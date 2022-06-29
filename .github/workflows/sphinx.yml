@@ -1,0 +1,27 @@
+# NOTE(robinson) - Based on the deployment instructions in the sphinx docs here:
+# ref: https://www.sphinx-doc.org/en/master/tutorial/deploying.html#id5
+
+name: Sphinx build
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build HTML
+      uses: ammaraskar/sphinx-action@e781e9af3e80bfe0ea539e4ea46858d51e027214
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: html-docs
+        path: docs/build/html/
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      if: github.ref == 'refs/heads/main'
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: docs/build/html

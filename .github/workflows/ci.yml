@@ -1,0 +1,101 @@
+name: CI
+
+on:
+  # NOTE(robinson) - We are limiting when we run CI avoid exceeding our 2,000 min/month limt.
+  # We can switch to running on push if we make this repo public or are fine with
+  # paying for CI minutes.
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  PYTHON_VERSION: 3.8
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    env:
+      NLTK_DATA: ${{ github.workspace }}/nltk_data
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/cache@v3
+      id: virtualenv-cache
+      with:
+        path: |
+          .venv
+          nltk_data
+        key: ${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+
+    - name: Setup virtual environment (no cache hit)
+      if: steps.virtualenv-cache.outputs.cache-hit != 'true'
+      run: |
+        python${{ env.PYTHON_VERSION }} -m venv .venv
+        source .venv/bin/activate
+        make install-ci
+
+  lint:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/cache@v3
+      id: virtualenv-cache
+      with:
+        path: .venv
+        key: ${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+    # NOTE(robinson) - This is a fallback in case the lint job does not find the cache.
+    # We can take this out when we implement the fix in CORE-99
+    - name: Setup virtual environment (no cache hit)
+      if: steps.virtualenv-cache.outputs.cache-hit != 'true'
+      run: |
+        python${{ env.PYTHON_VERSION }} -m venv .venv
+        source .venv/bin/activate
+        make install-ci
+    - name: Lint
+      run: |
+        source .venv/bin/activate
+        make check
+
+  test:
+    runs-on: ubuntu-latest
+    env:
+      NLTK_DATA: ${{ github.workspace }}/nltk_data
+    needs: [setup, lint]
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/cache@v3
+      id: virtualenv-cache
+      with:
+        path: |
+          .venv
+          nltk_data
+        key: ${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+    # NOTE(robinson) - This is a fallback in case the lint job does not find the cache.
+    # We can take this out when we implement the fix in CORE-99
+    - name: Setup virtual environment (no cache hit)
+      if: steps.virtualenv-cache.outputs.cache-hit != 'true'
+      run: |
+        python${{ env.PYTHON_VERSION }} -m venv .venv
+        source .venv/bin/activate
+        make install-ci
+    - name: Test
+      run: |
+        source .venv/bin/activate
+        make install-nltk-models
+        make test
+        make check-coverage
+
+  changelog:
+    runs-on: ubuntu-latest
+    steps:
+    - if: github.ref != 'refs/heads/main'
+      uses: dorny/paths-filter@v2
+      id: changes
+      with:
+        filters: |
+          src:
+            - 'unstructured/**'
+
+    - if: steps.changes.outputs.src == 'true' && github.ref != 'refs/heads/main'
+      uses: dangoslen/changelog-enforcer@v3
