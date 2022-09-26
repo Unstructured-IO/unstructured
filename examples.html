@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Examples &mdash; unstructured 0.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Bricks" href="bricks.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> unstructured
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Library Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installing.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elements.html">Elements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bricks.html">Bricks</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pdf-parsing">PDF Parsing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#html-parsing">HTML Parsing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#creating-html-from-xml-with-xslt">Creating HTML from XML with XSLT</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">unstructured</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Examples</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/examples.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="examples">
+<h1>Examples<a class="headerlink" href="#examples" title="Permalink to this heading"></a></h1>
+<p>The following are some examples of how to use the library to parse documents. You can find
+example documents in the
+<a class="reference external" href="https://github.com/Unstructured-IO/unstructured/tree/main/example-docs">example-docs</a>, along
+with instructions on how to download additional documents that are too large to store in the
+repo.</p>
+<section id="pdf-parsing">
+<h2>PDF Parsing<a class="headerlink" href="#pdf-parsing" title="Permalink to this heading"></a></h2>
+<p>Once installed, you can try the following using the
+<a class="reference external" href="https://arxiv.org/pdf/2103.15348.pdf">layoutparser</a> paper as an example. The PDF
+of the paper is available in the
+<a class="reference external" href="https://github.com/Unstructured-IO/unstructured/tree/main/example-docs">example-docs</a> directory.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.documents.pdf</span> <span class="kn">import</span> <span class="n">PDFDocument</span>
+
+<span class="n">doc</span> <span class="o">=</span> <span class="n">PDFDocument</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="s2">&quot;example-docs/layout-parser-paper.pdf&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>At this point, <code class="docutils literal notranslate"><span class="pre">print(doc)</span></code> will print out a string representation of the PDF file. The
+first page of output looks like the following:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">LayoutParser : A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis</span>
+
+<span class="sd">Zejiang Shen 1 ( (cid:0) ), Ruochen Zhang 2 , Melissa Dell 3 , Benjamin Charles Germain Lee 4 , Jacob Carlson 3 , and</span>
+<span class="sd">Weining Li 5</span>
+
+<span class="sd">Abstract. Recent advances in document image analysis (DIA) have been primarily driven by the application of neural</span>
+<span class="sd">networks. Ideally, research outcomes could be easily deployed in production and extended for further investigation.</span>
+<span class="sd">However, various factors like loosely organized codebases and sophisticated model conﬁgurations complicate the easy</span>
+<span class="sd">reuse of im- portant innovations by a wide audience. Though there have been on-going eﬀorts to improve reusability and</span>
+<span class="sd">simplify deep learning (DL) model development in disciplines like natural language processing and computer vision, none</span>
+<span class="sd">of them are optimized for challenges in the domain of DIA. This represents a major gap in the existing toolkit, as DIA</span>
+<span class="sd">is central to academic research across a wide range of disciplines in the social sciences and humanities. This paper</span>
+<span class="sd">introduces LayoutParser , an open-source library for streamlining the usage of DL in DIA research and applica- tions.</span>
+<span class="sd">The core LayoutParser library comes with a set of simple and intuitive interfaces for applying and customizing DL models</span>
+<span class="sd">for layout de- tection, character recognition, and many other document processing tasks. To promote extensibility,</span>
+<span class="sd">LayoutParser also incorporates a community platform for sharing both pre-trained models and full document digiti- zation</span>
+<span class="sd">pipelines. We demonstrate that LayoutParser is helpful for both lightweight and large-scale digitization pipelines in</span>
+<span class="sd">real-word use cases. The library is publicly available at https://layout-parser.github.io</span>
+
+<span class="sd">Keywords: Document Image Analysis · Deep Learning · Layout Analysis · Character Recognition · Open Source library ·</span>
+<span class="sd">Toolkit.</span>
+
+<span class="sd">Introduction</span>
+
+<span class="sd">Deep Learning(DL)-based approaches are the state-of-the-art for a wide range of document image analysis (DIA) tasks</span>
+<span class="sd">including document image classiﬁcation [11,</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">Document</span></code> has a <code class="docutils literal notranslate"><span class="pre">pages</span></code> attribute consisting of <code class="docutils literal notranslate"><span class="pre">Page</span></code> object and the <code class="docutils literal notranslate"><span class="pre">Page</span></code> object
+has an <code class="docutils literal notranslate"><span class="pre">elements</span></code> attribute consisting of <code class="docutils literal notranslate"><span class="pre">Element</span></code> objects. Sub-types of the <code class="docutils literal notranslate"><span class="pre">Element</span></code> class
+represent different components of a document, such as <code class="docutils literal notranslate"><span class="pre">NarrativeText</span></code> and <code class="docutils literal notranslate"><span class="pre">Title</span></code>. You can use
+these normalized elements to zero in on the components of a document you most care about.</p>
+</section>
+<section id="html-parsing">
+<h2>HTML Parsing<a class="headerlink" href="#html-parsing" title="Permalink to this heading"></a></h2>
+<p>You can parse an HTML document using the following command.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.documents.html</span> <span class="kn">import</span> <span class="n">HTMLDocument</span>
+
+<span class="n">doc</span> <span class="o">=</span> <span class="n">HTMLDocument</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="s2">&quot;example-docs/example-10k.html&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">pages</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>You can also instantiate a document directly from an HTML string using the <code class="docutils literal notranslate"><span class="pre">from_string</span></code> method.
+The output of this will be the following:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">SPECIAL NOTE REGARDING FORWARD-LOOKING STATEMENTS</span>
+<span class="sd">This report contains statements that do not relate to historical or current facts but are “forward-looking” statements. These statements relate to analyses and other information based on forecasts of future results and estimates of amounts not yet determinable. These statements may also relate to future events or trends, our future prospects and proposed new products, services, developments or business strategies, among other things. These statements can generally (although not always) be identified by their use of terms and phrases such as anticipate, appear, believe, could, would, estimate, expect, indicate, intent, may, plan, predict, project, pursue, will continue and other similar terms and phrases, as well as the use of the future tense.</span>
+
+<span class="sd">Actual results could differ materially from those expressed or implied in our forward-looking statements. Our future financial condition and results of operations, as well as any forward-looking statements, are subject to change and to inherent known and unknown risks and uncertainties. You should not assume at any point in the future that the forward-looking statements in this report are still valid. We do not intend, and undertake no obligation, to update our forward-looking statements to reflect future events or circumstances.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>If you then run:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">doc</span><span class="o">.</span><span class="n">pages</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">elements</span>
+</pre></div>
+</div>
+<p>You’ll get the following output, showing that the parser successfully differentiated between
+titles and narrative text.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="o">&lt;</span><span class="n">unstructured</span><span class="o">.</span><span class="n">documents</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">Title</span> <span class="n">at</span> <span class="mh">0x169cbe820</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="o">&lt;</span><span class="n">unstructured</span><span class="o">.</span><span class="n">documents</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">NarrativeText</span> <span class="n">at</span> <span class="mh">0x169cbe8e0</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="o">&lt;</span><span class="n">unstructured</span><span class="o">.</span><span class="n">documents</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">NarrativeText</span> <span class="n">at</span> <span class="mh">0x169cbe3a0</span><span class="o">&gt;</span><span class="p">]</span>
+</pre></div>
+</div>
+<section id="creating-html-from-xml-with-xslt">
+<h3>Creating HTML from XML with XSLT<a class="headerlink" href="#creating-html-from-xml-with-xslt" title="Permalink to this heading"></a></h3>
+<p>You can also convert XML files to HTML with the appropriate XSLT stylesheet. Note, XSLT
+converts arbitrary XML to XML, so there’s no guarantee the result will be HTML. Ensure
+you’re using a stylesheet designed to convert your specific XML to HTML. The workflow
+for reading in a document with an XSLT stylesheet is as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.document.html</span> <span class="kn">import</span> <span class="n">HTMLDocument</span>
+
+<span class="n">doc</span> <span class="o">=</span> <span class="n">HTMLDocument</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example-docs/factbook.xml&quot;</span><span class="p">,</span>
+                             <span class="n">stylesheet</span><span class="o">=</span><span class="s2">&quot;example-docs/factbook.xsl&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If you read from a stylesheet <code class="docutils literal notranslate"><span class="pre">HTMLDocument</span></code> will use the <code class="docutils literal notranslate"><span class="pre">etree.XMLParser</span></code> by default
+instead of the <code class="docutils literal notranslate"><span class="pre">etree.HTMLParser</span></code> because <code class="docutils literal notranslate"><span class="pre">HTMLDocument</span></code> assumes you want to convert
+your raw XML to HTML.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="bricks.html" class="btn btn-neutral float-left" title="Bricks" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Unstructured Technologies.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

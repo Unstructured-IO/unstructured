@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Installation &mdash; unstructured 0.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Elements" href="elements.html" />
+    <link rel="prev" title="Document Parsing" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> unstructured
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Library Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#logging">Logging</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#nltk-dependencies">NLTK Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xml-html-depenedencies">XML/HTML Depenedencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pdf-dependencies">PDF Dependencies</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="elements.html">Elements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bricks.html">Bricks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">unstructured</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Installation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/installing.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h1>
+<p>You can install the library by cloning the repo and running <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code> from the
+root directory. Developers can run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install-local</span></code> to install the dev and test
+requirements alongside the base requirements. Specific parsing capabilities may require
+extra dependencies, as documented below. If you want a minimal installation without any
+parser specific dependencies, run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install-base</span></code>.</p>
+<section id="logging">
+<h2>Logging<a class="headerlink" href="#logging" title="Permalink to this heading"></a></h2>
+<p>You can set the logging level for the package with the <code class="docutils literal notranslate"><span class="pre">LOG_LEVEL</span></code> environment variable.
+By default, the log level is set to <code class="docutils literal notranslate"><span class="pre">WARNING</span></code>. For debugging, consider setting the log
+level to <code class="docutils literal notranslate"><span class="pre">INFO</span></code> or <code class="docutils literal notranslate"><span class="pre">DEBUG</span></code>.</p>
+<section id="nltk-dependencies">
+<h3>NLTK Dependencies<a class="headerlink" href="#nltk-dependencies" title="Permalink to this heading"></a></h3>
+<p>The <a class="reference external" href="https://www.nltk.org/">NLTK</a> library is used for word and sentence tokenziation and
+part of speech (POS) tagging. Tokenization and POS tagging help to identify sections of
+narrative text within a document and are used across parsing families. The <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code>
+command downloads the <code class="docutils literal notranslate"><span class="pre">punkt</span></code> and <code class="docutils literal notranslate"><span class="pre">averaged_perceptron_tagger</span></code> depdenencies from <code class="docutils literal notranslate"><span class="pre">nltk</span></code>.
+If they are not already installed, you can install them with <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install-nltk</span></code>.</p>
+</section>
+<section id="xml-html-depenedencies">
+<h3>XML/HTML Depenedencies<a class="headerlink" href="#xml-html-depenedencies" title="Permalink to this heading"></a></h3>
+<p>For XML and HTML parsing, you’ll need <code class="docutils literal notranslate"><span class="pre">libxml2</span></code> and <code class="docutils literal notranslate"><span class="pre">libxlst</span></code> installed. On a Mac, you can do
+that with:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>brew install libxml2
+<span class="gp">$ </span>brew install libxslt
+</pre></div>
+</div>
+</section>
+<section id="pdf-dependencies">
+<h3>PDF Dependencies<a class="headerlink" href="#pdf-dependencies" title="Permalink to this heading"></a></h3>
+<p>Currently, PDF parsing capabilities rely on the
+<a class="reference external" href="https://github.com/facebookresearch/detectron2">Detectron2</a> object detection model. The
+<code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install-local</span></code> command installs all of the dependencies for Detectron2. If you
+need to parse PDFs and Detectron2 is not already installed, you can install it with
+<code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install-detectron2</span></code>.</p>
+<p>Also ensure that you have <code class="docutils literal notranslate"><span class="pre">poppler</span></code> installed on your system. On a Mac, you can run:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>brew install poppler
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Document Parsing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="elements.html" class="btn btn-neutral float-right" title="Elements" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Unstructured Technologies.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
