@@ -6,7 +6,7 @@
 ***REMOVED***
 antlr4-python3-runtime==4.9.3
     ***REMOVED*** via omegaconf
-certifi==2022.9.14
+certifi==2022.9.24
     ***REMOVED*** via requests
 ***REMOVED***
     ***REMOVED*** via cryptography
