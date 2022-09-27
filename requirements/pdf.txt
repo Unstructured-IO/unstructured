@@ -4,7 +4,7 @@
 #
 #    pip-compile --extra=pdf --output-file=requirements/pdf.txt
 #
-antlr4-python3-runtime==4.9.3
+antlr4-python3-runtime==4.11.1
     # via omegaconf
 certifi==2022.9.14
     # via requests
