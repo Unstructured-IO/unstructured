@@ -119,6 +119,10 @@ has an `element` attribute consisting of `Element` objects. Sub-types of the `El
 represent different components of a document, such as `NarrativeText` and `Title`. You can use
 these normalized elements to zero in on the components of a document you most care about.
 
+## Security Policy
+
+See our [security policy](https://github.com/Unstructured-IO/unstructured/security/policy) for
+information on how to report security vulnerabilities.
 
 ## Learn more
 
