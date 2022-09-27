@@ -7,23 +7,23 @@
 attrs==22.1.0
     ***REMOVED*** via pytest
 black==22.8.0
-    ***REMOVED*** via -r requirements/test.in
+    ***REMOVED*** via -r test.in
 ***REMOVED***
     ***REMOVED*** via
-    ***REMOVED***   -r requirements/test.in
+    ***REMOVED***   -r test.in
     ***REMOVED***   black
 coverage[toml]==6.4.4
     ***REMOVED*** via
-    ***REMOVED***   -r requirements/test.in
+    ***REMOVED***   -r test.in
     ***REMOVED***   pytest-cov
 flake8==5.0.4
-    ***REMOVED*** via -r requirements/test.in
+    ***REMOVED*** via -r test.in
 iniconfig==1.1.1
     ***REMOVED*** via pytest
 mccabe==0.7.0
     ***REMOVED*** via flake8
-mypy==0.971
-    ***REMOVED*** via -r requirements/test.in
+mypy==0.981
+    ***REMOVED*** via -r test.in
 mypy-extensions==0.4.3
     ***REMOVED*** via
     ***REMOVED***   black
@@ -47,7 +47,7 @@ pyparsing==3.0.9
 pytest==7.1.3
     ***REMOVED*** via pytest-cov
 pytest-cov==3.0.0
-    ***REMOVED*** via -r requirements/test.in
+    ***REMOVED*** via -r test.in
 tomli==2.0.1
     ***REMOVED*** via
     ***REMOVED***   black
@@ -55,6 +55,4 @@ tomli==2.0.1
     ***REMOVED***   mypy
     ***REMOVED***   pytest
 typing-extensions==4.3.0
-    ***REMOVED*** via
-    ***REMOVED***   black
-    ***REMOVED***   mypy
+    ***REMOVED*** via mypy
