@@ -1,6 +1,6 @@
 version: 2
 updates:
-  - package-ecosystem: "pip-compile"
+  - package-ecosystem: "pip"
     directory: "/requirements"
     schedule:
       interval: "weekly"
