@@ -354,7 +354,7 @@ Examples:
   from unstructured.staging.label_studio import stage_for_label_studio
 
   elements = [Title(text="Title"), NarrativeText(text="Narrative")]
-  label_studio_data = stage_for_label_studio(elements)
+  label_studio_data = stage_for_label_studio(elements, text_field="my_text", id_field="my_id")
 
   ***REMOVED*** The resulting JSON file is ready to be uploaded to LabelStudio
   with open("label_studio.json", "w") as f:
