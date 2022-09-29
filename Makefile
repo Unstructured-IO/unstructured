@@ -113,7 +113,6 @@ check-tests:
 .PHONY: check-scripts
 check-scripts:
     # Fail if any of these files have warnings
-	chmod +x scripts/shellcheck.sh
 	scripts/shellcheck.sh
 
 ## tidy:                    run black
