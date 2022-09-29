@@ -109,6 +109,13 @@ check-tests:
 	black --line-length 100 test_${PACKAGE_NAME} --check
 	flake8 test_${PACKAGE_NAME}
 
+## check-scripts:           run shellcheck
+.PHONY: check-scripts
+check-scripts:
+    # Fail if any of these files have warnings
+	chmod +x scripts/shellcheck.sh
+	scripts/shellcheck.sh
+
 ## tidy:                    run black
 .PHONY: tidy
 tidy:
