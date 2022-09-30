@@ -359,3 +359,27 @@ Examples:
   ***REMOVED*** The resulting JSON file is ready to be uploaded to LabelStudio
   with open("label_studio.json", "w") as f:
       json.dump(label_studio_data, f, indent=4)
+
+
+``stage_for_prodigy``
+--------------------------
+
+Formats outputs for use with `Prodigy <https://prodi.gy/docs/api-loaders>`_. After running ``stage_for_prodigy``, you can
+write the results to a JSON file that is ready to be used with Prodigy.
+
+Examples:
+
+.. code:: python
+
+  import json
+
+  from unstructured.documents.elements import Title, NarrativeText
+  from unstructured.staging.prodigy import stage_for_prodigy
+
+  elements = [Title(text="Title"), NarrativeText(text="Narrative")]
+  metadata = [{"type": "title"}, {"type": "text"}]
+  prodigy_data = stage_for_prodigy(elements, metadata)
+
+  ***REMOVED*** The resulting JSON file is ready to be used with Prodigy
+  with open("prodigy.json", "w") as f:
+      json.dump(prodigy_data, f, indent=4)
