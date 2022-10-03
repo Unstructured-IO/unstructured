@@ -1,5 +1,6 @@
-***REMOVED******REMOVED*** 0.2.1-dev1
+***REMOVED******REMOVED*** 0.2.1-dev2
 
+* Added staging brick for CSV format for Prodigy
 * Added staging brick for Prodigy
 * Added text_field and id_field to stage_for_label_studio signature
 

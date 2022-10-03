@@ -1,4 +1,6 @@
-from typing import Iterable, List, Dict, Optional, Union
+import io
+from typing import Generator, Iterable, List, Dict, Optional, Union
+import csv
 
 from unstructured.documents.elements import Text
 
@@ -6,15 +8,14 @@ from unstructured.documents.elements import Text
 PRODIGY_TYPE = List[Dict[str, Union[str, Dict[str, str]]]]
 
 
-def stage_for_prodigy(
+def _validate_prodigy_metadata(
     elements: List[Text],
     metadata: Optional[List[Dict[str, str]]] = None,
-) -> PRODIGY_TYPE:
+) -> Iterable[Dict[str, str]]:
     """
-    Converts the document to the format required for use with Prodigy.
-    ref: https://prodi.gy/docs/api-loaders***REMOVED***input
+    Returns validated metadata list for Prodigy bricks.
+    Raises ValueError with error message if metadata is not valid.
     """
-
     validated_metadata: Iterable[Dict[str, str]]
     if metadata:
         if len(metadata) != len(elements):
@@ -33,6 +34,19 @@ def stage_for_prodigy(
         validated_metadata = metadata
     else:
         validated_metadata = [dict() for _ in elements]
+    return validated_metadata
+
+
+def stage_for_prodigy(
+    elements: List[Text],
+    metadata: Optional[List[Dict[str, str]]] = None,
+) -> PRODIGY_TYPE:
+    """
+    Converts the document to the JSON format required for use with Prodigy.
+    ref: https://prodi.gy/docs/api-loaders***REMOVED***input
+    """
+
+    validated_metadata: Iterable[Dict[str, str]] = _validate_prodigy_metadata(elements, metadata)
 
     prodigy_data: PRODIGY_TYPE = list()
     for element, metadatum in zip(elements, validated_metadata):
@@ -42,3 +56,36 @@ def stage_for_prodigy(
         prodigy_data.append(data)
 
     return prodigy_data
+
+
+def stage_csv_for_prodigy(
+    elements: List[Text],
+    metadata: Optional[List[Dict[str, str]]] = None,
+) -> str:
+    """
+    Converts the document to the CSV format required for use with Prodigy.
+    ref: https://prodi.gy/docs/api-loaders***REMOVED***input
+    """
+    validated_metadata: Iterable[Dict[str, str]] = _validate_prodigy_metadata(elements, metadata)
+
+    csv_fieldnames = ["text", "id"]
+    csv_fieldnames += list(
+        set().union(
+            *((key.lower() for key in metadata_item.keys()) for metadata_item in validated_metadata)
+        )
+    )
+
+    def _get_rows() -> Generator[Dict[str, str], None, None]:
+        for element, metadatum in zip(elements, validated_metadata):
+            metadatum = {key.lower(): value for key, value in metadatum.items()}
+            row_data = dict(text=element.text, **metadatum)
+            if isinstance(element.id, str):
+                row_data["id"] = element.id
+            yield row_data
+
+    with io.StringIO() as buffer:
+        csv_writer = csv.DictWriter(buffer, fieldnames=csv_fieldnames)
+        csv_writer.writeheader()
+        csv_rows = _get_rows()
+        csv_writer.writerows(csv_rows)
+        return buffer.getvalue()
