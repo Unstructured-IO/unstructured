@@ -28,3 +28,69 @@ def test_specify_text_name(elements):
 def test_specify_id_name(elements):
     label_studio_data = label_studio.stage_for_label_studio(elements, id_field="random_id")
     assert "random_id" in label_studio_data[0]["data"]
+
+
+def test_created_annotation():
+    annotation = label_studio.LabelStudioAnnotation(
+        result=[
+            label_studio.LabelStudioResult(
+                type="choices",
+                value={"choices": ["Positive"]},
+                from_name="sentiment",
+                to_name="text",
+            )
+        ]
+    )
+
+    annotation.to_dict() == {
+        "result": [
+            {
+                "type": "choices",
+                "value": {"choices": ["Positive"]},
+                "from_name": "sentiment",
+                "id": None,
+                "to_name": "text",
+                "hidden": False,
+                "read_only": False,
+            }
+        ],
+        "was_canceled": False,
+    }
+
+
+def test_stage_with_annotation():
+    element = NarrativeText(text="A big brown bear")
+    annotations = [
+        label_studio.LabelStudioAnnotation(
+            result=[
+                label_studio.LabelStudioResult(
+                    type="choices",
+                    value={"choices": ["Positive"]},
+                    from_name="sentiment",
+                    to_name="text",
+                )
+            ]
+        )
+    ]
+    label_studio_data = label_studio.stage_for_label_studio([element], [annotations])
+    assert label_studio_data == [
+        {
+            "data": {"text": "A big brown bear", "ref_id": "8f458d5d0635df3975ceb9109cef9e12"},
+            "annotations": [
+                {
+                    "result": [
+                        {
+                            "type": "choices",
+                            "value": {"choices": ["Positive"]},
+                            "from_name": "sentiment",
+                            "id": None,
+                            "to_name": "text",
+                            "hidden": False,
+                            "read_only": False,
+                        }
+                    ],
+                    "was_canceled": False,
+                }
+            ],
+        }
+    ]
