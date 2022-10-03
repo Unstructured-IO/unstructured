@@ -24,7 +24,7 @@ cycler==0.11.0
     ***REMOVED*** via matplotlib
 effdet==0.3.0
     ***REMOVED*** via layoutparser
-fonttools==4.37.3
+fonttools==4.37.4
     ***REMOVED*** via matplotlib
 ***REMOVED***
     ***REMOVED*** via requests
