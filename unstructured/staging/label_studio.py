@@ -1,3 +1,4 @@
+from copy import deepcopy
 from dataclasses import dataclass
 from typing import Any, Dict, List, Union
 
@@ -21,6 +22,9 @@ class LabelStudioResult:
     from_name: str = "tag"  # Name of the source object tag
     to_name: str = "text"  # Name of the destination control tag
 
+    def to_dict(self):
+        return self.__dict__
+
 
 @dataclass
 class LabelStudioReview:
@@ -34,6 +38,9 @@ class LabelStudioReview:
     created_by: Dict[str, Union[str, int]]
     accepted: bool
 
+    def to_dict(self):
+        return self.__dict__
+
 
 @dataclass
 class LabelStudioAnnotation:
@@ -42,9 +49,17 @@ class LabelStudioAnnotation:
 
     id: str
     lead_time: float  # Time in seconds to label the task
-    result: List[LabelStudioResult]  # An array consisting of the annotation results
+    result: LabelStudioResult  # The result of the annotation
+    reviews: List[LabelStudioReview]  # An array consisting of the review results
     completed_by: int  # User ID for the user who completed the task
     was_canceled: bool = False  # Indicates whether or not the annotation was canceled
+
+    def to_dict(self):
+        annotation_dict = deepcopy(self.__dict__)
+        annotation_dict["result"] = annotation_dict["result"].to_dict()
+        if "reviews" in annotation_dict:
+            annotation_dict["reviews"] = [r.to_dict() for r in annotation_dict["reviews"]]
+        return annotation_dict
 
 
 def stage_for_label_studio(
