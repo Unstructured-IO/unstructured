@@ -22,7 +22,7 @@ iniconfig==1.1.1
     # via pytest
 mccabe==0.7.0
     # via flake8
-mypy==0.981
+mypy==0.982
     # via -r test.in
 mypy-extensions==0.4.3
     # via
