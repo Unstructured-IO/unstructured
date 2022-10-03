@@ -92,7 +92,7 @@ pytesseract==0.3.10
     ***REMOVED*** via
     ***REMOVED***   matplotlib
     ***REMOVED***   pandas
-pytz==2022.2.1
+pytz==2022.4
     ***REMOVED*** via pandas
 pyyaml==6.0
     ***REMOVED*** via
