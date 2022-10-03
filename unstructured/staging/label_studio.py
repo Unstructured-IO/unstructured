@@ -7,7 +7,7 @@ from unstructured.documents.elements import Text
 
 LABEL_STUDIO_TYPE = List[Dict[str, Dict[str, str]]]
 
-
+# NOTE(robinson) - ref: https://labelstud.io/tags/labels.html
 VALID_LABEL_TYPES = [
     "labels",
     "hypertextlabels",
@@ -46,7 +46,7 @@ class LabelStudioResult:
     hidden: bool = False
     read_only: bool = False
 
-    def post_init(self):
+    def __post_init__(self):
         if self.type not in VALID_LABEL_TYPES:
             raise ValueError(
                 f"{self.type} is not a valid label type. "
