@@ -8,7 +8,7 @@ from unstructured.documents.elements import Text
 LABEL_STUDIO_TYPE = List[Dict[str, Dict[str, str]]]
 
 
-VALID_TYPE = [
+VALID_LABEL_TYPES = [
     "labels",
     "hypertextlabels",
     "paragraphlabels",
@@ -48,6 +48,13 @@ class LabelStudioResult:
     to_name: str = "text"  # Name of the destination control tag
     hidden: bool = False
     read_only: bool = False
+
+    def post_init(self):
+        if self.type not in VALID_LABEL_TYPES:
+            raise ValueError(
+                f"{self.type} is not a valid label type. "
+                f"Valid label types are: {VALID_LABEL_TYPES}"
+            )
 
     def to_dict(self):
         return self.__dict__
