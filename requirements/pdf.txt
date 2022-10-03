@@ -24,7 +24,7 @@ cycler==0.11.0
     # via matplotlib
 effdet==0.3.0
     # via layoutparser
-fonttools==4.37.3
+fonttools==4.37.4
     # via matplotlib
 idna==3.4
     # via requests
@@ -92,7 +92,7 @@ python-dateutil==2.8.2
     # via
     #   matplotlib
     #   pandas
-pytz==2022.2.1
+pytz==2022.4
     # via pandas
 pyyaml==6.0
     # via
