@@ -364,7 +364,7 @@ Examples:
 ``stage_for_prodigy``
 --------------------------
 
-Formats outputs for use with `Prodigy <https://prodi.gy/docs/api-loaders>`_. After running ``stage_for_prodigy``, you can
+Formats outputs in JSON format for use with `Prodigy <https://prodi.gy/docs/api-loaders>`_. After running ``stage_for_prodigy``, you can
 write the results to a JSON file that is ready to be used with Prodigy.
 
 Examples:
@@ -383,3 +383,25 @@ Examples:
   # The resulting JSON file is ready to be used with Prodigy
   with open("prodigy.json", "w") as f:
       json.dump(prodigy_data, f, indent=4)
+
+
+``stage_csv_for_prodigy``
+--------------------------
+
+Formats outputs in CSV format for use with `Prodigy <https://prodi.gy/docs/api-loaders>`_. After running ``stage_csv_for_prodigy``, you can
+write the results to a CSV file that is ready to be used with Prodigy.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.documents.elements import Title, NarrativeText
+  from unstructured.staging.prodigy import stage_for_prodigy
+
+  elements = [Title(text="Title"), NarrativeText(text="Narrative")]
+  metadata = [{"type": "title"}, {"source": "news"}]
+  prodigy_csv_data = stage_csv_for_prodigy(elements, metadata)
+
+  # The resulting CSV file is ready to be used with Prodigy
+  with open("prodigy.csv", "w") as csv_file:
+      csv_file.write(prodigy_csv_data)
