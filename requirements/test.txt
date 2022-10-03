@@ -22,7 +22,7 @@ iniconfig==1.1.1
     ***REMOVED*** via pytest
 mccabe==0.7.0
     ***REMOVED*** via flake8
-mypy==0.981
+mypy==0.982
     ***REMOVED*** via -r test.in
 mypy-extensions==0.4.3
     ***REMOVED*** via
