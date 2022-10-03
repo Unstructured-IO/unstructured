@@ -41,11 +41,8 @@ class LabelStudioResult:
     type: str  # The type of tag used to annotate the task
     value: Dict[str, Any]  # The values for
     from_name: str  # Name of the source object tag (i.e. "sentiment" for the sentiment template)
+    to_name: str  # Name of the destination control tag
     id: Optional[str] = None
-    # NOTE(robinson) - See here for a list of object and control tags. Also provides the formats
-    # for the value parameter
-    # ref: https://labelstud.io/tags/
-    to_name: str = "text"  # Name of the destination control tag
     hidden: bool = False
     read_only: bool = False
 
@@ -66,11 +63,9 @@ class LabelStudioReview:
     Enterprise offering.
     ref: https://labelstud.io/guide/export.html#Label-Studio-JSON-format-of-annotated-tasks"""
 
-    id: str
-    # NOTE(robinson) - created_by is a dictionary containing the user ID, email, first name,
-    # and last name of the reviewer
     created_by: Dict[str, Union[str, int]]
     accepted: bool
+    id: Optional[str] = None
 
     def to_dict(self):
         return self.__dict__
@@ -94,6 +89,7 @@ class LabelStudioAnnotation:
         if "reviews" in annotation_dict and annotation_dict["reviews"] is not None:
             annotation_dict["reviews"] = [r.to_dict() for r in annotation_dict["reviews"]]
 
+        # NOTE(robinson) - Removes keys for any fields that defaulted to None
         _annotation_dict = deepcopy(annotation_dict)
         for key, value in annotation_dict.items():
             if value is None:
