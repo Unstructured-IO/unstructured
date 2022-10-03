@@ -115,11 +115,22 @@ check-scripts:
     # Fail if any of these files have warnings
 	scripts/shellcheck.sh
 
+## check-version:           run check to ensure version in CHANGELOG.md matches version in package
+.PHONY: check-version
+check-version:
+    # Fail if syncing version would produce changes
+	scripts/versionsync.sh -c
+
 ## tidy:                    run black
 .PHONY: tidy
 tidy:
 	black --line-length 100 ${PACKAGE_NAME}
 	black --line-length 100 test_${PACKAGE_NAME}
+
+## version-sync:            update __version__.py with most recent version from CHANGELOG.md
+.PHONY: version-sync
+version-sync:
+	scripts/versionsync.sh
 
 .PHONY: check-coverage
 check-coverage:
