@@ -30,8 +30,9 @@ def test_upload_label_studio_data_with_sdk(monkeypatch, elements):
     project.id = 1
     # Upload data to the project
     label_studio_data = label_studio.stage_for_label_studio(elements)
-    result = project.import_tasks(label_studio_data)
-    assert not result
+    # task_ids = MockResponse.json()["task_ids"] based on SDK
+    task_ids = project.import_tasks(label_studio_data)
+    assert not task_ids
 
 
 def test_convert_to_label_studio_data(elements):
