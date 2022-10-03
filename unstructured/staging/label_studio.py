@@ -104,7 +104,7 @@ class LabelStudioAnnotation:
 
 def stage_for_label_studio(
     elements: List[Text],
-    annotations: Optional[List[LabelStudioAnnotation]] = None,
+    annotations: Optional[List[List[LabelStudioAnnotation]]] = None,
     text_field: str = "text",
     id_field: str = "ref_id",
 ) -> LABEL_STUDIO_TYPE:
@@ -124,8 +124,7 @@ def stage_for_label_studio(
         labeling_example: Dict[str, Any] = dict()
         labeling_example["data"] = data
         if annotations is not None:
-            annotation: LabelStudioAnnotation = annotations[i]
-            labeling_example["annotations"] = [annotation.to_dict()]
+            labeling_example["annotations"] = [a.to_dict() for a in annotations[i]]
         label_studio_data.append(labeling_example)
 
     return label_studio_data
