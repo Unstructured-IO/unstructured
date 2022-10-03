@@ -396,7 +396,7 @@ Examples:
 .. code:: python
 
   from unstructured.documents.elements import Title, NarrativeText
-  from unstructured.staging.prodigy import stage_for_prodigy
+  from unstructured.staging.prodigy import stage_csv_for_prodigy
 
   elements = [Title(text="Title"), NarrativeText(text="Narrative")]
   metadata = [{"type": "title"}, {"source": "news"}]
