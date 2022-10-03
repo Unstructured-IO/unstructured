@@ -66,6 +66,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#convert-to-isd"><code class="docutils literal notranslate"><span class="pre">convert_to_isd</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#stage-for-label-studio"><code class="docutils literal notranslate"><span class="pre">stage_for_label_studio</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#stage-for-prodigy"><code class="docutils literal notranslate"><span class="pre">stage_for_prodigy</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#stage-csv-for-prodigy"><code class="docutils literal notranslate"><span class="pre">stage_csv_for_prodigy</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -391,7 +392,7 @@ write the results to a JSON folder that is ready to be included in a new LabelSt
 </section>
 <section id="stage-for-prodigy">
 <h3><code class="docutils literal notranslate"><span class="pre">stage_for_prodigy</span></code><a class="headerlink" href="#stage-for-prodigy" title="Permalink to this heading"></a></h3>
-<p>Formats outputs for use with <a class="reference external" href="https://prodi.gy/docs/api-loaders">Prodigy</a>. After running <code class="docutils literal notranslate"><span class="pre">stage_for_prodigy</span></code>, you can
+<p>Formats outputs in JSON format for use with <a class="reference external" href="https://prodi.gy/docs/api-loaders">Prodigy</a>. After running <code class="docutils literal notranslate"><span class="pre">stage_for_prodigy</span></code>, you can
 write the results to a JSON file that is ready to be used with Prodigy.</p>
 <p>Examples:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
@@ -406,6 +407,24 @@ write the results to a JSON file that is ready to be used with Prodigy.</p>
 <span class="c1"># The resulting JSON file is ready to be used with Prodigy</span>
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;prodigy.json&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">prodigy_data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="stage-csv-for-prodigy">
+<h3><code class="docutils literal notranslate"><span class="pre">stage_csv_for_prodigy</span></code><a class="headerlink" href="#stage-csv-for-prodigy" title="Permalink to this heading"></a></h3>
+<p>Formats outputs in CSV format for use with <a class="reference external" href="https://prodi.gy/docs/api-loaders">Prodigy</a>. After running <code class="docutils literal notranslate"><span class="pre">stage_csv_for_prodigy</span></code>, you can
+write the results to a CSV file that is ready to be used with Prodigy.</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.documents.elements</span> <span class="kn">import</span> <span class="n">Title</span><span class="p">,</span> <span class="n">NarrativeText</span>
+<span class="kn">from</span> <span class="nn">unstructured.staging.prodigy</span> <span class="kn">import</span> <span class="n">stage_csv_for_prodigy</span>
+
+<span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="n">Title</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Title&quot;</span><span class="p">),</span> <span class="n">NarrativeText</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Narrative&quot;</span><span class="p">)]</span>
+<span class="n">metadata</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;title&quot;</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="s2">&quot;news&quot;</span><span class="p">}]</span>
+<span class="n">prodigy_csv_data</span> <span class="o">=</span> <span class="n">stage_csv_for_prodigy</span><span class="p">(</span><span class="n">elements</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
+
+<span class="c1"># The resulting CSV file is ready to be used with Prodigy</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;prodigy.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">csv_file</span><span class="p">:</span>
+    <span class="n">csv_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">prodigy_csv_data</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
