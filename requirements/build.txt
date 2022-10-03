@@ -36,7 +36,7 @@ requests==2.28.1
     ***REMOVED*** via sphinx
 snowballstemmer==2.2.0
     ***REMOVED*** via sphinx
-sphinx==5.2.2
+sphinx==5.2.3
     ***REMOVED*** via
     ***REMOVED***   -r build.in
     ***REMOVED***   sphinx-rtd-theme
