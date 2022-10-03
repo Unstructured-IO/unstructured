@@ -7,3 +7,4 @@ click>=8.1
 flake8
 mypy
 pytest-cov
+label_studio_sdk
