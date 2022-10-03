@@ -1,6 +1,6 @@
 from copy import deepcopy
 from dataclasses import dataclass
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Optional, Union
 
 from unstructured.documents.elements import Text
 
@@ -63,10 +63,17 @@ class LabelStudioAnnotation:
 
 
 def stage_for_label_studio(
-    elements: List[Text], text_field: str = "text", id_field: str = "ref_id"
+    elements: List[Text],
+    annotations: Optional[List[Optional[LabelStudioAnnotation]]] = None,
+    text_field: str = "text",
+    id_field: str = "ref_id",
 ) -> LABEL_STUDIO_TYPE:
     """Converts the document to the format required for upload to LabelStudio.
     ref: https://labelstud.io/guide/tasks.html#Example-JSON-format"""
+    if annotations is not None:
+        if len(elements) != len(annotations):
+            raise ValueError("The length of elements and annotations must match.")
+
     label_studio_data: LABEL_STUDIO_TYPE = list()
     for element in elements:
         data: Dict[str, str] = dict()
