@@ -22,7 +22,7 @@ copyright = '2022, Unstructured Technologies'
 author = 'Unstructured Technologies'
 
 # The full version, including alpha/beta/rc tags
-release = '0.0.1'
+release = '0.2.1-dev3'
 
 
 # -- General configuration ---------------------------------------------------
