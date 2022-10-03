@@ -1,3 +1,7 @@
+## 0.2.1-dev2
+
+* Added staging brick for CSV format for Prodigy
+
 ## 0.2.1-dev1
 
 * Added staging brick for Prodigy
