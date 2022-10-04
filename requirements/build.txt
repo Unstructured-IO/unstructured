@@ -36,7 +36,7 @@ requests==2.28.1
     # via sphinx
 snowballstemmer==2.2.0
     # via sphinx
-sphinx==5.2.2
+sphinx==5.2.3
     # via
     #   -r build.in
     #   sphinx-rtd-theme

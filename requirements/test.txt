@@ -22,7 +22,7 @@ iniconfig==1.1.1
     # via pytest
 mccabe==0.7.0
     # via flake8
-mypy==0.981
+mypy==0.982
     # via -r test.in
 mypy-extensions==0.4.3
     # via
@@ -46,7 +46,7 @@ pyparsing==3.0.9
     # via packaging
 pytest==7.1.3
     # via pytest-cov
-pytest-cov==3.0.0
+pytest-cov==4.0.0
     # via -r test.in
 tomli==2.0.1
     # via
