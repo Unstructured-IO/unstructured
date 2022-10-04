@@ -361,6 +361,98 @@ Examples:
       json.dump(label_studio_data, f, indent=4)
 
 
+You can also include pre-annotations as part of your LabelStudio upload. The
+``annotations`` kwarg is a list of lists. If ``annotations`` is specified, there must be a list of
+annotations for each element in the ``elements`` list. If an element does not have any annotations,
+use an empty list.
+The following shows an example of how to upload annotations for the "Text Classification"
+task in LabelStudio:
+
+.. code:: python
+
+  import json
+
+  from unstructured.documents.elements import NarrativeText
+  from unstructured.staging.label_studio import (
+      stage_for_label_studio,
+      LabelStudioAnnotation,
+      LabelStudioResult,
+  )
+
+
+
+  elements = [NarrativeText(text="Narrative")]
+  annotations = [[
+    LabelStudioAnnotation(
+        result=[
+            LabelStudioResult(
+                type="choices",
+                value={"choices": ["Positive"]},
+                from_name="sentiment",
+                to_name="text",
+            )
+        ]
+    )
+  ]]
+  label_studio_data = stage_for_label_studio(
+      elements,
+      annotations=annotations,
+      text_field="my_text",
+      id_field="my_id"
+  )
+
+  # The resulting JSON file is ready to be uploaded to LabelStudio
+  # with annotations included
+  with open("label_studio.json", "w") as f:
+      json.dump(label_studio_data, f, indent=4)
+
+
+The following shows an example of how to upload annotations for the "Named Entity Recognition"
+task in LabelStudio:
+
+.. code:: python
+
+  import json
+
+  from unstructured.documents.elements import NarrativeText
+  from unstructured.staging.label_studio import (
+      stage_for_label_studio,
+      LabelStudioAnnotation,
+      LabelStudioResult,
+  )
+
+
+
+  elements = [NarrativeText(text="Narrative")]
+  annotations = [[
+    LabelStudioAnnotation(
+        result=[
+            LabelStudioResult(
+                type="labels",
+                value={"start": 0, "end": 9, "text": "Narrative", "labels": ["MISC"]},
+                from_name="label",
+                to_name="text",
+            )
+        ]
+    )
+  ]]
+  label_studio_data = stage_for_label_studio(
+      elements,
+      annotations=annotations,
+      text_field="my_text",
+      id_field="my_id"
+  )
+
+  # The resulting JSON file is ready to be uploaded to LabelStudio
+  # with annotations included
+  with open("label_studio.json", "w") as f:
+      json.dump(label_studio_data, f, indent=4)
+
+
+See the `LabelStudio docs <https://labelstud.io/tags/labels.html>`_ for a full list of options
+for labels and annotations.
+
+
 ``stage_for_prodigy``
 --------------------------
 
