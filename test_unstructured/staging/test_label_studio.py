@@ -5,14 +5,17 @@ from unstructured.documents.elements import Title, NarrativeText
 
 from label_studio_sdk.client import Client
 
-import requests
-import logging
-log = logging.getLogger('urllib3')  # works
-import pytest
-log.setLevel(logging.DEBUG)  # needed
-fh = logging.FileHandler("requests.log")
-log.addHandler(fh)
-logging.basicConfig(level=logging.DEBUG)
+# import requests
+# import logging
+
+# log = logging.getLogger("urllib3")  # works
+# import pytest
+
+# log.setLevel(logging.DEBUG)  # needed
+# fh = logging.FileHandler("requests.log")
+# log.addHandler(fh)
+# logging.basicConfig(level=logging.DEBUG)
+
 
 @pytest.fixture
 def elements():
@@ -42,31 +45,24 @@ def test_upload_label_studio_data_with_sdk(monkeypatch, elements):
     task_ids = project.import_tasks(label_studio_data)
     assert not task_ids
 
-def test_real_sdk(elements):
-    # Need to run label studio instance
-     
-    # Define the URL where Label Studio is accessible and the API key for your user account
-    LABEL_STUDIO_URL = 'http://localhost:8080'
-    API_KEY = 'd44b92c31f592583bffb7e0d817a60c16a937bca'
-    # Connect to the Label Studio API and check the connection
-    ls = Client(url=LABEL_STUDIO_URL, api_key=API_KEY)
-    ls.check_connection()
-    project = ls.get_projects()[0]
-    import pdb
-    pdb.set_trace()
-    label_studio_data = label_studio.stage_for_label_studio(elements, text_field="label")
-    # TypeError: stage_for_label_studio() got an unexpected keyword argument 'text_field'
-    import pdb
-    pdb.set_trace()
-    # label_studio_data = 
-    #       [{'data': {'my_text': 'Title 1', 'ref_id': 'ab03af41c2940e7584b62df48a964db3'}},
-    #       {'data': {'my_text': 'Narrative 1','ref_id': 'ff9eb806beb1f483322f6fbda680b08b'}}]
-    project.import_tasks(label_studio_data)
-    # [{"text": "Some text 1"}, {"text": "Some text 2"}]
-    # project.import_tasks(
-    #     [{'data': {'text': 'Title 1', 'ref_id': 'ab03af41c2940e7584b62df48a964db3'}}, 
-    #     {'data': {'text': 'Narrative 1', 'ref_id': 'ff9eb806beb1f483322f6fbda680b08b'}}]
-    # )
+
+# def test_real_sdk(elements):
+#     # Need to run label studio instance
+
+#     # Define the URL where Label Studio is accessible and the API key for your user account
+#     LABEL_STUDIO_URL = "http://localhost:8080"
+#     API_KEY = "d44b92c31f592583bffb7e0d817a60c16a937bca"
+#     # Connect to the Label Studio API and check the connection
+#     ls = Client(url=LABEL_STUDIO_URL, api_key=API_KEY)
+#     ls.check_connection()
+#     project = ls.get_projects()[0]
+#     label_studio_data = label_studio.stage_for_label_studio(elements)
+#     project.import_tasks(label_studio_data)
+#     # project.import_tasks(
+#     #     [{'data': {'my_text': 'Title 1', 'ref_id': 'ab03af41c2940e7584b62df48a964db3'}},
+#     #     {'data': {'my_text': 'Narrative 1', 'ref_id': 'ff9eb806beb1f483322f6fbda680b08b'}}]
+#     # )
+
 
 def test_convert_to_label_studio_data(elements):
     label_studio_data = label_studio.stage_for_label_studio(elements)
