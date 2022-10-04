@@ -7,7 +7,12 @@ from label_studio_sdk.client import Client
 
 import logging
 import re
+import subprocess
+import time
+import multiprocessing
 
+def start_server():
+    subprocess.call("label-studio start", shell=True)
 
 @pytest.fixture
 def elements():
@@ -18,7 +23,9 @@ def test_upload_label_studio_data_with_sdk_on_real_instance(caplog, elements):
     log = logging.getLogger("urllib3")
     log.setLevel(logging.DEBUG)
     # Need to run label studio instance
-
+    proc = multiprocessing.Process(target=start_server)
+    proc.start()
+    time.sleep(10)
     # Define the URL where Label Studio is accessible and the API key for your user account
     LABEL_STUDIO_URL = "http://localhost:8080"
     API_KEY = "d44b92c31f592583bffb7e0d817a60c16a937bca"
@@ -50,6 +57,7 @@ def test_upload_label_studio_data_with_sdk_on_real_instance(caplog, elements):
     # Check success status code (201) for posting tasks job in logger info
     success_posting_tasks_status = re.compile(r"POST /api/projects/.*/import.*201")
     assert bool(success_posting_tasks_status.search(caplog.text))
+    proc.terminate()
 
 
 def test_convert_to_label_studio_data(elements):
