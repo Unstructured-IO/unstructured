@@ -449,7 +449,7 @@ task in LabelStudio:
       json.dump(label_studio_data, f, indent=4)
 
 
-See the `LabelStudio docs <https://labelstud.io/tags/labels.html>`_ for a fulle list of options
+See the `LabelStudio docs <https://labelstud.io/tags/labels.html>`_ for a full list of options
 for labels and annotations.
 
 
