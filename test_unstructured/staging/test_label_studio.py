@@ -14,7 +14,6 @@ def elements():
     return [Title(text="Title 1"), NarrativeText(text="Narrative 1")]
 
 
-@pytest.fixture(autouse=True)
 def test_upload_label_studio_data_with_sdk_on_real_instance(caplog, elements):
     log = logging.getLogger("urllib3")
     log.setLevel(logging.DEBUG)
