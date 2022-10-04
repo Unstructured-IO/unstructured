@@ -11,8 +11,10 @@ import subprocess
 import time
 import multiprocessing
 
+
 def start_server():
     subprocess.call("label-studio start", shell=True)
+
 
 @pytest.fixture
 def elements():
