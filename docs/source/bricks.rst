@@ -385,6 +385,24 @@ Examples:
       json.dump(prodigy_data, f, indent=4)
 
 
+**Note**: Prodigy recommends ``.jsonl`` format for feeding data to API loaders. After running ``stage_for_prodigy``, you can
+use ``save_as_jsonl`` utility function to save the formatted data to a ``.jsonl`` file that is ready to be used with Prodigy.
+
+.. code:: python
+  
+  from unstructured.documents.elements import Title, NarrativeText
+  from unstructured.staging.prodigy import stage_for_prodigy
+  from unstructured.utils import save_as_jsonl
+
+  elements = [Title(text="Title"), NarrativeText(text="Narrative")]
+  metadata = [{"type": "title"}, {"type": "text"}]
+  prodigy_data = stage_for_prodigy(elements, metadata)
+
+  # The resulting jsonl file is ready to be used with Prodigy.
+  save_as_jsonl(prodigy_data, "prodigy.jsonl")
+
+
+
 ``stage_csv_for_prodigy``
 --------------------------
 
