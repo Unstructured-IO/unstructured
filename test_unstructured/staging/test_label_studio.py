@@ -47,9 +47,9 @@ def test_upload_label_studio_data_with_sdk_on_real_instance(caplog, elements):
     )
     label_studio_data = label_studio.stage_for_label_studio(elements)
     project.import_tasks(label_studio_data)
-    # Check status code (201) for posting tasks job in logger info
-    status_posting_tasks_format = re.compile(r"POST /api/projects/.*/import.*201")
-    assert bool(status_posting_tasks_format.search(caplog.text))
+    # Check success status code (201) for posting tasks job in logger info
+    success_posting_tasks_status = re.compile(r"POST /api/projects/.*/import.*201")
+    assert bool(success_posting_tasks_status.search(caplog.text))
 
 
 def test_convert_to_label_studio_data(elements):
