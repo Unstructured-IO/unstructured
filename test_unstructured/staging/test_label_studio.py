@@ -5,16 +5,8 @@ from unstructured.documents.elements import Title, NarrativeText
 
 from label_studio_sdk.client import Client
 
-# import requests
-# import logging
-
-# log = logging.getLogger("urllib3")  # works
-# import pytest
-
-# log.setLevel(logging.DEBUG)  # needed
-# fh = logging.FileHandler("requests.log")
-# log.addHandler(fh)
-# logging.basicConfig(level=logging.DEBUG)
+import logging
+import re
 
 
 @pytest.fixture
@@ -22,46 +14,43 @@ def elements():
     return [Title(text="Title 1"), NarrativeText(text="Narrative 1")]
 
 
-class MockResponse:
-    def __init__(self, *args, **kwargs):
-        self.headers = dict()
-        self.status_code = 201
+@pytest.fixture(autouse=True)
+def test_upload_label_studio_data_with_sdk_on_real_instance(caplog, elements):
+    log = logging.getLogger("urllib3")
+    log.setLevel(logging.DEBUG)
+    # Need to run label studio instance
 
-    def json(self):
-        return {"task_ids": None}
-
-
-def test_upload_label_studio_data_with_sdk(monkeypatch, elements):
-    monkeypatch.setattr(Client, "make_request", MockResponse)
-    client = Client(url="http://fake.url", api_key="fake_key")
+    # Define the URL where Label Studio is accessible and the API key for your user account
+    LABEL_STUDIO_URL = "http://localhost:8080"
+    API_KEY = "d44b92c31f592583bffb7e0d817a60c16a937bca"
     # Connect to the Label Studio API and check the connection
-    client.check_connection()
-    # Create a new project
-    project = client.start_project()
-    project.id = 1
-    # Upload data to the project
+    ls = Client(url=LABEL_STUDIO_URL, api_key=API_KEY)
+    ls.check_connection()
+    ls.delete_all_projects()
+    # Create a sample project to classify types of texts
+    project = ls.start_project(
+        title="Text Type Classifications",
+        label_config="""
+        <View>
+        <Text name="text" value="$text"/>
+        <View style="box-shadow: 2px 2px 5px #999;
+                       padding: 20px; margin-top: 2em;
+                       border-radius: 5px;">
+            <Header value="Choose text sentiment"/>
+            <Choices name="sentiment" toName="text"
+                    choice="single" showInLine="true">
+            <Choice value="Title"/>
+              <Choice value="Narrative"/>
+            </Choices>
+        </View>
+        </View>
+        """,
+    )
     label_studio_data = label_studio.stage_for_label_studio(elements)
-    # task_ids = MockResponse.json()["task_ids"] based on SDK
-    task_ids = project.import_tasks(label_studio_data)
-    assert not task_ids
-
-
-# def test_real_sdk(elements):
-#     # Need to run label studio instance
-
-#     # Define the URL where Label Studio is accessible and the API key for your user account
-#     LABEL_STUDIO_URL = "http://localhost:8080"
-#     API_KEY = "d44b92c31f592583bffb7e0d817a60c16a937bca"
-#     # Connect to the Label Studio API and check the connection
-#     ls = Client(url=LABEL_STUDIO_URL, api_key=API_KEY)
-#     ls.check_connection()
-#     project = ls.get_projects()[0]
-#     label_studio_data = label_studio.stage_for_label_studio(elements)
-#     project.import_tasks(label_studio_data)
-#     # project.import_tasks(
-#     #     [{'data': {'my_text': 'Title 1', 'ref_id': 'ab03af41c2940e7584b62df48a964db3'}},
-#     #     {'data': {'my_text': 'Narrative 1', 'ref_id': 'ff9eb806beb1f483322f6fbda680b08b'}}]
-#     # )
+    project.import_tasks(label_studio_data)
+    # Check status code (201) for posting tasks job in logger info
+    status_posting_tasks_format = re.compile(r"POST /api/projects/.*/import.*201")
+    assert bool(status_posting_tasks_format.search(caplog.text))
 
 
 def test_convert_to_label_studio_data(elements):
