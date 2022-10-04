@@ -493,6 +493,20 @@ write the results to a JSON file that is ready to be used with Prodigy.</p>
     <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">prodigy_data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 </pre></div>
 </div>
+<p><strong>Note</strong>: Prodigy recommends <code class="docutils literal notranslate"><span class="pre">.jsonl</span></code> format for feeding data to API loaders. After running <code class="docutils literal notranslate"><span class="pre">stage_for_prodigy</span></code>, you can
+use the <code class="docutils literal notranslate"><span class="pre">save_as_jsonl</span></code> utility function to save the formatted data to a <code class="docutils literal notranslate"><span class="pre">.jsonl</span></code> file that is ready to be used with Prodigy.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.documents.elements</span> <span class="kn">import</span> <span class="n">Title</span><span class="p">,</span> <span class="n">NarrativeText</span>
+<span class="kn">from</span> <span class="nn">unstructured.staging.prodigy</span> <span class="kn">import</span> <span class="n">stage_for_prodigy</span>
+<span class="kn">from</span> <span class="nn">unstructured.utils</span> <span class="kn">import</span> <span class="n">save_as_jsonl</span>
+
+<span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="n">Title</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Title&quot;</span><span class="p">),</span> <span class="n">NarrativeText</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Narrative&quot;</span><span class="p">)]</span>
+<span class="n">metadata</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;title&quot;</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">}]</span>
+<span class="n">prodigy_data</span> <span class="o">=</span> <span class="n">stage_for_prodigy</span><span class="p">(</span><span class="n">elements</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
+
+<span class="c1"># The resulting jsonl file is ready to be used with Prodigy.</span>
+<span class="n">save_as_jsonl</span><span class="p">(</span><span class="n">prodigy_data</span><span class="p">,</span> <span class="s2">&quot;prodigy.jsonl&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
 </section>
 <section id="stage-csv-for-prodigy">
 <h3><code class="docutils literal notranslate"><span class="pre">stage_csv_for_prodigy</span></code><a class="headerlink" href="#stage-csv-for-prodigy" title="Permalink to this heading"></a></h3>
