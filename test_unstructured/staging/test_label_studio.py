@@ -27,7 +27,7 @@ def test_upload_label_studio_data_with_sdk_on_real_instance(caplog, elements):
     # Need to run label studio instance
     proc = multiprocessing.Process(target=start_server)
     proc.start()
-    time.sleep(10)
+    time.sleep(20)
     # Define the URL where Label Studio is accessible and the API key for your user account
     LABEL_STUDIO_URL = "http://localhost:8080"
     API_KEY = "d44b92c31f592583bffb7e0d817a60c16a937bca"
