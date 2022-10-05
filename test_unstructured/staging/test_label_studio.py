@@ -17,12 +17,23 @@ def elements():
 
 @vcr.use_cassette("test_unstructured/vcr_fixtures/cassettes/label_studio_upload.yaml")
 def test_upload_label_studio_data_with_sdk(caplog, elements):
-    # The HTTP request to label studio is recorded by vcr decorator in the first time
-    # and replayed later.
+    """
+    Testing Instruction
+    ===================
+    1. Remove file `test_unstructured/vcr_fixtures/cassettes/label_studio_upload.yaml`,
+        which will be recreated later.
+    2. Install the label-studio package by running command `pip install -U label-studio`
+    3. Run `label-studio`, and login or set up label studio account on pop-up website.
+    4. Update `LABEL_STUDIO_URL` and `API_KEY` below.
+    5. Run this test once, and VCR will record the HTTP request to the yaml file.
+    6. Kill the label studio instance and run the test again, VCR will replay the response.
+    """
     log = logging.getLogger("urllib3")
     log.setLevel(logging.DEBUG)
-    # Define the URL where Label Studio is accessible and the API key for your user account
+    # Define the URL where Label Studio is accessible
     LABEL_STUDIO_URL = "http://localhost:8080"
+    # API_KEY is a temporary key from local install not actually valid anywhere
+    # Update it if the vcr cassette is updated with the API key from your user account
     API_KEY = "d44b92c31f592583bffb7e0d817a60c16a937bca"
     # Connect to the Label Studio API and check the connection
     ls = Client(url=LABEL_STUDIO_URL, api_key=API_KEY)
