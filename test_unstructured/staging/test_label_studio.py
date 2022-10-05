@@ -14,7 +14,8 @@ import vcr
 def elements():
     return [Title(text="Title 1"), NarrativeText(text="Narrative 1")]
 
-@vcr.use_cassette('fixtures/cassettes/label_studio.yaml')
+
+@vcr.use_cassette("fixtures/cassettes/label_studio.yaml")
 def test_upload_label_studio_data_with_sdk_on_real_instance(caplog, elements):
     # The HTTP request to label studio is recorded by vcr decorator in the first time
     # and replayed later.
