@@ -1,0 +1,319 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Authorization:
+      - Token d44b92c31f592583bffb7e0d817a60c16a937bca
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.27.1
+    method: GET
+    uri: http://localhost:8080/health
+  response:
+    body:
+      string: '{"status": "UP"}'
+    headers:
+      Content-Language:
+      - en-us
+      Content-Length:
+      - '16'
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Wed, 05 Oct 2022 16:26:14 GMT
+      Referrer-Policy:
+      - same-origin
+      Server:
+      - WSGIServer/0.2 CPython/3.8.13
+      Set-Cookie:
+      - sessionid=eyJ1aWQiOiJjYjYxOWVmYi05ZDU1LTQzNWYtOGQ4Ni00ZjcyZGJjMDM2ZTYiLCJvcmdhbml6YXRpb25fcGsiOjF9:1og7Dq:qxIxdgId2dOfw5lhYIjhXa3XGZd91f5GTyNXBnwFm_w;
+        expires=Wed, 19 Oct 2022 16:26:14 GMT; HttpOnly; Max-Age=1209600; Path=/;
+        SameSite=Lax
+      Vary:
+      - Accept-Language, Cookie, Origin
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Authorization:
+      - Token d44b92c31f592583bffb7e0d817a60c16a937bca
+      Connection:
+      - keep-alive
+      Cookie:
+      - sessionid=eyJ1aWQiOiJjYjYxOWVmYi05ZDU1LTQzNWYtOGQ4Ni00ZjcyZGJjMDM2ZTYiLCJvcmdhbml6YXRpb25fcGsiOjF9:1og7Dq:qxIxdgId2dOfw5lhYIjhXa3XGZd91f5GTyNXBnwFm_w
+      User-Agent:
+      - python-requests/2.27.1
+    method: GET
+    uri: http://localhost:8080/api/projects?page_size=10000000
+  response:
+    body:
+      string: '{"count":1,"next":null,"previous":null,"results":[{"id":95,"title":"Text
+        Type Classifications","description":"","label_config":"<View>\n        <Text
+        name=\"text\" value=\"$text\"/>\n        <View style=\"box-shadow: 2px 2px
+        5px #999;\n                       padding: 20px; margin-top: 2em;\n                       border-radius:
+        5px;\">\n            <Header value=\"Choose text type\"/>\n            <Choices
+        name=\"type\" toName=\"text\"\n                    choice=\"single\" showInLine=\"true\">\n            <Choice
+        value=\"Title\"/>\n              <Choice value=\"Narrative\"/>\n            </Choices>\n        </View>\n        </View>","expert_instruction":"","show_instruction":false,"show_skip_button":true,"enable_empty_annotation":true,"show_annotation_history":false,"organization":1,"color":"#FFFFFF","maximum_annotations":1,"is_published":false,"model_version":"","is_draft":false,"created_by":{"id":1,"first_name":"","last_name":"","email":"yuming@unstructured.io","avatar":null},"created_at":"2022-10-05T16:15:26.800180Z","min_annotations_to_start_training":0,"start_training_on_annotation_update":false,"show_collab_predictions":true,"num_tasks_with_annotations":0,"task_number":2,"useful_annotation_number":0,"ground_truth_number":0,"skipped_annotations_number":0,"total_annotations_number":0,"total_predictions_number":0,"sampling":"Sequential
+        sampling","show_ground_truth_first":false,"show_overlap_first":false,"overlap_cohort_percentage":100,"task_data_login":null,"task_data_password":null,"control_weights":{"type":{"overall":1.0,"type":"Choices","labels":{"Title":1.0,"Narrative":1.0}}},"parsed_label_config":{"type":{"type":"Choices","to_name":["text"],"inputs":[{"type":"Text","value":"text"}],"labels":["Title","Narrative"],"labels_attrs":{"Title":{"value":"Title"},"Narrative":{"value":"Narrative"}}}},"evaluate_predictions_automatically":false,"config_has_control_tags":true,"skip_queue":"REQUEUE_FOR_OTHERS","reveal_preannotations_interactively":false,"pinned_at":null}]}'
+    headers:
+      Allow:
+      - GET, POST, HEAD, OPTIONS
+      Content-Language:
+      - en-us
+      Content-Length:
+      - '2002'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 05 Oct 2022 16:26:14 GMT
+      Referrer-Policy:
+      - same-origin
+      Server:
+      - WSGIServer/0.2 CPython/3.8.13
+      Set-Cookie:
+      - sessionid=eyJ1aWQiOiJjYjYxOWVmYi05ZDU1LTQzNWYtOGQ4Ni00ZjcyZGJjMDM2ZTYiLCJvcmdhbml6YXRpb25fcGsiOjF9:1og7Dq:qxIxdgId2dOfw5lhYIjhXa3XGZd91f5GTyNXBnwFm_w;
+        expires=Wed, 19 Oct 2022 16:26:14 GMT; HttpOnly; Max-Age=1209600; Path=/;
+        SameSite=Lax
+      Vary:
+      - Accept-Language, Cookie, Origin
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Authorization:
+      - Token d44b92c31f592583bffb7e0d817a60c16a937bca
+      Connection:
+      - keep-alive
+      Cookie:
+      - sessionid=eyJ1aWQiOiJjYjYxOWVmYi05ZDU1LTQzNWYtOGQ4Ni00ZjcyZGJjMDM2ZTYiLCJvcmdhbml6YXRpb25fcGsiOjF9:1og7Dq:qxIxdgId2dOfw5lhYIjhXa3XGZd91f5GTyNXBnwFm_w
+      User-Agent:
+      - python-requests/2.27.1
+    method: GET
+    uri: http://localhost:8080/api/projects/95
+  response:
+    body:
+      string: '{"id":95,"title":"Text Type Classifications","description":"","label_config":"<View>\n        <Text
+        name=\"text\" value=\"$text\"/>\n        <View style=\"box-shadow: 2px 2px
+        5px #999;\n                       padding: 20px; margin-top: 2em;\n                       border-radius:
+        5px;\">\n            <Header value=\"Choose text type\"/>\n            <Choices
+        name=\"type\" toName=\"text\"\n                    choice=\"single\" showInLine=\"true\">\n            <Choice
+        value=\"Title\"/>\n              <Choice value=\"Narrative\"/>\n            </Choices>\n        </View>\n        </View>","expert_instruction":"","show_instruction":false,"show_skip_button":true,"enable_empty_annotation":true,"show_annotation_history":false,"organization":1,"color":"#FFFFFF","maximum_annotations":1,"is_published":false,"model_version":"","is_draft":false,"created_by":{"id":1,"first_name":"","last_name":"","email":"yuming@unstructured.io","avatar":null},"created_at":"2022-10-05T16:15:26.800180Z","min_annotations_to_start_training":0,"start_training_on_annotation_update":false,"show_collab_predictions":true,"num_tasks_with_annotations":0,"task_number":2,"useful_annotation_number":0,"ground_truth_number":0,"skipped_annotations_number":0,"total_annotations_number":0,"total_predictions_number":0,"sampling":"Sequential
+        sampling","show_ground_truth_first":false,"show_overlap_first":false,"overlap_cohort_percentage":100,"task_data_login":null,"task_data_password":null,"control_weights":{"type":{"overall":1.0,"type":"Choices","labels":{"Title":1.0,"Narrative":1.0}}},"parsed_label_config":{"type":{"type":"Choices","to_name":["text"],"inputs":[{"type":"Text","value":"text"}],"labels":["Title","Narrative"],"labels_attrs":{"Title":{"value":"Title"},"Narrative":{"value":"Narrative"}}}},"evaluate_predictions_automatically":false,"config_has_control_tags":true,"skip_queue":"REQUEUE_FOR_OTHERS","reveal_preannotations_interactively":false,"pinned_at":null}'
+    headers:
+      Allow:
+      - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+      Content-Language:
+      - en-us
+      Content-Length:
+      - '1950'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 05 Oct 2022 16:26:14 GMT
+      Referrer-Policy:
+      - same-origin
+      Server:
+      - WSGIServer/0.2 CPython/3.8.13
+      Set-Cookie:
+      - sessionid=eyJ1aWQiOiJjYjYxOWVmYi05ZDU1LTQzNWYtOGQ4Ni00ZjcyZGJjMDM2ZTYiLCJvcmdhbml6YXRpb25fcGsiOjF9:1og7Dq:qxIxdgId2dOfw5lhYIjhXa3XGZd91f5GTyNXBnwFm_w;
+        expires=Wed, 19 Oct 2022 16:26:14 GMT; HttpOnly; Max-Age=1209600; Path=/;
+        SameSite=Lax
+      Vary:
+      - Accept-Language, Cookie, Origin
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Authorization:
+      - Token d44b92c31f592583bffb7e0d817a60c16a937bca
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Cookie:
+      - sessionid=eyJ1aWQiOiJjYjYxOWVmYi05ZDU1LTQzNWYtOGQ4Ni00ZjcyZGJjMDM2ZTYiLCJvcmdhbml6YXRpb25fcGsiOjF9:1og7Dq:qxIxdgId2dOfw5lhYIjhXa3XGZd91f5GTyNXBnwFm_w
+      User-Agent:
+      - python-requests/2.27.1
+    method: DELETE
+    uri: http://localhost:8080/api/projects/95/
+  response:
+    body:
+      string: ''
+    headers:
+      Allow:
+      - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+      Content-Language:
+      - en-us
+      Content-Length:
+      - '0'
+      Date:
+      - Wed, 05 Oct 2022 16:26:14 GMT
+      Referrer-Policy:
+      - same-origin
+      Server:
+      - WSGIServer/0.2 CPython/3.8.13
+      Set-Cookie:
+      - sessionid=eyJ1aWQiOiJjYjYxOWVmYi05ZDU1LTQzNWYtOGQ4Ni00ZjcyZGJjMDM2ZTYiLCJvcmdhbml6YXRpb25fcGsiOjF9:1og7Dq:qxIxdgId2dOfw5lhYIjhXa3XGZd91f5GTyNXBnwFm_w;
+        expires=Wed, 19 Oct 2022 16:26:14 GMT; HttpOnly; Max-Age=1209600; Path=/;
+        SameSite=Lax
+      Vary:
+      - Accept-Language, Cookie, Origin
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: '{"title": "Text Type Classifications", "label_config": "\n        <View>\n        <Text
+      name=\"text\" value=\"$text\"/>\n        <View style=\"box-shadow: 2px 2px 5px
+      #999;\n                       padding: 20px; margin-top: 2em;\n                       border-radius:
+      5px;\">\n            <Header value=\"Choose text type\"/>\n            <Choices
+      name=\"type\" toName=\"text\"\n                    choice=\"single\" showInLine=\"true\">\n            <Choice
+      value=\"Title\"/>\n              <Choice value=\"Narrative\"/>\n            </Choices>\n        </View>\n        </View>\n        "}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Authorization:
+      - Token d44b92c31f592583bffb7e0d817a60c16a937bca
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '591'
+      Content-Type:
+      - application/json
+      Cookie:
+      - sessionid=eyJ1aWQiOiJjYjYxOWVmYi05ZDU1LTQzNWYtOGQ4Ni00ZjcyZGJjMDM2ZTYiLCJvcmdhbml6YXRpb25fcGsiOjF9:1og7Dq:qxIxdgId2dOfw5lhYIjhXa3XGZd91f5GTyNXBnwFm_w
+      User-Agent:
+      - python-requests/2.27.1
+    method: POST
+    uri: http://localhost:8080/api/projects
+  response:
+    body:
+      string: '{"id":96,"title":"Text Type Classifications","description":"","label_config":"<View>\n        <Text
+        name=\"text\" value=\"$text\"/>\n        <View style=\"box-shadow: 2px 2px
+        5px #999;\n                       padding: 20px; margin-top: 2em;\n                       border-radius:
+        5px;\">\n            <Header value=\"Choose text type\"/>\n            <Choices
+        name=\"type\" toName=\"text\"\n                    choice=\"single\" showInLine=\"true\">\n            <Choice
+        value=\"Title\"/>\n              <Choice value=\"Narrative\"/>\n            </Choices>\n        </View>\n        </View>","expert_instruction":"","show_instruction":false,"show_skip_button":true,"enable_empty_annotation":true,"show_annotation_history":false,"organization":1,"color":"#FFFFFF","maximum_annotations":1,"is_published":false,"model_version":"","is_draft":false,"created_by":{"id":1,"first_name":"","last_name":"","email":"yuming@unstructured.io","avatar":null},"created_at":"2022-10-05T16:26:14.756037Z","min_annotations_to_start_training":0,"start_training_on_annotation_update":false,"show_collab_predictions":true,"num_tasks_with_annotations":null,"task_number":null,"useful_annotation_number":null,"ground_truth_number":null,"skipped_annotations_number":null,"total_annotations_number":null,"total_predictions_number":null,"sampling":"Sequential
+        sampling","show_ground_truth_first":false,"show_overlap_first":false,"overlap_cohort_percentage":100,"task_data_login":null,"task_data_password":null,"control_weights":{"type":{"overall":1.0,"type":"Choices","labels":{"Title":1.0,"Narrative":1.0}}},"parsed_label_config":{"type":{"type":"Choices","to_name":["text"],"inputs":[{"type":"Text","value":"text"}],"labels":["Title","Narrative"],"labels_attrs":{"Title":{"value":"Title"},"Narrative":{"value":"Narrative"}}}},"evaluate_predictions_automatically":false,"config_has_control_tags":true,"skip_queue":"REQUEUE_FOR_OTHERS","reveal_preannotations_interactively":false,"pinned_at":null}'
+    headers:
+      Allow:
+      - GET, POST, HEAD, OPTIONS
+      Content-Language:
+      - en-us
+      Content-Length:
+      - '1971'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 05 Oct 2022 16:26:14 GMT
+      Referrer-Policy:
+      - same-origin
+      Server:
+      - WSGIServer/0.2 CPython/3.8.13
+      Set-Cookie:
+      - sessionid=eyJ1aWQiOiJjYjYxOWVmYi05ZDU1LTQzNWYtOGQ4Ni00ZjcyZGJjMDM2ZTYiLCJvcmdhbml6YXRpb25fcGsiOjF9:1og7Dq:qxIxdgId2dOfw5lhYIjhXa3XGZd91f5GTyNXBnwFm_w;
+        expires=Wed, 19 Oct 2022 16:26:14 GMT; HttpOnly; Max-Age=1209600; Path=/;
+        SameSite=Lax
+      Vary:
+      - Accept-Language, Cookie, Origin
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '[{"data": {"text": "Title 1", "ref_id": "ab03af41c2940e7584b62df48a964db3"}},
+      {"data": {"text": "Narrative 1", "ref_id": "ff9eb806beb1f483322f6fbda680b08b"}}]'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Authorization:
+      - Token d44b92c31f592583bffb7e0d817a60c16a937bca
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '158'
+      Content-Type:
+      - application/json
+      Cookie:
+      - sessionid=eyJ1aWQiOiJjYjYxOWVmYi05ZDU1LTQzNWYtOGQ4Ni00ZjcyZGJjMDM2ZTYiLCJvcmdhbml6YXRpb25fcGsiOjF9:1og7Dq:qxIxdgId2dOfw5lhYIjhXa3XGZd91f5GTyNXBnwFm_w
+      User-Agent:
+      - python-requests/2.27.1
+    method: POST
+    uri: http://localhost:8080/api/projects/96/import?return_task_ids=1
+  response:
+    body:
+      string: '{"task_count":2,"annotation_count":0,"prediction_count":0,"duration":0.012760162353515625,"file_upload_ids":[],"could_be_tasks_list":false,"found_formats":[],"data_columns":[],"task_ids":[1,2]}'
+    headers:
+      Allow:
+      - POST, OPTIONS
+      Content-Language:
+      - en-us
+      Content-Length:
+      - '193'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 05 Oct 2022 16:26:14 GMT
+      Referrer-Policy:
+      - same-origin
+      Server:
+      - WSGIServer/0.2 CPython/3.8.13
+      Set-Cookie:
+      - sessionid=eyJ1aWQiOiJjYjYxOWVmYi05ZDU1LTQzNWYtOGQ4Ni00ZjcyZGJjMDM2ZTYiLCJvcmdhbml6YXRpb25fcGsiOjF9:1og7Dq:qxIxdgId2dOfw5lhYIjhXa3XGZd91f5GTyNXBnwFm_w;
+        expires=Wed, 19 Oct 2022 16:26:14 GMT; HttpOnly; Max-Age=1209600; Path=/;
+        SameSite=Lax
+      Vary:
+      - Accept-Language, Cookie, Origin
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 201
+      message: Created
+version: 1
