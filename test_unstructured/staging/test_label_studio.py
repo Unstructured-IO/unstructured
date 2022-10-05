@@ -58,6 +58,49 @@ def test_created_annotation():
     }
 
 
+@pytest.mark.parametrize(
+    "score, raises, exception",
+    [
+        (None, True, ValueError),
+        (-0.25, True, ValueError),
+        (0, False, None),
+        (0.5, False, None),
+        (1, False, None),
+        (1.25, True, ValueError),
+    ],
+)
+def test_init_prediction(score, raises, exception):
+    result = [
+        label_studio.LabelStudioResult(
+            type="choices",
+            value={"choices": ["Positive"]},
+            from_name="sentiment",
+            to_name="text",
+        )
+    ]
+
+    if raises:
+        with pytest.raises(exception):
+            label_studio.LabelStudioPrediction(result=result, score=score)
+    else:
+        prediction = label_studio.LabelStudioPrediction(result=result, score=score)
+        prediction.to_dict() == {
+            "result": [
+                {
+                    "type": "choices",
+                    "value": {"choices": ["Positive"]},
+                    "from_name": "sentiment",
+                    "id": None,
+                    "to_name": "text",
+                    "hidden": False,
+                    "read_only": False,
+                }
+            ],
+            "was_canceled": False,
+            "score": score,
+        }
+
+
 def test_stage_with_annotation():
     element = NarrativeText(text="A big brown bear")
     annotations = [
@@ -90,6 +133,46 @@ def test_stage_with_annotation():
                         }
                     ],
                     "was_canceled": False,
+                }
+            ],
+        }
+    ]
+
+
+def test_stage_with_prediction():
+    element = NarrativeText(text="A big brown bear")
+    prediction = [
+        label_studio.LabelStudioPrediction(
+            result=[
+                label_studio.LabelStudioResult(
+                    type="choices",
+                    value={"choices": ["Positive"]},
+                    from_name="sentiment",
+                    to_name="text",
+                )
+            ],
+            score=0.98,
+        )
+    ]
+    label_studio_data = label_studio.stage_for_label_studio([element], predictions=[prediction])
+    assert label_studio_data == [
+        {
+            "data": {"text": "A big brown bear", "ref_id": "8f458d5d0635df3975ceb9109cef9e12"},
+            "predictions": [
+                {
+                    "result": [
+                        {
+                            "type": "choices",
+                            "value": {"choices": ["Positive"]},
+                            "from_name": "sentiment",
+                            "id": None,
+                            "to_name": "text",
+                            "hidden": False,
+                            "read_only": False,
+                        }
+                    ],
+                    "was_canceled": False,
+                    "score": 0.98,
                 }
             ],
         }
@@ -150,6 +233,25 @@ def test_stage_with_annotation_raises_with_mismatched_lengths():
     ]
     with pytest.raises(ValueError):
         label_studio.stage_for_label_studio([element], [annotations, annotations])
+
+
+def test_stage_with_prediction_raises_with_mismatched_lengths():
+    element = NarrativeText(text="A big brown bear")
+    prediction = [
+        label_studio.LabelStudioPrediction(
+            result=[
+                label_studio.LabelStudioResult(
+                    type="choices",
+                    value={"choices": ["Positive"]},
+                    from_name="sentiment",
+                    to_name="text",
+                )
+            ],
+            score=0.82,
+        )
+    ]
+    with pytest.raises(ValueError):
+        label_studio.stage_for_label_studio([element], predictions=[prediction, prediction])
 
 
 def test_stage_with_annotation_raises_with_invalid_type():
