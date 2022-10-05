@@ -24,7 +24,7 @@ def test_upload_label_studio_data_with_sdk(caplog, elements):
         which will be recreated later.
     2. Install the label-studio package by running command `pip install -U label-studio`.
     3. Run command `label-studio`, and login or set up label studio account on pop-up website.
-    4. Update `LABEL_STUDIO_URL` and `API_KEY` below, you can find your API_KEY by 
+    4. Update `LABEL_STUDIO_URL` and `API_KEY` below, you can find your API_KEY by
         clicking into your account profile.
     5. Run this test once, and VCR will record the HTTP request to the yaml file.
     6. Kill the label studio instance and run the test again, VCR will replay the response.
