@@ -1,5 +1,6 @@
-***REMOVED******REMOVED*** 0.2.1-dev4
+***REMOVED******REMOVED*** 0.2.1-dev5
 
+* Added ability to upload LabelStudio predictions
 * Added utility function for JSONL reading and writing
 * Added staging brick for CSV format for Prodigy
 * Added staging brick for Prodigy
