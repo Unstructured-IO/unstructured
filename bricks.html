@@ -390,8 +390,8 @@ write the results to a JSON folder that is ready to be included in a new LabelSt
     <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">label_studio_data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>You can also include pre-annotations as part of your LabelStudio upload. The
-<code class="docutils literal notranslate"><span class="pre">annotations</span></code> kwarg is a list of lists. If <code class="docutils literal notranslate"><span class="pre">annotations</span></code> is specified, there must be a list of
+<p>You can also include pre-annotations and predictions as part of your LabelStudio upload.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">annotations</span></code> kwarg is a list of lists. If <code class="docutils literal notranslate"><span class="pre">annotations</span></code> is specified, there must be a list of
 annotations for each element in the <code class="docutils literal notranslate"><span class="pre">elements</span></code> list. If an element does not have any annotations,
 use an empty list.
 The following shows an example of how to upload annotations for the “Text Classification”
@@ -423,6 +423,49 @@ task in LabelStudio:</p>
 <span class="n">label_studio_data</span> <span class="o">=</span> <span class="n">stage_for_label_studio</span><span class="p">(</span>
     <span class="n">elements</span><span class="p">,</span>
     <span class="n">annotations</span><span class="o">=</span><span class="n">annotations</span><span class="p">,</span>
+    <span class="n">text_field</span><span class="o">=</span><span class="s2">&quot;my_text&quot;</span><span class="p">,</span>
+    <span class="n">id_field</span><span class="o">=</span><span class="s2">&quot;my_id&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># The resulting JSON file is ready to be uploaded to LabelStudio</span>
+<span class="c1"># with annotations included</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;label_studio.json&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">label_studio_data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Similar to annotations, the <code class="docutils literal notranslate"><span class="pre">predictions</span></code> kwarg is also a list of lists. A <code class="docutils literal notranslate"><span class="pre">prediction</span></code> is an annotation with
+the addition of a <code class="docutils literal notranslate"><span class="pre">score</span></code> value. If <code class="docutils literal notranslate"><span class="pre">predictions</span></code> is specified, there must be a list of
+predictions for each element in the <code class="docutils literal notranslate"><span class="pre">elements</span></code> list. If an element does not have any predictions, use an empty list.
+The following shows an example of how to upload predictions for the “Text Classification”
+task in LabelStudio:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
+
+<span class="kn">from</span> <span class="nn">unstructured.documents.elements</span> <span class="kn">import</span> <span class="n">NarrativeText</span>
+<span class="kn">from</span> <span class="nn">unstructured.staging.label_studio</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">stage_for_label_studio</span><span class="p">,</span>
+    <span class="n">LabelStudioPrediction</span><span class="p">,</span>
+    <span class="n">LabelStudioResult</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+
+<span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="n">NarrativeText</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Narrative&quot;</span><span class="p">)]</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="p">[[</span>
+  <span class="n">LabelStudioPrediction</span><span class="p">(</span>
+      <span class="n">result</span><span class="o">=</span><span class="p">[</span>
+          <span class="n">LabelStudioResult</span><span class="p">(</span>
+              <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;choices&quot;</span><span class="p">,</span>
+              <span class="n">value</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;choices&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Positive&quot;</span><span class="p">]},</span>
+              <span class="n">from_name</span><span class="o">=</span><span class="s2">&quot;sentiment&quot;</span><span class="p">,</span>
+              <span class="n">to_name</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span>
+          <span class="p">)</span>
+      <span class="p">],</span>
+      <span class="n">score</span><span class="o">=</span><span class="mf">0.68</span>
+  <span class="p">)</span>
+<span class="p">]]</span>
+<span class="n">label_studio_data</span> <span class="o">=</span> <span class="n">stage_for_label_studio</span><span class="p">(</span>
+    <span class="n">elements</span><span class="p">,</span>
+    <span class="n">predictions</span><span class="o">=</span><span class="n">predictions</span><span class="p">,</span>
     <span class="n">text_field</span><span class="o">=</span><span class="s2">&quot;my_text&quot;</span><span class="p">,</span>
     <span class="n">id_field</span><span class="o">=</span><span class="s2">&quot;my_id&quot;</span>
 <span class="p">)</span>
