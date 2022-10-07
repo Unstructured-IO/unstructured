@@ -14,19 +14,22 @@ Sentiment Analysis Labeling in LabelStudio
 
 The following workflow will show how to format and upload the risk section from an SEC filing
 to LabelStudio for a sentiment analysis labeling task. In addition to the ``unstructured``
-library, this examples assumes you have the
+library, this example assumes you have `LabelStudio <https://labelstud.io/guide/#Quick-start>`_ 
+installed and running locally.
+
+
+In addition to the ``unstructured`` library, this examples assumes you have the
 `SEC pipeline <https://github.com/Unstructured-IO/pipeline-sec-filings>`_ repo installed and
 on your Python path, as well `LabelStudio <https://labelstud.io/guide/#Quick-start>`_ installed
-and running locally. First, we'll import dependencies and pull in the risk section of an
-SEC filing:
+and running locally. First, we'll import dependencies create some dummy risk narrative sections.
+For info on how to pull real SEC documents from EDGAR, see our
+`SEC pipeline <https://github.com/Unstructured-IO/pipeline-sec-filings>`_ repo.
 
 .. code:: python
 
     import json
 
-    from prepline_sec_filings.sec_document import SECDocument, SECSection
-    from prepline_sec_filings.fetch import get_form_by_ticker
-
+    from unstructured.documents.elements import NarrativeText
     from unstructured.staging.label_studio import (
         stage_for_label_studio,
         LabelStudioAnnotation,
@@ -34,16 +37,7 @@ SEC filing:
         LabelStudioResult,
     )
 
-
-    text = get_form_by_ticker(
-        'rgld',
-        '10-K',
-        company='Unstructured Technologies',
-        email='support@unstructured.io'
-    )
-    doc = SECDocument.from_string(text)
-    risk_section = doc.get_section_narrative(SECSection.RISK_FACTORS)
-
+    risk_section = [NarrativeText(text="Risk section 1"), NarrativeText(text="Risk section 2")]
 
 Next, we'll prepopulate some annotations and predictions. Annotations and predictions are optional.
 If you added annotations, the labeling examples will be pre-labeled in the LabelStudio UI. Predictions
