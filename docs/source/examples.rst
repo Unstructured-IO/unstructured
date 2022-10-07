@@ -105,18 +105,10 @@ labeling setup, and you're good to go.
 
 You can also create a new project in LabelStudio through
 the API by running the following command. Hit ``Account & Settings`` under your user name to find your
-API token. The label config is the config for text classification projects.
-
-
-.. code:: bash
-
-    curl -H 'Authorization: Token ${LABELSTUDIO_TOKEN}' \
-    -X POST 'http://localhost:8080/api/projects' \
-    --data '{"title":"Sentiment Analysis", "label_config":"<View>\n  <Text name=\"text\" value=\"$text\"/>\n  <View style=\"box-shadow: 2px 2px 5px #999;\n               padding: 20px; margin-top: 2em;\n               border-radius: 5px;\">\n    <Header value=\"Choose text sentiment\"/>\n    <Choices name=\"sentiment\" toName=\"text\"\n             choice=\"single\" showInLine=\"true\">\n      <Choice value=\"Positive\"/>\n      <Choice value=\"Negative\"/>\n      <Choice value=\"Neutral\"/>\n    </Choices>\n  </View>\n</View>\n\n<!-- {\n  \"data\": {\"text\": \"This is a great 3D movie that delivers everything almost right in your face.\"}\n} -->\n"}'
-
-
+API token. First, use the `create project <https://labelstud.io/api#operation/api_projects_create>`_ call to
+create a new project.
 After creating a project, upload data using the following command. The project ID will come from the
-response of the previous command. For existing projects, you can find the project ID in the URL for
+response of the create project call. For existing projects, you can find the project ID in the URL for
 the project.
 
 .. code:: bash
