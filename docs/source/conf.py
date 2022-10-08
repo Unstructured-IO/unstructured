@@ -13,7 +13,6 @@ sys.path.insert(0, os.path.abspath("../.."))
 
 # -- Project information -----------------------------------------------------
 
-import re
 from unstructured.__version__ import __version__
 
 project = "unstructured"
@@ -21,9 +20,7 @@ copyright = "2022, Unstructured Technologies"
 author = "Unstructured Technologies"
 
 # The full version, including alpha/beta/rc tags
-# NOTE(alan): This method displays the latest release version, without dev extension.
-release_re = re.compile(r"((?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*))")
-release = re.search(release_re, __version__).group()
+release = __version__
 
 # -- General configuration ---------------------------------------------------
 

@@ -361,10 +361,149 @@ Examples:
       json.dump(label_studio_data, f, indent=4)
 
 
+You can also include pre-annotations and predictions as part of your LabelStudio upload. 
+
+The ``annotations`` kwarg is a list of lists. If ``annotations`` is specified, there must be a list of
+annotations for each element in the ``elements`` list. If an element does not have any annotations,
+use an empty list.
+The following shows an example of how to upload annotations for the "Text Classification"
+task in LabelStudio:
+
+.. code:: python
+
+  import json
+
+  from unstructured.documents.elements import NarrativeText
+  from unstructured.staging.label_studio import (
+      stage_for_label_studio,
+      LabelStudioAnnotation,
+      LabelStudioResult,
+  )
+
+
+
+  elements = [NarrativeText(text="Narrative")]
+  annotations = [[
+    LabelStudioAnnotation(
+        result=[
+            LabelStudioResult(
+                type="choices",
+                value={"choices": ["Positive"]},
+                from_name="sentiment",
+                to_name="text",
+            )
+        ]
+    )
+  ]]
+  label_studio_data = stage_for_label_studio(
+      elements,
+      annotations=annotations,
+      text_field="my_text",
+      id_field="my_id"
+  )
+
+  # The resulting JSON file is ready to be uploaded to LabelStudio
+  # with annotations included
+  with open("label_studio.json", "w") as f:
+      json.dump(label_studio_data, f, indent=4)
+
+
+Similar to annotations, the ``predictions`` kwarg is also a list of lists. A ``prediction`` is an annotation with
+the addition of a ``score`` value. If ``predictions`` is specified, there must be a list of
+predictions for each element in the ``elements`` list. If an element does not have any predictions, use an empty list. 
+The following shows an example of how to upload predictions for the "Text Classification"
+task in LabelStudio:
+
+.. code:: python
+
+  import json
+
+  from unstructured.documents.elements import NarrativeText
+  from unstructured.staging.label_studio import (
+      stage_for_label_studio,
+      LabelStudioPrediction,
+      LabelStudioResult,
+  )
+
+
+
+  elements = [NarrativeText(text="Narrative")]
+  predictions = [[
+    LabelStudioPrediction(
+        result=[
+            LabelStudioResult(
+                type="choices",
+                value={"choices": ["Positive"]},
+                from_name="sentiment",
+                to_name="text",
+            )
+        ],
+        score=0.68
+    )
+  ]]
+  label_studio_data = stage_for_label_studio(
+      elements,
+      predictions=predictions,
+      text_field="my_text",
+      id_field="my_id"
+  )
+
+  # The resulting JSON file is ready to be uploaded to LabelStudio
+  # with annotations included
+  with open("label_studio.json", "w") as f:
+      json.dump(label_studio_data, f, indent=4)
+
+
+The following shows an example of how to upload annotations for the "Named Entity Recognition"
+task in LabelStudio:
+
+.. code:: python
+
+  import json
+
+  from unstructured.documents.elements import NarrativeText
+  from unstructured.staging.label_studio import (
+      stage_for_label_studio,
+      LabelStudioAnnotation,
+      LabelStudioResult,
+  )
+
+
+
+  elements = [NarrativeText(text="Narrative")]
+  annotations = [[
+    LabelStudioAnnotation(
+        result=[
+            LabelStudioResult(
+                type="labels",
+                value={"start": 0, "end": 9, "text": "Narrative", "labels": ["MISC"]},
+                from_name="label",
+                to_name="text",
+            )
+        ]
+    )
+  ]]
+  label_studio_data = stage_for_label_studio(
+      elements,
+      annotations=annotations,
+      text_field="my_text",
+      id_field="my_id"
+  )
+
+  # The resulting JSON file is ready to be uploaded to LabelStudio
+  # with annotations included
+  with open("label_studio.json", "w") as f:
+      json.dump(label_studio_data, f, indent=4)
+
+
+See the `LabelStudio docs <https://labelstud.io/tags/labels.html>`_ for a full list of options
+for labels and annotations.
+
+
 ``stage_for_prodigy``
 --------------------------
 
-Formats outputs for use with `Prodigy <https://prodi.gy/docs/api-loaders>`_. After running ``stage_for_prodigy``, you can
+Formats outputs in JSON format for use with `Prodigy <https://prodi.gy/docs/api-loaders>`_. After running ``stage_for_prodigy``, you can
 write the results to a JSON file that is ready to be used with Prodigy.
 
 Examples:
@@ -383,3 +522,43 @@ Examples:
   # The resulting JSON file is ready to be used with Prodigy
   with open("prodigy.json", "w") as f:
       json.dump(prodigy_data, f, indent=4)
+
+
+**Note**: Prodigy recommends ``.jsonl`` format for feeding data to API loaders. After running ``stage_for_prodigy``, you can
+use the ``save_as_jsonl`` utility function to save the formatted data to a ``.jsonl`` file that is ready to be used with Prodigy.
+
+.. code:: python
+
+  from unstructured.documents.elements import Title, NarrativeText
+  from unstructured.staging.prodigy import stage_for_prodigy
+  from unstructured.utils import save_as_jsonl
+
+  elements = [Title(text="Title"), NarrativeText(text="Narrative")]
+  metadata = [{"type": "title"}, {"type": "text"}]
+  prodigy_data = stage_for_prodigy(elements, metadata)
+
+  # The resulting jsonl file is ready to be used with Prodigy.
+  save_as_jsonl(prodigy_data, "prodigy.jsonl")
+
+
+
+``stage_csv_for_prodigy``
+--------------------------
+
+Formats outputs in CSV format for use with `Prodigy <https://prodi.gy/docs/api-loaders>`_. After running ``stage_csv_for_prodigy``, you can
+write the results to a CSV file that is ready to be used with Prodigy.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.documents.elements import Title, NarrativeText
+  from unstructured.staging.prodigy import stage_csv_for_prodigy
+
+  elements = [Title(text="Title"), NarrativeText(text="Narrative")]
+  metadata = [{"type": "title"}, {"source": "news"}]
+  prodigy_csv_data = stage_csv_for_prodigy(elements, metadata)
+
+  # The resulting CSV file is ready to be used with Prodigy
+  with open("prodigy.csv", "w") as csv_file:
+      csv_file.write(prodigy_csv_data)
