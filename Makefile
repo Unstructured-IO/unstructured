@@ -95,7 +95,7 @@ test:
 
 ## check:                   runs linters (includes tests)
 .PHONY: check
-check: check-src check-tests
+check: check-src check-tests check-version
 
 ## check-src:               runs linters (source only, no tests)
 .PHONY: check-src
