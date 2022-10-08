@@ -17,35 +17,32 @@ done
 CHANGELOGFILE="CHANGELOG.md"
 VERSIONFILE="unstructured/__version__.py"
 RE_SEMVER_FULL="(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-((0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(\+([0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*))?"
-RE_SEMVER_RELEASE="(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)"
 # Pull out semver appearing earliest in CHANGELOGFILE.
 LAST_VERSION=$(grep -o -m 1 -E "${RE_SEMVER_FULL}" "$CHANGELOGFILE")
-# Pull out release version from CHANGELOGFILE.
-LAST_RELEASE_VERSION=$(grep -o -m 1 -E "${RE_SEMVER_RELEASE}" "$CHANGELOGFILE")
 
-if [ -z $LAST_VERSION ];
+if [ -z "$LAST_VERSION" ];
 then
 	# No match to semver regex in CHANGELOGFILE, so no version to go from.
-	printf "Error: Unable to find latest version from $CHANGELOGFILE.\n"
+	printf "Error: Unable to find latest version from %s.\n" "$CHANGELOGFILE"
 	exit 1
 fi
 
 # Add files to this array that need to be kept in sync.
-FILES_TO_CHANGE=($VERSIONFILE)
+FILES_TO_CHANGE=("$VERSIONFILE")
 # Add patterns to this array to be matched in the above files.
-RE_SEMVERS=($RE_SEMVER_FULL)
+RE_SEMVERS=("$RE_SEMVER_FULL")
 # Add versions to this array to be used as replacements for the patterns matched above from the corresponding files.
-UPDATED_VERSIONS=($LAST_VERSION)
+UPDATED_VERSIONS=("$LAST_VERSION")
 
-for i in ${!FILES_TO_CHANGE[@]}; do
+for i in "${!FILES_TO_CHANGE[@]}"; do
 	FILE_TO_CHANGE=${FILES_TO_CHANGE[$i]}
 	RE_SEMVER=${RE_SEMVERS[$i]}
 	UPDATED_VERSION=${UPDATED_VERSIONS[$i]}
 	FILE_VERSION=$(grep -o -m 1 -E "${RE_SEMVER}" "$FILE_TO_CHANGE")
-	if [ -z $FILE_VERSION ];
+	if [ -z "$FILE_VERSION" ];
 	then
 		# No match to semver regex in VERSIONFILE, so nothing to replace
-		printf "Error: No semver version found in file $FILE_TO_CHANGE.\n";
+		printf "Error: No semver version found in file %s.\n" "$FILE_TO_CHANGE";
 		exit 1;
 	else
 		# Replace semver in VERSIONFILE with semver obtained from CHANGELOGFILE
@@ -60,7 +57,7 @@ for i in ${!FILES_TO_CHANGE[@]}; do
 				rm "$TMPFILE"
 				exit 0;
 			else
-				printf "version sync would make the following changes:\n$DIFF\n";
+				printf "version sync would make the following changes:\n%s\n" "$DIFF";
 				rm "$TMPFILE"
 				exit 1;
 			fi
