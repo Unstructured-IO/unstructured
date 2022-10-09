@@ -1,5 +1,6 @@
-## 0.2.1-dev4
+## 0.2.1-dev6
 
+* Added staging brick for LabelBox.
 * Added utility function for JSONL reading and writing
 * Added staging brick for CSV format for Prodigy
 * Added staging brick for Prodigy
