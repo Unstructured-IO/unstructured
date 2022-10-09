@@ -1,6 +1,7 @@
 ## 0.2.1-dev6
 
 * Added staging brick for LabelBox.
+* Added ability to upload LabelStudio predictions
 * Added utility function for JSONL reading and writing
 * Added staging brick for CSV format for Prodigy
 * Added staging brick for Prodigy

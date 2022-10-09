@@ -98,9 +98,22 @@ class LabelStudioAnnotation:
         return _annotation_dict
 
 
+@dataclass
+class LabelStudioPrediction(LabelStudioAnnotation):
+    score: float = 0
+
+    def __post_init__(self):
+        if not isinstance(self.score, (int, float)) or (self.score < 0 or self.score > 1):
+            raise ValueError(
+                f"{self.score} is not a valid score value. "
+                f"Score value must be a number between 0 and 1."
+            )
+
+
 def stage_for_label_studio(
     elements: List[Text],
     annotations: Optional[List[List[LabelStudioAnnotation]]] = None,
+    predictions: Optional[List[List[LabelStudioPrediction]]] = None,
     text_field: str = "text",
     id_field: str = "ref_id",
 ) -> LABEL_STUDIO_TYPE:
@@ -109,6 +122,9 @@ def stage_for_label_studio(
     if annotations is not None:
         if len(elements) != len(annotations):
             raise ValueError("The length of elements and annotations must match.")
+    if predictions is not None:
+        if len(elements) != len(predictions):
+            raise ValueError("The length of elements and predictions must match.")
 
     label_studio_data: LABEL_STUDIO_TYPE = list()
     for i, element in enumerate(elements):
@@ -121,6 +137,8 @@ def stage_for_label_studio(
         labeling_example["data"] = data
         if annotations is not None:
             labeling_example["annotations"] = [a.to_dict() for a in annotations[i]]
+        if predictions is not None:
+            labeling_example["predictions"] = [a.to_dict() for a in predictions[i]]
         label_studio_data.append(labeling_example)
 
     return label_studio_data

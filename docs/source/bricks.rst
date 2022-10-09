@@ -361,8 +361,9 @@ Examples:
       json.dump(label_studio_data, f, indent=4)
 
 
-You can also include pre-annotations as part of your LabelStudio upload. The
-``annotations`` kwarg is a list of lists. If ``annotations`` is specified, there must be a list of
+You can also include pre-annotations and predictions as part of your LabelStudio upload. 
+
+The ``annotations`` kwarg is a list of lists. If ``annotations`` is specified, there must be a list of
 annotations for each element in the ``elements`` list. If an element does not have any annotations,
 use an empty list.
 The following shows an example of how to upload annotations for the "Text Classification"
@@ -397,6 +398,52 @@ task in LabelStudio:
   label_studio_data = stage_for_label_studio(
       elements,
       annotations=annotations,
+      text_field="my_text",
+      id_field="my_id"
+  )
+
+  # The resulting JSON file is ready to be uploaded to LabelStudio
+  # with annotations included
+  with open("label_studio.json", "w") as f:
+      json.dump(label_studio_data, f, indent=4)
+
+
+Similar to annotations, the ``predictions`` kwarg is also a list of lists. A ``prediction`` is an annotation with
+the addition of a ``score`` value. If ``predictions`` is specified, there must be a list of
+predictions for each element in the ``elements`` list. If an element does not have any predictions, use an empty list. 
+The following shows an example of how to upload predictions for the "Text Classification"
+task in LabelStudio:
+
+.. code:: python
+
+  import json
+
+  from unstructured.documents.elements import NarrativeText
+  from unstructured.staging.label_studio import (
+      stage_for_label_studio,
+      LabelStudioPrediction,
+      LabelStudioResult,
+  )
+
+
+
+  elements = [NarrativeText(text="Narrative")]
+  predictions = [[
+    LabelStudioPrediction(
+        result=[
+            LabelStudioResult(
+                type="choices",
+                value={"choices": ["Positive"]},
+                from_name="sentiment",
+                to_name="text",
+            )
+        ],
+        score=0.68
+    )
+  ]]
+  label_studio_data = stage_for_label_studio(
+      elements,
+      predictions=predictions,
       text_field="my_text",
       id_field="my_id"
   )
