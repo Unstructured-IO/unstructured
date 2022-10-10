@@ -44,6 +44,7 @@
 <li class="toctree-l1"><a class="reference internal" href="elements.html">Elements</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bricks.html">Bricks</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#sentiment-analysis-labeling-in-labelstudio">Sentiment Analysis Labeling in LabelStudio</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#pdf-parsing">PDF Parsing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#html-parsing">HTML Parsing</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#creating-html-from-xml-with-xslt">Creating HTML from XML with XSLT</a></li>
@@ -84,6 +85,99 @@ example documents in the
 <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/tree/main/example-docs">example-docs</a>, along
 with instructions on how to download additional documents that are too large to store in the
 repo.</p>
+<section id="sentiment-analysis-labeling-in-labelstudio">
+<h2>Sentiment Analysis Labeling in LabelStudio<a class="headerlink" href="#sentiment-analysis-labeling-in-labelstudio" title="Permalink to this heading"></a></h2>
+<p>The following workflow will show how to format and upload the risk section from an SEC filing
+to LabelStudio for a sentiment analysis labeling task. In addition to the <code class="docutils literal notranslate"><span class="pre">unstructured</span></code>
+library, this example assumes you have <a class="reference external" href="https://labelstud.io/guide/#Quick-start">LabelStudio</a>
+installed and running locally.</p>
+<p>In addition to the <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> library, this examples assumes you have the
+<a class="reference external" href="https://github.com/Unstructured-IO/pipeline-sec-filings">SEC pipeline</a> repo installed and
+on your Python path, as well <a class="reference external" href="https://labelstud.io/guide/#Quick-start">LabelStudio</a> installed
+and running locally. First, we’ll import dependencies create some dummy risk narrative sections.
+For info on how to pull real SEC documents from EDGAR, see our
+<a class="reference external" href="https://github.com/Unstructured-IO/pipeline-sec-filings">SEC pipeline</a> repo.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
+
+<span class="kn">from</span> <span class="nn">unstructured.documents.elements</span> <span class="kn">import</span> <span class="n">NarrativeText</span>
+<span class="kn">from</span> <span class="nn">unstructured.staging.label_studio</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">stage_for_label_studio</span><span class="p">,</span>
+    <span class="n">LabelStudioAnnotation</span><span class="p">,</span>
+    <span class="n">LabelStudioPrediction</span><span class="p">,</span>
+    <span class="n">LabelStudioResult</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">risk_section</span> <span class="o">=</span> <span class="p">[</span><span class="n">NarrativeText</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Risk section 1&quot;</span><span class="p">),</span> <span class="n">NarrativeText</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Risk section 2&quot;</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>Next, we’ll prepopulate some annotations and predictions. Annotations and predictions are optional.
+If you added annotations, the labeling examples will be pre-labeled in the LabelStudio UI. Predictions
+are used for active learning in LabelStudio. If you include predictions, they will help determine
+the order in which labeled examples are presented to annotators. Feel free to skip this step if you do
+not need either of these features for your labeling task:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">annotations</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">risk_section</span><span class="p">:</span>
+    <span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">LabelStudioAnnotation</span><span class="p">(</span>
+          <span class="n">result</span><span class="o">=</span><span class="p">[</span>
+              <span class="n">LabelStudioResult</span><span class="p">(</span>
+                  <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;choices&quot;</span><span class="p">,</span>
+                  <span class="n">value</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;choices&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Positive&quot;</span><span class="p">]},</span>
+                  <span class="n">from_name</span><span class="o">=</span><span class="s2">&quot;sentiment&quot;</span><span class="p">,</span>
+                  <span class="n">to_name</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span>
+              <span class="p">)</span>
+          <span class="p">]</span>
+      <span class="p">)]</span>
+    <span class="p">)</span>
+
+
+<span class="n">predictions</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">risk_section</span><span class="p">:</span>
+    <span class="n">predictions</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">LabelStudioPrediction</span><span class="p">(</span>
+          <span class="n">result</span><span class="o">=</span><span class="p">[</span>
+              <span class="n">LabelStudioResult</span><span class="p">(</span>
+                  <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;choices&quot;</span><span class="p">,</span>
+                  <span class="n">value</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;choices&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Positive&quot;</span><span class="p">]},</span>
+                  <span class="n">from_name</span><span class="o">=</span><span class="s2">&quot;sentiment&quot;</span><span class="p">,</span>
+                  <span class="n">to_name</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span>
+              <span class="p">)</span>
+          <span class="p">],</span>
+          <span class="n">score</span><span class="o">=</span><span class="mf">0.68</span>
+      <span class="p">)]</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<p>Finally, we’ll format the data for upload to LabelStudio. You can omit the <code class="docutils literal notranslate"><span class="pre">annotations</span></code>
+and <code class="docutils literal notranslate"><span class="pre">predictions</span></code> kwargs if you did’t generated annotations or predictions.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">label_studio_data</span> <span class="o">=</span> <span class="n">stage_for_label_studio</span><span class="p">(</span>
+    <span class="n">elements</span><span class="o">=</span><span class="n">risk_section</span><span class="p">,</span>
+    <span class="n">annotations</span><span class="o">=</span><span class="n">annotations</span><span class="p">,</span>
+    <span class="n">predictions</span><span class="o">=</span><span class="n">predictions</span><span class="p">,</span>
+    <span class="n">text_field</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span>
+    <span class="n">id_field</span><span class="o">=</span><span class="s2">&quot;id&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># The resulting JSON file is ready to be uploaded to LabelStudio</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;label-studio.json&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">label_studio_data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>At this point, you can go into the LabelStudio UI and select <code class="docutils literal notranslate"><span class="pre">Create</span></code> to create a new project.
+Upload your sample <code class="docutils literal notranslate"><span class="pre">label-studio.json</span></code> file and select <code class="docutils literal notranslate"><span class="pre">Text</span> <span class="pre">Classification</span></code> for your
+labeling setup, and you’re good to go.</p>
+<p>You can also create a new project in LabelStudio through
+the API by running the following command. Hit <code class="docutils literal notranslate"><span class="pre">Account</span> <span class="pre">&amp;</span> <span class="pre">Settings</span></code> under your user name to find your
+API token. First, use the <a class="reference external" href="https://labelstud.io/api#operation/api_projects_create">create project</a> call to
+create a new project.
+After creating a project, upload data using the following command. The project ID will come from the
+response of the create project call. For existing projects, you can find the project ID in the URL for
+the project.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl -H <span class="s1">&#39;Authorization: Token ${LABELSTUDIO_TOKEN}&#39;</span> <span class="se">\</span>
+-X POST <span class="s1">&#39;http://localhost:8080/api/projects/{project_id}/import&#39;</span> <span class="se">\</span>
+-F <span class="s1">&#39;file=@label-studio.json&#39;</span>
+</pre></div>
+</div>
+<p>At this point, you’re good to go to start labeling in the LabelStudio UI.</p>
+</section>
 <section id="pdf-parsing">
 <h2>PDF Parsing<a class="headerlink" href="#pdf-parsing" title="Permalink to this heading"></a></h2>
 <p>Once installed, you can try the following using the
