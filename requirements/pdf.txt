@@ -123,7 +123,7 @@ tqdm==4.64.1
     # via
     #   iopath
     #   nltk
-typing-extensions==4.3.0
+typing-extensions==4.4.0
     # via
     #   iopath
     #   torch
