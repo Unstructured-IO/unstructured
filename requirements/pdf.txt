@@ -123,7 +123,7 @@ tqdm==4.64.1
     ***REMOVED*** via
     ***REMOVED***   iopath
     ***REMOVED***   nltk
-typing-extensions==4.3.0
+typing-extensions==4.4.0
     ***REMOVED*** via
     ***REMOVED***   iopath
     ***REMOVED***   torch
