@@ -42,8 +42,8 @@ for i in "${!FILES_TO_CHANGE[@]}"; do
     if [ -z "$FILE_VERSION" ];
     then
         # No match to semver regex in VERSIONFILE, so nothing to replace
-        printf "Error: No semver version found in file %s.\n" "$FILE_TO_CHANGE";
-        exit 1;
+        printf "Error: No semver version found in file %s.\n" "$FILE_TO_CHANGE"
+        exit 1
     else
         # Replace semver in VERSIONFILE with semver obtained from CHANGELOGFILE
         TMPFILE=$(mktemp /tmp/new_version.XXXXXX)
@@ -53,13 +53,13 @@ for i in "${!FILES_TO_CHANGE[@]}"; do
             DIFF=$(diff "$FILE_TO_CHANGE"  "$TMPFILE" )
             if [ -z "$DIFF" ];
             then
-                printf "version sync would make no changes.\n";
+                printf "version sync would make no changes.\n"
                 rm "$TMPFILE"
-                exit 0;
+                exit 0
             else
-                printf "version sync would make the following changes:\n%s\n" "$DIFF";
+                printf "version sync would make the following changes:\n%s\n" "$DIFF"
                 rm "$TMPFILE"
-                exit 1;
+                exit 1
             fi
         else
             cp "$TMPFILE" "$FILE_TO_CHANGE" 
