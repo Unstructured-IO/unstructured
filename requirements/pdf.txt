@@ -102,7 +102,7 @@ regex==2022.9.13
     ***REMOVED*** via nltk
 requests==2.28.1
     ***REMOVED*** via torchvision
-scipy==1.9.1
+scipy==1.9.2
     ***REMOVED*** via layoutparser
 ***REMOVED***
     ***REMOVED*** via python-dateutil
