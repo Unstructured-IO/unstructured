@@ -6,24 +6,21 @@
 
 ***REMOVED*** -- Path setup --------------------------------------------------------------
 
-***REMOVED*** If extensions (or modules to document with autodoc) are in another directory,
-***REMOVED*** add these directories to sys.path here. If the directory is relative to the
-***REMOVED*** documentation root, use os.path.abspath to make it absolute, like shown here.
-***REMOVED***
-***REMOVED*** import os
-***REMOVED*** import sys
-***REMOVED*** sys.path.insert(0, os.path.abspath('.'))
+import os
+import sys
 
+sys.path.insert(0, os.path.abspath("../.."))
 
 ***REMOVED*** -- Project information -----------------------------------------------------
 
-project = 'unstructured'
-copyright = '2022, Unstructured Technologies'
-author = 'Unstructured Technologies'
+from unstructured.__version__ import __version__
+
+project = "unstructured"
+copyright = "2022, Unstructured Technologies"
+author = "Unstructured Technologies"
 
 ***REMOVED*** The full version, including alpha/beta/rc tags
-release = '0.2.1-dev3'
-
+release = __version__
 
 ***REMOVED*** -- General configuration ---------------------------------------------------
 
@@ -31,13 +28,12 @@ release = '0.2.1-dev3'
 ***REMOVED*** extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 ***REMOVED*** ones.
 extensions = [
-    'sphinx_rtd_theme',
-    'sphinx.ext.autosectionlabel',
-
+    "sphinx_rtd_theme",
+    "sphinx.ext.autosectionlabel",
 ]
 
 ***REMOVED*** Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 ***REMOVED*** List of patterns, relative to source directory, that match files and
 ***REMOVED*** directories to ignore when looking for source files.
@@ -50,9 +46,9 @@ exclude_patterns = []
 ***REMOVED*** The theme to use for HTML and HTML Help pages.  See the documentation for
 ***REMOVED*** a list of builtin themes.
 ***REMOVED***
-html_theme = 'sphinx_rtd_theme'
+html_theme = "sphinx_rtd_theme"
 
 ***REMOVED*** Add any paths that contain custom static files (such as style sheets) here,
 ***REMOVED*** relative to this directory. They are copied after the builtin static files,
 ***REMOVED*** so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = ["_static"]
