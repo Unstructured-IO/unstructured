@@ -106,7 +106,7 @@ scipy==1.9.1
     ***REMOVED*** via layoutparser
 ***REMOVED***
     ***REMOVED*** via python-dateutil
-timm==0.6.7
+timm==0.6.11
     ***REMOVED*** via effdet
 torch==1.12.1
     ***REMOVED*** via
