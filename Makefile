@@ -119,7 +119,7 @@ check-scripts:
 .PHONY: check-version
 check-version:
     # Fail if syncing version would produce changes
-	scripts/versionsync.sh -c
+	scripts/version-sync.sh -c
 
 ## tidy:                    run black
 .PHONY: tidy
@@ -130,7 +130,7 @@ tidy:
 ## version-sync:            update __version__.py with most recent version from CHANGELOG.md
 .PHONY: version-sync
 version-sync:
-	scripts/versionsync.sh
+	scripts/version-sync.sh
 
 .PHONY: check-coverage
 check-coverage:
