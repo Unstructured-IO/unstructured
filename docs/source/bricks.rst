@@ -527,11 +527,13 @@ and does not support importing text directly. The ``stage_for_label_box`` does t
 * Stages the data files in the ``output_directory`` specified in function arguments to be uploaded to a cloud storage service.
 * Returns a config of type ``List[Dict[str, Any]]`` that can be written to a ``json`` file and imported into LabelBox.
 
+**Note:** ``stage_for_label_box`` does not upload the data to remote storage such as S3. Users can upload the data to S3 
+using ``aws s3 sync ${output_directory} ${url_prefix}`` after running the ``stage_for_label_box`` staging brick.
 
 Examples:
 
 The following example demonstrates generating a ``config.json`` file that can be used with LabelBox and uploading the staged data
-files to an S3 bucket that is publicly accessible.
+files to an S3 bucket.
 
 .. code:: python
 
@@ -541,11 +543,17 @@ files to an S3 bucket that is publicly accessible.
   from unstructured.documents.elements import Title, NarrativeText
   from unstructured.staging.label_box import stage_for_label_box
 
+  # The S3 Bucket name where data files should be uploaded.
+  S3_BUCKET_NAME = "labelbox-staging-bucket"
 
-  S3_BUCKET_NAME = "labelbox-staging-bucket"  # The S3 Bucket name where data files should be uploaded.
-  S3_BUCKET_KEY_PREFIX = "data/"  # The S3 key prefix (I.e. directory) where data files should be stored.
-  S3_URL_PREFIX = f"https://{S3_BUCKET_NAME}.s3.amazonaws.com/{S3_BUCKET_KEY_PREFIX}"  # The URL prefix where the data files will be accessed. In case of S3, the bucket should have public access enabled.
-  LOCAL_OUTPUT_DIRECTORY = "/tmp/labelbox-staging"  # The local output directory where the data files will be staged for uploading to a Cloud Storage service.
+  # The S3 key prefix (I.e. directory) where data files should be stored.
+  S3_BUCKET_KEY_PREFIX = "data/"
+
+  # The URL prefix where the data files will be accessed.
+  S3_URL_PREFIX = f"https://{S3_BUCKET_NAME}.s3.amazonaws.com/{S3_BUCKET_KEY_PREFIX}"
+  
+  # The local output directory where the data files will be staged for uploading to a Cloud Storage service.
+  LOCAL_OUTPUT_DIRECTORY = "/tmp/labelbox-staging"
 
   elements = [Title(text="Title"), NarrativeText(text="Narrative")]
 
