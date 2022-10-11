@@ -1,15 +1,22 @@
 import os
 
-from typing import Any, Dict, List, Optional
-from unstructured.documents.elements import Text
+from typing import Any, Dict, List, Optional, Union, Sequence
+from unstructured.documents.elements import Text, NoID
 
 
-VALID_ATTACHMENT_TYPES = ["IMAGE", "VIDEO", "RAW_TEXT", "TEXT_URL", "HTML"]
+VALID_ATTACHMENT_TYPES: List[str] = ["IMAGE", "VIDEO", "RAW_TEXT", "TEXT_URL", "HTML"]
 
 
-def _validate_attachments(attachments, element_index):
-    for attachment_index, attachment in enumerate(attachments):
-        error_message_prefix = f"Error at index {attachment_index} of attachments parameter for element at index {element_index}."
+def _validate_attachments(attachment_list: List[Dict[str, str]], element_index: int):
+    """
+    Validates attachment list specified for an element.
+    Raises a ValueError with error message if the attachment list are not valid.
+    """
+    for attachment_index, attachment in enumerate(attachment_list):
+        error_message_prefix = (
+            f"Error at index {attachment_index} of attachments parameter "
+            f"for element at index {element_index}."
+        )
         try:
             attachment_type = attachment["type"]
             attachment_value = attachment["value"]
@@ -21,11 +28,13 @@ def _validate_attachments(attachments, element_index):
             or attachment_type.upper() not in VALID_ATTACHMENT_TYPES
         ):
             raise ValueError(
-                f"{error_message_prefix}. Invalid value specified for attachment.type. Must be one of: {', '.join(VALID_ATTACHMENT_TYPES)}"
+                f"{error_message_prefix}. Invalid value specified for attachment.type. "
+                f"Must be one of: {', '.join(VALID_ATTACHMENT_TYPES)}"
             )
         if not isinstance(attachment_value, str):
             raise ValueError(
-                f"{error_message_prefix}. Invalid value specified for attachment.value. Must be of type string."
+                f"{error_message_prefix}. Invalid value specified for attachment.value. "
+                "Must be of type string."
             )
 
 
@@ -37,22 +46,28 @@ def stage_for_label_box(
     attachments: Optional[List[List[Dict[str, str]]]] = None,
     create_directory: bool = False,
 ) -> List[Dict[str, Any]]:
-    ids: List[str]
-    if external_ids and len(external_ids) != len(elements):
+    """
+    Stages documents to be uploaded to LabelBox and generates LabelBox configuration.
+    ref: https://docs.labelbox.com/reference/data-import-format-overview
+    """
+    ids: Sequence[Union[str, NoID]]
+    if (external_ids is not None) and len(external_ids) != len(elements):
         raise ValueError(
-            "The length of external_ids parameter must be the same as the length of elements parameter."
+            "The external_ids parameter must be a list and the length of external_ids parameter "
+            "must be the same as the length of elements parameter."
         )
-    elif not external_ids:
+    elif external_ids is None:
         ids = [element.id for element in elements]
     else:
         ids = external_ids
 
-    if attachments and len(attachments) != len(elements):
+    if (attachments is not None) and len(attachments) != len(elements):
         raise ValueError(
-            "The length of attachments parameter must be the same as the length of attachments parameter."
+            "The attachments parameter must be a list and the length of attachments parameter "
+            "must be the same as the length of elements parameter."
         )
-    elif not attachments:
-        attachments: List[List[Dict[str, str]]] = [{} for _ in range(len(elements))]
+    elif attachments is None:
+        attachments = [[] for _ in elements]
     else:
         for index, attachment_list in enumerate(attachments):
             _validate_attachments(attachment_list, index)
@@ -71,14 +86,16 @@ def stage_for_label_box(
         with open(output_filepath, "w+") as output_text_file:
             output_text_file.write(element.text)
 
-        element_config: Dict[str, str] = {
-            "externalId": element_id,
+        element_config: Dict[str, Any] = {
             "data": data_url,
             "attachments": [
                 {"type": attachment["type"].upper(), "value": attachment["value"]}
                 for attachment in attachment_list
             ],
         }
+        if isinstance(element_id, str):
+            element_config["externalId"] = element_id
+
         config_data.append(element_config)
 
     return config_data
