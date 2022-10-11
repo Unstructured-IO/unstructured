@@ -95,7 +95,7 @@ test:
 
 ## check:                   runs linters (includes tests)
 .PHONY: check
-check: check-src check-tests
+check: check-src check-tests check-version
 
 ## check-src:               runs linters (source only, no tests)
 .PHONY: check-src
@@ -115,11 +115,22 @@ check-scripts:
     # Fail if any of these files have warnings
 	scripts/shellcheck.sh
 
+## check-version:           run check to ensure version in CHANGELOG.md matches version in package
+.PHONY: check-version
+check-version:
+    # Fail if syncing version would produce changes
+	scripts/version-sync.sh -c
+
 ## tidy:                    run black
 .PHONY: tidy
 tidy:
 	black --line-length 100 ${PACKAGE_NAME}
 	black --line-length 100 test_${PACKAGE_NAME}
+
+## version-sync:            update __version__.py with most recent version from CHANGELOG.md
+.PHONY: version-sync
+version-sync:
+	scripts/version-sync.sh
 
 .PHONY: check-coverage
 check-coverage:

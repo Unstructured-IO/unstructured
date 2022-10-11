@@ -38,7 +38,7 @@ layoutparser[layoutmodels,tesseract]==0.3.4
     # via unstructured (setup.py)
 lxml==4.9.1
     # via unstructured (setup.py)
-matplotlib==3.6.0
+matplotlib==3.6.1
     # via pycocotools
 nltk==3.7
     # via unstructured (setup.py)
@@ -102,11 +102,11 @@ regex==2022.9.13
     # via nltk
 requests==2.28.1
     # via torchvision
-scipy==1.9.1
+scipy==1.9.2
     # via layoutparser
 six==1.16.0
     # via python-dateutil
-timm==0.6.7
+timm==0.6.11
     # via effdet
 torch==1.12.1
     # via
@@ -123,7 +123,7 @@ tqdm==4.64.1
     # via
     #   iopath
     #   nltk
-typing-extensions==4.3.0
+typing-extensions==4.4.0
     # via
     #   iopath
     #   torch
