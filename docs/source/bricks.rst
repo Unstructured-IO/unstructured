@@ -562,3 +562,70 @@ Examples:
   ***REMOVED*** The resulting CSV file is ready to be used with Prodigy
   with open("prodigy.csv", "w") as csv_file:
       csv_file.write(prodigy_csv_data)
+
+
+
+``stage_for_label_box``
+--------------------------
+
+Formats outputs for use with `LabelBox <https://docs.labelbox.com/docs/overview>`_. LabelBox accepts cloud-hosted data 
+and does not support importing text directly. The ``stage_for_label_box`` does the following:
+
+* Stages the data files in the ``output_directory`` specified in function arguments to be uploaded to a cloud storage service.
+* Returns a config of type ``List[Dict[str, Any]]`` that can be written to a ``json`` file and imported into LabelBox.
+
+**Note:** ``stage_for_label_box`` does not upload the data to remote storage such as S3. Users can upload the data to S3 
+using ``aws s3 sync ${output_directory} ${url_prefix}`` after running the ``stage_for_label_box`` staging brick.
+
+Examples:
+
+The following example demonstrates generating a ``config.json`` file that can be used with LabelBox and uploading the staged data
+files to an S3 bucket.
+
+.. code:: python
+
+  import os
+  import json
+
+  from unstructured.documents.elements import Title, NarrativeText
+  from unstructured.staging.label_box import stage_for_label_box
+
+  ***REMOVED*** The S3 Bucket name where data files should be uploaded.
+  S3_BUCKET_NAME = "labelbox-staging-bucket"
+
+  ***REMOVED*** The S3 key prefix (I.e. directory) where data files should be stored.
+  S3_BUCKET_KEY_PREFIX = "data/"
+
+  ***REMOVED*** The URL prefix where the data files will be accessed.
+  S3_URL_PREFIX = f"https://{S3_BUCKET_NAME}.s3.amazonaws.com/{S3_BUCKET_KEY_PREFIX}"
+  
+  ***REMOVED*** The local output directory where the data files will be staged for uploading to a Cloud Storage service.
+  LOCAL_OUTPUT_DIRECTORY = "/tmp/labelbox-staging"
+
+  elements = [Title(text="Title"), NarrativeText(text="Narrative")]
+
+  labelbox_config = stage_for_label_box(
+      elements,
+      output_directory=LOCAL_OUTPUT_DIRECTORY,
+      url_prefix=S3_URL_PREFIX,
+      external_ids=["id1", "id2"],
+      attachments=[[{"type": "RAW_TEXT", "value": "Title description"}], [{"type": "RAW_TEXT", "value": "Narrative Description"}]],
+      create_directory=True,
+  )
+
+  ***REMOVED*** The resulting JSON config file is ready to be used with LabelBox.
+  with open("config.json", "w+") as labelbox_config_file:
+      json.dump(labelbox_config, labelbox_config_file, indent=4)
+
+
+  ***REMOVED*** Upload staged data files to S3 from local output directory.
+  def upload_staged_files():
+      import boto3
+      s3 = boto3.client("s3")
+      for filename in os.listdir(LOCAL_OUTPUT_DIRECTORY):
+          filepath = os.path.join(LOCAL_OUTPUT_DIRECTORY, filename)
+          upload_key = os.path.join(S3_BUCKET_KEY_PREFIX, filename)
+          s3.upload_file(filepath, Bucket=S3_BUCKET_NAME, Key=upload_key)
+
+  upload_staged_files()
+
