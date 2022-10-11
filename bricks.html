@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bricks &mdash; unstructured 0.2.1-dev5 documentation</title>
+  <title>Bricks &mdash; unstructured 0.2.1-dev6 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -68,6 +68,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#stage-for-label-studio"><code class="docutils literal notranslate"><span class="pre">stage_for_label_studio</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#stage-for-prodigy"><code class="docutils literal notranslate"><span class="pre">stage_for_prodigy</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#stage-csv-for-prodigy"><code class="docutils literal notranslate"><span class="pre">stage_csv_for_prodigy</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#stage-for-label-box"><code class="docutils literal notranslate"><span class="pre">stage_for_label_box</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -567,6 +568,66 @@ write the results to a CSV file that is ready to be used with Prodigy.</p>
 <span class="c1"># The resulting CSV file is ready to be used with Prodigy</span>
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;prodigy.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">csv_file</span><span class="p">:</span>
     <span class="n">csv_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">prodigy_csv_data</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="stage-for-label-box">
+<h3><code class="docutils literal notranslate"><span class="pre">stage_for_label_box</span></code><a class="headerlink" href="#stage-for-label-box" title="Permalink to this heading"></a></h3>
+<p>Formats outputs for use with <a class="reference external" href="https://docs.labelbox.com/docs/overview">LabelBox</a>. LabelBox accepts cloud-hosted data
+and does not support importing text directly. The <code class="docutils literal notranslate"><span class="pre">stage_for_label_box</span></code> does the following:</p>
+<ul class="simple">
+<li><p>Stages the data files in the <code class="docutils literal notranslate"><span class="pre">output_directory</span></code> specified in function arguments to be uploaded to a cloud storage service.</p></li>
+<li><p>Returns a config of type <code class="docutils literal notranslate"><span class="pre">List[Dict[str,</span> <span class="pre">Any]]</span></code> that can be written to a <code class="docutils literal notranslate"><span class="pre">json</span></code> file and imported into LabelBox.</p></li>
+</ul>
+<p><strong>Note:</strong> <code class="docutils literal notranslate"><span class="pre">stage_for_label_box</span></code> does not upload the data to remote storage such as S3. Users can upload the data to S3
+using <code class="docutils literal notranslate"><span class="pre">aws</span> <span class="pre">s3</span> <span class="pre">sync</span> <span class="pre">${output_directory}</span> <span class="pre">${url_prefix}</span></code> after running the <code class="docutils literal notranslate"><span class="pre">stage_for_label_box</span></code> staging brick.</p>
+<p>Examples:</p>
+<p>The following example demonstrates generating a <code class="docutils literal notranslate"><span class="pre">config.json</span></code> file that can be used with LabelBox and uploading the staged data
+files to an S3 bucket.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="kn">from</span> <span class="nn">unstructured.documents.elements</span> <span class="kn">import</span> <span class="n">Title</span><span class="p">,</span> <span class="n">NarrativeText</span>
+<span class="kn">from</span> <span class="nn">unstructured.staging.label_box</span> <span class="kn">import</span> <span class="n">stage_for_label_box</span>
+
+<span class="c1"># The S3 Bucket name where data files should be uploaded.</span>
+<span class="n">S3_BUCKET_NAME</span> <span class="o">=</span> <span class="s2">&quot;labelbox-staging-bucket&quot;</span>
+
+<span class="c1"># The S3 key prefix (I.e. directory) where data files should be stored.</span>
+<span class="n">S3_BUCKET_KEY_PREFIX</span> <span class="o">=</span> <span class="s2">&quot;data/&quot;</span>
+
+<span class="c1"># The URL prefix where the data files will be accessed.</span>
+<span class="n">S3_URL_PREFIX</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://</span><span class="si">{</span><span class="n">S3_BUCKET_NAME</span><span class="si">}</span><span class="s2">.s3.amazonaws.com/</span><span class="si">{</span><span class="n">S3_BUCKET_KEY_PREFIX</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="c1"># The local output directory where the data files will be staged for uploading to a Cloud Storage service.</span>
+<span class="n">LOCAL_OUTPUT_DIRECTORY</span> <span class="o">=</span> <span class="s2">&quot;/tmp/labelbox-staging&quot;</span>
+
+<span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="n">Title</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Title&quot;</span><span class="p">),</span> <span class="n">NarrativeText</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Narrative&quot;</span><span class="p">)]</span>
+
+<span class="n">labelbox_config</span> <span class="o">=</span> <span class="n">stage_for_label_box</span><span class="p">(</span>
+    <span class="n">elements</span><span class="p">,</span>
+    <span class="n">output_directory</span><span class="o">=</span><span class="n">LOCAL_OUTPUT_DIRECTORY</span><span class="p">,</span>
+    <span class="n">url_prefix</span><span class="o">=</span><span class="n">S3_URL_PREFIX</span><span class="p">,</span>
+    <span class="n">external_ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;id1&quot;</span><span class="p">,</span> <span class="s2">&quot;id2&quot;</span><span class="p">],</span>
+    <span class="n">attachments</span><span class="o">=</span><span class="p">[[{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;RAW_TEXT&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;Title description&quot;</span><span class="p">}],</span> <span class="p">[{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;RAW_TEXT&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;Narrative Description&quot;</span><span class="p">}]],</span>
+    <span class="n">create_directory</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># The resulting JSON config file is ready to be used with LabelBox.</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;config.json&quot;</span><span class="p">,</span> <span class="s2">&quot;w+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">labelbox_config_file</span><span class="p">:</span>
+    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">labelbox_config</span><span class="p">,</span> <span class="n">labelbox_config_file</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+
+<span class="c1"># Upload staged data files to S3 from local output directory.</span>
+<span class="k">def</span> <span class="nf">upload_staged_files</span><span class="p">():</span>
+    <span class="kn">import</span> <span class="nn">boto3</span>
+    <span class="n">s3</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">client</span><span class="p">(</span><span class="s2">&quot;s3&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">LOCAL_OUTPUT_DIRECTORY</span><span class="p">):</span>
+        <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">LOCAL_OUTPUT_DIRECTORY</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="n">upload_key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">S3_BUCKET_KEY_PREFIX</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="n">s3</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">Bucket</span><span class="o">=</span><span class="n">S3_BUCKET_NAME</span><span class="p">,</span> <span class="n">Key</span><span class="o">=</span><span class="n">upload_key</span><span class="p">)</span>
+
+<span class="n">upload_staged_files</span><span class="p">()</span>
 </pre></div>
 </div>
 </section>
