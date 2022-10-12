@@ -28,14 +28,22 @@ def chunk_by_attention_window(
     chunk_separator: The string used to concat adjacent chunks when reconstructing the text
     """
     max_input_size = tokenizer.model_max_length if max_input_size is None else max_input_size
+    if buffer < 0 or buffer >= max_input_size:
+        raise ValueError(
+            f"buffer is set to {buffer}. Must be greater than zero and smaller than "
+            f"max_input_size, which is {max_input_size}."
+        )
+
     max_chunk_size = max_input_size - buffer
 
     split_text: List[str] = split_function(text)
+    num_splits = len(split_text)
+
     chunks: List[str] = list()
     chunk_text = str()
     chunk_size = 0
 
-    for segment in split_text:
+    for i, segment in enumerate(split_text):
         tokens = tokenizer.tokenize(segment)
         num_tokens = len(tokens)
         if num_tokens > max_chunk_size:
@@ -47,11 +55,15 @@ def chunk_by_attention_window(
                 "error is: \n\n{segment}"
             )
 
-        if chunk_size + num_tokens > max_chunk_size:
+        if chunk_size + num_tokens > max_chunk_size or i == (num_splits - 1):
+            chunks.append(chunk_text)
             chunk_text = str()
             chunk_size = 0
-            chunks.append(chunk_text)
-        else:
-            chunk_text += chunk_separator + segment
+
+        # NOTE(robison) - To avoid the separator appearing at the beginnign of the string
+        if chunk_size > 0:
+            chunk_text += chunk_separator
+        chunk_text += segment
+        chunk_size += num_tokens
 
     return chunks
