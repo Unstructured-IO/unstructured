@@ -2,6 +2,17 @@ from typing import Callable, Optional, List
 
 from transformers import PreTrainedTokenizer
 
+from unstructured.documents.elements import Text
+
+
+def stage_for_transformers(
+    elements: List[Text], tokenizer: PreTrainedTokenizer, **chunk_kwargs
+) -> List[str]:
+    """Stages text elements for transformers pipelines by chunking them into sections that can
+    fit into the attention window for the model associated with the tokenizer."""
+    combined_text = "\n\n".join([str(element) for element in elements])
+    return chunk_by_attention_window(combined_text, tokenizer, **chunk_kwargs)
+
 
 def chunk_by_attention_window(
     text: str,

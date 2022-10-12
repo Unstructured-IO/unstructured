@@ -1,5 +1,6 @@
 import pytest
 
+from unstructured.documents.elements import Text
 import unstructured.staging.huggingface as huggingface
 
 
@@ -9,6 +10,17 @@ class MockTokenizer:
 
     def tokenize(self, text):
         return text.split(" ")
+
+
+def test_stage_for_transformers():
+    elements = [Text(text="hello " * 20), Text(text="there " * 20)]
+    tokenizer = MockTokenizer()
+
+    chunks = huggingface.stage_for_transformers(elements, tokenizer, buffer=10)
+
+    hello_chunk = ("hello " * 10).strip()
+    there_chunk = ("there " * 10).strip()
+    assert chunks == [hello_chunk, hello_chunk, "\n\n" + there_chunk, there_chunk]
 
 
 def test_chunk_by_attention_window():
@@ -50,5 +62,8 @@ def test_chunk_by_attention_window_raises_if_chunk_exceeds_window():
     text = "hello " * 100 + "."
     tokenizer = MockTokenizer()
     with pytest.raises(ValueError):
-        split_function = lambda text: text.split(".")
+
+        def split_function(text):
+            return text.split(".")
+
         huggingface.chunk_by_attention_window(text, tokenizer, split_function=split_function)
