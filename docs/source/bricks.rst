@@ -342,7 +342,7 @@ Examples:
 --------------------------
 
 Prepares ``Text`` elements for processing in ``transformers`` pipelines
-by splitting the elements into chunks that fit into the mode's attention window. 
+by splitting the elements into chunks that fit into the model's attention window. 
 
 Examples:
 
@@ -405,9 +405,9 @@ The following optional keyword arguments can be specified in
 ``stage_for_transformers``:
 
     * ``buffer``: Indicates the number of tokens to leave as a buffer for the attention window. This is to account for special tokens like ``[CLS]`` that can appear at the beginning or end of an input sequence.
-    * ``max_input_size``: The size of the attention window for the model. If not specified, will use the model_max_length attribute on the tokenizer object.
-    * ``split_function``: The function used to split the text into chunks to consider for adding to the attention window.
-    * ``chunk_separator``: The string used to concat adjacent chunks when reconstructing the text
+    * ``max_input_size``: The size of the attention window for the model. If not specified, the default is the ``model_max_length`` attribute on the tokenizer object.
+    * ``split_function``: The function used to split the text into chunks to consider for adding to the attention window. Splits on spaces be default.
+    * ``chunk_separator``: The string used to concat adjacent chunks when reconstructing the text. Uses spaces by default.
 
   If you need to operate on text directly instead of ``unstructured`` ``Text``
   objects, use the ``chunk_by_attention_window`` helper function. Simply modify
