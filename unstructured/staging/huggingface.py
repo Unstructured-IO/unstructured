@@ -6,7 +6,7 @@ from transformers import PreTrainedTokenizer
 def chunk_by_attention_window(
     text: str,
     tokenizer: PreTrainedTokenizer,
-    buffer: int = 10,
+    buffer: int = 2,
     max_input_size: Optional[int] = None,
     split_function: Callable[[str], List[str]] = lambda text: text.split(" "),
     chunk_separator: str = " ",
