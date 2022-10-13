@@ -24,8 +24,12 @@ cycler==0.11.0
     ***REMOVED*** via matplotlib
 effdet==0.3.0
     ***REMOVED*** via layoutparser
+filelock==3.8.0
+    ***REMOVED*** via huggingface-hub
 fonttools==4.37.4
     ***REMOVED*** via matplotlib
+huggingface-hub==0.10.1
+    ***REMOVED*** via timm
 ***REMOVED***
     ***REMOVED*** via requests
 iopath==0.1.10
@@ -58,6 +62,7 @@ opencv-python==4.6.0.66
     ***REMOVED*** via layoutparser
 packaging==21.3
     ***REMOVED*** via
+    ***REMOVED***   huggingface-hub
     ***REMOVED***   matplotlib
     ***REMOVED***   pytesseract
 pandas==1.5.0
@@ -96,12 +101,16 @@ pytz==2022.4
     ***REMOVED*** via pandas
 pyyaml==6.0
     ***REMOVED*** via
+    ***REMOVED***   huggingface-hub
     ***REMOVED***   layoutparser
     ***REMOVED***   omegaconf
+    ***REMOVED***   timm
 regex==2022.9.13
     ***REMOVED*** via nltk
 requests==2.28.1
-    ***REMOVED*** via torchvision
+    ***REMOVED*** via
+    ***REMOVED***   huggingface-hub
+    ***REMOVED***   torchvision
 scipy==1.9.2
     ***REMOVED*** via layoutparser
 ***REMOVED***
@@ -121,10 +130,12 @@ torchvision==0.13.1
     ***REMOVED***   timm
 tqdm==4.64.1
     ***REMOVED*** via
+    ***REMOVED***   huggingface-hub
     ***REMOVED***   iopath
     ***REMOVED***   nltk
 typing-extensions==4.4.0
     ***REMOVED*** via
+    ***REMOVED***   huggingface-hub
     ***REMOVED***   iopath
     ***REMOVED***   torch
     ***REMOVED***   torchvision
