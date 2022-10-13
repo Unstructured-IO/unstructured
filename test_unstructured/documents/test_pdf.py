@@ -100,15 +100,13 @@ def test_read_pdf(monkeypatch, mock_page_layout):
     images = [image, image]
 
     layouts = Layout([mock_page_layout, mock_page_layout])
-    page = PDFPage(number=0, image=image, layout=mock_page_layout)
 
     monkeypatch.setattr(detectron2, "model", MockLayoutModel(mock_page_layout))
     monkeypatch.setattr(detectron2, "is_detectron2_available", lambda *args: True)
 
-    doc = PDFDocument("fake-file.pdf")
-
     with patch.object(lp, "load_pdf", return_value=(layouts, images)):
-        page.get_elements()
+        doc = PDFDocument.from_file("fake-file.pdf")
+
         assert str(doc).startswith("A Catchy Title")
         assert str(doc).count("A Catchy Title") == 2  ***REMOVED*** Once for each page
         assert str(doc).endswith("A very repetitive narrative. ")

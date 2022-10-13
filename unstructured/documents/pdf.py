@@ -19,7 +19,7 @@ class PDFDocument(Document):
     document image analysis (DIA) model detects the layout of the page prior to extracting
     element."""
 
-    def __init__(self, filename):
+    def __init__(self):
         print(
             """
 
@@ -29,12 +29,12 @@ WARNING: PDF parsing capabilities in unstructured is still experimental
 
 """
         )
-        self.filename = filename
         super().__init__()
 
-    def _read(self) -> List[Page]:
-        logger.info(f"Reading PDF for file: {self.filename} ...")
-        layouts, images = lp.load_pdf(self.filename, load_images=True)
+    @classmethod
+    def from_file(cls, filename: str):
+        logger.info(f"Reading PDF for file: {filename} ...")
+        layouts, images = lp.load_pdf(filename, load_images=True)
         pages: List[Page] = list()
         for i, layout in enumerate(layouts):
             image = images[i]
@@ -43,7 +43,7 @@ WARNING: PDF parsing capabilities in unstructured is still experimental
             page = PDFPage(number=i, image=image, layout=layout)
             page.get_elements()
             pages.append(page)
-        return pages
+        return cls.from_pages(pages)
 
 
 class PDFPage(Page):
