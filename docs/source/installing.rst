@@ -52,3 +52,22 @@ Also ensure that you have ``poppler`` installed on your system. On a Mac, you ca
 .. code:: console
 
 		$ brew install poppler
+
+
+========================
+Huggingface Dependencies
+========================
+
+The ``transformers`` requires the Rust compiler to be present on your system in
+order to properly ``pip`` install. If a Rust compiler is not available on your system,
+you can run the following command to install it:
+
+.. code:: console
+
+    $ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+Additionally, some tokenizers in the ``transformers`` library required the ``sentencepiece``
+library. This is not included as an ``unstructured`` dependency because it only applies
+to some tokenizers. See the
+`sentencepiece install instructions <https://github.com/google/sentencepiece#installation>`_ for
+information on how to install ``sentencepiece`` if your tokenizer requires it.

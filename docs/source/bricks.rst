@@ -338,6 +338,106 @@ Examples:
   isd = convert_to_isd(elements)
 
 
+``convert_to_isd_csv``
+----------------------
+
+Converts outputs to the initial structured data (ISD) format as a CSV string.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.documents.elements import Title, NarrativeText
+  from unstructured.staging.base import convert_to_isd_csv
+
+  elements = [Title(text="Title"), NarrativeText(text="Narrative")]
+  isd_csv = convert_to_isd_csv(elements)
+
+
+``stage_for_transformers``
+--------------------------
+
+Prepares ``Text`` elements for processing in ``transformers`` pipelines
+by splitting the elements into chunks that fit into the model's attention window. 
+
+Examples:
+
+.. code:: python
+
+    from transformers import AutoTokenizer, AutoModelForTokenClassification
+    from transformers import pipeline
+
+    from unstructured.documents.elements import NarrativeText
+    from unstructured.staging.huggingface import stage_for_transformers
+
+    model_name = "hf-internal-testing/tiny-bert-for-token-classification"
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    model = AutoModelForTokenClassification.from_pretrained(model_name)
+
+    nlp = pipeline("ner", model=model, tokenizer=tokenizer)
+
+    text = """From frost advisories this morning to a strong cold front expected later this week, the chance of fall showing up is real.
+
+    There's a refreshing crispness to the air, and it looks to get only more pronounced as the week goes on.
+
+    Frost advisories were in place this morning across portions of the Appalachians and coastal Maine as temperatures dropped into the 30s.
+
+    Temperatures this morning were in the 40s as far south as the Florida Panhandle.
+
+    And Maine even had a few reports of their first snow of the season Sunday. More cities could see their first snow later this week.
+
+    Yes, hello fall!
+
+    As temperatures moderate during the next few days, much of the east will stay right around seasonal norms, but the next blast of cold air will be strong and come with the potential for hazardous conditions.
+
+    "A more active fall weather pattern is expected to evolve by the end of this week and continuing into the weekend as a couple of cold fronts move across the central and eastern states," the Weather Prediction Center said.
+
+    The potent cold front will come in from Canada with a punch of chilly air, heavy rain and strong wind.
+
+    The Weather Prediction Center has a slight risk of excessive rainfall for much of the Northeast and New England on Thursday, including places like New York City, Buffalo and Burlington, so we will have to look out for flash flooding in these areas.
+
+    "More impactful weather continues to look likely with confidence growing that our region will experience the first real fall-like system with gusty to strong winds and a period of moderate to heavy rain along and ahead of a cold front passage," the National Weather Service office in Burlington wrote.
+
+    The potential for very heavy rain could accompany the front, bringing up to two inches of rain for much of the area, and isolated locations could see even more.
+
+    "Ensembles [forecast models] show median rainfall totals by Wednesday night around a half inch, with a potential for some spots to see around one inch, our first substantial rainfall in at least a couple of weeks," the weather service office in Grand Rapids noted, adding, "It may also get cold enough for some snow to mix in Thursday night to Friday morning, especially in the higher terrain north of Grand Rapids toward Cadillac."
+
+    There is also a chance for very strong winds to accompany the system.
+
+    The weather service is forecasting winds of 30-40 mph ahead of the cold front, which could cause some tree limbs to fall and sporadic power outages.
+
+    Behind the front, temperatures will fall.
+
+    "East Coast, with highs about 5-15 degrees below average to close out the workweek and going into next weekend, with highs only in the 40s and 50s from the Great Lakes to the Northeast on most days," the Weather Prediction Center explained.
+
+    By the weekend, a second cold front will drop down from Canada and bring a reinforcing shot of chilly air across the eastern half of the country."""
+
+    chunks = stage_for_transformers([NarrativeText(text=text)], tokenizer)
+
+    results = [nlp(chunk) for chunk in chunks]
+
+
+The following optional keyword arguments can be specified in
+``stage_for_transformers``:
+
+    * ``buffer``: Indicates the number of tokens to leave as a buffer for the attention window. This is to account for special tokens like ``[CLS]`` that can appear at the beginning or end of an input sequence.
+    * ``max_input_size``: The size of the attention window for the model. If not specified, the default is the ``model_max_length`` attribute on the tokenizer object.
+    * ``split_function``: The function used to split the text into chunks to consider for adding to the attention window. Splits on spaces be default.
+    * ``chunk_separator``: The string used to concat adjacent chunks when reconstructing the text. Uses spaces by default.
+
+  If you need to operate on text directly instead of ``unstructured`` ``Text``
+  objects, use the ``chunk_by_attention_window`` helper function. Simply modify
+  the example above to include the following:
+
+  .. code:: python
+
+    from unstructured.staging.huggingface import chunk_by_attention_window
+
+    chunks = chunk_by_attention_window(text, tokenizer)
+
+    results = [nlp(chunk) for chunk in chunks]
+
+
 ``stage_for_label_studio``
 --------------------------
 
