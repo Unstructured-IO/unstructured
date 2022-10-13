@@ -20,12 +20,17 @@ install-base: install-base-pip-packages install-nltk-models
 install: install-base-pip-packages install-dev install-detectron2 install-nltk-models install-test
 
 .PHONY: install-ci
-install-ci: install-base-pip-packages install-pdf install-test install-nltk-models
+install-ci: install-base-pip-packages install-pdf install-test install-nltk-models install-huggingface
 
 .PHONY: install-base-pip-packages
 install-base-pip-packages:
 	python3 -m pip install pip==${PIP_VERSION}
 	pip install -r requirements/base.txt
+
+.PHONY: install-huggingface
+install-huggingface:
+	python3 -m pip install pip==${PIP_VERSION}
+	pip install -r requirements/huggingface.txt
 
 .PHONY: install-pdf
 install-pdf:
@@ -60,6 +65,8 @@ install-build:
 .PHONY: pip-compile
 pip-compile:
 	pip-compile -o requirements/base.txt
+	# Extra requirements for huggingface staging functions
+	pip-compile --extra huggingface -o requirements/huggingface.txt
 	# Extra requirements for parsing PDF files
 	pip-compile --extra pdf -o requirements/pdf.txt
 	# NOTE(robinson) - We want the dependencies for detectron2 in the requirements.txt, but not

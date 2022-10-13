@@ -35,5 +35,8 @@ setup(
         "lxml",
         "nltk",
     ],
-    extras_require={"pdf": ["layoutparser[layoutmodels,tesseract]"]},
+    extras_require={
+        "pdf": ["layoutparser[layoutmodels,tesseract]"],
+        "huggingface": ["transformers"],
+    },
 )
