@@ -338,6 +338,22 @@ Examples:
   isd = convert_to_isd(elements)
 
 
+``convert_to_isd_csv``
+----------------------
+
+Converts outputs to the initial structured data (ISD) format as a CSV string.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.documents.elements import Title, NarrativeText
+  from unstructured.staging.base import convert_to_isd_csv
+
+  elements = [Title(text="Title"), NarrativeText(text="Narrative")]
+  isd_csv = convert_to_isd_csv(elements)
+
+
 ``stage_for_transformers``
 --------------------------
 
@@ -420,7 +436,6 @@ The following optional keyword arguments can be specified in
     chunks = chunk_by_attention_window(text, tokenizer)
 
     results = [nlp(chunk) for chunk in chunks]
-
 
 
 ``stage_for_label_studio``

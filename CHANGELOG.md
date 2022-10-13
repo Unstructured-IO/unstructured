@@ -1,5 +1,6 @@
-***REMOVED******REMOVED*** 0.2.1-dev7
+***REMOVED******REMOVED*** 0.2.1-dev8
 
+* Added staging brick for CSV format for ISD (Initial Structured Data) format.
 * Added staging brick for separating text into attention window size chunks for `transformers`.
 * Added staging brick for LabelBox.
 * Added ability to upload LabelStudio predictions
