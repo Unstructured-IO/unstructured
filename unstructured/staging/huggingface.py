@@ -71,7 +71,7 @@ def chunk_by_attention_window(
             chunk_text = str()
             chunk_size = 0
 
-        # NOTE(robison) - To avoid the separator appearing at the beginnign of the string
+        # NOTE(robinson) - To avoid the separator appearing at the beginning of the string
         if chunk_size > 0:
             chunk_text += chunk_separator
         chunk_text += segment
