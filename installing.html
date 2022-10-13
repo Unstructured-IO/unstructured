@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Installation &mdash; unstructured 0.2.1-dev6 documentation</title>
+  <title>Installation &mdash; unstructured 0.2.1-dev7 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -46,6 +46,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#nltk-dependencies">NLTK Dependencies</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#xml-html-depenedencies">XML/HTML Depenedencies</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pdf-dependencies">PDF Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#huggingface-dependencies">Huggingface Dependencies</a></li>
 </ul>
 </li>
 </ul>
@@ -119,6 +120,20 @@ need to parse PDFs and Detectron2 is not already installed, you can install it w
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>brew install poppler
 </pre></div>
 </div>
+</section>
+<section id="huggingface-dependencies">
+<h3>Huggingface Dependencies<a class="headerlink" href="#huggingface-dependencies" title="Permalink to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">transformers</span></code> requires the Rust compiler to be present on your system in
+order to properly <code class="docutils literal notranslate"><span class="pre">pip</span></code> install. If a Rust compiler is not available on your system,
+you can run the following command to install it:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>curl --proto <span class="s1">&#39;=https&#39;</span> --tlsv1.2 -sSf https://sh.rustup.rs <span class="p">|</span> sh
+</pre></div>
+</div>
+<p>Additionally, some tokenizers in the <code class="docutils literal notranslate"><span class="pre">transformers</span></code> library required the <code class="docutils literal notranslate"><span class="pre">sentencepiece</span></code>
+library. This is not included as an <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> dependency because it only applies
+to some tokenizers. See the
+<a class="reference external" href="https://github.com/google/sentencepiece#installation">sentencepiece install instructions</a> for
+information on how to install <code class="docutils literal notranslate"><span class="pre">sentencepiece</span></code> if your tokenizer requires it.</p>
 </section>
 </section>
 </section>

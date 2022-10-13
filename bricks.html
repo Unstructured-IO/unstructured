@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bricks &mdash; unstructured 0.2.1-dev6 documentation</title>
+  <title>Bricks &mdash; unstructured 0.2.1-dev7 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -65,6 +65,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#staging">Staging</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#convert-to-isd"><code class="docutils literal notranslate"><span class="pre">convert_to_isd</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#stage-for-transformers"><code class="docutils literal notranslate"><span class="pre">stage_for_transformers</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#stage-for-label-studio"><code class="docutils literal notranslate"><span class="pre">stage_for_label_studio</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#stage-for-prodigy"><code class="docutils literal notranslate"><span class="pre">stage_for_prodigy</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#stage-csv-for-prodigy"><code class="docutils literal notranslate"><span class="pre">stage_csv_for_prodigy</span></code></a></li>
@@ -372,6 +373,87 @@ for returning data in Unstructured pipeline APIs.</p>
 <span class="n">isd</span> <span class="o">=</span> <span class="n">convert_to_isd</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span>
 </pre></div>
 </div>
+</section>
+<section id="stage-for-transformers">
+<h3><code class="docutils literal notranslate"><span class="pre">stage_for_transformers</span></code><a class="headerlink" href="#stage-for-transformers" title="Permalink to this heading"></a></h3>
+<p>Prepares <code class="docutils literal notranslate"><span class="pre">Text</span></code> elements for processing in <code class="docutils literal notranslate"><span class="pre">transformers</span></code> pipelines
+by splitting the elements into chunks that fit into the model’s attention window.</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">AutoTokenizer</span><span class="p">,</span> <span class="n">AutoModelForTokenClassification</span>
+<span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">pipeline</span>
+
+<span class="kn">from</span> <span class="nn">unstructured.documents.elements</span> <span class="kn">import</span> <span class="n">NarrativeText</span>
+<span class="kn">from</span> <span class="nn">unstructured.staging.huggingface</span> <span class="kn">import</span> <span class="n">stage_for_transformers</span>
+
+<span class="n">model_name</span> <span class="o">=</span> <span class="s2">&quot;hf-internal-testing/tiny-bert-for-token-classification&quot;</span>
+<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">AutoModelForTokenClassification</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
+
+<span class="n">nlp</span> <span class="o">=</span> <span class="n">pipeline</span><span class="p">(</span><span class="s2">&quot;ner&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">tokenizer</span><span class="o">=</span><span class="n">tokenizer</span><span class="p">)</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;From frost advisories this morning to a strong cold front expected later this week, the chance of fall showing up is real.</span>
+
+<span class="s2">There&#39;s a refreshing crispness to the air, and it looks to get only more pronounced as the week goes on.</span>
+
+<span class="s2">Frost advisories were in place this morning across portions of the Appalachians and coastal Maine as temperatures dropped into the 30s.</span>
+
+<span class="s2">Temperatures this morning were in the 40s as far south as the Florida Panhandle.</span>
+
+<span class="s2">And Maine even had a few reports of their first snow of the season Sunday. More cities could see their first snow later this week.</span>
+
+<span class="s2">Yes, hello fall!</span>
+
+<span class="s2">As temperatures moderate during the next few days, much of the east will stay right around seasonal norms, but the next blast of cold air will be strong and come with the potential for hazardous conditions.</span>
+
+<span class="s2">&quot;A more active fall weather pattern is expected to evolve by the end of this week and continuing into the weekend as a couple of cold fronts move across the central and eastern states,&quot; the Weather Prediction Center said.</span>
+
+<span class="s2">The potent cold front will come in from Canada with a punch of chilly air, heavy rain and strong wind.</span>
+
+<span class="s2">The Weather Prediction Center has a slight risk of excessive rainfall for much of the Northeast and New England on Thursday, including places like New York City, Buffalo and Burlington, so we will have to look out for flash flooding in these areas.</span>
+
+<span class="s2">&quot;More impactful weather continues to look likely with confidence growing that our region will experience the first real fall-like system with gusty to strong winds and a period of moderate to heavy rain along and ahead of a cold front passage,&quot; the National Weather Service office in Burlington wrote.</span>
+
+<span class="s2">The potential for very heavy rain could accompany the front, bringing up to two inches of rain for much of the area, and isolated locations could see even more.</span>
+
+<span class="s2">&quot;Ensembles [forecast models] show median rainfall totals by Wednesday night around a half inch, with a potential for some spots to see around one inch, our first substantial rainfall in at least a couple of weeks,&quot; the weather service office in Grand Rapids noted, adding, &quot;It may also get cold enough for some snow to mix in Thursday night to Friday morning, especially in the higher terrain north of Grand Rapids toward Cadillac.&quot;</span>
+
+<span class="s2">There is also a chance for very strong winds to accompany the system.</span>
+
+<span class="s2">The weather service is forecasting winds of 30-40 mph ahead of the cold front, which could cause some tree limbs to fall and sporadic power outages.</span>
+
+<span class="s2">Behind the front, temperatures will fall.</span>
+
+<span class="s2">&quot;East Coast, with highs about 5-15 degrees below average to close out the workweek and going into next weekend, with highs only in the 40s and 50s from the Great Lakes to the Northeast on most days,&quot; the Weather Prediction Center explained.</span>
+
+<span class="s2">By the weekend, a second cold front will drop down from Canada and bring a reinforcing shot of chilly air across the eastern half of the country.&quot;&quot;&quot;</span>
+
+<span class="n">chunks</span> <span class="o">=</span> <span class="n">stage_for_transformers</span><span class="p">([</span><span class="n">NarrativeText</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)],</span> <span class="n">tokenizer</span><span class="p">)</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">nlp</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span> <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">chunks</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The following optional keyword arguments can be specified in
+<code class="docutils literal notranslate"><span class="pre">stage_for_transformers</span></code>:</p>
+<blockquote>
+<div><blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">buffer</span></code>: Indicates the number of tokens to leave as a buffer for the attention window. This is to account for special tokens like <code class="docutils literal notranslate"><span class="pre">[CLS]</span></code> that can appear at the beginning or end of an input sequence.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">max_input_size</span></code>: The size of the attention window for the model. If not specified, the default is the <code class="docutils literal notranslate"><span class="pre">model_max_length</span></code> attribute on the tokenizer object.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">split_function</span></code>: The function used to split the text into chunks to consider for adding to the attention window. Splits on spaces be default.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">chunk_separator</span></code>: The string used to concat adjacent chunks when reconstructing the text. Uses spaces by default.</p></li>
+</ul>
+</div></blockquote>
+<p>If you need to operate on text directly instead of <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> <code class="docutils literal notranslate"><span class="pre">Text</span></code>
+objects, use the <code class="docutils literal notranslate"><span class="pre">chunk_by_attention_window</span></code> helper function. Simply modify
+the example above to include the following:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.staging.huggingface</span> <span class="kn">import</span> <span class="n">chunk_by_attention_window</span>
+
+<span class="n">chunks</span> <span class="o">=</span> <span class="n">chunk_by_attention_window</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">)</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">nlp</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span> <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">chunks</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
 </section>
 <section id="stage-for-label-studio">
 <h3><code class="docutils literal notranslate"><span class="pre">stage_for_label_studio</span></code><a class="headerlink" href="#stage-for-label-studio" title="Permalink to this heading"></a></h3>
