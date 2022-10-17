@@ -46,7 +46,7 @@ matplotlib==3.6.1
     ***REMOVED*** via pycocotools
 nltk==3.7
     ***REMOVED*** via unstructured (setup.py)
-numpy==1.23.3
+numpy==1.23.4
     ***REMOVED*** via
     ***REMOVED***   contourpy
     ***REMOVED***   layoutparser
