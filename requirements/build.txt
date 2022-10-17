@@ -20,8 +20,6 @@ idna==3.4
     # via requests
 imagesize==1.4.1
     # via sphinx
-importlib-metadata==5.0.0
-    # via sphinx
 jinja2==3.1.2
     # via sphinx
 markupsafe==2.1.1
@@ -38,12 +36,12 @@ requests==2.28.1
     # via sphinx
 snowballstemmer==2.2.0
     # via sphinx
-sphinx==5.2.3
+sphinx==5.3.0
     # via
-    #   -r requirements/build.in
+    #   -r build.in
     #   sphinx-rtd-theme
 sphinx-rtd-theme==1.0.0
-    # via -r requirements/build.in
+    # via -r build.in
 sphinxcontrib-applehelp==1.0.2
     # via sphinx
 sphinxcontrib-devhelp==1.0.2
@@ -58,5 +56,3 @@ sphinxcontrib-serializinghtml==1.1.5
     # via sphinx
 urllib3==1.26.12
     # via requests
-zipp==3.9.0
-    # via importlib-metadata
