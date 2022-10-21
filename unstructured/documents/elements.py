@@ -47,9 +47,11 @@ class NarrativeText(Text):
 
 
 class ListItem(Text):
-    """BulletedText is a NarrativeText element that is part of a bulleted list."""
+    """ListItem is a NarrativeText element that is part of a list."""
 
-    category = "BulletedText"
+    category = "ListItem"
+
+    pass
 
 
 class Title(Text):

@@ -2,7 +2,7 @@ import io
 import csv
 from typing import Dict, List
 
-from unstructured.documents.elements import Text
+from unstructured.documents.elements import Text, NarrativeText, Title, ListItem
 
 
 def convert_to_isd(elements: List[Text]) -> List[Dict[str, str]]:
@@ -12,6 +12,23 @@ def convert_to_isd(elements: List[Text]) -> List[Dict[str, str]]:
         section = dict(text=element.text, type=element.category)
         isd.append(section)
     return isd
+
+
+def isd_to_elements(isd: List[Dict[str, str]]) -> List[Text]:
+    """Converts an Initial Structured Data (ISD) dictionary to a list of Text elements."""
+    elements: List[Text] = list()
+
+    for item in isd:
+        if item["type"] == "NarrativeText":
+            elements.append(NarrativeText(text=item["text"]))
+        elif item["type"] == "Title":
+            elements.append(Title(text=item["text"]))
+        ***REMOVED*** NOTE(robinson) - "BulletedText" is in there for backward compatibility. ListItem used
+        ***REMOVED*** to be called BulletedText in an earlier version
+        elif item["type"] in ["ListItem", "BulletedText"]:
+            elements.append(ListItem(text=item["text"]))
+
+    return elements
 
 
 def convert_to_isd_csv(elements: List[Text]) -> str:

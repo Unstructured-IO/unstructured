@@ -338,6 +338,27 @@ Examples:
   isd = convert_to_isd(elements)
 
 
+``isd_to_elements``
+-------------------
+
+Converts outputs from initial structured data (ISD) format back to a list of ``Text`` elements.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.staging.base import isd_to_elements
+
+  isd = [
+    {"text": "My Title", "type": "Title"},
+    {"text": "My Narrative", "type": "NarrativeText"}
+  ]
+
+  ***REMOVED*** elements will look like:
+  ***REMOVED*** [ Title(text="My Title"), NarrativeText(text="My Narrative")]
+  elements = isd_to_elements(isd)
+
+
 ``convert_to_isd_csv``
 ----------------------
 

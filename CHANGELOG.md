@@ -1,5 +1,6 @@
-***REMOVED******REMOVED*** 0.2.1-dev9
+***REMOVED******REMOVED*** 0.2.1
 
+* Added brick to convert an ISD dictionary to a list of elements
 * Update `PDFDocument` to use the `from_file` method
 * Added staging brick for CSV format for ISD (Initial Structured Data) format.
 * Added staging brick for separating text into attention window size chunks for `transformers`.
