@@ -4,7 +4,7 @@ import csv
 
 import unstructured.staging.base as base
 
-from unstructured.documents.elements import Title, NarrativeText
+from unstructured.documents.elements import Title, NarrativeText, ListItem
 
 
 @pytest.fixture
@@ -21,6 +21,23 @@ def test_convert_to_isd():
 
     assert isd[1]["text"] == "Narrative 1"
     assert isd[1]["type"] == "NarrativeText"
+
+
+def test_isd_to_elements():
+    isd = [
+        {"text": "Blurb1", "type": "NarrativeText"},
+        {"text": "Blurb2", "type": "Title"},
+        {"text": "Blurb3", "type": "ListItem"},
+        {"text": "Blurb4", "type": "BulletedText"},
+    ]
+
+    elements = base.isd_to_elements(isd)
+    assert elements == [
+        NarrativeText(text="Blurb1"),
+        Title(text="Blurb2"),
+        ListItem(text="Blurb3"),
+        ListItem(text="Blurb4"),
+    ]
 
 
 def test_convert_to_isd_csv(output_csv_file):
