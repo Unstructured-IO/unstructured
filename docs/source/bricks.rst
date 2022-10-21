@@ -353,6 +353,9 @@ Examples:
     {"text": "My Title", "type": "Title"},
     {"text": "My Narrative", "type": "NarrativeText"}
   ]
+
+  # elements will look like:
+  # [ Title(text="My Title"), NarrativeText(text="My Narrative")]
   elements = isd_to_elements(isd)
 
 
