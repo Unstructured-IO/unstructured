@@ -111,7 +111,7 @@ requests==2.28.1
     # via
     #   huggingface-hub
     #   torchvision
-scipy==1.9.2
+scipy==1.9.3
     # via layoutparser
 six==1.16.0
     # via python-dateutil
