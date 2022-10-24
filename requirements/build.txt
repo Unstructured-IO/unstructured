@@ -8,7 +8,7 @@ alabaster==0.7.12
     ***REMOVED*** via sphinx
 babel==2.10.3
     ***REMOVED*** via sphinx
-certifi==2022.9.14
+certifi==2022.9.24
     ***REMOVED*** via requests
 charset-normalizer==2.1.1
     ***REMOVED*** via requests
