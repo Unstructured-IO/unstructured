@@ -36,7 +36,7 @@ pyyaml==6.0
     ***REMOVED*** via
     ***REMOVED***   huggingface-hub
     ***REMOVED***   transformers
-regex==2022.9.13
+regex==2022.10.31
     ***REMOVED*** via
     ***REMOVED***   nltk
     ***REMOVED***   transformers
