@@ -81,7 +81,7 @@ pillow==9.2.0
     #   pdfplumber
     #   pytesseract
     #   torchvision
-portalocker==2.5.1
+portalocker==2.6.0
     # via iopath
 pycocotools==2.0.5
     # via effdet
