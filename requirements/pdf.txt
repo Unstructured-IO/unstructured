@@ -73,7 +73,7 @@ pdfminer-six==20220524
     ***REMOVED*** via pdfplumber
 pdfplumber==0.7.5
     ***REMOVED*** via layoutparser
-pillow==9.2.0
+pillow==9.3.0
     ***REMOVED*** via
     ***REMOVED***   layoutparser
     ***REMOVED***   matplotlib
