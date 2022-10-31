@@ -81,7 +81,7 @@ pillow==9.2.0
     ***REMOVED***   pdfplumber
     ***REMOVED***   pytesseract
     ***REMOVED***   torchvision
-portalocker==2.5.1
+portalocker==2.6.0
     ***REMOVED*** via iopath
 pycocotools==2.0.5
     ***REMOVED*** via effdet
