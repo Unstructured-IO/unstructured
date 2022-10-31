@@ -36,7 +36,7 @@ pyyaml==6.0
     # via
     #   huggingface-hub
     #   transformers
-regex==2022.9.13
+regex==2022.10.31
     # via
     #   nltk
     #   transformers
