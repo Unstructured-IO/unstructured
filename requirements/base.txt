@@ -12,7 +12,7 @@ lxml==4.9.1
     # via unstructured (setup.py)
 nltk==3.7
     # via unstructured (setup.py)
-regex==2022.9.13
+regex==2022.10.31
     # via nltk
 tqdm==4.64.1
     # via nltk
