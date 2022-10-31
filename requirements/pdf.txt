@@ -81,7 +81,7 @@ pillow==9.3.0
     #   pdfplumber
     #   pytesseract
     #   torchvision
-portalocker==2.5.1
+portalocker==2.6.0
     # via iopath
 pycocotools==2.0.5
     # via effdet
@@ -105,7 +105,7 @@ pyyaml==6.0
     #   layoutparser
     #   omegaconf
     #   timm
-regex==2022.9.13
+regex==2022.10.31
     # via nltk
 requests==2.28.1
     # via
