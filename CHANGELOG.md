@@ -1,3 +1,7 @@
+## 0.2.2-dev0
+
+* Add staging brick for Datasaur
+
 ## 0.2.1
 
 * Added brick to convert an ISD dictionary to a list of elements

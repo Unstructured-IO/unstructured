@@ -750,3 +750,26 @@ files to an S3 bucket.
 
   upload_staged_files()
 
+``stage_for_datasaur``
+--------------------------
+Formats a list of Text elements as input to Datasaur.
+
+For example, if input looks like:
+
+.. code:: python
+  input  = [Text("Text1"),Text("Text2")]
+  output = (stage_for_datasaur(input))
+The output should look like:
+
+.. code:: python
+
+  [
+    {
+      "text": "Text1",
+      "entities": []
+    }, 
+    {
+      "text": "Text2",
+      "entities": []
+    }
+  ]
