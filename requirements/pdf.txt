@@ -117,7 +117,7 @@ six==1.16.0
     # via python-dateutil
 timm==0.6.11
     # via effdet
-torch==1.12.1
+torch==1.13.0
     # via
     #   effdet
     #   layoutparser
