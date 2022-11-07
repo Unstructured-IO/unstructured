@@ -44,7 +44,7 @@ requests==2.28.1
     ***REMOVED*** via
     ***REMOVED***   huggingface-hub
     ***REMOVED***   transformers
-tokenizers==0.13.1
+tokenizers==0.13.2
     ***REMOVED*** via transformers
 tqdm==4.64.1
     ***REMOVED*** via
