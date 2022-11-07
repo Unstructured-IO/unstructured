@@ -18,7 +18,7 @@ charset-normalizer==2.1.1
     ***REMOVED*** via nltk
 contourpy==1.0.5
     ***REMOVED*** via matplotlib
-cryptography==38.0.1
+cryptography==38.0.3
     ***REMOVED*** via pdfminer-six
 cycler==0.11.0
     ***REMOVED*** via matplotlib
