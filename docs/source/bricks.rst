@@ -762,6 +762,6 @@ Example:
   elements  = [Text("Text1"),Text("Text2")]
   datasaur_data = stage_for_datasaur(elements)
 
-output is a list of dictionaries, each one with two keys:
+The output is a list of dictionaries, each one with two keys:
 "text" with the content of the element and 
 "entities" with an empty list.
