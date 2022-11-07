@@ -759,9 +759,9 @@ Example:
 .. code:: python
 
   from unstructured.staging.datasaur import stage_for_datasaur
-  input  = [Text("Text1"),Text("Text2")]
-  output = stage_for_datasaur(input)
+  elements  = [Text("Text1"),Text("Text2")]
+  datasaur_data = stage_for_datasaur(elements)
 
-  # output is a list of dictionaries, each one with two keys:
-  # "text" with the content of the element and 
-  # "entities" with an empty list.
+output is a list of dictionaries, each one with two keys:
+"text" with the content of the element and 
+"entities" with an empty list.
