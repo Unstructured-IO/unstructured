@@ -69,7 +69,7 @@ pandas==1.5.0
     # via layoutparser
 pdf2image==1.16.0
     # via layoutparser
-pdfminer-six==20220524
+pdfminer-six==20221105
     # via pdfplumber
 pdfplumber==0.7.5
     # via layoutparser
