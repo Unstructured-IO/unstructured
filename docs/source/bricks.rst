@@ -752,24 +752,16 @@ files to an S3 bucket.
 
 ``stage_for_datasaur``
 --------------------------
-Formats a list of Text elements as input to Datasaur.
+Formats a list of ``Text`` elements as input to token based tasks in Datasaur.
 
-For example, if input looks like:
+Example: 
 
 .. code:: python
+
+  from unstructured.staging.datasaur import stage_for_datasaur
   input  = [Text("Text1"),Text("Text2")]
-  output = (stage_for_datasaur(input))
-The output should look like:
+  output = stage_for_datasaur(input)
 
-.. code:: python
-
-  [
-    {
-      "text": "Text1",
-      "entities": []
-    }, 
-    {
-      "text": "Text2",
-      "entities": []
-    }
-  ]
+  # output is a list of dictionaries, each one with two keys:
+  # "text" with the content of the element and 
+  # "entities" with an empty list.
