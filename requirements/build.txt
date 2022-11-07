@@ -40,7 +40,7 @@ sphinx==5.3.0
     # via
     #   -r build.in
     #   sphinx-rtd-theme
-sphinx-rtd-theme==1.0.0
+sphinx-rtd-theme==1.1.1
     # via -r build.in
 sphinxcontrib-applehelp==1.0.2
     # via sphinx
