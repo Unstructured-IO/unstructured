@@ -25,6 +25,7 @@ setup(
     name="unstructured",
     description="A library that prepares raw documents for downstream ML tasks.",
     long_description=open("README.md", "r", encoding="utf-8").read(),
+    long_description_content_type="text/markdown",
     keywords="NLP PDF HTML CV XML parsing preprocessing",
     url="https://github.com/Unstructured-IO/unstructured",
     python_requires=">=3.8.0",
