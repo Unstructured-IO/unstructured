@@ -1,4 +1,4 @@
-***REMOVED******REMOVED*** 0.2.2-dev0
+***REMOVED******REMOVED*** 0.2.2
 
 * Add staging brick for Datasaur
 
