@@ -17,14 +17,22 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+import os
 
 from setuptools import setup, find_packages
 
 from unstructured.__version__ import __version__
 
+cwd = os.path.dirname(os.path.abspath(__file__))
+
+# Read in README.md for our long_description
+with open(os.path.join(cwd, "README.md"), encoding="utf-8") as f:
+    long_description = f.read()
+
 setup(
     name="unstructured",
     description="A library that prepares raw documents for downstream ML tasks.",
+    long_description=long_description,
     author="Unstructured Technologies",
     author_email="devops@unstructuredai.io",
     license="Apache-2.0",
