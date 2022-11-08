@@ -1,5 +1,8 @@
 <h3 align="center">
-  <img src="img/unstructured_logo.png" height="200">
+  <img
+    src="https://raw.githubusercontent.com/Unstructured-IO/unstructured/main/img/unstructured_logo.png"
+    height="200"
+  >
 </h3>
 
 <h3 align="center">
