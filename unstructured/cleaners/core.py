@@ -91,12 +91,12 @@ def clean_prefix(text: str, pattern: str, ignore_case: bool = False, strip: bool
     strip: If True, removes leading whitespace from the cleaned string.
     """
     flags = re.IGNORECASE if ignore_case else 0
-    clean_text = re.sub(r"^{0}".format(prefix), "", text, flags=flags)
+    clean_text = re.sub(r"^{0}".format(pattern), "", text, flags=flags)
     clean_text = clean_text.lstrip() if strip else clean_text
     return clean_text
 
 
-def clean_postfix(text: str, prefix: str, ignore_case: bool = False, strip: bool = True) -> str:
+def clean_postfix(text: str, pattern: str, ignore_case: bool = False, strip: bool = True) -> str:
     """Removes postfixes from a string according to the specified pattern.
 
     Input
@@ -107,8 +107,8 @@ def clean_postfix(text: str, prefix: str, ignore_case: bool = False, strip: bool
     strip: If True, removes trailing whitespace from the cleaned string.
     """
     flags = re.IGNORECASE if ignore_case else 0
-    clean_text = re.sub(r"{0}$".format(prefix), "", text, flags=flags)
-    clean_text = clean_text.lstrip() if strip else clean_text
+    clean_text = re.sub(r"{0}$".format(pattern), "", text, flags=flags)
+    clean_text = clean_text.rstrip() if strip else clean_text
     return clean_text
 
 
