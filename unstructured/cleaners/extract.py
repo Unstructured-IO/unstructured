@@ -3,7 +3,7 @@ import re
 
 def _get_indexed_match(text: str, pattern: str, index: int = 0) -> re.Match:
     if not isinstance(index, int) or index < 0:
-        raise ValueError(f"The index is {index}. Index must be a positive integer.")
+        raise ValueError(f"The index is {index}. Index must be a non-negative integer.")
 
     regex_match = None
     for i, result in enumerate(re.finditer(pattern, text)):
