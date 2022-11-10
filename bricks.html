@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bricks &mdash; unstructured 0.2.3-dev0 documentation</title>
+  <title>Bricks &mdash; unstructured 0.2.3 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -63,6 +63,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#remove-punctuation"><code class="docutils literal notranslate"><span class="pre">remove_punctuation</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#clean-prefix"><code class="docutils literal notranslate"><span class="pre">clean_prefix</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#clean-postfix"><code class="docutils literal notranslate"><span class="pre">clean_postfix</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#extract-text-before"><code class="docutils literal notranslate"><span class="pre">extract_text_before</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#extract-text-after"><code class="docutils literal notranslate"><span class="pre">extract_text_after</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#staging">Staging</a><ul>
@@ -394,6 +396,42 @@ such as <code class="docutils literal notranslate"><span class="pre">\u2013</spa
 
 <span class="c1"># Returns &quot;The end!&quot;</span>
 <span class="n">clean_postfix</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;(END|STOP)&quot;</span><span class="p">,</span> <span class="n">ignore_case</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="extract-text-before">
+<h3><code class="docutils literal notranslate"><span class="pre">extract_text_before</span></code><a class="headerlink" href="#extract-text-before" title="Permalink to this heading"></a></h3>
+<p>Extracts text that occurs before the specified pattern.</p>
+<p>Options:</p>
+<ul class="simple">
+<li><p>If <code class="docutils literal notranslate"><span class="pre">index</span></code> is set, extract before the <code class="docutils literal notranslate"><span class="pre">(index</span> <span class="pre">+</span> <span class="pre">1)``th</span> <span class="pre">occurence</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">pattern.</span> <span class="pre">The</span> <span class="pre">default</span> <span class="pre">is</span> <span class="pre">``0</span></code>.</p></li>
+<li><p>Strips leading whitespace if <code class="docutils literal notranslate"><span class="pre">strip</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>. The default is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+</ul>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.cleaners.extract</span> <span class="kn">import</span> <span class="n">extract_text_before</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;Here I am! STOP Look at me! STOP I&#39;m flying! STOP&quot;</span>
+
+<span class="c1"># Returns &quot;Here I am!&quot;</span>
+<span class="n">extract_text_before</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;STOP&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="extract-text-after">
+<h3><code class="docutils literal notranslate"><span class="pre">extract_text_after</span></code><a class="headerlink" href="#extract-text-after" title="Permalink to this heading"></a></h3>
+<p>Extracts text that occurs after the specified pattern.</p>
+<p>Options:</p>
+<ul class="simple">
+<li><p>If <code class="docutils literal notranslate"><span class="pre">index</span></code> is set, extract after the <code class="docutils literal notranslate"><span class="pre">(index</span> <span class="pre">+</span> <span class="pre">1)``th</span> <span class="pre">occurence</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">pattern.</span> <span class="pre">The</span> <span class="pre">default</span> <span class="pre">is</span> <span class="pre">``0</span></code>.</p></li>
+<li><p>Strips trailing whitespace if <code class="docutils literal notranslate"><span class="pre">strip</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>. The default is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+</ul>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.cleaners.extract</span> <span class="kn">import</span> <span class="n">extract_text_after</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;SPEAKER 1: Look at me, I&#39;m flying!&quot;</span>
+
+<span class="c1"># Returns &quot;Look at me, I&#39;m flying!&quot;</span>
+<span class="n">extract_text_after</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;SPEAKER \d</span><span class="si">{1}</span><span class="s2">:&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
