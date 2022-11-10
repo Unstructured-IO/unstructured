@@ -1,7 +1,7 @@
+import re
 import sys
 import unicodedata
 from unstructured.nlp.patterns import UNICODE_BULLETS_RE
-import re
 
 
 def clean_bullets(text) -> str:
@@ -80,6 +80,40 @@ def clean_trailing_punctuation(text: str) -> str:
     return text.strip().rstrip(".,:;")
 
 
+def clean_prefix(text: str, pattern: str, ignore_case: bool = False, strip: bool = True) -> str:
+    """Removes prefixes from a string according to the specified pattern. Strips leading
+    whitespace if the strip parameter is set to True.
+
+    Input
+    -----
+    text: The text to clean
+    pattern: The pattern for the prefix. Can be a simple string or a regex pattern
+    ignore_case: If True, ignores case in the pattern
+    strip: If True, removes leading whitespace from the cleaned string.
+    """
+    flags = re.IGNORECASE if ignore_case else 0
+    clean_text = re.sub(r"^{0}".format(pattern), "", text, flags=flags)
+    clean_text = clean_text.lstrip() if strip else clean_text
+    return clean_text
+
+
+def clean_postfix(text: str, pattern: str, ignore_case: bool = False, strip: bool = True) -> str:
+    """Removes postfixes from a string according to the specified pattern. Strips trailing
+    whitespace if the strip parameters is set to True.
+
+    Input
+    -----
+    text: The text to clean
+    pattern: The pattern for the postfix. Can be a simple string or a regex pattern
+    ignore_case: If True, ignores case in the pattern
+    strip: If True, removes trailing whitespace from the cleaned string.
+    """
+    flags = re.IGNORECASE if ignore_case else 0
+    clean_text = re.sub(r"{0}$".format(pattern), "", text, flags=flags)
+    clean_text = clean_text.rstrip() if strip else clean_text
+    return clean_text
+
+
 def clean(
     text: str,
     extra_whitespace: bool = False,
@@ -91,7 +125,7 @@ def clean(
     """Cleans text.
 
     Input
-    -------
+    -----
     extra_whitespace: Whether to clean extra whitespace characters in text.
     dashes: Whether to clean dash characters in text.
     bullets: Whether to clean unicode bullets from a section of text.
