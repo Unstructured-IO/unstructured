@@ -81,7 +81,8 @@ def clean_trailing_punctuation(text: str) -> str:
 
 
 def clean_prefix(text: str, pattern: str, ignore_case: bool = False, strip: bool = True) -> str:
-    """Removes prefixes from a string according to the specified pattern.
+    """Removes prefixes from a string according to the specified pattern. Strips leading
+    whitespace if the strip parameter is set to True.
 
     Input
     -----
@@ -97,7 +98,8 @@ def clean_prefix(text: str, pattern: str, ignore_case: bool = False, strip: bool
 
 
 def clean_postfix(text: str, pattern: str, ignore_case: bool = False, strip: bool = True) -> str:
-    """Removes postfixes from a string according to the specified pattern.
+    """Removes postfixes from a string according to the specified pattern. Strips trailing
+    whitespace if the strip parameters is set to True.
 
     Input
     -----
