@@ -391,7 +391,7 @@ Extracts text that occurs after the specified pattern.
 Options:
 
 * If ``index`` is set, extract after the ``(index + 1)``th occurence of the pattern. The default is ``0``.
-* Strips trailing whitespace is ``strip`` is set to ``True``. The default is ``True``.
+* Strips trailing whitespace if ``strip`` is set to ``True``. The default is ``True``.
 
 
 Examples:
