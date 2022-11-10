@@ -1,6 +1,7 @@
-***REMOVED******REMOVED*** 0.2.3-dev0
+***REMOVED******REMOVED*** 0.2.3
 
 * Add cleaning bricks for removing prefixes and postfixes
+* Add cleaning bricks for extracting text before and after a pattern
 
 ***REMOVED******REMOVED*** 0.2.2
 
