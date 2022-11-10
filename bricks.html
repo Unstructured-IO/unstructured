@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bricks &mdash; unstructured 0.2.2 documentation</title>
+  <title>Bricks &mdash; unstructured 0.2.3-dev0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -61,6 +61,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#clean-trailing-punctuation"><code class="docutils literal notranslate"><span class="pre">clean_trailing_punctuation</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#replace-unicode-quotes"><code class="docutils literal notranslate"><span class="pre">replace_unicode_quotes</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#remove-punctuation"><code class="docutils literal notranslate"><span class="pre">remove_punctuation</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#clean-prefix"><code class="docutils literal notranslate"><span class="pre">clean_prefix</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#clean-postfix"><code class="docutils literal notranslate"><span class="pre">clean_postfix</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#staging">Staging</a><ul>
@@ -356,6 +358,42 @@ such as <code class="docutils literal notranslate"><span class="pre">\u2013</spa
 
 <span class="c1"># Returns &quot;&quot;</span>
 <span class="n">replace_unicode_characters</span><span class="p">(</span><span class="s2">&quot;&#39;()[]</span><span class="si">{}</span><span class="s2">;:&#39;</span><span class="se">\&quot;</span><span class="s2">,.?/</span><span class="se">\\</span><span class="s2">-_&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="clean-prefix">
+<h3><code class="docutils literal notranslate"><span class="pre">clean_prefix</span></code><a class="headerlink" href="#clean-prefix" title="Permalink to this heading"></a></h3>
+<p>Removes the prefix from a string if they match a specified pattern.</p>
+<p>Options:</p>
+<ul class="simple">
+<li><p>Ignores case if <code class="docutils literal notranslate"><span class="pre">ignore_case</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>. The default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p>Strips leading whitespace is <code class="docutils literal notranslate"><span class="pre">strip</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>. The default is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+</ul>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.cleaners.core</span> <span class="kn">import</span> <span class="n">clean_prefix</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;SUMMARY: This is the best summary of all time!&quot;</span>
+
+<span class="c1"># Returns &quot;This is the best summary of all time!&quot;</span>
+<span class="n">clean_prefix</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;(SUMMARY|DESCRIPTION):&quot;</span><span class="p">,</span> <span class="n">ignore_case</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="clean-postfix">
+<h3><code class="docutils literal notranslate"><span class="pre">clean_postfix</span></code><a class="headerlink" href="#clean-postfix" title="Permalink to this heading"></a></h3>
+<p>Removes the postfix from a string if they match a specified pattern.</p>
+<p>Options:</p>
+<ul class="simple">
+<li><p>Ignores case if <code class="docutils literal notranslate"><span class="pre">ignore_case</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>. The default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p>Strips trailing whitespace is <code class="docutils literal notranslate"><span class="pre">strip</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>. The default is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+</ul>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.cleaners.core</span> <span class="kn">import</span> <span class="n">clean_postfix</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;The end! END&quot;</span>
+
+<span class="c1"># Returns &quot;The end!&quot;</span>
+<span class="n">clean_postfix</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;(END|STOP)&quot;</span><span class="p">,</span> <span class="n">ignore_case</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
