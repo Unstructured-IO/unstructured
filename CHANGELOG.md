@@ -1,4 +1,4 @@
-## 0.2.3
+## 0.2.3-dev0
 
 * Add cleaning bricks for removing prefixes and postfixes
 
