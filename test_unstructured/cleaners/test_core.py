@@ -84,6 +84,32 @@ def test_clean_trailing_punctuation(text, expected):
 
 
 @pytest.mark.parametrize(
+    "text, pattern, ignore_case, strip, expected",
+    [
+        ("SUMMARY: A great SUMMARY", r"(SUMMARY|DESC):", False, True, "A great SUMMARY"),
+        ("DESC: A great SUMMARY", r"(SUMMARY|DESC):", False, True, "A great SUMMARY"),
+        ("SUMMARY: A great SUMMARY", r"(SUMMARY|DESC):", False, False, " A great SUMMARY"),
+        ("summary: A great SUMMARY", r"(SUMMARY|DESC):", True, True, "A great SUMMARY"),
+    ],
+)
+def test_clean_prefix(text, pattern, ignore_case, strip, expected):
+    assert core.clean_prefix(text, pattern, ignore_case, strip) == expected
+
+
+@pytest.mark.parametrize(
+    "text, pattern, ignore_case, strip, expected",
+    [
+        ("The END! END", r"(END|STOP)", False, True, "The END!"),
+        ("The END! STOP", r"(END|STOP)", False, True, "The END!"),
+        ("The END! END", r"(END|STOP)", False, False, "The END! "),
+        ("The END! end", r"(END|STOP)", True, True, "The END!"),
+    ],
+)
+def test_clean_postfix(text, pattern, ignore_case, strip, expected):
+    assert core.clean_postfix(text, pattern, ignore_case, strip) == expected
+
+
+@pytest.mark.parametrize(
     ***REMOVED*** NOTE(yuming): Tests combined cleaners
     "text, extra_whitespace, dashes, bullets, lowercase, trailing_punctuation, expected",
     [

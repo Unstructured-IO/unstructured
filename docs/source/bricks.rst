@@ -314,6 +314,52 @@ Examples:
   replace_unicode_characters("'()[]{};:'\",.?/\\-_")
 
 
+``clean_prefix``
+----------------
+
+Removes the prefix from a string if they match a specified pattern.
+
+Options:
+
+* Ignores case if ``ignore_case`` is set to ``True``. The default is ``False``.
+* Strips leading whitespace is ``strip`` is set to ``True``. The default is ``True``.
+
+
+Examples:
+
+.. code:: python
+
+  from unstructured.cleaners.core import clean_prefix
+
+  text = "SUMMARY: This is the best summary of all time!"
+
+  ***REMOVED*** Returns "This is the best summary of all time!"
+  clean_prefix(text, r"(SUMMARY|DESCRIPTION):", ignore_case=True)
+
+
+``clean_postfix``
+-----------------
+
+Removes the postfix from a string if they match a specified pattern.
+
+Options:
+
+* Ignores case if ``ignore_case`` is set to ``True``. The default is ``False``.
+* Strips trailing whitespace is ``strip`` is set to ``True``. The default is ``True``.
+
+
+Examples:
+
+.. code:: python
+
+  from unstructured.cleaners.core import clean_postfix
+
+  text = "The end! END"
+
+  ***REMOVED*** Returns "The end!"
+  clean_postfix(text, r"(END|STOP)", ignore_case=True)
+
+
 ***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***
 Staging
 ***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***

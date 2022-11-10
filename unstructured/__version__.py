@@ -1,1 +1,1 @@
-__version__ = "0.2.2"  ***REMOVED*** pragma: no cover
+__version__ = "0.2.3-dev0"  ***REMOVED*** pragma: no cover
