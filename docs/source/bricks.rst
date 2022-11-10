@@ -360,6 +360,52 @@ Examples:
   clean_postfix(text, r"(END|STOP)", ignore_case=True)
 
 
+``extract_text_before``
+-----------------------
+
+Extracts text that occurs before the specified pattern.
+
+Options:
+
+* If ``index`` is set, extract before the ``(index + 1)``th occurence of the pattern. The default is ``0``.
+* Strips leading whitespace is ``strip`` is set to ``True``. The default is ``True``.
+
+
+Examples:
+
+.. code:: python
+
+  from unstructured.cleaners.extract import extract_text_before
+
+  text = "Here I am! STOP Look at me! STOP I'm flying! STOP"
+
+  # Returns "Here I am!"
+  extract_text_before(text, r"STOP")
+
+
+``extract_text_after``
+----------------------
+
+Extracts text that occurs after the specified pattern.
+
+Options:
+
+* If ``index`` is set, extract after the ``(index + 1)``th occurence of the pattern. The default is ``0``.
+* Strips trailing whitespace is ``strip`` is set to ``True``. The default is ``True``.
+
+
+Examples:
+
+.. code:: python
+
+  from unstructured.cleaners.extract import extract_text_after
+
+  text = "SPEAKER 1: Look at me, I'm flying!"
+
+  # Returns "Look at me, I'm flying!"
+  extract_text_after(text, r"SPEAKER \d{1}:")
+
+
 #######
 Staging
 #######
