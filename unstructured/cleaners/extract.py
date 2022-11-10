@@ -31,4 +31,16 @@ def extract_text_before(text: str, pattern: str, index: int = 0, strip: bool = T
     return before_text.rstrip() if strip else before_text
 
 
+def extract_text_after(text: str, pattern: str, index: int = 0, strip: bool = True) -> str:
+    """Extracts texts that occurs before the specified pattern. By default, it will use
+    the first occurence of the pattern (index 0). Use the index kwarg to choose a different
+    index.
 
+    Input
+    -----
+    strip: If True, removes leading whitespace from the extracted string
+    """
+    regex_match = _get_indexed_match(text, pattern, index)
+    _, end = regex_match.span()
+    before_text = text[end:]
+    return before_text.lstrip() if strip else before_text
