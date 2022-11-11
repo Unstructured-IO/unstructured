@@ -1,3 +1,7 @@
+## 0.2.3
+
+* Add partitioning brick for calling the document image analysis API
+
 ## 0.2.2
 
 * Add staging brick for Datasaur
