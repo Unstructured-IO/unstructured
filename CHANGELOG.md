@@ -1,3 +1,7 @@
+## 0.2.5
+
+* Update python requirement to >=3.7
+
 ## 0.2.4
 
 * Add alternative way of importing `Final` to support google colab
