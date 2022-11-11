@@ -1,6 +1,5 @@
 ## 0.2.5
 
-* Added Colab notebook link with examples from README.md
 * Update python requirement to >=3.7
 
 ## 0.2.4
