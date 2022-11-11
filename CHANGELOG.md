@@ -1,3 +1,7 @@
+***REMOVED******REMOVED*** 0.2.4
+
+* Add alternative way of importing `Final` to support google colab
+
 ***REMOVED******REMOVED*** 0.2.3
 
 * Add cleaning bricks for removing prefixes and postfixes

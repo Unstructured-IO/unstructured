@@ -1,4 +1,9 @@
-from typing import Final
+import sys
+
+if sys.version_info < (3, 8):
+    from typing_extensions import Final
+else:
+    from typing import Final
 
 from layoutparser.models.detectron2.layoutmodel import (
     is_detectron2_available,

@@ -1,5 +1,11 @@
 """parition.py implements logic for partining plain text documents into sections."""
-from typing import Final, List, Optional
+from typing import List, Optional
+import sys
+
+if sys.version_info < (3, 8):
+    from typing_extensions import Final
+else:
+    from typing import Final
 
 from unstructured.cleaners.core import remove_punctuation
 from unstructured.nlp.patterns import UNICODE_BULLETS_RE

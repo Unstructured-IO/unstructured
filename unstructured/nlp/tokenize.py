@@ -1,5 +1,11 @@
 from functools import lru_cache
-from typing import Final, List, Tuple
+from typing import List, Tuple
+import sys
+
+if sys.version_info < (3, 8):
+    from typing_extensions import Final
+else:
+    from typing import Final
 
 from nltk import (
     pos_tag as _pos_tag,
