@@ -1,4 +1,11 @@
-from typing import Final, List
+from typing import List
+import sys
+
+if sys.version_info < (3, 8):
+    from typing_extensions import Final
+else:
+    from typing import Final
+
 import re
 
 UNICODE_BULLETS: Final[List[str]] = [

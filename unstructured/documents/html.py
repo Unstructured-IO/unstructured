@@ -1,5 +1,11 @@
 from __future__ import annotations
-from typing import Final, List, Optional, Sequence, Tuple
+from typing import List, Optional, Sequence, Tuple
+import sys
+
+if sys.version_info < (3, 8):
+    from typing_extensions import Final
+else:
+    from typing import Final
 
 from lxml import etree
 

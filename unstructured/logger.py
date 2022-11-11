@@ -1,6 +1,11 @@
 import logging
 import os
-from typing import Final
+import sys
+
+if sys.version_info < (3, 8):
+    from typing_extensions import Final
+else:
+    from typing import Final
 
 DEFAULT_LOG_LEVEL: Final[str] = "WARNING"
 
