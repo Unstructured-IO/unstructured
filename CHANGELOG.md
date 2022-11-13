@@ -1,3 +1,7 @@
+## 0.2.6
+
+* Add partitioning brick for calling the document image analysis API
+
 ## 0.2.5
 
 * Update python requirement to >=3.7
