@@ -1,13 +1,15 @@
-"""parition.py implements logic for partining plain text documents into sections."""
+"""partition.py implements logic for partitioning plain text documents into sections."""
 from typing import List, Optional
 import sys
+import requests
 
 if sys.version_info < (3, 8):
-    from typing_extensions import Final
+    from typing_extensions import Final, List, Optional
 else:
-    from typing import Final
+    from typing import Final, List, Optional
 
 from unstructured.cleaners.core import remove_punctuation
+from unstructured.documents.elements import Element
 from unstructured.nlp.patterns import UNICODE_BULLETS_RE
 from unstructured.nlp.tokenize import pos_tag, sent_tokenize, word_tokenize
 from unstructured.logger import get_logger
@@ -112,3 +114,33 @@ def exceeds_cap_ratio(text: str, threshold: float = 0.3) -> bool:
     capitalized = sum([word.istitle() or word.isupper() for word in tokens])
     ratio = capitalized / len(tokens)
     return ratio > threshold
+
+
+def partition_pdf(filename: Optional[str] = "", file: Optional[bytes] = None,
+                  url: str = f"https://ml.unstructured.io/", template: Optional[str] = "base-model",
+                  token: Optional[str] = None, ) -> List[Element]:
+    """Calls the document parsing API.
+    Parameters
+    ----------
+    filename
+        A string defining the target filename path.
+    file
+        A file-like object as bytes --> open(filename, "rb").
+    template
+        A string defining what model will be used. The default "base-model" makes reference to layout/pdf.
+    url
+        A string endpoint to self-host an inference API, if desired.
+    token
+        A string defining the authentication token for a self-host url.
+    """
+    if not filename and not file:
+        raise FileNotFoundError("No filename nor file were specified")
+
+    url = f"{url}layout/pdf" if template == "base-model" else f"{url}/{template}"
+    response = requests.post(
+        url=url,
+        headers={'Authorization': f"Bearer {token}" if token else ""},
+        files={"file": (filename, file if file else open(filename, "rb"))},
+    )
+    pages = response.json()['pages']
+    return [(element['type'], element['text']) for page in pages for element in page['elements']]
