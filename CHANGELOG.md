@@ -1,3 +1,7 @@
+## 0.2.6-dev0
+
+* Typing corrections
+
 ## 0.2.5
 
 * Update python requirement to >=3.7
