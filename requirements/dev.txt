@@ -132,7 +132,7 @@ pexpect==4.8.0
     # via ipython
 pickleshare==0.7.5
     # via ipython
-pip-tools==6.9.0
+pip-tools==6.10.0
     # via -r dev.in
 prometheus-client==0.14.1
     # via notebook
@@ -187,10 +187,6 @@ terminado==0.15.0
     # via notebook
 tinycss2==1.1.1
     # via nbconvert
-tomli==2.0.1
-    # via
-    #   build
-    #   pep517
 tornado==6.2
     # via
     #   ipykernel
