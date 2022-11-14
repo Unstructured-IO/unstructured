@@ -16,7 +16,7 @@ charset-normalizer==2.1.1
     ***REMOVED***   requests
 ***REMOVED***
     ***REMOVED*** via nltk
-contourpy==1.0.5
+contourpy==1.0.6
     ***REMOVED*** via matplotlib
 cryptography==38.0.3
     ***REMOVED*** via pdfminer-six
