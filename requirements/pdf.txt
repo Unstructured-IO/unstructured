@@ -65,7 +65,7 @@ packaging==21.3
     ***REMOVED***   huggingface-hub
     ***REMOVED***   matplotlib
     ***REMOVED***   pytesseract
-pandas==1.5.0
+pandas==1.5.1
     ***REMOVED*** via layoutparser
 pdf2image==1.16.0
     ***REMOVED*** via layoutparser
