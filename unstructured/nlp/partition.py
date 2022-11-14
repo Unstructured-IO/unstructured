@@ -116,7 +116,7 @@ def exceeds_cap_ratio(text: str, threshold: float = 0.3) -> bool:
 
 
 def partition_pdf(filename: Optional[str] = "", file: Optional[bytes] = None,
-                  url: str = f"https://ml.unstructured.io/", template: Optional[str] = "base-model",
+                  url: str = "https://ml.unstructured.io/", template: Optional[str] = "base-model",
                   token: Optional[str] = None, ) -> List[Element]:
     """Calls the document parsing API.
     Parameters
@@ -126,7 +126,7 @@ def partition_pdf(filename: Optional[str] = "", file: Optional[bytes] = None,
     file
         A file-like object as bytes --> open(filename, "rb").
     template
-        A string defining what model will be used. The default "base-model" makes reference to layout/pdf.
+        A string defining the model to be used. Default "base-model" makes reference to layout/pdf.
     url
         A string endpoint to self-host an inference API, if desired.
     token
