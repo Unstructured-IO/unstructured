@@ -109,7 +109,7 @@ check: check-src check-tests check-version
 check-src:
 	black --line-length 100 ${PACKAGE_NAME} --check
 	flake8 ${PACKAGE_NAME}
-	mypy ${PACKAGE_NAME} --ignore-missing-imports
+	mypy ${PACKAGE_NAME} --ignore-missing-imports --check-untyped-defs
 
 .PHONY: check-tests
 check-tests:
