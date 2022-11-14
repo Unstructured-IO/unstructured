@@ -16,7 +16,7 @@ class Document(ABC):
         return "\n\n".join([str(page) for page in self.pages])
 
     def _read(self) -> List[Page]:  ***REMOVED*** pragma: no cover
-        pass
+        raise NotImplementedError
 
     def get_narrative(self) -> List[NarrativeText]:
         """Pulls out all of the narrative text sections from the document."""
