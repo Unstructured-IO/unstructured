@@ -36,7 +36,7 @@ mccabe==0.7.0
     # via flake8
 multidict==6.0.2
     # via yarl
-mypy==0.982
+mypy==0.990
     # via -r test.in
 mypy-extensions==0.4.3
     # via
@@ -71,11 +71,7 @@ requests==2.28.1
 six==1.16.0
     # via vcrpy
 tomli==2.0.1
-    # via
-    #   black
-    #   coverage
-    #   mypy
-    #   pytest
+    # via pytest
 typing-extensions==4.3.0
     # via
     #   mypy
