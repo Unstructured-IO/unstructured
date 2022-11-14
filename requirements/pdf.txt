@@ -83,7 +83,7 @@ pillow==9.3.0
     #   torchvision
 portalocker==2.6.0
     # via iopath
-pycocotools==2.0.5
+pycocotools==2.0.6
     # via effdet
 pycparser==2.21
     # via cffi
