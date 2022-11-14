@@ -1,5 +1,5 @@
 from __future__ import annotations
-from abc import ABC, abstractmethod
+from abc import ABC
 from typing import List, Optional
 
 from unstructured.documents.elements import Element, NarrativeText
@@ -15,10 +15,6 @@ class Document(ABC):
     def __str__(self) -> str:
         return "\n\n".join([str(page) for page in self.pages])
 
-    @abstractmethod
-    def _read(self) -> List[Page]:  # pragma: no cover
-        pass
-
     def get_narrative(self) -> List[NarrativeText]:
         """Pulls out all of the narrative text sections from the document."""
         narrative: List[NarrativeText] = list()
@@ -32,7 +28,10 @@ class Document(ABC):
     def pages(self) -> List[Page]:
         """Gets all elements from pages in sequential order."""
         if self._pages is None:
-            self._pages = self._read()
+            raise NotImplementedError(
+                "When subclassing, _pages should always be populated before "
+                "using the pages property."
+            )
         return self._pages
 
     @property
