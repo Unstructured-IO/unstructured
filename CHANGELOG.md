@@ -1,3 +1,7 @@
+## 0.2.6-dev0
+
+* Small change to how _read is placed within the inheritance structure since it doesn't really apply to pdf
+
 ## 0.2.5
 
 * Update python requirement to >=3.7
