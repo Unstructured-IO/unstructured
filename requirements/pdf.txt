@@ -83,7 +83,7 @@ pillow==9.3.0
     ***REMOVED***   torchvision
 portalocker==2.6.0
     ***REMOVED*** via iopath
-pycocotools==2.0.5
+pycocotools==2.0.6
     ***REMOVED*** via effdet
 ***REMOVED***
     ***REMOVED*** via cffi
