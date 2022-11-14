@@ -1,9 +1,9 @@
-from typing import Optional, Union
+from typing import Optional, Union, List
 
 import lxml.etree as etree
 
 from unstructured.logger import get_logger
-from unstructured.documents.base import Document
+from unstructured.documents.base import Document, Page
 
 logger = get_logger()
 
@@ -42,6 +42,13 @@ class XMLDocument(Document):
 
     def _read(self):
         raise NotImplementedError
+
+    @property
+    def pages(self) -> List[Page]:
+        """Gets all elements from pages in sequential order."""
+        if self._pages is None:
+            self._pages = self._read()
+        return super().pages
 
     def _read_xml(self, content):
         """Reads in an XML file and converts it to an lxml element tree object."""

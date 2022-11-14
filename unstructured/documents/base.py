@@ -15,9 +15,6 @@ class Document(ABC):
     def __str__(self) -> str:
         return "\n\n".join([str(page) for page in self.pages])
 
-    def _read(self) -> List[Page]:  ***REMOVED*** pragma: no cover
-        raise NotImplementedError
-
     def get_narrative(self) -> List[NarrativeText]:
         """Pulls out all of the narrative text sections from the document."""
         narrative: List[NarrativeText] = list()
@@ -31,7 +28,10 @@ class Document(ABC):
     def pages(self) -> List[Page]:
         """Gets all elements from pages in sequential order."""
         if self._pages is None:
-            self._pages = self._read()
+            raise NotImplementedError(
+                "When subclassing, _pages should always be populated before "
+                "using the pages property."
+            )
         return self._pages
 
     @property
