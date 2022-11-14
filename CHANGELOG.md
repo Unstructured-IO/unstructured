@@ -1,6 +1,6 @@
 ## 0.2.6-dev0
 
-* Typing corrections
+* Small change to how _read is placed within the inheritance structure since it doesn't really apply to pdf
 
 ## 0.2.5
 
