@@ -1,5 +1,5 @@
 from __future__ import annotations
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import List, Optional
 
 from unstructured.documents.elements import Element, NarrativeText
@@ -15,6 +15,7 @@ class Document(ABC):
     def __str__(self) -> str:
         return "\n\n".join([str(page) for page in self.pages])
 
+    @abstractmethod
     def _read(self) -> List[Page]:  # pragma: no cover
         pass
 
