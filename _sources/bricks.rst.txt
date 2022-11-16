@@ -174,6 +174,23 @@ Examples:
 
   # Returns False because the text is more than 1% caps
   exceeds_cap_ratio(example_2, threshold=0.01)
+  
+  
+``partition_pdf``
+---------------------
+
+The ``partition_pdf`` function segments a PDF document by calling the document image analysis API. 
+The intent of the parameters ``url`` and ``token`` is to allow users to self host an inference API,
+if desired.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.nlp.partition import partition_pdf
+
+  # Returns a List[Element] present in the pages of the parsed pdf document
+  elements = partition_pdf("example-docs/layout-parser-paper-fast.pdf")
 
 
 ########
