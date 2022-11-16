@@ -142,19 +142,19 @@ def partition_pdf(
     healthcheck_response = requests.models.Response()
     if not token:
         healthcheck_response = requests.get(url=f"{url}healthcheck")
-
-    if healthcheck_response.status_code == 200:
-        url = f"{url}layout/pdf" if template == "base-model" else f"{url}/{template}"
-        file_ = (filename, file if file else open(filename, "rb"))
-        response = requests.post(
-            url=url,
-            headers={"Authorization": f"Bearer {token}" if token else ""},
-            files={"file": file_},
-        )
-        if response.status_code == 200:
-            pages = response.json()["pages"]
-            return [element for page in pages for element in page["elements"]]
-        else:
-            return [Text(text=f"error: response status code = {response.status_code}")]
-    else:
+        
+    if healthcheck_response.status_code != 200:
         return [Text(text="error: endpoint api healthcheck has failed!")]
+
+    url = f"{url}layout/pdf" if template == "base-model" else f"{url}/{template}"
+    file_ = (filename, file if file else open(filename, "rb"))
+    response = requests.post(
+        url=url,
+        headers={"Authorization": f"Bearer {token}" if token else ""},
+        files={"file": file_},
+    )
+    if response.status_code == 200:
+        pages = response.json()["pages"]
+        return [element for page in pages for element in page["elements"]]
+    else:
+        return [Text(text=f"error: response status code = {response.status_code}")]
