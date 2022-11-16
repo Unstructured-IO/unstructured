@@ -1,6 +1,7 @@
-***REMOVED******REMOVED*** 0.2.6-dev0
+***REMOVED******REMOVED*** 0.2.6-dev1
 
 * Small change to how _read is placed within the inheritance structure since it doesn't really apply to pdf
+* Add partitioning brick for calling the document image analysis API
 
 ***REMOVED******REMOVED*** 0.2.5
 
