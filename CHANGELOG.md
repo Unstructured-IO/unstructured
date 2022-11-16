@@ -1,10 +1,7 @@
 ## 0.2.6-dev1
 
-* Add partitioning brick for calling the document image analysis API
-
-## 0.2.6-dev0
-
 * Small change to how _read is placed within the inheritance structure since it doesn't really apply to pdf
+* Add partitioning brick for calling the document image analysis API
 
 ## 0.2.5
 
