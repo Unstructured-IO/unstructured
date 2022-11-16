@@ -4,7 +4,8 @@ from unstructured.documents.elements import NarrativeText, Title
 
 
 class MockDocument(Document):
-    def _read(self):
+    def __init__(self):
+        super().__init__()
         elements = [
             Title(text="This is a narrative."),
             NarrativeText(text="This is a narrative."),
@@ -12,7 +13,7 @@ class MockDocument(Document):
         ]
         page = Page(number=0)
         page.elements = elements
-        return [page]
+        self._pages = [page]
 
 
 def test_get_narrative():

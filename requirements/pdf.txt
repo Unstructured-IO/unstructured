@@ -16,7 +16,7 @@ charset-normalizer==2.1.1
     #   requests
 click==8.1.3
     # via nltk
-contourpy==1.0.5
+contourpy==1.0.6
     # via matplotlib
 cryptography==38.0.3
     # via pdfminer-six
@@ -65,7 +65,7 @@ packaging==21.3
     #   huggingface-hub
     #   matplotlib
     #   pytesseract
-pandas==1.5.0
+pandas==1.5.1
     # via layoutparser
 pdf2image==1.16.0
     # via layoutparser
@@ -83,7 +83,7 @@ pillow==9.3.0
     #   torchvision
 portalocker==2.6.0
     # via iopath
-pycocotools==2.0.5
+pycocotools==2.0.6
     # via effdet
 pycparser==2.21
     # via cffi
