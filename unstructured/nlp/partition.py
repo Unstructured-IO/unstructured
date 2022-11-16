@@ -142,7 +142,7 @@ def partition_pdf(
     healthcheck_response = requests.models.Response()
     if not token:
         healthcheck_response = requests.get(url=f"{url}healthcheck")
-        
+
     if healthcheck_response.status_code != 200:
         return [Text(text="error: endpoint api healthcheck has failed!")]
 
