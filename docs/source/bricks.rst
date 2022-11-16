@@ -176,11 +176,11 @@ Examples:
   exceeds_cap_ratio(example_2, threshold=0.01)
   
   
-``partition_pfd``
+``partition_pdf``
 ---------------------
 
-The ``partition_pdf`` function calls the document image analysis API. The intent of the 
-parameters ``url`` and ``token`` is to allow users to self host an inference API,
+The ``partition_pdf`` function segments a PDF document by calling the document image analysis API. 
+The intent of the parameters ``url`` and ``token`` is to allow users to self host an inference API,
 if desired.
 
 Examples:
