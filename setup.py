@@ -52,7 +52,6 @@ setup(
         "nltk",
     ],
     extras_require={
-        "pdf": ["layoutparser[layoutmodels,tesseract]"],
         "huggingface": ["transformers"],
     },
 )
