@@ -19,9 +19,6 @@ install-base: install-base-pip-packages install-nltk-models
 .PHONY: install
 install: install-base-pip-packages install-dev install-detectron2 install-nltk-models install-test
 
-.PHONY: install-ci
-install-ci: install-base-pip-packages install-pdf install-test install-nltk-models install-huggingface
-
 .PHONY: install-base-pip-packages
 install-base-pip-packages:
 	python3 -m pip install pip==${PIP_VERSION}
@@ -31,18 +28,6 @@ install-base-pip-packages:
 install-huggingface:
 	python3 -m pip install pip==${PIP_VERSION}
 	pip install -r requirements/huggingface.txt
-
-.PHONY: install-pdf
-install-pdf:
-	python3 -m pip install pip==${PIP_VERSION}
-	pip install -r requirements/pdf.txt
-	@echo "\n\n========================================================================"
-	@echo " WARNING: PDF parsing capabilities in unstructured is still experimental"
-	@echo "========================================================================\n\n"
-
-.PHONY: install-detectron2
-install-detectron2: install-pdf
-	pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@v0.6#egg=detectron2"
 
 .PHONE: install-nltk-models
 install-nltk-models:
@@ -67,15 +52,6 @@ pip-compile:
 	pip-compile -o requirements/base.txt
 	# Extra requirements for huggingface staging functions
 	pip-compile --extra huggingface -o requirements/huggingface.txt
-	# Extra requirements for parsing PDF files
-	pip-compile --extra pdf -o requirements/pdf.txt
-	# NOTE(robinson) - We want the dependencies for detectron2 in the requirements.txt, but not
-	# the detectron2 repo itself. If detectron2 is in the requirements.txt file, an order of
-	# operations issue related to the torch library causes the install to fail
-	sed 's/^detectron2 @/# detectron2 @/g' requirements/pdf.txt
-	pip-compile requirements/dev.in
-	pip-compile requirements/test.in
-	pip-compile requirements/build.in
 	# NOTE(robinson) - doc/requirements.txt is where the GitHub action for building
 	# sphinx docs looks for additional requirements
 	cp requirements/build.txt docs/requirements.txt
