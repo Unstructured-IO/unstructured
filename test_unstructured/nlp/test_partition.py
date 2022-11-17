@@ -133,12 +133,3 @@ def test_sentence_count(monkeypatch):
 def test_item_titles():
     text = "ITEM 1(A). THIS IS A TITLE"
     assert partition.sentence_count(text, 3) < 2
-
-
-def test_partition_pdf(filename="example-docs/layout-parser-paper-fast.pdf"):
-    partition_pdf_response = partition.partition_pdf(filename)
-    assert partition_pdf_response[0]["type"] == "Title"
-    assert (
-        partition_pdf_response[0]["text"]
-        == "LayoutParser : A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
-    )
