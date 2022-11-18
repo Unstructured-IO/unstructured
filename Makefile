@@ -19,6 +19,9 @@ install-base: install-base-pip-packages install-nltk-models
 .PHONY: install
 install: install-base-pip-packages install-dev install-detectron2 install-nltk-models install-test
 
+.PHONY: install-ci
+install-ci: install-base-pip-packages install-test install-nltk-models install-huggingface
+
 .PHONY: install-base-pip-packages
 install-base-pip-packages:
 	python3 -m pip install pip==${PIP_VERSION}
@@ -52,6 +55,12 @@ pip-compile:
 	pip-compile -o requirements/base.txt
 	# Extra requirements for huggingface staging functions
 	pip-compile --extra huggingface -o requirements/huggingface.txt
+	# NOTE(robinson) - We want the dependencies for detectron2 in the requirements.txt, but not
+	# the detectron2 repo itself. If detectron2 is in the requirements.txt file, an order of
+	# operations issue related to the torch library causes the install to fail
+	pip-compile requirements/dev.in
+	pip-compile requirements/test.in
+	pip-compile requirements/build.in
 	# NOTE(robinson) - doc/requirements.txt is where the GitHub action for building
 	# sphinx docs looks for additional requirements
 	cp requirements/build.txt docs/requirements.txt
