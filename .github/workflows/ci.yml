@@ -26,7 +26,10 @@ jobs:
           .venv
           nltk_data
         key: ${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ hashFiles('requirements/*.txt') }}
-
+    - name: Set up Python ${{ env.PYTHON_VERSION }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
     - name: Setup virtual environment (no cache hit)
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
       run: |
