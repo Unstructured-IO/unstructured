@@ -14,6 +14,24 @@ The partitioning bricks in ``unstructured`` differentiate between different sect
 of text in a document. For example, the partitioning bricks can help distinguish between
 titles, narrative text, and tables.
 
+
+``partition_pdf``
+---------------------
+
+The ``partition_pdf`` function segments a PDF document by calling the document image analysis API. 
+The intent of the parameters ``url`` and ``token`` is to allow users to self host an inference API,
+if desired.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.pdf import partition_pdf
+
+  # Returns a List[Element] present in the pages of the parsed pdf document
+  elements = partition_pdf("example-docs/layout-parser-paper-fast.pdf")
+
+
 ``is_bulleted_text``
 ----------------------
 
@@ -24,7 +42,7 @@ Examples:
 
 .. code:: python
 
-  from unstructured.nlp.partition import is_bulleted_text
+  from unstructured.partition.text_type import is_bulleted_text
 
   # Returns True
   is_bulleted_text("● An excellent point!")
@@ -52,7 +70,7 @@ Examples:
 
 .. code:: python
 
-  from unstructured.nlp.partition import is_possible_narrative_text
+  from unstructured.partition.text_type import is_possible_narrative_text
 
   # Returns True because the example passes all the checks
   example_1 = "Make sure you brush your teeth before you go to bed."
@@ -83,7 +101,7 @@ Examples:
 
 .. code:: python
 
-  from unstructured.nlp.partition import is_possible_title
+  from unstructured.partition.text_type import is_possible_title
 
   # Returns True because the text passes all the tests
   example_2 = "ITEM 1A. RISK FACTORS"
@@ -116,7 +134,7 @@ Examples:
 
 .. code:: python
 
-  from unstructured.nlp.partition import contains_verb
+  from unstructured.partition.text_type import contains_verb
 
   # Returns True because the text contains a verb
   example_1 = "I am going to run to the store to pick up some milk."
@@ -139,7 +157,7 @@ Examples:
 
 .. code:: python
 
-  from unstructured.nlp.partition import sentence_count
+  from unstructured.partition.text_type import sentence_count
 
   example = "Look at me! I am a document with two sentences."
 
@@ -162,7 +180,7 @@ Examples:
 
 .. code:: python
 
-  from unstructured.nlp.partition import exceeds_cap_ratio
+  from unstructured.partition.text_type import exceeds_cap_ratio
 
   # Returns True because the text is more than 30% caps
   example_1 = "LOOK AT ME I AM YELLING"
@@ -174,23 +192,7 @@ Examples:
 
   # Returns False because the text is more than 1% caps
   exceeds_cap_ratio(example_2, threshold=0.01)
-  
-  
-``partition_pdf``
----------------------
 
-The ``partition_pdf`` function segments a PDF document by calling the document image analysis API. 
-The intent of the parameters ``url`` and ``token`` is to allow users to self host an inference API,
-if desired.
-
-Examples:
-
-.. code:: python
-
-  from unstructured.nlp.partition import partition_pdf
-
-  # Returns a List[Element] present in the pages of the parsed pdf document
-  elements = partition_pdf("example-docs/layout-parser-paper-fast.pdf")
 
 
 ########
