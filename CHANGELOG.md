@@ -1,6 +1,7 @@
-***REMOVED******REMOVED*** 0.3.0-dev1
+***REMOVED******REMOVED*** 0.3.0-dev2
 
 * Removing the local PDF parsing code and any dependencies and tests.
+* Reorganizes the staging bricks in the unstructured.partition module
 
 ***REMOVED******REMOVED*** 0.2.6
 
