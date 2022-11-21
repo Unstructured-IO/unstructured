@@ -91,7 +91,7 @@ titles and narrative text.
 You can use the following workflow to parse PDF documents.
 
 ```python
-from unstructured.nlp.partition import partition_pdf
+from unstructured.partition.pdf import partition_pdf
 
 elements = partition_pdf("example-docs/layout-parser-paper.pdf")
 print(doc)
