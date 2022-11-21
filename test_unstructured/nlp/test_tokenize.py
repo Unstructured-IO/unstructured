@@ -2,7 +2,7 @@ from typing import List, Tuple
 
 import unstructured.nlp.tokenize as tokenize
 
-from mock_nltk import mock_sent_tokenize, mock_word_tokenize
+from test_unstructured.nlp.mock_nltk import mock_sent_tokenize, mock_word_tokenize
 
 
 def mock_pos_tag(tokens: List[str]) -> List[Tuple[str, str]]:

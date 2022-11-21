@@ -15,7 +15,7 @@ from unstructured.cleaners.core import clean_bullets, replace_unicode_quotes
 from unstructured.documents.base import Page
 from unstructured.documents.elements import ListItem, Element, NarrativeText, Title
 from unstructured.documents.xml import XMLDocument
-from unstructured.nlp.partition import (
+from unstructured.partition.text_type import (
     is_bulleted_text,
     is_possible_narrative_text,
     is_possible_title,

@@ -1,8 +1,8 @@
 import pytest
 
-import unstructured.nlp.partition as partition
+import unstructured.partition.text_type as text_type
 
-from mock_nltk import mock_pos_tag, mock_sent_tokenize, mock_word_tokenize
+from test_unstructured.nlp.mock_nltk import mock_pos_tag, mock_sent_tokenize, mock_word_tokenize
 
 
 @pytest.mark.parametrize(
@@ -26,7 +26,7 @@ from mock_nltk import mock_pos_tag, mock_sent_tokenize, mock_word_tokenize
     ],
 )
 def test_headings_are_not_narrative_text(text, expected):
-    assert partition.is_possible_narrative_text(text) == expected
+    assert text_type.is_possible_narrative_text(text) == expected
 
 
 @pytest.mark.parametrize(
@@ -40,10 +40,10 @@ def test_headings_are_not_narrative_text(text, expected):
     ],
 )
 def test_is_possible_narrative_text(text, expected, monkeypatch):
-    monkeypatch.setattr(partition, "word_tokenize", mock_word_tokenize)
-    monkeypatch.setattr(partition, "pos_tag", mock_pos_tag)
-    monkeypatch.setattr(partition, "sent_tokenize", mock_sent_tokenize)
-    has_verb = partition.is_possible_narrative_text(text, cap_threshold=0.3)
+    monkeypatch.setattr(text_type, "word_tokenize", mock_word_tokenize)
+    monkeypatch.setattr(text_type, "pos_tag", mock_pos_tag)
+    monkeypatch.setattr(text_type, "sent_tokenize", mock_sent_tokenize)
+    has_verb = text_type.is_possible_narrative_text(text, cap_threshold=0.3)
     assert has_verb is expected
 
 
@@ -61,9 +61,9 @@ def test_is_possible_narrative_text(text, expected, monkeypatch):
     ],
 )
 def test_is_possible_title(text, expected, monkeypatch):
-    monkeypatch.setattr(partition, "sent_tokenize", mock_sent_tokenize)
-    monkeypatch.setattr(partition, "word_tokenize", mock_word_tokenize)
-    has_verb = partition.is_possible_title(text)
+    monkeypatch.setattr(text_type, "sent_tokenize", mock_sent_tokenize)
+    monkeypatch.setattr(text_type, "word_tokenize", mock_word_tokenize)
+    has_verb = text_type.is_possible_title(text)
     assert has_verb is expected
 
 
@@ -93,7 +93,7 @@ def test_is_possible_title(text, expected, monkeypatch):
     ],
 )
 def test_is_bulletized_text(text, expected):
-    assert partition.is_bulleted_text(text) is expected
+    assert text_type.is_bulleted_text(text) is expected
 
 
 @pytest.mark.parametrize(
@@ -104,9 +104,9 @@ def test_is_bulletized_text(text, expected):
     ],
 )
 def test_contains_verb(text, expected, monkeypatch):
-    monkeypatch.setattr(partition, "word_tokenize", mock_word_tokenize)
-    monkeypatch.setattr(partition, "pos_tag", mock_pos_tag)
-    has_verb = partition.contains_verb(text)
+    monkeypatch.setattr(text_type, "word_tokenize", mock_word_tokenize)
+    monkeypatch.setattr(text_type, "pos_tag", mock_pos_tag)
+    has_verb = text_type.contains_verb(text)
     assert has_verb is expected
 
 
@@ -119,26 +119,17 @@ def test_contains_verb(text, expected, monkeypatch):
     ],
 )
 def test_contains_exceeds_cap_ratio(text, expected, monkeypatch):
-    monkeypatch.setattr(partition, "word_tokenize", mock_word_tokenize)
-    monkeypatch.setattr(partition, "sent_tokenize", mock_sent_tokenize)
-    assert partition.exceeds_cap_ratio(text, threshold=0.3) is expected
+    monkeypatch.setattr(text_type, "word_tokenize", mock_word_tokenize)
+    monkeypatch.setattr(text_type, "sent_tokenize", mock_sent_tokenize)
+    assert text_type.exceeds_cap_ratio(text, threshold=0.3) is expected
 
 
 def test_sentence_count(monkeypatch):
-    monkeypatch.setattr(partition, "sent_tokenize", mock_sent_tokenize)
+    monkeypatch.setattr(text_type, "sent_tokenize", mock_sent_tokenize)
     text = "Hi my name is Matt. I work with Crag."
-    assert partition.sentence_count(text) == 2
+    assert text_type.sentence_count(text) == 2
 
 
 def test_item_titles():
     text = "ITEM 1(A). THIS IS A TITLE"
-    assert partition.sentence_count(text, 3) < 2
-
-
-def test_partition_pdf(filename="example-docs/layout-parser-paper-fast.pdf"):
-    partition_pdf_response = partition.partition_pdf(filename)
-    assert partition_pdf_response[0]["type"] == "Title"
-    assert (
-        partition_pdf_response[0]["text"]
-        == "LayoutParser : A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
-    )
+    assert text_type.sentence_count(text, 3) < 2
