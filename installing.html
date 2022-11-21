@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Installation &mdash; unstructured 0.2.6-dev1 documentation</title>
+  <title>Installation &mdash; unstructured 0.3.0-dev1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -45,7 +45,6 @@
 <li class="toctree-l2"><a class="reference internal" href="#logging">Logging</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#nltk-dependencies">NLTK Dependencies</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#xml-html-depenedencies">XML/HTML Depenedencies</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#pdf-dependencies">PDF Dependencies</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#huggingface-dependencies">Huggingface Dependencies</a></li>
 </ul>
 </li>
@@ -69,8 +68,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Installation</li>
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Installation</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/installing.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -84,8 +83,7 @@
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h1>
 <p>You can install the library by cloning the repo and running <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code> from the
 root directory. Developers can run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install-local</span></code> to install the dev and test
-requirements alongside the base requirements. Specific parsing capabilities may require
-extra dependencies, as documented below. If you want a minimal installation without any
+requirements alongside the base requirements. If you want a minimal installation without any
 parser specific dependencies, run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install-base</span></code>.</p>
 <section id="logging">
 <h2>Logging<a class="headerlink" href="#logging" title="Permalink to this heading"></a></h2>
@@ -106,18 +104,6 @@ If they are not already installed, you can install them with <code class="docuti
 that with:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>brew install libxml2
 <span class="gp">$ </span>brew install libxslt
-</pre></div>
-</div>
-</section>
-<section id="pdf-dependencies">
-<h3>PDF Dependencies<a class="headerlink" href="#pdf-dependencies" title="Permalink to this heading"></a></h3>
-<p>Currently, PDF parsing capabilities rely on the
-<a class="reference external" href="https://github.com/facebookresearch/detectron2">Detectron2</a> object detection model. The
-<code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install-local</span></code> command installs all of the dependencies for Detectron2. If you
-need to parse PDFs and Detectron2 is not already installed, you can install it with
-<code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install-detectron2</span></code>.</p>
-<p>Also ensure that you have <code class="docutils literal notranslate"><span class="pre">poppler</span></code> installed on your system. On a Mac, you can run:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>brew install poppler
 </pre></div>
 </div>
 </section>
