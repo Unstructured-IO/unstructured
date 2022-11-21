@@ -88,17 +88,16 @@ titles and narrative text.
 
 ***REMOVED******REMOVED******REMOVED*** PDF Parsing
 
-You can use the following workflow to parse PDF documents. Note, PDF parsing is currently
-expiremental and will be refined in the coming months.
+You can use the following workflow to parse PDF documents.
 
 ```python
-from unstructured.documents.pdf import PDFDocument
+from unstructured.nlp.partition import partition_pdf
 
-doc = PDFDocument.from_file("example-docs/layout-parser-paper.pdf")
+elements = partition_pdf("example-docs/layout-parser-paper.pdf")
 print(doc)
 ```
 
-At this point, `print(doc)` will print out a string representation of the PDF file. The
+At this point, `print(elements)` will print out a string representation of the PDF file. The
 first page of output looks like the following:
 
 ```

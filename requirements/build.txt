@@ -20,6 +20,8 @@ docutils==0.17.1
     ***REMOVED*** via requests
 imagesize==1.4.1
     ***REMOVED*** via sphinx
+importlib-metadata==5.0.0
+    ***REMOVED*** via sphinx
 jinja2==3.1.2
     ***REMOVED*** via sphinx
 markupsafe==2.1.1
@@ -38,10 +40,10 @@ snowballstemmer==2.2.0
     ***REMOVED*** via sphinx
 sphinx==5.3.0
     ***REMOVED*** via
-    ***REMOVED***   -r build.in
+    ***REMOVED***   -r requirements/build.in
     ***REMOVED***   sphinx-rtd-theme
 sphinx-rtd-theme==1.1.1
-    ***REMOVED*** via -r build.in
+    ***REMOVED*** via -r requirements/build.in
 sphinxcontrib-applehelp==1.0.2
     ***REMOVED*** via sphinx
 sphinxcontrib-devhelp==1.0.2
@@ -56,3 +58,5 @@ sphinxcontrib-serializinghtml==1.1.5
     ***REMOVED*** via sphinx
 urllib3==1.26.12
     ***REMOVED*** via requests
+zipp==3.10.0
+    ***REMOVED*** via importlib-metadata

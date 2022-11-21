@@ -1,4 +1,8 @@
-***REMOVED******REMOVED*** 0.2.6-dev1
+***REMOVED******REMOVED*** 0.3.0-dev1
+
+* Removing the local PDF parsing code and any dependencies and tests.
+
+***REMOVED******REMOVED*** 0.2.6
 
 * Small change to how _read is placed within the inheritance structure since it doesn't really apply to pdf
 * Add partitioning brick for calling the document image analysis API
