@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bricks &mdash; unstructured 0.3.0-dev1 documentation</title>
+  <title>Bricks &mdash; unstructured 0.3.0-dev2 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -45,13 +45,13 @@
 <li class="toctree-l1"><a class="reference internal" href="elements.html">Elements</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Bricks</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#partitioning">Partitioning</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#partition-pdf"><code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#is-bulleted-text"><code class="docutils literal notranslate"><span class="pre">is_bulleted_text</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#is-possible-narrative-text"><code class="docutils literal notranslate"><span class="pre">is_possible_narrative_text</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#is-possible-title"><code class="docutils literal notranslate"><span class="pre">is_possible_title</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#contains-verb"><code class="docutils literal notranslate"><span class="pre">contains_verb</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sentence-count"><code class="docutils literal notranslate"><span class="pre">sentence_count</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#exceeds-cap-ratio"><code class="docutils literal notranslate"><span class="pre">exceeds_cap_ratio</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#partition-pdf"><code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#cleaning">Cleaning</a><ul>
@@ -119,12 +119,25 @@ bricks currently available in the library.</p>
 <p>The partitioning bricks in <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> differentiate between different sections
 of text in a document. For example, the partitioning bricks can help distinguish between
 titles, narrative text, and tables.</p>
+<section id="partition-pdf">
+<h3><code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code><a class="headerlink" href="#partition-pdf" title="Permalink to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code> function segments a PDF document by calling the document image analysis API.
+The intent of the parameters <code class="docutils literal notranslate"><span class="pre">url</span></code> and <code class="docutils literal notranslate"><span class="pre">token</span></code> is to allow users to self host an inference API,
+if desired.</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.pdf</span> <span class="kn">import</span> <span class="n">partition_pdf</span>
+
+<span class="c1"># Returns a List[Element] present in the pages of the parsed pdf document</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_pdf</span><span class="p">(</span><span class="s2">&quot;example-docs/layout-parser-paper-fast.pdf&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
 <section id="is-bulleted-text">
 <h3><code class="docutils literal notranslate"><span class="pre">is_bulleted_text</span></code><a class="headerlink" href="#is-bulleted-text" title="Permalink to this heading"></a></h3>
 <p>Uses regular expression patterns to check if a snippet of text is a bullet point. Only
 triggers if the bullet point appears at the start of the snippet.</p>
 <p>Examples:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.nlp.partition</span> <span class="kn">import</span> <span class="n">is_bulleted_text</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.text_type</span> <span class="kn">import</span> <span class="n">is_bulleted_text</span>
 
 <span class="c1"># Returns True</span>
 <span class="n">is_bulleted_text</span><span class="p">(</span><span class="s2">&quot;● An excellent point!&quot;</span><span class="p">)</span>
@@ -148,7 +161,7 @@ is configurable with the <code class="docutils literal notranslate"><span class=
 that is all caps.</p></li>
 </ul>
 <p>Examples:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.nlp.partition</span> <span class="kn">import</span> <span class="n">is_possible_narrative_text</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.text_type</span> <span class="kn">import</span> <span class="n">is_possible_narrative_text</span>
 
 <span class="c1"># Returns True because the example passes all the checks</span>
 <span class="n">example_1</span> <span class="o">=</span> <span class="s2">&quot;Make sure you brush your teeth before you go to bed.&quot;</span>
@@ -175,7 +188,7 @@ for consideration as a title. The function performs the following checks:</p>
 Sentence length threshold is controlled by the <code class="docutils literal notranslate"><span class="pre">sentence_min_length</span></code> kwarg and defaults to 5.</p></li>
 </ul>
 <p>Examples:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.nlp.partition</span> <span class="kn">import</span> <span class="n">is_possible_title</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.text_type</span> <span class="kn">import</span> <span class="n">is_possible_title</span>
 
 <span class="c1"># Returns True because the text passes all the tests</span>
 <span class="n">example_2</span> <span class="o">=</span> <span class="s2">&quot;ITEM 1A. RISK FACTORS&quot;</span>
@@ -205,7 +218,7 @@ tagger. The following part of speech tags are identified as verbs:</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">VBZ</span></code></p></li>
 </ul>
 <p>Examples:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.nlp.partition</span> <span class="kn">import</span> <span class="n">contains_verb</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.text_type</span> <span class="kn">import</span> <span class="n">contains_verb</span>
 
 <span class="c1"># Returns True because the text contains a verb</span>
 <span class="n">example_1</span> <span class="o">=</span> <span class="s2">&quot;I am going to run to the store to pick up some milk.&quot;</span>
@@ -224,7 +237,7 @@ sentences that exceed a specified word count. Punctuation counts as a word token
 in the sentence. The function uses the NLTK sentence and word tokeniers to identify
 distinct sentences and words.</p>
 <p>Examples:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.nlp.partition</span> <span class="kn">import</span> <span class="n">sentence_count</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.text_type</span> <span class="kn">import</span> <span class="n">sentence_count</span>
 
 <span class="n">example</span> <span class="o">=</span> <span class="s2">&quot;Look at me! I am a document with two sentences.&quot;</span>
 
@@ -243,7 +256,7 @@ distinct sentences and words.</p>
 as well. You can set the caps threshold using the <code class="docutils literal notranslate"><span class="pre">threshold</span></code> kwarg. The threshold
 defaults to <code class="docutils literal notranslate"><span class="pre">0.3</span></code>. Only runs on sections of text that are a single sentence.</p>
 <p>Examples:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.nlp.partition</span> <span class="kn">import</span> <span class="n">exceeds_cap_ratio</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.text_type</span> <span class="kn">import</span> <span class="n">exceeds_cap_ratio</span>
 
 <span class="c1"># Returns True because the text is more than 30% caps</span>
 <span class="n">example_1</span> <span class="o">=</span> <span class="s2">&quot;LOOK AT ME I AM YELLING&quot;</span>
@@ -255,19 +268,6 @@ defaults to <code class="docutils literal notranslate"><span class="pre">0.3</sp
 
 <span class="c1"># Returns False because the text is more than 1% caps</span>
 <span class="n">exceeds_cap_ratio</span><span class="p">(</span><span class="n">example_2</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="partition-pdf">
-<h3><code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code><a class="headerlink" href="#partition-pdf" title="Permalink to this heading"></a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code> function segments a PDF document by calling the document image analysis API.
-The intent of the parameters <code class="docutils literal notranslate"><span class="pre">url</span></code> and <code class="docutils literal notranslate"><span class="pre">token</span></code> is to allow users to self host an inference API,
-if desired.</p>
-<p>Examples:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.nlp.partition</span> <span class="kn">import</span> <span class="n">partition_pdf</span>
-
-<span class="c1"># Returns a List[Element] present in the pages of the parsed pdf document</span>
-<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_pdf</span><span class="p">(</span><span class="s2">&quot;example-docs/layout-parser-paper-fast.pdf&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
