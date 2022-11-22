@@ -1,11 +1,12 @@
-## 0.3.0-dev2
+## 0.3.0-dev3
 
 * Removing the local PDF parsing code and any dependencies and tests.
 * Reorganizes the staging bricks in the unstructured.partition module
+* Allow entities to be passed into the Datasaur staging brick
 
 ## 0.2.6
 
-* Small change to how _read is placed within the inheritance structure since it doesn't really apply to pdf
+* Small change to how \_read is placed within the inheritance structure since it doesn't really apply to pdf
 * Add partitioning brick for calling the document image analysis API
 
 ## 0.2.5
