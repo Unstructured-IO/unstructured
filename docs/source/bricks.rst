@@ -868,8 +868,9 @@ Formats a list of ``Text`` elements as input to token based tasks in Datasaur.
 Example: 
 
 .. code:: python
-
+  from unstructured.documents.elements import Text
   from unstructured.staging.datasaur import stage_for_datasaur
+
   elements  = [Text("Text1"),Text("Text2")]
   datasaur_data = stage_for_datasaur(elements)
 
@@ -886,9 +887,9 @@ list for any elements that do not have any entities.
 Example:
 
 .. code:: python
-
-
+  from unstructured.documents.elements import Text
   from unstructured.staging.datasaur import stage_for_datasaur
+
   elements  = [Text("Hi my name is Matt.")]
   entities = [[{"text": "Matt", "type": "PER", "start_idx": 11, "end_idx": 15}]]
   datasaur_data = stage_for_datasaur(elements, entities)
