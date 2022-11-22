@@ -876,3 +876,19 @@ Example:
 The output is a list of dictionaries, each one with two keys:
 "text" with the content of the element and 
 "entities" with an empty list.
+
+You can also specify specify entities in the ``stage_for_datasaur`` brick. Entities
+you specify in the input will be included in the entities key in the output. The list
+of entities is a list of dictionaries and must have all of the keys in the example below.
+The list of entities must be the same length as the list of elements. Use an empty
+list for any elements that do not have any entities.
+
+Example:
+
+.. code:: python
+
+
+  from unstructured.staging.datasaur import stage_for_datasaur
+  elements  = [Text("Hi my name is Matt.")]
+  entities = [[{"text": "Matt", "type": "PER", "start_idx": 11, "end_idx": 15}]]
+  datasaur_data = stage_for_datasaur(elements, entities)
