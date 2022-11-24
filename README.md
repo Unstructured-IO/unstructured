@@ -5,6 +5,16 @@
   >
 </h3>
 
+<div align="center">
+
+  <a href="">![https://pypi.python.org/pypi/unstructured/](https://img.shields.io/pypi/l/unstructured.svg)</a>
+  <a href="">![https://pypi.python.org/pypi/unstructured/](https://img.shields.io/pypi/pyversions/unstructured.svg)</a>
+  <a href="">![https://GitHub.com/unstructured-io/unstructured.js/graphs/contributors](https://img.shields.io/github/contributors/unstructured-io/unstructured)</a>
+  <a href="">![https://GitHub.com/unstructured-io/unstructured.js/releases](https://img.shields.io/github/release/unstructured-io/unstructured)</a>
+  <a href="">![https://github.com/Naereen/badges/](https://badgen.net/badge/Open%20Source%20%3F/Yes%21/blue?icon=github)</a>
+  
+</div>
+
 <h3 align="center">
   <p>Open-Source Pre-Processing Tools for Unstructured Data</p>
 </h3>
@@ -22,12 +32,12 @@ about. Bricks in the library fall into three categories:
   fragments.
 - :performing_arts: ***Staging bricks*** that format data for downstream tasks, such as ML inference
   and data labeling.
-
-## Installation
+<br></br>
+## :eight_pointed_black_star: Installation
 
 To install the library, run `pip install unstructured`.
 
-## Developer Quick Start
+## :coffee: Getting Started 
 
 * Using `pyenv` to manage virtualenv's is recommended
 	* Mac install instructions. See [here](https://github.com/Unstructured-IO/community#mac--homebrew) for more detailed instructions.
@@ -42,7 +52,7 @@ To install the library, run `pip install unstructured`.
 
 * Run `make install-project-local`
 
-## Quick Tour
+## :clap: Quick Tour
 
 You can run this [Colab notebook](https://colab.research.google.com/drive/1RnXEiSTUaru8vZSGbh1U2T2P9aUa5tQD#scrollTo=E_WN7p3JGcLJ) to run the examples below.
 
@@ -135,12 +145,12 @@ has an `element` attribute consisting of `Element` objects. Sub-types of the `El
 represent different components of a document, such as `NarrativeText` and `Title`. You can use
 these normalized elements to zero in on the components of a document you most care about.
 
-## Security Policy
+## :guardsman: Security Policy
 
 See our [security policy](https://github.com/Unstructured-IO/unstructured/security/policy) for
 information on how to report security vulnerabilities.
 
-## Learn more
+## :books: Learn more
 
 | Section | Description |
 |-|-|
