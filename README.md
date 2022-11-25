@@ -10,6 +10,7 @@
   <a href="">![https://pypi.python.org/pypi/unstructured/](https://img.shields.io/pypi/l/unstructured.svg)</a>
   <a href="">![https://pypi.python.org/pypi/unstructured/](https://img.shields.io/pypi/pyversions/unstructured.svg)</a>
   <a href="">![https://GitHub.com/unstructured-io/unstructured.js/graphs/contributors](https://img.shields.io/github/contributors/unstructured-io/unstructured)</a>
+  <a href="">![code_of_conduct.md](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg) </a>
   <a href="">![https://GitHub.com/unstructured-io/unstructured.js/releases](https://img.shields.io/github/release/unstructured-io/unstructured)</a>
   <a href="">![https://github.com/Naereen/badges/](https://badgen.net/badge/Open%20Source%20%3F/Yes%21/blue?icon=github)</a>
   
@@ -21,7 +22,7 @@
 
 
 The `unstructured` library provides open-source components for pre-processing text documents
-such as PDFs, HTML and Word Documents. These components are packaged as "bricks", which provide
+such as **PDFs**, **HTML** and **Word** Documents. These components are packaged as *bricks* 🧱, which provide
 users the building blocks they need to build pipelines targeted at the documents they care
 about. Bricks in the library fall into three categories:
 
@@ -39,7 +40,7 @@ To install the library, run `pip install unstructured`.
 
 ## :coffee: Getting Started 
 
-* Using `pyenv` to manage virtualenv's is recommended
+* Using `pyenv` to manage virtualenv's is recommended but not necessary
 	* Mac install instructions. See [here](https://github.com/Unstructured-IO/community#mac--homebrew) for more detailed instructions.
 		* `brew install pyenv-virtualenv`
 	  * `pyenv install 3.8.15`
@@ -56,8 +57,10 @@ To install the library, run `pip install unstructured`.
 
 You can run this [Colab notebook](https://colab.research.google.com/drive/1RnXEiSTUaru8vZSGbh1U2T2P9aUa5tQD#scrollTo=E_WN7p3JGcLJ) to run the examples below.
 
-The following examples show how to get started with the `unstructured` library. See
-our [documentation page](https://unstructured-io.github.io/unstructured) for a full description
+The following examples show how to get started with the `unstructured` library.
+You can parse **HTML** and **PDF** documents with one line of code! 
+<br></br>
+See our [documentation page](https://unstructured-io.github.io/unstructured) for a full description
 of the features in the library.
 
 ### HTML Parsing
