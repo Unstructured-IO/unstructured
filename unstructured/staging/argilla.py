@@ -31,18 +31,10 @@ def stage_for_argilla(
             "Must be one of: {', '.join(ARGILLA_TASKS.keys())}."
         )
 
-    if argilla_task == "token_classification" and (
-        "tokens" not in record_kwargs
-        or not isinstance(record_kwargs["tokens"], list)
-        or len(record_kwargs["tokens"]) <= 0
-    ):
-        raise ValueError(
-            'keyword argument "tokens" is required for "token_classification"'
-            " task type and it should be a non-empty list."
-        )
+    if argilla_task in {"token_classification", "text2text"}:
+        raise NotImplementedError()  # TODO: Implement token_classification and text2text tasks
 
     for record_kwarg_key, record_kwarg_value in record_kwargs.items():
-
         if type(record_kwarg_value) is not list or len(record_kwarg_value) != len(elements):
             raise ValueError(
                 f'Invalid value specified for "{record_kwarg_key}" keyword argument.'
@@ -54,8 +46,6 @@ def stage_for_argilla(
     for idx, element in enumerate(elements):
         element_kwargs = {kwarg: record_kwargs[kwarg][idx] for kwarg in record_kwargs}
         arguments = dict(**element_kwargs, text=element.text)
-        print("arguments")
-        print(arguments)
         if isinstance(element.id, str):
             arguments["id"] = element.id
 

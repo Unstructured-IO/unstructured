@@ -34,11 +34,10 @@ def metadata_with_invalid_length():
             {"metadata": [{"type": "text1"}, {"type": "text2"}]},
         ),
         (
-            "token_classification",
-            rg.DatasetForTokenClassification,
-            {"tokens": [["example"], ["another", "example"]]},
+            "text_classification",
+            rg.DatasetForTextClassification,
+            {},
         ),
-        ("text2text", rg.DatasetForText2Text, {}),
     ],
 )
 def test_stage_for_argilla(elements, task_name, dataset_type, extra_kwargs):
@@ -55,11 +54,12 @@ def test_stage_for_argilla(elements, task_name, dataset_type, extra_kwargs):
     "task_name, error, error_message, extra_kwargs",
     [
         ("unkonwn_task", ValueError, "invalid value", {}),
+        ("token_classification", NotImplementedError, None, {}),
+        ("text2text", NotImplementedError, None, {}),
         ("text_classification", ValueError, "invalid value", {"metadata": "invalid metadata"}),
-        ("token_classification", ValueError, "invalid value", {"tokens": "invalid tokens"}),
     ],
 )
 def test_invalid_stage_for_argilla(elements, task_name, error, error_message, extra_kwargs):
     with pytest.raises(error) as e:
         argilla.stage_for_argilla(elements, task_name, **extra_kwargs)
-        assert error_message in e.args[0].lower()
+        assert error_message in e.args[0].lower() if error_message else True
