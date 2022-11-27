@@ -10,21 +10,6 @@ def elements():
     return [Title(text="example"), NarrativeText(text="another example")]
 
 
-@pytest.fixture
-def valid_metadata():
-    return [{"score": 0.1}, {"category": "paragraph"}]
-
-
-@pytest.fixture
-def metadata_with_id():
-    return [{"score": 0.1}, {"id": 1, "category": "paragraph"}]
-
-
-@pytest.fixture
-def metadata_with_invalid_length():
-    return [{"score": 0.1}, {"category": "paragraph"}, {"type": "text"}]
-
-
 @pytest.mark.parametrize(
     "task_name, dataset_type, extra_kwargs",
     [
@@ -53,7 +38,7 @@ def test_stage_for_argilla(elements, task_name, dataset_type, extra_kwargs):
 @pytest.mark.parametrize(
     "task_name, error, error_message, extra_kwargs",
     [
-        ("unkonwn_task", ValueError, "invalid value", {}),
+        ("unknown_task", ValueError, "invalid value", {}),
         ("token_classification", NotImplementedError, None, {}),
         ("text2text", NotImplementedError, None, {}),
         ("text_classification", ValueError, "invalid value", {"metadata": "invalid metadata"}),
