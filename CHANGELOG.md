@@ -1,3 +1,7 @@
+## 0.3.0-dev4
+
+* Implement staging brick for Argilla.
+
 ## 0.3.0-dev3
 
 * Removing the local PDF parsing code and any dependencies and tests.
