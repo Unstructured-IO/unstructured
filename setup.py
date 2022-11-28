@@ -50,6 +50,7 @@ setup(
     install_requires=[
         "lxml",
         "nltk",
+        "argilla",
     ],
     extras_require={
         "huggingface": ["transformers"],
