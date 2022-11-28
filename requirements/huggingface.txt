@@ -4,34 +4,64 @@
 ***REMOVED***
 ***REMOVED***    pip-compile --extra=huggingface --output-file=requirements/huggingface.txt
 ***REMOVED***
+argilla==1.1.0
+    ***REMOVED*** via unstructured (setup.py)
+***REMOVED***
+    ***REMOVED*** via argilla
 certifi==2022.9.24
-    ***REMOVED*** via requests
+    ***REMOVED*** via
+    ***REMOVED***   httpx
+    ***REMOVED***   requests
 charset-normalizer==2.1.1
     ***REMOVED*** via requests
 ***REMOVED***
     ***REMOVED*** via nltk
+***REMOVED***
+    ***REMOVED*** via argilla
 filelock==3.8.0
     ***REMOVED*** via
     ***REMOVED***   huggingface-hub
     ***REMOVED***   transformers
+h11==0.9.0
+    ***REMOVED*** via httpcore
+httpcore==0.11.1
+    ***REMOVED*** via httpx
+httpx==0.15.5
+    ***REMOVED*** via argilla
 huggingface-hub==0.10.1
     ***REMOVED*** via transformers
 ***REMOVED***
-    ***REMOVED*** via requests
+    ***REMOVED*** via
+    ***REMOVED***   requests
+    ***REMOVED***   rfc3986
 ***REMOVED***
     ***REMOVED*** via nltk
 lxml==4.9.1
     ***REMOVED*** via unstructured (setup.py)
+***REMOVED***
+    ***REMOVED*** via argilla
 nltk==3.7
     ***REMOVED*** via unstructured (setup.py)
 numpy==1.23.4
-    ***REMOVED*** via transformers
+    ***REMOVED*** via
+    ***REMOVED***   argilla
+    ***REMOVED***   pandas
+    ***REMOVED***   transformers
 packaging==21.3
     ***REMOVED*** via
+    ***REMOVED***   argilla
     ***REMOVED***   huggingface-hub
     ***REMOVED***   transformers
+pandas==1.5.2
+    ***REMOVED*** via argilla
+pydantic==1.10.2
+    ***REMOVED*** via argilla
 pyparsing==3.0.9
     ***REMOVED*** via packaging
+***REMOVED***
+    ***REMOVED*** via pandas
+pytz==2022.6
+    ***REMOVED*** via pandas
 pyyaml==6.0
     ***REMOVED*** via
     ***REMOVED***   huggingface-hub
@@ -44,16 +74,31 @@ requests==2.28.1
     ***REMOVED*** via
     ***REMOVED***   huggingface-hub
     ***REMOVED***   transformers
+***REMOVED***
+    ***REMOVED*** via httpx
+***REMOVED***
+    ***REMOVED*** via python-dateutil
+***REMOVED***
+    ***REMOVED*** via
+    ***REMOVED***   httpcore
+    ***REMOVED***   httpx
 tokenizers==0.13.2
     ***REMOVED*** via transformers
 tqdm==4.64.1
     ***REMOVED*** via
+    ***REMOVED***   argilla
     ***REMOVED***   huggingface-hub
     ***REMOVED***   nltk
     ***REMOVED***   transformers
 transformers==4.23.1
     ***REMOVED*** via unstructured (setup.py)
 typing-extensions==4.4.0
-    ***REMOVED*** via huggingface-hub
+    ***REMOVED*** via
+    ***REMOVED***   huggingface-hub
+    ***REMOVED***   pydantic
 urllib3==1.26.12
     ***REMOVED*** via requests
+wrapt==1.13.3
+    ***REMOVED*** via
+    ***REMOVED***   argilla
+    ***REMOVED***   deprecated

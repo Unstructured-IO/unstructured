@@ -4,15 +4,65 @@
 ***REMOVED***
 ***REMOVED***    pip-compile --output-file=requirements/base.txt
 ***REMOVED***
+argilla==1.1.0
+    ***REMOVED*** via unstructured (setup.py)
+***REMOVED***
+    ***REMOVED*** via argilla
+certifi==2022.9.24
+    ***REMOVED*** via httpx
 ***REMOVED***
     ***REMOVED*** via nltk
+***REMOVED***
+    ***REMOVED*** via argilla
+h11==0.9.0
+    ***REMOVED*** via httpcore
+httpcore==0.11.1
+    ***REMOVED*** via httpx
+httpx==0.15.5
+    ***REMOVED*** via argilla
+***REMOVED***
+    ***REMOVED*** via rfc3986
 ***REMOVED***
     ***REMOVED*** via nltk
 lxml==4.9.1
     ***REMOVED*** via unstructured (setup.py)
+***REMOVED***
+    ***REMOVED*** via argilla
 nltk==3.7
     ***REMOVED*** via unstructured (setup.py)
+***REMOVED***
+    ***REMOVED*** via
+    ***REMOVED***   argilla
+    ***REMOVED***   pandas
+packaging==21.3
+    ***REMOVED*** via argilla
+pandas==1.5.2
+    ***REMOVED*** via argilla
+pydantic==1.10.2
+    ***REMOVED*** via argilla
+pyparsing==3.0.9
+    ***REMOVED*** via packaging
+***REMOVED***
+    ***REMOVED*** via pandas
+pytz==2022.6
+    ***REMOVED*** via pandas
 regex==2022.10.31
     ***REMOVED*** via nltk
+***REMOVED***
+    ***REMOVED*** via httpx
+***REMOVED***
+    ***REMOVED*** via python-dateutil
+***REMOVED***
+    ***REMOVED*** via
+    ***REMOVED***   httpcore
+    ***REMOVED***   httpx
 tqdm==4.64.1
-    ***REMOVED*** via nltk
+    ***REMOVED*** via
+    ***REMOVED***   argilla
+    ***REMOVED***   nltk
+typing-extensions==4.4.0
+    ***REMOVED*** via pydantic
+wrapt==1.13.3
+    ***REMOVED*** via
+    ***REMOVED***   argilla
+    ***REMOVED***   deprecated

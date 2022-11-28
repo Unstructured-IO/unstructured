@@ -868,6 +868,7 @@ Formats a list of ``Text`` elements as input to token based tasks in Datasaur.
 Example: 
 
 .. code:: python
+
   from unstructured.documents.elements import Text
   from unstructured.staging.datasaur import stage_for_datasaur
 
@@ -887,9 +888,34 @@ list for any elements that do not have any entities.
 Example:
 
 .. code:: python
+
   from unstructured.documents.elements import Text
   from unstructured.staging.datasaur import stage_for_datasaur
 
   elements  = [Text("Hi my name is Matt.")]
   entities = [[{"text": "Matt", "type": "PER", "start_idx": 11, "end_idx": 15}]]
   datasaur_data = stage_for_datasaur(elements, entities)
+
+
+``stage_for_argilla``
+--------------------------
+
+Convert a list of ``Text`` elements to an `Argilla Dataset <https://docs.argilla.io/en/latest/reference/python/python_client.html***REMOVED***python-ref-datasets>`_.
+The type of Argilla dataset to be generated can be specified with `argilla_task` parameter. Currently, only ``text_classification``
+task type is supported.
+
+
+Examples:
+
+.. code:: python
+
+  import json
+
+  from unstructured.documents.elements import Title, NarrativeText
+  from unstructured.staging.argilla import stage_for_argilla
+
+  elements = [Title(text="Title"), NarrativeText(text="Narrative")]
+  metadata = [{"type": "title"}, {"type": "text"}]
+
+  ***REMOVED*** The resulting Argilla dataset is ready to be used with Argilla for training or labelling, etc.
+  argilla_dataset = stage_for_argilla(elements, "text_classification", metadata=metadata)

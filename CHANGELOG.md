@@ -1,5 +1,6 @@
-***REMOVED******REMOVED*** 0.3.0-dev3
+***REMOVED******REMOVED*** 0.3.0-dev4
 
+* Implement staging brick for Argilla.
 * Removing the local PDF parsing code and any dependencies and tests.
 * Reorganizes the staging bricks in the unstructured.partition module
 * Allow entities to be passed into the Datasaur staging brick
