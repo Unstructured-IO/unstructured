@@ -1,0 +1,54 @@
+from typing import List, Union
+from unstructured.documents.elements import Text
+import argilla
+from argilla.client.models import (
+    TextClassificationRecord,
+    TokenClassificationRecord,
+    Text2TextRecord,
+)
+
+
+def stage_for_argilla(
+    elements: List[Text],
+    argilla_task: str,
+    **record_kwargs,
+) -> Union[
+    argilla.DatasetForTextClassification,
+    argilla.DatasetForTokenClassification,
+    argilla.DatasetForText2Text,
+]:
+    ARGILLA_TASKS = {
+        "text_classification": (TextClassificationRecord, argilla.DatasetForTextClassification),
+        "token_classification": (TokenClassificationRecord, argilla.DatasetForTokenClassification),
+        "text2text": (Text2TextRecord, argilla.DatasetForText2Text),
+    }
+
+    try:
+        argilla_record_class, argilla_dataset_class = ARGILLA_TASKS[argilla_task]
+    except KeyError as e:
+        raise ValueError(
+            f'Invalid value "{e.args[0]}" specified for argilla_task. '
+            "Must be one of: {', '.join(ARGILLA_TASKS.keys())}."
+        )
+
+    if argilla_task in {"token_classification", "text2text"}:
+        raise NotImplementedError()  # TODO: Implement token_classification and text2text tasks
+
+    for record_kwarg_key, record_kwarg_value in record_kwargs.items():
+        if type(record_kwarg_value) is not list or len(record_kwarg_value) != len(elements):
+            raise ValueError(
+                f'Invalid value specified for "{record_kwarg_key}" keyword argument.'
+                " Must be of type list and same length as elements list."
+            )
+
+    results: List[Union[TextClassificationRecord, TokenClassificationRecord, Text2TextRecord]] = []
+
+    for idx, element in enumerate(elements):
+        element_kwargs = {kwarg: record_kwargs[kwarg][idx] for kwarg in record_kwargs}
+        arguments = dict(**element_kwargs, text=element.text)
+        if isinstance(element.id, str):
+            arguments["id"] = element.id
+
+        results.append(argilla_record_class(**arguments))
+
+    return argilla_dataset_class(results)
