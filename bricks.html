@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bricks &mdash; unstructured 0.3.0-dev3 documentation</title>
+  <title>Bricks &mdash; unstructured 0.3.0-dev4 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -78,6 +78,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#stage-csv-for-prodigy"><code class="docutils literal notranslate"><span class="pre">stage_csv_for_prodigy</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#stage-for-label-box"><code class="docutils literal notranslate"><span class="pre">stage_for_label_box</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#stage-for-datasaur"><code class="docutils literal notranslate"><span class="pre">stage_for_datasaur</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#stage-for-argilla"><code class="docutils literal notranslate"><span class="pre">stage_for_argilla</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -839,6 +840,13 @@ files to an S3 bucket.</p>
 <h3><code class="docutils literal notranslate"><span class="pre">stage_for_datasaur</span></code><a class="headerlink" href="#stage-for-datasaur" title="Permalink to this heading"></a></h3>
 <p>Formats a list of <code class="docutils literal notranslate"><span class="pre">Text</span></code> elements as input to token based tasks in Datasaur.</p>
 <p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.documents.elements</span> <span class="kn">import</span> <span class="n">Text</span>
+<span class="kn">from</span> <span class="nn">unstructured.staging.datasaur</span> <span class="kn">import</span> <span class="n">stage_for_datasaur</span>
+
+<span class="n">elements</span>  <span class="o">=</span> <span class="p">[</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Text1&quot;</span><span class="p">),</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Text2&quot;</span><span class="p">)]</span>
+<span class="n">datasaur_data</span> <span class="o">=</span> <span class="n">stage_for_datasaur</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>The output is a list of dictionaries, each one with two keys:
 “text” with the content of the element and
 “entities” with an empty list.</p>
@@ -848,6 +856,33 @@ of entities is a list of dictionaries and must have all of the keys in the examp
 The list of entities must be the same length as the list of elements. Use an empty
 list for any elements that do not have any entities.</p>
 <p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.documents.elements</span> <span class="kn">import</span> <span class="n">Text</span>
+<span class="kn">from</span> <span class="nn">unstructured.staging.datasaur</span> <span class="kn">import</span> <span class="n">stage_for_datasaur</span>
+
+<span class="n">elements</span>  <span class="o">=</span> <span class="p">[</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Hi my name is Matt.&quot;</span><span class="p">)]</span>
+<span class="n">entities</span> <span class="o">=</span> <span class="p">[[{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;Matt&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;PER&quot;</span><span class="p">,</span> <span class="s2">&quot;start_idx&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span> <span class="s2">&quot;end_idx&quot;</span><span class="p">:</span> <span class="mi">15</span><span class="p">}]]</span>
+<span class="n">datasaur_data</span> <span class="o">=</span> <span class="n">stage_for_datasaur</span><span class="p">(</span><span class="n">elements</span><span class="p">,</span> <span class="n">entities</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="stage-for-argilla">
+<h3><code class="docutils literal notranslate"><span class="pre">stage_for_argilla</span></code><a class="headerlink" href="#stage-for-argilla" title="Permalink to this heading"></a></h3>
+<p>Convert a list of <code class="docutils literal notranslate"><span class="pre">Text</span></code> elements to an <a class="reference external" href="https://docs.argilla.io/en/latest/reference/python/python_client.html#python-ref-datasets">Argilla Dataset</a>.
+The type of Argilla dataset to be generated can be specified with <cite>argilla_task</cite> parameter. Currently, only <code class="docutils literal notranslate"><span class="pre">text_classification</span></code>
+task type is supported.</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
+
+<span class="kn">from</span> <span class="nn">unstructured.documents.elements</span> <span class="kn">import</span> <span class="n">Title</span><span class="p">,</span> <span class="n">NarrativeText</span>
+<span class="kn">from</span> <span class="nn">unstructured.staging.argilla</span> <span class="kn">import</span> <span class="n">stage_for_argilla</span>
+
+<span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="n">Title</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Title&quot;</span><span class="p">),</span> <span class="n">NarrativeText</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Narrative&quot;</span><span class="p">)]</span>
+<span class="n">metadata</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;title&quot;</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">}]</span>
+
+<span class="c1"># The resulting Argilla dataset is ready to be used with Argilla for training or labelling, etc.</span>
+<span class="n">argilla_dataset</span> <span class="o">=</span> <span class="n">stage_for_argilla</span><span class="p">(</span><span class="n">elements</span><span class="p">,</span> <span class="s2">&quot;text_classification&quot;</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">)</span>
+</pre></div>
+</div>
 </section>
 </section>
 </section>
