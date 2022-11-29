@@ -33,6 +33,7 @@ def replace_unicode_quotes(text) -> str:
     text = text.replace("\x92", "’")
     text = text.replace("\x93", "“")
     text = text.replace("\x94", "”")
+    text = text.replace("&apos;", "'")
     return text
 
 
