@@ -22,6 +22,7 @@ def test_clean_bullets(text, expected):
     [
         ("\x93A lovely quote!\x94", "“A lovely quote!”"),
         ("\x91A lovely quote!\x92", "‘A lovely quote!’"),
+        ("Our dog&apos;s bowl.", "Our dog's bowl."),
     ],
 )
 def test_replace_unicode_quotes(text, expected):
