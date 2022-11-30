@@ -7,7 +7,7 @@ if sys.version_info < (3, 8):
 else:
     from typing import List, Optional
 
-from unstructured.documents.elements import Element, Text
+from unstructured.documents.elements import Element
 
 
 def partition_pdf(
@@ -39,7 +39,7 @@ def partition_pdf(
         healthcheck_response = requests.get(url=f"{url}healthcheck")
 
     if healthcheck_response.status_code != 200:
-        return [Text(text="error: endpoint api healthcheck has failed!")]
+        raise ValueError("endpoint api healthcheck has failed!")
 
     url = f"{url}layout/pdf" if template == "base-model" else f"{url}/{template}"
     file_ = (filename, file if file else open(filename, "rb"))
@@ -52,4 +52,4 @@ def partition_pdf(
         pages = response.json()["pages"]
         return [element for page in pages for element in page["elements"]]
     else:
-        return [Text(text=f"error: response status code = {response.status_code}")]
+        raise ValueError(f"response status code = {response.status_code}")
