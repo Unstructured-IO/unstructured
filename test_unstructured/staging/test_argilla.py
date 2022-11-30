@@ -23,16 +23,16 @@ def elements():
             rg.DatasetForTextClassification,
             {},
         ),
-        # (
-        #     "token_classification",
-        #     rg.DatasetForTokenClassification,
-        #     {"metadata": [{"type": "text1"}, {"type": "text2"}]},
-        # ),
-        # (
-        #     "token_classification",
-        #     rg.DatasetForTokenClassification,
-        #     {},
-        # ),
+        (
+            "token_classification",
+            rg.DatasetForTokenClassification,
+            {"metadata": [{"type": "text1"}, {"type": "text2"}]},
+        ),
+        (
+            "token_classification",
+            rg.DatasetForTokenClassification,
+            {},
+        ),
         (
             "text2text",
             rg.DatasetForText2Text,

@@ -1,11 +1,13 @@
 from typing import List, Union
-from unstructured.documents.elements import Text
 import argilla
 from argilla.client.models import (
     TextClassificationRecord,
     TokenClassificationRecord,
     Text2TextRecord,
 )
+
+from unstructured.documents.elements import Text
+from unstructured.nlp.tokenize import word_tokenize
 
 
 def stage_for_argilla(
@@ -45,6 +47,12 @@ def stage_for_argilla(
         arguments = dict(**element_kwargs, text=element.text)
         if isinstance(element.id, str):
             arguments["id"] = element.id
+
+        # NOTE(robinson) - TokenClassificationRecord raises and error if tokens are not
+        # provided as part of the input for the record. Default to the nltk word tokenizer
+        if argilla_task == "token_classification" and "tokens" not in arguments:
+            tokens = word_tokenize(arguments["text"])
+            arguments["tokens"] = tokens
 
         results.append(argilla_record_class(**arguments))
 
