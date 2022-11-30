@@ -5,13 +5,24 @@
   >
 </h3>
 
+<div align="center">
+
+  <a href="https://github.com/Unstructured-IO/unstructured/blob/main/LICENSE.md">![https://pypi.python.org/pypi/unstructured/](https://img.shields.io/pypi/l/unstructured.svg)</a>
+  <a href="https://pypi.python.org/pypi/unstructured/">![https://pypi.python.org/pypi/unstructured/](https://img.shields.io/pypi/pyversions/unstructured.svg)</a>
+  <a href="https://GitHub.com/unstructured-io/unstructured/graphs/contributors">![https://GitHub.com/unstructured-io/unstructured.js/graphs/contributors](https://img.shields.io/github/contributors/unstructured-io/unstructured)</a>
+  <a href="https://github.com/Unstructured-IO/unstructured/blob/main/CODE_OF_CONDUCT.md">![code_of_conduct.md](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg) </a>
+  <a href="https://GitHub.com/unstructured-io/unstructured/releases">![https://GitHub.com/unstructured-io/unstructured.js/releases](https://img.shields.io/github/release/unstructured-io/unstructured)</a>
+  <a href="https://pypi.python.org/pypi/unstructured/">![https://github.com/Naereen/badges/](https://badgen.net/badge/Open%20Source%20%3F/Yes%21/blue?icon=github)</a>
+  
+</div>
+
 <h3 align="center">
   <p>Open-Source Pre-Processing Tools for Unstructured Data</p>
 </h3>
 
 
 The `unstructured` library provides open-source components for pre-processing text documents
-such as PDFs, HTML and Word Documents. These components are packaged as "bricks", which provide
+such as **PDFs**, **HTML** and **Word** Documents. These components are packaged as *bricks* 🧱, which provide
 users the building blocks they need to build pipelines targeted at the documents they care
 about. Bricks in the library fall into three categories:
 
@@ -22,14 +33,14 @@ about. Bricks in the library fall into three categories:
   fragments.
 - :performing_arts: ***Staging bricks*** that format data for downstream tasks, such as ML inference
   and data labeling.
-
-## Installation
+<br></br>
+## :eight_pointed_black_star: Installation
 
 To install the library, run `pip install unstructured`.
 
-## Developer Quick Start
+## :coffee: Getting Started 
 
-* Using `pyenv` to manage virtualenv's is recommended
+* Using `pyenv` to manage virtualenv's is recommended but not necessary
 	* Mac install instructions. See [here](https://github.com/Unstructured-IO/community#mac--homebrew) for more detailed instructions.
 		* `brew install pyenv-virtualenv`
 	  * `pyenv install 3.8.15`
@@ -42,12 +53,14 @@ To install the library, run `pip install unstructured`.
 
 * Run `make install-project-local`
 
-## Quick Tour
+## :clap: Quick Tour
 
 You can run this [Colab notebook](https://colab.research.google.com/drive/1RnXEiSTUaru8vZSGbh1U2T2P9aUa5tQD#scrollTo=E_WN7p3JGcLJ) to run the examples below.
 
-The following examples show how to get started with the `unstructured` library. See
-our [documentation page](https://unstructured-io.github.io/unstructured) for a full description
+The following examples show how to get started with the `unstructured` library.
+You can parse **HTML** and **PDF** documents with one line of code! 
+<br></br>
+See our [documentation page](https://unstructured-io.github.io/unstructured) for a full description
 of the features in the library.
 
 ### HTML Parsing
@@ -135,12 +148,12 @@ has an `element` attribute consisting of `Element` objects. Sub-types of the `El
 represent different components of a document, such as `NarrativeText` and `Title`. You can use
 these normalized elements to zero in on the components of a document you most care about.
 
-## Security Policy
+## :guardsman: Security Policy
 
 See our [security policy](https://github.com/Unstructured-IO/unstructured/security/policy) for
 information on how to report security vulnerabilities.
 
-## Learn more
+## :books: Learn more
 
 | Section | Description |
 |-|-|
