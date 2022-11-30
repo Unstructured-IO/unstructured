@@ -920,5 +920,4 @@ Examples:
   elements = [Title(text="Title"), NarrativeText(text="Narrative")]
   metadata = [{"type": "title"}, {"type": "text"}]
 
-  # The resulting Argilla dataset is ready to be used with Argilla for training or labelling, etc.
   argilla_dataset = stage_for_argilla(elements, "text_classification", metadata=metadata)
