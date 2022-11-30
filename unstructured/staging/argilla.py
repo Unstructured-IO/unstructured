@@ -31,9 +31,6 @@ def stage_for_argilla(
             "Must be one of: {', '.join(ARGILLA_TASKS.keys())}."
         )
 
-    if argilla_task in {"token_classification", "text2text"}:
-        raise NotImplementedError()  # TODO: Implement token_classification and text2text tasks
-
     for record_kwarg_key, record_kwarg_value in record_kwargs.items():
         if type(record_kwarg_value) is not list or len(record_kwarg_value) != len(elements):
             raise ValueError(
