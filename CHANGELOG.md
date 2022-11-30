@@ -5,6 +5,7 @@
 * Reorganizes the staging bricks in the unstructured.partition module
 * Allow entities to be passed into the Datasaur staging brick
 * Added HTML escapes to the `replace_unicode_quotes` brick
+* Fix bad responses in partition_pdf to raise ValueError
 
 ## 0.2.6
 
