@@ -3,9 +3,9 @@ import requests  # type: ignore
 import sys
 
 if sys.version_info < (3, 8):
-    from typing_extensions import List, Optional
+    from typing_extensions import List, Optional  # pragma: no cover
 else:
-    from typing import List, Optional
+    from typing import List, Optional  # pragma: no cover
 
 from unstructured.documents.elements import Element
 
@@ -48,6 +48,7 @@ def partition_pdf(
         headers={"Authorization": f"Bearer {token}" if token else ""},
         files={"file": file_},
     )
+
     if response.status_code == 200:
         pages = response.json()["pages"]
         return [element for page in pages for element in page["elements"]]
