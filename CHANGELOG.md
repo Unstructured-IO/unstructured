@@ -1,4 +1,4 @@
-***REMOVED******REMOVED*** 0.3.0-dev6
+***REMOVED******REMOVED*** 0.3.0-dev7
 
 * Implement staging brick for Argilla. Converts lists of `Text` elements to `argilla` dataset classes.
 * Removing the local PDF parsing code and any dependencies and tests.
