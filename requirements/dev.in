@@ -1,3 +1,6 @@
 jupyter
 ipython
 pip-tools
+
+# NOTE(robinson) - Required pins for security scans
+jupyter-core>=4.11.2

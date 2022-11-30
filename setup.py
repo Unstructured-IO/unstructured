@@ -53,6 +53,8 @@ setup(
         "argilla",
     ],
     extras_require={
-        "huggingface": ["transformers"],
+        "huggingface": [
+            "transformers",
+        ],
     },
 )
