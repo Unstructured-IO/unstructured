@@ -901,8 +901,11 @@ Example:
 --------------------------
 
 Convert a list of ``Text`` elements to an `Argilla Dataset <https://docs.argilla.io/en/latest/reference/python/python_client.html#python-ref-datasets>`_.
-The type of Argilla dataset to be generated can be specified with `argilla_task` parameter. Currently, only ``text_classification``
-task type is supported.
+The type of Argilla dataset to be generated can be specified with ``argilla_task``
+parameter. Valid values for ``argilla_task`` are ``"text_classification"``,
+``"token_classification"``, and ``"text2text"``. If ``"token_classification"`` is selected
+and ``tokens`` is not included in the optional kwargs, the ``nltk`` word tokenizer
+is used by default.
 
 
 Examples:
@@ -917,5 +920,4 @@ Examples:
   elements = [Title(text="Title"), NarrativeText(text="Narrative")]
   metadata = [{"type": "title"}, {"type": "text"}]
 
-  # The resulting Argilla dataset is ready to be used with Argilla for training or labelling, etc.
   argilla_dataset = stage_for_argilla(elements, "text_classification", metadata=metadata)

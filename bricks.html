@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bricks &mdash; unstructured 0.3.0-dev5 documentation</title>
+  <title>Bricks &mdash; unstructured 0.3.0-dev6 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -868,8 +868,11 @@ list for any elements that do not have any entities.</p>
 <section id="stage-for-argilla">
 <h3><code class="docutils literal notranslate"><span class="pre">stage_for_argilla</span></code><a class="headerlink" href="#stage-for-argilla" title="Permalink to this heading"></a></h3>
 <p>Convert a list of <code class="docutils literal notranslate"><span class="pre">Text</span></code> elements to an <a class="reference external" href="https://docs.argilla.io/en/latest/reference/python/python_client.html#python-ref-datasets">Argilla Dataset</a>.
-The type of Argilla dataset to be generated can be specified with <cite>argilla_task</cite> parameter. Currently, only <code class="docutils literal notranslate"><span class="pre">text_classification</span></code>
-task type is supported.</p>
+The type of Argilla dataset to be generated can be specified with <code class="docutils literal notranslate"><span class="pre">argilla_task</span></code>
+parameter. Valid values for <code class="docutils literal notranslate"><span class="pre">argilla_task</span></code> are <code class="docutils literal notranslate"><span class="pre">&quot;text_classification&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;token_classification&quot;</span></code>, and <code class="docutils literal notranslate"><span class="pre">&quot;text2text&quot;</span></code>. If <code class="docutils literal notranslate"><span class="pre">&quot;token_classification&quot;</span></code> is selected
+and <code class="docutils literal notranslate"><span class="pre">tokens</span></code> is not included in the optional kwargs, the <code class="docutils literal notranslate"><span class="pre">nltk</span></code> word tokenizer
+is used by default.</p>
 <p>Examples:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
 
@@ -879,7 +882,6 @@ task type is supported.</p>
 <span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="n">Title</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Title&quot;</span><span class="p">),</span> <span class="n">NarrativeText</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Narrative&quot;</span><span class="p">)]</span>
 <span class="n">metadata</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;title&quot;</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">}]</span>
 
-<span class="c1"># The resulting Argilla dataset is ready to be used with Argilla for training or labelling, etc.</span>
 <span class="n">argilla_dataset</span> <span class="o">=</span> <span class="n">stage_for_argilla</span><span class="p">(</span><span class="n">elements</span><span class="p">,</span> <span class="s2">&quot;text_classification&quot;</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">)</span>
 </pre></div>
 </div>
