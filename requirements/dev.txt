@@ -82,8 +82,9 @@ jupyter-client==7.3.5
     ***REMOVED***   qtconsole
 jupyter-console==6.4.4
     ***REMOVED*** via jupyter
-jupyter-core==4.11.1
+jupyter-core==5.1.0
     ***REMOVED*** via
+    ***REMOVED***   -r requirements/dev.in
     ***REMOVED***   jupyter-client
     ***REMOVED***   nbconvert
     ***REMOVED***   nbformat
@@ -144,6 +145,8 @@ pip-tools==6.10.0
     ***REMOVED*** via -r requirements/dev.in
 pkgutil-resolve-name==1.3.10
     ***REMOVED*** via jsonschema
+platformdirs==2.5.4
+    ***REMOVED*** via jupyter-core
 prometheus-client==0.14.1
     ***REMOVED*** via notebook
 prompt-toolkit==3.0.31
