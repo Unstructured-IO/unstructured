@@ -23,6 +23,26 @@ def elements():
             rg.DatasetForTextClassification,
             {},
         ),
+        (
+            "token_classification",
+            rg.DatasetForTokenClassification,
+            {"metadata": [{"type": "text1"}, {"type": "text2"}]},
+        ),
+        (
+            "token_classification",
+            rg.DatasetForTokenClassification,
+            {},
+        ),
+        (
+            "text2text",
+            rg.DatasetForText2Text,
+            {"metadata": [{"type": "text1"}, {"type": "text2"}]},
+        ),
+        (
+            "text2text",
+            rg.DatasetForText2Text,
+            {},
+        ),
     ],
 )
 def test_stage_for_argilla(elements, task_name, dataset_type, extra_kwargs):
@@ -39,8 +59,6 @@ def test_stage_for_argilla(elements, task_name, dataset_type, extra_kwargs):
     "task_name, error, error_message, extra_kwargs",
     [
         ("unknown_task", ValueError, "invalid value", {}),
-        ("token_classification", NotImplementedError, None, {}),
-        ("text2text", NotImplementedError, None, {}),
         ("text_classification", ValueError, "invalid value", {"metadata": "invalid metadata"}),
     ],
 )

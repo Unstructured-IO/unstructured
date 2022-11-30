@@ -1,6 +1,6 @@
-## 0.3.0-dev5
+## 0.3.0-dev6
 
-* Implement staging brick for Argilla.
+* Implement staging brick for Argilla. Converts lists of `Text` elements to `argilla` dataset classes.
 * Removing the local PDF parsing code and any dependencies and tests.
 * Reorganizes the staging bricks in the unstructured.partition module
 * Allow entities to be passed into the Datasaur staging brick
