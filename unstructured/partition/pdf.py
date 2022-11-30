@@ -7,7 +7,7 @@ if sys.version_info < (3, 8):
 else:
     from typing import List, Optional
 
-from unstructured.documents.elements import Element, Text
+from unstructured.documents.elements import Element
 
 
 def partition_pdf(
