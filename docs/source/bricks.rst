@@ -904,7 +904,7 @@ Convert a list of ``Text`` elements to an `Argilla Dataset <https://docs.argilla
 The type of Argilla dataset to be generated can be specified with ``argilla_task``
 parameter. Valid values for ``argilla_task`` are ``"text_classification"``,
 ``"token_classification"``, and ``"text2text"``. If ``"token_classification"`` is selected
-and ``tokens`` is not included in the optional recrod kwargs, the ``nltk`` word tokenizer
+and ``tokens`` is not included in the optional kwargs, the ``nltk`` word tokenizer
 is used by default.
 
 
