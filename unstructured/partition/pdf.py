@@ -3,10 +3,16 @@ import requests  # type: ignore
 import sys
 
 if sys.version_info < (3, 8):
-    from typing_extensions import List, Optional, Union, Tuple, Mapping  # pragma: no cover
+    from typing_extensions import (
+        List,
+        Optional,
+        Union,
+        Tuple,
+        Mapping,
+        BinaryIO,
+    )  # pragma: no cover
 else:
-    from typing import List, Optional, Union, Tuple, Mapping  # pragma: no cover
-from _typeshed import SupportsRead
+    from typing import List, Optional, Union, Tuple, Mapping, BinaryIO  # pragma: no cover
 
 from unstructured.documents.elements import Element
 
@@ -44,7 +50,7 @@ def partition_pdf(
 
     url = f"{url}layout/pdf" if template == "base-model" else f"{url}/{template}"
 
-    file_: Mapping[str, Tuple[str, Union[SupportsRead[bytes], bytes]]] = {
+    file_: Mapping[str, Tuple[str, Union[BinaryIO, bytes]]] = {
         "file": (
             filename,
             file if file else open(filename, "rb"),
