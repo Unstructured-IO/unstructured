@@ -3,9 +3,16 @@ import requests  # type: ignore
 import sys
 
 if sys.version_info < (3, 8):
-    from typing_extensions import List, Optional  # pragma: no cover
+    from typing_extensions import (
+        List,
+        Optional,
+        Union,
+        Tuple,
+        Mapping,
+        BinaryIO,
+    )  # pragma: no cover
 else:
-    from typing import List, Optional  # pragma: no cover
+    from typing import List, Optional, Union, Tuple, Mapping, BinaryIO  # pragma: no cover
 
 from unstructured.documents.elements import Element
 
@@ -42,11 +49,17 @@ def partition_pdf(
         raise ValueError("endpoint api healthcheck has failed!")
 
     url = f"{url}layout/pdf" if template == "base-model" else f"{url}/{template}"
-    file_ = (filename, file if file else open(filename, "rb"))
+
+    file_: Mapping[str, Tuple[str, Union[BinaryIO, bytes]]] = {
+        "file": (
+            filename,
+            file if file else open(filename, "rb"),
+        )
+    }
     response = requests.post(
         url=url,
         headers={"Authorization": f"Bearer {token}" if token else ""},
-        files={"file": file_},
+        files=file_,
     )
 
     if response.status_code == 200:
