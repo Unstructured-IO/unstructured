@@ -1,4 +1,4 @@
-## 0.3.0-dev7
+## 0.3.0-dev8
 
 * Implement staging brick for Argilla. Converts lists of `Text` elements to `argilla` dataset classes.
 * Removing the local PDF parsing code and any dependencies and tests.
@@ -6,6 +6,7 @@
 * Allow entities to be passed into the Datasaur staging brick
 * Added HTML escapes to the `replace_unicode_quotes` brick
 * Fix bad responses in partition_pdf to raise ValueError
+* Adds the `partition_html` for partitioning HTML documents.
 
 ## 0.2.6
 
