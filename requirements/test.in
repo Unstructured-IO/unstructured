@@ -9,3 +9,7 @@ mypy
 pytest-cov
 label_studio_sdk
 vcrpy
+
+# NOTE(robinson) - The following pins are to address
+# vulernabilities in dependency scans
+certifi>=2022.12.07

@@ -8,8 +8,10 @@ attrs==22.1.0
     # via pytest
 black==22.10.0
     # via -r requirements/test.in
-certifi==2022.9.24
-    # via requests
+certifi==2022.12.7
+    # via
+    #   -r requirements/test.in
+    #   requests
 charset-normalizer==2.1.1
     # via requests
 click==8.1.3
