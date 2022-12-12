@@ -13,7 +13,7 @@
   <a href="https://github.com/Unstructured-IO/unstructured/blob/main/CODE_OF_CONDUCT.md">![code_of_conduct.md](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg) </a>
   <a href="https://GitHub.com/unstructured-io/unstructured/releases">![https://GitHub.com/unstructured-io/unstructured.js/releases](https://img.shields.io/github/release/unstructured-io/unstructured)</a>
   <a href="https://pypi.python.org/pypi/unstructured/">![https://github.com/Naereen/badges/](https://badgen.net/badge/Open%20Source%20%3F/Yes%21/blue?icon=github)</a>
-  
+
 </div>
 
 <div align="center">
@@ -42,7 +42,7 @@ about. Bricks in the library fall into three categories:
 
 To install the library, run `pip install unstructured`.
 
-## :coffee: Getting Started 
+## :coffee: Getting Started
 
 * Using `pyenv` to manage virtualenv's is recommended but not necessary
 	* Mac install instructions. See [here](https://github.com/Unstructured-IO/community#mac--homebrew) for more detailed instructions.
@@ -62,7 +62,7 @@ To install the library, run `pip install unstructured`.
 You can run this [Colab notebook](https://colab.research.google.com/drive/1RnXEiSTUaru8vZSGbh1U2T2P9aUa5tQD#scrollTo=E_WN7p3JGcLJ) to run the examples below.
 
 The following examples show how to get started with the `unstructured` library.
-You can parse **HTML** and **PDF** documents with one line of code! 
+You can parse **HTML** and **PDF** documents with one line of code!
 <br></br>
 See our [documentation page](https://unstructured-io.github.io/unstructured) for a full description
 of the features in the library.
@@ -72,35 +72,31 @@ of the features in the library.
 You can parse an HTML document using the following workflow:
 
 ```python
-from unstructured.documents.html import HTMLDocument
+from unstructured.partition.html import partition_html
 
-doc = HTMLDocument.from_file("example-docs/example-10k.html")
-print(doc.pages[2])
+elements = partition_html("example-docs/example-10k.html")
+print("\n\n".join([str(el) for el in elements[:5]]))
 ```
 
-The output of this will be the following:
-
+The print statement will show the following text:
 ```
-SPECIAL NOTE REGARDING FORWARD-LOOKING STATEMENTS
+UNITED STATES
 
-This report contains statements that do not relate to historical or current facts but are “forward-looking” statements. These statements relate to analyses and other information based on forecasts of future results and estimates of amounts not yet determinable. These statements may also relate to future events or trends, our future prospects and proposed new products, services, developments or business strategies, among other things. These statements can generally (although not always) be identified by their use of terms and phrases such as anticipate, appear, believe, could, would, estimate, expect, indicate, intent, may, plan, predict, project, pursue, will continue and other similar terms and phrases, as well as the use of the future tense.
+SECURITIES AND EXCHANGE COMMISSION
 
-Actual results could differ materially from those expressed or implied in our forward-looking statements. Our future financial condition and results of operations, as well as any forward-looking statements, are subject to change and to inherent known and unknown risks and uncertainties. You should not assume at any point in the future that the forward-looking statements in this report are still valid. We do not intend, and undertake no obligation, to update our forward-looking statements to reflect future events or circumstances.
+Washington, D.C. 20549
+
+FORM 10-K
+
+ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934
 ```
 
-If you then run:
+And `elements` will be a list of elements in the HTML document, similar to the following:
 
 ```python
-doc.pages[2].elements
-```
-
-You'll get the following output, showing that the parser successfully differentiated between
-titles and narrative text.
-
-```python
-[<unstructured.documents.base.Title at 0x169cbe820>,
- <unstructured.documents.base.NarrativeText at 0x169cbe8e0>,
- <unstructured.documents.base.NarrativeText at 0x169cbe3a0>]
+[<unstructured.documents.elements.Title at 0x169cbe820>,
+ <unstructured.documents.elements.NarrativeText at 0x169cbe8e0>,
+ <unstructured.documents.elements.NarrativeText at 0x169cbe3a0>]
 ```
 
 ### PDF Parsing

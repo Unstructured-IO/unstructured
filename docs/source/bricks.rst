@@ -14,6 +14,28 @@ The partitioning bricks in ``unstructured`` differentiate between different sect
 of text in a document. For example, the partitioning bricks can help distinguish between
 titles, narrative text, and tables.
 
+``partition_html``
+---------------------
+
+The ``partition_html`` function partitions an HTML document and returns a list
+of document ``Element`` objects. ``partition_html`` can take a filename, file-like
+object, or string as input. The three examples below all produce the same output.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.html import partition_html
+
+  elements = partition_html(filename="example-docs/example-10k.html")
+
+  with open("example-docs/example-10k.html", "r") as f:
+      elements = partition_html(file=f)
+
+  with open("example-docs/example-10k.html", "r") as f:
+      text = f.read()
+  elements = partition_html(text=text)
+
 
 ``partition_pdf``
 ---------------------
