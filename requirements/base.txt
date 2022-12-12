@@ -62,7 +62,7 @@ tqdm==4.64.1
     #   nltk
 typing-extensions==4.4.0
     # via pydantic
-wrapt==1.13.3
+wrapt==1.14.1
     # via
     #   argilla
     #   deprecated

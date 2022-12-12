@@ -98,7 +98,7 @@ typing-extensions==4.4.0
     #   pydantic
 urllib3==1.26.13
     # via requests
-wrapt==1.13.3
+wrapt==1.14.1
     # via
     #   argilla
     #   deprecated
