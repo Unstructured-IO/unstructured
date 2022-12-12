@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bricks &mdash; unstructured 0.3.0-dev7 documentation</title>
+  <title>Bricks &mdash; unstructured 0.3.0-dev8 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -45,6 +45,7 @@
 <li class="toctree-l1"><a class="reference internal" href="elements.html">Elements</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Bricks</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#partitioning">Partitioning</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#partition-html"><code class="docutils literal notranslate"><span class="pre">partition_html</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#partition-pdf"><code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#is-bulleted-text"><code class="docutils literal notranslate"><span class="pre">is_bulleted_text</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#is-possible-narrative-text"><code class="docutils literal notranslate"><span class="pre">is_possible_narrative_text</span></code></a></li>
@@ -120,6 +121,25 @@ bricks currently available in the library.</p>
 <p>The partitioning bricks in <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> differentiate between different sections
 of text in a document. For example, the partitioning bricks can help distinguish between
 titles, narrative text, and tables.</p>
+<section id="partition-html">
+<h3><code class="docutils literal notranslate"><span class="pre">partition_html</span></code><a class="headerlink" href="#partition-html" title="Permalink to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">partition_html</span></code> function partitions an HTML document and returns a list
+of document <code class="docutils literal notranslate"><span class="pre">Element</span></code> objects. <code class="docutils literal notranslate"><span class="pre">partition_html</span></code> can take a filename, file-like
+object, or string as input. The three examples below all produce the same output.</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.html</span> <span class="kn">import</span> <span class="n">partition_html</span>
+
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_html</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example-docs/example-10k.html&quot;</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;example-docs/example-10k.html&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_html</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;example-docs/example-10k.html&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_html</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
 <section id="partition-pdf">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code><a class="headerlink" href="#partition-pdf" title="Permalink to this heading"></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code> function segments a PDF document by calling the document image analysis API.
