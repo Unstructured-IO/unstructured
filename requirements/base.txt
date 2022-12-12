@@ -4,7 +4,7 @@
 ***REMOVED***
 ***REMOVED***    pip-compile --output-file=requirements/base.txt
 ***REMOVED***
-argilla==1.1.0
+argilla==1.1.1
     ***REMOVED*** via unstructured (setup.py)
 ***REMOVED***
     ***REMOVED*** via argilla
