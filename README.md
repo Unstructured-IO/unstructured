@@ -16,6 +16,10 @@
 
 </div>
 
+<div align="center">
+<img src="https://user-images.githubusercontent.com/38184042/205945013-99670127-0bf3-4851-b4ac-0bc23e357476.gif" title="unstructured in action!">
+</div>
+	
 <h3 align="center">
   <p>Open-Source Pre-Processing Tools for Unstructured Data</p>
 </h3>
