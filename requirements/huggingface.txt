@@ -28,7 +28,7 @@ httpcore==0.11.1
     ***REMOVED*** via httpx
 httpx==0.15.5
     ***REMOVED*** via argilla
-huggingface-hub==0.10.1
+huggingface-hub==0.11.1
     ***REMOVED*** via transformers
 ***REMOVED***
     ***REMOVED*** via
