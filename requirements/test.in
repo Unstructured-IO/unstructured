@@ -9,3 +9,7 @@ mypy
 pytest-cov
 label_studio_sdk
 vcrpy
+
+***REMOVED*** NOTE(robinson) - The following pins are to address
+***REMOVED*** vulernabilities in dependency scans
+certifi>=2022.12.07

@@ -8,8 +8,10 @@ attrs==22.1.0
     ***REMOVED*** via pytest
 black==22.10.0
     ***REMOVED*** via -r requirements/test.in
-certifi==2022.9.24
-    ***REMOVED*** via requests
+***REMOVED***
+    ***REMOVED*** via
+    ***REMOVED***   -r requirements/test.in
+    ***REMOVED***   requests
 charset-normalizer==2.1.1
     ***REMOVED*** via requests
 ***REMOVED***
