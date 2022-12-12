@@ -71,9 +71,23 @@ You can parse an HTML document using the following workflow:
 from unstructured.partition.html import partition_html
 
 elements = partition_html("example-docs/example-10k.html")
+print("\n\n".join([str(el) for el in elements[:5]]))
 ```
 
-The output will be a list of elements in the HTML document, similar to the following:
+The print statement will show the following text:
+```
+UNITED STATES
+
+SECURITIES AND EXCHANGE COMMISSION
+
+Washington, D.C. 20549
+
+FORM 10-K
+
+ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934
+```
+
+And `elements` will be a list of elements in the HTML document, similar to the following:
 
 ```python
 [<unstructured.documents.elements.Title at 0x169cbe820>,
