@@ -447,6 +447,36 @@ Examples:
   extract_text_after(text, r"SPEAKER \d{1}:")
 
 
+``translate_text``
+------------------
+
+The ``translate_text`` cleaning bricks translates text between language. ``translate_text``
+uses the `Helsinki NLP MT models <https://huggingface.co/Helsinki-NLP>`_ from
+``transformers`` for machine translation. 
+
+Parameters:
+
+* ``text``: the input string to translate.
+* ``source_lang``: the two letter language code for the source language of the text. 
+  If ``source_lang`` is not specified,
+  the language will be detected using ``langdetect``.
+* ``target_lang``: the two letter language code for the target language for translation.
+  Defaults to ``"en"``.
+
+
+Examples:
+
+.. code:: python
+
+  from unstructured.cleaners.translate import translate_text
+
+  # Output is "I'm a Berliner!"
+  translate_text("Ich bin ein Berliner!")
+
+  # Output is "I can also translate Russian!"
+  translate_text("Я тоже можно переводать русский язык!", "ru", "en")
+
+
 #######
 Staging
 #######
