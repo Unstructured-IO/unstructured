@@ -17,7 +17,7 @@ def _get_opus_mt_model_name(source_lang: str, target_lang: str):
 def _validate_language_code(language_code: str):
     if not isinstance(language_code, str) or len(language_code) != 2:
         raise ValueError(
-            f"Invalid language code: {language_code}. Language codes must be " "two letter strings."
+            f"Invalid language code: {language_code}. Language codes must be two letter strings."
         )
 
 
