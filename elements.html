@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Elements &mdash; unstructured 0.3.2-dev0 documentation</title>
+  <title>Elements &mdash; unstructured 0.3.2 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -42,7 +42,10 @@
               <p class="caption" role="heading"><span class="caption-text">Library Documentation</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installing.html">Installation</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Elements</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Elements</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#applying-cleaning-bricks-to-text-elements">Applying Cleaning Bricks to Text Elements</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="bricks.html">Bricks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 </ul>
@@ -84,6 +87,33 @@ elements.</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">Title</span></code> - Headings and sub-headings wtihin a document. Sub-class of <code class="docutils literal notranslate"><span class="pre">Text</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">ListItem</span></code> - A text element that is part of an ordered or unordered list. Sub-class of <code class="docutils literal notranslate"><span class="pre">Text</span></code>.</p></li>
 </ul>
+<section id="applying-cleaning-bricks-to-text-elements">
+<h2>Applying Cleaning Bricks to Text Elements<a class="headerlink" href="#applying-cleaning-bricks-to-text-elements" title="Permalink to this heading"></a></h2>
+<p>You can apply cleaning bricks to a text element by using the <code class="docutils literal notranslate"><span class="pre">apply</span></code> method. The
+apply method accepts any function that takes a string as input and produces a string
+as output. Use the <cite>partial</cite> function from <cite>functools</cite> if you need to set additional
+args or kwargs for your cleaning brick. The <cite>apply</cite> method will accept either a single
+cleaner or a list of cleaners.</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+
+<span class="kn">from</span> <span class="nn">unstructured.cleaners.core</span> <span class="kn">import</span> <span class="n">clean_prefix</span>
+<span class="kn">from</span> <span class="nn">unstructured.cleaners.translate</span> <span class="kn">import</span> <span class="n">translate_text</span>
+<span class="kn">from</span> <span class="nn">unstructured.documents.elements</span> <span class="kn">import</span> <span class="n">ListItem</span>
+
+<span class="n">cleaners</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="n">partial</span><span class="p">(</span><span class="n">clean_prefix</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;\[\d{1,2}\]&quot;</span><span class="p">),</span>
+  <span class="n">partial</span><span class="p">(</span><span class="n">translate_text</span><span class="p">,</span> <span class="n">target_lang</span><span class="o">=</span><span class="s2">&quot;ru&quot;</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">item</span> <span class="o">=</span> <span class="n">ListItem</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;[1] A Textbook on Crocodile Habitats&quot;</span><span class="p">)</span>
+<span class="n">item</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="o">*</span><span class="n">cleaners</span><span class="p">)</span>
+
+<span class="c1"># The output will be: Учебник по крокодильным средам обитания</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
 </section>
 
 
