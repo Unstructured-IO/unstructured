@@ -1,3 +1,7 @@
+## 0.3.2-dev0
+
+* Added `translate_text` brick for translating text between languages
+
 ## 0.3.1
 
 * Added \_\_init.py\_\_ to `partition`
