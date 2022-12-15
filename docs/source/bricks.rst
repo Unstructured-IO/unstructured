@@ -450,7 +450,7 @@ Examples:
 ``translate_text``
 ------------------
 
-The ``translate_text`` cleaning bricks translates text between language. ``translate_text``
+The ``translate_text`` cleaning bricks translates text between languages. ``translate_text``
 uses the `Helsinki NLP MT models <https://huggingface.co/Helsinki-NLP>`_ from
 ``transformers`` for machine translation. Works for Russian, Chinese, Arabic, and many
 other languages.
