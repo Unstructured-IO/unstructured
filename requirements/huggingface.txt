@@ -15,7 +15,9 @@ certifi==2022.9.24
 charset-normalizer==2.1.1
     ***REMOVED*** via requests
 ***REMOVED***
-    ***REMOVED*** via nltk
+    ***REMOVED*** via
+    ***REMOVED***   nltk
+    ***REMOVED***   sacremoses
 ***REMOVED***
     ***REMOVED*** via argilla
 filelock==3.8.2
@@ -35,7 +37,11 @@ huggingface-hub==0.11.1
     ***REMOVED***   requests
     ***REMOVED***   rfc3986
 ***REMOVED***
-    ***REMOVED*** via nltk
+    ***REMOVED*** via
+    ***REMOVED***   nltk
+    ***REMOVED***   sacremoses
+langdetect==1.0.9
+    ***REMOVED*** via unstructured (setup.py)
 lxml==4.9.1
     ***REMOVED*** via unstructured (setup.py)
 ***REMOVED***
@@ -69,6 +75,7 @@ pyyaml==6.0
 regex==2022.10.31
     ***REMOVED*** via
     ***REMOVED***   nltk
+    ***REMOVED***   sacremoses
     ***REMOVED***   transformers
 requests==2.28.1
     ***REMOVED*** via
@@ -76,19 +83,29 @@ requests==2.28.1
     ***REMOVED***   transformers
 ***REMOVED***
     ***REMOVED*** via httpx
+sacremoses==0.0.53
+    ***REMOVED*** via unstructured (setup.py)
+sentencepiece==0.1.97
+    ***REMOVED*** via unstructured (setup.py)
 ***REMOVED***
-    ***REMOVED*** via python-dateutil
+    ***REMOVED*** via
+    ***REMOVED***   langdetect
+    ***REMOVED***   python-dateutil
+    ***REMOVED***   sacremoses
 ***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   httpcore
     ***REMOVED***   httpx
 tokenizers==0.13.2
     ***REMOVED*** via transformers
+torch==1.13.0
+    ***REMOVED*** via unstructured (setup.py)
 tqdm==4.64.1
     ***REMOVED*** via
     ***REMOVED***   argilla
     ***REMOVED***   huggingface-hub
     ***REMOVED***   nltk
+    ***REMOVED***   sacremoses
     ***REMOVED***   transformers
 transformers==4.23.1
     ***REMOVED*** via unstructured (setup.py)
@@ -96,6 +113,7 @@ typing-extensions==4.4.0
     ***REMOVED*** via
     ***REMOVED***   huggingface-hub
     ***REMOVED***   pydantic
+    ***REMOVED***   torch
 urllib3==1.26.13
     ***REMOVED*** via requests
 wrapt==1.13.3
