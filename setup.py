@@ -57,6 +57,7 @@ setup(
             "langdetect",
             "sacremoses",
             "sentencepiece",
+            "torch",
             "transformers",
         ],
     },
