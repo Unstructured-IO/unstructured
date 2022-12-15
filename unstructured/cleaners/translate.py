@@ -35,7 +35,13 @@ def translate_text(text, source_lang: Optional[str] = None, target_lang: str = "
         The two letter language code for the language of the input text. If source_lang is
         not provided, the function will try to detect it.
     """
+    if text.strip() == "":
+        return text
+
     _source_lang: str = source_lang if source_lang is not None else langdetect.detect(text)
+    # NOTE(robinson) - Chinese gets detected with codes zh-cn, zh-tw, zh-hk for various
+    # Chinese variants. We normalizes these because there is a single model for Chinese
+    # machine translation
     if _source_lang.startswith("zh"):
         _source_lang = "zh"
 

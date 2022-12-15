@@ -16,6 +16,11 @@ def test_validate_language_code(code):
 
 def test_translate_returns_same_text_if_dest_is_same():
     text = "This is already in English!"
+    assert translate.translate_text(text, "en", "en") == text
+
+
+def test_translate_returns_same_text_text_is_empty():
+    text = "      "
     assert translate.translate_text(text) == text
 
 
