@@ -46,6 +46,9 @@ class Text(Element):
         for cleaner in cleaners:
             cleaned_text = cleaner(cleaned_text)
 
+        if not isinstance(cleaned_text, str):
+            raise ValueError("Cleaner produced a non-string output.")
+
         self.text = cleaned_text
 
 

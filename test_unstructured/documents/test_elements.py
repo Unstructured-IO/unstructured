@@ -1,4 +1,5 @@
 from functools import partial
+import pytest
 
 from unstructured.cleaners.core import clean_prefix
 from unstructured.cleaners.translate import translate_text
@@ -30,3 +31,9 @@ def test_text_element_apply_multiple_cleaners():
     text_element = Text(text="[1] A Textbook on Crocodile Habitats")
     text_element.apply(cleaners)
     assert str(text_element) == "Учебник по крокодильным средам обитания"
+
+
+def test_apply_raises_if_func_does_not_produce_string():
+    text_element = Text(text="[1] A Textbook on Crocodile Habitats")
+    with pytest.raises(ValueError):
+        text_element.apply(lambda s: 1)
