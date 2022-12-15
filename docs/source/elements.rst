@@ -39,7 +39,7 @@ Examples:
   ]
 
   item = ListItem(text="[1] A Textbook on Crocodile Habitats")
-  item.apply(cleaners)
+  item.apply(*cleaners)
 
   # The output will be: Учебник по крокодильным средам обитания
   print(item)

@@ -29,7 +29,7 @@ def test_text_element_apply_multiple_cleaners():
         partial(translate_text, target_lang="ru"),
     ]
     text_element = Text(text="[1] A Textbook on Crocodile Habitats")
-    text_element.apply(cleaners)
+    text_element.apply(*cleaners)
     assert str(text_element) == "Учебник по крокодильным средам обитания"
 
 

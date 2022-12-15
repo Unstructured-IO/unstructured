@@ -1,6 +1,6 @@
 from abc import ABC
 import hashlib
-from typing import Callable, List, Union
+from typing import Callable, Union
 
 
 class NoID(ABC):
@@ -36,12 +36,9 @@ class Text(Element):
     def __eq__(self, other):
         return self.text == other.text
 
-    def apply(self, cleaners: Union[Callable, List[Callable]]):
+    def apply(self, *cleaners: Callable):
         """Applies a cleaning brick to the text element. The function that's passed in
         should take a string as input and produce a string as output."""
-        if callable(cleaners):
-            cleaners = [cleaners]
-
         cleaned_text = self.text
         for cleaner in cleaners:
             cleaned_text = cleaner(cleaned_text)
