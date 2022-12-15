@@ -54,6 +54,9 @@ setup(
     ],
     extras_require={
         "huggingface": [
+            "langdetect",
+            "sacremoses",
+            "sentencepiece",
             "transformers",
         ],
     },
