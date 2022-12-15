@@ -14,11 +14,6 @@ def test_validate_language_code(code):
         translate._validate_language_code(code)
 
 
-def test_translate_raises_with_empty_text():
-    with pytest.raises(ValueError):
-        translate.translate_text(" ", "ru", "en")
-
-
 def test_translate_returns_same_text_if_dest_is_same():
     text = "This is already in English!"
     assert translate.translate_text(text) == text

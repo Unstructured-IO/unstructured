@@ -35,9 +35,6 @@ def translate_text(text, source_lang: Optional[str] = None, target_lang: str = "
         The two letter language code for the language of the input text. If source_lang is
         not provided, the function will try to detect it.
     """
-    if text.strip() == "":
-        raise ValueError("An empty string was passed to translate_text.")
-
     _source_lang: str = source_lang if source_lang is not None else langdetect.detect(text)
     if _source_lang.startswith("zh"):
         _source_lang = "zh"
