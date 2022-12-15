@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bricks &mdash; unstructured 0.3.1 documentation</title>
+  <title>Bricks &mdash; unstructured 0.3.2-dev0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -67,6 +67,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#clean-postfix"><code class="docutils literal notranslate"><span class="pre">clean_postfix</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#extract-text-before"><code class="docutils literal notranslate"><span class="pre">extract_text_before</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#extract-text-after"><code class="docutils literal notranslate"><span class="pre">extract_text_after</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#translate-text"><code class="docutils literal notranslate"><span class="pre">translate_text</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#staging">Staging</a><ul>
@@ -467,6 +468,32 @@ such as <code class="docutils literal notranslate"><span class="pre">\u2013</spa
 
 <span class="c1"># Returns &quot;Look at me, I&#39;m flying!&quot;</span>
 <span class="n">extract_text_after</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;SPEAKER \d</span><span class="si">{1}</span><span class="s2">:&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="translate-text">
+<h3><code class="docutils literal notranslate"><span class="pre">translate_text</span></code><a class="headerlink" href="#translate-text" title="Permalink to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">translate_text</span></code> cleaning bricks translates text between languages. <code class="docutils literal notranslate"><span class="pre">translate_text</span></code>
+uses the <a class="reference external" href="https://huggingface.co/Helsinki-NLP">Helsinki NLP MT models</a> from
+<code class="docutils literal notranslate"><span class="pre">transformers</span></code> for machine translation. Works for Russian, Chinese, Arabic, and many
+other languages.</p>
+<p>Parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">text</span></code>: the input string to translate.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">source_lang</span></code>: the two letter language code for the source language of the text.
+If <code class="docutils literal notranslate"><span class="pre">source_lang</span></code> is not specified,
+the language will be detected using <code class="docutils literal notranslate"><span class="pre">langdetect</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">target_lang</span></code>: the two letter language code for the target language for translation.
+Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;en&quot;</span></code>.</p></li>
+</ul>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.cleaners.translate</span> <span class="kn">import</span> <span class="n">translate_text</span>
+
+<span class="c1"># Output is &quot;I&#39;m a Berliner!&quot;</span>
+<span class="n">translate_text</span><span class="p">(</span><span class="s2">&quot;Ich bin ein Berliner!&quot;</span><span class="p">)</span>
+
+<span class="c1"># Output is &quot;I can also translate Russian!&quot;</span>
+<span class="n">translate_text</span><span class="p">(</span><span class="s2">&quot;Я тоже можно переводать русский язык!&quot;</span><span class="p">,</span> <span class="s2">&quot;ru&quot;</span><span class="p">,</span> <span class="s2">&quot;en&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
