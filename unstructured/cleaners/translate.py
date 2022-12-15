@@ -38,6 +38,8 @@ def translate_text(text, source_lang: Optional[str] = None, target_lang: str = "
         raise ValueError("An empty string was passed to translate_text.")
 
     _source_lang: str = source_lang if source_lang is not None else langdetect.detect(text)
+    if _source_lang.startswith("zh"):
+        _source_lang = "zh"
 
     _validate_language_code(target_lang)
     _validate_language_code(_source_lang)
