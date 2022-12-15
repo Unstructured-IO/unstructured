@@ -1,6 +1,7 @@
-***REMOVED******REMOVED*** 0.3.2-dev0
+***REMOVED******REMOVED*** 0.3.2
 
 * Added `translate_text` brick for translating text between languages
+* Add an `apply` method to make it easier to apply cleaners to elements
 
 ***REMOVED******REMOVED*** 0.3.1
 
