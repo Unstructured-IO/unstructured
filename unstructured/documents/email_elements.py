@@ -9,15 +9,20 @@ class EmailElement(Element):
     pass
 
     
-class Name(Text):
-    """Base element for capturing the category and text of that category
-     from within an email documents meta data."""
+class Name(EmailElement):
+    """Base element for capturing free text from within document."""
 
     category = "Uncategorized"
 
     def __init__(self, name: str, text: str, element_id: Union[str, NoID] = NoID()):
-        self.name: str = name
         self.text: str = text
+
+        if isinstance(element_id, NoID):
+            # NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits
+            element_id = hashlib.sha256(text.encode()).hexdigest()[:32]
+
+        super().__init__(element_id=element_id)
+        
 
     def __str__(self):
         return f"{self.name}: {self.text}"
@@ -25,6 +30,26 @@ class Name(Text):
     def __eq__(self, other):
         return self.name == other.name and self.text == other.text
 
+    def apply(self, *cleaners: Callable):
+        """Applies a cleaning brick to the text element. The function that's passed in
+        should take a string as input and produce a string as output."""
+        cleaned_text = self.text
+        cleaned_name = self.name
+
+        for cleaner in cleaners:
+            cleaned_text = cleaner(cleaned_text)
+        
+        for cleaner in cleaners:
+            cleaned_text = cleaner(cleaned_name)
+
+        if not isinstance(cleaned_text, str):
+            raise ValueError("Cleaner produced a non-string output.")
+
+        if not isinstance(cleaned_name, str):
+            raise ValueError("Cleaner produced a non-string output.")
+
+        self.text = cleaned_text
+        self.name = cleaned_name
 
 class BodyText(Text):
     """BodyText is an element consisting of multiple, well-formulated sentences. This
