@@ -1,4 +1,3 @@
-from abc import ABC
 import hashlib
 from typing import Callable, Union
 from unstructured.documents.elements import Element, Text, NoID
