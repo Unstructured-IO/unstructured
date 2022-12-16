@@ -3,12 +3,13 @@ import hashlib
 from typing import Callable, Union
 from unstructured.documents.elements import Element, Text, NoID
 
+
 class EmailElement(Element):
     """An email element is a section of the email."""
 
     pass
 
-    
+
 class Name(EmailElement):
     """Base element for capturing free text from within document."""
 
@@ -23,7 +24,6 @@ class Name(EmailElement):
             element_id = hashlib.sha256(text.encode()).hexdigest()[:32]
 
         super().__init__(element_id=element_id)
-        
 
     def __str__(self):
         return f"{self.name}: {self.text}"
@@ -50,6 +50,7 @@ class Name(EmailElement):
         self.text = cleaned_text
         self.name = cleaned_name
 
+
 class BodyText(Text):
     """BodyText is an element consisting of multiple, well-formulated sentences. This
     excludes elements such titles, headers, footers, and captions. It is the body of an email."""
@@ -60,47 +61,52 @@ class BodyText(Text):
 
 
 class ToHeader(Text):
-    """A text element for capturing header information of an email (e.g. Subject, 
+    """A text element for capturing header information of an email (e.g. Subject,
     To, From, etc)."""
 
     category = "ToHeader"
 
     pass
 
+
 class FromHeader(Text):
-    """A text element for capturing header information of an email (e.g. Subject, 
+    """A text element for capturing header information of an email (e.g. Subject,
     To, From, etc)."""
 
     category = "FromHeader"
 
     pass
 
+
 class SubjectHeader(Text):
-    """A text element for capturing header information of an email (e.g. Subject, 
+    """A text element for capturing header information of an email (e.g. Subject,
     To, From, etc)."""
 
     category = "SubjectHeader"
 
     pass
 
+
 class ReceivedHeader(Text):
-    """A text element for capturing header information of an email (e.g. Subject, 
+    """A text element for capturing header information of an email (e.g. Subject,
     To, From, etc)."""
 
     category = "ReceivedHeader"
 
     pass
 
+
 class MetaDataHeader(Name):
-    """A text element for capturing header information of an email (e.g. Subject, 
+    """A text element for capturing header information of an email (e.g. Subject,
     To, From, etc)."""
 
     category = "MetaDataHeader"
 
     pass
 
+
 class Attachment(Text):
-    """A text element for capturing header information of an email (e.g. Subject, 
+    """A text element for capturing header information of an email (e.g. Subject,
     To, From, etc)."""
 
     category = "Attachment"

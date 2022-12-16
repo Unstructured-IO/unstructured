@@ -8,7 +8,7 @@ from unstructured.documents.email_elements import EmailElement, NoID, Name, Text
 
 def test_text_id():
     name_element = Name(name="Example", text="hello there!")
-    assert text_element.id == "c69509590d81db2f37f9d75480c8efed"
+    assert name_element.id == "c69509590d81db2f37f9d75480c8efed"
 
 
 def test_element_defaults_to_blank_id():
@@ -28,12 +28,17 @@ def test_name_element_apply_multiple_cleaners():
         partial(clean_prefix, pattern=r"\[\d{1,2}\]"),
         partial(translate_text, target_lang="ru"),
     ]
-    name_element = Name(name="[1] A Textbook on Crocodile Habitats", text="[1] A Textbook on Crocodile Habitats")
+    name_element = Name(
+        name="[1] A Textbook on Crocodile Habitats", text="[1] A Textbook on Crocodile Habitats"
+    )
     name_element.apply(*cleaners)
-    assert str(name_element) == "Учебник по крокодильным средам обитания: Учебник по крокодильным средам обитания"
+    assert (
+        str(name_element)
+        == "Учебник по крокодильным средам обитания: Учебник по крокодильным средам обитания"
+    )
 
 
 def test_apply_raises_if_func_does_not_produce_string():
-    text_element = Name(name= "Example docs", text="[1] A Textbook on Crocodile Habitats")
+    name_element = Name(name="Example docs", text="[1] A Textbook on Crocodile Habitats")
     with pytest.raises(ValueError):
-        text_element.apply(lambda s: 1)
+        name_element.apply(lambda s: 1)
