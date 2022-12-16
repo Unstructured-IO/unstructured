@@ -1,4 +1,4 @@
-## 0.3.3
+## 0.3.3-dev0
 
 * Added `EmailElement` data structure for email documents
 

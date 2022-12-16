@@ -1,5 +1,6 @@
+from abc import ABC
 import hashlib
-from typing import Callable, Union
+from typing import Callable, List, Union
 from unstructured.documents.elements import Element, Text, NoID
 
 
@@ -50,7 +51,7 @@ class Name(EmailElement):
         self.name = cleaned_name
 
 
-class BodyText(Text):
+class BodyText(List[Text]):
     """BodyText is an element consisting of multiple, well-formulated sentences. This
     excludes elements such titles, headers, footers, and captions. It is the body of an email."""
 
@@ -59,47 +60,47 @@ class BodyText(Text):
     pass
 
 
-class ToHeader(Text):
+class Recipient(Text):
     """A text element for capturing header information of an email (e.g. Subject,
     To, From, etc)."""
 
-    category = "ToHeader"
+    category = "Recipient"
 
     pass
 
 
-class FromHeader(Text):
+class Sender(Text):
     """A text element for capturing header information of an email (e.g. Subject,
     To, From, etc)."""
 
-    category = "FromHeader"
+    category = "Sender"
 
     pass
 
 
-class SubjectHeader(Text):
+class Subject(Text):
     """A text element for capturing header information of an email (e.g. Subject,
     To, From, etc)."""
 
-    category = "SubjectHeader"
+    category = "Subject"
 
     pass
 
 
-class ReceivedHeader(Text):
+class ReceivedInfo(List[Text]):
     """A text element for capturing header information of an email (e.g. Subject,
     To, From, etc)."""
 
-    category = "ReceivedHeader"
+    category = "ReceivedInfo"
 
     pass
 
 
-class MetaDataHeader(Name):
+class MetaData(Name):
     """A text element for capturing header information of an email (e.g. Subject,
     To, From, etc)."""
 
-    category = "MetaDataHeader"
+    category = "MetaData"
 
     pass
 
@@ -111,3 +112,38 @@ class Attachment(Text):
     category = "Attachment"
 
     pass
+
+class Email(ABC):
+    """An email class with it's attributes"""
+
+    def __init__(self, recipient: Recipient,  sender: Sender, subject: Subject, body: BodyText):
+        self.recipient = recipient
+        self.sender = sender
+        self.subject = subject
+        self.body = body
+        self.received_info: ReceivedInfo = None
+        self.meta_data: MetaData = None
+        self.attachment: Attachment = None
+
+    def __str__(self):
+        return f""" 
+        Recipient: {self.recipient}
+        Sender: {self.sender}
+        Subject: {self.subject}
+        
+        Received Header Information:
+        
+        {self.received_info}
+
+        Meta Data From Header: 
+        
+        {self.meta_data}
+
+        Body: 
+        
+        {self.body}
+
+        Attachment:
+
+        {self.attachment}
+        """
