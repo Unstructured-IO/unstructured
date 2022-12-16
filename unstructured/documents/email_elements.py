@@ -15,7 +15,7 @@ class Name(EmailElement):
     category = "Uncategorized"
 
     def __init__(self, name: str, text: str, element_id: Union[str, NoID] = NoID()):
-        self.name = str = name
+        self.name: str = name
         self.text: str = text
 
         if isinstance(element_id, NoID):
