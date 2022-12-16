@@ -50,7 +50,7 @@ def partition_email(
     # <ul> =
     #    <li>Item 1</li>=
     #    <li>Item 2<li>=
-    #</ul>
+    # </ul>
     content = "".join(content.split("=\n"))
 
     elements = partition_html(text=content)
