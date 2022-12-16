@@ -1,7 +1,7 @@
 from abc import ABC
 import hashlib
-from typing import Union
-from unstructured.documents.elements import Element, Text
+from typing import Callable, Union
+from unstructured.documents.elements import Element, Text, NoID
 
 class EmailElement(Element):
     """An email element is a section of the email."""
@@ -15,6 +15,7 @@ class Name(EmailElement):
     category = "Uncategorized"
 
     def __init__(self, name: str, text: str, element_id: Union[str, NoID] = NoID()):
+        self.name = str = name
         self.text: str = text
 
         if isinstance(element_id, NoID):
@@ -38,9 +39,7 @@ class Name(EmailElement):
 
         for cleaner in cleaners:
             cleaned_text = cleaner(cleaned_text)
-        
-        for cleaner in cleaners:
-            cleaned_text = cleaner(cleaned_name)
+            cleaned_name = cleaner(cleaned_name)
 
         if not isinstance(cleaned_text, str):
             raise ValueError("Cleaner produced a non-string output.")
