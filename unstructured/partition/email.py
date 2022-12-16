@@ -44,6 +44,13 @@ def partition_email(
     if not content:
         raise ValueError("text/html content not found in email")
 
+    # NOTE(robinson) - In the .eml files, the HTML content gets stored in a format that
+    # looks like the following, resulting in extraneous "=" chracters in the output if
+    # you don't clean it up
+    # <ul> =
+    #    <li>Item 1</li>=
+    #    <li>Item 2<li>=
+    #</ul>
     content = "".join(content.split("=\n"))
 
     elements = partition_html(text=content)
