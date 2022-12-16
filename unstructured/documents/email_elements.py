@@ -9,7 +9,7 @@ class EmailElement(Element):
     pass
 
     
-class Name(EmailElement):
+class Name(Text):
     """Base element for capturing the category and text of that category
      from within an email documents meta data."""
 
@@ -18,12 +18,6 @@ class Name(EmailElement):
     def __init__(self, name: str, text: str, element_id: Union[str, NoID] = NoID()):
         self.name: str = name
         self.text: str = text
-
-        if isinstance(element_id, NoID):
-            # NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits
-            element_id = hashlib.sha256(text.encode()).hexdigest()[:32]
-
-        super().__init__(element_id=element_id)
 
     def __str__(self):
         return f"{self.name}: {self.text}"
