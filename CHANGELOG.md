@@ -1,3 +1,7 @@
+## 0.3.4-dev2
+
+* Add 
+
 ## 0.3.3-dev1
 
 * Adds the `partition_email` partitioning brick
