@@ -8,8 +8,10 @@ argilla==1.1.1
     ***REMOVED*** via unstructured (setup.py)
 ***REMOVED***
     ***REMOVED*** via argilla
-certifi==2022.9.24
-    ***REMOVED*** via httpx
+***REMOVED***
+    ***REMOVED*** via
+    ***REMOVED***   httpx
+    ***REMOVED***   unstructured (setup.py)
 ***REMOVED***
     ***REMOVED*** via nltk
 ***REMOVED***

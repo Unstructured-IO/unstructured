@@ -8,8 +8,10 @@ alabaster==0.7.12
     ***REMOVED*** via sphinx
 babel==2.10.3
     ***REMOVED*** via sphinx
-certifi==2022.9.24
-    ***REMOVED*** via requests
+***REMOVED***
+    ***REMOVED*** via
+    ***REMOVED***   -r requirements/build.in
+    ***REMOVED***   requests
 charset-normalizer==2.1.1
     ***REMOVED*** via requests
 docutils==0.17.1

@@ -8,10 +8,11 @@ argilla==1.1.1
     ***REMOVED*** via unstructured (setup.py)
 ***REMOVED***
     ***REMOVED*** via argilla
-certifi==2022.9.24
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   httpx
     ***REMOVED***   requests
+    ***REMOVED***   unstructured (setup.py)
 charset-normalizer==2.1.1
     ***REMOVED*** via requests
 ***REMOVED***
