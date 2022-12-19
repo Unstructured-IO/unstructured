@@ -31,6 +31,14 @@ def test_replace_unicode_quotes(text, expected):
 
 @pytest.mark.parametrize(
     "text, expected",
+    [("5 w=E2=80=99s", "5 w’s")],
+)
+def test_replace_mime_encodings(text, expected):
+    assert core.replace_mime_encodings(text=text) == expected
+
+
+@pytest.mark.parametrize(
+    "text, expected",
     [
         ("“A lovely quote!”", "A lovely quote"),
         ("‘A lovely quote!’", "A lovely quote"),

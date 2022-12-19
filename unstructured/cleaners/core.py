@@ -1,6 +1,8 @@
 import re
 import sys
 import unicodedata
+import quopri
+
 from unstructured.nlp.patterns import UNICODE_BULLETS_RE
 
 
@@ -79,6 +81,16 @@ def clean_trailing_punctuation(text: str) -> str:
     ITEM 1.     BUSINESS. -> ITEM 1.     BUSINESS
     """
     return text.strip().rstrip(".,:;")
+
+
+def replace_mime_encodings(text: str) -> str:
+    """Replaces MIME encodings with their UTF-8 equivalent characters.
+
+    Example
+    -------
+    5 w=E2=80-99s -> 5 w’s
+    """
+    return quopri.decodestring(text.encode()).decode("utf-8")
 
 
 def clean_prefix(text: str, pattern: str, ignore_case: bool = False, strip: bool = True) -> str:

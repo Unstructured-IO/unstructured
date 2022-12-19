@@ -54,6 +54,30 @@ Examples:
   elements = partition_pdf("example-docs/layout-parser-paper-fast.pdf")
 
 
+``partition_email``
+---------------------
+
+The ``partition_email`` function partitions ``.eml`` documents and works with exports
+from email clients such as Microsoft Outlook and Gmail. The ``partition_email`` 
+takes a filename, file-like object, or raw text as input and produces a list of
+document ``Element`` objects as output.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.email import partition_email
+
+  elements = partition_email(filename="example-docs/fake-email.eml")
+
+  with open("example-docs/fake-email.eml", "r") as f:
+      elements = partition_email(file=f)
+
+  with open("example-docs/fake-email.eml", "r") as f:
+      text = f.read()
+  elements = partition_email(text=text)
+
+
 ``is_bulleted_text``
 ----------------------
 

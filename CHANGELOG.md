@@ -1,3 +1,9 @@
+***REMOVED******REMOVED*** 0.3.3-dev1
+
+* Adds the `partition_email` partitioning brick
+* Adds the `replace_mime_encodings` cleaning bricks
+* Small fix to HTML parsing related to processing list items with sub-tags
+
 ***REMOVED******REMOVED*** 0.3.2
 
 * Added `translate_text` brick for translating text between languages
