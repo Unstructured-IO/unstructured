@@ -61,7 +61,7 @@ class BodyText(List[Text]):
 
 
 class Recipient(Text):
-    """A text element for capturing header information of an email (e.g. Subject,
+    """A text element for capturing the recipient information of an email (e.g. Subject,
     To, From, etc)."""
 
     category = "Recipient"
@@ -70,7 +70,7 @@ class Recipient(Text):
 
 
 class Sender(Text):
-    """A text element for capturing header information of an email (e.g. Subject,
+    """A text element for capturing the sender information of an email (e.g. Subject,
     To, From, etc)."""
 
     category = "Sender"
@@ -79,7 +79,7 @@ class Sender(Text):
 
 
 class Subject(Text):
-    """A text element for capturing header information of an email (e.g. Subject,
+    """A text element for capturing the subject information of an email (e.g. Subject,
     To, From, etc)."""
 
     category = "Subject"
@@ -97,7 +97,7 @@ class ReceivedInfo(List[Text]):
 
 
 class MetaData(Name):
-    """A text element for capturing header information of an email (e.g. Subject,
+    """A text element for capturing header meta data of an email (e.g. Subject,
     To, From, etc)."""
 
     category = "MetaData"
@@ -105,8 +105,8 @@ class MetaData(Name):
     pass
 
 
-class Attachment(Text):
-    """A text element for capturing header information of an email (e.g. Subject,
+class Attachment(Name):
+    """A text element for capturing the attachment name in an email (e.g. Subject,
     To, From, etc)."""
 
     category = "Attachment"
@@ -124,6 +124,7 @@ class Email(ABC):
         self.received_info: ReceivedInfo = None
         self.meta_data: MetaData = None
         self.attachment: Attachment = None
+        self.attachment_name: Attachment = None
 
     def __str__(self):
         return f""" 
@@ -145,5 +146,5 @@ class Email(ABC):
 
         Attachment:
 
-        {self.attachment}
+        {self.attachment_name}
         """
