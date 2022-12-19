@@ -1,13 +1,19 @@
 import email
-from typing import Dict, IO, List, Optional
+from typing import Dict, Final, IO, List, Optional
 
 from unstructured.cleaners.core import replace_mime_encodings
 from unstructured.documents.elements import Element, Text
 from unstructured.partition.html import partition_html
 
 
+VALID_CONTENT_SOURCES: Final[List[str]] = ["text/html"]
+
+
 def partition_email(
-    filename: Optional[str] = None, file: Optional[IO] = None, text: Optional[str] = None
+    filename: Optional[str] = None,
+    file: Optional[IO] = None,
+    text: Optional[str] = None,
+    content_source: str = "text/html",
 ) -> List[Element]:
     """Partitions an .eml documents into its constituent elements.
     Parameters
@@ -19,6 +25,12 @@ def partition_email(
     text
         The string representation of the .eml document.
     """
+    if content_source not in VALID_CONTENT_SOURCES:
+        raise ValueError(
+            f"{content_source} is not a valid value for content_source. "
+            f"Valid content sources are: {VALID_CONTENT_SOURCES}"
+        )
+
     if not any([filename, file, text]):
         raise ValueError("One of filename, file, or text must be specified.")
 
@@ -40,7 +52,8 @@ def partition_email(
     content_map: Dict[str, str] = {
         part.get_content_type(): part.get_payload() for part in msg.walk()
     }
-    content = content_map.get("text/html", "")
+
+    content = content_map.get(content_source, "")
     if not content:
         raise ValueError("text/html content not found in email")
 

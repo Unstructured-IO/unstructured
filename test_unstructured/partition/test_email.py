@@ -53,3 +53,9 @@ def test_partition_email_raises_with_too_many_specified():
 
     with pytest.raises(ValueError):
         partition_email(filename=filename, text=text)
+
+
+def test_partition_email_raises_with_invalid_content_type():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
+    with pytest.raises(ValueError):
+        partition_email(filename=filename, content_source="application/json")
