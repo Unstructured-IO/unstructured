@@ -3,7 +3,7 @@ import pytest
 
 from unstructured.cleaners.core import clean_prefix
 from unstructured.cleaners.translate import translate_text
-from unstructured.documents.email_elements import EmailElement, NoID, Name, Text
+from unstructured.documents.email_elements import EmailElement, NoID, Name
 
 
 def test_text_id():

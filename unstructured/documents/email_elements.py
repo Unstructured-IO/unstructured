@@ -122,27 +122,27 @@ class Email(ABC):
         self.sender = sender
         self.subject = subject
         self.body = body
-        self.received_info: ReceivedInfo = None
-        self.meta_data: MetaData = None
-        self.attachment: Attachment = None
-        self.attachment_name: Attachment = None
+        self.received_info: ReceivedInfo
+        self.meta_data: MetaData
+        self.attachment: Attachment
+        self.attachment_name: Attachment
 
     def __str__(self):
-        return f""" 
+        return f"""
         Recipient: {self.recipient}
         Sender: {self.sender}
         Subject: {self.subject}
-        
+
         Received Header Information:
-        
+
         {self.received_info}
 
-        Meta Data From Header: 
-        
+        Meta Data From Header:
+
         {self.meta_data}
 
-        Body: 
-        
+        Body:
+
         {self.body}
 
         Attachment:
