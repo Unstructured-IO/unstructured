@@ -1,4 +1,12 @@
+<<<<<<< HEAD
 ## 0.3.5-dev0
+=======
+## 0.3.4-dev2
+
+* Add 
+
+## 0.3.3-dev1
+>>>>>>> cc27de8 (changelog and new partition function)
 
 * Add new pattern to recognize plain text dash bullets
 * Add test for bullet patterns
