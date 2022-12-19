@@ -225,8 +225,13 @@ def _construct_text(tag_elem: etree.Element) -> str:
     return text.strip()
 
 
-def _is_text_tag(tag_elem: etree.Element) -> bool:
+def _is_text_tag(tag_elem: etree.Element, max_predecessor_len: int = 5) -> bool:
     """Deteremines if a tag potentially contains narrative text."""
+    # NOTE(robinson) - Only consider elements with limited depth. Otherwise,
+    # it could be the text representation of a giant div
+    if len(tag_elem) > max_predecessor_len:
+        return False
+
     if tag_elem.tag in TEXT_TAGS + HEADING_TAGS:
         return True
 
@@ -250,7 +255,7 @@ def _process_list_item(
     we can skip processing if bullets are found in a div element."""
     if tag_elem.tag in LIST_ITEM_TAGS:
         text = _construct_text(tag_elem)
-        return HTMLListItem(text=text, tag=tag_elem.tag), None
+        return HTMLListItem(text=text, tag=tag_elem.tag), tag_elem
 
     elif tag_elem.tag == "div":
         text = _construct_text(tag_elem)
