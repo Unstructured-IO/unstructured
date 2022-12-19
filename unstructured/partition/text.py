@@ -4,7 +4,10 @@ from typing import Dict, IO, List, Optional
 
 from unstructured.cleaners.core import replace_mime_encodings
 from unstructured.documents.elements import Element, Text
-from unstructured.partition.html import partition_html
+from unstructured.partition.text_type import (is_possible_narrative_text
+                                              ,is_possible_title
+                                              ,is_bulleted_text
+                                             )
 
 
 def partition_text(
@@ -47,10 +50,15 @@ def partition_text(
 
     content = re.split(r"\n\n\n|\n\n|\n", content)
 
-
-    elements = partition_html(text=content)
-    for element in elements:
-        if isinstance(element, Text):
-            element.apply(replace_mime_encodings)
+    elements: List[Text] = list()
+    for ctext in content:
+        if ctext == "":
+            break
+        if is_possible_narrative_text(ctext):
+            elements.append(NarrativeText(text=ctext))
+        elif is_possible_title(ctext):
+            elements.append(Title(text=ctext))
+        elif is_bulleted_text(ctext):
+            elements.append(ListItem(text=ctext)) 
 
     return elements
