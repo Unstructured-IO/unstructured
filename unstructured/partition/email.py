@@ -6,8 +6,26 @@ from unstructured.documents.elements import Element, Text
 from unstructured.partition.html import partition_html
 
 
-VALID_CONTENT_SOURCES: Final[List[str]] = ["text/html"]
+VALID_CONTENT_SOURCES: Final[List[str]] = ["text/html", "text/plain"]
 
+def split_by_paragraph(content: str) -> List[str]:
+    return re.split(r"\n\n\n|\n\n|\r\n|\r|\n", content)
+
+def partition_text(content: List[str]) -> List[Element]:
+    """ Categorizes the body of the an email and
+        returns the email elements.
+    """
+    elements: List[Text] = list()
+    for ctext in content:
+        if ctext == "":
+            break
+        if is_possible_narrative_text(ctext):
+            elements.append(NarrativeText(text=ctext))
+        elif is_possible_title(ctext):
+            elements.append(Title(text=ctext))
+        elif is_bulleted_text(ctext):
+            elements.append(ListItem(text=ctext))
+    return elements
 
 def partition_email(
     filename: Optional[str] = None,
@@ -24,6 +42,9 @@ def partition_email(
         A file-like object using "r" mode --> open(filename, "r").
     text
         The string representation of the .eml document.
+    content_source
+        default: "text/html"
+        other: "text/plain"
     """
     if content_source not in VALID_CONTENT_SOURCES:
         raise ValueError(
@@ -55,7 +76,7 @@ def partition_email(
 
     content = content_map.get(content_source, "")
     if not content:
-        raise ValueError("text/html content not found in email")
+        raise ValueError(f"{content_source} content not found in email")
 
     # NOTE(robinson) - In the .eml files, the HTML content gets stored in a format that
     # looks like the following, resulting in extraneous "=" chracters in the output if
@@ -64,11 +85,14 @@ def partition_email(
     #    <li>Item 1</li>=
     #    <li>Item 2<li>=
     # </ul>
-    content = "".join(content.split("=\n"))
+    content = split_by_paragraph(content)
 
-    elements = partition_html(text=content)
-    for element in elements:
-        if isinstance(element, Text):
-            element.apply(replace_mime_encodings)
+    if content_source == "text/html":
+        elements = partition_html(text=content)
+        for element in elements:
+            if isinstance(element, Text):
+                element.apply(replace_mime_encodings)
+    elif content_source == "text/plain":
+        elements = partition_text(content)
 
     return elements
