@@ -1,6 +1,8 @@
-## 0.3.3-dev0
+## 0.3.3-dev1
 
-* Added `EmailElement` data structure for email documents
+* Adds the `partition_email` partitioning brick
+* Adds the `replace_mime_encodings` cleaning bricks
+* Small fix to HTML parsing related to processing list items with sub-tags
 
 ## 0.3.2
 
