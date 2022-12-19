@@ -51,6 +51,9 @@ setup(
         "lxml",
         "nltk",
         "argilla",
+        # NOTE(robinson) - The following dependencies are pinned
+        # to address security scans
+        "certifi>=2022.12.07",
     ],
     extras_require={
         "huggingface": [
