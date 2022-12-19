@@ -113,10 +113,11 @@ class Attachment(Name):
 
     pass
 
+
 class Email(ABC):
     """An email class with it's attributes"""
 
-    def __init__(self, recipient: Recipient,  sender: Sender, subject: Subject, body: BodyText):
+    def __init__(self, recipient: Recipient, sender: Sender, subject: Subject, body: BodyText):
         self.recipient = recipient
         self.sender = sender
         self.subject = subject
