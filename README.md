@@ -19,7 +19,7 @@
 <div align="center">
 <img src="https://user-images.githubusercontent.com/38184042/205945013-99670127-0bf3-4851-b4ac-0bc23e357476.gif" title="unstructured in action!">
 </div>
-	
+
 <h3 align="center">
   <p>Open-Source Pre-Processing Tools for Unstructured Data</p>
 </h3>
@@ -147,6 +147,48 @@ The `Document` has a `pages` attribute consisting of `Page` object and the `Page
 has an `element` attribute consisting of `Element` objects. Sub-types of the `Element` class
 represent different components of a document, such as `NarrativeText` and `Title`. You can use
 these normalized elements to zero in on the components of a document you most care about.
+
+### E-mail Parsing
+
+The `partition_email` function within `unstructured` is helpful for parsing `.eml` files. Common
+e-mail clients such as Microsoft Outlook and Gmail support exproting e-mails as `.eml` files.
+`partition_email` accepts filenames, file-like object, and raw text as input. The following
+three snippets for parsing `.eml` files are equivalent:
+
+```python
+from unstructured.partition.email import partition_email
+
+elements = partition_email(filename="example-docs/fake-email.eml")
+
+with open("example-docs/fake-email.eml", "r") as f:
+  elements = partition_email(file=f)
+
+with open("example-docs/fake-email.eml", "r") as f:
+  text = f.read()
+elements = partition_email(text=text)
+```
+
+The `elements` output will look like the following:
+
+```python
+[<unstructured.documents.html.HTMLNarrativeText at 0x13ab14370>,
+<unstructured.documents.html.HTMLTitle at 0x106877970>,
+<unstructured.documents.html.HTMLListItem at 0x1068776a0>,
+<unstructured.documents.html.HTMLListItem at 0x13fe4b0a0>]
+```
+
+Run `print("\n\n".join([str(el) for el in elements]))` to get a string representation of the
+output, which looks like:
+
+```python
+This is a test email to use for unit tests.
+
+Important points:
+
+Roses are red
+
+Violets are blue
+```
 
 ## :guardsman: Security Policy
 
