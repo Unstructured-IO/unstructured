@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bricks &mdash; unstructured 0.3.2 documentation</title>
+  <title>Bricks &mdash; unstructured 0.3.3-dev1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -47,6 +47,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#partitioning">Partitioning</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#partition-html"><code class="docutils literal notranslate"><span class="pre">partition_html</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#partition-pdf"><code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#partition-email"><code class="docutils literal notranslate"><span class="pre">partition_email</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#is-bulleted-text"><code class="docutils literal notranslate"><span class="pre">is_bulleted_text</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#is-possible-narrative-text"><code class="docutils literal notranslate"><span class="pre">is_possible_narrative_text</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#is-possible-title"><code class="docutils literal notranslate"><span class="pre">is_possible_title</span></code></a></li>
@@ -151,6 +152,26 @@ if desired.</p>
 
 <span class="c1"># Returns a List[Element] present in the pages of the parsed pdf document</span>
 <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_pdf</span><span class="p">(</span><span class="s2">&quot;example-docs/layout-parser-paper-fast.pdf&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="partition-email">
+<h3><code class="docutils literal notranslate"><span class="pre">partition_email</span></code><a class="headerlink" href="#partition-email" title="Permalink to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">partition_email</span></code> function partitions <code class="docutils literal notranslate"><span class="pre">.eml</span></code> documents and works with exports
+from email clients such as Microsoft Outlook and Gmail. The <code class="docutils literal notranslate"><span class="pre">partition_email</span></code>
+takes a filename, file-like object, or raw text as input and produces a list of
+document <code class="docutils literal notranslate"><span class="pre">Element</span></code> objects as output.</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.email</span> <span class="kn">import</span> <span class="n">partition_email</span>
+
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_email</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example-docs/fake-email.eml&quot;</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;example-docs/fake-email.eml&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_email</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;example-docs/fake-email.eml&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_email</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
