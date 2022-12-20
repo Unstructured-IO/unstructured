@@ -9,7 +9,7 @@ else:
 
 from lxml import etree
 
-from unstructured.logger import get_logger
+from unstructured.logger import logger
 
 from unstructured.cleaners.core import clean_bullets, replace_unicode_quotes
 from unstructured.documents.base import Page
@@ -20,8 +20,6 @@ from unstructured.partition.text_type import (
     is_possible_narrative_text,
     is_possible_title,
 )
-
-logger = get_logger()
 
 TEXT_TAGS: Final[List[str]] = ["p", "a", "td", "span", "font"]
 LIST_ITEM_TAGS: Final[List[str]] = ["li", "dd"]

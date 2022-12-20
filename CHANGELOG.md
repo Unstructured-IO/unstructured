@@ -1,5 +1,6 @@
-***REMOVED******REMOVED*** 0.3.3-dev1
+***REMOVED******REMOVED*** 0.3.3-dev2
 
+* Removes BasicConfig from logger configuration
 * Adds the `partition_email` partitioning brick
 * Adds the `replace_mime_encodings` cleaning bricks
 * Small fix to HTML parsing related to processing list items with sub-tags
