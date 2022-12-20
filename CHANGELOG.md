@@ -1,4 +1,4 @@
-## 0.3.3-dev2
+## 0.3.3
 
 * Removes BasicConfig from logger configuration
 * Adds the `partition_email` partitioning brick
