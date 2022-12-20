@@ -9,9 +9,8 @@ else:
 from unstructured.cleaners.core import remove_punctuation
 from unstructured.nlp.patterns import UNICODE_BULLETS_RE
 from unstructured.nlp.tokenize import pos_tag, sent_tokenize, word_tokenize
-from unstructured.logger import get_logger
+from unstructured.logger import logger
 
-logger = get_logger()
 
 POS_VERB_TAGS: Final[List[str]] = ["VB", "VBG", "VBD", "VBN", "VBP", "VBZ"]
 
