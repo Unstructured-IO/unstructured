@@ -97,7 +97,7 @@ class HTMLDocument(XMLDocument):
                         descendanttag_elems = tuple(tag_elem.iterdescendants())
 
                 elif _is_container_with_text(tag_elem):
-                    element = _text_to_element(tag_elem.text, "div", [])
+                    element = _text_to_element(tag_elem.text, "div", ())
                     if element is not None:
                         page.elements.append(element)
 
