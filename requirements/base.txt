@@ -8,8 +8,10 @@ argilla==1.1.1
     # via unstructured (setup.py)
 backoff==2.2.1
     # via argilla
-certifi==2022.9.24
-    # via httpx
+certifi==2022.12.7
+    # via
+    #   httpx
+    #   unstructured (setup.py)
 click==8.1.3
     # via nltk
 deprecated==1.2.13
