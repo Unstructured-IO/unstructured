@@ -1,7 +1,8 @@
 """partition.py implements logic for partitioning plain text documents into sections."""
 import sys
 
-from typing import  List, Optional
+from typing import List, Optional
+
 if sys.version_info < (3, 8):
     from typing_extensions import Final
 else:
