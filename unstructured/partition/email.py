@@ -1,5 +1,10 @@
 import email
-from typing import Dict, Final, IO, List, Optional
+import sys
+from typing import Dict, IO, List, Optional
+if sys.version_info < (3, 8):
+    from typing_extensions import Final
+else:
+    from typing import Final
 
 from unstructured.cleaners.core import replace_mime_encodings
 from unstructured.documents.elements import Element, Text
