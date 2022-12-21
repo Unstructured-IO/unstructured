@@ -9,7 +9,7 @@ else:
 
 from lxml import etree
 
-from unstructured.logger import get_logger
+from unstructured.logger import logger
 
 from unstructured.cleaners.core import clean_bullets, replace_unicode_quotes
 from unstructured.documents.base import Page
@@ -20,8 +20,6 @@ from unstructured.partition.text_type import (
     is_possible_narrative_text,
     is_possible_title,
 )
-
-logger = get_logger()
 
 TEXT_TAGS: Final[List[str]] = ["p", "a", "td", "span", "font"]
 LIST_ITEM_TAGS: Final[List[str]] = ["li", "dd"]
@@ -97,6 +95,11 @@ class HTMLDocument(XMLDocument):
                     if element is not None:
                         page.elements.append(element)
                         descendanttag_elems = tuple(tag_elem.iterdescendants())
+
+                elif _is_container_with_text(tag_elem):
+                    element = _text_to_element(tag_elem.text, "div", ())
+                    if element is not None:
+                        page.elements.append(element)
 
                 elif _is_bulleted_table(tag_elem):
                     bulleted_text = _bulleted_text_from_table(tag_elem)
@@ -190,20 +193,44 @@ def _parse_tag(
     text = _construct_text(tag_elem)
     if not text:
         return None
+    return _text_to_element(text, tag_elem.tag, ancestortags)
+
+
+def _text_to_element(text: str, tag: str, ancestortags: Tuple[str, ...]) -> Optional[Element]:
+    """Given the text of an element, the tag type and the ancestor tags, produces the appropriate
+    HTML element."""
     if is_bulleted_text(text):
         if not clean_bullets(text):
             return None
-        return HTMLListItem(text=clean_bullets(text), tag=tag_elem.tag, ancestortags=ancestortags)
+        return HTMLListItem(text=clean_bullets(text), tag=tag, ancestortags=ancestortags)
 
     if len(text) < 2:
         return None
-    elif is_narrative_tag(text, tag_elem.tag):
-        return HTMLNarrativeText(text, tag=tag_elem.tag, ancestortags=ancestortags)
+    elif is_narrative_tag(text, tag):
+        return HTMLNarrativeText(text, tag=tag, ancestortags=ancestortags)
     elif is_possible_title(text):
-        return HTMLTitle(text, tag=tag_elem.tag, ancestortags=ancestortags)
+        return HTMLTitle(text, tag=tag, ancestortags=ancestortags)
     else:
         # Something that might end up here is text that's just a number.
         return None
+
+
+def _is_container_with_text(tag_elem: etree.Element) -> bool:
+    """Checks if a tag is a container that also happens to containe text.
+    Example
+    -------
+    <div>Hi there,
+        <div>This is my message.</div>
+        <div>Please read my message!</div>
+    </div>
+    """
+    if tag_elem.tag != "div" or len(tag_elem) == 0:
+        return False
+
+    if tag_elem.text is None or tag_elem.text.strip() == "":
+        return False
+
+    return True
 
 
 def is_narrative_tag(text: str, tag: str) -> bool:

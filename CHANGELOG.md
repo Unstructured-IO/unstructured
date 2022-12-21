@@ -1,8 +1,21 @@
-## 0.3.3-dev1
+## 0.3.5-dev2
 
+* Add new pattern to recognize plain text dash bullets
+* Add test for bullet patterns
+* Fix for `partition_html` that allows for processing `div` tags that have both text and child
+  elements
+
+## 0.3.4
+
+* Python-3.7 compat
+
+## 0.3.3
+
+* Removes BasicConfig from logger configuration
 * Adds the `partition_email` partitioning brick
 * Adds the `replace_mime_encodings` cleaning bricks
 * Small fix to HTML parsing related to processing list items with sub-tags
+* Add `EmailElement` data structure to store email documents
 
 ## 0.3.2
 

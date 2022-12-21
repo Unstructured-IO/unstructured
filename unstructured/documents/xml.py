@@ -2,10 +2,9 @@ from typing import Optional, Union, List
 
 import lxml.etree as etree
 
-from unstructured.logger import get_logger
+from unstructured.logger import logger
 from unstructured.documents.base import Document, Page
 
-logger = get_logger()
 
 VALID_PARSERS = Union[etree.HTMLParser, etree.XMLParser, None]
 
