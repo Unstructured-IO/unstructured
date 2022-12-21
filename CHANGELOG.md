@@ -1,4 +1,4 @@
-## 0.3.5-dev1
+## 0.3.5-dev2
 
 * Add new pattern to recognize plain text dash bullets
 * Add test for bullet patterns
