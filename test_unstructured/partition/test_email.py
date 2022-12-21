@@ -32,6 +32,14 @@ def test_partition_email_from_file():
     assert elements == EXPECTED_OUTPUT
 
 
+def test_partition_email_from_text_file():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.txt")
+    with open(filename, "r") as f:
+        elements = partition_email(file=f, content_source="text/plain")
+    assert len(elements) > 0
+    assert elements == EXPECTED_OUTPUT
+
+
 def test_partition_email_from_text():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
     with open(filename, "r") as f:

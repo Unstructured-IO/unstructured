@@ -1,13 +1,43 @@
 import email
+<<<<<<< Updated upstream
 from typing import Dict, Final, IO, List, Optional
+=======
+<<<<<<< Updated upstream
+import sys
+from typing import Dict, IO, List, Optional
 
-from unstructured.cleaners.core import replace_mime_encodings
-from unstructured.documents.elements import Element, Text
+if sys.version_info < (3, 8):
+    from typing_extensions import Final
+else:
+    from typing import Final
+=======
+import re
+from typing import Dict, Final, IO, List, Optional
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
+
+from unstructured.cleaners.core import replace_mime_encodings, clean_bullets
+from unstructured.documents.elements import (Element
+                                            , Text
+                                            , NarrativeText
+                                            , ListItem
+                                            , Title
+                                            )
 from unstructured.partition.html import partition_html
+from unstructured.partition.text_type import (is_possible_narrative_text
+                                              , is_possible_title
+                                              , is_bulleted_text
+                                             )
+
 
 
 VALID_CONTENT_SOURCES: Final[List[str]] = ["text/html", "text/plain"]
 
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
 def split_by_paragraph(content: str) -> List[str]:
     return re.split(r"\n\n\n|\n\n|\r\n|\r|\n", content)
 
@@ -17,6 +47,7 @@ def partition_text(content: List[str]) -> List[Element]:
     """
     elements: List[Text] = list()
     for ctext in content:
+<<<<<<< Updated upstream
         if ctext == "":
             break
         if is_possible_narrative_text(ctext):
@@ -26,6 +57,20 @@ def partition_text(content: List[str]) -> List[Element]:
         elif is_bulleted_text(ctext):
             elements.append(ListItem(text=ctext))
     return elements
+=======
+
+        if ctext == "":
+            break
+        if is_bulleted_text(ctext):
+            if not clean_bullets(ctext):
+                elements.append(ListItem(text=ctext))
+        elif is_possible_narrative_text(ctext):
+            elements.append(NarrativeText(text=ctext))
+        elif is_possible_title(ctext):
+            elements.append(Title(text=ctext))
+    return elements
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
 def partition_email(
     filename: Optional[str] = None,
@@ -87,12 +132,27 @@ def partition_email(
     # </ul>
     content = split_by_paragraph(content)
 
+<<<<<<< Updated upstream
     if content_source == "text/html":
+=======
+<<<<<<< Updated upstream
+    elements = partition_html(text=content)
+    for element in elements:
+        if isinstance(element, Text):
+            element.apply(replace_mime_encodings)
+=======
+    if content_source == "text/html":
+        content = "".join(content)
+>>>>>>> Stashed changes
         elements = partition_html(text=content)
         for element in elements:
             if isinstance(element, Text):
                 element.apply(replace_mime_encodings)
     elif content_source == "text/plain":
         elements = partition_text(content)
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
     return elements
