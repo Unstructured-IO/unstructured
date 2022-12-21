@@ -1,18 +1,5 @@
 import requests  # type: ignore
-
-import sys
-
-if sys.version_info < (3, 8):
-    from typing_extensions import (
-        List,
-        Optional,
-        Union,
-        Tuple,
-        Mapping,
-        BinaryIO,
-    )  # pragma: no cover
-else:
-    from typing import List, Optional, Union, Tuple, Mapping, BinaryIO  # pragma: no cover
+from typing import BinaryIO, List, Optional, Union, Tuple, Mapping
 
 from unstructured.documents.elements import Element
 
