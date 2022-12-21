@@ -88,6 +88,7 @@ def test_is_possible_title(text, expected, monkeypatch):
         ("⦿ This is a fine point!", True),
         ("  This is a fine point!", True),
         ("* This is a fine point!", True),
+        ("- This is a fine point!", True),
         ("This is NOT a fine point!", False),  # No bullet point
         ("I love morse code! ● ● ● --- ● ● ●", False),  # Not at the beginning
     ],

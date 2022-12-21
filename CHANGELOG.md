@@ -1,3 +1,8 @@
+## 0.3.5-dev0
+
+* Add new pattern to recognize plain text dash bullets
+* Add test for bullet patterns
+
 ## 0.3.4
 
 * Python-3.7 compat
