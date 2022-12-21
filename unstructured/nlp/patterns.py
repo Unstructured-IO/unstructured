@@ -26,6 +26,7 @@ UNICODE_BULLETS: Final[List[str]] = [
     "\u2767",
     "\u29BE",
     "\u29BF",
+    "\u002D",
     "",
     "\*",  # noqa: W605 NOTE(robinson) - skipping qa because we need the escape for the regex
     "\x95",
