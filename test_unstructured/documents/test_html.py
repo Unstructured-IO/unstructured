@@ -475,6 +475,34 @@ def test_nested_text_tags():
     assert len(html_document.pages[0].elements) == 1
 
 
+def test_containers_with_text_are_processed():
+    html_str = """<div dir=3D"ltr">Hi All,<div><br></div>
+   <div>Get excited for our first annual family day!</div>
+   <div>Best.<br clear=3D"all">
+      <div><br></div>
+      -- <br>
+      <div dir=3D"ltr">
+         <div dir=3D"ltr">Dino the Datasaur<div>Unstructured Technologies<br><div>Data Scientist
+                </div>
+               <div><br></div>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>"""
+    html_document = HTMLDocument.from_string(html_str)
+    html_document._read()
+
+    assert html_document.elements == [
+        Title(text="Hi All,"),
+        NarrativeText(text="Get excited for our first annual family day!"),
+        Title(text="Best."),
+        Title(text="Dino the Datasaur"),
+        Title(text="Unstructured Technologies"),
+        Title(text="Data Scientist"),
+    ]
+
+
 def test_html_grabs_bulleted_text_in_tags():
     html_str = """<html>
     <body>
