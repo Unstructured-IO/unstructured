@@ -1,7 +1,4 @@
 import requests  # type: ignore
-
-import sys
-
 from typing import BinaryIO, List, Optional, Union, Tuple, Mapping
 
 from unstructured.documents.elements import Element
