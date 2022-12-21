@@ -124,8 +124,7 @@ class Email(ABC):
         self.body = body
         self.received_info: ReceivedInfo
         self.meta_data: MetaData
-        self.attachment: Attachment
-        self.attachment_name: Attachment
+        self.attachment: List[Attachment]
 
     def __str__(self):
         return f"""
@@ -147,5 +146,5 @@ class Email(ABC):
 
         Attachment:
 
-        {self.attachment_name}
+        {[file.name for file in self.attachment]}
         """
