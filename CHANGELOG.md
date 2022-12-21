@@ -1,3 +1,7 @@
+***REMOVED******REMOVED*** 0.3.4
+
+* Python-3.7 compat
+
 ***REMOVED******REMOVED*** 0.3.3
 
 * Removes BasicConfig from logger configuration
