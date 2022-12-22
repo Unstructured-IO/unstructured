@@ -60,18 +60,16 @@ class BodyText(List[Text]):
     pass
 
 
-class Recipient(Text):
-    """A text element for capturing the recipient information of an email (e.g. Subject,
-    To, From, etc)."""
+class Recipient(Name):
+    """A text element for capturing the recipient information of an email """
 
     category = "Recipient"
 
     pass
 
 
-class Sender(Text):
-    """A text element for capturing the sender information of an email (e.g. Subject,
-    To, From, etc)."""
+class Sender(Name):
+    """A text element for capturing the sender information of an email"""
 
     category = "Sender"
 
@@ -79,8 +77,7 @@ class Sender(Text):
 
 
 class Subject(Text):
-    """A text element for capturing the subject information of an email (e.g. Subject,
-    To, From, etc)."""
+    """A text element for capturing the subject information of an email """
 
     category = "Subject"
 
@@ -88,8 +85,7 @@ class Subject(Text):
 
 
 class ReceivedInfo(List[Text]):
-    """A text element for capturing header information of an email (e.g. Subject,
-    To, From, etc)."""
+    """A text element for capturing header information of an email (e.g. IP addresses, etc)."""
 
     category = "ReceivedInfo"
 
@@ -97,8 +93,7 @@ class ReceivedInfo(List[Text]):
 
 
 class MetaData(Name):
-    """A text element for capturing header meta data of an email (e.g. Subject,
-    To, From, etc)."""
+    """A text element for capturing header meta data of an email (miscellaneous data in the email)."""
 
     category = "MetaData"
 
@@ -106,8 +101,8 @@ class MetaData(Name):
 
 
 class Attachment(Name):
-    """A text element for capturing the attachment name in an email (e.g. Subject,
-    To, From, etc)."""
+    """A text element for capturing the attachment name in an email (e.g. documents,
+    images, etc)."""
 
     category = "Attachment"
 

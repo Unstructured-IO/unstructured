@@ -9,7 +9,15 @@ else:
     from typing import Final
 
 from unstructured.cleaners.core import replace_mime_encodings, clean_bullets
-from unstructured.documents.email_elements import EmailElement, BodyText
+from unstructured.documents.email_elements import (
+    EmailElement, 
+    BodyText, 
+    Recipient, 
+    Sender, 
+    Subject,
+    ReceivedInfo,
+    MetaData,
+)
 from unstructured.documents.elements import Text, NarrativeText, ListItem, Title
 from unstructured.partition.html import partition_html
 from unstructured.partition.text_type import (
@@ -24,7 +32,23 @@ VALID_CONTENT_SOURCES: Final[List[str]] = ["text/html", "text/plain"]
 
 def split_by_paragraph(content: str) -> List[str]:
     return re.split(r"\n\n\n|\n\n|\r\n|\r|\n", content)
+    
+def parse_received_data(data: str) -> List[str]:
 
+
+def partition_header(msg: List[str])-> List[EmailElement]:
+    elements: List[Text] = list()
+    for item in msg.raw_items():
+        if item[0] == "To":
+            text = item[1].split(" ")
+            elements.append(Recipient(name=text[0], text=text[1]))
+        elif item[0] == "From":
+            text = item[1].split(" ")
+            elements.append(Recipient(name=text[0], text=text[1]))
+        elif item[0] == "Subject":
+            elements.append(Subject(text=item[1]))
+        elif item[0] == "Received":
+            elements.append(ReceivedInfo(parse_received_data(item[1])))
 
 def partition_text(content: List[str]) -> List[EmailElement]:
     """Categorizes the body of the an email and
@@ -91,6 +115,8 @@ def partition_email(
     else:
         raise ValueError("Only one of filename, file, or text can be specified.")
 
+    header_content = partition_header(msg)
+
     content_map: Dict[str, str] = {
         part.get_content_type(): part.get_payload() for part in msg.walk()
     }
@@ -118,4 +144,4 @@ def partition_email(
     elif content_source == "text/plain":
         elements = partition_text(content)
 
-    return elements
+    return elements + header_content
