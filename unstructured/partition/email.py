@@ -9,8 +9,14 @@ else:
     from typing import Final
 
 from unstructured.cleaners.core import replace_mime_encodings, clean_bullets
+from unstructured.cleaners.extract import (
+    extract_ip_address,
+    extract_ip_address_name,
+    extract_mapi_id,
+    extract_datetimetz,
+)
 from unstructured.documents.email_elements import (
-    EmailElement, 
+    EmailElement,
     BodyText, 
     Recipient, 
     Sender, 
@@ -32,9 +38,23 @@ VALID_CONTENT_SOURCES: Final[List[str]] = ["text/html", "text/plain"]
 
 def split_by_paragraph(content: str) -> List[str]:
     return re.split(r"\n\n\n|\n\n|\r\n|\r|\n", content)
-    
-def parse_received_data(data: str) -> List[str]:
 
+
+def parse_received_data(data: str) -> List[EmailElement]:
+
+    ip_address_names = extract_ip_address_name(data)
+    ip_addresses = extract_ip_address(data)
+    mapi_id = extract_mapi_id(data)
+    datetimetz = extract_datetimetz(data)
+
+    elements: List[EmailElement] = list()
+    for name, ip in zip(ip_address_names, ip_addresses):
+        elements.append(MetaData(name=name, text=ip))
+
+    elements.append(MetaData(name="mapi_id", text=mapi_id))
+    elements.append(MetaData(name="datetimetz", text=datetimetz))
+
+    return elements
 
 def partition_header(msg: List[str])-> List[EmailElement]:
     elements: List[Text] = list()
@@ -44,11 +64,15 @@ def partition_header(msg: List[str])-> List[EmailElement]:
             elements.append(Recipient(name=text[0], text=text[1]))
         elif item[0] == "From":
             text = item[1].split(" ")
-            elements.append(Recipient(name=text[0], text=text[1]))
+            elements.append(Sender(name=text[0], text=text[1]))
         elif item[0] == "Subject":
             elements.append(Subject(text=item[1]))
         elif item[0] == "Received":
             elements.append(ReceivedInfo(parse_received_data(item[1])))
+        else:
+            elements.append(MetaData(name=item[0], text=item[1]))
+
+    return elements
 
 def partition_text(content: List[str]) -> List[EmailElement]:
     """Categorizes the body of the an email and
