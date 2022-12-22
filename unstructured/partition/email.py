@@ -9,18 +9,14 @@ else:
     from typing import Final
 
 from unstructured.cleaners.core import replace_mime_encodings, clean_bullets
-from unstructured.documents.elements import (Element
-                                            , Text
-                                            , NarrativeText
-                                            , ListItem
-                                            , Title
-                                            )
+from unstructured.documents.email_elements import EmailElement, BodyText
+from unstructured.documents.elements import Text, NarrativeText, ListItem, Title
 from unstructured.partition.html import partition_html
-from unstructured.partition.text_type import (is_possible_narrative_text
-                                              , is_possible_title
-                                              , is_bulleted_text
-                                             )
-
+from unstructured.partition.text_type import (
+    is_possible_narrative_text,
+    is_possible_title,
+    is_bulleted_text,
+)
 
 
 VALID_CONTENT_SOURCES: Final[List[str]] = ["text/html", "text/plain"]
@@ -29,23 +25,27 @@ VALID_CONTENT_SOURCES: Final[List[str]] = ["text/html", "text/plain"]
 def split_by_paragraph(content: str) -> List[str]:
     return re.split(r"\n\n\n|\n\n|\r\n|\r|\n", content)
 
-def partition_text(content: List[str]) -> List[Element]:
-    """ Categorizes the body of the an email and
-        returns the email elements.
+
+def partition_text(content: List[str]) -> List[EmailElement]:
+    """Categorizes the body of the an email and
+    returns the email elements.
     """
+
     elements: List[Text] = list()
     for ctext in content:
+        # clean bullet doesn't recognize bullet with whitespace around it
+        # may want to fix in clean bullet but don't want to break other dependent code
+        ctext = ctext.strip()
 
         if ctext == "":
             break
         if is_bulleted_text(ctext):
-            if not clean_bullets(ctext):
-                elements.append(ListItem(text=ctext))
+            elements.append(ListItem(text=clean_bullets(ctext)))
         elif is_possible_narrative_text(ctext):
             elements.append(NarrativeText(text=ctext))
         elif is_possible_title(ctext):
             elements.append(Title(text=ctext))
-    return elements
+    return BodyText(elements)
 
 
 def partition_email(
@@ -53,7 +53,7 @@ def partition_email(
     file: Optional[IO] = None,
     text: Optional[str] = None,
     content_source: str = "text/html",
-) -> List[Element]:
+) -> List[EmailElement]:
     """Partitions an .eml documents into its constituent elements.
     Parameters
     ----------
