@@ -1,4 +1,5 @@
 import pytest
+import datetime
 
 import unstructured.cleaners.extract as extract
 
@@ -45,4 +46,6 @@ def extract_mapi_id():
 
 
 def extract_datetimetz():
-    assert extract.extract_datetimetx(EMAIL_META_DATA_INPUT) == ["Fri, 26 Mar 2021 11:04:09 +1200"]
+    assert extract.extract_datetimetx(EMAIL_META_DATA_INPUT) == datetime.datetime(
+        2021, 3, 26, 11, 4, 9, tzinfo=datetime.timezone(datetime.timedelta(seconds=43200))
+        )

@@ -1,6 +1,7 @@
 import email
 import sys
 import re
+from email.message import Message
 from typing import Dict, IO, List, Optional, Tuple
 
 if sys.version_info < (3, 8):
@@ -8,7 +9,7 @@ if sys.version_info < (3, 8):
 else:
     from typing import Final
 
-from unstructured.cleaners.core import replace_mime_encodings, clean_bullets
+from unstructured.cleaners.core import replace_mime_encodings
 from unstructured.cleaners.extract import (
     extract_ip_address,
     extract_ip_address_name,
@@ -18,27 +19,22 @@ from unstructured.cleaners.extract import (
 )
 from unstructured.documents.email_elements import (
     EmailElement,
-    BodyText, 
     Recipient, 
+    BodyText,
     Sender, 
     Subject,
     ReceivedInfo,
     MetaData,
 )
-from unstructured.documents.elements import Text, NarrativeText, ListItem, Title
+from unstructured.documents.elements import Text
 from unstructured.partition.html import partition_html
-from unstructured.partition.text import split_by_paragraph
-from unstructured.partition.text_type import (
-    is_possible_narrative_text,
-    is_possible_title,
-    is_bulleted_text,
-)
+from unstructured.partition.text import split_by_paragraph, partition_text
 
 
 VALID_CONTENT_SOURCES: Final[List[str]] = ["text/html", "text/plain"]
 
 
-def parse_received_data(data: str) -> List[EmailElement]:
+def _parse_received_data(data: str) -> List[EmailElement]:
 
     ip_address_names = extract_ip_address_name(data)
     ip_addresses = extract_ip_address(data)
@@ -56,7 +52,7 @@ def parse_received_data(data: str) -> List[EmailElement]:
 
     return elements
 
-def parse_email_address(data:str)-> Tuple[str, str]:
+def _parse_email_address(data:str)-> Tuple[str, str]:
     email_address = extract_email_address(data)
 
     name = re.split("<[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+>"
@@ -64,15 +60,15 @@ def parse_email_address(data:str)-> Tuple[str, str]:
 
     return name, email_address[0]
 
-def partition_header(msg: List[str])-> List[EmailElement]:
+def _partition_header(msg: Message)-> List[EmailElement]:
     elements: List[Text] = list()
     for item in msg.raw_items():
         if item[0] == "To":
-            text = parse_email_address(item[1])
+            text = _parse_email_address(item[1])
             print(text)
             elements.append(Recipient(name=text[0], text=text[1]))
         elif item[0] == "From":
-            text = parse_email_address(item[1])
+            text = _parse_email_address(item[1])
             print(text)
             elements.append(Sender(name=text[0], text=text[1]))
         elif item[0] == "Subject":
@@ -80,33 +76,12 @@ def partition_header(msg: List[str])-> List[EmailElement]:
             elements.append(Subject(text=item[1]))
         elif item[0] == "Received":
             print(item[1])
-            elements.append(ReceivedInfo(parse_received_data(item[1])))
+            elements.append(ReceivedInfo(_parse_received_data(item[1])))
         else:
             print(item[0], item[1])
             elements.append(MetaData(name=item[0], text=item[1]))
 
     return elements
-
-def partition_text(content: List[str]) -> List[EmailElement]:
-    """Categorizes the body of the an email and
-    returns the email elements.
-    """
-
-    elements: List[Text] = list()
-    for ctext in content:
-        # clean bullet doesn't recognize bullet with whitespace around it
-        # may want to fix in clean bullet but don't want to break other dependent code
-        ctext = ctext.strip()
-
-        if ctext == "":
-            break
-        if is_bulleted_text(ctext):
-            elements.append(ListItem(text=clean_bullets(ctext)))
-        elif is_possible_narrative_text(ctext):
-            elements.append(NarrativeText(text=ctext))
-        elif is_possible_title(ctext):
-            elements.append(Title(text=ctext))
-    return BodyText(elements)
 
 
 def partition_email(
@@ -179,9 +154,9 @@ def partition_email(
             if isinstance(element, Text):
                 element.apply(replace_mime_encodings)
     elif content_source == "text/plain":
-        elements = partition_text(content)
+        elements = BodyText(partition_text(file_content=content))
     
     if get_meta_data:
-        elements += partition_header(msg)
+        elements += _partition_header(msg)
 
     return elements

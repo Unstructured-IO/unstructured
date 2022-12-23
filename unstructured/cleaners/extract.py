@@ -1,4 +1,5 @@
 import re
+import datetime
 from typing import List
 from unstructured.nlp.patterns import (
     IP_ADDRESS_PATTERN_RE,
@@ -66,5 +67,7 @@ def extract_ip_address_name(text: str) -> List[str]:
 def extract_mapi_id(text:str) -> List[str]:
     return(re.findall(MAPI_ID_PATTERN, text))
 
-def extract_datetimetz(text:str) -> List[str]:
-    return re.findall(EMAIL_DATETIMETZ_PATTERN, text)
+def extract_datetimetz(text:str) -> List[datetime.datetime]:
+    date_string = re.findall(EMAIL_DATETIMETZ_PATTERN, text)
+    return datetime.strptime(date_string[0], '%d/%b/%Y:%H:%M:%S %z')
+

@@ -11,7 +11,7 @@ from unstructured.documents.email_elements import (
     Subject,
     ReceivedInfo,
 )
-from unstructured.partition.email import partition_email, partition_header
+from unstructured.partition.email import partition_email, _partition_header
 
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -79,7 +79,7 @@ def test_partition_header():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
     with open(filename, "r") as f:
         msg = email.message_from_file(f)
-    elements = partition_header(msg)
+    elements = _partition_header(msg)
     assert len(elements) > 0
     assert elements == HEADER_EXPECTED_OUTPUT
 

@@ -60,7 +60,10 @@ Examples:
 The ``partition_email`` function partitions ``.eml`` documents and works with exports
 from email clients such as Microsoft Outlook and Gmail. The ``partition_email`` 
 takes a filename, file-like object, or raw text as input and produces a list of
-document ``Element`` objects as output.
+document ``Element`` objects as output. Also ``content_source`` can be set to ``text/html``
+(default) or ``text/plain`` to process the html or plain text version of the email, respectively.
+In order for ``partition_email`` to also return the header information (e.g. sender, recipient,
+attachment, etc.), ``get_meta_data`` must be set to ``True``.
 
 Examples:
 
@@ -76,6 +79,44 @@ Examples:
   with open("example-docs/fake-email.eml", "r") as f:
       text = f.read()
   elements = partition_email(text=text)
+
+  with open("example-docs/fake-email.eml", "r", content_source="text/plain") as f:
+      text = f.read()
+  elements = partition_email(text=text)
+
+  with open("example-docs/fake-email.eml", "r", get_meta_data=True) as f:
+      text = f.read()
+  elements = partition_email(text=text)
+
+
+``partition_text``
+---------------------
+
+The ``partition_text`` function partitions text files. The ``partition_text`` 
+takes a filename, file-like object, raw text, or a list of string objects as input and produces a list of
+document ``Element`` objects as output.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.text import partition_text
+
+  elements = partition_text(filename="example-docs/fake-text.txt")
+
+  with open("example-docs/fake-text.txt", "r") as f:
+    elements = partition_text(file=f)
+
+  with open("example-docs/fake-text.txt", "r") as f:
+    text = f.read()
+  elements = partition_text(text=text)
+
+  content = ["This is a test document to use for unit tests.", 
+              "Important points:",
+              "   - Hamburgers are delicious",
+              "   - Dogs are the best",
+              "   - I love fuzzy blankets"]
+  elements = partition_text(file_content=content)
 
 
 ``is_bulleted_text``
@@ -469,6 +510,96 @@ Examples:
 
   # Returns "Look at me, I'm flying!"
   extract_text_after(text, r"SPEAKER \d{1}:")
+
+``extract_email_address``
+----------------------
+
+Extracts email addresses from a string input and returns a list of all the email
+addresses in the input string.
+
+.. code:: python
+
+  from unstructured.cleaners.extract import extract_email_address
+
+  text = """Me me@email.com and You <You@email.com> 
+      ([ba23::58b5:2236:45g2:88h2]) (10.0.2.01)"""
+
+  # Returns "['me@email.com', 'you@email.com']"
+  extract_email_address(text)
+
+
+``extract_ip_address``
+----------------------
+
+Extracts IPv4 and IPv6 IP addresses in the input string and
+returns a list of all IP address in input string.
+
+.. code:: python
+
+  from unstructured.cleaners.extract import extract_ip_address
+
+   text = """Me me@email.com and You <You@email.com> 
+      ([ba23::58b5:2236:45g2:88h2]) (10.0.2.01)"""
+
+  # Returns "['ba23::58b5:2236:45g2:88h2', '10.0.2.01']"
+ extract_ip_address(text)
+
+
+``extract_ip_address_name``
+----------------------
+
+Extracts the names of each IP address in the ``Received`` field(s) from an ``.eml`` 
+file. ``extract_ip_address_name`` takes in a string and returns a list of all
+IP addresses in the input string.
+
+.. code:: python
+
+  from unstructured.cleaners.extract import extract_ip_address_name
+
+  text = """from ABC.DEF.local ([ba23::58b5:2236:45g2:88h2]) by
+    \n ABC.DEF.local2 ([ba23::58b5:2236:45g2:88h2%25]) with mapi id\
+    n 32.88.5467.123; Fri, 26 Mar 2021 11:04:09 +1200"""
+
+  # Returns "['ABC.DEF.local', 'ABC.DEF.local2']"
+ extract_ip_address_name(text)
+
+
+``extract_mapi_id``
+----------------------
+
+Extracts the ``mapi id`` in the ``Received`` field(s) from an ``.eml`` 
+file. ``extract_mapi_id`` takes in a string and returns a list of a string
+containing the ``mapi id`` in the input string.
+
+.. code:: python
+
+  from unstructured.cleaners.extract import extract_mapi_id
+
+  text = """from ABC.DEF.local ([ba23::58b5:2236:45g2:88h2]) by
+    \n ABC.DEF.local2 ([ba23::58b5:2236:45g2:88h2%25]) with mapi id\
+    n 32.88.5467.123; Fri, 26 Mar 2021 11:04:09 +1200"""
+
+  # Returns "['32.88.5467.123']"
+ extract_mapi_id(text)
+
+
+``extract_datetimetz``
+----------------------
+
+Extracts the date, time, and timezone in the ``Received`` field(s) from an ``.eml`` 
+file. ``extract_datetimetz`` takes in a string and returns a datetime.datetime
+object from the input string.
+
+.. code:: python
+
+  from unstructured.cleaners.extract import extract_datetimetz
+
+  text = """from ABC.DEF.local ([ba23::58b5:2236:45g2:88h2]) by
+    \n ABC.DEF.local2 ([ba23::58b5:2236:45g2:88h2%25]) with mapi id\
+    n 32.88.5467.123; Fri, 26 Mar 2021 11:04:09 +1200"""
+
+  # Returns "['Fri, 26 Mar 2021 11:04:09 +1200']"
+ extract_datetimetz(text)
 
 
 ``translate_text``
