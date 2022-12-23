@@ -16,7 +16,8 @@ from unstructured.partition.html import partition_html
 VALID_CONTENT_SOURCES: Final[List[str]] = ["text/html"]
 
 
-def partition_attachment_info(message: Message, output_dir: str = None) -> Dict[str, str]:
+def extract_attachment_info(message: Message, output_dir: str = None) -> Dict[str, str]:
+    list_attachments = []
     attachment_info = {}
     for part in message.walk():
         if 'content-disposition' in part:
@@ -31,12 +32,14 @@ def partition_attachment_info(message: Message, output_dir: str = None) -> Dict[
                 value = clean_extra_whitespace(value.replace('"', ''))
                 attachment_info[clean_extra_whitespace(key)] = clean_extra_whitespace(value)
             attachment_info['payload'] = part.get_payload(decode=True)
-            
-            if output_dir:
-                filename = output_dir + "/" + attachment_info['filename']
-                with open(filename, "wb") as f:
-                    f.write(attachment_info['payload'])
-    return attachment_info
+            list_attachments.append(attachment_info)
+
+            for attachment in list_attachments:
+                if output_dir:
+                    filename = output_dir + "/" + attachment['filename']
+                    with open(filename, "wb") as f:
+                        f.write(attachment['payload'])
+    return list_attachments
 
 def partition_email(
     filename: Optional[str] = None,
