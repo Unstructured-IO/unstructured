@@ -42,3 +42,5 @@ IP_ADDRESS_NAME_PATTERN = "[a-zA-Z0-9-]*\.[a-zA-Z]*\.[a-zA-Z]*"
 MAPI_ID_PATTERN = "[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*;"
 
 EMAIL_DATETIMETZ_PATTERN = "[a-zA-z]{3},\s[0-9]{2}\s[a-zA-Z]{3}\s[0-9]{4}\s[0-9]{2}:[0-9]{2}:[0-9]{2}\s[+0-9]{5}"
+
+EMAIL_ADDRESS_PATTERN = "[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+"
