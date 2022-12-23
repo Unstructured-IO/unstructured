@@ -52,6 +52,7 @@ setup(
         "lxml",
         "nltk",
         "openpyxl",
+        "pillow",
         "python-docx",
         # NOTE(robinson) - The following dependencies are pinned
         # to address security scans
