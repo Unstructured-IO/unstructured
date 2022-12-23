@@ -44,7 +44,9 @@ joblib==1.2.0
 langdetect==1.0.9
     # via unstructured (setup.py)
 lxml==4.9.1
-    # via unstructured (setup.py)
+    # via
+    #   python-docx
+    #   unstructured (setup.py)
 monotonic==1.6
     # via argilla
 nltk==3.7
@@ -67,6 +69,8 @@ pyparsing==3.0.9
     # via packaging
 python-dateutil==2.8.2
     # via pandas
+python-docx==0.8.11
+    # via unstructured (setup.py)
 pytz==2022.6
     # via pandas
 pyyaml==6.0
