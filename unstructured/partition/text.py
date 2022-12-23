@@ -29,7 +29,7 @@ def partition_text(
         text: Optional[str] = None,
         file_content: Optional[List] = None,
     ) -> List[Element]:
-    """Partitions an .eml documents into its constituent elements.
+    """Partitions an .txt documents into its constituent elements.
     Parameters
     ----------
     filename
