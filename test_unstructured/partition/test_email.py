@@ -4,7 +4,7 @@ import pathlib
 import pytest
 
 from unstructured.documents.elements import NarrativeText, Title, ListItem
-from unstructured.partition.email import partition_email, partition_attachment_info
+from unstructured.partition.email import partition_email, extract_attachment_info
 
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -17,10 +17,10 @@ EXPECTED_OUTPUT = [
     ListItem(text="Violets are blue"),
 ]
 
-ATTACH_EXPECTED_OUTPUT = {
+ATTACH_EXPECTED_OUTPUT = [{
     "filename" : "fake-attachment.txt",
     "payload"  : b'Hey this is a fake attachment!'
-}
+}]
 
 def test_partition_email_from_filename():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
@@ -50,7 +50,7 @@ def test_partition_attachment_info():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email-attachment.eml")
     with open(filename, "r") as f:
         msg = email.message_from_file(f)
-    attachment_info = partition_attachment_info(msg)
+    attachment_info = extract_attachment_info(msg)
     assert len(attachment_info) > 0
     assert attachment_info == ATTACH_EXPECTED_OUTPUT
 
