@@ -61,7 +61,7 @@ class BodyText(List[Text]):
 
 
 class Recipient(Name):
-    """A text element for capturing the recipient information of an email """
+    """A text element for capturing the recipient information of an email"""
 
     category = "Recipient"
 
@@ -77,7 +77,7 @@ class Sender(Name):
 
 
 class Subject(Text):
-    """A text element for capturing the subject information of an email """
+    """A text element for capturing the subject information of an email"""
 
     category = "Subject"
 

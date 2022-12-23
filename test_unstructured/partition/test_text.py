@@ -15,6 +15,7 @@ EXPECTED_OUTPUT = [
     ListItem(text="I love fuzzy blankets"),
 ]
 
+
 def test_partition_email_from_filename():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-text.txt")
     elements = partition_text(filename=filename)
@@ -38,12 +39,15 @@ def test_partition_email_from_text():
     assert len(elements) > 0
     assert elements == EXPECTED_OUTPUT
 
+
 def test_partition_email_from_list():
-    content = ["This is a test document to use for unit tests.", 
-            "Important points:",
-            "   - Hamburgers are delicious",
-            "   - Dogs are the best",
-            "   - I love fuzzy blankets"]
+    content = [
+        "This is a test document to use for unit tests.",
+        "Important points:",
+        "   - Hamburgers are delicious",
+        "   - Dogs are the best",
+        "   - I love fuzzy blankets",
+    ]
     elements = partition_text(file_content=content)
     assert len(elements) > 0
     assert elements == EXPECTED_OUTPUT

@@ -3,13 +3,7 @@ import re
 import sys
 from typing import IO, List, Optional
 
-from unstructured.documents.elements import (
-    Element, 
-    ListItem,
-    NarrativeText,
-    Title,
-    Text
-)
+from unstructured.documents.elements import Element, ListItem, NarrativeText, Title, Text
 
 from unstructured.cleaners.core import clean_bullets
 from unstructured.partition.text_type import (
@@ -24,11 +18,11 @@ def split_by_paragraph(content: str) -> List[str]:
 
 
 def partition_text(
-        filename: Optional[str] = None,
-        file: Optional[IO] = None,
-        text: Optional[str] = None,
-        file_content: Optional[List] = None,
-    ) -> List[Element]:
+    filename: Optional[str] = None,
+    file: Optional[IO] = None,
+    text: Optional[str] = None,
+    file_content: Optional[List] = None,
+) -> List[Element]:
     """Partitions an .txt documents into its constituent elements.
     Parameters
     ----------
@@ -42,7 +36,6 @@ def partition_text(
             in a list. Typically used by `parition_email`.
     """
 
-
     if not any([filename, file, text, file_content]):
         raise ValueError("One of filename, file, or text must be specified.")
 
@@ -55,7 +48,7 @@ def partition_text(
 
     elif text is not None and not filename and not file and not file_content:
         file_text: str = str(text)
-    
+
     elif file_content is not None and not filename and not file and not text:
         pass
 
@@ -67,7 +60,7 @@ def partition_text(
 
     elements: List[Text] = list()
     for ctext in file_content:
-        
+
         ctext = ctext.strip()
 
         if ctext == "":

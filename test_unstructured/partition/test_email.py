@@ -5,8 +5,8 @@ import pytest
 
 from unstructured.documents.elements import NarrativeText, Title, ListItem
 from unstructured.documents.email_elements import (
-    MetaData, 
-    Recipient, 
+    MetaData,
+    Recipient,
     Sender,
     Subject,
     ReceivedInfo,
@@ -27,14 +27,20 @@ EXPECTED_OUTPUT = [
 HEADER_EXPECTED_OUTPUT = [
     MetaData(name="MIME-Version", text="1.0"),
     MetaData(name="Date", text="Fri, 16 Dec 2022 17:04:16 -0500"),
-    MetaData(name="Message-ID", text="<CADc-_xaLB2FeVQ7mNsoX+NJb_7hAJhBKa_zet-rtgPGenj0uVw@mail.gmail.com>"),
+    MetaData(
+        name="Message-ID",
+        text="<CADc-_xaLB2FeVQ7mNsoX+NJb_7hAJhBKa_zet-rtgPGenj0uVw@mail.gmail.com>",
+    ),
     Subject(text="Test Email"),
     Sender(name="Matthew Robinson", text="mrobinson@unstructured.io"),
     Recipient(name="Matthew Robinson", text="mrobinson@unstructured.io"),
-    MetaData(name="Content-Type", text='multipart/alternative; boundary="00000000000095c9b205eff92630"'),
+    MetaData(
+        name="Content-Type", text='multipart/alternative; boundary="00000000000095c9b205eff92630"'
+    ),
 ]
 
 ALL_EXPECTED_OUTPUT = EXPECTED_OUTPUT + HEADER_EXPECTED_OUTPUT
+
 
 def test_partition_email_from_filename():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
@@ -74,6 +80,7 @@ def test_partition_email_from_text():
     elements = partition_email(text=text)
     assert len(elements) > 0
     assert elements == EXPECTED_OUTPUT
+
 
 def test_partition_header():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")

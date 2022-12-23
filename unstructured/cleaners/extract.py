@@ -6,7 +6,7 @@ from unstructured.nlp.patterns import (
     IP_ADDRESS_NAME_PATTERN,
     MAPI_ID_PATTERN,
     EMAIL_DATETIMETZ_PATTERN,
-    EMAIL_ADDRESS_PATTERN
+    EMAIL_ADDRESS_PATTERN,
 )
 
 
@@ -55,19 +55,22 @@ def extract_text_after(text: str, pattern: str, index: int = 0, strip: bool = Tr
     return before_text.lstrip() if strip else before_text
 
 
-def extract_email_address(text:str) -> List[str]:
+def extract_email_address(text: str) -> List[str]:
     return re.findall(EMAIL_ADDRESS_PATTERN, text.lower())
+
 
 def extract_ip_address(text: str) -> List[str]:
     return re.findall(IP_ADDRESS_PATTERN_RE, text)
 
+
 def extract_ip_address_name(text: str) -> List[str]:
     return re.findall(IP_ADDRESS_NAME_PATTERN, text)
 
-def extract_mapi_id(text:str) -> List[str]:
-    return(re.findall(MAPI_ID_PATTERN, text))
 
-def extract_datetimetz(text:str) -> List[datetime.datetime]:
+def extract_mapi_id(text: str) -> List[str]:
+    return re.findall(MAPI_ID_PATTERN, text)
+
+
+def extract_datetimetz(text: str) -> List[datetime.datetime]:
     date_string = re.findall(EMAIL_DATETIMETZ_PATTERN, text)
-    return datetime.strptime(date_string[0], '%d/%b/%Y:%H:%M:%S %z')
-
+    return datetime.strptime(date_string[0], "%d/%b/%Y:%H:%M:%S %z")

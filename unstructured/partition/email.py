@@ -19,9 +19,9 @@ from unstructured.cleaners.extract import (
 )
 from unstructured.documents.email_elements import (
     EmailElement,
-    Recipient, 
+    Recipient,
     BodyText,
-    Sender, 
+    Sender,
     Subject,
     ReceivedInfo,
     MetaData,
@@ -52,15 +52,16 @@ def _parse_received_data(data: str) -> List[EmailElement]:
 
     return elements
 
-def _parse_email_address(data:str)-> Tuple[str, str]:
+
+def _parse_email_address(data: str) -> Tuple[str, str]:
     email_address = extract_email_address(data)
 
-    name = re.split("<[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+>"
-    , data.lower())[0].title().strip()
+    name = re.split("<[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+>", data.lower())[0].title().strip()
 
     return name, email_address[0]
 
-def _partition_header(msg: Message)-> List[EmailElement]:
+
+def _partition_header(msg: Message) -> List[EmailElement]:
     elements: List[Text] = list()
     for item in msg.raw_items():
         if item[0] == "To":
@@ -128,7 +129,6 @@ def partition_email(
     else:
         raise ValueError("Only one of filename, file, or text can be specified.")
 
-
     content_map: Dict[str, str] = {
         part.get_content_type(): part.get_payload() for part in msg.walk()
     }
@@ -155,7 +155,7 @@ def partition_email(
                 element.apply(replace_mime_encodings)
     elif content_source == "text/plain":
         elements = BodyText(partition_text(file_content=content))
-    
+
     if get_meta_data:
         elements += _partition_header(msg)
 

@@ -7,6 +7,7 @@ EMAIL_META_DATA_INPUT = """from ABC.DEF.local ([ba23::58b5:2236:45g2:88h2]) by
     \n ABC.DEF.local ([ba23::58b5:2236:45g2:88h2%25]) with mapi id\
     n 32.88.5467.123; Fri, 26 Mar 2021 11:04:09 +1200"""
 
+
 def test_get_indexed_match_raises_with_bad_index():
     with pytest.raises(ValueError):
         extract._get_indexed_match("BLAH BLAH BLAH", "BLAH", -1)
@@ -33,12 +34,17 @@ def test_extract_email_address():
 
 
 def test_extract_ip_address():
-    assert extract.extract_ip_address(EMAIL_META_DATA_INPUT) == ["ba23::58b5:2236:45g2:88h2",
-     "ba23::58b5:2236:45g2:88h2%25"]
+    assert extract.extract_ip_address(EMAIL_META_DATA_INPUT) == [
+        "ba23::58b5:2236:45g2:88h2",
+        "ba23::58b5:2236:45g2:88h2%25",
+    ]
 
 
 def test_extract_ip_address_name():
-    assert extract.extract_ip_address_name(EMAIL_META_DATA_INPUT) == ["ABC.DEF.local","ABC.DEF.local"]
+    assert extract.extract_ip_address_name(EMAIL_META_DATA_INPUT) == [
+        "ABC.DEF.local",
+        "ABC.DEF.local",
+    ]
 
 
 def extract_mapi_id():
@@ -48,4 +54,4 @@ def extract_mapi_id():
 def extract_datetimetz():
     assert extract.extract_datetimetx(EMAIL_META_DATA_INPUT) == datetime.datetime(
         2021, 3, 26, 11, 4, 9, tzinfo=datetime.timezone(datetime.timedelta(seconds=43200))
-        )
+    )
