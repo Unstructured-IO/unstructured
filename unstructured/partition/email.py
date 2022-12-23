@@ -1,5 +1,6 @@
 import email
 import sys
+from email.message import Message
 from typing import Dict, IO, List, Optional
 
 if sys.version_info < (3, 8):
@@ -7,13 +8,35 @@ if sys.version_info < (3, 8):
 else:
     from typing import Final
 
-from unstructured.cleaners.core import replace_mime_encodings
+from unstructured.cleaners.core import replace_mime_encodings, clean_extra_whitespace
 from unstructured.documents.elements import Element, Text
 from unstructured.partition.html import partition_html
 
 
 VALID_CONTENT_SOURCES: Final[List[str]] = ["text/html"]
 
+
+def partition_attachment_info(message: Message, output_dir: str = None) -> Dict[str, str]:
+    attachment_info = {}
+    for part in message.walk():
+        if 'content-disposition' in part:
+            cdisp = part['content-disposition'].split(';')
+            cdisp = [clean_extra_whitespace(item) for item in cdisp]
+
+            for item in cdisp:
+                if item.lower() == "attachment":
+                    continue
+                key, value = item.split("=")
+                key = clean_extra_whitespace(key.replace('"', ''))
+                value = clean_extra_whitespace(value.replace('"', ''))
+                attachment_info[clean_extra_whitespace(key)] = clean_extra_whitespace(value)
+            attachment_info['payload'] = part.get_payload(decode=True)
+            
+            if output_dir:
+                filename = output_dir + "/" + attachment_info['filename']
+                with open(filename, "wb") as f:
+                    f.write(attachment_info['payload'])
+    return attachment_info
 
 def partition_email(
     filename: Optional[str] = None,
