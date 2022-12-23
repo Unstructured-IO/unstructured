@@ -190,6 +190,59 @@ Roses are red
 Violets are blue
 ```
 
+### Text Document Parsing
+
+The `partition_text` function within `unstructured` can be used to parse simple
+text files into elements.
+
+`partition_text` accepts filenames, file-like object, raw text, and a list
+of string objects as input. The following four snippets are for parsing text files:
+
+```python
+from unstructured.partition.text import partition_text
+
+elements = partition_text(filename="example-docs/fake-text.txt")
+
+with open("example-docs/fake-text.txt", "r") as f:
+  elements = partition_text(file=f)
+
+with open("example-docs/fake-text.txt", "r") as f:
+  text = f.read()
+elements = partition_text(text=text)
+
+content = ["This is a test document to use for unit tests.", 
+            "Important points:",
+            "   - Hamburgers are delicious",
+            "   - Dogs are the best",
+            "   - I love fuzzy blankets"]
+elements = partition_text(file_content=content)
+```
+
+The `elements` output will look like the following:
+
+```python
+[<unstructured.documents.html.HTMLNarrativeText at 0x13ab14370>,
+<unstructured.documents.html.HTMLTitle at 0x106877970>,
+<unstructured.documents.html.HTMLListItem at 0x1068776a0>,
+<unstructured.documents.html.HTMLListItem at 0x13fe4b0a0>]
+```
+
+Run `print("\n\n".join([str(el) for el in elements]))` to get a string representation of the
+output, which looks like:
+
+```python
+This is a test document to use for unit tests.
+
+Important points:
+
+Hamburgers are delicious
+
+Dogs are the best
+
+I love fuzzy blankets
+```
+
+
 ## :guardsman: Security Policy
 
 See our [security policy](https://github.com/Unstructured-IO/unstructured/security/policy) for

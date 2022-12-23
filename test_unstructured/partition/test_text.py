@@ -8,10 +8,11 @@ from unstructured.partition.text import partition_text
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
 EXPECTED_OUTPUT = [
-    NarrativeText(text="This is a test email to use for unit tests."),
+    NarrativeText(text="This is a test document to use for unit tests."),
     Title(text="Important points:"),
-    ListItem(text="Roses are red"),
-    ListItem(text="Violets are blue"),
+    ListItem(text="Hamburgers are delicious"),
+    ListItem(text="Dogs are the best"),
+    ListItem(text="I love fuzzy blankets"),
 ]
 
 def test_partition_email_from_filename():
@@ -38,10 +39,11 @@ def test_partition_email_from_text():
     assert elements == EXPECTED_OUTPUT
 
 def test_partition_email_from_list():
-    content = ["This is a test email to use for unit tests.", 
+    content = ["This is a test document to use for unit tests.", 
             "Important points:",
-            "   - Roses are red",
-            "   - Violets are blue"]
+            "   - Hamburgers are delicious",
+            "   - Dogs are the best",
+            "   - I love fuzzy blankets"]
     elements = partition_text(file_content=content)
     assert len(elements) > 0
     assert elements == EXPECTED_OUTPUT
