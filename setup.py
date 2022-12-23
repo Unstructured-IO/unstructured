@@ -51,6 +51,7 @@ setup(
         "argilla",
         "lxml",
         "nltk",
+        "openpyxl",
         "python-docx",
         # NOTE(robinson) - The following dependencies are pinned
         # to address security scans
