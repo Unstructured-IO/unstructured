@@ -59,7 +59,7 @@ def test_partition_email_from_text_file():
     assert elements == EXPECTED_OUTPUT
 
 
-def test_partition_email_from_text_file():
+def test_partition_email_from_text_file_with_metadata():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.txt")
     with open(filename, "r") as f:
         elements = partition_email(file=f, content_source="text/plain", get_meta_data=True)

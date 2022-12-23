@@ -1,0 +1,6 @@
+This is a test email to use for unit tests.
+
+Important points:
+
+   - Roses are red
+   - Violets are blue

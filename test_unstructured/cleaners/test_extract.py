@@ -41,8 +41,8 @@ def test_extract_ip_address_name():
 
 
 def extract_mapi_id():
-    assert extract.extract_ip_address_name(EMAIL_META_DATA_INPUT) == ["32.88.5467.123"]
+    assert extract.extract_mapi_id(EMAIL_META_DATA_INPUT) == ["32.88.5467.123"]
 
 
 def extract_datetimetz():
-    assert extract.extract_ip_address_name(EMAIL_META_DATA_INPUT) == ["Fri, 26 Mar 2021 11:04:09 +1200"]
+    assert extract.extract_datetimetx(EMAIL_META_DATA_INPUT) == ["Fri, 26 Mar 2021 11:04:09 +1200"]

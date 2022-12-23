@@ -27,6 +27,7 @@ from unstructured.documents.email_elements import (
 )
 from unstructured.documents.elements import Text, NarrativeText, ListItem, Title
 from unstructured.partition.html import partition_html
+from unstructured.partition.text import split_by_paragraph
 from unstructured.partition.text_type import (
     is_possible_narrative_text,
     is_possible_title,
@@ -35,10 +36,6 @@ from unstructured.partition.text_type import (
 
 
 VALID_CONTENT_SOURCES: Final[List[str]] = ["text/html", "text/plain"]
-
-
-def split_by_paragraph(content: str) -> List[str]:
-    return re.split(r"\n\n\n|\n\n|\r\n|\r|\n", content)
 
 
 def parse_received_data(data: str) -> List[EmailElement]:
