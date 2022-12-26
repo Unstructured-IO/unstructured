@@ -45,7 +45,7 @@ joblib==1.2.0
     #   sacremoses
 langdetect==1.0.9
     # via unstructured (setup.py)
-lxml==4.9.1
+lxml==4.9.2
     # via
     #   python-docx
     #   unstructured (setup.py)
