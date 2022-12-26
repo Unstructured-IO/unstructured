@@ -4,10 +4,6 @@
 #
 #    pip-compile requirements/dev.in
 #
-appnope==0.1.3
-    # via
-    #   ipykernel
-    #   ipython
 argon2-cffi==21.3.0
     # via notebook
 argon2-cffi-bindings==21.2.0
@@ -49,7 +45,7 @@ ipykernel==6.15.3
     #   qtconsole
 ipython==8.6.0
     # via
-    #   -r requirements/dev.in
+    #   -r dev.in
     #   ipykernel
     #   ipywidgets
     #   jupyter-console
@@ -68,7 +64,7 @@ jinja2==3.1.2
 jsonschema==4.16.0
     # via nbformat
 jupyter==1.0.0
-    # via -r requirements/dev.in
+    # via -r dev.in
 jupyter-client==7.3.5
     # via
     #   ipykernel
@@ -80,7 +76,7 @@ jupyter-console==6.4.4
     # via jupyter
 jupyter-core==5.1.0
     # via
-    #   -r requirements/dev.in
+    #   -r dev.in
     #   jupyter-client
     #   nbconvert
     #   nbformat
@@ -137,8 +133,8 @@ pexpect==4.8.0
     # via ipython
 pickleshare==0.7.5
     # via ipython
-pip-tools==6.10.0
-    # via -r requirements/dev.in
+pip-tools==6.12.1
+    # via -r dev.in
 platformdirs==2.5.4
     # via jupyter-core
 prometheus-client==0.14.1
@@ -194,10 +190,6 @@ terminado==0.15.0
     # via notebook
 tinycss2==1.1.1
     # via nbconvert
-tomli==2.0.1
-    # via
-    #   build
-    #   pep517
 tornado==6.2
     # via
     #   ipykernel
