@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Examples &mdash; unstructured 0.3.5-dev2 documentation</title>
+  <title>Examples &mdash; unstructured 0.3.5-dev3 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -50,6 +50,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#creating-html-from-xml-with-xslt">Creating HTML from XML with XSLT</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#extracting-metadata-from-documents">Extracting Metadata from Documents</a></li>
 </ul>
 </li>
 </ul>
@@ -273,6 +274,32 @@ for reading in a document with an XSLT stylesheet is as follows:</p>
 instead of the <code class="docutils literal notranslate"><span class="pre">etree.HTMLParser</span></code> because <code class="docutils literal notranslate"><span class="pre">HTMLDocument</span></code> assumes you want to convert
 your raw XML to HTML.</p>
 </section>
+</section>
+<section id="extracting-metadata-from-documents">
+<h2>Extracting Metadata from Documents<a class="headerlink" href="#extracting-metadata-from-documents" title="Permalink to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> library includes utilities for extracting metadata from
+documents. Currently, there is support for extracting metadata from <code class="docutils literal notranslate"><span class="pre">.docx</span></code>,
+<code class="docutils literal notranslate"><span class="pre">.xlsx</span></code>, and <code class="docutils literal notranslate"><span class="pre">.jpg</span></code> documents. When you call these functions, the return type
+is a <code class="docutils literal notranslate"><span class="pre">Metadata</span></code> data class that you can convert to a dictionary by calling the
+<code class="docutils literal notranslate"><span class="pre">to_dict()</span></code> method. If you extract metadata from a <code class="docutils literal notranslate"><span class="pre">.jpg</span></code> document, the output
+will include EXIF metadata in the <code class="docutils literal notranslate"><span class="pre">exif_data</span></code> attribute, if it is available.
+Here is an example of how to use the metadata extraction functionality:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.file_utils.metadata</span> <span class="kn">import</span> <span class="n">get_jpg_metadata</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;example-docs/example.jpg&quot;</span>
+<span class="n">metadata</span> <span class="o">=</span> <span class="n">get_jpg_metadata</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can also pass in a file-like object with:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.file_utils.metadata</span> <span class="kn">import</span> <span class="n">get_jpg_metadata</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;example-docs/example.jpg&quot;</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="n">get_jpg_metadata</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To extract metadata from <code class="docutils literal notranslate"><span class="pre">.docx</span></code> or <code class="docutils literal notranslate"><span class="pre">.xlsx</span></code>, use <code class="docutils literal notranslate"><span class="pre">get_docx_metadata</span></code> and
+<code class="docutils literal notranslate"><span class="pre">get_xlsx_metadata</span></code>. The interfaces are the same as <code class="docutils literal notranslate"><span class="pre">get_jpg_metadata</span></code>.</p>
 </section>
 </section>
 
