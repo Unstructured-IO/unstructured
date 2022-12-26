@@ -4,10 +4,6 @@
 ***REMOVED***
 ***REMOVED***    pip-compile requirements/dev.in
 ***REMOVED***
-appnope==0.1.3
-    ***REMOVED*** via
-    ***REMOVED***   ipykernel
-    ***REMOVED***   ipython
 argon2-cffi==21.3.0
     ***REMOVED*** via notebook
 argon2-cffi-bindings==21.2.0
@@ -49,7 +45,7 @@ ipykernel==6.15.3
     ***REMOVED***   qtconsole
 ipython==8.6.0
     ***REMOVED*** via
-    ***REMOVED***   -r requirements/dev.in
+    ***REMOVED***   -r dev.in
     ***REMOVED***   ipykernel
     ***REMOVED***   ipywidgets
     ***REMOVED***   jupyter-console
@@ -68,7 +64,7 @@ jinja2==3.1.2
 jsonschema==4.16.0
     ***REMOVED*** via nbformat
 jupyter==1.0.0
-    ***REMOVED*** via -r requirements/dev.in
+    ***REMOVED*** via -r dev.in
 jupyter-client==7.3.5
     ***REMOVED*** via
     ***REMOVED***   ipykernel
@@ -80,7 +76,7 @@ jupyter-console==6.4.4
     ***REMOVED*** via jupyter
 jupyter-core==5.1.0
     ***REMOVED*** via
-    ***REMOVED***   -r requirements/dev.in
+    ***REMOVED***   -r dev.in
     ***REMOVED***   jupyter-client
     ***REMOVED***   nbconvert
     ***REMOVED***   nbformat
@@ -137,8 +133,8 @@ pexpect==4.8.0
     ***REMOVED*** via ipython
 pickleshare==0.7.5
     ***REMOVED*** via ipython
-pip-tools==6.10.0
-    ***REMOVED*** via -r requirements/dev.in
+pip-tools==6.12.1
+    ***REMOVED*** via -r dev.in
 platformdirs==2.5.4
     ***REMOVED*** via jupyter-core
 prometheus-client==0.14.1
@@ -194,10 +190,6 @@ terminado==0.15.0
     ***REMOVED*** via notebook
 tinycss2==1.1.1
     ***REMOVED*** via nbconvert
-tomli==2.0.1
-    ***REMOVED*** via
-    ***REMOVED***   build
-    ***REMOVED***   pep517
 tornado==6.2
     ***REMOVED*** via
     ***REMOVED***   ipykernel
