@@ -28,7 +28,7 @@ idna==3.4
     # via rfc3986
 joblib==1.2.0
     # via nltk
-lxml==4.9.1
+lxml==4.9.2
     # via
     #   python-docx
     #   unstructured (setup.py)
