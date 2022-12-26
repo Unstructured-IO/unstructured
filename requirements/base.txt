@@ -28,7 +28,7 @@ httpx==0.15.5
     ***REMOVED*** via rfc3986
 ***REMOVED***
     ***REMOVED*** via nltk
-lxml==4.9.1
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   python-docx
     ***REMOVED***   unstructured (setup.py)

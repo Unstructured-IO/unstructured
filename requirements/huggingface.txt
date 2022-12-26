@@ -45,7 +45,7 @@ huggingface-hub==0.11.1
     ***REMOVED***   sacremoses
 langdetect==1.0.9
     ***REMOVED*** via unstructured (setup.py)
-lxml==4.9.1
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   python-docx
     ***REMOVED***   unstructured (setup.py)
