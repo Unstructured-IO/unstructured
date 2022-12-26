@@ -109,7 +109,7 @@ sentencepiece==0.1.97
     ***REMOVED***   httpx
 tokenizers==0.13.2
     ***REMOVED*** via transformers
-torch==1.13.0
+torch==1.13.1
     ***REMOVED*** via unstructured (setup.py)
 tqdm==4.64.1
     ***REMOVED*** via
