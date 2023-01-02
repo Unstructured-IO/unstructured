@@ -9,7 +9,7 @@ else:
     from typing import Final
 
 from unstructured.cleaners.core import remove_punctuation
-from unstructured.nlp.patterns import UNICODE_BULLETS_RE
+from unstructured.nlp.patterns import PHONE_NUMBERS_RE, UNICODE_BULLETS_RE
 from unstructured.nlp.tokenize import pos_tag, sent_tokenize, word_tokenize
 from unstructured.logger import logger
 
@@ -61,6 +61,16 @@ def is_possible_title(text: str, sentence_min_length: int = 5) -> bool:
 def is_bulleted_text(text: str) -> bool:
     """Checks to see if the section of text is part of a bulleted list."""
     return UNICODE_BULLETS_RE.match(text.strip()) is not None
+
+
+def contains_phone_number(text: str) -> bool:
+    """Checks to see if a section of text contains a phone number.
+
+    Example
+    -------
+    contains_phone_number("867-5309") -> True
+    """
+    return PHONE_NUMBERS_RE.search(text.strip()) is not None
 
 
 def contains_verb(text: str) -> bool:
