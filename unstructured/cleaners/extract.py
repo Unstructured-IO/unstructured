@@ -1,5 +1,7 @@
 import re
 
+from unstructured.nlp.patterns import PHONE_NUMBERS_RE
+
 
 def _get_indexed_match(text: str, pattern: str, index: int = 0) -> re.Match:
     if not isinstance(index, int) or index < 0:
@@ -44,3 +46,20 @@ def extract_text_after(text: str, pattern: str, index: int = 0, strip: bool = Tr
     _, end = regex_match.span()
     before_text = text[end:]
     return before_text.lstrip() if strip else before_text
+
+
+def extract_phone_number(text: str):
+    """Extracts a phone number from a section of text that includes a phone number. If there
+    is no phone number present, the result will be an empty string.
+
+    Example
+    -------
+    extract_phone_number("Phone Number: 215-867-5309") -> "215-867-5309"
+    """
+    regex_match = PHONE_NUMBERS_RE.search(text)
+    if regex_match is None:
+        return ""
+
+    start, end = regex_match.span()
+    phone_number = text[start:end]
+    return phone_number.strip()
