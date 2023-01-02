@@ -67,7 +67,7 @@ packaging==22.0
     ***REMOVED***   transformers
 pandas==1.5.2
     ***REMOVED*** via argilla
-pillow==9.3.0
+***REMOVED***
     ***REMOVED*** via unstructured (setup.py)
 pydantic==1.10.2
     ***REMOVED*** via argilla
