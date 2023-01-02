@@ -42,7 +42,7 @@ nltk==3.7
     ***REMOVED***   pandas
 openpyxl==3.0.10
     ***REMOVED*** via unstructured (setup.py)
-packaging==21.3
+packaging==22.0
     ***REMOVED*** via argilla
 pandas==1.5.2
     ***REMOVED*** via argilla
