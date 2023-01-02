@@ -1,10 +1,11 @@
-## 0.3.5-dev3
+## 0.3.5-dev4
 
 * Add new pattern to recognize plain text dash bullets
 * Add test for bullet patterns
 * Fix for `partition_html` that allows for processing `div` tags that have both text and child
   elements
 * Add ability to extract document metadata from `.docx`, `.xlsx`, and `.jpg` files.
+* Helper functions for identifying and extracting phone numbers
 
 ## 0.3.4
 
