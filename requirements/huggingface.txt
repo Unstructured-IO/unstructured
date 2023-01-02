@@ -67,7 +67,7 @@ packaging==22.0
     #   transformers
 pandas==1.5.2
     # via argilla
-pillow==9.3.0
+pillow==9.4.0
     # via unstructured (setup.py)
 pydantic==1.10.2
     # via argilla
