@@ -77,7 +77,7 @@ pyparsing==3.0.9
     ***REMOVED*** via pandas
 ***REMOVED***
     ***REMOVED*** via unstructured (setup.py)
-pytz==2022.6
+pytz==2022.7
     ***REMOVED*** via pandas
 pyyaml==6.0
     ***REMOVED*** via
