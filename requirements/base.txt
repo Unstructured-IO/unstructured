@@ -18,7 +18,7 @@ deprecated==1.2.13
     # via argilla
 et-xmlfile==1.1.0
     # via openpyxl
-h11==0.9.0
+h11==0.14.0
     # via httpcore
 httpcore==0.11.1
     # via httpx

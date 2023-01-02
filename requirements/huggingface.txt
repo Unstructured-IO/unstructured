@@ -27,7 +27,7 @@ filelock==3.8.2
     # via
     #   huggingface-hub
     #   transformers
-h11==0.9.0
+h11==0.14.0
     # via httpcore
 httpcore==0.11.1
     # via httpx
