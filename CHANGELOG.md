@@ -6,6 +6,8 @@
   elements
 * Add ability to extract document metadata from `.docx`, `.xlsx`, and `.jpg` files.
 * Helper functions for identifying and extracting phone numbers
+* Add new function `extract_attachment_info` that extracts and decode the attachment
+of an email.
 
 ## 0.3.4
 
