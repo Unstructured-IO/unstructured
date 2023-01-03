@@ -80,8 +80,8 @@ def test_is_possible_title(text, expected, monkeypatch):
         ("Tel: 1(800)-867-5309", True),
     ],
 )
-def test_contains_phone_number(text, expected):
-    has_phone_number = text_type.contains_phone_number(text)
+def test_contains_us_phone_number(text, expected):
+    has_phone_number = text_type.contains_us_phone_number(text)
     assert has_phone_number is expected
 
 

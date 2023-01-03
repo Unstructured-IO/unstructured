@@ -31,6 +31,6 @@ def test_extract_text_after():
         ("Phone Number: Just Kidding", ""),
     ],
 )
-def test_extract_phone_number(text, expected):
-    phone_number = extract.extract_phone_number(text)
+def test_extract_us_phone_number(text, expected):
+    phone_number = extract.extract_us_phone_number(text)
     assert phone_number == expected

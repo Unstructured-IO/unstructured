@@ -162,19 +162,19 @@ Examples:
   is_possible_title(example_3, sentence_min_length=5)
 
 
-``contains_phone_number``
--------------------------
+``contains_us_phone_number``
+----------------------------
 
-Checks to see if a section of text containers a phone number.
+Checks to see if a section of text contains a US phone number.
 
 Examples:
 
 .. code:: python
 
-  from unstructured.partition.text_type import contains_phone_number
+  from unstructured.partition.text_type import contains_us_phone_number
 
   # Returns True because the text includes a phone number
-  contains_phone_number("Phone number: 215-867-5309")
+  contains_us_phone_number("Phone number: 215-867-5309")
 
 
 ``contains_verb``
@@ -486,19 +486,19 @@ Examples:
   extract_text_after(text, r"SPEAKER \d{1}:")
 
 
-``extract_phone_number``
-------------------------
+``extract_us_phone_number``
+---------------------------
 
-Extracts a phone number from a section of text
+Extracts a phone number from a section of text.
 
 Examples:
 
 .. code:: python
 
-  from unstructured.cleaners.extract import extract_phone_number
+  from unstructured.cleaners.extract import extract_us_phone_number
 
   # Returns "215-867-5309"
-  extract_phone_number("Phone number: 215-867-5309")
+  extract_us_phone_number("Phone number: 215-867-5309")
 
 
 ``translate_text``

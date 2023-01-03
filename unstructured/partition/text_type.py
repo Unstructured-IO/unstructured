@@ -9,7 +9,7 @@ else:
     from typing import Final
 
 from unstructured.cleaners.core import remove_punctuation
-from unstructured.nlp.patterns import PHONE_NUMBERS_RE, UNICODE_BULLETS_RE
+from unstructured.nlp.patterns import US_PHONE_NUMBERS_RE, UNICODE_BULLETS_RE
 from unstructured.nlp.tokenize import pos_tag, sent_tokenize, word_tokenize
 from unstructured.logger import logger
 
@@ -63,14 +63,14 @@ def is_bulleted_text(text: str) -> bool:
     return UNICODE_BULLETS_RE.match(text.strip()) is not None
 
 
-def contains_phone_number(text: str) -> bool:
-    """Checks to see if a section of text contains a phone number.
+def contains_us_phone_number(text: str) -> bool:
+    """Checks to see if a section of text contains a US phone number.
 
     Example
     -------
-    contains_phone_number("867-5309") -> True
+    contains_us_phone_number("867-5309") -> True
     """
-    return PHONE_NUMBERS_RE.search(text.strip()) is not None
+    return US_PHONE_NUMBERS_RE.search(text.strip()) is not None
 
 
 def contains_verb(text: str) -> bool:
