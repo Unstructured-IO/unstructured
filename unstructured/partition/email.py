@@ -39,13 +39,8 @@ def extract_attachment_info(
             for attachment in list_attachments:
                 if output_dir:
                     filename = output_dir + "/" + attachment["filename"]
-
-                    if type(attachment["payload"]):
-                        with open(filename, "w") as f:
-                            f.write(attachment["payload"])
-                    else:
-                        with open(filename, "wb") as f:
-                            f.write(attachment["payload"])
+                    with open(filename, "wb") as f:
+                        f.write(attachment["payload"])
     return list_attachments
 
 
