@@ -82,7 +82,8 @@ Examples:
 
 The ``extract_attachment_info`` function takes an ``email.message.Message`` object
 as input and returns the a list of dictionaries containing the attachment information,
-such as ``filename``, ``size``, ``payload``, etc.
+such as ``filename``, ``size``, ``payload``, etc. The attachment is saved to the ``output_dir``
+if specified.
 
 .. code:: python
 
