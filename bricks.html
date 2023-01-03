@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bricks &mdash; unstructured 0.3.5-dev3 documentation</title>
+  <title>Bricks &mdash; unstructured 0.3.5-dev4 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -48,6 +48,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#partition-html"><code class="docutils literal notranslate"><span class="pre">partition_html</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#partition-pdf"><code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#partition-email"><code class="docutils literal notranslate"><span class="pre">partition_email</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#extract-attachment-info"><code class="docutils literal notranslate"><span class="pre">extract_attachment_info</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#is-bulleted-text"><code class="docutils literal notranslate"><span class="pre">is_bulleted_text</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#is-possible-narrative-text"><code class="docutils literal notranslate"><span class="pre">is_possible_narrative_text</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#is-possible-title"><code class="docutils literal notranslate"><span class="pre">is_possible_title</span></code></a></li>
@@ -172,6 +173,21 @@ document <code class="docutils literal notranslate"><span class="pre">Element</s
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;example-docs/fake-email.eml&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">text</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_email</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="extract-attachment-info">
+<h3><code class="docutils literal notranslate"><span class="pre">extract_attachment_info</span></code><a class="headerlink" href="#extract-attachment-info" title="Permalink to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">extract_attachment_info</span></code> function takes an <code class="docutils literal notranslate"><span class="pre">email.message.Message</span></code> object
+as input and returns the a list of dictionaries containing the attachment information,
+such as <code class="docutils literal notranslate"><span class="pre">filename</span></code>, <code class="docutils literal notranslate"><span class="pre">size</span></code>, <code class="docutils literal notranslate"><span class="pre">payload</span></code>, etc. The attachment is saved to the <code class="docutils literal notranslate"><span class="pre">output_dir</span></code>
+if specified.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">email</span>
+<span class="kn">from</span> <span class="nn">unstructured.partition.email</span> <span class="kn">import</span> <span class="n">extract_attachment_info</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;example-docs/fake-email-attachment.eml&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="n">email</span><span class="o">.</span><span class="n">message_from_file</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="n">attachment_info</span> <span class="o">=</span> <span class="n">extract_attachment_info</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;example-docs&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
