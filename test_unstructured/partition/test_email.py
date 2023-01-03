@@ -46,7 +46,7 @@ def test_partition_email_from_text():
     assert elements == EXPECTED_OUTPUT
 
 
-def test_partition_attachment_info():
+def test_extract_attachment_info():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email-attachment.eml")
     with open(filename, "r") as f:
         msg = email.message_from_file(f)
