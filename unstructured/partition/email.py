@@ -9,7 +9,7 @@ if sys.version_info < (3, 8):
 else:
     from typing import Final
 
-from unstructured.cleaners.core import replace_mime_encodings
+from unstructured.cleaners.core import replace_mime_encodings, clean_extra_whitespace
 from unstructured.cleaners.extract import (
     extract_ip_address,
     extract_ip_address_name,
@@ -27,8 +27,6 @@ from unstructured.documents.email_elements import (
     MetaData,
 )
 from unstructured.documents.elements import Text
-from unstructured.cleaners.core import replace_mime_encodings, clean_extra_whitespace
-from unstructured.documents.elements import Element, Text
 from unstructured.partition.html import partition_html
 from unstructured.partition.text import split_by_paragraph, partition_text
 

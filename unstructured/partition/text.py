@@ -1,6 +1,4 @@
-import email
 import re
-import sys
 from typing import IO, List, Optional
 
 from unstructured.documents.elements import Element, ListItem, NarrativeText, Title, Text
