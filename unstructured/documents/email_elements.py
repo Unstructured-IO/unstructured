@@ -93,7 +93,7 @@ class ReceivedInfo(List[Text]):
 
 
 class MetaData(Name):
-    """A text element for capturing header meta data of an email 
+    """A text element for capturing header meta data of an email
     (miscellaneous data in the email)."""
 
     category = "MetaData"
