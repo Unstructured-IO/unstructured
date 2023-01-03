@@ -1,9 +1,12 @@
-## 0.3.5-dev3
+## 0.3.5-dev5
 
 * Add new pattern to recognize plain text dash bullets
 * Add test for bullet patterns
 * Fix for `partition_html` that allows for processing `div` tags that have both text and child
   elements
+* Add new function `extract_attachment_info` that extracts and decode the attachment
+of an email.
+* Add ability to extract document metadata from `.docx`, `.xlsx`, and `.jpg` files.
 * Add plain text functionality to `partition_email`
 
 ## 0.3.4

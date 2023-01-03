@@ -48,9 +48,12 @@ setup(
     version=__version__,
     entry_points={},
     install_requires=[
+        "argilla",
         "lxml",
         "nltk",
-        "argilla",
+        "openpyxl",
+        "pillow",
+        "python-docx",
         # NOTE(robinson) - The following dependencies are pinned
         # to address security scans
         "certifi>=2022.12.07",
