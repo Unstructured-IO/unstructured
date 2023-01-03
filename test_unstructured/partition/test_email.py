@@ -4,6 +4,7 @@ import pathlib
 import pytest
 
 from unstructured.documents.elements import NarrativeText, Title, ListItem
+<<<<<<< HEAD
 from unstructured.documents.email_elements import (
     MetaData,
     Recipient,
@@ -12,6 +13,9 @@ from unstructured.documents.email_elements import (
     ReceivedInfo,
 )
 from unstructured.partition.email import partition_email, _partition_header
+=======
+from unstructured.partition.email import partition_email, extract_attachment_info
+>>>>>>> 509ad4951ce621b5c78c37df5fd015ce9c2fd93f
 
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -40,6 +44,10 @@ HEADER_EXPECTED_OUTPUT = [
 ]
 
 ALL_EXPECTED_OUTPUT = EXPECTED_OUTPUT + HEADER_EXPECTED_OUTPUT
+
+ATTACH_EXPECTED_OUTPUT = [
+    {"filename": "fake-attachment.txt", "payload": b"Hey this is a fake attachment!"}
+]
 
 
 def test_partition_email_from_filename():
@@ -82,6 +90,7 @@ def test_partition_email_from_text():
     assert elements == EXPECTED_OUTPUT
 
 
+<<<<<<< HEAD
 def test_partition_header():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
     with open(filename, "r") as f:
@@ -89,6 +98,15 @@ def test_partition_header():
     elements = _partition_header(msg)
     assert len(elements) > 0
     assert elements == HEADER_EXPECTED_OUTPUT
+=======
+def test_extract_attachment_info():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email-attachment.eml")
+    with open(filename, "r") as f:
+        msg = email.message_from_file(f)
+    attachment_info = extract_attachment_info(msg)
+    assert len(attachment_info) > 0
+    assert attachment_info == ATTACH_EXPECTED_OUTPUT
+>>>>>>> 509ad4951ce621b5c78c37df5fd015ce9c2fd93f
 
 
 def test_partition_email_raises_with_none_specified():

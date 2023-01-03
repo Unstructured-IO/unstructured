@@ -27,6 +27,8 @@ from unstructured.documents.email_elements import (
     MetaData,
 )
 from unstructured.documents.elements import Text
+from unstructured.cleaners.core import replace_mime_encodings, clean_extra_whitespace
+from unstructured.documents.elements import Element, Text
 from unstructured.partition.html import partition_html
 from unstructured.partition.text import split_by_paragraph, partition_text
 
@@ -83,6 +85,36 @@ def _partition_header(msg: Message) -> List[EmailElement]:
             elements.append(MetaData(name=item[0], text=item[1]))
 
     return elements
+
+
+def extract_attachment_info(
+    message: Message, output_dir: Optional[str] = None
+) -> List[Dict[str, str]]:
+    list_attachments = []
+    attachment_info = {}
+    for part in message.walk():
+        if "content-disposition" in part:
+            cdisp = part["content-disposition"].split(";")
+            cdisp = [clean_extra_whitespace(item) for item in cdisp]
+
+            for item in cdisp:
+                if item.lower() == "attachment":
+                    continue
+                key, value = item.split("=")
+                key = clean_extra_whitespace(key.replace('"', ""))
+                value = clean_extra_whitespace(value.replace('"', ""))
+                attachment_info[clean_extra_whitespace(key)] = clean_extra_whitespace(value)
+            attachment_info["payload"] = part.get_payload(decode=True)
+            list_attachments.append(attachment_info)
+
+            for attachment in list_attachments:
+                if output_dir:
+                    filename = output_dir + "/" + attachment["filename"]
+                    with open(filename, "wb") as f:
+                        # mypy wants to just us `w` when opening the file but this
+                        # causes an error since the payloads are bytes not str
+                        f.write(attachment["payload"])  # type: ignore
+    return list_attachments
 
 
 def partition_email(
