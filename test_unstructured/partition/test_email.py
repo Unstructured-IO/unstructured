@@ -17,10 +17,10 @@ EXPECTED_OUTPUT = [
     ListItem(text="Violets are blue"),
 ]
 
-ATTACH_EXPECTED_OUTPUT = [{
-    "filename" : "fake-attachment.txt",
-    "payload"  : b'Hey this is a fake attachment!'
-}]
+ATTACH_EXPECTED_OUTPUT = [
+    {"filename": "fake-attachment.txt", "payload": b"Hey this is a fake attachment!"}
+]
+
 
 def test_partition_email_from_filename():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
