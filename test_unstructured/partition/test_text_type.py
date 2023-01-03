@@ -70,6 +70,24 @@ def test_is_possible_title(text, expected, monkeypatch):
 @pytest.mark.parametrize(
     "text, expected",
     [
+        ("8675309", True),
+        ("+1 867-5309", True),
+        ("2158675309", True),
+        ("+12158675309", True),
+        ("867.5309", True),
+        ("1-800-867-5309", True),
+        ("1(800)-867-5309", True),
+        ("Tel: 1(800)-867-5309", True),
+    ],
+)
+def test_contains_us_phone_number(text, expected):
+    has_phone_number = text_type.contains_us_phone_number(text)
+    assert has_phone_number is expected
+
+
+@pytest.mark.parametrize(
+    "text, expected",
+    [
         ("• This is a fine point!", True),
         (" • This is a fine point!", True),  ***REMOVED*** Has an extra space in front of the bullet
         ("‣ This is a fine point!", True),
