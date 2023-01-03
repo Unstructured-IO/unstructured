@@ -42,7 +42,7 @@ def extract_attachment_info(
                     with open(filename, "wb") as f:
                         # mypy wants to just us `w` when opening the file but this
                         # causes an error since the payloads are bytes not str
-                        f.write(attachment["payload"]) # type: ignore
+                        f.write(attachment["payload"])  # type: ignore
     return list_attachments
 
 
