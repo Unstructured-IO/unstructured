@@ -56,7 +56,10 @@ def _parse_received_data(data: str) -> List[EmailElement]:
 def _parse_email_address(data: str) -> Tuple[str, str]:
     email_address = extract_email_address(data)
 
-    name = re.split("<[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+>", data.lower())[0].title().strip()
+    PATTERN = "<[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+>"   # noqa: W605 Note(harrell)
+    name = (
+        re.split(PATTERN, data.lower())[0].title().strip()
+    )
 
     return name, email_address[0]
 
