@@ -9,6 +9,8 @@ from unstructured.nlp.patterns import (
     EMAIL_ADDRESS_PATTERN,
 )
 
+from unstructured.nlp.patterns import US_PHONE_NUMBERS_RE
+
 
 def _get_indexed_match(text: str, pattern: str, index: int = 0) -> re.Match:
     if not isinstance(index, int) or index < 0:
@@ -74,3 +76,18 @@ def extract_mapi_id(text: str) -> List[str]:
 def extract_datetimetz(text: str) -> List[datetime.datetime]:
     date_string = re.findall(EMAIL_DATETIMETZ_PATTERN, text)
     return datetime.strptime(date_string[0], "%d/%b/%Y:%H:%M:%S %z")
+def extract_us_phone_number(text: str):
+    """Extracts a US phone number from a section of text that includes a phone number. If there
+    is no phone number present, the result will be an empty string.
+
+    Example
+    -------
+    extract_phone_number("Phone Number: 215-867-5309") -> "215-867-5309"
+    """
+    regex_match = US_PHONE_NUMBERS_RE.search(text)
+    if regex_match is None:
+        return ""
+
+    start, end = regex_match.span()
+    phone_number = text[start:end]
+    return phone_number.strip()

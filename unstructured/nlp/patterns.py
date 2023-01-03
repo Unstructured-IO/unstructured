@@ -8,6 +8,14 @@ else:
 
 import re
 
+# NOTE(robinson) - Modified from answers found on this stackoverflow post
+# ref: https://stackoverflow.com/questions/16699007/
+# regular-expression-to-match-standard-10-digit-phone-number
+US_PHONE_NUMBERS_PATTERN = (
+    r"(?:\+?(\d{1,3}))?[-. (]*(\d{3})?[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$"
+)
+US_PHONE_NUMBERS_RE = re.compile(US_PHONE_NUMBERS_PATTERN)
+
 UNICODE_BULLETS: Final[List[str]] = [
     "\u0095",
     "\u2022",

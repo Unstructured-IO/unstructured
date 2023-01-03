@@ -29,8 +29,8 @@ def test_extract_text_after():
 
 
 def test_extract_email_address():
-    text = "Imran Scotty <Imran.Scotty@npf.gov.nr>"
-    assert extract.extract_email_address(text) == ["imran.scotty@npf.gov.nr"]
+    text = "Im Rabn <Im.Rabn@npf.gov.nr>"
+    assert extract.extract_email_address(text) == ["im.rabn@npf.gov.nr"]
 
 
 def test_extract_ip_address():
@@ -55,3 +55,14 @@ def extract_datetimetz():
     assert extract.extract_datetimetx(EMAIL_META_DATA_INPUT) == datetime.datetime(
         2021, 3, 26, 11, 4, 9, tzinfo=datetime.timezone(datetime.timedelta(seconds=43200))
     )
+@pytest.mark.parametrize(
+    "text, expected",
+    [
+        ("215-867-5309", "215-867-5309"),
+        ("Phone Number: +1 215.867.5309", "+1 215.867.5309"),
+        ("Phone Number: Just Kidding", ""),
+    ],
+)
+def test_extract_us_phone_number(text, expected):
+    phone_number = extract.extract_us_phone_number(text)
+    assert phone_number == expected
