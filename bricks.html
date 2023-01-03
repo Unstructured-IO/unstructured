@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bricks &mdash; unstructured 0.3.5-dev4 documentation</title>
+  <title>Bricks &mdash; unstructured 0.3.5-dev5 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -52,6 +52,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#is-bulleted-text"><code class="docutils literal notranslate"><span class="pre">is_bulleted_text</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#is-possible-narrative-text"><code class="docutils literal notranslate"><span class="pre">is_possible_narrative_text</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#is-possible-title"><code class="docutils literal notranslate"><span class="pre">is_possible_title</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#contains-us-phone-number"><code class="docutils literal notranslate"><span class="pre">contains_us_phone_number</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#contains-verb"><code class="docutils literal notranslate"><span class="pre">contains_verb</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sentence-count"><code class="docutils literal notranslate"><span class="pre">sentence_count</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#exceeds-cap-ratio"><code class="docutils literal notranslate"><span class="pre">exceeds_cap_ratio</span></code></a></li>
@@ -69,6 +70,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#clean-postfix"><code class="docutils literal notranslate"><span class="pre">clean_postfix</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#extract-text-before"><code class="docutils literal notranslate"><span class="pre">extract_text_before</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#extract-text-after"><code class="docutils literal notranslate"><span class="pre">extract_text_after</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#extract-us-phone-number"><code class="docutils literal notranslate"><span class="pre">extract_us_phone_number</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#translate-text"><code class="docutils literal notranslate"><span class="pre">translate_text</span></code></a></li>
 </ul>
 </li>
@@ -260,6 +262,17 @@ Sentence length threshold is controlled by the <code class="docutils literal not
 <span class="c1"># Returns False because there are two sentences</span>
 <span class="n">example_3</span> <span class="o">=</span> <span class="s2">&quot;Make sure you brush your teeth. Do it before you go to bed.&quot;</span>
 <span class="n">is_possible_title</span><span class="p">(</span><span class="n">example_3</span><span class="p">,</span> <span class="n">sentence_min_length</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="contains-us-phone-number">
+<h3><code class="docutils literal notranslate"><span class="pre">contains_us_phone_number</span></code><a class="headerlink" href="#contains-us-phone-number" title="Permalink to this heading"></a></h3>
+<p>Checks to see if a section of text contains a US phone number.</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.text_type</span> <span class="kn">import</span> <span class="n">contains_us_phone_number</span>
+
+<span class="c1"># Returns True because the text includes a phone number</span>
+<span class="n">contains_us_phone_number</span><span class="p">(</span><span class="s2">&quot;Phone number: 215-867-5309&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -505,6 +518,17 @@ such as <code class="docutils literal notranslate"><span class="pre">\u2013</spa
 
 <span class="c1"># Returns &quot;Look at me, I&#39;m flying!&quot;</span>
 <span class="n">extract_text_after</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;SPEAKER \d</span><span class="si">{1}</span><span class="s2">:&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="extract-us-phone-number">
+<h3><code class="docutils literal notranslate"><span class="pre">extract_us_phone_number</span></code><a class="headerlink" href="#extract-us-phone-number" title="Permalink to this heading"></a></h3>
+<p>Extracts a phone number from a section of text.</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.cleaners.extract</span> <span class="kn">import</span> <span class="n">extract_us_phone_number</span>
+
+<span class="c1"># Returns &quot;215-867-5309&quot;</span>
+<span class="n">extract_us_phone_number</span><span class="p">(</span><span class="s2">&quot;Phone number: 215-867-5309&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
