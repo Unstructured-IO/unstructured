@@ -21,3 +21,16 @@ def test_extract_text_before():
 def test_extract_text_after():
     text = "Teacher: BLAH BLAH BLAH; Student: BLAH BLAH BLAH!"
     assert extract.extract_text_after(text, "BLAH;", 0) == "Student: BLAH BLAH BLAH!"
+
+
+@pytest.mark.parametrize(
+    "text, expected",
+    [
+        ("215-867-5309", "215-867-5309"),
+        ("Phone Number: +1 215.867.5309", "+1 215.867.5309"),
+        ("Phone Number: Just Kidding", ""),
+    ],
+)
+def test_extract_us_phone_number(text, expected):
+    phone_number = extract.extract_us_phone_number(text)
+    assert phone_number == expected
