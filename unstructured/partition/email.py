@@ -16,7 +16,9 @@ from unstructured.partition.html import partition_html
 VALID_CONTENT_SOURCES: Final[List[str]] = ["text/html"]
 
 
-def extract_attachment_info(message: Message, output_dir: Optional[str] = None) -> List[Dict[str, str]]:
+def extract_attachment_info(
+    message: Message, output_dir: Optional[str] = None
+) -> List[Dict[str, str]]:
     list_attachments = []
     attachment_info = {}
     for part in message.walk():
@@ -38,7 +40,7 @@ def extract_attachment_info(message: Message, output_dir: Optional[str] = None) 
                 if output_dir:
                     filename = output_dir + "/" + attachment["filename"]
 
-                    if type(attachment["payload"]):        
+                    if type(attachment["payload"]):
                         with open(filename, "w") as f:
                             f.write(attachment["payload"])
                     else:
