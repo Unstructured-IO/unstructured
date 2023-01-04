@@ -1,7 +1,7 @@
 import re
 from typing import IO, List, Optional
 
-from unstructured.documents.elements import Element, ListItem, NarrativeText, Title, Text
+from unstructured.documents.elements import Element, ListItem, NarrativeText, Title
 
 from unstructured.cleaners.core import clean_bullets
 from unstructured.partition.text_type import (

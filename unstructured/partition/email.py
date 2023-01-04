@@ -21,7 +21,6 @@ from unstructured.documents.email_elements import (
     EmailElement,
     Name,
     Recipient,
-    BodyText,
     Sender,
     Subject,
     ReceivedInfo,
