@@ -21,8 +21,32 @@ def clean_bullets(text) -> str:
     return cleaned_text.strip()
 
 
+def clean_ordered_bullets(text) -> str:
+    """Cleans the start of bulleted text sections up to three “sub-section”
+    bullets accounting numeric and alpha-numeric types.
+
+    Example
+    -------
+    1.1 This is a very important point -> This is a very important point
+    a.b This is a very important point -> This is a very important point
+    """
+    text_sp = text.split()
+    text_cl = " ".join(text_sp[1:])
+    if any(['.' not in text_sp[0], '..' in text_sp[0]]):
+        return text
+
+    bullet = text_sp[0].split('.')
+    if not bullet[-1]:
+        del bullet[-1]
+
+    if len(bullet[0]) > 2:
+        return text
+
+    return text_cl
+
+
 # TODO(robinson) - There's likely a cleaner was to accomplish this and get all of the
-# unicode chracters instead of just the quotes. Doing this for now since quotes are
+# unicode characters instead of just the quotes. Doing this for now since quotes are
 # an issue that are popping up in the SEC filings tests
 def replace_unicode_quotes(text) -> str:
     """Replaces unicode bullets in text with the expected character
