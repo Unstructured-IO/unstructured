@@ -615,7 +615,7 @@ Examples:
 
 Converts a list of document ``Element`` objects to a ``pandas`` dataframe. The dataframe
 will have a ``text`` column with the text from the element and a ``type`` column
-indicated the element type, such as ``NarrativeText`` or ``Title``.
+indicating the element type, such as ``NarrativeText`` or ``Title``.
 
 Examples:
 
