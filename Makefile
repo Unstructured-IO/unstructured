@@ -17,10 +17,10 @@ install-base: install-base-pip-packages install-nltk-models
 
 ***REMOVED******REMOVED*** install:                 installs all test, dev, and experimental requirements
 .PHONY: install
-install: install-base-pip-packages install-dev install-nltk-models install-test install-huggingface
+install: install-base-pip-packages install-dev install-nltk-models install-test install-huggingface install-unstructured-inference
 
 .PHONY: install-ci
-install-ci: install-base-pip-packages install-test install-nltk-models install-huggingface
+install-ci: install-base-pip-packages install-test install-nltk-models install-huggingface install-unstructured-inference
 
 .PHONY: install-base-pip-packages
 install-base-pip-packages:
@@ -49,6 +49,18 @@ install-dev:
 install-build:
 	pip install -r requirements/build.txt
 
+.PHONY: install-unstructured-inference
+install-unstructured-inference:
+	pip install -r requirements/local-inference.txt
+
+.PHONY: install-detectron2
+install-detectron2:
+	pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@v0.6***REMOVED***egg=detectron2"
+
+***REMOVED******REMOVED*** install-local-inference: installs requirements for local inference
+.PHONY: install-local-inference
+install-local-inference: install install-unstructured-inference install-detectron2
+
 ***REMOVED******REMOVED*** pip-compile:             compiles all base/dev/test requirements
 .PHONY: pip-compile
 pip-compile:
@@ -61,6 +73,7 @@ pip-compile:
 	pip-compile requirements/dev.in
 	pip-compile requirements/test.in
 	pip-compile requirements/build.in
+	pip-compile requirements/local-inference.in
 	***REMOVED*** NOTE(robinson) - doc/requirements.txt is where the GitHub action for building
 	***REMOVED*** sphinx docs looks for additional requirements
 	cp requirements/build.txt docs/requirements.txt
