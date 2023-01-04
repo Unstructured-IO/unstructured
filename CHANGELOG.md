@@ -1,4 +1,4 @@
-## 0.3.5-dev5
+## 0.3.5-dev6
 
 * Add new pattern to recognize plain text dash bullets
 * Add test for bullet patterns
@@ -8,6 +8,7 @@
 * Helper functions for identifying and extracting phone numbers
 * Add new function `extract_attachment_info` that extracts and decode the attachment
 of an email.
+* Staging brick to convert a list of `Element`s to a `pandas` dataframe.
 
 ## 0.3.4
 
