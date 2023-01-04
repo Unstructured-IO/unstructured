@@ -45,7 +45,9 @@ openpyxl==3.0.10
 packaging==22.0
     # via argilla
 pandas==1.5.2
-    # via argilla
+    # via
+    #   argilla
+    #   unstructured (setup.py)
 pillow==9.4.0
     # via unstructured (setup.py)
 pydantic==1.10.2

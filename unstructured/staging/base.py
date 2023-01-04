@@ -2,6 +2,8 @@ import io
 import csv
 from typing import Dict, List
 
+import pandas as pd
+
 from unstructured.documents.elements import Text, NarrativeText, Title, ListItem
 
 
@@ -43,3 +45,14 @@ def convert_to_isd_csv(elements: List[Text]) -> str:
         csv_writer.writeheader()
         csv_writer.writerows(rows)
         return buffer.getvalue()
+
+
+def convert_to_dataframe(elements: List[Text]) -> pd.DataFrame:
+    """Converts document elements to a pandas DataFrame. The dataframe contains the
+    following columns:
+        text: the element text
+        type: the text type (NarrativeText, Title, etc)
+    """
+    csv_string = convert_to_isd_csv(elements)
+    csv_string_io = io.StringIO(csv_string)
+    return pd.read_csv(csv_string_io, sep=",")
