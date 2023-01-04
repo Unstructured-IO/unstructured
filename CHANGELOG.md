@@ -1,4 +1,4 @@
-## 0.3.5-dev6
+## 0.3.5
 
 * Add support for local inference
 * Add new pattern to recognize plain text dash bullets
