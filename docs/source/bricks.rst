@@ -77,6 +77,23 @@ Examples:
       text = f.read()
   elements = partition_email(text=text)
 
+``extract_attachment_info``
+----------------------
+
+The ``extract_attachment_info`` function takes an ``email.message.Message`` object
+as input and returns the a list of dictionaries containing the attachment information,
+such as ``filename``, ``size``, ``payload``, etc. The attachment is saved to the ``output_dir``
+if specified.
+
+.. code:: python
+
+  import email
+  from unstructured.partition.email import extract_attachment_info
+
+  with open("example-docs/fake-email-attachment.eml", "r") as f:
+      msg = email.message_from_file(f)
+  attachment_info = extract_attachment_info(msg, output_dir="example-docs")
+
 
 ``is_bulleted_text``
 ----------------------
@@ -160,6 +177,21 @@ Examples:
   # Returns False because there are two sentences
   example_3 = "Make sure you brush your teeth. Do it before you go to bed."
   is_possible_title(example_3, sentence_min_length=5)
+
+
+``contains_us_phone_number``
+----------------------------
+
+Checks to see if a section of text contains a US phone number.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.text_type import contains_us_phone_number
+
+  # Returns True because the text includes a phone number
+  contains_us_phone_number("Phone number: 215-867-5309")
 
 
 ``contains_verb``
@@ -469,6 +501,21 @@ Examples:
 
   # Returns "Look at me, I'm flying!"
   extract_text_after(text, r"SPEAKER \d{1}:")
+
+
+``extract_us_phone_number``
+---------------------------
+
+Extracts a phone number from a section of text.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.cleaners.extract import extract_us_phone_number
+
+  # Returns "215-867-5309"
+  extract_us_phone_number("Phone number: 215-867-5309")
 
 
 ``translate_text``
