@@ -29,7 +29,7 @@ does not officially support Windows, but it is possible to get it install on Win
 The installation instructions are based on the instructions LayoutParser provides
 `here <https://layout-parser.github.io/tutorials/installation#for-windows-users>`_.
 
-* Run ``pip install pycocotools-windows`` to install a Windows compatible version of ``pycocotools``. Alternatively, you can run ``pip3 install "git+https://github.com/philferriere/cocoapi.git#egg=pycocotools&subdirectory=PythonAPI"`` as outlined in `this GitHub issues <https://github.com/cocodataset/cocoapi/issues/169#issuecomment-462528628>`_.
+* Run ``pip install pycocotools-windows`` to install a Windows compatible version of ``pycocotools``. Alternatively, you can run ``pip3 install "git+https://github.com/philferriere/cocoapi.git#egg=pycocotools&subdirectory=PythonAPI"`` as outlined in `this GitHub issue <https://github.com/cocodataset/cocoapi/issues/169#issuecomment-462528628>`_.
 * Run ``git clone https://github.com/ivanpp/detectron2.git && cd detectron2 && pip install -e .`` to install a Windows compatible version of the ``detectron2`` library.
 * Install the a Windows compatible version of ``iopath`` using the instructions outlined in `this GitHub issue <https://github.com/Layout-Parser/layout-parser/issues/15#issuecomment-819546751>`_. First, run ``git clone https://github.com/facebookresearch/iopath --single-branch --branch v0.1.8``. Then on line 753 in ``iopath/iopath/common/file_io.py`` change ``filename = path.split("/")[-1]`` to ``filename = parsed_url.path.split("/")[-1]``. After that, navigate to the ``iopath`` directory and run ``pip install -e .``.
 * Run ``pip install unstructured[local-inference]``. This will install the ``unstructured_inference`` dependency.
@@ -44,6 +44,34 @@ At this point, you can verify the installation by running the following from the
 	layout = DocumentLayout.from_file("sample-docs/loremipsum.pdf")
 
 	print(layout.pages[0].elements)
+
+
+====================
+Installing PaddleOCR
+====================
+
+PaddleOCR is another package that is helpful to use in conjunction with ``unstructured``.
+You can use the following steps to install ``paddleocr`` in your ``unstructured`` ``conda``
+environment.
+
+* Run ``conda install -c esri paddleocr``
+* If you have the Windows version of ``detectron2`` cloned and installed locally, change the name of ``detectron2/tools`` to ``detectron2/detectron2_tools``. Otherwise, you will hit the module name conflict error described in `this issue <https://github.com/PaddlePaddle/PaddleOCR/issues/1024>`_.
+* Set the environment variable ``KMP_DUPLICATE_LIB_OK`` to ``"TRUE"``. This prevents the ``libiomp5md.dll`` linking issue described `in this issue on GitHub <https://github.com/PaddlePaddle/PaddleOCR/issues/4613>`_.
+
+
+At this point, you can verify the installation using the following commands. Choose a
+``.jpg`` image that contains text.
+
+.. code:: python
+
+	import numpy as np
+	from PIL import Image
+
+	filename = "path/to/my/image.jpg"
+	img = np.array(Image.open(filename))
+	ocr = PaddleOCR(lang="en", use_gpu=False, show_log=False)
+	result = ocr.ocr(img=img)
+
 
 
 Logging
