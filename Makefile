@@ -17,10 +17,10 @@ install-base: install-base-pip-packages install-nltk-models
 
 ## install:                 installs all test, dev, and experimental requirements
 .PHONY: install
-install: install-base-pip-packages install-dev install-nltk-models install-test install-huggingface
+install: install-base-pip-packages install-dev install-nltk-models install-test install-huggingface install-unstructured-inference
 
 .PHONY: install-ci
-install-ci: install-base-pip-packages install-test install-nltk-models install-huggingface
+install-ci: install-base-pip-packages install-test install-nltk-models install-huggingface install-unstructured-inference
 
 .PHONY: install-base-pip-packages
 install-base-pip-packages:
@@ -48,6 +48,18 @@ install-dev:
 .PHONY: install-build
 install-build:
 	pip install -r requirements/build.txt
+
+.PHONY: install-unstructured-inference
+install-unstructured-inference:
+	pip install -r requirements/local-inference.txt
+
+.PHONY: install-detectron2
+install-detectron2:
+	pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@v0.6#egg=detectron2"
+
+## install-local-inference: installs requirements for local inference
+.PHONY: install-local-inference
+install-local-inference: install install-unstructured-inference install-detectron2
 
 ## pip-compile:             compiles all base/dev/test requirements
 .PHONY: pip-compile
