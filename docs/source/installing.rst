@@ -11,7 +11,7 @@ Installation with ``conda`` on Windows
 --------------------------------------
 
 You can install and run ``unstructured`` on Windows with ``conda``, but the process
-involves a few extra steps. This section covers will help you get up and running.
+involves a few extra steps. This section will help you get up and running.
 
 * Install `Anaconda <https://docs.conda.io/projects/conda/en/latest/user-guide/install/windows.html>`_ on your Windows machine.
 * Install Microsoft C++ Build Tools using the instructions in `this Stackoverflow post <https://stackoverflow.com/questions/64261546/how-to-solve-error-microsoft-visual-c-14-0-or-greater-is-required-when-inst>`_. C++ build tools are required for the ``pycocotools`` dependency.
