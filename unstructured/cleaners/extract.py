@@ -65,7 +65,7 @@ def extract_us_phone_number(text: str):
     return phone_number.strip()
 
 
-def extract_ordered_bullets(text) -> str:
+def extract_ordered_bullets(text) -> tuple:
     """Extracts the start of bulleted text sections up to three “sub-section”
     bullets accounting numeric and alpha-numeric types.
 
@@ -76,10 +76,10 @@ def extract_ordered_bullets(text) -> str:
     a.b This is a very important point -> ("a", "b", None)
     """
     text_sp = text.split()
-    if any(['.' not in text_sp[0], '..' in text_sp[0]]):
+    if any(["." not in text_sp[0], ".." in text_sp[0]]):
         return None, None, None
 
-    bullet = text_sp[0].split('.')
+    bullet = text_sp[0].split(".")
     if not bullet[-1]:
         del bullet[-1]
 
