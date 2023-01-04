@@ -35,15 +35,15 @@ def test_clean_bullets(text, expected):
         ("2,3. Morse code 3. ●●●", "2,3. Morse code 3. ●●●"),
         ("1..2.3 four", "1..2.3 four"),
         ("Fig. 2: The relationship", "Fig. 2: The relationship"),
-        ("23 is everywhere", "23 is everywhere")
+        ("23 is everywhere", "23 is everywhere"),
     ],
 )
 def test_clean_ordered_bullets(text, expected):
     assert (
-            core.clean_ordered_bullets(
-                text=text,
-            )
-            == expected
+        core.clean_ordered_bullets(
+            text=text,
+        )
+        == expected
     )
 
 
@@ -166,13 +166,13 @@ def test_clean_postfix(text, pattern, ignore_case, strip, expected):
 )
 def test_clean(text, extra_whitespace, dashes, bullets, lowercase, trailing_punctuation, expected):
     assert (
-            core.clean(
-                text=text,
-                extra_whitespace=extra_whitespace,
-                dashes=dashes,
-                bullets=bullets,
-                trailing_punctuation=trailing_punctuation,
-                lowercase=lowercase,
-            )
-            == expected
+        core.clean(
+            text=text,
+            extra_whitespace=extra_whitespace,
+            dashes=dashes,
+            bullets=bullets,
+            trailing_punctuation=trailing_punctuation,
+            lowercase=lowercase,
+        )
+        == expected
     )

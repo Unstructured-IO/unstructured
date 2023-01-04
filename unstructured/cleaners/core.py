@@ -32,10 +32,10 @@ def clean_ordered_bullets(text) -> str:
     """
     text_sp = text.split()
     text_cl = " ".join(text_sp[1:])
-    if any(['.' not in text_sp[0], '..' in text_sp[0]]):
+    if any(["." not in text_sp[0], ".." in text_sp[0]]):
         return text
 
-    bullet = text_sp[0].split('.')
+    bullet = text_sp[0].split(".")
     if not bullet[-1]:
         del bullet[-1]
 

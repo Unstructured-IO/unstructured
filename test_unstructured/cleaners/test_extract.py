@@ -54,13 +54,13 @@ def test_extract_us_phone_number(text, expected):
         ("2,3. Morse code 3. ●●●", (None, None, None)),
         ("1..2.3 four", (None, None, None)),
         ("Fig. 2: The relationship", (None, None, None)),
-        ("23 is everywhere", (None, None, None))
+        ("23 is everywhere", (None, None, None)),
     ],
 )
 def test_extract_ordered_bullets(text, expected):
     assert (
-            extract.extract_ordered_bullets(
-                text=text,
-            )
-            == expected
+        extract.extract_ordered_bullets(
+            text=text,
+        )
+        == expected
     )
