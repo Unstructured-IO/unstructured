@@ -16,7 +16,13 @@ class Name(EmailElement):
 
     category = "Uncategorized"
 
-    def __init__(self, name: str, text: str, datestamp: Optional[datetime.datetime] = None, element_id: Union[str, NoID] = NoID()):
+    def __init__(
+        self,
+        name: str,
+        text: str,
+        datestamp: Optional[datetime.datetime] = None,
+        element_id: Union[str, NoID] = NoID(),
+    ):
         self.name: str = name
         self.text: str = text
 
