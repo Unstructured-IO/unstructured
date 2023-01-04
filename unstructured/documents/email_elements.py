@@ -1,6 +1,7 @@
 from abc import ABC
+import datetime
 import hashlib
-from typing import Callable, List, Union
+from typing import Callable, List, Union, Optional
 from unstructured.documents.elements import Element, Text, NoID
 
 
@@ -15,7 +16,7 @@ class Name(EmailElement):
 
     category = "Uncategorized"
 
-    def __init__(self, name: str, text: str, element_id: Union[str, NoID] = NoID()):
+    def __init__(self, name: str, text: str, datestamp: Optional[datetime.datetime] = None, element_id: Union[str, NoID] = NoID()):
         self.name: str = name
         self.text: str = text
 
@@ -84,19 +85,19 @@ class Subject(Text):
     pass
 
 
-class ReceivedInfo(List[Text]):
-    """A text element for capturing header information of an email (e.g. IP addresses, etc)."""
-
-    category = "ReceivedInfo"
-
-    pass
-
-
 class MetaData(Name):
     """A text element for capturing header meta data of an email
     (miscellaneous data in the email)."""
 
     category = "MetaData"
+
+    pass
+
+
+class ReceivedInfo(List[Name]):
+    """A text element for capturing header information of an email (e.g. IP addresses, etc)."""
+
+    category = "ReceivedInfo"
 
     pass
 

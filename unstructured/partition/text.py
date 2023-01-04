@@ -45,7 +45,7 @@ def partition_text(
         file_text = file.read()
 
     elif text is not None and not filename and not file and not file_content:
-        file_text: str = str(text)
+        file_text = str(text)
 
     elif file_content is not None and not filename and not file and not text:
         pass
@@ -56,7 +56,7 @@ def partition_text(
     if not file_content:
         file_content = split_by_paragraph(file_text)
 
-    elements: List[Text] = list()
+    elements: List[Element] = list()
     for ctext in file_content:
 
         ctext = ctext.strip()

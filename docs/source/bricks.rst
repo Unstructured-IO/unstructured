@@ -631,7 +631,7 @@ object from the input string.
     \n ABC.DEF.local2 ([ba23::58b5:2236:45g2:88h2%25]) with mapi id\
     n 32.88.5467.123; Fri, 26 Mar 2021 11:04:09 +1200"""
 
-  # Returns "['Fri, 26 Mar 2021 11:04:09 +1200']"
+  # Returns datetime.datetime(2021, 3, 26, 11, 4, 9, tzinfo=datetime.timezone(datetime.timedelta(seconds=43200)))
  extract_datetimetz(text)
 
 

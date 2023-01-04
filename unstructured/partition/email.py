@@ -2,7 +2,7 @@ import email
 import sys
 import re
 from email.message import Message
-from typing import Dict, IO, List, Optional, Tuple
+from typing import Dict, IO, List, Optional, Tuple, Union
 
 if sys.version_info < (3, 8):
     from typing_extensions import Final
@@ -19,6 +19,7 @@ from unstructured.cleaners.extract import (
 )
 from unstructured.documents.email_elements import (
     EmailElement,
+    Name,
     Recipient,
     BodyText,
     Sender,
@@ -26,7 +27,7 @@ from unstructured.documents.email_elements import (
     ReceivedInfo,
     MetaData,
 )
-from unstructured.documents.elements import Text
+from unstructured.documents.elements import Element, Text
 from unstructured.partition.html import partition_html
 from unstructured.partition.text import split_by_paragraph, partition_text
 
@@ -34,21 +35,21 @@ from unstructured.partition.text import split_by_paragraph, partition_text
 VALID_CONTENT_SOURCES: Final[List[str]] = ["text/html", "text/plain"]
 
 
-def _parse_received_data(data: str) -> List[EmailElement]:
+def _parse_received_data(data: str) -> List[Name]:
 
     ip_address_names = extract_ip_address_name(data)
     ip_addresses = extract_ip_address(data)
     mapi_id = extract_mapi_id(data)
     datetimetz = extract_datetimetz(data)
 
-    elements: List[EmailElement] = list()
+    elements: List[Name] = list()
     if ip_address_names and ip_addresses:
         for name, ip in zip(ip_address_names, ip_addresses):
             elements.append(MetaData(name=name, text=ip))
     if mapi_id:
         elements.append(MetaData(name="mapi_id", text=mapi_id[0]))
     if datetimetz:
-        elements.append(MetaData(name="received_datetimetz", text=datetimetz[0]))
+        elements.append(MetaData(name="received_datetimetz", text=str(datetimetz), datestamp=datetimetz))
 
     return elements
 
@@ -62,8 +63,8 @@ def _parse_email_address(data: str) -> Tuple[str, str]:
     return name, email_address[0]
 
 
-def _partition_header(msg: Message) -> List[EmailElement]:
-    elements: List[Text] = list()
+def _partition_header(msg: Message) -> List[Union[EmailElement,Element,List[Name]]]:
+    elements: List[Union[EmailElement,Element,List[Name]]] = list()
     for item in msg.raw_items():
         if item[0] == "To":
             text = _parse_email_address(item[1])
@@ -122,7 +123,7 @@ def partition_email(
     text: Optional[str] = None,
     content_source: str = "text/html",
     get_meta_data: bool = False,
-) -> List[EmailElement]:
+) -> List[Union[Element,EmailElement,List[Name]]]:
     """Partitions an .eml documents into its constituent elements.
     Parameters
     ----------
@@ -175,19 +176,21 @@ def partition_email(
     #    <li>Item 1</li>=
     #    <li>Item 2<li>=
     # </ul>
-    content = split_by_paragraph(content)
+    list_content = split_by_paragraph(content)
+    all_elements: List[Union[EmailElement,Element,List[Name]]] = list()
 
     if content_source == "text/html":
-        content = "".join(content)
+        content = "".join(list_content)
         elements = partition_html(text=content)
 
         for element in elements:
             if isinstance(element, Text):
                 element.apply(replace_mime_encodings)
     elif content_source == "text/plain":
-        elements = BodyText(partition_text(file_content=content))
+        elements = partition_text(file_content=list_content)
 
     if get_meta_data:
-        elements += _partition_header(msg)
+        all_elements.append(partition_header(msg))
+    all_elements.append(elements)
 
     return elements
