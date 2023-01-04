@@ -52,6 +52,7 @@ setup(
         "lxml",
         "nltk",
         "openpyxl",
+        "pandas",
         "pillow",
         "python-docx",
         ***REMOVED*** NOTE(robinson) - The following dependencies are pinned
