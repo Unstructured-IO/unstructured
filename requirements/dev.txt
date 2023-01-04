@@ -229,8 +229,10 @@ webencodings==0.5.1
     # via
     #   bleach
     #   tinycss2
-wheel==0.37.1
-    # via pip-tools
+wheel==0.38.4
+    # via
+    #   -r requirements/dev.in
+    #   pip-tools
 widgetsnbextension==4.0.3
     # via ipywidgets
 zipp==3.11.0
