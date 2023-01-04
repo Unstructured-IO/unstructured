@@ -1,0 +1,12 @@
+name: unstructured
+
+channels:
+  - defaults
+  - anaconda
+  - conda-forge
+  - pytorch
+
+dependencies:
+  - pywin32
+  - poppler
+  - torchvision
