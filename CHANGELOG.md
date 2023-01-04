@@ -1,3 +1,10 @@
+## 0.3.5-dev6
+
+* Add new cleaning brick for ordered bullets.
+* Add new extract method for ordered bullets.
+* Add test for cleaning ordered bullets.
+* Add test for extracting ordered bullets.
+
 ## 0.3.5-dev5
 
 * Add new pattern to recognize plain text dash bullets
