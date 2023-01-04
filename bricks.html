@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bricks &mdash; unstructured 0.3.5-dev5 documentation</title>
+  <title>Bricks &mdash; unstructured 0.3.5-dev6 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -78,6 +78,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#convert-to-isd"><code class="docutils literal notranslate"><span class="pre">convert_to_isd</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#isd-to-elements"><code class="docutils literal notranslate"><span class="pre">isd_to_elements</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#convert-to-isd-csv"><code class="docutils literal notranslate"><span class="pre">convert_to_isd_csv</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#convert-to-dataframe"><code class="docutils literal notranslate"><span class="pre">convert_to_dataframe</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#stage-for-transformers"><code class="docutils literal notranslate"><span class="pre">stage_for_transformers</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#stage-for-label-studio"><code class="docutils literal notranslate"><span class="pre">stage_for_label_studio</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#stage-for-prodigy"><code class="docutils literal notranslate"><span class="pre">stage_for_prodigy</span></code></a></li>
@@ -602,6 +603,20 @@ for returning data in Unstructured pipeline APIs.</p>
 
 <span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="n">Title</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Title&quot;</span><span class="p">),</span> <span class="n">NarrativeText</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Narrative&quot;</span><span class="p">)]</span>
 <span class="n">isd_csv</span> <span class="o">=</span> <span class="n">convert_to_isd_csv</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="convert-to-dataframe">
+<h3><code class="docutils literal notranslate"><span class="pre">convert_to_dataframe</span></code><a class="headerlink" href="#convert-to-dataframe" title="Permalink to this heading"></a></h3>
+<p>Converts a list of document <code class="docutils literal notranslate"><span class="pre">Element</span></code> objects to a <code class="docutils literal notranslate"><span class="pre">pandas</span></code> dataframe. The dataframe
+will have a <code class="docutils literal notranslate"><span class="pre">text</span></code> column with the text from the element and a <code class="docutils literal notranslate"><span class="pre">type</span></code> column
+indicating the element type, such as <code class="docutils literal notranslate"><span class="pre">NarrativeText</span></code> or <code class="docutils literal notranslate"><span class="pre">Title</span></code>.</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.documents.elements</span> <span class="kn">import</span> <span class="n">Title</span><span class="p">,</span> <span class="n">NarrativeText</span>
+<span class="kn">from</span> <span class="nn">unstructured.staging.base</span> <span class="kn">import</span> <span class="n">convert_to_dataframe</span>
+
+<span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="n">Title</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Title&quot;</span><span class="p">),</span> <span class="n">NarrativeText</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Narrative&quot;</span><span class="p">)]</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">convert_to_dataframe</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
