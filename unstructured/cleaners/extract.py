@@ -63,3 +63,34 @@ def extract_us_phone_number(text: str):
     start, end = regex_match.span()
     phone_number = text[start:end]
     return phone_number.strip()
+
+
+def extract_ordered_bullets(text) -> str:
+    """Extracts the start of bulleted text sections up to three “sub-section”
+    bullets accounting numeric and alpha-numeric types.
+
+    Example
+    -------
+    This is a very important point -> (None, None, None)
+    1.1 This is a very important point -> ("1", "1", None)
+    a.b This is a very important point -> ("a", "b", None)
+    """
+    text_sp = text.split()
+    if any(['.' not in text_sp[0], '..' in text_sp[0]]):
+        return None, None, None
+
+    bullet = text_sp[0].split('.')
+    if not bullet[-1]:
+        del bullet[-1]
+
+    if len(bullet[0]) > 2:
+        return None, None, None
+
+    a, *temp = bullet
+    b, c = None, None
+    if temp:
+        b, *c = temp
+        b = "".join(b)
+        c = "".join(c)
+    c = None if not c else c
+    return a, b, c
