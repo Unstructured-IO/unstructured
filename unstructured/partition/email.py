@@ -190,7 +190,7 @@ def partition_email(
         elements = partition_text(file_content=list_content)
 
     if get_meta_data:
-        all_elements.append(partition_header(msg))
+        all_elements.append(_partition_header(msg))
     all_elements.append(elements)
 
     return elements
