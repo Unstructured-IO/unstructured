@@ -48,7 +48,7 @@ def convert_to_isd_csv(elements: List[Text]) -> str:
 
 
 def convert_to_dataframe(elements: List[Text]) -> pd.DataFrame:
-    """Converts document element to a pandas DataFrame. The dataframe contains the
+    """Converts document elements to a pandas DataFrame. The dataframe contains the
     following columns:
         text: the element text
         type: the text type (NarrativeText, Title, etc)
