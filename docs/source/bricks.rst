@@ -78,7 +78,7 @@ Examples:
   elements = partition_email(text=text)
 
 ``extract_attachment_info``
-----------------------
+----------------------------
 
 The ``extract_attachment_info`` function takes an ``email.message.Message`` object
 as input and returns the a list of dictionaries containing the attachment information,
@@ -608,6 +608,24 @@ Examples:
 
   elements = [Title(text="Title"), NarrativeText(text="Narrative")]
   isd_csv = convert_to_isd_csv(elements)
+
+
+``convert_to_dataframe``
+------------------------
+
+Converts a list of document ``Element`` objects to a ``pandas`` dataframe. The dataframe
+will have a ``text`` column with the text from the element and a ``type`` column
+indicated the element type, such as ``NarrativeText`` or ``Title``.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.documents.elements import Title, NarrativeText
+  from unstructured.staging.base import convert_to_dataframe
+
+  elements = [Title(text="Title"), NarrativeText(text="Narrative")]
+  df = convert_to_dataframe(elements)
 
 
 ``stage_for_transformers``
