@@ -1,6 +1,8 @@
+import csv
 import os
 import pytest
-import csv
+
+import pandas as pd
 
 import unstructured.staging.base as base
 
@@ -51,3 +53,15 @@ def test_convert_to_isd_csv(output_csv_file):
     with open(output_csv_file, "r") as csv_file:
         csv_rows = csv.DictReader(csv_file)
         assert all(set(row.keys()) == set(fieldnames) for row in csv_rows)
+
+
+def test_convert_to_dataframe():
+    elements = [Title(text="Title 1"), NarrativeText(text="Narrative 1")]
+    df = base.convert_to_dataframe(elements)
+    expected_df = pd.DataFrame(
+        {
+            "type": ["Title", "NarrativeText"],
+            "text": ["Title 1", "Narrative 1"],
+        }
+    )
+    assert df.equals(expected_df) is True
