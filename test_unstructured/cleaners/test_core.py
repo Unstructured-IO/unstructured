@@ -20,6 +20,31 @@ def test_clean_bullets(text, expected):
 @pytest.mark.parametrize(
     "text, expected",
     [
+        ("1. Introduction:", "Introduction:"),
+        ("a. Introduction:", "Introduction:"),
+        ("20.3 Morse code ●●●", "Morse code ●●●"),
+        ("5.3.1 Convolutional Networks ", "Convolutional Networks"),
+        ("D.b.C Recurrent Neural Networks", "Recurrent Neural Networks"),
+        ("2.b.1 Recurrent Neural Networks", "Recurrent Neural Networks"),
+        ("eins. Neural Networks", "eins. Neural Networks"),
+        ("bb.c Feed Forward Neural Networks", "Feed Forward Neural Networks"),
+        ("aaa.ccc Metrics", "aaa.ccc Metrics"),
+        (" version = 3.8", " version = 3.8"),
+        ("1 2. 3 4", "1 2. 3 4"),
+        ("1) 2. 3 4", "1) 2. 3 4"),
+        ("2,3. Morse code 3. ●●●", "2,3. Morse code 3. ●●●"),
+        ("1..2.3 four", "1..2.3 four"),
+        ("Fig. 2: The relationship", "Fig. 2: The relationship"),
+        ("23 is everywhere", "23 is everywhere"),
+    ],
+)
+def test_clean_ordered_bullets(text, expected):
+    assert core.clean_ordered_bullets(text=text) == expected
+
+
+@pytest.mark.parametrize(
+    "text, expected",
+    [
         ("\x93A lovely quote!\x94", "“A lovely quote!”"),
         ("\x91A lovely quote!\x92", "‘A lovely quote!’"),
         ("Our dog&apos;s bowl.", "Our dog's bowl."),

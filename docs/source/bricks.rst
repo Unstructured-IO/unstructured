@@ -328,6 +328,24 @@ Examples:
   clean_bullets("I love Morse Code! ●●●")
 
 
+``clean_ordered_bullets``
+-----------------
+
+Remove alpha-numeric bullets from the beginning of text up to three “sub-section” levels.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.cleaners.core import clean_ordered_bullets
+
+  # Returns "This is a very important point"
+  clean_bullets("1.1 This is a very important point")
+
+  # Returns "This is a very important point ●"
+  clean_bullets("a.b This is a very important point ●")
+
+
 ``clean_extra_whitespace``
 --------------------------
 
@@ -516,6 +534,24 @@ Examples:
 
   # Returns "215-867-5309"
   extract_us_phone_number("Phone number: 215-867-5309")
+
+
+``extract_ordered_bullets``
+---------------------------
+
+Extracts alpha-numeric bullets from the beginning of text up to three “sub-section” levels.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.cleaners.extract import extract_ordered_bullets
+
+  # Returns ("1", "1", None)
+  extract_ordered_bullets("1.1 This is a very important point")
+
+  # Returns ("a", "1", None)
+  extract_ordered_bullets("a.1 This is a very important point")
 
 
 ``translate_text``
