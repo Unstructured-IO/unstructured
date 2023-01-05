@@ -18,7 +18,6 @@ from unstructured.cleaners.extract import (
     extract_email_address,
 )
 from unstructured.documents.email_elements import (
-    EmailElement,
     Name,
     Recipient,
     Sender,
@@ -64,8 +63,8 @@ def _parse_email_address(data: str) -> Tuple[str, str]:
     return name, email_address[0]
 
 
-def _partition_header(msg: Message) -> List[Union[EmailElement, Element, List[Name]]]:
-    elements: List[Union[EmailElement, Element, List[Name]]] = list()
+def partition_header(msg: Message) -> List[Union[Text, Name, List[Name]]]:
+    elements: List[Union[Text, Name, List[Name]]] = list()
     for item in msg.raw_items():
         if item[0] == "To":
             text = _parse_email_address(item[1])
@@ -124,7 +123,7 @@ def partition_email(
     text: Optional[str] = None,
     content_source: str = "text/html",
     get_meta_data: bool = False,
-) -> List[Union[Element, EmailElement, List[Name]]]:
+) -> Tuple[List[Element], List[Union[Text, Name, List[Name]]]]:
     """Partitions an .eml documents into its constituent elements.
     Parameters
     ----------
@@ -178,7 +177,6 @@ def partition_email(
     #    <li>Item 2<li>=
     # </ul>
     list_content = split_by_paragraph(content)
-    all_elements: List[Union[EmailElement, Element, List[Name]]] = list()
 
     if content_source == "text/html":
         content = "".join(list_content)
@@ -191,7 +189,6 @@ def partition_email(
         elements = partition_text(file_content=list_content)
 
     if get_meta_data:
-        all_elements.append(_partition_header(msg))
-    all_elements.append(elements)
+        header = partition_header(msg)
 
-    return elements
+    return (elements, header)
