@@ -1,3 +1,10 @@
+***REMOVED******REMOVED*** 0.3.6-dev0
+
+* Cleaning brick for removing ordered bullets `clean_ordered_bullets`.
+* Extract brick method for ordered bullets `extract_ordered_bullets`.
+* Test for `clean_ordered_bullets`.
+* Test for `extract_ordered_bullets`.
+
 ***REMOVED******REMOVED*** 0.3.5
 
 * Add support for local inference
