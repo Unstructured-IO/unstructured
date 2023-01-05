@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bricks &mdash; unstructured 0.3.5 documentation</title>
+  <title>Bricks &mdash; unstructured 0.3.6-dev0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -61,6 +61,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#cleaning">Cleaning</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#clean"><code class="docutils literal notranslate"><span class="pre">clean</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#clean-bullets"><code class="docutils literal notranslate"><span class="pre">clean_bullets</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#clean-ordered-bullets"><code class="docutils literal notranslate"><span class="pre">clean_ordered_bullets</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#clean-extra-whitespace"><code class="docutils literal notranslate"><span class="pre">clean_extra_whitespace</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#clean-dashes"><code class="docutils literal notranslate"><span class="pre">clean_dashes</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#clean-trailing-punctuation"><code class="docutils literal notranslate"><span class="pre">clean_trailing_punctuation</span></code></a></li>
@@ -71,6 +72,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#extract-text-before"><code class="docutils literal notranslate"><span class="pre">extract_text_before</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#extract-text-after"><code class="docutils literal notranslate"><span class="pre">extract_text_after</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#extract-us-phone-number"><code class="docutils literal notranslate"><span class="pre">extract_us_phone_number</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#extract-ordered-bullets"><code class="docutils literal notranslate"><span class="pre">extract_ordered_bullets</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#translate-text"><code class="docutils literal notranslate"><span class="pre">translate_text</span></code></a></li>
 </ul>
 </li>
@@ -387,6 +389,20 @@ text are not removed.</p>
 </pre></div>
 </div>
 </section>
+<section id="clean-ordered-bullets">
+<h3><code class="docutils literal notranslate"><span class="pre">clean_ordered_bullets</span></code><a class="headerlink" href="#clean-ordered-bullets" title="Permalink to this heading"></a></h3>
+<p>Remove alpha-numeric bullets from the beginning of text up to three “sub-section” levels.</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.cleaners.core</span> <span class="kn">import</span> <span class="n">clean_ordered_bullets</span>
+
+<span class="c1"># Returns &quot;This is a very important point&quot;</span>
+<span class="n">clean_bullets</span><span class="p">(</span><span class="s2">&quot;1.1 This is a very important point&quot;</span><span class="p">)</span>
+
+<span class="c1"># Returns &quot;This is a very important point ●&quot;</span>
+<span class="n">clean_bullets</span><span class="p">(</span><span class="s2">&quot;a.b This is a very important point ●&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
 <section id="clean-extra-whitespace">
 <h3><code class="docutils literal notranslate"><span class="pre">clean_extra_whitespace</span></code><a class="headerlink" href="#clean-extra-whitespace" title="Permalink to this heading"></a></h3>
 <p>Removes extra whitespace from a section of text. Also handles special characters
@@ -530,6 +546,20 @@ such as <code class="docutils literal notranslate"><span class="pre">\u2013</spa
 
 <span class="c1"># Returns &quot;215-867-5309&quot;</span>
 <span class="n">extract_us_phone_number</span><span class="p">(</span><span class="s2">&quot;Phone number: 215-867-5309&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="extract-ordered-bullets">
+<h3><code class="docutils literal notranslate"><span class="pre">extract_ordered_bullets</span></code><a class="headerlink" href="#extract-ordered-bullets" title="Permalink to this heading"></a></h3>
+<p>Extracts alpha-numeric bullets from the beginning of text up to three “sub-section” levels.</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.cleaners.extract</span> <span class="kn">import</span> <span class="n">extract_ordered_bullets</span>
+
+<span class="c1"># Returns (&quot;1&quot;, &quot;1&quot;, None)</span>
+<span class="n">extract_ordered_bullets</span><span class="p">(</span><span class="s2">&quot;1.1 This is a very important point&quot;</span><span class="p">)</span>
+
+<span class="c1"># Returns (&quot;a&quot;, &quot;1&quot;, None)</span>
+<span class="n">extract_ordered_bullets</span><span class="p">(</span><span class="s2">&quot;a.1 This is a very important point&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
