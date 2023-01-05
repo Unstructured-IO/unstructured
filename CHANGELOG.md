@@ -1,12 +1,5 @@
 ## 0.3.5-dev6
 
-* Add new cleaning brick for ordered bullets.
-* Add new extract method for ordered bullets.
-* Add test for cleaning ordered bullets.
-* Add test for extracting ordered bullets.
-
-## 0.3.5-dev5
-
 * Add new pattern to recognize plain text dash bullets
 * Add test for bullet patterns
 * Fix for `partition_html` that allows for processing `div` tags that have both text and child
@@ -16,6 +9,10 @@
 * Add new function `extract_attachment_info` that extracts and decode the attachment
 of an email.
 * Staging brick to convert a list of `Element`s to a `pandas` dataframe.
+* Add new cleaning brick for ordered bullets.
+* Add new extract method for ordered bullets.
+* Add test for cleaning ordered bullets.
+* Add test for extracting ordered bullets.
 
 ## 0.3.4
 
