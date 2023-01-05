@@ -152,12 +152,12 @@ def clean_postfix(text: str, pattern: str, ignore_case: bool = False, strip: boo
 
 
 def clean(
-        text: str,
-        extra_whitespace: bool = False,
-        dashes: bool = False,
-        bullets: bool = False,
-        trailing_punctuation: bool = False,
-        lowercase: bool = False,
+    text: str,
+    extra_whitespace: bool = False,
+    dashes: bool = False,
+    bullets: bool = False,
+    trailing_punctuation: bool = False,
+    lowercase: bool = False,
 ) -> str:
     """Cleans text.
 

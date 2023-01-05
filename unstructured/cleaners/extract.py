@@ -80,22 +80,24 @@ def extract_ordered_bullets(text) -> tuple:
     1.1 This is a very important point -> ("1", "1", None)
     a.1 This is a very important point -> ("a", "1", None)
     """
+    a, b, c, temp = None, None, None, None
     text_sp = text.split()
     if any(["." not in text_sp[0], ".." in text_sp[0]]):
-        return None, None, None
+        return a, b, c
 
     bullet = re.split(pattern=r"[\.]", string=text_sp[0])
     if not bullet[-1]:
         del bullet[-1]
 
     if len(bullet[0]) > 2:
-        return None, None, None
+        return a, b, c
 
     a, *temp = bullet
-    b, c = None, None
     if temp:
-        b, *c = temp
+        try:
+            b, c, *_ = temp
+        except ValueError:
+            b = temp
         b = "".join(b)
-        c = "".join(c)
-    c = None if not c else c
+        c = "".join(c) if c else None
     return a, b, c
