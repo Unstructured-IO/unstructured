@@ -10,7 +10,7 @@ else:
     from typing import Final
 
 from unstructured.cleaners.core import replace_mime_encodings, clean_extra_whitespace
-from unstructured.documents.elements import Element, Text, Image
+from unstructured.documents.elements import Element, Text, Image, NarrativeText
 from unstructured.partition.html import partition_html
 
 
@@ -53,11 +53,11 @@ def has_embedded_image(element):
     return PATTERN.search(element.text)
 
 
-def find_embedded_image(text: str, indices: re.Match) -> Element:
+def find_embedded_image(element: NarrativeText, indices: re.Match) -> Element:
 
     start, end = indices.start(), indices.end()
 
-    image_raw_info = text[start:end]
+    image_raw_info = element.text[start:end]
     image_info = clean_extra_whitespace(image_raw_info.split(":")[1])
 
     return Image(text=image_info[:-1])
@@ -126,7 +126,7 @@ def partition_email(
             element.apply(replace_mime_encodings)
 
         indices = has_embedded_image(element)
-        if indices:
-            elements.append(find_embedded_image(element.text, indices))
+        if isinstance(element, NarrativeText) and indices:
+            elements.append(find_embedded_image(element, indices))
 
     return elements
