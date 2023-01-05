@@ -49,7 +49,7 @@ def extract_attachment_info(
 
 def has_embedded_image(element):
 
-    PATTERN = re.compile("\[image: .+\]") # noqa: W605 NOTE(harrell)
+    PATTERN = re.compile("\[image: .+\]")  # noqa: W605 NOTE(harrell)
     return PATTERN.search(element.text)
 
 
