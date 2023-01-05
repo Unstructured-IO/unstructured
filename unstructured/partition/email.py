@@ -2,7 +2,7 @@ import email
 import re
 import sys
 from email.message import Message
-from typing import Dict, IO, List, Optional
+from typing import Dict, IO, List, Optional, Union
 
 if sys.version_info < (3, 8):
     from typing_extensions import Final
@@ -68,7 +68,7 @@ def partition_email(
     file: Optional[IO] = None,
     text: Optional[str] = None,
     content_source: str = "text/html",
-) -> List[Element]:
+) -> List[Union[Element, List[Element]]]:
     """Partitions an .eml documents into its constituent elements.
     Parameters
     ----------
@@ -120,12 +120,16 @@ def partition_email(
     # </ul>
     content = "".join(content.split("=\n"))
 
+    format_elements: List[Union[Element, List[Element]]] = list()
+
     elements = partition_html(text=content)
-    for element in elements:
+    for idx, element in enumerate(elements):
         if isinstance(element, Text):
             element.apply(replace_mime_encodings)
+
         indices = has_embedded_image(element)
         if indices:
-            element = find_embedded_image(element, indices)
-
-    return elements
+            format_elements.append(find_embedded_image(element, indices))
+        else:
+            format_elements.append(element)
+    return format_elements
