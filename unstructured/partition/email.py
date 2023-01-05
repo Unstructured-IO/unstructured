@@ -2,7 +2,7 @@ import email
 import re
 import sys
 from email.message import Message
-from typing import Dict, IO, List, Optional, Union
+from typing import Dict, IO, List, Optional
 
 if sys.version_info < (3, 8):
     from typing_extensions import Final
@@ -10,7 +10,7 @@ else:
     from typing import Final
 
 from unstructured.cleaners.core import replace_mime_encodings, clean_extra_whitespace
-from unstructured.documents.elements import Element, Text, Image, NarrativeText
+from unstructured.documents.elements import Element, Text, Image
 from unstructured.partition.html import partition_html
 
 
@@ -49,7 +49,7 @@ def extract_attachment_info(
 
 def has_embedded_image(element):
 
-    PATTERN = re.compile("\[image: .+\]")
+    PATTERN = re.compile("\[image: .+\]") # noqa: W605 NOTE(harrell)
     return PATTERN.search(element.text)
 
 
