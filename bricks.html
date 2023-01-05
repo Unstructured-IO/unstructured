@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bricks &mdash; unstructured 0.3.6-dev0 documentation</title>
+  <title>Bricks &mdash; unstructured 0.3.6-dev1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -45,6 +45,7 @@
 <li class="toctree-l1"><a class="reference internal" href="elements.html">Elements</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Bricks</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#partitioning">Partitioning</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#partition-docx"><code class="docutils literal notranslate"><span class="pre">partition_docx</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#partition-html"><code class="docutils literal notranslate"><span class="pre">partition_html</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#partition-pdf"><code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#partition-email"><code class="docutils literal notranslate"><span class="pre">partition_email</span></code></a></li>
@@ -129,6 +130,31 @@ bricks currently available in the library.</p>
 <p>The partitioning bricks in <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> differentiate between different sections
 of text in a document. For example, the partitioning bricks can help distinguish between
 titles, narrative text, and tables.</p>
+<section id="partition-docx">
+<h3><code class="docutils literal notranslate"><span class="pre">partition_docx</span></code><a class="headerlink" href="#partition-docx" title="Permalink to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">partition_docx</span></code> partitioning brick pre-processes Microsoft Word documents
+saved in the <code class="docutils literal notranslate"><span class="pre">.docx</span></code> format. This staging brick uses a combination of the styling
+information in the document and the structure of the text to determine the type
+of a text element. The <code class="docutils literal notranslate"><span class="pre">partition_docx</span></code> can take a filename or file-like object
+as input, as shown in the two examples below.</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">docx</span>
+
+<span class="kn">from</span> <span class="nn">unstructured.partition.docx</span> <span class="kn">import</span> <span class="n">partition_docx</span>
+
+<span class="n">document</span> <span class="o">=</span> <span class="n">docx</span><span class="o">.</span><span class="n">Document</span><span class="p">()</span>
+<span class="n">document</span><span class="o">.</span><span class="n">add_paragraph</span><span class="p">(</span><span class="s2">&quot;Important Analysis&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;Heading 1&quot;</span><span class="p">)</span>
+<span class="n">document</span><span class="o">.</span><span class="n">add_paragraph</span><span class="p">(</span><span class="s2">&quot;Here is my first thought.&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;Body Text&quot;</span><span class="p">)</span>
+<span class="n">document</span><span class="o">.</span><span class="n">add_paragraph</span><span class="p">(</span><span class="s2">&quot;Here is my second thought.&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;Normal&quot;</span><span class="p">)</span>
+<span class="n">document</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;mydoc.docx&quot;</span><span class="p">)</span>
+
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_docx</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;mydoc.docx&quot;</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;mydoc.docx&quot;</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_docx</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
 <section id="partition-html">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_html</span></code><a class="headerlink" href="#partition-html" title="Permalink to this heading"></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">partition_html</span></code> function partitions an HTML document and returns a list
