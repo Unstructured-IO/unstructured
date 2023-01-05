@@ -188,6 +188,7 @@ def partition_email(
     elif content_source == "text/plain":
         elements = partition_text(file_content=list_content)
 
+    header: List[Union[Text, Name, List[Name]]] = list()
     if get_meta_data:
         header = partition_header(msg)
 
