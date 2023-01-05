@@ -66,20 +66,25 @@ def extract_us_phone_number(text: str):
 
 
 def extract_ordered_bullets(text) -> tuple:
-    """Extracts the start of bulleted text sections up to three “sub-section”
-    bullets accounting numeric and alpha-numeric types.
+    """Extracts the start of bulleted text sections bullets
+    accounting numeric and alpha-numeric types.
+
+    Output
+    -----
+    tuple(section, sub_section, sub_sub_section): Each bullet partition
+    is a string or None if not present.
 
     Example
     -------
     This is a very important point -> (None, None, None)
     1.1 This is a very important point -> ("1", "1", None)
-    a.b This is a very important point -> ("a", "b", None)
+    a.1 This is a very important point -> ("a", "1", None)
     """
     text_sp = text.split()
     if any(["." not in text_sp[0], ".." in text_sp[0]]):
         return None, None, None
 
-    bullet = text_sp[0].split(".")
+    bullet = re.split(pattern=r"[\.]", string=text_sp[0])
     if not bullet[-1]:
         del bullet[-1]
 

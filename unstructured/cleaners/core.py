@@ -35,7 +35,7 @@ def clean_ordered_bullets(text) -> str:
     if any(["." not in text_sp[0], ".." in text_sp[0]]):
         return text
 
-    bullet = text_sp[0].split(".")
+    bullet = re.split(pattern=r"[\.]", string=text_sp[0])
     if not bullet[-1]:
         del bullet[-1]
 
@@ -152,12 +152,12 @@ def clean_postfix(text: str, pattern: str, ignore_case: bool = False, strip: boo
 
 
 def clean(
-    text: str,
-    extra_whitespace: bool = False,
-    dashes: bool = False,
-    bullets: bool = False,
-    trailing_punctuation: bool = False,
-    lowercase: bool = False,
+        text: str,
+        extra_whitespace: bool = False,
+        dashes: bool = False,
+        bullets: bool = False,
+        trailing_punctuation: bool = False,
+        lowercase: bool = False,
 ) -> str:
     """Cleans text.
 
