@@ -1,9 +1,10 @@
-## 0.3.6-dev0
+## 0.3.6-dev1
 
 * Cleaning brick for removing ordered bullets `clean_ordered_bullets`.
 * Extract brick method for ordered bullets `extract_ordered_bullets`.
 * Test for `clean_ordered_bullets`.
 * Test for `extract_ordered_bullets`.
+* Add new `Image` element and function to find embedded images `find_embedded_images`
 
 ## 0.3.5
 
