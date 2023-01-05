@@ -49,7 +49,7 @@ def test_partition_email_from_filename():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
     elements = partition_email(filename=filename)
     assert len(elements) > 0
-    assert elements == EXPECTED_OUTPUT
+    assert elements == (EXPECTED_OUTPUT, [])
 
 
 def test_partition_email_from_file():
@@ -57,7 +57,7 @@ def test_partition_email_from_file():
     with open(filename, "r") as f:
         elements = partition_email(file=f)
     assert len(elements) > 0
-    assert elements == EXPECTED_OUTPUT
+    assert elements == (EXPECTED_OUTPUT, [])
 
 
 def test_partition_email_from_text_file():
@@ -65,7 +65,7 @@ def test_partition_email_from_text_file():
     with open(filename, "r") as f:
         elements = partition_email(file=f, content_source="text/plain")
     assert len(elements) > 0
-    assert elements == EXPECTED_OUTPUT
+    assert elements == (EXPECTED_OUTPUT, [])
 
 
 def test_partition_email_from_text_file_with_metadata():
@@ -82,7 +82,7 @@ def test_partition_email_from_text():
         text = f.read()
     elements = partition_email(text=text)
     assert len(elements) > 0
-    assert elements == EXPECTED_OUTPUT
+    assert elements == (EXPECTED_OUTPUT, [])
 
 
 def test_partition_header():
