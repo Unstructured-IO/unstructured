@@ -4,6 +4,7 @@
 * Extract brick method for ordered bullets `extract_ordered_bullets`.
 * Test for `clean_ordered_bullets`.
 * Test for `extract_ordered_bullets`.
+* Added `partition_docx` for pre-processing Word Documents.
 * Add new `Image` element and function to find embedded images `find_embedded_images`
 
 ## 0.3.5
