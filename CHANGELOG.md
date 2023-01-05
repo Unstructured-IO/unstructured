@@ -1,5 +1,13 @@
-## 0.3.5-dev6
+## 0.3.6-dev0
 
+* Cleaning brick for removing ordered bullets `clean_ordered_bullets`.
+* Extract brick method for ordered bullets `extract_ordered_bullets`.
+* Test for `clean_ordered_bullets`.
+* Test for `extract_ordered_bullets`.
+
+## 0.3.5
+
+* Add support for local inference
 * Add new pattern to recognize plain text dash bullets
 * Add test for bullet patterns
 * Fix for `partition_html` that allows for processing `div` tags that have both text and child
