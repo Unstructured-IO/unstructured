@@ -53,14 +53,14 @@ def has_embedded_image(element):
     return PATTERN.search(element.text)
 
 
-def find_embedded_image(element: Element, indices: re.Match) -> List[Element]:
+def find_embedded_image(element: Element, indices: re.Match) -> Element:
 
     start, end = indices.start(), indices.end()
 
     image_raw_info = element.text[start:end]
     image_info = clean_extra_whitespace(image_raw_info.split(":")[1])
 
-    return [element, Image(text=image_info[:-1])]
+    return Image(text=image_info[:-1])
 
 
 def partition_email(
@@ -68,7 +68,7 @@ def partition_email(
     file: Optional[IO] = None,
     text: Optional[str] = None,
     content_source: str = "text/html",
-) -> List[Union[Element, List[Element]]]:
+) -> List[Element]:
     """Partitions an .eml documents into its constituent elements.
     Parameters
     ----------
@@ -120,8 +120,6 @@ def partition_email(
     # </ul>
     content = "".join(content.split("=\n"))
 
-    format_elements: List[Union[Element, List[Element]]] = list()
-
     elements = partition_html(text=content)
     for idx, element in enumerate(elements):
         if isinstance(element, Text):
@@ -129,7 +127,6 @@ def partition_email(
 
         indices = has_embedded_image(element)
         if indices:
-            format_elements.append(find_embedded_image(element, indices))
-        else:
-            format_elements.append(element)
+            elements.append(find_embedded_image(element, indices))
+   
     return format_elements
