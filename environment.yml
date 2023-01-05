@@ -1,0 +1,17 @@
+name: unstructured
+
+channels:
+  - defaults
+  - anaconda
+  - conda-forge
+  - pytorch
+
+dependencies:
+  - python=3.8
+  - pytorch=1.12.1
+  - pywin32
+  - poppler
+  - torchvision
+  - pip:
+    - huggingface-hub
+    - layoutparser
