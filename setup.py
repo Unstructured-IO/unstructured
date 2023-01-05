@@ -67,5 +67,6 @@ setup(
             "torch",
             "transformers",
         ],
+        "local-inference": ["unstructured-inference>=0.2.1"],
     },
 )
