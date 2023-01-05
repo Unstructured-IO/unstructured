@@ -1,8 +1,14 @@
-from typing import Optional
+from typing import IO, List, Optional
 
 import docx
 
-from unstructured.document.elements import ListItem, NarrativeText, Text, Title
+from unstructured.cleaners.core import clean_bullets
+from unstructured.documents.elements import Element, ListItem, NarrativeText, Text, Title
+from unstructured.partition.text_type import (
+    is_bulleted_text,
+    is_possible_narrative_text,
+    is_possible_title,
+)
 
 # NOTE(robinson) - documentation on built in styles can be fond at the link below
 # ref: https://python-docx.readthedocs.io/en/latest/user/
@@ -44,9 +50,7 @@ STYLE_TO_ELEMENT_MAPPING = {
 }
 
 
-def partition_docx(
-    filename: Optional[str] = None, file: Optional[IO] = None
-) -> List[Element]:
+def partition_docx(filename: Optional[str] = None, file: Optional[IO] = None) -> List[Element]:
     """Partitions Microsoft Word Documents in .docx format into it document elements.
 
     Parameters
@@ -67,10 +71,16 @@ def partition_docx(
     else:
         raise ValueError("Only one of filename or file can be specified.")
 
+    elements: List[Element] = []
+    for paragraph in document.paragraphs:
+        element = _paragraph_to_element(paragraph)
+        if element is not None:
+            elements.append(element)
+
     return elements
 
 
-def _paragraph_to_element(paragraph: docx.text.paragraph.Paragraph) -> Text:
+def _paragraph_to_element(paragraph: docx.text.paragraph.Paragraph) -> Optional[Text]:
     """Converts a docx Paragraph object into the appropriate unstructured document element.
     If the paragaraph style is "Normal" or unknown, we try to predict the element type from the
     raw text."""
@@ -87,7 +97,7 @@ def _paragraph_to_element(paragraph: docx.text.paragraph.Paragraph) -> Text:
         return element_class(text)
 
 
-def _text_to_element(text: str) -> Text:
+def _text_to_element(text: str) -> Optional[Text]:
     """Converts raw text into an unstructured Text element."""
     if is_bulleted_text(text):
         return ListItem(text=clean_bullets(text))
