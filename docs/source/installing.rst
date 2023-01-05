@@ -30,7 +30,7 @@ The installation instructions are based on the instructions LayoutParser provide
 `here <https://layout-parser.github.io/tutorials/installation#for-windows-users>`_.
 
 * Run ``pip install pycocotools-windows`` to install a Windows compatible version of ``pycocotools``. Alternatively, you can run ``pip3 install "git+https://github.com/philferriere/cocoapi.git#egg=pycocotools&subdirectory=PythonAPI"`` as outlined in `this GitHub issue <https://github.com/cocodataset/cocoapi/issues/169#issuecomment-462528628>`_.
-* If you are using Windows PowerShell, run ``git clone https://github.com/ivanpp/detectron2.git && cd detectron2 && pip install -e .`` to install a Windows compatible version of the ``detectron2`` library. If you are using another shell such as Windows Command Prompt, you'll need to run the commands separately instead of combining them with ``&&``.
+* Run ``git clone https://github.com/ivanpp/detectron2.git``, then ``cd detectron2``, then ``pip install -e .`` to install a Windows compatible version of the ``detectron2`` library.
 * Install the a Windows compatible version of ``iopath`` using the instructions outlined in `this GitHub issue <https://github.com/Layout-Parser/layout-parser/issues/15#issuecomment-819546751>`_. First, run ``git clone https://github.com/facebookresearch/iopath --single-branch --branch v0.1.8``. Then on line 753 in ``iopath/iopath/common/file_io.py`` change ``filename = path.split("/")[-1]`` to ``filename = parsed_url.path.split("/")[-1]``. After that, navigate to the ``iopath`` directory and run ``pip install -e .``.
 * Run ``pip install unstructured[local-inference]``. This will install the ``unstructured_inference`` dependency.
 
