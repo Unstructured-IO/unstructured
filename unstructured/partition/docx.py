@@ -87,7 +87,7 @@ def _paragraph_to_element(paragraph: docx.text.paragraph.Paragraph) -> Optional[
     text = paragraph.text
     style_name = paragraph.style.name
 
-    element_class = STYLE_TO_ELEMENT_MAPPING.get(style_name, None)
+    element_class = STYLE_TO_ELEMENT_MAPPING.get(style_name)
 
     # NOTE(robinson) - The "Normal" style name will return None since it's in the mapping.
     # Unknown style names will also return None
