@@ -10,7 +10,7 @@ from unstructured.documents.email_elements import (
     Sender,
     Subject,
 )
-from unstructured.partition.email import extract_attachment_info, partition_email, _partition_header
+from unstructured.partition.email import extract_attachment_info, partition_email, partition_header
 
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -38,7 +38,7 @@ HEADER_EXPECTED_OUTPUT = [
     ),
 ]
 
-ALL_EXPECTED_OUTPUT = EXPECTED_OUTPUT + HEADER_EXPECTED_OUTPUT
+ALL_EXPECTED_OUTPUT = (EXPECTED_OUTPUT, HEADER_EXPECTED_OUTPUT)
 
 ATTACH_EXPECTED_OUTPUT = [
     {"filename": "fake-attachment.txt", "payload": b"Hey this is a fake attachment!"}
@@ -89,7 +89,7 @@ def test_partition_header():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
     with open(filename, "r") as f:
         msg = email.message_from_file(f)
-    elements = _partition_header(msg)
+    elements = partition_header(msg)
     assert len(elements) > 0
     assert elements == HEADER_EXPECTED_OUTPUT
 

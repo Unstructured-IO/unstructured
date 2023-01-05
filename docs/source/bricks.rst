@@ -63,7 +63,8 @@ takes a filename, file-like object, or raw text as input and produces a list of
 document ``Element`` objects as output. Also ``content_source`` can be set to ``text/html``
 (default) or ``text/plain`` to process the html or plain text version of the email, respectively.
 In order for ``partition_email`` to also return the header information (e.g. sender, recipient,
-attachment, etc.), ``get_meta_data`` must be set to ``True``.
+attachment, etc.), ``get_meta_data`` must be set to ``True``. Returns tuple with body elements
+first and header elements second, if ``get_meta_data`` is True.
 
 Examples:
 
