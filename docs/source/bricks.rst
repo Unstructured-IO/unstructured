@@ -14,6 +14,36 @@ The partitioning bricks in ``unstructured`` differentiate between different sect
 of text in a document. For example, the partitioning bricks can help distinguish between
 titles, narrative text, and tables.
 
+
+``partition_docx``
+------------------
+
+The ``partition_docx`` partitioning brick pre-processes Microsoft Word documents
+saved in the ``.docx`` format. This staging brick uses a combination of the styling
+information in the document and the structure of the text to determine the type
+of a text element. The ``partition_docx`` can take a filename or file-like object
+as input, as shown in the two examples below.
+
+Examples:
+
+.. code:: python
+
+  import docx
+
+  from unstructured.partition.docx import partition_docx
+
+  document = docx.Document()
+  document.add_paragraph("Important Analysis", style="Heading 1")
+  document.add_paragraph("Here is my first thought.", style="Body Text")
+  document.add_paragraph("Here is my second thought.", style="Normal")
+  document.save("mydoc.docx")
+
+  elements = partition_docx(filename="mydoc.docx")
+
+  with open("mydoc.docx", "rb") as f:
+      elements = partition_docx(file=f)
+
+
 ``partition_html``
 ---------------------
 
@@ -372,7 +402,7 @@ Examples:
 
 
 ``clean_ordered_bullets``
------------------
+-------------------------
 
 Remove alpha-numeric bullets from the beginning of text up to three “sub-section” levels.
 

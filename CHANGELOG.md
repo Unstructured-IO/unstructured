@@ -1,9 +1,10 @@
-## 0.3.6-dev0
+## 0.3.6-dev1
 
 * Cleaning brick for removing ordered bullets `clean_ordered_bullets`.
 * Extract brick method for ordered bullets `extract_ordered_bullets`.
 * Test for `clean_ordered_bullets`.
 * Test for `extract_ordered_bullets`.
+* Added `partition_docx` for pre-processing Word Documents.
 
 ## 0.3.5
 
