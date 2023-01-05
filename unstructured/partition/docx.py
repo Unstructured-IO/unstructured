@@ -10,7 +10,7 @@ from unstructured.partition.text_type import (
     is_possible_title,
 )
 
-# NOTE(robinson) - documentation on built in styles can be fond at the link below
+# NOTE(robinson) - documentation on built in styles can be found at the link below
 # ref: https://python-docx.readthedocs.io/en/latest/user/
 #   styles-understanding.html#paragraph-styles-in-default-template
 STYLE_TO_ELEMENT_MAPPING = {
