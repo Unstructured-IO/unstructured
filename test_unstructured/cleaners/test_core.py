@@ -39,12 +39,7 @@ def test_clean_bullets(text, expected):
     ],
 )
 def test_clean_ordered_bullets(text, expected):
-    assert (
-        core.clean_ordered_bullets(
-            text=text,
-        )
-        == expected
-    )
+    assert core.clean_ordered_bullets(text=text) == expected
 
 
 @pytest.mark.parametrize(

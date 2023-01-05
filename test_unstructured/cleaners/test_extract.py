@@ -58,9 +58,4 @@ def test_extract_us_phone_number(text, expected):
     ],
 )
 def test_extract_ordered_bullets(text, expected):
-    assert (
-        extract.extract_ordered_bullets(
-            text=text,
-        )
-        == expected
-    )
+    assert extract.extract_ordered_bullets(text=text) == expected
