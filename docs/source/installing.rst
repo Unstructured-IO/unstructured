@@ -39,11 +39,9 @@ At this point, you can verify the installation by running the following from the
 
 .. code:: python
 
-	from unstructured_inference.inference.layout import DocumentLayout
+	from unstructured.partition.pdf import partition_pdf
 
-	layout = DocumentLayout.from_file("sample-docs/loremipsum.pdf")
-
-	print(layout.pages[0].elements)
+	partition_pdf("example-docs/layout-parser-paper-fast.pdf", url=None)
 
 
 ====================
@@ -66,6 +64,7 @@ At this point, you can verify the installation using the following commands. Cho
 
 	import numpy as np
 	from PIL import Image
+	from paddleocr import PaddleOCR
 
 	filename = "path/to/my/image.jpg"
 	img = np.array(Image.open(filename))
