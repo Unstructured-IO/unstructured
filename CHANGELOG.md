@@ -1,3 +1,10 @@
+## 0.3.6-dev0
+
+* Cleaning brick for removing ordered bullets `clean_ordered_bullets`.
+* Extract brick method for ordered bullets `extract_ordered_bullets`.
+* Test for `clean_ordered_bullets`.
+* Test for `extract_ordered_bullets`.
+
 ## 0.3.5
 
 * Add support for local inference
@@ -10,10 +17,6 @@
 * Add new function `extract_attachment_info` that extracts and decode the attachment
 of an email.
 * Staging brick to convert a list of `Element`s to a `pandas` dataframe.
-* Add new cleaning brick for ordered bullets.
-* Add new extract method for ordered bullets.
-* Add test for cleaning ordered bullets.
-* Add test for extracting ordered bullets.
 
 ## 0.3.4
 
