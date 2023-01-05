@@ -128,5 +128,5 @@ def partition_email(
         indices = has_embedded_image(element)
         if indices:
             elements.append(find_embedded_image(element, indices))
-   
-    return format_elements
+
+    return elements
