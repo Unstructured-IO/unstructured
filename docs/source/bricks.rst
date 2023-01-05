@@ -19,7 +19,7 @@ titles, narrative text, and tables.
 ------------------
 
 The ``partition_docx`` partitioning brick pre-processes Microsoft Word documents
-save in the ``.docx`` format. This staging brick uses a combination of the styling
+saved in the ``.docx`` format. This staging brick uses a combination of the styling
 information in the document and the structure of the text to determine the type
 of a text element. The ``partition_docx`` can take a filename or file-like object
 as input, as shown in the two examples below.
