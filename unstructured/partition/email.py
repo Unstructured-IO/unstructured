@@ -53,11 +53,11 @@ def has_embedded_image(element):
     return PATTERN.search(element.text)
 
 
-def find_embedded_image(element: Element, indices: re.Match) -> Element:
+def find_embedded_image(text: str, indices: re.Match) -> Element:
 
     start, end = indices.start(), indices.end()
 
-    image_raw_info = element.text[start:end]
+    image_raw_info = text[start:end]
     image_info = clean_extra_whitespace(image_raw_info.split(":")[1])
 
     return Image(text=image_info[:-1])
@@ -121,12 +121,12 @@ def partition_email(
     content = "".join(content.split("=\n"))
 
     elements = partition_html(text=content)
-    for idx, element in enumerate(elements):
+    for element in elements:
         if isinstance(element, Text):
             element.apply(replace_mime_encodings)
 
         indices = has_embedded_image(element)
         if indices:
-            elements.append(find_embedded_image(element, indices))
+            elements.append(find_embedded_image(element.text, indices))
 
     return elements
