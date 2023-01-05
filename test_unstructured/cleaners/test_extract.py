@@ -34,3 +34,28 @@ def test_extract_text_after():
 def test_extract_us_phone_number(text, expected):
     phone_number = extract.extract_us_phone_number(text)
     assert phone_number == expected
+
+
+@pytest.mark.parametrize(
+    "text, expected",
+    [
+        ("1. Introduction:", ("1", None, None)),
+        ("a. Introduction:", ("a", None, None)),
+        ("20.3 Morse code ●●●", ("20", "3", None)),
+        ("5.3.1 Convolutional Networks ", ("5", "3", "1")),
+        ("D.b.C Recurrent Neural Networks", ("D", "b", "C")),
+        ("2.b.1 Recurrent Neural Networks", ("2", "b", "1")),
+        ("eins. Neural Networks", (None, None, None)),
+        ("bb.c Feed Forward Neural Networks", ("bb", "c", None)),
+        ("aaa.ccc Metrics", (None, None, None)),
+        (" version = 3.8", (None, None, None)),
+        ("1 2. 3 4", (None, None, None)),
+        ("1) 2. 3 4", (None, None, None)),
+        ("2,3. Morse code 3. ●●●", (None, None, None)),
+        ("1..2.3 four", (None, None, None)),
+        ("Fig. 2: The relationship", (None, None, None)),
+        ("23 is everywhere", (None, None, None)),
+    ],
+)
+def test_extract_ordered_bullets(text, expected):
+    assert extract.extract_ordered_bullets(text=text) == expected
