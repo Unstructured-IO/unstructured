@@ -25,7 +25,7 @@ Setting up ``unstructured`` for local inference
 
 If you need to run model inferences locally, there are a few additional steps you need to
 take. The main challenge is installing ``detectron2`` for PDF layout parsing. ``detectron2``
-does not officially support Windows, but it is possible to get it install on Windows.
+does not officially support Windows, but it is possible to get it to install on Windows.
 The installation instructions are based on the instructions LayoutParser provides
 `here <https://layout-parser.github.io/tutorials/installation#for-windows-users>`_.
 
