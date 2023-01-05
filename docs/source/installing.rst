@@ -34,7 +34,7 @@ The installation instructions are based on the instructions LayoutParser provide
 * Install the a Windows compatible version of ``iopath`` using the instructions outlined in `this GitHub issue <https://github.com/Layout-Parser/layout-parser/issues/15#issuecomment-819546751>`_. First, run ``git clone https://github.com/facebookresearch/iopath --single-branch --branch v0.1.8``. Then on line 753 in ``iopath/iopath/common/file_io.py`` change ``filename = path.split("/")[-1]`` to ``filename = parsed_url.path.split("/")[-1]``. After that, navigate to the ``iopath`` directory and run ``pip install -e .``.
 * Run ``pip install unstructured[local-inference]``. This will install the ``unstructured_inference`` dependency.
 
-At this point, you can verify the installation by running the following from the root directory of the ``unstructured-inference`` `repo <https://github.com/Unstructured-IO/unstructured-inference>`_:
+At this point, you can verify the installation by running the following from the root directory of the ``unstructured`` `repo <https://github.com/Unstructured-IO/unstructured>`_:
 
 
 .. code:: python
