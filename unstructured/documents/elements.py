@@ -72,3 +72,11 @@ class Title(Text):
     category = "Title"
 
     pass
+
+
+class Image(Text):
+    """A text element for capturing image metadata."""
+
+    category = "Image"
+
+    pass

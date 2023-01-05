@@ -1,4 +1,5 @@
 import email
+import re
 import sys
 from email.message import Message
 from typing import Dict, IO, List, Optional
@@ -9,7 +10,7 @@ else:
     from typing import Final
 
 from unstructured.cleaners.core import replace_mime_encodings, clean_extra_whitespace
-from unstructured.documents.elements import Element, Text
+from unstructured.documents.elements import Element, Text, Image
 from unstructured.partition.html import partition_html
 
 
@@ -44,6 +45,22 @@ def extract_attachment_info(
                         # causes an error since the payloads are bytes not str
                         f.write(attachment["payload"])  # type: ignore
     return list_attachments
+
+
+def has_embedded_image(element):
+    
+    PATTERN = re.compile("\[image: .+\]")
+    return PATTERN.search(element.text)
+
+
+def find_embedded_image(element: Element, indices: re.Match) -> List[Element]:
+
+    start, end = indices.start(), indices.end()
+    
+    image_raw_info = element.text[start:end]
+    image_info = clean_extra_whitespace(image_raw_info.split(":")[1])
+    
+    return [element, Image(text=image_info[:-1])]
 
 
 def partition_email(
@@ -95,7 +112,7 @@ def partition_email(
         raise ValueError("text/html content not found in email")
 
     # NOTE(robinson) - In the .eml files, the HTML content gets stored in a format that
-    # looks like the following, resulting in extraneous "=" chracters in the output if
+    # looks like the following, resulting in extraneous "=" characters in the output if
     # you don't clean it up
     # <ul> =
     #    <li>Item 1</li>=
@@ -107,5 +124,9 @@ def partition_email(
     for element in elements:
         if isinstance(element, Text):
             element.apply(replace_mime_encodings)
+        indices = has_embedded_image(element)
+        if indices:
+            element = find_embedded_image(element, indices)
+
 
     return elements
