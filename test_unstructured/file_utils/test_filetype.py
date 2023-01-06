@@ -2,6 +2,7 @@ import os
 import pathlib
 import pytest
 
+import magic
 
 from unstructured.file_utils.filetype import detect_filetype, FileType
 
@@ -46,3 +47,20 @@ def test_detect_filetype_from_file(file, expected):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, file)
     with open(filename, "rb") as f:
         assert detect_filetype(file=f) == expected
+
+
+def test_detect_filetype_returns_none_with_unknown(monkeypatch):
+    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "application/fake")
+    assert detect_filetype(filename="made_up.fake") is None
+
+
+def test_detect_filetype_raises_with_both_specified():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
+    with open(filename, "rb") as f:
+        with pytest.raises(ValueError):
+            detect_filetype(filename=filename, file=f)
+
+
+def test_detect_filetype_raises_with_none_specified():
+    with pytest.raises(ValueError):
+        detect_filetype()
