@@ -142,13 +142,6 @@ Examples:
     text = f.read()
   elements = partition_text(text=text)
 
-  content = ["This is a test document to use for unit tests.", 
-              "Important points:",
-              "   - Hamburgers are delicious",
-              "   - Dogs are the best",
-              "   - I love fuzzy blankets"]
-  elements = partition_text(file_content=content)
-
 
 ``extract_attachment_info``
 ----------------------------

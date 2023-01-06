@@ -209,13 +209,6 @@ with open("example-docs/fake-text.txt", "r") as f:
 with open("example-docs/fake-text.txt", "r") as f:
   text = f.read()
 elements = partition_text(text=text)
-
-content = ["This is a test document to use for unit tests.", 
-            "Important points:",
-            "   - Hamburgers are delicious",
-            "   - Dogs are the best",
-            "   - I love fuzzy blankets"]
-elements = partition_text(file_content=content)
 ```
 
 The `elements` output will look like the following:

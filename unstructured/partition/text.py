@@ -19,7 +19,6 @@ def partition_text(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
     text: Optional[str] = None,
-    file_content: Optional[List] = None,
 ) -> List[Element]:
     """Partitions an .txt documents into its constituent elements.
     Parameters
@@ -34,27 +33,23 @@ def partition_text(
             in a list. Typically used by `parition_email`.
     """
 
-    if not any([filename, file, text, file_content]):
+    if not any([filename, file, text]):
         raise ValueError("One of filename, file, or text must be specified.")
 
-    if filename is not None and not file and not text and not file_content:
+    if filename is not None and not file and not text:
         with open(filename, "r") as f:
             file_text = f.read()
 
-    elif file is not None and not filename and not text and not file_content:
+    elif file is not None and not filename and not text:
         file_text = file.read()
 
-    elif text is not None and not filename and not file and not file_content:
+    elif text is not None and not filename and not file:
         file_text = str(text)
-
-    elif file_content is not None and not filename and not file and not text:
-        pass
 
     else:
         raise ValueError("Only one of filename, file, or text can be specified.")
 
-    if not file_content:
-        file_content = split_by_paragraph(file_text)
+    file_content = split_by_paragraph(file_text)
 
     elements: List[Element] = list()
     for ctext in file_content:
