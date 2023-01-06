@@ -76,7 +76,12 @@ def partition_email(
             msg = email.message_from_file(f)
 
     elif file is not None and not filename and not text:
-        file_text = file.read()
+        file_content = file.read()
+        if isinstance(file_content, bytes):
+            file_text = file_content.decode("utf-8")
+        else:
+            file_text = file_content
+
         msg = email.message_from_string(file_text)
 
     elif text is not None and not filename and not file:
