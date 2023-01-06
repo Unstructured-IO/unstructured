@@ -1,7 +1,7 @@
 from abc import ABC
 from datetime import datetime
 import hashlib
-from typing import Callable, List, Union, Optional
+from typing import Callable, List, Union
 from unstructured.documents.elements import Element, Text, NoID
 
 
@@ -21,15 +21,11 @@ class Name(EmailElement):
         name: str,
         text: str,
         element_id: Union[str, NoID] = NoID(),
-        datestamp: Optional[datetime] = None,
     ):
         self.name: str = name
         self.text: str = text
-
-        if datestamp:
-            self.datestamp: datetime = datestamp
-        else:
-            self.datestamp = None
+        self.datestamp: datetime
+        self.has_datestamp: bool = False
 
         if isinstance(element_id, NoID):
             # NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits
@@ -37,15 +33,21 @@ class Name(EmailElement):
 
         super().__init__(element_id=element_id)
 
+    def set_datestamp(self, datestamp: datetime):
+        self.datestamp = datestamp
+        self.has_datestamp = True
+
     def __str__(self):
         return f"{self.name}: {self.text}"
 
     def __eq__(self, other):
-        return (
-            self.name == other.name
-            and self.text == other.text
-            and self.datestamp == other.datestamp
-        )
+        if self.has_datestamp:
+            return (
+                self.name == other.name
+                and self.text == other.text
+                and self.datestamp == other.datestamp
+            )
+        return self.name == other.name and self.text == other.text
 
     def apply(self, *cleaners: Callable):
         """Applies a cleaning brick to the text element. The function that's passed in
