@@ -41,3 +41,9 @@ UNICODE_BULLETS: Final[List[str]] = [
     "·",
 ]
 UNICODE_BULLETS_RE = re.compile(f"({'|'.join(UNICODE_BULLETS)})")
+
+
+EMAIL_HEAD_PATTERN = (
+    r"(MIME-Version: 1.0(.*)?\n)?Date:.*\nMessage-ID:.*\nSubject:.*\nFrom:.*\nTo:.*"
+)
+EMAIL_HEAD_RE = re.compile(EMAIL_HEAD_PATTERN)

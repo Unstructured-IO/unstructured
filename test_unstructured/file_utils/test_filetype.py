@@ -36,7 +36,7 @@ def test_detect_filetype_from_filename(file, expected):
         ("fake.docx", FileType.DOCX),
         ("example.jpg", FileType.JPG),
         ("fake-text.txt", FileType.TXT),
-        ("fake-email.eml", FileType.TXT),
+        ("fake-email.eml", FileType.EML),
         ("factbook.xml", FileType.XML),
         ("example-10k.html", FileType.XML),
         ("fake-html.html", FileType.HTML),
