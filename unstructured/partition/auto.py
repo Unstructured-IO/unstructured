@@ -20,4 +20,16 @@ def partition(filename: Optional[str] = None, file: Optional[IO] = None):
     file
         A file-like object using "rb" mode --> open(filename, "rb").
     """
-    pass
+    filetype = detect_filetype(filename=filename, file=file)
+
+    if filetype == FileType.DOCX:
+        return partition_docx(filename=filename, file=file)
+    elif filetype == FileType.EML:
+        return partition_email(filename=filename, file=file)
+    elif filetype == FileType.HTML:
+        return partition_html(filename=filename, file=file)
+    elif filetype == FileType.PDF:
+        return partition_pdf(filename=filename, file=file)
+    else:
+        msg = "Invalid file." if not filename else f"Invalid file {filename}."
+        raise ValueError(f"{msg}. File type not support in partition.")
