@@ -86,5 +86,10 @@ def _check_eml_from_buffer(file: IO) -> bool:
     """Checks if a text/plain file is actually a .eml file. Uses a regex pattern to see if the
     start of the file matches the typical pattern for a .eml file."""
     file.seek(0)
-    file_head = file.read(4096).decode("utf-8")
+    file_content = file.read(4096)
+    if isinstance(file_content, bytes):
+        file_head = file_content.decode("utf-8")
+    else:
+        file_head = file_content
+
     return EMAIL_HEAD_RE.match(file_head) is not None

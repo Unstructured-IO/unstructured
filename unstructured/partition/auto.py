@@ -22,6 +22,9 @@ def partition(filename: Optional[str] = None, file: Optional[IO] = None):
     """
     filetype = detect_filetype(filename=filename, file=file)
 
+    if file is not None:
+        file.seek(0)
+
     if filetype == FileType.DOCX:
         return partition_docx(filename=filename, file=file)
     elif filetype == FileType.EML:
@@ -31,5 +34,5 @@ def partition(filename: Optional[str] = None, file: Optional[IO] = None):
     elif filetype == FileType.PDF:
         return partition_pdf(filename=filename, file=file)
     else:
-        msg = "Invalid file." if not filename else f"Invalid file {filename}."
+        msg = "Invalid file" if not filename else f"Invalid file {filename}"
         raise ValueError(f"{msg}. File type not support in partition.")
