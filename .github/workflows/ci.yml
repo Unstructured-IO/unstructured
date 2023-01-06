@@ -92,6 +92,7 @@ jobs:
       run: |
         python${{ env.PYTHON_VERSION }} -m venv .venv
         source .venv/bin/activate
+        sudo apt-get install -y libmagic-dev
         make install-ci
     - name: Test
       run: |
