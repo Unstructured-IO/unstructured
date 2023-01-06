@@ -62,10 +62,57 @@ To install the library, run `pip install unstructured`.
 You can run this [Colab notebook](https://colab.research.google.com/drive/1RnXEiSTUaru8vZSGbh1U2T2P9aUa5tQD#scrollTo=E_WN7p3JGcLJ) to run the examples below.
 
 The following examples show how to get started with the `unstructured` library.
-You can parse **HTML** and **PDF** documents with one line of code!
+You can parse **HTML**, **PDF**, **EML** and **DOCX** documents with one line of code!
 <br></br>
 See our [documentation page](https://unstructured-io.github.io/unstructured) for a full description
 of the features in the library.
+
+### Document Parsing
+
+The easiest way to parse a document in unstructured is to use the `partition` brick. If you
+use `partition` brick, `unstructured` will detect the file type and route it to the appropriate
+file-specific partitioning brick. `partition` will always apply the default arguments. If you need
+advanced features, use a document-specific brick. The `partition` brick currently works for
+`.docx`, `eml`, `.html`, and `.pdf` documents.
+
+```python
+from unstructured.partition.auto import partition
+
+elements = partition("example-docs/layout-parser-paper.pdf")
+```
+
+Run `print("\n\n".join([str(el) for el in elements]))` to get a string representation of the
+output, which looks like:
+
+```
+
+LayoutParser : A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis
+
+Zejiang Shen 1 ( (cid:0) ), Ruochen Zhang 2 , Melissa Dell 3 , Benjamin Charles Germain Lee 4 , Jacob Carlson 3 , and
+Weining Li 5
+
+Abstract. Recent advances in document image analysis (DIA) have been primarily driven by the application of neural
+networks. Ideally, research outcomes could be easily deployed in production and extended for further investigation.
+However, various factors like loosely organized codebases and sophisticated model conﬁgurations complicate the easy
+reuse of im- portant innovations by a wide audience. Though there have been on-going eﬀorts to improve reusability and
+simplify deep learning (DL) model development in disciplines like natural language processing and computer vision, none
+of them are optimized for challenges in the domain of DIA. This represents a major gap in the existing toolkit, as DIA
+is central to academic research across a wide range of disciplines in the social sciences and humanities. This paper
+introduces LayoutParser , an open-source library for streamlining the usage of DL in DIA research and applica- tions.
+The core LayoutParser library comes with a set of simple and intuitive interfaces for applying and customizing DL models
+for layout de- tection, character recognition, and many other document processing tasks. To promote extensibility,
+LayoutParser also incorporates a community platform for sharing both pre-trained models and full document digiti- zation
+pipelines. We demonstrate that LayoutParser is helpful for both lightweight and large-scale digitization pipelines in
+real-word use cases. The library is publicly available at https://layout-parser.github.io
+
+Keywords: Document Image Analysis · Deep Learning · Layout Analysis · Character Recognition · Open Source library ·
+Toolkit.
+
+Introduction
+
+Deep Learning(DL)-based approaches are the state-of-the-art for a wide range of document image analysis (DIA) tasks
+including document image classiﬁcation [11,
+```
 
 ### HTML Parsing
 
@@ -107,46 +154,10 @@ You can use the following workflow to parse PDF documents.
 from unstructured.partition.pdf import partition_pdf
 
 elements = partition_pdf("example-docs/layout-parser-paper.pdf")
-print(doc)
 ```
 
-At this point, `print(elements)` will print out a string representation of the PDF file. The
-first page of output looks like the following:
+The output will look the same as the example from the document parsing section above.
 
-```
-
-LayoutParser : A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis
-
-Zejiang Shen 1 ( (cid:0) ), Ruochen Zhang 2 , Melissa Dell 3 , Benjamin Charles Germain Lee 4 , Jacob Carlson 3 , and
-Weining Li 5
-
-Abstract. Recent advances in document image analysis (DIA) have been primarily driven by the application of neural
-networks. Ideally, research outcomes could be easily deployed in production and extended for further investigation.
-However, various factors like loosely organized codebases and sophisticated model conﬁgurations complicate the easy
-reuse of im- portant innovations by a wide audience. Though there have been on-going eﬀorts to improve reusability and
-simplify deep learning (DL) model development in disciplines like natural language processing and computer vision, none
-of them are optimized for challenges in the domain of DIA. This represents a major gap in the existing toolkit, as DIA
-is central to academic research across a wide range of disciplines in the social sciences and humanities. This paper
-introduces LayoutParser , an open-source library for streamlining the usage of DL in DIA research and applica- tions.
-The core LayoutParser library comes with a set of simple and intuitive interfaces for applying and customizing DL models
-for layout de- tection, character recognition, and many other document processing tasks. To promote extensibility,
-LayoutParser also incorporates a community platform for sharing both pre-trained models and full document digiti- zation
-pipelines. We demonstrate that LayoutParser is helpful for both lightweight and large-scale digitization pipelines in
-real-word use cases. The library is publicly available at https://layout-parser.github.io
-
-Keywords: Document Image Analysis · Deep Learning · Layout Analysis · Character Recognition · Open Source library ·
-Toolkit.
-
-Introduction
-
-Deep Learning(DL)-based approaches are the state-of-the-art for a wide range of document image analysis (DIA) tasks
-including document image classiﬁcation [11,
-```
-
-The `Document` has a `pages` attribute consisting of `Page` object and the `Page` object
-has an `element` attribute consisting of `Element` objects. Sub-types of the `Element` class
-represent different components of a document, such as `NarrativeText` and `Title`. You can use
-these normalized elements to zero in on the components of a document you most care about.
 
 ### E-mail Parsing
 
