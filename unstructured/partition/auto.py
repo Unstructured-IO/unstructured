@@ -32,7 +32,7 @@ def partition(filename: Optional[str] = None, file: Optional[IO] = None):
     elif filetype == FileType.HTML:
         return partition_html(filename=filename, file=file)
     elif filetype == FileType.PDF:
-        return partition_pdf(filename=filename, file=file, url=None)
+        return partition_pdf(filename=filename, file=file, url=None)  # type: ignore
     else:
         msg = "Invalid file" if not filename else f"Invalid file {filename}"
         raise ValueError(f"{msg}. File type not support in partition.")
