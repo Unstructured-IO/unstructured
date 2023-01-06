@@ -56,6 +56,8 @@ python-dateutil==2.8.2
     # via pandas
 python-docx==0.8.11
     # via unstructured (setup.py)
+python-magic==0.4.27
+    # via unstructured (setup.py)
 pytz==2022.7
     # via pandas
 regex==2022.10.31
