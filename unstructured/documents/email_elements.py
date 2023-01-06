@@ -1,5 +1,5 @@
 from abc import ABC
-import datetime
+from datetime import datetime
 import hashlib
 from typing import Callable, List, Union, Optional
 from unstructured.documents.elements import Element, Text, NoID
@@ -20,11 +20,14 @@ class Name(EmailElement):
         self,
         name: str,
         text: str,
-        datestamp: Optional[datetime.datetime] = None,
         element_id: Union[str, NoID] = NoID(),
+        datestamp: Optional[datetime] = None,
     ):
         self.name: str = name
         self.text: str = text
+
+        if datestamp:
+            self.datestamp: datetime = datestamp
 
         if isinstance(element_id, NoID):
             # NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits
@@ -36,7 +39,11 @@ class Name(EmailElement):
         return f"{self.name}: {self.text}"
 
     def __eq__(self, other):
-        return self.name == other.name and self.text == other.text
+        return (
+            self.name == other.name
+            and self.text == other.text
+            and self.datestamp == other.datestamp
+        )
 
     def apply(self, *cleaners: Callable):
         """Applies a cleaning brick to the text element. The function that's passed in
@@ -83,7 +90,7 @@ class Sender(Name):
     pass
 
 
-class Subject(Text):
+class Subject(Text, EmailElement):
     """A text element for capturing the subject information of an email"""
 
     category = "Subject"
@@ -100,7 +107,7 @@ class MetaData(Name):
     pass
 
 
-class ReceivedInfo(List[Name]):
+class ReceivedInfo(Name):
     """A text element for capturing header information of an email (e.g. IP addresses, etc)."""
 
     category = "ReceivedInfo"

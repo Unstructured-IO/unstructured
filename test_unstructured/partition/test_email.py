@@ -10,7 +10,11 @@ from unstructured.documents.email_elements import (
     Sender,
     Subject,
 )
-from unstructured.partition.email import extract_attachment_info, partition_email, partition_header
+from unstructured.partition.email import (
+    extract_attachment_info,
+    partition_email,
+    partition_email_header,
+)
 
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -38,7 +42,7 @@ HEADER_EXPECTED_OUTPUT = [
     ),
 ]
 
-ALL_EXPECTED_OUTPUT = (EXPECTED_OUTPUT, HEADER_EXPECTED_OUTPUT)
+ALL_EXPECTED_OUTPUT = HEADER_EXPECTED_OUTPUT + EXPECTED_OUTPUT
 
 ATTACH_EXPECTED_OUTPUT = [
     {"filename": "fake-attachment.txt", "payload": b"Hey this is a fake attachment!"}
@@ -49,7 +53,7 @@ def test_partition_email_from_filename():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
     elements = partition_email(filename=filename)
     assert len(elements) > 0
-    assert elements == (EXPECTED_OUTPUT, [])
+    assert elements == EXPECTED_OUTPUT
 
 
 def test_partition_email_from_file():
@@ -57,7 +61,7 @@ def test_partition_email_from_file():
     with open(filename, "r") as f:
         elements = partition_email(file=f)
     assert len(elements) > 0
-    assert elements == (EXPECTED_OUTPUT, [])
+    assert elements == EXPECTED_OUTPUT
 
 
 def test_partition_email_from_text_file():
@@ -65,13 +69,13 @@ def test_partition_email_from_text_file():
     with open(filename, "r") as f:
         elements = partition_email(file=f, content_source="text/plain")
     assert len(elements) > 0
-    assert elements == (EXPECTED_OUTPUT, [])
+    assert elements == EXPECTED_OUTPUT
 
 
 def test_partition_email_from_text_file_with_metadata():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.txt")
     with open(filename, "r") as f:
-        elements = partition_email(file=f, content_source="text/plain", get_meta_data=True)
+        elements = partition_email(file=f, content_source="text/plain", include_headers=True)
     assert len(elements) > 0
     assert elements == ALL_EXPECTED_OUTPUT
 
@@ -82,14 +86,14 @@ def test_partition_email_from_text():
         text = f.read()
     elements = partition_email(text=text)
     assert len(elements) > 0
-    assert elements == (EXPECTED_OUTPUT, [])
+    assert elements == EXPECTED_OUTPUT
 
 
-def test_partition_header():
+def test_partition_email_header():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
     with open(filename, "r") as f:
         msg = email.message_from_file(f)
-    elements = partition_header(msg)
+    elements = partition_email_header(msg)
     assert len(elements) > 0
     assert elements == HEADER_EXPECTED_OUTPUT
 

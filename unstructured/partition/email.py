@@ -43,12 +43,12 @@ def _parse_received_data(data: str) -> List[Name]:
     elements: List[Name] = list()
     if ip_address_names and ip_addresses:
         for name, ip in zip(ip_address_names, ip_addresses):
-            elements.append(MetaData(name=name, text=ip))
+            elements.append(ReceivedInfo(name=name, text=ip))
     if mapi_id:
-        elements.append(MetaData(name="mapi_id", text=mapi_id[0]))
+        elements.append(ReceivedInfo(name="mapi_id", text=mapi_id[0]))
     if datetimetz:
         elements.append(
-            MetaData(name="received_datetimetz", text=str(datetimetz), datestamp=datetimetz)
+            ReceivedInfo(name="received_datetimetz", text=str(datetimetz), datestamp=datetimetz)
         )
 
     return elements
@@ -63,8 +63,8 @@ def _parse_email_address(data: str) -> Tuple[str, str]:
     return name, email_address[0]
 
 
-def partition_header(msg: Message) -> List[Union[Text, Name, List[Name]]]:
-    elements: List[Union[Text, Name, List[Name]]] = list()
+def partition_email_header(msg: Message) -> List[Union[Element, List[Name]]]:
+    elements: List[Union[Element, List[Name]]] = list()
     for item in msg.raw_items():
         if item[0] == "To":
             text = _parse_email_address(item[1])
@@ -79,7 +79,7 @@ def partition_header(msg: Message) -> List[Union[Text, Name, List[Name]]]:
             elements.append(Subject(text=item[1]))
         elif item[0] == "Received":
             print(item[1])
-            elements.append(ReceivedInfo(_parse_received_data(item[1])))
+            elements += _parse_received_data(item[1])
         else:
             print(item[0], item[1])
             elements.append(MetaData(name=item[0], text=item[1]))
@@ -122,8 +122,8 @@ def partition_email(
     file: Optional[IO] = None,
     text: Optional[str] = None,
     content_source: str = "text/html",
-    get_meta_data: bool = False,
-) -> Tuple[List[Element], List[Union[Text, Name, List[Name]]]]:
+    include_headers: bool = False,
+) -> List[Union[Element, List[Name]]]:
     """Partitions an .eml documents into its constituent elements.
     Parameters
     ----------
@@ -181,15 +181,14 @@ def partition_email(
     if content_source == "text/html":
         content = "".join(list_content)
         elements = partition_html(text=content)
-
         for element in elements:
             if isinstance(element, Text):
                 element.apply(replace_mime_encodings)
     elif content_source == "text/plain":
         elements = partition_text(text=content)
 
-    header: List[Union[Text, Name, List[Name]]] = list()
-    if get_meta_data:
-        header = partition_header(msg)
-
-    return (elements, header)
+    header: List[Union[Element, List[Name]]] = list()
+    if include_headers:
+        header = partition_email_header(msg)
+    all_elements = header + elements
+    return all_elements

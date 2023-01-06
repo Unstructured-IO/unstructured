@@ -93,8 +93,8 @@ takes a filename, file-like object, or raw text as input and produces a list of
 document ``Element`` objects as output. Also ``content_source`` can be set to ``text/html``
 (default) or ``text/plain`` to process the html or plain text version of the email, respectively.
 In order for ``partition_email`` to also return the header information (e.g. sender, recipient,
-attachment, etc.), ``get_meta_data`` must be set to ``True``. Returns tuple with body elements
-first and header elements second, if ``get_meta_data`` is True.
+attachment, etc.), ``include_headers`` must be set to ``True``. Returns tuple with body elements
+first and header elements second, if ``include_headers`` is True.
 
 Examples:
 
@@ -115,7 +115,7 @@ Examples:
       text = f.read()
   elements = partition_email(text=text)
 
-  with open("example-docs/fake-email.eml", "r", get_meta_data=True) as f:
+  with open("example-docs/fake-email.eml", "r", include_headers=True) as f:
       text = f.read()
   elements = partition_email(text=text)
 
@@ -587,7 +587,7 @@ Examples:
   extract_text_after(text, r"SPEAKER \d{1}:")
 
 ``extract_email_address``
-----------------------
+--------------------------
 
 Extracts email addresses from a string input and returns a list of all the email
 addresses in the input string.
@@ -604,7 +604,7 @@ addresses in the input string.
 
 
 ``extract_ip_address``
-----------------------
+------------------------
 
 Extracts IPv4 and IPv6 IP addresses in the input string and
 returns a list of all IP address in input string.
