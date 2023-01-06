@@ -6,6 +6,7 @@ import docx
 
 from unstructured.documents.elements import NarrativeText, Title, Text, ListItem
 from unstructured.partition.auto import partition
+import unstructured.partition.auto as auto
 
 EXAMPLE_DOCS_DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
@@ -127,3 +128,9 @@ def test_auto_partition_pdf_from_file():
     with open(filename, "rb") as f:
         elements = partition(file=f)
     assert len(elements) > 0
+
+
+def test_auto_partition_raises_with_bad_type(monkeypatch):
+    monkeypatch.setattr(auto, "detect_filetype", lambda *args, **kwargs: None)
+    with pytest.raises(ValueError):
+        partition(filename="made-up.fake")
