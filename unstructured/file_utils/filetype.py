@@ -8,6 +8,7 @@ from unstructured.logger import logger
 
 
 DOCX_MIME_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+XLSX_MIME_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
 
 class FileType(Enum):
@@ -16,6 +17,9 @@ class FileType(Enum):
     JPG = 3
     TXT = 4
     EML = 5
+    XML = 6
+    HTML = 7
+    XLSX = 8
 
 
 def detect_filetype(filename: str = "", file: Optional[IO] = None) -> Optional[FileType]:
@@ -46,6 +50,13 @@ def detect_filetype(filename: str = "", file: Optional[IO] = None) -> Optional[F
             return FileType.EML
         else:
             return FileType.TXT
+    elif mime_type == "text/xml":
+        if extension and extension == ".html":
+            return FileType.HTML
+        else:
+            return FileType.XML
+    elif mime_type == XLSX_MIME_TYPE:
+        return FileType.XLSX
     else:
         logger.warn(
             f"MIME type was {mime_type}. This file type is not currently supported in unstructured."
