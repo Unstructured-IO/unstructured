@@ -33,6 +33,14 @@ def test_auto_partition_email_from_file():
     assert elements == EXPECTED_EMAIL_OUTPUT
 
 
+def test_auto_partition_email_from_file_rb():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
+    with open(filename, "rb") as f:
+        elements = partition(file=f)
+    assert len(elements) > 0
+    assert elements == EXPECTED_EMAIL_OUTPUT
+
+
 @pytest.fixture
 def mock_docx_document():
     document = docx.Document()
@@ -93,5 +101,36 @@ def test_auto_partition_html_from_filename():
 def test_auto_partition_html_from_file():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "..", "..", "example-docs", "fake-html.html")
     with open(filename, "r") as f:
+        elements = partition(file=f)
+    assert len(elements) > 0
+
+
+def test_auto_partition_html_from_file_rb():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "..", "..", "example-docs", "fake-html.html")
+    with open(filename, "rb") as f:
+        elements = partition(file=f)
+    assert len(elements) > 0
+
+
+def test_auto_partition_html_from_file():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "..", "..", "example-docs", "fake-html.html")
+    with open(filename, "r") as f:
+        elements = partition(file=f)
+    assert len(elements) > 0
+
+
+def test_auto_partition_pdf():
+    filename = os.path.join(
+        EXAMPLE_DOCS_DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf"
+    )
+    elements = partition(filename=filename)
+    assert len(elements) > 0
+
+
+def test_auto_partition_pdf_from_file():
+    filename = os.path.join(
+        EXAMPLE_DOCS_DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf"
+    )
+    with open(filename, "rb") as f:
         elements = partition(file=f)
     assert len(elements) > 0

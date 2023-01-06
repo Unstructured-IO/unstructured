@@ -1,4 +1,4 @@
-from typing import Dict, IO, List, Optional
+from typing import IO, Optional
 
 from unstructured.file_utils.filetype import detect_filetype, FileType
 from unstructured.partition.docx import partition_docx
@@ -32,7 +32,7 @@ def partition(filename: Optional[str] = None, file: Optional[IO] = None):
     elif filetype == FileType.HTML:
         return partition_html(filename=filename, file=file)
     elif filetype == FileType.PDF:
-        return partition_pdf(filename=filename, file=file)
+        return partition_pdf(filename=filename, file=file, url=None)
     else:
         msg = "Invalid file" if not filename else f"Invalid file {filename}"
         raise ValueError(f"{msg}. File type not support in partition.")
