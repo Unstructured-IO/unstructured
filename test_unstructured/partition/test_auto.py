@@ -82,3 +82,16 @@ def test_auto_partition_docx_with_file(mock_docx_document, expected_docx_element
     with open(filename, "rb") as f:
         elements = partition(file=f)
     assert elements == expected_docx_elements
+
+
+def test_auto_partition_html_from_filename():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "..", "..", "example-docs", "example-10k.html")
+    elements = partition(filename=filename)
+    assert len(elements) > 0
+
+
+def test_auto_partition_html_from_file():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "..", "..", "example-docs", "fake-html.html")
+    with open(filename, "r") as f:
+        elements = partition(file=f)
+    assert len(elements) > 0
