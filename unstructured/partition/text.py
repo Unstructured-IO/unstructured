@@ -4,6 +4,7 @@ from typing import IO, List, Optional
 from unstructured.documents.elements import Element, ListItem, NarrativeText, Title
 
 from unstructured.cleaners.core import clean_bullets
+from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.partition.text_type import (
     is_possible_narrative_text,
     is_possible_title,
@@ -12,7 +13,7 @@ from unstructured.partition.text_type import (
 
 
 def split_by_paragraph(content: str) -> List[str]:
-    return re.split(r"\n\n\n|\n\n|\r\n|\r|\n", content)
+    return re.split(PARAGRAPH_PATTERN, content)
 
 
 def partition_text(
@@ -29,8 +30,6 @@ def partition_text(
         A file-like object using "r" mode --> open(filename, "r").
     text
         The string representation of the .txt document.
-    file_content: A list of strings. Chunks of texts from the document
-            in a list. Typically used by `parition_email`.
     """
 
     if not any([filename, file, text]):

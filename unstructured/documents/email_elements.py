@@ -28,6 +28,8 @@ class Name(EmailElement):
 
         if datestamp:
             self.datestamp: datetime = datestamp
+        else:
+            self.datestamp = None
 
         if isinstance(element_id, NoID):
             # NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits

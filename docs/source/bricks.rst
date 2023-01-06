@@ -124,8 +124,7 @@ Examples:
 ---------------------
 
 The ``partition_text`` function partitions text files. The ``partition_text`` 
-takes a filename, file-like object, raw text, or a list of string objects as input and produces a list of
-document ``Element`` objects as output.
+takes a filename, file-like object, and raw text as input and produces ``Element`` objects as output.
 
 Examples:
 
@@ -617,7 +616,7 @@ returns a list of all IP address in input string.
       ([ba23::58b5:2236:45g2:88h2]) (10.0.2.01)"""
 
   # Returns "['ba23::58b5:2236:45g2:88h2', '10.0.2.01']"
- extract_ip_address(text)
+  extract_ip_address(text)
 
 
 ``extract_ip_address_name``
@@ -636,7 +635,7 @@ IP addresses in the input string.
     n 32.88.5467.123; Fri, 26 Mar 2021 11:04:09 +1200"""
 
   # Returns "['ABC.DEF.local', 'ABC.DEF.local2']"
- extract_ip_address_name(text)
+  extract_ip_address_name(text)
 
 
 ``extract_mapi_id``
@@ -655,7 +654,7 @@ containing the ``mapi id`` in the input string.
     n 32.88.5467.123; Fri, 26 Mar 2021 11:04:09 +1200"""
 
   # Returns "['32.88.5467.123']"
- extract_mapi_id(text)
+  extract_mapi_id(text)
 
 
 ``extract_datetimetz``
@@ -674,7 +673,7 @@ object from the input string.
     n 32.88.5467.123; Fri, 26 Mar 2021 11:04:09 +1200"""
 
   # Returns datetime.datetime(2021, 3, 26, 11, 4, 9, tzinfo=datetime.timezone(datetime.timedelta(seconds=43200)))
- extract_datetimetz(text)
+  extract_datetimetz(text)
 
 
 ``extract_us_phone_number``
