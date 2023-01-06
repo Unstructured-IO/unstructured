@@ -195,8 +195,7 @@ Violets are blue
 The `partition_text` function within `unstructured` can be used to parse simple
 text files into elements.
 
-`partition_text` accepts filenames, file-like object, raw text, and a list
-of string objects as input. The following four snippets are for parsing text files:
+`partition_text` accepts filenames, file-like object, and raw text as input. The following three snippets are for parsing text files:
 
 ```python
 from unstructured.partition.text import partition_text

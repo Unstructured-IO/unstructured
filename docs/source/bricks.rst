@@ -111,13 +111,13 @@ Examples:
       text = f.read()
   elements = partition_email(text=text)
 
-  with open("example-docs/fake-email.eml", "r", content_source="text/plain") as f:
+  with open("example-docs/fake-email.eml", "r") as f:
       text = f.read()
-  elements = partition_email(text=text)
+  elements = partition_email(text=text, content_source="text/plain")
 
-  with open("example-docs/fake-email.eml", "r", include_headers=True) as f:
+  with open("example-docs/fake-email.eml", "r") as f:
       text = f.read()
-  elements = partition_email(text=text)
+  elements = partition_email(text=text, include_headers=True)
 
 
 ``partition_text``
@@ -612,8 +612,8 @@ returns a list of all IP address in input string.
 
   from unstructured.cleaners.extract import extract_ip_address
 
-   text = """Me me@email.com and You <You@email.com> 
-      ([ba23::58b5:2236:45g2:88h2]) (10.0.2.01)"""
+  text = """Me me@email.com and You <You@email.com> 
+    ([ba23::58b5:2236:45g2:88h2]) (10.0.2.01)"""
 
   # Returns "['ba23::58b5:2236:45g2:88h2', '10.0.2.01']"
   extract_ip_address(text)
