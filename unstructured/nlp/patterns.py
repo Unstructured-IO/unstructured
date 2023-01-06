@@ -43,7 +43,7 @@ UNICODE_BULLETS: Final[List[str]] = [
 UNICODE_BULLETS_RE = re.compile(f"({'|'.join(UNICODE_BULLETS)})")
 
 # Helps split text by paragraphs
-PARAGRAPH_PATTERN = "\n\n\n|\n\n|\r\n|\r|\n"    # noqa: W605 NOTE(harrell)
+PARAGRAPH_PATTERN = "\n\n\n|\n\n|\r\n|\r|\n"  # noqa: W605 NOTE(harrell)
 
 # IP Address examples: ba23::58b5:2236:45g2:88h2 or 10.0.2.01
 IP_ADDRESS_PATTERN = (
