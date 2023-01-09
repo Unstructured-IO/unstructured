@@ -60,7 +60,7 @@ pytz==2022.7
     # via pandas
 regex==2022.10.31
     # via nltk
-rfc3986[idna2008]==1.5.0
+rfc3986[idna2008]==2.0.0
     # via httpx
 six==1.16.0
     # via python-dateutil
