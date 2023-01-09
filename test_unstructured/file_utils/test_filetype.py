@@ -4,7 +4,12 @@ import pytest
 
 import magic
 
-from unstructured.file_utils.filetype import detect_filetype, FileType
+from unstructured.file_utils.filetype import (
+    detect_filetype,
+    FileType,
+    DOCX_MIME_TYPE,
+    XLSX_MIME_TYPE,
+)
 
 FILE_DIRECTORY = pathlib.Path(__file__).parent.resolve()
 EXAMPLE_DOCS_DIRECTORY = os.path.join(FILE_DIRECTORY, "..", "..", "example-docs")
@@ -59,6 +64,22 @@ def test_detect_docx_filetype_application_octet_stream(monkeypatch):
 
 def test_detect_xlsx_filetype_application_octet_stream(monkeypatch):
     monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "application/octet-stream")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-excel.xlsx")
+    with open(filename, "rb") as f:
+        filetype = detect_filetype(file=f)
+    assert filetype == FileType.XLSX
+
+
+def test_detect_docx_filetype_word_mime_type(monkeypatch):
+    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: DOCX_MIME_TYPE)
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.docx")
+    with open(filename, "rb") as f:
+        filetype = detect_filetype(file=f)
+    assert filetype == FileType.DOCX
+
+
+def test_detect_xlsx_filetype_word_mime_type(monkeypatch):
+    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: XLSX_MIME_TYPE)
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-excel.xlsx")
     with open(filename, "rb") as f:
         filetype = detect_filetype(file=f)

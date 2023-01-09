@@ -93,6 +93,7 @@ jobs:
         python${{ env.PYTHON_VERSION }} -m venv .venv
         source .venv/bin/activate
         sudo apt-get install -y libmagic-dev
+        sudo apt-get install python-poppler
         make install-ci
     - name: Test
       run: |
