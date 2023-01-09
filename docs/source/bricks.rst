@@ -620,7 +620,7 @@ returns a list of all IP address in input string.
 
 
 ``extract_ip_address_name``
-----------------------
+----------------------------
 
 Extracts the names of each IP address in the ``Received`` field(s) from an ``.eml`` 
 file. ``extract_ip_address_name`` takes in a string and returns a list of all
