@@ -1,10 +1,14 @@
-***REMOVED******REMOVED*** 0.3.6-dev1
+***REMOVED******REMOVED*** 0.3.6-dev2
 
 * Cleaning brick for removing ordered bullets `clean_ordered_bullets`.
 * Extract brick method for ordered bullets `extract_ordered_bullets`.
 * Test for `clean_ordered_bullets`.
 * Test for `extract_ordered_bullets`.
 * Added `partition_docx` for pre-processing Word Documents.
+* Added new REGEX patterns to extract email header information
+* Added new functions to extract header information `parse_received_data` and `partition_header`
+* Added new function to parse plain text files `partition_text`
+* Added new cleaners functions `extract_ip_address`, `extract_ip_address_name`, `extract_mapi_id`, `extract_datetimetz`
 
 ***REMOVED******REMOVED*** 0.3.5
 
@@ -18,6 +22,7 @@
 * Add new function `extract_attachment_info` that extracts and decode the attachment
 of an email.
 * Staging brick to convert a list of `Element`s to a `pandas` dataframe.
+* Add plain text functionality to `partition_email`
 
 ***REMOVED******REMOVED*** 0.3.4
 
