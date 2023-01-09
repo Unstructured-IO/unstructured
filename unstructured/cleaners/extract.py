@@ -1,4 +1,13 @@
 import re
+import datetime
+from typing import List
+from unstructured.nlp.patterns import (
+    IP_ADDRESS_PATTERN_RE,
+    IP_ADDRESS_NAME_PATTERN,
+    MAPI_ID_PATTERN,
+    EMAIL_DATETIMETZ_PATTERN,
+    EMAIL_ADDRESS_PATTERN,
+)
 
 from unstructured.nlp.patterns import US_PHONE_NUMBERS_RE
 
@@ -46,6 +55,29 @@ def extract_text_after(text: str, pattern: str, index: int = 0, strip: bool = Tr
     _, end = regex_match.span()
     before_text = text[end:]
     return before_text.lstrip() if strip else before_text
+
+
+def extract_email_address(text: str) -> List[str]:
+    return re.findall(EMAIL_ADDRESS_PATTERN, text.lower())
+
+
+def extract_ip_address(text: str) -> List[str]:
+    return re.findall(IP_ADDRESS_PATTERN_RE, text)
+
+
+def extract_ip_address_name(text: str) -> List[str]:
+    return re.findall(IP_ADDRESS_NAME_PATTERN, text)
+
+
+def extract_mapi_id(text: str) -> List[str]:
+    mapi_ids = re.findall(MAPI_ID_PATTERN, text)
+    mapi_ids = [mid.replace(";", "") for mid in mapi_ids]
+    return mapi_ids
+
+
+def extract_datetimetz(text: str) -> datetime.datetime:
+    date_string = re.findall(EMAIL_DATETIMETZ_PATTERN, text)
+    return datetime.datetime.strptime(date_string[0], "%a, %d %b %Y %H:%M:%S %z")
 
 
 def extract_us_phone_number(text: str):

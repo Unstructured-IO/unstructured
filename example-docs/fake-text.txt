@@ -1,0 +1,7 @@
+This is a test document to use for unit tests.
+
+Important points:
+
+   - Hamburgers are delicious
+   - Dogs are the best
+   - I love fuzzy blankets

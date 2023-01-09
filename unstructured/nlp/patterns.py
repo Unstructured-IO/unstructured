@@ -41,3 +41,28 @@ UNICODE_BULLETS: Final[List[str]] = [
     "·",
 ]
 UNICODE_BULLETS_RE = re.compile(f"({'|'.join(UNICODE_BULLETS)})")
+
+# Helps split text by paragraphs
+PARAGRAPH_PATTERN = "\n\n\n|\n\n|\r\n|\r|\n"  # noqa: W605 NOTE(harrell)
+
+# IP Address examples: ba23::58b5:2236:45g2:88h2 or 10.0.2.01
+IP_ADDRESS_PATTERN = (
+    "[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}",  # noqa: W605 NOTE(harrell)
+    # - skipping qa because we need the escape for the regex
+    "[a-z0-9]{4}::[a-z0-9]{4}:[a-z0-9]{4}:[a-z0-9]{4}:[a-z0-9]{4}%?[0-9]*",
+)
+IP_ADDRESS_PATTERN_RE = re.compile(f"({'|'.join(IP_ADDRESS_PATTERN)})")
+
+IP_ADDRESS_NAME_PATTERN = "[a-zA-Z0-9-]*\.[a-zA-Z]*\.[a-zA-Z]*"  # noqa: W605 NOTE(harrell)
+# - skipping qa because we need the escape for the regex
+
+# Mapi ID example: 32.88.5467.123
+MAPI_ID_PATTERN = "[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*;"  # noqa: W605 NOTE(harrell)
+# - skipping qa because we need the escape for the regex
+
+# Date, time, timezone example: Fri, 26 Mar 2021 11:04:09 +1200
+EMAIL_DATETIMETZ_PATTERN = "[a-zA-z]{3},\s[0-9]{2}\s[a-zA-Z]{3}\s[0-9]{4}\s[0-9]{2}:[0-9]{2}:[0-9]{2}\s[+0-9]{5}"  # noqa: W605,E501
+# NOTE(harrell) - skipping qa because we need the escape for the regex
+
+EMAIL_ADDRESS_PATTERN = "[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+"  # noqa: W605 NOTE(harrell)
+# - skipping qa because we need the escape for the regex
