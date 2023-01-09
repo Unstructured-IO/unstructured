@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bricks &mdash; unstructured 0.3.6-dev1 documentation</title>
+  <title>Bricks &mdash; unstructured 0.3.6-dev2 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -49,6 +49,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#partition-html"><code class="docutils literal notranslate"><span class="pre">partition_html</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#partition-pdf"><code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#partition-email"><code class="docutils literal notranslate"><span class="pre">partition_email</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#partition-text"><code class="docutils literal notranslate"><span class="pre">partition_text</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#extract-attachment-info"><code class="docutils literal notranslate"><span class="pre">extract_attachment_info</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#is-bulleted-text"><code class="docutils literal notranslate"><span class="pre">is_bulleted_text</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#is-possible-narrative-text"><code class="docutils literal notranslate"><span class="pre">is_possible_narrative_text</span></code></a></li>
@@ -72,6 +73,11 @@
 <li class="toctree-l3"><a class="reference internal" href="#clean-postfix"><code class="docutils literal notranslate"><span class="pre">clean_postfix</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#extract-text-before"><code class="docutils literal notranslate"><span class="pre">extract_text_before</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#extract-text-after"><code class="docutils literal notranslate"><span class="pre">extract_text_after</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#extract-email-address"><code class="docutils literal notranslate"><span class="pre">extract_email_address</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#extract-ip-address"><code class="docutils literal notranslate"><span class="pre">extract_ip_address</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#extract-ip-address-name"><code class="docutils literal notranslate"><span class="pre">extract_ip_address_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#extract-mapi-id"><code class="docutils literal notranslate"><span class="pre">extract_mapi_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#extract-datetimetz"><code class="docutils literal notranslate"><span class="pre">extract_datetimetz</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#extract-us-phone-number"><code class="docutils literal notranslate"><span class="pre">extract_us_phone_number</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#extract-ordered-bullets"><code class="docutils literal notranslate"><span class="pre">extract_ordered_bullets</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#translate-text"><code class="docutils literal notranslate"><span class="pre">translate_text</span></code></a></li>
@@ -192,7 +198,11 @@ if desired.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">partition_email</span></code> function partitions <code class="docutils literal notranslate"><span class="pre">.eml</span></code> documents and works with exports
 from email clients such as Microsoft Outlook and Gmail. The <code class="docutils literal notranslate"><span class="pre">partition_email</span></code>
 takes a filename, file-like object, or raw text as input and produces a list of
-document <code class="docutils literal notranslate"><span class="pre">Element</span></code> objects as output.</p>
+document <code class="docutils literal notranslate"><span class="pre">Element</span></code> objects as output. Also <code class="docutils literal notranslate"><span class="pre">content_source</span></code> can be set to <code class="docutils literal notranslate"><span class="pre">text/html</span></code>
+(default) or <code class="docutils literal notranslate"><span class="pre">text/plain</span></code> to process the html or plain text version of the email, respectively.
+In order for <code class="docutils literal notranslate"><span class="pre">partition_email</span></code> to also return the header information (e.g. sender, recipient,
+attachment, etc.), <code class="docutils literal notranslate"><span class="pre">include_headers</span></code> must be set to <code class="docutils literal notranslate"><span class="pre">True</span></code>. Returns tuple with body elements
+first and header elements second, if <code class="docutils literal notranslate"><span class="pre">include_headers</span></code> is True.</p>
 <p>Examples:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.email</span> <span class="kn">import</span> <span class="n">partition_email</span>
 
@@ -204,6 +214,32 @@ document <code class="docutils literal notranslate"><span class="pre">Element</s
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;example-docs/fake-email.eml&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">text</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_email</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;example-docs/fake-email.eml&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_email</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">content_source</span><span class="o">=</span><span class="s2">&quot;text/plain&quot;</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;example-docs/fake-email.eml&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_email</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">include_headers</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="partition-text">
+<h3><code class="docutils literal notranslate"><span class="pre">partition_text</span></code><a class="headerlink" href="#partition-text" title="Permalink to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">partition_text</span></code> function partitions text files. The <code class="docutils literal notranslate"><span class="pre">partition_text</span></code>
+takes a filename, file-like object, and raw text as input and produces <code class="docutils literal notranslate"><span class="pre">Element</span></code> objects as output.</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.text</span> <span class="kn">import</span> <span class="n">partition_text</span>
+
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_text</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example-docs/fake-text.txt&quot;</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;example-docs/fake-text.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+  <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_text</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;example-docs/fake-text.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+  <span class="n">text</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_text</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -561,6 +597,82 @@ such as <code class="docutils literal notranslate"><span class="pre">\u2013</spa
 
 <span class="c1"># Returns &quot;Look at me, I&#39;m flying!&quot;</span>
 <span class="n">extract_text_after</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;SPEAKER \d</span><span class="si">{1}</span><span class="s2">:&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="extract-email-address">
+<h3><code class="docutils literal notranslate"><span class="pre">extract_email_address</span></code><a class="headerlink" href="#extract-email-address" title="Permalink to this heading"></a></h3>
+<p>Extracts email addresses from a string input and returns a list of all the email
+addresses in the input string.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.cleaners.extract</span> <span class="kn">import</span> <span class="n">extract_email_address</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Me me@email.com and You &lt;You@email.com&gt;</span>
+<span class="s2">    ([ba23::58b5:2236:45g2:88h2]) (10.0.2.01)&quot;&quot;&quot;</span>
+
+<span class="c1"># Returns &quot;[&#39;me@email.com&#39;, &#39;you@email.com&#39;]&quot;</span>
+<span class="n">extract_email_address</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="extract-ip-address">
+<h3><code class="docutils literal notranslate"><span class="pre">extract_ip_address</span></code><a class="headerlink" href="#extract-ip-address" title="Permalink to this heading"></a></h3>
+<p>Extracts IPv4 and IPv6 IP addresses in the input string and
+returns a list of all IP address in input string.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.cleaners.extract</span> <span class="kn">import</span> <span class="n">extract_ip_address</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Me me@email.com and You &lt;You@email.com&gt;</span>
+<span class="s2">  ([ba23::58b5:2236:45g2:88h2]) (10.0.2.01)&quot;&quot;&quot;</span>
+
+<span class="c1"># Returns &quot;[&#39;ba23::58b5:2236:45g2:88h2&#39;, &#39;10.0.2.01&#39;]&quot;</span>
+<span class="n">extract_ip_address</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="extract-ip-address-name">
+<h3><code class="docutils literal notranslate"><span class="pre">extract_ip_address_name</span></code><a class="headerlink" href="#extract-ip-address-name" title="Permalink to this heading"></a></h3>
+<p>Extracts the names of each IP address in the <code class="docutils literal notranslate"><span class="pre">Received</span></code> field(s) from an <code class="docutils literal notranslate"><span class="pre">.eml</span></code>
+file. <code class="docutils literal notranslate"><span class="pre">extract_ip_address_name</span></code> takes in a string and returns a list of all
+IP addresses in the input string.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.cleaners.extract</span> <span class="kn">import</span> <span class="n">extract_ip_address_name</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;from ABC.DEF.local ([ba23::58b5:2236:45g2:88h2]) by</span>
+<span class="s2">  </span><span class="se">\n</span><span class="s2"> ABC.DEF.local2 ([ba23::58b5:2236:45g2:88h2%25]) with mapi id</span><span class="se">\</span>
+<span class="s2">  n 32.88.5467.123; Fri, 26 Mar 2021 11:04:09 +1200&quot;&quot;&quot;</span>
+
+<span class="c1"># Returns &quot;[&#39;ABC.DEF.local&#39;, &#39;ABC.DEF.local2&#39;]&quot;</span>
+<span class="n">extract_ip_address_name</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="extract-mapi-id">
+<h3><code class="docutils literal notranslate"><span class="pre">extract_mapi_id</span></code><a class="headerlink" href="#extract-mapi-id" title="Permalink to this heading"></a></h3>
+<p>Extracts the <code class="docutils literal notranslate"><span class="pre">mapi</span> <span class="pre">id</span></code> in the <code class="docutils literal notranslate"><span class="pre">Received</span></code> field(s) from an <code class="docutils literal notranslate"><span class="pre">.eml</span></code>
+file. <code class="docutils literal notranslate"><span class="pre">extract_mapi_id</span></code> takes in a string and returns a list of a string
+containing the <code class="docutils literal notranslate"><span class="pre">mapi</span> <span class="pre">id</span></code> in the input string.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.cleaners.extract</span> <span class="kn">import</span> <span class="n">extract_mapi_id</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;from ABC.DEF.local ([ba23::58b5:2236:45g2:88h2]) by</span>
+<span class="s2">  </span><span class="se">\n</span><span class="s2"> ABC.DEF.local2 ([ba23::58b5:2236:45g2:88h2%25]) with mapi id</span><span class="se">\</span>
+<span class="s2">  n 32.88.5467.123; Fri, 26 Mar 2021 11:04:09 +1200&quot;&quot;&quot;</span>
+
+<span class="c1"># Returns &quot;[&#39;32.88.5467.123&#39;]&quot;</span>
+<span class="n">extract_mapi_id</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="extract-datetimetz">
+<h3><code class="docutils literal notranslate"><span class="pre">extract_datetimetz</span></code><a class="headerlink" href="#extract-datetimetz" title="Permalink to this heading"></a></h3>
+<p>Extracts the date, time, and timezone in the <code class="docutils literal notranslate"><span class="pre">Received</span></code> field(s) from an <code class="docutils literal notranslate"><span class="pre">.eml</span></code>
+file. <code class="docutils literal notranslate"><span class="pre">extract_datetimetz</span></code> takes in a string and returns a datetime.datetime
+object from the input string.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.cleaners.extract</span> <span class="kn">import</span> <span class="n">extract_datetimetz</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;from ABC.DEF.local ([ba23::58b5:2236:45g2:88h2]) by</span>
+<span class="s2">  </span><span class="se">\n</span><span class="s2"> ABC.DEF.local2 ([ba23::58b5:2236:45g2:88h2%25]) with mapi id</span><span class="se">\</span>
+<span class="s2">  n 32.88.5467.123; Fri, 26 Mar 2021 11:04:09 +1200&quot;&quot;&quot;</span>
+
+<span class="c1"># Returns datetime.datetime(2021, 3, 26, 11, 4, 9, tzinfo=datetime.timezone(datetime.timedelta(seconds=43200)))</span>
+<span class="n">extract_datetimetz</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
