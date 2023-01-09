@@ -71,7 +71,7 @@ def extract_ip_address_name(text: str) -> List[str]:
 
 def extract_mapi_id(text: str) -> List[str]:
     mapi_ids = re.findall(MAPI_ID_PATTERN, text)
-    mapi_ids = [mid.replace(";","") for mid in mapi_ids]
+    mapi_ids = [mid.replace(";", "") for mid in mapi_ids]
     return mapi_ids
 
 
