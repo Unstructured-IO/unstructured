@@ -24,7 +24,7 @@ from unstructured.documents.email_elements import (
     ReceivedInfo,
     MetaData,
 )
-from unstructured.documents.elements import Element, Text, Image, NarrativeText
+from unstructured.documents.elements import Element, Text, Image, NarrativeText, Title
 from unstructured.partition.html import partition_html
 from unstructured.partition.text import split_by_paragraph, partition_text
 
@@ -199,9 +199,12 @@ def partition_email(
     elif content_source == "text/plain":
         elements = partition_text(text=content)
 
+    for idx, element in enumerate(elements):
         indices = has_embedded_image(element)
-        if isinstance(element, NarrativeText) and indices:
-            elements.append(find_embedded_image(element, indices))
+        if (isinstance(element, NarrativeText) or isinstance(element, Title)) and indices:
+            image_info = find_embedded_image(element, indices)
+            elements.insert(idx + 1, image_info)
+            element.text = element.text.replace("[image: " + image_info.text + "]", "")
 
     header: List[Element] = list()
     if include_headers:

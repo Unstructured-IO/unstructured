@@ -1,88 +1,48 @@
 MIME-Version: 1.0
-Date: Wed, 4 Jan 2023 12:15:03 -0600
-Message-ID: <CAPgNNXQTb+FTog4KOH82MDJCJPewKPs8KtOZQkKN0M4L4SepCw@mail.gmail.com>
-Subject: email with image embedded
+Date: Mon, 9 Jan 2023 15:00:43 -0600
+Message-ID: <CAPgNNXSUabyHhzHrDW3zBQ0Q2BVibVVrR+FpgtPGmXSXSX7XCg@mail.gmail.com>
+Subject: fake-email-image-embedded
 From: Mallori Harrell <mallori@unstructured.io>
 To: Mallori Harrell <mallori@unstructured.io>
-Content-Type: multipart/related; boundary="000000000000cb276505f17429fa"
+Content-Type: multipart/related; boundary="0000000000007eaa9b05f1db0f70"
 
---000000000000cb276505f17429fa
-Content-Type: multipart/alternative; boundary="000000000000cb276305f17429f9"
+--0000000000007eaa9b05f1db0f70
+Content-Type: multipart/alternative; boundary="0000000000007eaa9805f1db0f6f"
 
---000000000000cb276305f17429f9
+--0000000000007eaa9805f1db0f6f
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-This is placeholder text so that we can embed an image in this email. Let's
-copy and paste some text also. features. The variables, packages and emails
-objects are initialized in separated classes. Figure 2 describes the
-implementation structure. Different external libraries are utilized in the
-implementation which include: Microsoft CDO for Windows 2000 COM Library to
-deal with each email file as an object and save the emails=E2=80=99 parts i=
-nto an
-output file. For features extraction development, we used the following
-libraries. [image: unstructured_logo.png]In EMFET, the user can load an
-email corpus with emails saved in EML format (e.g. SpamAssassin3 ,
-CSDMC20104 and Ling-Spam5 ). EML file extension for an email message saved
-to a file in the Internet Message Format protocol for electronic mail
-messages. EML is one of the most common file extensions used by email
-applications such as Outlook, Thunderbird and Gmail. Several public email
-corpora in EML format are available on the web and can be used with EMFET.
-The tool splits the emails=E2=80=99 into their main parts which are: From, =
-To, CC,
-BCC, Subject, Text Body, and HTML Body and save each of them to an output
-file. Then the tool extracts the selected features from the corresponding
-email part and save them in another file in CSV format. If any error
-occurred during the extraction process, an error file will be generated.
+This is a test email to use for unit tests.
 
---=20
-Mallori Harrell
-Unstructured Technologies
-Data Scientist
+Important points:
 
---000000000000cb276305f17429f9
+hello[image: unstructured_logo.png] this is our logo.
+
+   - Roses are red
+   - Violets are blue
+
+--0000000000007eaa9805f1db0f6f
 Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-<div dir=3D"ltr">This is placeholder text so that we can embed an image in =
-this email. Let&#39;s copy and paste some text also.=C2=A0features. The var=
-iables, packages and emails objects are initialized in separated classes. F=
-igure 2 describes
-the implementation structure.
-Different external libraries are utilized in the implementation which inclu=
-de: Microsoft CDO for Windows
-2000 COM Library to deal with each email file as an object and save the ema=
-ils=E2=80=99 parts into an output file.
-For features extraction development, we used the following libraries.=C2=A0=
-<img src=3D"cid:ii_lchzbiyd0" alt=3D"unstructured_logo.png" width=3D"216" h=
-eight=3D"173" style=3D"margin-right: 0px;">In EMFET, the user can load an e=
-mail corpus with emails saved in EML format (e.g. SpamAssassin3
-,
-CSDMC20104 and Ling-Spam5
-). EML file extension for an email message saved to a file in the Internet
-Message Format protocol for electronic mail messages. EML is one of the mos=
-t common file extensions used
-by email applications such as Outlook, Thunderbird and Gmail. Several publi=
-c email corpora in EML format
-are available on the web and can be used with EMFET.
-The tool splits the emails=E2=80=99 into their main parts which are: From, =
-To, CC, BCC, Subject, Text Body, and
-HTML Body and save each of them to an output file. Then the tool extracts t=
-he selected features from the
-corresponding email part and save them in another file in CSV format. If an=
-y error occurred during the
-extraction process, an error file will be generated.<br><div><br></div>-- <=
-br><div dir=3D"ltr" class=3D"gmail_signature" data-smartmail=3D"gmail_signa=
-ture"><div dir=3D"ltr">Mallori Harrell<div>Unstructured Technologies<br><di=
-v>Data Scientist</div><div><br></div></div></div></div></div>
+<div dir=3D"ltr"><div dir=3D"ltr" class=3D"gmail_signature" data-smartmail=
+=3D"gmail_signature"><div dir=3D"ltr"><div><div>This is a test email to use=
+ for unit tests.<br><br>Important points:</div><div><br>hello<img src=3D"ci=
+d:ii_lcp9vqz80" alt=3D"unstructured_logo.png" width=3D"357" height=3D"285" =
+class=3D"gmail-CToWUd gmail-a6T" tabindex=3D"0" style=3D"cursor: pointer; o=
+utline: 0px; margin-right: 0px;">=C2=A0this is our logo.<br><ul><li style=
+=3D"margin-left:15px">Roses are red</li><li style=3D"margin-left:15px">Viol=
+ets are blue</li></ul><div class=3D"gmail-yj6qo"></div><div dir=3D"ltr" cla=
+ss=3D"gmail-adL"><div dir=3D"ltr"><div><div><br></div></div></div></div></d=
+iv></div></div></div></div>
 
---000000000000cb276305f17429f9--
---000000000000cb276505f17429fa
+--0000000000007eaa9805f1db0f6f--
+--0000000000007eaa9b05f1db0f70
 Content-Type: image/png; name="unstructured_logo.png"
 Content-Disposition: attachment; filename="unstructured_logo.png"
 Content-Transfer-Encoding: base64
-X-Attachment-Id: ii_lchzbiyd0
-Content-ID: <ii_lchzbiyd0>
+X-Attachment-Id: ii_lcp9vqz80
+Content-ID: <ii_lcp9vqz80>
 
 iVBORw0KGgoAAAANSUhEUgAACAAAAAZmCAYAAAA8NUQqAAAAAXNSR0IArs4c6QAAIABJREFUeF7s
 2jERAAAIAzHwbxod/AUHTRm74wgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAIH3Avs+
@@ -3870,4 +3830,4 @@ CBAgUAUcAKqYPAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQOBRwADgcRSUCBAgQIECA
 AAECBAgQIECAAAECBAgQIECAAAECBAgQIFAFHACqmDwBAgQIECBAgAABAgQIECBAgAABAgQIECBA
 gAABAgQIEDgUcAA4HEUlAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBQBQalO2iy78F3
 0AAAAABJRU5ErkJggg==
---000000000000cb276505f17429fa--
+--0000000000007eaa9b05f1db0f70--
