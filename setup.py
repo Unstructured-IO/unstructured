@@ -55,6 +55,7 @@ setup(
         "pandas",
         "pillow",
         "python-docx",
+        "python-magic",
         # NOTE(robinson) - The following dependencies are pinned
         # to address security scans
         "certifi>=2022.12.07",
