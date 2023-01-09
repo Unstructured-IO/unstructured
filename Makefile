@@ -20,7 +20,7 @@ install-base: install-base-pip-packages install-nltk-models
 install: install-base-pip-packages install-dev install-nltk-models install-test install-huggingface install-unstructured-inference
 
 .PHONY: install-ci
-install-ci: install-base-pip-packages install-test install-nltk-models install-huggingface install-unstructured-inference install-local-inference
+install-ci: install-base-pip-packages install-nltk-models install-huggingface install-unstructured-inference install-test
 
 .PHONY: install-base-pip-packages
 install-base-pip-packages:
