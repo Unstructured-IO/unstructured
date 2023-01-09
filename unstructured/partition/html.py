@@ -26,7 +26,12 @@ def partition_html(
         elements = document.elements
 
     elif file is not None and not filename and not text:
-        file_text = file.read()
+        file_content = file.read()
+        if isinstance(file_content, bytes):
+            file_text = file_content.decode("utf-8")
+        else:
+            file_text = file_content
+
         document = HTMLDocument.from_string(file_text)
         elements = document.elements
 

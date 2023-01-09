@@ -77,6 +77,8 @@ pydantic==1.10.4
     ***REMOVED*** via pandas
 ***REMOVED***
     ***REMOVED*** via unstructured (setup.py)
+***REMOVED***
+    ***REMOVED*** via unstructured (setup.py)
 pytz==2022.7
     ***REMOVED*** via pandas
 pyyaml==6.0

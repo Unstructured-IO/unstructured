@@ -84,6 +84,31 @@ level to ``INFO`` or ``DEBUG``.
 Extra Dependencies
 -------------------
 
+==================
+Filetype Detection
+==================
+
+The ``filetype`` module in ``unstructured`` uses ``libmagic`` to detect MIME types. For
+this to work, you'll need ``libmagic`` installed on your computer. On a Mac, you can run:
+
+.. code:: console
+
+		$ brew install libmagic
+
+One Debian, run:
+
+.. code:: console
+
+		$ sudo apt-get install -y libmagic-dev
+
+
+If you are on Windows using ``conda``, run:
+
+.. code:: console
+
+		$ conda install -c conda-forge libmagic
+
+
 =================
 NLTK Dependencies
 =================

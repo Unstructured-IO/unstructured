@@ -97,6 +97,8 @@ jobs:
       run: |
         source .venv/bin/activate
         make install-nltk-models
+        make install-detectron2
+        sudo apt-get install -y libmagic-dev poppler-utils
         make test
         make check-coverage
 
