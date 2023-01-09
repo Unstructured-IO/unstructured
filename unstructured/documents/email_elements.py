@@ -1,4 +1,5 @@
 from abc import ABC
+from datetime import datetime
 import hashlib
 from typing import Callable, List, Union
 from unstructured.documents.elements import Element, Text, NoID
@@ -15,9 +16,16 @@ class Name(EmailElement):
 
     category = "Uncategorized"
 
-    def __init__(self, name: str, text: str, element_id: Union[str, NoID] = NoID()):
+    def __init__(
+        self,
+        name: str,
+        text: str,
+        element_id: Union[str, NoID] = NoID(),
+    ):
         self.name: str = name
         self.text: str = text
+        self.datestamp: datetime
+        self.has_datestamp: bool = False
 
         if isinstance(element_id, NoID):
             # NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits
@@ -25,10 +33,20 @@ class Name(EmailElement):
 
         super().__init__(element_id=element_id)
 
+    def set_datestamp(self, datestamp: datetime):
+        self.datestamp = datestamp
+        self.has_datestamp = True
+
     def __str__(self):
         return f"{self.name}: {self.text}"
 
     def __eq__(self, other):
+        if self.has_datestamp:
+            return (
+                self.name == other.name
+                and self.text == other.text
+                and self.datestamp == other.datestamp
+            )
         return self.name == other.name and self.text == other.text
 
     def apply(self, *cleaners: Callable):
@@ -60,54 +78,50 @@ class BodyText(List[Text]):
     pass
 
 
-class Recipient(Text):
-    """A text element for capturing the recipient information of an email (e.g. Subject,
-    To, From, etc)."""
+class Recipient(Name):
+    """A text element for capturing the recipient information of an email"""
 
     category = "Recipient"
 
     pass
 
 
-class Sender(Text):
-    """A text element for capturing the sender information of an email (e.g. Subject,
-    To, From, etc)."""
+class Sender(Name):
+    """A text element for capturing the sender information of an email"""
 
     category = "Sender"
 
     pass
 
 
-class Subject(Text):
-    """A text element for capturing the subject information of an email (e.g. Subject,
-    To, From, etc)."""
+class Subject(Text, EmailElement):
+    """A text element for capturing the subject information of an email"""
 
     category = "Subject"
 
     pass
 
 
-class ReceivedInfo(List[Text]):
-    """A text element for capturing header information of an email (e.g. Subject,
-    To, From, etc)."""
-
-    category = "ReceivedInfo"
-
-    pass
-
-
 class MetaData(Name):
-    """A text element for capturing header meta data of an email (e.g. Subject,
-    To, From, etc)."""
+    """A text element for capturing header meta data of an email
+    (miscellaneous data in the email)."""
 
     category = "MetaData"
 
     pass
 
 
+class ReceivedInfo(Name):
+    """A text element for capturing header information of an email (e.g. IP addresses, etc)."""
+
+    category = "ReceivedInfo"
+
+    pass
+
+
 class Attachment(Name):
-    """A text element for capturing the attachment name in an email (e.g. Subject,
-    To, From, etc)."""
+    """A text element for capturing the attachment name in an email (e.g. documents,
+    images, etc)."""
 
     category = "Attachment"
 
@@ -117,11 +131,11 @@ class Attachment(Name):
 class Email(ABC):
     """An email class with it's attributes"""
 
-    def __init__(self, recipient: Recipient, sender: Sender, subject: Subject, body: BodyText):
-        self.recipient = recipient
-        self.sender = sender
-        self.subject = subject
-        self.body = body
+    def __init__(self):
+        self.recipient = Recipient
+        self.sender = Sender
+        self.subject = Subject
+        self.body = BodyText
         self.received_info: ReceivedInfo
         self.meta_data: MetaData
         self.attachment: List[Attachment]
