@@ -34,7 +34,6 @@ IMAGE_EXPECTED_OUTPUT = [
     Image(text="unstructured_logo.png"),
     ListItem(text="Roses are red"),
     ListItem(text="Violets are blue"),
-
 ]
 
 HEADER_EXPECTED_OUTPUT = [
@@ -106,11 +105,13 @@ def test_partition_email_from_text():
     assert len(elements) > 0
     assert elements == EXPECTED_OUTPUT
 
+
 def test_partition_email_from_filename_with_embedded_image():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email-image-embedded.eml")
     elements = partition_email(filename=filename, content_source="text/plain")
     assert len(elements) > 0
     assert elements == IMAGE_EXPECTED_OUTPUT
+
 
 def test_partition_email_header():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
