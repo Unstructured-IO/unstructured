@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Installation &mdash; unstructured 0.3.6-dev2 documentation</title>
+  <title>Installation &mdash; unstructured 0.4.0-dev0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -49,6 +49,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#logging">Logging</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#extra-dependencies">Extra Dependencies</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#filetype-detection">Filetype Detection</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#nltk-dependencies">NLTK Dependencies</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#xml-html-depenedencies">XML/HTML Depenedencies</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#huggingface-dependencies">Huggingface Dependencies</a></li>
@@ -154,6 +155,22 @@ level to <code class="docutils literal notranslate"><span class="pre">INFO</span
 </section>
 <section id="extra-dependencies">
 <h2>Extra Dependencies<a class="headerlink" href="#extra-dependencies" title="Permalink to this heading"></a></h2>
+<section id="filetype-detection">
+<h3>Filetype Detection<a class="headerlink" href="#filetype-detection" title="Permalink to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">filetype</span></code> module in <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> uses <code class="docutils literal notranslate"><span class="pre">libmagic</span></code> to detect MIME types. For
+this to work, you’ll need <code class="docutils literal notranslate"><span class="pre">libmagic</span></code> installed on your computer. On a Mac, you can run:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>brew install libmagic
+</pre></div>
+</div>
+<p>One Debian, run:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>sudo apt-get install -y libmagic-dev
+</pre></div>
+</div>
+<p>If you are on Windows using <code class="docutils literal notranslate"><span class="pre">conda</span></code>, run:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>conda install -c conda-forge libmagic
+</pre></div>
+</div>
+</section>
 <section id="nltk-dependencies">
 <h3>NLTK Dependencies<a class="headerlink" href="#nltk-dependencies" title="Permalink to this heading"></a></h3>
 <p>The <a class="reference external" href="https://www.nltk.org/">NLTK</a> library is used for word and sentence tokenziation and

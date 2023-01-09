@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bricks &mdash; unstructured 0.3.6-dev2 documentation</title>
+  <title>Bricks &mdash; unstructured 0.4.0-dev0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -45,6 +45,7 @@
 <li class="toctree-l1"><a class="reference internal" href="elements.html">Elements</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Bricks</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#partitioning">Partitioning</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#partition"><code class="docutils literal notranslate"><span class="pre">partition</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#partition-docx"><code class="docutils literal notranslate"><span class="pre">partition_docx</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#partition-html"><code class="docutils literal notranslate"><span class="pre">partition_html</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#partition-pdf"><code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code></a></li>
@@ -136,6 +137,35 @@ bricks currently available in the library.</p>
 <p>The partitioning bricks in <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> differentiate between different sections
 of text in a document. For example, the partitioning bricks can help distinguish between
 titles, narrative text, and tables.</p>
+<section id="partition">
+<h3><code class="docutils literal notranslate"><span class="pre">partition</span></code><a class="headerlink" href="#partition" title="Permalink to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">partition</span></code> brick is the simplest way to partition a document in <code class="docutils literal notranslate"><span class="pre">unstructured</span></code>.
+If you call the <code class="docutils literal notranslate"><span class="pre">partition</span></code> function, <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> will attempt to detect the
+file type and route it to the appropriate partitioning brick. All partitioning bricks
+called within <code class="docutils literal notranslate"><span class="pre">partition</span></code> are called using the defualt kwargs. Use the document-type
+specific bricks if you need to apply non-default settings.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">docx</span>
+
+<span class="kn">from</span> <span class="nn">unstructured.partition.auto</span> <span class="kn">import</span> <span class="n">partition</span>
+
+<span class="n">document</span> <span class="o">=</span> <span class="n">docx</span><span class="o">.</span><span class="n">Document</span><span class="p">()</span>
+<span class="n">document</span><span class="o">.</span><span class="n">add_paragraph</span><span class="p">(</span><span class="s2">&quot;Important Analysis&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;Heading 1&quot;</span><span class="p">)</span>
+<span class="n">document</span><span class="o">.</span><span class="n">add_paragraph</span><span class="p">(</span><span class="s2">&quot;Here is my first thought.&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;Body Text&quot;</span><span class="p">)</span>
+<span class="n">document</span><span class="o">.</span><span class="n">add_paragraph</span><span class="p">(</span><span class="s2">&quot;Here is my second thought.&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;Normal&quot;</span><span class="p">)</span>
+<span class="n">document</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;mydoc.docx&quot;</span><span class="p">)</span>
+
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;mydoc.docx&quot;</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;mydoc.docx&quot;</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">elements</span> <span class="o">=</span> <span class="n">partition</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.auto</span> <span class="kn">import</span> <span class="n">partition</span>
+
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example-docs/layout-parser-paper-fast.pdf&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
 <section id="partition-docx">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_docx</span></code><a class="headerlink" href="#partition-docx" title="Permalink to this heading"></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">partition_docx</span></code> partitioning brick pre-processes Microsoft Word documents
