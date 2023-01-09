@@ -1,6 +1,7 @@
 from enum import Enum
 import os
 from typing import IO, Optional
+import zipfile
 
 import magic
 
@@ -10,6 +11,16 @@ from unstructured.nlp.patterns import EMAIL_HEAD_RE
 
 DOCX_MIME_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 XLSX_MIME_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+
+# NOTE(robinson) - .docx files are actually zip file with a .docx extension. If the MIME type is
+# application/octet-stream, we check if it's a .docx file by looking for expected filenames
+# within the zip file.
+EXPECTED_DOCX_FILES = [
+    "docProps/app.xml",
+    "docProps/core.xml",
+    "word/document.xml",
+    "word/settings.xml",
+]
 
 
 class FileType(Enum):
@@ -75,11 +86,29 @@ def detect_filetype(
     elif mime_type == XLSX_MIME_TYPE:
         return FileType.XLSX
 
-    else:
-        logger.warn(
-            f"MIME type was {mime_type}. This file type is not currently supported in unstructured."
-        )
-        return None
+    elif mime_type == "application/octet-stream":
+        if file:
+            return _detect_filetype_from_octet_stream(file=file)
+
+    logger.warn(
+        f"MIME type was {mime_type}. This file type is not currently supported in unstructured."
+    )
+    return None
+
+
+def _detect_filetype_from_octet_stream(file: IO) -> Optional[FileType]:
+    """Detects the filetype, given a file with an application/octet-stream MIME type."""
+    file.seek(0)
+    if zipfile.is_zipfile(file):
+        file.seek(0)
+        archive = zipfile.ZipFile(file)
+
+        archive_filenames = [f.filename for f in archive.filelist]
+        if all([f in archive_filenames for f in EXPECTED_DOCX_FILES]):
+            return FileType.DOCX
+
+    logger.warning("Could not detect the filetype from application/octet-strem MIME type.")
+    return None
 
 
 def _check_eml_from_buffer(file: IO) -> bool:
