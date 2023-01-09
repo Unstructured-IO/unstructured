@@ -1,7 +1,8 @@
 import email
 import sys
+import re
 from email.message import Message
-from typing import Dict, IO, List, Optional
+from typing import Dict, IO, List, Optional, Tuple
 
 if sys.version_info < (3, 8):
     from typing_extensions import Final
@@ -9,11 +10,77 @@ else:
     from typing import Final
 
 from unstructured.cleaners.core import replace_mime_encodings, clean_extra_whitespace
+from unstructured.cleaners.extract import (
+    extract_ip_address,
+    extract_ip_address_name,
+    extract_mapi_id,
+    extract_datetimetz,
+    extract_email_address,
+)
+from unstructured.documents.email_elements import (
+    Recipient,
+    Sender,
+    Subject,
+    ReceivedInfo,
+    MetaData,
+)
 from unstructured.documents.elements import Element, Text
 from unstructured.partition.html import partition_html
+from unstructured.partition.text import split_by_paragraph, partition_text
 
 
-VALID_CONTENT_SOURCES: Final[List[str]] = ["text/html"]
+VALID_CONTENT_SOURCES: Final[List[str]] = ["text/html", "text/plain"]
+
+
+def _parse_received_data(data: str) -> List[Element]:
+
+    ip_address_names = extract_ip_address_name(data)
+    ip_addresses = extract_ip_address(data)
+    mapi_id = extract_mapi_id(data)
+    datetimetz = extract_datetimetz(data)
+
+    elements: List[Element] = list()
+    if ip_address_names and ip_addresses:
+        for name, ip in zip(ip_address_names, ip_addresses):
+            elements.append(ReceivedInfo(name=name, text=ip))
+    if mapi_id:
+        elements.append(ReceivedInfo(name="mapi_id", text=mapi_id[0]))
+    if datetimetz:
+        elements.append(
+            ReceivedInfo(name="received_datetimetz", text=str(datetimetz)).set_datestamp(
+                datestamp=datetimetz
+            )
+        )
+
+    return elements
+
+
+def _parse_email_address(data: str) -> Tuple[str, str]:
+    email_address = extract_email_address(data)
+
+    PATTERN = "<[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+>"  # noqa: W605 Note(harrell)
+    name = re.split(PATTERN, data.lower())[0].title().strip()
+
+    return name, email_address[0]
+
+
+def partition_email_header(msg: Message) -> List[Element]:
+    elements: List[Element] = list()
+    for item in msg.raw_items():
+        if item[0] == "To":
+            text = _parse_email_address(item[1])
+            elements.append(Recipient(name=text[0], text=text[1]))
+        elif item[0] == "From":
+            text = _parse_email_address(item[1])
+            elements.append(Sender(name=text[0], text=text[1]))
+        elif item[0] == "Subject":
+            elements.append(Subject(text=item[1]))
+        elif item[0] == "Received":
+            elements += _parse_received_data(item[1])
+        else:
+            elements.append(MetaData(name=item[0], text=item[1]))
+
+    return elements
 
 
 def extract_attachment_info(
@@ -40,7 +107,7 @@ def extract_attachment_info(
                 if output_dir:
                     filename = output_dir + "/" + attachment["filename"]
                     with open(filename, "wb") as f:
-                        # mypy wants to just us `w` when opening the file but this
+                        # Note(harrell) mypy wants to just us `w` when opening the file but this
                         # causes an error since the payloads are bytes not str
                         f.write(attachment["payload"])  # type: ignore
     return list_attachments
@@ -51,6 +118,7 @@ def partition_email(
     file: Optional[IO] = None,
     text: Optional[str] = None,
     content_source: str = "text/html",
+    include_headers: bool = False,
 ) -> List[Element]:
     """Partitions an .eml documents into its constituent elements.
     Parameters
@@ -61,6 +129,9 @@ def partition_email(
         A file-like object using "r" mode --> open(filename, "r").
     text
         The string representation of the .eml document.
+    content_source
+        default: "text/html"
+        other: "text/plain"
     """
     if content_source not in VALID_CONTENT_SOURCES:
         raise ValueError(
@@ -97,7 +168,7 @@ def partition_email(
 
     content = content_map.get(content_source, "")
     if not content:
-        raise ValueError("text/html content not found in email")
+        raise ValueError(f"{content_source} content not found in email")
 
     # NOTE(robinson) - In the .eml files, the HTML content gets stored in a format that
     # looks like the following, resulting in extraneous "=" chracters in the output if
@@ -106,11 +177,19 @@ def partition_email(
     #    <li>Item 1</li>=
     #    <li>Item 2<li>=
     # </ul>
-    content = "".join(content.split("=\n"))
+    list_content = split_by_paragraph(content)
 
-    elements = partition_html(text=content)
-    for element in elements:
-        if isinstance(element, Text):
-            element.apply(replace_mime_encodings)
+    if content_source == "text/html":
+        content = "".join(list_content)
+        elements = partition_html(text=content)
+        for element in elements:
+            if isinstance(element, Text):
+                element.apply(replace_mime_encodings)
+    elif content_source == "text/plain":
+        elements = partition_text(text=content)
 
-    return elements
+    header: List[Element] = list()
+    if include_headers:
+        header = partition_email_header(msg)
+    all_elements = header + elements
+    return all_elements
