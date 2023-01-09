@@ -12,14 +12,19 @@ from unstructured.nlp.patterns import EMAIL_HEAD_RE
 DOCX_MIME_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 XLSX_MIME_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
-# NOTE(robinson) - .docx files are actually zip file with a .docx extension. If the MIME type is
-# application/octet-stream, we check if it's a .docx file by looking for expected filenames
-# within the zip file.
+# NOTE(robinson) - .docx.xlsx files are actually zip file with a .docx/.xslx extension.
+# If the MIME type is application/octet-stream, we check if it's a .docx/.xlsx file by
+# looking for expected filenames within the zip file.
 EXPECTED_DOCX_FILES = [
     "docProps/app.xml",
     "docProps/core.xml",
     "word/document.xml",
-    "word/settings.xml",
+]
+
+EXPECTED_XLSX_FILES = [
+    "docProps/app.xml",
+    "docProps/core.xml",
+    "xl/workbook.xml",
 ]
 
 
@@ -106,6 +111,8 @@ def _detect_filetype_from_octet_stream(file: IO) -> Optional[FileType]:
         archive_filenames = [f.filename for f in archive.filelist]
         if all([f in archive_filenames for f in EXPECTED_DOCX_FILES]):
             return FileType.DOCX
+        elif all([f in archive_filenames for f in EXPECTED_XLSX_FILES]):
+            return FileType.XLSX
 
     logger.warning("Could not detect the filetype from application/octet-strem MIME type.")
     return None
