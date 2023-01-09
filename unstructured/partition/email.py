@@ -200,16 +200,12 @@ def partition_email(
     elif content_source == "text/plain":
         elements = partition_text(text=content)
 
-<<<<<<< HEAD
         indices = has_embedded_image(element)
         if isinstance(element, NarrativeText) and indices:
             elements.append(find_embedded_image(element, indices))
 
-    return elements
-=======
     header: List[Element] = list()
     if include_headers:
         header = partition_email_header(msg)
     all_elements = header + elements
     return all_elements
->>>>>>> d7a00046a91a0d0afe081c47c58836e985c164b6
