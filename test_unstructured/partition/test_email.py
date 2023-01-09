@@ -68,6 +68,9 @@ def test_partition_email_from_file_rb():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
     with open(filename, "rb") as f:
         elements = partition_email(file=f)
+    assert len(elements) > 0
+    assert elements == EXPECTED_OUTPUT
+
 
 def test_partition_email_from_text_file():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.txt")
