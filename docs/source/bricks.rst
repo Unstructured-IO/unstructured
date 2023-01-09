@@ -14,6 +14,40 @@ The partitioning bricks in ``unstructured`` differentiate between different sect
 of text in a document. For example, the partitioning bricks can help distinguish between
 titles, narrative text, and tables.
 
+``partition``
+--------------
+
+The ``partition`` brick is the simplest way to partition a document in ``unstructured``.
+If you call the ``partition`` function, ``unstructured`` will attempt to detect the
+file type and route it to the appropriate partitioning brick. All partitioning bricks
+called within ``partition`` are called using the defualt kwargs. Use the document-type
+specific bricks if you need to apply non-default settings.
+
+
+.. code:: python
+
+  import docx
+
+  from unstructured.partition.auto import partition
+
+  document = docx.Document()
+  document.add_paragraph("Important Analysis", style="Heading 1")
+  document.add_paragraph("Here is my first thought.", style="Body Text")
+  document.add_paragraph("Here is my second thought.", style="Normal")
+  document.save("mydoc.docx")
+
+  elements = partition(filename="mydoc.docx")
+
+  with open("mydoc.docx", "rb") as f:
+      elements = partition(file=f)
+
+
+.. code:: python
+
+  from unstructured.partition.auto import partition
+
+  elements = partition(filename="example-docs/layout-parser-paper-fast.pdf")
+
 
 ``partition_docx``
 ------------------

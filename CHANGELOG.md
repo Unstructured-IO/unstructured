@@ -1,5 +1,9 @@
-## 0.3.6-dev2
+## 0.4.0-dev0
 
+* Added generic `partition` brick that detects the file type and routes a file to the appropriate
+  partitioning brick.
+* Added a file type detection module.
+* Updated `partition_html` and `partition_eml` to support file-like objects in 'rb' mode.
 * Cleaning brick for removing ordered bullets `clean_ordered_bullets`.
 * Extract brick method for ordered bullets `extract_ordered_bullets`.
 * Test for `clean_ordered_bullets`.
