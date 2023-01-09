@@ -97,7 +97,7 @@ jobs:
       run: |
         source .venv/bin/activate
         make install-nltk-models
-        sudo apt-get install -y libmagic-dev poppler-utils python-poppler
+        sudo apt-get install -y libmagic-dev poppler-utils
         make test
         make check-coverage
 
