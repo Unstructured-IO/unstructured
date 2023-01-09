@@ -70,12 +70,14 @@ def extract_ip_address_name(text: str) -> List[str]:
 
 
 def extract_mapi_id(text: str) -> List[str]:
-    return re.findall(MAPI_ID_PATTERN, text)
+    mapi_ids = re.findall(MAPI_ID_PATTERN, text)
+    mapi_ids = [mid.replace(";","") for mid in mapi_ids]
+    return mapi_ids
 
 
 def extract_datetimetz(text: str) -> datetime.datetime:
     date_string = re.findall(EMAIL_DATETIMETZ_PATTERN, text)
-    return datetime.datetime.strptime(date_string[0], "%d/%b/%Y:%H:%M:%S %z")
+    return datetime.datetime.strptime(date_string[0], "%a, %d %b %Y %H:%M:%S %z")
 
 
 def extract_us_phone_number(text: str):

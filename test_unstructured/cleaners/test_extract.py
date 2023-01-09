@@ -47,12 +47,12 @@ def test_extract_ip_address_name():
     ]
 
 
-def extract_mapi_id():
+def test_extract_mapi_id():
     assert extract.extract_mapi_id(EMAIL_META_DATA_INPUT) == ["32.88.5467.123"]
 
 
-def extract_datetimetz():
-    assert extract.extract_datetimetx(EMAIL_META_DATA_INPUT) == datetime.datetime(
+def test_extract_datetimetz():
+    assert extract.extract_datetimetz(EMAIL_META_DATA_INPUT) == datetime.datetime(
         2021, 3, 26, 11, 4, 9, tzinfo=datetime.timezone(datetime.timedelta(seconds=43200))
     )
 
