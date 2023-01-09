@@ -1,5 +1,4 @@
 import email
-import re
 import sys
 import re
 from email.message import Message
