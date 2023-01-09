@@ -92,13 +92,14 @@ jobs:
       run: |
         python${{ env.PYTHON_VERSION }} -m venv .venv
         source .venv/bin/activate
-        sudo apt-get install -y libmagic-dev
-        sudo apt-get install python-poppler
         make install-ci
     - name: Test
       run: |
         source .venv/bin/activate
         make install-nltk-models
+        sudo apt-get install -y libmagic-dev
+        sudo apt-get install -y poppler-utils
+        sudo apt-get install python-poppler
         make test
         make check-coverage
 
