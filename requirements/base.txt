@@ -36,7 +36,7 @@ httpx==0.15.5
     ***REMOVED*** via argilla
 nltk==3.7
     ***REMOVED*** via unstructured (setup.py)
-***REMOVED***
+numpy==1.24.1
     ***REMOVED*** via
     ***REMOVED***   argilla
     ***REMOVED***   pandas
