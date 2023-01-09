@@ -55,7 +55,7 @@ def test_detect_filetype_from_file(file, expected):
 
 
 def test_detect_docx_filetype_application_octet_stream(monkeypatch):
-    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "application/octet-stream")
+    monkeypatch.setattr(magic, "from_buffer", lambda *args, **kwargs: "application/octet-stream")
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.docx")
     with open(filename, "rb") as f:
         filetype = detect_filetype(file=f)
@@ -63,11 +63,19 @@ def test_detect_docx_filetype_application_octet_stream(monkeypatch):
 
 
 def test_detect_xlsx_filetype_application_octet_stream(monkeypatch):
-    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "application/octet-stream")
+    monkeypatch.setattr(magic, "from_buffer", lambda *args, **kwargs: "application/octet-stream")
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-excel.xlsx")
     with open(filename, "rb") as f:
         filetype = detect_filetype(file=f)
     assert filetype == FileType.XLSX
+
+
+def test_detect_application_octet_stream_returns_none_with_unknown(monkeypatch):
+    monkeypatch.setattr(magic, "from_buffer", lambda *args, **kwargs: "application/octet-stream")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
+    with open(filename, "rb") as f:
+        filetype = detect_filetype(file=f)
+    assert filetype is None
 
 
 def test_detect_docx_filetype_word_mime_type(monkeypatch):
