@@ -62,11 +62,25 @@ def test_detect_docx_filetype_application_octet_stream(monkeypatch):
     assert filetype == FileType.DOCX
 
 
+def test_detect_docx_filetype_application_octet_stream_with_filename(monkeypatch):
+    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "application/octet-stream")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.docx")
+    filetype = detect_filetype(filename=filename)
+    assert filetype == FileType.DOCX
+
+
 def test_detect_xlsx_filetype_application_octet_stream(monkeypatch):
     monkeypatch.setattr(magic, "from_buffer", lambda *args, **kwargs: "application/octet-stream")
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-excel.xlsx")
     with open(filename, "rb") as f:
         filetype = detect_filetype(file=f)
+    assert filetype == FileType.XLSX
+
+
+def test_detect_xlsx_filetype_application_octet_stream_with_filename(monkeypatch):
+    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "application/octet-stream")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-excel.xlsx")
+    filetype = detect_filetype(filename=filename)
     assert filetype == FileType.XLSX
 
 

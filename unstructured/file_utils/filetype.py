@@ -92,8 +92,12 @@ def detect_filetype(
         return FileType.XLSX
 
     elif mime_type == "application/octet-stream":
-        if file:
+        if file and not extension:
             return _detect_filetype_from_octet_stream(file=file)
+        elif extension == ".docx":
+            return FileType.DOCX
+        elif extension == ".xlsx":
+            return FileType.XLSX
 
     logger.warn(
         f"MIME type was {mime_type}. This file type is not currently supported in unstructured."
