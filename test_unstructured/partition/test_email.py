@@ -3,7 +3,7 @@ import os
 import pathlib
 import pytest
 
-from unstructured.documents.elements import NarrativeText, Title, ListItem
+from unstructured.documents.elements import NarrativeText, Title, ListItem, Image
 from unstructured.documents.email_elements import (
     MetaData,
     Recipient,
@@ -23,6 +23,15 @@ DIRECTORY = pathlib.Path(__file__).parent.resolve()
 EXPECTED_OUTPUT = [
     NarrativeText(text="This is a test email to use for unit tests."),
     Title(text="Important points:"),
+    ListItem(text="Roses are red"),
+    ListItem(text="Violets are blue"),
+]
+
+IMAGE_EXPECTED_OUTPUT = [
+    NarrativeText(text="This is a test email to use for unit tests."),
+    Title(text="Important points:"),
+    NarrativeText(text="hello this is our logo."),
+    Image(text="unstructured_logo.png"),
     ListItem(text="Roses are red"),
     ListItem(text="Violets are blue"),
 ]
@@ -95,6 +104,13 @@ def test_partition_email_from_text():
     elements = partition_email(text=text)
     assert len(elements) > 0
     assert elements == EXPECTED_OUTPUT
+
+
+def test_partition_email_from_filename_with_embedded_image():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email-image-embedded.eml")
+    elements = partition_email(filename=filename, content_source="text/plain")
+    assert len(elements) > 0
+    assert elements == IMAGE_EXPECTED_OUTPUT
 
 
 def test_partition_email_header():

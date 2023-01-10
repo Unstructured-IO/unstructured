@@ -2,7 +2,7 @@ import email
 import sys
 import re
 from email.message import Message
-from typing import Dict, IO, List, Optional, Tuple
+from typing import Dict, IO, List, Optional, Tuple, Union
 
 if sys.version_info < (3, 8):
     from typing_extensions import Final
@@ -24,7 +24,7 @@ from unstructured.documents.email_elements import (
     ReceivedInfo,
     MetaData,
 )
-from unstructured.documents.elements import Element, Text
+from unstructured.documents.elements import Element, Text, Image, NarrativeText, Title
 from unstructured.partition.html import partition_html
 from unstructured.partition.text import split_by_paragraph, partition_text
 
@@ -113,6 +113,25 @@ def extract_attachment_info(
     return list_attachments
 
 
+def has_embedded_image(element):
+
+    PATTERN = re.compile("\[image: .+\]")  # noqa: W605 NOTE(harrell)
+    return PATTERN.search(element.text)
+
+
+def find_embedded_image(
+    element: Union[NarrativeText, Title], indices: re.Match
+) -> Tuple[Element, Element]:
+
+    start, end = indices.start(), indices.end()
+
+    image_raw_info = element.text[start:end]
+    image_info = clean_extra_whitespace(image_raw_info.split(":")[1])
+    element.text = element.text.replace("[image: " + image_info[:-1] + "]", "")
+
+    return Image(text=image_info[:-1]), element
+
+
 def partition_email(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
@@ -171,7 +190,7 @@ def partition_email(
         raise ValueError(f"{content_source} content not found in email")
 
     # NOTE(robinson) - In the .eml files, the HTML content gets stored in a format that
-    # looks like the following, resulting in extraneous "=" chracters in the output if
+    # looks like the following, resulting in extraneous "=" characters in the output if
     # you don't clean it up
     # <ul> =
     #    <li>Item 1</li>=
@@ -187,6 +206,13 @@ def partition_email(
                 element.apply(replace_mime_encodings)
     elif content_source == "text/plain":
         elements = partition_text(text=content)
+
+    for idx, element in enumerate(elements):
+        indices = has_embedded_image(element)
+        if (isinstance(element, NarrativeText) or isinstance(element, Title)) and indices:
+            image_info, clean_element = find_embedded_image(element, indices)
+            elements[idx] = clean_element
+            elements.insert(idx + 1, image_info)
 
     header: List[Element] = list()
     if include_headers:
