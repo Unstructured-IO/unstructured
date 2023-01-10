@@ -270,3 +270,39 @@ You can also pass in a file-like object with:
 
 To extract metadata from ``.docx`` or ``.xlsx``, use ``get_docx_metadata`` and
 ``get_xlsx_metadata``. The interfaces are the same as ``get_jpg_metadata``.
+
+
+###########################
+Exploring Source Documents
+###########################
+
+The ``unstructured`` library includes tools for helping you explore source documents.
+To get a summary of the size and type of documents in a directory, you can
+use the ``get_directory_file_info`` function, as show below. The function will
+recursively explore files in subdirectories.
+
+.. code:: python
+
+    from unstructured.file_utils.exploration import get_directory_file_info
+
+    file_info = get_directory_file_info("example-docs")
+    file_info.filetype.value_counts()
+
+
+The output (``file_info``) is a ``pandas`` ``DataFrame``.
+The result should look similar to:
+
+.. code:: python
+
+    FileType.EML     4
+    FileType.TXT     3
+    FileType.HTML    2
+    FileType.XML     2
+    FileType.PDF     2
+    FileType.DOCX    1
+    FileType.PPTX    1
+    FileType.XLSX    1
+    FileType.JPG     1
+    Name: filetype, dtype: int64
+
+
