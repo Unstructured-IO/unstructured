@@ -6,7 +6,9 @@ import pandas as pd
 from unstructured.file_utils.filetype import detect_filetype
 
 
-def files_to_dataframe(directory: str) -> pd.DataFrame:
+def get_directory_file_info(directory: str) -> pd.DataFrame:
+    """Recursively walks a directory and extracts key file information to support initial
+    exploration of text data sets. Returns a pandas DataFrame."""
     data: Dict[str, List[Any]] = {
         "filename": [],
         "path": [],

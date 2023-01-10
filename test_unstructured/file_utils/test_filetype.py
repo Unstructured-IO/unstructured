@@ -130,6 +130,16 @@ def test_detect_filetype_returns_none_with_unknown(monkeypatch):
     assert detect_filetype(filename="made_up.fake") == FileType.UNK
 
 
+def test_detect_filetype_detects_png(monkeypatch):
+    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "image/png")
+    assert detect_filetype(filename="made_up.png") == FileType.PNG
+
+
+def test_detect_filetype_detects_unknown_text_types_as_txt(monkeypatch):
+    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "text/new-type")
+    assert detect_filetype(filename="made_up.png") == FileType.TXT
+
+
 def test_detect_filetype_raises_with_both_specified():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
     with open(filename, "rb") as f:
