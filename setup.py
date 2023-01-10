@@ -55,6 +55,7 @@ setup(
         "pandas",
         "pillow",
         "python-docx",
+        "python-pptx",
         "python-magic",
         # NOTE(robinson) - The following dependencies are pinned
         # to address security scans
