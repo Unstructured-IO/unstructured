@@ -13,6 +13,7 @@
 * Added new functions to extract header information `parse_received_data` and `partition_header`
 * Added new function to parse plain text files `partition_text`
 * Added new cleaners functions `extract_ip_address`, `extract_ip_address_name`, `extract_mapi_id`, `extract_datetimetz`
+* Add new `Image` element and function to find embedded images `find_embedded_images`
 
 ***REMOVED******REMOVED*** 0.3.5
 
