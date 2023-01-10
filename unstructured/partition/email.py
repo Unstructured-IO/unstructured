@@ -2,7 +2,7 @@ import email
 import sys
 import re
 from email.message import Message
-from typing import Dict, IO, List, Optional, Tuple
+from typing import Dict, IO, List, Optional, Tuple, Union
 
 if sys.version_info < (3, 8):
     from typing_extensions import Final
@@ -119,14 +119,17 @@ def has_embedded_image(element):
     return PATTERN.search(element.text)
 
 
-def find_embedded_image(element: NarrativeText, indices: re.Match) -> Element:
+def find_embedded_image(
+    element: Union[NarrativeText, Title], indices: re.Match
+) -> Tuple[Element, Element]:
 
     start, end = indices.start(), indices.end()
 
     image_raw_info = element.text[start:end]
     image_info = clean_extra_whitespace(image_raw_info.split(":")[1])
+    element.text = element.text.replace("[image: " + image_info + "]", "")
 
-    return Image(text=image_info[:-1])
+    return Image(text=image_info[:-1]), element
 
 
 def partition_email(
@@ -207,9 +210,9 @@ def partition_email(
     for idx, element in enumerate(elements):
         indices = has_embedded_image(element)
         if (isinstance(element, NarrativeText) or isinstance(element, Title)) and indices:
-            image_info = find_embedded_image(element, indices)
+            image_info, clean_element = find_embedded_image(element, indices)
+            elements[idx] = clean_element
             elements.insert(idx + 1, image_info)
-            element.text = element.text.replace("[image: " + image_info.text + "]", "")
 
     header: List[Element] = list()
     if include_headers:
