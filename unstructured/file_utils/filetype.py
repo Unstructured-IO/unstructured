@@ -11,6 +11,7 @@ from unstructured.nlp.patterns import EMAIL_HEAD_RE
 
 DOCX_MIME_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 XLSX_MIME_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+PPTX_MIME_TYPE = "application/vnd.openxmlformats-officedocument.presentationml.presentation"
 
 # NOTE(robinson) - .docx.xlsx files are actually zip file with a .docx/.xslx extension.
 # If the MIME type is application/octet-stream, we check if it's a .docx/.xlsx file by
@@ -27,8 +28,15 @@ EXPECTED_XLSX_FILES = [
     "xl/workbook.xml",
 ]
 
+EXPECTED_PPTX_FILES = [
+    "docProps/app.xml",
+    "docProps/core.xml",
+    "ppt/presentation.xml",
+]
+
 
 class FileType(Enum):
+    UNK = 0
     PDF = 1
     DOCX = 2
     JPG = 3
@@ -37,6 +45,7 @@ class FileType(Enum):
     XML = 6
     HTML = 7
     XLSX = 8
+    PPTX = 9
 
 
 def detect_filetype(
@@ -91,6 +100,9 @@ def detect_filetype(
     elif mime_type == XLSX_MIME_TYPE:
         return FileType.XLSX
 
+    elif mime_type == PPTX_MIME_TYPE:
+        return FileType.PPTX
+
     elif mime_type == "application/octet-stream":
         if file and not extension:
             return _detect_filetype_from_octet_stream(file=file)
@@ -98,11 +110,13 @@ def detect_filetype(
             return FileType.DOCX
         elif extension == ".xlsx":
             return FileType.XLSX
+        elif extension == ".pptx":
+            return FileType.PPTX
 
     logger.warn(
         f"MIME type was {mime_type}. This file type is not currently supported in unstructured."
     )
-    return None
+    return FileType.UNK
 
 
 def _detect_filetype_from_octet_stream(file: IO) -> Optional[FileType]:
@@ -117,9 +131,11 @@ def _detect_filetype_from_octet_stream(file: IO) -> Optional[FileType]:
             return FileType.DOCX
         elif all([f in archive_filenames for f in EXPECTED_XLSX_FILES]):
             return FileType.XLSX
+        elif all([f in archive_filenames for f in EXPECTED_PPTX_FILES]):
+            return FileType.PPTX
 
     logger.warning("Could not detect the filetype from application/octet-strem MIME type.")
-    return None
+    return FileType.UNK
 
 
 def _check_eml_from_buffer(file: IO) -> bool:

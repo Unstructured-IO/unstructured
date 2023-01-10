@@ -27,6 +27,7 @@ EXAMPLE_DOCS_DIRECTORY = os.path.join(FILE_DIRECTORY, "..", "..", "example-docs"
         ("example-10k.html", FileType.HTML),
         ("fake-html.html", FileType.HTML),
         ("fake-excel.xlsx", FileType.XLSX),
+        ("fake-power-point.pptx", FileType.PPTX),
     ],
 )
 def test_detect_filetype_from_filename(file, expected):
@@ -46,6 +47,7 @@ def test_detect_filetype_from_filename(file, expected):
         ("example-10k.html", FileType.XML),
         ("fake-html.html", FileType.HTML),
         ("fake-excel.xlsx", FileType.XLSX),
+        ("fake-power-point.pptx", FileType.PPTX),
     ],
 )
 def test_detect_filetype_from_file(file, expected):
@@ -84,12 +86,27 @@ def test_detect_xlsx_filetype_application_octet_stream_with_filename(monkeypatch
     assert filetype == FileType.XLSX
 
 
+def test_detect_pptx_filetype_application_octet_stream(monkeypatch):
+    monkeypatch.setattr(magic, "from_buffer", lambda *args, **kwargs: "application/octet-stream")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
+    with open(filename, "rb") as f:
+        filetype = detect_filetype(file=f)
+    assert filetype == FileType.PPTX
+
+
+def test_detect_pptx_filetype_application_octet_stream_with_filename(monkeypatch):
+    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "application/octet-stream")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
+    filetype = detect_filetype(filename=filename)
+    assert filetype == FileType.PPTX
+
+
 def test_detect_application_octet_stream_returns_none_with_unknown(monkeypatch):
     monkeypatch.setattr(magic, "from_buffer", lambda *args, **kwargs: "application/octet-stream")
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
     with open(filename, "rb") as f:
         filetype = detect_filetype(file=f)
-    assert filetype is None
+    assert filetype == FileType.UNK
 
 
 def test_detect_docx_filetype_word_mime_type(monkeypatch):
@@ -110,7 +127,7 @@ def test_detect_xlsx_filetype_word_mime_type(monkeypatch):
 
 def test_detect_filetype_returns_none_with_unknown(monkeypatch):
     monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "application/fake")
-    assert detect_filetype(filename="made_up.fake") is None
+    assert detect_filetype(filename="made_up.fake") == FileType.UNK
 
 
 def test_detect_filetype_raises_with_both_specified():
