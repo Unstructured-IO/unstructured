@@ -127,7 +127,7 @@ def find_embedded_image(
 
     image_raw_info = element.text[start:end]
     image_info = clean_extra_whitespace(image_raw_info.split(":")[1])
-    element.text = element.text.replace("[image: " + image_info + "]", "")
+    element.text = element.text.replace("[image: " + image_info[:-1] + "]", "")
 
     return Image(text=image_info[:-1]), element
 
