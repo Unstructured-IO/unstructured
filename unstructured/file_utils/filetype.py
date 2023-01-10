@@ -46,21 +46,33 @@ EXPECTED_PPTX_FILES = [
 
 class FileType(Enum):
     UNK = 0
-    PDF = 1
-    DOCX = 2
-    JPG = 3
-    TXT = 4
-    EML = 5
-    XML = 6
-    HTML = 7
-    XLSX = 8
-    PPTX = 9
-    PNG = 10
-    DOC = 11
-    ZIP = 12
-    XLS = 13
+
+    # MS Word Types
+    DOC = 10
+    DOCX = 11
+    XLS = 12
+    XLSX = 13
     PPT = 14
-    RTF = 15
+    PPTX = 15
+
+    # Adobe Types
+    PDF = 20
+
+    # Image Types
+    JPG = 30
+    PNG = 31
+
+    # Plain Text Types
+    EML = 40
+    RTF = 41
+    TXT = 42
+
+    # Markup Types
+    HTML = 50
+    XML = 51
+
+    # Compressed Types
+    ZIP = 60
 
 
 EXT_TO_FILETYPE = {
