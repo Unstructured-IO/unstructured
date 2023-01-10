@@ -151,12 +151,17 @@ def detect_filetype(
             return EXT_TO_FILETYPE.get(extension, FileType.UNK)
 
     elif mime_type == "application/zip":
+        filetype = FileType.UNK
         if file and not extension:
             filetype = _detect_filetype_from_octet_stream(file=file)
-            if filetype == FileType.UNK:
-                return FileType.ZIP
+        elif filename is not None:
+            with open(filename, "rb") as f:
+                filetype = _detect_filetype_from_octet_stream(file=f)
+
+        if filetype == FileType.UNK:
+            return FileType.ZIP
         else:
-            return EXT_TO_FILETYPE.get(extension, FileType.UNK)
+            return filetype
 
     logger.warn(
         f"MIME type was {mime_type}. This file type is not currently supported in unstructured."
@@ -164,7 +169,7 @@ def detect_filetype(
     return FileType.UNK
 
 
-def _detect_filetype_from_octet_stream(file: IO) -> Optional[FileType]:
+def _detect_filetype_from_octet_stream(file: IO) -> FileType:
     """Detects the filetype, given a file with an application/octet-stream MIME type."""
     file.seek(0)
     if zipfile.is_zipfile(file):

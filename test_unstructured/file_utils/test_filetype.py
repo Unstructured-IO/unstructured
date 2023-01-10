@@ -1,6 +1,7 @@
 import os
 import pathlib
 import pytest
+import zipfile
 
 import magic
 
@@ -71,6 +72,22 @@ def test_detect_docx_filetype_application_octet_stream_with_filename(monkeypatch
     assert filetype == FileType.DOCX
 
 
+def test_detect_docx_filetype_application_zip(monkeypatch):
+    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "application/zip")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.docx")
+    filetype = detect_filetype(filename=filename)
+    assert filetype == FileType.DOCX
+
+
+def test_detect_application_zip_files(monkeypatch, tmpdir):
+    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "application/zip")
+    filename = os.path.join(tmpdir, "test.zip")
+    zf = zipfile.ZipFile(filename, "w")
+    zf.close()
+    filetype = detect_filetype(filename=filename)
+    assert filetype == FileType.ZIP
+
+
 def test_detect_xlsx_filetype_application_octet_stream(monkeypatch):
     monkeypatch.setattr(magic, "from_buffer", lambda *args, **kwargs: "application/octet-stream")
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-excel.xlsx")
@@ -107,6 +124,14 @@ def test_detect_application_octet_stream_returns_none_with_unknown(monkeypatch):
     with open(filename, "rb") as f:
         filetype = detect_filetype(file=f)
     assert filetype == FileType.UNK
+
+
+def test_detect_application_zip_returns_zip_with_unknown(monkeypatch):
+    monkeypatch.setattr(magic, "from_buffer", lambda *args, **kwargs: "application/zip")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
+    with open(filename, "rb") as f:
+        filetype = detect_filetype(file=f)
+    assert filetype == FileType.ZIP
 
 
 def test_detect_docx_filetype_word_mime_type(monkeypatch):
