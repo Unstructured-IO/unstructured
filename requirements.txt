@@ -18,7 +18,7 @@ h11==0.9.0
     # via httpcore
 httpcore==0.11.1
     # via httpx
-httpx==0.15.5
+httpx==0.23.0
     # via argilla
 idna==3.4
     # via rfc3986
