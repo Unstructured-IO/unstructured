@@ -9,9 +9,18 @@ from unstructured.logger import logger
 from unstructured.nlp.patterns import EMAIL_HEAD_RE
 
 
-DOCX_MIME_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-XLSX_MIME_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-PPTX_MIME_TYPE = "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+DOCX_MIME_TYPES = [
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/msword",
+]
+XLSX_MIME_TYPES = [
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "application/vnd.ms-excel",
+]
+PPTX_MIME_TYPES = [
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    "application/vnd.ms-powerpoint",
+]
 
 # NOTE(robinson) - .docx.xlsx files are actually zip file with a .docx/.xslx extension.
 # If the MIME type is application/octet-stream, we check if it's a .docx/.xlsx file by
@@ -46,6 +55,31 @@ class FileType(Enum):
     HTML = 7
     XLSX = 8
     PPTX = 9
+    PNG = 10
+    DOC = 11
+    ZIP = 12
+    XLS = 13
+    PPT = 14
+    RTF = 15
+
+
+EXT_TO_FILETYPE = {
+    ".pdf": FileType.PDF,
+    ".docx": FileType.DOCX,
+    ".jpg": FileType.JPG,
+    ".txt": FileType.TXT,
+    ".eml": FileType.EML,
+    ".xml": FileType.XML,
+    ".html": FileType.HTML,
+    ".xlsx": FileType.XLSX,
+    ".pptx": FileType.PPTX,
+    ".png": FileType.PNG,
+    ".doc": FileType.DOC,
+    ".zip": FileType.ZIP,
+    ".xls": FileType.XLS,
+    ".ppt": FileType.PPT,
+    ".rtf": FileType.RTF,
+}
 
 
 def detect_filetype(
@@ -58,6 +92,7 @@ def detect_filetype(
 
     if filename:
         _, extension = os.path.splitext(filename)
+        extension = extension.lower()
         mime_type = magic.from_file(filename, mime=True)
     elif file is not None:
         extension = None
@@ -71,11 +106,14 @@ def detect_filetype(
     if mime_type == "application/pdf":
         return FileType.PDF
 
-    elif mime_type == DOCX_MIME_TYPE:
+    elif mime_type in DOCX_MIME_TYPES:
         return FileType.DOCX
 
     elif mime_type == "image/jpeg":
         return FileType.JPG
+
+    elif mime_type == "image/png":
+        return FileType.PNG
 
     elif mime_type == "text/plain":
         if extension and extension == ".eml":
@@ -97,21 +135,28 @@ def detect_filetype(
     elif mime_type == "text/html":
         return FileType.HTML
 
-    elif mime_type == XLSX_MIME_TYPE:
+    elif mime_type.startswith("text"):
+        return FileType.TXT
+
+    elif mime_type in XLSX_MIME_TYPES:
         return FileType.XLSX
 
-    elif mime_type == PPTX_MIME_TYPE:
+    elif mime_type in PPTX_MIME_TYPES:
         return FileType.PPTX
 
     elif mime_type == "application/octet-stream":
         if file and not extension:
             return _detect_filetype_from_octet_stream(file=file)
-        elif extension == ".docx":
-            return FileType.DOCX
-        elif extension == ".xlsx":
-            return FileType.XLSX
-        elif extension == ".pptx":
-            return FileType.PPTX
+        else:
+            return EXT_TO_FILETYPE.get(extension, FileType.UNK)
+
+    elif mime_type == "application/zip":
+        if file and not extension:
+            filetype = _detect_filetype_from_octet_stream(file=file)
+            if filetype == FileType.UNK:
+                return FileType.ZIP
+        else:
+            return EXT_TO_FILETYPE.get(extension, FileType.UNK)
 
     logger.warn(
         f"MIME type was {mime_type}. This file type is not currently supported in unstructured."

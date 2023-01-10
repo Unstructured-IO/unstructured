@@ -7,8 +7,8 @@ import magic
 from unstructured.file_utils.filetype import (
     detect_filetype,
     FileType,
-    DOCX_MIME_TYPE,
-    XLSX_MIME_TYPE,
+    DOCX_MIME_TYPES,
+    XLSX_MIME_TYPES,
 )
 
 FILE_DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -110,7 +110,7 @@ def test_detect_application_octet_stream_returns_none_with_unknown(monkeypatch):
 
 
 def test_detect_docx_filetype_word_mime_type(monkeypatch):
-    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: DOCX_MIME_TYPE)
+    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: DOCX_MIME_TYPES[0])
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.docx")
     with open(filename, "rb") as f:
         filetype = detect_filetype(file=f)
@@ -118,7 +118,7 @@ def test_detect_docx_filetype_word_mime_type(monkeypatch):
 
 
 def test_detect_xlsx_filetype_word_mime_type(monkeypatch):
-    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: XLSX_MIME_TYPE)
+    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: XLSX_MIME_TYPES[0])
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-excel.xlsx")
     with open(filename, "rb") as f:
         filetype = detect_filetype(file=f)
