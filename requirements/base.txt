@@ -31,6 +31,7 @@ joblib==1.2.0
 lxml==4.9.2
     # via
     #   python-docx
+    #   python-pptx
     #   unstructured (setup.py)
 monotonic==1.6
     # via argilla
@@ -49,7 +50,9 @@ pandas==1.5.2
     #   argilla
     #   unstructured (setup.py)
 pillow==9.4.0
-    # via unstructured (setup.py)
+    # via
+    #   python-pptx
+    #   unstructured (setup.py)
 pydantic==1.10.4
     # via argilla
 python-dateutil==2.8.2
@@ -57,6 +60,8 @@ python-dateutil==2.8.2
 python-docx==0.8.11
     # via unstructured (setup.py)
 python-magic==0.4.27
+    # via unstructured (setup.py)
+python-pptx==0.6.21
     # via unstructured (setup.py)
 pytz==2022.7
     # via pandas
@@ -80,3 +85,5 @@ wrapt==1.13.3
     # via
     #   argilla
     #   deprecated
+xlsxwriter==3.0.6
+    # via python-pptx
