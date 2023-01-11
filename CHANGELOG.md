@@ -1,4 +1,4 @@
-## 0.4.0-dev0
+## 0.4.0
 
 * Added generic `partition` brick that detects the file type and routes a file to the appropriate
   partitioning brick.
@@ -14,6 +14,7 @@
 * Added new function to parse plain text files `partition_text`
 * Added new cleaners functions `extract_ip_address`, `extract_ip_address_name`, `extract_mapi_id`, `extract_datetimetz`
 * Add new `Image` element and function to find embedded images `find_embedded_images`
+* Added `get_directory_file_info` for summarizing information about source documents
 
 ## 0.3.5
 
