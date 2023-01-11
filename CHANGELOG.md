@@ -1,3 +1,7 @@
+## 0.4.1-dev0
+
+* Fix bug in `_parse_received_data`.
+
 ## 0.4.0
 
 * Added generic `partition` brick that detects the file type and routes a file to the appropriate
@@ -25,7 +29,7 @@
   elements
 * Add ability to extract document metadata from `.docx`, `.xlsx`, and `.jpg` files.
 * Helper functions for identifying and extracting phone numbers
-* Add new function `extract_attachment_info` that extracts and decode the attachment
+* Add new function `extract_attachment_info` that extracts and decodes the attachment
 of an email.
 * Staging brick to convert a list of `Element`s to a `pandas` dataframe.
 * Add plain text functionality to `partition_email`
