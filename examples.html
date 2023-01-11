@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Examples &mdash; unstructured 0.4.0-dev0 documentation</title>
+  <title>Examples &mdash; unstructured 0.4.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -51,6 +51,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#extracting-metadata-from-documents">Extracting Metadata from Documents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exploring-source-documents">Exploring Source Documents</a></li>
 </ul>
 </li>
 </ul>
@@ -300,6 +301,54 @@ Here is an example of how to use the metadata extraction functionality:</p>
 </div>
 <p>To extract metadata from <code class="docutils literal notranslate"><span class="pre">.docx</span></code> or <code class="docutils literal notranslate"><span class="pre">.xlsx</span></code>, use <code class="docutils literal notranslate"><span class="pre">get_docx_metadata</span></code> and
 <code class="docutils literal notranslate"><span class="pre">get_xlsx_metadata</span></code>. The interfaces are the same as <code class="docutils literal notranslate"><span class="pre">get_jpg_metadata</span></code>.</p>
+</section>
+<section id="exploring-source-documents">
+<h2>Exploring Source Documents<a class="headerlink" href="#exploring-source-documents" title="Permalink to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> library includes tools for helping you explore source documents.
+To get a summary of the size (in bytes) and type of documents in a directory, you can
+use the <code class="docutils literal notranslate"><span class="pre">get_directory_file_info</span></code> function, as show below. The function will
+recursively explore files in subdirectories.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.file_utils.exploration</span> <span class="kn">import</span> <span class="n">get_directory_file_info</span>
+
+<span class="n">file_info</span> <span class="o">=</span> <span class="n">get_directory_file_info</span><span class="p">(</span><span class="s2">&quot;example-docs&quot;</span><span class="p">)</span>
+<span class="n">file_info</span><span class="o">.</span><span class="n">filetype</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The output (<code class="docutils literal notranslate"><span class="pre">file_info</span></code>) is a <code class="docutils literal notranslate"><span class="pre">pandas</span></code> <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code>.
+The result should look similar to:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">FileType</span><span class="o">.</span><span class="n">EML</span>     <span class="mi">4</span>
+<span class="n">FileType</span><span class="o">.</span><span class="n">TXT</span>     <span class="mi">3</span>
+<span class="n">FileType</span><span class="o">.</span><span class="n">HTML</span>    <span class="mi">2</span>
+<span class="n">FileType</span><span class="o">.</span><span class="n">XML</span>     <span class="mi">2</span>
+<span class="n">FileType</span><span class="o">.</span><span class="n">PDF</span>     <span class="mi">2</span>
+<span class="n">FileType</span><span class="o">.</span><span class="n">DOCX</span>    <span class="mi">1</span>
+<span class="n">FileType</span><span class="o">.</span><span class="n">PPTX</span>    <span class="mi">1</span>
+<span class="n">FileType</span><span class="o">.</span><span class="n">XLSX</span>    <span class="mi">1</span>
+<span class="n">FileType</span><span class="o">.</span><span class="n">JPG</span>     <span class="mi">1</span>
+<span class="n">Name</span><span class="p">:</span> <span class="n">filetype</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">int64</span>
+</pre></div>
+</div>
+<p>You can also find the average file size by file type by using the following command</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.file_utils.exploration</span> <span class="kn">import</span> <span class="n">get_directory_file_info</span>
+
+<span class="n">file_info</span> <span class="o">=</span> <span class="n">get_directory_file_info</span><span class="p">(</span><span class="s2">&quot;example-docs&quot;</span><span class="p">)</span>
+<span class="n">file_info</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;filetype&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The output should look similar to the following:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>                   <span class="n">filesize</span>
+<span class="n">filetype</span>
+<span class="n">FileType</span><span class="o">.</span><span class="n">DOCX</span>  <span class="mf">3.660200e+04</span>
+<span class="n">FileType</span><span class="o">.</span><span class="n">EML</span>   <span class="mf">1.490885e+05</span>
+<span class="n">FileType</span><span class="o">.</span><span class="n">HTML</span>  <span class="mf">1.228404e+06</span>
+<span class="n">FileType</span><span class="o">.</span><span class="n">JPG</span>   <span class="mf">3.276400e+04</span>
+<span class="n">FileType</span><span class="o">.</span><span class="n">PDF</span>   <span class="mf">2.429245e+06</span>
+<span class="n">FileType</span><span class="o">.</span><span class="n">PPTX</span>  <span class="mf">2.832900e+04</span>
+<span class="n">FileType</span><span class="o">.</span><span class="n">TXT</span>   <span class="mf">6.113333e+02</span>
+<span class="n">FileType</span><span class="o">.</span><span class="n">XLSX</span>  <span class="mf">4.765000e+03</span>
+<span class="n">FileType</span><span class="o">.</span><span class="n">XML</span>   <span class="mf">7.135000e+02</span>
+</pre></div>
+</div>
 </section>
 </section>
 
