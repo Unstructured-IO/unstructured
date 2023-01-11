@@ -175,3 +175,7 @@ def test_detect_filetype_raises_with_both_specified():
 def test_detect_filetype_raises_with_none_specified():
     with pytest.raises(ValueError):
         detect_filetype()
+
+
+def test_filetype_order():
+    assert FileType.HTML < FileType.XML

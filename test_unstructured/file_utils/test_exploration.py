@@ -29,3 +29,6 @@ def test_get_directory_file_info(tmpdir):
     file_info = exploration.get_directory_file_info(file_info_test)
     assert isinstance(file_info, pd.DataFrame)
     assert set(file_info["filename"].to_list()) == {"filename1.txt", "filename2.txt"}
+
+    means = file_info.groupby("filetype").mean()
+    assert means.columns.to_list() == ["filesize"]

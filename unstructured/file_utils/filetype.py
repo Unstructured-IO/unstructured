@@ -74,6 +74,10 @@ class FileType(Enum):
     # Compressed Types
     ZIP = 60
 
+    # NOTE(robinson) - This is to support sorting for pandas groupby functions
+    def __lt__(self, other):
+        return self.name < other.name
+
 
 EXT_TO_FILETYPE = {
     ".pdf": FileType.PDF,
