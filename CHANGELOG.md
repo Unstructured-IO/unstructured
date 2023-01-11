@@ -1,3 +1,6 @@
+## 0.4.1-dev0
+* Added `partition_image` to process documents in an image format.
+
 ## 0.4.0
 
 * Added generic `partition` brick that detects the file type and routes a file to the appropriate
