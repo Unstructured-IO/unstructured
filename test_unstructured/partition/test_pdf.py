@@ -68,7 +68,7 @@ def test_partition_pdf_api(monkeypatch, filename="example-docs/layout-parser-pap
     monkeypatch.setattr(requests, "post", mock_successful_post)
     monkeypatch.setattr(requests, "get", mock_healthy_get)
 
-    partition_pdf_response = pdf._partition_pdf_via_api(filename)
+    partition_pdf_response = pdf._partition_via_api(filename)
     assert partition_pdf_response[0]["type"] == "Title"
     assert partition_pdf_response[0]["text"] == "Charlie Brown and the Great Pumpkin"
 
@@ -77,12 +77,14 @@ def test_partition_pdf_api(monkeypatch, filename="example-docs/layout-parser-pap
     "filename, file", [("example-docs/layout-parser-paper-fast.pdf", None), (None, b"0000")]
 )
 def test_partition_pdf_local(monkeypatch, filename, file):
-    monkeypatch.setattr(layout, "process_data_with_model", lambda *args: MockDocumentLayout())
+    monkeypatch.setattr(
+        layout, "process_data_with_model", lambda *args, **kwargs: MockDocumentLayout()
+    )
     monkeypatch.setattr(
         layout, "process_file_with_model", lambda *args, **kwargs: MockDocumentLayout()
     )
 
-    partition_pdf_response = pdf._partition_pdf_via_local(filename, file)
+    partition_pdf_response = pdf._partition_pdf_or_image_local(filename, file)
     assert partition_pdf_response[0].type == "Title"
     assert partition_pdf_response[0].text == "Charlie Brown and the Great Pumpkin"
 
@@ -92,7 +94,7 @@ def test_partition_pdf_api_raises_with_no_filename(monkeypatch):
     monkeypatch.setattr(requests, "get", mock_healthy_get)
 
     with pytest.raises(FileNotFoundError):
-        pdf._partition_pdf_via_api(filename=None, file=None)
+        pdf._partition_via_api(filename=None, file=None)
 
 
 def test_partition_pdf_local_raises_with_no_filename(monkeypatch):
@@ -100,7 +102,7 @@ def test_partition_pdf_local_raises_with_no_filename(monkeypatch):
     monkeypatch.setattr(requests, "get", mock_healthy_get)
 
     with pytest.raises(FileNotFoundError):
-        pdf._partition_pdf_via_api(filename=None, file=None)
+        pdf._partition_via_api(filename=None, file=None)
 
 
 def test_partition_pdf_api_raises_with_failed_healthcheck(
@@ -110,7 +112,7 @@ def test_partition_pdf_api_raises_with_failed_healthcheck(
     monkeypatch.setattr(requests, "get", mock_unhealthy_get)
 
     with pytest.raises(ValueError):
-        pdf._partition_pdf_via_api(filename=filename)
+        pdf._partition_via_api(filename=filename)
 
 
 def test_partition_pdf_api_raises_with_failed_api_call(
@@ -120,16 +122,16 @@ def test_partition_pdf_api_raises_with_failed_api_call(
     monkeypatch.setattr(requests, "get", mock_healthy_get)
 
     with pytest.raises(ValueError):
-        pdf._partition_pdf_via_api(filename=filename)
+        pdf._partition_via_api(filename=filename)
 
 
 @pytest.mark.parametrize(
     "url, api_called, local_called", [("fakeurl", True, False), (None, False, True)]
 )
 def test_partition_pdf(url, api_called, local_called):
-    with mock.patch(
-        "unstructured.partition.pdf._partition_pdf_via_api", mock.MagicMock()
-    ), mock.patch("unstructured.partition.pdf._partition_pdf_via_local", mock.MagicMock()):
+    with mock.patch.object(
+        pdf, attribute="_partition_via_api", new=mock.MagicMock()
+    ), mock.patch.object(pdf, "_partition_pdf_or_image_local", mock.MagicMock()):
         pdf.partition_pdf(filename="fake.pdf", url=url)
-        assert pdf._partition_pdf_via_api.called == api_called
-        assert pdf._partition_pdf_via_local.called == local_called
+        assert pdf._partition_via_api.called == api_called
+        assert pdf._partition_pdf_or_image_local.called == local_called
