@@ -40,22 +40,7 @@ def partition_pdf_or_image(
     token: Optional[str] = None,
     is_image: bool = False,
 ) -> List[Element]:
-    """Parses a pdf or image document into a list of interpreted elements.
-    Parameters
-    ----------
-    filename
-        A string defining the target filename path.
-    file
-        A file-like object as bytes --> open(filename, "rb").
-    template
-        A string defining the model to be used. Default None uses default model ("layout/pdf" url
-        if using the API).
-    url
-        A string endpoint to self-host an inference API, if desired. If None, local inference will
-        be used.
-    token
-        A string defining the authentication token for a self-host url, if applicable.
-    """
+    """Parses a pdf or image document into a list of interpreted elements."""
     if url is None:
         return _partition_pdf_or_image_local(
             filename=filename, file=file, template=template, is_image=is_image
