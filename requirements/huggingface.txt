@@ -48,6 +48,7 @@ langdetect==1.0.9
 ***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   python-docx
+    ***REMOVED***   python-pptx
     ***REMOVED***   unstructured (setup.py)
 ***REMOVED***
     ***REMOVED*** via argilla
@@ -70,11 +71,15 @@ pandas==1.5.2
     ***REMOVED***   argilla
     ***REMOVED***   unstructured (setup.py)
 ***REMOVED***
-    ***REMOVED*** via unstructured (setup.py)
+    ***REMOVED*** via
+    ***REMOVED***   python-pptx
+    ***REMOVED***   unstructured (setup.py)
 pydantic==1.10.4
     ***REMOVED*** via argilla
 ***REMOVED***
     ***REMOVED*** via pandas
+***REMOVED***
+    ***REMOVED*** via unstructured (setup.py)
 ***REMOVED***
     ***REMOVED*** via unstructured (setup.py)
 ***REMOVED***
@@ -133,3 +138,5 @@ wrapt==1.13.3
     ***REMOVED*** via
     ***REMOVED***   argilla
     ***REMOVED***   deprecated
+xlsxwriter==3.0.6
+    ***REMOVED*** via python-pptx
