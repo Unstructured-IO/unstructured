@@ -24,6 +24,7 @@ from unstructured.documents.email_elements import (
     ReceivedInfo,
     MetaData,
 )
+
 from unstructured.documents.elements import Element, Text, Image, NarrativeText, Title
 from unstructured.partition.html import partition_html
 from unstructured.partition.text import split_by_paragraph, partition_text
@@ -46,11 +47,9 @@ def _parse_received_data(data: str) -> List[Element]:
     if mapi_id:
         elements.append(ReceivedInfo(name="mapi_id", text=mapi_id[0]))
     if datetimetz:
-        elements.append(
-            ReceivedInfo(name="received_datetimetz", text=str(datetimetz)).set_datestamp(
-                datestamp=datetimetz
-            )
-        )
+        datetimestamp = ReceivedInfo(name="received_datetimetz", text=str(datetimetz))
+        datetimestamp.set_datestamp(datestamp=datetimetz)
+        elements.append(datetimestamp)
 
     return elements
 
@@ -207,12 +206,12 @@ def partition_email(
     elif content_source == "text/plain":
         elements = partition_text(text=content)
 
-    for idx, element in enumerate(elements):
-        indices = has_embedded_image(element)
-        if (isinstance(element, NarrativeText) or isinstance(element, Title)) and indices:
-            image_info, clean_element = find_embedded_image(element, indices)
-            elements[idx] = clean_element
-            elements.insert(idx + 1, image_info)
+    # for idx, element in enumerate(elements):
+    #     indices = has_embedded_image(element)
+    #     if (isinstance(element, NarrativeText) or isinstance(element, Title)) and indices:
+    #         image_info, clean_element = find_embedded_image(element, indices)
+    #         elements[idx] = clean_element
+    #         elements.insert(idx + 1, image_info)
 
     header: List[Element] = list()
     if include_headers:

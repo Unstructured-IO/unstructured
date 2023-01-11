@@ -25,7 +25,7 @@
   elements
 * Add ability to extract document metadata from `.docx`, `.xlsx`, and `.jpg` files.
 * Helper functions for identifying and extracting phone numbers
-* Add new function `extract_attachment_info` that extracts and decode the attachment
+* Add new function `extract_attachment_info` that extracts and decodes the attachment
 of an email.
 * Staging brick to convert a list of `Element`s to a `pandas` dataframe.
 * Add plain text functionality to `partition_email`
