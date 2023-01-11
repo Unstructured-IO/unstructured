@@ -27,8 +27,39 @@ def partition_pdf(
     token
         A string defining the authentication token for a self-host url, if applicable.
     """
+    return partition_pdf_or_image(
+        filename=filename, file=file, url=url, template=template, token=token, is_image=False
+    )
+
+
+def partition_pdf_or_image(
+    filename: str = "",
+    file: Optional[bytes] = None,
+    url: Optional[str] = "https://ml.unstructured.io/",
+    template: Optional[str] = None,
+    token: Optional[str] = None,
+    is_image: bool = False,
+) -> List[Element]:
+    """Parses a pdf or image document into a list of interpreted elements.
+    Parameters
+    ----------
+    filename
+        A string defining the target filename path.
+    file
+        A file-like object as bytes --> open(filename, "rb").
+    template
+        A string defining the model to be used. Default None uses default model ("layout/pdf" url
+        if using the API).
+    url
+        A string endpoint to self-host an inference API, if desired. If None, local inference will
+        be used.
+    token
+        A string defining the authentication token for a self-host url, if applicable.
+    """
     if url is None:
-        return _partition_pdf_local(filename=filename, file=file, template=template)
+        return _partition_pdf_or_image_local(
+            filename=filename, file=file, template=template, is_image=is_image
+        )
     else:
         # NOTE(alan): Remove the "or (template == "checkbox")" after different models are
         # handled by routing
@@ -40,10 +71,11 @@ def partition_pdf(
         return _partition_via_api(filename=filename, file=file, url=url, token=token, data=data)
 
 
-def _partition_pdf_local(
+def _partition_pdf_or_image_local(
     filename: str = "",
     file: Optional[bytes] = None,
     template: Optional[str] = None,
+    is_image: bool = False,
 ) -> List[Element]:
     """Partition using package installed locally."""
     try:
@@ -67,8 +99,8 @@ def _partition_pdf_local(
         ) from e
 
     layout = (
-        process_file_with_model(filename, template)
+        process_file_with_model(filename, template, is_image=is_image)
         if file is None
-        else process_data_with_model(file, template)
+        else process_data_with_model(file, template, is_image=is_image)
     )
     return [element for page in layout.pages for element in page.elements]
