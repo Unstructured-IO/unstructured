@@ -47,7 +47,7 @@ EXPECTED_PPTX_FILES = [
 class FileType(Enum):
     UNK = 0
 
-    # MS Word Types
+    # MS Office Types
     DOC = 10
     DOCX = 11
     XLS = 12
