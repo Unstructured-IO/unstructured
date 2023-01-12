@@ -46,11 +46,9 @@ def _parse_received_data(data: str) -> List[Element]:
     if mapi_id:
         elements.append(ReceivedInfo(name="mapi_id", text=mapi_id[0]))
     if datetimetz:
-        elements.append(
-            ReceivedInfo(name="received_datetimetz", text=str(datetimetz)).set_datestamp(
-                datestamp=datetimetz
-            )
-        )
+        datetimetz_element = ReceivedInfo(name="received_datetimetz", text=str(datetimetz))
+        datetimetz_element.set_datestamp(datestamp=datetimetz)
+        elements.append(datetimetz_element)
 
     return elements
 
