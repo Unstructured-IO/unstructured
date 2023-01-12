@@ -1,7 +1,7 @@
-import requests  # type: ignore
-from typing import BinaryIO, List, Optional, Union, Tuple, Mapping
+from typing import List, Optional
 
 from unstructured.documents.elements import Element
+from unstructured.partition import _partition_via_api
 
 
 def partition_pdf(
@@ -27,8 +27,24 @@ def partition_pdf(
     token
         A string defining the authentication token for a self-host url, if applicable.
     """
+    return partition_pdf_or_image(
+        filename=filename, file=file, url=url, template=template, token=token, is_image=False
+    )
+
+
+def partition_pdf_or_image(
+    filename: str = "",
+    file: Optional[bytes] = None,
+    url: Optional[str] = "https://ml.unstructured.io/",
+    template: Optional[str] = None,
+    token: Optional[str] = None,
+    is_image: bool = False,
+) -> List[Element]:
+    """Parses a pdf or image document into a list of interpreted elements."""
     if url is None:
-        return _partition_pdf_via_local(filename=filename, file=file, template=template)
+        return _partition_pdf_or_image_local(
+            filename=filename, file=file, template=template, is_image=is_image
+        )
     else:
         # NOTE(alan): Remove the "or (template == "checkbox")" after different models are
         # handled by routing
@@ -37,51 +53,14 @@ def partition_pdf(
         data = {"model": "checkbox"} if (template == "checkbox") else None
         url = f"{url.rstrip('/')}/{route.lstrip('/')}"
         # NOTE(alan): Remove "data=data" after different models are handled by routing
-        return _partition_pdf_via_api(filename=filename, file=file, url=url, token=token, data=data)
+        return _partition_via_api(filename=filename, file=file, url=url, token=token, data=data)
 
 
-def _partition_pdf_via_api(
-    filename: str = "",
-    file: Optional[bytes] = None,
-    url: str = "https://ml.unstructured.io/layout/pdf",
-    token: Optional[str] = None,
-    data: Optional[dict] = None,  # NOTE(alan): Remove after different models are handled by routing
-) -> List[Element]:
-    """Use API for partitioning."""
-    if not filename and not file:
-        raise FileNotFoundError("No filename nor file were specified")
-
-    healthcheck_response = requests.models.Response()
-    if not token:
-        healthcheck_response = requests.get(url=f"{url}healthcheck")
-
-    if healthcheck_response.status_code != 200:
-        raise ValueError("endpoint api healthcheck has failed!")
-
-    file_: Mapping[str, Tuple[str, Union[BinaryIO, bytes]]] = {
-        "file": (
-            filename,
-            file if file else open(filename, "rb"),
-        )
-    }
-    response = requests.post(
-        url=url,
-        headers={"Authorization": f"Bearer {token}" if token else ""},
-        files=file_,
-        data=data,  # NOTE(alan): Remove after unstructured API is using routing
-    )
-
-    if response.status_code == 200:
-        pages = response.json()["pages"]
-        return [element for page in pages for element in page["elements"]]
-    else:
-        raise ValueError(f"response status code = {response.status_code}")
-
-
-def _partition_pdf_via_local(
+def _partition_pdf_or_image_local(
     filename: str = "",
     file: Optional[bytes] = None,
     template: Optional[str] = None,
+    is_image: bool = False,
 ) -> List[Element]:
     """Partition using package installed locally."""
     try:
@@ -105,8 +84,8 @@ def _partition_pdf_via_local(
         ) from e
 
     layout = (
-        process_file_with_model(filename, template)
+        process_file_with_model(filename, template, is_image=is_image)
         if file is None
-        else process_data_with_model(file, template)
+        else process_data_with_model(file, template, is_image=is_image)
     )
     return [element for page in layout.pages for element in page.elements]
