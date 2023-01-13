@@ -27,8 +27,10 @@ def partition_pdf(
     token
         A string defining the authentication token for a self-host url, if applicable.
     """
+    if template is None:
+        template = "layout/pdf"
     return partition_pdf_or_image(
-        filename=filename, file=file, url=url, template=template, token=token, is_image=False
+        filename=filename, file=file, url=url, template=template, token=token
     )
 
 
@@ -36,22 +38,31 @@ def partition_pdf_or_image(
     filename: str = "",
     file: Optional[bytes] = None,
     url: Optional[str] = "https://ml.unstructured.io/",
-    template: Optional[str] = None,
+    template: str = "layout/pdf",
     token: Optional[str] = None,
     is_image: bool = False,
 ) -> List[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
     if url is None:
+        # TODO(alan): Extract information about the filetype to be processed from the template
+        # route. Decoding the routing should probably be handled by a single function designed for
+        # that task so as routing design changes, those changes are implemented in a single
+        # function.
+        route_args = template.strip("/").split("/")
+        is_image = route_args[-1] == "image"
+        out_template: Optional[str] = template
+        if route_args[0] == "layout":
+            out_template = None
         return _partition_pdf_or_image_local(
-            filename=filename, file=file, template=template, is_image=is_image
+            filename=filename, file=file, template=out_template, is_image=is_image
         )
     else:
-        # NOTE(alan): Remove the "or (template == "checkbox")" after different models are
-        # handled by routing
-        route = "layout/pdf" if (template is None) or (template == "checkbox") else template
+        # NOTE(alan): Remove these lines after different models are handled by routing
+        if template == "checkbox":
+            template = "layout/pdf"
         # NOTE(alan): Remove after different models are handled by routing
         data = {"model": "checkbox"} if (template == "checkbox") else None
-        url = f"{url.rstrip('/')}/{route.lstrip('/')}"
+        url = f"{url.rstrip('/')}/{template.lstrip('/')}"
         # NOTE(alan): Remove "data=data" after different models are handled by routing
         return _partition_via_api(filename=filename, file=file, url=url, token=token, data=data)
 
