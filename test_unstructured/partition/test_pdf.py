@@ -97,7 +97,7 @@ def test_partition_pdf_api_raises_with_no_filename(monkeypatch):
         pdf._partition_via_api(filename=None, file=None)
 
 
-def test_partition_pdf_local_raises_with_no_filename(monkeypatch):
+def test_partition_pdf_local_raises_with_no_filename():
     with pytest.raises(FileNotFoundError):
         pdf._partition_pdf_or_image_local(filename="", file=None, is_image=False)
 

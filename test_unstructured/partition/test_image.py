@@ -89,7 +89,7 @@ def test_partition_image_local(monkeypatch, filename, file):
 
 
 @pytest.mark.skip("Needs to be fixed upstream in unstructured-inference")
-def test_partition_image_local_raises_with_no_filename(monkeypatch):
+def test_partition_image_local_raises_with_no_filename():
     with pytest.raises(FileNotFoundError):
         pdf._partition_pdf_or_image_local(filename="", file=None, is_image=True)
 
