@@ -113,7 +113,28 @@ def test_auto_partition_html_from_file_rb():
     assert len(elements) > 0
 
 
-def test_auto_partition_pdf():
+EXPECTED_TEXT_OUTPUT = [
+    NarrativeText(text="This is a test document to use for unit tests."),
+    Title(text="Important points:"),
+    ListItem(text="Hamburgers are delicious"),
+    ListItem(text="Dogs are the best"),
+    ListItem(text="I love fuzzy blankets"),
+]
+
+
+def test_auto_partition_text_from_filename():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "..", "..", "example-docs", "fake-text.txt")
+    elements = partition(filename=filename)
+    assert len(elements) > 0
+    assert elements == EXPECTED_TEXT_OUTPUT
+
+
+def test_auto_partition_text_from_file():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "..", "..", "example-docs", "fake-text.txt")
+    with open(filename, "r") as f:
+        elements = partition(file=f)
+    assert len(elements) > 0
+    assert elements == EXPECTED_TEXT_OUTPUT
     filename = os.path.join(
         EXAMPLE_DOCS_DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf"
     )

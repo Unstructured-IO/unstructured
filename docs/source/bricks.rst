@@ -22,6 +22,7 @@ If you call the ``partition`` function, ``unstructured`` will attempt to detect 
 file type and route it to the appropriate partitioning brick. All partitioning bricks
 called within ``partition`` are called using the defualt kwargs. Use the document-type
 specific bricks if you need to apply non-default settings.
+``partition`` currently supports ``.docx``, ``.eml``, ``.html``, ``.pdf``, and ``.txt`` files.
 
 
 .. code:: python
@@ -104,7 +105,7 @@ Examples:
 ``partition_pdf``
 ---------------------
 
-The ``partition_pdf`` function segments a PDF document by calling the document image analysis API. 
+The ``partition_pdf`` function segments a PDF document by calling the document image analysis API.
 The intent of the parameters ``url`` and ``token`` is to allow users to self host an inference API,
 if desired.
 
@@ -122,7 +123,7 @@ Examples:
 ---------------------
 
 The ``partition_email`` function partitions ``.eml`` documents and works with exports
-from email clients such as Microsoft Outlook and Gmail. The ``partition_email`` 
+from email clients such as Microsoft Outlook and Gmail. The ``partition_email``
 takes a filename, file-like object, or raw text as input and produces a list of
 document ``Element`` objects as output. Also ``content_source`` can be set to ``text/html``
 (default) or ``text/plain`` to process the html or plain text version of the email, respectively.
@@ -157,7 +158,7 @@ Examples:
 ``partition_text``
 ---------------------
 
-The ``partition_text`` function partitions text files. The ``partition_text`` 
+The ``partition_text`` function partitions text files. The ``partition_text``
 takes a filename, file-like object, and raw text as input and produces ``Element`` objects as output.
 
 Examples:
@@ -629,7 +630,7 @@ addresses in the input string.
 
   from unstructured.cleaners.extract import extract_email_address
 
-  text = """Me me@email.com and You <You@email.com> 
+  text = """Me me@email.com and You <You@email.com>
       ([ba23::58b5:2236:45g2:88h2]) (10.0.2.01)"""
 
   ***REMOVED*** Returns "['me@email.com', 'you@email.com']"
@@ -646,7 +647,7 @@ returns a list of all IP address in input string.
 
   from unstructured.cleaners.extract import extract_ip_address
 
-  text = """Me me@email.com and You <You@email.com> 
+  text = """Me me@email.com and You <You@email.com>
     ([ba23::58b5:2236:45g2:88h2]) (10.0.2.01)"""
 
   ***REMOVED*** Returns "['ba23::58b5:2236:45g2:88h2', '10.0.2.01']"
@@ -656,7 +657,7 @@ returns a list of all IP address in input string.
 ``extract_ip_address_name``
 ----------------------------
 
-Extracts the names of each IP address in the ``Received`` field(s) from an ``.eml`` 
+Extracts the names of each IP address in the ``Received`` field(s) from an ``.eml``
 file. ``extract_ip_address_name`` takes in a string and returns a list of all
 IP addresses in the input string.
 
@@ -675,7 +676,7 @@ IP addresses in the input string.
 ``extract_mapi_id``
 ----------------------
 
-Extracts the ``mapi id`` in the ``Received`` field(s) from an ``.eml`` 
+Extracts the ``mapi id`` in the ``Received`` field(s) from an ``.eml``
 file. ``extract_mapi_id`` takes in a string and returns a list of a string
 containing the ``mapi id`` in the input string.
 
@@ -694,7 +695,7 @@ containing the ``mapi id`` in the input string.
 ``extract_datetimetz``
 ----------------------
 
-Extracts the date, time, and timezone in the ``Received`` field(s) from an ``.eml`` 
+Extracts the date, time, and timezone in the ``Received`` field(s) from an ``.eml``
 file. ``extract_datetimetz`` takes in a string and returns a datetime.datetime
 object from the input string.
 
@@ -754,7 +755,7 @@ other languages.
 Parameters:
 
 * ``text``: the input string to translate.
-* ``source_lang``: the two letter language code for the source language of the text. 
+* ``source_lang``: the two letter language code for the source language of the text.
   If ``source_lang`` is not specified,
   the language will be detected using ``langdetect``.
 * ``target_lang``: the two letter language code for the target language for translation.
@@ -857,7 +858,7 @@ Examples:
 --------------------------
 
 Prepares ``Text`` elements for processing in ``transformers`` pipelines
-by splitting the elements into chunks that fit into the model's attention window. 
+by splitting the elements into chunks that fit into the model's attention window.
 
 Examples:
 
@@ -960,7 +961,7 @@ Examples:
       json.dump(label_studio_data, f, indent=4)
 
 
-You can also include pre-annotations and predictions as part of your LabelStudio upload. 
+You can also include pre-annotations and predictions as part of your LabelStudio upload.
 
 The ``annotations`` kwarg is a list of lists. If ``annotations`` is specified, there must be a list of
 annotations for each element in the ``elements`` list. If an element does not have any annotations,
@@ -1009,7 +1010,7 @@ task in LabelStudio:
 
 Similar to annotations, the ``predictions`` kwarg is also a list of lists. A ``prediction`` is an annotation with
 the addition of a ``score`` value. If ``predictions`` is specified, there must be a list of
-predictions for each element in the ``elements`` list. If an element does not have any predictions, use an empty list. 
+predictions for each element in the ``elements`` list. If an element does not have any predictions, use an empty list.
 The following shows an example of how to upload predictions for the "Text Classification"
 task in LabelStudio:
 
@@ -1167,13 +1168,13 @@ Examples:
 ``stage_for_label_box``
 --------------------------
 
-Formats outputs for use with `LabelBox <https://docs.labelbox.com/docs/overview>`_. LabelBox accepts cloud-hosted data 
+Formats outputs for use with `LabelBox <https://docs.labelbox.com/docs/overview>`_. LabelBox accepts cloud-hosted data
 and does not support importing text directly. The ``stage_for_label_box`` does the following:
 
 * Stages the data files in the ``output_directory`` specified in function arguments to be uploaded to a cloud storage service.
 * Returns a config of type ``List[Dict[str, Any]]`` that can be written to a ``json`` file and imported into LabelBox.
 
-**Note:** ``stage_for_label_box`` does not upload the data to remote storage such as S3. Users can upload the data to S3 
+**Note:** ``stage_for_label_box`` does not upload the data to remote storage such as S3. Users can upload the data to S3
 using ``aws s3 sync ${output_directory} ${url_prefix}`` after running the ``stage_for_label_box`` staging brick.
 
 Examples:
@@ -1197,7 +1198,7 @@ files to an S3 bucket.
 
   ***REMOVED*** The URL prefix where the data files will be accessed.
   S3_URL_PREFIX = f"https://{S3_BUCKET_NAME}.s3.amazonaws.com/{S3_BUCKET_KEY_PREFIX}"
-  
+
   ***REMOVED*** The local output directory where the data files will be staged for uploading to a Cloud Storage service.
   LOCAL_OUTPUT_DIRECTORY = "/tmp/labelbox-staging"
 
@@ -1232,7 +1233,7 @@ files to an S3 bucket.
 --------------------------
 Formats a list of ``Text`` elements as input to token based tasks in Datasaur.
 
-Example: 
+Example:
 
 .. code:: python
 
@@ -1243,7 +1244,7 @@ Example:
   datasaur_data = stage_for_datasaur(elements)
 
 The output is a list of dictionaries, each one with two keys:
-"text" with the content of the element and 
+"text" with the content of the element and
 "entities" with an empty list.
 
 You can also specify specify entities in the ``stage_for_datasaur`` brick. Entities
