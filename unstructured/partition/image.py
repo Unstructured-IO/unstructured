@@ -19,7 +19,7 @@ def partition_image(
     file
         A file-like object as bytes --> open(filename, "rb").
     template
-        A string defining the model to be used. Default None uses default model ("layout/pdf" url
+        A string defining the model to be used. Default None uses default model ("layout/image" url
         if using the API).
     url
         A string endpoint to self-host an inference API, if desired. If None, local inference will
@@ -27,6 +27,8 @@ def partition_image(
     token
         A string defining the authentication token for a self-host url, if applicable.
     """
+    if template is None:
+        template = "layout/image"
     return partition_pdf_or_image(
-        filename=filename, file=file, url=url, template=template, token=token, is_image=True
+        filename=filename, file=file, url=url, template=template, token=token
     )
