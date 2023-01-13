@@ -1,6 +1,7 @@
-## 0.4.1-dev0
+## 0.4.1
 
 * Added support for text files in the `partition` function
+* Pinned `opencv-python` for easier installation on Linux
 
 ## 0.4.0
 
