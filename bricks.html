@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bricks &mdash; unstructured 0.4.0 documentation</title>
+  <title>Bricks &mdash; unstructured 0.4.1-dev0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -143,7 +143,8 @@ titles, narrative text, and tables.</p>
 If you call the <code class="docutils literal notranslate"><span class="pre">partition</span></code> function, <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> will attempt to detect the
 file type and route it to the appropriate partitioning brick. All partitioning bricks
 called within <code class="docutils literal notranslate"><span class="pre">partition</span></code> are called using the defualt kwargs. Use the document-type
-specific bricks if you need to apply non-default settings.</p>
+specific bricks if you need to apply non-default settings.
+<code class="docutils literal notranslate"><span class="pre">partition</span></code> currently supports <code class="docutils literal notranslate"><span class="pre">.docx</span></code>, <code class="docutils literal notranslate"><span class="pre">.eml</span></code>, <code class="docutils literal notranslate"><span class="pre">.html</span></code>, <code class="docutils literal notranslate"><span class="pre">.pdf</span></code>, and <code class="docutils literal notranslate"><span class="pre">.txt</span></code> files.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">docx</span>
 
 <span class="kn">from</span> <span class="nn">unstructured.partition.auto</span> <span class="kn">import</span> <span class="n">partition</span>
