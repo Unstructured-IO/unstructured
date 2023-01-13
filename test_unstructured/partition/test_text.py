@@ -16,14 +16,14 @@ EXPECTED_OUTPUT = [
 ]
 
 
-def test_partition_email_from_filename():
+def test_partition_text_from_filename():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-text.txt")
     elements = partition_text(filename=filename)
     assert len(elements) > 0
     assert elements == EXPECTED_OUTPUT
 
 
-def test_partition_email_from_file():
+def test_partition_text_from_file():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-text.txt")
     with open(filename, "r") as f:
         elements = partition_text(file=f)
@@ -31,7 +31,7 @@ def test_partition_email_from_file():
     assert elements == EXPECTED_OUTPUT
 
 
-def test_partition_email_from_text():
+def test_partition_text_from_text():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-text.txt")
     with open(filename, "r") as f:
         text = f.read()
@@ -40,12 +40,12 @@ def test_partition_email_from_text():
     assert elements == EXPECTED_OUTPUT
 
 
-def test_partition_email_raises_with_none_specified():
+def test_partition_text_raises_with_none_specified():
     with pytest.raises(ValueError):
         partition_text()
 
 
-def test_partition_email_raises_with_too_many_specified():
+def test_partition_text_raises_with_too_many_specified():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-text.txt")
     with open(filename, "r") as f:
         text = f.read()

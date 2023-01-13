@@ -1,3 +1,7 @@
+## 0.4.1-dev0
+
+* Added support for text files in the `partition` function
+
 ## 0.4.0
 
 * Added generic `partition` brick that detects the file type and routes a file to the appropriate
