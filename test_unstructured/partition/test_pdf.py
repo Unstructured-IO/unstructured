@@ -98,11 +98,8 @@ def test_partition_pdf_api_raises_with_no_filename(monkeypatch):
 
 
 def test_partition_pdf_local_raises_with_no_filename(monkeypatch):
-    monkeypatch.setattr(requests, "post", mock_successful_post)
-    monkeypatch.setattr(requests, "get", mock_healthy_get)
-
     with pytest.raises(FileNotFoundError):
-        pdf._partition_via_api(filename=None, file=None)
+        pdf._partition_pdf_or_image_local(filename="", file=None, is_image=False)
 
 
 def test_partition_pdf_api_raises_with_failed_healthcheck(
