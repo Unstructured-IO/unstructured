@@ -151,6 +151,19 @@ def test_auto_partition_pdf_from_file():
     assert len(elements) > 0
 
 
+def test_auto_partition_jpg():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "..", "..", "example-docs", "example.jpg")
+    elements = partition(filename=filename)
+    assert len(elements) > 0
+
+
+def test_auto_partition_jpg_from_file():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "..", "..", "example-docs", "example.jpg")
+    with open(filename, "rb") as f:
+        elements = partition(file=f)
+    assert len(elements) > 0
+
+
 def test_auto_partition_raises_with_bad_type(monkeypatch):
     monkeypatch.setattr(auto, "detect_filetype", lambda *args, **kwargs: None)
     with pytest.raises(ValueError):

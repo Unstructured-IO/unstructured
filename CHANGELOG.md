@@ -1,3 +1,7 @@
+***REMOVED******REMOVED*** 0.4.2-dev0
+* Added `partition_image` to process documents in an image format.
+
+
 ***REMOVED******REMOVED*** 0.4.1
 
 * Added support for text files in the `partition` function

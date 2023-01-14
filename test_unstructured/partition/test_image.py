@@ -3,6 +3,7 @@ import requests
 from unittest import mock
 
 import unstructured.partition.pdf as pdf
+import unstructured.partition.image as image
 import unstructured_inference.inference.layout as layout
 
 
@@ -64,19 +65,17 @@ class MockDocumentLayout(layout.DocumentLayout):
         ]
 
 
-def test_partition_pdf_api(monkeypatch, filename="example-docs/layout-parser-paper-fast.pdf"):
+def test_partition_image_api(monkeypatch, filename="example-docs/example.jpg"):
     monkeypatch.setattr(requests, "post", mock_successful_post)
     monkeypatch.setattr(requests, "get", mock_healthy_get)
 
-    partition_pdf_response = pdf._partition_via_api(filename)
-    assert partition_pdf_response[0]["type"] == "Title"
-    assert partition_pdf_response[0]["text"] == "Charlie Brown and the Great Pumpkin"
+    partition_image_response = pdf._partition_via_api(filename)
+    assert partition_image_response[0]["type"] == "Title"
+    assert partition_image_response[0]["text"] == "Charlie Brown and the Great Pumpkin"
 
 
-@pytest.mark.parametrize(
-    "filename, file", [("example-docs/layout-parser-paper-fast.pdf", None), (None, b"0000")]
-)
-def test_partition_pdf_local(monkeypatch, filename, file):
+@pytest.mark.parametrize("filename, file", [("example-docs/example.jpg", None), (None, b"0000")])
+def test_partition_image_local(monkeypatch, filename, file):
     monkeypatch.setattr(
         layout, "process_data_with_model", lambda *args, **kwargs: MockDocumentLayout()
     )
@@ -84,51 +83,44 @@ def test_partition_pdf_local(monkeypatch, filename, file):
         layout, "process_file_with_model", lambda *args, **kwargs: MockDocumentLayout()
     )
 
-    partition_pdf_response = pdf._partition_pdf_or_image_local(filename, file)
-    assert partition_pdf_response[0].type == "Title"
-    assert partition_pdf_response[0].text == "Charlie Brown and the Great Pumpkin"
+    partition_image_response = pdf._partition_pdf_or_image_local(filename, file, is_image=True)
+    assert partition_image_response[0].type == "Title"
+    assert partition_image_response[0].text == "Charlie Brown and the Great Pumpkin"
 
 
-def test_partition_pdf_api_raises_with_no_filename(monkeypatch):
-    monkeypatch.setattr(requests, "post", mock_successful_post)
-    monkeypatch.setattr(requests, "get", mock_healthy_get)
-
+@pytest.mark.skip("Needs to be fixed upstream in unstructured-inference")
+def test_partition_image_local_raises_with_no_filename():
     with pytest.raises(FileNotFoundError):
-        pdf._partition_via_api(filename=None, file=None)
+        pdf._partition_pdf_or_image_local(filename="", file=None, is_image=True)
 
 
-def test_partition_pdf_local_raises_with_no_filename():
-    with pytest.raises(FileNotFoundError):
-        pdf._partition_pdf_or_image_local(filename="", file=None, is_image=False)
-
-
-def test_partition_pdf_api_raises_with_failed_healthcheck(
-    monkeypatch, filename="example-docs/layout-parser-paper-fast.pdf"
+def test_partition_image_api_raises_with_failed_healthcheck(
+    monkeypatch, filename="example-docs/example.jpg"
 ):
     monkeypatch.setattr(requests, "post", mock_successful_post)
     monkeypatch.setattr(requests, "get", mock_unhealthy_get)
 
     with pytest.raises(ValueError):
-        pdf._partition_via_api(filename=filename)
+        pdf._partition_via_api(filename=filename, url="http://ml.unstructured.io/layout/image")
 
 
-def test_partition_pdf_api_raises_with_failed_api_call(
-    monkeypatch, filename="example-docs/layout-parser-paper-fast.pdf"
+def test_partition_image_api_raises_with_failed_api_call(
+    monkeypatch, filename="example-docs/example.jpg"
 ):
     monkeypatch.setattr(requests, "post", mock_unsuccessful_post)
     monkeypatch.setattr(requests, "get", mock_healthy_get)
 
     with pytest.raises(ValueError):
-        pdf._partition_via_api(filename=filename)
+        pdf._partition_via_api(filename=filename, url="http://ml.unstructured.io/layout/image")
 
 
 @pytest.mark.parametrize(
     "url, api_called, local_called", [("fakeurl", True, False), (None, False, True)]
 )
-def test_partition_pdf(url, api_called, local_called):
+def test_partition_image(url, api_called, local_called):
     with mock.patch.object(
         pdf, attribute="_partition_via_api", new=mock.MagicMock()
     ), mock.patch.object(pdf, "_partition_pdf_or_image_local", mock.MagicMock()):
-        pdf.partition_pdf(filename="fake.pdf", url=url)
+        image.partition_image(filename="fake.pdf", url=url)
         assert pdf._partition_via_api.called == api_called
         assert pdf._partition_pdf_or_image_local.called == local_called
