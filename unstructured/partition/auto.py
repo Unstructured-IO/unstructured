@@ -6,6 +6,7 @@ from unstructured.partition.email import partition_email
 from unstructured.partition.html import partition_html
 from unstructured.partition.pdf import partition_pdf
 from unstructured.partition.image import partition_image
+from unstructured.partition.text import partition_text
 
 
 def partition(filename: Optional[str] = None, file: Optional[IO] = None):
@@ -36,6 +37,8 @@ def partition(filename: Optional[str] = None, file: Optional[IO] = None):
         return partition_pdf(filename=filename, file=file, url=None)  # type: ignore
     elif (filetype == FileType.PNG) or (filetype == FileType.JPG):
         return partition_image(filename=filename, file=file, url=None)  # type: ignore
+    elif filetype == FileType.TXT:
+        return partition_text(filename=filename, file=file)
     else:
         msg = "Invalid file" if not filename else f"Invalid file {filename}"
         raise ValueError(f"{msg}. File type not support in partition.")

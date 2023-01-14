@@ -1,5 +1,11 @@
-## 0.4.1-dev0
+## 0.4.2-dev0
 * Added `partition_image` to process documents in an image format.
+
+
+## 0.4.1
+
+* Added support for text files in the `partition` function
+* Pinned `opencv-python` for easier installation on Linux
 
 ## 0.4.0
 
