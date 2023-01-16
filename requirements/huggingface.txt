@@ -95,7 +95,7 @@ regex==2022.10.31
     #   nltk
     #   sacremoses
     #   transformers
-requests==2.28.1
+requests==2.28.2
     # via
     #   huggingface-hub
     #   transformers
