@@ -47,6 +47,16 @@ for i in "${!FILES_TO_CHANGE[@]}"; do
     else
         # Replace semver in VERSIONFILE with semver obtained from CHANGELOGFILE
         TMPFILE=$(mktemp /tmp/new_version.XXXXXX)
+        # Check sed version, exit if version < 4.3
+        if ! sed --version > /dev/null 2>&1; then
+            CURRENT_VERSION=1.archaic
+        else
+            CURRENT_VERSION=$(sed --version | head -n1 | cut -d" " -f4)
+        fi
+        REQUIRED_VERSION="4.3"
+        if [ "$(printf '%s\n' "$REQUIRED_VERSION" "$CURRENT_VERSION" | sort -V | head -n1)" != "$REQUIRED_VERSION" ]; then
+            echo "sed version must be >= ${REQUIRED_VERSION}" && exit 1
+        fi
         sed -r "s/$RE_SEMVER/$UPDATED_VERSION/" "$FILE_TO_CHANGE" > "$TMPFILE"
         if [ $CHECK == 1 ];
         then
