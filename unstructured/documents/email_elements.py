@@ -42,7 +42,7 @@ class Name(EmailElement):
             self.datestamp: datetime = datestamp
 
     def has_datestamp(self):
-        return self.datestamp is not None
+        return "self.datestamp" in globals()
 
     def __str__(self):
         return f"{self.name}: {self.text}"
