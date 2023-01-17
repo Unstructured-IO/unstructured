@@ -1,7 +1,7 @@
 from abc import ABC
 from datetime import datetime
 import hashlib
-from typing import Callable, List, Union, Optional
+from typing import Callable, List, Union
 from unstructured.documents.elements import Element, Text, NoID
 
 
@@ -20,7 +20,7 @@ class Name(EmailElement):
         self,
         name: str,
         text: str,
-        datestamp: Optional[datetime] = None,
+        datestamp: Union[datetime, None] = None,
         element_id: Union[str, NoID] = NoID(),
     ):
         self.name: str = name
