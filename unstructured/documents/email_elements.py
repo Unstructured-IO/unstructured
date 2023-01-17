@@ -5,6 +5,12 @@ from typing import Callable, List, Union
 from unstructured.documents.elements import Element, Text, NoID
 
 
+class NoDatestamp(ABC):
+    """Class to indicate that an element do not have a datetime stamp."""
+
+    pass
+
+
 class EmailElement(Element):
     """An email element is a section of the email."""
 
@@ -20,7 +26,7 @@ class Name(EmailElement):
         self,
         name: str,
         text: str,
-        datestamp: Union[datetime, None] = None,
+        datestamp: Union[datetime, NoDatestamp] = NoDatestamp(),
         element_id: Union[str, NoID] = NoID(),
     ):
         self.name: str = name
