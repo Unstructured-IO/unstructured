@@ -31,13 +31,15 @@ class Name(EmailElement):
     ):
         self.name: str = name
         self.text: str = text
-        self.datestamp: datetime = datestamp
 
         if isinstance(element_id, NoID):
             # NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits
             element_id = hashlib.sha256(text.encode()).hexdigest()[:32]
 
         super().__init__(element_id=element_id)
+
+        if isinstance(datestamp, datetime):
+            self.datestamp: datetime = datestamp
 
     def has_datestamp(self):
         return self.datestamp is not None
