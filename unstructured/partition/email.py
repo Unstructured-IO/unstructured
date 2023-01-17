@@ -189,22 +189,22 @@ def partition_email(
     if not content:
         raise ValueError(f"{content_source} content not found in email")
 
-    # NOTE(robinson) - In the .eml files, the HTML content gets stored in a format that
-    # looks like the following, resulting in extraneous "=" characters in the output if
-    # you don't clean it up
-    # <ul> =
-    #    <li>Item 1</li>=
-    #    <li>Item 2<li>=
-    # </ul>
-    list_content = split_by_paragraph(content)
-
     if content_source == "text/html":
+        # NOTE(robinson) - In the .eml files, the HTML content gets stored in a format that
+        # looks like the following, resulting in extraneous "=" characters in the output if
+        # you don't clean it up
+        # <ul> =
+        #    <li>Item 1</li>=
+        #    <li>Item 2<li>=
+        # </ul>
+        list_content = content.split("=\n")
         content = "".join(list_content)
         elements = partition_html(text=content)
         for element in elements:
             if isinstance(element, Text):
                 element.apply(replace_mime_encodings)
     elif content_source == "text/plain":
+        list_content = split_by_paragraph(content)
         elements = partition_text(text=content)
 
     for idx, element in enumerate(elements):
