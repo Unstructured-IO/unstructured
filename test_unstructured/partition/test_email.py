@@ -149,6 +149,18 @@ def test_partition_email_header():
     assert elements == RECEIVED_HEADER_OUTPUT
 
 
+def test_extract_email_text_matches_html():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email-attachment.eml")
+    elements_from_text = partition_email(filename=filename, content_source="text/plain")
+    elements_from_html = partition_email(filename=filename, content_source="text/html")
+
+    assert len(elements_from_text) == len(elements_from_html)
+    # NOTE(robinson) - checking each individually is necessary because the text/html returns
+    # HTMLTitle, HTMLNarrativeText, etc
+    for i, element in enumerate(elements_from_text):
+        assert element == elements_from_text[i]
+
+
 def test_extract_attachment_info():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email-attachment.eml")
     with open(filename, "r") as f:
