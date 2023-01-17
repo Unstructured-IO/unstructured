@@ -61,7 +61,7 @@ numpy==1.24.1
     ***REMOVED***   transformers
 openpyxl==3.0.10
     ***REMOVED*** via unstructured (setup.py)
-packaging==22.0
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   argilla
     ***REMOVED***   huggingface-hub

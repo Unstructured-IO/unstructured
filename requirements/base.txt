@@ -43,7 +43,7 @@ numpy==1.24.1
     ***REMOVED***   pandas
 openpyxl==3.0.10
     ***REMOVED*** via unstructured (setup.py)
-packaging==22.0
+***REMOVED***
     ***REMOVED*** via argilla
 pandas==1.5.2
     ***REMOVED*** via
