@@ -1,5 +1,7 @@
-***REMOVED******REMOVED*** 0.4.2-dev0
+***REMOVED******REMOVED*** 0.4.2
+
 * Added `partition_image` to process documents in an image format.
+* Fixed utf-8 encoding error in `partition_email` with attachments for `text/html`
 
 
 ***REMOVED******REMOVED*** 0.4.1

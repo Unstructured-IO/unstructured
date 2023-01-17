@@ -181,30 +181,35 @@ def partition_email(
     else:
         raise ValueError("Only one of filename, file, or text can be specified.")
 
-    content_map: Dict[str, str] = {
-        part.get_content_type(): part.get_payload() for part in msg.walk()
-    }
+    content_map: Dict[str, str] = {}
+    for part in msg.walk():
+        ***REMOVED*** NOTE(robinson) - content dispostiion is None for the content of the email itself.
+        ***REMOVED*** Other dispositions include "attachment" for attachments
+        if part.get_content_disposition() is not None:
+            continue
+        content_type = part.get_content_type()
+        content_map[content_type] = part.get_payload()
 
     content = content_map.get(content_source, "")
     if not content:
         raise ValueError(f"{content_source} content not found in email")
 
-    ***REMOVED*** NOTE(robinson) - In the .eml files, the HTML content gets stored in a format that
-    ***REMOVED*** looks like the following, resulting in extraneous "=" characters in the output if
-    ***REMOVED*** you don't clean it up
-    ***REMOVED*** <ul> =
-    ***REMOVED***    <li>Item 1</li>=
-    ***REMOVED***    <li>Item 2<li>=
-    ***REMOVED*** </ul>
-    list_content = split_by_paragraph(content)
-
     if content_source == "text/html":
+        ***REMOVED*** NOTE(robinson) - In the .eml files, the HTML content gets stored in a format that
+        ***REMOVED*** looks like the following, resulting in extraneous "=" characters in the output if
+        ***REMOVED*** you don't clean it up
+        ***REMOVED*** <ul> =
+        ***REMOVED***    <li>Item 1</li>=
+        ***REMOVED***    <li>Item 2<li>=
+        ***REMOVED*** </ul>
+        list_content = content.split("=\n")
         content = "".join(list_content)
         elements = partition_html(text=content)
         for element in elements:
             if isinstance(element, Text):
                 element.apply(replace_mime_encodings)
     elif content_source == "text/plain":
+        list_content = split_by_paragraph(content)
         elements = partition_text(text=content)
 
     for idx, element in enumerate(elements):
