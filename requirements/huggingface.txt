@@ -95,7 +95,7 @@ regex==2022.10.31
     ***REMOVED***   nltk
     ***REMOVED***   sacremoses
     ***REMOVED***   transformers
-requests==2.28.1
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   huggingface-hub
     ***REMOVED***   transformers
