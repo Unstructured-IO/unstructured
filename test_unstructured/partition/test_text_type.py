@@ -135,6 +135,7 @@ def test_contains_verb(text, expected, monkeypatch):
         ("Intellectual Property in the United States", True),
         ("Intellectual property helps incentivize innovation.", False),
         ("THIS IS ALL CAPS. BUT IT IS TWO SENTENCES.", False),
+        ("", False),
     ],
 )
 def test_contains_exceeds_cap_ratio(text, expected, monkeypatch):
