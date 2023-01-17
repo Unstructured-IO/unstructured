@@ -23,7 +23,7 @@ charset-normalizer==2.1.1
     ***REMOVED*** via argilla
 ***REMOVED***
     ***REMOVED*** via openpyxl
-filelock==3.8.2
+filelock==3.9.0
     ***REMOVED*** via
     ***REMOVED***   huggingface-hub
     ***REMOVED***   transformers
