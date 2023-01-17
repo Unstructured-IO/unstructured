@@ -1,12 +1,12 @@
-***REMOVED******REMOVED*** 0.4.3-dev0
+***REMOVED******REMOVED*** 0.4.3-dev1
 
 * Fix in `exceeds_cap_ratio` so the function doesn't break with empty text
+* Fix bug in `_parse_received_data`.
 
 ***REMOVED******REMOVED*** 0.4.2
 
 * Added `partition_image` to process documents in an image format.
 * Fixed utf-8 encoding error in `partition_email` with attachments for `text/html`
-
 
 ***REMOVED******REMOVED*** 0.4.1
 
@@ -40,7 +40,7 @@
   elements
 * Add ability to extract document metadata from `.docx`, `.xlsx`, and `.jpg` files.
 * Helper functions for identifying and extracting phone numbers
-* Add new function `extract_attachment_info` that extracts and decode the attachment
+* Add new function `extract_attachment_info` that extracts and decodes the attachment
 of an email.
 * Staging brick to convert a list of `Element`s to a `pandas` dataframe.
 * Add plain text functionality to `partition_email`

@@ -1,7 +1,9 @@
+import datetime
 import email
 import os
 import pathlib
 import pytest
+
 
 from unstructured.documents.elements import NarrativeText, Title, ListItem, Image
 from unstructured.documents.email_elements import (
@@ -9,6 +11,7 @@ from unstructured.documents.email_elements import (
     Recipient,
     Sender,
     Subject,
+    ReceivedInfo,
 )
 from unstructured.partition.email import (
     extract_attachment_info,
@@ -34,6 +37,30 @@ IMAGE_EXPECTED_OUTPUT = [
     Image(text="unstructured_logo.png"),
     ListItem(text="Roses are red"),
     ListItem(text="Violets are blue"),
+]
+
+RECEIVED_HEADER_OUTPUT = [
+    ReceivedInfo(name="ABCDEFG-000.ABC.guide", text="00.0.0.00"),
+    ReceivedInfo(name="ABCDEFG-000.ABC.guide", text="ba23::58b5:2236:45g2:88h2"),
+    ReceivedInfo(
+        name="received_datetimetz",
+        text="2023-02-20 10:03:18+12:00",
+        datestamp=datetime.datetime(
+            2023, 2, 20, 10, 3, 18, tzinfo=datetime.timezone(datetime.timedelta(seconds=43200))
+        ),
+    ),
+    MetaData(name="MIME-Version", text="1.0"),
+    MetaData(name="Date", text="Fri, 16 Dec 2022 17:04:16 -0500"),
+    MetaData(
+        name="Message-ID",
+        text="<CADc-_xaLB2FeVQ7mNsoX+NJb_7hAJhBKa_zet-rtgPGenj0uVw@mail.gmail.com>",
+    ),
+    Subject(text="Test Email"),
+    Sender(name="Matthew Robinson", text="mrobinson@unstructured.io"),
+    Recipient(name="Matthew Robinson", text="mrobinson@unstructured.io"),
+    MetaData(
+        name="Content-Type", text='multipart/alternative; boundary="00000000000095c9b205eff92630"'
+    ),
 ]
 
 HEADER_EXPECTED_OUTPUT = [
@@ -114,12 +141,12 @@ def test_partition_email_from_filename_with_embedded_image():
 
 
 def test_partition_email_header():
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email-header.eml")
     with open(filename, "r") as f:
         msg = email.message_from_file(f)
     elements = partition_email_header(msg)
     assert len(elements) > 0
-    assert elements == HEADER_EXPECTED_OUTPUT
+    assert elements == RECEIVED_HEADER_OUTPUT
 
 
 def test_extract_email_text_matches_html():
