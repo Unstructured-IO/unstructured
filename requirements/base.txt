@@ -43,7 +43,7 @@ numpy==1.24.1
     #   pandas
 openpyxl==3.0.10
     # via unstructured (setup.py)
-packaging==22.0
+packaging==23.0
     # via argilla
 pandas==1.5.2
     # via
