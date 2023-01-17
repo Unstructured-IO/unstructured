@@ -23,7 +23,7 @@ deprecated==1.2.13
     # via argilla
 et-xmlfile==1.1.0
     # via openpyxl
-filelock==3.8.2
+filelock==3.9.0
     # via
     #   huggingface-hub
     #   transformers
@@ -95,7 +95,7 @@ regex==2022.10.31
     #   nltk
     #   sacremoses
     #   transformers
-requests==2.28.1
+requests==2.28.2
     # via
     #   huggingface-hub
     #   transformers

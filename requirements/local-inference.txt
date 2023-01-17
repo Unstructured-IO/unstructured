@@ -150,7 +150,7 @@ typing-extensions==4.4.0
     #   starlette
     #   torch
     #   torchvision
-unstructured-inference==0.2.1
+unstructured-inference==0.2.2
     # via -r requirements/local-inference.in
 urllib3==1.26.13
     # via requests
