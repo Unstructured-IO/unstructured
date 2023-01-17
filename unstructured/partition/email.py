@@ -181,9 +181,14 @@ def partition_email(
     else:
         raise ValueError("Only one of filename, file, or text can be specified.")
 
-    content_map: Dict[str, str] = {
-        part.get_content_type(): part.get_payload() for part in msg.walk()
-    }
+    content_map: Dict[str, str] = {}
+    for part in msg.walk():
+        # NOTE(robinson) - content dispostiion is None for the content of the email itself.
+        # Other dispositions include "attachment" for attachments
+        if part.get_content_disposition() is not None:
+            continue
+        content_type = part.get_content_type()
+        content_map[content_type] = part.get_payload()
 
     content = content_map.get(content_source, "")
     if not content:
