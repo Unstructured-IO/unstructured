@@ -181,30 +181,35 @@ def partition_email(
     else:
         raise ValueError("Only one of filename, file, or text can be specified.")
 
-    content_map: Dict[str, str] = {
-        part.get_content_type(): part.get_payload() for part in msg.walk()
-    }
+    content_map: Dict[str, str] = {}
+    for part in msg.walk():
+        # NOTE(robinson) - content dispostiion is None for the content of the email itself.
+        # Other dispositions include "attachment" for attachments
+        if part.get_content_disposition() is not None:
+            continue
+        content_type = part.get_content_type()
+        content_map[content_type] = part.get_payload()
 
     content = content_map.get(content_source, "")
     if not content:
         raise ValueError(f"{content_source} content not found in email")
 
-    # NOTE(robinson) - In the .eml files, the HTML content gets stored in a format that
-    # looks like the following, resulting in extraneous "=" characters in the output if
-    # you don't clean it up
-    # <ul> =
-    #    <li>Item 1</li>=
-    #    <li>Item 2<li>=
-    # </ul>
-    list_content = split_by_paragraph(content)
-
     if content_source == "text/html":
+        # NOTE(robinson) - In the .eml files, the HTML content gets stored in a format that
+        # looks like the following, resulting in extraneous "=" characters in the output if
+        # you don't clean it up
+        # <ul> =
+        #    <li>Item 1</li>=
+        #    <li>Item 2<li>=
+        # </ul>
+        list_content = content.split("=\n")
         content = "".join(list_content)
         elements = partition_html(text=content)
         for element in elements:
             if isinstance(element, Text):
                 element.apply(replace_mime_encodings)
     elif content_source == "text/plain":
+        list_content = split_by_paragraph(content)
         elements = partition_text(text=content)
 
     for idx, element in enumerate(elements):
