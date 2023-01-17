@@ -119,6 +119,8 @@ def exceeds_cap_ratio(text: str, threshold: float = 0.3) -> bool:
         return False
 
     tokens = word_tokenize(text)
+    if len(tokens) == 0:
+        return False
     capitalized = sum([word.istitle() or word.isupper() for word in tokens])
     ratio = capitalized / len(tokens)
     return ratio > threshold

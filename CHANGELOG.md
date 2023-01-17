@@ -1,3 +1,7 @@
+***REMOVED******REMOVED*** 0.4.3-dev0
+
+* Fix in `exceeds_cap_ratio` so the function doesn't break with empty text
+
 ***REMOVED******REMOVED*** 0.4.2
 
 * Added `partition_image` to process documents in an image format.
