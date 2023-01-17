@@ -20,7 +20,7 @@ et-xmlfile==1.1.0
     # via openpyxl
 h11==0.9.0
     # via httpcore
-httpcore==0.11.1
+httpcore==0.16.3
     # via httpx
 httpx==0.15.5
     # via argilla
