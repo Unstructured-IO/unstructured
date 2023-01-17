@@ -5,6 +5,12 @@ from typing import Callable, List, Union
 from unstructured.documents.elements import Element, Text, NoID
 
 
+class NoDatestamp(ABC):
+    """Class to indicate that an element do not have a datetime stamp."""
+
+    pass
+
+
 class EmailElement(Element):
     """An email element is a section of the email."""
 
@@ -20,12 +26,11 @@ class Name(EmailElement):
         self,
         name: str,
         text: str,
+        datestamp: Union[datetime, NoDatestamp] = NoDatestamp(),
         element_id: Union[str, NoID] = NoID(),
     ):
         self.name: str = name
         self.text: str = text
-        self.datestamp: datetime
-        self.has_datestamp: bool = False
 
         if isinstance(element_id, NoID):
             # NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits
@@ -33,15 +38,17 @@ class Name(EmailElement):
 
         super().__init__(element_id=element_id)
 
-    def set_datestamp(self, datestamp: datetime):
-        self.datestamp = datestamp
-        self.has_datestamp = True
+        if isinstance(datestamp, datetime):
+            self.datestamp: datetime = datestamp
+
+    def has_datestamp(self):
+        return "self.datestamp" in globals()
 
     def __str__(self):
         return f"{self.name}: {self.text}"
 
     def __eq__(self, other):
-        if self.has_datestamp:
+        if self.has_datestamp():
             return (
                 self.name == other.name
                 and self.text == other.text
