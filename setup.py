@@ -57,6 +57,7 @@ setup(
         "python-docx",
         "python-pptx",
         "python-magic",
+        "requests",
         # NOTE(robinson) - The following dependencies are pinned
         # to address security scans
         "certifi>=2022.12.07",
