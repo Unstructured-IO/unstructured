@@ -11,7 +11,10 @@ argilla==1.1.1
 ***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   httpx
+    ***REMOVED***   requests
     ***REMOVED***   unstructured (setup.py)
+charset-normalizer==3.0.1
+    ***REMOVED*** via requests
 ***REMOVED***
     ***REMOVED*** via nltk
 ***REMOVED***
@@ -25,7 +28,9 @@ httpcore==0.11.1
 httpx==0.15.5
     ***REMOVED*** via argilla
 ***REMOVED***
-    ***REMOVED*** via rfc3986
+    ***REMOVED*** via
+    ***REMOVED***   requests
+    ***REMOVED***   rfc3986
 ***REMOVED***
     ***REMOVED*** via nltk
 ***REMOVED***
@@ -68,6 +73,8 @@ pytz==2022.7
 regex==2022.10.31
     ***REMOVED*** via nltk
 ***REMOVED***
+    ***REMOVED*** via unstructured (setup.py)
+***REMOVED***
     ***REMOVED*** via httpx
 ***REMOVED***
     ***REMOVED*** via python-dateutil
@@ -81,6 +88,8 @@ tqdm==4.64.1
     ***REMOVED***   nltk
 typing-extensions==4.4.0
     ***REMOVED*** via pydantic
+urllib3==1.26.14
+    ***REMOVED*** via requests
 wrapt==1.13.3
     ***REMOVED*** via
     ***REMOVED***   argilla

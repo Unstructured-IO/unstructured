@@ -99,6 +99,7 @@ regex==2022.10.31
     ***REMOVED*** via
     ***REMOVED***   huggingface-hub
     ***REMOVED***   transformers
+    ***REMOVED***   unstructured (setup.py)
 ***REMOVED***
     ***REMOVED*** via httpx
 sacremoses==0.0.53
