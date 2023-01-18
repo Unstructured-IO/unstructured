@@ -11,14 +11,25 @@ from unstructured.nlp.patterns import EMAIL_HEAD_RE
 
 DOCX_MIME_TYPES = [
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+]
+
+DOC_MIME_TYPES = [
     "application/msword",
 ]
+
 XLSX_MIME_TYPES = [
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+]
+
+XLS_MIME_TYPES = [
     "application/vnd.ms-excel",
 ]
+
 PPTX_MIME_TYPES = [
     "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+]
+
+PPT_MIME_TYPES = [
     "application/vnd.ms-powerpoint",
 ]
 
@@ -125,6 +136,9 @@ def detect_filetype(
     elif mime_type in DOCX_MIME_TYPES:
         return FileType.DOCX
 
+    elif mime_type in DOC_MIME_TYPES:
+        return FileType.DOC
+
     elif mime_type == "image/jpeg":
         return FileType.JPG
 
@@ -157,8 +171,14 @@ def detect_filetype(
     elif mime_type in XLSX_MIME_TYPES:
         return FileType.XLSX
 
+    elif mime_type in XLS_MIME_TYPES:
+        return FileType.XLS
+
     elif mime_type in PPTX_MIME_TYPES:
         return FileType.PPTX
+
+    elif mime_type in PPT_MIME_TYPES:
+        return FileType.PPT
 
     elif mime_type == "application/octet-stream":
         if file and not extension:
