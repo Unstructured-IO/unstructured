@@ -2,6 +2,7 @@ from typing import List, Optional
 
 from unstructured.documents.elements import Element
 from unstructured.partition import _partition_via_api
+from unstructured.partition.common import layout_element_to_text_element
 
 
 def partition_pdf(
@@ -53,7 +54,7 @@ def partition_pdf_or_image(
         out_template: Optional[str] = template
         if route_args[0] == "layout":
             out_template = None
-        return _partition_pdf_or_image_local(
+        layout_elements = _partition_pdf_or_image_local(
             filename=filename, file=file, template=out_template, is_image=is_image
         )
     else:
@@ -64,7 +65,11 @@ def partition_pdf_or_image(
         data = {"model": "checkbox"} if (template == "checkbox") else None
         url = f"{url.rstrip('/')}/{template.lstrip('/')}"
         # NOTE(alan): Remove "data=data" after different models are handled by routing
-        return _partition_via_api(filename=filename, file=file, url=url, token=token, data=data)
+        layout_elements = _partition_via_api(
+            filename=filename, file=file, url=url, token=token, data=data
+        )
+
+    return [layout_element_to_text_element(el) for el in layout_elements]
 
 
 def _partition_pdf_or_image_local(
