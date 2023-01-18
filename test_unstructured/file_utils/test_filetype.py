@@ -88,6 +88,24 @@ def test_detect_application_zip_files(monkeypatch, tmpdir):
     assert filetype == FileType.ZIP
 
 
+def test_detect_doc_file_from_mime_type(monkeypatch):
+    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "application/msword")
+    filetype = detect_filetype(filename="fake.doc")
+    assert filetype == FileType.DOC
+
+
+def test_detect_ppt_file_from_mime_type(monkeypatch):
+    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "application/vnd.ms-powerpoint")
+    filetype = detect_filetype(filename="fake.ppt")
+    assert filetype == FileType.PPT
+
+
+def test_detect_xls_file_from_mime_type(monkeypatch):
+    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "application/vnd.ms-excel")
+    filetype = detect_filetype(filename="fake.xls")
+    assert filetype == FileType.XLS
+
+
 def test_detect_xlsx_filetype_application_octet_stream(monkeypatch):
     monkeypatch.setattr(magic, "from_buffer", lambda *args, **kwargs: "application/octet-stream")
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-excel.xlsx")
