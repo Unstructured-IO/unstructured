@@ -1,5 +1,6 @@
-## 0.4.3-dev2
+## 0.4.3
 
+* Adds `requests` as a base dependency
 * Fix in `exceeds_cap_ratio` so the function doesn't break with empty text
 * Fix bug in `_parse_received_data`.
 * Update `detect_filetype` to properly handle `.doc`, `.xls`, and `.ppt`.

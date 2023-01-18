@@ -99,6 +99,7 @@ requests==2.28.2
     # via
     #   huggingface-hub
     #   transformers
+    #   unstructured (setup.py)
 rfc3986[idna2008]==1.5.0
     # via httpx
 sacremoses==0.0.53
