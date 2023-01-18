@@ -1,7 +1,8 @@
-## 0.4.3-dev1
+## 0.4.3-dev2
 
 * Fix in `exceeds_cap_ratio` so the function doesn't break with empty text
 * Fix bug in `_parse_received_data`.
+* Update `detect_filetype` to properly handle `.doc`, `.xls`, and `.ppt`.
 
 ## 0.4.2
 
