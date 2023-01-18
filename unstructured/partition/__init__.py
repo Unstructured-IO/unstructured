@@ -1,5 +1,6 @@
 import requests  # type: ignore
 from typing import BinaryIO, List, Optional, Union, Tuple, Mapping
+from urllib.parse import urlsplit
 
 from unstructured.documents.elements import Element
 
@@ -15,9 +16,11 @@ def _partition_via_api(
     if not filename and not file:
         raise FileNotFoundError("No filename nor file were specified")
 
+    split_url = urlsplit(url)
+    healthcheck_url = f"{split_url.scheme}://{split_url.netloc}/healthcheck"
     healthcheck_response = requests.models.Response()
     if not token:
-        healthcheck_response = requests.get(url=f"{url}healthcheck")
+        healthcheck_response = requests.get(url=healthcheck_url)
 
     if healthcheck_response.status_code != 200:
         raise ValueError("endpoint api healthcheck has failed!")
