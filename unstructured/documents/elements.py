@@ -1,6 +1,6 @@
 from abc import ABC
 import hashlib
-from typing import Callable, Union
+from typing import Callable, List, Optional, Union
 
 
 class NoID(ABC):
@@ -12,8 +12,29 @@ class NoID(ABC):
 class Element(ABC):
     """An element is a section of a page in the document."""
 
-    def __init__(self, element_id: Union[str, NoID] = NoID()):
+    def __init__(
+        self, element_id: Union[str, NoID] = NoID(), coordinates: Optional[List[float]] = None
+    ):
         self.id: Union[str, NoID] = element_id
+        self.coordinates: Optional[List[float]] = coordinates
+
+
+class CheckBox(Element):
+    """A checkbox with an attribute indicating whether its checked or not. Primarily used
+    in documents that are forms"""
+
+    def __init__(
+        self,
+        element_id: Union[str, NoID] = NoID(),
+        coordinates: Optional[List[float]] = None,
+        checked: bool = False,
+    ):
+        self.id: Union[str, NoID] = element_id
+        self.coordinates: Optional[List[float]] = coordinates
+        self.checked: bool = checked
+
+    def __eq__(self, other):
+        return (self.checked == other.checked) and (self.coordinates) == (other.coordinates)
 
 
 class Text(Element):
@@ -21,7 +42,12 @@ class Text(Element):
 
     category = "Uncategorized"
 
-    def __init__(self, text: str, element_id: Union[str, NoID] = NoID()):
+    def __init__(
+        self,
+        text: str,
+        element_id: Union[str, NoID] = NoID(),
+        coordinates: Optional[List[float]] = None,
+    ):
         self.text: str = text
 
         if isinstance(element_id, NoID):
@@ -34,7 +60,7 @@ class Text(Element):
         return self.text
 
     def __eq__(self, other):
-        return self.text == other.text
+        return (self.text == other.text) and (self.coordinates == other.coordinates)
 
     def apply(self, *cleaners: Callable):
         """Applies a cleaning brick to the text element. The function that's passed in
@@ -47,6 +73,14 @@ class Text(Element):
             raise ValueError("Cleaner produced a non-string output.")
 
         self.text = cleaned_text
+
+
+class FigureCaption(Text):
+    """An element for capturing text associated with figure captions."""
+
+    category = "FigureCaption"
+
+    pass
 
 
 class NarrativeText(Text):
