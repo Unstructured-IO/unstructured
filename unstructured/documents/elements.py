@@ -19,6 +19,24 @@ class Element(ABC):
         self.coordinates: Optional[List[float]] = coordinates
 
 
+class CheckBox(Element):
+    """A checkbox with an attribute indicating whether its checked or not. Primarily used
+    in documents that are forms"""
+
+    def __init__(
+        self,
+        element_id: Union[str, NoID] = NoID(),
+        coordinates: Optional[List[float]] = None,
+        checked: bool = False,
+    ):
+        self.id: Union[str, NoID] = element_id
+        self.coordinates: Optional[List[float]] = coordinates
+        self.checked: bool = checked
+
+    def __eq__(self, other):
+        return (self.checked == other.checked) and (self.coordinates) == (other.coordinates)
+
+
 class Text(Element):
     """Base element for capturing free text from within document."""
 
@@ -42,7 +60,7 @@ class Text(Element):
         return self.text
 
     def __eq__(self, other):
-        return self.text == other.text
+        return (self.text == other.text) and (self.coordinates == other.coordinates)
 
     def apply(self, *cleaners: Callable):
         """Applies a cleaning brick to the text element. The function that's passed in

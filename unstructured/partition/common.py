@@ -1,7 +1,14 @@
-from unstructured.documents.elements import FigureCaption, NarrativeText, Text, Title
+from unstructured.documents.elements import (
+    Element,
+    CheckBox,
+    FigureCaption,
+    NarrativeText,
+    Text,
+    Title,
+)
 
 
-def layout_element_to_text_element(layout_element) -> Text:
+def normalize_layout_element(layout_element) -> Element:
     """Converts a list of unstructured_inference DocumentLayout objects to a list of
     unstructured Elements."""
 
@@ -12,13 +19,17 @@ def layout_element_to_text_element(layout_element) -> Text:
 
     text = layout_dict["text"]
     coordinates = layout_dict["coordinates"]
-    text_type = layout_dict["type"]
+    element_type = layout_dict["type"]
 
-    if text_type == "Title":
+    if element_type == "Title":
         return Title(text=text, coordinates=coordinates)
-    elif text_type == "Text":
+    elif element_type == "Text":
         return NarrativeText(text=text, coordinates=coordinates)
-    elif text_type == "Figure":
+    elif element_type == "Figure":
         return FigureCaption(text=text, coordinates=coordinates)
+    elif element_type == "Checked":
+        return CheckBox(checked=True, coordinates=coordinates)
+    elif element_type == "Unchecked":
+        return CheckBox(checked=False, coordinates=coordinates)
     else:
         return Text(text=text, coordinates=coordinates)

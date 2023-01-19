@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from unstructured.documents.elements import Element
 from unstructured.partition import _partition_via_api
-from unstructured.partition.common import layout_element_to_text_element
+from unstructured.partition.common import normalize_layout_element
 
 
 def partition_pdf(
@@ -69,7 +69,7 @@ def partition_pdf_or_image(
             filename=filename, file=file, url=url, token=token, data=data
         )
 
-    return [layout_element_to_text_element(el) for el in layout_elements]
+    return [normalize_layout_element(el) for el in layout_elements]
 
 
 def _partition_pdf_or_image_local(
