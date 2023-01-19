@@ -1,3 +1,10 @@
+## 0.4.4-dev0
+
+* Updated `partition_pdf` and `partition_image` to return `unstructured` `Element` objects
+* Fixed the healthcheck url path when partitioning images and PDFs via API
+* Adds an optional `coordinates` attribute to document objects
+* Adds `FigureCaption` and `CheckBox` document elements
+
 ## 0.4.3
 
 * Adds `requests` as a base dependency

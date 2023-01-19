@@ -139,7 +139,12 @@ def test_auto_partition_text_from_file():
         EXAMPLE_DOCS_DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf"
     )
     elements = partition(filename=filename)
-    assert len(elements) > 0
+
+    assert isinstance(elements[0], Title)
+    assert elements[0].text.startswith("LayoutParser")
+
+    assert isinstance(elements[1], NarrativeText)
+    assert elements[1].text.startswith("Zejiang Shen 1")
 
 
 def test_auto_partition_pdf_from_file():
