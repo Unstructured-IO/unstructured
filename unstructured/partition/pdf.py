@@ -69,7 +69,15 @@ def partition_pdf_or_image(
             filename=filename, file=file, url=url, token=token, data=data
         )
 
-    return [normalize_layout_element(el) for el in layout_elements]
+    elements: List[Element] = list()
+    for layout_element in layout_elements:
+        element = normalize_layout_element(layout_element)
+        if isinstance(element, list):
+            elements.extend(element)
+        else:
+            elements.append(element)
+
+    return elements
 
 
 def _partition_pdf_or_image_local(

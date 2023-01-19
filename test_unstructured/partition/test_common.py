@@ -1,6 +1,13 @@
 from unstructured_inference.inference.layout import LayoutElement
 
-from unstructured.documents.elements import CheckBox, FigureCaption, NarrativeText, Text, Title
+from unstructured.documents.elements import (
+    CheckBox,
+    FigureCaption,
+    ListItem,
+    NarrativeText,
+    Text,
+    Title,
+)
 import unstructured.partition.common as common
 
 
@@ -66,3 +73,31 @@ def test_normalize_layout_element_unchecked_box():
     )
     element = common.normalize_layout_element(layout_element)
     assert element == CheckBox(checked=False, coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]])
+
+
+def test_normalize_layout_element_enumerated_list():
+    layout_element = LayoutElement(
+        type="List",
+        coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]],
+        text="1. I'm so cool! 2. You're cool too. 3. We're all cool!",
+    )
+    elements = common.normalize_layout_element(layout_element)
+    assert elements == [
+        ListItem(text="I'm so cool!", coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]]),
+        ListItem(text="You're cool too.", coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]]),
+        ListItem(text="We're all cool!", coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]]),
+    ]
+
+
+def test_normalize_layout_element_bulleted_list():
+    layout_element = LayoutElement(
+        type="List",
+        coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]],
+        text="* I'm so cool! * You're cool too. * We're all cool!",
+    )
+    elements = common.normalize_layout_element(layout_element)
+    assert elements == [
+        ListItem(text="I'm so cool!", coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]]),
+        ListItem(text="You're cool too.", coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]]),
+        ListItem(text="We're all cool!", coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]]),
+    ]
