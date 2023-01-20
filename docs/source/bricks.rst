@@ -22,7 +22,7 @@ If you call the ``partition`` function, ``unstructured`` will attempt to detect 
 file type and route it to the appropriate partitioning brick. All partitioning bricks
 called within ``partition`` are called using the defualt kwargs. Use the document-type
 specific bricks if you need to apply non-default settings.
-``partition`` currently supports ``.docx``, ``.pptx``, ``.eml``, ``.html``, ``.pdf``, 
+``partition`` currently supports ``.docx``, ``.pptx``, ``.eml``, ``.html``, ``.pdf``,
 ``.png``, ``.jpg``, and ``.txt`` files.
 
 
