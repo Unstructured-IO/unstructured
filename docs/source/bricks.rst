@@ -22,7 +22,8 @@ If you call the ``partition`` function, ``unstructured`` will attempt to detect 
 file type and route it to the appropriate partitioning brick. All partitioning bricks
 called within ``partition`` are called using the defualt kwargs. Use the document-type
 specific bricks if you need to apply non-default settings.
-``partition`` currently supports ``.docx``, ``.eml``, ``.html``, ``.pdf``, and ``.txt`` files.
+``partition`` currently supports ``.docx``, ``.pptx``, ``.eml``, ``.html``, ``.pdf``, 
+``.png``, ``.jpg``, and ``.txt`` files.
 
 
 .. code:: python
@@ -77,6 +78,26 @@ Examples:
 
   with open("mydoc.docx", "rb") as f:
       elements = partition_docx(file=f)
+
+``partition_pptx``
+---------------------
+
+The ``partition_pptx`` partitioning brick pre-processes Microsoft PowerPoint documents
+saved in the ``.pptx`` format. This staging brick uses a combination of the styling
+information in the document and the structure of the text to determine the type
+of a text element. The ``partition_pptx`` can take a filename or file-like object
+as input, as shown in the two examples below.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.pptx import partition_pptx
+
+  elements = partition_pptx(filename="example-docs/fake-power-point.pptx")
+
+  with open("example-docs/fake-power-point.pptx", "rb") as f:
+      elements = partition_pptx(file=f)
 
 
 ``partition_html``
