@@ -1,10 +1,11 @@
-## 0.4.4-dev1
+## 0.4.4-dev2
 
 * Updated `partition_pdf` and `partition_image` to return `unstructured` `Element` objects
 * Fixed the healthcheck url path when partitioning images and PDFs via API
 * Adds an optional `coordinates` attribute to document objects
 * Adds `FigureCaption` and `CheckBox` document elements
 * Added ability to split lists detected in `LayoutElement` objects
+* Adds `partition_pptx` for partition PowerPoint documents
 
 ## 0.4.3
 
