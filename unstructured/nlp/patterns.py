@@ -40,7 +40,9 @@ UNICODE_BULLETS: Final[List[str]] = [
     "\x95",
     "·",
 ]
-UNICODE_BULLETS_RE = re.compile(f"({'|'.join(UNICODE_BULLETS)})")
+UNICODE_BULLETS_RE = re.compile(f"(?:{'|'.join(UNICODE_BULLETS)})")
+
+ENUMERATED_BULLETS_RE = re.compile(r"(?:(?:\d{1,3}|[a-z][A-Z])\.?){1,3}")
 
 EMAIL_HEAD_PATTERN = (
     r"(MIME-Version: 1.0(.*)?\n)?Date:.*\nMessage-ID:.*\nSubject:.*\nFrom:.*\nTo:.*"
