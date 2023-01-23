@@ -8,8 +8,8 @@ from unstructured.documents.elements import NarrativeText, Title, Text, ListItem
 from unstructured.partition.auto import partition
 import unstructured.partition.auto as auto
 
-EXAMPLE_DOCS_DIRECTORY = pathlib.Path(__file__).parent.resolve()
-
+DIRECTORY = pathlib.Path(__file__).parent.resolve()
+EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "..", "example-docs")
 
 EXPECTED_EMAIL_OUTPUT = [
     NarrativeText(text="This is a test email to use for unit tests."),
@@ -20,14 +20,14 @@ EXPECTED_EMAIL_OUTPUT = [
 
 
 def test_auto_partition_email_from_filename():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
     elements = partition(filename=filename)
     assert len(elements) > 0
     assert elements == EXPECTED_EMAIL_OUTPUT
 
 
 def test_auto_partition_email_from_file():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
     with open(filename, "r") as f:
         elements = partition(file=f)
     assert len(elements) > 0
@@ -35,7 +35,7 @@ def test_auto_partition_email_from_file():
 
 
 def test_auto_partition_email_from_file_rb():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
     with open(filename, "rb") as f:
         elements = partition(file=f)
     assert len(elements) > 0
@@ -94,20 +94,20 @@ def test_auto_partition_docx_with_file(mock_docx_document, expected_docx_element
 
 
 def test_auto_partition_html_from_filename():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "..", "..", "example-docs", "example-10k.html")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "example-10k.html")
     elements = partition(filename=filename)
     assert len(elements) > 0
 
 
 def test_auto_partition_html_from_file():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "..", "..", "example-docs", "fake-html.html")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-html.html")
     with open(filename, "r") as f:
         elements = partition(file=f)
     assert len(elements) > 0
 
 
 def test_auto_partition_html_from_file_rb():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "..", "..", "example-docs", "fake-html.html")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-html.html")
     with open(filename, "rb") as f:
         elements = partition(file=f)
     assert len(elements) > 0
@@ -123,21 +123,19 @@ EXPECTED_TEXT_OUTPUT = [
 
 
 def test_auto_partition_text_from_filename():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "..", "..", "example-docs", "fake-text.txt")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
     elements = partition(filename=filename)
     assert len(elements) > 0
     assert elements == EXPECTED_TEXT_OUTPUT
 
 
 def test_auto_partition_text_from_file():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "..", "..", "example-docs", "fake-text.txt")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
     with open(filename, "r") as f:
         elements = partition(file=f)
     assert len(elements) > 0
     assert elements == EXPECTED_TEXT_OUTPUT
-    filename = os.path.join(
-        EXAMPLE_DOCS_DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf"
-    )
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
     elements = partition(filename=filename)
 
     assert isinstance(elements[0], Title)
@@ -148,22 +146,20 @@ def test_auto_partition_text_from_file():
 
 
 def test_auto_partition_pdf_from_file():
-    filename = os.path.join(
-        EXAMPLE_DOCS_DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf"
-    )
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
     with open(filename, "rb") as f:
         elements = partition(file=f)
     assert len(elements) > 0
 
 
 def test_auto_partition_jpg():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "..", "..", "example-docs", "example.jpg")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "example.jpg")
     elements = partition(filename=filename)
     assert len(elements) > 0
 
 
 def test_auto_partition_jpg_from_file():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "..", "..", "example-docs", "example.jpg")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "example.jpg")
     with open(filename, "rb") as f:
         elements = partition(file=f)
     assert len(elements) > 0
@@ -173,3 +169,19 @@ def test_auto_partition_raises_with_bad_type(monkeypatch):
     monkeypatch.setattr(auto, "detect_filetype", lambda *args, **kwargs: None)
     with pytest.raises(ValueError):
         partition(filename="made-up.fake")
+
+
+EXPECTED_PPTX_OUTPUT = [
+    Title(text="Adding a Bullet Slide"),
+    ListItem(text="Find the bullet slide layout"),
+    ListItem(text="Use _TextFrame.text for first bullet"),
+    ListItem(text="Use _TextFrame.add_paragraph() for subsequent bullets"),
+    NarrativeText(text="Here is a lot of text!"),
+    NarrativeText(text="Here is some text in a text box!"),
+]
+
+
+def test_auto_partition_pptx_from_filename():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
+    elements = partition(filename=filename)
+    assert elements == EXPECTED_PPTX_OUTPUT
