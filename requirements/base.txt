@@ -50,7 +50,7 @@ openpyxl==3.0.10
     # via unstructured (setup.py)
 packaging==23.0
     # via argilla
-pandas==1.5.2
+pandas==1.5.3
     # via
     #   argilla
     #   unstructured (setup.py)
