@@ -37,19 +37,16 @@ PPT_MIME_TYPES = [
 # If the MIME type is application/octet-stream, we check if it's a .docx/.xlsx file by
 # looking for expected filenames within the zip file.
 EXPECTED_DOCX_FILES = [
-    "docProps/app.xml",
     "docProps/core.xml",
     "word/document.xml",
 ]
 
 EXPECTED_XLSX_FILES = [
-    "docProps/app.xml",
     "docProps/core.xml",
     "xl/workbook.xml",
 ]
 
 EXPECTED_PPTX_FILES = [
-    "docProps/app.xml",
     "docProps/core.xml",
     "ppt/presentation.xml",
 ]
