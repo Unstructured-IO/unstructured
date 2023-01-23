@@ -84,7 +84,7 @@ python-magic==0.4.27
     # via unstructured (setup.py)
 python-pptx==0.6.21
     # via unstructured (setup.py)
-pytz==2022.7
+pytz==2022.7.1
     # via pandas
 pyyaml==6.0
     # via
