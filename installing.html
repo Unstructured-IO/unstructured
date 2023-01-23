@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Installation &mdash; unstructured 0.4.4-dev2 documentation</title>
@@ -11,10 +11,9 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script integrity="sha384-vtXRMe3mGCbOeY7l30aIg8H9p3GdeSe4IFlP6G8JMa7o7lXvnz3GFKzPxzJdPfGK" src="_static/jquery.js"></script>
+        <script integrity="sha384-lSZeSIVKp9myfKbDQ3GkN/KHjUc+mzg17VKDN4Y2kUeBSJioB9QSM639vM9fuY//" src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -29,11 +28,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> unstructured
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            unstructured
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -75,7 +78,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">Installation</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/installing.rst.txt" rel="nofollow"> View page source</a>
@@ -159,15 +162,15 @@ level to <code class="docutils literal notranslate"><span class="pre">INFO</span
 <h3>Filetype Detection<a class="headerlink" href="#filetype-detection" title="Permalink to this heading"></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">filetype</span></code> module in <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> uses <code class="docutils literal notranslate"><span class="pre">libmagic</span></code> to detect MIME types. For
 this to work, you’ll need <code class="docutils literal notranslate"><span class="pre">libmagic</span></code> installed on your computer. On a Mac, you can run:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>brew install libmagic
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>brew<span class="w"> </span>install<span class="w"> </span>libmagic
 </pre></div>
 </div>
 <p>One Debian, run:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>sudo apt-get install -y libmagic-dev
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>libmagic-dev
 </pre></div>
 </div>
 <p>If you are on Windows using <code class="docutils literal notranslate"><span class="pre">conda</span></code>, run:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>conda install -c conda-forge libmagic
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>libmagic
 </pre></div>
 </div>
 </section>
@@ -183,8 +186,8 @@ If they are not already installed, you can install them with <code class="docuti
 <h3>XML/HTML Depenedencies<a class="headerlink" href="#xml-html-depenedencies" title="Permalink to this heading"></a></h3>
 <p>For XML and HTML parsing, you’ll need <code class="docutils literal notranslate"><span class="pre">libxml2</span></code> and <code class="docutils literal notranslate"><span class="pre">libxlst</span></code> installed. On a Mac, you can do
 that with:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>brew install libxml2
-<span class="gp">$ </span>brew install libxslt
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>brew<span class="w"> </span>install<span class="w"> </span>libxml2
+<span class="gp">$ </span>brew<span class="w"> </span>install<span class="w"> </span>libxslt
 </pre></div>
 </div>
 </section>
@@ -193,7 +196,7 @@ that with:</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">transformers</span></code> requires the Rust compiler to be present on your system in
 order to properly <code class="docutils literal notranslate"><span class="pre">pip</span></code> install. If a Rust compiler is not available on your system,
 you can run the following command to install it:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>curl --proto <span class="s1">&#39;=https&#39;</span> --tlsv1.2 -sSf https://sh.rustup.rs <span class="p">|</span> sh
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>curl<span class="w"> </span>--proto<span class="w"> </span><span class="s1">&#39;=https&#39;</span><span class="w"> </span>--tlsv1.2<span class="w"> </span>-sSf<span class="w"> </span>https://sh.rustup.rs<span class="w"> </span><span class="p">|</span><span class="w"> </span>sh
 </pre></div>
 </div>
 <p>Additionally, some tokenizers in the <code class="docutils literal notranslate"><span class="pre">transformers</span></code> library required the <code class="docutils literal notranslate"><span class="pre">sentencepiece</span></code>
