@@ -76,7 +76,7 @@ If you are using the `partition` brick, ensure you first install `libmagic` usin
 instructions outlined [here](https://unstructured-io.github.io/unstructured/installing.html***REMOVED***filetype-detection)
 `partition` will always apply the default arguments. If you need
 advanced features, use a document-specific brick. The `partition` brick currently works for
-`.txt`, `.docx`, `eml`, `.html`, and `.pdf` documents.
+`.txt`, `.docx`, `.pptx`, `.jpg`, `.png`, `.eml`, `.html`, and `.pdf` documents.
 
 ```python
 from unstructured.partition.auto import partition
