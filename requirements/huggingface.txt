@@ -4,16 +4,19 @@
 ***REMOVED***
 ***REMOVED***    pip-compile --extra=huggingface --output-file=requirements/huggingface.txt
 ***REMOVED***
-argilla==1.1.1
+***REMOVED***
+    ***REMOVED*** via httpcore
+argilla==1.2.0
     ***REMOVED*** via unstructured (setup.py)
 ***REMOVED***
     ***REMOVED*** via argilla
 ***REMOVED***
     ***REMOVED*** via
+    ***REMOVED***   httpcore
     ***REMOVED***   httpx
     ***REMOVED***   requests
     ***REMOVED***   unstructured (setup.py)
-charset-normalizer==2.1.1
+charset-normalizer==3.0.1
     ***REMOVED*** via requests
 ***REMOVED***
     ***REMOVED*** via
@@ -27,16 +30,17 @@ filelock==3.9.0
     ***REMOVED*** via
     ***REMOVED***   huggingface-hub
     ***REMOVED***   transformers
-h11==0.9.0
+***REMOVED***
     ***REMOVED*** via httpcore
-httpcore==0.11.1
+***REMOVED***
     ***REMOVED*** via httpx
-httpx==0.15.5
+***REMOVED***
     ***REMOVED*** via argilla
 huggingface-hub==0.11.1
     ***REMOVED*** via transformers
 ***REMOVED***
     ***REMOVED*** via
+    ***REMOVED***   anyio
     ***REMOVED***   requests
     ***REMOVED***   rfc3986
 ***REMOVED***
@@ -52,9 +56,9 @@ langdetect==1.0.9
     ***REMOVED***   unstructured (setup.py)
 ***REMOVED***
     ***REMOVED*** via argilla
-nltk==3.7
+***REMOVED***
     ***REMOVED*** via unstructured (setup.py)
-numpy==1.24.1
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   argilla
     ***REMOVED***   pandas
@@ -66,7 +70,7 @@ openpyxl==3.0.10
     ***REMOVED***   argilla
     ***REMOVED***   huggingface-hub
     ***REMOVED***   transformers
-pandas==1.5.2
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   argilla
     ***REMOVED***   unstructured (setup.py)
@@ -84,7 +88,7 @@ pydantic==1.10.4
     ***REMOVED*** via unstructured (setup.py)
 ***REMOVED***
     ***REMOVED*** via unstructured (setup.py)
-pytz==2022.7
+pytz==2022.7.1
     ***REMOVED*** via pandas
 pyyaml==6.0
     ***REMOVED*** via
@@ -113,6 +117,7 @@ sentencepiece==0.1.97
     ***REMOVED***   sacremoses
 ***REMOVED***
     ***REMOVED*** via
+    ***REMOVED***   anyio
     ***REMOVED***   httpcore
     ***REMOVED***   httpx
 tokenizers==0.13.2
@@ -133,11 +138,11 @@ typing-extensions==4.4.0
     ***REMOVED***   huggingface-hub
     ***REMOVED***   pydantic
     ***REMOVED***   torch
-urllib3==1.26.13
+urllib3==1.26.14
     ***REMOVED*** via requests
-wrapt==1.13.3
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   argilla
     ***REMOVED***   deprecated
-xlsxwriter==3.0.6
+xlsxwriter==3.0.7
     ***REMOVED*** via python-pptx

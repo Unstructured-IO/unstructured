@@ -4,31 +4,40 @@
 ***REMOVED***
 ***REMOVED***    pip-compile requirements/dev.in
 ***REMOVED***
+***REMOVED***
+    ***REMOVED*** via jupyter-server
 appnope==0.1.3
     ***REMOVED*** via
     ***REMOVED***   ipykernel
     ***REMOVED***   ipython
 argon2-cffi==21.3.0
-    ***REMOVED*** via notebook
+    ***REMOVED*** via
+    ***REMOVED***   jupyter-server
+    ***REMOVED***   nbclassic
+    ***REMOVED***   notebook
 argon2-cffi-bindings==21.2.0
     ***REMOVED*** via argon2-cffi
-asttokens==2.0.8
+arrow==1.2.3
+    ***REMOVED*** via isoduration
+asttokens==2.2.1
     ***REMOVED*** via stack-data
-attrs==22.1.0
+attrs==22.2.0
     ***REMOVED*** via jsonschema
 backcall==0.2.0
     ***REMOVED*** via ipython
 beautifulsoup4==4.11.1
     ***REMOVED*** via nbconvert
-bleach==5.0.1
+bleach==6.0.0
     ***REMOVED*** via nbconvert
-build==0.8.0
+build==0.10.0
     ***REMOVED*** via pip-tools
 ***REMOVED***
     ***REMOVED*** via argon2-cffi-bindings
 ***REMOVED***
     ***REMOVED*** via pip-tools
-debugpy==1.6.3
+comm==0.1.2
+    ***REMOVED*** via ipykernel
+debugpy==1.6.5
     ***REMOVED*** via ipykernel
 decorator==5.1.1
     ***REMOVED*** via ipython
@@ -36,22 +45,29 @@ defusedxml==0.7.1
     ***REMOVED*** via nbconvert
 entrypoints==0.4
     ***REMOVED*** via jupyter-client
-executing==1.0.0
+executing==1.2.0
     ***REMOVED*** via stack-data
 fastjsonschema==2.16.2
     ***REMOVED*** via nbformat
+fqdn==1.5.1
+    ***REMOVED*** via jsonschema
+***REMOVED***
+    ***REMOVED*** via
+    ***REMOVED***   anyio
+    ***REMOVED***   jsonschema
 importlib-metadata==6.0.0
     ***REMOVED*** via nbconvert
 importlib-resources==5.10.2
     ***REMOVED*** via jsonschema
-ipykernel==6.15.3
+ipykernel==6.20.2
     ***REMOVED*** via
     ***REMOVED***   ipywidgets
     ***REMOVED***   jupyter
     ***REMOVED***   jupyter-console
+    ***REMOVED***   nbclassic
     ***REMOVED***   notebook
     ***REMOVED***   qtconsole
-ipython==8.6.0
+ipython==8.8.0
     ***REMOVED*** via
     ***REMOVED***   -r requirements/dev.in
     ***REMOVED***   ipykernel
@@ -59,24 +75,35 @@ ipython==8.6.0
     ***REMOVED***   jupyter-console
 ipython-genutils==0.2.0
     ***REMOVED*** via
+    ***REMOVED***   nbclassic
     ***REMOVED***   notebook
     ***REMOVED***   qtconsole
-ipywidgets==8.0.2
+ipywidgets==8.0.4
     ***REMOVED*** via jupyter
-jedi==0.18.1
+isoduration==20.11.0
+    ***REMOVED*** via jsonschema
+jedi==0.18.2
     ***REMOVED*** via ipython
 jinja2==3.1.2
     ***REMOVED*** via
+    ***REMOVED***   jupyter-server
+    ***REMOVED***   nbclassic
     ***REMOVED***   nbconvert
     ***REMOVED***   notebook
-jsonschema==4.16.0
-    ***REMOVED*** via nbformat
+jsonpointer==2.3
+    ***REMOVED*** via jsonschema
+jsonschema[format-nongpl]==4.17.3
+    ***REMOVED*** via
+    ***REMOVED***   jupyter-events
+    ***REMOVED***   nbformat
 jupyter==1.0.0
     ***REMOVED*** via -r requirements/dev.in
-jupyter-client==7.3.5
+jupyter-client==7.4.9
     ***REMOVED*** via
     ***REMOVED***   ipykernel
     ***REMOVED***   jupyter-console
+    ***REMOVED***   jupyter-server
+    ***REMOVED***   nbclassic
     ***REMOVED***   nbclient
     ***REMOVED***   notebook
     ***REMOVED***   qtconsole
@@ -86,17 +113,26 @@ jupyter-core==5.1.3
     ***REMOVED*** via
     ***REMOVED***   -r requirements/dev.in
     ***REMOVED***   jupyter-client
+    ***REMOVED***   jupyter-server
+    ***REMOVED***   nbclassic
+    ***REMOVED***   nbclient
     ***REMOVED***   nbconvert
     ***REMOVED***   nbformat
     ***REMOVED***   notebook
     ***REMOVED***   qtconsole
+jupyter-events==0.6.3
+    ***REMOVED*** via jupyter-server
+jupyter-server==2.1.0
+    ***REMOVED*** via
+    ***REMOVED***   nbclassic
+    ***REMOVED***   notebook-shim
+jupyter-server-terminals==0.4.4
+    ***REMOVED*** via jupyter-server
 jupyterlab-pygments==0.2.2
     ***REMOVED*** via nbconvert
-jupyterlab-widgets==3.0.3
+jupyterlab-widgets==3.0.5
     ***REMOVED*** via ipywidgets
-lxml==4.9.1
-    ***REMOVED*** via nbconvert
-markupsafe==2.1.1
+markupsafe==2.1.2
     ***REMOVED*** via
     ***REMOVED***   jinja2
     ***REMOVED***   nbconvert
@@ -106,37 +142,44 @@ matplotlib-inline==0.1.6
     ***REMOVED***   ipython
 mistune==2.0.4
     ***REMOVED*** via nbconvert
-nbclient==0.6.8
+nbclassic==0.4.8
+    ***REMOVED*** via notebook
+nbclient==0.7.2
     ***REMOVED*** via nbconvert
-nbconvert==7.0.0
+nbconvert==7.2.8
     ***REMOVED*** via
     ***REMOVED***   jupyter
+    ***REMOVED***   jupyter-server
+    ***REMOVED***   nbclassic
     ***REMOVED***   notebook
-nbformat==5.6.0
+nbformat==5.7.3
     ***REMOVED*** via
+    ***REMOVED***   jupyter-server
+    ***REMOVED***   nbclassic
     ***REMOVED***   nbclient
     ***REMOVED***   nbconvert
     ***REMOVED***   notebook
-nest-asyncio==1.5.5
+nest-asyncio==1.5.6
     ***REMOVED*** via
     ***REMOVED***   ipykernel
     ***REMOVED***   jupyter-client
-    ***REMOVED***   nbclient
+    ***REMOVED***   nbclassic
     ***REMOVED***   notebook
-notebook==6.4.12
+notebook==6.5.2
     ***REMOVED*** via jupyter
-packaging==21.3
+notebook-shim==0.2.2
+    ***REMOVED*** via nbclassic
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   build
     ***REMOVED***   ipykernel
+    ***REMOVED***   jupyter-server
     ***REMOVED***   nbconvert
     ***REMOVED***   qtpy
 pandocfilters==1.5.0
     ***REMOVED*** via nbconvert
 parso==0.8.3
     ***REMOVED*** via jedi
-pep517==0.13.0
-    ***REMOVED*** via build
 pexpect==4.8.0
     ***REMOVED*** via ipython
 pickleshare==0.7.5
@@ -145,15 +188,18 @@ pip-tools==6.12.1
     ***REMOVED*** via -r requirements/dev.in
 pkgutil-resolve-name==1.3.10
     ***REMOVED*** via jsonschema
-platformdirs==2.5.4
+platformdirs==2.6.2
     ***REMOVED*** via jupyter-core
-prometheus-client==0.14.1
-    ***REMOVED*** via notebook
-prompt-toolkit==3.0.31
+prometheus-client==0.15.0
+    ***REMOVED*** via
+    ***REMOVED***   jupyter-server
+    ***REMOVED***   nbclassic
+    ***REMOVED***   notebook
+prompt-toolkit==3.0.36
     ***REMOVED*** via
     ***REMOVED***   ipython
     ***REMOVED***   jupyter-console
-psutil==5.9.2
+psutil==5.9.4
     ***REMOVED*** via ipykernel
 ptyprocess==0.7.0
     ***REMOVED*** via
@@ -163,77 +209,115 @@ pure-eval==0.2.2
     ***REMOVED*** via stack-data
 ***REMOVED***
     ***REMOVED*** via cffi
-pygments==2.13.0
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   ipython
     ***REMOVED***   jupyter-console
     ***REMOVED***   nbconvert
     ***REMOVED***   qtconsole
-pyparsing==3.0.9
-    ***REMOVED*** via packaging
-pyrsistent==0.18.1
+pyproject-hooks==1.0.0
+    ***REMOVED*** via build
+pyrsistent==0.19.3
     ***REMOVED*** via jsonschema
 ***REMOVED***
-    ***REMOVED*** via jupyter-client
-pyzmq==24.0.1
+    ***REMOVED*** via
+    ***REMOVED***   arrow
+    ***REMOVED***   jupyter-client
+python-json-logger==2.0.4
+    ***REMOVED*** via jupyter-events
+pyyaml==6.0
+    ***REMOVED*** via jupyter-events
+pyzmq==25.0.0
     ***REMOVED*** via
     ***REMOVED***   ipykernel
     ***REMOVED***   jupyter-client
+    ***REMOVED***   jupyter-server
+    ***REMOVED***   nbclassic
     ***REMOVED***   notebook
     ***REMOVED***   qtconsole
-qtconsole==5.3.2
+qtconsole==5.4.0
     ***REMOVED*** via jupyter
-qtpy==2.2.0
+qtpy==2.3.0
     ***REMOVED*** via qtconsole
+rfc3339-validator==0.1.4
+    ***REMOVED*** via
+    ***REMOVED***   jsonschema
+    ***REMOVED***   jupyter-events
+rfc3986-validator==0.1.1
+    ***REMOVED*** via
+    ***REMOVED***   jsonschema
+    ***REMOVED***   jupyter-events
 send2trash==1.8.0
-    ***REMOVED*** via notebook
+    ***REMOVED*** via
+    ***REMOVED***   jupyter-server
+    ***REMOVED***   nbclassic
+    ***REMOVED***   notebook
 ***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   asttokens
     ***REMOVED***   bleach
     ***REMOVED***   python-dateutil
+    ***REMOVED***   rfc3339-validator
+***REMOVED***
+    ***REMOVED*** via anyio
 soupsieve==2.3.2.post1
     ***REMOVED*** via beautifulsoup4
-stack-data==0.5.0
+stack-data==0.6.2
     ***REMOVED*** via ipython
-terminado==0.15.0
-    ***REMOVED*** via notebook
-tinycss2==1.1.1
+terminado==0.17.1
+    ***REMOVED*** via
+    ***REMOVED***   jupyter-server
+    ***REMOVED***   jupyter-server-terminals
+    ***REMOVED***   nbclassic
+    ***REMOVED***   notebook
+tinycss2==1.2.1
     ***REMOVED*** via nbconvert
 tomli==2.0.1
     ***REMOVED*** via
     ***REMOVED***   build
-    ***REMOVED***   pep517
+    ***REMOVED***   pyproject-hooks
 tornado==6.2
     ***REMOVED*** via
     ***REMOVED***   ipykernel
     ***REMOVED***   jupyter-client
+    ***REMOVED***   jupyter-server
+    ***REMOVED***   nbclassic
     ***REMOVED***   notebook
     ***REMOVED***   terminado
-traitlets==5.4.0
+traitlets==5.8.1
     ***REMOVED*** via
+    ***REMOVED***   comm
     ***REMOVED***   ipykernel
     ***REMOVED***   ipython
     ***REMOVED***   ipywidgets
     ***REMOVED***   jupyter-client
     ***REMOVED***   jupyter-core
+    ***REMOVED***   jupyter-events
+    ***REMOVED***   jupyter-server
     ***REMOVED***   matplotlib-inline
+    ***REMOVED***   nbclassic
     ***REMOVED***   nbclient
     ***REMOVED***   nbconvert
     ***REMOVED***   nbformat
     ***REMOVED***   notebook
     ***REMOVED***   qtconsole
-wcwidth==0.2.5
+uri-template==1.2.0
+    ***REMOVED*** via jsonschema
+wcwidth==0.2.6
     ***REMOVED*** via prompt-toolkit
+webcolors==1.12
+    ***REMOVED*** via jsonschema
 webencodings==0.5.1
     ***REMOVED*** via
     ***REMOVED***   bleach
     ***REMOVED***   tinycss2
+websocket-client==1.4.2
+    ***REMOVED*** via jupyter-server
 wheel==0.38.4
     ***REMOVED*** via
     ***REMOVED***   -r requirements/dev.in
     ***REMOVED***   pip-tools
-widgetsnbextension==4.0.3
+widgetsnbextension==4.0.5
     ***REMOVED*** via ipywidgets
 zipp==3.11.0
     ***REMOVED*** via

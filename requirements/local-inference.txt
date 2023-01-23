@@ -12,13 +12,13 @@ antlr4-python3-runtime==4.9.3
     ***REMOVED*** via requests
 ***REMOVED***
     ***REMOVED*** via cryptography
-charset-normalizer==2.1.1
+charset-normalizer==3.0.1
     ***REMOVED*** via
     ***REMOVED***   pdfminer-six
     ***REMOVED***   requests
 ***REMOVED***
     ***REMOVED*** via uvicorn
-contourpy==1.0.6
+contourpy==1.0.7
     ***REMOVED*** via matplotlib
 cryptography==39.0.0
     ***REMOVED*** via pdfminer-six
@@ -26,7 +26,7 @@ cycler==0.11.0
     ***REMOVED*** via matplotlib
 effdet==0.3.0
     ***REMOVED*** via layoutparser
-fastapi==0.88.0
+fastapi==0.89.1
     ***REMOVED*** via unstructured-inference
 filelock==3.9.0
     ***REMOVED*** via huggingface-hub
@@ -48,7 +48,7 @@ kiwisolver==1.4.4
     ***REMOVED*** via matplotlib
 layoutparser[layoutmodels,tesseract]==0.3.4
     ***REMOVED*** via unstructured-inference
-matplotlib==3.6.2
+matplotlib==3.6.3
     ***REMOVED*** via pycocotools
 numpy==1.24.1
     ***REMOVED*** via
@@ -62,14 +62,16 @@ numpy==1.24.1
     ***REMOVED***   torchvision
 omegaconf==2.3.0
     ***REMOVED*** via effdet
-opencv-python==4.7.0.68
-    ***REMOVED*** via layoutparser
-packaging==22.0
+opencv-python==4.6.0.66
+    ***REMOVED*** via
+    ***REMOVED***   layoutparser
+    ***REMOVED***   unstructured-inference
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   huggingface-hub
     ***REMOVED***   matplotlib
     ***REMOVED***   pytesseract
-pandas==1.5.2
+***REMOVED***
     ***REMOVED*** via layoutparser
 pdf2image==1.16.2
     ***REMOVED*** via layoutparser
@@ -85,7 +87,7 @@ pdfplumber==0.7.6
     ***REMOVED***   pdfplumber
     ***REMOVED***   pytesseract
     ***REMOVED***   torchvision
-portalocker==2.6.0
+portalocker==2.7.0
     ***REMOVED*** via iopath
 pycocotools==2.0.6
     ***REMOVED*** via effdet
@@ -103,7 +105,7 @@ pytesseract==0.3.10
     ***REMOVED***   pandas
 python-multipart==0.0.5
     ***REMOVED*** via unstructured-inference
-pytz==2022.7
+pytz==2022.7.1
     ***REMOVED*** via pandas
 pyyaml==6.0
     ***REMOVED*** via
@@ -111,7 +113,7 @@ pyyaml==6.0
     ***REMOVED***   layoutparser
     ***REMOVED***   omegaconf
     ***REMOVED***   timm
-requests==2.28.1
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   huggingface-hub
     ***REMOVED***   torchvision
@@ -150,11 +152,11 @@ typing-extensions==4.4.0
     ***REMOVED***   starlette
     ***REMOVED***   torch
     ***REMOVED***   torchvision
-unstructured-inference==0.2.2
+unstructured-inference==0.2.3
     ***REMOVED*** via -r requirements/local-inference.in
-urllib3==1.26.13
+urllib3==1.26.14
     ***REMOVED*** via requests
 uvicorn==0.20.0
     ***REMOVED*** via unstructured-inference
-wand==0.6.10
+wand==0.6.11
     ***REMOVED*** via pdfplumber

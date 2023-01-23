@@ -4,12 +4,15 @@
 ***REMOVED***
 ***REMOVED***    pip-compile --output-file=requirements/base.txt
 ***REMOVED***
-argilla==1.1.1
+***REMOVED***
+    ***REMOVED*** via httpcore
+argilla==1.2.0
     ***REMOVED*** via unstructured (setup.py)
 ***REMOVED***
     ***REMOVED*** via argilla
 ***REMOVED***
     ***REMOVED*** via
+    ***REMOVED***   httpcore
     ***REMOVED***   httpx
     ***REMOVED***   requests
     ***REMOVED***   unstructured (setup.py)
@@ -21,14 +24,15 @@ charset-normalizer==3.0.1
     ***REMOVED*** via argilla
 ***REMOVED***
     ***REMOVED*** via openpyxl
-h11==0.9.0
+***REMOVED***
     ***REMOVED*** via httpcore
-httpcore==0.11.1
+***REMOVED***
     ***REMOVED*** via httpx
-httpx==0.15.5
+***REMOVED***
     ***REMOVED*** via argilla
 ***REMOVED***
     ***REMOVED*** via
+    ***REMOVED***   anyio
     ***REMOVED***   requests
     ***REMOVED***   rfc3986
 ***REMOVED***
@@ -40,9 +44,9 @@ httpx==0.15.5
     ***REMOVED***   unstructured (setup.py)
 ***REMOVED***
     ***REMOVED*** via argilla
-nltk==3.7
+***REMOVED***
     ***REMOVED*** via unstructured (setup.py)
-numpy==1.24.1
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   argilla
     ***REMOVED***   pandas
@@ -50,7 +54,7 @@ openpyxl==3.0.10
     ***REMOVED*** via unstructured (setup.py)
 ***REMOVED***
     ***REMOVED*** via argilla
-pandas==1.5.2
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   argilla
     ***REMOVED***   unstructured (setup.py)
@@ -68,7 +72,7 @@ pydantic==1.10.4
     ***REMOVED*** via unstructured (setup.py)
 ***REMOVED***
     ***REMOVED*** via unstructured (setup.py)
-pytz==2022.7
+pytz==2022.7.1
     ***REMOVED*** via pandas
 regex==2022.10.31
     ***REMOVED*** via nltk
@@ -80,6 +84,7 @@ regex==2022.10.31
     ***REMOVED*** via python-dateutil
 ***REMOVED***
     ***REMOVED*** via
+    ***REMOVED***   anyio
     ***REMOVED***   httpcore
     ***REMOVED***   httpx
 tqdm==4.64.1
@@ -90,9 +95,9 @@ typing-extensions==4.4.0
     ***REMOVED*** via pydantic
 urllib3==1.26.14
     ***REMOVED*** via requests
-wrapt==1.13.3
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   argilla
     ***REMOVED***   deprecated
-xlsxwriter==3.0.6
+xlsxwriter==3.0.7
     ***REMOVED*** via python-pptx
