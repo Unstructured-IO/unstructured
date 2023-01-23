@@ -5,7 +5,7 @@
 * Adds an optional `coordinates` attribute to document objects
 * Adds `FigureCaption` and `CheckBox` document elements
 * Added ability to split lists detected in `LayoutElement` objects
-* Adds `partition_pptx` for partition PowerPoint documents
+* Adds `partition_pptx` for partitioning PowerPoint documents
 
 ## 0.4.3
 
