@@ -1,5 +1,6 @@
 sphinx
-sphinx_rtd_theme
+# NOTE(alan) - Pinning to resolve a conflict with sphinx. We can unpin on next sphinx_rtd_theme release.
+sphinx_rtd_theme==1.2.0rc3
 
 # NOTE(robinson) - The following dependencies are pinned to address security scans
 certifi>=2022.12.07
