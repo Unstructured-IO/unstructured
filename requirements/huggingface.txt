@@ -139,5 +139,5 @@ wrapt==1.13.3
     # via
     #   argilla
     #   deprecated
-xlsxwriter==3.0.6
+xlsxwriter==3.0.7
     # via python-pptx
