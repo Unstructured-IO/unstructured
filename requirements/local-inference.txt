@@ -12,13 +12,13 @@ certifi==2022.12.7
     # via requests
 cffi==1.15.1
     # via cryptography
-charset-normalizer==2.1.1
+charset-normalizer==3.0.1
     # via
     #   pdfminer-six
     #   requests
 click==8.1.3
     # via uvicorn
-contourpy==1.0.6
+contourpy==1.0.7
     # via matplotlib
 cryptography==39.0.0
     # via pdfminer-six
@@ -26,7 +26,7 @@ cycler==0.11.0
     # via matplotlib
 effdet==0.3.0
     # via layoutparser
-fastapi==0.88.0
+fastapi==0.89.1
     # via unstructured-inference
 filelock==3.9.0
     # via huggingface-hub
@@ -48,7 +48,7 @@ kiwisolver==1.4.4
     # via matplotlib
 layoutparser[layoutmodels,tesseract]==0.3.4
     # via unstructured-inference
-matplotlib==3.6.2
+matplotlib==3.6.3
     # via pycocotools
 numpy==1.24.1
     # via
@@ -62,14 +62,16 @@ numpy==1.24.1
     #   torchvision
 omegaconf==2.3.0
     # via effdet
-opencv-python==4.7.0.68
-    # via layoutparser
-packaging==22.0
+opencv-python==4.6.0.66
+    # via
+    #   layoutparser
+    #   unstructured-inference
+packaging==23.0
     # via
     #   huggingface-hub
     #   matplotlib
     #   pytesseract
-pandas==1.5.2
+pandas==1.5.3
     # via layoutparser
 pdf2image==1.16.2
     # via layoutparser
@@ -85,7 +87,7 @@ pillow==9.4.0
     #   pdfplumber
     #   pytesseract
     #   torchvision
-portalocker==2.6.0
+portalocker==2.7.0
     # via iopath
 pycocotools==2.0.6
     # via effdet
@@ -103,7 +105,7 @@ python-dateutil==2.8.2
     #   pandas
 python-multipart==0.0.5
     # via unstructured-inference
-pytz==2022.7
+pytz==2022.7.1
     # via pandas
 pyyaml==6.0
     # via
@@ -111,7 +113,7 @@ pyyaml==6.0
     #   layoutparser
     #   omegaconf
     #   timm
-requests==2.28.1
+requests==2.28.2
     # via
     #   huggingface-hub
     #   torchvision
@@ -150,11 +152,11 @@ typing-extensions==4.4.0
     #   starlette
     #   torch
     #   torchvision
-unstructured-inference==0.2.2
+unstructured-inference==0.2.3
     # via -r requirements/local-inference.in
-urllib3==1.26.13
+urllib3==1.26.14
     # via requests
 uvicorn==0.20.0
     # via unstructured-inference
-wand==0.6.10
+wand==0.6.11
     # via pdfplumber
