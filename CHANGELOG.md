@@ -1,4 +1,4 @@
-## 0.4.4
+## 0.4.4-dev3
 
 * Updated `partition_pdf` and `partition_image` to return `unstructured` `Element` objects
 * Fixed the healthcheck url path when partitioning images and PDFs via API
