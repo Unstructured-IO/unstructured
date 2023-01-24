@@ -153,7 +153,7 @@ def detect_filetype(
         else:
             return FileType.TXT
 
-    elif mime_type == "text/xml":
+    elif mime_type.endswith("xml"):
         if extension and extension == ".html":
             return FileType.HTML
         else:

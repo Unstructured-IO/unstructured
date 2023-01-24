@@ -57,6 +57,34 @@ def test_detect_filetype_from_file(file, expected):
         assert detect_filetype(file=f) == expected
 
 
+def test_detect_xml_application_xml(monkeypatch):
+    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "application/xml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.xml")
+    filetype = detect_filetype(filename=filename)
+    assert filetype == FileType.XML
+
+
+def test_detect_xml_text_xml(monkeypatch):
+    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "text/xml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.xml")
+    filetype = detect_filetype(filename=filename)
+    assert filetype == FileType.XML
+
+
+def test_detect_html_application_xml(monkeypatch):
+    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "application/xml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.html")
+    filetype = detect_filetype(filename=filename)
+    assert filetype == FileType.HTML
+
+
+def test_detect_html_text_xml(monkeypatch):
+    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "text/xml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.html")
+    filetype = detect_filetype(filename=filename)
+    assert filetype == FileType.HTML
+
+
 def test_detect_docx_filetype_application_octet_stream(monkeypatch):
     monkeypatch.setattr(magic, "from_buffer", lambda *args, **kwargs: "application/octet-stream")
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.docx")
