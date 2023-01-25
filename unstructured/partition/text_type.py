@@ -24,10 +24,10 @@ def is_possible_narrative_text(text: str, cap_threshold: float = 0.5) -> bool:
     NARRATIVE_TEXT_CAP_THRESHOLD environment variable. The environment variable takes
     precedence over the kwarg.
 
-    Parameter
-    --------
+    Parameters
+    ----------
     text
-        the input tet
+        the input text
     cap_threshold
         the percentage of capitalized words necessary to disqualify the segment as narrative
     """
@@ -54,9 +54,21 @@ def is_possible_narrative_text(text: str, cap_threshold: float = 0.5) -> bool:
 
 
 def is_possible_title(text: str, sentence_min_length: int = 5) -> bool:
-    """Checks to see if the text passes all of the checks for a valid title."""
+    """Checks to see if the text passes all of the checks for a valid title.
+
+    Parameters
+    ----------
+    text
+        the input text
+    setence_min_length
+        the minimum number of words required to consider a section of text a sentence
+    """
     if len(text) == 0:
         logger.debug("Not a title. Text is empty.")
+        return False
+
+    # NOTE(robinson) - Prevent flagging salutations like "To My Dearest Friends," as titles
+    if text.endswith(","):
         return False
 
     if text.isnumeric():

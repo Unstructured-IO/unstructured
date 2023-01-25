@@ -59,6 +59,7 @@ def test_is_possible_narrative_text(text, expected, monkeypatch):
         ("7", False),  # Fails because it is numeric
         ("", False),  # Fails because it is empty
         ("ITEM 1A. RISK FACTORS", True),  # Two "sentences", but both are short
+        ("To My Dearest Friends,", False),  # Ends with a comma
     ],
 )
 def test_is_possible_title(text, expected, monkeypatch):
