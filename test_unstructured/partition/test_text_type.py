@@ -122,11 +122,10 @@ def test_is_bulletized_text(text, expected):
     [
         ("Ask the teacher for an apple", True),
         ("Intellectual property", False),
+        ("THIS MESSAGE WAS APPROVED", True),
     ],
 )
 def test_contains_verb(text, expected, monkeypatch):
-    monkeypatch.setattr(text_type, "word_tokenize", mock_word_tokenize)
-    monkeypatch.setattr(text_type, "pos_tag", mock_pos_tag)
     has_verb = text_type.contains_verb(text)
     assert has_verb is expected
 

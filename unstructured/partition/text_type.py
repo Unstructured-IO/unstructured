@@ -103,6 +103,9 @@ def contains_us_phone_number(text: str) -> bool:
 def contains_verb(text: str) -> bool:
     """Use a POS tagger to check if a segment contains verbs. If the section does not have verbs,
     that indicates that it is not narrative text."""
+    if text.isupper():
+        text = text.lower()
+
     pos_tags = pos_tag(text)
     for _, tag in pos_tags:
         if tag in POS_VERB_TAGS:

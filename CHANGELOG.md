@@ -1,3 +1,7 @@
+## 0.4.5-dev0
+
+* Changelog placeholder
+
 ## 0.4.4
 
 * Updated `partition_pdf` and `partition_image` to return `unstructured` `Element` objects
