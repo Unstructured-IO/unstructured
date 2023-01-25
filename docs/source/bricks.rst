@@ -247,7 +247,9 @@ for consideration as narrative text. The function performs the following checks 
 * Text that exceeds the specified caps ratio cannot be narrative text. The threshold
   is configurable with the ``cap_threshold`` kwarg. To ignore this check, you can set
   ``cap_threshold=1.0``. You may want to ignore this check when dealing with text
-  that is all caps.
+  that is all caps. You can also set the threshold by using the
+  ``NARRATIVE_TEXT_CAP_THRESHOLD`` environment variable. The environment variable
+  takes precedence over the kwarg.
 
 
 Examples:
