@@ -2,13 +2,14 @@ import os
 import pathlib
 import pytest
 
-from unstructured.documents.elements import NarrativeText, Title, ListItem
+from unstructured.documents.elements import Address, NarrativeText, Title, ListItem
 from unstructured.partition.text import partition_text
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
 EXPECTED_OUTPUT = [
     NarrativeText(text="This is a test document to use for unit tests."),
+    Address(text="Doylestown, PA 18901"),
     Title(text="Important points:"),
     ListItem(text="Hamburgers are delicious"),
     ListItem(text="Dogs are the best"),
