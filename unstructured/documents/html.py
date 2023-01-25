@@ -13,12 +13,13 @@ from unstructured.logger import logger
 
 from unstructured.cleaners.core import clean_bullets, replace_unicode_quotes
 from unstructured.documents.base import Page
-from unstructured.documents.elements import ListItem, Element, NarrativeText, Text, Title
+from unstructured.documents.elements import Address, ListItem, Element, NarrativeText, Text, Title
 from unstructured.documents.xml import XMLDocument
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_possible_narrative_text,
     is_possible_title,
+    is_us_city_state_zip,
 )
 
 TEXT_TAGS: Final[List[str]] = ["p", "a", "td", "span", "font"]
@@ -49,6 +50,12 @@ class TagsMixin:
 
 class HTMLText(TagsMixin, Text):
     """Text with tag information."""
+
+    pass
+
+
+class HTMLAddress(TagsMixin, Address):
+    """Address with tag information."""
 
     pass
 
@@ -209,6 +216,8 @@ def _text_to_element(text: str, tag: str, ancestortags: Tuple[str, ...]) -> Opti
         if not clean_bullets(text):
             return None
         return HTMLListItem(text=clean_bullets(text), tag=tag, ancestortags=ancestortags)
+    elif is_us_city_state_zip(text):
+        return HTMLAddress(text=text, tag=tag, ancestortags=ancestortags)
 
     if len(text) < 2:
         return None

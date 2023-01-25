@@ -4,7 +4,7 @@ from lxml import etree
 import pytest
 
 from unstructured.documents.base import Page
-from unstructured.documents.elements import ListItem, NarrativeText, Text, Title
+from unstructured.documents.elements import Address, ListItem, NarrativeText, Text, Title
 from unstructured.documents.html import (
     LIST_ITEM_TAGS,
     HTMLDocument,
@@ -484,6 +484,7 @@ def test_containers_with_text_are_processed():
       <div dir=3D"ltr">
          <div dir=3D"ltr">Dino the Datasaur<div>Unstructured Technologies<br><div>Data Scientist
                 </div>
+                <div>Doylestown, PA 18901</div>
                <div><br></div>
             </div>
          </div>
@@ -500,6 +501,7 @@ def test_containers_with_text_are_processed():
         Title(text="Dino the Datasaur"),
         Title(text="Unstructured Technologies"),
         Title(text="Data Scientist"),
+        Address(text="Doylestown, PA 18901"),
     ]
 
 
