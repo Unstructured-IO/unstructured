@@ -1,4 +1,5 @@
 """partition.py implements logic for partitioning plain text documents into sections."""
+import os
 import sys
 
 from typing import List, Optional
@@ -17,8 +18,19 @@ from unstructured.logger import logger
 POS_VERB_TAGS: Final[List[str]] = ["VB", "VBG", "VBD", "VBN", "VBP", "VBZ"]
 
 
-def is_possible_narrative_text(text: str, cap_threshold: float = 0.3) -> bool:
-    """Checks to see if the text passes all of the checks for a narrative text section."""
+def is_possible_narrative_text(text: str, cap_threshold: float = 0.5) -> bool:
+    """Checks to see if the text passes all of the checks for a narrative text section.
+    You can change the cap threshold using the cap_threshold kwarg or the
+    NARRATIVE_TEXT_CAP_THRESHOLD environment variable. The environment variable takes
+    precedence over the kwarg.
+
+    Parameter
+    --------
+    text
+        the input tet
+    cap_threshold
+        the percentage of capitalized words necessary to disqualify the segment as narrative
+    """
     if len(text) == 0:
         logger.debug("Not narrative. Text is empty.")
         return False
@@ -27,6 +39,9 @@ def is_possible_narrative_text(text: str, cap_threshold: float = 0.3) -> bool:
         logger.debug(f"Not narrative. Text is all numeric:\n\n{text}")
         return False
 
+    # NOTE(robinson): it gets read in from the environment as a string so we need to
+    # case it to a float
+    cap_threshold = float(os.environ.get("NARRATIVE_TEXT_CAP_THRESHOLD", cap_threshold))
     if exceeds_cap_ratio(text, threshold=cap_threshold):
         logger.debug(f"Not narrative. Text exceeds cap ratio {cap_threshold}:\n\n{text}")
         return False
@@ -109,7 +124,7 @@ def sentence_count(text: str, min_length: Optional[int] = None) -> int:
     return count
 
 
-def exceeds_cap_ratio(text: str, threshold: float = 0.3) -> bool:
+def exceeds_cap_ratio(text: str, threshold: float = 0.5) -> bool:
     """Checks the title ratio in a section of text. If a sufficient proportion of the text is
     capitalized."""
     # NOTE(robinson) - Currently limiting this to only sections of text with one sentence.

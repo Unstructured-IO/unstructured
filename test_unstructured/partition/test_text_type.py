@@ -1,4 +1,5 @@
 import pytest
+from unittest.mock import patch
 
 import unstructured.partition.text_type as text_type
 
@@ -135,13 +136,27 @@ def test_contains_verb(text, expected, monkeypatch):
         ("Intellectual Property in the United States", True),
         ("Intellectual property helps incentivize innovation.", False),
         ("THIS IS ALL CAPS. BUT IT IS TWO SENTENCES.", False),
+        ("This Has All Caps. It's Weird But Two Sentences", False),
+        ("The Business Report is expected within 6 hours of Noone", False),
         ("", False),
     ],
 )
 def test_contains_exceeds_cap_ratio(text, expected, monkeypatch):
     monkeypatch.setattr(text_type, "word_tokenize", mock_word_tokenize)
     monkeypatch.setattr(text_type, "sent_tokenize", mock_sent_tokenize)
-    assert text_type.exceeds_cap_ratio(text, threshold=0.3) is expected
+    assert text_type.exceeds_cap_ratio(text) is expected
+
+
+def test_set_caps_ratio_with_environment_variable(monkeypatch):
+    monkeypatch.setattr(text_type, "word_tokenize", mock_word_tokenize)
+    monkeypatch.setattr(text_type, "sent_tokenize", mock_sent_tokenize)
+    monkeypatch.setenv("NARRATIVE_TEXT_CAP_THRESHOLD", 0.8)
+
+    text = "All The King's Horses. And All The King's Men."
+    with patch.object(text_type, "exceeds_cap_ratio", return_value=False) as mock_exceeds:
+        text_type.is_possible_narrative_text(text)
+
+    mock_exceeds.assert_called_once_with(text, threshold=0.8)
 
 
 def test_sentence_count(monkeypatch):
