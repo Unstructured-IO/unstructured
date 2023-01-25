@@ -494,7 +494,7 @@ def test_containers_with_text_are_processed():
     html_document._read()
 
     assert html_document.elements == [
-        Title(text="Hi All,"),
+        Text(text="Hi All,"),
         NarrativeText(text="Get excited for our first annual family day!"),
         Title(text="Best."),
         Title(text="Dino the Datasaur"),
