@@ -3,7 +3,7 @@ import pytest
 
 import docx
 
-from unstructured.documents.elements import ListItem, NarrativeText, Title, Text
+from unstructured.documents.elements import Address, ListItem, NarrativeText, Title, Text
 from unstructured.partition.docx import partition_docx
 
 
@@ -14,7 +14,11 @@ def mock_document():
     document.add_paragraph("These are a few of my favorite things:", style="Heading 1")
     # NOTE(robinson) - this should get picked up as a list item due to the •
     document.add_paragraph("• Parrots", style="Normal")
+    # NOTE(robinson) - this should get dropped because it's empty
+    document.add_paragraph("• ", style="Normal")
     document.add_paragraph("Hockey", style="List Bullet")
+    # NOTE(robinson) - this should get dropped because it's empty
+    document.add_paragraph("", style="List Bullet")
     # NOTE(robinson) - this should get picked up as a title
     document.add_paragraph("Analysis", style="Normal")
     # NOTE(robinson) - this should get dropped because it is empty
@@ -24,6 +28,8 @@ def mock_document():
     document.add_paragraph("This is my third thought.", style="Body Text")
     # NOTE(robinson) - this should just be regular text
     document.add_paragraph("2023")
+    # NOTE(robinson) - this should be an address
+    document.add_paragraph("DOYLESTOWN, PA 18901")
 
     return document
 
@@ -38,6 +44,7 @@ def expected_elements():
         NarrativeText("This is my first thought. This is my second thought."),
         NarrativeText("This is my third thought."),
         Text("2023"),
+        Address("DOYLESTOWN, PA 18901"),
     ]
 
 

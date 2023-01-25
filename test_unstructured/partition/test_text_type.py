@@ -143,8 +143,6 @@ def test_contains_verb(text, expected, monkeypatch):
     ],
 )
 def test_contains_exceeds_cap_ratio(text, expected, monkeypatch):
-    monkeypatch.setattr(text_type, "word_tokenize", mock_word_tokenize)
-    monkeypatch.setattr(text_type, "sent_tokenize", mock_sent_tokenize)
     assert text_type.exceeds_cap_ratio(text) is expected
 
 

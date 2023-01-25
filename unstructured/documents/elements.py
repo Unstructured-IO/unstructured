@@ -114,6 +114,14 @@ class Title(Text):
     pass
 
 
+class Address(Text):
+    """A text element for capturing addresses."""
+
+    category = "Address"
+
+    pass
+
+
 class Image(Text):
     """A text element for capturing image metadata."""
 

@@ -5,7 +5,7 @@ import sys
 from typing import List, Optional
 
 if sys.version_info < (3, 8):
-    from typing_extensions import Final
+    from typing_extensions import Final  # pragma: nocover
 else:
     from typing import Final
 
