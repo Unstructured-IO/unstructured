@@ -145,6 +145,9 @@ def exceeds_cap_ratio(text: str, threshold: float = 0.5) -> bool:
         logger.debug(f"Text does not contain multiple sentences:\n\n{text}")
         return False
 
+    if text.isupper():
+        return False
+
     tokens = word_tokenize(text)
     if len(tokens) == 0:
         return False
