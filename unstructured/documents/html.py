@@ -13,7 +13,7 @@ from unstructured.logger import logger
 
 from unstructured.cleaners.core import clean_bullets, replace_unicode_quotes
 from unstructured.documents.base import Page
-from unstructured.documents.elements import ListItem, Element, NarrativeText, Title
+from unstructured.documents.elements import ListItem, Element, NarrativeText, Text, Title
 from unstructured.documents.xml import XMLDocument
 from unstructured.partition.text_type import (
     is_bulleted_text,
@@ -45,6 +45,12 @@ class TagsMixin:
             self.tag = tag
         self.ancestortags = ancestortags
         super().__init__(*args, **kwargs)
+
+
+class HTMLText(TagsMixin, Text):
+    """Text with tag information."""
+
+    pass
 
 
 class HTMLTitle(TagsMixin, Title):
@@ -211,8 +217,7 @@ def _text_to_element(text: str, tag: str, ancestortags: Tuple[str, ...]) -> Opti
     elif is_possible_title(text):
         return HTMLTitle(text, tag=tag, ancestortags=ancestortags)
     else:
-        # Something that might end up here is text that's just a number.
-        return None
+        return HTMLText(text, tag=tag, ancestortags=ancestortags)
 
 
 def _is_container_with_text(tag_elem: etree.Element) -> bool:

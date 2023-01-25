@@ -14,9 +14,6 @@ from unstructured.partition.text_type import (
 # ref: https://python-docx.readthedocs.io/en/latest/user/
 #   styles-understanding.html#paragraph-styles-in-default-template
 STYLE_TO_ELEMENT_MAPPING = {
-    "Body Text": NarrativeText,
-    "Body Text 2": NarrativeText,
-    "Body Text 3": NarrativeText,
     "Caption": Text,  # TODO(robinson) - add caption element type
     "Heading 1": Title,
     "Heading 2": Title,

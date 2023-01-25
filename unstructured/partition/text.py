@@ -1,7 +1,7 @@
 import re
 from typing import IO, List, Optional
 
-from unstructured.documents.elements import Element, ListItem, NarrativeText, Title
+from unstructured.documents.elements import Element, ListItem, NarrativeText, Text, Title
 
 from unstructured.cleaners.core import clean_bullets
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
@@ -63,4 +63,7 @@ def partition_text(
             elements.append(NarrativeText(text=ctext))
         elif is_possible_title(ctext):
             elements.append(Title(text=ctext))
+        else:
+            elements.append(Text(text=ctext))
+
     return elements

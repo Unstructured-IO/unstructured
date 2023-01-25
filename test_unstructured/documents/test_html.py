@@ -4,7 +4,7 @@ from lxml import etree
 import pytest
 
 from unstructured.documents.base import Page
-from unstructured.documents.elements import ListItem, NarrativeText, Title
+from unstructured.documents.elements import ListItem, NarrativeText, Text, Title
 from unstructured.documents.html import (
     LIST_ITEM_TAGS,
     HTMLDocument,
@@ -153,7 +153,7 @@ def test_parse_not_anything(monkeypatch):
     document_tree = etree.fromstring(doc, etree.HTMLParser())
     el = document_tree.find(".//p")
     parsed_el = html._parse_tag(el)
-    assert parsed_el is None
+    assert parsed_el == Text(text="This is nothing")
 
 
 def test_parse_bullets(monkeypatch):
