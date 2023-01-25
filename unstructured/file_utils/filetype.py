@@ -121,7 +121,7 @@ def detect_filetype(
     elif file is not None:
         extension = None
         ***REMOVED*** NOTE(robinson) - the python-magic docs recommend reading at least the first 2048 bytes
-        ***REMOVED*** Increased to 4096 because otherwise .xlsx files get detected as a zip fle
+        ***REMOVED*** Increased to 4096 because otherwise .xlsx files get detected as a zip file
         ***REMOVED*** ref: https://github.com/ahupp/python-magic***REMOVED***usage
         mime_type = magic.from_buffer(file.read(4096), mime=True)
     else:
@@ -153,7 +153,7 @@ def detect_filetype(
         else:
             return FileType.TXT
 
-    elif mime_type == "text/xml":
+    elif mime_type.endswith("xml"):
         if extension and extension == ".html":
             return FileType.HTML
         else:

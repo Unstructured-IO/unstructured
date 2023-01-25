@@ -1,4 +1,4 @@
-***REMOVED******REMOVED*** 0.4.4-dev2
+***REMOVED******REMOVED*** 0.4.4-dev3
 
 * Updated `partition_pdf` and `partition_image` to return `unstructured` `Element` objects
 * Fixed the healthcheck url path when partitioning images and PDFs via API
@@ -6,6 +6,7 @@
 * Adds `FigureCaption` and `CheckBox` document elements
 * Added ability to split lists detected in `LayoutElement` objects
 * Adds `partition_pptx` for partitioning PowerPoint documents
+* Fixed file type detection for XML and HTML files on Amazone Linux
 
 ***REMOVED******REMOVED*** 0.4.3
 
