@@ -7,6 +7,7 @@
 * Added ability to split lists detected in `LayoutElement` objects
 * Adds `partition_pptx` for partitioning PowerPoint documents
 * LayoutParser models now download from HugginfaceHub instead of DropBox
+* Fixed file type detection for XML and HTML files on Amazone Linux
 
 ## 0.4.3
 
