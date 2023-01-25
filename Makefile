@@ -73,7 +73,7 @@ pip-compile:
 	pip-compile requirements/dev.in
 	pip-compile requirements/test.in
 	pip-compile requirements/build.in
-	pip-compile -o requirements/local-inference.txt
+	pip-compile --extra local-inference -o requirements/local-inference.txt
 	# NOTE(robinson) - doc/requirements.txt is where the GitHub action for building
 	# sphinx docs looks for additional requirements
 	cp requirements/build.txt docs/requirements.txt
