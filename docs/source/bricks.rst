@@ -280,7 +280,7 @@ for consideration as a title. The function performs the following checks:
 * Empty text cannot be a title
 * Text that is all numeric cannot be a title
 * If a title contains more than one sentence that exceeds a certain length, it cannot be a title. Sentence length threshold is controlled by the ``sentence_min_length`` kwarg and defaults to 5.
-* If a segment of text ends in a command, it is not considered a potential title. This is to avoid salutations like "To My Dearest Friends," getting flagged as titles.
+* If a segment of text ends in a comma, it is not considered a potential title. This is to avoid salutations like "To My Dearest Friends," getting flagged as titles.
 
 
 Examples:
