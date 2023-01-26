@@ -57,7 +57,7 @@ def partition_text(
         ctext = ctext.strip()
 
         if ctext == "":
-            break
+            continue
         if is_bulleted_text(ctext):
             elements.append(ListItem(text=clean_bullets(ctext)))
         elif is_us_city_state_zip(ctext):

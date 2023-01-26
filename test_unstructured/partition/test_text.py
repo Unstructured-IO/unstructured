@@ -53,3 +53,15 @@ def test_partition_text_raises_with_too_many_specified():
 
     with pytest.raises(ValueError):
         partition_text(filename=filename, text=text)
+
+
+def test_partition_text_captures_everything_even_with_linebreaks():
+    text = """
+    VERY IMPORTANT MEMO
+    DOYLESTOWN, PA 18901
+    """
+    elements = partition_text(text=text)
+    assert elements == [
+        Title(text="VERY IMPORTANT MEMO"),
+        Address(text="DOYLESTOWN, PA 18901"),
+    ]
