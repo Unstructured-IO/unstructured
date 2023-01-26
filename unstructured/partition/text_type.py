@@ -40,7 +40,7 @@ def is_possible_narrative_text(text: str, cap_threshold: float = 0.5) -> bool:
         return False
 
     # NOTE(robinson): it gets read in from the environment as a string so we need to
-    # case it to a float
+    # cast it to a float
     cap_threshold = float(os.environ.get("NARRATIVE_TEXT_CAP_THRESHOLD", cap_threshold))
     if exceeds_cap_ratio(text, threshold=cap_threshold):
         logger.debug(f"Not narrative. Text exceeds cap ratio {cap_threshold}:\n\n{text}")
