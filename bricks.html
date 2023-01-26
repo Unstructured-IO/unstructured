@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bricks &mdash; unstructured 0.4.4 documentation</title>
+  <title>Bricks &mdash; unstructured 0.4.5-dev0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -336,8 +336,10 @@ for consideration as narrative text. The function performs the following checks 
 <li><p>Text that does not contain a verb cannot be narrative text</p></li>
 <li><p>Text that exceeds the specified caps ratio cannot be narrative text. The threshold
 is configurable with the <code class="docutils literal notranslate"><span class="pre">cap_threshold</span></code> kwarg. To ignore this check, you can set
-<code class="docutils literal notranslate"><span class="pre">cap_threshold=1.0</span></code>. You may want to ignore this check when dealing with text
-that is all caps.</p></li>
+<code class="docutils literal notranslate"><span class="pre">cap_threshold=1.0</span></code>. You can also set the threshold by using the
+<code class="docutils literal notranslate"><span class="pre">NARRATIVE_TEXT_CAP_THRESHOLD</span></code> environment variable. The environment variable
+takes precedence over the kwarg.</p></li>
+<li><p>The cap ratio test does not apply to text that is all uppercase.</p></li>
 </ul>
 <p>Examples:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.text_type</span> <span class="kn">import</span> <span class="n">is_possible_narrative_text</span>
@@ -363,8 +365,8 @@ for consideration as a title. The function performs the following checks:</p>
 <ul class="simple">
 <li><p>Empty text cannot be a title</p></li>
 <li><p>Text that is all numeric cannot be a title</p></li>
-<li><p>If a title contains more than one sentence that exceeds a certain length, it cannot be a title.
-Sentence length threshold is controlled by the <code class="docutils literal notranslate"><span class="pre">sentence_min_length</span></code> kwarg and defaults to 5.</p></li>
+<li><p>If a title contains more than one sentence that exceeds a certain length, it cannot be a title. Sentence length threshold is controlled by the <code class="docutils literal notranslate"><span class="pre">sentence_min_length</span></code> kwarg and defaults to 5.</p></li>
+<li><p>If a segment of text ends in a comma, it is not considered a potential title. This is to avoid salutations like “To My Dearest Friends,” getting flagged as titles.</p></li>
 </ul>
 <p>Examples:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.text_type</span> <span class="kn">import</span> <span class="n">is_possible_title</span>
@@ -398,7 +400,9 @@ Sentence length threshold is controlled by the <code class="docutils literal not
 <h3><code class="docutils literal notranslate"><span class="pre">contains_verb</span></code><a class="headerlink" href="#contains-verb" title="Permalink to this heading"></a></h3>
 <p>Checks if the text contains a verb. This is used in <code class="docutils literal notranslate"><span class="pre">is_possible_narrative_text</span></code>, but can
 be used independently as well. The function identifies verbs using the NLTK part of speech
-tagger. The following part of speech tags are identified as verbs:</p>
+tagger. Text that is all upper case is lower cased before part of speech detection. This is
+because the upper case letters sometimes cause the part of speech tagger to miss verbs.
+The following part of speech tags are identified as verbs:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">VB</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">VBG</span></code></p></li>
@@ -444,7 +448,10 @@ distinct sentences and words.</p>
 <p>Determines if the section of text exceeds the specified caps ratio. Used in
 <code class="docutils literal notranslate"><span class="pre">is_possible_narrative_text</span></code> and <code class="docutils literal notranslate"><span class="pre">is_possible_title</span></code>, but can be used independently
 as well. You can set the caps threshold using the <code class="docutils literal notranslate"><span class="pre">threshold</span></code> kwarg. The threshold
-defaults to <code class="docutils literal notranslate"><span class="pre">0.3</span></code>. Only runs on sections of text that are a single sentence.</p>
+defaults to <code class="docutils literal notranslate"><span class="pre">0.3</span></code>. Only runs on sections of text that are a single sentence.
+You can also set the threshold using the <code class="docutils literal notranslate"><span class="pre">NARRATIVE_TEXT_CAP_THRESHOLD</span></code> environment
+variable. The environment variable takes precedence over the kwarg. The caps ratio
+check does not apply to text that is all capitalized.</p>
 <p>Examples:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.text_type</span> <span class="kn">import</span> <span class="n">exceeds_cap_ratio</span>
 
