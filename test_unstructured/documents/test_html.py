@@ -4,7 +4,7 @@ from lxml import etree
 import pytest
 
 from unstructured.documents.base import Page
-from unstructured.documents.elements import ListItem, NarrativeText, Title
+from unstructured.documents.elements import Address, ListItem, NarrativeText, Text, Title
 from unstructured.documents.html import (
     LIST_ITEM_TAGS,
     HTMLDocument,
@@ -153,7 +153,7 @@ def test_parse_not_anything(monkeypatch):
     document_tree = etree.fromstring(doc, etree.HTMLParser())
     el = document_tree.find(".//p")
     parsed_el = html._parse_tag(el)
-    assert parsed_el is None
+    assert parsed_el == Text(text="This is nothing")
 
 
 def test_parse_bullets(monkeypatch):
@@ -484,6 +484,7 @@ def test_containers_with_text_are_processed():
       <div dir=3D"ltr">
          <div dir=3D"ltr">Dino the Datasaur<div>Unstructured Technologies<br><div>Data Scientist
                 </div>
+                <div>Doylestown, PA 18901</div>
                <div><br></div>
             </div>
          </div>
@@ -494,12 +495,13 @@ def test_containers_with_text_are_processed():
     html_document._read()
 
     assert html_document.elements == [
-        Title(text="Hi All,"),
+        Text(text="Hi All,"),
         NarrativeText(text="Get excited for our first annual family day!"),
         Title(text="Best."),
         Title(text="Dino the Datasaur"),
         Title(text="Unstructured Technologies"),
         Title(text="Data Scientist"),
+        Address(text="Doylestown, PA 18901"),
     ]
 
 

@@ -3,20 +3,18 @@ from typing import IO, List, Optional
 import docx
 
 from unstructured.cleaners.core import clean_bullets
-from unstructured.documents.elements import Element, ListItem, NarrativeText, Text, Title
+from unstructured.documents.elements import Address, Element, ListItem, NarrativeText, Text, Title
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_possible_narrative_text,
     is_possible_title,
+    is_us_city_state_zip,
 )
 
 # NOTE(robinson) - documentation on built in styles can be found at the link below
 # ref: https://python-docx.readthedocs.io/en/latest/user/
 #   styles-understanding.html#paragraph-styles-in-default-template
 STYLE_TO_ELEMENT_MAPPING = {
-    "Body Text": NarrativeText,
-    "Body Text 2": NarrativeText,
-    "Body Text 3": NarrativeText,
     "Caption": Text,  # TODO(robinson) - add caption element type
     "Heading 1": Title,
     "Heading 2": Title,
@@ -87,6 +85,9 @@ def _paragraph_to_element(paragraph: docx.text.paragraph.Paragraph) -> Optional[
     text = paragraph.text
     style_name = paragraph.style.name
 
+    if len(text.strip()) == 0:
+        return None
+
     element_class = STYLE_TO_ELEMENT_MAPPING.get(style_name)
 
     # NOTE(robinson) - The "Normal" style name will return None since it's in the mapping.
@@ -100,7 +101,11 @@ def _paragraph_to_element(paragraph: docx.text.paragraph.Paragraph) -> Optional[
 def _text_to_element(text: str) -> Optional[Text]:
     """Converts raw text into an unstructured Text element."""
     if is_bulleted_text(text):
-        return ListItem(text=clean_bullets(text))
+        clean_text = clean_bullets(text).strip()
+        return ListItem(text=clean_bullets(text)) if clean_text else None
+
+    elif is_us_city_state_zip(text):
+        return Address(text=text)
 
     if len(text) < 2:
         return None
