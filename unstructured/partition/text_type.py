@@ -168,5 +168,4 @@ def is_us_city_state_zip(text) -> bool:
     Doylestown, Pennsylvania, 18901
     DOYLESTOWN, PENNSYLVANIA 18901
     """
-    # NOTE(robinson) - to avoid long running regexes with catastrophic backtracking
     return US_CITY_STATE_ZIP_RE.match(text.strip()) is not None
