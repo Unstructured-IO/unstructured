@@ -246,10 +246,10 @@ for consideration as narrative text. The function performs the following checks 
 * Text that does not contain a verb cannot be narrative text
 * Text that exceeds the specified caps ratio cannot be narrative text. The threshold
   is configurable with the ``cap_threshold`` kwarg. To ignore this check, you can set
-  ``cap_threshold=1.0``. You may want to ignore this check when dealing with text
-  that is all caps. You can also set the threshold by using the
+  ``cap_threshold=1.0``. You can also set the threshold by using the
   ``NARRATIVE_TEXT_CAP_THRESHOLD`` environment variable. The environment variable
   takes precedence over the kwarg.
+* The cap ratio test does not apply to text that is all uppercase.
 
 
 Examples:
@@ -322,7 +322,9 @@ Examples:
 
 Checks if the text contains a verb. This is used in ``is_possible_narrative_text``, but can
 be used independently as well. The function identifies verbs using the NLTK part of speech
-tagger. The following part of speech tags are identified as verbs:
+tagger. Text that is all upper case is lower cased before part of speech detection. This is
+because the upper case letters sometimes cause the part of speech tagger to miss verbs.
+The following part of speech tags are identified as verbs:
 
 * ``VB``
 * ``VBG``
@@ -376,6 +378,9 @@ Determines if the section of text exceeds the specified caps ratio. Used in
 ``is_possible_narrative_text`` and ``is_possible_title``, but can be used independently
 as well. You can set the caps threshold using the ``threshold`` kwarg. The threshold
 defaults to ``0.3``. Only runs on sections of text that are a single sentence.
+You can also set the threshold using the ``NARRATIVE_TEXT_CAP_THRESHOLD`` environment
+variable. The environment variable takes precedence over the kwarg. The caps ratio
+check does not apply to text that is all capitalized.
 
 Examples:
 
