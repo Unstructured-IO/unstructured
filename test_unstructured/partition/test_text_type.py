@@ -1,4 +1,5 @@
 import pytest
+from unittest.mock import patch
 
 import unstructured.partition.text_type as text_type
 
@@ -58,6 +59,7 @@ def test_is_possible_narrative_text(text, expected, monkeypatch):
         ("7", False),  ***REMOVED*** Fails because it is numeric
         ("", False),  ***REMOVED*** Fails because it is empty
         ("ITEM 1A. RISK FACTORS", True),  ***REMOVED*** Two "sentences", but both are short
+        ("To My Dearest Friends,", False),  ***REMOVED*** Ends with a comma
     ],
 )
 def test_is_possible_title(text, expected, monkeypatch):
@@ -120,11 +122,10 @@ def test_is_bulletized_text(text, expected):
     [
         ("Ask the teacher for an apple", True),
         ("Intellectual property", False),
+        ("THIS MESSAGE WAS APPROVED", True),
     ],
 )
 def test_contains_verb(text, expected, monkeypatch):
-    monkeypatch.setattr(text_type, "word_tokenize", mock_word_tokenize)
-    monkeypatch.setattr(text_type, "pos_tag", mock_pos_tag)
     has_verb = text_type.contains_verb(text)
     assert has_verb is expected
 
@@ -135,13 +136,26 @@ def test_contains_verb(text, expected, monkeypatch):
         ("Intellectual Property in the United States", True),
         ("Intellectual property helps incentivize innovation.", False),
         ("THIS IS ALL CAPS. BUT IT IS TWO SENTENCES.", False),
+        ("LOOK AT THIS IT IS CAPS BUT NOT A TITLE.", False),
+        ("This Has All Caps. It's Weird But Two Sentences", False),
+        ("The Business Report is expected within 6 hours of closing", False),
         ("", False),
     ],
 )
 def test_contains_exceeds_cap_ratio(text, expected, monkeypatch):
+    assert text_type.exceeds_cap_ratio(text) is expected
+
+
+def test_set_caps_ratio_with_environment_variable(monkeypatch):
     monkeypatch.setattr(text_type, "word_tokenize", mock_word_tokenize)
     monkeypatch.setattr(text_type, "sent_tokenize", mock_sent_tokenize)
-    assert text_type.exceeds_cap_ratio(text, threshold=0.3) is expected
+    monkeypatch.setenv("NARRATIVE_TEXT_CAP_THRESHOLD", 0.8)
+
+    text = "All The King's Horses. And All The King's Men."
+    with patch.object(text_type, "exceeds_cap_ratio", return_value=False) as mock_exceeds:
+        text_type.is_possible_narrative_text(text)
+
+    mock_exceeds.assert_called_once_with(text, threshold=0.8)
 
 
 def test_sentence_count(monkeypatch):
@@ -153,3 +167,19 @@ def test_sentence_count(monkeypatch):
 def test_item_titles():
     text = "ITEM 1(A). THIS IS A TITLE"
     assert text_type.sentence_count(text, 3) < 2
+
+
+@pytest.mark.parametrize(
+    "text, expected",
+    [
+        ("Doylestown, PA 18901", True),
+        ("DOYLESTOWN, PENNSYLVANIA, 18901", True),
+        ("DOYLESTOWN, PENNSYLVANIA 18901", True),
+        ("Doylestown, Pennsylvania 18901", True),
+        ("     Doylestown, Pennsylvania 18901", True),
+        ("The Business Report is expected within 6 hours of closing", False),
+        ("", False),
+    ],
+)
+def test_is_us_city_state_zip(text, expected):
+    assert text_type.is_us_city_state_zip(text) is expected

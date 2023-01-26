@@ -11,6 +11,8 @@ elements.
 * ``NarrativeText`` - Sections of a document that include well-formed prose. Sub-class of ``Text``.
 * ``Title`` - Headings and sub-headings wtihin a document. Sub-class of ``Text``.
 * ``ListItem`` - A text element that is part of an ordered or unordered list. Sub-class of ``Text``.
+* ``Address`` - A text item that consists only of an address. Sub-class of ``Text``.
+* ``CheckBox`` - An element representing a check box. Has a ``checked`` element, which is a boolean indicating whether or not that box is checked.
 
 
 ***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***

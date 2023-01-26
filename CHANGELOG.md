@@ -1,3 +1,13 @@
+***REMOVED******REMOVED*** 0.4.5-dev0
+
+* Loosen the default cap threshold to `0.5`.
+* Add a `NARRATIVE_TEXT_CAP_THRESHOLD` environment variable for controlling the cap ratio threshold.
+* Unknown text elements are identified as `Text` for HTML and plain text documents.
+* `Body Text` styles no longer default to `NarrativeText` for Word documents. The style information
+  is insufficient to determine that the text is narrative.
+* Upper cased text is lower cased before checking for verbs. This helps avoid some missed verbs.
+* Adds an `Address` element for capturing elements that only contain an address.
+
 ***REMOVED******REMOVED*** 0.4.4
 
 * Updated `partition_pdf` and `partition_image` to return `unstructured` `Element` objects
