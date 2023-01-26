@@ -16,7 +16,8 @@ US_PHONE_NUMBERS_PATTERN = (
 )
 US_PHONE_NUMBERS_RE = re.compile(US_PHONE_NUMBERS_PATTERN)
 
-# NOTE(robinson) - Modified from this regex from regex101.com
+# NOTE(robinson) - Based on this regex from regex101. Regex was updated to run fast
+# and avoid catastrophic backtracking
 # ref: https://regex101.com/library/oR3jU1?page=673
 US_CITY_STATE_ZIP_PATTERN = (
     r"(?i)\b(?:[A-Z][a-z.-]{1,15}[ ]?){1,5},\s?"
