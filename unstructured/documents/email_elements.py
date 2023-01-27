@@ -136,10 +136,10 @@ class Email(ABC):
     """An email class with it's attributes"""
 
     def __init__(
-            self,
-            attachments: List[Attachment],
-            meta_data: MetaData,
-            received_info: ReceivedInfo,
+        self,
+        attachments: List[Attachment],
+        meta_data: MetaData,
+        received_info: ReceivedInfo,
     ):
         self.recipient = Recipient
         self.sender = Sender

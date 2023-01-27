@@ -3,10 +3,20 @@ import pytest
 
 from unstructured.cleaners.core import clean_prefix
 from unstructured.cleaners.translate import translate_text
-from unstructured.documents.email_elements import EmailElement, NoID, Name, Email, MetaData, ReceivedInfo, Attachment
+from unstructured.documents.email_elements import (
+    EmailElement,
+    NoID,
+    Name,
+    Email,
+    MetaData,
+    ReceivedInfo,
+    Attachment,
+)
+
 
 class TestEmail(Email):
     pass
+
 
 def test_text_id():
     name_element = Name(name="Example", text="hello there!")
@@ -48,7 +58,7 @@ def test_apply_raises_if_func_does_not_produce_string():
 
 def test_email_class():
     meta_data = MetaData(name="MIME-Version", text="1.0")
-    received_info = ReceivedInfo(name="ABCDEFG-000.ABC.guide", text="ba23::58b5:2236:45g2:88h2"),
+    received_info = (ReceivedInfo(name="ABCDEFG-000.ABC.guide", text="ba23::58b5:2236:45g2:88h2"),)
     attachment = Attachment(name="Attachment", text="Dummy attachment")
     test_obj = TestEmail(meta_data=meta_data, received_info=received_info, attachments=[attachment])
     EXPECTED_EMAIL_CLASS_OUTPUT = f"""
