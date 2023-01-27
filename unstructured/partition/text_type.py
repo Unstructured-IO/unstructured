@@ -1,16 +1,15 @@
 """partition.py implements logic for partitioning plain text documents into sections."""
-import os
 import sys
 
 from typing import List, Optional
 
 if sys.version_info < (3, 8):
-    from typing_extensions import Final  # pragma: nocover
+    from typing_extensions import Final
 else:
     from typing import Final
 
 from unstructured.cleaners.core import remove_punctuation
-from unstructured.nlp.patterns import US_PHONE_NUMBERS_RE, UNICODE_BULLETS_RE, US_CITY_STATE_ZIP_RE
+from unstructured.nlp.patterns import US_PHONE_NUMBERS_RE, UNICODE_BULLETS_RE
 from unstructured.nlp.tokenize import pos_tag, sent_tokenize, word_tokenize
 from unstructured.logger import logger
 
@@ -18,19 +17,8 @@ from unstructured.logger import logger
 POS_VERB_TAGS: Final[List[str]] = ["VB", "VBG", "VBD", "VBN", "VBP", "VBZ"]
 
 
-def is_possible_narrative_text(text: str, cap_threshold: float = 0.5) -> bool:
-    """Checks to see if the text passes all of the checks for a narrative text section.
-    You can change the cap threshold using the cap_threshold kwarg or the
-    NARRATIVE_TEXT_CAP_THRESHOLD environment variable. The environment variable takes
-    precedence over the kwarg.
-
-    Parameters
-    ----------
-    text
-        the input text
-    cap_threshold
-        the percentage of capitalized words necessary to disqualify the segment as narrative
-    """
+def is_possible_narrative_text(text: str, cap_threshold: float = 0.3) -> bool:
+    """Checks to see if the text passes all of the checks for a narrative text section."""
     if len(text) == 0:
         logger.debug("Not narrative. Text is empty.")
         return False
@@ -39,9 +27,6 @@ def is_possible_narrative_text(text: str, cap_threshold: float = 0.5) -> bool:
         logger.debug(f"Not narrative. Text is all numeric:\n\n{text}")
         return False
 
-    # NOTE(robinson): it gets read in from the environment as a string so we need to
-    # cast it to a float
-    cap_threshold = float(os.environ.get("NARRATIVE_TEXT_CAP_THRESHOLD", cap_threshold))
     if exceeds_cap_ratio(text, threshold=cap_threshold):
         logger.debug(f"Not narrative. Text exceeds cap ratio {cap_threshold}:\n\n{text}")
         return False
@@ -54,21 +39,9 @@ def is_possible_narrative_text(text: str, cap_threshold: float = 0.5) -> bool:
 
 
 def is_possible_title(text: str, sentence_min_length: int = 5) -> bool:
-    """Checks to see if the text passes all of the checks for a valid title.
-
-    Parameters
-    ----------
-    text
-        the input text
-    setence_min_length
-        the minimum number of words required to consider a section of text a sentence
-    """
+    """Checks to see if the text passes all of the checks for a valid title."""
     if len(text) == 0:
         logger.debug("Not a title. Text is empty.")
-        return False
-
-    # NOTE(robinson) - Prevent flagging salutations like "To My Dearest Friends," as titles
-    if text.endswith(","):
         return False
 
     if text.isnumeric():
@@ -103,9 +76,6 @@ def contains_us_phone_number(text: str) -> bool:
 def contains_verb(text: str) -> bool:
     """Use a POS tagger to check if a segment contains verbs. If the section does not have verbs,
     that indicates that it is not narrative text."""
-    if text.isupper():
-        text = text.lower()
-
     pos_tags = pos_tag(text)
     for _, tag in pos_tags:
         if tag in POS_VERB_TAGS:
@@ -139,7 +109,7 @@ def sentence_count(text: str, min_length: Optional[int] = None) -> int:
     return count
 
 
-def exceeds_cap_ratio(text: str, threshold: float = 0.5) -> bool:
+def exceeds_cap_ratio(text: str, threshold: float = 0.3) -> bool:
     """Checks the title ratio in a section of text. If a sufficient proportion of the text is
     capitalized."""
     # NOTE(robinson) - Currently limiting this to only sections of text with one sentence.
@@ -148,24 +118,9 @@ def exceeds_cap_ratio(text: str, threshold: float = 0.5) -> bool:
         logger.debug(f"Text does not contain multiple sentences:\n\n{text}")
         return False
 
-    if text.isupper():
-        return False
-
     tokens = word_tokenize(text)
     if len(tokens) == 0:
         return False
     capitalized = sum([word.istitle() or word.isupper() for word in tokens])
     ratio = capitalized / len(tokens)
     return ratio > threshold
-
-
-def is_us_city_state_zip(text) -> bool:
-    """Checks if the given text is in the format of US city/state/zip code.
-
-    Examples
-    --------
-    Doylestown, PA 18901
-    Doylestown, Pennsylvania, 18901
-    DOYLESTOWN, PENNSYLVANIA 18901
-    """
-    return US_CITY_STATE_ZIP_RE.match(text.strip()) is not None

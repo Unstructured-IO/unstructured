@@ -60,13 +60,7 @@ class Text(Element):
         return self.text
 
     def __eq__(self, other):
-        return all(
-            [
-                (self.text == other.text),
-                (self.coordinates == other.coordinates),
-                (self.category == other.category),
-            ]
-        )
+        return (self.text == other.text) and (self.coordinates == other.coordinates)
 
     def apply(self, *cleaners: Callable):
         """Applies a cleaning brick to the text element. The function that's passed in
@@ -110,14 +104,6 @@ class Title(Text):
     """A text element for capturing titles."""
 
     category = "Title"
-
-    pass
-
-
-class Address(Text):
-    """A text element for capturing addresses."""
-
-    category = "Address"
 
     pass
 

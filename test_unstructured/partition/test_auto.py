@@ -4,7 +4,7 @@ import pytest
 
 import docx
 
-from unstructured.documents.elements import Address, NarrativeText, Title, Text, ListItem
+from unstructured.documents.elements import NarrativeText, Title, Text, ListItem
 from unstructured.partition.auto import partition
 import unstructured.partition.auto as auto
 
@@ -115,7 +115,6 @@ def test_auto_partition_html_from_file_rb():
 
 EXPECTED_TEXT_OUTPUT = [
     NarrativeText(text="This is a test document to use for unit tests."),
-    Address(text="Doylestown, PA 18901"),
     Title(text="Important points:"),
     ListItem(text="Hamburgers are delicious"),
     ListItem(text="Dogs are the best"),

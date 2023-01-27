@@ -1,7 +1,7 @@
 import re
 from typing import IO, List, Optional
 
-from unstructured.documents.elements import Address, Element, ListItem, NarrativeText, Text, Title
+from unstructured.documents.elements import Element, ListItem, NarrativeText, Title
 
 from unstructured.cleaners.core import clean_bullets
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
@@ -9,7 +9,6 @@ from unstructured.partition.text_type import (
     is_possible_narrative_text,
     is_possible_title,
     is_bulleted_text,
-    is_us_city_state_zip,
 )
 
 
@@ -57,16 +56,11 @@ def partition_text(
         ctext = ctext.strip()
 
         if ctext == "":
-            continue
+            break
         if is_bulleted_text(ctext):
             elements.append(ListItem(text=clean_bullets(ctext)))
-        elif is_us_city_state_zip(ctext):
-            elements.append(Address(text=ctext))
         elif is_possible_narrative_text(ctext):
             elements.append(NarrativeText(text=ctext))
         elif is_possible_title(ctext):
             elements.append(Title(text=ctext))
-        else:
-            elements.append(Text(text=ctext))
-
     return elements

@@ -66,10 +66,7 @@ class Name(EmailElement):
             cleaned_text = cleaner(cleaned_text)
             cleaned_name = cleaner(cleaned_name)
 
-        if not isinstance(cleaned_text, str):
-            raise ValueError("Cleaner produced a non-string output.")
-
-        if not isinstance(cleaned_name, str):
+        if not isinstance(cleaned_text, str) or not isinstance(cleaned_name, str):
             raise ValueError("Cleaner produced a non-string output.")
 
         self.text = cleaned_text
@@ -138,14 +135,19 @@ class Attachment(Name):
 class Email(ABC):
     """An email class with it's attributes"""
 
-    def __init__(self):
+    def __init__(
+            self,
+            attachments: List[Attachment],
+            meta_data: MetaData,
+            received_info: ReceivedInfo,
+    ):
         self.recipient = Recipient
         self.sender = Sender
         self.subject = Subject
         self.body = BodyText
-        self.received_info: ReceivedInfo
-        self.meta_data: MetaData
-        self.attachment: List[Attachment]
+        self.received_info: ReceivedInfo = received_info
+        self.meta_data: MetaData = meta_data
+        self.attachment: List[Attachment] = attachments
 
     def __str__(self):
         return f"""

@@ -132,3 +132,14 @@ def test_partition_pdf(url, api_called, local_called):
         pdf.partition_pdf(filename="fake.pdf", url=url)
         assert pdf._partition_via_api.called == api_called
         assert pdf._partition_pdf_or_image_local.called == local_called
+
+@pytest.mark.parametrize(
+    "url, api_called, local_called", [("fakeurl", True, False), (None, False, True)]
+)
+def test_partition_pdf_with_template(url, api_called, local_called):
+    with mock.patch.object(
+        pdf, attribute="_partition_via_api", new=mock.MagicMock()
+    ), mock.patch.object(pdf, "_partition_pdf_or_image_local", mock.MagicMock()):
+        pdf.partition_pdf(filename="fake.pdf", url=url, template="checkbox")
+        assert pdf._partition_via_api.called == api_called
+        assert pdf._partition_pdf_or_image_local.called == local_called

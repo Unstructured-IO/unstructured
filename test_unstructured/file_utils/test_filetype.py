@@ -45,47 +45,16 @@ def test_detect_filetype_from_filename(file, expected):
         ("fake-text.txt", FileType.TXT),
         ("fake-email.eml", FileType.EML),
         ("factbook.xml", FileType.XML),
-        # NOTE(robinson) - For the document, some operating systems return
-        # */xml and some return */html. Either could be acceptable depending on the OS
-        ("example-10k.html", [FileType.HTML, FileType.XML]),
+        ("example-10k.html", FileType.XML),
         ("fake-html.html", FileType.HTML),
         ("fake-excel.xlsx", FileType.XLSX),
         ("fake-power-point.pptx", FileType.PPTX),
     ],
 )
 def test_detect_filetype_from_file(file, expected):
-    expected = expected if isinstance(expected, list) else [expected]
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, file)
     with open(filename, "rb") as f:
-        assert detect_filetype(file=f) in expected
-
-
-def test_detect_xml_application_xml(monkeypatch):
-    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "application/xml")
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.xml")
-    filetype = detect_filetype(filename=filename)
-    assert filetype == FileType.XML
-
-
-def test_detect_xml_text_xml(monkeypatch):
-    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "text/xml")
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.xml")
-    filetype = detect_filetype(filename=filename)
-    assert filetype == FileType.XML
-
-
-def test_detect_html_application_xml(monkeypatch):
-    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "application/xml")
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.html")
-    filetype = detect_filetype(filename=filename)
-    assert filetype == FileType.HTML
-
-
-def test_detect_html_text_xml(monkeypatch):
-    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "text/xml")
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.html")
-    filetype = detect_filetype(filename=filename)
-    assert filetype == FileType.HTML
+        assert detect_filetype(file=f) == expected
 
 
 def test_detect_docx_filetype_application_octet_stream(monkeypatch):
