@@ -1,6 +1,7 @@
 import os
 import pathlib
 import pytest
+import warnings
 
 import docx
 
@@ -136,6 +137,9 @@ def test_auto_partition_text_from_file():
         elements = partition(file=f)
     assert len(elements) > 0
     assert elements == EXPECTED_TEXT_OUTPUT
+
+
+def test_auto_partition_pdf_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
     elements = partition(filename=filename)
 
@@ -150,7 +154,23 @@ def test_auto_partition_pdf_from_file():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
     with open(filename, "rb") as f:
         elements = partition(file=f)
-    assert len(elements) > 0
+
+    assert isinstance(elements[0], Title)
+    assert elements[0].text.startswith("LayoutParser")
+
+    assert isinstance(elements[1], NarrativeText)
+    assert elements[1].text.startswith("Zejiang Shen 1")
+
+
+def test_partition_pdf_doesnt_raise_warning():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
+    ***REMOVED*** NOTE(robinson): This is the recommended way to check that no warning is emitted,
+    ***REMOVED*** per the pytest docs.
+    ***REMOVED*** ref: https://docs.pytest.org/en/7.0.x/how-to/capture-warnings.html
+    ***REMOVED***      ***REMOVED***additional-use-cases-of-warnings-in-tests
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        partition(filename=filename)
 
 
 def test_auto_partition_jpg():

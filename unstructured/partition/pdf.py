@@ -1,4 +1,5 @@
 from typing import List, Optional
+import warnings
 
 from unstructured.documents.elements import Element
 from unstructured.partition import _partition_via_api
@@ -54,9 +55,13 @@ def partition_pdf_or_image(
         out_template: Optional[str] = template
         if route_args[0] == "layout":
             out_template = None
-        layout_elements = _partition_pdf_or_image_local(
-            filename=filename, file=file, template=out_template, is_image=is_image
-        )
+
+        ***REMOVED*** NOTE(robinson): Catches a UserWarning that occurs when detectron is called
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            layout_elements = _partition_pdf_or_image_local(
+                filename=filename, file=file, template=out_template, is_image=is_image
+            )
     else:
         ***REMOVED*** NOTE(alan): Remove these lines after different models are handled by routing
         if template == "checkbox":
