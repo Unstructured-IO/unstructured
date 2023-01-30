@@ -4,6 +4,7 @@ import lxml.etree as etree
 
 from unstructured.logger import logger
 from unstructured.documents.base import Document, Page
+import re
 
 
 VALID_PARSERS = Union[etree.HTMLParser, etree.XMLParser, None]
@@ -50,6 +51,8 @@ class XMLDocument(Document):
         return super().pages
 
     def _read_xml(self, content):
+        """The regex checks the script tags in content(string) and remove text inside the script tag as well"""
+        content = re.sub("<script[\s\S]*?(.*?)</script>", "", content, flags=re.DOTALL)
         """Reads in an XML file and converts it to an lxml element tree object."""
         if self.document_tree is None:
             document_tree = etree.fromstring(content.encode(), self.parser)
