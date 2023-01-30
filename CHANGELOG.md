@@ -1,4 +1,4 @@
-## 0.4.5-dev0
+## 0.4.5-dev1
 
 * Loosen the default cap threshold to `0.5`.
 * Add a `NARRATIVE_TEXT_CAP_THRESHOLD` environment variable for controlling the cap ratio threshold.
@@ -7,7 +7,7 @@
   is insufficient to determine that the text is narrative.
 * Upper cased text is lower cased before checking for verbs. This helps avoid some missed verbs.
 * Adds an `Address` element for capturing elements that only contain an address.
-* Alter some of the unit testcases to increase the test coverage.
+* Suppress the `UserWarning` when detectron is called
 
 ## 0.4.4
 
