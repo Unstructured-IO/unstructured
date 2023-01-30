@@ -60,7 +60,7 @@ sphinxcontrib-serializinghtml==1.1.5
     ***REMOVED*** via sphinx
 urllib3==1.26.14
     ***REMOVED*** via requests
-zipp==3.11.0
+zipp==3.12.0
     ***REMOVED*** via importlib-metadata
 
 ***REMOVED*** The following packages are considered to be unsafe in a requirements file:

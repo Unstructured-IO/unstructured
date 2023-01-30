@@ -64,16 +64,16 @@ install-local-inference: install install-unstructured-inference install-detectro
 ***REMOVED******REMOVED*** pip-compile:             compiles all base/dev/test requirements
 .PHONY: pip-compile
 pip-compile:
-	pip-compile -o requirements/base.txt
+	pip-compile --upgrade -o requirements/base.txt
 	***REMOVED*** Extra requirements for huggingface staging functions
-	pip-compile --extra huggingface -o requirements/huggingface.txt
+	pip-compile --upgrade --extra huggingface -o requirements/huggingface.txt
 	***REMOVED*** NOTE(robinson) - We want the dependencies for detectron2 in the requirements.txt, but not
 	***REMOVED*** the detectron2 repo itself. If detectron2 is in the requirements.txt file, an order of
 	***REMOVED*** operations issue related to the torch library causes the install to fail
-	pip-compile requirements/dev.in
-	pip-compile requirements/test.in
-	pip-compile requirements/build.in
-	pip-compile --extra local-inference -o requirements/local-inference.txt
+	pip-compile --upgrade requirements/dev.in
+	pip-compile --upgrade requirements/test.in
+	pip-compile --upgrade requirements/build.in
+	pip-compile --upgrade --extra local-inference -o requirements/local-inference.txt
 	***REMOVED*** NOTE(robinson) - doc/requirements.txt is where the GitHub action for building
 	***REMOVED*** sphinx docs looks for additional requirements
 	cp requirements/build.txt docs/requirements.txt

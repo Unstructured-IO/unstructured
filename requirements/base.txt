@@ -6,7 +6,7 @@
 ***REMOVED***
 ***REMOVED***
     ***REMOVED*** via httpcore
-argilla==1.2.0
+argilla==1.2.1
     ***REMOVED*** via unstructured (setup.py)
 ***REMOVED***
     ***REMOVED*** via argilla

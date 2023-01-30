@@ -18,7 +18,7 @@ charset-normalizer==3.0.1
     ***REMOVED*** via
     ***REMOVED***   -r requirements/test.in
     ***REMOVED***   black
-coverage[toml]==7.0.5
+coverage[toml]==7.1.0
     ***REMOVED*** via
     ***REMOVED***   -r requirements/test.in
     ***REMOVED***   pytest-cov
@@ -48,7 +48,7 @@ mypy-extensions==0.4.3
     ***REMOVED***   mypy
 ***REMOVED***
     ***REMOVED*** via pytest
-pathspec==0.10.3
+pathspec==0.11.0
     ***REMOVED*** via black
 platformdirs==2.6.2
     ***REMOVED*** via black
