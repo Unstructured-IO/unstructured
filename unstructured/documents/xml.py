@@ -51,8 +51,11 @@ class XMLDocument(Document):
         return super().pages
 
     def _read_xml(self, content):
-        """The regex checks the script tags in content(string) and remove text inside the script tag as well"""
-        content = re.sub("<script[\s\S]*?(.*?)</script>", "", content, flags=re.DOTALL)
+        """
+        The regex checks the script tags in content(string).
+        Remove text inside the script tag as well.
+        """
+        content = re.sub(r"<script[\s\S]*?(.*?)</script>", "", content, flags=re.DOTALL)
         """Reads in an XML file and converts it to an lxml element tree object."""
         if self.document_tree is None:
             document_tree = etree.fromstring(content.encode(), self.parser)
