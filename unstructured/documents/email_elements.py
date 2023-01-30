@@ -1,7 +1,8 @@
+import hashlib
 from abc import ABC
 from datetime import datetime
-import hashlib
 from typing import Callable, List, Union
+
 from unstructured.documents.elements import Element, Text, NoID
 
 
@@ -130,4 +131,3 @@ class Attachment(Name):
     category = "Attachment"
 
     pass
-
