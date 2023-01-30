@@ -7,6 +7,7 @@
   is insufficient to determine that the text is narrative.
 * Upper cased text is lower cased before checking for verbs. This helps avoid some missed verbs.
 * Adds an `Address` element for capturing elements that only contain an address.
+* Added regex to eliminate script tags as well as strings in between.
 
 ## 0.4.4
 
