@@ -1,4 +1,4 @@
-## 0.4.5-dev0
+## 0.4.5-dev1
 
 * Loosen the default cap threshold to `0.5`.
 * Add a `NARRATIVE_TEXT_CAP_THRESHOLD` environment variable for controlling the cap ratio threshold.
