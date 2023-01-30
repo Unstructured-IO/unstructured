@@ -17,7 +17,6 @@
 * Adds `FigureCaption` and `CheckBox` document elements
 * Added ability to split lists detected in `LayoutElement` objects
 * Adds `partition_pptx` for partitioning PowerPoint documents
-* Alter the test cases to increase the test coverage
 
 ## 0.4.3
 
