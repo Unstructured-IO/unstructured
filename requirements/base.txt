@@ -6,7 +6,7 @@
 #
 anyio==3.6.2
     # via httpcore
-argilla==1.2.0
+argilla==1.2.1
     # via unstructured (setup.py)
 backoff==2.2.1
     # via argilla
