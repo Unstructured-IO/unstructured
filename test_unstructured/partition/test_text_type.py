@@ -37,7 +37,8 @@ def test_headings_are_not_narrative_text(text, expected):
         ("Ask Me About Intellectual Property", False),  # Exceeds the cap threshold
         ("7", False),  # Fails because it is numeric
         ("intellectual property", False),  # Fails because it does not contain a verb
-        ("", False),  # Fails because it is empty
+        ("Dal;kdjfal adawels adfjwalsdf. Addad jaja fjawlek", False),
+        ("", False),  # Doesn't have english words  # Fails because it is empty
     ],
 )
 def test_is_possible_narrative_text(text, expected, monkeypatch):
@@ -60,6 +61,7 @@ def test_is_possible_narrative_text(text, expected, monkeypatch):
         ("", False),  # Fails because it is empty
         ("ITEM 1A. RISK FACTORS", True),  # Two "sentences", but both are short
         ("To My Dearest Friends,", False),  # Ends with a comma
+        ("BTAR ADFJA L", False),  # Doesn't have english words
     ],
 )
 def test_is_possible_title(text, expected, monkeypatch):
@@ -127,6 +129,21 @@ def test_is_bulletized_text(text, expected):
 )
 def test_contains_verb(text, expected, monkeypatch):
     has_verb = text_type.contains_verb(text)
+    assert has_verb is expected
+
+
+@pytest.mark.parametrize(
+    "text, expected",
+    [
+        ("PARROT BEAK", True),
+        ("Parrot Beak", True),
+        ("parrot beak", True),
+        ("parrot!", True),
+        ("daljdf adlfajldj ajadfa", False),
+    ],
+)
+def test_contains_english_word(text, expected, monkeypatch):
+    has_verb = text_type.contains_english_word(text)
     assert has_verb is expected
 
 
