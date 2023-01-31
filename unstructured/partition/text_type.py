@@ -131,7 +131,7 @@ def contains_english_word(text: str) -> bool:
     for word in words:
         # NOTE(robinson) - to ignore punctuation at the ends of words like "best."
         word = "".join([character for character in word if character.isalpha()])
-        if word in ENGLISH_WORDS:
+        if len(word) > 1 and word in ENGLISH_WORDS:
             return True
 
     return False

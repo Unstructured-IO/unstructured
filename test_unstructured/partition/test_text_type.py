@@ -140,6 +140,8 @@ def test_contains_verb(text, expected, monkeypatch):
         ("parrot beak", True),
         ("parrot!", True),
         ("daljdf adlfajldj ajadfa", False),
+        ("BTAR ADFJA L", False),
+        ("Unstructured Technologies", True),
     ],
 )
 def test_contains_english_word(text, expected, monkeypatch):
