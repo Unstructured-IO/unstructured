@@ -1,7 +1,8 @@
+import hashlib
 from abc import ABC
 from datetime import datetime
-import hashlib
 from typing import Callable, List, Union
+
 from unstructured.documents.elements import Element, Text, NoID
 
 
@@ -66,10 +67,7 @@ class Name(EmailElement):
             cleaned_text = cleaner(cleaned_text)
             cleaned_name = cleaner(cleaned_name)
 
-        if not isinstance(cleaned_text, str):
-            raise ValueError("Cleaner produced a non-string output.")
-
-        if not isinstance(cleaned_name, str):
+        if not isinstance(cleaned_text, str) or not isinstance(cleaned_name, str):
             raise ValueError("Cleaner produced a non-string output.")
 
         self.text = cleaned_text
@@ -133,39 +131,3 @@ class Attachment(Name):
     category = "Attachment"
 
     pass
-
-
-class Email(ABC):
-    """An email class with it's attributes"""
-
-    def __init__(self):
-        self.recipient = Recipient
-        self.sender = Sender
-        self.subject = Subject
-        self.body = BodyText
-        self.received_info: ReceivedInfo
-        self.meta_data: MetaData
-        self.attachment: List[Attachment]
-
-    def __str__(self):
-        return f"""
-        Recipient: {self.recipient}
-        Sender: {self.sender}
-        Subject: {self.subject}
-
-        Received Header Information:
-
-        {self.received_info}
-
-        Meta Data From Header:
-
-        {self.meta_data}
-
-        Body:
-
-        {self.body}
-
-        Attachment:
-
-        {[file.name for file in self.attachment]}
-        """
