@@ -18,7 +18,7 @@ click==8.1.3
     # via
     #   -r requirements/test.in
     #   black
-coverage[toml]==7.0.5
+coverage[toml]==7.1.0
     # via
     #   -r requirements/test.in
     #   pytest-cov
@@ -48,7 +48,7 @@ mypy-extensions==0.4.3
     #   mypy
 packaging==23.0
     # via pytest
-pathspec==0.10.3
+pathspec==0.11.0
     # via black
 platformdirs==2.6.2
     # via black
