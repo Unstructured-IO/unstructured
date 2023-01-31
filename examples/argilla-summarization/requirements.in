@@ -1,0 +1,7 @@
+argilla[server]
+datasets
+jupyter
+requests
+torch
+transformers
+unstructured>=0.3.1

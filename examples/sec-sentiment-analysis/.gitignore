@@ -1,0 +1,4 @@
+xbrl-forms/*
+sec-sentiment-analysis*.json
+sec-sentiment-model/*
+tmp_trainer/*
