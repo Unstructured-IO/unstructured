@@ -62,6 +62,7 @@ def test_is_possible_narrative_text(text, expected, monkeypatch):
         ("ITEM 1A. RISK FACTORS", True),  # Two "sentences", but both are short
         ("To My Dearest Friends,", False),  # Ends with a comma
         ("BTAR ADFJA L", False),  # Doesn't have english words
+        ("ITEM 1A. RISK FACTORS " * 15, False),  # Title is too long
     ],
 )
 def test_is_possible_title(text, expected, monkeypatch):
@@ -168,13 +169,22 @@ def test_contains_exceeds_cap_ratio(text, expected, monkeypatch):
 def test_set_caps_ratio_with_environment_variable(monkeypatch):
     monkeypatch.setattr(text_type, "word_tokenize", mock_word_tokenize)
     monkeypatch.setattr(text_type, "sent_tokenize", mock_sent_tokenize)
-    monkeypatch.setenv("NARRATIVE_TEXT_CAP_THRESHOLD", 0.8)
+    monkeypatch.setenv("UNSTRUCTURED_NARRATIVE_TEXT_CAP_THRESHOLD", 0.8)
 
     text = "All The King's Horses. And All The King's Men."
     with patch.object(text_type, "exceeds_cap_ratio", return_value=False) as mock_exceeds:
         text_type.is_possible_narrative_text(text)
 
     mock_exceeds.assert_called_once_with(text, threshold=0.8)
+
+
+def test_set_title_max_word_length_with_environment_variable(monkeypatch):
+    monkeypatch.setattr(text_type, "word_tokenize", mock_word_tokenize)
+    monkeypatch.setattr(text_type, "sent_tokenize", mock_sent_tokenize)
+    monkeypatch.setenv("UNSTRUCTURED_TITLE_MAX_WORD_LENGTH", 5)
+
+    text = "Intellectual Property in the United States"
+    assert text_type.is_possible_narrative_text(text) is False
 
 
 def test_sentence_count(monkeypatch):

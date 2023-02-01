@@ -47,7 +47,9 @@ def is_possible_narrative_text(text: str, cap_threshold: float = 0.5, language: 
 
     # NOTE(robinson): it gets read in from the environment as a string so we need to
     # cast it to a float
-    cap_threshold = float(os.environ.get("NARRATIVE_TEXT_CAP_THRESHOLD", cap_threshold))
+    cap_threshold = float(
+        os.environ.get("UNSTRUCTURED_NARRATIVE_TEXT_CAP_THRESHOLD", cap_threshold)
+    )
     if exceeds_cap_ratio(text, threshold=cap_threshold):
         logger.debug(f"Not narrative. Text exceeds cap ratio {cap_threshold}:\n\n{text}")
         return False
@@ -59,7 +61,9 @@ def is_possible_narrative_text(text: str, cap_threshold: float = 0.5, language: 
     return True
 
 
-def is_possible_title(text: str, sentence_min_length: int = 5, language: str = "en") -> bool:
+def is_possible_title(
+    text: str, sentence_min_length: int = 5, title_max_word_length: int = 12, language: str = "en"
+) -> bool:
     """Checks to see if the text passes all of the checks for a valid title.
 
     Parameters
@@ -68,11 +72,21 @@ def is_possible_title(text: str, sentence_min_length: int = 5, language: str = "
         the input text
     sentence_min_length
         the minimum number of words required to consider a section of text a sentence
+    title_max_word_length
+        the maximum number of words a title can contain
     language
         the two letter language code for the text. defaults to "en" for English
     """
     if len(text) == 0:
         logger.debug("Not a title. Text is empty.")
+        return False
+
+    title_max_word_length = int(
+        os.environ.get("UNSTRUCTURED_TITLE_MAX_WORD_LENGTH", title_max_word_length)
+    )
+    # NOTE(robinson) - splitting on spaces here instead of word tokenizing because it
+    # is less expensive and actual tokenization doesn't add much value for the length check
+    if len(text.split(" ")) > title_max_word_length:
         return False
 
     # NOTE(robinson) - Prevent flagging salutations like "To My Dearest Friends," as titles
