@@ -59,7 +59,7 @@ def is_possible_narrative_text(
         logger.debug(f"Not narrative. Text exceeds cap ratio {cap_threshold}:\n\n{text}")
         return False
 
-    non_alpha_threshold = int(
+    non_alpha_threshold = float(
         os.environ.get("UNSTRUCTURED_NARRATIVE_TEXT_NON_ALPHA_THRESHOLD", non_alpha_threshold)
     )
     if under_non_alpha_ratio(text, threshold=non_alpha_threshold):
@@ -106,7 +106,7 @@ def is_possible_title(
     if len(text.split(" ")) > title_max_word_length:
         return False
 
-    non_alpha_threshold = int(
+    non_alpha_threshold = float(
         os.environ.get("UNSTRUCTURED_TITLE_NON_ALPHA_THRESHOLD", non_alpha_threshold)
     )
     if under_non_alpha_ratio(text, threshold=non_alpha_threshold):
