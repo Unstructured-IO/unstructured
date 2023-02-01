@@ -338,7 +338,7 @@ for consideration as narrative text. The function performs the following checks 
 <li><p>Text that exceeds the specified caps ratio cannot be narrative text. The threshold
 is configurable with the <code class="docutils literal notranslate"><span class="pre">cap_threshold</span></code> kwarg. To ignore this check, you can set
 <code class="docutils literal notranslate"><span class="pre">cap_threshold=1.0</span></code>. You can also set the threshold by using the
-<code class="docutils literal notranslate"><span class="pre">UNSTRUCTURED_NARRATIVE_TEXT_CAP_THRESHOLD</span></code> environment variable. The environment variable
+<code class="docutils literal notranslate"><span class="pre">NARRATIVE_TEXT_CAP_THRESHOLD</span></code> environment variable. The environment variable
 takes precedence over the kwarg.</p></li>
 <li><p>The cap ratio test does not apply to text that is all uppercase.</p></li>
 </ul>
@@ -365,10 +365,7 @@ takes precedence over the kwarg.</p></li>
 for consideration as a title. The function performs the following checks:</p>
 <ul class="simple">
 <li><p>Empty text cannot be a title</p></li>
-<li><p>Text that is all numeric cannot be a title.</p></li>
-<li><p>If a title contains to many words it is not a title. The default max length is <code class="docutils literal notranslate"><span class="pre">15</span></code>. You can change the max length with
-the <code class="docutils literal notranslate"><span class="pre">title_max_word_length</span></code> kwarg or the <code class="docutils literal notranslate"><span class="pre">UNSTRUCTURED_TITLE_MAX_WORD_LENGTH</span></code> environment variable. The environment
-variable takes precedence over the kwarg.</p></li>
+<li><p>Text that is all numeric cannot be a title</p></li>
 <li><p>Narrative text must contain at least one English word (if <code class="docutils literal notranslate"><span class="pre">language</span></code> is set to “en”)</p></li>
 <li><p>If a title contains more than one sentence that exceeds a certain length, it cannot be a title. Sentence length threshold is controlled by the <code class="docutils literal notranslate"><span class="pre">sentence_min_length</span></code> kwarg and defaults to 5.</p></li>
 <li><p>If a segment of text ends in a comma, it is not considered a potential title. This is to avoid salutations like “To My Dearest Friends,” getting flagged as titles.</p></li>
@@ -454,7 +451,8 @@ distinct sentences and words.</p>
 <code class="docutils literal notranslate"><span class="pre">is_possible_narrative_text</span></code> and <code class="docutils literal notranslate"><span class="pre">is_possible_title</span></code>, but can be used independently
 as well. You can set the caps threshold using the <code class="docutils literal notranslate"><span class="pre">threshold</span></code> kwarg. The threshold
 defaults to <code class="docutils literal notranslate"><span class="pre">0.3</span></code>. Only runs on sections of text that are a single sentence.
-The environment variable takes precedence over the kwarg. The caps ratio
+You can also set the threshold using the <code class="docutils literal notranslate"><span class="pre">NARRATIVE_TEXT_CAP_THRESHOLD</span></code> environment
+variable. The environment variable takes precedence over the kwarg. The caps ratio
 check does not apply to text that is all capitalized.</p>
 <p>Examples:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.text_type</span> <span class="kn">import</span> <span class="n">exceeds_cap_ratio</span>
