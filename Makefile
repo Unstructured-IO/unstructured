@@ -36,6 +36,7 @@ install-huggingface:
 install-nltk-models:
 	python -c "import nltk; nltk.download('punkt')"
 	python -c "import nltk; nltk.download('averaged_perceptron_tagger')"
+	python -c "import nltk; nltk.download('words')"
 
 .PHONY: install-test
 install-test:

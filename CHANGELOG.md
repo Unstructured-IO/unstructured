@@ -1,4 +1,4 @@
-***REMOVED******REMOVED*** 0.4.5-dev1
+***REMOVED******REMOVED*** 0.4.5-dev2
 
 * Loosen the default cap threshold to `0.5`.
 * Add a `NARRATIVE_TEXT_CAP_THRESHOLD` environment variable for controlling the cap ratio threshold.
@@ -7,7 +7,8 @@
   is insufficient to determine that the text is narrative.
 * Upper cased text is lower cased before checking for verbs. This helps avoid some missed verbs.
 * Adds an `Address` element for capturing elements that only contain an address.
-* Suppress the `UserWarning` when detectron is called
+* Suppress the `UserWarning` when detectron is called.
+* Checks that titles and narrative test have at least one English word.
 
 ***REMOVED******REMOVED*** 0.4.4
 

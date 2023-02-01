@@ -244,6 +244,7 @@ for consideration as narrative text. The function performs the following checks 
 * Empty text cannot be narrative text
 * Text that is all numeric cannot be narrative text
 * Text that does not contain a verb cannot be narrative text
+* Narrative text must contain at least one English word (if ``language`` is set to "en")
 * Text that exceeds the specified caps ratio cannot be narrative text. The threshold
   is configurable with the ``cap_threshold`` kwarg. To ignore this check, you can set
   ``cap_threshold=1.0``. You can also set the threshold by using the
@@ -279,6 +280,7 @@ for consideration as a title. The function performs the following checks:
 
 * Empty text cannot be a title
 * Text that is all numeric cannot be a title
+* Narrative text must contain at least one English word (if ``language`` is set to "en")
 * If a title contains more than one sentence that exceeds a certain length, it cannot be a title. Sentence length threshold is controlled by the ``sentence_min_length`` kwarg and defaults to 5.
 * If a segment of text ends in a comma, it is not considered a potential title. This is to avoid salutations like "To My Dearest Friends," getting flagged as titles.
 
