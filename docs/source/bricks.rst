@@ -248,7 +248,7 @@ for consideration as narrative text. The function performs the following checks 
 * Text that exceeds the specified caps ratio cannot be narrative text. The threshold
   is configurable with the ``cap_threshold`` kwarg. To ignore this check, you can set
   ``cap_threshold=1.0``. You can also set the threshold by using the
-  ``NARRATIVE_TEXT_CAP_THRESHOLD`` environment variable. The environment variable
+  ``UNSTRUCTURED_NARRATIVE_TEXT_CAP_THRESHOLD`` environment variable. The environment variable
   takes precedence over the kwarg.
 * The cap ratio test does not apply to text that is all uppercase.
 
@@ -279,7 +279,10 @@ The ``is_possible_title`` function determines if a section of text is a candidat
 for consideration as a title. The function performs the following checks:
 
 * Empty text cannot be a title
-* Text that is all numeric cannot be a title
+* Text that is all numeric cannot be a title.
+* If a title contains too many words it is not a title. The default max length is ``15``. You can change the max length with
+  the ``title_max_word_length`` kwarg or the ``UNSTRUCTURED_TITLE_MAX_WORD_LENGTH`` environment variable. The environment
+  variable takes precedence over the kwarg.
 * Narrative text must contain at least one English word (if ``language`` is set to "en")
 * If a title contains more than one sentence that exceeds a certain length, it cannot be a title. Sentence length threshold is controlled by the ``sentence_min_length`` kwarg and defaults to 5.
 * If a segment of text ends in a comma, it is not considered a potential title. This is to avoid salutations like "To My Dearest Friends," getting flagged as titles.
@@ -379,10 +382,7 @@ Examples:
 Determines if the section of text exceeds the specified caps ratio. Used in
 ``is_possible_narrative_text`` and ``is_possible_title``, but can be used independently
 as well. You can set the caps threshold using the ``threshold`` kwarg. The threshold
-defaults to ``0.3``. Only runs on sections of text that are a single sentence.
-You can also set the threshold using the ``NARRATIVE_TEXT_CAP_THRESHOLD`` environment
-variable. The environment variable takes precedence over the kwarg. The caps ratio
-check does not apply to text that is all capitalized.
+defaults to ``0.3``. Only runs on sections of text that are a single sentence. The caps ratio check does not apply to text that is all capitalized.
 
 Examples:
 
