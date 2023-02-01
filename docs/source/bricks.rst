@@ -382,9 +382,7 @@ Examples:
 Determines if the section of text exceeds the specified caps ratio. Used in
 ``is_possible_narrative_text`` and ``is_possible_title``, but can be used independently
 as well. You can set the caps threshold using the ``threshold`` kwarg. The threshold
-defaults to ``0.3``. Only runs on sections of text that are a single sentence.
-The environment variable takes precedence over the kwarg. The caps ratio
-check does not apply to text that is all capitalized.
+defaults to ``0.3``. Only runs on sections of text that are a single sentence. The caps ratio check does not apply to text that is all capitalized.
 
 Examples:
 
