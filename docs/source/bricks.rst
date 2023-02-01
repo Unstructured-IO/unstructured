@@ -280,7 +280,7 @@ for consideration as a title. The function performs the following checks:
 
 * Empty text cannot be a title
 * Text that is all numeric cannot be a title.
-* If a title contains to many words it is not a title. The default max length is ``15``. You can change the max length with
+* If a title contains too many words it is not a title. The default max length is ``15``. You can change the max length with
   the ``title_max_word_length`` kwarg or the ``UNSTRUCTURED_TITLE_MAX_WORD_LENGTH`` environment variable. The environment
   variable takes precedence over the kwarg.
 * Narrative text must contain at least one English word (if ``language`` is set to "en")
