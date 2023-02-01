@@ -62,7 +62,7 @@ def is_possible_narrative_text(text: str, cap_threshold: float = 0.5, language: 
 
 
 def is_possible_title(
-    text: str, sentence_min_length: int = 5, title_max_word_length: int = 15, language: str = "en"
+    text: str, sentence_min_length: int = 5, title_max_word_length: int = 12, language: str = "en"
 ) -> bool:
     """Checks to see if the text passes all of the checks for a valid title.
 
