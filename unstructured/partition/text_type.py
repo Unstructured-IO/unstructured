@@ -10,6 +10,7 @@ else:
     from typing import Final
 
 from unstructured.cleaners.core import remove_punctuation
+from unstructured.nlp.english_words import ENGLISH_WORDS
 from unstructured.nlp.patterns import US_PHONE_NUMBERS_RE, UNICODE_BULLETS_RE, US_CITY_STATE_ZIP_RE
 from unstructured.nlp.tokenize import pos_tag, sent_tokenize, word_tokenize
 from unstructured.logger import logger
@@ -18,7 +19,7 @@ from unstructured.logger import logger
 POS_VERB_TAGS: Final[List[str]] = ["VB", "VBG", "VBD", "VBN", "VBP", "VBZ"]
 
 
-def is_possible_narrative_text(text: str, cap_threshold: float = 0.5) -> bool:
+def is_possible_narrative_text(text: str, cap_threshold: float = 0.5, language: str = "en") -> bool:
     """Checks to see if the text passes all of the checks for a narrative text section.
     You can change the cap threshold using the cap_threshold kwarg or the
     NARRATIVE_TEXT_CAP_THRESHOLD environment variable. The environment variable takes
@@ -30,6 +31,8 @@ def is_possible_narrative_text(text: str, cap_threshold: float = 0.5) -> bool:
         the input text
     cap_threshold
         the percentage of capitalized words necessary to disqualify the segment as narrative
+    language
+        the two letter language code for the text. defaults to "en" for English
     """
     if len(text) == 0:
         logger.debug("Not narrative. Text is empty.")
@@ -37,6 +40,9 @@ def is_possible_narrative_text(text: str, cap_threshold: float = 0.5) -> bool:
 
     if text.isnumeric():
         logger.debug(f"Not narrative. Text is all numeric:\n\n{text}")
+        return False
+
+    if language == "en" and not contains_english_word(text):
         return False
 
     # NOTE(robinson): it gets read in from the environment as a string so we need to
@@ -53,15 +59,17 @@ def is_possible_narrative_text(text: str, cap_threshold: float = 0.5) -> bool:
     return True
 
 
-def is_possible_title(text: str, sentence_min_length: int = 5) -> bool:
+def is_possible_title(text: str, sentence_min_length: int = 5, language: str = "en") -> bool:
     """Checks to see if the text passes all of the checks for a valid title.
 
     Parameters
     ----------
     text
         the input text
-    setence_min_length
+    sentence_min_length
         the minimum number of words required to consider a section of text a sentence
+    language
+        the two letter language code for the text. defaults to "en" for English
     """
     if len(text) == 0:
         logger.debug("Not a title. Text is empty.")
@@ -69,6 +77,9 @@ def is_possible_title(text: str, sentence_min_length: int = 5) -> bool:
 
     # NOTE(robinson) - Prevent flagging salutations like "To My Dearest Friends," as titles
     if text.endswith(","):
+        return False
+
+    if language == "en" and not contains_english_word(text):
         return False
 
     if text.isnumeric():
@@ -110,6 +121,19 @@ def contains_verb(text: str) -> bool:
     for _, tag in pos_tags:
         if tag in POS_VERB_TAGS:
             return True
+    return False
+
+
+def contains_english_word(text: str) -> bool:
+    """Checks to see if the text contains an English word."""
+    text = text.lower()
+    words = text.split(" ")
+    for word in words:
+        # NOTE(robinson) - to ignore punctuation at the ends of words like "best."
+        word = "".join([character for character in word if character.isalpha()])
+        if len(word) > 1 and word in ENGLISH_WORDS:
+            return True
+
     return False
 
 
