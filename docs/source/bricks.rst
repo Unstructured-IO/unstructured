@@ -254,7 +254,7 @@ for consideration as narrative text. The function performs the following checks 
   not narrative text.
   The default is to expect a minimum of 75% alpha characters
   (not countings spaces). You can change the minimum value with the
-  ``non_alpha_ratio`` kwarg ofr the ``UNSTRUCTURED_NARRATIVE_TEXT_NON_ALPHA_RATIO`` environment variable.
+  ``non_alpha_ratio`` kwarg or the ``UNSTRUCTURED_NARRATIVE_TEXT_NON_ALPHA_RATIO`` environment variable.
   The environment variables takes precedence over the kwarg.
 * The cap ratio test does not apply to text that is all uppercase.
 
