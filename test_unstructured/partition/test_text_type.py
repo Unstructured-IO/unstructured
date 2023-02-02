@@ -65,8 +65,8 @@ def test_is_possible_narrative_text(text, expected, monkeypatch):
         ("BTAR ADFJA L", False),  # Doesn't have english words
         ("ITEM 1A. RISK FACTORS " * 15, False),  # Title is too long
         ("/--------BREAK-------/", False),  # Contains too many non-alpha characters
-        ("1.A.RISKS", True), # Tests that "RISKS" gets flagged as an english work
-        ("1. Unstructured Technologies", True), # Make sure we're English words :-)
+        ("1.A.RISKS", True),  # Tests that "RISKS" gets flagged as an english work
+        ("1. Unstructured Technologies", True),  # Make sure we're English words :-)
     ],
 )
 def test_is_possible_title(text, expected, monkeypatch):
@@ -146,7 +146,7 @@ def test_contains_verb(text, expected, monkeypatch):
         ("daljdf adlfajldj ajadfa", False),
         ("BTAR ADFJA L", False),
         ("Unstructured Technologies", True),
-        ("1.A.RISKS", True), # Test crammed together words get picked up
+        ("1.A.RISKS", True),  # Test crammed together words get picked up
     ],
 )
 def test_contains_english_word(text, expected, monkeypatch):
