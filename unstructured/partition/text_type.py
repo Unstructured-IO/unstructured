@@ -18,7 +18,7 @@ from unstructured.logger import logger
 
 
 POS_VERB_TAGS: Final[List[str]] = ["VB", "VBG", "VBD", "VBN", "VBP", "VBZ"]
-ENGLISH_WORD_SPLIT_RE = re.compile(r"[\s|\.|-|_]")
+ENGLISH_WORD_SPLIT_RE = re.compile(r"[\s|\.|-|_|\/]")
 
 
 def is_possible_narrative_text(
