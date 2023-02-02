@@ -1,5 +1,7 @@
+import base64
+import io
 import os
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import pandas as pd
 
@@ -37,5 +39,38 @@ def get_file_info(filenames: List[str]) -> pd.DataFrame:
         data["extension"].append(extension)
         data["filesize"].append(filesize)
         data["filetype"].append(filetype)
+
+    return pd.DataFrame(data)
+
+
+def get_file_info_from_file_contents(
+    file_contents: List[str], filenames: Optional[List[str]] = None
+) -> pd.DataFrame:
+
+    data: Dict[str, List[Any]] = {
+        "filesize": [],
+        "filetype": [],
+    }
+
+    if filenames:
+        if len(filenames) != len(file_contents):
+            raise ValueError(
+                f"There are {len(filenames)} filenames and {len(file_contents)} "
+                "file_contents. Both inputs must be the same length."
+            )
+        data["filename"] = []
+
+    for i, file_content in enumerate(file_contents):
+        _, content_string = file_content.split(",")
+        content_bytes = base64.b64decode(content_string)
+        f = io.BytesIO(content_bytes)
+        filetype = detect_filetype(file=f)
+        f.seek(0, os.SEEK_END)
+        filesize = f.tell()
+
+        data["filesize"].append(filesize)
+        data["filetype"].append(filetype)
+        if filenames:
+            data["filename"].append(filenames[i])
 
     return pd.DataFrame(data)
