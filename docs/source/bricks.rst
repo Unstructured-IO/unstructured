@@ -292,7 +292,7 @@ for consideration as a title. The function performs the following checks:
 * If a text contains too many non-alpha characters it is not a
   title. The default is to expect a minimum of 75% alpha characters
   (not countings spaces). You can change the minimum value with the
-  ``non_alpha_ratio`` kwarg ofr the ``UNSTRUCTURED_TITLE_NON_ALPHA_RATIO`` environment variable.
+  ``non_alpha_ratio`` kwarg or the ``UNSTRUCTURED_TITLE_NON_ALPHA_RATIO`` environment variable.
   The environment variables takes precedence over the kwarg.
 * Narrative text must contain at least one English word (if ``language`` is set to "en")
 * If a title contains more than one sentence that exceeds a certain length, it cannot be a title. Sentence length threshold is controlled by the ``sentence_min_length`` kwarg and defaults to 5.
