@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bricks &mdash; unstructured 0.4.5-dev3 documentation</title>
+  <title>Bricks &mdash; unstructured 0.4.5-dev4 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -340,6 +340,12 @@ is configurable with the <code class="docutils literal notranslate"><span class=
 <code class="docutils literal notranslate"><span class="pre">cap_threshold=1.0</span></code>. You can also set the threshold by using the
 <code class="docutils literal notranslate"><span class="pre">UNSTRUCTURED_NARRATIVE_TEXT_CAP_THRESHOLD</span></code> environment variable. The environment variable
 takes precedence over the kwarg.</p></li>
+<li><p>If a the text contains too many non-alpha characters it is
+not narrative text.
+The default is to expect a minimum of 75% alpha characters
+(not countings spaces). You can change the minimum value with the
+<code class="docutils literal notranslate"><span class="pre">non_alpha_ratio</span></code> kwarg or the <code class="docutils literal notranslate"><span class="pre">UNSTRUCTURED_NARRATIVE_TEXT_NON_ALPHA_RATIO</span></code> environment variable.
+The environment variables takes precedence over the kwarg.</p></li>
 <li><p>The cap ratio test does not apply to text that is all uppercase.</p></li>
 </ul>
 <p>Examples:</p>
@@ -366,9 +372,14 @@ for consideration as a title. The function performs the following checks:</p>
 <ul class="simple">
 <li><p>Empty text cannot be a title</p></li>
 <li><p>Text that is all numeric cannot be a title.</p></li>
-<li><p>If a title contains too many words it is not a title. The default max length is <code class="docutils literal notranslate"><span class="pre">15</span></code>. You can change the max length with
+<li><p>If a title contains too many words it is not a title. The default max length is <code class="docutils literal notranslate"><span class="pre">12</span></code>. You can change the max length with
 the <code class="docutils literal notranslate"><span class="pre">title_max_word_length</span></code> kwarg or the <code class="docutils literal notranslate"><span class="pre">UNSTRUCTURED_TITLE_MAX_WORD_LENGTH</span></code> environment variable. The environment
 variable takes precedence over the kwarg.</p></li>
+<li><p>If a text contains too many non-alpha characters it is not a
+title. The default is to expect a minimum of 75% alpha characters
+(not countings spaces). You can change the minimum value with the
+<code class="docutils literal notranslate"><span class="pre">non_alpha_ratio</span></code> kwarg or the <code class="docutils literal notranslate"><span class="pre">UNSTRUCTURED_TITLE_NON_ALPHA_RATIO</span></code> environment variable.
+The environment variables takes precedence over the kwarg.</p></li>
 <li><p>Narrative text must contain at least one English word (if <code class="docutils literal notranslate"><span class="pre">language</span></code> is set to “en”)</p></li>
 <li><p>If a title contains more than one sentence that exceeds a certain length, it cannot be a title. Sentence length threshold is controlled by the <code class="docutils literal notranslate"><span class="pre">sentence_min_length</span></code> kwarg and defaults to 5.</p></li>
 <li><p>If a segment of text ends in a comma, it is not considered a potential title. This is to avoid salutations like “To My Dearest Friends,” getting flagged as titles.</p></li>
