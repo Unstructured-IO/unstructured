@@ -73,5 +73,5 @@ setup(
         "local-inference": ["unstructured-inference>=0.2.4"],
     },
     package_dir={"unstructured": "unstructured"},
-    package_data={"unstructured": ["nlp/*.txt"],
+    package_data={"unstructured": ["nlp/*.txt"]},
 )
