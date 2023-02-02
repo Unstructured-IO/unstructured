@@ -9,4 +9,8 @@ DIRECTORY = pathlib.Path(__file__).parent.resolve()
 ENGLISH_WORDS_FILE = os.path.join(DIRECTORY, "english-words.txt")
 
 with open(ENGLISH_WORDS_FILE, "r") as f:
-    ENGLISH_WORDS = f.read().split("\n")
+    BASE_ENGLISH_WORDS = f.read().split("\n")
+
+# NOTE(robinson) - add new words that we want to pass for the English check in here
+ADDITIONAL_ENGLISH_WORDS = []
+ENGLISH_WORDS = BASE_ENGLISH_WORDS + ADDITIONAL_ENGLISH_WORDS
