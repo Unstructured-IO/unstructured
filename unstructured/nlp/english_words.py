@@ -1,4 +1,4 @@
-from pathlib import path
+import pathlib
 import os
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()

@@ -46,8 +46,8 @@ def test_is_possible_narrative_text(text, expected, monkeypatch):
     monkeypatch.setattr(text_type, "word_tokenize", mock_word_tokenize)
     monkeypatch.setattr(text_type, "pos_tag", mock_pos_tag)
     monkeypatch.setattr(text_type, "sent_tokenize", mock_sent_tokenize)
-    has_verb = text_type.is_possible_narrative_text(text, cap_threshold=0.3)
-    assert has_verb is expected
+    is_possible_narrative = text_type.is_possible_narrative_text(text, cap_threshold=0.3)
+    assert is_possible_narrative is expected
 
 
 @pytest.mark.parametrize(
@@ -65,6 +65,8 @@ def test_is_possible_narrative_text(text, expected, monkeypatch):
         ("BTAR ADFJA L", False),  # Doesn't have english words
         ("ITEM 1A. RISK FACTORS " * 15, False),  # Title is too long
         ("/--------BREAK-------/", False),  # Contains too many non-alpha characters
+        ("1.A.RISKS", True), # Tests that "RISKS" gets flagged as an english work
+        ("1. Unstructured Technologies", True), # Make sure we're English words :-)
     ],
 )
 def test_is_possible_title(text, expected, monkeypatch):
@@ -144,11 +146,11 @@ def test_contains_verb(text, expected, monkeypatch):
         ("daljdf adlfajldj ajadfa", False),
         ("BTAR ADFJA L", False),
         ("Unstructured Technologies", True),
+        ("1.A.RISKS", True), # Test crammed together words get picked up
     ],
 )
 def test_contains_english_word(text, expected, monkeypatch):
-    has_verb = text_type.contains_english_word(text)
-    assert has_verb is expected
+    assert text_type.contains_english_word(text) is expected
 
 
 @pytest.mark.parametrize(

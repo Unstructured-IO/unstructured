@@ -1,5 +1,6 @@
 """partition.py implements logic for partitioning plain text documents into sections."""
 import os
+import re
 import sys
 
 from typing import List, Optional
@@ -17,10 +18,11 @@ from unstructured.logger import logger
 
 
 POS_VERB_TAGS: Final[List[str]] = ["VB", "VBG", "VBD", "VBN", "VBP", "VBZ"]
+ENGLISH_WORD_SPLIT_RE = re.compile(r"[\s|\.|-|_]")
 
 
 def is_possible_narrative_text(
-    text: str, cap_threshold: float = 0.5, non_alpha_threshold: float = 0.75, language: str = "en"
+    text: str, cap_threshold: float = 0.5, non_alpha_threshold: float = 0.5, language: str = "en"
 ) -> bool:
     """Checks to see if the text passes all of the checks for a narrative text section.
     You can change the cap threshold using the cap_threshold kwarg or the
@@ -76,7 +78,7 @@ def is_possible_title(
     text: str,
     sentence_min_length: int = 5,
     title_max_word_length: int = 12,
-    non_alpha_threshold: float = 0.75,
+    non_alpha_threshold: float = 0.5,
     language: str = "en",
 ) -> bool:
     """Checks to see if the text passes all of the checks for a valid title.
@@ -164,7 +166,7 @@ def contains_verb(text: str) -> bool:
 def contains_english_word(text: str) -> bool:
     """Checks to see if the text contains an English word."""
     text = text.lower()
-    words = text.split(" ")
+    words = ENGLISH_WORD_SPLIT_RE.split(text)
     for word in words:
         # NOTE(robinson) - to ignore punctuation at the ends of words like "best."
         word = "".join([character for character in word if character.isalpha()])
@@ -200,7 +202,7 @@ def sentence_count(text: str, min_length: Optional[int] = None) -> int:
     return count
 
 
-def under_non_alpha_ratio(text: str, threshold: float = 0.75):
+def under_non_alpha_ratio(text: str, threshold: float = 0.5):
     """Checks if the proportion of non-alpha characters in the text snippet exceeds a given
     threshold. This helps prevent text like "-----------BREAK---------" from being tagged
     as a title or narrative text. The ratio does not count spaces.
