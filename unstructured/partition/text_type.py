@@ -19,7 +19,9 @@ from unstructured.logger import logger
 POS_VERB_TAGS: Final[List[str]] = ["VB", "VBG", "VBD", "VBN", "VBP", "VBZ"]
 
 
-def is_possible_narrative_text(text: str, cap_threshold: float = 0.5, language: str = "en") -> bool:
+def is_possible_narrative_text(
+    text: str, cap_threshold: float = 0.5, non_alpha_threshold: float = 0.75, language: str = "en"
+) -> bool:
     """Checks to see if the text passes all of the checks for a narrative text section.
     You can change the cap threshold using the cap_threshold kwarg or the
     NARRATIVE_TEXT_CAP_THRESHOLD environment variable. The environment variable takes
@@ -28,11 +30,14 @@ def is_possible_narrative_text(text: str, cap_threshold: float = 0.5, language: 
     Parameters
     ----------
     text
-        the input text
+        The input text to check
     cap_threshold
-        the percentage of capitalized words necessary to disqualify the segment as narrative
+        The percentage of capitalized words necessary to disqualify the segment as narrative
+    non_alpha_threshold
+        The minimum proportion of alpha characters the text needs to be considered
+        narrative text
     language
-        the two letter language code for the text. defaults to "en" for English
+        The two letter language code for the text. defaults to "en" for English
     """
     if len(text) == 0:
         logger.debug("Not narrative. Text is empty.")
@@ -54,6 +59,12 @@ def is_possible_narrative_text(text: str, cap_threshold: float = 0.5, language: 
         logger.debug(f"Not narrative. Text exceeds cap ratio {cap_threshold}:\n\n{text}")
         return False
 
+    non_alpha_threshold = float(
+        os.environ.get("UNSTRUCTURED_NARRATIVE_TEXT_NON_ALPHA_THRESHOLD", non_alpha_threshold)
+    )
+    if under_non_alpha_ratio(text, threshold=non_alpha_threshold):
+        return False
+
     if (sentence_count(text, 3) < 2) and (not contains_verb(text)):
         logger.debug(f"Not narrative. Text does not contain a verb:\n\n{text}")
         return False
@@ -62,20 +73,26 @@ def is_possible_narrative_text(text: str, cap_threshold: float = 0.5, language: 
 
 
 def is_possible_title(
-    text: str, sentence_min_length: int = 5, title_max_word_length: int = 12, language: str = "en"
+    text: str,
+    sentence_min_length: int = 5,
+    title_max_word_length: int = 12,
+    non_alpha_threshold: float = 0.75,
+    language: str = "en",
 ) -> bool:
     """Checks to see if the text passes all of the checks for a valid title.
 
     Parameters
     ----------
     text
-        the input text
+        The input text to check
     sentence_min_length
-        the minimum number of words required to consider a section of text a sentence
+        The minimum number of words required to consider a section of text a sentence
     title_max_word_length
-        the maximum number of words a title can contain
+        The maximum number of words a title can contain
+    non_alpha_threshold
+        The minimum number of alpha characters the text needs to be considered a title
     language
-        the two letter language code for the text. defaults to "en" for English
+        The two letter language code for the text. defaults to "en" for English
     """
     if len(text) == 0:
         logger.debug("Not a title. Text is empty.")
@@ -87,6 +104,12 @@ def is_possible_title(
     # NOTE(robinson) - splitting on spaces here instead of word tokenizing because it
     # is less expensive and actual tokenization doesn't add much value for the length check
     if len(text.split(" ")) > title_max_word_length:
+        return False
+
+    non_alpha_threshold = float(
+        os.environ.get("UNSTRUCTURED_TITLE_NON_ALPHA_THRESHOLD", non_alpha_threshold)
+    )
+    if under_non_alpha_ratio(text, threshold=non_alpha_threshold):
         return False
 
     # NOTE(robinson) - Prevent flagging salutations like "To My Dearest Friends," as titles
@@ -177,9 +200,40 @@ def sentence_count(text: str, min_length: Optional[int] = None) -> int:
     return count
 
 
+def under_non_alpha_ratio(text: str, threshold: float = 0.75):
+    """Checks if the proportion of non-alpha characters in the text snippet exceeds a given
+    threshold. This helps prevent text like "-----------BREAK---------" from being tagged
+    as a title or narrative text. The ratio does not count spaces.
+
+    Parameters
+    ----------
+    text
+        The input string to test
+    threshold
+        If the proportion of non-alpha characters exceeds this threshold, the function
+        returns False
+    """
+    if len(text) == 0:
+        return False
+
+    alpha_count = len([char for char in text if char.strip() and char.isalpha()])
+    total_count = len([char for char in text if char.strip()])
+    ratio = alpha_count / total_count
+    return ratio < threshold
+
+
 def exceeds_cap_ratio(text: str, threshold: float = 0.5) -> bool:
-    """Checks the title ratio in a section of text. If a sufficient proportion of the text is
-    capitalized."""
+    """Checks the title ratio in a section of text. If a sufficient proportion of the words
+    are capitalized, that can be indiciated on non-narrative text (i.e. "1A. Risk Factors").
+
+    Parameters
+    ----------
+    text
+        The input string to test
+    threshold
+        If the percentage of words beginning with a capital letter exceeds this threshold,
+        the function returns True
+    """
     # NOTE(robinson) - Currently limiting this to only sections of text with one sentence.
     # The assumption is that sections with multiple sentences are not titles.
     if sentence_count(text, 3) > 1:

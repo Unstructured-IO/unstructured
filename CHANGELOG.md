@@ -1,4 +1,4 @@
-## 0.4.5-dev3
+## 0.4.5-dev4
 
 * Loosen the default cap threshold to `0.5`.
 * Add a `UNSTRUCTURED_NARRATIVE_TEXT_CAP_THRESHOLD` environment variable for controlling
@@ -10,6 +10,7 @@
 * Adds an `Address` element for capturing elements that only contain an address.
 * Suppress the `UserWarning` when detectron is called.
 * Checks that titles and narrative test have at least one English word.
+* Checks that titles and narrative text are at least 75% alpha characters.
 * Restricts titles to a maximum word length. Adds a `UNSTRUCTURED_TITLE_MAX_WORD_LENGTH`
   environment variable for controlling the max number of words in a title.
 
