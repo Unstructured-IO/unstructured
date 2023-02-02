@@ -39,7 +39,6 @@ def partition_html(
         _text: str = str(text)
         document = HTMLDocument.from_string(_text)
         elements = document.elements
-
     else:
         raise ValueError("Only one of filename, file, or text can be specified.")
 
