@@ -252,7 +252,7 @@ for consideration as narrative text. The function performs the following checks 
   takes precedence over the kwarg.
 * If a the text contains too many non-alpha characters it is
   not narrative text.
-  The default is to expect a minimum of 75% alpha characters
+  The default is to expect a minimum of 50% alpha characters
   (not countings spaces). You can change the minimum value with the
   ``non_alpha_ratio`` kwarg or the ``UNSTRUCTURED_NARRATIVE_TEXT_NON_ALPHA_RATIO`` environment variable.
   The environment variables takes precedence over the kwarg.
@@ -290,7 +290,7 @@ for consideration as a title. The function performs the following checks:
   the ``title_max_word_length`` kwarg or the ``UNSTRUCTURED_TITLE_MAX_WORD_LENGTH`` environment variable. The environment
   variable takes precedence over the kwarg.
 * If a text contains too many non-alpha characters it is not a
-  title. The default is to expect a minimum of 75% alpha characters
+  title. The default is to expect a minimum of 50% alpha characters
   (not countings spaces). You can change the minimum value with the
   ``non_alpha_ratio`` kwarg or the ``UNSTRUCTURED_TITLE_NON_ALPHA_RATIO`` environment variable.
   The environment variables takes precedence over the kwarg.
