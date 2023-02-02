@@ -38,6 +38,7 @@ def test_headings_are_not_narrative_text(text, expected):
         ("7", False),  ***REMOVED*** Fails because it is numeric
         ("intellectual property", False),  ***REMOVED*** Fails because it does not contain a verb
         ("Dal;kdjfal adawels adfjwalsdf. Addad jaja fjawlek", False),
+        ("---------------Aske the teacher for an apple----------", False),  ***REMOVED*** Too many non-alpha
         ("", False),  ***REMOVED*** Doesn't have english words  ***REMOVED*** Fails because it is empty
     ],
 )
@@ -63,13 +64,13 @@ def test_is_possible_narrative_text(text, expected, monkeypatch):
         ("To My Dearest Friends,", False),  ***REMOVED*** Ends with a comma
         ("BTAR ADFJA L", False),  ***REMOVED*** Doesn't have english words
         ("ITEM 1A. RISK FACTORS " * 15, False),  ***REMOVED*** Title is too long
+        ("/--------BREAK-------/", False),  ***REMOVED*** Contains too many non-alpha characters
     ],
 )
 def test_is_possible_title(text, expected, monkeypatch):
     monkeypatch.setattr(text_type, "sent_tokenize", mock_sent_tokenize)
     monkeypatch.setattr(text_type, "word_tokenize", mock_word_tokenize)
-    has_verb = text_type.is_possible_title(text)
-    assert has_verb is expected
+    assert text_type.is_possible_title(text) is expected
 
 
 @pytest.mark.parametrize(
@@ -173,6 +174,30 @@ def test_set_caps_ratio_with_environment_variable(monkeypatch):
 
     text = "All The King's Horses. And All The King's Men."
     with patch.object(text_type, "exceeds_cap_ratio", return_value=False) as mock_exceeds:
+        text_type.is_possible_narrative_text(text)
+
+    mock_exceeds.assert_called_once_with(text, threshold=0.8)
+
+
+def test_set_title_non_alpha_threshold_with_environment_variable(monkeypatch):
+    monkeypatch.setattr(text_type, "word_tokenize", mock_word_tokenize)
+    monkeypatch.setattr(text_type, "sent_tokenize", mock_sent_tokenize)
+    monkeypatch.setenv("UNSTRUCTURED_TITLE_NON_ALPHA_THRESHOLD", 0.8)
+
+    text = "/--------------- All the king's horses----------------/"
+    with patch.object(text_type, "under_non_alpha_ratio", return_value=False) as mock_exceeds:
+        text_type.is_possible_title(text)
+
+    mock_exceeds.assert_called_once_with(text, threshold=0.8)
+
+
+def test_set_narrative_text_non_alpha_threshold_with_environment_variable(monkeypatch):
+    monkeypatch.setattr(text_type, "word_tokenize", mock_word_tokenize)
+    monkeypatch.setattr(text_type, "sent_tokenize", mock_sent_tokenize)
+    monkeypatch.setenv("UNSTRUCTURED_NARRATIVE_TEXT_NON_ALPHA_THRESHOLD", 0.8)
+
+    text = "/--------------- All the king's horses----------------/"
+    with patch.object(text_type, "under_non_alpha_ratio", return_value=False) as mock_exceeds:
         text_type.is_possible_narrative_text(text)
 
     mock_exceeds.assert_called_once_with(text, threshold=0.8)
