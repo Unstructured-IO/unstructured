@@ -1,4 +1,4 @@
-## 0.4.5-dev6
+## 0.4.5-dev5
 
 * Loosen the default cap threshold to `0.5`.
 * Add a `UNSTRUCTURED_NARRATIVE_TEXT_CAP_THRESHOLD` environment variable for controlling
