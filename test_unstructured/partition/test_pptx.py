@@ -2,6 +2,8 @@ import os
 import pathlib
 import pytest
 
+import pptx
+
 from unstructured.partition.pptx import partition_pptx
 from unstructured.documents.elements import ListItem, NarrativeText, Title
 
@@ -41,3 +43,35 @@ def test_partition_pptx_raises_with_both_specified():
 def test_partition_pptx_raises_with_neither():
     with pytest.raises(ValueError):
         partition_pptx()
+
+
+def test_partition_pptx_orders_elements(tmpdir):
+    filename = os.path.join(tmpdir, "test-ordering.pptx")
+
+    presentation = pptx.Presentation()
+    blank_slide_layout = presentation.slide_layouts[6]
+    slide = presentation.slides.add_slide(blank_slide_layout)
+
+    left = top = width = height = pptx.util.Inches(2)
+    txBox = slide.shapes.add_textbox(left, top, width, height)
+    tf = txBox.text_frame
+    tf.text = "This is lower and should come second"
+
+    width = height = pptx.util.Inches(1)
+    left = top = pptx.util.Inches(-1)
+    txBox = slide.shapes.add_textbox(left, top, width, height)
+    tf = txBox.text_frame
+    tf.text = "This is off the page and shouldn't appear"
+
+    left = top = width = height = pptx.util.Inches(1)
+    txBox = slide.shapes.add_textbox(left, top, width, height)
+    tf = txBox.text_frame
+    tf.text = "This is higher and should come first"
+
+    presentation.save(filename)
+
+    elements = partition_pptx(filename=filename)
+    assert elements == [
+        NarrativeText("This is higher and should come first"),
+        NarrativeText("This is lower and should come second"),
+    ]
