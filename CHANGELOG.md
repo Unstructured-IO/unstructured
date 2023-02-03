@@ -13,7 +13,7 @@
 * Checks that titles and narrative text are at least 50% alpha characters.
 * Restricts titles to a maximum word length. Adds a `UNSTRUCTURED_TITLE_MAX_WORD_LENGTH`
   environment variable for controlling the max number of words in a title.
-* Updated `partition_pptx` to order the elementso n the page
+* Updated `partition_pptx` to order the elements on the page
 
 ## 0.4.4
 
