@@ -34,7 +34,7 @@ def partition_pptx(filename: Optional[str] = None, file: Optional[IO] = None) ->
         raise ValueError("Only one of filename or file can be specified.")
 
     elements: List[Element] = list()
-    for i, slide in enumerate(presentation.slides):
+    for slide in presentation.slides:
         for shape in _order_shapes(slide.shapes):
             # NOTE(robinson) - we don't deal with tables yet, but so future humans can find
             # it again, here are docs on how to deal with tables. The check for tables should
