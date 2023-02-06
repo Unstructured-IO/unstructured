@@ -184,7 +184,7 @@ sniffio==1.3.0
     #   anyio
     #   httpcore
     #   httpx
-starlette==0.22.0
+starlette==0.24.0
     # via fastapi
 timm==0.6.12
     # via effdet
