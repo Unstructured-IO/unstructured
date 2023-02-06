@@ -213,7 +213,7 @@ typing-extensions==4.4.0
     #   starlette
     #   torch
     #   torchvision
-unstructured-inference==0.2.4
+unstructured-inference==0.2.5
     # via unstructured (setup.py)
 urllib3==1.26.14
     # via requests
