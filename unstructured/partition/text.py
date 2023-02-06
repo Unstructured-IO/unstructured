@@ -53,7 +53,6 @@ def partition_text(
 
     elements: List[Element] = list()
     for ctext in file_content:
-
         ctext = ctext.strip()
 
         if ctext == "":
