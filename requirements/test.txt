@@ -6,7 +6,7 @@
 #
 attrs==22.2.0
     # via pytest
-black==22.12.0
+black==23.1.0
     # via -r requirements/test.in
 certifi==2022.12.7
     # via
@@ -32,7 +32,7 @@ idna==3.4
     #   yarl
 iniconfig==2.0.0
     # via pytest
-label-studio-sdk==0.0.17
+label-studio-sdk==0.0.18
     # via -r requirements/test.in
 lxml==4.9.2
     # via label-studio-sdk
@@ -42,12 +42,14 @@ multidict==6.0.4
     # via yarl
 mypy==0.991
     # via -r requirements/test.in
-mypy-extensions==0.4.3
+mypy-extensions==1.0.0
     # via
     #   black
     #   mypy
 packaging==23.0
-    # via pytest
+    # via
+    #   black
+    #   pytest
 pathspec==0.11.0
     # via black
 platformdirs==2.6.2
