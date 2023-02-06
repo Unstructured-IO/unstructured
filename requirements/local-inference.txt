@@ -30,6 +30,8 @@ charset-normalizer==3.0.1
     ***REMOVED*** via
     ***REMOVED***   nltk
     ***REMOVED***   uvicorn
+coloredlogs==15.0.1
+    ***REMOVED*** via onnxruntime
 contourpy==1.0.7
     ***REMOVED*** via matplotlib
 cryptography==39.0.0
@@ -46,6 +48,8 @@ fastapi==0.89.1
     ***REMOVED*** via unstructured-inference
 filelock==3.9.0
     ***REMOVED*** via huggingface-hub
+flatbuffers==23.1.21
+    ***REMOVED*** via onnxruntime
 fonttools==4.38.0
     ***REMOVED*** via matplotlib
 ***REMOVED***
@@ -60,6 +64,8 @@ huggingface-hub==0.12.0
     ***REMOVED*** via
     ***REMOVED***   timm
     ***REMOVED***   unstructured-inference
+humanfriendly==10.0
+    ***REMOVED*** via coloredlogs
 ***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   anyio
@@ -69,6 +75,8 @@ iopath==0.1.10
     ***REMOVED*** via layoutparser
 ***REMOVED***
     ***REMOVED*** via nltk
+jsons==1.6.3
+    ***REMOVED*** via unstructured-inference
 kiwisolver==1.4.4
     ***REMOVED*** via matplotlib
 layoutparser[layoutmodels,tesseract]==0.3.4
@@ -82,6 +90,8 @@ matplotlib==3.6.3
     ***REMOVED*** via pycocotools
 ***REMOVED***
     ***REMOVED*** via argilla
+mpmath==1.2.1
+    ***REMOVED*** via sympy
 ***REMOVED***
     ***REMOVED*** via unstructured (setup.py)
 ***REMOVED***
@@ -90,6 +100,7 @@ matplotlib==3.6.3
     ***REMOVED***   contourpy
     ***REMOVED***   layoutparser
     ***REMOVED***   matplotlib
+    ***REMOVED***   onnxruntime
     ***REMOVED***   opencv-python
     ***REMOVED***   pandas
     ***REMOVED***   pycocotools
@@ -97,17 +108,20 @@ matplotlib==3.6.3
     ***REMOVED***   torchvision
 omegaconf==2.3.0
     ***REMOVED*** via effdet
+onnxruntime==1.13.1
+    ***REMOVED*** via unstructured-inference
 opencv-python==4.6.0.66
     ***REMOVED*** via
     ***REMOVED***   layoutparser
     ***REMOVED***   unstructured-inference
-openpyxl==3.0.10
+openpyxl==3.1.0
     ***REMOVED*** via unstructured (setup.py)
 ***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   argilla
     ***REMOVED***   huggingface-hub
     ***REMOVED***   matplotlib
+    ***REMOVED***   onnxruntime
     ***REMOVED***   pytesseract
 ***REMOVED***
     ***REMOVED*** via
@@ -132,6 +146,8 @@ pdfplumber==0.7.6
     ***REMOVED***   unstructured (setup.py)
 portalocker==2.7.0
     ***REMOVED*** via iopath
+protobuf==4.21.12
+    ***REMOVED*** via onnxruntime
 pycocotools==2.0.6
     ***REMOVED*** via effdet
 ***REMOVED***
@@ -186,6 +202,8 @@ scipy==1.10.0
     ***REMOVED***   httpx
 starlette==0.22.0
     ***REMOVED*** via fastapi
+sympy==1.11.1
+    ***REMOVED*** via onnxruntime
 timm==0.6.12
     ***REMOVED*** via effdet
 torch==1.13.1
@@ -213,7 +231,9 @@ typing-extensions==4.4.0
     ***REMOVED***   starlette
     ***REMOVED***   torch
     ***REMOVED***   torchvision
-unstructured-inference==0.2.4
+typish==1.9.3
+    ***REMOVED*** via jsons
+unstructured-inference==0.2.5
     ***REMOVED*** via unstructured (setup.py)
 urllib3==1.26.14
     ***REMOVED*** via requests
@@ -225,5 +245,5 @@ wand==0.6.11
     ***REMOVED*** via
     ***REMOVED***   argilla
     ***REMOVED***   deprecated
-xlsxwriter==3.0.7
+xlsxwriter==3.0.8
     ***REMOVED*** via python-pptx

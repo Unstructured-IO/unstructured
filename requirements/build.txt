@@ -48,7 +48,7 @@ sphinxcontrib-applehelp==1.0.4
     ***REMOVED*** via sphinx
 sphinxcontrib-devhelp==1.0.2
     ***REMOVED*** via sphinx
-sphinxcontrib-htmlhelp==2.0.0
+sphinxcontrib-htmlhelp==2.0.1
     ***REMOVED*** via sphinx
 sphinxcontrib-jquery==3.0.0
     ***REMOVED*** via sphinx-rtd-theme
@@ -60,7 +60,7 @@ sphinxcontrib-serializinghtml==1.1.5
     ***REMOVED*** via sphinx
 urllib3==1.26.14
     ***REMOVED*** via requests
-zipp==3.12.0
+zipp==3.12.1
     ***REMOVED*** via importlib-metadata
 
 ***REMOVED*** The following packages are considered to be unsafe in a requirements file:

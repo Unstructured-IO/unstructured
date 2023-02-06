@@ -25,7 +25,7 @@ attrs==22.2.0
     ***REMOVED*** via jsonschema
 backcall==0.2.0
     ***REMOVED*** via ipython
-beautifulsoup4==4.11.1
+beautifulsoup4==4.11.2
     ***REMOVED*** via nbconvert
 bleach==6.0.0
     ***REMOVED*** via nbconvert
@@ -59,7 +59,7 @@ importlib-metadata==6.0.0
     ***REMOVED***   nbconvert
 importlib-resources==5.10.2
     ***REMOVED*** via jsonschema
-ipykernel==6.21.0
+ipykernel==6.21.1
     ***REMOVED*** via
     ***REMOVED***   ipywidgets
     ***REMOVED***   jupyter
@@ -123,7 +123,7 @@ jupyter-core==5.2.0
     ***REMOVED***   qtconsole
 jupyter-events==0.6.3
     ***REMOVED*** via jupyter-server
-jupyter-server==2.1.0
+jupyter-server==2.2.1
     ***REMOVED*** via
     ***REMOVED***   nbclassic
     ***REMOVED***   notebook-shim
@@ -162,6 +162,7 @@ nbformat==5.7.3
     ***REMOVED***   notebook
 nest-asyncio==1.5.6
     ***REMOVED*** via
+    ***REMOVED***   ipykernel
     ***REMOVED***   nbclassic
     ***REMOVED***   notebook
 notebook==6.5.2
@@ -183,7 +184,7 @@ pexpect==4.8.0
     ***REMOVED*** via ipython
 pickleshare==0.7.5
     ***REMOVED*** via ipython
-pip-tools==6.12.1
+pip-tools==6.12.2
     ***REMOVED*** via -r requirements/dev.in
 pkgutil-resolve-name==1.3.10
     ***REMOVED*** via jsonschema
@@ -310,7 +311,7 @@ webencodings==0.5.1
     ***REMOVED*** via
     ***REMOVED***   bleach
     ***REMOVED***   tinycss2
-websocket-client==1.5.0
+websocket-client==1.5.1
     ***REMOVED*** via jupyter-server
 wheel==0.38.4
     ***REMOVED*** via
@@ -318,7 +319,7 @@ wheel==0.38.4
     ***REMOVED***   pip-tools
 widgetsnbextension==4.0.5
     ***REMOVED*** via ipywidgets
-zipp==3.12.0
+zipp==3.12.1
     ***REMOVED*** via
     ***REMOVED***   importlib-metadata
     ***REMOVED***   importlib-resources

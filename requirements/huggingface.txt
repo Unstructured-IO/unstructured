@@ -63,7 +63,7 @@ langdetect==1.0.9
     ***REMOVED***   argilla
     ***REMOVED***   pandas
     ***REMOVED***   transformers
-openpyxl==3.0.10
+openpyxl==3.1.0
     ***REMOVED*** via unstructured (setup.py)
 ***REMOVED***
     ***REMOVED*** via
@@ -144,5 +144,5 @@ urllib3==1.26.14
     ***REMOVED*** via
     ***REMOVED***   argilla
     ***REMOVED***   deprecated
-xlsxwriter==3.0.7
+xlsxwriter==3.0.8
     ***REMOVED*** via python-pptx
