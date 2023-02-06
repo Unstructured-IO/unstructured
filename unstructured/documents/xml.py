@@ -55,7 +55,9 @@ class XMLDocument(Document):
         The regex checks the script tags in content(string).
         Remove text inside the script tag as well.
         """
-        content = re.sub(r"<script[\s\S]*?(.*?)</script>", "", content, flags=re.IGNORECASE)
+        content = re.sub(
+            r"<script[\s\S]*?(.*?)</script[\s\S]*?(.*?)>", "", content, flags=re.IGNORECASE
+        )
         """Reads in an XML file and converts it to an lxml element tree object."""
         if self.document_tree is None:
             document_tree = etree.fromstring(content.encode(), self.parser)
