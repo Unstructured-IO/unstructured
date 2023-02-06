@@ -52,3 +52,6 @@ html_theme = "sphinx_rtd_theme"
 ***REMOVED*** relative to this directory. They are copied after the builtin static files,
 ***REMOVED*** so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
+
+***REMOVED*** Adding a custom css file in order to add custom css file and can change the necessary elements.
+html_css_files = ["unstructured.css"]
