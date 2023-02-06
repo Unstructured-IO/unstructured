@@ -1,0 +1,8 @@
+jupyter
+torch
+torchaudio
+torchvision
+transformers
+ratelimit
+requests
+unstructured>=0.2.1
