@@ -1,5 +1,6 @@
 import os
 import pathlib
+import pytest
 
 import pandas as pd
 
@@ -72,5 +73,18 @@ def test_get_file_info_from_file_contents():
     with open(file_contents_filename, "r") as f:
         file_contents = [f.read()]
 
-    file_info = exploration.get_file_info_from_file_contents(file_contents=file_contents)
+    file_info = exploration.get_file_info_from_file_contents(
+        file_contents=file_contents, filenames=["test.eml"]
+    )
     assert file_info.filetype[0] == FileType.EML
+
+
+def test_get_file_info_from_file_contents_raises_if_lists_no_equal():
+    file_contents_filename = os.path.join(DIRECTORY, "test-file-contents.txt")
+    with open(file_contents_filename, "r") as f:
+        file_contents = [f.read()]
+
+    with pytest.raises(ValueError):
+        exploration.get_file_info_from_file_contents(
+            file_contents=file_contents, filenames=["test.eml", "test2.eml"]
+        )
