@@ -1,4 +1,4 @@
-## 0.4.7
+## 0.4.7-dev2
 
 * Added the ability to pull an HTML document from a url in `partition_html`.
 * Added the the ability to get file summary info from lists of filenames and lists
