@@ -33,7 +33,6 @@ def partition_html(
 
     if filename is not None and not file and not text and not url:
         document = HTMLDocument.from_file(filename)
-        elements = document.elements
 
     elif file is not None and not filename and not text and not url:
         file_content = file.read()
@@ -43,12 +42,10 @@ def partition_html(
             file_text = file_content
 
         document = HTMLDocument.from_string(file_text)
-        elements = document.elements
 
     elif text is not None and not filename and not file and not url:
         _text: str = str(text)
         document = HTMLDocument.from_string(_text)
-        elements = document.elements
 
     elif url is not None and not filename and not file and not text:
         response = requests.get(url)
@@ -60,12 +57,11 @@ def partition_html(
             raise ValueError(f"Expected content type text/html. Got {content_type}.")
 
         document = HTMLDocument.from_string(response.text)
-        elements = document.elements
 
     else:
         raise ValueError("Only one of filename, file, or text can be specified.")
 
-    elements: List[Elements] = []
+    elements: List[Element] = []
     num_pages = len(document.pages)
     for i, page in enumerate(document.pages):
         for element in page.elements:
