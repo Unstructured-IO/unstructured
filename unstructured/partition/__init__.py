@@ -1,8 +1,6 @@
 import requests  # type: ignore
-from typing import BinaryIO, List, Optional, Union, Tuple, Mapping
+from typing import BinaryIO, Optional, Union, Tuple, Mapping
 from urllib.parse import urlsplit
-
-from unstructured.documents.elements import Element
 
 
 def _partition_via_api(
@@ -11,7 +9,8 @@ def _partition_via_api(
     url: str = "https://ml.unstructured.io/layout/pdf",
     token: Optional[str] = None,
     data: Optional[dict] = None,  # NOTE(alan): Remove after different models are handled by routing
-) -> List[Element]:
+    include_page_breaks: bool = False,
+):
     """Use API for partitioning."""
     if not filename and not file:
         raise FileNotFoundError("No filename nor file were specified")
@@ -40,6 +39,15 @@ def _partition_via_api(
 
     if response.status_code == 200:
         pages = response.json()["pages"]
-        return [element for page in pages for element in page["elements"]]
+        num_pages = len(pages)
+        elements = list()
+        for i, page in enumerate(pages):
+            for element in page["elements"]:
+                elements.append(element)
+            if include_page_breaks and i < num_pages - 1:
+                elements.append({"type": "PageBreak"})
+
+        return elements
+
     else:
         raise ValueError(f"response status code = {response.status_code}")

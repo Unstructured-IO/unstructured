@@ -6,6 +6,7 @@ from unstructured.documents.elements import (
     FigureCaption,
     ListItem,
     NarrativeText,
+    PageBreak,
     Text,
     Title,
 )
@@ -21,9 +22,9 @@ def normalize_layout_element(layout_element) -> Union[Element, List[Element]]:
     else:
         layout_dict = layout_element
 
-    text = layout_dict["text"]
-    coordinates = layout_dict["coordinates"]
-    element_type = layout_dict["type"]
+    text = layout_dict.get("text")
+    coordinates = layout_dict.get("coordinates")
+    element_type = layout_dict.get("type")
 
     if element_type == "Title":
         return Title(text=text, coordinates=coordinates)
@@ -37,6 +38,8 @@ def normalize_layout_element(layout_element) -> Union[Element, List[Element]]:
         return CheckBox(checked=True, coordinates=coordinates)
     elif element_type == "Unchecked":
         return CheckBox(checked=False, coordinates=coordinates)
+    elif element_type == "PageBreak":
+        return PageBreak()
     else:
         return Text(text=text, coordinates=coordinates)
 

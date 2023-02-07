@@ -1,7 +1,7 @@
 from typing import List, Optional
 import warnings
 
-from unstructured.documents.elements import Element
+from unstructured.documents.elements import Element, PageBreak
 from unstructured.partition import _partition_via_api
 from unstructured.partition.common import normalize_layout_element
 
@@ -90,6 +90,7 @@ def _partition_pdf_or_image_local(
     file: Optional[bytes] = None,
     template: Optional[str] = None,
     is_image: bool = False,
+    include_page_breaks: bool = False,
 ) -> List[Element]:
     """Partition using package installed locally."""
     try:
@@ -117,4 +118,13 @@ def _partition_pdf_or_image_local(
         if file is None
         else process_data_with_model(file, template, is_image=is_image)
     )
-    return [element for page in layout.pages for element in page.elements]
+
+    num_pages = len(layout.pages)
+    elements: List[Element] = list()
+    for i, page in enumerate(layout.pages):
+        for element in page.elements:
+            elements.append(element)
+        if include_page_breaks and i < num_pages - 1:
+            elements.append(PageBreak())
+
+    return elements
