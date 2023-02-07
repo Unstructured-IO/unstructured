@@ -1,0 +1,9 @@
+/* Css to change color scheme of side navigation search bar */
+.wy-side-nav-search {
+    background-color: #122540;
+}
+
+/* For changing the color of sidebar */
+.wy-nav-side {
+    background: #122540;
+}
