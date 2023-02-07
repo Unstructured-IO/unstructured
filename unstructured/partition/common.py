@@ -17,6 +17,9 @@ def normalize_layout_element(layout_element) -> Union[Element, List[Element]]:
     """Converts a list of unstructured_inference DocumentLayout objects to a list of
     unstructured Elements."""
 
+    if isinstance(layout_element, PageBreak):
+        return PageBreak()
+
     if not isinstance(layout_element, dict):
         layout_dict = layout_element.to_dict()
     else:

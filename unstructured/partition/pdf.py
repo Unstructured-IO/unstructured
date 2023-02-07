@@ -12,6 +12,7 @@ def partition_pdf(
     url: Optional[str] = "https://ml.unstructured.io/",
     template: Optional[str] = None,
     token: Optional[str] = None,
+    include_page_breaks: bool = False,
 ) -> List[Element]:
     """Parses a pdf document into a list of interpreted elements.
     Parameters
@@ -32,7 +33,12 @@ def partition_pdf(
     if template is None:
         template = "layout/pdf"
     return partition_pdf_or_image(
-        filename=filename, file=file, url=url, template=template, token=token
+        filename=filename,
+        file=file,
+        url=url,
+        template=template,
+        token=token,
+        include_page_breaks=include_page_breaks,
     )
 
 
@@ -43,6 +49,7 @@ def partition_pdf_or_image(
     template: str = "layout/pdf",
     token: Optional[str] = None,
     is_image: bool = False,
+    include_page_breaks: bool = False,
 ) -> List[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
     if url is None:
@@ -60,7 +67,11 @@ def partition_pdf_or_image(
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             layout_elements = _partition_pdf_or_image_local(
-                filename=filename, file=file, template=out_template, is_image=is_image
+                filename=filename,
+                file=file,
+                template=out_template,
+                is_image=is_image,
+                include_page_breaks=include_page_breaks,
             )
     else:
         # NOTE(alan): Remove these lines after different models are handled by routing
@@ -71,7 +82,12 @@ def partition_pdf_or_image(
         url = f"{url.rstrip('/')}/{template.lstrip('/')}"
         # NOTE(alan): Remove "data=data" after different models are handled by routing
         layout_elements = _partition_via_api(
-            filename=filename, file=file, url=url, token=token, data=data
+            filename=filename,
+            file=file,
+            url=url,
+            token=token,
+            data=data,
+            include_page_breaks=include_page_breaks,
         )
 
     elements: List[Element] = list()
