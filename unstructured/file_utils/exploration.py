@@ -46,7 +46,6 @@ def get_file_info(filenames: List[str]) -> pd.DataFrame:
 def get_file_info_from_file_contents(
     file_contents: List[str], filenames: Optional[List[str]] = None
 ) -> pd.DataFrame:
-
     data: Dict[str, List[Any]] = {
         "filesize": [],
         "filetype": [],

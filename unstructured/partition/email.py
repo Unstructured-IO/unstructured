@@ -33,7 +33,6 @@ VALID_CONTENT_SOURCES: Final[List[str]] = ["text/html", "text/plain"]
 
 
 def _parse_received_data(data: str) -> List[Element]:
-
     ip_address_names = extract_ip_address_name(data)
     ip_addresses = extract_ip_address(data)
     mapi_id = extract_mapi_id(data)
@@ -111,7 +110,6 @@ def extract_attachment_info(
 
 
 def has_embedded_image(element):
-
     PATTERN = re.compile("\[image: .+\]")  # noqa: W605 NOTE(harrell)
     return PATTERN.search(element.text)
 
@@ -119,7 +117,6 @@ def has_embedded_image(element):
 def find_embedded_image(
     element: Union[NarrativeText, Title], indices: re.Match
 ) -> Tuple[Element, Element]:
-
     start, end = indices.start(), indices.end()
 
     image_raw_info = element.text[start:end]

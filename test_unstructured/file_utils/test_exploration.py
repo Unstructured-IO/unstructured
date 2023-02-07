@@ -1,8 +1,12 @@
 import os
+import pathlib
 
 import pandas as pd
 
 import unstructured.file_utils.exploration as exploration
+from unstructured.file_utils.filetype import FileType
+
+DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
 
 def test_get_directory_file_info(tmpdir):
@@ -61,3 +65,12 @@ def test_get_file_info(tmpdir):
 
     means = file_info.groupby("filetype").mean()
     assert means.columns.to_list() == ["filesize"]
+
+
+def test_get_file_info_from_file_contents():
+    file_contents_filename = os.path.join(DIRECTORY, "test-file-contents.txt")
+    with open(file_contents_filename, "r") as f:
+        file_contents = [f.read()]
+
+    file_info = exploration.get_file_info_from_file_contents(file_contents=file_contents)
+    assert file_info.filetype[0] == FileType.EML
