@@ -1,4 +1,6 @@
-***REMOVED******REMOVED*** 0.4.7-dev0
+***REMOVED******REMOVED*** 0.4.7-dev1
+
+* Added the ability to pull an HTML document from a url in `partition_html`.
 
 ***REMOVED******REMOVED*** 0.4.6
 

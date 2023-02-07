@@ -11,6 +11,7 @@ pytest-cov
 ***REMOVED*** issue to address
 ***REMOVED*** ref: https://github.com/Unstructured-IO/unstructured/issues/200
 label_studio_sdk==0.0.17
+types-requests
 vcrpy
 
 ***REMOVED*** NOTE(robinson) - The following pins are to address
