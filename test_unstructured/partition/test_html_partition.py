@@ -1,6 +1,9 @@
 import os
 import pathlib
 import pytest
+from unittest.mock import patch
+
+import requests
 
 from unstructured.partition.html import partition_html
 
@@ -27,6 +30,50 @@ def test_partition_html_from_text():
         text = f.read()
     elements = partition_html(text=text)
     assert len(elements) > 0
+
+
+class MockResponse:
+    def __init__(self, text, status_code, headers={}):
+        self.text = text
+        self.status_code = status_code
+        self.ok = status_code < 300
+        self.headers = headers
+
+
+def test_partition_html_from_url():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "example-10k.html")
+    with open(filename, "r") as f:
+        text = f.read()
+
+    response = MockResponse(text=text, status_code=200, headers={"Content-Type": "text/html"})
+    with patch.object(requests, "get", return_value=response) as _:
+        elements = partition_html(url="https://fake.url")
+
+    assert len(elements) > 0
+
+
+def test_partition_html_from_url_raises_with_bad_status_code():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "example-10k.html")
+    with open(filename, "r") as f:
+        text = f.read()
+
+    response = MockResponse(text=text, status_code=500, headers={"Content-Type": "text/html"})
+    with patch.object(requests, "get", return_value=response) as _:
+        with pytest.raises(ValueError):
+            partition_html(url="https://fake.url")
+
+
+def test_partition_html_from_url_raises_with_bad_content_type():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "example-10k.html")
+    with open(filename, "r") as f:
+        text = f.read()
+
+    response = MockResponse(
+        text=text, status_code=200, headers={"Content-Type": "application/json"}
+    )
+    with patch.object(requests, "get", return_value=response) as _:
+        with pytest.raises(ValueError):
+            partition_html(url="https://fake.url")
 
 
 def test_partition_html_raises_with_none_specified():
