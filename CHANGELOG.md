@@ -1,6 +1,6 @@
 ## 0.4.7-dev1
 
-* Added the ability to pull and HTML document from a url in `partition_html`.
+* Added the ability to pull an HTML document from a url in `partition_html`.
 
 ## 0.4.6
 
