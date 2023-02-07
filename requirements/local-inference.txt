@@ -94,7 +94,7 @@ mpmath==1.2.1
     # via sympy
 nltk==3.8.1
     # via unstructured (setup.py)
-numpy==1.23.5
+numpy==1.24.2
     # via
     #   argilla
     #   contourpy
