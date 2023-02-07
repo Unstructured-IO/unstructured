@@ -2,7 +2,7 @@ from typing import IO, List, Optional
 
 import requests
 
-from unstructured.documents.elements import Element
+from unstructured.documents.elements import Element, PageBreak
 from unstructured.documents.html import HTMLDocument
 
 
@@ -11,6 +11,7 @@ def partition_html(
     file: Optional[IO] = None,
     text: Optional[str] = None,
     url: Optional[str] = None,
+    include_page_breaks: bool = False,
 ) -> List[Element]:
     """Partitions an HTML document into its constituent elements.
 
@@ -24,6 +25,8 @@ def partition_html(
         The string representation of the HTML document.
     url
         The URL of a webpage to parse. Only for URLs that return an HTML document.
+    include_page_breaks
+        If True, includes page breaks at the end of each page in the document.
     """
     if not any([filename, file, text, url]):
         raise ValueError("One of filename, file, or text must be specified.")
@@ -61,5 +64,13 @@ def partition_html(
 
     else:
         raise ValueError("Only one of filename, file, or text can be specified.")
+
+    elements: List[Elements] = []
+    num_pages = len(document.pages)
+    for i, page in enumerate(document.pages):
+        for element in page.elements:
+            elements.append(element)
+        if include_page_breaks and i < num_pages - 1:
+            elements.append(PageBreak())
 
     return elements
