@@ -1,6 +1,7 @@
-## 0.4.7-dev1
+## 0.4.7-dev2
 
 * Added the ability to pull an HTML document from a url in `partition_html`.
+* Added optional page break to `partition` for `.pptx`, `.pdf`, images, and `.html` files.
 
 ## 0.4.6
 
