@@ -34,7 +34,11 @@ def mock_successful_post(url, **kwargs):
             {
                 "number": 0,
                 "elements": [{"type": "Title", "text": "Charlie Brown and the Great Pumpkin"}],
-            }
+            },
+            {
+                "number": 1,
+                "elements": [{"type": "Title", "text": "A Charlie Brown Christmas"}],
+            },
         ]
     }
     return MockResponse(status_code=200, response=response)
@@ -72,6 +76,20 @@ def test_partition_image_api(monkeypatch, filename="example-docs/example.jpg"):
     partition_image_response = pdf._partition_via_api(filename)
     assert partition_image_response[0]["type"] == "Title"
     assert partition_image_response[0]["text"] == "Charlie Brown and the Great Pumpkin"
+    assert partition_image_response[1]["type"] == "Title"
+    assert partition_image_response[1]["text"] == "A Charlie Brown Christmas"
+
+
+def test_partition_image_api_page_break(monkeypatch, filename="example-docs/example.jpg"):
+    monkeypatch.setattr(requests, "post", mock_successful_post)
+    monkeypatch.setattr(requests, "get", mock_healthy_get)
+
+    partition_image_response = pdf._partition_via_api(filename, include_page_breaks=True)
+    assert partition_image_response[0]["type"] == "Title"
+    assert partition_image_response[0]["text"] == "Charlie Brown and the Great Pumpkin"
+    assert partition_image_response[1]["type"] == "PageBreak"
+    assert partition_image_response[2]["type"] == "Title"
+    assert partition_image_response[2]["text"] == "A Charlie Brown Christmas"
 
 
 @pytest.mark.parametrize("filename, file", [("example-docs/example.jpg", None), (None, b"0000")])

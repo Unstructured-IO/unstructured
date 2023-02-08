@@ -5,6 +5,7 @@ from unittest.mock import patch
 
 import requests
 
+from unstructured.documents.elements import PageBreak
 from unstructured.partition.html import partition_html
 
 
@@ -14,6 +15,14 @@ DIRECTORY = pathlib.Path(__file__).parent.resolve()
 def test_partition_html_from_filename():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "example-10k.html")
     elements = partition_html(filename=filename)
+    assert PageBreak() not in elements
+    assert len(elements) > 0
+
+
+def test_partition_html_with_page_breaks():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "example-10k.html")
+    elements = partition_html(filename=filename, include_page_breaks=True)
+    assert PageBreak() in elements
     assert len(elements) > 0
 
 

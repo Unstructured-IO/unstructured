@@ -128,3 +128,12 @@ class Image(Text):
     category = "Image"
 
     pass
+
+
+class PageBreak(Text):
+    """An element for capturing page breaks."""
+
+    category = "PageBreak"
+
+    def __init__(self):
+        super().__init__(text="<PAGE BREAK>")
