@@ -78,7 +78,7 @@ class Text(Element):
     def to_dict(self) -> dict:
         return {
             "text": self.text,
-            "category": self.category,
+            "type": self.category,
             "coordinates": self.coordinates,
             "element_id": self.id,
         }
