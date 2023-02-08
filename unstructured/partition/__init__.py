@@ -1,6 +1,8 @@
 import requests  # type: ignore
-from typing import BinaryIO, Optional, Union, Tuple, Mapping
+from typing import BinaryIO, List, Optional, Union, Tuple, Mapping
 from urllib.parse import urlsplit
+
+from unstructured.documents.elements import Element
 
 
 def _partition_via_api(
@@ -10,7 +12,7 @@ def _partition_via_api(
     token: Optional[str] = None,
     data: Optional[dict] = None,  # NOTE(alan): Remove after different models are handled by routing
     include_page_breaks: bool = False,
-):
+) -> List[Element]:
     """Use API for partitioning."""
     if not filename and not file:
         raise FileNotFoundError("No filename nor file were specified")
