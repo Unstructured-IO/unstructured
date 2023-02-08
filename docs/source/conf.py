@@ -54,9 +54,9 @@ html_theme = "furo"
 html_static_path = ["_static"]
 
 # Adding a custom css file in order to add custom css file and can change the necessary elements.
+html_favicon = "_static/images/unstructured_small.png"
 html_css_files = ["unstructured.css"]
 html_js_files = ["js/githubStargazers.js", "js/sidebarScrollPosition.js"]
-# html_css_files = ["css/custom.css"]
 
 html_theme_options = {
     "sidebar_hide_name": True,

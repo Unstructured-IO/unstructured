@@ -134,7 +134,7 @@ h2 {
   font-size: 14px;
   font-weight: 500;
   transition: all 0.3s ease-in-out;
-  background: linear-gradient(-45deg, #003C5E, #003C5E);
+  background: linear-gradient(-45deg, #0693e3, #0693e3);
   display: inline-flex;
   align-items: center;
   line-height: 20px;
@@ -1007,14 +1007,14 @@ a .tuto-section-11 {
 }
 
 .github-stars .--left {
-  background: #003C5E;
+  background: #0693e3;
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
   color: #ffffff;
   display: flex;
   align-items: center;
   gap: 6px;
-  border: 1px solid #003C5E;
+  border: 1px solid #0693e3;
 }
 
 .github-stars .--left:hover {
@@ -1031,8 +1031,8 @@ a .tuto-section-11 {
   background: white;
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
-  color: #003C5E;
-  border: 1px solid #003C5E;
+  color: #0693e3;
+  border: 1px solid #0693e3;
   display: flex;
   align-items: center;
 }
