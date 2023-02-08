@@ -79,8 +79,6 @@ class Text(Element):
         return {
             "text": self.text,
             "type": self.category,
-            "coordinates": self.coordinates,
-            "element_id": self.id,
         }
 
     def apply(self, *cleaners: Callable):
