@@ -24,6 +24,8 @@ called within ``partition`` are called using the defualt kwargs. Use the documen
 specific bricks if you need to apply non-default settings.
 ``partition`` currently supports ``.docx``, ``.pptx``, ``.eml``, ``.html``, ``.pdf``,
 ``.png``, ``.jpg``, and ``.txt`` files.
+If you set the ``include_page_breaks`` kwarg to ``True``, the output will include page breaks. This is only supported for ``.pptx``, ``.html``, ``.pdf``,
+``.png``, and ``.jpg``.
 
 
 .. code:: python
@@ -447,7 +449,7 @@ Examples:
   clean("● An excellent point!", bullets=True, lowercase=True)
 
   # Returns "ITEM 1A: RISK FACTORS"
-  clean("ITEM 1A:     RISK-FACTORS", whitespace=True, dashes=True)
+  clean("ITEM 1A:     RISK-FACTORS", extra_whitespace=True, dashes=True)
 
 
 ``clean_bullets``

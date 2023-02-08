@@ -10,6 +10,7 @@ def partition_image(
     url: Optional[str] = "https://ml.unstructured.io/",
     template: Optional[str] = None,
     token: Optional[str] = None,
+    include_page_breaks: bool = False,
 ) -> List[Element]:
     """Parses an image into a list of interpreted elements.
     Parameters
@@ -30,5 +31,10 @@ def partition_image(
     if template is None:
         template = "layout/image"
     return partition_pdf_or_image(
-        filename=filename, file=file, url=url, template=template, token=token
+        filename=filename,
+        file=file,
+        url=url,
+        template=template,
+        token=token,
+        include_page_breaks=include_page_breaks,
     )
