@@ -449,7 +449,7 @@ Examples:
   clean("● An excellent point!", bullets=True, lowercase=True)
 
   # Returns "ITEM 1A: RISK FACTORS"
-  clean("ITEM 1A:     RISK-FACTORS", whitespace=True, dashes=True)
+  clean("ITEM 1A:     RISK-FACTORS", extra_whitespace=True, dashes=True)
 
 
 ``clean_bullets``
