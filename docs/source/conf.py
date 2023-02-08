@@ -59,6 +59,7 @@ html_js_files = ["js/githubStargazers.js", "js/sidebarScrollPosition.js"]
 # html_css_files = ["css/custom.css"]
 
 html_theme_options = {
+    "sidebar_hide_name": True,
     "light_logo": "images/logo-light-mode.svg",
     "dark_logo": "images/logo-dark-mode.svg",
     "light_css_variables": {
