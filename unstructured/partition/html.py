@@ -2,8 +2,9 @@ from typing import IO, List, Optional
 
 import requests
 
-from unstructured.documents.elements import Element, PageBreak
+from unstructured.documents.elements import Element
 from unstructured.documents.html import HTMLDocument
+from unstructured.partition.common import document_to_element_list
 
 
 def partition_html(
@@ -61,12 +62,4 @@ def partition_html(
     else:
         raise ValueError("Only one of filename, file, or text can be specified.")
 
-    elements: List[Element] = []
-    num_pages = len(document.pages)
-    for i, page in enumerate(document.pages):
-        for element in page.elements:
-            elements.append(element)
-        if include_page_breaks and i < num_pages - 1:
-            elements.append(PageBreak())
-
-    return elements
+    return document_to_element_list(document, include_page_breaks=include_page_breaks)

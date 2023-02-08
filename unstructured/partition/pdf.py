@@ -1,9 +1,9 @@
 from typing import List, Optional
 import warnings
 
-from unstructured.documents.elements import Element, PageBreak
+from unstructured.documents.elements import Element
 from unstructured.partition import _partition_via_api
-from unstructured.partition.common import normalize_layout_element
+from unstructured.partition.common import normalize_layout_element, document_to_element_list
 
 
 def partition_pdf(
@@ -135,12 +135,4 @@ def _partition_pdf_or_image_local(
         else process_data_with_model(file, template, is_image=is_image)
     )
 
-    num_pages = len(layout.pages)
-    elements: List[Element] = list()
-    for i, page in enumerate(layout.pages):
-        for element in page.elements:
-            elements.append(element)
-        if include_page_breaks and i < num_pages - 1:
-            elements.append(PageBreak())
-
-    return elements
+    return document_to_element_list(layout, include_page_breaks=include_page_breaks)
