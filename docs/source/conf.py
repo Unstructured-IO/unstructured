@@ -20,7 +20,7 @@ copyright = "2022, Unstructured Technologies"
 author = "Unstructured Technologies"
 
 # The full version, including alpha/beta/rc tags
-release = __version__
+release = __version__.split("-")[0]
 
 # -- General configuration ---------------------------------------------------
 
@@ -55,3 +55,10 @@ html_static_path = ["_static"]
 
 # Adding a custom css file in order to add custom css file and can change the necessary elements.
 html_css_files = ["unstructured.css"]
+html_js_files = ["js/githubStargazers.js", "js/sidebarScrollPosition.js"]
+# html_css_files = ["css/custom.css"]
+
+html_theme_options = {
+    "light_logo": "images/logo-light-mode.svg",
+    "dark_logo": "images/logo-dark-mode.svg",
+}
