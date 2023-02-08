@@ -5,7 +5,7 @@ import pytest
 import pptx
 
 from unstructured.partition.pptx import partition_pptx
-from unstructured.documents.elements import ListItem, NarrativeText, Text, Title
+from unstructured.documents.elements import ListItem, NarrativeText, PageBreak, Text, Title
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "..", "example-docs")
@@ -43,6 +43,63 @@ def test_partition_pptx_raises_with_both_specified():
 def test_partition_pptx_raises_with_neither():
     with pytest.raises(ValueError):
         partition_pptx()
+
+
+def test_partition_pptx_adds_page_breaks(tmpdir):
+    filename = os.path.join(tmpdir, "test-page-breaks.pptx")
+
+    presentation = pptx.Presentation()
+    blank_slide_layout = presentation.slide_layouts[6]
+
+    slide = presentation.slides.add_slide(blank_slide_layout)
+    left = top = width = height = pptx.util.Inches(2)
+    txBox = slide.shapes.add_textbox(left, top, width, height)
+    tf = txBox.text_frame
+    tf.text = "This is the first slide."
+
+    slide = presentation.slides.add_slide(blank_slide_layout)
+    left = top = width = height = pptx.util.Inches(2)
+    txBox = slide.shapes.add_textbox(left, top, width, height)
+    tf = txBox.text_frame
+    tf.text = "This is the second slide."
+
+    presentation.save(filename)
+
+    elements = partition_pptx(filename=filename)
+
+    assert elements == [
+        NarrativeText(text="This is the first slide."),
+        PageBreak(),
+        NarrativeText(text="This is the second slide."),
+    ]
+
+
+def test_partition_pptx_page_breaks_toggle_off(tmpdir):
+    filename = os.path.join(tmpdir, "test-page-breaks.pptx")
+
+    presentation = pptx.Presentation()
+    blank_slide_layout = presentation.slide_layouts[6]
+
+    slide = presentation.slides.add_slide(blank_slide_layout)
+    left = top = width = height = pptx.util.Inches(2)
+    txBox = slide.shapes.add_textbox(left, top, width, height)
+    tf = txBox.text_frame
+    tf.text = "This is the first slide."
+
+    slide = presentation.slides.add_slide(blank_slide_layout)
+    left = top = width = height = pptx.util.Inches(2)
+    txBox = slide.shapes.add_textbox(left, top, width, height)
+    tf = txBox.text_frame
+    tf.text = "This is the second slide."
+
+    presentation.save(filename)
+
+    elements = partition_pptx(filename=filename, include_page_breaks=False)
+
+    assert elements == [
+        NarrativeText(text="This is the first slide."),
+        NarrativeText(text="This is the second slide."),
+    ]
 
 
 def test_partition_pptx_orders_elements(tmpdir):

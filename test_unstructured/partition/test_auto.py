@@ -5,7 +5,7 @@ import warnings
 
 import docx
 
-from unstructured.documents.elements import Address, NarrativeText, Title, Text, ListItem
+from unstructured.documents.elements import Address, NarrativeText, PageBreak, Title, Text, ListItem
 from unstructured.partition.auto import partition
 import unstructured.partition.auto as auto
 
@@ -206,3 +206,9 @@ def test_auto_partition_pptx_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
     elements = partition(filename=filename)
     assert elements == EXPECTED_PPTX_OUTPUT
+
+
+def test_auto_with_page_breaks():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
+    elements = partition(filename=filename, include_page_breaks=True)
+    assert PageBreak() in elements

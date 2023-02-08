@@ -2,6 +2,7 @@ import pytest
 import requests
 from unittest import mock
 
+from unstructured.documents.elements import PageBreak
 import unstructured.partition.pdf as pdf
 import unstructured_inference.inference.layout as layout
 
@@ -33,7 +34,11 @@ def mock_successful_post(url, **kwargs):
             {
                 "number": 0,
                 "elements": [{"type": "Title", "text": "Charlie Brown and the Great Pumpkin"}],
-            }
+            },
+            {
+                "number": 1,
+                "elements": [{"type": "Title", "text": "A Charlie Brown Christmas"}],
+            },
         ]
     }
     return MockResponse(status_code=200, response=response)
@@ -71,6 +76,22 @@ def test_partition_pdf_api(monkeypatch, filename="example-docs/layout-parser-pap
     partition_pdf_response = pdf._partition_via_api(filename)
     assert partition_pdf_response[0]["type"] == "Title"
     assert partition_pdf_response[0]["text"] == "Charlie Brown and the Great Pumpkin"
+    assert partition_pdf_response[1]["type"] == "Title"
+    assert partition_pdf_response[1]["text"] == "A Charlie Brown Christmas"
+
+
+def test_partition_pdf_api_page_breaks(
+    monkeypatch, filename="example-docs/layout-parser-paper-fast.pdf"
+):
+    monkeypatch.setattr(requests, "post", mock_successful_post)
+    monkeypatch.setattr(requests, "get", mock_healthy_get)
+
+    partition_pdf_response = pdf._partition_via_api(filename, include_page_breaks=True)
+    assert partition_pdf_response[0]["type"] == "Title"
+    assert partition_pdf_response[0]["text"] == "Charlie Brown and the Great Pumpkin"
+    assert partition_pdf_response[1]["type"] == "PageBreak"
+    assert partition_pdf_response[2]["type"] == "Title"
+    assert partition_pdf_response[2]["text"] == "A Charlie Brown Christmas"
 
 
 @pytest.mark.parametrize(
@@ -144,3 +165,13 @@ def test_partition_pdf_with_template(url, api_called, local_called):
         pdf.partition_pdf(filename="fake.pdf", url=url, template="checkbox")
         assert pdf._partition_via_api.called == api_called
         assert pdf._partition_pdf_or_image_local.called == local_called
+
+
+def test_partition_pdf_with_page_breaks(filename="example-docs/layout-parser-paper-fast.pdf"):
+    elements = pdf.partition_pdf(filename=filename, url=None, include_page_breaks=True)
+    assert PageBreak() in elements
+
+
+def test_partition_pdf_with_no_page_breaks(filename="example-docs/layout-parser-paper-fast.pdf"):
+    elements = pdf.partition_pdf(filename=filename, url=None)
+    assert PageBreak() not in elements
