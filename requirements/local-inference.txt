@@ -34,7 +34,7 @@ coloredlogs==15.0.1
     ***REMOVED*** via onnxruntime
 contourpy==1.0.7
     ***REMOVED*** via matplotlib
-cryptography==39.0.0
+cryptography==39.0.1
     ***REMOVED*** via pdfminer-six
 cycler==0.11.0
     ***REMOVED*** via matplotlib
@@ -44,7 +44,7 @@ effdet==0.3.0
     ***REMOVED*** via layoutparser
 ***REMOVED***
     ***REMOVED*** via openpyxl
-fastapi==0.89.1
+fastapi==0.90.0
     ***REMOVED*** via unstructured-inference
 filelock==3.9.0
     ***REMOVED*** via huggingface-hub
@@ -200,7 +200,7 @@ scipy==1.10.0
     ***REMOVED***   anyio
     ***REMOVED***   httpcore
     ***REMOVED***   httpx
-starlette==0.22.0
+starlette==0.23.0
     ***REMOVED*** via fastapi
 sympy==1.11.1
     ***REMOVED*** via onnxruntime
