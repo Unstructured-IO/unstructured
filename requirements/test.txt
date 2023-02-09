@@ -40,7 +40,7 @@ mccabe==0.7.0
     # via flake8
 multidict==6.0.4
     # via yarl
-mypy==0.991
+mypy==1.0.0
     # via -r requirements/test.in
 mypy-extensions==1.0.0
     # via
@@ -52,7 +52,7 @@ packaging==23.0
     #   pytest
 pathspec==0.11.0
     # via black
-platformdirs==2.6.2
+platformdirs==3.0.0
     # via black
 pluggy==1.0.0
     # via pytest
@@ -78,9 +78,9 @@ tomli==2.0.1
     #   coverage
     #   mypy
     #   pytest
-types-requests==2.28.11.8
+types-requests==2.28.11.12
     # via -r requirements/test.in
-types-urllib3==1.26.25.4
+types-urllib3==1.26.25.5
     # via types-requests
 typing-extensions==4.4.0
     # via

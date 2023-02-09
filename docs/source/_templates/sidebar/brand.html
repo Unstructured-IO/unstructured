@@ -1,0 +1,36 @@
+{#-
+
+Hi there!
+
+You might be interested in https://pradyunsg.me/furo/customisation/sidebar/
+
+Although if you're reading this, chances are that you're either familiar
+enough with Sphinx that you know what you're doing, or landed here from that
+documentation page.
+
+Hope your day's going well. :)
+
+-#}
+<a class="sidebar-brand{% if logo %} centered{% endif %}" href="{{ pathto(master_doc) }}">
+  {% block brand_content %}
+  {%- if logo_url %}
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="{{ logo_url }}" alt="Logo" />
+  </div>
+  {%- endif %}
+  {%- if theme_light_logo and theme_dark_logo %}
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo only-light" src="{{ pathto('_static/' + theme_light_logo, 1) }}" alt="Light Logo" />
+    <img class="sidebar-logo only-dark" src="{{ pathto('_static/' + theme_dark_logo, 1) }}" alt="Dark Logo" />
+  </div>
+  {%- endif %}
+  {% if not theme_sidebar_hide_name %}
+  <span class="sidebar-brand-text">{{ docstitle if docstitle else project }}</span>
+  {%- endif %}
+  {% endblock brand_content %}
+</a>
+<div class="social social--sidebar" style="margin-top: 1em; display: flex; justify-content: right; gap: 8px">
+  <a href="https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-1nlh1ot5d-dfY7zCRlhFboZrIWLA4Qgw"
+    class="button--primary" target="_blank">Join <span aria-label="slack" class="slack-icon"></span></span></a>
+    <div class="github-stars github-stars--sidebar"></div>
+</div>
