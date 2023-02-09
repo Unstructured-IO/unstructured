@@ -16,11 +16,11 @@ sys.path.insert(0, os.path.abspath("../.."))
 from unstructured.__version__ import __version__
 
 project = "unstructured"
-copyright = "2022, Unstructured Technologies"
+copyright = "2023, Unstructured Technologies"
 author = "Unstructured Technologies"
 
 # The full version, including alpha/beta/rc tags
-release = __version__.split("-")[0]
+release = __version__
 
 # -- General configuration ---------------------------------------------------
 
