@@ -408,14 +408,29 @@ object, or string as input. The three examples below all produce the same output
 </section>
 <section id="partition-pdf">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code><a class="headerlink" href="#partition-pdf" title="Permalink to this heading"></a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code> function segments a PDF document by calling the document image analysis API.
-The intent of the parameters <code class="docutils literal notranslate"><span class="pre">url</span></code> and <code class="docutils literal notranslate"><span class="pre">token</span></code> is to allow users to self host an inference API,
-if desired.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code> function segments a PDF document by using a document image analysis model.
+If you set <code class="docutils literal notranslate"><span class="pre">url=None</span></code>, the document image analysis model will execute locally. If you set
+the URL, <code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code> will make a call to a remote inference server.
+<code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code> also includes a <code class="docutils literal notranslate"><span class="pre">token</span></code> function that allows you to pass in an authentication
+token for a remote API call.</p>
 <p>Examples:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.pdf</span> <span class="kn">import</span> <span class="n">partition_pdf</span>
 
 <span class="c1"># Returns a List[Element] present in the pages of the parsed pdf document</span>
-<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_pdf</span><span class="p">(</span><span class="s2">&quot;example-docs/layout-parser-paper-fast.pdf&quot;</span><span class="p">)</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_pdf</span><span class="p">(</span><span class="s2">&quot;example-docs/layout-parser-paper-fast.pdf&quot;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="partition-image">
+<h3><code class="docutils literal notranslate"><span class="pre">partition_image</span></code><a class="headerlink" href="#partition-image" title="Permalink to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">partition_image</span></code> function has the same API as <code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code>, which is document above.
+The only difference is that <code class="docutils literal notranslate"><span class="pre">partition_image</span></code> does not need to convert a PDF to an image
+prior to processing. The <code class="docutils literal notranslate"><span class="pre">partition_image</span></code> function supports <code class="docutils literal notranslate"><span class="pre">.png</span></code> and <code class="docutils literal notranslate"><span class="pre">.jpg</span></code> files.</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.image</span> <span class="kn">import</span> <span class="n">partition_image</span>
+
+<span class="c1"># Returns a List[Element] present in the pages of the parsed image document</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_image</span><span class="p">(</span><span class="s2">&quot;example-docs/layout-parser-paper-fast.jpg&quot;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -1488,6 +1503,7 @@ is used by default.</p>
 <li><a class="reference internal" href="#partition-pptx"><code class="docutils literal notranslate"><span class="pre">partition_pptx</span></code></a></li>
 <li><a class="reference internal" href="#partition-html"><code class="docutils literal notranslate"><span class="pre">partition_html</span></code></a></li>
 <li><a class="reference internal" href="#partition-pdf"><code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code></a></li>
+<li><a class="reference internal" href="#partition-image"><code class="docutils literal notranslate"><span class="pre">partition_image</span></code></a></li>
 <li><a class="reference internal" href="#partition-email"><code class="docutils literal notranslate"><span class="pre">partition_email</span></code></a></li>
 <li><a class="reference internal" href="#partition-text"><code class="docutils literal notranslate"><span class="pre">partition_text</span></code></a></li>
 <li><a class="reference internal" href="#extract-attachment-info"><code class="docutils literal notranslate"><span class="pre">extract_attachment_info</span></code></a></li>
