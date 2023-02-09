@@ -48,7 +48,7 @@ def test_convert_to_isd_csv(output_csv_file):
         isd_csv_string = base.convert_to_isd_csv(elements)
         csv_file.write(isd_csv_string)
 
-    fieldnames = ["type", "text"]
+    fieldnames = ["type", "text", "coordinates", "element_id"]
     with open(output_csv_file, "r") as csv_file:
         csv_rows = csv.DictReader(csv_file)
         assert all(set(row.keys()) == set(fieldnames) for row in csv_rows)
@@ -63,4 +63,5 @@ def test_convert_to_dataframe():
             "text": ["Title 1", "Narrative 1"],
         }
     )
-    assert df.equals(expected_df) is True
+    assert df.type.equals(expected_df.type) is True
+    assert df.text.equals(expected_df.text) is True
