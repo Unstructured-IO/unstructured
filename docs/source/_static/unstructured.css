@@ -150,7 +150,7 @@ h2 {
 .button--primary:hover {
   color: white !important;
   transition: all 0.3s ease-in-out;
-  background: linear-gradient(-45deg, #c13030, #e25a55);
+  background: linear-gradient(-45deg, #003C5E, #003C5E);
 }
 
 .content .note .wy-alert-title,
@@ -1018,13 +1018,13 @@ a .tuto-section-11 {
 }
 
 .github-stars .--left:hover {
-  background: linear-gradient(-45deg, #c13030, #e25a55);
-  border-color: #c13030;
+  background: linear-gradient(-45deg, #003C5E, #003C5E);
+  border-color: #003C5E;
 }
 
 .github-stars .--right:hover {
-  color: #c13030;
-  border-color: #c13030;
+  color: #003C5E;
+  border-color: #003C5E;
 }
 
 .github-stars .--right {
