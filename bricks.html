@@ -409,8 +409,9 @@ object, or string as input. The three examples below all produce the same output
 <section id="partition-pdf">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code><a class="headerlink" href="#partition-pdf" title="Permalink to this heading"></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code> function segments a PDF document by using a document image analysis model.
-If you set <code class="docutils literal notranslate"><span class="pre">url=None</span></code>, the document image analysis model will execute locally. If you set
-the URL, <code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code> will make a call to a remote inference server.
+If you set <code class="docutils literal notranslate"><span class="pre">url=None</span></code>, the document image analysis model will execute locally. You need to install <code class="docutils literal notranslate"><span class="pre">unstructured[local-inference]</span></code>
+if you’d like to run inference locally.
+If you set the URL, <code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code> will make a call to a remote inference server.
 <code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code> also includes a <code class="docutils literal notranslate"><span class="pre">token</span></code> function that allows you to pass in an authentication
 token for a remote API call.</p>
 <p>Examples:</p>

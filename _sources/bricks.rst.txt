@@ -129,8 +129,9 @@ Examples:
 ---------------------
 
 The ``partition_pdf`` function segments a PDF document by using a document image analysis model.
-If you set ``url=None``, the document image analysis model will execute locally. If you set
-the URL, ``partition_pdf`` will make a call to a remote inference server.
+If you set ``url=None``, the document image analysis model will execute locally. You need to install ``unstructured[local-inference]``
+if you'd like to run inference locally.
+If you set the URL, ``partition_pdf`` will make a call to a remote inference server.
 ``partition_pdf`` also includes a ``token`` function that allows you to pass in an authentication
 token for a remote API call.
 
