@@ -1,9 +1,10 @@
-***REMOVED******REMOVED*** 0.4.7-dev2
+***REMOVED******REMOVED*** 0.4.7-dev3
 
 * Added the ability to pull an HTML document from a url in `partition_html`.
 * Added the the ability to get file summary info from lists of filenames and lists
   of file contents.
 * Added optional page break to `partition` for `.pptx`, `.pdf`, images, and `.html` files.
+* Added `to_dict` method to document elements.
 
 ***REMOVED******REMOVED*** 0.4.6
 
