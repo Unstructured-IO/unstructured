@@ -23,6 +23,7 @@ def partition_html(
 
     if filename is not None and not file and not text:
         document = HTMLDocument.from_file(filename)
+        
         elements = document.elements
 
     elif file is not None and not filename and not text:
