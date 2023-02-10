@@ -1,3 +1,7 @@
+## 0.4.8-dev1
+
+* Modified XML parser not to load comments.
+
 ## 0.4.7
 
 * Modified XML parser not to load comments.
