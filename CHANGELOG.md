@@ -1,6 +1,6 @@
 ## 0.4.8
 
-* Modified XML parser not to load comments.
+* Modified XML and HTML parsers not to load comments.
 
 ## 0.4.7
 
