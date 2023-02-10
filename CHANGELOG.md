@@ -6,6 +6,7 @@
   of file contents.
 * Added optional page break to `partition` for `.pptx`, `.pdf`, images, and `.html` files.
 * Added `to_dict` method to document elements.
+* Include more unicode quotes in `replace_unicode_quotes`.
 
 ## 0.4.6
 

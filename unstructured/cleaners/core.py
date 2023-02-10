@@ -55,11 +55,31 @@ def replace_unicode_quotes(text) -> str:
     -------
     \x93What a lovely quote!\x94 -> “What a lovely quote!”
     """
+    # NOTE(robinson) - We should probably make this something more sane like a regex
+    # instead of a whole big series of replaces
     text = text.replace("\x91", "‘")
     text = text.replace("\x92", "’")
     text = text.replace("\x93", "“")
     text = text.replace("\x94", "”")
     text = text.replace("&apos;", "'")
+    text = text.replace("â\x80\x99", "'")
+    text = text.replace("â\x80“", "—")
+    text = text.replace("â\x80”", "–")
+    text = text.replace("â\x80˜", "‘")
+    text = text.replace("â\x80¦", "…")
+    text = text.replace("â\x80™", "’")
+    text = text.replace("â\x80œ", "“")
+    text = text.replace("â\x80?", "”")
+    text = text.replace("â\x80ť", "”")
+    text = text.replace("â\x80ś", "“")
+    text = text.replace("â\x80¨", "—")
+    text = text.replace("â\x80ł", "″")
+    text = text.replace("â\x80Ž", "")
+    text = text.replace("â\x80‚", "")
+    text = text.replace("â\x80‰", "")
+    text = text.replace("â\x80‹", "")
+    text = text.replace("â\x80", "")
+    text = text.replace("â\x80s'", "")
     return text
 
 
