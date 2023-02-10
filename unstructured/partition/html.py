@@ -51,7 +51,7 @@ def partition_html(
     elif url is not None and not filename and not file and not text:
         response = requests.get(url)
         if not response.ok:
-            raise ValueError(f"URL return an error: {response.status_code} {response.text}")
+            raise ValueError(f"URL return an error: {response.status_code}")
 
         content_type = response.headers.get("Content-Type", "")
         if not content_type.startswith("text/html"):
