@@ -32,7 +32,11 @@ class XMLDocument(Document):
             are using a stylesheet, you likely want the XMLParser.
         """
         if not parser:
-            parser = etree.XMLParser() if stylesheet else etree.HTMLParser()
+            parser = (
+                etree.XMLParser(remove_comments=True)
+                if stylesheet
+                else etree.HTMLParser(remove_comments=True)
+            )
 
         self.stylesheet = stylesheet
         self.parser = parser

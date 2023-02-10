@@ -1,3 +1,7 @@
+***REMOVED******REMOVED*** 0.4.8
+
+* Modified XML and HTML parsers not to load comments.
+
 ***REMOVED******REMOVED*** 0.4.7
 
 * Added the ability to pull an HTML document from a url in `partition_html`.
