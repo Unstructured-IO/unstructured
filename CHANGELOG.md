@@ -4,7 +4,6 @@
 
 ## 0.4.7
 
-* Modified XML parser not to load comments.
 * Added the ability to pull an HTML document from a url in `partition_html`.
 * Added the the ability to get file summary info from lists of filenames and lists
   of file contents.
