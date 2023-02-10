@@ -36,6 +36,13 @@ class CheckBox(Element):
     def __eq__(self, other):
         return (self.checked == other.checked) and (self.coordinates) == (other.coordinates)
 
+    def to_dict(self) -> dict:
+        return {
+            "checked": self.checked,
+            "coordinates": self.coordinates,
+            "element_id": self.id,
+        }
+
 
 class Text(Element):
     """Base element for capturing free text from within document."""
@@ -67,6 +74,12 @@ class Text(Element):
                 (self.category == other.category),
             ]
         )
+
+    def to_dict(self) -> dict:
+        return {
+            "text": self.text,
+            "type": self.category,
+        }
 
     def apply(self, *cleaners: Callable):
         """Applies a cleaning brick to the text element. The function that's passed in
@@ -128,3 +141,12 @@ class Image(Text):
     category = "Image"
 
     pass
+
+
+class PageBreak(Text):
+    """An element for capturing page breaks."""
+
+    category = "PageBreak"
+
+    def __init__(self):
+        super().__init__(text="<PAGE BREAK>")

@@ -6,6 +6,7 @@ from unstructured.documents.elements import (
     FigureCaption,
     ListItem,
     NarrativeText,
+    PageBreak,
     Text,
     Title,
 )
@@ -16,14 +17,17 @@ def normalize_layout_element(layout_element) -> Union[Element, List[Element]]:
     """Converts a list of unstructured_inference DocumentLayout objects to a list of
     unstructured Elements."""
 
+    if isinstance(layout_element, PageBreak):
+        return PageBreak()
+
     if not isinstance(layout_element, dict):
         layout_dict = layout_element.to_dict()
     else:
         layout_dict = layout_element
 
-    text = layout_dict["text"]
-    coordinates = layout_dict["coordinates"]
-    element_type = layout_dict["type"]
+    text = layout_dict.get("text")
+    coordinates = layout_dict.get("coordinates")
+    element_type = layout_dict.get("type")
 
     if element_type == "Title":
         return Title(text=text, coordinates=coordinates)
@@ -37,6 +41,8 @@ def normalize_layout_element(layout_element) -> Union[Element, List[Element]]:
         return CheckBox(checked=True, coordinates=coordinates)
     elif element_type == "Unchecked":
         return CheckBox(checked=False, coordinates=coordinates)
+    elif element_type == "PageBreak":
+        return PageBreak()
     else:
         return Text(text=text, coordinates=coordinates)
 
@@ -54,3 +60,16 @@ def layout_list_to_list_items(text: str, coordinates: List[float]) -> List[Eleme
             list_items.append(ListItem(text=text_segment.strip(), coordinates=coordinates))
 
     return list_items
+
+
+def document_to_element_list(document, include_page_breaks: bool = False) -> List[Element]:
+    """Converts a DocumentLayout object to a list of unstructured elements."""
+    elements: List[Element] = list()
+    num_pages = len(document.pages)
+    for i, page in enumerate(document.pages):
+        for element in page.elements:
+            elements.append(element)
+        if include_page_breaks and i < num_pages - 1:
+            elements.append(PageBreak())
+
+    return elements

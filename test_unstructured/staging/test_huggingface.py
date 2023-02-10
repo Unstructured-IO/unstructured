@@ -5,7 +5,6 @@ import unstructured.staging.huggingface as huggingface
 
 
 class MockTokenizer:
-
     model_max_length = 20
 
     def tokenize(self, text):
