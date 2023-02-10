@@ -1,13 +1,12 @@
-from enum import Enum
 import os
-from typing import IO, Optional
 import zipfile
+from enum import Enum
+from typing import IO, Optional
 
 import magic
 
 from unstructured.logger import logger
 from unstructured.nlp.patterns import EMAIL_HEAD_RE
-
 
 DOCX_MIME_TYPES = [
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -111,6 +110,7 @@ def detect_filetype(
 ) -> Optional[FileType]:
     """Use libmagic to determine a file's type. Helps determine which partition brick
     to use for a given file. A return value of None indicates a non-supported file type."""
+
     if filename and file:
         raise ValueError("Only one of filename or file should be specified.")
 
@@ -130,7 +130,7 @@ def detect_filetype(
     if mime_type == "application/pdf":
         return FileType.PDF
 
-    elif mime_type in DOCX_MIME_TYPES:
+    if mime_type in DOCX_MIME_TYPES:
         return FileType.DOCX
 
     elif mime_type in DOC_MIME_TYPES:
@@ -196,9 +196,17 @@ def detect_filetype(
         else:
             return filetype
 
-    logger.warn(
-        f"MIME type was {mime_type}. This file type is not currently supported in unstructured."
-    )
+    if mime_type == "inode/x-empty":
+        if filename:
+            file_name = filename.split("/")
+            logger.warn(
+                f"MIME type was {mime_type} '{file_name[-1]}'.This file type is not \
+                currently supported in unstructured."
+            )
+    else:
+        logger.warn(
+            f"MIME type was {mime_type}. This file type is not currently supported in unstructured."
+        )
     return FileType.UNK
 
 
