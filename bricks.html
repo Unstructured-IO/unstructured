@@ -783,10 +783,7 @@ such as <code class="docutils literal notranslate"><span class="pre">\u2013</spa
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.cleaners.core</span> <span class="kn">import</span> <span class="n">remove_punctuation</span>
 
 <span class="c1"># Returns &quot;A lovely quote&quot;</span>
-<span class="n">replace_unicode_characters</span><span class="p">(</span><span class="s2">&quot;“A lovely quote!”&quot;</span><span class="p">)</span>
-
-<span class="c1"># Returns &quot;&quot;</span>
-<span class="n">replace_unicode_characters</span><span class="p">(</span><span class="s2">&quot;&#39;()[]</span><span class="si">{}</span><span class="s2">;:&#39;</span><span class="se">\&quot;</span><span class="s2">,.?/</span><span class="se">\\</span><span class="s2">-_&quot;</span><span class="p">)</span>
+<span class="n">remove_punctuation</span><span class="p">(</span><span class="s2">&quot;“A lovely quote!”&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
