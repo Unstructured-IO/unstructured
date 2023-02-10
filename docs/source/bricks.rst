@@ -587,10 +587,7 @@ Examples:
   from unstructured.cleaners.core import remove_punctuation
 
   ***REMOVED*** Returns "A lovely quote"
-  replace_unicode_characters("“A lovely quote!”")
-
-  ***REMOVED*** Returns ""
-  replace_unicode_characters("'()[]{};:'\",.?/\\-_")
+  remove_punctuation("“A lovely quote!”")
 
 
 ``clean_prefix``
