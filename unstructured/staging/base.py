@@ -38,7 +38,7 @@ def convert_to_isd_csv(elements: List[Text]) -> str:
     Returns the representation of document elements as an Initial Structured Document (ISD)
     in CSV Format.
     """
-    csv_fieldnames: List[str] = ["type", "text", "coordinates", "element_id"]
+    csv_fieldnames: List[str] = ["type", "text"]
     rows: List[Dict[str, str]] = convert_to_isd(elements)
     with io.StringIO() as buffer:
         csv_writer = csv.DictWriter(buffer, fieldnames=csv_fieldnames)
