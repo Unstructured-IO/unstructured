@@ -1,3 +1,7 @@
+## 0.4.9-dev0
+
+* Added ingest modules and s3 connector
+
 ## 0.4.8
 
 * Modified XML and HTML parsers not to load comments.

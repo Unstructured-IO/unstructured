@@ -59,7 +59,7 @@ importlib-metadata==6.0.0
     #   nbconvert
 importlib-resources==5.10.2
     # via jsonschema
-ipykernel==6.21.1
+ipykernel==6.21.2
     # via
     #   ipywidgets
     #   jupyter
@@ -67,7 +67,7 @@ ipykernel==6.21.1
     #   nbclassic
     #   notebook
     #   qtconsole
-ipython==8.9.0
+ipython==8.10.0
     # via
     #   -r requirements/dev.in
     #   ipykernel
@@ -107,13 +107,14 @@ jupyter-client==8.0.2
     #   nbclient
     #   notebook
     #   qtconsole
-jupyter-console==6.4.4
+jupyter-console==6.5.1
     # via jupyter
 jupyter-core==5.2.0
     # via
     #   -r requirements/dev.in
     #   ipykernel
     #   jupyter-client
+    #   jupyter-console
     #   jupyter-server
     #   nbclassic
     #   nbclient
@@ -223,7 +224,7 @@ python-dateutil==2.8.2
     # via
     #   arrow
     #   jupyter-client
-python-json-logger==2.0.4
+python-json-logger==2.0.5
     # via jupyter-events
 pyyaml==6.0
     # via jupyter-events
@@ -231,6 +232,7 @@ pyzmq==25.0.0
     # via
     #   ipykernel
     #   jupyter-client
+    #   jupyter-console
     #   jupyter-server
     #   nbclassic
     #   notebook
@@ -291,6 +293,7 @@ traitlets==5.9.0
     #   ipython
     #   ipywidgets
     #   jupyter-client
+    #   jupyter-console
     #   jupyter-core
     #   jupyter-events
     #   jupyter-server
@@ -319,7 +322,7 @@ wheel==0.38.4
     #   pip-tools
 widgetsnbextension==4.0.5
     # via ipywidgets
-zipp==3.12.1
+zipp==3.13.0
     # via
     #   importlib-metadata
     #   importlib-resources
