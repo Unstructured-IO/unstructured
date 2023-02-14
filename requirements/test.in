@@ -7,7 +7,11 @@ click>=8.1
 flake8
 mypy
 pytest-cov
-label_studio_sdk
+# NOTE(robinson) - Currently tests do not pass with 0.0.18. Added the following
+# issue to address
+# ref: https://github.com/Unstructured-IO/unstructured/issues/200
+label_studio_sdk==0.0.17
+types-requests
 vcrpy
 
 # NOTE(robinson) - The following pins are to address

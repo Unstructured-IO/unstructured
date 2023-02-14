@@ -30,9 +30,11 @@ click==8.1.3
     # via
     #   nltk
     #   uvicorn
+coloredlogs==15.0.1
+    # via onnxruntime
 contourpy==1.0.7
     # via matplotlib
-cryptography==39.0.0
+cryptography==39.0.1
     # via pdfminer-six
 cycler==0.11.0
     # via matplotlib
@@ -42,10 +44,12 @@ effdet==0.3.0
     # via layoutparser
 et-xmlfile==1.1.0
     # via openpyxl
-fastapi==0.89.1
+fastapi==0.90.0
     # via unstructured-inference
 filelock==3.9.0
     # via huggingface-hub
+flatbuffers==23.1.21
+    # via onnxruntime
 fonttools==4.38.0
     # via matplotlib
 h11==0.14.0
@@ -60,6 +64,8 @@ huggingface-hub==0.12.0
     # via
     #   timm
     #   unstructured-inference
+humanfriendly==10.0
+    # via coloredlogs
 idna==3.4
     # via
     #   anyio
@@ -69,6 +75,8 @@ iopath==0.1.10
     # via layoutparser
 joblib==1.2.0
     # via nltk
+jsons==1.6.3
+    # via unstructured-inference
 kiwisolver==1.4.4
     # via matplotlib
 layoutparser[layoutmodels,tesseract]==0.3.4
@@ -82,6 +90,8 @@ matplotlib==3.6.3
     # via pycocotools
 monotonic==1.6
     # via argilla
+mpmath==1.2.1
+    # via sympy
 nltk==3.8.1
     # via unstructured (setup.py)
 numpy==1.23.5
@@ -90,6 +100,7 @@ numpy==1.23.5
     #   contourpy
     #   layoutparser
     #   matplotlib
+    #   onnxruntime
     #   opencv-python
     #   pandas
     #   pycocotools
@@ -97,17 +108,20 @@ numpy==1.23.5
     #   torchvision
 omegaconf==2.3.0
     # via effdet
+onnxruntime==1.13.1
+    # via unstructured-inference
 opencv-python==4.6.0.66
     # via
     #   layoutparser
     #   unstructured-inference
-openpyxl==3.0.10
+openpyxl==3.1.0
     # via unstructured (setup.py)
 packaging==23.0
     # via
     #   argilla
     #   huggingface-hub
     #   matplotlib
+    #   onnxruntime
     #   pytesseract
 pandas==1.5.3
     # via
@@ -132,6 +146,8 @@ pillow==9.4.0
     #   unstructured (setup.py)
 portalocker==2.7.0
     # via iopath
+protobuf==4.21.12
+    # via onnxruntime
 pycocotools==2.0.6
     # via effdet
 pycparser==2.21
@@ -184,8 +200,10 @@ sniffio==1.3.0
     #   anyio
     #   httpcore
     #   httpx
-starlette==0.22.0
+starlette==0.23.0
     # via fastapi
+sympy==1.11.1
+    # via onnxruntime
 timm==0.6.12
     # via effdet
 torch==1.13.1
@@ -213,7 +231,9 @@ typing-extensions==4.4.0
     #   starlette
     #   torch
     #   torchvision
-unstructured-inference==0.2.4
+typish==1.9.3
+    # via jsons
+unstructured-inference==0.2.5
     # via unstructured (setup.py)
 urllib3==1.26.14
     # via requests
@@ -225,5 +245,5 @@ wrapt==1.14.1
     # via
     #   argilla
     #   deprecated
-xlsxwriter==3.0.7
+xlsxwriter==3.0.8
     # via python-pptx

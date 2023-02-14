@@ -63,7 +63,7 @@ numpy==1.23.5
     #   argilla
     #   pandas
     #   transformers
-openpyxl==3.0.10
+openpyxl==3.1.0
     # via unstructured (setup.py)
 packaging==23.0
     # via
@@ -144,5 +144,5 @@ wrapt==1.14.1
     # via
     #   argilla
     #   deprecated
-xlsxwriter==3.0.7
+xlsxwriter==3.0.8
     # via python-pptx

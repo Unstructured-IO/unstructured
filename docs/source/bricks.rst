@@ -24,6 +24,8 @@ called within ``partition`` are called using the defualt kwargs. Use the documen
 specific bricks if you need to apply non-default settings.
 ``partition`` currently supports ``.docx``, ``.pptx``, ``.eml``, ``.html``, ``.pdf``,
 ``.png``, ``.jpg``, and ``.txt`` files.
+If you set the ``include_page_breaks`` kwarg to ``True``, the output will include page breaks. This is only supported for ``.pptx``, ``.html``, ``.pdf``,
+``.png``, and ``.jpg``.
 
 
 .. code:: python
@@ -126,9 +128,12 @@ Examples:
 ``partition_pdf``
 ---------------------
 
-The ``partition_pdf`` function segments a PDF document by calling the document image analysis API.
-The intent of the parameters ``url`` and ``token`` is to allow users to self host an inference API,
-if desired.
+The ``partition_pdf`` function segments a PDF document by using a document image analysis model.
+If you set ``url=None``, the document image analysis model will execute locally. You need to install ``unstructured[local-inference]``
+if you'd like to run inference locally.
+If you set the URL, ``partition_pdf`` will make a call to a remote inference server.
+``partition_pdf`` also includes a ``token`` function that allows you to pass in an authentication
+token for a remote API call.
 
 Examples:
 
@@ -137,7 +142,25 @@ Examples:
   from unstructured.partition.pdf import partition_pdf
 
   # Returns a List[Element] present in the pages of the parsed pdf document
-  elements = partition_pdf("example-docs/layout-parser-paper-fast.pdf")
+  elements = partition_pdf("example-docs/layout-parser-paper-fast.pdf", url=None)
+
+
+``partition_image``
+---------------------
+
+The ``partition_image`` function has the same API as ``partition_pdf``, which is document above.
+The only difference is that ``partition_image`` does not need to convert a PDF to an image
+prior to processing. The ``partition_image`` function supports ``.png`` and ``.jpg`` files.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.image import partition_image
+
+  # Returns a List[Element] present in the pages of the parsed image document
+  elements = partition_image("example-docs/layout-parser-paper-fast.jpg", url=None)
+
 
 
 ``partition_email``
@@ -447,7 +470,7 @@ Examples:
   clean("● An excellent point!", bullets=True, lowercase=True)
 
   # Returns "ITEM 1A: RISK FACTORS"
-  clean("ITEM 1A:     RISK-FACTORS", whitespace=True, dashes=True)
+  clean("ITEM 1A:     RISK-FACTORS", extra_whitespace=True, dashes=True)
 
 
 ``clean_bullets``
@@ -564,10 +587,7 @@ Examples:
   from unstructured.cleaners.core import remove_punctuation
 
   # Returns "A lovely quote"
-  replace_unicode_characters("“A lovely quote!”")
-
-  # Returns ""
-  replace_unicode_characters("'()[]{};:'\",.?/\\-_")
+  remove_punctuation("“A lovely quote!”")
 
 
 ``clean_prefix``
