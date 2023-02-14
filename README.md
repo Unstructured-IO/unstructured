@@ -66,7 +66,12 @@ To install the library, run `pip install unstructured`.
 	`pyenv  virtualenv 3.8.15 unstructured` <br />
 	`pyenv activate unstructured`
 
-* Run `make install-project-local`
+* Run `make install`
+
+* Optional:
+  * To install models and dependencies for processing images and PDFs locally, run `make install-local-inference`.
+  * For processing image files, `tesseract` is required. See [here](https://tesseract-ocr.github.io/tessdoc/Installation.html) for installation instructions.
+  * For processing PDF files, `tesseract` and `poppler` are required. The [pdf2image docs](https://pdf2image.readthedocs.io/en/latest/installation.html) have instructions on installing `poppler` across various platforms.
 
 ## :clap: Quick Tour
 
