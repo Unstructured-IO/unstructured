@@ -44,7 +44,8 @@ class SimpleS3Config:
 
 @dataclass
 class S3IngestDoc:
-    """Class encapsulating fetching a doc and writing processed results (but not doing the processing!).
+    """Class encapsulating fetching a doc and writing processed results (but not
+    doing the processing!).
 
     Also includes a cleanup method. When things go wrong and the cleanup
     method is not called, the file is left behind on the filesystem to assist debugging.

@@ -29,7 +29,7 @@ def process_document(doc):
         # results across all docs in memory.
         doc.write_result(json_elems)
 
-    except Exception as e:
+    except Exception:
         # TODO(crag) save the exception instead of print?
         logging.error(f"Failed to process {doc}", exc_info=True)
     else:
