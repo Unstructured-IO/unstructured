@@ -88,7 +88,7 @@ of the features in the library.
 The easiest way to parse a document in unstructured is to use the `partition` brick. If you
 use `partition` brick, `unstructured` will detect the file type and route it to the appropriate
 file-specific partitioning brick.
-If you are using the `partition` brick, ensure you first install `libmagic` using the
+If you are using the `partition` brick, you may need to install additional parameters via `pip install unstructured[local-inference]`. Ensure you first install `libmagic` using the
 instructions outlined [here](https://unstructured-io.github.io/unstructured/installing.html#filetype-detection)
 `partition` will always apply the default arguments. If you need
 advanced features, use a document-specific brick. The `partition` brick currently works for
