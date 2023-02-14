@@ -142,7 +142,7 @@ Examples:
   from unstructured.partition.pdf import partition_pdf
 
   # Returns a List[Element] present in the pages of the parsed pdf document
-  elements = partition_pdf("example-docs/layout-parser-paper-fast.pdf", url=None)
+  elements = partition_pdf("example-docs/layout-parser-paper-fast.pdf")
 
 
 ``partition_image``
@@ -159,7 +159,7 @@ Examples:
   from unstructured.partition.image import partition_image
 
   # Returns a List[Element] present in the pages of the parsed image document
-  elements = partition_image("example-docs/layout-parser-paper-fast.jpg", url=None)
+  elements = partition_image("example-docs/layout-parser-paper-fast.jpg")
 
 
 
