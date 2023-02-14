@@ -7,6 +7,8 @@ import re
 import string
 
 import boto3
+from botocore import UNSIGNED
+from botocore.client import Config
 
 
 @dataclass
@@ -15,6 +17,7 @@ class SimpleS3Config:
     # where to write structured data, with the directory structure matching s3 path
     # TODO(crag): support s3 output destination in addition to local filesystem
     output_dir: str
+    anonymous: bool = False
 
     s3_bucket: str = field(init=False)
     # could be single object or prefix
@@ -58,6 +61,7 @@ class S3IngestDoc:
     s3_key: str
     local_output_dir: str
     tmp_download_dir: str
+    anonymous: bool = False
 
     # TODO(crag): probably, remove the s3 path prefix from the S3Connector from
     # the tmp_download_dir and local_output_dir paths to avoid creating
@@ -107,7 +111,10 @@ class S3Connector:
     def __init__(self, config: SimpleS3Config):
         self.config = config
         self._list_objects_kwargs = {"Bucket": config.s3_bucket, "Prefix": config.s3_path}
-        self.s3_cli = boto3.client("s3")
+        if config.anonymous:
+            self.s3_cli = boto3.client("s3", config=Config(signature_version=UNSIGNED))
+        else:
+            self.s3_cli = boto3.client("s3")
         self._tmp_download_dir = "tmp-ingest-" + "".join(
             random.choice(string.ascii_letters) for i in range(6)
         )
@@ -158,7 +165,11 @@ class S3Connector:
         s3_keys = self._list_objects()
         return [
             S3IngestDoc(
-                self.config.s3_bucket, s3_key, self.config.output_dir, self._tmp_download_dir
+                self.config.s3_bucket,
+                s3_key,
+                self.config.output_dir,
+                self._tmp_download_dir,
+                self.config.anonymous,
             )
             for s3_key in s3_keys
         ]
