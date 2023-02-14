@@ -10,7 +10,7 @@ antlr4-python3-runtime==4.9.3
     ***REMOVED*** via
     ***REMOVED***   httpcore
     ***REMOVED***   starlette
-argilla==1.2.1
+argilla==1.3.0
     ***REMOVED*** via unstructured (setup.py)
 ***REMOVED***
     ***REMOVED*** via argilla
@@ -44,10 +44,12 @@ effdet==0.3.0
     ***REMOVED*** via layoutparser
 ***REMOVED***
     ***REMOVED*** via openpyxl
-fastapi==0.90.0
+fastapi==0.91.0
     ***REMOVED*** via unstructured-inference
 filelock==3.9.0
-    ***REMOVED*** via huggingface-hub
+    ***REMOVED*** via
+    ***REMOVED***   huggingface-hub
+    ***REMOVED***   transformers
 flatbuffers==23.1.21
     ***REMOVED*** via onnxruntime
 fonttools==4.38.0
@@ -63,6 +65,7 @@ fonttools==4.38.0
 huggingface-hub==0.12.0
     ***REMOVED*** via
     ***REMOVED***   timm
+    ***REMOVED***   transformers
     ***REMOVED***   unstructured-inference
 humanfriendly==10.0
     ***REMOVED*** via coloredlogs
@@ -71,6 +74,8 @@ humanfriendly==10.0
     ***REMOVED***   anyio
     ***REMOVED***   requests
     ***REMOVED***   rfc3986
+importlib-resources==5.10.2
+    ***REMOVED*** via matplotlib
 iopath==0.1.10
     ***REMOVED*** via layoutparser
 ***REMOVED***
@@ -86,7 +91,7 @@ layoutparser[layoutmodels,tesseract]==0.3.4
     ***REMOVED***   python-docx
     ***REMOVED***   python-pptx
     ***REMOVED***   unstructured (setup.py)
-matplotlib==3.6.3
+matplotlib==3.7.0
     ***REMOVED*** via pycocotools
 ***REMOVED***
     ***REMOVED*** via argilla
@@ -106,6 +111,7 @@ mpmath==1.2.1
     ***REMOVED***   pycocotools
     ***REMOVED***   scipy
     ***REMOVED***   torchvision
+    ***REMOVED***   transformers
 omegaconf==2.3.0
     ***REMOVED*** via effdet
 onnxruntime==1.13.1
@@ -114,7 +120,7 @@ opencv-python==4.6.0.66
     ***REMOVED*** via
     ***REMOVED***   layoutparser
     ***REMOVED***   unstructured-inference
-openpyxl==3.1.0
+openpyxl==3.1.1
     ***REMOVED*** via unstructured (setup.py)
 ***REMOVED***
     ***REMOVED*** via
@@ -123,6 +129,7 @@ openpyxl==3.1.0
     ***REMOVED***   matplotlib
     ***REMOVED***   onnxruntime
     ***REMOVED***   pytesseract
+    ***REMOVED***   transformers
 ***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   argilla
@@ -132,7 +139,7 @@ pdf2image==1.16.2
     ***REMOVED*** via layoutparser
 pdfminer-six==20221105
     ***REMOVED*** via pdfplumber
-pdfplumber==0.7.6
+pdfplumber==0.8.0
     ***REMOVED*** via layoutparser
 ***REMOVED***
     ***REMOVED*** via
@@ -180,12 +187,16 @@ pyyaml==6.0
     ***REMOVED***   layoutparser
     ***REMOVED***   omegaconf
     ***REMOVED***   timm
+    ***REMOVED***   transformers
 regex==2022.10.31
-    ***REMOVED*** via nltk
+    ***REMOVED*** via
+    ***REMOVED***   nltk
+    ***REMOVED***   transformers
 ***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   huggingface-hub
     ***REMOVED***   torchvision
+    ***REMOVED***   transformers
     ***REMOVED***   unstructured (setup.py)
 ***REMOVED***
     ***REMOVED*** via httpx
@@ -200,12 +211,14 @@ scipy==1.10.0
     ***REMOVED***   anyio
     ***REMOVED***   httpcore
     ***REMOVED***   httpx
-starlette==0.23.0
+starlette==0.24.0
     ***REMOVED*** via fastapi
 sympy==1.11.1
     ***REMOVED*** via onnxruntime
 timm==0.6.12
     ***REMOVED*** via effdet
+tokenizers==0.13.2
+    ***REMOVED*** via transformers
 torch==1.13.1
     ***REMOVED*** via
     ***REMOVED***   effdet
@@ -223,6 +236,9 @@ tqdm==4.64.1
     ***REMOVED***   huggingface-hub
     ***REMOVED***   iopath
     ***REMOVED***   nltk
+    ***REMOVED***   transformers
+transformers==4.26.1
+    ***REMOVED*** via unstructured-inference
 typing-extensions==4.4.0
     ***REMOVED*** via
     ***REMOVED***   huggingface-hub
@@ -233,7 +249,7 @@ typing-extensions==4.4.0
     ***REMOVED***   torchvision
 typish==1.9.3
     ***REMOVED*** via jsons
-unstructured-inference==0.2.5
+unstructured-inference==0.2.7
     ***REMOVED*** via unstructured (setup.py)
 urllib3==1.26.14
     ***REMOVED*** via requests
@@ -247,3 +263,5 @@ wand==0.6.11
     ***REMOVED***   deprecated
 xlsxwriter==3.0.8
     ***REMOVED*** via python-pptx
+zipp==3.13.0
+    ***REMOVED*** via importlib-resources

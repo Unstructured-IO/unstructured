@@ -59,7 +59,7 @@ importlib-metadata==6.0.0
     ***REMOVED***   nbconvert
 importlib-resources==5.10.2
     ***REMOVED*** via jsonschema
-ipykernel==6.21.1
+ipykernel==6.21.2
     ***REMOVED*** via
     ***REMOVED***   ipywidgets
     ***REMOVED***   jupyter
@@ -67,7 +67,7 @@ ipykernel==6.21.1
     ***REMOVED***   nbclassic
     ***REMOVED***   notebook
     ***REMOVED***   qtconsole
-ipython==8.9.0
+ipython==8.10.0
     ***REMOVED*** via
     ***REMOVED***   -r requirements/dev.in
     ***REMOVED***   ipykernel
@@ -107,13 +107,14 @@ jupyter-client==8.0.2
     ***REMOVED***   nbclient
     ***REMOVED***   notebook
     ***REMOVED***   qtconsole
-jupyter-console==6.4.4
+jupyter-console==6.5.1
     ***REMOVED*** via jupyter
 jupyter-core==5.2.0
     ***REMOVED*** via
     ***REMOVED***   -r requirements/dev.in
     ***REMOVED***   ipykernel
     ***REMOVED***   jupyter-client
+    ***REMOVED***   jupyter-console
     ***REMOVED***   jupyter-server
     ***REMOVED***   nbclassic
     ***REMOVED***   nbclient
@@ -223,7 +224,7 @@ pyrsistent==0.19.3
     ***REMOVED*** via
     ***REMOVED***   arrow
     ***REMOVED***   jupyter-client
-python-json-logger==2.0.4
+python-json-logger==2.0.5
     ***REMOVED*** via jupyter-events
 pyyaml==6.0
     ***REMOVED*** via jupyter-events
@@ -231,6 +232,7 @@ pyzmq==25.0.0
     ***REMOVED*** via
     ***REMOVED***   ipykernel
     ***REMOVED***   jupyter-client
+    ***REMOVED***   jupyter-console
     ***REMOVED***   jupyter-server
     ***REMOVED***   nbclassic
     ***REMOVED***   notebook
@@ -291,6 +293,7 @@ traitlets==5.9.0
     ***REMOVED***   ipython
     ***REMOVED***   ipywidgets
     ***REMOVED***   jupyter-client
+    ***REMOVED***   jupyter-console
     ***REMOVED***   jupyter-core
     ***REMOVED***   jupyter-events
     ***REMOVED***   jupyter-server
@@ -319,7 +322,7 @@ wheel==0.38.4
     ***REMOVED***   pip-tools
 widgetsnbextension==4.0.5
     ***REMOVED*** via ipywidgets
-zipp==3.12.1
+zipp==3.13.0
     ***REMOVED*** via
     ***REMOVED***   importlib-metadata
     ***REMOVED***   importlib-resources

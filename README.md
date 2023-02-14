@@ -276,3 +276,4 @@ information on how to report security vulnerabilities.
 |-|-|
 | [Company Website](https://unstructured.io) | Unstructured.io product and company info |
 | [Documentation](https://unstructured-io.github.io/unstructured) | Full API documentation |
+| [Batch Processing](Ingest.md) | Ingesting batches of documents through Unstructured |

@@ -129,7 +129,54 @@ dmypy.json
 ***REMOVED*** Pyre type checker
 .pyre/
 
-***REMOVED*** VSCode
-.vscode/
+***REMOVED*** ingest outputs
+/structured-output
+***REMOVED*** ingest temporary files
+/tmp-ingest*
+
+***REMOVED******REMOVED*** https://github.com/github/gitignore/blob/main/Global/Emacs.gitignore (partial)
+
+*~
+\***REMOVED****\***REMOVED***
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\***REMOVED****
+
+***REMOVED******REMOVED*** https://github.com/github/gitignore/blob/main/Global/VisualStudioCode.gitignore
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+***REMOVED*** Local History for Visual Studio Code
+.history/
+
+***REMOVED*** Built Visual Studio Code Extensions
+*.vsix
+
+***REMOVED******REMOVED*** https://github.com/github/gitignore/blob/main/Global/Vim.gitignore
+***REMOVED*** Swap
+[._]*.s[a-v][a-z]
+!*.svg  ***REMOVED*** comment out if you don't need vector files
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+
+***REMOVED*** Session
+Session.vim
+Sessionx.vim
+
+***REMOVED*** Temporary
+.netrwhist
+***REMOVED*** Auto-generated tag files
+tags
+***REMOVED*** Persistent undo
+[._]*.un~
 
 .DS_Store
