@@ -1,6 +1,7 @@
-## 0.4.9-dev0
+## 0.4.9-dev1
 
 * Added ingest modules and s3 connector
+* Default to `url=None` for `partition_pdf` and `partition_image`
 
 ## 0.4.8
 
