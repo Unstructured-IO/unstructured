@@ -82,8 +82,8 @@ pip-compile:
 	pip-compile --upgrade --extra local-inference -o requirements/local-inference.txt
 	# NOTE(robinson) - doc/requirements.txt is where the GitHub action for building
 	# sphinx docs looks for additional requirements
-	pip-compile --upgrade requirements/ingest-s3.in requirements/base.txt --output-file requirements/ingest-s3.txt
 	cp requirements/build.txt docs/requirements.txt
+	pip-compile --upgrade requirements/ingest-s3.in requirements/base.txt --output-file requirements/ingest-s3.txt
 
 ## install-project-local:   install unstructured into your local python environment
 .PHONY: install-project-local
