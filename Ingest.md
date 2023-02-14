@@ -29,4 +29,8 @@ sequenceDiagram
 
 See the sample project [examples/ingest/s3-small-batch/main.py](examples/ingest/s3-small-batch/main.py), which processes all the documents under a given s3 URL with 2 parallel processes, writing the structured json output to `structured-outputs/`.
 
+You can try it out with
+
+    PYTHONPATH=. python examples/ingest/s3-small-batch/main.py
+
 The abstractions in the above diagram are honored in this project (though ABC's are not yet written), with the exception of the StructuredDocWriter which may be added more formally at a later time.
