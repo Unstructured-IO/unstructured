@@ -68,7 +68,7 @@ To install the library, run `pip install unstructured`.
 
 * Run `make install-project-local`
 
-* Optional
+* Optional:
   * For processing image files, `tesseract` is required. See [here](https://tesseract-ocr.github.io/tessdoc/Installation.html) for installation instructions.
   * For processing PDF files, `tesseract` and `poppler` are required. The [pdf2image docs](https://pdf2image.readthedocs.io/en/latest/installation.html) have instructions on installing `poppler` across various platforms.
 
