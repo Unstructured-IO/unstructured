@@ -34,8 +34,7 @@ def partition_html(
         raise ValueError("One of filename, file, or text must be specified.")
 
     if filename is not None and not file and not text and not url:
-        with open(filename, "r", encoding=encoding) as f:
-            document = HTMLDocument.from_file(f)
+        document = HTMLDocument.from_file(filename)
 
     elif file is not None and not filename and not text and not url:
         file_content = file.read()
