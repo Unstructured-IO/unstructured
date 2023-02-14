@@ -133,6 +133,7 @@ def partition_email(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
     text: Optional[str] = None,
+    encoding: Optional[str] = None,
     content_source: str = "text/html",
     include_headers: bool = False,
 ) -> List[Element]:
@@ -159,7 +160,7 @@ def partition_email(
         raise ValueError("One of filename, file, or text must be specified.")
 
     if filename is not None and not file and not text:
-        with open(filename, "r") as f:
+        with open(filename, "r", encoding=encoding) as f:
             msg = email.message_from_file(f)
 
     elif file is not None and not filename and not text:

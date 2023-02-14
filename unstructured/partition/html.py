@@ -5,7 +5,10 @@ from unstructured.documents.html import HTMLDocument
 
 
 def partition_html(
-    filename: Optional[str] = None, file: Optional[IO] = None, text: Optional[str] = None
+    filename: Optional[str] = None,
+    file: Optional[IO] = None,
+    text: Optional[str] = None,
+    encoding: Optional[str] = None,
 ) -> List[Element]:
     """Partitions an HTML document into its constituent elements.
 

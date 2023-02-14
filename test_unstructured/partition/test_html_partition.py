@@ -23,7 +23,7 @@ def test_partition_html_from_file():
 
 def test_partition_html_from_text():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "example-10k.html")
-    with open(filename, "r") as f:
+    with open(filename, "r", encoding="utf-8") as f:
         text = f.read()
     elements = partition_html(text=text)
     assert len(elements) > 0

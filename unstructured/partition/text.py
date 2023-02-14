@@ -21,6 +21,7 @@ def partition_text(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
     text: Optional[str] = None,
+    encoding: Optional[str] = None,
 ) -> List[Element]:
     """Partitions an .txt documents into its constituent elements.
     Parameters
@@ -37,7 +38,7 @@ def partition_text(
         raise ValueError("One of filename, file, or text must be specified.")
 
     if filename is not None and not file and not text:
-        with open(filename, "r") as f:
+        with open(filename, "r", encoding=encoding) as f:
             file_text = f.read()
 
     elif file is not None and not filename and not text:

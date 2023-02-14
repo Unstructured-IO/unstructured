@@ -126,7 +126,7 @@ def test_partition_email_from_text_file_with_headers():
 
 def test_partition_email_from_text():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
-    with open(filename, "r") as f:
+    with open(filename, "r", encoding="utf-8") as f:
         text = f.read()
     elements = partition_email(text=text)
     assert len(elements) > 0

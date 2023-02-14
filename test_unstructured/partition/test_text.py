@@ -34,7 +34,7 @@ def test_partition_text_from_file():
 
 def test_partition_text_from_text():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-text.txt")
-    with open(filename, "r") as f:
+    with open(filename, "r", encoding="utf-8") as f:
         text = f.read()
     elements = partition_text(text=text)
     assert len(elements) > 0
