@@ -27,7 +27,8 @@ class MainProcess:
         # fetch the list of lazy downloading IngestDoc obj's
         docs = self.doc_connector.fetch_docs()
 
-        # Debugging tip: use this instead of the mp.Pool loop
+        # Debugging tip: use the below line and comment out the mp.Pool loop
+        # block to remain in single process
         #self.doc_processor_fn(docs[0])
 
         with mp.Pool(processes=self.num_processes) as pool:

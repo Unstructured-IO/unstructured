@@ -110,7 +110,8 @@ class S3IngestDoc:
 class S3Connector:
     """Objects of this class support fetching document(s) from"""
 
-    # TODO(crag): allow not re-downloading files if they exist (eventually with checksum check)
+    # TODO(crag): have a config val to allow not re-downloading files if they
+    # exist (eventually with checksum check)
 
     def __init__(self, config: SimpleS3Config):
         self.config = config
