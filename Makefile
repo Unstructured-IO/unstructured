@@ -50,6 +50,11 @@ install-dev:
 install-build:
 	pip install -r requirements/build.txt
 
+## install-ingest-s3:       install requirements for the s3 connector
+.PHONY: install-ingest-s3
+install-ingest-s3:
+	pip install -r requirements/ingest-s3.txt
+
 .PHONY: install-unstructured-inference
 install-unstructured-inference:
 	pip install -r requirements/local-inference.txt
@@ -78,6 +83,7 @@ pip-compile:
 	# NOTE(robinson) - doc/requirements.txt is where the GitHub action for building
 	# sphinx docs looks for additional requirements
 	cp requirements/build.txt docs/requirements.txt
+	pip-compile --upgrade requirements/ingest-s3.in requirements/base.txt --output-file requirements/ingest-s3.txt
 
 ## install-project-local:   install unstructured into your local python environment
 .PHONY: install-project-local
