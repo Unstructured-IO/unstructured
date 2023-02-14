@@ -83,7 +83,11 @@ class S3IngestDoc:
     def get_file(self):
         """Actually fetches the file from s3"""
         self._create_full_tmp_dir_path()
-        boto3.client("s3").download_file(self.s3_bucket, self.s3_key, self._tmp_download_file())
+        if self.anonymous:
+            s3_cli = boto3.client("s3", config=Config(signature_version=UNSIGNED))
+        else:
+            s3_cli = boto3.client("s3")
+        s3_cli.download_file(self.s3_bucket, self.s3_key, self._tmp_download_file())
 
     def write_result(self, result):
         """write the structured json result. result must be json serializable"""

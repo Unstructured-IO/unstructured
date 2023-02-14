@@ -41,8 +41,8 @@ class MainProcess:
             config=SimpleS3Config(
                 s3_url="s3://utic-dev-tech-fixtures/small-pdf-set/",
                 output_dir="structured-output",
-                # set to true to use your AWS creds (not needed for this public s3 url)
-                anonymous=False,
+                # set to False to use your AWS creds (not needed for this public s3 url)
+                anonymous=True,
             ),
         )
         MainProcess(doc_connector=doc_connector,
