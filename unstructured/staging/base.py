@@ -6,7 +6,7 @@ import pandas as pd
 
 from unstructured.documents.elements import Text, NarrativeText, Title, ListItem
 
-TABLE_FIELDNAMES: List[str] = ["type", "text", "filename", "page_number"]
+TABLE_FIELDNAMES: List[str] = ["type", "text", "filename", "page_number", "url"]
 
 
 def convert_to_isd(elements: List[Text]) -> List[Dict[str, str]]:
