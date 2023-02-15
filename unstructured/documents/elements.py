@@ -14,7 +14,7 @@ class NoID(ABC):
 class ElementMetadata:
     filename: Optional[str] = None
     page_number: Optional[int] = None
-    url: Optional[int] = None
+    url: Optional[str] = None
     file_metadata: Optional[Dict[str, Any]] = None
 
     def to_dict(self):

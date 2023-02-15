@@ -198,7 +198,7 @@ def partition_email(
         # </ul>
         list_content = content.split("=\n")
         content = "".join(list_content)
-        elements = partition_html(text=content)
+        elements = partition_html(text=content, include_metadata=False)
         for element in elements:
             if isinstance(element, Text):
                 element.apply(replace_mime_encodings)
