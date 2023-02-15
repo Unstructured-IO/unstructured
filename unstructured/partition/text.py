@@ -1,7 +1,15 @@
 import re
 from typing import IO, List, Optional
 
-from unstructured.documents.elements import Address, Element, ListItem, NarrativeText, Text, Title
+from unstructured.documents.elements import (
+    Address,
+    Element,
+    ElementMetadata,
+    ListItem,
+    NarrativeText,
+    Text,
+    Title,
+)
 
 from unstructured.cleaners.core import clean_bullets
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
@@ -52,20 +60,21 @@ def partition_text(
     file_content = split_by_paragraph(file_text)
 
     elements: List[Element] = list()
+    metadata = ElementMetadata(filename=filename)
     for ctext in file_content:
         ctext = ctext.strip()
 
         if ctext == "":
             continue
         if is_bulleted_text(ctext):
-            elements.append(ListItem(text=clean_bullets(ctext)))
+            elements.append(ListItem(text=clean_bullets(ctext), metadata=metadata))
         elif is_us_city_state_zip(ctext):
-            elements.append(Address(text=ctext))
+            elements.append(Address(text=ctext, metadata=metadata))
         elif is_possible_narrative_text(ctext):
-            elements.append(NarrativeText(text=ctext))
+            elements.append(NarrativeText(text=ctext, metadata=metadata))
         elif is_possible_title(ctext):
-            elements.append(Title(text=ctext))
+            elements.append(Title(text=ctext, metadata=metadata))
         else:
-            elements.append(Text(text=ctext))
+            elements.append(Text(text=ctext, metadata=metadata))
 
     return elements

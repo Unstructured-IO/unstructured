@@ -24,7 +24,14 @@ from unstructured.documents.email_elements import (
     ReceivedInfo,
     MetaData,
 )
-from unstructured.documents.elements import Element, Text, Image, NarrativeText, Title
+from unstructured.documents.elements import (
+    Element,
+    ElementMetadata,
+    Text,
+    Image,
+    NarrativeText,
+    Title,
+)
 from unstructured.partition.html import partition_html
 from unstructured.partition.text import split_by_paragraph, partition_text
 
@@ -217,4 +224,7 @@ def partition_email(
     if include_headers:
         header = partition_email_header(msg)
     all_elements = header + elements
+
+    for element in all_elements:
+        element.metadata = ElementMetadata(filename=filename)
     return all_elements
