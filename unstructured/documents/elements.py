@@ -15,7 +15,6 @@ class ElementMetadata:
     filename: Optional[str] = None
     page_number: Optional[int] = None
     url: Optional[str] = None
-    file_metadata: Optional[Dict[str, Any]] = None
 
     def to_dict(self):
         return {key: value for key, value in self.__dict__.items() if value is not None}
