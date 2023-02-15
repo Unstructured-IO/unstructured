@@ -80,7 +80,7 @@ class Text(Element):
             # NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits
             element_id = hashlib.sha256(text.encode()).hexdigest()[:32]
 
-        super().__init__(element_id=element_id, metadata=metadata)
+        super().__init__(element_id=element_id, metadata=metadata, coordinates=coordinates)
 
     def __str__(self):
         return self.text
