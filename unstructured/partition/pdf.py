@@ -1,7 +1,7 @@
 from typing import List, Optional
 import warnings
 
-from unstructured.documents.elements import Element
+from unstructured.documents.elements import Element, ElementMetadata, PageBreak
 from unstructured.partition import _partition_via_api
 from unstructured.partition.common import normalize_layout_element, document_to_element_list
 
@@ -71,7 +71,7 @@ def partition_pdf_or_image(
                 file=file,
                 template=out_template,
                 is_image=is_image,
-                include_page_breaks=include_page_breaks,
+                include_page_breaks=True,
             )
     else:
         # NOTE(alan): Remove these lines after different models are handled by routing
@@ -87,15 +87,24 @@ def partition_pdf_or_image(
             url=url,
             token=token,
             data=data,
-            include_page_breaks=include_page_breaks,
+            include_page_breaks=True,
         )
 
     elements: List[Element] = list()
+    page_number: int = 1
     for layout_element in layout_elements:
         element = normalize_layout_element(layout_element)
+        metadata = ElementMetadata(filename=filename, page_number=page_number)
         if isinstance(element, list):
+            for _element in element:
+                _element.metadata = metadata
             elements.extend(element)
+        elif isinstance(element, PageBreak):
+            page_number += 1
+            if include_page_breaks is True:
+                elements.append(element)
         else:
+            element.metadata = metadata
             elements.append(element)
 
     return elements

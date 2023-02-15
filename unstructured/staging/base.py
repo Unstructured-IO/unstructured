@@ -1,6 +1,6 @@
 import io
 import csv
-from typing import Dict, List
+from typing import Any, Dict, List
 
 import pandas as pd
 
@@ -40,7 +40,7 @@ def convert_to_isd_csv(elements: List[Text]) -> str:
     Returns the representation of document elements as an Initial Structured Document (ISD)
     in CSV Format.
     """
-    rows: List[Dict[str, str]] = convert_to_isd(elements)
+    rows: List[Dict[str, Any]] = convert_to_isd(elements)
     # NOTE(robinson) - flatten metadata and add it to the table
     for row in rows:
         metadata = row.pop("metadata")
