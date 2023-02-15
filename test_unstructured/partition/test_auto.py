@@ -25,6 +25,7 @@ def test_auto_partition_email_from_filename():
     elements = partition(filename=filename)
     assert len(elements) > 0
     assert elements == EXPECTED_EMAIL_OUTPUT
+    assert elements[0].metadata.filename == filename
 
 
 def test_auto_partition_email_from_file():
@@ -83,6 +84,7 @@ def test_auto_partition_docx_with_filename(mock_docx_document, expected_docx_ele
 
     elements = partition(filename=filename)
     assert elements == expected_docx_elements
+    assert elements[0].metadata.filename == filename
 
 
 def test_auto_partition_docx_with_file(mock_docx_document, expected_docx_elements, tmpdir):
@@ -98,6 +100,7 @@ def test_auto_partition_html_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "example-10k.html")
     elements = partition(filename=filename)
     assert len(elements) > 0
+    assert elements[0].metadata.filename == filename
 
 
 def test_auto_partition_html_from_file():
@@ -129,6 +132,7 @@ def test_auto_partition_text_from_filename():
     elements = partition(filename=filename)
     assert len(elements) > 0
     assert elements == EXPECTED_TEXT_OUTPUT
+    assert elements[0].metadata.filename == filename
 
 
 def test_auto_partition_text_from_file():
@@ -148,6 +152,8 @@ def test_auto_partition_pdf_from_filename():
 
     assert isinstance(elements[1], NarrativeText)
     assert elements[1].text.startswith("Zejiang Shen 1")
+
+    assert elements[0].metadata.filename == filename
 
 
 def test_auto_partition_pdf_from_file():
@@ -206,6 +212,7 @@ def test_auto_partition_pptx_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
     elements = partition(filename=filename)
     assert elements == EXPECTED_PPTX_OUTPUT
+    assert elements[0].metadata.filename == filename
 
 
 def test_auto_with_page_breaks():

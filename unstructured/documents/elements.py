@@ -1,7 +1,7 @@
 from abc import ABC
 from dataclasses import dataclass
 import hashlib
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Callable, List, Optional, Union
 
 
 class NoID(ABC):
@@ -80,7 +80,7 @@ class Text(Element):
             # NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits
             element_id = hashlib.sha256(text.encode()).hexdigest()[:32]
 
-        super().__init__(element_id=element_id)
+        super().__init__(element_id=element_id, metadata=metadata)
 
     def __str__(self):
         return self.text
