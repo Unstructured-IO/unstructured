@@ -9,7 +9,7 @@ from unstructured.partition.common import normalize_layout_element, document_to_
 def partition_pdf(
     filename: str = "",
     file: Optional[bytes] = None,
-    url: Optional[str] = "https://ml.unstructured.io/",
+    url: Optional[str] = None,
     template: Optional[str] = None,
     token: Optional[str] = None,
     include_page_breaks: bool = False,

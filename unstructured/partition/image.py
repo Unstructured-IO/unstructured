@@ -7,7 +7,7 @@ from unstructured.partition.pdf import partition_pdf_or_image
 def partition_image(
     filename: str = "",
     file: Optional[bytes] = None,
-    url: Optional[str] = "https://ml.unstructured.io/",
+    url: Optional[str] = None,
     template: Optional[str] = None,
     token: Optional[str] = None,
     include_page_breaks: bool = False,
