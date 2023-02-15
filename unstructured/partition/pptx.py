@@ -2,7 +2,15 @@ from typing import IO, List, Optional
 
 import pptx
 
-from unstructured.documents.elements import Element, ListItem, NarrativeText, PageBreak, Text, Title
+from unstructured.documents.elements import (
+    Element,
+    ElementMetadata,
+    ListItem,
+    NarrativeText,
+    PageBreak,
+    Text,
+    Title,
+)
 from unstructured.partition.text_type import (
     is_possible_narrative_text,
     is_possible_title,
@@ -40,8 +48,11 @@ def partition_pptx(
         raise ValueError("Only one of filename or file can be specified.")
 
     elements: List[Element] = list()
+    metadata = ElementMetadata(filename=filename)
     num_slides = len(presentation.slides)
     for i, slide in enumerate(presentation.slides):
+        metadata.page_number = i + 1
+
         for shape in _order_shapes(slide.shapes):
             # NOTE(robinson) - we don't deal with tables yet, but so future humans can find
             # it again, here are docs on how to deal with tables. The check for tables should
@@ -57,13 +68,13 @@ def partition_pptx(
                 if text.strip() == "":
                     continue
                 if _is_bulleted_paragraph(paragraph):
-                    elements.append(ListItem(text=text))
+                    elements.append(ListItem(text=text, metadata=metadata))
                 elif is_possible_narrative_text(text):
-                    elements.append(NarrativeText(text=text))
+                    elements.append(NarrativeText(text=text, metadata=metadata))
                 elif is_possible_title(text):
-                    elements.append(Title(text=text))
+                    elements.append(Title(text=text, metadata=metadata))
                 else:
-                    elements.append(Text(text=text))
+                    elements.append(Text(text=text, metadata=metadata))
 
         if include_page_breaks and i < num_slides - 1:
             elements.append(PageBreak())
