@@ -1,7 +1,8 @@
-from typing import List, Union
+from typing import List, Optional, Union
 
 from unstructured.documents.elements import (
     Element,
+    ElementMetadata,
     CheckBox,
     FigureCaption,
     ListItem,
@@ -72,4 +73,31 @@ def document_to_element_list(document, include_page_breaks: bool = False) -> Lis
         if include_page_breaks and i < num_pages - 1:
             elements.append(PageBreak())
 
+    return elements
+
+
+def add_element_metadata(
+    layout_elements,
+    include_page_breaks: bool = False,
+    filename: Optional[str] = None,
+    url: Optional[str] = None,
+) -> List[Element]:
+    """Adds document metadata to the document element. Document metadata includes information
+    like the filename, source url, and page number."""
+    elements: List[Element] = list()
+    page_number: int = 1
+    for layout_element in layout_elements:
+        element = normalize_layout_element(layout_element)
+        metadata = ElementMetadata(filename=filename, url=url, page_number=page_number)
+        if isinstance(element, list):
+            for _element in element:
+                _element.metadata = metadata
+            elements.extend(element)
+        elif isinstance(element, PageBreak):
+            page_number += 1
+            if include_page_breaks is True:
+                elements.append(element)
+        else:
+            element.metadata = metadata
+            elements.append(element)
     return elements

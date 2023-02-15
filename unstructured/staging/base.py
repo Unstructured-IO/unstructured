@@ -1,10 +1,12 @@
 import io
 import csv
-from typing import Dict, List
+from typing import Any, Dict, List
 
 import pandas as pd
 
 from unstructured.documents.elements import Text, NarrativeText, Title, ListItem
+
+TABLE_FIELDNAMES: List[str] = ["type", "text", "filename", "page_number", "url"]
 
 
 def convert_to_isd(elements: List[Text]) -> List[Dict[str, str]]:
@@ -38,10 +40,16 @@ def convert_to_isd_csv(elements: List[Text]) -> str:
     Returns the representation of document elements as an Initial Structured Document (ISD)
     in CSV Format.
     """
-    csv_fieldnames: List[str] = ["type", "text"]
-    rows: List[Dict[str, str]] = convert_to_isd(elements)
+    rows: List[Dict[str, Any]] = convert_to_isd(elements)
+    ***REMOVED*** NOTE(robinson) - flatten metadata and add it to the table
+    for row in rows:
+        metadata = row.pop("metadata")
+        for key, value in metadata.items():
+            if key in TABLE_FIELDNAMES:
+                row[key] = value
+
     with io.StringIO() as buffer:
-        csv_writer = csv.DictWriter(buffer, fieldnames=csv_fieldnames)
+        csv_writer = csv.DictWriter(buffer, fieldnames=TABLE_FIELDNAMES)
         csv_writer.writeheader()
         csv_writer.writerows(rows)
         return buffer.getvalue()
