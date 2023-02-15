@@ -536,6 +536,7 @@ The default is to expect a minimum of 50% alpha characters
 <code class="docutils literal notranslate"><span class="pre">non_alpha_ratio</span></code> kwarg or the <code class="docutils literal notranslate"><span class="pre">UNSTRUCTURED_NARRATIVE_TEXT_NON_ALPHA_RATIO</span></code> environment variable.
 The environment variables takes precedence over the kwarg.</p></li>
 <li><p>The cap ratio test does not apply to text that is all uppercase.</p></li>
+<li><p>If you use the <code class="docutils literal notranslate"><span class="pre">language=&quot;&quot;</span></code> kwarg or set the <code class="docutils literal notranslate"><span class="pre">UNSTRUCTURED_LANGUAGE</span></code> environment variable to <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code>, the function will skip the verb check and the English word check.</p></li>
 </ul>
 <p>Examples:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.text_type</span> <span class="kn">import</span> <span class="n">is_possible_narrative_text</span>
@@ -572,6 +573,7 @@ The environment variables takes precedence over the kwarg.</p></li>
 <li><p>Narrative text must contain at least one English word (if <code class="docutils literal notranslate"><span class="pre">language</span></code> is set to “en”)</p></li>
 <li><p>If a title contains more than one sentence that exceeds a certain length, it cannot be a title. Sentence length threshold is controlled by the <code class="docutils literal notranslate"><span class="pre">sentence_min_length</span></code> kwarg and defaults to 5.</p></li>
 <li><p>If a segment of text ends in a comma, it is not considered a potential title. This is to avoid salutations like “To My Dearest Friends,” getting flagged as titles.</p></li>
+<li><p>If you use the <code class="docutils literal notranslate"><span class="pre">language=&quot;&quot;</span></code> kwarg or set the <code class="docutils literal notranslate"><span class="pre">UNSTRUCTURED_LANGUAGE</span></code> environment variable to <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code>, the function will skip the English word check.</p></li>
 </ul>
 <p>Examples:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.text_type</span> <span class="kn">import</span> <span class="n">is_possible_title</span>
