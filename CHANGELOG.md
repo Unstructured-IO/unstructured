@@ -1,7 +1,8 @@
-***REMOVED******REMOVED*** 0.4.9-dev1
+***REMOVED******REMOVED*** 0.4.9-dev2
 
 * Added ingest modules and s3 connector
 * Default to `url=None` for `partition_pdf` and `partition_image`
+* Add ability to skip English specific check by setting the `UNSTRUCTURED_LANGUAGE` env var to `""`.
 
 ***REMOVED******REMOVED*** 0.4.8
 
