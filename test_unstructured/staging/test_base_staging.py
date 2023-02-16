@@ -1,12 +1,14 @@
 import csv
+import json
 import os
+import pathlib
 import pytest
 
 import pandas as pd
 
 import unstructured.staging.base as base
 
-from unstructured.documents.elements import Title, NarrativeText, ListItem
+from unstructured.documents.elements import ElementMetadata, Title, NarrativeText, ListItem
 
 
 @pytest.fixture
@@ -64,3 +66,14 @@ def test_convert_to_dataframe():
     )
     assert df.type.equals(expected_df.type) is True
     assert df.text.equals(expected_df.text) is True
+
+
+def test_convert_to_isd_serializes_with_posix_paths():
+    metadata = ElementMetadata(filename=pathlib.PosixPath("../../fake-file.txt"))
+    elements = [
+        Title(text="Title 1", metadata=metadata),
+        NarrativeText(text="Narrative 1", metadata=metadata),
+    ]
+    output = base.convert_to_isd(elements)
+    # NOTE(robinson) - json.dumps should run without raising an exception
+    json.dumps(output)
