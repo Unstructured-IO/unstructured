@@ -14,7 +14,6 @@ class MainProcess:
 
     def initialize(self):
         """Slower initialization things: check connections, load things into memory, etc."""
-        #self.doc_connector.initialize()
         pass
         
     def cleanup(self):
@@ -30,11 +29,12 @@ class MainProcess:
 
         # Debugging tip: use the below line and comment out the mp.Pool loop
         # block to remain in single process
-        #self.doc_processor_fn(docs[0])
+        # self.doc_processor_fn(docs[0])
 
         with mp.Pool(processes=self.num_processes) as pool:
             results = pool.map(self.doc_processor_fn, docs)
-
+        
+        
         self.cleanup()
 
     @staticmethod
