@@ -32,6 +32,9 @@ def partition_doc(filename: Optional[str] = None, file: Optional[IO] = None) -> 
     else:
         raise ValueError("Only one of filename or file can be specified.")
 
+    if not os.path.exists(filename):
+        raise ValueError(f"The file {filename} does not exist.")
+
     base_filename, _ = os.path.splitext(filename_no_path)
 
     with tempfile.TemporaryDirectory() as tmpdir:

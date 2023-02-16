@@ -60,13 +60,20 @@ def test_partition_doc_with_filename(mock_document, expected_elements, tmpdir):
     assert elements == expected_elements
 
 
-def test_partition_matches_partition_docx(mock_document, expected_elements, tmpdir):
+def test_partition_doc_matches_partition_docx(mock_document, expected_elements, tmpdir):
     docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
     mock_document.save(docx_filename)
     convert_office_doc(docx_filename, tmpdir.dirname, "doc")
 
     partition_doc(filename=doc_filename) == partition_docx(filename=docx_filename)
+
+
+def test_partition_raises_with_missing_doc(mock_document, expected_elements, tmpdir):
+    doc_filename = os.path.join(tmpdir.dirname, "asdf.doc")
+
+    with pytest.raises(ValueError):
+        partition_doc(filename=doc_filename)
 
 
 def test_partition_doc_with_file(mock_document, expected_elements, tmpdir):
