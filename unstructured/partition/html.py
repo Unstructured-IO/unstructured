@@ -4,7 +4,7 @@ import requests
 
 from unstructured.documents.elements import Element
 from unstructured.documents.html import HTMLDocument
-from unstructured.partition.common import document_to_element_list
+from unstructured.partition.common import add_element_metadata, document_to_element_list
 
 
 def partition_html(
@@ -13,6 +13,7 @@ def partition_html(
     text: Optional[str] = None,
     url: Optional[str] = None,
     include_page_breaks: bool = False,
+    include_metadata: bool = True,
 ) -> List[Element]:
     """Partitions an HTML document into its constituent elements.
 
@@ -28,6 +29,9 @@ def partition_html(
         The URL of a webpage to parse. Only for URLs that return an HTML document.
     include_page_breaks
         If True, includes page breaks at the end of each page in the document.
+    include_metadata
+        Optionally allows for excluding metadata from the output. Primarily intended
+        for when partition_html is called in other partition bricks (like partition_email)
     """
     if not any([filename, file, text, url]):
         raise ValueError("One of filename, file, or text must be specified.")
@@ -62,4 +66,10 @@ def partition_html(
     else:
         raise ValueError("Only one of filename, file, or text can be specified.")
 
-    return document_to_element_list(document, include_page_breaks=include_page_breaks)
+    layout_elements = document_to_element_list(document, include_page_breaks=include_page_breaks)
+    if include_metadata:
+        return add_element_metadata(
+            layout_elements, include_page_breaks=include_page_breaks, filename=filename, url=url
+        )
+    else:
+        return layout_elements

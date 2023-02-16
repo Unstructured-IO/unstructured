@@ -3,7 +3,15 @@ from typing import IO, List, Optional
 import docx
 
 from unstructured.cleaners.core import clean_bullets
-from unstructured.documents.elements import Address, Element, ListItem, NarrativeText, Text, Title
+from unstructured.documents.elements import (
+    Address,
+    Element,
+    ElementMetadata,
+    ListItem,
+    NarrativeText,
+    Text,
+    Title,
+)
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_possible_narrative_text,
@@ -75,6 +83,7 @@ def partition_docx(
     for paragraph in document.paragraphs:
         element = _paragraph_to_element(paragraph)
         if element is not None:
+            element.metadata = ElementMetadata(filename=filename)
             elements.append(element)
 
     return elements

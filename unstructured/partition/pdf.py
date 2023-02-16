@@ -3,13 +3,16 @@ import warnings
 
 from unstructured.documents.elements import Element
 from unstructured.partition import _partition_via_api
-from unstructured.partition.common import normalize_layout_element, document_to_element_list
+from unstructured.partition.common import (
+    add_element_metadata,
+    document_to_element_list,
+)
 
 
 def partition_pdf(
     filename: str = "",
     file: Optional[bytes] = None,
-    url: Optional[str] = "https://ml.unstructured.io/",
+    url: Optional[str] = None,
     template: Optional[str] = None,
     token: Optional[str] = None,
     include_page_breaks: bool = False,
@@ -71,7 +74,7 @@ def partition_pdf_or_image(
                 file=file,
                 template=out_template,
                 is_image=is_image,
-                include_page_breaks=include_page_breaks,
+                include_page_breaks=True,
             )
     else:
         # NOTE(alan): Remove these lines after different models are handled by routing
@@ -87,18 +90,12 @@ def partition_pdf_or_image(
             url=url,
             token=token,
             data=data,
-            include_page_breaks=include_page_breaks,
+            include_page_breaks=True,
         )
 
-    elements: List[Element] = list()
-    for layout_element in layout_elements:
-        element = normalize_layout_element(layout_element)
-        if isinstance(element, list):
-            elements.extend(element)
-        else:
-            elements.append(element)
-
-    return elements
+    return add_element_metadata(
+        layout_elements, include_page_breaks=include_page_breaks, filename=filename
+    )
 
 
 def _partition_pdf_or_image_local(

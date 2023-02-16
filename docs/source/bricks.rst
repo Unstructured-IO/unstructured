@@ -142,7 +142,7 @@ Examples:
   from unstructured.partition.pdf import partition_pdf
 
   # Returns a List[Element] present in the pages of the parsed pdf document
-  elements = partition_pdf("example-docs/layout-parser-paper-fast.pdf", url=None)
+  elements = partition_pdf("example-docs/layout-parser-paper-fast.pdf")
 
 
 ``partition_image``
@@ -159,7 +159,7 @@ Examples:
   from unstructured.partition.image import partition_image
 
   # Returns a List[Element] present in the pages of the parsed image document
-  elements = partition_image("example-docs/layout-parser-paper-fast.jpg", url=None)
+  elements = partition_image("example-docs/layout-parser-paper-fast.jpg")
 
 
 
@@ -280,6 +280,7 @@ for consideration as narrative text. The function performs the following checks 
   ``non_alpha_ratio`` kwarg or the ``UNSTRUCTURED_NARRATIVE_TEXT_NON_ALPHA_RATIO`` environment variable.
   The environment variables takes precedence over the kwarg.
 * The cap ratio test does not apply to text that is all uppercase.
+* If you use the ``language=""`` kwarg or set the ``UNSTRUCTURED_LANGUAGE`` environment variable to ``""``, the function will skip the verb check and the English word check.
 
 
 Examples:
@@ -320,6 +321,8 @@ for consideration as a title. The function performs the following checks:
 * Narrative text must contain at least one English word (if ``language`` is set to "en")
 * If a title contains more than one sentence that exceeds a certain length, it cannot be a title. Sentence length threshold is controlled by the ``sentence_min_length`` kwarg and defaults to 5.
 * If a segment of text ends in a comma, it is not considered a potential title. This is to avoid salutations like "To My Dearest Friends," getting flagged as titles.
+* If you use the ``language=""`` kwarg or set the ``UNSTRUCTURED_LANGUAGE`` environment variable to ``""``, the function will skip the English word check.
+
 
 
 Examples:

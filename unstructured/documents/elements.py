@@ -1,6 +1,8 @@
 from abc import ABC
+from dataclasses import dataclass
 import hashlib
 from typing import Callable, List, Optional, Union
+import pathlib
 
 
 class NoID(ABC):
@@ -9,14 +11,32 @@ class NoID(ABC):
     pass
 
 
+@dataclass
+class ElementMetadata:
+    filename: Optional[str] = None
+    page_number: Optional[int] = None
+    url: Optional[str] = None
+
+    def __post_init__(self):
+        if isinstance(self.filename, pathlib.Path):
+            self.filename = str(self.filename)
+
+    def to_dict(self):
+        return {key: value for key, value in self.__dict__.items() if value is not None}
+
+
 class Element(ABC):
     """An element is a section of a page in the document."""
 
     def __init__(
-        self, element_id: Union[str, NoID] = NoID(), coordinates: Optional[List[float]] = None
+        self,
+        element_id: Union[str, NoID] = NoID(),
+        coordinates: Optional[List[float]] = None,
+        metadata: ElementMetadata = ElementMetadata(),
     ):
         self.id: Union[str, NoID] = element_id
         self.coordinates: Optional[List[float]] = coordinates
+        self.metadata = metadata
 
 
 class CheckBox(Element):
@@ -28,10 +48,12 @@ class CheckBox(Element):
         element_id: Union[str, NoID] = NoID(),
         coordinates: Optional[List[float]] = None,
         checked: bool = False,
+        metadata: ElementMetadata = ElementMetadata(),
     ):
         self.id: Union[str, NoID] = element_id
         self.coordinates: Optional[List[float]] = coordinates
         self.checked: bool = checked
+        self.metadata = metadata
 
     def __eq__(self, other):
         return (self.checked == other.checked) and (self.coordinates) == (other.coordinates)
@@ -41,6 +63,7 @@ class CheckBox(Element):
             "checked": self.checked,
             "coordinates": self.coordinates,
             "element_id": self.id,
+            "metadata": self.metadata.to_dict(),
         }
 
 
@@ -54,6 +77,7 @@ class Text(Element):
         text: str,
         element_id: Union[str, NoID] = NoID(),
         coordinates: Optional[List[float]] = None,
+        metadata: ElementMetadata = ElementMetadata(),
     ):
         self.text: str = text
 
@@ -61,7 +85,7 @@ class Text(Element):
             # NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits
             element_id = hashlib.sha256(text.encode()).hexdigest()[:32]
 
-        super().__init__(element_id=element_id)
+        super().__init__(element_id=element_id, metadata=metadata, coordinates=coordinates)
 
     def __str__(self):
         return self.text
@@ -79,6 +103,7 @@ class Text(Element):
         return {
             "text": self.text,
             "type": self.category,
+            "metadata": self.metadata.to_dict(),
         }
 
     def apply(self, *cleaners: Callable):

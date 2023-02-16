@@ -49,6 +49,7 @@ def is_possible_narrative_text(
         logger.debug(f"Not narrative. Text is all numeric:\n\n{text}")
         return False
 
+    language = os.environ.get("UNSTRUCTURED_LANGUAGE", language)
     if language == "en" and not contains_english_word(text):
         return False
 
@@ -67,7 +68,7 @@ def is_possible_narrative_text(
     if under_non_alpha_ratio(text, threshold=non_alpha_threshold):
         return False
 
-    if (sentence_count(text, 3) < 2) and (not contains_verb(text)):
+    if (sentence_count(text, 3) < 2) and (not contains_verb(text)) and language == "en":
         logger.debug(f"Not narrative. Text does not contain a verb:\n\n{text}")
         return False
 
@@ -118,6 +119,7 @@ def is_possible_title(
     if text.endswith(","):
         return False
 
+    language = os.environ.get("UNSTRUCTURED_LANGUAGE", language)
     if language == "en" and not contains_english_word(text):
         return False
 

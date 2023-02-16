@@ -1,6 +1,13 @@
-## 0.4.9-dev0
+## 0.4.10
 
-* Added ingest modules and s3 connector
+* Fixes `ElementMetadata` so that it's JSON serializable when the filename is a `Path` object.
+
+## 0.4.9
+
+* Added ingest modules and s3 connector, sample ingest script
+* Default to `url=None` for `partition_pdf` and `partition_image`
+* Add ability to skip English specific check by setting the `UNSTRUCTURED_LANGUAGE` env var to `""`.
+* Document `Element` objects now track metadata
 
 ## 0.4.8
 
