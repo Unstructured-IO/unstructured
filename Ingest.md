@@ -17,6 +17,31 @@ By default, it will not reprocess files from s3 if their outputs already exist i
 
 
 ```
+$ PYTHONPATH=. python examples/ingest/s3-small-batch/main.py --help
+Usage: main.py [OPTIONS]
+
+Options:
+  --s3-url TEXT                   Prefix of s3 objects (files) to download.
+                                  E.g. s3://bucket1/path/. Prefix may also be
+                                  a single file
+  --re-download / --no-re-download
+                                  Re-download files from s3 even if already
+                                  present in --download-dir
+  --download-dir TEXT             Where s3 files are downloaded to, defaults
+                                  to tmp-ingest-<6 random chars>
+  --preserve-downloads            Preserve downloaded s3 files, otherwise each
+                                  file is removed after being processed
+                                  successfully
+  --structured-output-dir TEXT    Where to place structured output .json files
+  --reprocess                     If a structured output .json file already
+                                  exists, do not reprocess an s3 file to
+                                  overwrite it
+  --num-processes INTEGER         Number of parallel processes to process docs
+                                  in  [default: 2]
+  --anonymous                     Whether to connect to s3 without local AWS
+                                  credentials
+  -v, --verbose
+  --help                          Show this message and exit.
 ```
 
 # Developer notes
