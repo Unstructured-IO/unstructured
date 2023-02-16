@@ -21,7 +21,7 @@ def partition_text(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
     text: Optional[str] = None,
-    encoding: Optional[str] = None,
+    encoding: Optional[None] = None,
 ) -> List[Element]:
     """Partitions an .txt documents into its constituent elements.
     Parameters

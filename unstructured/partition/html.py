@@ -11,7 +11,7 @@ def partition_html(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
     text: Optional[str] = None,
-    encoding: Optional[str] = None,
+    encoding: Optional[None] = None,
     url: Optional[str] = None,
     include_page_breaks: bool = False,
 ) -> List[Element]:

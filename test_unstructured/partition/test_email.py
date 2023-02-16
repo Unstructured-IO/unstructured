@@ -116,6 +116,7 @@ def test_partition_email_from_text_file():
     assert elements == EXPECTED_OUTPUT
 
 
+
 def test_partition_email_from_text_file_with_headers():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.txt")
     with open(filename, "r") as f:
@@ -188,3 +189,8 @@ def test_partition_email_raises_with_invalid_content_type():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
     with pytest.raises(ValueError):
         partition_email(filename=filename, content_source="application/json")
+
+def test_partition_email_from_filename_with_wrong_encoding():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email-utf-16.txt")
+    with pytest.raises(UnicodeDecodeError):
+        partition_email(filename=filename,encoding='utf-8')

@@ -1,5 +1,6 @@
 import os
 import pathlib
+
 import pytest
 
 from unstructured.documents.elements import Address, NarrativeText, Title, ListItem
@@ -65,3 +66,9 @@ def test_partition_text_captures_everything_even_with_linebreaks():
         Title(text="VERY IMPORTANT MEMO"),
         Address(text="DOYLESTOWN, PA 18901"),
     ]
+
+
+def test_partition_text_from_filename_with_wrong_encoding():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-text-utf-16.txt")
+    with pytest.raises(UnicodeDecodeError):
+        partition_text(filename=filename, encoding='utf-8')

@@ -130,7 +130,7 @@ def partition_email(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
     text: Optional[str] = None,
-    encoding: Optional[str] = None,
+    encoding: Optional[None] = None,
     content_source: str = "text/html",
     include_headers: bool = False,
 ) -> List[Element]:
@@ -163,7 +163,10 @@ def partition_email(
     elif file is not None and not filename and not text:
         file_content = file.read()
         if isinstance(file_content, bytes):
-            file_text = file_content.decode("utf-8")
+            if encoding:
+                file_text = file_content.decode(encoding)
+            else:
+                file_text = file_content.decode("utf-8")
         else:
             file_text = file_content
 
