@@ -14,8 +14,9 @@ class MainProcess:
 
     def initialize(self):
         """Slower initialization things: check connections, load things into memory, etc."""
-        self.doc_connector.initialize()
-
+        #self.doc_connector.initialize()
+        pass
+        
     def cleanup(self):
         self.doc_connector.cleanup()
 

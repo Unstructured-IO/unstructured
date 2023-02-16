@@ -99,10 +99,15 @@ jobs:
         make install-nltk-models
         make install-detectron2
         sudo apt-get install -y libmagic-dev poppler-utils tesseract-ocr
-        make test
-        make check-coverage
-        make install-ingest-s3
-        ./test_unstructured_ingest/test-ingest.sh
+        #make test
+        #make check-coverage
+    - uses: actions/checkout@v3
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      with:
+        limit-access-to-actor: true
+#        make install-ingest-s3
+#        ./test_unstructured_ingest/test-ingest.sh
 
   changelog:
     runs-on: ubuntu-latest

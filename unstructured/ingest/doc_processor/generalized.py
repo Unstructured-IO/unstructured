@@ -6,6 +6,15 @@ import os
 from unstructured.partition.auto import partition
 from unstructured.staging.base import convert_to_isd
 
+from unstructured_inference.models.detectron2 import MODEL_TYPES
+
+
+def initialize():
+    """Download models (avoids subprocesses all doing the same)"""
+    # Accessing this dictionary triggers standard model downloads for pdf processing
+    MODEL_TYPES[None]["model_path"]
+    MODEL_TYPES[None]["config_path"]
+
 
 def process_document(doc):
     """Process any IngestDoc-like class of document with Unstructured's auto partition logic."""
