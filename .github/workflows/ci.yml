@@ -99,8 +99,8 @@ jobs:
         make install-nltk-models
         make install-detectron2
         sudo apt-get install -y libmagic-dev poppler-utils tesseract-ocr
-        #make test
-        #make check-coverage
+        make test
+        make check-coverage
         make install-ingest-s3
         ./test_unstructured_ingest/test-ingest.sh
 
