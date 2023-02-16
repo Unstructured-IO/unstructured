@@ -11,7 +11,8 @@ fi
 
 PYTHONPATH=. python examples/ingest/s3-small-batch/main.py
 
-if ! diff -ru structured-output/ test_unstructured_ingest/expected-structured-output/ ; then
+
+if ! diff -ru structured-output/small-pdf-set test_unstructured_ingest/expected-structured-output/small-pdf-set ; then
    echo
    echo "There are differences from the previously checked-in structured outputs."
    echo 
