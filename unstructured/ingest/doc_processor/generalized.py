@@ -35,7 +35,8 @@ def process_document(doc):
 
         isd_elems_no_filename = []
         for elem in isd_elems:
-            elem["metadata"].pop("filename")
+            # type: ignore
+            elem["metadata"].pop("filename")  # type: ignore[attr-defined]
             isd_elems_no_filename.append(elem)
 
         # Note, this may be a no-op if the IngestDoc doesn't do anything to persist
