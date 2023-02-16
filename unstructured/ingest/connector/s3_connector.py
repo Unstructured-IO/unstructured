@@ -2,9 +2,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 import json
 import os
-import random
 import re
-import string
 
 import boto3
 from botocore import UNSIGNED
@@ -16,8 +14,14 @@ class SimpleS3Config:
     s3_url: str
     ***REMOVED*** where to write structured data, with the directory structure matching s3 path
     ***REMOVED*** TODO(crag): support s3 output destination in addition to local filesystem
+    download_dir: str
     output_dir: str
     anonymous: bool = False
+    re_download: bool = False
+    preserve_downloads: bool = False
+    ***REMOVED*** if a structured output .json file already exists, do not reprocess an s3 file to overwrite it
+    reprocess: bool = False
+    verbose: bool = False
 
     s3_bucket: str = field(init=False)
     ***REMOVED*** could be single object or prefix
@@ -57,11 +61,8 @@ class S3IngestDoc:
 
     """
 
-    s3_bucket: str
+    config: SimpleS3Config
     s3_key: str
-    local_output_dir: str
-    tmp_download_dir: str
-    anonymous: bool = False
 
     ***REMOVED*** TODO(crag): probably, remove the s3 path prefix from the S3Connector from
     ***REMOVED*** the tmp_download_dir and local_output_dir paths to avoid creating
@@ -72,7 +73,13 @@ class S3IngestDoc:
     ***REMOVED*** __post_init__ for multiprocessing simplicity (no Path objects in initially
     ***REMOVED*** instantiated object)
     def _tmp_download_file(self):
-        return Path(self.tmp_download_dir) / self.s3_key
+        return Path(self.config.download_dir) / self.s3_key
+
+    def _output_filename(self):
+        return Path(self.config.output_dir) / f"{self.s3_key}.json"
+
+    def has_output(self):
+        return self._output_filename().is_file() and os.path.getsize(self._output_filename())
 
     def _create_full_tmp_dir_path(self):
         """includes "directories" in s3 object path"""
@@ -83,15 +90,26 @@ class S3IngestDoc:
     def get_file(self):
         """Actually fetches the file from s3"""
         self._create_full_tmp_dir_path()
-        if self.anonymous:
+        if (
+            not self.config.re_download
+            and self._tmp_download_file().is_file()
+            and os.path.getsize(self._tmp_download_file())
+        ):
+            if self.config.verbose:
+                print(f"File exists: {self._tmp_download_file()}, skipping download")
+            return
+
+        if self.config.anonymous:
             s3_cli = boto3.client("s3", config=Config(signature_version=UNSIGNED))
         else:
             s3_cli = boto3.client("s3")
-        s3_cli.download_file(self.s3_bucket, self.s3_key, self._tmp_download_file())
+        if self.config.verbose:
+            print(f"fetching {self} - PID: {os.getpid()}")
+        s3_cli.download_file(self.config.s3_bucket, self.s3_key, self._tmp_download_file())
 
     def write_result(self, result):
         """write the structured json result. result must be json serializable"""
-        output_filename = Path(self.local_output_dir) / f"{self.s3_key}.json"
+        output_filename = self._output_filename()
         output_filename.parent.mkdir(parents=True, exist_ok=True)
         with open(output_filename, "w") as output_f:
             output_f.write(json.dumps(result, ensure_ascii=False, indent=2))
@@ -104,7 +122,10 @@ class S3IngestDoc:
 
     def cleanup_file(self):
         """Removes the local copy the file after successful processing."""
-        os.unlink(self._tmp_download_file())
+        if not self.config.preserve_downloads:
+            if self.config.verbose:
+                print(f"cleaning up {self}")
+            os.unlink(self._tmp_download_file())
 
 
 class S3Connector:
@@ -120,10 +141,7 @@ class S3Connector:
             self.s3_cli = boto3.client("s3", config=Config(signature_version=UNSIGNED))
         else:
             self.s3_cli = boto3.client("s3")
-        self._tmp_download_dir = "tmp-ingest-" + "".join(
-            random.choice(string.ascii_letters) for i in range(6)
-        )
-        self.cleanup_files = True
+        self.cleanup_files = not config.preserve_downloads
 
     def cleanup(self, cur_dir=None):
         """cleanup linginering empty sub-dirs from s3 paths, but leave remaining files
@@ -132,7 +150,7 @@ class S3Connector:
             return
 
         if cur_dir is None:
-            cur_dir = self._tmp_download_dir
+            cur_dir = self.config.download_dir
         sub_dirs = os.listdir(cur_dir)
         os.chdir(cur_dir)
         for sub_dir in sub_dirs:
@@ -150,7 +168,7 @@ class S3Connector:
             raise ValueError(
                 f"No objects found in {self.config.s3_url} -- response list object is {response}"
             )
-        os.mkdir(self._tmp_download_dir)
+        os.mkdir(self.config.download_dir)
 
     def _list_objects(self):
         response = self.s3_cli.list_objects_v2(**self._list_objects_kwargs)
@@ -170,11 +188,8 @@ class S3Connector:
         s3_keys = self._list_objects()
         return [
             S3IngestDoc(
-                self.config.s3_bucket,
+                self.config,
                 s3_key,
-                self.config.output_dir,
-                self._tmp_download_dir,
-                self.config.anonymous,
             )
             for s3_key in s3_keys
         ]

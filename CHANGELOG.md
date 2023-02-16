@@ -1,6 +1,6 @@
 ***REMOVED******REMOVED*** 0.4.9
 
-* Added ingest modules and s3 connector
+* Added ingest modules and s3 connector, sample ingest script
 * Default to `url=None` for `partition_pdf` and `partition_image`
 * Add ability to skip English specific check by setting the `UNSTRUCTURED_LANGUAGE` env var to `""`.
 * Document `Element` objects now track metadata

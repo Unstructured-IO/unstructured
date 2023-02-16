@@ -133,6 +133,8 @@ dmypy.json
 /structured-output
 ***REMOVED*** ingest temporary files
 /tmp-ingest*
+***REMOVED*** suggested ingest mirror directory
+/mirror
 
 ***REMOVED******REMOVED*** https://github.com/github/gitignore/blob/main/Global/Emacs.gitignore (partial)
 
