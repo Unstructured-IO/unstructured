@@ -191,13 +191,5 @@ class S3Connector:
                 self.config,
                 s3_key,
             )
-            # S3IngestDoc(
-            #    self.config.s3_bucket,
-            #    s3_key,
-            #    self.config.output_dir,
-            #    self._tmp_download_dir,
-            #    self.config.anonymous,
-            #    self.config.re_download,
-            # )
             for s3_key in s3_keys
         ]
