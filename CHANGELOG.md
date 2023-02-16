@@ -1,3 +1,7 @@
+## 0.4.10
+
+* Fixes `ElementMetadata` so that it's JSON serializable when the filename is a `Path` object.
+
 ## 0.4.9
 
 * Added ingest modules and s3 connector, sample ingest script

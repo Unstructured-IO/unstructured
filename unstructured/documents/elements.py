@@ -2,6 +2,7 @@ from abc import ABC
 from dataclasses import dataclass
 import hashlib
 from typing import Callable, List, Optional, Union
+import pathlib
 
 
 class NoID(ABC):
@@ -15,6 +16,10 @@ class ElementMetadata:
     filename: Optional[str] = None
     page_number: Optional[int] = None
     url: Optional[str] = None
+
+    def __post_init__(self):
+        if isinstance(self.filename, pathlib.Path):
+            self.filename = str(self.filename)
 
     def to_dict(self):
         return {key: value for key, value in self.__dict__.items() if value is not None}
