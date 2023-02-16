@@ -11,7 +11,9 @@ from unstructured_inference.models.detectron2 import MODEL_TYPES
 
 def initialize():
     """Download models (avoids subprocesses all doing the same)"""
-    # Accessing this dictionary triggers standard model downloads for pdf processing
+    # Accessing this dictionary triggers standard model downloads for pdf processing.
+    # There will be a better way to do this, see
+    # https://github.com/Unstructured-IO/unstructured-inference/issues/55
     MODEL_TYPES[None]["model_path"]
     MODEL_TYPES[None]["config_path"]
 

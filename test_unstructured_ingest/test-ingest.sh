@@ -2,8 +2,6 @@
 
 set -eux -o pipefail
 
-#PYTHONPATH=. python examples/ingest/s3-small-batch/main.py
-
 if [[ "$(find test_unstructured_ingest/expected-structured-output/ -type f -size +20k | wc -l)" != 3 ]]; then
     echo "The test fixtures in test_unstructured_ingest/expected-structured-output/ look suspicious. At least one of the files is too small."
     echo "Did you overwrite test fixtures with bad outputs?"
@@ -11,6 +9,7 @@ if [[ "$(find test_unstructured_ingest/expected-structured-output/ -type f -size
     exit 1
 fi
 
+PYTHONPATH=. python examples/ingest/s3-small-batch/main.py
 
 if ! diff -ru structured-output/ test_unstructured_ingest/expected-structured-output/ ; then
    echo

@@ -1,7 +1,7 @@
 import multiprocessing as mp
 import os
 from unstructured.ingest.connector.s3_connector import S3Connector, SimpleS3Config
-from unstructured.ingest.doc_processor.generalized import process_document
+from unstructured.ingest.doc_processor.generalized import initialize, process_document
 
 class MainProcess:
 
@@ -14,7 +14,7 @@ class MainProcess:
 
     def initialize(self):
         """Slower initialization things: check connections, load things into memory, etc."""
-        pass
+        initialize()
         
     def cleanup(self):
         self.doc_connector.cleanup()
