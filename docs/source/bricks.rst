@@ -98,13 +98,9 @@ Examples:
 
 .. code:: python
 
-  from unstructured.partition.common import convert_office_doc
   from unstructured.partition.doc import partition_doc
 
-
-  convert_office_doc("example-docs/fake.docx", "example-docs", "doc")
-
-  elements = partition_doc(filename="fake.doc")
+  elements = partition_doc(filename="example-docs/fake.doc")
 
 
 ``partition_pptx``
