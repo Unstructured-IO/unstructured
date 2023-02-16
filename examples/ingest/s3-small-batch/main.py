@@ -62,26 +62,26 @@ class MainProcess:
 
 @click.command()
 @click.option('--s3-url', default="s3://utic-dev-tech-fixtures/small-pdf-set/",
-              help="Prefix of s3 objects (files) to download. E.g. s3://bucket1/path/. Prefix may also be a single file")
+              help="Prefix of s3 objects (files) to download. E.g. s3://bucket1/path/. This value may also be a single file.")
 @click.option('--re-download/--no-re-download', default=False,
-              help="Re-download files from s3 even if already present in --download-dir")
+              help="Re-download files from s3 even if they are already present in --download-dir.")
 @click.option('--download-dir',
-              help="Where s3 files are downloaded to, defaults to tmp-ingest-<6 random chars>" )
+              help="Where s3 files are downloaded to, defaults to tmp-ingest-<6 random chars>." )
 @click.option('--preserve-downloads', is_flag=True, default=False,
-              help="Preserve downloaded s3 files, otherwise each file is removed after being processed successfully"  )
+              help="Preserve downloaded s3 files. Otherwise each file is removed after being processed successfully."  )
 @click.option('--structured-output-dir', default="structured-output",
-              help="Where to place structured output .json files"  )
+              help="Where to place structured output .json files.")
 @click.option('--reprocess', is_flag=True, default=False,
-              help="If a structured output .json file already exists, do not reprocess an s3 file to overwrite it")
+              help="Reprocess a downloaded file from s3 even if the relevant structured output .json file in --structured-output-dir already exists.")
 @click.option('--num-processes', default=2, show_default=True,
-              help="Number of parallel processes to process docs in")
+              help="Number of parallel processes to process docs in.")
 @click.option('--anonymous', is_flag=True, default=False,
-              help="Whether to connect to s3 without local AWS credentials")
+              help="Connect to s3 without local AWS credentials.")
 @click.option('-v', '--verbose', is_flag=True, default=False)
 def main(s3_url, re_download, download_dir, preserve_downloads, structured_output_dir,
          reprocess, num_processes, anonymous, verbose):
     if not preserve_downloads and download_dir:
-        print("Warning: not preserving downloaded s3 files but download_dir is specified")
+        print("Warning: not preserving downloaded s3 files but --download_dir is specified")
     if not download_dir:
         download_dir = "tmp-ingest-" + "".join(
             random.choice(string.ascii_letters) for i in range(6)

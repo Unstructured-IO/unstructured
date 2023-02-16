@@ -15,31 +15,30 @@ This utility is ready to use with any s3 prefix!
 By default, it will not reprocess files from s3 if their outputs already exist in --structured-ouput-dir. Natrually, this may come in handy when processing a large number of files. However, you can force reprocessing all documents with the --reprocess flag. 
 
 
-
 ```
 $ PYTHONPATH=. python examples/ingest/s3-small-batch/main.py --help
 Usage: main.py [OPTIONS]
 
 Options:
   --s3-url TEXT                   Prefix of s3 objects (files) to download.
-                                  E.g. s3://bucket1/path/. Prefix may also be
-                                  a single file
+                                  E.g. s3://bucket1/path/. This value may also
+                                  be a single file.
   --re-download / --no-re-download
-                                  Re-download files from s3 even if already
-                                  present in --download-dir
+                                  Re-download files from s3 even if they are
+                                  already present in --download-dir.
   --download-dir TEXT             Where s3 files are downloaded to, defaults
-                                  to tmp-ingest-<6 random chars>
-  --preserve-downloads            Preserve downloaded s3 files, otherwise each
+                                  to tmp-ingest-<6 random chars>.
+  --preserve-downloads            Preserve downloaded s3 files. Otherwise each
                                   file is removed after being processed
-                                  successfully
-  --structured-output-dir TEXT    Where to place structured output .json files
-  --reprocess                     If a structured output .json file already
-                                  exists, do not reprocess an s3 file to
-                                  overwrite it
+                                  successfully.
+  --structured-output-dir TEXT    Where to place structured output .json
+                                  files.
+  --reprocess                     Reprocess a downloaded file from s3 even if
+                                  the relevant structured output .json file in
+                                  --structured-output-dir already exists.
   --num-processes INTEGER         Number of parallel processes to process docs
-                                  in  [default: 2]
-  --anonymous                     Whether to connect to s3 without local AWS
-                                  credentials
+                                  in.  [default: 2]
+  --anonymous                     Connect to s3 without local AWS credentials.
   -v, --verbose
   --help                          Show this message and exit.
 ```
