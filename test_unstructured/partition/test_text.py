@@ -71,4 +71,4 @@ def test_partition_text_captures_everything_even_with_linebreaks():
 def test_partition_text_from_filename_with_wrong_encoding():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-text-utf-16.txt")
     with pytest.raises(UnicodeDecodeError):
-        partition_text(filename=filename, encoding='utf-8')
+        partition_text(filename=filename, encoding="utf-8")
