@@ -6,36 +6,17 @@ See the sample project [examples/ingest/s3-small-batch/main.py](examples/ingest/
 
 You can try it out with:
 
-    PYTHONPATH=. python examples/ingest/s3-small-batch/main.py --s3-url s3://utic-dev-tech-fixtures/small-pdf-set/
+    PYTHONPATH=. python examples/ingest/s3-small-batch/main.py --s3-url s3://utic-dev-tech-fixtures/small-pdf-set/ --anonymous
 
-Note that this is ready to use with any s3 prefix!
+    # Note the --anonymous simply means not to use local AWS credentials
 
-By default, it will not reprocess files from s3 if their outputs already exist in --structured-ouput-dir. However, you can force reprocessing all documents with the --reprocess flag.
+This utility is ready to use with any s3 prefix!
+
+By default, it will not reprocess files from s3 if their outputs already exist in --structured-ouput-dir. Natrually, this may come in handy when processing a large number of files. However, you can force reprocessing all documents with the --reprocess flag. 
+
+
 
 ```
-$ PYTHONPATH=. python examples/ingest/s3-small-batch/main.py --help
-Usage: main.py [OPTIONS]
-
-Options:
-  --s3-url TEXT                   Prefix of s3 objects (files) to download.
-                                  E.g. s3://bucket1/path/. Prefix may also be
-                                  a single file
-  --re-download / --no-re-download
-                                  Re-download files from s3 even if already
-                                  present in --download-dir
-  --download-dir TEXT             Where s3 files are downloaded to, defaults
-                                  to tmp-ingest-<6 random chars>
-  --preserve-downloads            Preserve downloaded s3 files, otherwise each
-                                  file is removed after being processed
-                                  successfully
-  --structured-output-dir TEXT    Where to place structured output .json files
-  --reprocess                     If a structured output .json file already
-                                  exists, do not reprocess an s3 file to
-                                  overwrite it
-  --num-processes INTEGER         Number of parallel processes to process docs
-                                  in  [default: 2]
-  -v, --verbose
-  --help                          Show this message and exit.
 ```
 
 # Developer notes

@@ -53,10 +53,10 @@ class MainProcess:
             
         # Debugging tip: use the below line and comment out the mp.Pool loop
         # block to remain in single process
-        self.doc_processor_fn(docs[0])
+        # self.doc_processor_fn(docs[0])
         
-        #with mp.Pool(processes=self.num_processes) as pool:
-        #    results = pool.map(self.doc_processor_fn, docs)
+        with mp.Pool(processes=self.num_processes) as pool:
+            results = pool.map(self.doc_processor_fn, docs)
         
         self.cleanup()
 
@@ -69,14 +69,17 @@ class MainProcess:
               help="Where s3 files are downloaded to, defaults to tmp-ingest-<6 random chars>" )
 @click.option('--preserve-downloads', is_flag=True, default=False,
               help="Preserve downloaded s3 files, otherwise each file is removed after being processed successfully"  )
-@click.option('--structured-output-dir', default="structured-outputs",
+@click.option('--structured-output-dir', default="structured-output",
               help="Where to place structured output .json files"  )
 @click.option('--reprocess', is_flag=True, default=False,
               help="If a structured output .json file already exists, do not reprocess an s3 file to overwrite it")
 @click.option('--num-processes', default=2, show_default=True,
               help="Number of parallel processes to process docs in")
+@click.option('--anonymous', is_flag=True, default=False,
+              help="Whether to connect to s3 without local AWS credentials")
 @click.option('-v', '--verbose', is_flag=True, default=False)
-def main(s3_url, re_download, download_dir, preserve_downloads, structured_output_dir, reprocess, num_processes, verbose):
+def main(s3_url, re_download, download_dir, preserve_downloads, structured_output_dir,
+         reprocess, num_processes, anonymous, verbose):
     if not preserve_downloads and download_dir:
         print("Warning: not preserving downloaded s3 files but download_dir is specified")
     if not download_dir:
@@ -89,7 +92,7 @@ def main(s3_url, re_download, download_dir, preserve_downloads, structured_outpu
             s3_url=s3_url,
             output_dir=structured_output_dir,
             # set to False to use your AWS creds (not needed for this public s3 url)
-            anonymous=True,
+            anonymous=anonymous,
             re_download=re_download,
             preserve_downloads=preserve_downloads,
             verbose=verbose,
