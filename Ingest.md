@@ -9,7 +9,7 @@ You can try it out with:
     PYTHONPATH=. python examples/ingest/s3-small-batch/main.py --s3-url s3://utic-dev-tech-fixtures/small-pdf-set/ --anonymous
 
     # Note: the --anonymous flag indicates not to provide AWS credentials, needed 
-    # for the boto3 lib. remove this flag when local AWS credentials are required.
+    # for the boto3 lib. Remove this flag when local AWS credentials are required.
 
 This utility is ready to use with any s3 prefix!
 
