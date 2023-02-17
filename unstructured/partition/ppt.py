@@ -7,7 +7,9 @@ from unstructured.partition.common import convert_office_doc
 from unstructured.partition.pptx import partition_pptx
 
 
-def partition_ppt(filename: Optional[str] = None, file: Optional[IO] = None) -> List[Element]:
+def partition_ppt(
+    filename: Optional[str] = None, file: Optional[IO] = None, include_page_breaks: bool = False
+) -> List[Element]:
     """Partitions Microsoft PowerPoint Documents in .ppt format into its document elements.
 
     Parameters
@@ -16,6 +18,8 @@ def partition_ppt(filename: Optional[str] = None, file: Optional[IO] = None) -> 
         A string defining the target filename path.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
+    include_page_breaks
+        If True, includes a PageBreak element between slides
     """
     if not any([filename, file]):
         raise ValueError("One of filename or file must be specified.")
@@ -40,6 +44,6 @@ def partition_ppt(filename: Optional[str] = None, file: Optional[IO] = None) -> 
     with tempfile.TemporaryDirectory() as tmpdir:
         convert_office_doc(filename, tmpdir, target_format="pptx")
         pptx_filename = os.path.join(tmpdir, f"{base_filename}.pptx")
-        elements = partition_pptx(filename=pptx_filename)
+        elements = partition_pptx(filename=pptx_filename, metadata_filename=filename)
 
     return elements

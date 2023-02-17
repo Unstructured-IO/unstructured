@@ -40,6 +40,6 @@ def partition_doc(filename: Optional[str] = None, file: Optional[IO] = None) -> 
     with tempfile.TemporaryDirectory() as tmpdir:
         convert_office_doc(filename, tmpdir, target_format="docx")
         docx_filename = os.path.join(tmpdir, f"{base_filename}.docx")
-        elements = partition_docx(filename=docx_filename)
+        elements = partition_docx(filename=docx_filename, metadata_filename=filename)
 
     return elements
