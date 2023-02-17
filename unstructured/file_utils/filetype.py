@@ -3,7 +3,11 @@ import os
 from typing import IO, Optional
 import zipfile
 
-import magic
+try:
+    import magic
+    LIBMAGIC_AVAILABLE = True
+except ImportError:
+    LIBMAGIC_AVAILABLE = False
 
 from unstructured.logger import logger
 from unstructured.nlp.patterns import EMAIL_HEAD_RE
@@ -105,12 +109,21 @@ EXT_TO_FILETYPE = {
     ".rtf": FileType.RTF,
 }
 
+def _detect_filetype_from_extension(extension: str) -> Optional[FileType]:
+    """Detect the file type based on the file extension."""
+    if extension in ['.txt', '.text']:
+        return FileType.TEXT
+    elif extension in ['.pdf']:
+        return FileType.PDF
+    elif extension in ['.jpg', '.jpeg', '.png', '.gif']:
+        return FileType.IMAGE
+    # Add more supported file types and their extensions here.
+    return None
+
 def detect_filetype(    
     filename: Optional[str] = None, file: Optional[IO] = None
 ) -> Optional[FileType]:
     try:
-        import magic
-        LIBMAGIC_AVAILABLE = True
         # Attempt to load the libmagic library 
         magic_obj = magic.Magic()
         mime_type = magic_obj.from_file(filename, mime=True)
@@ -123,6 +136,8 @@ def detect_filetype(
             _, extension = os.path.splitext(filename)
             extension = extension.lower()
             mime_type = magic.from_file(filename, mime=True)
+            if not LIBMAGIC_AVAILABLE:
+                return _detect_filetype_from_extension(filename)
         elif file is not None:
             extension = None
             # NOTE(robinson) - the python-magic docs recommend reading at least the first 2048 bytes
@@ -209,7 +224,6 @@ def detect_filetype(
         )
         return FileType.UNK
     except ImportError:
-        LIBMAGIC_AVAILABLE = False
         if filename and file:
             raise ValueError("Only one of filename or file should be specified.")
         if not filename and not file:
@@ -219,6 +233,9 @@ def detect_filetype(
         if filename:
             _, extension = os.path.splitext(filename)
         extension = extension.lower()
+
+        if not LIBMAGIC_AVAILABLE:
+            return _detect_filetype_from_extension(filename)
 
         mime_type = None
         if file is not None:
@@ -319,3 +336,4 @@ def _check_eml_from_buffer(file: IO) -> bool:
         file_head = file_content
 
     return EMAIL_HEAD_RE.match(file_head) is not None
+
