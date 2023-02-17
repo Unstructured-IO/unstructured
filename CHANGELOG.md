@@ -1,6 +1,7 @@
-## 0.4.11-dev0
+## 0.4.11
 
 * Adds `partition_doc` for partition Word documents in `.doc` format. Requires `libreoffice`.
+* Adds `partition_ppt` for partition Word documents in `.ppt` format. Requires `libreoffice`.
 
 ## 0.4.10
 
