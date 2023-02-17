@@ -319,7 +319,7 @@ If you call the <code class="docutils literal notranslate"><span class="pre">par
 file type and route it to the appropriate partitioning brick. All partitioning bricks
 called within <code class="docutils literal notranslate"><span class="pre">partition</span></code> are called using the defualt kwargs. Use the document-type
 specific bricks if you need to apply non-default settings.
-<code class="docutils literal notranslate"><span class="pre">partition</span></code> currently supports <code class="docutils literal notranslate"><span class="pre">.docx</span></code>, <code class="docutils literal notranslate"><span class="pre">.doc</span></code>, <code class="docutils literal notranslate"><span class="pre">.pptx</span></code>, <code class="docutils literal notranslate"><span class="pre">.eml</span></code>, <code class="docutils literal notranslate"><span class="pre">.html</span></code>, <code class="docutils literal notranslate"><span class="pre">.pdf</span></code>,
+<code class="docutils literal notranslate"><span class="pre">partition</span></code> currently supports <code class="docutils literal notranslate"><span class="pre">.docx</span></code>, <code class="docutils literal notranslate"><span class="pre">.doc</span></code>, <code class="docutils literal notranslate"><span class="pre">.pptx</span></code>, <code class="docutils literal notranslate"><span class="pre">.ppt</span></code>, <code class="docutils literal notranslate"><span class="pre">.eml</span></code>, <code class="docutils literal notranslate"><span class="pre">.html</span></code>, <code class="docutils literal notranslate"><span class="pre">.pdf</span></code>,
 <code class="docutils literal notranslate"><span class="pre">.png</span></code>, <code class="docutils literal notranslate"><span class="pre">.jpg</span></code>, and <code class="docutils literal notranslate"><span class="pre">.txt</span></code> files.
 If you set the <code class="docutils literal notranslate"><span class="pre">include_page_breaks</span></code> kwarg to <code class="docutils literal notranslate"><span class="pre">True</span></code>, the output will include page breaks. This is only supported for <code class="docutils literal notranslate"><span class="pre">.pptx</span></code>, <code class="docutils literal notranslate"><span class="pre">.html</span></code>, <code class="docutils literal notranslate"><span class="pre">.pdf</span></code>,
 <code class="docutils literal notranslate"><span class="pre">.png</span></code>, and <code class="docutils literal notranslate"><span class="pre">.jpg</span></code>.</p>
@@ -376,8 +376,8 @@ as input, as shown in the two examples below.</p>
 saved in the <code class="docutils literal notranslate"><span class="pre">.doc</span></code> format. This staging brick uses a combination of the styling
 information in the document and the structure of the text to determine the type
 of a text element. The <code class="docutils literal notranslate"><span class="pre">partition_doc</span></code> can take a filename or file-like object
-as input, as shown in the two examples below. <code class="docutils literal notranslate"><span class="pre">partiton_doc</span></code>
-uses <code class="docutils literal notranslate"><span class="pre">libreoffice</span></code> to convert the file to <code class="docutils literal notranslate"><span class="pre">.docx</span></code> and then
+as input.
+<code class="docutils literal notranslate"><span class="pre">partiton_doc</span></code> uses <code class="docutils literal notranslate"><span class="pre">libreoffice</span></code> to convert the file to <code class="docutils literal notranslate"><span class="pre">.docx</span></code> and then
 calls <code class="docutils literal notranslate"><span class="pre">partition_docx</span></code>. Ensure you have <code class="docutils literal notranslate"><span class="pre">libreoffice</span></code> installed
 before using <code class="docutils literal notranslate"><span class="pre">partition_doc</span></code>.</p>
 <p>Examples:</p>
@@ -401,6 +401,22 @@ as input, as shown in the two examples below.</p>
 
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;example-docs/fake-power-point.pptx&quot;</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_pptx</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="partition-ppt">
+<h3><code class="docutils literal notranslate"><span class="pre">partition_ppt</span></code><a class="headerlink" href="#partition-ppt" title="Permalink to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">partition_ppt</span></code> partitioning brick pre-processes Microsoft PowerPoint documents
+saved in the <code class="docutils literal notranslate"><span class="pre">.ppt</span></code> format. This staging brick uses a combination of the styling
+information in the document and the structure of the text to determine the type
+of a text element. The <code class="docutils literal notranslate"><span class="pre">partition_ppt</span></code> can take a filename or file-like object.
+<code class="docutils literal notranslate"><span class="pre">partition_ppt</span></code> uses <code class="docutils literal notranslate"><span class="pre">libreoffice</span></code> to convert the file to <code class="docutils literal notranslate"><span class="pre">.pptx</span></code> and then
+calls <code class="docutils literal notranslate"><span class="pre">partition_pptx</span></code>. Ensure you have <code class="docutils literal notranslate"><span class="pre">libreoffice</span></code> installed
+before using <code class="docutils literal notranslate"><span class="pre">partition_ppt</span></code>.</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.ppt</span> <span class="kn">import</span> <span class="n">partition_ppt</span>
+
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_ppt</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example-docs/fake-power-point.ppt&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -1519,6 +1535,7 @@ is used by default.</p>
 <li><a class="reference internal" href="#partition-docx"><code class="docutils literal notranslate"><span class="pre">partition_docx</span></code></a></li>
 <li><a class="reference internal" href="#partition-doc"><code class="docutils literal notranslate"><span class="pre">partition_doc</span></code></a></li>
 <li><a class="reference internal" href="#partition-pptx"><code class="docutils literal notranslate"><span class="pre">partition_pptx</span></code></a></li>
+<li><a class="reference internal" href="#partition-ppt"><code class="docutils literal notranslate"><span class="pre">partition_ppt</span></code></a></li>
 <li><a class="reference internal" href="#partition-html"><code class="docutils literal notranslate"><span class="pre">partition_html</span></code></a></li>
 <li><a class="reference internal" href="#partition-pdf"><code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code></a></li>
 <li><a class="reference internal" href="#partition-image"><code class="docutils literal notranslate"><span class="pre">partition_image</span></code></a></li>
