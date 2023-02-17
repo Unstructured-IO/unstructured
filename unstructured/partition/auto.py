@@ -1,10 +1,12 @@
 from typing import IO, Optional
 
 from unstructured.file_utils.filetype import detect_filetype, FileType
+from unstructured.partition.doc import partition_doc
 from unstructured.partition.docx import partition_docx
 from unstructured.partition.email import partition_email
 from unstructured.partition.html import partition_html
 from unstructured.partition.pdf import partition_pdf
+from unstructured.partition.ppt import partition_ppt
 from unstructured.partition.pptx import partition_pptx
 from unstructured.partition.image import partition_image
 from unstructured.partition.text import partition_text
@@ -34,6 +36,8 @@ def partition(
     if file is not None:
         file.seek(0)
 
+    if filetype == FileType.DOC:
+        return partition_doc(filename=filename, file=file)
     if filetype == FileType.DOCX:
         return partition_docx(filename=filename, file=file)
     elif filetype == FileType.EML:
@@ -56,6 +60,8 @@ def partition(
         )
     elif filetype == FileType.TXT:
         return partition_text(filename=filename, file=file)
+    elif filetype == FileType.PPT:
+        return partition_ppt(filename=filename, file=file, include_page_breaks=include_page_breaks)
     elif filetype == FileType.PPTX:
         return partition_pptx(filename=filename, file=file, include_page_breaks=include_page_breaks)
     else:

@@ -1,3 +1,8 @@
+## 0.4.11
+
+* Adds `partition_doc` for partitioning Word documents in `.doc` format. Requires `libreoffice`.
+* Adds `partition_ppt` for partitioning PowerPoint documents in `.ppt` format. Requires `libreoffice`.
+
 ## 0.4.10
 
 * Fixes `ElementMetadata` so that it's JSON serializable when the filename is a `Path` object.

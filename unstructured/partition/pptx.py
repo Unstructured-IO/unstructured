@@ -24,6 +24,7 @@ def partition_pptx(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
     include_page_breaks: bool = True,
+    metadata_filename: Optional[str] = None,
 ) -> List[Element]:
     """Partitions Microsoft PowerPoint Documents in .pptx format into its document elements.
 
@@ -35,6 +36,10 @@ def partition_pptx(
         A file-like object using "rb" mode --> open(filename, "rb").
     include_page_breaks
         If True, includes a PageBreak element between slides
+    metadata_filename
+        The filename to use for the metadata. Relevant because partition_ppt converts the
+        document .pptx before partition. We want the original source filename in the
+        metadata.
     """
 
     if not any([filename, file]):
@@ -48,7 +53,8 @@ def partition_pptx(
         raise ValueError("Only one of filename or file can be specified.")
 
     elements: List[Element] = list()
-    metadata = ElementMetadata(filename=filename)
+    metadata_filename = metadata_filename or filename
+    metadata = ElementMetadata(filename=metadata_filename)
     num_slides = len(presentation.slides)
     for i, slide in enumerate(presentation.slides):
         metadata.page_number = i + 1

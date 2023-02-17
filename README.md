@@ -78,7 +78,8 @@ To install the library, run `pip install unstructured`.
 You can run this [Colab notebook](https://colab.research.google.com/drive/1U8VCjY2-x8c6y5TYMbSFtQGlQVFHCVIW) to run the examples below.
 
 The following examples show how to get started with the `unstructured` library.
-You can parse **TXT**, **HTML**, **PDF**, **EML** and **DOCX** documents with one line of code!
+You can parse **TXT**, **HTML**, **PDF**, **EML**, **DOC**, **DOCX**, **PPT**, **PPTX**, **JPG**,
+and **PNG** documents with one line of code!
 <br></br>
 See our [documentation page](https://unstructured-io.github.io/unstructured) for a full description
 of the features in the library.
@@ -92,7 +93,7 @@ If you are using the `partition` brick, you may need to install additional param
 instructions outlined [here](https://unstructured-io.github.io/unstructured/installing.html#filetype-detection)
 `partition` will always apply the default arguments. If you need
 advanced features, use a document-specific brick. The `partition` brick currently works for
-`.txt`, `.docx`, `.pptx`, `.jpg`, `.png`, `.eml`, `.html`, and `.pdf` documents.
+`.txt`, `.doc`, `.docx`, `.ppt`, `.pptx`, `.jpg`, `.png`, `.eml`, `.html`, and `.pdf` documents.
 
 ```python
 from unstructured.partition.auto import partition

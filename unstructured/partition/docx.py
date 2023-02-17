@@ -57,7 +57,9 @@ STYLE_TO_ELEMENT_MAPPING = {
 
 
 def partition_docx(
-    filename: Optional[str] = None, file: Optional[IO] = None, **kwargs
+    filename: Optional[str] = None,
+    file: Optional[IO] = None,
+    metadata_filename: Optional[str] = None,
 ) -> List[Element]:
     """Partitions Microsoft Word Documents in .docx format into its document elements.
 
@@ -67,6 +69,10 @@ def partition_docx(
         A string defining the target filename path.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
+    metadata_filename
+        The filename to use for the metadata. Relevant because partition_doc converts the
+        document to .docx before partition. We want the original source filename in the
+        metadata.
     """
 
     if not any([filename, file]):
@@ -79,11 +85,12 @@ def partition_docx(
     else:
         raise ValueError("Only one of filename or file can be specified.")
 
+    metadata_filename = metadata_filename or filename
     elements: List[Element] = []
     for paragraph in document.paragraphs:
         element = _paragraph_to_element(paragraph)
         if element is not None:
-            element.metadata = ElementMetadata(filename=filename)
+            element.metadata = ElementMetadata(filename=metadata_filename)
             elements.append(element)
 
     return elements
