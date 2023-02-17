@@ -4,18 +4,22 @@ from typing import IO, List, Optional
 
 from unstructured.documents.elements import Element
 from unstructured.partition.common import convert_office_doc
-from unstructured.partition.docx import partition_docx
+from unstructured.partition.pptx import partition_pptx
 
 
-def partition_doc(filename: Optional[str] = None, file: Optional[IO] = None) -> List[Element]:
-    """Partitions Microsoft Word Documents in .doc format into its document elements.
+def partition_ppt(
+    filename: Optional[str] = None, file: Optional[IO] = None, include_page_breaks: bool = False
+) -> List[Element]:
+    """Partitions Microsoft PowerPoint Documents in .ppt format into their document elements.
 
     Parameters
     ----------
-     filename
+    filename
         A string defining the target filename path.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
+    include_page_breaks
+        If True, includes a PageBreak element between slides
     """
     if not any([filename, file]):
         raise ValueError("One of filename or file must be specified.")
@@ -38,8 +42,8 @@ def partition_doc(filename: Optional[str] = None, file: Optional[IO] = None) -> 
     base_filename, _ = os.path.splitext(filename_no_path)
 
     with tempfile.TemporaryDirectory() as tmpdir:
-        convert_office_doc(filename, tmpdir, target_format="docx")
-        docx_filename = os.path.join(tmpdir, f"{base_filename}.docx")
-        elements = partition_docx(filename=docx_filename, metadata_filename=filename)
+        convert_office_doc(filename, tmpdir, target_format="pptx")
+        pptx_filename = os.path.join(tmpdir, f"{base_filename}.pptx")
+        elements = partition_pptx(filename=pptx_filename, metadata_filename=filename)
 
     return elements

@@ -22,7 +22,7 @@ If you call the ``partition`` function, ``unstructured`` will attempt to detect 
 file type and route it to the appropriate partitioning brick. All partitioning bricks
 called within ``partition`` are called using the defualt kwargs. Use the document-type
 specific bricks if you need to apply non-default settings.
-``partition`` currently supports ``.docx``, ``.doc``, ``.pptx``, ``.eml``, ``.html``, ``.pdf``,
+``partition`` currently supports ``.docx``, ``.doc``, ``.pptx``, ``.ppt``, ``.eml``, ``.html``, ``.pdf``,
 ``.png``, ``.jpg``, and ``.txt`` files.
 If you set the ``include_page_breaks`` kwarg to ``True``, the output will include page breaks. This is only supported for ``.pptx``, ``.html``, ``.pdf``,
 ``.png``, and ``.jpg``.
@@ -89,8 +89,8 @@ The ``partition_doc`` partitioning brick pre-processes Microsoft Word documents
 saved in the ``.doc`` format. This staging brick uses a combination of the styling
 information in the document and the structure of the text to determine the type
 of a text element. The ``partition_doc`` can take a filename or file-like object
-as input, as shown in the two examples below. ``partiton_doc``
-uses ``libreoffice`` to convert the file to ``.docx`` and then
+as input.
+``partiton_doc`` uses ``libreoffice`` to convert the file to ``.docx`` and then
 calls ``partition_docx``. Ensure you have ``libreoffice`` installed
 before using ``partition_doc``.
 
@@ -123,6 +123,25 @@ Examples:
   with open("example-docs/fake-power-point.pptx", "rb") as f:
       elements = partition_pptx(file=f)
 
+
+``partition_ppt``
+---------------------
+
+The ``partition_ppt`` partitioning brick pre-processes Microsoft PowerPoint documents
+saved in the ``.ppt`` format. This staging brick uses a combination of the styling
+information in the document and the structure of the text to determine the type
+of a text element. The ``partition_ppt`` can take a filename or file-like object.
+``partition_ppt`` uses ``libreoffice`` to convert the file to ``.pptx`` and then
+calls ``partition_pptx``. Ensure you have ``libreoffice`` installed
+before using ``partition_ppt``.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.ppt import partition_ppt
+
+  elements = partition_ppt(filename="example-docs/fake-power-point.ppt")
 
 ``partition_html``
 ---------------------
