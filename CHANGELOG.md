@@ -1,3 +1,7 @@
+## 0.4.11-dev0
+
+* Adds `partition_doc` for partition Word documents in `.doc` format. Requires `libreoffice`.
+
 ## 0.4.10
 
 * Fixes `ElementMetadata` so that it's JSON serializable when the filename is a `Path` object.
