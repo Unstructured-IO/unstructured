@@ -109,6 +109,8 @@ def detect_filetype(
     filename: Optional[str] = None, file: Optional[IO] = None
 ) -> Optional[FileType]:
     try:
+        import magic
+        LIBMAGIC_AVAILABLE = True
         # Attempt to load the libmagic library 
         magic_obj = magic.Magic()
         mime_type = magic_obj.from_file(filename, mime=True)
@@ -126,7 +128,10 @@ def detect_filetype(
             # NOTE(robinson) - the python-magic docs recommend reading at least the first 2048 bytes
             # Increased to 4096 because otherwise .xlsx files get detected as a zip file
             # ref: https://github.com/ahupp/python-magic#usage
-            mime_type = magic.from_buffer(file.read(4096), mime=True)
+            try:
+                mime_type = magic.from_buffer(file.read(4096), mime=True)
+            except ImportError as e:
+                raise ImportError("libmagic is unavailable. Filetype detection on file-like objects requires libmagic. Please install libmagic and try again.") from e
         else:
             raise ValueError("No filename nor file were specified.")
 
@@ -203,7 +208,8 @@ def detect_filetype(
             f"MIME type was {mime_type}. This file type is not currently supported in unstructured."
         )
         return FileType.UNK
-    except:
+    except ImportError:
+        LIBMAGIC_AVAILABLE = False
         if filename and file:
             raise ValueError("Only one of filename or file should be specified.")
         if not filename and not file:
