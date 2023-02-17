@@ -1,6 +1,7 @@
 from typing import IO, Optional
 
 from unstructured.file_utils.filetype import detect_filetype, FileType
+from unstructured.partition.doc import partition_doc
 from unstructured.partition.docx import partition_docx
 from unstructured.partition.email import partition_email
 from unstructured.partition.html import partition_html
@@ -34,6 +35,8 @@ def partition(
     if file is not None:
         file.seek(0)
 
+    if filetype == FileType.DOC:
+        return partition_doc(filename=filename, file=file)
     if filetype == FileType.DOCX:
         return partition_docx(filename=filename, file=file)
     elif filetype == FileType.EML:

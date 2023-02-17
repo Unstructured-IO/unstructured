@@ -56,9 +56,7 @@ STYLE_TO_ELEMENT_MAPPING = {
 }
 
 
-def partition_docx(
-    filename: Optional[str] = None, file: Optional[IO] = None, **kwargs
-) -> List[Element]:
+def partition_docx(filename: Optional[str] = None, file: Optional[IO] = None) -> List[Element]:
     """Partitions Microsoft Word Documents in .docx format into its document elements.
 
     Parameters
