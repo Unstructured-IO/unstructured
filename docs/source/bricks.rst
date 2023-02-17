@@ -139,12 +139,9 @@ Examples:
 
 .. code:: python
 
-  from unstructured.partition.pptx import partition_pptx
+  from unstructured.partition.ppt import partition_ppt
 
-  elements = partition_pptx(filename="example-docs/fake-power-point.pptx")
-
-  with open("example-docs/fake-power-point.pptx", "rb") as f:
-      elements = partition_pptx(file=f)
+  elements = partition_ppt(filename="example-docs/fake-power-point.ppt")
 
 ``partition_html``
 ---------------------
