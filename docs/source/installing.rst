@@ -23,7 +23,7 @@ installation.
 * If you are parsing PDFs, run the following to install the ``detectron2`` model, which ``unstructured`` uses for layout detection:
 	* ``pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@v0.6#egg=detectron2"``
 
-At this point, you shold be able to run the following code:
+At this point, you should be able to run the following code:
 
 .. code:: python
 
