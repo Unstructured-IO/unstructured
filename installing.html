@@ -304,10 +304,52 @@
         <article role="main">
           <section id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h1>
-<p>You can install the library by cloning the repo and running <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code> from the
-root directory. Developers can run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install-local</span></code> to install the dev and test
-requirements alongside the base requirements. If you want a minimal installation without any
-parser specific dependencies, run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install-base</span></code>.</p>
+<section id="quick-start">
+<h2>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this heading"></a></h2>
+<p>Use the following instructions to get up and running with <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> and test your
+installation.</p>
+<ul class="simple">
+<li><p>Install the Python SDK with <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">unstructured[local-inference]</span></code>
+* If you do not need to process PDFs or images, you can run <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">unstructured</span></code></p></li>
+<li><dl class="simple">
+<dt>Install the following system dependencies if they are not already available on your system. Depending on what document types you’re parsing, you may not need all of these.</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">libmagic-dev</span></code> (filetype detection)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">poppler-utils</span></code> (images and PDFs)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tesseract-ocr</span></code> (images and PDFs)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">libreoffice</span></code> (MS Office docs)</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Run the following to install NLTK dependencies. <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> will handle this automatically soon.</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-c</span> <span class="pre">&quot;import</span> <span class="pre">nltk;</span> <span class="pre">nltk.download('punkt')&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-c</span> <span class="pre">&quot;import</span> <span class="pre">nltk;</span> <span class="pre">nltk.download('averaged_perceptron_tagger')&quot;</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>If you are parsing PDFs, run the following to install the <code class="docutils literal notranslate"><span class="pre">detectron2</span></code> model, which <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> uses for layout detection:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;detectron2&#64;git+https://github.com/facebookresearch/detectron2.git&#64;v0.6#egg=detectron2&quot;</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>At this point, you should be able to run the following code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.auto</span> <span class="kn">import</span> <span class="n">partition</span>
+
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example-docs/fake-email.eml&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>And if you installed with <cite>local-inference</cite>, you should be able to run this as well:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.auto</span> <span class="kn">import</span> <span class="n">partition</span>
+
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition</span><span class="p">(</span><span class="s2">&quot;example-docs/layout-parser-paper.pdf&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
 <section id="installation-with-conda-on-windows">
 <h2>Installation with <code class="docutils literal notranslate"><span class="pre">conda</span></code> on Windows<a class="headerlink" href="#installation-with-conda-on-windows" title="Permalink to this heading"></a></h2>
 <p>You can install and run <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> on Windows with <code class="docutils literal notranslate"><span class="pre">conda</span></code>, but the process
@@ -477,6 +519,7 @@ information on how to install <code class="docutils literal notranslate"><span c
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Installation</a><ul>
+<li><a class="reference internal" href="#quick-start">Quick Start</a></li>
 <li><a class="reference internal" href="#installation-with-conda-on-windows">Installation with <code class="docutils literal notranslate"><span class="pre">conda</span></code> on Windows</a><ul>
 <li><a class="reference internal" href="#setting-up-unstructured-for-local-inference">Setting up <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> for local inference</a></li>
 <li><a class="reference internal" href="#installing-paddleocr">Installing PaddleOCR</a></li>

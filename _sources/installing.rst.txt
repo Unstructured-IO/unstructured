@@ -1,10 +1,43 @@
 Installation
 ============
 
-You can install the library by cloning the repo and running ``make install`` from the
-root directory. Developers can run ``make install-local`` to install the dev and test
-requirements alongside the base requirements. If you want a minimal installation without any
-parser specific dependencies, run ``make install-base``.
+Quick Start
+-----------
+
+Use the following instructions to get up and running with ``unstructured`` and test your
+installation.
+
+* Install the Python SDK with ``pip install unstructured[local-inference]``
+  * If you do not need to process PDFs or images, you can run ``pip install unstructured``
+
+* Install the following system dependencies if they are not already available on your system. Depending on what document types you're parsing, you may not need all of these.
+	* ``libmagic-dev`` (filetype detection)
+	* ``poppler-utils`` (images and PDFs)
+	* ``tesseract-ocr`` (images and PDFs)
+	* ``libreoffice`` (MS Office docs)
+
+* Run the following to install NLTK dependencies. ``unstructured`` will handle this automatically soon.
+	* ``python -c "import nltk; nltk.download('punkt')"``
+	* ``python -c "import nltk; nltk.download('averaged_perceptron_tagger')"``
+
+* If you are parsing PDFs, run the following to install the ``detectron2`` model, which ``unstructured`` uses for layout detection:
+	* ``pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@v0.6#egg=detectron2"``
+
+At this point, you should be able to run the following code:
+
+.. code:: python
+
+  from unstructured.partition.auto import partition
+
+  elements = partition(filename="example-docs/fake-email.eml")
+
+And if you installed with `local-inference`, you should be able to run this as well:
+
+.. code:: python
+
+  from unstructured.partition.auto import partition
+
+  elements = partition("example-docs/layout-parser-paper.pdf")
 
 
 Installation with ``conda`` on Windows
