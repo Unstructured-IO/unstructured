@@ -10,7 +10,7 @@ from unstructured.partition.pptx import partition_pptx
 def partition_ppt(
     filename: Optional[str] = None, file: Optional[IO] = None, include_page_breaks: bool = False
 ) -> List[Element]:
-    """Partitions Microsoft PowerPoint Documents in .ppt format into its document elements.
+    """Partitions Microsoft PowerPoint Documents in .ppt format into their document elements.
 
     Parameters
     ----------
