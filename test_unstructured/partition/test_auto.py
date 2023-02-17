@@ -105,6 +105,7 @@ def test_auto_partition_doc_with_filename(mock_docx_document, expected_docx_elem
 
     elements = partition(filename=doc_filename)
     assert elements == expected_docx_elements
+    assert elements[0].metadata.filename == doc_filename
 
 
 ***REMOVED*** NOTE(robinson) - the application/x-ole-storage mime type is not specific enough to
@@ -235,6 +236,13 @@ EXPECTED_PPTX_OUTPUT = [
 
 def test_auto_partition_pptx_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
+    elements = partition(filename=filename)
+    assert elements == EXPECTED_PPTX_OUTPUT
+    assert elements[0].metadata.filename == filename
+
+
+def test_auto_partition_ppt_from_filename():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.ppt")
     elements = partition(filename=filename)
     assert elements == EXPECTED_PPTX_OUTPUT
     assert elements[0].metadata.filename == filename
