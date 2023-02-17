@@ -131,7 +131,7 @@ The ``partition_ppt`` partitioning brick pre-processes Microsoft PowerPoint docu
 saved in the ``.ppt`` format. This staging brick uses a combination of the styling
 information in the document and the structure of the text to determine the type
 of a text element. The ``partition_ppt`` can take a filename or file-like object.
-``partition_ppt`` uses ``libreoffice`` to convert the file to ``.docx`` and then
+``partition_ppt`` uses ``libreoffice`` to convert the file to ``.pptx`` and then
 calls ``partition_pptx``. Ensure you have ``libreoffice`` installed
 before using ``partition_ppt``.
 
