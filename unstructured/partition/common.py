@@ -58,12 +58,16 @@ def layout_list_to_list_items(text: str, coordinates: List[float]) -> List[Eleme
     list_items: List[Element] = list()
     for text_segment in split_items:
         if len(text_segment.strip()) > 0:
-            list_items.append(ListItem(text=text_segment.strip(), coordinates=coordinates))
+            list_items.append(
+                ListItem(text=text_segment.strip(), coordinates=coordinates)
+            )
 
     return list_items
 
 
-def document_to_element_list(document, include_page_breaks: bool = False) -> List[Element]:
+def document_to_element_list(
+    document, include_page_breaks: bool = False
+) -> List[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
     elements: List[Element] = list()
     num_pages = len(document.pages)

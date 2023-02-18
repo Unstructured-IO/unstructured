@@ -36,7 +36,8 @@ VALID_LABEL_TYPES = [
 @dataclass
 class LabelStudioResult:
     """Class for representing a LabelStudio annotation result.
-    ref: https://labelstud.io/guide/export.html#Label-Studio-JSON-format-of-annotated-tasks"""
+    ref: https://labelstud.io/guide/export.html#Label-Studio-JSON-format-of-annotated-tasks
+    """
 
     type: str  # The type of tag used to annotate the task
     value: Dict[str, Any]  # The values for
@@ -61,7 +62,8 @@ class LabelStudioResult:
 class LabelStudioReview:
     """Class for representing a LablStudio review. Reviews are only available in the
     Enterprise offering.
-    ref: https://labelstud.io/guide/export.html#Label-Studio-JSON-format-of-annotated-tasks"""
+    ref: https://labelstud.io/guide/export.html#Label-Studio-JSON-format-of-annotated-tasks
+    """
 
     created_by: Dict[str, Union[str, int]]
     accepted: bool
@@ -74,7 +76,8 @@ class LabelStudioReview:
 @dataclass
 class LabelStudioAnnotation:
     """Class for representing LabelStudio annotations.
-    ref: https://labelstud.io/guide/export.html#Label-Studio-JSON-format-of-annotated-tasks"""
+    ref: https://labelstud.io/guide/export.html#Label-Studio-JSON-format-of-annotated-tasks
+    """
 
     result: List[LabelStudioResult]  # The result of the annotation
     id: Optional[str] = None
@@ -87,7 +90,9 @@ class LabelStudioAnnotation:
         annotation_dict = deepcopy(self.__dict__)
         annotation_dict["result"] = [r.to_dict() for r in annotation_dict["result"]]
         if "reviews" in annotation_dict and annotation_dict["reviews"] is not None:
-            annotation_dict["reviews"] = [r.to_dict() for r in annotation_dict["reviews"]]
+            annotation_dict["reviews"] = [
+                r.to_dict() for r in annotation_dict["reviews"]
+            ]
 
         # NOTE(robinson) - Removes keys for any fields that defaulted to None
         _annotation_dict = deepcopy(annotation_dict)
@@ -103,7 +108,9 @@ class LabelStudioPrediction(LabelStudioAnnotation):
     score: float = 0
 
     def __post_init__(self):
-        if not isinstance(self.score, (int, float)) or (self.score < 0 or self.score > 1):
+        if not isinstance(self.score, (int, float)) or (
+            self.score < 0 or self.score > 1
+        ):
             raise ValueError(
                 f"{self.score} is not a valid score value. "
                 f"Score value must be a number between 0 and 1."

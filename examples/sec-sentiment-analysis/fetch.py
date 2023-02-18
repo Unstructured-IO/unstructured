@@ -65,7 +65,9 @@ def get_forms_by_cik(session: requests.Session, cik: Union[str, int]) -> dict:
     response.raise_for_status()
     content = json.loads(response.content)
     recent_forms = content["filings"]["recent"]
-    form_types = {k: v for k, v in zip(recent_forms["accessionNumber"], recent_forms["form"])}
+    form_types = {
+        k: v for k, v in zip(recent_forms["accessionNumber"], recent_forms["form"])
+    }
     return form_types
 
 
@@ -105,7 +107,9 @@ def get_recent_cik_and_acc_by_ticker(
     """
     session = _get_session(company, email)
     cik = get_cik_by_ticker(session, ticker)
-    acc_num, retrieved_form_type = _get_recent_acc_num_by_cik(session, cik, _form_types(form_type))
+    acc_num, retrieved_form_type = _get_recent_acc_num_by_cik(
+        session, cik, _form_types(form_type)
+    )
     return cik, acc_num, retrieved_form_type
 
 
@@ -120,7 +124,11 @@ def get_form_by_ticker(
     session = _get_session(company, email)
     cik = get_cik_by_ticker(session, ticker)
     return get_form_by_cik(
-        cik, form_type, allow_amended_filing=allow_amended_filing, company=company, email=email
+        cik,
+        form_type,
+        allow_amended_filing=allow_amended_filing,
+        company=company,
+        email=email,
     )
 
 
@@ -158,7 +166,9 @@ def open_form(cik, acc_num):
     """For a given cik and accession number, opens the index page in default browser for the
     associated SEC form"""
     acc_num = _drop_dashes(acc_num)
-    webbrowser.open_new_tab(f"{SEC_ARCHIVE_URL}/{cik}/{acc_num}/{_add_dashes(acc_num)}-index.html")
+    webbrowser.open_new_tab(
+        f"{SEC_ARCHIVE_URL}/{cik}/{acc_num}/{_add_dashes(acc_num)}-index.html"
+    )
 
 
 def open_form_by_ticker(
@@ -204,7 +214,9 @@ def _drop_dashes(accession_number: Union[str, int]) -> str:
     return accession_number.zfill(18)
 
 
-def _get_session(company: Optional[str] = None, email: Optional[str] = None) -> requests.Session:
+def _get_session(
+    company: Optional[str] = None, email: Optional[str] = None
+) -> requests.Session:
     """Creates a requests sessions with the appropriate headers set. If these headers are not
     set, SEC will reject your request.
     ref: https://www.sec.gov/os/accessing-edgar-data"""

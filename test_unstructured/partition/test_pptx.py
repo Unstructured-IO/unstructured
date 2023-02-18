@@ -5,7 +5,13 @@ import pytest
 import pptx
 
 from unstructured.partition.pptx import partition_pptx
-from unstructured.documents.elements import ListItem, NarrativeText, PageBreak, Text, Title
+from unstructured.documents.elements import (
+    ListItem,
+    NarrativeText,
+    PageBreak,
+    Text,
+    Title,
+)
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "..", "example-docs")

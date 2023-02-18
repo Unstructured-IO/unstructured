@@ -120,9 +120,21 @@ def test_clean_trailing_punctuation(text, expected):
 @pytest.mark.parametrize(
     "text, pattern, ignore_case, strip, expected",
     [
-        ("SUMMARY: A great SUMMARY", r"(SUMMARY|DESC):", False, True, "A great SUMMARY"),
+        (
+            "SUMMARY: A great SUMMARY",
+            r"(SUMMARY|DESC):",
+            False,
+            True,
+            "A great SUMMARY",
+        ),
         ("DESC: A great SUMMARY", r"(SUMMARY|DESC):", False, True, "A great SUMMARY"),
-        ("SUMMARY: A great SUMMARY", r"(SUMMARY|DESC):", False, False, " A great SUMMARY"),
+        (
+            "SUMMARY: A great SUMMARY",
+            r"(SUMMARY|DESC):",
+            False,
+            False,
+            " A great SUMMARY",
+        ),
         ("summary: A great SUMMARY", r"(SUMMARY|DESC):", True, True, "A great SUMMARY"),
     ],
 )
@@ -159,7 +171,9 @@ def test_clean_postfix(text, pattern, ignore_case, strip, expected):
         ("Risk factors: ", False, False, False, True, True, "risk factors"),
     ],
 )
-def test_clean(text, extra_whitespace, dashes, bullets, lowercase, trailing_punctuation, expected):
+def test_clean(
+    text, extra_whitespace, dashes, bullets, lowercase, trailing_punctuation, expected
+):
     assert (
         core.clean(
             text=text,

@@ -89,7 +89,9 @@ def test_detect_html_text_xml(monkeypatch):
 
 
 def test_detect_docx_filetype_application_octet_stream(monkeypatch):
-    monkeypatch.setattr(magic, "from_buffer", lambda *args, **kwargs: "application/octet-stream")
+    monkeypatch.setattr(
+        magic, "from_buffer", lambda *args, **kwargs: "application/octet-stream"
+    )
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.docx")
     with open(filename, "rb") as f:
         filetype = detect_filetype(file=f)
@@ -97,7 +99,9 @@ def test_detect_docx_filetype_application_octet_stream(monkeypatch):
 
 
 def test_detect_docx_filetype_application_octet_stream_with_filename(monkeypatch):
-    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "application/octet-stream")
+    monkeypatch.setattr(
+        magic, "from_file", lambda *args, **kwargs: "application/octet-stream"
+    )
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.docx")
     filetype = detect_filetype(filename=filename)
     assert filetype == FileType.DOCX
@@ -120,25 +124,33 @@ def test_detect_application_zip_files(monkeypatch, tmpdir):
 
 
 def test_detect_doc_file_from_mime_type(monkeypatch):
-    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "application/msword")
+    monkeypatch.setattr(
+        magic, "from_file", lambda *args, **kwargs: "application/msword"
+    )
     filetype = detect_filetype(filename="fake.doc")
     assert filetype == FileType.DOC
 
 
 def test_detect_ppt_file_from_mime_type(monkeypatch):
-    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "application/vnd.ms-powerpoint")
+    monkeypatch.setattr(
+        magic, "from_file", lambda *args, **kwargs: "application/vnd.ms-powerpoint"
+    )
     filetype = detect_filetype(filename="fake.ppt")
     assert filetype == FileType.PPT
 
 
 def test_detect_xls_file_from_mime_type(monkeypatch):
-    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "application/vnd.ms-excel")
+    monkeypatch.setattr(
+        magic, "from_file", lambda *args, **kwargs: "application/vnd.ms-excel"
+    )
     filetype = detect_filetype(filename="fake.xls")
     assert filetype == FileType.XLS
 
 
 def test_detect_xlsx_filetype_application_octet_stream(monkeypatch):
-    monkeypatch.setattr(magic, "from_buffer", lambda *args, **kwargs: "application/octet-stream")
+    monkeypatch.setattr(
+        magic, "from_buffer", lambda *args, **kwargs: "application/octet-stream"
+    )
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-excel.xlsx")
     with open(filename, "rb") as f:
         filetype = detect_filetype(file=f)
@@ -146,14 +158,18 @@ def test_detect_xlsx_filetype_application_octet_stream(monkeypatch):
 
 
 def test_detect_xlsx_filetype_application_octet_stream_with_filename(monkeypatch):
-    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "application/octet-stream")
+    monkeypatch.setattr(
+        magic, "from_file", lambda *args, **kwargs: "application/octet-stream"
+    )
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-excel.xlsx")
     filetype = detect_filetype(filename=filename)
     assert filetype == FileType.XLSX
 
 
 def test_detect_pptx_filetype_application_octet_stream(monkeypatch):
-    monkeypatch.setattr(magic, "from_buffer", lambda *args, **kwargs: "application/octet-stream")
+    monkeypatch.setattr(
+        magic, "from_buffer", lambda *args, **kwargs: "application/octet-stream"
+    )
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
     with open(filename, "rb") as f:
         filetype = detect_filetype(file=f)
@@ -161,14 +177,18 @@ def test_detect_pptx_filetype_application_octet_stream(monkeypatch):
 
 
 def test_detect_pptx_filetype_application_octet_stream_with_filename(monkeypatch):
-    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "application/octet-stream")
+    monkeypatch.setattr(
+        magic, "from_file", lambda *args, **kwargs: "application/octet-stream"
+    )
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
     filetype = detect_filetype(filename=filename)
     assert filetype == FileType.PPTX
 
 
 def test_detect_application_octet_stream_returns_none_with_unknown(monkeypatch):
-    monkeypatch.setattr(magic, "from_buffer", lambda *args, **kwargs: "application/octet-stream")
+    monkeypatch.setattr(
+        magic, "from_buffer", lambda *args, **kwargs: "application/octet-stream"
+    )
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
     with open(filename, "rb") as f:
         filetype = detect_filetype(file=f)

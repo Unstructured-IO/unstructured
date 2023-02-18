@@ -38,7 +38,9 @@ def chunk_by_attention_window(
         attention window.
     chunk_separator: The string used to concat adjacent chunks when reconstructing the text
     """
-    max_input_size = tokenizer.model_max_length if max_input_size is None else max_input_size
+    max_input_size = (
+        tokenizer.model_max_length if max_input_size is None else max_input_size
+    )
     if buffer < 0 or buffer >= max_input_size:
         raise ValueError(
             f"buffer is set to {buffer}. Must be greater than zero and smaller than "

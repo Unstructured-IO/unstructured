@@ -77,13 +77,17 @@ def test_convert_to_label_studio_data(elements):
 
 
 def test_specify_text_name(elements):
-    label_studio_data = label_studio.stage_for_label_studio(elements, text_field="random_text")
+    label_studio_data = label_studio.stage_for_label_studio(
+        elements, text_field="random_text"
+    )
     assert "random_text" in label_studio_data[0]["data"]
     assert label_studio_data[0]["data"]["random_text"] == "Title 1"
 
 
 def test_specify_id_name(elements):
-    label_studio_data = label_studio.stage_for_label_studio(elements, id_field="random_id")
+    label_studio_data = label_studio.stage_for_label_studio(
+        elements, id_field="random_id"
+    )
     assert "random_id" in label_studio_data[0]["data"]
 
 
@@ -175,7 +179,10 @@ def test_stage_with_annotation():
     label_studio_data = label_studio.stage_for_label_studio([element], [annotations])
     assert label_studio_data == [
         {
-            "data": {"text": "A big brown bear", "ref_id": "8f458d5d0635df3975ceb9109cef9e12"},
+            "data": {
+                "text": "A big brown bear",
+                "ref_id": "8f458d5d0635df3975ceb9109cef9e12",
+            },
             "annotations": [
                 {
                     "result": [
@@ -211,10 +218,15 @@ def test_stage_with_prediction():
             score=0.98,
         )
     ]
-    label_studio_data = label_studio.stage_for_label_studio([element], predictions=[prediction])
+    label_studio_data = label_studio.stage_for_label_studio(
+        [element], predictions=[prediction]
+    )
     assert label_studio_data == [
         {
-            "data": {"text": "A big brown bear", "ref_id": "8f458d5d0635df3975ceb9109cef9e12"},
+            "data": {
+                "text": "A big brown bear",
+                "ref_id": "8f458d5d0635df3975ceb9109cef9e12",
+            },
             "predictions": [
                 {
                     "result": [
@@ -253,13 +265,21 @@ def test_stage_with_annotation_for_ner():
     label_studio_data = label_studio.stage_for_label_studio([element], [annotations])
     assert label_studio_data == [
         {
-            "data": {"text": "A big brown bear", "ref_id": "8f458d5d0635df3975ceb9109cef9e12"},
+            "data": {
+                "text": "A big brown bear",
+                "ref_id": "8f458d5d0635df3975ceb9109cef9e12",
+            },
             "annotations": [
                 {
                     "result": [
                         {
                             "type": "labels",
-                            "value": {"start": 12, "end": 16, "text": "bear", "labels": ["PER"]},
+                            "value": {
+                                "start": 12,
+                                "end": 16,
+                                "text": "bear",
+                                "labels": ["PER"],
+                            },
                             "from_name": "label",
                             "id": None,
                             "to_name": "text",
@@ -308,7 +328,9 @@ def test_stage_with_prediction_raises_with_mismatched_lengths():
         )
     ]
     with pytest.raises(ValueError):
-        label_studio.stage_for_label_studio([element], predictions=[prediction, prediction])
+        label_studio.stage_for_label_studio(
+            [element], predictions=[prediction, prediction]
+        )
 
 
 def test_stage_with_annotation_raises_with_invalid_type():
@@ -333,13 +355,18 @@ def test_stage_with_reviewed_annotation():
                     to_name="text",
                 )
             ],
-            reviews=[label_studio.LabelStudioReview(created_by={"user_id": 1}, accepted=True)],
+            reviews=[
+                label_studio.LabelStudioReview(created_by={"user_id": 1}, accepted=True)
+            ],
         )
     ]
     label_studio_data = label_studio.stage_for_label_studio([element], [annotations])
     assert label_studio_data == [
         {
-            "data": {"text": "A big brown bear", "ref_id": "8f458d5d0635df3975ceb9109cef9e12"},
+            "data": {
+                "text": "A big brown bear",
+                "ref_id": "8f458d5d0635df3975ceb9109cef9e12",
+            },
             "annotations": [
                 {
                     "result": [
@@ -353,7 +380,9 @@ def test_stage_with_reviewed_annotation():
                             "read_only": False,
                         }
                     ],
-                    "reviews": [{"created_by": {"user_id": 1}, "accepted": True, "id": None}],
+                    "reviews": [
+                        {"created_by": {"user_id": 1}, "accepted": True, "id": None}
+                    ],
                     "was_canceled": False,
                 }
             ],

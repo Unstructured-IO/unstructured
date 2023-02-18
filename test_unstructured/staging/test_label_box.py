@@ -62,7 +62,14 @@ attachment = {"type": "RAW_TEXT", "value": "Text description."}
         (["id1"], None, "output_directory", True, True, ValueError),
         (None, [[attachment], [attachment]], "output_directory", True, False, None),
         (None, [[attachment]], "output_directory", True, True, ValueError),
-        (["id1", "id2"], [[attachment] * 2, [attachment]], "output_directory", True, False, None),
+        (
+            ["id1", "id2"],
+            [[attachment] * 2, [attachment]],
+            "output_directory",
+            True,
+            False,
+            None,
+        ),
         (
             ["id1", "id2"],
             [[attachment] * 2, [attachment]],
@@ -128,8 +135,12 @@ def test_stage_for_label_box(
                 ]
 
             assert element_config["data"].startswith(url_prefix)
-            assert element_config["data"].endswith(f'{element_config["externalId"]}.txt')
+            assert element_config["data"].endswith(
+                f'{element_config["externalId"]}.txt'
+            )
 
-            output_filepath = os.path.join(output_directory, f'{element_config["externalId"]}.txt')
+            output_filepath = os.path.join(
+                output_directory, f'{element_config["externalId"]}.txt'
+            )
             with open(output_filepath, "r") as data_file:
                 assert data_file.read().strip() == element.text.strip()

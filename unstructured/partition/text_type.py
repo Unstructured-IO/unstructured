@@ -12,7 +12,11 @@ else:
 
 from unstructured.cleaners.core import remove_punctuation
 from unstructured.nlp.english_words import ENGLISH_WORDS
-from unstructured.nlp.patterns import US_PHONE_NUMBERS_RE, UNICODE_BULLETS_RE, US_CITY_STATE_ZIP_RE
+from unstructured.nlp.patterns import (
+    US_PHONE_NUMBERS_RE,
+    UNICODE_BULLETS_RE,
+    US_CITY_STATE_ZIP_RE,
+)
 from unstructured.nlp.tokenize import pos_tag, sent_tokenize, word_tokenize
 from unstructured.logger import logger
 
@@ -22,7 +26,10 @@ ENGLISH_WORD_SPLIT_RE = re.compile(r"[\s|\.|-|_|\/]")
 
 
 def is_possible_narrative_text(
-    text: str, cap_threshold: float = 0.5, non_alpha_threshold: float = 0.5, language: str = "en"
+    text: str,
+    cap_threshold: float = 0.5,
+    non_alpha_threshold: float = 0.5,
+    language: str = "en",
 ) -> bool:
     """Checks to see if the text passes all of the checks for a narrative text section.
     You can change the cap threshold using the cap_threshold kwarg or the
@@ -59,11 +66,15 @@ def is_possible_narrative_text(
         os.environ.get("UNSTRUCTURED_NARRATIVE_TEXT_CAP_THRESHOLD", cap_threshold)
     )
     if exceeds_cap_ratio(text, threshold=cap_threshold):
-        logger.debug(f"Not narrative. Text exceeds cap ratio {cap_threshold}:\n\n{text}")
+        logger.debug(
+            f"Not narrative. Text exceeds cap ratio {cap_threshold}:\n\n{text}"
+        )
         return False
 
     non_alpha_threshold = float(
-        os.environ.get("UNSTRUCTURED_NARRATIVE_TEXT_NON_ALPHA_THRESHOLD", non_alpha_threshold)
+        os.environ.get(
+            "UNSTRUCTURED_NARRATIVE_TEXT_NON_ALPHA_THRESHOLD", non_alpha_threshold
+        )
     )
     if under_non_alpha_ratio(text, threshold=non_alpha_threshold):
         return False
@@ -131,7 +142,9 @@ def is_possible_title(
     # that sometimes get tokenized as separate sentences due to the period, but are still
     # valid titles
     if sentence_count(text, min_length=sentence_min_length) > 1:
-        logger.debug(f"Not a title. Text is longer than {sentence_min_length} sentences:\n\n{text}")
+        logger.debug(
+            f"Not a title. Text is longer than {sentence_min_length} sentences:\n\n{text}"
+        )
         return False
 
     return True

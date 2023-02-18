@@ -46,7 +46,13 @@ RECEIVED_HEADER_OUTPUT = [
         name="received_datetimetz",
         text="2023-02-20 10:03:18+12:00",
         datestamp=datetime.datetime(
-            2023, 2, 20, 10, 3, 18, tzinfo=datetime.timezone(datetime.timedelta(seconds=43200))
+            2023,
+            2,
+            20,
+            10,
+            3,
+            18,
+            tzinfo=datetime.timezone(datetime.timedelta(seconds=43200)),
         ),
     ),
     MetaData(name="MIME-Version", text="1.0"),
@@ -59,7 +65,8 @@ RECEIVED_HEADER_OUTPUT = [
     Sender(name="Matthew Robinson", text="mrobinson@unstructured.io"),
     Recipient(name="Matthew Robinson", text="mrobinson@unstructured.io"),
     MetaData(
-        name="Content-Type", text='multipart/alternative; boundary="00000000000095c9b205eff92630"'
+        name="Content-Type",
+        text='multipart/alternative; boundary="00000000000095c9b205eff92630"',
     ),
 ]
 
@@ -74,7 +81,8 @@ HEADER_EXPECTED_OUTPUT = [
     Sender(name="Matthew Robinson", text="mrobinson@unstructured.io"),
     Recipient(name="Matthew Robinson", text="mrobinson@unstructured.io"),
     MetaData(
-        name="Content-Type", text='multipart/alternative; boundary="00000000000095c9b205eff92630"'
+        name="Content-Type",
+        text='multipart/alternative; boundary="00000000000095c9b205eff92630"',
     ),
 ]
 
@@ -119,7 +127,9 @@ def test_partition_email_from_text_file():
 def test_partition_email_from_text_file_with_headers():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.txt")
     with open(filename, "r") as f:
-        elements = partition_email(file=f, content_source="text/plain", include_headers=True)
+        elements = partition_email(
+            file=f, content_source="text/plain", include_headers=True
+        )
     assert len(elements) > 0
     assert elements == ALL_EXPECTED_OUTPUT
 
@@ -134,14 +144,18 @@ def test_partition_email_from_text():
 
 
 def test_partition_email_from_filename_with_embedded_image():
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email-image-embedded.eml")
+    filename = os.path.join(
+        DIRECTORY, "..", "..", "example-docs", "fake-email-image-embedded.eml"
+    )
     elements = partition_email(filename=filename, content_source="text/plain")
     assert len(elements) > 0
     assert elements == IMAGE_EXPECTED_OUTPUT
 
 
 def test_partition_email_header():
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email-header.eml")
+    filename = os.path.join(
+        DIRECTORY, "..", "..", "example-docs", "fake-email-header.eml"
+    )
     with open(filename, "r") as f:
         msg = email.message_from_file(f)
     elements = partition_email_header(msg)
@@ -150,7 +164,9 @@ def test_partition_email_header():
 
 
 def test_extract_email_text_matches_html():
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email-attachment.eml")
+    filename = os.path.join(
+        DIRECTORY, "..", "..", "example-docs", "fake-email-attachment.eml"
+    )
     elements_from_text = partition_email(filename=filename, content_source="text/plain")
     elements_from_html = partition_email(filename=filename, content_source="text/html")
 
@@ -162,7 +178,9 @@ def test_extract_email_text_matches_html():
 
 
 def test_extract_attachment_info():
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email-attachment.eml")
+    filename = os.path.join(
+        DIRECTORY, "..", "..", "example-docs", "fake-email-attachment.eml"
+    )
     with open(filename, "r") as f:
         msg = email.message_from_file(f)
     attachment_info = extract_attachment_info(msg)

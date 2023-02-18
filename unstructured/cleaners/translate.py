@@ -21,7 +21,9 @@ def _validate_language_code(language_code: str):
         )
 
 
-def translate_text(text, source_lang: Optional[str] = None, target_lang: str = "en") -> str:
+def translate_text(
+    text, source_lang: Optional[str] = None, target_lang: str = "en"
+) -> str:
     """Translates the foreign language text. If the source language is not specified, the
     function will attempt to detect it using langdetect.
 
@@ -38,7 +40,9 @@ def translate_text(text, source_lang: Optional[str] = None, target_lang: str = "
     if text.strip() == "":
         return text
 
-    _source_lang: str = source_lang if source_lang is not None else langdetect.detect(text)
+    _source_lang: str = (
+        source_lang if source_lang is not None else langdetect.detect(text)
+    )
     # NOTE(robinson) - Chinese gets detected with codes zh-cn, zh-tw, zh-hk for various
     # Chinese variants. We normalizes these because there is a single model for Chinese
     # machine translation
@@ -62,7 +66,9 @@ def translate_text(text, source_lang: Optional[str] = None, target_lang: str = "
             "The requested source/target language combo is not suppored."
         )
 
-    chunks: List[str] = chunk_by_attention_window(text, tokenizer, split_function=sent_tokenize)
+    chunks: List[str] = chunk_by_attention_window(
+        text, tokenizer, split_function=sent_tokenize
+    )
 
     translated_chunks: List[str] = list()
     for chunk in chunks:
@@ -79,8 +85,11 @@ def _translate_text(text, model, tokenizer):
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         translated = model.generate(
-            **tokenizer([text], return_tensors="pt", padding="max_length", max_length=512)
+            **tokenizer(
+                [text], return_tensors="pt", padding="max_length", max_length=512
+            )
         )
-    return [tokenizer.decode(t, max_new_tokens=512, skip_special_tokens=True) for t in translated][
-        0
-    ]
+    return [
+        tokenizer.decode(t, max_new_tokens=512, skip_special_tokens=True)
+        for t in translated
+    ][0]

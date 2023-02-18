@@ -12,7 +12,9 @@ def stage_for_datasaur(
     _entities: List[List[Dict[str, Any]]] = [[] for _ in range(len(elements))]
     if entities is not None:
         if len(entities) != len(elements):
-            raise ValueError("If entities is specified, it must be the same lenth as elements.")
+            raise ValueError(
+                "If entities is specified, it must be the same lenth as elements."
+            )
 
         for entity_list in entities:
             for entity in entity_list:
@@ -33,6 +35,8 @@ def _validate_datasaur_entity(entity: Dict[str, Any]):
 
     for key, _type in keys_and_types.items():
         if key not in entity:
-            raise ValueError(f"Key '{key}' was expected but not present in the Datasaur entity.")
+            raise ValueError(
+                f"Key '{key}' was expected but not present in the Datasaur entity."
+            )
         if not isinstance(entity[key], _type):
             raise ValueError(f"Expected type {_type} for {key}. Got {type(key)}.")

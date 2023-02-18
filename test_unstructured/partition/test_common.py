@@ -18,7 +18,9 @@ def test_normalize_layout_element_dict():
         "text": "Some lovely text",
     }
     element = common.normalize_layout_element(layout_element)
-    assert element == Title(text="Some lovely text", coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]])
+    assert element == Title(
+        text="Some lovely text", coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]]
+    )
 
 
 def test_normalize_layout_element_dict_caption():
@@ -40,7 +42,9 @@ def test_normalize_layout_element_dict_misc():
         "text": "Some lovely text",
     }
     element = common.normalize_layout_element(layout_element)
-    assert element == Text(text="Some lovely text", coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]])
+    assert element == Text(
+        text="Some lovely text", coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]]
+    )
 
 
 def test_normalize_layout_element_layout_element():
@@ -62,7 +66,9 @@ def test_normalize_layout_element_checked_box():
         text="",
     )
     element = common.normalize_layout_element(layout_element)
-    assert element == CheckBox(checked=True, coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]])
+    assert element == CheckBox(
+        checked=True, coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]]
+    )
 
 
 def test_normalize_layout_element_unchecked_box():
@@ -72,7 +78,9 @@ def test_normalize_layout_element_unchecked_box():
         text="",
     )
     element = common.normalize_layout_element(layout_element)
-    assert element == CheckBox(checked=False, coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]])
+    assert element == CheckBox(
+        checked=False, coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]]
+    )
 
 
 def test_normalize_layout_element_enumerated_list():

@@ -10,7 +10,9 @@ def _partition_via_api(
     file: Optional[bytes] = None,
     url: str = "https://ml.unstructured.io/layout/pdf",
     token: Optional[str] = None,
-    data: Optional[dict] = None,  # NOTE(alan): Remove after different models are handled by routing
+    data: Optional[
+        dict
+    ] = None,  # NOTE(alan): Remove after different models are handled by routing
     include_page_breaks: bool = False,
 ) -> List[Element]:
     """Use API for partitioning."""

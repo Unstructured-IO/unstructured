@@ -138,7 +138,9 @@ def get_jpg_metadata(
     return metadata
 
 
-def _get_exif_datetime(exif_dict: Dict[str, Any], key: str) -> Optional[datetime.datetime]:
+def _get_exif_datetime(
+    exif_dict: Dict[str, Any], key: str
+) -> Optional[datetime.datetime]:
     """Converts a datetime string from the EXIF data to a Python datetime object."""
     date = exif_dict.get(key)
     if not date:

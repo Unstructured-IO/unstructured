@@ -33,7 +33,9 @@ def mock_successful_post(url, **kwargs):
         "pages": [
             {
                 "number": 0,
-                "elements": [{"type": "Title", "text": "Charlie Brown and the Great Pumpkin"}],
+                "elements": [
+                    {"type": "Title", "text": "Charlie Brown and the Great Pumpkin"}
+                ],
             },
             {
                 "number": 1,
@@ -80,11 +82,15 @@ def test_partition_image_api(monkeypatch, filename="example-docs/example.jpg"):
     assert partition_image_response[1]["text"] == "A Charlie Brown Christmas"
 
 
-def test_partition_image_api_page_break(monkeypatch, filename="example-docs/example.jpg"):
+def test_partition_image_api_page_break(
+    monkeypatch, filename="example-docs/example.jpg"
+):
     monkeypatch.setattr(requests, "post", mock_successful_post)
     monkeypatch.setattr(requests, "get", mock_healthy_get)
 
-    partition_image_response = pdf._partition_via_api(filename, include_page_breaks=True)
+    partition_image_response = pdf._partition_via_api(
+        filename, include_page_breaks=True
+    )
     assert partition_image_response[0]["type"] == "Title"
     assert partition_image_response[0]["text"] == "Charlie Brown and the Great Pumpkin"
     assert partition_image_response[1]["type"] == "PageBreak"
@@ -92,7 +98,9 @@ def test_partition_image_api_page_break(monkeypatch, filename="example-docs/exam
     assert partition_image_response[2]["text"] == "A Charlie Brown Christmas"
 
 
-@pytest.mark.parametrize("filename, file", [("example-docs/example.jpg", None), (None, b"0000")])
+@pytest.mark.parametrize(
+    "filename, file", [("example-docs/example.jpg", None), (None, b"0000")]
+)
 def test_partition_image_local(monkeypatch, filename, file):
     monkeypatch.setattr(
         layout, "process_data_with_model", lambda *args, **kwargs: MockDocumentLayout()
@@ -101,7 +109,9 @@ def test_partition_image_local(monkeypatch, filename, file):
         layout, "process_file_with_model", lambda *args, **kwargs: MockDocumentLayout()
     )
 
-    partition_image_response = pdf._partition_pdf_or_image_local(filename, file, is_image=True)
+    partition_image_response = pdf._partition_pdf_or_image_local(
+        filename, file, is_image=True
+    )
     assert partition_image_response[0].type == "Title"
     assert partition_image_response[0].text == "Charlie Brown and the Great Pumpkin"
 
@@ -119,7 +129,9 @@ def test_partition_image_api_raises_with_failed_healthcheck(
     monkeypatch.setattr(requests, "get", mock_unhealthy_get)
 
     with pytest.raises(ValueError):
-        pdf._partition_via_api(filename=filename, url="http://ml.unstructured.io/layout/image")
+        pdf._partition_via_api(
+            filename=filename, url="http://ml.unstructured.io/layout/image"
+        )
 
 
 def test_partition_image_api_raises_with_failed_api_call(
@@ -129,7 +141,9 @@ def test_partition_image_api_raises_with_failed_api_call(
     monkeypatch.setattr(requests, "get", mock_healthy_get)
 
     with pytest.raises(ValueError):
-        pdf._partition_via_api(filename=filename, url="http://ml.unstructured.io/layout/image")
+        pdf._partition_via_api(
+            filename=filename, url="http://ml.unstructured.io/layout/image"
+        )
 
 
 @pytest.mark.parametrize(

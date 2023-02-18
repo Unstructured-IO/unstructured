@@ -9,7 +9,9 @@ import openpyxl
 import unstructured.file_utils.metadata as meta
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
-EXAMPLE_JPG_FILENAME = os.path.join(DIRECTORY, "..", "..", "example-docs", "example.jpg")
+EXAMPLE_JPG_FILENAME = os.path.join(
+    DIRECTORY, "..", "..", "example-docs", "example.jpg"
+)
 
 
 def test_get_docx_metadata_from_filename(tmpdir):
@@ -90,18 +92,27 @@ def test_get_jpg_metadata_raises_without_file_or_filename():
 
 
 def test_get_exif_datetime():
-    exif_data = {"DateTime": "2022:12:23 15:49:00", "DateTimeOriginal": "2020:12:14 12:00:00"}
+    exif_data = {
+        "DateTime": "2022:12:23 15:49:00",
+        "DateTimeOriginal": "2020:12:14 12:00:00",
+    }
     date = meta._get_exif_datetime(exif_data, "DateTime")
     assert date == datetime.datetime(2022, 12, 23, 15, 49, 0)
 
 
 def test_get_exif_datetime_ignores_bad_formats():
-    exif_data = {"DateTime": "2022-12-23TZ15:49:00", "DateTimeOriginal": "2020:12:14 12:00:00"}
+    exif_data = {
+        "DateTime": "2022-12-23TZ15:49:00",
+        "DateTimeOriginal": "2020:12:14 12:00:00",
+    }
     date = meta._get_exif_datetime(exif_data, "DateTime")
     assert date is None
 
 
 def test_get_exif_datetime_ignores_missing_key():
-    exif_data = {"Datetime": "2022-12-23TZ15:49:00", "DateTimeOriginal": "2020:12:14 12:00:00"}
+    exif_data = {
+        "Datetime": "2022-12-23TZ15:49:00",
+        "DateTimeOriginal": "2020:12:14 12:00:00",
+    }
     date = meta._get_exif_datetime(exif_data, "DateTimeDigitized")
     assert date is None

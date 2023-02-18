@@ -13,7 +13,14 @@ from unstructured.logger import logger
 
 from unstructured.cleaners.core import clean_bullets, replace_unicode_quotes
 from unstructured.documents.base import Page
-from unstructured.documents.elements import Address, ListItem, Element, NarrativeText, Text, Title
+from unstructured.documents.elements import (
+    Address,
+    ListItem,
+    Element,
+    NarrativeText,
+    Text,
+    Title,
+)
 from unstructured.documents.xml import XMLDocument
 from unstructured.partition.text_type import (
     is_bulleted_text,
@@ -123,7 +130,9 @@ class HTMLDocument(XMLDocument):
                     element, next_element = _process_list_item(tag_elem)
                     if element is not None:
                         page.elements.append(element)
-                        descendanttag_elems = _get_bullet_descendants(tag_elem, next_element)
+                        descendanttag_elems = _get_bullet_descendants(
+                            tag_elem, next_element
+                        )
 
                 elif tag_elem.tag in PAGEBREAK_TAGS and len(page.elements) > 0:
                     pages.append(page)
@@ -174,7 +183,9 @@ class HTMLDocument(XMLDocument):
                     )
                 if not any(excluder(el) for excluder in excluders):
                     elements.append(el)
-                if skip_headers_and_footers and "footer" in tuple(el.ancestortags) + (el.tag,):
+                if skip_headers_and_footers and "footer" in tuple(el.ancestortags) + (
+                    el.tag,
+                ):
                     break
             if elements:
                 new_page.elements = elements
@@ -191,7 +202,9 @@ class HTMLDocument(XMLDocument):
                 # NOTE(robinson) - Skipping for test coverage because this condition is impossible.
                 # Added type check because from_pages is a method on Document. Without the type
                 # check, mypy complains about returning Document instead of HTMLDocument
-                raise ValueError(f"Unexpected class: {self.__class__.__name__}")  # pragma: no cover
+                raise ValueError(
+                    f"Unexpected class: {self.__class__.__name__}"
+                )  # pragma: no cover
             return out
 
 
@@ -202,20 +215,26 @@ def _parse_tag(
     Ancestor tags are kept so they can be used for filtering or classification without
     processing the document tree again. In the future we might want to keep descendants too,
     but we don't have a use for them at the moment."""
-    ancestortags: Tuple[str, ...] = tuple(el.tag for el in tag_elem.iterancestors())[::-1]
+    ancestortags: Tuple[str, ...] = tuple(el.tag for el in tag_elem.iterancestors())[
+        ::-1
+    ]
     text = _construct_text(tag_elem)
     if not text:
         return None
     return _text_to_element(text, tag_elem.tag, ancestortags)
 
 
-def _text_to_element(text: str, tag: str, ancestortags: Tuple[str, ...]) -> Optional[Element]:
+def _text_to_element(
+    text: str, tag: str, ancestortags: Tuple[str, ...]
+) -> Optional[Element]:
     """Given the text of an element, the tag type and the ancestor tags, produces the appropriate
     HTML element."""
     if is_bulleted_text(text):
         if not clean_bullets(text):
             return None
-        return HTMLListItem(text=clean_bullets(text), tag=tag, ancestortags=ancestortags)
+        return HTMLListItem(
+            text=clean_bullets(text), tag=tag, ancestortags=ancestortags
+        )
     elif is_us_city_state_zip(text):
         return HTMLAddress(text=text, tag=tag, ancestortags=ancestortags)
 
@@ -362,12 +381,16 @@ def _is_bulleted_table(tag_elem) -> bool:
     return True
 
 
-def _has_adjacent_bulleted_spans(tag_elem: etree.Element, children: List[etree.Element]) -> bool:
+def _has_adjacent_bulleted_spans(
+    tag_elem: etree.Element, children: List[etree.Element]
+) -> bool:
     """Checks to see if a div contains two or more adjacent spans beginning with a bullet. If
     this is the case, it is treated as a single bulleted text element."""
     if tag_elem.tag == "div":
         all_spans = all([child.tag == "span" for child in children])
-        _is_bulleted = children[0].text is not None and is_bulleted_text(children[0].text)
+        _is_bulleted = children[0].text is not None and is_bulleted_text(
+            children[0].text
+        )
         if all_spans and _is_bulleted:
             return True
     return False

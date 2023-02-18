@@ -53,7 +53,9 @@ def _parse_received_data(data: str) -> List[Element]:
         elements.append(ReceivedInfo(name="mapi_id", text=mapi_id[0]))
     if datetimetz:
         elements.append(
-            ReceivedInfo(name="received_datetimetz", text=str(datetimetz), datestamp=datetimetz)
+            ReceivedInfo(
+                name="received_datetimetz", text=str(datetimetz), datestamp=datetimetz
+            )
         )
     return elements
 
@@ -102,7 +104,9 @@ def extract_attachment_info(
                 key, value = item.split("=")
                 key = clean_extra_whitespace(key.replace('"', ""))
                 value = clean_extra_whitespace(value.replace('"', ""))
-                attachment_info[clean_extra_whitespace(key)] = clean_extra_whitespace(value)
+                attachment_info[clean_extra_whitespace(key)] = clean_extra_whitespace(
+                    value
+                )
             attachment_info["payload"] = part.get_payload(decode=True)
             list_attachments.append(attachment_info)
 
@@ -215,7 +219,9 @@ def partition_email(
 
     for idx, element in enumerate(elements):
         indices = has_embedded_image(element)
-        if (isinstance(element, NarrativeText) or isinstance(element, Title)) and indices:
+        if (
+            isinstance(element, NarrativeText) or isinstance(element, Title)
+        ) and indices:
             image_info, clean_element = find_embedded_image(element, indices)
             elements[idx] = clean_element
             elements.insert(idx + 1, image_info)

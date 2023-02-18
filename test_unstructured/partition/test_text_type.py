@@ -3,7 +3,11 @@ from unittest.mock import patch
 
 import unstructured.partition.text_type as text_type
 
-from test_unstructured.nlp.mock_nltk import mock_pos_tag, mock_sent_tokenize, mock_word_tokenize
+from test_unstructured.nlp.mock_nltk import (
+    mock_pos_tag,
+    mock_sent_tokenize,
+    mock_word_tokenize,
+)
 
 
 @pytest.mark.parametrize(
@@ -38,7 +42,10 @@ def test_headings_are_not_narrative_text(text, expected):
         ("7", False),  # Fails because it is numeric
         ("intellectual property", False),  # Fails because it does not contain a verb
         ("Dal;kdjfal adawels adfjwalsdf. Addad jaja fjawlek", False),
-        ("---------------Aske the teacher for an apple----------", False),  # Too many non-alpha
+        (
+            "---------------Aske the teacher for an apple----------",
+            False,
+        ),  # Too many non-alpha
         ("", False),  # Doesn't have english words  # Fails because it is empty
     ],
 )
@@ -46,7 +53,9 @@ def test_is_possible_narrative_text(text, expected, monkeypatch):
     monkeypatch.setattr(text_type, "word_tokenize", mock_word_tokenize)
     monkeypatch.setattr(text_type, "pos_tag", mock_pos_tag)
     monkeypatch.setattr(text_type, "sent_tokenize", mock_sent_tokenize)
-    is_possible_narrative = text_type.is_possible_narrative_text(text, cap_threshold=0.3)
+    is_possible_narrative = text_type.is_possible_narrative_text(
+        text, cap_threshold=0.3
+    )
     assert is_possible_narrative is expected
 
 
@@ -202,7 +211,9 @@ def test_set_caps_ratio_with_environment_variable(monkeypatch):
     monkeypatch.setenv("UNSTRUCTURED_NARRATIVE_TEXT_CAP_THRESHOLD", 0.8)
 
     text = "All The King's Horses. And All The King's Men."
-    with patch.object(text_type, "exceeds_cap_ratio", return_value=False) as mock_exceeds:
+    with patch.object(
+        text_type, "exceeds_cap_ratio", return_value=False
+    ) as mock_exceeds:
         text_type.is_possible_narrative_text(text)
 
     mock_exceeds.assert_called_once_with(text, threshold=0.8)
@@ -214,7 +225,9 @@ def test_set_title_non_alpha_threshold_with_environment_variable(monkeypatch):
     monkeypatch.setenv("UNSTRUCTURED_TITLE_NON_ALPHA_THRESHOLD", 0.8)
 
     text = "/--------------- All the king's horses----------------/"
-    with patch.object(text_type, "under_non_alpha_ratio", return_value=False) as mock_exceeds:
+    with patch.object(
+        text_type, "under_non_alpha_ratio", return_value=False
+    ) as mock_exceeds:
         text_type.is_possible_title(text)
 
     mock_exceeds.assert_called_once_with(text, threshold=0.8)
@@ -226,7 +239,9 @@ def test_set_narrative_text_non_alpha_threshold_with_environment_variable(monkey
     monkeypatch.setenv("UNSTRUCTURED_NARRATIVE_TEXT_NON_ALPHA_THRESHOLD", 0.8)
 
     text = "/--------------- All the king's horses----------------/"
-    with patch.object(text_type, "under_non_alpha_ratio", return_value=False) as mock_exceeds:
+    with patch.object(
+        text_type, "under_non_alpha_ratio", return_value=False
+    ) as mock_exceeds:
         text_type.is_possible_narrative_text(text)
 
     mock_exceeds.assert_called_once_with(text, threshold=0.8)

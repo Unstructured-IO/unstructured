@@ -137,7 +137,9 @@ def replace_mime_encodings(text: str) -> str:
     return quopri.decodestring(text.encode()).decode("utf-8")
 
 
-def clean_prefix(text: str, pattern: str, ignore_case: bool = False, strip: bool = True) -> str:
+def clean_prefix(
+    text: str, pattern: str, ignore_case: bool = False, strip: bool = True
+) -> str:
     """Removes prefixes from a string according to the specified pattern. Strips leading
     whitespace if the strip parameter is set to True.
 
@@ -154,7 +156,9 @@ def clean_prefix(text: str, pattern: str, ignore_case: bool = False, strip: bool
     return clean_text
 
 
-def clean_postfix(text: str, pattern: str, ignore_case: bool = False, strip: bool = True) -> str:
+def clean_postfix(
+    text: str, pattern: str, ignore_case: bool = False, strip: bool = True
+) -> str:
     """Removes postfixes from a string according to the specified pattern. Strips trailing
     whitespace if the strip parameters is set to True.
 
@@ -192,9 +196,13 @@ def clean(
 
     cleaned_text = text.lower() if lowercase else text
     cleaned_text = (
-        clean_trailing_punctuation(cleaned_text) if trailing_punctuation else cleaned_text
+        clean_trailing_punctuation(cleaned_text)
+        if trailing_punctuation
+        else cleaned_text
     )
     cleaned_text = clean_dashes(cleaned_text) if dashes else cleaned_text
-    cleaned_text = clean_extra_whitespace(cleaned_text) if extra_whitespace else cleaned_text
+    cleaned_text = (
+        clean_extra_whitespace(cleaned_text) if extra_whitespace else cleaned_text
+    )
     cleaned_text = clean_bullets(cleaned_text) if bullets else cleaned_text
     return cleaned_text.strip()

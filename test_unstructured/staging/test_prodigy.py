@@ -38,14 +38,19 @@ def test_validate_prodigy_metadata(elements):
 
 
 def test_validate_prodigy_metadata_with_valid_metadata(elements, valid_metadata):
-    validated_metadata = prodigy._validate_prodigy_metadata(elements, metadata=valid_metadata)
+    validated_metadata = prodigy._validate_prodigy_metadata(
+        elements, metadata=valid_metadata
+    )
     assert len(validated_metadata) == len(elements)
 
 
 @pytest.mark.parametrize(
     "invalid_metadata_fixture, exception_message",
     [
-        ("metadata_with_id", 'The key "id" is not allowed with metadata parameter at index: 1'),
+        (
+            "metadata_with_id",
+            'The key "id" is not allowed with metadata parameter at index: 1',
+        ),
         (
             "metadata_with_invalid_length",
             "The length of metadata parameter does not match with length of elements parameter.",

@@ -22,12 +22,16 @@ def _get_indexed_match(text: str, pattern: str, index: int = 0) -> re.Match:
             regex_match = result
 
     if regex_match is None:
-        raise ValueError(f"Result with index {index} was not found. The largest index was {i}.")
+        raise ValueError(
+            f"Result with index {index} was not found. The largest index was {i}."
+        )
 
     return regex_match
 
 
-def extract_text_before(text: str, pattern: str, index: int = 0, strip: bool = True) -> str:
+def extract_text_before(
+    text: str, pattern: str, index: int = 0, strip: bool = True
+) -> str:
     """Extracts texts that occurs before the specified pattern. By default, it will use
     the first occurence of the pattern (index 0). Use the index kwarg to choose a different
     index.
@@ -42,7 +46,9 @@ def extract_text_before(text: str, pattern: str, index: int = 0, strip: bool = T
     return before_text.rstrip() if strip else before_text
 
 
-def extract_text_after(text: str, pattern: str, index: int = 0, strip: bool = True) -> str:
+def extract_text_after(
+    text: str, pattern: str, index: int = 0, strip: bool = True
+) -> str:
     """Extracts texts that occurs before the specified pattern. By default, it will use
     the first occurence of the pattern (index 0). Use the index kwarg to choose a different
     index.

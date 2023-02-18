@@ -76,7 +76,8 @@ class Name(EmailElement):
 
 class BodyText(List[Text]):
     """BodyText is an element consisting of multiple, well-formulated sentences. This
-    excludes elements such titles, headers, footers, and captions. It is the body of an email."""
+    excludes elements such titles, headers, footers, and captions. It is the body of an email.
+    """
 
     category = "BodyText"
 

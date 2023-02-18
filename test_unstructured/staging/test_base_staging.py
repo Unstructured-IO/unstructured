@@ -8,7 +8,12 @@ import pandas as pd
 
 import unstructured.staging.base as base
 
-from unstructured.documents.elements import ElementMetadata, Title, NarrativeText, ListItem
+from unstructured.documents.elements import (
+    ElementMetadata,
+    Title,
+    NarrativeText,
+    ListItem,
+)
 
 
 @pytest.fixture

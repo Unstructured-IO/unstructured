@@ -17,7 +17,11 @@ def test_stage_for_datasaur():
 
 def test_stage_for_datasaur_with_entities():
     elements = [Text("Text 1"), Text("Text 2"), Text("Text 3")]
-    entities = [[{"text": "Matt", "type": "PER", "start_idx": 11, "end_idx": 15}], [], []]
+    entities = [
+        [{"text": "Matt", "type": "PER", "start_idx": 11, "end_idx": 15}],
+        [],
+        [],
+    ]
 
     result = datasaur.stage_for_datasaur(elements, entities=entities)
     assert result[0]["text"] == "Text 1"
@@ -43,7 +47,11 @@ def test_datasaur_raises_with_missing_key():
 
 
 def test_datasaur_raises_with_bad_type():
-    entities = [[{"text": "Matt", "type": "PER", "start_idx": 11, "end_idx": "15"}], [], []]
+    entities = [
+        [{"text": "Matt", "type": "PER", "start_idx": 11, "end_idx": "15"}],
+        [],
+        [],
+    ]
 
     with pytest.raises(ValueError):
         elements = [Text("Text 1"), Text("Text 2"), Text("Text 3")]

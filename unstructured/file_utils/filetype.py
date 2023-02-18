@@ -5,6 +5,7 @@ import zipfile
 
 try:
     import magic
+
     LIBMAGIC_AVAILABLE = True
 except ImportError:
     LIBMAGIC_AVAILABLE = False
@@ -109,22 +110,24 @@ EXT_TO_FILETYPE = {
     ".rtf": FileType.RTF,
 }
 
+
 def _detect_filetype_from_extension(extension: str) -> Optional[FileType]:
     """Detect the file type based on the file extension."""
-    if extension in ['.txt', '.text']:
+    if extension in [".txt", ".text"]:
         return FileType.TEXT
-    elif extension in ['.pdf']:
+    elif extension in [".pdf"]:
         return FileType.PDF
-    elif extension in ['.jpg', '.jpeg', '.png', '.gif']:
+    elif extension in [".jpg", ".jpeg", ".png", ".gif"]:
         return FileType.IMAGE
     # Add more supported file types and their extensions here.
     return None
 
-def detect_filetype(    
+
+def detect_filetype(
     filename: Optional[str] = None, file: Optional[IO] = None
 ) -> Optional[FileType]:
     try:
-        # Attempt to load the libmagic library 
+        # Attempt to load the libmagic library
         magic_obj = magic.Magic()
         mime_type = magic_obj.from_file(filename, mime=True)
         """Use libmagic to determine a file's type. Helps determine which partition brick
@@ -146,7 +149,9 @@ def detect_filetype(
             try:
                 mime_type = magic.from_buffer(file.read(4096), mime=True)
             except ImportError as e:
-                raise ImportError("libmagic is unavailable. Filetype detection on file-like objects requires libmagic. Please install libmagic and try again.") from e
+                raise ImportError(
+                    "libmagic is unavailable. Filetype detection on file-like objects requires libmagic. Please install libmagic and try again."
+                ) from e
         else:
             raise ValueError("No filename nor file were specified.")
 
@@ -306,6 +311,7 @@ def detect_filetype(
         )
         return FileType.UNK
 
+
 def _detect_filetype_from_octet_stream(file: IO) -> FileType:
     """Detects the filetype, given a file with an application/octet-stream MIME type."""
     file.seek(0)
@@ -321,7 +327,9 @@ def _detect_filetype_from_octet_stream(file: IO) -> FileType:
         elif all([f in archive_filenames for f in EXPECTED_PPTX_FILES]):
             return FileType.PPTX
 
-    logger.warning("Could not detect the filetype from application/octet-strem MIME type.")
+    logger.warning(
+        "Could not detect the filetype from application/octet-strem MIME type."
+    )
     return FileType.UNK
 
 
@@ -336,4 +344,3 @@ def _check_eml_from_buffer(file: IO) -> bool:
         file_head = file_content
 
     return EMAIL_HEAD_RE.match(file_head) is not None
-

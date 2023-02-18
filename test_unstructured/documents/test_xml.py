@@ -60,5 +60,7 @@ def test_read_with_stylesheet_warns_with_html_parser(caplog):
     filename = os.path.join(FILEPATH, "..", "..", "example-docs", "factbook.xml")
     stylesheet = os.path.join(FILEPATH, "..", "..", "example-docs", "factbook.xsl")
 
-    XMLDocument.from_file(filename=filename, stylesheet=stylesheet, parser=etree.HTMLParser())
+    XMLDocument.from_file(
+        filename=filename, stylesheet=stylesheet, parser=etree.HTMLParser()
+    )
     assert "WARNING" in caplog.text
