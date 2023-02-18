@@ -1,3 +1,4 @@
+import subprocess
 from typing import List, Optional, Union
 
 from unstructured.documents.elements import (
@@ -105,3 +106,32 @@ def add_element_metadata(
             element.metadata = metadata
             elements.append(element)
     return elements
+
+
+def convert_office_doc(input_filename: str, output_directory: str, target_format: str):
+    """Converts a .doc file to a .docx file using the libreoffice CLI."""
+    # NOTE(robinson) - In the future can also include win32com client as a fallback for windows
+    # users who do not have LibreOffice installed
+    # ref: https://stackoverflow.com/questions/38468442/
+    #       multiple-doc-to-docx-file-conversion-using-python
+    try:
+        subprocess.call(
+            [
+                "soffice",
+                "--headless",
+                "--convert-to",
+                target_format,
+                "--outdir",
+                output_directory,
+                input_filename,
+            ]
+        )
+    except FileNotFoundError:
+        raise FileNotFoundError(
+            """soffice command was not found. Please install libreoffice
+on your system and try again.
+
+- Install instructions: https://www.libreoffice.org/get-help/install-howto/
+- Mac: https://formulae.brew.sh/cask/libreoffice
+- Debian: https://wiki.debian.org/LibreOffice"""
+        )

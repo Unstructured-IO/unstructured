@@ -15,6 +15,7 @@ from unstructured.documents.elements import (
 )
 from unstructured.partition.auto import partition
 import unstructured.partition.auto as auto
+from unstructured.partition.common import convert_office_doc
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "..", "example-docs")
@@ -105,6 +106,31 @@ def test_auto_partition_docx_with_file(
     mock_docx_document.save(filename)
 
     with open(filename, "rb") as f:
+        elements = partition(file=f)
+    assert elements == expected_docx_elements
+
+
+def test_auto_partition_doc_with_filename(mock_docx_document, expected_docx_elements, tmpdir):
+    docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
+    doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
+    mock_docx_document.save(docx_filename)
+    convert_office_doc(docx_filename, tmpdir.dirname, "doc")
+
+    elements = partition(filename=doc_filename)
+    assert elements == expected_docx_elements
+    assert elements[0].metadata.filename == doc_filename
+
+
+# NOTE(robinson) - the application/x-ole-storage mime type is not specific enough to
+# determine that the file is an .doc document
+@pytest.mark.xfail
+def test_auto_partition_doc_with_file(mock_docx_document, expected_docx_elements, tmpdir):
+    docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
+    doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
+    mock_docx_document.save(docx_filename)
+    convert_office_doc(docx_filename, tmpdir.dirname, "doc")
+
+    with open(doc_filename, "rb") as f:
         elements = partition(file=f)
     assert elements == expected_docx_elements
 
@@ -223,6 +249,13 @@ EXPECTED_PPTX_OUTPUT = [
 
 def test_auto_partition_pptx_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
+    elements = partition(filename=filename)
+    assert elements == EXPECTED_PPTX_OUTPUT
+    assert elements[0].metadata.filename == filename
+
+
+def test_auto_partition_ppt_from_filename():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.ppt")
     elements = partition(filename=filename)
     assert elements == EXPECTED_PPTX_OUTPUT
     assert elements[0].metadata.filename == filename
