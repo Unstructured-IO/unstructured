@@ -1,3 +1,7 @@
+## 0.4.12-dev0
+
+* Adds console_entrypoint for unstructured-ingest
+
 ## 0.4.11
 
 * Adds `partition_doc` for partitioning Word documents in `.doc` format. Requires `libreoffice`.

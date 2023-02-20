@@ -46,7 +46,9 @@ setup(
     license="Apache-2.0",
     packages=find_packages(),
     version=__version__,
-    entry_points={},
+    entry_points={
+        'console_scripts': ['unstructured-ingest=unstructured.ingest.main:main'],
+    },
     install_requires=[
         "argilla",
         "lxml",
