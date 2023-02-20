@@ -40,10 +40,8 @@ class MainProcess:
     def run(self):
         self.initialize()
         
-        self.doc_connector.fetch_docs()
-
         # fetch the list of lazy downloading IngestDoc obj's
-        docs = self.doc_connector.fetch_docs()
+        docs = self.doc_connector.get_ingest_docs()
 
         # remove docs that have already been processed
         if not self.reprocess:
