@@ -9,11 +9,12 @@ on:
   pull_request:
     branches: [ main ]
 
-env:
-  PYTHON_VERSION: 3.8
 
 jobs:
   setup:
+    strategy:
+      matrix:
+        python-version: ["3.8","3.9","3.10"]
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
@@ -25,19 +26,22 @@ jobs:
         path: |
           .venv
           nltk_data
-        key: unstructured-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ hashFiles('requirements/*.txt') }}
-    - name: Set up Python ${{ env.PYTHON_VERSION }}
+        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements/*.txt') }}
+    - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
-        python-version: ${{ env.PYTHON_VERSION }}
+        python-version: ${{ matrix.python-version }}
     - name: Setup virtual environment (no cache hit)
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
       run: |
-        python${{ env.PYTHON_VERSION }} -m venv .venv
+        python${{ matrix.python-version }} -m venv .venv
         source .venv/bin/activate
         make install-ci
 
   lint:
+    strategy:
+      matrix:
+        python-version: ["3.8","3.9","3.10"]
     runs-on: ubuntu-latest
     needs: setup
     steps:
@@ -46,17 +50,17 @@ jobs:
       id: virtualenv-cache
       with:
         path: .venv
-        key: unstructured-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements/*.txt') }}
     ***REMOVED*** NOTE(robinson) - This is a fallback in case the lint job does not find the cache.
     ***REMOVED*** We can take this out when we implement the fix in CORE-99
-    - name: Set up Python ${{ env.PYTHON_VERSION }}
+    - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
-        python-version: ${{ env.PYTHON_VERSION }}
+        python-version: ${{ matrix.python-version }}
     - name: Setup virtual environment (no cache hit)
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
       run: |
-        python${{ env.PYTHON_VERSION }} -m venv .venv
+        python${{ matrix.python-version }} -m venv .venv
         source .venv/bin/activate
         make install-ci
     - name: Lint
@@ -72,6 +76,9 @@ jobs:
         uses: ludeeus/action-shellcheck@master
 
   test:
+    strategy:
+      matrix:
+        python-version: ["3.8","3.9","3.10"]
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
@@ -84,13 +91,13 @@ jobs:
         path: |
           .venv
           nltk_data
-        key: unstructured-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements/*.txt') }}
     ***REMOVED*** NOTE(robinson) - This is a fallback in case the lint job does not find the cache.
     ***REMOVED*** We can take this out when we implement the fix in CORE-99
     - name: Setup virtual environment (no cache hit)
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
       run: |
-        python${{ env.PYTHON_VERSION }} -m venv .venv
+        python${{ matrix.python-version}} -m venv .venv
         source .venv/bin/activate
         make install-ci
     - name: Test
