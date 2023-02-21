@@ -103,7 +103,6 @@ jobs:
     - name: Test
       run: |
         source .venv/bin/activate
-        make install-nltk-models
         make install-detectron2
         sudo apt-get install -y libmagic-dev poppler-utils tesseract-ocr libreoffice
         make test
