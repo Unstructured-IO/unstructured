@@ -1,3 +1,7 @@
+## 0.4.12
+
+* Automatically install `nltk` models in the `tokenize` module.
+
 ## 0.4.11
 
 * Adds `partition_doc` for partitioning Word documents in `.doc` format. Requires `libreoffice`.
