@@ -18,7 +18,7 @@ Naturally, --num-processes may be adjusted for better instance utilization with 
 
 Installation note: make sure to install the following extras when installing unstructured, needed for the above command:
 
-    pip install unstructured[s3,local-inference,huggingface]
+    pip install "unstructured[s3,local-inference]"
 
 # Developers' Guide
 
