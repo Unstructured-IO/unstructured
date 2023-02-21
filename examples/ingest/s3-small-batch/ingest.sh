@@ -6,7 +6,7 @@
 # Structured outputs are stored in s3-small-batch-output/
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-cd "$SCRIPT_DIR"/../../..
+cd "$SCRIPT_DIR"/../../.. || exit 1
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
          --s3-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
