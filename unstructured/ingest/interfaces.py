@@ -42,6 +42,7 @@ class BaseConnectorConfig(ABC):
     preserve_downloads: bool = False
     # where to write structured data outputs
     output_dir: str
+    re_download: bool = False
     # if a structured output .json file already exists for a given doc, do not reprocess
     reprocess: bool = False
     verbose: bool = False
