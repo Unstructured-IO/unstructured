@@ -1,71 +1,70 @@
 ***REMOVED*** Batch Processing Documents
 
-***REMOVED******REMOVED*** Sample Connector: S3
+***REMOVED******REMOVED*** The unstructured-ingest CLI
 
-See the sample project [examples/ingest/s3-small-batch/main.py](examples/ingest/s3-small-batch/main.py), which processes all the documents under a given s3 URL with 2 parallel processes, writing the structured json output to `structured-outputs/`.
+The unstructured library includes a CLI to batch ingest documents from (soon to be
+various) sources, storing structured outputs locally on the filesystem.
 
-You can try it out with:
+For example, the following command processes all the documents in S3 in the
+`utic-dev-tech-fixtures` bucket with a prefix of `small-pdf-set/`. 
 
-    PYTHONPATH=. python examples/ingest/s3-small-batch/main.py --s3-url s3://utic-dev-tech-fixtures/small-pdf-set/ --anonymous
+    unstructured-ingest \
+       --s3-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
+       --s3-anonymous \
+       --structured-output-dir s3-small-batch-output \
+       --num-processes 2
 
-    ***REMOVED*** Note: the --anonymous flag indicates not to provide AWS credentials, needed 
-    ***REMOVED*** for the boto3 lib. Remove this flag when local AWS credentials are required.
+Naturally, --num-processes may be adjusted for better instance utilization with multiprocessing.
 
-This utility is ready to use with any s3 prefix!
+Installation note: make sure to install the following extras when installing unstructured, needed for the above command:
 
-By default, it will not reprocess files from s3 if their outputs already exist in --structured-ouput-dir. Natrually, this may come in handy when processing a large number of files. However, you can force reprocessing all documents with the --reprocess flag. 
+    pip install "unstructured[s3,local-inference]"
 
+***REMOVED*** Developers' Guide
 
-```
-$ PYTHONPATH=. python examples/ingest/s3-small-batch/main.py --help
-Usage: main.py [OPTIONS]
+***REMOVED******REMOVED*** Local testing
 
-Options:
-  --s3-url TEXT                   Prefix of s3 objects (files) to download.
-                                  E.g. s3://bucket1/path/. This value may also
-                                  be a single file.
-  --re-download / --no-re-download
-                                  Re-download files from s3 even if they are
-                                  already present in --download-dir.
-  --download-dir TEXT             Where s3 files are downloaded to, defaults
-                                  to tmp-ingest-<6 random chars>.
-  --preserve-downloads            Preserve downloaded s3 files. Otherwise each
-                                  file is removed after being processed
-                                  successfully.
-  --structured-output-dir TEXT    Where to place structured output .json
-                                  files.
-  --reprocess                     Reprocess a downloaded file from s3 even if
-                                  the relevant structured output .json file in
-                                  --structured-output-dir already exists.
-  --num-processes INTEGER         Number of parallel processes to process docs
-                                  in.  [default: 2]
-  --anonymous                     Connect to s3 without local AWS credentials.
-  -v, --verbose
-  --help                          Show this message and exit.
-```
+When testing from a local checkout rather than a pip-installed version of `unstructured`,
+just execute `unstructured/ingest/main.py`, e.g.:
 
-***REMOVED*** Developer notes
+    PYTHONPATH=. ./unstructured/ingest/main.py \
+       --s3-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
+       --s3-anonymous \
+       --structured-output-dir s3-small-batch-output \
+       --num-processes 2
 
-***REMOVED******REMOVED*** The Abstractions
+***REMOVED******REMOVED*** Adding Data Connectors
 
-```mermaid
-sequenceDiagram
-    participant MainProcess
-    participant DocReader (connector)
-    participant DocProcessor
-    participant StructuredDocWriter (conncector)
-    MainProcess->>DocReader (connector): Initialize / Authorize
-    DocReader (connector)->>MainProcess: All doc metadata (no file content)
-    loop Single doc at a time (allows for multiprocessing)
-    MainProcess->>DocProcessor: Raw document metadata (no file content)
-    DocProcessor->>DocReader (connector): Request document
-    DocReader (connector)->>DocProcessor: Single document payload
-    Note over DocProcessor: Process through Unstructured
-    DocProcessor->>StructuredDocWriter (conncector): Write Structured Data
-    Note over StructuredDocWriter (conncector): <br /> Optionally store version info, filename, etc
-    DocProcessor->>MainProcess: Structured Data (only JSON in V0)
-    end
-    Note over MainProcess: Optional - process structured data from all docs
-```
+To add a connector, refer to [unstructured/ingest/connector/s3_connector.py](unstructured/ingest/connector/s3_connector.py) as example that implements the three relelvant abstract base classes.
 
-The abstractions in the above diagram are honored in the S3 Connector project (though ABC's are not yet written), with the exception of the StructuredDocWriter which may be added more formally at a later time.
+Then, update [unstructured/ingest/main.py](unstructured/ingest/main.py) to instantiate
+the connector specific to your class if its command line options are invoked.
+
+Create at least one folder [examples/ingest](examples/ingest) with an easily reproducible
+script that shows the new connector in action.
+
+Finally, to ensure the connector remains stable, add a new script test_unstructured_ingest/test-ingest-\<the-new-data-source\>.sh similar to [test_unstructured_ingest/test-ingest-s3.sh](test_unstructured_ingest/test-ingest-s3.sh), and append a line invoking the new script in [test_unstructured_ingest/test-ingest.sh](test_unstructured_ingest/test-ingest.sh).
+
+You'll notice that the unstructured outputs for the new documents are expected
+to be checked into CI under test_unstructured_ingest/expected-structured-output/\<folder-name-relevant-to-your-dataset\>. So, you'll need to `git add` those json outputs so that `test-ingest.sh` passes in CI.
+
+The `main.py` flags of --re-download/--no-re-download , --download-dir, --preserve-downloads, --structured-output-dir, and --reprocess are honored by the connector.
+
+***REMOVED******REMOVED******REMOVED*** The checklist:
+
+In checklist form, the above steps are summarized as:
+
+- [ ] Create a new module under [unstructured/ingest/connector/](unstructured/ingest/connector/) implementing the 3 abstract base classes, similar to [unstructured/ingest/connector/s3_connector.py](unstructured/ingest/connector/s3_connector.py).
+- [ ] Update [unstructured/ingest/main.py](unstructured/ingest/main.py) with support for the new connector.
+- [ ] Create a folder under [examples/ingest](examples/ingest) that includes at least one well documented script.
+- [ ] Add a script test_unstructured_ingest/test-ingest-\<the-new-data-source\>.sh. It's json output files should have a total of no more than 100K.
+- [ ] Git add the expected outputs under test_unstructured_ingest/expected-structured-output/\<folder-name-relevant-to-your-dataset\> so the above test passes in CI.
+- [ ] Add a line to [test_unstructured_ingest/test-ingest.sh](test_unstructured_ingest/test-ingest.sh) invoking the new test script.
+- [ ] Honors the conventions of `BaseConnectorConfig` defined in [unstructured/ingest/interfaces.py](unstructured/ingest/interfaces.py) which is passed through [the CLI](unstructured/ingest/main.py):
+  - [ ] If running with an `.output_dir` where structured outputs already exists for a given file, the file content is not re-downloaded from the data source nor is it reprocessed. This is made possible by implementing the call to `MyIngestDoc.has_output()` which is invoked in [MainProcess._filter_docs_with_outputs](ingest-prep-for-many/unstructured/ingest/main.py).
+  - [ ] Unless `.reprocess` is `True`, then documents are always reprocessed.
+  - [ ] If `.preserve_download` is `True`, documents downloaded to `.download_dir` are not removed after processing.
+  - [ ] Else if `.preserve_download` is `False`, documents downloaded to `.download_dir` are removed after they are **successfully** processed during the invocation of `MyIngestDoc.cleanup_file()` in [process_document](unstructured/ingest/doc_processor/generalized.py)
+  - [ ] Does not re-download documents to `.download_dir` if `.re_download` is False, enforced in `MyIngestDoc.get_file()`
+  - [ ] Prints more details if `.verbose` similar to [unstructured/ingest/connector/s3_connector.py](unstructured/ingest/connector/s3_connector.py).
+  
