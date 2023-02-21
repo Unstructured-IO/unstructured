@@ -72,7 +72,10 @@ class MainProcess:
     "also be a single file.",
 )
 @click.option(
-    "--s3-anonymous", is_flag=True, default=False, help="Connect to s3 without local AWS credentials."
+    "--s3-anonymous",
+    is_flag=True,
+    default=False,
+    help="Connect to s3 without local AWS credentials.",
 )
 @click.option(
     "--re-download/--no-re-download",
@@ -141,11 +144,11 @@ def main(
         )
     # Check for other connector-specific options here and define the doc_connector object
     # e.g. "elif azure_container:  ..."
-    
+
     else:
         print("No connector-specific option was specified!")
         sys.exit(1)
-    
+
     MainProcess(
         doc_connector=doc_connector,
         doc_processor_fn=process_document,

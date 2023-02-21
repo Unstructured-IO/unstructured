@@ -85,6 +85,7 @@ class S3IngestDoc(BaseIngestDoc):
     def get_file(self):
         """Actually fetches the file from s3 and stores it locally."""
         import boto3
+
         self._create_full_tmp_dir_path()
         if (
             not self.config.re_download
@@ -98,6 +99,7 @@ class S3IngestDoc(BaseIngestDoc):
         if self.config.anonymous:
             from botocore import UNSIGNED
             from botocore.client import Config
+
             s3_cli = boto3.client("s3", config=Config(signature_version=UNSIGNED))
         else:
             s3_cli = boto3.client("s3")
@@ -131,11 +133,13 @@ class S3Connector(BaseConnector):
 
     def __init__(self, config: SimpleS3Config):
         import boto3
+
         self.config = config
         self._list_objects_kwargs = {"Bucket": config.s3_bucket, "Prefix": config.s3_path}
         if config.anonymous:
             from botocore import UNSIGNED
             from botocore.client import Config
+
             self.s3_cli = boto3.client("s3", config=Config(signature_version=UNSIGNED))
         else:
             self.s3_cli = boto3.client("s3")
