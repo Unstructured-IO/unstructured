@@ -28,7 +28,9 @@ def process_document(doc):
         # accessing the .filename property could lazily call .get_file(), but
         # keeping them as two distinct calls for end-user transparency for now
         print(f"Processing {doc.filename}")
+
         elements = partition(filename=doc.filename)
+
         isd_elems = convert_to_isd(elements)
 
         isd_elems_no_filename = []
