@@ -1,6 +1,6 @@
-***REMOVED******REMOVED*** 0.4.12-dev0
+***REMOVED******REMOVED*** 0.4.12-dev1
 
-* Adds console_entrypoint for unstructured-ingest
+* Adds console_entrypoint for unstructured-ingest and more structure/docs related to ingest.
 
 ***REMOVED******REMOVED*** 0.4.11
 
