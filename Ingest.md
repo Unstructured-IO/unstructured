@@ -14,10 +14,9 @@ For example, the following command processes all the documents in S3 in the
        --structured-output-dir s3-small-batch-output \
        --num-processes 2
 
-Naturally, --num-processes may be adjusted to take advantage of multiprocessing
-as makes sense for your instance type.
+--num-processes may be adjusted to take advantage of multiprocessing to better utilize your instance.
 
-Installation note: make sure to install the following extras when installing unstructured:
+Installation note: make sure to install the following extras when installing unstructured, needed for the above command:
 
     pip install unstructured[s3,local-inference,huggingface]
 
@@ -25,7 +24,7 @@ Installation note: make sure to install the following extras when installing uns
 
 ## Local testing
 
-When testing from a local checkout rather than use `unstructured`'s console script,
+When testing from a local checkout rather than a pip-installed version of `unstructured`,
 just execute `unstructured/ingest/main.py`, e.g.:
 
     PYTHONPATH=. ./unstructured/ingest/main.py \
