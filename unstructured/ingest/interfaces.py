@@ -3,6 +3,9 @@ through Unstructured."""
 
 from abc import ABC, abstractmethod
 
+from unstructured.partition.auto import partition
+from unstructured.staging.base import convert_to_isd
+
 
 class BaseConnector(ABC):
     """Abstract Base Class for a connector to a remote source, e.g. S3 or Google Drive."""
@@ -80,6 +83,20 @@ class BaseIngestDoc(ABC):
         pass
 
     @abstractmethod
-    def write_result(self, result):
+    def write_result(self):
         """Write the structured json result for this doc. result must be json serializable."""
         pass
+
+    def process_file(self):
+        print(f"Processing {self.filename}")
+
+        elements = partition(filename=self.filename)
+        isd_elems = convert_to_isd(elements)
+
+        self.isd_elems_no_filename = []
+        for elem in isd_elems:
+            # type: ignore
+            elem["metadata"].pop("filename")  # type: ignore[attr-defined]
+            self.isd_elems_no_filename.append(elem)
+
+        return self.isd_elems_no_filename
