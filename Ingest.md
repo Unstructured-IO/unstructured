@@ -55,7 +55,7 @@ The `main.py` flags of --re-download/--no-re-download , --download-dir, --preser
 In checklist form, the above steps are summarized as:
 
 - [ ] Create a new module under [unstructured/ingest/connector/](unstructured/ingest/connector/) implementing the 3 abstract base classes, similar to [unstructured/ingest/connector/s3_connector.py](unstructured/ingest/connector/s3_connector.py).
-  - [ ] The subclass of `BaseIngestDoc` overrides `process_file()` if extra processing logic is needed other than provided by [auto.partition()](unstructured/partition/auto.py).
+  - [ ] The subclass of `BaseIngestDoc` overrides `process_file()` if extra processing logic is needed other than what is provided by [auto.partition()](unstructured/partition/auto.py).
 - [ ] Update [unstructured/ingest/main.py](unstructured/ingest/main.py) with support for the new connector.
 - [ ] Create a folder under [examples/ingest](examples/ingest) that includes at least one well documented script.
 - [ ] Add a script test_unstructured_ingest/test-ingest-\<the-new-data-source\>.sh. It's json output files should have a total of no more than 100K.
