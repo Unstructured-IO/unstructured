@@ -63,8 +63,8 @@ In checklist form, the above steps are summarized as:
 - [ ] Add a line to [test_unstructured_ingest/test-ingest.sh](test_unstructured_ingest/test-ingest.sh) invoking the new test script.
 - [ ] If additional python dependencies are needed for the new connector:
   - [ ] Add them as an extra to [setup.py](unstructured/setup.py).
-  - [ ] Update the Makefile, adding a target for `install-ingest-<name>` and an additonal `pip-compile` step. See [this commit](https://github.com/Unstructured-IO/unstructured/commit/ab542ca3c6274f96b431142262d47d727f309e37) for a reference.
-  - [ ] The added dependencies should be imported at runtime if the new connector is invoked, rather than as top-level imports.
+  - [ ] Update the Makefile, adding a target for `install-ingest-<name>` and adding another `pip-compile` line to the `pip-compile` make target. See [this commit](https://github.com/Unstructured-IO/unstructured/commit/ab542ca3c6274f96b431142262d47d727f309e37) for a reference.
+  - [ ] The added dependencies should be imported at runtime when the new connector is invoked, rather than as top-level imports.
 - [ ] Honors the conventions of `BaseConnectorConfig` defined in [unstructured/ingest/interfaces.py](unstructured/ingest/interfaces.py) which is passed through [the CLI](unstructured/ingest/main.py):
   - [ ] If running with an `.output_dir` where structured outputs already exists for a given file, the file content is not re-downloaded from the data source nor is it reprocessed. This is made possible by implementing the call to `MyIngestDoc.has_output()` which is invoked in [MainProcess._filter_docs_with_outputs](ingest-prep-for-many/unstructured/ingest/main.py).
   - [ ] Unless `.reprocess` is `True`, then documents are always reprocessed.
