@@ -61,7 +61,8 @@ In checklist form, the above steps are summarized as:
 - [ ] Add a script test_unstructured_ingest/test-ingest-\<the-new-data-source\>.sh. It's json output files should have a total of no more than 100K.
 - [ ] Git add the expected outputs under test_unstructured_ingest/expected-structured-output/\<folder-name-relevant-to-your-dataset\> so the above test passes in CI.
 - [ ] Add a line to [test_unstructured_ingest/test-ingest.sh](test_unstructured_ingest/test-ingest.sh) invoking the new test script.
-- [ ] If additional python dependencies are needed for the new connector, add them as an extra to [setup.py](unstructured/setup.py)
+- [ ] If additional python dependencies are needed for the new connector:
+  - [ ] Add them as an extra to [setup.py](unstructured/setup.py).
   - [ ] Update the Makefile, adding a target for `install-ingest-<name>` and an additonal `pip-compile` step. See [this commit](https://github.com/Unstructured-IO/unstructured/commit/ab542ca3c6274f96b431142262d47d727f309e37) for a reference.
   - [ ] The added dependencies should be imported at runtime if the new connector is invoked, rather than as top-level imports.
 - [ ] Honors the conventions of `BaseConnectorConfig` defined in [unstructured/ingest/interfaces.py](unstructured/ingest/interfaces.py) which is passed through [the CLI](unstructured/ingest/main.py):
