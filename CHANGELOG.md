@@ -1,3 +1,7 @@
+## 0.4.12-dev2
+
+* Add `parser` parameter to `partition_html`.
+
 ## 0.4.12-dev1
 
 * Adds console_entrypoint for unstructured-ingest, other structure/doc updates related to ingest.
