@@ -327,9 +327,7 @@ def _detect_filetype_from_octet_stream(file: IO) -> FileType:
         elif all([f in archive_filenames for f in EXPECTED_PPTX_FILES]):
             return FileType.PPTX
 
-    logger.warning(
-        "Could not detect the filetype from application/octet-strem MIME type."
-    )
+    logger.warning("Could not detect the filetype from application/octet-strem MIME type.")
     return FileType.UNK
 
 
