@@ -107,12 +107,12 @@ class S3IngestDoc(BaseIngestDoc):
             print(f"fetching {self} - PID: {os.getpid()}")
         s3_cli.download_file(self.config.s3_bucket, self.s3_key, self._tmp_download_file())
 
-    def write_result(self, result):
+    def write_result(self):
         """Write the structured json result for this doc. result must be json serializable."""
         output_filename = self._output_filename()
         output_filename.parent.mkdir(parents=True, exist_ok=True)
         with open(output_filename, "w") as output_f:
-            output_f.write(json.dumps(result, ensure_ascii=False, indent=2))
+            output_f.write(json.dumps(self.isd_elems_no_filename, ensure_ascii=False, indent=2))
         print(f"Wrote {output_filename}")
 
     @property

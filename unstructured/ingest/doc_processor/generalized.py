@@ -2,9 +2,6 @@
 
 import logging
 
-from unstructured.partition.auto import partition
-from unstructured.staging.base import convert_to_isd
-
 from unstructured_inference.models.detectron2 import MODEL_TYPES
 
 
@@ -25,24 +22,12 @@ def process_document(doc):
         # in the future, get_file_handle() could also be supported
         doc.get_file()
 
-        # accessing the .filename property could lazily call .get_file(), but
-        # keeping them as two distinct calls for end-user transparency for now
-        print(f"Processing {doc.filename}")
-
-        elements = partition(filename=doc.filename)
-
-        isd_elems = convert_to_isd(elements)
-
-        isd_elems_no_filename = []
-        for elem in isd_elems:
-            # type: ignore
-            elem["metadata"].pop("filename")  # type: ignore[attr-defined]
-            isd_elems_no_filename.append(elem)
+        isd_elems_no_filename = doc.process_file()
 
         # Note, this may be a no-op if the IngestDoc doesn't do anything to persist
         # the results. Instead, the MainProcess (caller) may work with the aggregate
         # results across all docs in memory.
-        doc.write_result(isd_elems_no_filename)
+        doc.write_result()
 
     except Exception:
         # TODO(crag) save the exception instead of print?
