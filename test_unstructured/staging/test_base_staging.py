@@ -14,6 +14,7 @@ from unstructured.documents.elements import (
     ElementMetadata,
     FigureCaption,
     Title,
+    Text,
     NarrativeText,
     ListItem,
     Image,
@@ -99,6 +100,7 @@ def test_all_elements_preserved_when_serialized():
         NarrativeText(text="narrative", metadata=metadata, element_id="5"),
         ListItem(text="list", metadata=metadata, element_id="6"),
         Image(text="image", metadata=metadata, element_id="7"),
+        Text(text="text", metadata=metadata, element_id="8"),
         PageBreak(),
     ]
 
@@ -117,6 +119,7 @@ def test_serialized_deserialize_elements_to_json(tmpdir):
         NarrativeText(text="narrative", metadata=metadata, element_id="5"),
         ListItem(text="list", metadata=metadata, element_id="6"),
         Image(text="image", metadata=metadata, element_id="7"),
+        Text(text="text", metadata=metadata, element_id="8"),
         PageBreak(),
     ]
 

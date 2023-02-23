@@ -83,7 +83,7 @@ class CheckBox(Element):
 class Text(Element):
     """Base element for capturing free text from within document."""
 
-    category = "Uncategorized"
+    category = "UncategorizedText"
 
     def __init__(
         self,
@@ -199,7 +199,7 @@ class PageBreak(Text):
 
 
 TYPE_TO_TEXT_ELEMENT_MAP: Dict[str, Any] = {
-    "Uncategorized": Text,
+    "UncategorizedText": Text,
     "FigureCaption": FigureCaption,
     "NarrativeText": NarrativeText,
     "ListItem": ListItem,
