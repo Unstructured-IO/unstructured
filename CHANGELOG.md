@@ -3,6 +3,8 @@
 ### Enhancements
 
 * Added `elements_to_json` and `elements_from_json` for easier serialization/deserialization
+* `convert_to_dict`, `dict_to_elements` and `convert_to_csv` are now aliases for functions
+  that use the ISD terminology.
 
 ### Fixes
 
