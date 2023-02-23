@@ -1,3 +1,15 @@
+***REMOVED******REMOVED*** 0.4.15
+
+***REMOVED******REMOVED******REMOVED*** Enhancements
+
+* Added `elements_to_json` and `elements_from_json` for easier serialization/deserialization
+* `convert_to_dict`, `dict_to_elements` and `convert_to_csv` are now aliases for functions
+  that use the ISD terminology.
+
+***REMOVED******REMOVED******REMOVED*** Fixes
+
+* Update to ensure all elements are preserved during serialization/deserialization
+
 ***REMOVED******REMOVED*** 0.4.14
 
 * Automatically install `nltk` models in the `tokenize` module.

@@ -45,3 +45,30 @@ Examples:
 
   ***REMOVED*** The output will be: Учебник по крокодильным средам обитания
   print(item)
+
+***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***
+Serializing Elements
+***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***
+
+The ``unstructured`` library includes helper functions for
+reading and writing a list of ``Element`` objects to and
+from JSON. You can use the following workflow for
+serializing and deserializing an ``Element`` list.
+
+
+.. code:: python
+
+    from unstructured.documents.elements import ElementMetadata, Text, Title, FigureCaption
+    from unstructured.staging.base import elements_to_json, elements_from_json
+
+    filename = "my-elements.json"
+    metadata = ElementMetadata(filename="fake-file.txt")
+    elements = [
+        FigureCaption(text="caption", metadata=metadata, element_id="1"),
+        Title(text="title", metadata=metadata, element_id="2"),
+        Text(text="title", metadata=metadata, element_id="3"),
+
+    ]
+
+    elements_to_json(elements, filename=filename)
+    new_elements = elements_from_json(filename=filename)
