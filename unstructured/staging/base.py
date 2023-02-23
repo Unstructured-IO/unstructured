@@ -38,11 +38,11 @@ def convert_to_dict(elements: List[Element]) -> List[Dict[str, str]]:
     return convert_to_isd(elements)
 
 
-def elements_to_json(elements: List[Element], filename: str):
+def elements_to_json(elements: List[Element], filename: str, indent: int = 4):
     """Saves a list of elements to a JSON file."""
     element_dict = convert_to_dict(elements)
     with open(filename, "w") as f:
-        json.dump(element_dict, f, indent=4)
+        json.dump(element_dict, f, indent=indent)
 
 
 def isd_to_elements(isd: List[Dict[str, Any]]) -> List[Element]:
