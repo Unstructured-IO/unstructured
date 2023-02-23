@@ -4,7 +4,7 @@ through Unstructured."""
 from abc import ABC, abstractmethod
 
 from unstructured.partition.auto import partition
-from unstructured.staging.base import convert_to_isd
+from unstructured.staging.base import convert_to_dict
 
 
 class BaseConnector(ABC):
@@ -91,12 +91,13 @@ class BaseIngestDoc(ABC):
         print(f"Processing {self.filename}")
 
         elements = partition(filename=self.filename)
-        isd_elems = convert_to_isd(elements)
+        isd_elems = convert_to_dict(elements)
 
         self.isd_elems_no_filename = []
         for elem in isd_elems:
             # type: ignore
             elem["metadata"].pop("filename")  # type: ignore[attr-defined]
+            elem.pop("coordinates")  # type: ignore[attr-defined]
             self.isd_elems_no_filename.append(elem)
 
         return self.isd_elems_no_filename

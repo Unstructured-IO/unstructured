@@ -1,7 +1,7 @@
 from abc import ABC
 from dataclasses import dataclass
 import hashlib
-from typing import Callable, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Union
 import pathlib
 
 
@@ -24,6 +24,10 @@ class ElementMetadata:
     def to_dict(self):
         return {key: value for key, value in self.__dict__.items() if value is not None}
 
+    @classmethod
+    def from_dict(cls, input_dict):
+        return cls(**input_dict)
+
 
 class Element(ABC):
     """An element is a section of a page in the document."""
@@ -37,6 +41,14 @@ class Element(ABC):
         self.id: Union[str, NoID] = element_id
         self.coordinates: Optional[List[float]] = coordinates
         self.metadata = metadata
+
+    def to_dict(self) -> dict:
+        return {
+            "type": None,
+            "coordinates": self.coordinates,
+            "element_id": self.id,
+            "metadata": self.metadata.to_dict(),
+        }
 
 
 class CheckBox(Element):
@@ -60,6 +72,7 @@ class CheckBox(Element):
 
     def to_dict(self) -> dict:
         return {
+            "type": "CheckBox",
             "checked": self.checked,
             "coordinates": self.coordinates,
             "element_id": self.id,
@@ -70,7 +83,7 @@ class CheckBox(Element):
 class Text(Element):
     """Base element for capturing free text from within document."""
 
-    category = "Uncategorized"
+    category = "UncategorizedText"
 
     def __init__(
         self,
@@ -101,6 +114,8 @@ class Text(Element):
 
     def to_dict(self) -> dict:
         return {
+            "element_id": self.id,
+            "coordinates": self.coordinates,
             "text": self.text,
             "type": self.category,
             "metadata": self.metadata.to_dict(),
@@ -173,5 +188,24 @@ class PageBreak(Text):
 
     category = "PageBreak"
 
-    def __init__(self):
+    def __init__(
+        self,
+        text: Optional[str] = None,
+        element_id: Union[str, NoID] = NoID(),
+        coordinates: Optional[List[float]] = None,
+        metadata: ElementMetadata = ElementMetadata(),
+    ):
         super().__init__(text="<PAGE BREAK>")
+
+
+TYPE_TO_TEXT_ELEMENT_MAP: Dict[str, Any] = {
+    "UncategorizedText": Text,
+    "FigureCaption": FigureCaption,
+    "NarrativeText": NarrativeText,
+    "ListItem": ListItem,
+    "BulletedText": ListItem,
+    "Title": Title,
+    "Address": Address,
+    "Image": Image,
+    "PageBreak": PageBreak,
+}
