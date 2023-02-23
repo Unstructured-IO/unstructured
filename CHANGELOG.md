@@ -1,6 +1,15 @@
-## 0.4.12
+## 0.4.14
 
 * Automatically install `nltk` models in the `tokenize` module.
+
+## 0.4.13
+
+* Fixes unstructured-ingest cli.
+
+## 0.4.12
+
+* Adds console_entrypoint for unstructured-ingest, other structure/doc updates related to ingest.
+* Add `parser` parameter to `partition_html`.
 
 ## 0.4.11
 

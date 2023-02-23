@@ -4,6 +4,7 @@ import requests
 
 from unstructured.documents.elements import Element
 from unstructured.documents.html import HTMLDocument
+from unstructured.documents.xml import VALID_PARSERS
 from unstructured.partition.common import add_element_metadata, document_to_element_list
 
 
@@ -14,6 +15,7 @@ def partition_html(
     url: Optional[str] = None,
     include_page_breaks: bool = False,
     include_metadata: bool = True,
+    parser: VALID_PARSERS = None,
 ) -> List[Element]:
     """Partitions an HTML document into its constituent elements.
 
@@ -32,12 +34,14 @@ def partition_html(
     include_metadata
         Optionally allows for excluding metadata from the output. Primarily intended
         for when partition_html is called in other partition bricks (like partition_email)
+    parser
+        The parser to use for parsing the HTML document. If None, default parser will be used.
     """
     if not any([filename, file, text, url]):
         raise ValueError("One of filename, file, or text must be specified.")
 
     if filename is not None and not file and not text and not url:
-        document = HTMLDocument.from_file(filename)
+        document = HTMLDocument.from_file(filename, parser=parser)
 
     elif file is not None and not filename and not text and not url:
         file_content = file.read()
@@ -46,11 +50,11 @@ def partition_html(
         else:
             file_text = file_content
 
-        document = HTMLDocument.from_string(file_text)
+        document = HTMLDocument.from_string(file_text, parser=parser)
 
     elif text is not None and not filename and not file and not url:
         _text: str = str(text)
-        document = HTMLDocument.from_string(_text)
+        document = HTMLDocument.from_string(_text, parser=parser)
 
     elif url is not None and not filename and not file and not text:
         response = requests.get(url)
@@ -61,7 +65,7 @@ def partition_html(
         if not content_type.startswith("text/html"):
             raise ValueError(f"Expected content type text/html. Got {content_type}.")
 
-        document = HTMLDocument.from_string(response.text)
+        document = HTMLDocument.from_string(response.text, parser=parser)
 
     else:
         raise ValueError("Only one of filename, file, or text can be specified.")
