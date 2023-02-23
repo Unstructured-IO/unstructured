@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Elements" href="elements.html" /><link rel="prev" title="Document Parsing" href="index.html" />
 
     <link rel="shortcut icon" href="_static/unstructured_small.png"/><!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 -->
-        <title>Installation - Unstructured 0.4.13 documentation</title>
+        <title>Installation - Unstructured 0.4.14 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -223,7 +223,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">Unstructured 0.4.13 documentation</div></a>
+      <a href="index.html"><div class="brand">Unstructured 0.4.14 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -322,14 +322,6 @@ installation.</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">poppler-utils</span></code> (images and PDFs)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">tesseract-ocr</span></code> (images and PDFs)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">libreoffice</span></code> (MS Office docs)</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>Run the following to install NLTK dependencies. <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> will handle this automatically soon.</dt><dd><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-c</span> <span class="pre">&quot;import</span> <span class="pre">nltk;</span> <span class="pre">nltk.download('punkt')&quot;</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-c</span> <span class="pre">&quot;import</span> <span class="pre">nltk;</span> <span class="pre">nltk.download('averaged_perceptron_tagger')&quot;</span></code></p></li>
 </ul>
 </dd>
 </dl>
@@ -434,14 +426,6 @@ this to work, you’ll need <code class="docutils literal notranslate"><span cla
 </pre></div>
 </div>
 </section>
-<section id="nltk-dependencies">
-<h3>NLTK Dependencies<a class="headerlink" href="#nltk-dependencies" title="Permalink to this heading"></a></h3>
-<p>The <a class="reference external" href="https://www.nltk.org/">NLTK</a> library is used for word and sentence tokenziation and
-part of speech (POS) tagging. Tokenization and POS tagging help to identify sections of
-narrative text within a document and are used across parsing families. The <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code>
-command downloads the <code class="docutils literal notranslate"><span class="pre">punkt</span></code> and <code class="docutils literal notranslate"><span class="pre">averaged_perceptron_tagger</span></code> depdenencies from <code class="docutils literal notranslate"><span class="pre">nltk</span></code>.
-If they are not already installed, you can install them with <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install-nltk</span></code>.</p>
-</section>
 <section id="xml-html-depenedencies">
 <h3>XML/HTML Depenedencies<a class="headerlink" href="#xml-html-depenedencies" title="Permalink to this heading"></a></h3>
 <p>For XML and HTML parsing, you’ll need <code class="docutils literal notranslate"><span class="pre">libxml2</span></code> and <code class="docutils literal notranslate"><span class="pre">libxlst</span></code> installed. On a Mac, you can do
@@ -533,7 +517,6 @@ information on how to install <code class="docutils literal notranslate"><span c
 <li><a class="reference internal" href="#logging">Logging</a></li>
 <li><a class="reference internal" href="#extra-dependencies">Extra Dependencies</a><ul>
 <li><a class="reference internal" href="#filetype-detection">Filetype Detection</a></li>
-<li><a class="reference internal" href="#nltk-dependencies">NLTK Dependencies</a></li>
 <li><a class="reference internal" href="#xml-html-depenedencies">XML/HTML Depenedencies</a></li>
 <li><a class="reference internal" href="#huggingface-dependencies">Huggingface Dependencies</a></li>
 </ul>
