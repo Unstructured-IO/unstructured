@@ -1,3 +1,7 @@
+## 0.4.13
+
+* Fixes unstructured-ingest cli.
+
 ## 0.4.12
 
 * Adds console_entrypoint for unstructured-ingest, other structure/doc updates related to ingest.
