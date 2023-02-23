@@ -102,6 +102,8 @@ class Text(Element):
 
     def to_dict(self) -> dict:
         return {
+            "element_id": self.id,
+            "coordinates": self.coordinates,
             "text": self.text,
             "type": self.category,
             "metadata": self.metadata.to_dict(),

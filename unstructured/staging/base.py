@@ -9,7 +9,15 @@ from unstructured.documents.elements import (
     TYPE_TO_TEXT_ELEMENT_MAP,
 )
 
-TABLE_FIELDNAMES: List[str] = ["type", "text", "filename", "page_number", "url"]
+TABLE_FIELDNAMES: List[str] = [
+    "type",
+    "text",
+    "element_id",
+    "coordinates",
+    "filename",
+    "page_number",
+    "url",
+]
 
 
 def convert_to_isd(elements: List[Text]) -> List[Dict[str, str]]:
