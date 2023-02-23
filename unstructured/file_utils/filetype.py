@@ -3,7 +3,13 @@ import os
 from typing import IO, Optional
 import zipfile
 
-import magic
+try:
+    import magic
+
+    LIBMAGIC_AVAILABLE = True
+except ImportError:
+    LIBMAGIC_AVAILABLE = False
+
 
 from unstructured.logger import logger
 from unstructured.nlp.patterns import EMAIL_HEAD_RE
@@ -106,100 +112,217 @@ EXT_TO_FILETYPE = {
 }
 
 
+def _detect_filetype_from_extension(extension: str) -> Optional[FileType]:
+    """Detect the file type based on the file extension."""
+    if extension in [".txt", ".text"]:
+        return FileType.TEXT
+    elif extension in [".pdf"]:
+        return FileType.PDF
+    elif extension in [".jpg", ".jpeg", ".png", ".gif"]:
+        return FileType.IMAGE
+    # Add more supported file types and their extensions here.
+    return None
+
+
+def _detect_filetype_from_extension(extension: str) -> Optional[FileType]:
+    """Detect the file type based on the file extension."""
+    if extension in [".txt", ".text"]:
+        return FileType.TEXT
+    elif extension in [".pdf"]:
+        return FileType.PDF
+    elif extension in [".jpg", ".jpeg", ".png", ".gif"]:
+        return FileType.IMAGE
+    # Add more supported file types and their extensions here.
+    return None
+
+
 def detect_filetype(
     filename: Optional[str] = None, file: Optional[IO] = None
 ) -> Optional[FileType]:
-    """Use libmagic to determine a file's type. Helps determine which partition brick
-    to use for a given file. A return value of None indicates a non-supported file type."""
-    if filename and file:
-        raise ValueError("Only one of filename or file should be specified.")
+    try:
+        # Attempt to load the libmagic library
+        magic_obj = magic.Magic()
+        mime_type = magic_obj.from_file(filename, mime=True)
+        """Use libmagic to determine a file's type. Helps determine which partition brick
+        to use for a given file. A return value of None indicates a non-supported file type."""
+        if filename and file:
+            raise ValueError("Only one of filename or file should be specified.")
 
-    if filename:
-        _, extension = os.path.splitext(filename)
-        extension = extension.lower()
-        mime_type = magic.from_file(filename, mime=True)
-    elif file is not None:
-        extension = None
-        # NOTE(robinson) - the python-magic docs recommend reading at least the first 2048 bytes
-        # Increased to 4096 because otherwise .xlsx files get detected as a zip file
-        # ref: https://github.com/ahupp/python-magic#usage
-        mime_type = magic.from_buffer(file.read(4096), mime=True)
-    else:
-        raise ValueError("No filename nor file were specified.")
+        if filename:
+            _, extension = os.path.splitext(filename)
+            extension = extension.lower()
+            mime_type = magic.from_file(filename, mime=True)
+            if not LIBMAGIC_AVAILABLE:
+                return _detect_filetype_from_extension(filename)
+        elif file is not None:
+            extension = None
+            # NOTE(robinson) - the python-magic docs recommend reading at least the first 2048 bytes
+            # Increased to 4096 because otherwise .xlsx files get detected as a zip file
+            # ref: https://github.com/ahupp/python-magic#usage
+            try:
+                mime_type = magic.from_buffer(file.read(4096), mime=True)
+            except ImportError as e:
+                raise ImportError(
+                    "libmagic is unavailable. Filetype detection on file-like objects requires libmagic. Please install libmagic and try again."
+                ) from e
+        else:
+            raise ValueError("No filename nor file were specified.")
 
-    if mime_type == "application/pdf":
-        return FileType.PDF
+        if mime_type == "application/pdf":
+            return FileType.PDF
 
-    elif mime_type in DOCX_MIME_TYPES:
-        return FileType.DOCX
+        elif mime_type in DOCX_MIME_TYPES:
+            return FileType.DOCX
 
-    elif mime_type in DOC_MIME_TYPES:
-        return FileType.DOC
+        elif mime_type in DOC_MIME_TYPES:
+            return FileType.DOC
 
-    elif mime_type == "image/jpeg":
-        return FileType.JPG
+        elif mime_type == "image/jpeg":
+            return FileType.JPG
 
-    elif mime_type == "image/png":
-        return FileType.PNG
+        elif mime_type == "image/png":
+            return FileType.PNG
 
-    elif mime_type == "text/plain":
-        if extension and extension == ".eml":
-            return FileType.EML
-        if file and not extension:
-            if _check_eml_from_buffer(file=file) is True:
+        elif mime_type == "text/plain":
+            if extension and extension == ".eml":
                 return FileType.EML
+            if file and not extension:
+                if _check_eml_from_buffer(file=file) is True:
+                    return FileType.EML
+                else:
+                    return FileType.TXT
             else:
                 return FileType.TXT
-        else:
+
+        elif mime_type.endswith("xml"):
+            if extension and extension == ".html":
+                return FileType.HTML
+            else:
+                return FileType.XML
+
+        elif mime_type == "text/html":
+            return FileType.HTML
+
+        elif mime_type.startswith("text"):
             return FileType.TXT
 
-    elif mime_type.endswith("xml"):
-        if extension and extension == ".html":
+        elif mime_type in XLSX_MIME_TYPES:
+            return FileType.XLSX
+
+        elif mime_type in XLS_MIME_TYPES:
+            return FileType.XLS
+
+        elif mime_type in PPTX_MIME_TYPES:
+            return FileType.PPTX
+
+        elif mime_type in PPT_MIME_TYPES:
+            return FileType.PPT
+
+        elif mime_type == "application/octet-stream":
+            if file and not extension:
+                return _detect_filetype_from_octet_stream(file=file)
+            else:
+                return EXT_TO_FILETYPE.get(extension, FileType.UNK)
+
+        elif mime_type == "application/zip":
+            filetype = FileType.UNK
+            if file and not extension:
+                filetype = _detect_filetype_from_octet_stream(file=file)
+            elif filename is not None:
+                with open(filename, "rb") as f:
+                    filetype = _detect_filetype_from_octet_stream(file=f)
+
+            if filetype == FileType.UNK:
+                return FileType.ZIP
+            else:
+                return filetype
+
+        logger.warn(
+            f"MIME type was {mime_type}. This file type is not currently supported in unstructured."
+        )
+        return FileType.UNK
+    except ImportError:
+        if filename and file:
+            raise ValueError("Only one of filename or file should be specified.")
+        if not filename and not file:
+            raise ValueError("No filename nor file were specified.")
+
+        extension = None
+        if filename:
+            _, extension = os.path.splitext(filename)
+        extension = extension.lower()
+
+        if not LIBMAGIC_AVAILABLE:
+            return _detect_filetype_from_extension(filename)
+
+        mime_type = None
+        if file is not None:
+            # Read at least the first 4096 bytes to determine the MIME type
+            file.seek(0)
+            buffer = file.read(4096)
+            mime_type = magic.from_buffer(buffer, mime=True)
+        elif filename:
+            mime_type = magic.from_file(filename, mime=True)
+
+        if mime_type == "application/pdf":
+            return FileType.PDF
+        elif mime_type in DOCX_MIME_TYPES:
+            return FileType.DOCX
+        elif mime_type in DOC_MIME_TYPES:
+            return FileType.DOC
+        elif mime_type == "image/jpeg":
+            return FileType.JPG
+        elif mime_type == "image/png":
+            return FileType.PNG
+        elif mime_type == "text/plain":
+            if extension and extension == ".eml":
+                return FileType.EML
+            if file and not extension:
+                if _check_eml_from_buffer(file=file) is True:
+                    return FileType.EML
+                else:
+                    return FileType.TXT
+            else:
+                return FileType.TXT
+        elif mime_type.endswith("xml"):
+            if extension and extension == ".html":
+                return FileType.HTML
+            else:
+                return FileType.XML
+        elif mime_type == "text/html":
             return FileType.HTML
-        else:
-            return FileType.XML
+        elif mime_type.startswith("text"):
+            return FileType.TXT
+        elif mime_type in XLSX_MIME_TYPES:
+            return FileType.XLSX
+        elif mime_type in XLS_MIME_TYPES:
+            return FileType.XLS
+        elif mime_type in PPTX_MIME_TYPES:
+            return FileType.PPTX
+        elif mime_type in PPT_MIME_TYPES:
+            return FileType.PPT
+        elif mime_type == "application/octet-stream":
+            if file and not extension:
+                return _detect_filetype_from_octet_stream(file=file)
+            else:
+                return EXT_TO_FILETYPE.get(extension, FileType.UNK)
+        elif mime_type == "application/zip":
+            filetype = FileType.UNK
+            if file and not extension:
+                filetype = _detect_filetype_from_octet_stream(file=file)
+            elif filename is not None:
+                with open(filename, "rb") as f:
+                    filetype = _detect_filetype_from_octet_stream(file=f)
 
-    elif mime_type == "text/html":
-        return FileType.HTML
+            if filetype == FileType.UNK:
+                return FileType.ZIP
+            else:
+                return filetype
 
-    elif mime_type.startswith("text"):
-        return FileType.TXT
-
-    elif mime_type in XLSX_MIME_TYPES:
-        return FileType.XLSX
-
-    elif mime_type in XLS_MIME_TYPES:
-        return FileType.XLS
-
-    elif mime_type in PPTX_MIME_TYPES:
-        return FileType.PPTX
-
-    elif mime_type in PPT_MIME_TYPES:
-        return FileType.PPT
-
-    elif mime_type == "application/octet-stream":
-        if file and not extension:
-            return _detect_filetype_from_octet_stream(file=file)
-        else:
-            return EXT_TO_FILETYPE.get(extension, FileType.UNK)
-
-    elif mime_type == "application/zip":
-        filetype = FileType.UNK
-        if file and not extension:
-            filetype = _detect_filetype_from_octet_stream(file=file)
-        elif filename is not None:
-            with open(filename, "rb") as f:
-                filetype = _detect_filetype_from_octet_stream(file=f)
-
-        if filetype == FileType.UNK:
-            return FileType.ZIP
-        else:
-            return filetype
-
-    logger.warn(
-        f"MIME type was {mime_type}. This file type is not currently supported in unstructured."
-    )
-    return FileType.UNK
+        logger.warn(
+            f"MIME type was {mime_type}. This file type is not currently supported in unstructured."
+        )
+        return FileType.UNK
 
 
 def _detect_filetype_from_octet_stream(file: IO) -> FileType:

@@ -169,3 +169,9 @@ of an email.
 ## 0.2.0
 
 * Initial release of unstructured
+
+## 0.4.11-dev0
+* Added a try and catch statement to check if libmagic library is present or not.
+* Added a try and catch statement in detect_filetype function so that it works even if libmagic is present or not.
+* Made a new function _detect_filetype_from_extension to detect file type based on the file extension.
+* Removed all the whitespace errors using black.
