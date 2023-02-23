@@ -1,3 +1,13 @@
+## 0.4.15
+
+### Enhancements
+
+* Added `elements_to_json` and `elements_from_json` for easier serialization/deserialization
+
+### Fixes
+
+* Update to ensure all elements are preserved during serialization/deserialization
+
 ## 0.4.14
 
 * Automatically install `nltk` models in the `tokenize` module.
