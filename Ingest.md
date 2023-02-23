@@ -20,6 +20,8 @@ Installation note: make sure to install the following extras when installing uns
 
     pip install "unstructured[s3,local-inference]"
 
+See the [Quick Start](https://github.com/Unstructured-IO/unstructured#eight_pointed_black_star-quick-start) which documents how to pip install `dectectron2` and other OS dependencies, necessary for the parsing of .PDF files.
+
 # Developers' Guide
 
 ## Local testing
