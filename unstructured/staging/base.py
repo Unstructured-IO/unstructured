@@ -32,8 +32,13 @@ def convert_to_isd(elements: List[Element]) -> List[Dict[str, str]]:
     return isd
 
 
+def convert_to_dict(elements: List[Element]) -> List[Dict[str, str]]:
+    """Converts a list of elements into a dictionary."""
+    return convert_to_isd(elements)
+
+
 def isd_to_elements(isd: List[Dict[str, Any]]) -> List[Element]:
-    """Converts an Initial Structured Data (ISD) dictionary to a list of Text elements."""
+    """Converts an Initial Structured Data (ISD) dictionary to a list of elements."""
     elements: List[Element] = list()
 
     for item in isd:
@@ -66,6 +71,11 @@ def isd_to_elements(isd: List[Dict[str, Any]]) -> List[Element]:
             )
 
     return elements
+
+
+def dict_to_elements(input_dict: List[Dict[str, Any]]) -> List[Element]:
+    """Converts a dictionary representation of an element list into List[Element]."""
+    return isd_to_elements(input_dict)
 
 
 def convert_to_isd_csv(elements: List[Element]) -> str:
