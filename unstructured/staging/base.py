@@ -4,7 +4,10 @@ from typing import Any, Dict, List
 
 import pandas as pd
 
-from unstructured.documents.elements import Text, NarrativeText, Title, ListItem
+from unstructured.documents.elements import (
+    Text,
+    TYPE_TO_TEXT_ELEMENT_MAP,
+)
 
 TABLE_FIELDNAMES: List[str] = ["type", "text", "filename", "page_number", "url"]
 
@@ -23,14 +26,15 @@ def isd_to_elements(isd: List[Dict[str, str]]) -> List[Text]:
     elements: List[Text] = list()
 
     for item in isd:
-        if item["type"] == "NarrativeText":
-            elements.append(NarrativeText(text=item["text"]))
-        elif item["type"] == "Title":
-            elements.append(Title(text=item["text"]))
-        # NOTE(robinson) - "BulletedText" is in there for backward compatibility. ListItem used
-        # to be called BulletedText in an earlier version
-        elif item["type"] in ["ListItem", "BulletedText"]:
-            elements.append(ListItem(text=item["text"]))
+        element_id = item.get("element_id")
+        coordinates = item.get("coordinates")
+        # metadata = item.get("metadata")
+
+        if item["type"] in TYPE_TO_TEXT_ELEMENT_MAP:
+            _text_class = TYPE_TO_TEXT_ELEMENT_MAP[item["type"]]
+            elements.append(
+                _text_class(text=item["text"], element_id=element_id, coordinates=coordinates)
+            )
 
     return elements
 

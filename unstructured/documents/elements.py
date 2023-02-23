@@ -1,7 +1,7 @@
 from abc import ABC
 from dataclasses import dataclass
 import hashlib
-from typing import Callable, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Union
 import pathlib
 
 
@@ -60,6 +60,7 @@ class CheckBox(Element):
 
     def to_dict(self) -> dict:
         return {
+            "type": "CheckBox",
             "checked": self.checked,
             "coordinates": self.coordinates,
             "element_id": self.id,
@@ -175,3 +176,16 @@ class PageBreak(Text):
 
     def __init__(self):
         super().__init__(text="<PAGE BREAK>")
+
+
+TYPE_TO_TEXT_ELEMENT_MAP: Dict[str, Any] = {
+    "Uncategorized": Text,
+    "FigureCaption": FigureCaption,
+    "NarrativeText": NarrativeText,
+    "ListItem": ListItem,
+    "BulletedText": ListItem,
+    "Title": Title,
+    "Address": Address,
+    "Image": Image,
+    "PageBreak": PageBreak,
+}
