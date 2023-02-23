@@ -42,6 +42,14 @@ class Element(ABC):
         self.coordinates: Optional[List[float]] = coordinates
         self.metadata = metadata
 
+    def to_dict(self) -> dict:
+        return {
+            "type": None,
+            "coordinates": self.coordinates,
+            "element_id": self.id,
+            "metadata": self.metadata.to_dict(),
+        }
+
 
 class CheckBox(Element):
     """A checkbox with an attribute indicating whether its checked or not. Primarily used

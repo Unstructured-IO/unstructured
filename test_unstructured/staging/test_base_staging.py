@@ -10,7 +10,7 @@ import unstructured.staging.base as base
 
 from unstructured.documents.elements import (
     Address,
-    # CheckBox,
+    CheckBox,
     ElementMetadata,
     FigureCaption,
     Title,
@@ -93,7 +93,7 @@ def test_all_elements_preserved_when_serialized():
     metadata = ElementMetadata(filename="fake-file.txt")
     elements = [
         Address(text="address", metadata=metadata, element_id="1"),
-        # CheckBox(checked=True, metadata=metadata, element_id="2"),
+        CheckBox(checked=True, metadata=metadata, element_id="2"),
         FigureCaption(text="caption", metadata=metadata, element_id="3"),
         Title(text="title", metadata=metadata, element_id="4"),
         NarrativeText(text="narrative", metadata=metadata, element_id="5"),
