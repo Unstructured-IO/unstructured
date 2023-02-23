@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Bricks" href="bricks.html" /><link rel="prev" title="Installation" href="installing.html" />
 
     <link rel="shortcut icon" href="_static/unstructured_small.png"/><!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 -->
-        <title>Elements - Unstructured 0.4.14 documentation</title>
+        <title>Elements - Unstructured 0.4.15 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -223,7 +223,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">Unstructured 0.4.14 documentation</div></a>
+      <a href="index.html"><div class="brand">Unstructured 0.4.15 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -344,6 +344,29 @@ cleaner or a list of cleaners.</p>
 </pre></div>
 </div>
 </section>
+<section id="serializing-elements">
+<h2>Serializing Elements<a class="headerlink" href="#serializing-elements" title="Permalink to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> library includes helper functions for
+reading and writing a list of <code class="docutils literal notranslate"><span class="pre">Element</span></code> objects to and
+from JSON. You can use the following workflow for
+serializing and deserializing an <code class="docutils literal notranslate"><span class="pre">Element</span></code> list.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.documents.elements</span> <span class="kn">import</span> <span class="n">ElementMetadata</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">Title</span><span class="p">,</span> <span class="n">FigureCaption</span>
+<span class="kn">from</span> <span class="nn">unstructured.staging.base</span> <span class="kn">import</span> <span class="n">elements_to_json</span><span class="p">,</span> <span class="n">elements_from_json</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;my-elements.json&quot;</span>
+<span class="n">metadata</span> <span class="o">=</span> <span class="n">ElementMetadata</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;fake-file.txt&quot;</span><span class="p">)</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">FigureCaption</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;caption&quot;</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">,</span> <span class="n">element_id</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">),</span>
+    <span class="n">Title</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;title&quot;</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">,</span> <span class="n">element_id</span><span class="o">=</span><span class="s2">&quot;2&quot;</span><span class="p">),</span>
+    <span class="n">Text</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;title&quot;</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">,</span> <span class="n">element_id</span><span class="o">=</span><span class="s2">&quot;3&quot;</span><span class="p">),</span>
+
+<span class="p">]</span>
+
+<span class="n">elements_to_json</span><span class="p">(</span><span class="n">elements</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
+<span class="n">new_elements</span> <span class="o">=</span> <span class="n">elements_from_json</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
 </section>
 
         </article>
@@ -403,6 +426,7 @@ cleaner or a list of cleaners.</p>
             <ul>
 <li><a class="reference internal" href="#">Elements</a><ul>
 <li><a class="reference internal" href="#applying-cleaning-bricks-to-text-elements">Applying Cleaning Bricks to Text Elements</a></li>
+<li><a class="reference internal" href="#serializing-elements">Serializing Elements</a></li>
 </ul>
 </li>
 </ul>

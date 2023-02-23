@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Examples" href="examples.html" /><link rel="prev" title="Elements" href="elements.html" />
 
     <link rel="shortcut icon" href="_static/unstructured_small.png"/><!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 -->
-        <title>Bricks - Unstructured 0.4.14 documentation</title>
+        <title>Bricks - Unstructured 0.4.15 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -223,7 +223,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">Unstructured 0.4.14 documentation</div></a>
+      <a href="index.html"><div class="brand">Unstructured 0.4.15 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -1026,24 +1026,24 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;e
 <h2>Staging<a class="headerlink" href="#staging" title="Permalink to this heading"></a></h2>
 <p>Staging bricks in <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> prepare extracted text for downstream tasks such
 as machine learning inference and data labeling.</p>
-<section id="convert-to-isd">
-<h3><code class="docutils literal notranslate"><span class="pre">convert_to_isd</span></code><a class="headerlink" href="#convert-to-isd" title="Permalink to this heading"></a></h3>
-<p>Converts outputs to the initial structured data (ISD) format. This is the default format
-for returning data in Unstructured pipeline APIs.</p>
+<section id="convert-to-dict">
+<h3><code class="docutils literal notranslate"><span class="pre">convert_to_dict</span></code><a class="headerlink" href="#convert-to-dict" title="Permalink to this heading"></a></h3>
+<p>Converts a list of <code class="docutils literal notranslate"><span class="pre">Element</span></code> objects to a dictionary. This is the default format
+for representing documents in <code class="docutils literal notranslate"><span class="pre">unstructured</span></code>.</p>
 <p>Examples:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.documents.elements</span> <span class="kn">import</span> <span class="n">Title</span><span class="p">,</span> <span class="n">NarrativeText</span>
-<span class="kn">from</span> <span class="nn">unstructured.staging.base</span> <span class="kn">import</span> <span class="n">convert_to_isd</span>
+<span class="kn">from</span> <span class="nn">unstructured.staging.base</span> <span class="kn">import</span> <span class="n">convert_to_dict</span>
 
 <span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="n">Title</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Title&quot;</span><span class="p">),</span> <span class="n">NarrativeText</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Narrative&quot;</span><span class="p">)]</span>
-<span class="n">isd</span> <span class="o">=</span> <span class="n">convert_to_isd</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span>
+<span class="n">isd</span> <span class="o">=</span> <span class="n">convert_to_dict</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
-<section id="isd-to-elements">
-<h3><code class="docutils literal notranslate"><span class="pre">isd_to_elements</span></code><a class="headerlink" href="#isd-to-elements" title="Permalink to this heading"></a></h3>
-<p>Converts outputs from initial structured data (ISD) format back to a list of <code class="docutils literal notranslate"><span class="pre">Text</span></code> elements.</p>
+<section id="dict-to-elements">
+<h3><code class="docutils literal notranslate"><span class="pre">dict_to_elements</span></code><a class="headerlink" href="#dict-to-elements" title="Permalink to this heading"></a></h3>
+<p>Converts a dictionary of the format produced by <code class="docutils literal notranslate"><span class="pre">convert_to_dict</span></code> back to a list of <code class="docutils literal notranslate"><span class="pre">Element</span></code> objects.</p>
 <p>Examples:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.staging.base</span> <span class="kn">import</span> <span class="n">isd_to_elements</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.staging.base</span> <span class="kn">import</span> <span class="n">dict_to_elements</span>
 
 <span class="n">isd</span> <span class="o">=</span> <span class="p">[</span>
   <span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;My Title&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Title&quot;</span><span class="p">},</span>
@@ -1052,19 +1052,19 @@ for returning data in Unstructured pipeline APIs.</p>
 
 <span class="c1"># elements will look like:</span>
 <span class="c1"># [ Title(text=&quot;My Title&quot;), NarrativeText(text=&quot;My Narrative&quot;)]</span>
-<span class="n">elements</span> <span class="o">=</span> <span class="n">isd_to_elements</span><span class="p">(</span><span class="n">isd</span><span class="p">)</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="n">dict_to_elements</span><span class="p">(</span><span class="n">isd</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
-<section id="convert-to-isd-csv">
-<h3><code class="docutils literal notranslate"><span class="pre">convert_to_isd_csv</span></code><a class="headerlink" href="#convert-to-isd-csv" title="Permalink to this heading"></a></h3>
+<section id="convert-to-csv">
+<h3><code class="docutils literal notranslate"><span class="pre">convert_to_csv</span></code><a class="headerlink" href="#convert-to-csv" title="Permalink to this heading"></a></h3>
 <p>Converts outputs to the initial structured data (ISD) format as a CSV string.</p>
 <p>Examples:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.documents.elements</span> <span class="kn">import</span> <span class="n">Title</span><span class="p">,</span> <span class="n">NarrativeText</span>
-<span class="kn">from</span> <span class="nn">unstructured.staging.base</span> <span class="kn">import</span> <span class="n">convert_to_isd_csv</span>
+<span class="kn">from</span> <span class="nn">unstructured.staging.base</span> <span class="kn">import</span> <span class="n">convert_to_csv</span>
 
 <span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="n">Title</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Title&quot;</span><span class="p">),</span> <span class="n">NarrativeText</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Narrative&quot;</span><span class="p">)]</span>
-<span class="n">isd_csv</span> <span class="o">=</span> <span class="n">convert_to_isd_csv</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span>
+<span class="n">isd_csv</span> <span class="o">=</span> <span class="n">convert_to_csv</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -1575,9 +1575,9 @@ is used by default.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#staging">Staging</a><ul>
-<li><a class="reference internal" href="#convert-to-isd"><code class="docutils literal notranslate"><span class="pre">convert_to_isd</span></code></a></li>
-<li><a class="reference internal" href="#isd-to-elements"><code class="docutils literal notranslate"><span class="pre">isd_to_elements</span></code></a></li>
-<li><a class="reference internal" href="#convert-to-isd-csv"><code class="docutils literal notranslate"><span class="pre">convert_to_isd_csv</span></code></a></li>
+<li><a class="reference internal" href="#convert-to-dict"><code class="docutils literal notranslate"><span class="pre">convert_to_dict</span></code></a></li>
+<li><a class="reference internal" href="#dict-to-elements"><code class="docutils literal notranslate"><span class="pre">dict_to_elements</span></code></a></li>
+<li><a class="reference internal" href="#convert-to-csv"><code class="docutils literal notranslate"><span class="pre">convert_to_csv</span></code></a></li>
 <li><a class="reference internal" href="#convert-to-dataframe"><code class="docutils literal notranslate"><span class="pre">convert_to_dataframe</span></code></a></li>
 <li><a class="reference internal" href="#stage-for-transformers"><code class="docutils literal notranslate"><span class="pre">stage_for_transformers</span></code></a></li>
 <li><a class="reference internal" href="#stage-for-label-studio"><code class="docutils literal notranslate"><span class="pre">stage_for_label_studio</span></code></a></li>
