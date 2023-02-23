@@ -104,3 +104,22 @@ def test_all_elements_preserved_when_serialized():
 
     isd = base.convert_to_isd(elements)
     assert base.convert_to_isd(base.isd_to_elements(isd)) == isd
+
+
+def test_serialized_deserialize_elements_to_json(tmpdir):
+    filename = os.path.join(tmpdir, "fake-elements.json")
+    metadata = ElementMetadata(filename="fake-file.txt")
+    elements = [
+        Address(text="address", metadata=metadata, element_id="1"),
+        CheckBox(checked=True, metadata=metadata, element_id="2"),
+        FigureCaption(text="caption", metadata=metadata, element_id="3"),
+        Title(text="title", metadata=metadata, element_id="4"),
+        NarrativeText(text="narrative", metadata=metadata, element_id="5"),
+        ListItem(text="list", metadata=metadata, element_id="6"),
+        Image(text="image", metadata=metadata, element_id="7"),
+        PageBreak(),
+    ]
+
+    base.elements_to_json(elements, filename=filename)
+    new_elements = base.elements_from_json(filename=filename)
+    assert elements == new_elements

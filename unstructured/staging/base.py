@@ -1,5 +1,6 @@
 import io
 import csv
+import json
 from typing import Any, Dict, List, Optional
 
 import pandas as pd
@@ -35,6 +36,13 @@ def convert_to_isd(elements: List[Element]) -> List[Dict[str, str]]:
 def convert_to_dict(elements: List[Element]) -> List[Dict[str, str]]:
     """Converts a list of elements into a dictionary."""
     return convert_to_isd(elements)
+
+
+def elements_to_json(elements: List[Element], filename: str):
+    """Saves a list of elements to a JSON file."""
+    element_dict = convert_to_dict(elements)
+    with open(filename, "w") as f:
+        json.dump(element_dict, f, indent=4)
 
 
 def isd_to_elements(isd: List[Dict[str, Any]]) -> List[Element]:
@@ -73,9 +81,16 @@ def isd_to_elements(isd: List[Dict[str, Any]]) -> List[Element]:
     return elements
 
 
-def dict_to_elements(input_dict: List[Dict[str, Any]]) -> List[Element]:
+def dict_to_elements(element_dict: List[Dict[str, Any]]) -> List[Element]:
     """Converts a dictionary representation of an element list into List[Element]."""
-    return isd_to_elements(input_dict)
+    return isd_to_elements(element_dict)
+
+
+def elements_from_json(filename: str) -> List[Element]:
+    """Loads a list of elements from a JSON file."""
+    with open(filename, "r") as f:
+        element_dict = json.load(f)
+    return dict_to_elements(element_dict)
 
 
 def convert_to_isd_csv(elements: List[Element]) -> str:
