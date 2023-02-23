@@ -56,9 +56,7 @@ class CheckBox(Element):
         self.metadata = metadata
 
     def __eq__(self, other):
-        return (self.checked == other.checked) and (self.coordinates) == (
-            other.coordinates
-        )
+        return (self.checked == other.checked) and (self.coordinates) == (other.coordinates)
 
     def to_dict(self) -> dict:
         return {
@@ -87,9 +85,7 @@ class Text(Element):
             # NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits
             element_id = hashlib.sha256(text.encode()).hexdigest()[:32]
 
-        super().__init__(
-            element_id=element_id, metadata=metadata, coordinates=coordinates
-        )
+        super().__init__(element_id=element_id, metadata=metadata, coordinates=coordinates)
 
     def __str__(self):
         return self.text

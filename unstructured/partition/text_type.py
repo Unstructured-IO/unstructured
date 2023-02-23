@@ -66,15 +66,11 @@ def is_possible_narrative_text(
         os.environ.get("UNSTRUCTURED_NARRATIVE_TEXT_CAP_THRESHOLD", cap_threshold)
     )
     if exceeds_cap_ratio(text, threshold=cap_threshold):
-        logger.debug(
-            f"Not narrative. Text exceeds cap ratio {cap_threshold}:\n\n{text}"
-        )
+        logger.debug(f"Not narrative. Text exceeds cap ratio {cap_threshold}:\n\n{text}")
         return False
 
     non_alpha_threshold = float(
-        os.environ.get(
-            "UNSTRUCTURED_NARRATIVE_TEXT_NON_ALPHA_THRESHOLD", non_alpha_threshold
-        )
+        os.environ.get("UNSTRUCTURED_NARRATIVE_TEXT_NON_ALPHA_THRESHOLD", non_alpha_threshold)
     )
     if under_non_alpha_ratio(text, threshold=non_alpha_threshold):
         return False
@@ -142,9 +138,7 @@ def is_possible_title(
     # that sometimes get tokenized as separate sentences due to the period, but are still
     # valid titles
     if sentence_count(text, min_length=sentence_min_length) > 1:
-        logger.debug(
-            f"Not a title. Text is longer than {sentence_min_length} sentences:\n\n{text}"
-        )
+        logger.debug(f"Not a title. Text is longer than {sentence_min_length} sentences:\n\n{text}")
         return False
 
     return True

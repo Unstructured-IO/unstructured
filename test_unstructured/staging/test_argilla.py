@@ -67,9 +67,7 @@ def test_stage_for_argilla(elements, task_name, dataset_type, extra_kwargs):
         ),
     ],
 )
-def test_invalid_stage_for_argilla(
-    elements, task_name, error, error_message, extra_kwargs
-):
+def test_invalid_stage_for_argilla(elements, task_name, error, error_message, extra_kwargs):
     with pytest.raises(error) as e:
         argilla.stage_for_argilla(elements, task_name, **extra_kwargs)
         assert error_message in e.args[0].lower() if error_message else True

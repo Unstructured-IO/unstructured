@@ -65,6 +65,4 @@ def test_chunk_by_attention_window_raises_if_chunk_exceeds_window():
         def split_function(text):
             return text.split(".")
 
-        huggingface.chunk_by_attention_window(
-            text, tokenizer, split_function=split_function
-        )
+        huggingface.chunk_by_attention_window(text, tokenizer, split_function=split_function)

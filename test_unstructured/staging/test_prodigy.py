@@ -38,9 +38,7 @@ def test_validate_prodigy_metadata(elements):
 
 
 def test_validate_prodigy_metadata_with_valid_metadata(elements, valid_metadata):
-    validated_metadata = prodigy._validate_prodigy_metadata(
-        elements, metadata=valid_metadata
-    )
+    validated_metadata = prodigy._validate_prodigy_metadata(elements, metadata=valid_metadata)
     assert len(validated_metadata) == len(elements)
 
 

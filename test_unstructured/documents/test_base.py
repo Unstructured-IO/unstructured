@@ -29,9 +29,7 @@ def test_split(index):
     document = MockDocument()
     elements = document.pages[0].elements
     split_before_doc = document.before_element(elements[index])
-    before_elements = (
-        split_before_doc.pages[0].elements if split_before_doc.pages else []
-    )
+    before_elements = split_before_doc.pages[0].elements if split_before_doc.pages else []
     split_after_doc = document.after_element(elements[index])
     after_elements = split_after_doc.pages[0].elements if split_after_doc.pages else []
     expected_before_elements = document.pages[0].elements[:index]

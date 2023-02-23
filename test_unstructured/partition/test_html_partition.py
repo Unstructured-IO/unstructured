@@ -54,9 +54,7 @@ def test_partition_html_from_url():
     with open(filename, "r") as f:
         text = f.read()
 
-    response = MockResponse(
-        text=text, status_code=200, headers={"Content-Type": "text/html"}
-    )
+    response = MockResponse(text=text, status_code=200, headers={"Content-Type": "text/html"})
     with patch.object(requests, "get", return_value=response) as _:
         elements = partition_html(url="https://fake.url")
 
@@ -68,9 +66,7 @@ def test_partition_html_from_url_raises_with_bad_status_code():
     with open(filename, "r") as f:
         text = f.read()
 
-    response = MockResponse(
-        text=text, status_code=500, headers={"Content-Type": "text/html"}
-    )
+    response = MockResponse(text=text, status_code=500, headers={"Content-Type": "text/html"})
     with patch.object(requests, "get", return_value=response) as _:
         with pytest.raises(ValueError):
             partition_html(url="https://fake.url")

@@ -43,9 +43,7 @@ def partition(
     elif filetype == FileType.EML:
         return partition_email(filename=filename, file=file)
     elif filetype == FileType.HTML:
-        return partition_html(
-            filename=filename, file=file, include_page_breaks=include_page_breaks
-        )
+        return partition_html(filename=filename, file=file, include_page_breaks=include_page_breaks)
     elif filetype == FileType.PDF:
         return partition_pdf(
             filename=filename,  # type: ignore
@@ -65,9 +63,7 @@ def partition(
     elif filetype == FileType.PPT:
         return partition_ppt(filename=filename, file=file, include_page_breaks=include_page_breaks)
     elif filetype == FileType.PPTX:
-        return partition_pptx(
-            filename=filename, file=file, include_page_breaks=include_page_breaks
-        )
+        return partition_pptx(filename=filename, file=file, include_page_breaks=include_page_breaks)
     else:
         msg = "Invalid file" if not filename else f"Invalid file {filename}"
         raise ValueError(f"{msg}. File type not support in partition.")

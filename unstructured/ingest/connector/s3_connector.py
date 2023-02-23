@@ -79,9 +79,7 @@ class S3IngestDoc:
         return Path(self.config.output_dir) / f"{self.s3_key}.json"
 
     def has_output(self):
-        return self._output_filename().is_file() and os.path.getsize(
-            self._output_filename()
-        )
+        return self._output_filename().is_file() and os.path.getsize(self._output_filename())
 
     def _create_full_tmp_dir_path(self):
         """includes "directories" in s3 object path"""
@@ -107,9 +105,7 @@ class S3IngestDoc:
             s3_cli = boto3.client("s3")
         if self.config.verbose:
             print(f"fetching {self} - PID: {os.getpid()}")
-        s3_cli.download_file(
-            self.config.s3_bucket, self.s3_key, self._tmp_download_file()
-        )
+        s3_cli.download_file(self.config.s3_bucket, self.s3_key, self._tmp_download_file())
 
     def write_result(self, result):
         """write the structured json result. result must be json serializable"""

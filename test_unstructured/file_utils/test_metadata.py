@@ -9,9 +9,7 @@ import openpyxl
 import unstructured.file_utils.metadata as meta
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
-EXAMPLE_JPG_FILENAME = os.path.join(
-    DIRECTORY, "..", "..", "example-docs", "example.jpg"
-)
+EXAMPLE_JPG_FILENAME = os.path.join(DIRECTORY, "..", "..", "example-docs", "example.jpg")
 
 
 def test_get_docx_metadata_from_filename(tmpdir):

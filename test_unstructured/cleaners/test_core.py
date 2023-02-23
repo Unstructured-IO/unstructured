@@ -171,9 +171,7 @@ def test_clean_postfix(text, pattern, ignore_case, strip, expected):
         ("Risk factors: ", False, False, False, True, True, "risk factors"),
     ],
 )
-def test_clean(
-    text, extra_whitespace, dashes, bullets, lowercase, trailing_punctuation, expected
-):
+def test_clean(text, extra_whitespace, dashes, bullets, lowercase, trailing_punctuation, expected):
     assert (
         core.clean(
             text=text,

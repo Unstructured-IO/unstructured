@@ -66,9 +66,7 @@ def partition_html(
     else:
         raise ValueError("Only one of filename, file, or text can be specified.")
 
-    layout_elements = document_to_element_list(
-        document, include_page_breaks=include_page_breaks
-    )
+    layout_elements = document_to_element_list(document, include_page_breaks=include_page_breaks)
     if include_metadata:
         return add_element_metadata(
             layout_elements,

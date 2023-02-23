@@ -53,9 +53,7 @@ def test_is_possible_narrative_text(text, expected, monkeypatch):
     monkeypatch.setattr(text_type, "word_tokenize", mock_word_tokenize)
     monkeypatch.setattr(text_type, "pos_tag", mock_pos_tag)
     monkeypatch.setattr(text_type, "sent_tokenize", mock_sent_tokenize)
-    is_possible_narrative = text_type.is_possible_narrative_text(
-        text, cap_threshold=0.3
-    )
+    is_possible_narrative = text_type.is_possible_narrative_text(text, cap_threshold=0.3)
     assert is_possible_narrative is expected
 
 
@@ -211,9 +209,7 @@ def test_set_caps_ratio_with_environment_variable(monkeypatch):
     monkeypatch.setenv("UNSTRUCTURED_NARRATIVE_TEXT_CAP_THRESHOLD", 0.8)
 
     text = "All The King's Horses. And All The King's Men."
-    with patch.object(
-        text_type, "exceeds_cap_ratio", return_value=False
-    ) as mock_exceeds:
+    with patch.object(text_type, "exceeds_cap_ratio", return_value=False) as mock_exceeds:
         text_type.is_possible_narrative_text(text)
 
     mock_exceeds.assert_called_once_with(text, threshold=0.8)
@@ -225,9 +221,7 @@ def test_set_title_non_alpha_threshold_with_environment_variable(monkeypatch):
     monkeypatch.setenv("UNSTRUCTURED_TITLE_NON_ALPHA_THRESHOLD", 0.8)
 
     text = "/--------------- All the king's horses----------------/"
-    with patch.object(
-        text_type, "under_non_alpha_ratio", return_value=False
-    ) as mock_exceeds:
+    with patch.object(text_type, "under_non_alpha_ratio", return_value=False) as mock_exceeds:
         text_type.is_possible_title(text)
 
     mock_exceeds.assert_called_once_with(text, threshold=0.8)
@@ -239,9 +233,7 @@ def test_set_narrative_text_non_alpha_threshold_with_environment_variable(monkey
     monkeypatch.setenv("UNSTRUCTURED_NARRATIVE_TEXT_NON_ALPHA_THRESHOLD", 0.8)
 
     text = "/--------------- All the king's horses----------------/"
-    with patch.object(
-        text_type, "under_non_alpha_ratio", return_value=False
-    ) as mock_exceeds:
+    with patch.object(text_type, "under_non_alpha_ratio", return_value=False) as mock_exceeds:
         text_type.is_possible_narrative_text(text)
 
     mock_exceeds.assert_called_once_with(text, threshold=0.8)

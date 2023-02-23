@@ -47,17 +47,13 @@ def stage_for_prodigy(
     ref: https://prodi.gy/docs/api-loaders#input
     """
 
-    validated_metadata: Iterable[Dict[str, str]] = _validate_prodigy_metadata(
-        elements, metadata
-    )
+    validated_metadata: Iterable[Dict[str, str]] = _validate_prodigy_metadata(elements, metadata)
 
     prodigy_data: PRODIGY_TYPE = list()
     for element, metadatum in zip(elements, validated_metadata):
         if isinstance(element.id, str):
             metadatum["id"] = element.id
-        data: Dict[str, Union[str, Dict[str, str]]] = dict(
-            text=element.text, meta=metadatum
-        )
+        data: Dict[str, Union[str, Dict[str, str]]] = dict(text=element.text, meta=metadatum)
         prodigy_data.append(data)
 
     return prodigy_data
@@ -71,17 +67,12 @@ def stage_csv_for_prodigy(
     Converts the document to the CSV format required for use with Prodigy.
     ref: https://prodi.gy/docs/api-loaders#input
     """
-    validated_metadata: Iterable[Dict[str, str]] = _validate_prodigy_metadata(
-        elements, metadata
-    )
+    validated_metadata: Iterable[Dict[str, str]] = _validate_prodigy_metadata(elements, metadata)
 
     csv_fieldnames = ["text", "id"]
     csv_fieldnames += list(
         set().union(
-            *(
-                (key.lower() for key in metadata_item.keys())
-                for metadata_item in validated_metadata
-            )
+            *((key.lower() for key in metadata_item.keys()) for metadata_item in validated_metadata)
         )
     )
 

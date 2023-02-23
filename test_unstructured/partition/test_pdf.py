@@ -33,9 +33,7 @@ def mock_successful_post(url, **kwargs):
         "pages": [
             {
                 "number": 0,
-                "elements": [
-                    {"type": "Title", "text": "Charlie Brown and the Great Pumpkin"}
-                ],
+                "elements": [{"type": "Title", "text": "Charlie Brown and the Great Pumpkin"}],
             },
             {
                 "number": 1,
@@ -71,9 +69,7 @@ class MockDocumentLayout(layout.DocumentLayout):
         ]
 
 
-def test_partition_pdf_api(
-    monkeypatch, filename="example-docs/layout-parser-paper-fast.pdf"
-):
+def test_partition_pdf_api(monkeypatch, filename="example-docs/layout-parser-paper-fast.pdf"):
     monkeypatch.setattr(requests, "post", mock_successful_post)
     monkeypatch.setattr(requests, "get", mock_healthy_get)
 

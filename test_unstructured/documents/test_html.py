@@ -49,9 +49,7 @@ def sample_doc():
         tag="p",
         ancestortags=("table", "tbody", "tr", "td"),
     )
-    narrative = HTMLNarrativeText(
-        "I'm some narrative text", tag="p", ancestortags=tuple()
-    )
+    narrative = HTMLNarrativeText("I'm some narrative text", tag="p", ancestortags=tuple())
     page1 = Page(0)
     page1.elements = [table_element, narrative]
     header = HTMLTitle("I'm a header", tag="header", ancestortags=tuple())
@@ -479,9 +477,7 @@ def test_nested_text_tags():
         </{tag1}>
     </body>
     """
-    html_document = HTMLDocument.from_string(html_str).doc_after_cleaners(
-        skip_table_text=False
-    )
+    html_document = HTMLDocument.from_string(html_str).doc_after_cleaners(skip_table_text=False)
     assert len(html_document.pages[0].elements) == 1
 
 
