@@ -5,6 +5,7 @@ from typing import Any, Dict, List
 import pandas as pd
 
 from unstructured.documents.elements import (
+    ElementMetadata,
     Text,
     TYPE_TO_TEXT_ELEMENT_MAP,
 )
@@ -36,12 +37,21 @@ def isd_to_elements(isd: List[Dict[str, str]]) -> List[Text]:
     for item in isd:
         element_id = item.get("element_id")
         coordinates = item.get("coordinates")
-        # metadata = item.get("metadata")
+
+        metadata = ElementMetadata()
+        _metadata_dict = item.get("metadata")
+        if _metadata_dict is not None:
+            metadata = ElementMetadata.from_dict(_metadata_dict)
 
         if item["type"] in TYPE_TO_TEXT_ELEMENT_MAP:
             _text_class = TYPE_TO_TEXT_ELEMENT_MAP[item["type"]]
             elements.append(
-                _text_class(text=item["text"], element_id=element_id, coordinates=coordinates)
+                _text_class(
+                    text=item["text"],
+                    element_id=element_id,
+                    metadata=metadata,
+                    coordinates=coordinates,
+                )
             )
 
     return elements

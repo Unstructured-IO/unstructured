@@ -8,7 +8,17 @@ import pandas as pd
 
 import unstructured.staging.base as base
 
-from unstructured.documents.elements import ElementMetadata, Title, NarrativeText, ListItem
+from unstructured.documents.elements import (
+    Address,
+    # CheckBox,
+    ElementMetadata,
+    FigureCaption,
+    Title,
+    NarrativeText,
+    ListItem,
+    Image,
+    PageBreak,
+)
 
 
 @pytest.fixture
@@ -77,3 +87,20 @@ def test_convert_to_isd_serializes_with_posix_paths():
     output = base.convert_to_isd(elements)
     # NOTE(robinson) - json.dumps should run without raising an exception
     json.dumps(output)
+
+
+def test_all_elements_preserved_when_serialized():
+    metadata = ElementMetadata(filename="fake-file.txt")
+    elements = [
+        Address(text="address", metadata=metadata, element_id="1"),
+        # CheckBox(checked=True, metadata=metadata, element_id="2"),
+        FigureCaption(text="caption", metadata=metadata, element_id="3"),
+        Title(text="title", metadata=metadata, element_id="4"),
+        NarrativeText(text="narrative", metadata=metadata, element_id="5"),
+        ListItem(text="list", metadata=metadata, element_id="6"),
+        Image(text="image", metadata=metadata, element_id="7"),
+        PageBreak(),
+    ]
+
+    isd = base.convert_to_isd(elements)
+    assert base.convert_to_isd(base.isd_to_elements(isd)) == isd

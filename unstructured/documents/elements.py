@@ -24,6 +24,10 @@ class ElementMetadata:
     def to_dict(self):
         return {key: value for key, value in self.__dict__.items() if value is not None}
 
+    @classmethod
+    def from_dict(cls, input_dict):
+        return cls(**input_dict)
+
 
 class Element(ABC):
     """An element is a section of a page in the document."""
@@ -176,7 +180,13 @@ class PageBreak(Text):
 
     category = "PageBreak"
 
-    def __init__(self):
+    def __init__(
+        self,
+        text: Optional[str] = None,
+        element_id: Union[str, NoID] = NoID(),
+        coordinates: Optional[List[float]] = None,
+        metadata: ElementMetadata = ElementMetadata(),
+    ):
         super().__init__(text="<PAGE BREAK>")
 
 
