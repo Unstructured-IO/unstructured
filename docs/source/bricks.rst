@@ -907,7 +907,7 @@ Examples:
 ``dict_to_elements``
 ---------------------
 
-Converts a dictionary format back to a list of ``Element`` objects.
+Converts a dictionary of the format produced by ``convert_to_dict`` back to a list of ``Element`` objects.
 
 Examples:
 
