@@ -1,3 +1,7 @@
+## 0.4.14
+
+* Automatically install `nltk` models in the `tokenize` module.
+
 ## 0.4.13
 
 * Fixes unstructured-ingest cli.

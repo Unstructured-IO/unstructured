@@ -16,10 +16,6 @@ installation.
 	* ``tesseract-ocr`` (images and PDFs)
 	* ``libreoffice`` (MS Office docs)
 
-* Run the following to install NLTK dependencies. ``unstructured`` will handle this automatically soon.
-	* ``python -c "import nltk; nltk.download('punkt')"``
-	* ``python -c "import nltk; nltk.download('averaged_perceptron_tagger')"``
-
 * If you are parsing PDFs, run the following to install the ``detectron2`` model, which ``unstructured`` uses for layout detection:
 	* ``pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@v0.6#egg=detectron2"``
 
@@ -140,17 +136,6 @@ If you are on Windows using ``conda``, run:
 .. code:: console
 
 		$ conda install -c conda-forge libmagic
-
-
-=================
-NLTK Dependencies
-=================
-
-The `NLTK <https://www.nltk.org/>`_ library is used for word and sentence tokenziation and
-part of speech (POS) tagging. Tokenization and POS tagging help to identify sections of
-narrative text within a document and are used across parsing families. The ``make install``
-command downloads the ``punkt`` and ``averaged_perceptron_tagger`` depdenencies from ``nltk``.
-If they are not already installed, you can install them with ``make install-nltk``.
 
 ======================
 XML/HTML Depenedencies

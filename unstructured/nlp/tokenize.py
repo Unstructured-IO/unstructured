@@ -7,6 +7,7 @@ if sys.version_info < (3, 8):
 else:
     from typing import Final
 
+import nltk
 from nltk import (
     pos_tag as _pos_tag,
     sent_tokenize as _sent_tokenize,
@@ -14,6 +15,23 @@ from nltk import (
 )
 
 CACHE_MAX_SIZE: Final[int] = 128
+
+
+def _download_nltk_package_if_not_present(package_name: str, package_category: str):
+    """If the required nlt package is not present, download it."""
+    try:
+        nltk.find(f"{package_category}/{package_name}")
+    except LookupError:
+        nltk.download(package_name)
+
+
+NLTK_PACKAGES = [
+    ("tokenizers", "punkt"),
+    ("taggers", "averaged_perceptron_tagger"),
+]
+
+for package_category, package_name in NLTK_PACKAGES:
+    _download_nltk_package_if_not_present(package_name, package_category)
 
 
 @lru_cache(maxsize=CACHE_MAX_SIZE)
