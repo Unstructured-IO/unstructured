@@ -113,6 +113,11 @@ def convert_to_isd_csv(elements: List[Element]) -> str:
         return buffer.getvalue()
 
 
+def convert_to_csv(elements: List[Element]) -> str:
+    """Converts a list of elements to a CSV."""
+    return convert_to_isd_csv(elements)
+
+
 def convert_to_dataframe(elements: List[Element]) -> pd.DataFrame:
     """Converts document elements to a pandas DataFrame. The dataframe contains the
     following columns:

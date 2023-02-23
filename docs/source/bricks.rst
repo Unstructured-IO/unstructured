@@ -887,33 +887,33 @@ Staging
 Staging bricks in ``unstructured`` prepare extracted text for downstream tasks such
 as machine learning inference and data labeling.
 
-``convert_to_isd``
-------------------
+``convert_to_dict``
+--------------------
 
-Converts outputs to the initial structured data (ISD) format. This is the default format
-for returning data in Unstructured pipeline APIs.
+Converts a list of ``Element`` objects to a dictionary. This is the default format
+for representing documents in ``unstructured``.
 
 Examples:
 
 .. code:: python
 
   from unstructured.documents.elements import Title, NarrativeText
-  from unstructured.staging.base import convert_to_isd
+  from unstructured.staging.base import convert_to_dict
 
   elements = [Title(text="Title"), NarrativeText(text="Narrative")]
-  isd = convert_to_isd(elements)
+  isd = convert_to_dict(elements)
 
 
-``isd_to_elements``
--------------------
+``dict_to_elements``
+---------------------
 
-Converts outputs from initial structured data (ISD) format back to a list of ``Text`` elements.
+Converts a dictionary format back to a list of ``Element`` objects.
 
 Examples:
 
 .. code:: python
 
-  from unstructured.staging.base import isd_to_elements
+  from unstructured.staging.base import dict_to_elements
 
   isd = [
     {"text": "My Title", "type": "Title"},
@@ -922,10 +922,10 @@ Examples:
 
   # elements will look like:
   # [ Title(text="My Title"), NarrativeText(text="My Narrative")]
-  elements = isd_to_elements(isd)
+  elements = dict_to_elements(isd)
 
 
-``convert_to_isd_csv``
+``convert_to_csv``
 ----------------------
 
 Converts outputs to the initial structured data (ISD) format as a CSV string.
@@ -935,10 +935,10 @@ Examples:
 .. code:: python
 
   from unstructured.documents.elements import Title, NarrativeText
-  from unstructured.staging.base import convert_to_isd_csv
+  from unstructured.staging.base import convert_to_csv
 
   elements = [Title(text="Title"), NarrativeText(text="Narrative")]
-  isd_csv = convert_to_isd_csv(elements)
+  isd_csv = convert_to_csv(elements)
 
 
 ``convert_to_dataframe``

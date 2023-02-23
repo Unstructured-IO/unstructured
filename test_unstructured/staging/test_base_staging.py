@@ -55,10 +55,10 @@ def test_isd_to_elements():
     ]
 
 
-def test_convert_to_isd_csv(output_csv_file):
+def test_convert_to_csv(output_csv_file):
     elements = [Title(text="Title 1"), NarrativeText(text="Narrative 1")]
     with open(output_csv_file, "w+") as csv_file:
-        isd_csv_string = base.convert_to_isd_csv(elements)
+        isd_csv_string = base.convert_to_csv(elements)
         csv_file.write(isd_csv_string)
 
     with open(output_csv_file, "r") as csv_file:
