@@ -4,7 +4,7 @@ import requests
 
 from unstructured.documents.elements import Element
 from unstructured.documents.html import HTMLDocument
-from unstructured.partition.xml import VALID_PARSERS
+from unstructured.documents.xml import VALID_PARSERS
 from unstructured.partition.common import add_element_metadata, document_to_element_list
 
 
@@ -34,6 +34,8 @@ def partition_html(
     include_metadata
         Optionally allows for excluding metadata from the output. Primarily intended
         for when partition_html is called in other partition bricks (like partition_email)
+    parser
+        The parser to use for parsing the HTML document. If None, default parser will be used.
     """
     if not any([filename, file, text, url]):
         raise ValueError("One of filename, file, or text must be specified.")
