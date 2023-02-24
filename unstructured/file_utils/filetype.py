@@ -3,7 +3,13 @@ import os
 from typing import IO, Optional
 import zipfile
 
-import magic
+try:
+    import magic
+
+    LIBMAGIC_AVAILABLE = True
+except ImportError:  ***REMOVED*** pragma: nocover
+    LIBMAGIC_AVAILABLE = False  ***REMOVED*** pragma: nocover
+
 
 from unstructured.logger import logger
 from unstructured.nlp.patterns import EMAIL_HEAD_RE
@@ -91,7 +97,9 @@ EXT_TO_FILETYPE = {
     ".pdf": FileType.PDF,
     ".docx": FileType.DOCX,
     ".jpg": FileType.JPG,
+    ".jpeg": FileType.JPG,
     ".txt": FileType.TXT,
+    ".text": FileType.TXT,
     ".eml": FileType.EML,
     ".xml": FileType.XML,
     ".html": FileType.HTML,
@@ -117,13 +125,24 @@ def detect_filetype(
     if filename:
         _, extension = os.path.splitext(filename)
         extension = extension.lower()
-        mime_type = magic.from_file(filename, mime=True)
+        if LIBMAGIC_AVAILABLE:
+            mime_type = None
+            mime_type = magic.from_file(filename, mime=True)
+        else:
+            return EXT_TO_FILETYPE.get(extension.lower(), FileType.UNK)
     elif file is not None:
         extension = None
         ***REMOVED*** NOTE(robinson) - the python-magic docs recommend reading at least the first 2048 bytes
         ***REMOVED*** Increased to 4096 because otherwise .xlsx files get detected as a zip file
         ***REMOVED*** ref: https://github.com/ahupp/python-magic***REMOVED***usage
-        mime_type = magic.from_buffer(file.read(4096), mime=True)
+        if LIBMAGIC_AVAILABLE:
+            mime_type = magic.from_buffer(file.read(4096), mime=True)
+        else:
+            raise ImportError(
+                "libmagic is unavailable. "
+                "Filetype detection on file-like objects requires libmagic. "
+                "Please install libmagic and try again."
+            )
     else:
         raise ValueError("No filename nor file were specified.")
 

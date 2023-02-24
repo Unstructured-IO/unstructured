@@ -1,3 +1,9 @@
+***REMOVED******REMOVED*** 0.4.16-dev0
+
+***REMOVED******REMOVED******REMOVED*** Enhancements
+
+* Fallback to using file extensions for filetype detection if `libmagic` is not present
+
 ***REMOVED******REMOVED*** 0.4.15
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
@@ -199,3 +205,4 @@ of an email.
 ***REMOVED******REMOVED*** 0.2.0
 
 * Initial release of unstructured
+
