@@ -51,7 +51,7 @@ def chunk_by_attention_window(
     num_splits = len(split_text)
 
     chunks: List[str] = list()
-    chunk_text = str()
+    chunk_text = ""
     chunk_size = 0
 
     for i, segment in enumerate(split_text):
@@ -68,7 +68,7 @@ def chunk_by_attention_window(
 
         if chunk_size + num_tokens > max_chunk_size or i == (num_splits - 1):
             chunks.append(chunk_text)
-            chunk_text = str()
+            chunk_text = ""
             chunk_size = 0
 
         # NOTE(robinson) - To avoid the separator appearing at the beginning of the string
