@@ -22,7 +22,7 @@ If you call the ``partition`` function, ``unstructured`` will attempt to detect 
 file type and route it to the appropriate partitioning brick. All partitioning bricks
 called within ``partition`` are called using the defualt kwargs. Use the document-type
 specific bricks if you need to apply non-default settings.
-``partition`` currently supports ``.docx``, ``.pptx``, ``.eml``, ``.html``, ``.pdf``,
+``partition`` currently supports ``.docx``, ``.doc``, ``.pptx``, ``.ppt``, ``.eml``, ``.html``, ``.pdf``,
 ``.png``, ``.jpg``, and ``.txt`` files.
 If you set the ``include_page_breaks`` kwarg to ``True``, the output will include page breaks. This is only supported for ``.pptx``, ``.html``, ``.pdf``,
 ``.png``, and ``.jpg``.
@@ -81,6 +81,28 @@ Examples:
   with open("mydoc.docx", "rb") as f:
       elements = partition_docx(file=f)
 
+
+``partition_doc``
+------------------
+
+The ``partition_doc`` partitioning brick pre-processes Microsoft Word documents
+saved in the ``.doc`` format. This staging brick uses a combination of the styling
+information in the document and the structure of the text to determine the type
+of a text element. The ``partition_doc`` can take a filename or file-like object
+as input.
+``partiton_doc`` uses ``libreoffice`` to convert the file to ``.docx`` and then
+calls ``partition_docx``. Ensure you have ``libreoffice`` installed
+before using ``partition_doc``.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.doc import partition_doc
+
+  elements = partition_doc(filename="example-docs/fake.doc")
+
+
 ``partition_pptx``
 ---------------------
 
@@ -101,6 +123,25 @@ Examples:
   with open("example-docs/fake-power-point.pptx", "rb") as f:
       elements = partition_pptx(file=f)
 
+
+``partition_ppt``
+---------------------
+
+The ``partition_ppt`` partitioning brick pre-processes Microsoft PowerPoint documents
+saved in the ``.ppt`` format. This staging brick uses a combination of the styling
+information in the document and the structure of the text to determine the type
+of a text element. The ``partition_ppt`` can take a filename or file-like object.
+``partition_ppt`` uses ``libreoffice`` to convert the file to ``.pptx`` and then
+calls ``partition_pptx``. Ensure you have ``libreoffice`` installed
+before using ``partition_ppt``.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.ppt import partition_ppt
+
+  elements = partition_ppt(filename="example-docs/fake-power-point.ppt")
 
 ``partition_html``
 ---------------------
@@ -846,33 +887,33 @@ Staging
 Staging bricks in ``unstructured`` prepare extracted text for downstream tasks such
 as machine learning inference and data labeling.
 
-``convert_to_isd``
-------------------
+``convert_to_dict``
+--------------------
 
-Converts outputs to the initial structured data (ISD) format. This is the default format
-for returning data in Unstructured pipeline APIs.
+Converts a list of ``Element`` objects to a dictionary. This is the default format
+for representing documents in ``unstructured``.
 
 Examples:
 
 .. code:: python
 
   from unstructured.documents.elements import Title, NarrativeText
-  from unstructured.staging.base import convert_to_isd
+  from unstructured.staging.base import convert_to_dict
 
   elements = [Title(text="Title"), NarrativeText(text="Narrative")]
-  isd = convert_to_isd(elements)
+  isd = convert_to_dict(elements)
 
 
-``isd_to_elements``
--------------------
+``dict_to_elements``
+---------------------
 
-Converts outputs from initial structured data (ISD) format back to a list of ``Text`` elements.
+Converts a dictionary of the format produced by ``convert_to_dict`` back to a list of ``Element`` objects.
 
 Examples:
 
 .. code:: python
 
-  from unstructured.staging.base import isd_to_elements
+  from unstructured.staging.base import dict_to_elements
 
   isd = [
     {"text": "My Title", "type": "Title"},
@@ -881,10 +922,10 @@ Examples:
 
   # elements will look like:
   # [ Title(text="My Title"), NarrativeText(text="My Narrative")]
-  elements = isd_to_elements(isd)
+  elements = dict_to_elements(isd)
 
 
-``convert_to_isd_csv``
+``convert_to_csv``
 ----------------------
 
 Converts outputs to the initial structured data (ISD) format as a CSV string.
@@ -894,10 +935,10 @@ Examples:
 .. code:: python
 
   from unstructured.documents.elements import Title, NarrativeText
-  from unstructured.staging.base import convert_to_isd_csv
+  from unstructured.staging.base import convert_to_csv
 
   elements = [Title(text="Title"), NarrativeText(text="Narrative")]
-  isd_csv = convert_to_isd_csv(elements)
+  isd_csv = convert_to_csv(elements)
 
 
 ``convert_to_dataframe``

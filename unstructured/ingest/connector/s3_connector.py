@@ -4,24 +4,28 @@ import json
 import os
 import re
 
-import boto3
-from botocore import UNSIGNED
-from botocore.client import Config
+from unstructured.ingest.interfaces import BaseConnector, BaseConnectorConfig, BaseIngestDoc
 
 
 @dataclass
-class SimpleS3Config:
+class SimpleS3Config(BaseConnectorConfig):
+    """Connector config where s3_url is an s3 prefix to process all documents from."""
+
+    # S3 Specific Options
     s3_url: str
-    # where to write structured data, with the directory structure matching s3 path
-    # TODO(crag): support s3 output destination in addition to local filesystem
+
+    # Standard Connector options
     download_dir: str
+    # where to write structured data, with the directory structure matching s3 path
     output_dir: str
-    anonymous: bool = False
     re_download: bool = False
     preserve_downloads: bool = False
     # if a structured output .json file already exists, do not reprocess an s3 file to overwrite it
     reprocess: bool = False
     verbose: bool = False
+
+    # S3 Specific (optional)
+    anonymous: bool = False
 
     s3_bucket: str = field(init=False)
     # could be single object or prefix
@@ -50,24 +54,16 @@ class SimpleS3Config:
 
 
 @dataclass
-class S3IngestDoc:
+class S3IngestDoc(BaseIngestDoc):
     """Class encapsulating fetching a doc and writing processed results (but not
     doing the processing!).
 
     Also includes a cleanup method. When things go wrong and the cleanup
     method is not called, the file is left behind on the filesystem to assist debugging.
-
-    TODO(crag): Eventually define the ABC (which would include all non-underscore methods)
-
     """
 
     config: SimpleS3Config
     s3_key: str
-
-    # TODO(crag): probably, remove the s3 path prefix from the S3Connector from
-    # the tmp_download_dir and local_output_dir paths to avoid creating
-    # extra subdirs. Though, it would still be possible that many subdirs
-    # below the root prefix are created.
 
     # NOTE(crag): probably doesn't matter,  but intentionally not defining tmp_download_file
     # __post_init__ for multiprocessing simplicity (no Path objects in initially
@@ -79,16 +75,17 @@ class S3IngestDoc:
         return Path(self.config.output_dir) / f"{self.s3_key}.json"
 
     def has_output(self):
+        """Determine if structured output for this doc already exists."""
         return self._output_filename().is_file() and os.path.getsize(self._output_filename())
 
     def _create_full_tmp_dir_path(self):
         """includes "directories" in s3 object path"""
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
 
-    # NOTE(crag): Future IngestDoc classes could define get_file_object() methods
-    # in addition to or instead of get_file()
     def get_file(self):
-        """Actually fetches the file from s3"""
+        """Actually fetches the file from s3 and stores it locally."""
+        import boto3
+
         self._create_full_tmp_dir_path()
         if (
             not self.config.re_download
@@ -100,6 +97,9 @@ class S3IngestDoc:
             return
 
         if self.config.anonymous:
+            from botocore import UNSIGNED
+            from botocore.client import Config
+
             s3_cli = boto3.client("s3", config=Config(signature_version=UNSIGNED))
         else:
             s3_cli = boto3.client("s3")
@@ -107,12 +107,12 @@ class S3IngestDoc:
             print(f"fetching {self} - PID: {os.getpid()}")
         s3_cli.download_file(self.config.s3_bucket, self.s3_key, self._tmp_download_file())
 
-    def write_result(self, result):
-        """write the structured json result. result must be json serializable"""
+    def write_result(self):
+        """Write the structured json result for this doc. result must be json serializable."""
         output_filename = self._output_filename()
         output_filename.parent.mkdir(parents=True, exist_ok=True)
         with open(output_filename, "w") as output_f:
-            output_f.write(json.dumps(result, ensure_ascii=False, indent=2))
+            output_f.write(json.dumps(self.isd_elems_no_filename, ensure_ascii=False, indent=2))
         print(f"Wrote {output_filename}")
 
     @property
@@ -128,16 +128,18 @@ class S3IngestDoc:
             os.unlink(self._tmp_download_file())
 
 
-class S3Connector:
+class S3Connector(BaseConnector):
     """Objects of this class support fetching document(s) from"""
 
-    # TODO(crag): have a config val to allow not re-downloading files if they
-    # exist (eventually with checksum check)
-
     def __init__(self, config: SimpleS3Config):
+        import boto3
+
         self.config = config
         self._list_objects_kwargs = {"Bucket": config.s3_bucket, "Prefix": config.s3_path}
         if config.anonymous:
+            from botocore import UNSIGNED
+            from botocore.client import Config
+
             self.s3_cli = boto3.client("s3", config=Config(signature_version=UNSIGNED))
         else:
             self.s3_cli = boto3.client("s3")
@@ -183,8 +185,7 @@ class S3Connector:
             )
         return s3_keys
 
-    def fetch_docs(self):
-        """yield file_name, doc_meta_object"""
+    def get_ingest_docs(self):
         s3_keys = self._list_objects()
         return [
             S3IngestDoc(

@@ -1,8 +1,38 @@
-## 0.4.11-dev0
-* Added a try and catch statement to check if libmagic library is present or not.
-* Added a try and catch statement in detect_filetype function so that it works even if libmagic is present or not.
-* Made a new function _detect_filetype_from_extension to detect file type based on the file extension.
-* Removed all the whitespace errors using black.
+## 0.4.16-dev0
+
+### Enhancements
+
+* Fallback to using file extensions for filetype detection if `libmagic` is not present
+
+## 0.4.15
+
+### Enhancements
+
+* Added `elements_to_json` and `elements_from_json` for easier serialization/deserialization
+* `convert_to_dict`, `dict_to_elements` and `convert_to_csv` are now aliases for functions
+  that use the ISD terminology.
+
+### Fixes
+
+* Update to ensure all elements are preserved during serialization/deserialization
+
+## 0.4.14
+
+* Automatically install `nltk` models in the `tokenize` module.
+
+## 0.4.13
+
+* Fixes unstructured-ingest cli.
+
+## 0.4.12
+
+* Adds console_entrypoint for unstructured-ingest, other structure/doc updates related to ingest.
+* Add `parser` parameter to `partition_html`.
+
+## 0.4.11
+
+* Adds `partition_doc` for partitioning Word documents in `.doc` format. Requires `libreoffice`.
+* Adds `partition_ppt` for partitioning PowerPoint documents in `.ppt` format. Requires `libreoffice`.
 
 ## 0.4.10
 

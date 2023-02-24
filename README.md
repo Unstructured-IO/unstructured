@@ -27,14 +27,21 @@
   </a>
 </div>
 
+<h2 align="center">
+  <p>Announcement!!!</p>
+</h2>
 <div align="center">
-<img src="https://user-images.githubusercontent.com/38184042/205945013-99670127-0bf3-4851-b4ac-0bc23e357476.gif" title="unstructured in action!">
+  <p>Unstructured wants to make it easier to connect to your data…and we need your help! We’re excited to announce a <a href="Competition.md">competition</a> focused on improving Unstructured's ability to seamlessly process data from the sources you care about most.</p>
+	
+  <p>The competition starts now and continues through March 10...and most importantly, we're offering cash prizes! Please join our <a
+  href="https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-1nlh1ot5d-dfY7zCRlhFboZrIWLA4Qgw">
+   community Slack</a> to participate and follow along</p>
+	<p><img src="money.gif"></p>
 </div>
 
 <h3 align="center">
   <p>Open-Source Pre-Processing Tools for Unstructured Data</p>
 </h3>
-
 
 The `unstructured` library provides open-source components for pre-processing text documents
 such as **PDFs**, **HTML** and **Word** Documents. These components are packaged as *bricks* 🧱, which provide
@@ -48,12 +55,51 @@ about. Bricks in the library fall into three categories:
   fragments.
 - :performing_arts: ***Staging bricks*** that format data for downstream tasks, such as ML inference
   and data labeling.
+
+<div align="center">
+<img src="https://user-images.githubusercontent.com/38184042/205945013-99670127-0bf3-4851-b4ac-0bc23e357476.gif" title="unstructured in action!">
+</div>
+
 <br></br>
-## :eight_pointed_black_star: Installation
 
-To install the library, run `pip install unstructured`.
+## :eight_pointed_black_star: Quick Start
 
-## :coffee: Getting Started
+Use the following instructions to get up and running with `unstructured` and test your
+installation.
+
+- Install the Python SDK with `pip install "unstructured[local-inference]"`
+		- If you do not need to process PDFs or images, you can run `pip install unstructured`
+- Install the following system dependencies if they are not already available on your system.
+  Depending on what document types you're parsing, you may not need all of these.
+    - `libmagic-dev` (filetype detection)
+    - `poppler-utils` (images and PDFs)
+    - `tesseract-ocr` (images and PDFs)
+    - `libreoffice` (MS Office docs)
+- If you are parsing PDFs, run the following to install the `detectron2` model, which
+  `unstructured` uses for layout detection:
+    - `pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@v0.6#egg=detectron2"`
+
+At this point, you should be able to run the following code:
+
+```python
+from unstructured.partition.auto import partition
+
+elements = partition(filename="example-docs/fake-email.eml")
+```
+
+And if you installed with `local-inference`, you should be able to run this as well:
+
+```python
+from unstructured.partition.auto import partition
+
+elements = partition("example-docs/layout-parser-paper.pdf")
+```
+
+
+## :coffee: Installation Instructions for Local Development
+
+The following instructions are intended to help you get up and running with `unstructured`
+locally if you are planning to contribute to the project.
 
 * Using `pyenv` to manage virtualenv's is recommended but not necessary
 	* Mac install instructions. See [here](https://github.com/Unstructured-IO/community#mac--homebrew) for more detailed instructions.
@@ -78,7 +124,8 @@ To install the library, run `pip install unstructured`.
 You can run this [Colab notebook](https://colab.research.google.com/drive/1U8VCjY2-x8c6y5TYMbSFtQGlQVFHCVIW) to run the examples below.
 
 The following examples show how to get started with the `unstructured` library.
-You can parse **TXT**, **HTML**, **PDF**, **EML** and **DOCX** documents with one line of code!
+You can parse **TXT**, **HTML**, **PDF**, **EML**, **DOC**, **DOCX**, **PPT**, **PPTX**, **JPG**,
+and **PNG** documents with one line of code!
 <br></br>
 See our [documentation page](https://unstructured-io.github.io/unstructured) for a full description
 of the features in the library.
@@ -92,7 +139,7 @@ If you are using the `partition` brick, you may need to install additional param
 instructions outlined [here](https://unstructured-io.github.io/unstructured/installing.html#filetype-detection)
 `partition` will always apply the default arguments. If you need
 advanced features, use a document-specific brick. The `partition` brick currently works for
-`.txt`, `.docx`, `.pptx`, `.jpg`, `.png`, `.eml`, `.html`, and `.pdf` documents.
+`.txt`, `.doc`, `.docx`, `.ppt`, `.pptx`, `.jpg`, `.png`, `.eml`, `.html`, and `.pdf` documents.
 
 ```python
 from unstructured.partition.auto import partition

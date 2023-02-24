@@ -1,15 +1,30 @@
 import io
 import csv
-from typing import Any, Dict, List
+import json
+from typing import Any, Dict, List, Optional
 
 import pandas as pd
 
-from unstructured.documents.elements import Text, NarrativeText, Title, ListItem
+from unstructured.documents.elements import (
+    CheckBox,
+    NoID,
+    Element,
+    ElementMetadata,
+    TYPE_TO_TEXT_ELEMENT_MAP,
+)
 
-TABLE_FIELDNAMES: List[str] = ["type", "text", "filename", "page_number", "url"]
+TABLE_FIELDNAMES: List[str] = [
+    "type",
+    "text",
+    "element_id",
+    "coordinates",
+    "filename",
+    "page_number",
+    "url",
+]
 
 
-def convert_to_isd(elements: List[Text]) -> List[Dict[str, str]]:
+def convert_to_isd(elements: List[Element]) -> List[Dict[str, str]]:
     """Represents the document elements as an Initial Structured Document (ISD)."""
     isd: List[Dict[str, str]] = list()
     for element in elements:
@@ -18,24 +33,67 @@ def convert_to_isd(elements: List[Text]) -> List[Dict[str, str]]:
     return isd
 
 
-def isd_to_elements(isd: List[Dict[str, str]]) -> List[Text]:
-    """Converts an Initial Structured Data (ISD) dictionary to a list of Text elements."""
-    elements: List[Text] = list()
+def convert_to_dict(elements: List[Element]) -> List[Dict[str, str]]:
+    """Converts a list of elements into a dictionary."""
+    return convert_to_isd(elements)
+
+
+def elements_to_json(elements: List[Element], filename: str, indent: int = 4):
+    """Saves a list of elements to a JSON file."""
+    element_dict = convert_to_dict(elements)
+    with open(filename, "w") as f:
+        json.dump(element_dict, f, indent=indent)
+
+
+def isd_to_elements(isd: List[Dict[str, Any]]) -> List[Element]:
+    """Converts an Initial Structured Data (ISD) dictionary to a list of elements."""
+    elements: List[Element] = list()
 
     for item in isd:
-        if item["type"] == "NarrativeText":
-            elements.append(NarrativeText(text=item["text"]))
-        elif item["type"] == "Title":
-            elements.append(Title(text=item["text"]))
-        # NOTE(robinson) - "BulletedText" is in there for backward compatibility. ListItem used
-        # to be called BulletedText in an earlier version
-        elif item["type"] in ["ListItem", "BulletedText"]:
-            elements.append(ListItem(text=item["text"]))
+        element_id: str = item.get("element_id", NoID())
+        coordinates: Optional[List[float]] = item.get("coordinates")
+
+        metadata = ElementMetadata()
+        _metadata_dict = item.get("metadata")
+        if _metadata_dict is not None:
+            metadata = ElementMetadata.from_dict(_metadata_dict)
+
+        if item["type"] in TYPE_TO_TEXT_ELEMENT_MAP:
+            _text_class = TYPE_TO_TEXT_ELEMENT_MAP[item["type"]]
+            elements.append(
+                _text_class(
+                    text=item["text"],
+                    element_id=element_id,
+                    metadata=metadata,
+                    coordinates=coordinates,
+                )
+            )
+        elif item["type"] == "CheckBox":
+            elements.append(
+                CheckBox(
+                    checked=item["checked"],
+                    element_id=element_id,
+                    metadata=metadata,
+                    coordinates=coordinates,
+                )
+            )
 
     return elements
 
 
-def convert_to_isd_csv(elements: List[Text]) -> str:
+def dict_to_elements(element_dict: List[Dict[str, Any]]) -> List[Element]:
+    """Converts a dictionary representation of an element list into List[Element]."""
+    return isd_to_elements(element_dict)
+
+
+def elements_from_json(filename: str) -> List[Element]:
+    """Loads a list of elements from a JSON file."""
+    with open(filename, "r") as f:
+        element_dict = json.load(f)
+    return dict_to_elements(element_dict)
+
+
+def convert_to_isd_csv(elements: List[Element]) -> str:
     """
     Returns the representation of document elements as an Initial Structured Document (ISD)
     in CSV Format.
@@ -55,7 +113,12 @@ def convert_to_isd_csv(elements: List[Text]) -> str:
         return buffer.getvalue()
 
 
-def convert_to_dataframe(elements: List[Text]) -> pd.DataFrame:
+def convert_to_csv(elements: List[Element]) -> str:
+    """Converts a list of elements to a CSV."""
+    return convert_to_isd_csv(elements)
+
+
+def convert_to_dataframe(elements: List[Element]) -> pd.DataFrame:
     """Converts document elements to a pandas DataFrame. The dataframe contains the
     following columns:
         text: the element text
