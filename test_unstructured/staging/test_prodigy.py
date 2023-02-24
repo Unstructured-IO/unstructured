@@ -3,7 +3,7 @@ import os
 
 import pytest
 
-import unstructured.staging.prodigy as prodigy
+from unstructured.staging import prodigy
 from unstructured.documents.elements import NarrativeText, Title
 
 

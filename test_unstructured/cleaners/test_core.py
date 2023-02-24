@@ -1,6 +1,6 @@
 import pytest
 
-import unstructured.cleaners.core as core
+from unstructured.cleaners import core
 
 
 @pytest.mark.parametrize(

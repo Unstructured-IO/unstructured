@@ -3,7 +3,7 @@ import os
 import pytest
 from lxml import etree
 
-import unstructured.documents.html as html
+from unstructured.documents import html
 from unstructured.documents.base import Page
 from unstructured.documents.elements import (
     Address,

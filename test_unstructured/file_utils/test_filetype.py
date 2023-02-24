@@ -5,7 +5,7 @@ import zipfile
 import magic
 import pytest
 
-import unstructured.file_utils.filetype as filetype
+from unstructured.file_utils import filetype
 from unstructured.file_utils.filetype import (
     DOCX_MIME_TYPES,
     XLSX_MIME_TYPES,

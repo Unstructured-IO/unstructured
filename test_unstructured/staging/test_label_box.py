@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-import unstructured.staging.label_box as label_box
+from unstructured.staging import label_box
 from unstructured.documents.elements import NarrativeText, Title
 
 

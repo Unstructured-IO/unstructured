@@ -6,7 +6,7 @@ import pathlib
 import pandas as pd
 import pytest
 
-import unstructured.staging.base as base
+from unstructured.staging import base
 from unstructured.documents.elements import (
     Address,
     CheckBox,

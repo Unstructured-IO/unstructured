@@ -1,6 +1,6 @@
 from typing import List, Optional, Union
 
-import lxml.etree as etree
+from lxml import etree
 
 from unstructured.documents.base import Document, Page
 from unstructured.logger import logger

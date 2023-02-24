@@ -1,6 +1,6 @@
 from unstructured_inference.inference.layout import LayoutElement
 
-import unstructured.partition.common as common
+from unstructured.partition import common
 from unstructured.documents.elements import (
     CheckBox,
     FigureCaption,

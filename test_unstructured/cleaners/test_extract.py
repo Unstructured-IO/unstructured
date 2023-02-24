@@ -2,7 +2,7 @@ import datetime
 
 import pytest
 
-import unstructured.cleaners.extract as extract
+from unstructured.cleaners import extract
 
 EMAIL_META_DATA_INPUT = """from ABC.DEF.local ([ba23::58b5:2236:45g2:88h2]) by
     \n ABC.DEF.local ([ba23::58b5:2236:45g2:88h2%25]) with mapi id\

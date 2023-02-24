@@ -5,7 +5,7 @@ import warnings
 import docx
 import pytest
 
-import unstructured.partition.auto as auto
+from unstructured.partition import auto
 from unstructured.documents.elements import (
     Address,
     ListItem,

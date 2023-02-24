@@ -1,6 +1,6 @@
 import pytest
 
-import unstructured.staging.datasaur as datasaur
+from unstructured.staging import datasaur
 from unstructured.documents.elements import Text
 
 

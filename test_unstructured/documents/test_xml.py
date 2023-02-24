@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 
-import lxml.etree as etree
+from lxml import etree
 import pytest
 
 from unstructured.documents.xml import XMLDocument

@@ -2,7 +2,7 @@ from unittest.mock import patch
 
 import pytest
 
-import unstructured.partition.text_type as text_type
+from unstructured.partition import text_type
 from test_unstructured.nlp.mock_nltk import (
     mock_pos_tag,
     mock_sent_tokenize,

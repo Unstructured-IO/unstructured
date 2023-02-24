@@ -2,9 +2,9 @@ from unittest import mock
 
 import pytest
 import requests
-import unstructured_inference.inference.layout as layout
+from unstructured_inference.inference import layout
 
-import unstructured.partition.pdf as pdf
+from unstructured.partition import pdf
 from unstructured.documents.elements import PageBreak
 
 

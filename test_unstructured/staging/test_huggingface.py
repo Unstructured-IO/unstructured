@@ -1,6 +1,6 @@
 import pytest
 
-import unstructured.staging.huggingface as huggingface
+from unstructured.staging import huggingface
 from unstructured.documents.elements import Text
 
 

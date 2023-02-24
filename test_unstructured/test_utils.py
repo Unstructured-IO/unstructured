@@ -3,7 +3,7 @@ import os
 
 import pytest
 
-import unstructured.utils as utils
+from unstructured import utils
 
 
 @pytest.fixture()

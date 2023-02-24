@@ -5,7 +5,7 @@ import pytest
 import vcr
 from label_studio_sdk.client import Client
 
-import unstructured.staging.label_studio as label_studio
+from unstructured.staging import label_studio
 from unstructured.documents.elements import NarrativeText, Title
 
 
