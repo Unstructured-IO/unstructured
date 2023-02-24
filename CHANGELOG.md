@@ -1,8 +1,12 @@
-## 0.4.16-dev0
+## 0.4.16-dev1
 
 ### Enhancements
 
 * Fallback to using file extensions for filetype detection if `libmagic` is not present
+
+### Features
+
+* Added setup script for Ubuntu
 
 ## 0.4.15
 
