@@ -19,7 +19,8 @@ def _validate_prodigy_metadata(
     if metadata:
         if len(metadata) != len(elements):
             raise ValueError(
-                "The length of metadata parameter does not match with length of elements parameter.",
+                "The length of the metadata parameter does not match with"
+                " the length of the elements parameter.",
             )
         id_error_index: Optional[int] = next(
             (index for index, metadatum in enumerate(metadata) if "id" in metadatum),
