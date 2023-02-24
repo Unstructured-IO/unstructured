@@ -2,7 +2,7 @@ Elements
 --------
 
 The following are the structured page elements that are available within the ``unstructured``
-package. Partioning bricks convert raw documents to this common set of elements. If you need
+package. Partitioning bricks convert raw documents to this common set of elements. If you need
 a custom element, the recommended approach is to create a sub-class of one of the default
 elements.
 
