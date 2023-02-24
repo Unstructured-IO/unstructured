@@ -162,7 +162,7 @@ def partition_email(
         raise ValueError("One of filename, file, or text must be specified.")
 
     if filename is not None and not file and not text:
-        with open(filename, "r") as f:
+        with open(filename) as f:
             msg = email.message_from_file(f)
 
     elif file is not None and not filename and not text:

@@ -38,7 +38,7 @@ def test_auto_partition_email_from_filename():
 
 def test_auto_partition_email_from_file():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
-    with open(filename, "r") as f:
+    with open(filename) as f:
         elements = partition(file=f)
     assert len(elements) > 0
     assert elements == EXPECTED_EMAIL_OUTPUT
@@ -138,7 +138,7 @@ def test_auto_partition_html_from_filename():
 
 def test_auto_partition_html_from_file():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-html.html")
-    with open(filename, "r") as f:
+    with open(filename) as f:
         elements = partition(file=f)
     assert len(elements) > 0
 
@@ -170,7 +170,7 @@ def test_auto_partition_text_from_filename():
 
 def test_auto_partition_text_from_file():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
-    with open(filename, "r") as f:
+    with open(filename) as f:
         elements = partition(file=f)
     assert len(elements) > 0
     assert elements == EXPECTED_TEXT_OUTPUT

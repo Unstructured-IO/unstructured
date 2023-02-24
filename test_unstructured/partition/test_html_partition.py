@@ -27,14 +27,14 @@ def test_partition_html_with_page_breaks():
 
 def test_partition_html_from_file():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "example-10k.html")
-    with open(filename, "r") as f:
+    with open(filename) as f:
         elements = partition_html(file=f)
     assert len(elements) > 0
 
 
 def test_partition_html_from_text():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "example-10k.html")
-    with open(filename, "r") as f:
+    with open(filename) as f:
         text = f.read()
     elements = partition_html(text=text)
     assert len(elements) > 0
@@ -50,7 +50,7 @@ class MockResponse:
 
 def test_partition_html_from_url():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "example-10k.html")
-    with open(filename, "r") as f:
+    with open(filename) as f:
         text = f.read()
 
     response = MockResponse(text=text, status_code=200, headers={"Content-Type": "text/html"})
@@ -62,7 +62,7 @@ def test_partition_html_from_url():
 
 def test_partition_html_from_url_raises_with_bad_status_code():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "example-10k.html")
-    with open(filename, "r") as f:
+    with open(filename) as f:
         text = f.read()
 
     response = MockResponse(text=text, status_code=500, headers={"Content-Type": "text/html"})
@@ -73,7 +73,7 @@ def test_partition_html_from_url_raises_with_bad_status_code():
 
 def test_partition_html_from_url_raises_with_bad_content_type():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "example-10k.html")
-    with open(filename, "r") as f:
+    with open(filename) as f:
         text = f.read()
 
     response = MockResponse(
@@ -91,7 +91,7 @@ def test_partition_html_raises_with_none_specified():
 
 def test_partition_html_raises_with_too_many_specified():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "example-10k.html")
-    with open(filename, "r") as f:
+    with open(filename) as f:
         text = f.read()
 
     with pytest.raises(ValueError):

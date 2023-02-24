@@ -88,7 +88,7 @@ def dict_to_elements(element_dict: List[Dict[str, Any]]) -> List[Element]:
 
 def elements_from_json(filename: str) -> List[Element]:
     """Loads a list of elements from a JSON file."""
-    with open(filename, "r") as f:
+    with open(filename) as f:
         element_dict = json.load(f)
     return dict_to_elements(element_dict)
 

@@ -29,7 +29,7 @@ def input_jsonl_file(tmp_path, input_data):
 
 def test_save_as_jsonl(input_data, output_jsonl_file):
     utils.save_as_jsonl(input_data, output_jsonl_file)
-    with open(output_jsonl_file, "r") as output_file:
+    with open(output_jsonl_file) as output_file:
         file_data = [json.loads(line) for line in output_file]
     assert file_data == input_data
 

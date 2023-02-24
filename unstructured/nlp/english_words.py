@@ -9,7 +9,7 @@ DIRECTORY = pathlib.Path(__file__).parent.resolve()
 # ref: https://github.com/jeremy-rifkin/Wordlist
 ENGLISH_WORDS_FILE = os.path.join(DIRECTORY, "english-words.txt")
 
-with open(ENGLISH_WORDS_FILE, "r") as f:
+with open(ENGLISH_WORDS_FILE) as f:
     BASE_ENGLISH_WORDS = f.read().split("\n")
 
 # NOTE(robinson) - add new words that we want to pass for the English check in here

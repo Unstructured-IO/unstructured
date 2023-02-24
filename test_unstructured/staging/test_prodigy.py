@@ -98,7 +98,7 @@ def test_stage_csv_for_prodigy(elements, output_csv_file):
         csv_file.write(prodigy_csv_string)
 
     fieldnames = ["text", "id"]
-    with open(output_csv_file, "r") as csv_file:
+    with open(output_csv_file) as csv_file:
         csv_rows = csv.DictReader(csv_file)
         assert all(set(row.keys()) == set(fieldnames) for row in csv_rows)
 
@@ -110,6 +110,6 @@ def test_stage_csv_for_prodigy_with_metadata(elements, valid_metadata, output_cs
 
     fieldnames = set(["text", "id"]).union(*(data.keys() for data in valid_metadata))
     fieldnames = [fieldname.lower() for fieldname in fieldnames]
-    with open(output_csv_file, "r") as csv_file:
+    with open(output_csv_file) as csv_file:
         csv_rows = csv.DictReader(csv_file)
         assert all(set(row.keys()) == set(fieldnames) for row in csv_rows)

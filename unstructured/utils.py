@@ -8,5 +8,5 @@ def save_as_jsonl(data: List[Dict], filename: str) -> None:
 
 
 def read_from_jsonl(filename: str) -> List[Dict]:
-    with open(filename, "r") as input_file:
+    with open(filename) as input_file:
         return [json.loads(line) for line in input_file]

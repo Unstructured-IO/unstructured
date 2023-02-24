@@ -70,7 +70,7 @@ def test_get_file_info(tmpdir):
 
 def test_get_file_info_from_file_contents():
     file_contents_filename = os.path.join(DIRECTORY, "test-file-contents.txt")
-    with open(file_contents_filename, "r") as f:
+    with open(file_contents_filename) as f:
         file_contents = [f.read()]
 
     file_info = exploration.get_file_info_from_file_contents(
@@ -81,7 +81,7 @@ def test_get_file_info_from_file_contents():
 
 def test_get_file_info_from_file_contents_raises_if_lists_no_equal():
     file_contents_filename = os.path.join(DIRECTORY, "test-file-contents.txt")
-    with open(file_contents_filename, "r") as f:
+    with open(file_contents_filename) as f:
         file_contents = [f.read()]
 
     with pytest.raises(ValueError):

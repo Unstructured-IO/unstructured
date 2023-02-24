@@ -44,7 +44,7 @@ def partition_text(
         raise ValueError("One of filename, file, or text must be specified.")
 
     if filename is not None and not file and not text:
-        with open(filename, "r") as f:
+        with open(filename) as f:
             file_text = f.read()
 
     elif file is not None and not filename and not text:
