@@ -77,7 +77,9 @@ def test_partition_html_from_url_raises_with_bad_content_type():
         text = f.read()
 
     response = MockResponse(
-        text=text, status_code=200, headers={"Content-Type": "application/json"},
+        text=text,
+        status_code=200,
+        headers={"Content-Type": "application/json"},
     )
     with patch.object(requests, "get", return_value=response) as _:
         with pytest.raises(ValueError):

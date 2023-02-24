@@ -74,7 +74,8 @@ def test_get_file_info_from_file_contents():
         file_contents = [f.read()]
 
     file_info = exploration.get_file_info_from_file_contents(
-        file_contents=file_contents, filenames=["test.eml"],
+        file_contents=file_contents,
+        filenames=["test.eml"],
     )
     assert file_info.filetype[0] == FileType.EML
 
@@ -86,5 +87,6 @@ def test_get_file_info_from_file_contents_raises_if_lists_no_equal():
 
     with pytest.raises(ValueError):
         exploration.get_file_info_from_file_contents(
-            file_contents=file_contents, filenames=["test.eml", "test2.eml"],
+            file_contents=file_contents,
+            filenames=["test.eml", "test2.eml"],
         )

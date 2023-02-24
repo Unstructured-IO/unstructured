@@ -55,7 +55,14 @@ attachment = {"type": "RAW_TEXT", "value": "Text description."}
 
 @pytest.mark.parametrize(
     (
-        ("external_ids", "attachments", "output_directory_fixture", "create_directory", "raises", "exception_class")
+        (
+            "external_ids",
+            "attachments",
+            "output_directory_fixture",
+            "create_directory",
+            "raises",
+            "exception_class",
+        )
     ),
     [
         (None, None, "output_directory", True, False, None),

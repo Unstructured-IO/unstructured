@@ -145,7 +145,15 @@ def test_clean_postfix(text, pattern, ignore_case, strip, expected):
 
 @pytest.mark.parametrize(
     # NOTE(yuming): Tests combined cleaners
-    ("text", "extra_whitespace", "dashes", "bullets", "lowercase", "trailing_punctuation", "expected"),
+    (
+        "text",
+        "extra_whitespace",
+        "dashes",
+        "bullets",
+        "lowercase",
+        "trailing_punctuation",
+        "expected",
+    ),
     [
         ("  Risk-factors ", True, True, False, False, False, "Risk factors"),
         ("● Point!  ●●● ", True, False, True, False, False, "Point! ●●●"),

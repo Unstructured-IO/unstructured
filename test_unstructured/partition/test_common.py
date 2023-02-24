@@ -29,7 +29,8 @@ def test_normalize_layout_element_dict_caption():
     }
     element = common.normalize_layout_element(layout_element)
     assert element == FigureCaption(
-        text="Some lovely text", coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]],
+        text="Some lovely text",
+        coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]],
     )
 
 
@@ -51,7 +52,8 @@ def test_normalize_layout_element_layout_element():
     )
     element = common.normalize_layout_element(layout_element)
     assert element == NarrativeText(
-        text="Some lovely text", coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]],
+        text="Some lovely text",
+        coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]],
     )
 
 
