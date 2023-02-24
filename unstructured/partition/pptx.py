@@ -16,7 +16,6 @@ from unstructured.partition.text_type import (
     is_possible_title,
 )
 
-
 OPENXML_SCHEMA_NAME = "{http://schemas.openxmlformats.org/drawingml/2006/main}"
 
 

@@ -1,40 +1,39 @@
 import email
-import sys
 import re
+import sys
 from email.message import Message
-from typing import Dict, IO, List, Optional, Tuple, Union
+from typing import IO, Dict, List, Optional, Tuple, Union
 
 if sys.version_info < (3, 8):
     from typing_extensions import Final
 else:
     from typing import Final
 
-from unstructured.cleaners.core import replace_mime_encodings, clean_extra_whitespace
+from unstructured.cleaners.core import clean_extra_whitespace, replace_mime_encodings
 from unstructured.cleaners.extract import (
+    extract_datetimetz,
+    extract_email_address,
     extract_ip_address,
     extract_ip_address_name,
     extract_mapi_id,
-    extract_datetimetz,
-    extract_email_address,
-)
-from unstructured.documents.email_elements import (
-    Recipient,
-    Sender,
-    Subject,
-    ReceivedInfo,
-    MetaData,
 )
 from unstructured.documents.elements import (
     Element,
     ElementMetadata,
-    Text,
     Image,
     NarrativeText,
+    Text,
     Title,
 )
+from unstructured.documents.email_elements import (
+    MetaData,
+    ReceivedInfo,
+    Recipient,
+    Sender,
+    Subject,
+)
 from unstructured.partition.html import partition_html
-from unstructured.partition.text import split_by_paragraph, partition_text
-
+from unstructured.partition.text import partition_text, split_by_paragraph
 
 VALID_CONTENT_SOURCES: Final[List[str]] = ["text/html", "text/plain"]
 

@@ -1,4 +1,5 @@
 from functools import partial
+
 import pytest
 
 from unstructured.cleaners.core import clean_prefix

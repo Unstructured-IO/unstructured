@@ -1,9 +1,15 @@
 import os
-import pytest
 
 import docx
+import pytest
 
-from unstructured.documents.elements import Address, ListItem, NarrativeText, Title, Text
+from unstructured.documents.elements import (
+    Address,
+    ListItem,
+    NarrativeText,
+    Text,
+    Title,
+)
 from unstructured.partition.common import convert_office_doc
 from unstructured.partition.doc import partition_doc
 from unstructured.partition.docx import partition_docx

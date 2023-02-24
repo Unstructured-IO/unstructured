@@ -2,10 +2,10 @@
 import json
 import os
 import re
-import requests
-from typing import Final, List, Optional, Tuple, Union
 import webbrowser
+from typing import Final, List, Optional, Tuple, Union
 
+import requests
 from ratelimit import limits, sleep_and_retry
 
 SEC_ARCHIVE_URL: Final[str] = "https://www.sec.gov/Archives/edgar/data"

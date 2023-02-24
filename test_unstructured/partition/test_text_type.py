@@ -1,9 +1,13 @@
-import pytest
 from unittest.mock import patch
 
-import unstructured.partition.text_type as text_type
+import pytest
 
-from test_unstructured.nlp.mock_nltk import mock_pos_tag, mock_sent_tokenize, mock_word_tokenize
+import unstructured.partition.text_type as text_type
+from test_unstructured.nlp.mock_nltk import (
+    mock_pos_tag,
+    mock_sent_tokenize,
+    mock_word_tokenize,
+)
 
 
 @pytest.mark.parametrize(

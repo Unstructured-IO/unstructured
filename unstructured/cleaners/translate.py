@@ -1,11 +1,11 @@
-from typing import List, Optional
 import warnings
+from typing import List, Optional
 
 import langdetect
 from transformers import MarianMTModel, MarianTokenizer
 
-from unstructured.staging.huggingface import chunk_by_attention_window
 from unstructured.nlp.tokenize import sent_tokenize
+from unstructured.staging.huggingface import chunk_by_attention_window
 
 
 def _get_opus_mt_model_name(source_lang: str, target_lang: str):

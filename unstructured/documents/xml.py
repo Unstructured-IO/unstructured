@@ -1,10 +1,9 @@
-from typing import Optional, Union, List
+from typing import List, Optional, Union
 
 import lxml.etree as etree
 
-from unstructured.logger import logger
 from unstructured.documents.base import Document, Page
-
+from unstructured.logger import logger
 
 VALID_PARSERS = Union[etree.HTMLParser, etree.XMLParser, None]
 

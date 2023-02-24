@@ -4,7 +4,6 @@ from unittest.mock import patch
 import nltk
 
 import unstructured.nlp.tokenize as tokenize
-
 from test_unstructured.nlp.mock_nltk import mock_sent_tokenize, mock_word_tokenize
 
 

@@ -1,5 +1,6 @@
-import os
 import json
+import os
+
 import pytest
 
 import unstructured.utils as utils

@@ -1,13 +1,12 @@
 import os
 import pathlib
-import pytest
 from unittest.mock import patch
 
+import pytest
 import requests
 
 from unstructured.documents.elements import PageBreak
 from unstructured.partition.html import partition_html
-
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 

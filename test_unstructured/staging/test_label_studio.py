@@ -1,13 +1,12 @@
-import pytest
-import unstructured.staging.label_studio as label_studio
-
-from unstructured.documents.elements import Title, NarrativeText
-
-from label_studio_sdk.client import Client
-
 import logging
 import re
+
+import pytest
 import vcr
+from label_studio_sdk.client import Client
+
+import unstructured.staging.label_studio as label_studio
+from unstructured.documents.elements import NarrativeText, Title
 
 
 @pytest.fixture

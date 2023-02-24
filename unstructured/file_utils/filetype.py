@@ -1,7 +1,7 @@
-from enum import Enum
 import os
-from typing import IO, Optional
 import zipfile
+from enum import Enum
+from typing import IO, Optional
 
 try:
     import magic
@@ -13,7 +13,6 @@ except ImportError:  # pragma: nocover
 
 from unstructured.logger import logger
 from unstructured.nlp.patterns import EMAIL_HEAD_RE
-
 
 DOCX_MIME_TYPES = [
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",

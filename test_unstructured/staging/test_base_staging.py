@@ -2,23 +2,22 @@ import csv
 import json
 import os
 import pathlib
-import pytest
 
 import pandas as pd
+import pytest
 
 import unstructured.staging.base as base
-
 from unstructured.documents.elements import (
     Address,
     CheckBox,
     ElementMetadata,
     FigureCaption,
-    Title,
-    Text,
-    NarrativeText,
-    ListItem,
     Image,
+    ListItem,
+    NarrativeText,
     PageBreak,
+    Text,
+    Title,
 )
 
 

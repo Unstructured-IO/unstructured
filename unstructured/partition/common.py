@@ -2,9 +2,9 @@ import subprocess
 from typing import List, Optional, Union
 
 from unstructured.documents.elements import (
+    CheckBox,
     Element,
     ElementMetadata,
-    CheckBox,
     FigureCaption,
     ListItem,
     NarrativeText,
@@ -12,7 +12,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.nlp.patterns import UNICODE_BULLETS_RE, ENUMERATED_BULLETS_RE
+from unstructured.nlp.patterns import ENUMERATED_BULLETS_RE, UNICODE_BULLETS_RE
 
 
 def normalize_layout_element(layout_element) -> Union[Element, List[Element]]:

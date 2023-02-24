@@ -1,5 +1,6 @@
-import pytest
 import datetime
+
+import pytest
 
 import unstructured.cleaners.extract as extract
 

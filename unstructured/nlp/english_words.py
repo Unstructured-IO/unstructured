@@ -1,5 +1,5 @@
-import pathlib
 import os
+import pathlib
 from typing import List
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()

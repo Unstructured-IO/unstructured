@@ -1,15 +1,15 @@
-import re
 import datetime
+import re
 from typing import List
-from unstructured.nlp.patterns import (
-    IP_ADDRESS_PATTERN_RE,
-    IP_ADDRESS_NAME_PATTERN,
-    MAPI_ID_PATTERN,
-    EMAIL_DATETIMETZ_PATTERN,
-    EMAIL_ADDRESS_PATTERN,
-)
 
-from unstructured.nlp.patterns import US_PHONE_NUMBERS_RE
+from unstructured.nlp.patterns import (
+    EMAIL_ADDRESS_PATTERN,
+    EMAIL_DATETIMETZ_PATTERN,
+    IP_ADDRESS_NAME_PATTERN,
+    IP_ADDRESS_PATTERN_RE,
+    MAPI_ID_PATTERN,
+    US_PHONE_NUMBERS_RE,
+)
 
 
 def _get_indexed_match(text: str, pattern: str, index: int = 0) -> re.Match:

@@ -1,9 +1,10 @@
-import pytest
 import csv
 import os
 
+import pytest
+
 import unstructured.staging.prodigy as prodigy
-from unstructured.documents.elements import Title, NarrativeText
+from unstructured.documents.elements import NarrativeText, Title
 
 
 @pytest.fixture

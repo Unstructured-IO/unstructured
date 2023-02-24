@@ -1,4 +1,5 @@
 from typing import Any, Dict, List, Optional
+
 from unstructured.documents.elements import Text
 
 

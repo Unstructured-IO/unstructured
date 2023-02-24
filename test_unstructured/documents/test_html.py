@@ -1,22 +1,27 @@
 import os
 
-from lxml import etree
 import pytest
+from lxml import etree
 
+import unstructured.documents.html as html
 from unstructured.documents.base import Page
-from unstructured.documents.elements import Address, ListItem, NarrativeText, Text, Title
+from unstructured.documents.elements import (
+    Address,
+    ListItem,
+    NarrativeText,
+    Text,
+    Title,
+)
 from unstructured.documents.html import (
+    HEADING_TAGS,
     LIST_ITEM_TAGS,
+    TABLE_TAGS,
+    TEXT_TAGS,
     HTMLDocument,
     HTMLNarrativeText,
     HTMLTitle,
-    TEXT_TAGS,
-    TABLE_TAGS,
-    HEADING_TAGS,
     TagsMixin,
 )
-import unstructured.documents.html as html
-
 
 TAGS = (
     "<a><abbr><acronym><address><applet><area><article><aside><audio><b><base><basefont><bdi>"

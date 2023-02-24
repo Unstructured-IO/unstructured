@@ -1,9 +1,10 @@
 from functools import partial
+
 import pytest
 
 from unstructured.cleaners.core import clean_prefix
 from unstructured.cleaners.translate import translate_text
-from unstructured.documents.email_elements import EmailElement, NoID, Name
+from unstructured.documents.email_elements import EmailElement, Name, NoID
 
 
 def test_text_id():

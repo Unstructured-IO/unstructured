@@ -1,10 +1,11 @@
-import pytest
-import requests
 from unittest import mock
 
-from unstructured.documents.elements import PageBreak
-import unstructured.partition.pdf as pdf
+import pytest
+import requests
 import unstructured_inference.inference.layout as layout
+
+import unstructured.partition.pdf as pdf
+from unstructured.documents.elements import PageBreak
 
 
 class MockResponse:

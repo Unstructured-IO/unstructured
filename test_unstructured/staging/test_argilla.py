@@ -1,8 +1,8 @@
+import argilla as rg
 import pytest
 
-import argilla as rg
 import unstructured.staging.argilla as argilla
-from unstructured.documents.elements import Title, NarrativeText
+from unstructured.documents.elements import NarrativeText, Title
 
 
 @pytest.fixture

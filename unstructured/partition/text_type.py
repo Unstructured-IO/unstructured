@@ -2,7 +2,6 @@
 import os
 import re
 import sys
-
 from typing import List, Optional
 
 if sys.version_info < (3, 8):
@@ -11,11 +10,14 @@ else:
     from typing import Final
 
 from unstructured.cleaners.core import remove_punctuation
-from unstructured.nlp.english_words import ENGLISH_WORDS
-from unstructured.nlp.patterns import US_PHONE_NUMBERS_RE, UNICODE_BULLETS_RE, US_CITY_STATE_ZIP_RE
-from unstructured.nlp.tokenize import pos_tag, sent_tokenize, word_tokenize
 from unstructured.logger import logger
-
+from unstructured.nlp.english_words import ENGLISH_WORDS
+from unstructured.nlp.patterns import (
+    UNICODE_BULLETS_RE,
+    US_CITY_STATE_ZIP_RE,
+    US_PHONE_NUMBERS_RE,
+)
+from unstructured.nlp.tokenize import pos_tag, sent_tokenize, word_tokenize
 
 POS_VERB_TAGS: Final[List[str]] = ["VB", "VBG", "VBD", "VBN", "VBP", "VBZ"]
 ENGLISH_WORD_SPLIT_RE = re.compile(r"[\s|\.|-|_|\/]")

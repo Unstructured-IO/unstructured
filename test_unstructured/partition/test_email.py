@@ -2,23 +2,22 @@ import datetime
 import email
 import os
 import pathlib
+
 import pytest
 
-
-from unstructured.documents.elements import NarrativeText, Title, ListItem, Image
+from unstructured.documents.elements import Image, ListItem, NarrativeText, Title
 from unstructured.documents.email_elements import (
     MetaData,
+    ReceivedInfo,
     Recipient,
     Sender,
     Subject,
-    ReceivedInfo,
 )
 from unstructured.partition.email import (
     extract_attachment_info,
     partition_email,
     partition_email_header,
 )
-
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 

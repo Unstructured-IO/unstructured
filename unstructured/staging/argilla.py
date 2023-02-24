@@ -1,9 +1,10 @@
 from typing import List, Union
+
 import argilla
 from argilla.client.models import (
+    Text2TextRecord,
     TextClassificationRecord,
     TokenClassificationRecord,
-    Text2TextRecord,
 )
 
 from unstructured.documents.elements import Text

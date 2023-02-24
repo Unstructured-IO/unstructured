@@ -1,8 +1,7 @@
 import os
+from typing import Any, Dict, List, Optional, Sequence, Union
 
-from typing import Any, Dict, List, Optional, Union, Sequence
-from unstructured.documents.elements import Text, NoID
-
+from unstructured.documents.elements import NoID, Text
 
 VALID_ATTACHMENT_TYPES: List[str] = ["IMAGE", "VIDEO", "RAW_TEXT", "TEXT_URL", "HTML"]
 

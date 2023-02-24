@@ -1,6 +1,5 @@
-from typing import List, Dict
-
 import json
+from typing import Dict, List
 
 
 def save_as_jsonl(data: List[Dict], filename: str) -> None:

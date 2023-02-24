@@ -1,5 +1,6 @@
 from unstructured_inference.inference.layout import LayoutElement
 
+import unstructured.partition.common as common
 from unstructured.documents.elements import (
     CheckBox,
     FigureCaption,
@@ -8,7 +9,6 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-import unstructured.partition.common as common
 
 
 def test_normalize_layout_element_dict():

@@ -1,9 +1,10 @@
 import os
 import pathlib
+
 import pytest
 
-from unstructured.partition.ppt import partition_ppt
 from unstructured.documents.elements import ListItem, NarrativeText, Title
+from unstructured.partition.ppt import partition_ppt
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "..", "example-docs")

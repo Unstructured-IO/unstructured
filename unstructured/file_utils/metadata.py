@@ -1,7 +1,7 @@
-from dataclasses import dataclass, field
 import datetime
 import io
-from typing import Any, Dict, IO, Final, Optional
+from dataclasses import dataclass, field
+from typing import IO, Any, Dict, Final, Optional
 
 import docx
 import openpyxl

@@ -1,16 +1,16 @@
-import io
 import csv
+import io
 import json
 from typing import Any, Dict, List, Optional
 
 import pandas as pd
 
 from unstructured.documents.elements import (
+    TYPE_TO_TEXT_ELEMENT_MAP,
     CheckBox,
-    NoID,
     Element,
     ElementMetadata,
-    TYPE_TO_TEXT_ELEMENT_MAP,
+    NoID,
 )
 
 TABLE_FIELDNAMES: List[str] = [

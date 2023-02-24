@@ -1,6 +1,6 @@
+import sys
 from functools import lru_cache
 from typing import List, Tuple
-import sys
 
 if sys.version_info < (3, 8):
     from typing_extensions import Final
@@ -8,11 +8,9 @@ else:
     from typing import Final
 
 import nltk
-from nltk import (
-    pos_tag as _pos_tag,
-    sent_tokenize as _sent_tokenize,
-    word_tokenize as _word_tokenize,
-)
+from nltk import pos_tag as _pos_tag
+from nltk import sent_tokenize as _sent_tokenize
+from nltk import word_tokenize as _word_tokenize
 
 CACHE_MAX_SIZE: Final[int] = 128
 

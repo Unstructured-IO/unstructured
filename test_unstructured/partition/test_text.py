@@ -1,8 +1,9 @@
 import os
 import pathlib
+
 import pytest
 
-from unstructured.documents.elements import Address, NarrativeText, Title, ListItem
+from unstructured.documents.elements import Address, ListItem, NarrativeText, Title
 from unstructured.partition.text import partition_text
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()

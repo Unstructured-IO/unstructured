@@ -1,6 +1,7 @@
 from __future__ import annotations
-from typing import List, Optional, Sequence, Tuple
+
 import sys
+from typing import List, Optional, Sequence, Tuple
 
 if sys.version_info < (3, 8):
     from typing_extensions import Final
@@ -9,12 +10,18 @@ else:
 
 from lxml import etree
 
-from unstructured.logger import logger
-
 from unstructured.cleaners.core import clean_bullets, replace_unicode_quotes
 from unstructured.documents.base import Page
-from unstructured.documents.elements import Address, ListItem, Element, NarrativeText, Text, Title
+from unstructured.documents.elements import (
+    Address,
+    Element,
+    ListItem,
+    NarrativeText,
+    Text,
+    Title,
+)
 from unstructured.documents.xml import XMLDocument
+from unstructured.logger import logger
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_possible_narrative_text,

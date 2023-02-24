@@ -1,5 +1,5 @@
-from typing import List, Optional
 import warnings
+from typing import List, Optional
 
 from unstructured.documents.elements import Element
 from unstructured.partition import _partition_via_api

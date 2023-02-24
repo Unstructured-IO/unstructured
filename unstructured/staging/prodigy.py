@@ -1,9 +1,8 @@
-import io
-from typing import Generator, Iterable, List, Dict, Optional, Union
 import csv
+import io
+from typing import Dict, Generator, Iterable, List, Optional, Union
 
 from unstructured.documents.elements import Text
-
 
 PRODIGY_TYPE = List[Dict[str, Union[str, Dict[str, str]]]]
 

@@ -1,6 +1,7 @@
-import requests  # type: ignore
-from typing import BinaryIO, List, Optional, Union, Tuple, Mapping
+from typing import BinaryIO, List, Mapping, Optional, Tuple, Union
 from urllib.parse import urlsplit
+
+import requests  # type: ignore
 
 from unstructured.documents.elements import Element
 

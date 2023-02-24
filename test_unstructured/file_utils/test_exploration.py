@@ -1,8 +1,8 @@
 import os
 import pathlib
-import pytest
 
 import pandas as pd
+import pytest
 
 import unstructured.file_utils.exploration as exploration
 from unstructured.file_utils.filetype import FileType

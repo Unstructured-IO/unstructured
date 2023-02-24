@@ -1,6 +1,7 @@
 import re
 from typing import IO, List, Optional
 
+from unstructured.cleaners.core import clean_bullets
 from unstructured.documents.elements import (
     Address,
     Element,
@@ -10,13 +11,11 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-
-from unstructured.cleaners.core import clean_bullets
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.partition.text_type import (
+    is_bulleted_text,
     is_possible_narrative_text,
     is_possible_title,
-    is_bulleted_text,
     is_us_city_state_zip,
 )
 

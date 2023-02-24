@@ -1,7 +1,7 @@
+import quopri
 import re
 import sys
 import unicodedata
-import quopri
 
 from unstructured.nlp.patterns import UNICODE_BULLETS_RE
 

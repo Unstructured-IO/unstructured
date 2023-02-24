@@ -4,7 +4,6 @@ from typing import Any, Dict, List, Optional, Union
 
 from unstructured.documents.elements import Text
 
-
 LABEL_STUDIO_TYPE = List[Dict[str, Dict[str, str]]]
 
 # NOTE(robinson) - ref: https://labelstud.io/tags/labels.html

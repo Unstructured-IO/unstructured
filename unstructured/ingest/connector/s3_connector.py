@@ -1,10 +1,14 @@
-from dataclasses import dataclass, field
-from pathlib import Path
 import json
 import os
 import re
+from dataclasses import dataclass, field
+from pathlib import Path
 
-from unstructured.ingest.interfaces import BaseConnector, BaseConnectorConfig, BaseIngestDoc
+from unstructured.ingest.interfaces import (
+    BaseConnector,
+    BaseConnectorConfig,
+    BaseIngestDoc,
+)
 
 
 @dataclass

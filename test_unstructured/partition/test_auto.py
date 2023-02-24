@@ -1,13 +1,20 @@
 import os
 import pathlib
-import pytest
 import warnings
 
 import docx
+import pytest
 
-from unstructured.documents.elements import Address, NarrativeText, PageBreak, Title, Text, ListItem
-from unstructured.partition.auto import partition
 import unstructured.partition.auto as auto
+from unstructured.documents.elements import (
+    Address,
+    ListItem,
+    NarrativeText,
+    PageBreak,
+    Text,
+    Title,
+)
+from unstructured.partition.auto import partition
 from unstructured.partition.common import convert_office_doc
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()

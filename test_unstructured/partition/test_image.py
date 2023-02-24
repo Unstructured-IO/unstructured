@@ -1,10 +1,11 @@
-import pytest
-import requests
 from unittest import mock
 
-import unstructured.partition.pdf as pdf
-import unstructured.partition.image as image
+import pytest
+import requests
 import unstructured_inference.inference.layout as layout
+
+import unstructured.partition.image as image
+import unstructured.partition.pdf as pdf
 
 
 class MockResponse:

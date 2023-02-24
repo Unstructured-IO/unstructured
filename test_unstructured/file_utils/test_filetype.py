@@ -1,16 +1,16 @@
 import os
 import pathlib
-import pytest
 import zipfile
 
 import magic
+import pytest
 
 import unstructured.file_utils.filetype as filetype
 from unstructured.file_utils.filetype import (
-    detect_filetype,
-    FileType,
     DOCX_MIME_TYPES,
     XLSX_MIME_TYPES,
+    FileType,
+    detect_filetype,
 )
 
 FILE_DIRECTORY = pathlib.Path(__file__).parent.resolve()
