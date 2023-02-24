@@ -49,7 +49,7 @@ class LabelStudioResult:
         if self.type not in VALID_LABEL_TYPES:
             raise ValueError(
                 f"{self.type} is not a valid label type. "
-                f"Valid label types are: {VALID_LABEL_TYPES}"
+                f"Valid label types are: {VALID_LABEL_TYPES}",
             )
 
     def to_dict(self):
@@ -105,7 +105,7 @@ class LabelStudioPrediction(LabelStudioAnnotation):
         if not isinstance(self.score, (int, float)) or (self.score < 0 or self.score > 1):
             raise ValueError(
                 f"{self.score} is not a valid score value. "
-                f"Score value must be a number between 0 and 1."
+                f"Score value must be a number between 0 and 1.",
             )
 
 

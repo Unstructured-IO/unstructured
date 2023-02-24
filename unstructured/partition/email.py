@@ -52,7 +52,7 @@ def _parse_received_data(data: str) -> List[Element]:
         elements.append(ReceivedInfo(name="mapi_id", text=mapi_id[0]))
     if datetimetz:
         elements.append(
-            ReceivedInfo(name="received_datetimetz", text=str(datetimetz), datestamp=datetimetz)
+            ReceivedInfo(name="received_datetimetz", text=str(datetimetz), datestamp=datetimetz),
         )
     return elements
 
@@ -86,7 +86,7 @@ def partition_email_header(msg: Message) -> List[Element]:
 
 
 def extract_attachment_info(
-    message: Message, output_dir: Optional[str] = None
+    message: Message, output_dir: Optional[str] = None,
 ) -> List[Dict[str, str]]:
     list_attachments = []
     attachment_info = {}
@@ -121,7 +121,7 @@ def has_embedded_image(element):
 
 
 def find_embedded_image(
-    element: Union[NarrativeText, Title], indices: re.Match
+    element: Union[NarrativeText, Title], indices: re.Match,
 ) -> Tuple[Element, Element]:
     start, end = indices.start(), indices.end()
 
@@ -155,7 +155,7 @@ def partition_email(
     if content_source not in VALID_CONTENT_SOURCES:
         raise ValueError(
             f"{content_source} is not a valid value for content_source. "
-            f"Valid content sources are: {VALID_CONTENT_SOURCES}"
+            f"Valid content sources are: {VALID_CONTENT_SOURCES}",
         )
 
     if not any([filename, file, text]):

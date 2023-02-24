@@ -114,7 +114,7 @@ EXT_TO_FILETYPE = {
 
 
 def detect_filetype(
-    filename: Optional[str] = None, file: Optional[IO] = None
+    filename: Optional[str] = None, file: Optional[IO] = None,
 ) -> Optional[FileType]:
     """Use libmagic to determine a file's type. Helps determine which partition brick
     to use for a given file. A return value of None indicates a non-supported file type."""
@@ -140,7 +140,7 @@ def detect_filetype(
             raise ImportError(
                 "libmagic is unavailable. "
                 "Filetype detection on file-like objects requires libmagic. "
-                "Please install libmagic and try again."
+                "Please install libmagic and try again.",
             )
     else:
         raise ValueError("No filename nor file were specified.")
@@ -215,7 +215,7 @@ def detect_filetype(
             return filetype
 
     logger.warn(
-        f"MIME type was {mime_type}. This file type is not currently supported in unstructured."
+        f"MIME type was {mime_type}. This file type is not currently supported in unstructured.",
     )
     return FileType.UNK
 

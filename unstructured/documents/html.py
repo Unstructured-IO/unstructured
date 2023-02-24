@@ -145,7 +145,7 @@ class HTMLDocument(XMLDocument):
         return pages
 
     def doc_after_cleaners(
-        self, skip_headers_and_footers=False, skip_table_text=False, inplace=False
+        self, skip_headers_and_footers=False, skip_table_text=False, inplace=False,
     ) -> HTMLDocument:
         """Filters the elements and returns a new instance of the class based on the criteria
         specified. Note that the number of pages can change in the case that all elements on a
@@ -177,7 +177,7 @@ class HTMLDocument(XMLDocument):
                     raise ValueError(
                         f"elements of class {self.__class__} should be of type HTMLTitle "
                         f"HTMLNarrativeText, or HTMLListItem but "
-                        f"object has an element of type {type(el)}"
+                        f"object has an element of type {type(el)}",
                     )
                 if not any(excluder(el) for excluder in excluders):
                     elements.append(el)
@@ -296,7 +296,7 @@ def _is_text_tag(tag_elem: etree.Element, max_predecessor_len: int = 5) -> bool:
 
 
 def _process_list_item(
-    tag_elem: etree.Element, max_predecessor_len: int = 5
+    tag_elem: etree.Element, max_predecessor_len: int = 5,
 ) -> Tuple[Optional[Element], etree.Element]:
     """If an etree element contains bulleted text, extracts the relevant bulleted text
     and converts it to ListItem objects. Also returns the next html elements so that

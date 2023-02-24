@@ -109,7 +109,7 @@ class Text(Element):
                 (self.text == other.text),
                 (self.coordinates == other.coordinates),
                 (self.category == other.category),
-            ]
+            ],
         )
 
     def to_dict(self) -> dict:

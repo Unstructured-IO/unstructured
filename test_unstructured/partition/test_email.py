@@ -45,7 +45,7 @@ RECEIVED_HEADER_OUTPUT = [
         name="received_datetimetz",
         text="2023-02-20 10:03:18+12:00",
         datestamp=datetime.datetime(
-            2023, 2, 20, 10, 3, 18, tzinfo=datetime.timezone(datetime.timedelta(seconds=43200))
+            2023, 2, 20, 10, 3, 18, tzinfo=datetime.timezone(datetime.timedelta(seconds=43200)),
         ),
     ),
     MetaData(name="MIME-Version", text="1.0"),
@@ -58,7 +58,7 @@ RECEIVED_HEADER_OUTPUT = [
     Sender(name="Matthew Robinson", text="mrobinson@unstructured.io"),
     Recipient(name="Matthew Robinson", text="mrobinson@unstructured.io"),
     MetaData(
-        name="Content-Type", text='multipart/alternative; boundary="00000000000095c9b205eff92630"'
+        name="Content-Type", text='multipart/alternative; boundary="00000000000095c9b205eff92630"',
     ),
 ]
 
@@ -73,14 +73,14 @@ HEADER_EXPECTED_OUTPUT = [
     Sender(name="Matthew Robinson", text="mrobinson@unstructured.io"),
     Recipient(name="Matthew Robinson", text="mrobinson@unstructured.io"),
     MetaData(
-        name="Content-Type", text='multipart/alternative; boundary="00000000000095c9b205eff92630"'
+        name="Content-Type", text='multipart/alternative; boundary="00000000000095c9b205eff92630"',
     ),
 ]
 
 ALL_EXPECTED_OUTPUT = HEADER_EXPECTED_OUTPUT + EXPECTED_OUTPUT
 
 ATTACH_EXPECTED_OUTPUT = [
-    {"filename": "fake-attachment.txt", "payload": b"Hey this is a fake attachment!"}
+    {"filename": "fake-attachment.txt", "payload": b"Hey this is a fake attachment!"},
 ]
 
 

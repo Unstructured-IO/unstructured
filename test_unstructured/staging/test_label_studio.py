@@ -94,8 +94,8 @@ def test_created_annotation():
                 value={"choices": ["Positive"]},
                 from_name="sentiment",
                 to_name="text",
-            )
-        ]
+            ),
+        ],
     )
 
     annotation.to_dict() == {
@@ -108,7 +108,7 @@ def test_created_annotation():
                 "to_name": "text",
                 "hidden": False,
                 "read_only": False,
-            }
+            },
         ],
         "was_canceled": False,
     }
@@ -132,7 +132,7 @@ def test_init_prediction(score, raises, exception):
             value={"choices": ["Positive"]},
             from_name="sentiment",
             to_name="text",
-        )
+        ),
     ]
 
     if raises:
@@ -150,7 +150,7 @@ def test_init_prediction(score, raises, exception):
                     "to_name": "text",
                     "hidden": False,
                     "read_only": False,
-                }
+                },
             ],
             "was_canceled": False,
             "score": score,
@@ -167,9 +167,9 @@ def test_stage_with_annotation():
                     value={"choices": ["Positive"]},
                     from_name="sentiment",
                     to_name="text",
-                )
-            ]
-        )
+                ),
+            ],
+        ),
     ]
     label_studio_data = label_studio.stage_for_label_studio([element], [annotations])
     assert label_studio_data == [
@@ -186,12 +186,12 @@ def test_stage_with_annotation():
                             "to_name": "text",
                             "hidden": False,
                             "read_only": False,
-                        }
+                        },
                     ],
                     "was_canceled": False,
-                }
+                },
             ],
-        }
+        },
     ]
 
 
@@ -205,10 +205,10 @@ def test_stage_with_prediction():
                     value={"choices": ["Positive"]},
                     from_name="sentiment",
                     to_name="text",
-                )
+                ),
             ],
             score=0.98,
-        )
+        ),
     ]
     label_studio_data = label_studio.stage_for_label_studio([element], predictions=[prediction])
     assert label_studio_data == [
@@ -225,13 +225,13 @@ def test_stage_with_prediction():
                             "to_name": "text",
                             "hidden": False,
                             "read_only": False,
-                        }
+                        },
                     ],
                     "was_canceled": False,
                     "score": 0.98,
-                }
+                },
             ],
-        }
+        },
     ]
 
 
@@ -245,9 +245,9 @@ def test_stage_with_annotation_for_ner():
                     value={"start": 12, "end": 16, "text": "bear", "labels": ["PER"]},
                     from_name="label",
                     to_name="text",
-                )
-            ]
-        )
+                ),
+            ],
+        ),
     ]
     label_studio_data = label_studio.stage_for_label_studio([element], [annotations])
     assert label_studio_data == [
@@ -264,12 +264,12 @@ def test_stage_with_annotation_for_ner():
                             "to_name": "text",
                             "hidden": False,
                             "read_only": False,
-                        }
+                        },
                     ],
                     "was_canceled": False,
-                }
+                },
             ],
-        }
+        },
     ]
 
 
@@ -283,9 +283,9 @@ def test_stage_with_annotation_raises_with_mismatched_lengths():
                     value={"choices": ["Positive"]},
                     from_name="sentiment",
                     to_name="text",
-                )
-            ]
-        )
+                ),
+            ],
+        ),
     ]
     with pytest.raises(ValueError):
         label_studio.stage_for_label_studio([element], [annotations, annotations])
@@ -301,10 +301,10 @@ def test_stage_with_prediction_raises_with_mismatched_lengths():
                     value={"choices": ["Positive"]},
                     from_name="sentiment",
                     to_name="text",
-                )
+                ),
             ],
             score=0.82,
-        )
+        ),
     ]
     with pytest.raises(ValueError):
         label_studio.stage_for_label_studio([element], predictions=[prediction, prediction])
@@ -330,10 +330,10 @@ def test_stage_with_reviewed_annotation():
                     value={"choices": ["Positive"]},
                     from_name="sentiment",
                     to_name="text",
-                )
+                ),
             ],
             reviews=[label_studio.LabelStudioReview(created_by={"user_id": 1}, accepted=True)],
-        )
+        ),
     ]
     label_studio_data = label_studio.stage_for_label_studio([element], [annotations])
     assert label_studio_data == [
@@ -350,11 +350,11 @@ def test_stage_with_reviewed_annotation():
                             "id": None,
                             "hidden": False,
                             "read_only": False,
-                        }
+                        },
                     ],
                     "reviews": [{"created_by": {"user_id": 1}, "accepted": True, "id": None}],
                     "was_canceled": False,
-                }
+                },
             ],
-        }
+        },
     ]

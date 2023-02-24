@@ -66,7 +66,7 @@ def isd_to_elements(isd: List[Dict[str, Any]]) -> List[Element]:
                     element_id=element_id,
                     metadata=metadata,
                     coordinates=coordinates,
-                )
+                ),
             )
         elif item["type"] == "CheckBox":
             elements.append(
@@ -75,7 +75,7 @@ def isd_to_elements(isd: List[Dict[str, Any]]) -> List[Element]:
                     element_id=element_id,
                     metadata=metadata,
                     coordinates=coordinates,
-                )
+                ),
             )
 
     return elements

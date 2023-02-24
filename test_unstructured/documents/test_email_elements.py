@@ -30,7 +30,7 @@ def test_name_element_apply_multiple_cleaners():
         partial(translate_text, target_lang="ru"),
     ]
     name_element = Name(
-        name="[1] A Textbook on Crocodile Habitats", text="[1] A Textbook on Crocodile Habitats"
+        name="[1] A Textbook on Crocodile Habitats", text="[1] A Textbook on Crocodile Habitats",
     )
     name_element.apply(*cleaners)
     assert (

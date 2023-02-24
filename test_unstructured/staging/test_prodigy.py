@@ -54,7 +54,7 @@ def test_validate_prodigy_metadata_with_valid_metadata(elements, valid_metadata)
     ],
 )
 def test_validate_prodigy_metadata_with_invalid_metadata(
-    elements, invalid_metadata_fixture, exception_message, request
+    elements, invalid_metadata_fixture, exception_message, request,
 ):
     invalid_metadata = request.getfixturevalue(invalid_metadata_fixture)
     with pytest.raises(ValueError) as validation_exception:

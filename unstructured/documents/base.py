@@ -31,7 +31,7 @@ class Document(ABC):
         if self._pages is None:
             raise NotImplementedError(
                 "When subclassing, _pages should always be populated before "
-                "using the pages property."
+                "using the pages property.",
             )
         return self._pages
 

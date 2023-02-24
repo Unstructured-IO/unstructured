@@ -19,16 +19,16 @@ def _validate_prodigy_metadata(
     if metadata:
         if len(metadata) != len(elements):
             raise ValueError(
-                "The length of metadata parameter does not match with length of elements parameter."
+                "The length of metadata parameter does not match with length of elements parameter.",
             )
         id_error_index: Optional[int] = next(
-            (index for index, metadatum in enumerate(metadata) if "id" in metadatum), None
+            (index for index, metadatum in enumerate(metadata) if "id" in metadatum), None,
         )
         if isinstance(id_error_index, int):
             raise ValueError(
                 'The key "id" is not allowed with metadata parameter at index: {index}'.format(
-                    index=id_error_index
-                )
+                    index=id_error_index,
+                ),
             )
         validated_metadata = metadata
     else:
@@ -70,8 +70,8 @@ def stage_csv_for_prodigy(
     csv_fieldnames = ["text", "id"]
     csv_fieldnames += list(
         set().union(
-            *((key.lower() for key in metadata_item.keys()) for metadata_item in validated_metadata)
-        )
+            *((key.lower() for key in metadata_item.keys()) for metadata_item in validated_metadata),
+        ),
     )
 
     def _get_rows() -> Generator[Dict[str, str], None, None]:

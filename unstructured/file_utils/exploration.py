@@ -44,7 +44,7 @@ def get_file_info(filenames: List[str]) -> pd.DataFrame:
 
 
 def get_file_info_from_file_contents(
-    file_contents: List[str], filenames: Optional[List[str]] = None
+    file_contents: List[str], filenames: Optional[List[str]] = None,
 ) -> pd.DataFrame:
     data: Dict[str, List[Any]] = {
         "filesize": [],
@@ -55,7 +55,7 @@ def get_file_info_from_file_contents(
         if len(filenames) != len(file_contents):
             raise ValueError(
                 f"There are {len(filenames)} filenames and {len(file_contents)} "
-                "file_contents. Both inputs must be the same length."
+                "file_contents. Both inputs must be the same length.",
             )
         data["filename"] = []
 

@@ -72,7 +72,7 @@ def test_convert_to_dataframe():
         {
             "type": ["Title", "NarrativeText"],
             "text": ["Title 1", "Narrative 1"],
-        }
+        },
     )
     assert df.type.equals(expected_df.type) is True
     assert df.text.equals(expected_df.text) is True

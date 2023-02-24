@@ -120,7 +120,7 @@ def convert_office_doc(input_filename: str, output_directory: str, target_format
                 "--outdir",
                 output_directory,
                 input_filename,
-            ]
+            ],
         )
     except FileNotFoundError:
         raise FileNotFoundError(
@@ -129,5 +129,5 @@ on your system and try again.
 
 - Install instructions: https://www.libreoffice.org/get-help/install-howto/
 - Mac: https://formulae.brew.sh/cask/libreoffice
-- Debian: https://wiki.debian.org/LibreOffice"""
+- Debian: https://wiki.debian.org/LibreOffice""",
         )

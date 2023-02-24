@@ -31,7 +31,7 @@ def _partition_via_api(
         "file": (
             filename,
             file if file else open(filename, "rb"),
-        )
+        ),
     }
     response = requests.post(
         url=url,

@@ -64,7 +64,7 @@ class XMLDocument(Document):
                         "Stylesheets are more commonly parsed with the "
                         "XMLParser. If your HTML does not display properly, try "
                         "`import lxml.etree as etree` and setting "
-                        "`parser=etree.XMLParser()` instead."
+                        "`parser=etree.XMLParser()` instead.",
                     )
                 xslt = etree.parse(self.stylesheet)
                 transform = etree.XSLT(xslt)

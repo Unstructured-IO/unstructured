@@ -314,7 +314,7 @@ def test_read_html_doc(tmpdir, monkeypatch):
         f.write(doc)
 
     html_document = HTMLDocument.from_file(filename=filename).doc_after_cleaners(
-        skip_headers_and_footers=True, skip_table_text=True
+        skip_headers_and_footers=True, skip_table_text=True,
     )
     print("original pages: ", HTMLDocument.from_file(filename=filename).pages)
     print("filtered pages: ", html_document.pages)
