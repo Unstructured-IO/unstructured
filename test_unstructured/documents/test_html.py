@@ -48,12 +48,12 @@ def sample_doc():
         tag="p",
         ancestortags=("table", "tbody", "tr", "td"),
     )
-    narrative = HTMLNarrativeText("I'm some narrative text", tag="p", ancestortags=tuple())
+    narrative = HTMLNarrativeText("I'm some narrative text", tag="p", ancestortags=())
     page1 = Page(0)
     page1.elements = [table_element, narrative]
-    header = HTMLTitle("I'm a header", tag="header", ancestortags=tuple())
-    body = HTMLNarrativeText("Body text", tag="p", ancestortags=tuple())
-    footer = HTMLTitle("I'm a footer", tag="footer", ancestortags=tuple())
+    header = HTMLTitle("I'm a header", tag="header", ancestortags=())
+    body = HTMLNarrativeText("Body text", tag="p", ancestortags=())
+    footer = HTMLTitle("I'm a footer", tag="footer", ancestortags=())
     page2 = Page(1)
     page2.elements = [header, body, footer]
     doc = HTMLDocument.from_pages([page1, page2])

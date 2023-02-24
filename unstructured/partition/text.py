@@ -58,7 +58,7 @@ def partition_text(
 
     file_content = split_by_paragraph(file_text)
 
-    elements: List[Element] = list()
+    elements: List[Element] = []
     metadata = ElementMetadata(filename=filename)
     for ctext in file_content:
         ctext = ctext.strip()

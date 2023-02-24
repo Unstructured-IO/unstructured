@@ -50,7 +50,7 @@ def chunk_by_attention_window(
     split_text: List[str] = split_function(text)
     num_splits = len(split_text)
 
-    chunks: List[str] = list()
+    chunks: List[str] = []
     chunk_text = ""
     chunk_size = 0
 

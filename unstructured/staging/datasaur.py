@@ -8,7 +8,7 @@ def stage_for_datasaur(
     entities: Optional[List[List[Dict[str, Any]]]] = None,
 ) -> List[Dict[str, Any]]:
     """Convert a list of elements into a list of dictionaries for use in Datasaur"""
-    result: List[Dict[str, Any]] = list()
+    result: List[Dict[str, Any]] = []
 
     _entities: List[List[Dict[str, Any]]] = [[] for _ in range(len(elements))]
     if entities is not None:
@@ -22,7 +22,7 @@ def stage_for_datasaur(
         _entities = entities
 
     for i, item in enumerate(elements):
-        data = dict(text=item.text, entities=_entities[i])
+        data = {"text": item.text, "entities": _entities[i]}
         result.append(data)
 
     return result

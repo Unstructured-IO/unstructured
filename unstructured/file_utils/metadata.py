@@ -119,7 +119,7 @@ def get_jpg_metadata(
         raise FileNotFoundError("No filename nor file were specified")
 
     exif_data = image.getexif()
-    exif_dict: Dict[str, Any] = dict()
+    exif_dict: Dict[str, Any] = {}
     for tag_id in exif_data:
         tag = TAGS.get(tag_id, tag_id)
         data = exif_data.get(tag_id)

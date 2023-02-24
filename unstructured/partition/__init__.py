@@ -43,7 +43,7 @@ def _partition_via_api(
     if response.status_code == 200:
         pages = response.json()["pages"]
         num_pages = len(pages)
-        elements = list()
+        elements = []
         for i, page in enumerate(pages):
             for element in page["elements"]:
                 elements.append(element)

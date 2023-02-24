@@ -32,7 +32,7 @@ def _validate_prodigy_metadata(
             )
         validated_metadata = metadata
     else:
-        validated_metadata = [dict() for _ in elements]
+        validated_metadata = [{} for _ in elements]
     return validated_metadata
 
 
@@ -47,11 +47,11 @@ def stage_for_prodigy(
 
     validated_metadata: Iterable[Dict[str, str]] = _validate_prodigy_metadata(elements, metadata)
 
-    prodigy_data: PRODIGY_TYPE = list()
+    prodigy_data: PRODIGY_TYPE = []
     for element, metadatum in zip(elements, validated_metadata):
         if isinstance(element.id, str):
             metadatum["id"] = element.id
-        data: Dict[str, Union[str, Dict[str, str]]] = dict(text=element.text, meta=metadatum)
+        data: Dict[str, Union[str, Dict[str, str]]] = {"text": element.text, "meta": metadatum}
         prodigy_data.append(data)
 
     return prodigy_data

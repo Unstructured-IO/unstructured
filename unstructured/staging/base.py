@@ -26,7 +26,7 @@ TABLE_FIELDNAMES: List[str] = [
 
 def convert_to_isd(elements: List[Element]) -> List[Dict[str, str]]:
     """Represents the document elements as an Initial Structured Document (ISD)."""
-    isd: List[Dict[str, str]] = list()
+    isd: List[Dict[str, str]] = []
     for element in elements:
         section = element.to_dict()
         isd.append(section)
@@ -47,7 +47,7 @@ def elements_to_json(elements: List[Element], filename: str, indent: int = 4):
 
 def isd_to_elements(isd: List[Dict[str, Any]]) -> List[Element]:
     """Converts an Initial Structured Data (ISD) dictionary to a list of elements."""
-    elements: List[Element] = list()
+    elements: List[Element] = []
 
     for item in isd:
         element_id: str = item.get("element_id", NoID())

@@ -24,7 +24,7 @@ def test_nltk_packages_do_not_download_if():
 
 
 def mock_pos_tag(tokens: List[str]) -> List[Tuple[str, str]]:
-    pos_tags: List[Tuple[str, str]] = list()
+    pos_tags: List[Tuple[str, str]] = []
     for token in tokens:
         if token.lower() == "ask":
             pos_tags.append((token, "VB"))

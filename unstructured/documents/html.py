@@ -44,7 +44,7 @@ class TagsMixin:
         self,
         *args,
         tag: Optional[str] = None,
-        ancestortags: Sequence[str] = tuple(),
+        ancestortags: Sequence[str] = (),
         **kwargs,
     ):
         if tag is None:
@@ -96,14 +96,14 @@ class HTMLDocument(XMLDocument):
         if self._pages:
             return self._pages
         logger.info("Reading document ...")
-        pages: List[Page] = list()
+        pages: List[Page] = []
         root = _find_main(self.document_tree)
 
         articles = _find_articles(root)
         page_number = 0
         page = Page(number=page_number)
         for article in articles:
-            descendanttag_elems: Tuple[etree.Element, ...] = tuple()
+            descendanttag_elems: Tuple[etree.Element, ...] = ()
             for tag_elem in article.iter():
                 if tag_elem in descendanttag_elems:
                     # Prevent repeating something that's been flagged as text as we chase it
@@ -322,7 +322,7 @@ def _process_list_item(
 
 
 def _get_bullet_descendants(element, next_element) -> Tuple[etree.Element, ...]:
-    descendants = list()
+    descendants = []
     if element is not None:
         if next_element is not None:
             descendants += list(next_element.iterdescendants())
@@ -346,7 +346,7 @@ def _bulleted_text_from_table(table) -> List[Element]:
     NOTE: if a table has mixed bullets and non-bullets, only bullets are extracted.
     I.e., _read() will drop non-bullet narrative text in the table.
     """
-    bulleted_text: List[Element] = list()
+    bulleted_text: List[Element] = []
     rows = table.findall(".//tr")
     for row in rows:
         text = _construct_text(row)

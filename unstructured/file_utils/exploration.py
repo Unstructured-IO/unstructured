@@ -11,7 +11,7 @@ from unstructured.file_utils.filetype import detect_filetype
 def get_directory_file_info(directory: str) -> pd.DataFrame:
     """Recursively walks a directory and extracts key file information to support initial
     exploration of text data sets. Returns a pandas DataFrame."""
-    filenames: List[str] = list()
+    filenames: List[str] = []
     for path, _, files in os.walk(directory):
         for filename_no_path in files:
             filenames.append(os.path.join(path, filename_no_path))

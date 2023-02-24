@@ -108,7 +108,7 @@ def test_stage_csv_for_prodigy_with_metadata(elements, valid_metadata, output_cs
         prodigy_csv_string = prodigy.stage_csv_for_prodigy(elements, valid_metadata)
         csv_file.write(prodigy_csv_string)
 
-    fieldnames = set(["text", "id"]).union(*(data.keys() for data in valid_metadata))
+    fieldnames = {"text", "id"}.union(*(data.keys() for data in valid_metadata))
     fieldnames = [fieldname.lower() for fieldname in fieldnames]
     with open(output_csv_file) as csv_file:
         csv_rows = csv.DictReader(csv_file)

@@ -51,7 +51,7 @@ def pos_tag(text: str) -> List[Tuple[str, str]]:
     # situations like "ITEM 1A. PROPERTIES" where "PROPERTIES" can be mistaken
     # for a verb because it looks like it's in verb form an "ITEM 1A." looks like the subject.
     sentences = _sent_tokenize(text)
-    parts_of_speech = list()
+    parts_of_speech = []
     for sentence in sentences:
         tokens = _word_tokenize(sentence)
         parts_of_speech.extend(_pos_tag(tokens))

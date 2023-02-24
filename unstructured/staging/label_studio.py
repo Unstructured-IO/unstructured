@@ -125,14 +125,14 @@ def stage_for_label_studio(
         if len(elements) != len(predictions):
             raise ValueError("The length of elements and predictions must match.")
 
-    label_studio_data: LABEL_STUDIO_TYPE = list()
+    label_studio_data: LABEL_STUDIO_TYPE = []
     for i, element in enumerate(elements):
-        data: Dict[str, str] = dict()
+        data: Dict[str, str] = {}
         data[text_field] = element.text
         if isinstance(element.id, str):
             data[id_field] = element.id
 
-        labeling_example: Dict[str, Any] = dict()
+        labeling_example: Dict[str, Any] = {}
         labeling_example["data"] = data
         if annotations is not None:
             labeling_example["annotations"] = [a.to_dict() for a in annotations[i]]

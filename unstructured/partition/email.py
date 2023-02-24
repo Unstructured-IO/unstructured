@@ -44,7 +44,7 @@ def _parse_received_data(data: str) -> List[Element]:
     mapi_id = extract_mapi_id(data)
     datetimetz = extract_datetimetz(data)
 
-    elements: List[Element] = list()
+    elements: List[Element] = []
     if ip_address_names and ip_addresses:
         for name, ip in zip(ip_address_names, ip_addresses):
             elements.append(ReceivedInfo(name=name, text=ip))
@@ -67,7 +67,7 @@ def _parse_email_address(data: str) -> Tuple[str, str]:
 
 
 def partition_email_header(msg: Message) -> List[Element]:
-    elements: List[Element] = list()
+    elements: List[Element] = []
     for item in msg.raw_items():
         if item[0] == "To":
             text = _parse_email_address(item[1])
@@ -219,7 +219,7 @@ def partition_email(
             elements[idx] = clean_element
             elements.insert(idx + 1, image_info)
 
-    header: List[Element] = list()
+    header: List[Element] = []
     if include_headers:
         header = partition_email_header(msg)
     all_elements = header + elements
