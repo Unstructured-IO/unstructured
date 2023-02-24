@@ -39,24 +39,26 @@ $sudo $pac install -y git
 # Install tools needed to build python
 $sudo $pac install -y curl gcc bzip2 sqlite zlib1g-dev libreadline-dev libsqlite3-dev libssl-dev tk-dev libffi-dev xz-utils make build-essential libbz2-dev wget llvm libncursesw5-dev libxml2-dev libxmlsec1-dev liblzma-dev
 # Install pyenv
-sudo -u $USER_ACCOUNT -i <<'EOF'
-cd $HOME
-curl https://pyenv.run | bash
+if [[ ! -d /home/$USER_ACCOUNT/.pyenv ]]; then
+    sudo -u $USER_ACCOUNT -i <<'EOF'
+    cd $HOME
+    curl https://pyenv.run | bash
 EOF
-# Remove initialization lines from .bashrc if they are already there, so we don't duplicate them
-sed -i '/export PYENV_ROOT="$HOME\/.pyenv"/d' /home/$USER_ACCOUNT/.bashrc
-sed -i '/command -v pyenv >\/dev\/null || export PATH="$PYENV_ROOT\/bin:$PATH"/d' /home/$USER_ACCOUNT/.bashrc
-sed -i '/eval "$(pyenv init -)"/d' /home/$USER_ACCOUNT/.bashrc
-sed -i '/eval "$(pyenv virtualenv-init -)"/d' /home/$USER_ACCOUNT/.bashrc
-# Add initialization lines to .bashrc
-sed -i '1ieval "$(pyenv virtualenv-init -)"' /home/$USER_ACCOUNT/.bashrc
-sed -i '1ieval "$(pyenv init -)"' /home/$USER_ACCOUNT/.bashrc
-sed -i '1icommand -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"' /home/$USER_ACCOUNT/.bashrc
-sed -i '1iexport PYENV_ROOT="$HOME/.pyenv"' /home/$USER_ACCOUNT/.bashrc
-# install python
-sudo -u $USER_ACCOUNT -i <<'EOF'
-pyenv install 3.8.15
+    # Remove initialization lines from .bashrc if they are already there, so we don't duplicate them
+    sed -i '/export PYENV_ROOT="$HOME\/.pyenv"/d' /home/$USER_ACCOUNT/.bashrc
+    sed -i '/command -v pyenv >\/dev\/null || export PATH="$PYENV_ROOT\/bin:$PATH"/d' /home/$USER_ACCOUNT/.bashrc
+    sed -i '/eval "$(pyenv init -)"/d' /home/$USER_ACCOUNT/.bashrc
+    sed -i '/eval "$(pyenv virtualenv-init -)"/d' /home/$USER_ACCOUNT/.bashrc
+    # Add initialization lines to .bashrc
+    sed -i '1ieval "$(pyenv virtualenv-init -)"' /home/$USER_ACCOUNT/.bashrc
+    sed -i '1ieval "$(pyenv init -)"' /home/$USER_ACCOUNT/.bashrc
+    sed -i '1icommand -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"' /home/$USER_ACCOUNT/.bashrc
+    sed -i '1iexport PYENV_ROOT="$HOME/.pyenv"' /home/$USER_ACCOUNT/.bashrc
+    # install python
+    sudo -u $USER_ACCOUNT -i <<'EOF'
+    pyenv install 3.8.15
 EOF
+fi
 
 #### OpenCV dependencies
 $sudo $pac install -y libgl1
