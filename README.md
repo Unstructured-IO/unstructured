@@ -27,14 +27,21 @@
   </a>
 </div>
 
+<h2 align="center">
+  <p>Announcement!!!</p>
+</h2>
 <div align="center">
-<img src="https://user-images.githubusercontent.com/38184042/205945013-99670127-0bf3-4851-b4ac-0bc23e357476.gif" title="unstructured in action!">
+  <p>Unstructured wants to make it easier to connect to your data…and we need your help! We’re excited to announce a <a href="Competition.md">competition</a> focused on improving Unstructured's ability to seamlessly process data from the sources you care about most.</p>
+	
+  <p>The competition starts now and continues through March 10...and most importantly, we're offering cash prizes! Please join our <a
+  href="https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-1nlh1ot5d-dfY7zCRlhFboZrIWLA4Qgw">
+   community Slack</a> to participate and follow along</p>
+	<p><img src="money.gif"></p>
 </div>
 
 <h3 align="center">
   <p>Open-Source Pre-Processing Tools for Unstructured Data</p>
 </h3>
-
 
 The `unstructured` library provides open-source components for pre-processing text documents
 such as **PDFs**, **HTML** and **Word** Documents. These components are packaged as *bricks* 🧱, which provide
@@ -48,7 +55,13 @@ about. Bricks in the library fall into three categories:
   fragments.
 - :performing_arts: ***Staging bricks*** that format data for downstream tasks, such as ML inference
   and data labeling.
+
+<div align="center">
+<img src="https://user-images.githubusercontent.com/38184042/205945013-99670127-0bf3-4851-b4ac-0bc23e357476.gif" title="unstructured in action!">
+</div>
+
 <br></br>
+
 ***REMOVED******REMOVED*** :eight_pointed_black_star: Quick Start
 
 Use the following instructions to get up and running with `unstructured` and test your
