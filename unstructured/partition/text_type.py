@@ -161,10 +161,7 @@ def contains_verb(text: str) -> bool:
         text = text.lower()
 
     pos_tags = pos_tag(text)
-    for _, tag in pos_tags:
-        if tag in POS_VERB_TAGS:
-            return True
-    return False
+    return any(tag in POS_VERB_TAGS for _, tag in pos_tags)
 
 
 def contains_english_word(text: str) -> bool:

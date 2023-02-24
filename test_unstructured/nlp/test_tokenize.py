@@ -16,9 +16,8 @@ def test_nltk_packages_download_if_not_present():
 
 
 def test_nltk_packages_do_not_download_if():
-    with patch.object(nltk, "find"):
-        with patch.object(nltk, "download") as mock_download:
-            tokenize._download_nltk_package_if_not_present("fake_package", "tokenizers")
+    with patch.object(nltk, "find"), patch.object(nltk, "download") as mock_download:
+        tokenize._download_nltk_package_if_not_present("fake_package", "tokenizers")
 
     mock_download.assert_not_called()
 

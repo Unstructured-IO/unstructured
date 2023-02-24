@@ -214,7 +214,7 @@ def partition_email(
 
     for idx, element in enumerate(elements):
         indices = has_embedded_image(element)
-        if (isinstance(element, NarrativeText) or isinstance(element, Title)) and indices:
+        if (isinstance(element, (NarrativeText, Title))) and indices:
             image_info, clean_element = find_embedded_image(element, indices)
             elements[idx] = clean_element
             elements.insert(idx + 1, image_info)

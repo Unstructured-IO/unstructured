@@ -40,9 +40,8 @@ def test_partition_ppt_from_file():
 
 def test_partition_ppt_raises_with_both_specified():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.ppt")
-    with open(filename, "rb") as f:
-        with pytest.raises(ValueError):
-            partition_ppt(filename=filename, file=f)
+    with open(filename, "rb") as f, pytest.raises(ValueError):
+        partition_ppt(filename=filename, file=f)
 
 
 def test_partition_ppt_raises_with_neither():

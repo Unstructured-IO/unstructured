@@ -323,9 +323,8 @@ def _process_list_item(
 
 def _get_bullet_descendants(element, next_element) -> Tuple[etree.Element, ...]:
     descendants = []
-    if element is not None:
-        if next_element is not None:
-            descendants += list(next_element.iterdescendants())
+    if element is not None and next_element is not None:
+        descendants += list(next_element.iterdescendants())
     descendanttag_elems = tuple(descendants)
     return descendanttag_elems
 
@@ -334,9 +333,8 @@ def is_list_item_tag(tag_elem: etree.Element) -> bool:
     """Checks to see if a tag contains bulleted text."""
     if tag_elem.tag in LIST_ITEM_TAGS:
         return True
-    elif tag_elem.tag == "div":
-        if is_bulleted_text(_construct_text(tag_elem)):
-            return True
+    elif tag_elem.tag == "div" and is_bulleted_text(_construct_text(tag_elem)):
+        return True
     return False
 
 
@@ -383,10 +381,7 @@ def _has_adjacent_bulleted_spans(tag_elem: etree.Element, children: List[etree.E
 def has_table_ancestor(element: TagsMixin) -> bool:
     """Checks to see if an element has ancestors that are table elements. If so, we consider
     it to be a table element rather than a section of narrative text."""
-    for ancestor in element.ancestortags:
-        if ancestor in TABLE_TAGS:
-            return True
-    return False
+    return any(ancestor in TABLE_TAGS for ancestor in element.ancestortags)
 
 
 def in_header_or_footer(element: TagsMixin) -> bool:

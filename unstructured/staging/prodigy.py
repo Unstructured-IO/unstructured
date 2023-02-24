@@ -70,7 +70,7 @@ def stage_csv_for_prodigy(
     csv_fieldnames = ["text", "id"]
     csv_fieldnames += list(
         set().union(
-            *((key.lower() for key in metadata_item.keys()) for metadata_item in validated_metadata),
+            *((key.lower() for key in metadata_item) for metadata_item in validated_metadata),
         ),
     )
 

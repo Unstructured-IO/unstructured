@@ -118,12 +118,10 @@ def stage_for_label_studio(
 ) -> LABEL_STUDIO_TYPE:
     """Converts the document to the format required for upload to LabelStudio.
     ref: https://labelstud.io/guide/tasks.html#Example-JSON-format"""
-    if annotations is not None:
-        if len(elements) != len(annotations):
-            raise ValueError("The length of elements and annotations must match.")
-    if predictions is not None:
-        if len(elements) != len(predictions):
-            raise ValueError("The length of elements and predictions must match.")
+    if annotations is not None and len(elements) != len(annotations):
+        raise ValueError("The length of elements and annotations must match.")
+    if predictions is not None and len(elements) != len(predictions):
+        raise ValueError("The length of elements and predictions must match.")
 
     label_studio_data: LABEL_STUDIO_TYPE = []
     for i, element in enumerate(elements):

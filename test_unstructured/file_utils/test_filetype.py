@@ -85,9 +85,8 @@ def test_detect_filetype_from_file(file, expected):
 def test_detect_filetype_from_file_raises_without_libmagic(monkeypatch):
     monkeypatch.setattr(filetype, "LIBMAGIC_AVAILABLE", False)
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
-    with open(filename, "rb") as f:
-        with pytest.raises(ImportError):
-            detect_filetype(file=f)
+    with open(filename, "rb") as f, pytest.raises(ImportError):
+        detect_filetype(file=f)
 
 
 def test_detect_xml_application_xml(monkeypatch):
@@ -246,9 +245,8 @@ def test_detect_filetype_detects_unknown_text_types_as_txt(monkeypatch):
 
 def test_detect_filetype_raises_with_both_specified():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
-    with open(filename, "rb") as f:
-        with pytest.raises(ValueError):
-            detect_filetype(filename=filename, file=f)
+    with open(filename, "rb") as f, pytest.raises(ValueError):
+        detect_filetype(filename=filename, file=f)
 
 
 def test_detect_filetype_raises_with_none_specified():

@@ -99,9 +99,8 @@ def test_partition_doc_raises_with_both_specified(mock_document, tmpdir):
     mock_document.save(docx_filename)
     convert_office_doc(docx_filename, tmpdir.dirname, "doc")
 
-    with open(doc_filename, "rb") as f:
-        with pytest.raises(ValueError):
-            partition_doc(filename=doc_filename, file=f)
+    with open(doc_filename, "rb") as f, pytest.raises(ValueError):
+        partition_doc(filename=doc_filename, file=f)
 
 
 def test_partition_doc_raises_with_neither():
