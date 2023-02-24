@@ -111,19 +111,6 @@ EXT_TO_FILETYPE = {
     ".rtf": FileType.RTF,
 }
 
-
-def _detect_filetype_from_extension(extension: str) -> Optional[FileType]:
-    """Detect the file type based on the file extension."""
-    if extension in [".txt", ".text"]:
-        return FileType.TEXT
-    elif extension in [".pdf"]:
-        return FileType.PDF
-    elif extension in [".jpg", ".jpeg", ".png", ".gif"]:
-        return FileType.IMAGE
-    # Add more supported file types and their extensions here.
-    return None
-
-
 def _detect_filetype_from_extension(extension: str) -> Optional[FileType]:
     """Detect the file type based on the file extension."""
     if extension in [".txt", ".text"]:
@@ -139,7 +126,7 @@ def _detect_filetype_from_extension(extension: str) -> Optional[FileType]:
 def detect_filetype(
     filename: Optional[str] = None, file: Optional[IO] = None
 ) -> Optional[FileType]:
-    try:
+    if LIBMAGIC_AVAILABLE:
         # Attempt to load the libmagic library
         magic_obj = magic.Magic()
         mime_type = magic_obj.from_file(filename, mime=True)
@@ -151,20 +138,21 @@ def detect_filetype(
         if filename:
             _, extension = os.path.splitext(filename)
             extension = extension.lower()
-            mime_type = magic.from_file(filename, mime=True)
-            if not LIBMAGIC_AVAILABLE:
-                return _detect_filetype_from_extension(filename)
+            mime_type = None
+        if not LIBMAGIC_AVAILABLE:
+            mime_type = magic.from_file(f"test.{extension}", mime=True)
+            return _detect_filetype_from_extension(f"test.{extension}")
         elif file is not None:
             extension = None
             # NOTE(robinson) - the python-magic docs recommend reading at least the first 2048 bytes
             # Increased to 4096 because otherwise .xlsx files get detected as a zip file
             # ref: https://github.com/ahupp/python-magic#usage
-            try:
+            if LIBMAGIC_AVAILABLE:
                 mime_type = magic.from_buffer(file.read(4096), mime=True)
-            except ImportError as e:
+            else:
                 raise ImportError(
                     "libmagic is unavailable. Filetype detection on file-like objects requires libmagic. Please install libmagic and try again."
-                ) from e
+                )
         else:
             raise ValueError("No filename nor file were specified.")
 
@@ -241,7 +229,7 @@ def detect_filetype(
             f"MIME type was {mime_type}. This file type is not currently supported in unstructured."
         )
         return FileType.UNK
-    except ImportError:
+    else:
         if filename and file:
             raise ValueError("Only one of filename or file should be specified.")
         if not filename and not file:
