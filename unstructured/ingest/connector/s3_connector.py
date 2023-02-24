@@ -185,7 +185,8 @@ class S3Connector(BaseConnector):
                 break
             next_token = response.get("NextContinuationToken")
             response = self.s3_cli.list_objects_v2(
-                **self._list_objects_kwargs, ContinuationToken=next_token,
+                **self._list_objects_kwargs,
+                ContinuationToken=next_token,
             )
         return s3_keys
 

@@ -86,7 +86,8 @@ def partition_email_header(msg: Message) -> List[Element]:
 
 
 def extract_attachment_info(
-    message: Message, output_dir: Optional[str] = None,
+    message: Message,
+    output_dir: Optional[str] = None,
 ) -> List[Dict[str, str]]:
     list_attachments = []
     attachment_info = {}
@@ -121,7 +122,8 @@ def has_embedded_image(element):
 
 
 def find_embedded_image(
-    element: Union[NarrativeText, Title], indices: re.Match,
+    element: Union[NarrativeText, Title],
+    indices: re.Match,
 ) -> Tuple[Element, Element]:
     start, end = indices.start(), indices.end()
 

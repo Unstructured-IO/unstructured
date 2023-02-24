@@ -24,7 +24,10 @@ ENGLISH_WORD_SPLIT_RE = re.compile(r"[\s|\.|-|_|\/]")
 
 
 def is_possible_narrative_text(
-    text: str, cap_threshold: float = 0.5, non_alpha_threshold: float = 0.5, language: str = "en",
+    text: str,
+    cap_threshold: float = 0.5,
+    non_alpha_threshold: float = 0.5,
+    language: str = "en",
 ) -> bool:
     """Checks to see if the text passes all of the checks for a narrative text section.
     You can change the cap threshold using the cap_threshold kwarg or the

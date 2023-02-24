@@ -114,7 +114,8 @@ EXT_TO_FILETYPE = {
 
 
 def detect_filetype(
-    filename: Optional[str] = None, file: Optional[IO] = None,
+    filename: Optional[str] = None,
+    file: Optional[IO] = None,
 ) -> Optional[FileType]:
     """Use libmagic to determine a file's type. Helps determine which partition brick
     to use for a given file. A return value of None indicates a non-supported file type."""

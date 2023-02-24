@@ -6,7 +6,9 @@ from unstructured.documents.elements import Text
 
 
 def stage_for_transformers(
-    elements: List[Text], tokenizer: PreTrainedTokenizer, **chunk_kwargs,
+    elements: List[Text],
+    tokenizer: PreTrainedTokenizer,
+    **chunk_kwargs,
 ) -> List[str]:
     """Stages text elements for transformers pipelines by chunking them into sections that can
     fit into the attention window for the model associated with the tokenizer."""
