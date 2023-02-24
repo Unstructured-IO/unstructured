@@ -59,7 +59,7 @@ def test_extract_datetimetz():
 
 
 @pytest.mark.parametrize(
-    "text, expected",
+    ("text", "expected"),
     [
         ("215-867-5309", "215-867-5309"),
         ("Phone Number: +1 215.867.5309", "+1 215.867.5309"),
@@ -72,7 +72,7 @@ def test_extract_us_phone_number(text, expected):
 
 
 @pytest.mark.parametrize(
-    "text, expected",
+    ("text", "expected"),
     [
         ("1. Introduction:", ("1", None, None)),
         ("a. Introduction:", ("a", None, None)),

@@ -21,7 +21,7 @@ from unstructured.documents.elements import (
 )
 
 
-@pytest.fixture
+@pytest.fixture()
 def output_csv_file(tmp_path):
     return os.path.join(tmp_path, "isd_data.csv")
 

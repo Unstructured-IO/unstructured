@@ -96,7 +96,7 @@ def test_partition_pdf_api_page_breaks(
 
 
 @pytest.mark.parametrize(
-    "filename, file", [("example-docs/layout-parser-paper-fast.pdf", None), (None, b"0000")],
+    ("filename", "file"), [("example-docs/layout-parser-paper-fast.pdf", None), (None, b"0000")],
 )
 def test_partition_pdf_local(monkeypatch, filename, file):
     monkeypatch.setattr(
@@ -145,7 +145,7 @@ def test_partition_pdf_api_raises_with_failed_api_call(
 
 
 @pytest.mark.parametrize(
-    "url, api_called, local_called", [("fakeurl", True, False), (None, False, True)],
+    ("url", "api_called", "local_called"), [("fakeurl", True, False), (None, False, True)],
 )
 def test_partition_pdf(url, api_called, local_called):
     with mock.patch.object(
@@ -157,7 +157,7 @@ def test_partition_pdf(url, api_called, local_called):
 
 
 @pytest.mark.parametrize(
-    "url, api_called, local_called", [("fakeurl", True, False), (None, False, True)],
+    ("url", "api_called", "local_called"), [("fakeurl", True, False), (None, False, True)],
 )
 def test_partition_pdf_with_template(url, api_called, local_called):
     with mock.patch.object(

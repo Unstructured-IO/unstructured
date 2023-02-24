@@ -9,7 +9,7 @@ import unstructured.staging.label_studio as label_studio
 from unstructured.documents.elements import NarrativeText, Title
 
 
-@pytest.fixture
+@pytest.fixture()
 def elements():
     return [Title(text="Title 1"), NarrativeText(text="Narrative 1")]
 
@@ -115,7 +115,7 @@ def test_created_annotation():
 
 
 @pytest.mark.parametrize(
-    "score, raises, exception",
+    ("score", "raises", "exception"),
     [
         (None, True, ValueError),
         (-0.25, True, ValueError),

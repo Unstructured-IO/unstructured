@@ -6,7 +6,7 @@ import pytest
 import unstructured.utils as utils
 
 
-@pytest.fixture
+@pytest.fixture()
 def input_data():
     return [
         {"text": "This is a sentence."},
@@ -14,12 +14,12 @@ def input_data():
     ]
 
 
-@pytest.fixture
+@pytest.fixture()
 def output_jsonl_file(tmp_path):
     return os.path.join(tmp_path, "output.jsonl")
 
 
-@pytest.fixture
+@pytest.fixture()
 def input_jsonl_file(tmp_path, input_data):
     file_path = os.path.join(tmp_path, "input.jsonl")
     with open(file_path, "w+") as input_file:

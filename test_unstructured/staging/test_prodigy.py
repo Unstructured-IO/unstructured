@@ -7,27 +7,27 @@ import unstructured.staging.prodigy as prodigy
 from unstructured.documents.elements import NarrativeText, Title
 
 
-@pytest.fixture
+@pytest.fixture()
 def elements():
     return [Title(text="Title 1"), NarrativeText(text="Narrative 1")]
 
 
-@pytest.fixture
+@pytest.fixture()
 def valid_metadata():
     return [{"score": 0.1}, {"category": "paragraph"}]
 
 
-@pytest.fixture
+@pytest.fixture()
 def metadata_with_id():
     return [{"score": 0.1}, {"id": 1, "category": "paragraph"}]
 
 
-@pytest.fixture
+@pytest.fixture()
 def metadata_with_invalid_length():
     return [{"score": 0.1}, {"category": "paragraph"}, {"type": "text"}]
 
 
-@pytest.fixture
+@pytest.fixture()
 def output_csv_file(tmp_path):
     return os.path.join(tmp_path, "prodigy_data.csv")
 
@@ -44,7 +44,7 @@ def test_validate_prodigy_metadata_with_valid_metadata(elements, valid_metadata)
 
 
 @pytest.mark.parametrize(
-    "invalid_metadata_fixture, exception_message",
+    ("invalid_metadata_fixture", "exception_message"),
     [
         ("metadata_with_id", 'The key "id" is not allowed with metadata parameter at index: 1'),
         (

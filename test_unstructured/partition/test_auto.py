@@ -52,7 +52,7 @@ def test_auto_partition_email_from_file_rb():
     assert elements == EXPECTED_EMAIL_OUTPUT
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_docx_document():
     document = docx.Document()
 
@@ -73,7 +73,7 @@ def mock_docx_document():
     return document
 
 
-@pytest.fixture
+@pytest.fixture()
 def expected_docx_elements():
     return [
         Title("These are a few of my favorite things:"),
@@ -117,7 +117,7 @@ def test_auto_partition_doc_with_filename(mock_docx_document, expected_docx_elem
 
 # NOTE(robinson) - the application/x-ole-storage mime type is not specific enough to
 # determine that the file is an .doc document
-@pytest.mark.xfail
+@pytest.mark.xfail()
 def test_auto_partition_doc_with_file(mock_docx_document, expected_docx_elements, tmpdir):
     docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")

@@ -41,7 +41,7 @@ INCLUDED_TAGS = TEXT_TAGS + HEADING_TAGS + LIST_ITEM_TAGS + ["div"]
 EXCLUDED_TAGS = "tag", [tag for tag in TAGS if tag not in INCLUDED_TAGS]
 
 
-@pytest.fixture
+@pytest.fixture()
 def sample_doc():
     table_element = HTMLTitle(
         "I'm a title in a table.",
@@ -120,7 +120,7 @@ def test_read_without_skipping_table(monkeypatch):
 
 
 @pytest.mark.parametrize(
-    "doc, expected",
+    ("doc", "expected"),
     [
         (
             "<p>Hi there <span>my name is</span> <b><i>Matt</i></i></p>",

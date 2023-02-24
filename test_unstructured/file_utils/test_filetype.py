@@ -18,7 +18,7 @@ EXAMPLE_DOCS_DIRECTORY = os.path.join(FILE_DIRECTORY, "..", "..", "example-docs"
 
 
 @pytest.mark.parametrize(
-    "file, expected",
+    ("file", "expected"),
     [
         ("layout-parser-paper-fast.pdf", FileType.PDF),
         ("fake.docx", FileType.DOCX),
@@ -38,7 +38,7 @@ def test_detect_filetype_from_filename(file, expected):
 
 
 @pytest.mark.parametrize(
-    "file, expected",
+    ("file", "expected"),
     [
         ("layout-parser-paper-fast.pdf", FileType.PDF),
         ("fake.docx", FileType.DOCX),
@@ -59,7 +59,7 @@ def test_detect_filetype_from_filename_with_extension(monkeypatch, file, expecte
 
 
 @pytest.mark.parametrize(
-    "file, expected",
+    ("file", "expected"),
     [
         ("layout-parser-paper-fast.pdf", FileType.PDF),
         ("fake.docx", FileType.DOCX),

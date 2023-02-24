@@ -9,7 +9,7 @@ from unstructured.documents.xml import XMLDocument
 FILEPATH = Path(__file__).absolute().parent
 
 
-@pytest.fixture
+@pytest.fixture()
 def sample_document():
     return """"<SEC-DOCUMENT>
     <TYPE>10-K

@@ -13,7 +13,7 @@ from unstructured.documents.elements import (
 from unstructured.partition.docx import partition_docx
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_document():
     document = docx.Document()
 
@@ -40,7 +40,7 @@ def mock_document():
     return document
 
 
-@pytest.fixture
+@pytest.fixture()
 def expected_elements():
     return [
         Title("These are a few of my favorite things:"),

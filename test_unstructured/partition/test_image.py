@@ -93,7 +93,7 @@ def test_partition_image_api_page_break(monkeypatch, filename="example-docs/exam
     assert partition_image_response[2]["text"] == "A Charlie Brown Christmas"
 
 
-@pytest.mark.parametrize("filename, file", [("example-docs/example.jpg", None), (None, b"0000")])
+@pytest.mark.parametrize(("filename", "file"), [("example-docs/example.jpg", None), (None, b"0000")])
 def test_partition_image_local(monkeypatch, filename, file):
     monkeypatch.setattr(
         layout, "process_data_with_model", lambda *args, **kwargs: MockDocumentLayout(),
@@ -134,7 +134,7 @@ def test_partition_image_api_raises_with_failed_api_call(
 
 
 @pytest.mark.parametrize(
-    "url, api_called, local_called", [("fakeurl", True, False), (None, False, True)],
+    ("url", "api_called", "local_called"), [("fakeurl", True, False), (None, False, True)],
 )
 def test_partition_image(url, api_called, local_called):
     with mock.patch.object(

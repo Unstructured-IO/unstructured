@@ -6,28 +6,28 @@ import unstructured.staging.label_box as label_box
 from unstructured.documents.elements import NarrativeText, Title
 
 
-@pytest.fixture
+@pytest.fixture()
 def elements():
     return [Title(text="Title 1"), NarrativeText(text="Narrative 1")]
 
 
-@pytest.fixture
+@pytest.fixture()
 def output_directory(tmp_path):
     return str(tmp_path)
 
 
-@pytest.fixture
+@pytest.fixture()
 def nonexistent_output_directory(tmp_path):
     return os.path.join(str(tmp_path), "nonexistent_dir")
 
 
-@pytest.fixture
+@pytest.fixture()
 def url_prefix():
     return "https://storage.googleapis.com/labelbox-sample-datasets/nlp"
 
 
 @pytest.mark.parametrize(
-    "attachments, raises_error",
+    ("attachments", "raises_error"),
     [
         (
             [
@@ -55,8 +55,7 @@ attachment = {"type": "RAW_TEXT", "value": "Text description."}
 
 @pytest.mark.parametrize(
     (
-        "external_ids, attachments, output_directory_fixture, create_directory, "
-        "raises, exception_class"
+        ("external_ids", "attachments", "output_directory_fixture", "create_directory", "raises", "exception_class")
     ),
     [
         (None, None, "output_directory", True, False, None),
