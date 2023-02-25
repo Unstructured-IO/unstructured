@@ -191,8 +191,6 @@ python-pptx==0.6.21
     # via unstructured (setup.py)
 pytz==2022.7.1
     # via pandas
-pywin32==305
-    # via portalocker
 pyyaml==6.0
     # via
     #   huggingface-hub
