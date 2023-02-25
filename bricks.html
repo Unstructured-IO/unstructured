@@ -317,7 +317,7 @@ titles, narrative text, and tables.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">partition</span></code> brick is the simplest way to partition a document in <code class="docutils literal notranslate"><span class="pre">unstructured</span></code>.
 If you call the <code class="docutils literal notranslate"><span class="pre">partition</span></code> function, <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> will attempt to detect the
 file type and route it to the appropriate partitioning brick. All partitioning bricks
-called within <code class="docutils literal notranslate"><span class="pre">partition</span></code> are called using the defualt kwargs. Use the document-type
+called within <code class="docutils literal notranslate"><span class="pre">partition</span></code> are called using the default kwargs. Use the document-type
 specific bricks if you need to apply non-default settings.
 <code class="docutils literal notranslate"><span class="pre">partition</span></code> currently supports <code class="docutils literal notranslate"><span class="pre">.docx</span></code>, <code class="docutils literal notranslate"><span class="pre">.doc</span></code>, <code class="docutils literal notranslate"><span class="pre">.pptx</span></code>, <code class="docutils literal notranslate"><span class="pre">.ppt</span></code>, <code class="docutils literal notranslate"><span class="pre">.eml</span></code>, <code class="docutils literal notranslate"><span class="pre">.html</span></code>, <code class="docutils literal notranslate"><span class="pre">.pdf</span></code>,
 <code class="docutils literal notranslate"><span class="pre">.png</span></code>, <code class="docutils literal notranslate"><span class="pre">.jpg</span></code>, and <code class="docutils literal notranslate"><span class="pre">.txt</span></code> files.
@@ -750,7 +750,7 @@ text are not removed.</p>
 </section>
 <section id="clean-ordered-bullets">
 <h3><code class="docutils literal notranslate"><span class="pre">clean_ordered_bullets</span></code><a class="headerlink" href="#clean-ordered-bullets" title="Permalink to this heading"></a></h3>
-<p>Remove alpha-numeric bullets from the beginning of text up to three “sub-section” levels.</p>
+<p>Remove alphanumeric bullets from the beginning of text up to three “sub-section” levels.</p>
 <p>Examples:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.cleaners.core</span> <span class="kn">import</span> <span class="n">clean_ordered_bullets</span>
 
@@ -863,7 +863,7 @@ such as <code class="docutils literal notranslate"><span class="pre">\u2013</spa
 <p>Extracts text that occurs before the specified pattern.</p>
 <p>Options:</p>
 <ul class="simple">
-<li><p>If <code class="docutils literal notranslate"><span class="pre">index</span></code> is set, extract before the <code class="docutils literal notranslate"><span class="pre">(index</span> <span class="pre">+</span> <span class="pre">1)``th</span> <span class="pre">occurence</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">pattern.</span> <span class="pre">The</span> <span class="pre">default</span> <span class="pre">is</span> <span class="pre">``0</span></code>.</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">index</span></code> is set, extract before the <code class="docutils literal notranslate"><span class="pre">(index</span> <span class="pre">+</span> <span class="pre">1)``th</span> <span class="pre">occurrence</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">pattern.</span> <span class="pre">The</span> <span class="pre">default</span> <span class="pre">is</span> <span class="pre">``0</span></code>.</p></li>
 <li><p>Strips leading whitespace if <code class="docutils literal notranslate"><span class="pre">strip</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>. The default is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
 </ul>
 <p>Examples:</p>
@@ -881,7 +881,7 @@ such as <code class="docutils literal notranslate"><span class="pre">\u2013</spa
 <p>Extracts text that occurs after the specified pattern.</p>
 <p>Options:</p>
 <ul class="simple">
-<li><p>If <code class="docutils literal notranslate"><span class="pre">index</span></code> is set, extract after the <code class="docutils literal notranslate"><span class="pre">(index</span> <span class="pre">+</span> <span class="pre">1)``th</span> <span class="pre">occurence</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">pattern.</span> <span class="pre">The</span> <span class="pre">default</span> <span class="pre">is</span> <span class="pre">``0</span></code>.</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">index</span></code> is set, extract after the <code class="docutils literal notranslate"><span class="pre">(index</span> <span class="pre">+</span> <span class="pre">1)``th</span> <span class="pre">occurrence</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">pattern.</span> <span class="pre">The</span> <span class="pre">default</span> <span class="pre">is</span> <span class="pre">``0</span></code>.</p></li>
 <li><p>Strips trailing whitespace if <code class="docutils literal notranslate"><span class="pre">strip</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>. The default is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
 </ul>
 <p>Examples:</p>
@@ -983,7 +983,7 @@ object from the input string.</p>
 </section>
 <section id="extract-ordered-bullets">
 <h3><code class="docutils literal notranslate"><span class="pre">extract_ordered_bullets</span></code><a class="headerlink" href="#extract-ordered-bullets" title="Permalink to this heading"></a></h3>
-<p>Extracts alpha-numeric bullets from the beginning of text up to three “sub-section” levels.</p>
+<p>Extracts alphanumeric bullets from the beginning of text up to three “sub-section” levels.</p>
 <p>Examples:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.cleaners.extract</span> <span class="kn">import</span> <span class="n">extract_ordered_bullets</span>
 
