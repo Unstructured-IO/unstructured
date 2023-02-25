@@ -82,23 +82,24 @@ class MainProcess:
     "--github-url",
     default=None,
     help='URL to GitHub repository, e.g. "https://github.com/Unstructured-IO/unstructured",'
-    ' or a repository owner/name pair, e.g. "Unstructured-IO/unstructured"'
+    ' or a repository owner/name pair, e.g. "Unstructured-IO/unstructured"',
 )
 @click.option(
     "--github-access-token",
     default=None,
-    help="A GitHub access token, see "
-    "https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token"
+    help="A GitHub access token, see https://docs.github.com/en/authentication",
 )
 @click.option(
     "--github-branch",
     default=None,
-    help="The branch for which to fetch files from. If not given, the default repository branch is used."
+    help="The branch for which to fetch files from. If not given,"
+    " the default repository branch is used.",
 )
 @click.option(
     "--github-file-glob",
     default=None,
-    help="A comma-separated list of file globs to limit which types of files are accepted, e.g. '*.html,*.txt'"
+    help="A comma-separated list of file globs to limit which types of files are accepted,"
+    " e.g. '*.html,*.txt'",
 )
 @click.option(
     "--re-download/--no-re-download",
@@ -170,7 +171,7 @@ def main(
             ),
         )
     elif github_url:
-        doc_connector = GitHubConnector(
+        doc_connector = GitHubConnector(  # type: ignore
             config=SimpleGitHubConfig(
                 github_url=github_url,
                 github_access_token=github_access_token,

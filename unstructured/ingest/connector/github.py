@@ -38,9 +38,7 @@ class SimpleGitHubConfig(BaseConnectorConfig):
 
     def __post_init__(self):
         parsed_gh_url = urlparse(self.github_url)
-        path_fragments = [
-            fragment for fragment in parsed_gh_url.path.split("/") if fragment
-        ]
+        path_fragments = [fragment for fragment in parsed_gh_url.path.split("/") if fragment]
 
         # If a scheme and netloc are provided, ensure they are correct
         # Additionally, ensure that the path contains two fragments
@@ -87,11 +85,7 @@ class GitHubIngestDoc(BaseIngestDoc):
     def get_file(self):
         """Fetches the "remote" doc and stores it locally on the filesystem."""
         self._create_full_tmp_dir_path()
-        if (
-            not self.config.re_download
-            and self.filename.is_file()
-            and self.filename.stat()
-        ):
+        if not self.config.re_download and self.filename.is_file() and self.filename.stat():
             if self.config.verbose:
                 print(f"File exists: {self.filename}, skipping download")
             return
@@ -100,7 +94,7 @@ class GitHubIngestDoc(BaseIngestDoc):
             print(f"fetching {self} - PID: {os.getpid()}")
         content_file = self.repo.get_contents(self.path)
         with open(self.filename, "wb") as f:
-            f.write(content_file.decoded_content)
+            f.write(content_file.decoded_content)  # type: ignore
 
     def has_output(self):
         """Determine if structured output for this doc already exists."""
@@ -112,9 +106,7 @@ class GitHubIngestDoc(BaseIngestDoc):
         output_filename = self._output_filename()
         output_filename.parent.mkdir(parents=True, exist_ok=True)
         with open(output_filename, "w", encoding="utf8") as output_f:
-            json.dump(
-                self.isd_elems_no_filename, output_f, ensure_ascii=False, indent=2
-            )
+            json.dump(self.isd_elems_no_filename, output_f, ensure_ascii=False, indent=2)
         print(f"Wrote {output_filename}")
 
 
@@ -165,20 +157,18 @@ class GitHubConnector(BaseConnector):
             )
         )
         if not supported and self.config.verbose:
-            print(
-                f"The file {path!r} is discarded as it does not contain a supported filetype."
-            )
+            print(f"The file {path!r} is discarded as it does not contain a supported filetype.")
         return supported
 
     def does_path_match_glob(self, path: str) -> bool:
+        if not self.config.github_file_glob:
+            return True
         patterns = self.config.github_file_glob.split(",")
         for pattern in patterns:
             if fnmatch.filter([path], pattern):
                 return True
         if self.config.verbose:
-            print(
-                f"The file {path!r} is discarded as it does not match any given glob."
-            )
+            print(f"The file {path!r} is discarded as it does not match any given glob.")
         return False
 
     def get_ingest_docs(self):
@@ -194,8 +184,5 @@ class GitHubConnector(BaseConnector):
             for element in git_tree.tree
             if element.type == "blob"
             and self.is_file_type_supported(element.path)
-            and (
-                not self.config.github_file_glob
-                or self.does_path_match_glob(element.path)
-            )
+            and (not self.config.github_file_glob or self.does_path_match_glob(element.path))
         ]
