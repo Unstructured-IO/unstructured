@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
-unstructured-ingest --github-url dcneiner/Downloadify --github-file-glob '*.html,*.txt' --structured-output-dir github-downloadify-output --verbose
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+cd "$SCRIPT_DIR"/.. || exit 1
+
+PYTHONPATH=. ./unstructured/ingest/main.py --github-url dcneiner/Downloadify --github-file-glob '*.html,*.txt' --structured-output-dir github-downloadify-output --verbose
 
 if ! diff -ru github-downloadify-output test_unstructured_ingest/expected-structured-output/github-downloadify ; then
    echo
