@@ -1,12 +1,9 @@
-from dataclasses import dataclass, field
 import fnmatch
 import json
 import os
+from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional
-
-from github import Github
-from github.Repository import Repository
+from typing import TYPE_CHECKING, Optional
 from urllib.parse import urlparse
 
 from unstructured.ingest.interfaces import (
@@ -14,6 +11,9 @@ from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
 )
+
+if TYPE_CHECKING:
+    from github.Repository import Repository
 
 
 @dataclass
@@ -62,7 +62,7 @@ class SimpleGitHubConfig(BaseConnectorConfig):
 @dataclass
 class GitHubIngestDoc(BaseIngestDoc):
     config: SimpleGitHubConfig = field(repr=False)
-    repo: Repository
+    repo: "Repository"
     path: str
 
     @property
@@ -120,6 +120,8 @@ class GitHubIngestDoc(BaseIngestDoc):
 
 class GitHubConnector(BaseConnector):
     def __init__(self, config: SimpleGitHubConfig):
+        from github import Github
+
         self.config = config
         self.github = Github(self.config.github_access_token)
         self.cleanup_files = not config.preserve_downloads
