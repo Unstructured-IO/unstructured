@@ -49,7 +49,8 @@ def test_validate_prodigy_metadata_with_valid_metadata(elements, valid_metadata)
         ("metadata_with_id", 'The key "id" is not allowed with metadata parameter at index: 1'),
         (
             "metadata_with_invalid_length",
-            "The length of the metadata parameter does not match with the length of the elements parameter.",
+            "The length of the metadata parameter does not match with"
+            " the length of the elements parameter.",
         ),
     ],
 )
