@@ -59,6 +59,7 @@ setup(
         "python-docx",
         "python-pptx",
         "python-magic",
+        "markdown",
         "requests",
         # NOTE(robinson) - The following dependencies are pinned
         # to address security scans
@@ -74,6 +75,7 @@ setup(
         ],
         "local-inference": ["unstructured-inference>=0.2.4"],
         "s3": ["boto3"],
+        "github": ["pygithub==1.57.0"]
     },
     package_dir={"unstructured": "unstructured"},
     package_data={"unstructured": ["nlp/*.txt"]},

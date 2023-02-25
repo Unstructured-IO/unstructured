@@ -84,6 +84,7 @@ class FileType(Enum):
     # Markup Types
     HTML = 50
     XML = 51
+    MD = 52
 
     # Compressed Types
     ZIP = 60
@@ -103,6 +104,7 @@ EXT_TO_FILETYPE = {
     ".eml": FileType.EML,
     ".xml": FileType.XML,
     ".html": FileType.HTML,
+    ".md": FileType.MD,
     ".xlsx": FileType.XLSX,
     ".pptx": FileType.PPTX,
     ".png": FileType.PNG,

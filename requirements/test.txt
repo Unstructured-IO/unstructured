@@ -18,6 +18,10 @@ click==8.1.3
     # via
     #   -r requirements/test.in
     #   black
+colorama==0.4.6
+    # via
+    #   click
+    #   pytest
 coverage[toml]==7.1.0
     # via
     #   -r requirements/test.in

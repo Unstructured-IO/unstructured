@@ -96,7 +96,7 @@ class BaseIngestDoc(ABC):
         self.isd_elems_no_filename = []
         for elem in isd_elems:
             # type: ignore
-            elem["metadata"].pop("filename")  # type: ignore[attr-defined]
+            elem["metadata"].pop("filename", None)  # type: ignore[attr-defined]
             elem.pop("coordinates")  # type: ignore[attr-defined]
             self.isd_elems_no_filename.append(elem)
 
