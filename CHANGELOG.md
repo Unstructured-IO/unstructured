@@ -1,4 +1,4 @@
-## 0.4.16-dev1
+## 0.4.16-dev2
 
 ### Enhancements
 
@@ -7,6 +7,8 @@
 ### Features
 
 * Added setup script for Ubuntu
+* Added GitHub connector for ingest cli.
+* Added `partition_md` partitioner.
 
 ## 0.4.15
 
