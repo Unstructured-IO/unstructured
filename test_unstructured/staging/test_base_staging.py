@@ -2,6 +2,7 @@ import csv
 import json
 import os
 import pathlib
+import platform
 import pytest
 
 import pandas as pd
@@ -79,6 +80,9 @@ def test_convert_to_dataframe():
     assert df.text.equals(expected_df.text) is True
 
 
+@pytest.mark.skipif(
+    platform.system() == "Windows", reason="Posix Paths are not available on Windows"
+)
 def test_convert_to_isd_serializes_with_posix_paths():
     metadata = ElementMetadata(filename=pathlib.PosixPath("../../fake-file.txt"))
     elements = [
