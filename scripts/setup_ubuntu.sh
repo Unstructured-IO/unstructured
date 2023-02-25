@@ -84,6 +84,9 @@ $sudo $pac install -y poppler-utils
 # Install tesseract as well as Russian language
 $sudo $pac install -y tesseract-ocr libtesseract-dev tesseract-ocr-rus
 
+#### libmagic
+$sudo $pac install -y libmagic-dev
+
 #### Put needrestart back the way it was and clean up
 if [[ -d /etc/needrestart/conf.d/ ]]; then
     $sudo rm -f /etc/needrestart/conf.d/99z_temp_disable.conf
