@@ -7,6 +7,7 @@ import sys
 import click
 
 from unstructured.ingest.connector.s3_connector import S3Connector, SimpleS3Config
+from unstructured.ingest.connector.discord_connector import DiscordConnector, SimpleDiscordConfig
 from unstructured.ingest.doc_processor.generalized import initialize, process_document
 
 
@@ -78,6 +79,11 @@ class MainProcess:
     help="Connect to s3 without local AWS credentials.",
 )
 @click.option(
+    "--discord-channels",
+    default=None,
+    help="A comma separated list of discord channel ids to ingest from."
+)
+@click.option(
     "--re-download/--no-re-download",
     default=False,
     help="Re-download files from s3 even if they are already present in --download-dir.",
@@ -114,6 +120,7 @@ class MainProcess:
 @click.option("-v", "--verbose", is_flag=True, default=False)
 def main(
     s3_url,
+    discord_channels,
     re_download,
     download_dir,
     preserve_downloads,
@@ -129,6 +136,7 @@ def main(
         download_dir = "tmp-ingest-" + "".join(
             random.choice(string.ascii_letters) for i in range(6)
         )
+        
     if s3_url:
         doc_connector = S3Connector(
             config=SimpleS3Config(
@@ -142,6 +150,18 @@ def main(
                 verbose=verbose,
             ),
         )
+
+    elif discord_channels:
+        doc_connector = DiscordConnector(
+            config=SimpleDiscordConfig(
+                channels=SimpleDiscordConfig.parse_channels(discord_channels),
+                download_dir=download_dir,
+                output_dir=structured_output_dir,
+                preserve_downloads=preserve_downloads,
+                verbose=verbose
+            )
+        )
+
     # Check for other connector-specific options here and define the doc_connector object
     # e.g. "elif azure_container:  ..."
 
