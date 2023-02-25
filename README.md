@@ -228,7 +228,7 @@ The output will look the same as the example from the document parsing section a
 ### E-mail Parsing
 
 The `partition_email` function within `unstructured` is helpful for parsing `.eml` files. Common
-e-mail clients such as Microsoft Outlook and Gmail support exproting e-mails as `.eml` files.
+e-mail clients such as Microsoft Outlook and Gmail support exporting e-mails as `.eml` files.
 `partition_email` accepts filenames, file-like object, and raw text as input. The following
 three snippets for parsing `.eml` files are equivalent:
 
