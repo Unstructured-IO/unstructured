@@ -15,5 +15,5 @@ types-requests
 vcrpy
 
 # NOTE(robinson) - The following pins are to address
-# vulernabilities in dependency scans
+# vulnerabilities in dependency scans
 certifi>=2022.12.07
