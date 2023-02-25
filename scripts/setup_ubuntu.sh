@@ -81,7 +81,7 @@ $sudo $pac install -y poppler-utils
 $sudo $pac install -y tesseract-ocr libtesseract-dev tesseract-ocr-rus
 
 #### libmagic
-$sudo $pac install libmagic-dev
+$sudo $pac install -y libmagic-dev
 
 #### Put needrestart back the way it was and clean up
 if [[ -d /etc/needrestart/conf.d/ ]]; then
