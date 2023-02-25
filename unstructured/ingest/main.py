@@ -96,6 +96,11 @@ class MainProcess:
     help="The branch for which to fetch files from. If not given, the default repository branch is used."
 )
 @click.option(
+    "--github-file-glob",
+    default=None,
+    help="A comma-separated list of file globs to limit which types of files are accepted, e.g. '*.html,*.txt'"
+)
+@click.option(
     "--re-download/--no-re-download",
     default=False,
     help="Re-download files from s3 even if they are already present in --download-dir.",
@@ -135,6 +140,7 @@ def main(
     github_url,
     github_access_token,
     github_branch,
+    github_file_glob,
     re_download,
     download_dir,
     preserve_downloads,
@@ -169,6 +175,7 @@ def main(
                 github_url=github_url,
                 github_access_token=github_access_token,
                 github_branch=github_branch,
+                github_file_glob=github_file_glob,
                 # defaults params:
                 download_dir=download_dir,
                 preserve_downloads=preserve_downloads,

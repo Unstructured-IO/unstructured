@@ -1,12 +1,11 @@
-from copy import deepcopy
 from dataclasses import dataclass, field
+import fnmatch
 import json
 import os
 from pathlib import Path
-from typing import Any, Dict, TYPE_CHECKING, Optional
+from typing import Optional
 
 from github import Github
-from github.ContentFile import ContentFile
 from github.Repository import Repository
 from urllib.parse import urlparse
 
@@ -22,6 +21,7 @@ class SimpleGitHubConfig(BaseConnectorConfig):
     github_url: str
     github_access_token: Optional[str]
     github_branch: Optional[str]
+    github_file_glob: Optional[str]
 
     # Standard Connector options
     download_dir: str
@@ -163,8 +163,21 @@ class GitHubConnector(BaseConnector):
             )
         )
         if not supported and self.config.verbose:
-            print(f"The file {path!r} is discarded as it does not contain a supported filetype.")
+            print(
+                f"The file {path!r} is discarded as it does not contain a supported filetype."
+            )
         return supported
+
+    def does_path_match_glob(self, path: str) -> bool:
+        patterns = self.config.github_file_glob.split(",")
+        for pattern in patterns:
+            if fnmatch.filter([path], pattern):
+                return True
+        if self.config.verbose:
+            print(
+                f"The file {path!r} is discarded as it does not match any given glob."
+            )
+        return False
 
     def get_ingest_docs(self):
         repo = self.github.get_repo(f"{self.config.repo_owner}/{self.config.repo_name}")
@@ -175,7 +188,12 @@ class GitHubConnector(BaseConnector):
         git_tree = repo.get_git_tree(sha, recursive=True)
         # TODO: path glob filtering here
         return [
-            GitHubIngestDoc(self.config, deepcopy(repo), element.path)
+            GitHubIngestDoc(self.config, repo, element.path)
             for element in git_tree.tree
-            if element.type == "blob" and self.is_file_type_supported(element.path)
+            if element.type == "blob"
+            and self.is_file_type_supported(element.path)
+            and (
+                not self.config.github_file_glob
+                or self.does_path_match_glob(element.path)
+            )
         ]
