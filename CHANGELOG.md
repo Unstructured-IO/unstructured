@@ -1,4 +1,4 @@
-## 0.4.16-dev1
+## 0.4.16-dev2
 
 ### Enhancements
 
@@ -7,6 +7,10 @@
 ### Features
 
 * Added setup script for Ubuntu
+
+### Fixes
+
+* Initializes connector properly in ingest.main::MainProcess
 
 ## 0.4.15
 
