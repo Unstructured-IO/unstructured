@@ -230,7 +230,7 @@ def _text_to_element(text: str, tag: str, ancestortags: Tuple[str, ...]) -> Opti
 
 
 def _is_container_with_text(tag_elem: etree.Element) -> bool:
-    """Checks if a tag is a container that also happens to containe text.
+    """Checks if a tag is a container that also happens to contain text.
     Example
     -------
     <div>Hi there,

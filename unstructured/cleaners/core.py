@@ -23,7 +23,7 @@ def clean_bullets(text) -> str:
 
 def clean_ordered_bullets(text) -> str:
     """Cleans the start of bulleted text sections up to three “sub-section”
-    bullets accounting numeric and alpha-numeric types.
+    bullets accounting numeric and alphanumeric types.
 
     Example
     -------

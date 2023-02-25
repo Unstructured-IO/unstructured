@@ -228,7 +228,7 @@ def under_non_alpha_ratio(text: str, threshold: float = 0.5):
 
 def exceeds_cap_ratio(text: str, threshold: float = 0.5) -> bool:
     """Checks the title ratio in a section of text. If a sufficient proportion of the words
-    are capitalized, that can be indiciated on non-narrative text (i.e. "1A. Risk Factors").
+    are capitalized, that can be indicated on non-narrative text (i.e. "1A. Risk Factors").
 
     Parameters
     ----------

@@ -8,7 +8,7 @@ complete a data science project in hours that previously would have taken weeks.
 To get started, use the following steps:
 
 - Ensure you have Python 3.8 or higher installed on your system
-- Create a new Python virtual enviornment
+- Create a new Python virtual environment
 - Run `pip install -r requirements.txt` to install the dependencies
 - Run `PYTHONPATH=. jupyter notebook` from this directory to launch the notebook
 

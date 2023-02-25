@@ -16,7 +16,7 @@ class BaseConnector(ABC):
 
     @abstractmethod
     def cleanup(self, cur_dir=None):
-        """Any additonal cleanup up need after processing is complete. E.g., removing
+        """Any additional cleanup up need after processing is complete. E.g., removing
         temporary download dirs that are empty.
 
         By convention, documents that failed to process are typically not cleaned up."""

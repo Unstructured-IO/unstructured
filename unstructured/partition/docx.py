@@ -98,7 +98,7 @@ def partition_docx(
 
 def _paragraph_to_element(paragraph: docx.text.paragraph.Paragraph) -> Optional[Text]:
     """Converts a docx Paragraph object into the appropriate unstructured document element.
-    If the paragaraph style is "Normal" or unknown, we try to predict the element type from the
+    If the paragraph style is "Normal" or unknown, we try to predict the element type from the
     raw text."""
     text = paragraph.text
     style_name = paragraph.style.name

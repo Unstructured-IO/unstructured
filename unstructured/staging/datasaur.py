@@ -12,7 +12,7 @@ def stage_for_datasaur(
     _entities: List[List[Dict[str, Any]]] = [[] for _ in range(len(elements))]
     if entities is not None:
         if len(entities) != len(elements):
-            raise ValueError("If entities is specified, it must be the same lenth as elements.")
+            raise ValueError("If entities is specified, it must be the same length as elements.")
 
         for entity_list in entities:
             for entity in entity_list:
