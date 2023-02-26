@@ -25,12 +25,10 @@ class SimpleGitHubConfig(BaseConnectorConfig):
 
     # Standard Connector options
     download_dir: str
-    # where to write structured data, with the directory structure matching s3 path
+    # where to write structured data, with the directory structure matching the github repository
     output_dir: str
     preserve_downloads: bool = False
     re_download: bool = False
-    # if a structured output .json file already exists, do not reprocess an s3 file to overwrite it
-    reprocess: bool = False
     verbose: bool = False
 
     repo_owner: str = field(init=False, repr=False)
@@ -71,12 +69,11 @@ class GitHubIngestDoc(BaseIngestDoc):
         return Path(self.config.output_dir) / f"{self.path}.json"
 
     def _create_full_tmp_dir_path(self):
-        """includes "directories" in s3 object path"""
+        """includes directories in in the github repository"""
         self.filename.parent.mkdir(parents=True, exist_ok=True)
 
     def cleanup_file(self):
-        """Removes the local copy the file (or anything else) after successful processing.
-        Not relevant for GitHubIngestDoc."""
+        """Removes the local copy the file (or anything else) after successful processing."""
         if not self.config.preserve_downloads:
             if self.config.verbose:
                 print(f"cleaning up {self}")
@@ -178,7 +175,6 @@ class GitHubConnector(BaseConnector):
         # for all blobs, i.e. all files, ignoring directories
         sha = self.config.github_branch or repo.default_branch
         git_tree = repo.get_git_tree(sha, recursive=True)
-        # TODO: path glob filtering here
         return [
             GitHubIngestDoc(self.config, repo, element.path)
             for element in git_tree.tree

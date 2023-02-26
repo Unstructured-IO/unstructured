@@ -75,7 +75,11 @@ setup(
         ],
         "local-inference": ["unstructured-inference>=0.2.4"],
         "s3": ["boto3"],
-        "github": ["pygithub==1.57.0"]
+        "github": [
+            # NOTE - pygithub at 1.58.0 fails due to https://github.com/PyGithub/PyGithub/issues/2436
+            # In the future, we can update this to pygithub>1.58.0
+            "pygithub==1.57.0"
+        ]
     },
     package_dir={"unstructured": "unstructured"},
     package_data={"unstructured": ["nlp/*.txt"]},
