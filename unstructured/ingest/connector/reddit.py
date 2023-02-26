@@ -64,9 +64,10 @@ class RedditIngestDoc(BaseIngestDoc):
 
         if self.config.verbose:
             print(f"fetching {self} - PID: {os.getpid()}")
-        submission_text = self.post.selftext
+        # Write the title plus the body, if any
+        text_to_write = f"# {self.post.title}\n{self.post.selftext}"
         with open(self.filename, "w", encoding="utf8") as f:
-            f.write(submission_text)
+            f.write(text_to_write)
 
     def has_output(self):
         """Determine if structured output for this doc already exists."""
