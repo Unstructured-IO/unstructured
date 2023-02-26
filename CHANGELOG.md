@@ -1,4 +1,4 @@
-***REMOVED******REMOVED*** 0.4.16-dev1
+***REMOVED******REMOVED*** 0.4.16-dev2
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
 
@@ -7,6 +7,10 @@
 ***REMOVED******REMOVED******REMOVED*** Features
 
 * Added setup script for Ubuntu
+
+***REMOVED******REMOVED******REMOVED*** Fixes
+
+* Initializes connector properly in ingest.main::MainProcess
 
 ***REMOVED******REMOVED*** 0.4.15
 
