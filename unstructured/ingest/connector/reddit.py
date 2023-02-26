@@ -2,12 +2,16 @@ import json
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
 )
+
+if TYPE_CHECKING:
+    from praw.models import Submission
 
 
 @dataclass
