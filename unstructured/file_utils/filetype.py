@@ -39,6 +39,11 @@ PPT_MIME_TYPES = [
     "application/vnd.ms-powerpoint",
 ]
 
+MD_MIME_TYPES = [
+    "text/markdown",
+    "text/x-markdown",
+]
+
 # NOTE(robinson) - .docx.xlsx files are actually zip file with a .docx/.xslx extension.
 # If the MIME type is application/octet-stream, we check if it's a .docx/.xlsx file by
 # looking for expected filenames within the zip file.
@@ -163,16 +168,19 @@ def detect_filetype(
     elif mime_type == "image/png":
         return FileType.PNG
 
+    elif mime_type in MD_MIME_TYPES:
+        # NOTE - I am not sure whether libmagic ever returns these mimetypes.
+        return FileType.MD
+
     elif mime_type == "text/plain":
         if extension and extension == ".eml":
             return FileType.EML
+        if extension and extension == ".md":
+            return FileType.MD
         if file and not extension:
             if _check_eml_from_buffer(file=file) is True:
                 return FileType.EML
-            else:
-                return FileType.TXT
-        else:
-            return FileType.TXT
+        return FileType.TXT
 
     elif mime_type.endswith("xml"):
         if extension and extension == ".html":
