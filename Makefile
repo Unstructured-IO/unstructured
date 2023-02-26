@@ -54,6 +54,10 @@ install-build:
 install-ingest-s3:
 	pip install -r requirements/ingest-s3.txt
 
+.PHONY: install-ingest-github
+install-ingest-github:
+	pip install -r requirements/ingest-github.txt
+
 .PHONY: install-unstructured-inference
 install-unstructured-inference:
 	pip install -r requirements/local-inference.txt

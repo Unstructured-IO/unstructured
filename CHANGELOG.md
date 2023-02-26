@@ -1,4 +1,4 @@
-## 0.4.16-dev1
+## 0.4.16-dev3
 
 ### Enhancements
 
@@ -7,6 +7,7 @@
 ### Features
 
 * Added setup script for Ubuntu
+* Added Reddit connector for ingest cli.
 
 ## 0.4.15
 
