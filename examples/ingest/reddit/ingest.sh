@@ -16,8 +16,8 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --subreddit-name machinelearning \
-    --reddit-client-id <client id here> \
-    --reddit-client-secret <client secret here> \
+    --reddit-client-id "<client id here>" \
+    --reddit-client-secret "<client secret here>" \
     --reddit-user-agent "Unstructured Ingest Subreddit fetcher by \u\..." \
     --reddit-search-query "Unstructured" \
     --reddit-num-posts 10 \
