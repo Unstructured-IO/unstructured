@@ -11,7 +11,7 @@ from unstructured.file_utils.filetype import detect_filetype
 def get_directory_file_info(directory: str) -> pd.DataFrame:
     """Recursively walks a directory and extracts key file information to support initial
     exploration of text data sets. Returns a pandas DataFrame."""
-    filenames: List[str] = list()
+    filenames: List[str] = []
     for path, _, files in os.walk(directory):
         for filename_no_path in files:
             filenames.append(os.path.join(path, filename_no_path))
@@ -44,7 +44,8 @@ def get_file_info(filenames: List[str]) -> pd.DataFrame:
 
 
 def get_file_info_from_file_contents(
-    file_contents: List[str], filenames: Optional[List[str]] = None
+    file_contents: List[str],
+    filenames: Optional[List[str]] = None,
 ) -> pd.DataFrame:
     data: Dict[str, List[Any]] = {
         "filesize": [],
@@ -55,7 +56,7 @@ def get_file_info_from_file_contents(
         if len(filenames) != len(file_contents):
             raise ValueError(
                 f"There are {len(filenames)} filenames and {len(file_contents)} "
-                "file_contents. Both inputs must be the same length."
+                "file_contents. Both inputs must be the same length.",
             )
         data["filename"] = []
 
