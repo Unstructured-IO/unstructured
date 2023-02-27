@@ -54,6 +54,10 @@ install-build:
 install-ingest-s3:
 	pip install -r requirements/ingest-s3.txt
 
+.PHONY: install-ingest-reddit
+install-ingest-reddit:
+	pip install -r requirements/ingest-reddit.txt
+
 .PHONY: install-unstructured-inference
 install-unstructured-inference:
 	pip install -r requirements/local-inference.txt
@@ -82,7 +86,8 @@ pip-compile:
 	# NOTE(robinson) - doc/requirements.txt is where the GitHub action for building
 	# sphinx docs looks for additional requirements
 	cp requirements/build.txt docs/requirements.txt
-	pip-compile --upgrade requirements/ingest-s3.in requirements/base.txt --output-file requirements/ingest-s3.txt
+	pip-compile --upgrade --extra=s3     --output-file=requirements/ingest-s3.txt     requirements/base.txt setup.py
+	pip-compile --upgrade --extra=reddit --output-file=requirements/ingest-reddit.txt requirements/base.txt setup.py
 
 ## install-project-local:   install unstructured into your local python environment
 .PHONY: install-project-local
@@ -130,7 +135,7 @@ check-scripts:
 .PHONY: check-version
 check-version:
     # Fail if syncing version would produce changes
-	scripts/version-sync.sh -c
+	scripts/version-sync.sh -c -f "unstructured/__version__.py" semver
 
 ## tidy:                    run black
 .PHONY: tidy
@@ -141,7 +146,7 @@ tidy:
 ## version-sync:            update __version__.py with most recent version from CHANGELOG.md
 .PHONY: version-sync
 version-sync:
-	scripts/version-sync.sh
+	scripts/version-sync.sh -f "unstructured/__version__.py" semver
 
 .PHONY: check-coverage
 check-coverage:

@@ -16,7 +16,7 @@ class BaseConnector(ABC):
 
     @abstractmethod
     def cleanup(self, cur_dir=None):
-        """Any additonal cleanup up need after processing is complete. E.g., removing
+        """Any additional cleanup up need after processing is complete. E.g., removing
         temporary download dirs that are empty.
 
         By convention, documents that failed to process are typically not cleaned up."""
@@ -90,7 +90,7 @@ class BaseIngestDoc(ABC):
     def process_file(self):
         print(f"Processing {self.filename}")
 
-        elements = partition(filename=self.filename)
+        elements = partition(filename=str(self.filename))
         isd_elems = convert_to_dict(elements)
 
         self.isd_elems_no_filename = []

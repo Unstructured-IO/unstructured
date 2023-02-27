@@ -1,3 +1,18 @@
+## 0.4.16-dev3
+
+### Enhancements
+
+* Fallback to using file extensions for filetype detection if `libmagic` is not present
+
+### Features
+
+* Added setup script for Ubuntu
+* Added Reddit connector for ingest cli.
+
+### Fixes
+
+* Initializes connector properly in ingest.main::MainProcess
+
 ## 0.4.15
 
 ### Enhancements
@@ -199,3 +214,4 @@ of an email.
 ## 0.2.0
 
 * Initial release of unstructured
+

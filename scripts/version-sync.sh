@@ -1,41 +1,110 @@
 #!/bin/bash
+function usage {
+    echo "Usage: $(basename "$0") [-c] -f FILE_TO_CHANGE REPLACEMENT_FORMAT [-f FILE_TO_CHANGE REPLACEMENT_FORMAT ...]" 2>&1
+    echo 'Synchronize files to latest version in source file'
+    echo '   -s              Specifies source file for version (default is CHANGELOG.md)'
+    echo '   -f              Specifies a file to change and the format for searching and replacing versions'
+    echo '                       FILE_TO_CHANGE is the file to be updated/checked for updates'
+    echo '                       REPLACEMENT_FORMAT is one of (semver, release, api-release)'
+    echo '                           semver indicates to look for a full semver version and replace with the latest full version'
+    echo '                           release indicates to look for a release semver version (x.x.x) and replace with the latest release version'
+    echo '                           api-release indicates to look for a release semver version in the context of an api route and replace with the latest release version'
+    echo '   -c              Compare versions and output proposed changes without changing anything.'
+}
 
-CHECK=0
-while getopts ":c" opt; do
+function getopts-extra () {
+    declare i=1
+    # if the next argument is not an option, then append it to array OPTARG
+    while [[ ${OPTIND} -le $# && ${!OPTIND:0:1} != '-' ]]; do
+        OPTARG[i]=${!OPTIND}
+        i+=1
+        OPTIND+=1
+    done
+}
+
+# Parse input options
+declare CHECK=0
+declare SOURCE_FILE="CHANGELOG.md"
+declare -a FILES_TO_CHECK=()
+declare -a REPLACEMENT_FORMATS=()
+declare args
+declare OPTIND OPTARG opt
+while getopts ":hcs:f:" opt; do
     case $opt in
+        h)
+            usage
+            exit 0
+            ;;
         c)
             CHECK=1
             ;;
+        s)
+            SOURCE_FILE="$OPTARG"
+            ;;
+        f)
+            getopts-extra "$@"
+            args=( "${OPTARG[@]}" )
+            # validate length of args, should be 2
+            if [ ${#args[@]} -eq 2 ]; then
+                FILES_TO_CHECK+=( "${args[0]}" )
+                REPLACEMENT_FORMATS+=( "${args[1]}" )
+            else
+                echo "Exactly 2 arguments must follow -f option." >&2
+                exit 1
+            fi
+            ;;
         \?)
-            echo "Invalid option: -$OPTARG. Use -c to show changes without applying, use no options to apply changes." >&2
+            echo "Invalid option: -$OPTARG." >&2
+            usage
             exit 1
             ;;
     esac
 done
 
-# Version appearing earliest in CHANGELOGFILE will be used as ground truth.
-CHANGELOGFILE="CHANGELOG.md"
-VERSIONFILE="unstructured/__version__.py"
-RE_SEMVER_FULL="(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-((0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(\+([0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*))?"
-# Pull out semver appearing earliest in CHANGELOGFILE.
-LAST_VERSION=$(grep -o -m 1 -E "${RE_SEMVER_FULL}" "$CHANGELOGFILE")
+# Parse REPLACEMENT_FORMATS
+RE_SEMVER_FULL='(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-((0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*))*))?(\+([0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*))?'
+RE_RELEASE="(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)"
+RE_API_RELEASE="v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)"
+# Pull out semver appearing earliest in SOURCE_FILE.
+LAST_VERSION=$(grep -o -m 1 -E "${RE_SEMVER_FULL}" "$SOURCE_FILE")
+LAST_RELEASE=$(grep -o -m 1 -E "${RE_RELEASE}($|[^-+])$" "$SOURCE_FILE" | grep -o -m 1 -E "${RE_RELEASE}")
+LAST_API_RELEASE="v$(grep -o -m 1 -E "${RE_RELEASE}($|[^-+])$" "$SOURCE_FILE" | grep -o -m 1 -E "${RE_RELEASE}")"
+declare -a RE_SEMVERS=()
+declare -a UPDATED_VERSIONS=()
+for i in "${!REPLACEMENT_FORMATS[@]}"; do
+    REPLACEMENT_FORMAT=${REPLACEMENT_FORMATS[$i]}
+    case $REPLACEMENT_FORMAT in
+        semver)
+            RE_SEMVERS+=( "$RE_SEMVER_FULL" )
+            UPDATED_VERSIONS+=( "$LAST_VERSION" )
+            ;;
+        release)
+            RE_SEMVERS+=( "$RE_RELEASE" )
+            UPDATED_VERSIONS+=( "$LAST_RELEASE" )
+            ;;
+        api-release)
+            RE_SEMVERS+=( "$RE_API_RELEASE" )
+            UPDATED_VERSIONS+=( "$LAST_API_RELEASE" )
+            ;;
+        *)
+            echo "Invalid replacement format: \"${REPLACEMENT_FORMAT}\". Use semver, release, or api-release" >&2
+            exit 1
+            ;;
+    esac
+done
 
 if [ -z "$LAST_VERSION" ];
 then
-    # No match to semver regex in CHANGELOGFILE, so no version to go from.
-    printf "Error: Unable to find latest version from %s.\n" "$CHANGELOGFILE"
+    # No match to semver regex in SOURCE_FILE, so no version to go from.
+    printf "Error: Unable to find latest version from %s.\n" "$SOURCE_FILE"
     exit 1
 fi
 
-# Add files to this array that need to be kept in sync.
-FILES_TO_CHANGE=("$VERSIONFILE")
-# Add patterns to this array to be matched in the above files.
-RE_SEMVERS=("$RE_SEMVER_FULL")
-# Add versions to this array to be used as replacements for the patterns matched above from the corresponding files.
-UPDATED_VERSIONS=("$LAST_VERSION")
+# Search files in FILES_TO_CHECK and change (or get diffs)
+declare FAILED_CHECK=0
 
-for i in "${!FILES_TO_CHANGE[@]}"; do
-    FILE_TO_CHANGE=${FILES_TO_CHANGE[$i]}
+for i in "${!FILES_TO_CHECK[@]}"; do
+    FILE_TO_CHANGE=${FILES_TO_CHECK[$i]}
     RE_SEMVER=${RE_SEMVERS[$i]}
     UPDATED_VERSION=${UPDATED_VERSIONS[$i]}
     FILE_VERSION=$(grep -o -m 1 -E "${RE_SEMVER}" "$FILE_TO_CHANGE")
@@ -45,7 +114,7 @@ for i in "${!FILES_TO_CHANGE[@]}"; do
         printf "Error: No semver version found in file %s.\n" "$FILE_TO_CHANGE"
         exit 1
     else
-        # Replace semver in VERSIONFILE with semver obtained from CHANGELOGFILE
+        # Replace semver in VERSIONFILE with semver obtained from SOURCE_FILE
         TMPFILE=$(mktemp /tmp/new_version.XXXXXX)
         # Check sed version, exit if version < 4.3
         if ! sed --version > /dev/null 2>&1; then
@@ -63,13 +132,12 @@ for i in "${!FILES_TO_CHANGE[@]}"; do
             DIFF=$(diff "$FILE_TO_CHANGE"  "$TMPFILE" )
             if [ -z "$DIFF" ];
             then
-                printf "version sync would make no changes.\n"
+                printf "version sync would make no changes to %s.\n" "$FILE_TO_CHANGE"
                 rm "$TMPFILE"
-                exit 0
             else
-                printf "version sync would make the following changes:\n%s\n" "$DIFF"
+                FAILED_CHECK=1
+                printf "version sync would make the following changes to %s:\n%s\n" "$FILE_TO_CHANGE" "$DIFF"
                 rm "$TMPFILE"
-                exit 1
             fi
         else
             cp "$TMPFILE" "$FILE_TO_CHANGE" 
@@ -77,3 +145,10 @@ for i in "${!FILES_TO_CHANGE[@]}"; do
         fi
     fi
 done
+
+# Exit with code determined by whether changes were needed in a check.
+if [ ${FAILED_CHECK} -ne 0 ]; then
+    exit 1
+else
+    exit 0
+fi

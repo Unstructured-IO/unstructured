@@ -5,6 +5,7 @@ import zipfile
 
 import magic
 
+import unstructured.file_utils.filetype as filetype
 from unstructured.file_utils.filetype import (
     detect_filetype,
     FileType,
@@ -45,6 +46,27 @@ def test_detect_filetype_from_filename(file, expected):
         ("fake-text.txt", FileType.TXT),
         ("fake-email.eml", FileType.EML),
         ("factbook.xml", FileType.XML),
+        ("example-10k.html", FileType.HTML),
+        ("fake-html.html", FileType.HTML),
+        ("fake-excel.xlsx", FileType.XLSX),
+        ("fake-power-point.pptx", FileType.PPTX),
+    ],
+)
+def test_detect_filetype_from_filename_with_extension(monkeypatch, file, expected):
+    monkeypatch.setattr(filetype, "LIBMAGIC_AVAILABLE", False)
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, file)
+    assert detect_filetype(filename) == expected
+
+
+@pytest.mark.parametrize(
+    "file, expected",
+    [
+        ("layout-parser-paper-fast.pdf", FileType.PDF),
+        ("fake.docx", FileType.DOCX),
+        ("example.jpg", FileType.JPG),
+        ("fake-text.txt", FileType.TXT),
+        ("fake-email.eml", FileType.EML),
+        ("factbook.xml", FileType.XML),
         # NOTE(robinson) - For the document, some operating systems return
         # */xml and some return */html. Either could be acceptable depending on the OS
         ("example-10k.html", [FileType.HTML, FileType.XML]),
@@ -58,6 +80,14 @@ def test_detect_filetype_from_file(file, expected):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, file)
     with open(filename, "rb") as f:
         assert detect_filetype(file=f) in expected
+
+
+def test_detect_filetype_from_file_raises_without_libmagic(monkeypatch):
+    monkeypatch.setattr(filetype, "LIBMAGIC_AVAILABLE", False)
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
+    with open(filename, "rb") as f:
+        with pytest.raises(ImportError):
+            detect_filetype(file=f)
 
 
 def test_detect_xml_application_xml(monkeypatch):

@@ -59,7 +59,7 @@ def translate_text(text, source_lang: Optional[str] = None, target_lang: str = "
     except OSError:
         raise ValueError(
             f"Transformers could not find the translation model {model_name}. "
-            "The requested source/target language combo is not suppored."
+            "The requested source/target language combo is not supported."
         )
 
     chunks: List[str] = chunk_by_attention_window(text, tokenizer, split_function=sent_tokenize)

@@ -20,7 +20,7 @@ titles, narrative text, and tables.
 The ``partition`` brick is the simplest way to partition a document in ``unstructured``.
 If you call the ``partition`` function, ``unstructured`` will attempt to detect the
 file type and route it to the appropriate partitioning brick. All partitioning bricks
-called within ``partition`` are called using the defualt kwargs. Use the document-type
+called within ``partition`` are called using the default kwargs. Use the document-type
 specific bricks if you need to apply non-default settings.
 ``partition`` currently supports ``.docx``, ``.doc``, ``.pptx``, ``.ppt``, ``.eml``, ``.html``, ``.pdf``,
 ``.png``, ``.jpg``, and ``.txt`` files.
@@ -539,7 +539,7 @@ Examples:
 ``clean_ordered_bullets``
 -------------------------
 
-Remove alpha-numeric bullets from the beginning of text up to three “sub-section” levels.
+Remove alphanumeric bullets from the beginning of text up to three “sub-section” levels.
 
 Examples:
 
@@ -687,7 +687,7 @@ Extracts text that occurs before the specified pattern.
 
 Options:
 
-* If ``index`` is set, extract before the ``(index + 1)``th occurence of the pattern. The default is ``0``.
+* If ``index`` is set, extract before the ``(index + 1)``th occurrence of the pattern. The default is ``0``.
 * Strips leading whitespace if ``strip`` is set to ``True``. The default is ``True``.
 
 
@@ -710,7 +710,7 @@ Extracts text that occurs after the specified pattern.
 
 Options:
 
-* If ``index`` is set, extract after the ``(index + 1)``th occurence of the pattern. The default is ``0``.
+* If ``index`` is set, extract after the ``(index + 1)``th occurrence of the pattern. The default is ``0``.
 * Strips trailing whitespace if ``strip`` is set to ``True``. The default is ``True``.
 
 
@@ -834,7 +834,7 @@ Examples:
 ``extract_ordered_bullets``
 ---------------------------
 
-Extracts alpha-numeric bullets from the beginning of text up to three “sub-section” levels.
+Extracts alphanumeric bullets from the beginning of text up to three “sub-section” levels.
 
 Examples:
 
