@@ -8,6 +8,10 @@
 
 * Added setup script for Ubuntu
 
+### Fixes
+
+* Initializes connector properly in ingest.main::MainProcess
+
 ## 0.4.15
 
 ### Enhancements
