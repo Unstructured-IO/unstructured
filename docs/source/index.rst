@@ -24,6 +24,6 @@ Library Documentation
 
    installing
    getting_started
-   elements
    bricks
+   elements
    examples
