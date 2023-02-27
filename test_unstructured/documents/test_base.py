@@ -1,4 +1,5 @@
 import pytest
+
 from unstructured.documents.base import Document, Page
 from unstructured.documents.elements import NarrativeText, Title
 

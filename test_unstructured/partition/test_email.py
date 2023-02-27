@@ -2,23 +2,22 @@ import datetime
 import email
 import os
 import pathlib
+
 import pytest
 
-
-from unstructured.documents.elements import NarrativeText, Title, ListItem, Image
+from unstructured.documents.elements import Image, ListItem, NarrativeText, Title
 from unstructured.documents.email_elements import (
     MetaData,
+    ReceivedInfo,
     Recipient,
     Sender,
     Subject,
-    ReceivedInfo,
 )
 from unstructured.partition.email import (
     extract_attachment_info,
     partition_email,
     partition_email_header,
 )
-
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
@@ -46,7 +45,13 @@ RECEIVED_HEADER_OUTPUT = [
         name="received_datetimetz",
         text="2023-02-20 10:03:18+12:00",
         datestamp=datetime.datetime(
-            2023, 2, 20, 10, 3, 18, tzinfo=datetime.timezone(datetime.timedelta(seconds=43200))
+            2023,
+            2,
+            20,
+            10,
+            3,
+            18,
+            tzinfo=datetime.timezone(datetime.timedelta(seconds=43200)),
         ),
     ),
     MetaData(name="MIME-Version", text="1.0"),
@@ -59,7 +64,8 @@ RECEIVED_HEADER_OUTPUT = [
     Sender(name="Matthew Robinson", text="mrobinson@unstructured.io"),
     Recipient(name="Matthew Robinson", text="mrobinson@unstructured.io"),
     MetaData(
-        name="Content-Type", text='multipart/alternative; boundary="00000000000095c9b205eff92630"'
+        name="Content-Type",
+        text='multipart/alternative; boundary="00000000000095c9b205eff92630"',
     ),
 ]
 
@@ -74,14 +80,15 @@ HEADER_EXPECTED_OUTPUT = [
     Sender(name="Matthew Robinson", text="mrobinson@unstructured.io"),
     Recipient(name="Matthew Robinson", text="mrobinson@unstructured.io"),
     MetaData(
-        name="Content-Type", text='multipart/alternative; boundary="00000000000095c9b205eff92630"'
+        name="Content-Type",
+        text='multipart/alternative; boundary="00000000000095c9b205eff92630"',
     ),
 ]
 
 ALL_EXPECTED_OUTPUT = HEADER_EXPECTED_OUTPUT + EXPECTED_OUTPUT
 
 ATTACH_EXPECTED_OUTPUT = [
-    {"filename": "fake-attachment.txt", "payload": b"Hey this is a fake attachment!"}
+    {"filename": "fake-attachment.txt", "payload": b"Hey this is a fake attachment!"},
 ]
 
 
@@ -94,7 +101,7 @@ def test_partition_email_from_filename():
 
 def test_partition_email_from_file():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
-    with open(filename, "r") as f:
+    with open(filename) as f:
         elements = partition_email(file=f)
     assert len(elements) > 0
     assert elements == EXPECTED_OUTPUT
@@ -110,7 +117,7 @@ def test_partition_email_from_file_rb():
 
 def test_partition_email_from_text_file():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.txt")
-    with open(filename, "r") as f:
+    with open(filename) as f:
         elements = partition_email(file=f, content_source="text/plain")
     assert len(elements) > 0
     assert elements == EXPECTED_OUTPUT
@@ -118,7 +125,7 @@ def test_partition_email_from_text_file():
 
 def test_partition_email_from_text_file_with_headers():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.txt")
-    with open(filename, "r") as f:
+    with open(filename) as f:
         elements = partition_email(file=f, content_source="text/plain", include_headers=True)
     assert len(elements) > 0
     assert elements == ALL_EXPECTED_OUTPUT
@@ -126,7 +133,7 @@ def test_partition_email_from_text_file_with_headers():
 
 def test_partition_email_from_text():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
-    with open(filename, "r") as f:
+    with open(filename) as f:
         text = f.read()
     elements = partition_email(text=text)
     assert len(elements) > 0
@@ -142,7 +149,7 @@ def test_partition_email_from_filename_with_embedded_image():
 
 def test_partition_email_header():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email-header.eml")
-    with open(filename, "r") as f:
+    with open(filename) as f:
         msg = email.message_from_file(f)
     elements = partition_email_header(msg)
     assert len(elements) > 0
@@ -163,7 +170,7 @@ def test_extract_email_text_matches_html():
 
 def test_extract_attachment_info():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email-attachment.eml")
-    with open(filename, "r") as f:
+    with open(filename) as f:
         msg = email.message_from_file(f)
     attachment_info = extract_attachment_info(msg)
     assert len(attachment_info) > 0
@@ -177,7 +184,7 @@ def test_partition_email_raises_with_none_specified():
 
 def test_partition_email_raises_with_too_many_specified():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
-    with open(filename, "r") as f:
+    with open(filename) as f:
         text = f.read()
 
     with pytest.raises(ValueError):

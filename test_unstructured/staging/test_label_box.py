@@ -1,31 +1,33 @@
 import os
+
 import pytest
-import unstructured.staging.label_box as label_box
-from unstructured.documents.elements import Title, NarrativeText
+
+from unstructured.documents.elements import NarrativeText, Title
+from unstructured.staging import label_box
 
 
-@pytest.fixture
+@pytest.fixture()
 def elements():
     return [Title(text="Title 1"), NarrativeText(text="Narrative 1")]
 
 
-@pytest.fixture
+@pytest.fixture()
 def output_directory(tmp_path):
     return str(tmp_path)
 
 
-@pytest.fixture
+@pytest.fixture()
 def nonexistent_output_directory(tmp_path):
     return os.path.join(str(tmp_path), "nonexistent_dir")
 
 
-@pytest.fixture
+@pytest.fixture()
 def url_prefix():
     return "https://storage.googleapis.com/labelbox-sample-datasets/nlp"
 
 
 @pytest.mark.parametrize(
-    "attachments, raises_error",
+    ("attachments", "raises_error"),
     [
         (
             [
@@ -53,8 +55,14 @@ attachment = {"type": "RAW_TEXT", "value": "Text description."}
 
 @pytest.mark.parametrize(
     (
-        "external_ids, attachments, output_directory_fixture, create_directory, "
-        "raises, exception_class"
+        (
+            "external_ids",
+            "attachments",
+            "output_directory_fixture",
+            "create_directory",
+            "raises",
+            "exception_class",
+        )
     ),
     [
         (None, None, "output_directory", True, False, None),
@@ -131,5 +139,5 @@ def test_stage_for_label_box(
             assert element_config["data"].endswith(f'{element_config["externalId"]}.txt')
 
             output_filepath = os.path.join(output_directory, f'{element_config["externalId"]}.txt')
-            with open(output_filepath, "r") as data_file:
+            with open(output_filepath) as data_file:
                 assert data_file.read().strip() == element.text.strip()

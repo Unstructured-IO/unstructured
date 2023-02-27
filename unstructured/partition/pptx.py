@@ -16,7 +16,6 @@ from unstructured.partition.text_type import (
     is_possible_title,
 )
 
-
 OPENXML_SCHEMA_NAME = "{http://schemas.openxmlformats.org/drawingml/2006/main}"
 
 
@@ -52,7 +51,7 @@ def partition_pptx(
     else:
         raise ValueError("Only one of filename or file can be specified.")
 
-    elements: List[Element] = list()
+    elements: List[Element] = []
     metadata_filename = metadata_filename or filename
     metadata = ElementMetadata(filename=metadata_filename)
     num_slides = len(presentation.slides)

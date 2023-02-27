@@ -1,32 +1,33 @@
-import pytest
 import csv
 import os
 
-import unstructured.staging.prodigy as prodigy
-from unstructured.documents.elements import Title, NarrativeText
+import pytest
+
+from unstructured.documents.elements import NarrativeText, Title
+from unstructured.staging import prodigy
 
 
-@pytest.fixture
+@pytest.fixture()
 def elements():
     return [Title(text="Title 1"), NarrativeText(text="Narrative 1")]
 
 
-@pytest.fixture
+@pytest.fixture()
 def valid_metadata():
     return [{"score": 0.1}, {"category": "paragraph"}]
 
 
-@pytest.fixture
+@pytest.fixture()
 def metadata_with_id():
     return [{"score": 0.1}, {"id": 1, "category": "paragraph"}]
 
 
-@pytest.fixture
+@pytest.fixture()
 def metadata_with_invalid_length():
     return [{"score": 0.1}, {"category": "paragraph"}, {"type": "text"}]
 
 
-@pytest.fixture
+@pytest.fixture()
 def output_csv_file(tmp_path):
     return os.path.join(tmp_path, "prodigy_data.csv")
 
@@ -43,17 +44,21 @@ def test_validate_prodigy_metadata_with_valid_metadata(elements, valid_metadata)
 
 
 @pytest.mark.parametrize(
-    "invalid_metadata_fixture, exception_message",
+    ("invalid_metadata_fixture", "exception_message"),
     [
         ("metadata_with_id", 'The key "id" is not allowed with metadata parameter at index: 1'),
         (
             "metadata_with_invalid_length",
-            "The length of metadata parameter does not match with length of elements parameter.",
+            "The length of the metadata parameter does not match with"
+            " the length of the elements parameter.",
         ),
     ],
 )
 def test_validate_prodigy_metadata_with_invalid_metadata(
-    elements, invalid_metadata_fixture, exception_message, request
+    elements,
+    invalid_metadata_fixture,
+    exception_message,
+    request,
 ):
     invalid_metadata = request.getfixturevalue(invalid_metadata_fixture)
     with pytest.raises(ValueError) as validation_exception:
@@ -97,7 +102,7 @@ def test_stage_csv_for_prodigy(elements, output_csv_file):
         csv_file.write(prodigy_csv_string)
 
     fieldnames = ["text", "id"]
-    with open(output_csv_file, "r") as csv_file:
+    with open(output_csv_file) as csv_file:
         csv_rows = csv.DictReader(csv_file)
         assert all(set(row.keys()) == set(fieldnames) for row in csv_rows)
 
@@ -107,8 +112,8 @@ def test_stage_csv_for_prodigy_with_metadata(elements, valid_metadata, output_cs
         prodigy_csv_string = prodigy.stage_csv_for_prodigy(elements, valid_metadata)
         csv_file.write(prodigy_csv_string)
 
-    fieldnames = set(["text", "id"]).union(*(data.keys() for data in valid_metadata))
+    fieldnames = {"text", "id"}.union(*(data.keys() for data in valid_metadata))
     fieldnames = [fieldname.lower() for fieldname in fieldnames]
-    with open(output_csv_file, "r") as csv_file:
+    with open(output_csv_file) as csv_file:
         csv_rows = csv.DictReader(csv_file)
         assert all(set(row.keys()) == set(fieldnames) for row in csv_rows)
