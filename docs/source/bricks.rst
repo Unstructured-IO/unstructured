@@ -593,6 +593,9 @@ In the example below, we invoke the ``replace_unicode_quotes`` cleaning brick us
   print(element)
 
 
+  See below for a full list of cleaning bricks in the ``unstructured`` library.
+
+
 
 ``clean``
 ---------
@@ -989,8 +992,21 @@ Examples:
 Staging
 #######
 
-Staging bricks in ``unstructured`` prepare extracted text for downstream tasks such
-as machine learning inference and data labeling.
+Staging bricks in the ``unstructured`` package help prepare your data for ingestion into downstream systems.
+A staging brick accepts a list of document elements as input and return an appropriately formatted dictionary as output.
+In the example below, we get our narrative text samples prepared for ingestion into LabelStudio using
+``the stage_for_label_studio`` brick.
+We can take this data and directly upload it into LabelStudio to quickly get started with an NLP labeling task.
+
+
+.. code:: python
+
+  import json
+  from unstructured.staging.label_studio import stage_for_label_studio
+
+  output = stage_for_label_studio(narrative_text)
+  print(json.dumps(output[:2], indent=4))
+
 
 ``convert_to_dict``
 --------------------
