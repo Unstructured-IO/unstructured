@@ -86,7 +86,7 @@ pip-compile:
 	***REMOVED*** NOTE(robinson) - doc/requirements.txt is where the GitHub action for building
 	***REMOVED*** sphinx docs looks for additional requirements
 	cp requirements/build.txt docs/requirements.txt
-	pip-compile --upgrade requirements/ingest-s3.in requirements/base.txt --output-file requirements/ingest-s3.txt
+	pip-compile --upgrade --extra=s3     --output-file=requirements/ingest-s3.txt     requirements/base.txt setup.py
 	pip-compile --upgrade --extra=reddit --output-file=requirements/ingest-reddit.txt requirements/base.txt setup.py
 
 ***REMOVED******REMOVED*** install-project-local:   install unstructured into your local python environment
