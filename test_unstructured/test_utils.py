@@ -37,3 +37,48 @@ def test_save_as_jsonl(input_data, output_jsonl_file):
 def test_read_as_jsonl(input_jsonl_file, input_data):
     file_data = utils.read_from_jsonl(input_jsonl_file)
     assert file_data == input_data
+
+
+def test_requires_dependencies_decorator():
+    @utils.requires_dependencies(dependencies="numpy")
+    def test_func():
+        import numpy
+
+    test_func()
+
+
+def test_requires_dependencies_decorator_multiple():
+    @utils.requires_dependencies(dependencies=["numpy", "pandas"])
+    def test_func():
+        import numpy
+        import pandas
+
+    test_func()
+
+
+def test_requires_dependencies_decorator_import_error():
+    @utils.requires_dependencies(dependencies="not_a_package")
+    def test_func():
+        import not_a_package
+
+    with pytest.raises(ImportError):
+        test_func()
+
+
+def test_requires_dependencies_decorator_import_error_multiple():
+    @utils.requires_dependencies(dependencies=["not_a_package", "numpy"])
+    def test_func():
+        import not_a_package
+        import numpy
+
+    with pytest.raises(ImportError):
+        test_func()
+
+
+def test_requires_dependencies_decorator_in_class():
+    @utils.requires_dependencies(dependencies="numpy")
+    class TestClass:
+        def __init__(self):
+            import numpy
+
+    TestClass()
