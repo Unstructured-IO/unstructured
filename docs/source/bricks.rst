@@ -1257,7 +1257,7 @@ The output is a list of dictionaries, each one with two keys:
 "text" with the content of the element and
 "entities" with an empty list.
 
-You can also specify specify entities in the ``stage_for_datasaur`` brick. Entities
+You can also specify entities in the ``stage_for_datasaur`` brick. Entities
 you specify in the input will be included in the entities key in the output. The list
 of entities is a list of dictionaries and must have all of the keys in the example below.
 The list of entities must be the same length as the list of elements. Use an empty
