@@ -92,16 +92,20 @@ class GitHubIngestDoc(BaseIngestDoc):
         if self.config.verbose:
             print(f"fetching {self} - PID: {os.getpid()}")
         content_file = self.repo.get_contents(self.path)
-        contents = ""
-        if not content_file.content and content_file.encoding == "none" and content_file.size:
+        contents = b""
+        if (
+            not content_file.content  # type: ignore
+            and content_file.encoding == "none"  # type: ignore
+            and content_file.size  # type: ignore
+        ):
             print("File too large for the GitHub API, using direct download link instead.")
-            response = requests.get(content_file.download_url)
+            response = requests.get(content_file.download_url)  # type: ignore
             if response.status_code != 200:
                 print("Direct download link has failed... Skipping this file.")
             else:
                 contents = response.content
         else:
-            contents = content_file.decoded_content
+            contents = content_file.decoded_content  # type: ignore
 
         with open(self.filename, "wb") as f:
             f.write(contents)
