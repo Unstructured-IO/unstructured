@@ -90,7 +90,7 @@ class BaseIngestDoc(ABC):
     def process_file(self):
         print(f"Processing {self.filename}")
 
-        elements = partition(filename=self.filename)
+        elements = partition(filename=str(self.filename))
         isd_elems = convert_to_dict(elements)
 
         self.isd_elems_no_filename = []
