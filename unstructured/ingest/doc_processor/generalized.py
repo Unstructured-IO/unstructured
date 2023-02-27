@@ -1,8 +1,7 @@
 """Process aribritrary files with the Unstructured library"""
 
-import logging
-
 from unstructured_inference.models.detectron2 import MODEL_TYPES
+from unstructured.logger import logger
 
 
 def initialize():
@@ -31,7 +30,7 @@ def process_document(doc):
 
     except Exception:
         # TODO(crag) save the exception instead of print?
-        logging.error(f"Failed to process {doc}", exc_info=True)
+        logger.error(f"Failed to process {doc}", exc_info=True)
     else:
         doc.cleanup_file()
     finally:
