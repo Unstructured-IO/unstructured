@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Installation" href="installing.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Elements" href="elements.html" /><link rel="prev" title="Installation" href="installing.html" />
 
     <link rel="shortcut icon" href="_static/unstructured_small.png"/><!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 -->
-        <title>Unstructured 0.4.16 documentation</title>
+        <title>Getting Started - Unstructured 0.4.16 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -223,7 +223,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="#"><div class="brand">Unstructured 0.4.16 documentation</div></a>
+      <a href="index.html"><div class="brand">Unstructured 0.4.16 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -243,7 +243,7 @@
   <aside class="sidebar-drawer">
     <div class="sidebar-container">
       
-      <div class="sidebar-sticky"><a class="sidebar-brand" href="#">
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   <div class="sidebar-logo-container">
     <img class="sidebar-logo only-light" src="_static/images/logo-light-mode.svg" alt="Light Logo" />
@@ -263,9 +263,9 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Library Documentation</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installing.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="elements.html">Elements</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bricks.html">Bricks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
@@ -303,20 +303,128 @@
           </label>
         </div>
         <article role="main">
-          <section id="document-parsing">
-<h1>Document Parsing<a class="headerlink" href="#document-parsing" title="Permalink to this heading"></a></h1>
-<p>The <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> library is designed to help preprocess structure unstructured text documents
-for use in downstream machine learning tasks. Examples of documents that can be processes
-using the <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> library include PDFs, XML and HTML documents.</p>
-<section id="library-documentation">
-<h2>Library Documentation<a class="headerlink" href="#library-documentation" title="Permalink to this heading"></a></h2>
-<dl class="simple">
-<dt><a class="reference internal" href="installing.html"><span class="doc">Installation</span></a></dt><dd><p>How to install the <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> library</p>
-</dd>
-<dt><a class="reference internal" href="examples.html"><span class="doc">Examples</span></a></dt><dd><p>Examples of how to use the library to parse different document types</p>
+          <section id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this heading"></a></h1>
+<p>The following section will cover basic concepts and usage patterns in <code class="docutils literal notranslate"><span class="pre">unstructured</span></code>.
+After reading this section, you should be able to:</p>
+<ul class="simple">
+<li><p>Partitioning a document with the <code class="docutils literal notranslate"><span class="pre">partition</span></code> function.</p></li>
+<li><p>Understand how documents are structured in <code class="docutils literal notranslate"><span class="pre">unstructured</span></code>.</p></li>
+<li><p>Convert a document to a dictionary and/or save it as a JSON.</p></li>
+</ul>
+<p>The example documents in this section come from the
+<a class="reference external" href="https://github.com/Unstructured-IO/unstructured/tree/main/example-docs">example-docs</a>
+directory in the <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> repo.</p>
+<p>Before running the code in this make sure you’ve installed the <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> library
+and all dependencies using the instructions in the <strong>Quick Start</strong> section.</p>
+<section id="partitioning-a-document">
+<h2>Partitioning a document<a class="headerlink" href="#partitioning-a-document" title="Permalink to this heading"></a></h2>
+<p>In this section, we’ll cut right to the chase and get to the most important part of the library: partitioning a document.
+The goal of document partitioning is to read in a source document, split the document into sections, categorize those sections,
+and extract the text associated with those sections. Depending on the document type, unstructured uses different methods for
+partitioning a document. We’ll cover those in a later section. For now, we’ll use the simplest API in the library,
+the <code class="docutils literal notranslate"><span class="pre">partition</span></code> function. The <code class="docutils literal notranslate"><span class="pre">partition</span></code> function will detect the filetype of the source document and route it to the appropriate
+partitioning function. You can try out the partition function by running the cell below.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.auto</span> <span class="kn">import</span> <span class="n">partition</span>
+
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example-10k.html&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can also pass in a file as a file-like object using the following workflow:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;example-10k.html&quot;</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">elements</span> <span class="o">=</span> <span class="n">partition</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">partition</span></code> function uses <a class="reference external" href="https://formulae.brew.sh/formula/libmagic">libmagic</a> for filetype detection. If <code class="docutils literal notranslate"><span class="pre">libmagic</span></code> is
+not present and the user passes a filename, <code class="docutils literal notranslate"><span class="pre">partition</span></code> falls back to detecting the filetype using the file extension.
+<code class="docutils literal notranslate"><span class="pre">libmagic</span></code> is required if you’d lke to pass a file-like object to <code class="docutils literal notranslate"><span class="pre">partition</span></code>.
+We highly recommend installing <code class="docutils literal notranslate"><span class="pre">libmagic</span></code> and you may observe different file detection behaviors
+if <code class="docutils literal notranslate"><span class="pre">libmagic</span></code> is not installed`.</p>
+</section>
+<section id="document-elements">
+<h2>Document elements<a class="headerlink" href="#document-elements" title="Permalink to this heading"></a></h2>
+<p>When we partition a document, the output is a list of document <code class="docutils literal notranslate"><span class="pre">Element</span></code> objects.
+These element objects represent different components of the source document. Currently, the <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> library supports the following element types:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">Element</span></code></dt><dd><ul>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">Text</span></code></dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">FigureCaption</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">NarrativeText</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ListItem</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Title</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Address</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PageBreak</span></code></p></li>
+</ul>
 </dd>
 </dl>
-<div class="toctree-wrapper compound">
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CheckBox</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Image</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>Other element types that we will add in the future include tables and figures.
+Different partitioning functions use different methods for determining the element type and extracting the associated content.
+Document elements have a <code class="docutils literal notranslate"><span class="pre">str</span></code> representation. You can print them using the snippet below.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">elements</span> <span class="o">=</span> <span class="n">partition</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example-10k.html&quot;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">[:</span><span class="mi">5</span><span class="p">]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>One helpful aspect of document elements is that they allow you to cut a document down to the elements that you need for your particular use case.
+For example, if you’re training a summarization model you may only want to include narrative text for model training.
+You’ll notice that the output above includes a lot of titles and other content that may not be suitable for a summarization model.
+The following code shows how you can limit your output to only narrative text with at least two sentences. As you can see, the output now only contains narrative text.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.documents.elements</span> <span class="kn">import</span> <span class="n">NarrativeText</span>
+<span class="kn">from</span> <span class="nn">unstructured.partition.text_type</span> <span class="kn">import</span> <span class="n">sentence_count</span>
+
+<span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">[:</span><span class="mi">100</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">NarrativeText</span><span class="p">)</span> <span class="ow">and</span> <span class="n">sentence_count</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">text</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="converting-elements-to-a-dictionary-or-json">
+<h2>Converting elements to a dictionary or JSON<a class="headerlink" href="#converting-elements-to-a-dictionary-or-json" title="Permalink to this heading"></a></h2>
+<p>The final step in the process for most users is to convert the output to JSON.
+You can convert a list of document elements to a list of dictionaries using the <code class="docutils literal notranslate"><span class="pre">convert_to_dict</span></code> function.
+The workflow for using <code class="docutils literal notranslate"><span class="pre">convert_to_dict</span></code> appears below.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.staging.base</span> <span class="kn">import</span> <span class="n">convert_to_dict</span>
+
+<span class="n">convert_to_dict</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> library also includes utilities for saving a list of elements to JSON and reading
+a list of elements from JSON, as seen in the snippet below</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.staging.base</span> <span class="kn">import</span> <span class="n">elements_to_json</span><span class="p">,</span> <span class="n">elements_from_json</span>
+
+
+<span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;outputs.json&quot;</span>
+<span class="n">elements_to_json</span><span class="p">(</span><span class="n">elements</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="n">elements_from_json</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="wrapping-it-all-up">
+<h2>Wrapping it all up<a class="headerlink" href="#wrapping-it-all-up" title="Permalink to this heading"></a></h2>
+<p>To conclude, the basic workflow for reading in a document and converting it to a JSON in <code class="docutils literal notranslate"><span class="pre">unstructured</span></code>
+looks like the following:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.auto</span> <span class="kn">import</span> <span class="n">partition</span>
+<span class="kn">from</span> <span class="nn">unstructured.staging.base</span> <span class="kn">import</span> <span class="n">elements_to_json</span>
+
+<span class="n">input_filename</span> <span class="o">=</span> <span class="s2">&quot;example-10k.html&quot;</span>
+<span class="n">output_filename</span> <span class="o">=</span> <span class="s2">&quot;outputs.json&quot;</span>
+
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">input_filename</span><span class="p">)</span>
+<span class="n">elements_to_json</span><span class="p">(</span><span class="n">elements</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">output_filename</span><span class="p">)</span>
+</pre></div>
 </div>
 </section>
 </section>
@@ -326,16 +434,26 @@ using the <code class="docutils literal notranslate"><span class="pre">unstructu
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="installing.html">
+          <a class="next-page" href="elements.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Installation</div>
+                <div class="title">Elements</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          
+          <a class="prev-page" href="installing.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Installation</div>
+                
+              </div>
+            </a>
         </div>
         <div class="bottom-of-page">
           <div class="left-details">
@@ -366,8 +484,11 @@ using the <code class="docutils literal notranslate"><span class="pre">unstructu
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Document Parsing</a><ul>
-<li><a class="reference internal" href="#library-documentation">Library Documentation</a></li>
+<li><a class="reference internal" href="#">Getting Started</a><ul>
+<li><a class="reference internal" href="#partitioning-a-document">Partitioning a document</a></li>
+<li><a class="reference internal" href="#document-elements">Document elements</a></li>
+<li><a class="reference internal" href="#converting-elements-to-a-dictionary-or-json">Converting elements to a dictionary or JSON</a></li>
+<li><a class="reference internal" href="#wrapping-it-all-up">Wrapping it all up</a></li>
 </ul>
 </li>
 </ul>
