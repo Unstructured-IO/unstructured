@@ -6,6 +6,8 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Optional
 from urllib.parse import urlparse
 
+import requests
+
 from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
@@ -90,8 +92,19 @@ class GitHubIngestDoc(BaseIngestDoc):
         if self.config.verbose:
             print(f"fetching {self} - PID: {os.getpid()}")
         content_file = self.repo.get_contents(self.path)
+        contents = ""
+        if not content_file.content and content_file.encoding == "none" and content_file.size:
+            print("File too large for the GitHub API, using direct download link instead.")
+            response = requests.get(content_file.download_url)
+            if response.status_code != 200:
+                print("Direct download link has failed... Skipping this file.")
+            else:
+                contents = response.content
+        else:
+            contents = content_file.decoded_content
+
         with open(self.filename, "wb") as f:
-            f.write(content_file.decoded_content)  # type: ignore
+            f.write(contents)
 
     def has_output(self):
         """Determine if structured output for this doc already exists."""
