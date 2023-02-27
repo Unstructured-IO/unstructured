@@ -1,18 +1,66 @@
 Bricks
 ======
 
-The ``unstructured`` library provides bricks to make it quick and
-easy to parse documents and create new pre-processing pipelines. The following documents
-bricks currently available in the library.
+The goal of this page is to introduce you to the concept of bricks.
+Bricks are functions that live in unstructured and are the primary public API for the library.
+There are three types of bricks in ``unstructured``, corresponding to the different stages of document pre-processing: partitioning, cleaning, and staging.
+After reading this section, you should understand the following:
+
+* How to extract content from a document using partitioning bricks.
+* How to remove unwanted content from document elements using cleaning bricks.
+* How to prepare data for downstream use cases using staging bricks
+
 
 
 ############
 Partitioning
 ############
 
-The partitioning bricks in ``unstructured`` differentiate between different sections
-of text in a document. For example, the partitioning bricks can help distinguish between
-titles, narrative text, and tables.
+
+Partitioning bricks in ``unstructured`` allow users to extract structured content from a raw unstructured document.
+These functions break a document down into elements such as ``Title``, ``NarrativeText``, and ``ListItem``,
+enabling users to decide what content they'd like to keep for their particular application.
+If you're training a summarization model, for example, you may only be interested in ``NarrativeText``.
+
+
+The easiest way to partition documents in unstructured is to use the ``partition`` brick.
+If you call the ``partition`` brick, ``unstructured`` will use ``libmagic`` to automatically determine the file type and invoke the appropriate partition function.
+In cases where ``libmagic`` is not available, filetype detection will fall back to using the file extension.
+
+As shown in the examples below, the ``partition`` function accepts both filenames and file-like objects as input.
+``partition`` also has includes some optional kwargs.
+For example, if you set ``include_page_breaks=True``, the output will include ``PageBreak`` elements if the filetype supports it.
+You can find a full listing of optional kwargs in the documentation below.
+
+.. code:: python
+
+  from unstructured.partition.auto import partition
+
+
+  filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
+  elements = partition(filename=filename)
+  print("\n\n".join([str(el) for el in elements][:10]))
+
+
+.. code:: python
+
+  from unstructured.partition.auto import partition
+
+
+  filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
+  with open(filename, "rb") as f:
+    elements = partition(file=f, include_page_breaks=True)
+  print("\n\n".join([str(el) for el in elements][5:15]))
+
+
+The ``unstructured`` library also includes partitioning bricks targeted at specific document types.
+The ``partition`` brick uses these document-specific partitioning bricks under the hood.
+There are a few reasons you may want to use a document-specific partitioning brick instead of ``partition``:
+
+* If you already know the document type, filetype detection is unnecessary. Using the document-specific brick directly will make your program run faster.
+* Fewer dependencies. You don't need to install ``libmagic`` for filetype detection if you're only using document-specific bricks.
+* Additional features. The API for partition is the least common denominator for all document types. Certain document-specific brick include extra features that you may want to take advantage of. For example, ``partition_html`` allows you to pass in a URL so you don't have to store the ``.html`` file locally. See the documentation below learn about the options available in each partitioning brick.
+
 
 ``partition``
 --------------
