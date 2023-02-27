@@ -362,8 +362,8 @@ In the example below, we invoke the ``replace_unicode_quotes`` cleaning brick us
   print(element)
 
 
-  Since a cleaning brick is just a str -> str function, users can also easily include their own cleaning bricks for custom data preparation tasks.
-  In the example below, we remove citations from a section of text.
+Since a cleaning brick is just a ``str -> str`` function, users can also easily include their own cleaning bricks for custom data preparation tasks.
+In the example below, we remove citations from a section of text.
 
 
 .. code:: python
