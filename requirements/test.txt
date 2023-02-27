@@ -18,11 +18,7 @@ charset-normalizer==3.0.1
     ***REMOVED*** via
     ***REMOVED***   -r requirements/test.in
     ***REMOVED***   black
-colorama==0.4.6
-    ***REMOVED*** via
-    ***REMOVED***   click
-    ***REMOVED***   pytest
-coverage[toml]==7.1.0
+coverage[toml]==7.2.1
     ***REMOVED*** via
     ***REMOVED***   -r requirements/test.in
     ***REMOVED***   pytest-cov
@@ -44,7 +40,7 @@ mccabe==0.7.0
     ***REMOVED*** via flake8
 multidict==6.0.4
     ***REMOVED*** via yarl
-mypy==1.0.0
+mypy==1.0.1
     ***REMOVED*** via -r requirements/test.in
 mypy-extensions==1.0.0
     ***REMOVED*** via
@@ -62,7 +58,7 @@ pluggy==1.0.0
     ***REMOVED*** via pytest
 pycodestyle==2.10.0
     ***REMOVED*** via flake8
-pydantic==1.10.4
+pydantic==1.10.5
     ***REMOVED*** via label-studio-sdk
 pyflakes==3.0.1
     ***REMOVED*** via flake8
@@ -74,7 +70,7 @@ pyyaml==6.0
     ***REMOVED*** via vcrpy
 ***REMOVED***
     ***REMOVED*** via label-studio-sdk
-ruff==0.0.252
+ruff==0.0.253
     ***REMOVED*** via -r requirements/test.in
 ***REMOVED***
     ***REMOVED*** via vcrpy
@@ -84,11 +80,11 @@ tomli==2.0.1
     ***REMOVED***   coverage
     ***REMOVED***   mypy
     ***REMOVED***   pytest
-types-requests==2.28.11.12
+types-requests==2.28.11.15
     ***REMOVED*** via -r requirements/test.in
-types-urllib3==1.26.25.5
+types-urllib3==1.26.25.8
     ***REMOVED*** via types-requests
-typing-extensions==4.4.0
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   black
     ***REMOVED***   mypy
@@ -97,7 +93,7 @@ urllib3==1.26.14
     ***REMOVED*** via requests
 vcrpy==4.2.1
     ***REMOVED*** via -r requirements/test.in
-***REMOVED***
+wrapt==1.15.0
     ***REMOVED*** via vcrpy
 yarl==1.8.2
     ***REMOVED*** via vcrpy

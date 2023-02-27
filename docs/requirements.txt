@@ -44,7 +44,7 @@ pytz==2022.7.1
     ***REMOVED*** via sphinx
 snowballstemmer==2.2.0
     ***REMOVED*** via sphinx
-soupsieve==2.3.2.post1
+soupsieve==2.4
     ***REMOVED*** via beautifulsoup4
 sphinx==6.1.3
     ***REMOVED*** via
@@ -72,7 +72,7 @@ sphinxcontrib-serializinghtml==1.1.5
     ***REMOVED*** via sphinx
 urllib3==1.26.14
     ***REMOVED*** via requests
-zipp==3.13.0
+***REMOVED***
     ***REMOVED*** via importlib-metadata
 
 ***REMOVED*** The following packages are considered to be unsafe in a requirements file:

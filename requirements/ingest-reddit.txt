@@ -8,7 +8,7 @@
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   httpcore
-argilla==1.3.0
+argilla==1.3.1
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   unstructured (setup.py)
@@ -31,10 +31,6 @@ charset-normalizer==3.0.1
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   nltk
-colorama==0.4.6
-    ***REMOVED*** via
-    ***REMOVED***   click
-    ***REMOVED***   tqdm
 ***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
@@ -106,7 +102,7 @@ praw==7.7.0
     ***REMOVED*** via unstructured (setup.py)
 prawcore==2.3.0
     ***REMOVED*** via praw
-pydantic==1.10.4
+pydantic==1.10.5
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   argilla
@@ -159,7 +155,7 @@ tqdm==4.64.1
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   argilla
     ***REMOVED***   nltk
-typing-extensions==4.4.0
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   pydantic

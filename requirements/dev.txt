@@ -45,7 +45,7 @@ defusedxml==0.7.1
     ***REMOVED*** via nbconvert
 executing==1.2.0
     ***REMOVED*** via stack-data
-fastjsonschema==2.16.2
+fastjsonschema==2.16.3
     ***REMOVED*** via nbformat
 fqdn==1.5.1
     ***REMOVED*** via jsonschema
@@ -57,7 +57,7 @@ importlib-metadata==6.0.0
     ***REMOVED*** via
     ***REMOVED***   jupyter-client
     ***REMOVED***   nbconvert
-importlib-resources==5.10.2
+importlib-resources==5.12.0
     ***REMOVED*** via jsonschema
 ipykernel==6.21.2
     ***REMOVED*** via
@@ -98,7 +98,7 @@ jsonschema[format-nongpl]==4.17.3
     ***REMOVED***   nbformat
 jupyter==1.0.0
     ***REMOVED*** via -r requirements/dev.in
-jupyter-client==8.0.2
+jupyter-client==8.0.3
     ***REMOVED*** via
     ***REMOVED***   ipykernel
     ***REMOVED***   jupyter-console
@@ -107,7 +107,7 @@ jupyter-client==8.0.2
     ***REMOVED***   nbclient
     ***REMOVED***   notebook
     ***REMOVED***   qtconsole
-jupyter-console==6.5.1
+jupyter-console==6.6.1
     ***REMOVED*** via jupyter
 jupyter-core==5.2.0
     ***REMOVED*** via
@@ -124,7 +124,7 @@ jupyter-core==5.2.0
     ***REMOVED***   qtconsole
 jupyter-events==0.6.3
     ***REMOVED*** via jupyter-server
-jupyter-server==2.2.1
+jupyter-server==2.3.0
     ***REMOVED*** via
     ***REMOVED***   nbclassic
     ***REMOVED***   notebook-shim
@@ -144,7 +144,7 @@ matplotlib-inline==0.1.6
     ***REMOVED***   ipython
 mistune==2.0.5
     ***REMOVED*** via nbconvert
-nbclassic==0.5.1
+nbclassic==0.5.2
     ***REMOVED*** via notebook
 nbclient==0.7.2
     ***REMOVED*** via nbconvert
@@ -196,7 +196,7 @@ prometheus-client==0.16.0
     ***REMOVED***   jupyter-server
     ***REMOVED***   nbclassic
     ***REMOVED***   notebook
-prompt-toolkit==3.0.36
+prompt-toolkit==3.0.37
     ***REMOVED*** via
     ***REMOVED***   ipython
     ***REMOVED***   jupyter-console
@@ -224,7 +224,7 @@ pyrsistent==0.19.3
     ***REMOVED*** via
     ***REMOVED***   arrow
     ***REMOVED***   jupyter-client
-python-json-logger==2.0.5
+python-json-logger==2.0.7
     ***REMOVED*** via jupyter-events
 pyyaml==6.0
     ***REMOVED*** via jupyter-events
@@ -262,7 +262,7 @@ send2trash==1.8.0
     ***REMOVED***   rfc3339-validator
 ***REMOVED***
     ***REMOVED*** via anyio
-soupsieve==2.3.2.post1
+soupsieve==2.4
     ***REMOVED*** via beautifulsoup4
 stack-data==0.6.2
     ***REMOVED*** via ipython
@@ -322,7 +322,7 @@ wheel==0.38.4
     ***REMOVED***   pip-tools
 widgetsnbextension==4.0.5
     ***REMOVED*** via ipywidgets
-zipp==3.13.0
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   importlib-metadata
     ***REMOVED***   importlib-resources

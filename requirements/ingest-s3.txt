@@ -8,7 +8,7 @@
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   httpcore
-argilla==1.3.0
+argilla==1.3.1
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   unstructured (setup.py)
@@ -16,9 +16,9 @@ argilla==1.3.0
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   argilla
-boto3==1.26.70
+boto3==1.26.79
     ***REMOVED*** via unstructured (setup.py)
-botocore==1.29.70
+botocore==1.29.79
     ***REMOVED*** via
     ***REMOVED***   boto3
     ***REMOVED***   s3transfer
@@ -108,7 +108,7 @@ openpyxl==3.1.1
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   python-pptx
     ***REMOVED***   unstructured (setup.py)
-pydantic==1.10.4
+pydantic==1.10.5
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   argilla
@@ -162,7 +162,7 @@ tqdm==4.64.1
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   argilla
     ***REMOVED***   nltk
-typing-extensions==4.4.0
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   pydantic
