@@ -75,6 +75,7 @@ setup(
         "local-inference": ["unstructured-inference>=0.2.4"],
         "s3": ["boto3"],
         "reddit": ["praw"],
+        "wikipedia": ["wikipedia"],
     },
     package_dir={"unstructured": "unstructured"},
     package_data={"unstructured": ["nlp/*.txt"]},

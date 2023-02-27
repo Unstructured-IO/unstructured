@@ -1,4 +1,4 @@
-## 0.4.16-dev3
+## 0.4.16-dev4
 
 ### Enhancements
 
@@ -8,6 +8,7 @@
 
 * Added setup script for Ubuntu
 * Added Reddit connector for ingest cli.
+* Added Wikipedia connector for ingest cli.
 
 ### Fixes
 
