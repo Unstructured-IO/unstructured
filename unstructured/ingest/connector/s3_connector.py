@@ -9,6 +9,7 @@ from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
 )
+from unstructured.utils import requires_dependencies
 
 
 @dataclass
@@ -86,6 +87,7 @@ class S3IngestDoc(BaseIngestDoc):
         """includes "directories" in s3 object path"""
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
 
+    @requires_dependencies(["boto3"], extras="s3")
     def get_file(self):
         """Actually fetches the file from s3 and stores it locally."""
         import boto3
@@ -132,6 +134,7 @@ class S3IngestDoc(BaseIngestDoc):
             os.unlink(self._tmp_download_file())
 
 
+@requires_dependencies(["boto3"], extras="s3")
 class S3Connector(BaseConnector):
     """Objects of this class support fetching document(s) from"""
 
