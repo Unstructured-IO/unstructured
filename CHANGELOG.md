@@ -1,4 +1,4 @@
-***REMOVED******REMOVED*** 0.4.16-dev2
+***REMOVED******REMOVED*** 0.4.16-dev3
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
 
@@ -7,6 +7,7 @@
 ***REMOVED******REMOVED******REMOVED*** Features
 
 * Added setup script for Ubuntu
+* Added Reddit connector for ingest cli.
 
 ***REMOVED******REMOVED******REMOVED*** Fixes
 
