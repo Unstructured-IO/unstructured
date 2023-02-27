@@ -1,3 +1,9 @@
+## 0.4.16-dev5
+
+### Fixes
+
+* Fix `process_document` file cleaning on failure
+
 ## 0.4.16-dev4
 
 ### Enhancements
