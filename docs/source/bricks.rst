@@ -62,6 +62,18 @@ There are a few reasons you may want to use a document-specific partitioning bri
 * Additional features. The API for partition is the least common denominator for all document types. Certain document-specific brick include extra features that you may want to take advantage of. For example, ``partition_html`` allows you to pass in a URL so you don't have to store the ``.html`` file locally. See the documentation below learn about the options available in each partitioning brick.
 
 
+Below we see an example of how to partition a document directly with the URL using the partition_html function.
+
+.. code:: python
+
+  from unstructured.partition.html import partition_html
+
+  url = "https://www.cnn.com/2023/01/30/sport/empire-state-building-green-philadelphia-eagles-spt-intl/index.html"
+  elements = partition_html(url=url)
+  print("\n\n".join([str(el) for el in elements]))
+
+
+
 ``partition``
 --------------
 
@@ -533,8 +545,53 @@ Examples:
 Cleaning
 ########
 
-The cleaning bricks in ``unstructured`` remove unwanted text from source documents.
-Examples include removing extra whitespace, boilerplate, or sentence fragments.
+
+As part of data preparation for an NLP model, it's common to need to clean up your data prior to passing it into the model.
+If there's unwanted content in your output, for example, it could impact the quality of your NLP model.
+To help with this, the unstructured library includes cleaning bricks to help users sanitize output before sending it to downstream applications.
+
+
+Some cleaning bricks apply automatically.
+In the example in the **Partition** section, the output ``Philadelphia Eaglesâ\x80\x99 victory`` automatically gets converted to ``Philadelphia Eagles' victory`` in ``partition_html`` using the ``replace_unicode_quotes`` cleaning brick.
+You can see how that works in the code snippet below:
+
+.. code:: python
+
+  from unstructured.cleaners.core import replace_unicode_quotes
+
+  replace_unicode_quotes("Philadelphia Eaglesâ\x80\x99 victory")
+
+
+
+Document elements in ``unstructured`` include an ``apply`` method that allow you to apply the text cleaning to the document element without instantiating a new element.
+The apply method expects a callable that takes a string as input and produces another string as output.
+In the example below, we invoke the ``replace_unicode_quotes`` cleaning brick using the apply method.
+
+
+.. code:: python
+
+  from unstructured.documents.elements import Text
+
+  element = Text("Philadelphia Eaglesâ\x80\x99 victory")
+  element.apply(replace_unicode_quotes)
+  print(element)
+
+
+  Since a cleaning brick is just a str -> str function, users can also easily include their own cleaning bricks for custom data preparation tasks.
+  In the example below, we remove citations from a section of text.
+
+
+.. code:: python
+
+
+  import re
+
+  remove_citations = lambda text: re.sub("\[\d{1,3}\]", "", text)
+
+  element = Text("[1] Geolocated combat footage has confirmed Russian gains in the Dvorichne area northwest of Svatove.")
+  element.apply(remove_citations)
+  print(element)
+
 
 
 ``clean``
