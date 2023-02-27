@@ -4,7 +4,7 @@ Getting Started
 The following section will cover basic concepts and usage patterns in ``unstructured``.
 After reading this section, you should be able to:
 
-* Partitiong a document with the ``partition`` function.
+* Partitioning a document with the ``partition`` function.
 * Understand how documents are structured in ``unstructured``.
 * Convert a document to a dictionary and/or save it as a JSON.
 
@@ -13,7 +13,7 @@ The example documents in this section come from the
 directory in the ``unstructured`` repo.
 
 Before running the code in this make sure you've installed the ``unstructured`` library
-and all dependencies using the instructions in the quick start section.
+and all dependencies using the instructions in the **Quick Start** section.
 
 
 #######################
@@ -23,7 +23,7 @@ Partitioning a document
 In this section, we'll cut right to the chase and get to the most important part of the library: partitioning a document.
 The goal of document partitioning is to read in a source document, split the document into sections, categorize those sections,
 and extract the text associated with those sections. Depending on the document type, unstructured uses different methods for
-partitioning a document. We'll cover those in a later training notebook. For now, we'll use the simplest API in the library,
+partitioning a document. We'll cover those in a later section. For now, we'll use the simplest API in the library,
 the ``partition`` function. The ``partition`` function will detect the filetype of the source document and route it to the appropriate
 partitioning function. You can try out the partition function by running the cell below.
 
@@ -48,6 +48,8 @@ You can also pass in a file as a file-like object using the following workflow:
 The ``partition`` function uses `libmagic <https://formulae.brew.sh/formula/libmagic>`_ for filetype detection. If ``libmagic`` is
 not present and the user passes a filename, ``partition`` falls back to detecting the filetype using the file extension.
 ``libmagic`` is required if you'd lke to pass a file-like object to ``partition``.
+We highly recommend installing ``libmagic`` and you may observe different file detection behaviors
+if ``libmagic`` is not installed`.
 
 
 ##################
@@ -73,7 +75,7 @@ These element objects represent different components of the source document. Cur
 
 
 Other element types that we will add in the future include tables and figures.
-Different partioning functions use different methods for determining the element type and extracting the associated content.
+Different partitioning functions use different methods for determining the element type and extracting the associated content.
 Document elements have a ``str`` representation. You can print them using the snippet below.
 
 
