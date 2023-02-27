@@ -73,7 +73,10 @@ setup(
             "torch",
             "transformers",
         ],
-        "local-inference": ["unstructured-inference>=0.2.4"],
+        "local-inference": [
+            # NOTE(robinson) - Upper bound is temporary due to a multithreading issue
+            "unstructured-inference>=0.2.4,<0.2.8",
+        ],
         "s3": ["boto3"],
         "github": [
             # NOTE - pygithub at 1.58.0 fails due to https://github.com/PyGithub/PyGithub/issues/2436
