@@ -5,3 +5,7 @@ requests
 torch
 transformers
 unstructured>=0.3.1
+
+# NOTE(robinson) - these bumps are to resolve security scan items
+cryptography>=39.0.1
+IPython>=8.10
