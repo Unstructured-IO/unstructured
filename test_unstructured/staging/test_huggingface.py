@@ -1,7 +1,7 @@
 import pytest
 
 from unstructured.documents.elements import Text
-import unstructured.staging.huggingface as huggingface
+from unstructured.staging import huggingface
 
 
 class MockTokenizer:

@@ -1,6 +1,6 @@
 import pytest
 
-import unstructured.cleaners.translate as translate
+from unstructured.cleaners import translate
 
 
 def test_get_opus_mt_model_name():

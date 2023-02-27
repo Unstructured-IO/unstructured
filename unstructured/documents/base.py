@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from abc import ABC
 from typing import List, Optional
 
@@ -17,7 +18,7 @@ class Document(ABC):
 
     def get_narrative(self) -> List[NarrativeText]:
         """Pulls out all of the narrative text sections from the document."""
-        narrative: List[NarrativeText] = list()
+        narrative: List[NarrativeText] = []
         for page in self.pages:
             for element in page.elements:
                 if isinstance(element, NarrativeText):
@@ -30,7 +31,7 @@ class Document(ABC):
         if self._pages is None:
             raise NotImplementedError(
                 "When subclassing, _pages should always be populated before "
-                "using the pages property."
+                "using the pages property.",
             )
         return self._pages
 
@@ -84,7 +85,7 @@ class Page(ABC):
 
     def __init__(self, number: int):
         self.number: int = number
-        self.elements: List[Element] = list()
+        self.elements: List[Element] = []
 
     def __str__(self):
         return "\n\n".join([str(element) for element in self.elements])

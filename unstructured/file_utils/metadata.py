@@ -1,7 +1,7 @@
-from dataclasses import dataclass, field
 import datetime
 import io
-from typing import Any, Dict, IO, Final, Optional
+from dataclasses import dataclass, field
+from typing import IO, Any, Dict, Final, Optional
 
 import docx
 import openpyxl
@@ -119,7 +119,7 @@ def get_jpg_metadata(
         raise FileNotFoundError("No filename nor file were specified")
 
     exif_data = image.getexif()
-    exif_dict: Dict[str, Any] = dict()
+    exif_dict: Dict[str, Any] = {}
     for tag_id in exif_data:
         tag = TAGS.get(tag_id, tag_id)
         data = exif_data.get(tag_id)

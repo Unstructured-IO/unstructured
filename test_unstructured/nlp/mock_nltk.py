@@ -12,7 +12,7 @@ def mock_word_tokenize(text: str) -> List[str]:
 
 def mock_pos_tag(text: str) -> List[Tuple[str, str]]:
     tokens = mock_word_tokenize(text)
-    pos_tags: List[Tuple[str, str]] = list()
+    pos_tags: List[Tuple[str, str]] = []
     for token in tokens:
         if token.lower() == "ask":
             pos_tags.append((token, "VB"))

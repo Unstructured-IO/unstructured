@@ -1,10 +1,10 @@
 import datetime
 import os
 import pathlib
-import pytest
 
 import docx
 import openpyxl
+import pytest
 
 import unstructured.file_utils.metadata as meta
 
