@@ -2,7 +2,7 @@ Bricks
 ======
 
 The goal of this page is to introduce you to the concept of bricks.
-Bricks are functions that live in unstructured and are the primary public API for the library.
+Bricks are functions that live in ``unstructured`` and are the primary public API for the library.
 There are three types of bricks in ``unstructured``, corresponding to the different stages of document pre-processing: partitioning, cleaning, and staging.
 After reading this section, you should understand the following:
 
