@@ -28,7 +28,7 @@ If you call the ``partition`` brick, ``unstructured`` will use ``libmagic`` to a
 In cases where ``libmagic`` is not available, filetype detection will fall back to using the file extension.
 
 As shown in the examples below, the ``partition`` function accepts both filenames and file-like objects as input.
-``partition`` also has includes some optional kwargs.
+``partition`` also has some optional kwargs.
 For example, if you set ``include_page_breaks=True``, the output will include ``PageBreak`` elements if the filetype supports it.
 You can find a full listing of optional kwargs in the documentation below.
 
