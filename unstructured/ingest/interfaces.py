@@ -46,8 +46,6 @@ class BaseConnectorConfig(ABC):
     ***REMOVED*** where to write structured data outputs
     output_dir: str
     re_download: bool = False
-    ***REMOVED*** if a structured output .json file already exists for a given doc, do not reprocess
-    reprocess: bool = False
     verbose: bool = False
 
 
@@ -96,7 +94,7 @@ class BaseIngestDoc(ABC):
         self.isd_elems_no_filename = []
         for elem in isd_elems:
             ***REMOVED*** type: ignore
-            elem["metadata"].pop("filename")  ***REMOVED*** type: ignore[attr-defined]
+            elem["metadata"].pop("filename", None)  ***REMOVED*** type: ignore[attr-defined]
             elem.pop("coordinates")  ***REMOVED*** type: ignore[attr-defined]
             self.isd_elems_no_filename.append(elem)
 

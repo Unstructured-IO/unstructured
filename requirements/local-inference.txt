@@ -30,6 +30,10 @@ charset-normalizer==3.0.1
     ***REMOVED*** via
     ***REMOVED***   nltk
     ***REMOVED***   uvicorn
+colorama==0.4.6
+    ***REMOVED*** via
+    ***REMOVED***   click
+    ***REMOVED***   tqdm
 coloredlogs==15.0.1
     ***REMOVED*** via onnxruntime
 contourpy==1.0.7
@@ -74,6 +78,8 @@ humanfriendly==10.0
     ***REMOVED***   anyio
     ***REMOVED***   requests
     ***REMOVED***   rfc3986
+importlib-metadata==6.0.0
+    ***REMOVED*** via markdown
 importlib-resources==5.12.0
     ***REMOVED*** via matplotlib
 iopath==0.1.10
@@ -91,6 +97,8 @@ layoutparser[layoutmodels,tesseract]==0.3.4
     ***REMOVED***   python-docx
     ***REMOVED***   python-pptx
     ***REMOVED***   unstructured (setup.py)
+markdown==3.4.1
+    ***REMOVED*** via unstructured (setup.py)
 matplotlib==3.7.0
     ***REMOVED*** via pycocotools
 ***REMOVED***
@@ -165,6 +173,8 @@ pydantic==1.10.5
     ***REMOVED***   fastapi
 pyparsing==3.0.9
     ***REMOVED*** via matplotlib
+pyreadline3==3.4.1
+    ***REMOVED*** via humanfriendly
 pytesseract==0.3.10
     ***REMOVED*** via layoutparser
 ***REMOVED***

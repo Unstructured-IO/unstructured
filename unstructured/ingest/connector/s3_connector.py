@@ -24,8 +24,6 @@ class SimpleS3Config(BaseConnectorConfig):
     output_dir: str
     re_download: bool = False
     preserve_downloads: bool = False
-    ***REMOVED*** if a structured output .json file already exists, do not reprocess an s3 file to overwrite it
-    reprocess: bool = False
     verbose: bool = False
 
     ***REMOVED*** S3 Specific (optional)

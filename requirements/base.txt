@@ -20,6 +20,10 @@ charset-normalizer==3.0.1
     ***REMOVED*** via requests
 ***REMOVED***
     ***REMOVED*** via nltk
+colorama==0.4.6
+    ***REMOVED*** via
+    ***REMOVED***   click
+    ***REMOVED***   tqdm
 ***REMOVED***
     ***REMOVED*** via argilla
 ***REMOVED***
@@ -35,6 +39,8 @@ charset-normalizer==3.0.1
     ***REMOVED***   anyio
     ***REMOVED***   requests
     ***REMOVED***   rfc3986
+importlib-metadata==6.0.0
+    ***REMOVED*** via markdown
 ***REMOVED***
     ***REMOVED*** via nltk
 ***REMOVED***
@@ -42,6 +48,8 @@ charset-normalizer==3.0.1
     ***REMOVED***   python-docx
     ***REMOVED***   python-pptx
     ***REMOVED***   unstructured (setup.py)
+markdown==3.4.1
+    ***REMOVED*** via unstructured (setup.py)
 ***REMOVED***
     ***REMOVED*** via argilla
 ***REMOVED***
@@ -101,3 +109,5 @@ urllib3==1.26.14
     ***REMOVED***   deprecated
 xlsxwriter==3.0.8
     ***REMOVED*** via python-pptx
+***REMOVED***
+    ***REMOVED*** via importlib-metadata

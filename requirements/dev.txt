@@ -6,10 +6,6 @@
 ***REMOVED***
 ***REMOVED***
     ***REMOVED*** via jupyter-server
-appnope==0.1.3
-    ***REMOVED*** via
-    ***REMOVED***   ipykernel
-    ***REMOVED***   ipython
 argon2-cffi==21.3.0
     ***REMOVED*** via
     ***REMOVED***   jupyter-server
@@ -35,6 +31,11 @@ build==0.10.0
     ***REMOVED*** via argon2-cffi-bindings
 ***REMOVED***
     ***REMOVED*** via pip-tools
+colorama==0.4.6
+    ***REMOVED*** via
+    ***REMOVED***   build
+    ***REMOVED***   click
+    ***REMOVED***   ipython
 comm==0.1.2
     ***REMOVED*** via ipykernel
 debugpy==1.6.6
@@ -181,8 +182,6 @@ pandocfilters==1.5.0
     ***REMOVED*** via nbconvert
 parso==0.8.3
     ***REMOVED*** via jedi
-pexpect==4.8.0
-    ***REMOVED*** via ipython
 pickleshare==0.7.5
     ***REMOVED*** via ipython
 pip-tools==6.12.2
@@ -202,10 +201,6 @@ prompt-toolkit==3.0.37
     ***REMOVED***   jupyter-console
 psutil==5.9.4
     ***REMOVED*** via ipykernel
-ptyprocess==0.7.0
-    ***REMOVED*** via
-    ***REMOVED***   pexpect
-    ***REMOVED***   terminado
 pure-eval==0.2.2
     ***REMOVED*** via stack-data
 ***REMOVED***

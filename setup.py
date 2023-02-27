@@ -59,6 +59,7 @@ setup(
         "python-docx",
         "python-pptx",
         "python-magic",
+        "markdown",
         "requests",
         ***REMOVED*** NOTE(robinson) - The following dependencies are pinned
         ***REMOVED*** to address security scans
@@ -77,6 +78,11 @@ setup(
             "unstructured-inference>=0.2.4,<0.2.8",
         ],
         "s3": ["boto3"],
+        "github": [
+            ***REMOVED*** NOTE - pygithub at 1.58.0 fails due to https://github.com/PyGithub/PyGithub/issues/2436
+            ***REMOVED*** In the future, we can update this to pygithub>1.58.0
+            "***REMOVED***",
+        ],
         "reddit": ["praw"],
     },
     package_dir={"unstructured": "unstructured"},
