@@ -73,9 +73,8 @@ setup(
             "transformers",
         ],
         "local-inference": [
-            "unstructured-inference>=0.2.4",
-            # NOTE(robinson) - This is temporary due to a multithreading issue
-            "unstructured-inference<0.2.8",
+            # NOTE(robinson) - Upper bound is temporary due to a multithreading issue
+            "unstructured-inference>=0.2.4,<0.2.8",
         ],
         "s3": ["boto3"],
         "reddit": ["praw"],
