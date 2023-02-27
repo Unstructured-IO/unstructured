@@ -9,6 +9,10 @@
 * Added setup script for Ubuntu
 * Added Reddit connector for ingest cli.
 
+### Fixes
+
+* Initializes connector properly in ingest.main::MainProcess
+
 ## 0.4.15
 
 ### Enhancements
