@@ -72,7 +72,11 @@ setup(
             "torch",
             "transformers",
         ],
-        "local-inference": ["unstructured-inference>=0.2.4"],
+        "local-inference": [
+            "unstructured-inference>=0.2.4",
+            # NOTE(robinson) - This is temporary due to a multithreading issue
+            "unstructured-inference<0.2.8"
+        ],
         "s3": ["boto3"],
         "reddit": ["praw"],
     },

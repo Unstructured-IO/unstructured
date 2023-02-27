@@ -70,7 +70,7 @@ pyyaml==6.0
     # via vcrpy
 requests==2.28.2
     # via label-studio-sdk
-ruff==0.0.252
+ruff==0.0.253
     # via -r requirements/test.in
 six==1.16.0
     # via vcrpy
