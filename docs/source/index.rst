@@ -9,10 +9,16 @@ Library Documentation
 ---------------------
 
 :doc:`installing`
-  How to install the ``unstructured`` library
+  Instructions on how to install the ``unstructured`` library on your system.
+
+:doc:`getting_started`
+  Check out this section to learn about basic workflows in ``unstructured``.
+
+:doc:`bricks`
+  Learning more about partitioning, cleaning, and staging bricks, included advanced usage patterns.
 
 :doc:`examples`
-  Examples of how to use the library to parse different document types
+  Examples of other types of workflows within the ``unstructured`` package.
 
 
 .. Hidden TOCs
@@ -25,5 +31,4 @@ Library Documentation
    installing
    getting_started
    bricks
-   elements
    examples

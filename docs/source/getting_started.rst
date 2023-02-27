@@ -47,7 +47,7 @@ You can also pass in a file as a file-like object using the following workflow:
 
 The ``partition`` function uses `libmagic <https://formulae.brew.sh/formula/libmagic>`_ for filetype detection. If ``libmagic`` is
 not present and the user passes a filename, ``partition`` falls back to detecting the filetype using the file extension.
-``libmagic`` is required if you'd lke to pass a file-like object to ``partition``.
+``libmagic`` is required if you'd like to pass a file-like object to ``partition``.
 We highly recommend installing ``libmagic`` and you may observe different file detection behaviors
 if ``libmagic`` is not installed`.
 
