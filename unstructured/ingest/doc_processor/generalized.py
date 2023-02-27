@@ -30,11 +30,7 @@ def process_document(doc):
         # the results. Instead, the MainProcess (caller) may work with the aggregate
         # results across all docs in memory.
         doc.write_result()
-
     except Exception:
-        filename = doc.filename if isinstance(doc.filename, Path) else Path(doc.filename)
-        if filename.exists():
-            os.unlink(filename.as_posix())
         # TODO(crag) save the exception instead of print?
         logger.error(f"Failed to process {doc}", exc_info=True)
     finally:
