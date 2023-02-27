@@ -4,7 +4,6 @@ from typing import Any, Dict, List, Optional, Union
 
 from unstructured.documents.elements import Text
 
-
 LABEL_STUDIO_TYPE = List[Dict[str, Dict[str, str]]]
 
 # NOTE(robinson) - ref: https://labelstud.io/tags/labels.html
@@ -50,7 +49,7 @@ class LabelStudioResult:
         if self.type not in VALID_LABEL_TYPES:
             raise ValueError(
                 f"{self.type} is not a valid label type. "
-                f"Valid label types are: {VALID_LABEL_TYPES}"
+                f"Valid label types are: {VALID_LABEL_TYPES}",
             )
 
     def to_dict(self):
@@ -106,7 +105,7 @@ class LabelStudioPrediction(LabelStudioAnnotation):
         if not isinstance(self.score, (int, float)) or (self.score < 0 or self.score > 1):
             raise ValueError(
                 f"{self.score} is not a valid score value. "
-                f"Score value must be a number between 0 and 1."
+                f"Score value must be a number between 0 and 1.",
             )
 
 
@@ -119,21 +118,19 @@ def stage_for_label_studio(
 ) -> LABEL_STUDIO_TYPE:
     """Converts the document to the format required for upload to LabelStudio.
     ref: https://labelstud.io/guide/tasks.html#Example-JSON-format"""
-    if annotations is not None:
-        if len(elements) != len(annotations):
-            raise ValueError("The length of elements and annotations must match.")
-    if predictions is not None:
-        if len(elements) != len(predictions):
-            raise ValueError("The length of elements and predictions must match.")
+    if annotations is not None and len(elements) != len(annotations):
+        raise ValueError("The length of elements and annotations must match.")
+    if predictions is not None and len(elements) != len(predictions):
+        raise ValueError("The length of elements and predictions must match.")
 
-    label_studio_data: LABEL_STUDIO_TYPE = list()
+    label_studio_data: LABEL_STUDIO_TYPE = []
     for i, element in enumerate(elements):
-        data: Dict[str, str] = dict()
+        data: Dict[str, str] = {}
         data[text_field] = element.text
         if isinstance(element.id, str):
             data[id_field] = element.id
 
-        labeling_example: Dict[str, Any] = dict()
+        labeling_example: Dict[str, Any] = {}
         labeling_example["data"] = data
         if annotations is not None:
             labeling_example["annotations"] = [a.to_dict() for a in annotations[i]]

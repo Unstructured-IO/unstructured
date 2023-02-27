@@ -1,7 +1,8 @@
-import pytest
 import datetime
 
-import unstructured.cleaners.extract as extract
+import pytest
+
+from unstructured.cleaners import extract
 
 EMAIL_META_DATA_INPUT = """from ABC.DEF.local ([ba23::58b5:2236:45g2:88h2]) by
     \n ABC.DEF.local ([ba23::58b5:2236:45g2:88h2%25]) with mapi id\
@@ -53,12 +54,18 @@ def test_extract_mapi_id():
 
 def test_extract_datetimetz():
     assert extract.extract_datetimetz(EMAIL_META_DATA_INPUT) == datetime.datetime(
-        2021, 3, 26, 11, 4, 9, tzinfo=datetime.timezone(datetime.timedelta(seconds=43200))
+        2021,
+        3,
+        26,
+        11,
+        4,
+        9,
+        tzinfo=datetime.timezone(datetime.timedelta(seconds=43200)),
     )
 
 
 @pytest.mark.parametrize(
-    "text, expected",
+    ("text", "expected"),
     [
         ("215-867-5309", "215-867-5309"),
         ("Phone Number: +1 215.867.5309", "+1 215.867.5309"),
@@ -71,7 +78,7 @@ def test_extract_us_phone_number(text, expected):
 
 
 @pytest.mark.parametrize(
-    "text, expected",
+    ("text", "expected"),
     [
         ("1. Introduction:", ("1", None, None)),
         ("a. Introduction:", ("a", None, None)),
