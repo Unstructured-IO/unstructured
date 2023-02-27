@@ -135,6 +135,7 @@ check-version:
 ## tidy:                    run black
 .PHONY: tidy
 tidy:
+	ruff . --select I,UP015,UP032,UP034,UP018,COM,C4,PT,SIM,PLR0402 --fix-only || true
 	black --line-length 100 ${PACKAGE_NAME}
 	black --line-length 100 test_${PACKAGE_NAME}
 
