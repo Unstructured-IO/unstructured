@@ -16,9 +16,9 @@ backoff==2.2.1
     # via
     #   -r requirements/base.txt
     #   argilla
-boto3==1.26.79
+boto3==1.26.70
     # via unstructured (setup.py)
-botocore==1.29.79
+botocore==1.29.70
     # via
     #   boto3
     #   s3transfer
