@@ -23,6 +23,7 @@ Library Documentation
    :hidden:
 
    installing
+   getting_started
    elements
    bricks
    examples
