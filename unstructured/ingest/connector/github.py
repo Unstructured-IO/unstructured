@@ -49,7 +49,7 @@ class SimpleGitHubConfig(BaseConnectorConfig):
         ):
             raise ValueError(
                 'Please provide a valid URL, e.g. "https://github.com/Unstructured-IO/unstructured"'
-                ' or a repository owner/name pair, e.g. "Unstructured-IO/unstructured".'
+                ' or a repository owner/name pair, e.g. "Unstructured-IO/unstructured".',
             )
 
         # If there's no issues, store the core repository info
@@ -168,7 +168,7 @@ class GitHubConnector(BaseConnector):
                 ".ppt",
                 ".pptx",
                 ".xml",
-            )
+            ),
         )
         if not supported and self.config.verbose:
             print(f"The file {path!r} is discarded as it does not contain a supported filetype.")

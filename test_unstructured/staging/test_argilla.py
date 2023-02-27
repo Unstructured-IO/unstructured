@@ -1,17 +1,17 @@
+import argilla as rg
 import pytest
 
-import argilla as rg
-import unstructured.staging.argilla as argilla
-from unstructured.documents.elements import Title, NarrativeText
+from unstructured.documents.elements import NarrativeText, Title
+from unstructured.staging import argilla
 
 
-@pytest.fixture
+@pytest.fixture()
 def elements():
     return [Title(text="example"), NarrativeText(text="another example")]
 
 
 @pytest.mark.parametrize(
-    "task_name, dataset_type, extra_kwargs",
+    ("task_name", "dataset_type", "extra_kwargs"),
     [
         (
             "text_classification",
@@ -56,7 +56,7 @@ def test_stage_for_argilla(elements, task_name, dataset_type, extra_kwargs):
 
 
 @pytest.mark.parametrize(
-    "task_name, error, error_message, extra_kwargs",
+    ("task_name", "error", "error_message", "extra_kwargs"),
     [
         ("unknown_task", ValueError, "invalid value", {}),
         ("text_classification", ValueError, "invalid value", {"metadata": "invalid metadata"}),

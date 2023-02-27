@@ -1,15 +1,15 @@
 from typing import IO, Optional
 
-from unstructured.file_utils.filetype import detect_filetype, FileType
+from unstructured.file_utils.filetype import FileType, detect_filetype
 from unstructured.partition.doc import partition_doc
 from unstructured.partition.docx import partition_docx
 from unstructured.partition.email import partition_email
 from unstructured.partition.html import partition_html
+from unstructured.partition.image import partition_image
 from unstructured.partition.md import partition_md
 from unstructured.partition.pdf import partition_pdf
 from unstructured.partition.ppt import partition_ppt
 from unstructured.partition.pptx import partition_pptx
-from unstructured.partition.image import partition_image
 from unstructured.partition.text import partition_text
 
 

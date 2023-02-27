@@ -1,4 +1,5 @@
 from typing import IO, List, Optional, Union
+
 import markdown
 import requests
 
@@ -26,7 +27,7 @@ def partition_md(
         raise ValueError("One of filename, file, or text must be specified.")
 
     if filename is not None and not file and not text and not url:
-        with open(filename, "r", encoding="utf8") as f:
+        with open(filename, encoding="utf8") as f:
             text = optional_decode(f.read())
 
     elif file is not None and not filename and not text and not url:
