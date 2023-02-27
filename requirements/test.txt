@@ -80,6 +80,8 @@ tomli==2.0.1
     #   coverage
     #   mypy
     #   pytest
+types-markdown==3.4.2.5
+    # via -r requirements/test.in
 types-requests==2.28.11.15
     # via -r requirements/test.in
 types-urllib3==1.26.25.8

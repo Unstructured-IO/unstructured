@@ -54,6 +54,10 @@ install-build:
 install-ingest-s3:
 	pip install -r requirements/ingest-s3.txt
 
+.PHONY: install-ingest-github
+install-ingest-github:
+	pip install -r requirements/ingest-github.txt
+
 .PHONY: install-ingest-reddit
 install-ingest-reddit:
 	pip install -r requirements/ingest-reddit.txt
@@ -88,6 +92,7 @@ pip-compile:
 	cp requirements/build.txt docs/requirements.txt
 	pip-compile --upgrade --extra=s3     --output-file=requirements/ingest-s3.txt     requirements/base.txt setup.py
 	pip-compile --upgrade --extra=reddit --output-file=requirements/ingest-reddit.txt requirements/base.txt setup.py
+	pip-compile --upgrade --extra=github --output-file=requirements/ingest-github.txt requirements/base.txt setup.py
 
 ## install-project-local:   install unstructured into your local python environment
 .PHONY: install-project-local

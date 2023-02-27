@@ -30,6 +30,10 @@ click==8.1.3
     # via
     #   nltk
     #   uvicorn
+colorama==0.4.6
+    # via
+    #   click
+    #   tqdm
 coloredlogs==15.0.1
     # via onnxruntime
 contourpy==1.0.7
@@ -74,6 +78,8 @@ idna==3.4
     #   anyio
     #   requests
     #   rfc3986
+importlib-metadata==6.0.0
+    # via markdown
 importlib-resources==5.12.0
     # via matplotlib
 iopath==0.1.10
@@ -91,6 +97,8 @@ lxml==4.9.2
     #   python-docx
     #   python-pptx
     #   unstructured (setup.py)
+markdown==3.4.1
+    # via unstructured (setup.py)
 matplotlib==3.7.0
     # via pycocotools
 monotonic==1.6
@@ -165,6 +173,8 @@ pydantic==1.10.5
     #   fastapi
 pyparsing==3.0.9
     # via matplotlib
+pyreadline3==3.4.1
+    # via humanfriendly
 pytesseract==0.3.10
     # via layoutparser
 python-dateutil==2.8.2
