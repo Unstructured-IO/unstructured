@@ -10,6 +10,10 @@
 * Added GitHub connector for ingest cli.
 * Added `partition_md` partitioner.
 
+### Fixes
+
+* Initializes connector properly in ingest.main::MainProcess
+
 ## 0.4.15
 
 ### Enhancements
