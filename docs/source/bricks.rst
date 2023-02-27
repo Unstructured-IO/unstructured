@@ -368,7 +368,6 @@ In the example below, we invoke the ``replace_unicode_quotes`` cleaning brick us
 
 .. code:: python
 
-
   import re
 
   remove_citations = lambda text: re.sub("\[\d{1,3}\]", "", text)
@@ -378,7 +377,7 @@ In the example below, we invoke the ``replace_unicode_quotes`` cleaning brick us
   print(element)
 
 
-  See below for a full list of cleaning bricks in the ``unstructured`` library.
+See below for a full list of cleaning bricks in the ``unstructured`` library.
 
 
 
