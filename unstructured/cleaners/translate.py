@@ -1,11 +1,11 @@
-from typing import List, Optional
 import warnings
+from typing import List, Optional
 
 import langdetect
 from transformers import MarianMTModel, MarianTokenizer
 
-from unstructured.staging.huggingface import chunk_by_attention_window
 from unstructured.nlp.tokenize import sent_tokenize
+from unstructured.staging.huggingface import chunk_by_attention_window
 
 
 def _get_opus_mt_model_name(source_lang: str, target_lang: str):
@@ -17,7 +17,7 @@ def _get_opus_mt_model_name(source_lang: str, target_lang: str):
 def _validate_language_code(language_code: str):
     if not isinstance(language_code, str) or len(language_code) != 2:
         raise ValueError(
-            f"Invalid language code: {language_code}. Language codes must be two letter strings."
+            f"Invalid language code: {language_code}. Language codes must be two letter strings.",
         )
 
 
@@ -59,12 +59,12 @@ def translate_text(text, source_lang: Optional[str] = None, target_lang: str = "
     except OSError:
         raise ValueError(
             f"Transformers could not find the translation model {model_name}. "
-            "The requested source/target language combo is not supported."
+            "The requested source/target language combo is not supported.",
         )
 
     chunks: List[str] = chunk_by_attention_window(text, tokenizer, split_function=sent_tokenize)
 
-    translated_chunks: List[str] = list()
+    translated_chunks: List[str] = []
     for chunk in chunks:
         translated_chunks.append(_translate_text(text, model, tokenizer))
 
@@ -79,7 +79,7 @@ def _translate_text(text, model, tokenizer):
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         translated = model.generate(
-            **tokenizer([text], return_tensors="pt", padding="max_length", max_length=512)
+            **tokenizer([text], return_tensors="pt", padding="max_length", max_length=512),
         )
     return [tokenizer.decode(t, max_new_tokens=512, skip_special_tokens=True) for t in translated][
         0

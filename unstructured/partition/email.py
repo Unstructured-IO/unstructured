@@ -1,40 +1,39 @@
 import email
-import sys
 import re
+import sys
 from email.message import Message
-from typing import Dict, IO, List, Optional, Tuple, Union
+from typing import IO, Dict, List, Optional, Tuple, Union
 
 if sys.version_info < (3, 8):
     from typing_extensions import Final
 else:
     from typing import Final
 
-from unstructured.cleaners.core import replace_mime_encodings, clean_extra_whitespace
+from unstructured.cleaners.core import clean_extra_whitespace, replace_mime_encodings
 from unstructured.cleaners.extract import (
+    extract_datetimetz,
+    extract_email_address,
     extract_ip_address,
     extract_ip_address_name,
     extract_mapi_id,
-    extract_datetimetz,
-    extract_email_address,
-)
-from unstructured.documents.email_elements import (
-    Recipient,
-    Sender,
-    Subject,
-    ReceivedInfo,
-    MetaData,
 )
 from unstructured.documents.elements import (
     Element,
     ElementMetadata,
-    Text,
     Image,
     NarrativeText,
+    Text,
     Title,
 )
+from unstructured.documents.email_elements import (
+    MetaData,
+    ReceivedInfo,
+    Recipient,
+    Sender,
+    Subject,
+)
 from unstructured.partition.html import partition_html
-from unstructured.partition.text import split_by_paragraph, partition_text
-
+from unstructured.partition.text import partition_text, split_by_paragraph
 
 VALID_CONTENT_SOURCES: Final[List[str]] = ["text/html", "text/plain"]
 
@@ -45,7 +44,7 @@ def _parse_received_data(data: str) -> List[Element]:
     mapi_id = extract_mapi_id(data)
     datetimetz = extract_datetimetz(data)
 
-    elements: List[Element] = list()
+    elements: List[Element] = []
     if ip_address_names and ip_addresses:
         for name, ip in zip(ip_address_names, ip_addresses):
             elements.append(ReceivedInfo(name=name, text=ip))
@@ -53,7 +52,7 @@ def _parse_received_data(data: str) -> List[Element]:
         elements.append(ReceivedInfo(name="mapi_id", text=mapi_id[0]))
     if datetimetz:
         elements.append(
-            ReceivedInfo(name="received_datetimetz", text=str(datetimetz), datestamp=datetimetz)
+            ReceivedInfo(name="received_datetimetz", text=str(datetimetz), datestamp=datetimetz),
         )
     return elements
 
@@ -68,7 +67,7 @@ def _parse_email_address(data: str) -> Tuple[str, str]:
 
 
 def partition_email_header(msg: Message) -> List[Element]:
-    elements: List[Element] = list()
+    elements: List[Element] = []
     for item in msg.raw_items():
         if item[0] == "To":
             text = _parse_email_address(item[1])
@@ -87,7 +86,8 @@ def partition_email_header(msg: Message) -> List[Element]:
 
 
 def extract_attachment_info(
-    message: Message, output_dir: Optional[str] = None
+    message: Message,
+    output_dir: Optional[str] = None,
 ) -> List[Dict[str, str]]:
     list_attachments = []
     attachment_info = {}
@@ -122,7 +122,8 @@ def has_embedded_image(element):
 
 
 def find_embedded_image(
-    element: Union[NarrativeText, Title], indices: re.Match
+    element: Union[NarrativeText, Title],
+    indices: re.Match,
 ) -> Tuple[Element, Element]:
     start, end = indices.start(), indices.end()
 
@@ -156,14 +157,14 @@ def partition_email(
     if content_source not in VALID_CONTENT_SOURCES:
         raise ValueError(
             f"{content_source} is not a valid value for content_source. "
-            f"Valid content sources are: {VALID_CONTENT_SOURCES}"
+            f"Valid content sources are: {VALID_CONTENT_SOURCES}",
         )
 
     if not any([filename, file, text]):
         raise ValueError("One of filename, file, or text must be specified.")
 
     if filename is not None and not file and not text:
-        with open(filename, "r") as f:
+        with open(filename) as f:
             msg = email.message_from_file(f)
 
     elif file is not None and not filename and not text:
@@ -215,12 +216,12 @@ def partition_email(
 
     for idx, element in enumerate(elements):
         indices = has_embedded_image(element)
-        if (isinstance(element, NarrativeText) or isinstance(element, Title)) and indices:
+        if (isinstance(element, (NarrativeText, Title))) and indices:
             image_info, clean_element = find_embedded_image(element, indices)
             elements[idx] = clean_element
             elements.insert(idx + 1, image_info)
 
-    header: List[Element] = list()
+    header: List[Element] = []
     if include_headers:
         header = partition_email_header(msg)
     all_elements = header + elements

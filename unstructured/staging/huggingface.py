@@ -1,4 +1,4 @@
-from typing import Callable, Optional, List
+from typing import Callable, List, Optional
 
 from transformers import PreTrainedTokenizer
 
@@ -6,7 +6,9 @@ from unstructured.documents.elements import Text
 
 
 def stage_for_transformers(
-    elements: List[Text], tokenizer: PreTrainedTokenizer, **chunk_kwargs
+    elements: List[Text],
+    tokenizer: PreTrainedTokenizer,
+    **chunk_kwargs,
 ) -> List[str]:
     """Stages text elements for transformers pipelines by chunking them into sections that can
     fit into the attention window for the model associated with the tokenizer."""
@@ -42,7 +44,7 @@ def chunk_by_attention_window(
     if buffer < 0 or buffer >= max_input_size:
         raise ValueError(
             f"buffer is set to {buffer}. Must be greater than zero and smaller than "
-            f"max_input_size, which is {max_input_size}."
+            f"max_input_size, which is {max_input_size}.",
         )
 
     max_chunk_size = max_input_size - buffer
@@ -50,8 +52,8 @@ def chunk_by_attention_window(
     split_text: List[str] = split_function(text)
     num_splits = len(split_text)
 
-    chunks: List[str] = list()
-    chunk_text = str()
+    chunks: List[str] = []
+    chunk_text = ""
     chunk_size = 0
 
     for i, segment in enumerate(split_text):
@@ -63,12 +65,12 @@ def chunk_by_attention_window(
                 f"The maximum number of tokens is {max_chunk_size}. "
                 "Consider using a different split_function to reduce the size "
                 "of the segments under consideration. The text that caused the "
-                "error is: \n\n{segment}"
+                "error is: \n\n{segment}",
             )
 
         if chunk_size + num_tokens > max_chunk_size or i == (num_splits - 1):
             chunks.append(chunk_text)
-            chunk_text = str()
+            chunk_text = ""
             chunk_size = 0
 
         ***REMOVED*** NOTE(robinson) - To avoid the separator appearing at the beginning of the string

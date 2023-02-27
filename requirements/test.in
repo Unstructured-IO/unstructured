@@ -13,6 +13,7 @@ pytest-cov
 label_studio_sdk==0.0.17
 types-requests
 vcrpy
+ruff
 
 ***REMOVED*** NOTE(robinson) - The following pins are to address
 ***REMOVED*** vulnerabilities in dependency scans

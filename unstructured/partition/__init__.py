@@ -1,6 +1,7 @@
-import requests  ***REMOVED*** type: ignore
-from typing import BinaryIO, List, Optional, Union, Tuple, Mapping
+from typing import BinaryIO, List, Mapping, Optional, Tuple, Union
 from urllib.parse import urlsplit
+
+import requests  ***REMOVED*** type: ignore
 
 from unstructured.documents.elements import Element
 
@@ -29,8 +30,8 @@ def _partition_via_api(
     file_: Mapping[str, Tuple[str, Union[BinaryIO, bytes]]] = {
         "file": (
             filename,
-            file if file else open(filename, "rb"),
-        )
+            file if file else open(filename, "rb"),  ***REMOVED*** noqa: SIM115
+        ),
     }
     response = requests.post(
         url=url,
@@ -42,7 +43,7 @@ def _partition_via_api(
     if response.status_code == 200:
         pages = response.json()["pages"]
         num_pages = len(pages)
-        elements = list()
+        elements = []
         for i, page in enumerate(pages):
             for element in page["elements"]:
                 elements.append(element)

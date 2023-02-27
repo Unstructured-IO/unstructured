@@ -6,8 +6,8 @@ import sys
 
 import click
 
-from unstructured.ingest.connector.s3_connector import S3Connector, SimpleS3Config
 from unstructured.ingest.connector.reddit import RedditConnector, SimpleRedditConfig
+from unstructured.ingest.connector.s3_connector import S3Connector, SimpleS3Config
 from unstructured.ingest.doc_processor.generalized import initialize, process_document
 
 
@@ -33,14 +33,14 @@ class MainProcess:
         num_docs_to_process = len(docs)
         if num_docs_to_process == 0:
             print(
-                "All docs have structured outputs, nothing to do. Use --reprocess to process all."
+                "All docs have structured outputs, nothing to do. Use --reprocess to process all.",
             )
             return None
         elif num_docs_to_process != num_docs_all:
             print(
                 f"Skipping processing for {num_docs_all - num_docs_to_process} docs out of "
                 f"{num_docs_all} since their structured outputs already exist, use --reprocess to "
-                "reprocess those in addition to the unprocessed ones."
+                "reprocess those in addition to the unprocessed ones.",
             )
         return docs
 

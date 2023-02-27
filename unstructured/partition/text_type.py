@@ -2,7 +2,6 @@
 import os
 import re
 import sys
-
 from typing import List, Optional
 
 if sys.version_info < (3, 8):
@@ -11,18 +10,24 @@ else:
     from typing import Final
 
 from unstructured.cleaners.core import remove_punctuation
-from unstructured.nlp.english_words import ENGLISH_WORDS
-from unstructured.nlp.patterns import US_PHONE_NUMBERS_RE, UNICODE_BULLETS_RE, US_CITY_STATE_ZIP_RE
-from unstructured.nlp.tokenize import pos_tag, sent_tokenize, word_tokenize
 from unstructured.logger import logger
-
+from unstructured.nlp.english_words import ENGLISH_WORDS
+from unstructured.nlp.patterns import (
+    UNICODE_BULLETS_RE,
+    US_CITY_STATE_ZIP_RE,
+    US_PHONE_NUMBERS_RE,
+)
+from unstructured.nlp.tokenize import pos_tag, sent_tokenize, word_tokenize
 
 POS_VERB_TAGS: Final[List[str]] = ["VB", "VBG", "VBD", "VBN", "VBP", "VBZ"]
 ENGLISH_WORD_SPLIT_RE = re.compile(r"[\s|\.|-|_|\/]")
 
 
 def is_possible_narrative_text(
-    text: str, cap_threshold: float = 0.5, non_alpha_threshold: float = 0.5, language: str = "en"
+    text: str,
+    cap_threshold: float = 0.5,
+    non_alpha_threshold: float = 0.5,
+    language: str = "en",
 ) -> bool:
     """Checks to see if the text passes all of the checks for a narrative text section.
     You can change the cap threshold using the cap_threshold kwarg or the
@@ -56,14 +61,14 @@ def is_possible_narrative_text(
     ***REMOVED*** NOTE(robinson): it gets read in from the environment as a string so we need to
     ***REMOVED*** cast it to a float
     cap_threshold = float(
-        os.environ.get("UNSTRUCTURED_NARRATIVE_TEXT_CAP_THRESHOLD", cap_threshold)
+        os.environ.get("UNSTRUCTURED_NARRATIVE_TEXT_CAP_THRESHOLD", cap_threshold),
     )
     if exceeds_cap_ratio(text, threshold=cap_threshold):
         logger.debug(f"Not narrative. Text exceeds cap ratio {cap_threshold}:\n\n{text}")
         return False
 
     non_alpha_threshold = float(
-        os.environ.get("UNSTRUCTURED_NARRATIVE_TEXT_NON_ALPHA_THRESHOLD", non_alpha_threshold)
+        os.environ.get("UNSTRUCTURED_NARRATIVE_TEXT_NON_ALPHA_THRESHOLD", non_alpha_threshold),
     )
     if under_non_alpha_ratio(text, threshold=non_alpha_threshold):
         return False
@@ -102,7 +107,7 @@ def is_possible_title(
         return False
 
     title_max_word_length = int(
-        os.environ.get("UNSTRUCTURED_TITLE_MAX_WORD_LENGTH", title_max_word_length)
+        os.environ.get("UNSTRUCTURED_TITLE_MAX_WORD_LENGTH", title_max_word_length),
     )
     ***REMOVED*** NOTE(robinson) - splitting on spaces here instead of word tokenizing because it
     ***REMOVED*** is less expensive and actual tokenization doesn't add much value for the length check
@@ -110,7 +115,7 @@ def is_possible_title(
         return False
 
     non_alpha_threshold = float(
-        os.environ.get("UNSTRUCTURED_TITLE_NON_ALPHA_THRESHOLD", non_alpha_threshold)
+        os.environ.get("UNSTRUCTURED_TITLE_NON_ALPHA_THRESHOLD", non_alpha_threshold),
     )
     if under_non_alpha_ratio(text, threshold=non_alpha_threshold):
         return False
@@ -159,10 +164,7 @@ def contains_verb(text: str) -> bool:
         text = text.lower()
 
     pos_tags = pos_tag(text)
-    for _, tag in pos_tags:
-        if tag in POS_VERB_TAGS:
-            return True
-    return False
+    return any(tag in POS_VERB_TAGS for _, tag in pos_tags)
 
 
 def contains_english_word(text: str) -> bool:
@@ -197,7 +199,7 @@ def sentence_count(text: str, min_length: Optional[int] = None) -> int:
         if min_length and len(words) < min_length:
             logger.debug(
                 f"Skipping sentence because does not exceed {min_length} word tokens\n"
-                f"{sentence}"
+                f"{sentence}",
             )
             continue
         count += 1

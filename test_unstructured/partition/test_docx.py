@@ -1,13 +1,19 @@
 import os
-import pytest
 
 import docx
+import pytest
 
-from unstructured.documents.elements import Address, ListItem, NarrativeText, Title, Text
+from unstructured.documents.elements import (
+    Address,
+    ListItem,
+    NarrativeText,
+    Text,
+    Title,
+)
 from unstructured.partition.docx import partition_docx
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_document():
     document = docx.Document()
 
@@ -34,7 +40,7 @@ def mock_document():
     return document
 
 
-@pytest.fixture
+@pytest.fixture()
 def expected_elements():
     return [
         Title("These are a few of my favorite things:"),
@@ -69,9 +75,8 @@ def test_partition_docx_raises_with_both_specified(mock_document, tmpdir):
     filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     mock_document.save(filename)
 
-    with open(filename, "rb") as f:
-        with pytest.raises(ValueError):
-            partition_docx(filename=filename, file=f)
+    with open(filename, "rb") as f, pytest.raises(ValueError):
+        partition_docx(filename=filename, file=f)
 
 
 def test_partition_docx_raises_with_neither():

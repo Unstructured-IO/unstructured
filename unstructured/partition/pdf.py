@@ -1,5 +1,5 @@
-from typing import List, Optional
 import warnings
+from typing import List, Optional
 
 from unstructured.documents.elements import Element
 from unstructured.partition import _partition_via_api
@@ -94,7 +94,9 @@ def partition_pdf_or_image(
         )
 
     return add_element_metadata(
-        layout_elements, include_page_breaks=include_page_breaks, filename=filename
+        layout_elements,
+        include_page_breaks=include_page_breaks,
+        filename=filename,
     )
 
 
@@ -116,14 +118,14 @@ def _partition_pdf_or_image_local(
             "unstructured_inference module not found... try running pip install "
             "unstructured[local-inference] if you installed the unstructured library as a package. "
             "If you cloned the unstructured repository, try running make install-local-inference "
-            "from the root directory of the repository."
+            "from the root directory of the repository.",
         ) from e
     except ImportError as e:
         raise Exception(
             "There was a problem importing unstructured_inference module - it may not be installed "
             "correctly... try running pip install unstructured[local-inference] if you installed "
             "the unstructured library as a package. If you cloned the unstructured repository, try "
-            "running make install-local-inference from the root directory of the repository."
+            "running make install-local-inference from the root directory of the repository.",
         ) from e
 
     layout = (

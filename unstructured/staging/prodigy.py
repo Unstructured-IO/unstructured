@@ -1,9 +1,8 @@
-import io
-from typing import Generator, Iterable, List, Dict, Optional, Union
 import csv
+import io
+from typing import Dict, Generator, Iterable, List, Optional, Union
 
 from unstructured.documents.elements import Text
-
 
 PRODIGY_TYPE = List[Dict[str, Union[str, Dict[str, str]]]]
 
@@ -20,20 +19,22 @@ def _validate_prodigy_metadata(
     if metadata:
         if len(metadata) != len(elements):
             raise ValueError(
-                "The length of metadata parameter does not match with length of elements parameter."
+                "The length of the metadata parameter does not match with"
+                " the length of the elements parameter.",
             )
         id_error_index: Optional[int] = next(
-            (index for index, metadatum in enumerate(metadata) if "id" in metadatum), None
+            (index for index, metadatum in enumerate(metadata) if "id" in metadatum),
+            None,
         )
         if isinstance(id_error_index, int):
             raise ValueError(
                 'The key "id" is not allowed with metadata parameter at index: {index}'.format(
-                    index=id_error_index
-                )
+                    index=id_error_index,
+                ),
             )
         validated_metadata = metadata
     else:
-        validated_metadata = [dict() for _ in elements]
+        validated_metadata = [{} for _ in elements]
     return validated_metadata
 
 
@@ -48,11 +49,11 @@ def stage_for_prodigy(
 
     validated_metadata: Iterable[Dict[str, str]] = _validate_prodigy_metadata(elements, metadata)
 
-    prodigy_data: PRODIGY_TYPE = list()
+    prodigy_data: PRODIGY_TYPE = []
     for element, metadatum in zip(elements, validated_metadata):
         if isinstance(element.id, str):
             metadatum["id"] = element.id
-        data: Dict[str, Union[str, Dict[str, str]]] = dict(text=element.text, meta=metadatum)
+        data: Dict[str, Union[str, Dict[str, str]]] = {"text": element.text, "meta": metadatum}
         prodigy_data.append(data)
 
     return prodigy_data
@@ -71,8 +72,8 @@ def stage_csv_for_prodigy(
     csv_fieldnames = ["text", "id"]
     csv_fieldnames += list(
         set().union(
-            *((key.lower() for key in metadata_item.keys()) for metadata_item in validated_metadata)
-        )
+            *((key.lower() for key in metadata_item) for metadata_item in validated_metadata),
+        ),
     )
 
     def _get_rows() -> Generator[Dict[str, str], None, None]:

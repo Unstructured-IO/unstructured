@@ -1,15 +1,15 @@
 import os
 from pathlib import Path
 
-import lxml.etree as etree
 import pytest
+from lxml import etree
 
 from unstructured.documents.xml import XMLDocument
 
 FILEPATH = Path(__file__).absolute().parent
 
 
-@pytest.fixture
+@pytest.fixture()
 def sample_document():
     return """"<SEC-DOCUMENT>
     <TYPE>10-K

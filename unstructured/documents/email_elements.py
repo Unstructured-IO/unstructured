@@ -3,7 +3,7 @@ from abc import ABC
 from datetime import datetime
 from typing import Callable, List, Union
 
-from unstructured.documents.elements import Element, Text, NoID
+from unstructured.documents.elements import Element, NoID, Text
 
 
 class NoDatestamp(ABC):

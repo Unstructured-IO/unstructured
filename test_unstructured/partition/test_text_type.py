@@ -1,13 +1,17 @@
-import pytest
 from unittest.mock import patch
 
-import unstructured.partition.text_type as text_type
+import pytest
 
-from test_unstructured.nlp.mock_nltk import mock_pos_tag, mock_sent_tokenize, mock_word_tokenize
+from test_unstructured.nlp.mock_nltk import (
+    mock_pos_tag,
+    mock_sent_tokenize,
+    mock_word_tokenize,
+)
+from unstructured.partition import text_type
 
 
 @pytest.mark.parametrize(
-    "text, expected",
+    ("text", "expected"),
     [
         (
             "ITEM 5(a).: MARKET FOR REGISTRANT’S COMMON EQUITY, RELATED STOCKHOLDER MATTERS AND "
@@ -31,7 +35,7 @@ def test_headings_are_not_narrative_text(text, expected):
 
 
 @pytest.mark.parametrize(
-    "text, expected",
+    ("text", "expected"),
     [
         ("Ask the teacher for an apple.", True),
         ("Ask Me About Intellectual Property", False),  ***REMOVED*** Exceeds the cap threshold
@@ -76,7 +80,7 @@ def test_text_type_handles_non_english_examples_with_env_var(monkeypatch):
 
 
 @pytest.mark.parametrize(
-    "text, expected",
+    ("text", "expected"),
     [
         ("Intellectual Property", True),  ***REMOVED*** Fails because it exceeds the cap threshold
         (
@@ -102,7 +106,7 @@ def test_is_possible_title(text, expected, monkeypatch):
 
 
 @pytest.mark.parametrize(
-    "text, expected",
+    ("text", "expected"),
     [
         ("8675309", True),
         ("+1 867-5309", True),
@@ -120,7 +124,7 @@ def test_contains_us_phone_number(text, expected):
 
 
 @pytest.mark.parametrize(
-    "text, expected",
+    ("text", "expected"),
     [
         ("• This is a fine point!", True),
         (" • This is a fine point!", True),  ***REMOVED*** Has an extra space in front of the bullet
@@ -150,7 +154,7 @@ def test_is_bulletized_text(text, expected):
 
 
 @pytest.mark.parametrize(
-    "text, expected",
+    ("text", "expected"),
     [
         ("Ask the teacher for an apple", True),
         ("Intellectual property", False),
@@ -163,7 +167,7 @@ def test_contains_verb(text, expected, monkeypatch):
 
 
 @pytest.mark.parametrize(
-    "text, expected",
+    ("text", "expected"),
     [
         ("PARROT BEAK", True),
         ("Parrot Beak", True),
@@ -181,7 +185,7 @@ def test_contains_english_word(text, expected, monkeypatch):
 
 
 @pytest.mark.parametrize(
-    "text, expected",
+    ("text", "expected"),
     [
         ("Intellectual Property in the United States", True),
         ("Intellectual property helps incentivize innovation.", False),
@@ -253,7 +257,7 @@ def test_item_titles():
 
 
 @pytest.mark.parametrize(
-    "text, expected",
+    ("text", "expected"),
     [
         ("Doylestown, PA 18901", True),
         ("DOYLESTOWN, PENNSYLVANIA, 18901", True),

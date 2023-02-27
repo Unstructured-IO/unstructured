@@ -1,8 +1,8 @@
+import hashlib
+import pathlib
 from abc import ABC
 from dataclasses import dataclass
-import hashlib
 from typing import Any, Callable, Dict, List, Optional, Union
-import pathlib
 
 
 class NoID(ABC):
@@ -109,7 +109,7 @@ class Text(Element):
                 (self.text == other.text),
                 (self.coordinates == other.coordinates),
                 (self.category == other.category),
-            ]
+            ],
         )
 
     def to_dict(self) -> dict:

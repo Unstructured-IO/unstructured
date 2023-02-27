@@ -1,13 +1,20 @@
 import os
 import pathlib
-import pytest
 import warnings
 
 import docx
+import pytest
 
-from unstructured.documents.elements import Address, NarrativeText, PageBreak, Title, Text, ListItem
+from unstructured.documents.elements import (
+    Address,
+    ListItem,
+    NarrativeText,
+    PageBreak,
+    Text,
+    Title,
+)
+from unstructured.partition import auto
 from unstructured.partition.auto import partition
-import unstructured.partition.auto as auto
 from unstructured.partition.common import convert_office_doc
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -31,7 +38,7 @@ def test_auto_partition_email_from_filename():
 
 def test_auto_partition_email_from_file():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
-    with open(filename, "r") as f:
+    with open(filename) as f:
         elements = partition(file=f)
     assert len(elements) > 0
     assert elements == EXPECTED_EMAIL_OUTPUT
@@ -45,7 +52,7 @@ def test_auto_partition_email_from_file_rb():
     assert elements == EXPECTED_EMAIL_OUTPUT
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_docx_document():
     document = docx.Document()
 
@@ -66,7 +73,7 @@ def mock_docx_document():
     return document
 
 
-@pytest.fixture
+@pytest.fixture()
 def expected_docx_elements():
     return [
         Title("These are a few of my favorite things:"),
@@ -110,7 +117,7 @@ def test_auto_partition_doc_with_filename(mock_docx_document, expected_docx_elem
 
 ***REMOVED*** NOTE(robinson) - the application/x-ole-storage mime type is not specific enough to
 ***REMOVED*** determine that the file is an .doc document
-@pytest.mark.xfail
+@pytest.mark.xfail()
 def test_auto_partition_doc_with_file(mock_docx_document, expected_docx_elements, tmpdir):
     docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
@@ -131,7 +138,7 @@ def test_auto_partition_html_from_filename():
 
 def test_auto_partition_html_from_file():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-html.html")
-    with open(filename, "r") as f:
+    with open(filename) as f:
         elements = partition(file=f)
     assert len(elements) > 0
 
@@ -163,7 +170,7 @@ def test_auto_partition_text_from_filename():
 
 def test_auto_partition_text_from_file():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
-    with open(filename, "r") as f:
+    with open(filename) as f:
         elements = partition(file=f)
     assert len(elements) > 0
     assert elements == EXPECTED_TEXT_OUTPUT

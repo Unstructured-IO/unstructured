@@ -3,27 +3,26 @@ import json
 import os
 import pathlib
 import platform
-import pytest
 
 import pandas as pd
-
-import unstructured.staging.base as base
+import pytest
 
 from unstructured.documents.elements import (
     Address,
     CheckBox,
     ElementMetadata,
     FigureCaption,
-    Title,
-    Text,
-    NarrativeText,
-    ListItem,
     Image,
+    ListItem,
+    NarrativeText,
     PageBreak,
+    Text,
+    Title,
 )
+from unstructured.staging import base
 
 
-@pytest.fixture
+@pytest.fixture()
 def output_csv_file(tmp_path):
     return os.path.join(tmp_path, "isd_data.csv")
 
@@ -62,7 +61,7 @@ def test_convert_to_csv(output_csv_file):
         isd_csv_string = base.convert_to_csv(elements)
         csv_file.write(isd_csv_string)
 
-    with open(output_csv_file, "r") as csv_file:
+    with open(output_csv_file) as csv_file:
         csv_rows = csv.DictReader(csv_file)
         assert all(set(row.keys()) == set(base.TABLE_FIELDNAMES) for row in csv_rows)
 
@@ -74,14 +73,15 @@ def test_convert_to_dataframe():
         {
             "type": ["Title", "NarrativeText"],
             "text": ["Title 1", "Narrative 1"],
-        }
+        },
     )
     assert df.type.equals(expected_df.type) is True
     assert df.text.equals(expected_df.text) is True
 
 
 @pytest.mark.skipif(
-    platform.system() == "Windows", reason="Posix Paths are not available on Windows"
+    platform.system() == "Windows",
+    reason="Posix Paths are not available on Windows",
 )
 def test_convert_to_isd_serializes_with_posix_paths():
     metadata = ElementMetadata(filename=pathlib.PosixPath("../../fake-file.txt"))
