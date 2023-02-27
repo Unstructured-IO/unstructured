@@ -79,7 +79,8 @@ setup(
             # NOTE - pygithub at 1.58.0 fails due to https://github.com/PyGithub/PyGithub/issues/2436
             # In the future, we can update this to pygithub>1.58.0
             "pygithub==1.57.0"
-        ]
+        ],
+        "reddit": ["praw"],
     },
     package_dir={"unstructured": "unstructured"},
     package_data={"unstructured": ["nlp/*.txt"]},

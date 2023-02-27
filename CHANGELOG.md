@@ -1,4 +1,4 @@
-## 0.4.16-dev2
+## 0.4.16-dev4
 
 ### Enhancements
 
@@ -9,6 +9,7 @@
 * Added setup script for Ubuntu
 * Added GitHub connector for ingest cli.
 * Added `partition_md` partitioner.
+* Added Reddit connector for ingest cli.
 
 ### Fixes
 

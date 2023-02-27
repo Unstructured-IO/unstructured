@@ -133,7 +133,6 @@ def detect_filetype(
         _, extension = os.path.splitext(filename)
         extension = extension.lower()
         if LIBMAGIC_AVAILABLE:
-            mime_type = None
             mime_type = magic.from_file(filename, mime=True)
         else:
             return EXT_TO_FILETYPE.get(extension.lower(), FileType.UNK)

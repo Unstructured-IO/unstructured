@@ -58,6 +58,10 @@ install-ingest-s3:
 install-ingest-github:
 	pip install -r requirements/ingest-github.txt
 
+.PHONY: install-ingest-reddit
+install-ingest-reddit:
+	pip install -r requirements/ingest-reddit.txt
+
 .PHONY: install-unstructured-inference
 install-unstructured-inference:
 	pip install -r requirements/local-inference.txt
@@ -87,6 +91,8 @@ pip-compile:
 	# sphinx docs looks for additional requirements
 	cp requirements/build.txt docs/requirements.txt
 	pip-compile --upgrade requirements/ingest-s3.in requirements/base.txt --output-file requirements/ingest-s3.txt
+	pip-compile --upgrade --extra=reddit --output-file=requirements/ingest-reddit.txt requirements/base.txt setup.py
+	pip-compile --upgrade --extra=github --output-file=requirements/ingest-github.txt requirements/base.txt setup.py
 
 ## install-project-local:   install unstructured into your local python environment
 .PHONY: install-project-local
