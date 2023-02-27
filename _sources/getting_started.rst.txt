@@ -47,7 +47,7 @@ You can also pass in a file as a file-like object using the following workflow:
 
 The ``partition`` function uses `libmagic <https://formulae.brew.sh/formula/libmagic>`_ for filetype detection. If ``libmagic`` is
 not present and the user passes a filename, ``partition`` falls back to detecting the filetype using the file extension.
-``libmagic`` is required if you'd lke to pass a file-like object to ``partition``.
+``libmagic`` is required if you'd like to pass a file-like object to ``partition``.
 We highly recommend installing ``libmagic`` and you may observe different file detection behaviors
 if ``libmagic`` is not installed`.
 
@@ -105,6 +105,34 @@ The following code shows how you can limit your output to only narrative text wi
 	    if isinstance(element, NarrativeText) and sentence_count(element.text) > 2:
 	        print(element)
 	        print("\n")
+
+
+####################
+Serializing Elements
+####################
+
+The ``unstructured`` library includes helper functions for
+reading and writing a list of ``Element`` objects to and
+from JSON. You can use the following workflow for
+serializing and deserializing an ``Element`` list.
+
+
+.. code:: python
+
+    from unstructured.documents.elements import ElementMetadata, Text, Title, FigureCaption
+    from unstructured.staging.base import elements_to_json, elements_from_json
+
+    filename = "my-elements.json"
+    metadata = ElementMetadata(filename="fake-file.txt")
+    elements = [
+        FigureCaption(text="caption", metadata=metadata, element_id="1"),
+        Title(text="title", metadata=metadata, element_id="2"),
+        Text(text="title", metadata=metadata, element_id="3"),
+
+    ]
+
+    elements_to_json(elements, filename=filename)
+    new_elements = elements_from_json(filename=filename)
 
 
 ###########################################

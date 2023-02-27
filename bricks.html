@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Examples" href="examples.html" /><link rel="prev" title="Elements" href="elements.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Examples" href="examples.html" /><link rel="prev" title="Getting Started" href="getting_started.html" />
 
     <link rel="shortcut icon" href="_static/unstructured_small.png"/><!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 -->
         <title>Bricks - Unstructured 0.4.16 documentation</title>
@@ -266,7 +266,6 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installing.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="elements.html">Elements</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Bricks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 </ul>
@@ -305,14 +304,61 @@
         <article role="main">
           <section id="bricks">
 <h1>Bricks<a class="headerlink" href="#bricks" title="Permalink to this heading"></a></h1>
-<p>The <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> library provides bricks to make it quick and
-easy to parse documents and create new pre-processing pipelines. The following documents
-bricks currently available in the library.</p>
+<p>The goal of this page is to introduce you to the concept of bricks.
+Bricks are functions that live in <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> and are the primary public API for the library.
+There are three types of bricks in <code class="docutils literal notranslate"><span class="pre">unstructured</span></code>, corresponding to the different stages of document pre-processing: partitioning, cleaning, and staging.
+After reading this section, you should understand the following:</p>
+<ul class="simple">
+<li><p>How to extract content from a document using partitioning bricks.</p></li>
+<li><p>How to remove unwanted content from document elements using cleaning bricks.</p></li>
+<li><p>How to prepare data for downstream use cases using staging bricks</p></li>
+</ul>
 <section id="partitioning">
 <h2>Partitioning<a class="headerlink" href="#partitioning" title="Permalink to this heading"></a></h2>
-<p>The partitioning bricks in <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> differentiate between different sections
-of text in a document. For example, the partitioning bricks can help distinguish between
-titles, narrative text, and tables.</p>
+<p>Partitioning bricks in <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> allow users to extract structured content from a raw unstructured document.
+These functions break a document down into elements such as <code class="docutils literal notranslate"><span class="pre">Title</span></code>, <code class="docutils literal notranslate"><span class="pre">NarrativeText</span></code>, and <code class="docutils literal notranslate"><span class="pre">ListItem</span></code>,
+enabling users to decide what content they’d like to keep for their particular application.
+If you’re training a summarization model, for example, you may only be interested in <code class="docutils literal notranslate"><span class="pre">NarrativeText</span></code>.</p>
+<p>The easiest way to partition documents in unstructured is to use the <code class="docutils literal notranslate"><span class="pre">partition</span></code> brick.
+If you call the <code class="docutils literal notranslate"><span class="pre">partition</span></code> brick, <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> will use <code class="docutils literal notranslate"><span class="pre">libmagic</span></code> to automatically determine the file type and invoke the appropriate partition function.
+In cases where <code class="docutils literal notranslate"><span class="pre">libmagic</span></code> is not available, filetype detection will fall back to using the file extension.</p>
+<p>As shown in the examples below, the <code class="docutils literal notranslate"><span class="pre">partition</span></code> function accepts both filenames and file-like objects as input.
+<code class="docutils literal notranslate"><span class="pre">partition</span></code> also has some optional kwargs.
+For example, if you set <code class="docutils literal notranslate"><span class="pre">include_page_breaks=True</span></code>, the output will include <code class="docutils literal notranslate"><span class="pre">PageBreak</span></code> elements if the filetype supports it.
+You can find a full listing of optional kwargs in the documentation below.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.auto</span> <span class="kn">import</span> <span class="n">partition</span>
+
+
+<span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EXAMPLE_DOCS_DIRECTORY</span><span class="p">,</span> <span class="s2">&quot;layout-parser-paper-fast.pdf&quot;</span><span class="p">)</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">][:</span><span class="mi">10</span><span class="p">]))</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.auto</span> <span class="kn">import</span> <span class="n">partition</span>
+
+
+<span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EXAMPLE_DOCS_DIRECTORY</span><span class="p">,</span> <span class="s2">&quot;layout-parser-paper-fast.pdf&quot;</span><span class="p">)</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+  <span class="n">elements</span> <span class="o">=</span> <span class="n">partition</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">include_page_breaks</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">][</span><span class="mi">5</span><span class="p">:</span><span class="mi">15</span><span class="p">]))</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> library also includes partitioning bricks targeted at specific document types.
+The <code class="docutils literal notranslate"><span class="pre">partition</span></code> brick uses these document-specific partitioning bricks under the hood.
+There are a few reasons you may want to use a document-specific partitioning brick instead of <code class="docutils literal notranslate"><span class="pre">partition</span></code>:</p>
+<ul class="simple">
+<li><p>If you already know the document type, filetype detection is unnecessary. Using the document-specific brick directly will make your program run faster.</p></li>
+<li><p>Fewer dependencies. You don’t need to install <code class="docutils literal notranslate"><span class="pre">libmagic</span></code> for filetype detection if you’re only using document-specific bricks.</p></li>
+<li><p>Additional features. The API for partition is the least common denominator for all document types. Certain document-specific brick include extra features that you may want to take advantage of. For example, <code class="docutils literal notranslate"><span class="pre">partition_html</span></code> allows you to pass in a URL so you don’t have to store the <code class="docutils literal notranslate"><span class="pre">.html</span></code> file locally. See the documentation below learn about the options available in each partitioning brick.</p></li>
+</ul>
+<p>Below we see an example of how to partition a document directly with the URL using the partition_html function.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.html</span> <span class="kn">import</span> <span class="n">partition_html</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://www.cnn.com/2023/01/30/sport/empire-state-building-green-philadelphia-eagles-spt-intl/index.html&quot;</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_html</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">]))</span>
+</pre></div>
+</div>
 <section id="partition">
 <h3><code class="docutils literal notranslate"><span class="pre">partition</span></code><a class="headerlink" href="#partition" title="Permalink to this heading"></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">partition</span></code> brick is the simplest way to partition a document in <code class="docutils literal notranslate"><span class="pre">unstructured</span></code>.
@@ -519,198 +565,42 @@ takes a filename, file-like object, and raw text as input and produces <code cla
 </pre></div>
 </div>
 </section>
-<section id="extract-attachment-info">
-<h3><code class="docutils literal notranslate"><span class="pre">extract_attachment_info</span></code><a class="headerlink" href="#extract-attachment-info" title="Permalink to this heading"></a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">extract_attachment_info</span></code> function takes an <code class="docutils literal notranslate"><span class="pre">email.message.Message</span></code> object
-as input and returns the a list of dictionaries containing the attachment information,
-such as <code class="docutils literal notranslate"><span class="pre">filename</span></code>, <code class="docutils literal notranslate"><span class="pre">size</span></code>, <code class="docutils literal notranslate"><span class="pre">payload</span></code>, etc. The attachment is saved to the <code class="docutils literal notranslate"><span class="pre">output_dir</span></code>
-if specified.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">email</span>
-<span class="kn">from</span> <span class="nn">unstructured.partition.email</span> <span class="kn">import</span> <span class="n">extract_attachment_info</span>
-
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;example-docs/fake-email-attachment.eml&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">msg</span> <span class="o">=</span> <span class="n">email</span><span class="o">.</span><span class="n">message_from_file</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-<span class="n">attachment_info</span> <span class="o">=</span> <span class="n">extract_attachment_info</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;example-docs&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="is-bulleted-text">
-<h3><code class="docutils literal notranslate"><span class="pre">is_bulleted_text</span></code><a class="headerlink" href="#is-bulleted-text" title="Permalink to this heading"></a></h3>
-<p>Uses regular expression patterns to check if a snippet of text is a bullet point. Only
-triggers if the bullet point appears at the start of the snippet.</p>
-<p>Examples:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.text_type</span> <span class="kn">import</span> <span class="n">is_bulleted_text</span>
-
-<span class="c1"># Returns True</span>
-<span class="n">is_bulleted_text</span><span class="p">(</span><span class="s2">&quot;● An excellent point!&quot;</span><span class="p">)</span>
-
-<span class="c1"># Returns False</span>
-<span class="n">is_bulleted_text</span><span class="p">(</span><span class="s2">&quot;I love Morse Code! ●●●&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="is-possible-narrative-text">
-<h3><code class="docutils literal notranslate"><span class="pre">is_possible_narrative_text</span></code><a class="headerlink" href="#is-possible-narrative-text" title="Permalink to this heading"></a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">is_possible_narrative_text</span></code> function determines if a section of text is a candidate
-for consideration as narrative text. The function performs the following checks on input text:</p>
-<ul class="simple">
-<li><p>Empty text cannot be narrative text</p></li>
-<li><p>Text that is all numeric cannot be narrative text</p></li>
-<li><p>Text that does not contain a verb cannot be narrative text</p></li>
-<li><p>Narrative text must contain at least one English word (if <code class="docutils literal notranslate"><span class="pre">language</span></code> is set to “en”)</p></li>
-<li><p>Text that exceeds the specified caps ratio cannot be narrative text. The threshold
-is configurable with the <code class="docutils literal notranslate"><span class="pre">cap_threshold</span></code> kwarg. To ignore this check, you can set
-<code class="docutils literal notranslate"><span class="pre">cap_threshold=1.0</span></code>. You can also set the threshold by using the
-<code class="docutils literal notranslate"><span class="pre">UNSTRUCTURED_NARRATIVE_TEXT_CAP_THRESHOLD</span></code> environment variable. The environment variable
-takes precedence over the kwarg.</p></li>
-<li><p>If a the text contains too many non-alpha characters it is
-not narrative text.
-The default is to expect a minimum of 50% alpha characters
-(not countings spaces). You can change the minimum value with the
-<code class="docutils literal notranslate"><span class="pre">non_alpha_ratio</span></code> kwarg or the <code class="docutils literal notranslate"><span class="pre">UNSTRUCTURED_NARRATIVE_TEXT_NON_ALPHA_RATIO</span></code> environment variable.
-The environment variables takes precedence over the kwarg.</p></li>
-<li><p>The cap ratio test does not apply to text that is all uppercase.</p></li>
-<li><p>If you use the <code class="docutils literal notranslate"><span class="pre">language=&quot;&quot;</span></code> kwarg or set the <code class="docutils literal notranslate"><span class="pre">UNSTRUCTURED_LANGUAGE</span></code> environment variable to <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code>, the function will skip the verb check and the English word check.</p></li>
-</ul>
-<p>Examples:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.text_type</span> <span class="kn">import</span> <span class="n">is_possible_narrative_text</span>
-
-<span class="c1"># Returns True because the example passes all the checks</span>
-<span class="n">example_1</span> <span class="o">=</span> <span class="s2">&quot;Make sure you brush your teeth before you go to bed.&quot;</span>
-<span class="n">is_possible_narrative_text</span><span class="p">(</span><span class="n">example_1</span><span class="p">)</span>
-
-<span class="c1"># Returns False because the text exceeds the caps ratio and does not contain a verb</span>
-<span class="n">example_2</span> <span class="o">=</span> <span class="s2">&quot;ITEM 1A. RISK FACTORS&quot;</span>
-<span class="n">is_possible_narrative_text</span><span class="p">(</span><span class="n">example_2</span><span class="p">)</span>
-
-<span class="c1"># Returns True because the text has a verb and does not exceed the cap_threshold</span>
-<span class="n">example_3</span> <span class="o">=</span> <span class="s2">&quot;OLD MCDONALD HAD A FARM&quot;</span>
-<span class="n">is_possible_narrative_text</span><span class="p">(</span><span class="n">example_3</span><span class="p">,</span> <span class="n">cap_threshold</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="is-possible-title">
-<h3><code class="docutils literal notranslate"><span class="pre">is_possible_title</span></code><a class="headerlink" href="#is-possible-title" title="Permalink to this heading"></a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">is_possible_title</span></code> function determines if a section of text is a candidate
-for consideration as a title. The function performs the following checks:</p>
-<ul class="simple">
-<li><p>Empty text cannot be a title</p></li>
-<li><p>Text that is all numeric cannot be a title.</p></li>
-<li><p>If a title contains too many words it is not a title. The default max length is <code class="docutils literal notranslate"><span class="pre">12</span></code>. You can change the max length with
-the <code class="docutils literal notranslate"><span class="pre">title_max_word_length</span></code> kwarg or the <code class="docutils literal notranslate"><span class="pre">UNSTRUCTURED_TITLE_MAX_WORD_LENGTH</span></code> environment variable. The environment
-variable takes precedence over the kwarg.</p></li>
-<li><p>If a text contains too many non-alpha characters it is not a
-title. The default is to expect a minimum of 50% alpha characters
-(not countings spaces). You can change the minimum value with the
-<code class="docutils literal notranslate"><span class="pre">non_alpha_ratio</span></code> kwarg or the <code class="docutils literal notranslate"><span class="pre">UNSTRUCTURED_TITLE_NON_ALPHA_RATIO</span></code> environment variable.
-The environment variables takes precedence over the kwarg.</p></li>
-<li><p>Narrative text must contain at least one English word (if <code class="docutils literal notranslate"><span class="pre">language</span></code> is set to “en”)</p></li>
-<li><p>If a title contains more than one sentence that exceeds a certain length, it cannot be a title. Sentence length threshold is controlled by the <code class="docutils literal notranslate"><span class="pre">sentence_min_length</span></code> kwarg and defaults to 5.</p></li>
-<li><p>If a segment of text ends in a comma, it is not considered a potential title. This is to avoid salutations like “To My Dearest Friends,” getting flagged as titles.</p></li>
-<li><p>If you use the <code class="docutils literal notranslate"><span class="pre">language=&quot;&quot;</span></code> kwarg or set the <code class="docutils literal notranslate"><span class="pre">UNSTRUCTURED_LANGUAGE</span></code> environment variable to <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code>, the function will skip the English word check.</p></li>
-</ul>
-<p>Examples:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.text_type</span> <span class="kn">import</span> <span class="n">is_possible_title</span>
-
-<span class="c1"># Returns True because the text passes all the tests</span>
-<span class="n">example_2</span> <span class="o">=</span> <span class="s2">&quot;ITEM 1A. RISK FACTORS&quot;</span>
-<span class="n">is_possible_title</span><span class="p">(</span><span class="n">example_2</span><span class="p">)</span>
-
-<span class="c1"># Returns True because there is only one sentence</span>
-<span class="n">example_2</span> <span class="o">=</span> <span class="s2">&quot;Make sure you brush your teeth before you go to bed.&quot;</span>
-<span class="n">is_possible_title</span><span class="p">(</span><span class="n">example_2</span><span class="p">,</span> <span class="n">sentence_min_length</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-
-<span class="c1"># Returns False because there are two sentences</span>
-<span class="n">example_3</span> <span class="o">=</span> <span class="s2">&quot;Make sure you brush your teeth. Do it before you go to bed.&quot;</span>
-<span class="n">is_possible_title</span><span class="p">(</span><span class="n">example_3</span><span class="p">,</span> <span class="n">sentence_min_length</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="contains-us-phone-number">
-<h3><code class="docutils literal notranslate"><span class="pre">contains_us_phone_number</span></code><a class="headerlink" href="#contains-us-phone-number" title="Permalink to this heading"></a></h3>
-<p>Checks to see if a section of text contains a US phone number.</p>
-<p>Examples:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.text_type</span> <span class="kn">import</span> <span class="n">contains_us_phone_number</span>
-
-<span class="c1"># Returns True because the text includes a phone number</span>
-<span class="n">contains_us_phone_number</span><span class="p">(</span><span class="s2">&quot;Phone number: 215-867-5309&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="contains-verb">
-<h3><code class="docutils literal notranslate"><span class="pre">contains_verb</span></code><a class="headerlink" href="#contains-verb" title="Permalink to this heading"></a></h3>
-<p>Checks if the text contains a verb. This is used in <code class="docutils literal notranslate"><span class="pre">is_possible_narrative_text</span></code>, but can
-be used independently as well. The function identifies verbs using the NLTK part of speech
-tagger. Text that is all upper case is lower cased before part of speech detection. This is
-because the upper case letters sometimes cause the part of speech tagger to miss verbs.
-The following part of speech tags are identified as verbs:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">VB</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">VBG</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">VBD</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">VBN</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">VBP</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">VBZ</span></code></p></li>
-</ul>
-<p>Examples:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.text_type</span> <span class="kn">import</span> <span class="n">contains_verb</span>
-
-<span class="c1"># Returns True because the text contains a verb</span>
-<span class="n">example_1</span> <span class="o">=</span> <span class="s2">&quot;I am going to run to the store to pick up some milk.&quot;</span>
-<span class="n">contains_verb</span><span class="p">(</span><span class="n">example_1</span><span class="p">)</span>
-
-<span class="c1"># Returns False because the text does not contain a verb</span>
-<span class="n">example_2</span> <span class="o">=</span> <span class="s2">&quot;A friendly dog&quot;</span>
-<span class="n">contains_verb</span><span class="p">(</span><span class="n">example_2</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="sentence-count">
-<h3><code class="docutils literal notranslate"><span class="pre">sentence_count</span></code><a class="headerlink" href="#sentence-count" title="Permalink to this heading"></a></h3>
-<p>Counts the number of sentences in a section of text. Optionally, you can only include
-sentences that exceed a specified word count. Punctuation counts as a word token
-in the sentence. The function uses the NLTK sentence and word tokeniers to identify
-distinct sentences and words.</p>
-<p>Examples:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.text_type</span> <span class="kn">import</span> <span class="n">sentence_count</span>
-
-<span class="n">example</span> <span class="o">=</span> <span class="s2">&quot;Look at me! I am a document with two sentences.&quot;</span>
-
-<span class="c1"># Returns 2 because the example contains two sentences</span>
-<span class="n">sentence_count</span><span class="p">(</span><span class="n">example</span><span class="p">)</span>
-
-<span class="c1"># Returns 1 because the first sentence in the example does not contain five word tokens.</span>
-<span class="n">sentence_count</span><span class="p">(</span><span class="n">example</span><span class="p">,</span> <span class="n">min_length</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="exceeds-cap-ratio">
-<h3><code class="docutils literal notranslate"><span class="pre">exceeds_cap_ratio</span></code><a class="headerlink" href="#exceeds-cap-ratio" title="Permalink to this heading"></a></h3>
-<p>Determines if the section of text exceeds the specified caps ratio. Used in
-<code class="docutils literal notranslate"><span class="pre">is_possible_narrative_text</span></code> and <code class="docutils literal notranslate"><span class="pre">is_possible_title</span></code>, but can be used independently
-as well. You can set the caps threshold using the <code class="docutils literal notranslate"><span class="pre">threshold</span></code> kwarg. The threshold
-defaults to <code class="docutils literal notranslate"><span class="pre">0.3</span></code>. Only runs on sections of text that are a single sentence. The caps ratio check does not apply to text that is all capitalized.</p>
-<p>Examples:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.text_type</span> <span class="kn">import</span> <span class="n">exceeds_cap_ratio</span>
-
-<span class="c1"># Returns True because the text is more than 30% caps</span>
-<span class="n">example_1</span> <span class="o">=</span> <span class="s2">&quot;LOOK AT ME I AM YELLING&quot;</span>
-<span class="n">exceeds_cap_ratio</span><span class="p">(</span><span class="n">example_1</span><span class="p">)</span>
-
-<span class="c1"># Returns False because the text is less than 30% caps</span>
-<span class="n">example_2</span> <span class="o">=</span> <span class="s2">&quot;Look at me, I am no longer yelling&quot;</span>
-<span class="n">exceeds_cap_ratio</span><span class="p">(</span><span class="n">example_2</span><span class="p">)</span>
-
-<span class="c1"># Returns False because the text is more than 1% caps</span>
-<span class="n">exceeds_cap_ratio</span><span class="p">(</span><span class="n">example_2</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
 </section>
 <section id="cleaning">
 <h2>Cleaning<a class="headerlink" href="#cleaning" title="Permalink to this heading"></a></h2>
-<p>The cleaning bricks in <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> remove unwanted text from source documents.
-Examples include removing extra whitespace, boilerplate, or sentence fragments.</p>
+<p>As part of data preparation for an NLP model, it’s common to need to clean up your data prior to passing it into the model.
+If there’s unwanted content in your output, for example, it could impact the quality of your NLP model.
+To help with this, the <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> library includes cleaning bricks to help users sanitize output before sending it to downstream applications.</p>
+<p>Some cleaning bricks apply automatically.
+In the example in the <strong>Partition</strong> section, the output <code class="docutils literal notranslate"><span class="pre">Philadelphia</span> <span class="pre">Eaglesâ\x80\x99</span> <span class="pre">victory</span></code> automatically gets converted to <code class="docutils literal notranslate"><span class="pre">Philadelphia</span> <span class="pre">Eagles'</span> <span class="pre">victory</span></code> in <code class="docutils literal notranslate"><span class="pre">partition_html</span></code> using the <code class="docutils literal notranslate"><span class="pre">replace_unicode_quotes</span></code> cleaning brick.
+You can see how that works in the code snippet below:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.cleaners.core</span> <span class="kn">import</span> <span class="n">replace_unicode_quotes</span>
+
+<span class="n">replace_unicode_quotes</span><span class="p">(</span><span class="s2">&quot;Philadelphia Eaglesâ</span><span class="se">\x80\x99</span><span class="s2"> victory&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Document elements in <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> include an <code class="docutils literal notranslate"><span class="pre">apply</span></code> method that allow you to apply the text cleaning to the document element without instantiating a new element.
+The <code class="docutils literal notranslate"><span class="pre">apply</span></code> method expects a callable that takes a string as input and produces another string as output.
+In the example below, we invoke the <code class="docutils literal notranslate"><span class="pre">replace_unicode_quotes</span></code> cleaning brick using the <code class="docutils literal notranslate"><span class="pre">apply</span></code> method.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.documents.elements</span> <span class="kn">import</span> <span class="n">Text</span>
+
+<span class="n">element</span> <span class="o">=</span> <span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Philadelphia Eaglesâ</span><span class="se">\x80\x99</span><span class="s2"> victory&quot;</span><span class="p">)</span>
+<span class="n">element</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">replace_unicode_quotes</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Since a cleaning brick is just a <code class="docutils literal notranslate"><span class="pre">str</span> <span class="pre">-&gt;</span> <span class="pre">str</span></code> function, users can also easily include their own cleaning bricks for custom data preparation tasks.
+In the example below, we remove citations from a section of text.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">re</span>
+
+<span class="n">remove_citations</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">text</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;\[\d{1,3}\]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+
+<span class="n">element</span> <span class="o">=</span> <span class="n">Text</span><span class="p">(</span><span class="s2">&quot;[1] Geolocated combat footage has confirmed Russian gains in the Dvorichne area northwest of Svatove.&quot;</span><span class="p">)</span>
+<span class="n">element</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">remove_citations</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>See below for a full list of cleaning bricks in the <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> library.</p>
 <section id="clean">
 <h3><code class="docutils literal notranslate"><span class="pre">clean</span></code><a class="headerlink" href="#clean" title="Permalink to this heading"></a></h3>
 <p>Cleans a section of text with options including removing bullets, extra whitespace, dashes
@@ -1025,8 +915,18 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;e
 </section>
 <section id="staging">
 <h2>Staging<a class="headerlink" href="#staging" title="Permalink to this heading"></a></h2>
-<p>Staging bricks in <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> prepare extracted text for downstream tasks such
-as machine learning inference and data labeling.</p>
+<p>Staging bricks in the <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> package help prepare your data for ingestion into downstream systems.
+A staging brick accepts a list of document elements as input and return an appropriately formatted dictionary as output.
+In the example below, we get our narrative text samples prepared for ingestion into LabelStudio using
+<code class="docutils literal notranslate"><span class="pre">the</span> <span class="pre">stage_for_label_studio</span></code> brick.
+We can take this data and directly upload it into LabelStudio to quickly get started with an NLP labeling task.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">unstructured.staging.label_studio</span> <span class="kn">import</span> <span class="n">stage_for_label_studio</span>
+
+<span class="n">output</span> <span class="o">=</span> <span class="n">stage_for_label_studio</span><span class="p">(</span><span class="n">narrative_text</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">output</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+</pre></div>
+</div>
 <section id="convert-to-dict">
 <h3><code class="docutils literal notranslate"><span class="pre">convert_to_dict</span></code><a class="headerlink" href="#convert-to-dict" title="Permalink to this heading"></a></h3>
 <p>Converts a list of <code class="docutils literal notranslate"><span class="pre">Element</span></code> objects to a dictionary. This is the default format
@@ -1436,7 +1336,7 @@ files to an S3 bucket.</p>
 <p>The output is a list of dictionaries, each one with two keys:
 “text” with the content of the element and
 “entities” with an empty list.</p>
-<p>You can also specify specify entities in the <code class="docutils literal notranslate"><span class="pre">stage_for_datasaur</span></code> brick. Entities
+<p>You can also specify entities in the <code class="docutils literal notranslate"><span class="pre">stage_for_datasaur</span></code> brick. Entities
 you specify in the input will be included in the entities key in the output. The list
 of entities is a list of dictionaries and must have all of the keys in the example below.
 The list of entities must be the same length as the list of elements. Use an empty
@@ -1473,6 +1373,198 @@ is used by default.</p>
 </div>
 </section>
 </section>
+<section id="other-helper-functions">
+<h2>Other helper functions<a class="headerlink" href="#other-helper-functions" title="Permalink to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> library also contains other useful helpful functions to aid in processing documents.
+You can see a list of the available helper functions below:</p>
+<section id="is-bulleted-text">
+<h3><code class="docutils literal notranslate"><span class="pre">is_bulleted_text</span></code><a class="headerlink" href="#is-bulleted-text" title="Permalink to this heading"></a></h3>
+<p>Uses regular expression patterns to check if a snippet of text is a bullet point. Only
+triggers if the bullet point appears at the start of the snippet.</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.text_type</span> <span class="kn">import</span> <span class="n">is_bulleted_text</span>
+
+<span class="c1"># Returns True</span>
+<span class="n">is_bulleted_text</span><span class="p">(</span><span class="s2">&quot;● An excellent point!&quot;</span><span class="p">)</span>
+
+<span class="c1"># Returns False</span>
+<span class="n">is_bulleted_text</span><span class="p">(</span><span class="s2">&quot;I love Morse Code! ●●●&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="is-possible-narrative-text">
+<h3><code class="docutils literal notranslate"><span class="pre">is_possible_narrative_text</span></code><a class="headerlink" href="#is-possible-narrative-text" title="Permalink to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">is_possible_narrative_text</span></code> function determines if a section of text is a candidate
+for consideration as narrative text. The function performs the following checks on input text:</p>
+<ul class="simple">
+<li><p>Empty text cannot be narrative text</p></li>
+<li><p>Text that is all numeric cannot be narrative text</p></li>
+<li><p>Text that does not contain a verb cannot be narrative text</p></li>
+<li><p>Narrative text must contain at least one English word (if <code class="docutils literal notranslate"><span class="pre">language</span></code> is set to “en”)</p></li>
+<li><p>Text that exceeds the specified caps ratio cannot be narrative text. The threshold
+is configurable with the <code class="docutils literal notranslate"><span class="pre">cap_threshold</span></code> kwarg. To ignore this check, you can set
+<code class="docutils literal notranslate"><span class="pre">cap_threshold=1.0</span></code>. You can also set the threshold by using the
+<code class="docutils literal notranslate"><span class="pre">UNSTRUCTURED_NARRATIVE_TEXT_CAP_THRESHOLD</span></code> environment variable. The environment variable
+takes precedence over the kwarg.</p></li>
+<li><p>If a the text contains too many non-alpha characters it is
+not narrative text.
+The default is to expect a minimum of 50% alpha characters
+(not countings spaces). You can change the minimum value with the
+<code class="docutils literal notranslate"><span class="pre">non_alpha_ratio</span></code> kwarg or the <code class="docutils literal notranslate"><span class="pre">UNSTRUCTURED_NARRATIVE_TEXT_NON_ALPHA_RATIO</span></code> environment variable.
+The environment variables takes precedence over the kwarg.</p></li>
+<li><p>The cap ratio test does not apply to text that is all uppercase.</p></li>
+<li><p>If you use the <code class="docutils literal notranslate"><span class="pre">language=&quot;&quot;</span></code> kwarg or set the <code class="docutils literal notranslate"><span class="pre">UNSTRUCTURED_LANGUAGE</span></code> environment variable to <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code>, the function will skip the verb check and the English word check.</p></li>
+</ul>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.text_type</span> <span class="kn">import</span> <span class="n">is_possible_narrative_text</span>
+
+<span class="c1"># Returns True because the example passes all the checks</span>
+<span class="n">example_1</span> <span class="o">=</span> <span class="s2">&quot;Make sure you brush your teeth before you go to bed.&quot;</span>
+<span class="n">is_possible_narrative_text</span><span class="p">(</span><span class="n">example_1</span><span class="p">)</span>
+
+<span class="c1"># Returns False because the text exceeds the caps ratio and does not contain a verb</span>
+<span class="n">example_2</span> <span class="o">=</span> <span class="s2">&quot;ITEM 1A. RISK FACTORS&quot;</span>
+<span class="n">is_possible_narrative_text</span><span class="p">(</span><span class="n">example_2</span><span class="p">)</span>
+
+<span class="c1"># Returns True because the text has a verb and does not exceed the cap_threshold</span>
+<span class="n">example_3</span> <span class="o">=</span> <span class="s2">&quot;OLD MCDONALD HAD A FARM&quot;</span>
+<span class="n">is_possible_narrative_text</span><span class="p">(</span><span class="n">example_3</span><span class="p">,</span> <span class="n">cap_threshold</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="is-possible-title">
+<h3><code class="docutils literal notranslate"><span class="pre">is_possible_title</span></code><a class="headerlink" href="#is-possible-title" title="Permalink to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">is_possible_title</span></code> function determines if a section of text is a candidate
+for consideration as a title. The function performs the following checks:</p>
+<ul class="simple">
+<li><p>Empty text cannot be a title</p></li>
+<li><p>Text that is all numeric cannot be a title.</p></li>
+<li><p>If a title contains too many words it is not a title. The default max length is <code class="docutils literal notranslate"><span class="pre">12</span></code>. You can change the max length with
+the <code class="docutils literal notranslate"><span class="pre">title_max_word_length</span></code> kwarg or the <code class="docutils literal notranslate"><span class="pre">UNSTRUCTURED_TITLE_MAX_WORD_LENGTH</span></code> environment variable. The environment
+variable takes precedence over the kwarg.</p></li>
+<li><p>If a text contains too many non-alpha characters it is not a
+title. The default is to expect a minimum of 50% alpha characters
+(not countings spaces). You can change the minimum value with the
+<code class="docutils literal notranslate"><span class="pre">non_alpha_ratio</span></code> kwarg or the <code class="docutils literal notranslate"><span class="pre">UNSTRUCTURED_TITLE_NON_ALPHA_RATIO</span></code> environment variable.
+The environment variables takes precedence over the kwarg.</p></li>
+<li><p>Narrative text must contain at least one English word (if <code class="docutils literal notranslate"><span class="pre">language</span></code> is set to “en”)</p></li>
+<li><p>If a title contains more than one sentence that exceeds a certain length, it cannot be a title. Sentence length threshold is controlled by the <code class="docutils literal notranslate"><span class="pre">sentence_min_length</span></code> kwarg and defaults to 5.</p></li>
+<li><p>If a segment of text ends in a comma, it is not considered a potential title. This is to avoid salutations like “To My Dearest Friends,” getting flagged as titles.</p></li>
+<li><p>If you use the <code class="docutils literal notranslate"><span class="pre">language=&quot;&quot;</span></code> kwarg or set the <code class="docutils literal notranslate"><span class="pre">UNSTRUCTURED_LANGUAGE</span></code> environment variable to <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code>, the function will skip the English word check.</p></li>
+</ul>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.text_type</span> <span class="kn">import</span> <span class="n">is_possible_title</span>
+
+<span class="c1"># Returns True because the text passes all the tests</span>
+<span class="n">example_2</span> <span class="o">=</span> <span class="s2">&quot;ITEM 1A. RISK FACTORS&quot;</span>
+<span class="n">is_possible_title</span><span class="p">(</span><span class="n">example_2</span><span class="p">)</span>
+
+<span class="c1"># Returns True because there is only one sentence</span>
+<span class="n">example_2</span> <span class="o">=</span> <span class="s2">&quot;Make sure you brush your teeth before you go to bed.&quot;</span>
+<span class="n">is_possible_title</span><span class="p">(</span><span class="n">example_2</span><span class="p">,</span> <span class="n">sentence_min_length</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="c1"># Returns False because there are two sentences</span>
+<span class="n">example_3</span> <span class="o">=</span> <span class="s2">&quot;Make sure you brush your teeth. Do it before you go to bed.&quot;</span>
+<span class="n">is_possible_title</span><span class="p">(</span><span class="n">example_3</span><span class="p">,</span> <span class="n">sentence_min_length</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="contains-us-phone-number">
+<h3><code class="docutils literal notranslate"><span class="pre">contains_us_phone_number</span></code><a class="headerlink" href="#contains-us-phone-number" title="Permalink to this heading"></a></h3>
+<p>Checks to see if a section of text contains a US phone number.</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.text_type</span> <span class="kn">import</span> <span class="n">contains_us_phone_number</span>
+
+<span class="c1"># Returns True because the text includes a phone number</span>
+<span class="n">contains_us_phone_number</span><span class="p">(</span><span class="s2">&quot;Phone number: 215-867-5309&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="contains-verb">
+<h3><code class="docutils literal notranslate"><span class="pre">contains_verb</span></code><a class="headerlink" href="#contains-verb" title="Permalink to this heading"></a></h3>
+<p>Checks if the text contains a verb. This is used in <code class="docutils literal notranslate"><span class="pre">is_possible_narrative_text</span></code>, but can
+be used independently as well. The function identifies verbs using the NLTK part of speech
+tagger. Text that is all upper case is lower cased before part of speech detection. This is
+because the upper case letters sometimes cause the part of speech tagger to miss verbs.
+The following part of speech tags are identified as verbs:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">VB</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">VBG</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">VBD</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">VBN</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">VBP</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">VBZ</span></code></p></li>
+</ul>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.text_type</span> <span class="kn">import</span> <span class="n">contains_verb</span>
+
+<span class="c1"># Returns True because the text contains a verb</span>
+<span class="n">example_1</span> <span class="o">=</span> <span class="s2">&quot;I am going to run to the store to pick up some milk.&quot;</span>
+<span class="n">contains_verb</span><span class="p">(</span><span class="n">example_1</span><span class="p">)</span>
+
+<span class="c1"># Returns False because the text does not contain a verb</span>
+<span class="n">example_2</span> <span class="o">=</span> <span class="s2">&quot;A friendly dog&quot;</span>
+<span class="n">contains_verb</span><span class="p">(</span><span class="n">example_2</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="sentence-count">
+<h3><code class="docutils literal notranslate"><span class="pre">sentence_count</span></code><a class="headerlink" href="#sentence-count" title="Permalink to this heading"></a></h3>
+<p>Counts the number of sentences in a section of text. Optionally, you can only include
+sentences that exceed a specified word count. Punctuation counts as a word token
+in the sentence. The function uses the NLTK sentence and word tokeniers to identify
+distinct sentences and words.</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.text_type</span> <span class="kn">import</span> <span class="n">sentence_count</span>
+
+<span class="n">example</span> <span class="o">=</span> <span class="s2">&quot;Look at me! I am a document with two sentences.&quot;</span>
+
+<span class="c1"># Returns 2 because the example contains two sentences</span>
+<span class="n">sentence_count</span><span class="p">(</span><span class="n">example</span><span class="p">)</span>
+
+<span class="c1"># Returns 1 because the first sentence in the example does not contain five word tokens.</span>
+<span class="n">sentence_count</span><span class="p">(</span><span class="n">example</span><span class="p">,</span> <span class="n">min_length</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="exceeds-cap-ratio">
+<h3><code class="docutils literal notranslate"><span class="pre">exceeds_cap_ratio</span></code><a class="headerlink" href="#exceeds-cap-ratio" title="Permalink to this heading"></a></h3>
+<p>Determines if the section of text exceeds the specified caps ratio. Used in
+<code class="docutils literal notranslate"><span class="pre">is_possible_narrative_text</span></code> and <code class="docutils literal notranslate"><span class="pre">is_possible_title</span></code>, but can be used independently
+as well. You can set the caps threshold using the <code class="docutils literal notranslate"><span class="pre">threshold</span></code> kwarg. The threshold
+defaults to <code class="docutils literal notranslate"><span class="pre">0.3</span></code>. Only runs on sections of text that are a single sentence. The caps ratio check does not apply to text that is all capitalized.</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.text_type</span> <span class="kn">import</span> <span class="n">exceeds_cap_ratio</span>
+
+<span class="c1"># Returns True because the text is more than 30% caps</span>
+<span class="n">example_1</span> <span class="o">=</span> <span class="s2">&quot;LOOK AT ME I AM YELLING&quot;</span>
+<span class="n">exceeds_cap_ratio</span><span class="p">(</span><span class="n">example_1</span><span class="p">)</span>
+
+<span class="c1"># Returns False because the text is less than 30% caps</span>
+<span class="n">example_2</span> <span class="o">=</span> <span class="s2">&quot;Look at me, I am no longer yelling&quot;</span>
+<span class="n">exceeds_cap_ratio</span><span class="p">(</span><span class="n">example_2</span><span class="p">)</span>
+
+<span class="c1"># Returns False because the text is more than 1% caps</span>
+<span class="n">exceeds_cap_ratio</span><span class="p">(</span><span class="n">example_2</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="extract-attachment-info">
+<h3><code class="docutils literal notranslate"><span class="pre">extract_attachment_info</span></code><a class="headerlink" href="#extract-attachment-info" title="Permalink to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">extract_attachment_info</span></code> function takes an <code class="docutils literal notranslate"><span class="pre">email.message.Message</span></code> object
+as input and returns the a list of dictionaries containing the attachment information,
+such as <code class="docutils literal notranslate"><span class="pre">filename</span></code>, <code class="docutils literal notranslate"><span class="pre">size</span></code>, <code class="docutils literal notranslate"><span class="pre">payload</span></code>, etc. The attachment is saved to the <code class="docutils literal notranslate"><span class="pre">output_dir</span></code>
+if specified.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">email</span>
+<span class="kn">from</span> <span class="nn">unstructured.partition.email</span> <span class="kn">import</span> <span class="n">extract_attachment_info</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;example-docs/fake-email-attachment.eml&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="n">email</span><span class="o">.</span><span class="n">message_from_file</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="n">attachment_info</span> <span class="o">=</span> <span class="n">extract_attachment_info</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;example-docs&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
 </section>
 
         </article>
@@ -1489,14 +1581,14 @@ is used by default.</p>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="elements.html">
+          <a class="prev-page" href="getting_started.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Elements</div>
+                <div class="title">Getting Started</div>
                 
               </div>
             </a>
@@ -1542,14 +1634,6 @@ is used by default.</p>
 <li><a class="reference internal" href="#partition-image"><code class="docutils literal notranslate"><span class="pre">partition_image</span></code></a></li>
 <li><a class="reference internal" href="#partition-email"><code class="docutils literal notranslate"><span class="pre">partition_email</span></code></a></li>
 <li><a class="reference internal" href="#partition-text"><code class="docutils literal notranslate"><span class="pre">partition_text</span></code></a></li>
-<li><a class="reference internal" href="#extract-attachment-info"><code class="docutils literal notranslate"><span class="pre">extract_attachment_info</span></code></a></li>
-<li><a class="reference internal" href="#is-bulleted-text"><code class="docutils literal notranslate"><span class="pre">is_bulleted_text</span></code></a></li>
-<li><a class="reference internal" href="#is-possible-narrative-text"><code class="docutils literal notranslate"><span class="pre">is_possible_narrative_text</span></code></a></li>
-<li><a class="reference internal" href="#is-possible-title"><code class="docutils literal notranslate"><span class="pre">is_possible_title</span></code></a></li>
-<li><a class="reference internal" href="#contains-us-phone-number"><code class="docutils literal notranslate"><span class="pre">contains_us_phone_number</span></code></a></li>
-<li><a class="reference internal" href="#contains-verb"><code class="docutils literal notranslate"><span class="pre">contains_verb</span></code></a></li>
-<li><a class="reference internal" href="#sentence-count"><code class="docutils literal notranslate"><span class="pre">sentence_count</span></code></a></li>
-<li><a class="reference internal" href="#exceeds-cap-ratio"><code class="docutils literal notranslate"><span class="pre">exceeds_cap_ratio</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#cleaning">Cleaning</a><ul>
@@ -1587,6 +1671,17 @@ is used by default.</p>
 <li><a class="reference internal" href="#stage-for-label-box"><code class="docutils literal notranslate"><span class="pre">stage_for_label_box</span></code></a></li>
 <li><a class="reference internal" href="#stage-for-datasaur"><code class="docutils literal notranslate"><span class="pre">stage_for_datasaur</span></code></a></li>
 <li><a class="reference internal" href="#stage-for-argilla"><code class="docutils literal notranslate"><span class="pre">stage_for_argilla</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#other-helper-functions">Other helper functions</a><ul>
+<li><a class="reference internal" href="#is-bulleted-text"><code class="docutils literal notranslate"><span class="pre">is_bulleted_text</span></code></a></li>
+<li><a class="reference internal" href="#is-possible-narrative-text"><code class="docutils literal notranslate"><span class="pre">is_possible_narrative_text</span></code></a></li>
+<li><a class="reference internal" href="#is-possible-title"><code class="docutils literal notranslate"><span class="pre">is_possible_title</span></code></a></li>
+<li><a class="reference internal" href="#contains-us-phone-number"><code class="docutils literal notranslate"><span class="pre">contains_us_phone_number</span></code></a></li>
+<li><a class="reference internal" href="#contains-verb"><code class="docutils literal notranslate"><span class="pre">contains_verb</span></code></a></li>
+<li><a class="reference internal" href="#sentence-count"><code class="docutils literal notranslate"><span class="pre">sentence_count</span></code></a></li>
+<li><a class="reference internal" href="#exceeds-cap-ratio"><code class="docutils literal notranslate"><span class="pre">exceeds_cap_ratio</span></code></a></li>
+<li><a class="reference internal" href="#extract-attachment-info"><code class="docutils literal notranslate"><span class="pre">extract_attachment_info</span></code></a></li>
 </ul>
 </li>
 </ul>
