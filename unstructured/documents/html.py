@@ -335,9 +335,9 @@ def _get_bullet_descendants(element, next_element) -> Tuple[etree.Element, ...]:
 
 def is_list_item_tag(tag_elem: etree.Element) -> bool:
     """Checks to see if a tag contains bulleted text."""
-    if tag_elem.tag in LIST_ITEM_TAGS:
-        return True
-    elif tag_elem.tag == "div" and is_bulleted_text(_construct_text(tag_elem)):
+    if tag_elem.tag in LIST_ITEM_TAGS or (
+        tag_elem.tag == "div" and is_bulleted_text(_construct_text(tag_elem))
+    ):
         return True
     return False
 

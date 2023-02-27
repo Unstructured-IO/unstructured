@@ -24,7 +24,7 @@ from unstructured.__version__ import __version__
 setup(
     name="unstructured",
     description="A library that prepares raw documents for downstream ML tasks.",
-    long_description=open("README.md", encoding="utf-8").read(),
+    long_description=open("README.md", encoding="utf-8").read(),  # noqa: SIM115
     long_description_content_type="text/markdown",
     keywords="NLP PDF HTML CV XML parsing preprocessing",
     url="https://github.com/Unstructured-IO/unstructured",

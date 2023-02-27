@@ -30,7 +30,7 @@ def _partition_via_api(
     file_: Mapping[str, Tuple[str, Union[BinaryIO, bytes]]] = {
         "file": (
             filename,
-            file if file else open(filename, "rb"),
+            file if file else open(filename, "rb"),  # noqa: SIM115
         ),
     }
     response = requests.post(
