@@ -333,7 +333,7 @@ Cleaning
 
 As part of data preparation for an NLP model, it's common to need to clean up your data prior to passing it into the model.
 If there's unwanted content in your output, for example, it could impact the quality of your NLP model.
-To help with this, the unstructured library includes cleaning bricks to help users sanitize output before sending it to downstream applications.
+To help with this, the ``unstructured`` library includes cleaning bricks to help users sanitize output before sending it to downstream applications.
 
 
 Some cleaning bricks apply automatically.
