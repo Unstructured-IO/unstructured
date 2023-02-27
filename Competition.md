@@ -23,16 +23,16 @@ Let's cut to the chase, we're offering **Cash Prizes**!
 
 ***REMOVED******REMOVED******REMOVED***  Goals
  
-* To date we've been focused on making it easy to transform your data. Now we want to improve Unstructured's ability to seamlessly process data from many sources through the `unstructured-ingest` client (see [Ingest.md](https://github.com/Unstructured-IO/unstructured/blob/main/Ingest.md***REMOVED***the-unstructured-ingest-cli))
+* To date, we've been focused on making it easy to transform your data. Now we want to improve Unstructured's ability to seamlessly process data from many sources through the `unstructured-ingest` client (see [Ingest.md](https://github.com/Unstructured-IO/unstructured/blob/main/Ingest.md***REMOVED***the-unstructured-ingest-cli))
 * Squash bugs!
 
 ***REMOVED******REMOVED******REMOVED*** Getting Started
 
-* See [Installation Instructions for Local Development](https://github.com/Unstructured-IO/unstructured/blob/main/Ingest.md***REMOVED***the-unstructured-ingest-cli), and also make sure to follow the "Optional" steps.
+* See [Installation Instructions for Local Development](https://github.com/Unstructured-IO/unstructured***REMOVED***coffee-installation-instructions-for-local-development), and also make sure to follow the "Optional" steps.
 * Looking for ideas? We've created a bunch of issues scoped so you can start writing code immediately. See the [issues tagged with enhancement](https://github.com/Unstructured-IO/unstructured/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement).
 
 ***REMOVED******REMOVED******REMOVED*** Criteria 
 
-We'll be measuring contributions for both quality and quantity, not total number of PR's merged to main. New data connectors are important, but so are bug fixes and other usability enhancements. All contributions are encouraged and will be considered on deciding winners. Contributions to dependent libraries such as [unstructured-inference](https://github.com/Unstructured-IO/unstructured-inference) are also welcome.
+We'll be measuring contributions for both quality and quantity, not the total number of PRs merged into the main branch. New data connectors are important, but so are bug fixes and other usability enhancements. All contributions are encouraged and will be considered in deciding winners. Contributions to dependent libraries such as [unstructured-inference](https://github.com/Unstructured-IO/unstructured-inference) are also welcome.
 
-**Winners to be announced on March 15, 2023!**
+**Winners will be announced on March 15, 2023!**
