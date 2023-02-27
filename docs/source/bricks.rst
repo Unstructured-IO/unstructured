@@ -322,222 +322,7 @@ Examples:
   elements = partition_text(text=text)
 
 
-``extract_attachment_info``
-----------------------------
 
-The ``extract_attachment_info`` function takes an ``email.message.Message`` object
-as input and returns the a list of dictionaries containing the attachment information,
-such as ``filename``, ``size``, ``payload``, etc. The attachment is saved to the ``output_dir``
-if specified.
-
-.. code:: python
-
-  import email
-  from unstructured.partition.email import extract_attachment_info
-
-  with open("example-docs/fake-email-attachment.eml", "r") as f:
-      msg = email.message_from_file(f)
-  attachment_info = extract_attachment_info(msg, output_dir="example-docs")
-
-
-``is_bulleted_text``
-----------------------
-
-Uses regular expression patterns to check if a snippet of text is a bullet point. Only
-triggers if the bullet point appears at the start of the snippet.
-
-Examples:
-
-.. code:: python
-
-  from unstructured.partition.text_type import is_bulleted_text
-
-  # Returns True
-  is_bulleted_text("● An excellent point!")
-
-  # Returns False
-  is_bulleted_text("I love Morse Code! ●●●")
-
-
-``is_possible_narrative_text``
-------------------------------
-
-The ``is_possible_narrative_text`` function determines if a section of text is a candidate
-for consideration as narrative text. The function performs the following checks on input text:
-
-* Empty text cannot be narrative text
-* Text that is all numeric cannot be narrative text
-* Text that does not contain a verb cannot be narrative text
-* Narrative text must contain at least one English word (if ``language`` is set to "en")
-* Text that exceeds the specified caps ratio cannot be narrative text. The threshold
-  is configurable with the ``cap_threshold`` kwarg. To ignore this check, you can set
-  ``cap_threshold=1.0``. You can also set the threshold by using the
-  ``UNSTRUCTURED_NARRATIVE_TEXT_CAP_THRESHOLD`` environment variable. The environment variable
-  takes precedence over the kwarg.
-* If a the text contains too many non-alpha characters it is
-  not narrative text.
-  The default is to expect a minimum of 50% alpha characters
-  (not countings spaces). You can change the minimum value with the
-  ``non_alpha_ratio`` kwarg or the ``UNSTRUCTURED_NARRATIVE_TEXT_NON_ALPHA_RATIO`` environment variable.
-  The environment variables takes precedence over the kwarg.
-* The cap ratio test does not apply to text that is all uppercase.
-* If you use the ``language=""`` kwarg or set the ``UNSTRUCTURED_LANGUAGE`` environment variable to ``""``, the function will skip the verb check and the English word check.
-
-
-Examples:
-
-.. code:: python
-
-  from unstructured.partition.text_type import is_possible_narrative_text
-
-  # Returns True because the example passes all the checks
-  example_1 = "Make sure you brush your teeth before you go to bed."
-  is_possible_narrative_text(example_1)
-
-  # Returns False because the text exceeds the caps ratio and does not contain a verb
-  example_2 = "ITEM 1A. RISK FACTORS"
-  is_possible_narrative_text(example_2)
-
-  # Returns True because the text has a verb and does not exceed the cap_threshold
-  example_3 = "OLD MCDONALD HAD A FARM"
-  is_possible_narrative_text(example_3, cap_threshold=1.0)
-
-
-``is_possible_title``
----------------------
-
-The ``is_possible_title`` function determines if a section of text is a candidate
-for consideration as a title. The function performs the following checks:
-
-* Empty text cannot be a title
-* Text that is all numeric cannot be a title.
-* If a title contains too many words it is not a title. The default max length is ``12``. You can change the max length with
-  the ``title_max_word_length`` kwarg or the ``UNSTRUCTURED_TITLE_MAX_WORD_LENGTH`` environment variable. The environment
-  variable takes precedence over the kwarg.
-* If a text contains too many non-alpha characters it is not a
-  title. The default is to expect a minimum of 50% alpha characters
-  (not countings spaces). You can change the minimum value with the
-  ``non_alpha_ratio`` kwarg or the ``UNSTRUCTURED_TITLE_NON_ALPHA_RATIO`` environment variable.
-  The environment variables takes precedence over the kwarg.
-* Narrative text must contain at least one English word (if ``language`` is set to "en")
-* If a title contains more than one sentence that exceeds a certain length, it cannot be a title. Sentence length threshold is controlled by the ``sentence_min_length`` kwarg and defaults to 5.
-* If a segment of text ends in a comma, it is not considered a potential title. This is to avoid salutations like "To My Dearest Friends," getting flagged as titles.
-* If you use the ``language=""`` kwarg or set the ``UNSTRUCTURED_LANGUAGE`` environment variable to ``""``, the function will skip the English word check.
-
-
-
-Examples:
-
-.. code:: python
-
-  from unstructured.partition.text_type import is_possible_title
-
-  # Returns True because the text passes all the tests
-  example_2 = "ITEM 1A. RISK FACTORS"
-  is_possible_title(example_2)
-
-  # Returns True because there is only one sentence
-  example_2 = "Make sure you brush your teeth before you go to bed."
-  is_possible_title(example_2, sentence_min_length=5)
-
-  # Returns False because there are two sentences
-  example_3 = "Make sure you brush your teeth. Do it before you go to bed."
-  is_possible_title(example_3, sentence_min_length=5)
-
-
-``contains_us_phone_number``
-----------------------------
-
-Checks to see if a section of text contains a US phone number.
-
-Examples:
-
-.. code:: python
-
-  from unstructured.partition.text_type import contains_us_phone_number
-
-  # Returns True because the text includes a phone number
-  contains_us_phone_number("Phone number: 215-867-5309")
-
-
-``contains_verb``
------------------
-
-Checks if the text contains a verb. This is used in ``is_possible_narrative_text``, but can
-be used independently as well. The function identifies verbs using the NLTK part of speech
-tagger. Text that is all upper case is lower cased before part of speech detection. This is
-because the upper case letters sometimes cause the part of speech tagger to miss verbs.
-The following part of speech tags are identified as verbs:
-
-* ``VB``
-* ``VBG``
-* ``VBD``
-* ``VBN``
-* ``VBP``
-* ``VBZ``
-
-Examples:
-
-.. code:: python
-
-  from unstructured.partition.text_type import contains_verb
-
-  # Returns True because the text contains a verb
-  example_1 = "I am going to run to the store to pick up some milk."
-  contains_verb(example_1)
-
-  # Returns False because the text does not contain a verb
-  example_2 = "A friendly dog"
-  contains_verb(example_2)
-
-
-``sentence_count``
-------------------
-
-Counts the number of sentences in a section of text. Optionally, you can only include
-sentences that exceed a specified word count. Punctuation counts as a word token
-in the sentence. The function uses the NLTK sentence and word tokeniers to identify
-distinct sentences and words.
-
-Examples:
-
-.. code:: python
-
-  from unstructured.partition.text_type import sentence_count
-
-  example = "Look at me! I am a document with two sentences."
-
-  # Returns 2 because the example contains two sentences
-  sentence_count(example)
-
-  # Returns 1 because the first sentence in the example does not contain five word tokens.
-  sentence_count(example, min_length=5)
-
-
-``exceeds_cap_ratio``
----------------------
-
-Determines if the section of text exceeds the specified caps ratio. Used in
-``is_possible_narrative_text`` and ``is_possible_title``, but can be used independently
-as well. You can set the caps threshold using the ``threshold`` kwarg. The threshold
-defaults to ``0.3``. Only runs on sections of text that are a single sentence. The caps ratio check does not apply to text that is all capitalized.
-
-Examples:
-
-.. code:: python
-
-  from unstructured.partition.text_type import exceeds_cap_ratio
-
-  # Returns True because the text is more than 30% caps
-  example_1 = "LOOK AT ME I AM YELLING"
-  exceeds_cap_ratio(example_1)
-
-  # Returns False because the text is less than 30% caps
-  example_2 = "Look at me, I am no longer yelling"
-  exceeds_cap_ratio(example_2)
-
-  # Returns False because the text is more than 1% caps
-  exceeds_cap_ratio(example_2, threshold=0.01)
 
 
 
@@ -1515,3 +1300,229 @@ Examples:
   metadata = [{"type": "title"}, {"type": "text"}]
 
   argilla_dataset = stage_for_argilla(elements, "text_classification", metadata=metadata)
+
+
+######################
+Other helper functions
+######################
+
+The ``unstructured`` library also contains other useful helpful functions to aid in processing documents.
+You can see a list of the available helper functions below:
+
+
+``is_bulleted_text``
+----------------------
+
+Uses regular expression patterns to check if a snippet of text is a bullet point. Only
+triggers if the bullet point appears at the start of the snippet.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.text_type import is_bulleted_text
+
+  # Returns True
+  is_bulleted_text("● An excellent point!")
+
+  # Returns False
+  is_bulleted_text("I love Morse Code! ●●●")
+
+
+``is_possible_narrative_text``
+------------------------------
+
+The ``is_possible_narrative_text`` function determines if a section of text is a candidate
+for consideration as narrative text. The function performs the following checks on input text:
+
+* Empty text cannot be narrative text
+* Text that is all numeric cannot be narrative text
+* Text that does not contain a verb cannot be narrative text
+* Narrative text must contain at least one English word (if ``language`` is set to "en")
+* Text that exceeds the specified caps ratio cannot be narrative text. The threshold
+  is configurable with the ``cap_threshold`` kwarg. To ignore this check, you can set
+  ``cap_threshold=1.0``. You can also set the threshold by using the
+  ``UNSTRUCTURED_NARRATIVE_TEXT_CAP_THRESHOLD`` environment variable. The environment variable
+  takes precedence over the kwarg.
+* If a the text contains too many non-alpha characters it is
+  not narrative text.
+  The default is to expect a minimum of 50% alpha characters
+  (not countings spaces). You can change the minimum value with the
+  ``non_alpha_ratio`` kwarg or the ``UNSTRUCTURED_NARRATIVE_TEXT_NON_ALPHA_RATIO`` environment variable.
+  The environment variables takes precedence over the kwarg.
+* The cap ratio test does not apply to text that is all uppercase.
+* If you use the ``language=""`` kwarg or set the ``UNSTRUCTURED_LANGUAGE`` environment variable to ``""``, the function will skip the verb check and the English word check.
+
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.text_type import is_possible_narrative_text
+
+  # Returns True because the example passes all the checks
+  example_1 = "Make sure you brush your teeth before you go to bed."
+  is_possible_narrative_text(example_1)
+
+  # Returns False because the text exceeds the caps ratio and does not contain a verb
+  example_2 = "ITEM 1A. RISK FACTORS"
+  is_possible_narrative_text(example_2)
+
+  # Returns True because the text has a verb and does not exceed the cap_threshold
+  example_3 = "OLD MCDONALD HAD A FARM"
+  is_possible_narrative_text(example_3, cap_threshold=1.0)
+
+
+``is_possible_title``
+---------------------
+
+The ``is_possible_title`` function determines if a section of text is a candidate
+for consideration as a title. The function performs the following checks:
+
+* Empty text cannot be a title
+* Text that is all numeric cannot be a title.
+* If a title contains too many words it is not a title. The default max length is ``12``. You can change the max length with
+  the ``title_max_word_length`` kwarg or the ``UNSTRUCTURED_TITLE_MAX_WORD_LENGTH`` environment variable. The environment
+  variable takes precedence over the kwarg.
+* If a text contains too many non-alpha characters it is not a
+  title. The default is to expect a minimum of 50% alpha characters
+  (not countings spaces). You can change the minimum value with the
+  ``non_alpha_ratio`` kwarg or the ``UNSTRUCTURED_TITLE_NON_ALPHA_RATIO`` environment variable.
+  The environment variables takes precedence over the kwarg.
+* Narrative text must contain at least one English word (if ``language`` is set to "en")
+* If a title contains more than one sentence that exceeds a certain length, it cannot be a title. Sentence length threshold is controlled by the ``sentence_min_length`` kwarg and defaults to 5.
+* If a segment of text ends in a comma, it is not considered a potential title. This is to avoid salutations like "To My Dearest Friends," getting flagged as titles.
+* If you use the ``language=""`` kwarg or set the ``UNSTRUCTURED_LANGUAGE`` environment variable to ``""``, the function will skip the English word check.
+
+
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.text_type import is_possible_title
+
+  # Returns True because the text passes all the tests
+  example_2 = "ITEM 1A. RISK FACTORS"
+  is_possible_title(example_2)
+
+  # Returns True because there is only one sentence
+  example_2 = "Make sure you brush your teeth before you go to bed."
+  is_possible_title(example_2, sentence_min_length=5)
+
+  # Returns False because there are two sentences
+  example_3 = "Make sure you brush your teeth. Do it before you go to bed."
+  is_possible_title(example_3, sentence_min_length=5)
+
+
+``contains_us_phone_number``
+----------------------------
+
+Checks to see if a section of text contains a US phone number.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.text_type import contains_us_phone_number
+
+  # Returns True because the text includes a phone number
+  contains_us_phone_number("Phone number: 215-867-5309")
+
+
+``contains_verb``
+-----------------
+
+Checks if the text contains a verb. This is used in ``is_possible_narrative_text``, but can
+be used independently as well. The function identifies verbs using the NLTK part of speech
+tagger. Text that is all upper case is lower cased before part of speech detection. This is
+because the upper case letters sometimes cause the part of speech tagger to miss verbs.
+The following part of speech tags are identified as verbs:
+
+* ``VB``
+* ``VBG``
+* ``VBD``
+* ``VBN``
+* ``VBP``
+* ``VBZ``
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.text_type import contains_verb
+
+  # Returns True because the text contains a verb
+  example_1 = "I am going to run to the store to pick up some milk."
+  contains_verb(example_1)
+
+  # Returns False because the text does not contain a verb
+  example_2 = "A friendly dog"
+  contains_verb(example_2)
+
+
+``sentence_count``
+------------------
+
+Counts the number of sentences in a section of text. Optionally, you can only include
+sentences that exceed a specified word count. Punctuation counts as a word token
+in the sentence. The function uses the NLTK sentence and word tokeniers to identify
+distinct sentences and words.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.text_type import sentence_count
+
+  example = "Look at me! I am a document with two sentences."
+
+  # Returns 2 because the example contains two sentences
+  sentence_count(example)
+
+  # Returns 1 because the first sentence in the example does not contain five word tokens.
+  sentence_count(example, min_length=5)
+
+
+``exceeds_cap_ratio``
+---------------------
+
+Determines if the section of text exceeds the specified caps ratio. Used in
+``is_possible_narrative_text`` and ``is_possible_title``, but can be used independently
+as well. You can set the caps threshold using the ``threshold`` kwarg. The threshold
+defaults to ``0.3``. Only runs on sections of text that are a single sentence. The caps ratio check does not apply to text that is all capitalized.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.text_type import exceeds_cap_ratio
+
+  # Returns True because the text is more than 30% caps
+  example_1 = "LOOK AT ME I AM YELLING"
+  exceeds_cap_ratio(example_1)
+
+  # Returns False because the text is less than 30% caps
+  example_2 = "Look at me, I am no longer yelling"
+  exceeds_cap_ratio(example_2)
+
+  # Returns False because the text is more than 1% caps
+  exceeds_cap_ratio(example_2, threshold=0.01)
+
+
+``extract_attachment_info``
+----------------------------
+
+The ``extract_attachment_info`` function takes an ``email.message.Message`` object
+as input and returns the a list of dictionaries containing the attachment information,
+such as ``filename``, ``size``, ``payload``, etc. The attachment is saved to the ``output_dir``
+if specified.
+
+.. code:: python
+
+  import email
+  from unstructured.partition.email import extract_attachment_info
+
+  with open("example-docs/fake-email-attachment.eml", "r") as f:
+      msg = email.message_from_file(f)
+  attachment_info = extract_attachment_info(msg, output_dir="example-docs")
