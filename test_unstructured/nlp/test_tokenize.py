@@ -3,9 +3,8 @@ from unittest.mock import patch
 
 import nltk
 
-import unstructured.nlp.tokenize as tokenize
-
 from test_unstructured.nlp.mock_nltk import mock_sent_tokenize, mock_word_tokenize
+from unstructured.nlp import tokenize
 
 
 def test_nltk_packages_download_if_not_present():
@@ -17,15 +16,14 @@ def test_nltk_packages_download_if_not_present():
 
 
 def test_nltk_packages_do_not_download_if():
-    with patch.object(nltk, "find"):
-        with patch.object(nltk, "download") as mock_download:
-            tokenize._download_nltk_package_if_not_present("fake_package", "tokenizers")
+    with patch.object(nltk, "find"), patch.object(nltk, "download") as mock_download:
+        tokenize._download_nltk_package_if_not_present("fake_package", "tokenizers")
 
     mock_download.assert_not_called()
 
 
 def mock_pos_tag(tokens: List[str]) -> List[Tuple[str, str]]:
-    pos_tags: List[Tuple[str, str]] = list()
+    pos_tags: List[Tuple[str, str]] = []
     for token in tokens:
         if token.lower() == "ask":
             pos_tags.append((token, "VB"))

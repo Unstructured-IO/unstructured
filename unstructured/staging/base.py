@@ -1,16 +1,16 @@
-import io
 import csv
+import io
 import json
 from typing import Any, Dict, List, Optional
 
 import pandas as pd
 
 from unstructured.documents.elements import (
+    TYPE_TO_TEXT_ELEMENT_MAP,
     CheckBox,
-    NoID,
     Element,
     ElementMetadata,
-    TYPE_TO_TEXT_ELEMENT_MAP,
+    NoID,
 )
 
 TABLE_FIELDNAMES: List[str] = [
@@ -26,7 +26,7 @@ TABLE_FIELDNAMES: List[str] = [
 
 def convert_to_isd(elements: List[Element]) -> List[Dict[str, str]]:
     """Represents the document elements as an Initial Structured Document (ISD)."""
-    isd: List[Dict[str, str]] = list()
+    isd: List[Dict[str, str]] = []
     for element in elements:
         section = element.to_dict()
         isd.append(section)
@@ -47,7 +47,7 @@ def elements_to_json(elements: List[Element], filename: str, indent: int = 4):
 
 def isd_to_elements(isd: List[Dict[str, Any]]) -> List[Element]:
     """Converts an Initial Structured Data (ISD) dictionary to a list of elements."""
-    elements: List[Element] = list()
+    elements: List[Element] = []
 
     for item in isd:
         element_id: str = item.get("element_id", NoID())
@@ -66,7 +66,7 @@ def isd_to_elements(isd: List[Dict[str, Any]]) -> List[Element]:
                     element_id=element_id,
                     metadata=metadata,
                     coordinates=coordinates,
-                )
+                ),
             )
         elif item["type"] == "CheckBox":
             elements.append(
@@ -75,7 +75,7 @@ def isd_to_elements(isd: List[Dict[str, Any]]) -> List[Element]:
                     element_id=element_id,
                     metadata=metadata,
                     coordinates=coordinates,
-                )
+                ),
             )
 
     return elements
@@ -88,7 +88,7 @@ def dict_to_elements(element_dict: List[Dict[str, Any]]) -> List[Element]:
 
 def elements_from_json(filename: str) -> List[Element]:
     """Loads a list of elements from a JSON file."""
-    with open(filename, "r") as f:
+    with open(filename) as f:
         element_dict = json.load(f)
     return dict_to_elements(element_dict)
 
