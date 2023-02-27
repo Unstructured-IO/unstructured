@@ -1,3 +1,10 @@
+## 0.4.16-dev5
+
+### Enhancements
+
+* Add `requires_dependencies` Python decorator to check dependencies are installed before
+instantiating a class or running a function
+
 ## 0.4.16-dev4
 
 ### Enhancements
