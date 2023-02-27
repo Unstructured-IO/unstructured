@@ -1,4 +1,4 @@
-﻿<h3 align="center">
+<h3 align="center">
   <img
     src="https://raw.githubusercontent.com/Unstructured-IO/unstructured/main/img/unstructured_logo.png"
     height="200"
@@ -28,7 +28,7 @@ Let's cut to the chase, we're offering **Cash Prizes**!
 
 ### Getting Started
 
-* See [Installation Instructions for Local Development](https://github.com/Unstructured-IO/unstructured/blob/main/Ingest.md#the-unstructured-ingest-cli), and also make sure to follow the "Optional" steps.
+* See [Installation Instructions for Local Development](https://github.com/Unstructured-IO/unstructured#coffee-installation-instructions-for-local-development), and also make sure to follow the "Optional" steps.
 * Looking for ideas? We've created a bunch of issues scoped so you can start writing code immediately. See the [issues tagged with enhancement](https://github.com/Unstructured-IO/unstructured/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement).
 
 ### Criteria 
