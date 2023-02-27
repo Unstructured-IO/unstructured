@@ -7,6 +7,7 @@
 ### Features
 
 * Added setup script for Ubuntu
+* Added Reddit connector for ingest cli.
 
 ### Fixes
 
