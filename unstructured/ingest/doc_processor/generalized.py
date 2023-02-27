@@ -1,5 +1,8 @@
 """Process aribritrary files with the Unstructured library"""
 
+import os
+from pathlib import Path
+
 from unstructured_inference.models.detectron2 import MODEL_TYPES
 from unstructured.logger import logger
 
@@ -29,9 +32,11 @@ def process_document(doc):
         doc.write_result()
 
     except Exception:
+        filename = doc.filename if isinstance(doc.filename, Path) else Path(doc.filename)
+        if filename.exists():
+            os.unlink(filename.as_posix())
         # TODO(crag) save the exception instead of print?
         logger.error(f"Failed to process {doc}", exc_info=True)
-    else:
-        doc.cleanup_file()
     finally:
+        doc.cleanup_file()
         return isd_elems_no_filename
