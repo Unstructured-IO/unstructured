@@ -9,7 +9,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --num-processes 2 \
     --verbose
 
-if [ $(ls wikipedia-ingest-output | wc -l) != 3 ]; then
+if [ $(find "wikipedia-ingest-output/Open Source" -type f -printf '.' | wc -c) != 3 ]; then
    echo
    echo "3 files should have been created."
    exit 1
