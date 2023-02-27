@@ -7,7 +7,6 @@ import platform
 import pandas as pd
 import pytest
 
-from unstructured.staging import base
 from unstructured.documents.elements import (
     Address,
     CheckBox,
@@ -20,6 +19,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
+from unstructured.staging import base
 
 
 @pytest.fixture()
@@ -80,7 +80,8 @@ def test_convert_to_dataframe():
 
 
 @pytest.mark.skipif(
-    platform.system() == "Windows", reason="Posix Paths are not available on Windows"
+    platform.system() == "Windows",
+    reason="Posix Paths are not available on Windows",
 )
 def test_convert_to_isd_serializes_with_posix_paths():
     metadata = ElementMetadata(filename=pathlib.PosixPath("../../fake-file.txt"))

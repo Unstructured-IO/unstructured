@@ -3,8 +3,8 @@ import os
 
 import pytest
 
-from unstructured.staging import prodigy
 from unstructured.documents.elements import NarrativeText, Title
+from unstructured.staging import prodigy
 
 
 @pytest.fixture()

@@ -4,8 +4,8 @@ import pytest
 import requests
 from unstructured_inference.inference import layout
 
-from unstructured.partition import pdf
 from unstructured.documents.elements import PageBreak
+from unstructured.partition import pdf
 
 
 class MockResponse:

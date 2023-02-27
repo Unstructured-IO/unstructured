@@ -3,8 +3,8 @@ from unittest.mock import patch
 
 import nltk
 
-from unstructured.nlp import tokenize
 from test_unstructured.nlp.mock_nltk import mock_sent_tokenize, mock_word_tokenize
+from unstructured.nlp import tokenize
 
 
 def test_nltk_packages_download_if_not_present():

@@ -5,7 +5,6 @@ import warnings
 import docx
 import pytest
 
-from unstructured.partition import auto
 from unstructured.documents.elements import (
     Address,
     ListItem,
@@ -14,6 +13,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
+from unstructured.partition import auto
 from unstructured.partition.auto import partition
 from unstructured.partition.common import convert_office_doc
 

@@ -1,7 +1,7 @@
 import pytest
 
-from unstructured.staging import datasaur
 from unstructured.documents.elements import Text
+from unstructured.staging import datasaur
 
 
 def test_stage_for_datasaur():

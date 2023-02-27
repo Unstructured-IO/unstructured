@@ -4,8 +4,7 @@ import pytest
 import requests
 from unstructured_inference.inference import layout
 
-from unstructured.partition import image
-from unstructured.partition import pdf
+from unstructured.partition import image, pdf
 
 
 class MockResponse:
@@ -94,7 +93,8 @@ def test_partition_image_api_page_break(monkeypatch, filename="example-docs/exam
 
 
 @pytest.mark.parametrize(
-    ("filename", "file"), [("example-docs/example.jpg", None), (None, b"0000")]
+    ("filename", "file"),
+    [("example-docs/example.jpg", None), (None, b"0000")],
 )
 def test_partition_image_local(monkeypatch, filename, file):
     monkeypatch.setattr(

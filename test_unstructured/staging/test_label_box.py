@@ -2,8 +2,8 @@ import os
 
 import pytest
 
-from unstructured.staging import label_box
 from unstructured.documents.elements import NarrativeText, Title
+from unstructured.staging import label_box
 
 
 @pytest.fixture()
