@@ -1,9 +1,9 @@
 """Process aribritrary files with the Unstructured library"""
 
-import os
-from pathlib import Path
+from typing import Optional, List, Dict, Any
 
 from unstructured_inference.models.detectron2 import MODEL_TYPES
+from unstructured.ingest.interfaces import BaseIngestDoc as IngestDoc
 from unstructured.logger import logger
 
 
@@ -16,7 +16,7 @@ def initialize():
     MODEL_TYPES[None]["config_path"]
 
 
-def process_document(doc):
+def process_document(doc: "IngestDoc") -> Optional[List[Dict[str, Any]]]:
     """Process any IngestDoc-like class of document with Unstructured's auto partition logic."""
     isd_elems_no_filename = None
     try:
