@@ -1,4 +1,4 @@
-<h3 align="center">
+﻿<h3 align="center">
   <img
     src="https://raw.githubusercontent.com/Unstructured-IO/unstructured/main/img/unstructured_logo.png"
     height="200"
@@ -23,7 +23,7 @@ Let's cut to the chase, we're offering **Cash Prizes**!
 
 ###  Goals
  
-* To date we've been focused on making it easy to transform your data. Now we want to improve Unstructured's ability to seamlessly process data from many sources through the `unstructured-ingest` client (see [Ingest.md](https://github.com/Unstructured-IO/unstructured/blob/main/Ingest.md#the-unstructured-ingest-cli))
+* To date, we've been focused on making it easy to transform your data. Now we want to improve Unstructured's ability to seamlessly process data from many sources through the `unstructured-ingest` client (see [Ingest.md](https://github.com/Unstructured-IO/unstructured/blob/main/Ingest.md#the-unstructured-ingest-cli))
 * Squash bugs!
 
 ### Getting Started
@@ -33,6 +33,6 @@ Let's cut to the chase, we're offering **Cash Prizes**!
 
 ### Criteria 
 
-We'll be measuring contributions for both quality and quantity, not total number of PR's merged to main. New data connectors are important, but so are bug fixes and other usability enhancements. All contributions are encouraged and will be considered on deciding winners. Contributions to dependent libraries such as [unstructured-inference](https://github.com/Unstructured-IO/unstructured-inference) are also welcome.
+We'll be measuring contributions for both quality and quantity, not the total number of PRs merged into the main branch. New data connectors are important, but so are bug fixes and other usability enhancements. All contributions are encouraged and will be considered in deciding winners. Contributions to dependent libraries such as [unstructured-inference](https://github.com/Unstructured-IO/unstructured-inference) are also welcome.
 
-**Winners to be announced on March 15, 2023!**
+**Winners will be announced on March 15, 2023!**
