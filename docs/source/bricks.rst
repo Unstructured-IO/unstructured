@@ -350,7 +350,7 @@ You can see how that works in the code snippet below:
 
 Document elements in ``unstructured`` include an ``apply`` method that allow you to apply the text cleaning to the document element without instantiating a new element.
 The ``apply`` method expects a callable that takes a string as input and produces another string as output.
-In the example below, we invoke the ``replace_unicode_quotes`` cleaning brick using the apply method.
+In the example below, we invoke the ``replace_unicode_quotes`` cleaning brick using the ``apply`` method.
 
 
 .. code:: python
