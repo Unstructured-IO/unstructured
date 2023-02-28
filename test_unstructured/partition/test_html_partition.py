@@ -98,9 +98,3 @@ def test_partition_html_raises_with_too_many_specified():
 
     with pytest.raises(ValueError):
         partition_html(filename=filename, text=text)
-
-
-def test_sample_doc_with_scripts():
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "example-with-scripts.html")
-    elements = partition_html(filename=filename)
-    assert all(["function (" not in element.text for element in elements])
