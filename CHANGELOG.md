@@ -10,7 +10,7 @@ of in the root directory under the name of `tmp-ingest-...`.
 ### Fixes
 
 * As of the caching update, now files are not downloaded over and over when 
-`download_dir` is not specified since it's path is not random anymore.
+`download_dir` is not specified since its path is not random anymore.
 
 ## 0.5.0
 
