@@ -32,7 +32,7 @@ def requires_dependencies(dependencies: Union[str, List[str]], extras: Optional[
                     if extras
                     else f"Please install them using `pip install {' '.join(missing_deps)}`.",
                 )
-            func(*args, **kwargs)
+            return func(*args, **kwargs)
 
         return wrapper
 
