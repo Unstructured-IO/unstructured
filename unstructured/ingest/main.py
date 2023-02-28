@@ -9,6 +9,10 @@ import click
 from unstructured.ingest.connector.github import GitHubConnector, SimpleGitHubConfig
 from unstructured.ingest.connector.reddit import RedditConnector, SimpleRedditConfig
 from unstructured.ingest.connector.s3_connector import S3Connector, SimpleS3Config
+from unstructured.ingest.connector.wikipedia import (
+    SimpleWikipediaConfig,
+    WikipediaConnector,
+)
 from unstructured.ingest.doc_processor.generalized import initialize, process_document
 
 
@@ -79,6 +83,11 @@ class MainProcess:
     is_flag=True,
     default=False,
     help="Connect to s3 without local AWS credentials.",
+)
+@click.option(
+    "--wikipedia-page-title",
+    default=None,
+    help='Title of a Wikipedia page, e.g. "Open source software".',
 )
 @click.option(
     "--github-url",
@@ -172,6 +181,7 @@ class MainProcess:
 @click.option("-v", "--verbose", is_flag=True, default=False)
 def main(
     s3_url,
+    wikipedia_page_title,
     github_url,
     github_access_token,
     github_branch,
@@ -234,6 +244,18 @@ def main(
                 user_agent=reddit_user_agent,
                 search_query=reddit_search_query,
                 num_posts=reddit_num_posts,
+                # defaults params:
+                download_dir=download_dir,
+                preserve_downloads=preserve_downloads,
+                output_dir=structured_output_dir,
+                re_download=re_download,
+                verbose=verbose,
+            ),
+        )
+    elif wikipedia_page_title:
+        doc_connector = WikipediaConnector(  # type: ignore
+            config=SimpleWikipediaConfig(
+                title=wikipedia_page_title,
                 # defaults params:
                 download_dir=download_dir,
                 preserve_downloads=preserve_downloads,

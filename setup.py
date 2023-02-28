@@ -84,6 +84,7 @@ setup(
             "pygithub==1.57.0",
         ],
         "reddit": ["praw"],
+        "wikipedia": ["wikipedia"],
     },
     package_dir={"unstructured": "unstructured"},
     package_data={"unstructured": ["nlp/*.txt"]},

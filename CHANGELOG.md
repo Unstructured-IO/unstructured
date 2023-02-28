@@ -1,8 +1,10 @@
-## 0.4.17-dev0
+## 0.4.17-dev1
 
 ### Enhancements
 
 ### Features
+
+* Added Wikipedia connector for ingest cli.
 
 ### Fixes
 
