@@ -20,10 +20,6 @@ charset-normalizer==3.0.1
     # via requests
 click==8.1.3
     # via nltk
-colorama==0.4.6
-    # via
-    #   click
-    #   tqdm
 deprecated==1.2.13
     # via argilla
 et-xmlfile==1.1.0
