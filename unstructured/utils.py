@@ -1,5 +1,6 @@
 import importlib
 import json
+from functools import wraps
 from typing import Dict, List, Optional, Union
 
 
@@ -18,6 +19,7 @@ def requires_dependencies(dependencies: Union[str, List[str]], extras: Optional[
         dependencies = [dependencies]
 
     def decorator(func):
+        @wraps(func)
         def wrapper(*args, **kwargs):
             missing_deps = []
             for dep in dependencies:
