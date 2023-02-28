@@ -265,9 +265,9 @@ def is_narrative_tag(text: str, tag: str) -> bool:
 def _construct_text(tag_elem: etree.Element) -> str:
     """Extracts text from a text tag element."""
     text = ""
-    for item in tag_elem.itertext():
-        if item:
-            text += item
+    for item in tag_elem.iter():
+        if item.text and item.tag != "script":
+            text += item.text
 
     if tag_elem.tail:
         text = text + tag_elem.tail
