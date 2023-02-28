@@ -13,6 +13,7 @@ from unstructured.ingest.connector.wikipedia import (
     SimpleWikipediaConfig,
     WikipediaConnector,
 )
+from unstructured.ingest.connector.google_drive import GoogleDriveConnector, SimpleGoogleDriveConfig
 from unstructured.ingest.doc_processor.generalized import initialize, process_document
 
 
@@ -83,6 +84,16 @@ class MainProcess:
     is_flag=True,
     default=False,
     help="Connect to s3 without local AWS credentials.",
+)
+@click.option(
+    "--drive-id",
+    default=None,
+    help="Google Drive File or Folder ID.",
+)
+@click.option(
+    "--drive-api-key",
+    default=None,
+    help="Google Drive API Key.",
 )
 @click.option(
     "--wikipedia-page-title",
@@ -181,6 +192,8 @@ class MainProcess:
 @click.option("-v", "--verbose", is_flag=True, default=False)
 def main(
     s3_url,
+    drive_id,
+    drive_api_key,
     wikipedia_page_title,
     github_url,
     github_access_token,
@@ -263,6 +276,19 @@ def main(
                 re_download=re_download,
                 verbose=verbose,
             ),
+        )
+    elif drive_id:
+        doc_connector = GoogleDriveConnector(
+            config=SimpleGoogleDriveConfig(
+                drive_id=drive_id,
+                api_key=drive_api_key,
+                # defaults params:
+                download_dir=download_dir,
+                preserve_downloads=preserve_downloads,
+                output_dir=structured_output_dir,
+                re_download=re_download,
+                verbose=verbose,
+            )
         )
     # Check for other connector-specific options here and define the doc_connector object
     # e.g. "elif azure_container:  ..."
