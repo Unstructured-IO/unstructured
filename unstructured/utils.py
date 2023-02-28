@@ -14,7 +14,10 @@ def read_from_jsonl(filename: str) -> List[Dict]:
         return [json.loads(line) for line in input_file]
 
 
-def requires_dependencies(dependencies: Union[str, List[str]], extras: Optional[str] = None):
+def requires_dependencies(
+    dependencies: Union[str, List[str]],
+    extras: Optional[str] = None,
+):
     if isinstance(dependencies, str):
         dependencies = [dependencies]
 
@@ -30,9 +33,11 @@ def requires_dependencies(dependencies: Union[str, List[str]], extras: Optional[
             if len(missing_deps) > 0:
                 raise ImportError(
                     f"Following dependencies are missing: {', '.join(missing_deps)}. "
-                    + f"Please install them using `pip install unstructured[{extras}]`."
-                    if extras
-                    else f"Please install them using `pip install {' '.join(missing_deps)}`.",
+                    + (
+                        f"Please install them using `pip install unstructured[{extras}]`."
+                        if extras
+                        else f"Please install them using `pip install {' '.join(missing_deps)}`."
+                    ),
                 )
             return func(*args, **kwargs)
 
