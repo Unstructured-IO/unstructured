@@ -59,6 +59,7 @@ setup(
         "python-docx",
         "python-pptx",
         "python-magic",
+        "markdown",
         "requests",
         # NOTE(robinson) - The following dependencies are pinned
         # to address security scans
@@ -72,8 +73,16 @@ setup(
             "torch",
             "transformers",
         ],
-        "local-inference": ["unstructured-inference>=0.2.4"],
+        "local-inference": [
+            # NOTE(robinson) - Upper bound is temporary due to a multithreading issue
+            "unstructured-inference>=0.2.4,<0.2.8",
+        ],
         "s3": ["boto3"],
+        "github": [
+            # NOTE - pygithub at 1.58.0 fails due to https://github.com/PyGithub/PyGithub/issues/2436
+            # In the future, we can update this to pygithub>1.58.0
+            "pygithub==1.57.0",
+        ],
         "reddit": ["praw"],
         "wikipedia": ["wikipedia"],
     },

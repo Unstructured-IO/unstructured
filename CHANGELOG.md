@@ -1,4 +1,14 @@
-## 0.4.16-dev5
+## 0.4.17-dev1
+
+### Enhancements
+
+### Features
+
+* Added Wikipedia connector for ingest cli.
+
+### Fixes
+
+## 0.4.16
 
 ### Enhancements
 
@@ -7,12 +17,14 @@
 ### Features
 
 * Added setup script for Ubuntu
+* Added GitHub connector for ingest cli.
+* Added `partition_md` partitioner.
 * Added Reddit connector for ingest cli.
-* Added Wikipedia connector for ingest cli.
 
 ### Fixes
 
 * Initializes connector properly in ingest.main::MainProcess
+* Restricts version of unstructured-inference to avoid multithreading issue
 
 ## 0.4.15
 
