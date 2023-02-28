@@ -1,4 +1,5 @@
 import os
+import pathlib
 
 import pytest
 from lxml import etree
@@ -22,6 +23,8 @@ from unstructured.documents.html import (
     HTMLTitle,
     TagsMixin,
 )
+
+DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
 TAGS = (
     "<a><abbr><acronym><address><applet><area><article><aside><audio><b><base><basefont><bdi>"
@@ -632,3 +635,9 @@ def test_joins_tag_text_correctly():
     doc = HTMLDocument.from_string(raw_html)
     el = doc.elements[0]
     assert el.text == "Hello again peet magical"
+
+
+def test_sample_doc_with_scripts():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "example-with-scripts.html")
+    doc = HTMLDocument.from_file(filename=filename)
+    assert all(["function (" not in element.text for element in doc.elements])

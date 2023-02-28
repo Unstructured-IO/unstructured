@@ -1,4 +1,4 @@
-***REMOVED******REMOVED*** 0.5.1-dev1
+***REMOVED******REMOVED*** 0.5.1-dev2
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
 
@@ -6,6 +6,7 @@
 
 ***REMOVED******REMOVED******REMOVED*** Fixes
 
+* Fixes an error causing JavaScript to appear in the output of `partition_html` sometimes.
 * Fix several issues with the `requires_dependencies` decorator, including the error message
   and how it was used.
 
