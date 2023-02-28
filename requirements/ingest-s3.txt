@@ -16,9 +16,9 @@ backoff==2.2.1
     # via
     #   -r requirements/base.txt
     #   argilla
-boto3==1.26.79
+boto3==1.26.80
     # via unstructured (setup.py)
-botocore==1.29.79
+botocore==1.29.80
     # via
     #   boto3
     #   s3transfer
@@ -63,6 +63,10 @@ idna==3.4
     #   anyio
     #   requests
     #   rfc3986
+importlib-metadata==6.0.0
+    # via
+    #   -r requirements/base.txt
+    #   markdown
 jmespath==1.0.1
     # via
     #   boto3
@@ -76,6 +80,10 @@ lxml==4.9.2
     #   -r requirements/base.txt
     #   python-docx
     #   python-pptx
+    #   unstructured (setup.py)
+markdown==3.4.1
+    # via
+    #   -r requirements/base.txt
     #   unstructured (setup.py)
 monotonic==1.6
     # via
@@ -180,3 +188,7 @@ xlsxwriter==3.0.8
     # via
     #   -r requirements/base.txt
     #   python-pptx
+zipp==3.15.0
+    # via
+    #   -r requirements/base.txt
+    #   importlib-metadata
