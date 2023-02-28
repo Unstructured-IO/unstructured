@@ -147,17 +147,17 @@ class MainProcess:
 @click.option(
     "--re-download/--no-re-download",
     default=False,
-    help="Re-download files from s3 even if they are already present in --download-dir.",
+    help="Re-download files even if they are already present in --download-dir.",
 )
 @click.option(
     "--download-dir",
-    help="Where s3 files are downloaded to, defaults to tmp-ingest-<6 random chars>.",
+    help="Where files are downloaded to, defaults to `$HOME/.cache/unstructured/ingest/<SHA256>`.",
 )
 @click.option(
     "--preserve-downloads",
     is_flag=True,
     default=False,
-    help="Preserve downloaded s3 files. Otherwise each file is removed after being processed "
+    help="Preserve downloaded files. Otherwise each file is removed after being processed "
     "successfully.",
 )
 @click.option(
@@ -169,7 +169,7 @@ class MainProcess:
     "--reprocess",
     is_flag=True,
     default=False,
-    help="Reprocess a downloaded file from s3 even if the relevant structured output .json file "
+    help="Reprocess a downloaded file even if the relevant structured output .json file "
     "in --structured-output-dir already exists.",
 )
 @click.option(
