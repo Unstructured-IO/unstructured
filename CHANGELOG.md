@@ -1,4 +1,4 @@
-## 0.4.16-dev5
+## 0.4.16
 
 ### Enhancements
 
@@ -14,6 +14,7 @@
 ### Fixes
 
 * Initializes connector properly in ingest.main::MainProcess
+* Restricts version of unstructured-inference to avoid multithreading issue
 
 ## 0.4.15
 
