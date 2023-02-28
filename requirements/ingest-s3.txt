@@ -16,9 +16,9 @@ argilla==1.3.1
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   argilla
-boto3==1.26.79
+boto3==1.26.80
     ***REMOVED*** via unstructured (setup.py)
-botocore==1.29.79
+botocore==1.29.80
     ***REMOVED*** via
     ***REMOVED***   boto3
     ***REMOVED***   s3transfer
@@ -37,11 +37,6 @@ charset-normalizer==3.0.1
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   nltk
-colorama==0.4.6
-    ***REMOVED*** via
-    ***REMOVED***   -r requirements/base.txt
-    ***REMOVED***   click
-    ***REMOVED***   tqdm
 ***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt

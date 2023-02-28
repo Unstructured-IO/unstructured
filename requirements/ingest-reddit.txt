@@ -57,6 +57,10 @@ charset-normalizer==3.0.1
     ***REMOVED***   anyio
     ***REMOVED***   requests
     ***REMOVED***   rfc3986
+importlib-metadata==6.0.0
+    ***REMOVED*** via
+    ***REMOVED***   -r requirements/base.txt
+    ***REMOVED***   markdown
 ***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
@@ -66,6 +70,10 @@ charset-normalizer==3.0.1
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   python-docx
     ***REMOVED***   python-pptx
+    ***REMOVED***   unstructured (setup.py)
+markdown==3.4.1
+    ***REMOVED*** via
+    ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   unstructured (setup.py)
 ***REMOVED***
     ***REMOVED*** via
@@ -176,3 +184,7 @@ xlsxwriter==3.0.8
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   python-pptx
+***REMOVED***
+    ***REMOVED*** via
+    ***REMOVED***   -r requirements/base.txt
+    ***REMOVED***   importlib-metadata

@@ -20,10 +20,6 @@ charset-normalizer==3.0.1
     ***REMOVED*** via requests
 ***REMOVED***
     ***REMOVED*** via nltk
-colorama==0.4.6
-    ***REMOVED*** via
-    ***REMOVED***   click
-    ***REMOVED***   tqdm
 ***REMOVED***
     ***REMOVED*** via argilla
 ***REMOVED***

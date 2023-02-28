@@ -30,10 +30,6 @@ charset-normalizer==3.0.1
     ***REMOVED*** via
     ***REMOVED***   nltk
     ***REMOVED***   uvicorn
-colorama==0.4.6
-    ***REMOVED*** via
-    ***REMOVED***   click
-    ***REMOVED***   tqdm
 coloredlogs==15.0.1
     ***REMOVED*** via onnxruntime
 contourpy==1.0.7
@@ -122,7 +118,7 @@ mpmath==1.2.1
     ***REMOVED***   transformers
 omegaconf==2.3.0
     ***REMOVED*** via effdet
-onnxruntime==1.13.1
+onnxruntime==1.14.1
     ***REMOVED*** via unstructured-inference
 opencv-python==4.6.0.66
     ***REMOVED*** via
@@ -173,8 +169,6 @@ pydantic==1.10.5
     ***REMOVED***   fastapi
 pyparsing==3.0.9
     ***REMOVED*** via matplotlib
-pyreadline3==3.4.1
-    ***REMOVED*** via humanfriendly
 pytesseract==0.3.10
     ***REMOVED*** via layoutparser
 ***REMOVED***
@@ -272,4 +266,6 @@ wand==0.6.11
 xlsxwriter==3.0.8
     ***REMOVED*** via python-pptx
 ***REMOVED***
-    ***REMOVED*** via importlib-resources
+    ***REMOVED*** via
+    ***REMOVED***   importlib-metadata
+    ***REMOVED***   importlib-resources

@@ -16,8 +16,6 @@ beautifulsoup4==4.11.2
     ***REMOVED***   requests
 charset-normalizer==3.0.1
     ***REMOVED*** via requests
-colorama==0.4.6
-    ***REMOVED*** via sphinx
 docutils==0.18.1
     ***REMOVED*** via
     ***REMOVED***   sphinx
