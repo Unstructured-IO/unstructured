@@ -1,8 +1,10 @@
-***REMOVED******REMOVED*** 0.4.17-dev0
+***REMOVED******REMOVED*** 0.4.17-dev1
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
 
 ***REMOVED******REMOVED******REMOVED*** Features
+
+* Added Wikipedia connector for ingest cli.
 
 ***REMOVED******REMOVED******REMOVED*** Fixes
 

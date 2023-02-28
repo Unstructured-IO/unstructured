@@ -84,6 +84,7 @@ setup(
             "***REMOVED***",
         ],
         "reddit": ["praw"],
+        "wikipedia": ["wikipedia"],
     },
     package_dir={"unstructured": "unstructured"},
     package_data={"unstructured": ["nlp/*.txt"]},
