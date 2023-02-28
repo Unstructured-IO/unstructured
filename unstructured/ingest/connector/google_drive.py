@@ -62,7 +62,7 @@ class GoogleDriveIngestDoc(BaseIngestDoc):
         return Path(f"{self.filename}.json").resolve()
 
     def cleanup_file(self):
-        if not self.config.preserve_downloads:
+        if not self.config.preserve_downloads and self.filename.is_file():
             if self.config.verbose:
                 print(f"cleaning up {self}")
             Path.unlink(self.filename)
@@ -86,6 +86,7 @@ class GoogleDriveIngestDoc(BaseIngestDoc):
             status, done = downloader.next_chunk()
 
         if file:
+            self.file_meta.get("download_dir").mkdir(parents=True, exist_ok=True)
             with open(self.filename, "wb") as handler:
                 handler.write(file.getbuffer())
 
@@ -102,7 +103,8 @@ class GoogleDriveConnector(BaseConnector):
     """Objects of this class support fetching documents from Google Drive"""
     def __init__(self, config):
         self.config = config
-        self.files = self._list_objects(self.config.drive_id)
+        self.files = []
+        self.cleanup_files = not self.config.preserve_downloads
 
     def _list_objects(self, folder_id, recursive=False):
         files = []
@@ -119,14 +121,16 @@ class GoogleDriveConnector(BaseConnector):
                         dir_ = DIRECTORY_FORMAT.format(name=meta.get("name"), id=meta.get("id"))
                         if recursive:
                             sub_dir = (download_dir / dir_).resolve()
-                            meta["files"] = traverse(sub_dir, meta.get("id"), True)
+                            traverse(sub_dir, meta.get("id"), True)
                     else:
-                        # TODO (Habeeb) Extract extension from file
-                        ext = guess_extension(meta.get("mimeType"))
+                        if not Path(meta.get("name")).suffixes:
+                            ext = guess_extension(meta.get("mimeType"))
+                        else:
+                            ext = ""
                         name = FILE_FORMAT.format(name=meta.get("name"), id=meta.get("id"), ext=ext)
                         meta["download_dir"] = download_dir
                         meta["download_filepath"] = (download_dir / name).resolve()
-                    files.append(meta)
+                        files.append(meta)
 
                 page_token = response.get('nextPageToken', None)
                 if page_token is None:
@@ -153,10 +157,7 @@ class GoogleDriveConnector(BaseConnector):
             os.rmdir(cur_dir)
 
     def initialize(self):
-        Path(self.config.download_dir).mkdir(parents=True, exist_ok=True)
-        for file in self.files:
-            if file.get("mimeType") == "application/vnd.google-apps.folder":
-                Path(file.get("download_filepath")).mkdir(parents=True, exist_ok=True)
+        self.files = self._list_objects(self.config.drive_id, self.config.recursive)
 
     def get_ingest_docs(self):
         return [

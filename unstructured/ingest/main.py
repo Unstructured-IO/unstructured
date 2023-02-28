@@ -96,6 +96,13 @@ class MainProcess:
     help="Google Drive API Key.",
 )
 @click.option(
+    "--drive-recursive",
+    is_flag=True,
+    default=False,
+    help="Recursively download files in folders from the Google Drive ID, "
+         "otherwise stop at the files in provided folder level.",
+)
+@click.option(
     "--wikipedia-page-title",
     default=None,
     help='Title of a Wikipedia page, e.g. "Open source software".',
@@ -194,6 +201,7 @@ def main(
     s3_url,
     drive_id,
     drive_api_key,
+    drive_recursive,
     wikipedia_page_title,
     github_url,
     github_access_token,
@@ -282,6 +290,7 @@ def main(
             config=SimpleGoogleDriveConfig(
                 drive_id=drive_id,
                 api_key=drive_api_key,
+                recursive=drive_recursive,
                 # defaults params:
                 download_dir=download_dir,
                 preserve_downloads=preserve_downloads,
