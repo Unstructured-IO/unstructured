@@ -207,9 +207,29 @@ def main(
         cache_path = Path.home() / ".cache" / "unstructured" / "ingest"
         if not cache_path.exists():
             cache_path.mkdir(parents=True, exist_ok=True)
+        if s3_url:
+            hashed_dir_name = hashlib.sha256(s3_url.encode("utf-8"))
+        elif github_url:
+            hashed_dir_name = hashlib.sha256(
+                f"{github_url}_{github_branch}".encode("utf-8"),
+            )
+        elif subreddit_name:
+            hashed_dir_name = hashlib.sha256(
+                subreddit_name.encode("utf-8"),
+            )
+        elif wikipedia_page_title:
+            hashed_dir_name = hashlib.sha256(
+                wikipedia_page_title.encode("utf-8"),
+            )
+        else:
+            raise ValueError("No connector-specific option was specified!")
+        download_dir = cache_path / hashed_dir_name.hexdigest()[:10]
+        if preserve_downloads:
+            print(
+                f"Warning: preserving downloaded files but --download-dir is not specified,"
+                f" using {download_dir}",
+            )
     if s3_url:
-        if not download_dir:
-            download_dir = cache_path / hashlib.md5(s3_url.encode("utf-8")).hexdigest()
         doc_connector = S3Connector(
             config=SimpleS3Config(
                 download_dir=download_dir,
@@ -223,13 +243,6 @@ def main(
             ),
         )
     elif github_url:
-        if not download_dir:
-            download_dir = (
-                cache_path
-                / hashlib.md5(
-                    f"{github_url}_{github_branch}_{github_file_glob}".encode("utf-8"),
-                ).hexdigest()
-            )
         doc_connector = GitHubConnector(  # type: ignore
             config=SimpleGitHubConfig(
                 github_url=github_url,
@@ -245,13 +258,6 @@ def main(
             ),
         )
     elif subreddit_name:
-        if not download_dir:
-            download_dir = (
-                cache_path
-                / hashlib.md5(
-                    f"{subreddit_name}_{reddit_search_query}_{reddit_num_posts}".encode("utf-8"),
-                ).hexdigest()
-            )
         doc_connector = RedditConnector(  # type: ignore
             config=SimpleRedditConfig(
                 subreddit_name=subreddit_name,
