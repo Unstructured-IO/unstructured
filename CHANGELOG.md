@@ -1,4 +1,4 @@
-## 0.4.17-dev1
+## 0.5.0
 
 ### Enhancements
 
@@ -9,6 +9,8 @@
 ### Fixes
 
 * Fix `process_document` file cleaning on failure
+* Fixes an error introduced in the metadata tracking commit that caused `NarrativeText`
+  and `FigureCaption` elements to be represented as `Text` in HTML documents.
 
 ## 0.4.16
 
