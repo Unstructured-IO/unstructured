@@ -1,4 +1,13 @@
-## 0.5.0-dev1
+## 0.5.1-dev1
+
+### Enhancements
+
+### Features
+
+### Fixes
+* Fixes an error causing JavaScript to appear in the output of `partition_html` sometimes.
+
+## 0.5.0
 
 ### Enhancements
 
@@ -14,7 +23,6 @@ instantiating a class or running a function
 * Fix `process_document` file cleaning on failure
 * Fixes an error introduced in the metadata tracking commit that caused `NarrativeText`
   and `FigureCaption` elements to be represented as `Text` in HTML documents.
-* Fixes an error causing JavaScript to appear in the output of `partition_html` sometimes.
 
 ## 0.4.16
 
