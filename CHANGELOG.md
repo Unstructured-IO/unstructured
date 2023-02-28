@@ -6,6 +6,8 @@
 
 ***REMOVED******REMOVED******REMOVED*** Fixes
 
+* Fix `process_document` file cleaning on failure
+
 ***REMOVED******REMOVED*** 0.4.16
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
