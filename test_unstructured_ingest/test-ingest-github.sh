@@ -5,7 +5,7 @@ cd "$SCRIPT_DIR"/.. || exit 1
 
 if [[ "$CI" == "true" && "$(( RANDOM % 10))" != "1" ]]; then
     # NOTE(crag): proper fix is being tracked here: https://github.com/Unstructured-IO/unstructured/issues/306
-    echo "Skipping ingest 90% of github ingest test to avoid rate limiting issue."
+    echo "Skipping ingest 90% of github ingest tests to avoid rate limiting issue."
     exit 0
 fi
 
