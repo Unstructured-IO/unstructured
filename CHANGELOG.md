@@ -2,6 +2,9 @@
 
 ### Enhancements
 
+* Add `requires_dependencies` Python decorator to check dependencies are installed before
+instantiating a class or running a function
+
 ### Features
 
 * Added Wikipedia connector for ingest cli.
