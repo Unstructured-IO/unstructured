@@ -29,7 +29,9 @@ def normalize_layout_element(layout_element) -> Union[Element, List[Element]]:
     coordinates = layout_dict.get("coordinates")
     element_type = layout_dict.get("type")
 
-    if element_type in TYPE_TO_TEXT_ELEMENT_MAP:
+    if element_type == "List":
+        return layout_list_to_list_items(text, coordinates)
+    elif element_type in TYPE_TO_TEXT_ELEMENT_MAP:
         _element_class = TYPE_TO_TEXT_ELEMENT_MAP[element_type]
         return _element_class(text=text, coordinates=coordinates)
     elif element_type == "Checked":

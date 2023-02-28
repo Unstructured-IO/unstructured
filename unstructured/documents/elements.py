@@ -201,6 +201,8 @@ class PageBreak(Text):
 TYPE_TO_TEXT_ELEMENT_MAP: Dict[str, Any] = {
     "UncategorizedText": Text,
     "FigureCaption": FigureCaption,
+    "Figure": FigureCaption,
+    "Text": NarrativeText,
     "NarrativeText": NarrativeText,
     "ListItem": ListItem,
     "BulletedText": ListItem,
