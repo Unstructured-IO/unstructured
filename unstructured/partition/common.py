@@ -2,15 +2,13 @@ import subprocess
 from typing import List, Optional, Union
 
 from unstructured.documents.elements import (
+    TYPE_TO_TEXT_ELEMENT_MAP,
     CheckBox,
     Element,
     ElementMetadata,
-    FigureCaption,
     ListItem,
-    NarrativeText,
     PageBreak,
     Text,
-    Title,
 )
 from unstructured.nlp.patterns import ENUMERATED_BULLETS_RE, UNICODE_BULLETS_RE
 
@@ -31,20 +29,13 @@ def normalize_layout_element(layout_element) -> Union[Element, List[Element]]:
     coordinates = layout_dict.get("coordinates")
     element_type = layout_dict.get("type")
 
-    if element_type == "Title":
-        return Title(text=text, coordinates=coordinates)
-    elif element_type == "Text":
-        return NarrativeText(text=text, coordinates=coordinates)
-    elif element_type == "Figure":
-        return FigureCaption(text=text, coordinates=coordinates)
-    elif element_type == "List":
-        return layout_list_to_list_items(text, coordinates)
+    if element_type in TYPE_TO_TEXT_ELEMENT_MAP:
+        _element_class = TYPE_TO_TEXT_ELEMENT_MAP[element_type]
+        return _element_class(text=text, coordinates=coordinates)
     elif element_type == "Checked":
         return CheckBox(checked=True, coordinates=coordinates)
     elif element_type == "Unchecked":
         return CheckBox(checked=False, coordinates=coordinates)
-    elif element_type == "PageBreak":
-        return PageBreak()
     else:
         return Text(text=text, coordinates=coordinates)
 
