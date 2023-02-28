@@ -1,4 +1,4 @@
-## 0.4.17-dev0
+## 0.4.17-dev1
 
 ### Enhancements
 
@@ -6,6 +6,8 @@
 instantiating a class or running a function
 
 ### Features
+
+* Added Wikipedia connector for ingest cli.
 
 ### Fixes
 
