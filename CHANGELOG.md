@@ -1,12 +1,19 @@
-## 0.4.17-dev0
+## 0.5.0
 
 ### Enhancements
 
+* Add `requires_dependencies` Python decorator to check dependencies are installed before
+instantiating a class or running a function
+
 ### Features
+
+* Added Wikipedia connector for ingest cli.
 
 ### Fixes
 
 * Fix `process_document` file cleaning on failure
+* Fixes an error introduced in the metadata tracking commit that caused `NarrativeText`
+  and `FigureCaption` elements to be represented as `Text` in HTML documents.
 
 ## 0.4.16
 
