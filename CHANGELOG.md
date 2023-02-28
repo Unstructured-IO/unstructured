@@ -1,9 +1,20 @@
+***REMOVED******REMOVED*** 0.5.1-dev1
+
+***REMOVED******REMOVED******REMOVED*** Enhancements
+
+***REMOVED******REMOVED******REMOVED*** Features
+
+***REMOVED******REMOVED******REMOVED*** Fixes
+
+* Fix several issues with the `requires_dependencies` decorator, including the error message
+  and how it was used.
+
 ***REMOVED******REMOVED*** 0.5.0
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
 
 * Add `requires_dependencies` Python decorator to check dependencies are installed before
-instantiating a class or running a function
+  instantiating a class or running a function
 
 ***REMOVED******REMOVED******REMOVED*** Features
 
