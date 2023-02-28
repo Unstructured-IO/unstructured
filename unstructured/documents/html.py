@@ -268,9 +268,8 @@ def _construct_text(tag_elem: etree.Element) -> str:
     for item in tag_elem.iter():
         if item.text and item.tag != "script":
             text += item.text
-
-    if tag_elem.tail:
-        text = text + tag_elem.tail
+            if item.tail:
+                text += item.tail
 
     text = replace_unicode_quotes(text)
     return text.strip()
