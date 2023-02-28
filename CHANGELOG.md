@@ -6,6 +6,7 @@
 
 ### Fixes
 
+* Fixes an error causing JavaScript to appear in the output of `partition_html` sometimes.
 * Fix several issues with the `requires_dependencies` decorator, including the error message
   and how it was used.
 
