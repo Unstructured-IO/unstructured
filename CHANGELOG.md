@@ -8,6 +8,8 @@
 
 ### Fixes
 
+* Fix `process_document` file cleaning on failure
+
 ## 0.4.16
 
 ### Enhancements
