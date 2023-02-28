@@ -1,11 +1,12 @@
-import os
 import json
+import os
+
 import pytest
 
-import unstructured.utils as utils
+from unstructured import utils
 
 
-@pytest.fixture
+@pytest.fixture()
 def input_data():
     return [
         {"text": "This is a sentence."},
@@ -13,12 +14,12 @@ def input_data():
     ]
 
 
-@pytest.fixture
+@pytest.fixture()
 def output_jsonl_file(tmp_path):
     return os.path.join(tmp_path, "output.jsonl")
 
 
-@pytest.fixture
+@pytest.fixture()
 def input_jsonl_file(tmp_path, input_data):
     file_path = os.path.join(tmp_path, "input.jsonl")
     with open(file_path, "w+") as input_file:
@@ -28,7 +29,7 @@ def input_jsonl_file(tmp_path, input_data):
 
 def test_save_as_jsonl(input_data, output_jsonl_file):
     utils.save_as_jsonl(input_data, output_jsonl_file)
-    with open(output_jsonl_file, "r") as output_file:
+    with open(output_jsonl_file) as output_file:
         file_data = [json.loads(line) for line in output_file]
     assert file_data == input_data
 
@@ -36,3 +37,48 @@ def test_save_as_jsonl(input_data, output_jsonl_file):
 def test_read_as_jsonl(input_jsonl_file, input_data):
     file_data = utils.read_from_jsonl(input_jsonl_file)
     assert file_data == input_data
+
+
+def test_requires_dependencies_decorator():
+    @utils.requires_dependencies(dependencies="numpy")
+    def test_func():
+        import numpy  # noqa: F401
+
+    test_func()
+
+
+def test_requires_dependencies_decorator_multiple():
+    @utils.requires_dependencies(dependencies=["numpy", "pandas"])
+    def test_func():
+        import numpy  # noqa: F401
+        import pandas  # noqa: F401
+
+    test_func()
+
+
+def test_requires_dependencies_decorator_import_error():
+    @utils.requires_dependencies(dependencies="not_a_package")
+    def test_func():
+        import not_a_package  # noqa: F401
+
+    with pytest.raises(ImportError):
+        test_func()
+
+
+def test_requires_dependencies_decorator_import_error_multiple():
+    @utils.requires_dependencies(dependencies=["not_a_package", "numpy"])
+    def test_func():
+        import not_a_package  # noqa: F401
+        import numpy  # noqa: F401
+
+    with pytest.raises(ImportError):
+        test_func()
+
+
+def test_requires_dependencies_decorator_in_class():
+    @utils.requires_dependencies(dependencies="numpy")
+    class TestClass:
+        def __init__(self):
+            import numpy  # noqa: F401
+
+    TestClass()

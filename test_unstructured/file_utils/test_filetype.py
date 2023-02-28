@@ -1,16 +1,16 @@
 import os
 import pathlib
-import pytest
 import zipfile
 
 import magic
+import pytest
 
-import unstructured.file_utils.filetype as filetype
+from unstructured.file_utils import filetype
 from unstructured.file_utils.filetype import (
-    detect_filetype,
-    FileType,
     DOCX_MIME_TYPES,
     XLSX_MIME_TYPES,
+    FileType,
+    detect_filetype,
 )
 
 FILE_DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -18,7 +18,7 @@ EXAMPLE_DOCS_DIRECTORY = os.path.join(FILE_DIRECTORY, "..", "..", "example-docs"
 
 
 @pytest.mark.parametrize(
-    "file, expected",
+    ("file", "expected"),
     [
         ("layout-parser-paper-fast.pdf", FileType.PDF),
         ("fake.docx", FileType.DOCX),
@@ -38,7 +38,7 @@ def test_detect_filetype_from_filename(file, expected):
 
 
 @pytest.mark.parametrize(
-    "file, expected",
+    ("file", "expected"),
     [
         ("layout-parser-paper-fast.pdf", FileType.PDF),
         ("fake.docx", FileType.DOCX),
@@ -59,7 +59,7 @@ def test_detect_filetype_from_filename_with_extension(monkeypatch, file, expecte
 
 
 @pytest.mark.parametrize(
-    "file, expected",
+    ("file", "expected"),
     [
         ("layout-parser-paper-fast.pdf", FileType.PDF),
         ("fake.docx", FileType.DOCX),
@@ -85,9 +85,8 @@ def test_detect_filetype_from_file(file, expected):
 def test_detect_filetype_from_file_raises_without_libmagic(monkeypatch):
     monkeypatch.setattr(filetype, "LIBMAGIC_AVAILABLE", False)
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
-    with open(filename, "rb") as f:
-        with pytest.raises(ImportError):
-            detect_filetype(file=f)
+    with open(filename, "rb") as f, pytest.raises(ImportError):
+        detect_filetype(file=f)
 
 
 def test_detect_xml_application_xml(monkeypatch):
@@ -246,9 +245,8 @@ def test_detect_filetype_detects_unknown_text_types_as_txt(monkeypatch):
 
 def test_detect_filetype_raises_with_both_specified():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
-    with open(filename, "rb") as f:
-        with pytest.raises(ValueError):
-            detect_filetype(filename=filename, file=f)
+    with open(filename, "rb") as f, pytest.raises(ValueError):
+        detect_filetype(filename=filename, file=f)
 
 
 def test_detect_filetype_raises_with_none_specified():

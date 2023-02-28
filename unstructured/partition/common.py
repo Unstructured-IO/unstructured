@@ -2,17 +2,15 @@ import subprocess
 from typing import List, Optional, Union
 
 from unstructured.documents.elements import (
+    TYPE_TO_TEXT_ELEMENT_MAP,
+    CheckBox,
     Element,
     ElementMetadata,
-    CheckBox,
-    FigureCaption,
     ListItem,
-    NarrativeText,
     PageBreak,
     Text,
-    Title,
 )
-from unstructured.nlp.patterns import UNICODE_BULLETS_RE, ENUMERATED_BULLETS_RE
+from unstructured.nlp.patterns import ENUMERATED_BULLETS_RE, UNICODE_BULLETS_RE
 
 
 def normalize_layout_element(layout_element) -> Union[Element, List[Element]]:
@@ -31,20 +29,15 @@ def normalize_layout_element(layout_element) -> Union[Element, List[Element]]:
     coordinates = layout_dict.get("coordinates")
     element_type = layout_dict.get("type")
 
-    if element_type == "Title":
-        return Title(text=text, coordinates=coordinates)
-    elif element_type == "Text":
-        return NarrativeText(text=text, coordinates=coordinates)
-    elif element_type == "Figure":
-        return FigureCaption(text=text, coordinates=coordinates)
-    elif element_type == "List":
+    if element_type == "List":
         return layout_list_to_list_items(text, coordinates)
+    elif element_type in TYPE_TO_TEXT_ELEMENT_MAP:
+        _element_class = TYPE_TO_TEXT_ELEMENT_MAP[element_type]
+        return _element_class(text=text, coordinates=coordinates)
     elif element_type == "Checked":
         return CheckBox(checked=True, coordinates=coordinates)
     elif element_type == "Unchecked":
         return CheckBox(checked=False, coordinates=coordinates)
-    elif element_type == "PageBreak":
-        return PageBreak()
     else:
         return Text(text=text, coordinates=coordinates)
 
@@ -56,7 +49,7 @@ def layout_list_to_list_items(text: str, coordinates: List[float]) -> List[Eleme
     if len(split_items) == 1:
         split_items = UNICODE_BULLETS_RE.split(text)
 
-    list_items: List[Element] = list()
+    list_items: List[Element] = []
     for text_segment in split_items:
         if len(text_segment.strip()) > 0:
             list_items.append(ListItem(text=text_segment.strip(), coordinates=coordinates))
@@ -66,7 +59,7 @@ def layout_list_to_list_items(text: str, coordinates: List[float]) -> List[Eleme
 
 def document_to_element_list(document, include_page_breaks: bool = False) -> List[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
-    elements: List[Element] = list()
+    elements: List[Element] = []
     num_pages = len(document.pages)
     for i, page in enumerate(document.pages):
         for element in page.elements:
@@ -85,7 +78,7 @@ def add_element_metadata(
 ) -> List[Element]:
     """Adds document metadata to the document element. Document metadata includes information
     like the filename, source url, and page number."""
-    elements: List[Element] = list()
+    elements: List[Element] = []
     page_number: int = 1
     for layout_element in layout_elements:
         element = normalize_layout_element(layout_element)
@@ -120,7 +113,7 @@ def convert_office_doc(input_filename: str, output_directory: str, target_format
                 "--outdir",
                 output_directory,
                 input_filename,
-            ]
+            ],
         )
     except FileNotFoundError:
         raise FileNotFoundError(
@@ -129,5 +122,5 @@ on your system and try again.
 
 - Install instructions: https://www.libreoffice.org/get-help/install-howto/
 - Mac: https://formulae.brew.sh/cask/libreoffice
-- Debian: https://wiki.debian.org/LibreOffice"""
+- Debian: https://wiki.debian.org/LibreOffice""",
         )

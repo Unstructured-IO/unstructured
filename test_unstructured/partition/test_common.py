@@ -8,7 +8,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-import unstructured.partition.common as common
+from unstructured.partition import common
 
 
 def test_normalize_layout_element_dict():
@@ -29,7 +29,21 @@ def test_normalize_layout_element_dict_caption():
     }
     element = common.normalize_layout_element(layout_element)
     assert element == FigureCaption(
-        text="Some lovely text", coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]]
+        text="Some lovely text",
+        coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]],
+    )
+
+
+def test_normalize_layout_element_dict_figure_caption():
+    layout_element = {
+        "type": "FigureCaption",
+        "coordinates": [[1, 2], [3, 4], [5, 6], [7, 8]],
+        "text": "Some lovely text",
+    }
+    element = common.normalize_layout_element(layout_element)
+    assert element == FigureCaption(
+        text="Some lovely text",
+        coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]],
     )
 
 
@@ -51,7 +65,21 @@ def test_normalize_layout_element_layout_element():
     )
     element = common.normalize_layout_element(layout_element)
     assert element == NarrativeText(
-        text="Some lovely text", coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]]
+        text="Some lovely text",
+        coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]],
+    )
+
+
+def test_normalize_layout_element_layout_element_narrative_text():
+    layout_element = LayoutElement(
+        type="NarrativeText",
+        coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]],
+        text="Some lovely text",
+    )
+    element = common.normalize_layout_element(layout_element)
+    assert element == NarrativeText(
+        text="Some lovely text",
+        coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]],
     )
 
 

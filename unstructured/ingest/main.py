@@ -6,7 +6,13 @@ import sys
 
 import click
 
+from unstructured.ingest.connector.github import GitHubConnector, SimpleGitHubConfig
+from unstructured.ingest.connector.reddit import RedditConnector, SimpleRedditConfig
 from unstructured.ingest.connector.s3_connector import S3Connector, SimpleS3Config
+from unstructured.ingest.connector.wikipedia import (
+    SimpleWikipediaConfig,
+    WikipediaConnector,
+)
 from unstructured.ingest.doc_processor.generalized import initialize, process_document
 
 
@@ -20,6 +26,7 @@ class MainProcess:
 
     def initialize(self):
         """Slower initialization things: check connections, load things into memory, etc."""
+        self.doc_connector.initialize()
         initialize()
 
     def cleanup(self):
@@ -31,14 +38,14 @@ class MainProcess:
         num_docs_to_process = len(docs)
         if num_docs_to_process == 0:
             print(
-                "All docs have structured outputs, nothing to do. Use --reprocess to process all."
+                "All docs have structured outputs, nothing to do. Use --reprocess to process all.",
             )
             return None
         elif num_docs_to_process != num_docs_all:
             print(
                 f"Skipping processing for {num_docs_all - num_docs_to_process} docs out of "
                 f"{num_docs_all} since their structured outputs already exist, use --reprocess to "
-                "reprocess those in addition to the unprocessed ones."
+                "reprocess those in addition to the unprocessed ones.",
             )
         return docs
 
@@ -78,6 +85,66 @@ class MainProcess:
     help="Connect to s3 without local AWS credentials.",
 )
 @click.option(
+    "--wikipedia-page-title",
+    default=None,
+    help='Title of a Wikipedia page, e.g. "Open source software".',
+)
+@click.option(
+    "--github-url",
+    default=None,
+    help='URL to GitHub repository, e.g. "https://github.com/Unstructured-IO/unstructured",'
+    ' or a repository owner/name pair, e.g. "Unstructured-IO/unstructured"',
+)
+@click.option(
+    "--github-access-token",
+    default=None,
+    help="A GitHub access token, see https://docs.github.com/en/authentication",
+)
+@click.option(
+    "--github-branch",
+    default=None,
+    help="The branch for which to fetch files from. If not given,"
+    " the default repository branch is used.",
+)
+@click.option(
+    "--github-file-glob",
+    default=None,
+    help="A comma-separated list of file globs to limit which types of files are accepted,"
+    " e.g. '*.html,*.txt'",
+)
+@click.option(
+    "--subreddit-name",
+    default=None,
+    help='The name of a subreddit, without the "r\\", e.g. "machinelearning"',
+)
+@click.option(
+    "--reddit-client-id",
+    default=None,
+    help="The client ID, see "
+    "https://praw.readthedocs.io/en/stable/getting_started/quick_start.html#prerequisites"
+    " for more information.",
+)
+@click.option(
+    "--reddit-client-secret",
+    default=None,
+    help="The client secret, see "
+    "https://praw.readthedocs.io/en/stable/getting_started/quick_start.html#prerequisites"
+    " for more information.",
+)
+@click.option(
+    "--reddit-user-agent",
+    default="Unstructured Ingest Subreddit fetcher",
+    help="The user agent to use on the Reddit API, see "
+    "https://praw.readthedocs.io/en/stable/getting_started/quick_start.html#prerequisites"
+    " for more information.",
+)
+@click.option(
+    "--reddit-search-query",
+    default=None,
+    help="If set, return posts using this query. Otherwise, use hot posts.",
+)
+@click.option("--reddit-num-posts", default=10, help="The number of posts to fetch.")
+@click.option(
     "--re-download/--no-re-download",
     default=False,
     help="Re-download files from s3 even if they are already present in --download-dir.",
@@ -114,6 +181,17 @@ class MainProcess:
 @click.option("-v", "--verbose", is_flag=True, default=False)
 def main(
     s3_url,
+    wikipedia_page_title,
+    github_url,
+    github_access_token,
+    github_branch,
+    github_file_glob,
+    subreddit_name,
+    reddit_client_id,
+    reddit_client_secret,
+    reddit_user_agent,
+    reddit_search_query,
+    reddit_num_posts,
     re_download,
     download_dir,
     preserve_downloads,
@@ -139,6 +217,50 @@ def main(
                 anonymous=s3_anonymous,
                 re_download=re_download,
                 preserve_downloads=preserve_downloads,
+                verbose=verbose,
+            ),
+        )
+    elif github_url:
+        doc_connector = GitHubConnector(  # type: ignore
+            config=SimpleGitHubConfig(
+                github_url=github_url,
+                github_access_token=github_access_token,
+                github_branch=github_branch,
+                github_file_glob=github_file_glob,
+                # defaults params:
+                download_dir=download_dir,
+                preserve_downloads=preserve_downloads,
+                output_dir=structured_output_dir,
+                re_download=re_download,
+                verbose=verbose,
+            ),
+        )
+    elif subreddit_name:
+        doc_connector = RedditConnector(  # type: ignore
+            config=SimpleRedditConfig(
+                subreddit_name=subreddit_name,
+                client_id=reddit_client_id,
+                client_secret=reddit_client_secret,
+                user_agent=reddit_user_agent,
+                search_query=reddit_search_query,
+                num_posts=reddit_num_posts,
+                # defaults params:
+                download_dir=download_dir,
+                preserve_downloads=preserve_downloads,
+                output_dir=structured_output_dir,
+                re_download=re_download,
+                verbose=verbose,
+            ),
+        )
+    elif wikipedia_page_title:
+        doc_connector = WikipediaConnector(  # type: ignore
+            config=SimpleWikipediaConfig(
+                title=wikipedia_page_title,
+                # defaults params:
+                download_dir=download_dir,
+                preserve_downloads=preserve_downloads,
+                output_dir=structured_output_dir,
+                re_download=re_download,
                 verbose=verbose,
             ),
         )

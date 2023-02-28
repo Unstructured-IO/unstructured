@@ -1,10 +1,10 @@
 import pytest
 
-import unstructured.cleaners.core as core
+from unstructured.cleaners import core
 
 
 @pytest.mark.parametrize(
-    "text, expected",
+    ("text", "expected"),
     [
         ("● An excellent point!", "An excellent point!"),
         ("● An excellent point! ●●●", "An excellent point! ●●●"),
@@ -18,7 +18,7 @@ def test_clean_bullets(text, expected):
 
 
 @pytest.mark.parametrize(
-    "text, expected",
+    ("text", "expected"),
     [
         ("1. Introduction:", "Introduction:"),
         ("a. Introduction:", "Introduction:"),
@@ -43,7 +43,7 @@ def test_clean_ordered_bullets(text, expected):
 
 
 @pytest.mark.parametrize(
-    "text, expected",
+    ("text", "expected"),
     [
         ("\x93A lovely quote!\x94", "“A lovely quote!”"),
         ("\x91A lovely quote!\x92", "‘A lovely quote!’"),
@@ -55,7 +55,7 @@ def test_replace_unicode_quotes(text, expected):
 
 
 @pytest.mark.parametrize(
-    "text, expected",
+    ("text", "expected"),
     [("5 w=E2=80=99s", "5 w’s")],
 )
 def test_replace_mime_encodings(text, expected):
@@ -63,7 +63,7 @@ def test_replace_mime_encodings(text, expected):
 
 
 @pytest.mark.parametrize(
-    "text, expected",
+    ("text", "expected"),
     [
         ("“A lovely quote!”", "A lovely quote"),
         ("‘A lovely quote!’", "A lovely quote"),
@@ -75,7 +75,7 @@ def test_remove_punctuation(text, expected):
 
 
 @pytest.mark.parametrize(
-    "text, expected",
+    ("text", "expected"),
     [
         ("RISK\n\nFACTORS", "RISK FACTORS"),
         ("Item\xa01A", "Item 1A"),
@@ -89,7 +89,7 @@ def test_clean_extra_whitespace(text, expected):
 
 
 @pytest.mark.parametrize(
-    "text, expected",
+    ("text", "expected"),
     [
         ("Risk-factors", "Risk factors"),
         ("Risk – factors", "Risk   factors"),
@@ -103,7 +103,7 @@ def test_clean_dashes(text, expected):
 
 
 @pytest.mark.parametrize(
-    "text, expected",
+    ("text", "expected"),
     [
         ("Item 1A:", "Item 1A"),
         ("Item 1A;", "Item 1A"),
@@ -118,7 +118,7 @@ def test_clean_trailing_punctuation(text, expected):
 
 
 @pytest.mark.parametrize(
-    "text, pattern, ignore_case, strip, expected",
+    ("text", "pattern", "ignore_case", "strip", "expected"),
     [
         ("SUMMARY: A great SUMMARY", r"(SUMMARY|DESC):", False, True, "A great SUMMARY"),
         ("DESC: A great SUMMARY", r"(SUMMARY|DESC):", False, True, "A great SUMMARY"),
@@ -131,7 +131,7 @@ def test_clean_prefix(text, pattern, ignore_case, strip, expected):
 
 
 @pytest.mark.parametrize(
-    "text, pattern, ignore_case, strip, expected",
+    ("text", "pattern", "ignore_case", "strip", "expected"),
     [
         ("The END! END", r"(END|STOP)", False, True, "The END!"),
         ("The END! STOP", r"(END|STOP)", False, True, "The END!"),
@@ -145,7 +145,15 @@ def test_clean_postfix(text, pattern, ignore_case, strip, expected):
 
 @pytest.mark.parametrize(
     # NOTE(yuming): Tests combined cleaners
-    "text, extra_whitespace, dashes, bullets, lowercase, trailing_punctuation, expected",
+    (
+        "text",
+        "extra_whitespace",
+        "dashes",
+        "bullets",
+        "lowercase",
+        "trailing_punctuation",
+        "expected",
+    ),
     [
         ("  Risk-factors ", True, True, False, False, False, "Risk factors"),
         ("● Point!  ●●● ", True, False, True, False, False, "Point! ●●●"),

@@ -1,7 +1,7 @@
-from enum import Enum
 import os
-from typing import IO, Optional
 import zipfile
+from enum import Enum
+from typing import IO, Optional
 
 try:
     import magic
@@ -13,7 +13,6 @@ except ImportError:  # pragma: nocover
 
 from unstructured.logger import logger
 from unstructured.nlp.patterns import EMAIL_HEAD_RE
-
 
 DOCX_MIME_TYPES = [
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -37,6 +36,11 @@ PPTX_MIME_TYPES = [
 
 PPT_MIME_TYPES = [
     "application/vnd.ms-powerpoint",
+]
+
+MD_MIME_TYPES = [
+    "text/markdown",
+    "text/x-markdown",
 ]
 
 # NOTE(robinson) - .docx.xlsx files are actually zip file with a .docx/.xslx extension.
@@ -84,6 +88,7 @@ class FileType(Enum):
     # Markup Types
     HTML = 50
     XML = 51
+    MD = 52
 
     # Compressed Types
     ZIP = 60
@@ -103,6 +108,7 @@ EXT_TO_FILETYPE = {
     ".eml": FileType.EML,
     ".xml": FileType.XML,
     ".html": FileType.HTML,
+    ".md": FileType.MD,
     ".xlsx": FileType.XLSX,
     ".pptx": FileType.PPTX,
     ".png": FileType.PNG,
@@ -115,7 +121,8 @@ EXT_TO_FILETYPE = {
 
 
 def detect_filetype(
-    filename: Optional[str] = None, file: Optional[IO] = None
+    filename: Optional[str] = None,
+    file: Optional[IO] = None,
 ) -> Optional[FileType]:
     """Use libmagic to determine a file's type. Helps determine which partition brick
     to use for a given file. A return value of None indicates a non-supported file type."""
@@ -126,7 +133,6 @@ def detect_filetype(
         _, extension = os.path.splitext(filename)
         extension = extension.lower()
         if LIBMAGIC_AVAILABLE:
-            mime_type = None
             mime_type = magic.from_file(filename, mime=True)
         else:
             return EXT_TO_FILETYPE.get(extension.lower(), FileType.UNK)
@@ -141,7 +147,7 @@ def detect_filetype(
             raise ImportError(
                 "libmagic is unavailable. "
                 "Filetype detection on file-like objects requires libmagic. "
-                "Please install libmagic and try again."
+                "Please install libmagic and try again.",
             )
     else:
         raise ValueError("No filename nor file were specified.")
@@ -161,16 +167,18 @@ def detect_filetype(
     elif mime_type == "image/png":
         return FileType.PNG
 
+    elif mime_type in MD_MIME_TYPES:
+        # NOTE - I am not sure whether libmagic ever returns these mimetypes.
+        return FileType.MD
+
     elif mime_type == "text/plain":
         if extension and extension == ".eml":
             return FileType.EML
-        if file and not extension:
-            if _check_eml_from_buffer(file=file) is True:
-                return FileType.EML
-            else:
-                return FileType.TXT
-        else:
-            return FileType.TXT
+        if extension and extension == ".md":
+            return FileType.MD
+        if file and not extension and _check_eml_from_buffer(file=file) is True:
+            return FileType.EML
+        return FileType.TXT
 
     elif mime_type.endswith("xml"):
         if extension and extension == ".html":
@@ -216,7 +224,7 @@ def detect_filetype(
             return filetype
 
     logger.warn(
-        f"MIME type was {mime_type}. This file type is not currently supported in unstructured."
+        f"MIME type was {mime_type}. This file type is not currently supported in unstructured.",
     )
     return FileType.UNK
 

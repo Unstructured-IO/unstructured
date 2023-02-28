@@ -1,9 +1,10 @@
 from functools import partial
+
 import pytest
 
 from unstructured.cleaners.core import clean_prefix
 from unstructured.cleaners.translate import translate_text
-from unstructured.documents.email_elements import EmailElement, NoID, Name
+from unstructured.documents.email_elements import EmailElement, Name, NoID
 
 
 def test_text_id():
@@ -29,7 +30,8 @@ def test_name_element_apply_multiple_cleaners():
         partial(translate_text, target_lang="ru"),
     ]
     name_element = Name(
-        name="[1] A Textbook on Crocodile Habitats", text="[1] A Textbook on Crocodile Habitats"
+        name="[1] A Textbook on Crocodile Habitats",
+        text="[1] A Textbook on Crocodile Habitats",
     )
     name_element.apply(*cleaners)
     assert (

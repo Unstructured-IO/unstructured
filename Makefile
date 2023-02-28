@@ -54,6 +54,18 @@ install-build:
 install-ingest-s3:
 	pip install -r requirements/ingest-s3.txt
 
+.PHONY: install-ingest-github
+install-ingest-github:
+	pip install -r requirements/ingest-github.txt
+
+.PHONY: install-ingest-reddit
+install-ingest-reddit:
+	pip install -r requirements/ingest-reddit.txt
+
+.PHONY: install-ingest-wikipedia
+install-ingest-wikipedia:
+	pip install -r requirements/ingest-wikipedia.txt
+
 .PHONY: install-unstructured-inference
 install-unstructured-inference:
 	pip install -r requirements/local-inference.txt
@@ -82,7 +94,10 @@ pip-compile:
 	# NOTE(robinson) - doc/requirements.txt is where the GitHub action for building
 	# sphinx docs looks for additional requirements
 	cp requirements/build.txt docs/requirements.txt
-	pip-compile --upgrade requirements/ingest-s3.in requirements/base.txt --output-file requirements/ingest-s3.txt
+	pip-compile --upgrade --extra=s3        --output-file=requirements/ingest-s3.txt        requirements/base.txt setup.py
+	pip-compile --upgrade --extra=reddit    --output-file=requirements/ingest-reddit.txt    requirements/base.txt setup.py
+	pip-compile --upgrade --extra=github    --output-file=requirements/ingest-github.txt    requirements/base.txt setup.py
+	pip-compile --upgrade --extra=wikipedia --output-file=requirements/ingest-wikipedia.txt requirements/base.txt setup.py
 
 ## install-project-local:   install unstructured into your local python environment
 .PHONY: install-project-local
@@ -111,6 +126,7 @@ check: check-src check-tests check-version
 ## check-src:               runs linters (source only, no tests)
 .PHONY: check-src
 check-src:
+	ruff . --select I,UP015,UP032,UP034,UP018,COM,C4,PT,SIM,PLR0402 --ignore PT011,PT012,SIM117
 	black --line-length 100 ${PACKAGE_NAME} --check
 	flake8 ${PACKAGE_NAME}
 	mypy ${PACKAGE_NAME} --ignore-missing-imports --check-untyped-defs
@@ -135,6 +151,7 @@ check-version:
 ## tidy:                    run black
 .PHONY: tidy
 tidy:
+	ruff . --select I,UP015,UP032,UP034,UP018,COM,C4,PT,SIM,PLR0402 --fix-only || true
 	black --line-length 100 ${PACKAGE_NAME}
 	black --line-length 100 test_${PACKAGE_NAME}
 
