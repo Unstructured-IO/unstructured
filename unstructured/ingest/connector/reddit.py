@@ -9,6 +9,7 @@ from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
 )
+from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
     from praw.models import Submission
@@ -87,6 +88,7 @@ class RedditIngestDoc(BaseIngestDoc):
         print(f"Wrote {output_filename}")
 
 
+@requires_dependencies(["praw"], extras="reddit")
 class RedditConnector(BaseConnector):
     def __init__(self, config: SimpleRedditConfig):
         from praw import Reddit

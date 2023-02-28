@@ -2,6 +2,9 @@
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
 
+* Add `requires_dependencies` Python decorator to check dependencies are installed before
+instantiating a class or running a function
+
 ***REMOVED******REMOVED******REMOVED*** Features
 
 * Added Wikipedia connector for ingest cli.

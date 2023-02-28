@@ -13,6 +13,7 @@ from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
 )
+from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
     from github.Repository import Repository
@@ -124,6 +125,7 @@ class GitHubIngestDoc(BaseIngestDoc):
         print(f"Wrote {output_filename}")
 
 
+@requires_dependencies(["pygithub"], extras="github")
 class GitHubConnector(BaseConnector):
     def __init__(self, config: SimpleGitHubConfig):
         from github import Github
