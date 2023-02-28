@@ -1,10 +1,10 @@
 import os
 import pathlib
-import pytest
 
 import pandas as pd
+import pytest
 
-import unstructured.file_utils.exploration as exploration
+from unstructured.file_utils import exploration
 from unstructured.file_utils.filetype import FileType
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -70,21 +70,23 @@ def test_get_file_info(tmpdir):
 
 def test_get_file_info_from_file_contents():
     file_contents_filename = os.path.join(DIRECTORY, "test-file-contents.txt")
-    with open(file_contents_filename, "r") as f:
+    with open(file_contents_filename) as f:
         file_contents = [f.read()]
 
     file_info = exploration.get_file_info_from_file_contents(
-        file_contents=file_contents, filenames=["test.eml"]
+        file_contents=file_contents,
+        filenames=["test.eml"],
     )
     assert file_info.filetype[0] == FileType.EML
 
 
 def test_get_file_info_from_file_contents_raises_if_lists_no_equal():
     file_contents_filename = os.path.join(DIRECTORY, "test-file-contents.txt")
-    with open(file_contents_filename, "r") as f:
+    with open(file_contents_filename) as f:
         file_contents = [f.read()]
 
     with pytest.raises(ValueError):
         exploration.get_file_info_from_file_contents(
-            file_contents=file_contents, filenames=["test.eml", "test2.eml"]
+            file_contents=file_contents,
+            filenames=["test.eml", "test2.eml"],
         )

@@ -1,18 +1,78 @@
 Bricks
 ======
 
-The ``unstructured`` library provides bricks to make it quick and
-easy to parse documents and create new pre-processing pipelines. The following documents
-bricks currently available in the library.
+The goal of this page is to introduce you to the concept of bricks.
+Bricks are functions that live in ``unstructured`` and are the primary public API for the library.
+There are three types of bricks in ``unstructured``, corresponding to the different stages of document pre-processing: partitioning, cleaning, and staging.
+After reading this section, you should understand the following:
+
+* How to extract content from a document using partitioning bricks.
+* How to remove unwanted content from document elements using cleaning bricks.
+* How to prepare data for downstream use cases using staging bricks
+
 
 
 ############
 Partitioning
 ############
 
-The partitioning bricks in ``unstructured`` differentiate between different sections
-of text in a document. For example, the partitioning bricks can help distinguish between
-titles, narrative text, and tables.
+
+Partitioning bricks in ``unstructured`` allow users to extract structured content from a raw unstructured document.
+These functions break a document down into elements such as ``Title``, ``NarrativeText``, and ``ListItem``,
+enabling users to decide what content they'd like to keep for their particular application.
+If you're training a summarization model, for example, you may only be interested in ``NarrativeText``.
+
+
+The easiest way to partition documents in unstructured is to use the ``partition`` brick.
+If you call the ``partition`` brick, ``unstructured`` will use ``libmagic`` to automatically determine the file type and invoke the appropriate partition function.
+In cases where ``libmagic`` is not available, filetype detection will fall back to using the file extension.
+
+As shown in the examples below, the ``partition`` function accepts both filenames and file-like objects as input.
+``partition`` also has some optional kwargs.
+For example, if you set ``include_page_breaks=True``, the output will include ``PageBreak`` elements if the filetype supports it.
+You can find a full listing of optional kwargs in the documentation below.
+
+.. code:: python
+
+  from unstructured.partition.auto import partition
+
+
+  filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
+  elements = partition(filename=filename)
+  print("\n\n".join([str(el) for el in elements][:10]))
+
+
+.. code:: python
+
+  from unstructured.partition.auto import partition
+
+
+  filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
+  with open(filename, "rb") as f:
+    elements = partition(file=f, include_page_breaks=True)
+  print("\n\n".join([str(el) for el in elements][5:15]))
+
+
+The ``unstructured`` library also includes partitioning bricks targeted at specific document types.
+The ``partition`` brick uses these document-specific partitioning bricks under the hood.
+There are a few reasons you may want to use a document-specific partitioning brick instead of ``partition``:
+
+* If you already know the document type, filetype detection is unnecessary. Using the document-specific brick directly will make your program run faster.
+* Fewer dependencies. You don't need to install ``libmagic`` for filetype detection if you're only using document-specific bricks.
+* Additional features. The API for partition is the least common denominator for all document types. Certain document-specific brick include extra features that you may want to take advantage of. For example, ``partition_html`` allows you to pass in a URL so you don't have to store the ``.html`` file locally. See the documentation below learn about the options available in each partitioning brick.
+
+
+Below we see an example of how to partition a document directly with the URL using the partition_html function.
+
+.. code:: python
+
+  from unstructured.partition.html import partition_html
+
+  url = "https://www.cnn.com/2023/01/30/sport/empire-state-building-green-philadelphia-eagles-spt-intl/index.html"
+  elements = partition_html(url=url)
+  print("\n\n".join([str(el) for el in elements]))
+
+
 
 ``partition``
 --------------
@@ -262,222 +322,7 @@ Examples:
   elements = partition_text(text=text)
 
 
-``extract_attachment_info``
-----------------------------
 
-The ``extract_attachment_info`` function takes an ``email.message.Message`` object
-as input and returns the a list of dictionaries containing the attachment information,
-such as ``filename``, ``size``, ``payload``, etc. The attachment is saved to the ``output_dir``
-if specified.
-
-.. code:: python
-
-  import email
-  from unstructured.partition.email import extract_attachment_info
-
-  with open("example-docs/fake-email-attachment.eml", "r") as f:
-      msg = email.message_from_file(f)
-  attachment_info = extract_attachment_info(msg, output_dir="example-docs")
-
-
-``is_bulleted_text``
-----------------------
-
-Uses regular expression patterns to check if a snippet of text is a bullet point. Only
-triggers if the bullet point appears at the start of the snippet.
-
-Examples:
-
-.. code:: python
-
-  from unstructured.partition.text_type import is_bulleted_text
-
-  # Returns True
-  is_bulleted_text("● An excellent point!")
-
-  # Returns False
-  is_bulleted_text("I love Morse Code! ●●●")
-
-
-``is_possible_narrative_text``
-------------------------------
-
-The ``is_possible_narrative_text`` function determines if a section of text is a candidate
-for consideration as narrative text. The function performs the following checks on input text:
-
-* Empty text cannot be narrative text
-* Text that is all numeric cannot be narrative text
-* Text that does not contain a verb cannot be narrative text
-* Narrative text must contain at least one English word (if ``language`` is set to "en")
-* Text that exceeds the specified caps ratio cannot be narrative text. The threshold
-  is configurable with the ``cap_threshold`` kwarg. To ignore this check, you can set
-  ``cap_threshold=1.0``. You can also set the threshold by using the
-  ``UNSTRUCTURED_NARRATIVE_TEXT_CAP_THRESHOLD`` environment variable. The environment variable
-  takes precedence over the kwarg.
-* If a the text contains too many non-alpha characters it is
-  not narrative text.
-  The default is to expect a minimum of 50% alpha characters
-  (not countings spaces). You can change the minimum value with the
-  ``non_alpha_ratio`` kwarg or the ``UNSTRUCTURED_NARRATIVE_TEXT_NON_ALPHA_RATIO`` environment variable.
-  The environment variables takes precedence over the kwarg.
-* The cap ratio test does not apply to text that is all uppercase.
-* If you use the ``language=""`` kwarg or set the ``UNSTRUCTURED_LANGUAGE`` environment variable to ``""``, the function will skip the verb check and the English word check.
-
-
-Examples:
-
-.. code:: python
-
-  from unstructured.partition.text_type import is_possible_narrative_text
-
-  # Returns True because the example passes all the checks
-  example_1 = "Make sure you brush your teeth before you go to bed."
-  is_possible_narrative_text(example_1)
-
-  # Returns False because the text exceeds the caps ratio and does not contain a verb
-  example_2 = "ITEM 1A. RISK FACTORS"
-  is_possible_narrative_text(example_2)
-
-  # Returns True because the text has a verb and does not exceed the cap_threshold
-  example_3 = "OLD MCDONALD HAD A FARM"
-  is_possible_narrative_text(example_3, cap_threshold=1.0)
-
-
-``is_possible_title``
----------------------
-
-The ``is_possible_title`` function determines if a section of text is a candidate
-for consideration as a title. The function performs the following checks:
-
-* Empty text cannot be a title
-* Text that is all numeric cannot be a title.
-* If a title contains too many words it is not a title. The default max length is ``12``. You can change the max length with
-  the ``title_max_word_length`` kwarg or the ``UNSTRUCTURED_TITLE_MAX_WORD_LENGTH`` environment variable. The environment
-  variable takes precedence over the kwarg.
-* If a text contains too many non-alpha characters it is not a
-  title. The default is to expect a minimum of 50% alpha characters
-  (not countings spaces). You can change the minimum value with the
-  ``non_alpha_ratio`` kwarg or the ``UNSTRUCTURED_TITLE_NON_ALPHA_RATIO`` environment variable.
-  The environment variables takes precedence over the kwarg.
-* Narrative text must contain at least one English word (if ``language`` is set to "en")
-* If a title contains more than one sentence that exceeds a certain length, it cannot be a title. Sentence length threshold is controlled by the ``sentence_min_length`` kwarg and defaults to 5.
-* If a segment of text ends in a comma, it is not considered a potential title. This is to avoid salutations like "To My Dearest Friends," getting flagged as titles.
-* If you use the ``language=""`` kwarg or set the ``UNSTRUCTURED_LANGUAGE`` environment variable to ``""``, the function will skip the English word check.
-
-
-
-Examples:
-
-.. code:: python
-
-  from unstructured.partition.text_type import is_possible_title
-
-  # Returns True because the text passes all the tests
-  example_2 = "ITEM 1A. RISK FACTORS"
-  is_possible_title(example_2)
-
-  # Returns True because there is only one sentence
-  example_2 = "Make sure you brush your teeth before you go to bed."
-  is_possible_title(example_2, sentence_min_length=5)
-
-  # Returns False because there are two sentences
-  example_3 = "Make sure you brush your teeth. Do it before you go to bed."
-  is_possible_title(example_3, sentence_min_length=5)
-
-
-``contains_us_phone_number``
-----------------------------
-
-Checks to see if a section of text contains a US phone number.
-
-Examples:
-
-.. code:: python
-
-  from unstructured.partition.text_type import contains_us_phone_number
-
-  # Returns True because the text includes a phone number
-  contains_us_phone_number("Phone number: 215-867-5309")
-
-
-``contains_verb``
------------------
-
-Checks if the text contains a verb. This is used in ``is_possible_narrative_text``, but can
-be used independently as well. The function identifies verbs using the NLTK part of speech
-tagger. Text that is all upper case is lower cased before part of speech detection. This is
-because the upper case letters sometimes cause the part of speech tagger to miss verbs.
-The following part of speech tags are identified as verbs:
-
-* ``VB``
-* ``VBG``
-* ``VBD``
-* ``VBN``
-* ``VBP``
-* ``VBZ``
-
-Examples:
-
-.. code:: python
-
-  from unstructured.partition.text_type import contains_verb
-
-  # Returns True because the text contains a verb
-  example_1 = "I am going to run to the store to pick up some milk."
-  contains_verb(example_1)
-
-  # Returns False because the text does not contain a verb
-  example_2 = "A friendly dog"
-  contains_verb(example_2)
-
-
-``sentence_count``
-------------------
-
-Counts the number of sentences in a section of text. Optionally, you can only include
-sentences that exceed a specified word count. Punctuation counts as a word token
-in the sentence. The function uses the NLTK sentence and word tokeniers to identify
-distinct sentences and words.
-
-Examples:
-
-.. code:: python
-
-  from unstructured.partition.text_type import sentence_count
-
-  example = "Look at me! I am a document with two sentences."
-
-  # Returns 2 because the example contains two sentences
-  sentence_count(example)
-
-  # Returns 1 because the first sentence in the example does not contain five word tokens.
-  sentence_count(example, min_length=5)
-
-
-``exceeds_cap_ratio``
----------------------
-
-Determines if the section of text exceeds the specified caps ratio. Used in
-``is_possible_narrative_text`` and ``is_possible_title``, but can be used independently
-as well. You can set the caps threshold using the ``threshold`` kwarg. The threshold
-defaults to ``0.3``. Only runs on sections of text that are a single sentence. The caps ratio check does not apply to text that is all capitalized.
-
-Examples:
-
-.. code:: python
-
-  from unstructured.partition.text_type import exceeds_cap_ratio
-
-  # Returns True because the text is more than 30% caps
-  example_1 = "LOOK AT ME I AM YELLING"
-  exceeds_cap_ratio(example_1)
-
-  # Returns False because the text is less than 30% caps
-  example_2 = "Look at me, I am no longer yelling"
-  exceeds_cap_ratio(example_2)
-
-  # Returns False because the text is more than 1% caps
-  exceeds_cap_ratio(example_2, threshold=0.01)
 
 
 
@@ -485,8 +330,55 @@ Examples:
 Cleaning
 ########
 
-The cleaning bricks in ``unstructured`` remove unwanted text from source documents.
-Examples include removing extra whitespace, boilerplate, or sentence fragments.
+
+As part of data preparation for an NLP model, it's common to need to clean up your data prior to passing it into the model.
+If there's unwanted content in your output, for example, it could impact the quality of your NLP model.
+To help with this, the ``unstructured`` library includes cleaning bricks to help users sanitize output before sending it to downstream applications.
+
+
+Some cleaning bricks apply automatically.
+In the example in the **Partition** section, the output ``Philadelphia Eaglesâ\x80\x99 victory`` automatically gets converted to ``Philadelphia Eagles' victory`` in ``partition_html`` using the ``replace_unicode_quotes`` cleaning brick.
+You can see how that works in the code snippet below:
+
+.. code:: python
+
+  from unstructured.cleaners.core import replace_unicode_quotes
+
+  replace_unicode_quotes("Philadelphia Eaglesâ\x80\x99 victory")
+
+
+
+Document elements in ``unstructured`` include an ``apply`` method that allow you to apply the text cleaning to the document element without instantiating a new element.
+The ``apply`` method expects a callable that takes a string as input and produces another string as output.
+In the example below, we invoke the ``replace_unicode_quotes`` cleaning brick using the ``apply`` method.
+
+
+.. code:: python
+
+  from unstructured.documents.elements import Text
+
+  element = Text("Philadelphia Eaglesâ\x80\x99 victory")
+  element.apply(replace_unicode_quotes)
+  print(element)
+
+
+Since a cleaning brick is just a ``str -> str`` function, users can also easily include their own cleaning bricks for custom data preparation tasks.
+In the example below, we remove citations from a section of text.
+
+
+.. code:: python
+
+  import re
+
+  remove_citations = lambda text: re.sub("\[\d{1,3}\]", "", text)
+
+  element = Text("[1] Geolocated combat footage has confirmed Russian gains in the Dvorichne area northwest of Svatove.")
+  element.apply(remove_citations)
+  print(element)
+
+
+See below for a full list of cleaning bricks in the ``unstructured`` library.
+
 
 
 ``clean``
@@ -884,8 +776,21 @@ Examples:
 Staging
 #######
 
-Staging bricks in ``unstructured`` prepare extracted text for downstream tasks such
-as machine learning inference and data labeling.
+Staging bricks in the ``unstructured`` package help prepare your data for ingestion into downstream systems.
+A staging brick accepts a list of document elements as input and return an appropriately formatted dictionary as output.
+In the example below, we get our narrative text samples prepared for ingestion into LabelStudio using
+``the stage_for_label_studio`` brick.
+We can take this data and directly upload it into LabelStudio to quickly get started with an NLP labeling task.
+
+
+.. code:: python
+
+  import json
+  from unstructured.staging.label_studio import stage_for_label_studio
+
+  output = stage_for_label_studio(narrative_text)
+  print(json.dumps(output[:2], indent=4))
+
 
 ``convert_to_dict``
 --------------------
@@ -1352,7 +1257,7 @@ The output is a list of dictionaries, each one with two keys:
 "text" with the content of the element and
 "entities" with an empty list.
 
-You can also specify specify entities in the ``stage_for_datasaur`` brick. Entities
+You can also specify entities in the ``stage_for_datasaur`` brick. Entities
 you specify in the input will be included in the entities key in the output. The list
 of entities is a list of dictionaries and must have all of the keys in the example below.
 The list of entities must be the same length as the list of elements. Use an empty
@@ -1394,3 +1299,229 @@ Examples:
   metadata = [{"type": "title"}, {"type": "text"}]
 
   argilla_dataset = stage_for_argilla(elements, "text_classification", metadata=metadata)
+
+
+######################
+Other helper functions
+######################
+
+The ``unstructured`` library also contains other useful helpful functions to aid in processing documents.
+You can see a list of the available helper functions below:
+
+
+``is_bulleted_text``
+----------------------
+
+Uses regular expression patterns to check if a snippet of text is a bullet point. Only
+triggers if the bullet point appears at the start of the snippet.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.text_type import is_bulleted_text
+
+  # Returns True
+  is_bulleted_text("● An excellent point!")
+
+  # Returns False
+  is_bulleted_text("I love Morse Code! ●●●")
+
+
+``is_possible_narrative_text``
+------------------------------
+
+The ``is_possible_narrative_text`` function determines if a section of text is a candidate
+for consideration as narrative text. The function performs the following checks on input text:
+
+* Empty text cannot be narrative text
+* Text that is all numeric cannot be narrative text
+* Text that does not contain a verb cannot be narrative text
+* Narrative text must contain at least one English word (if ``language`` is set to "en")
+* Text that exceeds the specified caps ratio cannot be narrative text. The threshold
+  is configurable with the ``cap_threshold`` kwarg. To ignore this check, you can set
+  ``cap_threshold=1.0``. You can also set the threshold by using the
+  ``UNSTRUCTURED_NARRATIVE_TEXT_CAP_THRESHOLD`` environment variable. The environment variable
+  takes precedence over the kwarg.
+* If a the text contains too many non-alpha characters it is
+  not narrative text.
+  The default is to expect a minimum of 50% alpha characters
+  (not countings spaces). You can change the minimum value with the
+  ``non_alpha_ratio`` kwarg or the ``UNSTRUCTURED_NARRATIVE_TEXT_NON_ALPHA_RATIO`` environment variable.
+  The environment variables takes precedence over the kwarg.
+* The cap ratio test does not apply to text that is all uppercase.
+* If you use the ``language=""`` kwarg or set the ``UNSTRUCTURED_LANGUAGE`` environment variable to ``""``, the function will skip the verb check and the English word check.
+
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.text_type import is_possible_narrative_text
+
+  # Returns True because the example passes all the checks
+  example_1 = "Make sure you brush your teeth before you go to bed."
+  is_possible_narrative_text(example_1)
+
+  # Returns False because the text exceeds the caps ratio and does not contain a verb
+  example_2 = "ITEM 1A. RISK FACTORS"
+  is_possible_narrative_text(example_2)
+
+  # Returns True because the text has a verb and does not exceed the cap_threshold
+  example_3 = "OLD MCDONALD HAD A FARM"
+  is_possible_narrative_text(example_3, cap_threshold=1.0)
+
+
+``is_possible_title``
+---------------------
+
+The ``is_possible_title`` function determines if a section of text is a candidate
+for consideration as a title. The function performs the following checks:
+
+* Empty text cannot be a title
+* Text that is all numeric cannot be a title.
+* If a title contains too many words it is not a title. The default max length is ``12``. You can change the max length with
+  the ``title_max_word_length`` kwarg or the ``UNSTRUCTURED_TITLE_MAX_WORD_LENGTH`` environment variable. The environment
+  variable takes precedence over the kwarg.
+* If a text contains too many non-alpha characters it is not a
+  title. The default is to expect a minimum of 50% alpha characters
+  (not countings spaces). You can change the minimum value with the
+  ``non_alpha_ratio`` kwarg or the ``UNSTRUCTURED_TITLE_NON_ALPHA_RATIO`` environment variable.
+  The environment variables takes precedence over the kwarg.
+* Narrative text must contain at least one English word (if ``language`` is set to "en")
+* If a title contains more than one sentence that exceeds a certain length, it cannot be a title. Sentence length threshold is controlled by the ``sentence_min_length`` kwarg and defaults to 5.
+* If a segment of text ends in a comma, it is not considered a potential title. This is to avoid salutations like "To My Dearest Friends," getting flagged as titles.
+* If you use the ``language=""`` kwarg or set the ``UNSTRUCTURED_LANGUAGE`` environment variable to ``""``, the function will skip the English word check.
+
+
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.text_type import is_possible_title
+
+  # Returns True because the text passes all the tests
+  example_2 = "ITEM 1A. RISK FACTORS"
+  is_possible_title(example_2)
+
+  # Returns True because there is only one sentence
+  example_2 = "Make sure you brush your teeth before you go to bed."
+  is_possible_title(example_2, sentence_min_length=5)
+
+  # Returns False because there are two sentences
+  example_3 = "Make sure you brush your teeth. Do it before you go to bed."
+  is_possible_title(example_3, sentence_min_length=5)
+
+
+``contains_us_phone_number``
+----------------------------
+
+Checks to see if a section of text contains a US phone number.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.text_type import contains_us_phone_number
+
+  # Returns True because the text includes a phone number
+  contains_us_phone_number("Phone number: 215-867-5309")
+
+
+``contains_verb``
+-----------------
+
+Checks if the text contains a verb. This is used in ``is_possible_narrative_text``, but can
+be used independently as well. The function identifies verbs using the NLTK part of speech
+tagger. Text that is all upper case is lower cased before part of speech detection. This is
+because the upper case letters sometimes cause the part of speech tagger to miss verbs.
+The following part of speech tags are identified as verbs:
+
+* ``VB``
+* ``VBG``
+* ``VBD``
+* ``VBN``
+* ``VBP``
+* ``VBZ``
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.text_type import contains_verb
+
+  # Returns True because the text contains a verb
+  example_1 = "I am going to run to the store to pick up some milk."
+  contains_verb(example_1)
+
+  # Returns False because the text does not contain a verb
+  example_2 = "A friendly dog"
+  contains_verb(example_2)
+
+
+``sentence_count``
+------------------
+
+Counts the number of sentences in a section of text. Optionally, you can only include
+sentences that exceed a specified word count. Punctuation counts as a word token
+in the sentence. The function uses the NLTK sentence and word tokeniers to identify
+distinct sentences and words.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.text_type import sentence_count
+
+  example = "Look at me! I am a document with two sentences."
+
+  # Returns 2 because the example contains two sentences
+  sentence_count(example)
+
+  # Returns 1 because the first sentence in the example does not contain five word tokens.
+  sentence_count(example, min_length=5)
+
+
+``exceeds_cap_ratio``
+---------------------
+
+Determines if the section of text exceeds the specified caps ratio. Used in
+``is_possible_narrative_text`` and ``is_possible_title``, but can be used independently
+as well. You can set the caps threshold using the ``threshold`` kwarg. The threshold
+defaults to ``0.3``. Only runs on sections of text that are a single sentence. The caps ratio check does not apply to text that is all capitalized.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.text_type import exceeds_cap_ratio
+
+  # Returns True because the text is more than 30% caps
+  example_1 = "LOOK AT ME I AM YELLING"
+  exceeds_cap_ratio(example_1)
+
+  # Returns False because the text is less than 30% caps
+  example_2 = "Look at me, I am no longer yelling"
+  exceeds_cap_ratio(example_2)
+
+  # Returns False because the text is more than 1% caps
+  exceeds_cap_ratio(example_2, threshold=0.01)
+
+
+``extract_attachment_info``
+----------------------------
+
+The ``extract_attachment_info`` function takes an ``email.message.Message`` object
+as input and returns the a list of dictionaries containing the attachment information,
+such as ``filename``, ``size``, ``payload``, etc. The attachment is saved to the ``output_dir``
+if specified.
+
+.. code:: python
+
+  import email
+  from unstructured.partition.email import extract_attachment_info
+
+  with open("example-docs/fake-email-attachment.eml", "r") as f:
+      msg = email.message_from_file(f)
+  attachment_info = extract_attachment_info(msg, output_dir="example-docs")

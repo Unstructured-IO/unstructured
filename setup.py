@@ -17,14 +17,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 from unstructured.__version__ import __version__
 
 setup(
     name="unstructured",
     description="A library that prepares raw documents for downstream ML tasks.",
-    long_description=open("README.md", "r", encoding="utf-8").read(),
+    long_description=open("README.md", encoding="utf-8").read(),  # noqa: SIM115
     long_description_content_type="text/markdown",
     keywords="NLP PDF HTML CV XML parsing preprocessing",
     url="https://github.com/Unstructured-IO/unstructured",
@@ -59,6 +59,7 @@ setup(
         "python-docx",
         "python-pptx",
         "python-magic",
+        "markdown",
         "requests",
         # NOTE(robinson) - The following dependencies are pinned
         # to address security scans
@@ -72,8 +73,17 @@ setup(
             "torch",
             "transformers",
         ],
-        "local-inference": ["unstructured-inference>=0.2.4"],
+        "local-inference": [
+            # NOTE(robinson) - Upper bound is temporary due to a multithreading issue
+            "unstructured-inference>=0.2.4,<0.2.8",
+        ],
         "s3": ["boto3"],
+        "github": [
+            # NOTE - pygithub at 1.58.0 fails due to https://github.com/PyGithub/PyGithub/issues/2436
+            # In the future, we can update this to pygithub>1.58.0
+            "pygithub==1.57.0",
+        ],
+        "reddit": ["praw"],
     },
     package_dir={"unstructured": "unstructured"},
     package_data={"unstructured": ["nlp/*.txt"]},

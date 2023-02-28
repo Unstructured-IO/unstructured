@@ -1,8 +1,7 @@
 import os
+from typing import Any, Dict, List, Optional, Sequence, Union
 
-from typing import Any, Dict, List, Optional, Union, Sequence
-from unstructured.documents.elements import Text, NoID
-
+from unstructured.documents.elements import NoID, Text
 
 VALID_ATTACHMENT_TYPES: List[str] = ["IMAGE", "VIDEO", "RAW_TEXT", "TEXT_URL", "HTML"]
 
@@ -29,12 +28,12 @@ def _validate_attachments(attachment_list: List[Dict[str, str]], element_index: 
         ):
             raise ValueError(
                 f"{error_message_prefix}. Invalid value specified for attachment.type. "
-                f"Must be one of: {', '.join(VALID_ATTACHMENT_TYPES)}"
+                f"Must be one of: {', '.join(VALID_ATTACHMENT_TYPES)}",
             )
         if not isinstance(attachment_value, str):
             raise ValueError(
                 f"{error_message_prefix}. Invalid value specified for attachment.value. "
-                "Must be of type string."
+                "Must be of type string.",
             )
 
 
@@ -54,7 +53,7 @@ def stage_for_label_box(
     if (external_ids is not None) and len(external_ids) != len(elements):
         raise ValueError(
             "The external_ids parameter must be a list and the length of external_ids parameter "
-            "must be the same as the length of elements parameter."
+            "must be the same as the length of elements parameter.",
         )
     elif external_ids is None:
         ids = [element.id for element in elements]
@@ -64,7 +63,7 @@ def stage_for_label_box(
     if (attachments is not None) and len(attachments) != len(elements):
         raise ValueError(
             "The attachments parameter must be a list and the length of attachments parameter "
-            "must be the same as the length of elements parameter."
+            "must be the same as the length of elements parameter.",
         )
     elif attachments is None:
         attachments = [[] for _ in elements]

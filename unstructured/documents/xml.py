@@ -1,10 +1,9 @@
-from typing import Optional, Union, List
+from typing import List, Optional, Union
 
-import lxml.etree as etree
+from lxml import etree
 
-from unstructured.logger import logger
 from unstructured.documents.base import Document, Page
-
+from unstructured.logger import logger
 
 VALID_PARSERS = Union[etree.HTMLParser, etree.XMLParser, None]
 
@@ -65,7 +64,7 @@ class XMLDocument(Document):
                         "Stylesheets are more commonly parsed with the "
                         "XMLParser. If your HTML does not display properly, try "
                         "`import lxml.etree as etree` and setting "
-                        "`parser=etree.XMLParser()` instead."
+                        "`parser=etree.XMLParser()` instead.",
                     )
                 xslt = etree.parse(self.stylesheet)
                 transform = etree.XSLT(xslt)

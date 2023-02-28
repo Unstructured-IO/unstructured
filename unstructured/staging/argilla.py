@@ -1,9 +1,10 @@
 from typing import List, Union
+
 import argilla
 from argilla.client.models import (
+    Text2TextRecord,
     TextClassificationRecord,
     TokenClassificationRecord,
-    Text2TextRecord,
 )
 
 from unstructured.documents.elements import Text
@@ -30,14 +31,14 @@ def stage_for_argilla(
     except KeyError as e:
         raise ValueError(
             f'Invalid value "{e.args[0]}" specified for argilla_task. '
-            "Must be one of: {', '.join(ARGILLA_TASKS.keys())}."
+            "Must be one of: {', '.join(ARGILLA_TASKS.keys())}.",
         )
 
     for record_kwarg_key, record_kwarg_value in record_kwargs.items():
         if type(record_kwarg_value) is not list or len(record_kwarg_value) != len(elements):
             raise ValueError(
                 f'Invalid value specified for "{record_kwarg_key}" keyword argument.'
-                " Must be of type list and same length as elements list."
+                " Must be of type list and same length as elements list.",
             )
 
     results: List[Union[TextClassificationRecord, TokenClassificationRecord, Text2TextRecord]] = []

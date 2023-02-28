@@ -108,6 +108,7 @@ jobs:
         make test
         make check-coverage
         make install-ingest-s3
+        make install-ingest-github
         ./test_unstructured_ingest/test-ingest.sh
 
   changelog:

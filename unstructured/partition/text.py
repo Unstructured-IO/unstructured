@@ -1,6 +1,7 @@
 import re
 from typing import IO, List, Optional
 
+from unstructured.cleaners.core import clean_bullets
 from unstructured.documents.elements import (
     Address,
     Element,
@@ -10,13 +11,11 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-
-from unstructured.cleaners.core import clean_bullets
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.partition.text_type import (
+    is_bulleted_text,
     is_possible_narrative_text,
     is_possible_title,
-    is_bulleted_text,
     is_us_city_state_zip,
 )
 
@@ -45,7 +44,7 @@ def partition_text(
         raise ValueError("One of filename, file, or text must be specified.")
 
     if filename is not None and not file and not text:
-        with open(filename, "r") as f:
+        with open(filename, encoding="utf8") as f:
             file_text = f.read()
 
     elif file is not None and not filename and not text:
@@ -59,7 +58,7 @@ def partition_text(
 
     file_content = split_by_paragraph(file_text)
 
-    elements: List[Element] = list()
+    elements: List[Element] = []
     metadata = ElementMetadata(filename=filename)
     for ctext in file_content:
         ctext = ctext.strip()

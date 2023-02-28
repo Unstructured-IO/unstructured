@@ -6,6 +6,7 @@ coverage
 click>=8.1
 flake8
 mypy
+types-Markdown
 pytest-cov
 # NOTE(robinson) - Currently tests do not pass with 0.0.18. Added the following
 # issue to address
@@ -13,6 +14,7 @@ pytest-cov
 label_studio_sdk==0.0.17
 types-requests
 vcrpy
+ruff
 
 # NOTE(robinson) - The following pins are to address
 # vulnerabilities in dependency scans

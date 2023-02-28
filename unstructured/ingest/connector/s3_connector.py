@@ -1,10 +1,14 @@
-from dataclasses import dataclass, field
-from pathlib import Path
 import json
 import os
 import re
+from dataclasses import dataclass, field
+from pathlib import Path
 
-from unstructured.ingest.interfaces import BaseConnector, BaseConnectorConfig, BaseIngestDoc
+from unstructured.ingest.interfaces import (
+    BaseConnector,
+    BaseConnectorConfig,
+    BaseIngestDoc,
+)
 
 
 @dataclass
@@ -20,8 +24,6 @@ class SimpleS3Config(BaseConnectorConfig):
     output_dir: str
     re_download: bool = False
     preserve_downloads: bool = False
-    # if a structured output .json file already exists, do not reprocess an s3 file to overwrite it
-    reprocess: bool = False
     verbose: bool = False
 
     # S3 Specific (optional)
@@ -47,7 +49,7 @@ class SimpleS3Config(BaseConnectorConfig):
         if not match:
             raise ValueError(
                 f"s3_url {self.s3_url} does not look like a valid path. "
-                "Expected s3://<bucket-name or s3://<bucket-name/path"
+                "Expected s3://<bucket-name or s3://<bucket-name/path",
             )
         self.s3_bucket = match.group(1)
         self.s3_path = match.group(2) or ""
@@ -168,7 +170,7 @@ class S3Connector(BaseConnector):
         response = self.s3_cli.list_objects_v2(**self._list_objects_kwargs, MaxKeys=1)
         if response["KeyCount"] < 1:
             raise ValueError(
-                f"No objects found in {self.config.s3_url} -- response list object is {response}"
+                f"No objects found in {self.config.s3_url} -- response list object is {response}",
             )
         os.mkdir(self.config.download_dir)
 
@@ -181,7 +183,8 @@ class S3Connector(BaseConnector):
                 break
             next_token = response.get("NextContinuationToken")
             response = self.s3_cli.list_objects_v2(
-                **self._list_objects_kwargs, ContinuationToken=next_token
+                **self._list_objects_kwargs,
+                ContinuationToken=next_token,
             )
         return s3_keys
 
