@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
+import hashlib
 import multiprocessing as mp
-import random
-import string
 import sys
+from pathlib import Path
 
 import click
 
@@ -194,10 +194,11 @@ def main(
     if not preserve_downloads and download_dir:
         print("Warning: not preserving downloaded files but --download_dir is specified")
     if not download_dir:
-        download_dir = "tmp-ingest-" + "".join(
-            random.choice(string.ascii_letters) for i in range(6)
-        )
+        cache_path = Path.home() / ".cache" / "unstructured" / "ingest"
+        if not cache_path.exists():
+            cache_path.mkdir(parents=True, exist_ok=True)
     if s3_url:
+        download_dir = cache_path / hashlib.md5(s3_url.encode("utf-8")).hexdigest()
         doc_connector = S3Connector(
             config=SimpleS3Config(
                 download_dir=download_dir,
@@ -211,6 +212,12 @@ def main(
             ),
         )
     elif github_url:
+        download_dir = (
+            cache_path
+            / hashlib.md5(
+                f"{github_url}_{github_branch}_{github_file_glob}".encode("utf-8")
+            ).hexdigest()
+        )
         doc_connector = GitHubConnector(  # type: ignore
             config=SimpleGitHubConfig(
                 github_url=github_url,
@@ -226,6 +233,12 @@ def main(
             ),
         )
     elif subreddit_name:
+        download_dir = (
+            cache_path
+            / hashlib.md5(
+                f"{subreddit_name}_{reddit_search_query}_{reddit_num_posts}".encode("utf-8")
+            ).hexdigest()
+        )
         doc_connector = RedditConnector(  # type: ignore
             config=SimpleRedditConfig(
                 subreddit_name=subreddit_name,
