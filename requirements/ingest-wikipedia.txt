@@ -158,7 +158,7 @@ tqdm==4.64.1
     #   -r requirements/base.txt
     #   argilla
     #   nltk
-typing-extensions==4.4.0
+typing-extensions==4.5.0
     # via
     #   -r requirements/base.txt
     #   pydantic
