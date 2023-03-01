@@ -1,8 +1,19 @@
-## 0.5.2-dev1
+## 0.5.2-dev2
 
 ### Enhancements
 
+* Add `FsspecConnector` to easily integrate any existing `fsspec` filesystem
+as a connector.
+* Rename `s3_connector.py` to `s3.py` for readability and consistency with the
+rest of the connectors.
+
 ### Features
+
+* Update `S3Connector` to inherit from `FsspecConnector`
+* Add `GCSConnector`  (missing CLI integration and working example but has been tested
+with a private bucket with a PDF and works as expected)
+* Add `ABSConnector` (missing CLI integration and working example but has been tested
+with a private container with a PDF and works as expected)
 
 ### Fixes
 
