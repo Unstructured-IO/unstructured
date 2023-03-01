@@ -175,7 +175,6 @@ class S3Connector(BaseConnector):
             raise ValueError(
                 f"No objects found in {self.config.s3_url} -- response list object is {response}",
             )
-        os.mkdir(self.config.download_dir)
 
     def _list_objects(self):
         response = self.s3_cli.list_objects_v2(**self._list_objects_kwargs)
