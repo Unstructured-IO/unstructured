@@ -42,7 +42,8 @@ class SimpleFsspecConfig(BaseConnectorConfig):
         self.protocol, self.path_without_protocol = self.path.split("://")
         if self.protocol not in SUPPORTED_REMOTE_FSSPEC_PROTOCOLS:
             raise ValueError(
-                f"Protocol {self.protocol} not supported yet, only {SUPPORTED_REMOTE_FSSPEC_PROTOCOLS} are supported.",
+                f"Protocol {self.protocol} not supported yet, only "
+                f"{SUPPORTED_REMOTE_FSSPEC_PROTOCOLS} are supported.",
             )
 
         # just a path with no trailing prefix
