@@ -1,3 +1,11 @@
+## 0.5.2-dev1
+
+### Enhancements
+
+### Features
+
+### Fixes
+
 ## 0.5.1
 
 ### Enhancements
