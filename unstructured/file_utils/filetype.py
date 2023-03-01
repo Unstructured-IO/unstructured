@@ -1,3 +1,4 @@
+import logging
 import os
 import zipfile
 from enum import Enum
@@ -10,9 +11,9 @@ try:
 except ImportError:  # pragma: nocover
     LIBMAGIC_AVAILABLE = False  # pragma: nocover
 
-
-from unstructured.logger import logger
 from unstructured.nlp.patterns import EMAIL_HEAD_RE
+
+logger = logging.getLogger(__name__)
 
 DOCX_MIME_TYPES = [
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -223,7 +224,7 @@ def detect_filetype(
         else:
             return filetype
 
-    logger.warn(
+    logger.warning(
         f"MIME type was {mime_type}. This file type is not currently supported in unstructured.",
     )
     return FileType.UNK

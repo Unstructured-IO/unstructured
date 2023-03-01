@@ -1,10 +1,13 @@
 """Defines Abstract Base Classes (ABC's) core to batch processing documents
 through Unstructured."""
 
+import logging
 from abc import ABC, abstractmethod
 
 from unstructured.partition.auto import partition
 from unstructured.staging.base import convert_to_dict
+
+logger = logging.getLogger(__name__)
 
 
 class BaseConnector(ABC):
@@ -46,7 +49,6 @@ class BaseConnectorConfig(ABC):
     # where to write structured data outputs
     output_dir: str
     re_download: bool = False
-    verbose: bool = False
 
 
 class BaseIngestDoc(ABC):
@@ -86,7 +88,7 @@ class BaseIngestDoc(ABC):
         pass
 
     def process_file(self):
-        print(f"Processing {self.filename}")
+        logger.info(f"Processing {self.filename}")
 
         elements = partition(filename=str(self.filename))
         isd_elems = convert_to_dict(elements)

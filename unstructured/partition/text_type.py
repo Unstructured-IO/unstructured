@@ -1,4 +1,5 @@
 """partition.py implements logic for partitioning plain text documents into sections."""
+import logging
 import os
 import re
 import sys
@@ -10,7 +11,6 @@ else:
     from typing import Final
 
 from unstructured.cleaners.core import remove_punctuation
-from unstructured.logger import logger
 from unstructured.nlp.english_words import ENGLISH_WORDS
 from unstructured.nlp.patterns import (
     UNICODE_BULLETS_RE,
@@ -18,6 +18,8 @@ from unstructured.nlp.patterns import (
     US_PHONE_NUMBERS_RE,
 )
 from unstructured.nlp.tokenize import pos_tag, sent_tokenize, word_tokenize
+
+logger = logging.getLogger(__name__)
 
 POS_VERB_TAGS: Final[List[str]] = ["VB", "VBG", "VBD", "VBN", "VBP", "VBZ"]
 ENGLISH_WORD_SPLIT_RE = re.compile(r"[\s|\.|-|_|\/]")

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import sys
 from typing import List, Optional, Sequence, Tuple
 
@@ -21,13 +22,14 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.documents.xml import XMLDocument
-from unstructured.logger import logger
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_possible_narrative_text,
     is_possible_title,
     is_us_city_state_zip,
 )
+
+logger = logging.getLogger(__name__)
 
 TEXT_TAGS: Final[List[str]] = ["p", "a", "td", "span", "font"]
 LIST_ITEM_TAGS: Final[List[str]] = ["li", "dd"]

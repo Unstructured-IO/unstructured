@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import logging
 import multiprocessing as mp
 import random
 import string
@@ -14,6 +15,8 @@ from unstructured.ingest.connector.wikipedia import (
     WikipediaConnector,
 )
 from unstructured.ingest.doc_processor.generalized import initialize, process_document
+
+logger = logging.getLogger(__name__)
 
 
 class MainProcess:
@@ -37,12 +40,12 @@ class MainProcess:
         docs = [doc for doc in docs if not doc.has_output()]
         num_docs_to_process = len(docs)
         if num_docs_to_process == 0:
-            print(
+            logger.info(
                 "All docs have structured outputs, nothing to do. Use --reprocess to process all.",
             )
             return None
         elif num_docs_to_process != num_docs_all:
-            print(
+            logger.info(
                 f"Skipping processing for {num_docs_all - num_docs_to_process} docs out of "
                 f"{num_docs_all} since their structured outputs already exist, use --reprocess to "
                 "reprocess those in addition to the unprocessed ones.",
@@ -201,8 +204,10 @@ def main(
     s3_anonymous,
     verbose,
 ):
+    if verbose:
+        logger.setLevel(logging.DEBUG)
     if not preserve_downloads and download_dir:
-        print("Warning: not preserving downloaded files but --download_dir is specified")
+        logger.warning("Not preserving downloaded files but --download_dir is specified")
     if not download_dir:
         download_dir = "tmp-ingest-" + "".join(
             random.choice(string.ascii_letters) for i in range(6)
@@ -217,7 +222,6 @@ def main(
                 anonymous=s3_anonymous,
                 re_download=re_download,
                 preserve_downloads=preserve_downloads,
-                verbose=verbose,
             ),
         )
     elif github_url:
@@ -232,7 +236,6 @@ def main(
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
                 re_download=re_download,
-                verbose=verbose,
             ),
         )
     elif subreddit_name:
@@ -249,7 +252,6 @@ def main(
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
                 re_download=re_download,
-                verbose=verbose,
             ),
         )
     elif wikipedia_page_title:
@@ -261,14 +263,13 @@ def main(
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
                 re_download=re_download,
-                verbose=verbose,
             ),
         )
     # Check for other connector-specific options here and define the doc_connector object
     # e.g. "elif azure_container:  ..."
 
     else:
-        print("No connector-specific option was specified!")
+        logger.error("No connector-specific option was specified!")
         sys.exit(1)
 
     MainProcess(
