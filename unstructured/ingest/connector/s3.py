@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 
 from unstructured.ingest.connector.fsspec import (
-    SimpleFsspecConfig,
-    FsspecIngestDoc,
     FsspecConnector,
+    FsspecIngestDoc,
+    SimpleFsspecConfig,
 )
 from unstructured.utils import requires_dependencies
 

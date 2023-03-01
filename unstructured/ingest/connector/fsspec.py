@@ -1,14 +1,22 @@
-from dataclasses import dataclass, field
-from pathlib import Path
 import json
 import os
 import re
+from dataclasses import dataclass, field
+from pathlib import Path
 
-from unstructured.ingest.interfaces import BaseConnector, BaseConnectorConfig, BaseIngestDoc
+from unstructured.ingest.interfaces import (
+    BaseConnector,
+    BaseConnectorConfig,
+    BaseIngestDoc,
+)
 
 SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
-    "s3", "gcs", "gcfs", "abs",
+    "s3",
+    "gcs",
+    "gcfs",
+    "abs",
 ]
+
 
 @dataclass
 class SimpleFsspecConfig(BaseConnectorConfig):
@@ -33,20 +41,22 @@ class SimpleFsspecConfig(BaseConnectorConfig):
     def __post_init__(self):
         self.protocol, self.path_without_protocol = self.path.split("://")
         if self.protocol not in SUPPORTED_REMOTE_FSSPEC_PROTOCOLS:
-            raise ValueError(f"Protocol {self.protocol} not supported yet, only {SUPPORTED_REMOTE_FSSPEC_PROTOCOLS} are supported.")
+            raise ValueError(
+                f"Protocol {self.protocol} not supported yet, only {SUPPORTED_REMOTE_FSSPEC_PROTOCOLS} are supported."
+            )
 
         # just a path with no trailing prefix
-        match = re.match(fr"{self.protocol}://([^/\s]+?)(/*)$", self.path)
+        match = re.match(rf"{self.protocol}://([^/\s]+?)(/*)$", self.path)
         if match:
             self.dir_path = match.group(1)
             self.file_path = ""
             return
 
         # valid path with a dir and/or file
-        match = re.match(fr"{self.protocol}://([^/\s]+?)/([^\s]*)", self.path)
+        match = re.match(rf"{self.protocol}://([^/\s]+?)/([^\s]*)", self.path)
         if not match:
             raise ValueError(
-                f"Invalid path {self.path}. Expected <protocol>://<dir-path>/<file-or-dir-path>."
+                f"Invalid path {self.path}. Expected <protocol>://<dir-path>/<file-or-dir-path>.",
             )
         self.dir_path = match.group(1)
         self.file_path = match.group(2) or ""
@@ -65,10 +75,15 @@ class FsspecIngestDoc(BaseIngestDoc):
     remote_file_path: str
 
     def _tmp_download_file(self):
-        return Path(self.config.download_dir) / self.remote_file_path.replace(f'{self.config.dir_path}/', '')
+        return Path(self.config.download_dir) / self.remote_file_path.replace(
+            f"{self.config.dir_path}/", ""
+        )
 
     def _output_filename(self):
-        return Path(self.config.output_dir) / f"{self.remote_file_path.replace(f'{self.config.dir_path}/', '')}.json"
+        return (
+            Path(self.config.output_dir)
+            / f"{self.remote_file_path.replace(f'{self.config.dir_path}/', '')}.json"
+        )
 
     def has_output(self):
         """Determine if structured output for this doc already exists."""
@@ -92,8 +107,10 @@ class FsspecIngestDoc(BaseIngestDoc):
                 print(f"File exists: {self._tmp_download_file()}, skipping download")
             return
 
-        fs: AbstractFileSystem = get_filesystem_class(self.config.protocol)(**self.config.access_kwargs)
-        
+        fs: AbstractFileSystem = get_filesystem_class(self.config.protocol)(
+            **self.config.access_kwargs
+        )
+
         if self.config.verbose:
             print(f"fetching {self} - PID: {os.getpid()}")
         fs.get(rpath=self.remote_file_path, lpath=self._tmp_download_file().as_posix())
@@ -126,7 +143,9 @@ class FsspecConnector(BaseConnector):
         from fsspec import AbstractFileSystem, get_filesystem_class
 
         self.config = config
-        self.fs: AbstractFileSystem = get_filesystem_class(self.config.protocol)(**self.config.access_kwargs)
+        self.fs: AbstractFileSystem = get_filesystem_class(self.config.protocol)(
+            **self.config.access_kwargs
+        )
         self.cleanup_files = not config.preserve_downloads
 
     def cleanup(self, cur_dir=None):
@@ -152,7 +171,7 @@ class FsspecConnector(BaseConnector):
         ls_output = self.fs.ls(self.config.path_without_protocol)
         if len(ls_output) < 1:
             raise ValueError(
-                f"No objects found in {self.config.path}."
+                f"No objects found in {self.config.path}.",
             )
 
     def _list_files(self):
