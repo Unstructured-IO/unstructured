@@ -1,10 +1,16 @@
-***REMOVED******REMOVED*** 0.5.2-dev1
+***REMOVED******REMOVED*** 0.5.2-dev0
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
+
+* `unstructured-ingest` now uses a default `--download_dir` of `$HOME/.cache/unstructured/ingest`
+rather than a "tmp-ingest-" dir in the working directory.
 
 ***REMOVED******REMOVED******REMOVED*** Features
 
 ***REMOVED******REMOVED******REMOVED*** Fixes
+
+* `unstructured-ingest` no longer re-downloads files when --preserve-downloads
+is used without --download-dir.
 
 ***REMOVED******REMOVED*** 0.5.1
 

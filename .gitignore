@@ -131,8 +131,7 @@ dmypy.json
 
 ***REMOVED*** ingest outputs
 /structured-output
-***REMOVED*** ingest temporary files
-/tmp-ingest*
+
 ***REMOVED*** suggested ingest mirror directory
 /mirror
 
