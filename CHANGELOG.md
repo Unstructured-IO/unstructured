@@ -1,8 +1,10 @@
-## 0.5.2-dev1
+## 0.5.2-dev2
 
 ### Enhancements
 
 ### Features
+
+* Fully move from printing to logging, optionally using the `rich` logger.
 
 ### Fixes
 
