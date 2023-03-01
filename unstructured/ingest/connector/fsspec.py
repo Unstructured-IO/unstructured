@@ -42,7 +42,7 @@ class SimpleFsspecConfig(BaseConnectorConfig):
         self.protocol, self.path_without_protocol = self.path.split("://")
         if self.protocol not in SUPPORTED_REMOTE_FSSPEC_PROTOCOLS:
             raise ValueError(
-                f"Protocol {self.protocol} not supported yet, only {SUPPORTED_REMOTE_FSSPEC_PROTOCOLS} are supported."
+                f"Protocol {self.protocol} not supported yet, only {SUPPORTED_REMOTE_FSSPEC_PROTOCOLS} are supported.",
             )
 
         # just a path with no trailing prefix
@@ -76,7 +76,7 @@ class FsspecIngestDoc(BaseIngestDoc):
 
     def _tmp_download_file(self):
         return Path(self.config.download_dir) / self.remote_file_path.replace(
-            f"{self.config.dir_path}/", ""
+            f"{self.config.dir_path}/", "",
         )
 
     def _output_filename(self):
@@ -108,7 +108,7 @@ class FsspecIngestDoc(BaseIngestDoc):
             return
 
         fs: AbstractFileSystem = get_filesystem_class(self.config.protocol)(
-            **self.config.access_kwargs
+            **self.config.access_kwargs,
         )
 
         if self.config.verbose:
@@ -144,7 +144,7 @@ class FsspecConnector(BaseConnector):
 
         self.config = config
         self.fs: AbstractFileSystem = get_filesystem_class(self.config.protocol)(
-            **self.config.access_kwargs
+            **self.config.access_kwargs,
         )
         self.cleanup_files = not config.preserve_downloads
 
