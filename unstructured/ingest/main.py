@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import hashlib
+import logging
 import multiprocessing as mp
 import sys
 from pathlib import Path

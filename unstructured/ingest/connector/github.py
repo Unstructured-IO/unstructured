@@ -13,8 +13,8 @@ from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
 )
-from unstructured.utils import requires_dependencies
 from unstructured.logger import logger
+from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
     from github.Repository import Repository

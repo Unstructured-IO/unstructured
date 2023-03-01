@@ -10,13 +10,13 @@ else:
     from typing import Final
 
 from unstructured.cleaners.core import remove_punctuation
+from unstructured.logger import logger
 from unstructured.nlp.english_words import ENGLISH_WORDS
 from unstructured.nlp.patterns import (
     UNICODE_BULLETS_RE,
     US_CITY_STATE_ZIP_RE,
     US_PHONE_NUMBERS_RE,
 )
-from unstructured.logger import logger
 from unstructured.nlp.tokenize import pos_tag, sent_tokenize, word_tokenize
 
 POS_VERB_TAGS: Final[List[str]] = ["VB", "VBG", "VBD", "VBN", "VBP", "VBZ"]

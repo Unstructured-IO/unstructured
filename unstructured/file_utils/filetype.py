@@ -10,8 +10,8 @@ try:
 except ImportError:  # pragma: nocover
     LIBMAGIC_AVAILABLE = False  # pragma: nocover
 
-from unstructured.nlp.patterns import EMAIL_HEAD_RE
 from unstructured.logger import logger
+from unstructured.nlp.patterns import EMAIL_HEAD_RE
 
 DOCX_MIME_TYPES = [
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
