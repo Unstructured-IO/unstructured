@@ -265,12 +265,11 @@ def is_narrative_tag(text: str, tag: str) -> bool:
 def _construct_text(tag_elem: etree.Element) -> str:
     """Extracts text from a text tag element."""
     text = ""
-    for item in tag_elem.itertext():
-        if item:
-            text += item
-
-    if tag_elem.tail:
-        text = text + tag_elem.tail
+    for item in tag_elem.iter():
+        if item.text and item.tag != "script":
+            text += item.text
+            if item.tail:
+                text += item.tail
 
     text = replace_unicode_quotes(text)
     return text.strip()

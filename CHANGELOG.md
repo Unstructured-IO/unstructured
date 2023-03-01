@@ -1,23 +1,35 @@
-## 0.5.1-dev0
+## 0.5.2.-dev0
 
 ### Enhancements
 
-* Default `download_dir` now lives under `$HOME/.cache/unstructured/ingest` instead
-of in the root directory under the name of `tmp-ingest-...`.
+* `unstructured-ingest` now uses a default `--download_dir` of `$HOME/.cache/unstructured/ingest`
+rather than a "tmp-ingest-" dir in the working directory.
 
 ### Features
 
 ### Fixes
 
-* As of the caching update, now files are not downloaded over and over when 
-`download_dir` is not specified since its path is not random anymore.
+* `unstructured-ingest` no longer re-downloads files when --preserve-downloads
+is used without --download-dir.
+
+## 0.5.1
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* Fixes an error causing JavaScript to appear in the output of `partition_html` sometimes.
+* Fix several issues with the `requires_dependencies` decorator, including the error message
+  and how it was used, which had caused an error for `unstructured-ingest --github-url ...`.
 
 ## 0.5.0
 
 ### Enhancements
 
 * Add `requires_dependencies` Python decorator to check dependencies are installed before
-instantiating a class or running a function
+  instantiating a class or running a function
 
 ### Features
 
