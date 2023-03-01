@@ -1,3 +1,11 @@
+***REMOVED******REMOVED*** 0.5.2-dev1
+
+***REMOVED******REMOVED******REMOVED*** Enhancements
+
+***REMOVED******REMOVED******REMOVED*** Features
+
+***REMOVED******REMOVED******REMOVED*** Fixes
+
 ***REMOVED******REMOVED*** 0.5.1
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
