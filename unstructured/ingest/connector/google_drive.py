@@ -28,12 +28,10 @@ class SimpleGoogleDriveConfig(BaseConnectorConfig):
 
     # Standard Connector options
     download_dir: str
-    # where to write structured data, with the directory structure matching s3 path
+    # where to write structured data, with the directory structure matching drive path
     output_dir: str
     re_download: bool = False
     preserve_downloads: bool = False
-    # if a structured output .json file already exists, do not reprocess an s3 file to overwrite it
-    reprocess: bool = False
     verbose: bool = False
 
     recursive: bool = False
@@ -41,8 +39,8 @@ class SimpleGoogleDriveConfig(BaseConnectorConfig):
     def __post_init__(self):
         try:
             self.service = build("drive", "v3", developerKey=self.api_key)
-            response = self.service.files().list(spaces="drive", fields="files(id)", pageToken=None,
-                                                 corpora="user", q=f"'{self.drive_id}' in parents").execute()
+            self.service.files().list(spaces="drive", fields="files(id)", pageToken=None,
+                                      corpora="user", q=f"'{self.drive_id}' in parents").execute()
         except HttpError as exc:
             raise ValueError(f"{exc.reason}")
         except exceptions.DefaultCredentialsError:
@@ -56,10 +54,10 @@ class GoogleDriveIngestDoc(BaseIngestDoc):
 
     @property
     def filename(self):
-        return (Path(self.file_meta.get("download_filepath"))).resolve()
+        return Path(self.file_meta.get("download_filepath")).resolve()
 
     def _output_filename(self):
-        return Path(f"{self.filename}.json").resolve()
+        return Path(f"{self.file_meta.get('output_filepath')}.json").resolve()
 
     def cleanup_file(self):
         if not self.config.preserve_downloads and self.filename.is_file():
@@ -86,9 +84,16 @@ class GoogleDriveIngestDoc(BaseIngestDoc):
             status, done = downloader.next_chunk()
 
         if file:
-            self.file_meta.get("download_dir").mkdir(parents=True, exist_ok=True)
+            if not self.file_meta.get("download_dir").is_dir():
+                if self.config.verbose:
+                    print(f"Creating directory: {self.file_meta.get('download_dir')}")
+
+                self.file_meta.get("download_dir").mkdir(parents=True, exist_ok=True)
+
             with open(self.filename, "wb") as handler:
                 handler.write(file.getbuffer())
+                if self.config.verbose:
+                    print(f"File downloaded: {self.filename}.")
 
     def write_result(self):
         """Write the structured json result for this doc. result must be json serializable."""
@@ -103,25 +108,25 @@ class GoogleDriveConnector(BaseConnector):
     """Objects of this class support fetching documents from Google Drive"""
     def __init__(self, config):
         self.config = config
-        self.files = []
         self.cleanup_files = not self.config.preserve_downloads
 
-    def _list_objects(self, folder_id, recursive=False):
+    def _list_objects(self, drive_id, recursive=False):
         files = []
 
-        def traverse(download_dir, folder_id, recursive=False):
+        def traverse(drive_id, download_dir, output_dir, recursive=False):
             page_token = None
             while True:
                 response = self.config.service.files().list(
                     spaces='drive', fields='nextPageToken, files(id, name, mimeType)',
-                    pageToken=page_token, corpora="user", q=f"'{folder_id}' in parents").execute()
+                    pageToken=page_token, corpora="user", q=f"'{drive_id}' in parents").execute()
 
                 for meta in response.get("files", []):
                     if meta.get("mimeType") == "application/vnd.google-apps.folder":
                         dir_ = DIRECTORY_FORMAT.format(name=meta.get("name"), id=meta.get("id"))
                         if recursive:
-                            sub_dir = (download_dir / dir_).resolve()
-                            traverse(sub_dir, meta.get("id"), True)
+                            download_sub_dir = (download_dir / dir_).resolve()
+                            output_sub_dir = (output_dir / dir_).resolve()
+                            traverse(meta.get("id"), download_sub_dir, output_sub_dir, True)
                     else:
                         if not Path(meta.get("name")).suffixes:
                             ext = guess_extension(meta.get("mimeType"))
@@ -130,14 +135,15 @@ class GoogleDriveConnector(BaseConnector):
                         name = FILE_FORMAT.format(name=meta.get("name"), id=meta.get("id"), ext=ext)
                         meta["download_dir"] = download_dir
                         meta["download_filepath"] = (download_dir / name).resolve()
+                        meta["output_dir"] = output_dir
+                        meta["output_filepath"] = (output_dir / name).resolve()
                         files.append(meta)
 
                 page_token = response.get('nextPageToken', None)
                 if page_token is None:
                     break
 
-        traverse(Path(self.config.download_dir), folder_id, recursive)
-
+        traverse(drive_id, Path(self.config.download_dir), Path(self.config.output_dir), recursive)
         return files
 
     def cleanup(self, cur_dir=None):
@@ -146,6 +152,10 @@ class GoogleDriveConnector(BaseConnector):
 
         if cur_dir is None:
             cur_dir = self.config.download_dir
+
+        if cur_dir is None or not Path(cur_dir).is_dir():
+            return
+
         sub_dirs = os.listdir(cur_dir)
         os.chdir(cur_dir)
         for sub_dir in sub_dirs:
@@ -157,10 +167,11 @@ class GoogleDriveConnector(BaseConnector):
             os.rmdir(cur_dir)
 
     def initialize(self):
-        self.files = self._list_objects(self.config.drive_id, self.config.recursive)
+        pass
 
     def get_ingest_docs(self):
+        files = self._list_objects(self.config.drive_id, self.config.recursive)
         return [
             GoogleDriveIngestDoc(self.config, file)
-            for file in self.files
+            for file in files
         ]
