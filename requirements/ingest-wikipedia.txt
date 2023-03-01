@@ -104,7 +104,7 @@ pillow==9.4.0
     #   -r requirements/base.txt
     #   python-pptx
     #   unstructured (setup.py)
-pydantic==1.10.4
+pydantic==1.10.5
     # via
     #   -r requirements/base.txt
     #   argilla
