@@ -182,3 +182,6 @@ tags
 [._]*.un~
 
 .DS_Store
+
+# Ruff cache
+.ruff_cache/
