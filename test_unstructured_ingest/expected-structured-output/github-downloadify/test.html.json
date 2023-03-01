@@ -8,8 +8,8 @@
     }
   },
   {
-    "element_id": "d551bbfc9477547e4dce6264d8196c7b",
-    "text": "More info available at the Github Project Page",
+    "element_id": "4300054a3c2601f905282a7bc7199044",
+    "text": "More info available at the \n\t\tGithub Project Page",
     "type": "Title",
     "metadata": {
       "page_number": 1
@@ -24,9 +24,9 @@
     }
   },
   {
-    "element_id": "43f65b1c5bd47774b25c72e2f96de300",
-    "text": "File Contents\n\nWhatever you put in this text box will be downloaded and saved in the file. If you leave it blank, no file will be downloaded",
-    "type": "UncategorizedText",
+    "element_id": "a309823c9d508290682a198270b84bca",
+    "text": "File Contents\nWhatever you put in this text box will be downloaded and saved in the file. If you leave it blank, no file will be downloaded",
+    "type": "NarrativeText",
     "metadata": {
       "page_number": 1
     }
@@ -34,7 +34,7 @@
   {
     "element_id": "53a4db70c6d40ed5206711ed8a255e03",
     "text": "You must have Flash 10 installed to download this file.",
-    "type": "UncategorizedText",
+    "type": "NarrativeText",
     "metadata": {
       "page_number": 1
     }
