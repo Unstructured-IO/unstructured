@@ -2,10 +2,12 @@
 
 from typing import Any, Dict, List, Optional
 
+import structlog
 from unstructured_inference.models.detectron2 import MODEL_TYPES
 
 from unstructured.ingest.interfaces import BaseIngestDoc as IngestDoc
-from unstructured.logger import logger
+
+logger = structlog.get_logger(__name__)
 
 
 def initialize():
@@ -21,6 +23,7 @@ def process_document(doc: "IngestDoc") -> Optional[List[Dict[str, Any]]]:
     """Process any IngestDoc-like class of document with Unstructured's auto partition logic."""
     isd_elems_no_filename = None
     try:
+        structlog.contextvars.bind_contextvars(filename=doc.filename)
         # does the work necessary to load file into filesystem
         # in the future, get_file_handle() could also be supported
         doc.get_file()
@@ -32,8 +35,8 @@ def process_document(doc: "IngestDoc") -> Optional[List[Dict[str, Any]]]:
         # results across all docs in memory.
         doc.write_result()
     except Exception:
-        # TODO(crag) save the exception instead of print?
-        logger.error(f"Failed to process {doc}", exc_info=True)
+        logger.error(f"Failed to process document {doc}")
     finally:
         doc.cleanup_file()
+        structlog.contextvars.clear_contextvars()
         return isd_elems_no_filename
