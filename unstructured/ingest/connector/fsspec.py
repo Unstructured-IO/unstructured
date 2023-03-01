@@ -36,14 +36,14 @@ class SimpleFsspecConfig(BaseConnectorConfig):
             raise ValueError(f"Protocol {self.protocol} not supported yet, only {SUPPORTED_REMOTE_FSSPEC_PROTOCOLS} are supported.")
 
         # just a path with no trailing prefix
-        match = re.match(fr"({self.protocol})://([^/\s]+?)(/*)$", self.path)
+        match = re.match(fr"{self.protocol}://([^/\s]+?)(/*)$", self.path)
         if match:
             self.dir_path = match.group(1)
             self.file_path = ""
             return
 
         # valid path with a dir and/or file
-        match = re.match(fr"({self.protocol})://([^/\s]+?)/([^\s]*)", self.path)
+        match = re.match(fr"{self.protocol}://([^/\s]+?)/([^\s]*)", self.path)
         if not match:
             raise ValueError(
                 f"Invalid path {self.path}. Expected <protocol>://<dir-path>/<file-or-dir-path>."
@@ -65,10 +65,10 @@ class FsspecIngestDoc(BaseIngestDoc):
     remote_file_path: str
 
     def _tmp_download_file(self):
-        return Path(self.config.download_dir) / self.remote_file_path
+        return Path(self.config.download_dir) / self.remote_file_path.replace(f'{self.config.dir_path}/', '')
 
     def _output_filename(self):
-        return Path(self.config.output_dir) / f"{self.remote_file_path}.json"
+        return Path(self.config.output_dir) / f"{self.remote_file_path.replace(f'{self.config.dir_path}/', '')}.json"
 
     def has_output(self):
         """Determine if structured output for this doc already exists."""
