@@ -32,7 +32,7 @@ fi
 $sudo $pac update -y
 if [[ -d /etc/needrestart/conf.d ]]; then
     ***REMOVED*** shellcheck disable=SC2016
-    echo '$nrconf{restart} = '"'a';" | $sudo tee /etc/needrestart/conf.d/99z_temp_disable.conf 
+    echo '$nrconf{restart} = '"'a';" | $sudo tee /etc/needrestart/conf.d/99z_temp_disable.conf
 fi
 $sudo $pac upgrade -y
 
@@ -42,7 +42,7 @@ $sudo $pac install -y git
 
 ***REMOVED******REMOVED******REMOVED******REMOVED*** Python
 ***REMOVED*** Install tools needed to build python
-$sudo DEBIAN_FRONTEND=noninteractive $pac install -y curl gcc bzip2 sqlite zlib1g-dev libreadline-dev libsqlite3-dev libssl-dev tk-dev libffi-dev xz-utils make build-essential libbz2-dev wget llvm libncursesw5-dev libxml2-dev libxmlsec1-dev liblzma-dev
+$sudo env DEBIAN_FRONTEND="noninteractive" $pac install -y curl gcc bzip2 sqlite zlib1g-dev libreadline-dev libsqlite3-dev libssl-dev tk-dev libffi-dev xz-utils make build-essential libbz2-dev wget llvm libncursesw5-dev libxml2-dev libxmlsec1-dev liblzma-dev
 ***REMOVED*** Install pyenv
 if [[ ! -d $USER_ACCOUNT_HOME/.pyenv ]]; then
     sudo -u "$USER_ACCOUNT" -i <<'EOF'
