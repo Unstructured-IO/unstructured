@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 import sys
 from typing import List, Optional, Sequence, Tuple
 
@@ -11,6 +10,7 @@ else:
 
 from lxml import etree
 
+from unstructured.logger import logger
 from unstructured.cleaners.core import clean_bullets, replace_unicode_quotes
 from unstructured.documents.base import Page
 from unstructured.documents.elements import (
@@ -28,8 +28,6 @@ from unstructured.partition.text_type import (
     is_possible_title,
     is_us_city_state_zip,
 )
-
-logger = logging.getLogger(__name__)
 
 TEXT_TAGS: Final[List[str]] = ["p", "a", "td", "span", "font"]
 LIST_ITEM_TAGS: Final[List[str]] = ["li", "dd"]

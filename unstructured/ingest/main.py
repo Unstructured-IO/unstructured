@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import hashlib
-import logging
 import multiprocessing as mp
 import sys
 from pathlib import Path
@@ -15,8 +14,7 @@ from unstructured.ingest.connector.wikipedia import (
     WikipediaConnector,
 )
 from unstructured.ingest.doc_processor.generalized import initialize, process_document
-
-logger = logging.getLogger(__name__)
+from unstructured.logger import logger
 
 
 class MainProcess:

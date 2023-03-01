@@ -1,13 +1,12 @@
 """Defines Abstract Base Classes (ABC's) core to batch processing documents
 through Unstructured."""
 
-import logging
 from abc import ABC, abstractmethod
 
 from unstructured.partition.auto import partition
 from unstructured.staging.base import convert_to_dict
 
-logger = logging.getLogger(__name__)
+from unstructured.logger import logger
 
 
 class BaseConnector(ABC):

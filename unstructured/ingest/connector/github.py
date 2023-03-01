@@ -1,6 +1,5 @@
 import fnmatch
 import json
-import logging
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -15,11 +14,10 @@ from unstructured.ingest.interfaces import (
     BaseIngestDoc,
 )
 from unstructured.utils import requires_dependencies
+from unstructured.logger import logger
 
 if TYPE_CHECKING:
     from github.Repository import Repository
-
-logger = logging.getLogger(__name__)
 
 
 @dataclass

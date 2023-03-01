@@ -4,14 +4,6 @@ from functools import wraps
 from typing import Dict, List, Optional, Union
 
 
-def initialize_rich_tracebacks() -> None:
-    try:
-        from rich.traceback import install
-    except ModuleNotFoundError:
-        return
-    install(max_frames=6)
-
-
 def save_as_jsonl(data: List[Dict], filename: str) -> None:
     with open(filename, "w+") as output_file:
         output_file.writelines(json.dumps(datum) + "\n" for datum in data)

@@ -1,5 +1,4 @@
 import json
-import logging
 import os
 import re
 from dataclasses import dataclass, field
@@ -11,8 +10,8 @@ from unstructured.ingest.interfaces import (
     BaseIngestDoc,
 )
 from unstructured.utils import requires_dependencies
+from unstructured.logger import logger
 
-logger = logging.getLogger(__name__)
 
 
 @dataclass

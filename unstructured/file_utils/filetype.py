@@ -1,4 +1,3 @@
-import logging
 import os
 import zipfile
 from enum import Enum
@@ -12,8 +11,7 @@ except ImportError:  # pragma: nocover
     LIBMAGIC_AVAILABLE = False  # pragma: nocover
 
 from unstructured.nlp.patterns import EMAIL_HEAD_RE
-
-logger = logging.getLogger(__name__)
+from unstructured.logger import logger
 
 DOCX_MIME_TYPES = [
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",

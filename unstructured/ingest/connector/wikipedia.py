@@ -1,5 +1,4 @@
 import json
-import logging
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -10,11 +9,10 @@ from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
 )
+from unstructured.logger import logger
 
 if TYPE_CHECKING:
     from wikipedia import WikipediaPage
-
-logger = logging.getLogger(__name__)
 
 
 @dataclass

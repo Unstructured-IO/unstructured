@@ -1,11 +1,9 @@
-import logging
 from typing import List, Optional, Union
 
 from lxml import etree
 
 from unstructured.documents.base import Document, Page
-
-logger = logging.getLogger(__name__)
+from unstructured.logger import logger
 
 VALID_PARSERS = Union[etree.HTMLParser, etree.XMLParser, None]
 

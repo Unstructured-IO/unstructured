@@ -2,7 +2,7 @@
 
 ### Enhancements
 
-* Fully move from printing to logging, optionally using the `rich` logger.
+* Fully move from printing to logging.
 * `unstructured-ingest` now uses a default `--download_dir` of `$HOME/.cache/unstructured/ingest`
 rather than a "tmp-ingest-" dir in the working directory.
 
