@@ -79,9 +79,7 @@ class S3IngestDoc(BaseIngestDoc):
 
     def has_output(self):
         """Determine if structured output for this doc already exists."""
-        return self._output_filename().is_file() and os.path.getsize(
-            self._output_filename(),
-        )
+        return self._output_filename().is_file() and os.path.getsize(self._output_filename())
 
     def _create_full_tmp_dir_path(self):
         """includes "directories" in s3 object path"""
@@ -109,23 +107,14 @@ class S3IngestDoc(BaseIngestDoc):
         else:
             s3_cli = boto3.client("s3")
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
-        s3_cli.download_file(
-            self.config.s3_bucket,
-            self.s3_key,
-            self._tmp_download_file(),
-        )
+        s3_cli.download_file(self.config.s3_bucket, self.s3_key, self._tmp_download_file())
 
     def write_result(self):
         """Write the structured json result for this doc. result must be json serializable."""
         output_filename = self._output_filename()
         output_filename.parent.mkdir(parents=True, exist_ok=True)
         with open(output_filename, "w") as output_f:
-            json.dump(
-                self.isd_elems_no_filename,
-                output_f,
-                ensure_ascii=False,
-                indent=2,
-            )
+            json.dump(self.isd_elems_no_filename, output_f, ensure_ascii=False, indent=2)
         logger.info(f"Wrote {output_filename}")
 
     @property
@@ -148,10 +137,7 @@ class S3Connector(BaseConnector):
         import boto3
 
         self.config = config
-        self._list_objects_kwargs = {
-            "Bucket": config.s3_bucket,
-            "Prefix": config.s3_path,
-        }
+        self._list_objects_kwargs = {"Bucket": config.s3_bucket, "Prefix": config.s3_path}
         if config.anonymous:
             from botocore import UNSIGNED
             from botocore.client import Config
