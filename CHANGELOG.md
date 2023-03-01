@@ -2,9 +2,9 @@
 
 ### Enhancements
 
-### Features
-
 * Fully move from printing to logging, optionally using the `rich` logger.
+
+### Features
 
 ### Fixes
 
