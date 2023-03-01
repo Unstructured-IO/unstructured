@@ -3,10 +3,12 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/.. || exit 1
 
-if [[ "$CI" == "true" && "$(( RANDOM % 10))" != "1" ]]; then
-    ***REMOVED*** NOTE(crag): proper fix is being tracked here: https://github.com/Unstructured-IO/unstructured/issues/306
-    echo "Skipping ingest 90% of github ingest tests to avoid rate limiting issue."
-    exit 0
+if [[ "$CI" == "true" ]]; then
+    if [ "$(( RANDOM % 10))" -lt 2 ] ; then
+        ***REMOVED*** NOTE(crag): proper fix is being tracked here: https://github.com/Unstructured-IO/unstructured/issues/306
+        echo "Skipping ingest 80% of github ingest tests to avoid rate limiting issue."
+        exit 0
+    fi
 fi
 
 
