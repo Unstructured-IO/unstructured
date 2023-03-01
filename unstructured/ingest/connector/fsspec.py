@@ -76,7 +76,8 @@ class FsspecIngestDoc(BaseIngestDoc):
 
     def _tmp_download_file(self):
         return Path(self.config.download_dir) / self.remote_file_path.replace(
-            f"{self.config.dir_path}/", "",
+            f"{self.config.dir_path}/",
+            "",
         )
 
     def _output_filename(self):
