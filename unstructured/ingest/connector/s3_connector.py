@@ -116,7 +116,7 @@ class S3IngestDoc(BaseIngestDoc):
         output_filename = self._output_filename()
         output_filename.parent.mkdir(parents=True, exist_ok=True)
         with open(output_filename, "w") as output_f:
-            output_f.write(json.dumps(self.isd_elems_no_filename, ensure_ascii=False, indent=2))
+            json.dump(self.isd_elems_no_filename, output_f, ensure_ascii=False, indent=2)
         print(f"Wrote {output_filename}")
 
     @property
