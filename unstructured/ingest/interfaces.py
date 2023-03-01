@@ -2,9 +2,14 @@
 through Unstructured."""
 
 from abc import ABC, abstractmethod
+from time import perf_counter
+
+import structlog
 
 from unstructured.partition.auto import partition
 from unstructured.staging.base import convert_to_dict
+
+logger = structlog.get_logger(__name__)
 
 
 class BaseConnector(ABC):
@@ -86,7 +91,8 @@ class BaseIngestDoc(ABC):
         pass
 
     def process_file(self):
-        print(f"Processing {self.filename}")
+        logger.info("Processing document...")
+        start_time = perf_counter()
 
         elements = partition(filename=str(self.filename))
         isd_elems = convert_to_dict(elements)
@@ -97,5 +103,7 @@ class BaseIngestDoc(ABC):
             elem["metadata"].pop("filename", None)  # type: ignore[attr-defined]
             elem.pop("coordinates")  # type: ignore[attr-defined]
             self.isd_elems_no_filename.append(elem)
+
+        logger.info(f"Document processed in {perf_counter() - start_time:.3f} seconds.")
 
         return self.isd_elems_no_filename

@@ -11,8 +11,11 @@ except ImportError:  # pragma: nocover
     LIBMAGIC_AVAILABLE = False  # pragma: nocover
 
 
-from unstructured.logger import logger
+import structlog
+
 from unstructured.nlp.patterns import EMAIL_HEAD_RE
+
+logger = structlog.get_logger(__name__)
 
 DOCX_MIME_TYPES = [
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",

@@ -8,6 +8,7 @@ if sys.version_info < (3, 8):
 else:
     from typing import Final
 
+import structlog
 from lxml import etree
 
 from unstructured.cleaners.core import clean_bullets, replace_unicode_quotes
@@ -21,7 +22,6 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.documents.xml import XMLDocument
-from unstructured.logger import logger
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_possible_narrative_text,
@@ -35,6 +35,9 @@ HEADING_TAGS: Final[List[str]] = ["h1", "h2", "h3", "h4", "h5", "h6"]
 TABLE_TAGS: Final[List[str]] = ["table", "tbody", "td", "tr"]
 PAGEBREAK_TAGS: Final[List[str]] = ["hr"]
 HEADER_OR_FOOTER_TAGS: Final[List[str]] = ["header", "footer"]
+
+
+logger = structlog.get_logger(__name__)
 
 
 class TagsMixin:
@@ -95,7 +98,6 @@ class HTMLDocument(XMLDocument):
         """
         if self._pages:
             return self._pages
-        logger.info("Reading document ...")
         pages: List[Page] = []
         root = _find_main(self.document_tree)
 

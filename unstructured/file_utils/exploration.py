@@ -4,8 +4,11 @@ import os
 from typing import Any, Dict, List, Optional
 
 import pandas as pd
+import structlog
 
 from unstructured.file_utils.filetype import detect_filetype
+
+logger = structlog.get_logger(__name__)
 
 
 def get_directory_file_info(directory: str) -> pd.DataFrame:
@@ -29,6 +32,7 @@ def get_file_info(filenames: List[str]) -> pd.DataFrame:
     }
 
     for filename in filenames:
+        structlog.contextvars.bind_contextvars(filename=filename)
         path, filename_no_path = os.path.split(os.path.abspath(filename))
         _, extension = os.path.splitext(filename)
         filesize = os.path.getsize(filename)
@@ -39,6 +43,7 @@ def get_file_info(filenames: List[str]) -> pd.DataFrame:
         data["extension"].append(extension)
         data["filesize"].append(filesize)
         data["filetype"].append(filetype)
+        structlog.contextvars.clear_contextvars()
 
     return pd.DataFrame(data)
 
@@ -64,6 +69,7 @@ def get_file_info_from_file_contents(
         _, content_string = file_content.split(",")
         content_bytes = base64.b64decode(content_string)
         f = io.BytesIO(content_bytes)
+        structlog.contextvars.bound_contextvars(file=f)
         filetype = detect_filetype(file=f)
         f.seek(0, os.SEEK_END)
         filesize = f.tell()
@@ -72,5 +78,6 @@ def get_file_info_from_file_contents(
         data["filetype"].append(filetype)
         if filenames:
             data["filename"].append(filenames[i])
+        structlog.contextvars.clear_contextvars()
 
     return pd.DataFrame(data)

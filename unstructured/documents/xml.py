@@ -1,11 +1,13 @@
 from typing import List, Optional, Union
 
+import structlog
 from lxml import etree
 
 from unstructured.documents.base import Document, Page
-from unstructured.logger import logger
 
 VALID_PARSERS = Union[etree.HTMLParser, etree.XMLParser, None]
+
+logger = structlog.get_logger(__name__)
 
 
 class XMLDocument(Document):
@@ -84,6 +86,7 @@ class XMLDocument(Document):
 
     @classmethod
     def from_file(cls, filename, parser: VALID_PARSERS = None, stylesheet: Optional[str] = None):
+        logger.info("Reading document from file ...")
         with open(filename, "r+", encoding="utf8") as f:
             content = f.read()
         return cls.from_string(content, parser=parser, stylesheet=stylesheet)
