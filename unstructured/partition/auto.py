@@ -11,7 +11,7 @@ from unstructured.partition.pdf import partition_pdf
 from unstructured.partition.ppt import partition_ppt
 from unstructured.partition.pptx import partition_pptx
 from unstructured.partition.text import partition_text
-
+from unstructured.partition.json import partition_json
 
 def partition(
     filename: Optional[str] = None,
@@ -67,6 +67,8 @@ def partition(
         return partition_ppt(filename=filename, file=file, include_page_breaks=include_page_breaks)
     elif filetype == FileType.PPTX:
         return partition_pptx(filename=filename, file=file, include_page_breaks=include_page_breaks)
+    elif filetype == FileType.JSON:
+        return partition_json(filename=filename, file=file)
     else:
         msg = "Invalid file" if not filename else f"Invalid file {filename}"
         raise ValueError(f"{msg}. File type not support in partition.")
