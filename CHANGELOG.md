@@ -1,3 +1,14 @@
+***REMOVED******REMOVED*** 0.5.3-dev0
+
+***REMOVED******REMOVED******REMOVED*** Enhancements
+
+***REMOVED******REMOVED******REMOVED*** Features
+
+* Add `--wikipedia-auto-suggest` argument to the ingest CLI to disable automatic redirection
+  to pages with similar names.
+
+***REMOVED******REMOVED******REMOVED*** Fixes
+
 ***REMOVED******REMOVED*** 0.5.2
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
