@@ -7,6 +7,9 @@ as a connector.
 * Rename `s3_connector.py` to `s3.py` for readability and consistency with the
 rest of the connectors.
 
+* `unstructured-ingest` now uses a default `--download_dir` of `$HOME/.cache/unstructured/ingest`
+rather than a "tmp-ingest-" dir in the working directory.
+
 ### Features
 
 * Update `S3Connector` to inherit from `FsspecConnector`
@@ -16,6 +19,11 @@ with a private bucket with a PDF and works as expected)
 with a private container with a PDF and works as expected)
 
 ### Fixes
+
+* 'setup_ubuntu.sh` no longer fails in some contexts by interpreting 
+`DEBIAN_FRONTEND=noninteractive` as a command
+* `unstructured-ingest` no longer re-downloads files when --preserve-downloads
+is used without --download-dir.
 
 ## 0.5.1
 
