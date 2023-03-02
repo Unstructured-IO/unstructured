@@ -125,7 +125,7 @@ Additionally, if you're planning to contribute to `unstructured`, we provide you
 file so that you make sure that your code matches the formatting and linting standards used in `unstructured`. Alternatively,
 you can use `make tidy` instead.
 
-If using the optional `pre-commit`, you'll need to install is as `pip install pre-commit`, and then install the
+If using the optional `pre-commit`, you'll need to install it as `pip install pre-commit`, and then install the
 hooks as `pre-commit install`, so that the hooks for `black`, `ruff`, and `flake8` will be triggered before every
 commit is created to ensure that the formatting and linting are aligned with the project standards.
 
