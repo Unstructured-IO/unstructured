@@ -7,6 +7,7 @@ import os
 import re
 
 from unstructured.ingest.interfaces import BaseConnector, BaseConnectorConfig, BaseIngestDoc
+from unstructured.file_utils import filetype
 from unstructured.utils import requires_dependencies
 
 
@@ -81,7 +82,18 @@ class GoogleDriveIngestDoc(BaseIngestDoc):
                 print(f"File exists: {self.filename}, skipping download")
             return
 
-        request = self.config.service.files().get_media(fileId=self.file_meta.get("id"))
+        if self.file_meta.get("mimeType", "").startswith("application/vnd.google-apps"):
+            export_mime = filetype.GOOGLE_DRIVE_EXPORT_TYPES.get(self.file_meta.get("mimeType"))
+            if not export_mime:
+                print(f"File not supported. Name: {self.file_meta.get('name')} "
+                      f"ID: {self.file_meta.get('id')} "
+                      f"MimeType: {self.file_meta.get('mimeType')}")
+                return
+
+            request = self.config.service.files().export_media(
+                fileId=self.file_meta.get("id"), mimeType=export_mime)
+        else:
+            request = self.config.service.files().get_media(fileId=self.file_meta.get("id"))
         file = io.BytesIO()
         downloader = MediaIoBaseDownload(file, request)
         done = False
@@ -133,10 +145,20 @@ class GoogleDriveConnector(BaseConnector):
                             output_sub_dir = (output_dir / dir_).resolve()
                             traverse(meta.get("id"), download_sub_dir, output_sub_dir, True)
                     else:
+                        ext = ""
                         if not Path(meta.get("name")).suffixes:
-                            ext = guess_extension(meta.get("mimeType"))
-                        else:
-                            ext = ""
+                            guess = guess_extension(meta.get("mimeType"))
+                            ext = guess if guess else ext
+
+                        if meta.get("mimeType", "").startswith("application/vnd.google-apps"):
+                            export_mime = filetype.GOOGLE_DRIVE_EXPORT_TYPES.get(meta.get("mimeType"))
+                            if not export_mime:
+                                continue
+
+                            if not ext:
+                                guess = guess_extension(export_mime)
+                                ext = guess if guess else ext
+
                         name = FILE_FORMAT.format(name=meta.get("name"), id=meta.get("id"), ext=ext)
                         meta["download_dir"] = download_dir
                         meta["download_filepath"] = (download_dir / name).resolve()

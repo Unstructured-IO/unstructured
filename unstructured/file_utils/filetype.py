@@ -120,6 +120,14 @@ EXT_TO_FILETYPE = {
 }
 
 
+GOOGLE_DRIVE_EXPORT_TYPES = {
+    "application/vnd.google-apps.document": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/vnd.google-apps.spreadsheet": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "application/vnd.google-apps.presentation": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    "application/vnd.google-apps.photo": "image/jpeg"
+}
+
+
 def detect_filetype(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
@@ -219,9 +227,9 @@ def detect_filetype(
                 filetype = _detect_filetype_from_octet_stream(file=f)
 
         if filetype == FileType.UNK:
-            return FileType.ZIP
+            return EXT_TO_FILETYPE.get(extension.lower(), FileType.ZIP)
         else:
-            return filetype
+            return EXT_TO_FILETYPE.get(extension.lower(), filetype)
 
     logger.warn(
         f"MIME type was {mime_type}. This file type is not currently supported in unstructured.",
