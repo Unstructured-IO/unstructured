@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
+import hashlib
 import multiprocessing as mp
-import random
-import string
 import sys
+from pathlib import Path
 
 import click
 
@@ -165,17 +165,17 @@ class MainProcess:
 @click.option(
     "--re-download/--no-re-download",
     default=False,
-    help="Re-download files from s3 even if they are already present in --download-dir.",
+    help="Re-download files even if they are already present in --download-dir.",
 )
 @click.option(
     "--download-dir",
-    help="Where s3 files are downloaded to, defaults to tmp-ingest-<6 random chars>.",
+    help="Where files are downloaded to, defaults to `$HOME/.cache/unstructured/ingest/<SHA256>`.",
 )
 @click.option(
     "--preserve-downloads",
     is_flag=True,
     default=False,
-    help="Preserve downloaded s3 files. Otherwise each file is removed after being processed "
+    help="Preserve downloaded files. Otherwise each file is removed after being processed "
     "successfully.",
 )
 @click.option(
@@ -187,7 +187,7 @@ class MainProcess:
     "--reprocess",
     is_flag=True,
     default=False,
-    help="Reprocess a downloaded file from s3 even if the relevant structured output .json file "
+    help="Reprocess a downloaded file even if the relevant structured output .json file "
     "in --structured-output-dir already exists.",
 )
 @click.option(
@@ -225,9 +225,31 @@ def main(
     if not preserve_downloads and download_dir:
         print("Warning: not preserving downloaded files but --download_dir is specified")
     if not download_dir:
-        download_dir = "tmp-ingest-" + "".join(
-            random.choice(string.ascii_letters) for i in range(6)
-        )
+        cache_path = Path.home() / ".cache" / "unstructured" / "ingest"
+        if not cache_path.exists():
+            cache_path.mkdir(parents=True, exist_ok=True)
+        if s3_url:
+            hashed_dir_name = hashlib.sha256(s3_url.encode("utf-8"))
+        elif github_url:
+            hashed_dir_name = hashlib.sha256(
+                f"{github_url}_{github_branch}".encode("utf-8"),
+            )
+        elif subreddit_name:
+            hashed_dir_name = hashlib.sha256(
+                subreddit_name.encode("utf-8"),
+            )
+        elif wikipedia_page_title:
+            hashed_dir_name = hashlib.sha256(
+                wikipedia_page_title.encode("utf-8"),
+            )
+        else:
+            raise ValueError("No connector-specific option was specified!")
+        download_dir = cache_path / hashed_dir_name.hexdigest()[:10]
+        if preserve_downloads:
+            print(
+                f"Warning: preserving downloaded files but --download-dir is not specified,"
+                f" using {download_dir}",
+            )
     if s3_url:
         doc_connector = S3Connector(
             config=SimpleS3Config(

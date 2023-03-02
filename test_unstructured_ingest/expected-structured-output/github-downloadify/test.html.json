@@ -26,7 +26,7 @@
   {
     "element_id": "43f65b1c5bd47774b25c72e2f96de300",
     "text": "File Contents\n\nWhatever you put in this text box will be downloaded and saved in the file. If you leave it blank, no file will be downloaded",
-    "type": "UncategorizedText",
+    "type": "NarrativeText",
     "metadata": {
       "page_number": 1
     }
@@ -34,7 +34,7 @@
   {
     "element_id": "53a4db70c6d40ed5206711ed8a255e03",
     "text": "You must have Flash 10 installed to download this file.",
-    "type": "UncategorizedText",
+    "type": "NarrativeText",
     "metadata": {
       "page_number": 1
     }

@@ -125,7 +125,7 @@ class GitHubIngestDoc(BaseIngestDoc):
         print(f"Wrote {output_filename}")
 
 
-@requires_dependencies(["pygithub"], extras="github")
+@requires_dependencies(["github"], extras="github")
 class GitHubConnector(BaseConnector):
     def __init__(self, config: SimpleGitHubConfig):
         from github import Github

@@ -1,9 +1,38 @@
+## 0.5.2
+
+### Enhancements
+
+* `unstructured-ingest` now uses a default `--download_dir` of `$HOME/.cache/unstructured/ingest`
+rather than a "tmp-ingest-" dir in the working directory.
+
+### Features
+
+### Fixes
+
+* 'setup_ubuntu.sh` no longer fails in some contexts by interpreting
+`DEBIAN_FRONTEND=noninteractive` as a command
+* `unstructured-ingest` no longer re-downloads files when --preserve-downloads
+is used without --download-dir.
+* Fixed an issue that was causing text to be skipped in some HTML documents.
+
+## 0.5.1
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* Fixes an error causing JavaScript to appear in the output of `partition_html` sometimes.
+* Fix several issues with the `requires_dependencies` decorator, including the error message
+  and how it was used, which had caused an error for `unstructured-ingest --github-url ...`.
+
 ## 0.5.0
 
 ### Enhancements
 
 * Add `requires_dependencies` Python decorator to check dependencies are installed before
-instantiating a class or running a function
+  instantiating a class or running a function
 
 ### Features
 
