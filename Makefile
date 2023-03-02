@@ -49,6 +49,7 @@ install-dev:
 install-build:
 	pip install -r requirements/build.txt
 
+## install-ingest-s3:       install requirements for the s3 connector
 .PHONY: install-ingest-s3
 install-ingest-s3:
 	pip install -r requirements/ingest-s3.txt
