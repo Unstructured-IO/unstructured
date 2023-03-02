@@ -1,4 +1,4 @@
-***REMOVED******REMOVED*** 0.5.2-dev1
+***REMOVED******REMOVED*** 0.5.2
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
 
@@ -9,10 +9,11 @@ rather than a "tmp-ingest-" dir in the working directory.
 
 ***REMOVED******REMOVED******REMOVED*** Fixes
 
-* 'setup_ubuntu.sh` no longer fails in some contexts by interpreting 
+* 'setup_ubuntu.sh` no longer fails in some contexts by interpreting
 `DEBIAN_FRONTEND=noninteractive` as a command
 * `unstructured-ingest` no longer re-downloads files when --preserve-downloads
 is used without --download-dir.
+* Fixed an issue that was causing text to be skipped in some HTML documents.
 
 ***REMOVED******REMOVED*** 0.5.1
 

@@ -104,6 +104,7 @@ jobs:
       run: |
         source .venv/bin/activate
         make install-detectron2
+        sudo apt-get update
         sudo apt-get install -y libmagic-dev poppler-utils tesseract-ocr libreoffice
         make test
         make check-coverage
