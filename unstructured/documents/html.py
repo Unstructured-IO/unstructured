@@ -97,6 +97,7 @@ class HTMLDocument(XMLDocument):
             return self._pages
         logger.info("Reading document ...")
         pages: List[Page] = []
+        etree.strip_elements(self.document_tree, ["script"])
         root = _find_main(self.document_tree)
 
         articles = _find_articles(root)
@@ -213,6 +214,8 @@ def _parse_tag(
     processing the document tree again. In the future we might want to keep descendants too,
     but we don't have a use for them at the moment."""
     ancestortags: Tuple[str, ...] = tuple(el.tag for el in tag_elem.iterancestors())[::-1]
+    if tag_elem.tag == "script":
+        return None
     text = _construct_text(tag_elem)
     if not text:
         return None
@@ -265,13 +268,12 @@ def is_narrative_tag(text: str, tag: str) -> bool:
 def _construct_text(tag_elem: etree.Element) -> str:
     """Extracts text from a text tag element."""
     text = ""
-    for item in tag_elem.iter():
-        if item.text and item.tag != "script":
-            text += item.text
-            if item.tail:
-                text += item.tail
+    for item in tag_elem.itertext():
+        if item:
+            text += item
 
-    text = replace_unicode_quotes(text)
+    if tag_elem.tail:
+        text = text + tag_elem.tail
     return text.strip()
 
 
