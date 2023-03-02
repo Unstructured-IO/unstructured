@@ -242,6 +242,10 @@ def main(
             hashed_dir_name = hashlib.sha256(
                 wikipedia_page_title.encode("utf-8"),
             )
+        elif drive_id:
+            hashed_dir_name = hashlib.sha256(
+                drive_id.encode("utf-8"),
+            )
         else:
             raise ValueError("No connector-specific option was specified!")
         download_dir = cache_path / hashed_dir_name.hexdigest()[:10]

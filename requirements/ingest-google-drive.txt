@@ -50,7 +50,6 @@ google-auth==2.16.2
     #   google-api-core
     #   google-api-python-client
     #   google-auth-httplib2
-    #   unstructured (setup.py)
 google-auth-httplib2==0.1.0
     # via google-api-python-client
 googleapis-common-protos==1.58.0
@@ -127,7 +126,9 @@ pillow==9.4.0
     #   python-pptx
     #   unstructured (setup.py)
 protobuf==4.22.0
-    # via google-api-core
+    # via
+    #   google-api-core
+    #   googleapis-common-protos
 pyasn1==0.4.8
     # via
     #   pyasn1-modules

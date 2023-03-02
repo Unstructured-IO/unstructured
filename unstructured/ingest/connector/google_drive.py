@@ -6,12 +6,9 @@ import io
 import os
 import re
 
-from google.auth import exceptions
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
-from googleapiclient.http import MediaIoBaseDownload
-
 from unstructured.ingest.interfaces import BaseConnector, BaseConnectorConfig, BaseIngestDoc
+from unstructured.utils import requires_dependencies
+
 
 FILE_FORMAT = "{id}-{name}{ext}"
 DIRECTORY_FORMAT = "{id}-{name}"
@@ -36,7 +33,12 @@ class SimpleGoogleDriveConfig(BaseConnectorConfig):
 
     recursive: bool = False
 
+    @requires_dependencies(["googleapiclient"], extras="google-drive")
     def __post_init__(self):
+        from google.auth import exceptions
+        from googleapiclient.discovery import build
+        from googleapiclient.errors import HttpError
+
         try:
             self.service = build("drive", "v3", developerKey=self.api_key)
             self.service.files().list(spaces="drive", fields="files(id)", pageToken=None,
@@ -70,7 +72,10 @@ class GoogleDriveIngestDoc(BaseIngestDoc):
         output_filename = self._output_filename()
         return output_filename.is_file() and output_filename.stat()
 
+    @requires_dependencies(["googleapiclient"], extras="google-drive")
     def get_file(self):
+        from googleapiclient.http import MediaIoBaseDownload
+
         if not self.config.re_download and self.filename.is_file() and self.filename.stat():
             if self.config.verbose:
                 print(f"File exists: {self.filename}, skipping download")
