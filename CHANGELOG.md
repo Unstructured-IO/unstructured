@@ -6,7 +6,6 @@
 as a connector.
 * Rename `s3_connector.py` to `s3.py` for readability and consistency with the
 rest of the connectors.
-
 * `unstructured-ingest` now uses a default `--download_dir` of `$HOME/.cache/unstructured/ingest`
 rather than a "tmp-ingest-" dir in the working directory.
 
