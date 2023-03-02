@@ -274,6 +274,8 @@ def _construct_text(tag_elem: etree.Element) -> str:
 
     if tag_elem.tail:
         text = text + tag_elem.tail
+
+    text = replace_unicode_quotes(text)
     return text.strip()
 
 
