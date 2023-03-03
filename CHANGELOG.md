@@ -14,7 +14,7 @@ rather than a "tmp-ingest-" dir in the working directory.
 * Update `S3Connector` to inherit from `FsspecConnector`
 * Add `GCSConnector`  (missing CLI integration and working example but has been tested
 with a private bucket with a PDF and works as expected)
-* Add `ABSConnector` (missing CLI integration and working example but has been tested
+* Add `AzureBlobStorageConnector` (missing CLI integration and working example but has been tested
 with a private container with a PDF and works as expected)
 
 ### Fixes
