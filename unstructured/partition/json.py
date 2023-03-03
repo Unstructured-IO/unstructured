@@ -33,7 +33,11 @@ def partition_json(
     # NOTE(Nathan): we expect file_text to be a list of dicts (optimization)
     if re.match(LIST_OF_DICTS_PATTERN, file_text):
         try:
-            elements = elements_from_json(filename)
+            if filename is not None:
+                elements = elements_from_json(filename)
+            else:
+                dict = json.load(file) if file is not None else json.loads(file_text)
+                elements = dict_to_elements(dict)
         except json.JSONDecodeError:
             raise ValueError("Not a valid json")
     else:
