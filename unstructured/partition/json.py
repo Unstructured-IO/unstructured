@@ -2,6 +2,8 @@ import re
 from typing import IO, List, Optional
 from unstructured.staging.base import elements_from_json
 
+LIST_OF_DICTS_PATTERN = r"\A\s*\[\s*{.*}\s*\]\s*\Z"
+
 def partition_json(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
@@ -25,15 +27,12 @@ def partition_json(
     else:
         raise ValueError("Only one of filename, file, or text can be specified.")
 
-
-    file_text_whitespace_removed = file_text.replace(" ", "")
-    try:
-        # NOTE(Nathan): quick check to ensure that file_text is a list of dicts
-        if file_text_whitespace_removed[0] == "[" and file_text_whitespace_removed[-1] == "]":
-            if len(file_text_whitespace_removed) == 2 or \
-                (file_text_whitespace_removed[1] == "{" and file_text_whitespace_removed[-2] == "}"):
-                return elements_from_json(filename)
+    # NOTE(Nathan): we expect file_text to be a list of dicts (optimization)
+    if re.match(LIST_OF_DICTS_PATTERN, file_text):
+        try:
+            return elements_from_json(filename)
+        except:
+            raise ValueError("Not an unstructured json")
+    else:
         raise ValueError("Not an unstructured json")
-    except:
-        raise ValueError("Not an unstructured json")
-    
+ 

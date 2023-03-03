@@ -2,6 +2,8 @@
 
 ### Enhancements
 
+* `auto.partition()` can now load Unstructured ISD json documents.
+
 ### Features
 
 * Add `--wikipedia-auto-suggest` argument to the ingest CLI to disable automatic redirection
