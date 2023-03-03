@@ -1,6 +1,7 @@
 import json
 import re
 from typing import IO, List, Optional
+
 from unstructured.staging.base import elements_from_json
 
 LIST_OF_DICTS_PATTERN = r"\A\s*\[\s*{"

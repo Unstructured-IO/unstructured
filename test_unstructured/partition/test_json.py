@@ -1,9 +1,9 @@
 import os
 import pathlib
+from typing import IO, List, Optional
 
 import pytest
 
-from typing import IO, List, Optional
 from unstructured.documents.elements import Address, ListItem, NarrativeText, Title
 from unstructured.partition.auto import partition
 from unstructured.partition.json import partition_json
