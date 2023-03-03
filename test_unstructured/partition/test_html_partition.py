@@ -98,3 +98,11 @@ def test_partition_html_raises_with_too_many_specified():
 
     with pytest.raises(ValueError):
         partition_html(filename=filename, text=text)
+
+
+def test_partition_html_on_ideas_page():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "ideas-page.html")
+    elements = partition_html(filename=filename)
+    document_text = "\n\n".join([str(el) for el in elements])
+    assert document_text.startswith("January 2023(Someone fed my essays into GPT")
+    assert document_text.endswith("whole new fractal buds.")

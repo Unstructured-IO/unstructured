@@ -99,13 +99,11 @@ jobs:
           python${{ matrix.python-version}} -m venv .venv
           source .venv/bin/activate
           make install-ci
-      # NOTE: we need to add `make install-ingest-...` for each connector, and some are currently missing
-      # because the tests have not been created e.g. gcs or azure (abs), once a public remote path is available
-      # for testing purposes, the tests can be developed and triggered as part of the CI.
       - name: Test
         run: |
           source .venv/bin/activate
           make install-detectron2
+          sudo apt-get update
           sudo apt-get install -y libmagic-dev poppler-utils tesseract-ocr libreoffice
           make test
           make check-coverage
