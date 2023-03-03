@@ -2,6 +2,7 @@ import json
 import re
 from typing import IO, List, Optional
 
+from unstructured.documents.elements import Element
 from unstructured.staging.base import elements_from_json
 
 LIST_OF_DICTS_PATTERN = r"\A\s*\[\s*{"
@@ -35,12 +36,9 @@ def partition_json(
             elements = elements_from_json(filename)
         except json.JSONDecodeError:
             raise ValueError("Not a valid json")
-        except:  # see below note
-            raise ValueError("Not an unstructured json")
-    else:  # see below note
+    else:
+        # NOTE(Nathan): in future PR, try extracting items that look like text
+        #               if file_text is a valid json but not an unstructured json
         raise ValueError("Not an unstructured json")
-
-    # NOTE(Nathan): in future PR, try extracting items that look like text
-    #               if file_text is a valid json but not an unstructured json
-
+    
     return elements
