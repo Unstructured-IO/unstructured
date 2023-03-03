@@ -110,6 +110,12 @@ class MainProcess:
     help='Title of a Wikipedia page, e.g. "Open source software".',
 )
 @click.option(
+    "--wikipedia-auto-suggest",
+    default=True,
+    help="Whether to automatically suggest a page if the exact page was not found."
+    " Set to False if the wrong Wikipedia page is fetched.",
+)
+@click.option(
     "--github-url",
     default=None,
     help='URL to GitHub repository, e.g. "https://github.com/Unstructured-IO/unstructured",'
@@ -205,6 +211,7 @@ def main(
     azure_account_name,
     azure_connection_string,
     wikipedia_page_title,
+    wikipedia_auto_suggest,
     github_url,
     github_access_token,
     github_branch,
@@ -318,6 +325,7 @@ def main(
         doc_connector = WikipediaConnector(  # type: ignore
             config=SimpleWikipediaConfig(
                 title=wikipedia_page_title,
+                auto_suggest=wikipedia_auto_suggest,
                 # defaults params:
                 download_dir=download_dir,
                 preserve_downloads=preserve_downloads,

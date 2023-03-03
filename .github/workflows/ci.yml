@@ -83,37 +83,37 @@ jobs:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup, lint]
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/cache@v3
-      id: virtualenv-cache
-      with:
-        path: |
-          .venv
-          nltk_data
-        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements/*.txt') }}
-    # NOTE(robinson) - This is a fallback in case the lint job does not find the cache.
-    # We can take this out when we implement the fix in CORE-99
-    - name: Setup virtual environment (no cache hit)
-      if: steps.virtualenv-cache.outputs.cache-hit != 'true'
-      run: |
-        python${{ matrix.python-version}} -m venv .venv
-        source .venv/bin/activate
-        make install-ci
-    # NOTE: we need to add `make install-ingest-...` for each connector, and some are currently missing
-    # because the tests have not been created e.g. gcs or azure (abs), once a public remote path is available
-    # for testing purposes, the tests can be developed and triggered as part of the CI.
-    - name: Test
-      run: |
-        source .venv/bin/activate
-        make install-detectron2
-        sudo apt-get update
-        sudo apt-get install -y libmagic-dev poppler-utils tesseract-ocr libreoffice
-        make test
-        make check-coverage
-        make install-ingest-s3
-        make install-ingest-github
-        make install-ingest-wikipedia
-        ./test_unstructured_ingest/test-ingest.sh
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        id: virtualenv-cache
+        with:
+          path: |
+            .venv
+            nltk_data
+          key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements/*.txt') }}
+      # NOTE(robinson) - This is a fallback in case the lint job does not find the cache.
+      # We can take this out when we implement the fix in CORE-99
+      - name: Setup virtual environment (no cache hit)
+        if: steps.virtualenv-cache.outputs.cache-hit != 'true'
+        run: |
+          python${{ matrix.python-version}} -m venv .venv
+          source .venv/bin/activate
+          make install-ci
+      # NOTE: we need to add `make install-ingest-...` for each connector, and some are currently missing
+      # because the tests have not been created e.g. gcs or azure (abs), once a public remote path is available
+      # for testing purposes, the tests can be developed and triggered as part of the CI.
+      - name: Test
+        run: |
+          source .venv/bin/activate
+          make install-detectron2
+          sudo apt-get update
+          sudo apt-get install -y libmagic-dev poppler-utils tesseract-ocr libreoffice
+          make test
+          make check-coverage
+          make install-ingest-s3
+          make install-ingest-github
+          make install-ingest-wikipedia
+          ./test_unstructured_ingest/test-ingest.sh
 
   changelog:
     runs-on: ubuntu-latest
