@@ -5,13 +5,13 @@ from unstructured.staging.base import elements_from_json
 
 LIST_OF_DICTS_PATTERN = r"\A\s*\[\s*{"
 
+
 def partition_json(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
     text: Optional[str] = None,
 ) -> List[Element]:
-    """Partitions an .json document into its constituent elements.                                                                          
-    """
+    """Partitions an .json document into its constituent elements."""
     if not any([filename, file, text]):
         raise ValueError("One of filename, file, or text must be specified.")
 
@@ -34,13 +34,12 @@ def partition_json(
             elements = elements_from_json(filename)
         except json.JSONDecodeError:
             raise ValueError("Not a valid json")
-        except: # see below note
+        except:  # see below note
             raise ValueError("Not an unstructured json")
-    else: # see below note
+    else:  # see below note
         raise ValueError("Not an unstructured json")
-    
+
     # NOTE(Nathan): in future PR, try extracting items that look like text
     #               if file_text is a valid json but not an unstructured json
-    
+
     return elements
- 

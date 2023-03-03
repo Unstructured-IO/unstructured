@@ -118,7 +118,7 @@ EXT_TO_FILETYPE = {
     ".xls": FileType.XLS,
     ".ppt": FileType.PPT,
     ".rtf": FileType.RTF,
-    ".json": FileType.JSON
+    ".json": FileType.JSON,
 }
 
 
@@ -159,7 +159,7 @@ def detect_filetype(
 
     elif mime_type == "application/json":
         return FileType.JSON
-    
+
     elif mime_type in DOCX_MIME_TYPES:
         return FileType.DOCX
 

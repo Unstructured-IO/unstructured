@@ -13,6 +13,7 @@ from unstructured.partition.pptx import partition_pptx
 from unstructured.partition.text import partition_text
 from unstructured.partition.json import partition_json
 
+
 def partition(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
