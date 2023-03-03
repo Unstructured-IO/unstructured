@@ -7,7 +7,8 @@ import os
 import re
 
 from unstructured.ingest.interfaces import BaseConnector, BaseConnectorConfig, BaseIngestDoc
-from unstructured.file_utils import filetype
+from unstructured.file_utils.filetype import EXT_TO_FILETYPE
+from unstructured.file_utils.google_filetype import GOOGLE_DRIVE_EXPORT_TYPES
 from unstructured.utils import requires_dependencies
 
 
@@ -21,6 +22,7 @@ class SimpleGoogleDriveConfig(BaseConnectorConfig):
     # Google Drive Specific Options
     drive_id: str
     api_key: str
+    extension: str
     # TODO (HAKSOAT) Add auth id
     # TODO (HAKSOAT) Allow download without id (has limitations)
 
@@ -39,6 +41,9 @@ class SimpleGoogleDriveConfig(BaseConnectorConfig):
         from google.auth import exceptions
         from googleapiclient.discovery import build
         from googleapiclient.errors import HttpError
+
+        if self.extension and self.extension not in EXT_TO_FILETYPE.keys():
+            raise ValueError(f"Extension not supported. Value MUST be one of {', '.join(EXT_TO_FILETYPE.keys())}.")
 
         try:
             self.service = build("drive", "v3", developerKey=self.api_key)
@@ -83,7 +88,7 @@ class GoogleDriveIngestDoc(BaseIngestDoc):
             return
 
         if self.file_meta.get("mimeType", "").startswith("application/vnd.google-apps"):
-            export_mime = filetype.GOOGLE_DRIVE_EXPORT_TYPES.get(self.file_meta.get("mimeType"))
+            export_mime = GOOGLE_DRIVE_EXPORT_TYPES.get(self.file_meta.get("mimeType"))
             if not export_mime:
                 print(f"File not supported. Name: {self.file_meta.get('name')} "
                       f"ID: {self.file_meta.get('id')} "
@@ -151,13 +156,17 @@ class GoogleDriveConnector(BaseConnector):
                             ext = guess if guess else ext
 
                         if meta.get("mimeType", "").startswith("application/vnd.google-apps"):
-                            export_mime = filetype.GOOGLE_DRIVE_EXPORT_TYPES.get(meta.get("mimeType"))
+                            export_mime = GOOGLE_DRIVE_EXPORT_TYPES.get(meta.get("mimeType"))
                             if not export_mime:
                                 continue
 
                             if not ext:
                                 guess = guess_extension(export_mime)
                                 ext = guess if guess else ext
+
+                        # TODO (Habeeb): Consider filtering at the query level.
+                        if self.config.extension and self.config.extension != ext:
+                            continue
 
                         name = FILE_FORMAT.format(name=meta.get("name"), id=meta.get("id"), ext=ext)
                         meta["download_dir"] = download_dir

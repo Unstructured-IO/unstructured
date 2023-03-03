@@ -103,6 +103,11 @@ class MainProcess:
          "otherwise stop at the files in provided folder level.",
 )
 @click.option(
+    "--drive-extension",
+    default=None,
+    help="Filters the files to be processed based on extension e.g. .jpg, .docx, etc.",
+)
+@click.option(
     "--wikipedia-page-title",
     default=None,
     help='Title of a Wikipedia page, e.g. "Open source software".',
@@ -202,6 +207,7 @@ def main(
     drive_id,
     drive_api_key,
     drive_recursive,
+    drive_extension,
     wikipedia_page_title,
     github_url,
     github_access_token,
@@ -317,6 +323,7 @@ def main(
                 drive_id=drive_id,
                 api_key=drive_api_key,
                 recursive=drive_recursive,
+                extension=drive_extension,
                 # defaults params:
                 download_dir=download_dir,
                 preserve_downloads=preserve_downloads,

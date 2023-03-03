@@ -26,7 +26,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --structured-output-dir google-drive-ingest-output \
     --num-processes 2 \
     --drive-recursive \
-    --verbose
+    --verbose \
+#    --extension ".docx" # Ensures only .docx files are processed.
 
 # Alternatively, you can call it using:
 # unstructured-ingest --drive-id ...
