@@ -9,16 +9,16 @@ from unstructured.utils import requires_dependencies
 
 
 @dataclass
-class SimpleABSConfig(SimpleFsspecConfig):
+class SimpleAzureBlobStorageConfig(SimpleFsspecConfig):
     pass
 
 
-class ABSIngestDoc(FsspecIngestDoc):
+class AzureBlobStorageIngestDoc(FsspecIngestDoc):
     @requires_dependencies(["adlfs", "fsspec"], extras="azure")
     def get_file(self):
         super().get_file()
 
 
 @requires_dependencies(["adlfs", "fsspec"], extras="azure")
-class ABSConnector(FsspecConnector):
+class AzureBlobStorageConnector(FsspecConnector):
     pass
