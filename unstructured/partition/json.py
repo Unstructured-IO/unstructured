@@ -3,7 +3,7 @@ import re
 from typing import IO, List, Optional
 
 from unstructured.documents.elements import Element
-from unstructured.staging.base import elements_from_json
+from unstructured.staging.base import dict_to_elements, elements_from_json
 
 LIST_OF_DICTS_PATTERN = r"\A\s*\[\s*{"
 
