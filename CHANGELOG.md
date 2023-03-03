@@ -1,4 +1,4 @@
-## 0.5.3-dev0
+## 0.5.3-dev1
 
 ### Enhancements
 
@@ -6,6 +6,7 @@
 
 * Add `--wikipedia-auto-suggest` argument to the ingest CLI to disable automatic redirection
   to pages with similar names.
+* Add setup script for Amazon Linux 2
 
 ### Fixes
 
