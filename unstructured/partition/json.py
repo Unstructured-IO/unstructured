@@ -1,8 +1,9 @@
 import re
+import json
 from typing import IO, List, Optional
 from unstructured.staging.base import elements_from_json
 
-LIST_OF_DICTS_PATTERN = r"\A\s*\[\s*{.*}\s*\]\s*\Z"
+LIST_OF_DICTS_PATTERN = r"\A\s*\[\s*{"
 
 def partition_json(
     filename: Optional[str] = None,
@@ -30,9 +31,16 @@ def partition_json(
     # NOTE(Nathan): we expect file_text to be a list of dicts (optimization)
     if re.match(LIST_OF_DICTS_PATTERN, file_text):
         try:
-            return elements_from_json(filename)
-        except:
+            elements = elements_from_json(filename)
+        except json.JSONDecodeError:
+            raise ValueError("Not a valid json")
+        except: # see below note
             raise ValueError("Not an unstructured json")
-    else:
+    else: # see below note
         raise ValueError("Not an unstructured json")
+    
+    # NOTE(Nathan): in future PR, try extracting items that look like text
+    #               if file_text is a valid json but not an unstructured json
+    
+    return elements
  
