@@ -40,5 +40,5 @@ def partition_json(
         # NOTE(Nathan): in future PR, try extracting items that look like text
         #               if file_text is a valid json but not an unstructured json
         raise ValueError("Not an unstructured json")
-    
+
     return elements
