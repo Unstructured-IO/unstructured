@@ -1,3 +1,13 @@
+## 0.5.3-dev1
+
+### Enhancements
+
+### Features
+
+* Add optional `encoding` argument to the `partition_(text/email/html)` functions.
+
+### Fixes
+
 ## 0.5.3-dev0
 
 ### Enhancements
