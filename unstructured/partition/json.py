@@ -1,5 +1,5 @@
-import re
 import json
+import re
 from typing import IO, List, Optional
 from unstructured.staging.base import elements_from_json
 

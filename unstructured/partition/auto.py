@@ -6,12 +6,12 @@ from unstructured.partition.docx import partition_docx
 from unstructured.partition.email import partition_email
 from unstructured.partition.html import partition_html
 from unstructured.partition.image import partition_image
+from unstructured.partition.json import partition_json
 from unstructured.partition.md import partition_md
 from unstructured.partition.pdf import partition_pdf
 from unstructured.partition.ppt import partition_ppt
 from unstructured.partition.pptx import partition_pptx
 from unstructured.partition.text import partition_text
-from unstructured.partition.json import partition_json
 
 
 def partition(

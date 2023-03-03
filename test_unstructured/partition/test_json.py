@@ -6,8 +6,8 @@ import pytest
 from typing import IO, List, Optional
 from unstructured.documents.elements import Address, ListItem, NarrativeText, Title
 from unstructured.partition.auto import partition
-from unstructured.staging.base import elements_to_json
 from unstructured.partition.json import partition_json
+from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
