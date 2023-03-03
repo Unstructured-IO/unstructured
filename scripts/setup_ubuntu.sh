@@ -1,5 +1,5 @@
 #!/bin/bash
-set +u -e
+set +u
 
 if [ -z "$1" ]; then
     echo "When running this script, please supply the name of the user account for which to set up unstructured dependencies."
@@ -7,7 +7,7 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
-set -ux
+set -eux
 
 # Set user account for which we're configuring the tools
 USER_ACCOUNT=$1
@@ -36,18 +36,23 @@ if [[ -d /etc/needrestart/conf.d ]]; then
 fi
 $sudo $pac upgrade -y
 
+#### Utils
+# Prerequisites
+$sudo env DEBIAN_FRONTEND="noninteractive" $pac install -y gcc wget tar curl make xz-utils build-essential tzdata
+
 #### Git
 # Install git
 $sudo $pac install -y git
 
 #### Python
 # Install tools needed to build python
-$sudo env DEBIAN_FRONTEND="noninteractive" $pac install -y curl gcc bzip2 sqlite zlib1g-dev libreadline-dev libsqlite3-dev libssl-dev tk-dev libffi-dev xz-utils make build-essential libbz2-dev wget llvm libncursesw5-dev libxml2-dev libxmlsec1-dev liblzma-dev
+$sudo $pac install -y bzip2 sqlite zlib1g-dev libreadline-dev libsqlite3-dev libssl-dev tk-dev libffi-dev libbz2-dev llvm libncursesw5-dev libxml2-dev libxmlsec1-dev liblzma-dev
 # Install pyenv
 if [[ ! -d $USER_ACCOUNT_HOME/.pyenv ]]; then
     sudo -u "$USER_ACCOUNT" -i <<'EOF'
     cd $HOME
     curl https://pyenv.run | bash
+    touch "$HOME"/.bashrc
 EOF
     # Remove initialization lines from .bashrc if they are already there, so we don't duplicate them
     # shellcheck disable=SC2016
@@ -60,15 +65,15 @@ EOF
     sed -i '/eval "$(pyenv virtualenv-init -)"/d' "$USER_ACCOUNT_HOME"/.bashrc
     # Add initialization lines to .bashrc
     # shellcheck disable=SC2016
-    sed -i '1ieval "$(pyenv virtualenv-init -)"' "$USER_ACCOUNT_HOME"/.bashrc
-    # shellcheck disable=SC2016
-    sed -i '1ieval "$(pyenv init -)"' "$USER_ACCOUNT_HOME"/.bashrc
-    # shellcheck disable=SC2016
-    sed -i '1icommand -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"' "$USER_ACCOUNT_HOME"/.bashrc
-    # shellcheck disable=SC2016
-    sed -i '1iexport PYENV_ROOT="$HOME/.pyenv"' "$USER_ACCOUNT_HOME"/.bashrc
+    cat <<'EOT' | cat - "$USER_ACCOUNT_HOME"/.bashrc > temp && $sudo mv temp "$USER_ACCOUNT_HOME"/.bashrc
+export PYENV_ROOT="$HOME/.pyenv"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+EOT
     # install python
     sudo -u "$USER_ACCOUNT" -i <<'EOF'
+    source $HOME/.bashrc
     pyenv install 3.8.15
 EOF
 fi
