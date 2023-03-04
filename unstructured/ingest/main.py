@@ -7,13 +7,16 @@ from pathlib import Path
 import click
 
 from unstructured.ingest.connector.github import GitHubConnector, SimpleGitHubConfig
+from unstructured.ingest.connector.google_drive import (
+    GoogleDriveConnector,
+    SimpleGoogleDriveConfig,
+)
 from unstructured.ingest.connector.reddit import RedditConnector, SimpleRedditConfig
 from unstructured.ingest.connector.s3_connector import S3Connector, SimpleS3Config
 from unstructured.ingest.connector.wikipedia import (
     SimpleWikipediaConfig,
     WikipediaConnector,
 )
-from unstructured.ingest.connector.google_drive import GoogleDriveConnector, SimpleGoogleDriveConfig
 from unstructured.ingest.doc_processor.generalized import initialize, process_document
 
 
@@ -100,7 +103,7 @@ class MainProcess:
     is_flag=True,
     default=False,
     help="Recursively download files in folders from the Google Drive ID, "
-         "otherwise stop at the files in provided folder level.",
+    "otherwise stop at the files in provided folder level.",
 )
 @click.option(
     "--drive-extension",
@@ -318,7 +321,7 @@ def main(
             ),
         )
     elif drive_id:
-        doc_connector = GoogleDriveConnector(
+        doc_connector = GoogleDriveConnector(  # type: ignore
             config=SimpleGoogleDriveConfig(
                 drive_id=drive_id,
                 api_key=drive_api_key,
@@ -330,7 +333,7 @@ def main(
                 output_dir=structured_output_dir,
                 re_download=re_download,
                 verbose=verbose,
-            )
+            ),
         )
     # Check for other connector-specific options here and define the doc_connector object
     # e.g. "elif azure_container:  ..."
