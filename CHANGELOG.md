@@ -1,3 +1,14 @@
+## 0.5.4
+
+### Enhancements
+
+### Features
+
+* Added Google Drive connector for ingest cli.
+
+### Fixes
+
+
 ## 0.5.3-dev0
 
 ### Enhancements
