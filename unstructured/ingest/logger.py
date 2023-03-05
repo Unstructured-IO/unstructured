@@ -2,7 +2,7 @@ import logging
 
 logger = logging.getLogger("unstructured.ingest")
 handler = logging.StreamHandler()
-formatter = logging.Formatter("%(asctime)s %(processName)-10s %(name)s %(levelname)-8s %(message)s")
+formatter = logging.Formatter("%(asctime)s %(processName)-10s %(levelname)-8s %(message)s")
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
