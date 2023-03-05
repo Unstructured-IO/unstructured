@@ -274,7 +274,7 @@ def main(
             ),
         )
     elif azure_url and (azure_account_name or azure_connection_string):
-        doc_connector = AzureBlobStorageConnector(
+        doc_connector = AzureBlobStorageConnector(  # type: ignore
             config=SimpleAzureBlobStorageConfig(
                 path=azure_url,
                 access_kwargs={"account_name": azure_account_name}
