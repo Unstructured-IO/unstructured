@@ -218,6 +218,7 @@ def detect_filetype(
             with open(filename, "rb") as f:
                 filetype = _detect_filetype_from_octet_stream(file=f)
 
+        extension = extension if extension else ""
         if filetype == FileType.UNK:
             return EXT_TO_FILETYPE.get(extension.lower(), FileType.ZIP)
         else:

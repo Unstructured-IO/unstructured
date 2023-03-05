@@ -19,6 +19,47 @@ FILE_FORMAT = "{id}-{name}{ext}"
 DIRECTORY_FORMAT = "{id}-{name}"
 
 
+@requires_dependencies(["googleapiclient"], extras="google-drive")
+def create_service_account_object(key_path, id=None):
+    """
+    Creates a service object for interacting with Google Drive.
+
+    Providing a drive id enforces a key validation process.
+
+    Args:
+        key_path: Path to Google Drive service account json file.
+        id: ID of a file on Google Drive. File has to be either publicly accessible or accessible
+            to the service account.
+
+    Returns:
+        Service account object
+    """
+    from google.auth import default, exceptions
+    from googleapiclient.discovery import build
+    from googleapiclient.errors import HttpError
+
+    try:
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = key_path
+        creds, _ = default()
+        service = build("drive", "v3", credentials=creds)
+
+        if id:
+            service.files().list(
+                spaces="drive",
+                fields="files(id)",
+                pageToken=None,
+                corpora="user",
+                q=f"'{id}' in parents",
+            ).execute()
+
+    except HttpError as exc:
+        raise ValueError(f"{exc.reason}")
+    except exceptions.DefaultCredentialsError:
+        raise ValueError("The provided API key is invalid.")
+
+    return service
+
+
 @dataclass
 class SimpleGoogleDriveConfig(BaseConnectorConfig):
     """Connector config where drive_id is the id of the document to process or
@@ -26,10 +67,8 @@ class SimpleGoogleDriveConfig(BaseConnectorConfig):
 
     # Google Drive Specific Options
     drive_id: str
-    api_key: str
+    service_account_key: str
     extension: str
-    # TODO (HAKSOAT) Add auth id
-    # TODO (HAKSOAT) Allow download without id (has limitations)
 
     # Standard Connector options
     download_dir: str
@@ -41,31 +80,14 @@ class SimpleGoogleDriveConfig(BaseConnectorConfig):
 
     recursive: bool = False
 
-    @requires_dependencies(["googleapiclient"], extras="google-drive")
     def __post_init__(self):
-        from google.auth import exceptions
-        from googleapiclient.discovery import build
-        from googleapiclient.errors import HttpError
-
         if self.extension and self.extension not in EXT_TO_FILETYPE.keys():
             raise ValueError(
                 f"Extension not supported. "
                 f"Value MUST be one of {', '.join(EXT_TO_FILETYPE.keys())}.",
             )
 
-        try:
-            self.service = build("drive", "v3", developerKey=self.api_key)
-            self.service.files().list(
-                spaces="drive",
-                fields="files(id)",
-                pageToken=None,
-                corpora="user",
-                q=f"'{self.drive_id}' in parents",
-            ).execute()
-        except HttpError as exc:
-            raise ValueError(f"{exc.reason}")
-        except exceptions.DefaultCredentialsError:
-            raise ValueError("The provided API key is invalid.")
+        self.service = create_service_account_object(self.service_account_key, self.drive_id)
 
 
 @dataclass
@@ -100,6 +122,8 @@ class GoogleDriveIngestDoc(BaseIngestDoc):
             if self.config.verbose:
                 print(f"File exists: {self.filename}, skipping download")
             return
+
+        self.config.service = create_service_account_object(self.config.service_account_key)
 
         if self.file_meta.get("mimeType", "").startswith("application/vnd.google-apps"):
             export_mime = GOOGLE_DRIVE_EXPORT_TYPES.get(
@@ -257,4 +281,6 @@ class GoogleDriveConnector(BaseConnector):
 
     def get_ingest_docs(self):
         files = self._list_objects(self.config.drive_id, self.config.recursive)
+        # Setting to None because service object can't be pickled for multiprocessing.
+        self.config.service = None
         return [GoogleDriveIngestDoc(self.config, file) for file in files]

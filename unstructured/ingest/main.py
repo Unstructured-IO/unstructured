@@ -94,9 +94,9 @@ class MainProcess:
     help="Google Drive File or Folder ID.",
 )
 @click.option(
-    "--drive-api-key",
+    "--drive-service-account-key",
     default=None,
-    help="Google Drive API Key.",
+    help="Path to the Google Drive service account json file.",
 )
 @click.option(
     "--drive-recursive",
@@ -214,7 +214,7 @@ class MainProcess:
 def main(
     s3_url,
     drive_id,
-    drive_api_key,
+    drive_service_account_key,
     drive_recursive,
     drive_extension,
     wikipedia_page_title,
@@ -332,7 +332,7 @@ def main(
         doc_connector = GoogleDriveConnector(  # type: ignore
             config=SimpleGoogleDriveConfig(
                 drive_id=drive_id,
-                api_key=drive_api_key,
+                service_account_key=drive_service_account_key,
                 recursive=drive_recursive,
                 extension=drive_extension,
                 # defaults params:
