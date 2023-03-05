@@ -121,6 +121,15 @@ locally if you are planning to contribute to the project.
   * For processing image files, `tesseract` is required. See [here](https://tesseract-ocr.github.io/tessdoc/Installation.html) for installation instructions.
   * For processing PDF files, `tesseract` and `poppler` are required. The [pdf2image docs](https://pdf2image.readthedocs.io/en/latest/installation.html) have instructions on installing `poppler` across various platforms.
 
+Additionally, if you're planning to contribute to `unstructured`, we provide you an optional `pre-commit` configuration
+file to ensure your code matches the formatting and linting standards used in `unstructured`.
+If you'd prefer not having code changes auto-tidied before every commit, you can use  `make check` to see
+whether any linting or formatting changes should be applied, and `make tidy` to apply them.
+
+If using the optional `pre-commit`, you'll just need to install the hooks with `pre-commit install` since the 
+`pre-commit` package is installed as part of `make install` mentioned above. Finally, if you decided to use `pre-commit`
+you can also uninstall the hooks with `pre-commit uninstall`.
+
 ***REMOVED******REMOVED*** :clap: Quick Tour
 
 You can run this [Colab notebook](https://colab.research.google.com/drive/1U8VCjY2-x8c6y5TYMbSFtQGlQVFHCVIW) to run the examples below.

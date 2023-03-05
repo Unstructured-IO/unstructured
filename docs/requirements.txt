@@ -6,7 +6,7 @@
 ***REMOVED***
 alabaster==0.7.13
     ***REMOVED*** via sphinx
-babel==2.11.0
+babel==2.12.1
     ***REMOVED*** via sphinx
 beautifulsoup4==4.11.2
     ***REMOVED*** via furo

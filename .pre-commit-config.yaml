@@ -1,0 +1,37 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: "v4.3.0"
+    hooks:
+      - id: check-added-large-files
+      - id: check-toml
+      - id: check-yaml
+      - id: check-json
+      - id: check-xml
+      - id: end-of-file-fixer
+        include: \.py$
+      - id: trailing-whitespace
+      - id: mixed-line-ending
+
+  - repo: https://github.com/psf/black
+    rev: 22.10.0
+    hooks:
+      - id: black
+        args: ["--line-length=100"]
+        language_version: python3
+
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: "v0.0.230"
+    hooks:
+      - id: ruff
+        args:
+          [
+            "--fix",
+            "--select=I,UP015,UP032,UP034,UP018,COM,C4,PT,SIM,PLR0402",
+            "--ignore=PT011,PT012,SIM117",
+          ]
+
+  - repo: https://github.com/pycqa/flake8
+    rev: 4.0.1
+    hooks:
+      - id: flake8
+        language_version: python3
