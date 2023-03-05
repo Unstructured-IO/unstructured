@@ -122,12 +122,13 @@ locally if you are planning to contribute to the project.
   * For processing PDF files, `tesseract` and `poppler` are required. The [pdf2image docs](https://pdf2image.readthedocs.io/en/latest/installation.html) have instructions on installing `poppler` across various platforms.
 
 Additionally, if you're planning to contribute to `unstructured`, we provide you an optional `pre-commit` configuration
-file so that you make sure that your code matches the formatting and linting standards used in `unstructured`. Alternatively,
-you can use `make tidy` instead.
+file so that you make sure that your code matches the formatting and linting standards used in `unstructured`.
+Alternatively, you can use `make tidy` or run the commands by yourself instead to fix the linting and formatting, or
+just to make sure that the checks pass with `make check`.
 
-If using the optional `pre-commit`, you'll need to install it as `pip install pre-commit`, and then install the
-hooks as `pre-commit install`, so that the hooks for `black`, `ruff`, and `flake8` will be triggered before every
-commit is created to ensure that the formatting and linting are aligned with the project standards.
+If using the optional `pre-commit`, you'll just need to install the hooks with `pre-commit install` since the 
+`pre-commit` package is installed as part of `make install` mentioned above. Finally, if you decided to use `pre-commit`
+you can also uninstall the hooks with `pre-commit uninstall`.
 
 ## :clap: Quick Tour
 
