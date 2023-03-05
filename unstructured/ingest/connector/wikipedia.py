@@ -18,6 +18,7 @@ if TYPE_CHECKING:
 @dataclass
 class SimpleWikipediaConfig(BaseConnectorConfig):
     title: str
+    auto_suggest: bool
 
     # Standard Connector options
     download_dir: str
@@ -152,7 +153,7 @@ class WikipediaConnector(BaseConnector):
     def get_ingest_docs(self):
         import wikipedia
 
-        page = wikipedia.page(self.config.title)
+        page = wikipedia.page(self.config.title, auto_suggest=self.config.auto_suggest)
         return [
             WikipediaIngestTextDoc(self.config, page),
             WikipediaIngestHTMLDoc(self.config, page),

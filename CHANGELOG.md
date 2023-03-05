@@ -1,4 +1,17 @@
-## 0.5.2-dev2
+## 0.5.3-dev1
+
+### Enhancements
+
+* Improve logging for ingest CLI.
+
+### Features
+
+* Add `--wikipedia-auto-suggest` argument to the ingest CLI to disable automatic redirection
+  to pages with similar names.
+
+### Fixes
+
+## 0.5.2
 
 ### Enhancements
 
@@ -10,10 +23,11 @@ rather than a "tmp-ingest-" dir in the working directory.
 
 ### Fixes
 
-* 'setup_ubuntu.sh` no longer fails in some contexts by interpreting 
+* 'setup_ubuntu.sh` no longer fails in some contexts by interpreting
 `DEBIAN_FRONTEND=noninteractive` as a command
 * `unstructured-ingest` no longer re-downloads files when --preserve-downloads
 is used without --download-dir.
+* Fixed an issue that was causing text to be skipped in some HTML documents.
 
 ## 0.5.1
 
