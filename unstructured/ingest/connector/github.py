@@ -13,7 +13,7 @@ from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
 )
-from unstructured.logger import logger
+from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
@@ -79,6 +79,7 @@ class GitHubIngestDoc(BaseIngestDoc):
         """Removes the local copy the file (or anything else) after successful processing."""
         if not self.config.preserve_downloads:
             logger.debug(f"Cleaning up {self}")
+            breakpoint()
             os.unlink(self.filename)
 
     def get_file(self):

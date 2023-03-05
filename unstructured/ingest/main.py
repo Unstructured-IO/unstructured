@@ -15,16 +15,24 @@ from unstructured.ingest.connector.wikipedia import (
     WikipediaConnector,
 )
 from unstructured.ingest.doc_processor.generalized import initialize, process_document
-from unstructured.logger import logger
+from unstructured.ingest.logger import logger, set_ingest_logging_level
 
 
 class MainProcess:
-    def __init__(self, doc_connector, doc_processor_fn, num_processes, reprocess):
+    def __init__(
+        self,
+        doc_connector,
+        doc_processor_fn,
+        num_processes,
+        reprocess,
+        verbose,
+    ):
         # initialize the reader and writer
         self.doc_connector = doc_connector
         self.doc_processor_fn = doc_processor_fn
         self.num_processes = num_processes
         self.reprocess = reprocess
+        self.verbose = verbose
 
     def initialize(self):
         """Slower initialization things: check connections, load things into memory, etc."""
@@ -67,8 +75,12 @@ class MainProcess:
         # block to remain in single process
         # self.doc_processor_fn(docs[0])
 
-        with mp.Pool(processes=self.num_processes) as pool:
-            results = pool.map(self.doc_processor_fn, docs)  # noqa: F841
+        with mp.Pool(
+            processes=self.num_processes,
+            initializer=set_ingest_logging_level,
+            initargs=(logging.DEBUG if self.verbose else logging.INFO,),
+        ) as pool:
+            pool.map(self.doc_processor_fn, docs)  # noqa: F841
 
         self.cleanup()
 
@@ -203,10 +215,10 @@ def main(
     s3_anonymous,
     verbose,
 ):
-    if verbose:
-        logger.setLevel(logging.DEBUG)
     if not preserve_downloads and download_dir:
-        logger.warning("Not preserving downloaded files but --download_dir is specified")
+        logger.warning(
+            "Not preserving downloaded files but --download_dir is specified",
+        )
     if not download_dir:
         cache_path = Path.home() / ".cache" / "unstructured" / "ingest"
         if not cache_path.exists():
@@ -229,8 +241,8 @@ def main(
             raise ValueError("No connector-specific option was specified!")
         download_dir = cache_path / hashed_dir_name.hexdigest()[:10]
         if preserve_downloads:
-            print(
-                f"Warning: preserving downloaded files but --download-dir is not specified,"
+            logger.warning(
+                f"Preserving downloaded files but --download-dir is not specified,"
                 f" using {download_dir}",
             )
     if s3_url:
@@ -298,6 +310,7 @@ def main(
         doc_processor_fn=process_document,
         num_processes=num_processes,
         reprocess=reprocess,
+        verbose=verbose,
     ).run()
 
 

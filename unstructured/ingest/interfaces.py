@@ -3,7 +3,7 @@ through Unstructured."""
 
 from abc import ABC, abstractmethod
 
-from unstructured.logger import logger
+from unstructured.ingest.logger import logger
 from unstructured.partition.auto import partition
 from unstructured.staging.base import convert_to_dict
 

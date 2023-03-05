@@ -9,7 +9,7 @@ from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
 )
-from unstructured.logger import logger
+from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
 
