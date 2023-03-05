@@ -122,9 +122,9 @@ locally if you are planning to contribute to the project.
   * For processing PDF files, `tesseract` and `poppler` are required. The [pdf2image docs](https://pdf2image.readthedocs.io/en/latest/installation.html) have instructions on installing `poppler` across various platforms.
 
 Additionally, if you're planning to contribute to `unstructured`, we provide you an optional `pre-commit` configuration
-file so that you make sure that your code matches the formatting and linting standards used in `unstructured`.
-Alternatively, you can use `make tidy` or run the commands by yourself instead to fix the linting and formatting, or
-just to make sure that the checks pass with `make check`.
+file to ensure your code matches the formatting and linting standards used in `unstructured`.
+If you'd prefer not having code changes auto-tidied before every commit, you can use  `make check` to see
+whether any linting or formatting changes should be applied, and `make tidy` to apply them.
 
 If using the optional `pre-commit`, you'll just need to install the hooks with `pre-commit install` since the 
 `pre-commit` package is installed as part of `make install` mentioned above. Finally, if you decided to use `pre-commit`
