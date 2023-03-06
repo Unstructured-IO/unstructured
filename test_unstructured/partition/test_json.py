@@ -25,12 +25,12 @@ test_files = [
 
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_text_from_filename(filename: str):
-    root, _ = os.path.splitext(filename)
+    # root, _ = os.path.splitext(filename)
 
     path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
     elements = partition(filename=path)
 
-    test_path = os.path.join(DIRECTORY, "test_json_output", root + ".json")
+    test_path = os.path.join(DIRECTORY, "test_json_output", filename + ".json")
     elements_to_json(elements, filename=test_path, indent=2)
 
     test_elements = partition_json(filename=test_path)
@@ -42,12 +42,12 @@ def test_partition_text_from_filename(filename: str):
 
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_text_from_file(filename: str):
-    root, _ = os.path.splitext(filename)
+    # root, _ = os.path.splitext(filename)
 
     path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
     elements = partition(filename=path)
 
-    test_path = os.path.join(DIRECTORY, "test_json_output", root + ".json")
+    test_path = os.path.join(DIRECTORY, "test_json_output", filename + ".json")
     elements_to_json(elements, filename=test_path, indent=2)
 
     with open(test_path) as f:
@@ -60,12 +60,12 @@ def test_partition_text_from_file(filename: str):
 
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_text_from_text(filename: str):
-    root, _ = os.path.splitext(filename)
+    # root, _ = os.path.splitext(filename)
 
     path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
     elements = partition(filename=path)
 
-    test_path = os.path.join(DIRECTORY, "test_json_output", root + ".json")
+    test_path = os.path.join(DIRECTORY, "test_json_output", filename + ".json")
     elements_to_json(elements, filename=test_path, indent=2)
 
     with open(test_path) as f:
