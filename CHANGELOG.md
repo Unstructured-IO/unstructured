@@ -1,6 +1,8 @@
-## 0.5.3-dev0
+## 0.5.3-dev1
 
 ### Enhancements
+
+* Simplify partitioning functions.
 
 ### Features
 

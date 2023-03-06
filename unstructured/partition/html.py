@@ -5,7 +5,11 @@ import requests
 from unstructured.documents.elements import Element
 from unstructured.documents.html import HTMLDocument
 from unstructured.documents.xml import VALID_PARSERS
-from unstructured.partition.common import add_element_metadata, document_to_element_list
+from unstructured.partition.common import (
+    add_element_metadata,
+    document_to_element_list,
+    exactly_one,
+)
 
 
 def partition_html(
@@ -37,13 +41,13 @@ def partition_html(
     parser
         The parser to use for parsing the HTML document. If None, default parser will be used.
     """
-    if not any([filename, file, text, url]):
-        raise ValueError("One of filename, file, or text must be specified.")
+    # Verify that only one of the arguments was provided
+    exactly_one([filename, file, text, url], ["filename", "file", "text", "url"])
 
-    if filename is not None and not file and not text and not url:
+    if filename:
         document = HTMLDocument.from_file(filename, parser=parser)
 
-    elif file is not None and not filename and not text and not url:
+    elif file:
         file_content = file.read()
         if isinstance(file_content, bytes):
             file_text = file_content.decode("utf-8")
@@ -52,11 +56,11 @@ def partition_html(
 
         document = HTMLDocument.from_string(file_text, parser=parser)
 
-    elif text is not None and not filename and not file and not url:
+    elif text:
         _text: str = str(text)
         document = HTMLDocument.from_string(_text, parser=parser)
 
-    elif url is not None and not filename and not file and not text:
+    elif url:
         response = requests.get(url)
         if not response.ok:
             raise ValueError(f"URL return an error: {response.status_code}")
@@ -66,9 +70,6 @@ def partition_html(
             raise ValueError(f"Expected content type text/html. Got {content_type}.")
 
         document = HTMLDocument.from_string(response.text, parser=parser)
-
-    else:
-        raise ValueError("Only one of filename, file, or text can be specified.")
 
     layout_elements = document_to_element_list(document, include_page_breaks=include_page_breaks)
     if include_metadata:

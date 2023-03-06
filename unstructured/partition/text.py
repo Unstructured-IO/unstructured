@@ -12,6 +12,7 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
+from unstructured.partition.common import exactly_one
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_possible_narrative_text,
@@ -40,21 +41,18 @@ def partition_text(
         The string representation of the .txt document.
     """
 
-    if not any([filename, file, text]):
-        raise ValueError("One of filename, file, or text must be specified.")
+    # Verify that only one of the arguments was provided
+    exactly_one([filename, file, text], ["filename", "file", "text"])
 
-    if filename is not None and not file and not text:
+    if filename:
         with open(filename, encoding="utf8") as f:
             file_text = f.read()
 
-    elif file is not None and not filename and not text:
+    elif file:
         file_text = file.read()
 
-    elif text is not None and not filename and not file:
+    elif text:
         file_text = str(text)
-
-    else:
-        raise ValueError("Only one of filename, file, or text can be specified.")
 
     file_content = split_by_paragraph(file_text)
 

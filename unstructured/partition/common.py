@@ -1,5 +1,5 @@
 import subprocess
-from typing import List, Optional, Union
+from typing import Any, List, Optional, Union
 
 from unstructured.documents.elements import (
     TYPE_TO_TEXT_ELEMENT_MAP,
@@ -52,12 +52,17 @@ def layout_list_to_list_items(text: str, coordinates: List[float]) -> List[Eleme
     list_items: List[Element] = []
     for text_segment in split_items:
         if len(text_segment.strip()) > 0:
-            list_items.append(ListItem(text=text_segment.strip(), coordinates=coordinates))
+            list_items.append(
+                ListItem(text=text_segment.strip(), coordinates=coordinates),
+            )
 
     return list_items
 
 
-def document_to_element_list(document, include_page_breaks: bool = False) -> List[Element]:
+def document_to_element_list(
+    document,
+    include_page_breaks: bool = False,
+) -> List[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
     elements: List[Element] = []
     num_pages = len(document.pages)
@@ -123,4 +128,25 @@ on your system and try again.
 - Install instructions: https://www.libreoffice.org/get-help/install-howto/
 - Mac: https://formulae.brew.sh/cask/libreoffice
 - Debian: https://wiki.debian.org/LibreOffice""",
+        )
+
+
+def exactly_one(args: List[Any], names: List[Any]) -> None:
+    # Verify correct usage of `exactly_one`
+    if len(args) != len(names):
+        raise Exception(
+            "`exactly_one` is not used correctly."
+            " The list of arguments must be equal in length to the list of argument names.",
+        )
+    if len(args) <= 1:
+        raise Exception(
+            "`exactly_one` is not used correctly."
+            " At least two arguments must be used,"
+            " otherwise there is no need to use `exactly_one`.",
+        )
+
+    # Verify arguments; exactly one of all arguments must the truthy
+    if not sum([arg is not None for arg in args]) == 1:
+        raise ValueError(
+            f"Exactly one of {', '.join(names[:-1])} and {names[-1]} must be specified.",
         )

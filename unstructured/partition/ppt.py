@@ -3,7 +3,7 @@ import tempfile
 from typing import IO, List, Optional
 
 from unstructured.documents.elements import Element
-from unstructured.partition.common import convert_office_doc
+from unstructured.partition.common import convert_office_doc, exactly_one
 from unstructured.partition.pptx import partition_pptx
 
 
@@ -23,28 +23,26 @@ def partition_ppt(
     include_page_breaks
         If True, includes a PageBreak element between slides
     """
-    if not any([filename, file]):
-        raise ValueError("One of filename or file must be specified.")
+    # Verify that only one of the arguments was provided
+    exactly_one([filename, file], ["filename", "file"])
 
-    if filename is not None and not file:
+    if filename:
         _, filename_no_path = os.path.split(os.path.abspath(filename))
         base_filename, _ = os.path.splitext(filename_no_path)
-    elif file is not None and not filename:
+    elif file:
         tmp = tempfile.NamedTemporaryFile(delete=False)
         tmp.write(file.read())
         tmp.close()
         filename = tmp.name
         _, filename_no_path = os.path.split(os.path.abspath(tmp.name))
-    else:
-        raise ValueError("Only one of filename or file can be specified.")
 
-    if not os.path.exists(filename):
+    if not os.path.exists(filename):  # type: ignore
         raise ValueError(f"The file {filename} does not exist.")
 
     base_filename, _ = os.path.splitext(filename_no_path)
 
     with tempfile.TemporaryDirectory() as tmpdir:
-        convert_office_doc(filename, tmpdir, target_format="pptx")
+        convert_office_doc(filename, tmpdir, target_format="pptx")  # type: ignore
         pptx_filename = os.path.join(tmpdir, f"{base_filename}.pptx")
         elements = partition_pptx(filename=pptx_filename, metadata_filename=filename)
 
