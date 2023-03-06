@@ -4,18 +4,9 @@
 
 ### Features
 
-* Add optional `encoding` argument to the `partition_(text/email/html)` functions.
-
-### Fixes
-
-## 0.5.3-dev0
-
-### Enhancements
-
-### Features
-
 * Add `--wikipedia-auto-suggest` argument to the ingest CLI to disable automatic redirection
   to pages with similar names.
+* Add optional `encoding` argument to the `partition_(text/email/html)` functions.
 
 ### Fixes
 
