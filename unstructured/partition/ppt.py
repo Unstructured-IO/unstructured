@@ -26,10 +26,10 @@ def partition_ppt(
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file)
 
-    if filename:
+    if filename is not None:
         _, filename_no_path = os.path.split(os.path.abspath(filename))
         base_filename, _ = os.path.splitext(filename_no_path)
-    elif file:
+    elif file is not None:
         tmp = tempfile.NamedTemporaryFile(delete=False)
         tmp.write(file.read())
         tmp.close()

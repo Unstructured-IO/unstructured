@@ -45,9 +45,9 @@ def partition_pptx(
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file)
 
-    if filename:
+    if filename is not None:
         presentation = pptx.Presentation(filename)
-    elif file:
+    elif file is not None:
         presentation = pptx.Presentation(file)
 
     elements: List[Element] = []

@@ -79,9 +79,9 @@ def partition_docx(
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file)
 
-    if filename:
+    if filename is not None:
         document = docx.Document(filename)
-    elif file:
+    elif file is not None:
         document = docx.Document(file)
 
     metadata_filename = metadata_filename or filename

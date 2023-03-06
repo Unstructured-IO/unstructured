@@ -44,14 +44,14 @@ def partition_text(
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text)
 
-    if filename:
+    if filename is not None:
         with open(filename, encoding="utf8") as f:
             file_text = f.read()
 
-    elif file:
+    elif file is not None:
         file_text = file.read()
 
-    elif text:
+    elif text is not None:
         file_text = str(text)
 
     file_content = split_by_paragraph(file_text)

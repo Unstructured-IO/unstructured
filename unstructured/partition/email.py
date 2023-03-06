@@ -165,11 +165,11 @@ def partition_email(
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text)
 
-    if filename:
+    if filename is not None:
         with open(filename) as f:
             msg = email.message_from_file(f)
 
-    elif file:
+    elif file is not None:
         file_content = file.read()
         if isinstance(file_content, bytes):
             file_text = file_content.decode("utf-8")
@@ -178,7 +178,7 @@ def partition_email(
 
         msg = email.message_from_string(file_text)
 
-    elif text:
+    elif text is not None:
         _text: str = str(text)
         msg = email.message_from_string(_text)
 

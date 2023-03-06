@@ -27,14 +27,14 @@ def partition_md(
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text, url=url)
 
-    if filename:
+    if filename is not None:
         with open(filename, encoding="utf8") as f:
             text = optional_decode(f.read())
 
-    elif file:
+    elif file is not None:
         text = optional_decode(file.read())
 
-    elif url:
+    elif url is not None:
         response = requests.get(url)
         if not response.ok:
             raise ValueError(f"URL return an error: {response.status_code}")

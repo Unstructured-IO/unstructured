@@ -44,10 +44,10 @@ def partition_html(
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text, url=url)
 
-    if filename:
+    if filename is not None:
         document = HTMLDocument.from_file(filename, parser=parser)
 
-    elif file:
+    elif file is not None:
         file_content = file.read()
         if isinstance(file_content, bytes):
             file_text = file_content.decode("utf-8")
@@ -56,11 +56,11 @@ def partition_html(
 
         document = HTMLDocument.from_string(file_text, parser=parser)
 
-    elif text:
+    elif text is not None:
         _text: str = str(text)
         document = HTMLDocument.from_string(_text, parser=parser)
 
-    elif url:
+    elif url is not None:
         response = requests.get(url)
         if not response.ok:
             raise ValueError(f"URL return an error: {response.status_code}")
