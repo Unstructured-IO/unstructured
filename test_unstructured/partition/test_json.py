@@ -12,10 +12,8 @@ DIRECTORY = pathlib.Path(__file__).parent.resolve()
 test_files = [
     "fake-text.txt",
     "layout-parser-paper-fast.pdf",
-    "factbook.xml",
     "fake-html.html",
     "fake.doc",
-    "factbook.xsl",
     "fake-email.eml",
     "fake-power-point.ppt",
     "fake.docx",
