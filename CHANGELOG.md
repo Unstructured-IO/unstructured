@@ -1,3 +1,13 @@
+***REMOVED******REMOVED*** 0.5.3-dev1
+
+***REMOVED******REMOVED******REMOVED*** Enhancements
+
+***REMOVED******REMOVED******REMOVED*** Features
+
+* Add optional `encoding` argument to the `partition_(text/email/html)` functions.
+
+***REMOVED******REMOVED******REMOVED*** Fixes
+
 ***REMOVED******REMOVED*** 0.5.3-dev0
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements

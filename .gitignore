@@ -37,6 +37,9 @@ MANIFEST
 pip-log.txt
 pip-delete-this-directory.txt
 
+***REMOVED*** Pycharm
+.idea/
+
 ***REMOVED*** Unit test / coverage reports
 htmlcov/
 .tox/
