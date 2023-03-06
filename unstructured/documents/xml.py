@@ -83,7 +83,13 @@ class XMLDocument(Document):
         return doc
 
     @classmethod
-    def from_file(cls, filename, parser: VALID_PARSERS = None, stylesheet: Optional[str] = None):
-        with open(filename, "r+", encoding="utf8") as f:
+    def from_file(
+        cls,
+        filename,
+        parser: VALID_PARSERS = None,
+        stylesheet: Optional[str] = None,
+        encoding: Optional[str] = "utf-8",
+    ):
+        with open(filename, "r+", encoding=encoding) as f:
             content = f.read()
         return cls.from_string(content, parser=parser, stylesheet=stylesheet)
