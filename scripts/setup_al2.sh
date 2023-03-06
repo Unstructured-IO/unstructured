@@ -9,10 +9,6 @@ fi
 
 set -eux
 
-# Set user account for which we're configuring the tools
-USER_ACCOUNT=$1
-USER_ACCOUNT_HOME=$(bash -c "cd ~$(printf %q "$USER_ACCOUNT") && pwd")
-
 # Set package manager command for this distribution
 pac="yum"
 
@@ -24,6 +20,10 @@ if [[ $(whoami) == 'root' ]]; then
     type -p sudo >/dev/null || (echo "Please have an administrator install sudo and add you to the sudo group before continuing." && exit 1)
     sudo='sudo'
 fi
+
+# Set user account for which we're configuring the tools
+USER_ACCOUNT=$1
+USER_ACCOUNT_HOME=$(sudo -u "$USER_ACCOUNT" sh -c 'echo $HOME')
 
 # Update existing packages
 $sudo $pac update -y
@@ -46,35 +46,33 @@ $sudo $pac install -y git
 # Install tools needed to build python
 $sudo $pac install -y bzip2 sqlite zlib-devel readline-devel sqlite-devel openssl-devel tk-devel libffi-devel bzip2-devel 
 # Install pyenv
-if [[ ! -d $USER_ACCOUNT_HOME/.pyenv ]]; then
-    sudo -u "$USER_ACCOUNT" -i <<'EOF'
-    cd $HOME
-    curl https://pyenv.run | bash
-    touch "$HOME"/.bashrc
-EOF
-    # Remove initialization lines from .bashrc if they are already there, so we don't duplicate them
-    # shellcheck disable=SC2016
-    sed -i '/export PYENV_ROOT="$HOME\/.pyenv"/d' "$USER_ACCOUNT_HOME"/.bashrc
-    # shellcheck disable=SC2016
-    sed -i '/command -v pyenv >\/dev\/null || export PATH="$PYENV_ROOT\/bin:$PATH"/d' "$USER_ACCOUNT_HOME"/.bashrc
-    # shellcheck disable=SC2016
-    sed -i '/eval "$(pyenv init -)"/d' "$USER_ACCOUNT_HOME"/.bashrc
-    # shellcheck disable=SC2016
-    sed -i '/eval "$(pyenv virtualenv-init -)"/d' "$USER_ACCOUNT_HOME"/.bashrc
-    # Add initialization lines to .bashrc
-    # shellcheck disable=SC2016
-    cat <<'EOT' | cat - "$USER_ACCOUNT_HOME"/.bashrc > temp && $sudo mv temp "$USER_ACCOUNT_HOME"/.bashrc
+sudo -u "$USER_ACCOUNT" -i <<'EOF'
+    if [[ ! -d "$HOME"/.pyenv ]]; then
+        cd $HOME
+        curl https://pyenv.run | bash
+        touch "$HOME"/.bashrc
+        # Remove initialization lines from .bashrc if they are already there, so we don't duplicate them
+        # shellcheck disable=SC2016
+        sed -i '/export PYENV_ROOT="$HOME\/.pyenv"/d' "$HOME"/.bashrc
+        # shellcheck disable=SC2016
+        sed -i '/command -v pyenv >\/dev\/null || export PATH="$PYENV_ROOT\/bin:$PATH"/d' "$HOME"/.bashrc
+        # shellcheck disable=SC2016
+        sed -i '/eval "$(pyenv init -)"/d' "$HOME"/.bashrc
+        # shellcheck disable=SC2016
+        sed -i '/eval "$(pyenv virtualenv-init -)"/d' "$HOME"/.bashrc
+        # Add initialization lines to .bashrc
+        # shellcheck disable=SC2016
+        cat <<'EOT' | cat - "$HOME"/.bashrc > temp && mv temp "$HOME"/.bashrc
 export PYENV_ROOT="$HOME/.pyenv"
 command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 EOT
-    # install python
-    sudo -u "$USER_ACCOUNT" -i <<'EOF'
-    source $HOME/.bashrc
-    pyenv install 3.8.15
+        # install python
+        source "$HOME"/.bashrc
+        pyenv install 3.8.15
+    fi
 EOF
-fi
 
 #### OpenCV dependencies
 $sudo $pac install -y mesa-libGL
