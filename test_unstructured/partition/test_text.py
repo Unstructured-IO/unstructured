@@ -18,11 +18,28 @@ EXPECTED_OUTPUT = [
 ]
 
 
-def test_partition_text_from_filename():
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-text.txt")
-    elements = partition_text(filename=filename)
+@pytest.mark.parametrize(
+    ("filename", "encoding"),
+    [("fake-text.txt", "utf-8"), ("fake-text.txt", None), ("fake-text-utf-16-be.txt", "utf-16-be")],
+)
+def test_partition_text_from_filename(filename, encoding):
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+    elements = partition_text(filename=filename, encoding=encoding)
     assert len(elements) > 0
     assert elements == EXPECTED_OUTPUT
+
+
+@pytest.mark.parametrize(
+    ("filename", "encoding", "error"),
+    [
+        ("fake-text.txt", "utf-16", UnicodeDecodeError),
+        ("fake-text-utf-16-be.txt", "utf-16", UnicodeError),
+    ],
+)
+def test_partition_text_from_filename_raises_econding_error(filename, encoding, error):
+    with pytest.raises(error):
+        filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+        partition_text(filename=filename, encoding=encoding)
 
 
 def test_partition_text_from_file():
