@@ -25,7 +25,7 @@ def partition_md(
     parser: VALID_PARSERS = None,
 ) -> List[Element]:
     # Verify that only one of the arguments was provided
-    exactly_one([filename, file, text, url], ["filename", "file", "text", "url"])
+    exactly_one(filename=filename, file=file, text=text, url=url)
 
     if filename:
         with open(filename, encoding="utf8") as f:

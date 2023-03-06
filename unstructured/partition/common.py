@@ -1,5 +1,5 @@
 import subprocess
-from typing import Any, List, Optional, Union
+from typing import List, Optional, Union
 
 from unstructured.documents.elements import (
     TYPE_TO_TEXT_ELEMENT_MAP,
@@ -131,22 +131,17 @@ on your system and try again.
         )
 
 
-def exactly_one(args: List[Any], names: List[Any]) -> None:
-    # Verify correct usage of `exactly_one`
-    if len(args) != len(names):
-        raise Exception(
-            "`exactly_one` is not used correctly."
-            " The list of arguments must be equal in length to the list of argument names.",
-        )
-    if len(args) <= 1:
-        raise Exception(
-            "`exactly_one` is not used correctly."
-            " At least two arguments must be used,"
-            " otherwise there is no need to use `exactly_one`.",
-        )
+def exactly_one(**kwargs) -> None:
+    """
+    Verify arguments; exactly one of all keyword arguments must not be None.
 
-    # Verify arguments; exactly one of all arguments must the truthy
-    if not sum([arg is not None for arg in args]) == 1:
-        raise ValueError(
-            f"Exactly one of {', '.join(names[:-1])} and {names[-1]} must be specified.",
-        )
+    Example:
+        >>> exactly_one(filename=filename, file=file, text=text, url=url)
+    """
+    if sum([(arg is not None) for arg in kwargs.values()]) != 1:
+        names = list(kwargs.keys())
+        if len(names) > 1:
+            message = f"Exactly one of {', '.join(names[:-1])} and {names[-1]} must be specified."
+        else:
+            message = f"{names[0]} must be specified."
+        raise ValueError(message)

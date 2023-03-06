@@ -24,7 +24,7 @@ def partition_ppt(
         If True, includes a PageBreak element between slides
     """
     # Verify that only one of the arguments was provided
-    exactly_one([filename, file], ["filename", "file"])
+    exactly_one(filename=filename, file=file)
 
     if filename:
         _, filename_no_path = os.path.split(os.path.abspath(filename))

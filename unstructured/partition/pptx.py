@@ -43,7 +43,7 @@ def partition_pptx(
     """
 
     # Verify that only one of the arguments was provided
-    exactly_one([filename, file], ["filename", "file"])
+    exactly_one(filename=filename, file=file)
 
     if filename:
         presentation = pptx.Presentation(filename)

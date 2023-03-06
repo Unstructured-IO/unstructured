@@ -42,7 +42,7 @@ def partition_html(
         The parser to use for parsing the HTML document. If None, default parser will be used.
     """
     # Verify that only one of the arguments was provided
-    exactly_one([filename, file, text, url], ["filename", "file", "text", "url"])
+    exactly_one(filename=filename, file=file, text=text, url=url)
 
     if filename:
         document = HTMLDocument.from_file(filename, parser=parser)

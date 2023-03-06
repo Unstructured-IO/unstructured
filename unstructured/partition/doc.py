@@ -18,7 +18,7 @@ def partition_doc(filename: Optional[str] = None, file: Optional[IO] = None) -> 
         A file-like object using "rb" mode --> open(filename, "rb").
     """
     # Verify that only one of the arguments was provided
-    exactly_one([filename, file], ["filename", "file"])
+    exactly_one(filename=filename, file=file)
 
     if filename:
         _, filename_no_path = os.path.split(os.path.abspath(filename))

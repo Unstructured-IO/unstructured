@@ -42,7 +42,7 @@ def partition_text(
     """
 
     # Verify that only one of the arguments was provided
-    exactly_one([filename, file, text], ["filename", "file", "text"])
+    exactly_one(filename=filename, file=file, text=text)
 
     if filename:
         with open(filename, encoding="utf8") as f:
