@@ -22,7 +22,7 @@ certifi==2022.12.7
     #   unstructured (setup.py)
 cffi==1.15.1
     # via cryptography
-charset-normalizer==3.0.1
+charset-normalizer==3.1.0
     # via
     #   pdfminer-six
     #   requests
@@ -34,7 +34,7 @@ coloredlogs==15.0.1
     # via onnxruntime
 contourpy==1.0.7
     # via matplotlib
-cryptography==39.0.1
+cryptography==39.0.2
     # via pdfminer-six
 cycler==0.11.0
     # via matplotlib
@@ -44,15 +44,15 @@ effdet==0.3.0
     # via layoutparser
 et-xmlfile==1.1.0
     # via openpyxl
-fastapi==0.92.0
+fastapi==0.93.0
     # via unstructured-inference
 filelock==3.9.0
     # via
     #   huggingface-hub
     #   transformers
-flatbuffers==23.1.21
+flatbuffers==23.3.3
     # via onnxruntime
-fonttools==4.38.0
+fonttools==4.39.0
     # via matplotlib
 h11==0.14.0
     # via
@@ -95,11 +95,11 @@ lxml==4.9.2
     #   unstructured (setup.py)
 markdown==3.4.1
     # via unstructured (setup.py)
-matplotlib==3.7.0
+matplotlib==3.7.1
     # via pycocotools
 monotonic==1.6
     # via argilla
-mpmath==1.2.1
+mpmath==1.3.0
     # via sympy
 nltk==3.8.1
     # via unstructured (setup.py)
@@ -232,7 +232,7 @@ torchvision==0.14.1
     #   effdet
     #   layoutparser
     #   timm
-tqdm==4.64.1
+tqdm==4.65.0
     # via
     #   argilla
     #   huggingface-hub

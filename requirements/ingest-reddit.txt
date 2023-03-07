@@ -23,7 +23,7 @@ certifi==2022.12.7
     #   httpx
     #   requests
     #   unstructured (setup.py)
-charset-normalizer==3.0.1
+charset-normalizer==3.1.0
     # via
     #   -r requirements/base.txt
     #   requests
@@ -158,7 +158,7 @@ sniffio==1.3.0
     #   anyio
     #   httpcore
     #   httpx
-tqdm==4.64.1
+tqdm==4.65.0
     # via
     #   -r requirements/base.txt
     #   argilla
