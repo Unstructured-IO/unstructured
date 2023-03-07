@@ -93,7 +93,7 @@ def test_partition_json_raises_with_too_many_specified():
         elements_to_json(elements, filename=test_path, indent=2)
         with open(test_path) as f:
             text = f.read()
-        
+
     with pytest.raises(ValueError):
         partition_json(filename=test_path, file=f)
 
