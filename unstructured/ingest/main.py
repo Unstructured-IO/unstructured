@@ -7,10 +7,6 @@ from pathlib import Path
 
 import click
 
-from unstructured.ingest.connector.azure import (
-    AzureBlobStorageConnector,
-    SimpleAzureBlobStorageConfig,
-)
 from unstructured.ingest.connector.github import GitHubConnector, SimpleGitHubConfig
 from unstructured.ingest.connector.google_drive import (
     GoogleDriveConnector,
@@ -106,22 +102,6 @@ class MainProcess:
     is_flag=True,
     default=False,
     help="Connect to s3 without local AWS credentials.",
-)
-@click.option(
-    "--azure-url",
-    default=None,
-    help="Prefix of Azure Blob Storage or DataLake objects (files) to download. "
-    "e.g. `adfs://container/blob`. This value may also be a single file.",
-)
-@click.option(
-    "--azure-account-name",
-    default=None,
-    help="Azure Blob Storage or DataLake account name.",
-)
-@click.option(
-    "--azure-connection-string",
-    default=None,
-    help="Azure Blob Storage or DataLake connection string.",
 )
 @click.option(
     "--drive-id",
@@ -248,9 +228,6 @@ class MainProcess:
 @click.option("-v", "--verbose", is_flag=True, default=False)
 def main(
     s3_url,
-    azure_url,
-    azure_account_name,
-    azure_connection_string,
     drive_id,
     drive_service_account_key,
     drive_recursive,
@@ -286,8 +263,6 @@ def main(
             cache_path.mkdir(parents=True, exist_ok=True)
         if s3_url:
             hashed_dir_name = hashlib.sha256(s3_url.encode("utf-8"))
-        elif azure_url:
-            hashed_dir_name = hashlib.sha256(azure_url.encode("utf-8"))
         elif github_url:
             hashed_dir_name = hashlib.sha256(
                 f"{github_url}_{github_branch}".encode("utf-8"),
@@ -322,21 +297,6 @@ def main(
                 re_download=re_download,
                 preserve_downloads=preserve_downloads,
                 verbose=verbose,
-            ),
-        )
-    elif azure_url and (azure_account_name or azure_connection_string):
-        doc_connector = AzureBlobStorageConnector(  # type: ignore
-            config=SimpleAzureBlobStorageConfig(
-                path=azure_url,
-                access_kwargs={"account_name": azure_account_name}
-                if azure_account_name
-                else {"connection_string": azure_connection_string}
-                if azure_connection_string
-                else {},
-                download_dir=download_dir,
-                output_dir=structured_output_dir,
-                re_download=re_download,
-                preserve_downloads=preserve_downloads,
             ),
         )
     elif github_url:
