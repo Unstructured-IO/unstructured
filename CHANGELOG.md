@@ -8,7 +8,6 @@
 as a connector.
 * Rename `s3_connector.py` to `s3.py` for readability and consistency with the
 rest of the connectors.
->>>>>>> upstream/main
 
 ### Features
 
