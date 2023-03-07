@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 
 @dataclass
-class SimpleGitlabConfig(SimpleGitConfig):
+class SimpleGitLabConfig(SimpleGitConfig):
     def __post_init__(self):
         parsed_gh_url = urlparse(self.url)
 
@@ -29,7 +29,7 @@ class SimpleGitlabConfig(SimpleGitConfig):
 
 
 @dataclass
-class GitlabIngestDoc(GitIngestDoc):
+class GitLabIngestDoc(GitIngestDoc):
     project: "Project"
 
     def _fetch_and_write(self) -> None:
@@ -45,7 +45,7 @@ class GitlabIngestDoc(GitIngestDoc):
 
 @requires_dependencies(["gitlab"], extras="gitlab")
 @dataclass
-class GitlabConnector(GitConnector):
+class GitLabConnector(GitConnector):
     def __post_init__(self) -> None:
         super().__post_init__()
         from gitlab import Gitlab
@@ -64,7 +64,7 @@ class GitlabConnector(GitConnector):
             all=True,
         )
         return [
-            GitlabIngestDoc(self.config, element["path"], project)
+            GitLabIngestDoc(self.config, element["path"], project)
             for element in git_tree
             if element["type"] == "blob"
             and self.is_file_type_supported(element["path"])

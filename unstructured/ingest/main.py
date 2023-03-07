@@ -8,7 +8,7 @@ from pathlib import Path
 import click
 
 from unstructured.ingest.connector.github import GitHubConnector, SimpleGitHubConfig
-from unstructured.ingest.connector.gitlab import GitlabConnector, SimpleGitlabConfig
+from unstructured.ingest.connector.gitlab import GitLabConnector, SimpleGitLabConfig
 from unstructured.ingest.connector.google_drive import (
     GoogleDriveConnector,
     SimpleGoogleDriveConfig,
@@ -152,7 +152,7 @@ class MainProcess:
 @click.option(
     "--git-access-token",
     default=None,
-    help="A GitHub or Gitlab access token, see https://docs.github.com/en/authentication "
+    help="A GitHub or GitLab access token, see https://docs.github.com/en/authentication "
     " or https://docs.gitlab.com/ee/api/rest/index.html#personalprojectgroup-access-tokens",
 )
 @click.option(
@@ -327,8 +327,8 @@ def main(
             ),
         )
     elif gitlab_url:
-        doc_connector = GitlabConnector(  # type: ignore
-            config=SimpleGitlabConfig(
+        doc_connector = GitLabConnector(  # type: ignore
+            config=SimpleGitLabConfig(
                 url=gitlab_url,
                 access_token=git_access_token,
                 branch=git_branch,
