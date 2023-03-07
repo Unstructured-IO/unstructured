@@ -9,6 +9,7 @@ from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
 )
+from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
 
@@ -25,7 +26,6 @@ class SimpleS3Config(BaseConnectorConfig):
     output_dir: str
     re_download: bool = False
     preserve_downloads: bool = False
-    verbose: bool = False
 
     # S3 Specific (optional)
     anonymous: bool = False
@@ -96,8 +96,7 @@ class S3IngestDoc(BaseIngestDoc):
             and self._tmp_download_file().is_file()
             and os.path.getsize(self._tmp_download_file())
         ):
-            if self.config.verbose:
-                print(f"File exists: {self._tmp_download_file()}, skipping download")
+            logger.debug(f"File exists: {self.filename}, skipping download")
             return
 
         if self.config.anonymous:
@@ -107,8 +106,7 @@ class S3IngestDoc(BaseIngestDoc):
             s3_cli = boto3.client("s3", config=Config(signature_version=UNSIGNED))
         else:
             s3_cli = boto3.client("s3")
-        if self.config.verbose:
-            print(f"fetching {self} - PID: {os.getpid()}")
+        logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         s3_cli.download_file(self.config.s3_bucket, self.s3_key, self._tmp_download_file())
 
     def write_result(self):
@@ -117,7 +115,7 @@ class S3IngestDoc(BaseIngestDoc):
         output_filename.parent.mkdir(parents=True, exist_ok=True)
         with open(output_filename, "w") as output_f:
             json.dump(self.isd_elems_no_filename, output_f, ensure_ascii=False, indent=2)
-        print(f"Wrote {output_filename}")
+        logger.info(f"Wrote {output_filename}")
 
     @property
     def filename(self):
@@ -127,8 +125,7 @@ class S3IngestDoc(BaseIngestDoc):
     def cleanup_file(self):
         """Removes the local copy the file after successful processing."""
         if not self.config.preserve_downloads:
-            if self.config.verbose:
-                print(f"cleaning up {self}")
+            logger.debug(f"Cleaning up {self}")
             os.unlink(self._tmp_download_file())
 
 
