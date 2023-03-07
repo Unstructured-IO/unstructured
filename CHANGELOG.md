@@ -1,4 +1,62 @@
-## 0.4.16-dev4
+## 0.5.3-dev1
+
+### Enhancements
+
+### Features
+
+* Add `--wikipedia-auto-suggest` argument to the ingest CLI to disable automatic redirection
+  to pages with similar names.
+* Add optional `encoding` argument to the `partition_(text/email/html)` functions.
+
+### Fixes
+
+## 0.5.2
+
+### Enhancements
+
+* `unstructured-ingest` now uses a default `--download_dir` of `$HOME/.cache/unstructured/ingest`
+rather than a "tmp-ingest-" dir in the working directory.
+
+### Features
+
+### Fixes
+
+* 'setup_ubuntu.sh` no longer fails in some contexts by interpreting
+`DEBIAN_FRONTEND=noninteractive` as a command
+* `unstructured-ingest` no longer re-downloads files when --preserve-downloads
+is used without --download-dir.
+* Fixed an issue that was causing text to be skipped in some HTML documents.
+
+## 0.5.1
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* Fixes an error causing JavaScript to appear in the output of `partition_html` sometimes.
+* Fix several issues with the `requires_dependencies` decorator, including the error message
+  and how it was used, which had caused an error for `unstructured-ingest --github-url ...`.
+
+## 0.5.0
+
+### Enhancements
+
+* Add `requires_dependencies` Python decorator to check dependencies are installed before
+  instantiating a class or running a function
+
+### Features
+
+* Added Wikipedia connector for ingest cli.
+
+### Fixes
+
+* Fix `process_document` file cleaning on failure
+* Fixes an error introduced in the metadata tracking commit that caused `NarrativeText`
+  and `FigureCaption` elements to be represented as `Text` in HTML documents.
+
+## 0.4.16
 
 ### Enhancements
 
@@ -7,11 +65,14 @@
 ### Features
 
 * Added setup script for Ubuntu
+* Added GitHub connector for ingest cli.
+* Added `partition_md` partitioner.
 * Added Reddit connector for ingest cli.
 
 ### Fixes
 
 * Initializes connector properly in ingest.main::MainProcess
+* Restricts version of unstructured-inference to avoid multithreading issue
 
 ## 0.4.15
 

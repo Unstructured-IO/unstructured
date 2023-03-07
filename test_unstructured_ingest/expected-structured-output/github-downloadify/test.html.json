@@ -1,0 +1,50 @@
+[
+  {
+    "element_id": "56a9f768a0968be676f9addd5ec3032e",
+    "text": "Downloadify Example",
+    "type": "Title",
+    "metadata": {
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "d551bbfc9477547e4dce6264d8196c7b",
+    "text": "More info available at the Github Project Page",
+    "type": "Title",
+    "metadata": {
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "971b974235a86ca628dcc713d6e2e8d9",
+    "text": "Filename",
+    "type": "Title",
+    "metadata": {
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "43f65b1c5bd47774b25c72e2f96de300",
+    "text": "File Contents\n\nWhatever you put in this text box will be downloaded and saved in the file. If you leave it blank, no file will be downloaded",
+    "type": "NarrativeText",
+    "metadata": {
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "53a4db70c6d40ed5206711ed8a255e03",
+    "text": "You must have Flash 10 installed to download this file.",
+    "type": "NarrativeText",
+    "metadata": {
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "839973fba0c850f1729fad098b031203",
+    "text": "Downloadify Invoke Script For This Page",
+    "type": "Title",
+    "metadata": {
+      "page_number": 1
+    }
+  }
+]

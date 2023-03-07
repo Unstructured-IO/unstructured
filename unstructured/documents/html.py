@@ -97,6 +97,7 @@ class HTMLDocument(XMLDocument):
             return self._pages
         logger.info("Reading document ...")
         pages: List[Page] = []
+        etree.strip_elements(self.document_tree, ["script"])
         root = _find_main(self.document_tree)
 
         articles = _find_articles(root)
@@ -213,6 +214,8 @@ def _parse_tag(
     processing the document tree again. In the future we might want to keep descendants too,
     but we don't have a use for them at the moment."""
     ancestortags: Tuple[str, ...] = tuple(el.tag for el in tag_elem.iterancestors())[::-1]
+    if tag_elem.tag == "script":
+        return None
     text = _construct_text(tag_elem)
     if not text:
         return None

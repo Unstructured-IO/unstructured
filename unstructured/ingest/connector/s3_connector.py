@@ -9,6 +9,7 @@ from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
 )
+from unstructured.utils import requires_dependencies
 
 
 @dataclass
@@ -24,8 +25,6 @@ class SimpleS3Config(BaseConnectorConfig):
     output_dir: str
     re_download: bool = False
     preserve_downloads: bool = False
-    # if a structured output .json file already exists, do not reprocess an s3 file to overwrite it
-    reprocess: bool = False
     verbose: bool = False
 
     # S3 Specific (optional)
@@ -86,6 +85,7 @@ class S3IngestDoc(BaseIngestDoc):
         """includes "directories" in s3 object path"""
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
 
+    @requires_dependencies(["boto3"], extras="s3")
     def get_file(self):
         """Actually fetches the file from s3 and stores it locally."""
         import boto3
@@ -116,7 +116,7 @@ class S3IngestDoc(BaseIngestDoc):
         output_filename = self._output_filename()
         output_filename.parent.mkdir(parents=True, exist_ok=True)
         with open(output_filename, "w") as output_f:
-            output_f.write(json.dumps(self.isd_elems_no_filename, ensure_ascii=False, indent=2))
+            json.dump(self.isd_elems_no_filename, output_f, ensure_ascii=False, indent=2)
         print(f"Wrote {output_filename}")
 
     @property
@@ -132,6 +132,7 @@ class S3IngestDoc(BaseIngestDoc):
             os.unlink(self._tmp_download_file())
 
 
+@requires_dependencies(["boto3"], extras="s3")
 class S3Connector(BaseConnector):
     """Objects of this class support fetching document(s) from"""
 
@@ -174,7 +175,6 @@ class S3Connector(BaseConnector):
             raise ValueError(
                 f"No objects found in {self.config.s3_url} -- response list object is {response}",
             )
-        os.mkdir(self.config.download_dir)
 
     def _list_objects(self):
         response = self.s3_cli.list_objects_v2(**self._list_objects_kwargs)

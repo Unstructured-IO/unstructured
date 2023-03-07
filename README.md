@@ -32,7 +32,7 @@
 </h2>
 <div align="center">
   <p>Unstructured wants to make it easier to connect to your data…and we need your help! We’re excited to announce a <a href="Competition.md">competition</a> focused on improving Unstructured's ability to seamlessly process data from the sources you care about most.</p>
-	
+
   <p>The competition starts now and continues through March 10...and most importantly, we're offering cash prizes! Please join our <a
   href="https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-1nlh1ot5d-dfY7zCRlhFboZrIWLA4Qgw">
    community Slack</a> to participate and follow along</p>
@@ -85,6 +85,7 @@ At this point, you should be able to run the following code:
 from unstructured.partition.auto import partition
 
 elements = partition(filename="example-docs/fake-email.eml")
+print("\n\n".join([str(el) for el in elements]))
 ```
 
 And if you installed with `local-inference`, you should be able to run this as well:
@@ -93,6 +94,7 @@ And if you installed with `local-inference`, you should be able to run this as w
 from unstructured.partition.auto import partition
 
 elements = partition("example-docs/layout-parser-paper.pdf")
+print("\n\n".join([str(el) for el in elements]))
 ```
 
 
@@ -118,6 +120,15 @@ locally if you are planning to contribute to the project.
   * To install models and dependencies for processing images and PDFs locally, run `make install-local-inference`.
   * For processing image files, `tesseract` is required. See [here](https://tesseract-ocr.github.io/tessdoc/Installation.html) for installation instructions.
   * For processing PDF files, `tesseract` and `poppler` are required. The [pdf2image docs](https://pdf2image.readthedocs.io/en/latest/installation.html) have instructions on installing `poppler` across various platforms.
+
+Additionally, if you're planning to contribute to `unstructured`, we provide you an optional `pre-commit` configuration
+file to ensure your code matches the formatting and linting standards used in `unstructured`.
+If you'd prefer not having code changes auto-tidied before every commit, you can use  `make check` to see
+whether any linting or formatting changes should be applied, and `make tidy` to apply them.
+
+If using the optional `pre-commit`, you'll just need to install the hooks with `pre-commit install` since the 
+`pre-commit` package is installed as part of `make install` mentioned above. Finally, if you decided to use `pre-commit`
+you can also uninstall the hooks with `pre-commit uninstall`.
 
 ## :clap: Quick Tour
 

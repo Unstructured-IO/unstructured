@@ -1,13 +1,18 @@
 #!/usr/bin/env python3
+import hashlib
 import multiprocessing as mp
-import random
-import string
 import sys
+from pathlib import Path
 
 import click
 
+from unstructured.ingest.connector.github import GitHubConnector, SimpleGitHubConfig
 from unstructured.ingest.connector.reddit import RedditConnector, SimpleRedditConfig
 from unstructured.ingest.connector.s3_connector import S3Connector, SimpleS3Config
+from unstructured.ingest.connector.wikipedia import (
+    SimpleWikipediaConfig,
+    WikipediaConnector,
+)
 from unstructured.ingest.doc_processor.generalized import initialize, process_document
 
 
@@ -80,6 +85,40 @@ class MainProcess:
     help="Connect to s3 without local AWS credentials.",
 )
 @click.option(
+    "--wikipedia-page-title",
+    default=None,
+    help='Title of a Wikipedia page, e.g. "Open source software".',
+)
+@click.option(
+    "--wikipedia-auto-suggest",
+    default=True,
+    help="Whether to automatically suggest a page if the exact page was not found."
+    " Set to False if the wrong Wikipedia page is fetched.",
+)
+@click.option(
+    "--github-url",
+    default=None,
+    help='URL to GitHub repository, e.g. "https://github.com/Unstructured-IO/unstructured",'
+    ' or a repository owner/name pair, e.g. "Unstructured-IO/unstructured"',
+)
+@click.option(
+    "--github-access-token",
+    default=None,
+    help="A GitHub access token, see https://docs.github.com/en/authentication",
+)
+@click.option(
+    "--github-branch",
+    default=None,
+    help="The branch for which to fetch files from. If not given,"
+    " the default repository branch is used.",
+)
+@click.option(
+    "--github-file-glob",
+    default=None,
+    help="A comma-separated list of file globs to limit which types of files are accepted,"
+    " e.g. '*.html,*.txt'",
+)
+@click.option(
     "--subreddit-name",
     default=None,
     help='The name of a subreddit, without the "r\\", e.g. "machinelearning"',
@@ -114,17 +153,17 @@ class MainProcess:
 @click.option(
     "--re-download/--no-re-download",
     default=False,
-    help="Re-download files from s3 even if they are already present in --download-dir.",
+    help="Re-download files even if they are already present in --download-dir.",
 )
 @click.option(
     "--download-dir",
-    help="Where s3 files are downloaded to, defaults to tmp-ingest-<6 random chars>.",
+    help="Where files are downloaded to, defaults to `$HOME/.cache/unstructured/ingest/<SHA256>`.",
 )
 @click.option(
     "--preserve-downloads",
     is_flag=True,
     default=False,
-    help="Preserve downloaded s3 files. Otherwise each file is removed after being processed "
+    help="Preserve downloaded files. Otherwise each file is removed after being processed "
     "successfully.",
 )
 @click.option(
@@ -136,7 +175,7 @@ class MainProcess:
     "--reprocess",
     is_flag=True,
     default=False,
-    help="Reprocess a downloaded file from s3 even if the relevant structured output .json file "
+    help="Reprocess a downloaded file even if the relevant structured output .json file "
     "in --structured-output-dir already exists.",
 )
 @click.option(
@@ -148,6 +187,12 @@ class MainProcess:
 @click.option("-v", "--verbose", is_flag=True, default=False)
 def main(
     s3_url,
+    wikipedia_page_title,
+    wikipedia_auto_suggest,
+    github_url,
+    github_access_token,
+    github_branch,
+    github_file_glob,
     subreddit_name,
     reddit_client_id,
     reddit_client_secret,
@@ -166,9 +211,31 @@ def main(
     if not preserve_downloads and download_dir:
         print("Warning: not preserving downloaded files but --download_dir is specified")
     if not download_dir:
-        download_dir = "tmp-ingest-" + "".join(
-            random.choice(string.ascii_letters) for i in range(6)
-        )
+        cache_path = Path.home() / ".cache" / "unstructured" / "ingest"
+        if not cache_path.exists():
+            cache_path.mkdir(parents=True, exist_ok=True)
+        if s3_url:
+            hashed_dir_name = hashlib.sha256(s3_url.encode("utf-8"))
+        elif github_url:
+            hashed_dir_name = hashlib.sha256(
+                f"{github_url}_{github_branch}".encode("utf-8"),
+            )
+        elif subreddit_name:
+            hashed_dir_name = hashlib.sha256(
+                subreddit_name.encode("utf-8"),
+            )
+        elif wikipedia_page_title:
+            hashed_dir_name = hashlib.sha256(
+                wikipedia_page_title.encode("utf-8"),
+            )
+        else:
+            raise ValueError("No connector-specific option was specified!")
+        download_dir = cache_path / hashed_dir_name.hexdigest()[:10]
+        if preserve_downloads:
+            print(
+                f"Warning: preserving downloaded files but --download-dir is not specified,"
+                f" using {download_dir}",
+            )
     if s3_url:
         doc_connector = S3Connector(
             config=SimpleS3Config(
@@ -182,6 +249,21 @@ def main(
                 verbose=verbose,
             ),
         )
+    elif github_url:
+        doc_connector = GitHubConnector(  # type: ignore
+            config=SimpleGitHubConfig(
+                github_url=github_url,
+                github_access_token=github_access_token,
+                github_branch=github_branch,
+                github_file_glob=github_file_glob,
+                # defaults params:
+                download_dir=download_dir,
+                preserve_downloads=preserve_downloads,
+                output_dir=structured_output_dir,
+                re_download=re_download,
+                verbose=verbose,
+            ),
+        )
     elif subreddit_name:
         doc_connector = RedditConnector(  # type: ignore
             config=SimpleRedditConfig(
@@ -191,6 +273,19 @@ def main(
                 user_agent=reddit_user_agent,
                 search_query=reddit_search_query,
                 num_posts=reddit_num_posts,
+                # defaults params:
+                download_dir=download_dir,
+                preserve_downloads=preserve_downloads,
+                output_dir=structured_output_dir,
+                re_download=re_download,
+                verbose=verbose,
+            ),
+        )
+    elif wikipedia_page_title:
+        doc_connector = WikipediaConnector(  # type: ignore
+            config=SimpleWikipediaConfig(
+                title=wikipedia_page_title,
+                auto_suggest=wikipedia_auto_suggest,
                 # defaults params:
                 download_dir=download_dir,
                 preserve_downloads=preserve_downloads,

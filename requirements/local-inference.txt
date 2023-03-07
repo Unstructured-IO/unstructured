@@ -74,6 +74,8 @@ idna==3.4
     #   anyio
     #   requests
     #   rfc3986
+importlib-metadata==6.0.0
+    # via markdown
 importlib-resources==5.12.0
     # via matplotlib
 iopath==0.1.10
@@ -91,6 +93,8 @@ lxml==4.9.2
     #   python-docx
     #   python-pptx
     #   unstructured (setup.py)
+markdown==3.4.1
+    # via unstructured (setup.py)
 matplotlib==3.7.0
     # via pycocotools
 monotonic==1.6
@@ -114,7 +118,7 @@ numpy==1.23.5
     #   transformers
 omegaconf==2.3.0
     # via effdet
-onnxruntime==1.13.1
+onnxruntime==1.14.1
     # via unstructured-inference
 opencv-python==4.6.0.66
     # via
@@ -262,4 +266,6 @@ wrapt==1.14.1
 xlsxwriter==3.0.8
     # via python-pptx
 zipp==3.15.0
-    # via importlib-resources
+    # via
+    #   importlib-metadata
+    #   importlib-resources

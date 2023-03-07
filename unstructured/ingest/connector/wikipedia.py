@@ -9,20 +9,15 @@ from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
 )
-from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
-    from praw.models import Submission
+    from wikipedia import WikipediaPage
 
 
 @dataclass
-class SimpleRedditConfig(BaseConnectorConfig):
-    subreddit_name: str
-    client_id: str
-    client_secret: str
-    user_agent: str
-    search_query: str
-    num_posts: int
+class SimpleWikipediaConfig(BaseConnectorConfig):
+    title: str
+    auto_suggest: bool
 
     # Standard Connector options
     download_dir: str
@@ -32,22 +27,22 @@ class SimpleRedditConfig(BaseConnectorConfig):
     re_download: bool = False
     verbose: bool = False
 
-    def __post_init__(self):
-        if self.num_posts <= 0:
-            raise ValueError("The number of Reddit posts to fetch must be positive.")
-
 
 @dataclass
-class RedditIngestDoc(BaseIngestDoc):
-    config: SimpleRedditConfig = field(repr=False)
-    post: "Submission"
+class WikipediaIngestDoc(BaseIngestDoc):
+    config: SimpleWikipediaConfig = field(repr=False)
+    page: "WikipediaPage"
 
     @property
     def filename(self) -> Path:
-        return (Path(self.config.download_dir) / f"{self.post.id}.md").resolve()
+        raise NotImplementedError()
+
+    @property
+    def text(self) -> str:
+        raise NotImplementedError()
 
     def _output_filename(self):
-        return Path(self.config.output_dir) / f"{self.post.id}.json"
+        raise NotImplementedError()
 
     def _create_full_tmp_dir_path(self):
         self.filename.parent.mkdir(parents=True, exist_ok=True)
@@ -69,10 +64,8 @@ class RedditIngestDoc(BaseIngestDoc):
 
         if self.config.verbose:
             print(f"fetching {self} - PID: {os.getpid()}")
-        # Write the title plus the body, if any
-        text_to_write = f"# {self.post.title}\n{self.post.selftext}"
         with open(self.filename, "w", encoding="utf8") as f:
-            f.write(text_to_write)
+            f.write(self.text)
 
     def has_output(self):
         """Determine if structured output for this doc already exists."""
@@ -88,17 +81,57 @@ class RedditIngestDoc(BaseIngestDoc):
         print(f"Wrote {output_filename}")
 
 
-@requires_dependencies(["praw"], extras="reddit")
-class RedditConnector(BaseConnector):
-    def __init__(self, config: SimpleRedditConfig):
-        from praw import Reddit
+class WikipediaIngestHTMLDoc(WikipediaIngestDoc):
+    @property
+    def filename(self) -> Path:
+        return (
+            Path(self.config.download_dir) / f"{self.page.title}-{self.page.revision_id}.html"
+        ).resolve()
 
-        self.config = config
-        self.reddit = Reddit(
-            client_id=config.client_id,
-            client_secret=config.client_secret,
-            user_agent=config.user_agent,
+    @property
+    def text(self):
+        return self.page.html()
+
+    def _output_filename(self):
+        return Path(self.config.output_dir) / f"{self.page.title}-{self.page.revision_id}-html.json"
+
+
+class WikipediaIngestTextDoc(WikipediaIngestDoc):
+    @property
+    def filename(self) -> Path:
+        return (
+            Path(self.config.download_dir) / f"{self.page.title}-{self.page.revision_id}.txt"
+        ).resolve()
+
+    @property
+    def text(self):
+        return self.page.content
+
+    def _output_filename(self):
+        return Path(self.config.output_dir) / f"{self.page.title}-{self.page.revision_id}-txt.json"
+
+
+class WikipediaIngestSummaryDoc(WikipediaIngestDoc):
+    @property
+    def filename(self) -> Path:
+        return (
+            Path(self.config.download_dir)
+            / f"{self.page.title}-{self.page.revision_id}-summary.txt"
+        ).resolve()
+
+    @property
+    def text(self):
+        return self.page.summary
+
+    def _output_filename(self):
+        return (
+            Path(self.config.output_dir) / f"{self.page.title}-{self.page.revision_id}-summary.json"
         )
+
+
+class WikipediaConnector(BaseConnector):
+    def __init__(self, config: SimpleWikipediaConfig):
+        self.config = config
         self.cleanup_files = not config.preserve_downloads
 
     def cleanup(self, cur_dir=None):
@@ -121,9 +154,11 @@ class RedditConnector(BaseConnector):
         pass
 
     def get_ingest_docs(self):
-        subreddit = self.reddit.subreddit(self.config.subreddit_name)
-        if self.config.search_query:
-            posts = subreddit.search(self.config.search_query, limit=self.config.num_posts)
-        else:
-            posts = subreddit.hot(limit=self.config.num_posts)
-        return [RedditIngestDoc(self.config, post) for post in posts]
+        import wikipedia
+
+        page = wikipedia.page(self.config.title, auto_suggest=self.config.auto_suggest)
+        return [
+            WikipediaIngestTextDoc(self.config, page),
+            WikipediaIngestHTMLDoc(self.config, page),
+            WikipediaIngestSummaryDoc(self.config, page),
+        ]

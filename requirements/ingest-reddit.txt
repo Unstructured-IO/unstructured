@@ -57,6 +57,10 @@ idna==3.4
     #   anyio
     #   requests
     #   rfc3986
+importlib-metadata==6.0.0
+    # via
+    #   -r requirements/base.txt
+    #   markdown
 joblib==1.2.0
     # via
     #   -r requirements/base.txt
@@ -66,6 +70,10 @@ lxml==4.9.2
     #   -r requirements/base.txt
     #   python-docx
     #   python-pptx
+    #   unstructured (setup.py)
+markdown==3.4.1
+    # via
+    #   -r requirements/base.txt
     #   unstructured (setup.py)
 monotonic==1.6
     # via
@@ -176,3 +184,7 @@ xlsxwriter==3.0.8
     # via
     #   -r requirements/base.txt
     #   python-pptx
+zipp==3.15.0
+    # via
+    #   -r requirements/base.txt
+    #   importlib-metadata

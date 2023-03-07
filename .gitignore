@@ -37,6 +37,9 @@ MANIFEST
 pip-log.txt
 pip-delete-this-directory.txt
 
+# Pycharm
+.idea/
+
 # Unit test / coverage reports
 htmlcov/
 .tox/
@@ -131,8 +134,7 @@ dmypy.json
 
 # ingest outputs
 /structured-output
-# ingest temporary files
-/tmp-ingest*
+
 # suggested ingest mirror directory
 /mirror
 

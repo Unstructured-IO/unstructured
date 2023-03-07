@@ -1,5 +1,7 @@
+import importlib
 import json
-from typing import Dict, List
+from functools import wraps
+from typing import Dict, List, Optional, Union
 
 
 def save_as_jsonl(data: List[Dict], filename: str) -> None:
@@ -10,3 +12,35 @@ def save_as_jsonl(data: List[Dict], filename: str) -> None:
 def read_from_jsonl(filename: str) -> List[Dict]:
     with open(filename) as input_file:
         return [json.loads(line) for line in input_file]
+
+
+def requires_dependencies(
+    dependencies: Union[str, List[str]],
+    extras: Optional[str] = None,
+):
+    if isinstance(dependencies, str):
+        dependencies = [dependencies]
+
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            missing_deps = []
+            for dep in dependencies:
+                try:
+                    importlib.import_module(dep)
+                except ImportError:
+                    missing_deps.append(dep)
+            if len(missing_deps) > 0:
+                raise ImportError(
+                    f"Following dependencies are missing: {', '.join(missing_deps)}. "
+                    + (
+                        f"Please install them using `pip install unstructured[{extras}]`."
+                        if extras
+                        else f"Please install them using `pip install {' '.join(missing_deps)}`."
+                    ),
+                )
+            return func(*args, **kwargs)
+
+        return wrapper
+
+    return decorator
