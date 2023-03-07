@@ -19,7 +19,7 @@ from unstructured.ingest.connector.wikipedia import (
     WikipediaConnector,
 )
 from unstructured.ingest.doc_processor.generalized import initialize, process_document
-from unstructured.ingest.logger import logger, set_ingest_logging_level
+from unstructured.ingest.logger import ingest_log_streaming_init, logger
 
 
 class MainProcess:
@@ -81,7 +81,7 @@ class MainProcess:
 
         with mp.Pool(
             processes=self.num_processes,
-            initializer=set_ingest_logging_level,
+            initializer=ingest_log_streaming_init,
             initargs=(logging.DEBUG if self.verbose else logging.INFO,),
         ) as pool:
             pool.map(self.doc_processor_fn, docs)  # noqa: F841
