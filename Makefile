@@ -49,6 +49,10 @@ install-dev:
 install-build:
 	pip install -r requirements/build.txt
 
+.PHONY: install-ingest-google-drive
+install-ingest-google-drive:
+	pip install -r requirements/ingest-google-drive.txt
+
 ## install-ingest-s3:       install requirements for the s3 connector
 .PHONY: install-ingest-s3
 install-ingest-s3:
@@ -98,6 +102,7 @@ pip-compile:
 	pip-compile --upgrade --extra=reddit    --output-file=requirements/ingest-reddit.txt    requirements/base.txt setup.py
 	pip-compile --upgrade --extra=github    --output-file=requirements/ingest-github.txt    requirements/base.txt setup.py
 	pip-compile --upgrade --extra=wikipedia --output-file=requirements/ingest-wikipedia.txt requirements/base.txt setup.py
+	pip-compile --upgrade --extra=google-drive --output-file=requirements/ingest-google-drive.txt  requirements/base.txt setup.py
 
 ## install-project-local:   install unstructured into your local python environment
 .PHONY: install-project-local

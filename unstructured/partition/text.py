@@ -29,6 +29,7 @@ def partition_text(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
     text: Optional[str] = None,
+    encoding: Optional[str] = "utf-8",
 ) -> List[Element]:
     """Partitions an .txt documents into its constituent elements.
     Parameters
@@ -39,14 +40,19 @@ def partition_text(
         A file-like object using "r" mode --> open(filename, "r").
     text
         The string representation of the .txt document.
+    encoding
+        The encoding method used to decode the text input. If None, utf-8 will be used.
     """
 
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text)
 
     if filename is not None:
-        with open(filename, encoding="utf8") as f:
-            file_text = f.read()
+        with open(filename, encoding=encoding) as f:
+            try:
+                file_text = f.read()
+            except (UnicodeDecodeError, UnicodeError) as error:
+                raise error
 
     elif file is not None:
         file_text = file.read()
