@@ -352,7 +352,6 @@ def main(
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
                 re_download=re_download,
-                verbose=verbose,
             ),
         )
     # Check for other connector-specific options here and define the doc_connector object
