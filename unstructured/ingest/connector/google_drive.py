@@ -13,6 +13,7 @@ from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
 )
+from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
 FILE_FORMAT = "{id}-{name}{ext}"
@@ -76,7 +77,6 @@ class SimpleGoogleDriveConfig(BaseConnectorConfig):
     output_dir: str
     re_download: bool = False
     preserve_downloads: bool = False
-    verbose: bool = False
 
     recursive: bool = False
 
@@ -104,8 +104,7 @@ class GoogleDriveIngestDoc(BaseIngestDoc):
 
     def cleanup_file(self):
         if not self.config.preserve_downloads and self.filename.is_file():
-            if self.config.verbose:
-                print(f"cleaning up {self}")
+            logger.debug(f"Cleaning up {self}")
             Path.unlink(self.filename)
 
     def has_output(self):
@@ -119,8 +118,7 @@ class GoogleDriveIngestDoc(BaseIngestDoc):
         from googleapiclient.http import MediaIoBaseDownload
 
         if not self.config.re_download and self.filename.is_file() and self.filename.stat():
-            if self.config.verbose:
-                print(f"File exists: {self.filename}, skipping download")
+            logger.debug(f"File exists: {self.filename}, skipping download")
             return
 
         self.config.service = create_service_account_object(self.config.service_account_key)
@@ -130,7 +128,7 @@ class GoogleDriveIngestDoc(BaseIngestDoc):
                 self.file_meta.get("mimeType"),  # type: ignore
             )
             if not export_mime:
-                print(
+                logger.info(
                     f"File not supported. Name: {self.file_meta.get('name')} "
                     f"ID: {self.file_meta.get('id')} "
                     f"MimeType: {self.file_meta.get('mimeType')}",
@@ -158,8 +156,7 @@ class GoogleDriveIngestDoc(BaseIngestDoc):
             dir_ = self.file_meta.get("download_dir")
             if dir_:
                 if not dir_.is_dir():
-                    if self.config.verbose:
-                        print(f"Creating directory: {self.file_meta.get('download_dir')}")
+                    logger.debug(f"Creating directory: {self.file_meta.get('download_dir')}")
 
                     if dir_:
                         dir_.mkdir(parents=True, exist_ok=True)
@@ -167,11 +164,10 @@ class GoogleDriveIngestDoc(BaseIngestDoc):
                 with open(self.filename, "wb") as handler:
                     handler.write(file.getbuffer())
                     saved = True
-                    if self.config.verbose:
-                        print(f"File downloaded: {self.filename}.")
+                    logger.debug(f"File downloaded: {self.filename}.")
 
         if not saved:
-            print(f"Error while downloading and saving file: {self.filename}.")
+            logger.error(f"Error while downloading and saving file: {self.filename}.")
 
     def write_result(self):
         """Write the structured json result for this doc. result must be json serializable."""
@@ -179,7 +175,7 @@ class GoogleDriveIngestDoc(BaseIngestDoc):
         output_filename.parent.mkdir(parents=True, exist_ok=True)
         with open(output_filename, "w") as output_f:
             output_f.write(json.dumps(self.isd_elems_no_filename, ensure_ascii=False, indent=2))
-        print(f"Wrote {output_filename}")
+        logger.info(f"Wrote {output_filename}")
 
 
 class GoogleDriveConnector(BaseConnector):
@@ -223,7 +219,7 @@ class GoogleDriveConnector(BaseConnector):
                         if meta.get("mimeType", "").startswith("application/vnd.google-apps"):
                             export_mime = GOOGLE_DRIVE_EXPORT_TYPES.get(meta.get("mimeType"))
                             if not export_mime:
-                                print(
+                                logger.info(
                                     f"File {meta.get('name')} has an "
                                     f"unsupported MimeType {meta.get('mimeType')}",
                                 )
@@ -235,12 +231,11 @@ class GoogleDriveConnector(BaseConnector):
 
                         # TODO (Habeeb): Consider filtering at the query level.
                         if self.config.extension and self.config.extension != ext:  # noqa: SIM102
-                            if self.config.verbose:
-                                print(
-                                    f"File {meta.get('name')} does not match "
-                                    f"the file type {self.config.extension}",
-                                )
-                                continue
+                            logger.debug(
+                                f"File {meta.get('name')} does not match "
+                                f"the file type {self.config.extension}",
+                            )
+                            continue
 
                         name = FILE_FORMAT.format(name=meta.get("name"), id=meta.get("id"), ext=ext)
                         meta["download_dir"] = download_dir
