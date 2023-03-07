@@ -9,6 +9,7 @@ from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
 )
+from unstructured.ingest.logger import logger
 
 SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
     "s3",
@@ -28,7 +29,6 @@ class SimpleFsspecConfig(BaseConnectorConfig):
     output_dir: str
     preserve_downloads: bool = False
     re_download: bool = False
-    verbose: bool = False
 
     # fsspec specific options
     access_kwargs: dict = field(default_factory=dict)
@@ -105,16 +105,14 @@ class FsspecIngestDoc(BaseIngestDoc):
             and self._tmp_download_file().is_file()
             and os.path.getsize(self._tmp_download_file())
         ):
-            if self.config.verbose:
-                print(f"File exists: {self._tmp_download_file()}, skipping download")
+            logger.debug(f"File exists: {self._tmp_download_file()}, skipping download")
             return
 
         fs: AbstractFileSystem = get_filesystem_class(self.config.protocol)(
             **self.config.access_kwargs,
         )
 
-        if self.config.verbose:
-            print(f"fetching {self} - PID: {os.getpid()}")
+        logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         fs.get(rpath=self.remote_file_path, lpath=self._tmp_download_file().as_posix())
 
     def write_result(self):
@@ -123,7 +121,7 @@ class FsspecIngestDoc(BaseIngestDoc):
         output_filename.parent.mkdir(parents=True, exist_ok=True)
         with open(output_filename, "w") as output_f:
             output_f.write(json.dumps(self.isd_elems_no_filename, ensure_ascii=False, indent=2))
-        print(f"Wrote {output_filename}")
+        logger.info(f"Wrote {output_filename}")
 
     @property
     def filename(self):
@@ -133,8 +131,7 @@ class FsspecIngestDoc(BaseIngestDoc):
     def cleanup_file(self):
         """Removes the local copy the file after successful processing."""
         if not self.config.preserve_downloads:
-            if self.config.verbose:
-                print(f"cleaning up {self}")
+            logger.debug(f"Cleaning up {self}")
             os.unlink(self._tmp_download_file())
 
 
