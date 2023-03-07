@@ -13,6 +13,7 @@ from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
 )
+from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
@@ -32,7 +33,6 @@ class SimpleGitHubConfig(BaseConnectorConfig):
     output_dir: str
     preserve_downloads: bool = False
     re_download: bool = False
-    verbose: bool = False
 
     repo_owner: str = field(init=False, repr=False)
     repo_name: str = field(init=False, repr=False)
@@ -78,20 +78,17 @@ class GitHubIngestDoc(BaseIngestDoc):
     def cleanup_file(self):
         """Removes the local copy the file (or anything else) after successful processing."""
         if not self.config.preserve_downloads:
-            if self.config.verbose:
-                print(f"cleaning up {self}")
+            logger.debug(f"Cleaning up {self}")
             os.unlink(self.filename)
 
     def get_file(self):
         """Fetches the "remote" doc and stores it locally on the filesystem."""
         self._create_full_tmp_dir_path()
         if not self.config.re_download and self.filename.is_file() and self.filename.stat():
-            if self.config.verbose:
-                print(f"File exists: {self.filename}, skipping download")
+            logger.debug(f"File exists: {self.filename}, skipping download")
             return
 
-        if self.config.verbose:
-            print(f"fetching {self} - PID: {os.getpid()}")
+        logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         content_file = self.repo.get_contents(self.path)
         contents = b""
         if (
@@ -99,10 +96,10 @@ class GitHubIngestDoc(BaseIngestDoc):
             and content_file.encoding == "none"  # type: ignore
             and content_file.size  # type: ignore
         ):
-            print("File too large for the GitHub API, using direct download link instead.")
+            logger.info("File too large for the GitHub API, using direct download link instead.")
             response = requests.get(content_file.download_url)  # type: ignore
             if response.status_code != 200:
-                print("Direct download link has failed... Skipping this file.")
+                logger.info("Direct download link has failed... Skipping this file.")
             else:
                 contents = response.content
         else:
@@ -122,7 +119,7 @@ class GitHubIngestDoc(BaseIngestDoc):
         output_filename.parent.mkdir(parents=True, exist_ok=True)
         with open(output_filename, "w", encoding="utf8") as output_f:
             json.dump(self.isd_elems_no_filename, output_f, ensure_ascii=False, indent=2)
-        print(f"Wrote {output_filename}")
+        logger.info(f"Wrote {output_filename}")
 
 
 @requires_dependencies(["github"], extras="github")
@@ -172,8 +169,10 @@ class GitHubConnector(BaseConnector):
                 ".xml",
             ),
         )
-        if not supported and self.config.verbose:
-            print(f"The file {path!r} is discarded as it does not contain a supported filetype.")
+        if not supported:
+            logger.debug(
+                f"The file {path!r} is discarded as it does not contain a supported filetype.",
+            )
         return supported
 
     def does_path_match_glob(self, path: str) -> bool:
@@ -183,8 +182,7 @@ class GitHubConnector(BaseConnector):
         for pattern in patterns:
             if fnmatch.filter([path], pattern):
                 return True
-        if self.config.verbose:
-            print(f"The file {path!r} is discarded as it does not match any given glob.")
+        logger.debug(f"The file {path!r} is discarded as it does not match any given glob.")
         return False
 
     def get_ingest_docs(self):

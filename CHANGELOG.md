@@ -1,13 +1,16 @@
-## 0.5.3-dev0
+## 0.5.3-dev3
 
 ### Enhancements
 
 * `auto.partition()` can now load Unstructured ISD json documents.
+* Improve logging for ingest CLI.
 
 ### Features
 
 * Add `--wikipedia-auto-suggest` argument to the ingest CLI to disable automatic redirection
   to pages with similar names.
+* Add optional `encoding` argument to the `partition_(text/email/html)` functions.
+* Added Google Drive connector for ingest cli.
 
 ### Fixes
 
@@ -15,6 +18,7 @@
 
 ### Enhancements
 
+* Fully move from printing to logging.
 * `unstructured-ingest` now uses a default `--download_dir` of `$HOME/.cache/unstructured/ingest`
 rather than a "tmp-ingest-" dir in the working directory.
 

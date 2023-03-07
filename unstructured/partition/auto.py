@@ -72,4 +72,4 @@ def partition(
         return partition_json(filename=filename, file=file)
     else:
         msg = "Invalid file" if not filename else f"Invalid file {filename}"
-        raise ValueError(f"{msg}. File type not support in partition.")
+        raise ValueError(f"{msg}. The {filetype} file type is not supported in partition.")
