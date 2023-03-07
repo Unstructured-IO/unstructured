@@ -11,6 +11,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
+from unstructured.partition.common import exactly_one
 from unstructured.partition.text_type import (
     is_possible_narrative_text,
     is_possible_title,
@@ -41,15 +42,13 @@ def partition_pptx(
         metadata.
     """
 
-    if not any([filename, file]):
-        raise ValueError("One of filename or file must be specified.")
+    # Verify that only one of the arguments was provided
+    exactly_one(filename=filename, file=file)
 
-    if filename is not None and not file:
+    if filename is not None:
         presentation = pptx.Presentation(filename)
-    elif file is not None and not filename:
+    elif file is not None:
         presentation = pptx.Presentation(file)
-    else:
-        raise ValueError("Only one of filename or file can be specified.")
 
     elements: List[Element] = []
     metadata_filename = metadata_filename or filename

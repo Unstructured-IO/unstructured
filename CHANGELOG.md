@@ -1,11 +1,14 @@
-## 0.5.3-dev1
+## 0.5.3-dev4
 
 ### Enhancements
 
+* Simplify partitioning functions.
+* Improve logging for ingest CLI.
 * Add `FsspecConnector` to easily integrate any existing `fsspec` filesystem
 as a connector.
 * Rename `s3_connector.py` to `s3.py` for readability and consistency with the
 rest of the connectors.
+>>>>>>> upstream/main
 
 ### Features
 
@@ -16,6 +19,8 @@ rest of the connectors.
 with a private bucket with a PDF and works as expected)
 * Add `AzureBlobStorageConnector` (missing CLI integration and working example but has been tested
 with a private container with a PDF and works as expected)
+* Add optional `encoding` argument to the `partition_(text/email/html)` functions.
+* Added Google Drive connector for ingest cli.
 
 ### Fixes
 
@@ -23,6 +28,7 @@ with a private container with a PDF and works as expected)
 
 ### Enhancements
 
+* Fully move from printing to logging.
 * `unstructured-ingest` now uses a default `--download_dir` of `$HOME/.cache/unstructured/ingest`
 rather than a "tmp-ingest-" dir in the working directory.
 

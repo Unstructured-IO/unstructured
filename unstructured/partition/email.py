@@ -4,6 +4,8 @@ import sys
 from email.message import Message
 from typing import IO, Dict, List, Optional, Tuple, Union
 
+from unstructured.partition.common import exactly_one
+
 if sys.version_info < (3, 8):
     from typing_extensions import Final
 else:
@@ -139,6 +141,7 @@ def partition_email(
     file: Optional[IO] = None,
     text: Optional[str] = None,
     content_source: str = "text/html",
+    encoding: Optional[str] = None,
     include_headers: bool = False,
 ) -> List[Element]:
     """Partitions an .eml documents into its constituent elements.
@@ -153,35 +156,37 @@ def partition_email(
     content_source
         default: "text/html"
         other: "text/plain"
+    encoding
+        The encoding method used to decode the text input. If None, utf-8 will be used.
     """
+    if not encoding:
+        encoding = "utf-8"
+
     if content_source not in VALID_CONTENT_SOURCES:
         raise ValueError(
             f"{content_source} is not a valid value for content_source. "
             f"Valid content sources are: {VALID_CONTENT_SOURCES}",
         )
 
-    if not any([filename, file, text]):
-        raise ValueError("One of filename, file, or text must be specified.")
+    # Verify that only one of the arguments was provided
+    exactly_one(filename=filename, file=file, text=text)
 
-    if filename is not None and not file and not text:
+    if filename is not None:
         with open(filename) as f:
             msg = email.message_from_file(f)
 
-    elif file is not None and not filename and not text:
+    elif file is not None:
         file_content = file.read()
         if isinstance(file_content, bytes):
-            file_text = file_content.decode("utf-8")
+            file_text = file_content.decode(encoding)
         else:
             file_text = file_content
 
         msg = email.message_from_string(file_text)
 
-    elif text is not None and not filename and not file:
+    elif text is not None:
         _text: str = str(text)
         msg = email.message_from_string(_text)
-
-    else:
-        raise ValueError("Only one of filename, file, or text can be specified.")
 
     content_map: Dict[str, str] = {}
     for part in msg.walk():

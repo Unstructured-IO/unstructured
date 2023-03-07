@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import hashlib
+import logging
 import multiprocessing as mp
 import sys
 from pathlib import Path
@@ -11,6 +12,10 @@ from unstructured.ingest.connector.azure import (
     SimpleAzureBlobStorageConfig,
 )
 from unstructured.ingest.connector.github import GitHubConnector, SimpleGitHubConfig
+from unstructured.ingest.connector.google_drive import (
+    GoogleDriveConnector,
+    SimpleGoogleDriveConfig,
+)
 from unstructured.ingest.connector.reddit import RedditConnector, SimpleRedditConfig
 from unstructured.ingest.connector.s3 import S3Connector, SimpleS3Config
 from unstructured.ingest.connector.wikipedia import (
@@ -18,18 +23,28 @@ from unstructured.ingest.connector.wikipedia import (
     WikipediaConnector,
 )
 from unstructured.ingest.doc_processor.generalized import initialize, process_document
+from unstructured.ingest.logger import ingest_log_streaming_init, logger
 
 
 class MainProcess:
-    def __init__(self, doc_connector, doc_processor_fn, num_processes, reprocess):
+    def __init__(
+        self,
+        doc_connector,
+        doc_processor_fn,
+        num_processes,
+        reprocess,
+        verbose,
+    ):
         # initialize the reader and writer
         self.doc_connector = doc_connector
         self.doc_processor_fn = doc_processor_fn
         self.num_processes = num_processes
         self.reprocess = reprocess
+        self.verbose = verbose
 
     def initialize(self):
         """Slower initialization things: check connections, load things into memory, etc."""
+        ingest_log_streaming_init(logging.DEBUG if self.verbose else logging.INFO)
         self.doc_connector.initialize()
         initialize()
 
@@ -41,12 +56,12 @@ class MainProcess:
         docs = [doc for doc in docs if not doc.has_output()]
         num_docs_to_process = len(docs)
         if num_docs_to_process == 0:
-            print(
+            logger.info(
                 "All docs have structured outputs, nothing to do. Use --reprocess to process all.",
             )
             return None
         elif num_docs_to_process != num_docs_all:
-            print(
+            logger.info(
                 f"Skipping processing for {num_docs_all - num_docs_to_process} docs out of "
                 f"{num_docs_all} since their structured outputs already exist, use --reprocess to "
                 "reprocess those in addition to the unprocessed ones.",
@@ -69,8 +84,12 @@ class MainProcess:
         # block to remain in single process
         # self.doc_processor_fn(docs[0])
 
-        with mp.Pool(processes=self.num_processes) as pool:
-            results = pool.map(self.doc_processor_fn, docs)  # noqa: F841
+        with mp.Pool(
+            processes=self.num_processes,
+            initializer=ingest_log_streaming_init,
+            initargs=(logging.DEBUG if self.verbose else logging.INFO,),
+        ) as pool:
+            pool.map(self.doc_processor_fn, docs)  # noqa: F841
 
         self.cleanup()
 
@@ -103,6 +122,28 @@ class MainProcess:
     "--azure-connection-string",
     default=None,
     help="Azure Blob Storage or DataLake connection string.",
+)
+@click.option(
+    "--drive-id",
+    default=None,
+    help="Google Drive File or Folder ID.",
+)
+@click.option(
+    "--drive-service-account-key",
+    default=None,
+    help="Path to the Google Drive service account json file.",
+)
+@click.option(
+    "--drive-recursive",
+    is_flag=True,
+    default=False,
+    help="Recursively download files in folders from the Google Drive ID, "
+    "otherwise stop at the files in provided folder level.",
+)
+@click.option(
+    "--drive-extension",
+    default=None,
+    help="Filters the files to be processed based on extension e.g. .jpg, .docx, etc.",
 )
 @click.option(
     "--wikipedia-page-title",
@@ -210,6 +251,10 @@ def main(
     azure_url,
     azure_account_name,
     azure_connection_string,
+    drive_id,
+    drive_service_account_key,
+    drive_recursive,
+    drive_extension,
     wikipedia_page_title,
     wikipedia_auto_suggest,
     github_url,
@@ -232,7 +277,9 @@ def main(
     verbose,
 ):
     if not preserve_downloads and download_dir:
-        print("Warning: not preserving downloaded files but --download_dir is specified")
+        logger.warning(
+            "Not preserving downloaded files but --download_dir is specified",
+        )
     if not download_dir:
         cache_path = Path.home() / ".cache" / "unstructured" / "ingest"
         if not cache_path.exists():
@@ -253,12 +300,16 @@ def main(
             hashed_dir_name = hashlib.sha256(
                 wikipedia_page_title.encode("utf-8"),
             )
+        elif drive_id:
+            hashed_dir_name = hashlib.sha256(
+                drive_id.encode("utf-8"),
+            )
         else:
             raise ValueError("No connector-specific option was specified!")
         download_dir = cache_path / hashed_dir_name.hexdigest()[:10]
         if preserve_downloads:
-            print(
-                f"Warning: preserving downloaded files but --download-dir is not specified,"
+            logger.warning(
+                f"Preserving downloaded files but --download-dir is not specified,"
                 f" using {download_dir}",
             )
     if s3_url:
@@ -286,7 +337,6 @@ def main(
                 output_dir=structured_output_dir,
                 re_download=re_download,
                 preserve_downloads=preserve_downloads,
-                verbose=verbose,
             ),
         )
     elif github_url:
@@ -301,7 +351,6 @@ def main(
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
                 re_download=re_download,
-                verbose=verbose,
             ),
         )
     elif subreddit_name:
@@ -318,7 +367,6 @@ def main(
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
                 re_download=re_download,
-                verbose=verbose,
             ),
         )
     elif wikipedia_page_title:
@@ -331,14 +379,27 @@ def main(
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
                 re_download=re_download,
-                verbose=verbose,
+            ),
+        )
+    elif drive_id:
+        doc_connector = GoogleDriveConnector(  # type: ignore
+            config=SimpleGoogleDriveConfig(
+                drive_id=drive_id,
+                service_account_key=drive_service_account_key,
+                recursive=drive_recursive,
+                extension=drive_extension,
+                # defaults params:
+                download_dir=download_dir,
+                preserve_downloads=preserve_downloads,
+                output_dir=structured_output_dir,
+                re_download=re_download,
             ),
         )
     # Check for other connector-specific options here and define the doc_connector object
     # e.g. "elif azure_container:  ..."
 
     else:
-        print("No connector-specific option was specified!")
+        logger.error("No connector-specific option was specified!")
         sys.exit(1)
 
     MainProcess(
@@ -346,6 +407,7 @@ def main(
         doc_processor_fn=process_document,
         num_processes=num_processes,
         reprocess=reprocess,
+        verbose=verbose,
     ).run()
 
 
