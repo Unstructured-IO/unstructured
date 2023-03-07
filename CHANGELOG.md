@@ -1,4 +1,4 @@
-## 0.5.3-dev1
+## 0.5.3-dev3
 
 ### Enhancements
 
@@ -8,6 +8,8 @@
 
 * Add `--wikipedia-auto-suggest` argument to the ingest CLI to disable automatic redirection
   to pages with similar names.
+* Add optional `encoding` argument to the `partition_(text/email/html)` functions.
+* Added Google Drive connector for ingest cli.
 
 ### Fixes
 

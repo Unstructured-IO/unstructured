@@ -217,10 +217,11 @@ def detect_filetype(
             with open(filename, "rb") as f:
                 filetype = _detect_filetype_from_octet_stream(file=f)
 
+        extension = extension if extension else ""
         if filetype == FileType.UNK:
-            return FileType.ZIP
+            return EXT_TO_FILETYPE.get(extension.lower(), FileType.ZIP)
         else:
-            return filetype
+            return EXT_TO_FILETYPE.get(extension.lower(), filetype)
 
     logger.warning(
         f"MIME type was {mime_type}. This file type is not currently supported in unstructured.",
