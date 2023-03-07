@@ -1,0 +1,210 @@
+import io
+import json
+import os
+from ftplib import FTP, error_perm
+import urllib.request
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Dict
+
+from unstructured.ingest.interfaces import (
+    BaseConnector,
+    BaseConnectorConfig,
+    BaseIngestDoc,
+)
+
+
+DOMAIN = "ftp.ncbi.nlm.nih.gov"
+FTP_DOMAIN = f"ftp://{DOMAIN}"
+PMC_DIR = "pub/pmc"
+SUBSET_TYPES = ["oa_pdf", "oa_package"]
+
+
+@dataclass
+class SimpleBiomedConfig(BaseConnectorConfig):
+    """Connector config where drive_id is the id of the document to process or
+    the folder to process all documents from."""
+
+    # Google Drive Specific Options
+    path: str
+
+    # Standard Connector options
+    download_dir: str
+    # where to write structured data, with the directory structure matching drive path
+    output_dir: str
+    re_download: bool = False
+    preserve_downloads: bool = False
+    verbose: bool = False
+
+    def __post_init__(self):
+        self.path = self.path.strip("/").lower()
+        is_valid = any([self.path.startswith(type_) for type_ in SUBSET_TYPES])
+
+        if not is_valid:
+            raise ValueError(f"Path MUST start with one of: {', '.join(SUBSET_TYPES)}.")
+
+        self.is_file = False
+        self.is_dir = False
+
+        ftp = FTP(DOMAIN)
+        ftp.login()
+
+        path = Path(PMC_DIR) / self.path
+        response = None
+        try:
+            response = ftp.cwd(str(path))
+        except error_perm as exc:
+            if "no such file or directory" in exc.args[0].lower():
+                raise ValueError(f"The path: {path} is not valid.")
+            elif "not a directory" in exc.args[0].lower():
+                self.is_file = True
+            elif "command successful" in response:
+                self.is_dir = True
+            else:
+                raise ValueError("Something went wrong when validating the path: {path}.")
+
+
+@dataclass
+class BiomedIngestDoc(BaseIngestDoc):
+    config: SimpleBiomedConfig
+    file_meta: Dict
+
+    @property
+    def filename(self):
+        return Path(self.file_meta.get("download_filepath")).resolve()  # type: ignore
+
+    def _output_filename(self):
+        return Path(f"{self.file_meta.get('output_filepath')}.json").resolve()
+
+    def cleanup_file(self):
+        if not self.config.preserve_downloads and self.filename.is_file():
+            if self.config.verbose:
+                print(f"cleaning up {self}")
+            Path.unlink(self.filename)
+
+    def has_output(self):
+        """Determine if structured output for this doc already exists."""
+        output_filename = self._output_filename()
+        return output_filename.is_file() and output_filename.stat()
+
+    def get_file(self):
+        download_path = self.file_meta.get("download_filepath")
+
+        dir_ = Path(os.path.dirname(download_path))
+        if not dir_.is_dir():
+            if self.config.verbose:
+                print(f"Creating directory: {dir_}")
+
+            if dir_:
+                dir_.mkdir(parents=True, exist_ok=True)
+
+        urllib.request.urlretrieve(
+            self.file_meta.get("ftp_path"), self.file_meta.get("download_filepath"))
+
+        if self.config.verbose:
+            print(f"File downloaded: {self.file_meta.get('download_filepath')}.")
+
+
+    def write_result(self):
+        """Write the structured json result for this doc. result must be json serializable."""
+        output_filename = self._output_filename()
+        output_filename.parent.mkdir(parents=True, exist_ok=True)
+        with open(output_filename, "w") as output_f:
+            output_f.write(json.dumps(self.isd_elems_no_filename, ensure_ascii=False, indent=2))
+        print(f"Wrote {output_filename}")
+
+
+class BiomedConnector(BaseConnector):
+    """Objects of this class support fetching documents from Google Drive"""
+
+    def __init__(self, config):
+        self.config = config
+        self.cleanup_files = not self.config.preserve_downloads
+
+    def _list_objects(self):
+        files = []
+
+        def traverse(path, download_dir, output_dir):
+            full_path = Path(PMC_DIR) / path
+
+            if self.config.verbose:
+                print(f"Traversing directory: {full_path}")
+
+            ftp = FTP(DOMAIN)
+            ftp.login()
+
+            try:
+                response = ftp.cwd(str(full_path))
+            except error_perm:
+                raise ValueError(f"{full_path} is not a valid directory.")
+
+            if "command successful" in response.lower():
+                sub_paths = [path / p for p in ftp.nlst() if "PMC7234218" in p or "PMC5636404" in p or len(p) < 4]
+
+                if not sub_paths:
+                    return
+
+                ext = Path(sub_paths[0]).suffix
+                if ext:
+                    for sub_path in sub_paths:
+                        ftp_path = f"{FTP_DOMAIN}/{PMC_DIR}/{sub_path}"
+                        local_path = "/".join(str(sub_path).split("/")[1:])
+                        files.append({
+                            "ftp_path": ftp_path,
+                            "download_filepath": (
+                                    Path(self.config.download_dir) / local_path
+                            ).resolve(),
+                            "output_filepath": (
+                                    Path(self.config.output_dir) / local_path
+                            ).resolve()
+                        })
+
+                else:
+                    for sub_path in sub_paths:
+                        traverse(sub_path, download_dir, output_dir)
+
+            else:
+                raise ValueError(f"{full_path} is not a valid directory.")
+
+        ftp_path = f"{FTP_DOMAIN}/{PMC_DIR}/{self.config.path}"
+        if self.config.is_file:
+            local_path = "/".join(self.config.path.split("/")[1:])
+            return [
+                {
+                    "ftp_path": ftp_path,
+                    "download_filepath": (Path(self.config.download_dir) / local_path).resolve(),
+                    "output_filepath": (Path(self.config.output_dir) / local_path).resolve()
+                }
+            ]
+        else:
+            traverse(Path(self.config.path),
+                     Path(self.config.download_dir), Path(self.config.output_dir))
+
+        return files
+
+    def cleanup(self, cur_dir=None):
+        if not self.cleanup_files:
+            return
+
+        if cur_dir is None:
+            cur_dir = self.config.download_dir
+
+        if cur_dir is None or not Path(cur_dir).is_dir():
+            return
+
+        sub_dirs = os.listdir(cur_dir)
+        os.chdir(cur_dir)
+        for sub_dir in sub_dirs:
+            # don't traverse symlinks, not that there every should be any
+            if os.path.isdir(sub_dir) and not os.path.islink(sub_dir):
+                self.cleanup(sub_dir)
+        os.chdir("..")
+        if len(os.listdir(cur_dir)) == 0:
+            os.rmdir(cur_dir)
+
+    def initialize(self):
+        pass
+
+    def get_ingest_docs(self):
+        files = self._list_objects()
+        return [BiomedIngestDoc(self.config, file) for file in files]

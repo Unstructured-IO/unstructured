@@ -7,6 +7,7 @@ from pathlib import Path
 import click
 
 from unstructured.ingest.connector.github import GitHubConnector, SimpleGitHubConfig
+from unstructured.ingest.connector.biomed import BiomedConnector, SimpleBiomedConfig
 from unstructured.ingest.connector.reddit import RedditConnector, SimpleRedditConfig
 from unstructured.ingest.connector.s3_connector import S3Connector, SimpleS3Config
 from unstructured.ingest.connector.wikipedia import (
@@ -83,6 +84,11 @@ class MainProcess:
     is_flag=True,
     default=False,
     help="Connect to s3 without local AWS credentials.",
+)
+@click.option(
+    "--biomed-path",
+    default=None,
+    help='PMC Open Access FTP Directory Path.',
 )
 @click.option(
     "--wikipedia-page-title",
@@ -187,6 +193,7 @@ class MainProcess:
 @click.option("-v", "--verbose", is_flag=True, default=False)
 def main(
     s3_url,
+    biomed_path,
     wikipedia_page_title,
     wikipedia_auto_suggest,
     github_url,
@@ -286,6 +293,18 @@ def main(
             config=SimpleWikipediaConfig(
                 title=wikipedia_page_title,
                 auto_suggest=wikipedia_auto_suggest,
+                # defaults params:
+                download_dir=download_dir,
+                preserve_downloads=preserve_downloads,
+                output_dir=structured_output_dir,
+                re_download=re_download,
+                verbose=verbose,
+            ),
+        )
+    elif biomed_path:
+        doc_connector = BiomedConnector(  # type: ignore
+            config=SimpleBiomedConfig(
+                path=biomed_path,
                 # defaults params:
                 download_dir=download_dir,
                 preserve_downloads=preserve_downloads,
