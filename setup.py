@@ -85,6 +85,7 @@ setup(
         ],
         "reddit": ["praw"],
         "wikipedia": ["wikipedia"],
+        "google-drive": ["google-api-python-client"],
     },
     package_dir={"unstructured": "unstructured"},
     package_data={"unstructured": ["nlp/*.txt"]},
