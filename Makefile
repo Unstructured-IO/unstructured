@@ -62,6 +62,10 @@ install-ingest-s3:
 install-ingest-github:
 	pip install -r requirements/ingest-github.txt
 
+.PHONY: install-ingest-gitlab
+install-ingest-gitlab:
+	pip install -r requirements/ingest-gitlab.txt
+
 .PHONY: install-ingest-reddit
 install-ingest-reddit:
 	pip install -r requirements/ingest-reddit.txt
@@ -101,6 +105,7 @@ pip-compile:
 	pip-compile --upgrade --extra=s3        --output-file=requirements/ingest-s3.txt        requirements/base.txt setup.py
 	pip-compile --upgrade --extra=reddit    --output-file=requirements/ingest-reddit.txt    requirements/base.txt setup.py
 	pip-compile --upgrade --extra=github    --output-file=requirements/ingest-github.txt    requirements/base.txt setup.py
+	pip-compile --upgrade --extra=gitlab    --output-file=requirements/ingest-gitlab.txt    requirements/base.txt setup.py
 	pip-compile --upgrade --extra=wikipedia --output-file=requirements/ingest-wikipedia.txt requirements/base.txt setup.py
 	pip-compile --upgrade --extra=google-drive --output-file=requirements/ingest-google-drive.txt  requirements/base.txt setup.py
 
