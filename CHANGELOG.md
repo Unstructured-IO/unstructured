@@ -1,7 +1,8 @@
-## 0.5.3-dev3
+## 0.5.3-dev4
 
 ### Enhancements
 
+* Simplify partitioning functions.
 * Improve logging for ingest CLI.
 
 ### Features
