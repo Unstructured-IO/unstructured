@@ -39,8 +39,8 @@ def partition_json(
         elements = dict_to_elements(dict)
     except json.JSONDecodeError:
         raise ValueError("Not a valid json")
-    
+
     # NOTE(Nathan): in future PR, try extracting items that look like text
     #               if file_text is a valid json but not an unstructured json
-    
+
     return elements

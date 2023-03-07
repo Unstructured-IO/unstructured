@@ -1,8 +1,8 @@
 import os
 import pathlib
+import tempfile
 
 import pytest
-import tempfile
 
 from unstructured.partition.auto import partition
 from unstructured.partition.json import partition_json
@@ -31,10 +31,10 @@ def test_partition_json_from_filename(filename: str):
         test_path = os.path.join(tmpdir, filename + ".json")
         elements_to_json(elements, filename=test_path, indent=2)
         test_elements = partition_json(filename=test_path)
-        
+
     assert len(elements) > 0
     assert len(str(elements[0])) > 0
-    
+
     assert len(elements) == len(test_elements)
     for i in range(len(elements)):
         assert elements[i] == test_elements[i]
@@ -50,10 +50,10 @@ def test_partition_json_from_file(filename: str):
         elements_to_json(elements, filename=test_path, indent=2)
         with open(test_path) as f:
             test_elements = partition_json(file=f)
-        
+
     assert len(elements) > 0
     assert len(str(elements[0])) > 0
-    
+
     assert len(elements) == len(test_elements)
     for i in range(len(elements)):
         assert elements[i] == test_elements[i]
@@ -70,10 +70,10 @@ def test_partition_json_from_text(filename: str):
         with open(test_path) as f:
             text = f.read()
         test_elements = partition_json(text=text)
-        
+
     assert len(elements) > 0
     assert len(str(elements[0])) > 0
-    
+
     assert len(elements) == len(test_elements)
     for i in range(len(elements)):
         assert elements[i] == test_elements[i]
