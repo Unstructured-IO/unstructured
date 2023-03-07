@@ -1,8 +1,9 @@
-## 0.5.3-dev3
+## 0.5.3-dev4
 
 ### Enhancements
 
 * `auto.partition()` can now load Unstructured ISD json documents.
+* Simplify partitioning functions.
 * Improve logging for ingest CLI.
 
 ### Features
