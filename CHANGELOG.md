@@ -1,7 +1,8 @@
-***REMOVED******REMOVED*** 0.5.3-dev3
+***REMOVED******REMOVED*** 0.5.3-dev4
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
 
+* Simplify partitioning functions.
 * Improve logging for ingest CLI.
 
 ***REMOVED******REMOVED******REMOVED*** Features
