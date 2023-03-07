@@ -1,15 +1,4 @@
-## 0.5.4
-
-### Enhancements
-
-### Features
-
-* Added Google Drive connector for ingest cli.
-
-### Fixes
-
-
-## 0.5.3-dev0
+## 0.5.3-dev2
 
 ### Enhancements
 
@@ -17,6 +6,8 @@
 
 * Add `--wikipedia-auto-suggest` argument to the ingest CLI to disable automatic redirection
   to pages with similar names.
+* Add optional `encoding` argument to the `partition_(text/email/html)` functions.
+* Added Google Drive connector for ingest cli.
 
 ### Fixes
 
