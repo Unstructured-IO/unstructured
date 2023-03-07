@@ -10,7 +10,6 @@ try:
 except ImportError:  ***REMOVED*** pragma: nocover
     LIBMAGIC_AVAILABLE = False  ***REMOVED*** pragma: nocover
 
-
 from unstructured.logger import logger
 from unstructured.nlp.patterns import EMAIL_HEAD_RE
 
@@ -224,7 +223,7 @@ def detect_filetype(
         else:
             return EXT_TO_FILETYPE.get(extension.lower(), filetype)
 
-    logger.warn(
+    logger.warning(
         f"MIME type was {mime_type}. This file type is not currently supported in unstructured.",
     )
     return FileType.UNK

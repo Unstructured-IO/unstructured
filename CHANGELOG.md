@@ -1,6 +1,8 @@
-***REMOVED******REMOVED*** 0.5.3-dev2
+***REMOVED******REMOVED*** 0.5.3-dev3
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
+
+* Improve logging for ingest CLI.
 
 ***REMOVED******REMOVED******REMOVED*** Features
 
@@ -15,6 +17,7 @@
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
 
+* Fully move from printing to logging.
 * `unstructured-ingest` now uses a default `--download_dir` of `$HOME/.cache/unstructured/ingest`
 rather than a "tmp-ingest-" dir in the working directory.
 

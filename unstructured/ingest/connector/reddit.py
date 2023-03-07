@@ -9,6 +9,7 @@ from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
 )
+from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
@@ -30,7 +31,6 @@ class SimpleRedditConfig(BaseConnectorConfig):
     output_dir: str
     preserve_downloads: bool = False
     re_download: bool = False
-    verbose: bool = False
 
     def __post_init__(self):
         if self.num_posts <= 0:
@@ -55,20 +55,17 @@ class RedditIngestDoc(BaseIngestDoc):
     def cleanup_file(self):
         """Removes the local copy the file (or anything else) after successful processing."""
         if not self.config.preserve_downloads:
-            if self.config.verbose:
-                print(f"cleaning up {self}")
+            logger.debug(f"Cleaning up {self}")
             os.unlink(self.filename)
 
     def get_file(self):
         """Fetches the "remote" doc and stores it locally on the filesystem."""
         self._create_full_tmp_dir_path()
         if not self.config.re_download and self.filename.is_file() and self.filename.stat():
-            if self.config.verbose:
-                print(f"File exists: {self.filename}, skipping download")
+            logger.debug(f"File exists: {self.filename}, skipping download")
             return
 
-        if self.config.verbose:
-            print(f"fetching {self} - PID: {os.getpid()}")
+        logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         ***REMOVED*** Write the title plus the body, if any
         text_to_write = f"***REMOVED*** {self.post.title}\n{self.post.selftext}"
         with open(self.filename, "w", encoding="utf8") as f:
@@ -85,7 +82,7 @@ class RedditIngestDoc(BaseIngestDoc):
         output_filename.parent.mkdir(parents=True, exist_ok=True)
         with open(output_filename, "w", encoding="utf8") as output_f:
             json.dump(self.isd_elems_no_filename, output_f, ensure_ascii=False, indent=2)
-        print(f"Wrote {output_filename}")
+        logger.info(f"Wrote {output_filename}")
 
 
 @requires_dependencies(["praw"], extras="reddit")

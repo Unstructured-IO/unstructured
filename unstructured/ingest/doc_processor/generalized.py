@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Optional
 from unstructured_inference.models.detectron2 import MODEL_TYPES
 
 from unstructured.ingest.interfaces import BaseIngestDoc as IngestDoc
-from unstructured.logger import logger
+from unstructured.ingest.logger import logger
 
 
 def initialize():
