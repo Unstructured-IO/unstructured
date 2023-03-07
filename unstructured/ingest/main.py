@@ -40,6 +40,7 @@ class MainProcess:
 
     def initialize(self):
         """Slower initialization things: check connections, load things into memory, etc."""
+        ingest_log_streaming_init(logging.DEBUG if self.verbose else logging.INFO)
         self.doc_connector.initialize()
         initialize()
 
