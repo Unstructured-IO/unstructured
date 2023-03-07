@@ -79,7 +79,6 @@ class GitHubIngestDoc(BaseIngestDoc):
         """Removes the local copy the file (or anything else) after successful processing."""
         if not self.config.preserve_downloads:
             logger.debug(f"Cleaning up {self}")
-            breakpoint()
             os.unlink(self.filename)
 
     def get_file(self):
