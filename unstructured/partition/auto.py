@@ -69,4 +69,4 @@ def partition(
         return partition_pptx(filename=filename, file=file, include_page_breaks=include_page_breaks)
     else:
         msg = "Invalid file" if not filename else f"Invalid file {filename}"
-        raise ValueError(f"{msg}. File type not support in partition.")
+        raise ValueError(f"{msg}. The {filetype} file type is not supported in partition.")
