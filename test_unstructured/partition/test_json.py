@@ -85,18 +85,23 @@ def test_partition_json_raises_with_none_specified():
 
 
 def test_partition_json_raises_with_too_many_specified():
-    filename = os.path.join(DIRECTORY, "test_json_output", "fake-text.json")
-    with open(filename) as f:
-        text = f.read()
+    path = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-text.txt")
+    elements = partition(filename=path)
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        test_path = os.path.join(tmpdir, "fake-text.txt.json")
+        elements_to_json(elements, filename=test_path, indent=2)
+        with open(test_path) as f:
+            text = f.read()
+        
+    with pytest.raises(ValueError):
+        partition_json(filename=test_path, file=f)
 
     with pytest.raises(ValueError):
-        partition_json(filename=filename, file=f)
-
-    with pytest.raises(ValueError):
-        partition_json(filename=filename, text=text)
+        partition_json(filename=test_path, text=text)
 
     with pytest.raises(ValueError):
         partition_json(file=f, text=text)
 
     with pytest.raises(ValueError):
-        partition_json(filename=filename, file=f, text=text)
+        partition_json(filename=test_path, file=f, text=text)
