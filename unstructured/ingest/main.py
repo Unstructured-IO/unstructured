@@ -7,6 +7,10 @@ from pathlib import Path
 import click
 
 from unstructured.ingest.connector.github import GitHubConnector, SimpleGitHubConfig
+from unstructured.ingest.connector.google_drive import (
+    GoogleDriveConnector,
+    SimpleGoogleDriveConfig,
+)
 from unstructured.ingest.connector.reddit import RedditConnector, SimpleRedditConfig
 from unstructured.ingest.connector.s3_connector import S3Connector, SimpleS3Config
 from unstructured.ingest.connector.wikipedia import (
@@ -83,6 +87,28 @@ class MainProcess:
     is_flag=True,
     default=False,
     help="Connect to s3 without local AWS credentials.",
+)
+@click.option(
+    "--drive-id",
+    default=None,
+    help="Google Drive File or Folder ID.",
+)
+@click.option(
+    "--drive-service-account-key",
+    default=None,
+    help="Path to the Google Drive service account json file.",
+)
+@click.option(
+    "--drive-recursive",
+    is_flag=True,
+    default=False,
+    help="Recursively download files in folders from the Google Drive ID, "
+    "otherwise stop at the files in provided folder level.",
+)
+@click.option(
+    "--drive-extension",
+    default=None,
+    help="Filters the files to be processed based on extension e.g. .jpg, .docx, etc.",
 )
 @click.option(
     "--wikipedia-page-title",
@@ -187,6 +213,10 @@ class MainProcess:
 @click.option("-v", "--verbose", is_flag=True, default=False)
 def main(
     s3_url,
+    drive_id,
+    drive_service_account_key,
+    drive_recursive,
+    drive_extension,
     wikipedia_page_title,
     wikipedia_auto_suggest,
     github_url,
@@ -227,6 +257,10 @@ def main(
         elif wikipedia_page_title:
             hashed_dir_name = hashlib.sha256(
                 wikipedia_page_title.encode("utf-8"),
+            )
+        elif drive_id:
+            hashed_dir_name = hashlib.sha256(
+                drive_id.encode("utf-8"),
             )
         else:
             raise ValueError("No connector-specific option was specified!")
@@ -286,6 +320,21 @@ def main(
             config=SimpleWikipediaConfig(
                 title=wikipedia_page_title,
                 auto_suggest=wikipedia_auto_suggest,
+                ***REMOVED*** defaults params:
+                download_dir=download_dir,
+                preserve_downloads=preserve_downloads,
+                output_dir=structured_output_dir,
+                re_download=re_download,
+                verbose=verbose,
+            ),
+        )
+    elif drive_id:
+        doc_connector = GoogleDriveConnector(  ***REMOVED*** type: ignore
+            config=SimpleGoogleDriveConfig(
+                drive_id=drive_id,
+                service_account_key=drive_service_account_key,
+                recursive=drive_recursive,
+                extension=drive_extension,
                 ***REMOVED*** defaults params:
                 download_dir=download_dir,
                 preserve_downloads=preserve_downloads,
