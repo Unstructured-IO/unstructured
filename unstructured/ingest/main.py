@@ -102,7 +102,7 @@ class MainProcess:
 @click.option(
     "--azure-connection-string",
     default=None,
-    help="Azure Blob Storage or DataLake connection strin.",
+    help="Azure Blob Storage or DataLake connection string.",
 )
 @click.option(
     "--wikipedia-page-title",
