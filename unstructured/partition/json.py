@@ -31,18 +31,16 @@ def partition_json(
         raise ValueError("Only one of filename, file, or text can be specified.")
 
     # NOTE(Nathan): we expect file_text to be a list of dicts (optimization)
-    if re.match(LIST_OF_DICTS_PATTERN, file_text):
-        try:
-            if filename is not None:
-                elements = elements_from_json(filename)
-            else:
-                dict = json.load(file) if file is not None else json.loads(file_text)
-                elements = dict_to_elements(dict)
-        except json.JSONDecodeError:
-            raise ValueError("Not a valid json")
-    else:
-        # NOTE(Nathan): in future PR, try extracting items that look like text
-        #               if file_text is a valid json but not an unstructured json
-        raise ValueError("Not an unstructured json")
+    if not re.match(LIST_OF_DICTS_PATTERN, file_text):
+        raise ValueError("Json schema does not match the Unstructured schema")
 
+    try:
+        dict = json.loads(file_text)
+        elements = dict_to_elements(dict)
+    except json.JSONDecodeError:
+        raise ValueError("Not a valid json")
+    
+    # NOTE(Nathan): in future PR, try extracting items that look like text
+    #               if file_text is a valid json but not an unstructured json
+    
     return elements
