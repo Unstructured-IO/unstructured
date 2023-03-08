@@ -110,6 +110,7 @@ jobs:
         make check-coverage
         make install-ingest-s3
         make install-ingest-github
+        make install-ingest-gitlab
         make install-ingest-wikipedia
         ./test_unstructured_ingest/test-ingest.sh
 

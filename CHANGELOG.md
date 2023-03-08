@@ -12,6 +12,7 @@
 * Add setup script for Amazon Linux 2
 * Add optional `encoding` argument to the `partition_(text/email/html)` functions.
 * Added Google Drive connector for ingest cli.
+* Added Gitlab connector for ingest cli.
 
 ### Fixes
 
@@ -281,4 +282,3 @@ of an email.
 ## 0.2.0
 
 * Initial release of unstructured
-
