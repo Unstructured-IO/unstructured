@@ -10,7 +10,7 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --github-url Unstructured-IO/unstructured \
-    --github-branch main \
+    --git-branch main \
     --structured-output-dir github-ingest-output \
     --num-processes 2 \
     --verbose
