@@ -303,8 +303,8 @@ def main(
     if s3_url:
         doc_connector = S3Connector(
             config=SimpleS3Config(
-                path=s3_url,
-                access_kwargs={"anon": s3_anonymous},
+                s3_url=s3_url,
+                anonymous=s3_anonymous,
                 download_dir=download_dir,
                 output_dir=structured_output_dir,
                 re_download=re_download,
