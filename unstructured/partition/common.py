@@ -52,12 +52,17 @@ def layout_list_to_list_items(text: str, coordinates: List[float]) -> List[Eleme
     list_items: List[Element] = []
     for text_segment in split_items:
         if len(text_segment.strip()) > 0:
-            list_items.append(ListItem(text=text_segment.strip(), coordinates=coordinates))
+            list_items.append(
+                ListItem(text=text_segment.strip(), coordinates=coordinates),
+            )
 
     return list_items
 
 
-def document_to_element_list(document, include_page_breaks: bool = False) -> List[Element]:
+def document_to_element_list(
+    document,
+    include_page_breaks: bool = False,
+) -> List[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
     elements: List[Element] = []
     num_pages = len(document.pages)
@@ -124,3 +129,19 @@ on your system and try again.
 - Mac: https://formulae.brew.sh/cask/libreoffice
 - Debian: https://wiki.debian.org/LibreOffice""",
         )
+
+
+def exactly_one(**kwargs) -> None:
+    """
+    Verify arguments; exactly one of all keyword arguments must not be None.
+
+    Example:
+        >>> exactly_one(filename=filename, file=file, text=text, url=url)
+    """
+    if sum([(arg is not None) for arg in kwargs.values()]) != 1:
+        names = list(kwargs.keys())
+        if len(names) > 1:
+            message = f"Exactly one of {', '.join(names[:-1])} and {names[-1]} must be specified."
+        else:
+            message = f"{names[0]} must be specified."
+        raise ValueError(message)
