@@ -65,7 +65,7 @@ def chunk_by_attention_window(
                 f"The maximum number of tokens is {max_chunk_size}. "
                 "Consider using a different split_function to reduce the size "
                 "of the segments under consideration. The text that caused the "
-                "error is: \n\n{segment}",
+                f"error is: \n\n{segment}",
             )
 
         if chunk_size + num_tokens > max_chunk_size or i == (num_splits - 1):
