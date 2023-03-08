@@ -83,6 +83,7 @@ class FileType(Enum):
     EML = 40
     RTF = 41
     TXT = 42
+    JSON = 43
 
     ***REMOVED*** Markup Types
     HTML = 50
@@ -116,6 +117,7 @@ EXT_TO_FILETYPE = {
     ".xls": FileType.XLS,
     ".ppt": FileType.PPT,
     ".rtf": FileType.RTF,
+    ".json": FileType.JSON,
 }
 
 
@@ -153,6 +155,9 @@ def detect_filetype(
 
     if mime_type == "application/pdf":
         return FileType.PDF
+
+    elif mime_type == "application/json":
+        return FileType.JSON
 
     elif mime_type in DOCX_MIME_TYPES:
         return FileType.DOCX
