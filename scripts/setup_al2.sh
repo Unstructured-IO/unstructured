@@ -23,7 +23,6 @@ fi
 
 # Set user account for which we're configuring the tools
 USER_ACCOUNT=$1
-USER_ACCOUNT_HOME=$(sudo -u "$USER_ACCOUNT" sh -c 'echo $HOME')
 
 # Update existing packages
 $sudo $pac update -y
