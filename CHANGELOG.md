@@ -14,7 +14,6 @@ rest of the connectors.
 
 * Add `--wikipedia-auto-suggest` argument to the ingest CLI to disable automatic redirection
   to pages with similar names.
-* Update `S3Connector` to inherit from `FsspecConnector`
 * Add optional `encoding` argument to the `partition_(text/email/html)` functions.
 * Added Google Drive connector for ingest cli.
 * Added Gitlab connector for ingest cli.
