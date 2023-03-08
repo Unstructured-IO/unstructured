@@ -8,6 +8,7 @@ from pathlib import Path
 import click
 
 from unstructured.ingest.connector.github import GitHubConnector, SimpleGitHubConfig
+from unstructured.ingest.connector.gitlab import GitLabConnector, SimpleGitLabConfig
 from unstructured.ingest.connector.google_drive import (
     GoogleDriveConnector,
     SimpleGoogleDriveConfig,
@@ -85,7 +86,7 @@ class MainProcess:
             initializer=ingest_log_streaming_init,
             initargs=(logging.DEBUG if self.verbose else logging.INFO,),
         ) as pool:
-            pool.map(self.doc_processor_fn, docs)  # noqa: F841
+            pool.map(self.doc_processor_fn, docs)
 
         self.cleanup()
 
@@ -143,18 +144,25 @@ class MainProcess:
     ' or a repository owner/name pair, e.g. "Unstructured-IO/unstructured"',
 )
 @click.option(
-    "--github-access-token",
+    "--gitlab-url",
     default=None,
-    help="A GitHub access token, see https://docs.github.com/en/authentication",
+    help='URL to GitLab repository, e.g. "https://gitlab.com/gitlab-com/content-sites/docsy-gitlab"'
+    ', or a repository path, e.g. "gitlab-com/content-sites/docsy-gitlab"',
 )
 @click.option(
-    "--github-branch",
+    "--git-access-token",
+    default=None,
+    help="A GitHub or GitLab access token, see https://docs.github.com/en/authentication "
+    " or https://docs.gitlab.com/ee/api/rest/index.html#personalprojectgroup-access-tokens",
+)
+@click.option(
+    "--git-branch",
     default=None,
     help="The branch for which to fetch files from. If not given,"
     " the default repository branch is used.",
 )
 @click.option(
-    "--github-file-glob",
+    "--git-file-glob",
     default=None,
     help="A comma-separated list of file globs to limit which types of files are accepted,"
     " e.g. '*.html,*.txt'",
@@ -235,9 +243,10 @@ def main(
     wikipedia_page_title,
     wikipedia_auto_suggest,
     github_url,
-    github_access_token,
-    github_branch,
-    github_file_glob,
+    gitlab_url,
+    git_access_token,
+    git_branch,
+    git_file_glob,
     subreddit_name,
     reddit_client_id,
     reddit_client_secret,
@@ -265,7 +274,11 @@ def main(
             hashed_dir_name = hashlib.sha256(s3_url.encode("utf-8"))
         elif github_url:
             hashed_dir_name = hashlib.sha256(
-                f"{github_url}_{github_branch}".encode("utf-8"),
+                f"{github_url}_{git_branch}".encode("utf-8"),
+            )
+        elif gitlab_url:
+            hashed_dir_name = hashlib.sha256(
+                f"{gitlab_url}_{git_branch}".encode("utf-8"),
             )
         elif subreddit_name:
             hashed_dir_name = hashlib.sha256(
@@ -302,10 +315,24 @@ def main(
     elif github_url:
         doc_connector = GitHubConnector(  # type: ignore
             config=SimpleGitHubConfig(
-                github_url=github_url,
-                github_access_token=github_access_token,
-                github_branch=github_branch,
-                github_file_glob=github_file_glob,
+                url=github_url,
+                access_token=git_access_token,
+                branch=git_branch,
+                file_glob=git_file_glob,
+                # defaults params:
+                download_dir=download_dir,
+                preserve_downloads=preserve_downloads,
+                output_dir=structured_output_dir,
+                re_download=re_download,
+            ),
+        )
+    elif gitlab_url:
+        doc_connector = GitLabConnector(  # type: ignore
+            config=SimpleGitLabConfig(
+                url=gitlab_url,
+                access_token=git_access_token,
+                branch=git_branch,
+                file_glob=git_file_glob,
                 # defaults params:
                 download_dir=download_dir,
                 preserve_downloads=preserve_downloads,
