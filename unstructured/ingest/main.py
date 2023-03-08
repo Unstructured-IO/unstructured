@@ -296,7 +296,6 @@ def main(
                 output_dir=structured_output_dir,
                 re_download=re_download,
                 preserve_downloads=preserve_downloads,
-                verbose=verbose,
             ),
         )
     elif github_url:
