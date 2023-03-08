@@ -2,6 +2,7 @@
 
 ### Enhancements
 
+* `auto.partition()` can now load Unstructured ISD json documents.
 * Simplify partitioning functions.
 * Improve logging for ingest CLI.
 * Add `FsspecConnector` to easily integrate any existing `fsspec` filesystem
