@@ -66,7 +66,7 @@ pillow==9.4.0
     # via
     #   python-pptx
     #   unstructured (setup.py)
-pydantic==1.10.5
+pydantic==1.10.6
     # via argilla
 python-dateutil==2.8.2
     # via pandas

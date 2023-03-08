@@ -55,7 +55,7 @@ filelock==3.9.0
     # via virtualenv
 fqdn==1.5.1
     # via jsonschema
-identify==2.5.18
+identify==2.5.19
     # via pre-commit
 idna==3.4
     # via

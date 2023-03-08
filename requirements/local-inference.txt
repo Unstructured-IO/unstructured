@@ -62,7 +62,7 @@ httpcore==0.16.3
     # via httpx
 httpx==0.23.3
     # via argilla
-huggingface-hub==0.12.1
+huggingface-hub==0.13.0
     # via
     #   timm
     #   transformers
@@ -157,13 +157,13 @@ pillow==9.4.0
     #   unstructured (setup.py)
 portalocker==2.7.0
     # via iopath
-protobuf==4.22.0
+protobuf==4.22.1
     # via onnxruntime
 pycocotools==2.0.6
     # via effdet
 pycparser==2.21
     # via cffi
-pydantic==1.10.5
+pydantic==1.10.6
     # via
     #   argilla
     #   fastapi

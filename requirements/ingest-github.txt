@@ -111,7 +111,7 @@ pillow==9.4.0
     #   unstructured (setup.py)
 pycparser==2.21
     # via cffi
-pydantic==1.10.5
+pydantic==1.10.6
     # via
     #   -r requirements/base.txt
     #   argilla

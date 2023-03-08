@@ -125,7 +125,7 @@ pillow==9.4.0
     #   -r requirements/base.txt
     #   python-pptx
     #   unstructured (setup.py)
-protobuf==4.22.0
+protobuf==4.22.1
     # via
     #   google-api-core
     #   googleapis-common-protos
@@ -135,7 +135,7 @@ pyasn1==0.4.8
     #   rsa
 pyasn1-modules==0.2.8
     # via google-auth
-pydantic==1.10.5
+pydantic==1.10.6
     # via
     #   -r requirements/base.txt
     #   argilla

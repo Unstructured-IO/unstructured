@@ -23,7 +23,7 @@ certifi==2022.12.7
     #   httpx
     #   requests
     #   unstructured (setup.py)
-charset-normalizer==3.0.1
+charset-normalizer==3.1.0
     # via
     #   -r requirements/base.txt
     #   requests
@@ -31,10 +31,6 @@ click==8.1.3
     # via
     #   -r requirements/base.txt
     #   nltk
-colorama==0.4.6
-    # via
-    #   click
-    #   tqdm
 deprecated==1.2.13
     # via
     #   -r requirements/base.txt
@@ -110,7 +106,7 @@ pillow==9.4.0
     #   -r requirements/base.txt
     #   python-pptx
     #   unstructured (setup.py)
-pydantic==1.10.5
+pydantic==1.10.6
     # via
     #   -r requirements/base.txt
     #   argilla
@@ -162,7 +158,7 @@ sniffio==1.3.0
     #   anyio
     #   httpcore
     #   httpx
-tqdm==4.64.1
+tqdm==4.65.0
     # via
     #   -r requirements/base.txt
     #   argilla

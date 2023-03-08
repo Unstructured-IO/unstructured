@@ -36,7 +36,7 @@ httpcore==0.16.3
     # via httpx
 httpx==0.23.3
     # via argilla
-huggingface-hub==0.12.1
+huggingface-hub==0.13.0
     # via transformers
 idna==3.4
     # via
@@ -82,7 +82,7 @@ pillow==9.4.0
     # via
     #   python-pptx
     #   unstructured (setup.py)
-pydantic==1.10.5
+pydantic==1.10.6
     # via argilla
 python-dateutil==2.8.2
     # via pandas

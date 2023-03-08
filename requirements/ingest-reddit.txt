@@ -110,7 +110,7 @@ praw==7.7.0
     # via unstructured (setup.py)
 prawcore==2.3.0
     # via praw
-pydantic==1.10.5
+pydantic==1.10.6
     # via
     #   -r requirements/base.txt
     #   argilla
