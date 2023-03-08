@@ -1,4 +1,4 @@
-## 0.5.3-dev4
+## 0.5.3-dev5
 
 ### Enhancements
 
@@ -16,6 +16,7 @@ rest of the connectors.
 * Update `S3Connector` to inherit from `FsspecConnector`
 * Add optional `encoding` argument to the `partition_(text/email/html)` functions.
 * Added Google Drive connector for ingest cli.
+* Added Gitlab connector for ingest cli.
 
 ### Fixes
 
@@ -285,4 +286,3 @@ of an email.
 ## 0.2.0
 
 * Initial release of unstructured
-

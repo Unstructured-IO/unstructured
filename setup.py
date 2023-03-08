@@ -47,7 +47,7 @@ setup(
     packages=find_packages(),
     version=__version__,
     entry_points={
-        'console_scripts': ['unstructured-ingest=unstructured.ingest.main:main'],
+        "console_scripts": ["unstructured-ingest=unstructured.ingest.main:main"],
     },
     install_requires=[
         "argilla",
@@ -79,10 +79,11 @@ setup(
         ],
         "s3": ["s3fs", "fsspec"],
         "github": [
-            # NOTE - pygithub at 1.58.0 fails due to https://github.com/PyGithub/PyGithub/issues/2436
+            # NOTE - pygithub==1.58.0 fails due to https://github.com/PyGithub/PyGithub/issues/2436
             # In the future, we can update this to pygithub>1.58.0
             "pygithub==1.57.0",
         ],
+        "gitlab": ["python-gitlab"],
         "reddit": ["praw"],
         "wikipedia": ["wikipedia"],
         "google-drive": ["google-api-python-client"],

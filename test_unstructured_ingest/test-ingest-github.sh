@@ -12,15 +12,15 @@ if [[ "$CI" == "true" ]]; then
 fi
 
 
-PYTHONPATH=. ./unstructured/ingest/main.py --github-url dcneiner/Downloadify --github-file-glob '*.html,*.txt' --structured-output-dir github-downloadify-output --verbose
+PYTHONPATH=. ./unstructured/ingest/main.py --github-url dcneiner/Downloadify --git-file-glob '*.html,*.txt' --structured-output-dir github-downloadify-output --verbose
 
 if ! diff -ru github-downloadify-output test_unstructured_ingest/expected-structured-output/github-downloadify ; then
    echo
    echo "There are differences from the previously checked-in structured outputs."
-   echo 
+   echo
    echo "If these differences are acceptable, copy the outputs from"
    echo "github-downloadify-output/ to test_unstructured_ingest/expected-structured-output/github-downloadify/ after running"
-   echo 
+   echo
    echo "  PYTHONPATH=. ./unstructured/ingest/main.py --github-url dcneiner/Downloadify --github-file-glob '*.html,*.txt' --structured-output-dir github-downloadify-output --verbose"
    echo
    exit 1
