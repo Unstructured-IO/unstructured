@@ -6,8 +6,8 @@ from pathlib import Path
 
 import click
 
-from unstructured.ingest.connector.github import GitHubConnector, SimpleGitHubConfig
 from unstructured.ingest.connector.biomed import BiomedConnector, SimpleBiomedConfig
+from unstructured.ingest.connector.github import GitHubConnector, SimpleGitHubConfig
 from unstructured.ingest.connector.reddit import RedditConnector, SimpleRedditConfig
 from unstructured.ingest.connector.s3_connector import S3Connector, SimpleS3Config
 from unstructured.ingest.connector.wikipedia import (
@@ -88,7 +88,27 @@ class MainProcess:
 @click.option(
     "--biomed-path",
     default=None,
-    help='PMC Open Access FTP Directory Path.',
+    help="PMC Open Access FTP Directory Path.",
+)
+@click.option(
+    "--biomed-api-id",
+    default=None,
+    help="ID parameter for OA Web Service API.",
+)
+@click.option(
+    "--biomed-api-from",
+    default=None,
+    help="From parameter for OA Web Service API.",
+)
+@click.option(
+    "--biomed-api-until",
+    default=None,
+    help="Until parameter for OA Web Service API.",
+)
+@click.option(
+    "--biomed-api-format",
+    default=None,
+    help="Format parameter for OA Web Service API.",
 )
 @click.option(
     "--wikipedia-page-title",
@@ -194,6 +214,10 @@ class MainProcess:
 def main(
     s3_url,
     biomed_path,
+    biomed_api_id,
+    biomed_api_from,
+    biomed_api_until,
+    biomed_api_format,
     wikipedia_page_title,
     wikipedia_auto_suggest,
     github_url,
@@ -301,10 +325,14 @@ def main(
                 verbose=verbose,
             ),
         )
-    elif biomed_path:
+    elif biomed_path or biomed_api_id or biomed_api_from or biomed_api_until or biomed_api_format:
         doc_connector = BiomedConnector(  # type: ignore
             config=SimpleBiomedConfig(
                 path=biomed_path,
+                id_=biomed_api_id,
+                from_=biomed_api_from,
+                until=biomed_api_until,
+                format=biomed_api_format,
                 # defaults params:
                 download_dir=download_dir,
                 preserve_downloads=preserve_downloads,
