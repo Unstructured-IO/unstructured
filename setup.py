@@ -47,7 +47,7 @@ setup(
     packages=find_packages(),
     version=__version__,
     entry_points={
-        'console_scripts': ['unstructured-ingest=unstructured.ingest.main:main'],
+        "console_scripts": ["unstructured-ingest=unstructured.ingest.main:main"],
     },
     install_requires=[
         "argilla",
@@ -79,10 +79,11 @@ setup(
         ],
         "s3": ["boto3"],
         "github": [
-            ***REMOVED*** NOTE - pygithub at 1.58.0 fails due to https://github.com/PyGithub/PyGithub/issues/2436
+            ***REMOVED*** NOTE - pygithub==1.58.0 fails due to https://github.com/PyGithub/PyGithub/issues/2436
             ***REMOVED*** In the future, we can update this to pygithub>1.58.0
             "***REMOVED***",
         ],
+        "gitlab": ["python-gitlab"],
         "reddit": ["praw"],
         "wikipedia": ["wikipedia"],
         "google-drive": ["google-api-python-client"],

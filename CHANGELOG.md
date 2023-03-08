@@ -1,4 +1,4 @@
-***REMOVED******REMOVED*** 0.5.3-dev4
+***REMOVED******REMOVED*** 0.5.3-dev5
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
 
@@ -11,6 +11,7 @@
   to pages with similar names.
 * Add optional `encoding` argument to the `partition_(text/email/html)` functions.
 * Added Google Drive connector for ingest cli.
+* Added Gitlab connector for ingest cli.
 
 ***REMOVED******REMOVED******REMOVED*** Fixes
 
@@ -280,4 +281,3 @@ of an email.
 ***REMOVED******REMOVED*** 0.2.0
 
 * Initial release of unstructured
-
