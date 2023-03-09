@@ -161,34 +161,43 @@ def _partition_pdf_with_pdfminer(
     from pdfminer.utils import open_filename
 
     if filename:
-        elements = []
         with open_filename(filename, "rb") as fp:
-            fp = cast(BinaryIO, fp)  # we opened in binary mode
-            rsrcmgr = PDFResourceManager(caching=False)
-            laparams = LAParams()
-
-            for page in PDFPage.get_pages(fp):
-                with StringIO() as output_string:
-                    device = TextConverter(
-                        rsrcmgr, output_string, codec=encoding, laparams=laparams
-                    )
-                    interpreter = PDFPageInterpreter(rsrcmgr, device)
-                    interpreter.process_page(page)
-                    text = output_string.getvalue()
-                    elements.extend(partition_text(text=text))
+            fp = cast(BinaryIO, fp)
+            elements = _process_pdf_miner_pages(fp, encoding)
 
     elif file:
-        elements = []
         fp = cast(BinaryIO, file)  # we opened in binary mode
-        rsrcmgr = PDFResourceManager(caching=False)
-        laparams = LAParams()
+        elements = _process_pdf_miner_pages(fp, encoding)
 
-        for page in PDFPage.get_pages(fp):
-            with StringIO() as output_string:
-                device = TextConverter(rsrcmgr, output_string, codec=encoding, laparams=laparams)
-                interpreter = PDFPageInterpreter(rsrcmgr, device)
-                interpreter.process_page(page)
-                text = output_string.getvalue()
-                elements.extend(partition_text(text=text))
+    return elements
 
-        return elements
+
+def _process_pdf_miner_pages(fp, encoding):
+    from io import StringIO
+    from typing import BinaryIO, cast
+
+    from pdfminer.converter import TextConverter
+    from pdfminer.layout import LAParams
+    from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
+    from pdfminer.pdfpage import PDFPage
+    from pdfminer.utils import open_filename
+
+    rsrcmgr = PDFResourceManager(caching=False)
+    laparams = LAParams()
+
+    elements = []
+
+    for page in PDFPage.get_pages(fp):
+        with StringIO() as output_string:
+            device = TextConverter(
+                rsrcmgr,
+                output_string,
+                codec=encoding,
+                laparams=laparams,
+            )
+            interpreter = PDFPageInterpreter(rsrcmgr, device)
+            interpreter.process_page(page)
+            text = output_string.getvalue()
+            elements.extend(partition_text(text=text))
+
+    return elements
