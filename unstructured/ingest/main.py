@@ -3,6 +3,7 @@ import hashlib
 import logging
 import multiprocessing as mp
 import sys
+from contextlib import suppress
 from pathlib import Path
 
 import click
@@ -23,10 +24,8 @@ from unstructured.ingest.connector.wikipedia import (
 from unstructured.ingest.doc_processor.generalized import initialize, process_document
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 
-try:
+with suppress(RuntimeError):
     mp.set_start_method("spawn")
-except RuntimeError:
-    pass
 
 
 class MainProcess:
