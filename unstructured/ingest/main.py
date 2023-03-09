@@ -7,6 +7,8 @@ from pathlib import Path
 
 import click
 
+# from unstructured.ingest.connector.s3 import S3Connector, SimpleS3Config
+from unstructured.ingest.connector._s3 import S3Connector, SimpleS3Config
 from unstructured.ingest.connector.github import GitHubConnector, SimpleGitHubConfig
 from unstructured.ingest.connector.gitlab import GitLabConnector, SimpleGitLabConfig
 from unstructured.ingest.connector.google_drive import (
@@ -14,13 +16,17 @@ from unstructured.ingest.connector.google_drive import (
     SimpleGoogleDriveConfig,
 )
 from unstructured.ingest.connector.reddit import RedditConnector, SimpleRedditConfig
-from unstructured.ingest.connector.s3 import S3Connector, SimpleS3Config
 from unstructured.ingest.connector.wikipedia import (
     SimpleWikipediaConfig,
     WikipediaConnector,
 )
 from unstructured.ingest.doc_processor.generalized import initialize, process_document
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
+
+try:
+    mp.set_start_method("spawn")
+except RuntimeError:
+    pass
 
 
 class MainProcess:
@@ -80,7 +86,6 @@ class MainProcess:
         # Debugging tip: use the below line and comment out the mp.Pool loop
         # block to remain in single process
         # self.doc_processor_fn(docs[0])
-
         with mp.Pool(
             processes=self.num_processes,
             initializer=ingest_log_streaming_init,
@@ -303,8 +308,8 @@ def main(
     if s3_url:
         doc_connector = S3Connector(
             config=SimpleS3Config(
-                s3_url=s3_url,
-                anonymous=s3_anonymous,
+                path=s3_url,
+                access_kwargs={"anon": s3_anonymous},
                 download_dir=download_dir,
                 output_dir=structured_output_dir,
                 re_download=re_download,
