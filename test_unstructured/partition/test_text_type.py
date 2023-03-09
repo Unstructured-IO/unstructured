@@ -59,7 +59,7 @@ def test_narrative_text_language_checks():
     # NOTE(robinson) - This is true because we don't check english vocab if language checks
     # are set to False
     text = "Dal;kdjfal adawels adfjwalsdf. Addad jaja fjawlek"
-    text_type.is_possible_narrative_text(text, language_checks=False) is True
+    assert text_type.is_possible_narrative_text(text, language_checks=True) is False
 
 
 def test_text_type_handles_non_english_examples(monkeypatch):
@@ -119,7 +119,7 @@ def test_title_language_checks():
     # NOTE(robinson) - This is true because we don't check english vocab if language checks
     # are set to False
     text = "BTAR ADFJA L"
-    text_type.is_possible_narrative_text(text, language_checks=False) is True
+    assert text_type.is_possible_narrative_text(text, language_checks=True) is False
 
 
 @pytest.mark.parametrize(
