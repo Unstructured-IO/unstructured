@@ -160,9 +160,26 @@ def _partition_pdf_with_pdfminer(
     from pdfminer.pdfpage import PDFPage
     from pdfminer.utils import open_filename
 
-    elements = []
-    with open_filename(filename, "rb") as fp:
-        fp = cast(BinaryIO, fp)  # we opened in binary mode
+    if filename:
+        elements = []
+        with open_filename(filename, "rb") as fp:
+            fp = cast(BinaryIO, fp)  # we opened in binary mode
+            rsrcmgr = PDFResourceManager(caching=False)
+            laparams = LAParams()
+
+            for page in PDFPage.get_pages(fp):
+                with StringIO() as output_string:
+                    device = TextConverter(
+                        rsrcmgr, output_string, codec=encoding, laparams=laparams
+                    )
+                    interpreter = PDFPageInterpreter(rsrcmgr, device)
+                    interpreter.process_page(page)
+                    text = output_string.getvalue()
+                    elements.extend(partition_text(text=text))
+
+    elif file:
+        elements = []
+        fp = cast(BinaryIO, file)  # we opened in binary mode
         rsrcmgr = PDFResourceManager(caching=False)
         laparams = LAParams()
 
