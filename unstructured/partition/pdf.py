@@ -20,6 +20,8 @@ def partition_pdf(
     template: Optional[str] = None,
     token: Optional[str] = None,
     include_page_breaks: bool = False,
+    strategy: str = "hi_res",
+    encoding: str = "utf-8",
 ) -> List[Element]:
     """Parses a pdf document into a list of interpreted elements.
     Parameters
@@ -36,6 +38,12 @@ def partition_pdf(
         be used.
     token
         A string defining the authentication token for a self-host url, if applicable.
+    strategy
+        The strategy to use for partitioning the PDF. Uses a layout detection model if set
+        to 'hi_res', otherwise partition_pdf simply extracts the text from the document
+        and processes it.
+    encoding
+        The encoding method used to decode the text input. If None, utf-8 will be used.
     """
     if template is None:
         template = "layout/pdf"
@@ -46,6 +54,8 @@ def partition_pdf(
         template=template,
         token=token,
         include_page_breaks=include_page_breaks,
+        strategy=strategy,
+        encoding=encoding,
     )
 
 
@@ -57,6 +67,8 @@ def partition_pdf_or_image(
     token: Optional[str] = None,
     is_image: bool = False,
     include_page_breaks: bool = False,
+    strategy: str = "hi_res",
+    encoding: str = "utf-8",
 ) -> List[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
     if url is None:
@@ -70,16 +82,29 @@ def partition_pdf_or_image(
         if route_args[0] == "layout":
             out_template = None
 
-        # NOTE(robinson): Catches a UserWarning that occurs when detectron is called
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            layout_elements = _partition_pdf_or_image_local(
+        if strategy == "hi_res":
+            # NOTE(robinson): Catches a UserWarning that occurs when detectron is called
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                layout_elements = _partition_pdf_or_image_local(
+                    filename=filename,
+                    file=file,
+                    template=out_template,
+                    is_image=is_image,
+                    include_page_breaks=True,
+                )
+
+        elif strategy == "fast":
+            return _partition_pdf_with_pdfminer(
                 filename=filename,
                 file=file,
-                template=out_template,
-                is_image=is_image,
-                include_page_breaks=True,
+                include_page_breaks=include_page_breaks,
+                encoding=encoding,
             )
+
+        else:
+            raise ValueError(f"{strategy} is an invalid parsing strategy for PDFs")
+
     else:
         # NOTE(alan): Remove these lines after different models are handled by routing
         if template == "checkbox":
