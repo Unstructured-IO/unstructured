@@ -50,11 +50,20 @@ def test_is_possible_narrative_text(text, expected, monkeypatch):
     monkeypatch.setattr(text_type, "word_tokenize", mock_word_tokenize)
     monkeypatch.setattr(text_type, "pos_tag", mock_pos_tag)
     monkeypatch.setattr(text_type, "sent_tokenize", mock_sent_tokenize)
+    monkeypatch.setenv("UNSTRUCTURED_LANGUAGE_CHECKS", "true")
     is_possible_narrative = text_type.is_possible_narrative_text(text, cap_threshold=0.3)
     assert is_possible_narrative is expected
 
 
-def test_text_type_handles_non_english_examples():
+def test_narrative_text_language_checks():
+    ***REMOVED*** NOTE(robinson) - This is true because we don't check english vocab if language checks
+    ***REMOVED*** are set to False
+    text = "Dal;kdjfal adawels adfjwalsdf. Addad jaja fjawlek"
+    assert text_type.is_possible_narrative_text(text, language_checks=True) is False
+
+
+def test_text_type_handles_non_english_examples(monkeypatch):
+    monkeypatch.setenv("UNSTRUCTURED_LANGUAGE_CHECKS", "true")
     narrative_text = "Я говорю по-русски. Вы тоже?"
     title = "Риски"
 
@@ -102,7 +111,15 @@ def test_text_type_handles_non_english_examples_with_env_var(monkeypatch):
 def test_is_possible_title(text, expected, monkeypatch):
     monkeypatch.setattr(text_type, "sent_tokenize", mock_sent_tokenize)
     monkeypatch.setattr(text_type, "word_tokenize", mock_word_tokenize)
+    monkeypatch.setenv("UNSTRUCTURED_LANGUAGE_CHECKS", "true")
     assert text_type.is_possible_title(text) is expected
+
+
+def test_title_language_checks():
+    ***REMOVED*** NOTE(robinson) - This is true because we don't check english vocab if language checks
+    ***REMOVED*** are set to False
+    text = "BTAR ADFJA L"
+    assert text_type.is_possible_narrative_text(text, language_checks=True) is False
 
 
 @pytest.mark.parametrize(
