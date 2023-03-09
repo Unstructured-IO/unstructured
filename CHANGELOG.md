@@ -1,4 +1,4 @@
-***REMOVED******REMOVED*** 0.5.3-dev5
+***REMOVED******REMOVED*** 0.5.3
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
 
@@ -10,6 +10,7 @@
 
 * Add `--wikipedia-auto-suggest` argument to the ingest CLI to disable automatic redirection
   to pages with similar names.
+* Add setup script for Amazon Linux 2
 * Add optional `encoding` argument to the `partition_(text/email/html)` functions.
 * Added Google Drive connector for ingest cli.
 * Added Gitlab connector for ingest cli.
