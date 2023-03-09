@@ -47,7 +47,8 @@ def is_possible_narrative_text(
     language
         The two letter language code for the text. defaults to "en" for English
     language_checks
-        If True, conducts checks that are language to the specified language.
+        If True, conducts checks that are language to the specified language. Turn on for more
+        accurate partitioning and off for faster processing.
     """
     _language_checks = os.environ.get("UNSTRUCTURED_LANGUAGE_CHECKS")
     if _language_checks is not None:
@@ -110,7 +111,8 @@ def is_possible_title(
     language
         The two letter language code for the text. defaults to "en" for English
     language_checks
-        If True, conducts checks that are language to the specified language.
+        If True, conducts checks that are language to the specified language. Turn on for more
+        accurate partitioning and off for faster processing.
     """
     _language_checks = os.environ.get("UNSTRUCTURED_LANGUAGE_CHECKS")
     if _language_checks is not None:
