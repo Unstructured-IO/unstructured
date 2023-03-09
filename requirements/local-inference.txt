@@ -10,7 +10,7 @@ anyio==3.6.2
     # via
     #   httpcore
     #   starlette
-argilla==1.3.1
+argilla==1.4.0
     # via unstructured (setup.py)
 backoff==2.2.1
     # via argilla
@@ -22,7 +22,7 @@ certifi==2022.12.7
     #   unstructured (setup.py)
 cffi==1.15.1
     # via cryptography
-charset-normalizer==3.0.1
+charset-normalizer==3.1.0
     # via
     #   pdfminer-six
     #   requests
@@ -32,9 +32,11 @@ click==8.1.3
     #   uvicorn
 coloredlogs==15.0.1
     # via onnxruntime
+commonmark==0.9.1
+    # via rich
 contourpy==1.0.7
     # via matplotlib
-cryptography==39.0.1
+cryptography==39.0.2
     # via pdfminer-six
 cycler==0.11.0
     # via matplotlib
@@ -44,15 +46,15 @@ effdet==0.3.0
     # via layoutparser
 et-xmlfile==1.1.0
     # via openpyxl
-fastapi==0.92.0
+fastapi==0.93.0
     # via unstructured-inference
 filelock==3.9.0
     # via
     #   huggingface-hub
     #   transformers
-flatbuffers==23.1.21
+flatbuffers==23.3.3
     # via onnxruntime
-fonttools==4.38.0
+fonttools==4.39.0
     # via matplotlib
 h11==0.14.0
     # via
@@ -62,7 +64,7 @@ httpcore==0.16.3
     # via httpx
 httpx==0.23.3
     # via argilla
-huggingface-hub==0.12.1
+huggingface-hub==0.13.1
     # via
     #   timm
     #   transformers
@@ -82,8 +84,6 @@ iopath==0.1.10
     # via layoutparser
 joblib==1.2.0
     # via nltk
-jsons==1.6.3
-    # via unstructured-inference
 kiwisolver==1.4.4
     # via matplotlib
 layoutparser[layoutmodels,tesseract]==0.3.4
@@ -95,11 +95,11 @@ lxml==4.9.2
     #   unstructured (setup.py)
 markdown==3.4.1
     # via unstructured (setup.py)
-matplotlib==3.7.0
+matplotlib==3.7.1
     # via pycocotools
 monotonic==1.6
     # via argilla
-mpmath==1.2.1
+mpmath==1.3.0
     # via sympy
 nltk==3.8.1
     # via unstructured (setup.py)
@@ -157,16 +157,18 @@ pillow==9.4.0
     #   unstructured (setup.py)
 portalocker==2.7.0
     # via iopath
-protobuf==4.22.0
+protobuf==4.22.1
     # via onnxruntime
 pycocotools==2.0.6
     # via effdet
 pycparser==2.21
     # via cffi
-pydantic==1.10.5
+pydantic==1.10.6
     # via
     #   argilla
     #   fastapi
+pygments==2.14.0
+    # via rich
 pyparsing==3.0.9
     # via matplotlib
 pytesseract==0.3.10
@@ -204,6 +206,8 @@ requests==2.28.2
     #   unstructured (setup.py)
 rfc3986[idna2008]==1.5.0
     # via httpx
+rich==13.0.1
+    # via argilla
 scipy==1.10.1
     # via layoutparser
 six==1.16.0
@@ -232,7 +236,7 @@ torchvision==0.14.1
     #   effdet
     #   layoutparser
     #   timm
-tqdm==4.64.1
+tqdm==4.65.0
     # via
     #   argilla
     #   huggingface-hub
@@ -246,12 +250,11 @@ typing-extensions==4.5.0
     #   huggingface-hub
     #   iopath
     #   pydantic
+    #   rich
     #   starlette
     #   torch
     #   torchvision
-typish==1.9.3
-    # via jsons
-unstructured-inference==0.2.7
+unstructured-inference==0.2.10
     # via unstructured (setup.py)
 urllib3==1.26.14
     # via requests
