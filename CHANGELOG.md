@@ -1,10 +1,7 @@
-## 0.5.3-dev6
+## 0.5.4-dev0
 
 ### Enhancements
 
-* `auto.partition()` can now load Unstructured ISD json documents.
-* Simplify partitioning functions.
-* Improve logging for ingest CLI.
 * Add `FsspecConnector` to easily integrate any existing `fsspec` filesystem
 as a connector.
 * Rename `s3_connector.py` to `s3.py` for readability and consistency with the
@@ -12,8 +9,21 @@ rest of the connectors.
 
 ### Features
 
+### Fixes
+
+## 0.5.3
+
+### Enhancements
+
+* `auto.partition()` can now load Unstructured ISD json documents.
+* Simplify partitioning functions.
+* Improve logging for ingest CLI.
+
+### Features
+
 * Add `--wikipedia-auto-suggest` argument to the ingest CLI to disable automatic redirection
   to pages with similar names.
+* Add setup script for Amazon Linux 2
 * Add optional `encoding` argument to the `partition_(text/email/html)` functions.
 * Added Google Drive connector for ingest cli.
 * Added Gitlab connector for ingest cli.
