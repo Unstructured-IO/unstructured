@@ -1,11 +1,13 @@
 import warnings
-from typing import List, Optional
+from io import StringIO
+from typing import BinaryIO, List, Optional, cast
 
-from unstructured.documents.elements import Element, ElementMetadata
+from unstructured.documents.elements import Element, ElementMetadata, PageBreak
 from unstructured.partition import _partition_via_api
 from unstructured.partition.common import (
     add_element_metadata,
     document_to_element_list,
+    exactly_one,
 )
 from unstructured.partition.text import partition_text
 from unstructured.utils import requires_dependencies
@@ -155,25 +157,29 @@ def _partition_pdf_with_pdfminer(
     ref: https://github.com/pdfminer/pdfminer.six/blob/master/pdfminer/high_level.py
     """
 
-    from typing import BinaryIO, cast
-
     from pdfminer.utils import open_filename
 
+    exactly_one(filename=filename, file=file)
     if filename:
         with open_filename(filename, "rb") as fp:
             fp = cast(BinaryIO, fp)
-            elements = _process_pdf_miner_pages(fp, filename, encoding)
+            elements = _process_pdf_miner_pages(
+                fp=fp, filename=filename, encoding=encoding, include_page_breaks=include_page_breaks
+            )
 
     elif file:
-        fp = cast(BinaryIO, file)  # we opened in binary mode
-        elements = _process_pdf_miner_pages(fp, filename, encoding)
+        fp = cast(BinaryIO, file)
+        elements = _process_pdf_miner_pages(
+            fp=fp, filename=filename, encoding=encoding, include_page_breaks=include_page_breaks
+        )
 
     return elements
 
 
-def _process_pdf_miner_pages(fp, filename, encoding):
-    from io import StringIO
-
+def _process_pdf_miner_pages(
+    fp: BinaryIO, filename: str = "", encoding: str = "utf-8", include_page_breaks: bool = False
+):
+    """Uses PDF miner to split a document into pages and process them."""
     from pdfminer.converter import TextConverter
     from pdfminer.layout import LAParams
     from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
@@ -185,6 +191,7 @@ def _process_pdf_miner_pages(fp, filename, encoding):
     elements: List[Element] = []
 
     for i, page in enumerate(PDFPage.get_pages(fp)):
+        metadata = ElementMetadata(filename=filename, page_number=i + 1)
         with StringIO() as output_string:
             device = TextConverter(
                 rsrcmgr,
@@ -197,8 +204,11 @@ def _process_pdf_miner_pages(fp, filename, encoding):
             text = output_string.getvalue()
             _elements = partition_text(text=text)
             for element in _elements:
-                element.metadata = ElementMetadata(filename=filename, page_number=i + 1)
+                element.metadata = metadata
                 elements.append(element)
             elements.extend(partition_text(text=text))
+
+        if include_page_breaks:
+            elements.append(PageBreak())
 
     return elements
