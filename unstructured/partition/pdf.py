@@ -1,12 +1,14 @@
 import warnings
 from typing import List, Optional
 
-from unstructured.documents.elements import Element
+from unstructured.documents.elements import Element, ElementMetadata
 from unstructured.partition import _partition_via_api
 from unstructured.partition.common import (
     add_element_metadata,
     document_to_element_list,
 )
+from unstructured.partition.text import partition_text
+from unstructured.utils import requires_dependencies
 
 
 def partition_pdf(
@@ -135,3 +137,41 @@ def _partition_pdf_or_image_local(
     )
 
     return document_to_element_list(layout, include_page_breaks=include_page_breaks)
+
+
+@requires_dependencies("pdfminer", "local-inference")
+def _partition_pdf_with_pdfminer(
+    filename: str = "",
+    file: Optional[bytes] = None,
+    template: Optional[str] = None,
+    is_image: bool = False,
+    include_page_breaks: bool = False,
+    encoding: str = "utf-8",
+) -> List[Element]:
+    """Partitions a PDF using PDFMiner instead of using a layoutmodel. Used for faster
+    processing or detectron2 is not available."""
+
+    from io import StringIO
+    from typing import BinaryIO, cast
+
+    from pdfminer.converter import TextConverter
+    from pdfminer.layout import LAParams
+    from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
+    from pdfminer.pdfpage import PDFPage
+    from pdfminer.utils import open_filename
+
+    elements = []
+    with open_filename(filename, "rb") as fp:
+        fp = cast(BinaryIO, fp)  # we opened in binary mode
+        rsrcmgr = PDFResourceManager(caching=False)
+        laparams = LAParams()
+
+        for page in PDFPage.get_pages(fp):
+            with StringIO() as output_string:
+                device = TextConverter(rsrcmgr, output_string, codec=encoding, laparams=laparams)
+                interpreter = PDFPageInterpreter(rsrcmgr, device)
+                interpreter.process_page(page)
+                text = output_string.getvalue()
+                elements.extend(partition_text(text=text))
+
+        return elements
