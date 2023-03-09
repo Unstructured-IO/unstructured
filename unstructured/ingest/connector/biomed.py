@@ -15,6 +15,7 @@ from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
 )
+from unstructured.ingest.logger import logger
 
 DOMAIN = "ftp.ncbi.nlm.nih.gov"
 FTP_DOMAIN = f"ftp://{DOMAIN}"
@@ -41,7 +42,6 @@ class SimpleBiomedConfig(BaseConnectorConfig):
     output_dir: str
     re_download: bool = False
     preserve_downloads: bool = False
-    verbose: bool = False
 
     def validate_api_inputs(self):
         valid = False
@@ -144,8 +144,7 @@ class BiomedIngestDoc(BaseIngestDoc):
 
     def cleanup_file(self):
         if not self.config.preserve_downloads and self.filename.is_file():
-            if self.config.verbose:
-                print(f"cleaning up {self}")
+            logger.debug(f"Cleaning up {self}")
             Path.unlink(self.filename)
 
     def has_output(self):
@@ -158,8 +157,7 @@ class BiomedIngestDoc(BaseIngestDoc):
 
         dir_ = Path(os.path.dirname(download_path))  # type: ignore
         if not dir_.is_dir():
-            if self.config.verbose:
-                print(f"Creating directory: {dir_}")
+            logger.debug(f"Creating directory: {dir_}")
 
             if dir_:
                 dir_.mkdir(parents=True, exist_ok=True)
@@ -169,8 +167,7 @@ class BiomedIngestDoc(BaseIngestDoc):
             self.file_meta.get("download_filepath"),
         )
 
-        if self.config.verbose:
-            print(f"File downloaded: {self.file_meta.get('download_filepath')}.")
+        logger.debug(f"File downloaded: {self.file_meta.get('download_filepath')}.")
 
     def write_result(self):
         """Write the structured json result for this doc. result must be json serializable."""
@@ -178,7 +175,7 @@ class BiomedIngestDoc(BaseIngestDoc):
         output_filename.parent.mkdir(parents=True, exist_ok=True)
         with open(output_filename, "w") as output_f:
             output_f.write(json.dumps(self.isd_elems_no_filename, ensure_ascii=False, indent=2))
-        print(f"Wrote {output_filename}")
+        logger.info(f"Wrote {output_filename}")
 
 
 class BiomedConnector(BaseConnector):
@@ -261,9 +258,7 @@ class BiomedConnector(BaseConnector):
 
         def traverse(path, download_dir, output_dir):
             full_path = Path(PMC_DIR) / path
-
-            if self.config.verbose:
-                print(f"Traversing directory: {full_path}")
+            logger.debug(f"Traversing directory: {full_path}")
 
             ftp = FTP(DOMAIN)
             ftp.login()
@@ -277,7 +272,6 @@ class BiomedConnector(BaseConnector):
                 sub_paths = [
                     path / p
                     for p in ftp.nlst()
-                    if "PMC7234218" in p or "PMC5636404" in p or len(p) < 4
                 ]
 
                 if not sub_paths:
