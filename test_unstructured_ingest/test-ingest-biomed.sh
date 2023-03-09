@@ -18,7 +18,7 @@ if ! diff -ru biomed-ingest-output test_unstructured_ingest/expected-structured-
    echo "If these differences are acceptable, copy the outputs from"
    echo "biomed-ingest-output/ to test_unstructured_ingest/expected-structured-output/biomed-ingest-output/ after running"
    echo 
-   echo "./examples/ingest/biomed/ingest.sh"
+   echo "PYTHONPATH=. ./unstructured/ingest/main.py    --biomed-api-from "2019-01-02" --biomed-api-until "2019-01-02+00:03:10" --structured-output-dir biomed-ingest-output  --num-processes 2 --verbose --download-dir biomed-download --preserve-downloads"
    echo
    exit 1
 fi

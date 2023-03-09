@@ -25,8 +25,8 @@ SUBSET_TYPES = ["oa_pdf", "oa_package"]
 
 @dataclass
 class SimpleBiomedConfig(BaseConnectorConfig):
-    """Connector config where drive_id is the id of the document to process or
-    the folder to process all documents from."""
+    """Connector config where path is the FTP directory path and
+    id_, from_, until, format are API parameters."""
 
     path: str
 
@@ -38,7 +38,7 @@ class SimpleBiomedConfig(BaseConnectorConfig):
 
     # Standard Connector options
     download_dir: str
-    # where to write structured data, with the directory structure matching drive path
+    # where to write structured data, with the directory structure matching FTP path
     output_dir: str
     re_download: bool = False
     preserve_downloads: bool = False
@@ -179,7 +179,7 @@ class BiomedIngestDoc(BaseIngestDoc):
 
 
 class BiomedConnector(BaseConnector):
-    """Objects of this class support fetching documents from Google Drive"""
+    """Objects of this class support fetching documents from Biomedical literature FTP directory"""
 
     def __init__(self, config):
         self.config = config
