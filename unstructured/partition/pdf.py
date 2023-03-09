@@ -164,20 +164,29 @@ def _partition_pdf_with_pdfminer(
         with open_filename(filename, "rb") as fp:
             fp = cast(BinaryIO, fp)
             elements = _process_pdf_miner_pages(
-                fp=fp, filename=filename, encoding=encoding, include_page_breaks=include_page_breaks
+                fp=fp,
+                filename=filename,
+                encoding=encoding,
+                include_page_breaks=include_page_breaks,
             )
 
     elif file:
         fp = cast(BinaryIO, file)
         elements = _process_pdf_miner_pages(
-            fp=fp, filename=filename, encoding=encoding, include_page_breaks=include_page_breaks
+            fp=fp,
+            filename=filename,
+            encoding=encoding,
+            include_page_breaks=include_page_breaks,
         )
 
     return elements
 
 
 def _process_pdf_miner_pages(
-    fp: BinaryIO, filename: str = "", encoding: str = "utf-8", include_page_breaks: bool = False
+    fp: BinaryIO,
+    filename: str = "",
+    encoding: str = "utf-8",
+    include_page_breaks: bool = False,
 ):
     """Uses PDF miner to split a document into pages and process them."""
     from pdfminer.converter import TextConverter
