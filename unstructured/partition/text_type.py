@@ -28,6 +28,7 @@ def is_possible_narrative_text(
     cap_threshold: float = 0.5,
     non_alpha_threshold: float = 0.5,
     language: str = "en",
+    language_checks: bool = False,
 ) -> bool:
     """Checks to see if the text passes all of the checks for a narrative text section.
     You can change the cap threshold using the cap_threshold kwarg or the
@@ -45,7 +46,14 @@ def is_possible_narrative_text(
         narrative text
     language
         The two letter language code for the text. defaults to "en" for English
+    language_checks
+        If True, conducts checks that are specific to the chosen language. Turn on for more
+        accurate partitioning and off for faster processing.
     """
+    _language_checks = os.environ.get("UNSTRUCTURED_LANGUAGE_CHECKS")
+    if _language_checks is not None:
+        language_checks = _language_checks.lower() == "true"
+
     if len(text) == 0:
         logger.debug("Not narrative. Text is empty.")
         return False
@@ -55,7 +63,7 @@ def is_possible_narrative_text(
         return False
 
     language = os.environ.get("UNSTRUCTURED_LANGUAGE", language)
-    if language == "en" and not contains_english_word(text):
+    if language == "en" and language_checks and not contains_english_word(text):
         return False
 
     # NOTE(robinson): it gets read in from the environment as a string so we need to
@@ -86,6 +94,7 @@ def is_possible_title(
     title_max_word_length: int = 12,
     non_alpha_threshold: float = 0.5,
     language: str = "en",
+    language_checks: bool = False,
 ) -> bool:
     """Checks to see if the text passes all of the checks for a valid title.
 
@@ -101,7 +110,14 @@ def is_possible_title(
         The minimum number of alpha characters the text needs to be considered a title
     language
         The two letter language code for the text. defaults to "en" for English
+    language_checks
+        If True, conducts checks that are specific to the chosen language. Turn on for more
+        accurate partitioning and off for faster processing.
     """
+    _language_checks = os.environ.get("UNSTRUCTURED_LANGUAGE_CHECKS")
+    if _language_checks is not None:
+        language_checks = _language_checks.lower() == "true"
+
     if len(text) == 0:
         logger.debug("Not a title. Text is empty.")
         return False
@@ -125,7 +141,7 @@ def is_possible_title(
         return False
 
     language = os.environ.get("UNSTRUCTURED_LANGUAGE", language)
-    if language == "en" and not contains_english_word(text):
+    if language == "en" and not contains_english_word(text) and language_checks:
         return False
 
     if text.isnumeric():
