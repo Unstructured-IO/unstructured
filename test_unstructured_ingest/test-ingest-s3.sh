@@ -11,7 +11,7 @@ fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py --s3-url s3://utic-dev-tech-fixtures/small-pdf-set/ --s3-anonymous --structured-output-dir s3-small-batch-output
 
-if [[ "$(diff -r test_unstructured_ingest/expected-structured-output/s3-small-batch/ s3-small-batch-output/ | wc -l)" -ne 0 ]]; then
+if ! diff -ru s3-small-batch-output test_unstructured_ingest/expected-structured-output/s3-small-batch ; then
     echo
     echo "There are differences from the previously checked-in structured outputs."
     echo
