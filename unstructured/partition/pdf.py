@@ -143,51 +143,48 @@ def _partition_pdf_or_image_local(
 def _partition_pdf_with_pdfminer(
     filename: str = "",
     file: Optional[bytes] = None,
-    template: Optional[str] = None,
-    is_image: bool = False,
     include_page_breaks: bool = False,
     encoding: str = "utf-8",
 ) -> List[Element]:
     """Partitions a PDF using PDFMiner instead of using a layoutmodel. Used for faster
-    processing or detectron2 is not available."""
+    processing or detectron2 is not available.
 
-    from io import StringIO
+    Implementation is based on the `extract_text` implemenation in pdfminer.six, but
+    modified to support tracking page numbers and working with file-like objects.
+
+    ref: https://github.com/pdfminer/pdfminer.six/blob/master/pdfminer/high_level.py
+    """
+
     from typing import BinaryIO, cast
 
-    from pdfminer.converter import TextConverter
-    from pdfminer.layout import LAParams
-    from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
-    from pdfminer.pdfpage import PDFPage
     from pdfminer.utils import open_filename
 
     if filename:
         with open_filename(filename, "rb") as fp:
             fp = cast(BinaryIO, fp)
-            elements = _process_pdf_miner_pages(fp, encoding)
+            elements = _process_pdf_miner_pages(fp, filename, encoding)
 
     elif file:
         fp = cast(BinaryIO, file)  # we opened in binary mode
-        elements = _process_pdf_miner_pages(fp, encoding)
+        elements = _process_pdf_miner_pages(fp, filename, encoding)
 
     return elements
 
 
-def _process_pdf_miner_pages(fp, encoding):
+def _process_pdf_miner_pages(fp, filename, encoding):
     from io import StringIO
-    from typing import BinaryIO, cast
 
     from pdfminer.converter import TextConverter
     from pdfminer.layout import LAParams
     from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
     from pdfminer.pdfpage import PDFPage
-    from pdfminer.utils import open_filename
 
     rsrcmgr = PDFResourceManager(caching=False)
     laparams = LAParams()
 
-    elements = []
+    elements: List[Element] = []
 
-    for page in PDFPage.get_pages(fp):
+    for i, page in enumerate(PDFPage.get_pages(fp)):
         with StringIO() as output_string:
             device = TextConverter(
                 rsrcmgr,
@@ -198,6 +195,10 @@ def _process_pdf_miner_pages(fp, encoding):
             interpreter = PDFPageInterpreter(rsrcmgr, device)
             interpreter.process_page(page)
             text = output_string.getvalue()
+            _elements = partition_text(text=text)
+            for element in _elements:
+                element.metadata = ElementMetadata(filename=filename, page_number=i + 1)
+                elements.append(element)
             elements.extend(partition_text(text=text))
 
     return elements
