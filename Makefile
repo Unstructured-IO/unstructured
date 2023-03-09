@@ -56,7 +56,7 @@ install-ingest-google-drive:
 ## install-ingest-s3:       install requirements for the s3 connector
 .PHONY: install-ingest-s3
 install-ingest-s3:
-	pip install -r requirements/ingest-s3-alt.txt
+	pip install -r requirements/ingest-s3.txt
 
 .PHONY: install-ingest-github
 install-ingest-github:

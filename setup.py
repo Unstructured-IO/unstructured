@@ -77,8 +77,7 @@ setup(
             # NOTE(robinson) - Upper bound is temporary due to a multithreading issue
             "unstructured-inference>=0.2.4,<0.2.8",
         ],
-        "s3": ["boto3"],
-        "_s3": ["s3fs", "fsspec"],
+        "s3": ["s3fs", "fsspec"],
         "github": [
             # NOTE - pygithub==1.58.0 fails due to https://github.com/PyGithub/PyGithub/issues/2436
             # In the future, we can update this to pygithub>1.58.0

@@ -8,8 +8,6 @@ from pathlib import Path
 
 import click
 
-# from unstructured.ingest.connector.s3 import S3Connector, SimpleS3Config
-from unstructured.ingest.connector._s3 import S3Connector, SimpleS3Config
 from unstructured.ingest.connector.github import GitHubConnector, SimpleGitHubConfig
 from unstructured.ingest.connector.gitlab import GitLabConnector, SimpleGitLabConfig
 from unstructured.ingest.connector.google_drive import (
@@ -17,6 +15,7 @@ from unstructured.ingest.connector.google_drive import (
     SimpleGoogleDriveConfig,
 )
 from unstructured.ingest.connector.reddit import RedditConnector, SimpleRedditConfig
+from unstructured.ingest.connector.s3 import S3Connector, SimpleS3Config
 from unstructured.ingest.connector.wikipedia import (
     SimpleWikipediaConfig,
     WikipediaConnector,
