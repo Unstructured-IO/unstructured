@@ -1,3 +1,15 @@
+## 0.5.4-dev 0
+
+### Enhancements
+
+* Adds an `UNSTRUCTURED_LANGUAGE_CHECKS` environment variable to control whether or not language
+  specific checks like vocabulary and POS tagging are applied. Set to `"true"` for higher
+  resolution partitioning and `"false"` for faster processing.
+
+### Features
+
+### Fixes
+
 ## 0.5.3
 
 ### Enhancements
