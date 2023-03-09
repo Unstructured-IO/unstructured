@@ -1,3 +1,15 @@
+## 0.5.4
+
+### Enhancements
+
+### Features
+
+* Added Biomedical literature connector for ingest cli.
+
+### Fixes
+
+
+
 ## 0.5.3-dev5
 
 ### Enhancements

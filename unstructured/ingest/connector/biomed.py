@@ -269,10 +269,7 @@ class BiomedConnector(BaseConnector):
                 raise ValueError(f"{full_path} is not a valid directory.")
 
             if "command successful" in response.lower():
-                sub_paths = [
-                    path / p
-                    for p in ftp.nlst()
-                ]
+                sub_paths = [path / p for p in ftp.nlst()]
 
                 if not sub_paths:
                     return
