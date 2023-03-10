@@ -39,7 +39,7 @@ PPT_MIME_TYPES = [
 
 TXT_MIME_TYPES = [
     "text/plain",
-    "message/rfc822", # ref: https://www.rfc-editor.org/rfc/rfc822
+    "message/rfc822",  # ref: https://www.rfc-editor.org/rfc/rfc822
 ]
 
 MD_MIME_TYPES = [
