@@ -87,13 +87,13 @@ def partition_pdf_or_image(
         if not dependency_exists("detectron2"):
             if is_image:
                 raise ValueError(
-                    "detectron2 is not installed. detectron2 is required for " "partioning images."
+                    "detectron2 is not installed. detectron2 is required for " "partioning images.",
                 )
             else:
                 fallback_to_fast = True
                 logger.warn(
                     "detectron2 is not installed. Cannot use the hi_res partitioning "
-                    "strategy. Falling back to partitioning with the fast strategy."
+                    "strategy. Falling back to partitioning with the fast strategy.",
                 )
 
         if strategy == "hi_res" and not fallback_to_fast:
@@ -211,7 +211,7 @@ def _partition_pdf_with_pdfminer(
 
     elif file:
         fp = cast(BinaryIO, file)
-        elements = _process_pdf_miner_pages(
+        elements = _process_pdfminer_pages(
             fp=fp,
             filename=filename,
             encoding=encoding,

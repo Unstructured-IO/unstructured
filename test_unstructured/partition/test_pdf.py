@@ -4,7 +4,7 @@ import pytest
 import requests
 from unstructured_inference.inference import layout
 
-from unstructured.documents.elements import PageBreak
+from unstructured.documents.elements import PageBreak, Text
 from unstructured.partition import pdf
 
 
@@ -190,3 +190,46 @@ def test_partition_pdf_with_page_breaks(filename="example-docs/layout-parser-pap
 def test_partition_pdf_with_no_page_breaks(filename="example-docs/layout-parser-paper-fast.pdf"):
     elements = pdf.partition_pdf(filename=filename, url=None)
     assert PageBreak() not in elements
+
+
+def test_partition_pdf_with_fast_strategy(filename="example-docs/layout-parser-paper-fast.pdf"):
+    elements = pdf.partition_pdf(filename=filename, url=None, strategy="fast")
+    assert len(elements) > 10
+
+
+def test_partition_pdf_with_fast_strategy_from_file(
+    filename="example-docs/layout-parser-paper-fast.pdf",
+):
+    with open(filename, "rb") as f:
+        elements = pdf.partition_pdf(file=f, url=None, strategy="fast")
+    assert len(elements) > 10
+
+
+def test_partition_pdf_with_fast_strategy_and_page_breaks(
+    filename="example-docs/layout-parser-paper-fast.pdf",
+):
+    elements = pdf.partition_pdf(
+        filename=filename,
+        url=None,
+        strategy="fast",
+        include_page_breaks=True,
+    )
+    assert len(elements) > 10
+    assert PageBreak() in elements
+
+
+def test_partition_pdf_falls_back_to_fast(
+    monkeypatch,
+    filename="example-docs/layout-parser-paper-fast.pdf",
+):
+    monkeypatch.setattr(pdf, "dependency_exists", lambda dep: dep != "detectron2")
+
+    mock_return = [Text("Hello there!")]
+    with mock.patch.object(
+        pdf,
+        "_partition_pdf_with_pdfminer",
+        return_value=mock_return,
+    ) as mock_partition:
+        pdf.partition_pdf(filename=filename, url=None, strategy="fast")
+
+    mock_partition.assert_called_once()
