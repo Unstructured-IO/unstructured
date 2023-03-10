@@ -1,16 +1,22 @@
-## 0.5.4
+## 0.5.4-dev2
 
 ### Enhancements
 
-### Features
-
 * Added Biomedical literature connector for ingest cli.
+* Add `FsspecConnector` to easily integrate any existing `fsspec` filesystem as a connector.
+* Rename `s3_connector.py` to `s3.py` for readability and consistency with the
+  rest of the connectors.
+* Now `S3Connector` relies on `s3fs` instead of on `boto3`, and it inherits
+  from `FsspecConnector`.
+* Adds an `UNSTRUCTURED_LANGUAGE_CHECKS` environment variable to control whether or not language
+  specific checks like vocabulary and POS tagging are applied. Set to `"true"` for higher
+  resolution partitioning and `"false"` for faster processing.
+
+### Features
 
 ### Fixes
 
-
-
-## 0.5.3-dev5
+## 0.5.3
 
 ### Enhancements
 
@@ -22,6 +28,7 @@
 
 * Add `--wikipedia-auto-suggest` argument to the ingest CLI to disable automatic redirection
   to pages with similar names.
+* Add setup script for Amazon Linux 2
 * Add optional `encoding` argument to the `partition_(text/email/html)` functions.
 * Added Google Drive connector for ingest cli.
 * Added Gitlab connector for ingest cli.

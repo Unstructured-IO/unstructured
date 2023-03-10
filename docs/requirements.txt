@@ -14,7 +14,7 @@ certifi==2022.12.7
     # via
     #   -r requirements/build.in
     #   requests
-charset-normalizer==3.0.1
+charset-normalizer==3.1.0
     # via requests
 docutils==0.18.1
     # via

@@ -3,6 +3,7 @@ import hashlib
 import logging
 import multiprocessing as mp
 import sys
+from contextlib import suppress
 from pathlib import Path
 
 import click
@@ -15,13 +16,16 @@ from unstructured.ingest.connector.google_drive import (
     SimpleGoogleDriveConfig,
 )
 from unstructured.ingest.connector.reddit import RedditConnector, SimpleRedditConfig
-from unstructured.ingest.connector.s3_connector import S3Connector, SimpleS3Config
+from unstructured.ingest.connector.s3 import S3Connector, SimpleS3Config
 from unstructured.ingest.connector.wikipedia import (
     SimpleWikipediaConfig,
     WikipediaConnector,
 )
 from unstructured.ingest.doc_processor.generalized import initialize, process_document
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
+
+with suppress(RuntimeError):
+    mp.set_start_method("spawn")
 
 
 class MainProcess:
@@ -81,7 +85,6 @@ class MainProcess:
         # Debugging tip: use the below line and comment out the mp.Pool loop
         # block to remain in single process
         # self.doc_processor_fn(docs[0])
-
         with mp.Pool(
             processes=self.num_processes,
             initializer=ingest_log_streaming_init,
@@ -341,11 +344,10 @@ def main(
     if s3_url:
         doc_connector = S3Connector(
             config=SimpleS3Config(
+                path=s3_url,
+                access_kwargs={"anon": s3_anonymous},
                 download_dir=download_dir,
-                s3_url=s3_url,
                 output_dir=structured_output_dir,
-                # set to False to use your AWS creds (not needed for this public s3 url)
-                anonymous=s3_anonymous,
                 re_download=re_download,
                 preserve_downloads=preserve_downloads,
             ),
