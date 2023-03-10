@@ -78,6 +78,7 @@ setup(
             "unstructured-inference>=0.2.4,<0.2.8",
         ],
         "s3": ["s3fs", "fsspec"],
+        "azure": ["adlfs", "fsspec"],
         "github": [
             ***REMOVED*** NOTE - pygithub==1.58.0 fails due to https://github.com/PyGithub/PyGithub/issues/2436
             ***REMOVED*** In the future, we can update this to pygithub>1.58.0
