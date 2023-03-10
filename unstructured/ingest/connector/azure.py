@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Type
 
 from unstructured.ingest.connector.fsspec import (
     FsspecConnector,
@@ -21,4 +22,10 @@ class AzureBlobStorageIngestDoc(FsspecIngestDoc):
 
 @requires_dependencies(["adlfs", "fsspec"], extras="azure")
 class AzureBlobStorageConnector(FsspecConnector):
-    pass
+    ingest_doc_cls: Type[AzureBlobStorageIngestDoc] = AzureBlobStorageIngestDoc
+
+    def __init__(
+        self,
+        config: SimpleAzureBlobStorageConfig,
+    ) -> None:
+        super().__init__(config=config)

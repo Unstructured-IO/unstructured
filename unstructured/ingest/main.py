@@ -357,16 +357,15 @@ def main(
                 ),
             )
         elif protocol in ("abfs", "az"):
-            access_kwargs = (
-                {
+            if azure_account_name:
+                access_kwargs = {
                     "account_name": azure_account_name,
                     "account_key": azure_account_key,
                 }
-                if azure_account_name
-                else {"connection_string": azure_connection_string}
-                if azure_connection_string
-                else {}
-            )
+            elif azure_connection_string:
+                access_kwargs = {"connection_string": azure_connection_string}
+            else:
+                access_kwargs = {}
             doc_connector = AzureBlobStorageConnector(  # type: ignore
                 config=SimpleAzureBlobStorageConfig(
                     path=remote_url,

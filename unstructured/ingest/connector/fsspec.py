@@ -3,6 +3,7 @@ import os
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Type
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -137,7 +138,12 @@ class FsspecIngestDoc(BaseIngestDoc):
 class FsspecConnector(BaseConnector):
     """Objects of this class support fetching document(s) from"""
 
-    def __init__(self, config: SimpleFsspecConfig):
+    ingest_doc_cls: Type[FsspecIngestDoc] = FsspecIngestDoc
+
+    def __init__(
+        self,
+        config: SimpleFsspecConfig,
+    ):
         from fsspec import AbstractFileSystem, get_filesystem_class
 
         self.config = config
@@ -177,7 +183,7 @@ class FsspecConnector(BaseConnector):
 
     def get_ingest_docs(self):
         return [
-            FsspecIngestDoc(
+            self.ingest_doc_cls(
                 self.config,
                 file,
             )
