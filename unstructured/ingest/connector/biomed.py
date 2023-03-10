@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from ftplib import FTP, error_perm
 from pathlib import Path
-from typing import Dict, List
+from typing import List, Union
 
 import requests
 from bs4 import BeautifulSoup
@@ -21,6 +21,13 @@ DOMAIN = "ftp.ncbi.nlm.nih.gov"
 FTP_DOMAIN = f"ftp://{DOMAIN}"
 PMC_DIR = "pub/pmc"
 PDF_DIR = "oa_pdf"
+
+
+@dataclass
+class BiomedFileMeta:
+    ftp_path: str
+    download_filepath: Union[str, os.PathLike]
+    output_filepath: Union[str, os.PathLike]
 
 
 @dataclass
@@ -121,14 +128,14 @@ class SimpleBiomedConfig(BaseConnectorConfig):
 @dataclass
 class BiomedIngestDoc(BaseIngestDoc):
     config: SimpleBiomedConfig
-    file_meta: Dict
+    file_meta: BiomedFileMeta
 
     @property
     def filename(self):
-        return Path(self.file_meta.get("download_filepath")).resolve()  # type: ignore
+        return Path(self.file_meta.download_filepath).resolve()  # type: ignore
 
     def _output_filename(self):
-        return Path(f"{self.file_meta.get('output_filepath')}.json").resolve()
+        return Path(f"{self.file_meta.output_filepath}.json").resolve()
 
     def cleanup_file(self):
         if not self.config.preserve_downloads and self.filename.is_file():
@@ -141,7 +148,7 @@ class BiomedIngestDoc(BaseIngestDoc):
         return output_filename.is_file() and output_filename.stat()
 
     def get_file(self):
-        download_path = self.file_meta.get("download_filepath")  # type: ignore
+        download_path = self.file_meta.download_filepath  # type: ignore
 
         dir_ = Path(os.path.dirname(download_path))  # type: ignore
         if not dir_.is_dir():
@@ -151,11 +158,11 @@ class BiomedIngestDoc(BaseIngestDoc):
                 dir_.mkdir(parents=True, exist_ok=True)
 
         urllib.request.urlretrieve(
-            self.file_meta.get("ftp_path"),  # type: ignore
-            self.file_meta.get("download_filepath"),
+            self.file_meta.ftp_path,  # type: ignore
+            self.file_meta.download_filepath,
         )
 
-        logger.debug(f"File downloaded: {self.file_meta.get('download_filepath')}")
+        logger.debug(f"File downloaded: {self.file_meta.download_filepath}")
 
     def write_result(self):
         """Write the structured json result for this doc. result must be json serializable."""
@@ -181,20 +188,18 @@ class BiomedConnector(BaseConnector):
                 if len(parts) > 1:
                     local_path = parts[1].strip("/")
                     files.append(
-                        {
-                            "ftp_path": url,
-                            "download_filepath": (
+                        BiomedFileMeta(
+                            ftp_path=url,
+                            download_filepath=(
                                 Path(self.config.download_dir) / local_path
                             ).resolve(),
-                            "output_filepath": (
-                                Path(self.config.output_dir) / local_path
-                            ).resolve(),
-                        },
+                            output_filepath=(Path(self.config.output_dir) / local_path).resolve(),
+                        ),
                     )
 
             return files
 
-        files: List[Dict] = []
+        files: List[BiomedFileMeta] = []
 
         endpoint_url = "https://www.ncbi.nlm.nih.gov/pmc/utils/oa/oa.fcgi?format=pdf"
 
@@ -250,15 +255,15 @@ class BiomedConnector(BaseConnector):
                         ftp_path = f"{FTP_DOMAIN}/{PMC_DIR}/{sub_path}"
                         local_path = "/".join(str(sub_path).split("/")[1:])
                         files.append(
-                            {
-                                "ftp_path": ftp_path,
-                                "download_filepath": (
+                            BiomedFileMeta(
+                                ftp_path=ftp_path,
+                                download_filepath=(
                                     Path(self.config.download_dir) / local_path
                                 ).resolve(),
-                                "output_filepath": (
+                                output_filepath=(
                                     Path(self.config.output_dir) / local_path
                                 ).resolve(),
-                            },
+                            ),
                         )
 
                 else:
@@ -272,11 +277,11 @@ class BiomedConnector(BaseConnector):
         if self.config.is_file:
             local_path = "/".join(self.config.path.split("/")[1:])
             return [
-                {
-                    "ftp_path": ftp_path,
-                    "download_filepath": (Path(self.config.download_dir) / local_path).resolve(),
-                    "output_filepath": (Path(self.config.output_dir) / local_path).resolve(),
-                },
+                BiomedFileMeta(
+                    ftp_path=ftp_path,
+                    download_filepath=(Path(self.config.download_dir) / local_path).resolve(),
+                    output_filepath=(Path(self.config.output_dir) / local_path).resolve(),
+                ),
             ]
         else:
             traverse(
