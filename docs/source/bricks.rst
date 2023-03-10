@@ -1230,12 +1230,12 @@ files to an S3 bucket.
 
   ***REMOVED*** Upload staged data files to S3 from local output directory.
   def upload_staged_files():
-      import boto3
-      s3 = boto3.client("s3")
+      from s3fs import S3FileSystem
+      fs = S3FileSystem()
       for filename in os.listdir(LOCAL_OUTPUT_DIRECTORY):
           filepath = os.path.join(LOCAL_OUTPUT_DIRECTORY, filename)
           upload_key = os.path.join(S3_BUCKET_KEY_PREFIX, filename)
-          s3.upload_file(filepath, Bucket=S3_BUCKET_NAME, Key=upload_key)
+          fs.put_file(lpath=filepath, rpath=os.path.join(S3_BUCKET_NAME, upload_key))
 
   upload_staged_files()
 

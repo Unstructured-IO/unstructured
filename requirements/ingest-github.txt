@@ -8,7 +8,7 @@
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   httpcore
-argilla==1.3.1
+argilla==1.4.0
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   unstructured (setup.py)
@@ -25,7 +25,7 @@ argilla==1.3.1
     ***REMOVED***   unstructured (setup.py)
 ***REMOVED***
     ***REMOVED*** via pynacl
-charset-normalizer==3.0.1
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   requests
@@ -33,6 +33,10 @@ charset-normalizer==3.0.1
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   nltk
+***REMOVED***
+    ***REMOVED*** via
+    ***REMOVED***   -r requirements/base.txt
+    ***REMOVED***   rich
 ***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
@@ -111,12 +115,16 @@ openpyxl==3.1.1
     ***REMOVED***   unstructured (setup.py)
 ***REMOVED***
     ***REMOVED*** via cffi
-pydantic==1.10.5
+pydantic==1.10.6
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   argilla
 ***REMOVED***
     ***REMOVED*** via unstructured (setup.py)
+***REMOVED***
+    ***REMOVED*** via
+    ***REMOVED***   -r requirements/base.txt
+    ***REMOVED***   rich
 ***REMOVED***
     ***REMOVED*** via pygithub
 ***REMOVED***
@@ -157,6 +165,10 @@ regex==2022.10.31
 ***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
+    ***REMOVED***   argilla
+***REMOVED***
+    ***REMOVED*** via
+    ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   python-dateutil
 ***REMOVED***
     ***REMOVED*** via
@@ -164,7 +176,7 @@ regex==2022.10.31
     ***REMOVED***   anyio
     ***REMOVED***   httpcore
     ***REMOVED***   httpx
-tqdm==4.64.1
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   argilla
@@ -173,6 +185,7 @@ tqdm==4.64.1
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   pydantic
+    ***REMOVED***   rich
 urllib3==1.26.14
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt

@@ -12,7 +12,7 @@ black==23.1.0
     ***REMOVED*** via
     ***REMOVED***   -r requirements/test.in
     ***REMOVED***   requests
-charset-normalizer==3.0.1
+***REMOVED***
     ***REMOVED*** via requests
 ***REMOVED***
     ***REMOVED*** via
@@ -40,7 +40,7 @@ mccabe==0.7.0
     ***REMOVED*** via flake8
 multidict==6.0.4
     ***REMOVED*** via yarl
-mypy==1.0.1
+mypy==1.1.1
     ***REMOVED*** via -r requirements/test.in
 mypy-extensions==1.0.0
     ***REMOVED*** via
@@ -52,17 +52,17 @@ mypy-extensions==1.0.0
     ***REMOVED***   pytest
 pathspec==0.11.0
     ***REMOVED*** via black
-platformdirs==3.0.0
+platformdirs==3.1.0
     ***REMOVED*** via black
 pluggy==1.0.0
     ***REMOVED*** via pytest
 pycodestyle==2.10.0
     ***REMOVED*** via flake8
-pydantic==1.10.5
+pydantic==1.10.6
     ***REMOVED*** via label-studio-sdk
 pyflakes==3.0.1
     ***REMOVED*** via flake8
-pytest==7.2.1
+pytest==7.2.2
     ***REMOVED*** via pytest-cov
 pytest-cov==4.0.0
     ***REMOVED*** via -r requirements/test.in
@@ -70,7 +70,7 @@ pyyaml==6.0
     ***REMOVED*** via vcrpy
 ***REMOVED***
     ***REMOVED*** via label-studio-sdk
-ruff==0.0.253
+ruff==0.0.254
     ***REMOVED*** via -r requirements/test.in
 ***REMOVED***
     ***REMOVED*** via vcrpy

@@ -55,7 +55,7 @@ filelock==3.9.0
     ***REMOVED*** via virtualenv
 fqdn==1.5.1
     ***REMOVED*** via jsonschema
-identify==2.5.18
+identify==2.5.19
     ***REMOVED*** via pre-commit
 ***REMOVED***
     ***REMOVED*** via
@@ -67,7 +67,7 @@ importlib-metadata==6.0.0
     ***REMOVED***   nbconvert
 importlib-resources==5.12.0
     ***REMOVED*** via jsonschema
-ipykernel==6.21.2
+ipykernel==6.21.3
     ***REMOVED*** via
     ***REMOVED***   ipywidgets
     ***REMOVED***   jupyter
@@ -115,7 +115,7 @@ jupyter-client==8.0.3
     ***REMOVED***   nbclient
     ***REMOVED***   notebook
     ***REMOVED***   qtconsole
-jupyter-console==6.6.2
+jupyter-console==6.6.3
     ***REMOVED*** via jupyter
 jupyter-core==5.2.0
     ***REMOVED*** via
@@ -132,7 +132,7 @@ jupyter-core==5.2.0
     ***REMOVED***   qtconsole
 jupyter-events==0.6.3
     ***REMOVED*** via jupyter-server
-jupyter-server==2.3.0
+jupyter-server==2.4.0
     ***REMOVED*** via
     ***REMOVED***   nbclassic
     ***REMOVED***   notebook-shim
@@ -152,7 +152,7 @@ matplotlib-inline==0.1.6
     ***REMOVED***   ipython
 mistune==2.0.5
     ***REMOVED*** via nbconvert
-nbclassic==0.5.2
+nbclassic==0.5.3
     ***REMOVED*** via notebook
 nbclient==0.7.2
     ***REMOVED*** via nbconvert
@@ -176,7 +176,7 @@ nest-asyncio==1.5.6
     ***REMOVED***   notebook
 nodeenv==1.7.0
     ***REMOVED*** via pre-commit
-notebook==6.5.2
+notebook==6.5.3
     ***REMOVED*** via jupyter
 notebook-shim==0.2.2
     ***REMOVED*** via nbclassic
@@ -199,7 +199,7 @@ pip-tools==6.12.3
     ***REMOVED*** via -r requirements/dev.in
 pkgutil-resolve-name==1.3.10
     ***REMOVED*** via jsonschema
-platformdirs==3.0.0
+platformdirs==3.1.0
     ***REMOVED*** via
     ***REMOVED***   jupyter-core
     ***REMOVED***   virtualenv

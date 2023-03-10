@@ -10,7 +10,7 @@ antlr4-python3-runtime==4.9.3
     ***REMOVED*** via
     ***REMOVED***   httpcore
     ***REMOVED***   starlette
-argilla==1.3.1
+argilla==1.4.0
     ***REMOVED*** via unstructured (setup.py)
 ***REMOVED***
     ***REMOVED*** via argilla
@@ -22,7 +22,7 @@ argilla==1.3.1
     ***REMOVED***   unstructured (setup.py)
 ***REMOVED***
     ***REMOVED*** via cryptography
-charset-normalizer==3.0.1
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   pdfminer-six
     ***REMOVED***   requests
@@ -32,9 +32,11 @@ charset-normalizer==3.0.1
     ***REMOVED***   uvicorn
 coloredlogs==15.0.1
     ***REMOVED*** via onnxruntime
+***REMOVED***
+    ***REMOVED*** via rich
 contourpy==1.0.7
     ***REMOVED*** via matplotlib
-cryptography==39.0.1
+cryptography==39.0.2
     ***REMOVED*** via pdfminer-six
 cycler==0.11.0
     ***REMOVED*** via matplotlib
@@ -44,15 +46,15 @@ effdet==0.3.0
     ***REMOVED*** via layoutparser
 ***REMOVED***
     ***REMOVED*** via openpyxl
-fastapi==0.92.0
+fastapi==0.93.0
     ***REMOVED*** via unstructured-inference
 filelock==3.9.0
     ***REMOVED*** via
     ***REMOVED***   huggingface-hub
     ***REMOVED***   transformers
-flatbuffers==23.1.21
+flatbuffers==23.3.3
     ***REMOVED*** via onnxruntime
-fonttools==4.38.0
+fonttools==4.39.0
     ***REMOVED*** via matplotlib
 ***REMOVED***
     ***REMOVED*** via
@@ -62,7 +64,7 @@ fonttools==4.38.0
     ***REMOVED*** via httpx
 ***REMOVED***
     ***REMOVED*** via argilla
-huggingface-hub==0.12.1
+huggingface-hub==0.13.1
     ***REMOVED*** via
     ***REMOVED***   timm
     ***REMOVED***   transformers
@@ -95,11 +97,11 @@ layoutparser[layoutmodels,tesseract]==0.3.4
     ***REMOVED***   unstructured (setup.py)
 markdown==3.4.1
     ***REMOVED*** via unstructured (setup.py)
-matplotlib==3.7.0
+matplotlib==3.7.1
     ***REMOVED*** via pycocotools
 ***REMOVED***
     ***REMOVED*** via argilla
-mpmath==1.2.1
+mpmath==1.3.0
     ***REMOVED*** via sympy
 ***REMOVED***
     ***REMOVED*** via unstructured (setup.py)
@@ -157,16 +159,18 @@ pdfplumber==0.8.0
     ***REMOVED***   unstructured (setup.py)
 portalocker==2.7.0
     ***REMOVED*** via iopath
-protobuf==4.22.0
+protobuf==4.22.1
     ***REMOVED*** via onnxruntime
 pycocotools==2.0.6
     ***REMOVED*** via effdet
 ***REMOVED***
     ***REMOVED*** via cffi
-pydantic==1.10.5
+pydantic==1.10.6
     ***REMOVED*** via
     ***REMOVED***   argilla
     ***REMOVED***   fastapi
+***REMOVED***
+    ***REMOVED*** via rich
 pyparsing==3.0.9
     ***REMOVED*** via matplotlib
 pytesseract==0.3.10
@@ -204,6 +208,8 @@ regex==2022.10.31
     ***REMOVED***   unstructured (setup.py)
 ***REMOVED***
     ***REMOVED*** via httpx
+***REMOVED***
+    ***REMOVED*** via argilla
 scipy==1.10.1
     ***REMOVED*** via layoutparser
 ***REMOVED***
@@ -232,7 +238,7 @@ torchvision==0.14.1
     ***REMOVED***   effdet
     ***REMOVED***   layoutparser
     ***REMOVED***   timm
-tqdm==4.64.1
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   argilla
     ***REMOVED***   huggingface-hub
@@ -246,6 +252,7 @@ transformers==4.26.1
     ***REMOVED***   huggingface-hub
     ***REMOVED***   iopath
     ***REMOVED***   pydantic
+    ***REMOVED***   rich
     ***REMOVED***   starlette
     ***REMOVED***   torch
     ***REMOVED***   torchvision
