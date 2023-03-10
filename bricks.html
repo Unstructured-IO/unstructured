@@ -1311,12 +1311,12 @@ files to an S3 bucket.</p>
 
 <span class="c1"># Upload staged data files to S3 from local output directory.</span>
 <span class="k">def</span> <span class="nf">upload_staged_files</span><span class="p">():</span>
-    <span class="kn">import</span> <span class="nn">boto3</span>
-    <span class="n">s3</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">client</span><span class="p">(</span><span class="s2">&quot;s3&quot;</span><span class="p">)</span>
+    <span class="kn">from</span> <span class="nn">s3fs</span> <span class="kn">import</span> <span class="n">S3FileSystem</span>
+    <span class="n">fs</span> <span class="o">=</span> <span class="n">S3FileSystem</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">LOCAL_OUTPUT_DIRECTORY</span><span class="p">):</span>
         <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">LOCAL_OUTPUT_DIRECTORY</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
         <span class="n">upload_key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">S3_BUCKET_KEY_PREFIX</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
-        <span class="n">s3</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">Bucket</span><span class="o">=</span><span class="n">S3_BUCKET_NAME</span><span class="p">,</span> <span class="n">Key</span><span class="o">=</span><span class="n">upload_key</span><span class="p">)</span>
+        <span class="n">fs</span><span class="o">.</span><span class="n">put_file</span><span class="p">(</span><span class="n">lpath</span><span class="o">=</span><span class="n">filepath</span><span class="p">,</span> <span class="n">rpath</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">S3_BUCKET_NAME</span><span class="p">,</span> <span class="n">upload_key</span><span class="p">))</span>
 
 <span class="n">upload_staged_files</span><span class="p">()</span>
 </pre></div>
