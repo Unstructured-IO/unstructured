@@ -1,4 +1,4 @@
-## 0.5.4-dev2
+## 0.5.4-dev3
 
 ### Enhancements
 
@@ -11,6 +11,8 @@
   specific checks like vocabulary and POS tagging are applied. Set to `"true"` for higher
   resolution partitioning and `"false"` for faster processing.
 * Improves `detect_filetype` warning to include filename when provided.
+* Adds a "fast" strategy for partitioning PDFs with PDFMiner. Also falls back to the "fast"
+  strategy if detectron2 is not available.
 
 ### Features
 
