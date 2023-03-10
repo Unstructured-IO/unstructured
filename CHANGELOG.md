@@ -21,6 +21,8 @@ from `FsspecConnector`
 
 ### Fixes
 
+* Fixes processing for text files with `message/rfc822` MIME type.
+
 ## 0.5.3
 
 ### Enhancements
