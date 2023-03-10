@@ -106,11 +106,11 @@ class SimpleBiomedConfig(BaseConnectorConfig):
 
             self.is_api = True
         else:
-            self.path = self.path.strip("/").lower()
-            is_valid = any([self.path.startswith(type_) for type_ in SUBSET_TYPES])
+            self.path = self.path.strip("/")
+            is_valid = any([self.path.lower().startswith(type_) for type_ in SUBSET_TYPES])
 
             if not is_valid:
-                raise ValueError(f"Path MUST start with one of: {', '.join(SUBSET_TYPES)}.")
+                raise ValueError(f"Path MUST start with one of: {', '.join(SUBSET_TYPES)}")
 
             ftp = FTP(DOMAIN)
             ftp.login()
@@ -118,7 +118,11 @@ class SimpleBiomedConfig(BaseConnectorConfig):
             path = Path(PMC_DIR) / self.path
             response = ""
             try:
-                response = ftp.cwd(str(path))
+                if path.suffix == ".pdf":
+                    response = ftp.cwd(str(path.parent))
+                    self.is_file = True
+                else:
+                    response = ftp.cwd(str(path))
             except error_perm as exc:
                 if "no such file or directory" in exc.args[0].lower():
                     raise ValueError(f"The path: {path} is not valid.")
@@ -167,7 +171,7 @@ class BiomedIngestDoc(BaseIngestDoc):
             self.file_meta.get("download_filepath"),
         )
 
-        logger.debug(f"File downloaded: {self.file_meta.get('download_filepath')}.")
+        logger.debug(f"File downloaded: {self.file_meta.get('download_filepath')}")
 
     def write_result(self):
         """Write the structured json result for this doc. result must be json serializable."""

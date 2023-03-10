@@ -323,14 +323,30 @@ def main(
             hashed_dir_name = hashlib.sha256(
                 drive_id.encode("utf-8"),
             )
+        elif (
+            biomed_path or biomed_api_id or biomed_api_from or biomed_api_until or biomed_api_format
+        ):
+            base_path = biomed_path
+            if not biomed_path:
+                base_path = (
+                    f"{biomed_api_id or ''}-{biomed_api_from or ''}-"
+                    f"{biomed_api_until or ''}-{biomed_api_format or ''}"
+                )
+            hashed_dir_name = hashlib.sha256(
+                base_path.encode("utf-8"),
+            )
         else:
-            raise ValueError("No connector-specific option was specified!")
+            raise ValueError(
+                "This connector does not support saving downloads to ~/.cache/  ,"
+                " --download-dir must be provided",
+            )
         download_dir = cache_path / hashed_dir_name.hexdigest()[:10]
         if preserve_downloads:
             logger.warning(
                 f"Preserving downloaded files but --download-dir is not specified,"
                 f" using {download_dir}",
             )
+
     if s3_url:
         doc_connector = S3Connector(
             config=SimpleS3Config(
