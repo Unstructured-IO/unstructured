@@ -19,11 +19,9 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --biomed-api-from "2019-01-02" \
     --biomed-api-until "2019-01-02+00:03:10" \
-    --biomed-api-format "pdf" \
     --structured-output-dir biomed-ingest-output-api \
     --num-processes 2 \
     --verbose \
-    --download-dir biomed-download-api \
     --preserve-downloads
 
 

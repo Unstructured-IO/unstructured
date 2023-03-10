@@ -28,8 +28,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --structured-output-dir biomed-ingest-output-path \
     --num-processes 2 \
     --verbose \
-    --download-dir biomed-download-path \
-    --preserve-downloads \
+    --preserve-downloads
 
 # Alternatively, you can call it using:
 # unstructured-ingest --biomed-path ...
