@@ -218,6 +218,13 @@ def test_partition_pdf_with_fast_strategy_and_page_breaks(
     assert PageBreak() in elements
 
 
+def test_partition_pdf_raises_with_bad_strategy(
+    filename="example-docs/layout-parser-paper-fast.pdf",
+):
+    with pytest.raises(ValueError):
+        pdf.partition_pdf(filename=filename, url=None, strategy="made_up")
+
+
 def test_partition_pdf_falls_back_to_fast(
     monkeypatch,
     filename="example-docs/layout-parser-paper-fast.pdf",
