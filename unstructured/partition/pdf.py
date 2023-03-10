@@ -3,6 +3,7 @@ from io import StringIO
 from typing import BinaryIO, List, Optional, cast
 
 from unstructured.documents.elements import Element, ElementMetadata, PageBreak
+from unstructured.logger import logger
 from unstructured.partition import _partition_via_api
 from unstructured.partition.common import (
     add_element_metadata,
@@ -10,7 +11,7 @@ from unstructured.partition.common import (
     exactly_one,
 )
 from unstructured.partition.text import partition_text
-from unstructured.utils import requires_dependencies
+from unstructured.utils import dependency_exists, requires_dependencies
 
 
 def partition_pdf(
@@ -82,7 +83,20 @@ def partition_pdf_or_image(
         if route_args[0] == "layout":
             out_template = None
 
-        if strategy == "hi_res":
+        fallback_to_fast = False
+        if not dependency_exists("detectron2"):
+            if is_image:
+                raise ValueError(
+                    "detectron2 is not installed. detectron2 is required for " "partioning images."
+                )
+            else:
+                fallback_to_fast = True
+                logger.warn(
+                    "detectron2 is not installed. Cannot use the hi_res partitioning "
+                    "strategy. Falling back to partitioning with the fast strategy."
+                )
+
+        if strategy == "hi_res" and not fallback_to_fast:
             # NOTE(robinson): Catches a UserWarning that occurs when detectron is called
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
@@ -94,7 +108,7 @@ def partition_pdf_or_image(
                     include_page_breaks=True,
                 )
 
-        elif strategy == "fast":
+        elif strategy == "fast" or fallback_to_fast:
             return _partition_pdf_with_pdfminer(
                 filename=filename,
                 file=file,
@@ -188,7 +202,7 @@ def _partition_pdf_with_pdfminer(
     if filename:
         with open_filename(filename, "rb") as fp:
             fp = cast(BinaryIO, fp)
-            elements = _process_pdf_miner_pages(
+            elements = _process_pdfminer_pages(
                 fp=fp,
                 filename=filename,
                 encoding=encoding,
@@ -207,7 +221,7 @@ def _partition_pdf_with_pdfminer(
     return elements
 
 
-def _process_pdf_miner_pages(
+def _process_pdfminer_pages(
     fp: BinaryIO,
     filename: str = "",
     encoding: str = "utf-8",
