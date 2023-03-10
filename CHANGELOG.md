@@ -1,10 +1,16 @@
-## 0.5.4-dev0
+## 0.5.4-dev2
 
 ### Enhancements
 
+* Add `FsspecConnector` to easily integrate any existing `fsspec` filesystem as a connector.
+* Rename `s3_connector.py` to `s3.py` for readability and consistency with the
+  rest of the connectors.
+* Now `S3Connector` relies on `s3fs` instead of on `boto3`, and it inherits
+  from `FsspecConnector`.
 * Adds an `UNSTRUCTURED_LANGUAGE_CHECKS` environment variable to control whether or not language
   specific checks like vocabulary and POS tagging are applied. Set to `"true"` for higher
   resolution partitioning and `"false"` for faster processing.
+* Improves `detect_filetype` warning to include filename when provided.
 
 ### Features
 

@@ -37,7 +37,9 @@ just execute `unstructured/ingest/main.py`, e.g.:
 
 ## Adding Data Connectors
 
-To add a connector, refer to [unstructured/ingest/connector/s3_connector.py](unstructured/ingest/connector/s3_connector.py) as example that implements the three relelvant abstract base classes.
+To add a connector, refer to [unstructured/ingest/connector/github.py](unstructured/ingest/connector/github.py) as example that implements the three relelvant abstract base classes.
+
+If the connector has an available `fsspec` implementation, then refer to [unstructured/ingest/connector/s3.py](unstructured/ingest/connector/s3.py).
 
 Then, update [unstructured/ingest/main.py](unstructured/ingest/main.py) to instantiate
 the connector specific to your class if its command line options are invoked.
@@ -56,7 +58,7 @@ The `main.py` flags of --re-download/--no-re-download , --download-dir, --preser
 
 In checklist form, the above steps are summarized as:
 
-- [ ] Create a new module under [unstructured/ingest/connector/](unstructured/ingest/connector/) implementing the 3 abstract base classes, similar to [unstructured/ingest/connector/s3_connector.py](unstructured/ingest/connector/s3_connector.py).
+- [ ] Create a new module under [unstructured/ingest/connector/](unstructured/ingest/connector/) implementing the 3 abstract base classes, similar to [unstructured/ingest/connector/github.py](unstructured/ingest/connector/github.py).
   - [ ] The subclass of `BaseIngestDoc` overrides `process_file()` if extra processing logic is needed other than what is provided by [auto.partition()](unstructured/partition/auto.py).
 - [ ] Update [unstructured/ingest/main.py](unstructured/ingest/main.py) with support for the new connector.
 - [ ] Create a folder under [examples/ingest](examples/ingest) that includes at least one well documented script.
@@ -67,7 +69,7 @@ In checklist form, the above steps are summarized as:
   - [ ] Add them as an extra to [setup.py](unstructured/setup.py).
   - [ ] Update the Makefile, adding a target for `install-ingest-<name>` and adding another `pip-compile` line to the `pip-compile` make target. See [this commit](https://github.com/Unstructured-IO/unstructured/commit/ab542ca3c6274f96b431142262d47d727f309e37) for a reference.
   - [ ] The added dependencies should be imported at runtime when the new connector is invoked, rather than as top-level imports.
-  - [ ] Add the decorator `unstructured.utils.requires_dependencies` on top of each class instance or function that uses those connector-specific dependencies e.g. for `S3Connector` should look like `@requires_dependencies(dependencies=["boto3"], extras="s3")`
+  - [ ] Add the decorator `unstructured.utils.requires_dependencies` on top of each class instance or function that uses those connector-specific dependencies e.g. for `GitHubConnector` should look like `@requires_dependencies(dependencies=["github"], extras="github")`
   - [ ] Run `make tidy` and `make check` to ensure linting checks pass.
 - [ ] Honors the conventions of `BaseConnectorConfig` defined in [unstructured/ingest/interfaces.py](unstructured/ingest/interfaces.py) which is passed through [the CLI](unstructured/ingest/main.py):
   - [ ] If running with an `.output_dir` where structured outputs already exists for a given file, the file content is not re-downloaded from the data source nor is it reprocessed. This is made possible by implementing the call to `MyIngestDoc.has_output()` which is invoked in [MainProcess._filter_docs_with_outputs](ingest-prep-for-many/unstructured/ingest/main.py).
@@ -75,4 +77,4 @@ In checklist form, the above steps are summarized as:
   - [ ] If `.preserve_download` is `True`, documents downloaded to `.download_dir` are not removed after processing.
   - [ ] Else if `.preserve_download` is `False`, documents downloaded to `.download_dir` are removed after they are **successfully** processed during the invocation of `MyIngestDoc.cleanup_file()` in [process_document](unstructured/ingest/doc_processor/generalized.py)
   - [ ] Does not re-download documents to `.download_dir` if `.re_download` is False, enforced in `MyIngestDoc.get_file()`
-  - [ ] Prints more details if `.verbose` similar to [unstructured/ingest/connector/s3_connector.py](unstructured/ingest/connector/s3_connector.py).
+  - [ ] Prints more details if `--verbose` in ingest CLI, similar to [unstructured/ingest/connector/github.py](unstructured/ingest/connector/github.py) logging messages.

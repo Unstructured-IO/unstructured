@@ -193,7 +193,7 @@ wrapt==1.14.1
     #   -r requirements/base.txt
     #   argilla
     #   deprecated
-xlsxwriter==3.0.8
+xlsxwriter==3.0.9
     # via
     #   -r requirements/base.txt
     #   python-pptx

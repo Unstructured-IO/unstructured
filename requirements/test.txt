@@ -52,7 +52,7 @@ packaging==23.0
     #   pytest
 pathspec==0.11.0
     # via black
-platformdirs==3.1.0
+platformdirs==3.1.1
     # via black
 pluggy==1.0.0
     # via pytest
