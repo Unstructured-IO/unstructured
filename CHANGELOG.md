@@ -1,4 +1,4 @@
-## 0.5.4-dev2
+## 0.5.4-dev3
 
 ### Enhancements
 
@@ -15,6 +15,8 @@
 ### Features
 
 ### Fixes
+
+* Fixes processing for text files with `message/rfc822` MIME type.
 
 ## 0.5.3
 
