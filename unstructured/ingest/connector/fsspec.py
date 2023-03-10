@@ -13,9 +13,8 @@ from unstructured.ingest.logger import logger
 
 SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
     "s3",
-    "gcs",
-    "gcfs",
     "abfs",
+    "az",
 ]
 
 
