@@ -106,7 +106,7 @@ class MainProcess:
     "--remote-url",
     default=None,
     help="Remote fsspec URL formatted as `protocol://dir/path`, it can contain both "
-    "a directory or a single file.",
+    "a directory or a single file. Supported protocols are: `s3`, `s3a`, `abfs`, and `az`.",
 )
 @click.option(
     "--s3-url",
@@ -357,17 +357,20 @@ def main(
                 ),
             )
         elif protocol in ("abfs", "az"):
+            access_kwargs = (
+                {
+                    "account_name": azure_account_name,
+                    "account_key": azure_account_key,
+                }
+                if azure_account_name
+                else {"connection_string": azure_connection_string}
+                if azure_connection_string
+                else {}
+            )
             doc_connector = AzureBlobStorageConnector(  # type: ignore
                 config=SimpleAzureBlobStorageConfig(
                     path=remote_url,
-                    access_kwargs={
-                        "account_name": azure_account_name,
-                        "account_key": azure_account_key,
-                    }
-                    if azure_account_name
-                    else {"connection_string": azure_connection_string}
-                    if azure_connection_string
-                    else {},
+                    access_kwargs=access_kwargs,
                     download_dir=download_dir,
                     output_dir=structured_output_dir,
                     re_download=re_download,
@@ -377,7 +380,8 @@ def main(
         else:
             warnings.warn(
                 f"`fsspec` protocol {protocol} is not directly supported by `unstructured`,"
-                " so use it at your own risk!",
+                " so use it at your own risk. Supported protocols are `s3`, `s3a`, `abfs`,"
+                " and `az`.",
                 UserWarning,
             )
             doc_connector = FsspecConnector(  # type: ignore
