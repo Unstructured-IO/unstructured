@@ -1,7 +1,6 @@
-***REMOVED******REMOVED*** 0.5.4-dev1
+***REMOVED******REMOVED*** 0.5.4-dev2
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
-
 
 * Add `FsspecConnector` to easily integrate any existing `fsspec` filesystem as a connector.
 * Rename `s3_connector.py` to `s3.py` for readability and consistency with the
@@ -11,6 +10,7 @@
 * Adds an `UNSTRUCTURED_LANGUAGE_CHECKS` environment variable to control whether or not language
   specific checks like vocabulary and POS tagging are applied. Set to `"true"` for higher
   resolution partitioning and `"false"` for faster processing.
+* Improves `detect_filetype` warning to include filename when provided.
 
 ***REMOVED******REMOVED******REMOVED*** Features
 

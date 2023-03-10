@@ -229,7 +229,8 @@ def detect_filetype(
             return EXT_TO_FILETYPE.get(extension.lower(), filetype)
 
     logger.warning(
-        f"MIME type was {mime_type}. This file type is not currently supported in unstructured.",
+        f"The MIME type{f' of {filename!r}' if filename else ''} is {mime_type!r}. "
+        "This file type is not currently supported in unstructured.",
     )
     return FileType.UNK
 
