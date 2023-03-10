@@ -1,4 +1,4 @@
-***REMOVED******REMOVED*** 0.5.4-dev2
+***REMOVED******REMOVED*** 0.5.4-dev3
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
 
@@ -15,6 +15,8 @@
 ***REMOVED******REMOVED******REMOVED*** Features
 
 ***REMOVED******REMOVED******REMOVED*** Fixes
+
+* Fixes processing for text files with `message/rfc822` MIME type.
 
 ***REMOVED******REMOVED*** 0.5.3
 

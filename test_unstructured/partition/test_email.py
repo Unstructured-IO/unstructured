@@ -195,3 +195,9 @@ def test_partition_email_raises_with_invalid_content_type():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
     with pytest.raises(ValueError):
         partition_email(filename=filename, content_source="application/json")
+
+
+def test_partition_email_processes_fake_email_with_header():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email-header.eml")
+    elements = partition_email(filename=filename)
+    assert len(elements) > 0
