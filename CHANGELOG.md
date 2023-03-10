@@ -1,4 +1,4 @@
-## 0.5.4-dev2
+## 0.5.4-dev4
 
 ### Enhancements
 
@@ -11,10 +11,17 @@
   specific checks like vocabulary and POS tagging are applied. Set to `"true"` for higher
   resolution partitioning and `"false"` for faster processing.
 * Improves `detect_filetype` warning to include filename when provided.
+* Start deprecation life cycle for `unstructured-ingest --s3-url` option, to be deprecated in
+  favor of `--remote-url`.
 
 ### Features
 
+* Add `AzureBlobStorageConnector` based on its `fsspec` implementation inheriting
+from `FsspecConnector`
+
 ### Fixes
+
+* Fixes processing for text files with `message/rfc822` MIME type.
 
 ## 0.5.3
 
