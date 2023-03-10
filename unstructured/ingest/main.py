@@ -148,11 +148,6 @@ class MainProcess:
     help="Until parameter for OA Web Service API.",
 )
 @click.option(
-    "--biomed-api-format",
-    default=None,
-    help="Format parameter for OA Web Service API.",
-)
-@click.option(
     "--wikipedia-page-title",
     default=None,
     help='Title of a Wikipedia page, e.g. "Open source software".',
@@ -270,7 +265,6 @@ def main(
     biomed_api_id,
     biomed_api_from,
     biomed_api_until,
-    biomed_api_format,
     wikipedia_page_title,
     wikipedia_auto_suggest,
     github_url,
@@ -323,14 +317,11 @@ def main(
             hashed_dir_name = hashlib.sha256(
                 drive_id.encode("utf-8"),
             )
-        elif (
-            biomed_path or biomed_api_id or biomed_api_from or biomed_api_until or biomed_api_format
-        ):
+        elif biomed_path or biomed_api_id or biomed_api_from or biomed_api_until:
             base_path = biomed_path
             if not biomed_path:
                 base_path = (
-                    f"{biomed_api_id or ''}-{biomed_api_from or ''}-"
-                    f"{biomed_api_until or ''}-{biomed_api_format or ''}"
+                    f"{biomed_api_id or ''}-{biomed_api_from or ''}-" f"{biomed_api_until or ''}"
                 )
             hashed_dir_name = hashlib.sha256(
                 base_path.encode("utf-8"),
@@ -429,14 +420,13 @@ def main(
                 re_download=re_download,
             ),
         )
-    elif biomed_path or biomed_api_id or biomed_api_from or biomed_api_until or biomed_api_format:
+    elif biomed_path or biomed_api_id or biomed_api_from or biomed_api_until:
         doc_connector = BiomedConnector(  # type: ignore
             config=SimpleBiomedConfig(
                 path=biomed_path,
                 id_=biomed_api_id,
                 from_=biomed_api_from,
                 until=biomed_api_until,
-                format=biomed_api_format,
                 # defaults params:
                 download_dir=download_dir,
                 preserve_downloads=preserve_downloads,

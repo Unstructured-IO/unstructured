@@ -20,7 +20,7 @@ from unstructured.ingest.logger import logger
 DOMAIN = "ftp.ncbi.nlm.nih.gov"
 FTP_DOMAIN = f"ftp://{DOMAIN}"
 PMC_DIR = "pub/pmc"
-SUBSET_TYPES = ["oa_pdf", "oa_package"]
+PDF_DIR = "oa_pdf"
 
 
 @dataclass
@@ -34,7 +34,6 @@ class SimpleBiomedConfig(BaseConnectorConfig):
     id_: str
     from_: str
     until: str
-    format: str
 
     # Standard Connector options
     download_dir: str
@@ -43,51 +42,36 @@ class SimpleBiomedConfig(BaseConnectorConfig):
     re_download: bool = False
     preserve_downloads: bool = False
 
+    def _validate_date_args(self, date):
+        date_formats = ["%Y-%m-%d", "%Y-%m-%d+%H:%M:%S"]
+
+        valid = False
+        if date:
+            date = date.replace(" ", "+").replace("%20", "+")
+            for format in date_formats:
+                try:
+                    datetime.strptime(date, format)
+                    valid = True
+                    break
+                except ValueError:
+                    pass
+
+            if not valid:
+                raise ValueError(
+                    f"The from argument {date} does not satisfy the format: "
+                    "YYYY-MM-DD or YYYY-MM-DD HH:MM:SS",
+                )
+
+        return valid
+
     def validate_api_inputs(self):
         valid = False
-        if self.format:
-            options = ["pdf", "tgz"]
-            self.format = self.format.lower()
-            if self.format not in options:
-                raise ValueError(f"Invalid format. Format MUST be one of {', '.join(options)}")
-            valid = True
 
-        date_formats = ["%Y-%m-%d", "%Y-%m-%d+%H:%M:%S"]
         if self.from_:
-            from_valid = False
-            self.from_ = self.from_.replace(" ", "+").replace("%20", "+")
-            for format in date_formats:
-                try:
-                    datetime.strptime(self.from_, format)
-                    from_valid = True
-                    valid = True
-                    break
-                except ValueError:
-                    pass
-
-            if not from_valid:
-                raise ValueError(
-                    f"The from argument {self.from_} does not satisfy the format: "
-                    "YYYY-MM-DD or YYYY-MM-DD HH:MM:SS",
-                )
+            valid = self._validate_date_args(self.from_)
 
         if self.until:
-            until_valid = False
-            self.until = self.until.replace(" ", "+").replace("%20", "+")
-            for format in date_formats:
-                try:
-                    datetime.strptime(self.until, format)
-                    until_valid = True
-                    valid = True
-                    break
-                except ValueError:
-                    pass
-
-            if not until_valid:
-                raise ValueError(
-                    f"The from argument {self.until} does not satisfy the format: "
-                    "YYYY-MM-DD or YYYY-MM-DD HH:MM:SS",
-                )
+            valid = self._validate_date_args(self.until)
 
         return valid
 
@@ -107,10 +91,10 @@ class SimpleBiomedConfig(BaseConnectorConfig):
             self.is_api = True
         else:
             self.path = self.path.strip("/")
-            is_valid = any([self.path.lower().startswith(type_) for type_ in SUBSET_TYPES])
+            is_valid = self.path.lower().startswith(PDF_DIR)
 
             if not is_valid:
-                raise ValueError(f"Path MUST start with one of: {', '.join(SUBSET_TYPES)}")
+                raise ValueError(f"Path MUST start with {PDF_DIR}")
 
             ftp = FTP(DOMAIN)
             ftp.login()
@@ -193,53 +177,35 @@ class BiomedConnector(BaseConnector):
         def urls_to_metadata(urls):
             files = []
             for url in urls:
-                for type_ in SUBSET_TYPES:
-                    parts = url.split(type_)
-                    if len(parts) > 1:
-                        local_path = parts[1].strip("/")
-                        files.append(
-                            {
-                                "ftp_path": url,
-                                "download_filepath": (
-                                    Path(self.config.download_dir) / local_path
-                                ).resolve(),
-                                "output_filepath": (
-                                    Path(self.config.output_dir) / local_path
-                                ).resolve(),
-                            },
-                        )
-                        break
+                parts = url.split(PDF_DIR)
+                if len(parts) > 1:
+                    local_path = parts[1].strip("/")
+                    files.append(
+                        {
+                            "ftp_path": url,
+                            "download_filepath": (
+                                Path(self.config.download_dir) / local_path
+                            ).resolve(),
+                            "output_filepath": (
+                                Path(self.config.output_dir) / local_path
+                            ).resolve(),
+                        },
+                    )
+
             return files
 
         files: List[Dict] = []
 
-        endpoint_url = "https://www.ncbi.nlm.nih.gov/pmc/utils/oa/oa.fcgi?"
+        endpoint_url = "https://www.ncbi.nlm.nih.gov/pmc/utils/oa/oa.fcgi?format=pdf"
 
         if self.config.id_:
-            endpoint_url += (
-                f"id={self.config.id_}" if endpoint_url.endswith("?") else f"&id={self.config.id_}"
-            )
+            endpoint_url += f"&id={self.config.id_}"
 
         if self.config.from_:
-            endpoint_url += (
-                f"from={self.config.from_}"
-                if endpoint_url.endswith("?")
-                else f"&from={self.config.from_}"
-            )
+            endpoint_url += f"&from={self.config.from_}"
 
         if self.config.until:
-            endpoint_url += (
-                f"until={self.config.until}"
-                if endpoint_url.endswith("?")
-                else f"&until={self.config.until}"
-            )
-
-        if self.config.format:
-            endpoint_url += (
-                f"format={self.config.format}"
-                if endpoint_url.endswith("?")
-                else f"&format={self.config.format}"
-            )
+            endpoint_url += f"&until={self.config.until}"
 
         while endpoint_url:
             response = requests.get(endpoint_url)
