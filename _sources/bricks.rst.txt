@@ -86,6 +86,8 @@ specific bricks if you need to apply non-default settings.
 ``.png``, ``.jpg``, and ``.txt`` files.
 If you set the ``include_page_breaks`` kwarg to ``True``, the output will include page breaks. This is only supported for ``.pptx``, ``.html``, ``.pdf``,
 ``.png``, and ``.jpg``.
+The ``strategy`` kwarg controls the strategy for partitioning documents. Generally available strategies are `"fast"` for
+faster processing and `"hi_res"` for
 
 
 .. code:: python
@@ -235,6 +237,10 @@ if you'd like to run inference locally.
 If you set the URL, ``partition_pdf`` will make a call to a remote inference server.
 ``partition_pdf`` also includes a ``token`` function that allows you to pass in an authentication
 token for a remote API call.
+The ``strategy`` kwarg controls the method that will be used to process the PDF. The ``"hi_res"`` strategy
+will identify the layout of the document using ``detectron2``. The ``"fast"`` strategy will extract the
+text using ``pdfminer`` and process the raw text with ``partition_text``. If ``detectron2`` is not available,
+and the ``"hi_res"`` strategy is set, ``partition_pdf`` will fallback to the ``"fast"`` strategy.
 
 Examples:
 
