@@ -1,7 +1,8 @@
-***REMOVED******REMOVED*** 0.5.4-dev4
+***REMOVED******REMOVED*** 0.5.4-dev5
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
 
+* Added Biomedical literature connector for ingest cli.
 * Add `FsspecConnector` to easily integrate any existing `fsspec` filesystem as a connector.
 * Rename `s3_connector.py` to `s3.py` for readability and consistency with the
   rest of the connectors.
