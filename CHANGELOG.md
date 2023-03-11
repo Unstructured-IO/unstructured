@@ -1,7 +1,8 @@
-## 0.5.4-dev3
+## 0.5.4-dev6
 
 ### Enhancements
 
+* Added Biomedical literature connector for ingest cli.
 * Add `FsspecConnector` to easily integrate any existing `fsspec` filesystem as a connector.
 * Rename `s3_connector.py` to `s3.py` for readability and consistency with the
   rest of the connectors.
@@ -13,10 +14,17 @@
 * Improves `detect_filetype` warning to include filename when provided.
 * Adds a "fast" strategy for partitioning PDFs with PDFMiner. Also falls back to the "fast"
   strategy if detectron2 is not available.
+* Start deprecation life cycle for `unstructured-ingest --s3-url` option, to be deprecated in
+  favor of `--remote-url`.
 
 ### Features
 
+* Add `AzureBlobStorageConnector` based on its `fsspec` implementation inheriting
+from `FsspecConnector`
+
 ### Fixes
+
+* Fixes processing for text files with `message/rfc822` MIME type.
 
 ## 0.5.3
 

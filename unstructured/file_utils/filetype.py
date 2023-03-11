@@ -37,6 +37,11 @@ PPT_MIME_TYPES = [
     "application/vnd.ms-powerpoint",
 ]
 
+TXT_MIME_TYPES = [
+    "text/plain",
+    "message/rfc822",  # ref: https://www.rfc-editor.org/rfc/rfc822
+]
+
 MD_MIME_TYPES = [
     "text/markdown",
     "text/x-markdown",
@@ -175,7 +180,7 @@ def detect_filetype(
         # NOTE - I am not sure whether libmagic ever returns these mimetypes.
         return FileType.MD
 
-    elif mime_type == "text/plain":
+    elif mime_type in TXT_MIME_TYPES:
         if extension and extension == ".eml":
             return FileType.EML
         if extension and extension == ".md":

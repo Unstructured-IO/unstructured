@@ -3,11 +3,19 @@ import hashlib
 import logging
 import multiprocessing as mp
 import sys
+import warnings
 from contextlib import suppress
 from pathlib import Path
+from urllib.parse import urlparse
 
 import click
 
+from unstructured.ingest.connector.azure import (
+    AzureBlobStorageConnector,
+    SimpleAzureBlobStorageConfig,
+)
+from unstructured.ingest.connector.biomed import BiomedConnector, SimpleBiomedConfig
+from unstructured.ingest.connector.fsspec import FsspecConnector, SimpleFsspecConfig
 from unstructured.ingest.connector.github import GitHubConnector, SimpleGitHubConfig
 from unstructured.ingest.connector.gitlab import GitLabConnector, SimpleGitLabConfig
 from unstructured.ingest.connector.google_drive import (
@@ -96,16 +104,38 @@ class MainProcess:
 
 @click.command()
 @click.option(
+    "--remote-url",
+    default=None,
+    help="Remote fsspec URL formatted as `protocol://dir/path`, it can contain both "
+    "a directory or a single file. Supported protocols are: `s3`, `s3a`, `abfs`, and `az`.",
+)
+@click.option(
     "--s3-url",
     default=None,
     help="Prefix of s3 objects (files) to download. E.g. s3://bucket1/path/. This value may "
-    "also be a single file.",
+    "also be a single file. To be deprecated in favor of --remote-url.",
 )
 @click.option(
     "--s3-anonymous",
     is_flag=True,
     default=False,
     help="Connect to s3 without local AWS credentials.",
+)
+@click.option(
+    "--azure-account-name",
+    default=None,
+    help="Azure Blob Storage or DataLake account name.",
+)
+@click.option(
+    "--azure-account-key",
+    default=None,
+    help="Azure Blob Storage or DataLake account key (not required if "
+    "`azure_account_name` is public).",
+)
+@click.option(
+    "--azure-connection-string",
+    default=None,
+    help="Azure Blob Storage or DataLake connection string.",
 )
 @click.option(
     "--drive-id",
@@ -128,6 +158,26 @@ class MainProcess:
     "--drive-extension",
     default=None,
     help="Filters the files to be processed based on extension e.g. .jpg, .docx, etc.",
+)
+@click.option(
+    "--biomed-path",
+    default=None,
+    help="PMC Open Access FTP Directory Path.",
+)
+@click.option(
+    "--biomed-api-id",
+    default=None,
+    help="ID parameter for OA Web Service API.",
+)
+@click.option(
+    "--biomed-api-from",
+    default=None,
+    help="From parameter for OA Web Service API.",
+)
+@click.option(
+    "--biomed-api-until",
+    default=None,
+    help="Until parameter for OA Web Service API.",
 )
 @click.option(
     "--wikipedia-page-title",
@@ -238,11 +288,20 @@ class MainProcess:
 )
 @click.option("-v", "--verbose", is_flag=True, default=False)
 def main(
-    s3_url,
+    remote_url,
+    s3_url,  # TODO: deprecate this in the next minor release
+    s3_anonymous,
+    azure_account_name,
+    azure_account_key,
+    azure_connection_string,
     drive_id,
     drive_service_account_key,
     drive_recursive,
     drive_extension,
+    biomed_path,
+    biomed_api_id,
+    biomed_api_from,
+    biomed_api_until,
     wikipedia_page_title,
     wikipedia_auto_suggest,
     github_url,
@@ -262,7 +321,6 @@ def main(
     structured_output_dir,
     reprocess,
     num_processes,
-    s3_anonymous,
     verbose,
 ):
     if not preserve_downloads and download_dir:
@@ -274,7 +332,14 @@ def main(
         if not cache_path.exists():
             cache_path.mkdir(parents=True, exist_ok=True)
         if s3_url:
-            hashed_dir_name = hashlib.sha256(s3_url.encode("utf-8"))
+            warnings.warn(
+                "The `--s3-url` option will be deprecated in favor of `--remote-url`"
+                " in the next minor release.",
+                DeprecationWarning,
+            )
+            remote_url = s3_url
+        if remote_url:
+            hashed_dir_name = hashlib.sha256(remote_url.encode("utf-8"))
         elif github_url:
             hashed_dir_name = hashlib.sha256(
                 f"{github_url}_{git_branch}".encode("utf-8"),
@@ -295,25 +360,75 @@ def main(
             hashed_dir_name = hashlib.sha256(
                 drive_id.encode("utf-8"),
             )
+        elif biomed_path or biomed_api_id or biomed_api_from or biomed_api_until:
+            base_path = biomed_path
+            if not biomed_path:
+                base_path = (
+                    f"{biomed_api_id or ''}-{biomed_api_from or ''}-" f"{biomed_api_until or ''}"
+                )
+            hashed_dir_name = hashlib.sha256(
+                base_path.encode("utf-8"),
+            )
         else:
-            raise ValueError("No connector-specific option was specified!")
+            raise ValueError(
+                "This connector does not support saving downloads to ~/.cache/  ,"
+                " --download-dir must be provided",
+            )
         download_dir = cache_path / hashed_dir_name.hexdigest()[:10]
         if preserve_downloads:
             logger.warning(
                 f"Preserving downloaded files but --download-dir is not specified,"
                 f" using {download_dir}",
             )
-    if s3_url:
-        doc_connector = S3Connector(
-            config=SimpleS3Config(
-                path=s3_url,
-                access_kwargs={"anon": s3_anonymous},
-                download_dir=download_dir,
-                output_dir=structured_output_dir,
-                re_download=re_download,
-                preserve_downloads=preserve_downloads,
-            ),
-        )
+    if remote_url:
+        protocol = urlparse(remote_url).scheme
+        if protocol in ("s3", "s3a"):
+            doc_connector = S3Connector(  # type: ignore
+                config=SimpleS3Config(
+                    path=s3_url,
+                    access_kwargs={"anon": s3_anonymous},
+                    download_dir=download_dir,
+                    output_dir=structured_output_dir,
+                    re_download=re_download,
+                    preserve_downloads=preserve_downloads,
+                ),
+            )
+        elif protocol in ("abfs", "az"):
+            if azure_account_name:
+                access_kwargs = {
+                    "account_name": azure_account_name,
+                    "account_key": azure_account_key,
+                }
+            elif azure_connection_string:
+                access_kwargs = {"connection_string": azure_connection_string}
+            else:
+                access_kwargs = {}
+            doc_connector = AzureBlobStorageConnector(  # type: ignore
+                config=SimpleAzureBlobStorageConfig(
+                    path=remote_url,
+                    access_kwargs=access_kwargs,
+                    download_dir=download_dir,
+                    output_dir=structured_output_dir,
+                    re_download=re_download,
+                    preserve_downloads=preserve_downloads,
+                ),
+            )
+        else:
+            warnings.warn(
+                f"`fsspec` protocol {protocol} is not directly supported by `unstructured`,"
+                " so use it at your own risk. Supported protocols are `s3`, `s3a`, `abfs`,"
+                " and `az`.",
+                UserWarning,
+            )
+            doc_connector = FsspecConnector(  # type: ignore
+                config=SimpleFsspecConfig(
+                    path=remote_url,
+                    download_dir=download_dir,
+                    output_dir=structured_output_dir,
+                    re_download=re_download,
+                    preserve_downloads=preserve_downloads,
+                ),
+            )
     elif github_url:
         doc_connector = GitHubConnector(  # type: ignore
             config=SimpleGitHubConfig(
@@ -377,6 +492,20 @@ def main(
                 service_account_key=drive_service_account_key,
                 recursive=drive_recursive,
                 extension=drive_extension,
+                # defaults params:
+                download_dir=download_dir,
+                preserve_downloads=preserve_downloads,
+                output_dir=structured_output_dir,
+                re_download=re_download,
+            ),
+        )
+    elif biomed_path or biomed_api_id or biomed_api_from or biomed_api_until:
+        doc_connector = BiomedConnector(  # type: ignore
+            config=SimpleBiomedConfig(
+                path=biomed_path,
+                id_=biomed_api_id,
+                from_=biomed_api_from,
+                until=biomed_api_until,
                 # defaults params:
                 download_dir=download_dir,
                 preserve_downloads=preserve_downloads,
