@@ -14,10 +14,10 @@ PYTHONPATH=. ./unstructured/ingest/main.py --s3-url s3://utic-dev-tech-fixtures/
 if ! diff -ru test_unstructured_ingest/expected-structured-output/s3-small-batch s3-small-batch-output ; then
     echo
     echo "There are differences from the previously checked-in structured outputs."
-    echo 
+    echo
     echo "If these differences are acceptable, copy the outputs from"
     echo "s3-small-batch-output/ to test_unstructured_ingest/expected-structured-output/s3-small-batch/ after running"
-    echo 
+    echo
     echo "  PYTHONPATH=. python examples/ingest/s3-small-batch/main.py --structured-output-dir s3-small-batch-output"
     echo
     exit 1
