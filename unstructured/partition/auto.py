@@ -18,6 +18,8 @@ def partition(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
     include_page_breaks: bool = False,
+    strategy: str = "hi_res",
+    encoding: str = "utf-8",
 ):
     """Partitions a document into its constituent elements. Will use libmagic to determine
     the file's type and route it to the appropriate partitioning function. Applies the default
@@ -32,6 +34,12 @@ def partition(
         A file-like object using "rb" mode --> open(filename, "rb").
     include_page_breaks
         If True, the output will include page breaks if the filetype supports it
+    strategy
+        The strategy to use for partitioning the PDF. Uses a layout detection model if set
+        to 'hi_res', otherwise partition_pdf simply extracts the text from the document
+        and processes it.
+    encoding
+        The encoding method used to decode the text input. If None, utf-8 will be used.
     """
     filetype = detect_filetype(filename=filename, file=file)
 
@@ -43,9 +51,14 @@ def partition(
     if filetype == FileType.DOCX:
         return partition_docx(filename=filename, file=file)
     elif filetype == FileType.EML:
-        return partition_email(filename=filename, file=file)
+        return partition_email(filename=filename, file=file, encoding=encoding)
     elif filetype == FileType.HTML:
-        return partition_html(filename=filename, file=file, include_page_breaks=include_page_breaks)
+        return partition_html(
+            filename=filename,
+            file=file,
+            include_page_breaks=include_page_breaks,
+            encoding=encoding,
+        )
     elif filetype == FileType.MD:
         return partition_md(filename=filename, file=file, include_page_breaks=include_page_breaks)
     elif filetype == FileType.PDF:
@@ -54,6 +67,8 @@ def partition(
             file=file,  ***REMOVED*** type: ignore
             url=None,
             include_page_breaks=include_page_breaks,
+            encoding=encoding,
+            strategy=strategy,
         )
     elif (filetype == FileType.PNG) or (filetype == FileType.JPG):
         return partition_image(
@@ -63,7 +78,7 @@ def partition(
             include_page_breaks=include_page_breaks,
         )
     elif filetype == FileType.TXT:
-        return partition_text(filename=filename, file=file)
+        return partition_text(filename=filename, file=file, encoding=encoding)
     elif filetype == FileType.PPT:
         return partition_ppt(filename=filename, file=file, include_page_breaks=include_page_breaks)
     elif filetype == FileType.PPTX:

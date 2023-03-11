@@ -26,9 +26,7 @@ def requires_dependencies(
         def wrapper(*args, **kwargs):
             missing_deps = []
             for dep in dependencies:
-                try:
-                    importlib.import_module(dep)
-                except ImportError:
+                if not dependency_exists(dep):
                     missing_deps.append(dep)
             if len(missing_deps) > 0:
                 raise ImportError(
@@ -44,3 +42,11 @@ def requires_dependencies(
         return wrapper
 
     return decorator
+
+
+def dependency_exists(dependency):
+    try:
+        importlib.import_module(dependency)
+    except ImportError:
+        return False
+    return True

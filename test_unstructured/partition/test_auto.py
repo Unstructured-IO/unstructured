@@ -1,6 +1,7 @@
 import os
 import pathlib
 import warnings
+from unittest.mock import patch
 
 import docx
 import pytest
@@ -187,6 +188,23 @@ def test_auto_partition_pdf_from_filename():
     assert elements[1].text.startswith("Zejiang Shen 1")
 
     assert elements[0].metadata.filename == filename
+
+
+def test_auto_partition_pdf_with_fast_strategy():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
+
+    mock_return = [NarrativeText("Hello there!")]
+    with patch.object(auto, "partition_pdf", return_value=mock_return) as mock_partition:
+        partition(filename=filename, strategy="fast")
+
+    mock_partition.assert_called_once_with(
+        filename=filename,
+        file=None,
+        url=None,
+        include_page_breaks=False,
+        encoding="utf-8",
+        strategy="fast",
+    )
 
 
 def test_auto_partition_pdf_from_file():
