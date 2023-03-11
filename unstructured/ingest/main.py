@@ -14,6 +14,7 @@ from unstructured.ingest.connector.azure import (
     AzureBlobStorageConnector,
     SimpleAzureBlobStorageConfig,
 )
+from unstructured.ingest.connector.biomed import BiomedConnector, SimpleBiomedConfig
 from unstructured.ingest.connector.fsspec import FsspecConnector, SimpleFsspecConfig
 from unstructured.ingest.connector.github import GitHubConnector, SimpleGitHubConfig
 from unstructured.ingest.connector.gitlab import GitLabConnector, SimpleGitLabConfig
@@ -159,6 +160,26 @@ class MainProcess:
     help="Filters the files to be processed based on extension e.g. .jpg, .docx, etc.",
 )
 @click.option(
+    "--biomed-path",
+    default=None,
+    help="PMC Open Access FTP Directory Path.",
+)
+@click.option(
+    "--biomed-api-id",
+    default=None,
+    help="ID parameter for OA Web Service API.",
+)
+@click.option(
+    "--biomed-api-from",
+    default=None,
+    help="From parameter for OA Web Service API.",
+)
+@click.option(
+    "--biomed-api-until",
+    default=None,
+    help="Until parameter for OA Web Service API.",
+)
+@click.option(
     "--wikipedia-page-title",
     default=None,
     help='Title of a Wikipedia page, e.g. "Open source software".',
@@ -277,6 +298,10 @@ def main(
     drive_service_account_key,
     drive_recursive,
     drive_extension,
+    biomed_path,
+    biomed_api_id,
+    biomed_api_from,
+    biomed_api_until,
     wikipedia_page_title,
     wikipedia_auto_suggest,
     github_url,
@@ -335,8 +360,20 @@ def main(
             hashed_dir_name = hashlib.sha256(
                 drive_id.encode("utf-8"),
             )
+        elif biomed_path or biomed_api_id or biomed_api_from or biomed_api_until:
+            base_path = biomed_path
+            if not biomed_path:
+                base_path = (
+                    f"{biomed_api_id or ''}-{biomed_api_from or ''}-" f"{biomed_api_until or ''}"
+                )
+            hashed_dir_name = hashlib.sha256(
+                base_path.encode("utf-8"),
+            )
         else:
-            raise ValueError("No connector-specific option was specified!")
+            raise ValueError(
+                "This connector does not support saving downloads to ~/.cache/  ,"
+                " --download-dir must be provided",
+            )
         download_dir = cache_path / hashed_dir_name.hexdigest()[:10]
         if preserve_downloads:
             logger.warning(
@@ -455,6 +492,20 @@ def main(
                 service_account_key=drive_service_account_key,
                 recursive=drive_recursive,
                 extension=drive_extension,
+                # defaults params:
+                download_dir=download_dir,
+                preserve_downloads=preserve_downloads,
+                output_dir=structured_output_dir,
+                re_download=re_download,
+            ),
+        )
+    elif biomed_path or biomed_api_id or biomed_api_from or biomed_api_until:
+        doc_connector = BiomedConnector(  # type: ignore
+            config=SimpleBiomedConfig(
+                path=biomed_path,
+                id_=biomed_api_id,
+                from_=biomed_api_from,
+                until=biomed_api_until,
                 # defaults params:
                 download_dir=download_dir,
                 preserve_downloads=preserve_downloads,
