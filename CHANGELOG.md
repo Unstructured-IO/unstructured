@@ -1,4 +1,32 @@
-## 0.5.3-dev6
+## 0.5.4-dev6
+
+### Enhancements
+
+* Added Biomedical literature connector for ingest cli.
+* Add `FsspecConnector` to easily integrate any existing `fsspec` filesystem as a connector.
+* Rename `s3_connector.py` to `s3.py` for readability and consistency with the
+  rest of the connectors.
+* Now `S3Connector` relies on `s3fs` instead of on `boto3`, and it inherits
+  from `FsspecConnector`.
+* Adds an `UNSTRUCTURED_LANGUAGE_CHECKS` environment variable to control whether or not language
+  specific checks like vocabulary and POS tagging are applied. Set to `"true"` for higher
+  resolution partitioning and `"false"` for faster processing.
+* Improves `detect_filetype` warning to include filename when provided.
+* Adds a "fast" strategy for partitioning PDFs with PDFMiner. Also falls back to the "fast"
+  strategy if detectron2 is not available.
+* Start deprecation life cycle for `unstructured-ingest --s3-url` option, to be deprecated in
+  favor of `--remote-url`.
+
+### Features
+
+* Add `AzureBlobStorageConnector` based on its `fsspec` implementation inheriting
+from `FsspecConnector`
+
+### Fixes
+
+* Fixes processing for text files with `message/rfc822` MIME type.
+
+## 0.5.3
 
 ### Enhancements
 
@@ -10,13 +38,12 @@
 
 * Add `--wikipedia-auto-suggest` argument to the ingest CLI to disable automatic redirection
   to pages with similar names.
+* Add setup script for Amazon Linux 2
 * Add optional `encoding` argument to the `partition_(text/email/html)` functions.
 * Added Google Drive connector for ingest cli.
 * Added Gitlab connector for ingest cli.
 
 ### Fixes
-
-* Open xml files in read-only mode when reading contents to construct an XMLDocument.
 
 ## 0.5.2
 

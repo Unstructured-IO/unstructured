@@ -86,6 +86,8 @@ specific bricks if you need to apply non-default settings.
 ``.png``, ``.jpg``, and ``.txt`` files.
 If you set the ``include_page_breaks`` kwarg to ``True``, the output will include page breaks. This is only supported for ``.pptx``, ``.html``, ``.pdf``,
 ``.png``, and ``.jpg``.
+The ``strategy`` kwarg controls the strategy for partitioning documents. Generally available strategies are `"fast"` for
+faster processing and `"hi_res"` for
 
 
 .. code:: python
@@ -235,6 +237,10 @@ if you'd like to run inference locally.
 If you set the URL, ``partition_pdf`` will make a call to a remote inference server.
 ``partition_pdf`` also includes a ``token`` function that allows you to pass in an authentication
 token for a remote API call.
+The ``strategy`` kwarg controls the method that will be used to process the PDF. The ``"hi_res"`` strategy
+will identify the layout of the document using ``detectron2``. The ``"fast"`` strategy will extract the
+text using ``pdfminer`` and process the raw text with ``partition_text``. If ``detectron2`` is not available,
+and the ``"hi_res"`` strategy is set, ``partition_pdf`` will fallback to the ``"fast"`` strategy.
 
 Examples:
 
@@ -1230,12 +1236,12 @@ files to an S3 bucket.
 
   # Upload staged data files to S3 from local output directory.
   def upload_staged_files():
-      import boto3
-      s3 = boto3.client("s3")
+      from s3fs import S3FileSystem
+      fs = S3FileSystem()
       for filename in os.listdir(LOCAL_OUTPUT_DIRECTORY):
           filepath = os.path.join(LOCAL_OUTPUT_DIRECTORY, filename)
           upload_key = os.path.join(S3_BUCKET_KEY_PREFIX, filename)
-          s3.upload_file(filepath, Bucket=S3_BUCKET_NAME, Key=upload_key)
+          fs.put_file(lpath=filepath, rpath=os.path.join(S3_BUCKET_NAME, upload_key))
 
   upload_staged_files()
 
@@ -1351,6 +1357,7 @@ for consideration as narrative text. The function performs the following checks 
   The environment variables takes precedence over the kwarg.
 * The cap ratio test does not apply to text that is all uppercase.
 * If you use the ``language=""`` kwarg or set the ``UNSTRUCTURED_LANGUAGE`` environment variable to ``""``, the function will skip the verb check and the English word check.
+* If you use the ``language_checks=True`` kwarg or set the ``UNSTRUCTURED_LANGUAGE_CHECKS`` environment variable to ``"true"``, the function will apply language specific checks such as vocab part of speech checks.
 
 
 Examples:
@@ -1392,6 +1399,8 @@ for consideration as a title. The function performs the following checks:
 * If a title contains more than one sentence that exceeds a certain length, it cannot be a title. Sentence length threshold is controlled by the ``sentence_min_length`` kwarg and defaults to 5.
 * If a segment of text ends in a comma, it is not considered a potential title. This is to avoid salutations like "To My Dearest Friends," getting flagged as titles.
 * If you use the ``language=""`` kwarg or set the ``UNSTRUCTURED_LANGUAGE`` environment variable to ``""``, the function will skip the English word check.
+* If you use the ``language_checks=True`` kwarg or set the ``UNSTRUCTURED_LANGUAGE_CHECKS`` environment variable to ``"true"``, the function will apply language specific checks such as vocab part of speech checks.
+
 
 
 

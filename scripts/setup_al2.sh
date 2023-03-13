@@ -10,7 +10,7 @@ fi
 set -eux
 
 # Set package manager command for this distribution
-pac="apt"
+pac="yum"
 
 # If we're not running as root, we want to prefix certain commands with sudo
 if [[ $(whoami) == 'root' ]]; then
@@ -25,19 +25,17 @@ fi
 USER_ACCOUNT=$1
 
 # Update existing packages
-# Reconfigure the service that detects the need for service restarts from interactive mode (user
-# needs to manually confirm which services to restart) to automatic. If we don't do this we'll
-# get hung up on a screen asking us which services we want to restart after upgrading packages.
 $sudo $pac update -y
-if [[ -d /etc/needrestart/conf.d ]]; then
-    # shellcheck disable=SC2016
-    echo '$nrconf{restart} = '"'a';" | $sudo tee /etc/needrestart/conf.d/99z_temp_disable.conf
-fi
-$sudo $pac upgrade -y
 
 #### Utils
 # Prerequisites
-$sudo env DEBIAN_FRONTEND="noninteractive" $pac install -y gcc wget tar curl make xz-utils build-essential tzdata
+$sudo $pac install -y gcc wget tar curl make xz-devel
+# Install non-ancient version of sed
+wget http://ftp.gnu.org/gnu/sed/sed-4.9.tar.gz
+tar xvf sed-4.9.tar.gz
+cd sed-4.9/
+./configure && make && $sudo make install
+cd ..
 
 #### Git
 # Install git
@@ -45,7 +43,7 @@ $sudo $pac install -y git
 
 #### Python
 # Install tools needed to build python
-$sudo $pac install -y bzip2 sqlite zlib1g-dev libreadline-dev libsqlite3-dev libssl-dev tk-dev libffi-dev libbz2-dev llvm libncursesw5-dev libxml2-dev libxmlsec1-dev liblzma-dev
+$sudo $pac install -y bzip2 sqlite zlib-devel readline-devel sqlite-devel openssl-devel tk-devel libffi-devel bzip2-devel 
 # Install pyenv
 sudo -u "$USER_ACCOUNT" -i <<'EOF'
     if [[ ! -d "$HOME"/.pyenv ]]; then
@@ -76,20 +74,38 @@ EOT
 EOF
 
 #### OpenCV dependencies
-$sudo $pac install -y libgl1
+$sudo $pac install -y mesa-libGL
 
 #### Poppler
 # Install poppler
 $sudo $pac install -y poppler-utils
 
 #### Tesseract
-# Install tesseract as well as Russian language
-$sudo $pac install -y tesseract-ocr libtesseract-dev tesseract-ocr-rus libreoffice
+# Install dependencies for image and pdf manipulation
+$sudo $pac install -y opencv opencv-devel opencv-python perl-core clang libpng-devel libtiff-devel libwebp-devel libjpeg-turbo-devel git-core libtool pkgconfig xz
+# Install leptonica (tesseract dependency)
+wget https://github.com/DanBloomberg/leptonica/releases/download/1.75.1/leptonica-1.75.1.tar.gz
+tar -xzvf leptonica-1.75.1.tar.gz
+cd leptonica-1.75.1
+./configure && make && $sudo make install
+cd ..
+# Install autoconf-archive (tesseract dependency)
+wget http://mirror.squ.edu.om/gnu/autoconf-archive/autoconf-archive-2017.09.28.tar.xz
+tar -xvf autoconf-archive-2017.09.28.tar.xz
+cd autoconf-archive-2017.09.28
+./configure && make && $sudo make install
+$sudo cp m4/* /usr/share/aclocal
+cd ..
+# Install tesseract
+git clone --depth 1  https://github.com/tesseract-ocr/tesseract.git tesseract-ocr
+cd tesseract-ocr
+export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
+./autogen.sh
+./configure && make && $sudo make install
+cd ..
+# Install tesseract languages
+git clone https://github.com/tesseract-ocr/tessdata.git
+$sudo cp tessdata/*.traineddata /usr/local/share/tessdata
 
 #### libmagic
-$sudo $pac install -y libmagic-dev
-
-#### Put needrestart back the way it was and clean up
-if [[ -d /etc/needrestart/conf.d/ ]]; then
-    $sudo rm -f /etc/needrestart/conf.d/99z_temp_disable.conf
-fi
+$sudo $pac install -y file-devel

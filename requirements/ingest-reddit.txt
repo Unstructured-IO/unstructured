@@ -8,7 +8,7 @@ anyio==3.6.2
     # via
     #   -r requirements/base.txt
     #   httpcore
-argilla==1.3.1
+argilla==1.4.0
     # via
     #   -r requirements/base.txt
     #   unstructured (setup.py)
@@ -23,7 +23,7 @@ certifi==2022.12.7
     #   httpx
     #   requests
     #   unstructured (setup.py)
-charset-normalizer==3.0.1
+charset-normalizer==3.1.0
     # via
     #   -r requirements/base.txt
     #   requests
@@ -31,6 +31,10 @@ click==8.1.3
     # via
     #   -r requirements/base.txt
     #   nltk
+commonmark==0.9.1
+    # via
+    #   -r requirements/base.txt
+    #   rich
 deprecated==1.2.13
     # via
     #   -r requirements/base.txt
@@ -110,10 +114,14 @@ praw==7.7.0
     # via unstructured (setup.py)
 prawcore==2.3.0
     # via praw
-pydantic==1.10.5
+pydantic==1.10.6
     # via
     #   -r requirements/base.txt
     #   argilla
+pygments==2.14.0
+    # via
+    #   -r requirements/base.txt
+    #   rich
 python-dateutil==2.8.2
     # via
     #   -r requirements/base.txt
@@ -148,6 +156,10 @@ rfc3986[idna2008]==1.5.0
     # via
     #   -r requirements/base.txt
     #   httpx
+rich==13.0.1
+    # via
+    #   -r requirements/base.txt
+    #   argilla
 six==1.16.0
     # via
     #   -r requirements/base.txt
@@ -158,7 +170,7 @@ sniffio==1.3.0
     #   anyio
     #   httpcore
     #   httpx
-tqdm==4.64.1
+tqdm==4.65.0
     # via
     #   -r requirements/base.txt
     #   argilla
@@ -167,6 +179,7 @@ typing-extensions==4.5.0
     # via
     #   -r requirements/base.txt
     #   pydantic
+    #   rich
 update-checker==0.18.0
     # via praw
 urllib3==1.26.14
