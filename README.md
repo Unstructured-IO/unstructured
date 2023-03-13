@@ -27,18 +27,6 @@
   </a>
 </div>
 
-<h2 align="center">
-  <p>Announcement!!!</p>
-</h2>
-<div align="center">
-  <p>Unstructured wants to make it easier to connect to your data…and we need your help! We’re excited to announce a <a href="Competition.md">competition</a> focused on improving Unstructured's ability to seamlessly process data from the sources you care about most.</p>
-
-  <p>The competition starts now and continues through March 10...and most importantly, we're offering cash prizes! Please join our <a
-  href="https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-1nlh1ot5d-dfY7zCRlhFboZrIWLA4Qgw">
-   community Slack</a> to participate and follow along</p>
-	<p><img src="money.gif"></p>
-</div>
-
 <h3 align="center">
   <p>Open-Source Pre-Processing Tools for Unstructured Data</p>
 </h3>
