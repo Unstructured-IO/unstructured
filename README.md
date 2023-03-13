@@ -44,10 +44,6 @@ about. Bricks in the library fall into three categories:
 - :performing_arts: ***Staging bricks*** that format data for downstream tasks, such as ML inference
   and data labeling.
 
-<div align="center">
-<img src="https://user-images.githubusercontent.com/38184042/205945013-99670127-0bf3-4851-b4ac-0bc23e357476.gif" title="unstructured in action!">
-</div>
-
 <br></br>
 
 ## :eight_pointed_black_star: Quick Start
