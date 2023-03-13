@@ -56,6 +56,7 @@ setup(
         "openpyxl",
         "pandas",
         "pillow",
+        "pypandoc",
         "python-docx",
         "python-pptx",
         "python-magic",
