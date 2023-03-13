@@ -1,4 +1,4 @@
-## 0.5.3-dev5
+## 0.5.3-dev6
 
 ### Enhancements
 
@@ -15,6 +15,8 @@
 * Added Gitlab connector for ingest cli.
 
 ### Fixes
+
+* Open xml files in read-only mode when reading contents to construct an XMLDocument.
 
 ## 0.5.2
 
