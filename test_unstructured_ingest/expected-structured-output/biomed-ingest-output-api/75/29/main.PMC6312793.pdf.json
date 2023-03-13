@@ -216,16 +216,16 @@
     }
   },
   {
-    "element_id": "a9232cb0e8af5f01ec54c6a83d9dc77a",
-    "text": "different problem instances of the MDVSP that can be used to evaluate the performance of the algorithms for the MDVSP. \f The data provide all the information that is required to model the MDVSP by using the existing mathematical formulations. \f All the problem instances are available for use without any restrictions. \f The benchmark solutions and solution time for the problem instances are presented in [",
+    "element_id": "ae2ec2f9015a920ca777ed80f83f9625",
+    "text": "different problem instances of the MDVSP that can be used to evaluate the performance of the algorithms for the MDVSP. The data provide all the information that is required to model the MDVSP by using the existing mathematical formulations. All the problem instances are available for use without any restrictions. The benchmark solutions and solution time for the problem instances are presented in [",
     "type": "ListItem",
     "metadata": {
       "page_number": 2
     }
   },
   {
-    "element_id": "c50e21ba526d57294dd30c3a7d0de831",
-    "text": "] and can be used for the comparison. \f The dataset includes a program that can generate similar problem instances of different sizes.",
+    "element_id": "ca6a4e8ba5cd29f28afbf1be79bfe9f0",
+    "text": "] and can be used for the comparison. The dataset includes a program that can generate similar problem instances of different sizes.",
     "type": "ListItem",
     "metadata": {
       "page_number": 2
@@ -272,8 +272,8 @@
     }
   },
   {
-    "element_id": "bb713b49b45041e1177c53667bb84c09",
-    "text": "\f The travel time, δ ij , between any two locations i ; j A 1 ; … ; l",
+    "element_id": "f562440bfb37c791547df5aaf08eaf45",
+    "text": "The travel time, δ ij , between any two locations i ; j A 1 ; … ; l",
     "type": "NarrativeText",
     "metadata": {
       "page_number": 2
@@ -296,8 +296,8 @@
     }
   },
   {
-    "element_id": "068844cf2dbe972764a886ce25559a07",
-    "text": "A trip j can be covered after trip i by the same vehicle, if t sj t ei þ l ei l sj . If l ei l sj , the vehicle must travel empty from l ei to l sj , otherwise, the vehicle may require waiting at l ei for the duration of ð t sj \f t ei Þ . A schedule is given by the sequence in which a vehicle can cover the trips. The MDVSP is to determine the minimum number of schedules to cover all trips that minimizes total time in waiting and empty travel. The following requirements must be satis ﬁ ed:",
+    "element_id": "b0db1cc87b21aa17409de37b2f6a29d8",
+    "text": "A trip j can be covered after trip i by the same vehicle, if t sj t ei þ l ei l sj . If l ei l sj , the vehicle must travel empty from l ei to l sj , otherwise, the vehicle may require waiting at l ei for the duration of ð t sj t ei Þ . A schedule is given by the sequence in which a vehicle can cover the trips. The MDVSP is to determine the minimum number of schedules to cover all trips that minimizes total time in waiting and empty travel. The following requirements must be satis ﬁ ed:",
     "type": "NarrativeText",
     "metadata": {
       "page_number": 3
@@ -320,8 +320,8 @@
     }
   },
   {
-    "element_id": "f6a12c82b0cad873085545d9f03462aa",
-    "text": "The description of the ﬁ le for each problem instance is presented in Table 2. The ﬁ rst line in the ﬁ le provides the number of depots ð m Þ , the number of trips, ð n Þ , and the number of locations ð l Þ , in the problem instance. The next n lines present the information for n trips. Each line corresponds to a trip, i A 1 ; … ; n f g , and provides the start location, the start time, the end location, and the end time of trip i The next l lines present the travel times between any two locations, i ; j A 1 ; … ; l \f \f .",
+    "element_id": "322b598a18278d3d39f6bf634841b89a",
+    "text": "The description of the ﬁ le for each problem instance is presented in Table 2. The ﬁ rst line in the ﬁ le provides the number of depots ð m Þ , the number of trips, ð n Þ , and the number of locations ð l Þ , in the problem instance. The next n lines present the information for n trips. Each line corresponds to a trip, i A 1 ; … ; n f g , and provides the start location, the start time, the end location, and the end time of trip i The next l lines present the travel times between any two locations, i ; j A 1 ; … ; l .",
     "type": "NarrativeText",
     "metadata": {
       "page_number": 3
