@@ -90,6 +90,6 @@ class XMLDocument(Document):
         stylesheet: Optional[str] = None,
         encoding: Optional[str] = "utf-8",
     ):
-        with open(filename, "r+", encoding=encoding) as f:
+        with open(filename, encoding=encoding) as f:
             content = f.read()
         return cls.from_string(content, parser=parser, stylesheet=stylesheet)

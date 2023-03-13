@@ -1,4 +1,4 @@
-***REMOVED******REMOVED*** 0.5.4-dev6
+***REMOVED******REMOVED*** 0.5.4-dev7
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
 
@@ -25,6 +25,7 @@ from `FsspecConnector`
 ***REMOVED******REMOVED******REMOVED*** Fixes
 
 * Fixes processing for text files with `message/rfc822` MIME type.
+* Open xml files in read-only mode when reading contents to construct an XMLDocument.
 
 ***REMOVED******REMOVED*** 0.5.3
 
