@@ -277,3 +277,18 @@ def test_auto_with_page_breaks():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
     elements = partition(filename=filename, include_page_breaks=True)
     assert PageBreak() in elements
+
+
+def test_auto_partition_epub_from_filename():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "winter-sports.epub")
+    elements = partition(filename=filename)
+    assert len(elements) > 0
+    assert elements[0].text.startswith("The Project Gutenberg eBook of Winter Sports")
+
+
+def test_auto_partition_epub_from_file():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "winter-sports.epub")
+    with open(filename, "rb") as f:
+        elements = partition(file=f)
+    assert len(elements) > 0
+    assert elements[0].text.startswith("The Project Gutenberg eBook of Winter Sports")
