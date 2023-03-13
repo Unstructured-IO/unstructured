@@ -1,4 +1,4 @@
-## 0.5.4-dev6
+## 0.5.4
 
 ### Enhancements
 
@@ -21,6 +21,7 @@
 
 * Add `AzureBlobStorageConnector` based on its `fsspec` implementation inheriting
 from `FsspecConnector`
+* Add `partition_epub` for partitioning e-books in EPUB3 format.
 
 ### Fixes
 
