@@ -25,7 +25,7 @@ fi
 USER_ACCOUNT=$1
 
 ***REMOVED*** Update existing packages
-***REMOVED*** Reconfigure the service that detects the need for service restarts from interactive mode (user 
+***REMOVED*** Reconfigure the service that detects the need for service restarts from interactive mode (user
 ***REMOVED*** needs to manually confirm which services to restart) to automatic. If we don't do this we'll
 ***REMOVED*** get hung up on a screen asking us which services we want to restart after upgrading packages.
 $sudo $pac update -y
@@ -84,7 +84,7 @@ $sudo $pac install -y poppler-utils
 
 ***REMOVED******REMOVED******REMOVED******REMOVED*** Tesseract
 ***REMOVED*** Install tesseract as well as Russian language
-$sudo $pac install -y tesseract-ocr libtesseract-dev tesseract-ocr-rus
+$sudo $pac install -y tesseract-ocr libtesseract-dev tesseract-ocr-rus libreoffice
 
 ***REMOVED******REMOVED******REMOVED******REMOVED*** libmagic
 $sudo $pac install -y libmagic-dev
