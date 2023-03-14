@@ -328,7 +328,7 @@ Examples:
 ---------------------
 
 The ``partition_md`` function provides the ability to parse markdown files. The
-follow workflow shows how to use ``partition_md``.
+following workflow shows how to use ``partition_md``.
 
 
 Examples:
