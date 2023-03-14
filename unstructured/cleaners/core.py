@@ -11,8 +11,7 @@ def clean_non_ascii_chars(text) -> str:
 
     Example
     -------
-    \x88This text contains non-ascii characters!\x88
-        -> This text contains non-ascii characters!
+    \x88This text contains non-ascii characters!\x88 -> This text contains non-ascii characters!
     """
     en = text.encode("ascii", "ignore")
     return en.decode()
