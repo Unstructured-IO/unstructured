@@ -178,3 +178,18 @@ version-sync:
 .PHONY: check-coverage
 check-coverage:
 	coverage report --fail-under=95
+
+***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***
+***REMOVED*** Docker ***REMOVED***
+***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***
+
+***REMOVED*** Docker targets are provided for convenience only and are not required in a standard development environment
+
+
+.PHONY: docker-build
+docker-build:
+	PIP_VERSION=${PIP_VERSION} ./scripts/docker-build.sh
+
+.PHONY: docker-start-bash
+docker-start-bash:
+	docker run --platform linux/amd64 -ti --rm unstructured-dev:latest

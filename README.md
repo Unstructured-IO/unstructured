@@ -81,6 +81,32 @@ elements = partition("example-docs/layout-parser-paper.pdf")
 print("\n\n".join([str(el) for el in elements]))
 ```
 
+***REMOVED******REMOVED*** :dizzy: Instructions for using the docker image
+
+The following instructions are intended to help you get up and running using docker to interact with `unstructured`.
+
+If you only plan on parsing one type of data you can speed up building the image by commenting out some
+of the packages/requirements necessary for other data types. See Dockerfile to know which lines are necessary
+for your use case.
+
+See [here](https://docs.docker.com/get-docker/) if you don't already have docker installed on your machine.
+
+```bash
+make docker-build
+
+***REMOVED*** this will drop you into a bash shell where the docker image is running
+make docker-start-bash
+
+***REMOVED*** this will drop you into a python console so you can run the below partition functions
+python3
+
+>>> from unstructured.partition.pdf import partition_pdf
+>>> elements = partition_pdf(filename="example-docs/layout-parser-paper-fast.pdf")
+
+>>> from unstructured.partition.text import partition_text
+>>> elements = partition_text(filename="example-docs/fake-text.txt")
+```
+
 
 ***REMOVED******REMOVED*** :coffee: Installation Instructions for Local Development
 
