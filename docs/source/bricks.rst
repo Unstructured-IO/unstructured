@@ -309,7 +309,7 @@ Examples:
 ``partition_epub``
 ---------------------
 
-The ``partition_epub`` functions processes e-books in EPUB3 format. The function
+The ``partition_epub`` function processes e-books in EPUB3 format. The function
 first converts the document to HTML using ``pandocs`` and then calls ``partition_html``.
 You'll need `pandocs <https://pandoc.org/installing.html>`_ installed on your system
 to use ``partition_epub``.
