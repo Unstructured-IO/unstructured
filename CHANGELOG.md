@@ -1,4 +1,4 @@
-## 0.5.4-dev7
+## 0.5.4-dev8
 
 ### Enhancements
 
@@ -19,6 +19,7 @@
 
 ### Features
 
+* Add `clean_non_ascii_chars` to remove non-ascii characters from unicode string
 * Add `AzureBlobStorageConnector` based on its `fsspec` implementation inheriting
 from `FsspecConnector`
 
