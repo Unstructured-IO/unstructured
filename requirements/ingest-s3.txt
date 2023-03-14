@@ -221,7 +221,7 @@ wrapt==1.14.1
     #   aiobotocore
     #   argilla
     #   deprecated
-xlsxwriter==3.0.8
+xlsxwriter==3.0.9
     # via
     #   -r requirements/base.txt
     #   python-pptx

@@ -76,7 +76,7 @@ setup(
         ],
         "local-inference": [
             # NOTE(robinson) - Upper bound is temporary due to a multithreading issue
-            "unstructured-inference>=0.2.4,<0.2.8",
+            "unstructured-inference~=0.2.4",
         ],
         "s3": ["s3fs", "fsspec"],
         "azure": ["adlfs", "fsspec"],
