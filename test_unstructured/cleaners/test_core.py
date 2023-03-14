@@ -7,7 +7,7 @@ from unstructured.cleaners import core
     ("text", "expected"),
     [
         ("\x88This text contains non-ascii characters!\x88", \
-         "This text contains non-ascii characters!"),
+            "This text contains non-ascii characters!"),
         ("\x93A lovely quote!\x94", "A lovely quote!"),
         ("● An excellent point! ●●●", " An excellent point! "),
         ("Item\xa01A", "Item 1A"),
