@@ -12,7 +12,7 @@ from unstructured.cleaners import core
         ),
         ("\x93A lovely quote!\x94", "A lovely quote!"),
         ("● An excellent point! ●●●", " An excellent point! "),
-        ("Item\xa01A", "Item 1A"),
+        ("Item\xa01A", "Item1A"),
         ("Our dog&apos;s bowl.", "Our dog&apos;s bowl."),
         ("5 w=E2=80=99s", "5 w=E2=80=99s"),
     ],
