@@ -30,6 +30,7 @@ EXAMPLE_DOCS_DIRECTORY = os.path.join(FILE_DIRECTORY, "..", "..", "example-docs"
         ("fake-html.html", FileType.HTML),
         ("unsupported/fake-excel.xlsx", FileType.XLSX),
         ("fake-power-point.pptx", FileType.PPTX),
+        ("winter-sports.epub", FileType.EPUB),
     ],
 )
 def test_detect_filetype_from_filename(file, expected):
@@ -50,6 +51,7 @@ def test_detect_filetype_from_filename(file, expected):
         ("fake-html.html", FileType.HTML),
         ("unsupported/fake-excel.xlsx", FileType.XLSX),
         ("fake-power-point.pptx", FileType.PPTX),
+        ("winter-sports.epub", FileType.EPUB),
     ],
 )
 def test_detect_filetype_from_filename_with_extension(monkeypatch, file, expected):
@@ -73,6 +75,7 @@ def test_detect_filetype_from_filename_with_extension(monkeypatch, file, expecte
         ("fake-html.html", FileType.HTML),
         ("unsupported/fake-excel.xlsx", FileType.XLSX),
         ("fake-power-point.pptx", FileType.PPTX),
+        ("winter-sports.epub", FileType.EPUB),
     ],
 )
 def test_detect_filetype_from_file(file, expected):
