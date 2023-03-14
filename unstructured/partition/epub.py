@@ -1,5 +1,6 @@
-from typing import IO, Optional
+from typing import IO, List, Optional
 
+from unstructured.documents.element import Element
 from unstructured.file_utils.file_conversion import convert_epub_to_html
 from unstructured.partition.html import partition_html
 
@@ -8,7 +9,7 @@ def partition_epub(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
     include_page_breaks: bool = False,
-):
+) -> List[Element]:
     """Partitions an EPUB document. The document is first converted to HTML and then
     partitoned using partiton_html.
 
