@@ -6,6 +6,17 @@ import unicodedata
 from unstructured.nlp.patterns import UNICODE_BULLETS_RE
 
 
+def clean_non_ascii_chars(text) -> str:
+    """Cleans non-ascii characters from unicode string.
+
+    Example
+    -------
+    \x88This text contains non-ascii characters!\x88 -> This text contains non-ascii characters!
+    """
+    en = text.encode("ascii", "ignore")
+    return en.decode()
+
+
 def clean_bullets(text) -> str:
     """Cleans unicode bullets from a section of text.
 
