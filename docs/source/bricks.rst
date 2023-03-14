@@ -579,7 +579,7 @@ Examples:
 
 
 ``clean_non_ascii_chars``
------------------
+-------------------------
 
 Removes non-ascii characters from a string.
 
