@@ -1,6 +1,6 @@
 from typing import IO, List, Optional
 
-from unstructured.documents.element import Element
+from unstructured.documents.elements import Element
 from unstructured.file_utils.file_conversion import convert_epub_to_html
 from unstructured.partition.html import partition_html
 
