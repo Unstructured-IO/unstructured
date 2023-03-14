@@ -47,6 +47,11 @@ MD_MIME_TYPES = [
     "text/x-markdown",
 ]
 
+EPUB_MIME_TYPES = [
+    "application/epub",
+    "application/epub+zip",
+]
+
 ***REMOVED*** NOTE(robinson) - .docx.xlsx files are actually zip file with a .docx/.xslx extension.
 ***REMOVED*** If the MIME type is application/octet-stream, we check if it's a .docx/.xlsx file by
 ***REMOVED*** looking for expected filenames within the zip file.
@@ -94,6 +99,7 @@ class FileType(Enum):
     HTML = 50
     XML = 51
     MD = 52
+    EPUB = 53
 
     ***REMOVED*** Compressed Types
     ZIP = 60
@@ -123,6 +129,7 @@ EXT_TO_FILETYPE = {
     ".ppt": FileType.PPT,
     ".rtf": FileType.RTF,
     ".json": FileType.JSON,
+    ".epub": FileType.EPUB,
 }
 
 
@@ -179,6 +186,9 @@ def detect_filetype(
     elif mime_type in MD_MIME_TYPES:
         ***REMOVED*** NOTE - I am not sure whether libmagic ever returns these mimetypes.
         return FileType.MD
+
+    elif mime_type in EPUB_MIME_TYPES:
+        return FileType.EPUB
 
     elif mime_type in TXT_MIME_TYPES:
         if extension and extension == ".eml":

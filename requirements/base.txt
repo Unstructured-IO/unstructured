@@ -4,6 +4,9 @@
 ***REMOVED***
 ***REMOVED***    pip-compile --output-file=requirements/base.txt
 ***REMOVED***
+--extra-index-url https://pypi.ngc.nvidia.com
+--trusted-host pypi.ngc.nvidia.com
+
 ***REMOVED***
     ***REMOVED*** via httpcore
 argilla==1.4.0
@@ -72,6 +75,8 @@ pydantic==1.10.6
     ***REMOVED*** via argilla
 ***REMOVED***
     ***REMOVED*** via rich
+***REMOVED***
+    ***REMOVED*** via unstructured (setup.py)
 ***REMOVED***
     ***REMOVED*** via pandas
 ***REMOVED***

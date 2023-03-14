@@ -84,7 +84,7 @@ $sudo $pac install -y poppler-utils
 
 ***REMOVED******REMOVED******REMOVED******REMOVED*** Tesseract
 ***REMOVED*** Install tesseract as well as Russian language
-$sudo $pac install -y tesseract-ocr libtesseract-dev tesseract-ocr-rus libreoffice
+$sudo $pac install -y tesseract-ocr libtesseract-dev tesseract-ocr-rus libreoffice pandoc
 
 ***REMOVED******REMOVED******REMOVED******REMOVED*** libmagic
 $sudo $pac install -y libmagic-dev

@@ -82,7 +82,7 @@ If you call the ``partition`` function, ``unstructured`` will attempt to detect 
 file type and route it to the appropriate partitioning brick. All partitioning bricks
 called within ``partition`` are called using the default kwargs. Use the document-type
 specific bricks if you need to apply non-default settings.
-``partition`` currently supports ``.docx``, ``.doc``, ``.pptx``, ``.ppt``, ``.eml``, ``.html``, ``.pdf``,
+``partition`` currently supports ``.docx``, ``.doc``, ``.pptx``, ``.ppt``, ``.eml``, ``.epub``, ``.html``, ``.pdf``,
 ``.png``, ``.jpg``, and ``.txt`` files.
 If you set the ``include_page_breaks`` kwarg to ``True``, the output will include page breaks. This is only supported for ``.pptx``, ``.html``, ``.pdf``,
 ``.png``, and ``.jpg``.
@@ -304,6 +304,41 @@ Examples:
   with open("example-docs/fake-email.eml", "r") as f:
       text = f.read()
   elements = partition_email(text=text, include_headers=True)
+
+
+``partition_epub``
+---------------------
+
+The ``partition_epub`` function processes e-books in EPUB3 format. The function
+first converts the document to HTML using ``pandocs`` and then calls ``partition_html``.
+You'll need `pandocs <https://pandoc.org/installing.html>`_ installed on your system
+to use ``partition_epub``.
+
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.epub import partition_epub
+
+  elements = partition_epub(filename="example-docs/winter-sports.epub")
+
+
+``partition_md``
+---------------------
+
+The ``partition_md`` function provides the ability to parse markdown files. The
+following workflow shows how to use ``partition_md``.
+
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.md import partition_md
+
+  elements = partition_md(filename="README.md")
+
 
 
 ``partition_text``

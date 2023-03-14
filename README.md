@@ -110,7 +110,7 @@ file to ensure your code matches the formatting and linting standards used in `u
 If you'd prefer not having code changes auto-tidied before every commit, you can use  `make check` to see
 whether any linting or formatting changes should be applied, and `make tidy` to apply them.
 
-If using the optional `pre-commit`, you'll just need to install the hooks with `pre-commit install` since the 
+If using the optional `pre-commit`, you'll just need to install the hooks with `pre-commit install` since the
 `pre-commit` package is installed as part of `make install` mentioned above. Finally, if you decided to use `pre-commit`
 you can also uninstall the hooks with `pre-commit uninstall`.
 
@@ -119,7 +119,7 @@ you can also uninstall the hooks with `pre-commit uninstall`.
 You can run this [Colab notebook](https://colab.research.google.com/drive/1U8VCjY2-x8c6y5TYMbSFtQGlQVFHCVIW) to run the examples below.
 
 The following examples show how to get started with the `unstructured` library.
-You can parse **TXT**, **HTML**, **PDF**, **EML**, **DOC**, **DOCX**, **PPT**, **PPTX**, **JPG**,
+You can parse **TXT**, **HTML**, **PDF**, **EML**, **EPUB**, **DOC**, **DOCX**, **PPT**, **PPTX**, **JPG**,
 and **PNG** documents with one line of code!
 <br></br>
 See our [documentation page](https://unstructured-io.github.io/unstructured) for a full description
