@@ -4,6 +4,7 @@ from unstructured.file_utils.filetype import FileType, detect_filetype
 from unstructured.partition.doc import partition_doc
 from unstructured.partition.docx import partition_docx
 from unstructured.partition.email import partition_email
+from unstructured.partition.epub import partition_epub
 from unstructured.partition.html import partition_html
 from unstructured.partition.image import partition_image
 from unstructured.partition.json import partition_json
@@ -59,6 +60,8 @@ def partition(
             include_page_breaks=include_page_breaks,
             encoding=encoding,
         )
+    elif filetype == FileType.EPUB:
+        return partition_epub(filename=filename, file=file, include_page_breaks=include_page_breaks)
     elif filetype == FileType.MD:
         return partition_md(filename=filename, file=file, include_page_breaks=include_page_breaks)
     elif filetype == FileType.PDF:
