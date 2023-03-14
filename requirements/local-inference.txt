@@ -46,7 +46,7 @@ effdet==0.3.0
     ***REMOVED*** via layoutparser
 ***REMOVED***
     ***REMOVED*** via openpyxl
-fastapi==0.93.0
+fastapi==0.94.0
     ***REMOVED*** via unstructured-inference
 filelock==3.9.0
     ***REMOVED*** via
@@ -84,8 +84,6 @@ iopath==0.1.10
     ***REMOVED*** via layoutparser
 ***REMOVED***
     ***REMOVED*** via nltk
-jsons==1.6.3
-    ***REMOVED*** via unstructured-inference
 kiwisolver==1.4.4
     ***REMOVED*** via matplotlib
 layoutparser[layoutmodels,tesseract]==0.3.4
@@ -219,7 +217,7 @@ scipy==1.10.1
     ***REMOVED***   anyio
     ***REMOVED***   httpcore
     ***REMOVED***   httpx
-starlette==0.25.0
+starlette==0.26.0.post1
     ***REMOVED*** via fastapi
 sympy==1.11.1
     ***REMOVED*** via onnxruntime
@@ -256,13 +254,11 @@ transformers==4.26.1
     ***REMOVED***   starlette
     ***REMOVED***   torch
     ***REMOVED***   torchvision
-typish==1.9.3
-    ***REMOVED*** via jsons
-unstructured-inference==0.2.7
+unstructured-inference==0.2.11
     ***REMOVED*** via unstructured (setup.py)
 urllib3==1.26.14
     ***REMOVED*** via requests
-uvicorn==0.20.0
+uvicorn==0.21.0
     ***REMOVED*** via unstructured-inference
 wand==0.6.11
     ***REMOVED*** via pdfplumber
@@ -270,7 +266,7 @@ wand==0.6.11
     ***REMOVED*** via
     ***REMOVED***   argilla
     ***REMOVED***   deprecated
-xlsxwriter==3.0.8
+***REMOVED***
     ***REMOVED*** via python-pptx
 ***REMOVED***
     ***REMOVED*** via

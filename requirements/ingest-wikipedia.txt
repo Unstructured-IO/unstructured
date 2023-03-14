@@ -190,7 +190,7 @@ wikipedia==1.4.0
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   argilla
     ***REMOVED***   deprecated
-xlsxwriter==3.0.8
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   python-pptx

@@ -155,7 +155,7 @@ urllib3==1.26.14
     ***REMOVED*** via
     ***REMOVED***   argilla
     ***REMOVED***   deprecated
-xlsxwriter==3.0.8
+***REMOVED***
     ***REMOVED*** via python-pptx
 ***REMOVED***
     ***REMOVED*** via importlib-metadata

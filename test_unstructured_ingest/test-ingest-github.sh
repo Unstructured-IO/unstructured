@@ -14,7 +14,7 @@ fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py --github-url dcneiner/Downloadify --git-file-glob '*.html,*.txt' --structured-output-dir github-downloadify-output --verbose
 
-if ! diff -ru github-downloadify-output test_unstructured_ingest/expected-structured-output/github-downloadify ; then
+if ! diff -ru test_unstructured_ingest/expected-structured-output/github-downloadify github-downloadify-output ; then
    echo
    echo "There are differences from the previously checked-in structured outputs."
    echo

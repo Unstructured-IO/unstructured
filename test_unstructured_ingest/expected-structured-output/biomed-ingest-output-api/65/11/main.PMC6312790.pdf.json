@@ -216,16 +216,16 @@
     }
   },
   {
-    "element_id": "a6d9e195a423f52793f2671020bc0a90",
-    "text": "corrosion in sulphuric acid environment. \f The data obtained for the inhibition of waste product (egg shell powder) on stainless steel Type",
+    "element_id": "a46f9f30a7e99da10ee392358628f902",
+    "text": "corrosion in sulphuric acid environment. The data obtained for the inhibition of waste product (egg shell powder) on stainless steel Type",
     "type": "ListItem",
     "metadata": {
       "page_number": 2
     }
   },
   {
-    "element_id": "9c27a353d941bcc3cbf8596f744b1941",
-    "text": "can be used as basis in determining the inhibitive performance of the same inhibitor in other environments. \f The data can be used to examine the relationship between the process variable as it affect the nature of inhibition of metals.",
+    "element_id": "ca7b772bc6e34f631824b746c4525650",
+    "text": "can be used as basis in determining the inhibitive performance of the same inhibitor in other environments. The data can be used to examine the relationship between the process variable as it affect the nature of inhibition of metals.",
     "type": "ListItem",
     "metadata": {
       "page_number": 2
@@ -320,8 +320,8 @@
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "a080eedc29ff995e00faf2b0341bfa18",
+    "text": "ottabitse.eeeeso—«—«",
     "type": "FigureCaption",
     "metadata": {
       "page_number": 4
@@ -352,8 +352,8 @@
     }
   },
   {
-    "element_id": "3382d82decb1e5e8754d8083f5b3a916",
-    "text": "Inhibitor concentration (g) bc (V/dec) ba (V/dec) Ecorr (V) icorr (A/cm 2 ) Polarization resistance ( Ω ) Corrosion rate (mm/year) 0 0.0335 0.0409 \f 0.9393 0.0003 24.0910 2.8163 2 1.9460 0.0596 \f 0.8276 0.0002 121.440 1.5054 4 0.0163 0.2369 \f 0.8825 0.0001 42.121 0.9476 6 0.3233 0.0540 \f 0.8027 5.39E-05 373.180 0.4318 8 0.1240 0.0556 \f 0.5896 5.46E-05 305.650 0.3772 10 0.0382 0.0086 \f 0.5356 1.24E-05 246.080 0.0919",
+    "element_id": "8b206a2157155bfd11874c55924f92ee",
+    "text": "Inhibitor concentration (g) bc (V/dec) ba (V/dec) Ecorr (V) icorr (A/cm 2 ) Polarization resistance ( Ω ) Corrosion rate (mm/year) 0 0.0335 0.0409 0.9393 0.0003 24.0910 2.8163 2 1.9460 0.0596 0.8276 0.0002 121.440 1.5054 4 0.0163 0.2369 0.8825 0.0001 42.121 0.9476 6 0.3233 0.0540 0.8027 5.39E-05 373.180 0.4318 8 0.1240 0.0556 0.5896 5.46E-05 305.650 0.3772 10 0.0382 0.0086 0.5356 1.24E-05 246.080 0.0919",
     "type": "UncategorizedText",
     "metadata": {
       "page_number": 4
@@ -384,8 +384,8 @@
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "36a9e7f1c95b82ffb99743e0c5c4ce95",
+    "text": " ",
     "type": "FigureCaption",
     "metadata": {
       "page_number": 5
@@ -416,8 +416,8 @@
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "36a9e7f1c95b82ffb99743e0c5c4ce95",
+    "text": " ",
     "type": "FigureCaption",
     "metadata": {
       "page_number": 5
@@ -520,8 +520,8 @@
     }
   },
   {
-    "element_id": "90d8b72f086a37fbdc4f2847699a558f",
-    "text": "steps of the linear polarization plot are substituted to get corrosion current. Nova software was used with linear polarization resistance (LPR) and the current was set to 10 mA (maximum) and 10 nA (minimum). LSV staircase parameter start potential \f 1.5 v, step potential 0.001 m/s and stop potential of þ 1.5 v set was used in this study.",
+    "element_id": "7d9d3615bab6ee55d73f76fac7b87756",
+    "text": "steps of the linear polarization plot are substituted to get corrosion current. Nova software was used with linear polarization resistance (LPR) and the current was set to 10 mA (maximum) and 10 nA (minimum). LSV staircase parameter start potential 1.5 v, step potential 0.001 m/s and stop potential of þ 1.5 v set was used in this study.",
     "type": "NarrativeText",
     "metadata": {
       "page_number": 7
