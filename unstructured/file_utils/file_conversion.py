@@ -6,7 +6,7 @@ import pypandoc
 from unstructured.partition.common import exactly_one
 
 
-def convert_file_to_text(filename: str, source_format: str, target_format: str):
+def convert_file_to_text(filename: str, source_format: str, target_format: str) -> str:
     """Uses pandoc to convert the source document to a raw text string."""
     try:
         text = pypandoc.convert_file(filename, "html", format="epub")
@@ -25,7 +25,7 @@ def convert_file_to_text(filename: str, source_format: str, target_format: str):
 def convert_epub_to_html(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
-):
+) -> str:
     """Converts an EPUB document to HTML raw text. Enables an EPUB doucment to be
     processed using the partition_html function."""
     exactly_one(filename=filename, file=file)
