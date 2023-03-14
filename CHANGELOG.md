@@ -1,4 +1,14 @@
-## 0.5.4-dev8
+## 0.5.5-dev0
+
+### Enhancements
+
+### Features
+
+* Add `clean_non_ascii_chars` to remove non-ascii characters from unicode string
+
+### Fixes
+
+## 0.5.4
 
 ### Enhancements
 
@@ -19,9 +29,9 @@
 
 ### Features
 
-* Add `clean_non_ascii_chars` to remove non-ascii characters from unicode string
 * Add `AzureBlobStorageConnector` based on its `fsspec` implementation inheriting
 from `FsspecConnector`
+* Add `partition_epub` for partitioning e-books in EPUB3 format.
 
 ### Fixes
 
@@ -59,7 +69,7 @@ rather than a "tmp-ingest-" dir in the working directory.
 
 ### Fixes
 
-* 'setup_ubuntu.sh` no longer fails in some contexts by interpreting
+* `setup_ubuntu.sh` no longer fails in some contexts by interpreting
 `DEBIAN_FRONTEND=noninteractive` as a command
 * `unstructured-ingest` no longer re-downloads files when --preserve-downloads
 is used without --download-dir.
