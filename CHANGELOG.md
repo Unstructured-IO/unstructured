@@ -59,7 +59,7 @@ rather than a "tmp-ingest-" dir in the working directory.
 
 ***REMOVED******REMOVED******REMOVED*** Fixes
 
-* 'setup_ubuntu.sh` no longer fails in some contexts by interpreting
+* `setup_ubuntu.sh` no longer fails in some contexts by interpreting
 `DEBIAN_FRONTEND=noninteractive` as a command
 * `unstructured-ingest` no longer re-downloads files when --preserve-downloads
 is used without --download-dir.
