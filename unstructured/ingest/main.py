@@ -35,6 +35,35 @@ with suppress(RuntimeError):
     mp.set_start_method("spawn")
 
 
+class MutuallyExclusiveOption(Option):
+    def __init__(self, *args, **kwargs):
+        self.mutually_exclusive = set(kwargs.pop('mutually_exclusive', []))
+        help = kwargs.get('help', '')
+        if self.mutually_exclusive:
+            mutex_str = ', '.join(self.mutually_exclusive)
+            kwargs['help'] = help + (
+                ' NOTE: This argument is mutually exclusive with '
+                ' arguments: [' + mutex_str + '].'
+            )
+        super(MutuallyExclusiveOption, self).__init__(*args, **kwargs)
+
+    def handle_parse_result(self, ctx, opts, args):
+        if self.mutually_exclusive.intersection(opts) and self.name in opts:
+            raise UsageError(
+                "Illegal usage: `{}` is mutually exclusive with "
+                "arguments `{}`.".format(
+                    self.name,
+                    ', '.join(self.mutually_exclusive)
+                )
+            )
+
+        return super(MutuallyExclusiveOption, self).handle_parse_result(
+            ctx,
+            opts,
+            args
+        )
+
+
 class MainProcess:
     def __init__(
         self,
@@ -103,6 +132,20 @@ class MainProcess:
 
 
 @click.command()
+@click.option(
+    "--metadata-include",
+    cls=MutuallyExclusiveOption,
+    default=None,
+    help="If set, include the specified metadata fields if they exist and drop all other fields.",
+    mutually_exclusive=["--metadata-exclude"]
+)
+@click.option(
+    "--metadata-exclude",
+    cls=MutuallyExclusiveOption,
+    default=None,
+    help="If set, drop the specified metadata fields if they exist.",
+    mutually_exclusive=["--metadata-include"]
+)
 @click.option(
     "--remote-url",
     default=None,
