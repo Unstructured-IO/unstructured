@@ -24,7 +24,8 @@ jobs:
         issuetype: Task
         summary: ${{ github.event.issue.title }}
         description: ${{ github.event.issue.body }}
-        fields: '{}'
+        fields: '{ "labels": ["github-issue"] }'
+
 
     - name: Log created issue
       run: echo "Issue ${{ steps.create.outputs.issue }} was created"
