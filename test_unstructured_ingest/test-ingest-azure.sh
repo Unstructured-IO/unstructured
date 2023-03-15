@@ -4,6 +4,7 @@ SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 cd "$SCRIPT_DIR"/.. || exit 1
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
+    --metadata-exclude filename \
     --remote-url abfs://container1/ \
     --azure-account-name azureunstructured1 \
     --structured-output-dir azure-ingest-output \

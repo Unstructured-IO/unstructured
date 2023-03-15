@@ -12,7 +12,12 @@ if [[ "$CI" == "true" ]]; then
 fi
 
 
-PYTHONPATH=. ./unstructured/ingest/main.py --github-url dcneiner/Downloadify --git-file-glob '*.html,*.txt' --structured-output-dir github-downloadify-output --verbose
+PYTHONPATH=. ./unstructured/ingest/main.py \
+    --metadata-exclude filename \
+    --github-url dcneiner/Downloadify \
+    --git-file-glob '*.html,*.txt' \
+    --structured-output-dir github-downloadify-output \
+    --verbose
 
 if ! diff -ru test_unstructured_ingest/expected-structured-output/github-downloadify github-downloadify-output ; then
    echo
