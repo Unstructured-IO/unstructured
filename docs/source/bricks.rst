@@ -613,6 +613,23 @@ Examples:
   clean_postfix(text, r"(END|STOP)", ignore_case=True)
 
 
+``clean_non_ascii_chars``
+-------------------------
+
+Removes non-ascii characters from a string.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.cleaners.core import clean_non_ascii_chars
+
+  text = "\x88This text contains®non-ascii characters!●"
+
+  # Returns "This text containsnon-ascii characters!"
+  clean_non_ascii_chars(text)
+
+
 ``extract_text_before``
 -----------------------
 
