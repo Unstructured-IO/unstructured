@@ -47,6 +47,8 @@ class BaseConnectorConfig(ABC):
     # where to write structured data outputs
     output_dir: str
     re_download: bool = False
+    metadata_include: str = ""
+    metadata_exclude: str = ""
 
 
 class BaseIngestDoc(ABC):
@@ -57,7 +59,7 @@ class BaseIngestDoc(ABC):
 
     Crucially, it is not responsible for the actual processing of the raw document.
     """
-
+    config: BaseConnectorConfig
     @property
     @abstractmethod
     def filename(self):
@@ -94,7 +96,18 @@ class BaseIngestDoc(ABC):
         self.isd_elems_no_filename = []
         for elem in isd_elems:
             # type: ignore
-            elem["metadata"].pop("filename", None)  # type: ignore[attr-defined]
+            if self.config.metadata_exclude:
+                ex_list = self.config.metadata_exclude.split(",")
+                for ex in ex_list:
+                    elem["metadata"].pop(ex, None)
+            elif self.config.metadata_include:
+                in_list = self.config.metadata_include.split(",")
+                for k in elem["metadata"]:
+                    if k not in in_list:
+                        elem["metadata"].pop(k, None)
+            else:
+                elem["metadata"].pop("filename", None)  # type: ignore[attr-defined]
+            
             elem.pop("coordinates")  # type: ignore[attr-defined]
             self.isd_elems_no_filename.append(elem)
 
