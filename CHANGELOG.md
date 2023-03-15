@@ -1,3 +1,13 @@
+***REMOVED******REMOVED*** 0.5.5-dev0
+
+***REMOVED******REMOVED******REMOVED*** Enhancements
+
+***REMOVED******REMOVED******REMOVED*** Features
+
+* Add `clean_non_ascii_chars` to remove non-ascii characters from unicode string
+
+***REMOVED******REMOVED******REMOVED*** Fixes
+
 ***REMOVED******REMOVED*** 0.5.4
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
