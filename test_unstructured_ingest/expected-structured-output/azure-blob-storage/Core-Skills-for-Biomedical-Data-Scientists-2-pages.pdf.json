@@ -1,0 +1,338 @@
+[
+  {
+    "element_id": "611cb5b35c8277f981fe5faaaab7b1a5",
+    "text": "Core Skills for Biomedical Data Scientists",
+    "type": "Title",
+    "metadata": {
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "f48c9af7eb1949feead1f7527af7138d",
+    "text": "Maryam Zaringhalam, PhD , AAAS Science & Technology Policy Fellow",
+    "type": "NarrativeText",
+    "metadata": {
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "f14031943b3f1e34dcfc27bf02c38c09",
+    "text": "This report provides recommendations for a minimal set of core skills for biomedical data scientists based on analysis that draws on opinions of data scientists, curricula for existing biomedical data science programs, and requirements for biomedical data science jobs. Suggested high-level core skills include:",
+    "type": "NarrativeText",
+    "metadata": {
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "5d6c2464323f180b51fedef6df9eeee8",
+    "text": "General biomedical subject matter knowledge : biomedical data scientists should have a general working knowledge of the principles of biology, bioinformatics, and basic clinical science;",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "b7844fc3e1dcf9728cfdbf5ee8d0c55f",
+    "text": "Programming language expertise : biomedical data scientists should be fluent in at least one programming language (typically R and/or Python);",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "ac71a38c31d4032816e40d136f4cdb26",
+    "text": "Predictive analytics, modeling, and machine learning : while a range of statistical methods may be useful, predictive analytics, modeling, and machine learning emerged as especially important skills in biomedical data science;",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "1748eb2eadb6c937d22f155593ca65ba",
+    "text": "Team science and scientific communication : “soft” skills, like the ability to work well on teams and communicate effectively in both verbal and written venues, may be as important as the more technical skills typically associated with data science.",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "ed7ff8beab22a36cd6a5f7976f826fda",
+    "text": "Responsible data stewardship : a successful data scientist must be able to implement best practices for data management and stewardship, as well as conduct research in an ethical manner that maintains data security and privacy.",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "5e3d4670749a0f3753fa4bb1b328d156",
+    "text": "Training a biomedical data science (BDS) workforce is a central theme in NLM’s Strategic Plan for the coming decade. That commitment is echoed in the NIH-wide Big Data to Knowledge (BD2K) initiative, which invested $61 million between FY2014 and FY2017 in training programs for the development and use of biomedical big data science methods and tools. In line with",
+    "type": "NarrativeText",
+    "metadata": {
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "4c5f925a7db08289f19dbe8635d8b4cd",
+    "text": "this commitment, a recent report to the NLM Director recommended working across NIH to identify and develop core skills required of a biomedical data scientist to consistency across the cohort of NIH-trained data scientists. This report provides a set of recommended core skills based on analysis of current BD2K-funded training programs, biomedical data science job ads, and practicing members of the current data science workforce.",
+    "type": "NarrativeText",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "f26d07e6b71e42596791a241e2417931",
+    "text": "Methodology",
+    "type": "Title",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "bcefa2402c4d32dbf76a40451d0fc3dd",
+    "text": "The Workforce Excellence team took a three-pronged approach to identifying core skills required of a biomedical data scientist (BDS), drawing from:",
+    "type": "NarrativeText",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "153010aa2c8aa0a0e54bdac5e14340be",
+    "text": "a) Responses to a",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "9b773eceddf8b7622fdec8bb3c8657ff",
+    "text": "Kaggle",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "811f2a14b9850c9d9c7562f29228754b",
+    "text": "survey",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "13d71f8611c0248d58ffa4d1230da73e",
+    "text": "of over",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "d03502c43d74a30b936740a9517dc4ea",
+    "text": ",",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "b9155b5adc04d5539379f3fc62b33711",
+    "text": "self-identified data scientists working across many industries. Analysis of the Kaggle survey responses from the current data science workforce provided insights into the current generation of data scientists, including how they were trained and what programming and analysis skills they use. b) Data science skills taught in BD",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "07f54d1cb2e96bc062c55121de3f6882",
+    "text": "K-funded training programs. A qualitative content analysis was applied to the descriptions of required courses offered under the",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "24349c8054862cb8cbd4d857d096943e",
+    "text": "BD",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "caa5fc58a6d57578858155571d5d4f79",
+    "text": "K-funded training programs. Each course was coded using qualitative data analysis software, with each skill that was present in the description counted once. The coding schema of data science-related skills was inductively developed and was organized into four major categories: (",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "8b67c1eff9f0e59b2d8a11195bc13ce1",
+    "text": ") statistics and math skills; (",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "4b021f7187c84f22e863e931047e2fc2",
+    "text": ") computer science; (",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "59e087d0c9fcb1a8cc6d5448ce5fad04",
+    "text": ") subject knowledge; (",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "ae19ecd18e97da5a942738ed9c37b235",
+    "text": ") general skills, like communication and teamwork. The coding schema is detailed in Appendix A. c) Desired skills identified from data science-related job ads.",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "d14cf7578b76bba89cd14f7c65d27dce",
+    "text": "job ads from government (",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "ff8f02c33b45fd488b21342ad816f985",
+    "text": "%), academia (",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "7b953c4510d51c8c49bdb1f72208e813",
+    "text": "%), industry (",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "b991274d798760827347db84d4c50aed",
+    "text": "%), and the nonprofit sector (",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "1572bacbb81057c1c7ebfd97e032d2cd",
+    "text": "%) were sampled from websites like Glassdoor, Linkedin, and Ziprecruiter. The content analysis methodology and coding schema utilized in analyzing the training programs were applied to the job descriptions. Because many job ads mentioned the same skill more than once, each occurrence of the skill was coded, therefore weighting important skills that were mentioned multiple times in a single ad.",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "85fef96a87667d49c39d953d69a511ab",
+    "text": "a) Responses to a 2017 Kaggle 1 survey 2 of over 16,000 self-identified data scientists working across many industries. Analysis of the Kaggle survey responses from the current data science workforce provided insights into the current generation of data scientists, including how they were trained and what programming and analysis skills they use.",
+    "type": "NarrativeText",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "8b344c7a03b0e90a794d3c4dd7de87d4",
+    "text": "b) Data science skills taught in BD2K-funded training programs. A qualitative content analysis was applied to the descriptions of required courses offered under the 12 BD2K-funded training programs. Each course was coded using qualitative data analysis software, with each skill that was present in the description counted once. The coding schema of data science-related skills was inductively developed and was organized into four major categories: (1) statistics and math skills; (2) computer science; (3) subject knowledge; (4) general skills, like communication and teamwork. The coding schema is detailed in Appendix A.",
+    "type": "NarrativeText",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "a1293b18f4057b9cbb8166dfbdda98dd",
+    "text": "Desired skills identified from data science-related job ads.",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "d14cf7578b76bba89cd14f7c65d27dce",
+    "text": "job ads from government (",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "ff8f02c33b45fd488b21342ad816f985",
+    "text": "%), academia (",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "7b953c4510d51c8c49bdb1f72208e813",
+    "text": "%), industry (",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "b991274d798760827347db84d4c50aed",
+    "text": "%), and the nonprofit sector (",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "1572bacbb81057c1c7ebfd97e032d2cd",
+    "text": "%) were sampled from websites like Glassdoor, Linkedin, and Ziprecruiter. The content analysis methodology and coding schema utilized in analyzing the training programs were applied to the job descriptions. Because many job ads mentioned the same skill more than once, each occurrence of the skill was coded, therefore weighting important skills that were mentioned multiple times in a single ad.",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "6934158451634cb4c2a470b7734d29f6",
+    "text": "c) Desired skills identified from data science-related job ads. 59 job ads from government (8.5%), academia (42.4%), industry (33.9%), and the nonprofit sector (15.3%) were sampled from websites like Glassdoor, Linkedin, and Ziprecruiter. The content analysis methodology and coding schema utilized in analyzing the training programs were applied to the job descriptions. Because many job ads mentioned the same skill more than once, each occurrence of the skill was coded, therefore weighting important skills that were mentioned multiple times in a single ad.",
+    "type": "NarrativeText",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "91da3a0694b9cdc01c32e1d3071f3941",
+    "text": "Analysis of the above data provided insights into the current state of biomedical data science training, as well as a view into data science-related skills likely to be needed to prepare the BDS workforce to succeed in the future. Together, these analyses informed recommendations for core skills necessary for a competitive biomedical data scientist.",
+    "type": "NarrativeText",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "374f95a41b6a55eea7c8767aed17978a",
+    "text": "Kaggle is an online community for data scientists, serving as a platform for collaboration, competition, learning: http://kaggle.com",
+    "type": "NarrativeText",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "94ba2c5be803a3cb405fc51dada2532d",
+    "text": "2 In August 2017, Kaggle conducted an industry-wide survey to gain a clearer picture of the state of data science and machine learning. A standard set of questions were asked of all respondents, with more specific questions related to work for employed data scientists and questions related to learning for data scientists in training. Methodology and results: https://www.kaggle.com/kaggle/kaggle-survey-2017",
+    "type": "NarrativeText",
+    "metadata": {
+      "page_number": 2
+    }
+  }
+]

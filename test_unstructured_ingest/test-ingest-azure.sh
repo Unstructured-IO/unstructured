@@ -9,8 +9,14 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --structured-output-dir azure-ingest-output \
     --num-processes 2
 
-if [ "$(find 'azure-ingest-output' -type f -printf '.' | wc -c)" -ne 5 ]; then
+if ! diff -ru test_unstructured_ingest/expected-structured-output/azure-blob-storage azure-ingest-output ; then
     echo
-    echo "5 files should have been created."
+    echo "There are differences from the previously checked-in structured outputs."
+    echo
+    echo "If these differences are acceptable, overwrite the fixtures with: "
+    echo
+    echo " cp azure-ingest-output/* test_unstructured_ingest/expected-structured-output/azure-blob-storage/"
+    echo
+    echo "after running this script."
     exit 1
 fi
