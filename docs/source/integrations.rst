@@ -1,22 +1,22 @@
 Integrations
 ======
 Integrate your model development pipeline with your favorite machine learning frameworks and libraries, 
-and prepare your data for ingestion into downstream systems. Most of out integrations are in the form of 
-some of our `staging bricks <https://unstructured-io.github.io/unstructured/bricks.html#staging>`_, 
-design to get a list of document ``unstructured`` ``Element`` objects as input and return formatted dictionaries as output.
+and prepare your data for ingestion into downstream systems. Most of our integrations come in the form of 
+`staging bricks <https://unstructured-io.github.io/unstructured/bricks.html#staging>`_, 
+which take a list of ``Element`` objects as input and return formatted dictionaries as output.
 
 
-``Integration with Arguila``
+``Integration with Argilla``
 --------------
-You can convert a list of ``Text`` elements to an `Argilla <https://www.argilla.io/>`_ Dataset by specifying the type of 
-dataset to be generated using the ``argilla_task`` parameter. Valid values are "text_classification", "token_classification", and "text2text".
-Just follow the link for our staging brick `stage_for_arguila <https://unstructured-io.github.io/unstructured/bricks.html#stage-for-argilla>`_ 
+You can convert a list of ``Text`` elements to an `Argilla <https://www.argilla.io/>`_ ``Dataset`` by specifying the type of 
+dataset to be generated using the ``argilla_task`` parameter. Valid values are ``"text_classification"``, ``"token_classification"``, and ``"text2text"``.
+Just follow the link for our staging brick `stage_for_argilla <https://unstructured-io.github.io/unstructured/bricks.html#stage-for-argilla>`_ 
 to see how to do it.
 
 
 ``Integration with Datasaur``
 --------------
-You can format a list of ``Text`` elements as input to token based tasks in `Datasaur <https://datasaur.ai/>`_ and obtain a list of dictionaries indexed by  the keys ``'text'`` with the content of the element, and ``'entities'`` with an empty list. Customise your entities and check how to use this integration in the documentation for our staging brick `stage_for_datasaur <https://unstructured-io.github.io/unstructured/bricks.html#stage-for-datasaur>`_.
+You can format a list of ``Text`` elements as input to token based tasks in `Datasaur <https://datasaur.ai/>`_ and obtain a list of dictionaries indexed by the keys ``"text"`` with the content of the element, and ``"entities"`` with an empty list. Customise your entities and check how to use this integration in the documentation for our staging brick `stage_for_datasaur <https://unstructured-io.github.io/unstructured/bricks.html#stage-for-datasaur>`_.
 
 
 ``Integration with Hugging Face``
@@ -32,7 +32,7 @@ to see how to do it.
 ``Integration with Labelbox``
 --------------
 You can format your outputs for use with `LabelBox <https://labelbox.com/>`_ which accepts cloud-hosted data and does not support importing text directly. With this integration you can stage the data files in the ``output_directory`` to be uploaded to a cloud storage service (such as S3 buckets) and get a config of type ``List[Dict[str, Any]]`` that can be written to a ``.json`` file and imported into LabelBox. Just follow the link for our staging brick 
-`stage_for_label_box <https://unstructured-io.github.io/unstructured/bricks.html#stage-for-label-box>`_ to see how to generate the ``config.json`` file that can be used with ``LabelBox`` and uploading the staged data files to an S3 bucket.
+`stage_for_label_box <https://unstructured-io.github.io/unstructured/bricks.html#stage-for-label-box>`_ to see how to generate the ``config.json`` file that can be used with LabelBox and uploading the staged data files to an S3 bucket.
 
 
 ``Integration with Label Studio``
@@ -41,7 +41,7 @@ You can format your outputs for upload to `Label Studio <https://labelstud.io/>`
 to a JSON folder that is ready to be included in a new Label Studio project. You can also include pre-annotations and predictions 
 as part of your upload.
 
-Check our example notebook to format and upload the risk section from an SEC filing to Label Studio for a sentiment analysis labeling task `here <https://unstructured-io.github.io/unstructured/examples.html#sentiment-analysis-labeling-in-labelstudio>`_ .Follow the link for our staging brick `stage_for_labelstudio <https://unstructured-io.github.io/unstructured/bricks.html#stage-for-label-studio>`_ to see how to do it, and `Label Studio docs <https://labelstud.io/tags/labels.html>`_ for a full list of options 
+Check our example notebook to format and upload the risk section from an SEC filing to Label Studio for a sentiment analysis labeling task `here <https://unstructured-io.github.io/unstructured/examples.html#sentiment-analysis-labeling-in-labelstudio>`_ . Follow the link for our staging brick `stage_for_label_studio <https://unstructured-io.github.io/unstructured/bricks.html#stage-for-label-studio>`_ to see how to do it, and `Label Studio docs <https://labelstud.io/tags/labels.html>`_ for a full list of options 
 for labels and annotations.
 
 
@@ -64,13 +64,13 @@ To use ``Unstructured.io File Loader`` you will need to have LlamaIndex 🦙 (GP
 
 ``Integration with Pandas``
 --------------
-You can convert a list of document Element objects to a Pandas dataframe with a ``text`` and ``type`` columns with 
-the text from the element and its type such as ``NarrativeText`` or ``Title``. Just follow the link for our staging brick 
+You can convert a list of ``Element`` objects to a Pandas dataframe with columns for 
+the text from each element and their types such as ``NarrativeText`` or ``Title``. Just follow the link for our staging brick 
 `convert_to_dataframe <https://unstructured-io.github.io/unstructured/bricks.html#convert-to-dataframe>`_ to see how to use it.
 
 
 ``Integration with Prodigy``
 --------------
-You can format your outputs in a JSON or CSV format for use with `Prodigy <https://prodi.gy/docs/api-loaders>`_. After running ``stage_for_prodigy`` | 
-``stage_csv_for_prodigy``, you can write the results to a ``.json`` | ``.jsonl`` or a ``.csv`` file. that is ready to be used with Prodigy. Just follow the link for our staging bricks `stage_for_prodigy <https://unstructured-io.github.io/unstructured/bricks.html#stage-for-prodigy>`_ and 
+You can format your JSON or CSV outputs for use with `Prodigy <https://prodi.gy/docs/api-loaders>`_. After running ``stage_for_prodigy`` | 
+``stage_csv_for_prodigy``, you can write the results to a ``.json`` | ``.jsonl`` or a ``.csv`` file that is ready to be used with Prodigy. Just follow the links for our staging bricks `stage_for_prodigy <https://unstructured-io.github.io/unstructured/bricks.html#stage-for-prodigy>`_ and 
 `stage_csv_for_prodigy <https://unstructured-io.github.io/unstructured/bricks.html#stage-csv-for-prodigy>`_ to see how to do this.
