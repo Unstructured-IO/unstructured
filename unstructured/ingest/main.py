@@ -437,8 +437,8 @@ def main(
                     output_dir=structured_output_dir,
                     re_download=re_download,
                     preserve_downloads=preserve_downloads,
-                    metadata_exclude=metadata_exclude,
                     metadata_include=metadata_include,
+                    metadata_exclude=metadata_exclude,
                 ),
             )
         elif protocol in ("abfs", "az"):
@@ -459,8 +459,8 @@ def main(
                     output_dir=structured_output_dir,
                     re_download=re_download,
                     preserve_downloads=preserve_downloads,
-                    metadata_exclude=metadata_exclude,
                     metadata_include=metadata_include,
+                    metadata_exclude=metadata_exclude,
                 ),
             )
         else:
@@ -477,8 +477,8 @@ def main(
                     output_dir=structured_output_dir,
                     re_download=re_download,
                     preserve_downloads=preserve_downloads,
-                    metadata_exclude=metadata_exclude,
                     metadata_include=metadata_include,
+                    metadata_exclude=metadata_exclude,
                 ),
             )
     elif github_url:
@@ -493,8 +493,8 @@ def main(
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
                 re_download=re_download,
-                metadata_exclude=metadata_exclude,
                 metadata_include=metadata_include,
+                metadata_exclude=metadata_exclude,
             ),
         )
     elif gitlab_url:
@@ -509,8 +509,8 @@ def main(
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
                 re_download=re_download,
-                metadata_exclude=metadata_exclude,
                 metadata_include=metadata_include,
+                metadata_exclude=metadata_exclude,
             ),
         )
     elif subreddit_name:
@@ -527,8 +527,8 @@ def main(
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
                 re_download=re_download,
-                metadata_exclude=metadata_exclude,
                 metadata_include=metadata_include,
+                metadata_exclude=metadata_exclude,
             ),
         )
     elif wikipedia_page_title:
@@ -541,8 +541,8 @@ def main(
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
                 re_download=re_download,
-                metadata_exclude=metadata_exclude,
                 metadata_include=metadata_include,
+                metadata_exclude=metadata_exclude,
             ),
         )
     elif drive_id:
@@ -557,8 +557,8 @@ def main(
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
                 re_download=re_download,
-                metadata_exclude=metadata_exclude,
                 metadata_include=metadata_include,
+                metadata_exclude=metadata_exclude,
             ),
         )
     elif biomed_path or biomed_api_id or biomed_api_from or biomed_api_until:
@@ -573,8 +573,8 @@ def main(
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
                 re_download=re_download,
-                metadata_exclude=metadata_exclude,
                 metadata_include=metadata_include,
+                metadata_exclude=metadata_exclude,
             ),
         )
     # Check for other connector-specific options here and define the doc_connector object

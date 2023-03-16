@@ -26,6 +26,8 @@ class SimpleGitConfig(BaseConnectorConfig):
     output_dir: str
     preserve_downloads: bool = False
     re_download: bool = False
+    metadata_include: str = ""
+    metadata_exclude: str = ""
 
     repo_path: str = field(init=False, repr=False)
 

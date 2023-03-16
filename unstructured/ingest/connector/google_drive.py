@@ -77,6 +77,8 @@ class SimpleGoogleDriveConfig(BaseConnectorConfig):
     output_dir: str
     re_download: bool = False
     preserve_downloads: bool = False
+    metadata_include: str = ""
+    metadata_exclude: str = ""
 
     recursive: bool = False
 
