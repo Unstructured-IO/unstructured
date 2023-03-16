@@ -110,7 +110,7 @@ class BaseIngestDoc(ABC):
                     if k not in in_list:
                         metadata_dict.pop(k, None)
             elem["metadata"] = str(metadata_dict)
-            
+
             elem.pop("coordinates")  # type: ignore[attr-defined]
             self.isd_elems_no_filename.append(elem)
 
