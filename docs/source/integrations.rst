@@ -1,11 +1,9 @@
 Integrations
 ======
 Integrate your model development pipeline with your favorite machine learning frameworks and libraries, 
-and prepare your data for ingestion into downstream systems. For instance, you can check our example notebook 
-to format and upload the risk section from an SEC filing to LabelStudio for a sentiment analysis labeling 
-task `here <https://unstructured-io.github.io/unstructured/examples.html#sentiment-analysis-labeling-in-labelstudio>`_ . 
-Integrations are result of our `staging bricks <https://unstructured-io.github.io/unstructured/bricks.html#staging>`_, 
-design to get a list of document ``unstructured`` ``Element`` objects as input and return a formatted dictionaries as output.
+and prepare your data for ingestion into downstream systems. Most of out integrations are in the form of 
+some of our `staging bricks <https://unstructured-io.github.io/unstructured/bricks.html#staging>`_, 
+design to get a list of document ``unstructured`` ``Element`` objects as input and return formatted dictionaries as output.
 
 
 ``Integration with Arguila``
@@ -41,7 +39,9 @@ You can format your outputs for use with `LabelBox <https://labelbox.com/>`_ whi
 --------------
 You can format your outputs for upload to `Label Studio <https://labelstud.io/>`_. After running ``stage_for_label_studio``, you can write the results 
 to a JSON folder that is ready to be included in a new Label Studio project. You can also include pre-annotations and predictions 
-as part of your upload. Follow the link for our staging brick `stage_for_labelstudio <https://unstructured-io.github.io/unstructured/bricks.html#stage-for-label-studio>`_ to see how to do it, and `Label Studio docs <https://labelstud.io/tags/labels.html>`_ for a full list of options 
+as part of your upload.
+
+Check our example notebook to format and upload the risk section from an SEC filing to Label Studio for a sentiment analysis labeling task `here <https://unstructured-io.github.io/unstructured/examples.html#sentiment-analysis-labeling-in-labelstudio>`_ .Follow the link for our staging brick `stage_for_labelstudio <https://unstructured-io.github.io/unstructured/bricks.html#stage-for-label-studio>`_ to see how to do it, and `Label Studio docs <https://labelstud.io/tags/labels.html>`_ for a full list of options 
 for labels and annotations.
 
 
