@@ -1,7 +1,6 @@
 """Defines Abstract Base Classes (ABC's) core to batch processing documents
 through Unstructured."""
 
-import ast
 from abc import ABC, abstractmethod
 
 from unstructured.ingest.logger import logger
@@ -99,18 +98,15 @@ class BaseIngestDoc(ABC):
         self.isd_elems_no_filename = []
         for elem in isd_elems:
             # type: ignore
-            metadata_dict = ast.literal_eval(elem["metadata"])
-
             if self.config.metadata_exclude:
                 ex_list = self.config.metadata_exclude.split(",")
                 for ex in ex_list:
-                    metadata_dict.pop(ex, None)
+                    elem["metadata"].pop(ex, None)
             elif self.config.metadata_include:
                 in_list = self.config.metadata_include.split(",")
                 for k in elem["metadata"]:
                     if k not in in_list:
-                        metadata_dict.pop(k, None)
-            elem["metadata"] = str(metadata_dict)
+                        elem["metadata"].pop(k, None)
 
             elem.pop("coordinates")  # type: ignore[attr-defined]
             self.isd_elems_no_filename.append(elem)
