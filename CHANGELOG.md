@@ -1,9 +1,10 @@
-## 0.5.5-dev0
+## 0.5.5-dev1
 
 ### Enhancements
 
 ### Features
 
+* Add `--metadata-include` and `--metadata-exclude` parameters to `unstructured-ingest`
 * Add `clean_non_ascii_chars` to remove non-ascii characters from unicode string
 
 ### Fixes
