@@ -101,12 +101,12 @@ class BaseIngestDoc(ABC):
             if self.config.metadata_exclude:
                 ex_list = self.config.metadata_exclude.split(",")
                 for ex in ex_list:
-                    elem["metadata"].pop(ex, None)
+                    elem["metadata"].pop(ex, None) # type: ignore[attr-defined]
             elif self.config.metadata_include:
                 in_list = self.config.metadata_include.split(",")
                 for k in elem["metadata"]:
                     if k not in in_list:
-                        elem["metadata"].pop(k, None)
+                        elem["metadata"].pop(k, None) # type: ignore[attr-defined]
 
             elem.pop("coordinates")  # type: ignore[attr-defined]
             self.isd_elems_no_filename.append(elem)
