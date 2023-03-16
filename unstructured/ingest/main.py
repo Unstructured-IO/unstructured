@@ -53,14 +53,14 @@ class MutuallyExclusiveOption(Option):
                 "Illegal usage: `{}` is mutually exclusive with "
                 "arguments `{}`.".format(
                     self.name,
-                    ', '.join(self.mutually_exclusive)
-                )
+                    ', '.join(self.mutually_exclusive),
+                ),
             )
 
         return super(MutuallyExclusiveOption, self).handle_parse_result(
             ctx,
             opts,
-            args
+            args,
         )
 
 
@@ -137,14 +137,14 @@ class MainProcess:
     cls=MutuallyExclusiveOption,
     default=None,
     help="If set, include the specified metadata fields if they exist and drop all other fields.",
-    mutually_exclusive=["--metadata-exclude"]
+    mutually_exclusive=["--metadata-exclude"],
 )
 @click.option(
     "--metadata-exclude",
     cls=MutuallyExclusiveOption,
     default=None,
     help="If set, drop the specified metadata fields if they exist.",
-    mutually_exclusive=["--metadata-include"]
+    mutually_exclusive=["--metadata-include"],
 )
 @click.option(
     "--remote-url",
