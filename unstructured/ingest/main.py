@@ -8,7 +8,7 @@ from contextlib import suppress
 from pathlib import Path
 from urllib.parse import urlparse
 
-import click
+from click import Option, UsageError
 
 from unstructured.ingest.connector.azure import (
     AzureBlobStorageConnector,
