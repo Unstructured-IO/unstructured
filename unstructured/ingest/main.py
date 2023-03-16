@@ -37,13 +37,13 @@ with suppress(RuntimeError):
 
 class MutuallyExclusiveOption(Option):
     def __init__(self, *args, **kwargs):
-        self.mutually_exclusive = set(kwargs.pop('mutually_exclusive', []))
-        help = kwargs.get('help', '')
+        self.mutually_exclusive = set(kwargs.pop("mutually_exclusive", []))
+        help = kwargs.get("help", "")
         if self.mutually_exclusive:
-            mutex_str = ', '.join(self.mutually_exclusive)
-            kwargs['help'] = help + (
-                ' NOTE: This argument is mutually exclusive with '
-                ' arguments: [' + mutex_str + '].'
+            mutex_str = ", ".join(self.mutually_exclusive)
+            kwargs["help"] = help + (
+                " NOTE: This argument is mutually exclusive with "
+                " arguments: [" + mutex_str + "]."
             )
         super(MutuallyExclusiveOption, self).__init__(*args, **kwargs)
 
@@ -53,7 +53,7 @@ class MutuallyExclusiveOption(Option):
                 "Illegal usage: `{}` is mutually exclusive with "
                 "arguments `{}`.".format(
                     self.name,
-                    ', '.join(self.mutually_exclusive),
+                    ", ".join(self.mutually_exclusive),
                 ),
             )
 
