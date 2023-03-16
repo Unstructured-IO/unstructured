@@ -26,6 +26,8 @@ class SimpleWikipediaConfig(BaseConnectorConfig):
     output_dir: str
     preserve_downloads: bool = False
     re_download: bool = False
+    metadata_include: str = ""
+    metadata_exclude: str = ""
 
 
 @dataclass

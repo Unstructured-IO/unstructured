@@ -29,6 +29,8 @@ class SimpleFsspecConfig(BaseConnectorConfig):
     output_dir: str
     preserve_downloads: bool = False
     re_download: bool = False
+    metadata_include: str = ""
+    metadata_exclude: str = ""
 
     # fsspec specific options
     access_kwargs: dict = field(default_factory=dict)

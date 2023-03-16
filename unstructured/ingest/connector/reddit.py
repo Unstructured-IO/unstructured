@@ -31,6 +31,8 @@ class SimpleRedditConfig(BaseConnectorConfig):
     output_dir: str
     preserve_downloads: bool = False
     re_download: bool = False
+    metadata_include: str = ""
+    metadata_exclude: str = ""
 
     def __post_init__(self):
         if self.num_posts <= 0:
