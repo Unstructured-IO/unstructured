@@ -59,7 +59,9 @@ class BaseIngestDoc(ABC):
 
     Crucially, it is not responsible for the actual processing of the raw document.
     """
+
     config: BaseConnectorConfig
+
     @property
     @abstractmethod
     def filename(self):
@@ -105,7 +107,7 @@ class BaseIngestDoc(ABC):
                 for k in elem["metadata"]:
                     if k not in in_list:
                         elem["metadata"].pop(k, None)
-            
+
             elem.pop("coordinates")  # type: ignore[attr-defined]
             self.isd_elems_no_filename.append(elem)
 
