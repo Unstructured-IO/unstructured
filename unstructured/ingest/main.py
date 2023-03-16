@@ -136,14 +136,14 @@ class MainProcess:
 @click.option(
     "--metadata-include",
     cls=MutuallyExclusiveOption,
-    default=None,
+    default="",
     help="If set, include the specified metadata fields if they exist and drop all other fields.",
     mutually_exclusive=["--metadata-exclude"],
 )
 @click.option(
     "--metadata-exclude",
     cls=MutuallyExclusiveOption,
-    default=None,
+    default="",
     help="If set, drop the specified metadata fields if they exist.",
     mutually_exclusive=["--metadata-include"],
 )
@@ -366,6 +366,8 @@ def main(
     reprocess,
     num_processes,
     verbose,
+    metadata_include,
+    metadata_exclude,
 ):
     if not preserve_downloads and download_dir:
         logger.warning(
@@ -435,6 +437,8 @@ def main(
                     output_dir=structured_output_dir,
                     re_download=re_download,
                     preserve_downloads=preserve_downloads,
+                    metadata_exclude=metadata_exclude,
+                    metadata_include=metadata_include,
                 ),
             )
         elif protocol in ("abfs", "az"):
@@ -455,6 +459,8 @@ def main(
                     output_dir=structured_output_dir,
                     re_download=re_download,
                     preserve_downloads=preserve_downloads,
+                    metadata_exclude=metadata_exclude,
+                    metadata_include=metadata_include,
                 ),
             )
         else:
@@ -471,6 +477,8 @@ def main(
                     output_dir=structured_output_dir,
                     re_download=re_download,
                     preserve_downloads=preserve_downloads,
+                    metadata_exclude=metadata_exclude,
+                    metadata_include=metadata_include,
                 ),
             )
     elif github_url:
@@ -485,6 +493,8 @@ def main(
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
                 re_download=re_download,
+                metadata_exclude=metadata_exclude,
+                metadata_include=metadata_include,
             ),
         )
     elif gitlab_url:
@@ -499,6 +509,8 @@ def main(
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
                 re_download=re_download,
+                metadata_exclude=metadata_exclude,
+                metadata_include=metadata_include,
             ),
         )
     elif subreddit_name:
@@ -515,6 +527,8 @@ def main(
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
                 re_download=re_download,
+                metadata_exclude=metadata_exclude,
+                metadata_include=metadata_include,
             ),
         )
     elif wikipedia_page_title:
@@ -527,6 +541,8 @@ def main(
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
                 re_download=re_download,
+                metadata_exclude=metadata_exclude,
+                metadata_include=metadata_include,
             ),
         )
     elif drive_id:
@@ -541,6 +557,8 @@ def main(
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
                 re_download=re_download,
+                metadata_exclude=metadata_exclude,
+                metadata_include=metadata_include,
             ),
         )
     elif biomed_path or biomed_api_id or biomed_api_from or biomed_api_until:
@@ -555,6 +573,8 @@ def main(
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
                 re_download=re_download,
+                metadata_exclude=metadata_exclude,
+                metadata_include=metadata_include,
             ),
         )
     # Check for other connector-specific options here and define the doc_connector object
