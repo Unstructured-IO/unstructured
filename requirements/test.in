@@ -8,10 +8,7 @@ flake8
 mypy
 types-Markdown
 pytest-cov
-***REMOVED*** NOTE(robinson) - Currently tests do not pass with 0.0.18. Added the following
-***REMOVED*** issue to address
-***REMOVED*** ref: https://github.com/Unstructured-IO/unstructured/issues/200
-label_studio_sdk==0.0.17
+label_studio_sdk
 types-requests
 vcrpy
 ruff

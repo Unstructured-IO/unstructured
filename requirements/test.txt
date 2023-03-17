@@ -4,6 +4,11 @@
 ***REMOVED***
 ***REMOVED***    pip-compile requirements/test.in
 ***REMOVED***
+--extra-index-url https://pypi.ngc.nvidia.com
+--trusted-host pypi.ngc.nvidia.com
+
+appdirs==1.4.4
+    ***REMOVED*** via label-studio-tools
 attrs==22.2.0
     ***REMOVED*** via pytest
 black==23.1.0
@@ -22,7 +27,7 @@ coverage[toml]==7.2.1
     ***REMOVED*** via
     ***REMOVED***   -r requirements/test.in
     ***REMOVED***   pytest-cov
-exceptiongroup==1.1.0
+exceptiongroup==1.1.1
     ***REMOVED*** via pytest
 flake8==6.0.0
     ***REMOVED*** via -r requirements/test.in
@@ -32,10 +37,14 @@ flake8==6.0.0
     ***REMOVED***   yarl
 iniconfig==2.0.0
     ***REMOVED*** via pytest
-label-studio-sdk==0.0.17
+label-studio-sdk==0.0.21
     ***REMOVED*** via -r requirements/test.in
-***REMOVED***
+label-studio-tools==0.0.2
     ***REMOVED*** via label-studio-sdk
+***REMOVED***
+    ***REMOVED*** via
+    ***REMOVED***   label-studio-sdk
+    ***REMOVED***   label-studio-tools
 mccabe==0.7.0
     ***REMOVED*** via flake8
 multidict==6.0.4
@@ -50,7 +59,7 @@ mypy-extensions==1.0.0
     ***REMOVED*** via
     ***REMOVED***   black
     ***REMOVED***   pytest
-pathspec==0.11.0
+pathspec==0.11.1
     ***REMOVED*** via black
 platformdirs==3.1.1
     ***REMOVED*** via black
@@ -70,7 +79,7 @@ pyyaml==6.0
     ***REMOVED*** via vcrpy
 ***REMOVED***
     ***REMOVED*** via label-studio-sdk
-ruff==0.0.254
+ruff==0.0.256
     ***REMOVED*** via -r requirements/test.in
 ***REMOVED***
     ***REMOVED*** via vcrpy
@@ -91,7 +100,7 @@ types-urllib3==1.26.25.8
     ***REMOVED***   black
     ***REMOVED***   mypy
     ***REMOVED***   pydantic
-urllib3==1.26.14
+***REMOVED***
     ***REMOVED*** via requests
 vcrpy==4.2.1
     ***REMOVED*** via -r requirements/test.in

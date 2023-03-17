@@ -14,7 +14,10 @@ def elements():
     return [Title(text="Title 1"), NarrativeText(text="Narrative 1")]
 
 
-@vcr.use_cassette("test_unstructured/vcr_fixtures/cassettes/label_studio_upload.yaml")
+@vcr.use_cassette(
+    "test_unstructured/vcr_fixtures/cassettes/label_studio_upload.yaml",
+    allow_playback_repeats=True,
+)
 def test_upload_label_studio_data_with_sdk(caplog, elements):
     """
     Testing Instructions
