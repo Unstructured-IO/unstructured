@@ -8,6 +8,12 @@ ARG UNSTRUCTURED
 RUN yum -y update && \
   yum -y install poppler-utils xz-devel which
 
+# Enable the EPEL repository
+RUN yum install -y epel-release && yum clean all
+
+# Install pandoc
+RUN yum install -y pandoc && yum clean all
+
 # Note(austin) Get a recent tesseract from this repo
 # See https://tesseract-ocr.github.io/tessdoc/Installation.html
 # PDF and images:
@@ -44,6 +50,7 @@ ENV PATH="/home/usr/.local/bin:${PATH}"
 COPY example-docs example-docs
 
 COPY requirements/base.txt requirements-base.txt
+COPY requirements/test.txt requirements-test.txt
 COPY requirements/huggingface.txt requirements-huggingface.txt
 COPY requirements/dev.txt requirements-dev.txt
 # PDFs and images
@@ -52,6 +59,7 @@ COPY requirements/local-inference.txt requirements-local-inference.txt
 
 RUN python3.8 -m pip install pip==${PIP_VERSION} \
   && pip install --no-cache -r requirements-base.txt \
+  && pip install --no-cache -r requirements-test.txt \
   && pip install --no-cache -r requirements-huggingface.txt \
   && pip install --no-cache -r requirements-dev.txt \
   # PDFs and images
