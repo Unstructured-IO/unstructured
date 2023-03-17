@@ -119,7 +119,7 @@ faster processing and `"hi_res"` for
 ------------------
 
 The ``partition_docx`` partitioning brick pre-processes Microsoft Word documents
-saved in the ``.docx`` format. This staging brick uses a combination of the styling
+saved in the ``.docx`` format. This partition brick uses a combination of the styling
 information in the document and the structure of the text to determine the type
 of a text element. The ``partition_docx`` can take a filename or file-like object
 as input, as shown in the two examples below.
@@ -148,7 +148,7 @@ Examples:
 ------------------
 
 The ``partition_doc`` partitioning brick pre-processes Microsoft Word documents
-saved in the ``.doc`` format. This staging brick uses a combination of the styling
+saved in the ``.doc`` format. This partition brick uses a combination of the styling
 information in the document and the structure of the text to determine the type
 of a text element. The ``partition_doc`` can take a filename or file-like object
 as input.
@@ -169,7 +169,7 @@ Examples:
 ---------------------
 
 The ``partition_pptx`` partitioning brick pre-processes Microsoft PowerPoint documents
-saved in the ``.pptx`` format. This staging brick uses a combination of the styling
+saved in the ``.pptx`` format. This partition brick uses a combination of the styling
 information in the document and the structure of the text to determine the type
 of a text element. The ``partition_pptx`` can take a filename or file-like object
 as input, as shown in the two examples below.
@@ -190,7 +190,7 @@ Examples:
 ---------------------
 
 The ``partition_ppt`` partitioning brick pre-processes Microsoft PowerPoint documents
-saved in the ``.ppt`` format. This staging brick uses a combination of the styling
+saved in the ``.ppt`` format. This partition brick uses a combination of the styling
 information in the document and the structure of the text to determine the type
 of a text element. The ``partition_ppt`` can take a filename or file-like object.
 ``partition_ppt`` uses ``libreoffice`` to convert the file to ``.pptx`` and then

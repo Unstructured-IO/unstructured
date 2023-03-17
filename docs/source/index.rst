@@ -20,6 +20,8 @@ Library Documentation
 :doc:`examples`
   Examples of other types of workflows within the ``unstructured`` package.
 
+:doc:`integrations`
+  We make it easy for you to connect your output with other popular ML services.
 
 .. Hidden TOCs
 
@@ -32,3 +34,4 @@ Library Documentation
    getting_started
    bricks
    examples
+   integrations
