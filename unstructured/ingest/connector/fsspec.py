@@ -31,6 +31,7 @@ class SimpleFsspecConfig(BaseConnectorConfig):
     re_download: bool = False
     metadata_include: str = ""
     metadata_exclude: str = ""
+    fields_include: str = ""
 
     # fsspec specific options
     access_kwargs: dict = field(default_factory=dict)

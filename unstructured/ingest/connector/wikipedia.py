@@ -28,6 +28,7 @@ class SimpleWikipediaConfig(BaseConnectorConfig):
     re_download: bool = False
     metadata_include: str = ""
     metadata_exclude: str = ""
+    fields_include: str = ""
 
 
 @dataclass

@@ -134,6 +134,12 @@ class MainProcess:
 
 @click.command()
 @click.option(
+    "--fields-include",
+    default="element_id,text,type,metadata",
+    help="If set, include the specified top-level fields in an element. "
+    "Default is `element_id,text,type,metadata`.",
+)
+@click.option(
     "--metadata-include",
     cls=MutuallyExclusiveOption,
     default="",
@@ -368,7 +374,14 @@ def main(
     verbose,
     metadata_include,
     metadata_exclude,
+    fields_include,
 ):
+    if "metadata" not in fields_include and (metadata_include or metadata_exclude):
+        logger.error(
+            "Either `--metadata-include` or `--metadata-exclude` is specified"
+            " while metadata is not specified in --fields-include."
+        )
+        sys.exit(1)
     if not preserve_downloads and download_dir:
         logger.warning(
             "Not preserving downloaded files but --download_dir is specified",
@@ -439,6 +452,7 @@ def main(
                     preserve_downloads=preserve_downloads,
                     metadata_include=metadata_include,
                     metadata_exclude=metadata_exclude,
+                    fields_include=fields_include,
                 ),
             )
         elif protocol in ("abfs", "az"):
@@ -461,6 +475,7 @@ def main(
                     preserve_downloads=preserve_downloads,
                     metadata_include=metadata_include,
                     metadata_exclude=metadata_exclude,
+                    fields_include=fields_include,
                 ),
             )
         else:
@@ -479,6 +494,7 @@ def main(
                     preserve_downloads=preserve_downloads,
                     metadata_include=metadata_include,
                     metadata_exclude=metadata_exclude,
+                    fields_include=fields_include,
                 ),
             )
     elif github_url:
@@ -495,6 +511,7 @@ def main(
                 re_download=re_download,
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
+                fields_include=fields_include,
             ),
         )
     elif gitlab_url:
@@ -511,6 +528,7 @@ def main(
                 re_download=re_download,
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
+                fields_include=fields_include,
             ),
         )
     elif subreddit_name:
@@ -529,6 +547,7 @@ def main(
                 re_download=re_download,
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
+                fields_include=fields_include,
             ),
         )
     elif wikipedia_page_title:
@@ -543,6 +562,7 @@ def main(
                 re_download=re_download,
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
+                fields_include=fields_include,
             ),
         )
     elif drive_id:
@@ -559,6 +579,7 @@ def main(
                 re_download=re_download,
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
+                fields_include=fields_include,
             ),
         )
     elif biomed_path or biomed_api_id or biomed_api_from or biomed_api_until:
@@ -575,6 +596,7 @@ def main(
                 re_download=re_download,
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
+                fields_include=fields_include,
             ),
         )
     # Check for other connector-specific options here and define the doc_connector object

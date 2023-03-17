@@ -33,6 +33,7 @@ class SimpleRedditConfig(BaseConnectorConfig):
     re_download: bool = False
     metadata_include: str = ""
     metadata_exclude: str = ""
+    fields_include: str = ""
 
     def __post_init__(self):
         if self.num_posts <= 0:

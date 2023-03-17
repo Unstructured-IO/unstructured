@@ -49,6 +49,7 @@ class BaseConnectorConfig(ABC):
     re_download: bool = False
     metadata_include: str = ""
     metadata_exclude: str = ""
+    fields_include: str = ""
 
 
 class BaseIngestDoc(ABC):
@@ -108,7 +109,11 @@ class BaseIngestDoc(ABC):
                     if k not in in_list:
                         elem["metadata"].pop(k, None)  # type: ignore[attr-defined]
 
-            elem.pop("coordinates")  # type: ignore[attr-defined]
+            in_list = self.config.fields_include.split(",")
+            for k in elem:
+                if k not in in_list:
+                    elem.pop(k, None)  # type: ignore[attr-defined]
+            
             self.isd_elems_no_filename.append(elem)
 
         return self.isd_elems_no_filename
