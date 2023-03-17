@@ -113,7 +113,7 @@ class BaseIngestDoc(ABC):
             for k in elem:
                 if k not in in_list:
                     elem.pop(k, None)  # type: ignore[attr-defined]
-            
+
             self.isd_elems_no_filename.append(elem)
 
         return self.isd_elems_no_filename
