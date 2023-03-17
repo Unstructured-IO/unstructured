@@ -5,7 +5,6 @@ import pytest
 
 from unstructured.ingest.connector.git import GitIngestDoc, SimpleGitConfig
 
-
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "example-docs")
 
