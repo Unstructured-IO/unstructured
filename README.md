@@ -49,7 +49,7 @@ about. Bricks in the library fall into three categories:
 ## :eight_pointed_black_star: Quick Start
 
 Use the following instructions to get up and running with `unstructured` and test your
-installation.
+installation. NOTE: We do not currently support python 3.11, please use an older version.
 
 - Install the Python SDK with `pip install "unstructured[local-inference]"`
 		- If you do not need to process PDFs or images, you can run `pip install unstructured`
