@@ -1,0 +1,50 @@
+name: Build And Push Docker Image
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  DOCKER_REGISTRY: "quay.io"
+  DOCKER_NAMESPACE: "unstructured"
+  IMAGE_PLATFORMS: linux/amd64,linux/arm64
+  PACKAGE: "unstructured"
+  PIP_VERSION: "22.2.1"
+  BUILD_TYPE_TAG_SUFFIX: ""
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to Quay.io
+        uses: docker/login-action@v1
+        with:
+          registry: quay.io
+          username: ${{ secrets.QUAY_IO_ROBOT_USERNAME }}
+          password: ${{ secrets.QUAY_IO_ROBOT_TOKEN }}
+
+      - name: Build and push Docker image
+        run: |
+          BUILD_TYPE_TAG_SUFFIX=""
+          if [[ ! "${{ github.ref }}" =~ ^refs/tags/ ]]; then
+            BUILD_TYPE_TAG_SUFFIX="-dev"
+          fi
+          GIT_SHA=$(git rev-parse --short HEAD)
+          IMAGE_NAME=${{ env.PACKAGE }}${BUILD_TYPE_TAG_SUFFIX}
+          docker buildx build --platform ${{ env.IMAGE_PLATFORMS }} --provenance=false --push \
+          --build-arg PIP_VERSION=${{ env.PIP_VERSION }} \
+          -t ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/${IMAGE_NAME}:${GIT_SHA} \
+          -t ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/${IMAGE_NAME}:latest .
