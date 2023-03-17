@@ -44,7 +44,7 @@ jobs:
           fi
           GIT_SHA=$(git rev-parse --short HEAD)
           IMAGE_NAME=${{ env.PACKAGE }}${BUILD_TYPE_TAG_SUFFIX}
-          docker buildx build --platform ${{ env.IMAGE_PLATFORMS }} --provenance=false --push \
+          docker buildx build --provenance=false --push \
           --build-arg PIP_VERSION=${{ env.PIP_VERSION }} \
           -t ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/${IMAGE_NAME}:${GIT_SHA} \
           -t ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/${IMAGE_NAME}:latest .
