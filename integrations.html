@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Installation" href="installing.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="Examples" href="examples.html" />
 
     <link rel="shortcut icon" href="_static/unstructured_small.png"/><!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 -->
-        <title>Unstructured 0.5.5 documentation</title>
+        <title>Integrations - Unstructured 0.5.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -223,7 +223,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="#"><div class="brand">Unstructured 0.5.5 documentation</div></a>
+      <a href="index.html"><div class="brand">Unstructured 0.5.5 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -243,7 +243,7 @@
   <aside class="sidebar-drawer">
     <div class="sidebar-container">
       
-      <div class="sidebar-sticky"><a class="sidebar-brand" href="#">
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   <div class="sidebar-logo-container">
     <img class="sidebar-logo only-light" src="_static/images/logo-light-mode.svg" alt="Light Logo" />
@@ -263,12 +263,12 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Library Documentation</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installing.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bricks.html">Bricks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="integrations.html">Integrations</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Integrations</a></li>
 </ul>
 
 </div>
@@ -303,27 +303,52 @@
           </label>
         </div>
         <article role="main">
-          <section id="document-parsing">
-<h1>Document Parsing<a class="headerlink" href="#document-parsing" title="Permalink to this heading"></a></h1>
-<p>The <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> library is designed to help preprocess structure unstructured text documents
-for use in downstream machine learning tasks. Examples of documents that can be processes
-using the <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> library include PDFs, XML and HTML documents.</p>
-<section id="library-documentation">
-<h2>Library Documentation<a class="headerlink" href="#library-documentation" title="Permalink to this heading"></a></h2>
-<dl class="simple">
-<dt><a class="reference internal" href="installing.html"><span class="doc">Installation</span></a></dt><dd><p>Instructions on how to install the <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> library on your system.</p>
-</dd>
-<dt><a class="reference internal" href="getting_started.html"><span class="doc">Getting Started</span></a></dt><dd><p>Check out this section to learn about basic workflows in <code class="docutils literal notranslate"><span class="pre">unstructured</span></code>.</p>
-</dd>
-<dt><a class="reference internal" href="bricks.html"><span class="doc">Bricks</span></a></dt><dd><p>Learning more about partitioning, cleaning, and staging bricks, included advanced usage patterns.</p>
-</dd>
-<dt><a class="reference internal" href="examples.html"><span class="doc">Examples</span></a></dt><dd><p>Examples of other types of workflows within the <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> package.</p>
-</dd>
-<dt><a class="reference internal" href="integrations.html"><span class="doc">Integrations</span></a></dt><dd><p>We make it easy for you to connect your output with other popular ML services.</p>
-</dd>
-</dl>
-<div class="toctree-wrapper compound">
-</div>
+          <section id="integrations">
+<h1>Integrations<a class="headerlink" href="#integrations" title="Permalink to this heading"></a></h1>
+<p>Integrate your model development pipeline with your favorite machine learning frameworks and libraries,
+and prepare your data for ingestion into downstream systems. Most of our integrations come in the form of
+<a class="reference external" href="https://unstructured-io.github.io/unstructured/bricks.html#staging">staging bricks</a>,
+which take a list of <code class="docutils literal notranslate"><span class="pre">Element</span></code> objects as input and return formatted dictionaries as output.</p>
+<section id="integration-with-argilla">
+<h2><code class="docutils literal notranslate"><span class="pre">Integration</span> <span class="pre">with</span> <span class="pre">Argilla</span></code><a class="headerlink" href="#integration-with-argilla" title="Permalink to this heading"></a></h2>
+<p>You can convert a list of <code class="docutils literal notranslate"><span class="pre">Text</span></code> elements to an <a class="reference external" href="https://www.argilla.io/">Argilla</a> <code class="docutils literal notranslate"><span class="pre">Dataset</span></code> using the <a class="reference external" href="https://unstructured-io.github.io/unstructured/bricks.html#stage-for-argilla">stage_for_argilla</a> staging brick. Specify the type of dataset to be generated using the <code class="docutils literal notranslate"><span class="pre">argilla_task</span></code> parameter. Valid values are <code class="docutils literal notranslate"><span class="pre">&quot;text_classification&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;token_classification&quot;</span></code>, and <code class="docutils literal notranslate"><span class="pre">&quot;text2text&quot;</span></code>. Follow the link for more details on usage.</p>
+</section>
+<section id="integration-with-datasaur">
+<h2><code class="docutils literal notranslate"><span class="pre">Integration</span> <span class="pre">with</span> <span class="pre">Datasaur</span></code><a class="headerlink" href="#integration-with-datasaur" title="Permalink to this heading"></a></h2>
+<p>You can format a list of <code class="docutils literal notranslate"><span class="pre">Text</span></code> elements as input to token based tasks in <a class="reference external" href="https://datasaur.ai/">Datasaur</a> using the <a class="reference external" href="https://unstructured-io.github.io/unstructured/bricks.html#stage-for-datasaur">stage_for_datasaur</a> staging brick. You will obtain a list of dictionaries indexed by the keys <code class="docutils literal notranslate"><span class="pre">&quot;text&quot;</span></code> with the content of the element, and <code class="docutils literal notranslate"><span class="pre">&quot;entities&quot;</span></code> with an empty list. Follow the link to learn how to customise your entities and for more details on usage.</p>
+</section>
+<section id="integration-with-hugging-face">
+<h2><code class="docutils literal notranslate"><span class="pre">Integration</span> <span class="pre">with</span> <span class="pre">Hugging</span> <span class="pre">Face</span></code><a class="headerlink" href="#integration-with-hugging-face" title="Permalink to this heading"></a></h2>
+<p>You can prepare <code class="docutils literal notranslate"><span class="pre">Text</span></code> elements for processing in Hugging Face <a class="reference external" href="https://huggingface.co/docs/transformers/index">Transformers</a>
+pipelines by splitting the elements into chunks that fit into the model’s attention window using the <a class="reference external" href="https://unstructured-io.github.io/unstructured/bricks.html#stage-for-transformers">stage_for_transformers</a> staging brick. You can customise the transformation by defining
+the <code class="docutils literal notranslate"><span class="pre">buffer</span></code> and <code class="docutils literal notranslate"><span class="pre">window_size</span></code>, the <code class="docutils literal notranslate"><span class="pre">split_function</span></code> and the <code class="docutils literal notranslate"><span class="pre">chunk_separator</span></code>. if you need to operate on
+text directly instead of <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> <code class="docutils literal notranslate"><span class="pre">Text</span></code> objects, use the <a class="reference external" href="https://unstructured-io.github.io/unstructured/bricks.html#stage-for-transformers">chunk_by_attention_window</a> helper function. Follow the links for more details on usage.</p>
+</section>
+<section id="integration-with-labelbox">
+<h2><code class="docutils literal notranslate"><span class="pre">Integration</span> <span class="pre">with</span> <span class="pre">Labelbox</span></code><a class="headerlink" href="#integration-with-labelbox" title="Permalink to this heading"></a></h2>
+<p>You can format your outputs for use with <a class="reference external" href="https://labelbox.com/">LabelBox</a> using the <a class="reference external" href="https://unstructured-io.github.io/unstructured/bricks.html#stage-for-label-box">stage_for_label_box</a> staging brick. LabelBox accepts cloud-hosted data and does not support importing text directly. With this integration you can stage the data files in the <code class="docutils literal notranslate"><span class="pre">output_directory</span></code> to be uploaded to a cloud storage service (such as S3 buckets) and get a config of type <code class="docutils literal notranslate"><span class="pre">List[Dict[str,</span> <span class="pre">Any]]</span></code> that can be written to a <code class="docutils literal notranslate"><span class="pre">.json</span></code> file and imported into LabelBox. Follow the link to see how to generate the <code class="docutils literal notranslate"><span class="pre">config.json</span></code> file that can be used with LabelBox, how to upload the staged data files to an S3 bucket, and for more details on usage.</p>
+</section>
+<section id="integration-with-label-studio">
+<h2><code class="docutils literal notranslate"><span class="pre">Integration</span> <span class="pre">with</span> <span class="pre">Label</span> <span class="pre">Studio</span></code><a class="headerlink" href="#integration-with-label-studio" title="Permalink to this heading"></a></h2>
+<p>You can format your outputs for upload to <a class="reference external" href="https://labelstud.io/">Label Studio</a> using the <a class="reference external" href="https://unstructured-io.github.io/unstructured/bricks.html#stage-for-label-studio">stage_for_label_studio</a> staging brick. After running <code class="docutils literal notranslate"><span class="pre">stage_for_label_studio</span></code>, you can write the results
+to a JSON folder that is ready to be included in a new Label Studio project. You can also include pre-annotations and predictions
+as part of your upload.</p>
+<p>Check our example notebook to format and upload the risk section from an SEC filing to Label Studio for a sentiment analysis labeling task <a class="reference external" href="https://unstructured-io.github.io/unstructured/examples.html#sentiment-analysis-labeling-in-labelstudio">here</a> . Follow the link for more details on usage, and check <a class="reference external" href="https://labelstud.io/tags/labels.html">Label Studio docs</a> for a full list of options for labels and annotations.</p>
+</section>
+<section id="integration-with-langchain">
+<h2><code class="docutils literal notranslate"><span class="pre">Integration</span> <span class="pre">with</span> <span class="pre">LangChain</span></code><a class="headerlink" href="#integration-with-langchain" title="Permalink to this heading"></a></h2>
+<p>Our integration with <a class="reference external" href="https://github.com/hwchase17/langchain">LangChain</a> makes it incredibly easy to combine language models with your data, no matter what form it is in. The <a class="reference external" href="https://langchain.readthedocs.io/en/latest/modules/document_loaders/examples/unstructured_file.html">Unstructured.io File Loader</a> extracts the text from a variety of unstructured text files using our <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> library. It is designed to be used as a way to load data into <a class="reference external" href="https://github.com/jerryjliu/llama_index">LlamaIndex</a> and/or subsequently used as a Tool in a LangChain Agent. See <a class="reference external" href="https://github.com/emptycrown/llama-hub/tree/main">here</a> for more <a class="reference external" href="https://llamahub.ai/">LlamaHub</a> examples.</p>
+<p>To use <code class="docutils literal notranslate"><span class="pre">Unstructured.io</span> <span class="pre">File</span> <span class="pre">Loader</span></code> you will need to have LlamaIndex 🦙 (GPT Index) installed in your environment. Just <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">llama-index</span></code> and then pass in a <code class="docutils literal notranslate"><span class="pre">Path</span></code> to a local file. Optionally, you may specify split_documents if you want each element generated by <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> to be placed in a separate document. Here is a simple example on how to use it:</p>
+</section>
+<section id="integration-with-pandas">
+<h2><code class="docutils literal notranslate"><span class="pre">Integration</span> <span class="pre">with</span> <span class="pre">Pandas</span></code><a class="headerlink" href="#integration-with-pandas" title="Permalink to this heading"></a></h2>
+<p>You can convert a list of <code class="docutils literal notranslate"><span class="pre">Element</span></code> objects to a Pandas dataframe with columns for
+the text from each element and their types such as <code class="docutils literal notranslate"><span class="pre">NarrativeText</span></code> or <code class="docutils literal notranslate"><span class="pre">Title</span></code> using the <a class="reference external" href="https://unstructured-io.github.io/unstructured/bricks.html#convert-to-dataframe">convert_to_dataframe</a> staging brick. Follow the link for more details on usage.</p>
+</section>
+<section id="integration-with-prodigy">
+<h2><code class="docutils literal notranslate"><span class="pre">Integration</span> <span class="pre">with</span> <span class="pre">Prodigy</span></code><a class="headerlink" href="#integration-with-prodigy" title="Permalink to this heading"></a></h2>
+<p>You can format your JSON or CSV outputs for use with <a class="reference external" href="https://prodi.gy/docs/api-loaders">Prodigy</a> using the <a class="reference external" href="https://unstructured-io.github.io/unstructured/bricks.html#stage-for-prodigy">stage_for_prodigy</a> and <a class="reference external" href="https://unstructured-io.github.io/unstructured/bricks.html#stage-csv-for-prodigy">stage_csv_for_prodigy</a> staging bricks. After running <code class="docutils literal notranslate"><span class="pre">stage_for_prodigy</span></code> |
+<code class="docutils literal notranslate"><span class="pre">stage_csv_for_prodigy</span></code>, you can write the results to a <code class="docutils literal notranslate"><span class="pre">.json</span></code> | <code class="docutils literal notranslate"><span class="pre">.jsonl</span></code> or a <code class="docutils literal notranslate"><span class="pre">.csv</span></code> file that is ready to be used with Prodigy. Follow the links for more details on usage.</p>
 </section>
 </section>
 
@@ -332,16 +357,18 @@ using the <code class="docutils literal notranslate"><span class="pre">unstructu
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="installing.html">
+          
+          <a class="prev-page" href="examples.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
-                  <span>Next</span>
+                  <span>Previous</span>
                 </div>
-                <div class="title">Installation</div>
+                
+                <div class="title">Examples</div>
+                
               </div>
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          
         </div>
         <div class="bottom-of-page">
           <div class="left-details">
@@ -372,8 +399,15 @@ using the <code class="docutils literal notranslate"><span class="pre">unstructu
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Document Parsing</a><ul>
-<li><a class="reference internal" href="#library-documentation">Library Documentation</a></li>
+<li><a class="reference internal" href="#">Integrations</a><ul>
+<li><a class="reference internal" href="#integration-with-argilla"><code class="docutils literal notranslate"><span class="pre">Integration</span> <span class="pre">with</span> <span class="pre">Argilla</span></code></a></li>
+<li><a class="reference internal" href="#integration-with-datasaur"><code class="docutils literal notranslate"><span class="pre">Integration</span> <span class="pre">with</span> <span class="pre">Datasaur</span></code></a></li>
+<li><a class="reference internal" href="#integration-with-hugging-face"><code class="docutils literal notranslate"><span class="pre">Integration</span> <span class="pre">with</span> <span class="pre">Hugging</span> <span class="pre">Face</span></code></a></li>
+<li><a class="reference internal" href="#integration-with-labelbox"><code class="docutils literal notranslate"><span class="pre">Integration</span> <span class="pre">with</span> <span class="pre">Labelbox</span></code></a></li>
+<li><a class="reference internal" href="#integration-with-label-studio"><code class="docutils literal notranslate"><span class="pre">Integration</span> <span class="pre">with</span> <span class="pre">Label</span> <span class="pre">Studio</span></code></a></li>
+<li><a class="reference internal" href="#integration-with-langchain"><code class="docutils literal notranslate"><span class="pre">Integration</span> <span class="pre">with</span> <span class="pre">LangChain</span></code></a></li>
+<li><a class="reference internal" href="#integration-with-pandas"><code class="docutils literal notranslate"><span class="pre">Integration</span> <span class="pre">with</span> <span class="pre">Pandas</span></code></a></li>
+<li><a class="reference internal" href="#integration-with-prodigy"><code class="docutils literal notranslate"><span class="pre">Integration</span> <span class="pre">with</span> <span class="pre">Prodigy</span></code></a></li>
 </ul>
 </li>
 </ul>
