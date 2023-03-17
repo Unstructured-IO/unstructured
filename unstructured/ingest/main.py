@@ -379,7 +379,7 @@ def main(
     if "metadata" not in fields_include and (metadata_include or metadata_exclude):
         logger.error(
             "Either `--metadata-include` or `--metadata-exclude` is specified"
-            " while metadata is not specified in --fields-include."
+            " while metadata is not specified in --fields-include.",
         )
         sys.exit(1)
     if not preserve_downloads and download_dir:
