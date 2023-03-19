@@ -38,10 +38,10 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          VERSION=$(grep -Po '(?<=__version__ = ")[^"]*' __version__.py)
+          VERSION=$(grep -Po '(?<=__version__ = ")[^"]*' unstructured/__version__.py)
           GIT_SHA=$(git rev-parse --short HEAD)
           IMAGE_NAME=${{ env.PACKAGE }}
-          docker buildx build --provenance=false --push \
+          docker buildx build --platform=linux/amd64 --provenance=false --push \
           --build-arg PIP_VERSION=${{ env.PIP_VERSION }} \
           -t ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/${IMAGE_NAME}:${GIT_SHA} \
           -t ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/${IMAGE_NAME}:${VERSION} \
