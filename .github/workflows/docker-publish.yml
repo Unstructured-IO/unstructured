@@ -11,7 +11,7 @@ on:
 env:
   DOCKER_REGISTRY: "quay.io"
   DOCKER_NAMESPACE: "unstructured-io"
-  IMAGE_PLATFORMS: linux/amd64,linux/arm64
+  IMAGE_PLATFORMS: linux/amd64
   PACKAGE: "unstructured"
   PIP_VERSION: "22.2.1"
   BUILD_TYPE_TAG_SUFFIX: ""
@@ -36,12 +36,13 @@ jobs:
           username: ${{ secrets.QUAY_IO_ROBOT_USERNAME }}
           password: ${{ secrets.QUAY_IO_ROBOT_TOKEN }}
 
+      # TODO(rniko): add a step to test the built image before pushing. Will add after https://unstructured-ai.atlassian.net/browse/CORE-745 is done
       - name: Build and push Docker image
         run: |
           VERSION=$(grep -Po '(?<=__version__ = ")[^"]*' unstructured/__version__.py)
           GIT_SHA=$(git rev-parse --short HEAD)
           IMAGE_NAME=${{ env.PACKAGE }}
-          docker buildx build --platform=linux/amd64 --provenance=false --push \
+          docker buildx build --platform=${{ env.IMAGE_PLATFORMS }} --provenance=false --push \
           --build-arg PIP_VERSION=${{ env.PIP_VERSION }} \
           -t ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/${IMAGE_NAME}:${GIT_SHA} \
           -t ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/${IMAGE_NAME}:${VERSION} \
