@@ -90,13 +90,13 @@ We build Docker images for all pushes to `main`. To leverage this, `docker pull`
 
 NOTE: the image is only supported for x86_64 hardware and known to have issues on Apple silicon.
 
-```
+```bash
 docker pull quay.io/unstructured-io/unstructured:latest
 ```
 
 Once pulled, you can create a container from this image and shell to it.
 
-```
+```bash
 # create the container
 docker run --platform linux/amd64 -d -t --name unstructured quay.io/unstructured-io/unstructured:latest
 
@@ -118,7 +118,7 @@ make docker-start-bash
 ```
 
 Once in the running container, you can try things out directly in Python interpreter's interactive mode.
-```
+```bash
 # this will drop you into a python console so you can run the below partition functions
 python3
 
