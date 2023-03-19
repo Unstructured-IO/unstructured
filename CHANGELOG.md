@@ -1,6 +1,8 @@
-## 0.5.5-dev0
+## 0.5.5-dev1
 
 ### Enhancements
+
+* `contains_english_word()`, used heavily in text processing, is 10x faster.
 
 ### Features
 
