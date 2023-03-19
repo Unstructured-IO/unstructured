@@ -1,6 +1,8 @@
-***REMOVED******REMOVED*** 0.5.5-dev0
+***REMOVED******REMOVED*** 0.5.5-dev1
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
+
+* `contains_english_word()`, used heavily in text processing, is 10x faster.
 
 ***REMOVED******REMOVED******REMOVED*** Features
 
