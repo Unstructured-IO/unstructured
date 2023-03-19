@@ -83,20 +83,42 @@ print("\n\n".join([str(el) for el in elements]))
 
 ## :dizzy: Instructions for using the docker image
 
-The following instructions are intended to help you get up and running using docker to interact with `unstructured`.
+The following instructions are intended to help you get up and running using Docker to interact with `unstructured`.
+See [here](https://docs.docker.com/get-docker/) if you don't already have docker installed on your machine.
+
+We build Docker images for all pushes to `main`. To leverage this, `docker pull` from our registry.
+
+NOTE: the image is only supported for x86_64 hardware and known to have issues on Apple silicon.
+
+```
+docker pull quay.io/unstructured-io/unstructured:latest
+```
+
+Once pulled, you can create a container from this image and shell to it.
+
+```
+# create the container
+docker run --platform linux/amd64 -d -t --name unstructured quay.io/unstructured-io/unstructured:latest
+
+# this will drop you into a bash shell where the Docker image is running
+docker exec -it unstructured bash 
+```
+
+You can also build your own Docker image.
 
 If you only plan on parsing one type of data you can speed up building the image by commenting out some
 of the packages/requirements necessary for other data types. See Dockerfile to know which lines are necessary
 for your use case.
 
-See [here](https://docs.docker.com/get-docker/) if you don't already have docker installed on your machine.
-
 ```bash
 make docker-build
 
-# this will drop you into a bash shell where the docker image is running
+# this will drop you into a bash shell where the Docker image is running
 make docker-start-bash
+```
 
+Once in the running container, you can try things out directly in Python interpreter's interactive mode.
+```
 # this will drop you into a python console so you can run the below partition functions
 python3
 
