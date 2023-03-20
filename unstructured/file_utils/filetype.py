@@ -2,6 +2,7 @@ import os
 import zipfile
 from enum import Enum
 from typing import IO, Optional
+from unstructured.partition.common import exactly_one
 
 try:
     import magic
@@ -139,8 +140,7 @@ def detect_filetype(
 ) -> Optional[FileType]:
     """Use libmagic to determine a file's type. Helps determine which partition brick
     to use for a given file. A return value of None indicates a non-supported file type."""
-    if filename and file:
-        raise ValueError("Only one of filename or file should be specified.")
+    exactly_one(filename, file)
 
     if filename:
         _, extension = os.path.splitext(filename)
@@ -162,8 +162,6 @@ def detect_filetype(
                 "Filetype detection on file-like objects requires libmagic. "
                 "Please install libmagic and try again.",
             )
-    else:
-        raise ValueError("No filename nor file were specified.")
 
     if mime_type == "application/pdf":
         return FileType.PDF
