@@ -134,6 +134,13 @@ class MainProcess:
 
 @click.command()
 @click.option(
+    "--flatten-metadata",
+    is_flag=True,
+    default=False,
+    help="If set, flatten metadata by moving elements in the metadata field up a level "
+    "and removing the metadata field.",
+)
+@click.option(
     "--fields-include",
     default="element_id,text,type,metadata",
     help="If set, include the specified top-level fields in an element. "
@@ -379,6 +386,7 @@ def main(
     metadata_include,
     metadata_exclude,
     fields_include,
+    flatten_metadata,
 ):
     if "metadata" not in fields_include and (metadata_include or metadata_exclude):
         logger.error(
@@ -457,6 +465,7 @@ def main(
                     metadata_include=metadata_include,
                     metadata_exclude=metadata_exclude,
                     fields_include=fields_include,
+                    flatten_metadata=flatten_metadata,
                 ),
             )
         elif protocol in ("abfs", "az"):
@@ -480,6 +489,7 @@ def main(
                     metadata_include=metadata_include,
                     metadata_exclude=metadata_exclude,
                     fields_include=fields_include,
+                    flatten_metadata=flatten_metadata,
                 ),
             )
         else:
@@ -499,6 +509,7 @@ def main(
                     metadata_include=metadata_include,
                     metadata_exclude=metadata_exclude,
                     fields_include=fields_include,
+                    flatten_metadata=flatten_metadata,
                 ),
             )
     elif github_url:
@@ -516,6 +527,7 @@ def main(
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
+                flatten_metadata=flatten_metadata,
             ),
         )
     elif gitlab_url:
@@ -533,6 +545,7 @@ def main(
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
+                flatten_metadata=flatten_metadata,
             ),
         )
     elif subreddit_name:
@@ -552,6 +565,7 @@ def main(
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
+                flatten_metadata=flatten_metadata,
             ),
         )
     elif wikipedia_page_title:
@@ -567,6 +581,7 @@ def main(
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
+                flatten_metadata=flatten_metadata,
             ),
         )
     elif drive_id:
@@ -584,6 +599,7 @@ def main(
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
+                flatten_metadata=flatten_metadata,
             ),
         )
     elif biomed_path or biomed_api_id or biomed_api_from or biomed_api_until:
@@ -601,6 +617,7 @@ def main(
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
+                flatten_metadata=flatten_metadata,
             ),
         )
     # Check for other connector-specific options here and define the doc_connector object
