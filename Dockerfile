@@ -6,7 +6,7 @@ ARG PIP_VERSION
 ARG UNSTRUCTURED
 
 RUN yum -y update && \
-  yum -y install poppler-utils xz-devel which
+  yum -y install poppler-utils xz-devel wget tar curl make which
 
 # Enable the EPEL repository
 RUN yum install -y epel-release && yum clean all
@@ -19,7 +19,7 @@ RUN yum install -y pandoc && yum clean all
 #     yum install -y devtoolset-9-gcc devtoolset-9-gcc-c++ wget tar curl make xz-devel && \
 #     scl enable devtoolset-9 -- sh -c 'echo "source /opt/rh/devtoolset-9/enable" >> /etc/profile.d/devtoolset-9.sh'
 
-# Note(yuming): Install gcc & g++ ≥ 5.4 for Detectron2 requirement
+# Note(yuming): Install gcc & g++ ≥ 5.4 for Detectron2 and Tesseract requirement
 RUN yum -y update
 RUN yum -y install centos-release-scl
 RUN yum -y install devtoolset-7-gcc*
