@@ -2,6 +2,8 @@
 
 ### Enhancements
 
+* `contains_english_word()`, used heavily in text processing, is 10x faster.
+
 ### Features
 
 * Add `--fields-include` parameter to `unstructured-ingest`
