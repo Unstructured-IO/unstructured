@@ -29,8 +29,6 @@ def partition_doc(filename: Optional[str] = None, file: Optional[IO] = None) -> 
         tmp.close()
         filename = tmp.name
         _, filename_no_path = os.path.split(os.path.abspath(tmp.name))
-    else:
-        raise ValueError("Exactly one of filename and file must be specified.")
 
     if not os.path.exists(filename):
         raise ValueError(f"The file {filename} does not exist.")

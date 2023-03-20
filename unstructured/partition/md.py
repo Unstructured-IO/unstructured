@@ -45,9 +45,6 @@ def partition_md(
 
         text = response.text
 
-    elif text is None:
-        raise ValueError("Exactly one of filename, file, url or text must be specified.")
-
     html = markdown.markdown(text)
 
     return partition_html(
