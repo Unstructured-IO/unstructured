@@ -1,6 +1,6 @@
 import os
 import pathlib
-from typing import List
+from typing import List, Set
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 # NOTE(robinson) - the list of English words is based on the nlkt.corpus.words corpus
@@ -14,4 +14,4 @@ with open(ENGLISH_WORDS_FILE) as f:
 
 # NOTE(robinson) - add new words that we want to pass for the English check in here
 ADDITIONAL_ENGLISH_WORDS: List[str] = []
-ENGLISH_WORDS: List[str] = BASE_ENGLISH_WORDS + ADDITIONAL_ENGLISH_WORDS
+ENGLISH_WORDS: Set[str] = set(BASE_ENGLISH_WORDS + ADDITIONAL_ENGLISH_WORDS)
