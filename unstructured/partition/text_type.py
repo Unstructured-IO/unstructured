@@ -20,7 +20,7 @@ from unstructured.nlp.patterns import (
 from unstructured.nlp.tokenize import pos_tag, sent_tokenize, word_tokenize
 
 POS_VERB_TAGS: Final[List[str]] = ["VB", "VBG", "VBD", "VBN", "VBP", "VBZ"]
-ENGLISH_WORD_SPLIT_RE = re.compile(r"[\s,.!?-_\/]+")
+ENGLISH_WORD_SPLIT_RE = re.compile(r"[\s\-,.!?_\/]+")
 NON_LOWERCASE_ALPHA_RE = re.compile(r"[^a-z]")
 
 def is_possible_narrative_text(
