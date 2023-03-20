@@ -4,11 +4,14 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 env:
   DOCKER_REGISTRY: "quay.io"
   DOCKER_NAMESPACE: "unstructured-io"
-  IMAGE_PLATFORMS: linux/amd64
+  IMAGE_PLATFORMS: linux/amd64,linux/arm64
   PACKAGE: "unstructured"
   PIP_VERSION: "22.2.1"
   BUILD_TYPE_TAG_SUFFIX: ""
@@ -41,6 +44,6 @@ jobs:
           IMAGE_NAME=${{ env.PACKAGE }}
           docker buildx build --platform=${{ env.IMAGE_PLATFORMS }} --provenance=false --push \
           --build-arg PIP_VERSION=${{ env.PIP_VERSION }} \
-          -t ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/${IMAGE_NAME}:${GIT_SHA} \
-          -t ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/${IMAGE_NAME}:${VERSION} \
-          -t ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/${IMAGE_NAME}:latest .
+          -t ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/${IMAGE_NAME}:${GIT_SHA}
+          # -t ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/${IMAGE_NAME}:${VERSION} \
+          # -t ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/${IMAGE_NAME}:latest .
