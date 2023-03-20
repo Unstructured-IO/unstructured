@@ -111,9 +111,12 @@ class BaseIngestDoc(ABC):
                         elem["metadata"].pop(k, None)  # type: ignore[attr-defined]
 
             in_list = self.config.fields_include.split(",")
+            ex_list = []
             for k in elem:
                 if k not in in_list:
-                    elem.pop(k, None)  # type: ignore[attr-defined]
+                    ex_list.append(k)
+            for k in ex_list:
+                elem.pop(k)  # type: ignore[attr-defined]
 
             self.isd_elems_no_filename.append(elem)
 
