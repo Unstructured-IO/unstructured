@@ -194,7 +194,7 @@ def test_contains_verb(text, expected, monkeypatch):
         ("zombie?parrot", True),
         ("notaWordHa 'parrot'", True),
         ("notaWordHa'parrot'", False),
-        ("notaWordHa \"parrot,\"", True),
+        ('notaWordHa "parrot,"', True),
         ("daljdf adlfajldj ajadfa", False),
         ("BTAR ADFJA L", False),
         ("Unstructured Technologies", True),

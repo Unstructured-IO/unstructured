@@ -23,6 +23,7 @@ POS_VERB_TAGS: Final[List[str]] = ["VB", "VBG", "VBD", "VBN", "VBP", "VBZ"]
 ENGLISH_WORD_SPLIT_RE = re.compile(r"[\s\-,.!?_\/]+")
 NON_LOWERCASE_ALPHA_RE = re.compile(r"[^a-z]")
 
+
 def is_possible_narrative_text(
     text: str,
     cap_threshold: float = 0.5,
