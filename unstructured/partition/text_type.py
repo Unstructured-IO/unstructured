@@ -20,7 +20,7 @@ from unstructured.nlp.patterns import (
 from unstructured.nlp.tokenize import pos_tag, sent_tokenize, word_tokenize
 
 POS_VERB_TAGS: Final[List[str]] = ["VB", "VBG", "VBD", "VBN", "VBP", "VBZ"]
-ENGLISH_WORD_SPLIT_RE = re.compile(r"[\s,.!?-_\/]")
+ENGLISH_WORD_SPLIT_RE = re.compile(r"[\s,.!?-_\/]+")
 NON_LOWERCASE_ALPHA_RE = re.compile(r"[^a-z]")
 
 def is_possible_narrative_text(
@@ -187,7 +187,6 @@ def contains_english_word(text: str) -> bool:
     """Checks to see if the text contains an English word."""
     text = text.lower()
     words = ENGLISH_WORD_SPLIT_RE.split(text)
-    import sys; sys.stderr.write("~~~".join(words)+"\n")
     for word in words:
         # Remove any non-lowercase alphabetical characters
         word = NON_LOWERCASE_ALPHA_RE.sub("", word)
