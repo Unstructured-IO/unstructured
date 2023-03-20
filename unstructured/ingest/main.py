@@ -136,15 +136,19 @@ class MainProcess:
 @click.option(
     "--metadata-include",
     cls=MutuallyExclusiveOption,
-    default="",
-    help="If set, include the specified metadata fields if they exist and drop all other fields.",
+    default=None,
+    help="If set, include the specified metadata fields if they exist and drop all other fields. "
+    "Usage: provide a single string with comma separated values. "
+    "Example: --metadata-include filename,page_number ",
     mutually_exclusive=["--metadata-exclude"],
 )
 @click.option(
     "--metadata-exclude",
     cls=MutuallyExclusiveOption,
-    default="",
-    help="If set, drop the specified metadata fields if they exist.",
+    default=None,
+    help="If set, drop the specified metadata fields if they exist. "
+    "Usage: provide a single string with comma separated values. "
+    "Example: --metadata-exclude filename,page_number ",
     mutually_exclusive=["--metadata-include"],
 )
 @click.option(

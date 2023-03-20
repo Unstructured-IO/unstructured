@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from ftplib import FTP, error_perm
 from pathlib import Path
-from typing import List, Union
+from typing import List, Optional, Union
 
 import requests
 from bs4 import BeautifulSoup
@@ -48,8 +48,8 @@ class SimpleBiomedConfig(BaseConnectorConfig):
     output_dir: str
     re_download: bool = False
     preserve_downloads: bool = False
-    metadata_include: str = ""
-    metadata_exclude: str = ""
+    metadata_include: Optional[str] = None
+    metadata_exclude: Optional[str] = None
 
     def _validate_date_args(self, date):
         date_formats = ["%Y-%m-%d", "%Y-%m-%d+%H:%M:%S"]

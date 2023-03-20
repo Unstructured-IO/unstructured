@@ -2,7 +2,7 @@ import json
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -26,9 +26,8 @@ class SimpleWikipediaConfig(BaseConnectorConfig):
     output_dir: str
     preserve_downloads: bool = False
     re_download: bool = False
-    metadata_include: str = ""
-    metadata_exclude: str = ""
-
+    metadata_include: Optional[str] = None
+    metadata_exclude: Optional[str] = None
 
 @dataclass
 class WikipediaIngestDoc(BaseIngestDoc):
