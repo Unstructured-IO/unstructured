@@ -88,6 +88,16 @@ RUN python3.8 -m pip install pip==${PIP_VERSION} \
   # PDFs
   && pip install --no-cache "detectron2@git+https://github.com/facebookresearch/detectron2.git@v0.6#egg=detectron2"
 
+# Clear up space so we don't run out of room
+RUN rm -rf /var/cache/yum/* \
+  && yum clean all \
+  && rm -rf /tmp/* \
+  && rm -rf /var/tmp/* \
+  && rm -rf /usr/share/doc/* \
+  && rm -rf /usr/share/man/* \
+  && rm -rf /usr/share/info/* \
+  && rm -rf /usr/share/locale/*/LC_MESSAGES/*
+
 COPY unstructured unstructured
 
 CMD ["/bin/bash"]
