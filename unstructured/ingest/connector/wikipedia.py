@@ -29,6 +29,7 @@ class SimpleWikipediaConfig(BaseConnectorConfig):
     metadata_include: Optional[str] = None
     metadata_exclude: Optional[str] = None
 
+
 @dataclass
 class WikipediaIngestDoc(BaseIngestDoc):
     config: SimpleWikipediaConfig = field(repr=False)
