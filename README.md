@@ -86,9 +86,9 @@ print("\n\n".join([str(el) for el in elements]))
 The following instructions are intended to help you get up and running using Docker to interact with `unstructured`.
 See [here](https://docs.docker.com/get-docker/) if you don't already have docker installed on your machine.
 
-We build Docker images for all pushes to `main`. To leverage this, `docker pull` from our registry.
-
 NOTE: the image is only supported for x86_64 hardware and known to have issues on Apple silicon.
+
+We build Docker images for all pushes to `main`. We tag each image with the corresponding short commit hash (e.g. `fbc7a69`) and the application version (e.g. `0.5.5-dev1`). We also tag the most recent image with `latest`. To leverage this, `docker pull` from our image repository.
 
 ```bash
 docker pull quay.io/unstructured-io/unstructured:latest
