@@ -30,6 +30,7 @@ class SimpleWikipediaConfig(BaseConnectorConfig):
     metadata_exclude: Optional[str] = None
     fields_include: Optional[str] = None
 
+
 @dataclass
 class WikipediaIngestDoc(BaseIngestDoc):
     config: SimpleWikipediaConfig = field(repr=False)
