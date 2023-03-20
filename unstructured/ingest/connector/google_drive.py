@@ -4,7 +4,7 @@ import os
 from dataclasses import dataclass
 from mimetypes import guess_extension
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Optional
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.file_utils.google_filetype import GOOGLE_DRIVE_EXPORT_TYPES
@@ -77,8 +77,8 @@ class SimpleGoogleDriveConfig(BaseConnectorConfig):
     output_dir: str
     re_download: bool = False
     preserve_downloads: bool = False
-    metadata_include: str = ""
-    metadata_exclude: str = ""
+    metadata_include: Optional[str] = None
+    metadata_exclude: Optional[str] = None
 
     recursive: bool = False
 
