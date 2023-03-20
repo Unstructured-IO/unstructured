@@ -50,7 +50,7 @@ class BaseConnectorConfig(ABC):
     re_download: bool = False
     metadata_include: Optional[str] = None
     metadata_exclude: Optional[str] = None
-    fields_include: Optional[str] = None
+    fields_include: str = "element_id,text,type,metadata"
 
 
 class BaseIngestDoc(ABC):
@@ -110,11 +110,10 @@ class BaseIngestDoc(ABC):
                     if k not in in_list:
                         elem["metadata"].pop(k, None)  # type: ignore[attr-defined]
 
-            if self.config.fields_include is not None:
-                in_list = self.config.fields_include.split(",")
-                for k in elem:
-                    if k not in in_list:
-                        elem.pop(k, None)  # type: ignore[attr-defined]
+            in_list = self.config.fields_include.split(",")
+            for k in elem:
+                if k not in in_list:
+                    elem.pop(k, None)  # type: ignore[attr-defined]
 
             self.isd_elems_no_filename.append(elem)
 
