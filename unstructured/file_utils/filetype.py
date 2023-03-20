@@ -140,7 +140,7 @@ def detect_filetype(
 ) -> Optional[FileType]:
     """Use libmagic to determine a file's type. Helps determine which partition brick
     to use for a given file. A return value of None indicates a non-supported file type."""
-    exactly_one(filename, file)
+    exactly_one(filename=filename, file=file)
 
     if filename:
         _, extension = os.path.splitext(filename)
