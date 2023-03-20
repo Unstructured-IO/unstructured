@@ -2,6 +2,7 @@ import os
 import zipfile
 from enum import Enum
 from typing import IO, Optional
+
 from unstructured.partition.common import exactly_one
 
 try:
