@@ -190,8 +190,7 @@ def contains_english_word(text: str) -> bool:
     for word in words:
         # NOTE(Crag): Remove any non-lowercase alphabetical
         # characters.  These removed chars will usually be trailing or
-        # leading characters not already matched in
-        # ENGLISH_WORD_SPLIT_RE.
+        # leading characters not already matched in ENGLISH_WORD_SPLIT_RE.
         # The possessive case is also generally ok:
         #   "beggar's" -> "beggars" (still an english word)
         # and of course:
