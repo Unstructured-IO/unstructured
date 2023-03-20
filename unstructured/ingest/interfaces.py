@@ -48,14 +48,9 @@ class BaseConnectorConfig(ABC):
     # where to write structured data outputs
     output_dir: str
     re_download: bool = False
-<<<<<<< HEAD
-    metadata_include: str = ""
-    metadata_exclude: str = ""
-    fields_include: str = ""
-=======
     metadata_include: Optional[str] = None
     metadata_exclude: Optional[str] = None
->>>>>>> feat/metadata
+    fields_include: Optional[str] = None
 
 
 class BaseIngestDoc(ABC):
