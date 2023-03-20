@@ -110,7 +110,7 @@ class BaseIngestDoc(ABC):
                     if k not in in_list:
                         elem["metadata"].pop(k, None)  # type: ignore[attr-defined]
 
-            if self.config.fields_include is not None:            
+            if self.config.fields_include is not None:
                 in_list = self.config.fields_include.split(",")
                 for k in elem:
                     if k not in in_list:
