@@ -120,7 +120,7 @@ class BaseIngestDoc(ABC):
                 elem.pop(k)  # type: ignore[attr-defined]
 
             if self.config.flatten_metadata:
-                for k, v in elem["metadata"].items():
+                for k, v in elem["metadata"].items():  # type: ignore[attr-defined]
                     elem[k] = v
                 elem.pop("metadata")  # type: ignore[attr-defined]
 
