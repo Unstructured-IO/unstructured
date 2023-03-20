@@ -36,13 +36,13 @@ def partition_ppt(
         filename = tmp.name
         _, filename_no_path = os.path.split(os.path.abspath(tmp.name))
 
-    if not os.path.exists(filename):
+    if not os.path.exists(filename):  # type: ignore[attr-defined]
         raise ValueError(f"The file {filename} does not exist.")
 
     base_filename, _ = os.path.splitext(filename_no_path)
 
     with tempfile.TemporaryDirectory() as tmpdir:
-        convert_office_doc(filename, tmpdir, target_format="pptx")
+        convert_office_doc(filename, tmpdir, target_format="pptx")  # type: ignore[attr-defined]
         pptx_filename = os.path.join(tmpdir, f"{base_filename}.pptx")
         elements = partition_pptx(filename=pptx_filename, metadata_filename=filename)
 

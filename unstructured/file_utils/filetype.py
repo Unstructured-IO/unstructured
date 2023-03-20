@@ -226,7 +226,7 @@ def detect_filetype(
         if file and not extension:
             return _detect_filetype_from_octet_stream(file=file)
         else:
-            return EXT_TO_FILETYPE.get(extension, FileType.UNK)
+            return EXT_TO_FILETYPE.get(extension, FileType.UNK)  # type: ignore[attr-defined]
 
     elif mime_type == "application/zip":
         filetype = FileType.UNK
