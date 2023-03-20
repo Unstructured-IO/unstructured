@@ -22,8 +22,8 @@ RUN yum install -y pandoc && yum clean all
 # Note(yuming): Install gcc & g++ ≥ 5.4 for Detectron2 and Tesseract requirement
 RUN yum -y update
 RUN yum -y install centos-release-scl
-RUN yum -y install devtoolset-7-gcc*
-SHELL [ "/usr/bin/scl", "enable", "devtoolset-7"]
+RUN yum -y install devtoolset-9-gcc*
+SHELL [ "/usr/bin/scl", "enable", "devtoolset-9"]
 
 # Install Tessaract
 RUN set -ex && \
