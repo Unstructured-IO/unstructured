@@ -16,7 +16,7 @@ def partition_json(
 ) -> List[Element]:
     """Partitions an .json document into its constituent elements."""
     exactly_one(filenmae=filename, file=file, text=text)
-    
+
     if filename is not None:
         with open(filename, encoding="utf8") as f:
             file_text = f.read()
