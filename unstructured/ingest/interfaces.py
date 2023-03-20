@@ -118,7 +118,7 @@ class BaseIngestDoc(ABC):
                     ex_list.append(k)
             for k in ex_list:
                 elem.pop(k)  # type: ignore[attr-defined]
-            
+
             if self.config.flatten_metadata:
                 for k, v in elem["metadata"].items():
                     elem[k] = v
