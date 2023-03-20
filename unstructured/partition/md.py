@@ -45,7 +45,7 @@ def partition_md(
 
         text = response.text
 
-    html = markdown.markdown(text)  # type: ignore[attr-defined]
+    html = markdown.markdown(text)  # type: ignore
 
     return partition_html(
         text=html,
