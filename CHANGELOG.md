@@ -3,6 +3,7 @@
 ### Enhancements
 
 * Refactored codebase using `exactly_one`
+* `contains_english_word()`, used heavily in text processing, is 10x faster.
 
 ### Features
 
