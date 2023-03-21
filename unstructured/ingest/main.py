@@ -380,6 +380,7 @@ def main(
         logger.error(
             "Either `--metadata-include` or `--metadata-exclude` is specified"
             " while metadata is not specified in --fields-include.",
+        )
     if metadata_exclude is not None and metadata_include is not None:
         logger.error(
             "Arguments `--metadata-include` and `--metadata-exclude` are "
