@@ -2,6 +2,7 @@
 through Unstructured."""
 
 from abc import ABC, abstractmethod
+from typing import Optional
 
 from unstructured.ingest.logger import logger
 from unstructured.partition.auto import partition
@@ -47,6 +48,8 @@ class BaseConnectorConfig(ABC):
     # where to write structured data outputs
     output_dir: str
     re_download: bool = False
+    metadata_include: Optional[str] = None
+    metadata_exclude: Optional[str] = None
 
 
 class BaseIngestDoc(ABC):
@@ -57,6 +60,8 @@ class BaseIngestDoc(ABC):
 
     Crucially, it is not responsible for the actual processing of the raw document.
     """
+
+    config: BaseConnectorConfig
 
     @property
     @abstractmethod
@@ -94,7 +99,24 @@ class BaseIngestDoc(ABC):
         self.isd_elems_no_filename = []
         for elem in isd_elems:
             # type: ignore
-            elem["metadata"].pop("filename", None)  # type: ignore[attr-defined]
+            if (
+                self.config.metadata_exclude is not None
+                and self.config.metadata_include is not None
+            ):
+                raise ValueError(
+                    "Arguments `--metadata-include` and `--metadata-exclude` are "
+                    "mutually exclusive with each other.",
+                )
+            elif self.config.metadata_exclude is not None:
+                ex_list = self.config.metadata_exclude.split(",")
+                for ex in ex_list:
+                    elem["metadata"].pop(ex, None)  # type: ignore[attr-defined]
+            elif self.config.metadata_include is not None:
+                in_list = self.config.metadata_include.split(",")
+                for k in elem["metadata"]:
+                    if k not in in_list:
+                        elem["metadata"].pop(k, None)  # type: ignore[attr-defined]
+
             elem.pop("coordinates")  # type: ignore[attr-defined]
             self.isd_elems_no_filename.append(elem)
 
