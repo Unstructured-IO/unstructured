@@ -10,6 +10,7 @@ if [[ "$(find test_unstructured_ingest/expected-structured-output/biomed-ingest-
 fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
+   --metadata-exclude filename \
    --biomed-api-from "2019-01-02" \
    --biomed-api-until "2019-01-02+00:03:10" \
    --structured-output-dir biomed-ingest-output-api  \

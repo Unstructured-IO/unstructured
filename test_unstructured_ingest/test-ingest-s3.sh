@@ -9,7 +9,11 @@ if [[ "$(find test_unstructured_ingest/expected-structured-output/s3-small-batch
     exit 1
 fi
 
-PYTHONPATH=. ./unstructured/ingest/main.py --s3-url s3://utic-dev-tech-fixtures/small-pdf-set/ --s3-anonymous --structured-output-dir s3-small-batch-output
+PYTHONPATH=. ./unstructured/ingest/main.py \
+    --metadata-exclude filename \
+    --s3-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
+    --s3-anonymous \
+    --structured-output-dir s3-small-batch-output \
 
 if ! diff -ru test_unstructured_ingest/expected-structured-output/s3-small-batch s3-small-batch-output ; then
     echo

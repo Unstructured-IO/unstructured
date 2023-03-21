@@ -104,6 +104,20 @@ class MainProcess:
 
 @click.command()
 @click.option(
+    "--metadata-include",
+    default=None,
+    help="If set, include the specified metadata fields if they exist and drop all other fields. "
+    "Usage: provide a single string with comma separated values. "
+    "Example: --metadata-include filename,page_number ",
+)
+@click.option(
+    "--metadata-exclude",
+    default=None,
+    help="If set, drop the specified metadata fields if they exist. "
+    "Usage: provide a single string with comma separated values. "
+    "Example: --metadata-exclude filename,page_number ",
+)
+@click.option(
     "--remote-url",
     default=None,
     help="Remote fsspec URL formatted as `protocol://dir/path`, it can contain both "
@@ -322,7 +336,15 @@ def main(
     reprocess,
     num_processes,
     verbose,
+    metadata_include,
+    metadata_exclude,
 ):
+    if metadata_exclude is not None and metadata_include is not None:
+        logger.error(
+            "Arguments `--metadata-include` and `--metadata-exclude` are "
+            "mutually exclusive with each other.",
+        )
+        sys.exit(1)
     if not preserve_downloads and download_dir:
         logger.warning(
             "Not preserving downloaded files but --download_dir is specified",
@@ -391,6 +413,8 @@ def main(
                     output_dir=structured_output_dir,
                     re_download=re_download,
                     preserve_downloads=preserve_downloads,
+                    metadata_include=metadata_include,
+                    metadata_exclude=metadata_exclude,
                 ),
             )
         elif protocol in ("abfs", "az"):
@@ -411,6 +435,8 @@ def main(
                     output_dir=structured_output_dir,
                     re_download=re_download,
                     preserve_downloads=preserve_downloads,
+                    metadata_include=metadata_include,
+                    metadata_exclude=metadata_exclude,
                 ),
             )
         else:
@@ -427,6 +453,8 @@ def main(
                     output_dir=structured_output_dir,
                     re_download=re_download,
                     preserve_downloads=preserve_downloads,
+                    metadata_include=metadata_include,
+                    metadata_exclude=metadata_exclude,
                 ),
             )
     elif github_url:
@@ -441,6 +469,8 @@ def main(
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
                 re_download=re_download,
+                metadata_include=metadata_include,
+                metadata_exclude=metadata_exclude,
             ),
         )
     elif gitlab_url:
@@ -455,6 +485,8 @@ def main(
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
                 re_download=re_download,
+                metadata_include=metadata_include,
+                metadata_exclude=metadata_exclude,
             ),
         )
     elif subreddit_name:
@@ -471,6 +503,8 @@ def main(
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
                 re_download=re_download,
+                metadata_include=metadata_include,
+                metadata_exclude=metadata_exclude,
             ),
         )
     elif wikipedia_page_title:
@@ -483,6 +517,8 @@ def main(
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
                 re_download=re_download,
+                metadata_include=metadata_include,
+                metadata_exclude=metadata_exclude,
             ),
         )
     elif drive_id:
@@ -497,6 +533,8 @@ def main(
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
                 re_download=re_download,
+                metadata_include=metadata_include,
+                metadata_exclude=metadata_exclude,
             ),
         )
     elif biomed_path or biomed_api_id or biomed_api_from or biomed_api_until:
@@ -511,6 +549,8 @@ def main(
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
                 re_download=re_download,
+                metadata_include=metadata_include,
+                metadata_exclude=metadata_exclude,
             ),
         )
     ***REMOVED*** Check for other connector-specific options here and define the doc_connector object
