@@ -18,7 +18,7 @@ def partition_pdf(
     filename: str = "",
     file: Optional[bytes] = None,
     url: Optional[str] = None,
-    template: Optional[str] = None,
+    template: str = "layout/pdf",
     token: Optional[str] = None,
     include_page_breaks: bool = False,
     strategy: str = "hi_res",
@@ -46,8 +46,7 @@ def partition_pdf(
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
     """
-    if template is None:
-        template = "layout/pdf"
+    exactly_one(filename=filename, file=file, url=url)
     return partition_pdf_or_image(
         filename=filename,
         file=file,
