@@ -9,7 +9,6 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 import click
-from click import Option, UsageError
 
 from unstructured.ingest.connector.azure import (
     AzureBlobStorageConnector,
@@ -34,35 +33,6 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
 
 with suppress(RuntimeError):
     mp.set_start_method("spawn")
-
-
-class MutuallyExclusiveOption(Option):
-    def __init__(self, *args, **kwargs):
-        self.mutually_exclusive = set(kwargs.pop("mutually_exclusive", []))
-        help = kwargs.get("help", "")
-        if self.mutually_exclusive:
-            mutex_str = ", ".join(self.mutually_exclusive)
-            kwargs["help"] = help + (
-                " NOTE: This argument is mutually exclusive with "
-                " arguments: [" + mutex_str + "]."
-            )
-        super(MutuallyExclusiveOption, self).__init__(*args, **kwargs)
-
-    def handle_parse_result(self, ctx, opts, args):
-        if self.mutually_exclusive.intersection(opts) and self.name in opts:
-            raise UsageError(
-                "Illegal usage: `{}` is mutually exclusive with "
-                "arguments `{}`.".format(
-                    self.name,
-                    ", ".join(self.mutually_exclusive),
-                ),
-            )
-
-        return super(MutuallyExclusiveOption, self).handle_parse_result(
-            ctx,
-            opts,
-            args,
-        )
 
 
 class MainProcess:
