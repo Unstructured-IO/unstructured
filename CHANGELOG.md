@@ -1,3 +1,15 @@
+## 0.5.7-dev0
+
+### Enhancements
+
+### Features
+
+* Add `--fields-include` parameter to `unstructured-ingest`
+
+### Fixes
+
+
+
 ## 0.5.6
 
 * Fix problem with PDF partition (duplicated test)
