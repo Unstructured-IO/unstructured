@@ -339,7 +339,7 @@ def main(
     metadata_include,
     metadata_exclude,
 ):
-    if metadata_exclude and metadata_include:
+    if metadata_exclude is not None and metadata_include is not None:
         logger.error(
             "Arguments `--metadata-include` and `--metadata-exclude` are "
             "mutually exclusive with each other.",
