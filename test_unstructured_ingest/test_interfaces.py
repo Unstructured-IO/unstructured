@@ -87,10 +87,7 @@ def test_process_file_fields_include_default(filename: str):
         ),
     )
     isd_elems = ingest_doc.process_file()
-
-    for elem in isd_elems:
-        for k in elem:
-            assert k in ["element_id", "text", "type", "metadata"]
+    assert set(["element_id", "text", "type", "metadata"]) == set(elem.keys())
 
 
 @pytest.mark.parametrize("filename", test_files)
@@ -103,8 +100,5 @@ def test_process_file_fields_include_elementid(filename: str):
         ),
     )
     isd_elems = ingest_doc.process_file()
-
-    for elem in isd_elems:
-        for k in elem:
-            assert k == "element_id"
+    assert set(["element_id"]) == set(elem.keys())
 
