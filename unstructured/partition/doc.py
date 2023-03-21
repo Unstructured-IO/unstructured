@@ -23,15 +23,14 @@ def partition_doc(filename: Optional[str] = None, file: Optional[IO] = None) -> 
     if filename is not None:
         _, filename_no_path = os.path.split(os.path.abspath(filename))
         base_filename, _ = os.path.splitext(filename_no_path)
+        if not os.path.exists(filename):
+            raise ValueError(f"The file {filename} does not exist.")
     elif file is not None:
         tmp = tempfile.NamedTemporaryFile(delete=False)
         tmp.write(file.read())
         tmp.close()
         filename = tmp.name
         _, filename_no_path = os.path.split(os.path.abspath(tmp.name))
-
-    if not os.path.exists(filename):  # type: ignore
-        raise ValueError(f"The file {filename} does not exist.")
 
     base_filename, _ = os.path.splitext(filename_no_path)
 
