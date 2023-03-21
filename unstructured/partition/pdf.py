@@ -254,7 +254,6 @@ def _process_pdfminer_pages(
             for element in _elements:
                 element.metadata = metadata
                 elements.append(element)
-            elements.extend(partition_text(text=text))
 
         if include_page_breaks:
             elements.append(PageBreak())

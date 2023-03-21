@@ -50,7 +50,6 @@ class BaseConnectorConfig(ABC):
     re_download: bool = False
     metadata_include: Optional[str] = None
     metadata_exclude: Optional[str] = None
-    fields_include: str = "element_id,text,type,metadata"
 
 
 class BaseIngestDoc(ABC):
@@ -100,7 +99,15 @@ class BaseIngestDoc(ABC):
         self.isd_elems_no_filename = []
         for elem in isd_elems:
             # type: ignore
-            if self.config.metadata_exclude is not None:
+            if (
+                self.config.metadata_exclude is not None
+                and self.config.metadata_include is not None
+            ):
+                raise ValueError(
+                    "Arguments `--metadata-include` and `--metadata-exclude` are "
+                    "mutually exclusive with each other.",
+                )
+            elif self.config.metadata_exclude is not None:
                 ex_list = self.config.metadata_exclude.split(",")
                 for ex in ex_list:
                     elem["metadata"].pop(ex, None)  # type: ignore[attr-defined]
@@ -110,14 +117,7 @@ class BaseIngestDoc(ABC):
                     if k not in in_list:
                         elem["metadata"].pop(k, None)  # type: ignore[attr-defined]
 
-            in_list = self.config.fields_include.split(",")
-            ex_list = []
-            for k in elem:
-                if k not in in_list:
-                    ex_list.append(k)
-            for k in ex_list:
-                elem.pop(k)  # type: ignore[attr-defined]
-
+            elem.pop("coordinates")  # type: ignore[attr-defined]
             self.isd_elems_no_filename.append(elem)
 
         return self.isd_elems_no_filename

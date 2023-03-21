@@ -134,28 +134,18 @@ class MainProcess:
 
 @click.command()
 @click.option(
-    "--fields-include",
-    default="element_id,text,type,metadata",
-    help="If set, include the specified top-level fields in an element. "
-    "Default is `element_id,text,type,metadata`.",
-)
-@click.option(
     "--metadata-include",
-    cls=MutuallyExclusiveOption,
     default=None,
     help="If set, include the specified metadata fields if they exist and drop all other fields. "
     "Usage: provide a single string with comma separated values. "
     "Example: --metadata-include filename,page_number ",
-    mutually_exclusive=["--metadata-exclude"],
 )
 @click.option(
     "--metadata-exclude",
-    cls=MutuallyExclusiveOption,
     default=None,
     help="If set, drop the specified metadata fields if they exist. "
     "Usage: provide a single string with comma separated values. "
     "Example: --metadata-exclude filename,page_number ",
-    mutually_exclusive=["--metadata-include"],
 )
 @click.option(
     "--remote-url",
@@ -378,12 +368,11 @@ def main(
     verbose,
     metadata_include,
     metadata_exclude,
-    fields_include,
 ):
-    if "metadata" not in fields_include and (metadata_include or metadata_exclude):
+    if metadata_exclude is not None and metadata_include is not None:
         logger.error(
-            "Either `--metadata-include` or `--metadata-exclude` is specified"
-            " while metadata is not specified in --fields-include.",
+            "Arguments `--metadata-include` and `--metadata-exclude` are "
+            "mutually exclusive with each other.",
         )
         sys.exit(1)
     if not preserve_downloads and download_dir:
@@ -456,7 +445,6 @@ def main(
                     preserve_downloads=preserve_downloads,
                     metadata_include=metadata_include,
                     metadata_exclude=metadata_exclude,
-                    fields_include=fields_include,
                 ),
             )
         elif protocol in ("abfs", "az"):
@@ -479,7 +467,6 @@ def main(
                     preserve_downloads=preserve_downloads,
                     metadata_include=metadata_include,
                     metadata_exclude=metadata_exclude,
-                    fields_include=fields_include,
                 ),
             )
         else:
@@ -498,7 +485,6 @@ def main(
                     preserve_downloads=preserve_downloads,
                     metadata_include=metadata_include,
                     metadata_exclude=metadata_exclude,
-                    fields_include=fields_include,
                 ),
             )
     elif github_url:
@@ -515,7 +501,6 @@ def main(
                 re_download=re_download,
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
-                fields_include=fields_include,
             ),
         )
     elif gitlab_url:
@@ -532,7 +517,6 @@ def main(
                 re_download=re_download,
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
-                fields_include=fields_include,
             ),
         )
     elif subreddit_name:
@@ -551,7 +535,6 @@ def main(
                 re_download=re_download,
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
-                fields_include=fields_include,
             ),
         )
     elif wikipedia_page_title:
@@ -566,7 +549,6 @@ def main(
                 re_download=re_download,
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
-                fields_include=fields_include,
             ),
         )
     elif drive_id:
@@ -583,7 +565,6 @@ def main(
                 re_download=re_download,
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
-                fields_include=fields_include,
             ),
         )
     elif biomed_path or biomed_api_id or biomed_api_from or biomed_api_until:
@@ -600,7 +581,6 @@ def main(
                 re_download=re_download,
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
-                fields_include=fields_include,
             ),
         )
     # Check for other connector-specific options here and define the doc_connector object
