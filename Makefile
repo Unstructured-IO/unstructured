@@ -1,5 +1,6 @@
 PACKAGE_NAME := unstructured
 PIP_VERSION := 22.2.1
+CURRENT_DIR := $(shell pwd)
 
 
 .PHONY: help
@@ -185,7 +186,6 @@ check-coverage:
 
 # Docker targets are provided for convenience only and are not required in a standard development environment
 
-
 .PHONY: docker-build
 docker-build:
 	PIP_VERSION=${PIP_VERSION} ./scripts/docker-build.sh
@@ -193,3 +193,9 @@ docker-build:
 .PHONY: docker-start-bash
 docker-start-bash:
 	docker run --platform linux/amd64 -ti --rm unstructured-dev:latest
+
+.PHONY: docker-test
+docker-test:
+	docker run --platform linux/amd64 --rm \
+	-v ${CURRENT_DIR}/test_unstructured:/home/test_unstructured unstructured-dev:latest \
+	bash -c "pytest test_unstructured"
