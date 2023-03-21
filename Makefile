@@ -1,6 +1,6 @@
 PACKAGE_NAME := unstructured
 PIP_VERSION := 22.2.1
-PWD := $(pwd)
+CURRENT_DIR := $(shell pwd)
 
 
 .PHONY: help
@@ -197,5 +197,5 @@ docker-start-bash:
 .PHONY: docker-test
 docker-test:
 	docker run --platform linux/amd64 --rm \
-	-v /home/runner/work/unstructured/unstructured/test_unstructured:/home/test_unstructured unstructured-dev:latest \
+	-v ${CURRENT_DIR}/test_unstructured:/home/test_unstructured unstructured-dev:latest \
 	bash -c "pytest test_unstructured"
