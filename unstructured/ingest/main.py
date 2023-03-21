@@ -350,7 +350,7 @@ def main(
     if flatten_metadata and "metadata" not in fields_include:
         logger.warning(
             "`--flatten-metadata` is specified, but there is no metadata to flatten, "
-            "since `metadata` is not specified in `--fields-include`."
+            "since `metadata` is not specified in `--fields-include`.",
         )
     if metadata_exclude is not None and metadata_include is not None:
         logger.error(
