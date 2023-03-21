@@ -1,3 +1,13 @@
+***REMOVED******REMOVED*** 0.5.7-dev0
+
+***REMOVED******REMOVED******REMOVED*** Enhancements
+
+* Refactored codebase using `exactly_one`
+
+***REMOVED******REMOVED******REMOVED*** Features
+
+***REMOVED******REMOVED******REMOVED*** Fixes
+
 ***REMOVED******REMOVED*** 0.5.6
 
 * Fix problem with PDF partition (duplicated test)
