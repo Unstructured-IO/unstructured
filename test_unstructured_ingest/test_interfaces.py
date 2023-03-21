@@ -15,7 +15,7 @@ test_files = [
 
 
 @pytest.mark.parametrize("filename", test_files)
-def test_process_file_include_filename(filename: str):
+def test_process_file_metadata_include_filename(filename: str):
     ingest_doc = GitIngestDoc(
         path=filename,
         config=SimpleGitConfig(
@@ -31,7 +31,7 @@ def test_process_file_include_filename(filename: str):
 
 
 @pytest.mark.parametrize("filename", test_files)
-def test_process_file_include_filename_pagenum(filename: str):
+def test_process_file_metadata_include_filename_pagenum(filename: str):
     ingest_doc = GitIngestDoc(
         path=filename,
         config=SimpleGitConfig(
@@ -47,7 +47,7 @@ def test_process_file_include_filename_pagenum(filename: str):
 
 
 @pytest.mark.parametrize("filename", test_files)
-def test_process_file_exclude_filename(filename: str):
+def test_process_file_metadata_exclude_filename(filename: str):
     ingest_doc = GitIngestDoc(
         path=filename,
         config=SimpleGitConfig(
@@ -63,7 +63,7 @@ def test_process_file_exclude_filename(filename: str):
 
 
 @pytest.mark.parametrize("filename", test_files)
-def test_process_file_exclude_filename_pagenum(filename: str):
+def test_process_file_metadata_exclude_filename_pagenum(filename: str):
     ingest_doc = GitIngestDoc(
         path=filename,
         config=SimpleGitConfig(
@@ -76,3 +76,35 @@ def test_process_file_exclude_filename_pagenum(filename: str):
     for elem in isd_elems:
         for k in elem["metadata"]:
             assert k not in ["filename", "page_number"]
+
+
+@pytest.mark.parametrize("filename", test_files)
+def test_process_file_fields_include_default(filename: str):
+    ingest_doc = GitIngestDoc(
+        path=filename,
+        config=SimpleGitConfig(
+          download_dir=EXAMPLE_DOCS_DIRECTORY,
+        ),
+    )
+    isd_elems = ingest_doc.process_file()
+
+    for elem in isd_elems:
+        for k in elem:
+            assert k in ["element_id", "text", "type", "metadata"]
+
+
+@pytest.mark.parametrize("filename", test_files)
+def test_process_file_fields_include_elementid(filename: str):
+    ingest_doc = GitIngestDoc(
+        path=filename,
+        config=SimpleGitConfig(
+          download_dir=EXAMPLE_DOCS_DIRECTORY,
+          fields_include="element_id",
+        ),
+    )
+    isd_elems = ingest_doc.process_file()
+
+    for elem in isd_elems:
+        for k in elem:
+            assert k == "element_id"
+
