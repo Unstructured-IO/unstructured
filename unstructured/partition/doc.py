@@ -18,9 +18,11 @@ def partition_doc(filename: Optional[str] = None, file: Optional[IO] = None) -> 
         A file-like object using "rb" mode --> open(filename, "rb").
     """
     # Verify that only one of the arguments was provided
+    if filename is None:
+        filename = ""
     exactly_one(filename=filename, file=file)
 
-    if filename is not None:
+    if len(filename) > 0:
         _, filename_no_path = os.path.split(os.path.abspath(filename))
         base_filename, _ = os.path.splitext(filename_no_path)
         if not os.path.exists(filename):
@@ -35,7 +37,7 @@ def partition_doc(filename: Optional[str] = None, file: Optional[IO] = None) -> 
     base_filename, _ = os.path.splitext(filename_no_path)
 
     with tempfile.TemporaryDirectory() as tmpdir:
-        convert_office_doc(filename, tmpdir, target_format="docx")  # type: ignore
+        convert_office_doc(filename, tmpdir, target_format="docx")
         docx_filename = os.path.join(tmpdir, f"{base_filename}.docx")
         elements = partition_docx(filename=docx_filename, metadata_filename=filename)
 

@@ -28,7 +28,7 @@ def partition_ppt(
         filename = ""
     exactly_one(filename=filename, file=file)
 
-    if filename:
+    if len(filename) > 0:
         _, filename_no_path = os.path.split(os.path.abspath(filename))
         base_filename, _ = os.path.splitext(filename_no_path)
         if not os.path.exists(filename):
