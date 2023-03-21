@@ -132,6 +132,7 @@ EXT_TO_FILETYPE = {
     ".rtf": FileType.RTF,
     ".json": FileType.JSON,
     ".epub": FileType.EPUB,
+    None: FileType.UNK,
 }
 
 
@@ -226,7 +227,7 @@ def detect_filetype(
         if file and not extension:
             return _detect_filetype_from_octet_stream(file=file)
         else:
-            return EXT_TO_FILETYPE.get(extension, FileType.UNK)  # type: ignore
+            return EXT_TO_FILETYPE.get(extension)
 
     elif mime_type == "application/zip":
         filetype = FileType.UNK
