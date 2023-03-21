@@ -25,6 +25,8 @@ def partition_md(
     parser: VALID_PARSERS = None,
 ) -> List[Element]:
     # Verify that only one of the arguments was provided
+    if text is None:
+        text = ""
     exactly_one(filename=filename, file=file, text=text, url=url)
 
     if filename is not None:
@@ -45,7 +47,7 @@ def partition_md(
 
         text = response.text
 
-    html = markdown.markdown(text)  # type: ignore
+    html = markdown.markdown(text)
 
     return partition_html(
         text=html,
