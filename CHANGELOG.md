@@ -1,4 +1,6 @@
-***REMOVED******REMOVED*** 0.5.5-dev1
+***REMOVED******REMOVED*** 0.5.6
+
+* Fix problem with PDF partition (duplicated test)
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
 
