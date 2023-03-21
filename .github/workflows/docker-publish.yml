@@ -42,6 +42,9 @@ jobs:
           VERSION=$(grep -Po '(?<=__version__ = ")[^"]*' unstructured/__version__.py)
           GIT_SHA=$(git rev-parse --short HEAD)
           IMAGE_NAME=${{ env.PACKAGE }}
+          docker buildx create --use --driver=docker-container
           docker buildx build --platform=${{ env.IMAGE_PLATFORMS }} --provenance=false --push \
           --build-arg PIP_VERSION=${{ env.PIP_VERSION }} \
+          --cache-to type=gha,scope=$GITHUB_REF_NAME-$IMAGE_NAME \
+          --cache-from type=gha,scope=$GITHUB_REF_NAME-$IMAGE_NAME \
           -t ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/${IMAGE_NAME}:${GIT_SHA} .
