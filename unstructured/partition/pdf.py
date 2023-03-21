@@ -46,7 +46,7 @@ def partition_pdf(
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
     """
-    exactly_one(filename=filename, file=file, url=url)
+    exactly_one(filename=filename, file=file)
     return partition_pdf_or_image(
         filename=filename,
         file=file,
