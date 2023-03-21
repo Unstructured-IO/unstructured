@@ -1,4 +1,6 @@
-## 0.5.5-dev2
+## 0.5.6
+
+* Fix problem with PDF partition (duplicated test)
 
 ### Enhancements
 
