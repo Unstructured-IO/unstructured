@@ -141,21 +141,17 @@ class MainProcess:
 )
 @click.option(
     "--metadata-include",
-    cls=MutuallyExclusiveOption,
     default=None,
     help="If set, include the specified metadata fields if they exist and drop all other fields. "
     "Usage: provide a single string with comma separated values. "
     "Example: --metadata-include filename,page_number ",
-    mutually_exclusive=["--metadata-exclude"],
 )
 @click.option(
     "--metadata-exclude",
-    cls=MutuallyExclusiveOption,
     default=None,
     help="If set, drop the specified metadata fields if they exist. "
     "Usage: provide a single string with comma separated values. "
     "Example: --metadata-exclude filename,page_number ",
-    mutually_exclusive=["--metadata-include"],
 )
 @click.option(
     "--remote-url",
@@ -384,6 +380,10 @@ def main(
         logger.error(
             "Either `--metadata-include` or `--metadata-exclude` is specified"
             " while metadata is not specified in --fields-include.",
+    if metadata_exclude is not None and metadata_include is not None:
+        logger.error(
+            "Arguments `--metadata-include` and `--metadata-exclude` are "
+            "mutually exclusive with each other.",
         )
         sys.exit(1)
     if not preserve_downloads and download_dir:

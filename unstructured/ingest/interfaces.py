@@ -100,7 +100,15 @@ class BaseIngestDoc(ABC):
         self.isd_elems_no_filename = []
         for elem in isd_elems:
             # type: ignore
-            if self.config.metadata_exclude is not None:
+            if (
+                self.config.metadata_exclude is not None
+                and self.config.metadata_include is not None
+            ):
+                raise ValueError(
+                    "Arguments `--metadata-include` and `--metadata-exclude` are "
+                    "mutually exclusive with each other.",
+                )
+            elif self.config.metadata_exclude is not None:
                 ex_list = self.config.metadata_exclude.split(",")
                 for ex in ex_list:
                     elem["metadata"].pop(ex, None)  # type: ignore[attr-defined]
