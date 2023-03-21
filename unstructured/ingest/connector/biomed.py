@@ -50,6 +50,7 @@ class SimpleBiomedConfig(BaseConnectorConfig):
     preserve_downloads: bool = False
     metadata_include: Optional[str] = None
     metadata_exclude: Optional[str] = None
+    flatten_metadata: bool = False
 
     def _validate_date_args(self, date):
         date_formats = ["%Y-%m-%d", "%Y-%m-%d+%H:%M:%S"]

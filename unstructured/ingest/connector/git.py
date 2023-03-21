@@ -28,6 +28,7 @@ class SimpleGitConfig(BaseConnectorConfig):
     re_download: bool = False
     metadata_include: Optional[str] = None
     metadata_exclude: Optional[str] = None
+    flatten_metadata: bool = False
 
     repo_path: str = field(init=False, repr=False)
 

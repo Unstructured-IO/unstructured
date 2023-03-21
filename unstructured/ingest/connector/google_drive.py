@@ -79,6 +79,7 @@ class SimpleGoogleDriveConfig(BaseConnectorConfig):
     preserve_downloads: bool = False
     metadata_include: Optional[str] = None
     metadata_exclude: Optional[str] = None
+    flatten_metadata: bool = False
 
     recursive: bool = False
 
