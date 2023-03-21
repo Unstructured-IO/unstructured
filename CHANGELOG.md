@@ -1,3 +1,13 @@
+## 0.5.7-dev0
+
+### Enhancements
+
+### Features
+
+* Add `--flatten-metadata` parameter to `unstructured-ingest`
+
+### Fixes
+
 ## 0.5.6
 
 * Fix problem with PDF partition (duplicated test)
