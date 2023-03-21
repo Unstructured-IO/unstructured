@@ -1,10 +1,19 @@
+## 0.5.7-dev0
+
+### Enhancements
+
+* Refactored codebase using `exactly_one`
+
+### Features
+
+### Fixes
+
 ## 0.5.6
 
 * Fix problem with PDF partition (duplicated test)
 
 ### Enhancements
 
-* Refactored codebase using `exactly_one`
 * `contains_english_word()`, used heavily in text processing, is 10x faster.
 
 ### Features
