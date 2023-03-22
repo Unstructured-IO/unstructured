@@ -1,4 +1,4 @@
-## 0.5.7-dev1
+## 0.5.7-dev2
 
 ### Enhancements
 
@@ -6,6 +6,7 @@
 
 ### Features
 
+* Add `--flatten-metadata` parameter to `unstructured-ingest`
 * Add `--fields-include` parameter to `unstructured-ingest`
 
 ### Fixes
