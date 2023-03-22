@@ -2,6 +2,8 @@
 
 ### Enhancements
 
+* Refactored codebase using `exactly_one`
+
 ### Features
 
 * Add `--fields-include` parameter to `unstructured-ingest`

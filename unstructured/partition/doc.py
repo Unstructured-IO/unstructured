@@ -18,22 +18,21 @@ def partition_doc(filename: Optional[str] = None, file: Optional[IO] = None) -> 
         A file-like object using "rb" mode --> open(filename, "rb").
     """
     # Verify that only one of the arguments was provided
+    if filename is None:
+        filename = ""
     exactly_one(filename=filename, file=file)
 
-    if filename is not None:
+    if len(filename) > 0:
         _, filename_no_path = os.path.split(os.path.abspath(filename))
         base_filename, _ = os.path.splitext(filename_no_path)
+        if not os.path.exists(filename):
+            raise ValueError(f"The file {filename} does not exist.")
     elif file is not None:
         tmp = tempfile.NamedTemporaryFile(delete=False)
         tmp.write(file.read())
         tmp.close()
         filename = tmp.name
         _, filename_no_path = os.path.split(os.path.abspath(tmp.name))
-    else:
-        raise ValueError("Exactly one of filename and file must be specified.")
-
-    if not os.path.exists(filename):
-        raise ValueError(f"The file {filename} does not exist.")
 
     base_filename, _ = os.path.splitext(filename_no_path)
 
