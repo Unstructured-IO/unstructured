@@ -51,6 +51,7 @@ class BaseConnectorConfig(ABC):
     metadata_include: Optional[str] = None
     metadata_exclude: Optional[str] = None
     fields_include: str = "element_id,text,type,metadata"
+    flatten_metadata: bool = False
 
 
 class BaseIngestDoc(ABC):
@@ -120,6 +121,11 @@ class BaseIngestDoc(ABC):
 
             in_list = self.config.fields_include.split(",")
             elem = {k: v for k, v in elem.items() if k in in_list}
+
+            if self.config.flatten_metadata:
+                for k, v in elem["metadata"].items():  ***REMOVED*** type: ignore[attr-defined]
+                    elem[k] = v
+                elem.pop("metadata")  ***REMOVED*** type: ignore[attr-defined]
 
             self.isd_elems_no_filename.append(elem)
 

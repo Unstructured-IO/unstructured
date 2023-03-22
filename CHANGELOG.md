@@ -1,4 +1,4 @@
-***REMOVED******REMOVED*** 0.5.7-dev1
+***REMOVED******REMOVED*** 0.5.7-dev2
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
 
@@ -6,6 +6,7 @@
 
 ***REMOVED******REMOVED******REMOVED*** Features
 
+* Add `--flatten-metadata` parameter to `unstructured-ingest`
 * Add `--fields-include` parameter to `unstructured-ingest`
 
 ***REMOVED******REMOVED******REMOVED*** Fixes
