@@ -107,8 +107,9 @@ class MainProcess:
     "--flatten-metadata",
     is_flag=True,
     default=False,
-    help="If set, flatten metadata by moving elements in the metadata field up a level "
-    "and removing the metadata field.",
+    help="Results in flattened json elements. "
+    "Specifically, the metadata key values are brought to the top-level of the element, "
+    "and the `metadata` key itself is removed.",
 )
 @click.option(
     "--fields-include",
