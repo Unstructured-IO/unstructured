@@ -8,8 +8,6 @@
 
 ### Fixes
 
-
-
 ## 0.5.6
 
 * Fix problem with PDF partition (duplicated test)
