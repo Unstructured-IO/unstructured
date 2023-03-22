@@ -104,18 +104,17 @@ class MainProcess:
 
 @click.command()
 @click.option(
-<<<<<<< HEAD
     "--flatten-metadata",
     is_flag=True,
     default=False,
     help="If set, flatten metadata by moving elements in the metadata field up a level "
     "and removing the metadata field.",
-=======
+)
+@click.option(
     "--fields-include",
     default="element_id,text,type,metadata",
     help="If set, include the specified top-level fields in an element. "
     "Default is `element_id,text,type,metadata`.",
->>>>>>> 66a0369fb62a4d9648c172c8a1e174ef9f83f295
 )
 @click.option(
     "--metadata-include",

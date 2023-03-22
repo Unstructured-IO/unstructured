@@ -50,11 +50,8 @@ class BaseConnectorConfig(ABC):
     re_download: bool = False
     metadata_include: Optional[str] = None
     metadata_exclude: Optional[str] = None
-<<<<<<< HEAD
-    flatten_metadata: bool = False
-=======
     fields_include: str = "element_id,text,type,metadata"
->>>>>>> 66a0369fb62a4d9648c172c8a1e174ef9f83f295
+    flatten_metadata: bool = False
 
 
 class BaseIngestDoc(ABC):
