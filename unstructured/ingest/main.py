@@ -104,11 +104,18 @@ class MainProcess:
 
 @click.command()
 @click.option(
+<<<<<<< HEAD
     "--flatten-metadata",
     is_flag=True,
     default=False,
     help="If set, flatten metadata by moving elements in the metadata field up a level "
     "and removing the metadata field.",
+=======
+    "--fields-include",
+    default="element_id,text,type,metadata",
+    help="If set, include the specified top-level fields in an element. "
+    "Default is `element_id,text,type,metadata`.",
+>>>>>>> 66a0369fb62a4d9648c172c8a1e174ef9f83f295
 )
 @click.option(
     "--metadata-include",
@@ -345,12 +352,18 @@ def main(
     verbose,
     metadata_include,
     metadata_exclude,
+    fields_include,
     flatten_metadata,
 ):
     if flatten_metadata and "metadata" not in fields_include:
         logger.warning(
             "`--flatten-metadata` is specified, but there is no metadata to flatten, "
             "since `metadata` is not specified in `--fields-include`.",
+        )
+    if "metadata" not in fields_include and (metadata_include or metadata_exclude):
+        logger.warning(
+            "Either `--metadata-include` or `--metadata-exclude` is specified"
+            " while metadata is not specified in --fields-include.",
         )
     if metadata_exclude is not None and metadata_include is not None:
         logger.error(
@@ -428,6 +441,7 @@ def main(
                     preserve_downloads=preserve_downloads,
                     metadata_include=metadata_include,
                     metadata_exclude=metadata_exclude,
+                    fields_include=fields_include,
                     flatten_metadata=flatten_metadata,
                 ),
             )
@@ -451,6 +465,7 @@ def main(
                     preserve_downloads=preserve_downloads,
                     metadata_include=metadata_include,
                     metadata_exclude=metadata_exclude,
+                    fields_include=fields_include,
                     flatten_metadata=flatten_metadata,
                 ),
             )
@@ -470,6 +485,7 @@ def main(
                     preserve_downloads=preserve_downloads,
                     metadata_include=metadata_include,
                     metadata_exclude=metadata_exclude,
+                    fields_include=fields_include,
                     flatten_metadata=flatten_metadata,
                 ),
             )
@@ -487,6 +503,7 @@ def main(
                 re_download=re_download,
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
+                fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
             ),
         )
@@ -504,6 +521,7 @@ def main(
                 re_download=re_download,
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
+                fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
             ),
         )
@@ -523,6 +541,7 @@ def main(
                 re_download=re_download,
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
+                fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
             ),
         )
@@ -538,6 +557,7 @@ def main(
                 re_download=re_download,
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
+                fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
             ),
         )
@@ -555,6 +575,7 @@ def main(
                 re_download=re_download,
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
+                fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
             ),
         )
@@ -572,6 +593,7 @@ def main(
                 re_download=re_download,
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
+                fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
             ),
         )

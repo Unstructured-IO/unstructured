@@ -28,6 +28,7 @@ class SimpleWikipediaConfig(BaseConnectorConfig):
     re_download: bool = False
     metadata_include: Optional[str] = None
     metadata_exclude: Optional[str] = None
+    fields_include: str = "element_id,text,type,metadata"
     flatten_metadata: bool = False
 
 

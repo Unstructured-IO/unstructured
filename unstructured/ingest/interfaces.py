@@ -50,7 +50,11 @@ class BaseConnectorConfig(ABC):
     re_download: bool = False
     metadata_include: Optional[str] = None
     metadata_exclude: Optional[str] = None
+<<<<<<< HEAD
     flatten_metadata: bool = False
+=======
+    fields_include: str = "element_id,text,type,metadata"
+>>>>>>> 66a0369fb62a4d9648c172c8a1e174ef9f83f295
 
 
 class BaseIngestDoc(ABC):
@@ -118,7 +122,8 @@ class BaseIngestDoc(ABC):
                     if k not in in_list:
                         elem["metadata"].pop(k, None)  # type: ignore[attr-defined]
 
-            elem.pop("coordinates")  # type: ignore[attr-defined]
+            in_list = self.config.fields_include.split(",")
+            elem = {k: v for k, v in elem.items() if k in in_list}
 
             if self.config.flatten_metadata:
                 for k, v in elem["metadata"].items():  # type: ignore[attr-defined]
