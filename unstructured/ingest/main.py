@@ -347,7 +347,7 @@ def main(
     fields_include,
 ):
     if "metadata" not in fields_include and (metadata_include or metadata_exclude):
-        logger.error(
+        logger.warning(
             "Either `--metadata-include` or `--metadata-exclude` is specified"
             " while metadata is not specified in --fields-include.",
         )
