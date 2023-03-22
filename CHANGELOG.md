@@ -1,10 +1,12 @@
-***REMOVED******REMOVED*** 0.5.7-dev0
+***REMOVED******REMOVED*** 0.5.7-dev1
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
 
 * Refactored codebase using `exactly_one`
 
 ***REMOVED******REMOVED******REMOVED*** Features
+
+* Add `--fields-include` parameter to `unstructured-ingest`
 
 ***REMOVED******REMOVED******REMOVED*** Fixes
 
