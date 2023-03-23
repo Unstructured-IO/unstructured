@@ -128,7 +128,6 @@ STR_TO_FILETYPE = {
     "application/vnd.openxmlformats-officedocument.presentationml.presentation": FileType.PPTX,
     "application/vnd.ms-powerpoint": FileType.PPT,
     "application/xml": FileType.XML,
-    "application/zip": FileType.ZIP,
 }
 
 
@@ -180,6 +179,7 @@ def detect_filetype(
         if LIBMAGIC_AVAILABLE:
             mime_type = magic.from_file(filename, mime=True)
         else:
+            # might not need this
             return EXT_TO_FILETYPE.get(extension.lower(), FileType.UNK)
     elif file is not None:
         extension = None

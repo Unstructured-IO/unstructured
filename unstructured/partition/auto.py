@@ -48,7 +48,9 @@ def partition(
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
     """
-    filetype = detect_filetype(filename=filename, file=file, file_filename=file_filename, content_type=content_type)
+    filetype = detect_filetype(
+        filename=filename, file=file, file_filename=file_filename, content_type=content_type
+    )
 
     if file is not None:
         file.seek(0)
