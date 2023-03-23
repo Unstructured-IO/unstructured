@@ -22,6 +22,7 @@ from unstructured.ingest.connector.google_drive import (
     GoogleDriveConnector,
     SimpleGoogleDriveConfig,
 )
+from unstructured.ingest.connector.local import LocalConnector, SimpleLocalConfig
 from unstructured.ingest.connector.reddit import RedditConnector, SimpleRedditConfig
 from unstructured.ingest.connector.s3 import S3Connector, SimpleS3Config
 from unstructured.ingest.connector.wikipedia import (
@@ -103,6 +104,23 @@ class MainProcess:
 
 
 @click.command()
+@click.option(
+    "--local-input-path",
+    default=None,
+    help="Path to the location in the local file system that will be processed.",
+)
+@click.option(
+    "--local-recursive",
+    is_flag=True,
+    default=False,
+    help="Support recursive local file processing.",
+)
+@click.option(
+    "--local-file-glob",
+    default=None,
+    help="A comma-separated list of file globs to limit which types of local files are accepted,"
+    " e.g. '*.html,*.txt'",
+)
 @click.option(
     "--fields-include",
     default="element_id,text,type,metadata",
@@ -345,6 +363,9 @@ def main(
     metadata_include,
     metadata_exclude,
     fields_include,
+    local_input_path,
+    local_recursive,
+    local_file_glob,
 ):
     if "metadata" not in fields_include and (metadata_include or metadata_exclude):
         logger.warning(
@@ -569,6 +590,19 @@ def main(
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
                 re_download=re_download,
+                metadata_include=metadata_include,
+                metadata_exclude=metadata_exclude,
+                fields_include=fields_include,
+            ),
+        )
+    elif local_input_path:
+        doc_connector = LocalConnector(  # type: ignore
+            config=SimpleLocalConfig(
+                input_dir=local_input_path,
+                recursive=local_recursive,
+                file_glob=local_file_glob,
+                # defaults params:
+                output_dir=structured_output_dir,
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
