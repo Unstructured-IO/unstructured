@@ -113,8 +113,6 @@ class FileType(Enum):
 
 STR_TO_FILETYPE = {
     "application/pdf": FileType.PDF,
-    "application/json": FileType.JSON,
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": FileType.DOCX,
     "application/msword": FileType.DOC,
     "image/jpeg": FileType.JPG,
     "image/png": FileType.PNG,
@@ -177,7 +175,10 @@ def detect_filetype(
             _, extension = os.path.splitext(filename)
         extension = extension.lower()
         if LIBMAGIC_AVAILABLE:
-            mime_type = magic.from_file(filename, mime=True)
+            if not filename:
+                mime_type = magic.from_file(file_filename, mime=True)
+            else:
+                mime_type = magic.from_file(filename, mime=True)
         else:
             # might not need this
             return EXT_TO_FILETYPE.get(extension.lower(), FileType.UNK)
