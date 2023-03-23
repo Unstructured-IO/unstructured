@@ -111,6 +111,27 @@ class FileType(Enum):
         return self.name < other.name
 
 
+STR_TO_FILETYPE = {
+    "application/pdf": FileType.PDF,
+    "application/json": FileType.JSON,
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": FileType.DOCX,
+    "application/msword": FileType.DOC,
+    "image/jpeg": FileType.JPG,
+    "image/png": FileType.PNG,
+    "text/markdown": FileType.MD,
+    "text/x-markdown": FileType.MD,
+    "application/epub": FileType.EPUB,
+    "application/epub+zip": FileType.EPUB,
+    "text/html": FileType.HTML,
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": FileType.XLSX,
+    "application/vnd.ms-excel": FileType.XLS,
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation": FileType.PPTX,
+    "application/vnd.ms-powerpoint": FileType.PPT,
+    "application/xml": FileType.XML,
+    "application/zip": FileType.ZIP,
+}
+
+
 EXT_TO_FILETYPE = {
     ".pdf": FileType.PDF,
     ".docx": FileType.DOCX,
@@ -138,14 +159,23 @@ EXT_TO_FILETYPE = {
 
 def detect_filetype(
     filename: Optional[str] = None,
+    content_type: Optional[str] = None,
     file: Optional[IO] = None,
+    file_filename: Optional[str] = None,
 ) -> Optional[FileType]:
     """Use libmagic to determine a file's type. Helps determine which partition brick
     to use for a given file. A return value of None indicates a non-supported file type."""
     exactly_one(filename=filename, file=file)
 
-    if filename:
-        _, extension = os.path.splitext(filename)
+    filetype = STR_TO_FILETYPE.get(content_type)
+    if filetype:
+        return filetype
+
+    if filename or file_filename:
+        if not filename:
+            _, extension = os.path.splitext(file_filename)
+        else:
+            _, extension = os.path.splitext(filename)
         extension = extension.lower()
         if LIBMAGIC_AVAILABLE:
             mime_type = magic.from_file(filename, mime=True)
@@ -164,6 +194,8 @@ def detect_filetype(
                 "Filetype detection on file-like objects requires libmagic. "
                 "Please install libmagic and try again.",
             )
+    else:
+        raise ValueError("No filename, file, nor file_filename were specified.")
 
     if mime_type == "application/pdf":
         return FileType.PDF
