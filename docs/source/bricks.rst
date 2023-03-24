@@ -212,7 +212,7 @@ The ``partition_html`` function partitions an HTML document and returns a list
 of document ``Element`` objects. ``partition_html`` can take a filename, file-like
 object, string, or url as input.
 
-The following three invocations of partition_html() result are essentially equivalent:
+The following three invocations of partition_html() are essentially equivalent:
 
 
 .. code:: python
