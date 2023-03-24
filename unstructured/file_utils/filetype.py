@@ -164,21 +164,22 @@ def detect_filetype(
     to use for a given file. A return value of None indicates a non-supported file type."""
     exactly_one(filename=filename, file=file)
 
-    filetype = STR_TO_FILETYPE.get(content_type)
-    if filetype:
-        return filetype
+    if content_type:
+        filetype = STR_TO_FILETYPE.get(content_type)
+        if filetype:
+            return filetype
 
     if filename or file_filename:
-        if not filename:
-            _, extension = os.path.splitext(file_filename)
+        if filename:
+            _, extension = os.path.splitext(filename)  # type: ignore
         else:
-            _, extension = os.path.splitext(filename)
+            _, extension = os.path.splitext(file_filename)  # type: ignore
         extension = extension.lower()
         if LIBMAGIC_AVAILABLE:
-            if not filename:
-                mime_type = magic.from_file(file_filename, mime=True)
-            else:
+            if filename:
                 mime_type = magic.from_file(filename, mime=True)
+            else:
+                mime_type = magic.from_file(file_filename, mime=True)  # type: ignore
         else:
             # might not need this
             return EXT_TO_FILETYPE.get(extension.lower(), FileType.UNK)
