@@ -1,11 +1,13 @@
-## 0.5.7-dev1
+## 0.5.7-dev3
 
 ### Enhancements
 
 * Refactored codebase using `exactly_one`
+* Adds ability to pass headers when passing a url in partition_html()
 
 ### Features
 
+* Add `--flatten-metadata` parameter to `unstructured-ingest`
 * Add `--fields-include` parameter to `unstructured-ingest`
 
 ### Fixes

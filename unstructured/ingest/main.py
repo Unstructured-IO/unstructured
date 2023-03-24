@@ -122,6 +122,14 @@ class MainProcess:
     " e.g. '*.html,*.txt'",
 )
 @click.option(
+    "--flatten-metadata",
+    is_flag=True,
+    default=False,
+    help="Results in flattened json elements. "
+    "Specifically, the metadata key values are brought to the top-level of the element, "
+    "and the `metadata` key itself is removed.",
+)
+@click.option(
     "--fields-include",
     default="element_id,text,type,metadata",
     help="If set, include the specified top-level fields in an element. "
@@ -363,10 +371,16 @@ def main(
     metadata_include,
     metadata_exclude,
     fields_include,
+    flatten_metadata,
     local_input_path,
     local_recursive,
     local_file_glob,
 ):
+    if flatten_metadata and "metadata" not in fields_include:
+        logger.warning(
+            "`--flatten-metadata` is specified, but there is no metadata to flatten, "
+            "since `metadata` is not specified in `--fields-include`.",
+        )
     if "metadata" not in fields_include and (metadata_include or metadata_exclude):
         logger.warning(
             "Either `--metadata-include` or `--metadata-exclude` is specified"
@@ -449,6 +463,7 @@ def main(
                     metadata_include=metadata_include,
                     metadata_exclude=metadata_exclude,
                     fields_include=fields_include,
+                    flatten_metadata=flatten_metadata,
                 ),
             )
         elif protocol in ("abfs", "az"):
@@ -472,6 +487,7 @@ def main(
                     metadata_include=metadata_include,
                     metadata_exclude=metadata_exclude,
                     fields_include=fields_include,
+                    flatten_metadata=flatten_metadata,
                 ),
             )
         else:
@@ -491,6 +507,7 @@ def main(
                     metadata_include=metadata_include,
                     metadata_exclude=metadata_exclude,
                     fields_include=fields_include,
+                    flatten_metadata=flatten_metadata,
                 ),
             )
     elif github_url:
@@ -508,6 +525,7 @@ def main(
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
+                flatten_metadata=flatten_metadata,
             ),
         )
     elif gitlab_url:
@@ -525,6 +543,7 @@ def main(
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
+                flatten_metadata=flatten_metadata,
             ),
         )
     elif subreddit_name:
@@ -544,6 +563,7 @@ def main(
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
+                flatten_metadata=flatten_metadata,
             ),
         )
     elif wikipedia_page_title:
@@ -559,6 +579,7 @@ def main(
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
+                flatten_metadata=flatten_metadata,
             ),
         )
     elif drive_id:
@@ -576,6 +597,7 @@ def main(
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
+                flatten_metadata=flatten_metadata,
             ),
         )
     elif biomed_path or biomed_api_id or biomed_api_from or biomed_api_until:
@@ -593,6 +615,7 @@ def main(
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
+                flatten_metadata=flatten_metadata,
             ),
         )
     elif local_input_path:

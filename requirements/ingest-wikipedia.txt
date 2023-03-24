@@ -8,7 +8,7 @@ anyio==3.6.2
     # via
     #   -r requirements/base.txt
     #   httpcore
-argilla==1.4.0
+argilla==1.5.0
     # via
     #   -r requirements/base.txt
     #   unstructured (setup.py)
@@ -16,7 +16,7 @@ backoff==2.2.1
     # via
     #   -r requirements/base.txt
     #   argilla
-beautifulsoup4==4.11.2
+beautifulsoup4==4.12.0
     # via wikipedia
 certifi==2022.12.7
     # via
@@ -63,7 +63,7 @@ idna==3.4
     #   anyio
     #   requests
     #   rfc3986
-importlib-metadata==6.0.0
+importlib-metadata==6.1.0
     # via
     #   -r requirements/base.txt
     #   markdown
@@ -77,7 +77,7 @@ lxml==4.9.2
     #   python-docx
     #   python-pptx
     #   unstructured (setup.py)
-markdown==3.4.1
+markdown==3.4.3
     # via
     #   -r requirements/base.txt
     #   unstructured (setup.py)
@@ -94,7 +94,7 @@ numpy==1.23.5
     #   -r requirements/base.txt
     #   argilla
     #   pandas
-openpyxl==3.1.1
+openpyxl==3.1.2
     # via
     #   -r requirements/base.txt
     #   unstructured (setup.py)
@@ -112,7 +112,7 @@ pillow==9.4.0
     #   -r requirements/base.txt
     #   python-pptx
     #   unstructured (setup.py)
-pydantic==1.10.6
+pydantic==1.10.7
     # via
     #   -r requirements/base.txt
     #   argilla
@@ -120,6 +120,10 @@ pygments==2.14.0
     # via
     #   -r requirements/base.txt
     #   rich
+pypandoc==1.11
+    # via
+    #   -r requirements/base.txt
+    #   unstructured (setup.py)
 python-dateutil==2.8.2
     # via
     #   -r requirements/base.txt
@@ -140,7 +144,7 @@ pytz==2022.7.1
     # via
     #   -r requirements/base.txt
     #   pandas
-regex==2022.10.31
+regex==2023.3.23
     # via
     #   -r requirements/base.txt
     #   nltk
@@ -179,7 +183,7 @@ typing-extensions==4.5.0
     #   -r requirements/base.txt
     #   pydantic
     #   rich
-urllib3==1.26.14
+urllib3==1.26.15
     # via
     #   -r requirements/base.txt
     #   requests

@@ -65,7 +65,7 @@ def get_forms_by_cik(session: requests.Session, cik: Union[str, int]) -> dict:
     response.raise_for_status()
     content = json.loads(response.content)
     recent_forms = content["filings"]["recent"]
-    form_types = {k: v for k, v in zip(recent_forms["accessionNumber"], recent_forms["form"])}
+    form_types = dict(zip(recent_forms["accessionNumber"], recent_forms["form"]))
     return form_types
 
 
