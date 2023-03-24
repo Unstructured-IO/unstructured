@@ -16,7 +16,7 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/../../.. || exit 1
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-    --local-input-path "<path in local file system>" \
+    --local-input-path example-docs \
     --local-file-glob "<comma-separated list of file globs>" \
     --structured-output-dir local-ingest-output \
     --num-processes 2 \
