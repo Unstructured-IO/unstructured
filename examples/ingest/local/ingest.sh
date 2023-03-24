@@ -18,11 +18,12 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --local-input-path "<path in local file system>" \
     --local-file-glob "<comma-separated list of file globs>" \
-#   Example: `--local-file-glob .docx` ensures only .docx files are processed.
     --structured-output-dir local-ingest-output \
     --num-processes 2 \
-    --local-recursive \ # optional
+    --local-recursive \
     --verbose \
+#   Example: `--local-file-glob .docx` ensures only .docx files are processed.
+#   NOTE: `--local-recursive` is optional
 
 # Alternatively, you can call it using:
 # unstructured-ingest --local-input-path ...
