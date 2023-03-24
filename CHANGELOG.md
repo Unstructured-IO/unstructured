@@ -1,9 +1,10 @@
-## 0.5.7-dev3
+## 0.5.7-dev4
 
 ### Enhancements
 
 * Refactored codebase using `exactly_one`
 * Adds ability to pass headers when passing a url in partition_html()
+* Added optional `content_type` and `file_filename` parameters to `partition()` to bypass file detection
 
 ### Features
 
