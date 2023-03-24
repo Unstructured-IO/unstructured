@@ -8,6 +8,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --local-input-path ./example-docs/ \
     --local-file-glob "*.html" \
     --structured-output-dir local-ingest-output \
+    --verbose
 
 if [ "$(find 'local-ingest-output' -type f -printf '.' | wc -c)" != 2 ]; then
    echo
