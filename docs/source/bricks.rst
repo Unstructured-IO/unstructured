@@ -212,9 +212,7 @@ The ``partition_html`` function partitions an HTML document and returns a list
 of document ``Element`` objects. ``partition_html`` can take a filename, file-like
 object, string, or url as input.
 
-Examples:
-
-These three invocations of partition_html() result are essentially equivalent:
+The following three invocations of partition_html() result are essentially equivalent:
 
 
 .. code:: python
@@ -232,7 +230,7 @@ These three invocations of partition_html() result are essentially equivalent:
 
 
 
-The following illustrates fetching a url and partition it the response content.
+The following illustrates fetching a url and partitioning the response content:
 
 .. code:: python
 
@@ -243,7 +241,7 @@ The following illustrates fetching a url and partition it the response content.
   # you can also provide custom headers:
 
   elements = partition_html(url="https://python.org/",
-                 headers={"User-Agent": "YourScriptName/1.0 ..."})
+                            headers={"User-Agent": "YourScriptName/1.0 ..."})
 
 
 
