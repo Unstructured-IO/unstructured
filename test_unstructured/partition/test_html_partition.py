@@ -4,6 +4,7 @@ from unittest.mock import patch
 
 import pytest
 import requests
+from requests.models import Response
 
 from unstructured.documents.elements import PageBreak
 from unstructured.partition.html import partition_html
@@ -84,6 +85,25 @@ def test_partition_html_from_url_raises_with_bad_content_type():
     with patch.object(requests, "get", return_value=response) as _:
         with pytest.raises(ValueError):
             partition_html(url="https://fake.url")
+
+
+def test_partition_from_url_uses_headers(mocker):
+    test_url = "https://example.com"
+    test_headers = {"User-Agent": "test"}
+
+    response = Response()
+    response.status_code = 200
+    response._content = (
+        b"<html><head></head><body><p>What do i know? Who needs to know it?</p></body></html>"
+    )
+    response.headers = {"Content-Type": "text/html"}
+
+    mock_get = mocker.patch("requests.get", return_value=response)
+
+    partition_html(url=test_url, headers=test_headers)
+
+    ***REMOVED*** Check if requests.get was called with the correct arguments
+    mock_get.assert_called_once_with(test_url, headers=test_headers)
 
 
 def test_partition_html_raises_with_none_specified():

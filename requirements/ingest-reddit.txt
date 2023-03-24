@@ -8,7 +8,7 @@
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   httpcore
-argilla==1.4.0
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   unstructured (setup.py)
@@ -61,7 +61,7 @@ argilla==1.4.0
     ***REMOVED***   anyio
     ***REMOVED***   requests
     ***REMOVED***   rfc3986
-importlib-metadata==6.0.0
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   markdown
@@ -75,7 +75,7 @@ importlib-metadata==6.0.0
     ***REMOVED***   python-docx
     ***REMOVED***   python-pptx
     ***REMOVED***   unstructured (setup.py)
-markdown==3.4.1
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   unstructured (setup.py)
@@ -92,7 +92,7 @@ markdown==3.4.1
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   argilla
     ***REMOVED***   pandas
-openpyxl==3.1.1
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   unstructured (setup.py)
@@ -114,7 +114,7 @@ praw==7.7.0
     ***REMOVED*** via unstructured (setup.py)
 prawcore==2.3.0
     ***REMOVED*** via praw
-pydantic==1.10.6
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   argilla
@@ -122,6 +122,10 @@ pydantic==1.10.6
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   rich
+***REMOVED***
+    ***REMOVED*** via
+    ***REMOVED***   -r requirements/base.txt
+    ***REMOVED***   unstructured (setup.py)
 ***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
@@ -142,7 +146,7 @@ pytz==2022.7.1
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   pandas
-regex==2022.10.31
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   nltk
@@ -182,7 +186,7 @@ regex==2022.10.31
     ***REMOVED***   rich
 update-checker==0.18.0
     ***REMOVED*** via praw
-urllib3==1.26.14
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   requests

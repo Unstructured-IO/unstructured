@@ -8,7 +8,7 @@
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   httpcore
-argilla==1.4.0
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   unstructured (setup.py)
@@ -47,7 +47,7 @@ cachetools==5.3.0
     ***REMOVED***   openpyxl
 google-api-core==2.11.0
     ***REMOVED*** via google-api-python-client
-google-api-python-client==2.80.0
+google-api-python-client==2.82.0
     ***REMOVED*** via unstructured (setup.py)
 google-auth==2.16.2
     ***REMOVED*** via
@@ -56,7 +56,7 @@ google-auth==2.16.2
     ***REMOVED***   google-auth-httplib2
 google-auth-httplib2==0.1.0
     ***REMOVED*** via google-api-python-client
-googleapis-common-protos==1.58.0
+googleapis-common-protos==1.59.0
     ***REMOVED*** via google-api-core
 ***REMOVED***
     ***REMOVED*** via
@@ -66,7 +66,7 @@ googleapis-common-protos==1.58.0
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   httpx
-httplib2==0.21.0
+httplib2==0.22.0
     ***REMOVED*** via
     ***REMOVED***   google-api-python-client
     ***REMOVED***   google-auth-httplib2
@@ -80,7 +80,7 @@ httplib2==0.21.0
     ***REMOVED***   anyio
     ***REMOVED***   requests
     ***REMOVED***   rfc3986
-importlib-metadata==6.0.0
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   markdown
@@ -94,7 +94,7 @@ importlib-metadata==6.0.0
     ***REMOVED***   python-docx
     ***REMOVED***   python-pptx
     ***REMOVED***   unstructured (setup.py)
-markdown==3.4.1
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   unstructured (setup.py)
@@ -111,7 +111,7 @@ markdown==3.4.1
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   argilla
     ***REMOVED***   pandas
-openpyxl==3.1.1
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   unstructured (setup.py)
@@ -139,7 +139,7 @@ pyasn1==0.4.8
     ***REMOVED***   rsa
 pyasn1-modules==0.2.8
     ***REMOVED*** via google-auth
-pydantic==1.10.6
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   argilla
@@ -147,6 +147,10 @@ pydantic==1.10.6
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   rich
+***REMOVED***
+    ***REMOVED*** via
+    ***REMOVED***   -r requirements/base.txt
+    ***REMOVED***   unstructured (setup.py)
 pyparsing==3.0.9
     ***REMOVED*** via httplib2
 ***REMOVED***
@@ -169,7 +173,7 @@ pytz==2022.7.1
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   pandas
-regex==2022.10.31
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   nltk
@@ -212,7 +216,7 @@ rsa==4.9
     ***REMOVED***   rich
 uritemplate==4.1.1
     ***REMOVED*** via google-api-python-client
-urllib3==1.26.14
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   requests

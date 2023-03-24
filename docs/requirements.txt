@@ -8,7 +8,7 @@ alabaster==0.7.13
     ***REMOVED*** via sphinx
 babel==2.12.1
     ***REMOVED*** via sphinx
-beautifulsoup4==4.11.2
+beautifulsoup4==4.12.0
     ***REMOVED*** via furo
 ***REMOVED***
     ***REMOVED*** via
@@ -20,13 +20,13 @@ docutils==0.18.1
     ***REMOVED*** via
     ***REMOVED***   sphinx
     ***REMOVED***   sphinx-rtd-theme
-furo==2022.12.7
+furo==2023.3.23
     ***REMOVED*** via -r requirements/build.in
 ***REMOVED***
     ***REMOVED*** via requests
 imagesize==1.4.1
     ***REMOVED*** via sphinx
-importlib-metadata==6.0.0
+***REMOVED***
     ***REMOVED*** via sphinx
 jinja2==3.1.2
     ***REMOVED*** via sphinx
@@ -52,6 +52,7 @@ sphinx==6.1.3
     ***REMOVED***   furo
     ***REMOVED***   sphinx-basic-ng
     ***REMOVED***   sphinx-rtd-theme
+    ***REMOVED***   sphinxcontrib-jquery
 sphinx-basic-ng==1.0.0b1
     ***REMOVED*** via furo
 sphinx-rtd-theme==1.2.0rc3
@@ -62,7 +63,7 @@ sphinxcontrib-devhelp==1.0.2
     ***REMOVED*** via sphinx
 sphinxcontrib-htmlhelp==2.0.1
     ***REMOVED*** via sphinx
-sphinxcontrib-jquery==3.0.0
+sphinxcontrib-jquery==4.1
     ***REMOVED*** via sphinx-rtd-theme
 sphinxcontrib-jsmath==1.0.1
     ***REMOVED*** via sphinx
@@ -70,10 +71,7 @@ sphinxcontrib-qthelp==1.0.3
     ***REMOVED*** via sphinx
 sphinxcontrib-serializinghtml==1.1.5
     ***REMOVED*** via sphinx
-urllib3==1.26.14
+***REMOVED***
     ***REMOVED*** via requests
 ***REMOVED***
     ***REMOVED*** via importlib-metadata
-
-***REMOVED*** The following packages are considered to be unsafe in a requirements file:
-***REMOVED*** setuptools

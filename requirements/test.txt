@@ -4,9 +4,6 @@
 ***REMOVED***
 ***REMOVED***    pip-compile requirements/test.in
 ***REMOVED***
---extra-index-url https://pypi.ngc.nvidia.com
---trusted-host pypi.ngc.nvidia.com
-
 appdirs==1.4.4
     ***REMOVED*** via label-studio-tools
 attrs==22.2.0
@@ -23,7 +20,7 @@ black==23.1.0
     ***REMOVED*** via
     ***REMOVED***   -r requirements/test.in
     ***REMOVED***   black
-coverage[toml]==7.2.1
+coverage[toml]==7.2.2
     ***REMOVED*** via
     ***REMOVED***   -r requirements/test.in
     ***REMOVED***   pytest-cov
@@ -67,19 +64,23 @@ pluggy==1.0.0
     ***REMOVED*** via pytest
 pycodestyle==2.10.0
     ***REMOVED*** via flake8
-pydantic==1.10.6
+***REMOVED***
     ***REMOVED*** via label-studio-sdk
 pyflakes==3.0.1
     ***REMOVED*** via flake8
 pytest==7.2.2
-    ***REMOVED*** via pytest-cov
+    ***REMOVED*** via
+    ***REMOVED***   pytest-cov
+    ***REMOVED***   pytest-mock
 pytest-cov==4.0.0
+    ***REMOVED*** via -r requirements/test.in
+pytest-mock==3.10.0
     ***REMOVED*** via -r requirements/test.in
 pyyaml==6.0
     ***REMOVED*** via vcrpy
 ***REMOVED***
     ***REMOVED*** via label-studio-sdk
-ruff==0.0.256
+ruff==0.0.259
     ***REMOVED*** via -r requirements/test.in
 ***REMOVED***
     ***REMOVED*** via vcrpy
@@ -91,7 +92,7 @@ tomli==2.0.1
     ***REMOVED***   pytest
 types-markdown==3.4.2.5
     ***REMOVED*** via -r requirements/test.in
-types-requests==2.28.11.15
+types-requests==2.28.11.16
     ***REMOVED*** via -r requirements/test.in
 types-urllib3==1.26.25.8
     ***REMOVED*** via types-requests

@@ -4,12 +4,9 @@
 ***REMOVED***
 ***REMOVED***    pip-compile --output-file=requirements/base.txt
 ***REMOVED***
---extra-index-url https://pypi.ngc.nvidia.com
---trusted-host pypi.ngc.nvidia.com
-
 ***REMOVED***
     ***REMOVED*** via httpcore
-argilla==1.4.0
+***REMOVED***
     ***REMOVED*** via unstructured (setup.py)
 ***REMOVED***
     ***REMOVED*** via argilla
@@ -40,7 +37,7 @@ argilla==1.4.0
     ***REMOVED***   anyio
     ***REMOVED***   requests
     ***REMOVED***   rfc3986
-importlib-metadata==6.0.0
+***REMOVED***
     ***REMOVED*** via markdown
 ***REMOVED***
     ***REMOVED*** via nltk
@@ -49,7 +46,7 @@ importlib-metadata==6.0.0
     ***REMOVED***   python-docx
     ***REMOVED***   python-pptx
     ***REMOVED***   unstructured (setup.py)
-markdown==3.4.1
+***REMOVED***
     ***REMOVED*** via unstructured (setup.py)
 ***REMOVED***
     ***REMOVED*** via argilla
@@ -59,7 +56,7 @@ markdown==3.4.1
     ***REMOVED*** via
     ***REMOVED***   argilla
     ***REMOVED***   pandas
-openpyxl==3.1.1
+***REMOVED***
     ***REMOVED*** via unstructured (setup.py)
 ***REMOVED***
     ***REMOVED*** via argilla
@@ -71,7 +68,7 @@ openpyxl==3.1.1
     ***REMOVED*** via
     ***REMOVED***   python-pptx
     ***REMOVED***   unstructured (setup.py)
-pydantic==1.10.6
+***REMOVED***
     ***REMOVED*** via argilla
 ***REMOVED***
     ***REMOVED*** via rich
@@ -87,7 +84,7 @@ pydantic==1.10.6
     ***REMOVED*** via unstructured (setup.py)
 pytz==2022.7.1
     ***REMOVED*** via pandas
-regex==2022.10.31
+***REMOVED***
     ***REMOVED*** via nltk
 ***REMOVED***
     ***REMOVED*** via unstructured (setup.py)
@@ -110,7 +107,7 @@ regex==2022.10.31
     ***REMOVED*** via
     ***REMOVED***   pydantic
     ***REMOVED***   rich
-urllib3==1.26.14
+***REMOVED***
     ***REMOVED*** via requests
 ***REMOVED***
     ***REMOVED*** via

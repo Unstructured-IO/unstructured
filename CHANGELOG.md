@@ -1,8 +1,9 @@
-***REMOVED******REMOVED*** 0.5.7-dev2
+***REMOVED******REMOVED*** 0.5.7-dev3
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
 
 * Refactored codebase using `exactly_one`
+* Adds ability to pass headers when passing a url in partition_html()
 
 ***REMOVED******REMOVED******REMOVED*** Features
 

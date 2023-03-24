@@ -16,7 +16,7 @@ aiosignal==1.3.1
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   httpcore
-argilla==1.3.1
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   unstructured (setup.py)
@@ -50,7 +50,7 @@ azure-storage-blob==12.15.0
     ***REMOVED*** via
     ***REMOVED***   azure-datalake-store
     ***REMOVED***   cryptography
-charset-normalizer==3.0.1
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   aiohttp
@@ -59,7 +59,11 @@ charset-normalizer==3.0.1
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   nltk
-cryptography==39.0.1
+***REMOVED***
+    ***REMOVED*** via
+    ***REMOVED***   -r requirements/base.txt
+    ***REMOVED***   rich
+cryptography==39.0.2
     ***REMOVED*** via
     ***REMOVED***   adal
     ***REMOVED***   azure-identity
@@ -78,7 +82,7 @@ frozenlist==1.3.3
     ***REMOVED*** via
     ***REMOVED***   aiohttp
     ***REMOVED***   aiosignal
-fsspec==2023.1.0
+fsspec==2023.3.0
     ***REMOVED*** via
     ***REMOVED***   adlfs
     ***REMOVED***   unstructured (setup.py)
@@ -101,7 +105,7 @@ fsspec==2023.1.0
     ***REMOVED***   requests
     ***REMOVED***   rfc3986
     ***REMOVED***   yarl
-importlib-metadata==6.0.0
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   markdown
@@ -117,7 +121,7 @@ isodate==0.6.1
     ***REMOVED***   python-docx
     ***REMOVED***   python-pptx
     ***REMOVED***   unstructured (setup.py)
-markdown==3.4.1
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   unstructured (setup.py)
@@ -144,7 +148,7 @@ multidict==6.0.4
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   argilla
     ***REMOVED***   pandas
-openpyxl==3.1.1
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   unstructured (setup.py)
@@ -166,14 +170,22 @@ portalocker==2.7.0
     ***REMOVED*** via msal-extensions
 ***REMOVED***
     ***REMOVED*** via cffi
-pydantic==1.10.5
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   argilla
+***REMOVED***
+    ***REMOVED*** via
+    ***REMOVED***   -r requirements/base.txt
+    ***REMOVED***   rich
 pyjwt[crypto]==2.6.0
     ***REMOVED*** via
     ***REMOVED***   adal
     ***REMOVED***   msal
+***REMOVED***
+    ***REMOVED*** via
+    ***REMOVED***   -r requirements/base.txt
+    ***REMOVED***   unstructured (setup.py)
 ***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
@@ -195,7 +207,7 @@ pytz==2022.7.1
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   pandas
-regex==2022.10.31
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   nltk
@@ -214,6 +226,10 @@ regex==2022.10.31
 ***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
+    ***REMOVED***   argilla
+***REMOVED***
+    ***REMOVED*** via
+    ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   azure-core
     ***REMOVED***   azure-identity
     ***REMOVED***   isodate
@@ -224,7 +240,7 @@ regex==2022.10.31
     ***REMOVED***   anyio
     ***REMOVED***   httpcore
     ***REMOVED***   httpx
-tqdm==4.64.1
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   argilla
@@ -235,7 +251,8 @@ tqdm==4.64.1
     ***REMOVED***   azure-core
     ***REMOVED***   azure-storage-blob
     ***REMOVED***   pydantic
-urllib3==1.26.14
+    ***REMOVED***   rich
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   requests
@@ -244,7 +261,7 @@ urllib3==1.26.14
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   argilla
     ***REMOVED***   deprecated
-xlsxwriter==3.0.8
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   python-pptx
