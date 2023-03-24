@@ -475,8 +475,7 @@ before using <code class="docutils literal notranslate"><span class="pre">partit
 <p>The <code class="docutils literal notranslate"><span class="pre">partition_html</span></code> function partitions an HTML document and returns a list
 of document <code class="docutils literal notranslate"><span class="pre">Element</span></code> objects. <code class="docutils literal notranslate"><span class="pre">partition_html</span></code> can take a filename, file-like
 object, string, or url as input.</p>
-<p>Examples:</p>
-<p>These three invocations of partition_html() result are essentially equivalent:</p>
+<p>The following three invocations of partition_html() are essentially equivalent:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.html</span> <span class="kn">import</span> <span class="n">partition_html</span>
 
 <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_html</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example-docs/example-10k.html&quot;</span><span class="p">)</span>
@@ -489,7 +488,7 @@ object, string, or url as input.</p>
 <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_html</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The following illustrates fetching a url and partition it the response content.</p>
+<p>The following illustrates fetching a url and partitioning the response content:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.html</span> <span class="kn">import</span> <span class="n">partition_html</span>
 
 <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_html</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s2">&quot;https://python.org/&quot;</span><span class="p">)</span>
@@ -497,7 +496,7 @@ object, string, or url as input.</p>
 <span class="c1"># you can also provide custom headers:</span>
 
 <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_html</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s2">&quot;https://python.org/&quot;</span><span class="p">,</span>
-               <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="s2">&quot;YourScriptName/1.0 ...&quot;</span><span class="p">})</span>
+                          <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="s2">&quot;YourScriptName/1.0 ...&quot;</span><span class="p">})</span>
 </pre></div>
 </div>
 </section>
