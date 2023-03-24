@@ -3,6 +3,7 @@
 ### Enhancements
 
 * Refactored codebase using `exactly_one`
+* Adds ability to pass headers when passing a url in partition_html()
 
 ### Features
 
