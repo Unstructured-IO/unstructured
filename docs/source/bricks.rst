@@ -30,7 +30,7 @@ In cases where ``libmagic`` is not available, filetype detection will fall back 
 As shown in the examples below, the ``partition`` function accepts both filenames and file-like objects as input.
 ``partition`` also has some optional kwargs.
 For example, if you set ``include_page_breaks=True``, the output will include ``PageBreak`` elements if the filetype supports it.
-Additionally you can bypass the filetype detection logic with the optional  ``content_type`` argument.
+Additionally you can bypass the filetype detection logic with the optional  ``content_type`` argument which may be specified with either the ``filename`` or file-like object, ``file``.
 You can find a full listing of optional kwargs in the documentation below.
 
 .. code:: python
