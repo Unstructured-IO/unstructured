@@ -396,7 +396,7 @@ def main(
         logger.warning(
             "Not preserving downloaded files but --download_dir is specified",
         )
-    if not download_dir:
+    if local_input_path is None and not download_dir:
         cache_path = Path.home() / ".cache" / "unstructured" / "ingest"
         if not cache_path.exists():
             cache_path.mkdir(parents=True, exist_ok=True)
