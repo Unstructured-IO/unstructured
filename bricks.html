@@ -326,12 +326,13 @@ In cases where <code class="docutils literal notranslate"><span class="pre">libm
 <p>As shown in the examples below, the <code class="docutils literal notranslate"><span class="pre">partition</span></code> function accepts both filenames and file-like objects as input.
 <code class="docutils literal notranslate"><span class="pre">partition</span></code> also has some optional kwargs.
 For example, if you set <code class="docutils literal notranslate"><span class="pre">include_page_breaks=True</span></code>, the output will include <code class="docutils literal notranslate"><span class="pre">PageBreak</span></code> elements if the filetype supports it.
+Additionally you can bypass the filetype detection logic with the optional  <code class="docutils literal notranslate"><span class="pre">content_type</span></code> argument which may be specified with either the <code class="docutils literal notranslate"><span class="pre">filename</span></code> or file-like object, <code class="docutils literal notranslate"><span class="pre">file</span></code>.
 You can find a full listing of optional kwargs in the documentation below.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.auto</span> <span class="kn">import</span> <span class="n">partition</span>
 
 
 <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EXAMPLE_DOCS_DIRECTORY</span><span class="p">,</span> <span class="s2">&quot;layout-parser-paper-fast.pdf&quot;</span><span class="p">)</span>
-<span class="n">elements</span> <span class="o">=</span> <span class="n">partition</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">content_type</span><span class="o">=</span><span class="s2">&quot;application/pdf&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">][:</span><span class="mi">10</span><span class="p">]))</span>
 </pre></div>
 </div>
@@ -348,7 +349,7 @@ You can find a full listing of optional kwargs in the documentation below.</p>
 The <code class="docutils literal notranslate"><span class="pre">partition</span></code> brick uses these document-specific partitioning bricks under the hood.
 There are a few reasons you may want to use a document-specific partitioning brick instead of <code class="docutils literal notranslate"><span class="pre">partition</span></code>:</p>
 <ul class="simple">
-<li><p>If you already know the document type, filetype detection is unnecessary. Using the document-specific brick directly will make your program run faster.</p></li>
+<li><p>If you already know the document type, filetype detection is unnecessary. Using the document-specific brick directly, or passing in the <code class="docutils literal notranslate"><span class="pre">content_type</span></code> will make your program run faster.</p></li>
 <li><p>Fewer dependencies. You don’t need to install <code class="docutils literal notranslate"><span class="pre">libmagic</span></code> for filetype detection if you’re only using document-specific bricks.</p></li>
 <li><p>Additional features. The API for partition is the least common denominator for all document types. Certain document-specific brick include extra features that you may want to take advantage of. For example, <code class="docutils literal notranslate"><span class="pre">partition_html</span></code> allows you to pass in a URL so you don’t have to store the <code class="docutils literal notranslate"><span class="pre">.html</span></code> file locally. See the documentation below learn about the options available in each partitioning brick.</p></li>
 </ul>
