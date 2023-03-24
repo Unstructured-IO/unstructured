@@ -1,8 +1,8 @@
+import fnmatch
 import glob
 import json
 import os
-import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional, Type
 
@@ -16,13 +16,14 @@ from unstructured.ingest.logger import logger
 
 @dataclass
 class SimpleLocalConfig(BaseConnectorConfig):
+    output_dir: str
+
     # Local specific options
     input_dir: str
     recursive: bool = False
     file_glob: Optional[str] = None
 
     # base connector options
-    output_dir: str
     metadata_include: Optional[str] = None
     metadata_exclude: Optional[str] = None
     fields_include: str = "element_id,text,type,metadata"
@@ -89,7 +90,17 @@ class LocalConnector(BaseConnector):
         pass
 
     def _list_files(self):
-        for file in glob.glob(self.config.input_dir, recursive=self.config.recursive)
+        return glob.glob(self.config.input_dir, recursive=self.config.recursive)
+
+    def does_path_match_glob(self, path: str) -> bool:
+        if self.config.file_glob is None:
+            return True
+        patterns = self.config.file_glob.split(",")
+        for pattern in patterns:
+            if fnmatch.filter([path], pattern):
+                return True
+        logger.debug(f"The file {path!r} is discarded as it does not match any given glob.")
+        return False
 
     def get_ingest_docs(self):
         return [
@@ -98,4 +109,5 @@ class LocalConnector(BaseConnector):
                 file,
             )
             for file in self._list_files()
+            if self.does_path_match_glob(file)
         ]

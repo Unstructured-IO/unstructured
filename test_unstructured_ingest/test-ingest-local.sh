@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
+cd "$SCRIPT_DIR"/.. || exit 1
+
+PYTHONPATH=. ./unstructured/ingest/main.py \
+    --metadata-exclude filename \
+    --local-input-path ./example-docs/ \
+    --local-file-glob layout-parser-paper-fast.* \
+    --structured-output-dir local-ingest-output \
+
+if [ "$(find 'local-ingest-output' -type f -printf '.' | wc -c)" != 2 ]; then
+   echo
+   echo "2 files should have been created."
+   exit 1
+fi
