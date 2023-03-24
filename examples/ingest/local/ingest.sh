@@ -6,7 +6,7 @@
 # Structured outputs are stored in local-ingest-output/
 
 # NOTE, this script is not ready-to-run!
-# You must enter
+# You must enter:
 #   1) --local-input-path  : path in the local file system which is to be processed
 #   2) --local-file-glob   : types of local files that are accepted,
 #                            provided as a comma-separated list
