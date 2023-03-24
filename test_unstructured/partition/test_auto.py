@@ -110,7 +110,11 @@ def test_auto_partition_docx_with_file(mock_docx_document, expected_docx_element
     [(False, None), (False, "application/msword"), (True, "application/msword"), (True, None)],
 )
 def test_auto_partition_doc_with_filename(
-    mock_docx_document, expected_docx_elements, tmpdir, pass_file_filename, content_type
+    mock_docx_document,
+    expected_docx_elements,
+    tmpdir,
+    pass_file_filename,
+    content_type,
 ):
     docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
@@ -118,7 +122,9 @@ def test_auto_partition_doc_with_filename(
     convert_office_doc(docx_filename, tmpdir.dirname, "doc")
     file_filename = doc_filename if pass_file_filename else None
     elements = partition(
-        filename=doc_filename, file_filename=file_filename, content_type=content_type
+        filename=doc_filename,
+        file_filename=file_filename,
+        content_type=content_type,
     )
     assert elements == expected_docx_elements
     assert elements[0].metadata.filename == doc_filename
