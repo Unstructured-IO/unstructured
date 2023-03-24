@@ -6,7 +6,7 @@ cd "$SCRIPT_DIR"/.. || exit 1
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --metadata-exclude filename \
     --local-input-path ./example-docs/ \
-    --local-file-glob layout-parser-paper-fast.* \
+    --local-file-glob "*.html" \
     --structured-output-dir local-ingest-output \
 
 if [ "$(find 'local-ingest-output' -type f -printf '.' | wc -c)" != 2 ]; then
