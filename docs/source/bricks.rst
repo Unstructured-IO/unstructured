@@ -30,6 +30,7 @@ In cases where ``libmagic`` is not available, filetype detection will fall back 
 As shown in the examples below, the ``partition`` function accepts both filenames and file-like objects as input.
 ``partition`` also has some optional kwargs.
 For example, if you set ``include_page_breaks=True``, the output will include ``PageBreak`` elements if the filetype supports it.
+Additionally you can bypass the filetype detection logic with the optional  ``content_type`` argument which may be specified with either the ``filename`` or file-like object, ``file``.
 You can find a full listing of optional kwargs in the documentation below.
 
 .. code:: python
@@ -38,7 +39,7 @@ You can find a full listing of optional kwargs in the documentation below.
 
 
   filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
-  elements = partition(filename=filename)
+  elements = partition(filename=filename, content_type="application/pdf")
   print("\n\n".join([str(el) for el in elements][:10]))
 
 
@@ -57,7 +58,7 @@ The ``unstructured`` library also includes partitioning bricks targeted at speci
 The ``partition`` brick uses these document-specific partitioning bricks under the hood.
 There are a few reasons you may want to use a document-specific partitioning brick instead of ``partition``:
 
-* If you already know the document type, filetype detection is unnecessary. Using the document-specific brick directly will make your program run faster.
+* If you already know the document type, filetype detection is unnecessary. Using the document-specific brick directly, or passing in the ``content_type`` will make your program run faster.
 * Fewer dependencies. You don't need to install ``libmagic`` for filetype detection if you're only using document-specific bricks.
 * Additional features. The API for partition is the least common denominator for all document types. Certain document-specific brick include extra features that you may want to take advantage of. For example, ``partition_html`` allows you to pass in a URL so you don't have to store the ``.html`` file locally. See the documentation below learn about the options available in each partitioning brick.
 
