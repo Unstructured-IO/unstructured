@@ -38,7 +38,7 @@ def partition(
     file
         A file-like object using "rb" mode --> open(filename, "rb").
     file_filename
-        A string defining the file.
+        When file is not None, the filename (string) to store in element metadata. E.g. "foo.txt"
     include_page_breaks
         If True, the output will include page breaks if the filetype supports it
     strategy
