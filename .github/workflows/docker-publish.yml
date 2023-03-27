@@ -69,8 +69,13 @@ jobs:
         registry: quay.io
         username: ${{ secrets.QUAY_IO_ROBOT_USERNAME }}
         password: ${{ secrets.QUAY_IO_ROBOT_TOKEN }}
-
-    - name: Build AMD64 image
+    - name: Set Docker Repository
+      id: get-docker-repo
+      run: |
+        DOCKER_REPOSITORY=${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/${DOCKER_IMAGE_NAME}
+        echo "::set-output name=docker_repository::$DOCKER_REPOSITORY"
+        echo "DOCKER_REPOSITORY=$DOCKER_REPOSITORY" >> $GITHUB_ENV
+    - name: Build AMD64 Image
       run: |
         DOCKER_BUILDKIT=1 docker buildx build --platform=linux/amd64 --load \
           --build-arg PIP_VERSION=$PIP_VERSION \
