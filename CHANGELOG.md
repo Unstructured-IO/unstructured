@@ -1,3 +1,18 @@
+## 0.5.7
+
+### Enhancements
+
+* Refactored codebase using `exactly_one`
+* Adds ability to pass headers when passing a url in partition_html()
+* Added optional `content_type` and `file_filename` parameters to `partition()` to bypass file detection
+
+### Features
+
+* Add `--flatten-metadata` parameter to `unstructured-ingest`
+* Add `--fields-include` parameter to `unstructured-ingest`
+
+### Fixes
+
 ## 0.5.6
 
 * Fix problem with PDF partition (duplicated test)

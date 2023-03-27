@@ -104,6 +104,20 @@ class MainProcess:
 
 @click.command()
 @click.option(
+    "--flatten-metadata",
+    is_flag=True,
+    default=False,
+    help="Results in flattened json elements. "
+    "Specifically, the metadata key values are brought to the top-level of the element, "
+    "and the `metadata` key itself is removed.",
+)
+@click.option(
+    "--fields-include",
+    default="element_id,text,type,metadata",
+    help="If set, include the specified top-level fields in an element. "
+    "Default is `element_id,text,type,metadata`.",
+)
+@click.option(
     "--metadata-include",
     default=None,
     help="If set, include the specified metadata fields if they exist and drop all other fields. "
@@ -338,7 +352,19 @@ def main(
     verbose,
     metadata_include,
     metadata_exclude,
+    fields_include,
+    flatten_metadata,
 ):
+    if flatten_metadata and "metadata" not in fields_include:
+        logger.warning(
+            "`--flatten-metadata` is specified, but there is no metadata to flatten, "
+            "since `metadata` is not specified in `--fields-include`.",
+        )
+    if "metadata" not in fields_include and (metadata_include or metadata_exclude):
+        logger.warning(
+            "Either `--metadata-include` or `--metadata-exclude` is specified"
+            " while metadata is not specified in --fields-include.",
+        )
     if metadata_exclude is not None and metadata_include is not None:
         logger.error(
             "Arguments `--metadata-include` and `--metadata-exclude` are "
@@ -415,6 +441,8 @@ def main(
                     preserve_downloads=preserve_downloads,
                     metadata_include=metadata_include,
                     metadata_exclude=metadata_exclude,
+                    fields_include=fields_include,
+                    flatten_metadata=flatten_metadata,
                 ),
             )
         elif protocol in ("abfs", "az"):
@@ -437,6 +465,8 @@ def main(
                     preserve_downloads=preserve_downloads,
                     metadata_include=metadata_include,
                     metadata_exclude=metadata_exclude,
+                    fields_include=fields_include,
+                    flatten_metadata=flatten_metadata,
                 ),
             )
         else:
@@ -455,6 +485,8 @@ def main(
                     preserve_downloads=preserve_downloads,
                     metadata_include=metadata_include,
                     metadata_exclude=metadata_exclude,
+                    fields_include=fields_include,
+                    flatten_metadata=flatten_metadata,
                 ),
             )
     elif github_url:
@@ -471,6 +503,8 @@ def main(
                 re_download=re_download,
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
+                fields_include=fields_include,
+                flatten_metadata=flatten_metadata,
             ),
         )
     elif gitlab_url:
@@ -487,6 +521,8 @@ def main(
                 re_download=re_download,
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
+                fields_include=fields_include,
+                flatten_metadata=flatten_metadata,
             ),
         )
     elif subreddit_name:
@@ -505,6 +541,8 @@ def main(
                 re_download=re_download,
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
+                fields_include=fields_include,
+                flatten_metadata=flatten_metadata,
             ),
         )
     elif wikipedia_page_title:
@@ -519,6 +557,8 @@ def main(
                 re_download=re_download,
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
+                fields_include=fields_include,
+                flatten_metadata=flatten_metadata,
             ),
         )
     elif drive_id:
@@ -535,6 +575,8 @@ def main(
                 re_download=re_download,
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
+                fields_include=fields_include,
+                flatten_metadata=flatten_metadata,
             ),
         )
     elif biomed_path or biomed_api_id or biomed_api_from or biomed_api_until:
@@ -551,6 +593,8 @@ def main(
                 re_download=re_download,
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
+                fields_include=fields_include,
+                flatten_metadata=flatten_metadata,
             ),
         )
     # Check for other connector-specific options here and define the doc_connector object
