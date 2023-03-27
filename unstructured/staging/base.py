@@ -39,7 +39,9 @@ def convert_to_dict(elements: List[Element]) -> List[Dict[str, str]]:
     return convert_to_isd(elements)
 
 
-def elements_to_json(elements: List[Element], filename: Optional[str] = None, indent: int = 4) -> Optional[str]:
+def elements_to_json(
+    elements: List[Element], filename: Optional[str] = None, indent: int = 4
+) -> Optional[str]:
     """
     Saves a list of elements to a JSON file if filename is specified.
     Otherwise, return the list of elements as a string.
@@ -96,14 +98,13 @@ def dict_to_elements(element_dict: List[Dict[str, Any]]) -> List[Element]:
 def elements_from_json(filename: str = "", text: str = "") -> List[Element]:
     """Loads a list of elements from a JSON file or a string."""
     exactly_one(filename=filename, text=text)
-    
+
     if filename:
         with open(filename) as f:
             element_dict = json.load(f)
         return dict_to_elements(element_dict)
     elif text:
         return json.loads(s)
-
 
 
 def convert_to_isd_csv(elements: List[Element]) -> str:
