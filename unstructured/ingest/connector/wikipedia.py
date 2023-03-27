@@ -159,8 +159,10 @@ class WikipediaConnector(BaseConnector):
         import wikipedia
 
         page = wikipedia.page(self.config.title, auto_suggest=self.config.auto_suggest)
-        return [
+        ingest_docs = [
             WikipediaIngestTextDoc(self.config, page),
             WikipediaIngestHTMLDoc(self.config, page),
             WikipediaIngestSummaryDoc(self.config, page),
         ]
+        n = len(ingest_docs) if self.config.max_docs is None else min(len(ingest_docs), self.config.max_docs)
+        return ingest_docs[:n]

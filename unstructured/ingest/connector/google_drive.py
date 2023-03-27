@@ -185,7 +185,7 @@ class GoogleDriveIngestDoc(BaseIngestDoc):
 class GoogleDriveConnector(BaseConnector):
     """Objects of this class support fetching documents from Google Drive"""
 
-    def __init__(self, config):
+    def __init__(self, config: SimpleGoogleDriveConfig):
         self.config = config
         self.cleanup_files = not self.config.preserve_downloads
 
@@ -282,4 +282,6 @@ class GoogleDriveConnector(BaseConnector):
         files = self._list_objects(self.config.drive_id, self.config.recursive)
         # Setting to None because service object can't be pickled for multiprocessing.
         self.config.service = None
-        return [GoogleDriveIngestDoc(self.config, file) for file in files]
+        
+        n = len(files) if self.config.max_docs is None else min(len(files), self.config.max_docs)
+        return [GoogleDriveIngestDoc(self.config, file) for file in files[:n]]

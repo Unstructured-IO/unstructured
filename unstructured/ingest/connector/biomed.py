@@ -181,7 +181,7 @@ class BiomedIngestDoc(BaseIngestDoc):
 class BiomedConnector(BaseConnector):
     """Objects of this class support fetching documents from Biomedical literature FTP directory"""
 
-    def __init__(self, config):
+    def __init__(self, config: SimpleBiomedConfig):
         self.config = config
         self.cleanup_files = not self.config.preserve_downloads
 
@@ -322,4 +322,5 @@ class BiomedConnector(BaseConnector):
 
     def get_ingest_docs(self):
         files = self._list_objects_api() if self.config.is_api else self._list_objects()
-        return [BiomedIngestDoc(self.config, file) for file in files]
+        n = len(files) if self.config.max_docs is None else min(len(files), self.config.max_docs)
+        return [BiomedIngestDoc(self.config, file) for file in files[:n]]

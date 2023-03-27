@@ -63,10 +63,12 @@ class GitLabConnector(GitConnector):
             iterator=True,
             all=True,
         )
-        return [
+        ingest_docs = [
             GitLabIngestDoc(self.config, element["path"], project)
             for element in git_tree
             if element["type"] == "blob"
             and self.is_file_type_supported(element["path"])
             and (not self.config.file_glob or self.does_path_match_glob(element["path"]))
         ]
+        n = len(ingest_docs) if self.config.max_docs is None else min(len(ingest_docs), self.config.max_docs)
+        return ingest_docs[:n]

@@ -128,4 +128,6 @@ class RedditConnector(BaseConnector):
             posts = subreddit.search(self.config.search_query, limit=self.config.num_posts)
         else:
             posts = subreddit.hot(limit=self.config.num_posts)
-        return [RedditIngestDoc(self.config, post) for post in posts]
+        
+        n = len(posts) if self.config.max_docs is None else min(len(posts), self.config.max_docs)
+        return [RedditIngestDoc(self.config, post) for post in posts[:n]]
