@@ -12,7 +12,6 @@ env:
   DOCKER_REGISTRY: quay.io
   DOCKER_NAMESPACE: unstructured-io
   DOCKER_IMAGE_NAME: unstructured
-  DOCKER_REPOSITORY: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/${{ env.DOCKER_IMAGE_NAME }}
   PIP_VERSION: "22.2.1"
   PYTHON_VERSION: "3.8"
   NLTK_DATA: ${{ github.workspace }}/nltk_data
