@@ -10,8 +10,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --structured-output-dir local-ingest-output \
     --verbose
 
-if [ "$(find 'local-ingest-output' -type f -printf '.' | wc -c)" != 2 ]; then
+if [ "$(find 'local-ingest-output' -type f -printf '.' | wc -c)" != 4 ]; then
    echo
-   echo "2 files should have been created."
+   echo "4 files should have been created."
    exit 1
 fi
