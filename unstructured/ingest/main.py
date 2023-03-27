@@ -104,6 +104,11 @@ class MainProcess:
 
 @click.command()
 @click.option(
+    "--max-docs",
+    default=None,
+    help="If specified, process at most specified number of documents."
+)
+@click.option(
     "--flatten-metadata",
     is_flag=True,
     default=False,
@@ -354,6 +359,7 @@ def main(
     metadata_exclude,
     fields_include,
     flatten_metadata,
+    max_docs,
 ):
     if flatten_metadata and "metadata" not in fields_include:
         logger.warning(
@@ -443,6 +449,7 @@ def main(
                     metadata_exclude=metadata_exclude,
                     fields_include=fields_include,
                     flatten_metadata=flatten_metadata,
+                    max_docs=max_docs,
                 ),
             )
         elif protocol in ("abfs", "az"):
@@ -467,6 +474,7 @@ def main(
                     metadata_exclude=metadata_exclude,
                     fields_include=fields_include,
                     flatten_metadata=flatten_metadata,
+                    max_docs=max_docs,
                 ),
             )
         else:
@@ -487,6 +495,7 @@ def main(
                     metadata_exclude=metadata_exclude,
                     fields_include=fields_include,
                     flatten_metadata=flatten_metadata,
+                    max_docs=max_docs,
                 ),
             )
     elif github_url:
@@ -505,6 +514,7 @@ def main(
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
+                max_docs=max_docs,
             ),
         )
     elif gitlab_url:
@@ -523,6 +533,7 @@ def main(
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
+                max_docs=max_docs,
             ),
         )
     elif subreddit_name:
@@ -543,6 +554,7 @@ def main(
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
+                max_docs=max_docs,
             ),
         )
     elif wikipedia_page_title:
@@ -559,6 +571,7 @@ def main(
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
+                max_docs=max_docs,
             ),
         )
     elif drive_id:
@@ -577,6 +590,7 @@ def main(
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
+                max_docs=max_docs,
             ),
         )
     elif biomed_path or biomed_api_id or biomed_api_from or biomed_api_until:
@@ -595,6 +609,7 @@ def main(
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
+                max_docs=max_docs,
             ),
         )
     # Check for other connector-specific options here and define the doc_connector object
