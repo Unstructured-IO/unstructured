@@ -9,9 +9,7 @@ on:
       - main
 
 env:
-  DOCKER_REGISTRY: quay.io
-  DOCKER_NAMESPACE: unstructured-io
-  DOCKER_IMAGE_NAME: unstructured
+  DOCKER_REPOSITORY: quay.io/unstructured-io/unstructured
   PIP_VERSION: "22.2.1"
   PYTHON_VERSION: "3.8"
   NLTK_DATA: ${{ github.workspace }}/nltk_data
@@ -52,12 +50,6 @@ jobs:
         registry: quay.io
         username: ${{ secrets.QUAY_IO_ROBOT_USERNAME }}
         password: ${{ secrets.QUAY_IO_ROBOT_TOKEN }}
-    - name: Set Docker Repository
-      id: get-docker-repo
-      run: |
-        DOCKER_REPOSITORY=${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/${DOCKER_IMAGE_NAME}
-        echo "::set-output name=docker_repository::$DOCKER_REPOSITORY"
-        echo "DOCKER_REPOSITORY=$DOCKER_REPOSITORY" >> $GITHUB_ENV
         
   build-amd-local:
     runs-on: ubuntu-latest
@@ -68,15 +60,15 @@ jobs:
         DOCKER_BUILDKIT=1 docker buildx build --platform=linux/amd64 --load \
           --build-arg PIP_VERSION=$PIP_VERSION \
           --progress plain \
-          --cache-to type=gha,scope=$GITHUB_REF_NAME-$IMAGE_NAME \
-          --cache-from type=gha,scope=$GITHUB_REF_NAME-$IMAGE_NAME \
+          --cache-to type=gha,scope=$GITHUB_REF_NAME-$DOCKER_REPOSITORY \
+          --cache-from type=gha,scope=$GITHUB_REF_NAME-$DOCKER_REPOSITORY \
           --cache-from $DOCKER_REPOSITORY:amd \
           -t $DOCKER_REPOSITORY:amd .
     - name: Test AMD image
       run: | 
         source .venv/bin/activate 
         make docker-test DOCKER_PLATFORM=linux/amd64 DOCKER_IMAGE="$DOCKER_REPOSITORY:amd"
-        
+
   build-arm-local:
     runs-on: ubuntu-latest
     needs: [setup]
@@ -86,8 +78,8 @@ jobs:
         DOCKER_BUILDKIT=1 docker buildx build --platform=linux/arm64 --load \
           --build-arg PIP_VERSION=$PIP_VERSION \
           --progress plain \
-          --cache-to type=gha,scope=$GITHUB_REF_NAME-$IMAGE_NAME \
-          --cache-from type=gha,scope=$GITHUB_REF_NAME-$IMAGE_NAME \
+          --cache-to type=gha,scope=$GITHUB_REF_NAME-$DOCKER_REPOSITORY \
+          --cache-from type=gha,scope=$GITHUB_REF_NAME-$DOCKER_REPOSITORY \
           --cache-from $DOCKER_REPOSITORY:arm \
           -t $DOCKER_REPOSITORY:arm .
     - name: Test AMD image
