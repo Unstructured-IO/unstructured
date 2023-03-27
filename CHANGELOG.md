@@ -1,3 +1,14 @@
+## 0.5.8-dev0
+
+### Enhancements
+
+* Update `elements_to_json` to return string when filename is not specified
+* Update `elements_from_json` to allow for a new text parameter to deserialize
+
+### Features
+
+### Fixes
+
 ## 0.5.7
 
 ### Enhancements
