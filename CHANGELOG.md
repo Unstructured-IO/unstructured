@@ -1,3 +1,13 @@
+## 0.5.9-dev0
+
+### Enhancements
+
+### Features
+
+* Add local file system to `unstructured-ingest`
+
+### Fixes
+
 ## 0.5.8
 
 ### Enhancements
