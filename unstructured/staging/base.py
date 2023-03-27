@@ -12,6 +12,7 @@ from unstructured.documents.elements import (
     ElementMetadata,
     NoID,
 )
+from unstructured.partition.common import exactly_one
 
 TABLE_FIELDNAMES: List[str] = [
     "type",
@@ -92,11 +93,17 @@ def dict_to_elements(element_dict: List[Dict[str, Any]]) -> List[Element]:
     return isd_to_elements(element_dict)
 
 
-def elements_from_json(filename: str) -> List[Element]:
-    """Loads a list of elements from a JSON file."""
-    with open(filename) as f:
-        element_dict = json.load(f)
-    return dict_to_elements(element_dict)
+def elements_from_json(filename: str = "", text: str = "") -> List[Element]:
+    """Loads a list of elements from a JSON file or a string."""
+    exactly_one(filename=filename, text=text)
+    
+    if filename:
+        with open(filename) as f:
+            element_dict = json.load(f)
+        return dict_to_elements(element_dict)
+    elif text:
+        return json.loads(s)
+
 
 
 def convert_to_isd_csv(elements: List[Element]) -> str:
