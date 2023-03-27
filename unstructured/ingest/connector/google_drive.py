@@ -282,6 +282,6 @@ class GoogleDriveConnector(BaseConnector):
         files = self._list_objects(self.config.drive_id, self.config.recursive)
         # Setting to None because service object can't be pickled for multiprocessing.
         self.config.service = None
-        
+
         n = len(files) if self.config.max_docs is None else min(len(files), self.config.max_docs)
         return [GoogleDriveIngestDoc(self.config, file) for file in files[:n]]

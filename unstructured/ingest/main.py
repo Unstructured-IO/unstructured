@@ -106,7 +106,7 @@ class MainProcess:
 @click.option(
     "--max-docs",
     default=None,
-    help="If specified, process at most specified number of documents."
+    help="If specified, process at most specified number of documents.",
 )
 @click.option(
     "--flatten-metadata",

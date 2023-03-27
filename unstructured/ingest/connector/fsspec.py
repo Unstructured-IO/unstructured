@@ -187,7 +187,11 @@ class FsspecConnector(BaseConnector):
         return self.fs.ls(self.config.path_without_protocol)
 
     def get_ingest_docs(self):
-        n = len(self._list_files()) if self.config.max_docs is None else min(len(self._list_files()), self.config.max_docs)
+        n = (
+            len(self._list_files())
+            if self.config.max_docs is None
+            else min(len(self._list_files()), self.config.max_docs)
+        )
         return [
             self.ingest_doc_cls(
                 self.config,
