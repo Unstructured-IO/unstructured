@@ -39,23 +39,7 @@ jobs:
         python${{ env.PYTHON_VERSION }} -m venv .venv
         source .venv/bin/activate
         make install-ci
-        
-  build:
-    runs-on: ubuntu-latest
-    needs: [setup]
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Set virtualenv cache
-      uses: actions/cache@v3
-      id: virtualenv-cache
-      with:
-        path: |
-          .venv
-          nltk_data
-        key: unstructured-${{ runner.os }}-${{ hashFiles('requirements/*.txt') }}
-
+    
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v1
 
@@ -74,6 +58,11 @@ jobs:
         DOCKER_REPOSITORY=${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/${DOCKER_IMAGE_NAME}
         echo "::set-output name=docker_repository::$DOCKER_REPOSITORY"
         echo "DOCKER_REPOSITORY=$DOCKER_REPOSITORY" >> $GITHUB_ENV
+        
+  build-amd-local:
+    runs-on: ubuntu-latest
+    needs: [setup]
+    steps:
     - name: Build AMD64 Image
       run: |
         DOCKER_BUILDKIT=1 docker buildx build --platform=linux/amd64 --load \
@@ -83,3 +72,25 @@ jobs:
           --cache-from type=gha,scope=$GITHUB_REF_NAME-$IMAGE_NAME \
           --cache-from $DOCKER_REPOSITORY:amd \
           -t $DOCKER_REPOSITORY:amd .
+    - name: Test AMD image
+      run: | 
+        source .venv/bin/activate 
+        make docker-test DOCKER_PLATFORM=linux/amd64 DOCKER_IMAGE="$DOCKER_REPOSITORY:amd"
+        
+  build-arm-local:
+    runs-on: ubuntu-latest
+    needs: [setup]
+    steps:
+    - name: Build ARM64 Image
+      run: |
+        DOCKER_BUILDKIT=1 docker buildx build --platform=linux/arm64 --load \
+          --build-arg PIP_VERSION=$PIP_VERSION \
+          --progress plain \
+          --cache-to type=gha,scope=$GITHUB_REF_NAME-$IMAGE_NAME \
+          --cache-from type=gha,scope=$GITHUB_REF_NAME-$IMAGE_NAME \
+          --cache-from $DOCKER_REPOSITORY:arm \
+          -t $DOCKER_REPOSITORY:arm .
+    - name: Test AMD image
+      run: | 
+        source .venv/bin/activate 
+        make docker-test DOCKER_PLATFORM=linux/arm64 DOCKER_IMAGE="$DOCKER_REPOSITORY:arm"
