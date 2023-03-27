@@ -196,6 +196,7 @@ docker-start-bash:
 
 .PHONY: docker-test
 docker-test:
-	docker run --platform linux/amd64 --rm \
-	-v ${CURRENT_DIR}/test_unstructured:/home/test_unstructured unstructured-dev:latest \
+	docker run --platform ${DOCKER_PLATFORM:-linux/amd64} --rm \
+	-v ${CURRENT_DIR}/test_unstructured:/home/test_unstructured \
+	${DOCKER_IMAGE:-unstructured-dev:latest} \
 	bash -c "pytest test_unstructured"

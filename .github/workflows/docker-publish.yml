@@ -8,8 +8,8 @@ on:
 env:
   DOCKER_REGISTRY: "quay.io"
   DOCKER_NAMESPACE: "unstructured-io"
-  IMAGE_PLATFORMS: linux/amd64
-  PACKAGE: "unstructured"
+  DOCKER_IMAGE_NAME: "unstructured"
+  DOCKER_REPOSITORY: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/${{ env.DOCKER_IMAGE_NAME }}
   PIP_VERSION: "22.2.1"
   PYTHON_VERSION: "3.8"
   NLTK_DATA: ${{ github.workspace }}/nltk_data
@@ -67,27 +67,12 @@ jobs:
         username: ${{ secrets.QUAY_IO_ROBOT_USERNAME }}
         password: ${{ secrets.QUAY_IO_ROBOT_TOKEN }}
 
-    - name: Build and push Docker image
+    - name: Build AMD64 image
       run: |
-        VERSION=$(grep -Po '(?<=__version__ = ")[^"]*' unstructured/__version__.py)
-        GIT_SHA=$(git rev-parse --short HEAD)
-        IMAGE_NAME=${{ env.PACKAGE }}
-        docker buildx create --use --driver=docker-container
-        docker buildx build --platform=${{ env.IMAGE_PLATFORMS }} --provenance=false --load \
-        --cache-to type=gha,scope=$GITHUB_REF_NAME-$IMAGE_NAME \
-        --cache-from type=gha,scope=$GITHUB_REF_NAME-$IMAGE_NAME \
-        --build-arg PIP_VERSION=${{ env.PIP_VERSION }} \
-        --progress plain \
-        -t ${{ env.TEST_IMAGE_NAME }}:latest \
-        -t ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/${IMAGE_NAME}:${GIT_SHA} \
-        -t ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/${IMAGE_NAME}:${VERSION} \
-        -t ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/${IMAGE_NAME}:latest .
-
-    - name: Test image
-      run: | 
-        source .venv/bin/activate 
-        make docker-test
-
-    - name: Push image
-      run: | 
-        docker image push --all-tags ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/${{ env.PACKAGE }}
+        DOCKER_BUILDKIT=1 docker buildx build --platform=linux/amd64 --load \
+          --build-arg PIP_VERSION=$PIP_VERSION \
+          --progress plain \
+          --cache-to type=gha,scope=$GITHUB_REF_NAME-$IMAGE_NAME \
+          --cache-from type=gha,scope=$GITHUB_REF_NAME-$IMAGE_NAME \
+          --cache-from $DOCKER_REPOSITORY:amd \
+          -t $DOCKER_REPOSITORY:amd .
