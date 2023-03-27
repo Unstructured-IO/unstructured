@@ -107,7 +107,8 @@ def elements_from_json(filename: str = "", text: str = "") -> List[Element]:
             element_dict = json.load(f)
         return dict_to_elements(element_dict)
     else:
-        return json.loads(text)
+        dict = json.loads(text)
+        return dict_to_elements(dict)
 
 
 def convert_to_isd_csv(elements: List[Element]) -> str:
