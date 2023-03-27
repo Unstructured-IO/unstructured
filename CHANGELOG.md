@@ -1,4 +1,4 @@
-## 0.5.9-dev0
+## 0.5.8-dev0
 
 ### Enhancements
 
@@ -8,7 +8,7 @@
 
 ### Fixes
 
-## 0.5.8
+## 0.5.7
 
 ### Enhancements
 
@@ -18,7 +18,6 @@
 
 ### Features
 
-* Add local file system to `unstructured-ingest`
 * Add `--flatten-metadata` parameter to `unstructured-ingest`
 * Add `--fields-include` parameter to `unstructured-ingest`
 
