@@ -128,5 +128,9 @@ def test_serialized_deserialize_elements_to_json(tmpdir):
     ]
 
     base.elements_to_json(elements, filename=filename)
-    new_elements = base.elements_from_json(filename=filename)
-    assert elements == new_elements
+    elements_str = elements_to_json(elements)
+    assert elements_str == str(elements)
+    new_elements_filename = base.elements_from_json(filename=filename)
+    assert elements == new_elements_filename
+    new_elements_text = base.elements_from_json(text=str(elements))
+    assert elements == new_elements_text
