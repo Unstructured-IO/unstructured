@@ -1,3 +1,13 @@
+## 0.5.8-dev0
+
+### Enhancements
+
+### Features
+
+* Add `--max-docs` parameter to `unstructured-ingest`
+
+### Fixes
+
 ## 0.5.7
 
 ### Enhancements
