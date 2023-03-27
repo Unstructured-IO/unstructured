@@ -30,6 +30,7 @@ class SimpleWikipediaConfig(BaseConnectorConfig):
     metadata_exclude: Optional[str] = None
     fields_include: str = "element_id,text,type,metadata"
     flatten_metadata: bool = False
+    max_docs: Optional[int] = None
 
 
 @dataclass
