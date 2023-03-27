@@ -40,7 +40,9 @@ def convert_to_dict(elements: List[Element]) -> List[Dict[str, str]]:
 
 
 def elements_to_json(
-    elements: List[Element], filename: Optional[str] = None, indent: int = 4
+    elements: List[Element],
+    filename: Optional[str] = None,
+    indent: int = 4,
 ) -> Optional[str]:
     """
     Saves a list of elements to a JSON file if filename is specified.
@@ -50,6 +52,7 @@ def elements_to_json(
     if filename is not None:
         with open(filename, "w") as f:
             json.dump(element_dict, f, indent=indent)
+            return None
     else:
         return str(element_dict)
 
@@ -103,8 +106,8 @@ def elements_from_json(filename: str = "", text: str = "") -> List[Element]:
         with open(filename) as f:
             element_dict = json.load(f)
         return dict_to_elements(element_dict)
-    elif text:
-        return json.loads(s)
+    else:
+        return json.loads(text)
 
 
 def convert_to_isd_csv(elements: List[Element]) -> str:
