@@ -75,7 +75,6 @@ jobs:
     - name: Create Manifest
       run: |
         docker manifest create ${DOCKER_REPOSITORY}-multiarch:latest $DOCKER_REPOSITORY:amd $DOCKER_REPOSITORY:arm
-        docker manifest push $DOCKER_REPOSITORY:latest
-    - name: Push Tag
-      run: |
-        docker push ${DOCKER_REPOSITORY}-multiarch:latest
+        docker manifest push $DOCKER_REPOSITORY-multiarch:latest
+        docker tag $DOCKER_REPOSITORY-multiarch:latest $DOCKER_REPOSITORY-multiarch:test
+        docker push $DOCKER_REPOSITORY-multiarch:test
