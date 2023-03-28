@@ -341,3 +341,23 @@ def test_auto_partition_epub_from_file():
         elements = partition(file=f)
     assert len(elements) > 0
     assert elements[0].text.startswith("The Project Gutenberg eBook of Winter Sports")
+
+
+EXPECTED_MSG_OUTPUT = [
+    NarrativeText(text="This is a test email to use for unit tests."),
+    Title(text="Important points:"),
+    ListItem(text="Roses are red"),
+    ListItem(text="Violets are blue"),
+]
+
+def test_auto_partition_msg_from_filename():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
+    elements = partition(filename=filename)
+    assert elements == EXPECTED_MSG_OUTPUT
+
+
+def test_auto_partition_msg_from_file():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
+    with open(filename, "rb") as f:
+        elements = partition(file=f)
+    assert elements == EXPECTED_MSG_OUTPUT

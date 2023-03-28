@@ -2,6 +2,8 @@
 
 ### Enhancements
 
+* `detect_filetype` now does a final fallback to file extension.
+
 ### Features
 
 * Added `partition_msg` for processing MSFT Outlook .msg files.
