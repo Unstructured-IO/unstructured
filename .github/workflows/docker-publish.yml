@@ -27,33 +27,35 @@ jobs:
     needs: [setup]
     steps:
     - uses: actions/checkout@v3
-    - name: Build AMD Image
+    - name: Build AMD image
       run: |
         DOCKER_BUILDKIT=1 docker buildx build --platform=linux/amd64 --load \
           --build-arg PIP_VERSION=$PIP_VERSION \
           --progress plain \
           --cache-from $DOCKER_REPOSITORY:amd \
           -t $DOCKER_REPOSITORY:amd .
-        docker save $DOCKER_REPOSITORY:amd > $DOCKER_REPOSITORY-amd.tar
-    - name: Test AMD Image
-      run: |
-        DOCKER_PLATFORM="linux/amd64" DOCKER_IMAGE="$DOCKER_REPOSITORY:amd" make docker-test 
+        docker push "$DOCKER_REPOSITORY:amd"
+        docker save $DOCKER_REPOSITORY:amd > unstructured-amd.tar
+    # - name: Test AMD image
+    #   run: |
+    #     DOCKER_PLATFORM="linux/amd64" DOCKER_IMAGE="$DOCKER_REPOSITORY:amd" make docker-test 
   
   build-arm:
     runs-on: ubuntu-latest
     needs: [setup]
     steps:
     - uses: actions/checkout@v3
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v2
-    # - name: Build ARM Image
+    # - name: Set up QEMU
+    #   uses: docker/setup-qemu-action@v2
+    # - name: Build ARM image
     #   run: |
     #     DOCKER_BUILDKIT=1 docker buildx build --platform=linux/arm64 --load \
     #       --build-arg PIP_VERSION=$PIP_VERSION \
     #       --progress plain \
     #       --cache-from $DOCKER_REPOSITORY:arm \
     #       -t $DOCKER_REPOSITORY:arm .
-    # - name: Test ARM Image
+    #     docker save $DOCKER_REPOSITORY:arm > unstructured-arm.tar
+    # - name: Test ARM image
     #   run: |
     #     # only run a subset of tests on ARM, since they take a long time with emulation
     #     DOCKER_PLATFORM="linux/arm64" DOCKER_IMAGE="$DOCKER_REPOSITORY:arm" make docker-test TEST_NAME=partition/test_text.py
@@ -69,16 +71,16 @@ jobs:
         registry: quay.io
         username: ${{ secrets.QUAY_IO_ROBOT_USERNAME }}
         password: ${{ secrets.QUAY_IO_ROBOT_TOKEN }}
-    - name: Push AMD Image
+    - name: Push AMD image
       run: |
-        docker load --input $DOCKER_REPOSITORY-amd.tar
         docker images
-        echo "Pushing $DOCKER_REPOSITORY:amd"
-        docker push "$DOCKER_REPOSITORY:amd"
-    - name: Push ARM Image
+        docker load --input $DOCKER_REPOSITORY-amd.tar
+        # docker push "$DOCKER_REPOSITORY:amd"
+    - name: Push ARM image
       run: |
+        docker load --input $DOCKER_REPOSITORY-arm.tar
         docker push "$DOCKER_REPOSITORY:arm"
-    - name: Create Manifest
+    - name: Create manifest
       run: |
         docker manifest create ${DOCKER_REPOSITORY}-multiarch:latest $DOCKER_REPOSITORY:amd $DOCKER_REPOSITORY:arm
         docker manifest push $DOCKER_REPOSITORY-multiarch:latest
