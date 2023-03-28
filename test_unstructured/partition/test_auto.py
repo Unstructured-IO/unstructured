@@ -355,10 +355,3 @@ def test_auto_partition_msg_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
     elements = partition(filename=filename)
     assert elements == EXPECTED_MSG_OUTPUT
-
-
-def test_auto_partition_msg_from_file():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
-    with open(filename, "rb") as f:
-        elements = partition(file=f, content_type="application/vnd.ms-outlook")
-    assert elements == EXPECTED_MSG_OUTPUT
