@@ -30,7 +30,6 @@ class SimpleWikipediaConfig(BaseConnectorConfig):
     metadata_exclude: Optional[str] = None
     fields_include: str = "element_id,text,type,metadata"
     flatten_metadata: bool = False
-    max_docs: Optional[int] = None
 
 
 @dataclass
@@ -159,14 +158,8 @@ class WikipediaConnector(BaseConnector):
         import wikipedia
 
         page = wikipedia.page(self.config.title, auto_suggest=self.config.auto_suggest)
-        ingest_docs = [
+        return [
             WikipediaIngestTextDoc(self.config, page),
             WikipediaIngestHTMLDoc(self.config, page),
             WikipediaIngestSummaryDoc(self.config, page),
         ]
-        n = (
-            len(ingest_docs)
-            if self.config.max_docs is None
-            else min(len(ingest_docs), self.config.max_docs)
-        )
-        return ingest_docs[:n]
