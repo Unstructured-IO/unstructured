@@ -12,8 +12,6 @@ env:
   DOCKER_REPOSITORY: quay.io/unstructured-io/unstructured
   PIP_VERSION: "22.2.1"
   PYTHON_VERSION: "3.8"
-  NLTK_DATA: ${{ github.workspace }}/nltk_data
-  TEST_IMAGE_NAME: "unstructured-dev"
 
 jobs:
   setup:
@@ -32,7 +30,7 @@ jobs:
           --build-arg PIP_VERSION=$PIP_VERSION \
           --progress plain \
           --cache-from $DOCKER_REPOSITORY:amd \
-          -t $DOCKER_REPOSITORY:amd . -f Dockerfile
+          .
     - name: Test AMD Image
       run: | 
         source .venv/bin/activate 
