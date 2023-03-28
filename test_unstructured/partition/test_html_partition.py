@@ -41,6 +41,10 @@ def test_partition_html_from_text():
     assert len(elements) > 0
 
 
+def test_partition_html_from_text_works_with_empty_string():
+    assert partition_html(text="") == []
+
+
 class MockResponse:
     def __init__(self, text, status_code, headers={}):
         self.text = text
