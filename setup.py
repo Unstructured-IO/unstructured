@@ -52,6 +52,7 @@ setup(
     install_requires=[
         "argilla",
         "lxml",
+        "msg_parser",
         "nltk",
         "openpyxl",
         "pandas",

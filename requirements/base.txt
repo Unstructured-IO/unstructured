@@ -4,6 +4,9 @@
 ***REMOVED***
 ***REMOVED***    pip-compile --output-file=requirements/base.txt
 ***REMOVED***
+--extra-index-url https://pypi.ngc.nvidia.com
+--trusted-host pypi.ngc.nvidia.com
+
 ***REMOVED***
     ***REMOVED*** via httpcore
 ***REMOVED***
@@ -53,9 +56,13 @@
 ***REMOVED***
     ***REMOVED*** via unstructured (setup.py)
 ***REMOVED***
+    ***REMOVED*** via unstructured (setup.py)
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   argilla
     ***REMOVED***   pandas
+***REMOVED***
+    ***REMOVED*** via msg-parser
 ***REMOVED***
     ***REMOVED*** via unstructured (setup.py)
 ***REMOVED***

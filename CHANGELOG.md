@@ -1,3 +1,17 @@
+***REMOVED******REMOVED*** 0.5.8-dev0
+
+***REMOVED******REMOVED******REMOVED*** Enhancements
+
+* `detect_filetype` now does a final fallback to file extension.
+
+***REMOVED******REMOVED******REMOVED*** Features
+
+* Added `partition_msg` for processing MSFT Outlook .msg files.
+
+***REMOVED******REMOVED******REMOVED*** Fixes
+
+* `convert_file_to_text` now passes through the `source_format` and `target_format` kwargs.
+
 ***REMOVED******REMOVED*** 0.5.7
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements

@@ -83,7 +83,7 @@ If you call the ``partition`` function, ``unstructured`` will attempt to detect 
 file type and route it to the appropriate partitioning brick. All partitioning bricks
 called within ``partition`` are called using the default kwargs. Use the document-type
 specific bricks if you need to apply non-default settings.
-``partition`` currently supports ``.docx``, ``.doc``, ``.pptx``, ``.ppt``, ``.eml``, ``.epub``, ``.html``, ``.pdf``,
+``partition`` currently supports ``.docx``, ``.doc``, ``.pptx``, ``.ppt``, ``.eml``, ``.msg``, ``.epub``, ``.html``, ``.pdf``,
 ``.png``, ``.jpg``, and ``.txt`` files.
 If you set the ``include_page_breaks`` kwarg to ``True``, the output will include page breaks. This is only supported for ``.pptx``, ``.html``, ``.pdf``,
 ``.png``, and ``.jpg``.
@@ -322,6 +322,21 @@ Examples:
   with open("example-docs/fake-email.eml", "r") as f:
       text = f.read()
   elements = partition_email(text=text, include_headers=True)
+
+
+``partition_msg``
+-----------------
+
+The ``partition_msg`` functions processes ``.msg`` files, which is a filetype specific
+to email exports from Microsoft Outlook.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.msg import partition_msg
+
+  elements = partition_msg(filename="example-docs/fake-email.msg")
 
 
 ``partition_epub``
