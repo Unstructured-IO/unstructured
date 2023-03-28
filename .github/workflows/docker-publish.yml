@@ -35,16 +35,13 @@ jobs:
         password: ${{ secrets.QUAY_IO_ROBOT_TOKEN }}
     - name: Build AMD image
       run: |
-        # DOCKER_BUILDKIT=1 docker buildx build --platform=linux/amd64 --load \
-        #   --build-arg PIP_VERSION=$PIP_VERSION \
-        #   --build-arg BUILDKIT_INLINE_CACHE=1 \
-        #   --progress plain \
-        #   --cache-from $DOCKER_REPOSITORY:amd \
-        #   -t $DOCKER_REPOSITORY:amd .
-        # docker save $DOCKER_REPOSITORY:amd > "${{ github.workspace }}/unstructured-amd.tar"
-        echo "Hello, world!" > "${{ github.workspace }}/data.txt"
-        echo "workspace: ${{ github.workspace }}"
-        ls ${{ github.workspace }}
+        DOCKER_BUILDKIT=1 docker buildx build --platform=linux/amd64 --load \
+          --build-arg PIP_VERSION=$PIP_VERSION \
+          --build-arg BUILDKIT_INLINE_CACHE=1 \
+          --progress plain \
+          --cache-from $DOCKER_REPOSITORY:amd \
+          -t $DOCKER_REPOSITORY:amd .
+        docker save $DOCKER_REPOSITORY:amd > "${{ github.workspace }}/unstructured-amd.tar"
     - name: Upload image artifact
       uses: actions/upload-artifact@v2
       with:
