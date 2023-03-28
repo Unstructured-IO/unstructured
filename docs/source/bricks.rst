@@ -324,6 +324,21 @@ Examples:
   elements = partition_email(text=text, include_headers=True)
 
 
+``partition_msg``
+-----------------
+
+The ``partition_msg`` functions processes ``.msg`` files, which is a filetype specific
+to email exports from Microsoft Outlook.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.msg import partition_msg
+
+  elements = partition_msg(filename="example-docs/fake-email.msg")
+
+
 ``partition_epub``
 ---------------------
 
