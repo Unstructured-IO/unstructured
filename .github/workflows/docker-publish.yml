@@ -26,21 +26,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: [setup]
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/cache@v3
-      id: virtualenv-cache
-      with:
-        path: |
-          .venv
-          nltk_data
-        key: unstructured-${{ runner.os }}-${{ hashFiles('requirements/*.txt') }}
     - name: Build AMD Image
       run: |
         DOCKER_BUILDKIT=1 docker buildx build --platform=linux/amd64 --load \
           --build-arg PIP_VERSION=$PIP_VERSION \
           --progress plain \
-          --cache-to type=gha,scope=$GITHUB_REF_NAME-$DOCKER_REPOSITORY \
-          --cache-from type=gha,scope=$GITHUB_REF_NAME-$DOCKER_REPOSITORY \
           --cache-from $DOCKER_REPOSITORY:amd \
           -t $DOCKER_REPOSITORY:amd .
     - name: Test AMD Image
@@ -48,39 +38,55 @@ jobs:
         source .venv/bin/activate 
         DOCKER_PLATFORM="linux/amd64" DOCKER_IMAGE="$DOCKER_REPOSITORY:amd" make docker-test 
 
-  build-arm-local:
-    runs-on: ubuntu-latest
-    needs: [setup]
-    steps:
-    - uses: actions/checkout@v3
-    - uses: actions/cache@v3
-      id: virtualenv-cache
-      with:
-        path: |
-          .venv
-          nltk_data
-        key: unstructured-${{ runner.os }}-${{ hashFiles('requirements/*.txt') }}
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v1
-    - name: Build ARM Image
-      run: |
-        DOCKER_BUILDKIT=1 docker buildx build --platform=linux/arm64 --load \
-          --build-arg PIP_VERSION=$PIP_VERSION \
-          --progress plain \
-          --cache-to type=gha,scope=$GITHUB_REF_NAME-$DOCKER_REPOSITORY \
-          --cache-from type=gha,scope=$GITHUB_REF_NAME-$DOCKER_REPOSITORY \
-          --cache-from $DOCKER_REPOSITORY:arm \
-          -t $DOCKER_REPOSITORY:arm .
-    - name: Test ARM Image
-      run: | 
-        source .venv/bin/activate 
-        make docker-test DOCKER_PLATFORM=linux/arm64 DOCKER_IMAGE="$DOCKER_REPOSITORY:arm"
-
-
-
-    # - name: Login to Quay.io
-    #   uses: docker/login-action@v1
-    #   with:
-    #     registry: quay.io
-    #     username: ${{ secrets.QUAY_IO_ROBOT_USERNAME }}
-    #     password: ${{ secrets.QUAY_IO_ROBOT_TOKEN }}
+  # build-arm-local:
+  #   runs-on: ubuntu-latest
+  #   needs: [setup]
+  #   steps:
+  #   - uses: actions/checkout@v3
+  #   - uses: actions/cache@v3
+  #     id: virtualenv-cache
+  #     with:
+  #       path: |
+  #         .venv
+  #         nltk_data
+  #       key: unstructured-${{ runner.os }}-${{ hashFiles('requirements/*.txt') }}
+  #   - name: Set up QEMU
+  #     uses: docker/setup-qemu-action@v
+  #   - name: Build ARM Image
+  #     run: |
+  #       DOCKER_BUILDKIT=1 docker buildx build --platform=linux/arm64 --load \
+  #         --build-arg PIP_VERSION=$PIP_VERSION \
+  #         --progress plain \
+  #         --cache-to type=gha,scope=$GITHUB_REF_NAME-$DOCKER_REPOSITORY \
+  #         --cache-from type=gha,scope=$GITHUB_REF_NAME-$DOCKER_REPOSITORY \
+  #         --cache-from $DOCKER_REPOSITORY:arm \
+  #         -t $DOCKER_REPOSITORY:arm .
+  #   - name: Test ARM Image
+  #     run: | 
+  #       source .venv/bin/activate 
+  #       make docker-test DOCKER_PLATFORM=linux/arm64 DOCKER_IMAGE="$DOCKER_REPOSITORY:arm"
+  
+  # push-images:
+  #   runs-on: ubuntu-latest
+  #   needs: [build-amd-local, build-arm-local]
+  #   steps:
+  #   - uses: actions/checkout@v3
+  #   - name: Login to Quay.io
+  #     uses: docker/login-action@v1
+  #     with:
+  #       registry: quay.io
+  #       username: ${{ secrets.QUAY_IO_ROBOT_USERNAME }}
+  #       password: ${{ secrets.QUAY_IO_ROBOT_TOKEN }}
+  #   - name: Push AMD Image
+  #     run: |
+  #       docker push $DOCKER_REPOSITORY:amd
+  #   - name: Push ARM Image
+  #     run: |
+  #       docker push $DOCKER_REPOSITORY:arm
+  #   - name: Create Manifest
+  #     run: |
+  #       docker manifest create $DOCKER_REPOSITORY:latest $DOCKER_REPOSITORY:amd $DOCKER_REPOSITORY:arm
+  #       docker manifest push $DOCKER_REPOSITORY:latest
+  #   - name: Push Tag
+  #     run: |
+  #       docker push $DOCKER_REPOSITORY:latest
