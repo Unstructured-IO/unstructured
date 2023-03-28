@@ -168,6 +168,9 @@ def partition_email(
             f"Valid content sources are: {VALID_CONTENT_SOURCES}",
         )
 
+    if text is not None and text.strip() == "" and not file and not filename:
+        return []
+
     ***REMOVED*** Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text)
 

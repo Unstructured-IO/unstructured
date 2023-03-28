@@ -6,7 +6,7 @@ from unstructured.documents.elements import Element
 from unstructured.partition.common import exactly_one
 from unstructured.staging.base import dict_to_elements
 
-LIST_OF_DICTS_PATTERN = r"\A\s*\[\s*{"
+LIST_OF_DICTS_PATTERN = r"\A\s*\[\s*{?"
 
 
 def partition_json(
@@ -15,6 +15,9 @@ def partition_json(
     text: Optional[str] = None,
 ) -> List[Element]:
     """Partitions an .json document into its constituent elements."""
+    if text is not None and text.strip() == "" and not file and not filename:
+        return []
+
     exactly_one(filenmae=filename, file=file, text=text)
 
     if filename is not None:
