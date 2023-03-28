@@ -45,13 +45,13 @@ jobs:
     - uses: actions/checkout@v3
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
-    - name: Build ARM Image
-      run: |
-        DOCKER_BUILDKIT=1 docker buildx build --platform=linux/arm64 --load \
-          --build-arg PIP_VERSION=$PIP_VERSION \
-          --progress plain \
-          --cache-from $DOCKER_REPOSITORY:arm \
-          -t $DOCKER_REPOSITORY:arm .
+    # - name: Build ARM Image
+    #   run: |
+    #     DOCKER_BUILDKIT=1 docker buildx build --platform=linux/arm64 --load \
+    #       --build-arg PIP_VERSION=$PIP_VERSION \
+    #       --progress plain \
+    #       --cache-from $DOCKER_REPOSITORY:arm \
+    #       -t $DOCKER_REPOSITORY:arm .
     # - name: Test ARM Image
     #   run: |
     #     # only run a subset of tests on ARM, since they take a long time with emulation
