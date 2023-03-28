@@ -41,7 +41,7 @@ jobs:
           --cache-from $DOCKER_REPOSITORY:amd \
           -t $DOCKER_REPOSITORY:amd .
         docker push $DOCKER_REPOSITORY:amd
-        docker save $DOCKER_REPOSITORY:amd > unstructured-amd.tar
+        docker save $DOCKER_REPOSITORY:amd > "${{ github.workspace }}/unstructured-amd.tar"
     # - name: Test AMD image
     #   run: |
     #     DOCKER_PLATFORM="linux/amd64" DOCKER_IMAGE="$DOCKER_REPOSITORY:amd" make docker-test 
@@ -80,7 +80,7 @@ jobs:
     - name: Push AMD image
       run: |
         docker images
-        docker load --input unstructured-amd.tar
+        docker load --input "${{ github.workspace }}/unstructured-amd.tar"
         docker push $DOCKER_REPOSITORY:amd
     - name: Push ARM image
       run: |
