@@ -34,6 +34,7 @@ class SimpleLocalConfig(BaseConnectorConfig):
         else:
             self.input_path_is_file = False
 
+
 @dataclass
 class LocalIngestDoc(BaseIngestDoc):
     """Class encapsulating fetching a doc and writing processed results (but not
