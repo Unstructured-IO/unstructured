@@ -105,23 +105,6 @@ class MainProcess:
 
 @click.command()
 @click.option(
-    "--local-input-path",
-    default=None,
-    help="Path to the location in the local file system that will be processed.",
-)
-@click.option(
-    "--local-recursive",
-    is_flag=True,
-    default=False,
-    help="Support recursive local file processing.",
-)
-@click.option(
-    "--local-file-glob",
-    default=None,
-    help="A comma-separated list of file globs to limit which types of local files are accepted,"
-    " e.g. '*.html,*.txt'",
-)
-@click.option(
     "--flatten-metadata",
     is_flag=True,
     default=False,
@@ -148,6 +131,23 @@ class MainProcess:
     help="If set, drop the specified metadata fields if they exist. "
     "Usage: provide a single string with comma separated values. "
     "Example: --metadata-exclude filename,page_number ",
+)
+@click.option(
+    "--local-input-path",
+    default=None,
+    help="Path to the location in the local file system that will be processed.",
+)
+@click.option(
+    "--local-recursive",
+    is_flag=True,
+    default=False,
+    help="Support recursive local file processing.",
+)
+@click.option(
+    "--local-file-glob",
+    default=None,
+    help="A comma-separated list of file globs to limit which types of local files are accepted,"
+    " e.g. '*.html,*.txt'",
 )
 @click.option(
     "--remote-url",
