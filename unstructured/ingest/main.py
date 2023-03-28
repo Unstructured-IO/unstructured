@@ -65,7 +65,9 @@ class MainProcess:
     def _filter_docs_with_outputs(self, docs):
         num_docs_all = len(docs)
         docs = [doc for doc in docs if not doc.has_output()]
-        num_docs_to_process = len(docs) if self.max_docs is None else min(len(docs), self.max_docs)
+        if self.max_docs is not None:
+            docs = docs[:min(len(docs), self.max_docs)]
+        num_docs_to_process = len(docs)
         if num_docs_to_process == 0:
             logger.info(
                 "All docs have structured outputs, nothing to do. Use --reprocess to process all.",
