@@ -20,7 +20,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
+      uses: docker/setup-buildx-action@v2
         
   build-amd:
     runs-on: ubuntu-latest
@@ -39,7 +39,7 @@ jobs:
           --build-arg PIP_VERSION=$PIP_VERSION \
           --build-arg BUILDKIT_INLINE_CACHE=1 \
           --progress plain \
-          --cache-to type=gha,scope=$GITHUB_REF_NAME-amd \
+          --cache-to type=gha,mode=max,scope=$GITHUB_REF_NAME-amd \
           --cache-from type=gha,scope=$GITHUB_REF_NAME-amd \
           --cache-from $DOCKER_REPOSITORY:amd \
           -t $DOCKER_REPOSITORY:amd .
