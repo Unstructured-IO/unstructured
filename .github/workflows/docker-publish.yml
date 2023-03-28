@@ -60,7 +60,6 @@ jobs:
           --build-arg PIP_VERSION=$PIP_VERSION \
           --build-arg BUILDKIT_INLINE_CACHE=1 \
           --progress plain \
-          --cache-to type=gha,scope=$GITHUB_REF_NAME-amd \
           --cache-from type=gha,scope=$GITHUB_REF_NAME-amd \
           -t $DOCKER_REPOSITORY:amd .  
         docker images   
