@@ -27,6 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [setup]
     steps:
+    - uses: actions/checkout@v3
     - name: Build AMD Image
       run: |
         DOCKER_BUILDKIT=1 docker buildx build --platform=linux/amd64 --load \
