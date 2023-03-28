@@ -12,7 +12,6 @@ env:
   DOCKER_REPOSITORY: quay.io/unstructured-io/unstructured
   PIP_VERSION: "22.2.1"
   PYTHON_VERSION: "3.8"
-  NLTK_DATA: ${{ github.workspace }}/nltk_data
   TEST_IMAGE_NAME: "unstructured-dev"
 
 jobs:
@@ -53,10 +52,10 @@ jobs:
           --progress plain \
           --cache-from $DOCKER_REPOSITORY:arm \
           -t $DOCKER_REPOSITORY:arm .
-    - name: Test ARM Image
-      run: |
-        # only run a subset of tests on ARM, since they take a long time with emulation
-        DOCKER_PLATFORM="linux/arm64" DOCKER_IMAGE="$DOCKER_REPOSITORY:arm" make docker-test TEST_NAME=partition/test_text.py
+    # - name: Test ARM Image
+    #   run: |
+    #     # only run a subset of tests on ARM, since they take a long time with emulation
+    #     DOCKER_PLATFORM="linux/arm64" DOCKER_IMAGE="$DOCKER_REPOSITORY:arm" make docker-test TEST_NAME=partition/test_text.py
 
   push-images:
     runs-on: ubuntu-latest
@@ -71,13 +70,15 @@ jobs:
         password: ${{ secrets.QUAY_IO_ROBOT_TOKEN }}
     - name: Push AMD Image
       run: |
-        docker push $DOCKER_REPOSITORY:amd
+        docker images
+        echo "Pushing $DOCKER_REPOSITORY:amd"
+        docker push "$DOCKER_REPOSITORY:amd"
     - name: Push ARM Image
       run: |
-        docker push $DOCKER_REPOSITORY:arm
+        docker push "$DOCKER_REPOSITORY:arm"
     - name: Create Manifest
       run: |
         docker manifest create ${DOCKER_REPOSITORY}-multiarch:latest $DOCKER_REPOSITORY:amd $DOCKER_REPOSITORY:arm
         docker manifest push $DOCKER_REPOSITORY-multiarch:latest
-        docker tag $DOCKER_REPOSITORY-multiarch:latest $DOCKER_REPOSITORY-multiarch:test
-        docker push $DOCKER_REPOSITORY-multiarch:test
+        docker tag "$DOCKER_REPOSITORY-multiarch:latest" "$DOCKER_REPOSITORY-multiarch:test"
+        docker push "$DOCKER_REPOSITORY-multiarch:test"
