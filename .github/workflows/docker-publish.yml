@@ -45,47 +45,47 @@ jobs:
         echo "Hello, world!" > "${{ github.workspace }}/data.txt"
         echo "workspace: ${{ github.workspace }}"
         ls ${{ github.workspace }}
-    - name: Upload artifact
+    - name: Upload image artifact
       uses: actions/upload-artifact@v2
       with:
-        name: data
-        path: ${{ github.workspace }}/data.txt
+        name: amd-image
+        path: ${{ github.workspace }}/unstructured-amd.tar
     # - name: Test AMD image
     #   run: |
     #     DOCKER_PLATFORM="linux/amd64" DOCKER_IMAGE="$DOCKER_REPOSITORY:amd" make docker-test 
     #
 
 
-  test-no-checkout:
-    runs-on: ubuntu-latest
-    needs: [build-amd]
-    steps:
-    - name: Download artifact
-      uses: actions/download-artifact@v2
-      with:
-        name: data
-    - name: Test no checkout
-      run: |
-        echo "workspace: ${{ github.workspace }}"
-        ls ${{ github.workspace }}
-  test-checkout:
-    runs-on: ubuntu-latest
-    needs: [build-amd]
-    steps:
-    - uses: actions/checkout@v3
-    - name: Download artifact
-      uses: actions/download-artifact@v2
-      with:
-        name: data
-    - name: Test checkout
-      run: |
-        echo "workspace: ${{ github.workspace }}"
-        ls ${{ github.workspace }}        
-  # build-arm:
+  # test-no-checkout:
   #   runs-on: ubuntu-latest
-  #   needs: [setup]
+  #   needs: [build-amd]
+  #   steps:
+  #   - name: Download amd-image artifact
+  #     uses: actions/download-artifact@v2
+  #     with:
+  #       name: amd-image
+  #   - name: Test no checkout
+  #     run: |
+  #       echo "workspace: ${{ github.workspace }}"
+  #       ls ${{ github.workspace }}
+  # test-checkout:
+  #   runs-on: ubuntu-latest
+  #   needs: [build-amd]
   #   steps:
   #   - uses: actions/checkout@v3
+  #   - name: Download artifact
+  #     uses: actions/download-artifact@v2
+  #     with:
+  #       name: data
+  #   - name: Test checkout
+  #     run: |
+  #       echo "workspace: ${{ github.workspace }}"
+  #       ls ${{ github.workspace }}        
+  build-arm:
+    runs-on: ubuntu-latest
+    needs: [setup]
+    steps:
+    - uses: actions/checkout@v3
     # - name: Set up QEMU
     #   uses: docker/setup-qemu-action@v2
     # - name: Build ARM image
@@ -101,22 +101,25 @@ jobs:
     #     # only run a subset of tests on ARM, since they take a long time with emulation
     #     DOCKER_PLATFORM="linux/arm64" DOCKER_IMAGE="$DOCKER_REPOSITORY:arm" make docker-test TEST_NAME=partition/test_text.py
 
-  # push-images:
-  #   runs-on: ubuntu-latest
-  #   needs: [build-amd, build-arm]
-  #   steps:
-  #   - uses: actions/checkout@v3
-  #   - name: Login to Quay.io
-  #     uses: docker/login-action@v1
-  #     with:
-  #       registry: quay.io
-  #       username: ${{ secrets.QUAY_IO_ROBOT_USERNAME }}
-  #       password: ${{ secrets.QUAY_IO_ROBOT_TOKEN }}
-  #   - name: Push AMD image
-  #     run: |
-  #       echo "workspace: ${{ github.workspace }}"
-  #       ls ${{ github.workspace }}
-  #       docker load --input "${{ github.workspace }}/unstructured-amd.tar"
+  push-images:
+    runs-on: ubuntu-latest
+    needs: [build-amd, build-arm]
+    steps:
+    - name: Download amd-image artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: amd-image
+    - name: Login to Quay.io
+      uses: docker/login-action@v1
+      with:
+        registry: quay.io
+        username: ${{ secrets.QUAY_IO_ROBOT_USERNAME }}
+        password: ${{ secrets.QUAY_IO_ROBOT_TOKEN }}
+    - name: Push AMD image
+      run: |
+        echo "workspace: ${{ github.workspace }}"
+        ls ${{ github.workspace }}
+        docker load --input "${{ github.workspace }}/unstructured-amd.tar"
   #       docker push $DOCKER_REPOSITORY:amd
   #   - name: Push ARM image
   #     run: |
