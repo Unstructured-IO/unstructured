@@ -45,7 +45,7 @@ def partition_html(
     parser
         The parser to use for parsing the HTML document. If None, default parser will be used.
     """
-    if text is not None  and text.strip() == "" and not file and not filename and not url:
+    if text is not None and text.strip() == "" and not file and not filename and not url:
         return []
 
     # Verify that only one of the arguments was provided
