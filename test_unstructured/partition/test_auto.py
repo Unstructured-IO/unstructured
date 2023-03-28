@@ -350,6 +350,7 @@ EXPECTED_MSG_OUTPUT = [
     ListItem(text="Violets are blue"),
 ]
 
+
 def test_auto_partition_msg_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
     elements = partition(filename=filename)
