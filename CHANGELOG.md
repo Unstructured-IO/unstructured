@@ -1,13 +1,18 @@
-## 0.5.8-dev0
+## 0.5.8-dev1
 
 ### Enhancements
 
 * Update `elements_to_json` to return string when filename is not specified
 * Update `elements_from_json` to allow for a new text parameter to deserialize
+* `detect_filetype` now does a final fallback to file extension.
 
 ### Features
 
+* Added `partition_msg` for processing MSFT Outlook .msg files.
+
 ### Fixes
+
+* `convert_file_to_text` now passes through the `source_format` and `target_format` kwargs.
 
 ## 0.5.7
 

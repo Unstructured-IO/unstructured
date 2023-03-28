@@ -39,6 +39,11 @@ PPT_MIME_TYPES = [
     "application/vnd.ms-powerpoint",
 ]
 
+MSG_MIME_TYPES = [
+    "application/vnd.ms-outlook",
+    "application/x-ole-storage",
+]
+
 TXT_MIME_TYPES = [
     "text/plain",
     "message/rfc822",  # ref: https://www.rfc-editor.org/rfc/rfc822
@@ -83,6 +88,7 @@ class FileType(Enum):
     XLSX = 13
     PPT = 14
     PPTX = 15
+    MSG = 16
 
     # Adobe Types
     PDF = 20
@@ -150,6 +156,7 @@ EXT_TO_FILETYPE = {
     ".rtf": FileType.RTF,
     ".json": FileType.JSON,
     ".epub": FileType.EPUB,
+    ".msg": FileType.MSG,
     None: FileType.UNK,
 }
 
@@ -205,6 +212,9 @@ def detect_filetype(
     elif mime_type in DOC_MIME_TYPES:
         return FileType.DOC
 
+    elif mime_type in MSG_MIME_TYPES:
+        return FileType.MSG
+
     elif mime_type == "image/jpeg":
         return FileType.JPG
 
@@ -255,7 +265,7 @@ def detect_filetype(
         if file and not extension:
             return _detect_filetype_from_octet_stream(file=file)
         else:
-            return EXT_TO_FILETYPE.get(extension)
+            return EXT_TO_FILETYPE.get(extension, FileType.UNK)
 
     elif mime_type == "application/zip":
         filetype = FileType.UNK
@@ -275,7 +285,7 @@ def detect_filetype(
         f"The MIME type{f' of {filename!r}' if filename else ''} is {mime_type!r}. "
         "This file type is not currently supported in unstructured.",
     )
-    return FileType.UNK
+    return EXT_TO_FILETYPE.get(extension, FileType.UNK)
 
 
 def _detect_filetype_from_octet_stream(file: IO) -> FileType:
