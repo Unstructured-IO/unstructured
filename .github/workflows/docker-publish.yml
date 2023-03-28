@@ -27,11 +27,10 @@ jobs:
     - name: Build AMD Image
       working-directory: ./
       run: |
-        DOCKER_BUILDKIT=1 docker buildx build --platform=linux/amd64 --load \
-          --build-arg PIP_VERSION=$PIP_VERSION \
+        docker build --build-arg PIP_VERSION=$PIP_VERSION \
           --progress plain \
           --cache-from $DOCKER_REPOSITORY:amd \
-          -t $DOCKER_REPOSITORY:amd . -f Dockerfile
+          -t myimage:latest .
     - name: Test AMD Image
       run: | 
         source .venv/bin/activate 
