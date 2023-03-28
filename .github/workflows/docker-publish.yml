@@ -37,6 +37,7 @@ jobs:
       run: |
         DOCKER_BUILDKIT=1 docker buildx build --platform=linux/amd64 --load \
           --build-arg PIP_VERSION=$PIP_VERSION \
+          --build-arg BUILDKIT_INLINE_CACHE=1 \
           --progress plain \
           --cache-from $DOCKER_REPOSITORY:amd \
           -t $DOCKER_REPOSITORY:amd .
@@ -60,7 +61,7 @@ jobs:
     #       --progress plain \
     #       --cache-from $DOCKER_REPOSITORY:arm \
     #       -t $DOCKER_REPOSITORY:arm .
-    #     docker save $DOCKER_REPOSITORY:arm > unstructured-arm.tar
+    #     docker save $DOCKER_REPOSITORY:arm > "${{ github.workspace }}/unstructured-arm.tar"
     # - name: Test ARM image
     #   run: |
     #     # only run a subset of tests on ARM, since they take a long time with emulation
@@ -84,7 +85,7 @@ jobs:
         docker push $DOCKER_REPOSITORY:amd
     - name: Push ARM image
       run: |
-        docker load --input unstructured-arm.tar
+        docker load --input "${{ github.workspace }}/unstructured-arm.tar"
         docker push $DOCKER_REPOSITORY:arm
     - name: Create manifest
       run: |
