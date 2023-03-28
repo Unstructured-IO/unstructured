@@ -35,6 +35,8 @@ jobs:
         password: ${{ secrets.QUAY_IO_ROBOT_TOKEN }}
     - name: Build AMD image
       run: |
+        echo "workspace: ${{ github.workspace }}"
+        ls ${{ github.workspace }}
         DOCKER_BUILDKIT=1 docker buildx build --platform=linux/amd64 --load \
           --build-arg PIP_VERSION=$PIP_VERSION \
           --build-arg BUILDKIT_INLINE_CACHE=1 \
@@ -43,6 +45,8 @@ jobs:
           -t $DOCKER_REPOSITORY:amd .
         docker push $DOCKER_REPOSITORY:amd
         docker save $DOCKER_REPOSITORY:amd > "${{ github.workspace }}/unstructured-amd.tar"
+        echo "workspace: ${{ github.workspace }}"
+        ls ${{ github.workspace }}
     # - name: Test AMD image
     #   run: |
     #     DOCKER_PLATFORM="linux/amd64" DOCKER_IMAGE="$DOCKER_REPOSITORY:amd" make docker-test 
@@ -81,7 +85,8 @@ jobs:
         password: ${{ secrets.QUAY_IO_ROBOT_TOKEN }}
     - name: Push AMD image
       run: |
-        docker images
+        echo "workspace: ${{ github.workspace }}"
+        ls ${{ github.workspace }}
         docker load --input "${{ github.workspace }}/unstructured-amd.tar"
         docker push $DOCKER_REPOSITORY:amd
     - name: Push ARM image
