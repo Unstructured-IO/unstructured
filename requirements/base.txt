@@ -4,6 +4,9 @@
 #
 #    pip-compile --output-file=requirements/base.txt
 #
+--extra-index-url https://pypi.ngc.nvidia.com
+--trusted-host pypi.ngc.nvidia.com
+
 anyio==3.6.2
     # via httpcore
 argilla==1.5.0
@@ -50,12 +53,16 @@ markdown==3.4.3
     # via unstructured (setup.py)
 monotonic==1.6
     # via argilla
+msg-parser==1.2.0
+    # via unstructured (setup.py)
 nltk==3.8.1
     # via unstructured (setup.py)
 numpy==1.23.5
     # via
     #   argilla
     #   pandas
+olefile==0.46
+    # via msg-parser
 openpyxl==3.1.2
     # via unstructured (setup.py)
 packaging==23.0
