@@ -1,6 +1,7 @@
 import os
 import pathlib
 
+import msg_parser
 import pytest
 
 from unstructured.documents.elements import ListItem, NarrativeText, Title
@@ -21,6 +22,18 @@ def test_partition_msg_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
     elements = partition_msg(filename=filename)
     assert elements == EXPECTED_MSG_OUTPUT
+
+
+class MockMsOxMessage:
+    def __init__(self, filename):
+        self.body = "Here is an email with plain text."
+
+
+def test_partition_msg_from_filename_with_text_content(monkeypatch):
+    monkeypatch.setattr(msg_parser, "MsOxMessage", MockMsOxMessage)
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
+    elements = partition_msg(filename=filename)
+    assert str(elements[0]) == "Here is an email with plain text."
 
 
 def test_partition_msg_raises_with_missing_file():
