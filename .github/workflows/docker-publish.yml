@@ -27,6 +27,12 @@ jobs:
     needs: [setup]
     steps:
     - uses: actions/checkout@v3
+    - name: Login to Quay.io
+      uses: docker/login-action@v1
+      with:
+        registry: quay.io
+        username: ${{ secrets.QUAY_IO_ROBOT_USERNAME }}
+        password: ${{ secrets.QUAY_IO_ROBOT_TOKEN }}
     - name: Build AMD image
       run: |
         DOCKER_BUILDKIT=1 docker buildx build --platform=linux/amd64 --load \
@@ -34,7 +40,7 @@ jobs:
           --progress plain \
           --cache-from $DOCKER_REPOSITORY:amd \
           -t $DOCKER_REPOSITORY:amd .
-        docker push "$DOCKER_REPOSITORY:amd"
+        docker push $DOCKER_REPOSITORY:amd
         docker save $DOCKER_REPOSITORY:amd > unstructured-amd.tar
     # - name: Test AMD image
     #   run: |
@@ -75,7 +81,7 @@ jobs:
       run: |
         docker images
         docker load --input unstructured-amd.tar
-        # docker push $DOCKER_REPOSITORY:amd
+        docker push $DOCKER_REPOSITORY:amd
     - name: Push ARM image
       run: |
         docker load --input unstructured-arm.tar
