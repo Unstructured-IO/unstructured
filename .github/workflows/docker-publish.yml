@@ -12,24 +12,16 @@ env:
   DOCKER_REPOSITORY: quay.io/unstructured-io/unstructured
   PIP_VERSION: "22.2.1"
   PYTHON_VERSION: "3.8"
+  NLTK_DATA: ${{ github.workspace }}/nltk_data
+  TEST_IMAGE_NAME: "unstructured-dev"
 
 jobs:
   setup:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v3
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
-
-  tmate:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Set up tmate session
-      uses: mxschmitt/action-tmate@v3
-      with:
-        limit-access-to-actor: true
-        limit-connections: true
-        limit-time: 30m
-        debug: true
         
   build-amd-local:
     runs-on: ubuntu-latest
@@ -37,10 +29,11 @@ jobs:
     steps:
     - name: Build AMD Image
       run: |
-        docker build --build-arg PIP_VERSION=$PIP_VERSION \
+        DOCKER_BUILDKIT=1 docker buildx build --platform=linux/amd64 --load \
+          --build-arg PIP_VERSION=$PIP_VERSION \
           --progress plain \
           --cache-from $DOCKER_REPOSITORY:amd \
-          -t myimage:latest .
+          -t $DOCKER_REPOSITORY:amd .
     - name: Test AMD Image
       run: | 
         source .venv/bin/activate 
