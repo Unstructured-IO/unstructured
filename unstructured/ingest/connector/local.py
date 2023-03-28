@@ -19,7 +19,7 @@ class SimpleLocalConfig(BaseConnectorConfig):
     output_dir: str
 
     # Local specific options
-    input_dir: str
+    input_path: str
     recursive: bool = False
     file_glob: Optional[str] = None
 
@@ -28,6 +28,11 @@ class SimpleLocalConfig(BaseConnectorConfig):
     metadata_exclude: Optional[str] = None
     fields_include: str = "element_id,text,type,metadata"
 
+    def __post_init__(self):
+        if os.path.isfile(self.input_path):
+            self.input_path_is_file = True
+        else:
+            self.input_path_is_file = False
 
 @dataclass
 class LocalIngestDoc(BaseIngestDoc):
@@ -54,7 +59,7 @@ class LocalIngestDoc(BaseIngestDoc):
     def _output_filename(self):
         return (
             Path(self.config.output_dir)
-            / f"{self.path.replace(f'{self.config.input_dir}/', '')}.json"
+            / f"{self.path.replace(f'{self.config.input_path}/', '')}.json"
         )
 
     def has_output(self):
@@ -90,7 +95,12 @@ class LocalConnector(BaseConnector):
         pass
 
     def _list_files(self):
-        return glob.glob(f"{self.config.input_dir}/**/*.*", recursive=self.config.recursive)
+        if self.config.input_path_is_file:
+            return glob.glob(f"{self.config.input_path}")
+        elif self.config.recursive:
+            return glob.glob(f"{self.config.input_path}/**/*.*")
+        else:
+            return glob.glob(f"{self.config.input_path}/*.*")
 
     def does_path_match_glob(self, path: str) -> bool:
         if self.config.file_glob is None:

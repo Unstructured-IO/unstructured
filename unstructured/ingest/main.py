@@ -621,7 +621,7 @@ def main(
     elif local_input_path:
         doc_connector = LocalConnector(  # type: ignore
             config=SimpleLocalConfig(
-                input_dir=local_input_path,
+                input_path=local_input_path,
                 recursive=local_recursive,
                 file_glob=local_file_glob,
                 # defaults params:

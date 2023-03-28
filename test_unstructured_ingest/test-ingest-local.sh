@@ -8,7 +8,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --local-input-path example-docs \
     --local-file-glob "*.html" \
     --structured-output-dir local-ingest-output \
-    --verbose
+    --verbose \
+    --reprocess
 
 if [ "$(find 'local-ingest-output' -type f -printf '.' | wc -c)" != 4 ]; then
    echo
