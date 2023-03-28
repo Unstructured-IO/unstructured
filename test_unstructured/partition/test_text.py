@@ -59,6 +59,10 @@ def test_partition_text_from_text():
     assert elements == EXPECTED_OUTPUT
 
 
+def test_partition_text_from_text_works_with_empty_string():
+    assert partition_text(text="") == []
+
+
 def test_partition_text_raises_with_none_specified():
     with pytest.raises(ValueError):
         partition_text()
