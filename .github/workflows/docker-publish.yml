@@ -35,39 +35,35 @@ jobs:
         password: ${{ secrets.QUAY_IO_ROBOT_TOKEN }}
     - name: Build AMD image
       run: |
-        # DOCKER_BUILDKIT=1 docker buildx build --platform=linux/amd64 --load \
-        #   --build-arg PIP_VERSION=$PIP_VERSION \
-        #   --build-arg BUILDKIT_INLINE_CACHE=1 \
-        #   --progress plain \
-        #   --cache-from $DOCKER_REPOSITORY:amd \
-        #   -t $DOCKER_REPOSITORY:amd .
-        # docker save $DOCKER_REPOSITORY:amd > "${{ github.workspace }}/unstructured-amd.tar"
-        echo "Hello, world!" > "${{ github.workspace }}/data.txt"
-        echo "workspace: ${{ github.workspace }}"
-        ls ${{ github.workspace }}
+        DOCKER_BUILDKIT=1 docker buildx build --platform=linux/amd64 --load \
+          --build-arg PIP_VERSION=$PIP_VERSION \
+          --build-arg BUILDKIT_INLINE_CACHE=1 \
+          --progress plain \
+          --cache-to type=gha,scope=$GITHUB_REF_NAME-amd \
+          --cache-from type=gha,scope=$GITHUB_REF_NAME-amd \
+          --cache-from $DOCKER_REPOSITORY:amd \
+          -t $DOCKER_REPOSITORY:amd .
     # - name: Test AMD image
     #   run: |
     #     DOCKER_PLATFORM="linux/amd64" DOCKER_IMAGE="$DOCKER_REPOSITORY:amd" make docker-test 
     #
 
 
-  test-no-checkout:
-    runs-on: ubuntu-latest
-    needs: [build-amd]
-    steps:
-    - name: Test no checkout
-      run: |
-        echo "workspace: ${{ github.workspace }}"
-        ls ${{ github.workspace }}
-  test-checkout:
+  test-cache:
     runs-on: ubuntu-latest
     needs: [build-amd]
     steps:
     - uses: actions/checkout@v3
     - name: Test checkout
       run: |
-        echo "workspace: ${{ github.workspace }}"
-        ls ${{ github.workspace }}        
+        DOCKER_BUILDKIT=1 docker buildx build --platform=linux/amd64 --load \
+          --build-arg PIP_VERSION=$PIP_VERSION \
+          --build-arg BUILDKIT_INLINE_CACHE=1 \
+          --progress plain \
+          --cache-to type=gha,scope=$GITHUB_REF_NAME-amd \
+          --cache-from type=gha,scope=$GITHUB_REF_NAME-amd \
+          -t $DOCKER_REPOSITORY:amd .  
+        docker images   
   # build-arm:
   #   runs-on: ubuntu-latest
   #   needs: [setup]
@@ -80,6 +76,8 @@ jobs:
     #     DOCKER_BUILDKIT=1 docker buildx build --platform=linux/arm64 --load \
     #       --build-arg PIP_VERSION=$PIP_VERSION \
     #       --progress plain \
+            # --cache-to type=gha,scope=$GITHUB_REF_NAME-arm \
+            # --cache-from type=gha,scope=$GITHUB_REF_NAME-arm \
     #       --cache-from $DOCKER_REPOSITORY:arm \
     #       -t $DOCKER_REPOSITORY:arm .
     #     docker save $DOCKER_REPOSITORY:arm > "${{ github.workspace }}/unstructured-arm.tar"
