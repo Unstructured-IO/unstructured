@@ -46,7 +46,8 @@ jobs:
     # - name: Test AMD image
     #   run: |
     #     DOCKER_PLATFORM="linux/amd64" DOCKER_IMAGE="$DOCKER_REPOSITORY:amd" make docker-test 
-  
+    #
+
   build-arm:
     runs-on: ubuntu-latest
     needs: [setup]
