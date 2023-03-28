@@ -74,15 +74,15 @@ jobs:
     - name: Push AMD image
       run: |
         docker images
-        docker load --input $DOCKER_REPOSITORY-amd.tar
-        # docker push "$DOCKER_REPOSITORY:amd"
+        docker load --input unstructured-amd.tar
+        # docker push $DOCKER_REPOSITORY:amd
     - name: Push ARM image
       run: |
-        docker load --input $DOCKER_REPOSITORY-arm.tar
-        docker push "$DOCKER_REPOSITORY:arm"
+        docker load --input unstructured-arm.tar
+        docker push $DOCKER_REPOSITORY:arm
     - name: Create manifest
       run: |
         docker manifest create ${DOCKER_REPOSITORY}-multiarch:latest $DOCKER_REPOSITORY:amd $DOCKER_REPOSITORY:arm
         docker manifest push $DOCKER_REPOSITORY-multiarch:latest
-        docker tag "$DOCKER_REPOSITORY-multiarch:latest" "$DOCKER_REPOSITORY-multiarch:test"
-        docker push "$DOCKER_REPOSITORY-multiarch:test"
+        docker tag $DOCKER_REPOSITORY-multiarch:latest $DOCKER_REPOSITORY-multiarch:test
+        docker push $DOCKER_REPOSITORY-multiarch:test
