@@ -1,3 +1,15 @@
+## 0.5.8-dev0
+
+### Enhancements
+
+### Features
+
+* Added `partition_msg` for processing MSFT Outlook .msg files.
+
+### Fixes
+
+* `convert_file_to_text` now passes through the `source_format` and `target_format` kwargs.
+
 ## 0.5.7
 
 ### Enhancements
