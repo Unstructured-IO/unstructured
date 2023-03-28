@@ -32,7 +32,7 @@ jobs:
           --build-arg PIP_VERSION=$PIP_VERSION \
           --progress plain \
           --cache-from $DOCKER_REPOSITORY:amd \
-          -t $DOCKER_REPOSITORY:amd Dockerfile 
+          -t $DOCKER_REPOSITORY:amd . -f Dockerfile
     - name: Test AMD Image
       run: | 
         source .venv/bin/activate 
