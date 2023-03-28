@@ -33,7 +33,6 @@ class SimpleFsspecConfig(BaseConnectorConfig):
     metadata_exclude: Optional[str] = None
     fields_include: str = "element_id,text,type,metadata"
     flatten_metadata: bool = False
-    max_docs: Optional[int] = None
 
     # fsspec specific options
     access_kwargs: dict = field(default_factory=dict)
@@ -187,15 +186,10 @@ class FsspecConnector(BaseConnector):
         return self.fs.ls(self.config.path_without_protocol)
 
     def get_ingest_docs(self):
-        n = (
-            len(self._list_files())
-            if self.config.max_docs is None
-            else min(len(self._list_files()), self.config.max_docs)
-        )
         return [
             self.ingest_doc_cls(
                 self.config,
                 file,
             )
-            for file in self._list_files()[:n]
+            for file in self._list_files()
         ]

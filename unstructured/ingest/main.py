@@ -43,6 +43,7 @@ class MainProcess:
         num_processes,
         reprocess,
         verbose,
+        max_docs,
     ):
         # initialize the reader and writer
         self.doc_connector = doc_connector
@@ -50,6 +51,7 @@ class MainProcess:
         self.num_processes = num_processes
         self.reprocess = reprocess
         self.verbose = verbose
+        self.max_docs = max_docs
 
     def initialize(self):
         """Slower initialization things: check connections, load things into memory, etc."""
@@ -63,7 +65,7 @@ class MainProcess:
     def _filter_docs_with_outputs(self, docs):
         num_docs_all = len(docs)
         docs = [doc for doc in docs if not doc.has_output()]
-        num_docs_to_process = len(docs)
+        num_docs_to_process = len(docs) if self.max_docs is None else min(len(docs), self.max_docs)
         if num_docs_to_process == 0:
             logger.info(
                 "All docs have structured outputs, nothing to do. Use --reprocess to process all.",
@@ -449,7 +451,6 @@ def main(
                     metadata_exclude=metadata_exclude,
                     fields_include=fields_include,
                     flatten_metadata=flatten_metadata,
-                    max_docs=max_docs,
                 ),
             )
         elif protocol in ("abfs", "az"):
@@ -474,7 +475,6 @@ def main(
                     metadata_exclude=metadata_exclude,
                     fields_include=fields_include,
                     flatten_metadata=flatten_metadata,
-                    max_docs=max_docs,
                 ),
             )
         else:
@@ -495,7 +495,6 @@ def main(
                     metadata_exclude=metadata_exclude,
                     fields_include=fields_include,
                     flatten_metadata=flatten_metadata,
-                    max_docs=max_docs,
                 ),
             )
     elif github_url:
@@ -514,7 +513,6 @@ def main(
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
-                max_docs=max_docs,
             ),
         )
     elif gitlab_url:
@@ -533,7 +531,6 @@ def main(
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
-                max_docs=max_docs,
             ),
         )
     elif subreddit_name:
@@ -554,7 +551,6 @@ def main(
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
-                max_docs=max_docs,
             ),
         )
     elif wikipedia_page_title:
@@ -571,7 +567,6 @@ def main(
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
-                max_docs=max_docs,
             ),
         )
     elif drive_id:
@@ -590,7 +585,6 @@ def main(
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
-                max_docs=max_docs,
             ),
         )
     elif biomed_path or biomed_api_id or biomed_api_from or biomed_api_until:
@@ -609,7 +603,6 @@ def main(
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
-                max_docs=max_docs,
             ),
         )
     # Check for other connector-specific options here and define the doc_connector object
@@ -625,6 +618,7 @@ def main(
         num_processes=num_processes,
         reprocess=reprocess,
         verbose=verbose,
+        max_docs=max_docs,
     ).run()
 
 
