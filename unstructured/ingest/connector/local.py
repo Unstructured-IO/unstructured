@@ -90,7 +90,9 @@ class LocalConnector(BaseConnector):
         pass
 
     def _list_files(self):
-        return glob.glob(f"{self.config.input_dir}/*", recursive=self.config.recursive)
+        if os.path.isfile(self.config.input_dir):
+            return glob.glob(f"{self.config.input_dir}")
+        return glob.glob(f"{self.config.input_dir}*.*", recursive=self.config.recursive)
 
     def does_path_match_glob(self, path: str) -> bool:
         if self.config.file_glob is None:
