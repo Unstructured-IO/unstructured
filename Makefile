@@ -202,4 +202,4 @@ docker-test:
 	docker run --platform $(DOCKER_PLATFORM) --rm \
 	-v ${CURRENT_DIR}/test_unstructured:/home/test_unstructured \
 	$(DOCKER_IMAGE) \
-	bash -c "pytest test_unstructured"
+	bash -c "pytest $(if $(TEST_NAME),-k $(TEST_NAME),) test_unstructured"
