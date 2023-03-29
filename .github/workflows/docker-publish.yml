@@ -10,7 +10,7 @@ on:
 
 env:
   DOCKER_REPOSITORY: quay.io/unstructured-io/test-unstructured
-  DOCKER_BUILD_REPOSITORY: quay.io/unstructured-io/test-unstructured
+  DOCKER_BUILD_REPOSITORY: quay.io/unstructured-io/build-unstructured
   PIP_VERSION: "22.2.1"
   PYTHON_VERSION: "3.8"
 
