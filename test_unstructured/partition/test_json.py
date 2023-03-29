@@ -87,6 +87,14 @@ def test_partition_json_raises_with_none_specified():
         partition_json()
 
 
+def test_partition_json_works_with_empty_string():
+    assert partition_json(text="") == []
+
+
+def test_partition_json_works_with_empty_list():
+    assert partition_json(text="[]") == []
+
+
 def test_partition_json_raises_with_too_many_specified():
     path = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-text.txt")
     elements = partition(filename=path)
