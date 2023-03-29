@@ -4,12 +4,9 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 env:
-  DOCKER_REPOSITORY: quay.io/unstructured-io/unstructured-multiarch
+  DOCKER_REPOSITORY: quay.io/unstructured-io/unstructured
   DOCKER_BUILD_REPOSITORY: quay.io/unstructured-io/build-unstructured
   PIP_VERSION: "22.2.1"
   PYTHON_VERSION: "3.8"
