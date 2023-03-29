@@ -66,8 +66,9 @@ class MainProcess:
         num_docs_all = len(docs)
         docs = [doc for doc in docs if not doc.has_output()]
         if self.max_docs is not None:
-            num_docs_all = self.max_docs if num_docs_all > self.max_docs
-            docs = docs[:self.max_docs]
+            if num_docs_all > self.max_docs:
+                num_docs_all = self.max_docs
+            docs = docs[: self.max_docs]
         num_docs_to_process = len(docs)
         if num_docs_to_process == 0:
             logger.info(
