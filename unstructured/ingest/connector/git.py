@@ -26,6 +26,7 @@ class SimpleGitConfig(BaseConnectorConfig):
     output_dir: str
     preserve_downloads: bool = False
     re_download: bool = False
+    download_only: bool = False
     metadata_include: Optional[str] = None
     metadata_exclude: Optional[str] = None
     fields_include: str = "element_id,text,type,metadata"
@@ -51,7 +52,7 @@ class GitIngestDoc(BaseIngestDoc):
         self.filename.parent.mkdir(parents=True, exist_ok=True)
 
     def cleanup_file(self):
-        """Removes the local copy the file (or anything else) after successful processing."""
+        """Removes the local copy of the file (or anything else) after successful processing."""
         if not self.config.preserve_downloads:
             logger.debug(f"Cleaning up {self}")
             os.unlink(self.filename)
@@ -76,11 +77,12 @@ class GitIngestDoc(BaseIngestDoc):
 
     def write_result(self):
         """Write the structured json result for this doc. result must be json serializable."""
-        output_filename = self._output_filename()
-        output_filename.parent.mkdir(parents=True, exist_ok=True)
-        with open(output_filename, "w", encoding="utf8") as output_f:
-            json.dump(self.isd_elems_no_filename, output_f, ensure_ascii=False, indent=2)
-        logger.info(f"Wrote {output_filename}")
+        if not self.config.download_only:
+            output_filename = self._output_filename()
+            output_filename.parent.mkdir(parents=True, exist_ok=True)
+            with open(output_filename, "w", encoding="utf8") as output_f:
+                json.dump(self.isd_elems_no_filename, output_f, ensure_ascii=False, indent=2)
+            logger.info(f"Wrote {output_filename}")
 
 
 @dataclass

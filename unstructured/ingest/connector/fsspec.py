@@ -29,6 +29,7 @@ class SimpleFsspecConfig(BaseConnectorConfig):
     output_dir: str
     preserve_downloads: bool = False
     re_download: bool = False
+    download_only: bool = False
     metadata_include: Optional[str] = None
     metadata_exclude: Optional[str] = None
     fields_include: str = "element_id,text,type,metadata"
@@ -121,11 +122,12 @@ class FsspecIngestDoc(BaseIngestDoc):
 
     def write_result(self):
         """Write the structured json result for this doc. result must be json serializable."""
-        output_filename = self._output_filename()
-        output_filename.parent.mkdir(parents=True, exist_ok=True)
-        with open(output_filename, "w") as output_f:
-            output_f.write(json.dumps(self.isd_elems_no_filename, ensure_ascii=False, indent=2))
-        logger.info(f"Wrote {output_filename}")
+        if not self.config.download_only:
+            output_filename = self._output_filename()
+            output_filename.parent.mkdir(parents=True, exist_ok=True)
+            with open(output_filename, "w") as output_f:
+                output_f.write(json.dumps(self.isd_elems_no_filename, ensure_ascii=False, indent=2))
+            logger.info(f"Wrote {output_filename}")
 
     @property
     def filename(self):
@@ -133,7 +135,7 @@ class FsspecIngestDoc(BaseIngestDoc):
         return self._tmp_download_file()
 
     def cleanup_file(self):
-        """Removes the local copy the file after successful processing."""
+        """Removes the local copy of the file after successful processing."""
         if not self.config.preserve_downloads:
             logger.debug(f"Cleaning up {self}")
             os.unlink(self._tmp_download_file())

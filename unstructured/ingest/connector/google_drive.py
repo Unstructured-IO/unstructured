@@ -76,6 +76,7 @@ class SimpleGoogleDriveConfig(BaseConnectorConfig):
     # where to write structured data, with the directory structure matching drive path
     output_dir: str
     re_download: bool = False
+    download_only: bool = False
     preserve_downloads: bool = False
     metadata_include: Optional[str] = None
     metadata_exclude: Optional[str] = None
@@ -174,11 +175,12 @@ class GoogleDriveIngestDoc(BaseIngestDoc):
 
     def write_result(self):
         """Write the structured json result for this doc. result must be json serializable."""
-        output_filename = self._output_filename()
-        output_filename.parent.mkdir(parents=True, exist_ok=True)
-        with open(output_filename, "w") as output_f:
-            output_f.write(json.dumps(self.isd_elems_no_filename, ensure_ascii=False, indent=2))
-        logger.info(f"Wrote {output_filename}")
+        if not self.config.download_only:
+            output_filename = self._output_filename()
+            output_filename.parent.mkdir(parents=True, exist_ok=True)
+            with open(output_filename, "w") as output_f:
+                output_f.write(json.dumps(self.isd_elems_no_filename, ensure_ascii=False, indent=2))
+            logger.info(f"Wrote {output_filename}")
 
 
 class GoogleDriveConnector(BaseConnector):
