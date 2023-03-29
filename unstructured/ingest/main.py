@@ -22,6 +22,7 @@ from unstructured.ingest.connector.google_drive import (
     GoogleDriveConnector,
     SimpleGoogleDriveConfig,
 )
+from unstructured.ingest.connector.local import LocalConnector, SimpleLocalConfig
 from unstructured.ingest.connector.reddit import RedditConnector, SimpleRedditConfig
 from unstructured.ingest.connector.s3 import S3Connector, SimpleS3Config
 from unstructured.ingest.connector.wikipedia import (
@@ -142,6 +143,23 @@ class MainProcess:
     help="If set, drop the specified metadata fields if they exist. "
     "Usage: provide a single string with comma separated values. "
     "Example: --metadata-exclude filename,page_number ",
+)
+@click.option(
+    "--local-input-path",
+    default=None,
+    help="Path to the location in the local file system that will be processed.",
+)
+@click.option(
+    "--local-recursive",
+    is_flag=True,
+    default=False,
+    help="Support recursive local file processing.",
+)
+@click.option(
+    "--local-file-glob",
+    default=None,
+    help="A comma-separated list of file globs to limit which types of local files are accepted,"
+    " e.g. '*.html,*.txt'",
 )
 @click.option(
     "--remote-url",
@@ -367,6 +385,9 @@ def main(
     fields_include,
     flatten_metadata,
     max_docs,
+    local_input_path,
+    local_recursive,
+    local_file_glob,
 ):
     if flatten_metadata and "metadata" not in fields_include:
         logger.warning(
@@ -388,7 +409,7 @@ def main(
         logger.warning(
             "Not preserving downloaded files but --download_dir is specified",
         )
-    if not download_dir:
+    if local_input_path is None and not download_dir:
         cache_path = Path.home() / ".cache" / "unstructured" / "ingest"
         if not cache_path.exists():
             cache_path.mkdir(parents=True, exist_ok=True)
@@ -608,6 +629,19 @@ def main(
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
+            ),
+        )
+    elif local_input_path:
+        doc_connector = LocalConnector(  ***REMOVED*** type: ignore
+            config=SimpleLocalConfig(
+                input_path=local_input_path,
+                recursive=local_recursive,
+                file_glob=local_file_glob,
+                ***REMOVED*** defaults params:
+                output_dir=structured_output_dir,
+                metadata_include=metadata_include,
+                metadata_exclude=metadata_exclude,
+                fields_include=fields_include,
             ),
         )
     ***REMOVED*** Check for other connector-specific options here and define the doc_connector object
