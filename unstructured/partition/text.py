@@ -43,6 +43,8 @@ def partition_text(
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
     """
+    if text is not None and text.strip() == "" and not file and not filename:
+        return []
 
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text)

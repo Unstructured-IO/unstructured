@@ -140,6 +140,10 @@ def test_partition_email_from_text():
     assert elements == EXPECTED_OUTPUT
 
 
+def test_partition_email_from_text_work_with_empty_string():
+    assert partition_email(text="") == []
+
+
 def test_partition_email_from_filename_with_embedded_image():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email-image-embedded.eml")
     elements = partition_email(filename=filename, content_source="text/plain")
