@@ -43,6 +43,7 @@ class MainProcess:
         num_processes,
         reprocess,
         verbose,
+        max_docs,
     ):
         ***REMOVED*** initialize the reader and writer
         self.doc_connector = doc_connector
@@ -50,6 +51,7 @@ class MainProcess:
         self.num_processes = num_processes
         self.reprocess = reprocess
         self.verbose = verbose
+        self.max_docs = max_docs
 
     def initialize(self):
         """Slower initialization things: check connections, load things into memory, etc."""
@@ -63,6 +65,10 @@ class MainProcess:
     def _filter_docs_with_outputs(self, docs):
         num_docs_all = len(docs)
         docs = [doc for doc in docs if not doc.has_output()]
+        if self.max_docs is not None:
+            if num_docs_all > self.max_docs:
+                num_docs_all = self.max_docs
+            docs = docs[: self.max_docs]
         num_docs_to_process = len(docs)
         if num_docs_to_process == 0:
             logger.info(
@@ -103,6 +109,12 @@ class MainProcess:
 
 
 @click.command()
+@click.option(
+    "--max-docs",
+    default=None,
+    type=int,
+    help="If specified, process at most specified number of documents.",
+)
 @click.option(
     "--flatten-metadata",
     is_flag=True,
@@ -354,6 +366,7 @@ def main(
     metadata_exclude,
     fields_include,
     flatten_metadata,
+    max_docs,
 ):
     if flatten_metadata and "metadata" not in fields_include:
         logger.warning(
@@ -610,6 +623,7 @@ def main(
         num_processes=num_processes,
         reprocess=reprocess,
         verbose=verbose,
+        max_docs=max_docs,
     ).run()
 
 
