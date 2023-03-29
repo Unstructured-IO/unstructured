@@ -8,6 +8,7 @@
 
 ### Features
 
+* Add `--max-docs` parameter to `unstructured-ingest`
 * Added `partition_msg` for processing MSFT Outlook .msg files.
 
 ### Fixes
