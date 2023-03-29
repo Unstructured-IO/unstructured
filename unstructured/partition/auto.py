@@ -9,6 +9,7 @@ from unstructured.partition.html import partition_html
 from unstructured.partition.image import partition_image
 from unstructured.partition.json import partition_json
 from unstructured.partition.md import partition_md
+from unstructured.partition.msg import partition_msg
 from unstructured.partition.pdf import partition_pdf
 from unstructured.partition.ppt import partition_ppt
 from unstructured.partition.pptx import partition_pptx
@@ -64,6 +65,8 @@ def partition(
         return partition_docx(filename=filename, file=file)
     elif filetype == FileType.EML:
         return partition_email(filename=filename, file=file, encoding=encoding)
+    elif filetype == FileType.MSG:
+        return partition_msg(filename=filename, file=file)
     elif filetype == FileType.HTML:
         return partition_html(
             filename=filename,

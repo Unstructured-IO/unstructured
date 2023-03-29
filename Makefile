@@ -85,7 +85,7 @@ install-unstructured-inference:
 
 .PHONY: install-detectron2
 install-detectron2:
-	pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@v0.6#egg=detectron2"
+	pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@e2ce8dc1ab097891395d324abaffe9cf298503d1#egg=detectron2"
 
 ## install-local-inference: installs requirements for local inference
 .PHONY: install-local-inference
