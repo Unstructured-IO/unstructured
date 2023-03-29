@@ -15,18 +15,14 @@ env:
   TEST_IMAGE_NAME: "unstructured-dev"
 
 jobs:
-  setup:
+  build-amd:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
-        
-  publish:
-    runs-on: ubuntu-latest
-    needs: [setup]
-    steps:
-    - uses: actions/checkout@v3
+    - uses: docker/setup-buildx-action@v1
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
     - name: Login to Quay.io
       uses: docker/login-action@v1
       with:
@@ -40,10 +36,27 @@ jobs:
           --build-arg BUILDKIT_INLINE_CACHE=1 \
           --progress plain \
           --cache-from $DOCKER_REPOSITORY:amd \
-          -t $DOCKER_REPOSITORY:amd .
+          -t $DOCKER_REPOSITORY:amd-${{ github.sha }} .
     - name: Test AMD image
       run: |
-        DOCKER_PLATFORM="linux/amd64" DOCKER_IMAGE="$DOCKER_REPOSITORY:amd" make docker-test 
+        DOCKER_PLATFORM="linux/amd64" DOCKER_IMAGE="$DOCKER_REPOSITORY:amd-${{ github.sha }}" make docker-test 
+    - name: Push AMD image
+      run: |
+        docker push $DOCKER_REPOSITORY:amd-${{ github.sha }}
+  build-arm:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: docker/setup-buildx-action@v1
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - name: Login to Quay.io
+      uses: docker/login-action@v1
+      with:
+        registry: quay.io
+        username: ${{ secrets.QUAY_IO_ROBOT_USERNAME }}
+        password: ${{ secrets.QUAY_IO_ROBOT_TOKEN }}
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
     - name: Build ARM image
@@ -53,21 +66,49 @@ jobs:
           --build-arg BUILDKIT_INLINE_CACHE=1 \
           --progress plain \
           --cache-from $DOCKER_REPOSITORY:arm \
-          -t $DOCKER_REPOSITORY:arm .
+          -t $DOCKER_REPOSITORY:arm-${{ github.sha }} .
     - name: Test ARM image
       run: |
         # only run a subset of tests on ARM, since they take a long time with emulation
-        DOCKER_PLATFORM="linux/arm64" DOCKER_IMAGE="$DOCKER_REPOSITORY:arm" make docker-test TEST_NAME=partition/test_text.py
-    - name: Push AMD image
-      run: |
-        docker push $DOCKER_REPOSITORY:amd
+        DOCKER_PLATFORM="linux/arm64" DOCKER_IMAGE="$DOCKER_REPOSITORY:arm-${{ github.sha }}" make docker-test TEST_NAME=partition/test_text.py
     - name: Push ARM image
       run: |
+        docker push $DOCKER_REPOSITORY:arm-${{ github.sha }}
+  push-images:
+    runs-on: ubuntu-latest
+    needs: [build-amd, build-arm]
+    steps:
+    - uses: docker/setup-buildx-action@v1
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - name: Login to Quay.io
+      uses: docker/login-action@v1
+      with:
+        registry: quay.io
+        username: ${{ secrets.QUAY_IO_ROBOT_USERNAME }}
+        password: ${{ secrets.QUAY_IO_ROBOT_TOKEN }}
+    - name: Pull AMD image
+      run: |
+        docker push $DOCKER_REPOSITORY:amd-${{ github.sha }}
+    - name: Pull ARM image
+      run: |
+        docker push $DOCKER_REPOSITORY:arm-${{ github.sha }}
+    - name: Push AMD and ARM tags
+      run: |
+        docker tag $DOCKER_REPOSITORY:amd-${{ github.sha }} $DOCKER_REPOSITORY:amd
+        docker push $DOCKER_REPOSITORY:amd
+        docker tag $DOCKER_REPOSITORY:arm-${{ github.sha }} $DOCKER_REPOSITORY:arm
         docker push $DOCKER_REPOSITORY:arm
-    - name: Create manifest
+    - name: Push multiarch manifest
       run: |
         docker manifest create ${DOCKER_REPOSITORY}-multiarch:latest $DOCKER_REPOSITORY:amd $DOCKER_REPOSITORY:arm
         docker manifest push $DOCKER_REPOSITORY-multiarch:latest
-        docker tag $DOCKER_REPOSITORY-multiarch:latest $DOCKER_REPOSITORY-multiarch:test
-        docker push $DOCKER_REPOSITORY-multiarch:test
+        docker manifest create ${DOCKER_REPOSITORY}-multiarch:${{ github.sha }} $DOCKER_REPOSITORY:amd $DOCKER_REPOSITORY:arm
+        docker manifest push $DOCKER_REPOSITORY-multiarch:${{ github.sha }}
+        VERSION=$(grep -Po '(?<=__version__ = ")[^"]*' unstructured/__version__.py)
+        docker manifest create ${DOCKER_REPOSITORY}-multiarch:$VERSION $DOCKER_REPOSITORY:amd $DOCKER_REPOSITORY:arm
+        docker manifest push $DOCKER_REPOSITORY-multiarch:$VERSION
+
     
