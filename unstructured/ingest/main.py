@@ -286,6 +286,14 @@ class MainProcess:
     help="Re-download files even if they are already present in --download-dir.",
 )
 @click.option(
+    "--download-only",
+    is_flag=True,
+    default=False,
+    help="Download any files that are not already present in either --download-dir or "
+    "the default download ~/.cache/... location in case --download-dir is not specified and "
+    "skip processing them through unstructured.",
+)
+@click.option(
     "--download-dir",
     help="Where files are downloaded to, defaults to `$HOME/.cache/unstructured/ingest/<SHA256>`.",
 )
@@ -354,6 +362,7 @@ def main(
     metadata_exclude,
     fields_include,
     flatten_metadata,
+    download_only,
 ):
     if flatten_metadata and "metadata" not in fields_include:
         logger.warning(
