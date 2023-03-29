@@ -3,7 +3,7 @@
 ### Enhancements
 
 * Update `elements_to_json` to return string when filename is not specified
-* Update `elements_from_json` to allow for a new text parameter to deserialize
+* `elements_from_json` may take a string instead of a filename with the `text` kwarg
 * `detect_filetype` now does a final fallback to file extension.
 
 ### Features
