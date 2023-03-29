@@ -134,7 +134,7 @@ serializing and deserializing an ``Element`` list.
     elements_to_json(elements, filename=filename)
     new_elements = elements_from_json(filename=filename)
     
-	# alternatively, one can also serialize/deserialize to/from a string with:
+    # alternatively, one can also serialize/deserialize to/from a string with:
     serialized_elements_json = elements_to_json(elements)
     new_elements = elements_from_json(text=serialized_elements_json)
 
