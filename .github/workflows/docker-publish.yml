@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 env:
   DOCKER_REPOSITORY: quay.io/unstructured-io/unstructured
@@ -114,12 +111,12 @@ jobs:
         docker push $DOCKER_REPOSITORY:arm
     - name: Push multiarch manifest
       run: |
-        docker manifest create ${DOCKER_REPOSITORY}-multiarch:latest $DOCKER_REPOSITORY:amd $DOCKER_REPOSITORY:arm
-        docker manifest push $DOCKER_REPOSITORY-multiarch:latest
-        docker manifest create ${DOCKER_REPOSITORY}-multiarch:$SHORT_SHA $DOCKER_REPOSITORY:amd $DOCKER_REPOSITORY:arm
-        docker manifest push $DOCKER_REPOSITORY-multiarch:$SHORT_SHA
+        docker manifest create ${DOCKER_REPOSITORY}:latest $DOCKER_REPOSITORY:amd $DOCKER_REPOSITORY:arm
+        docker manifest push $DOCKER_REPOSITORY:latest
+        docker manifest create ${DOCKER_REPOSITORY}:$SHORT_SHA $DOCKER_REPOSITORY:amd $DOCKER_REPOSITORY:arm
+        docker manifest push $DOCKER_REPOSITORY:$SHORT_SHA
         VERSION=$(grep -Po '(?<=__version__ = ")[^"]*' unstructured/__version__.py)
-        docker manifest create ${DOCKER_REPOSITORY}-multiarch:$VERSION $DOCKER_REPOSITORY:amd $DOCKER_REPOSITORY:arm
-        docker manifest push $DOCKER_REPOSITORY-multiarch:$VERSION
+        docker manifest create ${DOCKER_REPOSITORY}:$VERSION $DOCKER_REPOSITORY:amd $DOCKER_REPOSITORY:arm
+        docker manifest push $DOCKER_REPOSITORY:$VERSION
 
     
