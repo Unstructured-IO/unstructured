@@ -1,7 +1,9 @@
-## 0.5.8-dev2
+## 0.5.8-dev3
 
 ### Enhancements
 
+* Update `elements_to_json` to return string when filename is not specified
+* `elements_from_json` may take a string instead of a filename with the `text` kwarg
 * `detect_filetype` now does a final fallback to file extension.
 
 ### Features
