@@ -99,9 +99,9 @@ class LocalConnector(BaseConnector):
         if self.config.input_path_is_file:
             return glob.glob(f"{self.config.input_path}")
         elif self.config.recursive:
-            return glob.glob(f"{self.config.input_path}/**/*.*", recursive=self.config.recursive)
+            return glob.glob(f"{self.config.input_path}/**", recursive=self.config.recursive)
         else:
-            return glob.glob(f"{self.config.input_path}/*.*")
+            return glob.glob(f"{self.config.input_path}/*")
 
     def does_path_match_glob(self, path: str) -> bool:
         if self.config.file_glob is None:
