@@ -42,7 +42,7 @@ jobs:
         # write to the build repository to cache for the publish-images job
         docker push $DOCKER_BUILD_REPOSITORY:amd-$SHORT_SHA
   build-arm:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest 
     steps:
     - uses: docker/setup-buildx-action@v1
     - name: Checkout code
