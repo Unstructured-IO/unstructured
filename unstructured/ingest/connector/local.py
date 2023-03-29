@@ -120,5 +120,5 @@ class LocalConnector(BaseConnector):
                 file,
             )
             for file in self._list_files()
-            if self.does_path_match_glob(file)
+            if os.path.isfile(file) and self.does_path_match_glob(file)
         ]
