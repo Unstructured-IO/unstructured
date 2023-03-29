@@ -411,6 +411,10 @@ serializing and deserializing an <code class="docutils literal notranslate"><spa
 
 <span class="n">elements_to_json</span><span class="p">(</span><span class="n">elements</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
 <span class="n">new_elements</span> <span class="o">=</span> <span class="n">elements_from_json</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
+
+<span class="c1"># alternatively, one can also serialize/deserialize to/from a string with:</span>
+<span class="n">serialized_elements_json</span> <span class="o">=</span> <span class="n">elements_to_json</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span>
+<span class="n">new_elements</span> <span class="o">=</span> <span class="n">elements_from_json</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">serialized_elements_json</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
