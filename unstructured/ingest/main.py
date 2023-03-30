@@ -681,7 +681,6 @@ def main(
         reprocess=reprocess,
         verbose=verbose,
         max_docs=max_docs,
-        download_only=download_only,
     ).run()
 
 
