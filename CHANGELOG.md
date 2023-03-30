@@ -19,6 +19,8 @@
 * Partitioning functions that accept a `text` kwarg no longer raise an error if an empty
   string is passed (and empty list of elements is returned instead).
 * `partition_json` no longer fails if the input is an empty list.
+* Fixed bug in `chunk_by_attention_window` that caused the last word in segments to be cut-off
+  in some cases.
 
 ### BREAKING CHANGES
 

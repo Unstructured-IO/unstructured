@@ -81,8 +81,8 @@ def chunk_by_attention_window(
                 f"error is: \n\n{segment}",
             )
 
-        if chunk_size + num_tokens > max_chunk_size or i == (num_splits - 1):
-            chunks.append(chunk_text)
+        if chunk_size + num_tokens > max_chunk_size:
+            chunks.append(chunk_text + chunk_separator.strip())
             chunk_text = ""
             chunk_size = 0
 
@@ -91,5 +91,8 @@ def chunk_by_attention_window(
             chunk_text += chunk_separator
         chunk_text += segment
         chunk_size += num_tokens
+
+        if i == (num_splits - 1) and len(chunk_text) > 0:
+            chunks.append(chunk_text)
 
     return chunks
