@@ -417,9 +417,14 @@ def main(
             "mutually exclusive with each other.",
         )
         sys.exit(1)
-    if not preserve_downloads and download_dir:
+    if (not preserve_downloads and not download_only) and download_dir:
         logger.warning(
             "Not preserving downloaded files but --download_dir is specified",
+        )
+    if local_input_path is not None and download_dir:
+        logger.warning(
+            "Files should already be in local file system: there is nothing to download, "
+            "but --download-dir is specified.",
         )
     if local_input_path is None and not download_dir:
         cache_path = Path.home() / ".cache" / "unstructured" / "ingest"
