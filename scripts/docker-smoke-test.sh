@@ -1,15 +1,17 @@
 #!/bin/bash
 
-# docker-smoke-test.sh
-# Start the containerized api and run some end-to-end tests against it
-# There will be some overlap with just running a TestClient in the unit tests
-# Is there a good way to reuse code here?
-# Also note this can evolve into a generalized pipeline smoke test
+# Start the containerized repository and run ingest tests
 
 # shellcheck disable=SC2317  # Shellcheck complains that trap functions are unreachable...
 
-CONTAINER_NAME=unstructured-smoketest
+set -eux -o pipefail
+
+CONTAINER_NAME=unstructured-smoke-test
 IMAGE_NAME="${IMAGE_NAME:-unstructured:latest}"
+
+# Change to the root of the repository
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+cd "$SCRIPT_DIR"/.. || exit 1
 
 start_container() {
     echo Starting container "$CONTAINER_NAME"
