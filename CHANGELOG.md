@@ -1,4 +1,4 @@
-## 0.5.8-dev5
+## 0.5.8-dev6
 
 ### Enhancements
 
@@ -44,8 +44,6 @@
 
 ## 0.5.6
 
-* Fix problem with PDF partition (duplicated test)
-
 ### Enhancements
 
 * `contains_english_word()`, used heavily in text processing, is 10x faster.
@@ -56,6 +54,8 @@
 * Add `clean_non_ascii_chars` to remove non-ascii characters from unicode string
 
 ### Fixes
+
+* Fix problem with PDF partition (duplicated test)
 
 ## 0.5.4
 
