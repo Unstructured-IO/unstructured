@@ -18,6 +18,13 @@ start_container() {
     docker run -dt --rm --name "$CONTAINER_NAME" "$IMAGE_NAME"
 }
 
+await_container() {
+    echo Waiting for container to start
+    until [ "$(docker inspect -f '{{.State.Status}}' $CONTAINER_NAME)" == "running" ]; do
+        sleep 1
+    done
+}
+
 stop_container() {
     echo Stopping container "$CONTAINER_NAME"
     docker stop "$CONTAINER_NAME"
@@ -28,11 +35,7 @@ start_container
 # Regardless of test result, stop the container
 trap stop_container EXIT
 
-# Wait for the container to start
-echo Waiting for container to start
-until [ "$(docker inspect -f '{{.State.Status}}' $CONTAINER_NAME)" == "running" ]; do
-    sleep 1
-done
+await_container
 
 # Run the tests
 docker cp test_unstructured_ingest $CONTAINER_NAME:/home
