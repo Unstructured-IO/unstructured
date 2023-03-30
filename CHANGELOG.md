@@ -1,10 +1,11 @@
-## 0.5.8-dev5
+## 0.5.8-dev7
 
 ### Enhancements
 
 * Update `elements_to_json` to return string when filename is not specified
 * `elements_from_json` may take a string instead of a filename with the `text` kwarg
 * `detect_filetype` now does a final fallback to file extension.
+* Empty tags are now skipped during the depth check for HTML processing.
 
 ### Features
 
@@ -19,6 +20,13 @@
 * Partitioning functions that accept a `text` kwarg no longer raise an error if an empty
   string is passed (and empty list of elements is returned instead).
 * `partition_json` no longer fails if the input is an empty list.
+* Fixed bug in `chunk_by_attention_window` that caused the last word in segments to be cut-off
+  in some cases.
+
+### BREAKING CHANGES
+
+* `stage_for_transformers` now returns a list of elements, making it consistent with other
+  staging bricks
 
 ## 0.5.7
 
@@ -37,8 +45,6 @@
 
 ## 0.5.6
 
-* Fix problem with PDF partition (duplicated test)
-
 ### Enhancements
 
 * `contains_english_word()`, used heavily in text processing, is 10x faster.
@@ -49,6 +55,8 @@
 * Add `clean_non_ascii_chars` to remove non-ascii characters from unicode string
 
 ### Fixes
+
+* Fix problem with PDF partition (duplicated test)
 
 ## 0.5.4
 
