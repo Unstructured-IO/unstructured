@@ -1,4 +1,4 @@
-## 0.5.8-dev6
+## 0.5.8
 
 ### Enhancements
 
@@ -16,6 +16,7 @@
 ### Fixes
 
 * `convert_file_to_text` now passes through the `source_format` and `target_format` kwargs.
+  Previously they were hard coded.
 * Partitioning functions that accept a `text` kwarg no longer raise an error if an empty
   string is passed (and empty list of elements is returned instead).
 * `partition_json` no longer fails if the input is an empty list.
