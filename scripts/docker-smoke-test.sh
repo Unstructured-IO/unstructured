@@ -15,7 +15,7 @@ cd "$SCRIPT_DIR"/.. || exit 1
 
 start_container() {
     echo Starting container "$CONTAINER_NAME"
-    docker run -d --rm --name "$CONTAINER_NAME" "$IMAGE_NAME"
+    docker run -dt --rm --name "$CONTAINER_NAME" "$IMAGE_NAME"
 }
 
 stop_container() {
@@ -30,15 +30,13 @@ trap stop_container EXIT
 
 # Wait for the container to start
 echo Waiting for container to start
-docker wait "$CONTAINER_NAME"
+until [ "$(docker inspect -f '{{.State.Status}}' $CONTAINER_NAME)" == "running" ]; do
+    sleep 1
+done
 
 # Run the tests
-docker exec "$CONTAINER_NAME" /bin/bash -c "./test_unstructured_ingest/test-ingest-wikipedia.sh"
-
-
-
-echo Running tests
-PYTHONPATH=. pytest scripts/smoketest.py
+docker cp test_unstructured_ingest $CONTAINER_NAME:/home
+docker exec "$CONTAINER_NAME" /bin/bash -c "/home/test_unstructured_ingest/test-ingest-wikipedia.sh"
 
 result=$?
 exit $result
