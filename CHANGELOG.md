@@ -19,6 +19,9 @@
 * Partitioning functions that accept a `text` kwarg no longer raise an error if an empty
   string is passed (and empty list of elements is returned instead).
 * `partition_json` no longer fails if the input is an empty list.
+
+### BREAKING CHANGES
+
 * `stage_for_transformers` now returns a list of elements, making it consistent with other
   staging bricks
 
