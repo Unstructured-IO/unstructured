@@ -72,6 +72,13 @@ RUN python3.8 -m pip install pip==${PIP_VERSION} && \
   pip install --no-cache -r requirements/test.txt && \
   pip install --no-cache -r requirements/huggingface.txt && \
   pip install --no-cache -r requirements/dev.txt && \
+  pip install --no-cache -r requirements/ingest-azure.txt && \
+  pip install --no-cache -r requirements/ingest-github.txt && \
+  pip install --no-cache -r requirements/ingest-gitlab.txt && \
+  pip install --no-cache -r requirements/ingest-google-drive.txt && \
+  pip install --no-cache -r requirements/ingest-reddit.txt && \
+  pip install --no-cache -r requirements/ingest-s3.txt && \
+  pip install --no-cache -r requirements/ingest-wikipedia.txt && \
   pip install --no-cache -r requirements/local-inference.txt && \
   pip install --no-cache "detectron2@git+https://github.com/facebookresearch/detectron2.git@v0.6***REMOVED***egg=detectron2"
 
