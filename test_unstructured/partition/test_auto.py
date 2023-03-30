@@ -28,6 +28,8 @@ EXPECTED_EMAIL_OUTPUT = [
     ListItem(text="Violets are blue"),
 ]
 
+is_in_docker = os.path.exists("/.dockerenv")
+
 
 def test_auto_partition_email_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
