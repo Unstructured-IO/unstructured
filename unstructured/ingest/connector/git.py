@@ -53,7 +53,7 @@ class GitIngestDoc(BaseIngestDoc):
 
     def cleanup_file(self):
         """Removes the local copy of the file (or anything else) after successful processing."""
-        if not self.config.preserve_downloads:
+        if not self.config.preserve_downloads and not self.config.download_only:
             logger.debug(f"Cleaning up {self}")
             os.unlink(self.filename)
 
@@ -90,7 +90,7 @@ class GitConnector(BaseConnector):
     config: SimpleGitConfig
 
     def __post_init__(self) -> None:
-        self.cleanup_files = not self.config.preserve_downloads
+        self.cleanup_files = not self.config.preserve_downloads and not self.config.download_only
 
     def cleanup(self, cur_dir=None):
         if not self.cleanup_files:

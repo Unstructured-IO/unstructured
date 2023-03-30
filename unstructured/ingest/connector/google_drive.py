@@ -107,7 +107,11 @@ class GoogleDriveIngestDoc(BaseIngestDoc):
         return Path(f"{self.file_meta.get('output_filepath')}.json").resolve()
 
     def cleanup_file(self):
-        if not self.config.preserve_downloads and self.filename.is_file():
+        if (
+            not self.config.preserve_downloads
+            and self.filename.is_file()
+            and not self.config.download_only
+        ):
             logger.debug(f"Cleaning up {self}")
             Path.unlink(self.filename)
 
@@ -188,7 +192,7 @@ class GoogleDriveConnector(BaseConnector):
 
     def __init__(self, config):
         self.config = config
-        self.cleanup_files = not self.config.preserve_downloads
+        self.cleanup_files = not self.config.preserve_downloads and not self.config.download_only
 
     def _list_objects(self, drive_id, recursive=False):
         files = []

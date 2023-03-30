@@ -54,7 +54,7 @@ class WikipediaIngestDoc(BaseIngestDoc):
 
     def cleanup_file(self):
         """Removes the local copy of the file (or anything else) after successful processing."""
-        if not self.config.preserve_downloads:
+        if not self.config.preserve_downloads and not self.config.download_only:
             logger.debug(f"Cleaning up {self}")
             os.unlink(self.filename)
 
@@ -135,7 +135,7 @@ class WikipediaIngestSummaryDoc(WikipediaIngestDoc):
 class WikipediaConnector(BaseConnector):
     def __init__(self, config: SimpleWikipediaConfig):
         self.config = config
-        self.cleanup_files = not config.preserve_downloads
+        self.cleanup_files = not config.preserve_downloads and not config.download_only
 
     def cleanup(self, cur_dir=None):
         if not self.cleanup_files:

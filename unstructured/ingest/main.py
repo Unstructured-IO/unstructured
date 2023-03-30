@@ -45,7 +45,6 @@ class MainProcess:
         reprocess,
         verbose,
         max_docs,
-        download_only,
     ):
         # initialize the reader and writer
         self.doc_connector = doc_connector
@@ -54,7 +53,6 @@ class MainProcess:
         self.reprocess = reprocess
         self.verbose = verbose
         self.max_docs = max_docs
-        self.download_only = download_only
 
     def initialize(self):
         """Slower initialization things: check connections, load things into memory, etc."""
@@ -63,8 +61,7 @@ class MainProcess:
         initialize()
 
     def cleanup(self):
-        if not self.download_only:
-            self.doc_connector.cleanup()
+        self.doc_connector.cleanup()
 
     def _filter_docs_with_outputs(self, docs):
         num_docs_all = len(docs)
