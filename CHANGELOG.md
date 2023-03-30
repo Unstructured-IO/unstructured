@@ -1,4 +1,4 @@
-## 0.5.8-dev4
+## 0.5.8-dev5
 
 ### Enhancements
 
@@ -9,6 +9,7 @@
 ### Features
 
 * Added `--download-only` parameter to `unstructured-ingest`
+* Add local file system to `unstructured-ingest`
 * Add `--max-docs` parameter to `unstructured-ingest`
 * Added `partition_msg` for processing MSFT Outlook .msg files.
 
