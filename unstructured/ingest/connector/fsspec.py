@@ -3,7 +3,7 @@ import os
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Type
+from typing import Optional, Type
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -29,6 +29,10 @@ class SimpleFsspecConfig(BaseConnectorConfig):
     output_dir: str
     preserve_downloads: bool = False
     re_download: bool = False
+    metadata_include: Optional[str] = None
+    metadata_exclude: Optional[str] = None
+    fields_include: str = "element_id,text,type,metadata"
+    flatten_metadata: bool = False
 
     # fsspec specific options
     access_kwargs: dict = field(default_factory=dict)

@@ -83,20 +83,42 @@ print("\n\n".join([str(el) for el in elements]))
 
 ## :dizzy: Instructions for using the docker image
 
-The following instructions are intended to help you get up and running using docker to interact with `unstructured`.
+The following instructions are intended to help you get up and running using Docker to interact with `unstructured`.
+See [here](https://docs.docker.com/get-docker/) if you don't already have docker installed on your machine.
+
+NOTE: the image is only supported for x86_64 hardware and known to have issues on Apple silicon.
+
+We build Docker images for all pushes to `main`. We tag each image with the corresponding short commit hash (e.g. `fbc7a69`) and the application version (e.g. `0.5.5-dev1`). We also tag the most recent image with `latest`. To leverage this, `docker pull` from our image repository.
+
+```bash
+docker pull quay.io/unstructured-io/unstructured:latest
+```
+
+Once pulled, you can create a container from this image and shell to it.
+
+```bash
+# create the container
+docker run --platform linux/amd64 -d -t --name unstructured quay.io/unstructured-io/unstructured:latest
+
+# this will drop you into a bash shell where the Docker image is running
+docker exec -it unstructured bash
+```
+
+You can also build your own Docker image.
 
 If you only plan on parsing one type of data you can speed up building the image by commenting out some
 of the packages/requirements necessary for other data types. See Dockerfile to know which lines are necessary
 for your use case.
 
-See [here](https://docs.docker.com/get-docker/) if you don't already have docker installed on your machine.
-
 ```bash
 make docker-build
 
-# this will drop you into a bash shell where the docker image is running
+# this will drop you into a bash shell where the Docker image is running
 make docker-start-bash
+```
 
+Once in the running container, you can try things out directly in Python interpreter's interactive mode.
+```bash
 # this will drop you into a python console so you can run the below partition functions
 python3
 
@@ -145,7 +167,7 @@ you can also uninstall the hooks with `pre-commit uninstall`.
 You can run this [Colab notebook](https://colab.research.google.com/drive/1U8VCjY2-x8c6y5TYMbSFtQGlQVFHCVIW) to run the examples below.
 
 The following examples show how to get started with the `unstructured` library.
-You can parse **TXT**, **HTML**, **PDF**, **EML**, **EPUB**, **DOC**, **DOCX**, **PPT**, **PPTX**, **JPG**,
+You can parse **TXT**, **HTML**, **PDF**, **EML**, **MSG**, **EPUB**, **DOC**, **DOCX**, **PPT**, **PPTX**, **JPG**,
 and **PNG** documents with one line of code!
 <br></br>
 See our [documentation page](https://unstructured-io.github.io/unstructured) for a full description
@@ -160,7 +182,7 @@ If you are using the `partition` brick, you may need to install additional param
 instructions outlined [here](https://unstructured-io.github.io/unstructured/installing.html#filetype-detection)
 `partition` will always apply the default arguments. If you need
 advanced features, use a document-specific brick. The `partition` brick currently works for
-`.txt`, `.doc`, `.docx`, `.ppt`, `.pptx`, `.jpg`, `.png`, `.eml`, `.html`, and `.pdf` documents.
+`.txt`, `.doc`, `.docx`, `.ppt`, `.pptx`, `.jpg`, `.png`, `.eml`, `.msg`, `.html`, and `.pdf` documents.
 
 ```python
 from unstructured.partition.auto import partition

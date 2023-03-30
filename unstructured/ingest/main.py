@@ -22,6 +22,7 @@ from unstructured.ingest.connector.google_drive import (
     GoogleDriveConnector,
     SimpleGoogleDriveConfig,
 )
+from unstructured.ingest.connector.local import LocalConnector, SimpleLocalConfig
 from unstructured.ingest.connector.reddit import RedditConnector, SimpleRedditConfig
 from unstructured.ingest.connector.s3 import S3Connector, SimpleS3Config
 from unstructured.ingest.connector.wikipedia import (
@@ -43,6 +44,7 @@ class MainProcess:
         num_processes,
         reprocess,
         verbose,
+        max_docs,
     ):
         # initialize the reader and writer
         self.doc_connector = doc_connector
@@ -50,6 +52,7 @@ class MainProcess:
         self.num_processes = num_processes
         self.reprocess = reprocess
         self.verbose = verbose
+        self.max_docs = max_docs
 
     def initialize(self):
         """Slower initialization things: check connections, load things into memory, etc."""
@@ -63,6 +66,10 @@ class MainProcess:
     def _filter_docs_with_outputs(self, docs):
         num_docs_all = len(docs)
         docs = [doc for doc in docs if not doc.has_output()]
+        if self.max_docs is not None:
+            if num_docs_all > self.max_docs:
+                num_docs_all = self.max_docs
+            docs = docs[: self.max_docs]
         num_docs_to_process = len(docs)
         if num_docs_to_process == 0:
             logger.info(
@@ -103,6 +110,57 @@ class MainProcess:
 
 
 @click.command()
+@click.option(
+    "--max-docs",
+    default=None,
+    type=int,
+    help="If specified, process at most specified number of documents.",
+)
+@click.option(
+    "--flatten-metadata",
+    is_flag=True,
+    default=False,
+    help="Results in flattened json elements. "
+    "Specifically, the metadata key values are brought to the top-level of the element, "
+    "and the `metadata` key itself is removed.",
+)
+@click.option(
+    "--fields-include",
+    default="element_id,text,type,metadata",
+    help="If set, include the specified top-level fields in an element. "
+    "Default is `element_id,text,type,metadata`.",
+)
+@click.option(
+    "--metadata-include",
+    default=None,
+    help="If set, include the specified metadata fields if they exist and drop all other fields. "
+    "Usage: provide a single string with comma separated values. "
+    "Example: --metadata-include filename,page_number ",
+)
+@click.option(
+    "--metadata-exclude",
+    default=None,
+    help="If set, drop the specified metadata fields if they exist. "
+    "Usage: provide a single string with comma separated values. "
+    "Example: --metadata-exclude filename,page_number ",
+)
+@click.option(
+    "--local-input-path",
+    default=None,
+    help="Path to the location in the local file system that will be processed.",
+)
+@click.option(
+    "--local-recursive",
+    is_flag=True,
+    default=False,
+    help="Support recursive local file processing.",
+)
+@click.option(
+    "--local-file-glob",
+    default=None,
+    help="A comma-separated list of file globs to limit which types of local files are accepted,"
+    " e.g. '*.html,*.txt'",
+)
 @click.option(
     "--remote-url",
     default=None,
@@ -322,12 +380,36 @@ def main(
     reprocess,
     num_processes,
     verbose,
+    metadata_include,
+    metadata_exclude,
+    fields_include,
+    flatten_metadata,
+    max_docs,
+    local_input_path,
+    local_recursive,
+    local_file_glob,
 ):
+    if flatten_metadata and "metadata" not in fields_include:
+        logger.warning(
+            "`--flatten-metadata` is specified, but there is no metadata to flatten, "
+            "since `metadata` is not specified in `--fields-include`.",
+        )
+    if "metadata" not in fields_include and (metadata_include or metadata_exclude):
+        logger.warning(
+            "Either `--metadata-include` or `--metadata-exclude` is specified"
+            " while metadata is not specified in --fields-include.",
+        )
+    if metadata_exclude is not None and metadata_include is not None:
+        logger.error(
+            "Arguments `--metadata-include` and `--metadata-exclude` are "
+            "mutually exclusive with each other.",
+        )
+        sys.exit(1)
     if not preserve_downloads and download_dir:
         logger.warning(
             "Not preserving downloaded files but --download_dir is specified",
         )
-    if not download_dir:
+    if local_input_path is None and not download_dir:
         cache_path = Path.home() / ".cache" / "unstructured" / "ingest"
         if not cache_path.exists():
             cache_path.mkdir(parents=True, exist_ok=True)
@@ -391,6 +473,10 @@ def main(
                     output_dir=structured_output_dir,
                     re_download=re_download,
                     preserve_downloads=preserve_downloads,
+                    metadata_include=metadata_include,
+                    metadata_exclude=metadata_exclude,
+                    fields_include=fields_include,
+                    flatten_metadata=flatten_metadata,
                 ),
             )
         elif protocol in ("abfs", "az"):
@@ -411,6 +497,10 @@ def main(
                     output_dir=structured_output_dir,
                     re_download=re_download,
                     preserve_downloads=preserve_downloads,
+                    metadata_include=metadata_include,
+                    metadata_exclude=metadata_exclude,
+                    fields_include=fields_include,
+                    flatten_metadata=flatten_metadata,
                 ),
             )
         else:
@@ -427,6 +517,10 @@ def main(
                     output_dir=structured_output_dir,
                     re_download=re_download,
                     preserve_downloads=preserve_downloads,
+                    metadata_include=metadata_include,
+                    metadata_exclude=metadata_exclude,
+                    fields_include=fields_include,
+                    flatten_metadata=flatten_metadata,
                 ),
             )
     elif github_url:
@@ -441,6 +535,10 @@ def main(
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
                 re_download=re_download,
+                metadata_include=metadata_include,
+                metadata_exclude=metadata_exclude,
+                fields_include=fields_include,
+                flatten_metadata=flatten_metadata,
             ),
         )
     elif gitlab_url:
@@ -455,6 +553,10 @@ def main(
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
                 re_download=re_download,
+                metadata_include=metadata_include,
+                metadata_exclude=metadata_exclude,
+                fields_include=fields_include,
+                flatten_metadata=flatten_metadata,
             ),
         )
     elif subreddit_name:
@@ -471,6 +573,10 @@ def main(
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
                 re_download=re_download,
+                metadata_include=metadata_include,
+                metadata_exclude=metadata_exclude,
+                fields_include=fields_include,
+                flatten_metadata=flatten_metadata,
             ),
         )
     elif wikipedia_page_title:
@@ -483,6 +589,10 @@ def main(
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
                 re_download=re_download,
+                metadata_include=metadata_include,
+                metadata_exclude=metadata_exclude,
+                fields_include=fields_include,
+                flatten_metadata=flatten_metadata,
             ),
         )
     elif drive_id:
@@ -497,6 +607,10 @@ def main(
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
                 re_download=re_download,
+                metadata_include=metadata_include,
+                metadata_exclude=metadata_exclude,
+                fields_include=fields_include,
+                flatten_metadata=flatten_metadata,
             ),
         )
     elif biomed_path or biomed_api_id or biomed_api_from or biomed_api_until:
@@ -511,6 +625,23 @@ def main(
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
                 re_download=re_download,
+                metadata_include=metadata_include,
+                metadata_exclude=metadata_exclude,
+                fields_include=fields_include,
+                flatten_metadata=flatten_metadata,
+            ),
+        )
+    elif local_input_path:
+        doc_connector = LocalConnector(  # type: ignore
+            config=SimpleLocalConfig(
+                input_path=local_input_path,
+                recursive=local_recursive,
+                file_glob=local_file_glob,
+                # defaults params:
+                output_dir=structured_output_dir,
+                metadata_include=metadata_include,
+                metadata_exclude=metadata_exclude,
+                fields_include=fields_include,
             ),
         )
     # Check for other connector-specific options here and define the doc_connector object
@@ -526,6 +657,7 @@ def main(
         num_processes=num_processes,
         reprocess=reprocess,
         verbose=verbose,
+        max_docs=max_docs,
     ).run()
 
 

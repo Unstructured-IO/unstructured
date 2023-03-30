@@ -4,7 +4,7 @@ import os
 from dataclasses import dataclass
 from mimetypes import guess_extension
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Optional
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.file_utils.google_filetype import GOOGLE_DRIVE_EXPORT_TYPES
@@ -77,6 +77,10 @@ class SimpleGoogleDriveConfig(BaseConnectorConfig):
     output_dir: str
     re_download: bool = False
     preserve_downloads: bool = False
+    metadata_include: Optional[str] = None
+    metadata_exclude: Optional[str] = None
+    fields_include: str = "element_id,text,type,metadata"
+    flatten_metadata: bool = False
 
     recursive: bool = False
 
@@ -84,9 +88,8 @@ class SimpleGoogleDriveConfig(BaseConnectorConfig):
         if self.extension and self.extension not in EXT_TO_FILETYPE.keys():
             raise ValueError(
                 f"Extension not supported. "
-                f"Value MUST be one of {', '.join(EXT_TO_FILETYPE.keys())}.",
+                f"Value MUST be one of {', '.join([k for k in EXT_TO_FILETYPE if k is not None])}.",
             )
-
         self.service = create_service_account_object(self.service_account_key, self.drive_id)
 
 

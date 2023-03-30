@@ -105,13 +105,27 @@ def test_auto_partition_docx_with_file(mock_docx_document, expected_docx_element
     assert elements == expected_docx_elements
 
 
-def test_auto_partition_doc_with_filename(mock_docx_document, expected_docx_elements, tmpdir):
+@pytest.mark.parametrize(
+    ("pass_file_filename", "content_type"),
+    [(False, None), (False, "application/msword"), (True, "application/msword"), (True, None)],
+)
+def test_auto_partition_doc_with_filename(
+    mock_docx_document,
+    expected_docx_elements,
+    tmpdir,
+    pass_file_filename,
+    content_type,
+):
     docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
     mock_docx_document.save(docx_filename)
     convert_office_doc(docx_filename, tmpdir.dirname, "doc")
-
-    elements = partition(filename=doc_filename)
+    file_filename = doc_filename if pass_file_filename else None
+    elements = partition(
+        filename=doc_filename,
+        file_filename=file_filename,
+        content_type=content_type,
+    )
     assert elements == expected_docx_elements
     assert elements[0].metadata.filename == doc_filename
 
@@ -130,17 +144,27 @@ def test_auto_partition_doc_with_file(mock_docx_document, expected_docx_elements
     assert elements == expected_docx_elements
 
 
-def test_auto_partition_html_from_filename():
+@pytest.mark.parametrize(
+    ("pass_file_filename", "content_type"),
+    [(False, None), (False, "text/html"), (True, "text/html"), (True, None)],
+)
+def test_auto_partition_html_from_filename(pass_file_filename, content_type):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "example-10k.html")
-    elements = partition(filename=filename)
+    file_filename = filename if pass_file_filename else None
+    elements = partition(filename=filename, file_filename=file_filename, content_type=content_type)
     assert len(elements) > 0
     assert elements[0].metadata.filename == filename
 
 
-def test_auto_partition_html_from_file():
+@pytest.mark.parametrize(
+    ("pass_file_filename", "content_type"),
+    [(False, None), (False, "text/html"), (True, "text/html"), (True, None)],
+)
+def test_auto_partition_html_from_file(pass_file_filename, content_type):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-html.html")
+    file_filename = filename if pass_file_filename else None
     with open(filename) as f:
-        elements = partition(file=f)
+        elements = partition(file=f, file_filename=file_filename, content_type=content_type)
     assert len(elements) > 0
 
 
@@ -177,9 +201,15 @@ def test_auto_partition_text_from_file():
     assert elements == EXPECTED_TEXT_OUTPUT
 
 
-def test_auto_partition_pdf_from_filename():
+@pytest.mark.parametrize(
+    ("pass_file_filename", "content_type"),
+    [(False, None), (False, "application/pdf"), (True, "application/pdf"), (True, None)],
+)
+def test_auto_partition_pdf_from_filename(pass_file_filename, content_type):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
-    elements = partition(filename=filename)
+    file_filename = filename if pass_file_filename else None
+
+    elements = partition(filename=filename, file_filename=file_filename, content_type=content_type)
 
     assert isinstance(elements[0], Title)
     assert elements[0].text.startswith("LayoutParser")
@@ -207,10 +237,16 @@ def test_auto_partition_pdf_with_fast_strategy():
     )
 
 
-def test_auto_partition_pdf_from_file():
+@pytest.mark.parametrize(
+    ("pass_file_filename", "content_type"),
+    [(False, None), (False, "application/pdf"), (True, "application/pdf"), (True, None)],
+)
+def test_auto_partition_pdf_from_file(pass_file_filename, content_type):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
+    file_filename = filename if pass_file_filename else None
+
     with open(filename, "rb") as f:
-        elements = partition(file=f)
+        elements = partition(file=f, file_filename=file_filename, content_type=content_type)
 
     assert isinstance(elements[0], Title)
     assert elements[0].text.startswith("LayoutParser")
@@ -230,16 +266,26 @@ def test_partition_pdf_doesnt_raise_warning():
         partition(filename=filename)
 
 
-def test_auto_partition_jpg():
+@pytest.mark.parametrize(
+    ("pass_file_filename", "content_type"),
+    [(False, None), (False, "image/jpeg"), (True, "image/jpeg"), (True, None)],
+)
+def test_auto_partition_jpg(pass_file_filename, content_type):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "example.jpg")
-    elements = partition(filename=filename)
+    file_filename = filename if pass_file_filename else None
+    elements = partition(filename=filename, file_filename=file_filename, content_type=content_type)
     assert len(elements) > 0
 
 
-def test_auto_partition_jpg_from_file():
+@pytest.mark.parametrize(
+    ("pass_file_filename", "content_type"),
+    [(False, None), (False, "image/jpeg"), (True, "image/jpeg"), (True, None)],
+)
+def test_auto_partition_jpg_from_file(pass_file_filename, content_type):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "example.jpg")
+    file_filename = filename if pass_file_filename else None
     with open(filename, "rb") as f:
-        elements = partition(file=f)
+        elements = partition(file=f, file_filename=file_filename, content_type=content_type)
     assert len(elements) > 0
 
 
@@ -266,6 +312,7 @@ def test_auto_partition_pptx_from_filename():
     assert elements[0].metadata.filename == filename
 
 
+@pytest.mark.xfail(reason="Requirements mismatch, should only fail in docker test")
 def test_auto_partition_ppt_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.ppt")
     elements = partition(filename=filename)
@@ -279,6 +326,7 @@ def test_auto_with_page_breaks():
     assert PageBreak() in elements
 
 
+@pytest.mark.xfail(reason="Requirements mismatch, should only fail in docker test")
 def test_auto_partition_epub_from_filename():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "winter-sports.epub")
     elements = partition(filename=filename)
@@ -286,9 +334,24 @@ def test_auto_partition_epub_from_filename():
     assert elements[0].text.startswith("The Project Gutenberg eBook of Winter Sports")
 
 
+@pytest.mark.xfail(reason="Requirements mismatch, should only fail in docker test")
 def test_auto_partition_epub_from_file():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "winter-sports.epub")
     with open(filename, "rb") as f:
         elements = partition(file=f)
     assert len(elements) > 0
     assert elements[0].text.startswith("The Project Gutenberg eBook of Winter Sports")
+
+
+EXPECTED_MSG_OUTPUT = [
+    NarrativeText(text="This is a test email to use for unit tests."),
+    Title(text="Important points:"),
+    ListItem(text="Roses are red"),
+    ListItem(text="Violets are blue"),
+]
+
+
+def test_auto_partition_msg_from_filename():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
+    elements = partition(filename=filename)
+    assert elements == EXPECTED_MSG_OUTPUT

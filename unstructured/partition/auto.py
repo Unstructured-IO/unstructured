@@ -9,6 +9,7 @@ from unstructured.partition.html import partition_html
 from unstructured.partition.image import partition_image
 from unstructured.partition.json import partition_json
 from unstructured.partition.md import partition_md
+from unstructured.partition.msg import partition_msg
 from unstructured.partition.pdf import partition_pdf
 from unstructured.partition.ppt import partition_ppt
 from unstructured.partition.pptx import partition_pptx
@@ -17,7 +18,9 @@ from unstructured.partition.text import partition_text
 
 def partition(
     filename: Optional[str] = None,
+    content_type: Optional[str] = None,
     file: Optional[IO] = None,
+    file_filename: Optional[str] = None,
     include_page_breaks: bool = False,
     strategy: str = "hi_res",
     encoding: str = "utf-8",
@@ -31,8 +34,12 @@ def partition(
     ----------
      filename
         A string defining the target filename path.
+    content_type
+        A string defining the file content in MIME type
     file
         A file-like object using "rb" mode --> open(filename, "rb").
+    file_filename
+        When file is not None, the filename (string) to store in element metadata. E.g. "foo.txt"
     include_page_breaks
         If True, the output will include page breaks if the filetype supports it
     strategy
@@ -42,7 +49,12 @@ def partition(
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
     """
-    filetype = detect_filetype(filename=filename, file=file)
+    filetype = detect_filetype(
+        filename=filename,
+        file=file,
+        file_filename=file_filename,
+        content_type=content_type,
+    )
 
     if file is not None:
         file.seek(0)
@@ -53,6 +65,8 @@ def partition(
         return partition_docx(filename=filename, file=file)
     elif filetype == FileType.EML:
         return partition_email(filename=filename, file=file, encoding=encoding)
+    elif filetype == FileType.MSG:
+        return partition_msg(filename=filename, file=file)
     elif filetype == FileType.HTML:
         return partition_html(
             filename=filename,

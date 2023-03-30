@@ -16,7 +16,10 @@ test_files = [
     "fake-html.html",
     "fake.doc",
     "fake-email.eml",
-    "fake-power-point.ppt",
+    pytest.param(
+        "fake-power-point.ppt",
+        marks=pytest.mark.xfail(reason="Requirements mismatch, should only fail in docker test"),
+    ),
     "fake.docx",
     "fake-power-point.pptx",
 ]
@@ -82,6 +85,14 @@ def test_partition_json_from_text(filename: str):
 def test_partition_json_raises_with_none_specified():
     with pytest.raises(ValueError):
         partition_json()
+
+
+def test_partition_json_works_with_empty_string():
+    assert partition_json(text="") == []
+
+
+def test_partition_json_works_with_empty_list():
+    assert partition_json(text="[]") == []
 
 
 def test_partition_json_raises_with_too_many_specified():
