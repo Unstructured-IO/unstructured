@@ -1,4 +1,4 @@
-## 0.5.8-dev6
+## 0.5.8
 
 ### Enhancements
 
