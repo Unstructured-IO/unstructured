@@ -1,19 +1,32 @@
+from copy import deepcopy
 from typing import Callable, List, Optional
 
 from transformers import PreTrainedTokenizer
 
-from unstructured.documents.elements import Text
+from unstructured.documents.elements import Element, NarrativeText, Text
 
 
 def stage_for_transformers(
     elements: List[Text],
     tokenizer: PreTrainedTokenizer,
     **chunk_kwargs,
-) -> List[str]:
+) -> List[Element]:
     """Stages text elements for transformers pipelines by chunking them into sections that can
     fit into the attention window for the model associated with the tokenizer."""
-    combined_text = "\n\n".join([str(element) for element in elements])
-    return chunk_by_attention_window(combined_text, tokenizer, **chunk_kwargs)
+    chunked_elements: List[Element] = []
+    for element in elements:
+        # NOTE(robinson) - Only chunk potentially lengthy text. Shorter text (like titles)
+        # should already fit into the attention window just fine.
+        if isinstance(element, (NarrativeText, Text)):
+            chunked_text = chunk_by_attention_window(element.text, tokenizer, **chunk_kwargs)
+            for chunk in chunked_text:
+                _chunk_element = deepcopy(element)
+                _chunk_element.text = chunk
+                chunked_elements.append(_chunk_element)
+        else:
+            chunked_elements.append(element)
+
+    return chunked_elements
 
 
 def chunk_by_attention_window(
