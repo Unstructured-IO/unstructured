@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: Set Short SHA
         id: set_short_sha
-        run: echo "::set-output name=short_sha::$(echo ${{ github.sha }} | cut -c1-7)"
+        run: echo "short_sha=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
 
   build-amd:
     runs-on: ubuntu-latest
