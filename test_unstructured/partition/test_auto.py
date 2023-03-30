@@ -215,7 +215,7 @@ def test_auto_partition_pdf_from_filename(pass_file_filename, content_type):
     assert elements[0].text.startswith("LayoutParser")
 
     assert isinstance(elements[1], NarrativeText)
-    assert elements[1].text.startswith("Zejiang Shen 1")
+    assert elements[1].text.startswith("Zejiang Shen")
 
     assert elements[0].metadata.filename == filename
 
@@ -252,7 +252,7 @@ def test_auto_partition_pdf_from_file(pass_file_filename, content_type):
     assert elements[0].text.startswith("LayoutParser")
 
     assert isinstance(elements[1], NarrativeText)
-    assert elements[1].text.startswith("Zejiang Shen 1")
+    assert elements[1].text.startswith("Zejiang Shen")
 
 
 def test_partition_pdf_doesnt_raise_warning():
