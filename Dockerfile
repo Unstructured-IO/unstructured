@@ -67,13 +67,13 @@ ENV PATH="/home/usr/.local/bin:${PATH}"
 # Copy and install Unstructured
 COPY requirements requirements
 
-RUN python3.8 -m pip install pip==${PIP_VERSION} && \
+RUN /usr/bin/scl enable devtoolset-9 'python3.8 -m pip install pip==${PIP_VERSION} && \
   pip install --no-cache -r requirements/base.txt && \
   pip install --no-cache -r requirements/test.txt && \
   pip install --no-cache -r requirements/huggingface.txt && \
   pip install --no-cache -r requirements/dev.txt && \
   pip install --no-cache -r requirements/local-inference.txt && \
-  pip install --no-cache "detectron2@git+https://github.com/facebookresearch/detectron2.git@v0.6#egg=detectron2"
+  pip install --no-cache "detectron2@git+https://github.com/facebookresearch/detectron2.git@v0.6#egg=detectron2"'
 
 COPY example-docs example-docs
 COPY unstructured unstructured
