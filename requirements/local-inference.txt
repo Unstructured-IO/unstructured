@@ -168,8 +168,10 @@ pillow==9.4.0
     #   unstructured (setup.py)
 portalocker==2.7.0
     # via iopath
-protobuf==4.22.1
-    # via onnxruntime
+protobuf==3.20.3
+    # via
+    #   onnxruntime
+    #   unstructured (setup.py)
 pycocotools==2.0.6
     # via effdet
 pycparser==2.21

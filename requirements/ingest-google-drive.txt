@@ -137,10 +137,11 @@ pillow==9.4.0
     #   -r requirements/base.txt
     #   python-pptx
     #   unstructured (setup.py)
-protobuf==4.22.1
+protobuf==3.20.3
     # via
     #   google-api-core
     #   googleapis-common-protos
+    #   unstructured (setup.py)
 pyasn1==0.4.8
     # via
     #   pyasn1-modules
