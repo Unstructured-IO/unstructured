@@ -203,3 +203,7 @@ docker-test:
 	-v ${CURRENT_DIR}/test_unstructured:/home/test_unstructured \
 	$(DOCKER_IMAGE) \
 	bash -c "pytest $(if $(TEST_NAME),-k $(TEST_NAME),) test_unstructured"
+
+.PHONY: docker-smoke-test
+docker-smoke-test:
+	./scripts/docker-smoke-test.sh
