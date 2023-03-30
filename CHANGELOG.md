@@ -1,10 +1,11 @@
-***REMOVED******REMOVED*** 0.5.8-dev4
+***REMOVED******REMOVED*** 0.5.8-dev5
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
 
 * Update `elements_to_json` to return string when filename is not specified
 * `elements_from_json` may take a string instead of a filename with the `text` kwarg
 * `detect_filetype` now does a final fallback to file extension.
+* Empty tags are now skipped during the depth check for HTML processing.
 
 ***REMOVED******REMOVED******REMOVED*** Features
 
@@ -18,6 +19,13 @@
 * Partitioning functions that accept a `text` kwarg no longer raise an error if an empty
   string is passed (and empty list of elements is returned instead).
 * `partition_json` no longer fails if the input is an empty list.
+* Fixed bug in `chunk_by_attention_window` that caused the last word in segments to be cut-off
+  in some cases.
+
+***REMOVED******REMOVED******REMOVED*** BREAKING CHANGES
+
+* `stage_for_transformers` now returns a list of elements, making it consistent with other
+  staging bricks
 
 ***REMOVED******REMOVED*** 0.5.7
 

@@ -1,6 +1,6 @@
 import pytest
 
-from unstructured.documents.elements import Text
+from unstructured.documents.elements import Text, Title
 from unstructured.staging import huggingface
 
 
@@ -12,14 +12,23 @@ class MockTokenizer:
 
 
 def test_stage_for_transformers():
-    elements = [Text(text="hello " * 20), Text(text="there " * 20)]
+    title_element = (Title(text="Here is a wonderful story"),)
+    elements = [title_element, Text(text="hello " * 20 + "there " * 20)]
+
     tokenizer = MockTokenizer()
 
-    chunks = huggingface.stage_for_transformers(elements, tokenizer, buffer=10)
+    chunk_elements = huggingface.stage_for_transformers(elements, tokenizer, buffer=10)
 
-    hello_chunk = ("hello " * 10).strip()
-    there_chunk = ("there " * 10).strip()
-    assert chunks == [hello_chunk, hello_chunk, "\n\n" + there_chunk, there_chunk]
+    hello_chunk = Text(("hello " * 10).strip())
+    there_chunk = Text(("there " * 10).strip())
+
+    assert chunk_elements == [
+        title_element,
+        hello_chunk,
+        hello_chunk,
+        there_chunk,
+        there_chunk,
+    ]
 
 
 def test_chunk_by_attention_window():

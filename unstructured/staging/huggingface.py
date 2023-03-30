@@ -1,19 +1,32 @@
+from copy import deepcopy
 from typing import Callable, List, Optional
 
 from transformers import PreTrainedTokenizer
 
-from unstructured.documents.elements import Text
+from unstructured.documents.elements import Element, NarrativeText, Text
 
 
 def stage_for_transformers(
     elements: List[Text],
     tokenizer: PreTrainedTokenizer,
     **chunk_kwargs,
-) -> List[str]:
+) -> List[Element]:
     """Stages text elements for transformers pipelines by chunking them into sections that can
     fit into the attention window for the model associated with the tokenizer."""
-    combined_text = "\n\n".join([str(element) for element in elements])
-    return chunk_by_attention_window(combined_text, tokenizer, **chunk_kwargs)
+    chunked_elements: List[Element] = []
+    for element in elements:
+        ***REMOVED*** NOTE(robinson) - Only chunk potentially lengthy text. Shorter text (like titles)
+        ***REMOVED*** should already fit into the attention window just fine.
+        if isinstance(element, (NarrativeText, Text)):
+            chunked_text = chunk_by_attention_window(element.text, tokenizer, **chunk_kwargs)
+            for chunk in chunked_text:
+                _chunk_element = deepcopy(element)
+                _chunk_element.text = chunk
+                chunked_elements.append(_chunk_element)
+        else:
+            chunked_elements.append(element)
+
+    return chunked_elements
 
 
 def chunk_by_attention_window(
@@ -68,8 +81,8 @@ def chunk_by_attention_window(
                 f"error is: \n\n{segment}",
             )
 
-        if chunk_size + num_tokens > max_chunk_size or i == (num_splits - 1):
-            chunks.append(chunk_text)
+        if chunk_size + num_tokens > max_chunk_size:
+            chunks.append(chunk_text + chunk_separator.strip())
             chunk_text = ""
             chunk_size = 0
 
@@ -78,5 +91,8 @@ def chunk_by_attention_window(
             chunk_text += chunk_separator
         chunk_text += segment
         chunk_size += num_tokens
+
+        if i == (num_splits - 1) and len(chunk_text) > 0:
+            chunks.append(chunk_text)
 
     return chunks
