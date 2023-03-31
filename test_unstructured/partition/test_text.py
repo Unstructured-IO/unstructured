@@ -50,6 +50,15 @@ def test_partition_text_from_file():
     assert elements == EXPECTED_OUTPUT
 
 
+def test_partition_text_from_bytes_file():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-text.txt")
+    with open(filename) as f:
+        file_bytes = f.read().encode("utf-8")
+        elements = partition_text(file=file_bytes)
+    assert len(elements) > 0
+    assert elements == EXPECTED_OUTPUT
+
+
 def test_partition_text_from_text():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-text.txt")
     with open(filename) as f:
