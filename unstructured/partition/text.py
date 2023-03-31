@@ -52,17 +52,20 @@ def partition_text(
     if filename is not None:
         with open(filename, encoding=encoding) as f:
             try:
-                file_text = f.read()
+                file_text = str(f.read())
             except (UnicodeDecodeError, UnicodeError) as error:
                 raise error
 
     elif file is not None:
-        file_text = file.read()
+        try:
+            file_text = file.read()
+        except AttributeError:
+            file_text = file.decode(encoding)  # type: ignore
 
     elif text is not None:
         file_text = str(text)
 
-    file_content = split_by_paragraph(str(file_text))
+    file_content = split_by_paragraph(file_text)
 
     elements: List[Element] = []
     metadata = ElementMetadata(filename=filename)
