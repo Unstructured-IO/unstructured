@@ -10,6 +10,8 @@ from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
+is_in_docker = os.path.exists("/.dockerenv")
+
 test_files = [
     "fake-text.txt",
     "layout-parser-paper-fast.pdf",
@@ -18,11 +20,13 @@ test_files = [
     "fake-email.eml",
     pytest.param(
         "fake-power-point.ppt",
-        marks=pytest.mark.xfail(reason="Requirements mismatch, should only fail in docker test"),
+        marks=pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container"),
     ),
     "fake.docx",
     "fake-power-point.pptx",
 ]
+
+is_in_docker = os.path.exists("/.dockerenv")
 
 
 @pytest.mark.parametrize("filename", test_files)

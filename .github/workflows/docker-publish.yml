@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: Set Short SHA
         id: set_short_sha
-        run: echo "::set-output name=short_sha::$(echo ${{ github.sha }} | cut -c1-7)"
+        run: echo "short_sha=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
 
   build-amd:
     runs-on: ubuntu-latest
@@ -47,6 +47,7 @@ jobs:
     - name: Test AMD image
       run: |
         DOCKER_PLATFORM="linux/amd64" DOCKER_IMAGE="$DOCKER_BUILD_REPOSITORY:amd-$SHORT_SHA" make docker-test 
+        IMAGE_NAME=$DOCKER_BUILD_REPOSITORY:amd-$SHORT_SHA make docker-smoke-test
     - name: Push AMD image
       run: |
         # write to the build repository to cache for the publish-images job
@@ -80,6 +81,7 @@ jobs:
       run: |
         # only run a subset of tests on ARM, since they take a long time with emulation
         DOCKER_PLATFORM="linux/arm64" DOCKER_IMAGE="$DOCKER_BUILD_REPOSITORY:arm-$SHORT_SHA" make docker-test TEST_NAME=partition/test_text.py
+        IMAGE_NAME=$DOCKER_BUILD_REPOSITORY:arm-$SHORT_SHA make docker-smoke-test
     - name: Push ARM image
       run: |
         # write to the build repository to cache for the publish-images job
