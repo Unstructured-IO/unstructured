@@ -62,7 +62,7 @@ def partition_text(
     elif text is not None:
         file_text = str(text)
 
-    file_content = split_by_paragraph(file_text)
+    file_content = split_by_paragraph(str(file_text))
 
     elements: List[Element] = []
     metadata = ElementMetadata(filename=filename)
