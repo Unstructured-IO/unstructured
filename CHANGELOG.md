@@ -1,3 +1,13 @@
+## 0.5.9
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* Convert file to str in helper `split_by_paragraph` for `partition_text`
+
 ## 0.5.8
 
 ### Enhancements
