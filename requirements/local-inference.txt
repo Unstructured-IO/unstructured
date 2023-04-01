@@ -10,7 +10,7 @@ anyio==3.6.2
     # via
     #   httpcore
     #   starlette
-argilla==1.5.0
+argilla==1.5.1
     # via unstructured (setup.py)
 backoff==2.2.1
     # via argilla

@@ -16,7 +16,7 @@ anyio==3.6.2
     # via
     #   -r requirements/base.txt
     #   httpcore
-argilla==1.5.0
+argilla==1.5.1
     # via
     #   -r requirements/base.txt
     #   unstructured (setup.py)
