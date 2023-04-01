@@ -53,8 +53,7 @@ def test_partition_text_from_file():
 def test_partition_text_from_bytes_file():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-text.txt")
     with open(filename, "rb") as f:
-        file_bytes = f.read()
-        elements = partition_text(file=file_bytes)
+        elements = partition_text(file=f)
     assert len(elements) > 0
     assert elements == EXPECTED_OUTPUT
 

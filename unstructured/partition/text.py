@@ -57,10 +57,9 @@ def partition_text(
                 raise error
 
     elif file is not None:
-        try:
-            file_text = file.read()
-        except AttributeError:
-            file_text = file.decode(encoding)  # type: ignore
+        file_text = file.read()
+        if isinstance(file_text, bytes):
+            file_text = file_text.decode(encoding)
 
     elif text is not None:
         file_text = str(text)
