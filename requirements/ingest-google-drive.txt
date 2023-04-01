@@ -47,7 +47,7 @@ et-xmlfile==1.1.0
     #   openpyxl
 google-api-core==2.11.0
     # via google-api-python-client
-google-api-python-client==2.82.0
+google-api-python-client==2.83.0
     # via unstructured (setup.py)
 google-auth==2.16.2
     # via
