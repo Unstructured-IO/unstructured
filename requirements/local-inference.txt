@@ -215,7 +215,7 @@ requests==2.28.2
     #   unstructured (setup.py)
 rfc3986[idna2008]==1.5.0
     # via httpx
-rich==13.0.1
+rich==13.3.3
     # via argilla
 scipy==1.10.1
     # via layoutparser

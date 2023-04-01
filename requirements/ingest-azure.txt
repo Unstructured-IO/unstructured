@@ -223,7 +223,7 @@ rfc3986[idna2008]==1.5.0
     # via
     #   -r requirements/base.txt
     #   httpx
-rich==13.0.1
+rich==13.3.3
     # via
     #   -r requirements/base.txt
     #   argilla
