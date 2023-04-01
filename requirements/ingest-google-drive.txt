@@ -49,7 +49,7 @@ google-api-core==2.11.0
     # via google-api-python-client
 google-api-python-client==2.82.0
     # via unstructured (setup.py)
-google-auth==2.16.2
+google-auth==2.17.1
     # via
     #   google-api-core
     #   google-api-python-client
