@@ -52,7 +52,7 @@ def partition_text(
     if filename is not None:
         with open(filename, encoding=encoding) as f:
             try:
-                file_text = str(f.read())
+                file_text = f.read()
             except (UnicodeDecodeError, UnicodeError) as error:
                 raise error
 
