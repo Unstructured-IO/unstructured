@@ -58,6 +58,8 @@ def partition_text(
 
     elif file is not None:
         file_text = file.read()
+        if isinstance(file_text, bytes):
+            file_text = file_text.decode(encoding)
 
     elif text is not None:
         file_text = str(text)
