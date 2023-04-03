@@ -67,7 +67,6 @@ def test_normalize_layout_element_layout_element():
         text="Some lovely text",
     )
     element = common.normalize_layout_element(layout_element)
-    print(element.coordinates)
     assert element == NarrativeText(
         text="Some lovely text",
         coordinates=((1, 2), (1, 4), (3, 4), (3, 2)),
