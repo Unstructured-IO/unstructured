@@ -1,3 +1,4 @@
+import datetime
 import email
 import re
 import sys
@@ -85,6 +86,27 @@ def partition_email_header(msg: Message) -> List[Element]:
             elements.append(MetaData(name=item[0], text=item[1]))
 
     return elements
+
+
+def build_email_metadata(msg: Message) -> ElementMetadata:
+    """Creates and ElementMetadata object from the header information in the email."""
+    header_dict = dict(msg.raw_items())
+    email_date = header_dict.get("Date")
+    if email_date is not None:
+        email_date = convert_to_iso_8601(email_date)
+
+    return ElementMetadata(
+        sent_to=header_dict.get("To"),
+        sent_from=header_dict.get("From"),
+        subject=header_dict.get("Subject"),
+        date=email_date,
+    )
+
+
+def convert_to_iso_8601(time: str) -> str:
+    """Converts the datetime from the email output to ISO-8601 format."""
+    datetime_object = datetime.datetime.strptime(time, "%a, %d %b %Y %H:%M:%S %z")
+    return datetime_object.isoformat()
 
 
 def extract_attachment_info(
@@ -234,6 +256,8 @@ def partition_email(
         header = partition_email_header(msg)
     all_elements = header + elements
 
+    metadata = build_email_metadata(msg)
+    metadata.filename = filename
     for element in all_elements:
-        element.metadata = ElementMetadata(filename=filename)
+        element.metadata = metadata
     return all_elements
