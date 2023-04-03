@@ -1,3 +1,13 @@
+***REMOVED******REMOVED*** 0.5.9
+
+***REMOVED******REMOVED******REMOVED*** Enhancements
+
+***REMOVED******REMOVED******REMOVED*** Features
+
+***REMOVED******REMOVED******REMOVED*** Fixes
+
+* Convert file to str in helper `split_by_paragraph` for `partition_text`
+
 ***REMOVED******REMOVED*** 0.5.8
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
