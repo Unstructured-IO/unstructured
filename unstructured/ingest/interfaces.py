@@ -94,42 +94,41 @@ class BaseIngestDoc(ABC):
         pass
 
     def process_file(self):
-        if not self.config.download_only:
-            logger.info(f"Processing {self.filename}")
+        if self.config.download_only:
+            return
+        logger.info(f"Processing {self.filename}")
+        elements = partition(filename=str(self.filename))
+        isd_elems = convert_to_dict(elements)
 
-            elements = partition(filename=str(self.filename))
-            isd_elems = convert_to_dict(elements)
+        self.isd_elems_no_filename = []
+        for elem in isd_elems:
+            # type: ignore
+            if (
+                self.config.metadata_exclude is not None
+                and self.config.metadata_include is not None
+            ):
+                raise ValueError(
+                    "Arguments `--metadata-include` and `--metadata-exclude` are "
+                    "mutually exclusive with each other.",
+                )
+            elif self.config.metadata_exclude is not None:
+                ex_list = self.config.metadata_exclude.split(",")
+                for ex in ex_list:
+                    elem["metadata"].pop(ex, None)  # type: ignore[attr-defined]
+            elif self.config.metadata_include is not None:
+                in_list = self.config.metadata_include.split(",")
+                for k in elem["metadata"]:
+                    if k not in in_list:
+                        elem["metadata"].pop(k, None)  # type: ignore[attr-defined]
 
-            self.isd_elems_no_filename = []
-            for elem in isd_elems:
-                # type: ignore
-                if (
-                    self.config.metadata_exclude is not None
-                    and self.config.metadata_include is not None
-                ):
-                    raise ValueError(
-                        "Arguments `--metadata-include` and `--metadata-exclude` are "
-                        "mutually exclusive with each other.",
-                    )
-                elif self.config.metadata_exclude is not None:
-                    ex_list = self.config.metadata_exclude.split(",")
-                    for ex in ex_list:
-                        elem["metadata"].pop(ex, None)  # type: ignore[attr-defined]
-                elif self.config.metadata_include is not None:
-                    in_list = self.config.metadata_include.split(",")
-                    for k in elem["metadata"]:
-                        if k not in in_list:
-                            elem["metadata"].pop(k, None)  # type: ignore[attr-defined]
+            in_list = self.config.fields_include.split(",")
+            elem = {k: v for k, v in elem.items() if k in in_list}
 
-                in_list = self.config.fields_include.split(",")
-                elem = {k: v for k, v in elem.items() if k in in_list}
+            if self.config.flatten_metadata:
+                for k, v in elem["metadata"].items():  # type: ignore[attr-defined]
+                    elem[k] = v
+                elem.pop("metadata")  # type: ignore[attr-defined]
 
-                if self.config.flatten_metadata:
-                    for k, v in elem["metadata"].items():  # type: ignore[attr-defined]
-                        elem[k] = v
-                    elem.pop("metadata")  # type: ignore[attr-defined]
+            self.isd_elems_no_filename.append(elem)
 
-                self.isd_elems_no_filename.append(elem)
-
-            return self.isd_elems_no_filename
-        return None
+        return self.isd_elems_no_filename

@@ -423,6 +423,7 @@ def main(
             "Files should already be in local file system: there is nothing to download, "
             "but --download-dir is specified.",
         )
+        sys.exit(1)
     if local_input_path is None and not download_dir:
         cache_path = Path.home() / ".cache" / "unstructured" / "ingest"
         if not cache_path.exists():
