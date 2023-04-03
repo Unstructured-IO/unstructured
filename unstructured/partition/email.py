@@ -95,9 +95,17 @@ def build_email_metadata(msg: Message) -> ElementMetadata:
     if email_date is not None:
         email_date = convert_to_iso_8601(email_date)
 
+    sent_from = header_dict.get("To")
+    if sent_from is not None:
+        sent_from = [sender.strip() for sender in sent_from.split(",")]
+
+    sent_to = header_dict.get("To")
+    if sent_to is not None:
+        sent_to = [recipient.strip() for recipient in sent_to.split(",")]
+
     return ElementMetadata(
-        sent_to=header_dict.get("To"),
-        sent_from=header_dict.get("From"),
+        sent_to=sent_from,
+        sent_from=sent_to,
         subject=header_dict.get("Subject"),
         date=email_date,
     )

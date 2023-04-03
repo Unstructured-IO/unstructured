@@ -23,8 +23,8 @@ class ElementMetadata:
     url: Optional[str] = None
 
     # E-mail specific metadata fields
-    sent_from: Optional[str] = None
-    sent_to: Optional[str] = None
+    sent_from: Optional[List[str]] = None
+    sent_to: Optional[List[str]] = None
     subject: Optional[str] = None
 
     def __post_init__(self):
