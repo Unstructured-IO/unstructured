@@ -3,8 +3,9 @@ from typing import IO, List, Optional
 
 import msg_parser
 
-from unstructured.documents.elements import Element
+from unstructured.documents.elements import Element, ElementMetadata
 from unstructured.partition.common import exactly_one
+from unstructured.partition.email import convert_to_iso_8601
 from unstructured.partition.html import partition_html
 from unstructured.partition.text import partition_text
 
@@ -38,4 +39,31 @@ def partition_msg(
     else:
         elements = partition_text(text=text)
 
+    metadata = build_msg_metadata(msg_obj)
+    metadata.filename = filename
+    for element in elements:
+        element.metadata = metadata
+
     return elements
+
+
+def build_msg_metadata(msg_obj: msg_parser.MsOxMessage) -> ElementMetadata:
+    """Creates an ElementMetadata object from the header information in the emai."""
+    email_date = getattr(msg_obj, "sent_date", None)
+    if email_date is not None:
+        email_date = convert_to_iso_8601(email_date)
+
+    sent_from = getattr(msg_obj, "sender", None)
+    if sent_from is not None:
+        sent_from = [str(sender) for sender in sent_from]
+
+    sent_to = getattr(msg_obj, "recipients", None)
+    if sent_to is not None:
+        sent_to = [str(recipient) for recipient in sent_to]
+
+    return ElementMetadata(
+        sent_to=sent_to,
+        sent_from=sent_from,
+        subject=getattr(msg_obj, "subject", None),
+        date=email_date,
+    )
