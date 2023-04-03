@@ -7,7 +7,7 @@ The sample docs directory contains the following files:
 - `factbook.xml`/`factbook.xsl` - Example XML/XLS files that you can use to test stylesheets
 
 These documents can be used to test out the parsers in the library. In addition, here are
-instructions for pullig in some sample docs that are too big to store in the repo.
+instructions for pulling in some sample docs that are too big to store in the repo.
 
 #### XBRL 10-K
 
