@@ -1,8 +1,9 @@
-## 0.5.10-dev0
+## 0.5.10-dev1
 
 ### Enhancements
 
 * Updated inference package
+* Add sender, recipient, date, and subject to element metadata for emails
 
 ### Features
 
