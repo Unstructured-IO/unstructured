@@ -26,6 +26,8 @@ class SimpleLocalConfig(BaseConnectorConfig):
     # base connector options
     metadata_include: Optional[str] = None
     metadata_exclude: Optional[str] = None
+    partition_by_api: bool = False
+    partition_host: str = "https://api.unstructured.io"
     fields_include: str = "element_id,text,type,metadata"
 
     def __post_init__(self):
