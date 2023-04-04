@@ -1,3 +1,13 @@
+## 0.5.10-dev0
+
+### Enhancements
+
+* Add sender, recipient, date, and subject to element metadata for emails
+
+### Features
+
+### Fixes
+
 ## 0.5.9
 
 ### Enhancements
