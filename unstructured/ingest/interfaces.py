@@ -108,10 +108,11 @@ class BaseIngestDoc(ABC):
 
             logger.debug(f"Using remote partition ({hostname})")
 
-            response = requests.post(
-                f"{hostname}/{path}",
-                files={"files": (str(self.filename), open(self.filename, "rb"))},
-            )
+            with open(self.filename, "rb") as f:
+                response = requests.post(
+                    f"{hostname}/{path}",
+                    files={"files": (str(self.filename), f)},
+                )
 
             if response.status_code != 200:
                 raise RuntimeError(f"Caught {response.status_code} from API: {response.text}")
