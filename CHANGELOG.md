@@ -1,3 +1,13 @@
+***REMOVED******REMOVED*** 0.5.10-dev0
+
+***REMOVED******REMOVED******REMOVED*** Enhancements
+
+* Add sender, recipient, date, and subject to element metadata for emails
+
+***REMOVED******REMOVED******REMOVED*** Features
+
+***REMOVED******REMOVED******REMOVED*** Fixes
+
 ***REMOVED******REMOVED*** 0.5.9
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements

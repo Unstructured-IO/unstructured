@@ -14,8 +14,18 @@ class NoID(ABC):
 @dataclass
 class ElementMetadata:
     filename: Optional[str] = None
+    date: Optional[str] = None
+
+    ***REMOVED*** Page numbers currenlty supported for PDF, HTML and PPT documents
     page_number: Optional[int] = None
+
+    ***REMOVED*** Webpage specific metadata fields
     url: Optional[str] = None
+
+    ***REMOVED*** E-mail specific metadata fields
+    sent_from: Optional[List[str]] = None
+    sent_to: Optional[List[str]] = None
+    subject: Optional[str] = None
 
     def __post_init__(self):
         if isinstance(self.filename, pathlib.Path):
