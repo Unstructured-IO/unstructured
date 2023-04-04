@@ -1,10 +1,12 @@
-## 0.5.10-dev0
+## 0.5.10-dev1
 
 ### Enhancements
 
 * Add sender, recipient, date, and subject to element metadata for emails
 
 ### Features
+
+* Add --partition-by-api parameter to unstructured-ingest
 
 ### Fixes
 
