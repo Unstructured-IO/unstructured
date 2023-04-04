@@ -4,7 +4,12 @@ import pathlib
 import msg_parser
 import pytest
 
-from unstructured.documents.elements import ListItem, NarrativeText, Title
+from unstructured.documents.elements import (
+    ElementMetadata,
+    ListItem,
+    NarrativeText,
+    Title,
+)
 from unstructured.partition.msg import partition_msg
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -22,6 +27,15 @@ def test_partition_msg_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
     elements = partition_msg(filename=filename)
     assert elements == EXPECTED_MSG_OUTPUT
+    assert elements[0].metadata == ElementMetadata(
+        filename=filename,
+        date="2022-12-16T17:04:16-05:00",
+        page_number=None,
+        url=None,
+        sent_from=["Matthew Robinson <mrobinson@unstructured.io>"],
+        sent_to=["Matthew Robinson (None)"],
+        subject="Test Email",
+    )
 
 
 class MockMsOxMessage:
