@@ -2,6 +2,8 @@
 
 ### Enhancements
 
+* Add sender, recipient, date, and subject to element metadata for emails
+
 ### Features
 
 * Added `--download-only` parameter to `unstructured-ingest`
