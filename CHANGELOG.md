@@ -1,4 +1,4 @@
-## 0.5.10-dev2
+## 0.5.10
 
 ### Enhancements
 
@@ -10,6 +10,8 @@
 * Added `--download-only` parameter to `unstructured-ingest`
 
 ### Fixes
+
+* FileNotFound error when filename is provided but file is not on disk
 
 ## 0.5.9
 
