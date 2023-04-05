@@ -1,4 +1,4 @@
-## 0.5.10-dev0
+## 0.5.10-dev1
 
 ### Enhancements
 
@@ -7,6 +7,8 @@
 ### Features
 
 ### Fixes
+
+* FileNotFound error when filename is provided but file is not on disk
 
 ## 0.5.9
 
