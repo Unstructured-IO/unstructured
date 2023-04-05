@@ -1,3 +1,25 @@
+## 0.5.12-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* Allow encoding to be passed into `replace_mime_encodings`.
+
+
+## 0.5.11
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* Guard against null style attribute in docx document elements
+* Update HTML encoding to better support foreign language characters
+
 ## 0.5.10
 
 ### Enhancements

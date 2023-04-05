@@ -149,3 +149,9 @@ def test_user_without_file_write_permission_can_partition_html(tmp_path, monkeyp
     # partition html should still work
     elements = partition_html(filename=read_only_file.resolve())
     assert len(elements) > 0
+
+
+def test_partition_html_processes_chinese_chracters():
+    html_text = "<html><div><p>每日新闻</p></div></html>"
+    elements = partition_html(text=html_text)
+    assert elements[0].text == "每日新闻"
