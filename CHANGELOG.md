@@ -1,3 +1,13 @@
+***REMOVED******REMOVED*** 0.5.11-dev0
+
+***REMOVED******REMOVED******REMOVED*** Enhancements
+
+***REMOVED******REMOVED******REMOVED*** Features
+
+***REMOVED******REMOVED******REMOVED*** Fixes
+
+* Guard against null style attribute in docx document elements
+
 ***REMOVED******REMOVED*** 0.5.10
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements

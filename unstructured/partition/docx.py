@@ -100,7 +100,7 @@ def _paragraph_to_element(paragraph: docx.text.paragraph.Paragraph) -> Optional[
     If the paragraph style is "Normal" or unknown, we try to predict the element type from the
     raw text."""
     text = paragraph.text
-    style_name = paragraph.style.name
+    style_name = paragraph.style and paragraph.style.name  ***REMOVED*** .style can be None
 
     if len(text.strip()) == 0:
         return None
