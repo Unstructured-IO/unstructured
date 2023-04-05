@@ -47,9 +47,9 @@ et-xmlfile==1.1.0
     #   openpyxl
 google-api-core==2.11.0
     # via google-api-python-client
-google-api-python-client==2.82.0
+google-api-python-client==2.83.0
     # via unstructured (setup.py)
-google-auth==2.16.2
+google-auth==2.17.0
     # via
     #   google-api-core
     #   google-api-python-client
@@ -102,6 +102,10 @@ monotonic==1.6
     # via
     #   -r requirements/base.txt
     #   argilla
+msg-parser==1.2.0
+    # via
+    #   -r requirements/base.txt
+    #   unstructured (setup.py)
 nltk==3.8.1
     # via
     #   -r requirements/base.txt
@@ -111,6 +115,10 @@ numpy==1.23.5
     #   -r requirements/base.txt
     #   argilla
     #   pandas
+olefile==0.46
+    # via
+    #   -r requirements/base.txt
+    #   msg-parser
 openpyxl==3.1.2
     # via
     #   -r requirements/base.txt
@@ -129,10 +137,11 @@ pillow==9.4.0
     #   -r requirements/base.txt
     #   python-pptx
     #   unstructured (setup.py)
-protobuf==4.22.1
+protobuf==3.20.3
     # via
     #   google-api-core
     #   googleapis-common-protos
+    #   unstructured (setup.py)
 pyasn1==0.4.8
     # via
     #   pyasn1-modules
@@ -169,7 +178,7 @@ python-pptx==0.6.21
     # via
     #   -r requirements/base.txt
     #   unstructured (setup.py)
-pytz==2022.7.1
+pytz==2023.3
     # via
     #   -r requirements/base.txt
     #   pandas

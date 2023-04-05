@@ -1,5 +1,5 @@
 import subprocess
-from typing import List, Optional, Union
+from typing import List, Optional, Tuple, Union
 
 from unstructured.documents.elements import (
     TYPE_TO_TEXT_ELEMENT_MAP,
@@ -42,7 +42,10 @@ def normalize_layout_element(layout_element) -> Union[Element, List[Element]]:
         return Text(text=text, coordinates=coordinates)
 
 
-def layout_list_to_list_items(text: str, coordinates: List[float]) -> List[Element]:
+def layout_list_to_list_items(
+    text: str,
+    coordinates: Tuple[Tuple[float, float], ...],
+) -> List[Element]:
     """Converts a list LayoutElement to a list of ListItem elements."""
     split_items = ENUMERATED_BULLETS_RE.split(text)
     # NOTE(robinson) - this means there wasn't a match for the enumerated bullets

@@ -2,6 +2,7 @@
 
 ### Enhancements
 
+* Updated inference package
 * Add sender, recipient, date, and subject to element metadata for emails
 
 ### Features

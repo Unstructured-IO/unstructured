@@ -63,7 +63,7 @@ commonmark==0.9.1
     # via
     #   -r requirements/base.txt
     #   rich
-cryptography==39.0.2
+cryptography==40.0.1
     # via
     #   adal
     #   azure-identity
@@ -135,6 +135,10 @@ msal==1.21.0
     #   msal-extensions
 msal-extensions==1.0.0
     # via azure-identity
+msg-parser==1.2.0
+    # via
+    #   -r requirements/base.txt
+    #   unstructured (setup.py)
 multidict==6.0.4
     # via
     #   aiohttp
@@ -148,6 +152,10 @@ numpy==1.23.5
     #   -r requirements/base.txt
     #   argilla
     #   pandas
+olefile==0.46
+    # via
+    #   -r requirements/base.txt
+    #   msg-parser
 openpyxl==3.1.2
     # via
     #   -r requirements/base.txt
@@ -203,7 +211,7 @@ python-pptx==0.6.21
     # via
     #   -r requirements/base.txt
     #   unstructured (setup.py)
-pytz==2022.7.1
+pytz==2023.3
     # via
     #   -r requirements/base.txt
     #   pandas
