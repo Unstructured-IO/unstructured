@@ -32,7 +32,7 @@ def partition(
 
     Parameters
     ----------
-     filename
+    filename
         A string defining the target filename path.
     content_type
         A string defining the file content in MIME type

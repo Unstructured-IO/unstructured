@@ -1,10 +1,14 @@
-## 0.5.10-dev2
+## 0.5.11-dev0
+
+### Enhancements
+
+### Features
 
 ### Fixes
 
 * Guard against null style attribute in docx document elements
 
-## 0.5.10-dev1
+## 0.5.10
 
 ### Enhancements
 
@@ -13,7 +17,11 @@
 
 ### Features
 
+* Added `--download-only` parameter to `unstructured-ingest`
+
 ### Fixes
+
+* FileNotFound error when filename is provided but file is not on disk
 
 ## 0.5.9
 

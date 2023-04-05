@@ -24,6 +24,7 @@ class SimpleLocalConfig(BaseConnectorConfig):
     file_glob: Optional[str] = None
 
     # base connector options
+    download_only: bool = False
     metadata_include: Optional[str] = None
     metadata_exclude: Optional[str] = None
     fields_include: str = "element_id,text,type,metadata"
@@ -69,6 +70,8 @@ class LocalIngestDoc(BaseIngestDoc):
 
     def write_result(self):
         """Write the structured json result for this doc. result must be json serializable."""
+        if self.config.download_only:
+            return
         output_filename = self._output_filename()
         output_filename.parent.mkdir(parents=True, exist_ok=True)
         with open(output_filename, "w") as output_f:
