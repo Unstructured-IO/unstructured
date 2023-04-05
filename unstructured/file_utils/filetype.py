@@ -177,12 +177,12 @@ def detect_filetype(
             return filetype
 
     if filename or file_filename:
-        _, extension = os.path.splitext(filename or file_filename or "")
+        _filename = filename or file_filename
+        _, extension = os.path.splitext(_filename)
         extension = extension.lower()
-        if LIBMAGIC_AVAILABLE:
+        if os.path.isfile(_filename) and LIBMAGIC_AVAILABLE:
             mime_type = magic.from_file(filename or file_filename, mime=True)  # type: ignore
         else:
-            # might not need this
             return EXT_TO_FILETYPE.get(extension.lower(), FileType.UNK)
     elif file is not None:
         extension = None
