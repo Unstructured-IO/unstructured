@@ -80,6 +80,11 @@ def test_replace_mime_encodings(text, expected):
     assert core.replace_mime_encodings(text=text) == expected
 
 
+def test_replace_mime_encodings_works_with_different_encodings():
+    text = '5 w=E2=80-99s=E2=80-92'
+    assert core.replace_mime_encodings(text=text, encoding="latin-1") == "5 wâ\x80-99sâ\x80-92"
+
+
 @pytest.mark.parametrize(
     ("text", "expected"),
     [
