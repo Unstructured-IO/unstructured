@@ -2,7 +2,7 @@ import hashlib
 import pathlib
 from abc import ABC
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 
 class NoID(ABC):
@@ -45,11 +45,11 @@ class Element(ABC):
     def __init__(
         self,
         element_id: Union[str, NoID] = NoID(),
-        coordinates: Optional[List[float]] = None,
+        coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
         metadata: ElementMetadata = ElementMetadata(),
     ):
         self.id: Union[str, NoID] = element_id
-        self.coordinates: Optional[List[float]] = coordinates
+        self.coordinates: Optional[Tuple[Tuple[float, float], ...]] = coordinates
         self.metadata = metadata
 
     def to_dict(self) -> dict:
@@ -68,12 +68,12 @@ class CheckBox(Element):
     def __init__(
         self,
         element_id: Union[str, NoID] = NoID(),
-        coordinates: Optional[List[float]] = None,
+        coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
         checked: bool = False,
         metadata: ElementMetadata = ElementMetadata(),
     ):
         self.id: Union[str, NoID] = element_id
-        self.coordinates: Optional[List[float]] = coordinates
+        self.coordinates: Optional[Tuple[Tuple[float, float], ...]] = coordinates
         self.checked: bool = checked
         self.metadata = metadata
 
@@ -99,7 +99,7 @@ class Text(Element):
         self,
         text: str,
         element_id: Union[str, NoID] = NoID(),
-        coordinates: Optional[List[float]] = None,
+        coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
         metadata: ElementMetadata = ElementMetadata(),
     ):
         self.text: str = text
