@@ -1,4 +1,4 @@
-## 0.5.11-dev0
+## 0.5.11
 
 ### Enhancements
 
@@ -7,6 +7,7 @@
 ### Fixes
 
 * Guard against null style attribute in docx document elements
+* Update HTML encoding to better support foreign language characters
 
 ## 0.5.10
 
