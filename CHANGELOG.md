@@ -1,4 +1,4 @@
-***REMOVED******REMOVED*** 0.5.11-dev0
+***REMOVED******REMOVED*** 0.5.11
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
 
@@ -7,6 +7,7 @@
 ***REMOVED******REMOVED******REMOVED*** Fixes
 
 * Guard against null style attribute in docx document elements
+* Update HTML encoding to better support foreign language characters
 
 ***REMOVED******REMOVED*** 0.5.10
 
