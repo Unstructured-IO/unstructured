@@ -186,7 +186,6 @@ check-coverage:
 
 # Docker targets are provided for convenience only and are not required in a standard development environment
 
-DOCKER_PLATFORM ?= linux/amd64
 DOCKER_IMAGE ?= unstructured:dev
 
 .PHONY: docker-build
@@ -195,15 +194,15 @@ docker-build:
 
 .PHONY: docker-start-bash
 docker-start-bash:
-	docker run --platform $(DOCKER_PLATFORM) -ti --rm $(DOCKER_IMAGE) 
+	docker run -ti --rm ${DOCKER_IMAGE}
 
 .PHONY: docker-test
 docker-test:
-	docker run --platform $(DOCKER_PLATFORM) --rm \
+	docker run --rm \
 	-v ${CURRENT_DIR}/test_unstructured:/home/test_unstructured \
 	$(DOCKER_IMAGE) \
 	bash -c "pytest $(if $(TEST_NAME),-k $(TEST_NAME),) test_unstructured"
 
 .PHONY: docker-smoke-test
 docker-smoke-test:
-	./scripts/docker-smoke-test.sh
+	IMAGE_NAME=${DOCKER_IMAGE} ./scripts/docker-smoke-test.sh
