@@ -12,7 +12,7 @@ else
 fi
 DOCKER_BUILD_REPOSITORY="${DOCKER_BUILD_REPOSITORY:-quay.io/unstructured-io/build-unstructured}"
 PIPELINE_PACKAGE="${PIPELINE_PACKAGE:-general}"
-PIP_VERSION="${PIP_VERSION:-21.0.1}"
+PIP_VERSION="${PIP_VERSION:-22.2.1}"
 
 DOCKER_BUILDKIT=1 docker buildx build --load --platform="$DOCKER_BUILD_PLATFORM" -f Dockerfile \
   --build-arg PIP_VERSION="$PIP_VERSION" \
