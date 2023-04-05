@@ -190,7 +190,7 @@ DOCKER_IMAGE ?= unstructured:dev
 
 .PHONY: docker-build
 docker-build:
-	PIP_VERSION=${PIP_VERSION} DOCKER_BUILD_IMAGE_NAME=${DOCKER_IMAGE} ./scripts/docker-build.sh
+	PIP_VERSION=${PIP_VERSION} DOCKER_IMAGE_NAME=${DOCKER_IMAGE} ./scripts/docker-build.sh
 
 .PHONY: docker-start-bash
 docker-start-bash:
