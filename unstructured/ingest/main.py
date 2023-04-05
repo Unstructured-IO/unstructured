@@ -316,6 +316,14 @@ class MainProcess:
     help="Re-download files even if they are already present in --download-dir.",
 )
 @click.option(
+    "--download-only",
+    is_flag=True,
+    default=False,
+    help="Download any files that are not already present in either --download-dir or "
+    "the default download ~/.cache/... location in case --download-dir is not specified and "
+    "skip processing them through unstructured.",
+)
+@click.option(
     "--download-dir",
     help="Where files are downloaded to, defaults to `$HOME/.cache/unstructured/ingest/<SHA256>`.",
 )
@@ -388,6 +396,7 @@ def main(
     local_input_path,
     local_recursive,
     local_file_glob,
+    download_only,
 ):
     if flatten_metadata and "metadata" not in fields_include:
         logger.warning(
@@ -405,10 +414,16 @@ def main(
             "mutually exclusive with each other.",
         )
         sys.exit(1)
-    if not preserve_downloads and download_dir:
+    if (not preserve_downloads and not download_only) and download_dir:
         logger.warning(
             "Not preserving downloaded files but --download_dir is specified",
         )
+    if local_input_path is not None and download_dir:
+        logger.warning(
+            "Files should already be in local file system: there is nothing to download, "
+            "but --download-dir is specified.",
+        )
+        sys.exit(1)
     if local_input_path is None and not download_dir:
         cache_path = Path.home() / ".cache" / "unstructured" / "ingest"
         if not cache_path.exists():
@@ -477,6 +492,7 @@ def main(
                     metadata_exclude=metadata_exclude,
                     fields_include=fields_include,
                     flatten_metadata=flatten_metadata,
+                    download_only=download_only,
                 ),
             )
         elif protocol in ("abfs", "az"):
@@ -501,6 +517,7 @@ def main(
                     metadata_exclude=metadata_exclude,
                     fields_include=fields_include,
                     flatten_metadata=flatten_metadata,
+                    download_only=download_only,
                 ),
             )
         else:
@@ -521,6 +538,7 @@ def main(
                     metadata_exclude=metadata_exclude,
                     fields_include=fields_include,
                     flatten_metadata=flatten_metadata,
+                    download_only=download_only,
                 ),
             )
     elif github_url:
@@ -539,6 +557,7 @@ def main(
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
+                download_only=download_only,
             ),
         )
     elif gitlab_url:
@@ -557,6 +576,7 @@ def main(
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
+                download_only=download_only,
             ),
         )
     elif subreddit_name:
@@ -577,6 +597,7 @@ def main(
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
+                download_only=download_only,
             ),
         )
     elif wikipedia_page_title:
@@ -593,6 +614,7 @@ def main(
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
+                download_only=download_only,
             ),
         )
     elif drive_id:
@@ -611,6 +633,7 @@ def main(
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
+                download_only=download_only,
             ),
         )
     elif biomed_path or biomed_api_id or biomed_api_from or biomed_api_until:
@@ -629,6 +652,7 @@ def main(
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
+                download_only=download_only,
             ),
         )
     elif local_input_path:

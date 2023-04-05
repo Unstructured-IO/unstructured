@@ -1,4 +1,4 @@
-***REMOVED******REMOVED*** 0.5.10-dev1
+***REMOVED******REMOVED*** 0.5.10-dev2
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
 
@@ -6,6 +6,8 @@
 * Add sender, recipient, date, and subject to element metadata for emails
 
 ***REMOVED******REMOVED******REMOVED*** Features
+
+* Added `--download-only` parameter to `unstructured-ingest`
 
 ***REMOVED******REMOVED******REMOVED*** Fixes
 
