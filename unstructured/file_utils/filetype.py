@@ -177,7 +177,7 @@ def detect_filetype(
             return filetype
 
     if filename or file_filename:
-        _filename = filename or file_filename
+        _filename = filename or file_filename or ""
         _, extension = os.path.splitext(_filename)
         extension = extension.lower()
         if os.path.isfile(_filename) and LIBMAGIC_AVAILABLE:
