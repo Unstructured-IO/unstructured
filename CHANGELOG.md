@@ -1,3 +1,9 @@
+## 0.5.10-dev2
+
+### Fixes
+
+* Guard against null style attribute in docx document elements
+
 ## 0.5.10-dev1
 
 ### Enhancements
