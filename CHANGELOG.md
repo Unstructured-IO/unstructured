@@ -1,3 +1,14 @@
+***REMOVED******REMOVED*** 0.5.12-dev0
+
+***REMOVED******REMOVED******REMOVED*** Enhancements
+
+***REMOVED******REMOVED******REMOVED*** Features
+
+***REMOVED******REMOVED******REMOVED*** Fixes
+
+* Allow encoding to be passed into `replace_mime_encodings`.
+
+
 ***REMOVED******REMOVED*** 0.5.11
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements

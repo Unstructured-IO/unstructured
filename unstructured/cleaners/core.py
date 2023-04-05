@@ -139,14 +139,14 @@ def clean_trailing_punctuation(text: str) -> str:
     return text.strip().rstrip(".,:;")
 
 
-def replace_mime_encodings(text: str) -> str:
-    """Replaces MIME encodings with their UTF-8 equivalent characters.
+def replace_mime_encodings(text: str, encoding: str = "utf-8") -> str:
+    """Replaces MIME encodings with their equivalent characters in the specified encoding.
 
     Example
     -------
     5 w=E2=80-99s -> 5 w’s
     """
-    return quopri.decodestring(text.encode()).decode("utf-8")
+    return quopri.decodestring(text.encode()).decode(encoding)
 
 
 def clean_prefix(text: str, pattern: str, ignore_case: bool = False, strip: bool = True) -> str:

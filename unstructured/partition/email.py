@@ -3,6 +3,7 @@ import email
 import re
 import sys
 from email.message import Message
+from functools import partial
 from typing import IO, Dict, List, Optional, Tuple, Union
 
 from unstructured.partition.common import exactly_one
@@ -247,7 +248,8 @@ def partition_email(
         elements = partition_html(text=content, include_metadata=False)
         for element in elements:
             if isinstance(element, Text):
-                element.apply(replace_mime_encodings)
+                _replace_mime_encodings = partial(replace_mime_encodings, encoding=encoding)
+                element.apply(_replace_mime_encodings)
     elif content_source == "text/plain":
         list_content = split_by_paragraph(content)
         elements = partition_text(text=content)
