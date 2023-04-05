@@ -76,7 +76,7 @@ setup(
             "transformers",
         ],
         "local-inference": [
-            "unstructured-inference>=0.3.1",
+            "unstructured-inference==0.3.2",
         ],
         "s3": ["s3fs", "fsspec"],
         "azure": ["adlfs", "fsspec"],
