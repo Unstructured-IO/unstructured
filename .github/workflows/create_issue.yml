@@ -24,7 +24,7 @@ jobs:
         project: CORE
         issuetype: Task
         summary: ${{ github.event.issue.title }}
-        description: "Created from Github issue: ${{ github.event.issue.url }} \\ \\${{ github.event.issue.body }}"
+        description: "Created from Github issue: ${{ github.event.issue.html_url }} \\ \\${{ github.event.issue.body }}"
         fields: '{ "labels": ["github-issue"] }'
 
     - name: Log created issue
