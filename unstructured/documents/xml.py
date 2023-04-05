@@ -55,7 +55,14 @@ class XMLDocument(Document):
     def _read_xml(self, content):
         """Reads in an XML file and converts it to an lxml element tree object."""
         if self.document_tree is None:
-            document_tree = etree.fromstring(content.encode(), self.parser)
+            try:
+                document_tree = etree.fromstring(content, self.parser)
+            # NOTE(robinson) - The following ValueError occurs with unicode strings. In that
+            # case, we call back to encoding the string and passing in bytes.
+            #     ValueError: Unicode strings with encoding declaration are not supported.
+            #     Please use  bytes input or XML fragments without declaration.
+            except ValueError:
+                document_tree = etree.fromstring(content.encode(), self.parser)
 
             if self.stylesheet:
                 if isinstance(self.parser, etree.HTMLParser):
