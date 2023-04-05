@@ -7,6 +7,8 @@
 
 ### Features
 
+* Added `--download-only` parameter to `unstructured-ingest`
+
 ### Fixes
 
 * FileNotFound error when filename is provided but file is not on disk
