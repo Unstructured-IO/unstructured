@@ -2,7 +2,6 @@
 
 set -euo pipefail
 DOCKER_REPOSITORY="${DOCKER_REPOSITORY:-quay.io/unstructured-io/unstructured}"
-PIPELINE_PACKAGE="${PIPELINE_PACKAGE:-general}"
 PIP_VERSION="${PIP_VERSION:-22.2.1}"
 DOCKER_IMAGE_NAME="${DOCKER_IMAGE_NAME:-unstructured:dev}"
 
