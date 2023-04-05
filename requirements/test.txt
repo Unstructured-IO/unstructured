@@ -8,7 +8,7 @@ appdirs==1.4.4
     ***REMOVED*** via label-studio-tools
 attrs==22.2.0
     ***REMOVED*** via pytest
-black==23.1.0
+black==23.3.0
     ***REMOVED*** via -r requirements/test.in
 ***REMOVED***
     ***REMOVED*** via
@@ -58,7 +58,7 @@ mypy-extensions==1.0.0
     ***REMOVED***   pytest
 pathspec==0.11.1
     ***REMOVED*** via black
-platformdirs==3.1.1
+platformdirs==3.2.0
     ***REMOVED*** via black
 pluggy==1.0.0
     ***REMOVED*** via pytest
@@ -80,7 +80,7 @@ pyyaml==6.0
     ***REMOVED*** via vcrpy
 ***REMOVED***
     ***REMOVED*** via label-studio-sdk
-ruff==0.0.259
+ruff==0.0.260
     ***REMOVED*** via -r requirements/test.in
 ***REMOVED***
     ***REMOVED*** via vcrpy
@@ -90,11 +90,11 @@ tomli==2.0.1
     ***REMOVED***   coverage
     ***REMOVED***   mypy
     ***REMOVED***   pytest
-types-markdown==3.4.2.5
+types-markdown==3.4.2.6
     ***REMOVED*** via -r requirements/test.in
-types-requests==2.28.11.16
+types-requests==2.28.11.17
     ***REMOVED*** via -r requirements/test.in
-types-urllib3==1.26.25.8
+types-urllib3==1.26.25.10
     ***REMOVED*** via types-requests
 ***REMOVED***
     ***REMOVED*** via

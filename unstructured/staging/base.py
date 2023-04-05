@@ -1,7 +1,7 @@
 import csv
 import io
 import json
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import pandas as pd
 
@@ -63,7 +63,10 @@ def isd_to_elements(isd: List[Dict[str, Any]]) -> List[Element]:
 
     for item in isd:
         element_id: str = item.get("element_id", NoID())
-        coordinates: Optional[List[float]] = item.get("coordinates")
+        coord_value: Optional[List[List[float]]] = item.get("coordinates")
+        coordinates: Optional[Tuple[Tuple[float, float], ...]] = None
+        if coord_value is not None:
+            coordinates = tuple((x, y) for x, y in coord_value)
 
         metadata = ElementMetadata()
         _metadata_dict = item.get("metadata")

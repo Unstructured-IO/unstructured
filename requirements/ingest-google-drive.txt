@@ -47,9 +47,9 @@ cachetools==5.3.0
     ***REMOVED***   openpyxl
 google-api-core==2.11.0
     ***REMOVED*** via google-api-python-client
-google-api-python-client==2.82.0
+google-api-python-client==2.83.0
     ***REMOVED*** via unstructured (setup.py)
-google-auth==2.16.2
+google-auth==2.17.0
     ***REMOVED*** via
     ***REMOVED***   google-api-core
     ***REMOVED***   google-api-python-client
@@ -109,8 +109,16 @@ httplib2==0.22.0
 ***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
+    ***REMOVED***   unstructured (setup.py)
+***REMOVED***
+    ***REMOVED*** via
+    ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   argilla
     ***REMOVED***   pandas
+***REMOVED***
+    ***REMOVED*** via
+    ***REMOVED***   -r requirements/base.txt
+    ***REMOVED***   msg-parser
 ***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
@@ -129,10 +137,11 @@ httplib2==0.22.0
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   python-pptx
     ***REMOVED***   unstructured (setup.py)
-protobuf==4.22.1
+protobuf==3.20.3
     ***REMOVED*** via
     ***REMOVED***   google-api-core
     ***REMOVED***   googleapis-common-protos
+    ***REMOVED***   unstructured (setup.py)
 pyasn1==0.4.8
     ***REMOVED*** via
     ***REMOVED***   pyasn1-modules
@@ -169,7 +178,7 @@ pyparsing==3.0.9
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   unstructured (setup.py)
-pytz==2022.7.1
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   pandas

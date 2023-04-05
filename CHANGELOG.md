@@ -1,7 +1,8 @@
-***REMOVED******REMOVED*** 0.5.10-dev0
+***REMOVED******REMOVED*** 0.5.10-dev1
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
 
+* Updated inference package
 * Add sender, recipient, date, and subject to element metadata for emails
 
 ***REMOVED******REMOVED******REMOVED*** Features
