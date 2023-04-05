@@ -140,7 +140,7 @@ def clean_trailing_punctuation(text: str) -> str:
 
 
 def replace_mime_encodings(text: str, encoding: str = "utf-8") -> str:
-    """Replaces MIME encodings with their UTF-8 equivalent characters.
+    """Replaces MIME encodings with their equivalent characters in the specified encoding.
 
     Example
     -------
