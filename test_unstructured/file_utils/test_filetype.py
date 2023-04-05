@@ -86,7 +86,6 @@ def test_detect_filetype_from_filename_with_extension(monkeypatch, file, expecte
         ("winter-sports.epub", FileType.EPUB),
     ],
 )
-
 def test_detect_filetype_from_file(file, expected):
     expected = expected if isinstance(expected, list) else [expected]
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, file)
