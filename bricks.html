@@ -618,6 +618,24 @@ takes a filename, file-like object, and raw text as input and produces <code cla
 <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_text</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>If the text has extra line breaks for formatting purposes, you can group
+together the broken text using the <code class="docutils literal notranslate"><span class="pre">paragraph_grouper</span></code> kwarg. The
+<code class="docutils literal notranslate"><span class="pre">paragraph_grouper</span></code> kwarg is a function that accepts a string and returns
+another string.</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.text</span> <span class="kn">import</span> <span class="n">partition_text</span>
+<span class="kn">from</span> <span class="nn">unstructured.cleaners.core</span> <span class="kn">import</span> <span class="n">group_broken_paragraphs</span>
+
+
+<span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;The big brown fox</span>
+<span class="s2">was walking down the lane.</span>
+
+<span class="s2">At the end of the lane, the</span>
+<span class="s2">fox met a bear.&quot;&quot;&quot;</span>
+
+<span class="n">partition_text</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">paragraph_grouper</span><span class="o">=</span><span class="n">group_broken_paragraphs</span><span class="p">)</span>
+</pre></div>
+</div>
 </section>
 </section>
 <section id="cleaning">
@@ -739,6 +757,41 @@ such as <code class="docutils literal notranslate"><span class="pre">\u2013</spa
 
 <span class="c1"># Returns &quot;ITEM 1A: RISK FACTORS&quot;</span>
 <span class="n">clean_trailing_punctuation</span><span class="p">(</span><span class="s2">&quot;ITEM 1A: RISK FACTORS.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="group-broken-paragraphs">
+<h3><code class="docutils literal notranslate"><span class="pre">group_broken_paragraphs</span></code><a class="headerlink" href="#group-broken-paragraphs" title="Permalink to this heading"></a></h3>
+<p>Groups together paragraphs that are broken up with line breaks
+for visual or formatting purposes. This is common in <code class="docutils literal notranslate"><span class="pre">.txt</span></code> files.
+By default, <code class="docutils literal notranslate"><span class="pre">group_broken_paragraphs</span></code> groups together lines split
+by <code class="docutils literal notranslate"><span class="pre">\n</span></code>. You can change that behavior with the <code class="docutils literal notranslate"><span class="pre">line_split</span></code>
+kwarg. The function considers <code class="docutils literal notranslate"><span class="pre">\n\n</span></code> to be a paragraph break by
+default. You can change that behavior with the <code class="docutils literal notranslate"><span class="pre">paragraph_split</span></code> kwarg.</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.cleaners.core</span> <span class="kn">import</span> <span class="n">group_broken_paragraphs</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;The big brown fox</span>
+<span class="s2">was walking down the lane.</span>
+
+<span class="s2">At the end of the lane, the</span>
+<span class="s2">fox met a bear.&quot;&quot;&quot;</span>
+
+<span class="n">group_broken_paragraphs</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.cleaners.core</span> <span class="kn">import</span> <span class="n">group_broken_paragraphs</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;The big brown fox</span>
+
+<span class="s2">was walking down the lane.</span>
+
+
+<span class="s2">At the end of the lane, the</span>
+
+<span class="s2">fox met a bear.&quot;&quot;&quot;</span>
+
+<span class="n">group_broken_paragraphs</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">line_split</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">paragraph_split</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -1715,6 +1768,7 @@ if specified.</p>
 <li><a class="reference internal" href="#clean-extra-whitespace"><code class="docutils literal notranslate"><span class="pre">clean_extra_whitespace</span></code></a></li>
 <li><a class="reference internal" href="#clean-dashes"><code class="docutils literal notranslate"><span class="pre">clean_dashes</span></code></a></li>
 <li><a class="reference internal" href="#clean-trailing-punctuation"><code class="docutils literal notranslate"><span class="pre">clean_trailing_punctuation</span></code></a></li>
+<li><a class="reference internal" href="#group-broken-paragraphs"><code class="docutils literal notranslate"><span class="pre">group_broken_paragraphs</span></code></a></li>
 <li><a class="reference internal" href="#replace-unicode-quotes"><code class="docutils literal notranslate"><span class="pre">replace_unicode_quotes</span></code></a></li>
 <li><a class="reference internal" href="#remove-punctuation"><code class="docutils literal notranslate"><span class="pre">remove_punctuation</span></code></a></li>
 <li><a class="reference internal" href="#clean-prefix"><code class="docutils literal notranslate"><span class="pre">clean_prefix</span></code></a></li>
