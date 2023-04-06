@@ -414,7 +414,7 @@ Examples:
   At the end of the lane, the
   fox met a bear."""
 
-  partition_text(text=text, paragraph_group=group_broken_paragraphs)
+  partition_text(text=text, paragraph_grouper=group_broken_paragraphs)
 
 
 ########
