@@ -1,6 +1,8 @@
-## 0.5.12-dev0
+## 0.5.12-dev1
 
 ### Enhancements
+
+* Use the image registry as a cache when building Docker images.
 
 ### Features
 
