@@ -1,5 +1,5 @@
 import re
-from typing import IO, List, Optional
+from typing import IO, Callable, List, Optional
 
 from unstructured.cleaners.core import clean_bullets
 from unstructured.documents.elements import (
@@ -30,6 +30,7 @@ def partition_text(
     file: Optional[IO] = None,
     text: Optional[str] = None,
     encoding: Optional[str] = "utf-8",
+    paragraph_grouper: Optional[Callable[[str], str]] = None,
 ) -> List[Element]:
     """Partitions an .txt documents into its constituent elements.
     Parameters
@@ -42,6 +43,9 @@ def partition_text(
         The string representation of the .txt document.
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
+    paragrapher_grouper
+        A str -> str function for fixing paragraphs that are interrupted by line breaks
+        for formatting purposes.
     """
     if text is not None and text.strip() == "" and not file and not filename:
         return []
@@ -63,6 +67,9 @@ def partition_text(
 
     elif text is not None:
         file_text = str(text)
+
+    if paragraph_grouper is not None:
+        file_text = paragraph_grouper(file_text)
 
     file_content = split_by_paragraph(file_text)
 
