@@ -395,9 +395,26 @@ Examples:
     text = f.read()
   elements = partition_text(text=text)
 
+If the text has extra line breaks for formatting purposes, you can group
+together the broken text using the ``paragraph_grouper`` kwarg. The
+``paragraph_grouper`` kwarg is a function that accepts a string and returns
+another string.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.text import partition_text
+  from unstructured.cleaners.core import group_broken_paragraphs
 
 
+  text = """The big brown fox
+  was walking down the lane.
 
+  At the end of the lane, the
+  fox met a bear."""
+
+  partition_text(text=text, paragraph_group=group_broken_paragraphs)
 
 
 ########
