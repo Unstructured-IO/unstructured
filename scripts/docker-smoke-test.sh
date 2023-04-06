@@ -7,7 +7,7 @@
 set -eux -o pipefail
 
 CONTAINER_NAME=unstructured-smoke-test
-IMAGE_NAME="${IMAGE_NAME:-unstructured:latest}"
+IMAGE_NAME="${IMAGE_NAME:-unstructured:dev}"
 
 # Change to the root of the repository
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )

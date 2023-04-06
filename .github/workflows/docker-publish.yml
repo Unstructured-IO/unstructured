@@ -3,10 +3,10 @@ name: Build And Push Docker Image
 on:
   push:
     branches:
-      - main
+      - "**"
 
 env:
-  DOCKER_REPOSITORY: quay.io/unstructured-io/unstructured
+  DOCKER_REPOSITORY: quay.io/unstructured-io/test-unstructured
   DOCKER_BUILD_REPOSITORY: quay.io/unstructured-io/build-unstructured
   PIP_VERSION: "22.2.1"
   PYTHON_VERSION: "3.8"
@@ -47,7 +47,7 @@ jobs:
     - name: Test AMD image
       run: |
         DOCKER_PLATFORM="linux/amd64" DOCKER_IMAGE="$DOCKER_BUILD_REPOSITORY:amd-$SHORT_SHA" make docker-test 
-        IMAGE_NAME=$DOCKER_BUILD_REPOSITORY:amd-$SHORT_SHA make docker-smoke-test
+        DOCKER_IMAGE=$DOCKER_BUILD_REPOSITORY:amd-$SHORT_SHA make docker-smoke-test
     - name: Push AMD image
       run: |
         # write to the build repository to cache for the publish-images job
