@@ -1,13 +1,14 @@
-## 0.5.12-dev0
+## 0.5.12-dev1
 
 ### Enhancements
+
+* Add OS mimetypes DB to docker image, mainly for unstructured-api compat.
 
 ### Features
 
 ### Fixes
 
 * Allow encoding to be passed into `replace_mime_encodings`.
-
 
 ## 0.5.11
 
