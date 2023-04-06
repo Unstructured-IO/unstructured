@@ -1,4 +1,4 @@
-from typing import IO, Optional
+from typing import IO, Callable, Optional
 
 from unstructured.file_utils.filetype import FileType, detect_filetype
 from unstructured.partition.doc import partition_doc
@@ -24,6 +24,7 @@ def partition(
     include_page_breaks: bool = False,
     strategy: str = "hi_res",
     encoding: str = "utf-8",
+    paragraph_grouper: Optional[Callable[[str], str]] = None,
 ):
     """Partitions a document into its constituent elements. Will use libmagic to determine
     the file's type and route it to the appropriate partitioning function. Applies the default
@@ -95,7 +96,12 @@ def partition(
             include_page_breaks=include_page_breaks,
         )
     elif filetype == FileType.TXT:
-        return partition_text(filename=filename, file=file, encoding=encoding)
+        return partition_text(
+            filename=filename,
+            file=file,
+            encoding=encoding,
+            paragraph_grouper=paragraph_grouper,
+        )
     elif filetype == FileType.PPT:
         return partition_ppt(filename=filename, file=file, include_page_breaks=include_page_breaks)
     elif filetype == FileType.PPTX:

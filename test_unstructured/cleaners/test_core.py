@@ -1,3 +1,5 @@
+import re
+
 import pytest
 
 from unstructured.cleaners import core
@@ -164,6 +166,42 @@ def test_clean_prefix(text, pattern, ignore_case, strip, expected):
 )
 def test_clean_postfix(text, pattern, ignore_case, strip, expected):
     assert core.clean_postfix(text, pattern, ignore_case, strip) == expected
+
+
+def test_group_broken_paragraphs():
+    text = """The big red fox
+is walking down the lane.
+
+At the end of the lane
+the fox met a friendly bear."""
+
+    assert (
+        core.group_broken_paragraphs(text)
+        == """The big red fox is walking down the lane.
+
+At the end of the lane the fox met a friendly bear."""
+    )
+
+
+def test_group_broken_paragraphs_non_default_settings():
+    text = """The big red fox
+
+is walking down the lane.
+
+
+At the end of the lane
+
+the fox met a friendly bear."""
+
+    para_split_re = re.compile(r"(\s*\n\s*){3}")
+
+    clean_text = core.group_broken_paragraphs(text, paragraph_split=para_split_re)
+    assert (
+        clean_text
+        == """The big red fox is walking down the lane.
+
+At the end of the lane the fox met a friendly bear."""
+    )
 
 
 @pytest.mark.parametrize(

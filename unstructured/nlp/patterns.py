@@ -70,6 +70,9 @@ EMAIL_HEAD_RE = re.compile(EMAIL_HEAD_PATTERN)
 ***REMOVED*** (incluing \r and \n chars) on either side
 PARAGRAPH_PATTERN = r"\s*\n\s*"  ***REMOVED*** noqa: W605 NOTE(harrell)
 
+PARAGRAPH_PATTERN_RE = re.compile(PARAGRAPH_PATTERN)
+DOUBLE_PARAGRAPH_PATTERN_RE = re.compile("(" + PARAGRAPH_PATTERN + "){2}")
+
 ***REMOVED*** IP Address examples: ba23::58b5:2236:45g2:88h2 or 10.0.2.01
 IP_ADDRESS_PATTERN = (
     "[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}",  ***REMOVED*** noqa: W605 NOTE(harrell)
