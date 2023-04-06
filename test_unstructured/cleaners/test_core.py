@@ -166,6 +166,41 @@ def test_clean_postfix(text, pattern, ignore_case, strip, expected):
     assert core.clean_postfix(text, pattern, ignore_case, strip) == expected
 
 
+def test_group_broken_paragraphs():
+    text = """The big red fox
+is walking down the lane.
+
+At the end of the lane
+the fox met a friendly bear."""
+
+    assert (
+        core.group_broken_paragraphs(text)
+        == """The big red fox is walking down the lane.
+
+At the end of the lane the fox met a friendly bear."""
+    )
+
+
+def test_group_broken_paragraphs_non_default_settings():
+    text = """The big red fox
+
+is walking down the lane.
+
+
+At the end of the lane
+
+the fox met a friendly bear."""
+
+    clean_text = core.group_broken_paragraphs(text, line_split="\n\n", paragraph_split="\n\n\n")
+    assert (
+        clean_text
+        == """The big red fox is walking down the lane.
+
+
+At the end of the lane the fox met a friendly bear."""
+    )
+
+
 @pytest.mark.parametrize(
     # NOTE(yuming): Tests combined cleaners
     (

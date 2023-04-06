@@ -57,6 +57,26 @@ def clean_ordered_bullets(text) -> str:
     return text_cl
 
 
+def group_broken_paragraphs(text, line_split="\n", paragraph_split="\n\n"):
+    """Groups paragraphs that have line breaks for visual/formatting purposes.
+    For example:
+
+    '''The big red fox
+    is walking down the lane.
+
+    At the end of the lane
+    the fox met a bear.'''
+
+    Gets converted to
+
+    '''The big red fox is walking down the lane.
+    At the end of the land the fox met a bear.'''
+    """
+    paragraphs = text.split(paragraph_split)
+    clean_paragraphs = [para.replace(line_split, " ") for para in paragraphs if para]
+    return paragraph_split.join(clean_paragraphs)
+
+
 # TODO(robinson) - There's likely a cleaner was to accomplish this and get all of the
 # unicode characters instead of just the quotes. Doing this for now since quotes are
 # an issue that are popping up in the SEC filings tests
