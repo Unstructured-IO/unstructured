@@ -1,6 +1,8 @@
-***REMOVED******REMOVED*** 0.5.12-dev0
+***REMOVED******REMOVED*** 0.5.12-dev1
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
+
+* Use the image registry as a cache when building Docker images.
 
 ***REMOVED******REMOVED******REMOVED*** Features
 
