@@ -1,3 +1,5 @@
+import re
+
 import pytest
 
 from unstructured.cleaners import core
@@ -191,11 +193,12 @@ At the end of the lane
 
 the fox met a friendly bear."""
 
-    clean_text = core.group_broken_paragraphs(text, line_split="\n\n", paragraph_split="\n\n\n")
+    para_split_re = re.compile(r"(\s*\n\s*){3}")
+
+    clean_text = core.group_broken_paragraphs(text, paragraph_split=para_split_re)
     assert (
         clean_text
         == """The big red fox is walking down the lane.
-
 
 At the end of the lane the fox met a friendly bear."""
     )
