@@ -97,7 +97,10 @@ def partition(
         )
     elif filetype == FileType.TXT:
         return partition_text(
-            filename=filename, file=file, encoding=encoding, paragraph_grouper=paragraph_grouper
+            filename=filename,
+            file=file,
+            encoding=encoding,
+            paragraph_grouper=paragraph_grouper,
         )
     elif filetype == FileType.PPT:
         return partition_ppt(filename=filename, file=file, include_page_breaks=include_page_breaks)
