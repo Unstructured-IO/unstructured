@@ -1,8 +1,9 @@
-## 0.5.12-dev1
+## 0.5.12-dev2
 
 ### Enhancements
 
 * Add OS mimetypes DB to docker image, mainly for unstructured-api compat.
+* Use the image registry as a cache when building Docker images.
 
 ### Features
 
