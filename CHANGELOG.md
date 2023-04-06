@@ -1,8 +1,9 @@
-## 0.5.12-dev1
+## 0.5.12-dev2
 
 ### Enhancements
 
 * Use the image registry as a cache when building Docker images.
+* Adds the ability for `partition_text` to group together broken paragraphs.
 
 ### Features
 
