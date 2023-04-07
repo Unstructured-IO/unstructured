@@ -5,7 +5,13 @@ import pathlib
 
 import pytest
 
-from unstructured.documents.elements import Image, ListItem, NarrativeText, Title
+from unstructured.documents.elements import (
+    ElementMetadata,
+    Image,
+    ListItem,
+    NarrativeText,
+    Title,
+)
 from unstructured.documents.email_elements import (
     MetaData,
     ReceivedInfo,
@@ -140,6 +146,10 @@ def test_partition_email_from_text():
     assert elements == EXPECTED_OUTPUT
 
 
+def test_partition_email_from_text_work_with_empty_string():
+    assert partition_email(text="") == []
+
+
 def test_partition_email_from_filename_with_embedded_image():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email-image-embedded.eml")
     elements = partition_email(filename=filename, content_source="text/plain")
@@ -154,6 +164,21 @@ def test_partition_email_header():
     elements = partition_email_header(msg)
     assert len(elements) > 0
     assert elements == RECEIVED_HEADER_OUTPUT
+
+
+def test_partition_email_has_metadata():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email-header.eml")
+    elements = partition_email(filename=filename)
+    assert len(elements) > 0
+    assert elements[0].metadata == ElementMetadata(
+        filename=filename,
+        date="2022-12-16T17:04:16-05:00",
+        page_number=None,
+        url=None,
+        sent_from=["Matthew Robinson <mrobinson@unstructured.io>"],
+        sent_to=["Matthew Robinson <mrobinson@unstructured.io>"],
+        subject="Test Email",
+    )
 
 
 def test_extract_email_text_matches_html():

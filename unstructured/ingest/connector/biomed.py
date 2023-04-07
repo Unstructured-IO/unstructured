@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from ftplib import FTP, error_perm
 from pathlib import Path
-from typing import List, Union
+from typing import List, Optional, Union
 
 import requests
 from bs4 import BeautifulSoup
@@ -47,7 +47,12 @@ class SimpleBiomedConfig(BaseConnectorConfig):
     # where to write structured data, with the directory structure matching FTP path
     output_dir: str
     re_download: bool = False
+    download_only: bool = False
     preserve_downloads: bool = False
+    metadata_include: Optional[str] = None
+    metadata_exclude: Optional[str] = None
+    fields_include: str = "element_id,text,type,metadata"
+    flatten_metadata: bool = False
 
     def _validate_date_args(self, date):
         date_formats = ["%Y-%m-%d", "%Y-%m-%d+%H:%M:%S"]
@@ -138,7 +143,11 @@ class BiomedIngestDoc(BaseIngestDoc):
         return Path(f"{self.file_meta.output_filepath}.json").resolve()
 
     def cleanup_file(self):
-        if not self.config.preserve_downloads and self.filename.is_file():
+        if (
+            not self.config.preserve_downloads
+            and self.filename.is_file()
+            and not self.config.download_only
+        ):
             logger.debug(f"Cleaning up {self}")
             Path.unlink(self.filename)
 
@@ -166,6 +175,8 @@ class BiomedIngestDoc(BaseIngestDoc):
 
     def write_result(self):
         """Write the structured json result for this doc. result must be json serializable."""
+        if self.config.download_only:
+            return
         output_filename = self._output_filename()
         output_filename.parent.mkdir(parents=True, exist_ok=True)
         with open(output_filename, "w") as output_f:
@@ -178,7 +189,7 @@ class BiomedConnector(BaseConnector):
 
     def __init__(self, config):
         self.config = config
-        self.cleanup_files = not self.config.preserve_downloads
+        self.cleanup_files = not self.config.preserve_downloads and not self.config.download_only
 
     def _list_objects_api(self):
         def urls_to_metadata(urls):

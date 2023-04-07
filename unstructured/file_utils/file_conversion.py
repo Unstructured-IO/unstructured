@@ -9,7 +9,7 @@ from unstructured.partition.common import exactly_one
 def convert_file_to_text(filename: str, source_format: str, target_format: str) -> str:
     """Uses pandoc to convert the source document to a raw text string."""
     try:
-        text = pypandoc.convert_file(filename, "html", format="epub")
+        text = pypandoc.convert_file(filename, target_format, format=source_format)
     except FileNotFoundError as err:
         msg = (
             "Error converting the file to text. Ensure you have the pandoc "

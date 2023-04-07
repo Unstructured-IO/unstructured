@@ -52,6 +52,7 @@ setup(
     install_requires=[
         "argilla",
         "lxml",
+        "msg_parser",
         "nltk",
         "openpyxl",
         "pandas",
@@ -75,8 +76,7 @@ setup(
             "transformers",
         ],
         "local-inference": [
-            # NOTE(robinson) - Upper bound is temporary due to a multithreading issue
-            "unstructured-inference~=0.2.4",
+            "unstructured-inference==0.3.2",
         ],
         "s3": ["s3fs", "fsspec"],
         "azure": ["adlfs", "fsspec"],
@@ -88,7 +88,11 @@ setup(
         "gitlab": ["python-gitlab"],
         "reddit": ["praw"],
         "wikipedia": ["wikipedia"],
-        "google-drive": ["google-api-python-client"],
+        "google-drive": [
+            "google-api-python-client",
+            # consistency with local-inference-pin
+            "protobuf<3.21",
+        ],
     },
     package_dir={"unstructured": "unstructured"},
     package_data={"unstructured": ["nlp/*.txt"]},

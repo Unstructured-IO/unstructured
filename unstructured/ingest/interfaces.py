@@ -2,6 +2,7 @@
 through Unstructured."""
 
 from abc import ABC, abstractmethod
+from typing import Optional
 
 from unstructured.ingest.logger import logger
 from unstructured.partition.auto import partition
@@ -47,6 +48,11 @@ class BaseConnectorConfig(ABC):
     # where to write structured data outputs
     output_dir: str
     re_download: bool = False
+    download_only: bool = False
+    metadata_include: Optional[str] = None
+    metadata_exclude: Optional[str] = None
+    fields_include: str = "element_id,text,type,metadata"
+    flatten_metadata: bool = False
 
 
 class BaseIngestDoc(ABC):
@@ -57,6 +63,8 @@ class BaseIngestDoc(ABC):
 
     Crucially, it is not responsible for the actual processing of the raw document.
     """
+
+    config: BaseConnectorConfig
 
     @property
     @abstractmethod
@@ -86,16 +94,41 @@ class BaseIngestDoc(ABC):
         pass
 
     def process_file(self):
+        if self.config.download_only:
+            return
         logger.info(f"Processing {self.filename}")
-
         elements = partition(filename=str(self.filename))
         isd_elems = convert_to_dict(elements)
 
         self.isd_elems_no_filename = []
         for elem in isd_elems:
             # type: ignore
-            elem["metadata"].pop("filename", None)  # type: ignore[attr-defined]
-            elem.pop("coordinates")  # type: ignore[attr-defined]
+            if (
+                self.config.metadata_exclude is not None
+                and self.config.metadata_include is not None
+            ):
+                raise ValueError(
+                    "Arguments `--metadata-include` and `--metadata-exclude` are "
+                    "mutually exclusive with each other.",
+                )
+            elif self.config.metadata_exclude is not None:
+                ex_list = self.config.metadata_exclude.split(",")
+                for ex in ex_list:
+                    elem["metadata"].pop(ex, None)  # type: ignore[attr-defined]
+            elif self.config.metadata_include is not None:
+                in_list = self.config.metadata_include.split(",")
+                for k in elem["metadata"]:
+                    if k not in in_list:
+                        elem["metadata"].pop(k, None)  # type: ignore[attr-defined]
+
+            in_list = self.config.fields_include.split(",")
+            elem = {k: v for k, v in elem.items() if k in in_list}
+
+            if self.config.flatten_metadata:
+                for k, v in elem["metadata"].items():  # type: ignore[attr-defined]
+                    elem[k] = v
+                elem.pop("metadata")  # type: ignore[attr-defined]
+
             self.isd_elems_no_filename.append(elem)
 
         return self.isd_elems_no_filename

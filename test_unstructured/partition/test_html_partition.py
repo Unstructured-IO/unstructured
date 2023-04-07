@@ -4,6 +4,7 @@ from unittest.mock import patch
 
 import pytest
 import requests
+from requests.models import Response
 
 from unstructured.documents.elements import PageBreak
 from unstructured.partition.html import partition_html
@@ -38,6 +39,10 @@ def test_partition_html_from_text():
         text = f.read()
     elements = partition_html(text=text)
     assert len(elements) > 0
+
+
+def test_partition_html_from_text_works_with_empty_string():
+    assert partition_html(text="") == []
 
 
 class MockResponse:
@@ -86,6 +91,25 @@ def test_partition_html_from_url_raises_with_bad_content_type():
             partition_html(url="https://fake.url")
 
 
+def test_partition_from_url_uses_headers(mocker):
+    test_url = "https://example.com"
+    test_headers = {"User-Agent": "test"}
+
+    response = Response()
+    response.status_code = 200
+    response._content = (
+        b"<html><head></head><body><p>What do i know? Who needs to know it?</p></body></html>"
+    )
+    response.headers = {"Content-Type": "text/html"}
+
+    mock_get = mocker.patch("requests.get", return_value=response)
+
+    partition_html(url=test_url, headers=test_headers)
+
+    # Check if requests.get was called with the correct arguments
+    mock_get.assert_called_once_with(test_url, headers=test_headers)
+
+
 def test_partition_html_raises_with_none_specified():
     with pytest.raises(ValueError):
         partition_html()
@@ -125,3 +149,9 @@ def test_user_without_file_write_permission_can_partition_html(tmp_path, monkeyp
     # partition html should still work
     elements = partition_html(filename=read_only_file.resolve())
     assert len(elements) > 0
+
+
+def test_partition_html_processes_chinese_chracters():
+    html_text = "<html><div><p>每日新闻</p></div></html>"
+    elements = partition_html(text=html_text)
+    assert elements[0].text == "每日新闻"

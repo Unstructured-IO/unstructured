@@ -66,8 +66,12 @@ EMAIL_HEAD_PATTERN = (
 )
 EMAIL_HEAD_RE = re.compile(EMAIL_HEAD_PATTERN)
 
-# Helps split text by paragraphs
-PARAGRAPH_PATTERN = "\n\n\n|\n\n|\r\n|\r|\n"  # noqa: W605 NOTE(harrell)
+# Helps split text by paragraphs. There must be one newline, with potential whitespace
+# (incluing \r and \n chars) on either side
+PARAGRAPH_PATTERN = r"\s*\n\s*"  # noqa: W605 NOTE(harrell)
+
+PARAGRAPH_PATTERN_RE = re.compile(PARAGRAPH_PATTERN)
+DOUBLE_PARAGRAPH_PATTERN_RE = re.compile("(" + PARAGRAPH_PATTERN + "){2}")
 
 # IP Address examples: ba23::58b5:2236:45g2:88h2 or 10.0.2.01
 IP_ADDRESS_PATTERN = (

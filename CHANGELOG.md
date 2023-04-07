@@ -1,12 +1,112 @@
-## 0.5.5-dev0
+## 0.5.12-dev2
+
+### Enhancements
+
+* Use the image registry as a cache when building Docker images.
+* Adds the ability for `partition_text` to group together broken paragraphs.
+
+### Features
+
+### Fixes
+
+* Allow encoding to be passed into `replace_mime_encodings`.
+
+
+## 0.5.11
 
 ### Enhancements
 
 ### Features
 
+### Fixes
+
+* Guard against null style attribute in docx document elements
+* Update HTML encoding to better support foreign language characters
+
+## 0.5.10
+
+### Enhancements
+
+* Updated inference package
+* Add sender, recipient, date, and subject to element metadata for emails
+
+### Features
+
+* Added `--download-only` parameter to `unstructured-ingest`
+
+### Fixes
+
+* FileNotFound error when filename is provided but file is not on disk
+
+## 0.5.9
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* Convert file to str in helper `split_by_paragraph` for `partition_text`
+
+## 0.5.8
+
+### Enhancements
+
+* Update `elements_to_json` to return string when filename is not specified
+* `elements_from_json` may take a string instead of a filename with the `text` kwarg
+* `detect_filetype` now does a final fallback to file extension.
+* Empty tags are now skipped during the depth check for HTML processing.
+
+### Features
+
+* Add local file system to `unstructured-ingest`
+* Add `--max-docs` parameter to `unstructured-ingest`
+* Added `partition_msg` for processing MSFT Outlook .msg files.
+
+### Fixes
+
+* `convert_file_to_text` now passes through the `source_format` and `target_format` kwargs.
+  Previously they were hard coded.
+* Partitioning functions that accept a `text` kwarg no longer raise an error if an empty
+  string is passed (and empty list of elements is returned instead).
+* `partition_json` no longer fails if the input is an empty list.
+* Fixed bug in `chunk_by_attention_window` that caused the last word in segments to be cut-off
+  in some cases.
+
+### BREAKING CHANGES
+
+* `stage_for_transformers` now returns a list of elements, making it consistent with other
+  staging bricks
+
+## 0.5.7
+
+### Enhancements
+
+* Refactored codebase using `exactly_one`
+* Adds ability to pass headers when passing a url in partition_html()
+* Added optional `content_type` and `file_filename` parameters to `partition()` to bypass file detection
+
+### Features
+
+* Add `--flatten-metadata` parameter to `unstructured-ingest`
+* Add `--fields-include` parameter to `unstructured-ingest`
+
+### Fixes
+
+## 0.5.6
+
+### Enhancements
+
+* `contains_english_word()`, used heavily in text processing, is 10x faster.
+
+### Features
+
+* Add `--metadata-include` and `--metadata-exclude` parameters to `unstructured-ingest`
 * Add `clean_non_ascii_chars` to remove non-ascii characters from unicode string
 
 ### Fixes
+
+* Fix problem with PDF partition (duplicated test)
 
 ## 0.5.4
 

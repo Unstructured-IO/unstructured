@@ -1,0 +1,127 @@
+name: Build And Push Docker Image
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  DOCKER_REPOSITORY: quay.io/unstructured-io/unstructured
+  DOCKER_BUILD_REPOSITORY: quay.io/unstructured-io/build-unstructured
+  PIP_VERSION: "22.2.1"
+  PYTHON_VERSION: "3.8"
+
+jobs:
+  set-short-sha:
+    runs-on: ubuntu-latest
+    outputs:
+      short_sha: ${{ steps.set_short_sha.outputs.short_sha }}
+    steps:
+      - name: Set Short SHA
+        id: set_short_sha
+        run: echo "short_sha=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
+
+  build-amd:
+    runs-on: ubuntu-latest
+    needs: set-short-sha
+    env:
+      SHORT_SHA: ${{ needs.set-short-sha.outputs.short_sha }}
+    steps:
+    - uses: docker/setup-buildx-action@v1
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Login to Quay.io
+      uses: docker/login-action@v1
+      with:
+        registry: quay.io
+        username: ${{ secrets.QUAY_IO_ROBOT_USERNAME }}
+        password: ${{ secrets.QUAY_IO_ROBOT_TOKEN }}
+    - name: Build AMD image
+      run: |
+        DOCKER_BUILDKIT=1 docker buildx build --platform=linux/amd64 --load \
+          --build-arg PIP_VERSION=$PIP_VERSION \
+          --build-arg BUILDKIT_INLINE_CACHE=1 \
+          --progress plain \
+          --cache-from $DOCKER_BUILD_REPOSITORY:amd \
+          -t $DOCKER_BUILD_REPOSITORY:amd-$SHORT_SHA .
+    - name: Test AMD image
+      run: |
+        DOCKER_PLATFORM="linux/amd64" DOCKER_IMAGE="$DOCKER_BUILD_REPOSITORY:amd-$SHORT_SHA" make docker-test 
+        DOCKER_IMAGE=$DOCKER_BUILD_REPOSITORY:amd-$SHORT_SHA make docker-smoke-test
+    - name: Push AMD image
+      run: |
+        # write to the build repository to cache for the publish-images job
+        docker push $DOCKER_BUILD_REPOSITORY:amd-$SHORT_SHA
+  build-arm:
+    runs-on: ubuntu-latest
+    needs: set-short-sha
+    env:
+      SHORT_SHA: ${{ needs.set-short-sha.outputs.short_sha }}
+    steps:
+    - uses: docker/setup-buildx-action@v1
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Login to Quay.io
+      uses: docker/login-action@v1
+      with:
+        registry: quay.io
+        username: ${{ secrets.QUAY_IO_ROBOT_USERNAME }}
+        password: ${{ secrets.QUAY_IO_ROBOT_TOKEN }}
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+    - name: Build ARM image
+      run: |
+        DOCKER_BUILDKIT=1 docker buildx build --platform=linux/arm64 --load \
+          --build-arg PIP_VERSION=$PIP_VERSION \
+          --build-arg BUILDKIT_INLINE_CACHE=1 \
+          --progress plain \
+          --cache-from $DOCKER_BUILD_REPOSITORY:arm \
+          -t $DOCKER_BUILD_REPOSITORY:arm-$SHORT_SHA .
+    - name: Test ARM image
+      run: |
+        # only run a subset of tests on ARM, since they take a long time with emulation
+        DOCKER_PLATFORM="linux/arm64" DOCKER_IMAGE="$DOCKER_BUILD_REPOSITORY:arm-$SHORT_SHA" make docker-test TEST_NAME=partition/test_text.py
+        DOCKER_IMAGE=$DOCKER_BUILD_REPOSITORY:arm-$SHORT_SHA make docker-smoke-test
+    - name: Push ARM image
+      run: |
+        # write to the build repository to cache for the publish-images job
+        docker push $DOCKER_BUILD_REPOSITORY:arm-$SHORT_SHA
+  publish-images:
+    runs-on: ubuntu-latest
+    needs: [set-short-sha, build-amd, build-arm]
+    env:
+      SHORT_SHA: ${{ needs.set-short-sha.outputs.short_sha }}
+    steps:
+    - uses: docker/setup-buildx-action@v1
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Login to Quay.io
+      uses: docker/login-action@v1
+      with:
+        registry: quay.io
+        username: ${{ secrets.QUAY_IO_ROBOT_USERNAME }}
+        password: ${{ secrets.QUAY_IO_ROBOT_TOKEN }}
+    - name: Pull AMD image
+      run: |
+        docker pull $DOCKER_BUILD_REPOSITORY:amd-$SHORT_SHA
+    - name: Pull ARM image
+      run: |
+        docker pull $DOCKER_BUILD_REPOSITORY:arm-$SHORT_SHA
+    - name: Push latest build tags for AMD and ARM
+      run: |
+        # these are used to construct the final manifest but also cache-from in subsequent runs
+        docker tag $DOCKER_BUILD_REPOSITORY:amd-$SHORT_SHA $DOCKER_BUILD_REPOSITORY:amd
+        docker push $DOCKER_BUILD_REPOSITORY:amd
+        docker tag $DOCKER_BUILD_REPOSITORY:arm-$SHORT_SHA $DOCKER_BUILD_REPOSITORY:arm
+        docker push $DOCKER_BUILD_REPOSITORY:arm
+    - name: Push multiarch manifest
+      run: |
+        docker manifest create ${DOCKER_REPOSITORY}:latest $DOCKER_BUILD_REPOSITORY:amd $DOCKER_BUILD_REPOSITORY:arm
+        docker manifest push $DOCKER_REPOSITORY:latest
+        docker manifest create ${DOCKER_REPOSITORY}:$SHORT_SHA $DOCKER_BUILD_REPOSITORY:amd $DOCKER_BUILD_REPOSITORY:arm
+        docker manifest push $DOCKER_REPOSITORY:$SHORT_SHA
+        VERSION=$(grep -Po '(?<=__version__ = ")[^"]*' unstructured/__version__.py)
+        docker manifest create ${DOCKER_REPOSITORY}:$VERSION $DOCKER_BUILD_REPOSITORY:amd $DOCKER_BUILD_REPOSITORY:arm
+        docker manifest push $DOCKER_REPOSITORY:$VERSION
+
+    

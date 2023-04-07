@@ -3,6 +3,7 @@ import pathlib
 
 import pytest
 
+from unstructured.cleaners.core import group_broken_paragraphs
 from unstructured.documents.elements import Address, ListItem, NarrativeText, Title
 from unstructured.partition.text import partition_text
 
@@ -50,6 +51,14 @@ def test_partition_text_from_file():
     assert elements == EXPECTED_OUTPUT
 
 
+def test_partition_text_from_bytes_file():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-text.txt")
+    with open(filename, "rb") as f:
+        elements = partition_text(file=f)
+    assert len(elements) > 0
+    assert elements == EXPECTED_OUTPUT
+
+
 def test_partition_text_from_text():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-text.txt")
     with open(filename) as f:
@@ -57,6 +66,10 @@ def test_partition_text_from_text():
     elements = partition_text(text=text)
     assert len(elements) > 0
     assert elements == EXPECTED_OUTPUT
+
+
+def test_partition_text_from_text_works_with_empty_string():
+    assert partition_text(text="") == []
 
 
 def test_partition_text_raises_with_none_specified():
@@ -82,4 +95,18 @@ def test_partition_text_captures_everything_even_with_linebreaks():
     assert elements == [
         Title(text="VERY IMPORTANT MEMO"),
         Address(text="DOYLESTOWN, PA 18901"),
+    ]
+
+
+def test_partition_text_groups_broken_paragraphs():
+    text = """The big brown fox
+was walking down the lane.
+
+At the end of the lane,
+the fox met a bear."""
+
+    elements = partition_text(text=text, paragraph_grouper=group_broken_paragraphs)
+    assert elements == [
+        NarrativeText(text="The big brown fox was walking down the lane."),
+        NarrativeText(text="At the end of the lane, the fox met a bear."),
     ]

@@ -35,6 +35,7 @@ HEADING_TAGS: Final[List[str]] = ["h1", "h2", "h3", "h4", "h5", "h6"]
 TABLE_TAGS: Final[List[str]] = ["table", "tbody", "td", "tr"]
 PAGEBREAK_TAGS: Final[List[str]] = ["hr"]
 HEADER_OR_FOOTER_TAGS: Final[List[str]] = ["header", "footer"]
+EMPTY_TAGS: Final[List[str]] = ["br", "hr"]
 
 
 class TagsMixin:
@@ -154,7 +155,6 @@ class HTMLDocument(XMLDocument):
         """Filters the elements and returns a new instance of the class based on the criteria
         specified. Note that the number of pages can change in the case that all elements on a
         page are filtered out.
-
         Parameters
         ----------
         skip_table_text:
@@ -283,7 +283,9 @@ def _is_text_tag(tag_elem: etree.Element, max_predecessor_len: int = 5) -> bool:
     """Deteremines if a tag potentially contains narrative text."""
     # NOTE(robinson) - Only consider elements with limited depth. Otherwise,
     # it could be the text representation of a giant div
-    if len(tag_elem) > max_predecessor_len:
+    # Exclude empty tags from tag_elem
+    empty_elems_len = len([el for el in tag_elem.getchildren() if el.tag in EMPTY_TAGS])
+    if len(tag_elem) > max_predecessor_len + empty_elems_len:
         return False
 
     if tag_elem.tag in TEXT_TAGS + HEADING_TAGS:
@@ -320,7 +322,8 @@ def _process_list_item(
         next_text = _construct_text(next_element)
         # NOTE(robinson) - Only consider elements with limited depth. Otherwise,
         # it could be the text representation of a giant div
-        if len(tag_elem) > max_predecessor_len:
+        empty_elems_len = len([el for el in tag_elem.getchildren() if el.tag in EMPTY_TAGS])
+        if len(tag_elem) > max_predecessor_len + empty_elems_len:
             return None, None
         if next_text:
             return HTMLListItem(text=next_text, tag=next_element.tag), next_element
@@ -347,7 +350,6 @@ def is_list_item_tag(tag_elem: etree.Element) -> bool:
 
 def _bulleted_text_from_table(table) -> List[Element]:
     """Extracts bulletized narrative text from a table.
-
     NOTE: if a table has mixed bullets and non-bullets, only bullets are extracted.
     I.e., _read() will drop non-bullet narrative text in the table.
     """

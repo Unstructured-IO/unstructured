@@ -30,6 +30,7 @@ In cases where ``libmagic`` is not available, filetype detection will fall back 
 As shown in the examples below, the ``partition`` function accepts both filenames and file-like objects as input.
 ``partition`` also has some optional kwargs.
 For example, if you set ``include_page_breaks=True``, the output will include ``PageBreak`` elements if the filetype supports it.
+Additionally you can bypass the filetype detection logic with the optional  ``content_type`` argument which may be specified with either the ``filename`` or file-like object, ``file``.
 You can find a full listing of optional kwargs in the documentation below.
 
 .. code:: python
@@ -38,7 +39,7 @@ You can find a full listing of optional kwargs in the documentation below.
 
 
   filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
-  elements = partition(filename=filename)
+  elements = partition(filename=filename, content_type="application/pdf")
   print("\n\n".join([str(el) for el in elements][:10]))
 
 
@@ -57,7 +58,7 @@ The ``unstructured`` library also includes partitioning bricks targeted at speci
 The ``partition`` brick uses these document-specific partitioning bricks under the hood.
 There are a few reasons you may want to use a document-specific partitioning brick instead of ``partition``:
 
-* If you already know the document type, filetype detection is unnecessary. Using the document-specific brick directly will make your program run faster.
+* If you already know the document type, filetype detection is unnecessary. Using the document-specific brick directly, or passing in the ``content_type`` will make your program run faster.
 * Fewer dependencies. You don't need to install ``libmagic`` for filetype detection if you're only using document-specific bricks.
 * Additional features. The API for partition is the least common denominator for all document types. Certain document-specific brick include extra features that you may want to take advantage of. For example, ``partition_html`` allows you to pass in a URL so you don't have to store the ``.html`` file locally. See the documentation below learn about the options available in each partitioning brick.
 
@@ -82,7 +83,7 @@ If you call the ``partition`` function, ``unstructured`` will attempt to detect 
 file type and route it to the appropriate partitioning brick. All partitioning bricks
 called within ``partition`` are called using the default kwargs. Use the document-type
 specific bricks if you need to apply non-default settings.
-``partition`` currently supports ``.docx``, ``.doc``, ``.pptx``, ``.ppt``, ``.eml``, ``.epub``, ``.html``, ``.pdf``,
+``partition`` currently supports ``.docx``, ``.doc``, ``.pptx``, ``.ppt``, ``.eml``, ``.msg``, ``.epub``, ``.html``, ``.pdf``,
 ``.png``, ``.jpg``, and ``.txt`` files.
 If you set the ``include_page_breaks`` kwarg to ``True``, the output will include page breaks. This is only supported for ``.pptx``, ``.html``, ``.pdf``,
 ``.png``, and ``.jpg``.
@@ -119,7 +120,7 @@ faster processing and `"hi_res"` for
 ------------------
 
 The ``partition_docx`` partitioning brick pre-processes Microsoft Word documents
-saved in the ``.docx`` format. This staging brick uses a combination of the styling
+saved in the ``.docx`` format. This partition brick uses a combination of the styling
 information in the document and the structure of the text to determine the type
 of a text element. The ``partition_docx`` can take a filename or file-like object
 as input, as shown in the two examples below.
@@ -148,7 +149,7 @@ Examples:
 ------------------
 
 The ``partition_doc`` partitioning brick pre-processes Microsoft Word documents
-saved in the ``.doc`` format. This staging brick uses a combination of the styling
+saved in the ``.doc`` format. This partition brick uses a combination of the styling
 information in the document and the structure of the text to determine the type
 of a text element. The ``partition_doc`` can take a filename or file-like object
 as input.
@@ -169,7 +170,7 @@ Examples:
 ---------------------
 
 The ``partition_pptx`` partitioning brick pre-processes Microsoft PowerPoint documents
-saved in the ``.pptx`` format. This staging brick uses a combination of the styling
+saved in the ``.pptx`` format. This partition brick uses a combination of the styling
 information in the document and the structure of the text to determine the type
 of a text element. The ``partition_pptx`` can take a filename or file-like object
 as input, as shown in the two examples below.
@@ -190,7 +191,7 @@ Examples:
 ---------------------
 
 The ``partition_ppt`` partitioning brick pre-processes Microsoft PowerPoint documents
-saved in the ``.ppt`` format. This staging brick uses a combination of the styling
+saved in the ``.ppt`` format. This partition brick uses a combination of the styling
 information in the document and the structure of the text to determine the type
 of a text element. The ``partition_ppt`` can take a filename or file-like object.
 ``partition_ppt`` uses ``libreoffice`` to convert the file to ``.pptx`` and then
@@ -210,9 +211,10 @@ Examples:
 
 The ``partition_html`` function partitions an HTML document and returns a list
 of document ``Element`` objects. ``partition_html`` can take a filename, file-like
-object, or string as input. The three examples below all produce the same output.
+object, string, or url as input.
 
-Examples:
+The following three invocations of partition_html() are essentially equivalent:
+
 
 .. code:: python
 
@@ -226,6 +228,22 @@ Examples:
   with open("example-docs/example-10k.html", "r") as f:
       text = f.read()
   elements = partition_html(text=text)
+
+
+
+The following illustrates fetching a url and partitioning the response content:
+
+.. code:: python
+
+  from unstructured.partition.html import partition_html
+
+  elements = partition_html(url="https://python.org/")
+
+  # you can also provide custom headers:
+
+  elements = partition_html(url="https://python.org/",
+                            headers={"User-Agent": "YourScriptName/1.0 ..."})
+
 
 
 ``partition_pdf``
@@ -306,6 +324,21 @@ Examples:
   elements = partition_email(text=text, include_headers=True)
 
 
+``partition_msg``
+-----------------
+
+The ``partition_msg`` functions processes ``.msg`` files, which is a filetype specific
+to email exports from Microsoft Outlook.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.msg import partition_msg
+
+  elements = partition_msg(filename="example-docs/fake-email.msg")
+
+
 ``partition_epub``
 ---------------------
 
@@ -362,9 +395,26 @@ Examples:
     text = f.read()
   elements = partition_text(text=text)
 
+If the text has extra line breaks for formatting purposes, you can group
+together the broken text using the ``paragraph_grouper`` kwarg. The
+``paragraph_grouper`` kwarg is a function that accepts a string and returns
+another string.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.text import partition_text
+  from unstructured.cleaners.core import group_broken_paragraphs
 
 
+  text = """The big brown fox
+  was walking down the lane.
 
+  At the end of the lane, the
+  fox met a bear."""
+
+  partition_text(text=text, paragraph_grouper=group_broken_paragraphs)
 
 
 ########
@@ -532,6 +582,46 @@ Examples:
 
   # Returns "ITEM 1A: RISK FACTORS"
   clean_trailing_punctuation("ITEM 1A: RISK FACTORS.")
+
+
+``group_broken_paragraphs``
+---------------------------
+
+Groups together paragraphs that are broken up with line breaks
+for visual or formatting purposes. This is common in ``.txt`` files.
+By default, ``group_broken_paragraphs`` groups together lines split
+by ``\n``. You can change that behavior with the ``line_split``
+kwarg. The function considers ``\n\n`` to be a paragraph break by
+default. You can change that behavior with the ``paragraph_split`` kwarg.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.cleaners.core import group_broken_paragraphs
+
+  text = """The big brown fox
+  was walking down the lane.
+
+  At the end of the lane, the
+  fox met a bear."""
+
+  group_broken_paragraphs(text)
+
+.. code:: python
+
+  from unstructured.cleaners.core import group_broken_paragraphs
+
+  text = """The big brown fox
+
+  was walking down the lane.
+
+
+  At the end of the lane, the
+
+  fox met a bear."""
+
+  group_broken_paragraphs(text, line_split="\n\n", paragraph_split="\n\n\n")
 
 
 ``replace_unicode_quotes``

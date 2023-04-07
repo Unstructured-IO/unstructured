@@ -1,4 +1,4 @@
-from typing import IO, List, Optional
+from typing import IO, Dict, List, Optional
 
 import requests
 
@@ -20,6 +20,7 @@ def partition_html(
     encoding: Optional[str] = None,
     include_page_breaks: bool = False,
     include_metadata: bool = True,
+    headers: Dict[str, str] = {},
     parser: VALID_PARSERS = None,
 ) -> List[Element]:
     """Partitions an HTML document into its constituent elements.
@@ -44,6 +45,9 @@ def partition_html(
     parser
         The parser to use for parsing the HTML document. If None, default parser will be used.
     """
+    if text is not None and text.strip() == "" and not file and not filename and not url:
+        return []
+
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text, url=url)
 
@@ -67,7 +71,7 @@ def partition_html(
         document = HTMLDocument.from_string(_text, parser=parser)
 
     elif url is not None:
-        response = requests.get(url)
+        response = requests.get(url, headers=headers)
         if not response.ok:
             raise ValueError(f"URL return an error: {response.status_code}")
 

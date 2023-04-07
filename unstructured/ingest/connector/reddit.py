@@ -2,7 +2,7 @@ import json
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -31,6 +31,11 @@ class SimpleRedditConfig(BaseConnectorConfig):
     output_dir: str
     preserve_downloads: bool = False
     re_download: bool = False
+    download_only: bool = False
+    metadata_include: Optional[str] = None
+    metadata_exclude: Optional[str] = None
+    fields_include: str = "element_id,text,type,metadata"
+    flatten_metadata: bool = False
 
     def __post_init__(self):
         if self.num_posts <= 0:
@@ -53,8 +58,8 @@ class RedditIngestDoc(BaseIngestDoc):
         self.filename.parent.mkdir(parents=True, exist_ok=True)
 
     def cleanup_file(self):
-        """Removes the local copy the file (or anything else) after successful processing."""
-        if not self.config.preserve_downloads:
+        """Removes the local copy of the file (or anything else) after successful processing."""
+        if not self.config.preserve_downloads and not self.config.download_only:
             logger.debug(f"Cleaning up {self}")
             os.unlink(self.filename)
 
@@ -78,6 +83,8 @@ class RedditIngestDoc(BaseIngestDoc):
 
     def write_result(self):
         """Write the structured json result for this doc. result must be json serializable."""
+        if self.config.download_only:
+            return
         output_filename = self._output_filename()
         output_filename.parent.mkdir(parents=True, exist_ok=True)
         with open(output_filename, "w", encoding="utf8") as output_f:
@@ -96,7 +103,7 @@ class RedditConnector(BaseConnector):
             client_secret=config.client_secret,
             user_agent=config.user_agent,
         )
-        self.cleanup_files = not config.preserve_downloads
+        self.cleanup_files = not config.preserve_downloads and not config.download_only
 
     def cleanup(self, cur_dir=None):
         if not self.cleanup_files:
