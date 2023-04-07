@@ -466,6 +466,7 @@ def main(
         protocol = urlparse(remote_url).scheme
         if protocol in ("s3", "s3a"):
             from unstructured.ingest.connector.s3 import S3Connector, SimpleS3Config
+
             doc_connector = S3Connector(  # type: ignore
                 config=SimpleS3Config(
                     path=s3_url,
@@ -486,6 +487,7 @@ def main(
                 AzureBlobStorageConnector,
                 SimpleAzureBlobStorageConfig,
             )
+
             if azure_account_name:
                 access_kwargs = {
                     "account_name": azure_account_name,
@@ -517,7 +519,11 @@ def main(
                 " and `az`.",
                 UserWarning,
             )
-            from unstructured.ingest.connector.fsspec import FsspecConnector, SimpleFsspecConfig
+            from unstructured.ingest.connector.fsspec import (
+                FsspecConnector,
+                SimpleFsspecConfig,
+            )
+
             doc_connector = FsspecConnector(  # type: ignore
                 config=SimpleFsspecConfig(
                     path=remote_url,
@@ -533,7 +539,11 @@ def main(
                 ),
             )
     elif github_url:
-        from unstructured.ingest.connector.github import GitHubConnector, SimpleGitHubConfig
+        from unstructured.ingest.connector.github import (
+            GitHubConnector,
+            SimpleGitHubConfig,
+        )
+
         doc_connector = GitHubConnector(  # type: ignore
             config=SimpleGitHubConfig(
                 url=github_url,
@@ -553,7 +563,11 @@ def main(
             ),
         )
     elif gitlab_url:
-        from unstructured.ingest.connector.gitlab import GitLabConnector, SimpleGitLabConfig
+        from unstructured.ingest.connector.gitlab import (
+            GitLabConnector,
+            SimpleGitLabConfig,
+        )
+
         doc_connector = GitLabConnector(  # type: ignore
             config=SimpleGitLabConfig(
                 url=gitlab_url,
@@ -573,7 +587,11 @@ def main(
             ),
         )
     elif subreddit_name:
-        from unstructured.ingest.connector.reddit import RedditConnector, SimpleRedditConfig
+        from unstructured.ingest.connector.reddit import (
+            RedditConnector,
+            SimpleRedditConfig,
+        )
+
         doc_connector = RedditConnector(  # type: ignore
             config=SimpleRedditConfig(
                 subreddit_name=subreddit_name,
@@ -616,6 +634,7 @@ def main(
             GoogleDriveConnector,
             SimpleGoogleDriveConfig,
         )
+
         doc_connector = GoogleDriveConnector(  # type: ignore
             config=SimpleGoogleDriveConfig(
                 drive_id=drive_id,
@@ -635,7 +654,11 @@ def main(
             ),
         )
     elif biomed_path or biomed_api_id or biomed_api_from or biomed_api_until:
-        from unstructured.ingest.connector.biomed import BiomedConnector, SimpleBiomedConfig
+        from unstructured.ingest.connector.biomed import (
+            BiomedConnector,
+            SimpleBiomedConfig,
+        )
+
         doc_connector = BiomedConnector(  # type: ignore
             config=SimpleBiomedConfig(
                 path=biomed_path,
@@ -655,7 +678,11 @@ def main(
             ),
         )
     elif local_input_path:
-        from unstructured.ingest.connector.local import LocalConnector, SimpleLocalConfig
+        from unstructured.ingest.connector.local import (
+            LocalConnector,
+            SimpleLocalConfig,
+        )
+
         doc_connector = LocalConnector(  # type: ignore
             config=SimpleLocalConfig(
                 input_path=local_input_path,
