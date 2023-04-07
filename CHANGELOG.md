@@ -2,6 +2,7 @@
 
 ### Enhancements
 
+* Add OS mimetypes DB to docker image, mainly for unstructured-api compat.
 * Use the image registry as a cache when building Docker images.
 * Adds the ability for `partition_text` to group together broken paragraphs.
 
@@ -10,7 +11,6 @@
 ### Fixes
 
 * Allow encoding to be passed into `replace_mime_encodings`.
-
 
 ## 0.5.11
 
