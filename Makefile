@@ -205,4 +205,4 @@ docker-test:
 
 .PHONY: docker-smoke-test
 docker-smoke-test:
-	IMAGE_NAME=${DOCKER_IMAGE} ./scripts/docker-smoke-test.sh
+	DOCKER_IMAGE=${DOCKER_IMAGE} ./scripts/docker-smoke-test.sh

@@ -3,7 +3,11 @@ import re
 import sys
 import unicodedata
 
-from unstructured.nlp.patterns import UNICODE_BULLETS_RE
+from unstructured.nlp.patterns import (
+    DOUBLE_PARAGRAPH_PATTERN_RE,
+    PARAGRAPH_PATTERN_RE,
+    UNICODE_BULLETS_RE,
+)
 
 
 def clean_non_ascii_chars(text) -> str:
@@ -55,6 +59,30 @@ def clean_ordered_bullets(text) -> str:
         return text
 
     return text_cl
+
+
+def group_broken_paragraphs(
+    text: str,
+    line_split: re.Pattern = PARAGRAPH_PATTERN_RE,
+    paragraph_split: re.Pattern = DOUBLE_PARAGRAPH_PATTERN_RE,
+) -> str:
+    """Groups paragraphs that have line breaks for visual/formatting purposes.
+    For example:
+
+    '''The big red fox
+    is walking down the lane.
+
+    At the end of the lane
+    the fox met a bear.'''
+
+    Gets converted to
+
+    '''The big red fox is walking down the lane.
+    At the end of the land the fox met a bear.'''
+    """
+    paragraphs = paragraph_split.split(text)
+    clean_paragraphs = [line_split.sub(" ", para) for para in paragraphs if para.strip()]
+    return "\n\n".join(clean_paragraphs)
 
 
 # TODO(robinson) - There's likely a cleaner was to accomplish this and get all of the

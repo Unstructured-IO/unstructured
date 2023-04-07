@@ -47,7 +47,7 @@ jobs:
     - name: Test AMD image
       run: |
         DOCKER_PLATFORM="linux/amd64" DOCKER_IMAGE="$DOCKER_BUILD_REPOSITORY:amd-$SHORT_SHA" make docker-test 
-        IMAGE_NAME=$DOCKER_BUILD_REPOSITORY:amd-$SHORT_SHA make docker-smoke-test
+        DOCKER_IMAGE=$DOCKER_BUILD_REPOSITORY:amd-$SHORT_SHA make docker-smoke-test
     - name: Push AMD image
       run: |
         # write to the build repository to cache for the publish-images job
@@ -81,7 +81,7 @@ jobs:
       run: |
         # only run a subset of tests on ARM, since they take a long time with emulation
         DOCKER_PLATFORM="linux/arm64" DOCKER_IMAGE="$DOCKER_BUILD_REPOSITORY:arm-$SHORT_SHA" make docker-test TEST_NAME=partition/test_text.py
-        IMAGE_NAME=$DOCKER_BUILD_REPOSITORY:arm-$SHORT_SHA make docker-smoke-test
+        DOCKER_IMAGE=$DOCKER_BUILD_REPOSITORY:arm-$SHORT_SHA make docker-smoke-test
     - name: Push ARM image
       run: |
         # write to the build repository to cache for the publish-images job

@@ -7,7 +7,7 @@
 set -eux -o pipefail
 
 CONTAINER_NAME=unstructured-smoke-test
-IMAGE_NAME="${IMAGE_NAME:-unstructured:latest}"
+DOCKER_IMAGE="${DOCKER_IMAGE:-unstructured:dev}"
 
 # Change to the root of the repository
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
@@ -15,7 +15,7 @@ cd "$SCRIPT_DIR"/.. || exit 1
 
 start_container() {
     echo Starting container "$CONTAINER_NAME"
-    docker run -dt --rm --name "$CONTAINER_NAME" "$IMAGE_NAME"
+    docker run -dt --rm --name "$CONTAINER_NAME" "$DOCKER_IMAGE"
 }
 
 await_container() {
