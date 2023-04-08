@@ -117,7 +117,7 @@ class BaseIngestDoc(ABC):
                     elem["metadata"].pop(ex, None)  ***REMOVED*** type: ignore[attr-defined]
             elif self.config.metadata_include is not None:
                 in_list = self.config.metadata_include.split(",")
-                for k in elem["metadata"]:
+                for k in list(elem["metadata"].keys()):  ***REMOVED*** type: ignore[attr-defined]
                     if k not in in_list:
                         elem["metadata"].pop(k, None)  ***REMOVED*** type: ignore[attr-defined]
 

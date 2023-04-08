@@ -26,6 +26,7 @@ from unstructured.ingest.connector.local import LocalConnector, SimpleLocalConfi
 from unstructured.ingest.connector.reddit import RedditConnector, SimpleRedditConfig
 from unstructured.ingest.connector.s3 import S3Connector, SimpleS3Config
 from unstructured.ingest.connector.slack import SimpleSlackConfig, SlackConnector
+
 from unstructured.ingest.connector.wikipedia import (
     SimpleWikipediaConfig,
     WikipediaConnector,
@@ -505,6 +506,8 @@ def main(
     if remote_url:
         protocol = urlparse(remote_url).scheme
         if protocol in ("s3", "s3a"):
+            from unstructured.ingest.connector.s3 import S3Connector, SimpleS3Config
+
             doc_connector = S3Connector(  ***REMOVED*** type: ignore
                 config=SimpleS3Config(
                     path=s3_url,
@@ -521,6 +524,11 @@ def main(
                 ),
             )
         elif protocol in ("abfs", "az"):
+            from unstructured.ingest.connector.azure import (
+                AzureBlobStorageConnector,
+                SimpleAzureBlobStorageConfig,
+            )
+
             if azure_account_name:
                 access_kwargs = {
                     "account_name": azure_account_name,
@@ -552,6 +560,11 @@ def main(
                 " and `az`.",
                 UserWarning,
             )
+            from unstructured.ingest.connector.fsspec import (
+                FsspecConnector,
+                SimpleFsspecConfig,
+            )
+
             doc_connector = FsspecConnector(  ***REMOVED*** type: ignore
                 config=SimpleFsspecConfig(
                     path=remote_url,
@@ -567,6 +580,11 @@ def main(
                 ),
             )
     elif github_url:
+        from unstructured.ingest.connector.github import (
+            GitHubConnector,
+            SimpleGitHubConfig,
+        )
+
         doc_connector = GitHubConnector(  ***REMOVED*** type: ignore
             config=SimpleGitHubConfig(
                 url=github_url,
@@ -586,6 +604,11 @@ def main(
             ),
         )
     elif gitlab_url:
+        from unstructured.ingest.connector.gitlab import (
+            GitLabConnector,
+            SimpleGitLabConfig,
+        )
+
         doc_connector = GitLabConnector(  ***REMOVED*** type: ignore
             config=SimpleGitLabConfig(
                 url=gitlab_url,
@@ -605,6 +628,11 @@ def main(
             ),
         )
     elif subreddit_name:
+        from unstructured.ingest.connector.reddit import (
+            RedditConnector,
+            SimpleRedditConfig,
+        )
+
         doc_connector = RedditConnector(  ***REMOVED*** type: ignore
             config=SimpleRedditConfig(
                 subreddit_name=subreddit_name,
@@ -658,6 +686,11 @@ def main(
             ),
         )
     elif drive_id:
+        from unstructured.ingest.connector.google_drive import (
+            GoogleDriveConnector,
+            SimpleGoogleDriveConfig,
+        )
+
         doc_connector = GoogleDriveConnector(  ***REMOVED*** type: ignore
             config=SimpleGoogleDriveConfig(
                 drive_id=drive_id,
@@ -677,6 +710,11 @@ def main(
             ),
         )
     elif biomed_path or biomed_api_id or biomed_api_from or biomed_api_until:
+        from unstructured.ingest.connector.biomed import (
+            BiomedConnector,
+            SimpleBiomedConfig,
+        )
+
         doc_connector = BiomedConnector(  ***REMOVED*** type: ignore
             config=SimpleBiomedConfig(
                 path=biomed_path,
@@ -696,6 +734,11 @@ def main(
             ),
         )
     elif local_input_path:
+        from unstructured.ingest.connector.local import (
+            LocalConnector,
+            SimpleLocalConfig,
+        )
+
         doc_connector = LocalConnector(  ***REMOVED*** type: ignore
             config=SimpleLocalConfig(
                 input_path=local_input_path,
@@ -706,6 +749,7 @@ def main(
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
+                flatten_metadata=flatten_metadata,
             ),
         )
     ***REMOVED*** Check for other connector-specific options here and define the doc_connector object
