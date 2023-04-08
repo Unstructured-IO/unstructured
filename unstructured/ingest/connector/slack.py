@@ -32,8 +32,8 @@ class SimpleSlackConfig(BaseConnectorConfig):
     verbose: bool = False
 
     def validate_inputs(self):
-        oldest_valid = False
-        latest_valid = False
+        oldest_valid = True
+        latest_valid = True
 
         if self.oldest:
             oldest_valid = validate_date_args(self.oldest)
@@ -103,8 +103,8 @@ class SlackIngestDoc(BaseIngestDoc):
         self.client = WebClient(token=self.token)
 
         try:
-            oldest = 0
-            latest = 0
+            oldest = "0"
+            latest = "0"
             if self.oldest:
                 oldest = self.convert_datetime(self.oldest)
 
