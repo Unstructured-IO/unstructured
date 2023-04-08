@@ -693,6 +693,7 @@ def main(
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
+                flatten_metadata=flatten_metadata,
             ),
         )
     # Check for other connector-specific options here and define the doc_connector object
