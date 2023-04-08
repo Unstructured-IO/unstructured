@@ -1,5 +1,6 @@
 import importlib
 import json
+from datetime import datetime
 from functools import wraps
 from typing import Dict, List, Optional, Union
 
@@ -50,3 +51,25 @@ def dependency_exists(dependency):
     except ImportError:
         return False
     return True
+
+***REMOVED*** Copied from unstructured/ingest/connector/biomed.py
+def validate_date_args(date):
+    date_formats = ["%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M:%S%z"]
+
+    valid = False
+    if date:
+        for format in date_formats:
+            try:
+                datetime.strptime(date, format)
+                valid = True
+                break
+            except ValueError:
+                pass
+
+        if not valid:
+            raise ValueError(
+                f"The argument {date} does not satisfy the format: "
+                "YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS or YYYY-MM-DDTHH:MM:SStz",
+            )
+
+    return valid

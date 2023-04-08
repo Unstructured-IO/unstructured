@@ -24,6 +24,7 @@ from unstructured.ingest.connector.google_drive import (
 )
 from unstructured.ingest.connector.reddit import RedditConnector, SimpleRedditConfig
 from unstructured.ingest.connector.s3 import S3Connector, SimpleS3Config
+from unstructured.ingest.connector.slack import SimpleSlackConfig, SlackConnector
 from unstructured.ingest.connector.wikipedia import (
     SimpleWikipediaConfig,
     WikipediaConnector,
@@ -286,6 +287,26 @@ class MainProcess:
     help="Re-download files even if they are already present in --download-dir.",
 )
 @click.option(
+    "--slack-channel",
+    default=None,
+    help="Slack channel to pull messages from",
+)
+@click.option(
+    "--slack-token",
+    default=None,
+    help="Token used to access Slack API",
+)
+@click.option(
+    "--start-date",
+    default=None,
+    help="Start date/time in formats YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS or YYYY-MM-DDTHH:MM:SStz",
+)
+@click.option(
+    "--end-date",
+    default=None,
+    help="End date/time in formats YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS or YYYY-MM-DDTHH:MM:SStz",
+)
+@click.option(
     "--download-dir",
     help="Where files are downloaded to, defaults to `$HOME/.cache/unstructured/ingest/<SHA256>`.",
 )
@@ -344,6 +365,10 @@ def main(
     reddit_search_query,
     reddit_num_posts,
     re_download,
+    slack_channel,
+    slack_token,
+    start_date,
+    end_date,
     download_dir,
     preserve_downloads,
     structured_output_dir,
@@ -543,6 +568,21 @@ def main(
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
+            ),
+        )
+    elif slack_channel:
+        doc_connector = SlackConnector(  ***REMOVED*** type: ignore
+            config=SimpleSlackConfig(
+                channel=slack_channel,
+                token=slack_token,
+                oldest=start_date,
+                latest=end_date,
+                ***REMOVED*** defaults params:
+                download_dir=download_dir,
+                preserve_downloads=preserve_downloads,
+                output_dir=structured_output_dir,
+                re_download=re_download,
+                verbose=verbose,
             ),
         )
     elif wikipedia_page_title:
