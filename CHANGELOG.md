@@ -12,6 +12,8 @@
 
 * Allow encoding to be passed into `replace_mime_encodings`.
 * unstructured-ingest connector-specific dependencies are imported on demand.
+* unstructured-ingest --flatten-metadata supported for local connector.
+* unstructured-ingest fix runtime error when using --metadata-include.
 
 ## 0.5.11
 
