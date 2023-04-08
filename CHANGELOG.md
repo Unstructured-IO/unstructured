@@ -1,4 +1,4 @@
-***REMOVED******REMOVED*** 0.5.12-dev2
+***REMOVED******REMOVED*** 0.5.12-dev3
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
 
@@ -11,6 +11,9 @@
 ***REMOVED******REMOVED******REMOVED*** Fixes
 
 * Allow encoding to be passed into `replace_mime_encodings`.
+* unstructured-ingest connector-specific dependencies are imported on demand.
+* unstructured-ingest --flatten-metadata supported for local connector.
+* unstructured-ingest fix runtime error when using --metadata-include.
 
 ***REMOVED******REMOVED*** 0.5.11
 
