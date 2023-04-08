@@ -56,8 +56,8 @@
     }
   },
   {
-    "element_id": "8d36fb45025a34b5002ca3e15d155685",
-    "text": "Ambassador                                                                                                        About WRN Ambassadors                                                                            Become an Ambassador                                                                            Ambassadors of Excellence                                                                            People of WRN                                                                             FAQS                                                                            Tell Your Success Story                                                                             Success Stories                                                                            Tri-fold                                                                            Aviation                                                                             Current Ambassadors                                                                            Brochure                                                                            En EspaÃ±ol",
+    "element_id": "77f5acc603de9a165ed87a5c3fbaf14a",
+    "text": "Ambassador                                                                                                        About WRN Ambassadors                                                                            Become an Ambassador                                                                            Ambassadors of Excellence                                                                            People of WRN                                                                             FAQS                                                                            Tell Your Success Story                                                                             Success Stories                                                                            Tri-fold                                                                            Aviation                                                                             Current Ambassadors                                                                            Brochure                                                                            En Español",
     "type": "ListItem",
     "metadata": {
       "page_number": 1
@@ -72,8 +72,8 @@
     }
   },
   {
-    "element_id": "18f907ca333d1f99f07a806f22e79641",
-    "text": "Collaboration                                                                                                        Get Involved                                                                             Social Media                                                                            WRN Ambassadors                                                                             Enterprise Resources                                                                            StormReady                                                                            TsunamiReady                                                                            NWSChat (core partners only)                                                                            InteractiveNWS (iNWS) (core partners only)                                                                            SKYWARN",
+    "element_id": "1245f9cf9e019713391e4ee3bac54a63",
+    "text": "Collaboration                                                                                                        Get Involved                                                                             Social Media                                                                            WRN Ambassadors ​                                                                            Enterprise Resources                                                                            StormReady                                                                            TsunamiReady                                                                            NWSChat (core partners only)                                                                            InteractiveNWS (iNWS) (core partners only)​                                                                            SKYWARN",
     "type": "ListItem",
     "metadata": {
       "page_number": 1
@@ -152,33 +152,9 @@
     }
   },
   {
-    "element_id": "c9b4b8b324383371034a3682d0d712d2",
-    "text": "US Dept of Commerce",
-    "type": "Title",
-    "metadata": {
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "668c4fe04cbbc45c7e91b0b675dd48a3",
-    "text": "National Oceanic and Atmospheric Administration",
-    "type": "Title",
-    "metadata": {
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "a5c0620dc25afae7e2761c210037b45c",
-    "text": "National Weather Service",
-    "type": "Title",
-    "metadata": {
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "1b0316a06a8f4d5b672669bb9f5b2877",
-    "text": "Comments? Questions? Please Contact Us.",
-    "type": "Title",
+    "element_id": "47d5d0d27a35a36d7467dfc8b6e089b3",
+    "text": "US Dept of Commerce\n                        National Oceanic and Atmospheric Administration\n                        National Weather Service\n                        News Around NOAA1325 East West HighwaySilver Spring, MD 20910Comments? Questions? Please Contact Us.",
+    "type": "NarrativeText",
     "metadata": {
       "page_number": 1
     }
