@@ -20,7 +20,8 @@ from unstructured.nlp.patterns import (
 from unstructured.nlp.tokenize import pos_tag, sent_tokenize, word_tokenize
 
 POS_VERB_TAGS: Final[List[str]] = ["VB", "VBG", "VBD", "VBN", "VBP", "VBZ"]
-ENGLISH_WORD_SPLIT_RE = re.compile(r"[\s|\.|-|_|\/]")
+ENGLISH_WORD_SPLIT_RE = re.compile(r"[\s\-,.!?_\/]+")
+NON_LOWERCASE_ALPHA_RE = re.compile(r"[^a-z]")
 
 
 def is_possible_narrative_text(
@@ -188,11 +189,16 @@ def contains_english_word(text: str) -> bool:
     text = text.lower()
     words = ENGLISH_WORD_SPLIT_RE.split(text)
     for word in words:
-        ***REMOVED*** NOTE(robinson) - to ignore punctuation at the ends of words like "best."
-        word = "".join([character for character in word if character.isalpha()])
+        ***REMOVED*** NOTE(Crag): Remove any non-lowercase alphabetical
+        ***REMOVED*** characters.  These removed chars will usually be trailing or
+        ***REMOVED*** leading characters not already matched in ENGLISH_WORD_SPLIT_RE.
+        ***REMOVED*** The possessive case is also generally ok:
+        ***REMOVED***   "beggar's" -> "beggars" (still an english word)
+        ***REMOVED*** and of course:
+        ***REMOVED***   "'beggars'"-> "beggars" (also still an english word)
+        word = NON_LOWERCASE_ALPHA_RE.sub("", word)
         if len(word) > 1 and word in ENGLISH_WORDS:
             return True
-
     return False
 
 

@@ -1,7 +1,9 @@
+import datetime
 import email
 import re
 import sys
 from email.message import Message
+from functools import partial
 from typing import IO, Dict, List, Optional, Tuple, Union
 
 from unstructured.partition.common import exactly_one
@@ -87,6 +89,35 @@ def partition_email_header(msg: Message) -> List[Element]:
     return elements
 
 
+def build_email_metadata(msg: Message) -> ElementMetadata:
+    """Creates an ElementMetadata object from the header information in the email."""
+    header_dict = dict(msg.raw_items())
+    email_date = header_dict.get("Date")
+    if email_date is not None:
+        email_date = convert_to_iso_8601(email_date)
+
+    sent_from = header_dict.get("To")
+    if sent_from is not None:
+        sent_from = [sender.strip() for sender in sent_from.split(",")]
+
+    sent_to = header_dict.get("To")
+    if sent_to is not None:
+        sent_to = [recipient.strip() for recipient in sent_to.split(",")]
+
+    return ElementMetadata(
+        sent_to=sent_to,
+        sent_from=sent_from,
+        subject=header_dict.get("Subject"),
+        date=email_date,
+    )
+
+
+def convert_to_iso_8601(time: str) -> str:
+    """Converts the datetime from the email output to ISO-8601 format."""
+    datetime_object = datetime.datetime.strptime(time, "%a, %d %b %Y %H:%M:%S %z")
+    return datetime_object.isoformat()
+
+
 def extract_attachment_info(
     message: Message,
     output_dir: Optional[str] = None,
@@ -168,6 +199,9 @@ def partition_email(
             f"Valid content sources are: {VALID_CONTENT_SOURCES}",
         )
 
+    if text is not None and text.strip() == "" and not file and not filename:
+        return []
+
     ***REMOVED*** Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text)
 
@@ -214,7 +248,8 @@ def partition_email(
         elements = partition_html(text=content, include_metadata=False)
         for element in elements:
             if isinstance(element, Text):
-                element.apply(replace_mime_encodings)
+                _replace_mime_encodings = partial(replace_mime_encodings, encoding=encoding)
+                element.apply(_replace_mime_encodings)
     elif content_source == "text/plain":
         list_content = split_by_paragraph(content)
         elements = partition_text(text=content)
@@ -231,6 +266,8 @@ def partition_email(
         header = partition_email_header(msg)
     all_elements = header + elements
 
+    metadata = build_email_metadata(msg)
+    metadata.filename = filename
     for element in all_elements:
-        element.metadata = ElementMetadata(filename=filename)
+        element.metadata = metadata
     return all_elements

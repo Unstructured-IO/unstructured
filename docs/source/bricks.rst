@@ -395,9 +395,26 @@ Examples:
     text = f.read()
   elements = partition_text(text=text)
 
+If the text has extra line breaks for formatting purposes, you can group
+together the broken text using the ``paragraph_grouper`` kwarg. The
+``paragraph_grouper`` kwarg is a function that accepts a string and returns
+another string.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.text import partition_text
+  from unstructured.cleaners.core import group_broken_paragraphs
 
 
+  text = """The big brown fox
+  was walking down the lane.
 
+  At the end of the lane, the
+  fox met a bear."""
+
+  partition_text(text=text, paragraph_grouper=group_broken_paragraphs)
 
 
 ***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***
@@ -565,6 +582,46 @@ Examples:
 
   ***REMOVED*** Returns "ITEM 1A: RISK FACTORS"
   clean_trailing_punctuation("ITEM 1A: RISK FACTORS.")
+
+
+``group_broken_paragraphs``
+---------------------------
+
+Groups together paragraphs that are broken up with line breaks
+for visual or formatting purposes. This is common in ``.txt`` files.
+By default, ``group_broken_paragraphs`` groups together lines split
+by ``\n``. You can change that behavior with the ``line_split``
+kwarg. The function considers ``\n\n`` to be a paragraph break by
+default. You can change that behavior with the ``paragraph_split`` kwarg.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.cleaners.core import group_broken_paragraphs
+
+  text = """The big brown fox
+  was walking down the lane.
+
+  At the end of the lane, the
+  fox met a bear."""
+
+  group_broken_paragraphs(text)
+
+.. code:: python
+
+  from unstructured.cleaners.core import group_broken_paragraphs
+
+  text = """The big brown fox
+
+  was walking down the lane.
+
+
+  At the end of the lane, the
+
+  fox met a bear."""
+
+  group_broken_paragraphs(text, line_split="\n\n", paragraph_split="\n\n\n")
 
 
 ``replace_unicode_quotes``

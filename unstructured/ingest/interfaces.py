@@ -48,6 +48,7 @@ class BaseConnectorConfig(ABC):
     ***REMOVED*** where to write structured data outputs
     output_dir: str
     re_download: bool = False
+    download_only: bool = False
     metadata_include: Optional[str] = None
     metadata_exclude: Optional[str] = None
     fields_include: str = "element_id,text,type,metadata"
@@ -93,8 +94,9 @@ class BaseIngestDoc(ABC):
         pass
 
     def process_file(self):
+        if self.config.download_only:
+            return
         logger.info(f"Processing {self.filename}")
-
         elements = partition(filename=str(self.filename))
         isd_elems = convert_to_dict(elements)
 

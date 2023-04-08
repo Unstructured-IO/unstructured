@@ -63,7 +63,7 @@ azure-storage-blob==12.15.0
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   rich
-cryptography==39.0.2
+cryptography==40.0.1
     ***REMOVED*** via
     ***REMOVED***   adal
     ***REMOVED***   azure-identity
@@ -135,6 +135,10 @@ msal==1.21.0
     ***REMOVED***   msal-extensions
 msal-extensions==1.0.0
     ***REMOVED*** via azure-identity
+***REMOVED***
+    ***REMOVED*** via
+    ***REMOVED***   -r requirements/base.txt
+    ***REMOVED***   unstructured (setup.py)
 multidict==6.0.4
     ***REMOVED*** via
     ***REMOVED***   aiohttp
@@ -148,6 +152,10 @@ multidict==6.0.4
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   argilla
     ***REMOVED***   pandas
+***REMOVED***
+    ***REMOVED*** via
+    ***REMOVED***   -r requirements/base.txt
+    ***REMOVED***   msg-parser
 ***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
@@ -203,7 +211,7 @@ pyjwt[crypto]==2.6.0
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   unstructured (setup.py)
-pytz==2022.7.1
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   pandas

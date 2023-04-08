@@ -20,7 +20,7 @@ docutils==0.18.1
     ***REMOVED*** via
     ***REMOVED***   sphinx
     ***REMOVED***   sphinx-rtd-theme
-furo==2023.3.23
+furo==2023.3.27
     ***REMOVED*** via -r requirements/build.in
 ***REMOVED***
     ***REMOVED*** via requests
@@ -38,7 +38,7 @@ markupsafe==2.1.2
     ***REMOVED*** via
     ***REMOVED***   furo
     ***REMOVED***   sphinx
-pytz==2022.7.1
+***REMOVED***
     ***REMOVED*** via babel
 ***REMOVED***
     ***REMOVED*** via sphinx

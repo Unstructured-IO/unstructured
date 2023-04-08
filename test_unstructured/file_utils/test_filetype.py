@@ -55,8 +55,16 @@ def test_detect_filetype_from_filename(file, expected):
     ],
 )
 def test_detect_filetype_from_filename_with_extension(monkeypatch, file, expected):
+    """Test that we detect the filetype from the filename extension when libmagic is not available
+    or the file does not exist."""
+    ***REMOVED*** Test when libmagic is not available
     monkeypatch.setattr(filetype, "LIBMAGIC_AVAILABLE", False)
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, file)
+    assert detect_filetype(filename) == expected
+    ***REMOVED*** Test when the file does not exist
+    monkeypatch.setattr(filetype, "LIBMAGIC_AVAILABLE", True)
+    extension = pathlib.Path(file).suffix
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "not-on-disk" + extension)
     assert detect_filetype(filename) == expected
 
 
@@ -243,6 +251,7 @@ def test_detect_filetype_detects_png(monkeypatch):
 
 def test_detect_filetype_detects_unknown_text_types_as_txt(monkeypatch):
     monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "text/new-type")
+    monkeypatch.setattr(os.path, "isfile", lambda *args, **kwargs: True)
     assert detect_filetype(filename="made_up.png") == FileType.TXT
 
 

@@ -3,7 +3,11 @@ import re
 import sys
 import unicodedata
 
-from unstructured.nlp.patterns import UNICODE_BULLETS_RE
+from unstructured.nlp.patterns import (
+    DOUBLE_PARAGRAPH_PATTERN_RE,
+    PARAGRAPH_PATTERN_RE,
+    UNICODE_BULLETS_RE,
+)
 
 
 def clean_non_ascii_chars(text) -> str:
@@ -55,6 +59,30 @@ def clean_ordered_bullets(text) -> str:
         return text
 
     return text_cl
+
+
+def group_broken_paragraphs(
+    text: str,
+    line_split: re.Pattern = PARAGRAPH_PATTERN_RE,
+    paragraph_split: re.Pattern = DOUBLE_PARAGRAPH_PATTERN_RE,
+) -> str:
+    """Groups paragraphs that have line breaks for visual/formatting purposes.
+    For example:
+
+    '''The big red fox
+    is walking down the lane.
+
+    At the end of the lane
+    the fox met a bear.'''
+
+    Gets converted to
+
+    '''The big red fox is walking down the lane.
+    At the end of the land the fox met a bear.'''
+    """
+    paragraphs = paragraph_split.split(text)
+    clean_paragraphs = [line_split.sub(" ", para) for para in paragraphs if para.strip()]
+    return "\n\n".join(clean_paragraphs)
 
 
 ***REMOVED*** TODO(robinson) - There's likely a cleaner was to accomplish this and get all of the
@@ -139,14 +167,14 @@ def clean_trailing_punctuation(text: str) -> str:
     return text.strip().rstrip(".,:;")
 
 
-def replace_mime_encodings(text: str) -> str:
-    """Replaces MIME encodings with their UTF-8 equivalent characters.
+def replace_mime_encodings(text: str, encoding: str = "utf-8") -> str:
+    """Replaces MIME encodings with their equivalent characters in the specified encoding.
 
     Example
     -------
     5 w=E2=80-99s -> 5 w’s
     """
-    return quopri.decodestring(text.encode()).decode("utf-8")
+    return quopri.decodestring(text.encode()).decode(encoding)
 
 
 def clean_prefix(text: str, pattern: str, ignore_case: bool = False, strip: bool = True) -> str:

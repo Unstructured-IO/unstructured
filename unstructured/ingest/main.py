@@ -22,6 +22,7 @@ from unstructured.ingest.connector.google_drive import (
     GoogleDriveConnector,
     SimpleGoogleDriveConfig,
 )
+from unstructured.ingest.connector.local import LocalConnector, SimpleLocalConfig
 from unstructured.ingest.connector.reddit import RedditConnector, SimpleRedditConfig
 from unstructured.ingest.connector.s3 import S3Connector, SimpleS3Config
 from unstructured.ingest.connector.slack import SimpleSlackConfig, SlackConnector
@@ -44,6 +45,7 @@ class MainProcess:
         num_processes,
         reprocess,
         verbose,
+        max_docs,
     ):
         ***REMOVED*** initialize the reader and writer
         self.doc_connector = doc_connector
@@ -51,6 +53,7 @@ class MainProcess:
         self.num_processes = num_processes
         self.reprocess = reprocess
         self.verbose = verbose
+        self.max_docs = max_docs
 
     def initialize(self):
         """Slower initialization things: check connections, load things into memory, etc."""
@@ -64,6 +67,10 @@ class MainProcess:
     def _filter_docs_with_outputs(self, docs):
         num_docs_all = len(docs)
         docs = [doc for doc in docs if not doc.has_output()]
+        if self.max_docs is not None:
+            if num_docs_all > self.max_docs:
+                num_docs_all = self.max_docs
+            docs = docs[: self.max_docs]
         num_docs_to_process = len(docs)
         if num_docs_to_process == 0:
             logger.info(
@@ -105,6 +112,12 @@ class MainProcess:
 
 @click.command()
 @click.option(
+    "--max-docs",
+    default=None,
+    type=int,
+    help="If specified, process at most specified number of documents.",
+)
+@click.option(
     "--flatten-metadata",
     is_flag=True,
     default=False,
@@ -131,6 +144,23 @@ class MainProcess:
     help="If set, drop the specified metadata fields if they exist. "
     "Usage: provide a single string with comma separated values. "
     "Example: --metadata-exclude filename,page_number ",
+)
+@click.option(
+    "--local-input-path",
+    default=None,
+    help="Path to the location in the local file system that will be processed.",
+)
+@click.option(
+    "--local-recursive",
+    is_flag=True,
+    default=False,
+    help="Support recursive local file processing.",
+)
+@click.option(
+    "--local-file-glob",
+    default=None,
+    help="A comma-separated list of file globs to limit which types of local files are accepted,"
+    " e.g. '*.html,*.txt'",
 )
 @click.option(
     "--remote-url",
@@ -307,6 +337,14 @@ class MainProcess:
     help="End date/time in formats YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS or YYYY-MM-DDTHH:MM:SStz",
 )
 @click.option(
+    "--download-only",
+    is_flag=True,
+    default=False,
+    help="Download any files that are not already present in either --download-dir or "
+    "the default download ~/.cache/... location in case --download-dir is not specified and "
+    "skip processing them through unstructured.",
+)
+@click.option(
     "--download-dir",
     help="Where files are downloaded to, defaults to `$HOME/.cache/unstructured/ingest/<SHA256>`.",
 )
@@ -379,6 +417,11 @@ def main(
     metadata_exclude,
     fields_include,
     flatten_metadata,
+    max_docs,
+    local_input_path,
+    local_recursive,
+    local_file_glob,
+    download_only,
 ):
     if flatten_metadata and "metadata" not in fields_include:
         logger.warning(
@@ -396,11 +439,17 @@ def main(
             "mutually exclusive with each other.",
         )
         sys.exit(1)
-    if not preserve_downloads and download_dir:
+    if (not preserve_downloads and not download_only) and download_dir:
         logger.warning(
             "Not preserving downloaded files but --download_dir is specified",
         )
-    if not download_dir:
+    if local_input_path is not None and download_dir:
+        logger.warning(
+            "Files should already be in local file system: there is nothing to download, "
+            "but --download-dir is specified.",
+        )
+        sys.exit(1)
+    if local_input_path is None and not download_dir:
         cache_path = Path.home() / ".cache" / "unstructured" / "ingest"
         if not cache_path.exists():
             cache_path.mkdir(parents=True, exist_ok=True)
@@ -468,6 +517,7 @@ def main(
                     metadata_exclude=metadata_exclude,
                     fields_include=fields_include,
                     flatten_metadata=flatten_metadata,
+                    download_only=download_only,
                 ),
             )
         elif protocol in ("abfs", "az"):
@@ -492,6 +542,7 @@ def main(
                     metadata_exclude=metadata_exclude,
                     fields_include=fields_include,
                     flatten_metadata=flatten_metadata,
+                    download_only=download_only,
                 ),
             )
         else:
@@ -512,6 +563,7 @@ def main(
                     metadata_exclude=metadata_exclude,
                     fields_include=fields_include,
                     flatten_metadata=flatten_metadata,
+                    download_only=download_only,
                 ),
             )
     elif github_url:
@@ -530,6 +582,7 @@ def main(
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
+                download_only=download_only,
             ),
         )
     elif gitlab_url:
@@ -548,6 +601,7 @@ def main(
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
+                download_only=download_only,
             ),
         )
     elif subreddit_name:
@@ -568,6 +622,7 @@ def main(
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
+                download_only=download_only,
             ),
         )
     elif slack_channel:
@@ -599,6 +654,7 @@ def main(
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
+                download_only=download_only,
             ),
         )
     elif drive_id:
@@ -617,6 +673,7 @@ def main(
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
+                download_only=download_only,
             ),
         )
     elif biomed_path or biomed_api_id or biomed_api_from or biomed_api_until:
@@ -635,6 +692,20 @@ def main(
                 metadata_exclude=metadata_exclude,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
+                download_only=download_only,
+            ),
+        )
+    elif local_input_path:
+        doc_connector = LocalConnector(  ***REMOVED*** type: ignore
+            config=SimpleLocalConfig(
+                input_path=local_input_path,
+                recursive=local_recursive,
+                file_glob=local_file_glob,
+                ***REMOVED*** defaults params:
+                output_dir=structured_output_dir,
+                metadata_include=metadata_include,
+                metadata_exclude=metadata_exclude,
+                fields_include=fields_include,
             ),
         )
     ***REMOVED*** Check for other connector-specific options here and define the doc_connector object
@@ -650,6 +721,7 @@ def main(
         num_processes=num_processes,
         reprocess=reprocess,
         verbose=verbose,
+        max_docs=max_docs,
     ).run()
 
 

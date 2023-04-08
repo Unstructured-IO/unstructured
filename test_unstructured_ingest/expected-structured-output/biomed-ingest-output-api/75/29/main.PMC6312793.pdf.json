@@ -1,16 +1,8 @@
 [
   {
-    "element_id": "e647d6d1226cfa5541e835c8c728ac2f",
-    "text": "Contents lists available at ScienceDirect journal homepage: www.elsevier.com/locate/dib Data in Brief",
+    "element_id": "70d50409ea726a2789ebbd004bec31f4",
+    "text": "Contents lists available at ScienceDirect Data in Brief journal homepage: www.elsevier.com/locate/dib",
     "type": "FigureCaption",
-    "metadata": {
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "0ca3f075fdccf9232449ff461b63ceb9",
-    "text": "journal homepage: www.elsevier.com/locate/dib",
-    "type": "NarrativeText",
     "metadata": {
       "page_number": 1
     }
@@ -24,72 +16,64 @@
     }
   },
   {
-    "element_id": "9a38964ae93b5fcaf87559f31b751f3c",
-    "text": "Sarang Kulkarni a,b,c, n , Mohan Krishnamoorthy d,e , Abhiram Ranade f , Andreas T. Ernst c , Rahul Patil b",
+    "element_id": "6171cb8d012b6a4fe0d3d2d559fa8a49",
+    "text": "Sarang Kulkarni a,b,c,n, Mohan Krishnamoorthy d,e, Abhiram Ranade f, Andreas T. Ernst c, Rahul Patil b",
     "type": "NarrativeText",
     "metadata": {
       "page_number": 1
     }
   },
   {
-    "element_id": "9ed84b72c4d409fac423787a918f034e",
-    "text": "a IITB-Monash Research Academy, IIT Bombay, Powai, Mumbai 400076, India b SJM School of Management, IIT Bombay, Powai, Mumbai 400076, India c School of Mathematical Sciences, Monash University, Clayton, VIC 3800, Australia d Department of Mechanical and Aerospace Engineering, Monash University, Clayton, VIC 3800, Australia e School of Information Technology and Electrical Engineering, The University of Queensland, QLD 4072, Australia f",
+    "element_id": "1cd8f730884c8b214a75eceab622b553",
+    "text": "a IITB-Monash Research Academy, IIT Bombay, Powai, Mumbai 400076, India b SJM School of Management, IIT Bombay, Powai, Mumbai 400076, India c School of Mathematical Sciences, Monash University, Clayton, VIC 3800, Australia d Department of Mechanical and Aerospace Engineering, Monash University, Clayton, VIC 3800, e School of Information Technology and Electrical Engineering, The University of Queensland, QLD",
     "type": "NarrativeText",
     "metadata": {
       "page_number": 1
     }
   },
   {
-    "element_id": "7d6a84904b2d8c0f1d06099c14777493",
-    "text": "Department of Computer Science and Engineering, IIT Bombay, Powai, Mumbai 400076, India",
+    "element_id": "f3de57b70eeb335028d46138d95baf87",
+    "text": "of Computer Science and Engineering, IIT Bombay, Powai, Mumbai 400076, India",
     "type": "NarrativeText",
     "metadata": {
       "page_number": 1
     }
   },
   {
-    "element_id": "b19c404157ff5d5a4a14fac202a5d55d",
-    "text": "This data article presents a description of a benchmark dataset for the multiple depot vehicle scheduling problem (MDVSP). The MDVSP is to assign vehicles from different depots to timetabled trips to minimize the total cost of empty travel and waiting. The dataset has been developed to evaluate the heuristics of the MDVSP that are presented in “ A new formulation and a column generation-based heuristic for the multiple depot vehicle sche- duling problem ” (Kulkarni et al., 2018). The dataset contains 60 problem instances of varying size. Researchers can use the dataset to evaluate the future algorithms for the MDVSP and compare the performance with the existing algorithms. The dataset includes a program that can be used to generate new problem instances of the MDVSP.",
+    "element_id": "8fd297d1a2817570ee2dfbca314e8039",
+    "text": "This data article presents a description of a benchmark dataset for the multiple depot vehicle scheduling problem (MDVSP). The MDVSP is to assign vehicles from different depots to timetabled trips to minimize the total cost of empty travel and waiting. The dataset has been developed to evaluate the heuristics of the MDVSP that are presented in “A new formulation and a column generation-based heuristic for the multiple depot vehicle sche- duling problem” (Kulkarni et al., 2018). The dataset contains 60 problem instances of varying size. Researchers can use the dataset to evaluate the future algorithms for the MDVSP and compare the performance with the existing algorithms. The dataset includes a program that can be used to generate new problem instances of the MDVSP.",
     "type": "NarrativeText",
     "metadata": {
       "page_number": 1
     }
   },
   {
-    "element_id": "1b9ea7082f80cc97a25df6c67547fe2b",
-    "text": "2018 Published by Elsevier Inc. This is an open access article under the CC BY-NC-ND license",
+    "element_id": "958d8b4aff103d20c38caf156a80c238",
+    "text": " (http: ||creativecommons. org/licenses/by- nce-nd/4.0/).  ",
     "type": "NarrativeText",
     "metadata": {
       "page_number": 1
     }
   },
   {
-    "element_id": "05176ed2416890f7d4a4655f1e9d87d0",
-    "text": "(http://creativecommons.org/licenses/by-nc-nd/4.0/).",
+    "element_id": "f7c575292a9d9f0d9d8653435e5d43e1",
+    "text": "2352-3409/& 2018 Published by Elsevier Inc. This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-nc-nd/4.0/).",
     "type": "NarrativeText",
     "metadata": {
       "page_number": 1
     }
   },
   {
-    "element_id": "115d31eefb0fc75f0e068d8c3d76c812",
-    "text": "DOI of original article: https://doi.org/10.1016/j.trb.2018.11.007 n Corresponding author at: IITB-Monash Research Academy, IIT Bombay, Powai, Mumbai 400076, India. E-mail address: sarangkulkarni@iitb.ac.in (S. Kulkarni).",
-    "type": "NarrativeText",
+    "element_id": "0141e31a627e76fb56d3528957fef193",
+    "text": "Artiﬁcially generated by a Cþ þ program on Intels Xeons CPU E",
+    "type": "ListItem",
     "metadata": {
-      "page_number": 1
+      "page_number": 2
     }
   },
   {
-    "element_id": "c7617b32a017575f77d35bde20b90ca4",
-    "text": "2352-3409/ & 2018 Published by Elsevier Inc. This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-nc-nd/4.0/).",
-    "type": "NarrativeText",
-    "metadata": {
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "7618d2e5eeef6b5305841ac31ea399ea",
-    "text": "Operations research Vehicle scheduling Tables, text ﬁ les Arti ﬁ cially generated by a C þ þ program on Intel s Xeon s CPU E",
+    "element_id": "d4f85d36757c12f0c6dab57721287f32",
+    "text": "–",
     "type": "ListItem",
     "metadata": {
       "page_number": 2
@@ -104,8 +88,8 @@
     }
   },
   {
-    "element_id": "e7ed26397d6208215398eaf2876ff109",
-    "text": "with Linux operating system. Raw Sixty randomly generated instances of the MDVSP with the number depots in (",
+    "element_id": "6b78edec8b4f160fd31d6b5468ca84f4",
+    "text": "with Linux operating system. Raw Sixty randomly generated instances of the MDVSP with the number of depots in (",
     "type": "ListItem",
     "metadata": {
       "page_number": 2
@@ -168,88 +152,112 @@
     }
   },
   {
-    "element_id": "be3aef839dad90d89adb3eea9bb23c9b",
-    "text": "A new formulation and a column generation-based heuristic the multiple depot vehicle scheduling problem. Transportation Research Part B: Methodological,",
+    "element_id": "31d805cba7125109a2f22720089275e6",
+    "text": "A new formulation and a column generation-based heuristic for the multiple depot vehicle scheduling problem. Transportation",
     "type": "ListItem",
     "metadata": {
       "page_number": 2
     }
   },
   {
-    "element_id": "803dac27c4823a821bc305f70dfa7a04",
-    "text": ", pp.",
-    "type": "ListItem",
-    "metadata": {
-      "page_number": 2
-    }
-  },
-  {
-    "element_id": "d4f85d36757c12f0c6dab57721287f32",
-    "text": "–",
-    "type": "ListItem",
-    "metadata": {
-      "page_number": 2
-    }
-  },
-  {
-    "element_id": "245843abef9e72e7efac30138a994bf6",
-    "text": "[",
-    "type": "ListItem",
-    "metadata": {
-      "page_number": 2
-    }
-  },
-  {
-    "element_id": "a00ad12fa538b6cae76f5413d3a14e45",
-    "text": "].",
-    "type": "ListItem",
-    "metadata": {
-      "page_number": 2
-    }
-  },
-  {
-    "element_id": "9bf39412d343706db6a940993c139203",
-    "text": "The dataset contains",
-    "type": "ListItem",
-    "metadata": {
-      "page_number": 2
-    }
-  },
-  {
-    "element_id": "ae2ec2f9015a920ca777ed80f83f9625",
-    "text": "different problem instances of the MDVSP that can be used to evaluate the performance of the algorithms for the MDVSP. The data provide all the information that is required to model the MDVSP by using the existing mathematical formulations. All the problem instances are available for use without any restrictions. The benchmark solutions and solution time for the problem instances are presented in [",
-    "type": "ListItem",
-    "metadata": {
-      "page_number": 2
-    }
-  },
-  {
-    "element_id": "ca6a4e8ba5cd29f28afbf1be79bfe9f0",
-    "text": "] and can be used for the comparison. The dataset includes a program that can generate similar problem instances of different sizes.",
-    "type": "ListItem",
-    "metadata": {
-      "page_number": 2
-    }
-  },
-  {
-    "element_id": "c2b2b778d53cc9a1cb4dc340476bc5aa",
-    "text": "1. Data",
-    "type": "Title",
-    "metadata": {
-      "page_number": 2
-    }
-  },
-  {
-    "element_id": "ef3d6ac8b234a253c1472063256a0204",
-    "text": "The dataset contains 60 different problem instances of the multiple depot vehicle scheduling pro- blem (MDVSP). Each problem instance is provided in a separate ﬁ le. Each ﬁ le is named as ‘ RN-m-n-k.dat ’ where ‘ m ’ , ‘ n ’ , and ‘ k ’ denote the number of depots, the number of trips, and the instance number for the size, ‘ ð m ; n Þ ’ , respectively. For example, the problem instance, ‘ RN-8 – 1500-01.dat ’ is the ﬁ rst problem instance with 8 depots and 1500 trips. For the number of depots, m, we used three values, 8,12, and 16. The four values for the number of trips, n , are 1500, 2000, 2500, and 3000. For each size, ð m ; n Þ , ﬁ ve instances are provided. The dataset can be downloaded from https://orlib.uqcloud.net.",
+    "element_id": "f66486b2db409493f9442f275e48a594",
+    "text": "S., Krishnamoorthy, M., Ranade, A., Ernst, A.T. and Patil, R., A new formulation and a column generation-based heuristic for multiple depot vehicle scheduling problem. Transportation Part B: Methodological, 118, pp. 457–487 [3].",
     "type": "NarrativeText",
     "metadata": {
       "page_number": 2
     }
   },
   {
-    "element_id": "97dee66e34df3ad769be81de882ae8b6",
-    "text": "For each problem instance, the following information is provided: The number of depots m ð Þ , The number of trips ð n Þ , The number of locations ð l Þ , The number of vehicles at each depot, For each trip i A",
+    "element_id": "596eda178f8c5adefbae7cfe1bec78c3",
+    "text": "Value of the data",
+    "type": "Title",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "a0ec1ff22b659610fcf5e590b34f6716",
+    "text": "(cid:",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "c450824d50e14047feb63a3e823f4e79",
+    "text": ") The dataset contains",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "71f5d9d02f796abf77f6c8cefccfbbc6",
+    "text": "different problem instances of the MDVSP that can be used to evaluate performance of the algorithms for the MDVSP. (cid:",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "ff9a3de64cbe3f036663277a1244b4f1",
+    "text": ") The data provide all the information that is required to model the MDVSP by using the mathematical formulations. (cid:",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "e0d4a2eb6e524ab6a940a80cac00ddc5",
+    "text": ") All the problem instances are available for use without any restrictions. (cid:",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "2c1b57c4582a3df9d4356f76304eddc8",
+    "text": ") The benchmark solutions and solution time for the problem instances are presented in [",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "cc161a19fc428fc287dcf14f1654e0cb",
+    "text": "] and be used for the comparison. (cid:",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "72aa6ba1397a323ae5bece0093a9a3a4",
+    "text": ") The dataset includes a program that can generate similar problem instances of different sizes.",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "2d6c133ed11dddace9e2df5f4cd678c5",
+    "text": "dataset includes a program that can generate similar problem instances of different sizes.",
+    "type": "NarrativeText",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "d6a9448e0184c8bd5e12eb3a97e140c7",
+    "text": "The dataset contains 60 different problem instances of the multiple depot vehicle scheduling pro- blem (MDVSP). Each problem instance is provided in a separate ﬁle. Each ﬁle is named as ‘RN-m-n-k.dat’, where ‘m’, ‘n’, and ‘k’ denote the number of depots, the number of trips, and the instance number for the size, ‘ðm;nÞ’, respectively. For example, the problem instance, ‘RN-8–1500-01.dat’, is the ﬁrst problem instance with 8 depots and 1500 trips. For the number of depots, m, we used three values, 8,12, and 16. The four values for the number of trips, n, are 1500, 2000, 2500, and 3000. For each size, ðm;nÞ, ﬁve instances are provided. The dataset can be downloaded from https://orlib.uqcloud.net. For each problem instance, the following information is provided:",
+    "type": "NarrativeText",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "04aebad316ac758cf28b98351fb115b3",
+    "text": "The number of depots ðmÞ, The number of trips ðnÞ, The number of locations ðlÞ, The number of vehicles at each depot, For each trip",
     "type": "ListItem",
     "metadata": {
       "page_number": 2
@@ -264,16 +272,16 @@
     }
   },
   {
-    "element_id": "517f4142a958f4c5f922eb8f83ea3f72",
-    "text": "; … ; n , a start time, t s i , an end time, t e i , a start location, l si , and an end location, and",
+    "element_id": "a39bfd8cfef6541b044847975896a2c6",
+    "text": ";…;n, a start time, ts, an end time, te, a start location, ls, and an end i i i and",
     "type": "ListItem",
     "metadata": {
       "page_number": 2
     }
   },
   {
-    "element_id": "f562440bfb37c791547df5aaf08eaf45",
-    "text": "The travel time, δ ij , between any two locations i ; j A 1 ; … ; l",
+    "element_id": "81cf45127cb8d3e1c01ffca5e41ead4b",
+    "text": "(cid:2) The travel time, , between any two locations i;jA1;…;l. ij",
     "type": "NarrativeText",
     "metadata": {
       "page_number": 2
@@ -288,48 +296,40 @@
     }
   },
   {
-    "element_id": "b94574eff42df0be379c1cdb5ee6dc6b",
-    "text": "and end location of the trip. A long trip is about 3 – 5 h in duration and has the same start and end location. For all instances, m r l and the locations 1 ; … ; m correspond to depots, while the remaining locations only appear as trip start and end locations.",
+    "element_id": "e1e2a818fd38b9f4952535d26fb659a0",
+    "text": "and end location of the trip. A long trip is about 3–5 h in duration and has the same start and end location. For all instances, mrl and the locations 1;…;m correspond to depots, while the remaining locations only appear as trip start and end locations.",
     "type": "NarrativeText",
     "metadata": {
       "page_number": 3
     }
   },
   {
-    "element_id": "b0db1cc87b21aa17409de37b2f6a29d8",
-    "text": "A trip j can be covered after trip i by the same vehicle, if t sj t ei þ l ei l sj . If l ei l sj , the vehicle must travel empty from l ei to l sj , otherwise, the vehicle may require waiting at l ei for the duration of ð t sj t ei Þ . A schedule is given by the sequence in which a vehicle can cover the trips. The MDVSP is to determine the minimum number of schedules to cover all trips that minimizes total time in waiting and empty travel. The following requirements must be satis ﬁ ed:",
+    "element_id": "ce2e201f29b7016ecce46d1d693ef7b4",
+    "text": "j i lels i j i j travel empty from le to ls, otherwise, the vehicle may require waiting at le for the duration of i j i j i A schedule is given by the sequence in which a vehicle can cover the trips. The MDVSP is to the minimum number of schedules to cover all trips that minimizes total time in waiting and travel. The following requirements must be satisﬁed:",
     "type": "NarrativeText",
     "metadata": {
       "page_number": 3
     }
   },
   {
-    "element_id": "4d47b9cd8d7fa658b61e62e181a14f92",
-    "text": "1. Each schedule should start and end at the same depot. 2. Each trip should be covered by only one vehicle. 3. The number of schedules that start from a depot should not exceed the number of vehicles at the depot.",
+    "element_id": "cd9bf519d24539b268f95eac88c85d58",
+    "text": "For each instance size ðm;nÞ, Table 1 provides the average of the number of locations, the number of times, the number of vehicles, and the number of possible empty travels, over ﬁve instances. The number of locations includes m distinct locations for depots and the number of locations at which various trips start or end. The number of times includes the start and the end time of the planning horizon and the start/end times for the trips. The number of vehicles is the total number of vehicles from all the depots. The number of possible empty travels is the number of possible connections between trips that require a vehicle travelling empty between two consecutive trips in a schedule.",
     "type": "NarrativeText",
     "metadata": {
       "page_number": 3
     }
   },
   {
-    "element_id": "0e8f81d8287c46ce432a33a3e3ceb65e",
-    "text": "A suf ﬁ cient number of vehicles are provided to maintain the feasibility of an instance. For each instance size ð m ; n Þ , Table 1 provides the average of the number of locations, the number of times, the number of vehicles, and the number of possible empty travels, over ﬁ ve instances. The number of locations includes m distinct locations for depots and the number of locations at which various trips start or end. The number of times includes the start and the end time of the planning horizon and the start/end times for the trips. The number of vehicles is the total number of vehicles from all the depots. The number of possible empty travels is the number of possible connections between trips that require a vehicle travelling empty between two consecutive trips in a schedule.",
+    "element_id": "15ccc43b8b50ed7b5fc5ea342405a929",
+    "text": "The description of the ﬁle for each problem instance is presented in Table 2. The ﬁrst line in the ﬁle provides the number of depots ðmÞ, the number of trips, ðnÞ, and the number of locations ðlÞ, in the problem instance. The next n lines present the information for n trips. Each line corresponds to a trip, iAf1;…;ng, and provides the start location, the start time, the end location, and the end time of trip i. (cid:1) (cid:3)",
     "type": "NarrativeText",
     "metadata": {
       "page_number": 3
     }
   },
   {
-    "element_id": "322b598a18278d3d39f6bf634841b89a",
-    "text": "The description of the ﬁ le for each problem instance is presented in Table 2. The ﬁ rst line in the ﬁ le provides the number of depots ð m Þ , the number of trips, ð n Þ , and the number of locations ð l Þ , in the problem instance. The next n lines present the information for n trips. Each line corresponds to a trip, i A 1 ; … ; n f g , and provides the start location, the start time, the end location, and the end time of trip i The next l lines present the travel times between any two locations, i ; j A 1 ; … ; l .",
-    "type": "NarrativeText",
-    "metadata": {
-      "page_number": 3
-    }
-  },
-  {
-    "element_id": "e4b85cd33d032c805617600c0bfad8a8",
-    "text": "The dataset also includes a program ‘ GenerateInstance.cpp ’ that can be used to generate new instances. The program takes three inputs, the number of depots ð m Þ , the number of trips ð n Þ , and the number of instances for each size ð m ; n Þ .",
+    "element_id": "9585148595a20a62c56ffb6787174e9c",
+    "text": "The dataset also includes a program ‘GenerateInstance.cpp’ that can be used to generate new instances. The program takes three inputs, the number of depots ðmÞ, the number of trips ðnÞ, and the number of instances for each size ðm;nÞ.",
     "type": "NarrativeText",
     "metadata": {
       "page_number": 3
@@ -360,17 +360,57 @@
     }
   },
   {
-    "element_id": "79c86e197781c022bd52b7871adfd363",
-    "text": "Description of ﬁ le format for each problem instance.",
+    "element_id": "fec9cdb50e095b07d7653f500e145481",
+    "text": "Description of ﬁle format for each problem instance.",
     "type": "NarrativeText",
     "metadata": {
       "page_number": 4
     }
   },
   {
-    "element_id": "3f58c5fa339d2e5716c2e1bba2291ff9",
-    "text": "Number of lines Number of columns in each line Description 1 3 The number of depots, the number of trips, and the number of locations. 1 m The number of vehicles r d at each depot d . n 4 One line for each trip, i ¼ 1 ; 2 ; … ; n . Each line provides the start location l si , the start time t si , the end location l ei and the end time t ei for the corresponding trip. l l Each element, δ ij ; where i ; j A 1 ; 2 ; … ; l , refers to the travel time between location i and location j .",
-    "type": "UncategorizedText",
+    "element_id": "a31604c2bcc4c1c3483860a3ae062f81",
+    "text": "The number of depots, the number of trips, and the number of locations. The number of vehicles r at each depot d. d One line for each trip, i¼",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 4
+    }
+  },
+  {
+    "element_id": "41b805ea7ac014e23556e98bb374702a",
+    "text": ";",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 4
+    }
+  },
+  {
+    "element_id": "a85100380c9ad1b14aa72862ec4628b4",
+    "text": ";…;n. Each line provides the start location ls, the start i time ts, the end location le and the end time te for the corresponding trip. i i i Each element, δ ; where i;",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 4
+    }
+  },
+  {
+    "element_id": "41b805ea7ac014e23556e98bb374702a",
+    "text": ";",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 4
+    }
+  },
+  {
+    "element_id": "0815e59cdd0e83f371758dac27f9eb81",
+    "text": ";…;l, refers to the travel time between location i and ij location j.",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 4
+    }
+  },
+  {
+    "element_id": "764eef872135149aaf95224bab69c844",
+    "text": "2. Experimental design, materials, and methods",
+    "type": "Title",
     "metadata": {
       "page_number": 4
     }
@@ -392,17 +432,9 @@
     }
   },
   {
-    "element_id": "8f0264ba00616d29c2648dc51f24b439",
-    "text": "Transparency document associated with this article can be found in the online version at https://doi. org/10.1016/j.dib.2018.12.055.",
-    "type": "NarrativeText",
-    "metadata": {
-      "page_number": 4
-    }
-  },
-  {
-    "element_id": "fa783fbedd3cbd108b99d04da7fb7e8b",
-    "text": "org/10.1016/j.dib.2018.12.055.",
-    "type": "NarrativeText",
+    "element_id": "d202816913e482abce90d70d88f202c3",
+    "text": "Transparency document. Supporting information",
+    "type": "Title",
     "metadata": {
       "page_number": 4
     }
@@ -416,8 +448,8 @@
     }
   },
   {
-    "element_id": "b021ff686bb8a038da9836464aa37ce1",
-    "text": "[1] G. Carpaneto, M. Dell'Amico, M. Fischetti, P. Toth, A branch and bound algorithm for the multiple depot vehicle scheduling problem, Networks 19 (5) (1989) 531 – 548. [2] N. Kliewer, T. Mellouli, L. Suhl, A time – space network based exact optimization model for multi-depot bus scheduling, Eur. J. Oper. Res. 175 (3) (2006) 1616 – 1627. [3] S. Kulkarni, M. Krishnamoorthy, A. Ranade, A.T. Ernst, R. Patil, A new formulation and a column generation-based heuristic for the multiple depot vehicle scheduling problem, Transp. Res. Part B Methodol. 118 (2018) 457 – 487. [4] A.S. Pepin, G. Desaulniers, A. Hertz, D. Huisman, A comparison of ﬁ ve heuristics for the multiple depot vehicle scheduling problem, J. Sched. 12 (1) (2009) 17. [5] C.C. Ribeiro, F. Soumis, A column generation approach to the multiple-depot vehicle scheduling problem, Oper. Res. 42 (1) (1994) 41 – 52.",
+    "element_id": "779c8db2c33a770fc051ffa089c1ea73",
+    "text": "[1] G. Carpaneto, M. Dell'Amico, M. Fischetti, P. Toth, A branch and bound algorithm for the multiple depot vehicle scheduling problem, Networks 19 (5) (1989) 531–548. [2] N. Kliewer, T. Mellouli, L. Suhl, A time–space network based exact optimization model for multi-depot bus scheduling, Eur. J. Oper. Res. 175 (3) (2006) 1616–1627. [3] S. Kulkarni, M. Krishnamoorthy, A. Ranade, A.T. Ernst, R. Patil, A new formulation and a column generation-based heuristic for the multiple depot vehicle scheduling problem, Transp. Res. Part B Methodol. 118 (2018) 457–487. [4] A.S. Pepin, G. Desaulniers, A. Hertz, D. Huisman, A comparison of ﬁve heuristics for the multiple depot vehicle scheduling problem, J. Sched. 12 (1) (2009) 17. [5] C.C. Ribeiro, F. Soumis, A column generation approach to the multiple-depot vehicle scheduling problem, Oper. Res. 42 (1) (1994) 41–52.",
     "type": "NarrativeText",
     "metadata": {
       "page_number": 4

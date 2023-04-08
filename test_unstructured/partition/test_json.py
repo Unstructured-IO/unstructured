@@ -10,6 +10,8 @@ from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
+is_in_docker = os.path.exists("/.dockerenv")
+
 test_files = [
     "fake-text.txt",
     "layout-parser-paper-fast.pdf",
@@ -18,11 +20,13 @@ test_files = [
     "fake-email.eml",
     pytest.param(
         "fake-power-point.ppt",
-        marks=pytest.mark.xfail(reason="Requirements mismatch, should only fail in docker test"),
+        marks=pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container"),
     ),
     "fake.docx",
     "fake-power-point.pptx",
 ]
+
+is_in_docker = os.path.exists("/.dockerenv")
 
 
 @pytest.mark.parametrize("filename", test_files)
@@ -40,6 +44,8 @@ def test_partition_json_from_filename(filename: str):
 
     assert len(elements) == len(test_elements)
     for i in range(len(elements)):
+        print(elements[i].coordinates)
+        print(test_elements[i].coordinates)
         assert elements[i] == test_elements[i]
 
 
@@ -85,6 +91,14 @@ def test_partition_json_from_text(filename: str):
 def test_partition_json_raises_with_none_specified():
     with pytest.raises(ValueError):
         partition_json()
+
+
+def test_partition_json_works_with_empty_string():
+    assert partition_json(text="") == []
+
+
+def test_partition_json_works_with_empty_list():
+    assert partition_json(text="[]") == []
 
 
 def test_partition_json_raises_with_too_many_specified():

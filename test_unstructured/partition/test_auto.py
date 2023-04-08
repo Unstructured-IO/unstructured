@@ -28,6 +28,8 @@ EXPECTED_EMAIL_OUTPUT = [
     ListItem(text="Violets are blue"),
 ]
 
+is_in_docker = os.path.exists("/.dockerenv")
+
 
 def test_auto_partition_email_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
@@ -215,7 +217,7 @@ def test_auto_partition_pdf_from_filename(pass_file_filename, content_type):
     assert elements[0].text.startswith("LayoutParser")
 
     assert isinstance(elements[1], NarrativeText)
-    assert elements[1].text.startswith("Zejiang Shen 1")
+    assert elements[1].text.startswith("Zejiang Shen")
 
     assert elements[0].metadata.filename == filename
 
@@ -252,7 +254,7 @@ def test_auto_partition_pdf_from_file(pass_file_filename, content_type):
     assert elements[0].text.startswith("LayoutParser")
 
     assert isinstance(elements[1], NarrativeText)
-    assert elements[1].text.startswith("Zejiang Shen 1")
+    assert elements[1].text.startswith("Zejiang Shen")
 
 
 def test_partition_pdf_doesnt_raise_warning():
@@ -312,7 +314,7 @@ def test_auto_partition_pptx_from_filename():
     assert elements[0].metadata.filename == filename
 
 
-@pytest.mark.xfail(reason="Requirements mismatch, should only fail in docker test")
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_auto_partition_ppt_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.ppt")
     elements = partition(filename=filename)
@@ -326,7 +328,7 @@ def test_auto_with_page_breaks():
     assert PageBreak() in elements
 
 
-@pytest.mark.xfail(reason="Requirements mismatch, should only fail in docker test")
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_auto_partition_epub_from_filename():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "winter-sports.epub")
     elements = partition(filename=filename)
@@ -334,7 +336,7 @@ def test_auto_partition_epub_from_filename():
     assert elements[0].text.startswith("The Project Gutenberg eBook of Winter Sports")
 
 
-@pytest.mark.xfail(reason="Requirements mismatch, should only fail in docker test")
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_auto_partition_epub_from_file():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "winter-sports.epub")
     with open(filename, "rb") as f:

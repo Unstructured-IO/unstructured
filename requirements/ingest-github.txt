@@ -93,8 +93,16 @@
 ***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
+    ***REMOVED***   unstructured (setup.py)
+***REMOVED***
+    ***REMOVED*** via
+    ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   argilla
     ***REMOVED***   pandas
+***REMOVED***
+    ***REMOVED*** via
+    ***REMOVED***   -r requirements/base.txt
+    ***REMOVED***   msg-parser
 ***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
@@ -149,7 +157,7 @@
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   unstructured (setup.py)
-pytz==2022.7.1
+***REMOVED***
     ***REMOVED*** via
     ***REMOVED***   -r requirements/base.txt
     ***REMOVED***   pandas

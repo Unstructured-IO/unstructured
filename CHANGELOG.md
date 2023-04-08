@@ -1,16 +1,82 @@
-***REMOVED******REMOVED*** 0.5.8-dev0
+***REMOVED******REMOVED*** 0.5.12-dev2
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
 
-* `detect_filetype` now does a final fallback to file extension.
+* Add OS mimetypes DB to docker image, mainly for unstructured-api compat.
+* Use the image registry as a cache when building Docker images.
+* Adds the ability for `partition_text` to group together broken paragraphs.
 
 ***REMOVED******REMOVED******REMOVED*** Features
 
+***REMOVED******REMOVED******REMOVED*** Fixes
+
+* Allow encoding to be passed into `replace_mime_encodings`.
+
+***REMOVED******REMOVED*** 0.5.11
+
+***REMOVED******REMOVED******REMOVED*** Enhancements
+
+***REMOVED******REMOVED******REMOVED*** Features
+
+***REMOVED******REMOVED******REMOVED*** Fixes
+
+* Guard against null style attribute in docx document elements
+* Update HTML encoding to better support foreign language characters
+
+***REMOVED******REMOVED*** 0.5.10
+
+***REMOVED******REMOVED******REMOVED*** Enhancements
+
+* Updated inference package
+* Add sender, recipient, date, and subject to element metadata for emails
+
+***REMOVED******REMOVED******REMOVED*** Features
+
+* Added `--download-only` parameter to `unstructured-ingest`
+
+***REMOVED******REMOVED******REMOVED*** Fixes
+
+* FileNotFound error when filename is provided but file is not on disk
+
+***REMOVED******REMOVED*** 0.5.9
+
+***REMOVED******REMOVED******REMOVED*** Enhancements
+
+***REMOVED******REMOVED******REMOVED*** Features
+
+***REMOVED******REMOVED******REMOVED*** Fixes
+
+* Convert file to str in helper `split_by_paragraph` for `partition_text`
+
+***REMOVED******REMOVED*** 0.5.8
+
+***REMOVED******REMOVED******REMOVED*** Enhancements
+
+* Update `elements_to_json` to return string when filename is not specified
+* `elements_from_json` may take a string instead of a filename with the `text` kwarg
+* `detect_filetype` now does a final fallback to file extension.
+* Empty tags are now skipped during the depth check for HTML processing.
+
+***REMOVED******REMOVED******REMOVED*** Features
+
+* Add local file system to `unstructured-ingest`
+* Add `--max-docs` parameter to `unstructured-ingest`
 * Added `partition_msg` for processing MSFT Outlook .msg files.
 
 ***REMOVED******REMOVED******REMOVED*** Fixes
 
 * `convert_file_to_text` now passes through the `source_format` and `target_format` kwargs.
+  Previously they were hard coded.
+* Partitioning functions that accept a `text` kwarg no longer raise an error if an empty
+  string is passed (and empty list of elements is returned instead).
+* `partition_json` no longer fails if the input is an empty list.
+* Fixed bug in `chunk_by_attention_window` that caused the last word in segments to be cut-off
+  in some cases.
+
+***REMOVED******REMOVED******REMOVED*** BREAKING CHANGES
+
+* `stage_for_transformers` now returns a list of elements, making it consistent with other
+  staging bricks
 
 ***REMOVED******REMOVED*** 0.5.7
 
@@ -29,8 +95,6 @@
 
 ***REMOVED******REMOVED*** 0.5.6
 
-* Fix problem with PDF partition (duplicated test)
-
 ***REMOVED******REMOVED******REMOVED*** Enhancements
 
 * `contains_english_word()`, used heavily in text processing, is 10x faster.
@@ -41,6 +105,8 @@
 * Add `clean_non_ascii_chars` to remove non-ascii characters from unicode string
 
 ***REMOVED******REMOVED******REMOVED*** Fixes
+
+* Fix problem with PDF partition (duplicated test)
 
 ***REMOVED******REMOVED*** 0.5.4
 

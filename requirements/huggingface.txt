@@ -28,7 +28,7 @@
     ***REMOVED*** via argilla
 ***REMOVED***
     ***REMOVED*** via openpyxl
-filelock==3.10.3
+filelock==3.10.7
     ***REMOVED*** via
     ***REMOVED***   huggingface-hub
     ***REMOVED***   torch
@@ -69,6 +69,8 @@ markupsafe==2.1.2
     ***REMOVED*** via argilla
 mpmath==1.3.0
     ***REMOVED*** via sympy
+***REMOVED***
+    ***REMOVED*** via unstructured (setup.py)
 networkx==3.0
     ***REMOVED*** via torch
 ***REMOVED***
@@ -78,6 +80,8 @@ networkx==3.0
     ***REMOVED***   argilla
     ***REMOVED***   pandas
     ***REMOVED***   transformers
+***REMOVED***
+    ***REMOVED*** via msg-parser
 ***REMOVED***
     ***REMOVED*** via unstructured (setup.py)
 ***REMOVED***
@@ -107,7 +111,7 @@ networkx==3.0
     ***REMOVED*** via unstructured (setup.py)
 ***REMOVED***
     ***REMOVED*** via unstructured (setup.py)
-pytz==2022.7.1
+***REMOVED***
     ***REMOVED*** via pandas
 pyyaml==6.0
     ***REMOVED*** via
@@ -154,7 +158,7 @@ torch==2.0.0
     ***REMOVED***   nltk
     ***REMOVED***   sacremoses
     ***REMOVED***   transformers
-transformers==4.27.3
+transformers==4.27.4
     ***REMOVED*** via unstructured (setup.py)
 ***REMOVED***
     ***REMOVED*** via

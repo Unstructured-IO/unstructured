@@ -61,7 +61,7 @@ installation. NOTE: We do not currently support python 3.11, please use an older
     - `libreoffice` (MS Office docs)
 - If you are parsing PDFs, run the following to install the `detectron2` model, which
   `unstructured` uses for layout detection:
-    - `pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@v0.6***REMOVED***egg=detectron2"`
+    - `pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@e2ce8dc***REMOVED***egg=detectron2"`
 
 At this point, you should be able to run the following code:
 
@@ -86,7 +86,7 @@ print("\n\n".join([str(el) for el in elements]))
 The following instructions are intended to help you get up and running using Docker to interact with `unstructured`.
 See [here](https://docs.docker.com/get-docker/) if you don't already have docker installed on your machine.
 
-NOTE: the image is only supported for x86_64 hardware and known to have issues on Apple silicon.
+NOTE: we build multi-platform images to support both x86_64 and Apple silicon hardware. `docker pull` should download the corresponding image for your architecture, but you can specify with `--platform` (e.g. `--platform linux/amd64`) if needed.
 
 We build Docker images for all pushes to `main`. We tag each image with the corresponding short commit hash (e.g. `fbc7a69`) and the application version (e.g. `0.5.5-dev1`). We also tag the most recent image with `latest`. To leverage this, `docker pull` from our image repository.
 
@@ -98,7 +98,7 @@ Once pulled, you can create a container from this image and shell to it.
 
 ```bash
 ***REMOVED*** create the container
-docker run --platform linux/amd64 -d -t --name unstructured quay.io/unstructured-io/unstructured:latest
+docker run -dt --name unstructured quay.io/unstructured-io/unstructured:latest
 
 ***REMOVED*** this will drop you into a bash shell where the Docker image is running
 docker exec -it unstructured bash

@@ -1,7 +1,7 @@
 import csv
 import io
 import json
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import pandas as pd
 
@@ -12,6 +12,7 @@ from unstructured.documents.elements import (
     ElementMetadata,
     NoID,
 )
+from unstructured.partition.common import exactly_one
 
 TABLE_FIELDNAMES: List[str] = [
     "type",
@@ -38,11 +39,22 @@ def convert_to_dict(elements: List[Element]) -> List[Dict[str, str]]:
     return convert_to_isd(elements)
 
 
-def elements_to_json(elements: List[Element], filename: str, indent: int = 4):
-    """Saves a list of elements to a JSON file."""
+def elements_to_json(
+    elements: List[Element],
+    filename: Optional[str] = None,
+    indent: int = 4,
+) -> Optional[str]:
+    """
+    Saves a list of elements to a JSON file if filename is specified.
+    Otherwise, return the list of elements as a string.
+    """
     element_dict = convert_to_dict(elements)
-    with open(filename, "w") as f:
-        json.dump(element_dict, f, indent=indent)
+    if filename is not None:
+        with open(filename, "w") as f:
+            json.dump(element_dict, f, indent=indent)
+            return None
+    else:
+        return json.dumps(element_dict, indent=indent)
 
 
 def isd_to_elements(isd: List[Dict[str, Any]]) -> List[Element]:
@@ -51,7 +63,10 @@ def isd_to_elements(isd: List[Dict[str, Any]]) -> List[Element]:
 
     for item in isd:
         element_id: str = item.get("element_id", NoID())
-        coordinates: Optional[List[float]] = item.get("coordinates")
+        coord_value: Optional[List[List[float]]] = item.get("coordinates")
+        coordinates: Optional[Tuple[Tuple[float, float], ...]] = None
+        if coord_value is not None:
+            coordinates = tuple((x, y) for x, y in coord_value)
 
         metadata = ElementMetadata()
         _metadata_dict = item.get("metadata")
@@ -86,11 +101,17 @@ def dict_to_elements(element_dict: List[Dict[str, Any]]) -> List[Element]:
     return isd_to_elements(element_dict)
 
 
-def elements_from_json(filename: str) -> List[Element]:
-    """Loads a list of elements from a JSON file."""
-    with open(filename) as f:
-        element_dict = json.load(f)
-    return dict_to_elements(element_dict)
+def elements_from_json(filename: str = "", text: str = "") -> List[Element]:
+    """Loads a list of elements from a JSON file or a string."""
+    exactly_one(filename=filename, text=text)
+
+    if filename:
+        with open(filename) as f:
+            element_dict = json.load(f)
+        return dict_to_elements(element_dict)
+    else:
+        element_dict = json.loads(text)
+        return dict_to_elements(element_dict)
 
 
 def convert_to_isd_csv(elements: List[Element]) -> str:
