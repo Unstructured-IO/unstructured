@@ -14,6 +14,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --s3-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
     --s3-anonymous \
     --structured-output-dir s3-small-batch-output \
+    --preserve-downloads \
     --reprocess
 
 OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
