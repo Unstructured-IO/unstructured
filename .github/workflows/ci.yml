@@ -122,7 +122,7 @@ jobs:
       if: ${{ failure() }}
       uses: mxschmitt/action-tmate@v3
 
-changelog:
+  changelog:
     runs-on: ubuntu-latest
     steps:
     - if: github.ref != 'refs/heads/main'
