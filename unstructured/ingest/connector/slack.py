@@ -101,7 +101,7 @@ class SlackIngestDoc(BaseIngestDoc):
             return
 
         if self.config.verbose:
-            logger.info(f"fetching channel {self.channel} - PID: {os.getpid()}")
+            logger.debug(f"fetching channel {self.channel} - PID: {os.getpid()}")
 
         messages = []
         self.client = WebClient(token=self.token)
