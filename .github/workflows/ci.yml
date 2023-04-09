@@ -112,6 +112,7 @@ jobs:
         make install-ingest-azure
         make install-ingest-github
         make install-ingest-gitlab
+        make install-ingest-slack
         make install-ingest-wikipedia
         ./test_unstructured_ingest/test-ingest.sh
 

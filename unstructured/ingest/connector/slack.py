@@ -77,7 +77,8 @@ class SlackIngestDoc(BaseIngestDoc):
         return Path(self.config.download_dir) / channel_file
 
     def _output_filename(self):
-        return Path(self.config.output_dir) / self.channel
+        output_file = self.channel + ".json"
+        return Path(self.config.output_dir) / output_file
 
     def has_output(self):
         """Determine if structured output for this doc already exists."""
@@ -86,6 +87,7 @@ class SlackIngestDoc(BaseIngestDoc):
     def _create_full_tmp_dir_path(self):
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
 
+    @requires_dependencies(dependencies=["slack_sdk"], extras="slack")
     def get_file(self):
         """Fetches the data from a slack channel and stores it locally."""
 
@@ -100,7 +102,7 @@ class SlackIngestDoc(BaseIngestDoc):
             return
 
         if self.config.verbose:
-            logger.info(f"fetching channel {self.channel} - PID: {os.getpid()}")
+            logger.debug(f"fetching channel {self.channel} - PID: {os.getpid()}")
 
         messages = []
         self.client = WebClient(token=self.token)
