@@ -10,21 +10,6 @@ from urllib.parse import urlparse
 
 import click
 
-from unstructured.ingest.connector.azure import (
-    AzureBlobStorageConnector,
-    SimpleAzureBlobStorageConfig,
-)
-from unstructured.ingest.connector.biomed import BiomedConnector, SimpleBiomedConfig
-from unstructured.ingest.connector.fsspec import FsspecConnector, SimpleFsspecConfig
-from unstructured.ingest.connector.github import GitHubConnector, SimpleGitHubConfig
-from unstructured.ingest.connector.gitlab import GitLabConnector, SimpleGitLabConfig
-from unstructured.ingest.connector.google_drive import (
-    GoogleDriveConnector,
-    SimpleGoogleDriveConfig,
-)
-from unstructured.ingest.connector.local import LocalConnector, SimpleLocalConfig
-from unstructured.ingest.connector.reddit import RedditConnector, SimpleRedditConfig
-from unstructured.ingest.connector.s3 import S3Connector, SimpleS3Config
 from unstructured.ingest.connector.slack import SimpleSlackConfig, SlackConnector
 from unstructured.ingest.connector.wikipedia import (
     SimpleWikipediaConfig,
