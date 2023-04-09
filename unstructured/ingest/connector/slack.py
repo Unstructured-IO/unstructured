@@ -13,7 +13,10 @@ from unstructured.ingest.interfaces import (
     BaseIngestDoc,
 )
 from unstructured.ingest.logger import logger
-from unstructured.utils import requires_dependencies, validate_date_args
+from unstructured.utils import (
+    requires_dependencies,
+    validate_date_args,
+)
 
 @dataclass
 class SimpleSlackConfig(BaseConnectorConfig):
@@ -32,8 +35,8 @@ class SimpleSlackConfig(BaseConnectorConfig):
     verbose: bool = False
 
     def validate_inputs(self):
-        oldest_valid = False
-        latest_valid = False
+        oldest_valid = True
+        latest_valid = True
 
         if self.oldest:
             oldest_valid = validate_date_args(self.oldest)

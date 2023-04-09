@@ -327,12 +327,12 @@ class MainProcess:
 @click.option(
     "--slack-channel",
     default=None,
-    help="Slack channel to pull messages from",
+    help="Slack channel to pull messages from, can be a public or private channel",
 )
 @click.option(
     "--slack-token",
     default=None,
-    help="Token used to access Slack API",
+    help="Bot token used to access Slack API, must have channels:history scope for the bot user",
 )
 @click.option(
     "--start-date",
