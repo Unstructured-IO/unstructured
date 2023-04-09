@@ -1,3 +1,15 @@
+***REMOVED******REMOVED*** 0.5.12-dev4
+
+***REMOVED******REMOVED******REMOVED*** Enhancements
+
+* Added method to utils to allow date time format validation
+
+***REMOVED******REMOVED******REMOVED*** Features
+
+* Add Slack connector to pull messages for a specific channel
+
+***REMOVED******REMOVED******REMOVED*** Fixes
+
 ***REMOVED******REMOVED*** 0.5.12-dev3
 
 ***REMOVED******REMOVED******REMOVED*** Enhancements
