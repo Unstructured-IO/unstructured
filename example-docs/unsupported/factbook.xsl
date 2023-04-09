@@ -5,7 +5,7 @@
 <body>
   <h2>World Factbook</h2>
   <table border="1">
-    <tr bgcolor="***REMOVED***9acd32">
+    <tr bgcolor="#9acd32">
       <th style="text-align:left">Country</th>
       <th style="text-align:left">Capital</th>
       <th style="text-align:left">Leader</th>

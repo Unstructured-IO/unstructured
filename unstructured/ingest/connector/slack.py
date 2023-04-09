@@ -28,7 +28,7 @@ class SimpleSlackConfig(BaseConnectorConfig):
     oldest: str
     latest: str
 
-    ***REMOVED*** Standard Connector options
+    # Standard Connector options
     download_dir: str
     output_dir: str
     re_download: bool = False
@@ -70,15 +70,16 @@ class SlackIngestDoc(BaseIngestDoc):
     oldest: str
     latest: str
 
-    ***REMOVED*** NOTE(crag): probably doesn't matter,  but intentionally not defining tmp_download_file
-    ***REMOVED*** __post_init__ for multiprocessing simplicity (no Path objects in initially
-    ***REMOVED*** instantiated object)
+    # NOTE(crag): probably doesn't matter,  but intentionally not defining tmp_download_file
+    # __post_init__ for multiprocessing simplicity (no Path objects in initially
+    # instantiated object)
     def _tmp_download_file(self):
         channel_file = self.channel + ".txt"
         return Path(self.config.download_dir) / channel_file
 
     def _output_filename(self):
-        return Path(self.config.output_dir) / self.channel
+        output_file = self.channel + ".json"
+        return Path(self.config.output_dir) / output_file
 
     def has_output(self):
         """Determine if structured output for this doc already exists."""
@@ -186,7 +187,7 @@ class SlackConnector(BaseConnector):
         sub_dirs = os.listdir(cur_dir)
         os.chdir(cur_dir)
         for sub_dir in sub_dirs:
-            ***REMOVED*** don't traverse symlinks, not that there every should be any
+            # don't traverse symlinks, not that there every should be any
             if os.path.isdir(sub_dir) and not os.path.islink(sub_dir):
                 self.cleanup(sub_dir)
         os.chdir("..")

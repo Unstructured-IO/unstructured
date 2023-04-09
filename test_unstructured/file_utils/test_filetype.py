@@ -57,11 +57,11 @@ def test_detect_filetype_from_filename(file, expected):
 def test_detect_filetype_from_filename_with_extension(monkeypatch, file, expected):
     """Test that we detect the filetype from the filename extension when libmagic is not available
     or the file does not exist."""
-    ***REMOVED*** Test when libmagic is not available
+    # Test when libmagic is not available
     monkeypatch.setattr(filetype, "LIBMAGIC_AVAILABLE", False)
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, file)
     assert detect_filetype(filename) == expected
-    ***REMOVED*** Test when the file does not exist
+    # Test when the file does not exist
     monkeypatch.setattr(filetype, "LIBMAGIC_AVAILABLE", True)
     extension = pathlib.Path(file).suffix
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "not-on-disk" + extension)
@@ -77,8 +77,8 @@ def test_detect_filetype_from_filename_with_extension(monkeypatch, file, expecte
         ("fake-text.txt", FileType.TXT),
         ("fake-email.eml", FileType.EML),
         ("unsupported/factbook.xml", FileType.XML),
-        ***REMOVED*** NOTE(robinson) - For the document, some operating systems return
-        ***REMOVED*** */xml and some return */html. Either could be acceptable depending on the OS
+        # NOTE(robinson) - For the document, some operating systems return
+        # */xml and some return */html. Either could be acceptable depending on the OS
         ("example-10k.html", [FileType.HTML, FileType.XML]),
         ("fake-html.html", FileType.HTML),
         ("unsupported/fake-excel.xlsx", FileType.XLSX),

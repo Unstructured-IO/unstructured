@@ -38,12 +38,12 @@ def test_headings_are_not_narrative_text(text, expected):
     ("text", "expected"),
     [
         ("Ask the teacher for an apple.", True),
-        ("Ask Me About Intellectual Property", False),  ***REMOVED*** Exceeds the cap threshold
-        ("7", False),  ***REMOVED*** Fails because it is numeric
-        ("intellectual property", False),  ***REMOVED*** Fails because it does not contain a verb
+        ("Ask Me About Intellectual Property", False),  # Exceeds the cap threshold
+        ("7", False),  # Fails because it is numeric
+        ("intellectual property", False),  # Fails because it does not contain a verb
         ("Dal;kdjfal adawels adfjwalsdf. Addad jaja fjawlek", False),
-        ("---------------Aske the teacher for an apple----------", False),  ***REMOVED*** Too many non-alpha
-        ("", False),  ***REMOVED*** Doesn't have english words  ***REMOVED*** Fails because it is empty
+        ("---------------Aske the teacher for an apple----------", False),  # Too many non-alpha
+        ("", False),  # Doesn't have english words  # Fails because it is empty
     ],
 )
 def test_is_possible_narrative_text(text, expected, monkeypatch):
@@ -56,8 +56,8 @@ def test_is_possible_narrative_text(text, expected, monkeypatch):
 
 
 def test_narrative_text_language_checks():
-    ***REMOVED*** NOTE(robinson) - This is true because we don't check english vocab if language checks
-    ***REMOVED*** are set to False
+    # NOTE(robinson) - This is true because we don't check english vocab if language checks
+    # are set to False
     text = "Dal;kdjfal adawels adfjwalsdf. Addad jaja fjawlek"
     assert text_type.is_possible_narrative_text(text, language_checks=True) is False
 
@@ -91,20 +91,20 @@ def test_text_type_handles_non_english_examples_with_env_var(monkeypatch):
 @pytest.mark.parametrize(
     ("text", "expected"),
     [
-        ("Intellectual Property", True),  ***REMOVED*** Fails because it exceeds the cap threshold
+        ("Intellectual Property", True),  # Fails because it exceeds the cap threshold
         (
             "Ask the teacher for an apple. You might a gold star.",
             False,
-        ),  ***REMOVED*** Too many sentences
-        ("7", False),  ***REMOVED*** Fails because it is numeric
-        ("", False),  ***REMOVED*** Fails because it is empty
-        ("ITEM 1A. RISK FACTORS", True),  ***REMOVED*** Two "sentences", but both are short
-        ("To My Dearest Friends,", False),  ***REMOVED*** Ends with a comma
-        ("BTAR ADFJA L", False),  ***REMOVED*** Doesn't have english words
-        ("ITEM 1A. RISK FACTORS " * 15, False),  ***REMOVED*** Title is too long
-        ("/--------BREAK-------/", False),  ***REMOVED*** Contains too many non-alpha characters
-        ("1.A.RISKS", True),  ***REMOVED*** Tests that "RISKS" gets flagged as an english word
-        ("1. Unstructured Technologies", True),  ***REMOVED*** Make sure we're English words :-)
+        ),  # Too many sentences
+        ("7", False),  # Fails because it is numeric
+        ("", False),  # Fails because it is empty
+        ("ITEM 1A. RISK FACTORS", True),  # Two "sentences", but both are short
+        ("To My Dearest Friends,", False),  # Ends with a comma
+        ("BTAR ADFJA L", False),  # Doesn't have english words
+        ("ITEM 1A. RISK FACTORS " * 15, False),  # Title is too long
+        ("/--------BREAK-------/", False),  # Contains too many non-alpha characters
+        ("1.A.RISKS", True),  # Tests that "RISKS" gets flagged as an english word
+        ("1. Unstructured Technologies", True),  # Make sure we're English words :-)
         ("Big/Brown/Sheet", True),
     ],
 )
@@ -116,8 +116,8 @@ def test_is_possible_title(text, expected, monkeypatch):
 
 
 def test_title_language_checks():
-    ***REMOVED*** NOTE(robinson) - This is true because we don't check english vocab if language checks
-    ***REMOVED*** are set to False
+    # NOTE(robinson) - This is true because we don't check english vocab if language checks
+    # are set to False
     text = "BTAR ADFJA L"
     assert text_type.is_possible_narrative_text(text, language_checks=True) is False
 
@@ -144,7 +144,7 @@ def test_contains_us_phone_number(text, expected):
     ("text", "expected"),
     [
         ("• This is a fine point!", True),
-        (" • This is a fine point!", True),  ***REMOVED*** Has an extra space in front of the bullet
+        (" • This is a fine point!", True),  # Has an extra space in front of the bullet
         ("‣ This is a fine point!", True),
         ("⁃ This is a fine point!", True),
         ("⁌ This is a fine point!", True),
@@ -162,8 +162,8 @@ def test_contains_us_phone_number(text, expected):
         ("  This is a fine point!", True),
         ("* This is a fine point!", True),
         ("- This is a fine point!", True),
-        ("This is NOT a fine point!", False),  ***REMOVED*** No bullet point
-        ("I love morse code! ● ● ● --- ● ● ●", False),  ***REMOVED*** Not at the beginning
+        ("This is NOT a fine point!", False),  # No bullet point
+        ("I love morse code! ● ● ● --- ● ● ●", False),  # Not at the beginning
     ],
 )
 def test_is_bulletized_text(text, expected):
@@ -198,7 +198,7 @@ def test_contains_verb(text, expected, monkeypatch):
         ("daljdf adlfajldj ajadfa", False),
         ("BTAR ADFJA L", False),
         ("Unstructured Technologies", True),
-        ("1.A.RISKS", True),  ***REMOVED*** Test crammed together words get picked up
+        ("1.A.RISKS", True),  # Test crammed together words get picked up
         ("Big/Brown/Sheep", True),
     ],
 )

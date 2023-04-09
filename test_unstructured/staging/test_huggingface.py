@@ -62,7 +62,7 @@ def test_chunk_by_attention_window_raises_if_buffer_too_big():
     text = "hello " * 20 + "there " * 20
     tokenizer = MockTokenizer()
     with pytest.raises(ValueError):
-        ***REMOVED*** NOTE(robinson) - The buffer exceeds the max input size of 20
+        # NOTE(robinson) - The buffer exceeds the max input size of 20
         huggingface.chunk_by_attention_window(text, tokenizer, buffer=40)
 
 

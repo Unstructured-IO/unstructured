@@ -33,22 +33,22 @@ def test_upload_label_studio_data_with_sdk(caplog, elements):
     """
     log = logging.getLogger("urllib3")
     log.setLevel(logging.DEBUG)
-    ***REMOVED*** Define the URL where Label Studio is accessible
+    # Define the URL where Label Studio is accessible
     LABEL_STUDIO_URL = "http://localhost:8080"
-    ***REMOVED*** API_KEY is a temporary key from local install not actually valid anywhere
-    ***REMOVED*** Update it if the vcr cassette is updated with the API key from your user account
+    # API_KEY is a temporary key from local install not actually valid anywhere
+    # Update it if the vcr cassette is updated with the API key from your user account
     API_KEY = "d44b92c31f592583bffb7e0d817a60c16a937bca"
-    ***REMOVED*** Connect to the Label Studio API and check the connection
+    # Connect to the Label Studio API and check the connection
     ls = Client(url=LABEL_STUDIO_URL, api_key=API_KEY)
     ls.check_connection()
     ls.delete_all_projects()
-    ***REMOVED*** Create a sample project to classify types of texts
+    # Create a sample project to classify types of texts
     project = ls.start_project(
         title="Text Type Classifications",
         label_config="""
         <View>
         <Text name="text" value="$text"/>
-        <View style="box-shadow: 2px 2px 5px ***REMOVED***999;
+        <View style="box-shadow: 2px 2px 5px #999;
                        padding: 20px; margin-top: 2em;
                        border-radius: 5px;">
             <Header value="Choose text type"/>
@@ -63,7 +63,7 @@ def test_upload_label_studio_data_with_sdk(caplog, elements):
     )
     label_studio_data = label_studio.stage_for_label_studio(elements)
     project.import_tasks(label_studio_data)
-    ***REMOVED*** Check success status code (201) for posting tasks job in logger info
+    # Check success status code (201) for posting tasks job in logger info
     success_posting_tasks_status = re.compile(r"POST /api/projects/.*/import.*201")
     assert bool(success_posting_tasks_status.search(caplog.text))
 

@@ -37,14 +37,14 @@ class SimpleBiomedConfig(BaseConnectorConfig):
 
     path: str
 
-    ***REMOVED*** OA Web Service API Options
+    # OA Web Service API Options
     id_: str
     from_: str
     until: str
 
-    ***REMOVED*** Standard Connector options
+    # Standard Connector options
     download_dir: str
-    ***REMOVED*** where to write structured data, with the directory structure matching FTP path
+    # where to write structured data, with the directory structure matching FTP path
     output_dir: str
     re_download: bool = False
     download_only: bool = False
@@ -137,7 +137,7 @@ class BiomedIngestDoc(BaseIngestDoc):
 
     @property
     def filename(self):
-        return Path(self.file_meta.download_filepath).resolve()  ***REMOVED*** type: ignore
+        return Path(self.file_meta.download_filepath).resolve()  # type: ignore
 
     def _output_filename(self):
         return Path(f"{self.file_meta.output_filepath}.json").resolve()
@@ -157,9 +157,9 @@ class BiomedIngestDoc(BaseIngestDoc):
         return output_filename.is_file() and output_filename.stat()
 
     def get_file(self):
-        download_path = self.file_meta.download_filepath  ***REMOVED*** type: ignore
+        download_path = self.file_meta.download_filepath  # type: ignore
 
-        dir_ = Path(os.path.dirname(download_path))  ***REMOVED*** type: ignore
+        dir_ = Path(os.path.dirname(download_path))  # type: ignore
         if not dir_.is_dir():
             logger.debug(f"Creating directory: {dir_}")
 
@@ -167,7 +167,7 @@ class BiomedIngestDoc(BaseIngestDoc):
                 dir_.mkdir(parents=True, exist_ok=True)
 
         urllib.request.urlretrieve(
-            self.file_meta.ftp_path,  ***REMOVED*** type: ignore
+            self.file_meta.ftp_path,  # type: ignore
             self.file_meta.download_filepath,
         )
 
@@ -316,7 +316,7 @@ class BiomedConnector(BaseConnector):
         sub_dirs = os.listdir(cur_dir)
         os.chdir(cur_dir)
         for sub_dir in sub_dirs:
-            ***REMOVED*** don't traverse symlinks, not that there every should be any
+            # don't traverse symlinks, not that there every should be any
             if os.path.isdir(sub_dir) and not os.path.islink(sub_dir):
                 self.cleanup(sub_dir)
         os.chdir("..")

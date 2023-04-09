@@ -120,7 +120,7 @@ def convert_to_isd_csv(elements: List[Element]) -> str:
     in CSV Format.
     """
     rows: List[Dict[str, Any]] = convert_to_isd(elements)
-    ***REMOVED*** NOTE(robinson) - flatten metadata and add it to the table
+    # NOTE(robinson) - flatten metadata and add it to the table
     for row in rows:
         metadata = row.pop("metadata")
         for key, value in metadata.items():

@@ -25,9 +25,9 @@ class SimpleRedditConfig(BaseConnectorConfig):
     search_query: str
     num_posts: int
 
-    ***REMOVED*** Standard Connector options
+    # Standard Connector options
     download_dir: str
-    ***REMOVED*** where to write structured data
+    # where to write structured data
     output_dir: str
     preserve_downloads: bool = False
     re_download: bool = False
@@ -71,8 +71,8 @@ class RedditIngestDoc(BaseIngestDoc):
             return
 
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
-        ***REMOVED*** Write the title plus the body, if any
-        text_to_write = f"***REMOVED*** {self.post.title}\n{self.post.selftext}"
+        # Write the title plus the body, if any
+        text_to_write = f"# {self.post.title}\n{self.post.selftext}"
         with open(self.filename, "w", encoding="utf8") as f:
             f.write(text_to_write)
 
@@ -114,7 +114,7 @@ class RedditConnector(BaseConnector):
         sub_dirs = os.listdir(cur_dir)
         os.chdir(cur_dir)
         for sub_dir in sub_dirs:
-            ***REMOVED*** don't traverse symlinks, not that there every should be any
+            # don't traverse symlinks, not that there every should be any
             if os.path.isdir(sub_dir) and not os.path.islink(sub_dir):
                 self.cleanup(sub_dir)
         os.chdir("..")

@@ -8,19 +8,19 @@ with instructions on how to download additional documents that are too large to 
 repo.
 
 
-***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***
+##########################################
 Sentiment Analysis Labeling in LabelStudio
-***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***
+##########################################
 
 The following workflow will show how to format and upload the risk section from an SEC filing
 to LabelStudio for a sentiment analysis labeling task. In addition to the ``unstructured``
-library, this example assumes you have `LabelStudio <https://labelstud.io/guide/***REMOVED***Quick-start>`_ 
+library, this example assumes you have `LabelStudio <https://labelstud.io/guide/#Quick-start>`_ 
 installed and running locally.
 
 
 In addition to the ``unstructured`` library, this examples assumes you have the
 `SEC pipeline <https://github.com/Unstructured-IO/pipeline-sec-filings>`_ repo installed and
-on your Python path, as well `LabelStudio <https://labelstud.io/guide/***REMOVED***Quick-start>`_ installed
+on your Python path, as well `LabelStudio <https://labelstud.io/guide/#Quick-start>`_ installed
 and running locally. First, we'll import dependencies create some dummy risk narrative sections.
 For info on how to pull real SEC documents from EDGAR, see our
 `SEC pipeline <https://github.com/Unstructured-IO/pipeline-sec-filings>`_ repo.
@@ -93,7 +93,7 @@ and ``predictions`` kwargs if you did't generated annotations or predictions.
         id_field="id"
     )
 
-    ***REMOVED*** The resulting JSON file is ready to be uploaded to LabelStudio
+    # The resulting JSON file is ready to be uploaded to LabelStudio
     with open("label-studio.json", "w") as f:
         json.dump(label_studio_data, f, indent=4)
 
@@ -105,7 +105,7 @@ labeling setup, and you're good to go.
 
 You can also create a new project in LabelStudio through
 the API by running the following command. Hit ``Account & Settings`` under your user name to find your
-API token. First, use the `create project <https://labelstud.io/api***REMOVED***operation/api_projects_create>`_ call to
+API token. First, use the `create project <https://labelstud.io/api#operation/api_projects_create>`_ call to
 create a new project.
 After creating a project, upload data using the following command. The project ID will come from the
 response of the create project call. For existing projects, you can find the project ID in the URL for
@@ -120,9 +120,9 @@ the project.
 At this point, you're good to go to start labeling in the LabelStudio UI.
 
 
-***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***
+##################################
 Extracting Metadata from Documents
-***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***
+##################################
 
 The ``unstructured`` library includes utilities for extracting metadata from
 documents. Currently, there is support for extracting metadata from ``.docx``,
@@ -156,9 +156,9 @@ To extract metadata from ``.docx`` or ``.xlsx``, use ``get_docx_metadata`` and
 ``get_xlsx_metadata``. The interfaces are the same as ``get_jpg_metadata``.
 
 
-***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***
+###########################
 Exploring Source Documents
-***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***
+###########################
 
 The ``unstructured`` library includes tools for helping you explore source documents.
 To get a summary of the size (in bytes) and type of documents in a directory, you can

@@ -1,8 +1,8 @@
 black>=22.3.0
 coverage
-***REMOVED*** NOTE(mrobinson) - Pinning click due to a unicode issue in black
-***REMOVED*** can remove after black drops support for Python 3.6
-***REMOVED*** ref: https://github.com/psf/black/issues/2964
+# NOTE(mrobinson) - Pinning click due to a unicode issue in black
+# can remove after black drops support for Python 3.6
+# ref: https://github.com/psf/black/issues/2964
 click>=8.1
 flake8
 mypy
@@ -14,6 +14,6 @@ types-requests
 vcrpy
 ruff
 
-***REMOVED*** NOTE(robinson) - The following pins are to address
-***REMOVED*** vulnerabilities in dependency scans
+# NOTE(robinson) - The following pins are to address
+# vulnerabilities in dependency scans
 certifi>=2022.12.07

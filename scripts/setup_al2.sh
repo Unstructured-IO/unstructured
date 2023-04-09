@@ -1,4 +1,4 @@
-***REMOVED***!/bin/bash
+#!/bin/bash
 set +u
 
 if [ -z "$1" ]; then
@@ -9,10 +9,10 @@ fi
 
 set -eux
 
-***REMOVED*** Set package manager command for this distribution
+# Set package manager command for this distribution
 pac="yum"
 
-***REMOVED*** If we're not running as root, we want to prefix certain commands with sudo
+# If we're not running as root, we want to prefix certain commands with sudo
 if [[ $(whoami) == 'root' ]]; then
     $pac update -y
     $pac install -y sudo
@@ -21,91 +21,91 @@ if [[ $(whoami) == 'root' ]]; then
     sudo='sudo'
 fi
 
-***REMOVED*** Set user account for which we're configuring the tools
+# Set user account for which we're configuring the tools
 USER_ACCOUNT=$1
 
-***REMOVED*** Update existing packages
+# Update existing packages
 $sudo $pac update -y
 
-***REMOVED******REMOVED******REMOVED******REMOVED*** Utils
-***REMOVED*** Prerequisites
+#### Utils
+# Prerequisites
 $sudo $pac install -y gcc wget tar curl make xz-devel
-***REMOVED*** Install non-ancient version of sed
+# Install non-ancient version of sed
 wget http://ftp.gnu.org/gnu/sed/sed-4.9.tar.gz
 tar xvf sed-4.9.tar.gz
 cd sed-4.9/
 ./configure && make && $sudo make install
 cd ..
 
-***REMOVED******REMOVED******REMOVED******REMOVED*** Git
-***REMOVED*** Install git
+#### Git
+# Install git
 $sudo $pac install -y git
 
-***REMOVED******REMOVED******REMOVED******REMOVED*** Python
-***REMOVED*** Install tools needed to build python
+#### Python
+# Install tools needed to build python
 $sudo $pac install -y bzip2 sqlite zlib-devel readline-devel sqlite-devel openssl-devel tk-devel libffi-devel bzip2-devel 
-***REMOVED*** Install pyenv
+# Install pyenv
 sudo -u "$USER_ACCOUNT" -i <<'EOF'
     if [[ ! -d "$HOME"/.pyenv ]]; then
         cd $HOME
         curl https://pyenv.run | bash
         touch "$HOME"/.bashrc
-        ***REMOVED*** Remove initialization lines from .bashrc if they are already there, so we don't duplicate them
-        ***REMOVED*** shellcheck disable=SC2016
+        # Remove initialization lines from .bashrc if they are already there, so we don't duplicate them
+        # shellcheck disable=SC2016
         sed -i '/export PYENV_ROOT="$HOME\/.pyenv"/d' "$HOME"/.bashrc
-        ***REMOVED*** shellcheck disable=SC2016
+        # shellcheck disable=SC2016
         sed -i '/command -v pyenv >\/dev\/null || export PATH="$PYENV_ROOT\/bin:$PATH"/d' "$HOME"/.bashrc
-        ***REMOVED*** shellcheck disable=SC2016
+        # shellcheck disable=SC2016
         sed -i '/eval "$(pyenv init -)"/d' "$HOME"/.bashrc
-        ***REMOVED*** shellcheck disable=SC2016
+        # shellcheck disable=SC2016
         sed -i '/eval "$(pyenv virtualenv-init -)"/d' "$HOME"/.bashrc
-        ***REMOVED*** Add initialization lines to .bashrc
-        ***REMOVED*** shellcheck disable=SC2016
+        # Add initialization lines to .bashrc
+        # shellcheck disable=SC2016
         cat <<'EOT' | cat - "$HOME"/.bashrc > temp && mv temp "$HOME"/.bashrc
 export PYENV_ROOT="$HOME/.pyenv"
 command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 EOT
-        ***REMOVED*** install python
+        # install python
         source "$HOME"/.bashrc
         pyenv install 3.8.15
     fi
 EOF
 
-***REMOVED******REMOVED******REMOVED******REMOVED*** OpenCV dependencies
+#### OpenCV dependencies
 $sudo $pac install -y mesa-libGL
 
-***REMOVED******REMOVED******REMOVED******REMOVED*** Poppler
-***REMOVED*** Install poppler
+#### Poppler
+# Install poppler
 $sudo $pac install -y poppler-utils
 
-***REMOVED******REMOVED******REMOVED******REMOVED*** Tesseract
-***REMOVED*** Install dependencies for image and pdf manipulation
+#### Tesseract
+# Install dependencies for image and pdf manipulation
 $sudo $pac install -y opencv opencv-devel opencv-python perl-core clang libpng-devel libtiff-devel libwebp-devel libjpeg-turbo-devel git-core libtool pkgconfig xz
-***REMOVED*** Install leptonica (tesseract dependency)
+# Install leptonica (tesseract dependency)
 wget https://github.com/DanBloomberg/leptonica/releases/download/1.75.1/leptonica-1.75.1.tar.gz
 tar -xzvf leptonica-1.75.1.tar.gz
 cd leptonica-1.75.1
 ./configure && make && $sudo make install
 cd ..
-***REMOVED*** Install autoconf-archive (tesseract dependency)
+# Install autoconf-archive (tesseract dependency)
 wget http://mirror.squ.edu.om/gnu/autoconf-archive/autoconf-archive-2017.09.28.tar.xz
 tar -xvf autoconf-archive-2017.09.28.tar.xz
 cd autoconf-archive-2017.09.28
 ./configure && make && $sudo make install
 $sudo cp m4/* /usr/share/aclocal
 cd ..
-***REMOVED*** Install tesseract
+# Install tesseract
 git clone --depth 1  https://github.com/tesseract-ocr/tesseract.git tesseract-ocr
 cd tesseract-ocr
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 ./autogen.sh
 ./configure && make && $sudo make install
 cd ..
-***REMOVED*** Install tesseract languages
+# Install tesseract languages
 git clone https://github.com/tesseract-ocr/tessdata.git
 $sudo cp tessdata/*.traineddata /usr/local/share/tessdata
 
-***REMOVED******REMOVED******REMOVED******REMOVED*** libmagic
+#### libmagic
 $sudo $pac install -y file-devel

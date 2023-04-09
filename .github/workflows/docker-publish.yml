@@ -50,7 +50,7 @@ jobs:
         DOCKER_IMAGE=$DOCKER_BUILD_REPOSITORY:amd-$SHORT_SHA make docker-smoke-test
     - name: Push AMD image
       run: |
-        ***REMOVED*** write to the build repository to cache for the publish-images job
+        # write to the build repository to cache for the publish-images job
         docker push $DOCKER_BUILD_REPOSITORY:amd-$SHORT_SHA
   build-arm:
     runs-on: ubuntu-latest
@@ -79,12 +79,12 @@ jobs:
           -t $DOCKER_BUILD_REPOSITORY:arm-$SHORT_SHA .
     - name: Test ARM image
       run: |
-        ***REMOVED*** only run a subset of tests on ARM, since they take a long time with emulation
+        # only run a subset of tests on ARM, since they take a long time with emulation
         DOCKER_PLATFORM="linux/arm64" DOCKER_IMAGE="$DOCKER_BUILD_REPOSITORY:arm-$SHORT_SHA" make docker-test TEST_NAME=partition/test_text.py
         DOCKER_IMAGE=$DOCKER_BUILD_REPOSITORY:arm-$SHORT_SHA make docker-smoke-test
     - name: Push ARM image
       run: |
-        ***REMOVED*** write to the build repository to cache for the publish-images job
+        # write to the build repository to cache for the publish-images job
         docker push $DOCKER_BUILD_REPOSITORY:arm-$SHORT_SHA
   publish-images:
     runs-on: ubuntu-latest
@@ -109,7 +109,7 @@ jobs:
         docker pull $DOCKER_BUILD_REPOSITORY:arm-$SHORT_SHA
     - name: Push latest build tags for AMD and ARM
       run: |
-        ***REMOVED*** these are used to construct the final manifest but also cache-from in subsequent runs
+        # these are used to construct the final manifest but also cache-from in subsequent runs
         docker tag $DOCKER_BUILD_REPOSITORY:amd-$SHORT_SHA $DOCKER_BUILD_REPOSITORY:amd
         docker push $DOCKER_BUILD_REPOSITORY:amd
         docker tag $DOCKER_BUILD_REPOSITORY:arm-$SHORT_SHA $DOCKER_BUILD_REPOSITORY:arm

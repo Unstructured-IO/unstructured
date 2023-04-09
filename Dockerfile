@@ -1,10 +1,10 @@
-***REMOVED*** syntax=docker/dockerfile:experimental
+# syntax=docker/dockerfile:experimental
 
 FROM centos:centos7.9.2009
 
 ARG PIP_VERSION
 
-***REMOVED*** Install dependency packages
+# Install dependency packages
 RUN yum -y update && \
   yum -y install poppler-utils xz-devel wget tar curl make which mailcap && \
   yum install -y epel-release && \
@@ -12,14 +12,14 @@ RUN yum -y update && \
   yum -y install libreoffice && \
   yum clean all
 
-***REMOVED*** Install gcc & g++ ≥ 8 for Tesseract and Detectron2
+# Install gcc & g++ ≥ 8 for Tesseract and Detectron2
 RUN yum -y install centos-release-scl && \
   yum -y install devtoolset-9-gcc* && \
   yum clean all
 
 SHELL [ "/usr/bin/scl", "enable", "devtoolset-9"]
 
-***REMOVED*** Install Tessaract
+# Install Tessaract
 RUN set -ex && \
     $sudo yum install -y opencv opencv-devel opencv-python perl-core clang libpng-devel libtiff-devel libwebp-devel libjpeg-turbo-devel git-core libtool pkgconfig xz && \
     wget https://github.com/DanBloomberg/leptonica/releases/download/1.75.1/leptonica-1.75.1.tar.gz && \
@@ -46,7 +46,7 @@ RUN set -ex && \
     $sudo rm -rf /tmp/* && \
     yum clean all
 
-***REMOVED*** Install Python
+# Install Python
 RUN yum -y install openssl-devel bzip2-devel libffi-devel make git sqlite-devel && \
   curl -O https://www.python.org/ftp/python/3.8.15/Python-3.8.15.tgz && tar -xzf Python-3.8.15.tgz && \
   cd Python-3.8.15/ && ./configure --enable-optimizations && make altinstall && \
@@ -56,7 +56,7 @@ RUN yum -y install openssl-devel bzip2-devel libffi-devel make git sqlite-devel 
   $sudo rm -rf /var/cache/yum/* && \
   yum clean all
 
-***REMOVED*** Set up environment 
+# Set up environment 
 ENV HOME /home/
 WORKDIR ${HOME}
 RUN mkdir ${HOME}/.ssh && chmod go-rwx ${HOME}/.ssh \
@@ -64,7 +64,7 @@ RUN mkdir ${HOME}/.ssh && chmod go-rwx ${HOME}/.ssh \
 ENV PYTHONPATH="${PYTHONPATH}:${HOME}"
 ENV PATH="/home/usr/.local/bin:${PATH}"
 
-***REMOVED*** Copy and install Unstructured
+# Copy and install Unstructured
 COPY requirements requirements
 
 RUN python3.8 -m pip install pip==${PIP_VERSION} && \
@@ -80,7 +80,7 @@ RUN python3.8 -m pip install pip==${PIP_VERSION} && \
   pip install --no-cache -r requirements/ingest-s3.txt && \
   pip install --no-cache -r requirements/ingest-wikipedia.txt && \
   pip install --no-cache -r requirements/local-inference.txt && \
-  pip install --no-cache "detectron2@git+https://github.com/facebookresearch/detectron2.git@e2ce8dc***REMOVED***egg=detectron2"
+  pip install --no-cache "detectron2@git+https://github.com/facebookresearch/detectron2.git@e2ce8dc#egg=detectron2"
 
 COPY example-docs example-docs
 COPY unstructured unstructured

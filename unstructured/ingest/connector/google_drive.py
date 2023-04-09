@@ -66,14 +66,14 @@ class SimpleGoogleDriveConfig(BaseConnectorConfig):
     """Connector config where drive_id is the id of the document to process or
     the folder to process all documents from."""
 
-    ***REMOVED*** Google Drive Specific Options
+    # Google Drive Specific Options
     drive_id: str
     service_account_key: str
     extension: str
 
-    ***REMOVED*** Standard Connector options
+    # Standard Connector options
     download_dir: str
-    ***REMOVED*** where to write structured data, with the directory structure matching drive path
+    # where to write structured data, with the directory structure matching drive path
     output_dir: str
     re_download: bool = False
     download_only: bool = False
@@ -101,7 +101,7 @@ class GoogleDriveIngestDoc(BaseIngestDoc):
 
     @property
     def filename(self):
-        return Path(self.file_meta.get("download_filepath")).resolve()  ***REMOVED*** type: ignore
+        return Path(self.file_meta.get("download_filepath")).resolve()  # type: ignore
 
     def _output_filename(self):
         return Path(f"{self.file_meta.get('output_filepath')}.json").resolve()
@@ -133,7 +133,7 @@ class GoogleDriveIngestDoc(BaseIngestDoc):
 
         if self.file_meta.get("mimeType", "").startswith("application/vnd.google-apps"):
             export_mime = GOOGLE_DRIVE_EXPORT_TYPES.get(
-                self.file_meta.get("mimeType"),  ***REMOVED*** type: ignore
+                self.file_meta.get("mimeType"),  # type: ignore
             )
             if not export_mime:
                 logger.info(
@@ -239,8 +239,8 @@ class GoogleDriveConnector(BaseConnector):
                                 guess = guess_extension(export_mime)
                                 ext = guess if guess else ext
 
-                        ***REMOVED*** TODO (Habeeb): Consider filtering at the query level.
-                        if self.config.extension and self.config.extension != ext:  ***REMOVED*** noqa: SIM102
+                        # TODO (Habeeb): Consider filtering at the query level.
+                        if self.config.extension and self.config.extension != ext:  # noqa: SIM102
                             logger.debug(
                                 f"File {meta.get('name')} does not match "
                                 f"the file type {self.config.extension}",
@@ -274,7 +274,7 @@ class GoogleDriveConnector(BaseConnector):
         sub_dirs = os.listdir(cur_dir)
         os.chdir(cur_dir)
         for sub_dir in sub_dirs:
-            ***REMOVED*** don't traverse symlinks, not that there every should be any
+            # don't traverse symlinks, not that there every should be any
             if os.path.isdir(sub_dir) and not os.path.islink(sub_dir):
                 self.cleanup(sub_dir)
         os.chdir("..")
@@ -286,6 +286,6 @@ class GoogleDriveConnector(BaseConnector):
 
     def get_ingest_docs(self):
         files = self._list_objects(self.config.drive_id, self.config.recursive)
-        ***REMOVED*** Setting to None because service object can't be pickled for multiprocessing.
+        # Setting to None because service object can't be pickled for multiprocessing.
         self.config.service = None
         return [GoogleDriveIngestDoc(self.config, file) for file in files]

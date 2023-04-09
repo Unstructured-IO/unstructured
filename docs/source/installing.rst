@@ -18,7 +18,7 @@ installation.
 	* ``pandocs`` (EPUBs)
 
 * If you are parsing PDFs, run the following to install the ``detectron2`` model, which ``unstructured`` uses for layout detection:
-	* ``pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@e2ce8dc***REMOVED***egg=detectron2"``
+	* ``pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@e2ce8dc#egg=detectron2"``
 
 At this point, you should be able to run the following code:
 
@@ -57,11 +57,11 @@ If you need to run model inferences locally, there are a few additional steps yo
 take. The main challenge is installing ``detectron2`` for PDF layout parsing. ``detectron2``
 does not officially support Windows, but it is possible to get it to install on Windows.
 The installation instructions are based on the instructions LayoutParser provides
-`here <https://layout-parser.github.io/tutorials/installation***REMOVED***for-windows-users>`_.
+`here <https://layout-parser.github.io/tutorials/installation#for-windows-users>`_.
 
-* Run ``pip install pycocotools-windows`` to install a Windows compatible version of ``pycocotools``. Alternatively, you can run ``pip3 install "git+https://github.com/philferriere/cocoapi.git***REMOVED***egg=pycocotools&subdirectory=PythonAPI"`` as outlined in `this GitHub issue <https://github.com/cocodataset/cocoapi/issues/169***REMOVED***issuecomment-462528628>`_.
+* Run ``pip install pycocotools-windows`` to install a Windows compatible version of ``pycocotools``. Alternatively, you can run ``pip3 install "git+https://github.com/philferriere/cocoapi.git#egg=pycocotools&subdirectory=PythonAPI"`` as outlined in `this GitHub issue <https://github.com/cocodataset/cocoapi/issues/169#issuecomment-462528628>`_.
 * Run ``git clone https://github.com/ivanpp/detectron2.git``, then ``cd detectron2``, then ``pip install -e .`` to install a Windows compatible version of the ``detectron2`` library.
-* Install the a Windows compatible version of ``iopath`` using the instructions outlined in `this GitHub issue <https://github.com/Layout-Parser/layout-parser/issues/15***REMOVED***issuecomment-819546751>`_. First, run ``git clone https://github.com/facebookresearch/iopath --single-branch --branch v0.1.8``. Then on line 753 in ``iopath/iopath/common/file_io.py`` change ``filename = path.split("/")[-1]`` to ``filename = parsed_url.path.split("/")[-1]``. After that, navigate to the ``iopath`` directory and run ``pip install -e .``.
+* Install the a Windows compatible version of ``iopath`` using the instructions outlined in `this GitHub issue <https://github.com/Layout-Parser/layout-parser/issues/15#issuecomment-819546751>`_. First, run ``git clone https://github.com/facebookresearch/iopath --single-branch --branch v0.1.8``. Then on line 753 in ``iopath/iopath/common/file_io.py`` change ``filename = path.split("/")[-1]`` to ``filename = parsed_url.path.split("/")[-1]``. After that, navigate to the ``iopath`` directory and run ``pip install -e .``.
 * Run ``pip install unstructured[local-inference]``. This will install the ``unstructured_inference`` dependency.
 
 At this point, you can verify the installation by running the following from the root directory of the ``unstructured`` `repo <https://github.com/Unstructured-IO/unstructured>`_:
@@ -166,5 +166,5 @@ you can run the following command to install it:
 Additionally, some tokenizers in the ``transformers`` library required the ``sentencepiece``
 library. This is not included as an ``unstructured`` dependency because it only applies
 to some tokenizers. See the
-`sentencepiece install instructions <https://github.com/google/sentencepiece***REMOVED***installation>`_ for
+`sentencepiece install instructions <https://github.com/google/sentencepiece#installation>`_ for
 information on how to install ``sentencepiece`` if your tokenizer requires it.

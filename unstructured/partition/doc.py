@@ -17,7 +17,7 @@ def partition_doc(filename: Optional[str] = None, file: Optional[IO] = None) -> 
     file
         A file-like object using "rb" mode --> open(filename, "rb").
     """
-    ***REMOVED*** Verify that only one of the arguments was provided
+    # Verify that only one of the arguments was provided
     if filename is None:
         filename = ""
     exactly_one(filename=filename, file=file)

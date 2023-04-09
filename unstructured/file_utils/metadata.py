@@ -8,7 +8,7 @@ import openpyxl
 from PIL import Image
 from PIL.ExifTags import TAGS
 
-***REMOVED*** NOTE(robison) - ref: https://www.media.mit.edu/pia/Research/deepview/exif.html
+# NOTE(robison) - ref: https://www.media.mit.edu/pia/Research/deepview/exif.html
 EXIF_DATETIME_FMT: Final[str] = "%Y:%m:%d %H:%M:%S"
 
 
@@ -32,7 +32,7 @@ class Metadata:
     description: str = ""
     namespace: str = ""
 
-    ***REMOVED*** NOTE(robinson) - Metadata for use with image files
+    # NOTE(robinson) - Metadata for use with image files
     exif_data: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self):
@@ -129,8 +129,8 @@ def get_jpg_metadata(
         author=exif_dict.get("Artist", ""),
         comments=exif_dict.get("UserComment", ""),
         created=_get_exif_datetime(exif_dict, "DateTimeOriginal"),
-        ***REMOVED*** NOTE(robinson) - Per EXIF docs, DateTime is the last modified data
-        ***REMOVED*** ref: https://www.media.mit.edu/pia/Research/deepview/exif.html
+        # NOTE(robinson) - Per EXIF docs, DateTime is the last modified data
+        # ref: https://www.media.mit.edu/pia/Research/deepview/exif.html
         modified=_get_exif_datetime(exif_dict, "DateTime"),
         exif_data=exif_dict,
     )
@@ -146,7 +146,7 @@ def _get_exif_datetime(exif_dict: Dict[str, Any], key: str) -> Optional[datetime
 
     try:
         return datetime.datetime.strptime(date, EXIF_DATETIME_FMT)
-    ***REMOVED*** NOTE(robinson) - An exception could occur if the datetime is not formatted
-    ***REMOVED*** using the standard EXIF datetime format
+    # NOTE(robinson) - An exception could occur if the datetime is not formatted
+    # using the standard EXIF datetime format
     except ValueError:
         return None

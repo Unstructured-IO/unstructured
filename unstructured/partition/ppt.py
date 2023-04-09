@@ -23,7 +23,7 @@ def partition_ppt(
     include_page_breaks
         If True, includes a PageBreak element between slides
     """
-    ***REMOVED*** Verify that only one of the arguments was provided
+    # Verify that only one of the arguments was provided
     if filename is None:
         filename = ""
     exactly_one(filename=filename, file=file)

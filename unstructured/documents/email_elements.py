@@ -34,7 +34,7 @@ class Name(EmailElement):
         self.text: str = text
 
         if isinstance(element_id, NoID):
-            ***REMOVED*** NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits
+            # NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits
             element_id = hashlib.sha256(text.encode()).hexdigest()[:32]
 
         super().__init__(element_id=element_id)

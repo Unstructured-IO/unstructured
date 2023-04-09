@@ -60,17 +60,17 @@ def mock_docx_document():
     document = docx.Document()
 
     document.add_paragraph("These are a few of my favorite things:", style="Heading 1")
-    ***REMOVED*** NOTE(robinson) - this should get picked up as a list item due to the •
+    # NOTE(robinson) - this should get picked up as a list item due to the •
     document.add_paragraph("• Parrots", style="Normal")
     document.add_paragraph("Hockey", style="List Bullet")
-    ***REMOVED*** NOTE(robinson) - this should get picked up as a title
+    # NOTE(robinson) - this should get picked up as a title
     document.add_paragraph("Analysis", style="Normal")
-    ***REMOVED*** NOTE(robinson) - this should get dropped because it is empty
+    # NOTE(robinson) - this should get dropped because it is empty
     document.add_paragraph("", style="Normal")
-    ***REMOVED*** NOTE(robinson) - this should get picked up as a narrative text
+    # NOTE(robinson) - this should get picked up as a narrative text
     document.add_paragraph("This is my first thought. This is my second thought.", style="Normal")
     document.add_paragraph("This is my third thought.", style="Body Text")
-    ***REMOVED*** NOTE(robinson) - this should just be regular text
+    # NOTE(robinson) - this should just be regular text
     document.add_paragraph("2023")
 
     return document
@@ -132,8 +132,8 @@ def test_auto_partition_doc_with_filename(
     assert elements[0].metadata.filename == doc_filename
 
 
-***REMOVED*** NOTE(robinson) - the application/x-ole-storage mime type is not specific enough to
-***REMOVED*** determine that the file is an .doc document
+# NOTE(robinson) - the application/x-ole-storage mime type is not specific enough to
+# determine that the file is an .doc document
 @pytest.mark.xfail()
 def test_auto_partition_doc_with_file(mock_docx_document, expected_docx_elements, tmpdir):
     docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
@@ -259,10 +259,10 @@ def test_auto_partition_pdf_from_file(pass_file_filename, content_type):
 
 def test_partition_pdf_doesnt_raise_warning():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
-    ***REMOVED*** NOTE(robinson): This is the recommended way to check that no warning is emitted,
-    ***REMOVED*** per the pytest docs.
-    ***REMOVED*** ref: https://docs.pytest.org/en/7.0.x/how-to/capture-warnings.html
-    ***REMOVED***      ***REMOVED***additional-use-cases-of-warnings-in-tests
+    # NOTE(robinson): This is the recommended way to check that no warning is emitted,
+    # per the pytest docs.
+    # ref: https://docs.pytest.org/en/7.0.x/how-to/capture-warnings.html
+    #      #additional-use-cases-of-warnings-in-tests
     with warnings.catch_warnings():
         warnings.simplefilter("error")
         partition(filename=filename)

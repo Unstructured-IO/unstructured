@@ -1,15 +1,15 @@
-***REMOVED***!/usr/bin/env bash
+#!/usr/bin/env bash
 
-***REMOVED*** Processes the Unstructured-IO/unstructured repository
-***REMOVED*** through Unstructured's library in 2 processes.
+# Processes the Unstructured-IO/unstructured repository
+# through Unstructured's library in 2 processes.
 
-***REMOVED*** Structured outputs are stored in reddit-ingest-output/
+# Structured outputs are stored in reddit-ingest-output/
 
-***REMOVED*** NOTE, this script is not ready-to-run!
-***REMOVED*** You must enter a client ID and a client secret before running.
-***REMOVED*** You can find out how to get them here:
-***REMOVED*** https://github.com/reddit-archive/reddit/wiki/OAuth2-Quick-Start-Example***REMOVED***first-steps
-***REMOVED*** It is quite easy and very quick.
+# NOTE, this script is not ready-to-run!
+# You must enter a client ID and a client secret before running.
+# You can find out how to get them here:
+# https://github.com/reddit-archive/reddit/wiki/OAuth2-Quick-Start-Example#first-steps
+# It is quite easy and very quick.
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/../../.. || exit 1
@@ -25,5 +25,5 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --num-processes 2 \
     --verbose
 
-***REMOVED*** Alternatively, you can call it using:
-***REMOVED*** unstructured-ingest --subreddit-name ...
+# Alternatively, you can call it using:
+# unstructured-ingest --subreddit-name ...

@@ -18,7 +18,7 @@ class SimpleGitLabConfig(SimpleGitConfig):
     def __post_init__(self):
         parsed_gh_url = urlparse(self.url)
 
-        ***REMOVED*** If no scheme or netloc are provided, use the default gitlab.com
+        # If no scheme or netloc are provided, use the default gitlab.com
         if not parsed_gh_url.scheme and not parsed_gh_url.netloc:
             self.url = "https://gitlab.com"
         else:
@@ -53,8 +53,8 @@ class GitLabConnector(GitConnector):
         self.gitlab = Gitlab(self.config.url, private_token=self.config.access_token)
 
     def get_ingest_docs(self):
-        ***REMOVED*** Load the Git tree with all files, and then create Ingest docs
-        ***REMOVED*** for all blobs, i.e. all files, ignoring directories
+        # Load the Git tree with all files, and then create Ingest docs
+        # for all blobs, i.e. all files, ignoring directories
         project = self.gitlab.projects.get(self.config.repo_path)
         ref = self.config.branch or project.default_branch
         git_tree = project.repository_tree(

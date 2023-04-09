@@ -1,4 +1,4 @@
-***REMOVED***!/bin/bash
+#!/bin/bash
 function usage {
     echo "Usage: $(basename "$0") [-c] -f FILE_TO_CHANGE REPLACEMENT_FORMAT [-f FILE_TO_CHANGE REPLACEMENT_FORMAT ...]" 2>&1
     echo 'Synchronize files to latest version in source file'
@@ -14,15 +14,15 @@ function usage {
 
 function getopts-extra () {
     declare i=1
-    ***REMOVED*** if the next argument is not an option, then append it to array OPTARG
-    while [[ ${OPTIND} -le $***REMOVED*** && ${!OPTIND:0:1} != '-' ]]; do
+    # if the next argument is not an option, then append it to array OPTARG
+    while [[ ${OPTIND} -le $# && ${!OPTIND:0:1} != '-' ]]; do
         OPTARG[i]=${!OPTIND}
         i+=1
         OPTIND+=1
     done
 }
 
-***REMOVED*** Parse input options
+# Parse input options
 declare CHECK=0
 declare SOURCE_FILE="CHANGELOG.md"
 declare -a FILES_TO_CHECK=()
@@ -44,8 +44,8 @@ while getopts ":hcs:f:" opt; do
         f)
             getopts-extra "$@"
             args=( "${OPTARG[@]}" )
-            ***REMOVED*** validate length of args, should be 2
-            if [ ${***REMOVED***args[@]} -eq 2 ]; then
+            # validate length of args, should be 2
+            if [ ${#args[@]} -eq 2 ]; then
                 FILES_TO_CHECK+=( "${args[0]}" )
                 REPLACEMENT_FORMATS+=( "${args[1]}" )
             else
@@ -61,11 +61,11 @@ while getopts ":hcs:f:" opt; do
     esac
 done
 
-***REMOVED*** Parse REPLACEMENT_FORMATS
+# Parse REPLACEMENT_FORMATS
 RE_SEMVER_FULL='(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-((0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*))*))?(\+([0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*))?'
 RE_RELEASE="(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)"
 RE_API_RELEASE="v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)"
-***REMOVED*** Pull out semver appearing earliest in SOURCE_FILE.
+# Pull out semver appearing earliest in SOURCE_FILE.
 LAST_VERSION=$(grep -o -m 1 -E "${RE_SEMVER_FULL}" "$SOURCE_FILE")
 LAST_RELEASE=$(grep -o -m 1 -E "${RE_RELEASE}($|[^-+])$" "$SOURCE_FILE" | grep -o -m 1 -E "${RE_RELEASE}")
 LAST_API_RELEASE="v$(grep -o -m 1 -E "${RE_RELEASE}($|[^-+])$" "$SOURCE_FILE" | grep -o -m 1 -E "${RE_RELEASE}")"
@@ -95,12 +95,12 @@ done
 
 if [ -z "$LAST_VERSION" ];
 then
-    ***REMOVED*** No match to semver regex in SOURCE_FILE, so no version to go from.
+    # No match to semver regex in SOURCE_FILE, so no version to go from.
     printf "Error: Unable to find latest version from %s.\n" "$SOURCE_FILE"
     exit 1
 fi
 
-***REMOVED*** Search files in FILES_TO_CHECK and change (or get diffs)
+# Search files in FILES_TO_CHECK and change (or get diffs)
 declare FAILED_CHECK=0
 
 for i in "${!FILES_TO_CHECK[@]}"; do
@@ -110,13 +110,13 @@ for i in "${!FILES_TO_CHECK[@]}"; do
     FILE_VERSION=$(grep -o -m 1 -E "${RE_SEMVER}" "$FILE_TO_CHANGE")
     if [ -z "$FILE_VERSION" ];
     then
-        ***REMOVED*** No match to semver regex in VERSIONFILE, so nothing to replace
+        # No match to semver regex in VERSIONFILE, so nothing to replace
         printf "Error: No semver version found in file %s.\n" "$FILE_TO_CHANGE"
         exit 1
     else
-        ***REMOVED*** Replace semver in VERSIONFILE with semver obtained from SOURCE_FILE
+        # Replace semver in VERSIONFILE with semver obtained from SOURCE_FILE
         TMPFILE=$(mktemp /tmp/new_version.XXXXXX)
-        ***REMOVED*** Check sed version, exit if version < 4.3
+        # Check sed version, exit if version < 4.3
         if ! sed --version > /dev/null 2>&1; then
             CURRENT_VERSION=1.archaic
         else
@@ -146,7 +146,7 @@ for i in "${!FILES_TO_CHECK[@]}"; do
     fi
 done
 
-***REMOVED*** Exit with code determined by whether changes were needed in a check.
+# Exit with code determined by whether changes were needed in a check.
 if [ ${FAILED_CHECK} -ne 0 ]; then
     exit 1
 else

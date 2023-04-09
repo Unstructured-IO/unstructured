@@ -12,9 +12,9 @@ After reading this section, you should understand the following:
 
 
 
-***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***
+############
 Partitioning
-***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***
+############
 
 
 Partitioning bricks in ``unstructured`` allow users to extract structured content from a raw unstructured document.
@@ -239,7 +239,7 @@ The following illustrates fetching a url and partitioning the response content:
 
   elements = partition_html(url="https://python.org/")
 
-  ***REMOVED*** you can also provide custom headers:
+  # you can also provide custom headers:
 
   elements = partition_html(url="https://python.org/",
                             headers={"User-Agent": "YourScriptName/1.0 ..."})
@@ -266,7 +266,7 @@ Examples:
 
   from unstructured.partition.pdf import partition_pdf
 
-  ***REMOVED*** Returns a List[Element] present in the pages of the parsed pdf document
+  # Returns a List[Element] present in the pages of the parsed pdf document
   elements = partition_pdf("example-docs/layout-parser-paper-fast.pdf")
 
 
@@ -283,7 +283,7 @@ Examples:
 
   from unstructured.partition.image import partition_image
 
-  ***REMOVED*** Returns a List[Element] present in the pages of the parsed image document
+  # Returns a List[Element] present in the pages of the parsed image document
   elements = partition_image("example-docs/layout-parser-paper-fast.jpg")
 
 
@@ -417,9 +417,9 @@ Examples:
   partition_text(text=text, paragraph_grouper=group_broken_paragraphs)
 
 
-***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***
+########
 Cleaning
-***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***
+########
 
 
 As part of data preparation for an NLP model, it's common to need to clean up your data prior to passing it into the model.
@@ -493,10 +493,10 @@ Examples:
 
   from unstructured.cleaners.core import clean
 
-  ***REMOVED*** Returns "an excellent point!"
+  # Returns "an excellent point!"
   clean("● An excellent point!", bullets=True, lowercase=True)
 
-  ***REMOVED*** Returns "ITEM 1A: RISK FACTORS"
+  # Returns "ITEM 1A: RISK FACTORS"
   clean("ITEM 1A:     RISK-FACTORS", extra_whitespace=True, dashes=True)
 
 
@@ -512,10 +512,10 @@ Examples:
 
   from unstructured.cleaners.core import clean_bullets
 
-  ***REMOVED*** Returns "An excellent point!"
+  # Returns "An excellent point!"
   clean_bullets("● An excellent point!")
 
-  ***REMOVED*** Returns "I love Morse Code! ●●●"
+  # Returns "I love Morse Code! ●●●"
   clean_bullets("I love Morse Code! ●●●")
 
 
@@ -530,10 +530,10 @@ Examples:
 
   from unstructured.cleaners.core import clean_ordered_bullets
 
-  ***REMOVED*** Returns "This is a very important point"
+  # Returns "This is a very important point"
   clean_bullets("1.1 This is a very important point")
 
-  ***REMOVED*** Returns "This is a very important point ●"
+  # Returns "This is a very important point ●"
   clean_bullets("a.b This is a very important point ●")
 
 
@@ -549,7 +549,7 @@ Examples:
 
   from unstructured.cleaners.core import clean_extra_whitespace
 
-  ***REMOVED*** Returns "ITEM 1A: RISK FACTORS"
+  # Returns "ITEM 1A: RISK FACTORS"
   clean_extra_whitespace("ITEM 1A:     RISK FACTORS\n")
 
 
@@ -565,7 +565,7 @@ Examples:
 
   from unstructured.cleaners.core import clean_dashes
 
-  ***REMOVED*** Returns "ITEM 1A: RISK FACTORS"
+  # Returns "ITEM 1A: RISK FACTORS"
   clean_dashes("ITEM 1A: RISK-FACTORS\u2013")
 
 
@@ -580,7 +580,7 @@ Examples:
 
   from unstructured.cleaners.core import clean_trailing_punctuation
 
-  ***REMOVED*** Returns "ITEM 1A: RISK FACTORS"
+  # Returns "ITEM 1A: RISK FACTORS"
   clean_trailing_punctuation("ITEM 1A: RISK FACTORS.")
 
 
@@ -635,10 +635,10 @@ Examples:
 
   from unstructured.cleaners.core import replace_unicode_quotes
 
-  ***REMOVED*** Returns "“A lovely quote!”"
+  # Returns "“A lovely quote!”"
   replace_unicode_characters("\x93A lovely quote!\x94")
 
-  ***REMOVED*** Returns ""‘A lovely quote!’"
+  # Returns ""‘A lovely quote!’"
   replace_unicode_characters("\x91A lovely quote!\x92")
 
 
@@ -653,7 +653,7 @@ Examples:
 
   from unstructured.cleaners.core import remove_punctuation
 
-  ***REMOVED*** Returns "A lovely quote"
+  # Returns "A lovely quote"
   remove_punctuation("“A lovely quote!”")
 
 
@@ -676,7 +676,7 @@ Examples:
 
   text = "SUMMARY: This is the best summary of all time!"
 
-  ***REMOVED*** Returns "This is the best summary of all time!"
+  # Returns "This is the best summary of all time!"
   clean_prefix(text, r"(SUMMARY|DESCRIPTION):", ignore_case=True)
 
 
@@ -699,7 +699,7 @@ Examples:
 
   text = "The end! END"
 
-  ***REMOVED*** Returns "The end!"
+  # Returns "The end!"
   clean_postfix(text, r"(END|STOP)", ignore_case=True)
 
 
@@ -716,7 +716,7 @@ Examples:
 
   text = "\x88This text contains®non-ascii characters!●"
 
-  ***REMOVED*** Returns "This text containsnon-ascii characters!"
+  # Returns "This text containsnon-ascii characters!"
   clean_non_ascii_chars(text)
 
 
@@ -739,7 +739,7 @@ Examples:
 
   text = "Here I am! STOP Look at me! STOP I'm flying! STOP"
 
-  ***REMOVED*** Returns "Here I am!"
+  # Returns "Here I am!"
   extract_text_before(text, r"STOP")
 
 
@@ -762,7 +762,7 @@ Examples:
 
   text = "SPEAKER 1: Look at me, I'm flying!"
 
-  ***REMOVED*** Returns "Look at me, I'm flying!"
+  # Returns "Look at me, I'm flying!"
   extract_text_after(text, r"SPEAKER \d{1}:")
 
 ``extract_email_address``
@@ -778,7 +778,7 @@ addresses in the input string.
   text = """Me me@email.com and You <You@email.com>
       ([ba23::58b5:2236:45g2:88h2]) (10.0.2.01)"""
 
-  ***REMOVED*** Returns "['me@email.com', 'you@email.com']"
+  # Returns "['me@email.com', 'you@email.com']"
   extract_email_address(text)
 
 
@@ -795,7 +795,7 @@ returns a list of all IP address in input string.
   text = """Me me@email.com and You <You@email.com>
     ([ba23::58b5:2236:45g2:88h2]) (10.0.2.01)"""
 
-  ***REMOVED*** Returns "['ba23::58b5:2236:45g2:88h2', '10.0.2.01']"
+  # Returns "['ba23::58b5:2236:45g2:88h2', '10.0.2.01']"
   extract_ip_address(text)
 
 
@@ -814,7 +814,7 @@ IP addresses in the input string.
     \n ABC.DEF.local2 ([ba23::58b5:2236:45g2:88h2%25]) with mapi id\
     n 32.88.5467.123; Fri, 26 Mar 2021 11:04:09 +1200"""
 
-  ***REMOVED*** Returns "['ABC.DEF.local', 'ABC.DEF.local2']"
+  # Returns "['ABC.DEF.local', 'ABC.DEF.local2']"
   extract_ip_address_name(text)
 
 
@@ -833,7 +833,7 @@ containing the ``mapi id`` in the input string.
     \n ABC.DEF.local2 ([ba23::58b5:2236:45g2:88h2%25]) with mapi id\
     n 32.88.5467.123; Fri, 26 Mar 2021 11:04:09 +1200"""
 
-  ***REMOVED*** Returns "['32.88.5467.123']"
+  # Returns "['32.88.5467.123']"
   extract_mapi_id(text)
 
 
@@ -852,7 +852,7 @@ object from the input string.
     \n ABC.DEF.local2 ([ba23::58b5:2236:45g2:88h2%25]) with mapi id\
     n 32.88.5467.123; Fri, 26 Mar 2021 11:04:09 +1200"""
 
-  ***REMOVED*** Returns datetime.datetime(2021, 3, 26, 11, 4, 9, tzinfo=datetime.timezone(datetime.timedelta(seconds=43200)))
+  # Returns datetime.datetime(2021, 3, 26, 11, 4, 9, tzinfo=datetime.timezone(datetime.timedelta(seconds=43200)))
   extract_datetimetz(text)
 
 
@@ -867,7 +867,7 @@ Examples:
 
   from unstructured.cleaners.extract import extract_us_phone_number
 
-  ***REMOVED*** Returns "215-867-5309"
+  # Returns "215-867-5309"
   extract_us_phone_number("Phone number: 215-867-5309")
 
 
@@ -882,10 +882,10 @@ Examples:
 
   from unstructured.cleaners.extract import extract_ordered_bullets
 
-  ***REMOVED*** Returns ("1", "1", None)
+  # Returns ("1", "1", None)
   extract_ordered_bullets("1.1 This is a very important point")
 
-  ***REMOVED*** Returns ("a", "1", None)
+  # Returns ("a", "1", None)
   extract_ordered_bullets("a.1 This is a very important point")
 
 
@@ -913,16 +913,16 @@ Examples:
 
   from unstructured.cleaners.translate import translate_text
 
-  ***REMOVED*** Output is "I'm a Berliner!"
+  # Output is "I'm a Berliner!"
   translate_text("Ich bin ein Berliner!")
 
-  ***REMOVED*** Output is "I can also translate Russian!"
+  # Output is "I can also translate Russian!"
   translate_text("Я тоже можно переводать русский язык!", "ru", "en")
 
 
-***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***
+#######
 Staging
-***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***
+#######
 
 Staging bricks in the ``unstructured`` package help prepare your data for ingestion into downstream systems.
 A staging brick accepts a list of document elements as input and return an appropriately formatted dictionary as output.
@@ -973,8 +973,8 @@ Examples:
     {"text": "My Narrative", "type": "NarrativeText"}
   ]
 
-  ***REMOVED*** elements will look like:
-  ***REMOVED*** [ Title(text="My Title"), NarrativeText(text="My Narrative")]
+  # elements will look like:
+  # [ Title(text="My Title"), NarrativeText(text="My Narrative")]
   elements = dict_to_elements(isd)
 
 
@@ -1114,7 +1114,7 @@ Examples:
   elements = [Title(text="Title"), NarrativeText(text="Narrative")]
   label_studio_data = stage_for_label_studio(elements, text_field="my_text", id_field="my_id")
 
-  ***REMOVED*** The resulting JSON file is ready to be uploaded to LabelStudio
+  # The resulting JSON file is ready to be uploaded to LabelStudio
   with open("label_studio.json", "w") as f:
       json.dump(label_studio_data, f, indent=4)
 
@@ -1160,8 +1160,8 @@ task in LabelStudio:
       id_field="my_id"
   )
 
-  ***REMOVED*** The resulting JSON file is ready to be uploaded to LabelStudio
-  ***REMOVED*** with annotations included
+  # The resulting JSON file is ready to be uploaded to LabelStudio
+  # with annotations included
   with open("label_studio.json", "w") as f:
       json.dump(label_studio_data, f, indent=4)
 
@@ -1206,8 +1206,8 @@ task in LabelStudio:
       id_field="my_id"
   )
 
-  ***REMOVED*** The resulting JSON file is ready to be uploaded to LabelStudio
-  ***REMOVED*** with annotations included
+  # The resulting JSON file is ready to be uploaded to LabelStudio
+  # with annotations included
   with open("label_studio.json", "w") as f:
       json.dump(label_studio_data, f, indent=4)
 
@@ -1248,8 +1248,8 @@ task in LabelStudio:
       id_field="my_id"
   )
 
-  ***REMOVED*** The resulting JSON file is ready to be uploaded to LabelStudio
-  ***REMOVED*** with annotations included
+  # The resulting JSON file is ready to be uploaded to LabelStudio
+  # with annotations included
   with open("label_studio.json", "w") as f:
       json.dump(label_studio_data, f, indent=4)
 
@@ -1277,7 +1277,7 @@ Examples:
   metadata = [{"type": "title"}, {"type": "text"}]
   prodigy_data = stage_for_prodigy(elements, metadata)
 
-  ***REMOVED*** The resulting JSON file is ready to be used with Prodigy
+  # The resulting JSON file is ready to be used with Prodigy
   with open("prodigy.json", "w") as f:
       json.dump(prodigy_data, f, indent=4)
 
@@ -1295,7 +1295,7 @@ use the ``save_as_jsonl`` utility function to save the formatted data to a ``.js
   metadata = [{"type": "title"}, {"type": "text"}]
   prodigy_data = stage_for_prodigy(elements, metadata)
 
-  ***REMOVED*** The resulting jsonl file is ready to be used with Prodigy.
+  # The resulting jsonl file is ready to be used with Prodigy.
   save_as_jsonl(prodigy_data, "prodigy.jsonl")
 
 
@@ -1317,7 +1317,7 @@ Examples:
   metadata = [{"type": "title"}, {"source": "news"}]
   prodigy_csv_data = stage_csv_for_prodigy(elements, metadata)
 
-  ***REMOVED*** The resulting CSV file is ready to be used with Prodigy
+  # The resulting CSV file is ready to be used with Prodigy
   with open("prodigy.csv", "w") as csv_file:
       csv_file.write(prodigy_csv_data)
 
@@ -1348,16 +1348,16 @@ files to an S3 bucket.
   from unstructured.documents.elements import Title, NarrativeText
   from unstructured.staging.label_box import stage_for_label_box
 
-  ***REMOVED*** The S3 Bucket name where data files should be uploaded.
+  # The S3 Bucket name where data files should be uploaded.
   S3_BUCKET_NAME = "labelbox-staging-bucket"
 
-  ***REMOVED*** The S3 key prefix (I.e. directory) where data files should be stored.
+  # The S3 key prefix (I.e. directory) where data files should be stored.
   S3_BUCKET_KEY_PREFIX = "data/"
 
-  ***REMOVED*** The URL prefix where the data files will be accessed.
+  # The URL prefix where the data files will be accessed.
   S3_URL_PREFIX = f"https://{S3_BUCKET_NAME}.s3.amazonaws.com/{S3_BUCKET_KEY_PREFIX}"
 
-  ***REMOVED*** The local output directory where the data files will be staged for uploading to a Cloud Storage service.
+  # The local output directory where the data files will be staged for uploading to a Cloud Storage service.
   LOCAL_OUTPUT_DIRECTORY = "/tmp/labelbox-staging"
 
   elements = [Title(text="Title"), NarrativeText(text="Narrative")]
@@ -1371,12 +1371,12 @@ files to an S3 bucket.
       create_directory=True,
   )
 
-  ***REMOVED*** The resulting JSON config file is ready to be used with LabelBox.
+  # The resulting JSON config file is ready to be used with LabelBox.
   with open("config.json", "w+") as labelbox_config_file:
       json.dump(labelbox_config, labelbox_config_file, indent=4)
 
 
-  ***REMOVED*** Upload staged data files to S3 from local output directory.
+  # Upload staged data files to S3 from local output directory.
   def upload_staged_files():
       from s3fs import S3FileSystem
       fs = S3FileSystem()
@@ -1426,7 +1426,7 @@ Example:
 ``stage_for_argilla``
 --------------------------
 
-Convert a list of ``Text`` elements to an `Argilla Dataset <https://docs.argilla.io/en/latest/reference/python/python_client.html***REMOVED***python-ref-datasets>`_.
+Convert a list of ``Text`` elements to an `Argilla Dataset <https://docs.argilla.io/en/latest/reference/python/python_client.html#python-ref-datasets>`_.
 The type of Argilla dataset to be generated can be specified with ``argilla_task``
 parameter. Valid values for ``argilla_task`` are ``"text_classification"``,
 ``"token_classification"``, and ``"text2text"``. If ``"token_classification"`` is selected
@@ -1449,9 +1449,9 @@ Examples:
   argilla_dataset = stage_for_argilla(elements, "text_classification", metadata=metadata)
 
 
-***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***
+######################
 Other helper functions
-***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***
+######################
 
 The ``unstructured`` library also contains other useful helpful functions to aid in processing documents.
 You can see a list of the available helper functions below:
@@ -1469,10 +1469,10 @@ Examples:
 
   from unstructured.partition.text_type import is_bulleted_text
 
-  ***REMOVED*** Returns True
+  # Returns True
   is_bulleted_text("● An excellent point!")
 
-  ***REMOVED*** Returns False
+  # Returns False
   is_bulleted_text("I love Morse Code! ●●●")
 
 
@@ -1508,15 +1508,15 @@ Examples:
 
   from unstructured.partition.text_type import is_possible_narrative_text
 
-  ***REMOVED*** Returns True because the example passes all the checks
+  # Returns True because the example passes all the checks
   example_1 = "Make sure you brush your teeth before you go to bed."
   is_possible_narrative_text(example_1)
 
-  ***REMOVED*** Returns False because the text exceeds the caps ratio and does not contain a verb
+  # Returns False because the text exceeds the caps ratio and does not contain a verb
   example_2 = "ITEM 1A. RISK FACTORS"
   is_possible_narrative_text(example_2)
 
-  ***REMOVED*** Returns True because the text has a verb and does not exceed the cap_threshold
+  # Returns True because the text has a verb and does not exceed the cap_threshold
   example_3 = "OLD MCDONALD HAD A FARM"
   is_possible_narrative_text(example_3, cap_threshold=1.0)
 
@@ -1552,15 +1552,15 @@ Examples:
 
   from unstructured.partition.text_type import is_possible_title
 
-  ***REMOVED*** Returns True because the text passes all the tests
+  # Returns True because the text passes all the tests
   example_2 = "ITEM 1A. RISK FACTORS"
   is_possible_title(example_2)
 
-  ***REMOVED*** Returns True because there is only one sentence
+  # Returns True because there is only one sentence
   example_2 = "Make sure you brush your teeth before you go to bed."
   is_possible_title(example_2, sentence_min_length=5)
 
-  ***REMOVED*** Returns False because there are two sentences
+  # Returns False because there are two sentences
   example_3 = "Make sure you brush your teeth. Do it before you go to bed."
   is_possible_title(example_3, sentence_min_length=5)
 
@@ -1576,7 +1576,7 @@ Examples:
 
   from unstructured.partition.text_type import contains_us_phone_number
 
-  ***REMOVED*** Returns True because the text includes a phone number
+  # Returns True because the text includes a phone number
   contains_us_phone_number("Phone number: 215-867-5309")
 
 
@@ -1602,11 +1602,11 @@ Examples:
 
   from unstructured.partition.text_type import contains_verb
 
-  ***REMOVED*** Returns True because the text contains a verb
+  # Returns True because the text contains a verb
   example_1 = "I am going to run to the store to pick up some milk."
   contains_verb(example_1)
 
-  ***REMOVED*** Returns False because the text does not contain a verb
+  # Returns False because the text does not contain a verb
   example_2 = "A friendly dog"
   contains_verb(example_2)
 
@@ -1627,10 +1627,10 @@ Examples:
 
   example = "Look at me! I am a document with two sentences."
 
-  ***REMOVED*** Returns 2 because the example contains two sentences
+  # Returns 2 because the example contains two sentences
   sentence_count(example)
 
-  ***REMOVED*** Returns 1 because the first sentence in the example does not contain five word tokens.
+  # Returns 1 because the first sentence in the example does not contain five word tokens.
   sentence_count(example, min_length=5)
 
 
@@ -1648,15 +1648,15 @@ Examples:
 
   from unstructured.partition.text_type import exceeds_cap_ratio
 
-  ***REMOVED*** Returns True because the text is more than 30% caps
+  # Returns True because the text is more than 30% caps
   example_1 = "LOOK AT ME I AM YELLING"
   exceeds_cap_ratio(example_1)
 
-  ***REMOVED*** Returns False because the text is less than 30% caps
+  # Returns False because the text is less than 30% caps
   example_2 = "Look at me, I am no longer yelling"
   exceeds_cap_ratio(example_2)
 
-  ***REMOVED*** Returns False because the text is more than 1% caps
+  # Returns False because the text is more than 1% caps
   exceeds_cap_ratio(example_2, threshold=0.01)
 
 

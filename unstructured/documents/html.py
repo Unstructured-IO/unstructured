@@ -108,8 +108,8 @@ class HTMLDocument(XMLDocument):
             descendanttag_elems: Tuple[etree.Element, ...] = ()
             for tag_elem in article.iter():
                 if tag_elem in descendanttag_elems:
-                    ***REMOVED*** Prevent repeating something that's been flagged as text as we chase it
-                    ***REMOVED*** down a chain
+                    # Prevent repeating something that's been flagged as text as we chase it
+                    # down a chain
                     continue
 
                 if _is_text_tag(tag_elem):
@@ -199,10 +199,10 @@ class HTMLDocument(XMLDocument):
         else:
             out = self.__class__.from_pages(pages)
             if not isinstance(out, HTMLDocument):
-                ***REMOVED*** NOTE(robinson) - Skipping for test coverage because this condition is impossible.
-                ***REMOVED*** Added type check because from_pages is a method on Document. Without the type
-                ***REMOVED*** check, mypy complains about returning Document instead of HTMLDocument
-                raise ValueError(f"Unexpected class: {self.__class__.__name__}")  ***REMOVED*** pragma: no cover
+                # NOTE(robinson) - Skipping for test coverage because this condition is impossible.
+                # Added type check because from_pages is a method on Document. Without the type
+                # check, mypy complains about returning Document instead of HTMLDocument
+                raise ValueError(f"Unexpected class: {self.__class__.__name__}")  # pragma: no cover
             return out
 
 
@@ -281,9 +281,9 @@ def _construct_text(tag_elem: etree.Element) -> str:
 
 def _is_text_tag(tag_elem: etree.Element, max_predecessor_len: int = 5) -> bool:
     """Deteremines if a tag potentially contains narrative text."""
-    ***REMOVED*** NOTE(robinson) - Only consider elements with limited depth. Otherwise,
-    ***REMOVED*** it could be the text representation of a giant div
-    ***REMOVED*** Exclude empty tags from tag_elem
+    # NOTE(robinson) - Only consider elements with limited depth. Otherwise,
+    # it could be the text representation of a giant div
+    # Exclude empty tags from tag_elem
     empty_elems_len = len([el for el in tag_elem.getchildren() if el.tag in EMPTY_TAGS])
     if len(tag_elem) > max_predecessor_len + empty_elems_len:
         return False
@@ -291,8 +291,8 @@ def _is_text_tag(tag_elem: etree.Element, max_predecessor_len: int = 5) -> bool:
     if tag_elem.tag in TEXT_TAGS + HEADING_TAGS:
         return True
 
-    ***REMOVED*** NOTE(robinson) - This indicates that a div tag has no children. If that's the
-    ***REMOVED*** case and the tag has text, its potential a text tag
+    # NOTE(robinson) - This indicates that a div tag has no children. If that's the
+    # case and the tag has text, its potential a text tag
     children = tag_elem.getchildren()
     if tag_elem.tag == "div" and len(children) == 0:
         return True
@@ -320,8 +320,8 @@ def _process_list_item(
         if next_element is None:
             return None, None
         next_text = _construct_text(next_element)
-        ***REMOVED*** NOTE(robinson) - Only consider elements with limited depth. Otherwise,
-        ***REMOVED*** it could be the text representation of a giant div
+        # NOTE(robinson) - Only consider elements with limited depth. Otherwise,
+        # it could be the text representation of a giant div
         empty_elems_len = len([el for el in tag_elem.getchildren() if el.tag in EMPTY_TAGS])
         if len(tag_elem) > max_predecessor_len + empty_elems_len:
             return None, None
@@ -412,6 +412,6 @@ def _find_articles(root: etree.Element) -> List[etree.Element]:
     tags, the entire document is returned as a single item list."""
     articles = root.findall(".//article")
     if len(articles) == 0:
-        ***REMOVED*** NOTE(robinson) - ref: https://schema.org/Article
+        # NOTE(robinson) - ref: https://schema.org/Article
         articles = root.findall(".//div[@itemprop='articleBody']")
     return [root] if len(articles) == 0 else articles

@@ -24,7 +24,7 @@ from unstructured.__version__ import __version__
 setup(
     name="unstructured",
     description="A library that prepares raw documents for downstream ML tasks.",
-    long_description=open("README.md", encoding="utf-8").read(),  ***REMOVED*** noqa: SIM115
+    long_description=open("README.md", encoding="utf-8").read(),  # noqa: SIM115
     long_description_content_type="text/markdown",
     keywords="NLP PDF HTML CV XML parsing preprocessing",
     url="https://github.com/Unstructured-IO/unstructured",
@@ -63,8 +63,8 @@ setup(
         "python-magic",
         "markdown",
         "requests",
-        ***REMOVED*** NOTE(robinson) - The following dependencies are pinned
-        ***REMOVED*** to address security scans
+        # NOTE(robinson) - The following dependencies are pinned
+        # to address security scans
         "certifi>=2022.12.07",
     ],
     extras_require={
@@ -81,9 +81,9 @@ setup(
         "s3": ["s3fs", "fsspec"],
         "azure": ["adlfs", "fsspec"],
         "github": [
-            ***REMOVED*** NOTE - pygithub==1.58.0 fails due to https://github.com/PyGithub/PyGithub/issues/2436
-            ***REMOVED*** In the future, we can update this to pygithub>1.58.0
-            "***REMOVED***",
+            # NOTE - pygithub==1.58.0 fails due to https://github.com/PyGithub/PyGithub/issues/2436
+            # In the future, we can update this to pygithub>1.58.0
+            "pygithub==1.57.0",
         ],
         "gitlab": ["python-gitlab"],
         "reddit": ["praw"],
@@ -91,7 +91,7 @@ setup(
         "wikipedia": ["wikipedia"],
         "google-drive": [
             "google-api-python-client",
-            ***REMOVED*** consistency with local-inference-pin
+            # consistency with local-inference-pin
             "protobuf<3.21",
         ],
     },

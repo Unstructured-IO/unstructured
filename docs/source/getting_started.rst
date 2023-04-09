@@ -16,9 +16,9 @@ Before running the code in this make sure you've installed the ``unstructured`` 
 and all dependencies using the instructions in the **Quick Start** section.
 
 
-***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***
+#######################
 Partitioning a document
-***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***
+#######################
 
 In this section, we'll cut right to the chase and get to the most important part of the library: partitioning a document.
 The goal of document partitioning is to read in a source document, split the document into sections, categorize those sections,
@@ -52,9 +52,9 @@ We highly recommend installing ``libmagic`` and you may observe different file d
 if ``libmagic`` is not installed`.
 
 
-***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***
+##################
 Document elements
-***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***
+##################
 
 
 When we partition a document, the output is a list of document ``Element`` objects.
@@ -107,9 +107,9 @@ The following code shows how you can limit your output to only narrative text wi
 	        print("\n")
 
 
-***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***
+####################
 Serializing Elements
-***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***
+####################
 
 The ``unstructured`` library includes helper functions for
 reading and writing a list of ``Element`` objects to and
@@ -134,13 +134,13 @@ serializing and deserializing an ``Element`` list.
     elements_to_json(elements, filename=filename)
     new_elements = elements_from_json(filename=filename)
     
-    ***REMOVED*** alternatively, one can also serialize/deserialize to/from a string with:
+    # alternatively, one can also serialize/deserialize to/from a string with:
     serialized_elements_json = elements_to_json(elements)
     new_elements = elements_from_json(text=serialized_elements_json)
 
-***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***
+###########################################
 Converting elements to a dictionary or JSON
-***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***
+###########################################
 
 The final step in the process for most users is to convert the output to JSON.
 You can convert a list of document elements to a list of dictionaries using the ``convert_to_dict`` function.
@@ -171,9 +171,9 @@ a list of elements from JSON, as seen in the snippet below
 
 
 
-***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***
+##################
 Wrapping it all up
-***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***
+##################
 
 To conclude, the basic workflow for reading in a document and converting it to a JSON in ``unstructured``
 looks like the following:

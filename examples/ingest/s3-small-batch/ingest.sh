@@ -1,9 +1,9 @@
-***REMOVED***!/usr/bin/env bash
+#!/usr/bin/env bash
 
-***REMOVED*** Processes 3 PDF's from s3://utic-dev-tech-fixtures/small-pdf-set/
-***REMOVED*** through Unstructured's library in 2 processes.
+# Processes 3 PDF's from s3://utic-dev-tech-fixtures/small-pdf-set/
+# through Unstructured's library in 2 processes.
 
-***REMOVED*** Structured outputs are stored in s3-small-batch-output/
+# Structured outputs are stored in s3-small-batch-output/
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/../../.. || exit 1

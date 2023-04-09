@@ -24,7 +24,7 @@ def partition_md(
     include_metadata: bool = True,
     parser: VALID_PARSERS = None,
 ) -> List[Element]:
-    ***REMOVED*** Verify that only one of the arguments was provided
+    # Verify that only one of the arguments was provided
     if text is None:
         text = ""
     exactly_one(filename=filename, file=file, text=text, url=url)

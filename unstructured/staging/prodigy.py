@@ -44,7 +44,7 @@ def stage_for_prodigy(
 ) -> PRODIGY_TYPE:
     """
     Converts the document to the JSON format required for use with Prodigy.
-    ref: https://prodi.gy/docs/api-loaders***REMOVED***input
+    ref: https://prodi.gy/docs/api-loaders#input
     """
 
     validated_metadata: Iterable[Dict[str, str]] = _validate_prodigy_metadata(elements, metadata)
@@ -65,7 +65,7 @@ def stage_csv_for_prodigy(
 ) -> str:
     """
     Converts the document to the CSV format required for use with Prodigy.
-    ref: https://prodi.gy/docs/api-loaders***REMOVED***input
+    ref: https://prodi.gy/docs/api-loaders#input
     """
     validated_metadata: Iterable[Dict[str, str]] = _validate_prodigy_metadata(elements, metadata)
 

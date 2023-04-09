@@ -1,5 +1,5 @@
-***REMOVED*** NOTE(robinson) - Based on the deployment instructions in the sphinx docs here:
-***REMOVED*** ref: https://www.sphinx-doc.org/en/master/tutorial/deploying.html***REMOVED***id5
+# NOTE(robinson) - Based on the deployment instructions in the sphinx docs here:
+# ref: https://www.sphinx-doc.org/en/master/tutorial/deploying.html#id5
 
 name: Sphinx build
 

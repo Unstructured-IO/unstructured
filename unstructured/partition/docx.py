@@ -20,11 +20,11 @@ from unstructured.partition.text_type import (
     is_us_city_state_zip,
 )
 
-***REMOVED*** NOTE(robinson) - documentation on built in styles can be found at the link below
-***REMOVED*** ref: https://python-docx.readthedocs.io/en/latest/user/
-***REMOVED***   styles-understanding.html***REMOVED***paragraph-styles-in-default-template
+# NOTE(robinson) - documentation on built in styles can be found at the link below
+# ref: https://python-docx.readthedocs.io/en/latest/user/
+#   styles-understanding.html#paragraph-styles-in-default-template
 STYLE_TO_ELEMENT_MAPPING = {
-    "Caption": Text,  ***REMOVED*** TODO(robinson) - add caption element type
+    "Caption": Text,  # TODO(robinson) - add caption element type
     "Heading 1": Title,
     "Heading 2": Title,
     "Heading 3": Title,
@@ -34,7 +34,7 @@ STYLE_TO_ELEMENT_MAPPING = {
     "Heading 7": Title,
     "Heading 8": Title,
     "Heading 9": Title,
-    "Intense Quote": Text,  ***REMOVED*** TODO(robinson) - add quote element type
+    "Intense Quote": Text,  # TODO(robinson) - add quote element type
     "List": ListItem,
     "List 2": ListItem,
     "List 3": ListItem,
@@ -50,7 +50,7 @@ STYLE_TO_ELEMENT_MAPPING = {
     "List Paragraph": ListItem,
     "Macro Text": Text,
     "No Spacing": Text,
-    "Quote": Text,  ***REMOVED*** TODO(robinson) - add quote element type
+    "Quote": Text,  # TODO(robinson) - add quote element type
     "Subtitle": Title,
     "TOCHeading": Title,
     "Title": Title,
@@ -76,7 +76,7 @@ def partition_docx(
         metadata.
     """
 
-    ***REMOVED*** Verify that only one of the arguments was provided
+    # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file)
 
     if filename is not None:
@@ -100,15 +100,15 @@ def _paragraph_to_element(paragraph: docx.text.paragraph.Paragraph) -> Optional[
     If the paragraph style is "Normal" or unknown, we try to predict the element type from the
     raw text."""
     text = paragraph.text
-    style_name = paragraph.style and paragraph.style.name  ***REMOVED*** .style can be None
+    style_name = paragraph.style and paragraph.style.name  # .style can be None
 
     if len(text.strip()) == 0:
         return None
 
     element_class = STYLE_TO_ELEMENT_MAPPING.get(style_name)
 
-    ***REMOVED*** NOTE(robinson) - The "Normal" style name will return None since it's in the mapping.
-    ***REMOVED*** Unknown style names will also return None
+    # NOTE(robinson) - The "Normal" style name will return None since it's in the mapping.
+    # Unknown style names will also return None
     if element_class is None:
         return _text_to_element(text)
     else:

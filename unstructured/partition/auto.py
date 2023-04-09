@@ -81,8 +81,8 @@ def partition(
         return partition_md(filename=filename, file=file, include_page_breaks=include_page_breaks)
     elif filetype == FileType.PDF:
         return partition_pdf(
-            filename=filename,  ***REMOVED*** type: ignore
-            file=file,  ***REMOVED*** type: ignore
+            filename=filename,  # type: ignore
+            file=file,  # type: ignore
             url=None,
             include_page_breaks=include_page_breaks,
             encoding=encoding,
@@ -90,8 +90,8 @@ def partition(
         )
     elif (filetype == FileType.PNG) or (filetype == FileType.JPG):
         return partition_image(
-            filename=filename,  ***REMOVED*** type: ignore
-            file=file,  ***REMOVED*** type: ignore
+            filename=filename,  # type: ignore
+            file=file,  # type: ignore
             url=None,
             include_page_breaks=include_page_breaks,
         )

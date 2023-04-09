@@ -22,8 +22,8 @@ class SimpleGitHubConfig(SimpleGitConfig):
         parsed_gh_url = urlparse(self.url)
         path_fragments = [fragment for fragment in parsed_gh_url.path.split("/") if fragment]
 
-        ***REMOVED*** If a scheme and netloc are provided, ensure they are correct
-        ***REMOVED*** Additionally, ensure that the path contains two fragments
+        # If a scheme and netloc are provided, ensure they are correct
+        # Additionally, ensure that the path contains two fragments
         if (
             (parsed_gh_url.scheme and parsed_gh_url.scheme != "https")
             or (parsed_gh_url.netloc and parsed_gh_url.netloc != "github.com")
@@ -34,7 +34,7 @@ class SimpleGitHubConfig(SimpleGitConfig):
                 ' or a repository owner/name pair, e.g. "Unstructured-IO/unstructured".',
             )
 
-        ***REMOVED*** If there's no issues, store the core repository info
+        # If there's no issues, store the core repository info
         self.repo_path = parsed_gh_url.path
 
 
@@ -46,18 +46,18 @@ class GitHubIngestDoc(GitIngestDoc):
         content_file = self.repo.get_contents(self.path)
         contents = b""
         if (
-            not content_file.content  ***REMOVED*** type: ignore
-            and content_file.encoding == "none"  ***REMOVED*** type: ignore
-            and content_file.size  ***REMOVED*** type: ignore
+            not content_file.content  # type: ignore
+            and content_file.encoding == "none"  # type: ignore
+            and content_file.size  # type: ignore
         ):
             logger.info("File too large for the GitHub API, using direct download link instead.")
-            response = requests.get(content_file.download_url)  ***REMOVED*** type: ignore
+            response = requests.get(content_file.download_url)  # type: ignore
             if response.status_code != 200:
                 logger.info("Direct download link has failed... Skipping this file.")
             else:
                 contents = response.content
         else:
-            contents = content_file.decoded_content  ***REMOVED*** type: ignore
+            contents = content_file.decoded_content  # type: ignore
 
         with open(self.filename, "wb") as f:
             f.write(contents)
@@ -75,8 +75,8 @@ class GitHubConnector(GitConnector):
     def get_ingest_docs(self):
         repo = self.github.get_repo(self.config.repo_path)
 
-        ***REMOVED*** Load the Git tree with all files, and then create Ingest docs
-        ***REMOVED*** for all blobs, i.e. all files, ignoring directories
+        # Load the Git tree with all files, and then create Ingest docs
+        # for all blobs, i.e. all files, ignoring directories
         sha = self.config.branch or repo.default_branch
         git_tree = repo.get_git_tree(sha, recursive=True)
         return [

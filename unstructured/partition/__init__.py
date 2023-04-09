@@ -1,7 +1,7 @@
 from typing import BinaryIO, List, Mapping, Optional, Tuple, Union
 from urllib.parse import urlsplit
 
-import requests  ***REMOVED*** type: ignore
+import requests  # type: ignore
 
 from unstructured.documents.elements import Element
 
@@ -11,7 +11,7 @@ def _partition_via_api(
     file: Optional[bytes] = None,
     url: str = "https://ml.unstructured.io/layout/pdf",
     token: Optional[str] = None,
-    data: Optional[dict] = None,  ***REMOVED*** NOTE(alan): Remove after different models are handled by routing
+    data: Optional[dict] = None,  # NOTE(alan): Remove after different models are handled by routing
     include_page_breaks: bool = False,
 ) -> List[Element]:
     """Use API for partitioning."""
@@ -30,14 +30,14 @@ def _partition_via_api(
     file_: Mapping[str, Tuple[str, Union[BinaryIO, bytes]]] = {
         "file": (
             filename,
-            file if file else open(filename, "rb"),  ***REMOVED*** noqa: SIM115
+            file if file else open(filename, "rb"),  # noqa: SIM115
         ),
     }
     response = requests.post(
         url=url,
         headers={"Authorization": f"Bearer {token}" if token else ""},
         files=file_,
-        data=data,  ***REMOVED*** NOTE(alan): Remove after unstructured API is using routing
+        data=data,  # NOTE(alan): Remove after unstructured API is using routing
     )
 
     if response.status_code == 200:

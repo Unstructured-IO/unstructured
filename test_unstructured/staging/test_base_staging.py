@@ -90,7 +90,7 @@ def test_convert_to_isd_serializes_with_posix_paths():
         NarrativeText(text="Narrative 1", metadata=metadata),
     ]
     output = base.convert_to_isd(elements)
-    ***REMOVED*** NOTE(robinson) - json.dumps should run without raising an exception
+    # NOTE(robinson) - json.dumps should run without raising an exception
     json.dumps(output)
 
 

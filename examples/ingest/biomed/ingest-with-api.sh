@@ -1,17 +1,17 @@
-***REMOVED***!/usr/bin/env bash
+#!/usr/bin/env bash
 
-***REMOVED*** Processes the Unstructured-IO/unstructured repository
-***REMOVED*** through Unstructured's library in 2 processes.
+# Processes the Unstructured-IO/unstructured repository
+# through Unstructured's library in 2 processes.
 
-***REMOVED*** Structured outputs are stored in biomed-ingest-output-api/
+# Structured outputs are stored in biomed-ingest-output-api/
 
-***REMOVED*** Biomedical documents can be extracted in one of two ways, in this script is the API approach.
+# Biomedical documents can be extracted in one of two ways, in this script is the API approach.
 
-***REMOVED*** Through the OA Web Service API and the parameters provided here: https://www.ncbi.nlm.nih.gov/pmc/tools/oa-service/
-***REMOVED*** The format parameter is the only unsupported parameter. Format will always be PDF as .tar.gz files aren't
+# Through the OA Web Service API and the parameters provided here: https://www.ncbi.nlm.nih.gov/pmc/tools/oa-service/
+# The format parameter is the only unsupported parameter. Format will always be PDF as .tar.gz files aren't
 
-***REMOVED*** For example, to download documents from 2019-01-02 00:00:00 to 2019-01-02+00:03:10"
-***REMOVED*** the parameters "from" and "until" are needed
+# For example, to download documents from 2019-01-02 00:00:00 to 2019-01-02+00:03:10"
+# the parameters "from" and "until" are needed
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/../../.. || exit 1
@@ -25,5 +25,5 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --preserve-downloads
 
 
-***REMOVED*** Alternatively, you can call it using:
-***REMOVED*** unstructured-ingest --biomed-api ...
+# Alternatively, you can call it using:
+# unstructured-ingest --biomed-api ...

@@ -64,7 +64,7 @@ def _parse_received_data(data: str) -> List[Element]:
 def _parse_email_address(data: str) -> Tuple[str, str]:
     email_address = extract_email_address(data)
 
-    PATTERN = "<[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+>"  ***REMOVED*** noqa: W605 Note(harrell)
+    PATTERN = "<[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+>"  # noqa: W605 Note(harrell)
     name = re.split(PATTERN, data.lower())[0].title().strip()
 
     return name, email_address[0]
@@ -143,14 +143,14 @@ def extract_attachment_info(
                 if output_dir:
                     filename = output_dir + "/" + attachment["filename"]
                     with open(filename, "wb") as f:
-                        ***REMOVED*** Note(harrell) mypy wants to just us `w` when opening the file but this
-                        ***REMOVED*** causes an error since the payloads are bytes not str
-                        f.write(attachment["payload"])  ***REMOVED*** type: ignore
+                        # Note(harrell) mypy wants to just us `w` when opening the file but this
+                        # causes an error since the payloads are bytes not str
+                        f.write(attachment["payload"])  # type: ignore
     return list_attachments
 
 
 def has_embedded_image(element):
-    PATTERN = re.compile("\[image: .+\]")  ***REMOVED*** noqa: W605 NOTE(harrell)
+    PATTERN = re.compile("\[image: .+\]")  # noqa: W605 NOTE(harrell)
     return PATTERN.search(element.text)
 
 
@@ -202,7 +202,7 @@ def partition_email(
     if text is not None and text.strip() == "" and not file and not filename:
         return []
 
-    ***REMOVED*** Verify that only one of the arguments was provided
+    # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text)
 
     if filename is not None:
@@ -224,8 +224,8 @@ def partition_email(
 
     content_map: Dict[str, str] = {}
     for part in msg.walk():
-        ***REMOVED*** NOTE(robinson) - content dispostiion is None for the content of the email itself.
-        ***REMOVED*** Other dispositions include "attachment" for attachments
+        # NOTE(robinson) - content dispostiion is None for the content of the email itself.
+        # Other dispositions include "attachment" for attachments
         if part.get_content_disposition() is not None:
             continue
         content_type = part.get_content_type()
@@ -236,13 +236,13 @@ def partition_email(
         raise ValueError(f"{content_source} content not found in email")
 
     if content_source == "text/html":
-        ***REMOVED*** NOTE(robinson) - In the .eml files, the HTML content gets stored in a format that
-        ***REMOVED*** looks like the following, resulting in extraneous "=" characters in the output if
-        ***REMOVED*** you don't clean it up
-        ***REMOVED*** <ul> =
-        ***REMOVED***    <li>Item 1</li>=
-        ***REMOVED***    <li>Item 2<li>=
-        ***REMOVED*** </ul>
+        # NOTE(robinson) - In the .eml files, the HTML content gets stored in a format that
+        # looks like the following, resulting in extraneous "=" characters in the output if
+        # you don't clean it up
+        # <ul> =
+        #    <li>Item 1</li>=
+        #    <li>Item 2<li>=
+        # </ul>
         list_content = content.split("=\n")
         content = "".join(list_content)
         elements = partition_html(text=content, include_metadata=False)

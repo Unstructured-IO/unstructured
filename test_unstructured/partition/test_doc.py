@@ -20,23 +20,23 @@ def mock_document():
     document = docx.Document()
 
     document.add_paragraph("These are a few of my favorite things:", style="Heading 1")
-    ***REMOVED*** NOTE(robinson) - this should get picked up as a list item due to the •
+    # NOTE(robinson) - this should get picked up as a list item due to the •
     document.add_paragraph("• Parrots", style="Normal")
-    ***REMOVED*** NOTE(robinson) - this should get dropped because it's empty
+    # NOTE(robinson) - this should get dropped because it's empty
     document.add_paragraph("• ", style="Normal")
     document.add_paragraph("Hockey", style="List Bullet")
-    ***REMOVED*** NOTE(robinson) - this should get dropped because it's empty
+    # NOTE(robinson) - this should get dropped because it's empty
     document.add_paragraph("", style="List Bullet")
-    ***REMOVED*** NOTE(robinson) - this should get picked up as a title
+    # NOTE(robinson) - this should get picked up as a title
     document.add_paragraph("Analysis", style="Normal")
-    ***REMOVED*** NOTE(robinson) - this should get dropped because it is empty
+    # NOTE(robinson) - this should get dropped because it is empty
     document.add_paragraph("", style="Normal")
-    ***REMOVED*** NOTE(robinson) - this should get picked up as a narrative text
+    # NOTE(robinson) - this should get picked up as a narrative text
     document.add_paragraph("This is my first thought. This is my second thought.", style="Normal")
     document.add_paragraph("This is my third thought.", style="Body Text")
-    ***REMOVED*** NOTE(robinson) - this should just be regular text
+    # NOTE(robinson) - this should just be regular text
     document.add_paragraph("2023")
-    ***REMOVED*** NOTE(robinson) - this should be an address
+    # NOTE(robinson) - this should be an address
     document.add_paragraph("DOYLESTOWN, PA 18901")
 
     return document

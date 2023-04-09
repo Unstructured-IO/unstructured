@@ -48,7 +48,7 @@ def layout_list_to_list_items(
 ) -> List[Element]:
     """Converts a list LayoutElement to a list of ListItem elements."""
     split_items = ENUMERATED_BULLETS_RE.split(text)
-    ***REMOVED*** NOTE(robinson) - this means there wasn't a match for the enumerated bullets
+    # NOTE(robinson) - this means there wasn't a match for the enumerated bullets
     if len(split_items) == 1:
         split_items = UNICODE_BULLETS_RE.split(text)
 
@@ -107,10 +107,10 @@ def add_element_metadata(
 
 def convert_office_doc(input_filename: str, output_directory: str, target_format: str):
     """Converts a .doc file to a .docx file using the libreoffice CLI."""
-    ***REMOVED*** NOTE(robinson) - In the future can also include win32com client as a fallback for windows
-    ***REMOVED*** users who do not have LibreOffice installed
-    ***REMOVED*** ref: https://stackoverflow.com/questions/38468442/
-    ***REMOVED***       multiple-doc-to-docx-file-conversion-using-python
+    # NOTE(robinson) - In the future can also include win32com client as a fallback for windows
+    # users who do not have LibreOffice installed
+    # ref: https://stackoverflow.com/questions/38468442/
+    #       multiple-doc-to-docx-file-conversion-using-python
     try:
         subprocess.call(
             [

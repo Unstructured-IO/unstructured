@@ -16,13 +16,13 @@ class ElementMetadata:
     filename: Optional[str] = None
     date: Optional[str] = None
 
-    ***REMOVED*** Page numbers currenlty supported for PDF, HTML and PPT documents
+    # Page numbers currenlty supported for PDF, HTML and PPT documents
     page_number: Optional[int] = None
 
-    ***REMOVED*** Webpage specific metadata fields
+    # Webpage specific metadata fields
     url: Optional[str] = None
 
-    ***REMOVED*** E-mail specific metadata fields
+    # E-mail specific metadata fields
     sent_from: Optional[List[str]] = None
     sent_to: Optional[List[str]] = None
     subject: Optional[str] = None
@@ -105,7 +105,7 @@ class Text(Element):
         self.text: str = text
 
         if isinstance(element_id, NoID):
-            ***REMOVED*** NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits
+            # NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits
             element_id = hashlib.sha256(text.encode()).hexdigest()[:32]
 
         super().__init__(element_id=element_id, metadata=metadata, coordinates=coordinates)

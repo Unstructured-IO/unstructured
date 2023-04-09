@@ -1,4 +1,4 @@
-***REMOVED******REMOVED*** SEC Sentiment Analysis Model
+## SEC Sentiment Analysis Model
 
 This directory contains an example of how to use the SEC API, the Unstructured SEC pipeline API,
 and several bricks from the `unstructured` library to train a sentiment analysis model for the

@@ -21,10 +21,10 @@ SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
 
 @dataclass
 class SimpleFsspecConfig(BaseConnectorConfig):
-    ***REMOVED*** fsspec specific options
+    # fsspec specific options
     path: str
 
-    ***REMOVED*** base connector options
+    # base connector options
     download_dir: str
     output_dir: str
     preserve_downloads: bool = False
@@ -35,7 +35,7 @@ class SimpleFsspecConfig(BaseConnectorConfig):
     fields_include: str = "element_id,text,type,metadata"
     flatten_metadata: bool = False
 
-    ***REMOVED*** fsspec specific options
+    # fsspec specific options
     access_kwargs: dict = field(default_factory=dict)
 
     protocol: str = field(init=False)
@@ -51,14 +51,14 @@ class SimpleFsspecConfig(BaseConnectorConfig):
                 f"{SUPPORTED_REMOTE_FSSPEC_PROTOCOLS} are supported.",
             )
 
-        ***REMOVED*** just a path with no trailing prefix
+        # just a path with no trailing prefix
         match = re.match(rf"{self.protocol}://([^/\s]+?)(/*)$", self.path)
         if match:
             self.dir_path = match.group(1)
             self.file_path = ""
             return
 
-        ***REMOVED*** valid path with a dir and/or file
+        # valid path with a dir and/or file
         match = re.match(rf"{self.protocol}://([^/\s]+?)/([^\s]*)", self.path)
         if not match:
             raise ValueError(
@@ -170,7 +170,7 @@ class FsspecConnector(BaseConnector):
         sub_dirs = os.listdir(cur_dir)
         os.chdir(cur_dir)
         for sub_dir in sub_dirs:
-            ***REMOVED*** don't traverse symlinks, not that there every should be any
+            # don't traverse symlinks, not that there every should be any
             if os.path.isdir(sub_dir) and not os.path.islink(sub_dir):
                 self.cleanup(sub_dir)
         os.chdir("..")

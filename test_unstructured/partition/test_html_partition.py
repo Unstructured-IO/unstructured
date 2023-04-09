@@ -106,7 +106,7 @@ def test_partition_from_url_uses_headers(mocker):
 
     partition_html(url=test_url, headers=test_headers)
 
-    ***REMOVED*** Check if requests.get was called with the correct arguments
+    # Check if requests.get was called with the correct arguments
     mock_get.assert_called_once_with(test_url, headers=test_headers)
 
 
@@ -135,18 +135,18 @@ def test_partition_html_on_ideas_page():
 def test_user_without_file_write_permission_can_partition_html(tmp_path, monkeypatch):
     example_filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "example-10k.html")
 
-    ***REMOVED*** create a file with no write permissions
+    # create a file with no write permissions
     read_only_file = tmp_path / "example-10k-readonly.html"
     read_only_file.touch()
 
-    ***REMOVED*** set content of read_only_file to be that of example-10k.html
+    # set content of read_only_file to be that of example-10k.html
     with open(example_filename) as f:
         read_only_file.write_text(f.read())
 
-    ***REMOVED*** set read_only_file to be read only
+    # set read_only_file to be read only
     read_only_file.chmod(0o444)
 
-    ***REMOVED*** partition html should still work
+    # partition html should still work
     elements = partition_html(filename=read_only_file.resolve())
     assert len(elements) > 0
 

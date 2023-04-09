@@ -20,9 +20,9 @@ class SimpleWikipediaConfig(BaseConnectorConfig):
     title: str
     auto_suggest: bool
 
-    ***REMOVED*** Standard Connector options
+    # Standard Connector options
     download_dir: str
-    ***REMOVED*** where to write structured data
+    # where to write structured data
     output_dir: str
     preserve_downloads: bool = False
     re_download: bool = False
@@ -147,7 +147,7 @@ class WikipediaConnector(BaseConnector):
         sub_dirs = os.listdir(cur_dir)
         os.chdir(cur_dir)
         for sub_dir in sub_dirs:
-            ***REMOVED*** don't traverse symlinks, not that there every should be any
+            # don't traverse symlinks, not that there every should be any
             if os.path.isdir(sub_dir) and not os.path.islink(sub_dir):
                 self.cleanup(sub_dir)
         os.chdir("..")

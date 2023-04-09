@@ -6,7 +6,7 @@ from unstructured.documents.elements import Text
 
 LABEL_STUDIO_TYPE = List[Dict[str, Dict[str, str]]]
 
-***REMOVED*** NOTE(robinson) - ref: https://labelstud.io/tags/labels.html
+# NOTE(robinson) - ref: https://labelstud.io/tags/labels.html
 VALID_LABEL_TYPES = [
     "labels",
     "hypertextlabels",
@@ -35,12 +35,12 @@ VALID_LABEL_TYPES = [
 @dataclass
 class LabelStudioResult:
     """Class for representing a LabelStudio annotation result.
-    ref: https://labelstud.io/guide/export.html***REMOVED***Label-Studio-JSON-format-of-annotated-tasks"""
+    ref: https://labelstud.io/guide/export.html#Label-Studio-JSON-format-of-annotated-tasks"""
 
-    type: str  ***REMOVED*** The type of tag used to annotate the task
-    value: Dict[str, Any]  ***REMOVED*** The values for
-    from_name: str  ***REMOVED*** Name of the source object tag (i.e. "sentiment" for the sentiment template)
-    to_name: str  ***REMOVED*** Name of the destination control tag
+    type: str  # The type of tag used to annotate the task
+    value: Dict[str, Any]  # The values for
+    from_name: str  # Name of the source object tag (i.e. "sentiment" for the sentiment template)
+    to_name: str  # Name of the destination control tag
     id: Optional[str] = None
     hidden: bool = False
     read_only: bool = False
@@ -60,7 +60,7 @@ class LabelStudioResult:
 class LabelStudioReview:
     """Class for representing a LablStudio review. Reviews are only available in the
     Enterprise offering.
-    ref: https://labelstud.io/guide/export.html***REMOVED***Label-Studio-JSON-format-of-annotated-tasks"""
+    ref: https://labelstud.io/guide/export.html#Label-Studio-JSON-format-of-annotated-tasks"""
 
     created_by: Dict[str, Union[str, int]]
     accepted: bool
@@ -73,14 +73,14 @@ class LabelStudioReview:
 @dataclass
 class LabelStudioAnnotation:
     """Class for representing LabelStudio annotations.
-    ref: https://labelstud.io/guide/export.html***REMOVED***Label-Studio-JSON-format-of-annotated-tasks"""
+    ref: https://labelstud.io/guide/export.html#Label-Studio-JSON-format-of-annotated-tasks"""
 
-    result: List[LabelStudioResult]  ***REMOVED*** The result of the annotation
+    result: List[LabelStudioResult]  # The result of the annotation
     id: Optional[str] = None
-    lead_time: Optional[float] = None  ***REMOVED*** Time in seconds to label the task
-    completed_by: Optional[int] = None  ***REMOVED*** User ID for the user who completed the task
-    reviews: Optional[List[LabelStudioReview]] = None  ***REMOVED*** An array of the review results
-    was_canceled: bool = False  ***REMOVED*** Indicates whether or not the annotation was canceled
+    lead_time: Optional[float] = None  # Time in seconds to label the task
+    completed_by: Optional[int] = None  # User ID for the user who completed the task
+    reviews: Optional[List[LabelStudioReview]] = None  # An array of the review results
+    was_canceled: bool = False  # Indicates whether or not the annotation was canceled
 
     def to_dict(self):
         annotation_dict = deepcopy(self.__dict__)
@@ -88,7 +88,7 @@ class LabelStudioAnnotation:
         if "reviews" in annotation_dict and annotation_dict["reviews"] is not None:
             annotation_dict["reviews"] = [r.to_dict() for r in annotation_dict["reviews"]]
 
-        ***REMOVED*** NOTE(robinson) - Removes keys for any fields that defaulted to None
+        # NOTE(robinson) - Removes keys for any fields that defaulted to None
         _annotation_dict = deepcopy(annotation_dict)
         for key, value in annotation_dict.items():
             if value is None:
@@ -117,7 +117,7 @@ def stage_for_label_studio(
     id_field: str = "ref_id",
 ) -> LABEL_STUDIO_TYPE:
     """Converts the document to the format required for upload to LabelStudio.
-    ref: https://labelstud.io/guide/tasks.html***REMOVED***Example-JSON-format"""
+    ref: https://labelstud.io/guide/tasks.html#Example-JSON-format"""
     if annotations is not None and len(elements) != len(annotations):
         raise ValueError("The length of elements and annotations must match.")
     if predictions is not None and len(elements) != len(predictions):

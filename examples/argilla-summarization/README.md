@@ -1,4 +1,4 @@
-***REMOVED******REMOVED*** ISW Summarization Example
+## ISW Summarization Example
 
 This directory shows and example of how to use `unstructured`, `argilla`, and `transformers`
 to train a custom summarization model on Institute for the Study of War (ISW) reports

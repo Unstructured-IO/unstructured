@@ -1,4 +1,4 @@
-***REMOVED***!/usr/bin/env python3
+#!/usr/bin/env python3
 import hashlib
 import logging
 import multiprocessing as mp
@@ -10,7 +10,7 @@ from urllib.parse import urlparse
 
 import click
 
-from unstructured.ingest.connector.slack import SimpleSlackConfig, SlackConnector
+
 from unstructured.ingest.connector.wikipedia import (
     SimpleWikipediaConfig,
     WikipediaConnector,
@@ -32,7 +32,7 @@ class MainProcess:
         verbose,
         max_docs,
     ):
-        ***REMOVED*** initialize the reader and writer
+        # initialize the reader and writer
         self.doc_connector = doc_connector
         self.doc_processor_fn = doc_processor_fn
         self.num_processes = num_processes
@@ -73,18 +73,18 @@ class MainProcess:
     def run(self):
         self.initialize()
 
-        ***REMOVED*** fetch the list of lazy downloading IngestDoc obj's
+        # fetch the list of lazy downloading IngestDoc obj's
         docs = self.doc_connector.get_ingest_docs()
 
-        ***REMOVED*** remove docs that have already been processed
+        # remove docs that have already been processed
         if not self.reprocess:
             docs = self._filter_docs_with_outputs(docs)
             if not docs:
                 return
 
-        ***REMOVED*** Debugging tip: use the below line and comment out the mp.Pool loop
-        ***REMOVED*** block to remain in single process
-        ***REMOVED*** self.doc_processor_fn(docs[0])
+        # Debugging tip: use the below line and comment out the mp.Pool loop
+        # block to remain in single process
+        # self.doc_processor_fn(docs[0])
         with mp.Pool(
             processes=self.num_processes,
             initializer=ingest_log_streaming_init,
@@ -250,7 +250,7 @@ class MainProcess:
     "--git-access-token",
     default=None,
     help="A GitHub or GitLab access token, see https://docs.github.com/en/authentication "
-    " or https://docs.gitlab.com/ee/api/rest/index.html***REMOVED***personalprojectgroup-access-tokens",
+    " or https://docs.gitlab.com/ee/api/rest/index.html#personalprojectgroup-access-tokens",
 )
 @click.option(
     "--git-branch",
@@ -273,21 +273,21 @@ class MainProcess:
     "--reddit-client-id",
     default=None,
     help="The client ID, see "
-    "https://praw.readthedocs.io/en/stable/getting_started/quick_start.html***REMOVED***prerequisites"
+    "https://praw.readthedocs.io/en/stable/getting_started/quick_start.html#prerequisites"
     " for more information.",
 )
 @click.option(
     "--reddit-client-secret",
     default=None,
     help="The client secret, see "
-    "https://praw.readthedocs.io/en/stable/getting_started/quick_start.html***REMOVED***prerequisites"
+    "https://praw.readthedocs.io/en/stable/getting_started/quick_start.html#prerequisites"
     " for more information.",
 )
 @click.option(
     "--reddit-user-agent",
     default="Unstructured Ingest Subreddit fetcher",
     help="The user agent to use on the Reddit API, see "
-    "https://praw.readthedocs.io/en/stable/getting_started/quick_start.html***REMOVED***prerequisites"
+    "https://praw.readthedocs.io/en/stable/getting_started/quick_start.html#prerequisites"
     " for more information.",
 )
 @click.option(
@@ -361,7 +361,7 @@ class MainProcess:
 @click.option("-v", "--verbose", is_flag=True, default=False)
 def main(
     remote_url,
-    s3_url,  ***REMOVED*** TODO: deprecate this in the next minor release
+    s3_url,  # TODO: deprecate this in the next minor release
     s3_anonymous,
     azure_account_name,
     azure_account_key,
@@ -492,7 +492,7 @@ def main(
         if protocol in ("s3", "s3a"):
             from unstructured.ingest.connector.s3 import S3Connector, SimpleS3Config
 
-            doc_connector = S3Connector(  ***REMOVED*** type: ignore
+            doc_connector = S3Connector(  # type: ignore
                 config=SimpleS3Config(
                     path=s3_url,
                     access_kwargs={"anon": s3_anonymous},
@@ -522,7 +522,7 @@ def main(
                 access_kwargs = {"connection_string": azure_connection_string}
             else:
                 access_kwargs = {}
-            doc_connector = AzureBlobStorageConnector(  ***REMOVED*** type: ignore
+            doc_connector = AzureBlobStorageConnector(  # type: ignore
                 config=SimpleAzureBlobStorageConfig(
                     path=remote_url,
                     access_kwargs=access_kwargs,
@@ -549,7 +549,7 @@ def main(
                 SimpleFsspecConfig,
             )
 
-            doc_connector = FsspecConnector(  ***REMOVED*** type: ignore
+            doc_connector = FsspecConnector(  # type: ignore
                 config=SimpleFsspecConfig(
                     path=remote_url,
                     download_dir=download_dir,
@@ -569,13 +569,13 @@ def main(
             SimpleGitHubConfig,
         )
 
-        doc_connector = GitHubConnector(  ***REMOVED*** type: ignore
+        doc_connector = GitHubConnector(  # type: ignore
             config=SimpleGitHubConfig(
                 url=github_url,
                 access_token=git_access_token,
                 branch=git_branch,
                 file_glob=git_file_glob,
-                ***REMOVED*** defaults params:
+                # defaults params:
                 download_dir=download_dir,
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
@@ -593,13 +593,13 @@ def main(
             SimpleGitLabConfig,
         )
 
-        doc_connector = GitLabConnector(  ***REMOVED*** type: ignore
+        doc_connector = GitLabConnector(  # type: ignore
             config=SimpleGitLabConfig(
                 url=gitlab_url,
                 access_token=git_access_token,
                 branch=git_branch,
                 file_glob=git_file_glob,
-                ***REMOVED*** defaults params:
+                # defaults params:
                 download_dir=download_dir,
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
@@ -617,7 +617,7 @@ def main(
             SimpleRedditConfig,
         )
 
-        doc_connector = RedditConnector(  ***REMOVED*** type: ignore
+        doc_connector = RedditConnector(  # type: ignore
             config=SimpleRedditConfig(
                 subreddit_name=subreddit_name,
                 client_id=reddit_client_id,
@@ -625,7 +625,7 @@ def main(
                 user_agent=reddit_user_agent,
                 search_query=reddit_search_query,
                 num_posts=reddit_num_posts,
-                ***REMOVED*** defaults params:
+                # defaults params:
                 download_dir=download_dir,
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
@@ -638,13 +638,15 @@ def main(
             ),
         )
     elif slack_channel:
-        doc_connector = SlackConnector(  ***REMOVED*** type: ignore
+        from unstructured.ingest.connector.slack import SimpleSlackConfig, SlackConnector
+        
+        doc_connector = SlackConnector(  # type: ignore
             config=SimpleSlackConfig(
                 channel=slack_channel,
                 token=slack_token,
                 oldest=start_date,
                 latest=end_date,
-                ***REMOVED*** defaults params:
+                # defaults params:
                 download_dir=download_dir,
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
@@ -653,11 +655,11 @@ def main(
             ),
         )
     elif wikipedia_page_title:
-        doc_connector = WikipediaConnector(  ***REMOVED*** type: ignore
+        doc_connector = WikipediaConnector(  # type: ignore
             config=SimpleWikipediaConfig(
                 title=wikipedia_page_title,
                 auto_suggest=wikipedia_auto_suggest,
-                ***REMOVED*** defaults params:
+                # defaults params:
                 download_dir=download_dir,
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
@@ -675,13 +677,13 @@ def main(
             SimpleGoogleDriveConfig,
         )
 
-        doc_connector = GoogleDriveConnector(  ***REMOVED*** type: ignore
+        doc_connector = GoogleDriveConnector(  # type: ignore
             config=SimpleGoogleDriveConfig(
                 drive_id=drive_id,
                 service_account_key=drive_service_account_key,
                 recursive=drive_recursive,
                 extension=drive_extension,
-                ***REMOVED*** defaults params:
+                # defaults params:
                 download_dir=download_dir,
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
@@ -699,13 +701,13 @@ def main(
             SimpleBiomedConfig,
         )
 
-        doc_connector = BiomedConnector(  ***REMOVED*** type: ignore
+        doc_connector = BiomedConnector(  # type: ignore
             config=SimpleBiomedConfig(
                 path=biomed_path,
                 id_=biomed_api_id,
                 from_=biomed_api_from,
                 until=biomed_api_until,
-                ***REMOVED*** defaults params:
+                # defaults params:
                 download_dir=download_dir,
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
@@ -723,12 +725,12 @@ def main(
             SimpleLocalConfig,
         )
 
-        doc_connector = LocalConnector(  ***REMOVED*** type: ignore
+        doc_connector = LocalConnector(  # type: ignore
             config=SimpleLocalConfig(
                 input_path=local_input_path,
                 recursive=local_recursive,
                 file_glob=local_file_glob,
-                ***REMOVED*** defaults params:
+                # defaults params:
                 output_dir=structured_output_dir,
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
@@ -736,8 +738,8 @@ def main(
                 flatten_metadata=flatten_metadata,
             ),
         )
-    ***REMOVED*** Check for other connector-specific options here and define the doc_connector object
-    ***REMOVED*** e.g. "elif azure_container:  ..."
+    # Check for other connector-specific options here and define the doc_connector object
+    # e.g. "elif azure_container:  ..."
 
     else:
         logger.error("No connector-specific option was specified!")

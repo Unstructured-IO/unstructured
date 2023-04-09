@@ -15,8 +15,8 @@ def stage_for_transformers(
     fit into the attention window for the model associated with the tokenizer."""
     chunked_elements: List[Element] = []
     for element in elements:
-        ***REMOVED*** NOTE(robinson) - Only chunk potentially lengthy text. Shorter text (like titles)
-        ***REMOVED*** should already fit into the attention window just fine.
+        # NOTE(robinson) - Only chunk potentially lengthy text. Shorter text (like titles)
+        # should already fit into the attention window just fine.
         if isinstance(element, (NarrativeText, Text)):
             chunked_text = chunk_by_attention_window(element.text, tokenizer, **chunk_kwargs)
             for chunk in chunked_text:
@@ -86,7 +86,7 @@ def chunk_by_attention_window(
             chunk_text = ""
             chunk_size = 0
 
-        ***REMOVED*** NOTE(robinson) - To avoid the separator appearing at the beginning of the string
+        # NOTE(robinson) - To avoid the separator appearing at the beginning of the string
         if chunk_size > 0:
             chunk_text += chunk_separator
         chunk_text += segment

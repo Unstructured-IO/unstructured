@@ -9,8 +9,8 @@ try:
     import magic
 
     LIBMAGIC_AVAILABLE = True
-except ImportError:  ***REMOVED*** pragma: nocover
-    LIBMAGIC_AVAILABLE = False  ***REMOVED*** pragma: nocover
+except ImportError:  # pragma: nocover
+    LIBMAGIC_AVAILABLE = False  # pragma: nocover
 
 from unstructured.logger import logger
 from unstructured.nlp.patterns import EMAIL_HEAD_RE
@@ -46,7 +46,7 @@ MSG_MIME_TYPES = [
 
 TXT_MIME_TYPES = [
     "text/plain",
-    "message/rfc822",  ***REMOVED*** ref: https://www.rfc-editor.org/rfc/rfc822
+    "message/rfc822",  # ref: https://www.rfc-editor.org/rfc/rfc822
 ]
 
 MD_MIME_TYPES = [
@@ -59,9 +59,9 @@ EPUB_MIME_TYPES = [
     "application/epub+zip",
 ]
 
-***REMOVED*** NOTE(robinson) - .docx.xlsx files are actually zip file with a .docx/.xslx extension.
-***REMOVED*** If the MIME type is application/octet-stream, we check if it's a .docx/.xlsx file by
-***REMOVED*** looking for expected filenames within the zip file.
+# NOTE(robinson) - .docx.xlsx files are actually zip file with a .docx/.xslx extension.
+# If the MIME type is application/octet-stream, we check if it's a .docx/.xlsx file by
+# looking for expected filenames within the zip file.
 EXPECTED_DOCX_FILES = [
     "docProps/core.xml",
     "word/document.xml",
@@ -81,7 +81,7 @@ EXPECTED_PPTX_FILES = [
 class FileType(Enum):
     UNK = 0
 
-    ***REMOVED*** MS Office Types
+    # MS Office Types
     DOC = 10
     DOCX = 11
     XLS = 12
@@ -90,29 +90,29 @@ class FileType(Enum):
     PPTX = 15
     MSG = 16
 
-    ***REMOVED*** Adobe Types
+    # Adobe Types
     PDF = 20
 
-    ***REMOVED*** Image Types
+    # Image Types
     JPG = 30
     PNG = 31
 
-    ***REMOVED*** Plain Text Types
+    # Plain Text Types
     EML = 40
     RTF = 41
     TXT = 42
     JSON = 43
 
-    ***REMOVED*** Markup Types
+    # Markup Types
     HTML = 50
     XML = 51
     MD = 52
     EPUB = 53
 
-    ***REMOVED*** Compressed Types
+    # Compressed Types
     ZIP = 60
 
-    ***REMOVED*** NOTE(robinson) - This is to support sorting for pandas groupby functions
+    # NOTE(robinson) - This is to support sorting for pandas groupby functions
     def __lt__(self, other):
         return self.name < other.name
 
@@ -182,14 +182,14 @@ def detect_filetype(
         _, extension = os.path.splitext(_filename)
         extension = extension.lower()
         if os.path.isfile(_filename) and LIBMAGIC_AVAILABLE:
-            mime_type = magic.from_file(filename or file_filename, mime=True)  ***REMOVED*** type: ignore
+            mime_type = magic.from_file(filename or file_filename, mime=True)  # type: ignore
         else:
             return EXT_TO_FILETYPE.get(extension.lower(), FileType.UNK)
     elif file is not None:
         extension = None
-        ***REMOVED*** NOTE(robinson) - the python-magic docs recommend reading at least the first 2048 bytes
-        ***REMOVED*** Increased to 4096 because otherwise .xlsx files get detected as a zip file
-        ***REMOVED*** ref: https://github.com/ahupp/python-magic***REMOVED***usage
+        # NOTE(robinson) - the python-magic docs recommend reading at least the first 2048 bytes
+        # Increased to 4096 because otherwise .xlsx files get detected as a zip file
+        # ref: https://github.com/ahupp/python-magic#usage
         if LIBMAGIC_AVAILABLE:
             mime_type = magic.from_buffer(file.read(4096), mime=True)
         else:
@@ -223,7 +223,7 @@ def detect_filetype(
         return FileType.PNG
 
     elif mime_type in MD_MIME_TYPES:
-        ***REMOVED*** NOTE - I am not sure whether libmagic ever returns these mimetypes.
+        # NOTE - I am not sure whether libmagic ever returns these mimetypes.
         return FileType.MD
 
     elif mime_type in EPUB_MIME_TYPES:

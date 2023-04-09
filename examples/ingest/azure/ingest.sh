@@ -1,9 +1,9 @@
-***REMOVED***!/usr/bin/env bash
+#!/usr/bin/env bash
 
-***REMOVED*** Processes all the files from abfs://container1/ in azureunstructured1 account, 
-***REMOVED*** using the `unstructured` library.
+# Processes all the files from abfs://container1/ in azureunstructured1 account, 
+# using the `unstructured` library.
 
-***REMOVED*** Structured outputs are stored in azure-ingest-output/
+# Structured outputs are stored in azure-ingest-output/
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/../../.. || exit 1

@@ -205,7 +205,7 @@ At the end of the lane the fox met a friendly bear."""
 
 
 @pytest.mark.parametrize(
-    ***REMOVED*** NOTE(yuming): Tests combined cleaners
+    # NOTE(yuming): Tests combined cleaners
     (
         "text",
         "extra_whitespace",

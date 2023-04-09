@@ -1,12 +1,12 @@
-***REMOVED*** Byte-compiled / optimized / DLL files
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
 
-***REMOVED*** C extensions
+# C extensions
 *.so
 
-***REMOVED*** Distribution / packaging
+# Distribution / packaging
 .Python
 build/
 develop-eggs/
@@ -27,20 +27,20 @@ share/python-wheels/
 *.egg
 MANIFEST
 
-***REMOVED*** PyInstaller
-***REMOVED***  Usually these files are written by a python script from a template
-***REMOVED***  before PyInstaller builds the exe, so as to inject date/other infos into it.
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
 *.spec
 
-***REMOVED*** Installer logs
+# Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
 
-***REMOVED*** Pycharm
+# Pycharm
 .idea/
 
-***REMOVED*** Unit test / coverage reports
+# Unit test / coverage reports
 htmlcov/
 .tox/
 .nox/
@@ -54,58 +54,58 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 
-***REMOVED*** Translations
+# Translations
 *.mo
 *.pot
 
-***REMOVED*** Django stuff:
+# Django stuff:
 *.log
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
 
-***REMOVED*** Flask stuff:
+# Flask stuff:
 instance/
 .webassets-cache
 
-***REMOVED*** Scrapy stuff:
+# Scrapy stuff:
 .scrapy
 
-***REMOVED*** Sphinx documentation
+# Sphinx documentation
 docs/_build/
 
-***REMOVED*** PyBuilder
+# PyBuilder
 target/
 
-***REMOVED*** Jupyter Notebook
+# Jupyter Notebook
 .ipynb_checkpoints
 nbs/
 
-***REMOVED*** IPython
+# IPython
 profile_default/
 ipython_config.py
 
-***REMOVED*** pyenv
+# pyenv
 .python-version
 
-***REMOVED*** pipenv
-***REMOVED***   According to pypa/pipenv***REMOVED***598, it is recommended to include Pipfile.lock in version control.
-***REMOVED***   However, in case of collaboration, if having platform-specific dependencies or dependencies
-***REMOVED***   having no cross-platform support, pipenv may install dependencies that don't work, or not
-***REMOVED***   install all needed dependencies.
-***REMOVED***Pipfile.lock
+# pipenv
+#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
+#   However, in case of collaboration, if having platform-specific dependencies or dependencies
+#   having no cross-platform support, pipenv may install dependencies that don't work, or not
+#   install all needed dependencies.
+#Pipfile.lock
 
-***REMOVED*** PEP 582; used by e.g. github.com/David-OConnor/pyflow
+# PEP 582; used by e.g. github.com/David-OConnor/pyflow
 __pypackages__/
 
-***REMOVED*** Celery stuff
+# Celery stuff
 celerybeat-schedule
 celerybeat.pid
 
-***REMOVED*** SageMath parsed files
+# SageMath parsed files
 *.sage.py
 
-***REMOVED*** Environments
+# Environments
 .env
 .venv
 env/
@@ -114,42 +114,42 @@ ENV/
 env.bak/
 venv.bak/
 
-***REMOVED*** Spyder project settings
+# Spyder project settings
 .spyderproject
 .spyproject
 
-***REMOVED*** Rope project settings
+# Rope project settings
 .ropeproject
 
-***REMOVED*** mkdocs documentation
+# mkdocs documentation
 /site
 
-***REMOVED*** mypy
+# mypy
 .mypy_cache/
 .dmypy.json
 dmypy.json
 
-***REMOVED*** Pyre type checker
+# Pyre type checker
 .pyre/
 
-***REMOVED*** ingest outputs
+# ingest outputs
 /structured-output
 
-***REMOVED*** suggested ingest mirror directory
+# suggested ingest mirror directory
 /mirror
 
-***REMOVED******REMOVED*** https://github.com/github/gitignore/blob/main/Global/Emacs.gitignore (partial)
+## https://github.com/github/gitignore/blob/main/Global/Emacs.gitignore (partial)
 
 *~
-\***REMOVED****\***REMOVED***
+\#*\#
 /.emacs.desktop
 /.emacs.desktop.lock
 *.elc
 auto-save-list
 tramp
-.\***REMOVED****
+.\#*
 
-***REMOVED******REMOVED*** https://github.com/github/gitignore/blob/main/Global/VisualStudioCode.gitignore
+## https://github.com/github/gitignore/blob/main/Global/VisualStudioCode.gitignore
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
@@ -157,33 +157,33 @@ tramp
 !.vscode/extensions.json
 !.vscode/*.code-snippets
 
-***REMOVED*** Local History for Visual Studio Code
+# Local History for Visual Studio Code
 .history/
 
-***REMOVED*** Built Visual Studio Code Extensions
+# Built Visual Studio Code Extensions
 *.vsix
 
-***REMOVED******REMOVED*** https://github.com/github/gitignore/blob/main/Global/Vim.gitignore
-***REMOVED*** Swap
+## https://github.com/github/gitignore/blob/main/Global/Vim.gitignore
+# Swap
 [._]*.s[a-v][a-z]
-!*.svg  ***REMOVED*** comment out if you don't need vector files
+!*.svg  # comment out if you don't need vector files
 [._]*.sw[a-p]
 [._]s[a-rt-v][a-z]
 [._]ss[a-gi-z]
 [._]sw[a-p]
 
-***REMOVED*** Session
+# Session
 Session.vim
 Sessionx.vim
 
-***REMOVED*** Temporary
+# Temporary
 .netrwhist
-***REMOVED*** Auto-generated tag files
+# Auto-generated tag files
 tags
-***REMOVED*** Persistent undo
+# Persistent undo
 [._]*.un~
 
 .DS_Store
 
-***REMOVED*** Ruff cache
+# Ruff cache
 .ruff_cache/

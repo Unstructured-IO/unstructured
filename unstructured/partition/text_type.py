@@ -5,7 +5,7 @@ import sys
 from typing import List, Optional
 
 if sys.version_info < (3, 8):
-    from typing_extensions import Final  ***REMOVED*** pragma: nocover
+    from typing_extensions import Final  # pragma: nocover
 else:
     from typing import Final
 
@@ -67,8 +67,8 @@ def is_possible_narrative_text(
     if language == "en" and language_checks and not contains_english_word(text):
         return False
 
-    ***REMOVED*** NOTE(robinson): it gets read in from the environment as a string so we need to
-    ***REMOVED*** cast it to a float
+    # NOTE(robinson): it gets read in from the environment as a string so we need to
+    # cast it to a float
     cap_threshold = float(
         os.environ.get("UNSTRUCTURED_NARRATIVE_TEXT_CAP_THRESHOLD", cap_threshold),
     )
@@ -126,8 +126,8 @@ def is_possible_title(
     title_max_word_length = int(
         os.environ.get("UNSTRUCTURED_TITLE_MAX_WORD_LENGTH", title_max_word_length),
     )
-    ***REMOVED*** NOTE(robinson) - splitting on spaces here instead of word tokenizing because it
-    ***REMOVED*** is less expensive and actual tokenization doesn't add much value for the length check
+    # NOTE(robinson) - splitting on spaces here instead of word tokenizing because it
+    # is less expensive and actual tokenization doesn't add much value for the length check
     if len(text.split(" ")) > title_max_word_length:
         return False
 
@@ -137,7 +137,7 @@ def is_possible_title(
     if under_non_alpha_ratio(text, threshold=non_alpha_threshold):
         return False
 
-    ***REMOVED*** NOTE(robinson) - Prevent flagging salutations like "To My Dearest Friends," as titles
+    # NOTE(robinson) - Prevent flagging salutations like "To My Dearest Friends," as titles
     if text.endswith(","):
         return False
 
@@ -149,9 +149,9 @@ def is_possible_title(
         logger.debug(f"Not a title. Text is all numeric:\n\n{text}")
         return False
 
-    ***REMOVED*** NOTE(robinson) - The min length is to capture content such as "ITEM 1A. RISK FACTORS"
-    ***REMOVED*** that sometimes get tokenized as separate sentences due to the period, but are still
-    ***REMOVED*** valid titles
+    # NOTE(robinson) - The min length is to capture content such as "ITEM 1A. RISK FACTORS"
+    # that sometimes get tokenized as separate sentences due to the period, but are still
+    # valid titles
     if sentence_count(text, min_length=sentence_min_length) > 1:
         logger.debug(f"Not a title. Text is longer than {sentence_min_length} sentences:\n\n{text}")
         return False
@@ -189,13 +189,13 @@ def contains_english_word(text: str) -> bool:
     text = text.lower()
     words = ENGLISH_WORD_SPLIT_RE.split(text)
     for word in words:
-        ***REMOVED*** NOTE(Crag): Remove any non-lowercase alphabetical
-        ***REMOVED*** characters.  These removed chars will usually be trailing or
-        ***REMOVED*** leading characters not already matched in ENGLISH_WORD_SPLIT_RE.
-        ***REMOVED*** The possessive case is also generally ok:
-        ***REMOVED***   "beggar's" -> "beggars" (still an english word)
-        ***REMOVED*** and of course:
-        ***REMOVED***   "'beggars'"-> "beggars" (also still an english word)
+        # NOTE(Crag): Remove any non-lowercase alphabetical
+        # characters.  These removed chars will usually be trailing or
+        # leading characters not already matched in ENGLISH_WORD_SPLIT_RE.
+        # The possessive case is also generally ok:
+        #   "beggar's" -> "beggars" (still an english word)
+        # and of course:
+        #   "'beggars'"-> "beggars" (also still an english word)
         word = NON_LOWERCASE_ALPHA_RE.sub("", word)
         if len(word) > 1 and word in ENGLISH_WORDS:
             return True
@@ -262,8 +262,8 @@ def exceeds_cap_ratio(text: str, threshold: float = 0.5) -> bool:
         If the percentage of words beginning with a capital letter exceeds this threshold,
         the function returns True
     """
-    ***REMOVED*** NOTE(robinson) - Currently limiting this to only sections of text with one sentence.
-    ***REMOVED*** The assumption is that sections with multiple sentences are not titles.
+    # NOTE(robinson) - Currently limiting this to only sections of text with one sentence.
+    # The assumption is that sections with multiple sentences are not titles.
     if sentence_count(text, 3) > 1:
         logger.debug(f"Text does not contain multiple sentences:\n\n{text}")
         return False

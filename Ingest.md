@@ -1,6 +1,6 @@
-***REMOVED*** Batch Processing Documents
+# Batch Processing Documents
 
-***REMOVED******REMOVED*** The unstructured-ingest CLI
+## The unstructured-ingest CLI
 
 The unstructured library includes a CLI to batch ingest documents from (soon to be
 various) sources, storing structured outputs locally on the filesystem.
@@ -20,11 +20,11 @@ Installation note: make sure to install the following extras when installing uns
 
     pip install "unstructured[s3,local-inference]"
 
-See the [Quick Start](https://github.com/Unstructured-IO/unstructured***REMOVED***eight_pointed_black_star-quick-start) which documents how to pip install `dectectron2` and other OS dependencies, necessary for the parsing of .PDF files.
+See the [Quick Start](https://github.com/Unstructured-IO/unstructured#eight_pointed_black_star-quick-start) which documents how to pip install `dectectron2` and other OS dependencies, necessary for the parsing of .PDF files.
 
-***REMOVED*** Developers' Guide
+# Developers' Guide
 
-***REMOVED******REMOVED*** Local testing
+## Local testing
 
 When testing from a local checkout rather than a pip-installed version of `unstructured`,
 just execute `unstructured/ingest/main.py`, e.g.:
@@ -35,7 +35,7 @@ just execute `unstructured/ingest/main.py`, e.g.:
        --structured-output-dir s3-small-batch-output \
        --num-processes 2
 
-***REMOVED******REMOVED*** Adding Data Connectors
+## Adding Data Connectors
 
 To add a connector, refer to [unstructured/ingest/connector/github.py](unstructured/ingest/connector/github.py) as example that implements the three relelvant abstract base classes.
 
@@ -54,7 +54,7 @@ to be checked into CI under test_unstructured_ingest/expected-structured-output/
 
 The `main.py` flags of --re-download/--no-re-download , --download-dir, --preserve-downloads, --structured-output-dir, and --reprocess are honored by the connector.
 
-***REMOVED******REMOVED******REMOVED*** The checklist:
+### The checklist:
 
 In checklist form, the above steps are summarized as:
 

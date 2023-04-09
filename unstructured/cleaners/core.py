@@ -85,9 +85,9 @@ def group_broken_paragraphs(
     return "\n\n".join(clean_paragraphs)
 
 
-***REMOVED*** TODO(robinson) - There's likely a cleaner was to accomplish this and get all of the
-***REMOVED*** unicode characters instead of just the quotes. Doing this for now since quotes are
-***REMOVED*** an issue that are popping up in the SEC filings tests
+# TODO(robinson) - There's likely a cleaner was to accomplish this and get all of the
+# unicode characters instead of just the quotes. Doing this for now since quotes are
+# an issue that are popping up in the SEC filings tests
 def replace_unicode_quotes(text) -> str:
     """Replaces unicode bullets in text with the expected character
 
@@ -95,8 +95,8 @@ def replace_unicode_quotes(text) -> str:
     -------
     \x93What a lovely quote!\x94 -> “What a lovely quote!”
     """
-    ***REMOVED*** NOTE(robinson) - We should probably make this something more sane like a regex
-    ***REMOVED*** instead of a whole big series of replaces
+    # NOTE(robinson) - We should probably make this something more sane like a regex
+    # instead of a whole big series of replaces
     text = text.replace("\x91", "‘")
     text = text.replace("\x92", "’")
     text = text.replace("\x93", "“")
@@ -153,7 +153,7 @@ def clean_dashes(text: str) -> str:
     -------
     ITEM 1. -BUSINESS -> ITEM 1.  BUSINESS
     """
-    ***REMOVED*** NOTE(Yuming): '\u2013' is the unicode string of 'EN DASH', a variation of "-"
+    # NOTE(Yuming): '\u2013' is the unicode string of 'EN DASH', a variation of "-"
     return re.sub(r"[-\u2013]", " ", text).strip()
 
 

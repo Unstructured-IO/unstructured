@@ -18,12 +18,12 @@ from unstructured.ingest.logger import logger
 class SimpleLocalConfig(BaseConnectorConfig):
     output_dir: str
 
-    ***REMOVED*** Local specific options
+    # Local specific options
     input_path: str
     recursive: bool = False
     file_glob: Optional[str] = None
 
-    ***REMOVED*** base connector options
+    # base connector options
     download_only: bool = False
     metadata_include: Optional[str] = None
     metadata_exclude: Optional[str] = None

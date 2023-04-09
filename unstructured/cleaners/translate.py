@@ -39,9 +39,9 @@ def translate_text(text, source_lang: Optional[str] = None, target_lang: str = "
         return text
 
     _source_lang: str = source_lang if source_lang is not None else langdetect.detect(text)
-    ***REMOVED*** NOTE(robinson) - Chinese gets detected with codes zh-cn, zh-tw, zh-hk for various
-    ***REMOVED*** Chinese variants. We normalizes these because there is a single model for Chinese
-    ***REMOVED*** machine translation
+    # NOTE(robinson) - Chinese gets detected with codes zh-cn, zh-tw, zh-hk for various
+    # Chinese variants. We normalizes these because there is a single model for Chinese
+    # machine translation
     if _source_lang.startswith("zh"):
         _source_lang = "zh"
 
@@ -73,9 +73,9 @@ def translate_text(text, source_lang: Optional[str] = None, target_lang: str = "
 
 def _translate_text(text, model, tokenizer):
     """Translates text using the specified model and tokenizer."""
-    ***REMOVED*** NOTE(robinson) - Suppresses the HuggingFace UserWarning resulting from the "max_length"
-    ***REMOVED*** key in the MarianMT config. The warning states that "max_length" will be deprecated
-    ***REMOVED*** in transformers v5
+    # NOTE(robinson) - Suppresses the HuggingFace UserWarning resulting from the "max_length"
+    # key in the MarianMT config. The warning states that "max_length" will be deprecated
+    # in transformers v5
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         translated = model.generate(

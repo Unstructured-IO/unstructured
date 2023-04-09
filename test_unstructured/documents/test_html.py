@@ -189,7 +189,7 @@ def test_parse_tag_ignores_stubs():
 
 
 def test_adjacent_spans_are_text_tags():
-    doc = """<div><span>&***REMOVED***8226;</span><span>A bullet!</span></div>"""
+    doc = """<div><span>&#8226;</span><span>A bullet!</span></div>"""
     document_tree = etree.fromstring(doc, etree.HTMLParser())
     el = document_tree.find(".//div")
     assert html._is_text_tag(el) is True
@@ -536,10 +536,10 @@ def test_html_grabs_bulleted_text_in_paras():
     html_str = """<html>
     <body>
         <p>
-            <span>&***REMOVED***8226; Happy Groundhog's day!</span>
+            <span>&#8226; Happy Groundhog's day!</span>
         </p>
         <p>
-            <span>&***REMOVED***8226; Looks like six more weeks of winter ...</span>
+            <span>&#8226; Looks like six more weeks of winter ...</span>
         </p>
     </body>
 </html>"""
@@ -584,11 +584,11 @@ def test_html_grabs_bulleted_text_in_tables():
         <table>
             <tbody>
                 <tr>
-                    <td>&***REMOVED***8226;</td>
+                    <td>&#8226;</td>
                     <td><p>Happy Groundhog's day!</p></td>
                 </tr>
                 <tr>
-                    <td>&***REMOVED***8226;</td>
+                    <td>&#8226;</td>
                     <td><p>Looks like six more weeks of winter ...</p></td>
                 </tr>
             </tbody>

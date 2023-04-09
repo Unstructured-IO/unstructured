@@ -49,8 +49,8 @@ def stage_for_argilla(
         if isinstance(element.id, str):
             arguments["id"] = element.id
 
-        ***REMOVED*** NOTE(robinson) - TokenClassificationRecord raises and error if tokens are not
-        ***REMOVED*** provided as part of the input for the record. Default to the nltk word tokenizer
+        # NOTE(robinson) - TokenClassificationRecord raises and error if tokens are not
+        # provided as part of the input for the record. Default to the nltk word tokenizer
         if argilla_task == "token_classification" and "tokens" not in arguments:
             tokens = word_tokenize(arguments["text"])
             arguments["tokens"] = tokens

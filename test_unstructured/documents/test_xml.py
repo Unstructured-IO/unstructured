@@ -27,7 +27,7 @@ def test_read_xml(sample_document, tmpdir):
     type_tag = document_tree.find(".//type")
     assert type_tag.text.strip() == "10-K"
 
-    ***REMOVED*** Test to make sure the & character is retained
+    # Test to make sure the & character is retained
     company_tag = document_tree.find(".//company")
     assert company_tag.text.strip() == "Proctor & Gamble"
 
@@ -50,9 +50,9 @@ def test_read_with_stylesheet():
 
     xml_document = XMLDocument.from_file(filename=filename, stylesheet=stylesheet)
     doc_tree = xml_document.document_tree
-    ***REMOVED*** NOTE(robinson) - The table heading row plus one row for each of the four data items
+    # NOTE(robinson) - The table heading row plus one row for each of the four data items
     assert int(doc_tree.xpath("count(//tr)")) == 5
-    ***REMOVED*** NOTE(robinson) - Four data elements x four attributes for each
+    # NOTE(robinson) - Four data elements x four attributes for each
     assert int(doc_tree.xpath("count(//td)")) == 16
 
 

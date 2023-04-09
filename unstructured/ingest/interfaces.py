@@ -42,10 +42,10 @@ class BaseConnector(ABC):
 class BaseConnectorConfig(ABC):
     """All connector configs must respect these attr's."""
 
-    ***REMOVED*** where raw documents are stored for processing, and then removed if not preserve_downloads
+    # where raw documents are stored for processing, and then removed if not preserve_downloads
     download_dir: str
     preserve_downloads: bool = False
-    ***REMOVED*** where to write structured data outputs
+    # where to write structured data outputs
     output_dir: str
     re_download: bool = False
     download_only: bool = False
@@ -76,8 +76,8 @@ class BaseIngestDoc(ABC):
         """Removes the local copy the file (or anything else) after successful processing."""
         pass
 
-    ***REMOVED*** NOTE(crag): Future BaseIngestDoc classes could define get_file_object() methods
-    ***REMOVED*** in addition to or instead of get_file()
+    # NOTE(crag): Future BaseIngestDoc classes could define get_file_object() methods
+    # in addition to or instead of get_file()
     @abstractmethod
     def get_file(self):
         """Fetches the "remote" doc and stores it locally on the filesystem."""
@@ -102,7 +102,7 @@ class BaseIngestDoc(ABC):
 
         self.isd_elems_no_filename = []
         for elem in isd_elems:
-            ***REMOVED*** type: ignore
+            # type: ignore
             if (
                 self.config.metadata_exclude is not None
                 and self.config.metadata_include is not None
@@ -114,20 +114,20 @@ class BaseIngestDoc(ABC):
             elif self.config.metadata_exclude is not None:
                 ex_list = self.config.metadata_exclude.split(",")
                 for ex in ex_list:
-                    elem["metadata"].pop(ex, None)  ***REMOVED*** type: ignore[attr-defined]
+                    elem["metadata"].pop(ex, None)  # type: ignore[attr-defined]
             elif self.config.metadata_include is not None:
                 in_list = self.config.metadata_include.split(",")
-                for k in list(elem["metadata"].keys()):  ***REMOVED*** type: ignore[attr-defined]
+                for k in list(elem["metadata"].keys()):  # type: ignore[attr-defined]
                     if k not in in_list:
-                        elem["metadata"].pop(k, None)  ***REMOVED*** type: ignore[attr-defined]
+                        elem["metadata"].pop(k, None)  # type: ignore[attr-defined]
 
             in_list = self.config.fields_include.split(",")
             elem = {k: v for k, v in elem.items() if k in in_list}
 
             if self.config.flatten_metadata:
-                for k, v in elem["metadata"].items():  ***REMOVED*** type: ignore[attr-defined]
+                for k, v in elem["metadata"].items():  # type: ignore[attr-defined]
                     elem[k] = v
-                elem.pop("metadata")  ***REMOVED*** type: ignore[attr-defined]
+                elem.pop("metadata")  # type: ignore[attr-defined]
 
             self.isd_elems_no_filename.append(elem)
 

@@ -72,10 +72,10 @@ def partition_pdf_or_image(
 ) -> List[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
     if url is None:
-        ***REMOVED*** TODO(alan): Extract information about the filetype to be processed from the template
-        ***REMOVED*** route. Decoding the routing should probably be handled by a single function designed for
-        ***REMOVED*** that task so as routing design changes, those changes are implemented in a single
-        ***REMOVED*** function.
+        # TODO(alan): Extract information about the filetype to be processed from the template
+        # route. Decoding the routing should probably be handled by a single function designed for
+        # that task so as routing design changes, those changes are implemented in a single
+        # function.
         route_args = template.strip("/").split("/")
         is_image = route_args[-1] == "image"
         out_template: Optional[str] = template
@@ -96,7 +96,7 @@ def partition_pdf_or_image(
                 )
 
         if strategy == "hi_res" and not fallback_to_fast:
-            ***REMOVED*** NOTE(robinson): Catches a UserWarning that occurs when detectron is called
+            # NOTE(robinson): Catches a UserWarning that occurs when detectron is called
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
                 layout_elements = _partition_pdf_or_image_local(
@@ -119,13 +119,13 @@ def partition_pdf_or_image(
             raise ValueError(f"{strategy} is an invalid parsing strategy for PDFs")
 
     else:
-        ***REMOVED*** NOTE(alan): Remove these lines after different models are handled by routing
+        # NOTE(alan): Remove these lines after different models are handled by routing
         if template == "checkbox":
             template = "layout/pdf"
-        ***REMOVED*** NOTE(alan): Remove after different models are handled by routing
+        # NOTE(alan): Remove after different models are handled by routing
         data = {"model": "checkbox"} if (template == "checkbox") else None
         url = f"{url.rstrip('/')}/{template.lstrip('/')}"
-        ***REMOVED*** NOTE(alan): Remove "data=data" after different models are handled by routing
+        # NOTE(alan): Remove "data=data" after different models are handled by routing
         layout_elements = _partition_via_api(
             filename=filename,
             file=file,

@@ -1,9 +1,9 @@
-***REMOVED***!/usr/bin/env bash
+#!/usr/bin/env bash
 
-***REMOVED*** Processes the arbitrarily chosen https://gitlab.com/gitlab-com/content-sites/docsy-gitlab repository
-***REMOVED*** through Unstructured's library in 2 processes.
+# Processes the arbitrarily chosen https://gitlab.com/gitlab-com/content-sites/docsy-gitlab repository
+# through Unstructured's library in 2 processes.
 
-***REMOVED*** Structured outputs are stored in gitlab-ingest-output/
+# Structured outputs are stored in gitlab-ingest-output/
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/../../.. || exit 1
@@ -15,5 +15,5 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --num-processes 2 \
     --verbose
 
-***REMOVED*** Alternatively, you can call it using:
-***REMOVED*** unstructured-ingest --gitlab-url ...
+# Alternatively, you can call it using:
+# unstructured-ingest --gitlab-url ...

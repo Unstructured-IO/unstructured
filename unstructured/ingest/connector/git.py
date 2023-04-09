@@ -20,9 +20,9 @@ class SimpleGitConfig(BaseConnectorConfig):
     branch: Optional[str]
     file_glob: Optional[str]
 
-    ***REMOVED*** Standard Connector options
+    # Standard Connector options
     download_dir: str
-    ***REMOVED*** where to write structured data, with the directory structure matching the github repository
+    # where to write structured data, with the directory structure matching the github repository
     output_dir: str
     preserve_downloads: bool = False
     re_download: bool = False
@@ -102,7 +102,7 @@ class GitConnector(BaseConnector):
         sub_dirs = os.listdir(cur_dir)
         os.chdir(cur_dir)
         for sub_dir in sub_dirs:
-            ***REMOVED*** don't traverse symlinks, not that there every should be any
+            # don't traverse symlinks, not that there every should be any
             if os.path.isdir(sub_dir) and not os.path.islink(sub_dir):
                 self.cleanup(sub_dir)
         os.chdir("..")
@@ -113,8 +113,8 @@ class GitConnector(BaseConnector):
         pass
 
     def is_file_type_supported(self, path: str) -> bool:
-        ***REMOVED*** Workaround to ensure that auto.partition isn't fed with .yaml, .py, etc. files
-        ***REMOVED*** TODO: What to do with no filenames? e.g. LICENSE, Makefile, etc.
+        # Workaround to ensure that auto.partition isn't fed with .yaml, .py, etc. files
+        # TODO: What to do with no filenames? e.g. LICENSE, Makefile, etc.
         supported = path.endswith(
             (
                 ".md",

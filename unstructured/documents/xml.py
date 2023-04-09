@@ -57,10 +57,10 @@ class XMLDocument(Document):
         if self.document_tree is None:
             try:
                 document_tree = etree.fromstring(content, self.parser)
-            ***REMOVED*** NOTE(robinson) - The following ValueError occurs with unicode strings. In that
-            ***REMOVED*** case, we call back to encoding the string and passing in bytes.
-            ***REMOVED***     ValueError: Unicode strings with encoding declaration are not supported.
-            ***REMOVED***     Please use  bytes input or XML fragments without declaration.
+            # NOTE(robinson) - The following ValueError occurs with unicode strings. In that
+            # case, we call back to encoding the string and passing in bytes.
+            #     ValueError: Unicode strings with encoding declaration are not supported.
+            #     Please use  bytes input or XML fragments without declaration.
             except ValueError:
                 document_tree = etree.fromstring(content.encode(), self.parser)
 

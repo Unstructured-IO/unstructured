@@ -47,9 +47,9 @@ def word_tokenize(text: str) -> List[str]:
 @lru_cache(maxsize=CACHE_MAX_SIZE)
 def pos_tag(text: str) -> List[Tuple[str, str]]:
     """A wrapper around the NLTK POS tagger with LRU caching enabled."""
-    ***REMOVED*** NOTE(robinson) - Splitting into sentences before tokenizing. The helps with
-    ***REMOVED*** situations like "ITEM 1A. PROPERTIES" where "PROPERTIES" can be mistaken
-    ***REMOVED*** for a verb because it looks like it's in verb form an "ITEM 1A." looks like the subject.
+    # NOTE(robinson) - Splitting into sentences before tokenizing. The helps with
+    # situations like "ITEM 1A. PROPERTIES" where "PROPERTIES" can be mistaken
+    # for a verb because it looks like it's in verb form an "ITEM 1A." looks like the subject.
     sentences = _sent_tokenize(text)
     parts_of_speech = []
     for sentence in sentences:

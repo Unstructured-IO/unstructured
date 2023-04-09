@@ -1,4 +1,4 @@
-***REMOVED******REMOVED*** Example Docs
+## Example Docs
 
 The sample docs directory contains the following files:
 
@@ -9,7 +9,7 @@ The sample docs directory contains the following files:
 These documents can be used to test out the parsers in the library. In addition, here are
 instructions for pulling in some sample docs that are too big to store in the repo.
 
-***REMOVED******REMOVED******REMOVED******REMOVED*** XBRL 10-K
+#### XBRL 10-K
 
 You can get an example 10-K in inline XBRL format using the following `curl`. Note, you need
 to have the user agent set in the header or the SEC site will reject your request.

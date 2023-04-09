@@ -46,7 +46,7 @@ about. Bricks in the library fall into three categories:
 
 <br></br>
 
-***REMOVED******REMOVED*** :eight_pointed_black_star: Quick Start
+## :eight_pointed_black_star: Quick Start
 
 Use the following instructions to get up and running with `unstructured` and test your
 installation. NOTE: We do not currently support python 3.11, please use an older version.
@@ -61,7 +61,7 @@ installation. NOTE: We do not currently support python 3.11, please use an older
     - `libreoffice` (MS Office docs)
 - If you are parsing PDFs, run the following to install the `detectron2` model, which
   `unstructured` uses for layout detection:
-    - `pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@e2ce8dc***REMOVED***egg=detectron2"`
+    - `pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@e2ce8dc#egg=detectron2"`
 
 At this point, you should be able to run the following code:
 
@@ -81,7 +81,7 @@ elements = partition("example-docs/layout-parser-paper.pdf")
 print("\n\n".join([str(el) for el in elements]))
 ```
 
-***REMOVED******REMOVED*** :dizzy: Instructions for using the docker image
+## :dizzy: Instructions for using the docker image
 
 The following instructions are intended to help you get up and running using Docker to interact with `unstructured`.
 See [here](https://docs.docker.com/get-docker/) if you don't already have docker installed on your machine.
@@ -97,10 +97,10 @@ docker pull quay.io/unstructured-io/unstructured:latest
 Once pulled, you can create a container from this image and shell to it.
 
 ```bash
-***REMOVED*** create the container
+# create the container
 docker run -dt --name unstructured quay.io/unstructured-io/unstructured:latest
 
-***REMOVED*** this will drop you into a bash shell where the Docker image is running
+# this will drop you into a bash shell where the Docker image is running
 docker exec -it unstructured bash
 ```
 
@@ -113,13 +113,13 @@ for your use case.
 ```bash
 make docker-build
 
-***REMOVED*** this will drop you into a bash shell where the Docker image is running
+# this will drop you into a bash shell where the Docker image is running
 make docker-start-bash
 ```
 
 Once in the running container, you can try things out directly in Python interpreter's interactive mode.
 ```bash
-***REMOVED*** this will drop you into a python console so you can run the below partition functions
+# this will drop you into a python console so you can run the below partition functions
 python3
 
 >>> from unstructured.partition.pdf import partition_pdf
@@ -130,16 +130,16 @@ python3
 ```
 
 
-***REMOVED******REMOVED*** :coffee: Installation Instructions for Local Development
+## :coffee: Installation Instructions for Local Development
 
 The following instructions are intended to help you get up and running with `unstructured`
 locally if you are planning to contribute to the project.
 
 * Using `pyenv` to manage virtualenv's is recommended but not necessary
-	* Mac install instructions. See [here](https://github.com/Unstructured-IO/community***REMOVED***mac--homebrew) for more detailed instructions.
+	* Mac install instructions. See [here](https://github.com/Unstructured-IO/community#mac--homebrew) for more detailed instructions.
 		* `brew install pyenv-virtualenv`
 	  * `pyenv install 3.8.15`
-  * Linux instructions are available [here](https://github.com/Unstructured-IO/community***REMOVED***linux).
+  * Linux instructions are available [here](https://github.com/Unstructured-IO/community#linux).
 
 * Create a virtualenv to work in and activate it, e.g. for one named `unstructured`:
 
@@ -162,7 +162,7 @@ If using the optional `pre-commit`, you'll just need to install the hooks with `
 `pre-commit` package is installed as part of `make install` mentioned above. Finally, if you decided to use `pre-commit`
 you can also uninstall the hooks with `pre-commit uninstall`.
 
-***REMOVED******REMOVED*** :clap: Quick Tour
+## :clap: Quick Tour
 
 You can run this [Colab notebook](https://colab.research.google.com/drive/1U8VCjY2-x8c6y5TYMbSFtQGlQVFHCVIW) to run the examples below.
 
@@ -173,13 +173,13 @@ and **PNG** documents with one line of code!
 See our [documentation page](https://unstructured-io.github.io/unstructured) for a full description
 of the features in the library.
 
-***REMOVED******REMOVED******REMOVED*** Document Parsing
+### Document Parsing
 
 The easiest way to parse a document in unstructured is to use the `partition` brick. If you
 use `partition` brick, `unstructured` will detect the file type and route it to the appropriate
 file-specific partitioning brick.
 If you are using the `partition` brick, you may need to install additional parameters via `pip install unstructured[local-inference]`. Ensure you first install `libmagic` using the
-instructions outlined [here](https://unstructured-io.github.io/unstructured/installing.html***REMOVED***filetype-detection)
+instructions outlined [here](https://unstructured-io.github.io/unstructured/installing.html#filetype-detection)
 `partition` will always apply the default arguments. If you need
 advanced features, use a document-specific brick. The `partition` brick currently works for
 `.txt`, `.doc`, `.docx`, `.ppt`, `.pptx`, `.jpg`, `.png`, `.eml`, `.msg`, `.html`, and `.pdf` documents.
@@ -223,7 +223,7 @@ Deep Learning(DL)-based approaches are the state-of-the-art for a wide range of 
 including document image classiﬁcation [11,
 ```
 
-***REMOVED******REMOVED******REMOVED*** HTML Parsing
+### HTML Parsing
 
 You can parse an HTML document using the following workflow:
 
@@ -255,7 +255,7 @@ And `elements` will be a list of elements in the HTML document, similar to the f
  <unstructured.documents.elements.NarrativeText at 0x169cbe3a0>]
 ```
 
-***REMOVED******REMOVED******REMOVED*** PDF Parsing
+### PDF Parsing
 
 You can use the following workflow to parse PDF documents.
 
@@ -268,7 +268,7 @@ elements = partition_pdf("example-docs/layout-parser-paper.pdf")
 The output will look the same as the example from the document parsing section above.
 
 
-***REMOVED******REMOVED******REMOVED*** E-mail Parsing
+### E-mail Parsing
 
 The `partition_email` function within `unstructured` is helpful for parsing `.eml` files. Common
 e-mail clients such as Microsoft Outlook and Gmail support exporting e-mails as `.eml` files.
@@ -310,7 +310,7 @@ Roses are red
 Violets are blue
 ```
 
-***REMOVED******REMOVED******REMOVED*** Text Document Parsing
+### Text Document Parsing
 
 The `partition_text` function within `unstructured` can be used to parse simple
 text files into elements.
@@ -355,12 +355,12 @@ I love fuzzy blankets
 ```
 
 
-***REMOVED******REMOVED*** :guardsman: Security Policy
+## :guardsman: Security Policy
 
 See our [security policy](https://github.com/Unstructured-IO/unstructured/security/policy) for
 information on how to report security vulnerabilities.
 
-***REMOVED******REMOVED*** :books: Learn more
+## :books: Learn more
 
 | Section | Description |
 |-|-|

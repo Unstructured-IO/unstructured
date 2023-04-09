@@ -53,7 +53,7 @@ def dependency_exists(dependency):
     return True
 
 
-***REMOVED*** Copied from unstructured/ingest/connector/biomed.py
+# Copied from unstructured/ingest/connector/biomed.py
 def validate_date_args(date):
     date_formats = ["%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M:%S%z"]
 

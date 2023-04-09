@@ -2,6 +2,6 @@ jupyter
 ipython
 pip-tools
 pre-commit
-***REMOVED*** NOTE(robinson) - Required pins for security scans
+# NOTE(robinson) - Required pins for security scans
 jupyter-core>=4.11.2
 wheel>=0.38.1

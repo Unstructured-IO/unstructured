@@ -10,9 +10,9 @@ from unstructured.ingest.logger import logger
 
 def initialize():
     """Download models (avoids subprocesses all doing the same)"""
-    ***REMOVED*** Accessing this dictionary triggers standard model downloads for pdf processing.
-    ***REMOVED*** There will be a better way to do this, see
-    ***REMOVED*** https://github.com/Unstructured-IO/unstructured-inference/issues/55
+    # Accessing this dictionary triggers standard model downloads for pdf processing.
+    # There will be a better way to do this, see
+    # https://github.com/Unstructured-IO/unstructured-inference/issues/55
     MODEL_TYPES[None]["model_path"]
     MODEL_TYPES[None]["config_path"]
 
@@ -21,18 +21,18 @@ def process_document(doc: "IngestDoc") -> Optional[List[Dict[str, Any]]]:
     """Process any IngestDoc-like class of document with Unstructured's auto partition logic."""
     isd_elems_no_filename = None
     try:
-        ***REMOVED*** does the work necessary to load file into filesystem
-        ***REMOVED*** in the future, get_file_handle() could also be supported
+        # does the work necessary to load file into filesystem
+        # in the future, get_file_handle() could also be supported
         doc.get_file()
 
         isd_elems_no_filename = doc.process_file()
 
-        ***REMOVED*** Note, this may be a no-op if the IngestDoc doesn't do anything to persist
-        ***REMOVED*** the results. Instead, the MainProcess (caller) may work with the aggregate
-        ***REMOVED*** results across all docs in memory.
+        # Note, this may be a no-op if the IngestDoc doesn't do anything to persist
+        # the results. Instead, the MainProcess (caller) may work with the aggregate
+        # results across all docs in memory.
         doc.write_result()
     except Exception:
-        ***REMOVED*** TODO(crag) save the exception instead of print?
+        # TODO(crag) save the exception instead of print?
         logger.error(f"Failed to process {doc}", exc_info=True)
     finally:
         doc.cleanup_file()

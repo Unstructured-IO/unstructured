@@ -1,27 +1,27 @@
-***REMOVED***!/usr/bin/env bash
+#!/usr/bin/env bash
 
-***REMOVED*** Processes the Unstructured-IO/unstructured repository
-***REMOVED*** through Unstructured's library in 2 processes.
+# Processes the Unstructured-IO/unstructured repository
+# through Unstructured's library in 2 processes.
 
-***REMOVED*** Structured outputs are stored in biomed-ingest-output-path/
+# Structured outputs are stored in biomed-ingest-output-path/
 
-***REMOVED*** Biomedical documents can be extracted in one of two ways, in this script is the FTP directory approach.
+# Biomedical documents can be extracted in one of two ways, in this script is the FTP directory approach.
 
-***REMOVED*** The supported ftp directories is:
-***REMOVED*** https://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_pdf
+# The supported ftp directories is:
+# https://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_pdf
 
-***REMOVED*** By providing the path, the documents existing therein are downloaded.
-***REMOVED*** For example, to download the documents in the path: https://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_pdf/07/
-***REMOVED*** The path needed is oa_pdf/07/
+# By providing the path, the documents existing therein are downloaded.
+# For example, to download the documents in the path: https://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_pdf/07/
+# The path needed is oa_pdf/07/
 
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/../../.. || exit 1
 
-***REMOVED*** The example below will ingest the PDF from the "oa_pdf/07/07/sbaa031.073.PMC7234218.pdf" path.
+# The example below will ingest the PDF from the "oa_pdf/07/07/sbaa031.073.PMC7234218.pdf" path.
 
-***REMOVED*** You can ingest all the documents in the "oa_pdf/07/07" path by passing "oa_pdf/07/07" instead.
-***REMOVED*** WARNING: There are many documents in that path.
+# You can ingest all the documents in the "oa_pdf/07/07" path by passing "oa_pdf/07/07" instead.
+# WARNING: There are many documents in that path.
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --biomed-path "oa_pdf/07/07/sbaa031.073.PMC7234218.pdf" \
@@ -30,5 +30,5 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --verbose \
     --preserve-downloads
 
-***REMOVED*** Alternatively, you can call it using:
-***REMOVED*** unstructured-ingest --biomed-path ...
+# Alternatively, you can call it using:
+# unstructured-ingest --biomed-path ...

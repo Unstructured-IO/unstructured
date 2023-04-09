@@ -50,7 +50,7 @@ def partition_text(
     if text is not None and text.strip() == "" and not file and not filename:
         return []
 
-    ***REMOVED*** Verify that only one of the arguments was provided
+    # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text)
 
     if filename is not None:

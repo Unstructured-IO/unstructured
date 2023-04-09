@@ -42,7 +42,7 @@ def partition_pptx(
         metadata.
     """
 
-    ***REMOVED*** Verify that only one of the arguments was provided
+    # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file)
 
     if filename is not None:
@@ -58,13 +58,13 @@ def partition_pptx(
         metadata.page_number = i + 1
 
         for shape in _order_shapes(slide.shapes):
-            ***REMOVED*** NOTE(robinson) - we don't deal with tables yet, but so future humans can find
-            ***REMOVED*** it again, here are docs on how to deal with tables. The check for tables should
-            ***REMOVED*** be `if shape.has_table`
-            ***REMOVED*** ref: https://python-pptx.readthedocs.io/en/latest/user/table.html***REMOVED***adding-a-table
+            # NOTE(robinson) - we don't deal with tables yet, but so future humans can find
+            # it again, here are docs on how to deal with tables. The check for tables should
+            # be `if shape.has_table`
+            # ref: https://python-pptx.readthedocs.io/en/latest/user/table.html#adding-a-table
             if not shape.has_text_frame:
                 continue
-            ***REMOVED*** NOTE(robinson) - avoid processing shapes that are not on the actual slide
+            # NOTE(robinson) - avoid processing shapes that are not on the actual slide
             if shape.top < 0 or shape.left < 0:
                 continue
             for paragraph in shape.text_frame.paragraphs:

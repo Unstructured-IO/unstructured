@@ -1,84 +1,84 @@
-***REMOVED******REMOVED*** 0.5.12-dev4
+## 0.5.12-dev4
 
-***REMOVED******REMOVED******REMOVED*** Enhancements
+### Enhancements
 
 * Added method to utils to allow date time format validation
 
-***REMOVED******REMOVED******REMOVED*** Features
+### Features
 
 * Add Slack connector to pull messages for a specific channel
 
-***REMOVED******REMOVED******REMOVED*** Fixes
+### Fixes
 
-***REMOVED******REMOVED*** 0.5.12-dev3
+## 0.5.12-dev3
 
-***REMOVED******REMOVED******REMOVED*** Enhancements
+### Enhancements
 
 * Add OS mimetypes DB to docker image, mainly for unstructured-api compat.
 * Use the image registry as a cache when building Docker images.
 * Adds the ability for `partition_text` to group together broken paragraphs.
 
-***REMOVED******REMOVED******REMOVED*** Features
+### Features
 
-***REMOVED******REMOVED******REMOVED*** Fixes
+### Fixes
 
 * Allow encoding to be passed into `replace_mime_encodings`.
 * unstructured-ingest connector-specific dependencies are imported on demand.
 * unstructured-ingest --flatten-metadata supported for local connector.
 * unstructured-ingest fix runtime error when using --metadata-include.
 
-***REMOVED******REMOVED*** 0.5.11
+## 0.5.11
 
-***REMOVED******REMOVED******REMOVED*** Enhancements
+### Enhancements
 
-***REMOVED******REMOVED******REMOVED*** Features
+### Features
 
-***REMOVED******REMOVED******REMOVED*** Fixes
+### Fixes
 
 * Guard against null style attribute in docx document elements
 * Update HTML encoding to better support foreign language characters
 
-***REMOVED******REMOVED*** 0.5.10
+## 0.5.10
 
-***REMOVED******REMOVED******REMOVED*** Enhancements
+### Enhancements
 
 * Updated inference package
 * Add sender, recipient, date, and subject to element metadata for emails
 
-***REMOVED******REMOVED******REMOVED*** Features
+### Features
 
 * Added `--download-only` parameter to `unstructured-ingest`
 
-***REMOVED******REMOVED******REMOVED*** Fixes
+### Fixes
 
 * FileNotFound error when filename is provided but file is not on disk
 
-***REMOVED******REMOVED*** 0.5.9
+## 0.5.9
 
-***REMOVED******REMOVED******REMOVED*** Enhancements
+### Enhancements
 
-***REMOVED******REMOVED******REMOVED*** Features
+### Features
 
-***REMOVED******REMOVED******REMOVED*** Fixes
+### Fixes
 
 * Convert file to str in helper `split_by_paragraph` for `partition_text`
 
-***REMOVED******REMOVED*** 0.5.8
+## 0.5.8
 
-***REMOVED******REMOVED******REMOVED*** Enhancements
+### Enhancements
 
 * Update `elements_to_json` to return string when filename is not specified
 * `elements_from_json` may take a string instead of a filename with the `text` kwarg
 * `detect_filetype` now does a final fallback to file extension.
 * Empty tags are now skipped during the depth check for HTML processing.
 
-***REMOVED******REMOVED******REMOVED*** Features
+### Features
 
 * Add local file system to `unstructured-ingest`
 * Add `--max-docs` parameter to `unstructured-ingest`
 * Added `partition_msg` for processing MSFT Outlook .msg files.
 
-***REMOVED******REMOVED******REMOVED*** Fixes
+### Fixes
 
 * `convert_file_to_text` now passes through the `source_format` and `target_format` kwargs.
   Previously they were hard coded.
@@ -88,44 +88,44 @@
 * Fixed bug in `chunk_by_attention_window` that caused the last word in segments to be cut-off
   in some cases.
 
-***REMOVED******REMOVED******REMOVED*** BREAKING CHANGES
+### BREAKING CHANGES
 
 * `stage_for_transformers` now returns a list of elements, making it consistent with other
   staging bricks
 
-***REMOVED******REMOVED*** 0.5.7
+## 0.5.7
 
-***REMOVED******REMOVED******REMOVED*** Enhancements
+### Enhancements
 
 * Refactored codebase using `exactly_one`
 * Adds ability to pass headers when passing a url in partition_html()
 * Added optional `content_type` and `file_filename` parameters to `partition()` to bypass file detection
 
-***REMOVED******REMOVED******REMOVED*** Features
+### Features
 
 * Add `--flatten-metadata` parameter to `unstructured-ingest`
 * Add `--fields-include` parameter to `unstructured-ingest`
 
-***REMOVED******REMOVED******REMOVED*** Fixes
+### Fixes
 
-***REMOVED******REMOVED*** 0.5.6
+## 0.5.6
 
-***REMOVED******REMOVED******REMOVED*** Enhancements
+### Enhancements
 
 * `contains_english_word()`, used heavily in text processing, is 10x faster.
 
-***REMOVED******REMOVED******REMOVED*** Features
+### Features
 
 * Add `--metadata-include` and `--metadata-exclude` parameters to `unstructured-ingest`
 * Add `clean_non_ascii_chars` to remove non-ascii characters from unicode string
 
-***REMOVED******REMOVED******REMOVED*** Fixes
+### Fixes
 
 * Fix problem with PDF partition (duplicated test)
 
-***REMOVED******REMOVED*** 0.5.4
+## 0.5.4
 
-***REMOVED******REMOVED******REMOVED*** Enhancements
+### Enhancements
 
 * Added Biomedical literature connector for ingest cli.
 * Add `FsspecConnector` to easily integrate any existing `fsspec` filesystem as a connector.
@@ -142,26 +142,26 @@
 * Start deprecation life cycle for `unstructured-ingest --s3-url` option, to be deprecated in
   favor of `--remote-url`.
 
-***REMOVED******REMOVED******REMOVED*** Features
+### Features
 
 * Add `AzureBlobStorageConnector` based on its `fsspec` implementation inheriting
 from `FsspecConnector`
 * Add `partition_epub` for partitioning e-books in EPUB3 format.
 
-***REMOVED******REMOVED******REMOVED*** Fixes
+### Fixes
 
 * Fixes processing for text files with `message/rfc822` MIME type.
 * Open xml files in read-only mode when reading contents to construct an XMLDocument.
 
-***REMOVED******REMOVED*** 0.5.3
+## 0.5.3
 
-***REMOVED******REMOVED******REMOVED*** Enhancements
+### Enhancements
 
 * `auto.partition()` can now load Unstructured ISD json documents.
 * Simplify partitioning functions.
 * Improve logging for ingest CLI.
 
-***REMOVED******REMOVED******REMOVED*** Features
+### Features
 
 * Add `--wikipedia-auto-suggest` argument to the ingest CLI to disable automatic redirection
   to pages with similar names.
@@ -170,19 +170,19 @@ from `FsspecConnector`
 * Added Google Drive connector for ingest cli.
 * Added Gitlab connector for ingest cli.
 
-***REMOVED******REMOVED******REMOVED*** Fixes
+### Fixes
 
-***REMOVED******REMOVED*** 0.5.2
+## 0.5.2
 
-***REMOVED******REMOVED******REMOVED*** Enhancements
+### Enhancements
 
 * Fully move from printing to logging.
 * `unstructured-ingest` now uses a default `--download_dir` of `$HOME/.cache/unstructured/ingest`
 rather than a "tmp-ingest-" dir in the working directory.
 
-***REMOVED******REMOVED******REMOVED*** Features
+### Features
 
-***REMOVED******REMOVED******REMOVED*** Fixes
+### Fixes
 
 * `setup_ubuntu.sh` no longer fails in some contexts by interpreting
 `DEBIAN_FRONTEND=noninteractive` as a command
@@ -190,99 +190,99 @@ rather than a "tmp-ingest-" dir in the working directory.
 is used without --download-dir.
 * Fixed an issue that was causing text to be skipped in some HTML documents.
 
-***REMOVED******REMOVED*** 0.5.1
+## 0.5.1
 
-***REMOVED******REMOVED******REMOVED*** Enhancements
+### Enhancements
 
-***REMOVED******REMOVED******REMOVED*** Features
+### Features
 
-***REMOVED******REMOVED******REMOVED*** Fixes
+### Fixes
 
 * Fixes an error causing JavaScript to appear in the output of `partition_html` sometimes.
 * Fix several issues with the `requires_dependencies` decorator, including the error message
   and how it was used, which had caused an error for `unstructured-ingest --github-url ...`.
 
-***REMOVED******REMOVED*** 0.5.0
+## 0.5.0
 
-***REMOVED******REMOVED******REMOVED*** Enhancements
+### Enhancements
 
 * Add `requires_dependencies` Python decorator to check dependencies are installed before
   instantiating a class or running a function
 
-***REMOVED******REMOVED******REMOVED*** Features
+### Features
 
 * Added Wikipedia connector for ingest cli.
 
-***REMOVED******REMOVED******REMOVED*** Fixes
+### Fixes
 
 * Fix `process_document` file cleaning on failure
 * Fixes an error introduced in the metadata tracking commit that caused `NarrativeText`
   and `FigureCaption` elements to be represented as `Text` in HTML documents.
 
-***REMOVED******REMOVED*** 0.4.16
+## 0.4.16
 
-***REMOVED******REMOVED******REMOVED*** Enhancements
+### Enhancements
 
 * Fallback to using file extensions for filetype detection if `libmagic` is not present
 
-***REMOVED******REMOVED******REMOVED*** Features
+### Features
 
 * Added setup script for Ubuntu
 * Added GitHub connector for ingest cli.
 * Added `partition_md` partitioner.
 * Added Reddit connector for ingest cli.
 
-***REMOVED******REMOVED******REMOVED*** Fixes
+### Fixes
 
 * Initializes connector properly in ingest.main::MainProcess
 * Restricts version of unstructured-inference to avoid multithreading issue
 
-***REMOVED******REMOVED*** 0.4.15
+## 0.4.15
 
-***REMOVED******REMOVED******REMOVED*** Enhancements
+### Enhancements
 
 * Added `elements_to_json` and `elements_from_json` for easier serialization/deserialization
 * `convert_to_dict`, `dict_to_elements` and `convert_to_csv` are now aliases for functions
   that use the ISD terminology.
 
-***REMOVED******REMOVED******REMOVED*** Fixes
+### Fixes
 
 * Update to ensure all elements are preserved during serialization/deserialization
 
-***REMOVED******REMOVED*** 0.4.14
+## 0.4.14
 
 * Automatically install `nltk` models in the `tokenize` module.
 
-***REMOVED******REMOVED*** 0.4.13
+## 0.4.13
 
 * Fixes unstructured-ingest cli.
 
-***REMOVED******REMOVED*** 0.4.12
+## 0.4.12
 
 * Adds console_entrypoint for unstructured-ingest, other structure/doc updates related to ingest.
 * Add `parser` parameter to `partition_html`.
 
-***REMOVED******REMOVED*** 0.4.11
+## 0.4.11
 
 * Adds `partition_doc` for partitioning Word documents in `.doc` format. Requires `libreoffice`.
 * Adds `partition_ppt` for partitioning PowerPoint documents in `.ppt` format. Requires `libreoffice`.
 
-***REMOVED******REMOVED*** 0.4.10
+## 0.4.10
 
 * Fixes `ElementMetadata` so that it's JSON serializable when the filename is a `Path` object.
 
-***REMOVED******REMOVED*** 0.4.9
+## 0.4.9
 
 * Added ingest modules and s3 connector, sample ingest script
 * Default to `url=None` for `partition_pdf` and `partition_image`
 * Add ability to skip English specific check by setting the `UNSTRUCTURED_LANGUAGE` env var to `""`.
 * Document `Element` objects now track metadata
 
-***REMOVED******REMOVED*** 0.4.8
+## 0.4.8
 
 * Modified XML and HTML parsers not to load comments.
 
-***REMOVED******REMOVED*** 0.4.7
+## 0.4.7
 
 * Added the ability to pull an HTML document from a url in `partition_html`.
 * Added the the ability to get file summary info from lists of filenames and lists
@@ -291,7 +291,7 @@ is used without --download-dir.
 * Added `to_dict` method to document elements.
 * Include more unicode quotes in `replace_unicode_quotes`.
 
-***REMOVED******REMOVED*** 0.4.6
+## 0.4.6
 
 * Loosen the default cap threshold to `0.5`.
 * Add a `UNSTRUCTURED_NARRATIVE_TEXT_CAP_THRESHOLD` environment variable for controlling
@@ -308,7 +308,7 @@ is used without --download-dir.
   environment variable for controlling the max number of words in a title.
 * Updated `partition_pptx` to order the elements on the page
 
-***REMOVED******REMOVED*** 0.4.4
+## 0.4.4
 
 * Updated `partition_pdf` and `partition_image` to return `unstructured` `Element` objects
 * Fixed the healthcheck url path when partitioning images and PDFs via API
@@ -319,24 +319,24 @@ is used without --download-dir.
 * LayoutParser models now download from HugginfaceHub instead of DropBox
 * Fixed file type detection for XML and HTML files on Amazone Linux
 
-***REMOVED******REMOVED*** 0.4.3
+## 0.4.3
 
 * Adds `requests` as a base dependency
 * Fix in `exceeds_cap_ratio` so the function doesn't break with empty text
 * Fix bug in `_parse_received_data`.
 * Update `detect_filetype` to properly handle `.doc`, `.xls`, and `.ppt`.
 
-***REMOVED******REMOVED*** 0.4.2
+## 0.4.2
 
 * Added `partition_image` to process documents in an image format.
 * Fixed utf-8 encoding error in `partition_email` with attachments for `text/html`
 
-***REMOVED******REMOVED*** 0.4.1
+## 0.4.1
 
 * Added support for text files in the `partition` function
 * Pinned `opencv-python` for easier installation on Linux
 
-***REMOVED******REMOVED*** 0.4.0
+## 0.4.0
 
 * Added generic `partition` brick that detects the file type and routes a file to the appropriate
   partitioning brick.
@@ -354,7 +354,7 @@ is used without --download-dir.
 * Add new `Image` element and function to find embedded images `find_embedded_images`
 * Added `get_directory_file_info` for summarizing information about source documents
 
-***REMOVED******REMOVED*** 0.3.5
+## 0.3.5
 
 * Add support for local inference
 * Add new pattern to recognize plain text dash bullets
@@ -368,11 +368,11 @@ of an email.
 * Staging brick to convert a list of `Element`s to a `pandas` dataframe.
 * Add plain text functionality to `partition_email`
 
-***REMOVED******REMOVED*** 0.3.4
+## 0.3.4
 
 * Python-3.7 compat
 
-***REMOVED******REMOVED*** 0.3.3
+## 0.3.3
 
 * Removes BasicConfig from logger configuration
 * Adds the `partition_email` partitioning brick
@@ -380,16 +380,16 @@ of an email.
 * Small fix to HTML parsing related to processing list items with sub-tags
 * Add `EmailElement` data structure to store email documents
 
-***REMOVED******REMOVED*** 0.3.2
+## 0.3.2
 
 * Added `translate_text` brick for translating text between languages
 * Add an `apply` method to make it easier to apply cleaners to elements
 
-***REMOVED******REMOVED*** 0.3.1
+## 0.3.1
 
 * Added \_\_init.py\_\_ to `partition`
 
-***REMOVED******REMOVED*** 0.3.0
+## 0.3.0
 
 * Implement staging brick for Argilla. Converts lists of `Text` elements to `argilla` dataset classes.
 * Removing the local PDF parsing code and any dependencies and tests.
@@ -399,29 +399,29 @@ of an email.
 * Fix bad responses in partition_pdf to raise ValueError
 * Adds `partition_html` for partitioning HTML documents.
 
-***REMOVED******REMOVED*** 0.2.6
+## 0.2.6
 
 * Small change to how \_read is placed within the inheritance structure since it doesn't really apply to pdf
 * Add partitioning brick for calling the document image analysis API
 
-***REMOVED******REMOVED*** 0.2.5
+## 0.2.5
 
 * Update python requirement to >=3.7
 
-***REMOVED******REMOVED*** 0.2.4
+## 0.2.4
 
 * Add alternative way of importing `Final` to support google colab
 
-***REMOVED******REMOVED*** 0.2.3
+## 0.2.3
 
 * Add cleaning bricks for removing prefixes and postfixes
 * Add cleaning bricks for extracting text before and after a pattern
 
-***REMOVED******REMOVED*** 0.2.2
+## 0.2.2
 
 * Add staging brick for Datasaur
 
-***REMOVED******REMOVED*** 0.2.1
+## 0.2.1
 
 * Added brick to convert an ISD dictionary to a list of elements
 * Update `PDFDocument` to use the `from_file` method
@@ -435,6 +435,6 @@ of an email.
 * Added ability to upload LabelStudio annotations
 * Added text_field and id_field to stage_for_label_studio signature
 
-***REMOVED******REMOVED*** 0.2.0
+## 0.2.0
 
 * Initial release of unstructured
