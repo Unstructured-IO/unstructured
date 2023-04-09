@@ -26,7 +26,6 @@ from unstructured.ingest.connector.local import LocalConnector, SimpleLocalConfi
 from unstructured.ingest.connector.reddit import RedditConnector, SimpleRedditConfig
 from unstructured.ingest.connector.s3 import S3Connector, SimpleS3Config
 from unstructured.ingest.connector.slack import SimpleSlackConfig, SlackConnector
-
 from unstructured.ingest.connector.wikipedia import (
     SimpleWikipediaConfig,
     WikipediaConnector,
