@@ -75,6 +75,10 @@ install-ingest-gitlab:
 install-ingest-reddit:
 	pip install -r requirements/ingest-reddit.txt
 
+.PHONY: install-ingest-slack
+install-ingest-slack:
+	pip install -r requirements/ingest-slack.txt
+
 .PHONY: install-ingest-wikipedia
 install-ingest-wikipedia:
 	pip install -r requirements/ingest-wikipedia.txt
@@ -112,6 +116,7 @@ pip-compile:
 	pip-compile --upgrade --extra=reddit    --output-file=requirements/ingest-reddit.txt    requirements/base.txt setup.py
 	pip-compile --upgrade --extra=github    --output-file=requirements/ingest-github.txt    requirements/base.txt setup.py
 	pip-compile --upgrade --extra=gitlab    --output-file=requirements/ingest-gitlab.txt    requirements/base.txt setup.py
+	pip-compile --upgrade --extra=slack    --output-file=requirements/ingest-slack.txt    requirements/base.txt setup.py
 	pip-compile --upgrade --extra=wikipedia --output-file=requirements/ingest-wikipedia.txt requirements/base.txt setup.py
 	pip-compile --upgrade --extra=google-drive --output-file=requirements/ingest-google-drive.txt  requirements/base.txt setup.py
 
