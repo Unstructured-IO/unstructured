@@ -357,3 +357,9 @@ def test_auto_partition_msg_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
     elements = partition(filename=filename)
     assert elements == EXPECTED_MSG_OUTPUT
+
+
+def test_auto_partition_rtf_from_filename():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-doc.rtf")
+    elements = partition(filename=filename)
+    assert elements[0] == Title("My First Heading")
