@@ -10,21 +10,6 @@ from urllib.parse import urlparse
 
 import click
 
-from unstructured.ingest.connector.azure import (
-    AzureBlobStorageConnector,
-    SimpleAzureBlobStorageConfig,
-)
-from unstructured.ingest.connector.biomed import BiomedConnector, SimpleBiomedConfig
-from unstructured.ingest.connector.fsspec import FsspecConnector, SimpleFsspecConfig
-from unstructured.ingest.connector.github import GitHubConnector, SimpleGitHubConfig
-from unstructured.ingest.connector.gitlab import GitLabConnector, SimpleGitLabConfig
-from unstructured.ingest.connector.google_drive import (
-    GoogleDriveConnector,
-    SimpleGoogleDriveConfig,
-)
-from unstructured.ingest.connector.local import LocalConnector, SimpleLocalConfig
-from unstructured.ingest.connector.reddit import RedditConnector, SimpleRedditConfig
-from unstructured.ingest.connector.s3 import S3Connector, SimpleS3Config
 from unstructured.ingest.connector.wikipedia import (
     SimpleWikipediaConfig,
     WikipediaConnector,
@@ -328,6 +313,14 @@ class MainProcess:
     help="Re-download files even if they are already present in --download-dir.",
 )
 @click.option(
+    "--download-only",
+    is_flag=True,
+    default=False,
+    help="Download any files that are not already present in either --download-dir or "
+    "the default download ~/.cache/... location in case --download-dir is not specified and "
+    "skip processing them through unstructured.",
+)
+@click.option(
     "--download-dir",
     help="Where files are downloaded to, defaults to `$HOME/.cache/unstructured/ingest/<SHA256>`.",
 )
@@ -402,6 +395,7 @@ def main(
     local_input_path,
     local_recursive,
     local_file_glob,
+    download_only,
 ):
     if flatten_metadata and "metadata" not in fields_include:
         logger.warning(
@@ -423,10 +417,16 @@ def main(
         logger.warning(
             "Ignoring --partition-host because --partition-by-api was not set",
         )
-    if not preserve_downloads and download_dir:
+    if (not preserve_downloads and not download_only) and download_dir:
         logger.warning(
             "Not preserving downloaded files but --download_dir is specified",
         )
+    if local_input_path is not None and download_dir:
+        logger.warning(
+            "Files should already be in local file system: there is nothing to download, "
+            "but --download-dir is specified.",
+        )
+        sys.exit(1)
     if local_input_path is None and not download_dir:
         cache_path = Path.home() / ".cache" / "unstructured" / "ingest"
         if not cache_path.exists():
@@ -483,6 +483,8 @@ def main(
     if remote_url:
         protocol = urlparse(remote_url).scheme
         if protocol in ("s3", "s3a"):
+            from unstructured.ingest.connector.s3 import S3Connector, SimpleS3Config
+
             doc_connector = S3Connector(  # type: ignore
                 config=SimpleS3Config(
                     path=s3_url,
@@ -497,9 +499,15 @@ def main(
                     partition_host=partition_host,
                     fields_include=fields_include,
                     flatten_metadata=flatten_metadata,
+                    download_only=download_only,
                 ),
             )
         elif protocol in ("abfs", "az"):
+            from unstructured.ingest.connector.azure import (
+                AzureBlobStorageConnector,
+                SimpleAzureBlobStorageConfig,
+            )
+
             if azure_account_name:
                 access_kwargs = {
                     "account_name": azure_account_name,
@@ -523,6 +531,7 @@ def main(
                     partition_host=partition_host,
                     fields_include=fields_include,
                     flatten_metadata=flatten_metadata,
+                    download_only=download_only,
                 ),
             )
         else:
@@ -532,6 +541,11 @@ def main(
                 " and `az`.",
                 UserWarning,
             )
+            from unstructured.ingest.connector.fsspec import (
+                FsspecConnector,
+                SimpleFsspecConfig,
+            )
+
             doc_connector = FsspecConnector(  # type: ignore
                 config=SimpleFsspecConfig(
                     path=remote_url,
@@ -545,9 +559,15 @@ def main(
                     partition_host=partition_host,
                     fields_include=fields_include,
                     flatten_metadata=flatten_metadata,
+                    download_only=download_only,
                 ),
             )
     elif github_url:
+        from unstructured.ingest.connector.github import (
+            GitHubConnector,
+            SimpleGitHubConfig,
+        )
+
         doc_connector = GitHubConnector(  # type: ignore
             config=SimpleGitHubConfig(
                 url=github_url,
@@ -565,9 +585,15 @@ def main(
                 partition_host=partition_host,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
+                download_only=download_only,
             ),
         )
     elif gitlab_url:
+        from unstructured.ingest.connector.gitlab import (
+            GitLabConnector,
+            SimpleGitLabConfig,
+        )
+
         doc_connector = GitLabConnector(  # type: ignore
             config=SimpleGitLabConfig(
                 url=gitlab_url,
@@ -585,9 +611,15 @@ def main(
                 partition_host=partition_host,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
+                download_only=download_only,
             ),
         )
     elif subreddit_name:
+        from unstructured.ingest.connector.reddit import (
+            RedditConnector,
+            SimpleRedditConfig,
+        )
+
         doc_connector = RedditConnector(  # type: ignore
             config=SimpleRedditConfig(
                 subreddit_name=subreddit_name,
@@ -607,6 +639,7 @@ def main(
                 partition_host=partition_host,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
+                download_only=download_only,
             ),
         )
     elif wikipedia_page_title:
@@ -625,9 +658,15 @@ def main(
                 partition_host=partition_host,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
+                download_only=download_only,
             ),
         )
     elif drive_id:
+        from unstructured.ingest.connector.google_drive import (
+            GoogleDriveConnector,
+            SimpleGoogleDriveConfig,
+        )
+
         doc_connector = GoogleDriveConnector(  # type: ignore
             config=SimpleGoogleDriveConfig(
                 drive_id=drive_id,
@@ -645,9 +684,15 @@ def main(
                 partition_host=partition_host,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
+                download_only=download_only,
             ),
         )
     elif biomed_path or biomed_api_id or biomed_api_from or biomed_api_until:
+        from unstructured.ingest.connector.biomed import (
+            BiomedConnector,
+            SimpleBiomedConfig,
+        )
+
         doc_connector = BiomedConnector(  # type: ignore
             config=SimpleBiomedConfig(
                 path=biomed_path,
@@ -665,9 +710,15 @@ def main(
                 partition_host=partition_host,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
+                download_only=download_only,
             ),
         )
     elif local_input_path:
+        from unstructured.ingest.connector.local import (
+            LocalConnector,
+            SimpleLocalConfig,
+        )
+
         doc_connector = LocalConnector(  # type: ignore
             config=SimpleLocalConfig(
                 input_path=local_input_path,
@@ -680,6 +731,7 @@ def main(
                 partition_by_api=partition_by_api,
                 partition_host=partition_host,
                 fields_include=fields_include,
+                flatten_metadata=flatten_metadata,
             ),
         )
     # Check for other connector-specific options here and define the doc_connector object

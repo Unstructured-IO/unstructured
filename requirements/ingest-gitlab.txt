@@ -83,6 +83,10 @@ monotonic==1.6
     # via
     #   -r requirements/base.txt
     #   argilla
+msg-parser==1.2.0
+    # via
+    #   -r requirements/base.txt
+    #   unstructured (setup.py)
 nltk==3.8.1
     # via
     #   -r requirements/base.txt
@@ -92,6 +96,10 @@ numpy==1.23.5
     #   -r requirements/base.txt
     #   argilla
     #   pandas
+olefile==0.46
+    # via
+    #   -r requirements/base.txt
+    #   msg-parser
 openpyxl==3.1.2
     # via
     #   -r requirements/base.txt
@@ -140,7 +148,7 @@ python-pptx==0.6.21
     # via
     #   -r requirements/base.txt
     #   unstructured (setup.py)
-pytz==2022.7.1
+pytz==2023.3
     # via
     #   -r requirements/base.txt
     #   pandas

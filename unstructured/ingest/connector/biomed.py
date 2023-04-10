@@ -47,6 +47,7 @@ class SimpleBiomedConfig(BaseConnectorConfig):
     # where to write structured data, with the directory structure matching FTP path
     output_dir: str
     re_download: bool = False
+    download_only: bool = False
     preserve_downloads: bool = False
     metadata_include: Optional[str] = None
     metadata_exclude: Optional[str] = None
@@ -144,7 +145,11 @@ class BiomedIngestDoc(BaseIngestDoc):
         return Path(f"{self.file_meta.output_filepath}.json").resolve()
 
     def cleanup_file(self):
-        if not self.config.preserve_downloads and self.filename.is_file():
+        if (
+            not self.config.preserve_downloads
+            and self.filename.is_file()
+            and not self.config.download_only
+        ):
             logger.debug(f"Cleaning up {self}")
             Path.unlink(self.filename)
 
@@ -172,6 +177,8 @@ class BiomedIngestDoc(BaseIngestDoc):
 
     def write_result(self):
         """Write the structured json result for this doc. result must be json serializable."""
+        if self.config.download_only:
+            return
         output_filename = self._output_filename()
         output_filename.parent.mkdir(parents=True, exist_ok=True)
         with open(output_filename, "w") as output_f:
@@ -184,7 +191,7 @@ class BiomedConnector(BaseConnector):
 
     def __init__(self, config):
         self.config = config
-        self.cleanup_files = not self.config.preserve_downloads
+        self.cleanup_files = not self.config.preserve_downloads and not self.config.download_only
 
     def _list_objects_api(self):
         def urls_to_metadata(urls):

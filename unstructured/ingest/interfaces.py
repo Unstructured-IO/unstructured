@@ -50,6 +50,7 @@ class BaseConnectorConfig(ABC):
     # where to write structured data outputs
     output_dir: str
     re_download: bool = False
+    download_only: bool = False
     metadata_include: Optional[str] = None
     metadata_exclude: Optional[str] = None
     partition_by_api: bool = False
@@ -124,6 +125,8 @@ class BaseIngestDoc(ABC):
             return response.json()
 
     def process_file(self):
+        if self.config.download_only:
+            return
         logger.info(f"Processing {self.filename}")
 
         isd_elems = self.partition_file()
@@ -145,7 +148,7 @@ class BaseIngestDoc(ABC):
                     elem["metadata"].pop(ex, None)  # type: ignore[attr-defined]
             elif self.config.metadata_include is not None:
                 in_list = self.config.metadata_include.split(",")
-                for k in elem["metadata"]:
+                for k in list(elem["metadata"].keys()):  # type: ignore[attr-defined]
                     if k not in in_list:
                         elem["metadata"].pop(k, None)  # type: ignore[attr-defined]
 

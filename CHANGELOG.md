@@ -1,14 +1,47 @@
-## 0.5.10-dev1
+## 0.5.12-dev4
 
 ### Enhancements
 
-* Add sender, recipient, date, and subject to element metadata for emails
+* Add OS mimetypes DB to docker image, mainly for unstructured-api compat.
+* Use the image registry as a cache when building Docker images.
+* Adds the ability for `partition_text` to group together broken paragraphs.
 
 ### Features
 
 * Add --partition-by-api parameter to unstructured-ingest
 
 ### Fixes
+
+* Allow encoding to be passed into `replace_mime_encodings`.
+* unstructured-ingest connector-specific dependencies are imported on demand.
+* unstructured-ingest --flatten-metadata supported for local connector.
+* unstructured-ingest fix runtime error when using --metadata-include.
+
+## 0.5.11
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* Guard against null style attribute in docx document elements
+* Update HTML encoding to better support foreign language characters
+
+## 0.5.10
+
+### Enhancements
+
+* Updated inference package
+* Add sender, recipient, date, and subject to element metadata for emails
+
+### Features
+
+* Added `--download-only` parameter to `unstructured-ingest`
+
+### Fixes
+
+* FileNotFound error when filename is provided but file is not on disk
 
 ## 0.5.9
 

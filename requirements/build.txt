@@ -20,7 +20,7 @@ docutils==0.18.1
     # via
     #   sphinx
     #   sphinx-rtd-theme
-furo==2023.3.23
+furo==2023.3.27
     # via -r requirements/build.in
 idna==3.4
     # via requests
@@ -38,7 +38,7 @@ pygments==2.14.0
     # via
     #   furo
     #   sphinx
-pytz==2022.7.1
+pytz==2023.3
     # via babel
 requests==2.28.2
     # via sphinx

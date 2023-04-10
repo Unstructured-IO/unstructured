@@ -54,7 +54,10 @@ class MockPageLayout(layout.PageLayout):
         return [
             layout.LayoutElement(
                 type="Title",
-                coordinates=[(0, 0), (2, 2)],
+                x1=0,
+                y1=0,
+                x2=2,
+                y2=2,
                 text="Charlie Brown and the Great Pumpkin",
             ),
         ]
