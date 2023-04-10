@@ -10,7 +10,7 @@ def partition_rtf(
     include_page_breaks: bool = False,
 ) -> List[Element]:
     """Partitions an RTF document. The document is first converted to HTML and then
-    partitoned using partiton_html.
+    partitioned using partiton_html.
 
     Parameters
     ----------
