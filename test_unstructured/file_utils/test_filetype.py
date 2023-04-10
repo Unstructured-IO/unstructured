@@ -52,6 +52,7 @@ def test_detect_filetype_from_filename(file, expected):
         ("unsupported/fake-excel.xlsx", FileType.XLSX),
         ("fake-power-point.pptx", FileType.PPTX),
         ("winter-sports.epub", FileType.EPUB),
+        ("fake-doc.rtf", FileType.RTF),
     ],
 )
 def test_detect_filetype_from_filename_with_extension(monkeypatch, file, expected):
@@ -105,6 +106,13 @@ def test_detect_xml_application_xml(monkeypatch):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.xml")
     filetype = detect_filetype(filename=filename)
     assert filetype == FileType.XML
+
+
+def test_detect_xml_application_rtf(monkeypatch):
+    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "application/rtf")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.rtf")
+    filetype = detect_filetype(filename=filename)
+    assert filetype == FileType.RTF
 
 
 def test_detect_xml_text_xml(monkeypatch):

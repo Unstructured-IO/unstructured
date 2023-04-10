@@ -4,6 +4,7 @@ import warnings
 from unittest.mock import patch
 
 import docx
+import pypandoc
 import pytest
 
 from unstructured.documents.elements import (
@@ -29,6 +30,7 @@ EXPECTED_EMAIL_OUTPUT = [
 ]
 
 is_in_docker = os.path.exists("/.dockerenv")
+rtf_not_supported = "rtf" not in pypandoc.get_pandoc_formats()[0]
 
 
 def test_auto_partition_email_from_filename():
@@ -357,3 +359,11 @@ def test_auto_partition_msg_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
     elements = partition(filename=filename)
     assert elements == EXPECTED_MSG_OUTPUT
+
+
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
+@pytest.mark.skipif(rtf_not_supported, reason="RTF not supported in this version of pypandoc.")
+def test_auto_partition_rtf_from_filename():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-doc.rtf")
+    elements = partition(filename=filename)
+    assert elements[0] == Title("My First Heading")
