@@ -368,7 +368,7 @@ If you call the <code class="docutils literal notranslate"><span class="pre">par
 file type and route it to the appropriate partitioning brick. All partitioning bricks
 called within <code class="docutils literal notranslate"><span class="pre">partition</span></code> are called using the default kwargs. Use the document-type
 specific bricks if you need to apply non-default settings.
-<code class="docutils literal notranslate"><span class="pre">partition</span></code> currently supports <code class="docutils literal notranslate"><span class="pre">.docx</span></code>, <code class="docutils literal notranslate"><span class="pre">.doc</span></code>, <code class="docutils literal notranslate"><span class="pre">.pptx</span></code>, <code class="docutils literal notranslate"><span class="pre">.ppt</span></code>, <code class="docutils literal notranslate"><span class="pre">.eml</span></code>, <code class="docutils literal notranslate"><span class="pre">.msg</span></code>, <code class="docutils literal notranslate"><span class="pre">.epub</span></code>, <code class="docutils literal notranslate"><span class="pre">.html</span></code>, <code class="docutils literal notranslate"><span class="pre">.pdf</span></code>,
+<code class="docutils literal notranslate"><span class="pre">partition</span></code> currently supports <code class="docutils literal notranslate"><span class="pre">.docx</span></code>, <code class="docutils literal notranslate"><span class="pre">.doc</span></code>, <code class="docutils literal notranslate"><span class="pre">.pptx</span></code>, <code class="docutils literal notranslate"><span class="pre">.ppt</span></code>, <code class="docutils literal notranslate"><span class="pre">.eml</span></code>, <code class="docutils literal notranslate"><span class="pre">.msg</span></code>, <code class="docutils literal notranslate"><span class="pre">.rtf</span></code>, <code class="docutils literal notranslate"><span class="pre">.epub</span></code>, <code class="docutils literal notranslate"><span class="pre">.html</span></code>, <code class="docutils literal notranslate"><span class="pre">.pdf</span></code>,
 <code class="docutils literal notranslate"><span class="pre">.png</span></code>, <code class="docutils literal notranslate"><span class="pre">.jpg</span></code>, and <code class="docutils literal notranslate"><span class="pre">.txt</span></code> files.
 If you set the <code class="docutils literal notranslate"><span class="pre">include_page_breaks</span></code> kwarg to <code class="docutils literal notranslate"><span class="pre">True</span></code>, the output will include page breaks. This is only supported for <code class="docutils literal notranslate"><span class="pre">.pptx</span></code>, <code class="docutils literal notranslate"><span class="pre">.html</span></code>, <code class="docutils literal notranslate"><span class="pre">.pdf</span></code>,
 <code class="docutils literal notranslate"><span class="pre">.png</span></code>, and <code class="docutils literal notranslate"><span class="pre">.jpg</span></code>.
@@ -590,6 +590,19 @@ to use <code class="docutils literal notranslate"><span class="pre">partition_ep
 </pre></div>
 </div>
 </section>
+<section id="partition-rtf">
+<h3><code class="docutils literal notranslate"><span class="pre">partition_rtf</span></code><a class="headerlink" href="#partition-rtf" title="Permalink to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">partition_rtf</span></code> function processes rich text files. The function
+first converts the document to HTML using <code class="docutils literal notranslate"><span class="pre">pandocs</span></code> and then calls <code class="docutils literal notranslate"><span class="pre">partition_html</span></code>.
+You’ll need <a class="reference external" href="https://pandoc.org/installing.html">pandocs</a> installed on your system
+to use <code class="docutils literal notranslate"><span class="pre">partition_rtf</span></code>.</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.rtf</span> <span class="kn">import</span> <span class="n">partition_rtf</span>
+
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_rtf</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example-docs/fake-doc.rtf&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
 <section id="partition-md">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_md</span></code><a class="headerlink" href="#partition-md" title="Permalink to this heading"></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">partition_md</span></code> function provides the ability to parse markdown files. The
@@ -780,7 +793,10 @@ default. You can change that behavior with the <code class="docutils literal not
 <span class="n">group_broken_paragraphs</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.cleaners.core</span> <span class="kn">import</span> <span class="n">group_broken_paragraphs</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">unstructured.cleaners.core</span> <span class="kn">import</span> <span class="n">group_broken_paragraphs</span>
+
+<span class="n">para_split_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(\s*\n\s*)</span><span class="si">{3}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;The big brown fox</span>
 
@@ -791,7 +807,7 @@ default. You can change that behavior with the <code class="docutils literal not
 
 <span class="s2">fox met a bear.&quot;&quot;&quot;</span>
 
-<span class="n">group_broken_paragraphs</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">line_split</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">paragraph_split</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">group_broken_paragraphs</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">paragraph_split</span><span class="o">=</span><span class="n">para_split_re</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -1156,9 +1172,7 @@ by splitting the elements into chunks that fit into the model’s attention wind
 
 <span class="s2">By the weekend, a second cold front will drop down from Canada and bring a reinforcing shot of chilly air across the eastern half of the country.&quot;&quot;&quot;</span>
 
-<span class="n">chunks</span> <span class="o">=</span> <span class="n">stage_for_transformers</span><span class="p">([</span><span class="n">NarrativeText</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)],</span> <span class="n">tokenizer</span><span class="p">)</span>
-
-<span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">nlp</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span> <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">chunks</span><span class="p">]</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="n">stage_for_transformers</span><span class="p">([</span><span class="n">NarrativeText</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)],</span> <span class="n">tokenizer</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The following optional keyword arguments can be specified in
@@ -1757,6 +1771,7 @@ if specified.</p>
 <li><a class="reference internal" href="#partition-email"><code class="docutils literal notranslate"><span class="pre">partition_email</span></code></a></li>
 <li><a class="reference internal" href="#partition-msg"><code class="docutils literal notranslate"><span class="pre">partition_msg</span></code></a></li>
 <li><a class="reference internal" href="#partition-epub"><code class="docutils literal notranslate"><span class="pre">partition_epub</span></code></a></li>
+<li><a class="reference internal" href="#partition-rtf"><code class="docutils literal notranslate"><span class="pre">partition_rtf</span></code></a></li>
 <li><a class="reference internal" href="#partition-md"><code class="docutils literal notranslate"><span class="pre">partition_md</span></code></a></li>
 <li><a class="reference internal" href="#partition-text"><code class="docutils literal notranslate"><span class="pre">partition_text</span></code></a></li>
 </ul>
