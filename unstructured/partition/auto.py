@@ -13,6 +13,7 @@ from unstructured.partition.msg import partition_msg
 from unstructured.partition.pdf import partition_pdf
 from unstructured.partition.ppt import partition_ppt
 from unstructured.partition.pptx import partition_pptx
+from unstructured.partition.rtf import partition_rtf
 from unstructured.partition.text import partition_text
 
 
@@ -102,6 +103,8 @@ def partition(
             encoding=encoding,
             paragraph_grouper=paragraph_grouper,
         )
+    elif filetype == FileType.RTF:
+        return partition_rtf(filename=filename, file=file, include_page_breaks=include_page_breaks)
     elif filetype == FileType.PPT:
         return partition_ppt(filename=filename, file=file, include_page_breaks=include_page_breaks)
     elif filetype == FileType.PPTX:

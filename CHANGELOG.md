@@ -1,4 +1,4 @@
-## 0.5.12-dev3
+## 0.5.12-dev4
 
 ### Enhancements
 
@@ -7,6 +7,8 @@
 * Adds the ability for `partition_text` to group together broken paragraphs.
 
 ### Features
+
+* Added `partition_rtf` for processing rich text files.
 
 ### Fixes
 
