@@ -3,6 +3,11 @@
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 cd "$SCRIPT_DIR"/.. || exit 1
 
+if [ -z "$SLACK_CHANNEL" ] || [ -z "$SLACK_TOKEN" ]; then
+   echo "Skipping Slack ingest test because SLACK_CHANNEL and SLACK_TOKEN env vars are not set."
+   exit 0
+fi
+
 PYTHONPATH=. ./unstructured/ingest/main.py \
         --slack-channel "${SLACK_CHANNEL}" \
         --slack-token "${SLACK_TOKEN}" \
