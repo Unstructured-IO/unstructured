@@ -41,7 +41,7 @@ class SimpleSlackConfig(BaseConnectorConfig):
 
         if self.oldest:
             oldest_valid = validate_date_args(self.oldest)
-        
+
         if self.latest:
             latest_valid = validate_date_args(self.latest)
 
@@ -109,8 +109,8 @@ class SlackIngestDoc(BaseIngestDoc):
         self.client = WebClient(token=self.token)
 
         try:
-            oldest = 0
-            latest = 0
+            oldest = "0"
+            latest = "0"
             if self.oldest:
                 oldest = self.convert_datetime(self.oldest)
 
@@ -118,9 +118,10 @@ class SlackIngestDoc(BaseIngestDoc):
                 latest = self.convert_datetime(self.latest)
 
             result = self.client.conversations_history(
-                channel=self.channel, 
-                oldest=oldest, 
-                latest=latest)
+                channel=self.channel,
+                oldest=oldest,
+                latest=latest,
+            )
             messages.extend(result["messages"])
             while result["has_more"]:
                 result = self.client.conversations_history(
@@ -154,7 +155,6 @@ class SlackIngestDoc(BaseIngestDoc):
                 return datetime.strptime(date_time, format).timestamp()
             except ValueError:
                 pass
-        
 
     @property
     def filename(self):
