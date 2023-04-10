@@ -109,9 +109,13 @@ class BaseIngestDoc(ABC):
             logger.debug(f"Using remote partition ({hostname})")
 
             with open(self.filename, "rb") as f:
+                # Note(austin) - When we don't send the content type,
+                # FastAPI ends up getting None which breaks the default
+                # type handling. For now, use octet-stream to trigger a
+                # mimetype lookup on the host.
                 response = requests.post(
                     f"{hostname}/{path}",
-                    files={"files": (str(self.filename), f)},
+                    files={"files": (str(self.filename), f, "application/octet-stream")},
                 )
 
             if response.status_code != 200:
