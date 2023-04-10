@@ -1091,9 +1091,7 @@ Examples:
 
     By the weekend, a second cold front will drop down from Canada and bring a reinforcing shot of chilly air across the eastern half of the country."""
 
-    chunks = stage_for_transformers([NarrativeText(text=text)], tokenizer)
-
-    results = [nlp(chunk) for chunk in chunks]
+    elements = stage_for_transformers([NarrativeText(text=text)], tokenizer)
 
 
 The following optional keyword arguments can be specified in
