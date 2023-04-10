@@ -639,8 +639,8 @@ def main(
         )
     elif slack_channel:
         from unstructured.ingest.connector.slack import (
-            SlackConnector,
             SimpleSlackConfig,
+            SlackConnector,
         )
 
         doc_connector = SlackConnector(  # type: ignore

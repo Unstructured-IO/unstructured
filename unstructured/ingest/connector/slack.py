@@ -18,6 +18,7 @@ from unstructured.utils import (
     validate_date_args,
 )
 
+
 @dataclass
 class SimpleSlackConfig(BaseConnectorConfig):
     """Connector config to process all messages by channel id."""
