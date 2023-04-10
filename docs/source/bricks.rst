@@ -610,7 +610,10 @@ Examples:
 
 .. code:: python
 
+  import re
   from unstructured.cleaners.core import group_broken_paragraphs
+
+  para_split_re = re.compile(r"(\s*\n\s*){3}")
 
   text = """The big brown fox
 
@@ -621,7 +624,7 @@ Examples:
 
   fox met a bear."""
 
-  group_broken_paragraphs(text, line_split="\n\n", paragraph_split="\n\n\n")
+  group_broken_paragraphs(text, paragraph_split=para_split_re)
 
 
 ``replace_unicode_quotes``
