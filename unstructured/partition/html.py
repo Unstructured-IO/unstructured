@@ -5,6 +5,7 @@ import requests
 from unstructured.documents.elements import Element
 from unstructured.documents.html import HTMLDocument
 from unstructured.documents.xml import VALID_PARSERS
+from unstructured.file_utils.file_conversion import convert_file_to_html_text
 from unstructured.partition.common import (
     add_element_metadata,
     document_to_element_list,
@@ -91,3 +92,34 @@ def partition_html(
         )
     else:
         return layout_elements
+
+
+def convert_and_partition_html(
+    source_format: str,
+    filename: Optional[str] = None,
+    file: Optional[IO] = None,
+    include_page_breaks: bool = False,
+) -> List[Element]:
+    """Converts a document to HTML and then partitions it using partition_html. Works with
+    any file format support by pandoc.
+
+    Parameters
+    ----------
+    source_format
+        The format of the source document, i.e. rst
+    filename
+        A string defining the target filename path.
+    file
+        A file-like object using "rb" mode --> open(filename, "rb").
+
+    include_page_breaks
+        If True, the output will include page breaks if the filetype supports it
+    """
+    html_text = convert_file_to_html_text(source_format=source_format, filename=filename, file=file)
+    # NOTE(robinson) - pypandoc returns a text string with unicode encoding
+    # ref: https://github.com/JessicaTegner/pypandoc#usage
+    return partition_html(
+        text=html_text,
+        include_page_breaks=include_page_breaks,
+        encoding="unicode",
+    )

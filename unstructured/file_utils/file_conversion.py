@@ -22,11 +22,12 @@ def convert_file_to_text(filename: str, source_format: str, target_format: str) 
     return text
 
 
-def convert_epub_to_html(
+def convert_file_to_html_text(
+    source_format: str,
     filename: Optional[str] = None,
     file: Optional[IO] = None,
 ) -> str:
-    """Converts an EPUB document to HTML raw text. Enables an EPUB doucment to be
+    """Converts a document to HTML raw text. Enables a the doucment to be
     processed using the partition_html function."""
     exactly_one(filename=filename, file=file)
 
@@ -36,13 +37,13 @@ def convert_epub_to_html(
         tmp.close()
         html_text = convert_file_to_text(
             filename=tmp.name,
-            source_format="epub",
+            source_format=source_format,
             target_format="html",
         )
     elif filename is not None:
         html_text = convert_file_to_text(
             filename=filename,
-            source_format="epub",
+            source_format=source_format,
             target_format="html",
         )
 
