@@ -19,7 +19,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
 
 OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
 
-# to update test fixtures, "export OVERWRITE_FIXTURES=true" and rerun this script
+# to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
 
     cp s3-small-batch-output/small-pdf-set/* test_unstructured_ingest/expected-structured-output/s3-small-batch/small-pdf-set/

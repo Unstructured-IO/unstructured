@@ -21,10 +21,11 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
 
 OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
 
-# to update test fixtures, "export OVERWRITE_FIXTURES=true" and rerun this script
+# to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
+
     find biomed-ingest-output-api/
-    rsync -av biomed-ingest-output-api/ test_unstructured_ingest/expected-structured-output/biomed-ingest-output-api
+    rsync -rlptDv --no-o --no-g biomed-ingest-output-api/ test_unstructured_ingest/expected-structured-output/biomed-ingest-output-api
 
 elif ! diff -ru biomed-ingest-output-api test_unstructured_ingest/expected-structured-output/biomed-ingest-output-api ; then
     echo
