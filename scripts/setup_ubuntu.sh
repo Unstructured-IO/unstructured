@@ -37,7 +37,7 @@ $sudo $pac upgrade -y
 
 #### Utils
 # Prerequisites
-$sudo env DEBIAN_FRONTEND="noninteractive" $pac install -y gcc wget tar curl make xz-utils build-essential tzdata
+$sudo env DEBIAN_FRONTEND="noninteractive" $pac install -y gcc wget tar curl make xz-utils build-essential tzdata rsync
 
 #### Git
 # Install git
@@ -86,6 +86,7 @@ $sudo $pac install -y poppler-utils
 $sudo $pac install -y libreoffice pandoc
 
 # Install tesseract 5 as well as Russian language
+$sudo $pac install -y software-properties-common
 $sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
 $sudo $pac install -y tesseract-ocr libtesseract-dev tesseract-ocr-rus
 
