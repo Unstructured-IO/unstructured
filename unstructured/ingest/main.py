@@ -139,7 +139,8 @@ class MainProcess:
 @click.option(
     "--partition-endpoint",
     default="https://api.unstructured.io/general/v0/general",
-    help="If partitioning via api, use the following host. " "Default: https://api.unstructured.io/general/v0/general",
+    help="If partitioning via api, use the following host. "
+    "Default: https://api.unstructured.io/general/v0/general",
 )
 @click.option(
     "--local-input-path",
@@ -413,7 +414,10 @@ def main(
             "mutually exclusive with each other.",
         )
         sys.exit(1)
-    if not partition_by_api and partition_endpoint != "https://api.unstructured.io/general/v0/general":
+    if (
+        not partition_by_api
+        and partition_endpoint != "https://api.unstructured.io/general/v0/general"
+    ):
         logger.warning(
             "Ignoring --partition-endpoint because --partition-by-api was not set",
         )
