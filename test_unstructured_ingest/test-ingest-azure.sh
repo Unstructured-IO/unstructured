@@ -8,10 +8,30 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --remote-url abfs://container1/ \
     --azure-account-name azureunstructured1 \
     --structured-output-dir azure-ingest-output \
+    --reprocess \
     --num-processes 2
 
-if [ "$(find 'azure-ingest-output' -type f -printf '.' | wc -c)" -ne 5 ]; then
+OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
+
+# to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
+if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
+
+    cp azure-ingest-output/* test_unstructured_ingest/expected-structured-output/azure-blob-storage/
+
+elif ! diff -ru test_unstructured_ingest/expected-structured-output/azure-blob-storage azure-ingest-output ; then
+
     echo
-    echo "5 files should have been created."
+    echo "There are differences from the previously checked-in structured outputs."
+    echo
+    echo "If these differences are acceptable, overwrite by the fixtures by setting the env var:"
+    echo
+    echo "  export OVERWRITE_FIXTURES=true"
+    echo
+    echo "and then rerun this script."
+    echo
+    echo "NOTE: You'll likely just want to run scripts/ingest-test-fixtures-update.sh on x86_64 hardware"
+    echo "to update fixtures for CI."
+    echo
     exit 1
+
 fi

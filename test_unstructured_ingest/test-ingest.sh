@@ -5,6 +5,9 @@ set -eux -o pipefail
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/.. || exit 1
 
+# NOTE(crag): sets number of tesseract threads to 1 which may help with more reproducible outputs
+export OMP_THREAD_LIMIT=1
+
 ./test_unstructured_ingest/test-ingest-s3.sh
 ./test_unstructured_ingest/test-ingest-azure.sh
 ./test_unstructured_ingest/test-ingest-github.sh
