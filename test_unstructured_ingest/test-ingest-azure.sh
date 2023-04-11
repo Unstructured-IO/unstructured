@@ -33,8 +33,5 @@ elif ! diff -ru test_unstructured_ingest/expected-structured-output/azure-blob-s
     echo "to update fixtures for CI."
     echo
     exit 1
-    
+
 fi
-
-
-

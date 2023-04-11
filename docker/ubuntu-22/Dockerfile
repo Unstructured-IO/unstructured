@@ -22,4 +22,3 @@ RUN source ~/.bashrc && pyenv virtualenv 3.8.15 unstructured && \
     make install-ingest-github && \
     make install-ingest-gitlab && \
     make install-ingest-wikipedia
-
