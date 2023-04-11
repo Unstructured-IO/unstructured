@@ -117,10 +117,6 @@ jobs:
         make install-ingest-gitlab
         make install-ingest-wikipedia
         ./test_unstructured_ingest/test-ingest.sh
-    - uses: actions/checkout@v3
-    - name: Setup tmate session
-      if: ${{ failure() }}
-      uses: mxschmitt/action-tmate@v3
 
   changelog:
     runs-on: ubuntu-latest

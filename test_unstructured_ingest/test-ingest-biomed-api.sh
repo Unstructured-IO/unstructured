@@ -3,11 +3,11 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/.. || exit 1
 
-#if [[ "$(find test_unstructured_ingest/expected-structured-output/biomed-ingest-output-api/ -type f -size +10k | wc -l)" != 2 ]]; then
-#    echo "The test fixtures in test_unstructured_ingest/expected-structured-output/biomed-ingest-output-api/ look suspicious. At least one of the files is too small."
-#    echo "Did you overwrite test fixtures with bad outputs?"
-#    exit 1
-#fi
+if [[ "$(find test_unstructured_ingest/expected-structured-output/biomed-ingest-output-api/ -type f -size +10k | wc -l)" != 2 ]]; then
+    echo "The test fixtures in test_unstructured_ingest/expected-structured-output/biomed-ingest-output-api/ look suspicious. At least one of the files is too small."
+    echo "Did you overwrite test fixtures with bad outputs?"
+    exit 1
+fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
    --metadata-exclude filename \
@@ -24,7 +24,6 @@ OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
 # to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
 
-    find biomed-ingest-output-api/
     rsync -rlptDv --no-o --no-g biomed-ingest-output-api/ test_unstructured_ingest/expected-structured-output/biomed-ingest-output-api
 
 elif ! diff -ru biomed-ingest-output-api test_unstructured_ingest/expected-structured-output/biomed-ingest-output-api ; then
@@ -36,6 +35,10 @@ elif ! diff -ru biomed-ingest-output-api test_unstructured_ingest/expected-struc
     echo "  export OVERWRITE_FIXTURES=true"
     echo
     echo "and then rerun this script."
+    echo
+    echo "NOTE: You'll likely just want to run scripts/ingest-test-fixtures-update.sh on x86_64 hardware"
+    echo "to update fixtures for CI."
+    echo
     exit 1
 
 fi

@@ -33,6 +33,10 @@ elif ! diff -ru test_unstructured_ingest/expected-structured-output/s3-small-bat
     echo "  export OVERWRITE_FIXTURES=true"
     echo
     echo "and then rerun this script."
+    echo
+    echo "NOTE: You'll likely just want to run scripts/ingest-test-fixtures-update.sh on x86_64 hardware"
+    echo "to update fixtures for CI,"
+    echo
     exit 1
 
 fi
