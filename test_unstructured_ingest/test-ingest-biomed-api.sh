@@ -15,18 +15,31 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
    --biomed-api-until "2019-01-02+00:03:10" \
    --structured-output-dir biomed-ingest-output-api  \
    --num-processes 2 \
+   --reprocess \
    --verbose \
-   --download-dir biomed-download-api \
    --preserve-downloads
 
-if ! diff -ru biomed-ingest-output-api test_unstructured_ingest/expected-structured-output/biomed-ingest-output-api ; then
-   echo
-   echo "There are differences from the previously checked-in structured outputs."
-   echo 
-   echo "If these differences are acceptable, copy the outputs from"
-   echo "biomed-ingest-output-api/ to test_unstructured_ingest/expected-structured-output/biomed-ingest-output-api/ after running"
-   echo 
-   echo "PYTHONPATH=. ./unstructured/ingest/main.py --biomed-api-from '2019-01-02' --biomed-api-until '2019-01-02+00:03:10' --structured-output-dir biomed-ingest-output-api --num-processes 2 --verbose --download-dir biomed-download-api --preserve-downloads"
-   echo
-   exit 1
+OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
+
+# to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
+if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
+
+    OWNER_GROUP=$(stat -c "%u:%g" test_unstructured_ingest/expected-structured-output/biomed-ingest-output-api)
+    rsync -rv --chown="$OWNER_GROUP" biomed-ingest-output-api/ test_unstructured_ingest/expected-structured-output/biomed-ingest-output-api
+
+elif ! diff -ru biomed-ingest-output-api test_unstructured_ingest/expected-structured-output/biomed-ingest-output-api ; then
+    echo
+    echo "There are differences from the previously checked-in structured outputs."
+    echo
+    echo "If these differences are acceptable, overwrite by the fixtures by setting the env var:"
+    echo
+    echo "  export OVERWRITE_FIXTURES=true"
+    echo
+    echo "and then rerun this script."
+    echo
+    echo "NOTE: You'll likely just want to run scripts/ingest-test-fixtures-update.sh on x86_64 hardware"
+    echo "to update fixtures for CI."
+    echo
+    exit 1
+
 fi

@@ -17,16 +17,30 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --github-url dcneiner/Downloadify \
     --git-file-glob '*.html,*.txt' \
     --structured-output-dir github-downloadify-output \
+    --reprocess \
+    --preserve-downloads \
     --verbose
 
-if ! diff -ru test_unstructured_ingest/expected-structured-output/github-downloadify github-downloadify-output ; then
-   echo
-   echo "There are differences from the previously checked-in structured outputs."
-   echo
-   echo "If these differences are acceptable, copy the outputs from"
-   echo "github-downloadify-output/ to test_unstructured_ingest/expected-structured-output/github-downloadify/ after running"
-   echo
-   echo "  PYTHONPATH=. ./unstructured/ingest/main.py --github-url dcneiner/Downloadify --github-file-glob '*.html,*.txt' --structured-output-dir github-downloadify-output --verbose"
-   echo
-   exit 1
+OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
+
+# to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
+if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
+
+    cp github-downloadify-output/* test_unstructured_ingest/expected-structured-output/github-downloadify/
+
+elif ! diff -ru test_unstructured_ingest/expected-structured-output/github-downloadify github-downloadify-output ; then
+    echo
+    echo "There are differences from the previously checked-in structured outputs."
+    echo
+    echo "If these differences are acceptable, overwrite by the fixtures by setting the env var:"
+    echo
+    echo "  export OVERWRITE_FIXTURES=true"
+    echo
+    echo "and then rerun this script."
+    echo
+    echo "NOTE: You'll likely just want to run scripts/ingest-test-fixtures-update.sh on x86_64 hardware"
+    echo "to update fixtures for CI."
+    echo
+    exit 1
+
 fi
