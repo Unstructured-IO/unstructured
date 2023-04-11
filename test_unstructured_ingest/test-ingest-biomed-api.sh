@@ -24,7 +24,8 @@ OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
 # to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
 
-    rsync -rlptDv --no-o --no-g biomed-ingest-output-api/ test_unstructured_ingest/expected-structured-output/biomed-ingest-output-api
+    OWNER_GROUP=$(stat -c "%u:%g" test_unstructured_ingest/expected-structured-output/biomed-ingest-output-api)
+    rsync -rv --chown="$OWNER_GROUP" biomed-ingest-output-api/ test_unstructured_ingest/expected-structured-output/biomed-ingest-output-api
 
 elif ! diff -ru biomed-ingest-output-api test_unstructured_ingest/expected-structured-output/biomed-ingest-output-api ; then
     echo
