@@ -54,7 +54,7 @@ class BaseConnectorConfig(ABC):
     metadata_include: Optional[str] = None
     metadata_exclude: Optional[str] = None
     partition_by_api: bool = False
-    partition_host: str = "https://api.unstructured.io"
+    partition_endpoint: str = "https://api.unstructured.io/general/v0/general"
     fields_include: str = "element_id,text,type,metadata"
     flatten_metadata: bool = False
 
@@ -104,14 +104,13 @@ class BaseIngestDoc(ABC):
             return convert_to_dict(elements)
 
         else:
-            hostname = self.config.partition_host
-            path = "general/v0/general"
+            endpoint = self.config.partition_endpoint
 
-            logger.debug(f"Using remote partition ({hostname})")
+            logger.debug(f"Using remote partition ({endpoint})")
 
             with open(self.filename, "rb") as f:
                 response = requests.post(
-                    f"{hostname}/{path}",
+                    f"{endpoint}",
                     files={"files": (str(self.filename), f)},
                 )
 

@@ -137,9 +137,9 @@ class MainProcess:
     " Otherwise, use the function from partition.auto",
 )
 @click.option(
-    "--partition-host",
-    default="https://api.unstructured.io",
-    help="If partitioning via api, use the following host. " "Default: https://api.unstructured.io",
+    "--partition-endpoint",
+    default="https://api.unstructured.io/general/v0/general",
+    help="If partitioning via api, use the following host. " "Default: https://api.unstructured.io/general/v0/general",
 )
 @click.option(
     "--local-input-path",
@@ -391,7 +391,7 @@ def main(
     flatten_metadata,
     max_docs,
     partition_by_api,
-    partition_host,
+    partition_endpoint,
     local_input_path,
     local_recursive,
     local_file_glob,
@@ -413,9 +413,9 @@ def main(
             "mutually exclusive with each other.",
         )
         sys.exit(1)
-    if not partition_by_api and partition_host != "https://api.unstructured.io":
+    if not partition_by_api and partition_endpoint != "https://api.unstructured.io/general/v0/general":
         logger.warning(
-            "Ignoring --partition-host because --partition-by-api was not set",
+            "Ignoring --partition-endpoint because --partition-by-api was not set",
         )
     if (not preserve_downloads and not download_only) and download_dir:
         logger.warning(
@@ -496,7 +496,7 @@ def main(
                     metadata_include=metadata_include,
                     metadata_exclude=metadata_exclude,
                     partition_by_api=partition_by_api,
-                    partition_host=partition_host,
+                    partition_endpoint=partition_endpoint,
                     fields_include=fields_include,
                     flatten_metadata=flatten_metadata,
                     download_only=download_only,
@@ -528,7 +528,7 @@ def main(
                     metadata_include=metadata_include,
                     metadata_exclude=metadata_exclude,
                     partition_by_api=partition_by_api,
-                    partition_host=partition_host,
+                    partition_endpoint=partition_endpoint,
                     fields_include=fields_include,
                     flatten_metadata=flatten_metadata,
                     download_only=download_only,
@@ -556,7 +556,7 @@ def main(
                     metadata_include=metadata_include,
                     metadata_exclude=metadata_exclude,
                     partition_by_api=partition_by_api,
-                    partition_host=partition_host,
+                    partition_endpoint=partition_endpoint,
                     fields_include=fields_include,
                     flatten_metadata=flatten_metadata,
                     download_only=download_only,
@@ -582,7 +582,7 @@ def main(
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
                 partition_by_api=partition_by_api,
-                partition_host=partition_host,
+                partition_endpoint=partition_endpoint,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
                 download_only=download_only,
@@ -608,7 +608,7 @@ def main(
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
                 partition_by_api=partition_by_api,
-                partition_host=partition_host,
+                partition_endpoint=partition_endpoint,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
                 download_only=download_only,
@@ -636,7 +636,7 @@ def main(
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
                 partition_by_api=partition_by_api,
-                partition_host=partition_host,
+                partition_endpoint=partition_endpoint,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
                 download_only=download_only,
@@ -655,7 +655,7 @@ def main(
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
                 partition_by_api=partition_by_api,
-                partition_host=partition_host,
+                partition_endpoint=partition_endpoint,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
                 download_only=download_only,
@@ -681,7 +681,7 @@ def main(
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
                 partition_by_api=partition_by_api,
-                partition_host=partition_host,
+                partition_endpoint=partition_endpoint,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
                 download_only=download_only,
@@ -707,7 +707,7 @@ def main(
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
                 partition_by_api=partition_by_api,
-                partition_host=partition_host,
+                partition_endpoint=partition_endpoint,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
                 download_only=download_only,
@@ -729,7 +729,7 @@ def main(
                 metadata_include=metadata_include,
                 metadata_exclude=metadata_exclude,
                 partition_by_api=partition_by_api,
-                partition_host=partition_host,
+                partition_endpoint=partition_endpoint,
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
             ),
