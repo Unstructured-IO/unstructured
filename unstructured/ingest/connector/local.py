@@ -27,6 +27,8 @@ class SimpleLocalConfig(BaseConnectorConfig):
     download_only: bool = False
     metadata_include: Optional[str] = None
     metadata_exclude: Optional[str] = None
+    partition_by_api: bool = False
+    partition_endpoint: str = "https://api.unstructured.io/general/v0/general"
     fields_include: str = "element_id,text,type,metadata"
     flatten_metadata: bool = False
 

@@ -16,3 +16,4 @@ export OMP_THREAD_LIMIT=1
 ./test_unstructured_ingest/test-ingest-biomed-api.sh
 ./test_unstructured_ingest/test-ingest-biomed-path.sh
 ./test_unstructured_ingest/test-ingest-local.sh
+./test_unstructured_ingest/test-ingest-against-api.sh
