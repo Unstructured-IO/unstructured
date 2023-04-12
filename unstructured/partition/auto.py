@@ -1,6 +1,10 @@
-from typing import IO, Callable, Optional
+import io
+from typing import IO, Callable, Optional, Tuple
+
+import requests
 
 from unstructured.file_utils.filetype import FileType, detect_filetype
+from unstructured.partition.common import exactly_one
 from unstructured.partition.doc import partition_doc
 from unstructured.partition.docx import partition_docx
 from unstructured.partition.email import partition_email
@@ -22,6 +26,7 @@ def partition(
     content_type: Optional[str] = None,
     file: Optional[IO] = None,
     file_filename: Optional[str] = None,
+    url: Optional[str] = None,
     include_page_breaks: bool = False,
     strategy: str = "hi_res",
     encoding: str = "utf-8",
@@ -42,6 +47,9 @@ def partition(
         A file-like object using "rb" mode --> open(filename, "rb").
     file_filename
         When file is not None, the filename (string) to store in element metadata. E.g. "foo.txt"
+    url
+        The url for a remote document. Pass in content_type if you want partition to treat
+        the document as a specific content_type.
     include_page_breaks
         If True, the output will include page breaks if the filetype supports it
     strategy
@@ -51,12 +59,17 @@ def partition(
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
     """
-    filetype = detect_filetype(
-        filename=filename,
-        file=file,
-        file_filename=file_filename,
-        content_type=content_type,
-    )
+    exactly_one(file=file, filename=filename, url=url)
+
+    if url is not None:
+        file, filetype = file_and_type_from_url(url=url, content_type=content_type)
+    else:
+        filetype = detect_filetype(
+            filename=filename,
+            file=file,
+            file_filename=file_filename,
+            content_type=content_type,
+        )
 
     if file is not None:
         file.seek(0)
@@ -114,3 +127,15 @@ def partition(
     else:
         msg = "Invalid file" if not filename else f"Invalid file {filename}"
         raise ValueError(f"{msg}. The {filetype} file type is not supported in partition.")
+
+
+def file_and_type_from_url(
+    url: str,
+    content_type: Optional[str] = None,
+) -> Tuple[io.BytesIO, Optional[FileType]]:
+    response = requests.get(url)
+    file = io.BytesIO(response.content)
+
+    content_type = content_type or response.headers.get("Content-Type")
+    filetype = detect_filetype(file=file, content_type=content_type)
+    return file, filetype
