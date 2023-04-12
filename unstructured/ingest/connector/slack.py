@@ -22,7 +22,7 @@ from unstructured.utils import (
 
 @dataclass
 class SimpleSlackConfig(BaseConnectorConfig):
-    """Connector config to process all messages by channel id."""
+    """Connector config to process all messages by channel id's."""
 
     channels: List[str]
     token: str
