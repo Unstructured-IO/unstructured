@@ -75,26 +75,34 @@ def partition(
         file.seek(0)
 
     if filetype == FileType.DOC:
-        return partition_doc(filename=filename, file=file)
-    if filetype == FileType.DOCX:
-        return partition_docx(filename=filename, file=file)
+        elements = partition_doc(filename=filename, file=file)
+    elif filetype == FileType.DOCX:
+        elements = partition_docx(filename=filename, file=file)
     elif filetype == FileType.EML:
-        return partition_email(filename=filename, file=file, encoding=encoding)
+        elements = partition_email(filename=filename, file=file, encoding=encoding)
     elif filetype == FileType.MSG:
-        return partition_msg(filename=filename, file=file)
+        elements = partition_msg(filename=filename, file=file)
     elif filetype == FileType.HTML:
-        return partition_html(
+        elements = partition_html(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,
             encoding=encoding,
         )
     elif filetype == FileType.EPUB:
-        return partition_epub(filename=filename, file=file, include_page_breaks=include_page_breaks)
+        elements = partition_epub(
+            filename=filename,
+            file=file,
+            include_page_breaks=include_page_breaks,
+        )
     elif filetype == FileType.MD:
-        return partition_md(filename=filename, file=file, include_page_breaks=include_page_breaks)
+        elements = partition_md(
+            filename=filename,
+            file=file,
+            include_page_breaks=include_page_breaks,
+        )
     elif filetype == FileType.PDF:
-        return partition_pdf(
+        elements = partition_pdf(
             filename=filename,  # type: ignore
             file=file,  # type: ignore
             url=None,
@@ -103,30 +111,47 @@ def partition(
             strategy=strategy,
         )
     elif (filetype == FileType.PNG) or (filetype == FileType.JPG):
-        return partition_image(
+        elements = partition_image(
             filename=filename,  # type: ignore
             file=file,  # type: ignore
             url=None,
             include_page_breaks=include_page_breaks,
         )
     elif filetype == FileType.TXT:
-        return partition_text(
+        elements = partition_text(
             filename=filename,
             file=file,
             encoding=encoding,
             paragraph_grouper=paragraph_grouper,
         )
     elif filetype == FileType.RTF:
-        return partition_rtf(filename=filename, file=file, include_page_breaks=include_page_breaks)
+        elements = partition_rtf(
+            filename=filename,
+            file=file,
+            include_page_breaks=include_page_breaks,
+        )
     elif filetype == FileType.PPT:
-        return partition_ppt(filename=filename, file=file, include_page_breaks=include_page_breaks)
+        elements = partition_ppt(
+            filename=filename,
+            file=file,
+            include_page_breaks=include_page_breaks,
+        )
     elif filetype == FileType.PPTX:
-        return partition_pptx(filename=filename, file=file, include_page_breaks=include_page_breaks)
+        elements = partition_pptx(
+            filename=filename,
+            file=file,
+            include_page_breaks=include_page_breaks,
+        )
     elif filetype == FileType.JSON:
-        return partition_json(filename=filename, file=file)
+        elements = partition_json(filename=filename, file=file)
     else:
         msg = "Invalid file" if not filename else f"Invalid file {filename}"
         raise ValueError(f"{msg}. The {filetype} file type is not supported in partition.")
+
+    for element in elements:
+        element.metadata.url = url
+
+    return elements
 
 
 def file_and_type_from_url(
