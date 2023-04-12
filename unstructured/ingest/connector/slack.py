@@ -113,7 +113,7 @@ class SlackIngestDoc(BaseIngestDoc):
             and os.path.getsize(self._tmp_download_file())
         ):
             if self.config.verbose:
-                logger.info(f"File exists: {self._tmp_download_file()}, skipping download")
+                logger.debug(f"File exists: {self._tmp_download_file()}, skipping download")
             return
 
         if self.config.verbose:
