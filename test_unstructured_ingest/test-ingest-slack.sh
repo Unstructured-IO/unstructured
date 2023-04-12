@@ -9,7 +9,7 @@ if [ -z "$SLACK_CHANNEL" ] || [ -z "$SLACK_TOKEN" ]; then
 fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-        --slack-channel "${SLACK_CHANNEL}" \
+        --slack-channels "${SLACK_CHANNEL}" \
         --slack-token "${SLACK_TOKEN}" \
         --download-dir slack-ingest-download \
         --structured-output-dir slack-ingest-output \

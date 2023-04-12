@@ -3,7 +3,7 @@ import os
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
@@ -24,7 +24,7 @@ from unstructured.utils import (
 class SimpleSlackConfig(BaseConnectorConfig):
     """Connector config to process all messages by channel id."""
 
-    channel: str
+    channels: List[str]
     token: str
     oldest: str
     latest: str
@@ -61,6 +61,12 @@ class SimpleSlackConfig(BaseConnectorConfig):
             raise ValueError(
                 "Start and/or End dates are not valid. ",
             )
+    
+    @staticmethod    
+    def parse_channels(channel_str: str) -> List[str]:
+        """Parses a comma separated list of channels into a list.
+        """
+        return [x.strip() for x in channel_str.split(",")]
 
 
 @dataclass
@@ -211,9 +217,10 @@ class SlackConnector(BaseConnector):
         return [
             SlackIngestDoc(
                 self.config,
-                self.config.channel,
+                channel,
                 self.config.token,
                 self.config.oldest,
                 self.config.latest,
-            ),
+            )
+            for channel in self.config.channels
         ]

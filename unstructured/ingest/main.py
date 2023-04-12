@@ -322,9 +322,9 @@ class MainProcess:
     "skip processing them through unstructured.",
 )
 @click.option(
-    "--slack-channel",
+    "--slack-channels",
     default=None,
-    help="Slack channel to pull messages from, can be a public or private channel",
+    help="Comma separated list of Slack channels to pull messages from, can be a public or private channel",
 )
 @click.option(
     "--slack-token",
@@ -400,7 +400,7 @@ def main(
     reddit_search_query,
     reddit_num_posts,
     re_download,
-    slack_channel,
+    slack_channels,
     slack_token,
     start_date,
     end_date,
@@ -671,7 +671,7 @@ def main(
                 download_only=download_only,
             ),
         )
-    elif slack_channel:
+    elif slack_channels:
         from unstructured.ingest.connector.slack import (
             SimpleSlackConfig,
             SlackConnector,
@@ -679,7 +679,7 @@ def main(
 
         doc_connector = SlackConnector(  # type: ignore
             config=SimpleSlackConfig(
-                channel=slack_channel,
+                channels=SimpleSlackConfig.parse_channels(slack_channels),
                 token=slack_token,
                 oldest=start_date,
                 latest=end_date,
