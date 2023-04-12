@@ -1,3 +1,13 @@
+## 0.5.13-dev0
+
+### Enhancements
+
+* Allow headers to be passed into `partition` when `url` is used.
+
+### Features
+
+### Fixes
+
 ## 0.5.12
 
 ### Enhancements

@@ -1,5 +1,5 @@
 import io
-from typing import IO, Callable, Optional, Tuple
+from typing import IO, Callable, Dict, Optional, Tuple
 
 import requests
 
@@ -31,6 +31,7 @@ def partition(
     strategy: str = "hi_res",
     encoding: str = "utf-8",
     paragraph_grouper: Optional[Callable[[str], str]] = None,
+    headers: Dict[str, str] = {},
 ):
     """Partitions a document into its constituent elements. Will use libmagic to determine
     the file's type and route it to the appropriate partitioning function. Applies the default
@@ -62,7 +63,11 @@ def partition(
     exactly_one(file=file, filename=filename, url=url)
 
     if url is not None:
-        file, filetype = file_and_type_from_url(url=url, content_type=content_type)
+        file, filetype = file_and_type_from_url(
+            url=url,
+            content_type=content_type,
+            headers=headers,
+        )
     else:
         filetype = detect_filetype(
             filename=filename,
@@ -157,8 +162,9 @@ def partition(
 def file_and_type_from_url(
     url: str,
     content_type: Optional[str] = None,
+    headers: Dict[str, str] = {},
 ) -> Tuple[io.BytesIO, Optional[FileType]]:
-    response = requests.get(url)
+    response = requests.get(url, headers=headers)
     file = io.BytesIO(response.content)
 
     content_type = content_type or response.headers.get("Content-Type")
