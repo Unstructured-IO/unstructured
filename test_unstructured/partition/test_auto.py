@@ -367,3 +367,10 @@ def test_auto_partition_rtf_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-doc.rtf")
     elements = partition(filename=filename)
     assert elements[0] == Title("My First Heading")
+
+
+def test_auto_partition_from_url():
+    url = "https://raw.githubusercontent.com/Unstructured-IO/unstructured/main/LICENSE.md"
+    elements = partition(url=url, content_type="text/plain")
+    assert elements[0] == Title("Apache License")
+    assert elements[0].metadata.url == url
