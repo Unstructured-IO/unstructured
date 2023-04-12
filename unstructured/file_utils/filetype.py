@@ -229,11 +229,19 @@ def detect_filetype(
     elif mime_type in EPUB_MIME_TYPES:
         return FileType.EPUB
 
+    # NOTE(robinson) - examples are application/rtf or text/rtf.
+    # magic often returns text/plain for RTF files
+    elif mime_type.endswith("rtf"):
+        return FileType.RTF
+
     elif mime_type in TXT_MIME_TYPES:
         if extension and extension == ".eml":
             return FileType.EML
-        if extension and extension == ".md":
+        elif extension and extension == ".md":
             return FileType.MD
+        elif extension and extension == ".rtf":
+            return FileType.RTF
+
         if file and not extension and _check_eml_from_buffer(file=file) is True:
             return FileType.EML
         return FileType.TXT

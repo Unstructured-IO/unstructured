@@ -26,12 +26,12 @@ install-ci: install-base-pip-packages install-nltk-models install-huggingface in
 .PHONY: install-base-pip-packages
 install-base-pip-packages:
 	python3 -m pip install pip==${PIP_VERSION}
-	pip install -r requirements/base.txt
+	python3 -m pip install -r requirements/base.txt
 
 .PHONY: install-huggingface
 install-huggingface:
 	python3 -m pip install pip==${PIP_VERSION}
-	pip install -r requirements/huggingface.txt
+	python3 -m pip install -r requirements/huggingface.txt
 
 .PHONE: install-nltk-models
 install-nltk-models:
@@ -40,40 +40,40 @@ install-nltk-models:
 
 .PHONY: install-test
 install-test:
-	pip install -r requirements/test.txt
+	python3 -m pip install -r requirements/test.txt
 
 .PHONY: install-dev
 install-dev:
-	pip install -r requirements/dev.txt
+	python3 -m pip install -r requirements/dev.txt
 
 .PHONY: install-build
 install-build:
-	pip install -r requirements/build.txt
+	python3 -m pip install -r requirements/build.txt
 
 .PHONY: install-ingest-google-drive
 install-ingest-google-drive:
-	pip install -r requirements/ingest-google-drive.txt
+	python3 -m pip install -r requirements/ingest-google-drive.txt
 
 ## install-ingest-s3:       install requirements for the s3 connector
 .PHONY: install-ingest-s3
 install-ingest-s3:
-	pip install -r requirements/ingest-s3.txt
+	python3 -m pip install -r requirements/ingest-s3.txt
 
 .PHONY: install-ingest-azure
 install-ingest-azure:
-	pip install -r requirements/ingest-azure.txt
+	python3 -m pip install -r requirements/ingest-azure.txt
 
 .PHONY: install-ingest-github
 install-ingest-github:
-	pip install -r requirements/ingest-github.txt
+	python3 -m pip install -r requirements/ingest-github.txt
 
 .PHONY: install-ingest-gitlab
 install-ingest-gitlab:
-	pip install -r requirements/ingest-gitlab.txt
+	python3 -m pip install -r requirements/ingest-gitlab.txt
 
 .PHONY: install-ingest-reddit
 install-ingest-reddit:
-	pip install -r requirements/ingest-reddit.txt
+	python3 -m pip install -r requirements/ingest-reddit.txt
 
 .PHONY: install-ingest-slack
 install-ingest-slack:
@@ -81,15 +81,15 @@ install-ingest-slack:
 
 .PHONY: install-ingest-wikipedia
 install-ingest-wikipedia:
-	pip install -r requirements/ingest-wikipedia.txt
+	python3 -m pip install -r requirements/ingest-wikipedia.txt
 
 .PHONY: install-unstructured-inference
 install-unstructured-inference:
-	pip install -r requirements/local-inference.txt
+	python3 -m pip install -r requirements/local-inference.txt
 
 .PHONY: install-detectron2
 install-detectron2:
-	pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@e2ce8dc#egg=detectron2"
+	python3 -m pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@e2ce8dc#egg=detectron2"
 
 ## install-local-inference: installs requirements for local inference
 .PHONY: install-local-inference

@@ -4,6 +4,8 @@ through Unstructured."""
 from abc import ABC, abstractmethod
 from typing import Optional
 
+import requests
+
 from unstructured.ingest.logger import logger
 from unstructured.partition.auto import partition
 from unstructured.staging.base import convert_to_dict
@@ -51,6 +53,8 @@ class BaseConnectorConfig(ABC):
     download_only: bool = False
     metadata_include: Optional[str] = None
     metadata_exclude: Optional[str] = None
+    partition_by_api: bool = False
+    partition_endpoint: str = "https://api.unstructured.io/general/v0/general"
     fields_include: str = "element_id,text,type,metadata"
     flatten_metadata: bool = False
 
@@ -93,12 +97,34 @@ class BaseIngestDoc(ABC):
         """Write the structured json result for this doc. result must be json serializable."""
         pass
 
+    def partition_file(self):
+        if not self.config.partition_by_api:
+            logger.debug("Using local partition")
+            elements = partition(filename=str(self.filename))
+            return convert_to_dict(elements)
+
+        else:
+            endpoint = self.config.partition_endpoint
+
+            logger.debug(f"Using remote partition ({endpoint})")
+
+            with open(self.filename, "rb") as f:
+                response = requests.post(
+                    f"{endpoint}",
+                    files={"files": (str(self.filename), f)},
+                )
+
+            if response.status_code != 200:
+                raise RuntimeError(f"Caught {response.status_code} from API: {response.text}")
+
+            return response.json()
+
     def process_file(self):
         if self.config.download_only:
             return
         logger.info(f"Processing {self.filename}")
-        elements = partition(filename=str(self.filename))
-        isd_elems = convert_to_dict(elements)
+
+        isd_elems = self.partition_file()
 
         self.isd_elems_no_filename = []
         for elem in isd_elems:

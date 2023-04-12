@@ -1,4 +1,4 @@
-## 0.5.12-dev4
+## 0.5.12-dev5
 
 ### Enhancements
 
@@ -9,6 +9,9 @@
 
 ### Features
 * Add Slack connector to pull messages for a specific channel
+
+* Add --partition-by-api parameter to unstructured-ingest
+* Added `partition_rtf` for processing rich text files.
 
 ### Fixes
 

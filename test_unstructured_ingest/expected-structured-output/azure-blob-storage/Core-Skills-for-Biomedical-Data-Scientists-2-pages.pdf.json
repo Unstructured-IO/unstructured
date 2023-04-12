@@ -1,0 +1,378 @@
+[
+  {
+    "element_id": "833e3f9d4af02845c670c31e2d6d4f9a",
+    "text": "Skills for Biomedical Data",
+    "type": "Title",
+    "metadata": {
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "64b2134f054446d473fce1b05d4d4c94",
+    "text": "Maryam Zaringhalam, PhD, AAAS Science & Technology Policy Fellow",
+    "type": "NarrativeText",
+    "metadata": {
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "f3416e4bccede2117fed6bc61910bc18",
+    "text": "F. Huerta, PhD, Associate Director of NLM for Program Development and NLM of Data Science and Open Science Initiatives",
+    "type": "Title",
+    "metadata": {
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "f14031943b3f1e34dcfc27bf02c38c09",
+    "text": "This report provides recommendations for a minimal set of core skills for biomedical data scientists based on analysis that draws on opinions of data scientists, curricula for existing biomedical data science programs, and requirements for biomedical data science jobs. Suggested high-level core skills include:",
+    "type": "NarrativeText",
+    "metadata": {
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "1f0a7c85704bf89e1ec17d6fe40bf29b",
+    "text": "General biomedical subject matter knowledge: biomedical data scientists have a general working knowledge of the principles of biology, bioinformatics, basic clinical science;",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "8a5926da311fdb0da8c4cac8e15ba79d",
+    "text": "Programming language expertise: biomedical data scientists should be fluent in least one programming language (typically R and/or Python);",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "fdc7dc13c15e758445efae7d34a23951",
+    "text": "Predictive analytics, modeling, and machine learning: while a range of methods may be useful, predictive analytics, modeling, and machine learning as especially important skills in biomedical data science;",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "52c66df43382ed215c2445f81ad76010",
+    "text": "Team science and scientific communication: “soft” skills, like the ability to work on teams and communicate effectively in both verbal and written venues, may be important as the more technical skills typically associated with data science.",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "5a9a1f072c06a3ae844a187dab3b9e32",
+    "text": "Responsible data stewardship: a successful data scientist must be able to best practices for data management and stewardship, as well as conduct research an ethical manner that maintains data security and privacy.",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "5e3d4670749a0f3753fa4bb1b328d156",
+    "text": "Training a biomedical data science (BDS) workforce is a central theme in NLM’s Strategic Plan for the coming decade. That commitment is echoed in the NIH-wide Big Data to Knowledge (BD2K) initiative, which invested $61 million between FY2014 and FY2017 in training programs for the development and use of biomedical big data science methods and tools. In line with",
+    "type": "NarrativeText",
+    "metadata": {
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "4c5f925a7db08289f19dbe8635d8b4cd",
+    "text": "this commitment, a recent report to the NLM Director recommended working across NIH to identify and develop core skills required of a biomedical data scientist to consistency across the cohort of NIH-trained data scientists. This report provides a set of recommended core skills based on analysis of current BD2K-funded training programs, biomedical data science job ads, and practicing members of the current data science workforce.",
+    "type": "NarrativeText",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "f26d07e6b71e42596791a241e2417931",
+    "text": "Methodology",
+    "type": "Title",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "153010aa2c8aa0a0e54bdac5e14340be",
+    "text": "a) Responses to a",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "9b773eceddf8b7622fdec8bb3c8657ff",
+    "text": "Kaggle",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "811f2a14b9850c9d9c7562f29228754b",
+    "text": "survey",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "13d71f8611c0248d58ffa4d1230da73e",
+    "text": "of over",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "d03502c43d74a30b936740a9517dc4ea",
+    "text": ",",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "b9155b5adc04d5539379f3fc62b33711",
+    "text": "self-identified data scientists working across many industries. Analysis of the Kaggle survey responses from the current data science workforce provided insights into the current generation of data scientists, including how they were trained and what programming and analysis skills they use. b) Data science skills taught in BD",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "07f54d1cb2e96bc062c55121de3f6882",
+    "text": "K-funded training programs. A qualitative content analysis was applied to the descriptions of required courses offered under the",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "24349c8054862cb8cbd4d857d096943e",
+    "text": "BD",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "caa5fc58a6d57578858155571d5d4f79",
+    "text": "K-funded training programs. Each course was coded using qualitative data analysis software, with each skill that was present in the description counted once. The coding schema of data science-related skills was inductively developed and was organized into four major categories: (",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "8b67c1eff9f0e59b2d8a11195bc13ce1",
+    "text": ") statistics and math skills; (",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "4b021f7187c84f22e863e931047e2fc2",
+    "text": ") computer science; (",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "59e087d0c9fcb1a8cc6d5448ce5fad04",
+    "text": ") subject knowledge; (",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "ae19ecd18e97da5a942738ed9c37b235",
+    "text": ") general skills, like communication and teamwork. The coding schema is detailed in Appendix A. c) Desired skills identified from data science-related job ads.",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "d14cf7578b76bba89cd14f7c65d27dce",
+    "text": "job ads from government (",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "ff8f02c33b45fd488b21342ad816f985",
+    "text": "%), academia (",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "7b953c4510d51c8c49bdb1f72208e813",
+    "text": "%), industry (",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "b991274d798760827347db84d4c50aed",
+    "text": "%), and the nonprofit sector (",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "d6dc0d0c11a894b2ce64fcc8af4cfe27",
+    "text": "%) were sampled from websites like Glassdoor, Linkedin, and Ziprecruiter. The content analysis methodology and coding schema utilized in analyzing the training programs were applied to the job descriptions. Because many job ads mentioned the same skill more than once, each occurrence of the skill was coded, therefore weighting",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "a119d3cc0dc7f3ac85725acf60229415",
+    "text": "Responses to a 2017 Kaggle1 survey2 of over 16,000 self-identified data scientists working across many industries. Analysis of the Kaggle survey responses from the current data science workforce provided insights into the current generation of data scientists, including how they were trained and what programming and analysis skills",
+    "type": "NarrativeText",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "153010aa2c8aa0a0e54bdac5e14340be",
+    "text": "a) Responses to a",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "13d71f8611c0248d58ffa4d1230da73e",
+    "text": "of over",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "d03502c43d74a30b936740a9517dc4ea",
+    "text": ",",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "86bb1e8982150210536b8273bbe0b53d",
+    "text": "self-identified data scientists working across many industries. Analysis of the Kaggle survey responses from the current data science workforce provided insights into the current generation of data scientists, including how they were trained and what programming and analysis skills they use.",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "73b8242ab49aacecd5561fc18ea23239",
+    "text": "b) Data science skills taught in BD",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "07f54d1cb2e96bc062c55121de3f6882",
+    "text": "K-funded training programs. A qualitative content analysis was applied to the descriptions of required courses offered under the",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "24349c8054862cb8cbd4d857d096943e",
+    "text": "BD",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "caa5fc58a6d57578858155571d5d4f79",
+    "text": "K-funded training programs. Each course was coded using qualitative data analysis software, with each skill that was present in the description counted once. The coding schema of data science-related skills was inductively developed and was organized into four major categories: (",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "8b67c1eff9f0e59b2d8a11195bc13ce1",
+    "text": ") statistics and math skills; (",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "4b021f7187c84f22e863e931047e2fc2",
+    "text": ") computer science; (",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "59e087d0c9fcb1a8cc6d5448ce5fad04",
+    "text": ") subject knowledge; (",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "c865029d7025ef68891ec5c426b9aaa3",
+    "text": ") general skills, like communication and teamwork. The coding schema is detailed in Appendix A.",
+    "type": "ListItem",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "63ba3341ed94f1b2d89198e84757f871",
+    "text": "b) Data science skills taught in BD2K-funded training programs. A qualitative content analysis was applied to the descriptions of required courses offered under the 12 BD2K-funded training programs. Each course was coded using qualitative data analysis software, with each skill that was present in the description counted once. The coding schema of data science-related skills was inductively developed and was organized into four major categories: (1) statistics and math skills; (2) computer science; (3) subject knowledge; (4) general skills, like communication and teamwork. The coding",
+    "type": "NarrativeText",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "52eeeeac5a03bf69edb6126abb21f1d5",
+    "text": "Desired skills identified from data science-related job ads. 59 job ads from government (8.5%), academia (42.4%), industry (33.9%), and the nonprofit sector (15.3%) were sampled from websites like Glassdoor, Linkedin, and Ziprecruiter. The content analysis methodology and coding schema utilized in analyzing the training programs were applied to the job descriptions. Because many job ads mentioned the same skill more than once, each occurrence of the skill was coded, therefore weighting important skills that were mentioned multiple times in a single ad.",
+    "type": "NarrativeText",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "6a436d034b4636ebebdfee2765d3ac9e",
+    "text": "Analysis of the above data provided insights into the current state of biomedical data training, as well as a view into data science-related skills likely to be needed to prepare BDS workforce to succeed in the future. Together, these analyses informed for core skills necessary for a competitive biomedical data scientist.",
+    "type": "NarrativeText",
+    "metadata": {
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "94ba2c5be803a3cb405fc51dada2532d",
+    "text": "2 In August 2017, Kaggle conducted an industry-wide survey to gain a clearer picture of the state of data science and machine learning. A standard set of questions were asked of all respondents, with more specific questions related to work for employed data scientists and questions related to learning for data scientists in training. Methodology and results: https://www.kaggle.com/kaggle/kaggle-survey-2017",
+    "type": "NarrativeText",
+    "metadata": {
+      "page_number": 2
+    }
+  }
+]
