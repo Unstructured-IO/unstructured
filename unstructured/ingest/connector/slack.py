@@ -3,6 +3,7 @@ import os
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
+from typing import Optional
 
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
@@ -33,6 +34,13 @@ class SimpleSlackConfig(BaseConnectorConfig):
     output_dir: str
     re_download: bool = False
     preserve_downloads: bool = False
+    download_only: bool = False
+    metadata_include: Optional[str] = None
+    metadata_exclude: Optional[str] = None
+    partition_by_api: bool = False
+    partition_endpoint: str = "https://api.unstructured.io/general/v0/general"
+    fields_include: str = "element_id,text,type,metadata"
+    flatten_metadata: bool = False
     verbose: bool = False
 
     def validate_inputs(self):

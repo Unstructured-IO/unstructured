@@ -2,24 +2,13 @@
 
 ### Enhancements
 
-* Added method to utils to allow date time format validation
-
-### Features
-
-* Add Slack connector to pull messages for a specific channel
-
-### Fixes
-
-
-## 0.5.12-dev3
-
-### Enhancements
-
 * Add OS mimetypes DB to docker image, mainly for unstructured-api compat.
 * Use the image registry as a cache when building Docker images.
 * Adds the ability for `partition_text` to group together broken paragraphs.
+* Added method to utils to allow date time format validation
 
 ### Features
+* Add Slack connector to pull messages for a specific channel
 
 ### Fixes
 
