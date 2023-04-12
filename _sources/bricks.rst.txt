@@ -116,6 +116,21 @@ faster processing and `"hi_res"` for
   elements = partition(filename="example-docs/layout-parser-paper-fast.pdf")
 
 
+The ``partition`` function also accepts a ``url`` kwarg for remotely hosted documents. If you want
+to force ``partition`` to treat the document as a particular MIME type, use the ``content_type``
+kwarg in conjunction with ``url``. Otherwise, ``partition`` will use the information from
+the ``Content-Type`` header in the HTTP response.
+
+
+.. code:: python
+
+  from unstructured.partition.auto import partition
+
+  url = "https://raw.githubusercontent.com/Unstructured-IO/unstructured/main/LICENSE.md"
+  elements = partition(url=url)
+  elements = partition(url=url, content_type="text/markdown")
+
+
 ``partition_docx``
 ------------------
 

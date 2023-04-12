@@ -395,6 +395,17 @@ faster processing and <cite>“hi_res”</cite> for</p>
 <span class="n">elements</span> <span class="o">=</span> <span class="n">partition</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example-docs/layout-parser-paper-fast.pdf&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>The <code class="docutils literal notranslate"><span class="pre">partition</span></code> function also accepts a <code class="docutils literal notranslate"><span class="pre">url</span></code> kwarg for remotely hosted documents. If you want
+to force <code class="docutils literal notranslate"><span class="pre">partition</span></code> to treat the document as a particular MIME type, use the <code class="docutils literal notranslate"><span class="pre">content_type</span></code>
+kwarg in conjunction with <code class="docutils literal notranslate"><span class="pre">url</span></code>. Otherwise, <code class="docutils literal notranslate"><span class="pre">partition</span></code> will use the information from
+the <code class="docutils literal notranslate"><span class="pre">Content-Type</span></code> header in the HTTP response.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.auto</span> <span class="kn">import</span> <span class="n">partition</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/Unstructured-IO/unstructured/main/LICENSE.md&quot;</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">)</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">content_type</span><span class="o">=</span><span class="s2">&quot;text/markdown&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
 </section>
 <section id="partition-docx">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_docx</span></code><a class="headerlink" href="#partition-docx" title="Permalink to this heading"></a></h3>
