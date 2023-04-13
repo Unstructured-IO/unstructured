@@ -6,7 +6,8 @@ import pytest
 import requests
 from requests.models import Response
 
-from unstructured.documents.elements import PageBreak
+from unstructured.cleaners.core import bytes_string_to_string
+from unstructured.documents.elements import PageBreak, Title
 from unstructured.partition.html import partition_html
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -155,3 +156,16 @@ def test_partition_html_processes_chinese_chracters():
     html_text = "<html><div><p>每日新闻</p></div></html>"
     elements = partition_html(text=html_text)
     assert elements[0].text == "每日新闻"
+
+
+def test_recovery_emoji_from_html_bytes_output():
+    html_text = """\n<html charset="utf-8"><p>Hello 😀</p></html>"""
+    elements = partition_html(text=html_text)
+    elements[0].apply(bytes_string_to_string)
+    assert elements[0] == Title("Hello 😀")
+
+
+def test_emoji_appears_with_emoji_utf8_code():
+    html_text = """\n<html charset="utf-8"><p>Hello &#128512;</p></html>"""
+    elements = partition_html(text=html_text)
+    assert elements[0] == Title("Hello 😀")
