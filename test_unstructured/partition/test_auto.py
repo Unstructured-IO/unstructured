@@ -376,6 +376,18 @@ def test_auto_partition_from_url():
     assert elements[0].metadata.url == url
 
 
+def test_partition_md_works_with_embedded_html():
+    url = "https://raw.githubusercontent.com/Unstructured-IO/unstructured/main/README.md"
+    elements = partition(url=url, content_type="text/markdown")
+    elements[0].text
+    unstructured_found = False
+    for element in elements:
+        if "unstructured" in elements[0].text:
+            unstructured_found = True
+            break
+    assert unstructured_found is True
+
+
 def test_auto_partition_warns_if_header_set_and_not_url(caplog):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
     partition(filename=filename, headers={"Accept": "application/pdf"})
