@@ -209,6 +209,7 @@ def test_partition_pdf_with_fast_strategy_from_file(
 
 
 def test_partition_pdf_with_fast_strategy_and_page_breaks(
+    caplog,
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
     elements = pdf.partition_pdf(
@@ -220,6 +221,8 @@ def test_partition_pdf_with_fast_strategy_and_page_breaks(
     assert len(elements) > 10
     assert PageBreak() in elements
 
+    assert "detectron2 is not installed" not in caplog.text
+
 
 def test_partition_pdf_raises_with_bad_strategy(
     filename="example-docs/layout-parser-paper-fast.pdf",
@@ -230,6 +233,7 @@ def test_partition_pdf_raises_with_bad_strategy(
 
 def test_partition_pdf_falls_back_to_fast(
     monkeypatch,
+    caplog,
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
     monkeypatch.setattr(pdf, "dependency_exists", lambda dep: dep != "detectron2")
@@ -240,6 +244,7 @@ def test_partition_pdf_falls_back_to_fast(
         "_partition_pdf_with_pdfminer",
         return_value=mock_return,
     ) as mock_partition:
-        pdf.partition_pdf(filename=filename, url=None, strategy="fast")
+        pdf.partition_pdf(filename=filename, url=None, strategy="hi_res")
 
     mock_partition.assert_called_once()
+    assert "detectron2 is not installed" in caplog.text
