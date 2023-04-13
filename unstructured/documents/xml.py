@@ -54,6 +54,12 @@ class XMLDocument(Document):
 
     def _read_xml(self, content):
         """Reads in an XML file and converts it to an lxml element tree object."""
+        # NOTE(robinson) - without the carriage return at the beginning, you get
+        # output that looks like the following when you run partition_pdf
+        #   'h   3       a   l   i   g   n   =   "   c   e   n   t   e   r   "   >'
+        # The correct output is returned once you add the initial return.
+        if content and not content.startswith("\n"):
+            content = "\n" + content
         if self.document_tree is None:
             try:
                 document_tree = etree.fromstring(content, self.parser)
