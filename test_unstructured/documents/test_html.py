@@ -644,6 +644,10 @@ def test_sample_doc_with_scripts():
 
 
 def test_sample_doc_with_emoji():
-    raw_html = "<p>Hello again 😀</p>"
+    raw_html = """
+    <html charset="unicode">
+        <p>Hello again 😀</p>
+    </html>
+    """
     doc = HTMLDocument.from_string(raw_html)
     assert doc.elements[0].text == "Hello again ð\x9f\x98\x80"
