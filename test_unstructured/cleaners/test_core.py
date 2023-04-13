@@ -240,3 +240,8 @@ def test_clean(text, extra_whitespace, dashes, bullets, lowercase, trailing_punc
         )
         == expected
     )
+
+
+def test_bytes_string_to_string():
+    text = "\xe6\xaf\x8f\xe6\x97\xa5\xe6\x96\xb0\xe9\x97\xbb"
+    assert core.bytes_string_to_string(text, "utf-8") == "每日新闻"
