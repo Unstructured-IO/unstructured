@@ -1,4 +1,4 @@
-## 0.5.13-dev0
+## 0.5.13-dev1
 
 ### Enhancements
 
@@ -7,6 +7,8 @@
 ### Features
 
 ### Fixes
+
+* unstructured-documents encode xml string if document_tree is `None` in `_read_xml`.
 
 ## 0.5.12
 
