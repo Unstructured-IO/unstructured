@@ -5,6 +5,8 @@ from functools import wraps
 from typing import Dict, List, Optional, Union
 
 
+date_formats = ("%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d+%H:%M:%S", "%Y-%m-%dT%H:%M:%S%z")
+
 def save_as_jsonl(data: List[Dict], filename: str) -> None:
     with open(filename, "w+") as output_file:
         output_file.writelines(json.dumps(datum) + "\n" for datum in data)
@@ -54,23 +56,19 @@ def dependency_exists(dependency):
 
 
 # Copied from unstructured/ingest/connector/biomed.py
-def validate_date_args(date):
-    date_formats = ["%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M:%S%z"]
+def validate_date_args(date: Optional[str] = None):
 
-    valid = False
-    if date:
-        for format in date_formats:
-            try:
-                datetime.strptime(date, format)
-                valid = True
-                break
-            except ValueError:
-                pass
+    if not date:
+        raise ValueError("The argument date is None.")
 
-        if not valid:
-            raise ValueError(
-                f"The argument {date} does not satisfy the format: "
-                "YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS or YYYY-MM-DDTHH:MM:SStz",
-            )
+    for format in date_formats:
+        try:
+            datetime.strptime(date, format)
+            return True
+        except ValueError:
+            pass
 
-    return valid
+    raise ValueError(
+        f"The argument {date} does not satisfy the format: "
+        "YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS or YYYY-MM-DD+HH:MM:SS or YYYY-MM-DDTHH:MM:SStz",
+    )

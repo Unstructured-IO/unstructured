@@ -324,7 +324,7 @@ class MainProcess:
 @click.option(
     "--slack-channels",
     default=None,
-    help="Comma separated list of Slack channels to pull messages from, can be a public or private channel",
+    help="Comma separated list of Slack channel IDs to pull messages from, can be a public or private channel",
 )
 @click.option(
     "--slack-token",
@@ -334,12 +334,12 @@ class MainProcess:
 @click.option(
     "--start-date",
     default=None,
-    help="Start date/time in formats YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS or YYYY-MM-DDTHH:MM:SStz",
+    help="Start date/time in formats YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS or YYYY-MM-DD+HH:MM:SS or YYYY-MM-DDTHH:MM:SStz",
 )
 @click.option(
     "--end-date",
     default=None,
-    help="End date/time in formats YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS or YYYY-MM-DDTHH:MM:SStz",
+    help="End date/time in formats YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS or YYYY-MM-DD+HH:MM:SS or YYYY-MM-DDTHH:MM:SStz",
 )
 @click.option(
     "--download-dir",

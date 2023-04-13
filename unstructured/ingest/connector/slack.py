@@ -20,6 +20,9 @@ from unstructured.utils import (
 )
 
 
+date_formats = ("%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M:%S%z")
+
+
 @dataclass
 class SimpleSlackConfig(BaseConnectorConfig):
     """Connector config to process all messages by channel id's."""
@@ -148,11 +151,10 @@ class SlackIngestDoc(BaseIngestDoc):
         except SlackApiError as e:
             logger.error(f"Error: {e}")
 
-        with open(self._tmp_download_file(), "w") as f:
+        with open(self._tmp_download_file(), "w") as channel_file:
             for message in messages:
-                f.write(message["text"] + "\n")
+                channel_file.write(message["text"] + "\n")
 
-        f.close()
 
     def write_result(self):
         """Write the structured json result for this doc. result must be json serializable."""
@@ -163,7 +165,6 @@ class SlackIngestDoc(BaseIngestDoc):
         logger.info(f"Wrote {output_filename}")
 
     def convert_datetime(self, date_time):
-        date_formats = ["%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M:%S%z"]
         for format in date_formats:
             try:
                 return datetime.strptime(date_time, format).timestamp()
@@ -210,8 +211,7 @@ class SlackConnector(BaseConnector):
             os.rmdir(cur_dir)
 
     def initialize(self):
-        """Verify that can get metadata for an object, validates connections info."""
-        os.mkdir(self.config.download_dir)
+            """Verify that can get metadata for an object, validates connections info."""
 
     def get_ingest_docs(self):
         return [

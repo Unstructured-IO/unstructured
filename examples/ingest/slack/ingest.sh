@@ -8,6 +8,8 @@
 # oldest, latest arguments are optional
 
 # Ingests a slack text channel into a file.
+# slack-channels is a comma sparated list of channel IDs.
+# Bot user must be in the channels for them to be ingested.
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/../../.. || exit 1
