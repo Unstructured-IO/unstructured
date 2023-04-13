@@ -58,7 +58,8 @@ class XMLDocument(Document):
         # output that looks like the following when you run partition_pdf
         #   'h   3       a   l   i   g   n   =   "   c   e   n   t   e   r   "   >'
         # The correct output is returned once you add the initial return.
-        if content and not content.startswith("\n"):
+        is_html_parser = isinstance(self.parser, etree.HTMLParser)
+        if content and not content.startswith("\n") and is_html_parser:
             content = "\n" + content
         if self.document_tree is None:
             try:
