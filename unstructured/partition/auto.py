@@ -1,9 +1,10 @@
 import io
-from typing import IO, Callable, Optional, Tuple
+from typing import IO, Callable, Dict, Optional, Tuple
 
 import requests
 
 from unstructured.file_utils.filetype import FileType, detect_filetype
+from unstructured.logger import logger
 from unstructured.partition.common import exactly_one
 from unstructured.partition.doc import partition_doc
 from unstructured.partition.docx import partition_docx
@@ -31,6 +32,7 @@ def partition(
     strategy: str = "hi_res",
     encoding: str = "utf-8",
     paragraph_grouper: Optional[Callable[[str], str]] = None,
+    headers: Dict[str, str] = {},
 ):
     """Partitions a document into its constituent elements. Will use libmagic to determine
     the file's type and route it to the appropriate partitioning function. Applies the default
@@ -58,12 +60,23 @@ def partition(
         and processes it.
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
+    headers
+        The headers to be used in conjunction with the HTTP request if URL is set.
     """
     exactly_one(file=file, filename=filename, url=url)
 
     if url is not None:
-        file, filetype = file_and_type_from_url(url=url, content_type=content_type)
+        file, filetype = file_and_type_from_url(
+            url=url,
+            content_type=content_type,
+            headers=headers,
+        )
     else:
+        if headers != {}:
+            logger.warning(
+                "The headers kwarg is set but the url kwarg is not. "
+                "The headers kwarg will be ignored.",
+            )
         filetype = detect_filetype(
             filename=filename,
             file=file,
@@ -157,8 +170,9 @@ def partition(
 def file_and_type_from_url(
     url: str,
     content_type: Optional[str] = None,
+    headers: Dict[str, str] = {},
 ) -> Tuple[io.BytesIO, Optional[FileType]]:
-    response = requests.get(url)
+    response = requests.get(url, headers=headers)
     file = io.BytesIO(response.content)
 
     content_type = content_type or response.headers.get("Content-Type")
