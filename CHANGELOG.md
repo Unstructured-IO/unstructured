@@ -1,11 +1,13 @@
-## 0.5.13-dev0
+## 0.5.13-dev2
 
 ### Enhancements
 
 ### Features
 
 ### Fixes
+
 * unstructured-documents encode xml string if document_tree is `None` in `_read_xml`.
+* Fallback to "fast" strategy only emits a warning if the user specifies the "hi_res" strategy.
 
 ## 0.5.12
 
