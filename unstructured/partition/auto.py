@@ -4,6 +4,7 @@ from typing import IO, Callable, Dict, Optional, Tuple
 import requests
 
 from unstructured.file_utils.filetype import FileType, detect_filetype
+from unstructured.logger import logger
 from unstructured.partition.common import exactly_one
 from unstructured.partition.doc import partition_doc
 from unstructured.partition.docx import partition_docx
@@ -59,6 +60,8 @@ def partition(
         and processes it.
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
+    headers
+        The headers to be used in conjunction with the HTTP request if URL is set.
     """
     exactly_one(file=file, filename=filename, url=url)
 
@@ -69,6 +72,11 @@ def partition(
             headers=headers,
         )
     else:
+        if headers != {}:
+            logger.warning(
+                "The headers kwarg is set but the url kwarg is not. "
+                "The headers kwarg will be ignored.",
+            )
         filetype = detect_filetype(
             filename=filename,
             file=file,
