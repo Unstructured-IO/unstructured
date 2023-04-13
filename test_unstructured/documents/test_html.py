@@ -641,3 +641,9 @@ def test_sample_doc_with_scripts():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "example-with-scripts.html")
     doc = HTMLDocument.from_file(filename=filename)
     assert all(["function (" not in element.text for element in doc.elements])
+
+
+def test_sample_doc_with_emoji():
+    raw_html = "<p>Hello again 😀</p>"
+    doc = HTMLDocument.from_string(raw_html)
+    assert doc.elements[0].text == "Hello again ð\x9f\x98\x80"
