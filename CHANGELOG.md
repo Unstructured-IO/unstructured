@@ -2,6 +2,8 @@
 
 ### Enhancements
 
+* Allow headers to be passed into `partition` when `url` is used.
+
 ### Features
 
 ### Fixes

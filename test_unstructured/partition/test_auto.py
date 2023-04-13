@@ -386,3 +386,8 @@ def test_partition_md_works_with_embedded_html():
             unstructured_found = True
             break
     assert unstructured_found is True
+
+def test_auto_partition_warns_if_header_set_and_not_url(caplog):
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
+    partition(filename=filename, headers={"Accept": "application/pdf"})
+    assert caplog.records[0].levelname == "WARNING"
