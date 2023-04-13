@@ -1,11 +1,13 @@
-## 0.5.13-dev0
+## 0.5.13-dev4
 
 ### Enhancements
 
 ### Features
 
 ### Fixes
+
 * unstructured-documents encode xml string if document_tree is `None` in `_read_xml`.
+* Update to `_read_xml` so that Markdown files with embedded HTML process correctly.
 
 ## 0.5.12
 
