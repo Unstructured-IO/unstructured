@@ -374,3 +374,15 @@ def test_auto_partition_from_url():
     elements = partition(url=url, content_type="text/plain")
     assert elements[0] == Title("Apache License")
     assert elements[0].metadata.url == url
+
+
+def test_partition_md_works_with_embedded_html():
+    url = "https://raw.githubusercontent.com/Unstructured-IO/unstructured/main/README.md"
+    elements = partition(url=url, content_type="text/markdown")
+    elements[0].text
+    unstructured_found = False
+    for element in elements:
+        if "unstructured" in elements[0].text:
+            unstructured_found = True
+            break
+    assert unstructured_found is True
