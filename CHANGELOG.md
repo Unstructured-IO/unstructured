@@ -1,4 +1,4 @@
-## 0.5.12-dev5
+## 0.5.12
 
 ### Enhancements
 
@@ -12,6 +12,7 @@
 
 * Add --partition-by-api parameter to unstructured-ingest
 * Added `partition_rtf` for processing rich text files.
+* `partition` now accepts a `url` kwarg in addition to `file` and `filename`.
 
 ### Fixes
 
