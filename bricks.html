@@ -932,6 +932,30 @@ default. You can change that behavior with the <code class="docutils literal not
 </pre></div>
 </div>
 </section>
+<section id="bytes-string-to-string">
+<h3><code class="docutils literal notranslate"><span class="pre">bytes_string_to_string</span></code><a class="headerlink" href="#bytes-string-to-string" title="Permalink to this heading"></a></h3>
+<p>Converts an output string that looks like a byte string to a string using the specified encoding. This
+happens sometimes in <code class="docutils literal notranslate"><span class="pre">partition_html</span></code> when there is a character like an emoji that isn’t expected
+by the HTML parser. In that case, the encoded bytes get processed.</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.cleaners.core</span> <span class="kn">import</span> <span class="n">bytes_string_to_string</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;Hello ð</span><span class="se">\x9f\x98\x80</span><span class="s2">&quot;</span>
+<span class="c1"># The output should be &quot;Hello 😀&quot;</span>
+<span class="n">bytes_string_to_string</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.cleaners.core</span> <span class="kn">import</span> <span class="n">bytes_string_to_string</span>
+<span class="kn">from</span> <span class="nn">unstructured.partition.html</span> <span class="kn">import</span> <span class="n">partition_html</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\n</span><span class="s2">&lt;html charset=&quot;utf-8&quot;&gt;&lt;p&gt;Hello 😀&lt;/p&gt;&lt;/html&gt;&quot;&quot;&quot;</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_html</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
+<span class="n">elements</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">bytes_string_to_string</span><span class="p">)</span>
+<span class="c1"># The output should be &quot;Hello 😀&quot;</span>
+<span class="n">elements</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span>
+</pre></div>
+</div>
+</section>
 <section id="extract-email-address">
 <h3><code class="docutils literal notranslate"><span class="pre">extract_email_address</span></code><a class="headerlink" href="#extract-email-address" title="Permalink to this heading"></a></h3>
 <p>Extracts email addresses from a string input and returns a list of all the email
@@ -1802,6 +1826,7 @@ if specified.</p>
 <li><a class="reference internal" href="#clean-non-ascii-chars"><code class="docutils literal notranslate"><span class="pre">clean_non_ascii_chars</span></code></a></li>
 <li><a class="reference internal" href="#extract-text-before"><code class="docutils literal notranslate"><span class="pre">extract_text_before</span></code></a></li>
 <li><a class="reference internal" href="#extract-text-after"><code class="docutils literal notranslate"><span class="pre">extract_text_after</span></code></a></li>
+<li><a class="reference internal" href="#bytes-string-to-string"><code class="docutils literal notranslate"><span class="pre">bytes_string_to_string</span></code></a></li>
 <li><a class="reference internal" href="#extract-email-address"><code class="docutils literal notranslate"><span class="pre">extract_email_address</span></code></a></li>
 <li><a class="reference internal" href="#extract-ip-address"><code class="docutils literal notranslate"><span class="pre">extract_ip_address</span></code></a></li>
 <li><a class="reference internal" href="#extract-ip-address-name"><code class="docutils literal notranslate"><span class="pre">extract_ip_address_name</span></code></a></li>
