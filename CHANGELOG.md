@@ -1,10 +1,12 @@
-## 0.5.13-dev4
+## 0.5.13-dev5
 
 ### Enhancements
 
 * Allow headers to be passed into `partition` when `url` is used.
 
 ### Features
+
+* `bytes_string_to_string` cleaning brick for bytes string output.
 
 ### Fixes
 
