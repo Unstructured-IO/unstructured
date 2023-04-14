@@ -70,8 +70,10 @@ def partition_text(
 
     if paragraph_grouper is not None:
         file_text = paragraph_grouper(file_text)
+    else:
+        file_text = group_broken_paragraphs(file_text)
 
-    file_content = split_by_paragraph(group_broken_paragraphs(file_text))
+    file_content = split_by_paragraph(file_text)
 
     elements: List[Element] = []
     metadata = ElementMetadata(filename=filename)
