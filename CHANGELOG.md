@@ -1,4 +1,4 @@
-## 0.5.13-dev5
+## 0.5.13-dev6
 
 ### Enhancements
 
@@ -14,6 +14,7 @@
 * Update to `_read_xml` so that Markdown files with embedded HTML process correctly.
 * Fallback to "fast" strategy only emits a warning if the user specifies the "hi_res" strategy.
 * unstructured-partition-text_type exceeds_cap_ratio fix returns and how capitalization ratios are calculated
+* `partition_pdf` groups broken paragraphs to avoid fragmented `NarrativeText` elements.
 
 ## 0.5.12
 
