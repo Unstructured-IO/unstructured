@@ -212,6 +212,7 @@ def test_contains_english_word(text, expected, monkeypatch):
         ("Intellectual Property in the United States", True),
         ("Intellectual property helps incentivize innovation.", False),
         ("THIS IS ALL CAPS. BUT IT IS TWO SENTENCES.", False),
+        ("LOOK AT THIS IT IS CAPS BUT NOT A TITLE.", False),
         ("This Has All Caps. It's Weird But Two Sentences", False),
         ("The Business Report is expected within 6 hours of closing", False),
         ("", True),

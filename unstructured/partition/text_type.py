@@ -268,7 +268,7 @@ def exceeds_cap_ratio(text: str, threshold: float = 0.5) -> bool:
         return False
 
     if text.isupper():
-        return True
+        return False
 
     # NOTE(jay-ylee) - The word_tokenize function also recognizes and separates special characters
     # into one word, causing problems with ratio measurement.
