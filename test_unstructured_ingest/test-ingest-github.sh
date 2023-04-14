@@ -5,6 +5,7 @@ cd "$SCRIPT_DIR"/.. || exit 1
 
 GH_READ_ONLY_ACCESS_TOKEN=${GH_READ_ONLY_ACCESS_TOKEN:-none}
 
+ACCESS_TOKEN_FLAGS=""
 # to update test fixtures, "export OVERWRITE_FIXTURES=true" and rerun this script
 if [[ "$GH_READ_ONLY_ACCESS_TOKEN" != "none" ]]; then
    ACCESS_TOKEN_FLAGS="--git-access-token $GH_READ_ONLY_ACCESS_TOKEN"
