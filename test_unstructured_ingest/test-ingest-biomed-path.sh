@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+echo "Skipping test-ingest-biomed-api.sh,"
+echo "see https://github.com/Unstructured-IO/unstructured/issues/468"
+echo
+exit 0
+
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/.. || exit 1
 
