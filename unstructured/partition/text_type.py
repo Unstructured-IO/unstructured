@@ -265,7 +265,6 @@ def exceeds_cap_ratio(text: str, threshold: float = 0.5) -> bool:
     # NOTE(robinson) - Currently limiting this to only sections of text with one sentence.
     # The assumption is that sections with multiple sentences are not titles.
     if sentence_count(text, 3) > 1:
-        # logger.debug(f"Text contains multiple sentences:\n\n{text}")
         return False
     
     if text.isupper():
