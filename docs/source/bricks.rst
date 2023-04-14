@@ -801,6 +801,37 @@ Examples:
   # Returns "Look at me, I'm flying!"
   extract_text_after(text, r"SPEAKER \d{1}:")
 
+
+``bytes_string_to_string``
+---------------------------
+
+Converts an output string that looks like a byte string to a string using the specified encoding. This
+happens sometimes in ``partition_html`` when there is a character like an emoji that isn't expected
+by the HTML parser. In that case, the encoded bytes get processed.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.cleaners.core import bytes_string_to_string
+
+  text = "Hello ð\x9f\x98\x80"
+  # The output should be "Hello 😀"
+  bytes_string_to_string(text, encoding="utf-8")
+
+
+.. code:: python
+
+  from unstructured.cleaners.core import bytes_string_to_string
+  from unstructured.partition.html import partition_html
+
+  text = """\n<html charset="utf-8"><p>Hello 😀</p></html>"""
+  elements = partition_html(text=text)
+  elements[0].apply(bytes_string_to_string)
+  # The output should be "Hello 😀"
+  elements[0].text
+
+
 ``extract_email_address``
 --------------------------
 
