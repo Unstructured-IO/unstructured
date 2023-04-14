@@ -90,7 +90,7 @@ def group_broken_paragraphs(
         if UNICODE_BULLETS_RE.match(paragraph.strip()):
             clean_paragraphs.extend(re.split(PARAGRAPH_PATTERN, paragraph))
         else:
-            clean_paragraphs.append(line_split.sub(" ", paragraph))
+            clean_paragraphs.append(re.sub(PARAGRAPH_PATTERN, " ", paragraph))
 
     return "\n\n".join(clean_paragraphs)
 
