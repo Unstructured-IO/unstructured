@@ -21,7 +21,6 @@ elif [[ "$CI" == "true" ]]; then
     fi
 fi
 
-
 #shellcheck disable=SC2086
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --metadata-exclude filename \
