@@ -57,7 +57,6 @@ def dependency_exists(dependency):
 
 # Copied from unstructured/ingest/connector/biomed.py
 def validate_date_args(date: Optional[str] = None):
-
     if not date:
         raise ValueError("The argument date is None.")
 
