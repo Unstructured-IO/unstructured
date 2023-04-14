@@ -11,7 +11,14 @@ if [[ "$CI" == "true" ]]; then
     fi
 fi
 
+GH_READ_ONLY_ACCESS_TOKEN=${GH_READ_ONLY_ACCESS_TOKEN:-none}
 
+# to update test fixtures, "export OVERWRITE_FIXTURES=true" and rerun this script
+if [[ "$GH_READ_ONLY_ACCESS_TOKEN" != "none" ]]; then
+   ACCESS_TOKEN_FLAGS="--git-access-token $GH_READ_ONLY_ACCESS_TOKEN"
+fi
+
+#shellcheck disable=SC2086
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --metadata-exclude filename \
     --github-url dcneiner/Downloadify \
@@ -19,7 +26,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --structured-output-dir github-downloadify-output \
     --reprocess \
     --preserve-downloads \
-    --verbose
+    --verbose $ACCESS_TOKEN_FLAGS
 
 OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
 
