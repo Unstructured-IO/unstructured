@@ -28,7 +28,7 @@ fi
 ./scripts/docker-build-ubuntu.sh
 
 # Warn the user if they have an old image
-IMAGE_NAME="unstructured-ubuntu:latest2"
+IMAGE_NAME="unstructured-ubuntu:latest"
 CREATION_TIMESTAMP=$(docker inspect --format='{{.Created}}' "$IMAGE_NAME")
 CREATION_DATE=$(date -d "$CREATION_TIMESTAMP" +%s)
 CURRENT_DATE=$(date +%s)
