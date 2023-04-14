@@ -2,6 +2,7 @@ import warnings
 from io import StringIO
 from typing import BinaryIO, List, Optional, cast
 
+from unstructured.cleaners.core import group_broken_paragraphs
 from unstructured.documents.elements import Element, ElementMetadata, PageBreak
 from unstructured.logger import logger
 from unstructured.partition import _partition_via_api
@@ -253,6 +254,7 @@ def _process_pdfminer_pages(
             interpreter = PDFPageInterpreter(rsrcmgr, device)
             interpreter.process_page(page)
             text = output_string.getvalue()
+            text = group_broken_paragraphs(text)
             _elements = partition_text(text=text)
             for element in _elements:
                 element.metadata = metadata
