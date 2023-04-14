@@ -82,7 +82,6 @@ def group_broken_paragraphs(
     At the end of the land the fox met a bear.'''
     """
     paragraphs = paragraph_split.split(text)
-
     clean_paragraphs = []
     for paragraph in paragraphs:
         if not paragraph.strip():
