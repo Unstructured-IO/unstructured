@@ -28,7 +28,7 @@ fi
 ./scripts/docker-build-ubuntu.sh
 
 # Warn the user if they have an old image
-IMAGE_NAME="unstructured-ubuntu:latest"
+IMAGE_NAME="unstructured-ubuntu:latest2"
 CREATION_TIMESTAMP=$(docker inspect --format='{{.Created}}' "$IMAGE_NAME")
 CREATION_DATE=$(date -d "$CREATION_TIMESTAMP" +%s)
 CURRENT_DATE=$(date +%s)
@@ -41,7 +41,7 @@ fi
 docker run --rm -v "$SCRIPT_DIR"/../unstructured:/root/unstructured -v \
    "$SCRIPT_DIR"/../test_unstructured_ingest:/root/test_unstructured_ingest \
    -w /root "$IMAGE_NAME" \
-   bash -c "export OVERWRITE_FIXTURES=true && source ~/.bashrc && pyenv activate unstructured &&
+   bash -c "export OVERWRITE_FIXTURES=true && source ~/.bashrc && pyenv activate unstructured && tesseract --version &&
                ./test_unstructured_ingest/test-ingest-azure.sh &&
                ./test_unstructured_ingest/test-ingest-github.sh &&
                ./test_unstructured_ingest/test-ingest-biomed-api.sh &&
