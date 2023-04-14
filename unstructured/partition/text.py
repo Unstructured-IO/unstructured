@@ -1,7 +1,7 @@
 import re
 from typing import IO, Callable, List, Optional
 
-from unstructured.cleaners.core import clean_bullets
+from unstructured.cleaners.core import clean_bullets, group_broken_paragraphs
 from unstructured.documents.elements import (
     Address,
     Element,
@@ -71,7 +71,7 @@ def partition_text(
     if paragraph_grouper is not None:
         file_text = paragraph_grouper(file_text)
 
-    file_content = split_by_paragraph(file_text)
+    file_content = split_by_paragraph(group_broken_paragraphs(file_text))
 
     elements: List[Element] = []
     metadata = ElementMetadata(filename=filename)

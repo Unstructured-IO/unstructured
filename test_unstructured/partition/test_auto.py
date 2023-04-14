@@ -192,6 +192,7 @@ EXPECTED_TEXT_OUTPUT = [
 def test_auto_partition_text_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
     elements = partition(filename=filename)
+
     assert len(elements) > 0
     assert elements == EXPECTED_TEXT_OUTPUT
     assert elements[0].metadata.filename == filename

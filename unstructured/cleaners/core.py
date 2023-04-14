@@ -5,6 +5,7 @@ import unicodedata
 
 from unstructured.nlp.patterns import (
     DOUBLE_PARAGRAPH_PATTERN_RE,
+    PARAGRAPH_PATTERN,
     PARAGRAPH_PATTERN_RE,
     UNICODE_BULLETS_RE,
 )
@@ -81,7 +82,17 @@ def group_broken_paragraphs(
     At the end of the land the fox met a bear.'''
     """
     paragraphs = paragraph_split.split(text)
-    clean_paragraphs = [line_split.sub(" ", para) for para in paragraphs if para.strip()]
+
+    clean_paragraphs = []
+    for paragraph in paragraphs:
+        if not paragraph.strip():
+            continue
+
+        if UNICODE_BULLETS_RE.match(paragraph.strip()):
+            clean_paragraphs.extend(re.split(PARAGRAPH_PATTERN, paragraph))
+        else:
+            clean_paragraphs.append(line_split.sub(" ", paragraph))
+
     return "\n\n".join(clean_paragraphs)
 
 
