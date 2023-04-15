@@ -4,8 +4,8 @@ from datetime import datetime
 from functools import wraps
 from typing import Dict, List, Optional, Union
 
-
 DATE_FORMATS = ("%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d+%H:%M:%S", "%Y-%m-%dT%H:%M:%S%z")
+
 
 def save_as_jsonl(data: List[Dict], filename: str) -> None:
     with open(filename, "w+") as output_file:

@@ -19,7 +19,6 @@ from unstructured.utils import (
     validate_date_args,
 )
 
-
 DATE_FORMATS = ("%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M:%S%z")
 
 
@@ -64,11 +63,10 @@ class SimpleSlackConfig(BaseConnectorConfig):
             raise ValueError(
                 "Start and/or End dates are not valid. ",
             )
-    
-    @staticmethod    
+
+    @staticmethod
     def parse_channels(channel_str: str) -> List[str]:
-        """Parses a comma separated list of channels into a list.
-        """
+        """Parses a comma separated list of channels into a list."""
         return [x.strip() for x in channel_str.split(",")]
 
 
@@ -155,7 +153,6 @@ class SlackIngestDoc(BaseIngestDoc):
             for message in messages:
                 channel_file.write(message["text"] + "\n")
 
-
     def write_result(self):
         """Write the structured json result for this doc. result must be json serializable."""
         output_filename = self._output_filename()
@@ -213,7 +210,6 @@ class SlackConnector(BaseConnector):
     def initialize(self):
         """Verify that can get metadata for an object, validates connections info."""
         pass
-    
 
     def get_ingest_docs(self):
         return [

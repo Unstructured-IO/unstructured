@@ -2,7 +2,6 @@ import json
 import os
 import urllib.request
 from dataclasses import dataclass
-from datetime import datetime
 from ftplib import FTP, error_perm
 from pathlib import Path
 from typing import List, Optional, Union
@@ -15,9 +14,7 @@ from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
 )
-
 from unstructured.ingest.logger import logger
-
 from unstructured.utils import (
     validate_date_args,
 )
@@ -60,7 +57,6 @@ class SimpleBiomedConfig(BaseConnectorConfig):
     partition_endpoint: str = "https://api.unstructured.io/general/v0/general"
     fields_include: str = "element_id,text,type,metadata"
     flatten_metadata: bool = False
-
 
     def validate_api_inputs(self):
         valid = False
