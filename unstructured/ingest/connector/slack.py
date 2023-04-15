@@ -20,7 +20,7 @@ from unstructured.utils import (
 )
 
 
-date_formats = ("%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M:%S%z")
+DATE_FORMATS = ("%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M:%S%z")
 
 
 @dataclass
@@ -165,7 +165,7 @@ class SlackIngestDoc(BaseIngestDoc):
         logger.info(f"Wrote {output_filename}")
 
     def convert_datetime(self, date_time):
-        for format in date_formats:
+        for format in DATE_FORMATS:
             try:
                 return datetime.strptime(date_time, format).timestamp()
             except ValueError:
@@ -211,7 +211,9 @@ class SlackConnector(BaseConnector):
             os.rmdir(cur_dir)
 
     def initialize(self):
-            """Verify that can get metadata for an object, validates connections info."""
+        """Verify that can get metadata for an object, validates connections info."""
+        pass
+    
 
     def get_ingest_docs(self):
         return [
