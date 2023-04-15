@@ -101,6 +101,8 @@ jobs:
         source .venv/bin/activate
         make install-ci
     - name: Test
+      env:
+        GH_READ_ONLY_ACCESS_TOKEN: ${{ secrets.GH_READ_ONLY_ACCESS_TOKEN }}
       run: |
         source .venv/bin/activate
         make install-detectron2

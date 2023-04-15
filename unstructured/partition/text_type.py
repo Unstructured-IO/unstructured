@@ -265,15 +265,24 @@ def exceeds_cap_ratio(text: str, threshold: float = 0.5) -> bool:
     # NOTE(robinson) - Currently limiting this to only sections of text with one sentence.
     # The assumption is that sections with multiple sentences are not titles.
     if sentence_count(text, 3) > 1:
-        logger.debug(f"Text does not contain multiple sentences:\n\n{text}")
         return False
 
     if text.isupper():
         return False
 
-    tokens = word_tokenize(text)
+    # NOTE(jay-ylee) - The word_tokenize function also recognizes and separates special characters
+    # into one word, causing problems with ratio measurement.
+    # Therefore, only words consisting of alphabets are used to measure the ratio.
+    # ex. world_tokenize("ITEM 1. Financial Statements (Unaudited)")
+    #     = ['ITEM', '1', '.', 'Financial', 'Statements', '(', 'Unaudited', ')'],
+    # however, "ITEM 1. Financial Statements (Unaudited)" is Title, not NarrativeText
+    tokens = [tk for tk in word_tokenize(text) if tk.isalpha()]
+
+    # NOTE(jay-ylee) - If word_tokenize(text) is empty, return must be True to
+    # avoid being misclassified as Narrative Text.
     if len(tokens) == 0:
-        return False
+        return True
+
     capitalized = sum([word.istitle() or word.isupper() for word in tokens])
     ratio = capitalized / len(tokens)
     return ratio > threshold

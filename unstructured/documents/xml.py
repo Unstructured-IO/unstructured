@@ -54,9 +54,18 @@ class XMLDocument(Document):
 
     def _read_xml(self, content):
         """Reads in an XML file and converts it to an lxml element tree object."""
+        # NOTE(robinson) - without the carriage return at the beginning, you get
+        # output that looks like the following when you run partition_pdf
+        #   'h   3       a   l   i   g   n   =   "   c   e   n   t   e   r   "   >'
+        # The correct output is returned once you add the initial return.
+        is_html_parser = isinstance(self.parser, etree.HTMLParser)
+        if content and not content.startswith("\n") and is_html_parser:
+            content = "\n" + content
         if self.document_tree is None:
             try:
                 document_tree = etree.fromstring(content, self.parser)
+                if document_tree is None:
+                    raise ValueError("document_tree is None")
             # NOTE(robinson) - The following ValueError occurs with unicode strings. In that
             # case, we call back to encoding the string and passing in bytes.
             #     ValueError: Unicode strings with encoding declaration are not supported.

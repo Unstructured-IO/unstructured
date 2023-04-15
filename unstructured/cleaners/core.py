@@ -238,3 +238,10 @@ def clean(
     cleaned_text = clean_extra_whitespace(cleaned_text) if extra_whitespace else cleaned_text
     cleaned_text = clean_bullets(cleaned_text) if bullets else cleaned_text
     return cleaned_text.strip()
+
+
+def bytes_string_to_string(text: str, encoding: str = "utf-8"):
+    """Converts a string representation of a byte string to a regular string using the
+    specified encoding."""
+    text_bytes = bytes([ord(char) for char in text])
+    return text_bytes.decode(encoding)

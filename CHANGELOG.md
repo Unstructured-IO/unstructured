@@ -1,3 +1,20 @@
+## 0.5.13-dev5
+
+### Enhancements
+
+* Allow headers to be passed into `partition` when `url` is used.
+
+### Features
+
+* `bytes_string_to_string` cleaning brick for bytes string output.
+
+### Fixes
+
+* unstructured-documents encode xml string if document_tree is `None` in `_read_xml`.
+* Update to `_read_xml` so that Markdown files with embedded HTML process correctly.
+* Fallback to "fast" strategy only emits a warning if the user specifies the "hi_res" strategy.
+* unstructured-partition-text_type exceeds_cap_ratio fix returns and how capitalization ratios are calculated
+
 ## 0.5.12
 
 ### Enhancements
