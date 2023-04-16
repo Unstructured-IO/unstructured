@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2317
 # NOTE(crag): remove above shellcheck line when the biomed issue is fixed
-#echo "Skipping test-ingest-biomed-api.sh,"
-#echo "see https://github.com/Unstructured-IO/unstructured/issues/468"
-#echo
-#exit 0
+echo "Skipping test-ingest-biomed-api.sh,"
+echo "see https://github.com/Unstructured-IO/unstructured/issues/468"
+echo
+exit 0
 
 set -e
 

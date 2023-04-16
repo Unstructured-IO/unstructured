@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 cd "$SCRIPT_DIR"/.. || exit 1
 
@@ -8,8 +10,6 @@ if [[ "$(find test_unstructured_ingest/expected-structured-output/s3-small-batch
     echo "Did you overwrite test fixtures with bad outputs?"
     exit 1
 fi
-
-set -e
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --metadata-exclude filename \

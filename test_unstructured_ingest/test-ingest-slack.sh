@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 cd "$SCRIPT_DIR"/.. || exit 1
 
@@ -7,8 +9,6 @@ if [ -z "$SLACK_TOKEN" ]; then
    echo "Skipping Slack ingest test because the SLACK_TOKEN env var is not set."
    exit 0
 fi
-
-set -e
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
       --slack-channels C052BGT7718 \
