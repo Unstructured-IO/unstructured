@@ -100,11 +100,10 @@ jobs:
         python${{ matrix.python-version}} -m venv .venv
         source .venv/bin/activate
         make install-ci
-    - name: test-ingest env vars
-      run: |
-        echo "export GH_READ_ONLY_ACCESS_TOKEN=${{ GH_READ_ONLY_ACCESS_TOKEN }}" >> $GITHUB_ENV
-        echo "export SLACK_TOKEN=${{ SLACK_TOKEN }}" >> $GITHUB_ENV
     - name: Test
+      env:
+        GH_READ_ONLY_ACCESS_TOKEN: ${{ secrets.GH_READ_ONLY_ACCESS_TOKEN }}
+        SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
       run: |
         source .venv/bin/activate
         make install-detectron2
@@ -164,3 +163,4 @@ jobs:
           source .venv/bin/activate
           make docker-build
           make docker-test
+
