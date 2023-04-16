@@ -102,8 +102,8 @@ jobs:
         make install-ci
     - name: test-ingest env vars
       run: |
-        echo "export GH_READ_ONLY_ACCESS_TOKEN=${{ secrets.GH_READ_ONLY_ACCESS_TOKEN }}" >> $GITHUB_ENV
-        echo "export SLACK_TOKEN=${{ secrets.SLACK_TOKEN }}" >> $GITHUB_ENV
+        echo "export GH_READ_ONLY_ACCESS_TOKEN=${{ GH_READ_ONLY_ACCESS_TOKEN }}" >> $GITHUB_ENV
+        echo "export SLACK_TOKEN=${{ SLACK_TOKEN }}" >> $GITHUB_ENV
     - name: Test
       run: |
         source .venv/bin/activate
