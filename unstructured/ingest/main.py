@@ -330,8 +330,7 @@ class MainProcess:
 @click.option(
     "--slack-token",
     default=None,
-    help="Bot token used to access Slack API, must have channels:history "
-    "scope for the bot user",
+    help="Bot token used to access Slack API, must have channels:history " "scope for the bot user",
 )
 @click.option(
     "--start-date",
