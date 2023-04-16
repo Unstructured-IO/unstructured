@@ -3,6 +3,8 @@
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 cd "$SCRIPT_DIR"/.. || exit 1
 
+set -e
+
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --local-input-path example-docs \
     --local-file-glob "*.pdf" \
@@ -10,6 +12,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --partition-by-api \
     --verbose \
     --reprocess
+
+set +e
 
 if [ "$(find 'api-ingest-output' -type f -printf '.' | wc -c)" != 2 ]; then
    echo

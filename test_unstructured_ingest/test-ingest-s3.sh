@@ -9,6 +9,8 @@ if [[ "$(find test_unstructured_ingest/expected-structured-output/s3-small-batch
     exit 1
 fi
 
+set -e
+
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --metadata-exclude filename \
     --s3-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
@@ -18,6 +20,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --reprocess
 
 OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
+
+set +e
 
 # to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then

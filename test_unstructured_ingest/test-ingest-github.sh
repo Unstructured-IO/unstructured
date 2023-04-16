@@ -3,6 +3,8 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/.. || exit 1
 
+set -e
+
 GH_READ_ONLY_ACCESS_TOKEN=${GH_READ_ONLY_ACCESS_TOKEN:-none}
 
 ACCESS_TOKEN_FLAGS=""
@@ -32,6 +34,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --verbose $ACCESS_TOKEN_FLAGS
 
 OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
+
+set +e
 
 # to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
