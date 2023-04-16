@@ -103,6 +103,7 @@ jobs:
     - name: Test
       env:
         GH_READ_ONLY_ACCESS_TOKEN: ${{ secrets.GH_READ_ONLY_ACCESS_TOKEN }}
+        SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
       run: |
         source .venv/bin/activate
         make install-detectron2
@@ -117,6 +118,7 @@ jobs:
         make install-ingest-azure
         make install-ingest-github
         make install-ingest-gitlab
+        make install-ingest-slack
         make install-ingest-wikipedia
         ./test_unstructured_ingest/test-ingest.sh
 
