@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 cd "$SCRIPT_DIR"/.. || exit 1
 
@@ -17,6 +19,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
       --end-date 2023-04-08T12:00:00-08:00
 
 OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
+
+set +e
 
 # to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then

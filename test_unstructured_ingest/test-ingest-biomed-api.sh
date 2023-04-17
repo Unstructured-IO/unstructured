@@ -6,6 +6,8 @@ echo "see https://github.com/Unstructured-IO/unstructured/issues/468"
 echo
 exit 0
 
+set -e
+
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/.. || exit 1
 
@@ -30,9 +32,12 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
    --num-processes 2 \
    --reprocess \
    --verbose \
+   --re-download \
    --preserve-downloads
 
 OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
+
+set +x
 
 # to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then

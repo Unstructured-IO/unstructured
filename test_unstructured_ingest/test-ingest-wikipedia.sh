@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/.. || exit 1
 
@@ -9,6 +11,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --structured-output-dir wikipedia-ingest-output \
     --num-processes 2 \
     --verbose
+
+set +e
 
 if [ "$(find 'wikipedia-ingest-output' -type f -printf '.' | wc -c)" != 3 ]; then
    echo

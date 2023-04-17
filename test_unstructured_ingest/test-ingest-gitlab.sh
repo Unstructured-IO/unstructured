@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/.. || exit 1
 
@@ -10,6 +12,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --structured-output-dir gitlab-ingest-output \
     --git-branch 'v0.0.7' \
     --verbose
+
+set +e
 
 if [ "$(find 'gitlab-ingest-output' -type f -printf '.' | wc -c)" != 2 ]; then
    echo
