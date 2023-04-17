@@ -89,7 +89,6 @@ def test_partition_text_raises_with_too_many_specified():
 def test_partition_text_captures_everything_even_with_linebreaks():
     text = """
     VERY IMPORTANT MEMO
-
     DOYLESTOWN, PA 18901
     """
     elements = partition_text(text=text)

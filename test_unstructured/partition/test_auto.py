@@ -373,7 +373,7 @@ def test_auto_partition_rtf_from_filename():
 def test_auto_partition_from_url():
     url = "https://raw.githubusercontent.com/Unstructured-IO/unstructured/main/LICENSE.md"
     elements = partition(url=url, content_type="text/plain")
-    assert elements[0].text.startswith("Apache License")
+    assert elements[0] == Title("Apache License")
     assert elements[0].metadata.url == url
 
 
