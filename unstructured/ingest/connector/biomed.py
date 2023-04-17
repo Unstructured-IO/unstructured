@@ -2,7 +2,6 @@ import json
 import os
 import urllib.request
 from dataclasses import dataclass
-from datetime import datetime
 from ftplib import FTP, error_perm
 from pathlib import Path
 from typing import List, Optional, Union
@@ -16,6 +15,9 @@ from unstructured.ingest.interfaces import (
     BaseIngestDoc,
 )
 from unstructured.ingest.logger import logger
+from unstructured.utils import (
+    validate_date_args,
+)
 
 DOMAIN = "ftp.ncbi.nlm.nih.gov"
 FTP_DOMAIN = f"ftp://{DOMAIN}"
@@ -56,36 +58,14 @@ class SimpleBiomedConfig(BaseConnectorConfig):
     fields_include: str = "element_id,text,type,metadata"
     flatten_metadata: bool = False
 
-    def _validate_date_args(self, date):
-        date_formats = ["%Y-%m-%d", "%Y-%m-%d+%H:%M:%S"]
-
-        valid = False
-        if date:
-            date = date.replace(" ", "+").replace("%20", "+")
-            for format in date_formats:
-                try:
-                    datetime.strptime(date, format)
-                    valid = True
-                    break
-                except ValueError:
-                    pass
-
-            if not valid:
-                raise ValueError(
-                    f"The from argument {date} does not satisfy the format: "
-                    "YYYY-MM-DD or YYYY-MM-DD HH:MM:SS",
-                )
-
-        return valid
-
     def validate_api_inputs(self):
         valid = False
 
         if self.from_:
-            valid = self._validate_date_args(self.from_)
+            valid = validate_date_args(self.from_)
 
         if self.until:
-            valid = self._validate_date_args(self.until)
+            valid = validate_date_args(self.until)
 
         return valid
 

@@ -926,7 +926,7 @@
   {
     "element_id": "58d2ec361e9b569851420330ecbac8fd",
     "text": "The Network Virtual Terminal (NVT) is a bi-directional character",
-    "type": "NarrativeText",
+    "type": "Title",
     "metadata": {}
   },
   {
@@ -2072,7 +2072,7 @@
   {
     "element_id": "3bceb7e6ecafeda3f867da7cba48b2ec",
     "text": "coupled with the TELNET command DATA MARK.  The Urgent",
-    "type": "NarrativeText",
+    "type": "Title",
     "metadata": {}
   },
   {
@@ -2360,7 +2360,7 @@
   {
     "element_id": "8459ff8791582f54cd1435d6b9d770db",
     "text": "1. Send the TELNET IP character;",
-    "type": "NarrativeText",
+    "type": "Title",
     "metadata": {}
   },
   {
