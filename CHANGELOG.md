@@ -1,4 +1,4 @@
-## 0.5.13-dev6
+## 0.5.13-dev7
 
 ### Enhancements
 
@@ -10,6 +10,7 @@
 
 ### Fixes
 
+* Fixed typo in call to `exactly_one` in `partition_json`
 * unstructured-documents encode xml string if document_tree is `None` in `_read_xml`.
 * Update to `_read_xml` so that Markdown files with embedded HTML process correctly.
 * Fallback to "fast" strategy only emits a warning if the user specifies the "hi_res" strategy.
