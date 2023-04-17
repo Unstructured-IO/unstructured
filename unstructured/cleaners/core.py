@@ -93,7 +93,7 @@ def group_broken_paragraphs(
         #     Version 2.0, January 2004
         #     http://www.apache.org/licenses/
         para_split = line_split.split(paragraph)
-        all_lines_short = all([len(line.strip().split(" ")) < 10 for line in para_split])
+        all_lines_short = all([len(line.strip().split(" ")) < 5 for line in para_split])
 
         if UNICODE_BULLETS_RE.match(paragraph.strip()):
             clean_paragraphs.extend(re.split(PARAGRAPH_PATTERN, paragraph))
