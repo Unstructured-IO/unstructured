@@ -87,6 +87,7 @@ setup(
         ],
         "gitlab": ["python-gitlab"],
         "reddit": ["praw"],
+        "slack": ["slack_sdk"],
         "wikipedia": ["wikipedia"],
         "google-drive": [
             "google-api-python-client",

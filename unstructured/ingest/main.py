@@ -322,6 +322,29 @@ class MainProcess:
     "skip processing them through unstructured.",
 )
 @click.option(
+    "--slack-channels",
+    default=None,
+    help="Comma separated list of Slack channel IDs to pull messages from, "
+    "can be a public or private channel",
+)
+@click.option(
+    "--slack-token",
+    default=None,
+    help="Bot token used to access Slack API, must have channels:history " "scope for the bot user",
+)
+@click.option(
+    "--start-date",
+    default=None,
+    help="Start date/time in formats YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS or "
+    "YYYY-MM-DD+HH:MM:SS or YYYY-MM-DDTHH:MM:SStz",
+)
+@click.option(
+    "--end-date",
+    default=None,
+    help="End date/time in formats YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS or "
+    "YYYY-MM-DD+HH:MM:SS or YYYY-MM-DDTHH:MM:SStz",
+)
+@click.option(
     "--download-dir",
     help="Where files are downloaded to, defaults to `$HOME/.cache/unstructured/ingest/<SHA256>`.",
 )
@@ -380,6 +403,10 @@ def main(
     reddit_search_query,
     reddit_num_posts,
     re_download,
+    slack_channels,
+    slack_token,
+    start_date,
+    end_date,
     download_dir,
     preserve_downloads,
     structured_output_dir,
@@ -545,6 +572,7 @@ def main(
                 " and `az`.",
                 UserWarning,
             )
+
             from unstructured.ingest.connector.fsspec import (
                 FsspecConnector,
                 SimpleFsspecConfig,
@@ -644,6 +672,26 @@ def main(
                 fields_include=fields_include,
                 flatten_metadata=flatten_metadata,
                 download_only=download_only,
+            ),
+        )
+    elif slack_channels:
+        from unstructured.ingest.connector.slack import (
+            SimpleSlackConfig,
+            SlackConnector,
+        )
+
+        doc_connector = SlackConnector(  # type: ignore
+            config=SimpleSlackConfig(
+                channels=SimpleSlackConfig.parse_channels(slack_channels),
+                token=slack_token,
+                oldest=start_date,
+                latest=end_date,
+                # defaults params:
+                download_dir=download_dir,
+                preserve_downloads=preserve_downloads,
+                output_dir=structured_output_dir,
+                re_download=re_download,
+                verbose=verbose,
             ),
         )
     elif wikipedia_page_title:
