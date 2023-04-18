@@ -786,7 +786,7 @@ Extracts text that occurs after the specified pattern.
 
 Options:
 
-* If ``index`` is set, extract after the ``(index + 1)``th occurrence of the pattern. The default is ``0``.
+* If ``index`` is set, extract after the ``(index + 1)``\th occurrence of the pattern. The default is ``0``.
 * Strips trailing whitespace if ``strip`` is set to ``True``. The default is ``True``.
 
 
