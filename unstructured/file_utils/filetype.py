@@ -183,6 +183,11 @@ def detect_filetype(
         extension = extension.lower()
         if os.path.isfile(_filename) and LIBMAGIC_AVAILABLE:
             mime_type = magic.from_file(filename or file_filename, mime=True)  # type: ignore
+            # NOTE(crag): for older versions of the OS libmagic package, such as is currently
+            # installed on the Unstructured docker image, .json files resolve to "text/plain"
+            # rather than "application/json". this corrects for that case.
+            if mime_type == "text/plain" and extension == ".json":
+                return FileType.JSON
         else:
             return EXT_TO_FILETYPE.get(extension.lower(), FileType.UNK)
     elif file is not None:
