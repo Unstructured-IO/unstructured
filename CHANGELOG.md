@@ -1,4 +1,4 @@
-## 0.5.13-dev7
+## 0.5.13-dev8
 
 ### Enhancements
 
@@ -15,6 +15,7 @@
 * Update to `_read_xml` so that Markdown files with embedded HTML process correctly.
 * Fallback to "fast" strategy only emits a warning if the user specifies the "hi_res" strategy.
 * unstructured-partition-text_type exceeds_cap_ratio fix returns and how capitalization ratios are calculated
+* .json files resolved as "application/json" on centos7 (or other installs with older libmagic libs)
 
 ## 0.5.12
 
