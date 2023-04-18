@@ -139,7 +139,7 @@ If you are on Windows using ``conda``, run:
 		$ conda install -c conda-forge libmagic
 
 ======================
-XML/HTML Depenedencies
+XML/HTML Dependencies
 ======================
 
 For XML and HTML parsing, you'll need ``libxml2`` and ``libxlst`` installed. On a Mac, you can do
