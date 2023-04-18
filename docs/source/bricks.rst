@@ -763,7 +763,7 @@ Extracts text that occurs before the specified pattern.
 
 Options:
 
-* If ``index`` is set, extract before the ``(index + 1)``th occurrence of the pattern. The default is ``0``.
+* If ``index`` is set, extract before the ``(index + 1)``\th occurrence of the pattern. The default is ``0``.
 * Strips leading whitespace if ``strip`` is set to ``True``. The default is ``True``.
 
 
