@@ -115,7 +115,7 @@ jobs:
         make test
         make check-coverage
         make install-ingest-s3
-        make install-ingest-azure
+        # make install-ingest-azure
         make install-ingest-github
         make install-ingest-gitlab
         make install-ingest-slack
