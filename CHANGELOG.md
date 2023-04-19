@@ -1,4 +1,4 @@
-## 0.5.13-dev6
+## 0.5.13-dev8
 
 ### Enhancements
 
@@ -10,11 +10,13 @@
 
 ### Fixes
 
+* Fixed typo in call to `exactly_one` in `partition_json`
 * unstructured-documents encode xml string if document_tree is `None` in `_read_xml`.
 * Update to `_read_xml` so that Markdown files with embedded HTML process correctly.
 * Fallback to "fast" strategy only emits a warning if the user specifies the "hi_res" strategy.
 * unstructured-partition-text_type exceeds_cap_ratio fix returns and how capitalization ratios are calculated
 * `partition_pdf` and `partition_text` group broken paragraphs to avoid fragmented `NarrativeText` elements.
+* .json files resolved as "application/json" on centos7 (or other installs with older libmagic libs)
 
 ## 0.5.12
 

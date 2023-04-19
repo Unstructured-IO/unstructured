@@ -205,6 +205,7 @@ docker-start-bash:
 docker-test:
 	docker run --rm \
 	-v ${CURRENT_DIR}/test_unstructured:/home/test_unstructured \
+	-v ${CURRENT_DIR}/test_unstructured_ingest:/home/test_unstructured_ingest \
 	$(DOCKER_IMAGE) \
 	bash -c "pytest $(if $(TEST_NAME),-k $(TEST_NAME),) test_unstructured"
 
