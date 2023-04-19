@@ -37,7 +37,7 @@
 <p>Checkout the <a href="https://github.com/Unstructured-IO/unstructured-api#--">readme</a> here to get started making API calls. You’ll also find instructions there about how to host your own version of the API. Unstructured data just got easier! 
 We'd love to hear your feedback, let us know how it goes in our <a
   href="https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-1nlh1ot5d-dfY7zCRlhFboZrIWLA4Qgw">
-   community slack</a>.
+   community slack</a>. And stay tuned for improvements to both quality and performance over the coming months!
 <p><img src="easy.gif"></p></p>
 </div>
 
