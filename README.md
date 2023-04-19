@@ -37,7 +37,7 @@ We'd love to hear your feedback, let us know how it goes in our <a
   href="https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-1nlh1ot5d-dfY7zCRlhFboZrIWLA4Qgw">
    community slack</a>.
 <p><img src="easy.gif"></p></p>
-
+</div>
 
 <h3 align="center">
   <p>Open-Source Pre-Processing Tools for Unstructured Data</p>
