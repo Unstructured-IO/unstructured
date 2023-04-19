@@ -46,4 +46,5 @@ docker run --rm -v "$SCRIPT_DIR"/../unstructured:/root/unstructured -v \
                ./test_unstructured_ingest/test-ingest-github.sh &&
                ./test_unstructured_ingest/test-ingest-biomed-api.sh &&
                ./test_unstructured_ingest/test-ingest-biomed-path.sh &&
-               ./test_unstructured_ingest/test-ingest-s3.sh"
+               ./test_unstructured_ingest/test-ingest-s3.sh &&
+               ./test_unstructured_ingest/test-ingest-slack.sh"
