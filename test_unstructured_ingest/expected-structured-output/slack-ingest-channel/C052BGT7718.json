@@ -1,23 +1,7 @@
 [
   {
-    "element_id": "cf80cd8aed482d5d1527d7dc72fceff8",
-    "text": "testing",
-    "type": "NarrativeText",
-    "metadata": {
-      "filename": "slack-ingest-download/C052BGT7718.txt"
-    }
-  },
-  {
-    "element_id": "55434f5d914503444c44a26487bf31bc",
-    "text": "<@U051UBRR946> has joined the channel",
-    "type": "NarrativeText",
-    "metadata": {
-      "filename": "slack-ingest-download/C052BGT7718.txt"
-    }
-  },
-  {
-    "element_id": "574858a3daf89b7ef96e41910a4ae56d",
-    "text": "<@U04ST78RXU3> has joined the channel",
+    "element_id": "e50da2f0aada6f89af788627ebf261b7",
+    "text": "testing <@U051UBRR946> has joined the channel <@U04ST78RXU3> has joined the channel",
     "type": "NarrativeText",
     "metadata": {
       "filename": "slack-ingest-download/C052BGT7718.txt"
