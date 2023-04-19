@@ -26,6 +26,18 @@
     <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" />
   </a>
 </div>
+<h2 align="center">
+  <p>Announcement!!!</p>
+</h2>
+<div align="center">
+  <p>We're excited to announce the public release of the unstructured.io hosted API! Now you can leverage Unstructured with a simple API call to render clean text in JSON format out of your images, documents, powerpoints, and more.</p>
+
+<p>Checkout the <a href="https://github.com/Unstructured-IO/unstructured-api#--">readme</a> here to get started making API calls. You’ll also find instructions there about how to host your own version of the API. Unstructured data just got easier! 
+We'd love to hear your feedback, let us know how it goes in our <a
+  href="https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-1nlh1ot5d-dfY7zCRlhFboZrIWLA4Qgw">
+   community slack</a>. And stay tuned for improvements to both quality and performance over the coming months!
+<p><img src="easy.gif"></p></p>
+</div>
 
 <h3 align="center">
   <p>Open-Source Pre-Processing Tools for Unstructured Data</p>
