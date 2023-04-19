@@ -1,13 +1,7 @@
 [
   {
-    "element_id": "6f348994832b2ad6127af4f7f1736f67",
-    "text": "Downloadify: Client Side File Creation",
-    "type": "Title",
-    "metadata": {}
-  },
-  {
-    "element_id": "074ac796e8f463c50a5d2ec4d047a5b7",
-    "text": "JavaScript + Flash Library",
+    "element_id": "e3e5334b595ef9b648bf7f1f6c1a60c4",
+    "text": "Downloadify: Client Side File Creation JavaScript + Flash Library",
     "type": "Title",
     "metadata": {}
   },
@@ -18,93 +12,21 @@
     "metadata": {}
   },
   {
-    "element_id": "eb281d7b00a856779aaca7d1ec5197a7",
-    "text": "Permission is hereby granted, free of charge, to any person obtaining a copy",
+    "element_id": "fa3ff462f020dcadaf3c44b61f0df757",
+    "text": "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:",
     "type": "NarrativeText",
     "metadata": {}
   },
   {
-    "element_id": "b41e880594419467436d152970f36710",
-    "text": "of this software and associated documentation files (the \"Software\"), to deal",
+    "element_id": "70760316a66259dc346c891a2b964556",
+    "text": "The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.",
     "type": "NarrativeText",
     "metadata": {}
   },
   {
-    "element_id": "a9578931575204db7971aa2e85137083",
-    "text": "in the Software without restriction, including without limitation the rights",
+    "element_id": "1da9072633b5e4291608b205a664d5af",
+    "text": "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
     "type": "NarrativeText",
-    "metadata": {}
-  },
-  {
-    "element_id": "7105a363bc50eba8e93f676dbb0bd145",
-    "text": "to use, copy, modify, merge, publish, distribute, sublicense, and/or sell",
-    "type": "NarrativeText",
-    "metadata": {}
-  },
-  {
-    "element_id": "10e76e02d2ddc0fa91590e65249dbbb5",
-    "text": "copies of the Software, and to permit persons to whom the Software is",
-    "type": "NarrativeText",
-    "metadata": {}
-  },
-  {
-    "element_id": "cb2b93515ca0dd50850fd3e1491bf06c",
-    "text": "furnished to do so, subject to the following conditions:",
-    "type": "NarrativeText",
-    "metadata": {}
-  },
-  {
-    "element_id": "ace17038b2bfb49c3882a23be243c016",
-    "text": "The above copyright notice and this permission notice shall be included in",
-    "type": "NarrativeText",
-    "metadata": {}
-  },
-  {
-    "element_id": "4d1f5dcef281e3f580a6c6156a298960",
-    "text": "all copies or substantial portions of the Software.",
-    "type": "Title",
-    "metadata": {}
-  },
-  {
-    "element_id": "58dab889725677ddc5a270a07df8395e",
-    "text": "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR",
-    "type": "NarrativeText",
-    "metadata": {}
-  },
-  {
-    "element_id": "b47e700b9d4e04e4670448bb39067ed2",
-    "text": "IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,",
-    "type": "NarrativeText",
-    "metadata": {}
-  },
-  {
-    "element_id": "ff5d35f4e0324c8499b81980c7da4b7c",
-    "text": "FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE",
-    "type": "NarrativeText",
-    "metadata": {}
-  },
-  {
-    "element_id": "6dc498cbd6e27db10da2431cfcc32e90",
-    "text": "AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER",
-    "type": "NarrativeText",
-    "metadata": {}
-  },
-  {
-    "element_id": "cb64ba82bcfdc75c8d68da657159e00d",
-    "text": "LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,",
-    "type": "NarrativeText",
-    "metadata": {}
-  },
-  {
-    "element_id": "ed18e41c2aa38a20e0c256fdc28b7243",
-    "text": "OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN",
-    "type": "UncategorizedText",
-    "metadata": {}
-  },
-  {
-    "element_id": "76d8377ccb0743b6c7de1f85b60f3955",
-    "text": "THE SOFTWARE.",
-    "type": "Title",
     "metadata": {}
   }
 ]

@@ -4,7 +4,7 @@ import pytest
 import requests
 from unstructured_inference.inference import layout
 
-from unstructured.documents.elements import PageBreak, Text
+from unstructured.documents.elements import NarrativeText, PageBreak, Text
 from unstructured.partition import pdf
 
 
@@ -198,6 +198,20 @@ def test_partition_pdf_with_no_page_breaks(filename="example-docs/layout-parser-
 def test_partition_pdf_with_fast_strategy(filename="example-docs/layout-parser-paper-fast.pdf"):
     elements = pdf.partition_pdf(filename=filename, url=None, strategy="fast")
     assert len(elements) > 10
+
+
+def test_partition_pdf_with_fast_groups_text(filename="example-docs/layout-parser-paper-fast.pdf"):
+    elements = pdf.partition_pdf(filename=filename, url=None, strategy="fast")
+
+    first_narrative_element = None
+    for element in elements:
+        if isinstance(element, NarrativeText):
+            first_narrative_element = element
+            break
+
+    assert len(first_narrative_element.text) > 1000
+    assert first_narrative_element.text.startswith("Abstract. Recent advances")
+    assert first_narrative_element.text.endswith("https://layout-parser.github.io.")
 
 
 def test_partition_pdf_with_fast_strategy_from_file(
