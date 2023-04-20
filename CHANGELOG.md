@@ -1,3 +1,15 @@
+## 0.5.14-dev0
+
+### Enhancements
+
+* Adds an `ssl_verify` kwarg to `partition` and `partition_html` to enable turning off
+  SSL verification for HTTP requests. SSL verification is on by default.
+
+### Features
+
+### Fixes
+
+
 ## 0.5.13
 
 ### Enhancements
