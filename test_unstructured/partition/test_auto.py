@@ -281,6 +281,7 @@ def test_auto_partition_pdf_with_fast_strategy():
         url=None,
         include_page_breaks=False,
         encoding="utf-8",
+        extract_tables=False,
         strategy="fast",
     )
 
