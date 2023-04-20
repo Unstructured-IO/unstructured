@@ -2,7 +2,6 @@ import datetime
 import email
 import re
 import sys
-import extract_msg
 from email.message import Message
 from functools import partial
 from typing import IO, Dict, List, Optional, Tuple, Union
@@ -119,46 +118,18 @@ def convert_to_iso_8601(time: str) -> str:
     return datetime_object.isoformat()
 
 
-def msg_extract_attachment(filename: str, output_dir: Optional[str] = None) -> List[Dict[str, str]]:
-    list_attachments = []
-
-    msg = extract_msg.Message(filename)
-
-    for attachment in msg.attachments:
-        attachment_info = {}
-
-        if not output_dir:
-            attachment.save()
-        else:
-            with open(output_dir + "/", "wb") as f:
-                f.write(attachment.data)
-        attachment_info["filename"] = attachment.getFilename()
-        attachment_info["extension"] = attachment.extension
-        attachment_info["payload"] = attachment.data
-
-        list_attachments.append(attachment_info)
-    return list_attachments
-
-
-def eml_extract_attachment(
-    message: Optional[Message],
-    filename: Optional[str] = None,
+def extract_attachment_info(
+    message: Message,
     output_dir: Optional[str] = None,
 ) -> List[Dict[str, str]]:
     list_attachments = []
-
-    if filename is not None:
-        with open(filename, "r") as f:
-            message = email.message_from_file(f)
-
+    attachment_info = {}
     for part in message.walk():
         if "content-disposition" in part:
             cdisp = part["content-disposition"].split(";")
             cdisp = [clean_extra_whitespace(item) for item in cdisp]
 
             for item in cdisp:
-
-                attachment_info = {}
                 if item.lower() == "attachment":
                     continue
                 key, value = item.split("=")
@@ -176,10 +147,6 @@ def eml_extract_attachment(
                         # causes an error since the payloads are bytes not str
                         f.write(attachment["payload"])  # type: ignore
     return list_attachments
-
-
-def extract_attachment_info():
-    pass
 
 
 def has_embedded_image(element):
