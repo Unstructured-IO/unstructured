@@ -268,6 +268,15 @@ def test_auto_partition_pdf_from_filename(pass_file_filename, content_type):
     assert elements[0].metadata.filename == filename
 
 
+def test_auto_partition_pdf_uses_table_extraction():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
+    with patch(
+        "unstructured_inference.inference.layout.process_file_with_model"
+    ) as mock_process_file_with_model:
+        partition(filename, pdf_extract_tables=True)
+        assert mock_process_file_with_model.call_args[1]["extract_tables"]
+
+
 def test_auto_partition_pdf_with_fast_strategy():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
 
