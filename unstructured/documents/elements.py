@@ -208,6 +208,14 @@ class PageBreak(Text):
         super().__init__(text="<PAGE BREAK>")
 
 
+class Table(Text):
+    """An element for capturing tables."""
+
+    category = "Table"
+
+    pass
+
+
 TYPE_TO_TEXT_ELEMENT_MAP: Dict[str, Any] = {
     "UncategorizedText": Text,
     "FigureCaption": FigureCaption,
@@ -220,4 +228,5 @@ TYPE_TO_TEXT_ELEMENT_MAP: Dict[str, Any] = {
     "Address": Address,
     "Image": Image,
     "PageBreak": PageBreak,
+    "Table": Table,
 }
