@@ -45,7 +45,11 @@ def partition_pdf(
         to 'hi_res', otherwise partition_pdf simply extracts the text from the document
         and processes it.
     extract_tables
-        If True, extracts any tables that are detected.
+        If True, extracts any tables that are detected when using 'hi_res' strategy. Whether this
+        is True or False, the partitioning process will attempt to identify any tables in the
+        document. This parameter indicates that the partitioning process will attempt to extract the
+        structure of any identified tables. The table structure and cell contents will be stored as
+        HTML in the text property of the resulting Table element.
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
     """
