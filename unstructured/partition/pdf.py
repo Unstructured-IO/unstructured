@@ -22,6 +22,7 @@ def partition_pdf(
     token: Optional[str] = None,
     include_page_breaks: bool = False,
     strategy: str = "hi_res",
+    extract_tables: bool = False,
     encoding: str = "utf-8",
 ) -> List[Element]:
     """Parses a pdf document into a list of interpreted elements.
@@ -43,6 +44,8 @@ def partition_pdf(
         The strategy to use for partitioning the PDF. Uses a layout detection model if set
         to 'hi_res', otherwise partition_pdf simply extracts the text from the document
         and processes it.
+    extract_tables
+        If True, extracts any tables that are detected.
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
     """
@@ -55,6 +58,7 @@ def partition_pdf(
         token=token,
         include_page_breaks=include_page_breaks,
         strategy=strategy,
+        extract_tables=extract_tables,
         encoding=encoding,
     )
 
@@ -68,6 +72,7 @@ def partition_pdf_or_image(
     is_image: bool = False,
     include_page_breaks: bool = False,
     strategy: str = "hi_res",
+    extract_tables: bool = False,
     encoding: str = "utf-8",
 ) -> List[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
@@ -102,6 +107,7 @@ def partition_pdf_or_image(
                     file=file,
                     template=out_template,
                     is_image=is_image,
+                    extract_tables=extract_tables,
                     include_page_breaks=True,
                 )
 
@@ -110,6 +116,11 @@ def partition_pdf_or_image(
                 logger.warning(
                     "detectron2 is not installed. Cannot use the hi_res partitioning "
                     "strategy. Falling back to partitioning with the fast strategy.",
+                )
+            if extract_tables:
+                logger.warning(
+                    "Table extraction was selected, but is being ignored while using the fast "
+                    "strategy.",
                 )
 
             return _partition_pdf_with_pdfminer(
@@ -151,6 +162,7 @@ def _partition_pdf_or_image_local(
     file: Optional[bytes] = None,
     template: Optional[str] = None,
     is_image: bool = False,
+    extract_tables: bool = False,
     include_page_breaks: bool = False,
 ) -> List[Element]:
     """Partition using package installed locally."""
@@ -175,9 +187,19 @@ def _partition_pdf_or_image_local(
         ) from e
 
     layout = (
-        process_file_with_model(filename, template, is_image=is_image)
+        process_file_with_model(
+            filename,
+            template,
+            is_image=is_image,
+            extract_tables=extract_tables,
+        )
         if file is None
-        else process_data_with_model(file, template, is_image=is_image)
+        else process_data_with_model(
+            file,
+            template,
+            is_image=is_image,
+            extract_tables=extract_tables,
+        )
     )
 
     return document_to_element_list(layout, include_page_breaks=include_page_breaks)
