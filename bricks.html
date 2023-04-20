@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Examples" href="examples.html" /><link rel="prev" title="Getting Started" href="getting_started.html" />
 
     <link rel="shortcut icon" href="_static/unstructured_small.png"/><!-- Generated with Sphinx 6.1.3 and Furo 2023.03.27 -->
-        <title>Bricks - Unstructured 0.5.13 documentation</title>
+        <title>Bricks - Unstructured 0.5.14 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -223,7 +223,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">Unstructured 0.5.13 documentation</div></a>
+      <a href="index.html"><div class="brand">Unstructured 0.5.14 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -398,7 +398,9 @@ faster processing and <cite>“hi_res”</cite> for more accurate processing.</p
 <p>The <code class="docutils literal notranslate"><span class="pre">partition</span></code> function also accepts a <code class="docutils literal notranslate"><span class="pre">url</span></code> kwarg for remotely hosted documents. If you want
 to force <code class="docutils literal notranslate"><span class="pre">partition</span></code> to treat the document as a particular MIME type, use the <code class="docutils literal notranslate"><span class="pre">content_type</span></code>
 kwarg in conjunction with <code class="docutils literal notranslate"><span class="pre">url</span></code>. Otherwise, <code class="docutils literal notranslate"><span class="pre">partition</span></code> will use the information from
-the <code class="docutils literal notranslate"><span class="pre">Content-Type</span></code> header in the HTTP response.</p>
+the <code class="docutils literal notranslate"><span class="pre">Content-Type</span></code> header in the HTTP response. The <code class="docutils literal notranslate"><span class="pre">ssl_verify</span></code> kwarg controls whether
+or not SSL verification is enabled for the HTTP request. By default it is on. Use <code class="docutils literal notranslate"><span class="pre">ssl_verify=False</span></code>
+to disable SSL verification in the request.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.auto</span> <span class="kn">import</span> <span class="n">partition</span>
 
 <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/Unstructured-IO/unstructured/main/LICENSE.md&quot;</span>
@@ -500,7 +502,10 @@ object, string, or url as input.</p>
 <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_html</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The following illustrates fetching a url and partitioning the response content:</p>
+<p>The following illustrates fetching a url and partitioning the response content.
+The <code class="docutils literal notranslate"><span class="pre">ssl_verify</span></code> kwarg controls whether
+or not SSL verification is enabled for the HTTP request. By default it is on. Use <code class="docutils literal notranslate"><span class="pre">ssl_verify=False</span></code>
+to disable SSL verification in the request.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.html</span> <span class="kn">import</span> <span class="n">partition_html</span>
 
 <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_html</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s2">&quot;https://python.org/&quot;</span><span class="p">)</span>
@@ -509,6 +514,10 @@ object, string, or url as input.</p>
 
 <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_html</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s2">&quot;https://python.org/&quot;</span><span class="p">,</span>
                           <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="s2">&quot;YourScriptName/1.0 ...&quot;</span><span class="p">})</span>
+
+<span class="c1"># and turn off SSL verification</span>
+
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_html</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s2">&quot;https://python.org/&quot;</span><span class="p">,</span> <span class="n">ssl_verify</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
