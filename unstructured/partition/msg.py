@@ -91,7 +91,8 @@ def extract_attachment_info(
         list_attachments.append(attachment_info)
 
         if output_dir is not None:
-            with open(f"{output_dir}/{attachment.AttachLongFilename()}", "wb") as f:
+            filename = output_dir + "/" + attachment_info["filename"]
+            with open(filename, "wb") as f:
                 f.write(attachment.data)
 
     return list_attachments
