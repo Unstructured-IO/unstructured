@@ -267,7 +267,7 @@ def test_partition_pdf_falls_back_to_fast(
 def test_partition_pdf_uses_table_extraction():
     filename = "example-docs/layout-parser-paper-fast.pdf"
     with mock.patch(
-        "unstructured_inference.inference.layout.process_file_with_model"
+        "unstructured_inference.inference.layout.process_file_with_model",
     ) as mock_process_file_with_model:
         pdf.partition_pdf(filename, extract_tables=True)
         assert mock_process_file_with_model.call_args[1]["extract_tables"]
