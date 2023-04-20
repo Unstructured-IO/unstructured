@@ -88,7 +88,7 @@ specific bricks if you need to apply non-default settings.
 If you set the ``include_page_breaks`` kwarg to ``True``, the output will include page breaks. This is only supported for ``.pptx``, ``.html``, ``.pdf``,
 ``.png``, and ``.jpg``.
 The ``strategy`` kwarg controls the strategy for partitioning documents. Generally available strategies are `"fast"` for
-faster processing and `"hi_res"` for
+faster processing and `"hi_res"` for more accurate processing.
 
 
 .. code:: python
