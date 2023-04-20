@@ -107,7 +107,7 @@ def test_partition_from_url_uses_headers(mocker):
     partition_html(url=test_url, headers=test_headers)
 
     # Check if requests.get was called with the correct arguments
-    mock_get.assert_called_once_with(test_url, headers=test_headers)
+    mock_get.assert_called_once_with(test_url, headers=test_headers, verify=True)
 
 
 def test_partition_html_raises_with_none_specified():
