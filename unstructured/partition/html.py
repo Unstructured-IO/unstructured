@@ -22,6 +22,7 @@ def partition_html(
     include_page_breaks: bool = False,
     include_metadata: bool = True,
     headers: Dict[str, str] = {},
+    ssl_verify: bool = True,
     parser: VALID_PARSERS = None,
 ) -> List[Element]:
     """Partitions an HTML document into its constituent elements.
@@ -43,6 +44,11 @@ def partition_html(
     include_metadata
         Optionally allows for excluding metadata from the output. Primarily intended
         for when partition_html is called in other partition bricks (like partition_email)
+    headers
+        The headers to be used in conjunction with the HTTP request if URL is set.
+    ssl_verify
+        If the URL parameter is set, determines whether or not partition uses SSL verification
+        in the HTTP request.
     parser
         The parser to use for parsing the HTML document. If None, default parser will be used.
     """
@@ -72,7 +78,7 @@ def partition_html(
         document = HTMLDocument.from_string(_text, parser=parser)
 
     elif url is not None:
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers, verify=ssl_verify)
         if not response.ok:
             raise ValueError(f"URL return an error: {response.status_code}")
 
