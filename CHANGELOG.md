@@ -1,3 +1,13 @@
+## 0.5.14-dev0
+
+### Enhancements
+
+### Features
+
+* Table extraction is now possible for pdfs from `partition` and `partition_pdf`.
+
+### Fixes
+
 ## 0.5.13
 
 ### Enhancements
