@@ -283,6 +283,10 @@ The ``strategy`` kwarg controls the method that will be used to process the PDF.
 will identify the layout of the document using ``detectron2``. The ``"fast"`` strategy will extract the
 text using ``pdfminer`` and process the raw text with ``partition_text``. If ``detectron2`` is not available,
 and the ``"hi_res"`` strategy is set, ``partition_pdf`` will fallback to the ``"fast"`` strategy.
+You can also specify what languages to use for OCR with the ``ocr_languages`` kwarg. For example,
+use ``ocr_languages="eng+deu"`` to use the English and German language packs. See the
+`Tesseract documentation <https://github.com/tesseract-ocr/tessdata>`_ for a full list of languages and
+install instructions. OCR is only applied if the text is not already available in the PDF document.
 
 Examples:
 
@@ -293,6 +297,10 @@ Examples:
   # Returns a List[Element] present in the pages of the parsed pdf document
   elements = partition_pdf("example-docs/layout-parser-paper-fast.pdf")
 
+  # Applies the English and Swedish language pack for ocr. OCR is only applied
+  # if the text is not available in the PDF.
+  elements = partition_pdf("example-docs/layout-parser-paper-fast.pdf", ocr_languages="eng+swe")
+
 
 ``partition_image``
 ---------------------
@@ -300,6 +308,11 @@ Examples:
 The ``partition_image`` function has the same API as ``partition_pdf``, which is document above.
 The only difference is that ``partition_image`` does not need to convert a PDF to an image
 prior to processing. The ``partition_image`` function supports ``.png`` and ``.jpg`` files.
+You can also specify what languages to use for OCR with the ``ocr_languages`` kwarg. For example,
+use ``ocr_languages="eng+deu"`` to use the English and German language packs. See the
+`Tesseract documentation <https://github.com/tesseract-ocr/tessdata>`_ for a full list of languages and
+install instructions.
+
 
 Examples:
 
@@ -309,6 +322,9 @@ Examples:
 
   # Returns a List[Element] present in the pages of the parsed image document
   elements = partition_image("example-docs/layout-parser-paper-fast.jpg")
+
+  # Applies the English and Swedish language pack for ocr
+  elements = partition_image("example-docs/layout-parser-paper-fast.jpg", ocr_languages="eng+swe")
 
 
 
