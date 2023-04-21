@@ -75,7 +75,44 @@ jobs:
       - name: ShellCheck
         uses: ludeeus/action-shellcheck@master
 
-  test:
+  test_unit:
+    strategy:
+      matrix:
+        python-version: ["3.8","3.9","3.10"]
+    runs-on: ubuntu-latest
+    env:
+      NLTK_DATA: ${{ github.workspace }}/nltk_data
+    needs: [setup, lint]
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/cache@v3
+      id: virtualenv-cache
+      with:
+        path: |
+          .venv
+          nltk_data
+        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements/*.txt') }}
+    # NOTE(robinson) - This is a fallback in case the job does not find the cache.
+    # We can take this out when we implement the fix in CORE-99
+    - name: Setup virtual environment (no cache hit)
+      if: steps.virtualenv-cache.outputs.cache-hit != 'true'
+      run: |
+        python${{ matrix.python-version}} -m venv .venv
+        source .venv/bin/activate
+        make install-ci
+    - name: Test
+      run: |
+        source .venv/bin/activate
+        make install-detectron2
+        sudo apt-get update
+        sudo apt-get install -y libmagic-dev poppler-utils libreoffice pandoc
+        sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
+        sudo apt-get install -y tesseract-ocr
+        tesseract --version
+        make test
+        make check-coverage
+
+  test_ingest:
     strategy:
       matrix:
         python-version: ["3.8","3.9","3.10"]
@@ -112,8 +149,6 @@ jobs:
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
         sudo apt-get install -y tesseract-ocr
         tesseract --version
-        make test
-        make check-coverage
         make install-ingest-s3
         make install-ingest-azure
         make install-ingest-github
