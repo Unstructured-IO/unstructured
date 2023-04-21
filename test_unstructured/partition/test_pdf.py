@@ -1,3 +1,4 @@
+import os
 from unittest import mock
 
 import pytest
@@ -271,3 +272,24 @@ def test_partition_pdf_uses_table_extraction():
     ) as mock_process_file_with_model:
         pdf.partition_pdf(filename, extract_tables=True)
         assert mock_process_file_with_model.call_args[1]["extract_tables"]
+
+
+@pytest.mark.parametrize(
+    ("filename", "from_file", "expected"),
+    [
+        ("layout-parser-paper-fast.pdf", True, True),
+        ("copy-protected.pdf", True, False),
+        ("layout-parser-paper-fast.pdf", False, True),
+        ("copy-protected.pdf", False, False),
+    ],
+)
+def test_is_pdf_text_extractable(filename, from_file, expected):
+    filename = os.path.join("example-docs", filename)
+
+    if from_file:
+        with open(filename, "rb") as f:
+            extractable = pdf.is_pdf_text_extractable(file=f)
+    else:
+        extractable = pdf.is_pdf_text_extractable(filename=filename)
+
+    assert extractable is expected

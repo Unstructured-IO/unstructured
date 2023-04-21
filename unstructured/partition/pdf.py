@@ -2,6 +2,9 @@ import warnings
 from io import StringIO
 from typing import BinaryIO, List, Optional, cast
 
+from pdfminer.pdfpage import PDFPage, PDFTextExtractionNotAllowed
+from pdfminer.utils import open_filename
+
 from unstructured.documents.elements import Element, ElementMetadata, PageBreak
 from unstructured.logger import logger
 from unstructured.partition import _partition_via_api
@@ -233,9 +236,6 @@ def _partition_pdf_with_pdfminer(
 
     ref: https://github.com/pdfminer/pdfminer.six/blob/master/pdfminer/high_level.py
     """
-
-    from pdfminer.utils import open_filename
-
     exactly_one(filename=filename, file=file)
     if filename:
         with open_filename(filename, "rb") as fp:
@@ -269,14 +269,13 @@ def _process_pdfminer_pages(
     from pdfminer.converter import TextConverter
     from pdfminer.layout import LAParams
     from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
-    from pdfminer.pdfpage import PDFPage
 
     rsrcmgr = PDFResourceManager(caching=False)
     laparams = LAParams()
 
     elements: List[Element] = []
 
-    for i, page in enumerate(PDFPage.get_pages(fp)):
+    for i, page in enumerate(PDFPage.get_pages(fp, check_extractable=True)):
         metadata = ElementMetadata(filename=filename, page_number=i + 1)
         with StringIO() as output_string:
             device = TextConverter(
@@ -297,3 +296,25 @@ def _process_pdfminer_pages(
             elements.append(PageBreak())
 
     return elements
+
+
+def is_pdf_text_extractable(filename: str = "", file: Optional[bytes] = None):
+    """Checks to see if the text from a PDF document is extractable. Sometimes the
+    text is not extractable due to PDF security settings."""
+    exactly_one(filename=filename, file=file)
+
+    def _fp_is_extractable(fp):
+        try:
+            next(PDFPage.get_pages(fp, check_extractable=True))
+            extractable = True
+        except PDFTextExtractionNotAllowed:
+            extractable = False
+        return extractable
+
+    if filename:
+        with open_filename(filename, "rb") as fp:
+            fp = cast(BinaryIO, fp)
+            return _fp_is_extractable(fp)
+    elif file:
+        fp = cast(BinaryIO, file)
+        return _fp_is_extractable(fp)
