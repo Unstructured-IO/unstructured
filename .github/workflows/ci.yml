@@ -92,7 +92,7 @@ jobs:
           .venv
           nltk_data
         key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements/*.txt') }}
-    # NOTE(robinson) - This is a fallback in case the lint job does not find the cache.
+    # NOTE(robinson) - This is a fallback in case the job does not find the cache.
     # We can take this out when we implement the fix in CORE-99
     - name: Setup virtual environment (no cache hit)
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
