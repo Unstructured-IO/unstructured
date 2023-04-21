@@ -25,7 +25,7 @@ def partition_pdf(
     token: Optional[str] = None,
     include_page_breaks: bool = False,
     strategy: str = "hi_res",
-    extract_tables: bool = False,
+    infer_table_structure: bool = False,
     encoding: str = "utf-8",
     ocr_languages: str = "eng",
 ) -> List[Element]:
@@ -48,12 +48,13 @@ def partition_pdf(
         The strategy to use for partitioning the PDF. Uses a layout detection model if set
         to 'hi_res', otherwise partition_pdf simply extracts the text from the document
         and processes it.
-    extract_tables
-        If True, extracts any tables that are detected when using 'hi_res' strategy. Whether this
-        is True or False, the partitioning process will attempt to identify any tables in the
-        document. This parameter indicates that the partitioning process will attempt to extract the
-        structure of any identified tables. The table structure and cell contents will be stored as
-        HTML in the metadata in the text_as_html property, e.g. element.metadata.text_as_html
+    infer_table_structure
+        Only applicable if `strategy=hi_res`.
+        If True, any Table elements that are extracted will also have a metadata field
+        named "text_as_html" where the table's text content is rendered into an html string.
+        I.e., rows and cells are preserved.
+        Whether True or False, the "text" field is always present in any Table element
+        and is the text content of the table (no structure).
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
     ocr_languages
@@ -69,7 +70,7 @@ def partition_pdf(
         token=token,
         include_page_breaks=include_page_breaks,
         strategy=strategy,
-        extract_tables=extract_tables,
+        infer_table_structure=infer_table_structure,
         encoding=encoding,
         ocr_languages=ocr_languages,
     )
@@ -84,7 +85,7 @@ def partition_pdf_or_image(
     is_image: bool = False,
     include_page_breaks: bool = False,
     strategy: str = "hi_res",
-    extract_tables: bool = False,
+    infer_table_structure: bool = False,
     encoding: str = "utf-8",
     ocr_languages: str = "eng",
 ) -> List[Element]:
@@ -133,7 +134,7 @@ def partition_pdf_or_image(
                     file=file,
                     template=out_template,
                     is_image=is_image,
-                    extract_tables=extract_tables,
+                    infer_table_structure=infer_table_structure,
                     include_page_breaks=True,
                     ocr_languages=ocr_languages,
                 )
@@ -144,7 +145,7 @@ def partition_pdf_or_image(
                     "detectron2 is not installed. Cannot use the hi_res partitioning "
                     "strategy. Falling back to partitioning with the fast strategy.",
                 )
-            if extract_tables:
+            if infer_table_structure:
                 logger.warning(
                     "Table extraction was selected, but is being ignored while using the fast "
                     "strategy.",
@@ -189,7 +190,7 @@ def _partition_pdf_or_image_local(
     file: Optional[bytes] = None,
     template: Optional[str] = None,
     is_image: bool = False,
-    extract_tables: bool = False,
+    infer_table_structure: bool = False,
     include_page_breaks: bool = False,
     ocr_languages: str = "eng",
 ) -> List[Element]:
@@ -220,7 +221,7 @@ def _partition_pdf_or_image_local(
             template,
             is_image=is_image,
             ocr_languages=ocr_languages,
-            extract_tables=extract_tables,
+            extract_tables=infer_table_structure,
         )
     else:
         layout = process_data_with_model(
@@ -228,7 +229,7 @@ def _partition_pdf_or_image_local(
             template,
             is_image=is_image,
             ocr_languages=ocr_languages,
-            extract_tables=extract_tables,
+            extract_tables=infer_table_structure,
         )
 
     return document_to_element_list(layout, include_page_breaks=include_page_breaks)
