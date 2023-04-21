@@ -69,14 +69,20 @@ def build_msg_metadata(msg_obj: msg_parser.MsOxMessage) -> ElementMetadata:
     )
 
 
-def extract_attachment_info(
+def extract_msg_attachment_info(
     filename: str,
+    file: Optional[IO] = None,
     output_dir: Optional[str] = None,
 ) -> List[Dict[str, str]]:
+    exactly_one(filename=filename, file=file)
+
     if filename is not None:
         msg_obj = msg_parser.MsOxMessage(filename)
-    else:
-        raise ValueError("Input a filename for the MSG file to extract the attachment(s).")
+    elif file is not None:
+        tmp = tempfile.NamedTemporaryFile(delete=False)
+        tmp.write(file.read())
+        tmp.close()
+        msg_obj = msg_parser.MsOxMessage(tmp.name)
 
     list_attachments = []
 
