@@ -302,6 +302,25 @@ Examples:
   elements = partition_pdf("example-docs/layout-parser-paper-fast.pdf", ocr_languages="eng+swe")
 
 
+If a PDF is copy protected, ``partition_pdf`` can process the document with the ``"hi_res"`` strategy (which)
+will treat it like an image, but cannot process the document with the ``"fast"`` strategy. If the user
+chooses ``"fast"`` on a copy protected PDF, ``partition_pdf`` will fall back to the ``"hi_res"``
+strategy. If ``detectron2`` is not installed, ``partition_pdf`` will fail for copy protected
+PDFs because the document will not be processable by any of the available methods.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.pdf import partition_pdf
+
+  # This will process without issue
+  elements = partition_pdf("example-docs/copy-protected.pdf", strategy="hi_res")
+
+  # This will output a warning and fall back to hi_res
+  elements = partition_pdf("example-docs/copy-protected.pdf", strategy="fast")
+
+
 ``partition_image``
 ---------------------
 
