@@ -343,7 +343,7 @@ def test_read_html_doc(tmpdir, monkeypatch):
     ]
 
     pages = html_document.pages
-    assert all([isinstance(page, Page) for page in pages])
+    assert all(isinstance(page, Page) for page in pages)
 
 
 def test_find_main():
@@ -640,7 +640,7 @@ def test_joins_tag_text_correctly():
 def test_sample_doc_with_scripts():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "example-with-scripts.html")
     doc = HTMLDocument.from_file(filename=filename)
-    assert all(["function (" not in element.text for element in doc.elements])
+    assert all("function (" not in element.text for element in doc.elements)
 
 
 def test_sample_doc_with_emoji():
