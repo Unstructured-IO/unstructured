@@ -6,7 +6,7 @@
 #
 anyio==3.6.2
     # via httpcore
-argilla==1.5.0
+argilla==1.6.0
     # via unstructured (setup.py)
 backoff==2.2.1
     # via argilla
@@ -37,7 +37,7 @@ idna==3.4
     #   anyio
     #   requests
     #   rfc3986
-importlib-metadata==6.1.0
+importlib-metadata==6.5.0
     # via markdown
 joblib==1.2.0
     # via nltk
@@ -62,19 +62,19 @@ olefile==0.46
     # via msg-parser
 openpyxl==3.1.2
     # via unstructured (setup.py)
-packaging==23.0
+packaging==23.1
     # via argilla
 pandas==1.5.3
     # via
     #   argilla
     #   unstructured (setup.py)
-pillow==9.4.0
+pillow==9.5.0
     # via
     #   python-pptx
     #   unstructured (setup.py)
 pydantic==1.10.7
     # via argilla
-pygments==2.14.0
+pygments==2.15.1
     # via rich
 pypandoc==1.11
     # via unstructured (setup.py)
@@ -117,7 +117,7 @@ wrapt==1.14.1
     # via
     #   argilla
     #   deprecated
-xlsxwriter==3.0.9
+xlsxwriter==3.1.0
     # via python-pptx
 zipp==3.15.0
     # via importlib-metadata

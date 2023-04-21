@@ -1,4 +1,4 @@
-## 0.5.14-dev1
+## 0.6.0
 
 ### Enhancements
 
@@ -11,8 +11,13 @@
 
 ### Features
 
+* Table extraction is now possible for pdfs from `partition` and `partition_pdf`.
+* Adds support for extracting attachments from `.msg` files
+
 ### Fixes
 
+* Adds an `ssl_verify` kwarg to `partition` and `partition_html` to enable turning off
+  SSL verification for HTTP requests. SSL verification is on by default.
 
 ## 0.5.13
 

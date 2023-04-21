@@ -380,7 +380,7 @@ def _has_adjacent_bulleted_spans(tag_elem: etree.Element, children: List[etree.E
     """Checks to see if a div contains two or more adjacent spans beginning with a bullet. If
     this is the case, it is treated as a single bulleted text element."""
     if tag_elem.tag == "div":
-        all_spans = all([child.tag == "span" for child in children])
+        all_spans = all(child.tag == "span" for child in children)
         _is_bulleted = children[0].text is not None and is_bulleted_text(children[0].text)
         if all_spans and _is_bulleted:
             return True
