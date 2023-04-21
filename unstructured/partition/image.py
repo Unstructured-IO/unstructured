@@ -29,7 +29,7 @@ def partition_image(
     token
         A string defining the authentication token for a self-host url, if applicable.
     ocr_languages
-        The languages to use for the Tesseract agent. To use a langauge, you'll first need
+        The languages to use for the Tesseract agent. To use a language, you'll first need
         to isntall the appropriate Tesseract language pack.
     """
     if template is None:
