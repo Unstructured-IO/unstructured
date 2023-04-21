@@ -34,6 +34,7 @@ def partition(
     paragraph_grouper: Optional[Callable[[str], str]] = None,
     headers: Dict[str, str] = {},
     ssl_verify: bool = True,
+    ocr_languages: str = "eng",
 ):
     """Partitions a document into its constituent elements. Will use libmagic to determine
     the file's type and route it to the appropriate partitioning function. Applies the default
@@ -66,6 +67,9 @@ def partition(
     ssl_verify
         If the URL parameter is set, determines whether or not partition uses SSL verification
         in the HTTP request.
+    ocr_languages
+        The languages to use for the Tesseract agent. To use a language, you'll first need
+        to isntall the appropriate Tesseract language pack.
     """
     exactly_one(file=file, filename=filename, url=url)
 
@@ -127,6 +131,7 @@ def partition(
             include_page_breaks=include_page_breaks,
             encoding=encoding,
             strategy=strategy,
+            ocr_languages=ocr_languages,
         )
     elif (filetype == FileType.PNG) or (filetype == FileType.JPG):
         elements = partition_image(
@@ -134,6 +139,7 @@ def partition(
             file=file,  # type: ignore
             url=None,
             include_page_breaks=include_page_breaks,
+            ocr_languages=ocr_languages,
         )
     elif filetype == FileType.TXT:
         elements = partition_text(

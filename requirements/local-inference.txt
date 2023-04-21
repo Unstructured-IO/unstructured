@@ -268,7 +268,7 @@ typing-extensions==4.5.0
     #   rich
     #   starlette
     #   torch
-unstructured-inference==0.3.2
+unstructured-inference==0.4.1
     # via unstructured (setup.py)
 urllib3==1.26.15
     # via requests
