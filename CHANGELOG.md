@@ -1,3 +1,13 @@
+## 0.6.1
+
+### Enhancements
+
+* Updated the table extraction parameter name to be more descriptive
+
+### Features
+
+### Fixes
+
 ## 0.6.0
 
 ### Enhancements

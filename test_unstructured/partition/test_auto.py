@@ -273,7 +273,7 @@ def test_auto_partition_pdf_uses_table_extraction():
     with patch(
         "unstructured_inference.inference.layout.process_file_with_model",
     ) as mock_process_file_with_model:
-        partition(filename, pdf_extract_tables=True)
+        partition(filename, pdf_infer_table_structure=True)
         assert mock_process_file_with_model.call_args[1]["extract_tables"]
 
 
@@ -290,7 +290,7 @@ def test_auto_partition_pdf_with_fast_strategy():
         url=None,
         include_page_breaks=False,
         encoding="utf-8",
-        extract_tables=False,
+        infer_table_structure=False,
         strategy="fast",
         ocr_languages="eng",
     )

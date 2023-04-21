@@ -269,5 +269,5 @@ def test_partition_pdf_uses_table_extraction():
     with mock.patch(
         "unstructured_inference.inference.layout.process_file_with_model",
     ) as mock_process_file_with_model:
-        pdf.partition_pdf(filename, extract_tables=True)
+        pdf.partition_pdf(filename, infer_table_structure=True)
         assert mock_process_file_with_model.call_args[1]["extract_tables"]
