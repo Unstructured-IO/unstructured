@@ -105,7 +105,12 @@ def partition_pdf_or_image(
         fallback_to_hi_res = False
 
         detectron2_installed = dependency_exists("detectron2")
-        pdf_text_extractable = is_pdf_text_extractable(filename=filename, file=file) or is_image
+        if is_image:
+            pdf_text_extractable = False
+        else:
+            pdf_text_extractable = is_pdf_text_extractable(filename=filename, file=file)
+            if file is not None:
+                file.seek(0)  # type: ignore
 
         if not detectron2_installed and not pdf_text_extractable:
             raise ValueError(
