@@ -5,7 +5,7 @@ import pytest
 import requests
 from unstructured_inference.inference import layout
 
-from unstructured.documents.elements import NarrativeText, PageBreak, Text
+from unstructured.documents.elements import NarrativeText, PageBreak, Text, Title
 from unstructured.partition import pdf
 
 
@@ -295,3 +295,16 @@ def test_is_pdf_text_extractable(filename, from_file, expected):
         extractable = pdf.is_pdf_text_extractable(filename=filename)
 
     assert extractable is expected
+
+
+def test_partition_pdf_with_copy_protection():
+    filename = os.path.join("example-docs", "copy-protected.pdf")
+    elements = pdf.partition_pdf(filename=filename, strategy="hi_res")
+    elements[0] == Title("LayoutParser: A Uniﬁed Toolkit for Deep Based Document Image Analysis")
+
+
+def test_partition_pdf_with_copy_protection_fallback_to_hi_res(caplog):
+    filename = os.path.join("example-docs", "copy-protected.pdf")
+    elements = pdf.partition_pdf(filename=filename, strategy="fast")
+    elements[0] == Title("LayoutParser: A Uniﬁed Toolkit for Deep Based Document Image Analysis")
+    assert "PDF text is not extractable" in caplog.text
