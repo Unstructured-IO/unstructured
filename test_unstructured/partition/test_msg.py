@@ -10,7 +10,7 @@ from unstructured.documents.elements import (
     NarrativeText,
     Title,
 )
-from unstructured.partition.msg import partition_msg
+from unstructured.partition.msg import extract_msg_attachment_info, partition_msg
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "..", "example-docs")
@@ -20,6 +20,15 @@ EXPECTED_MSG_OUTPUT = [
     Title(text="Important points:"),
     ListItem(text="Roses are red"),
     ListItem(text="Violets are blue"),
+]
+
+ATTACH_EXPECTED_OUTPUT = [
+    {
+        "filename": "fake-attachment.txt",
+        "extension": ".txt",
+        "file_size": "unknown",
+        "payload": b"Hey this is a fake attachment!",
+    },
 ]
 
 
@@ -61,6 +70,13 @@ def test_partition_msg_from_file():
     with open(filename, "rb") as f:
         elements = partition_msg(file=f)
     assert elements == EXPECTED_MSG_OUTPUT
+
+
+def test_extract_attachment_info():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email-attachment.msg")
+    attachment_info = extract_msg_attachment_info(filename)
+    assert len(attachment_info) > 0
+    assert attachment_info == ATTACH_EXPECTED_OUTPUT
 
 
 def test_partition_msg_raises_with_both_specified():

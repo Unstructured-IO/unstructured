@@ -12,6 +12,7 @@
 ### Features
 
 * Table extraction is now possible for pdfs from `partition` and `partition_pdf`.
+* Adds support for extracting attachments from `.msg` files
 
 ### Fixes
 

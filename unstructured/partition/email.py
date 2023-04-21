@@ -123,13 +123,15 @@ def extract_attachment_info(
     output_dir: Optional[str] = None,
 ) -> List[Dict[str, str]]:
     list_attachments = []
-    attachment_info = {}
+
     for part in message.walk():
         if "content-disposition" in part:
             cdisp = part["content-disposition"].split(";")
             cdisp = [clean_extra_whitespace(item) for item in cdisp]
 
             for item in cdisp:
+                attachment_info = {}
+
                 if item.lower() == "attachment":
                     continue
                 key, value = item.split("=")
