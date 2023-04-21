@@ -1,3 +1,14 @@
+## 0.6.2-dev0
+
+### Enhancements
+
+* Added logic to `partition_pdf` for detecting copy protected PDFs and falling back
+  to the hi res strategy when necessary.
+
+### Features
+
+### Fixes
+
 ## 0.6.1
 
 ### Enhancements
