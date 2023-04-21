@@ -1,3 +1,9 @@
+## 0.5.15-dev2
+
+### Features
+
+* Adds support for extracting attachments from `.msg` files
+
 ## 0.5.14-dev1
 
 ### Enhancements
