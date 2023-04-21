@@ -101,17 +101,30 @@ def partition_pdf_or_image(
             out_template = None
 
         fallback_to_fast = False
+        fallback_to_hi_res = False
+
         detectron2_installed = dependency_exists("detectron2")
+        pdf_text_extractable = is_pdf_text_extractable(filename=filename, file=file) or is_image
+
+        if not detectron2_installed and not pdf_text_extractable:
+            raise ValueError(
+                "detectron2 is not installed and the text of the PDF is not extractable. "
+                "To process this file, install detectron2 or remove copy protection from the PDF.",
+            )
+
+        if not pdf_text_extractable:
+            fallback_to_hi_res = strategy == "fast"
 
         if not detectron2_installed:
-            if is_image:
-                raise ValueError(
-                    "detectron2 is not installed. detectron2 is required for partioning images.",
-                )
-            else:
-                fallback_to_fast = True
+            fallback_to_fast = strategy == "hi_res"
 
-        if strategy == "hi_res" and not fallback_to_fast:
+        if (strategy == "hi_res" or fallback_to_hi_res) and not fallback_to_fast:
+            if strategy == "fast":
+                logger.warning(
+                    "PDF text is not extractable. Cannot use the fast partitioning "
+                    "strategy. Falling back to partitioning with the hi_res strategy.",
+                )
+
             # NOTE(robinson): Catches a UserWarning that occurs when detectron is called
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
@@ -125,7 +138,7 @@ def partition_pdf_or_image(
                     ocr_languages=ocr_languages,
                 )
 
-        elif strategy == "fast" or fallback_to_fast:
+        elif (strategy == "fast" or fallback_to_fast) and not fallback_to_hi_res:
             if strategy == "hi_res":
                 logger.warning(
                     "detectron2 is not installed. Cannot use the hi_res partitioning "

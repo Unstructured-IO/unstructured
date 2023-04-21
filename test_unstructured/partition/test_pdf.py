@@ -160,7 +160,8 @@ def test_partition_pdf_api_raises_with_failed_api_call(
     ("url", "api_called", "local_called"),
     [("fakeurl", True, False), (None, False, True)],
 )
-def test_partition_pdf(url, api_called, local_called):
+def test_partition_pdf(url, api_called, local_called, monkeypatch):
+    monkeypatch.setattr(pdf, "is_pdf_text_extractable", lambda *args, **kwargs: True)
     with mock.patch.object(
         pdf,
         attribute="_partition_via_api",
@@ -175,7 +176,8 @@ def test_partition_pdf(url, api_called, local_called):
     ("url", "api_called", "local_called"),
     [("fakeurl", True, False), (None, False, True)],
 )
-def test_partition_pdf_with_template(url, api_called, local_called):
+def test_partition_pdf_with_template(url, api_called, local_called, monkeypatch):
+    monkeypatch.setattr(pdf, "is_pdf_text_extractable", lambda *args, **kwargs: True)
     with mock.patch.object(
         pdf,
         attribute="_partition_via_api",
