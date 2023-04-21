@@ -46,11 +46,12 @@ def partition_pdf(
         to 'hi_res', otherwise partition_pdf simply extracts the text from the document
         and processes it.
     infer_table_structure
-        If True, extracts any tables that are detected when using 'hi_res' strategy. Whether this
-        is True or False, the partitioning process will attempt to identify any tables in the
-        document. This parameter indicates that the partitioning process will attempt to extract the
-        structure of any identified tables. The table structure and cell contents will be stored as
-        HTML in the metadata in the text_as_html property, e.g. element.metadata.text_as_html
+        Only applicable if `strategy=hi_res`.
+        If True, any Table elements that are extracted will also have a metadata field
+        named "text_as_html" where the table's text content is rendered into an html string.
+        I.e., rows and cells are preserved.
+        Whether True or False, the "text" field is always present in any Table element
+        and is the text content of the table (no structure).
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
     ocr_languages
