@@ -23,7 +23,12 @@ EXPECTED_MSG_OUTPUT = [
 ]
 
 ATTACH_EXPECTED_OUTPUT = [
-    {"filename": "fake-attachment.txt", "payload": b"Hey this is a fake attachment!"},
+    {
+        "filename": "fake-attachment.txt",
+        "extension": ".txt",
+        "file_size": "unknown",
+        "payload": b"Hey this is a fake attachment!",
+    },
 ]
 
 
