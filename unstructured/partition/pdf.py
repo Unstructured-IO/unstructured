@@ -47,7 +47,7 @@ def partition_pdf(
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
     ocr_languages
-        The languages to use for the Tesseract agent. To use a langauge, you'll first need
+        The languages to use for the Tesseract agent. To use a language, you'll first need
         to isntall the appropriate Tesseract language pack.
     """
     exactly_one(filename=filename, file=file)
