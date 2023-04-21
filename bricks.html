@@ -532,12 +532,20 @@ token for a remote API call.
 The <code class="docutils literal notranslate"><span class="pre">strategy</span></code> kwarg controls the method that will be used to process the PDF. The <code class="docutils literal notranslate"><span class="pre">&quot;hi_res&quot;</span></code> strategy
 will identify the layout of the document using <code class="docutils literal notranslate"><span class="pre">detectron2</span></code>. The <code class="docutils literal notranslate"><span class="pre">&quot;fast&quot;</span></code> strategy will extract the
 text using <code class="docutils literal notranslate"><span class="pre">pdfminer</span></code> and process the raw text with <code class="docutils literal notranslate"><span class="pre">partition_text</span></code>. If <code class="docutils literal notranslate"><span class="pre">detectron2</span></code> is not available,
-and the <code class="docutils literal notranslate"><span class="pre">&quot;hi_res&quot;</span></code> strategy is set, <code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code> will fallback to the <code class="docutils literal notranslate"><span class="pre">&quot;fast&quot;</span></code> strategy.</p>
+and the <code class="docutils literal notranslate"><span class="pre">&quot;hi_res&quot;</span></code> strategy is set, <code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code> will fallback to the <code class="docutils literal notranslate"><span class="pre">&quot;fast&quot;</span></code> strategy.
+You can also specify what languages to use for OCR with the <code class="docutils literal notranslate"><span class="pre">ocr_languages</span></code> kwarg. For example,
+use <code class="docutils literal notranslate"><span class="pre">ocr_languages=&quot;eng+deu&quot;</span></code> to use the English and German language packs. See the
+<a class="reference external" href="https://github.com/tesseract-ocr/tessdata">Tesseract documentation</a> for a full list of languages and
+install instructions. OCR is only applied if the text is not already available in the PDF document.</p>
 <p>Examples:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.pdf</span> <span class="kn">import</span> <span class="n">partition_pdf</span>
 
 <span class="c1"># Returns a List[Element] present in the pages of the parsed pdf document</span>
 <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_pdf</span><span class="p">(</span><span class="s2">&quot;example-docs/layout-parser-paper-fast.pdf&quot;</span><span class="p">)</span>
+
+<span class="c1"># Applies the English and Swedish language pack for ocr. OCR is only applied</span>
+<span class="c1"># if the text is not available in the PDF.</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_pdf</span><span class="p">(</span><span class="s2">&quot;example-docs/layout-parser-paper-fast.pdf&quot;</span><span class="p">,</span> <span class="n">ocr_languages</span><span class="o">=</span><span class="s2">&quot;eng+swe&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -545,12 +553,19 @@ and the <code class="docutils literal notranslate"><span class="pre">&quot;hi_re
 <h3><code class="docutils literal notranslate"><span class="pre">partition_image</span></code><a class="headerlink" href="#partition-image" title="Permalink to this heading"></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">partition_image</span></code> function has the same API as <code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code>, which is document above.
 The only difference is that <code class="docutils literal notranslate"><span class="pre">partition_image</span></code> does not need to convert a PDF to an image
-prior to processing. The <code class="docutils literal notranslate"><span class="pre">partition_image</span></code> function supports <code class="docutils literal notranslate"><span class="pre">.png</span></code> and <code class="docutils literal notranslate"><span class="pre">.jpg</span></code> files.</p>
+prior to processing. The <code class="docutils literal notranslate"><span class="pre">partition_image</span></code> function supports <code class="docutils literal notranslate"><span class="pre">.png</span></code> and <code class="docutils literal notranslate"><span class="pre">.jpg</span></code> files.
+You can also specify what languages to use for OCR with the <code class="docutils literal notranslate"><span class="pre">ocr_languages</span></code> kwarg. For example,
+use <code class="docutils literal notranslate"><span class="pre">ocr_languages=&quot;eng+deu&quot;</span></code> to use the English and German language packs. See the
+<a class="reference external" href="https://github.com/tesseract-ocr/tessdata">Tesseract documentation</a> for a full list of languages and
+install instructions.</p>
 <p>Examples:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.image</span> <span class="kn">import</span> <span class="n">partition_image</span>
 
 <span class="c1"># Returns a List[Element] present in the pages of the parsed image document</span>
 <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_image</span><span class="p">(</span><span class="s2">&quot;example-docs/layout-parser-paper-fast.jpg&quot;</span><span class="p">)</span>
+
+<span class="c1"># Applies the English and Swedish language pack for ocr</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_image</span><span class="p">(</span><span class="s2">&quot;example-docs/layout-parser-paper-fast.jpg&quot;</span><span class="p">,</span> <span class="n">ocr_languages</span><span class="o">=</span><span class="s2">&quot;eng+swe&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
