@@ -119,7 +119,9 @@ faster processing and `"hi_res"` for more accurate processing.
 The ``partition`` function also accepts a ``url`` kwarg for remotely hosted documents. If you want
 to force ``partition`` to treat the document as a particular MIME type, use the ``content_type``
 kwarg in conjunction with ``url``. Otherwise, ``partition`` will use the information from
-the ``Content-Type`` header in the HTTP response.
+the ``Content-Type`` header in the HTTP response. The ``ssl_verify`` kwarg controls whether
+or not SSL verification is enabled for the HTTP request. By default it is on. Use ``ssl_verify=False``
+to disable SSL verification in the request.
 
 
 .. code:: python
@@ -246,7 +248,10 @@ The following three invocations of partition_html() are essentially equivalent:
 
 
 
-The following illustrates fetching a url and partitioning the response content:
+The following illustrates fetching a url and partitioning the response content.
+The ``ssl_verify`` kwarg controls whether
+or not SSL verification is enabled for the HTTP request. By default it is on. Use ``ssl_verify=False``
+to disable SSL verification in the request.
 
 .. code:: python
 
@@ -258,6 +263,10 @@ The following illustrates fetching a url and partitioning the response content:
 
   elements = partition_html(url="https://python.org/",
                             headers={"User-Agent": "YourScriptName/1.0 ..."})
+
+  # and turn off SSL verification
+
+  elements = partition_html(url="https://python.org/", ssl_verify=False)
 
 
 

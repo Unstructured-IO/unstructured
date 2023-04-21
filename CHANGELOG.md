@@ -1,4 +1,4 @@
-## 0.5.14-dev0
+## 0.5.14-dev1
 
 ### Enhancements
 
@@ -7,6 +7,9 @@
 * Table extraction is now possible for pdfs from `partition` and `partition_pdf`.
 
 ### Fixes
+
+* Adds an `ssl_verify` kwarg to `partition` and `partition_html` to enable turning off
+  SSL verification for HTTP requests. SSL verification is on by default.
 
 ## 0.5.13
 
