@@ -10,7 +10,7 @@ from unstructured.documents.elements import (
     NarrativeText,
     Title,
 )
-from unstructured.partition.msg import extract_attachment_info, partition_msg
+from unstructured.partition.msg import extract_msg_attachment_info, partition_msg
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "..", "example-docs")
@@ -69,7 +69,7 @@ def test_partition_msg_from_file():
 
 def test_extract_attachment_info():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email-attachment.msg")
-    attachment_info = extract_attachment_info(filename)
+    attachment_info = extract_msg_attachment_info(filename)
     assert len(attachment_info) > 0
     assert attachment_info == ATTACH_EXPECTED_OUTPUT
 
