@@ -308,3 +308,14 @@ def test_partition_pdf_with_copy_protection_fallback_to_hi_res(caplog):
     elements = pdf.partition_pdf(filename=filename, strategy="fast")
     elements[0] == Title("LayoutParser: A Uniﬁed Toolkit for Deep Based Document Image Analysis")
     assert "PDF text is not extractable" in caplog.text
+
+
+def test_partition_pdf_fails_if_pdf_not_processable(
+    monkeypatch,
+    filename="example-docs/layout-parser-paper-fast.pdf",
+):
+    monkeypatch.setattr(pdf, "dependency_exists", lambda dep: dep != "detectron2")
+    monkeypatch.setattr(pdf, "is_pdf_text_extractable", lambda *args, **kwargs: False)
+
+    with pytest.raises(ValueError):
+        pdf.partition_pdf(filename=filename)
