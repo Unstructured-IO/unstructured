@@ -35,7 +35,7 @@ def partition(
     headers: Dict[str, str] = {},
     ssl_verify: bool = True,
     ocr_languages: str = "eng",
-    pdf_extract_tables: bool = False,
+    pdf_infer_table_structure: bool = False,
 ):
     """Partitions a document into its constituent elements. Will use libmagic to determine
     the file's type and route it to the appropriate partitioning function. Applies the default
@@ -71,7 +71,7 @@ def partition(
     ocr_languages
         The languages to use for the Tesseract agent. To use a language, you'll first need
         to isntall the appropriate Tesseract language pack.
-    pdf_extract_tables
+    pdf_infer_table_structure
         If True, in the case that the file to be processed is detected to be a PDF, any tables that
         are detected will be extracted.
     """
@@ -134,7 +134,7 @@ def partition(
             url=None,
             include_page_breaks=include_page_breaks,
             encoding=encoding,
-            extract_tables=pdf_extract_tables,
+            infer_table_structure=pdf_infer_table_structure,
             strategy=strategy,
             ocr_languages=ocr_languages,
         )
