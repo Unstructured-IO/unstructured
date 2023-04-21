@@ -6,7 +6,7 @@
 #
 anyio==3.6.2
     # via httpcore
-argilla==1.5.0
+argilla==1.6.0
     # via unstructured (setup.py)
 backoff==2.2.1
     # via argilla
@@ -28,7 +28,7 @@ deprecated==1.2.13
     # via argilla
 et-xmlfile==1.1.0
     # via openpyxl
-filelock==3.10.7
+filelock==3.12.0
     # via
     #   huggingface-hub
     #   torch
@@ -39,14 +39,14 @@ httpcore==0.16.3
     # via httpx
 httpx==0.23.3
     # via argilla
-huggingface-hub==0.13.3
+huggingface-hub==0.13.4
     # via transformers
 idna==3.4
     # via
     #   anyio
     #   requests
     #   rfc3986
-importlib-metadata==6.1.0
+importlib-metadata==6.5.0
     # via markdown
 jinja2==3.1.2
     # via torch
@@ -71,7 +71,7 @@ mpmath==1.3.0
     # via sympy
 msg-parser==1.2.0
     # via unstructured (setup.py)
-networkx==3.0
+networkx==3.1
     # via torch
 nltk==3.8.1
     # via unstructured (setup.py)
@@ -84,7 +84,7 @@ olefile==0.46
     # via msg-parser
 openpyxl==3.1.2
     # via unstructured (setup.py)
-packaging==23.0
+packaging==23.1
     # via
     #   argilla
     #   huggingface-hub
@@ -93,13 +93,13 @@ pandas==1.5.3
     # via
     #   argilla
     #   unstructured (setup.py)
-pillow==9.4.0
+pillow==9.5.0
     # via
     #   python-pptx
     #   unstructured (setup.py)
 pydantic==1.10.7
     # via argilla
-pygments==2.14.0
+pygments==2.15.1
     # via rich
 pypandoc==1.11
     # via unstructured (setup.py)
@@ -133,7 +133,7 @@ rich==13.0.1
     # via argilla
 sacremoses==0.0.53
     # via unstructured (setup.py)
-sentencepiece==0.1.97
+sentencepiece==0.1.98
     # via unstructured (setup.py)
 six==1.16.0
     # via
@@ -147,7 +147,7 @@ sniffio==1.3.0
     #   httpx
 sympy==1.11.1
     # via torch
-tokenizers==0.13.2
+tokenizers==0.13.3
     # via transformers
 torch==2.0.0
     # via unstructured (setup.py)
@@ -158,7 +158,7 @@ tqdm==4.65.0
     #   nltk
     #   sacremoses
     #   transformers
-transformers==4.27.4
+transformers==4.28.1
     # via unstructured (setup.py)
 typing-extensions==4.5.0
     # via
@@ -172,7 +172,7 @@ wrapt==1.14.1
     # via
     #   argilla
     #   deprecated
-xlsxwriter==3.0.9
+xlsxwriter==3.1.0
     # via python-pptx
 zipp==3.15.0
     # via importlib-metadata

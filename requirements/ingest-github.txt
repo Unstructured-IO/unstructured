@@ -8,7 +8,7 @@ anyio==3.6.2
     # via
     #   -r requirements/base.txt
     #   httpcore
-argilla==1.5.0
+argilla==1.6.0
     # via
     #   -r requirements/base.txt
     #   unstructured (setup.py)
@@ -64,7 +64,7 @@ idna==3.4
     #   anyio
     #   requests
     #   rfc3986
-importlib-metadata==6.1.0
+importlib-metadata==6.5.0
     # via
     #   -r requirements/base.txt
     #   markdown
@@ -107,7 +107,7 @@ openpyxl==3.1.2
     # via
     #   -r requirements/base.txt
     #   unstructured (setup.py)
-packaging==23.0
+packaging==23.1
     # via
     #   -r requirements/base.txt
     #   argilla
@@ -116,7 +116,7 @@ pandas==1.5.3
     #   -r requirements/base.txt
     #   argilla
     #   unstructured (setup.py)
-pillow==9.4.0
+pillow==9.5.0
     # via
     #   -r requirements/base.txt
     #   python-pptx
@@ -129,7 +129,7 @@ pydantic==1.10.7
     #   argilla
 pygithub==1.57.0
     # via unstructured (setup.py)
-pygments==2.14.0
+pygments==2.15.1
     # via
     #   -r requirements/base.txt
     #   rich
@@ -207,7 +207,7 @@ wrapt==1.14.1
     #   -r requirements/base.txt
     #   argilla
     #   deprecated
-xlsxwriter==3.0.9
+xlsxwriter==3.1.0
     # via
     #   -r requirements/base.txt
     #   python-pptx
