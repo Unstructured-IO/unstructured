@@ -11,6 +11,7 @@ def partition_image(
     template: Optional[str] = None,
     token: Optional[str] = None,
     include_page_breaks: bool = False,
+    ocr_languages: str = "eng",
 ) -> List[Element]:
     """Parses an image into a list of interpreted elements.
     Parameters
@@ -27,6 +28,9 @@ def partition_image(
         be used.
     token
         A string defining the authentication token for a self-host url, if applicable.
+    ocr_languages
+        The languages to use for the Tesseract agent. To use a language, you'll first need
+        to isntall the appropriate Tesseract language pack.
     """
     if template is None:
         template = "layout/image"
@@ -37,4 +41,5 @@ def partition_image(
         template=template,
         token=token,
         include_page_breaks=include_page_breaks,
+        ocr_languages=ocr_languages,
     )

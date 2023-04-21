@@ -24,6 +24,7 @@ def partition_pdf(
     strategy: str = "hi_res",
     extract_tables: bool = False,
     encoding: str = "utf-8",
+    ocr_languages: str = "eng",
 ) -> List[Element]:
     """Parses a pdf document into a list of interpreted elements.
     Parameters
@@ -52,6 +53,9 @@ def partition_pdf(
         HTML in the metadata in the text_as_html property, e.g. element.metadata.text_as_html
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
+    ocr_languages
+        The languages to use for the Tesseract agent. To use a language, you'll first need
+        to isntall the appropriate Tesseract language pack.
     """
     exactly_one(filename=filename, file=file)
     return partition_pdf_or_image(
@@ -64,6 +68,7 @@ def partition_pdf(
         strategy=strategy,
         extract_tables=extract_tables,
         encoding=encoding,
+        ocr_languages=ocr_languages,
     )
 
 
@@ -78,6 +83,7 @@ def partition_pdf_or_image(
     strategy: str = "hi_res",
     extract_tables: bool = False,
     encoding: str = "utf-8",
+    ocr_languages: str = "eng",
 ) -> List[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
     if url is None:
@@ -113,6 +119,7 @@ def partition_pdf_or_image(
                     is_image=is_image,
                     extract_tables=extract_tables,
                     include_page_breaks=True,
+                    ocr_languages=ocr_languages,
                 )
 
         elif strategy == "fast" or fallback_to_fast:
@@ -168,6 +175,7 @@ def _partition_pdf_or_image_local(
     is_image: bool = False,
     extract_tables: bool = False,
     include_page_breaks: bool = False,
+    ocr_languages: str = "eng",
 ) -> List[Element]:
     """Partition using package installed locally."""
     try:
@@ -190,21 +198,22 @@ def _partition_pdf_or_image_local(
             "running make install-local-inference from the root directory of the repository.",
         ) from e
 
-    layout = (
-        process_file_with_model(
+    if file is None:
+        layout = process_file_with_model(
             filename,
             template,
             is_image=is_image,
+            ocr_languages=ocr_languages,
             extract_tables=extract_tables,
         )
-        if file is None
-        else process_data_with_model(
+    else:
+        layout = process_data_with_model(
             file,
             template,
             is_image=is_image,
+            ocr_languages=ocr_languages,
             extract_tables=extract_tables,
         )
-    )
 
     return document_to_element_list(layout, include_page_breaks=include_page_breaks)
 

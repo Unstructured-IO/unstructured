@@ -292,6 +292,7 @@ def test_auto_partition_pdf_with_fast_strategy():
         encoding="utf-8",
         extract_tables=False,
         strategy="fast",
+        ocr_languages="eng",
     )
 
 

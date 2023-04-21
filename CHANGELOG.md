@@ -1,6 +1,13 @@
-## 0.5.14-dev1
+## 0.5.14-dev2
 
 ### Enhancements
+
+* Adds an `ssl_verify` kwarg to `partition` and `partition_html` to enable turning off
+  SSL verification for HTTP requests. SSL verification is on by default.
+* Allows users to pass in ocr language to `partition_pdf` and `partition_image` through
+  the `ocr_language` kwarg. `ocr_language` corresponds to the code for the language pack
+  in Tesseract. You will need to install the relevant Tesseract language pack to use a
+  given language.
 
 ### Features
 
