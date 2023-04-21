@@ -310,11 +310,11 @@ def _detect_filetype_from_octet_stream(file: IO) -> FileType:
         archive = zipfile.ZipFile(file)
 
         archive_filenames = [f.filename for f in archive.filelist]
-        if all([f in archive_filenames for f in EXPECTED_DOCX_FILES]):
+        if all(f in archive_filenames for f in EXPECTED_DOCX_FILES):
             return FileType.DOCX
-        elif all([f in archive_filenames for f in EXPECTED_XLSX_FILES]):
+        elif all(f in archive_filenames for f in EXPECTED_XLSX_FILES):
             return FileType.XLSX
-        elif all([f in archive_filenames for f in EXPECTED_PPTX_FILES]):
+        elif all(f in archive_filenames for f in EXPECTED_PPTX_FILES):
             return FileType.PPTX
 
     logger.warning("Could not detect the filetype from application/octet-stream MIME type.")
