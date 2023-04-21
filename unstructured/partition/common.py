@@ -90,7 +90,16 @@ def add_element_metadata(
     page_number: int = 1
     for layout_element in layout_elements:
         element = normalize_layout_element(layout_element)
-        metadata = ElementMetadata(filename=filename, url=url, page_number=page_number)
+        if hasattr(layout_element, "text_as_html"):
+            text_as_html: Optional[str] = layout_element.text_as_html
+        else:
+            text_as_html = None
+        metadata = ElementMetadata(
+            filename=filename,
+            url=url,
+            page_number=page_number,
+            text_as_html=text_as_html,
+        )
         if isinstance(element, list):
             for _element in element:
                 _element.metadata = metadata

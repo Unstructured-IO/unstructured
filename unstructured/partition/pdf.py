@@ -49,7 +49,7 @@ def partition_pdf(
         is True or False, the partitioning process will attempt to identify any tables in the
         document. This parameter indicates that the partitioning process will attempt to extract the
         structure of any identified tables. The table structure and cell contents will be stored as
-        HTML in the text property of the resulting Table element.
+        HTML in the metadata in the text_as_html property, e.g. element.metadata.text_as_html
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
     """

@@ -27,6 +27,9 @@ class ElementMetadata:
     sent_to: Optional[List[str]] = None
     subject: Optional[str] = None
 
+    # Text format metadata fields
+    text_as_html: Optional[str] = None
+
     def __post_init__(self):
         if isinstance(self.filename, pathlib.Path):
             self.filename = str(self.filename)
