@@ -68,7 +68,7 @@ def partition(
         If the URL parameter is set, determines whether or not partition uses SSL verification
         in the HTTP request.
     ocr_languages
-        The languages to use for the Tesseract agent. To use a langauge, you'll first need
+        The languages to use for the Tesseract agent. To use a language, you'll first need
         to isntall the appropriate Tesseract language pack.
     """
     exactly_one(file=file, filename=filename, url=url)
