@@ -345,6 +345,11 @@ class MainProcess:
     "YYYY-MM-DD+HH:MM:SS or YYYY-MM-DDTHH:MM:SStz",
 )
 @click.option(
+    "--discord-channels",
+    default=None,
+    help="A comma separated list of discord channel ids to ingest from."
+)
+@click.option(
     "--download-dir",
     help="Where files are downloaded to, defaults to `$HOME/.cache/unstructured/ingest/<SHA256>`.",
 )
@@ -407,6 +412,7 @@ def main(
     slack_token,
     start_date,
     end_date,
+    discord_channels,
     download_dir,
     preserve_downloads,
     structured_output_dir,
@@ -692,6 +698,21 @@ def main(
                 output_dir=structured_output_dir,
                 re_download=re_download,
                 verbose=verbose,
+            ),
+        )
+    elif discord_channels:
+        from unstructured.ingest.connector.discord import (
+            SimpleDiscordConfig,
+            DiscordConnector,
+        )
+
+        doc_connector = DiscordConnector(
+            config=SimpleDiscordConfig(
+                channels=SimpleDiscordConfig.parse_channels(discord_channels),
+                download_dir=download_dir,
+                output_dir=structured_output_dir,
+                preserve_downloads=preserve_downloads,
+                verbose=verbose
             ),
         )
     elif wikipedia_page_title:
