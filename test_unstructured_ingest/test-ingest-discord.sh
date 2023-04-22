@@ -5,8 +5,15 @@ set -e
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 cd "$SCRIPT_DIR"/.. || exit 1
 
+
+if [ -z "$DISCORD_TOKEN" ]; then
+   echo "Skipping Discord ingest test because the DISCORD_TOKEN env var is not set."
+   exit 0
+fi
+
 PYTHONPATH=. ./unstructured/ingest/main.py \
-        --discord-channels 12345678 \
+        --discord-channels 1099414371207221270 \
+        --discord-token "$DISCORD_TOKEN" \
         --structured-output-dir discord-ingest-channel
 
 OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}

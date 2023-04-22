@@ -347,7 +347,18 @@ class MainProcess:
 @click.option(
     "--discord-channels",
     default=None,
-    help="A comma separated list of discord channel ids to ingest from."
+    help="A comma separated list of discord channel ids to ingest from.",
+)
+@click.option(
+    "--discord-token",
+    default=None,
+    help="Bot token used to access Discord API, must have "
+    "READ_MESSAGE_HISTORY scope for the bot user",
+)
+@click.option(
+    "--discord-period",
+    default=None,
+    help="Number of days to go back in the history of discord channels",
 )
 @click.option(
     "--download-dir",
@@ -413,6 +424,8 @@ def main(
     start_date,
     end_date,
     discord_channels,
+    discord_token,
+    discord_period,
     download_dir,
     preserve_downloads,
     structured_output_dir,
@@ -702,17 +715,19 @@ def main(
         )
     elif discord_channels:
         from unstructured.ingest.connector.discord import (
-            SimpleDiscordConfig,
             DiscordConnector,
+            SimpleDiscordConfig,
         )
 
-        doc_connector = DiscordConnector(
+        doc_connector = DiscordConnector(  # type: ignore
             config=SimpleDiscordConfig(
                 channels=SimpleDiscordConfig.parse_channels(discord_channels),
+                days=discord_period,
+                token=discord_token,
                 download_dir=download_dir,
                 output_dir=structured_output_dir,
                 preserve_downloads=preserve_downloads,
-                verbose=verbose
+                verbose=verbose,
             ),
         )
     elif wikipedia_page_title:
