@@ -109,7 +109,11 @@ class DiscordIngestDoc(BaseIngestDoc):
 
         @bot.event
         async def on_ready():
-            after_date = dt.datetime.utcnow() - dt.timedelta(days=int(self.days))
+            if self.days:
+                after_date = dt.datetime.utcnow() - dt.timedelta(days=int(self.days))
+            else:
+                after_date = None
+
             channel = bot.get_channel(int(self.channel))
             async for msg in channel.history(after=after_date):  # type: ignore
                 messages.append(msg)

@@ -9,4 +9,6 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
         --discord-channels 12345678 \
+        --discord-token "$DISCORD_TOKEN" \
+        --download-dir discord-ingest-download \
         --structured-output-dir discord-example

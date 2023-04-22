@@ -12,9 +12,10 @@ if [ -z "$DISCORD_TOKEN" ]; then
 fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-        --discord-channels 1099414371207221270 \
+        --discord-channels 1099442333440802930 \
         --discord-token "$DISCORD_TOKEN" \
-        --structured-output-dir discord-ingest-channel
+        --download-dir discord-ingest-download \
+        --structured-output-dir discord-ingest-output
 
 OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
 
@@ -25,7 +26,7 @@ if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
 
    cp discord-ingest-output/* test_unstructured_ingest/expected-structured-output/discord-ingest-channel/
 
-elif ! diff -ru discord-ingest-output test_unstructured_ingest/expected-structured-output/dicord-ingest-channel; then
+elif ! diff -ru discord-ingest-output test_unstructured_ingest/expected-structured-output/discord-ingest-channel/; then
     echo
     echo "There are differences from the previously checked-in structured outputs."
     echo 
