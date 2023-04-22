@@ -4,7 +4,16 @@ import json
 import os
 from typing import List
 
-from unstructured.ingest.interfaces import BaseConnector, BaseConnectorConfig, BaseIngestDoc
+from unstructured.ingest.interfaces import (
+    BaseConnector,
+    BaseConnectorConfig,
+    BaseIngestDoc,
+)
+from unstructured.ingest.logger import logger
+from unstructured.utils import (
+    requires_dependencies,
+    validate_date_args,
+)
 
 @dataclass
 class SimpleDiscordConfig(BaseConnectorConfig):
@@ -61,6 +70,7 @@ class DiscordIngestDoc(BaseIngestDoc):
         """includes "directories" in s3 object path"""
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
 
+    @requires_dependencies(dependencies=["discord.py"], extras="discord")
     def get_file(self):
         """Actually fetches the data from discord and stores it locally."""
         import discord
