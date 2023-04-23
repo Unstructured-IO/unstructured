@@ -1,9 +1,10 @@
-## 0.6.2-dev0
+## 0.6.2-dev1
 
 ### Enhancements
 
 * Added logic to `partition_pdf` for detecting copy protected PDFs and falling back
   to the hi res strategy when necessary.
+* Add Discord connector to pull messages from a list of channels
 
 ### Features
 

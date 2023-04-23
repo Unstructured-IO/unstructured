@@ -24,8 +24,8 @@ class SimpleDiscordConfig(BaseConnectorConfig):
 
     # Discord Specific Options
     channels: List[str]
-    days: int
     token: str
+    days: str
 
     # Standard Connector options
     download_dir: str
@@ -60,7 +60,7 @@ class DiscordIngestDoc(BaseIngestDoc):
 
     config: SimpleDiscordConfig
     channel: str
-    days: int
+    days: str
     token: str
 
     # NOTE(crag): probably doesn't matter,  but intentionally not defining tmp_download_file
@@ -109,16 +109,19 @@ class DiscordIngestDoc(BaseIngestDoc):
 
         @bot.event
         async def on_ready():
-            if self.days:
-                after_date = dt.datetime.utcnow() - dt.timedelta(days=int(self.days))
-            else:
+            try:
                 after_date = None
+                if self.days:
+                    after_date = dt.datetime.utcnow() - dt.timedelta(days=int(self.days))
 
-            channel = bot.get_channel(int(self.channel))
-            async for msg in channel.history(after=after_date):  # type: ignore
-                messages.append(msg)
+                channel = bot.get_channel(int(self.channel))
+                async for msg in channel.history(after=after_date):  # type: ignore
+                    messages.append(msg)
 
-            await bot.close()
+                await bot.close()
+            except Exception as e:
+                logger.error(f"Error fetching messages: {e}")
+                await bot.close()
 
         bot.run(self.token)
 
