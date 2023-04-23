@@ -42,6 +42,12 @@ class SimpleDiscordConfig(BaseConnectorConfig):
     verbose: bool = False
 
     def __post_init__(self):
+        if self.days:
+            try:
+                self.days = int(self.days)
+            except ValueError:
+                raise ValueError("--discord-period must be an integer")
+
         pass
 
     @staticmethod
@@ -112,7 +118,7 @@ class DiscordIngestDoc(BaseIngestDoc):
             try:
                 after_date = None
                 if self.days:
-                    after_date = dt.datetime.utcnow() - dt.timedelta(days=int(self.days))
+                    after_date = dt.datetime.utcnow() - dt.timedelta(days=self.days)
 
                 channel = bot.get_channel(int(self.channel))
                 async for msg in channel.history(after=after_date):  # type: ignore

@@ -358,7 +358,7 @@ class MainProcess:
 @click.option(
     "--discord-period",
     default=None,
-    help="Number of days to go back in the history of discord channels",
+    help="Number of days to go back in the history of discord channels, must be an number",
 )
 @click.option(
     "--download-dir",
