@@ -25,7 +25,7 @@ class SimpleDiscordConfig(BaseConnectorConfig):
     # Discord Specific Options
     channels: List[str]
     token: str
-    days: str
+    days: int
 
     # Standard Connector options
     download_dir: str
@@ -66,7 +66,7 @@ class DiscordIngestDoc(BaseIngestDoc):
 
     config: SimpleDiscordConfig
     channel: str
-    days: str
+    days: int
     token: str
 
     # NOTE(crag): probably doesn't matter,  but intentionally not defining tmp_download_file
