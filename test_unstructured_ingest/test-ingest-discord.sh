@@ -12,10 +12,11 @@ if [ -z "$DISCORD_TOKEN" ]; then
 fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-        --discord-channels 1099442333440802930 \
+        --discord-channels 1099442333440802930,1099601456321003600 \
         --discord-token "$DISCORD_TOKEN" \
         --download-dir discord-ingest-download \
-        --structured-output-dir discord-ingest-output
+        --structured-output-dir discord-ingest-output \
+        --reprocess
 
 OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
 
