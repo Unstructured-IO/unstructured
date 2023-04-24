@@ -1,7 +1,10 @@
 import importlib
 import json
+from datetime import datetime
 from functools import wraps
 from typing import Dict, List, Optional, Union
+
+DATE_FORMATS = ("%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d+%H:%M:%S", "%Y-%m-%dT%H:%M:%S%z")
 
 
 def save_as_jsonl(data: List[Dict], filename: str) -> None:
@@ -50,3 +53,21 @@ def dependency_exists(dependency):
     except ImportError:
         return False
     return True
+
+
+# Copied from unstructured/ingest/connector/biomed.py
+def validate_date_args(date: Optional[str] = None):
+    if not date:
+        raise ValueError("The argument date is None.")
+
+    for format in DATE_FORMATS:
+        try:
+            datetime.strptime(date, format)
+            return True
+        except ValueError:
+            pass
+
+    raise ValueError(
+        f"The argument {date} does not satisfy the format: "
+        "YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS or YYYY-MM-DD+HH:MM:SS or YYYY-MM-DDTHH:MM:SStz",
+    )

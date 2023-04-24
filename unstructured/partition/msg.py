@@ -1,5 +1,5 @@
 import tempfile
-from typing import IO, List, Optional
+from typing import IO, Dict, List, Optional
 
 import msg_parser
 
@@ -67,3 +67,38 @@ def build_msg_metadata(msg_obj: msg_parser.MsOxMessage) -> ElementMetadata:
         subject=getattr(msg_obj, "subject", None),
         date=email_date,
     )
+
+
+def extract_msg_attachment_info(
+    filename: str,
+    file: Optional[IO] = None,
+    output_dir: Optional[str] = None,
+) -> List[Dict[str, str]]:
+    exactly_one(filename=filename, file=file)
+
+    if filename is not None:
+        msg_obj = msg_parser.MsOxMessage(filename)
+    elif file is not None:
+        tmp = tempfile.NamedTemporaryFile(delete=False)
+        tmp.write(file.read())
+        tmp.close()
+        msg_obj = msg_parser.MsOxMessage(tmp.name)
+
+    list_attachments = []
+
+    for attachment in msg_obj.attachments:
+        attachment_info = {}
+
+        attachment_info["filename"] = attachment.AttachLongFilename
+        attachment_info["extension"] = attachment.AttachExtension
+        attachment_info["file_size"] = attachment.AttachmentSize
+        attachment_info["payload"] = attachment.data
+
+        list_attachments.append(attachment_info)
+
+        if output_dir is not None:
+            filename = output_dir + "/" + attachment_info["filename"]
+            with open(filename, "wb") as f:
+                f.write(attachment.data)
+
+    return list_attachments

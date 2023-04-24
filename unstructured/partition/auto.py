@@ -33,6 +33,9 @@ def partition(
     encoding: str = "utf-8",
     paragraph_grouper: Optional[Callable[[str], str]] = None,
     headers: Dict[str, str] = {},
+    ssl_verify: bool = True,
+    ocr_languages: str = "eng",
+    pdf_infer_table_structure: bool = False,
 ):
     """Partitions a document into its constituent elements. Will use libmagic to determine
     the file's type and route it to the appropriate partitioning function. Applies the default
@@ -62,6 +65,17 @@ def partition(
         The encoding method used to decode the text input. If None, utf-8 will be used.
     headers
         The headers to be used in conjunction with the HTTP request if URL is set.
+    ssl_verify
+        If the URL parameter is set, determines whether or not partition uses SSL verification
+        in the HTTP request.
+    ocr_languages
+        The languages to use for the Tesseract agent. To use a language, you'll first need
+        to isntall the appropriate Tesseract language pack.
+    pdf_infer_table_structure
+        If True and strategy=hi_res, any Table Elements extracted from a PDF will include an
+        additional metadata field, "text_as_html," where the value (string) is a just a
+        transformation of the data into an HTML <table>.
+        The "text" field for a partitioned Table Element is always present, whether True or False.
     """
     exactly_one(file=file, filename=filename, url=url)
 
@@ -70,6 +84,7 @@ def partition(
             url=url,
             content_type=content_type,
             headers=headers,
+            ssl_verify=ssl_verify,
         )
     else:
         if headers != {}:
@@ -121,7 +136,9 @@ def partition(
             url=None,
             include_page_breaks=include_page_breaks,
             encoding=encoding,
+            infer_table_structure=pdf_infer_table_structure,
             strategy=strategy,
+            ocr_languages=ocr_languages,
         )
     elif (filetype == FileType.PNG) or (filetype == FileType.JPG):
         elements = partition_image(
@@ -129,6 +146,7 @@ def partition(
             file=file,  # type: ignore
             url=None,
             include_page_breaks=include_page_breaks,
+            ocr_languages=ocr_languages,
         )
     elif filetype == FileType.TXT:
         elements = partition_text(
@@ -171,8 +189,9 @@ def file_and_type_from_url(
     url: str,
     content_type: Optional[str] = None,
     headers: Dict[str, str] = {},
+    ssl_verify: bool = True,
 ) -> Tuple[io.BytesIO, Optional[FileType]]:
-    response = requests.get(url, headers=headers)
+    response = requests.get(url, headers=headers, verify=ssl_verify)
     file = io.BytesIO(response.content)
 
     content_type = content_type or response.headers.get("Content-Type")

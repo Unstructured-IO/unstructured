@@ -1,7 +1,7 @@
 [
   {
-    "element_id": "ea216492b46010685b4a036fe66de211",
-    "text": "WORLD NUCLEARASSOCIATION",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "text": "",
     "type": "Title",
     "metadata": {
       "page_number": 1
@@ -24,8 +24,8 @@
     }
   },
   {
-    "element_id": "53d548aa01fc3eb72da15a5be7f235e2",
-    "text": "Executive Summary",
+    "element_id": "8e76a94ac8320d515375e625bef18292",
+    "text": "Summary",
     "type": "Title",
     "metadata": {
       "page_number": 3
@@ -136,8 +136,8 @@
     }
   },
   {
-    "element_id": "0149284b8b4501f34d96b798178d8859",
-    "text": "45,000  Marine 40,000  CSP  Solar PV 35,000  Geothermal 30,000  Wind 25,000  Bioenergy  Hydro 20,000  Nuclear 15,000  Gas 10,000  Oil  Coal 5,000 0 2000 2010 2020 2030 2040 hWT",
+    "element_id": "259ebbd79882ee61390c52104a5779dd",
+    "text": "45,000  Marine 40,000  CSP  Solar PV 35,000  Geothermal 30,000  Wind 25,000  Bioenergy  Hydro 20,000  Nuclear 15,000  Gas 10,000  Oil  Coal 5,000 0 2000 2010 2020 2030 2040",
     "type": "FigureCaption",
     "metadata": {
       "page_number": 4
@@ -248,8 +248,8 @@
     }
   },
   {
-    "element_id": "3655eec20e80973efc46cc09db7a04ba",
-    "text": "Moving to a sustainable future",
+    "element_id": "ff4a9b34d6cdebbc9b8afbf9767f6e1c",
+    "text": "to a sustainable future",
     "type": "Title",
     "metadata": {
       "page_number": 6
@@ -296,8 +296,8 @@
     }
   },
   {
-    "element_id": "d02a658dd68c3b434198c96f8f0b3eb5",
-    "text": "300 250 200 150 100 50 0 m m ervciolatlaic ore Wind ore Wind N uclear C C G T C oal o o h h C hot O ns Offs hWM/$",
+    "element_id": "ac2f7675bb4bdcfe8a09dcf1d6776329",
+    "text": "300 250 200 150 100 50 0 m m er vci ola tl aic ore Wind ore Wind N uclear C C G T C oal o o h h C hot O ns Offs hWM/$",
     "type": "FigureCaption",
     "metadata": {
       "page_number": 7
@@ -360,8 +360,8 @@
     }
   },
   {
-    "element_id": "47fa6da7c7492baefa9445e6dd589c97",
-    "text": "140 120 120 99.5 100 71.9 80 60 40 20 8.5 1.78 0.245 <0.01 0 C oal Oil ural gas ore wi(ndU K) ore wimnadny) Solar PV N uclear* Nat sh sh er Off O n (G raey WT rep seitilataF e",
+    "element_id": "39d8baa95e0deaa41bdd5142eb5b1662",
+    "text": "140 120 120 99.5 100 71.9 80 60 40 20 8.5 1.78 0.245 <0.01 0 C oal Oil ural gas ore wi (nd U K) ore wi mn ad ny) Solar PV N uclear* Nat sh sh er Off O n (G raey WT rep e",
     "type": "FigureCaption",
     "metadata": {
       "page_number": 8
@@ -392,8 +392,8 @@
     }
   },
   {
-    "element_id": "2776036d75e54882b17fa8dc20300bf0",
-    "text": "100  Coal 90  Gas/Oil 80  Biofuels/Waste 70  Wind/Solar  Hydro 60  Nuclear 50 40 30 20 10 0 France Sweden Switzerland %",
+    "element_id": "81e9e346cb5f4662d56e34c6788ad5c8",
+    "text": "100  Coal 90  Gas/Oil 80  Biofuels/Waste 70  Wind/Solar  Hydro 60  Nuclear 50 40 30 20 10 0 France Sweden Switzerland",
     "type": "FigureCaption",
     "metadata": {
       "page_number": 8

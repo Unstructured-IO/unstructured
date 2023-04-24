@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 cd "$SCRIPT_DIR"/.. || exit 1
 
@@ -10,6 +12,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --structured-output-dir local-ingest-output \
     --verbose \
     --reprocess
+
+set +e
 
 if [ "$(find 'local-ingest-output' -type f -printf '.' | wc -c)" != 4 ]; then
    echo

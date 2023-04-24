@@ -1,4 +1,48 @@
-## 0.5.13-dev5
+## 0.6.2-dev0
+
+### Enhancements
+
+* Added logic to `partition_pdf` for detecting copy protected PDFs and falling back
+  to the hi res strategy when necessary.
+
+### Features
+
+### Fixes
+
+* Fix how `exceeds_cap_ratio` handles empty (returns `True` instead of `False`)
+
+## 0.6.1
+
+### Enhancements
+
+* Updated the table extraction parameter name to be more descriptive
+
+### Features
+
+### Fixes
+
+## 0.6.0
+
+### Enhancements
+
+* Adds an `ssl_verify` kwarg to `partition` and `partition_html` to enable turning off
+  SSL verification for HTTP requests. SSL verification is on by default.
+* Allows users to pass in ocr language to `partition_pdf` and `partition_image` through
+  the `ocr_language` kwarg. `ocr_language` corresponds to the code for the language pack
+  in Tesseract. You will need to install the relevant Tesseract language pack to use a
+  given language.
+
+### Features
+
+* Table extraction is now possible for pdfs from `partition` and `partition_pdf`.
+* Adds support for extracting attachments from `.msg` files
+
+### Fixes
+
+* Adds an `ssl_verify` kwarg to `partition` and `partition_html` to enable turning off
+  SSL verification for HTTP requests. SSL verification is on by default.
+
+## 0.5.13
 
 ### Enhancements
 
@@ -10,10 +54,13 @@
 
 ### Fixes
 
+* Fixed typo in call to `exactly_one` in `partition_json`
 * unstructured-documents encode xml string if document_tree is `None` in `_read_xml`.
 * Update to `_read_xml` so that Markdown files with embedded HTML process correctly.
 * Fallback to "fast" strategy only emits a warning if the user specifies the "hi_res" strategy.
 * unstructured-partition-text_type exceeds_cap_ratio fix returns and how capitalization ratios are calculated
+* `partition_pdf` and `partition_text` group broken paragraphs to avoid fragmented `NarrativeText` elements.
+* .json files resolved as "application/json" on centos7 (or other installs with older libmagic libs)
 
 ## 0.5.12
 
@@ -22,8 +69,10 @@
 * Add OS mimetypes DB to docker image, mainly for unstructured-api compat.
 * Use the image registry as a cache when building Docker images.
 * Adds the ability for `partition_text` to group together broken paragraphs.
+* Added method to utils to allow date time format validation
 
 ### Features
+* Add Slack connector to pull messages for a specific channel
 
 * Add --partition-by-api parameter to unstructured-ingest
 * Added `partition_rtf` for processing rich text files.

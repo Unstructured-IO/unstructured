@@ -1,10 +1,11 @@
+import os
 from unittest import mock
 
 import pytest
 import requests
 from unstructured_inference.inference import layout
 
-from unstructured.documents.elements import PageBreak, Text
+from unstructured.documents.elements import NarrativeText, PageBreak, Text, Title
 from unstructured.partition import pdf
 
 
@@ -159,7 +160,8 @@ def test_partition_pdf_api_raises_with_failed_api_call(
     ("url", "api_called", "local_called"),
     [("fakeurl", True, False), (None, False, True)],
 )
-def test_partition_pdf(url, api_called, local_called):
+def test_partition_pdf(url, api_called, local_called, monkeypatch):
+    monkeypatch.setattr(pdf, "is_pdf_text_extractable", lambda *args, **kwargs: True)
     with mock.patch.object(
         pdf,
         attribute="_partition_via_api",
@@ -174,7 +176,8 @@ def test_partition_pdf(url, api_called, local_called):
     ("url", "api_called", "local_called"),
     [("fakeurl", True, False), (None, False, True)],
 )
-def test_partition_pdf_with_template(url, api_called, local_called):
+def test_partition_pdf_with_template(url, api_called, local_called, monkeypatch):
+    monkeypatch.setattr(pdf, "is_pdf_text_extractable", lambda *args, **kwargs: True)
     with mock.patch.object(
         pdf,
         attribute="_partition_via_api",
@@ -198,6 +201,20 @@ def test_partition_pdf_with_no_page_breaks(filename="example-docs/layout-parser-
 def test_partition_pdf_with_fast_strategy(filename="example-docs/layout-parser-paper-fast.pdf"):
     elements = pdf.partition_pdf(filename=filename, url=None, strategy="fast")
     assert len(elements) > 10
+
+
+def test_partition_pdf_with_fast_groups_text(filename="example-docs/layout-parser-paper-fast.pdf"):
+    elements = pdf.partition_pdf(filename=filename, url=None, strategy="fast")
+
+    first_narrative_element = None
+    for element in elements:
+        if isinstance(element, NarrativeText):
+            first_narrative_element = element
+            break
+
+    assert len(first_narrative_element.text) > 1000
+    assert first_narrative_element.text.startswith("Abstract. Recent advances")
+    assert first_narrative_element.text.endswith("https://layout-parser.github.io.")
 
 
 def test_partition_pdf_with_fast_strategy_from_file(
@@ -248,3 +265,57 @@ def test_partition_pdf_falls_back_to_fast(
 
     mock_partition.assert_called_once()
     assert "detectron2 is not installed" in caplog.text
+
+
+def test_partition_pdf_uses_table_extraction():
+    filename = "example-docs/layout-parser-paper-fast.pdf"
+    with mock.patch(
+        "unstructured_inference.inference.layout.process_file_with_model",
+    ) as mock_process_file_with_model:
+        pdf.partition_pdf(filename, infer_table_structure=True)
+        assert mock_process_file_with_model.call_args[1]["extract_tables"]
+
+
+@pytest.mark.parametrize(
+    ("filename", "from_file", "expected"),
+    [
+        ("layout-parser-paper-fast.pdf", True, True),
+        ("copy-protected.pdf", True, False),
+        ("layout-parser-paper-fast.pdf", False, True),
+        ("copy-protected.pdf", False, False),
+    ],
+)
+def test_is_pdf_text_extractable(filename, from_file, expected):
+    filename = os.path.join("example-docs", filename)
+
+    if from_file:
+        with open(filename, "rb") as f:
+            extractable = pdf.is_pdf_text_extractable(file=f)
+    else:
+        extractable = pdf.is_pdf_text_extractable(filename=filename)
+
+    assert extractable is expected
+
+
+def test_partition_pdf_with_copy_protection():
+    filename = os.path.join("example-docs", "copy-protected.pdf")
+    elements = pdf.partition_pdf(filename=filename, strategy="hi_res")
+    elements[0] == Title("LayoutParser: A Uniﬁed Toolkit for Deep Based Document Image Analysis")
+
+
+def test_partition_pdf_with_copy_protection_fallback_to_hi_res(caplog):
+    filename = os.path.join("example-docs", "copy-protected.pdf")
+    elements = pdf.partition_pdf(filename=filename, strategy="fast")
+    elements[0] == Title("LayoutParser: A Uniﬁed Toolkit for Deep Based Document Image Analysis")
+    assert "PDF text is not extractable" in caplog.text
+
+
+def test_partition_pdf_fails_if_pdf_not_processable(
+    monkeypatch,
+    filename="example-docs/layout-parser-paper-fast.pdf",
+):
+    monkeypatch.setattr(pdf, "dependency_exists", lambda dep: dep != "detectron2")
+    monkeypatch.setattr(pdf, "is_pdf_text_extractable", lambda *args, **kwargs: False)
+
+    with pytest.raises(ValueError):
+        pdf.partition_pdf(filename=filename)

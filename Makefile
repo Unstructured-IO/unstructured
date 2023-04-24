@@ -75,6 +75,10 @@ install-ingest-gitlab:
 install-ingest-reddit:
 	python3 -m pip install -r requirements/ingest-reddit.txt
 
+.PHONY: install-ingest-slack
+install-ingest-slack:
+	pip install -r requirements/ingest-slack.txt
+
 .PHONY: install-ingest-wikipedia
 install-ingest-wikipedia:
 	python3 -m pip install -r requirements/ingest-wikipedia.txt
@@ -112,6 +116,7 @@ pip-compile:
 	pip-compile --upgrade --extra=reddit    --output-file=requirements/ingest-reddit.txt    requirements/base.txt setup.py
 	pip-compile --upgrade --extra=github    --output-file=requirements/ingest-github.txt    requirements/base.txt setup.py
 	pip-compile --upgrade --extra=gitlab    --output-file=requirements/ingest-gitlab.txt    requirements/base.txt setup.py
+	pip-compile --upgrade --extra=slack     --output-file=requirements/ingest-slack.txt     requirements/base.txt setup.py
 	pip-compile --upgrade --extra=wikipedia --output-file=requirements/ingest-wikipedia.txt requirements/base.txt setup.py
 	pip-compile --upgrade --extra=google-drive --output-file=requirements/ingest-google-drive.txt  requirements/base.txt setup.py
 
@@ -162,7 +167,8 @@ check-scripts:
 .PHONY: check-version
 check-version:
     # Fail if syncing version would produce changes
-	scripts/version-sync.sh -c -f "unstructured/__version__.py" semver
+	scripts/version-sync.sh -c \
+		-f "unstructured/__version__.py" semver
 
 ## tidy:                    run black
 .PHONY: tidy
@@ -174,7 +180,8 @@ tidy:
 ## version-sync:            update __version__.py with most recent version from CHANGELOG.md
 .PHONY: version-sync
 version-sync:
-	scripts/version-sync.sh -f "unstructured/__version__.py" semver
+	scripts/version-sync.sh \
+		-f "unstructured/__version__.py" semver
 
 .PHONY: check-coverage
 check-coverage:
@@ -200,6 +207,7 @@ docker-start-bash:
 docker-test:
 	docker run --rm \
 	-v ${CURRENT_DIR}/test_unstructured:/home/test_unstructured \
+	-v ${CURRENT_DIR}/test_unstructured_ingest:/home/test_unstructured_ingest \
 	$(DOCKER_IMAGE) \
 	bash -c "pytest $(if $(TEST_NAME),-k $(TEST_NAME),) test_unstructured"
 

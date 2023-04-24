@@ -18,7 +18,7 @@ def partition_json(
     if text is not None and text.strip() == "" and not file and not filename:
         return []
 
-    exactly_one(filenmae=filename, file=file, text=text)
+    exactly_one(filename=filename, file=file, text=text)
 
     if filename is not None:
         with open(filename, encoding="utf8") as f:

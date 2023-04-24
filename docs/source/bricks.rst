@@ -88,7 +88,7 @@ specific bricks if you need to apply non-default settings.
 If you set the ``include_page_breaks`` kwarg to ``True``, the output will include page breaks. This is only supported for ``.pptx``, ``.html``, ``.pdf``,
 ``.png``, and ``.jpg``.
 The ``strategy`` kwarg controls the strategy for partitioning documents. Generally available strategies are `"fast"` for
-faster processing and `"hi_res"` for
+faster processing and `"hi_res"` for more accurate processing.
 
 
 .. code:: python
@@ -119,7 +119,9 @@ faster processing and `"hi_res"` for
 The ``partition`` function also accepts a ``url`` kwarg for remotely hosted documents. If you want
 to force ``partition`` to treat the document as a particular MIME type, use the ``content_type``
 kwarg in conjunction with ``url``. Otherwise, ``partition`` will use the information from
-the ``Content-Type`` header in the HTTP response.
+the ``Content-Type`` header in the HTTP response. The ``ssl_verify`` kwarg controls whether
+or not SSL verification is enabled for the HTTP request. By default it is on. Use ``ssl_verify=False``
+to disable SSL verification in the request.
 
 
 .. code:: python
@@ -246,7 +248,10 @@ The following three invocations of partition_html() are essentially equivalent:
 
 
 
-The following illustrates fetching a url and partitioning the response content:
+The following illustrates fetching a url and partitioning the response content.
+The ``ssl_verify`` kwarg controls whether
+or not SSL verification is enabled for the HTTP request. By default it is on. Use ``ssl_verify=False``
+to disable SSL verification in the request.
 
 .. code:: python
 
@@ -258,6 +263,10 @@ The following illustrates fetching a url and partitioning the response content:
 
   elements = partition_html(url="https://python.org/",
                             headers={"User-Agent": "YourScriptName/1.0 ..."})
+
+  # and turn off SSL verification
+
+  elements = partition_html(url="https://python.org/", ssl_verify=False)
 
 
 
@@ -274,6 +283,10 @@ The ``strategy`` kwarg controls the method that will be used to process the PDF.
 will identify the layout of the document using ``detectron2``. The ``"fast"`` strategy will extract the
 text using ``pdfminer`` and process the raw text with ``partition_text``. If ``detectron2`` is not available,
 and the ``"hi_res"`` strategy is set, ``partition_pdf`` will fallback to the ``"fast"`` strategy.
+You can also specify what languages to use for OCR with the ``ocr_languages`` kwarg. For example,
+use ``ocr_languages="eng+deu"`` to use the English and German language packs. See the
+`Tesseract documentation <https://github.com/tesseract-ocr/tessdata>`_ for a full list of languages and
+install instructions. OCR is only applied if the text is not already available in the PDF document.
 
 Examples:
 
@@ -284,6 +297,29 @@ Examples:
   # Returns a List[Element] present in the pages of the parsed pdf document
   elements = partition_pdf("example-docs/layout-parser-paper-fast.pdf")
 
+  # Applies the English and Swedish language pack for ocr. OCR is only applied
+  # if the text is not available in the PDF.
+  elements = partition_pdf("example-docs/layout-parser-paper-fast.pdf", ocr_languages="eng+swe")
+
+
+If a PDF is copy protected, ``partition_pdf`` can process the document with the ``"hi_res"`` strategy (which
+will treat it like an image), but cannot process the document with the ``"fast"`` strategy. If the user
+chooses ``"fast"`` on a copy protected PDF, ``partition_pdf`` will fall back to the ``"hi_res"``
+strategy. If ``detectron2`` is not installed, ``partition_pdf`` will fail for copy protected
+PDFs because the document will not be processable by any of the available methods.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.pdf import partition_pdf
+
+  # This will process without issue
+  elements = partition_pdf("example-docs/copy-protected.pdf", strategy="hi_res")
+
+  # This will output a warning and fall back to hi_res
+  elements = partition_pdf("example-docs/copy-protected.pdf", strategy="fast")
+
 
 ``partition_image``
 ---------------------
@@ -291,6 +327,11 @@ Examples:
 The ``partition_image`` function has the same API as ``partition_pdf``, which is document above.
 The only difference is that ``partition_image`` does not need to convert a PDF to an image
 prior to processing. The ``partition_image`` function supports ``.png`` and ``.jpg`` files.
+You can also specify what languages to use for OCR with the ``ocr_languages`` kwarg. For example,
+use ``ocr_languages="eng+deu"`` to use the English and German language packs. See the
+`Tesseract documentation <https://github.com/tesseract-ocr/tessdata>`_ for a full list of languages and
+install instructions.
+
 
 Examples:
 
@@ -300,6 +341,9 @@ Examples:
 
   # Returns a List[Element] present in the pages of the parsed image document
   elements = partition_image("example-docs/layout-parser-paper-fast.jpg")
+
+  # Applies the English and Swedish language pack for ocr
+  elements = partition_image("example-docs/layout-parser-paper-fast.jpg", ocr_languages="eng+swe")
 
 
 
@@ -763,7 +807,7 @@ Extracts text that occurs before the specified pattern.
 
 Options:
 
-* If ``index`` is set, extract before the ``(index + 1)``th occurrence of the pattern. The default is ``0``.
+* If ``index`` is set, extract before the ``(index + 1)``\th occurrence of the pattern. The default is ``0``.
 * Strips leading whitespace if ``strip`` is set to ``True``. The default is ``True``.
 
 
@@ -786,7 +830,7 @@ Extracts text that occurs after the specified pattern.
 
 Options:
 
-* If ``index`` is set, extract after the ``(index + 1)``th occurrence of the pattern. The default is ``0``.
+* If ``index`` is set, extract after the ``(index + 1)``\th occurrence of the pattern. The default is ``0``.
 * Strips trailing whitespace if ``strip`` is set to ``True``. The default is ``True``.
 
 

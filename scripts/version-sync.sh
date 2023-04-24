@@ -62,12 +62,12 @@ while getopts ":hcs:f:" opt; do
 done
 
 # Parse REPLACEMENT_FORMATS
-RE_SEMVER_FULL='(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-((0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*))*))?(\+([0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*))?'
+RE_SEMVER_FULL="(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-((0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*))*))?(\+([0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*))?"
 RE_RELEASE="(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)"
 RE_API_RELEASE="v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)"
 # Pull out semver appearing earliest in SOURCE_FILE.
 LAST_VERSION=$(grep -o -m 1 -E "${RE_SEMVER_FULL}" "$SOURCE_FILE")
-LAST_RELEASE=$(grep -o -m 1 -E "${RE_RELEASE}($|[^-+])$" "$SOURCE_FILE" | grep -o -m 1 -E "${RE_RELEASE}")
+LAST_RELEASE=$(grep -o -m 1 -E "${RE_RELEASE}($|[^-+])" "$SOURCE_FILE" | grep -o -m 1 -E "${RE_RELEASE}")
 LAST_API_RELEASE="v$(grep -o -m 1 -E "${RE_RELEASE}($|[^-+])$" "$SOURCE_FILE" | grep -o -m 1 -E "${RE_RELEASE}")"
 declare -a RE_SEMVERS=()
 declare -a UPDATED_VERSIONS=()
@@ -126,7 +126,7 @@ for i in "${!FILES_TO_CHECK[@]}"; do
         if [ "$(printf '%s\n' "$REQUIRED_VERSION" "$CURRENT_VERSION" | sort -V | head -n1)" != "$REQUIRED_VERSION" ]; then
             echo "sed version must be >= ${REQUIRED_VERSION}" && exit 1
         fi
-        sed -r "s/$RE_SEMVER/$UPDATED_VERSION/" "$FILE_TO_CHANGE" > "$TMPFILE"
+        sed -E -r "s/$RE_SEMVER/$UPDATED_VERSION/" "$FILE_TO_CHANGE" > "$TMPFILE"
         if [ $CHECK == 1 ];
         then
             DIFF=$(diff "$FILE_TO_CHANGE"  "$TMPFILE" )

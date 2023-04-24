@@ -5,6 +5,7 @@ import unicodedata
 
 from unstructured.nlp.patterns import (
     DOUBLE_PARAGRAPH_PATTERN_RE,
+    PARAGRAPH_PATTERN,
     PARAGRAPH_PATTERN_RE,
     UNICODE_BULLETS_RE,
 )
@@ -81,7 +82,26 @@ def group_broken_paragraphs(
     At the end of the land the fox met a bear.'''
     """
     paragraphs = paragraph_split.split(text)
-    clean_paragraphs = [line_split.sub(" ", para) for para in paragraphs if para.strip()]
+    clean_paragraphs = []
+    for paragraph in paragraphs:
+        if not paragraph.strip():
+            continue
+
+        # NOTE(robinson) - This block is to account for lines like the following that shouldn't be
+        # grouped together, but aren't separated by a double line break.
+        #     Apache License
+        #     Version 2.0, January 2004
+        #     http://www.apache.org/licenses/
+        para_split = line_split.split(paragraph)
+        all_lines_short = all(len(line.strip().split(" ")) < 5 for line in para_split)
+
+        if UNICODE_BULLETS_RE.match(paragraph.strip()):
+            clean_paragraphs.extend(re.split(PARAGRAPH_PATTERN, paragraph))
+        elif all_lines_short:
+            clean_paragraphs.extend([line for line in para_split if line.strip()])
+        else:
+            clean_paragraphs.append(re.sub(PARAGRAPH_PATTERN, " ", paragraph))
+
     return "\n\n".join(clean_paragraphs)
 
 

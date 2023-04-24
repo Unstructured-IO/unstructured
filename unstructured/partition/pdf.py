@@ -2,6 +2,9 @@ import warnings
 from io import StringIO
 from typing import BinaryIO, List, Optional, cast
 
+from pdfminer.pdfpage import PDFPage, PDFTextExtractionNotAllowed
+from pdfminer.utils import open_filename
+
 from unstructured.documents.elements import Element, ElementMetadata, PageBreak
 from unstructured.logger import logger
 from unstructured.partition import _partition_via_api
@@ -22,7 +25,9 @@ def partition_pdf(
     token: Optional[str] = None,
     include_page_breaks: bool = False,
     strategy: str = "hi_res",
+    infer_table_structure: bool = False,
     encoding: str = "utf-8",
+    ocr_languages: str = "eng",
 ) -> List[Element]:
     """Parses a pdf document into a list of interpreted elements.
     Parameters
@@ -43,8 +48,18 @@ def partition_pdf(
         The strategy to use for partitioning the PDF. Uses a layout detection model if set
         to 'hi_res', otherwise partition_pdf simply extracts the text from the document
         and processes it.
+    infer_table_structure
+        Only applicable if `strategy=hi_res`.
+        If True, any Table elements that are extracted will also have a metadata field
+        named "text_as_html" where the table's text content is rendered into an html string.
+        I.e., rows and cells are preserved.
+        Whether True or False, the "text" field is always present in any Table element
+        and is the text content of the table (no structure).
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
+    ocr_languages
+        The languages to use for the Tesseract agent. To use a language, you'll first need
+        to isntall the appropriate Tesseract language pack.
     """
     exactly_one(filename=filename, file=file)
     return partition_pdf_or_image(
@@ -55,7 +70,9 @@ def partition_pdf(
         token=token,
         include_page_breaks=include_page_breaks,
         strategy=strategy,
+        infer_table_structure=infer_table_structure,
         encoding=encoding,
+        ocr_languages=ocr_languages,
     )
 
 
@@ -68,7 +85,9 @@ def partition_pdf_or_image(
     is_image: bool = False,
     include_page_breaks: bool = False,
     strategy: str = "hi_res",
+    infer_table_structure: bool = False,
     encoding: str = "utf-8",
+    ocr_languages: str = "eng",
 ) -> List[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
     if url is None:
@@ -83,17 +102,35 @@ def partition_pdf_or_image(
             out_template = None
 
         fallback_to_fast = False
+        fallback_to_hi_res = False
+
         detectron2_installed = dependency_exists("detectron2")
+        if is_image:
+            pdf_text_extractable = False
+        else:
+            pdf_text_extractable = is_pdf_text_extractable(filename=filename, file=file)
+            if file is not None:
+                file.seek(0)  # type: ignore
+
+        if not detectron2_installed and not pdf_text_extractable:
+            raise ValueError(
+                "detectron2 is not installed and the text of the PDF is not extractable. "
+                "To process this file, install detectron2 or remove copy protection from the PDF.",
+            )
+
+        if not pdf_text_extractable:
+            fallback_to_hi_res = strategy == "fast"
 
         if not detectron2_installed:
-            if is_image:
-                raise ValueError(
-                    "detectron2 is not installed. detectron2 is required for partioning images.",
-                )
-            else:
-                fallback_to_fast = True
+            fallback_to_fast = strategy == "hi_res"
 
-        if strategy == "hi_res" and not fallback_to_fast:
+        if (strategy == "hi_res" or fallback_to_hi_res) and not fallback_to_fast:
+            if strategy == "fast":
+                logger.warning(
+                    "PDF text is not extractable. Cannot use the fast partitioning "
+                    "strategy. Falling back to partitioning with the hi_res strategy.",
+                )
+
             # NOTE(robinson): Catches a UserWarning that occurs when detectron is called
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
@@ -102,14 +139,21 @@ def partition_pdf_or_image(
                     file=file,
                     template=out_template,
                     is_image=is_image,
+                    infer_table_structure=infer_table_structure,
                     include_page_breaks=True,
+                    ocr_languages=ocr_languages,
                 )
 
-        elif strategy == "fast" or fallback_to_fast:
+        elif (strategy == "fast" or fallback_to_fast) and not fallback_to_hi_res:
             if strategy == "hi_res":
                 logger.warning(
                     "detectron2 is not installed. Cannot use the hi_res partitioning "
                     "strategy. Falling back to partitioning with the fast strategy.",
+                )
+            if infer_table_structure:
+                logger.warning(
+                    "Table extraction was selected, but is being ignored while using the fast "
+                    "strategy.",
                 )
 
             return _partition_pdf_with_pdfminer(
@@ -151,7 +195,9 @@ def _partition_pdf_or_image_local(
     file: Optional[bytes] = None,
     template: Optional[str] = None,
     is_image: bool = False,
+    infer_table_structure: bool = False,
     include_page_breaks: bool = False,
+    ocr_languages: str = "eng",
 ) -> List[Element]:
     """Partition using package installed locally."""
     try:
@@ -174,11 +220,22 @@ def _partition_pdf_or_image_local(
             "running make install-local-inference from the root directory of the repository.",
         ) from e
 
-    layout = (
-        process_file_with_model(filename, template, is_image=is_image)
-        if file is None
-        else process_data_with_model(file, template, is_image=is_image)
-    )
+    if file is None:
+        layout = process_file_with_model(
+            filename,
+            template,
+            is_image=is_image,
+            ocr_languages=ocr_languages,
+            extract_tables=infer_table_structure,
+        )
+    else:
+        layout = process_data_with_model(
+            file,
+            template,
+            is_image=is_image,
+            ocr_languages=ocr_languages,
+            extract_tables=infer_table_structure,
+        )
 
     return document_to_element_list(layout, include_page_breaks=include_page_breaks)
 
@@ -198,9 +255,6 @@ def _partition_pdf_with_pdfminer(
 
     ref: https://github.com/pdfminer/pdfminer.six/blob/master/pdfminer/high_level.py
     """
-
-    from pdfminer.utils import open_filename
-
     exactly_one(filename=filename, file=file)
     if filename:
         with open_filename(filename, "rb") as fp:
@@ -234,14 +288,13 @@ def _process_pdfminer_pages(
     from pdfminer.converter import TextConverter
     from pdfminer.layout import LAParams
     from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
-    from pdfminer.pdfpage import PDFPage
 
     rsrcmgr = PDFResourceManager(caching=False)
     laparams = LAParams()
 
     elements: List[Element] = []
 
-    for i, page in enumerate(PDFPage.get_pages(fp)):
+    for i, page in enumerate(PDFPage.get_pages(fp, check_extractable=True)):
         metadata = ElementMetadata(filename=filename, page_number=i + 1)
         with StringIO() as output_string:
             device = TextConverter(
@@ -262,3 +315,25 @@ def _process_pdfminer_pages(
             elements.append(PageBreak())
 
     return elements
+
+
+def is_pdf_text_extractable(filename: str = "", file: Optional[bytes] = None):
+    """Checks to see if the text from a PDF document is extractable. Sometimes the
+    text is not extractable due to PDF security settings."""
+    exactly_one(filename=filename, file=file)
+
+    def _fp_is_extractable(fp):
+        try:
+            next(PDFPage.get_pages(fp, check_extractable=True))
+            extractable = True
+        except PDFTextExtractionNotAllowed:
+            extractable = False
+        return extractable
+
+    if filename:
+        with open_filename(filename, "rb") as fp:
+            fp = cast(BinaryIO, fp)
+            return _fp_is_extractable(fp)
+    elif file:
+        fp = cast(BinaryIO, file)
+        return _fp_is_extractable(fp)

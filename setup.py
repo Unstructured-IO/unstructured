@@ -76,7 +76,7 @@ setup(
             "transformers",
         ],
         "local-inference": [
-            "unstructured-inference==0.3.2",
+            "unstructured-inference>=0.4.2",
         ],
         "s3": ["s3fs", "fsspec"],
         "azure": ["adlfs", "fsspec"],
@@ -87,6 +87,7 @@ setup(
         ],
         "gitlab": ["python-gitlab"],
         "reddit": ["praw"],
+        "slack": ["slack_sdk"],
         "wikipedia": ["wikipedia"],
         "google-drive": [
             "google-api-python-client",

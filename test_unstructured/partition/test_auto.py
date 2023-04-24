@@ -1,3 +1,4 @@
+import json
 import os
 import pathlib
 import warnings
@@ -18,6 +19,7 @@ from unstructured.documents.elements import (
 from unstructured.partition import auto
 from unstructured.partition.auto import partition
 from unstructured.partition.common import convert_office_doc
+from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "..", "example-docs")
@@ -179,6 +181,48 @@ def test_auto_partition_html_from_file_rb():
     assert len(elements) > 0
 
 
+def test_auto_partition_json_from_filename():
+    """Test auto-processing an unstructured json output file by filename."""
+    filename = os.path.join(
+        EXAMPLE_DOCS_DIRECTORY,
+        "..",
+        "test_unstructured_ingest",
+        "expected-structured-output",
+        "azure-blob-storage",
+        "spring-weather.html.json",
+    )
+    with open(filename) as json_f:
+        json_data = json.load(json_f)
+    json_elems = json.loads(elements_to_json(partition(filename=filename)))
+    for elem in json_elems:
+        # coordinates are always in the element data structures, even if None
+        elem.pop("coordinates")
+    assert json_data == json_elems
+
+
+@pytest.mark.xfail(
+    reason="parsed as text not json, https://github.com/Unstructured-IO/unstructured/issues/492",
+)
+def test_auto_partition_json_from_file():
+    """Test auto-processing an unstructured json output file by file handle."""
+    filename = os.path.join(
+        EXAMPLE_DOCS_DIRECTORY,
+        "..",
+        "test_unstructured_ingest",
+        "expected-structured-output",
+        "azure-blob-storage",
+        "spring-weather.html.json",
+    )
+    with open(filename) as json_f:
+        json_data = json.load(json_f)
+    with open(filename, encoding="utf-8") as partition_f:
+        json_elems = json.loads(elements_to_json(partition(file=partition_f)))
+    for elem in json_elems:
+        # coordinates are always in the element data structures, even if None
+        elem.pop("coordinates")
+    assert json_data == json_elems
+
+
 EXPECTED_TEXT_OUTPUT = [
     NarrativeText(text="This is a test document to use for unit tests."),
     Address(text="Doylestown, PA 18901"),
@@ -224,6 +268,15 @@ def test_auto_partition_pdf_from_filename(pass_file_filename, content_type):
     assert elements[0].metadata.filename == filename
 
 
+def test_auto_partition_pdf_uses_table_extraction():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
+    with patch(
+        "unstructured_inference.inference.layout.process_file_with_model",
+    ) as mock_process_file_with_model:
+        partition(filename, pdf_infer_table_structure=True)
+        assert mock_process_file_with_model.call_args[1]["extract_tables"]
+
+
 def test_auto_partition_pdf_with_fast_strategy():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
 
@@ -237,7 +290,9 @@ def test_auto_partition_pdf_with_fast_strategy():
         url=None,
         include_page_breaks=False,
         encoding="utf-8",
+        infer_table_structure=False,
         strategy="fast",
+        ocr_languages="eng",
     )
 
 
