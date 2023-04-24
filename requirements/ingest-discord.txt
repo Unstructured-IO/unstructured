@@ -5,6 +5,10 @@
 #    pip-compile --extra=discord --output-file=requirements/ingest-discord.txt requirements/base.txt setup.py
 #
 
+aiohttp==3.8.4
+    # via discord-py
+aiosignal==1.3.1
+    # via aiohttp
 anyio==3.6.2
     # via
     #   -r requirements/base.txt
@@ -13,6 +17,10 @@ argilla==1.6.0
     # via
     #   -r requirements/base.txt
     #   unstructured (setup.py)
+async-timeout==4.0.2
+    # via aiohttp
+attrs==23.1.0
+    # via aiohttp
 backoff==2.2.1
     # via
     #   -r requirements/base.txt
@@ -27,6 +35,7 @@ certifi==2022.12.7
 charset-normalizer==3.1.0
     # via
     #   -r requirements/base.txt
+    #   aiohttp
     #   requests
 click==8.1.3
     # via
@@ -40,10 +49,16 @@ deprecated==1.2.13
     # via
     #   -r requirements/base.txt
     #   argilla
+discord-py==2.2.2
+    # via unstructured (setup.py)
 et-xmlfile==1.1.0
     # via
     #   -r requirements/base.txt
     #   openpyxl
+frozenlist==1.3.3
+    # via
+    #   aiohttp
+    #   aiosignal
 h11==0.14.0
     # via
     #   -r requirements/base.txt
@@ -62,6 +77,7 @@ idna==3.4
     #   anyio
     #   requests
     #   rfc3986
+    #   yarl
 importlib-metadata==6.5.0
     # via
     #   -r requirements/base.txt
@@ -88,6 +104,10 @@ msg-parser==1.2.0
     # via
     #   -r requirements/base.txt
     #   unstructured (setup.py)
+multidict==6.0.4
+    # via
+    #   aiohttp
+    #   yarl
 nltk==3.8.1
     # via
     #   -r requirements/base.txt
@@ -200,6 +220,8 @@ xlsxwriter==3.1.0
     # via
     #   -r requirements/base.txt
     #   python-pptx
+yarl==1.9.1
+    # via aiohttp
 zipp==3.15.0
     # via
     #   -r requirements/base.txt
