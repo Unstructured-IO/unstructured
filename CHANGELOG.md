@@ -1,4 +1,4 @@
-## 0.6.2-dev0
+## 0.6.2-dev1
 
 ### Enhancements
 
@@ -8,6 +8,8 @@
 ### Features
 
 ### Fixes
+
+* Fix how `exceeds_cap_ratio` handles empty (returns `True` instead of `False`)
 
 ## 0.6.1
 

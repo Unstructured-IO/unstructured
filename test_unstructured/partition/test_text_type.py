@@ -106,6 +106,7 @@ def test_text_type_handles_non_english_examples_with_env_var(monkeypatch):
         ("1.A.RISKS", True),  # Tests that "RISKS" gets flagged as an english word
         ("1. Unstructured Technologies", True),  # Make sure we're English words :-)
         ("Big/Brown/Sheet", True),
+        ("LOOK AT THIS IT IS CAPS BUT NOT A TITLE.", False),
     ],
 )
 def test_is_possible_title(text, expected, monkeypatch):
@@ -212,7 +213,7 @@ def test_contains_english_word(text, expected, monkeypatch):
         ("Intellectual Property in the United States", True),
         ("Intellectual property helps incentivize innovation.", False),
         ("THIS IS ALL CAPS. BUT IT IS TWO SENTENCES.", False),
-        ("LOOK AT THIS IT IS CAPS BUT NOT A TITLE.", False),
+        ("LOOK AT THIS IT IS CAPS BUT NOT A TITLE.", True),
         ("This Has All Caps. It's Weird But Two Sentences", False),
         ("The Business Report is expected within 6 hours of closing", False),
         ("", True),

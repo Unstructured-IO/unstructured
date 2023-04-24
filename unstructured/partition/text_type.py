@@ -13,6 +13,7 @@ from unstructured.cleaners.core import remove_punctuation
 from unstructured.logger import logger
 from unstructured.nlp.english_words import ENGLISH_WORDS
 from unstructured.nlp.patterns import (
+    ENDS_IN_PUNCT_RE,
     UNICODE_BULLETS_RE,
     US_CITY_STATE_ZIP_RE,
     US_PHONE_NUMBERS_RE,
@@ -121,6 +122,9 @@ def is_possible_title(
 
     if len(text) == 0:
         logger.debug("Not a title. Text is empty.")
+        return False
+
+    if text.isupper() and ENDS_IN_PUNCT_RE.search(text) is not None:
         return False
 
     title_max_word_length = int(
@@ -268,7 +272,7 @@ def exceeds_cap_ratio(text: str, threshold: float = 0.5) -> bool:
         return False
 
     if text.isupper():
-        return False
+        return True
 
     # NOTE(jay-ylee) - The word_tokenize function also recognizes and separates special characters
     # into one word, causing problems with ratio measurement.
