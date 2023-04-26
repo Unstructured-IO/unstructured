@@ -3,10 +3,9 @@ import re
 from typing import IO, List, Optional
 
 from unstructured.documents.elements import Element
+from unstructured.nlp.patters import LIST_OF_DICTS_PATTERN
 from unstructured.partition.common import exactly_one
 from unstructured.staging.base import dict_to_elements
-
-LIST_OF_DICTS_PATTERN = r"\A\s*\[\s*{?"
 
 
 def partition_json(
