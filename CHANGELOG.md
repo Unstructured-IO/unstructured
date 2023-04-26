@@ -1,4 +1,4 @@
-## 0.6.2-dev1
+## 0.6.2-dev2
 
 ### Enhancements
 
@@ -6,6 +6,8 @@
   to the hi res strategy when necessary.
 
 ### Features
+
+* Add `partition_via_api` for partitioning documents through the hosted API.
 
 ### Fixes
 
