@@ -242,18 +242,6 @@ def detect_filetype(
     elif mime_type.endswith("rtf"):
         return FileType.RTF
 
-    elif mime_type in TXT_MIME_TYPES:
-        if extension and extension == ".eml":
-            return FileType.EML
-        elif extension and extension == ".md":
-            return FileType.MD
-        elif extension and extension == ".rtf":
-            return FileType.RTF
-
-        if file and not extension and _check_eml_from_buffer(file=file) is True:
-            return FileType.EML
-        return FileType.TXT
-
     elif mime_type.endswith("xml"):
         if extension and extension == ".html":
             return FileType.HTML
@@ -263,7 +251,19 @@ def detect_filetype(
     elif mime_type == "text/html":
         return FileType.HTML
 
-    elif mime_type.startswith("text"):
+    elif mime_type in TXT_MIME_TYPES or mime_type.startswith("text"):
+        if extension and extension == ".eml":
+            return FileType.EML
+        elif extension and extension == ".md":
+            return FileType.MD
+        elif extension and extension == ".rtf":
+            return FileType.RTF
+
+        if _is_text_file_a_json(file=file, filename=filename):
+            return FileType.JSON
+
+        if file and not extension and _check_eml_from_buffer(file=file) is True:
+            return FileType.EML
         return FileType.TXT
 
     elif mime_type in XLSX_MIME_TYPES:
