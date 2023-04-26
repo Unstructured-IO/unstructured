@@ -409,6 +409,30 @@ to disable SSL verification in the request.</p>
 </pre></div>
 </div>
 </section>
+<section id="partition-via-api">
+<h3><code class="docutils literal notranslate"><span class="pre">partition_via_api</span></code><a class="headerlink" href="#partition-via-api" title="Permalink to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">partition_via_api</span></code> allows users to partition documents using the hosted Unstructured API.
+The API partitions documents using the automatic <code class="docutils literal notranslate"><span class="pre">partition</span></code> function. Currently, the API
+supports all filetypes except for RTF and EPUBs.
+To use another URL for the API use the <code class="docutils literal notranslate"><span class="pre">api_url</span></code> kwarg. This is helpful if you’re hosting
+the API yourself or running it locally through a container. You can pass in your API key
+using the <code class="docutils literal notranslate"><span class="pre">api_key</span></code> kwarg. You can use the <code class="docutils literal notranslate"><span class="pre">content_type</span></code> kwarg to pass in the MIME
+type for the file. If you do not explicitly pass it, the MIME type will be inferred.</p>
+<p>See <a class="reference external" href="https://api.unstructured.io/general/docs">here</a> for the hosted API swagger documentation
+and <a class="reference external" href="https://github.com/Unstructured-IO/unstructured-api#dizzy-instructions-for-using-the-docker-image">here</a> for
+documentation on how to run the API as a container locally.</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.api</span> <span class="kn">import</span> <span class="n">partition_via_api</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;example-docs/fake-email.eml&quot;</span>
+
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_via_api</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;MY_API_KEY&quot;</span><span class="p">,</span> <span class="n">content_type</span><span class="o">=</span><span class="s2">&quot;message/rfc822&quot;</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+  <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_via_api</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">file_filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;MY_API_KEY&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
 <section id="partition-docx">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_docx</span></code><a class="headerlink" href="#partition-docx" title="Permalink to this heading"></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">partition_docx</span></code> partitioning brick pre-processes Microsoft Word documents
@@ -1835,6 +1859,7 @@ if specified.</p>
 <li><a class="reference internal" href="#">Bricks</a><ul>
 <li><a class="reference internal" href="#partitioning">Partitioning</a><ul>
 <li><a class="reference internal" href="#partition"><code class="docutils literal notranslate"><span class="pre">partition</span></code></a></li>
+<li><a class="reference internal" href="#partition-via-api"><code class="docutils literal notranslate"><span class="pre">partition_via_api</span></code></a></li>
 <li><a class="reference internal" href="#partition-docx"><code class="docutils literal notranslate"><span class="pre">partition_docx</span></code></a></li>
 <li><a class="reference internal" href="#partition-doc"><code class="docutils literal notranslate"><span class="pre">partition_doc</span></code></a></li>
 <li><a class="reference internal" href="#partition-pptx"><code class="docutils literal notranslate"><span class="pre">partition_pptx</span></code></a></li>
