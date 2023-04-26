@@ -447,3 +447,17 @@ def test_auto_partition_warns_if_header_set_and_not_url(caplog):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
     partition(filename=filename, headers={"Accept": "application/pdf"})
     assert caplog.records[0].levelname == "WARNING"
+
+
+def test_auto_partition_works_with_unstructured_jsons():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "spring-weather.html.json")
+    elements = partition(filename=filename)
+    assert elements[0].text == "News Around NOAA"
+
+
+def test_auto_partition_works_with_unstructured_jsons_from_file():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "spring-weather.html.json")
+
+    with open(filename, "rb") as f:
+        elements = partition(file=f)
+    assert elements[0].text == "News Around NOAA"

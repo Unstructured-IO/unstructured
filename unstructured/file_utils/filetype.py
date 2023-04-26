@@ -336,7 +336,11 @@ def _is_text_file_a_json(
 
     if file is not None:
         file.seek(0)
-        file_text = file.read(4096).decode()
+        file_content = file.read(4096)
+        if isinstance(file_content, str):
+            file_text = file_content
+        else:
+            file_text = file_content.decode()
         file.seek(0)
     elif filename is not None:
         with open(filename) as f:
