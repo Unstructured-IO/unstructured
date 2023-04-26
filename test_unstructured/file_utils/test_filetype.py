@@ -31,6 +31,7 @@ EXAMPLE_DOCS_DIRECTORY = os.path.join(FILE_DIRECTORY, "..", "..", "example-docs"
         ("unsupported/fake-excel.xlsx", FileType.XLSX),
         ("fake-power-point.pptx", FileType.PPTX),
         ("winter-sports.epub", FileType.EPUB),
+        ("spring-weather.html.json", FileType.JSON),
     ],
 )
 def test_detect_filetype_from_filename(file, expected):
@@ -53,6 +54,7 @@ def test_detect_filetype_from_filename(file, expected):
         ("fake-power-point.pptx", FileType.PPTX),
         ("winter-sports.epub", FileType.EPUB),
         ("fake-doc.rtf", FileType.RTF),
+        ("spring-weather.html.json", FileType.JSON),
     ],
 )
 def test_detect_filetype_from_filename_with_extension(monkeypatch, file, expected):
@@ -257,10 +259,15 @@ def test_detect_filetype_detects_png(monkeypatch):
     assert detect_filetype(filename="made_up.png") == FileType.PNG
 
 
-def test_detect_filetype_detects_unknown_text_types_as_txt(monkeypatch):
+def test_detect_filetype_detects_unknown_text_types_as_txt(monkeypatch, tmpdir):
     monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "text/new-type")
     monkeypatch.setattr(os.path, "isfile", lambda *args, **kwargs: True)
-    assert detect_filetype(filename="made_up.png") == FileType.TXT
+
+    filename = os.path.join(tmpdir.dirname, "made_up.png")
+    with open(filename, "w") as f:
+        f.write("here is a fake file!")
+
+    assert detect_filetype(filename=filename) == FileType.TXT
 
 
 def test_detect_filetype_raises_with_both_specified():

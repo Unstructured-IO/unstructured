@@ -3,10 +3,9 @@ import re
 from typing import IO, List, Optional
 
 from unstructured.documents.elements import Element
+from unstructured.nlp.patterns import LIST_OF_DICTS_PATTERN
 from unstructured.partition.common import exactly_one
 from unstructured.staging.base import dict_to_elements
-
-LIST_OF_DICTS_PATTERN = r"\A\s*\[\s*{?"
 
 
 def partition_json(
@@ -24,7 +23,12 @@ def partition_json(
         with open(filename, encoding="utf8") as f:
             file_text = f.read()
     elif file is not None:
-        file_text = file.read()
+        file_content = file.read()
+        if isinstance(file_content, str):
+            file_text = file_content
+        else:
+            file_text = file_content.decode()
+        file.seek(0)
     elif text is not None:
         file_text = str(text)
 

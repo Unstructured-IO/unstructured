@@ -1,4 +1,4 @@
-## 0.6.2-dev2
+## 0.6.2-dev3
 
 ### Enhancements
 
@@ -12,6 +12,7 @@
 ### Fixes
 
 * Fix how `exceeds_cap_ratio` handles empty (returns `True` instead of `False`)
+* Updates `detect_filetype` to properly detect JSONs when the MIME type is `text/plain`.
 
 ## 0.6.1
 

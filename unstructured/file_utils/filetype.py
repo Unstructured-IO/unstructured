@@ -1,8 +1,10 @@
 import os
+import re
 import zipfile
 from enum import Enum
 from typing import IO, Optional
 
+from unstructured.nlp.patterns import LIST_OF_DICTS_PATTERN
 from unstructured.partition.common import exactly_one
 
 try:
@@ -169,7 +171,8 @@ def detect_filetype(
     file_filename: Optional[str] = None,
 ) -> Optional[FileType]:
     """Use libmagic to determine a file's type. Helps determine which partition brick
-    to use for a given file. A return value of None indicates a non-supported file type."""
+    to use for a given file. A return value of None indicates a non-supported file type.
+    """
     exactly_one(filename=filename, file=file)
 
     if content_type:
@@ -239,18 +242,6 @@ def detect_filetype(
     elif mime_type.endswith("rtf"):
         return FileType.RTF
 
-    elif mime_type in TXT_MIME_TYPES:
-        if extension and extension == ".eml":
-            return FileType.EML
-        elif extension and extension == ".md":
-            return FileType.MD
-        elif extension and extension == ".rtf":
-            return FileType.RTF
-
-        if file and not extension and _check_eml_from_buffer(file=file) is True:
-            return FileType.EML
-        return FileType.TXT
-
     elif mime_type.endswith("xml"):
         if extension and extension == ".html":
             return FileType.HTML
@@ -260,7 +251,19 @@ def detect_filetype(
     elif mime_type == "text/html":
         return FileType.HTML
 
-    elif mime_type.startswith("text"):
+    elif mime_type in TXT_MIME_TYPES or mime_type.startswith("text"):
+        if extension and extension == ".eml":
+            return FileType.EML
+        elif extension and extension == ".md":
+            return FileType.MD
+        elif extension and extension == ".rtf":
+            return FileType.RTF
+
+        if _is_text_file_a_json(file=file, filename=filename):
+            return FileType.JSON
+
+        if file and not extension and _check_eml_from_buffer(file=file) is True:
+            return FileType.EML
         return FileType.TXT
 
     elif mime_type in XLSX_MIME_TYPES:
@@ -317,8 +320,33 @@ def _detect_filetype_from_octet_stream(file: IO) -> FileType:
         elif all(f in archive_filenames for f in EXPECTED_PPTX_FILES):
             return FileType.PPTX
 
-    logger.warning("Could not detect the filetype from application/octet-stream MIME type.")
+    logger.warning(
+        "Could not detect the filetype from application/octet-stream MIME type.",
+    )
     return FileType.UNK
+
+
+def _is_text_file_a_json(
+    filename: Optional[str] = None,
+    content_type: Optional[str] = None,
+    file: Optional[IO] = None,
+):
+    """Detects if a file that has a text/plain MIME type is a JSON file."""
+    exactly_one(filename=filename, file=file)
+
+    if file is not None:
+        file.seek(0)
+        file_content = file.read(4096)
+        if isinstance(file_content, str):
+            file_text = file_content
+        else:
+            file_text = file_content.decode()
+        file.seek(0)
+    elif filename is not None:
+        with open(filename) as f:
+            file_text = f.read()
+
+    return re.match(LIST_OF_DICTS_PATTERN, file_text) is not None
 
 
 def _check_eml_from_buffer(file: IO) -> bool:
