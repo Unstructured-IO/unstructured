@@ -133,6 +133,35 @@ to disable SSL verification in the request.
   elements = partition(url=url, content_type="text/markdown")
 
 
+``partition_via_api``
+---------------------
+
+``partition_via_api`` allows users to partition documents using the hosted Unstructured API.
+The API partitions documents using the automatic ``partition`` function. Currently, the API
+supports all filetypes except for RTF and EPUBs. 
+To use another URL for the API use the ``api_url`` kwarg. This is helpful if you're hosting
+the API yourself or running it locally through a container. You can pass in your API key
+using the ``api_key`` kwarg. You can use the ``content_type`` kwarg to pass in the MIME
+type for the file. If you do not explicitly pass it, the MIME type will be inferred.
+
+See `here <https://api.unstructured.io/general/docs>`_ for the hosted API swagger documentation
+and `here <https://github.com/Unstructured-IO/unstructured-api#dizzy-instructions-for-using-the-docker-image>`_ for
+documentation on how to run the API as a container locally.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.api import partition_via_api
+
+  filename = "example-docs/fake-email.eml"
+
+  elements = partition_via_api(filename=filename, api_key="MY_API_KEY", content_type="message/rfc822")
+
+  with open(filename, "rb") as f:
+    elements = partition_via_api(file=f, file_filename=filename, api_key="MY_API_KEY")
+
+
 ``partition_docx``
 ------------------
 

@@ -94,3 +94,11 @@ EMAIL_DATETIMETZ_PATTERN = "[a-zA-z]{3},\s[0-9]{2}\s[a-zA-Z]{3}\s[0-9]{4}\s[0-9]
 
 EMAIL_ADDRESS_PATTERN = "[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+"  # noqa: W605 NOTE(harrell)
 # - skipping qa because we need the escape for the regex
+
+
+ENDS_IN_PUNCT_PATTERN = r"[^\w\s]\Z"
+ENDS_IN_PUNCT_RE = re.compile(ENDS_IN_PUNCT_PATTERN)
+
+# NOTE(robinson) - Used to detect if text is in the expected "list of dicts"
+# format for document elements
+LIST_OF_DICTS_PATTERN = r"\A\s*\[\s*{?"

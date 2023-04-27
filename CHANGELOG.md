@@ -1,14 +1,29 @@
-## 0.6.2-dev1
+## 0.6.3-dev1
 
 ### Enhancements
 
-* Added logic to `partition_pdf` for detecting copy protected PDFs and falling back
-  to the hi res strategy when necessary.
 * Add Discord connector to pull messages from a list of channels
 
 ### Features
 
 ### Fixes
+
+## 0.6.2
+
+### Enhancements
+
+* Added logic to `partition_pdf` for detecting copy protected PDFs and falling back
+  to the hi res strategy when necessary.
+
+
+### Features
+
+* Add `partition_via_api` for partitioning documents through the hosted API.
+
+### Fixes
+
+* Fix how `exceeds_cap_ratio` handles empty (returns `True` instead of `False`)
+* Updates `detect_filetype` to properly detect JSONs when the MIME type is `text/plain`.
 
 ## 0.6.1
 
