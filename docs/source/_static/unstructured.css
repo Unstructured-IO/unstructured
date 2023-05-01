@@ -299,7 +299,10 @@ span:target~h6:first-of-type {
 }
 
 .header-logo {
-  max-width: 120px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 120px;
 }
 
 .header__search {
@@ -505,7 +508,7 @@ a.back-to-top.muted-link {
 }
 
 .sidebar-tree .reference:hover {
-  font-weight: 600;
+  font-weight: 601;
 }
 
 .sidebar-tree .current-page>.reference {
