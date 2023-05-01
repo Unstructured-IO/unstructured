@@ -46,7 +46,7 @@ idna==3.4
     #   anyio
     #   requests
     #   rfc3986
-importlib-metadata==6.5.0
+importlib-metadata==6.6.0
     # via markdown
 jinja2==3.1.2
     # via torch
