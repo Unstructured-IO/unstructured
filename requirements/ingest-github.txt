@@ -94,7 +94,7 @@ nltk==3.8.1
     # via
     #   -r requirements/base.txt
     #   unstructured (setup.py)
-numpy==1.23.5
+numpy==1.24.3
     # via
     #   -r requirements/base.txt
     #   argilla
