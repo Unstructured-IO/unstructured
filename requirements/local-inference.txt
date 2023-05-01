@@ -65,7 +65,7 @@ httpcore==0.16.3
     # via httpx
 httpx==0.23.3
     # via argilla
-huggingface-hub==0.13.4
+huggingface-hub==0.14.1
     # via
     #   timm
     #   transformers
