@@ -129,7 +129,7 @@ html_theme_options = {
         "color-search-placeholder": "#FFFFFF",
         "color-literal": "#F8C0A7",
         "color-page-info": "#FFFFFF",
-        "color-img-background": "#757575",
+        "color-img-background": "#131416",
         "sidebar-tree-space-above": "0",
         "sidebar-caption-space-above": "0",
     },
