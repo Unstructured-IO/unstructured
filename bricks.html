@@ -1,18 +1,19 @@
 <!doctype html>
-<html class="no-js" lang="en">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+<html class="no-js"  lang="en" >
+
+<head><meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Examples" href="examples.html" /><link rel="prev" title="Getting Started" href="getting_started.html" />
 
-    <link rel="shortcut icon" href="_static/unstructured_small.png"/><!-- Generated with Sphinx 6.1.3 and Furo 2023.03.27 -->
-        <title>Bricks - Unstructured 0.6.2 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
-    <link rel="stylesheet" type="text/css" href="_static/unstructured.css" />
-    
-    
+  <link rel="shortcut icon" href="_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.1.3, furo 2023.03.27" />
+  <title>Bricks - Unstructured 0.6.2 documentation</title>
+  <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+  <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
+  <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+  <link rel="stylesheet" type="text/css" href="_static/unstructured.css" />
+  
+  
 
 
 <style>
@@ -89,7 +90,7 @@
   --color-search-placeholder: #FFFFFF;
   --color-literal: #F8C0A7;
   --color-page-info: #FFFFFF;
-  --color-img-background: #757575;
+  --color-img-background: #131416;
   --sidebar-tree-space-above: 0;
   --sidebar-caption-space-above: 0;
   
@@ -127,20 +128,29 @@
   --color-search-placeholder: #FFFFFF;
   --color-literal: #F8C0A7;
   --color-page-info: #FFFFFF;
-  --color-img-background: #757575;
+  --color-img-background: #131416;
   --sidebar-tree-space-above: 0;
   --sidebar-caption-space-above: 0;
   
       }
     }
   }
-</style></head>
-  <body>
-    
-    <script>
-      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
-    </script>
-    
+</style><script src="_static/jquery.js"></script>
+  <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+  <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+  <script src="_static/doctools.js"></script>
+  <script src="_static/sphinx_highlight.js"></script>
+  <script src="_static/scripts/furo.js"></script>
+  <script src="_static/js/githubStargazers.js"></script>
+  <script src="_static/js/sidebarScrollPosition.js"></script>
+  </head>
+
+<body>
+  
+  <script>
+    document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+  </script>
+  
 
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <symbol id="svg-toc" viewBox="0 0 24 24">
@@ -205,11 +215,15 @@
 
 <input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
 <input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<input type="checkbox" class="sidebar-toggle" name="__search" id="__search">
 <label class="overlay sidebar-overlay" for="__navigation">
   <div class="visually-hidden">Hide navigation sidebar</div>
 </label>
 <label class="overlay toc-overlay" for="__toc">
   <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+<label class="overlay search-overlay" for="__search">
+  <div class="visually-hidden">Hide search</div>
 </label>
 
 
@@ -219,30 +233,58 @@
     <div class="header-left">
       <label class="nav-overlay-icon" for="__navigation">
         <div class="visually-hidden">Toggle site navigation sidebar</div>
-        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+        <i class="icon"><svg>
+            <use href="#svg-menu"></use>
+          </svg></i>
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">Unstructured 0.6.2 documentation</div></a>
+      <a href="index.html">
+        <div class="brand">
+					<img class="header-logo only-light" src="_static/images/logo-light-mode.svg" alt="Light Logo" />
+					<img class="header-logo only-dark" src="_static/images/logo-dark-mode.svg" alt="Dark Logo" />
+        </div>
+      </a>
     </div>
+
     <div class="header-right">
-      <div class="theme-toggle-container theme-toggle-header">
-        <button class="theme-toggle">
-          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
-          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
-          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
-        </button>
-      </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="search-icon" for="__search">
+        <div class="visually-hidden">Toggle search</div>
+      </label>
+      <!-- <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
-      </label>
+      </label> -->
     </div>
   </header>
+  <div class="header__search">
+    <form class="header__search__container" method="get" action="search.html" role="search">
+      <input class="header__search__input" placeholder=Search name="q" aria-label=" Search">
+      <input type="hidden" name="check_keywords" value="yes">
+      <input type="hidden" name="area" value="default">
+      <label class="close-icon" for="__search">
+        <div class="visually-hidden">Hide search</div>
+      </label>
+    </form>
+    <div id="searchbox"></div>
+  </div>
   <aside class="sidebar-drawer">
     <div class="sidebar-container">
       
+      <div class="theme-toggle-container theme-toggle-header sidebar__theme-toggle">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto">
+            <use href="#svg-sun-half"></use>
+          </svg>
+          <svg class="theme-icon-when-dark">
+            <use href="#svg-moon"></use>
+          </svg>
+          <svg class="theme-icon-when-light">
+            <use href="#svg-sun"></use>
+          </svg>
+        </button>
+      </div>
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   <div class="sidebar-logo-container">
@@ -262,7 +304,7 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <p class="caption" role="heading"><span class="caption-text">Library Documentation</span></p>
+  <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installing.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
@@ -292,17 +334,38 @@
 <div class="theme-toggle-container theme-toggle-content">
             <button class="theme-toggle">
               <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
-              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
-              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+              <svg class="theme-icon-when-auto">
+                <use href="#svg-sun-half"></use>
+              </svg>
+              <svg class="theme-icon-when-dark">
+                <use href="#svg-moon"></use>
+              </svg>
+              <svg class="theme-icon-when-light">
+                <use href="#svg-sun"></use>
+              </svg>
             </button>
           </div>
           <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+            <i class="icon"><svg>
+                <use href="#svg-toc"></use>
+              </svg></i>
           </label>
         </div>
+        <div class="header-center">
+          <a href="index.html">
+            <div class="brand">
+            </div>
+          </a>
+        </div>
         <article role="main">
+          <div class="social social--main" style="margin-top: 1em; display: flex; justify-content: right; gap: 8px">
+  					<a href="https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-1nlh1ot5d-dfY7zCRlhFboZrIWLA4Qgw"
+              class="button--primary" target="_blank">Join <span aria-label="slack"
+                class="slack-icon"></span></span></a>
+            <div class="github-stars github-stars--top-page"></div>
+            <!-- Calendly badge widget begin -->
+          </div>
           <section id="bricks">
 <h1>Bricks<a class="headerlink" href="#bricks" title="Permalink to this heading"></a></h1>
 <p>The goal of this page is to introduce you to the concept of bricks.
@@ -1807,30 +1870,28 @@ if specified.</p>
         
         <div class="related-pages">
           <a class="next-page" href="examples.html">
-              <div class="page-info">
-                <div class="context">
-                  <span>Next</span>
-                </div>
-                <div class="title">Examples</div>
+            <div class="page-info">
+              <div class="context">
+                <span>Next</span>
               </div>
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
-            </a>
+              <div class="title">Examples</div>
+            </div>
+          </a>
           <a class="prev-page" href="getting_started.html">
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
-              <div class="page-info">
-                <div class="context">
-                  <span>Previous</span>
-                </div>
-                
-                <div class="title">Getting Started</div>
-                
+            <div class="page-info">
+              <div class="context">
+                <span>Previous</span>
               </div>
-            </a>
+              
+              <div class="title">Getting Started</div>
+              
+            </div>
+          </a>
         </div>
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2022-2023, Unstructured Technologies
+              Copyright &#169; 2022-2023, Unstructured Technologies
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
@@ -1838,7 +1899,9 @@ if specified.</p>
             
           </div>
           <div class="right-details">
-            
+            <div class="icons">
+              
+            </div>
           </div>
         </div>
         
@@ -1850,7 +1913,7 @@ if specified.</p>
       <div class="toc-sticky toc-scroll">
         <div class="toc-title-container">
           <span class="toc-title">
-            On this page
+            Contents
           </span>
         </div>
         <div class="toc-tree-container">
@@ -1937,13 +2000,6 @@ if specified.</p>
       
     </aside>
   </div>
-</div><script src="_static/jquery.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/sphinx_highlight.js"></script>
-    <script src="_static/scripts/furo.js"></script>
-    <script src="_static/js/githubStargazers.js"></script>
-    <script src="_static/js/sidebarScrollPosition.js"></script>
-    </body>
+</div>
+</body>
 </html>
