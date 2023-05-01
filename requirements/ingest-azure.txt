@@ -105,7 +105,7 @@ idna==3.4
     #   requests
     #   rfc3986
     #   yarl
-importlib-metadata==6.5.0
+importlib-metadata==6.6.0
     # via
     #   -r requirements/base.txt
     #   markdown
