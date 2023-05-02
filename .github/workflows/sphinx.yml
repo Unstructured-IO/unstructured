@@ -5,7 +5,8 @@ name: Sphinx build
 
 on:
   push:
-    branches: [ main ]
+    tags:
+      - '*'
 
 jobs:
   docs:
