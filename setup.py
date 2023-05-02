@@ -56,6 +56,7 @@ setup(
         "nltk",
         "openpyxl",
         "pandas",
+        "pdfminer.six",
         "pillow",
         "pypandoc",
         "python-docx",
