@@ -1,3 +1,4 @@
+import contextlib
 import json
 from typing import (
     IO,
@@ -132,11 +133,21 @@ def partition_multiple_via_api(
         if content_types and len(content_types) != len(filenames):
             raise ValueError("content_types and filenames must have the same length.")
 
-        _files = []
-        for i, filename in enumerate(filenames):
-            content_type = content_types[i] if content_types is not None else None
-            _file = open(filename, "rb")  # noqa
-            _files.append(("files", (filename, _file, content_type)))
+        with contextlib.ExitStack() as stack:
+            files = [stack.enter_context(open(f, "rb")) for f in filenames]  # type: ignore
+
+            _files = []
+            for i, file in enumerate(files):
+                filename = filenames[i]
+                content_type = content_types[i] if content_types is not None else None
+                _files.append(("files", (filename, file, content_type)))
+
+            response = requests.post(
+                api_url,
+                headers=headers,
+                data=data,
+                files=_files,  # type: ignore
+            )
 
     elif files is not None:
         if content_types and len(content_types) != len(files):
@@ -153,12 +164,7 @@ def partition_multiple_via_api(
             filename = file_filenames[i]
             _files.append(("files", (filename, _file, content_type)))
 
-    response = requests.post(api_url, headers=headers, data=data, files=_files)  # type: ignore
-
-    if filenames is not None:
-        for submission in _files:
-            _file = submission[1][1]
-            _file.close()
+        response = requests.post(api_url, headers=headers, data=data, files=_files)  # type: ignore
 
     if response.status_code == 200:
         documents = []

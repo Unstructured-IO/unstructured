@@ -162,6 +162,36 @@ Examples:
     elements = partition_via_api(file=f, file_filename=filename, api_key="MY_API_KEY")
 
 
+``partition_multiple_via_api``
+------------------------------
+
+``partition_multiple_via_api`` is similar to ``partition_via_api``, but allows you to partition
+multiple documents in a single REST API call. The result has the type ``List[List[Element]]``.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.api import partition_multiple_via_api
+
+  filenames = ["example-docs/fake-email.eml", "example-docs/fake.docx"]
+
+  documents = partition_multiple_via_api(filenames=filenames)
+
+
+.. code:: python
+  from contextlib import ExitStack
+
+  from unstructured.partition.api import partition_multiple_via_api
+
+  filenames = ["example-docs/fake-email.eml", "example-docs/fake.docx"]
+  files = [open(filename, "rb") for filename in filenames]
+
+  with ExitStack() as stack:
+      files = [open(filename, "rb") for filename in filenames]
+      documents = partition_multiple_via_api(files=files, file_filenames=filenames)
+
+
 ``partition_docx``
 ------------------
 
