@@ -84,7 +84,7 @@ def partition_via_api(
         )
 
 
-def partition_files_via_api(
+def partition_multiple_via_api(
     filenames: Optional[List[str]] = None,
     content_types: Optional[List[str]] = None,
     files: Optional[List[str]] = None,
@@ -93,8 +93,8 @@ def partition_files_via_api(
     api_url: str = "https://api.unstructured.io/general/v0/general",
     api_key: str = "",
 ) -> List[List[Element]]:
-    """Partitions a document using the Unstructured REST API. This is equivalent to
-    running the document through partition.
+    """Partitions multiple document using the Unstructured REST API by batching
+    the documents into a single HTTP request.
 
     See https://api.unstructured.io/general/docs for the hosted API documentation or
     https://github.com/Unstructured-IO/unstructured-api for instructions on how to run
@@ -102,10 +102,14 @@ def partition_files_via_api(
 
     Parameters
     ----------
-    filenames
-        A list string defining the target filename paths.
-    content_type
-        A list string defining the file content in MIME type in the filenames.
+    filename
+        A list of strings defining the target filename paths.
+    content_types
+        A list of strings defining the file contents in MIME types.
+    files
+        A list of file-like object using "rb" mode --> open(filename, "rb").
+    file_filename
+        When file is not None, the filename (string) to store in element metadata. E.g. "foo.txt"
     strategy
         The strategy to use for partitioning the PDF. Uses a layout detection model if set
         to 'hi_res', otherwise partition_pdf simply extracts the text from the document
