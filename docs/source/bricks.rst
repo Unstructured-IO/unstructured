@@ -166,7 +166,15 @@ Examples:
 ------------------------------
 
 ``partition_multiple_via_api`` is similar to ``partition_via_api``, but allows you to partition
-multiple documents in a single REST API call. The result has the type ``List[List[Element]]``.
+multiple documents in a single REST API call. The result has the type ``List[List[Element]]``,
+for example:
+
+.. code:: python
+
+  [
+    [NarrativeText("Narrative!"), Title("Title!")],
+    [NarrativeText("Narrative!"), Title("Title!")]
+  ]
 
 Examples:
 
@@ -180,6 +188,7 @@ Examples:
 
 
 .. code:: python
+
   from contextlib import ExitStack
 
   from unstructured.partition.api import partition_multiple_via_api
