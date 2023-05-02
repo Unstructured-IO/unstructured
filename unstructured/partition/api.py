@@ -1,3 +1,4 @@
+import json
 from typing import (
     IO,
     List,
@@ -77,6 +78,71 @@ def partition_via_api(
 
     if response.status_code == 200:
         return partition_json(text=response.text)
+    else:
+        raise ValueError(
+            f"Receive unexpected status code {response.status_code} from the API.",
+        )
+
+
+def partition_files_via_api(
+    filenames: Optional[List[str]] = None,
+    content_types: Optional[List[str]] = None,
+    strategy: str = "hi_res",
+    api_url: str = "https://api.unstructured.io/general/v0/general",
+    api_key: str = "",
+) -> List[List[Element]]:
+    """Partitions a document using the Unstructured REST API. This is equivalent to
+    running the document through partition.
+
+    See https://api.unstructured.io/general/docs for the hosted API documentation or
+    https://github.com/Unstructured-IO/unstructured-api for instructions on how to run
+    the API locally as a container.
+
+    Parameters
+    ----------
+    filenames
+        A list string defining the target filename paths.
+    content_type
+        A list string defining the file content in MIME type in the filenames.
+    strategy
+        The strategy to use for partitioning the PDF. Uses a layout detection model if set
+        to 'hi_res', otherwise partition_pdf simply extracts the text from the document
+        and processes it.
+    api_url
+        The URL for the Unstructured API. Defaults to the hosted Unstructured API.
+    api_key
+        The API key to pass to the Unstructured API.
+    """
+    headers = {
+        "ACCEPT": "application/json",
+        "UNSTRUCTURED-API-KEY": api_key,
+    }
+
+    data = {
+        "strategy": strategy,
+    }
+
+    if content_types is not None and filenames is not None and len(content_types) != len(filenames):
+        raise ValueError("content_types and filenames must have the same length.")
+
+    if filenames is not None:
+        _files = []
+        for i, filename in enumerate(filenames):
+            content_type = content_types[i] if content_types is not None else None
+            _file = open(filename, "rb")  # noqa
+            _files.append(("files", (filename, _file, content_type)))
+
+        response = requests.post(api_url, headers=headers, data=data, files=_files)  # type: ignore
+
+        for submission in _files:
+            _file = submission[1][1]
+            _file.close()
+
+    if response.status_code == 200:
+        documents = []
+        for document in response.json():
+            documents.append(partition_json(text=json.dumps(document)))
+        return documents
     else:
         raise ValueError(
             f"Receive unexpected status code {response.status_code} from the API.",
