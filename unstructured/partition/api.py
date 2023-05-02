@@ -87,6 +87,8 @@ def partition_via_api(
 def partition_files_via_api(
     filenames: Optional[List[str]] = None,
     content_types: Optional[List[str]] = None,
+    files: Optional[List[str]] = None,
+    file_filenames: Optional[List[str]] = None,
     strategy: str = "hi_res",
     api_url: str = "https://api.unstructured.io/general/v0/general",
     api_key: str = "",
@@ -122,18 +124,34 @@ def partition_files_via_api(
         "strategy": strategy,
     }
 
-    if content_types is not None and filenames is not None and len(content_types) != len(filenames):
-        raise ValueError("content_types and filenames must have the same length.")
-
     if filenames is not None:
+        if content_types and len(content_types) != len(filenames):
+            raise ValueError("content_types and filenames must have the same length.")
+
         _files = []
         for i, filename in enumerate(filenames):
             content_type = content_types[i] if content_types is not None else None
             _file = open(filename, "rb")  # noqa
             _files.append(("files", (filename, _file, content_type)))
 
-        response = requests.post(api_url, headers=headers, data=data, files=_files)  # type: ignore
+    elif files is not None:
+        if content_types and len(content_types) != len(files):
+            raise ValueError("content_types and files must have the same length.")
 
+        if not file_filenames:
+            raise ValueError("file_filenames must be specified if files are passed")
+        elif len(file_filenames) != len(files):
+            raise ValueError("file_filenames and files must have the same length.")
+
+        _files = []
+        for i, _file in enumerate(files):  # type: ignore
+            content_type = content_types[i] if content_types is not None else None
+            filename = file_filenames[i]
+            _files.append(("files", (filename, _file, content_type)))
+
+    response = requests.post(api_url, headers=headers, data=data, files=_files)  # type: ignore
+
+    if filenames is not None:
         for submission in _files:
             _file = submission[1][1]
             _file.close()
