@@ -188,7 +188,7 @@ Examples:
   files = [open(filename, "rb") for filename in filenames]
 
   with ExitStack() as stack:
-      files = [open(filename, "rb") for filename in filenames]
+      files = [stack.enter_context(open(filename, "rb")) for filename in filenames]
       documents = partition_multiple_via_api(files=files, file_filenames=filenames)
 
 
