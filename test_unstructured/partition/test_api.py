@@ -177,3 +177,67 @@ def test_partition_multiple_via_api_raises_with_bad_response(monkeypatch):
 
     with pytest.raises(ValueError):
         partition_multiple_via_api(filenames=filenames, api_key="FAKEROO")
+
+
+def test_partition_multiple_via_api_raises_with_content_types_size_mismatch(monkeypatch):
+    monkeypatch.setattr(
+        requests,
+        "post",
+        lambda *args, **kwargs: MockMultipleResponse(status_code=500),
+    )
+
+    filenames = [
+        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml"),
+        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake.docx"),
+    ]
+
+    with pytest.raises(ValueError):
+        partition_multiple_via_api(
+            filenames=filenames,
+            content_types=["text/plain"],
+            api_key="FAKEROO",
+        )
+
+
+def test_partition_multiple_via_api_from_files_raises_with_size_mismatch(monkeypatch):
+    monkeypatch.setattr(
+        requests,
+        "post",
+        lambda *args, **kwargs: MockMultipleResponse(status_code=200),
+    )
+
+    filenames = [
+        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml"),
+        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake.docx"),
+    ]
+
+    with contextlib.ExitStack() as stack:
+        files = [stack.enter_context(open(filename, "rb")) for filename in filenames]
+        with pytest.raises(ValueError):
+            partition_multiple_via_api(
+                files=files,
+                file_filenames=filenames,
+                content_types=["text/plain"],
+                api_key="FAKEROO",
+            )
+
+
+def test_partition_multiple_via_api_from_files_raises_without_filenames(monkeypatch):
+    monkeypatch.setattr(
+        requests,
+        "post",
+        lambda *args, **kwargs: MockMultipleResponse(status_code=200),
+    )
+
+    filenames = [
+        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml"),
+        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake.docx"),
+    ]
+
+    with contextlib.ExitStack() as stack:
+        files = [stack.enter_context(open(filename, "rb")) for filename in filenames]
+        with pytest.raises(ValueError):
+            partition_multiple_via_api(
+                files=files,
+                api_key="FAKEROO",
+            )
