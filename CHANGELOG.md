@@ -1,3 +1,13 @@
+## 0.6.3-dev0
+
+### Enhancements
+
+* Add an "ocr_only" strategy for `partition_image`.
+
+### Features
+
+### Fixes
+
 ## 0.6.2
 
 ### Enhancements
