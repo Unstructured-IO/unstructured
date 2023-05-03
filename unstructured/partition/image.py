@@ -1,7 +1,7 @@
-import tempfile
 from typing import List, Optional
 
 import pytesseract
+from PIL import Image
 
 from unstructured.documents.elements import Element
 from unstructured.partition.common import exactly_one
@@ -60,14 +60,11 @@ def partition_image(
         )
 
     elif strategy == "ocr_only":
-        if filename is not None:
+        if file is not None:
+            image = Image.open(file)
+            text = pytesseract.image_to_string(image, config=f"-l '{ocr_languages}'")
+        else:
             text = pytesseract.image_to_string(filename, config=f"-l '{ocr_languages}'")
-        elif file is not None:
-            with tempfile.NamedTemporaryFile() as tmp_file:
-                tmp_file.write(file.read())
-                file.seek(0)
-                text = pytesseract.image_to_string(tmp_file.name, config=f"-l '{ocr_languages}'")
-
         return partition_text(text=text)
 
     else:
