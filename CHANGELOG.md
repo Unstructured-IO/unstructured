@@ -1,10 +1,13 @@
-## 0.6.3-dev0
+## 0.6.3-dev1
 
 ### Enhancements
 
 * Add an "ocr_only" strategy for `partition_image`.
 
 ### Features
+
+* Added `partition_multiple_via_api` for partitioning multiple documents in a single REST
+  API call.
 
 ### Fixes
 
