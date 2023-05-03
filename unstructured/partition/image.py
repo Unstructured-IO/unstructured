@@ -22,6 +22,7 @@ def partition_image(
     strategy: str = "hi_res",
 ) -> List[Element]:
     """Parses an image into a list of interpreted elements.
+
     Parameters
     ----------
     filename
