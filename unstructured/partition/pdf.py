@@ -288,28 +288,34 @@ def _process_pdfminer_pages(
     from pdfminer.converter import TextConverter
     from pdfminer.layout import LAParams
     from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
+    from pdfminer.high_level import extract_pages
+
+    from unstructured.cleaners.core import clean_extra_whitespace
+    from unstructured.nlp.patterns import PARAGRAPH_PATTERN_RE
 
     rsrcmgr = PDFResourceManager(caching=False)
     laparams = LAParams()
 
     elements: List[Element] = []
 
-    for i, page in enumerate(PDFPage.get_pages(fp, check_extractable=True)):
+    for i, page in enumerate(extract_pages(fp)):
         metadata = ElementMetadata(filename=filename, page_number=i + 1)
-        with StringIO() as output_string:
-            device = TextConverter(
-                rsrcmgr,
-                output_string,
-                codec=encoding,
-                laparams=laparams,
-            )
-            interpreter = PDFPageInterpreter(rsrcmgr, device)
-            interpreter.process_page(page)
-            text = output_string.getvalue()
-            _elements = partition_text(text=text)
-            for element in _elements:
-                element.metadata = metadata
-                elements.append(element)
+
+        text_segments = []
+        for obj in page:
+            if not hasattr(obj, "get_text"):
+                continue
+            _text = obj.get_text()
+            _text = PARAGRAPH_PATTERN_RE.sub(" ", _text)
+            _text = clean_extra_whitespace(_text)
+            text_segments.append(_text)
+
+        text  = "\n\n".join(_text)
+
+        _elements = partition_text(text=text)
+        for element in _elements:
+            element.metadata = metadata
+            elements.append(element)
 
         if include_page_breaks:
             elements.append(PageBreak())
