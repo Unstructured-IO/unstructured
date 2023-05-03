@@ -1,4 +1,4 @@
-## 0.6.3-dev0
+## 0.6.3-dev1
 
 ### Enhancements
 
@@ -9,6 +9,9 @@
   API call.
 
 ### Fixes
+
+* Updates the grouping logic in the `partition_pdf` fast strategy to group together text
+  in the same bounding box.
 
 
 ## 0.6.2
