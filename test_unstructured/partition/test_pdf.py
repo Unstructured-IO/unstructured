@@ -332,5 +332,5 @@ def test_partition_pdf_fast_groups_text_in_text_box():
     assert str(elements[1]).endswith("Jordan and Egypt.")
 
     assert elements[3] == Title(
-        "kilograms CO₂e/boe carbon intensity from our Eastern Mediterranean operations in 2022"
+        "kilograms CO₂e/boe carbon intensity from our Eastern Mediterranean operations in 2022",
     )
