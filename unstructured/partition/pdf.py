@@ -295,12 +295,15 @@ def _process_pdfminer_pages(
 
         text_segments = []
         for obj in page:
+            # NOTE(robinson) - "Figure" is an example of an object type that does
+            # not have a get_text method
             if not hasattr(obj, "get_text"):
                 continue
             _text = obj.get_text()
             _text = re.sub(PARAGRAPH_PATTERN, " ", _text)
             _text = clean_extra_whitespace(_text)
-            text_segments.append(_text)
+            if _text.strip():
+                text_segments.append(_text)
 
         text = "\n\n".join(text_segments)
 
