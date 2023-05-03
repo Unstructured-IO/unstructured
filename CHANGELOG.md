@@ -1,3 +1,16 @@
+## 0.6.3-dev0
+
+### Enhancements
+
+
+### Features
+
+* Added `partition_multiple_via_api` for partitioning multiple documents in a single REST
+  API call.
+
+### Fixes
+
+
 ## 0.6.2
 
 ### Enhancements
