@@ -209,3 +209,9 @@ def test_partition_image_with_ocr_detects_korean_from_file():
 
     assert elements[0] == Title("RULES AND INSTRUCTIONS")
     assert elements[3].text.startswith("안녕하세요")
+
+
+def test_partition_image_raises_with_bad_strategy():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "english-and-korean.png")
+    with pytest.raises(ValueError):
+        image.partition_image(filename=filename, strategy="fakeroo")
