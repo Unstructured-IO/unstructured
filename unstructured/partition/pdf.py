@@ -1,12 +1,15 @@
+import re
 import warnings
-from io import StringIO
 from typing import BinaryIO, List, Optional, cast
 
+from pdfminer.high_level import extract_pages
 from pdfminer.pdfpage import PDFPage, PDFTextExtractionNotAllowed
 from pdfminer.utils import open_filename
 
+from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import Element, ElementMetadata, PageBreak
 from unstructured.logger import logger
+from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.partition import _partition_via_api
 from unstructured.partition.common import (
     add_element_metadata,
@@ -285,20 +288,9 @@ def _process_pdfminer_pages(
     include_page_breaks: bool = False,
 ):
     """Uses PDF miner to split a document into pages and process them."""
-    from pdfminer.converter import TextConverter
-    from pdfminer.layout import LAParams
-    from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
-    from pdfminer.high_level import extract_pages
-
-    from unstructured.cleaners.core import clean_extra_whitespace
-    from unstructured.nlp.patterns import PARAGRAPH_PATTERN_RE
-
-    rsrcmgr = PDFResourceManager(caching=False)
-    laparams = LAParams()
-
     elements: List[Element] = []
 
-    for i, page in enumerate(extract_pages(fp)):
+    for i, page in enumerate(extract_pages(fp)):  # type: ignore
         metadata = ElementMetadata(filename=filename, page_number=i + 1)
 
         text_segments = []
@@ -306,11 +298,11 @@ def _process_pdfminer_pages(
             if not hasattr(obj, "get_text"):
                 continue
             _text = obj.get_text()
-            _text = PARAGRAPH_PATTERN_RE.sub(" ", _text)
+            _text = re.sub(PARAGRAPH_PATTERN, " ", _text)
             _text = clean_extra_whitespace(_text)
             text_segments.append(_text)
 
-        text  = "\n\n".join(_text)
+        text = "\n\n".join(text_segments)
 
         _elements = partition_text(text=text)
         for element in _elements:
