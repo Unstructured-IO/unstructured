@@ -1,4 +1,4 @@
-## 0.6.3-dev3
+## 0.6.3
 
 ### Enhancements
 
