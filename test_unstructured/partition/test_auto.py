@@ -461,3 +461,17 @@ def test_auto_partition_works_with_unstructured_jsons_from_file():
     with open(filename, "rb") as f:
         elements = partition(file=f)
     assert elements[0].text == "News Around NOAA"
+
+
+def test_auto_partition_odt_from_filename():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.odt")
+    elements = partition(filename=filename)
+    assert elements == [Title("Lorem ipsum dolor sit amet.")]
+
+
+def test_auto_partition_odt_from_file():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.odt")
+    with open(filename, "rb") as f:
+        elements = partition(file=f)
+
+    assert elements == [Title("Lorem ipsum dolor sit amet.")]
