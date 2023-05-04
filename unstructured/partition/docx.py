@@ -1,6 +1,9 @@
+import os
+import tempfile
 from typing import IO, List, Optional
 
 import docx
+import pypandoc
 
 from unstructured.cleaners.core import clean_bullets
 from unstructured.documents.elements import (
@@ -132,3 +135,46 @@ def _text_to_element(text: str) -> Optional[Text]:
         return Title(text)
     else:
         return Text(text)
+
+
+def convert_and_partition_docx(
+    source_format: str,
+    filename: Optional[str] = None,
+    file: Optional[IO] = None,
+) -> List[Element]:
+    """Converts a document to DOCX and then partitions it using partition_html. Works with
+    any file format support by pandoc.
+
+    Parameters
+    ----------
+    source_format
+        The format of the source document, i.e. rst
+    filename
+        A string defining the target filename path.
+    file
+        A file-like object using "rb" mode --> open(filename, "rb").
+    """
+    if filename is None:
+        filename = ""
+    exactly_one(filename=filename, file=file)
+
+    if len(filename) > 0:
+        _, filename_no_path = os.path.split(os.path.abspath(filename))
+        base_filename, _ = os.path.splitext(filename_no_path)
+        if not os.path.exists(filename):
+            raise ValueError(f"The file {filename} does not exist.")
+    elif file is not None:
+        tmp = tempfile.NamedTemporaryFile(delete=False)
+        tmp.write(file.read())
+        tmp.close()
+        filename = tmp.name
+        _, filename_no_path = os.path.split(os.path.abspath(tmp.name))
+
+    base_filename, _ = os.path.splitext(filename_no_path)
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        docx_filename = os.path.join(tmpdir, f"{base_filename}.docx")
+        pypandoc.convert_file(filename, "docx", format=source_format, outputfile=docx_filename)
+        elements = partition_docx(filename=docx_filename, metadata_filename=filename)
+
+    return elements
