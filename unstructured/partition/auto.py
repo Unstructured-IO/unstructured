@@ -15,6 +15,7 @@ from unstructured.partition.image import partition_image
 from unstructured.partition.json import partition_json
 from unstructured.partition.md import partition_md
 from unstructured.partition.msg import partition_msg
+from unstructured.partition.odt import partition_odt
 from unstructured.partition.pdf import partition_pdf
 from unstructured.partition.ppt import partition_ppt
 from unstructured.partition.pptx import partition_pptx
@@ -106,6 +107,8 @@ def partition(
         elements = partition_doc(filename=filename, file=file)
     elif filetype == FileType.DOCX:
         elements = partition_docx(filename=filename, file=file)
+    elif filetype == FileType.ODT:
+        elements = partition_odt(filename=filename, file=file)
     elif filetype == FileType.EML:
         elements = partition_email(filename=filename, file=file, encoding=encoding)
     elif filetype == FileType.MSG:

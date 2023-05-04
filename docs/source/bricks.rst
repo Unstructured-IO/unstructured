@@ -83,7 +83,7 @@ If you call the ``partition`` function, ``unstructured`` will attempt to detect 
 file type and route it to the appropriate partitioning brick. All partitioning bricks
 called within ``partition`` are called using the default kwargs. Use the document-type
 specific bricks if you need to apply non-default settings.
-``partition`` currently supports ``.docx``, ``.doc``, ``.pptx``, ``.ppt``, ``.eml``, ``.msg``, ``.rtf``, ``.epub``, ``.html``, ``.pdf``,
+``partition`` currently supports ``.docx``, ``.doc``, ``.odt``, ``.pptx``, ``.ppt``, ``.eml``, ``.msg``, ``.rtf``, ``.epub``, ``.html``, ``.pdf``,
 ``.png``, ``.jpg``, and ``.txt`` files.
 If you set the ``include_page_breaks`` kwarg to ``True``, the output will include page breaks. This is only supported for ``.pptx``, ``.html``, ``.pdf``,
 ``.png``, and ``.jpg``.
@@ -249,6 +249,22 @@ Examples:
   from unstructured.partition.doc import partition_doc
 
   elements = partition_doc(filename="example-docs/fake.doc")
+
+
+``partition_odt``
+------------------
+
+The ``partition_odt`` partitioning brick pre-processes Open Office documents
+saved in the ``.odt`` format. The function first converst the document
+to ``.docx`` using ``pandoc`` and then processes it using ``partition_docx``.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.odt import partition_odt
+
+  elements = partition_odt(filename="example-docs/fake.odt")
 
 
 ``partition_pptx``
