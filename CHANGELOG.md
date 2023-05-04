@@ -11,6 +11,9 @@
 
 ### Fixes
 
+* Updates the grouping logic in the `partition_pdf` fast strategy to group together text
+  in the same bounding box.
+
 ## 0.6.2
 
 ### Enhancements
