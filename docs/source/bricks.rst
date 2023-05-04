@@ -430,6 +430,20 @@ Examples:
   elements = partition_image("example-docs/layout-parser-paper-fast.jpg", ocr_languages="eng+swe")
 
 
+The default partitioning strategy for ``partition_image`` is `"hi_res"`, which segements the document using
+``detectron2`` and then OCRs the document. You can also choose ``"ocr_only"`` as the partitioning strategy,
+which OCRs the document and then runs the output through ``partition_text``. This can be helpful
+if ``detectron2`` does not detect a text element in the image. To run example below, ensure you
+have the Korean language pack for Tesseract installed on your system.
+
+
+.. code:: python
+
+  from unstructured.partition.image import partition_image
+
+  filename = "example-docs/english-and-korean.png"
+  elements = partition_image(filename=filename, ocr_languages="eng+kor", strategy="ocr_only")
+
 
 ``partition_email``
 ---------------------

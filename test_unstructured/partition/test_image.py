@@ -1,3 +1,5 @@
+import os
+import pathlib
 from unittest import mock
 
 import pytest
@@ -5,7 +7,12 @@ import requests
 from pytesseract import TesseractError
 from unstructured_inference.inference import layout
 
+from unstructured.documents.elements import Title
 from unstructured.partition import image, pdf
+
+DIRECTORY = pathlib.Path(__file__).parent.resolve()
+
+is_in_docker = os.path.exists("/.dockerenv")
 
 
 class MockResponse:
@@ -178,3 +185,37 @@ def test_partition_image_from_file_with_language_passed(filename="example-docs/e
 def test_partition_image_raises_with_invalid_language(filename="example-docs/example.jpg"):
     with pytest.raises(TesseractError):
         image.partition_image(filename=filename, ocr_languages="fakeroo")
+
+
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
+def test_partition_image_with_ocr_detects_korean():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "english-and-korean.png")
+    elements = image.partition_image(
+        filename=filename,
+        ocr_languages="eng+kor",
+        strategy="ocr_only",
+    )
+
+    assert elements[0] == Title("RULES AND INSTRUCTIONS")
+    assert elements[3].text.startswith("안녕하세요")
+
+
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
+def test_partition_image_with_ocr_detects_korean_from_file():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "english-and-korean.png")
+
+    with open(filename, "rb") as f:
+        elements = image.partition_image(
+            file=f,
+            ocr_languages="eng+kor",
+            strategy="ocr_only",
+        )
+
+    assert elements[0] == Title("RULES AND INSTRUCTIONS")
+    assert elements[3].text.startswith("안녕하세요")
+
+
+def test_partition_image_raises_with_bad_strategy():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "english-and-korean.png")
+    with pytest.raises(ValueError):
+        image.partition_image(filename=filename, strategy="fakeroo")
