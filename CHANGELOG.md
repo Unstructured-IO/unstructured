@@ -8,6 +8,7 @@
 
 * Added `partition_multiple_via_api` for partitioning multiple documents in a single REST
   API call.
+* Added `stage_for_baseplate` function to prepare outputs for ingestion into Baseplate.
 
 ### Fixes
 

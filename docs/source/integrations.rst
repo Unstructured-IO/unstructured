@@ -11,6 +11,15 @@ which take a list of ``Element`` objects as input and return formatted dictionar
 You can convert a list of ``Text`` elements to an `Argilla <https://www.argilla.io/>`_ ``Dataset`` using the `stage_for_argilla <https://unstructured-io.github.io/unstructured/bricks.html#stage-for-argilla>`_ staging brick. Specify the type of dataset to be generated using the ``argilla_task`` parameter. Valid values are ``"text_classification"``, ``"token_classification"``, and ``"text2text"``. Follow the link for more details on usage.
 
 
+``Integration with Baseplate``
+-------------------------------
+`Baseplate <https://docs.baseplate.ai/introduction>`_ is a backend optimized for use with LLMs that has an easy to use spreadsheet
+interface. The ``unstructured`` library offers a staging brick to convert a list of ``Element`` objects into the
+`rows format <https://docs.baseplate.ai/api-reference/documents/overview>`_ required by the Baseplate API. See the
+`stage_for_baseplate <https://unstructured-io.github.io/unstructured/bricks.html#stage-for-baseplate>`_ documentation for
+information on how to stage elements for ingestion into Baseplate.
+
+
 ``Integration with Datasaur``
 ------------------------------
 You can format a list of ``Text`` elements as input to token based tasks in `Datasaur <https://datasaur.ai/>`_ using the `stage_for_datasaur <https://unstructured-io.github.io/unstructured/bricks.html#stage-for-datasaur>`_ staging brick. You will obtain a list of dictionaries indexed by the keys ``"text"`` with the content of the element, and ``"entities"`` with an empty list. Follow the link to learn how to customise your entities and for more details on usage.
