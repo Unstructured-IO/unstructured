@@ -2,6 +2,7 @@ import os
 import pathlib
 
 import pypandoc
+import pytest
 
 from unstructured.documents.elements import Title
 from unstructured.partition.odt import partition_odt
