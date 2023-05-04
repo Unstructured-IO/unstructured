@@ -148,7 +148,7 @@ def convert_and_partition_docx(
     Parameters
     ----------
     source_format
-        The format of the source document, i.e. rst
+        The format of the source document, .e.g. odt
     filename
         A string defining the target filename path.
     file
