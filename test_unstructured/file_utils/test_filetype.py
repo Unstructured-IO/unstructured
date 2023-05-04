@@ -32,6 +32,7 @@ EXAMPLE_DOCS_DIRECTORY = os.path.join(FILE_DIRECTORY, "..", "..", "example-docs"
         ("fake-power-point.pptx", FileType.PPTX),
         ("winter-sports.epub", FileType.EPUB),
         ("spring-weather.html.json", FileType.JSON),
+        ("fake.odt", FileType.ODT),
     ],
 )
 def test_detect_filetype_from_filename(file, expected):
@@ -55,6 +56,7 @@ def test_detect_filetype_from_filename(file, expected):
         ("winter-sports.epub", FileType.EPUB),
         ("fake-doc.rtf", FileType.RTF),
         ("spring-weather.html.json", FileType.JSON),
+        ("fake.odt", FileType.ODT),
     ],
 )
 def test_detect_filetype_from_filename_with_extension(monkeypatch, file, expected):

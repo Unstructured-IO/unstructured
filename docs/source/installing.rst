@@ -15,7 +15,7 @@ installation.
 	* ``poppler-utils`` (images and PDFs)
 	* ``tesseract-ocr`` (images and PDFs)
 	* ``libreoffice`` (MS Office docs)
-	* ``pandocs`` (EPUBs)
+	* ``pandocs`` (EPUBs, RTFs and Open Office docs)
 
 * If you are parsing PDFs, run the following to install the ``detectron2`` model, which ``unstructured`` uses for layout detection:
 	* ``pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@e2ce8dc#egg=detectron2"``
