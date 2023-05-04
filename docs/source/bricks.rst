@@ -1435,6 +1435,61 @@ See the `LabelStudio docs <https://labelstud.io/tags/labels.html>`_ for a full l
 for labels and annotations.
 
 
+``stage_for_baseplate``
+-----------------------
+
+The ``stage_for_baseplate`` staging function prepares a list of ``Element`` objects for ingestion
+into `Baseplate <https://docs.baseplate.ai/introduction>`_, an LLM backend with a spreadsheet interface.
+After running the ``stage_for_baseplate`` function, you can use the
+`Baseplate API <https://docs.baseplate.ai/api-reference/documents/upsert-data-rows>`_ to upload the documents
+to Baseplate. The following example code shows how to use the ``stage_for_baseplate`` function.
+
+.. code:: python
+
+  from unstructured.documents.elements import ElementMetadata, NarrativeText, Title
+  from unstructured.staging.baseplate import stage_for_baseplate
+
+  metadata = ElementMetadata(filename="fox.epub")
+
+  elements = [
+    Title("A Wonderful Story About A Fox", metadata=metadata),
+    NarrativeText(
+      "A fox ran into the chicken coop and the chickens flew off!",
+      metadata=metadata,
+    ),
+  ]
+
+  rows = stage_for_baseplate(elements)
+
+The output will look like:
+
+.. code:: python
+
+  {
+        "rows": [
+            {
+                "data": {
+                    "element_id": "ad270eefd1cc68d15f4d3e51666d4dc8",
+                    "coordinates": None,
+                    "text": "A Wonderful Story About A Fox",
+                    "type": "Title",
+                },
+                "metadata": {"filename": "fox.epub"},
+            },
+            {
+                "data": {
+                    "element_id": "8275769fdd1804f9f2b55ad3c9b0ef1b",
+                    "coordinates": None,
+                    "text": "A fox ran into the chicken coop and the chickens flew off!",
+                    "type": "NarrativeText",
+                },
+                "metadata": {"filename": "fox.epub"},
+            },
+        ],
+    }
+
+
+
 ``stage_for_prodigy``
 --------------------------
 
