@@ -136,16 +136,15 @@ def partition_pdf_or_image(
             )
 
         elif strategy == "ocr_only":
-            return _partition_pdf_or_image_with_ocr(
-                filename=filename,
-                file=file,
-                include_page_breaks=include_page_breaks,
-                ocr_languages=ocr_languages,
-                is_image=is_image,
-            )
-
-        else:
-            raise ValueError(f"{strategy} is an invalid parsing strategy for PDFs")
+            # NOTE(robinson): Catches file conversion warnings when running with PDFs
+            with warnings.catch_warnings():
+                return _partition_pdf_or_image_with_ocr(
+                    filename=filename,
+                    file=file,
+                    include_page_breaks=include_page_breaks,
+                    ocr_languages=ocr_languages,
+                    is_image=is_image,
+                )
 
     else:
         # NOTE(alan): Remove these lines after different models are handled by routing
@@ -303,6 +302,8 @@ def _partition_pdf_or_image_with_ocr(
     ocr_languages: str = "eng",
     is_image: bool = False,
 ):
+    """Partitions and image or PDF using Tesseract OCR. For PDFs, each page is converted
+    to an image prior to processing."""
     if is_image:
         if file is not None:
             image = Image.open(file)

@@ -3,29 +3,26 @@ from typing import BinaryIO, Dict, List, Optional, cast
 from pdfminer.pdfpage import PDFPage, PDFTextExtractionNotAllowed
 from pdfminer.utils import open_filename
 
-from unstructured.file_utils.filetype import FileType
 from unstructured.logger import logger
 from unstructured.partition.common import exactly_one
 from unstructured.utils import dependency_exists
 
-VALID_STRATEGIES: Dict[str, List[FileType]] = {
+VALID_STRATEGIES: Dict[str, List[str]] = {
     "hi_res": [
-        FileType.PDF,
-        FileType.JPG,
-        FileType.PNG,
+        "pdf",
+        "image",
     ],
     "ocr_only": [
-        FileType.PDF,
-        FileType.JPG,
-        FileType.PNG,
+        "pdf",
+        "image",
     ],
     "fast": [
-        FileType.PDF,
+        "pdf",
     ],
 }
 
 
-def validate_strategy(strategy: str, filetype: FileType):
+def validate_strategy(strategy: str, filetype: str):
     """Determines if the strategy is valid for the specified filetype."""
     valid_filetypes = VALID_STRATEGIES.get(strategy, None)
     if valid_filetypes is None:
@@ -66,10 +63,10 @@ def determine_pdf_or_image_strategy(
     logic if some dependencies are not available."""
     detectron2_installed = dependency_exists("detectron2")
     if is_image:
-        validate_strategy(strategy, FileType.JPG)
+        validate_strategy(strategy, "image")
         pdf_text_extractable = False
     else:
-        validate_strategy(strategy, FileType.PDF)
+        validate_strategy(strategy, "pdf")
         pdf_text_extractable = is_pdf_text_extractable(filename=filename, file=file)
 
     if file is not None:
