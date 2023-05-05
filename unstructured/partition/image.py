@@ -1,14 +1,8 @@
 from typing import List, Optional
 
-import pytesseract
-from PIL import Image
-
 from unstructured.documents.elements import Element
 from unstructured.partition.common import exactly_one
 from unstructured.partition.pdf import partition_pdf_or_image
-from unstructured.partition.text import partition_text
-
-VALID_STRATEGIES = ["hi_res", "ocr_only"]
 
 
 def partition_image(
@@ -48,29 +42,16 @@ def partition_image(
     """
     exactly_one(filename=filename, file=file)
 
-    if strategy == "hi_res":
-        if template is None:
-            template = "layout/image"
-        return partition_pdf_or_image(
-            filename=filename,
-            file=file,
-            url=url,
-            template=template,
-            token=token,
-            include_page_breaks=include_page_breaks,
-            ocr_languages=ocr_languages,
-        )
+    if template is None:
+        template = "layout/image"
 
-    elif strategy == "ocr_only":
-        if file is not None:
-            image = Image.open(file)
-            text = pytesseract.image_to_string(image, config=f"-l '{ocr_languages}'")
-        else:
-            text = pytesseract.image_to_string(filename, config=f"-l '{ocr_languages}'")
-        return partition_text(text=text)
-
-    else:
-        raise ValueError(
-            f"{strategy} is not a valid strategy for partition_image. "
-            f"Choose one of {VALID_STRATEGIES}.",
-        )
+    return partition_pdf_or_image(
+        filename=filename,
+        file=file,
+        url=url,
+        template=template,
+        token=token,
+        include_page_breaks=include_page_breaks,
+        ocr_languages=ocr_languages,
+        strategy=strategy,
+    )

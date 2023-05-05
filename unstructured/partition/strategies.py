@@ -66,8 +66,10 @@ def determine_pdf_or_image_strategy(
     logic if some dependencies are not available."""
     detectron2_installed = dependency_exists("detectron2")
     if is_image:
+        validate_strategy(strategy, FileType.JPG)
         pdf_text_extractable = False
     else:
+        validate_strategy(strategy, FileType.PDF)
         pdf_text_extractable = is_pdf_text_extractable(filename=filename, file=file)
 
     if file is not None:
@@ -79,7 +81,7 @@ def determine_pdf_or_image_strategy(
             "To process this file, install detectron2 or remove copy protection from the PDF.",
         )
 
-    if not pdf_text_extractable:
+    if not pdf_text_extractable and not is_image:
         if strategy == "fast":
             logger.warning(
                 "PDF text is not extractable. Cannot use the fast partitioning "
@@ -95,7 +97,7 @@ def determine_pdf_or_image_strategy(
             )
         return "fast"
 
-    if not pdf_text_extractable:
+    if not pdf_text_extractable and not is_image:
         if strategy == "fast":
             logger.warning(
                 "PDF text is not extractable. Cannot use the fast partitioning "

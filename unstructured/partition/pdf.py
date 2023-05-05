@@ -135,6 +135,15 @@ def partition_pdf_or_image(
                 encoding=encoding,
             )
 
+        elif strategy == "ocr_only":
+            return _partition_pdf_or_image_with_ocr(
+                filename=filename,
+                file=file,
+                include_page_breaks=include_page_breaks,
+                ocr_languages=ocr_languages,
+                is_image=is_image,
+            )
+
         else:
             raise ValueError(f"{strategy} is an invalid parsing strategy for PDFs")
 
@@ -297,9 +306,9 @@ def _partition_pdf_or_image_with_ocr(
     if is_image:
         if file is not None:
             image = Image.open(file)
-            text = pytesseract.image_to_string(image, languages=ocr_languages)
+            text = pytesseract.image_to_string(image, config=f"-l '{ocr_languages}'")
         else:
-            text = pytesseract.image_to_string(filename, languages=ocr_languages)
+            text = pytesseract.image_to_string(filename, config=f"-l '{ocr_languages}'")
         elements = partition_text(text=text)
     else:
         elements = []
@@ -310,7 +319,7 @@ def _partition_pdf_or_image_with_ocr(
 
         for i, image in enumerate(document):
             metadata = ElementMetadata(filename=filename, page_number=i + 1)
-            text = pytesseract.image_to_string(image, languages=ocr_languages)
+            text = pytesseract.image_to_string(image, config=f"-l '{ocr_languages}'")
 
             _elements = partition_text(text=text)
             for element in _elements:
