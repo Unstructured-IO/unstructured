@@ -270,6 +270,51 @@ def test_partition_pdf_falls_back_to_fast(
     assert "detectron2 is not installed" in caplog.text
 
 
+def test_partition_pdf_falls_back_to_fast_from_ocr_only(
+    monkeypatch,
+    caplog,
+    filename="example-docs/layout-parser-paper-fast.pdf",
+):
+    def mock_exists(dep):
+        return dep not in ["pytesseract"]
+
+    monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
+
+    mock_return = [Text("Hello there!")]
+    with mock.patch.object(
+        pdf,
+        "_partition_pdf_with_pdfminer",
+        return_value=mock_return,
+    ) as mock_partition:
+        pdf.partition_pdf(filename=filename, url=None, strategy="ocr_only")
+
+    mock_partition.assert_called_once()
+    assert "pytesseract is not installed" in caplog.text
+
+
+def test_partition_pdf_falls_back_to_hi_res_from_ocr_only(
+    monkeypatch,
+    caplog,
+    filename="example-docs/layout-parser-paper-fast.pdf",
+):
+    def mock_exists(dep):
+        return dep not in ["pytesseract"]
+
+    monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
+    monkeypatch.setattr(strategies, "is_pdf_text_extractable", lambda *args, **kwargs: False)
+
+    mock_return = [Text("Hello there!")]
+    with mock.patch.object(
+        pdf,
+        "_partition_pdf_or_image_local",
+        return_value=mock_return,
+    ) as mock_partition:
+        pdf.partition_pdf(filename=filename, url=None, strategy="ocr_only")
+
+    mock_partition.assert_called_once()
+    assert "pytesseract is not installed" in caplog.text
+
+
 def test_partition_pdf_falls_back_to_ocr_only(
     monkeypatch,
     caplog,
