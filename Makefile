@@ -1,6 +1,7 @@
 PACKAGE_NAME := unstructured
 PIP_VERSION := 22.2.1
 CURRENT_DIR := $(shell pwd)
+OS := $(shell uname)
 
 
 .PHONY: help
@@ -87,8 +88,14 @@ install-ingest-wikipedia:
 install-unstructured-inference:
 	python3 -m pip install -r requirements/local-inference.txt
 
+.PHONY: install-tensorboard
+install-tensorboard:
+	@if [ ${OS} = "Darwin" ]; then\
+		python3 -m pip install tensorboard;\
+	fi
+
 .PHONY: install-detectron2
-install-detectron2:
+install-detectron2: install-tensorboard
 	python3 -m pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@e2ce8dc#egg=detectron2"
 
 ## install-local-inference: installs requirements for local inference
