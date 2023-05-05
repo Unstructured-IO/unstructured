@@ -36,9 +36,9 @@ def partition_image(
         to install the appropriate Tesseract language pack.
     strategy
         The strategy to use for partitioning the PDF. Valid strategies are "hi_res" and
-        "ocr_only". When using the "hi_res" strategy, the function  ses a layout detection
-        model if to identify document elements. When using the "ocr_only strategy",
-        partition_image simply extracts the text from the document and processes it.
+        "ocr_only". When using the "hi_res" strategy, the function uses a layout detection
+        model if to identify document elements. When using the "ocr_only" strategy,
+        partition_image simply extracts the text from the document using OCR and processes it.
     """
     exactly_one(filename=filename, file=file)
 
