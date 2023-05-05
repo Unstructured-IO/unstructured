@@ -2,8 +2,11 @@ import re
 import warnings
 from typing import BinaryIO, List, Optional, cast
 
+import pdf2image
+import pytesseract
 from pdfminer.high_level import extract_pages
 from pdfminer.utils import open_filename
+from PIL import Image
 
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import Element, ElementMetadata, PageBreak
@@ -281,4 +284,39 @@ def _process_pdfminer_pages(
         if include_page_breaks:
             elements.append(PageBreak())
 
+    return elements
+
+
+def _partition_pdf_or_image_with_ocr(
+    filename: str = "",
+    file: Optional[bytes] = None,
+    include_page_breaks: bool = False,
+    ocr_languages: str = "eng",
+    is_image: bool = False,
+):
+    if is_image:
+        if file is not None:
+            image = Image.open(file)
+            text = pytesseract.image_to_string(image, languages=ocr_languages)
+        else:
+            text = pytesseract.image_to_string(filename, languages=ocr_languages)
+        elements = partition_text(text=text)
+    else:
+        elements = []
+        if file is not None:
+            document = pdf2image.convert_from_bytes(file)
+        else:
+            document = pdf2image.convert_from_path(filename)
+
+        for i, image in enumerate(document):
+            metadata = ElementMetadata(filename=filename, page_number=i + 1)
+            text = pytesseract.image_to_string(image, languages=ocr_languages)
+
+            _elements = partition_text(text=text)
+            for element in _elements:
+                element.metadata = metadata
+                elements.append(element)
+
+            if include_page_breaks:
+                elements.append(PageBreak())
     return elements
