@@ -14,7 +14,7 @@ from unstructured.partition.common import (
     document_to_element_list,
     exactly_one,
 )
-from unstructured.partition.strategies import determine_pdf_strategy
+from unstructured.partition.strategies import determine_pdf_or_image_strategy
 from unstructured.partition.text import partition_text
 from unstructured.utils import requires_dependencies
 
@@ -103,7 +103,12 @@ def partition_pdf_or_image(
         if route_args[0] == "layout":
             out_template = None
 
-        strategy = determine_pdf_strategy(strategy, filename=filename, file=file)
+        strategy = determine_pdf_or_image_strategy(
+            strategy,
+            filename=filename,
+            file=file,
+            is_image=is_image,
+        )
 
         if strategy == "hi_res":
             # NOTE(robinson): Catches a UserWarning that occurs when detectron is called

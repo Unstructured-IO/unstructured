@@ -56,19 +56,20 @@ def is_pdf_text_extractable(filename: str = "", file: Optional[bytes] = None):
         return _fp_is_extractable(fp)
 
 
-def determine_pdf_strategy(
+def determine_pdf_or_image_strategy(
     strategy: str,
     filename: str = "",
     file: Optional[bytes] = None,
+    is_image: bool = False,
 ):
-    """Determines what strategy to use for processing PDFs, accounting for fallback
+    """Determines what strategy to use for processing PDFs or images, accounting for fallback
     logic if some dependencies are not available."""
-
     detectron2_installed = dependency_exists("detectron2")
-    # if is_image:
-    #     pdf_text_extractable = False
-    # else:
-    pdf_text_extractable = is_pdf_text_extractable(filename=filename, file=file)
+    if is_image:
+        pdf_text_extractable = False
+    else:
+        pdf_text_extractable = is_pdf_text_extractable(filename=filename, file=file)
+
     if file is not None:
         file.seek(0)  # type: ignore
 
