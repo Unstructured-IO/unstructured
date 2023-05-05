@@ -91,11 +91,10 @@ def determine_pdf_or_image_strategy(
         return "ocr_only"
 
     elif strategy == "hi_res" and not detectron2_installed:
-        if strategy == "hi_res":
-            logger.warning(
-                "detectron2 is not installed. Cannot use the hi_res partitioning "
-                "strategy. Falling back to partitioning with another strategy.",
-            )
+        logger.warning(
+            "detectron2 is not installed. Cannot use the hi_res partitioning "
+            "strategy. Falling back to partitioning with another strategy.",
+        )
         # NOTE(robinson) - fallback to ocr_only if possible because it is the most
         # similar to hi_res
         if pytesseract_installed:
@@ -105,12 +104,16 @@ def determine_pdf_or_image_strategy(
             logger.warning("Falling back to partitioning with fast.")
             return "fast"
 
-    if not pdf_text_extractable and not is_image:
-        if strategy == "fast":
-            logger.warning(
-                "PDF text is not extractable. Cannot use the fast partitioning "
-                "strategy. Falling back to partitioning with the hi_res strategy.",
-            )
-        return "hi_res"
+    elif strategy == "ocr_only" and not pytesseract_installed:
+        logger.warning(
+            "pytesseract is not installed. Cannot use the ocr_only partitioning "
+            "strategy. Falling back to partitioning with another strategy.",
+        )
+        if pdf_text_extractable:
+            logger.warning("Falling back to partitioning with fast.")
+            return "fast"
+        else:
+            logger.warning("Falling back to partitioning with hi_res.")
+            return "hi_res"
 
     return strategy
