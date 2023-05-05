@@ -127,17 +127,6 @@ def partition_pdf_or_image(
                 )
 
         elif strategy == "fast":
-            # if strategy == "hi_res":
-            #     logger.warning(
-            #         "detectron2 is not installed. Cannot use the hi_res partitioning "
-            #         "strategy. Falling back to partitioning with the fast strategy.",
-            #     )
-            # if infer_table_structure:
-            #     logger.warning(
-            #         "Table extraction was selected, but is being ignored while using the fast "
-            #         "strategy.",
-            #     )
-
             return _partition_pdf_with_pdfminer(
                 filename=filename,
                 file=file,
