@@ -7,7 +7,6 @@ from pdfminer.utils import open_filename
 
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import Element, ElementMetadata, PageBreak
-from unstructured.logger import logger
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.partition import _partition_via_api
 from unstructured.partition.common import (
@@ -107,12 +106,6 @@ def partition_pdf_or_image(
         strategy = determine_pdf_strategy(strategy, filename=filename, file=file)
 
         if strategy == "hi_res":
-            if strategy == "fast":
-                logger.warning(
-                    "PDF text is not extractable. Cannot use the fast partitioning "
-                    "strategy. Falling back to partitioning with the hi_res strategy.",
-                )
-
             # NOTE(robinson): Catches a UserWarning that occurs when detectron is called
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
