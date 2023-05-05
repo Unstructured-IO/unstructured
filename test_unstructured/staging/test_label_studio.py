@@ -1,9 +1,4 @@
-import logging
-import re
-
 import pytest
-import vcr
-from label_studio_sdk.client import Client
 
 from unstructured.documents.elements import NarrativeText, Title
 from unstructured.staging import label_studio
