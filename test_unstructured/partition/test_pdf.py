@@ -253,7 +253,10 @@ def test_partition_pdf_falls_back_to_fast(
     caplog,
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
-    monkeypatch.setattr(strategies, "dependency_exists", lambda dep: dep != "detectron2")
+    def mock_exists(dep):
+        return dep not in ["detectron2", "pytesseract"]
+
+    monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
 
     mock_return = [Text("Hello there!")]
     with mock.patch.object(
@@ -293,7 +296,10 @@ def test_partition_pdf_fails_if_pdf_not_processable(
     monkeypatch,
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
-    monkeypatch.setattr(strategies, "dependency_exists", lambda dep: dep != "detectron2")
+    def mock_exists(dep):
+        return dep not in ["detectron2", "pytesseract"]
+
+    monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
     monkeypatch.setattr(strategies, "is_pdf_text_extractable", lambda *args, **kwargs: False)
 
     with pytest.raises(ValueError):
