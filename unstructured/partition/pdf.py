@@ -3,7 +3,6 @@ import warnings
 from typing import BinaryIO, List, Optional, cast
 
 from pdfminer.high_level import extract_pages
-from pdfminer.pdfpage import PDFPage, PDFTextExtractionNotAllowed
 from pdfminer.utils import open_filename
 
 from unstructured.cleaners.core import clean_extra_whitespace
@@ -16,8 +15,9 @@ from unstructured.partition.common import (
     document_to_element_list,
     exactly_one,
 )
+from unstructured.partition.strategies import determine_pdf_strategy
 from unstructured.partition.text import partition_text
-from unstructured.utils import dependency_exists, requires_dependencies
+from unstructured.utils import requires_dependencies
 
 
 def partition_pdf(
@@ -104,30 +104,9 @@ def partition_pdf_or_image(
         if route_args[0] == "layout":
             out_template = None
 
-        fallback_to_fast = False
-        fallback_to_hi_res = False
+        strategy = determine_pdf_strategy(strategy, filename=filename, file=file)
 
-        detectron2_installed = dependency_exists("detectron2")
-        if is_image:
-            pdf_text_extractable = False
-        else:
-            pdf_text_extractable = is_pdf_text_extractable(filename=filename, file=file)
-            if file is not None:
-                file.seek(0)  # type: ignore
-
-        if not detectron2_installed and not pdf_text_extractable:
-            raise ValueError(
-                "detectron2 is not installed and the text of the PDF is not extractable. "
-                "To process this file, install detectron2 or remove copy protection from the PDF.",
-            )
-
-        if not pdf_text_extractable:
-            fallback_to_hi_res = strategy == "fast"
-
-        if not detectron2_installed:
-            fallback_to_fast = strategy == "hi_res"
-
-        if (strategy == "hi_res" or fallback_to_hi_res) and not fallback_to_fast:
+        if strategy == "hi_res":
             if strategy == "fast":
                 logger.warning(
                     "PDF text is not extractable. Cannot use the fast partitioning "
@@ -147,17 +126,17 @@ def partition_pdf_or_image(
                     ocr_languages=ocr_languages,
                 )
 
-        elif (strategy == "fast" or fallback_to_fast) and not fallback_to_hi_res:
-            if strategy == "hi_res":
-                logger.warning(
-                    "detectron2 is not installed. Cannot use the hi_res partitioning "
-                    "strategy. Falling back to partitioning with the fast strategy.",
-                )
-            if infer_table_structure:
-                logger.warning(
-                    "Table extraction was selected, but is being ignored while using the fast "
-                    "strategy.",
-                )
+        elif strategy == "fast":
+            # if strategy == "hi_res":
+            #     logger.warning(
+            #         "detectron2 is not installed. Cannot use the hi_res partitioning "
+            #         "strategy. Falling back to partitioning with the fast strategy.",
+            #     )
+            # if infer_table_structure:
+            #     logger.warning(
+            #         "Table extraction was selected, but is being ignored while using the fast "
+            #         "strategy.",
+            #     )
 
             return _partition_pdf_with_pdfminer(
                 filename=filename,
@@ -316,25 +295,3 @@ def _process_pdfminer_pages(
             elements.append(PageBreak())
 
     return elements
-
-
-def is_pdf_text_extractable(filename: str = "", file: Optional[bytes] = None):
-    """Checks to see if the text from a PDF document is extractable. Sometimes the
-    text is not extractable due to PDF security settings."""
-    exactly_one(filename=filename, file=file)
-
-    def _fp_is_extractable(fp):
-        try:
-            next(PDFPage.get_pages(fp, check_extractable=True))
-            extractable = True
-        except PDFTextExtractionNotAllowed:
-            extractable = False
-        return extractable
-
-    if filename:
-        with open_filename(filename, "rb") as fp:
-            fp = cast(BinaryIO, fp)
-            return _fp_is_extractable(fp)
-    elif file:
-        fp = cast(BinaryIO, file)
-        return _fp_is_extractable(fp)

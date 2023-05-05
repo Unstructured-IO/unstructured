@@ -6,7 +6,7 @@ import requests
 from unstructured_inference.inference import layout
 
 from unstructured.documents.elements import NarrativeText, PageBreak, Text, Title
-from unstructured.partition import pdf
+from unstructured.partition import pdf, strategies
 
 
 class MockResponse:
@@ -161,7 +161,7 @@ def test_partition_pdf_api_raises_with_failed_api_call(
     [("fakeurl", True, False), (None, False, True)],
 )
 def test_partition_pdf(url, api_called, local_called, monkeypatch):
-    monkeypatch.setattr(pdf, "is_pdf_text_extractable", lambda *args, **kwargs: True)
+    monkeypatch.setattr(strategies, "is_pdf_text_extractable", lambda *args, **kwargs: True)
     with mock.patch.object(
         pdf,
         attribute="_partition_via_api",
@@ -177,7 +177,7 @@ def test_partition_pdf(url, api_called, local_called, monkeypatch):
     [("fakeurl", True, False), (None, False, True)],
 )
 def test_partition_pdf_with_template(url, api_called, local_called, monkeypatch):
-    monkeypatch.setattr(pdf, "is_pdf_text_extractable", lambda *args, **kwargs: True)
+    monkeypatch.setattr(strategies, "is_pdf_text_extractable", lambda *args, **kwargs: True)
     with mock.patch.object(
         pdf,
         attribute="_partition_via_api",
@@ -253,7 +253,7 @@ def test_partition_pdf_falls_back_to_fast(
     caplog,
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
-    monkeypatch.setattr(pdf, "dependency_exists", lambda dep: dep != "detectron2")
+    monkeypatch.setattr(strategies, "dependency_exists", lambda dep: dep != "detectron2")
 
     mock_return = [Text("Hello there!")]
     with mock.patch.object(
@@ -276,27 +276,6 @@ def test_partition_pdf_uses_table_extraction():
         assert mock_process_file_with_model.call_args[1]["extract_tables"]
 
 
-@pytest.mark.parametrize(
-    ("filename", "from_file", "expected"),
-    [
-        ("layout-parser-paper-fast.pdf", True, True),
-        ("copy-protected.pdf", True, False),
-        ("layout-parser-paper-fast.pdf", False, True),
-        ("copy-protected.pdf", False, False),
-    ],
-)
-def test_is_pdf_text_extractable(filename, from_file, expected):
-    filename = os.path.join("example-docs", filename)
-
-    if from_file:
-        with open(filename, "rb") as f:
-            extractable = pdf.is_pdf_text_extractable(file=f)
-    else:
-        extractable = pdf.is_pdf_text_extractable(filename=filename)
-
-    assert extractable is expected
-
-
 def test_partition_pdf_with_copy_protection():
     filename = os.path.join("example-docs", "copy-protected.pdf")
     elements = pdf.partition_pdf(filename=filename, strategy="hi_res")
@@ -314,8 +293,8 @@ def test_partition_pdf_fails_if_pdf_not_processable(
     monkeypatch,
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
-    monkeypatch.setattr(pdf, "dependency_exists", lambda dep: dep != "detectron2")
-    monkeypatch.setattr(pdf, "is_pdf_text_extractable", lambda *args, **kwargs: False)
+    monkeypatch.setattr(strategies, "dependency_exists", lambda dep: dep != "detectron2")
+    monkeypatch.setattr(strategies, "is_pdf_text_extractable", lambda *args, **kwargs: False)
 
     with pytest.raises(ValueError):
         pdf.partition_pdf(filename=filename)

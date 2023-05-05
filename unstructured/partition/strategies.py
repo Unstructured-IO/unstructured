@@ -1,8 +1,11 @@
-from typing import Dict, List, Optional
+from typing import BinaryIO, Dict, List, Optional, cast
+
+from pdfminer.pdfpage import PDFPage, PDFTextExtractionNotAllowed
+from pdfminer.utils import open_filename
 
 from unstructured.file_utils.filetype import FileType
 from unstructured.logger import logger
-from unstructured.partition.pdf import is_pdf_text_extractable
+from unstructured.partition.common import exactly_one
 from unstructured.utils import dependency_exists
 
 VALID_STRATEGIES: Dict[str, List[FileType]] = {
@@ -29,6 +32,28 @@ def validate_strategy(strategy: str, filetype: FileType):
         raise ValueError(f"{strategy} is not a valid strategy.")
     if filetype not in valid_filetypes:
         raise ValueError(f"{strategy} is not a valid strategy for filetype {filetype}.")
+
+
+def is_pdf_text_extractable(filename: str = "", file: Optional[bytes] = None):
+    """Checks to see if the text from a PDF document is extractable. Sometimes the
+    text is not extractable due to PDF security settings."""
+    exactly_one(filename=filename, file=file)
+
+    def _fp_is_extractable(fp):
+        try:
+            next(PDFPage.get_pages(fp, check_extractable=True))
+            extractable = True
+        except PDFTextExtractionNotAllowed:
+            extractable = False
+        return extractable
+
+    if filename:
+        with open_filename(filename, "rb") as fp:
+            fp = cast(BinaryIO, fp)
+            return _fp_is_extractable(fp)
+    elif file:
+        fp = cast(BinaryIO, file)
+        return _fp_is_extractable(fp)
 
 
 def determine_pdf_strategy(
