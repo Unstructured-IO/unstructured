@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Examples" href="examples.html" /><link rel="prev" title="Getting Started" href="getting_started.html" />
 
   <link rel="shortcut icon" href="_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.1.3, furo 2023.03.27" />
-  <title>Bricks - Unstructured 0.6.2 documentation</title>
+  <title>Bricks - Unstructured 0.6.3 documentation</title>
   <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -431,7 +431,7 @@ If you call the <code class="docutils literal notranslate"><span class="pre">par
 file type and route it to the appropriate partitioning brick. All partitioning bricks
 called within <code class="docutils literal notranslate"><span class="pre">partition</span></code> are called using the default kwargs. Use the document-type
 specific bricks if you need to apply non-default settings.
-<code class="docutils literal notranslate"><span class="pre">partition</span></code> currently supports <code class="docutils literal notranslate"><span class="pre">.docx</span></code>, <code class="docutils literal notranslate"><span class="pre">.doc</span></code>, <code class="docutils literal notranslate"><span class="pre">.pptx</span></code>, <code class="docutils literal notranslate"><span class="pre">.ppt</span></code>, <code class="docutils literal notranslate"><span class="pre">.eml</span></code>, <code class="docutils literal notranslate"><span class="pre">.msg</span></code>, <code class="docutils literal notranslate"><span class="pre">.rtf</span></code>, <code class="docutils literal notranslate"><span class="pre">.epub</span></code>, <code class="docutils literal notranslate"><span class="pre">.html</span></code>, <code class="docutils literal notranslate"><span class="pre">.pdf</span></code>,
+<code class="docutils literal notranslate"><span class="pre">partition</span></code> currently supports <code class="docutils literal notranslate"><span class="pre">.docx</span></code>, <code class="docutils literal notranslate"><span class="pre">.doc</span></code>, <code class="docutils literal notranslate"><span class="pre">.odt</span></code>, <code class="docutils literal notranslate"><span class="pre">.pptx</span></code>, <code class="docutils literal notranslate"><span class="pre">.ppt</span></code>, <code class="docutils literal notranslate"><span class="pre">.eml</span></code>, <code class="docutils literal notranslate"><span class="pre">.msg</span></code>, <code class="docutils literal notranslate"><span class="pre">.rtf</span></code>, <code class="docutils literal notranslate"><span class="pre">.epub</span></code>, <code class="docutils literal notranslate"><span class="pre">.html</span></code>, <code class="docutils literal notranslate"><span class="pre">.pdf</span></code>,
 <code class="docutils literal notranslate"><span class="pre">.png</span></code>, <code class="docutils literal notranslate"><span class="pre">.jpg</span></code>, and <code class="docutils literal notranslate"><span class="pre">.txt</span></code> files.
 If you set the <code class="docutils literal notranslate"><span class="pre">include_page_breaks</span></code> kwarg to <code class="docutils literal notranslate"><span class="pre">True</span></code>, the output will include page breaks. This is only supported for <code class="docutils literal notranslate"><span class="pre">.pptx</span></code>, <code class="docutils literal notranslate"><span class="pre">.html</span></code>, <code class="docutils literal notranslate"><span class="pre">.pdf</span></code>,
 <code class="docutils literal notranslate"><span class="pre">.png</span></code>, and <code class="docutils literal notranslate"><span class="pre">.jpg</span></code>.
@@ -496,6 +496,38 @@ documentation on how to run the API as a container locally.</p>
 </pre></div>
 </div>
 </section>
+<section id="partition-multiple-via-api">
+<h3><code class="docutils literal notranslate"><span class="pre">partition_multiple_via_api</span></code><a class="headerlink" href="#partition-multiple-via-api" title="Permalink to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">partition_multiple_via_api</span></code> is similar to <code class="docutils literal notranslate"><span class="pre">partition_via_api</span></code>, but allows you to partition
+multiple documents in a single REST API call. The result has the type <code class="docutils literal notranslate"><span class="pre">List[List[Element]]</span></code>,
+for example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+  <span class="p">[</span><span class="n">NarrativeText</span><span class="p">(</span><span class="s2">&quot;Narrative!&quot;</span><span class="p">),</span> <span class="n">Title</span><span class="p">(</span><span class="s2">&quot;Title!&quot;</span><span class="p">)],</span>
+  <span class="p">[</span><span class="n">NarrativeText</span><span class="p">(</span><span class="s2">&quot;Narrative!&quot;</span><span class="p">),</span> <span class="n">Title</span><span class="p">(</span><span class="s2">&quot;Title!&quot;</span><span class="p">)]</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.api</span> <span class="kn">import</span> <span class="n">partition_multiple_via_api</span>
+
+<span class="n">filenames</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;example-docs/fake-email.eml&quot;</span><span class="p">,</span> <span class="s2">&quot;example-docs/fake.docx&quot;</span><span class="p">]</span>
+
+<span class="n">documents</span> <span class="o">=</span> <span class="n">partition_multiple_via_api</span><span class="p">(</span><span class="n">filenames</span><span class="o">=</span><span class="n">filenames</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">ExitStack</span>
+
+<span class="kn">from</span> <span class="nn">unstructured.partition.api</span> <span class="kn">import</span> <span class="n">partition_multiple_via_api</span>
+
+<span class="n">filenames</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;example-docs/fake-email.eml&quot;</span><span class="p">,</span> <span class="s2">&quot;example-docs/fake.docx&quot;</span><span class="p">]</span>
+<span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">]</span>
+
+<span class="k">with</span> <span class="n">ExitStack</span><span class="p">()</span> <span class="k">as</span> <span class="n">stack</span><span class="p">:</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="n">stack</span><span class="o">.</span><span class="n">enter_context</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">))</span> <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">]</span>
+    <span class="n">documents</span> <span class="o">=</span> <span class="n">partition_multiple_via_api</span><span class="p">(</span><span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">,</span> <span class="n">file_filenames</span><span class="o">=</span><span class="n">filenames</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
 <section id="partition-docx">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_docx</span></code><a class="headerlink" href="#partition-docx" title="Permalink to this heading"></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">partition_docx</span></code> partitioning brick pre-processes Microsoft Word documents
@@ -535,6 +567,18 @@ before using <code class="docutils literal notranslate"><span class="pre">partit
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.doc</span> <span class="kn">import</span> <span class="n">partition_doc</span>
 
 <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_doc</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example-docs/fake.doc&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="partition-odt">
+<h3><code class="docutils literal notranslate"><span class="pre">partition_odt</span></code><a class="headerlink" href="#partition-odt" title="Permalink to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">partition_odt</span></code> partitioning brick pre-processes Open Office documents
+saved in the <code class="docutils literal notranslate"><span class="pre">.odt</span></code> format. The function first converst the document
+to <code class="docutils literal notranslate"><span class="pre">.docx</span></code> using <code class="docutils literal notranslate"><span class="pre">pandoc</span></code> and then processes it using <code class="docutils literal notranslate"><span class="pre">partition_docx</span></code>.</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.odt</span> <span class="kn">import</span> <span class="n">partition_odt</span>
+
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_odt</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example-docs/fake.odt&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -668,6 +712,17 @@ install instructions.</p>
 
 <span class="c1"># Applies the English and Swedish language pack for ocr</span>
 <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_image</span><span class="p">(</span><span class="s2">&quot;example-docs/layout-parser-paper-fast.jpg&quot;</span><span class="p">,</span> <span class="n">ocr_languages</span><span class="o">=</span><span class="s2">&quot;eng+swe&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The default partitioning strategy for <code class="docutils literal notranslate"><span class="pre">partition_image</span></code> is <cite>“hi_res”</cite>, which segements the document using
+<code class="docutils literal notranslate"><span class="pre">detectron2</span></code> and then OCRs the document. You can also choose <code class="docutils literal notranslate"><span class="pre">&quot;ocr_only&quot;</span></code> as the partitioning strategy,
+which OCRs the document and then runs the output through <code class="docutils literal notranslate"><span class="pre">partition_text</span></code>. This can be helpful
+if <code class="docutils literal notranslate"><span class="pre">detectron2</span></code> does not detect a text element in the image. To run example below, ensure you
+have the Korean language pack for Tesseract installed on your system.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.image</span> <span class="kn">import</span> <span class="n">partition_image</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;example-docs/english-and-korean.png&quot;</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">ocr_languages</span><span class="o">=</span><span class="s2">&quot;eng+kor&quot;</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="s2">&quot;ocr_only&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -1505,6 +1560,55 @@ task in LabelStudio:</p>
 <p>See the <a class="reference external" href="https://labelstud.io/tags/labels.html">LabelStudio docs</a> for a full list of options
 for labels and annotations.</p>
 </section>
+<section id="stage-for-baseplate">
+<h3><code class="docutils literal notranslate"><span class="pre">stage_for_baseplate</span></code><a class="headerlink" href="#stage-for-baseplate" title="Permalink to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">stage_for_baseplate</span></code> staging function prepares a list of <code class="docutils literal notranslate"><span class="pre">Element</span></code> objects for ingestion
+into <a class="reference external" href="https://docs.baseplate.ai/introduction">Baseplate</a>, an LLM backend with a spreadsheet interface.
+After running the <code class="docutils literal notranslate"><span class="pre">stage_for_baseplate</span></code> function, you can use the
+<a class="reference external" href="https://docs.baseplate.ai/api-reference/documents/upsert-data-rows">Baseplate API</a> to upload the documents
+to Baseplate. The following example code shows how to use the <code class="docutils literal notranslate"><span class="pre">stage_for_baseplate</span></code> function.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.documents.elements</span> <span class="kn">import</span> <span class="n">ElementMetadata</span><span class="p">,</span> <span class="n">NarrativeText</span><span class="p">,</span> <span class="n">Title</span>
+<span class="kn">from</span> <span class="nn">unstructured.staging.baseplate</span> <span class="kn">import</span> <span class="n">stage_for_baseplate</span>
+
+<span class="n">metadata</span> <span class="o">=</span> <span class="n">ElementMetadata</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;fox.epub&quot;</span><span class="p">)</span>
+
+<span class="n">elements</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="n">Title</span><span class="p">(</span><span class="s2">&quot;A Wonderful Story About A Fox&quot;</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">),</span>
+  <span class="n">NarrativeText</span><span class="p">(</span>
+    <span class="s2">&quot;A fox ran into the chicken coop and the chickens flew off!&quot;</span><span class="p">,</span>
+    <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">,</span>
+  <span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">rows</span> <span class="o">=</span> <span class="n">stage_for_baseplate</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The output will look like:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+      <span class="s2">&quot;rows&quot;</span><span class="p">:</span> <span class="p">[</span>
+          <span class="p">{</span>
+              <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
+                  <span class="s2">&quot;element_id&quot;</span><span class="p">:</span> <span class="s2">&quot;ad270eefd1cc68d15f4d3e51666d4dc8&quot;</span><span class="p">,</span>
+                  <span class="s2">&quot;coordinates&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                  <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;A Wonderful Story About A Fox&quot;</span><span class="p">,</span>
+                  <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Title&quot;</span><span class="p">,</span>
+              <span class="p">},</span>
+              <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;filename&quot;</span><span class="p">:</span> <span class="s2">&quot;fox.epub&quot;</span><span class="p">},</span>
+          <span class="p">},</span>
+          <span class="p">{</span>
+              <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
+                  <span class="s2">&quot;element_id&quot;</span><span class="p">:</span> <span class="s2">&quot;8275769fdd1804f9f2b55ad3c9b0ef1b&quot;</span><span class="p">,</span>
+                  <span class="s2">&quot;coordinates&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                  <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;A fox ran into the chicken coop and the chickens flew off!&quot;</span><span class="p">,</span>
+                  <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;NarrativeText&quot;</span><span class="p">,</span>
+              <span class="p">},</span>
+              <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;filename&quot;</span><span class="p">:</span> <span class="s2">&quot;fox.epub&quot;</span><span class="p">},</span>
+          <span class="p">},</span>
+      <span class="p">],</span>
+  <span class="p">}</span>
+</pre></div>
+</div>
+</section>
 <section id="stage-for-prodigy">
 <h3><code class="docutils literal notranslate"><span class="pre">stage_for_prodigy</span></code><a class="headerlink" href="#stage-for-prodigy" title="Permalink to this heading"></a></h3>
 <p>Formats outputs in JSON format for use with <a class="reference external" href="https://prodi.gy/docs/api-loaders">Prodigy</a>. After running <code class="docutils literal notranslate"><span class="pre">stage_for_prodigy</span></code>, you can
@@ -1923,8 +2027,10 @@ if specified.</p>
 <li><a class="reference internal" href="#partitioning">Partitioning</a><ul>
 <li><a class="reference internal" href="#partition"><code class="docutils literal notranslate"><span class="pre">partition</span></code></a></li>
 <li><a class="reference internal" href="#partition-via-api"><code class="docutils literal notranslate"><span class="pre">partition_via_api</span></code></a></li>
+<li><a class="reference internal" href="#partition-multiple-via-api"><code class="docutils literal notranslate"><span class="pre">partition_multiple_via_api</span></code></a></li>
 <li><a class="reference internal" href="#partition-docx"><code class="docutils literal notranslate"><span class="pre">partition_docx</span></code></a></li>
 <li><a class="reference internal" href="#partition-doc"><code class="docutils literal notranslate"><span class="pre">partition_doc</span></code></a></li>
+<li><a class="reference internal" href="#partition-odt"><code class="docutils literal notranslate"><span class="pre">partition_odt</span></code></a></li>
 <li><a class="reference internal" href="#partition-pptx"><code class="docutils literal notranslate"><span class="pre">partition_pptx</span></code></a></li>
 <li><a class="reference internal" href="#partition-ppt"><code class="docutils literal notranslate"><span class="pre">partition_ppt</span></code></a></li>
 <li><a class="reference internal" href="#partition-html"><code class="docutils literal notranslate"><span class="pre">partition_html</span></code></a></li>
@@ -1971,6 +2077,7 @@ if specified.</p>
 <li><a class="reference internal" href="#convert-to-dataframe"><code class="docutils literal notranslate"><span class="pre">convert_to_dataframe</span></code></a></li>
 <li><a class="reference internal" href="#stage-for-transformers"><code class="docutils literal notranslate"><span class="pre">stage_for_transformers</span></code></a></li>
 <li><a class="reference internal" href="#stage-for-label-studio"><code class="docutils literal notranslate"><span class="pre">stage_for_label_studio</span></code></a></li>
+<li><a class="reference internal" href="#stage-for-baseplate"><code class="docutils literal notranslate"><span class="pre">stage_for_baseplate</span></code></a></li>
 <li><a class="reference internal" href="#stage-for-prodigy"><code class="docutils literal notranslate"><span class="pre">stage_for_prodigy</span></code></a></li>
 <li><a class="reference internal" href="#stage-csv-for-prodigy"><code class="docutils literal notranslate"><span class="pre">stage_csv_for_prodigy</span></code></a></li>
 <li><a class="reference internal" href="#stage-for-label-box"><code class="docutils literal notranslate"><span class="pre">stage_for_label_box</span></code></a></li>

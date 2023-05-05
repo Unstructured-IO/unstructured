@@ -83,7 +83,7 @@ If you call the ``partition`` function, ``unstructured`` will attempt to detect 
 file type and route it to the appropriate partitioning brick. All partitioning bricks
 called within ``partition`` are called using the default kwargs. Use the document-type
 specific bricks if you need to apply non-default settings.
-``partition`` currently supports ``.docx``, ``.doc``, ``.pptx``, ``.ppt``, ``.eml``, ``.msg``, ``.rtf``, ``.epub``, ``.html``, ``.pdf``,
+``partition`` currently supports ``.docx``, ``.doc``, ``.odt``, ``.pptx``, ``.ppt``, ``.eml``, ``.msg``, ``.rtf``, ``.epub``, ``.html``, ``.pdf``,
 ``.png``, ``.jpg``, and ``.txt`` files.
 If you set the ``include_page_breaks`` kwarg to ``True``, the output will include page breaks. This is only supported for ``.pptx``, ``.html``, ``.pdf``,
 ``.png``, and ``.jpg``.
@@ -162,6 +162,45 @@ Examples:
     elements = partition_via_api(file=f, file_filename=filename, api_key="MY_API_KEY")
 
 
+``partition_multiple_via_api``
+------------------------------
+
+``partition_multiple_via_api`` is similar to ``partition_via_api``, but allows you to partition
+multiple documents in a single REST API call. The result has the type ``List[List[Element]]``,
+for example:
+
+.. code:: python
+
+  [
+    [NarrativeText("Narrative!"), Title("Title!")],
+    [NarrativeText("Narrative!"), Title("Title!")]
+  ]
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.api import partition_multiple_via_api
+
+  filenames = ["example-docs/fake-email.eml", "example-docs/fake.docx"]
+
+  documents = partition_multiple_via_api(filenames=filenames)
+
+
+.. code:: python
+
+  from contextlib import ExitStack
+
+  from unstructured.partition.api import partition_multiple_via_api
+
+  filenames = ["example-docs/fake-email.eml", "example-docs/fake.docx"]
+  files = [open(filename, "rb") for filename in filenames]
+
+  with ExitStack() as stack:
+      files = [stack.enter_context(open(filename, "rb")) for filename in filenames]
+      documents = partition_multiple_via_api(files=files, file_filenames=filenames)
+
+
 ``partition_docx``
 ------------------
 
@@ -210,6 +249,22 @@ Examples:
   from unstructured.partition.doc import partition_doc
 
   elements = partition_doc(filename="example-docs/fake.doc")
+
+
+``partition_odt``
+------------------
+
+The ``partition_odt`` partitioning brick pre-processes Open Office documents
+saved in the ``.odt`` format. The function first converst the document
+to ``.docx`` using ``pandoc`` and then processes it using ``partition_docx``.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.odt import partition_odt
+
+  elements = partition_odt(filename="example-docs/fake.odt")
 
 
 ``partition_pptx``
@@ -374,6 +429,20 @@ Examples:
   # Applies the English and Swedish language pack for ocr
   elements = partition_image("example-docs/layout-parser-paper-fast.jpg", ocr_languages="eng+swe")
 
+
+The default partitioning strategy for ``partition_image`` is `"hi_res"`, which segements the document using
+``detectron2`` and then OCRs the document. You can also choose ``"ocr_only"`` as the partitioning strategy,
+which OCRs the document and then runs the output through ``partition_text``. This can be helpful
+if ``detectron2`` does not detect a text element in the image. To run example below, ensure you
+have the Korean language pack for Tesseract installed on your system.
+
+
+.. code:: python
+
+  from unstructured.partition.image import partition_image
+
+  filename = "example-docs/english-and-korean.png"
+  elements = partition_image(filename=filename, ocr_languages="eng+kor", strategy="ocr_only")
 
 
 ``partition_email``
@@ -1394,6 +1463,61 @@ task in LabelStudio:
 
 See the `LabelStudio docs <https://labelstud.io/tags/labels.html>`_ for a full list of options
 for labels and annotations.
+
+
+``stage_for_baseplate``
+-----------------------
+
+The ``stage_for_baseplate`` staging function prepares a list of ``Element`` objects for ingestion
+into `Baseplate <https://docs.baseplate.ai/introduction>`_, an LLM backend with a spreadsheet interface.
+After running the ``stage_for_baseplate`` function, you can use the
+`Baseplate API <https://docs.baseplate.ai/api-reference/documents/upsert-data-rows>`_ to upload the documents
+to Baseplate. The following example code shows how to use the ``stage_for_baseplate`` function.
+
+.. code:: python
+
+  from unstructured.documents.elements import ElementMetadata, NarrativeText, Title
+  from unstructured.staging.baseplate import stage_for_baseplate
+
+  metadata = ElementMetadata(filename="fox.epub")
+
+  elements = [
+    Title("A Wonderful Story About A Fox", metadata=metadata),
+    NarrativeText(
+      "A fox ran into the chicken coop and the chickens flew off!",
+      metadata=metadata,
+    ),
+  ]
+
+  rows = stage_for_baseplate(elements)
+
+The output will look like:
+
+.. code:: python
+
+  {
+        "rows": [
+            {
+                "data": {
+                    "element_id": "ad270eefd1cc68d15f4d3e51666d4dc8",
+                    "coordinates": None,
+                    "text": "A Wonderful Story About A Fox",
+                    "type": "Title",
+                },
+                "metadata": {"filename": "fox.epub"},
+            },
+            {
+                "data": {
+                    "element_id": "8275769fdd1804f9f2b55ad3c9b0ef1b",
+                    "coordinates": None,
+                    "text": "A fox ran into the chicken coop and the chickens flew off!",
+                    "type": "NarrativeText",
+                },
+                "metadata": {"filename": "fox.epub"},
+            },
+        ],
+    }
+
 
 
 ``stage_for_prodigy``

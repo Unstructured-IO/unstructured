@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="Examples" href="examples.html" />
 
   <link rel="shortcut icon" href="_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.1.3, furo 2023.03.27" />
-  <title>Integrations - Unstructured 0.6.2 documentation</title>
+  <title>Integrations - Unstructured 0.6.3 documentation</title>
   <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -376,6 +376,14 @@ which take a list of <code class="docutils literal notranslate"><span class="pre
 <h2><code class="docutils literal notranslate"><span class="pre">Integration</span> <span class="pre">with</span> <span class="pre">Argilla</span></code><a class="headerlink" href="#integration-with-argilla" title="Permalink to this heading"></a></h2>
 <p>You can convert a list of <code class="docutils literal notranslate"><span class="pre">Text</span></code> elements to an <a class="reference external" href="https://www.argilla.io/">Argilla</a> <code class="docutils literal notranslate"><span class="pre">Dataset</span></code> using the <a class="reference external" href="https://unstructured-io.github.io/unstructured/bricks.html#stage-for-argilla">stage_for_argilla</a> staging brick. Specify the type of dataset to be generated using the <code class="docutils literal notranslate"><span class="pre">argilla_task</span></code> parameter. Valid values are <code class="docutils literal notranslate"><span class="pre">&quot;text_classification&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;token_classification&quot;</span></code>, and <code class="docutils literal notranslate"><span class="pre">&quot;text2text&quot;</span></code>. Follow the link for more details on usage.</p>
 </section>
+<section id="integration-with-baseplate">
+<h2><code class="docutils literal notranslate"><span class="pre">Integration</span> <span class="pre">with</span> <span class="pre">Baseplate</span></code><a class="headerlink" href="#integration-with-baseplate" title="Permalink to this heading"></a></h2>
+<p><a class="reference external" href="https://docs.baseplate.ai/introduction">Baseplate</a> is a backend optimized for use with LLMs that has an easy to use spreadsheet
+interface. The <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> library offers a staging brick to convert a list of <code class="docutils literal notranslate"><span class="pre">Element</span></code> objects into the
+<a class="reference external" href="https://docs.baseplate.ai/api-reference/documents/overview">rows format</a> required by the Baseplate API. See the
+<a class="reference external" href="https://unstructured-io.github.io/unstructured/bricks.html#stage-for-baseplate">stage_for_baseplate</a> documentation for
+information on how to stage elements for ingestion into Baseplate.</p>
+</section>
 <section id="integration-with-datasaur">
 <h2><code class="docutils literal notranslate"><span class="pre">Integration</span> <span class="pre">with</span> <span class="pre">Datasaur</span></code><a class="headerlink" href="#integration-with-datasaur" title="Permalink to this heading"></a></h2>
 <p>You can format a list of <code class="docutils literal notranslate"><span class="pre">Text</span></code> elements as input to token based tasks in <a class="reference external" href="https://datasaur.ai/">Datasaur</a> using the <a class="reference external" href="https://unstructured-io.github.io/unstructured/bricks.html#stage-for-datasaur">stage_for_datasaur</a> staging brick. You will obtain a list of dictionaries indexed by the keys <code class="docutils literal notranslate"><span class="pre">&quot;text&quot;</span></code> with the content of the element, and <code class="docutils literal notranslate"><span class="pre">&quot;entities&quot;</span></code> with an empty list. Follow the link to learn how to customise your entities and for more details on usage.</p>
@@ -475,6 +483,7 @@ the text from each element and their types such as <code class="docutils literal
             <ul>
 <li><a class="reference internal" href="#">Integrations</a><ul>
 <li><a class="reference internal" href="#integration-with-argilla"><code class="docutils literal notranslate"><span class="pre">Integration</span> <span class="pre">with</span> <span class="pre">Argilla</span></code></a></li>
+<li><a class="reference internal" href="#integration-with-baseplate"><code class="docutils literal notranslate"><span class="pre">Integration</span> <span class="pre">with</span> <span class="pre">Baseplate</span></code></a></li>
 <li><a class="reference internal" href="#integration-with-datasaur"><code class="docutils literal notranslate"><span class="pre">Integration</span> <span class="pre">with</span> <span class="pre">Datasaur</span></code></a></li>
 <li><a class="reference internal" href="#integration-with-hugging-face"><code class="docutils literal notranslate"><span class="pre">Integration</span> <span class="pre">with</span> <span class="pre">Hugging</span> <span class="pre">Face</span></code></a></li>
 <li><a class="reference internal" href="#integration-with-labelbox"><code class="docutils literal notranslate"><span class="pre">Integration</span> <span class="pre">with</span> <span class="pre">Labelbox</span></code></a></li>
