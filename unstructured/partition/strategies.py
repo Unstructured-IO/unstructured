@@ -72,19 +72,26 @@ def determine_pdf_or_image_strategy(
     if file is not None:
         file.seek(0)  # type: ignore
 
+    if strategy == "fast" and not pdf_text_extractable:
+        logger.warning(
+            "PDF text is not extractable. Cannot use the fast partitioning "
+            "strategy. Falling back to partitioning with the ocr_only strategy.",
+        )
+        return "ocr_only"
+
     if not detectron2_installed and not pdf_text_extractable:
         raise ValueError(
             "detectron2 is not installed and the text of the PDF is not extractable. "
             "To process this file, install detectron2 or remove copy protection from the PDF.",
         )
 
-    if not pdf_text_extractable and not is_image:
-        if strategy == "fast":
-            logger.warning(
-                "PDF text is not extractable. Cannot use the fast partitioning "
-                "strategy. Falling back to partitioning with the hi_res strategy.",
-            )
-        return "hi_res"
+    # if not pdf_text_extractable and not is_image:
+    #     if strategy == "fast":
+    #         logger.warning(
+    #             "PDF text is not extractable. Cannot use the fast partitioning "
+    #             "strategy. Falling back to partitioning with the hi_res strategy.",
+    #         )
+    #     return "hi_res"
 
     if not detectron2_installed:
         if strategy == "hi_res":
