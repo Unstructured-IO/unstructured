@@ -13,7 +13,8 @@ from unstructured.staging import label_studio
 def elements():
     return [Title(text="Title 1"), NarrativeText(text="Narrative 1")]
 
-# TODO (rniko): vcr breaks with urllib3 >= 2.0.2 
+
+# TODO (rniko): vcr breaks with urllib3 >= 2.0.2
 # @vcr.use_cassette(
 #     "test_unstructured/vcr_fixtures/cassettes/label_studio_upload.yaml",
 #     allow_playback_repeats=True,
