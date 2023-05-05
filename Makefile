@@ -1,7 +1,7 @@
 PACKAGE_NAME := unstructured
 PIP_VERSION := 22.2.1
 CURRENT_DIR := $(shell pwd)
-OS := $(shell uname)
+ARCH := $(shell uname -m)
 
 
 .PHONY: help
@@ -90,7 +90,7 @@ install-unstructured-inference:
 
 .PHONY: install-tensorboard
 install-tensorboard:
-	@if [ ${OS} = "Darwin" ]; then\
+	@if [ ${ARCH} = "arm64" ] || [ ${ARCH} = "aarch64" ]; then\
 		python3 -m pip install tensorboard;\
 	fi
 
