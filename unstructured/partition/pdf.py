@@ -317,7 +317,8 @@ def _partition_pdf_or_image_with_ocr(
     else:
         elements = []
         if file is not None:
-            document = pdf2image.convert_from_bytes(file.read())
+            document = pdf2image.convert_from_bytes(file.read())  # type: ignore
+            file.seek(0)  # type: ignore
         else:
             document = pdf2image.convert_from_path(filename)
 
