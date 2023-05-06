@@ -1,4 +1,4 @@
-## 0.6.3-dev1
+## 0.6.4-dev1
 
 ### Enhancements
 
@@ -7,6 +7,24 @@
 ### Features
 
 ### Fixes
+
+## 0.6.3
+
+### Enhancements
+
+* Add an "ocr_only" strategy for `partition_image`.
+
+### Features
+
+* Added `partition_multiple_via_api` for partitioning multiple documents in a single REST
+  API call.
+* Added `stage_for_baseplate` function to prepare outputs for ingestion into Baseplate.
+* Added `partition_odt` for processing Open Office documents.
+
+### Fixes
+
+* Updates the grouping logic in the `partition_pdf` fast strategy to group together text
+  in the same bounding box.
 
 ## 0.6.2
 

@@ -1,5 +1,5 @@
-Document Parsing
-================
+Unstructured Core Library
+=========================
 
 The ``unstructured`` library is designed to help preprocess structure unstructured text documents
 for use in downstream machine learning tasks. Examples of documents that can be processes
@@ -26,7 +26,7 @@ Library Documentation
 .. Hidden TOCs
 
 .. toctree::
-   :caption: Library Documentation
+   :caption: Documentation
    :maxdepth: 2
    :hidden:
 

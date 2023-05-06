@@ -39,14 +39,14 @@ httpcore==0.16.3
     # via httpx
 httpx==0.23.3
     # via argilla
-huggingface-hub==0.13.4
+huggingface-hub==0.14.1
     # via transformers
 idna==3.4
     # via
     #   anyio
     #   requests
     #   rfc3986
-importlib-metadata==6.5.0
+importlib-metadata==6.6.0
     # via markdown
 jinja2==3.1.2
     # via torch

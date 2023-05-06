@@ -25,6 +25,10 @@ DOC_MIME_TYPES = [
     "application/msword",
 ]
 
+ODT_MIME_TYPES = [
+    "application/vnd.oasis.opendocument.text",
+]
+
 XLSX_MIME_TYPES = [
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 ]
@@ -114,6 +118,9 @@ class FileType(Enum):
     # Compressed Types
     ZIP = 60
 
+    # Open Office Types
+    ODT = 70
+
     # NOTE(robinson) - This is to support sorting for pandas groupby functions
     def __lt__(self, other):
         return self.name < other.name
@@ -135,6 +142,7 @@ STR_TO_FILETYPE = {
     "application/vnd.openxmlformats-officedocument.presentationml.presentation": FileType.PPTX,
     "application/vnd.ms-powerpoint": FileType.PPT,
     "application/xml": FileType.XML,
+    "application/vnd.oasis.opendocument.text": FileType.ODT,
 }
 
 
@@ -160,6 +168,7 @@ EXT_TO_FILETYPE = {
     ".json": FileType.JSON,
     ".epub": FileType.EPUB,
     ".msg": FileType.MSG,
+    ".odt": FileType.ODT,
     None: FileType.UNK,
 }
 
@@ -220,6 +229,9 @@ def detect_filetype(
 
     elif mime_type in DOC_MIME_TYPES:
         return FileType.DOC
+
+    elif mime_type in ODT_MIME_TYPES:
+        return FileType.ODT
 
     elif mime_type in MSG_MIME_TYPES:
         return FileType.MSG

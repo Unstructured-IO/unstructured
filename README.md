@@ -13,6 +13,8 @@
   <a href="https://github.com/Unstructured-IO/unstructured/blob/main/CODE_OF_CONDUCT.md">![code_of_conduct.md](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg) </a>
   <a href="https://GitHub.com/unstructured-io/unstructured/releases">![https://GitHub.com/unstructured-io/unstructured.js/releases](https://img.shields.io/github/release/unstructured-io/unstructured)</a>
   <a href="https://pypi.python.org/pypi/unstructured/">![https://github.com/Naereen/badges/](https://badgen.net/badge/Open%20Source%20%3F/Yes%21/blue?icon=github)</a>
+  [![Downloads](https://static.pepy.tech/badge/unstructured)](https://pepy.tech/project/unstructured)
+  [![Downloads](https://static.pepy.tech/badge/unstructured/month)](https://pepy.tech/project/unstructured)
 
 </div>
 
@@ -32,7 +34,7 @@
 <div align="center">
   <p>We're excited to announce the public release of the unstructured.io hosted API! Now you can leverage Unstructured with a simple API call to render clean text in JSON format out of your images, documents, powerpoints, and more.</p>
 
-<p>Checkout the <a href="https://github.com/Unstructured-IO/unstructured-api#--">readme</a> here to get started making API calls. You’ll also find instructions there about how to host your own version of the API. Unstructured data just got easier! 
+<p>Checkout the <a href="https://github.com/Unstructured-IO/unstructured-api#--">readme</a> here to get started making API calls. You’ll also find instructions there about how to host your own version of the API. Unstructured data just got easier!
 We'd love to hear your feedback, let us know how it goes in our <a
   href="https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-1nlh1ot5d-dfY7zCRlhFboZrIWLA4Qgw">
    community slack</a>. And stay tuned for improvements to both quality and performance over the coming months!
@@ -73,6 +75,7 @@ installation. NOTE: We do not currently support python 3.11, please use an older
     - `libreoffice` (MS Office docs)
 - If you are parsing PDFs, run the following to install the `detectron2` model, which
   `unstructured` uses for layout detection:
+    - `pip install tensorboard>=2.12.2`
     - `pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@e2ce8dc#egg=detectron2"`
 
 At this point, you should be able to run the following code:
@@ -179,7 +182,8 @@ you can also uninstall the hooks with `pre-commit uninstall`.
 You can run this [Colab notebook](https://colab.research.google.com/drive/1U8VCjY2-x8c6y5TYMbSFtQGlQVFHCVIW) to run the examples below.
 
 The following examples show how to get started with the `unstructured` library.
-You can parse **TXT**, **HTML**, **PDF**, **EML**, **MSG**, **RTF**, **EPUB**, **DOC**, **DOCX**, **PPT**, **PPTX**, **JPG**,
+You can parse **TXT**, **HTML**, **PDF**, **EML**, **MSG**, **RTF**, **EPUB**, **DOC**, **DOCX**,
+**ODT**, **PPT**, **PPTX**, **JPG**,
 and **PNG** documents with one line of code!
 <br></br>
 See our [documentation page](https://unstructured-io.github.io/unstructured) for a full description

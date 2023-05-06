@@ -319,3 +319,18 @@ def test_partition_pdf_fails_if_pdf_not_processable(
 
     with pytest.raises(ValueError):
         pdf.partition_pdf(filename=filename)
+
+
+def test_partition_pdf_fast_groups_text_in_text_box():
+    filename = os.path.join("example-docs", "chevron-page.pdf")
+    elements = pdf.partition_pdf(filename=filename, strategy="fast")
+
+    assert elements[0] == Title("eastern mediterranean")
+
+    assert isinstance(elements[1], NarrativeText)
+    assert str(elements[1]).startswith("We")
+    assert str(elements[1]).endswith("Jordan and Egypt.")
+
+    assert elements[3] == Title(
+        "kilograms CO₂e/boe carbon intensity from our Eastern Mediterranean operations in 2022",
+    )
