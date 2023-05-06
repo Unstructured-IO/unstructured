@@ -91,7 +91,7 @@ install-unstructured-inference:
 .PHONY: install-tensorboard
 install-tensorboard:
 	@if [ ${ARCH} = "arm64" ] || [ ${ARCH} = "aarch64" ]; then\
-		python3 -m pip install tensorboard;\
+		python3 -m pip install tensorboard>=2.12.2;\
 	fi
 
 .PHONY: install-detectron2
