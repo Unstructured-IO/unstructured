@@ -6,7 +6,7 @@ ARG PIP_VERSION
 
 # Install dependency packages
 RUN yum -y update && \
-  yum -y install poppler-utils xz-devel wget tar curl make which mailcap && \
+  yum -y install poppler-utils xz-devel zlib-devel wget tar curl make which mailcap && \
   yum install -y epel-release && \
   yum install -y pandoc && \
   yum -y install libreoffice && \
@@ -48,13 +48,14 @@ RUN set -ex && \
 
 # SSL dependency gets baked into Python binary so do this first
 RUN yum -y update && \
-  yum install -y make perl-core pcre-devel wget zlib-devel && \
+  yum install -y perl-core pcre-devel && \
   wget https://ftp.openssl.org/source/openssl-1.1.1k.tar.gz && \
   tar -xzvf openssl-1.1.1k.tar.gz && \
   cd openssl-1.1.1k && \
   ./config shared --prefix=/usr/local/ssl --openssldir=/usr/local/ssl && \
   make && \
   make install && cd .. && \
+  $sudo yum -y remove perl-core pcre-devel && \
   ldconfig
 
 ENV PATH="/usr/local/ssl/bin:${PATH}"
