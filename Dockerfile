@@ -55,8 +55,9 @@ RUN yum -y update && \
   ./config shared --prefix=/usr/local/ssl --openssldir=/usr/local/ssl && \
   make && \
   make install && cd .. && \
+  ldconfig && \
   $sudo yum -y remove perl-core pcre-devel && \
-  ldconfig
+  yum clean all
 
 ENV PATH="/usr/local/ssl/bin:${PATH}"
 ENV LD_LIBRARY_PATH="/usr/local/ssl/lib:$LD_LIBRARY_PATH"
