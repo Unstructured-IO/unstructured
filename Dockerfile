@@ -6,7 +6,7 @@ ARG PIP_VERSION
 
 # Install dependency packages
 RUN yum -y update && \
-  yum -y install poppler-utils xz-devel zlib-devel wget tar curl make which mailcap && \
+  yum -y install poppler-utils xz-devel wget tar curl make which mailcap && \
   yum install -y epel-release && \
   yum install -y pandoc && \
   yum -y install libreoffice && \
