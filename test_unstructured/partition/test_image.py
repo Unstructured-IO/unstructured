@@ -162,7 +162,7 @@ def test_partition_image(url, api_called, local_called):
         attribute="_partition_via_api",
         new=mock.MagicMock(),
     ), mock.patch.object(pdf, "_partition_pdf_or_image_local", mock.MagicMock()):
-        image.partition_image(filename="example-docs/layout-parser-paper-fast.pdf", url=url)
+        image.partition_image(filename="fake.pdf", url=url)
         assert pdf._partition_via_api.called == api_called
         assert pdf._partition_pdf_or_image_local.called == local_called
 
