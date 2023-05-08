@@ -66,7 +66,7 @@ ENV SSL_CERT_FILE=/etc/ssl/certs/ca-bundle.crt
 RUN yum -y install bzip2-devel libffi-devel make git sqlite-devel && \
   curl -O https://www.python.org/ftp/python/3.8.15/Python-3.8.15.tgz && tar -xzf Python-3.8.15.tgz && \
   cd Python-3.8.15/ && \
-  ./configure --with-openssl=/usr/local/ssl && \
+  ./configure --enable-optimizations --with-openssl=/usr/local/ssl && \
   make altinstall && \
   cd .. && rm -rf Python-3.8.15* && \
   ln -s /usr/local/bin/python3.8 /usr/local/bin/python3 && \
