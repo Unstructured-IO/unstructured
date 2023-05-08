@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Examples" href="examples.html" /><link rel="prev" title="Getting Started" href="getting_started.html" />
 
   <link rel="shortcut icon" href="_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.1.3, furo 2023.03.27" />
-  <title>Bricks - Unstructured 0.6.3 documentation</title>
+  <title>Bricks - Unstructured 0.6.4 documentation</title>
   <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -573,7 +573,7 @@ before using <code class="docutils literal notranslate"><span class="pre">partit
 <section id="partition-odt">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_odt</span></code><a class="headerlink" href="#partition-odt" title="Permalink to this heading"></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">partition_odt</span></code> partitioning brick pre-processes Open Office documents
-saved in the <code class="docutils literal notranslate"><span class="pre">.odt</span></code> format. The function first converst the document
+saved in the <code class="docutils literal notranslate"><span class="pre">.odt</span></code> format. The function first converts the document
 to <code class="docutils literal notranslate"><span class="pre">.docx</span></code> using <code class="docutils literal notranslate"><span class="pre">pandoc</span></code> and then processes it using <code class="docutils literal notranslate"><span class="pre">partition_docx</span></code>.</p>
 <p>Examples:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.odt</span> <span class="kn">import</span> <span class="n">partition_odt</span>
@@ -659,12 +659,21 @@ If you set <code class="docutils literal notranslate"><span class="pre">url=None
 if you’d like to run inference locally.
 If you set the URL, <code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code> will make a call to a remote inference server.
 <code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code> also includes a <code class="docutils literal notranslate"><span class="pre">token</span></code> function that allows you to pass in an authentication
-token for a remote API call.
-The <code class="docutils literal notranslate"><span class="pre">strategy</span></code> kwarg controls the method that will be used to process the PDF. The <code class="docutils literal notranslate"><span class="pre">&quot;hi_res&quot;</span></code> strategy
-will identify the layout of the document using <code class="docutils literal notranslate"><span class="pre">detectron2</span></code>. The <code class="docutils literal notranslate"><span class="pre">&quot;fast&quot;</span></code> strategy will extract the
-text using <code class="docutils literal notranslate"><span class="pre">pdfminer</span></code> and process the raw text with <code class="docutils literal notranslate"><span class="pre">partition_text</span></code>. If <code class="docutils literal notranslate"><span class="pre">detectron2</span></code> is not available,
-and the <code class="docutils literal notranslate"><span class="pre">&quot;hi_res&quot;</span></code> strategy is set, <code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code> will fallback to the <code class="docutils literal notranslate"><span class="pre">&quot;fast&quot;</span></code> strategy.
-You can also specify what languages to use for OCR with the <code class="docutils literal notranslate"><span class="pre">ocr_languages</span></code> kwarg. For example,
+token for a remote API call.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">strategy</span></code> kwarg controls the method that will be used to process the PDF.
+The available strategies for PDFs are <cite>“hi_res”</cite>, <cite>“ocr_only”</cite>, and <cite>“fast”</cite>.
+The <code class="docutils literal notranslate"><span class="pre">&quot;hi_res&quot;</span></code> strategy will identify the layout of the document using <code class="docutils literal notranslate"><span class="pre">detectron2</span></code>. The advantage of <cite>“hi_res”</cite> is that
+it uses the document layout to gain additional information about document elements. We recommend using this strategy
+if your use case is highly sensitive to correct classifications for document elements. If <code class="docutils literal notranslate"><span class="pre">detectron2</span></code> is not available,
+the <code class="docutils literal notranslate"><span class="pre">&quot;hi_res&quot;</span></code> strategy will fall back to the <code class="docutils literal notranslate"><span class="pre">&quot;ocr_only&quot;</span></code> strategy.
+The <code class="docutils literal notranslate"><span class="pre">&quot;ocr_only&quot;</span></code> strategy runs the document through Tesseract for OCR and then runs the raw text through <code class="docutils literal notranslate"><span class="pre">partition_text</span></code>.
+Currently, <code class="docutils literal notranslate"><span class="pre">&quot;hi_res&quot;</span></code> has difficulty ordering elements for documents with multiple columns. If you have a document with
+multiple columns that does not have extractable text, we recommend using the <code class="docutils literal notranslate"><span class="pre">&quot;ocr_only&quot;</span></code> strategy. <code class="docutils literal notranslate"><span class="pre">&quot;ocr_only&quot;</span></code> falls
+back to <code class="docutils literal notranslate"><span class="pre">&quot;fast&quot;</span></code> if Tesseract is not available and the document has extractable text.
+The <code class="docutils literal notranslate"><span class="pre">&quot;fast&quot;</span></code> strategy will extract the text using <code class="docutils literal notranslate"><span class="pre">pdfminer</span></code> and process the raw text with <code class="docutils literal notranslate"><span class="pre">partition_text</span></code>.
+If the PDF text is not extractable, <code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code> will fall back to <code class="docutils literal notranslate"><span class="pre">&quot;ocr_only&quot;</span></code>. We recommend using the
+<code class="docutils literal notranslate"><span class="pre">&quot;fast&quot;</span></code> strategy in most cases where the PDF has extractable text.</p>
+<p>You can also specify what languages to use for OCR with the <code class="docutils literal notranslate"><span class="pre">ocr_languages</span></code> kwarg. For example,
 use <code class="docutils literal notranslate"><span class="pre">ocr_languages=&quot;eng+deu&quot;</span></code> to use the English and German language packs. See the
 <a class="reference external" href="https://github.com/tesseract-ocr/tessdata">Tesseract documentation</a> for a full list of languages and
 install instructions. OCR is only applied if the text is not already available in the PDF document.</p>
@@ -699,8 +708,17 @@ PDFs because the document will not be processable by any of the available method
 <h3><code class="docutils literal notranslate"><span class="pre">partition_image</span></code><a class="headerlink" href="#partition-image" title="Permalink to this heading"></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">partition_image</span></code> function has the same API as <code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code>, which is document above.
 The only difference is that <code class="docutils literal notranslate"><span class="pre">partition_image</span></code> does not need to convert a PDF to an image
-prior to processing. The <code class="docutils literal notranslate"><span class="pre">partition_image</span></code> function supports <code class="docutils literal notranslate"><span class="pre">.png</span></code> and <code class="docutils literal notranslate"><span class="pre">.jpg</span></code> files.
-You can also specify what languages to use for OCR with the <code class="docutils literal notranslate"><span class="pre">ocr_languages</span></code> kwarg. For example,
+prior to processing. The <code class="docutils literal notranslate"><span class="pre">partition_image</span></code> function supports <code class="docutils literal notranslate"><span class="pre">.png</span></code> and <code class="docutils literal notranslate"><span class="pre">.jpg</span></code> files.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">strategy</span></code> kwarg controls the method that will be used to process the PDF.
+The available strategies for images are <cite>“hi_res”</cite> and <code class="docutils literal notranslate"><span class="pre">&quot;ocr_only&quot;</span></code>.
+The <code class="docutils literal notranslate"><span class="pre">&quot;hi_res&quot;</span></code> strategy will identify the layout of the document using <code class="docutils literal notranslate"><span class="pre">detectron2</span></code>. The advantage of <cite>“hi_res”</cite> is that it
+uses the document layout to gain additional information about document elements. We recommend using this strategy
+if your use case is highly sensitive to correct classifications for document elements. If <code class="docutils literal notranslate"><span class="pre">detectron2</span></code> is not available,
+the <code class="docutils literal notranslate"><span class="pre">&quot;hi_res&quot;</span></code> strategy will fall back to the <code class="docutils literal notranslate"><span class="pre">&quot;ocr_only&quot;</span></code> strategy.
+The <code class="docutils literal notranslate"><span class="pre">&quot;ocr_only&quot;</span></code> strategy runs the document through Tesseract for OCR and then runs the raw text through <code class="docutils literal notranslate"><span class="pre">partition_text</span></code>.
+Currently, <code class="docutils literal notranslate"><span class="pre">&quot;hi_res&quot;</span></code> has difficulty ordering elements for documents with multiple columns. If you have a document with
+multiple columns that does not have extractable text, we recoomend using the <code class="docutils literal notranslate"><span class="pre">&quot;ocr_only&quot;</span></code> strategy.</p>
+<p>You can also specify what languages to use for OCR with the <code class="docutils literal notranslate"><span class="pre">ocr_languages</span></code> kwarg. For example,
 use <code class="docutils literal notranslate"><span class="pre">ocr_languages=&quot;eng+deu&quot;</span></code> to use the English and German language packs. See the
 <a class="reference external" href="https://github.com/tesseract-ocr/tessdata">Tesseract documentation</a> for a full list of languages and
 install instructions.</p>
@@ -714,7 +732,7 @@ install instructions.</p>
 <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_image</span><span class="p">(</span><span class="s2">&quot;example-docs/layout-parser-paper-fast.jpg&quot;</span><span class="p">,</span> <span class="n">ocr_languages</span><span class="o">=</span><span class="s2">&quot;eng+swe&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The default partitioning strategy for <code class="docutils literal notranslate"><span class="pre">partition_image</span></code> is <cite>“hi_res”</cite>, which segements the document using
+<p>The default partitioning strategy for <code class="docutils literal notranslate"><span class="pre">partition_image</span></code> is <cite>“hi_res”</cite>, which segments the document using
 <code class="docutils literal notranslate"><span class="pre">detectron2</span></code> and then OCRs the document. You can also choose <code class="docutils literal notranslate"><span class="pre">&quot;ocr_only&quot;</span></code> as the partitioning strategy,
 which OCRs the document and then runs the output through <code class="docutils literal notranslate"><span class="pre">partition_text</span></code>. This can be helpful
 if <code class="docutils literal notranslate"><span class="pre">detectron2</span></code> does not detect a text element in the image. To run example below, ensure you
