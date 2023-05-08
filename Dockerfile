@@ -73,7 +73,7 @@ RUN yum -y install bzip2-devel libffi-devel make git sqlite-devel && \
   $sudo rm -rf /var/cache/yum/* && \
   yum clean all
 
-# Set up environment 
+# Set up environment
 ENV HOME /home/
 WORKDIR ${HOME}
 RUN mkdir ${HOME}/.ssh && chmod go-rwx ${HOME}/.ssh \

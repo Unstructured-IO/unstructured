@@ -1,3 +1,14 @@
+## 0.6.4
+
+### Enhancements
+
+* Added an "ocr_only" strategy for `partition_pdf`. Refactored the strategy decision
+  logic into its own module.
+
+### Features
+
+### Fixes
+
 ## 0.6.3
 
 ### Enhancements
