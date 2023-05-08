@@ -51,7 +51,7 @@ def partition_pdf(
         A string defining the authentication token for a self-host url, if applicable.
     strategy
         The strategy to use for partitioning the PDF. Valid strategies are "hi_res",
-        "ocr_only", and "fast". When using the "hi_res" strategy, the function usses
+        "ocr_only", and "fast". When using the "hi_res" strategy, the function uses
         a layout detection model to identify document elements. When using the
         "ocr_only" strategy, partition_image simply extracts the text from the
         document using OCR and processes it. If the "fast" strategy is used, the text

@@ -138,7 +138,7 @@ to disable SSL verification in the request.
 
 ``partition_via_api`` allows users to partition documents using the hosted Unstructured API.
 The API partitions documents using the automatic ``partition`` function. Currently, the API
-supports all filetypes except for RTF and EPUBs. 
+supports all filetypes except for RTF and EPUBs.
 To use another URL for the API use the ``api_url`` kwarg. This is helpful if you're hosting
 the API yourself or running it locally through a container. You can pass in your API key
 using the ``api_key`` kwarg. You can use the ``content_type`` kwarg to pass in the MIME
@@ -372,7 +372,7 @@ if your use case is highly sensitive to correct classifications for document ele
 the ``"hi_res"`` strategy will fall back to the ``"ocr_only"`` strategy.
 The ``"ocr_only"`` strategy runs the document through Tesseract for OCR and then runs the raw text through ``partition_text``.
 Currently, ``"hi_res"`` has difficulty ordering elements for documents with multiple columns. If you have a document with
-multiple columns that does not have extractable text, we recoomend using the ``"ocr_only"`` strategy. ``"ocr_only"`` falls
+multiple columns that does not have extractable text, we recommend using the ``"ocr_only"`` strategy. ``"ocr_only"`` falls
 back to ``"fast"`` if Tesseract is not available and the document has extractable text.
 The ``"fast"`` strategy will extract the text using ``pdfminer`` and process the raw text with ``partition_text``.
 If the PDF text is not extractable, ``partition_pdf`` will fall back to ``"ocr_only"``. We recommend using the
