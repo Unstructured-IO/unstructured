@@ -1,3 +1,4 @@
 unstructured[local-inference]
-mysql-connector-python
+pandas
+sqlalchemy
 jupyter
