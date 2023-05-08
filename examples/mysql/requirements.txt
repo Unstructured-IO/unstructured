@@ -1,0 +1,3 @@
+unstructured
+mysql-connector-python
+jupyter
