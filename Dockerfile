@@ -56,6 +56,7 @@ RUN yum -y update && \
   make && \
   make install && cd .. && \
   ldconfig && \
+  rm -rf openssl-1.1.1k && rm openssl-1.1.1k.tar.gz && \
   $sudo yum -y remove perl-core pcre-devel && \
   yum clean all
 
