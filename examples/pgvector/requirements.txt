@@ -1,0 +1,4 @@
+unstructured[local-inference]
+langchain
+jupyter
+pgvector
