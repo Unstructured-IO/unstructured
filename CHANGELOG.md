@@ -3,7 +3,6 @@
 ### Enhancements
 
 * Added an additional trace logger for NLP debugging.
-* PLACEHOLDER - delete this line when there is an actual changelog item to report for 0.6.5
 
 ### Features
 
