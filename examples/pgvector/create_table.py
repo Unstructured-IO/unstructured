@@ -1,15 +1,25 @@
+import datetime
+import os
+
 from sqlalchemy import (
     create_engine,
+    ARRAY,
     Column,
     Integer,
     String,
     Float,
     DateTime,
     func,
-    VECTOR,
 )
+from pgvector.sqlalchemy import Vector
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+
+from langchain.embeddings.openai import OpenAIEmbeddings
+
+from unstructured.partition.email import partition_email
+
+EXAMPLE_DOCS_DIRECTORY = "../../example-docs"
 
 # Create a connection to the PostgreSQL database using the psycopg2 driver
 connection_string = "postgresql://localhost:5432/postgres"
@@ -28,11 +38,13 @@ class Item(Base):
 
     id = Column(Integer, primary_key=True)
     embedding = Column(Vector(ADA_TOKEN_COUNT))
-    source = Column(String)
+    text = Column(String)
     filename = Column(String)
-    page_number = Column(Integer)
     category = Column(String)
     date = Column(DateTime)
+    sent_to = Column(ARRAY(String))
+    sent_from = Column(ARRAY(String))
+    subject = Column(String)
 
 
 # Create the table in the database
@@ -42,42 +54,58 @@ Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 session = Session()
 
-# Insert data into the items table
-session.add_all(
-    [
+
+elements = []
+for f in os.listdir(EXAMPLE_DOCS_DIRECTORY):
+    if not f.endswith(".eml"):
+        continue
+
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, f)
+    elements.extend(partition_email(filename=filename))
+
+for element in elements:
+    date = element.metadata.date
+    if not isinstance(date, str):
+        continue
+
+    element.metadata.date = datetime.datetime.fromisoformat(date)
+
+embedding_function = OpenAIEmbeddings()
+embeddings = embedding_function.embed_documents([el.text for el in elements])
+
+for i, element in enumerate(elements):
+    element.embedding = embeddings[i]
+
+items_to_add = []
+for element in elements:
+    items_to_add.append(
         Item(
-            embedding=[1, 2, 3],
-            source="../../example-docs/copy-protected.pdf",
-            filename="../../example-docs/copy-protected.pdf",
-            page_number=2,
-            category="NarrativeText",
-            date=datetime.datetime(2023, 5, 9, 15, 58, 56, 419472),
-        ),
-        Item(
-            embedding=[4, 5, 6],
-            source="../../example-docs/copy-protected.pdf",
-            filename="../../example-docs/copy-protected.pdf",
-            page_number=2,
-            category="NarrativeText",
-            date=datetime.datetime(2023, 5, 9, 15, 58, 56, 419472),
-        ),
-    ]
-)
+            text=element.text,
+            embedding=element.embedding,
+            filename=element.metadata.filename,
+            date=element.metadata.date,
+            sent_to=element.metadata.sent_to,
+            sent_from=element.metadata.sent_from,
+            subject=element.metadata.subject,
+        )
+    )
+
+
+session.add_all(items_to_add)
 session.commit()
 
 # Query the items table and order the results by the distance between the embedding column and a given vector
-query = (
-    session.query(Item).order_by(func.cube_distance(Item.embedding, [3, 1, 2])).limit(5)
-)
-
-# Iterate over the query results and print them
-for item in query:
-    print(
-        item.id,
-        item.embedding,
-        item.source,
-        item.filename,
-        item.page_number,
-        item.category,
-        item.date,
-    )
+# query = (
+#     session.query(Item).order_by(func.cube_distance(Item.embedding, [3, 1, 2])).limit(5)
+# )
+#
+# # Iterate over the query results and print them
+# for item in query:
+#     print(
+#         item.id,
+#         item.embedding,
+#         item.filename,
+#         item.page_number,
+#         item.category,
+#         item.date,
+#     )
