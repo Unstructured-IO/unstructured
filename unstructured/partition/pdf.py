@@ -2,13 +2,14 @@ import re
 import warnings
 from typing import BinaryIO, List, Optional, cast
 
+import pdf2image
+import pytesseract
 from pdfminer.high_level import extract_pages
-from pdfminer.pdfpage import PDFPage, PDFTextExtractionNotAllowed
 from pdfminer.utils import open_filename
+from PIL import Image
 
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import Element, ElementMetadata, PageBreak
-from unstructured.logger import logger
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.partition import _partition_via_api
 from unstructured.partition.common import (
@@ -16,8 +17,9 @@ from unstructured.partition.common import (
     document_to_element_list,
     exactly_one,
 )
+from unstructured.partition.strategies import determine_pdf_or_image_strategy
 from unstructured.partition.text import partition_text
-from unstructured.utils import dependency_exists, requires_dependencies
+from unstructured.utils import requires_dependencies
 
 
 def partition_pdf(
@@ -48,9 +50,12 @@ def partition_pdf(
     token
         A string defining the authentication token for a self-host url, if applicable.
     strategy
-        The strategy to use for partitioning the PDF. Uses a layout detection model if set
-        to 'hi_res', otherwise partition_pdf simply extracts the text from the document
-        and processes it.
+        The strategy to use for partitioning the PDF. Valid strategies are "hi_res",
+        "ocr_only", and "fast". When using the "hi_res" strategy, the function uses
+        a layout detection model to identify document elements. When using the
+        "ocr_only" strategy, partition_image simply extracts the text from the
+        document using OCR and processes it. If the "fast" strategy is used, the text
+        is extracted directly from the PDF.
     infer_table_structure
         Only applicable if `strategy=hi_res`.
         If True, any Table elements that are extracted will also have a metadata field
@@ -104,36 +109,14 @@ def partition_pdf_or_image(
         if route_args[0] == "layout":
             out_template = None
 
-        fallback_to_fast = False
-        fallback_to_hi_res = False
+        strategy = determine_pdf_or_image_strategy(
+            strategy,
+            filename=filename,
+            file=file,
+            is_image=is_image,
+        )
 
-        detectron2_installed = dependency_exists("detectron2")
-        if is_image:
-            pdf_text_extractable = False
-        else:
-            pdf_text_extractable = is_pdf_text_extractable(filename=filename, file=file)
-            if file is not None:
-                file.seek(0)  # type: ignore
-
-        if not detectron2_installed and not pdf_text_extractable:
-            raise ValueError(
-                "detectron2 is not installed and the text of the PDF is not extractable. "
-                "To process this file, install detectron2 or remove copy protection from the PDF.",
-            )
-
-        if not pdf_text_extractable:
-            fallback_to_hi_res = strategy == "fast"
-
-        if not detectron2_installed:
-            fallback_to_fast = strategy == "hi_res"
-
-        if (strategy == "hi_res" or fallback_to_hi_res) and not fallback_to_fast:
-            if strategy == "fast":
-                logger.warning(
-                    "PDF text is not extractable. Cannot use the fast partitioning "
-                    "strategy. Falling back to partitioning with the hi_res strategy.",
-                )
-
+        if strategy == "hi_res":
             # NOTE(robinson): Catches a UserWarning that occurs when detectron is called
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
@@ -147,18 +130,7 @@ def partition_pdf_or_image(
                     ocr_languages=ocr_languages,
                 )
 
-        elif (strategy == "fast" or fallback_to_fast) and not fallback_to_hi_res:
-            if strategy == "hi_res":
-                logger.warning(
-                    "detectron2 is not installed. Cannot use the hi_res partitioning "
-                    "strategy. Falling back to partitioning with the fast strategy.",
-                )
-            if infer_table_structure:
-                logger.warning(
-                    "Table extraction was selected, but is being ignored while using the fast "
-                    "strategy.",
-                )
-
+        elif strategy == "fast":
             return _partition_pdf_with_pdfminer(
                 filename=filename,
                 file=file,
@@ -166,8 +138,16 @@ def partition_pdf_or_image(
                 encoding=encoding,
             )
 
-        else:
-            raise ValueError(f"{strategy} is an invalid parsing strategy for PDFs")
+        elif strategy == "ocr_only":
+            # NOTE(robinson): Catches file conversion warnings when running with PDFs
+            with warnings.catch_warnings():
+                return _partition_pdf_or_image_with_ocr(
+                    filename=filename,
+                    file=file,
+                    include_page_breaks=include_page_breaks,
+                    ocr_languages=ocr_languages,
+                    is_image=is_image,
+                )
 
     else:
         # NOTE(alan): Remove these lines after different models are handled by routing
@@ -318,23 +298,39 @@ def _process_pdfminer_pages(
     return elements
 
 
-def is_pdf_text_extractable(filename: str = "", file: Optional[bytes] = None):
-    """Checks to see if the text from a PDF document is extractable. Sometimes the
-    text is not extractable due to PDF security settings."""
-    exactly_one(filename=filename, file=file)
+def _partition_pdf_or_image_with_ocr(
+    filename: str = "",
+    file: Optional[bytes] = None,
+    include_page_breaks: bool = False,
+    ocr_languages: str = "eng",
+    is_image: bool = False,
+):
+    """Partitions and image or PDF using Tesseract OCR. For PDFs, each page is converted
+    to an image prior to processing."""
+    if is_image:
+        if file is not None:
+            image = Image.open(file)
+            text = pytesseract.image_to_string(image, config=f"-l '{ocr_languages}'")
+        else:
+            text = pytesseract.image_to_string(filename, config=f"-l '{ocr_languages}'")
+        elements = partition_text(text=text)
+    else:
+        elements = []
+        if file is not None:
+            document = pdf2image.convert_from_bytes(file.read())  # type: ignore
+            file.seek(0)  # type: ignore
+        else:
+            document = pdf2image.convert_from_path(filename)
 
-    def _fp_is_extractable(fp):
-        try:
-            next(PDFPage.get_pages(fp, check_extractable=True))
-            extractable = True
-        except PDFTextExtractionNotAllowed:
-            extractable = False
-        return extractable
+        for i, image in enumerate(document):
+            metadata = ElementMetadata(filename=filename, page_number=i + 1)
+            text = pytesseract.image_to_string(image, config=f"-l '{ocr_languages}'")
 
-    if filename:
-        with open_filename(filename, "rb") as fp:
-            fp = cast(BinaryIO, fp)
-            return _fp_is_extractable(fp)
-    elif file:
-        fp = cast(BinaryIO, file)
-        return _fp_is_extractable(fp)
+            _elements = partition_text(text=text)
+            for element in _elements:
+                element.metadata = metadata
+                elements.append(element)
+
+            if include_page_breaks:
+                elements.append(PageBreak())
+    return elements

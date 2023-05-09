@@ -1,3 +1,24 @@
+## 0.6.5-dev0
+
+### Enhancements
+
+* PLACEHOLDER - delete this line when there is an actual changelog item to report for 0.6.5
+
+### Features
+
+### Fixes
+
+## 0.6.4
+
+### Enhancements
+
+* Added an "ocr_only" strategy for `partition_pdf`. Refactored the strategy decision
+  logic into its own module.
+
+### Features
+
+### Fixes
+
 ## 0.6.3
 
 ### Enhancements
