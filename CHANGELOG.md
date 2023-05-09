@@ -1,12 +1,13 @@
-## 0.6.5-dev0
+## 0.6.5-dev1
 
 ### Enhancements
-
-* PLACEHOLDER - delete this line when there is an actual changelog item to report for 0.6.5
 
 ### Features
 
 ### Fixes
+
+* `partition_email` was updated to more flexibly handle deviations from the RFC-2822 standard.
+  The time in the metadata returns `None` if the time does not match RFC-2822 at all.
 
 ## 0.6.4
 
