@@ -57,6 +57,8 @@ flatbuffers==23.3.3
     # via onnxruntime
 fonttools==4.39.3
     # via matplotlib
+fsspec==2023.4.0
+    # via huggingface-hub
 h11==0.14.0
     # via
     #   httpcore
@@ -153,7 +155,9 @@ pandas==1.5.3
 pdf2image==1.16.3
     # via layoutparser
 pdfminer-six==20221105
-    # via pdfplumber
+    # via
+    #   pdfplumber
+    #   unstructured (setup.py)
 pdfplumber==0.9.0
     # via layoutparser
 pillow==9.5.0
@@ -168,7 +172,7 @@ pillow==9.5.0
     #   unstructured (setup.py)
 portalocker==2.7.0
     # via iopath
-protobuf==4.22.3
+protobuf==4.22.4
     # via onnxruntime
 pycocotools==2.0.6
     # via effdet
@@ -207,11 +211,11 @@ pyyaml==6.0
     #   omegaconf
     #   timm
     #   transformers
-regex==2023.3.23
+regex==2023.5.5
     # via
     #   nltk
     #   transformers
-requests==2.28.2
+requests==2.30.0
     # via
     #   huggingface-hub
     #   torchvision
@@ -268,11 +272,11 @@ typing-extensions==4.5.0
     #   rich
     #   starlette
     #   torch
-unstructured-inference==0.4.2
+unstructured-inference==0.4.4
     # via unstructured (setup.py)
-urllib3==1.26.15
+urllib3==2.0.2
     # via requests
-uvicorn==0.21.1
+uvicorn==0.22.0
     # via unstructured-inference
 wand==0.6.11
     # via pdfplumber
