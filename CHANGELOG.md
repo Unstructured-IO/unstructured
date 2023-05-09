@@ -1,12 +1,12 @@
-## 0.6.5-dev0
+## 0.6.5-dev1
 
 ### Enhancements
-
-* PLACEHOLDER - delete this line when there is an actual changelog item to report for 0.6.5
 
 ### Features
 
 ### Fixes
+
+* Include all metadata fields when converting to dataframe or CSV
 
 ## 0.6.4
 
