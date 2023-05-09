@@ -94,6 +94,11 @@ for element in elements:
 session.add_all(items_to_add)
 session.commit()
 
+
+query = session.query(Item).order_by(Item.embedding.l2_distance(vector)).limit(5)
+for item in query:
+    print(item.id, item.text)
+
 # Query the items table and order the results by the distance between the embedding column and a given vector
 # query = (
 #     session.query(Item).order_by(func.cube_distance(Item.embedding, [3, 1, 2])).limit(5)
