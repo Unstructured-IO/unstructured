@@ -14,5 +14,5 @@ def detail(self, message, *args, **kws):
         self._log(DETAIL, message, args, **kws)
 
 
-# Add the custom log method to the logging. Logger class
-logging.Logger.detail = detail
+# Add the custom log method to the logging.Logger class
+logging.Logger.detail = detail  # type: ignore
