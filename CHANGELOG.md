@@ -1,3 +1,13 @@
+## 0.6.5-dev0
+
+### Enhancements
+
+* PLACEHOLDER - delete this line when there is an actual changelog item to report for 0.6.5
+
+### Features
+
+### Fixes
+
 ## 0.6.4
 
 ### Enhancements
