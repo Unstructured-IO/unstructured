@@ -1,7 +1,8 @@
-## 0.6.5-dev0
+## 0.6.5-dev1
 
 ### Enhancements
 
+* Added an additional trace logger for debugging `partition_text_type`.
 * PLACEHOLDER - delete this line when there is an actual changelog item to report for 0.6.5
 
 ### Features
