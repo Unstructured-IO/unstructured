@@ -67,7 +67,7 @@ importlib-metadata==6.6.0
     #   nbconvert
 importlib-resources==5.12.0
     # via jsonschema
-ipykernel==6.22.0
+ipykernel==6.23.0
     # via
     #   ipywidgets
     #   jupyter
@@ -156,7 +156,7 @@ nbclassic==1.0.0
     # via notebook
 nbclient==0.7.4
     # via nbconvert
-nbconvert==7.3.1
+nbconvert==7.4.0
     # via
     #   jupyter
     #   jupyter-server
