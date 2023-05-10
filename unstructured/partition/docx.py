@@ -1,7 +1,7 @@
 import os
 import tempfile
-from typing import BinaryIO, IO, List, Optional, Union, cast
 from tempfile import SpooledTemporaryFile
+from typing import IO, BinaryIO, List, Optional, Union, cast
 
 import docx
 import pypandoc
@@ -87,7 +87,7 @@ def partition_docx(
         document = docx.Document(filename)
     elif file is not None:
         document = docx.Document(
-            spooled_to_bytes_io_if_needed(cast(Union[BinaryIO, SpooledTemporaryFile], file))
+            spooled_to_bytes_io_if_needed(cast(Union[BinaryIO, SpooledTemporaryFile], file)),
         )
 
     metadata_filename = metadata_filename or filename

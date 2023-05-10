@@ -61,18 +61,21 @@ def test_partition_docx_with_filename(mock_document, expected_elements, tmpdir):
     elements = partition_docx(filename=filename)
     assert elements == expected_elements
 
+
 def test_partition_docx_with_spooled_file(mock_document, expected_elements, tmpdir):
     # Test that the partition_docx function can handle a SpooledTemporaryFile
     filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     mock_document.save(filename)
 
     from tempfile import SpooledTemporaryFile
+
     with open(filename, "rb") as test_file:
         spooled_temp_file = SpooledTemporaryFile()
         spooled_temp_file.write(test_file.read())
         spooled_temp_file.seek(0)
         elements = partition_docx(file=spooled_temp_file)
         assert elements == expected_elements
+
 
 def test_partition_docx_with_file(mock_document, expected_elements, tmpdir):
     filename = os.path.join(tmpdir.dirname, "mock_document.docx")

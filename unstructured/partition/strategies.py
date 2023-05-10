@@ -1,5 +1,5 @@
-from typing import BinaryIO, Dict, List, Optional, Union, cast
 from tempfile import SpooledTemporaryFile
+from typing import BinaryIO, Dict, List, Optional, Union, cast
 
 from pdfminer.pdfpage import PDFPage, PDFTextExtractionNotAllowed
 from pdfminer.utils import open_filename

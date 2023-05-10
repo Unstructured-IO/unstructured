@@ -1,6 +1,6 @@
 import re
-from tempfile import SpooledTemporaryFile
 import warnings
+from tempfile import SpooledTemporaryFile
 from typing import BinaryIO, List, Optional, Union, cast
 
 import pdf2image
@@ -133,7 +133,6 @@ def partition_pdf_or_image(
                 )
 
         elif strategy == "fast":
-            
             return _partition_pdf_with_pdfminer(
                 filename=filename,
                 file=spooled_to_bytes_io_if_needed(file),
@@ -253,7 +252,6 @@ def _partition_pdf_with_pdfminer(
             )
 
     elif file:
-        
         fp = cast(BinaryIO, file)
         elements = _process_pdfminer_pages(
             fp=fp,

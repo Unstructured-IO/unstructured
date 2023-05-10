@@ -1,5 +1,5 @@
-from typing import BinaryIO, IO, List, Optional, Union, cast
 from tempfile import SpooledTemporaryFile
+from typing import IO, BinaryIO, List, Optional, Union, cast
 
 import pptx
 
@@ -50,7 +50,7 @@ def partition_pptx(
         presentation = pptx.Presentation(filename)
     elif file is not None:
         presentation = pptx.Presentation(
-            spooled_to_bytes_io_if_needed(cast(Union[BinaryIO, SpooledTemporaryFile], file))
+            spooled_to_bytes_io_if_needed(cast(Union[BinaryIO, SpooledTemporaryFile], file)),
         )
 
     elements: List[Element] = []

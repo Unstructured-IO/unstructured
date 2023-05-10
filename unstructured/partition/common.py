@@ -1,5 +1,5 @@
-from io import BytesIO
 import subprocess
+from io import BytesIO
 from tempfile import SpooledTemporaryFile
 from typing import BinaryIO, List, Optional, Tuple, Union
 
@@ -160,8 +160,9 @@ def exactly_one(**kwargs) -> None:
             message = f"{names[0]} must be specified."
         raise ValueError(message)
 
+
 def spooled_to_bytes_io_if_needed(
-    file_obj: Optional[Union[BinaryIO, SpooledTemporaryFile]]
+    file_obj: Optional[Union[BinaryIO, SpooledTemporaryFile]],
 ) -> Optional[BinaryIO]:
     if isinstance(file_obj, SpooledTemporaryFile):
         file_obj.seek(0)

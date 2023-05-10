@@ -172,13 +172,14 @@ def test_partition_pdf(url, api_called, local_called, monkeypatch):
         assert pdf._partition_via_api.called == api_called
         assert pdf._partition_pdf_or_image_local.called == local_called
 
+
 @pytest.mark.parametrize(
     ("strategy"),
     [("fast"), ("hi_res"), ("ocr_only")],
 )
 def test_partition_pdf_with_spooled_file(
     strategy,
-    filename="example-docs/layout-parser-paper-fast.pdf"
+    filename="example-docs/layout-parser-paper-fast.pdf",
 ):
     # Test that the partition_pdf function can handle a SpooledTemporaryFile
     with open(filename, "rb") as test_file:
@@ -188,6 +189,7 @@ def test_partition_pdf_with_spooled_file(
         result = pdf.partition_pdf(file=spooled_temp_file, strategy=strategy)
         # validate that the result is a non-empty list of dicts
         assert len(result) > 0
+
 
 @pytest.mark.parametrize(
     ("url", "api_called", "local_called"),
