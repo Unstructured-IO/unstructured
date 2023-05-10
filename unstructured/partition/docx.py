@@ -9,6 +9,7 @@ import pypandoc
 
 from docx.oxml.shared import qn
 from docx.text.run import Run
+from docx.text.paragraph import Paragraph
 
 from unstructured.cleaners.core import clean_bullets
 from unstructured.documents.elements import (
@@ -92,7 +93,7 @@ def GetParagraphRuns(paragraph):
 
 
 # Add the runs property to the Paragraph class
-docx.Paragraph.runs = property(lambda self: GetParagraphRuns(self))
+Paragraph.runs = property(lambda self: GetParagraphRuns(self))
 
 
 def partition_docx(
