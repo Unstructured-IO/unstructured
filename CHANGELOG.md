@@ -1,3 +1,13 @@
+## 0.6.6-dev0
+
+### Enhancements
+
+* Added an additional trace logger for NLP debugging.
+
+### Features
+
+### Fixes
+
 ## 0.6.5
 
 ### Enhancements
