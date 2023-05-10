@@ -1,4 +1,4 @@
-## 0.6.5-dev1
+## 0.6.6-dev0
 
 ### Enhancements
 
@@ -8,6 +8,16 @@
 
 * `partition_email` was updated to more flexibly handle deviations from the RFC-2822 standard.
   The time in the metadata returns `None` if the time does not match RFC-2822 at all.
+
+## 0.6.5
+
+### Enhancements
+
+* Added support for SpooledTemporaryFile file argument.
+
+### Features
+
+### Fixes
 
 ## 0.6.4
 
