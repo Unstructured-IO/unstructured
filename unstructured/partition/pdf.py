@@ -17,7 +17,7 @@ from unstructured.partition.common import (
     add_element_metadata,
     document_to_element_list,
     exactly_one,
-    spooled_to_bytes_if_needed,
+    spooled_to_bytes_io_if_needed,
 )
 from unstructured.partition.strategies import determine_pdf_or_image_strategy
 from unstructured.partition.text import partition_text
@@ -124,7 +124,7 @@ def partition_pdf_or_image(
                 warnings.simplefilter("ignore")
                 layout_elements = _partition_pdf_or_image_local(
                     filename=filename,
-                    file=spooled_to_bytes_if_needed(file),
+                    file=spooled_to_bytes_io_if_needed(file),
                     template=out_template,
                     is_image=is_image,
                     infer_table_structure=infer_table_structure,
@@ -136,7 +136,7 @@ def partition_pdf_or_image(
             
             return _partition_pdf_with_pdfminer(
                 filename=filename,
-                file=spooled_to_bytes_if_needed(file),
+                file=spooled_to_bytes_io_if_needed(file),
                 include_page_breaks=include_page_breaks,
                 encoding=encoding,
             )

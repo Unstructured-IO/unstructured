@@ -160,7 +160,7 @@ def exactly_one(**kwargs) -> None:
             message = f"{names[0]} must be specified."
         raise ValueError(message)
 
-def spooled_to_bytes_if_needed(
+def spooled_to_bytes_io_if_needed(
     file_obj: Optional[Union[BinaryIO, SpooledTemporaryFile]]
 ) -> Optional[BinaryIO]:
     if isinstance(file_obj, SpooledTemporaryFile):

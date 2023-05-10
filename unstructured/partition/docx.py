@@ -1,6 +1,7 @@
 import os
 import tempfile
-from typing import IO, List, Optional
+from typing import BinaryIO, IO, List, Optional, Union, cast
+from tempfile import SpooledTemporaryFile
 
 import docx
 import pypandoc
@@ -15,7 +16,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.partition.common import exactly_one
+from unstructured.partition.common import exactly_one, spooled_to_bytes_io_if_needed
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_possible_narrative_text,
@@ -62,7 +63,7 @@ STYLE_TO_ELEMENT_MAPPING = {
 
 def partition_docx(
     filename: Optional[str] = None,
-    file: Optional[IO] = None,
+    file: Optional[Union[IO, SpooledTemporaryFile]] = None,
     metadata_filename: Optional[str] = None,
 ) -> List[Element]:
     """Partitions Microsoft Word Documents in .docx format into its document elements.
@@ -85,7 +86,9 @@ def partition_docx(
     if filename is not None:
         document = docx.Document(filename)
     elif file is not None:
-        document = docx.Document(file)
+        document = docx.Document(
+            spooled_to_bytes_io_if_needed(cast(Union[BinaryIO, SpooledTemporaryFile], file))
+        )
 
     metadata_filename = metadata_filename or filename
     elements: List[Element] = []
