@@ -3,8 +3,12 @@ import tempfile
 from tempfile import SpooledTemporaryFile
 from typing import IO, BinaryIO, List, Optional, Union, cast
 
+from tabulate import tabulate
 import docx
 import pypandoc
+
+from docx.oxml.shared import qn
+from docx.text.run import Run
 
 from unstructured.cleaners.core import clean_bullets
 from unstructured.documents.elements import (
@@ -60,6 +64,36 @@ STYLE_TO_ELEMENT_MAPPING = {
     "Title": Title,
 }
 
+# NOTE(kevinrpan) there are table styles in the docx library that I am not applying here
+
+# NOTE(kevinrpan) Open to other ways of doing this 
+def GetParagraphRuns(paragraph):
+    """
+    Get hyperlink text from a paragraph object. 
+    Without this, the default runs function skips over hyperlinks.
+
+    Args:
+        paragraph (Paragraph): A Paragraph object.
+
+    Returns:
+        list: A list of Run objects.
+    """
+    # Recursively get runs. 
+    def _get_runs(node, parent):
+        for child in node:
+            # If the child is a run, yield a Run object
+            if child.tag == qn('w:r'):
+                yield Run(child, parent)
+            # If the child is a hyperlink, search for runs within it recursively
+            if child.tag == qn('w:hyperlink'):
+                yield from _get_runs(child, parent)
+
+    return list(_get_runs(paragraph._element, paragraph))
+
+
+# Add the runs property to the Paragraph class
+docx.Paragraph.runs = property(lambda self: GetParagraphRuns(self))
+
 
 def partition_docx(
     filename: Optional[str] = None,
@@ -92,13 +126,42 @@ def partition_docx(
 
     metadata_filename = metadata_filename or filename
     elements: List[Element] = []
-    for paragraph in document.paragraphs:
-        element = _paragraph_to_element(paragraph)
-        if element is not None:
-            element.metadata = ElementMetadata(filename=metadata_filename)
-            elements.append(element)
-
+    table_index = 0 
+    
+    for element_item in document.element.body:
+        if element_item.tag.endswith('tbl'):
+            table = document.tables[table_index]
+            html_table = _convert_table_to_html(table)
+            element = Text(html_table)
+            if element is not None:
+                element.metadata = ElementMetadata(
+                    filename=metadata_filename)
+                elements.append(element)
+            table_index += 1
+        elif element_item.tag.endswith('p'):
+            paragraph = docx.text.paragraph.Paragraph(element_item, document)
+            element = _paragraph_to_element(paragraph)
+            if element is not None:
+                element.metadata = ElementMetadata(
+                    filename=metadata_filename)
+                elements.append(element)
+                
     return elements
+
+
+def _convert_table_to_html(table):
+    """
+    Convert a table object from a Word document to an HTML table string using the tabulate library.
+    
+    Args:
+        table (Table): A Table object.
+    
+    Returns:
+        str: An HTML table string representation of the input table.
+    """
+    headers = [cell.text for cell in table.rows[0].cells]
+    data = [[cell.text for cell in row.cells] for row in table.rows[1:]]
+    return tabulate(data, headers=headers, tablefmt='html')
 
 
 def _paragraph_to_element(paragraph: docx.text.paragraph.Paragraph) -> Optional[Text]:
@@ -181,3 +244,5 @@ def convert_and_partition_docx(
         elements = partition_docx(filename=docx_filename, metadata_filename=filename)
 
     return elements
+
+
