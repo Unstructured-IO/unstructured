@@ -170,4 +170,3 @@ def spooled_to_bytes_io_if_needed(
     else:
         # Return the original file object if it's not a SpooledTemporaryFile
         return file_obj
-    
