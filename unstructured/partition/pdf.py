@@ -1,6 +1,7 @@
 import re
+from tempfile import SpooledTemporaryFile
 import warnings
-from typing import BinaryIO, List, Optional, cast
+from typing import BinaryIO, List, Optional, Union, cast
 
 import pdf2image
 import pytesseract
@@ -16,6 +17,7 @@ from unstructured.partition.common import (
     add_element_metadata,
     document_to_element_list,
     exactly_one,
+    spooled_to_bytes_if_needed,
 )
 from unstructured.partition.strategies import determine_pdf_or_image_strategy
 from unstructured.partition.text import partition_text
@@ -24,7 +26,7 @@ from unstructured.utils import requires_dependencies
 
 def partition_pdf(
     filename: str = "",
-    file: Optional[bytes] = None,
+    file: Optional[Union[BinaryIO, SpooledTemporaryFile]] = None,
     url: Optional[str] = None,
     template: str = "layout/pdf",
     token: Optional[str] = None,
@@ -86,7 +88,7 @@ def partition_pdf(
 
 def partition_pdf_or_image(
     filename: str = "",
-    file: Optional[bytes] = None,
+    file: Optional[Union[BinaryIO, SpooledTemporaryFile]] = None,
     url: Optional[str] = "https://ml.unstructured.io/",
     template: str = "layout/pdf",
     token: Optional[str] = None,
@@ -122,7 +124,7 @@ def partition_pdf_or_image(
                 warnings.simplefilter("ignore")
                 layout_elements = _partition_pdf_or_image_local(
                     filename=filename,
-                    file=file,
+                    file=spooled_to_bytes_if_needed(file),
                     template=out_template,
                     is_image=is_image,
                     infer_table_structure=infer_table_structure,
@@ -131,9 +133,10 @@ def partition_pdf_or_image(
                 )
 
         elif strategy == "fast":
+            
             return _partition_pdf_with_pdfminer(
                 filename=filename,
-                file=file,
+                file=spooled_to_bytes_if_needed(file),
                 include_page_breaks=include_page_breaks,
                 encoding=encoding,
             )
@@ -175,7 +178,7 @@ def partition_pdf_or_image(
 
 def _partition_pdf_or_image_local(
     filename: str = "",
-    file: Optional[bytes] = None,
+    file: Optional[BinaryIO] = None,
     template: Optional[str] = None,
     is_image: bool = False,
     infer_table_structure: bool = False,
@@ -226,7 +229,7 @@ def _partition_pdf_or_image_local(
 @requires_dependencies("pdfminer", "local-inference")
 def _partition_pdf_with_pdfminer(
     filename: str = "",
-    file: Optional[bytes] = None,
+    file: Optional[BinaryIO] = None,
     include_page_breaks: bool = False,
     encoding: str = "utf-8",
 ) -> List[Element]:
@@ -250,6 +253,7 @@ def _partition_pdf_with_pdfminer(
             )
 
     elif file:
+        
         fp = cast(BinaryIO, file)
         elements = _process_pdfminer_pages(
             fp=fp,
@@ -300,7 +304,7 @@ def _process_pdfminer_pages(
 
 def _partition_pdf_or_image_with_ocr(
     filename: str = "",
-    file: Optional[bytes] = None,
+    file: Optional[Union[BinaryIO, SpooledTemporaryFile]] = None,
     include_page_breaks: bool = False,
     ocr_languages: str = "eng",
     is_image: bool = False,
