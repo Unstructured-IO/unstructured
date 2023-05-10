@@ -2,6 +2,8 @@
 
 ### Enhancements
 
+* Added an additional trace logger for NLP debugging.
+
 ### Features
 
 ### Fixes
