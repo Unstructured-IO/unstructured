@@ -88,7 +88,7 @@ def partition_pdf(
 
 def partition_pdf_or_image(
     filename: str = "",
-    file: Optional[Union[BinaryIO, SpooledTemporaryFile]] = None,
+    file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
     url: Optional[str] = "https://ml.unstructured.io/",
     template: str = "layout/pdf",
     token: Optional[str] = None,
@@ -161,7 +161,7 @@ def partition_pdf_or_image(
         # NOTE(alan): Remove "data=data" after different models are handled by routing
         layout_elements = _partition_via_api(
             filename=filename,
-            file=file,
+            file=cast(BinaryIO, file),
             url=url,
             token=token,
             data=data,
@@ -177,7 +177,7 @@ def partition_pdf_or_image(
 
 def _partition_pdf_or_image_local(
     filename: str = "",
-    file: Optional[BinaryIO] = None,
+    file: Optional[Union[bytes, BinaryIO]] = None,
     template: Optional[str] = None,
     is_image: bool = False,
     infer_table_structure: bool = False,
@@ -302,7 +302,7 @@ def _process_pdfminer_pages(
 
 def _partition_pdf_or_image_with_ocr(
     filename: str = "",
-    file: Optional[Union[BinaryIO, SpooledTemporaryFile]] = None,
+    file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
     include_page_breaks: bool = False,
     ocr_languages: str = "eng",
     is_image: bool = False,

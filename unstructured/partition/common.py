@@ -162,8 +162,8 @@ def exactly_one(**kwargs) -> None:
 
 
 def spooled_to_bytes_io_if_needed(
-    file_obj: Optional[Union[BinaryIO, SpooledTemporaryFile]],
-) -> Optional[BinaryIO]:
+    file_obj: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]],
+) -> Optional[Union[bytes, BinaryIO]]:
     if isinstance(file_obj, SpooledTemporaryFile):
         file_obj.seek(0)
         contents = file_obj.read()
