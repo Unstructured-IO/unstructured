@@ -8,6 +8,8 @@
 
 ### Fixes
 
+* Include all metadata fields when converting to dataframe or CSV
+
 ## 0.6.5
 
 ### Enhancements
@@ -17,6 +19,7 @@
 ### Features
 
 ### Fixes
+
 
 ## 0.6.4
 
