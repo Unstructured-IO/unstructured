@@ -99,18 +99,18 @@ query = session.query(Item).order_by(Item.embedding.l2_distance(vector)).limit(5
 for item in query:
     print(item.id, item.text)
 
-# Query the items table and order the results by the distance between the embedding column and a given vector
-# query = (
-#     session.query(Item).order_by(func.cube_distance(Item.embedding, [3, 1, 2])).limit(5)
-# )
-#
-# # Iterate over the query results and print them
-# for item in query:
-#     print(
-#         item.id,
-#         item.embedding,
-#         item.filename,
-#         item.page_number,
-#         item.category,
-#         item.date,
-#     )
+
+query = (
+    session.query(
+        Item,
+        func.exp(
+            text(f"-{decay_rate} * EXTRACT(DAY FROM (NOW() - date))")
+            * Item.embedding.l2_distance(vector)
+        ).label("decay_score"),
+    )
+    .order_by(text("decay_score DESC"))
+    .limit(5)
+)
+
+for item in query:
+    print(item.id, item.text)
