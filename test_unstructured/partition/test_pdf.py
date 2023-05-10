@@ -188,7 +188,7 @@ def test_partition_pdf_with_spooled_file(
         spooled_temp_file.seek(0)
         result = pdf.partition_pdf(file=spooled_temp_file, strategy=strategy)
         # validate that the result is a non-empty list of dicts
-        assert len(result) > 0
+        assert len(result) > 10
 
 
 @pytest.mark.parametrize(
