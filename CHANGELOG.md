@@ -1,4 +1,4 @@
-## 0.6.5-dev1
+## 0.6.6-dev0
 
 ### Enhancements
 
@@ -7,6 +7,17 @@
 ### Fixes
 
 * Include all metadata fields when converting to dataframe or CSV
+
+## 0.6.5
+
+### Enhancements
+
+* Added support for SpooledTemporaryFile file argument.
+
+### Features
+
+### Fixes
+
 
 ## 0.6.4
 

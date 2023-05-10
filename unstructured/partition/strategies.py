@@ -1,4 +1,5 @@
-from typing import BinaryIO, Dict, List, Optional, cast
+from tempfile import SpooledTemporaryFile
+from typing import BinaryIO, Dict, List, Optional, Union, cast
 
 from pdfminer.pdfpage import PDFPage, PDFTextExtractionNotAllowed
 from pdfminer.utils import open_filename
@@ -31,7 +32,10 @@ def validate_strategy(strategy: str, filetype: str):
         raise ValueError(f"{strategy} is not a valid strategy for filetype {filetype}.")
 
 
-def is_pdf_text_extractable(filename: str = "", file: Optional[bytes] = None):
+def is_pdf_text_extractable(
+    filename: str = "",
+    file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
+):
     """Checks to see if the text from a PDF document is extractable. Sometimes the
     text is not extractable due to PDF security settings."""
     exactly_one(filename=filename, file=file)
@@ -56,7 +60,7 @@ def is_pdf_text_extractable(filename: str = "", file: Optional[bytes] = None):
 def determine_pdf_or_image_strategy(
     strategy: str,
     filename: str = "",
-    file: Optional[bytes] = None,
+    file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
     is_image: bool = False,
 ):
     """Determines what strategy to use for processing PDFs or images, accounting for fallback
