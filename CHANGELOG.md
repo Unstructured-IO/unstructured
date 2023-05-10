@@ -1,4 +1,4 @@
-## 0.6.5-dev1
+## 0.6.5
 
 ### Enhancements
 
