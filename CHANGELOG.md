@@ -1,12 +1,25 @@
-## 0.6.5-dev0
+## 0.6.6-dev0
 
 ### Enhancements
 
-* PLACEHOLDER - delete this line when there is an actual changelog item to report for 0.6.5
+* Added an additional trace logger for NLP debugging.
 
 ### Features
 
 ### Fixes
+
+* Include all metadata fields when converting to dataframe or CSV
+
+## 0.6.5
+
+### Enhancements
+
+* Added support for SpooledTemporaryFile file argument.
+
+### Features
+
+### Fixes
+
 
 ## 0.6.4
 

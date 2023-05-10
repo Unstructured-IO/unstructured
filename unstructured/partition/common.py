@@ -1,5 +1,7 @@
 import subprocess
-from typing import List, Optional, Tuple, Union
+from io import BytesIO
+from tempfile import SpooledTemporaryFile
+from typing import BinaryIO, List, Optional, Tuple, Union
 
 from unstructured.documents.elements import (
     TYPE_TO_TEXT_ELEMENT_MAP,
@@ -157,3 +159,15 @@ def exactly_one(**kwargs) -> None:
         else:
             message = f"{names[0]} must be specified."
         raise ValueError(message)
+
+
+def spooled_to_bytes_io_if_needed(
+    file_obj: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]],
+) -> Optional[Union[bytes, BinaryIO]]:
+    if isinstance(file_obj, SpooledTemporaryFile):
+        file_obj.seek(0)
+        contents = file_obj.read()
+        return BytesIO(contents)
+    else:
+        # Return the original file object if it's not a SpooledTemporaryFile
+        return file_obj

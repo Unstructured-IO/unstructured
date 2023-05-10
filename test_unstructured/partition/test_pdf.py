@@ -1,4 +1,5 @@
 import os
+from tempfile import SpooledTemporaryFile
 from unittest import mock
 
 import pytest
@@ -170,6 +171,24 @@ def test_partition_pdf(url, api_called, local_called, monkeypatch):
         pdf.partition_pdf(filename="fake.pdf", url=url)
         assert pdf._partition_via_api.called == api_called
         assert pdf._partition_pdf_or_image_local.called == local_called
+
+
+@pytest.mark.parametrize(
+    ("strategy"),
+    [("fast"), ("hi_res"), ("ocr_only")],
+)
+def test_partition_pdf_with_spooled_file(
+    strategy,
+    filename="example-docs/layout-parser-paper-fast.pdf",
+):
+    # Test that the partition_pdf function can handle a SpooledTemporaryFile
+    with open(filename, "rb") as test_file:
+        spooled_temp_file = SpooledTemporaryFile()
+        spooled_temp_file.write(test_file.read())
+        spooled_temp_file.seek(0)
+        result = pdf.partition_pdf(file=spooled_temp_file, strategy=strategy)
+        # validate that the result is a non-empty list of dicts
+        assert len(result) > 10
 
 
 @pytest.mark.parametrize(
