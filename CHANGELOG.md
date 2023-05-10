@@ -1,8 +1,8 @@
-## 0.6.5-dev0
+## 0.6.5-dev1
 
 ### Enhancements
 
-* PLACEHOLDER - delete this line when there is an actual changelog item to report for 0.6.5
+* Added support for SpooledTemporaryFile file argument.
 
 ### Features
 
