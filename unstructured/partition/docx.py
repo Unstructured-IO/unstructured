@@ -141,10 +141,10 @@ def partition_docx(
             table_index += 1
         elif element_item.tag.endswith("p"):
             paragraph = docx.text.paragraph.Paragraph(element_item, document)
-            element = _paragraph_to_element(paragraph)
-            if element is not None:
-                element.metadata = ElementMetadata(filename=metadata_filename)
-                elements.append(element)
+            para_element: Optional[Text] = _paragraph_to_element(paragraph)
+            if para_element is not None:
+                para_element.metadata = ElementMetadata(filename=metadata_filename)
+                elements.append(para_element)
 
     return elements
 
