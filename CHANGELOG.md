@@ -6,7 +6,8 @@
 
 ### Features
 
-* Added table reading as html with URL parsing to partition_docx in docx
+* Added table reading as html with URL parsing to `partition_docx` in docx
+* Added metadata field for text_as_html for docx files 
 
 ### Fixes
 
