@@ -1,3 +1,13 @@
+## 0.6.6-dev1
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* fix: fileutils/file_type check json and eml decode ignore error
+
 ## 0.6.6-dev0
 
 ### Enhancements
