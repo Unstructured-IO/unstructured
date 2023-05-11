@@ -2,6 +2,14 @@
 
 ### Enhancements
 
+### Features
+
+### Fixes
+
+* fix: fileutils/file_type check json and eml decode ignore error
+
+### Enhancements
+
 * Added an additional trace logger for NLP debugging.
 
 ### Features
