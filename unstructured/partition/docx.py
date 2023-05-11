@@ -3,13 +3,12 @@ import tempfile
 from tempfile import SpooledTemporaryFile
 from typing import IO, BinaryIO, List, Optional, Union, cast
 
-from tabulate import tabulate
 import docx
 import pypandoc
-
 from docx.oxml.shared import qn
-from docx.text.run import Run
 from docx.text.paragraph import Paragraph
+from docx.text.run import Run
+from tabulate import tabulate
 
 from unstructured.cleaners.core import clean_bullets
 from unstructured.documents.elements import (
@@ -18,9 +17,9 @@ from unstructured.documents.elements import (
     ElementMetadata,
     ListItem,
     NarrativeText,
+    Table,
     Text,
     Title,
-    Table,
 )
 from unstructured.partition.common import exactly_one, spooled_to_bytes_io_if_needed
 from unstructured.partition.text_type import (
