@@ -14,6 +14,9 @@
 
 ### Features
 
+* Added table reading as html with URL parsing to `partition_docx` in docx
+* Added metadata field for text_as_html for docx files 
+
 ### Fixes
 
 * `partition_email` was updated to more flexibly handle deviations from the RFC-2822 standard.
