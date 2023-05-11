@@ -36,6 +36,8 @@ from unstructured.documents.email_elements import (
     Sender,
     Subject,
 )
+from unstructured.logger import logger
+from unstructured.nlp.patterns import EMAIL_DATETIMETZ_PATTERN_RE
 from unstructured.partition.html import partition_html
 from unstructured.partition.text import partition_text, split_by_paragraph
 
@@ -112,9 +114,17 @@ def build_email_metadata(msg: Message) -> ElementMetadata:
     )
 
 
-def convert_to_iso_8601(time: str) -> str:
+def convert_to_iso_8601(time: str) -> Optional[str]:
     """Converts the datetime from the email output to ISO-8601 format."""
-    datetime_object = datetime.datetime.strptime(time, "%a, %d %b %Y %H:%M:%S %z")
+    cleaned_time = clean_extra_whitespace(time)
+    regex_match = EMAIL_DATETIMETZ_PATTERN_RE.search(cleaned_time)
+    if regex_match is None:
+        logger.warning(f"{time} did not match RFC-2822 format. Unable to extract the time.")
+        return None
+
+    start, end = regex_match.span()
+    dt_string = cleaned_time[start:end]
+    datetime_object = datetime.datetime.strptime(dt_string, "%a, %d %b %Y %H:%M:%S %z")
     return datetime_object.isoformat()
 
 

@@ -10,6 +10,7 @@ from unstructured.file_utils.filetype import (
     DOCX_MIME_TYPES,
     XLSX_MIME_TYPES,
     FileType,
+    _is_text_file_a_json,
     detect_filetype,
 )
 
@@ -285,3 +286,16 @@ def test_detect_filetype_raises_with_none_specified():
 
 def test_filetype_order():
     assert FileType.HTML < FileType.XML
+
+
+@pytest.mark.parametrize(
+    ("content", "expected"),
+    [
+        (b"d\xe2\x80", False),
+    ],
+)
+def test_is_text_file_a_json(content, expected):
+    from io import BytesIO
+
+    with BytesIO(content) as f:
+        assert _is_text_file_a_json(file=f) == expected
