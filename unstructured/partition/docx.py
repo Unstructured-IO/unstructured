@@ -155,7 +155,8 @@ def _convert_table_to_text(table, as_html):
 
     Args:
         table (Table): A Table object.
-        as_html (bool): Whether to return the table as an HTML string (True) or a plain text string (False)
+        as_html (bool): Whether to return the table as an HTML string (True) or a
+            plain text string (False)
 
     Returns:
         str: An table string representation of the input table.
