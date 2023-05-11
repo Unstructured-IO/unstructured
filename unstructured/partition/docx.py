@@ -68,7 +68,7 @@ STYLE_TO_ELEMENT_MAPPING = {
 # NOTE(kevinrpan) there are table styles in the docx library that I am not applying here
 
 # NOTE(kevinrpan) Open to other ways of doing this 
-def GetParagraphRuns(paragraph):
+def _get_paragraph_runs(paragraph):
     """
     Get hyperlink text from a paragraph object. 
     Without this, the default runs function skips over hyperlinks.
@@ -93,7 +93,7 @@ def GetParagraphRuns(paragraph):
 
 
 # Add the runs property to the Paragraph class
-Paragraph.runs = property(lambda self: GetParagraphRuns(self))
+Paragraph.runs = property(lambda self: _get_paragraph_runs(self))
 
 
 def partition_docx(
