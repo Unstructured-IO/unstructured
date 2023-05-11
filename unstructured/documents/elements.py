@@ -1,5 +1,6 @@
 import datetime
 import hashlib
+import os
 import pathlib
 from abc import ABC
 from dataclasses import dataclass
@@ -34,6 +35,9 @@ class ElementMetadata:
     def __post_init__(self):
         if isinstance(self.filename, pathlib.Path):
             self.filename = str(self.filename)
+
+        if self.filename is not None:
+            self.filename = os.path.basename(self.filename)
 
     def to_dict(self):
         return {key: value for key, value in self.__dict__.items() if value is not None}
