@@ -8,8 +8,6 @@
 
 * fix: fileutils/file_type check json and eml decode ignore error
 
-## 0.6.6-dev0
-
 ### Enhancements
 
 * Added an additional trace logger for NLP debugging.
@@ -18,6 +16,8 @@
 
 ### Fixes
 
+* `partition_email` was updated to more flexibly handle deviations from the RFC-2822 standard.
+  The time in the metadata returns `None` if the time does not match RFC-2822 at all.
 * Include all metadata fields when converting to dataframe or CSV
 
 ## 0.6.5
