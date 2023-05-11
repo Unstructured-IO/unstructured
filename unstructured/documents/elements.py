@@ -1,3 +1,4 @@
+import datetime
 import hashlib
 import pathlib
 from abc import ABC
@@ -40,6 +41,13 @@ class ElementMetadata:
     @classmethod
     def from_dict(cls, input_dict):
         return cls(**input_dict)
+
+    def get_date(self) -> Optional[datetime.datetime]:
+        """Converts the date field to a datetime object."""
+        dt = None
+        if self.date is not None:
+            dt = datetime.datetime.fromisoformat(self.date)
+        return dt
 
 
 class Element(ABC):
