@@ -167,6 +167,13 @@ def test_partition_image(url, api_called, local_called):
         assert pdf._partition_pdf_or_image_local.called == local_called
 
 
+def test_partition_image_with_auto_strategy(filename="example-docs/layout-parser-paper-fast.jpg"):
+    elements = image.partition_image(filename=filename, strategy="auto")
+    titles = [el for el in elements if el.category == "Title" and len(el.text.split(" ")) > 10]
+    title = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
+    assert titles[0].text == title
+
+
 def test_partition_image_with_language_passed(filename="example-docs/example.jpg"):
     with mock.patch.object(layout, "process_file_with_model", mock.MagicMock()) as mock_partition:
         image.partition_image(filename=filename, strategy="hi_res", ocr_languages="eng+swe")
