@@ -184,6 +184,10 @@ def partition(
 
     for element in elements:
         element.metadata.url = url
+        if content_type is not None:
+            element.metadata.filetype = content_type
+        else:
+            element.metadata.filetype = filetype.name
 
     return elements
 
