@@ -92,7 +92,7 @@ def partition_email_header(msg: Message) -> List[Element]:
     return elements
 
 
-def build_email_metadata(msg: Message) -> ElementMetadata:
+def build_email_metadata(msg: Message, filename: Optional[str]) -> ElementMetadata:
     """Creates an ElementMetadata object from the header information in the email."""
     header_dict = dict(msg.raw_items())
     email_date = header_dict.get("Date")
@@ -112,6 +112,7 @@ def build_email_metadata(msg: Message) -> ElementMetadata:
         sent_from=sent_from,
         subject=header_dict.get("Subject"),
         date=email_date,
+        filename=filename,
     )
 
 
@@ -280,8 +281,7 @@ def partition_email(
         header = partition_email_header(msg)
     all_elements = header + elements
 
-    metadata = build_email_metadata(msg)
-    metadata.filename = filename
+    metadata = build_email_metadata(msg, filename=filename)
     for element in all_elements:
         element.metadata = metadata
     return all_elements

@@ -181,6 +181,9 @@ def test_partition_email_has_metadata():
         subject="Test Email",
     )
 
+    expected_dt = datetime.datetime.fromisoformat("2022-12-16T17:04:16-05:00")
+    assert elements[0].metadata.get_date() == expected_dt
+
 
 def test_extract_email_text_matches_html():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email-attachment.eml")

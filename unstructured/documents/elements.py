@@ -1,5 +1,7 @@
 from __future__ import annotations
+import datetime
 import hashlib
+import os
 import pathlib
 from abc import ABC
 from dataclasses import dataclass
@@ -36,6 +38,9 @@ class ElementMetadata:
         if isinstance(self.filename, pathlib.Path):
             self.filename = str(self.filename)
 
+        if self.filename is not None:
+            self.filename = os.path.basename(self.filename)
+
     def to_dict(self):
         return {key: value for key, value in self.__dict__.items() if value is not None}
 
@@ -47,6 +52,13 @@ class ElementMetadata:
         for k in self.__dict__:
             if getattr(self, k) is None:
                 setattr(self, k, getattr(other, k))
+
+    def get_date(self) -> Optional[datetime.datetime]:
+        """Converts the date field to a datetime object."""
+        dt = None
+        if self.date is not None:
+            dt = datetime.datetime.fromisoformat(self.date)
+        return dt
 
 
 class Element(ABC):
