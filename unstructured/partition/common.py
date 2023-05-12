@@ -90,7 +90,7 @@ def _add_element_metadata(
         )
         if isinstance(element, list):
             for _element in element:
-                _element.metadata = metadata
+                _element.metadata = metadata.merge(_element.metadata)
             elements.extend(element)
         elif isinstance(element, PageBreak):
             page_number += 1
