@@ -201,6 +201,8 @@ def test_auto_partition_json_from_filename():
     for elem in json_elems:
         # coordinates are always in the element data structures, even if None
         elem.pop("coordinates")
+        elem["metadata"].pop("filename")
+        elem["metadata"].pop("filetype")
     assert json_data == json_elems
 
 
