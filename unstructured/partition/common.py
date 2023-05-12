@@ -19,6 +19,9 @@ def normalize_layout_element(layout_element) -> Union[Element, List[Element]]:
     """Converts a list of unstructured_inference DocumentLayout objects to a list of
     unstructured Elements."""
 
+    if isinstance(layout_element, Element):
+        return layout_element
+
     if isinstance(layout_element, PageBreak):
         return PageBreak()
 
@@ -97,7 +100,7 @@ def _add_element_metadata(
             if include_page_breaks:
                 elements.append(element)
         else:
-            element.metadata = metadata
+            element.metadata = metadata.merge(element.metadata)
             elements.append(element)
     return elements
 
