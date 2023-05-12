@@ -64,26 +64,11 @@ def layout_list_to_list_items(
     return list_items
 
 
-def document_to_element_list(
-    document,
-    include_page_breaks: bool = False,
-) -> List[Element]:
-    """Converts a DocumentLayout object to a list of unstructured elements."""
-    elements: List[Element] = []
-    num_pages = len(document.pages)
-    for i, page in enumerate(document.pages):
-        for element in page.elements:
-            elements.append(element)
-        if include_page_breaks and i < num_pages - 1:
-            elements.append(PageBreak())
-
-    return elements
-
-
-def add_element_metadata(
+def _add_element_metadata(
     layout_elements,
     include_page_breaks: bool = False,
     filename: Optional[str] = None,
+    filetype: Optional[str] = None,
     url: Optional[str] = None,
 ) -> List[Element]:
     """Adds document metadata to the document element. Document metadata includes information
@@ -98,6 +83,7 @@ def add_element_metadata(
             text_as_html = None
         metadata = ElementMetadata(
             filename=filename,
+            filetype=filetype,
             url=url,
             page_number=page_number,
             text_as_html=text_as_html,
@@ -108,7 +94,7 @@ def add_element_metadata(
             elements.extend(element)
         elif isinstance(element, PageBreak):
             page_number += 1
-            if include_page_breaks is True:
+            if include_page_breaks:
                 elements.append(element)
         else:
             element.metadata = metadata
