@@ -451,7 +451,7 @@ Examples:
 
 
 The ``strategy`` kwarg controls the method that will be used to process the PDF.
-The available strategies for images are ``"autho"``, ``"hi_res"`` and ``"ocr_only"``.
+The available strategies for images are ``"auto"``, ``"hi_res"`` and ``"ocr_only"``.
 
 The ``"auto"`` strategy will choose the partitioning strategy based on document characteristics and the function kwargs.
 If ``infer_table_structure`` is passed, the strategy will be ``"hi_res"`` because that is the only strategy that
