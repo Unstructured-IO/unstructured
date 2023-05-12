@@ -52,6 +52,7 @@ class ElementMetadata:
         for k in self.__dict__:
             if getattr(self, k) is None:
                 setattr(self, k, getattr(other, k))
+        return self
 
     def get_date(self) -> Optional[datetime.datetime]:
         """Converts the date field to a datetime object."""
