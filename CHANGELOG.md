@@ -1,4 +1,12 @@
-## 0.6.6-dev0
+## 0.6.6-dev1
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* fix: fileutils/file_type check json and eml decode ignore error
 
 ### Enhancements
 
@@ -6,7 +14,14 @@
 
 ### Features
 
+* Added table reading as html with URL parsing to `partition_docx` in docx
+* Added metadata field for text_as_html for docx files 
+
 ### Fixes
+
+* `partition_email` was updated to more flexibly handle deviations from the RFC-2822 standard.
+  The time in the metadata returns `None` if the time does not match RFC-2822 at all.
+* Include all metadata fields when converting to dataframe or CSV
 
 ## 0.6.5
 
@@ -17,6 +32,7 @@
 ### Features
 
 ### Fixes
+
 
 ## 0.6.4
 

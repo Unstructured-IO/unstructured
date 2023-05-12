@@ -4,6 +4,9 @@
 #
 #    pip-compile requirements/test.in
 #
+--extra-index-url https://pypi.ngc.nvidia.com
+--trusted-host pypi.ngc.nvidia.com
+
 appdirs==1.4.4
     # via label-studio-tools
 black==23.3.0
@@ -92,7 +95,13 @@ types-markdown==3.4.2.9
     # via -r requirements/test.in
 types-requests==2.30.0.0
     # via -r requirements/test.in
+<<<<<<< HEAD
 types-urllib3==1.26.25.13
+=======
+types-tabulate==0.9.0.2
+    # via -r requirements/test.in
+types-urllib3==1.26.25.12
+>>>>>>> 7c07b3f69074fb0dce532d1598791fad97272f6e
     # via types-requests
 typing-extensions==4.5.0
     # via

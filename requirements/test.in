@@ -10,6 +10,7 @@ types-Markdown
 pytest-cov
 pytest-mock
 label_studio_sdk
+types-tabulate
 types-requests
 vcrpy
 ruff
