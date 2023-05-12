@@ -39,15 +39,14 @@ def partition_msg(
     else:
         elements = partition_text(text=text)
 
-    metadata = build_msg_metadata(msg_obj)
-    metadata.filename = filename
+    metadata = build_msg_metadata(msg_obj, filename)
     for element in elements:
         element.metadata = metadata
 
     return elements
 
 
-def build_msg_metadata(msg_obj: msg_parser.MsOxMessage) -> ElementMetadata:
+def build_msg_metadata(msg_obj: msg_parser.MsOxMessage, filename: Optional[str]) -> ElementMetadata:
     """Creates an ElementMetadata object from the header information in the emai."""
     email_date = getattr(msg_obj, "sent_date", None)
     if email_date is not None:
@@ -66,6 +65,7 @@ def build_msg_metadata(msg_obj: msg_parser.MsOxMessage) -> ElementMetadata:
         sent_from=sent_from,
         subject=getattr(msg_obj, "subject", None),
         date=email_date,
+        filename=filename,
     )
 
 
