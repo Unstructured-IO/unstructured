@@ -1,13 +1,21 @@
-## 0.6.6-dev0
+## 0.6.6-dev2
 
 ### Enhancements
 
 * Added an additional trace logger for NLP debugging.
+* Add `get_date` method to `ElementMetadata` for converting the datestring to a `datetime` object.
+* Cleanup the `filename` attribute on `ElementMetadata` to remove the full filepath.
 
 ### Features
 
+* Added table reading as html with URL parsing to `partition_docx` in docx
+* Added metadata field for text_as_html for docx files
+
 ### Fixes
 
+* `fileutils/file_type` check json and eml decode ignore error
+* `partition_email` was updated to more flexibly handle deviations from the RFC-2822 standard.
+  The time in the metadata returns `None` if the time does not match RFC-2822 at all.
 * Include all metadata fields when converting to dataframe or CSV
 
 ## 0.6.5
