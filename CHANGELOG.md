@@ -1,3 +1,15 @@
+## 0.6.7-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* Makes `pytesseract` a function level import in `partition_pdf` so you can use the `"fast"`
+  or `"hi_res"` strategies if `pytesseract` is not installed. Also adds the
+  `required_dependencies` decorator for the `"hi_res"` and `"ocr_only"` strategies.
+
 ## 0.6.6
 
 ### Enhancements
