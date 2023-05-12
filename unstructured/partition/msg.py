@@ -4,12 +4,14 @@ from typing import IO, Dict, List, Optional
 import msg_parser
 
 from unstructured.documents.elements import Element, ElementMetadata
+from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import exactly_one
 from unstructured.partition.email import convert_to_iso_8601
 from unstructured.partition.html import partition_html
 from unstructured.partition.text import partition_text
 
 
+@add_metadata_with_filetype(FileType.MSG)
 def partition_msg(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
