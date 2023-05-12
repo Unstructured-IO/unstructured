@@ -1,24 +1,23 @@
-## 0.6.6-dev1
+## 0.6.6
 
 ### Enhancements
 
-### Features
-
-### Fixes
-
-* fix: fileutils/file_type check json and eml decode ignore error
-
-### Enhancements
-
+* Adds an `"auto"` strategy that chooses the partitioning strategy based on document
+  characteristics and function kwargs. This is the new default strategy for `partition_pdf`
+  and `partition_image`. Users can maintain existing behavior by explicitly setting
+  `strategy="hi_res"`.
 * Added an additional trace logger for NLP debugging.
+* Add `get_date` method to `ElementMetadata` for converting the datestring to a `datetime` object.
+* Cleanup the `filename` attribute on `ElementMetadata` to remove the full filepath.
 
 ### Features
 
 * Added table reading as html with URL parsing to `partition_docx` in docx
-* Added metadata field for text_as_html for docx files 
+* Added metadata field for text_as_html for docx files
 
 ### Fixes
 
+* `fileutils/file_type` check json and eml decode ignore error
 * `partition_email` was updated to more flexibly handle deviations from the RFC-2822 standard.
   The time in the metadata returns `None` if the time does not match RFC-2822 at all.
 * Include all metadata fields when converting to dataframe or CSV

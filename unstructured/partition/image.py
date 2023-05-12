@@ -13,7 +13,7 @@ def partition_image(
     token: Optional[str] = None,
     include_page_breaks: bool = False,
     ocr_languages: str = "eng",
-    strategy: str = "hi_res",
+    strategy: str = "auto",
 ) -> List[Element]:
     """Parses an image into a list of interpreted elements.
 

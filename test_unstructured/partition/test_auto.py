@@ -41,7 +41,7 @@ def test_auto_partition_email_from_filename():
     elements = partition(filename=filename)
     assert len(elements) > 0
     assert elements == EXPECTED_EMAIL_OUTPUT
-    assert elements[0].metadata.filename == filename
+    assert elements[0].metadata.filename == os.path.basename(filename)
 
 
 def test_auto_partition_email_from_file():
@@ -100,7 +100,7 @@ def test_auto_partition_docx_with_filename(mock_docx_document, expected_docx_ele
 
     elements = partition(filename=filename)
     assert elements == expected_docx_elements
-    assert elements[0].metadata.filename == filename
+    assert elements[0].metadata.filename == os.path.basename(filename)
 
 
 def test_auto_partition_docx_with_file(mock_docx_document, expected_docx_elements, tmpdir):
@@ -134,7 +134,7 @@ def test_auto_partition_doc_with_filename(
         content_type=content_type,
     )
     assert elements == expected_docx_elements
-    assert elements[0].metadata.filename == doc_filename
+    assert elements[0].metadata.filename == "mock_document.doc"
 
 
 # NOTE(robinson) - the application/x-ole-storage mime type is not specific enough to
@@ -160,7 +160,7 @@ def test_auto_partition_html_from_filename(pass_file_filename, content_type):
     file_filename = filename if pass_file_filename else None
     elements = partition(filename=filename, file_filename=file_filename, content_type=content_type)
     assert len(elements) > 0
-    assert elements[0].metadata.filename == filename
+    assert elements[0].metadata.filename == os.path.basename(filename)
 
 
 @pytest.mark.parametrize(
@@ -239,7 +239,7 @@ def test_auto_partition_text_from_filename():
     elements = partition(filename=filename)
     assert len(elements) > 0
     assert elements == EXPECTED_TEXT_OUTPUT
-    assert elements[0].metadata.filename == filename
+    assert elements[0].metadata.filename == os.path.basename(filename)
 
 
 def test_auto_partition_text_from_file():
@@ -266,7 +266,7 @@ def test_auto_partition_pdf_from_filename(pass_file_filename, content_type):
     assert isinstance(elements[1], NarrativeText)
     assert elements[1].text.startswith("Zejiang Shen")
 
-    assert elements[0].metadata.filename == filename
+    assert elements[0].metadata.filename == os.path.basename(filename)
 
 
 def test_auto_partition_pdf_uses_table_extraction():
@@ -331,7 +331,7 @@ def test_partition_pdf_doesnt_raise_warning():
     [(False, None), (False, "image/jpeg"), (True, "image/jpeg"), (True, None)],
 )
 def test_auto_partition_jpg(pass_file_filename, content_type):
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "example.jpg")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.jpg")
     file_filename = filename if pass_file_filename else None
     elements = partition(filename=filename, file_filename=file_filename, content_type=content_type)
     assert len(elements) > 0
@@ -342,7 +342,7 @@ def test_auto_partition_jpg(pass_file_filename, content_type):
     [(False, None), (False, "image/jpeg"), (True, "image/jpeg"), (True, None)],
 )
 def test_auto_partition_jpg_from_file(pass_file_filename, content_type):
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "example.jpg")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.jpg")
     file_filename = filename if pass_file_filename else None
     with open(filename, "rb") as f:
         elements = partition(file=f, file_filename=file_filename, content_type=content_type)
@@ -369,7 +369,7 @@ def test_auto_partition_pptx_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
     elements = partition(filename=filename)
     assert elements == EXPECTED_PPTX_OUTPUT
-    assert elements[0].metadata.filename == filename
+    assert elements[0].metadata.filename == os.path.basename(filename)
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
@@ -377,7 +377,7 @@ def test_auto_partition_ppt_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.ppt")
     elements = partition(filename=filename)
     assert elements == EXPECTED_PPTX_OUTPUT
-    assert elements[0].metadata.filename == filename
+    assert elements[0].metadata.filename == os.path.basename(filename)
 
 
 def test_auto_with_page_breaks():
