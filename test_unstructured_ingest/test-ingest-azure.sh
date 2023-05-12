@@ -10,6 +10,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --remote-url abfs://container1/ \
     --azure-account-name azureunstructured1 \
     --structured-output-dir azure-ingest-output \
+    --partition-strategy hi_res \
     --reprocess \
     --num-processes 2
 
