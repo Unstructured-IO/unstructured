@@ -3,7 +3,7 @@
 ### Enhancements
 
 * Adds an `"auto"` strategy that chooses the partitioning strategy based on document
-  characteristics an function kwargs. This is the new default strategy for `partition_pdf`
+  characteristics and function kwargs. This is the new default strategy for `partition_pdf`
   and `partition_image`. Users can maintain existing behavior by explicitly setting
   `strategy="hi_res"`.
 * Added an additional trace logger for NLP debugging.
