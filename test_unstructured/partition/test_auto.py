@@ -331,7 +331,7 @@ def test_partition_pdf_doesnt_raise_warning():
     [(False, None), (False, "image/jpeg"), (True, "image/jpeg"), (True, None)],
 )
 def test_auto_partition_jpg(pass_file_filename, content_type):
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "example.jpg")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.jpg")
     file_filename = filename if pass_file_filename else None
     elements = partition(filename=filename, file_filename=file_filename, content_type=content_type)
     assert len(elements) > 0
@@ -342,7 +342,7 @@ def test_auto_partition_jpg(pass_file_filename, content_type):
     [(False, None), (False, "image/jpeg"), (True, "image/jpeg"), (True, None)],
 )
 def test_auto_partition_jpg_from_file(pass_file_filename, content_type):
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "example.jpg")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.jpg")
     file_filename = filename if pass_file_filename else None
     with open(filename, "rb") as f:
         elements = partition(file=f, file_filename=file_filename, content_type=content_type)
