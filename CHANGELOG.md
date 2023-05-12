@@ -1,4 +1,4 @@
-## 0.6.6-dev2
+## 0.6.6
 
 ### Enhancements
 
@@ -6,16 +6,9 @@
   characteristics an function kwargs. This is the new default strategy for `partition_pdf`
   and `partition_image`. Users can maintain existing behavior by explicitly setting
   `strategy="hi_res"`.
-
-### Features
-
-### Fixes
-
-* fix: fileutils/file_type check json and eml decode ignore error
-
-### Enhancements
-
 * Added an additional trace logger for NLP debugging.
+* Add `get_date` method to `ElementMetadata` for converting the datestring to a `datetime` object.
+* Cleanup the `filename` attribute on `ElementMetadata` to remove the full filepath.
 
 ### Features
 
@@ -24,6 +17,7 @@
 
 ### Fixes
 
+* `fileutils/file_type` check json and eml decode ignore error
 * `partition_email` was updated to more flexibly handle deviations from the RFC-2822 standard.
   The time in the metadata returns `None` if the time does not match RFC-2822 at all.
 * Include all metadata fields when converting to dataframe or CSV
