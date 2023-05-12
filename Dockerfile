@@ -111,4 +111,7 @@ RUN python3.8 -c "import nltk; nltk.download('punkt')" && \
   python3.8 -c "import nltk; nltk.download('averaged_perceptron_tagger')" && \
   python3.8 -c "from unstructured.ingest.doc_processor.generalized import initialize; initialize()"
 
+RUN echo "alias python=python3" >> ~/.bashrc && \
+    echo "alias pip=pip3" >> ~/.bashrc
+
 CMD ["/bin/bash"]
