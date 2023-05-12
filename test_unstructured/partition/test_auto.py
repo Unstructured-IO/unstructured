@@ -485,19 +485,29 @@ def test_auto_partition_odt_from_file():
     assert elements == [Title("Lorem ipsum dolor sit amet.")]
 
 
-@pytest.mark.parametrize("content_type", ["asdf", "hjdfshjdfs"])
-def test_auto_adds_filetype_to_metadata(content_type):
+@pytest.mark.parametrize(
+    ("content_type", "routing_func", "expected"),
+    [
+        ("application/json", "json", FileType.JSON.name),
+        ("text/html", "html", FileType.HTML.name),
+        ("jdsfjdfsjkds", "pdf", None),
+    ],
+)
+def test_auto_adds_filetype_to_metadata(content_type, routing_func, expected):
     with patch(
-        "unstructured.partition.auto.partition_pdf",
+        f"unstructured.partition.auto.partition_{routing_func}",
         lambda *args, **kwargs: [Text("text 1"), Text("text 2")],
     ):
         elements = partition("example-docs/layout-parser-paper-fast.pdf", content_type=content_type)
     assert len(elements) == 2
-    assert all(el.metadata.filetype == content_type for el in elements)
+    assert all(el.metadata.filetype == expected for el in elements)
 
 
-@pytest.mark.parametrize("content_type", ["asdf", "hjdfshjdfs"])
-def test_content_type_overrides_file_specific(content_type):
+@pytest.mark.parametrize(
+    ("content_type", "expected"),
+    [("application/pdf", FileType.PDF.name), (None, FileType.PDF.name)],
+)
+def test_auto_filetype_overrides_file_specific(content_type, expected):
     pdf_metadata = ElementMetadata(filetype="imapdf")
     with patch(
         "unstructured.partition.auto.partition_pdf",
@@ -508,7 +518,7 @@ def test_content_type_overrides_file_specific(content_type):
     ):
         elements = partition("example-docs/layout-parser-paper-fast.pdf", content_type=content_type)
     assert len(elements) == 2
-    assert all(el.metadata.filetype == content_type for el in elements)
+    assert all(el.metadata.filetype == expected for el in elements)
 
 
 supported_filetypes = [
