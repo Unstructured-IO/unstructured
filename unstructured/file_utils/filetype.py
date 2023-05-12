@@ -4,7 +4,7 @@ import re
 import zipfile
 from enum import Enum
 from functools import wraps
-from typing import IO, List, Optional
+from typing import IO, Callable, List, Optional
 
 from unstructured.documents.elements import Element, PageBreak
 from unstructured.nlp.patterns import LIST_OF_DICTS_PATTERN
@@ -410,12 +410,12 @@ def document_to_element_list(
 
 
 def add_metadata_with_filetype(filetype: FileType):
-    def decorator(func: callable):
+    def decorator(func: Callable):
         @wraps(func)
         def wrapper(*args, **kwargs):
             elements = func(*args, **kwargs)
             sig = inspect.signature(func)
-            params = {**{param: value for param, value in zip(sig.parameters, args)}, **kwargs}
+            params = dict(**dict(zip(sig.parameters, args)), **kwargs)
             for param in sig.parameters.values():
                 if param.name not in params and param.default is not param.empty:
                     params[param.name] = param.default
