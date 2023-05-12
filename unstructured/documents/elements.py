@@ -1,3 +1,4 @@
+from __future__ import annotations
 import hashlib
 import pathlib
 from abc import ABC
@@ -41,6 +42,11 @@ class ElementMetadata:
     @classmethod
     def from_dict(cls, input_dict):
         return cls(**input_dict)
+
+    def merge(self, other: ElementMetadata):
+        for k in self.__dict__:
+            if getattr(self, k) is None:
+                setattr(self, k, getattr(other, k))
 
 
 class Element(ABC):
