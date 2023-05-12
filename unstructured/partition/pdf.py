@@ -35,7 +35,7 @@ def partition_pdf(
     template: str = "layout/pdf",
     token: Optional[str] = None,
     include_page_breaks: bool = False,
-    strategy: str = "hi_res",
+    strategy: str = "auto",
     infer_table_structure: bool = False,
     encoding: str = "utf-8",
     ocr_languages: str = "eng",
@@ -98,7 +98,7 @@ def partition_pdf_or_image(
     token: Optional[str] = None,
     is_image: bool = False,
     include_page_breaks: bool = False,
-    strategy: str = "hi_res",
+    strategy: str = "auto",
     infer_table_structure: bool = False,
     encoding: str = "utf-8",
     ocr_languages: str = "eng",
@@ -120,6 +120,7 @@ def partition_pdf_or_image(
             filename=filename,
             file=file,
             is_image=is_image,
+            infer_table_structure=infer_table_structure,
         )
 
         if strategy == "hi_res":

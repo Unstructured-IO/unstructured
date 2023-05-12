@@ -9,6 +9,10 @@ from unstructured.partition.common import exactly_one
 from unstructured.utils import dependency_exists
 
 VALID_STRATEGIES: Dict[str, List[str]] = {
+    "auto": [
+        "pdf",
+        "image",
+    ],
     "hi_res": [
         "pdf",
         "image",
@@ -62,6 +66,7 @@ def determine_pdf_or_image_strategy(
     filename: str = "",
     file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
     is_image: bool = False,
+    infer_table_structure: bool = False,
 ):
     """Determines what strategy to use for processing PDFs or images, accounting for fallback
     logic if some dependencies are not available."""
@@ -74,6 +79,15 @@ def determine_pdf_or_image_strategy(
     else:
         validate_strategy(strategy, "pdf")
         pdf_text_extractable = is_pdf_text_extractable(filename=filename, file=file)
+
+    if strategy == "auto":
+        if is_image:
+            strategy = _determine_image_auto_strategy(infer_table_structure=infer_table_structure)
+        else:
+            strategy = _determine_pdf_auto_strategy(
+                pdf_text_extractable=pdf_text_extractable,
+                infer_table_structure=infer_table_structure,
+            )
 
     if file is not None:
         file.seek(0)  # type: ignore
@@ -121,3 +135,29 @@ def determine_pdf_or_image_strategy(
             return "hi_res"
 
     return strategy
+
+
+def _determine_image_auto_strategy(infer_table_structure: bool = False):
+    """If "auto" is passed in as the strategy, determines what strategy to use
+    for images."""
+    if infer_table_structure is True:
+        return "hi_res"
+    else:
+        return "ocr_only"
+
+
+def _determine_pdf_auto_strategy(
+    pdf_text_extractable: bool = True,
+    infer_table_structure: bool = False,
+):
+    """If "auto" is passed in as the strategy, determines what strategy to use
+    for PDFs."""
+    # NOTE(robinson) - Currrently "hi_res" is the only stategy where
+    # infer_table_structure is used.
+    if infer_table_structure:
+        return "hi_res"
+
+    if pdf_text_extractable:
+        return "fast"
+    else:
+        return "ocr_only"

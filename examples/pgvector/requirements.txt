@@ -1,0 +1,7 @@
+unstructured[local-inference]
+langchain
+jupyter
+pgvector
+psycopg2
+openai
+tiktoken
