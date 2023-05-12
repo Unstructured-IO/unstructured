@@ -1,3 +1,14 @@
+## 0.6.7-dev0
+
+### Enhancements
+
+* Added a `--partition-strategy` parameter to unstructured-ingest so that users can specify
+  partition strategy in CLI. For example, `--partition-strategy fast`.
+
+### Features
+
+### Fixes
+
 ## 0.6.6
 
 ### Enhancements
