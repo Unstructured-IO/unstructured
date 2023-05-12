@@ -1,7 +1,11 @@
-## 0.6.6-dev2
+## 0.6.6
 
 ### Enhancements
 
+* Adds an `"auto"` strategy that chooses the partitioning strategy based on document
+  characteristics and function kwargs. This is the new default strategy for `partition_pdf`
+  and `partition_image`. Users can maintain existing behavior by explicitly setting
+  `strategy="hi_res"`.
 * Added an additional trace logger for NLP debugging.
 * Add `get_date` method to `ElementMetadata` for converting the datestring to a `datetime` object.
 * Cleanup the `filename` attribute on `ElementMetadata` to remove the full filepath.

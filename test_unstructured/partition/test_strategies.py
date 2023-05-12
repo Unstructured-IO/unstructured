@@ -39,3 +39,34 @@ def test_is_pdf_text_extractable(filename, from_file, expected):
         extractable = strategies.is_pdf_text_extractable(filename=filename)
 
     assert extractable is expected
+
+
+@pytest.mark.parametrize(
+    ("infer_table_structure", "expected"),
+    [
+        (True, "hi_res"),
+        (False, "ocr_only"),
+    ],
+)
+def test_determine_image_auto_strategy(infer_table_structure, expected):
+    strategy = strategies._determine_image_auto_strategy(
+        infer_table_structure=infer_table_structure,
+    )
+    assert strategy is expected
+
+
+@pytest.mark.parametrize(
+    ("pdf_text_extractable", "infer_table_structure", "expected"),
+    [
+        (True, True, "hi_res"),
+        (False, True, "hi_res"),
+        (True, False, "fast"),
+        (False, False, "ocr_only"),
+    ],
+)
+def test_determine_image_pdf_strategy(pdf_text_extractable, infer_table_structure, expected):
+    strategy = strategies._determine_pdf_auto_strategy(
+        pdf_text_extractable=pdf_text_extractable,
+        infer_table_structure=infer_table_structure,
+    )
+    assert strategy is expected
