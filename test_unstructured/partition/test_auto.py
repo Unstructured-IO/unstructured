@@ -553,7 +553,11 @@ FILETYPE_TO_MODULE = {
 def test_file_specific_produces_correct_filetype(filetype: FileType):
     if filetype in (FileType.JPG, FileType.PNG):
         pytest.skip()
-    if (filetype == FileType.RTF) and (is_in_docker or rtf_not_supported):
+    if (filetype is FileType.RTF) and (is_in_docker or rtf_not_supported):
+        pytest.skip()
+    if (filetype is FileType.ODT) and (is_in_docker or odt_not_supported):
+        pytest.skip()
+    if (filetype is FileType.EPUB) and is_in_docker:
         pytest.skip()
     extension = filetype.name.lower()
     filetype_module = (
