@@ -4,6 +4,7 @@ from typing import IO, Callable, Dict, Optional, Tuple
 import requests
 
 from unstructured.file_utils.filetype import (
+    FILETYPE_TO_MIMETYPE,
     STR_TO_FILETYPE,
     FileType,
     detect_filetype,
@@ -190,9 +191,11 @@ def partition(
         element.metadata.url = url
         if content_type is not None:
             out_filetype = STR_TO_FILETYPE.get(content_type)
-            element.metadata.filetype = out_filetype.name if out_filetype is not None else None
+            element.metadata.filetype = (
+                FILETYPE_TO_MIMETYPE[out_filetype] if out_filetype is not None else None
+            )
         else:
-            element.metadata.filetype = filetype.name
+            element.metadata.filetype = FILETYPE_TO_MIMETYPE[filetype]
 
     return elements
 
