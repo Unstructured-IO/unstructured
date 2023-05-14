@@ -44,7 +44,7 @@ def test_partition_msg_from_filename():
         sent_from=["Matthew Robinson <mrobinson@unstructured.io>"],
         sent_to=["Matthew Robinson (None)"],
         subject="Test Email",
-        filetype="MSG",
+        filetype="application/vnd.ms-outlook",
     )
 
 

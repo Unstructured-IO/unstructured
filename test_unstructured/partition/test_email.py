@@ -179,7 +179,7 @@ def test_partition_email_has_metadata():
         sent_from=["Matthew Robinson <mrobinson@unstructured.io>"],
         sent_to=["Matthew Robinson <mrobinson@unstructured.io>"],
         subject="Test Email",
-        filetype="EML",
+        filetype="message/rfc822",
     )
 
     expected_dt = datetime.datetime.fromisoformat("2022-12-16T17:04:16-05:00")

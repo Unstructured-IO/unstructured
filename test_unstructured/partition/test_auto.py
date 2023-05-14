@@ -18,7 +18,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.file_utils.filetype import FileType
+from unstructured.file_utils.filetype import FILETYPE_TO_MIMETYPE, FileType
 from unstructured.partition import auto
 from unstructured.partition.auto import partition
 from unstructured.partition.common import convert_office_doc
@@ -491,8 +491,8 @@ def test_auto_partition_odt_from_file():
 @pytest.mark.parametrize(
     ("content_type", "routing_func", "expected"),
     [
-        ("application/json", "json", FileType.JSON.name),
-        ("text/html", "html", FileType.HTML.name),
+        ("application/json", "json", "application/json"),
+        ("text/html", "html", "text/html"),
         ("jdsfjdfsjkds", "pdf", None),
     ],
 )
@@ -508,7 +508,10 @@ def test_auto_adds_filetype_to_metadata(content_type, routing_func, expected):
 
 @pytest.mark.parametrize(
     ("content_type", "expected"),
-    [("application/pdf", FileType.PDF.name), (None, FileType.PDF.name)],
+    [
+        ("application/pdf", FILETYPE_TO_MIMETYPE[FileType.PDF]),
+        (None, FILETYPE_TO_MIMETYPE[FileType.PDF]),
+    ],
 )
 def test_auto_filetype_overrides_file_specific(content_type, expected):
     pdf_metadata = ElementMetadata(filetype="imapdf")
@@ -562,5 +565,5 @@ def test_file_specific_produces_correct_filetype(filetype: FileType):
     for file in pathlib.Path("example-docs").iterdir():
         if file.is_file() and file.suffix == f".{extension}":
             elements = fun(str(file))
-            assert all(el.metadata.filetype == filetype.name for el in elements)
+            assert all(el.metadata.filetype == FILETYPE_TO_MIMETYPE[filetype] for el in elements)
             break
