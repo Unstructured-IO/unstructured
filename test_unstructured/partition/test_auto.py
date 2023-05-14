@@ -550,6 +550,8 @@ FILETYPE_TO_MODULE = {
 def test_file_specific_produces_correct_filetype(filetype: FileType):
     if filetype in (FileType.JPG, FileType.PNG):
         pytest.skip()
+    if (filetype == FileType.RTF) and (is_in_docker or rtf_not_supported):
+        pytest.skip()
     extension = filetype.name.lower()
     filetype_module = (
         extension if filetype not in FILETYPE_TO_MODULE else FILETYPE_TO_MODULE[filetype]
