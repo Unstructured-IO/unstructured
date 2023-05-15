@@ -1,6 +1,8 @@
-## 0.6.7-dev0
+## 0.6.7-dev1
 
 ### Enhancements
+
+* Added metadata for filetype.
 
 ### Features
 

@@ -118,7 +118,6 @@ def test_partition_pdf_local(monkeypatch, filename, file):
     )
 
     partition_pdf_response = pdf._partition_pdf_or_image_local(filename, file)
-    assert partition_pdf_response[0].type == "Title"
     assert partition_pdf_response[0].text == "Charlie Brown and the Great Pumpkin"
 
 

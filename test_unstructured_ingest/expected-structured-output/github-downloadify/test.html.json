@@ -4,6 +4,7 @@
     "text": "Downloadify Example",
     "type": "Title",
     "metadata": {
+      "filetype": "text/html",
       "page_number": 1
     }
   },
@@ -12,6 +13,7 @@
     "text": "More info available at the Github Project Page",
     "type": "Title",
     "metadata": {
+      "filetype": "text/html",
       "page_number": 1
     }
   },
@@ -20,6 +22,7 @@
     "text": "Filename",
     "type": "Title",
     "metadata": {
+      "filetype": "text/html",
       "page_number": 1
     }
   },
@@ -28,6 +31,7 @@
     "text": "File Contents\n\nWhatever you put in this text box will be downloaded and saved in the file. If you leave it blank, no file will be downloaded",
     "type": "NarrativeText",
     "metadata": {
+      "filetype": "text/html",
       "page_number": 1
     }
   },
@@ -36,6 +40,7 @@
     "text": "You must have Flash 10 installed to download this file.",
     "type": "NarrativeText",
     "metadata": {
+      "filetype": "text/html",
       "page_number": 1
     }
   },
@@ -44,6 +49,7 @@
     "text": "Downloadify Invoke Script For This Page",
     "type": "Title",
     "metadata": {
+      "filetype": "text/html",
       "page_number": 1
     }
   }

@@ -21,6 +21,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
+from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import exactly_one, spooled_to_bytes_io_if_needed
 from unstructured.partition.text_type import (
     is_bulleted_text,
@@ -95,6 +96,7 @@ def _get_paragraph_runs(paragraph):
 Paragraph.runs = property(lambda self: _get_paragraph_runs(self))
 
 
+@add_metadata_with_filetype(FileType.DOCX)
 def partition_docx(
     filename: Optional[str] = None,
     file: Optional[Union[IO, SpooledTemporaryFile]] = None,
