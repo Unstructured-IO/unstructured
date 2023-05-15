@@ -801,7 +801,6 @@ def main(
         logger.error("No connector-specific option was specified!")
         sys.exit(1)
 
-    # NOTE(yuming): passing kwargs function `partition` in `unstructured.partition.auto`
     process_document_with_partition_strategy = partial(
         process_document,
         strategy=partition_strategy,

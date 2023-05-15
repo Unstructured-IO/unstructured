@@ -97,10 +97,10 @@ class BaseIngestDoc(ABC):
         """Write the structured json result for this doc. result must be json serializable."""
         pass
 
-    def partition_file(self, **kwargs):
+    def partition_file(self, **partition_kwargs):
         if not self.config.partition_by_api:
             logger.debug("Using local partition")
-            elements = partition(filename=str(self.filename), **kwargs)
+            elements = partition(filename=str(self.filename), **partition_kwargs)
             return convert_to_dict(elements)
 
         else:
@@ -119,12 +119,12 @@ class BaseIngestDoc(ABC):
 
             return response.json()
 
-    def process_file(self, **kwargs):
+    def process_file(self, **partition_kwargs):
         if self.config.download_only:
             return
         logger.info(f"Processing {self.filename}")
 
-        isd_elems = self.partition_file(**kwargs)
+        isd_elems = self.partition_file(**partition_kwargs)
 
         self.isd_elems_no_filename = []
         for elem in isd_elems:
