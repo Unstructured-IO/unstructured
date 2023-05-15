@@ -173,11 +173,6 @@ def partition_pdf_or_image(
         )
 
     return layout_elements
-    # return add_element_metadata(
-    #     layout_elements,
-    #     include_page_breaks=include_page_breaks,
-    #     filename=filename,
-    # )
 
 
 @requires_dependencies("unstructured_inference")
