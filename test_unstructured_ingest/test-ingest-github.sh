@@ -25,7 +25,7 @@ fi
 
 #shellcheck disable=SC2086
 PYTHONPATH=. ./unstructured/ingest/main.py \
-    --metadata-exclude filename \
+    --metadata-exclude filename,file_directory \
     --github-url dcneiner/Downloadify \
     --git-file-glob '*.html,*.txt' \
     --structured-output-dir github-downloadify-output \
