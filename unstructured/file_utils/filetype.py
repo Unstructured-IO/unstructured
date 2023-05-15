@@ -138,7 +138,6 @@ FILETYPE_TO_MIMETYPE = {
     FileType.TXT: "text/plain",
     FileType.MD: "text/markdown",
     FileType.EPUB: "application/epub",
-    FileType.EPUB: "application/epub+zip",
     FileType.JSON: "application/json",
     FileType.RTF: "application/rtf",
     FileType.HTML: "text/html",
