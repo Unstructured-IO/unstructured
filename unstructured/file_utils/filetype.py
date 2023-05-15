@@ -1,11 +1,14 @@
+import inspect
 import os
 import re
 import zipfile
 from enum import Enum
-from typing import IO, Optional
+from functools import wraps
+from typing import IO, Callable, List, Optional
 
+from unstructured.documents.elements import Element, PageBreak
 from unstructured.nlp.patterns import LIST_OF_DICTS_PATTERN
-from unstructured.partition.common import exactly_one
+from unstructured.partition.common import _add_element_metadata, exactly_one
 
 try:
     import magic
@@ -132,10 +135,13 @@ STR_TO_FILETYPE = {
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document": FileType.DOCX,
     "image/jpeg": FileType.JPG,
     "image/png": FileType.PNG,
+    "text/plain": FileType.TXT,
     "text/markdown": FileType.MD,
     "text/x-markdown": FileType.MD,
     "application/epub": FileType.EPUB,
     "application/epub+zip": FileType.EPUB,
+    "application/json": FileType.JSON,
+    "application/rtf": FileType.RTF,
     "text/html": FileType.HTML,
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": FileType.XLSX,
     "application/vnd.ms-excel": FileType.XLS,
@@ -143,8 +149,13 @@ STR_TO_FILETYPE = {
     "application/vnd.ms-powerpoint": FileType.PPT,
     "application/xml": FileType.XML,
     "application/vnd.oasis.opendocument.text": FileType.ODT,
+    "message/rfc822": FileType.EML,
+    "application/vnd.ms-outlook": FileType.MSG,
 }
 
+FILETYPE_TO_MIMETYPE = {
+    v: k for k, v in STR_TO_FILETYPE.items() if k not in ("text/x-markdown", "application/epub+zip")
+}
 
 EXT_TO_FILETYPE = {
     ".pdf": FileType.PDF,
@@ -155,6 +166,7 @@ EXT_TO_FILETYPE = {
     ".text": FileType.TXT,
     ".eml": FileType.EML,
     ".xml": FileType.XML,
+    ".htm": FileType.HTML,
     ".html": FileType.HTML,
     ".md": FileType.MD,
     ".xlsx": FileType.XLSX,
@@ -255,7 +267,7 @@ def detect_filetype(
         return FileType.RTF
 
     elif mime_type.endswith("xml"):
-        if extension and extension == ".html":
+        if extension and (extension == ".html" or extension == ".htm"):
             return FileType.HTML
         else:
             return FileType.XML
@@ -372,3 +384,61 @@ def _check_eml_from_buffer(file: IO) -> bool:
         file_head = file_content
 
     return EMAIL_HEAD_RE.match(file_head) is not None
+
+
+def document_to_element_list(
+    document,
+    include_page_breaks: bool = False,
+) -> List[Element]:
+    """Converts a DocumentLayout object to a list of unstructured elements."""
+    elements: List[Element] = []
+    image_formats: List[str] = []
+    num_pages = len(document.pages)
+    for i, page in enumerate(document.pages):
+        for element in page.elements:
+            elements.append(element)
+            if hasattr(page, "image"):
+                image_formats.append(page.image.format)
+        if include_page_breaks and i < num_pages - 1:
+            elements.append(PageBreak())
+
+    if image_formats and all(image_format == "PNG" for image_format in image_formats):
+        filetype = FileType.PNG.name
+    elif image_formats and all(image_format == "JPEG" for image_format in image_formats):
+        filetype = FileType.JPG.name
+    else:
+        filetype = None
+    elements = _add_element_metadata(
+        elements,
+        include_page_breaks=include_page_breaks,
+        filetype=filetype,
+    )
+    return elements
+
+
+def add_metadata_with_filetype(filetype: FileType):
+    def decorator(func: Callable):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            elements = func(*args, **kwargs)
+            sig = inspect.signature(func)
+            params = dict(**dict(zip(sig.parameters, args)), **kwargs)
+            for param in sig.parameters.values():
+                if param.name not in params and param.default is not param.empty:
+                    params[param.name] = param.default
+            include_metadata = params.get("include_metadata", True)
+            if include_metadata:
+                metadata_kwargs = {
+                    kwarg: params.get(kwarg) for kwarg in ("include_page_breaks", "filename", "url")
+                }
+                return _add_element_metadata(
+                    elements,
+                    filetype=FILETYPE_TO_MIMETYPE[filetype],
+                    **metadata_kwargs,  # type: ignore
+                )
+            else:
+                return elements
+
+        return wrapper
+
+    return decorator

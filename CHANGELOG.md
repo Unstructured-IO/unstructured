@@ -1,3 +1,20 @@
+## 0.6.7-dev3
+
+### Enhancements
+
+* Added a `--partition-strategy` parameter to unstructured-ingest so that users can specify
+  partition strategy in CLI. For example, `--partition-strategy fast`.
+* Added metadata for filetype.
+
+### Features
+
+### Fixes
+
+* Supports `hml` filetype for partition as a variation of html filetype.
+* Makes `pytesseract` a function level import in `partition_pdf` so you can use the `"fast"`
+  or `"hi_res"` strategies if `pytesseract` is not installed. Also adds the
+  `required_dependencies` decorator for the `"hi_res"` and `"ocr_only"` strategies.
+
 ## 0.6.6
 
 ### Enhancements

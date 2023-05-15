@@ -19,6 +19,9 @@ def normalize_layout_element(layout_element) -> Union[Element, List[Element]]:
     """Converts a list of unstructured_inference DocumentLayout objects to a list of
     unstructured Elements."""
 
+    if isinstance(layout_element, Element):
+        return layout_element
+
     if isinstance(layout_element, PageBreak):
         return PageBreak()
 
@@ -64,26 +67,11 @@ def layout_list_to_list_items(
     return list_items
 
 
-def document_to_element_list(
-    document,
-    include_page_breaks: bool = False,
-) -> List[Element]:
-    """Converts a DocumentLayout object to a list of unstructured elements."""
-    elements: List[Element] = []
-    num_pages = len(document.pages)
-    for i, page in enumerate(document.pages):
-        for element in page.elements:
-            elements.append(element)
-        if include_page_breaks and i < num_pages - 1:
-            elements.append(PageBreak())
-
-    return elements
-
-
-def add_element_metadata(
+def _add_element_metadata(
     layout_elements,
     include_page_breaks: bool = False,
     filename: Optional[str] = None,
+    filetype: Optional[str] = None,
     url: Optional[str] = None,
 ) -> List[Element]:
     """Adds document metadata to the document element. Document metadata includes information
@@ -98,20 +86,21 @@ def add_element_metadata(
             text_as_html = None
         metadata = ElementMetadata(
             filename=filename,
+            filetype=filetype,
             url=url,
             page_number=page_number,
             text_as_html=text_as_html,
         )
         if isinstance(element, list):
             for _element in element:
-                _element.metadata = metadata
+                _element.metadata = metadata.merge(_element.metadata)
             elements.extend(element)
         elif isinstance(element, PageBreak):
             page_number += 1
-            if include_page_breaks is True:
+            if include_page_breaks:
                 elements.append(element)
         else:
-            element.metadata = metadata
+            element.metadata = metadata.merge(element.metadata)
             elements.append(element)
     return elements
 

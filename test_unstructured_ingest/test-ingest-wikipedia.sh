@@ -10,6 +10,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --wikipedia-page-title "Open Source Software" \
     --structured-output-dir wikipedia-ingest-output \
     --num-processes 2 \
+    --partition-strategy hi_res \
     --verbose
 
 set +e

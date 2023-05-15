@@ -3,7 +3,12 @@ from typing import IO, Callable, Dict, Optional, Tuple
 
 import requests
 
-from unstructured.file_utils.filetype import FileType, detect_filetype
+from unstructured.file_utils.filetype import (
+    FILETYPE_TO_MIMETYPE,
+    STR_TO_FILETYPE,
+    FileType,
+    detect_filetype,
+)
 from unstructured.logger import logger
 from unstructured.partition.common import exactly_one
 from unstructured.partition.doc import partition_doc
@@ -30,7 +35,7 @@ def partition(
     file_filename: Optional[str] = None,
     url: Optional[str] = None,
     include_page_breaks: bool = False,
-    strategy: str = "hi_res",
+    strategy: str = "auto",
     encoding: str = "utf-8",
     paragraph_grouper: Optional[Callable[[str], str]] = None,
     headers: Dict[str, str] = {},
@@ -184,6 +189,13 @@ def partition(
 
     for element in elements:
         element.metadata.url = url
+        if content_type is not None:
+            out_filetype = STR_TO_FILETYPE.get(content_type)
+            element.metadata.filetype = (
+                FILETYPE_TO_MIMETYPE[out_filetype] if out_filetype is not None else None
+            )
+        else:
+            element.metadata.filetype = FILETYPE_TO_MIMETYPE[filetype]
 
     return elements
 

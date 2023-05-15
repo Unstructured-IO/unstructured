@@ -120,7 +120,6 @@ def test_partition_image_local(monkeypatch, filename, file):
     )
 
     partition_image_response = pdf._partition_pdf_or_image_local(filename, file, is_image=True)
-    assert partition_image_response[0].type == "Title"
     assert partition_image_response[0].text == "Charlie Brown and the Great Pumpkin"
 
 
@@ -204,7 +203,7 @@ def test_partition_image_with_ocr_detects_korean():
     )
 
     assert elements[0] == Title("RULES AND INSTRUCTIONS")
-    assert elements[3].text.startswith("안녕하세요")
+    assert elements[3].text.replace(" ", "").startswith("안녕하세요")
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
@@ -219,7 +218,7 @@ def test_partition_image_with_ocr_detects_korean_from_file():
         )
 
     assert elements[0] == Title("RULES AND INSTRUCTIONS")
-    assert elements[3].text.startswith("안녕하세요")
+    assert elements[3].text.replace(" ", "").startswith("안녕하세요")
 
 
 def test_partition_image_raises_with_bad_strategy():

@@ -3,11 +3,13 @@ import re
 from typing import IO, List, Optional
 
 from unstructured.documents.elements import Element
+from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.nlp.patterns import LIST_OF_DICTS_PATTERN
 from unstructured.partition.common import exactly_one
 from unstructured.staging.base import dict_to_elements
 
 
+@add_metadata_with_filetype(FileType.JSON)
 def partition_json(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
