@@ -129,28 +129,6 @@ class FileType(Enum):
         return self.name < other.name
 
 
-FILETYPE_TO_MIMETYPE = {
-    FileType.PDF: "application/pdf",
-    FileType.DOC: "application/msword",
-    FileType.DOCX: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    FileType.JPG: "image/jpeg",
-    FileType.PNG: "image/png",
-    FileType.TXT: "text/plain",
-    FileType.MD: "text/markdown",
-    FileType.EPUB: "application/epub",
-    FileType.JSON: "application/json",
-    FileType.RTF: "application/rtf",
-    FileType.HTML: "text/html",
-    FileType.XLSX: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    FileType.XLS: "application/vnd.ms-excel",
-    FileType.PPTX: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-    FileType.PPT: "application/vnd.ms-powerpoint",
-    FileType.XML: "application/xml",
-    FileType.ODT: "application/vnd.oasis.opendocument.text",
-    FileType.EML: "message/rfc822",
-    FileType.MSG: "application/vnd.ms-outlook",
-}
-
 STR_TO_FILETYPE = {
     "application/pdf": FileType.PDF,
     "application/msword": FileType.DOC,
@@ -173,6 +151,10 @@ STR_TO_FILETYPE = {
     "application/vnd.oasis.opendocument.text": FileType.ODT,
     "message/rfc822": FileType.EML,
     "application/vnd.ms-outlook": FileType.MSG,
+}
+
+FILETYPE_TO_MIMETYPE = {
+    v: k for k, v in STR_TO_FILETYPE if k not in ("text/x-markdown", "application/epub+zip")
 }
 
 EXT_TO_FILETYPE = {
