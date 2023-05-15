@@ -154,7 +154,7 @@ STR_TO_FILETYPE = {
 }
 
 FILETYPE_TO_MIMETYPE = {
-    v: k for k, v in STR_TO_FILETYPE if k not in ("text/x-markdown", "application/epub+zip")
+    v: k for k, v in STR_TO_FILETYPE.items() if k not in ("text/x-markdown", "application/epub+zip")
 }
 
 EXT_TO_FILETYPE = {
