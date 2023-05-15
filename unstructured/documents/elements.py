@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import datetime
 import hashlib
 import os
@@ -17,6 +19,7 @@ class NoID(ABC):
 class ElementMetadata:
     filename: Optional[str] = None
     date: Optional[str] = None
+    filetype: Optional[str] = None
 
     # Page numbers currenlty supported for PDF, HTML and PPT documents
     page_number: Optional[int] = None
@@ -45,6 +48,12 @@ class ElementMetadata:
     @classmethod
     def from_dict(cls, input_dict):
         return cls(**input_dict)
+
+    def merge(self, other: ElementMetadata):
+        for k in self.__dict__:
+            if getattr(self, k) is None:
+                setattr(self, k, getattr(other, k))
+        return self
 
     def get_date(self) -> Optional[datetime.datetime]:
         """Converts the date field to a datetime object."""

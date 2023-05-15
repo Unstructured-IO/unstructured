@@ -1,9 +1,11 @@
 from typing import IO, List, Optional
 
 from unstructured.documents.elements import Element
+from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.html import convert_and_partition_html
 
 
+@add_metadata_with_filetype(FileType.RTF)
 def partition_rtf(
     filename: Optional[str] = None,
     file: Optional[IO] = None,

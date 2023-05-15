@@ -3,10 +3,12 @@ import tempfile
 from typing import IO, List, Optional
 
 from unstructured.documents.elements import Element
+from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import convert_office_doc, exactly_one
 from unstructured.partition.pptx import partition_pptx
 
 
+@add_metadata_with_filetype(FileType.PPT)
 def partition_ppt(
     filename: Optional[str] = None,
     file: Optional[IO] = None,

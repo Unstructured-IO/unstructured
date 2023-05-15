@@ -2,6 +2,7 @@ import json
 import os
 import pathlib
 import warnings
+from importlib import import_module
 from unittest.mock import patch
 
 import docx
@@ -10,12 +11,14 @@ import pytest
 
 from unstructured.documents.elements import (
     Address,
+    ElementMetadata,
     ListItem,
     NarrativeText,
     PageBreak,
     Text,
     Title,
 )
+from unstructured.file_utils.filetype import FILETYPE_TO_MIMETYPE, FileType
 from unstructured.partition import auto
 from unstructured.partition.auto import partition
 from unstructured.partition.common import convert_office_doc
@@ -209,6 +212,9 @@ def test_auto_partition_json_from_filename():
     for elem in json_elems:
         # coordinates are always in the element data structures, even if None
         elem.pop("coordinates")
+        elem.pop("metadata")
+    for elem in json_data:
+        elem.pop("metadata")
     assert json_data == json_elems
 
 
@@ -511,3 +517,88 @@ def test_auto_partition_odt_from_file():
         elements = partition(file=f, strategy="hi_res")
 
     assert elements == [Title("Lorem ipsum dolor sit amet.")]
+
+
+@pytest.mark.parametrize(
+    ("content_type", "routing_func", "expected"),
+    [
+        ("application/json", "json", "application/json"),
+        ("text/html", "html", "text/html"),
+        ("jdsfjdfsjkds", "pdf", None),
+    ],
+)
+def test_auto_adds_filetype_to_metadata(content_type, routing_func, expected):
+    with patch(
+        f"unstructured.partition.auto.partition_{routing_func}",
+        lambda *args, **kwargs: [Text("text 1"), Text("text 2")],
+    ):
+        elements = partition("example-docs/layout-parser-paper-fast.pdf", content_type=content_type)
+    assert len(elements) == 2
+    assert all(el.metadata.filetype == expected for el in elements)
+
+
+@pytest.mark.parametrize(
+    ("content_type", "expected"),
+    [
+        ("application/pdf", FILETYPE_TO_MIMETYPE[FileType.PDF]),
+        (None, FILETYPE_TO_MIMETYPE[FileType.PDF]),
+    ],
+)
+def test_auto_filetype_overrides_file_specific(content_type, expected):
+    pdf_metadata = ElementMetadata(filetype="imapdf")
+    with patch(
+        "unstructured.partition.auto.partition_pdf",
+        lambda *args, **kwargs: [
+            Text("text 1", metadata=pdf_metadata),
+            Text("text 2", metadata=pdf_metadata),
+        ],
+    ):
+        elements = partition("example-docs/layout-parser-paper-fast.pdf", content_type=content_type)
+    assert len(elements) == 2
+    assert all(el.metadata.filetype == expected for el in elements)
+
+
+supported_filetypes = [
+    _
+    for _ in FileType
+    if _
+    not in (
+        FileType.UNK,
+        FileType.ZIP,
+        FileType.XML,
+        FileType.XLS,
+        FileType.XLSX,
+    )
+]
+
+
+FILETYPE_TO_MODULE = {
+    FileType.JPG: "image",
+    FileType.PNG: "image",
+    FileType.TXT: "text",
+    FileType.EML: "email",
+}
+
+
+@pytest.mark.parametrize("filetype", supported_filetypes)
+def test_file_specific_produces_correct_filetype(filetype: FileType):
+    if filetype in (FileType.JPG, FileType.PNG):
+        pytest.skip()
+    if (filetype is FileType.RTF) and (is_in_docker or rtf_not_supported):
+        pytest.skip()
+    if (filetype is FileType.ODT) and (is_in_docker or odt_not_supported):
+        pytest.skip()
+    if (filetype is FileType.EPUB) and is_in_docker:
+        pytest.skip()
+    extension = filetype.name.lower()
+    filetype_module = (
+        extension if filetype not in FILETYPE_TO_MODULE else FILETYPE_TO_MODULE[filetype]
+    )
+    fun_name = "partition_" + filetype_module
+    module = import_module(f"unstructured.partition.{filetype_module}")  # noqa
+    fun = eval(f"module.{fun_name}")
+    for file in pathlib.Path("example-docs").iterdir():
+        if file.is_file() and file.suffix == f".{extension}":
+            elements = fun(str(file))
+            assert all(el.metadata.filetype == FILETYPE_TO_MIMETYPE[filetype] for el in elements)
+            break

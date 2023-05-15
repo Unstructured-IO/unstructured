@@ -10,11 +10,14 @@ from PIL import Image
 
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import Element, ElementMetadata, PageBreak
+from unstructured.file_utils.filetype import (
+    FileType,
+    add_metadata_with_filetype,
+    document_to_element_list,
+)
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.partition import _partition_via_api
 from unstructured.partition.common import (
-    add_element_metadata,
-    document_to_element_list,
     exactly_one,
     spooled_to_bytes_io_if_needed,
 )
@@ -23,6 +26,7 @@ from unstructured.partition.text import partition_text
 from unstructured.utils import requires_dependencies
 
 
+@add_metadata_with_filetype(FileType.PDF)
 def partition_pdf(
     filename: str = "",
     file: Optional[Union[BinaryIO, SpooledTemporaryFile]] = None,
@@ -168,11 +172,7 @@ def partition_pdf_or_image(
             include_page_breaks=True,
         )
 
-    return add_element_metadata(
-        layout_elements,
-        include_page_breaks=include_page_breaks,
-        filename=filename,
-    )
+    return layout_elements
 
 
 @requires_dependencies("unstructured_inference")

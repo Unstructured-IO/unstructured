@@ -11,6 +11,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
+from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.partition.common import exactly_one
 from unstructured.partition.text_type import (
@@ -25,6 +26,7 @@ def split_by_paragraph(content: str) -> List[str]:
     return re.split(PARAGRAPH_PATTERN, content)
 
 
+@add_metadata_with_filetype(FileType.TXT)
 def partition_text(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
