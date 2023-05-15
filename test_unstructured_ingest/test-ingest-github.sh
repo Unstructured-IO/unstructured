@@ -29,6 +29,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --github-url dcneiner/Downloadify \
     --git-file-glob '*.html,*.txt' \
     --structured-output-dir github-downloadify-output \
+    --partition-strategy hi_res \
     --reprocess \
     --preserve-downloads \
     --verbose $ACCESS_TOKEN_FLAGS
