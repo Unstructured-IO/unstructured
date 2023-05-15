@@ -166,6 +166,7 @@ EXT_TO_FILETYPE = {
     ".text": FileType.TXT,
     ".eml": FileType.EML,
     ".xml": FileType.XML,
+    ".htm": FileType.HTML,
     ".html": FileType.HTML,
     ".md": FileType.MD,
     ".xlsx": FileType.XLSX,
@@ -266,7 +267,7 @@ def detect_filetype(
         return FileType.RTF
 
     elif mime_type.endswith("xml"):
-        if extension and extension == ".html":
+        if extension and (extension == ".html" or extension == ".htm"):
             return FileType.HTML
         else:
             return FileType.XML
