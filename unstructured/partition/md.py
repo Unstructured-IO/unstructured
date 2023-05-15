@@ -5,6 +5,7 @@ import requests
 
 from unstructured.documents.elements import Element
 from unstructured.documents.xml import VALID_PARSERS
+from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import exactly_one
 from unstructured.partition.html import partition_html
 
@@ -15,6 +16,7 @@ def optional_decode(contents: Union[str, bytes]) -> str:
     return contents
 
 
+@add_metadata_with_filetype(FileType.MD)
 def partition_md(
     filename: Optional[str] = None,
     file: Optional[IO] = None,

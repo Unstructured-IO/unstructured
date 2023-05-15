@@ -1,8 +1,9 @@
-## 0.6.7-dev1
+## 0.6.7-dev2
 
 ### Enhancements
 
 * Add `file_directory` to metadata
+* Added metadata for filetype.
 
 ### Features
 
