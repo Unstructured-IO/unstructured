@@ -10,6 +10,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --local-input-path example-docs \
     --local-file-glob "*.html" \
     --structured-output-dir local-ingest-output \
+    --partition-strategy hi_res \
     --verbose \
     --reprocess
 

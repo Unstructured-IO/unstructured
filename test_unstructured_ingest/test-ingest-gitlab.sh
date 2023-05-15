@@ -11,6 +11,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --git-file-glob '*.md,*.txt' \
     --structured-output-dir gitlab-ingest-output \
     --git-branch 'v0.0.7' \
+    --partition-strategy hi_res \
     --verbose
 
 set +e

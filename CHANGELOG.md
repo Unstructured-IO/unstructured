@@ -3,6 +3,8 @@
 ### Enhancements
 
 * Add `file_directory` to metadata
+* Added a `--partition-strategy` parameter to unstructured-ingest so that users can specify
+  partition strategy in CLI. For example, `--partition-strategy fast`.
 * Added metadata for filetype.
 
 ### Features

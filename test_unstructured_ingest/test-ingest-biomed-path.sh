@@ -29,6 +29,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --biomed-path "oa_pdf/07/07/sbaa031.073.PMC7234218.pdf" \
     --structured-output-dir biomed-ingest-output-path \
     --num-processes 2 \
+    --partition-strategy hi_res \
     --reprocess \
     --download-dir biomed-download-path \
     --preserve-downloads \
