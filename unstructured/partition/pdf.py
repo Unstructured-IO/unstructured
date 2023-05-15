@@ -4,7 +4,6 @@ from tempfile import SpooledTemporaryFile
 from typing import BinaryIO, List, Optional, Union, cast
 
 import pdf2image
-import pytesseract
 from pdfminer.high_level import extract_pages
 from pdfminer.utils import open_filename
 from PIL import Image
@@ -176,6 +175,7 @@ def partition_pdf_or_image(
     )
 
 
+@requires_dependencies("unstructured_inference")
 def _partition_pdf_or_image_local(
     filename: str = "",
     file: Optional[Union[bytes, BinaryIO]] = None,
@@ -301,6 +301,7 @@ def _process_pdfminer_pages(
     return elements
 
 
+@requires_dependencies("pytesseract")
 def _partition_pdf_or_image_with_ocr(
     filename: str = "",
     file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
@@ -310,6 +311,8 @@ def _partition_pdf_or_image_with_ocr(
 ):
     """Partitions and image or PDF using Tesseract OCR. For PDFs, each page is converted
     to an image prior to processing."""
+    import pytesseract
+
     if is_image:
         if file is not None:
             image = Image.open(file)
