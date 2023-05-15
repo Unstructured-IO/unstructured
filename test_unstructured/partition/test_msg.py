@@ -58,6 +58,8 @@ def test_partition_msg_from_filename_with_text_content(monkeypatch):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
     elements = partition_msg(filename=filename)
     assert str(elements[0]) == "Here is an email with plain text."
+    assert elements[0].metadata.filename == "fake-email.msg"
+    assert elements[0].metadata.file_directory == EXAMPLE_DOCS_DIRECTORY
 
 
 def test_partition_msg_raises_with_missing_file():
