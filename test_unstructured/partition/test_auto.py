@@ -45,6 +45,7 @@ def test_auto_partition_email_from_filename():
     assert len(elements) > 0
     assert elements == EXPECTED_EMAIL_OUTPUT
     assert elements[0].metadata.filename == os.path.basename(filename)
+    assert elements[0].metadata.file_directory == os.path.split(filename)[0]
 
 
 def test_auto_partition_email_from_file():
@@ -139,6 +140,7 @@ def test_auto_partition_doc_with_filename(
     )
     assert elements == expected_docx_elements
     assert elements[0].metadata.filename == "mock_document.doc"
+    assert elements[0].metadata.file_directory == tmpdir.dirname
 
 
 # NOTE(robinson) - the application/x-ole-storage mime type is not specific enough to
@@ -170,6 +172,7 @@ def test_auto_partition_html_from_filename(pass_file_filename, content_type):
     )
     assert len(elements) > 0
     assert elements[0].metadata.filename == os.path.basename(filename)
+    assert elements[0].metadata.file_directory == os.path.split(filename)[0]
 
 
 @pytest.mark.parametrize(
@@ -257,6 +260,7 @@ def test_auto_partition_text_from_filename():
     assert len(elements) > 0
     assert elements == EXPECTED_TEXT_OUTPUT
     assert elements[0].metadata.filename == os.path.basename(filename)
+    assert elements[0].metadata.file_directory == os.path.split(filename)[0]
 
 
 def test_auto_partition_text_from_file():
@@ -289,6 +293,7 @@ def test_auto_partition_pdf_from_filename(pass_file_filename, content_type):
     assert elements[1].text.startswith("Zejiang Shen")
 
     assert elements[0].metadata.filename == os.path.basename(filename)
+    assert elements[0].metadata.file_directory == os.path.split(filename)[0]
 
 
 def test_auto_partition_pdf_uses_table_extraction():
@@ -407,6 +412,7 @@ def test_auto_partition_pptx_from_filename():
     elements = partition(filename=filename, strategy="hi_res")
     assert elements == EXPECTED_PPTX_OUTPUT
     assert elements[0].metadata.filename == os.path.basename(filename)
+    assert elements[0].metadata.file_directory == os.path.split(filename)[0]
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
@@ -415,6 +421,7 @@ def test_auto_partition_ppt_from_filename():
     elements = partition(filename=filename, strategy="hi_res")
     assert elements == EXPECTED_PPTX_OUTPUT
     assert elements[0].metadata.filename == os.path.basename(filename)
+    assert elements[0].metadata.file_directory == os.path.split(filename)[0]
 
 
 def test_auto_with_page_breaks():

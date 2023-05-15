@@ -18,6 +18,7 @@ class NoID(ABC):
 @dataclass
 class ElementMetadata:
     filename: Optional[str] = None
+    file_directory: Optional[str] = None
     date: Optional[str] = None
     filetype: Optional[str] = None
 
@@ -40,7 +41,9 @@ class ElementMetadata:
             self.filename = str(self.filename)
 
         if self.filename is not None:
-            self.filename = os.path.basename(self.filename)
+            file_directory, filename = os.path.split(self.filename)
+            self.file_directory = file_directory or None
+            self.filename = filename
 
     def to_dict(self):
         return {key: value for key, value in self.__dict__.items() if value is not None}
