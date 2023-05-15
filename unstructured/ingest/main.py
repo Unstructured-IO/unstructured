@@ -146,7 +146,8 @@ class MainProcess:
 @click.option(
     "--partition-strategy",
     default="auto",
-    help="The method that will be used to process the documents. " "Default: auto",
+    help="The method that will be used to process the documents. "
+    "Default: auto. Other strategies include `fast` and `hi_res`.",
 )
 @click.option(
     "--local-input-path",
