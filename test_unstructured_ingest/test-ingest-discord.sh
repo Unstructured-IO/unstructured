@@ -28,17 +28,17 @@ if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
    cp discord-ingest-output/* test_unstructured_ingest/expected-structured-output/discord-ingest-channel/
 
 elif ! diff -ru discord-ingest-output test_unstructured_ingest/expected-structured-output/discord-ingest-channel/; then
-    echo
-    echo "There are differences from the previously checked-in structured outputs."
-    echo 
-    echo "If these differences are acceptable, overwrite by the fixtures by setting the env var:"
-    echo
-    echo "  export OVERWRITE_FIXTURES=true"
-    echo
-    echo "and then rerun this script."
-    echo
-    echo "NOTE: You'll likely just want to run scripts/ingest-test-fixtures-update.sh on x86_64 hardware"
-    echo "to update fixtures for CI."
-    echo
-    exit 1
+   echo
+   echo "There are differences from the previously checked-in structured outputs."
+   echo
+   echo "If these differences are acceptable, overwrite by the fixtures by setting the env var:"
+   echo
+   echo "  export OVERWRITE_FIXTURES=true"
+   echo
+   echo "and then rerun this script."
+   echo
+   echo "NOTE: You'll likely just want to run scripts/ingest-test-fixtures-update.sh on x86_64 hardware"
+   echo "to update fixtures for CI."
+   echo
+   exit 1
 fi
