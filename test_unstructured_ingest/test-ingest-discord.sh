@@ -5,20 +5,18 @@ set -e
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 cd "$SCRIPT_DIR"/.. || exit 1
 
-if [ -z "$SLACK_TOKEN" ]; then
-   echo "Skipping Slack ingest test because the SLACK_TOKEN env var is not set."
+
+if [ -z "$DISCORD_TOKEN" ]; then
+   echo "Skipping Discord ingest test because the DISCORD_TOKEN env var is not set."
    exit 0
 fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-      --slack-channels C052BGT7718 \
-      --slack-token "${SLACK_TOKEN}" \
-      --download-dir slack-ingest-download \
-      --structured-output-dir slack-ingest-output \
-      --partition-strategy hi_res \
-      --start-date 2023-04-01 \
-      --end-date 2023-04-08T12:00:00-08:00 \
-      --reprocess
+        --discord-channels 1099442333440802930,1099601456321003600 \
+        --discord-token "$DISCORD_TOKEN" \
+        --download-dir discord-ingest-download \
+        --structured-output-dir discord-ingest-output \
+        --reprocess
 
 OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
 
@@ -27,9 +25,9 @@ set +e
 # to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
 
-   cp slack-ingest-output/* test_unstructured_ingest/expected-structured-output/slack-ingest-channel/
+   cp discord-ingest-output/* test_unstructured_ingest/expected-structured-output/discord-ingest-channel/
 
-elif ! diff -ru slack-ingest-output test_unstructured_ingest/expected-structured-output/slack-ingest-channel; then
+elif ! diff -ru discord-ingest-output test_unstructured_ingest/expected-structured-output/discord-ingest-channel/; then
    echo
    echo "There are differences from the previously checked-in structured outputs."
    echo

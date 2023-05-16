@@ -352,6 +352,22 @@ class MainProcess:
     "YYYY-MM-DD+HH:MM:SS or YYYY-MM-DDTHH:MM:SStz",
 )
 @click.option(
+    "--discord-channels",
+    default=None,
+    help="A comma separated list of discord channel ids to ingest from.",
+)
+@click.option(
+    "--discord-token",
+    default=None,
+    help="Bot token used to access Discord API, must have "
+    "READ_MESSAGE_HISTORY scope for the bot user",
+)
+@click.option(
+    "--discord-period",
+    default=None,
+    help="Number of days to go back in the history of discord channels, must be an number",
+)
+@click.option(
     "--download-dir",
     help="Where files are downloaded to, defaults to `$HOME/.cache/unstructured/ingest/<SHA256>`.",
 )
@@ -414,6 +430,9 @@ def main(
     slack_token,
     start_date,
     end_date,
+    discord_channels,
+    discord_token,
+    discord_period,
     download_dir,
     preserve_downloads,
     structured_output_dir,
@@ -699,6 +718,23 @@ def main(
                 preserve_downloads=preserve_downloads,
                 output_dir=structured_output_dir,
                 re_download=re_download,
+                verbose=verbose,
+            ),
+        )
+    elif discord_channels:
+        from unstructured.ingest.connector.discord import (
+            DiscordConnector,
+            SimpleDiscordConfig,
+        )
+
+        doc_connector = DiscordConnector(  # type: ignore
+            config=SimpleDiscordConfig(
+                channels=SimpleDiscordConfig.parse_channels(discord_channels),
+                days=discord_period,
+                token=discord_token,
+                download_dir=download_dir,
+                output_dir=structured_output_dir,
+                preserve_downloads=preserve_downloads,
                 verbose=verbose,
             ),
         )
