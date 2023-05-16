@@ -1,11 +1,11 @@
 from tempfile import SpooledTemporaryFile
 from typing import IO, BinaryIO, List, Optional, Union, cast
 
+import lxml.html
 import pandas as pd
 
 from unstructured.documents.elements import Element, ElementMetadata, Table
 from unstructured.partition.common import exactly_one, spooled_to_bytes_io_if_needed
-from unstructured.partition.html import partition_html
 
 
 def partition_xlsx(
@@ -38,9 +38,8 @@ def partition_xlsx(
     page_number = 0
     for sheet_name, table in sheets.items():
         page_number += 1
-        html_text = table.to_html(index=False).replace("NaN", "")
-        html_elements = partition_html(text=html_text, include_metadata=False)
-        text = "\n\n".join([str(element) for element in html_elements])
+        html_text = table.to_html(index=False, header=False, na_rep="")
+        text = lxml.html.document_fromstring(html_text).text_content()
 
         metadata = ElementMetadata(
             text_as_html=html_text,
