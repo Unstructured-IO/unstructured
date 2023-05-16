@@ -1,12 +1,9 @@
-from tempfile import SpooledTemporaryFile
-from typing import IO, BinaryIO, List, Optional, Union, cast
-
 import xml.etree.ElementTree as ET
+from tempfile import SpooledTemporaryFile
+from typing import IO, BinaryIO, Optional, Union, cast
 
-from unstructured.documents.elements import ElementMetadata
 from unstructured.partition.common import exactly_one, spooled_to_bytes_io_if_needed
 from unstructured.partition.text import partition_text
-from unstructured.staging.base import elements_to_json
 
 
 def is_leaf(elem):
@@ -20,13 +17,13 @@ def get_leaf_elements(
 ):
     if filename:
         tree = ET.parse(filename)
-    else:
+    elif file:
         f = (
             spooled_to_bytes_io_if_needed(
-                cast(Union[BinaryIO, SpooledTemporaryFile], file)
+                cast(Union[BinaryIO, SpooledTemporaryFile], file),
             ),
         )
-        tree = ET.parse(f)
+        tree = ET.parse(f)  # type: ignore
 
     root = tree.getroot()
     leaf_elements = []
@@ -36,17 +33,27 @@ def get_leaf_elements(
             if is_leaf(subelem):
                 leaf_elements.append(subelem.text)
 
-    return "\n".join(leaf_elements)
+    return "\n".join(leaf_elements)  # type: ignore
 
 
 def partition_xml(
     filename: Optional[str] = None,
     file: Optional[Union[IO, SpooledTemporaryFile]] = None,
+    keep_xml_tags: bool = False,
     xml_path: str = ".",
     metadata_filename: Optional[str] = None,
+    encoding: str = "utf-8",
 ):
     exactly_one(filename=filename, file=file)
     metadata_filename = metadata_filename or filename
-    raw_text = get_leaf_elements(filename=filename, file=file, xml_path=xml_path)
+
+    if keep_xml_tags:
+        if filename:
+            with open(filename) as f:
+                raw_text = f.read()
+        elif file:
+            raw_text = file.read().decode(encoding)
+    else:
+        raw_text = get_leaf_elements(filename=filename, file=file, xml_path=xml_path)
     elements = partition_text(text=raw_text, metadata_filename=metadata_filename)
     return elements
