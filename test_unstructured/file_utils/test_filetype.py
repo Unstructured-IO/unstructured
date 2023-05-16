@@ -246,7 +246,7 @@ def test_detect_docx_filetype_word_mime_type(monkeypatch):
 
 def test_detect_xlsx_filetype_word_mime_type(monkeypatch):
     monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: XLSX_MIME_TYPES[0])
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "unsupported", "fake-excel.xlsx")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "stanley-cups.xlsx")
     with open(filename, "rb") as f:
         filetype = detect_filetype(file=f)
     assert filetype == FileType.XLSX
