@@ -65,7 +65,8 @@ def partition_xml(
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
     include_metdata
-        Determines whether or not metadata is included in the output.
+        Determines whether or not metadata is included in the metadata attribute on the
+        elements in the output.
     """
     exactly_one(filename=filename, file=file)
     metadata_filename = metadata_filename or filename
