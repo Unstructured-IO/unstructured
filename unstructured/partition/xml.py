@@ -19,12 +19,10 @@ def get_leaf_elements(
     if filename:
         tree = ET.parse(filename)
     elif file:
-        f = (
-            spooled_to_bytes_io_if_needed(
-                cast(Union[BinaryIO, SpooledTemporaryFile], file),
-            ),
+        f = spooled_to_bytes_io_if_needed(
+            cast(Union[BinaryIO, SpooledTemporaryFile], file),
         )
-        tree = ET.parse(f[0])  # type: ignore
+        tree = ET.parse(f)  # type: ignore
 
     root = tree.getroot()
     leaf_elements = []
@@ -76,12 +74,10 @@ def partition_xml(
             with open(filename) as f:
                 raw_text = f.read()
         elif file:
-            f = (  # type: ignore
-                spooled_to_bytes_io_if_needed(
-                    cast(Union[BinaryIO, SpooledTemporaryFile], file),
-                ),
+            f = spooled_to_bytes_io_if_needed(  # type: ignore
+                cast(Union[BinaryIO, SpooledTemporaryFile], file),
             )
-            raw_text = f[0].read().decode(encoding)  # type: ignore
+            raw_text = f.read().decode(encoding)  # type: ignore
     else:
         raw_text = get_leaf_elements(filename=filename, file=file, xml_path=xml_path)
     elements = partition_text(
