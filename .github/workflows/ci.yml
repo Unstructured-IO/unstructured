@@ -152,6 +152,7 @@ jobs:
         tesseract --version
         make install-ingest-s3
         make install-ingest-azure
+        make install-ingest-discord
         make install-ingest-github
         make install-ingest-gitlab
         make install-ingest-slack
