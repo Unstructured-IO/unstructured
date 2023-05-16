@@ -67,7 +67,7 @@ importlib-metadata==6.6.0
     #   nbconvert
 importlib-resources==5.12.0
     # via jsonschema
-ipykernel==6.23.0
+ipykernel==6.23.1
     # via
     #   ipywidgets
     #   jupyter
@@ -174,7 +174,7 @@ nest-asyncio==1.5.6
     #   ipykernel
     #   nbclassic
     #   notebook
-nodeenv==1.7.0
+nodeenv==1.8.0
     # via pre-commit
 notebook==6.5.4
     # via jupyter
@@ -200,7 +200,7 @@ pip-tools==6.13.0
     # via -r requirements/dev.in
 pkgutil-resolve-name==1.3.10
     # via jsonschema
-platformdirs==3.5.0
+platformdirs==3.5.1
     # via
     #   jupyter-core
     #   virtualenv
@@ -295,7 +295,7 @@ tomli==2.0.1
     # via
     #   build
     #   pyproject-hooks
-tornado==6.3.1
+tornado==6.3.2
     # via
     #   ipykernel
     #   jupyter-client
