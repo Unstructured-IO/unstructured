@@ -6,6 +6,7 @@
 * Added a `--partition-strategy` parameter to unstructured-ingest so that users can specify
   partition strategy in CLI. For example, `--partition-strategy fast`.
 * Added metadata for filetype.
+* Add Discord connector to pull messages from a list of channels
 
 ### Features
 
@@ -88,6 +89,7 @@
 
 * Added logic to `partition_pdf` for detecting copy protected PDFs and falling back
   to the hi res strategy when necessary.
+
 
 ### Features
 
