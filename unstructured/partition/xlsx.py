@@ -36,6 +36,8 @@ def partition_xlsx(
         f = spooled_to_bytes_io_if_needed(cast(Union[BinaryIO, SpooledTemporaryFile], file))
         sheets = pd.read_excel(f, sheet_name=None)
 
+    metadata_filename = filename or metadata_filename
+
     elements: List[Element] = []
     page_number = 0
     for sheet_name, table in sheets.items():
@@ -46,7 +48,7 @@ def partition_xlsx(
         metadata = ElementMetadata(
             text_as_html=html_text,
             page_number=page_number,
-            filename=filename,
+            filename=metadata_filename,
         )
         table = Table(text=text, metadata=metadata)
         elements.append(table)
