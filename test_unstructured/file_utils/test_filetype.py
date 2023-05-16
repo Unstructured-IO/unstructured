@@ -192,7 +192,7 @@ def test_detect_xls_file_from_mime_type(monkeypatch):
 
 def test_detect_xlsx_filetype_application_octet_stream(monkeypatch):
     monkeypatch.setattr(magic, "from_buffer", lambda *args, **kwargs: "application/octet-stream")
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "unsupported", "fake-excel.xlsx")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "stanley-cups.xlsx")
     with open(filename, "rb") as f:
         filetype = detect_filetype(file=f)
     assert filetype == FileType.XLSX
@@ -200,7 +200,7 @@ def test_detect_xlsx_filetype_application_octet_stream(monkeypatch):
 
 def test_detect_xlsx_filetype_application_octet_stream_with_filename(monkeypatch):
     monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "application/octet-stream")
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "unsupported", "fake-excel.xlsx")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "stanley-cups.xlsx")
     filetype = detect_filetype(filename=filename)
     assert filetype == FileType.XLSX
 
