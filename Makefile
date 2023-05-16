@@ -63,6 +63,10 @@ install-ingest-s3:
 install-ingest-azure:
 	python3 -m pip install -r requirements/ingest-azure.txt
 
+.PHONY: install-ingest-discord
+install-ingest-discord:
+	pip install -r requirements/ingest-discord.txt
+
 .PHONY: install-ingest-github
 install-ingest-github:
 	python3 -m pip install -r requirements/ingest-github.txt
@@ -119,6 +123,7 @@ pip-compile:
 	cp requirements/build.txt docs/requirements.txt
 	pip-compile --upgrade --extra=s3        --output-file=requirements/ingest-s3.txt        requirements/base.txt setup.py
 	pip-compile --upgrade --extra=azure     --output-file=requirements/ingest-azure.txt     requirements/base.txt setup.py
+	pip-compile --upgrade --extra=discord   --output-file=requirements/ingest-azure.txt     requirements/base.txt setup.py
 	pip-compile --upgrade --extra=reddit    --output-file=requirements/ingest-reddit.txt    requirements/base.txt setup.py
 	pip-compile --upgrade --extra=github    --output-file=requirements/ingest-github.txt    requirements/base.txt setup.py
 	pip-compile --upgrade --extra=gitlab    --output-file=requirements/ingest-gitlab.txt    requirements/base.txt setup.py
