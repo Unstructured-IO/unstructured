@@ -9,12 +9,14 @@ import docx
 import pypandoc
 import pytest
 
+from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import (
     Address,
     ElementMetadata,
     ListItem,
     NarrativeText,
     PageBreak,
+    Table,
     Text,
     Title,
 )
@@ -609,3 +611,59 @@ def test_file_specific_produces_correct_filetype(filetype: FileType):
             elements = fun(str(file))
             assert all(el.metadata.filetype == FILETYPE_TO_MIMETYPE[filetype] for el in elements)
             break
+
+
+EXPECTED_XLSX_TABLE = """<table border="1" class="dataframe">
+  <tbody>
+    <tr>
+      <td>Team</td>
+      <td>Location</td>
+      <td>Stanley Cups</td>
+    </tr>
+    <tr>
+      <td>Blues</td>
+      <td>STL</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>Flyers</td>
+      <td>PHI</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>Maple Leafs</td>
+      <td>TOR</td>
+      <td>13</td>
+    </tr>
+  </tbody>
+</table>"""
+
+
+EXPECTED_XLSX_TEXT = "Team Location Stanley Cups Blues STL 1 Flyers PHI 2 Maple Leafs TOR 13"
+
+EXPECTED_XLSX_FILETYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+
+
+def test_auto_partition_xlsx_from_filename(filename="example-docs/stanley-cups.xlsx"):
+    elements = partition(filename=filename)
+
+    assert all(isinstance(element, Table) for element in elements)
+    assert len(elements) == 2
+
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_XLSX_TEXT
+    assert elements[0].metadata.text_as_html == EXPECTED_XLSX_TABLE
+    assert elements[0].metadata.page_number == 1
+    assert elements[0].metadata.filetype == EXPECTED_XLSX_FILETYPE
+
+
+def test_auto_partition_xlsx_from_file(filename="example-docs/stanley-cups.xlsx"):
+    with open(filename, "rb") as f:
+        elements = partition(file=f)
+
+    assert all(isinstance(element, Table) for element in elements)
+    assert len(elements) == 2
+
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_XLSX_TEXT
+    assert elements[0].metadata.text_as_html == EXPECTED_XLSX_TABLE
+    assert elements[0].metadata.page_number == 1
+    assert elements[0].metadata.filetype == EXPECTED_XLSX_FILETYPE
