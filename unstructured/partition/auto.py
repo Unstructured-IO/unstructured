@@ -26,8 +26,8 @@ from unstructured.partition.ppt import partition_ppt
 from unstructured.partition.pptx import partition_pptx
 from unstructured.partition.rtf import partition_rtf
 from unstructured.partition.text import partition_text
-from unstructured.partition.xml import partition_xml
 from unstructured.partition.xlsx import partition_xlsx
+from unstructured.partition.xml import partition_xml
 
 
 def partition(
