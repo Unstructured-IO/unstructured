@@ -26,7 +26,7 @@ EXAMPLE_DOCS_DIRECTORY = os.path.join(FILE_DIRECTORY, "..", "..", "example-docs"
         ("example.jpg", FileType.JPG),
         ("fake-text.txt", FileType.TXT),
         ("fake-email.eml", FileType.EML),
-        ("unsupported/factbook.xml", FileType.XML),
+        ("factbook.xml", FileType.XML),
         ("example-10k.html", FileType.HTML),
         ("fake-html.html", FileType.HTML),
         ("unsupported/fake-excel.xlsx", FileType.XLSX),
@@ -49,7 +49,7 @@ def test_detect_filetype_from_filename(file, expected):
         ("example.jpg", FileType.JPG),
         ("fake-text.txt", FileType.TXT),
         ("fake-email.eml", FileType.EML),
-        ("unsupported/factbook.xml", FileType.XML),
+        ("factbook.xml", FileType.XML),
         ("example-10k.html", FileType.HTML),
         ("fake-html.html", FileType.HTML),
         ("unsupported/fake-excel.xlsx", FileType.XLSX),
@@ -82,7 +82,7 @@ def test_detect_filetype_from_filename_with_extension(monkeypatch, file, expecte
         ("example.jpg", FileType.JPG),
         ("fake-text.txt", FileType.TXT),
         ("fake-email.eml", FileType.EML),
-        ("unsupported/factbook.xml", FileType.XML),
+        ("factbook.xml", FileType.XML),
         # NOTE(robinson) - For the document, some operating systems return
         # */xml and some return */html. Either could be acceptable depending on the OS
         ("example-10k.html", [FileType.HTML, FileType.XML]),
