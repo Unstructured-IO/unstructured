@@ -34,6 +34,7 @@ def partition_text(
     encoding: Optional[str] = "utf-8",
     paragraph_grouper: Optional[Callable[[str], str]] = None,
     metadata_filename: Optional[str] = None,
+    include_metadata: bool = True,
 ) -> List[Element]:
     """Partitions an .txt documents into its constituent elements.
     Parameters
@@ -49,6 +50,8 @@ def partition_text(
     paragrapher_grouper
         A str -> str function for fixing paragraphs that are interrupted by line breaks
         for formatting purposes.
+    include_metdata
+        Determines whether or not metadata is included in the output.
     """
     if text is not None and text.strip() == "" and not file and not filename:
         return []
@@ -81,7 +84,9 @@ def partition_text(
     metadata_filename = metadata_filename or filename
 
     elements: List[Element] = []
-    metadata = ElementMetadata(filename=metadata_filename)
+    metadata = (
+        ElementMetadata(filename=metadata_filename) if include_metadata else ElementMetadata()
+    )
     for ctext in file_content:
         ctext = ctext.strip()
 

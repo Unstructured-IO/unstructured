@@ -44,6 +44,7 @@ def partition_xml(
     keep_xml_tags: bool = False,
     xml_path: str = ".",
     metadata_filename: Optional[str] = None,
+    include_metadata: bool = True,
     encoding: str = "utf-8",
 ):
     """Partitions an XML doucment into its document elements.
@@ -63,6 +64,8 @@ def partition_xml(
         The filename to use for the metadata.
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
+    include_metdata
+        Determines whether or not metadata is included in the output.
     """
     exactly_one(filename=filename, file=file)
     metadata_filename = metadata_filename or filename
@@ -80,5 +83,10 @@ def partition_xml(
             raw_text = f[0].read().decode(encoding)  # type: ignore
     else:
         raw_text = get_leaf_elements(filename=filename, file=file, xml_path=xml_path)
-    elements = partition_text(text=raw_text, metadata_filename=metadata_filename)
+    elements = partition_text(
+        text=raw_text,
+        metadata_filename=metadata_filename,
+        include_metadata=include_metadata,
+    )
+
     return elements
