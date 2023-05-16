@@ -1,4 +1,4 @@
-## 0.6.7-dev3
+## 0.6.7-dev4
 
 ### Enhancements
 
@@ -8,6 +8,8 @@
 * Added metadata for filetype.
 
 ### Features
+
+* Add `partition_xlsx` for Microsoft Excel documents.
 
 ### Fixes
 
