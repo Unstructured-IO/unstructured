@@ -640,6 +640,7 @@ def test_auto_partition_xml_from_file_with_tags(filename="example-docs/factbook.
 
     assert elements[5].text == "<name>United States</name>"
 
+
 EXPECTED_XLSX_TABLE = """<table border="1" class="dataframe">
   <tbody>
     <tr>
