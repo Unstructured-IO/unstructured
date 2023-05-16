@@ -33,6 +33,7 @@ def partition_text(
     text: Optional[str] = None,
     encoding: Optional[str] = "utf-8",
     paragraph_grouper: Optional[Callable[[str], str]] = None,
+    metadata_filename: Optional[str] = None,
 ) -> List[Element]:
     """Partitions an .txt documents into its constituent elements.
     Parameters
@@ -77,8 +78,10 @@ def partition_text(
 
     file_content = split_by_paragraph(file_text)
 
+    metadata_filename = metadata_filename or filename
+
     elements: List[Element] = []
-    metadata = ElementMetadata(filename=filename)
+    metadata = ElementMetadata(filename=metadata_filename)
     for ctext in file_content:
         ctext = ctext.strip()
 
