@@ -5,9 +5,11 @@ import lxml.html
 import pandas as pd
 
 from unstructured.documents.elements import Element, ElementMetadata, Table
+from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import exactly_one, spooled_to_bytes_io_if_needed
 
 
+@add_metadata_with_filetype(FileType.XLSX)
 def partition_xlsx(
     filename: Optional[str] = None,
     file: Optional[Union[IO, SpooledTemporaryFile]] = None,

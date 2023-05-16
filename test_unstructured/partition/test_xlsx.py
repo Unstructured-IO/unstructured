@@ -30,13 +30,29 @@ EXPECTED_TABLE = """<table border="1" class="dataframe">
 
 EXPECTED_TEXT = "Team Location Stanley Cups Blues STL 1 Flyers PHI 2 Maple Leafs TOR 13"
 
+EXPECTED_FILETYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+
 
 def test_partition_xlsx_from_filename(filename="example-docs/stanley-cups.xlsx"):
     elements = partition_xlsx(filename=filename)
-    assert all(isinstance(element, Table) for element in elements)
 
+    assert all(isinstance(element, Table) for element in elements)
     assert len(elements) == 2
 
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
     assert elements[0].metadata.text_as_html == EXPECTED_TABLE
     assert elements[0].metadata.page_number == 1
+    assert elements[0].metadata.filetype == EXPECTED_FILETYPE
+
+
+def test_partition_xlsx_from_file(filename="example-docs/stanley-cups.xlsx"):
+    with open(filename, "rb") as f:
+        elements = partition_xlsx(file=f)
+
+    assert all(isinstance(element, Table) for element in elements)
+    assert len(elements) == 2
+
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
+    assert elements[0].metadata.text_as_html == EXPECTED_TABLE
+    assert elements[0].metadata.page_number == 1
+    assert elements[0].metadata.filetype == EXPECTED_FILETYPE
