@@ -4,7 +4,10 @@
     "text": "testing <@U051UBRR946> has joined the channel <@U04ST78RXU3> has joined the channel",
     "type": "NarrativeText",
     "metadata": {
-      "filename": "slack-ingest-download/C052BGT7718.txt"
+      "filename": "C052BGT7718.txt",
+      "file_directory": "slack-ingest-download",
+      "filetype": "text/plain",
+      "page_number": 1
     }
   }
 ]

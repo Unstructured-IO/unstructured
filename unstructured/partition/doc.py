@@ -3,10 +3,12 @@ import tempfile
 from typing import IO, List, Optional
 
 from unstructured.documents.elements import Element
+from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import convert_office_doc, exactly_one
 from unstructured.partition.docx import partition_docx
 
 
+@add_metadata_with_filetype(FileType.DOC)
 def partition_doc(filename: Optional[str] = None, file: Optional[IO] = None) -> List[Element]:
     """Partitions Microsoft Word Documents in .doc format into its document elements.
 

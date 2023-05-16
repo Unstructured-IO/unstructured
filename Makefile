@@ -1,8 +1,7 @@
 PACKAGE_NAME := unstructured
-PIP_VERSION := 22.2.1
+PIP_VERSION := 23.1.2
 CURRENT_DIR := $(shell pwd)
 ARCH := $(shell uname -m)
-
 
 .PHONY: help
 help: Makefile

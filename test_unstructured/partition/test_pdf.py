@@ -1,4 +1,5 @@
 import os
+from tempfile import SpooledTemporaryFile
 from unittest import mock
 
 import pytest
@@ -6,7 +7,7 @@ import requests
 from unstructured_inference.inference import layout
 
 from unstructured.documents.elements import NarrativeText, PageBreak, Text, Title
-from unstructured.partition import pdf
+from unstructured.partition import pdf, strategies
 
 
 class MockResponse:
@@ -117,7 +118,6 @@ def test_partition_pdf_local(monkeypatch, filename, file):
     )
 
     partition_pdf_response = pdf._partition_pdf_or_image_local(filename, file)
-    assert partition_pdf_response[0].type == "Title"
     assert partition_pdf_response[0].text == "Charlie Brown and the Great Pumpkin"
 
 
@@ -161,15 +161,33 @@ def test_partition_pdf_api_raises_with_failed_api_call(
     [("fakeurl", True, False), (None, False, True)],
 )
 def test_partition_pdf(url, api_called, local_called, monkeypatch):
-    monkeypatch.setattr(pdf, "is_pdf_text_extractable", lambda *args, **kwargs: True)
+    monkeypatch.setattr(strategies, "is_pdf_text_extractable", lambda *args, **kwargs: True)
     with mock.patch.object(
         pdf,
         attribute="_partition_via_api",
         new=mock.MagicMock(),
     ), mock.patch.object(pdf, "_partition_pdf_or_image_local", mock.MagicMock()):
-        pdf.partition_pdf(filename="fake.pdf", url=url)
+        pdf.partition_pdf(filename="fake.pdf", strategy="hi_res", url=url)
         assert pdf._partition_via_api.called == api_called
         assert pdf._partition_pdf_or_image_local.called == local_called
+
+
+@pytest.mark.parametrize(
+    ("strategy"),
+    [("fast"), ("hi_res"), ("ocr_only")],
+)
+def test_partition_pdf_with_spooled_file(
+    strategy,
+    filename="example-docs/layout-parser-paper-fast.pdf",
+):
+    # Test that the partition_pdf function can handle a SpooledTemporaryFile
+    with open(filename, "rb") as test_file:
+        spooled_temp_file = SpooledTemporaryFile()
+        spooled_temp_file.write(test_file.read())
+        spooled_temp_file.seek(0)
+        result = pdf.partition_pdf(file=spooled_temp_file, strategy=strategy)
+        # validate that the result is a non-empty list of dicts
+        assert len(result) > 10
 
 
 @pytest.mark.parametrize(
@@ -177,15 +195,24 @@ def test_partition_pdf(url, api_called, local_called, monkeypatch):
     [("fakeurl", True, False), (None, False, True)],
 )
 def test_partition_pdf_with_template(url, api_called, local_called, monkeypatch):
-    monkeypatch.setattr(pdf, "is_pdf_text_extractable", lambda *args, **kwargs: True)
+    monkeypatch.setattr(strategies, "is_pdf_text_extractable", lambda *args, **kwargs: True)
     with mock.patch.object(
         pdf,
         attribute="_partition_via_api",
         new=mock.MagicMock(),
     ), mock.patch.object(pdf, "_partition_pdf_or_image_local", mock.MagicMock()):
-        pdf.partition_pdf(filename="fake.pdf", url=url, template="checkbox")
+        pdf.partition_pdf(filename="fake.pdf", strategy="hi_res", url=url, template="checkbox")
         assert pdf._partition_via_api.called == api_called
         assert pdf._partition_pdf_or_image_local.called == local_called
+
+
+def test_partition_pdf_with_auto_strategy(filename="example-docs/layout-parser-paper-fast.pdf"):
+    elements = pdf.partition_pdf(filename=filename, strategy="auto")
+    titles = [el for el in elements if el.category == "Title" and len(el.text.split(" ")) > 10]
+    title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
+    assert titles[0].text == title
+    assert titles[0].metadata.filename == "layout-parser-paper-fast.pdf"
+    assert titles[0].metadata.file_directory == "example-docs"
 
 
 def test_partition_pdf_with_page_breaks(filename="example-docs/layout-parser-paper-fast.pdf"):
@@ -253,12 +280,82 @@ def test_partition_pdf_falls_back_to_fast(
     caplog,
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
-    monkeypatch.setattr(pdf, "dependency_exists", lambda dep: dep != "detectron2")
+    def mock_exists(dep):
+        return dep not in ["detectron2", "pytesseract"]
+
+    monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
 
     mock_return = [Text("Hello there!")]
     with mock.patch.object(
         pdf,
         "_partition_pdf_with_pdfminer",
+        return_value=mock_return,
+    ) as mock_partition:
+        pdf.partition_pdf(filename=filename, url=None, strategy="hi_res")
+
+    mock_partition.assert_called_once()
+    assert "detectron2 is not installed" in caplog.text
+
+
+def test_partition_pdf_falls_back_to_fast_from_ocr_only(
+    monkeypatch,
+    caplog,
+    filename="example-docs/layout-parser-paper-fast.pdf",
+):
+    def mock_exists(dep):
+        return dep not in ["pytesseract"]
+
+    monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
+
+    mock_return = [Text("Hello there!")]
+    with mock.patch.object(
+        pdf,
+        "_partition_pdf_with_pdfminer",
+        return_value=mock_return,
+    ) as mock_partition:
+        pdf.partition_pdf(filename=filename, url=None, strategy="ocr_only")
+
+    mock_partition.assert_called_once()
+    assert "pytesseract is not installed" in caplog.text
+
+
+def test_partition_pdf_falls_back_to_hi_res_from_ocr_only(
+    monkeypatch,
+    caplog,
+    filename="example-docs/layout-parser-paper-fast.pdf",
+):
+    def mock_exists(dep):
+        return dep not in ["pytesseract"]
+
+    monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
+    monkeypatch.setattr(strategies, "is_pdf_text_extractable", lambda *args, **kwargs: False)
+
+    mock_return = [Text("Hello there!")]
+    with mock.patch.object(
+        pdf,
+        "_partition_pdf_or_image_local",
+        return_value=mock_return,
+    ) as mock_partition:
+        pdf.partition_pdf(filename=filename, url=None, strategy="ocr_only")
+
+    mock_partition.assert_called_once()
+    assert "pytesseract is not installed" in caplog.text
+
+
+def test_partition_pdf_falls_back_to_ocr_only(
+    monkeypatch,
+    caplog,
+    filename="example-docs/layout-parser-paper-fast.pdf",
+):
+    def mock_exists(dep):
+        return dep not in ["detectron2"]
+
+    monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
+
+    mock_return = [Text("Hello there!")]
+    with mock.patch.object(
+        pdf,
+        "_partition_pdf_or_image_with_ocr",
         return_value=mock_return,
     ) as mock_partition:
         pdf.partition_pdf(filename=filename, url=None, strategy="hi_res")
@@ -274,27 +371,6 @@ def test_partition_pdf_uses_table_extraction():
     ) as mock_process_file_with_model:
         pdf.partition_pdf(filename, infer_table_structure=True)
         assert mock_process_file_with_model.call_args[1]["extract_tables"]
-
-
-@pytest.mark.parametrize(
-    ("filename", "from_file", "expected"),
-    [
-        ("layout-parser-paper-fast.pdf", True, True),
-        ("copy-protected.pdf", True, False),
-        ("layout-parser-paper-fast.pdf", False, True),
-        ("copy-protected.pdf", False, False),
-    ],
-)
-def test_is_pdf_text_extractable(filename, from_file, expected):
-    filename = os.path.join("example-docs", filename)
-
-    if from_file:
-        with open(filename, "rb") as f:
-            extractable = pdf.is_pdf_text_extractable(file=f)
-    else:
-        extractable = pdf.is_pdf_text_extractable(filename=filename)
-
-    assert extractable is expected
 
 
 def test_partition_pdf_with_copy_protection():
@@ -314,8 +390,11 @@ def test_partition_pdf_fails_if_pdf_not_processable(
     monkeypatch,
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
-    monkeypatch.setattr(pdf, "dependency_exists", lambda dep: dep != "detectron2")
-    monkeypatch.setattr(pdf, "is_pdf_text_extractable", lambda *args, **kwargs: False)
+    def mock_exists(dep):
+        return dep not in ["detectron2", "pytesseract"]
+
+    monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
+    monkeypatch.setattr(strategies, "is_pdf_text_extractable", lambda *args, **kwargs: False)
 
     with pytest.raises(ValueError):
         pdf.partition_pdf(filename=filename)

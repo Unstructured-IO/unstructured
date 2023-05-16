@@ -1,321 +1,919 @@
 [
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "2f43c4f56aa489358399784107e3f80c",
+    "text": "ase eee ee weInstructions for Form 3115(Rev. November 1987)Ao dt ew ht fn. P-L... !'. A... L*.. Rew Lh Ld",
     "type": "Title",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 1
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "766cf1d1243ef2cdbb0db5ad32d7f9c9",
+    "text": "(Section references are to the Internal Revenue Code unless otherwise noted.)",
     "type": "NarrativeText",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 1
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "e8d040fcadaf595b3624579225028b80",
+    "text": "Long-term contracts. —If you are required tochange your method of accounting for long-termcontracts under section",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "ac843848ae2f4c656203dee90cdc207c",
+    "text": ", see Notice",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "3973e022e93220f9212c18d0d0c543ae",
+    "text": "-",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "32ebb1abcc1c601ceb9c4e3c4faba0ca",
+    "text": "(",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "8a5edab282632443219e051e4ade2d1d",
+    "text": "/",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "8a5edab282632443219e051e4ade2d1d",
+    "text": "/",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "bb01c44bd646ab29df9cea6459a3499b",
+    "text": "),",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "3973e022e93220f9212c18d0d0c543ae",
+    "text": "-",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "29b33c1e0aea8247e6576bd9ad14448e",
+    "text": "IRB",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "64b044a845d6a903604d0edc68d5c8d1",
+    "text": ", for the notificationprocedures that must be followed.Other methods.—Unless the Service haspublished a regulation or procedure to thecontrary, all other changes !n accountingmethods required by the Act are automaticallyconsidered to be approved by the Commissioner.Examples of method changes automaticallyapproved by the Commissioner are those changesrequired to effect: (",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "aed90f3480456a62ac47f6cf5c5e526a",
+    "text": ") the repeal of the reservemethod for bad debts of taxpayers other thanfinancial institutions (Act section",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "fd0f38844b9901d3a4e7c44630346145",
+    "text": "); (",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "fdf216c15df57c2716f392d4cc8b2fbe",
+    "text": ") therepeal of the installment method for sales undera revolving credit plan (Act section",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "fd0f38844b9901d3a4e7c44630346145",
+    "text": "); (",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "4df2762fd804bd5859df0774d1d51796",
+    "text": ") th",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "6ea7ec2e8449de6c5c662bb59e333fa7",
+    "text": "nclusion of income attributable to the sale orfurnishing of utility services no later than the yea",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "2a639c819f6663cf3a9940f3528b3205",
+    "text": "n which the services were provided to customers(Act section",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "25d6eaf57eebce49267b71ce2f347a03",
+    "text": "); and (",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "1a278d181295c8d1b6bfd86baca09eaf",
+    "text": ") the repeal of thededuction for qualified discount coupons (Actsection",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "e9d9ab5eb5ff32a31a32bda940a33b7a",
+    "text": "). Do not file Form",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "e9cae276abe56d0cb30fcf798f0c134e",
+    "text": "for thesechanges.",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "f1a73e2204a114077f988c9da98d7f8b",
+    "text": "Signature",
     "type": "Title",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 1
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "ccc6ad15c84b7210289ea296696a553a",
+    "text": "Long-term contracts. —If you are required tochange your method of accounting for long-termcontracts under section 460, see Notice 87-61(9/21/87), 1987-38 IRB 40, for the notificationprocedures that must be followed.",
     "type": "NarrativeText",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 1
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "54ec88975af9b41a261fd299b06bb75e",
+    "text": "Individuals. —An individual desiring the changeshould sign the application. If the applicationpertains to a husband and wife filing a jointincome tax return, the names of both shouldappear in the heading and both should sign.Partnerships.—The form should be signed withthe partnership name followed by the signatureof one of the general partners and the words“General Partner.”Corporations, cooperatives, and insurancecompanies.—The form should show the name ofthe corporation, cooperative, or insurancecompany and the signature of the president, vicepresident, treasurer, assistant treasurer, or chiefaccounting officer (such as tax officer) authorizedto sign, and his or her official title. Receivers,trustees, or assignees must sign any applicationthey are required to file. For a subsidiarycorporation filing a consolidated return with itsparent, the form should be signed by an officer ofthe parent corporation.Fiduciaries.—The-form should show the nameof the estate or trust and be signed by thefiduciary, personal representative, executor,executrix, administrator, administratrix, etc.,having legal authority to sign, and his or her title.Preparer other than partner, officer, etc.—Thesignature of the individual preparing theapplication should appear in the space providedon page",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "586e989b479e4362ebe28a6954c1427b",
+    "text": "If the individual or firm is also authorized to",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "3c1320decc74d3d1c2d3628dcccaa65a",
+    "text": "General InstructionsPurpose of Form",
     "type": "Title",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 1
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "a1547a4ed1611eee44b15e99120fb978",
+    "text": "General Instructions",
     "type": "Title",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 1
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "68a3289177b49b285e133a5267eb355f",
+    "text": "Purpose of Form",
     "type": "Title",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 1
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "04fbc82e22c46ad0107ac25505cafd7a",
+    "text": "When filing Form 3115, taxpayers arereminded to determine if IRS has published aruling or procedure dealing with the specific typeof change since November 1987 (the currentrevision date of Form 3115),",
     "type": "NarrativeText",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 1
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "a9f61573cc50d4a664c68cc5328691e7",
+    "text": "Generally, applicants must complete SectionA. In addition, complete the appropriate sections(B-1 through H) for which a change Is desired.Vinee mised rissa all patencsannd Sande im,",
     "type": "NarrativeText",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 1
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "5756fb398995bb6518a87637f24f426e",
+    "text": "Time and Place for Filing",
     "type": "Title",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 1
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "8e6f542c5cf52ea7f18c0b24329e8c4d",
+    "text": "oGenerally, applicants must file this form withinthe first 180 days of the tax year in which it isdesired to make the change.",
     "type": "Title",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 1
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "71b6d7f72c57641ea91dd411abdc9959",
+    "text": "MIT RGSSIf the individual or firm is also authorized torepresent the applicant before the IRS, receivea copy of the requested ruling, or perform anyother act(s), the power of attorney must reflectsuch authorization(s).",
     "type": "Title",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 1
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "3a3c4c51cecaae9468ed756342118957",
+    "text": "oState whether you desire a conference in theNational Office if the Service proposes todisapprove your application.",
     "type": "NarrativeText",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 1
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "8b06cd6e2bf7fc15130d5d9ed7e66283",
+    "text": "Affiliated Groups",
     "type": "Title",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 1
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "cd746731c7a892b0087828c0801c022b",
+    "text": "Changes to Accounting MethodsRequired Under the Tax Reform Actof 1986",
     "type": "Title",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 1
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "2f07b6ab03490547ef3c3f2a3a05d798",
+    "text": "Taxpayers that are members of an affiliatedgroup filing a consolidated return that seeks tochange to the same accounting method for morethan one member of the group must file aseparate Form 3115 for each such member,",
     "type": "NarrativeText",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 1
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "f0a757884fb918f704c1d90b762f5894",
+    "text": "Specific InstructionsSection A",
     "type": "Title",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 1
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "bea5791425bda4a6e373841837f69d33",
+    "text": "an early application.Note: /f this form is being filed in accordancewith Rev. Proc. 74-11, see Section G below.",
     "type": "Title",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 1
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "bdf661ae8fe9375f60fd738b421bda06",
+    "text": "Item 5a, page 1.—“Taxable income or (loss)from operations” is to be entered beforeapplication of any net operating loss deductionunder section 172(a).",
     "type": "NarrativeText",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 1
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "a4316c02df07840f1beb56609cb09735",
+    "text": "Late Applications",
     "type": "Title",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 1
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "1343e02315a5221f92300d29ba4b512f",
+    "text": "allowances) and all amounts received forservices. In addition, gross receipts include anyincome from investments and from incidental oroutside sources (e.g., interest, dividends, rents,royalties, and annuities). However, if you are aresaler of personal property, exclude from grossreceipts any amounts not derived in the ordinarycourse of a trade or business. Gross receipts donot include amounts received for sales taxes if,under the applicable state or local law, the tax islecally imnnced on the nijrchacer of the cood nr",
     "type": "NarrativeText",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 1
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "6e1d51f920ee67d5cfb7a2600d4cb494",
+    "text": "Disregard the instructions under Time andPlace for Filing and Late Applications. Instead,attach Form 3115 to your income tax return forthe year of change; do not file it separately. Alsoinclude on a separate statement accompanyingthe Form 3115 the period over which the section481(a) adjustment will be taken into account andthe basis for that conclusion. Identify the",
     "type": "NarrativeText",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 1
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "025a65465b6fd9635316e92633b24c7e",
+    "text": "Identifying Number",
     "type": "Title",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 1
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "8d6743276d5bc8e32d0b05ba0b232db8",
+    "text": "Section E",
     "type": "Title",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 2
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
-    "type": "NarrativeText",
+    "element_id": "dfca5da56b8cdb627309e2aa5a45e17b",
+    "text": "Section",
+    "type": "ListItem",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 2
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
-    "type": "NarrativeText",
+    "element_id": "45324e281827f059c0b49f2b3aab9c5c",
+    "text": "(f) provides that the term “long-termcontract” means any contract for themanufacturing, building, installation, orconstruction of property that is not completedwithin the tax year in which it",
+    "type": "ListItem",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 2
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
-    "type": "NarrativeText",
+    "element_id": "cf29164f7821b3a6775b230f5e247551",
+    "text": "s entered into.However, a manufacturing contract will notqualify as a long-term contract unless thecontract involves the manufacture of: (",
+    "type": "ListItem",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 2
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "dd39fef35cb957547bd3efad8b3d6557",
+    "text": ") aunique item not normally included in yourfinished goods inventory, or (",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "ae214de0f0455b7dc7212c1f815d65d4",
+    "text": ") any item thatnormally requires more than",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "916235d01ae867fb3a482f0c7af7f4a4",
+    "text": "calendar monthsto complete.",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "189ce30883d06e43e6280df0aab6297b",
+    "text": "eg Nn Ior less. —To qualify for this exception, the Ccorporation's or partnership’s annual averagegross receipts for the three years ending with theprior tax year may not exceed $5,000,000. If thecorporation or partnership was not in existencefor the entire 3-vear nerind the neriod of",
+    "type": "NarrativeText",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "970119899f9ca6a4999a41089a1a5bd2",
+    "text": "(1) Gives your best estimate of the percentageof the section 481(a) adjustment that would havebeen required if the requested change had beenmade for each of the 3 ‘preceding years; and",
+    "type": "NarrativeText",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "d4a24074a87fa83be64422b84d16b866",
+    "text": "AMRMENIB ISAll long-term contracts entered into afte",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "f7ca8476d7c8a3ac84efbd8699f97f87",
+    "text": "ebruary",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "d03502c43d74a30b936740a9517dc4ea",
+    "text": ",",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "b60ab3f42291035b6184fde93a3b9230",
+    "text": ", except for real propertyconstruction contracts expected to be completedwithin",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "93bcd9d786ff021bed0fe0c9d71fc976",
+    "text": "years by contractors whose averageannual gross receipts for the",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "9ff4779aaab33521b8398aeb72f613c0",
+    "text": "prior tax years donot exceed $",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "d03502c43d74a30b936740a9517dc4ea",
+    "text": ",",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "d03502c43d74a30b936740a9517dc4ea",
+    "text": ",",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "1e970967cee7e2aa31666b6108587f35",
+    "text": ", must be accounted forusing either the percentage of completion-capitalized cost method or the percentage ofcompletion method. See section",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "070baf413b0aca84064c63f5afaf041e",
+    "text": "Caution: At the time these instructions wereprinted, Congress was considering legislation thatwould repeal the use of the percentage ofcompletion-capitalized cost method for certainlong-term contracts.",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "407fba54d794af19011e8a40154f8d9c",
+    "text": "Item 13, page 2. —Insert the actual number oftax years. Use of the term “since inception” 1s notacceptable. However, “more than 6 years” Isacceptable.",
+    "type": "NarrativeText",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "136a59b0c53731bc299206fda46e0888",
+    "text": "Section B-1",
     "type": "Title",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 2
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "32786e68a6fd82dc356d2d58bf283dc4",
+    "text": "Section G",
     "type": "Title",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 2
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "e3c7cd96bde7999c7250929f952ca4e9",
+    "text": "Item 1b, page 2.-rannrted ac incams",
     "type": "Title",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 2
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "04bca6d73335fa66fbbc9263ab732fe6",
+    "text": "This section Is to be used only to request achange in a method of accounting fordepreciation under section 167.",
     "type": "NarrativeText",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 2
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "97646477bf91420689f5eed2d5e6483c",
+    "text": "Geprecial",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "64d9cae6cbd0f68236a721e51331ac2c",
+    "text": "n UNGer s",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "663398def7bd512d1a33d11202019b76",
+    "text": "cuon LO/.Rev. Proc.",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "3973e022e93220f9212c18d0d0c543ae",
+    "text": "-",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "d1b4f2833de69b6f575c831a9f48b701",
+    "text": "provides a procedurewhereby applicants are considered to haveobtained the consent of the Commissioner tochange their method of accounting fordepreciation. You must file Form",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "b5853f570646a9c84a04db0074669873",
+    "text": "with th",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "d3db347dee9aa258e493a48a9fe6de1d",
+    "text": "ervice Center where your return will be filedwithin the first",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "afa6e0c384f2e247351af77caa91b468",
+    "text": "days of the tax year in whichit is desired to make the change. Attach a copy ofthe form to the income tax return for the tax yearof the change.Note: Do not use Form",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "d48e10ad7912a775666090b432873213",
+    "text": "to make an electionunder section",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "f7af2efc15f587ce789c3063c3abed62",
+    "text": "Such an election may bemade only on the tax return for the year in whichthe property",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "b22bdae1f591f90ccdbe57a861e14556",
+    "text": "s placed in service. In addition,Form",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "5a4a6d4941b9810d720e598efce0fb1e",
+    "text": "is not to be used to request approvalto revoke an election made under section",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "0eab98069b0c6f8bc39238cfb2ab5af5",
+    "text": "Such a request must be made in accordance wit",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "8af8267e8d0857ac9d3610cbd4d98019",
+    "text": "ay Prac",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "32d899dee3924edd6ebf68273da88fcd",
+    "text": "findatod annralivy",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "f63f53aab435b8c9789ab7d6b982db3f",
+    "text": "Sections B-2 and B-3",
     "type": "Title",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 2
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "70c9fb918db2682e9cf83e6f68d96821",
+    "text": "Limitation on the Use of the Cash Method ofAccounting.—Except as provided below. C",
     "type": "Title",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 2
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "bbb63d49e0bfe29c140756158cc396df",
+    "text": "Accounting.—Except as provided below, Ccorporations, partnerships with a C corporationas a partner, and tax shelters may not use thecash method of accounting. For purposes of thislimitation, a trust subject to the tax on unrelatedbusiness income under section 511 1s treated asaC corporation with respect to its unrelated tradeor business activities.",
     "type": "NarrativeText",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 2
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "a8155ab3bed92cc259ab58331619e0e1",
+    "text": "Section H",
     "type": "Title",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 2
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "8d7569b4eb495015543cd55aeded1b1a",
+    "text": "(2) State whether the proposed identificationand valuation methods conform to the inventorymethod currently used with respect to non-LIFOInventories, if any, or how such method isotherwise consistent with Regulations section1.472-6.",
     "type": "NarrativeText",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 2
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "54f2708b4cfb39e6586ec74244fe7f1e",
+    "text": "The limitation on the use of the cash method(except for tax shelters) does not apply to—",
     "type": "NarrativeText",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 2
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "8b5197662da2b524c395d0224bcf121f",
+    "text": "Generally, this section should be used forrequesting changes In a method of accounting forwhich provision has not been made elsewhere onthis form. Attach additional pages if more spacets needed for a full explanation of the presentmethod used and the proposed changerequested.",
     "type": "NarrativeText",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 2
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "b39286f97010acc09c872df0a25a8d46",
+    "text": "(except for tax shelters) does not apply to—(",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "daaf36cd7c9f373f7192a7f76716cfc4",
+    "text": ") Farming businesses.—F or this purpose,the term “farming business”",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "ff9c1c0798a1d593d7b89253052fc17f",
+    "text": "s defined in section",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "cac62e982bd6f2fdde9219ae1aff4c92",
+    "text": "A(e)(",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "920fa4651462da72706415162fc8bc85",
+    "text": "), but it also includes the raising,harvesting, or growing of trees to which section",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "7c2c864009e421aecec36fd061644f50",
+    "text": "A(c)(",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "b4537ecf064e370911fbd07081bd5bc7",
+    "text": ") applies. Notwithstanding thisexception, section",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "efd8cce5314342430e90a40afde3ab07",
+    "text": "requires certain Ccorporations and partnerships with a Ccorporation as a partner to use the accrualmethod.Lah",
+    "type": "ListItem",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 2
+    }
+  },
+  {
+    "element_id": "1fbc7ab18ebbfd6edfcbe19b4d5a84cd",
+    "text": "If you are making an election under section458, show the applicable information underRegulations section 1.458-10.",
     "type": "NarrativeText",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 2
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
+    "element_id": "92e21a61e1d872dbbe3e3221a920b409",
+    "text": "Section D",
     "type": "Title",
     "metadata": {
+      "filetype": "application/pdf",
       "page_number": 2
     }
   }

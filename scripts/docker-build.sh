@@ -2,7 +2,7 @@
 
 set -euo pipefail
 DOCKER_REPOSITORY="${DOCKER_REPOSITORY:-quay.io/unstructured-io/unstructured}"
-PIP_VERSION="${PIP_VERSION:-22.2.1}"
+PIP_VERSION="${PIP_VERSION:-23.1.2}"
 DOCKER_IMAGE="${DOCKER_IMAGE:-unstructured:dev}"
 
 DOCKER_BUILD_CMD=(docker buildx build --load -f Dockerfile \

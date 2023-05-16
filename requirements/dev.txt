@@ -55,13 +55,13 @@ filelock==3.12.0
     # via virtualenv
 fqdn==1.5.1
     # via jsonschema
-identify==2.5.22
+identify==2.5.24
     # via pre-commit
 idna==3.4
     # via
     #   anyio
     #   jsonschema
-importlib-metadata==6.5.0
+importlib-metadata==6.6.0
     # via
     #   jupyter-client
     #   nbconvert
@@ -75,7 +75,7 @@ ipykernel==6.22.0
     #   nbclassic
     #   notebook
     #   qtconsole
-ipython==8.12.0
+ipython==8.12.2
     # via
     #   -r requirements/dev.in
     #   ipykernel
@@ -152,9 +152,9 @@ matplotlib-inline==0.1.6
     #   ipython
 mistune==2.0.5
     # via nbconvert
-nbclassic==0.5.5
+nbclassic==1.0.0
     # via notebook
-nbclient==0.7.3
+nbclient==0.7.4
     # via nbconvert
 nbconvert==7.3.1
     # via
@@ -178,7 +178,7 @@ nodeenv==1.7.0
     # via pre-commit
 notebook==6.5.4
     # via jupyter
-notebook-shim==0.2.2
+notebook-shim==0.2.3
     # via nbclassic
 packaging==23.1
     # via
@@ -200,11 +200,11 @@ pip-tools==6.13.0
     # via -r requirements/dev.in
 pkgutil-resolve-name==1.3.10
     # via jsonschema
-platformdirs==3.2.0
+platformdirs==3.5.0
     # via
     #   jupyter-core
     #   virtualenv
-pre-commit==3.2.2
+pre-commit==3.3.1
     # via -r requirements/dev.in
 prometheus-client==0.16.0
     # via
@@ -254,7 +254,7 @@ pyzmq==25.0.2
     #   nbclassic
     #   notebook
     #   qtconsole
-qtconsole==5.4.2
+qtconsole==5.4.3
     # via jupyter
 qtpy==2.3.1
     # via qtconsole
@@ -266,7 +266,7 @@ rfc3986-validator==0.1.1
     # via
     #   jsonschema
     #   jupyter-events
-send2trash==1.8.0
+send2trash==1.8.2
     # via
     #   jupyter-server
     #   nbclassic
@@ -295,7 +295,7 @@ tomli==2.0.1
     # via
     #   build
     #   pyproject-hooks
-tornado==6.3
+tornado==6.3.1
     # via
     #   ipykernel
     #   jupyter-client
@@ -325,7 +325,7 @@ typing-extensions==4.5.0
     # via ipython
 uri-template==1.2.0
     # via jsonschema
-virtualenv==20.22.0
+virtualenv==20.23.0
     # via pre-commit
 wcwidth==0.2.6
     # via prompt-toolkit

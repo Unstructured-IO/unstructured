@@ -17,15 +17,21 @@ def initialize():
     MODEL_TYPES[None]["config_path"]
 
 
-def process_document(doc: "IngestDoc") -> Optional[List[Dict[str, Any]]]:
-    """Process any IngestDoc-like class of document with Unstructured's auto partition logic."""
+def process_document(doc: "IngestDoc", **partition_kwargs) -> Optional[List[Dict[str, Any]]]:
+    """Process any IngestDoc-like class of document with choosen Unstructured's partition logic.
+
+    Parameters
+    ----------
+    partition_kwargs
+        ultimately the parameters passed to partition()
+    """
     isd_elems_no_filename = None
     try:
         # does the work necessary to load file into filesystem
         # in the future, get_file_handle() could also be supported
         doc.get_file()
 
-        isd_elems_no_filename = doc.process_file()
+        isd_elems_no_filename = doc.process_file(**partition_kwargs)
 
         # Note, this may be a no-op if the IngestDoc doesn't do anything to persist
         # the results. Instead, the MainProcess (caller) may work with the aggregate

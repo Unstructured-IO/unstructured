@@ -46,13 +46,33 @@ RUN set -ex && \
     $sudo rm -rf /tmp/* && \
     yum clean all
 
+# SSL dependency gets baked into Python binary so do this first
+RUN yum -y update && \
+  yum install -y perl-core pcre-devel && \
+  wget https://ftp.openssl.org/source/openssl-1.1.1k.tar.gz && \
+  tar -xzvf openssl-1.1.1k.tar.gz && \
+  cd openssl-1.1.1k && \
+  ./config shared --prefix=/usr/local/ssl --openssldir=/usr/local/ssl && \
+  make && \
+  make install && cd .. && \
+  ldconfig && \
+  rm -rf openssl-1.1.1k && rm openssl-1.1.1k.tar.gz && \
+  $sudo yum -y remove perl-core pcre-devel && \
+  yum clean all
+
+ENV PATH="/usr/local/ssl/bin:${PATH}"
+ENV LD_LIBRARY_PATH="/usr/local/ssl/lib:$LD_LIBRARY_PATH"
+ENV SSL_CERT_FILE=/etc/ssl/certs/ca-bundle.crt
+
 # Install Python
-RUN yum -y install openssl-devel bzip2-devel libffi-devel make git sqlite-devel && \
+RUN yum -y install bzip2-devel libffi-devel make git sqlite-devel && \
   curl -O https://www.python.org/ftp/python/3.8.15/Python-3.8.15.tgz && tar -xzf Python-3.8.15.tgz && \
-  cd Python-3.8.15/ && ./configure --enable-optimizations && make altinstall && \
+  cd Python-3.8.15/ && \
+  ./configure --enable-optimizations --with-openssl=/usr/local/ssl && \
+  make altinstall && \
   cd .. && rm -rf Python-3.8.15* && \
   ln -s /usr/local/bin/python3.8 /usr/local/bin/python3 && \
-  $sudo yum -y remove openssl-devel bzip2-devel libffi-devel make sqlite-devel && \
+  $sudo yum -y remove bzip2-devel libffi-devel make sqlite-devel && \
   $sudo rm -rf /var/cache/yum/* && \
   yum clean all
 
@@ -81,6 +101,7 @@ RUN python3.8 -m pip install pip==${PIP_VERSION} && \
   pip install --no-cache -r requirements/ingest-slack.txt && \
   pip install --no-cache -r requirements/ingest-wikipedia.txt && \
   pip install --no-cache -r requirements/local-inference.txt && \
+  scl enable devtoolset-9 bash && \
   pip install --no-cache "detectron2@git+https://github.com/facebookresearch/detectron2.git@e2ce8dc#egg=detectron2"
 
 COPY example-docs example-docs

@@ -32,6 +32,19 @@ def test_partition_pptx_from_filename():
     assert elements == EXPECTED_PPTX_OUTPUT
 
 
+def test_partition_pptx_with_spooled_file():
+    # Test that the partition_pptx function can handle a SpooledTemporaryFile
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
+    from tempfile import SpooledTemporaryFile
+
+    with open(filename, "rb") as test_file:
+        spooled_temp_file = SpooledTemporaryFile()
+        spooled_temp_file.write(test_file.read())
+        spooled_temp_file.seek(0)
+        elements = partition_pptx(file=spooled_temp_file)
+        assert elements == EXPECTED_PPTX_OUTPUT
+
+
 def test_partition_pptx_from_file():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
     with open(filename, "rb") as f:

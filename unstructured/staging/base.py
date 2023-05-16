@@ -22,10 +22,14 @@ TABLE_FIELDNAMES: List[str] = [
     "filename",
     "page_number",
     "url",
+    "sent_from",
+    "sent_to",
+    "subject",
+    "sender",
 ]
 
 
-def convert_to_isd(elements: List[Element]) -> List[Dict[str, str]]:
+def convert_to_isd(elements: List[Element]) -> List[Dict[str, Any]]:
     """Represents the document elements as an Initial Structured Document (ISD)."""
     isd: List[Dict[str, str]] = []
     for element in elements:
@@ -34,7 +38,7 @@ def convert_to_isd(elements: List[Element]) -> List[Dict[str, str]]:
     return isd
 
 
-def convert_to_dict(elements: List[Element]) -> List[Dict[str, str]]:
+def convert_to_dict(elements: List[Element]) -> List[Dict[str, Any]]:
     """Converts a list of elements into a dictionary."""
     return convert_to_isd(elements)
 
@@ -126,6 +130,11 @@ def convert_to_isd_csv(elements: List[Element]) -> str:
         for key, value in metadata.items():
             if key in TABLE_FIELDNAMES:
                 row[key] = value
+
+        if row.get("sent_from"):
+            row["sender"] = row.get("sent_from")
+            if type(row["sender"]) == list:
+                row["sender"] = row["sender"][0]
 
     with io.StringIO() as buffer:
         csv_writer = csv.DictWriter(buffer, fieldnames=TABLE_FIELDNAMES)

@@ -1,4 +1,5 @@
-from typing import IO, List, Optional
+from tempfile import SpooledTemporaryFile
+from typing import IO, BinaryIO, List, Optional, Union, cast
 
 import pptx
 
@@ -11,7 +12,8 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.partition.common import exactly_one
+from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
+from unstructured.partition.common import exactly_one, spooled_to_bytes_io_if_needed
 from unstructured.partition.text_type import (
     is_possible_narrative_text,
     is_possible_title,
@@ -20,9 +22,10 @@ from unstructured.partition.text_type import (
 OPENXML_SCHEMA_NAME = "{http://schemas.openxmlformats.org/drawingml/2006/main}"
 
 
+@add_metadata_with_filetype(FileType.PPTX)
 def partition_pptx(
     filename: Optional[str] = None,
-    file: Optional[IO] = None,
+    file: Optional[Union[IO, SpooledTemporaryFile]] = None,
     include_page_breaks: bool = True,
     metadata_filename: Optional[str] = None,
 ) -> List[Element]:
@@ -48,7 +51,9 @@ def partition_pptx(
     if filename is not None:
         presentation = pptx.Presentation(filename)
     elif file is not None:
-        presentation = pptx.Presentation(file)
+        presentation = pptx.Presentation(
+            spooled_to_bytes_io_if_needed(cast(Union[BinaryIO, SpooledTemporaryFile], file)),
+        )
 
     elements: List[Element] = []
     metadata_filename = metadata_filename or filename

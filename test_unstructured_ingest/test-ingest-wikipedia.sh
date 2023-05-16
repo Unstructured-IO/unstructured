@@ -6,10 +6,11 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/.. || exit 1
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-    --metadata-exclude filename \
+    --metadata-exclude filename,file_directory \
     --wikipedia-page-title "Open Source Software" \
     --structured-output-dir wikipedia-ingest-output \
     --num-processes 2 \
+    --partition-strategy hi_res \
     --verbose
 
 set +e

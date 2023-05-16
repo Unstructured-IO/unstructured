@@ -5,6 +5,7 @@ import multiprocessing as mp
 import sys
 import warnings
 from contextlib import suppress
+from functools import partial
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -141,6 +142,12 @@ class MainProcess:
     default="https://api.unstructured.io/general/v0/general",
     help="If partitioning via api, use the following host. "
     "Default: https://api.unstructured.io/general/v0/general",
+)
+@click.option(
+    "--partition-strategy",
+    default="auto",
+    help="The method that will be used to process the documents. "
+    "Default: auto. Other strategies include `fast` and `hi_res`.",
 )
 @click.option(
     "--local-input-path",
@@ -439,6 +446,7 @@ def main(
     max_docs,
     partition_by_api,
     partition_endpoint,
+    partition_strategy,
     local_input_path,
     local_recursive,
     local_file_glob,
@@ -829,9 +837,14 @@ def main(
         logger.error("No connector-specific option was specified!")
         sys.exit(1)
 
+    process_document_with_partition_strategy = partial(
+        process_document,
+        strategy=partition_strategy,
+    )
+
     MainProcess(
         doc_connector=doc_connector,
-        doc_processor_fn=process_document,
+        doc_processor_fn=process_document_with_partition_strategy,
         num_processes=num_processes,
         reprocess=reprocess,
         verbose=verbose,

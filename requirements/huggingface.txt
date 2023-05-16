@@ -16,14 +16,20 @@ certifi==2022.12.7
     #   httpx
     #   requests
     #   unstructured (setup.py)
+cffi==1.15.1
+    # via cryptography
 charset-normalizer==3.1.0
-    # via requests
+    # via
+    #   pdfminer-six
+    #   requests
 click==8.1.3
     # via
     #   nltk
     #   sacremoses
 commonmark==0.9.1
     # via rich
+cryptography==40.0.2
+    # via pdfminer-six
 deprecated==1.2.13
     # via argilla
 et-xmlfile==1.1.0
@@ -33,6 +39,8 @@ filelock==3.12.0
     #   huggingface-hub
     #   torch
     #   transformers
+fsspec==2023.4.0
+    # via huggingface-hub
 h11==0.14.0
     # via httpcore
 httpcore==0.16.3
@@ -93,10 +101,14 @@ pandas==1.5.3
     # via
     #   argilla
     #   unstructured (setup.py)
+pdfminer-six==20221105
+    # via unstructured (setup.py)
 pillow==9.5.0
     # via
     #   python-pptx
     #   unstructured (setup.py)
+pycparser==2.21
+    # via cffi
 pydantic==1.10.7
     # via argilla
 pygments==2.15.1
@@ -117,12 +129,12 @@ pyyaml==6.0
     # via
     #   huggingface-hub
     #   transformers
-regex==2023.3.23
+regex==2023.5.5
     # via
     #   nltk
     #   sacremoses
     #   transformers
-requests==2.28.2
+requests==2.30.0
     # via
     #   huggingface-hub
     #   transformers
@@ -133,7 +145,7 @@ rich==13.0.1
     # via argilla
 sacremoses==0.0.53
     # via unstructured (setup.py)
-sentencepiece==0.1.98
+sentencepiece==0.1.99
     # via unstructured (setup.py)
 six==1.16.0
     # via
@@ -166,7 +178,7 @@ typing-extensions==4.5.0
     #   pydantic
     #   rich
     #   torch
-urllib3==1.26.15
+urllib3==2.0.2
     # via requests
 wrapt==1.14.1
     # via

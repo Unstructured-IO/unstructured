@@ -20,6 +20,7 @@ from unstructured.documents.email_elements import (
     Subject,
 )
 from unstructured.partition.email import (
+    convert_to_iso_8601,
     extract_attachment_info,
     partition_email,
     partition_email_header,
@@ -173,12 +174,16 @@ def test_partition_email_has_metadata():
     assert elements[0].metadata == ElementMetadata(
         filename=filename,
         date="2022-12-16T17:04:16-05:00",
-        page_number=None,
+        page_number=1,
         url=None,
         sent_from=["Matthew Robinson <mrobinson@unstructured.io>"],
         sent_to=["Matthew Robinson <mrobinson@unstructured.io>"],
         subject="Test Email",
+        filetype="message/rfc822",
     )
+
+    expected_dt = datetime.datetime.fromisoformat("2022-12-16T17:04:16-05:00")
+    assert elements[0].metadata.get_date() == expected_dt
 
 
 def test_extract_email_text_matches_html():
@@ -226,3 +231,17 @@ def test_partition_email_processes_fake_email_with_header():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email-header.eml")
     elements = partition_email(filename=filename)
     assert len(elements) > 0
+
+
+@pytest.mark.parametrize(
+    (("time", "expected")),
+    [
+        ("Thu,  4 May 2023 02:32:49 +0000", "2023-05-04T02:32:49+00:00"),
+        ("Thu, 4 May 2023 02:32:49 +0000", "2023-05-04T02:32:49+00:00"),
+        ("Thu, 4 May 2023 02:32:49 +0000 (UTC)", "2023-05-04T02:32:49+00:00"),
+        ("Thursday 5/3/2023 02:32:49", None),
+    ],
+)
+def test_convert_to_iso_8601(time, expected):
+    iso_time = convert_to_iso_8601(time)
+    assert iso_time == expected

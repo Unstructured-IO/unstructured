@@ -6,10 +6,11 @@ SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 cd "$SCRIPT_DIR"/.. || exit 1
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-    --metadata-exclude filename \
+    --metadata-exclude filename,file_directory \
     --local-input-path example-docs \
     --local-file-glob "*.html" \
     --structured-output-dir local-ingest-output \
+    --partition-strategy hi_res \
     --verbose \
     --reprocess
 

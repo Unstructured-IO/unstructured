@@ -8,7 +8,7 @@ from unstructured.documents.elements import Element
 
 def _partition_via_api(
     filename: str = "",
-    file: Optional[bytes] = None,
+    file: Optional[Union[BinaryIO, bytes]] = None,
     url: str = "https://ml.unstructured.io/layout/pdf",
     token: Optional[str] = None,
     data: Optional[dict] = None,  # NOTE(alan): Remove after different models are handled by routing

@@ -138,7 +138,7 @@ to disable SSL verification in the request.
 
 ``partition_via_api`` allows users to partition documents using the hosted Unstructured API.
 The API partitions documents using the automatic ``partition`` function. Currently, the API
-supports all filetypes except for RTF and EPUBs. 
+supports all filetypes except for RTF and EPUBs.
 To use another URL for the API use the ``api_url`` kwarg. This is helpful if you're hosting
 the API yourself or running it locally through a container. You can pass in your API key
 using the ``api_key`` kwarg. You can use the ``content_type`` kwarg to pass in the MIME
@@ -255,7 +255,7 @@ Examples:
 ------------------
 
 The ``partition_odt`` partitioning brick pre-processes Open Office documents
-saved in the ``.odt`` format. The function first converst the document
+saved in the ``.odt`` format. The function first converts the document
 to ``.docx`` using ``pandoc`` and then processes it using ``partition_docx``.
 
 Examples:
@@ -363,10 +363,7 @@ if you'd like to run inference locally.
 If you set the URL, ``partition_pdf`` will make a call to a remote inference server.
 ``partition_pdf`` also includes a ``token`` function that allows you to pass in an authentication
 token for a remote API call.
-The ``strategy`` kwarg controls the method that will be used to process the PDF. The ``"hi_res"`` strategy
-will identify the layout of the document using ``detectron2``. The ``"fast"`` strategy will extract the
-text using ``pdfminer`` and process the raw text with ``partition_text``. If ``detectron2`` is not available,
-and the ``"hi_res"`` strategy is set, ``partition_pdf`` will fallback to the ``"fast"`` strategy.
+
 You can also specify what languages to use for OCR with the ``ocr_languages`` kwarg. For example,
 use ``ocr_languages="eng+deu"`` to use the English and German language packs. See the
 `Tesseract documentation <https://github.com/tesseract-ocr/tessdata>`_ for a full list of languages and
@@ -386,9 +383,31 @@ Examples:
   elements = partition_pdf("example-docs/layout-parser-paper-fast.pdf", ocr_languages="eng+swe")
 
 
+The ``strategy`` kwarg controls the method that will be used to process the PDF.
+The available strategies for PDFs are ``"auto"``, ``"hi_res"``, ``"ocr_only"``, and ``"fast"``.
+
+The ``"auto"`` strategy will choose the partitioning strategy based on document characteristics and the function kwargs.
+If ``infer_table_structure`` is passed, the strategy will be ``"hi_res"`` because that is the only strategy that
+currently extracts tables for PDFs. Otherwise, ``"auto"`` will choose ``"fast"`` if the PDF text is extractable and
+``"ocr_only"`` otherwise. ``"auto"`` is the default strategy.
+
+The ``"hi_res"`` strategy will identify the layout of the document using ``detectron2``. The advantage of `"hi_res"` is that
+it uses the document layout to gain additional information about document elements. We recommend using this strategy
+if your use case is highly sensitive to correct classifications for document elements. If ``detectron2`` is not available,
+the ``"hi_res"`` strategy will fall back to the ``"ocr_only"`` strategy.
+
+The ``"ocr_only"`` strategy runs the document through Tesseract for OCR and then runs the raw text through ``partition_text``.
+Currently, ``"hi_res"`` has difficulty ordering elements for documents with multiple columns. If you have a document with
+multiple columns that does not have extractable text, we recommend using the ``"ocr_only"`` strategy. ``"ocr_only"`` falls
+back to ``"fast"`` if Tesseract is not available and the document has extractable text.
+
+The ``"fast"`` strategy will extract the text using ``pdfminer`` and process the raw text with ``partition_text``.
+If the PDF text is not extractable, ``partition_pdf`` will fall back to ``"ocr_only"``. We recommend using the
+``"fast"`` strategy in most cases where the PDF has extractable text.
+
 If a PDF is copy protected, ``partition_pdf`` can process the document with the ``"hi_res"`` strategy (which
-will treat it like an image), but cannot process the document with the ``"fast"`` strategy. If the user
-chooses ``"fast"`` on a copy protected PDF, ``partition_pdf`` will fall back to the ``"hi_res"``
+will treat it like an image), but cannot process the document with the ``"fast"`` strategy. 
+If the user chooses ``"fast"`` on a copy protected PDF, ``partition_pdf`` will fall back to the ``"hi_res"``
 strategy. If ``detectron2`` is not installed, ``partition_pdf`` will fail for copy protected
 PDFs because the document will not be processable by any of the available methods.
 
@@ -411,6 +430,7 @@ Examples:
 The ``partition_image`` function has the same API as ``partition_pdf``, which is document above.
 The only difference is that ``partition_image`` does not need to convert a PDF to an image
 prior to processing. The ``partition_image`` function supports ``.png`` and ``.jpg`` files.
+
 You can also specify what languages to use for OCR with the ``ocr_languages`` kwarg. For example,
 use ``ocr_languages="eng+deu"`` to use the English and German language packs. See the
 `Tesseract documentation <https://github.com/tesseract-ocr/tessdata>`_ for a full list of languages and
@@ -430,9 +450,23 @@ Examples:
   elements = partition_image("example-docs/layout-parser-paper-fast.jpg", ocr_languages="eng+swe")
 
 
-The default partitioning strategy for ``partition_image`` is `"hi_res"`, which segements the document using
-``detectron2`` and then OCRs the document. You can also choose ``"ocr_only"`` as the partitioning strategy,
-which OCRs the document and then runs the output through ``partition_text``. This can be helpful
+The ``strategy`` kwarg controls the method that will be used to process the PDF.
+The available strategies for images are ``"auto"``, ``"hi_res"`` and ``"ocr_only"``.
+
+The ``"auto"`` strategy will choose the partitioning strategy based on document characteristics and the function kwargs.
+If ``infer_table_structure`` is passed, the strategy will be ``"hi_res"`` because that is the only strategy that
+currently extracts tables for PDFs. Otherwise, ``"auto"`` will choose ``ocr_only``. ``"auto"`` is the default strategy.
+
+The ``"hi_res"`` strategy will identify the layout of the document using ``detectron2``. The advantage of `"hi_res"` is that it
+uses the document layout to gain additional information about document elements. We recommend using this strategy
+if your use case is highly sensitive to correct classifications for document elements. If ``detectron2`` is not available,
+the ``"hi_res"`` strategy will fall back to the ``"ocr_only"`` strategy.
+
+The ``"ocr_only"`` strategy runs the document through Tesseract for OCR and then runs the raw text through ``partition_text``.
+Currently, ``"hi_res"`` has difficulty ordering elements for documents with multiple columns. If you have a document with
+multiple columns that does not have extractable text, we recoomend using the ``"ocr_only"`` strategy.
+
+It is helpful to use ``"ocr_only"`` instead of ``"hi_res"``
 if ``detectron2`` does not detect a text element in the image. To run example below, ensure you
 have the Korean language pack for Tesseract installed on your system.
 

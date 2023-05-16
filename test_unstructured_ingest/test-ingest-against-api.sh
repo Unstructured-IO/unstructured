@@ -10,6 +10,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --local-file-glob "*.pdf" \
     --structured-output-dir api-ingest-output \
     --partition-by-api \
+    --partition-strategy hi_res \
     --verbose \
     --reprocess
 

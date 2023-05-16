@@ -19,11 +19,11 @@ def test_process_file_metadata_include_filename(filename: str):
     ingest_doc = GitIngestDoc(
         path=filename,
         config=SimpleGitConfig(
-          download_dir=EXAMPLE_DOCS_DIRECTORY,
-          metadata_include="filename",
+            download_dir=EXAMPLE_DOCS_DIRECTORY,
+            metadata_include="filename",
         ),
     )
-    isd_elems = ingest_doc.process_file()
+    isd_elems = ingest_doc.process_file(strategy="hi_res")
 
     for elem in isd_elems:
         assert set(elem["metadata"].keys()) == {"filename"}
@@ -34,11 +34,11 @@ def test_process_file_metadata_include_filename_pagenum(filename: str):
     ingest_doc = GitIngestDoc(
         path=filename,
         config=SimpleGitConfig(
-          download_dir=EXAMPLE_DOCS_DIRECTORY,
-          metadata_include="filename,page_number",
+            download_dir=EXAMPLE_DOCS_DIRECTORY,
+            metadata_include="filename,page_number",
         ),
     )
-    isd_elems = ingest_doc.process_file()
+    isd_elems = ingest_doc.process_file(strategy="hi_res")
 
     for elem in isd_elems:
         assert set(elem["metadata"].keys()) == {"filename", "page_number"}
@@ -49,11 +49,11 @@ def test_process_file_metadata_exclude_filename(filename: str):
     ingest_doc = GitIngestDoc(
         path=filename,
         config=SimpleGitConfig(
-          download_dir=EXAMPLE_DOCS_DIRECTORY,
-          metadata_exclude="filename",
+            download_dir=EXAMPLE_DOCS_DIRECTORY,
+            metadata_exclude="filename",
         ),
     )
-    isd_elems = ingest_doc.process_file()
+    isd_elems = ingest_doc.process_file(strategy="hi_res")
 
     for elem in isd_elems:
         assert "filename" not in elem["metadata"].keys()
@@ -64,11 +64,11 @@ def test_process_file_metadata_exclude_filename_pagenum(filename: str):
     ingest_doc = GitIngestDoc(
         path=filename,
         config=SimpleGitConfig(
-          download_dir=EXAMPLE_DOCS_DIRECTORY,
-          metadata_exclude="filename,page_number",
+            download_dir=EXAMPLE_DOCS_DIRECTORY,
+            metadata_exclude="filename,page_number",
         ),
     )
-    isd_elems = ingest_doc.process_file()
+    isd_elems = ingest_doc.process_file(strategy="hi_res")
 
     for elem in isd_elems:
         assert "filename" not in elem["metadata"].keys()
@@ -80,10 +80,10 @@ def test_process_file_fields_include_default(filename: str):
     ingest_doc = GitIngestDoc(
         path=filename,
         config=SimpleGitConfig(
-          download_dir=EXAMPLE_DOCS_DIRECTORY,
+            download_dir=EXAMPLE_DOCS_DIRECTORY,
         ),
     )
-    isd_elems = ingest_doc.process_file()
+    isd_elems = ingest_doc.process_file(strategy="hi_res")
 
     for elem in isd_elems:
         assert {"element_id", "text", "type", "metadata"} == set(elem.keys())
@@ -94,11 +94,11 @@ def test_process_file_fields_include_elementid(filename: str):
     ingest_doc = GitIngestDoc(
         path=filename,
         config=SimpleGitConfig(
-          download_dir=EXAMPLE_DOCS_DIRECTORY,
-          fields_include="element_id",
+            download_dir=EXAMPLE_DOCS_DIRECTORY,
+            fields_include="element_id",
         ),
     )
-    isd_elems = ingest_doc.process_file()
+    isd_elems = ingest_doc.process_file(strategy="hi_res")
 
     for elem in isd_elems:
         assert {"element_id"} == set(elem.keys())
@@ -109,13 +109,12 @@ def test_process_file_flatten_metadata_filename(filename: str):
     ingest_doc = GitIngestDoc(
         path=filename,
         config=SimpleGitConfig(
-          download_dir=EXAMPLE_DOCS_DIRECTORY,
-          metadata_include="filename",
-          flatten_metadata=True,
+            download_dir=EXAMPLE_DOCS_DIRECTORY,
+            metadata_include="filename",
+            flatten_metadata=True,
         ),
     )
-    isd_elems = ingest_doc.process_file()
-    
+    isd_elems = ingest_doc.process_file(strategy="hi_res")
     for elem in isd_elems:
         assert {"element_id", "text", "type", "filename"} == set(elem.keys())
 
@@ -125,12 +124,11 @@ def test_process_file_flatten_metadata_filename_pagenum(filename: str):
     ingest_doc = GitIngestDoc(
         path=filename,
         config=SimpleGitConfig(
-          download_dir=EXAMPLE_DOCS_DIRECTORY,
-          metadata_include="filename,page_number",
-          flatten_metadata=True,
+            download_dir=EXAMPLE_DOCS_DIRECTORY,
+            metadata_include="filename,page_number",
+            flatten_metadata=True,
         ),
     )
-    isd_elems = ingest_doc.process_file()
-    
+    isd_elems = ingest_doc.process_file(strategy="hi_res")
     for elem in isd_elems:
         assert {"element_id", "text", "type", "filename", "page_number"} == set(elem.keys())
