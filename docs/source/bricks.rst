@@ -83,7 +83,7 @@ If you call the ``partition`` function, ``unstructured`` will attempt to detect 
 file type and route it to the appropriate partitioning brick. All partitioning bricks
 called within ``partition`` are called using the default kwargs. Use the document-type
 specific bricks if you need to apply non-default settings.
-``partition`` currently supports ``.docx``, ``.doc``, ``.odt``, ``.pptx``, ``.ppt``, ``.eml``, ``.msg``, ``.rtf``, ``.epub``, ``.html``, ``.pdf``,
+``partition`` currently supports ``.docx``, ``.doc``, ``.odt``, ``.pptx``, ``.ppt``, ``.xlsx``, ``.eml``, ``.msg``, ``.rtf``, ``.epub``, ``.html``, ``.pdf``,
 ``.png``, ``.jpg``, and ``.txt`` files.
 If you set the ``include_page_breaks`` kwarg to ``True``, the output will include page breaks. This is only supported for ``.pptx``, ``.html``, ``.pdf``,
 ``.png``, and ``.jpg``.
@@ -249,6 +249,24 @@ Examples:
   from unstructured.partition.doc import partition_doc
 
   elements = partition_doc(filename="example-docs/fake.doc")
+
+
+``partition_xlsx``
+------------------
+
+The ``partition_xlsx`` function pre-processing Microsoft Excel documents. Each
+sheet in the Excel file will be stored as a ``Table`` object. The plain text
+of the sheet will be the ``text`` attribute of the ``Table``. The ``text_as_html``
+attribute in the element metadata will contain an HTML representation of the table.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.xlsx import partition_xlsx
+
+  elements = partition_xlsx(filename="example-docs/stanley-cups.xlsx")
+  print(elements[0].metadata.text_as_html)
 
 
 ``partition_odt``
