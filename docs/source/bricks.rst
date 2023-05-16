@@ -254,7 +254,7 @@ Examples:
 ``partition_xlsx``
 ------------------
 
-The ``partition_xlsx`` function pre-processing Microsoft Excel documents. Each
+The ``partition_xlsx`` function pre-processes Microsoft Excel documents. Each
 sheet in the Excel file will be stored as a ``Table`` object. The plain text
 of the sheet will be the ``text`` attribute of the ``Table``. The ``text_as_html``
 attribute in the element metadata will contain an HTML representation of the table.
