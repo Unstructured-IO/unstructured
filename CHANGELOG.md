@@ -10,6 +10,8 @@
 
 ### Features
 
+* Add `partition_xlsx` for Microsoft Excel documents.
+
 ### Fixes
 
 * Supports `hml` filetype for partition as a variation of html filetype.
