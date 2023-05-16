@@ -65,6 +65,6 @@ def test_partition_xlsx_can_exclude_metadata(filename="example-docs/stanley-cups
     assert len(elements) == 2
 
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
-    assert elements[0].metadata.text_as_html == None
-    assert elements[0].metadata.page_number == None
-    assert elements[0].metadata.filetype == None
+    assert elements[0].metadata.text_as_html is None
+    assert elements[0].metadata.page_number is None
+    assert elements[0].metadata.filetype is None
