@@ -56,3 +56,15 @@ def test_partition_xlsx_from_file(filename="example-docs/stanley-cups.xlsx"):
     assert elements[0].metadata.text_as_html == EXPECTED_TABLE
     assert elements[0].metadata.page_number == 1
     assert elements[0].metadata.filetype == EXPECTED_FILETYPE
+
+
+def test_partition_xlsx_can_exclude_metadata(filename="example-docs/stanley-cups.xlsx"):
+    elements = partition_xlsx(filename=filename, include_metadata=False)
+
+    assert all(isinstance(element, Table) for element in elements)
+    assert len(elements) == 2
+
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
+    assert elements[0].metadata.text_as_html == None
+    assert elements[0].metadata.page_number == None
+    assert elements[0].metadata.filetype == None

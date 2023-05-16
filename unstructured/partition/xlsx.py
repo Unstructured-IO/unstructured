@@ -14,6 +14,7 @@ def partition_xlsx(
     filename: Optional[str] = None,
     file: Optional[Union[IO, SpooledTemporaryFile]] = None,
     metadata_filename: Optional[str] = None,
+    include_metadata: bool = True,
 ) -> List[Element]:
     """Partitions Microsoft Excel Documents in .xlsx format into its document elements.
 
@@ -27,6 +28,8 @@ def partition_xlsx(
         The filename to use for the metadata. Relevant because partition_doc converts the
         document to .xlsx before partition. We want the original source filename in the
         metadata.
+    include_metadata
+        Determines whether or not metadata is included in the output.
     """
     exactly_one(filename=filename, file=file)
 
@@ -45,11 +48,15 @@ def partition_xlsx(
         html_text = table.to_html(index=False, header=False, na_rep="")
         text = lxml.html.document_fromstring(html_text).text_content()
 
-        metadata = ElementMetadata(
-            text_as_html=html_text,
-            page_number=page_number,
-            filename=metadata_filename,
-        )
+        if include_metadata:
+            metadata = ElementMetadata(
+                text_as_html=html_text,
+                page_number=page_number,
+                filename=metadata_filename,
+            )
+        else:
+            metadata = ElementMetadata()
+
         table = Table(text=text, metadata=metadata)
         elements.append(table)
 
