@@ -1,4 +1,4 @@
-## 0.6.7-dev4
+## 0.6.7-dev5
 
 ### Enhancements
 
@@ -18,6 +18,7 @@
 * Makes `pytesseract` a function level import in `partition_pdf` so you can use the `"fast"`
   or `"hi_res"` strategies if `pytesseract` is not installed. Also adds the
   `required_dependencies` decorator for the `"hi_res"` and `"ocr_only"` strategies.
+* Fix to ensure `filename` is tracked in metadata for `docx` tables.
 
 ## 0.6.6
 

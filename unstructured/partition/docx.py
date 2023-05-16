@@ -137,8 +137,10 @@ def partition_docx(
             text_table = _convert_table_to_text(table, as_html=False)
             element = Table(text_table)
             if element is not None:
-                element.metadata = ElementMetadata(filename=metadata_filename)
-                element.metadata = ElementMetadata(text_as_html=html_table)
+                element.metadata = ElementMetadata(
+                    text_as_html=html_table,
+                    filename=metadata_filename,
+                )
                 elements.append(element)
             table_index += 1
         elif element_item.tag.endswith("p"):
