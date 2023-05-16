@@ -13,10 +13,13 @@ DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
 
 def test_partition_html_from_filename():
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "example-10k.html")
+    directory = os.path.join(DIRECTORY, "..", "..", "example-docs")
+    filename = os.path.join(directory, "example-10k.html")
     elements = partition_html(filename=filename)
     assert PageBreak() not in elements
     assert len(elements) > 0
+    assert elements[0].metadata.filename == "example-10k.html"
+    assert elements[0].metadata.file_directory == directory
 
 
 def test_partition_html_with_page_breaks():
