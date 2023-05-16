@@ -27,6 +27,7 @@ from unstructured.partition.pptx import partition_pptx
 from unstructured.partition.rtf import partition_rtf
 from unstructured.partition.text import partition_text
 from unstructured.partition.xml import partition_xml
+from unstructured.partition.xlsx import partition_xlsx
 
 
 def partition(
@@ -195,6 +196,8 @@ def partition(
         )
     elif filetype == FileType.JSON:
         elements = partition_json(filename=filename, file=file)
+    elif filetype == FileType.XLSX:
+        elements = partition_xlsx(filename=filename, file=file)
     else:
         msg = "Invalid file" if not filename else f"Invalid file {filename}"
         raise ValueError(f"{msg}. The {filetype} file type is not supported in partition.")
