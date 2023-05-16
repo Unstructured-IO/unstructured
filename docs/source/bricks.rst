@@ -83,7 +83,7 @@ If you call the ``partition`` function, ``unstructured`` will attempt to detect 
 file type and route it to the appropriate partitioning brick. All partitioning bricks
 called within ``partition`` are called using the default kwargs. Use the document-type
 specific bricks if you need to apply non-default settings.
-``partition`` currently supports ``.docx``, ``.doc``, ``.odt``, ``.pptx``, ``.ppt``, ``.eml``, ``.msg``, ``.rtf``, ``.epub``, ``.html``, ``.pdf``,
+``partition`` currently supports ``.docx``, ``.doc``, ``.odt``, ``.pptx``, ``.ppt``, ``.eml``, ``.msg``, ``.rtf``, ``.epub``, ``.html``, ``.xml``, ``.pdf``,
 ``.png``, ``.jpg``, and ``.txt`` files.
 If you set the ``include_page_breaks`` kwarg to ``True``, the output will include page breaks. This is only supported for ``.pptx``, ``.html``, ``.pdf``,
 ``.png``, and ``.jpg``.
@@ -351,6 +351,26 @@ to disable SSL verification in the request.
   # and turn off SSL verification
 
   elements = partition_html(url="https://python.org/", ssl_verify=False)
+
+
+``partition_xml``
+-----------------
+
+The ``partition_xml`` function processes XML documents.
+If ``keep_xml_tags=False``, the function only returns the text attributes from the tags.
+You can use ``xml_path`` in conjuntion with ``keep_xml_tags=False`` to restrict the text
+extraction to specific tags.
+If ``keep_xml_tags=True``, the function returns tag information in addition to tag text.
+``keep_xml_tags`` is ``False`` be default.
+
+
+.. code:: python
+
+  from unstructured.partition.xml import partition_xml
+
+  elements = partition_xml(filename="example-docs/factbook.xml", keep_xml_tags=True)
+
+  elements = partition_xml(filename="example-docs/factbook.xml", keep_xml_tags=False)
 
 
 
