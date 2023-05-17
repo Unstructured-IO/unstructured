@@ -18,6 +18,6 @@ set +e
 
 if [ "$(find 'local-ingest-output' -type f -printf '.' | wc -c)" != 4 ]; then
    echo
-   echo "4 files should have been created."
+   echo "6 files should have been created."
    exit 1
 fi
