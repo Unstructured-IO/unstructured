@@ -30,7 +30,7 @@ def partition_text(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
     text: Optional[str] = None,
-    encoding: Optional[str] = "utf-8",
+    encoding: Optional[str] = None,
     paragraph_grouper: Optional[Callable[[str], str]] = None,
 ) -> List[Element]:
     """Partitions an .txt documents into its constituent elements.
@@ -54,16 +54,11 @@ def partition_text(
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text)
 
-    if not encoding:
-        encoding = "utf-8"
-
     if filename is not None:
         encoding, file_text = read_txt_file(filename=filename, encoding=encoding)
 
     elif file is not None:
-        file_text = file.read()
-        if isinstance(file_text, bytes):
-            file_text = file_text.decode(encoding)
+        encoding, file_text = read_txt_file(file=file, encoding=encoding)
 
     elif text is not None:
         file_text = str(text)

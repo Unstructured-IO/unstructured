@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from typing import IO, Optional, Tuple
 
 import chardet
 
@@ -27,41 +27,68 @@ COMMON_ENCODINGS = [
 ]
 
 
+def detect_file_encoding(filename: str = "", file: Optional[bytes] = None) -> Tuple[str, str]:
+    if filename:
+        with open(filename, "rb") as f:
+            binary_data = f.read()
+    elif file:
+        binary_data = file
+    else:
+        raise FileNotFoundError("No filename nor file were specified")
+
+    result = chardet.detect(binary_data)
+    encoding = result["encoding"]
+    confidence = result["confidence"]
+
+    if encoding is None or confidence < ENCODE_REC_THRESHOLD:
+        # Encoding detection failed, fallback to predefined encodings
+        for enc in COMMON_ENCODINGS:
+            try:
+                with open(filename, encoding=enc) as f:
+                    file_text = f.read()
+                encoding = enc
+                break
+            except (UnicodeDecodeError, UnicodeError):
+                continue
+        else:
+            raise UnicodeDecodeError(
+                "Unable to determine the encoding of the file or match it with any "
+                "of the specified encodings.",
+            )
+
+    else:
+        file_text = binary_data.decode(encoding)
+
+    return encoding, file_text
+
+
 def read_txt_file(
     filename: str = "",
-    encoding: Optional[str] = "utf-8",
+    file: Optional[IO] = None,
+    encoding: Optional[str] = None,
 ) -> Tuple[str, str]:
     """Extracts document metadata from a plain text document."""
     if filename:
-        with open(filename, encoding=encoding) as f:
-            try:
-                file_text = f.read()
-            except (UnicodeDecodeError, UnicodeError):
-                with open(filename, "rb") as f_rb:
-                    binary_data = f_rb.read()
-
-                result = chardet.detect(binary_data)
-                encoding = result["encoding"]
-                confidence = result["confidence"]
-
-                if encoding is None or confidence < ENCODE_REC_THRESHOLD:
-                    # Encoding detection failed, fallback to predefined encodings
-                    for enc in COMMON_ENCODINGS:
-                        try:
-                            with open(filename, encoding=enc) as f_retry:
-                                file_text = f_retry.read()
-                            encoding = enc
-                            break
-                        except (UnicodeDecodeError, UnicodeError):
-                            continue
-                    else:
-                        raise UnicodeDecodeError(
-                            "Unable to determine the encoding of the file or match it with "
-                            "any of the specified encodings.",
-                        )
-
-                else:
-                    file_text = binary_data.decode(encoding)
+        if encoding:
+            with open(filename, encoding=encoding) as f:
+                try:
+                    file_text = f.read()
+                except (UnicodeDecodeError, UnicodeError) as error:
+                    raise error
+        else:
+            encoding, file_text = detect_file_encoding(filename)
+    elif file:
+        file_content = file.read()
+        if isinstance(file_content, bytes):
+            if encoding:
+                try:
+                    file_text = file_content.decode(encoding)
+                except (UnicodeDecodeError, UnicodeError) as error:
+                    raise error
+            else:
+                encoding, file_text = detect_file_encoding(file=file_content)
+        else:
+            file_text = file_content
     else:
         raise FileNotFoundError("No filename was specified")
 
