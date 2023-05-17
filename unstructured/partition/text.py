@@ -11,6 +11,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
+from unstructured.file_utils.encoding import read_txt_file
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.partition.common import exactly_one
 from unstructured.partition.text_type import (
@@ -53,12 +54,11 @@ def partition_text(
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text)
 
+    if not encoding:
+        encoding = "utf-8"
+
     if filename is not None:
-        with open(filename, encoding=encoding) as f:
-            try:
-                file_text = f.read()
-            except (UnicodeDecodeError, UnicodeError) as error:
-                raise error
+        encoding, file_text = read_txt_file(filename=filename, encoding=encoding)
 
     elif file is not None:
         file_text = file.read()
