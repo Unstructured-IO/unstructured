@@ -26,19 +26,6 @@ class SimpleDiscordConfig(BaseConnectorConfig):
     channels: List[str]
     token: str
     days: int
-
-    # Standard Connector options
-    download_dir: str
-    output_dir: str
-    re_download: bool = False
-    preserve_downloads: bool = False
-    download_only: bool = False
-    metadata_include: Optional[str] = None
-    metadata_exclude: Optional[str] = None
-    partition_by_api: bool = False
-    partition_endpoint: str = "https://api.unstructured.io/general/v0/general"
-    fields_include: str = "element_id,text,type,metadata"
-    flatten_metadata: bool = False
     verbose: bool = False
 
     def __post_init__(self):

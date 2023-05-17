@@ -17,8 +17,6 @@ from unstructured.ingest.logger import logger
 
 @dataclass
 class SimpleLocalConfig(BaseConnectorConfig):
-    output_dir: str
-
     # Local specific options
     input_path: str
     recursive: bool = False
