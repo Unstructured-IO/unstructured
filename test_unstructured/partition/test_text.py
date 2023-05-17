@@ -32,7 +32,7 @@ def test_partition_text_from_filename(filename, encoding):
 
 @pytest.mark.parametrize(
     "filename",
-    ["fake-text-utf-16.txt", "fake-text-utf-32.txt"],
+    ["fake-text-utf-16.txt", "fake-text-utf-16-le.txt", "fake-text-utf-32.txt"],
 )
 def test_partition_text_from_filename_without_encoding(filename):
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
