@@ -113,9 +113,7 @@ STR_TO_FILETYPE = {
 }
 
 FILETYPE_TO_MIMETYPE = {
-    v: k
-    for k, v in STR_TO_FILETYPE.items()
-    if k not in ("text/x-markdown", "application/epub+zip")
+    v: k for k, v in STR_TO_FILETYPE.items() if k not in ("text/x-markdown", "application/epub+zip")
 }
 
 EXT_TO_FILETYPE = {
@@ -208,12 +206,19 @@ def detect_filetype(
             return FileType.MD
         elif extension and extension == ".rtf":
             return FileType.RTF
+        elif extension and extension == ".html":
+            return FileType.HTML
 
         if _is_text_file_a_json(file=file, filename=filename):
             return FileType.JSON
 
         if file and not extension and _check_eml_from_buffer(file=file) is True:
             return FileType.EML
+
+        # Safety catch
+        if mime_type in STR_TO_FILETYPE:
+            return STR_TO_FILETYPE[mime_type]
+
         return FileType.TXT
 
     elif mime_type == "application/octet-stream":
@@ -322,9 +327,7 @@ def document_to_element_list(
 
     if image_formats and all(image_format == "PNG" for image_format in image_formats):
         filetype = FileType.PNG.name
-    elif image_formats and all(
-        image_format == "JPEG" for image_format in image_formats
-    ):
+    elif image_formats and all(image_format == "JPEG" for image_format in image_formats):
         filetype = FileType.JPG.name
     else:
         filetype = None
@@ -349,8 +352,7 @@ def add_metadata_with_filetype(filetype: FileType):
             include_metadata = params.get("include_metadata", True)
             if include_metadata:
                 metadata_kwargs = {
-                    kwarg: params.get(kwarg)
-                    for kwarg in ("include_page_breaks", "filename", "url")
+                    kwarg: params.get(kwarg) for kwarg in ("include_page_breaks", "filename", "url")
                 }
                 return _add_element_metadata(
                     elements,
