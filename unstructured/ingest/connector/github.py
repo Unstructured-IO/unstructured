@@ -80,7 +80,7 @@ class GitHubConnector(GitConnector):
         sha = self.config.branch or repo.default_branch
         git_tree = repo.get_git_tree(sha, recursive=True)
         return [
-            GitHubIngestDoc(self.config, element.path, repo)
+            GitHubIngestDoc(self.standard_config, self.config, element.path, repo)
             for element in git_tree.tree
             if element.type == "blob"
             and self.is_file_type_supported(element.path)

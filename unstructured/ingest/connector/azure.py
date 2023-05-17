@@ -6,6 +6,7 @@ from unstructured.ingest.connector.fsspec import (
     FsspecIngestDoc,
     SimpleFsspecConfig,
 )
+from unstructured.ingest.interfaces import StandardConnectorConfig
 from unstructured.utils import requires_dependencies
 
 
@@ -27,5 +28,6 @@ class AzureBlobStorageConnector(FsspecConnector):
     def __init__(
         self,
         config: SimpleAzureBlobStorageConfig,
+        standard_config: StandardConnectorConfig,
     ) -> None:
-        super().__init__(config=config)
+        super().__init__(standard_config=standard_config, config=config)
