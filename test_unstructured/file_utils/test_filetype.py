@@ -10,6 +10,7 @@ from unstructured.file_utils.filetype import (
     DOCX_MIME_TYPES,
     XLSX_MIME_TYPES,
     FileType,
+    _is_text_file_a_json,
     detect_filetype,
 )
 
@@ -28,7 +29,7 @@ EXAMPLE_DOCS_DIRECTORY = os.path.join(FILE_DIRECTORY, "..", "..", "example-docs"
         ("unsupported/factbook.xml", FileType.XML),
         ("example-10k.html", FileType.HTML),
         ("fake-html.html", FileType.HTML),
-        ("unsupported/fake-excel.xlsx", FileType.XLSX),
+        ("stanley-cups.xlsx", FileType.XLSX),
         ("fake-power-point.pptx", FileType.PPTX),
         ("winter-sports.epub", FileType.EPUB),
         ("spring-weather.html.json", FileType.JSON),
@@ -51,7 +52,7 @@ def test_detect_filetype_from_filename(file, expected):
         ("unsupported/factbook.xml", FileType.XML),
         ("example-10k.html", FileType.HTML),
         ("fake-html.html", FileType.HTML),
-        ("unsupported/fake-excel.xlsx", FileType.XLSX),
+        ("stanley-cups.xlsx", FileType.XLSX),
         ("fake-power-point.pptx", FileType.PPTX),
         ("winter-sports.epub", FileType.EPUB),
         ("fake-doc.rtf", FileType.RTF),
@@ -86,7 +87,7 @@ def test_detect_filetype_from_filename_with_extension(monkeypatch, file, expecte
         # */xml and some return */html. Either could be acceptable depending on the OS
         ("example-10k.html", [FileType.HTML, FileType.XML]),
         ("fake-html.html", FileType.HTML),
-        ("unsupported/fake-excel.xlsx", FileType.XLSX),
+        ("stanley-cups.xlsx", FileType.XLSX),
         ("fake-power-point.pptx", FileType.PPTX),
         ("winter-sports.epub", FileType.EPUB),
     ],
@@ -191,7 +192,7 @@ def test_detect_xls_file_from_mime_type(monkeypatch):
 
 def test_detect_xlsx_filetype_application_octet_stream(monkeypatch):
     monkeypatch.setattr(magic, "from_buffer", lambda *args, **kwargs: "application/octet-stream")
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "unsupported", "fake-excel.xlsx")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "stanley-cups.xlsx")
     with open(filename, "rb") as f:
         filetype = detect_filetype(file=f)
     assert filetype == FileType.XLSX
@@ -199,7 +200,7 @@ def test_detect_xlsx_filetype_application_octet_stream(monkeypatch):
 
 def test_detect_xlsx_filetype_application_octet_stream_with_filename(monkeypatch):
     monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "application/octet-stream")
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "unsupported", "fake-excel.xlsx")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "stanley-cups.xlsx")
     filetype = detect_filetype(filename=filename)
     assert filetype == FileType.XLSX
 
@@ -245,7 +246,7 @@ def test_detect_docx_filetype_word_mime_type(monkeypatch):
 
 def test_detect_xlsx_filetype_word_mime_type(monkeypatch):
     monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: XLSX_MIME_TYPES[0])
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "unsupported", "fake-excel.xlsx")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "stanley-cups.xlsx")
     with open(filename, "rb") as f:
         filetype = detect_filetype(file=f)
     assert filetype == FileType.XLSX
@@ -285,3 +286,16 @@ def test_detect_filetype_raises_with_none_specified():
 
 def test_filetype_order():
     assert FileType.HTML < FileType.XML
+
+
+@pytest.mark.parametrize(
+    ("content", "expected"),
+    [
+        (b"d\xe2\x80", False),
+    ],
+)
+def test_is_text_file_a_json(content, expected):
+    from io import BytesIO
+
+    with BytesIO(content) as f:
+        assert _is_text_file_a_json(file=f) == expected

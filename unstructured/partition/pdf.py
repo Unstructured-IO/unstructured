@@ -4,18 +4,20 @@ from tempfile import SpooledTemporaryFile
 from typing import BinaryIO, List, Optional, Union, cast
 
 import pdf2image
-import pytesseract
 from pdfminer.high_level import extract_pages
 from pdfminer.utils import open_filename
 from PIL import Image
 
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import Element, ElementMetadata, PageBreak
+from unstructured.file_utils.filetype import (
+    FileType,
+    add_metadata_with_filetype,
+    document_to_element_list,
+)
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.partition import _partition_via_api
 from unstructured.partition.common import (
-    add_element_metadata,
-    document_to_element_list,
     exactly_one,
     spooled_to_bytes_io_if_needed,
 )
@@ -24,6 +26,7 @@ from unstructured.partition.text import partition_text
 from unstructured.utils import requires_dependencies
 
 
+@add_metadata_with_filetype(FileType.PDF)
 def partition_pdf(
     filename: str = "",
     file: Optional[Union[BinaryIO, SpooledTemporaryFile]] = None,
@@ -31,7 +34,7 @@ def partition_pdf(
     template: str = "layout/pdf",
     token: Optional[str] = None,
     include_page_breaks: bool = False,
-    strategy: str = "hi_res",
+    strategy: str = "auto",
     infer_table_structure: bool = False,
     encoding: str = "utf-8",
     ocr_languages: str = "eng",
@@ -94,7 +97,7 @@ def partition_pdf_or_image(
     token: Optional[str] = None,
     is_image: bool = False,
     include_page_breaks: bool = False,
-    strategy: str = "hi_res",
+    strategy: str = "auto",
     infer_table_structure: bool = False,
     encoding: str = "utf-8",
     ocr_languages: str = "eng",
@@ -116,6 +119,7 @@ def partition_pdf_or_image(
             filename=filename,
             file=file,
             is_image=is_image,
+            infer_table_structure=infer_table_structure,
         )
 
         if strategy == "hi_res":
@@ -168,13 +172,10 @@ def partition_pdf_or_image(
             include_page_breaks=True,
         )
 
-    return add_element_metadata(
-        layout_elements,
-        include_page_breaks=include_page_breaks,
-        filename=filename,
-    )
+    return layout_elements
 
 
+@requires_dependencies("unstructured_inference")
 def _partition_pdf_or_image_local(
     filename: str = "",
     file: Optional[Union[bytes, BinaryIO]] = None,
@@ -300,6 +301,7 @@ def _process_pdfminer_pages(
     return elements
 
 
+@requires_dependencies("pytesseract")
 def _partition_pdf_or_image_with_ocr(
     filename: str = "",
     file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
@@ -309,6 +311,8 @@ def _partition_pdf_or_image_with_ocr(
 ):
     """Partitions and image or PDF using Tesseract OCR. For PDFs, each page is converted
     to an image prior to processing."""
+    import pytesseract
+
     if is_image:
         if file is not None:
             image = Image.open(file)

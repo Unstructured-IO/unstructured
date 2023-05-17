@@ -3,7 +3,12 @@ from typing import IO, Callable, Dict, Optional, Tuple
 
 import requests
 
-from unstructured.file_utils.filetype import FileType, detect_filetype
+from unstructured.file_utils.filetype import (
+    FILETYPE_TO_MIMETYPE,
+    STR_TO_FILETYPE,
+    FileType,
+    detect_filetype,
+)
 from unstructured.logger import logger
 from unstructured.partition.common import exactly_one
 from unstructured.partition.doc import partition_doc
@@ -21,6 +26,7 @@ from unstructured.partition.ppt import partition_ppt
 from unstructured.partition.pptx import partition_pptx
 from unstructured.partition.rtf import partition_rtf
 from unstructured.partition.text import partition_text
+from unstructured.partition.xlsx import partition_xlsx
 
 
 def partition(
@@ -30,7 +36,7 @@ def partition(
     file_filename: Optional[str] = None,
     url: Optional[str] = None,
     include_page_breaks: bool = False,
-    strategy: str = "hi_res",
+    strategy: str = "auto",
     encoding: str = "utf-8",
     paragraph_grouper: Optional[Callable[[str], str]] = None,
     headers: Dict[str, str] = {},
@@ -178,12 +184,21 @@ def partition(
         )
     elif filetype == FileType.JSON:
         elements = partition_json(filename=filename, file=file)
+    elif filetype == FileType.XLSX:
+        elements = partition_xlsx(filename=filename, file=file)
     else:
         msg = "Invalid file" if not filename else f"Invalid file {filename}"
         raise ValueError(f"{msg}. The {filetype} file type is not supported in partition.")
 
     for element in elements:
         element.metadata.url = url
+        if content_type is not None:
+            out_filetype = STR_TO_FILETYPE.get(content_type)
+            element.metadata.filetype = (
+                FILETYPE_TO_MIMETYPE[out_filetype] if out_filetype is not None else None
+            )
+        else:
+            element.metadata.filetype = FILETYPE_TO_MIMETYPE[filetype]
 
     return elements
 

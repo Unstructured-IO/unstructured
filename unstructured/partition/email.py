@@ -36,6 +36,9 @@ from unstructured.documents.email_elements import (
     Sender,
     Subject,
 )
+from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
+from unstructured.logger import logger
+from unstructured.nlp.patterns import EMAIL_DATETIMETZ_PATTERN_RE
 from unstructured.partition.html import partition_html
 from unstructured.partition.text import partition_text, split_by_paragraph
 
@@ -89,7 +92,7 @@ def partition_email_header(msg: Message) -> List[Element]:
     return elements
 
 
-def build_email_metadata(msg: Message) -> ElementMetadata:
+def build_email_metadata(msg: Message, filename: Optional[str]) -> ElementMetadata:
     """Creates an ElementMetadata object from the header information in the email."""
     header_dict = dict(msg.raw_items())
     email_date = header_dict.get("Date")
@@ -109,12 +112,21 @@ def build_email_metadata(msg: Message) -> ElementMetadata:
         sent_from=sent_from,
         subject=header_dict.get("Subject"),
         date=email_date,
+        filename=filename,
     )
 
 
-def convert_to_iso_8601(time: str) -> str:
+def convert_to_iso_8601(time: str) -> Optional[str]:
     """Converts the datetime from the email output to ISO-8601 format."""
-    datetime_object = datetime.datetime.strptime(time, "%a, %d %b %Y %H:%M:%S %z")
+    cleaned_time = clean_extra_whitespace(time)
+    regex_match = EMAIL_DATETIMETZ_PATTERN_RE.search(cleaned_time)
+    if regex_match is None:
+        logger.warning(f"{time} did not match RFC-2822 format. Unable to extract the time.")
+        return None
+
+    start, end = regex_match.span()
+    dt_string = cleaned_time[start:end]
+    datetime_object = datetime.datetime.strptime(dt_string, "%a, %d %b %Y %H:%M:%S %z")
     return datetime_object.isoformat()
 
 
@@ -169,6 +181,7 @@ def find_embedded_image(
     return Image(text=image_info[:-1]), element
 
 
+@add_metadata_with_filetype(FileType.EML)
 def partition_email(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
@@ -268,8 +281,7 @@ def partition_email(
         header = partition_email_header(msg)
     all_elements = header + elements
 
-    metadata = build_email_metadata(msg)
-    metadata.filename = filename
+    metadata = build_email_metadata(msg, filename=filename)
     for element in all_elements:
         element.metadata = metadata
     return all_elements

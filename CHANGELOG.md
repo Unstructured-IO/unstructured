@@ -1,13 +1,46 @@
-## 0.6.6-dev0
+## 0.6.7-dev4
 
 ### Enhancements
 
-* Added an additional trace logger for NLP debugging.
+* Add `file_directory` to metadata
+* Added a `--partition-strategy` parameter to unstructured-ingest so that users can specify
+  partition strategy in CLI. For example, `--partition-strategy fast`.
+* Added metadata for filetype.
+* Add Discord connector to pull messages from a list of channels
 
 ### Features
 
+* Add `partition_xlsx` for Microsoft Excel documents.
+
 ### Fixes
 
+* Supports `hml` filetype for partition as a variation of html filetype.
+* Makes `pytesseract` a function level import in `partition_pdf` so you can use the `"fast"`
+  or `"hi_res"` strategies if `pytesseract` is not installed. Also adds the
+  `required_dependencies` decorator for the `"hi_res"` and `"ocr_only"` strategies.
+
+## 0.6.6
+
+### Enhancements
+
+* Adds an `"auto"` strategy that chooses the partitioning strategy based on document
+  characteristics and function kwargs. This is the new default strategy for `partition_pdf`
+  and `partition_image`. Users can maintain existing behavior by explicitly setting
+  `strategy="hi_res"`.
+* Added an additional trace logger for NLP debugging.
+* Add `get_date` method to `ElementMetadata` for converting the datestring to a `datetime` object.
+* Cleanup the `filename` attribute on `ElementMetadata` to remove the full filepath.
+
+### Features
+
+* Added table reading as html with URL parsing to `partition_docx` in docx
+* Added metadata field for text_as_html for docx files
+
+### Fixes
+
+* `fileutils/file_type` check json and eml decode ignore error
+* `partition_email` was updated to more flexibly handle deviations from the RFC-2822 standard.
+  The time in the metadata returns `None` if the time does not match RFC-2822 at all.
 * Include all metadata fields when converting to dataframe or CSV
 
 ## 0.6.5
@@ -56,6 +89,7 @@
 
 * Added logic to `partition_pdf` for detecting copy protected PDFs and falling back
   to the hi res strategy when necessary.
+
 
 ### Features
 

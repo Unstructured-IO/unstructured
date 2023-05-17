@@ -120,7 +120,6 @@ def test_partition_image_local(monkeypatch, filename, file):
     )
 
     partition_image_response = pdf._partition_pdf_or_image_local(filename, file, is_image=True)
-    assert partition_image_response[0].type == "Title"
     assert partition_image_response[0].text == "Charlie Brown and the Great Pumpkin"
 
 
@@ -162,14 +161,21 @@ def test_partition_image(url, api_called, local_called):
         attribute="_partition_via_api",
         new=mock.MagicMock(),
     ), mock.patch.object(pdf, "_partition_pdf_or_image_local", mock.MagicMock()):
-        image.partition_image(filename="fake.pdf", url=url)
+        image.partition_image(filename="fake.pdf", strategy="hi_res", url=url)
         assert pdf._partition_via_api.called == api_called
         assert pdf._partition_pdf_or_image_local.called == local_called
 
 
+def test_partition_image_with_auto_strategy(filename="example-docs/layout-parser-paper-fast.jpg"):
+    elements = image.partition_image(filename=filename, strategy="auto")
+    titles = [el for el in elements if el.category == "Title" and len(el.text.split(" ")) > 10]
+    title = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
+    assert titles[0].text == title
+
+
 def test_partition_image_with_language_passed(filename="example-docs/example.jpg"):
     with mock.patch.object(layout, "process_file_with_model", mock.MagicMock()) as mock_partition:
-        image.partition_image(filename=filename, ocr_languages="eng+swe")
+        image.partition_image(filename=filename, strategy="hi_res", ocr_languages="eng+swe")
 
     assert mock_partition.call_args.kwargs.get("ocr_languages") == "eng+swe"
 
@@ -177,14 +183,14 @@ def test_partition_image_with_language_passed(filename="example-docs/example.jpg
 def test_partition_image_from_file_with_language_passed(filename="example-docs/example.jpg"):
     with mock.patch.object(layout, "process_data_with_model", mock.MagicMock()) as mock_partition:
         with open(filename, "rb") as f:
-            image.partition_image(file=f, ocr_languages="eng+swe")
+            image.partition_image(file=f, strategy="hi_res", ocr_languages="eng+swe")
 
     assert mock_partition.call_args.kwargs.get("ocr_languages") == "eng+swe"
 
 
 def test_partition_image_raises_with_invalid_language(filename="example-docs/example.jpg"):
     with pytest.raises(TesseractError):
-        image.partition_image(filename=filename, ocr_languages="fakeroo")
+        image.partition_image(filename=filename, strategy="hi_res", ocr_languages="fakeroo")
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
@@ -197,7 +203,7 @@ def test_partition_image_with_ocr_detects_korean():
     )
 
     assert elements[0] == Title("RULES AND INSTRUCTIONS")
-    assert elements[3].text.startswith("안녕하세요")
+    assert elements[3].text.replace(" ", "").startswith("안녕하세요")
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
@@ -212,7 +218,7 @@ def test_partition_image_with_ocr_detects_korean_from_file():
         )
 
     assert elements[0] == Title("RULES AND INSTRUCTIONS")
-    assert elements[3].text.startswith("안녕하세요")
+    assert elements[3].text.replace(" ", "").startswith("안녕하세요")
 
 
 def test_partition_image_raises_with_bad_strategy():

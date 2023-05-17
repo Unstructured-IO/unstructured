@@ -43,8 +43,10 @@ docker run --rm -v "$SCRIPT_DIR"/../unstructured:/root/unstructured -v \
    -w /root "$IMAGE_NAME" \
    bash -c "export OVERWRITE_FIXTURES=true && source ~/.bashrc && pyenv activate unstructured && tesseract --version &&
                ./test_unstructured_ingest/test-ingest-azure.sh &&
+               ./test_unstructured_ingest/test-ingest-discord.sh &&
                ./test_unstructured_ingest/test-ingest-github.sh &&
                ./test_unstructured_ingest/test-ingest-biomed-api.sh &&
                ./test_unstructured_ingest/test-ingest-biomed-path.sh &&
                ./test_unstructured_ingest/test-ingest-s3.sh &&
+               ./test_unstructured_ingest/test-ingest-slack.sh &&
                ./test_unstructured_ingest/test-ingest-slack.sh"

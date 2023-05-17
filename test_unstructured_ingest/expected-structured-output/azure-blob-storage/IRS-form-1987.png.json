@@ -1,321 +1,361 @@
 [
   {
-    "element_id": "0bd6458cb49a638f3ccff515b9433cb8",
-    "text": "———eee eee eee\n\nInstructions for Form 3115\n(Rev. November 1987)\n\nAnniicatinn far Chancain Acnninting Mothad\n",
+    "element_id": "9e4a454d91ac1f220324c6d1a0377093",
+    "text": "rh Department of the Treasury Internal Revenue Service",
     "type": "Title",
     "metadata": {
+      "filetype": "image/png",
       "page_number": 1
     }
   },
   {
-    "element_id": "41f3d9c83b2b4679195c9796134fd8f5",
-    "text": "(Section references are to the Internal Revenue Code unless otherwise noted.)\n",
+    "element_id": "3946c42a1f494117b1952a55bd2c7dae",
+    "text": "Instructions for Form 3115",
+    "type": "Title",
+    "metadata": {
+      "filetype": "image/png",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "bf237dd1ffea49acc9a79255e8422aec",
+    "text": "(Rev. November 1987) Application for Change in Accoun",
+    "type": "Title",
+    "metadata": {
+      "filetype": "image/png",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "05eba4d15469c9e92dd42e0d3e87a220",
+    "text": "ig Method",
+    "type": "Title",
+    "metadata": {
+      "filetype": "image/png",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "766cf1d1243ef2cdbb0db5ad32d7f9c9",
+    "text": "(Section references are to the Internal Revenue Code unless otherwise noted.)",
     "type": "NarrativeText",
     "metadata": {
+      "filetype": "image/png",
       "page_number": 1
     }
   },
   {
-    "element_id": "97968e4ba14bd2d082a70ec61ef2d9b1",
-    "text": "Long-term contracts.—If you are required to\nchange your method of accounting for long-term\ncontracts under section",
-    "type": "ListItem",
-    "metadata": {
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "ac843848ae2f4c656203dee90cdc207c",
-    "text": ", see Notice",
-    "type": "ListItem",
-    "metadata": {
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "3973e022e93220f9212c18d0d0c543ae",
-    "text": "-",
-    "type": "ListItem",
-    "metadata": {
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "32ebb1abcc1c601ceb9c4e3c4faba0ca",
-    "text": "(",
-    "type": "ListItem",
-    "metadata": {
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "8a5edab282632443219e051e4ade2d1d",
-    "text": "/",
-    "type": "ListItem",
-    "metadata": {
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "8a5edab282632443219e051e4ade2d1d",
-    "text": "/",
-    "type": "ListItem",
-    "metadata": {
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "bb01c44bd646ab29df9cea6459a3499b",
-    "text": "),",
-    "type": "ListItem",
-    "metadata": {
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "3973e022e93220f9212c18d0d0c543ae",
-    "text": "-",
-    "type": "ListItem",
-    "metadata": {
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "29b33c1e0aea8247e6576bd9ad14448e",
-    "text": "IRB",
-    "type": "ListItem",
-    "metadata": {
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "f0d2beb7f43493694a91137e8e65b5f3",
-    "text": ", for the notification\nprocedures that must be followed.\n\nOther methods. —Unless the Service has\npublished a regulation or procedure to the\ncontrary, all other changes in accounting\nmethods required by the Act are automatically\nconsidered to be approved by the Commissioner.\nExamples of method changes automatically\napproved by the Commissioner are those changes\nrequired to effect: (",
-    "type": "ListItem",
-    "metadata": {
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "13f2a282f705590fbe7b6ce15b08862a",
-    "text": ") the repeal of the reserve\nmethod for bad debts of taxpayers other than\nfinancial institutions (Act section",
-    "type": "ListItem",
-    "metadata": {
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "fd0f38844b9901d3a4e7c44630346145",
-    "text": "); (",
-    "type": "ListItem",
-    "metadata": {
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "9820f79275e683f5afe3f2f1283de4ca",
-    "text": ") the\nrepeal of the installment method for sales under\na revolving credit plan (Act section",
-    "type": "ListItem",
-    "metadata": {
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "fd0f38844b9901d3a4e7c44630346145",
-    "text": "); (",
-    "type": "ListItem",
-    "metadata": {
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "a98378f4a88db65dff42b7d8bd75be92",
-    "text": ") the\nInclusion of mcome attributable to the sale or\nfurnishing of utility services no later than the year\nin which the services were provided to customers\n(Act section",
-    "type": "ListItem",
-    "metadata": {
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "25d6eaf57eebce49267b71ce2f347a03",
-    "text": "); and (",
-    "type": "ListItem",
-    "metadata": {
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "3cb57c50002187a715e1c5048e643c65",
-    "text": ") the repeal of the\ndeduction for qualified discount coupons (Act\nsection",
-    "type": "ListItem",
-    "metadata": {
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "e9d9ab5eb5ff32a31a32bda940a33b7a",
-    "text": "). Do not file Form",
-    "type": "ListItem",
-    "metadata": {
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "f88cf27baa9e77b38c7d9c688ac90417",
-    "text": "for these\nchanges.\n\nTime and Dinne fay Cling",
-    "type": "ListItem",
-    "metadata": {
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "bd913e19b877497b5480c528c96fd0f6",
-    "text": "Signature\n\nIndivideale\n",
+    "element_id": "61ed58fa51293f429f87e8cf1896c9e4",
+    "text": "Paperwork Reduction Act Notice",
     "type": "Title",
     "metadata": {
+      "filetype": "image/png",
       "page_number": 1
     }
   },
   {
-    "element_id": "0c97452e61a431a9bced8091af69e908",
-    "text": "Individuals.—An individual desiring the change\nshould sign the application. Ifthe application\npertains to a husband and wife filing a joint\nIncome tax return, the names of both should\nappear in the heading and both should sign\nPartnerships.—The form should be signed with\nthe partnership name followed by the signature\nof one of the general partners and the words\n“General Partner.”\nCorporations, cooperatives, and insurance\ncompanies.—The form should show the name of\nthe corporation, cooperative, or insurance\nCompany and the signature of the president, vice\npresident, treasurer, assistant treasurer, or chief\naccounting officer (such as tax officer) authorized\ntosign, and his or her official title. Receivers,\ntrustees, or assignees must sign any application\nthey are required to file, For a subsidiary\ncorporation filing a consolidated return with its\nparent, the form should be signed by an officer of\nthe parent corporation,\nluciaries.—The-form should show the name\nof the estate or trust and be signed by the\nfiduciary, personal representative, executor,\nexecutrix, administrator, administratrx, etc’,\nhaving legal authority to'sign, and his or her ttle.\nPreparer other than partner, officer, etc.—The\nsignature of the individual preparing the\napplication should appear in the space provided\non page",
-    "type": "ListItem",
-    "metadata": {
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "586e989b479e4362ebe28a6954c1427b",
-    "text": "If the individual or firm is also authorized to",
-    "type": "ListItem",
-    "metadata": {
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "226fa83297914d5195e002508d61fb1d",
-    "text": "General Instructions\n\n",
-    "type": "Title",
-    "metadata": {
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "d0e1e01dcbc7b4dfa2df8fe1d7c71acc",
-    "text": "General Instructions\nPurpose of Form\n\nPile thse Seen te vepsect a phepee se\n",
-    "type": "Title",
-    "metadata": {
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "f0e951e5bcb4a6070fa6672b37822348",
-    "text": "Purpose of Form\n\nCin bce Secon te cece cget.\n",
-    "type": "Title",
-    "metadata": {
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "03fe77cbc1e2a87cdf64a64b839545b5",
-    "text": "alata\nGenerally, applicants must complete Section\n\n‘A. In addition, complete the appropriate sections\n\n(B:1 through H) for which a change is desired.\n\nYou must give all relevant facts. including a\n\n",
+    "element_id": "4660422c06dddc914ab634c5e4045dec",
+    "text": "We ask for this information to carry out the Internal Revenue laws of the United States. We need it to ensure that taxpayers are complying with these laws an¢ to allow us to figure and collect the nght amount of tax. You are required to give us this information.",
     "type": "NarrativeText",
     "metadata": {
+      "filetype": "image/png",
       "page_number": 1
     }
   },
   {
-    "element_id": "7fc74bd7792c99bb71777aeaea5bf987",
-    "text": "Time and Place for Filing\namacall, ammlinapte pret file trie\n",
+    "element_id": "a1547a4ed1611eee44b15e99120fb978",
+    "text": "General Instructions",
     "type": "Title",
     "metadata": {
+      "filetype": "image/png",
       "page_number": 1
     }
   },
   {
-    "element_id": "efd2dea48b678ae3052a8fae284dcd9b",
-    "text": "on page ©.\n\nIf the individual or firm is also authorized to\nrepresent the applicant before the IRS, receive\na copy of the requested ruling, or perform any\nother act(s), the power of attorney must reflect\nsuch authorization(s).\n\n",
+    "element_id": "68a3289177b49b285e133a5267eb355f",
+    "text": "Purpose of Form",
     "type": "Title",
     "metadata": {
+      "filetype": "image/png",
       "page_number": 1
     }
   },
   {
-    "element_id": "8b35e7c212710b1099b675ce9394fb47",
-    "text": "Se NB ON\n\nState whether you desire a conference in the\nNational Office if the Service proposes to\ndisapprove your application.\n\n",
+    "element_id": "f9b8e17da7a31507773f78959378e09c",
+    "text": "File this form to request a change in your accounting method, including the accounting treatment of any item. if you are requesting 2 change in accounting period, use Form 1128, Application for Change in Accounting Period. For more information, see Publication 538, Accounting Periods and Methods,",
     "type": "NarrativeText",
     "metadata": {
+      "filetype": "image/png",
       "page_number": 1
     }
   },
   {
-    "element_id": "7c9e868b449a25434af63386e8c72962",
-    "text": "Affiliated Groups\n\nTavmayare that ara mam)\n",
-    "type": "Title",
-    "metadata": {
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "d6d128db1d06743816667d277159e1e9",
-    "text": "Changes to Accounting Methods\nRequired Under the Tax Reform Act\nof 1986\n\n",
-    "type": "Title",
-    "metadata": {
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "4f022ad16f9de29b399fe4e77ebec3da",
-    "text": "Uniform capitalization rules and limitation on\n‘cash method. —If you are required to change\n",
-    "type": "Title",
-    "metadata": {
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "231967b6e23633ce4b794ba4d92195b5",
-    "text": "Specific Instructions\nSection A\n\nItem Sa. nage 1 «-\"Taxahle incams\n",
-    "type": "Title",
-    "metadata": {
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "1dda7db8eaa236f190c9f1385666af36",
-    "text": "anearly application.\nNote: if this form is being filed in accordance\nwith Rev. Proc. 74-11, see Section G below.\n\na.\n\n",
-    "type": "Title",
-    "metadata": {
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "b4a7f10875d4301b0cbce5eff69f64df",
-    "text": "Late Applications\n\nMe cms anmiimation ie Fler\n",
-    "type": "Title",
-    "metadata": {
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "e4a97fbdd3d6f33335ec71deba7af01f",
-    "text": "includes total sales (net of returns and\nallowances) and all amounts received for\nservices. in addition, gross receipts include any\nincome from investments and from incidental or\noutside sources (e.g., interest, dividends, rents,\nroyalties, and annuities). However, if you area\nresaler of personal property, exclude from gross\nreceipts any amounts not derived in the ordinary\ncourse of a trade or business. Gross receipts do\nnot include amounts received for sales taxes if,\ntunder the applicable state or local law, the taxis\nlegally imposed on the purchaser of the good or\nservice, and the taxpayer merely collects and\nremits the tax to the taxing authority.\n",
+    "element_id": "b3859f2f29884b1d3ba0892e52859a99",
+    "text": "When filing Form 3115, taxpayers are reminded to determine if IRS has published a ruling or procedure dealing with the specific type of change since November 1987 (the current. revision date of Form 3115)",
     "type": "NarrativeText",
     "metadata": {
+      "filetype": "image/png",
       "page_number": 1
     }
   },
   {
-    "element_id": "786c2aaee9fcae020f4b01a298e4d141",
-    "text": "Disregard the instructions under Time and\nPlace for Filing and Late Applications. instead,\nattach Form 3115 to your income tax return for\nthe year of change; do not file it separately. Also\ninclude on a separate statement accompanying\nthe Form 3115 the period over which the section\n481(2) adjustment will be taken into account and\nthe basis for that conclusion. Identify the\n\n",
+    "element_id": "42e5349e9c4ad7addfadfcf2f177b93b",
+    "text": "Generally, applicants must complete Section ‘A. In addition, complete the appropriate sections (B:1 through H) for which a change is desired.",
     "type": "NarrativeText",
     "metadata": {
+      "filetype": "image/png",
       "page_number": 1
     }
   },
   {
-    "element_id": "f2db523f6d52de1e67f6e8c1c81a8069",
-    "text": "Identifying Number\n",
+    "element_id": "bf2a070cb9d03d056e70b26bebf1ef79",
+    "text": "You must give all relevant facts, including a detailed description of your present and proposed methods. You must also state the reason(s) you believe approval to make the requested change should be granted. Attach additional pages if more space is needed for explanations. Each page should show your name, address, and identifying number.",
+    "type": "NarrativeText",
+    "metadata": {
+      "filetype": "image/png",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "25f830e7c39c115c9937eb9d11cfb1f2",
+    "text": "State whether you desire a conference in the National Office if the Service proposes to disapprove your application",
+    "type": "NarrativeText",
+    "metadata": {
+      "filetype": "image/png",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "242a9dba10a04654d4adef9c58ff96f6",
+    "text": "Changes to Accounting Methods Required Under the Tax Reform Act of 1986",
     "type": "Title",
     "metadata": {
+      "filetype": "image/png",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "c10c0c63b05172dff854d1d0e570c588",
+    "text": "Uniform capitalization rules and limitation on cash method.—If you are required to change your method of accounting under section, 263A (relating to the capitalization and inclusion in inventory costs of certain expenses) or 448 (imiting the use of the cash method of accounting by certain taxpayers) as added by the Tax Reform Act of 1986 (\"Act\"), the change is treated as initiated by the taxpayer, approved by the Commissioner, and the period for taking the adjustments under section 481(a) into account will not exceed 4 years. (Hospitals required to cchange from the cash method under section 448 have 10 years to take the adjustments into account.) Complete Section A and the appropriate sections (B-1 or C and D) for which the change is required",
+    "type": "NarrativeText",
+    "metadata": {
+      "filetype": "image/png",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "fc2252774c86adc22225761fc0bee985",
+    "text": "Disregard the instructions under Time and Place for Filing and Late Applications. instead, attach Form 3115 to your income tax return for the year of change; do not file it separately. Also include on a separate statement accompanying the Form 3115 the period over which the section 481(2) adjustment will be taken into account and the basis for that conclusion. Identify the automatic change being made at the top of page 1 of Form 3118 eg. “Automatic Change to Accrual Method—Section 448”). See Temporary Regulations sections 1.263A-1T and 1.448-1T for additional information",
+    "type": "NarrativeText",
+    "metadata": {
+      "filetype": "image/png",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "7685df2334a5f6c8c8099dea61a8f1b4",
+    "text": "Long-term contracts.—If you are required to change your method of accounting for long-term contracts under section 460, see Notice 87-61 (9/21/87), 1987-38 IRB 40, for the notification procedures that must be followed.",
+    "type": "NarrativeText",
+    "metadata": {
+      "filetype": "image/png",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "e99fda4244cd613e7bdf9b73fadbbe8d",
+    "text": "Other methods. —Unless the Service has published a regulation or procedure to the contrary, all other changes in accounting methods required by the Act are automatically considered to be approved by the Commissioner. Examples of method changes automatically approved by the Commissioner are those changes required to effect: (1) the repeal of the reserve method for bad debts of taxpayers other than financial institutions (Act section 805); (2) the repeal of the installment method for sales under a revolving credit plan (Act section 812); (3) the Inclusion of mcome attributable to the sale or furnishing of utility services no later than the year in which the services were provided to customers (Act section 821); and (4) the repeal of the deduction for qualified discount coupons (Act section 823). Do not file Form 3115 for these changes.",
+    "type": "NarrativeText",
+    "metadata": {
+      "filetype": "image/png",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "5756fb398995bb6518a87637f24f426e",
+    "text": "Time and Place for Filing",
+    "type": "Title",
+    "metadata": {
+      "filetype": "image/png",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "a720c5a62597e77c686cbc5df1c682ce",
+    "text": "Generally, applicants must file this form within the first 180 days of the tax year in which itis desired to make the change.",
+    "type": "NarrativeText",
+    "metadata": {
+      "filetype": "image/png",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "9dda11db48254f5e0d0000afb5d1dd9b",
+    "text": "Taxpayers, other than exempt organizations, should file Form 3115 with the Commissioner of Internal Revenue, Attention: CC:C:4, 1111 Constitution Avenue, NW, Washington, DC 20224, Exempt organizations should file with the Assistant Commissioner (Employee Plans and Exempt Organizations), 1111 Constitution Avenue, NW, Washington, DC 20224.",
+    "type": "UncategorizedText",
+    "metadata": {
+      "filetype": "image/png",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "4d063cdbd131401fa29e1d0e824dc017",
+    "text": "You should normally receive an acknowledgment of receipt of your application within 30 days. If you do not hear from IRS within 30 days of submitting your completed Form 3115, you may inquire as to the receipt of your application by writing to: Control Clerk, CC:C:4, Internal Revenue Service, Room 5040, 1111 Constitution Avenue, NW, Washington, DC 20224.",
+    "type": "NarrativeText",
+    "metadata": {
+      "filetype": "image/png",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "f4a2a2f2a1ed8b5a1e96c46edc24463e",
+    "text": "See section 5.03 of Rev. Proc. 84-74 for filing an early application,",
+    "type": "NarrativeText",
+    "metadata": {
+      "filetype": "image/png",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "11cb901986e9621aadbd76e6f7400809",
+    "text": "Note: If this form is being filed in accordance with Rey. Proc. 74-11, see Section G below.",
+    "type": "NarrativeText",
+    "metadata": {
+      "filetype": "image/png",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "a4316c02df07840f1beb56609cb09735",
+    "text": "Late Applications",
+    "type": "Title",
+    "metadata": {
+      "filetype": "image/png",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "8474975a0cd563b9feee81d0e540ffd3",
+    "text": "If your application is filed after the 180-day period, itis late. The application will be considered for processing only upon a showing of “good cause” and if it can be shown to the satisfaction of the Commissioner that granting you an extension will not jeopardize the Government's interests. For further information, see Rev. Proc. 79-63.",
+    "type": "NarrativeText",
+    "metadata": {
+      "filetype": "image/png",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "025a65465b6fd9635316e92633b24c7e",
+    "text": "Identifying Number",
+    "type": "Title",
+    "metadata": {
+      "filetype": "image/png",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "74de78b6981ff81ce3f0f37b7c1498ca",
+    "text": "Individuals. —An individual should enter his or her social security number in this block. If the application is made on behalf of a husband and wife who file their income tax return jointly, enter the social security numbers of both. Others.-—The employer identification number of an applicant other than an individual should be entered in this block,",
+    "type": "NarrativeText",
+    "metadata": {
+      "filetype": "image/png",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "d783dbd6788d4c44afce9a1ca4f06ec2",
+    "text": "Individuals.—An individual desiring the change should sign the application. Ifthe application pertains to a husband and wife filing a joint Income tax return, the names of both should appear in the heading and both should sign Partnerships.—The form should be signed with the partnership name followed by the signature of one of the general partners and the words “General Partner.”",
+    "type": "NarrativeText",
+    "metadata": {
+      "filetype": "image/png",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "ee6a9bcef7e5e33bc26f419812e2c77a",
+    "text": "Corporations, cooperatives, and insurance companies.—The form should show the name of the corporation, cooperative, or insurance Company and the signature of the president, vice president, treasurer, assistant treasurer, or chief accounting officer (such as tax officer) authorized tosign, and his or her official title. Receivers, trustees, or assignees must sign any application they are required to file, For a subsidiary corporation filing a consolidated return with its parent, the form should be signed by an officer of the parent corporation,",
+    "type": "NarrativeText",
+    "metadata": {
+      "filetype": "image/png",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "e4373e5cc13047d5e53355e7aa3bb7d3",
+    "text": "Fiduciaries.—The-form should show the name of the estate or trust and be signed by the fiduciary, personal representative, executor, executrix, administrator, administratrx, etc’, having legal authority to'sign, and his or her ttle. Preparer other than partner, officer, etc.—The signature of the individual preparing the application should appear in the space provided on page 6.",
+    "type": "NarrativeText",
+    "metadata": {
+      "filetype": "image/png",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "35f1273e073cf159019550bc35b6692c",
+    "text": "Ifthe individual or firm is also authorized to represent the applicant before the IRS, receive a copy of the requested ruling, or perform any other act(s), the power of attorney must reflect such authorization(s).",
+    "type": "NarrativeText",
+    "metadata": {
+      "filetype": "image/png",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "8b06cd6e2bf7fc15130d5d9ed7e66283",
+    "text": "Affiliated Groups",
+    "type": "Title",
+    "metadata": {
+      "filetype": "image/png",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "762e2a39ed1a3ef5d3d4c83dd5dcc0e8",
+    "text": "Taxpayers that are members of an affiliated group filing a consolidated return that seeks to Change to the same accounting method for more than one member of the group must file a separate Form 3115 for each such member.",
+    "type": "NarrativeText",
+    "metadata": {
+      "filetype": "image/png",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "8b838d95f7d4f66b5453307de1353ff4",
+    "text": "Specific Instructions",
+    "type": "Title",
+    "metadata": {
+      "filetype": "image/png",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "bc272940e494acf9441070d3eb4b79f6",
+    "text": "Section A",
+    "type": "Title",
+    "metadata": {
+      "filetype": "image/png",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "a6c53a8898025076b8c0397178f95fa3",
+    "text": "Item 5a, page 1.—“Taxable income or (loss) from operations” is to be entered before application of any net operating loss deduction under section 172(a)",
+    "type": "NarrativeText",
+    "metadata": {
+      "filetype": "image/png",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "e9278d083996ccb1f39236b8064b28cd",
+    "text": "Item 6, page 2.—The term “gross receipts” Includes total sales (net of returns and allowances) and all amounts received for services. in addition, gross receipts include any income from investments and from incidental or outside sources (e.g., interest, dividends, rents, royalties, and annuities). However, if you area resaler of personal property, exclude from gross receipts any amounts not derived in the ordinary course of a trade or business. Gross receipts do not include amounts received for sales taxes if, tunder the applicable state or local law, the taxis legally imposed on the purchaser of the good or service, and the taxpayer merely collects and remits the tax to the taxing authority.",
+    "type": "NarrativeText",
+    "metadata": {
+      "filetype": "image/png",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "4b4424f821633ea87deab36702d4c113",
+    "text": "Item 7b, page 2.—If item 7b 1s \"Yes,\" indicate ona separate sheet the following for each separate trade or business: Nature of business",
+    "type": "NarrativeText",
+    "metadata": {
+      "filetype": "image/png",
       "page_number": 1
     }
   }

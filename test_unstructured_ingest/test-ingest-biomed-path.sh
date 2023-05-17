@@ -25,10 +25,11 @@ if [[ "$(find test_unstructured_ingest/expected-structured-output/biomed-ingest-
 fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-    --metadata-exclude filename \
+    --metadata-exclude filename,file_directory \
     --biomed-path "oa_pdf/07/07/sbaa031.073.PMC7234218.pdf" \
     --structured-output-dir biomed-ingest-output-path \
     --num-processes 2 \
+    --partition-strategy hi_res \
     --reprocess \
     --download-dir biomed-download-path \
     --preserve-downloads \
@@ -44,7 +45,7 @@ if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
 
     OWNER_GROUP=$(stat -c "%u:%g" test_unstructured_ingest/expected-structured-output/biomed-ingest-output-path)
     rsync -rv --chown="$OWNER_GROUP" biomed-ingest-output-path/ test_unstructured_ingest/expected-structured-output/biomed-ingest-output-path
-    
+
 elif ! diff -ru biomed-ingest-output-path test_unstructured_ingest/expected-structured-output/biomed-ingest-output-path ; then
     echo
     echo "There are differences from the previously checked-in structured outputs."
