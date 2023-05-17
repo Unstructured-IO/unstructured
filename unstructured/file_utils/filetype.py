@@ -34,7 +34,6 @@ EXPECTED_DOCX_FILES = [
 ]
 
 EXPECTED_XLSX_FILES = [
-    "docProps/core.xml",
     "xl/workbook.xml",
 ]
 
