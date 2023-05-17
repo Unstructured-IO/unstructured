@@ -7,6 +7,8 @@
   partition strategy in CLI. For example, `--partition-strategy fast`.
 * Added metadata for filetype.
 * Add Discord connector to pull messages from a list of channels
+* Refactor `unstructured/file-utils/filetype.py` to better utilise hashmap to return mime type.
+* Add local declaration of DOCX_MIME_TYPES and XLSX_MIME_TYPES for `test_filetype.py`.
 
 ### Features
 
