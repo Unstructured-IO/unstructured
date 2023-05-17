@@ -222,7 +222,7 @@ def test_detect_xlsx_filetype_application_octet_stream(monkeypatch):
         "from_buffer",
         lambda *args, **kwargs: "application/octet-stream",
     )
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "unsupported", "fake-excel.xlsx")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "stanley-cups.xlsx")
     with open(filename, "rb") as f:
         filetype = detect_filetype(file=f)
     assert filetype == FileType.XLSX
@@ -234,7 +234,7 @@ def test_detect_xlsx_filetype_application_octet_stream_with_filename(monkeypatch
         "from_file",
         lambda *args, **kwargs: "application/octet-stream",
     )
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "unsupported", "fake-excel.xlsx")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "stanley-cups.xlsx")
     filetype = detect_filetype(filename=filename)
     assert filetype == FileType.XLSX
 

@@ -107,8 +107,8 @@ STR_TO_FILETYPE = {
     "application/xml": FileType.XML,
     "application/vnd.oasis.opendocument.text": FileType.ODT,
     "message/rfc822": FileType.EML,
-    "application/vnd.ms-outlook": FileType.MSG,
     "application/x-ole-storage": FileType.MSG,
+    "application/vnd.ms-outlook": FileType.MSG,
 }
 
 FILETYPE_TO_MIMETYPE = {
