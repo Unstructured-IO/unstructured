@@ -27,6 +27,7 @@ from unstructured.partition.pptx import partition_pptx
 from unstructured.partition.rtf import partition_rtf
 from unstructured.partition.text import partition_text
 from unstructured.partition.xlsx import partition_xlsx
+from unstructured.partition.xml import partition_xml
 
 
 def partition(
@@ -43,6 +44,7 @@ def partition(
     ssl_verify: bool = True,
     ocr_languages: str = "eng",
     pdf_infer_table_structure: bool = False,
+    xml_keep_tags: bool = False,
 ):
     """Partitions a document into its constituent elements. Will use libmagic to determine
     the file's type and route it to the appropriate partitioning function. Applies the default
@@ -83,6 +85,9 @@ def partition(
         additional metadata field, "text_as_html," where the value (string) is a just a
         transformation of the data into an HTML <table>.
         The "text" field for a partitioned Table Element is always present, whether True or False.
+    xml_keep_tags
+        If True, will retain the XML tags in the output. Otherwise it will simply extract
+        the text from within the tags. Only applies to partition_xml.
     """
     exactly_one(file=file, filename=filename, url=url)
 
@@ -125,6 +130,13 @@ def partition(
             file=file,
             include_page_breaks=include_page_breaks,
             encoding=encoding,
+        )
+    elif filetype == FileType.XML:
+        elements = partition_xml(
+            filename=filename,
+            file=file,
+            encoding=encoding,
+            xml_keep_tags=xml_keep_tags,
         )
     elif filetype == FileType.EPUB:
         elements = partition_epub(

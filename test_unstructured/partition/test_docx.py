@@ -7,6 +7,7 @@ from unstructured.documents.elements import (
     Address,
     ListItem,
     NarrativeText,
+    Table,
     Text,
     Title,
 )
@@ -97,3 +98,21 @@ def test_partition_docx_raises_with_both_specified(mock_document, tmpdir):
 def test_partition_docx_raises_with_neither():
     with pytest.raises(ValueError):
         partition_docx()
+
+
+def test_partition_docx_processes_table(filename="example-docs/fake_table.docx"):
+    elements = partition_docx(filename=filename)
+
+    assert isinstance(elements[0], Table)
+    assert (
+        elements[0].metadata.text_as_html
+        == """<table>
+<thead>
+<tr><th>Header Col 1   </th><th>Header Col 2  </th></tr>
+</thead>
+<tbody>
+<tr><td>Lorem ipsum    </td><td>A Link example</td></tr>
+</tbody>
+</table>"""
+    )
+    assert elements[0].metadata.filename == "fake_table.docx"
