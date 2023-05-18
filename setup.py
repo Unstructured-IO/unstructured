@@ -64,6 +64,7 @@ setup(
         "python-pptx",
         "python-magic",
         "markdown",
+        "tabulate",
         "requests",
         # NOTE(robinson) - The following dependencies are pinned
         # to address security scans

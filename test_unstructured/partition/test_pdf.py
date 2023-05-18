@@ -37,7 +37,7 @@ def mock_successful_post(url, **kwargs):
             {
                 "number": 0,
                 "elements": [
-                    {"type": "Title", "text": "Charlie Brown and the Great Pumpkin"}
+                    {"type": "Title", "text": "Charlie Brown and the Great Pumpkin"},
                 ],
             },
             {
@@ -78,7 +78,8 @@ class MockDocumentLayout(layout.DocumentLayout):
 
 
 def test_partition_pdf_api(
-    monkeypatch, filename="example-docs/layout-parser-paper-fast.pdf"
+    monkeypatch,
+    filename="example-docs/layout-parser-paper-fast.pdf",
 ):
     monkeypatch.setattr(requests, "post", mock_successful_post)
     monkeypatch.setattr(requests, "get", mock_healthy_get)
@@ -172,7 +173,9 @@ def test_partition_pdf(
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
     monkeypatch.setattr(
-        strategies, "is_pdf_text_extractable", lambda *args, **kwargs: True
+        strategies,
+        "is_pdf_text_extractable",
+        lambda *args, **kwargs: True,
     )
     with mock.patch.object(
         pdf,
@@ -214,7 +217,9 @@ def test_partition_pdf_with_template(
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
     monkeypatch.setattr(
-        strategies, "is_pdf_text_extractable", lambda *args, **kwargs: True
+        strategies,
+        "is_pdf_text_extractable",
+        lambda *args, **kwargs: True,
     )
     with mock.patch.object(
         pdf,
@@ -222,7 +227,10 @@ def test_partition_pdf_with_template(
         new=mock.MagicMock(),
     ), mock.patch.object(pdf, "_partition_pdf_or_image_local", mock.MagicMock()):
         pdf.partition_pdf(
-            filename=filename, strategy="hi_res", url=url, template="checkbox"
+            filename=filename,
+            strategy="hi_res",
+            url=url,
+            template="checkbox",
         )
         assert pdf._partition_via_api.called == api_called
         assert pdf._partition_pdf_or_image_local.called == local_called
@@ -232,12 +240,8 @@ def test_partition_pdf_with_auto_strategy(
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
     elements = pdf.partition_pdf(filename=filename, strategy="auto")
-    titles = [
-        el for el in elements if el.category == "Title" and len(el.text.split(" ")) > 10
-    ]
-    title = (
-        "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
-    )
+    titles = [el for el in elements if el.category == "Title" and len(el.text.split(" ")) > 10]
+    title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
     assert titles[0].text == title
     assert titles[0].metadata.filename == "layout-parser-paper-fast.pdf"
     assert titles[0].metadata.file_directory == "example-docs"
@@ -365,7 +369,9 @@ def test_partition_pdf_falls_back_to_hi_res_from_ocr_only(
 
     monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
     monkeypatch.setattr(
-        strategies, "is_pdf_text_extractable", lambda *args, **kwargs: False
+        strategies,
+        "is_pdf_text_extractable",
+        lambda *args, **kwargs: False,
     )
 
     mock_return = [Text("Hello there!")]
@@ -415,7 +421,7 @@ def test_partition_pdf_with_copy_protection():
     filename = os.path.join("example-docs", "copy-protected.pdf")
     elements = pdf.partition_pdf(filename=filename, strategy="hi_res")
     elements[0] == Title(
-        "LayoutParser: A Uniﬁed Toolkit for Deep Based Document Image Analysis"
+        "LayoutParser: A Uniﬁed Toolkit for Deep Based Document Image Analysis",
     )
 
 
@@ -423,7 +429,7 @@ def test_partition_pdf_with_copy_protection_fallback_to_hi_res(caplog):
     filename = os.path.join("example-docs", "copy-protected.pdf")
     elements = pdf.partition_pdf(filename=filename, strategy="fast")
     elements[0] == Title(
-        "LayoutParser: A Uniﬁed Toolkit for Deep Based Document Image Analysis"
+        "LayoutParser: A Uniﬁed Toolkit for Deep Based Document Image Analysis",
     )
     assert "PDF text is not extractable" in caplog.text
 
@@ -437,7 +443,9 @@ def test_partition_pdf_fails_if_pdf_not_processable(
 
     monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
     monkeypatch.setattr(
-        strategies, "is_pdf_text_extractable", lambda *args, **kwargs: False
+        strategies,
+        "is_pdf_text_extractable",
+        lambda *args, **kwargs: False,
     )
 
     with pytest.raises(ValueError):
