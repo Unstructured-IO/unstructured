@@ -39,6 +39,7 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
     ],
     author="Unstructured Technologies",
@@ -77,7 +78,7 @@ setup(
             "transformers",
         ],
         "local-inference": [
-            "unstructured-inference==0.4.4",
+            "unstructured-inference==0.5.0",
         ],
         "s3": ["s3fs", "fsspec"],
         "azure": ["adlfs", "fsspec"],
