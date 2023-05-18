@@ -4,7 +4,7 @@ import urllib.request
 from dataclasses import dataclass
 from ftplib import FTP, error_perm
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import List, Union
 
 import requests
 from bs4 import BeautifulSoup
@@ -13,6 +13,7 @@ from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
+    StandardConnectorConfig,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import (
@@ -38,25 +39,10 @@ class SimpleBiomedConfig(BaseConnectorConfig):
     id_, from_, until, format are API parameters."""
 
     path: str
-
     # OA Web Service API Options
     id_: str
     from_: str
     until: str
-
-    # Standard Connector options
-    download_dir: str
-    # where to write structured data, with the directory structure matching FTP path
-    output_dir: str
-    re_download: bool = False
-    download_only: bool = False
-    preserve_downloads: bool = False
-    metadata_include: Optional[str] = None
-    metadata_exclude: Optional[str] = None
-    partition_by_api: bool = False
-    partition_endpoint: str = "https://api.unstructured.io/general/v0/general"
-    fields_include: str = "element_id,text,type,metadata"
-    flatten_metadata: bool = False
 
     def validate_api_inputs(self):
         valid = False
@@ -78,7 +64,7 @@ class SimpleBiomedConfig(BaseConnectorConfig):
             is_valid = self.validate_api_inputs()
             if not is_valid:
                 raise ValueError(
-                    "Path argument or atleast one of the "
+                    "Path argument or at least one of the "
                     "OA Web Service arguments MUST be provided.",
                 )
 
@@ -126,9 +112,9 @@ class BiomedIngestDoc(BaseIngestDoc):
 
     def cleanup_file(self):
         if (
-            not self.config.preserve_downloads
+            not self.standard_config.preserve_downloads
             and self.filename.is_file()
-            and not self.config.download_only
+            and not self.standard_config.download_only
         ):
             logger.debug(f"Cleaning up {self}")
             Path.unlink(self.filename)
@@ -157,7 +143,7 @@ class BiomedIngestDoc(BaseIngestDoc):
 
     def write_result(self):
         """Write the structured json result for this doc. result must be json serializable."""
-        if self.config.download_only:
+        if self.standard_config.download_only:
             return
         output_filename = self._output_filename()
         output_filename.parent.mkdir(parents=True, exist_ok=True)
@@ -169,9 +155,13 @@ class BiomedIngestDoc(BaseIngestDoc):
 class BiomedConnector(BaseConnector):
     """Objects of this class support fetching documents from Biomedical literature FTP directory"""
 
-    def __init__(self, config):
-        self.config = config
-        self.cleanup_files = not self.config.preserve_downloads and not self.config.download_only
+    config: SimpleBiomedConfig
+
+    def __init__(self, standard_config: StandardConnectorConfig, config: SimpleBiomedConfig):
+        super().__init__(standard_config, config)
+        self.cleanup_files = (
+            not self.standard_config.preserve_downloads and not self.standard_config.download_only
+        )
 
     def _list_objects_api(self):
         def urls_to_metadata(urls):
@@ -184,9 +174,11 @@ class BiomedConnector(BaseConnector):
                         BiomedFileMeta(
                             ftp_path=url,
                             download_filepath=(
-                                Path(self.config.download_dir) / local_path
+                                Path(self.standard_config.download_dir) / local_path
                             ).resolve(),
-                            output_filepath=(Path(self.config.output_dir) / local_path).resolve(),
+                            output_filepath=(
+                                Path(self.standard_config.output_dir) / local_path
+                            ).resolve(),
                         ),
                     )
 
@@ -251,10 +243,10 @@ class BiomedConnector(BaseConnector):
                             BiomedFileMeta(
                                 ftp_path=ftp_path,
                                 download_filepath=(
-                                    Path(self.config.download_dir) / local_path
+                                    Path(self.standard_config.download_dir) / local_path
                                 ).resolve(),
                                 output_filepath=(
-                                    Path(self.config.output_dir) / local_path
+                                    Path(self.standard_config.output_dir) / local_path
                                 ).resolve(),
                             ),
                         )
@@ -272,15 +264,17 @@ class BiomedConnector(BaseConnector):
             return [
                 BiomedFileMeta(
                     ftp_path=ftp_path,
-                    download_filepath=(Path(self.config.download_dir) / local_path).resolve(),
-                    output_filepath=(Path(self.config.output_dir) / local_path).resolve(),
+                    download_filepath=(
+                        Path(self.standard_config.download_dir) / local_path
+                    ).resolve(),
+                    output_filepath=(Path(self.standard_config.output_dir) / local_path).resolve(),
                 ),
             ]
         else:
             traverse(
                 Path(self.config.path),
-                Path(self.config.download_dir),
-                Path(self.config.output_dir),
+                Path(self.standard_config.download_dir),
+                Path(self.standard_config.output_dir),
             )
 
         return files
@@ -290,7 +284,7 @@ class BiomedConnector(BaseConnector):
             return
 
         if cur_dir is None:
-            cur_dir = self.config.download_dir
+            cur_dir = self.standard_config.download_dir
 
         if cur_dir is None or not Path(cur_dir).is_dir():
             return
@@ -310,4 +304,4 @@ class BiomedConnector(BaseConnector):
 
     def get_ingest_docs(self):
         files = self._list_objects_api() if self.config.is_api else self._list_objects()
-        return [BiomedIngestDoc(self.config, file) for file in files]
+        return [BiomedIngestDoc(self.standard_config, self.config, file) for file in files]

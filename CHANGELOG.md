@@ -1,7 +1,8 @@
-## 0.6.7-dev6
+## 0.6.7-dev7
 
 ### Enhancements
 
+* Refactor out non-connector-specific config variables
 * Add `file_directory` to metadata
 * Add `page_name` to metadata. Currently used for the sheet name in XLSX documents.
 * Added a `--partition-strategy` parameter to unstructured-ingest so that users can specify
