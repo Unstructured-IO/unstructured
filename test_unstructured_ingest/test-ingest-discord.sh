@@ -14,7 +14,7 @@ fi
 PYTHONPATH=. ./unstructured/ingest/main.py \
         --discord-channels 1099442333440802930,1099601456321003600 \
         --discord-token "$DISCORD_TOKEN" \
-        --download-dir files-ingest-download/discord \
+        --download-dir files-ingest-download \
         --structured-output-dir discord-ingest-output \
         --preserve-downloads \
         --reprocess
