@@ -35,7 +35,7 @@ def get_leaf_elements(
     return "\n".join(leaf_elements)  # type: ignore
 
 
-@add_metadata_with_filetype(FileType.XLSX)
+@add_metadata_with_filetype(FileType.XML)
 def partition_xml(
     filename: Optional[str] = None,
     file: Optional[Union[IO, SpooledTemporaryFile]] = None,
