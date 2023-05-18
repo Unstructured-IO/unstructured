@@ -115,6 +115,8 @@ sniffio==1.3.0
     #   anyio
     #   httpcore
     #   httpx
+tabulate==0.9.0
+    # via unstructured (setup.py)
 tqdm==4.65.0
     # via
     #   argilla
