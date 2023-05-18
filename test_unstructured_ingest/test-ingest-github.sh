@@ -28,7 +28,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --metadata-exclude filename,file_directory \
     --github-url dcneiner/Downloadify \
     --git-file-glob '*.html,*.txt' \
-    --structured-output-dir github-downloadify-output \
+    --structured-output-dir github-downloadify-ingest-output \
     --partition-strategy hi_res \
     --reprocess \
     --preserve-downloads \
@@ -41,9 +41,9 @@ set +e
 # to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
 
-    cp github-downloadify-output/* test_unstructured_ingest/expected-structured-output/github-downloadify/
+    cp github-downloadify-ingest-output/* test_unstructured_ingest/expected-structured-output/github-downloadify/
 
-elif ! diff -ru test_unstructured_ingest/expected-structured-output/github-downloadify github-downloadify-output ; then
+elif ! diff -ru test_unstructured_ingest/expected-structured-output/github-downloadify github-downloadify-ingest-output ; then
     echo
     echo "There are differences from the previously checked-in structured outputs."
     echo
