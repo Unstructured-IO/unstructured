@@ -1,14 +1,9 @@
-## 0.6.7-dev5
-
-### Enhancements
-
-* Add `page_name` to metadata. Currently used for the sheet name in XLSX documents.
-
-## 0.6.7-dev4
+## 0.6.7-dev6
 
 ### Enhancements
 
 * Add `file_directory` to metadata
+* Add `page_name` to metadata. Currently used for the sheet name in XLSX documents.
 * Added a `--partition-strategy` parameter to unstructured-ingest so that users can specify
   partition strategy in CLI. For example, `--partition-strategy fast`.
 * Added metadata for filetype.
@@ -26,6 +21,7 @@
 * Makes `pytesseract` a function level import in `partition_pdf` so you can use the `"fast"`
   or `"hi_res"` strategies if `pytesseract` is not installed. Also adds the
   `required_dependencies` decorator for the `"hi_res"` and `"ocr_only"` strategies.
+* Fix to ensure `filename` is tracked in metadata for `docx` tables.
 
 ## 0.6.6
 
