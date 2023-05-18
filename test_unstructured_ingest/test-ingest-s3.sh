@@ -15,7 +15,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --metadata-exclude filename,file_directory \
     --s3-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
     --s3-anonymous \
-    --structured-output-dir s3-small-batch-ingest-output \
+    --structured-output-dir s3-small-batch-output \
     --preserve-downloads \
     --partition-strategy hi_res \
     --reprocess
@@ -27,9 +27,9 @@ set +e
 # to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
 
-    cp s3-small-batch-ingest-output/small-pdf-set/* test_unstructured_ingest/expected-structured-output/s3-small-batch/small-pdf-set/
+    cp s3-small-batch-output/small-pdf-set/* test_unstructured_ingest/expected-structured-output/s3-small-batch/small-pdf-set/
 
-elif ! diff -ru test_unstructured_ingest/expected-structured-output/s3-small-batch s3-small-batch-ingest-output ; then
+elif ! diff -ru test_unstructured_ingest/expected-structured-output/s3-small-batch s3-small-batch-output ; then
     echo
     echo "There are differences from the previously checked-in structured outputs."
     echo

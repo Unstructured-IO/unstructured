@@ -28,7 +28,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
    --metadata-exclude filename,file_directory \
    --biomed-api-from "2019-01-02" \
    --biomed-api-until "2019-01-02+00:03:10" \
-   --structured-output-dir biomed-api-ingest-output  \
+   --structured-output-dir biomed-ingest-output-api  \
    --num-processes 2 \
    --partition-strategy hi_res \
    --reprocess \
@@ -44,9 +44,9 @@ set +x
 if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
 
     OWNER_GROUP=$(stat -c "%u:%g" test_unstructured_ingest/expected-structured-output/biomed-ingest-output-api)
-    rsync -rv --chown="$OWNER_GROUP" biomed-api-ingest-output/ test_unstructured_ingest/expected-structured-output/biomed-ingest-output-api
+    rsync -rv --chown="$OWNER_GROUP" biomed-ingest-output-api/ test_unstructured_ingest/expected-structured-output/biomed-ingest-output-api
 
-elif ! diff -ru biomed-api-ingest-output test_unstructured_ingest/expected-structured-output/biomed-ingest-output-api ; then
+elif ! diff -ru biomed-ingest-output-api test_unstructured_ingest/expected-structured-output/biomed-ingest-output-api ; then
     echo
     echo "There are differences from the previously checked-in structured outputs."
     echo
