@@ -27,7 +27,7 @@ class AzureBlobStorageConnector(FsspecConnector):
 
     def __init__(
         self,
-        config: SimpleAzureBlobStorageConfig,
         standard_config: StandardConnectorConfig,
+        config: SimpleAzureBlobStorageConfig,
     ) -> None:
         super().__init__(standard_config=standard_config, config=config)
