@@ -45,7 +45,7 @@ def partition_xml(
     include_metadata: bool = True,
     encoding: str = "utf-8",
 ):
-    """Partitions an XML doucment into its document elements.
+    """Partitions an XML document into its document elements.
 
     Parameters
     ----------
