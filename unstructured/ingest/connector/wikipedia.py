@@ -167,7 +167,6 @@ class WikipediaConnector(BaseConnector):
         import wikipedia
 
         page = wikipedia.page(
-            self.standard_config,
             self.config.title,
             auto_suggest=self.config.auto_suggest,
         )
