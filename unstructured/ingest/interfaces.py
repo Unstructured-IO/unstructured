@@ -38,6 +38,9 @@ class BaseConnectorConfig(ABC):
 class BaseConnector(ABC):
     """Abstract Base Class for a connector to a remote source, e.g. S3 or Google Drive."""
 
+    standard_config: StandardConnectorConfig
+    config: BaseConnectorConfig
+
     def __init__(self, standard_config: StandardConnectorConfig, config: BaseConnectorConfig):
         """Expects a standard_config object that implements StandardConnectorConfig
         and config object that implements BaseConnectorConfig."""
