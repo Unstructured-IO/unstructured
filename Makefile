@@ -103,7 +103,7 @@ install-detectron2: install-tensorboard
 
 ## install-local-inference: installs requirements for local inference
 .PHONY: install-local-inference
-install-local-inference: install install-unstructured-inference install-detectron2
+install-local-inference: install install-unstructured-inference
 
 ## pip-compile:             compiles all base/dev/test requirements
 .PHONY: pip-compile
