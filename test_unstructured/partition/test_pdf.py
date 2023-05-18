@@ -305,7 +305,7 @@ def test_partition_pdf_with_fast_strategy_and_page_breaks(
     assert len(elements) > 10
     assert PageBreak() in elements
 
-    assert "detectron2 is not installed" not in caplog.text
+    assert "unstructured_inference is not installed" not in caplog.text
 
 
 def test_partition_pdf_raises_with_bad_strategy(
@@ -321,7 +321,7 @@ def test_partition_pdf_falls_back_to_fast(
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
     def mock_exists(dep):
-        return dep not in ["detectron2", "pytesseract"]
+        return dep not in ["unstructured_inference", "pytesseract"]
 
     monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
 
@@ -334,7 +334,7 @@ def test_partition_pdf_falls_back_to_fast(
         pdf.partition_pdf(filename=filename, url=None, strategy="hi_res")
 
     mock_partition.assert_called_once()
-    assert "detectron2 is not installed" in caplog.text
+    assert "unstructured_inference is not installed" in caplog.text
 
 
 def test_partition_pdf_falls_back_to_fast_from_ocr_only(
@@ -392,7 +392,7 @@ def test_partition_pdf_falls_back_to_ocr_only(
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
     def mock_exists(dep):
-        return dep not in ["detectron2"]
+        return dep not in ["unstructured_inference"]
 
     monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
 
@@ -405,7 +405,7 @@ def test_partition_pdf_falls_back_to_ocr_only(
         pdf.partition_pdf(filename=filename, url=None, strategy="hi_res")
 
     mock_partition.assert_called_once()
-    assert "detectron2 is not installed" in caplog.text
+    assert "unstructured_inference is not installed" in caplog.text
 
 
 def test_partition_pdf_uses_table_extraction():
@@ -439,7 +439,7 @@ def test_partition_pdf_fails_if_pdf_not_processable(
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
     def mock_exists(dep):
-        return dep not in ["detectron2", "pytesseract"]
+        return dep not in ["unstructured_inference", "pytesseract"]
 
     monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
     monkeypatch.setattr(
