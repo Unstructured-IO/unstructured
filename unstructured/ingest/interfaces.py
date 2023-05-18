@@ -34,12 +34,13 @@ class StandardConnectorConfig:
 class BaseConnectorConfig(ABC):
     """Abstract definition on which to define connector-specific attributes."""
 
+
 @dataclass
 class BaseConnector(ABC):
     """Abstract Base Class for a connector to a remote source, e.g. S3 or Google Drive."""
-   
+
     standard_config: StandardConnectorConfig
-    config: BaseConnectorConfig 
+    config: BaseConnectorConfig
 
     def __init__(self, standard_config: StandardConnectorConfig, config: BaseConnectorConfig):
         """Expects a standard_config object that implements StandardConnectorConfig
