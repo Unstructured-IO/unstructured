@@ -50,7 +50,7 @@ def partition_text(
     paragrapher_grouper
         A str -> str function for fixing paragraphs that are interrupted by line breaks
         for formatting purposes.
-    include_metdata
+    include_metadata
         Determines whether or not metadata is included in the output.
     """
     if text is not None and text.strip() == "" and not file and not filename:
