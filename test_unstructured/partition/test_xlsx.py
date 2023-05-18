@@ -73,4 +73,3 @@ def test_partition_xlsx_can_exclude_metadata(filename="example-docs/stanley-cups
     assert elements[0].metadata.page_number is None
     assert elements[0].metadata.filetype is None
     assert elements[0].metadata.page_name is None
-  
