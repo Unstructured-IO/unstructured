@@ -1,11 +1,22 @@
-## 0.6.7-dev0
+## 0.6.7-dev4
 
 ### Enhancements
 
+* Add `file_directory` to metadata
+* Added a `--partition-strategy` parameter to unstructured-ingest so that users can specify
+  partition strategy in CLI. For example, `--partition-strategy fast`.
+* Added metadata for filetype.
+* Add Discord connector to pull messages from a list of channels
+* Refactor `unstructured/file-utils/filetype.py` to better utilise hashmap to return mime type.
+* Add local declaration of DOCX_MIME_TYPES and XLSX_MIME_TYPES for `test_filetype.py`.
+
 ### Features
+
+* Add `partition_xlsx` for Microsoft Excel documents.
 
 ### Fixes
 
+* Supports `hml` filetype for partition as a variation of html filetype.
 * Makes `pytesseract` a function level import in `partition_pdf` so you can use the `"fast"`
   or `"hi_res"` strategies if `pytesseract` is not installed. Also adds the
   `required_dependencies` decorator for the `"hi_res"` and `"ocr_only"` strategies.
@@ -80,6 +91,7 @@
 
 * Added logic to `partition_pdf` for detecting copy protected PDFs and falling back
   to the hi res strategy when necessary.
+
 
 ### Features
 

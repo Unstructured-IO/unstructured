@@ -15,8 +15,10 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
       --slack-token "${SLACK_TOKEN}" \
       --download-dir slack-ingest-download \
       --structured-output-dir slack-ingest-output \
+      --partition-strategy hi_res \
       --start-date 2023-04-01 \
-      --end-date 2023-04-08T12:00:00-08:00
+      --end-date 2023-04-08T12:00:00-08:00 \
+      --reprocess
 
 OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
 
@@ -30,7 +32,7 @@ if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
 elif ! diff -ru slack-ingest-output test_unstructured_ingest/expected-structured-output/slack-ingest-channel; then
    echo
    echo "There are differences from the previously checked-in structured outputs."
-   echo 
+   echo
    echo "If these differences are acceptable, overwrite by the fixtures by setting the env var:"
    echo
    echo "  export OVERWRITE_FIXTURES=true"

@@ -7,8 +7,6 @@ import pytest
 
 from unstructured.file_utils import filetype
 from unstructured.file_utils.filetype import (
-    DOCX_MIME_TYPES,
-    XLSX_MIME_TYPES,
     FileType,
     _is_text_file_a_json,
     detect_filetype,
@@ -16,6 +14,14 @@ from unstructured.file_utils.filetype import (
 
 FILE_DIRECTORY = pathlib.Path(__file__).parent.resolve()
 EXAMPLE_DOCS_DIRECTORY = os.path.join(FILE_DIRECTORY, "..", "..", "example-docs")
+
+DOCX_MIME_TYPES = [
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+]
+
+XLSX_MIME_TYPES = [
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+]
 
 
 @pytest.mark.parametrize(
@@ -29,7 +35,7 @@ EXAMPLE_DOCS_DIRECTORY = os.path.join(FILE_DIRECTORY, "..", "..", "example-docs"
         ("unsupported/factbook.xml", FileType.XML),
         ("example-10k.html", FileType.HTML),
         ("fake-html.html", FileType.HTML),
-        ("unsupported/fake-excel.xlsx", FileType.XLSX),
+        ("stanley-cups.xlsx", FileType.XLSX),
         ("fake-power-point.pptx", FileType.PPTX),
         ("winter-sports.epub", FileType.EPUB),
         ("spring-weather.html.json", FileType.JSON),
@@ -52,7 +58,7 @@ def test_detect_filetype_from_filename(file, expected):
         ("unsupported/factbook.xml", FileType.XML),
         ("example-10k.html", FileType.HTML),
         ("fake-html.html", FileType.HTML),
-        ("unsupported/fake-excel.xlsx", FileType.XLSX),
+        ("stanley-cups.xlsx", FileType.XLSX),
         ("fake-power-point.pptx", FileType.PPTX),
         ("winter-sports.epub", FileType.EPUB),
         ("fake-doc.rtf", FileType.RTF),
@@ -87,7 +93,7 @@ def test_detect_filetype_from_filename_with_extension(monkeypatch, file, expecte
         # */xml and some return */html. Either could be acceptable depending on the OS
         ("example-10k.html", [FileType.HTML, FileType.XML]),
         ("fake-html.html", FileType.HTML),
-        ("unsupported/fake-excel.xlsx", FileType.XLSX),
+        ("stanley-cups.xlsx", FileType.XLSX),
         ("fake-power-point.pptx", FileType.PPTX),
         ("winter-sports.epub", FileType.EPUB),
     ],
@@ -142,7 +148,11 @@ def test_detect_html_text_xml(monkeypatch):
 
 
 def test_detect_docx_filetype_application_octet_stream(monkeypatch):
-    monkeypatch.setattr(magic, "from_buffer", lambda *args, **kwargs: "application/octet-stream")
+    monkeypatch.setattr(
+        magic,
+        "from_buffer",
+        lambda *args, **kwargs: "application/octet-stream",
+    )
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.docx")
     with open(filename, "rb") as f:
         filetype = detect_filetype(file=f)
@@ -150,7 +160,11 @@ def test_detect_docx_filetype_application_octet_stream(monkeypatch):
 
 
 def test_detect_docx_filetype_application_octet_stream_with_filename(monkeypatch):
-    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "application/octet-stream")
+    monkeypatch.setattr(
+        magic,
+        "from_file",
+        lambda *args, **kwargs: "application/octet-stream",
+    )
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.docx")
     filetype = detect_filetype(filename=filename)
     assert filetype == FileType.DOCX
@@ -173,40 +187,64 @@ def test_detect_application_zip_files(monkeypatch, tmpdir):
 
 
 def test_detect_doc_file_from_mime_type(monkeypatch):
-    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "application/msword")
+    monkeypatch.setattr(
+        magic,
+        "from_file",
+        lambda *args, **kwargs: "application/msword",
+    )
     filetype = detect_filetype(filename="fake.doc")
     assert filetype == FileType.DOC
 
 
 def test_detect_ppt_file_from_mime_type(monkeypatch):
-    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "application/vnd.ms-powerpoint")
+    monkeypatch.setattr(
+        magic,
+        "from_file",
+        lambda *args, **kwargs: "application/vnd.ms-powerpoint",
+    )
     filetype = detect_filetype(filename="fake.ppt")
     assert filetype == FileType.PPT
 
 
 def test_detect_xls_file_from_mime_type(monkeypatch):
-    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "application/vnd.ms-excel")
+    monkeypatch.setattr(
+        magic,
+        "from_file",
+        lambda *args, **kwargs: "application/vnd.ms-excel",
+    )
     filetype = detect_filetype(filename="fake.xls")
     assert filetype == FileType.XLS
 
 
 def test_detect_xlsx_filetype_application_octet_stream(monkeypatch):
-    monkeypatch.setattr(magic, "from_buffer", lambda *args, **kwargs: "application/octet-stream")
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "unsupported", "fake-excel.xlsx")
+    monkeypatch.setattr(
+        magic,
+        "from_buffer",
+        lambda *args, **kwargs: "application/octet-stream",
+    )
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "stanley-cups.xlsx")
     with open(filename, "rb") as f:
         filetype = detect_filetype(file=f)
     assert filetype == FileType.XLSX
 
 
 def test_detect_xlsx_filetype_application_octet_stream_with_filename(monkeypatch):
-    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "application/octet-stream")
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "unsupported", "fake-excel.xlsx")
+    monkeypatch.setattr(
+        magic,
+        "from_file",
+        lambda *args, **kwargs: "application/octet-stream",
+    )
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "stanley-cups.xlsx")
     filetype = detect_filetype(filename=filename)
     assert filetype == FileType.XLSX
 
 
 def test_detect_pptx_filetype_application_octet_stream(monkeypatch):
-    monkeypatch.setattr(magic, "from_buffer", lambda *args, **kwargs: "application/octet-stream")
+    monkeypatch.setattr(
+        magic,
+        "from_buffer",
+        lambda *args, **kwargs: "application/octet-stream",
+    )
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
     with open(filename, "rb") as f:
         filetype = detect_filetype(file=f)
@@ -214,14 +252,22 @@ def test_detect_pptx_filetype_application_octet_stream(monkeypatch):
 
 
 def test_detect_pptx_filetype_application_octet_stream_with_filename(monkeypatch):
-    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "application/octet-stream")
+    monkeypatch.setattr(
+        magic,
+        "from_file",
+        lambda *args, **kwargs: "application/octet-stream",
+    )
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
     filetype = detect_filetype(filename=filename)
     assert filetype == FileType.PPTX
 
 
 def test_detect_application_octet_stream_returns_none_with_unknown(monkeypatch):
-    monkeypatch.setattr(magic, "from_buffer", lambda *args, **kwargs: "application/octet-stream")
+    monkeypatch.setattr(
+        magic,
+        "from_buffer",
+        lambda *args, **kwargs: "application/octet-stream",
+    )
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
     with open(filename, "rb") as f:
         filetype = detect_filetype(file=f)
@@ -246,7 +292,7 @@ def test_detect_docx_filetype_word_mime_type(monkeypatch):
 
 def test_detect_xlsx_filetype_word_mime_type(monkeypatch):
     monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: XLSX_MIME_TYPES[0])
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "unsupported", "fake-excel.xlsx")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "stanley-cups.xlsx")
     with open(filename, "rb") as f:
         filetype = detect_filetype(file=f)
     assert filetype == FileType.XLSX

@@ -6,13 +6,17 @@ from unstructured.documents.elements import Element
 from unstructured.documents.html import HTMLDocument
 from unstructured.documents.xml import VALID_PARSERS
 from unstructured.file_utils.file_conversion import convert_file_to_html_text
-from unstructured.partition.common import (
-    add_element_metadata,
+from unstructured.file_utils.filetype import (
+    FileType,
+    add_metadata_with_filetype,
     document_to_element_list,
+)
+from unstructured.partition.common import (
     exactly_one,
 )
 
 
+@add_metadata_with_filetype(FileType.HTML)
 def partition_html(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
@@ -88,16 +92,7 @@ def partition_html(
 
         document = HTMLDocument.from_string(response.text, parser=parser)
 
-    layout_elements = document_to_element_list(document, include_page_breaks=include_page_breaks)
-    if include_metadata:
-        return add_element_metadata(
-            layout_elements,
-            include_page_breaks=include_page_breaks,
-            filename=filename,
-            url=url,
-        )
-    else:
-        return layout_elements
+    return document_to_element_list(document, include_page_breaks=include_page_breaks)
 
 
 def convert_and_partition_html(

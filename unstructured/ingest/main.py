@@ -5,6 +5,7 @@ import multiprocessing as mp
 import sys
 import warnings
 from contextlib import suppress
+from functools import partial
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -141,6 +142,12 @@ class MainProcess:
     default="https://api.unstructured.io/general/v0/general",
     help="If partitioning via api, use the following host. "
     "Default: https://api.unstructured.io/general/v0/general",
+)
+@click.option(
+    "--partition-strategy",
+    default="auto",
+    help="The method that will be used to process the documents. "
+    "Default: auto. Other strategies include `fast` and `hi_res`.",
 )
 @click.option(
     "--local-input-path",
@@ -345,6 +352,22 @@ class MainProcess:
     "YYYY-MM-DD+HH:MM:SS or YYYY-MM-DDTHH:MM:SStz",
 )
 @click.option(
+    "--discord-channels",
+    default=None,
+    help="A comma separated list of discord channel ids to ingest from.",
+)
+@click.option(
+    "--discord-token",
+    default=None,
+    help="Bot token used to access Discord API, must have "
+    "READ_MESSAGE_HISTORY scope for the bot user",
+)
+@click.option(
+    "--discord-period",
+    default=None,
+    help="Number of days to go back in the history of discord channels, must be an number",
+)
+@click.option(
     "--download-dir",
     help="Where files are downloaded to, defaults to `$HOME/.cache/unstructured/ingest/<SHA256>`.",
 )
@@ -407,6 +430,9 @@ def main(
     slack_token,
     start_date,
     end_date,
+    discord_channels,
+    discord_token,
+    discord_period,
     download_dir,
     preserve_downloads,
     structured_output_dir,
@@ -420,6 +446,7 @@ def main(
     max_docs,
     partition_by_api,
     partition_endpoint,
+    partition_strategy,
     local_input_path,
     local_recursive,
     local_file_glob,
@@ -694,6 +721,23 @@ def main(
                 verbose=verbose,
             ),
         )
+    elif discord_channels:
+        from unstructured.ingest.connector.discord import (
+            DiscordConnector,
+            SimpleDiscordConfig,
+        )
+
+        doc_connector = DiscordConnector(  # type: ignore
+            config=SimpleDiscordConfig(
+                channels=SimpleDiscordConfig.parse_channels(discord_channels),
+                days=discord_period,
+                token=discord_token,
+                download_dir=download_dir,
+                output_dir=structured_output_dir,
+                preserve_downloads=preserve_downloads,
+                verbose=verbose,
+            ),
+        )
     elif wikipedia_page_title:
         doc_connector = WikipediaConnector(  # type: ignore
             config=SimpleWikipediaConfig(
@@ -793,9 +837,14 @@ def main(
         logger.error("No connector-specific option was specified!")
         sys.exit(1)
 
+    process_document_with_partition_strategy = partial(
+        process_document,
+        strategy=partition_strategy,
+    )
+
     MainProcess(
         doc_connector=doc_connector,
-        doc_processor_fn=process_document,
+        doc_processor_fn=process_document_with_partition_strategy,
         num_processes=num_processes,
         reprocess=reprocess,
         verbose=verbose,

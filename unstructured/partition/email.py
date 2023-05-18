@@ -36,6 +36,7 @@ from unstructured.documents.email_elements import (
     Sender,
     Subject,
 )
+from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.logger import logger
 from unstructured.nlp.patterns import EMAIL_DATETIMETZ_PATTERN_RE
 from unstructured.partition.html import partition_html
@@ -180,6 +181,7 @@ def find_embedded_image(
     return Image(text=image_info[:-1]), element
 
 
+@add_metadata_with_filetype(FileType.EML)
 def partition_email(
     filename: Optional[str] = None,
     file: Optional[IO] = None,

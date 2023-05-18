@@ -10,13 +10,14 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --local-file-glob "*.pdf" \
     --structured-output-dir api-ingest-output \
     --partition-by-api \
+    --partition-strategy hi_res \
     --verbose \
     --reprocess
 
 set +e
 
-if [ "$(find 'api-ingest-output' -type f -printf '.' | wc -c)" != 4 ]; then
+if [ "$(find 'api-ingest-output' -type f -printf '.' | wc -c)" != 5 ]; then
    echo
-   echo "4 files should have been created."
+   echo "5 files should have been created."
    exit 1
 fi

@@ -64,6 +64,8 @@ def test_partition_doc_with_filename(mock_document, expected_elements, tmpdir):
 
     elements = partition_doc(filename=doc_filename)
     assert elements == expected_elements
+    assert elements[0].metadata.filename == "mock_document.doc"
+    assert elements[0].metadata.file_directory == tmpdir.dirname
 
 
 def test_partition_doc_matches_partition_docx(mock_document, expected_elements, tmpdir):
