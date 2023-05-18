@@ -32,6 +32,8 @@ EXPECTED_TEXT = "Team Location Stanley Cups Blues STL 1 Flyers PHI 2 Maple Leafs
 
 EXPECTED_FILETYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
+EXCEPTED_PAGE_NAME = "Stanley Cups"
+
 
 def test_partition_xlsx_from_filename(filename="example-docs/stanley-cups.xlsx"):
     elements = partition_xlsx(filename=filename)
@@ -43,6 +45,7 @@ def test_partition_xlsx_from_filename(filename="example-docs/stanley-cups.xlsx")
     assert elements[0].metadata.text_as_html == EXPECTED_TABLE
     assert elements[0].metadata.page_number == 1
     assert elements[0].metadata.filetype == EXPECTED_FILETYPE
+    assert elements[0].metadata.page_name == EXCEPTED_PAGE_NAME
 
 
 def test_partition_xlsx_from_file(filename="example-docs/stanley-cups.xlsx"):
@@ -56,6 +59,7 @@ def test_partition_xlsx_from_file(filename="example-docs/stanley-cups.xlsx"):
     assert elements[0].metadata.text_as_html == EXPECTED_TABLE
     assert elements[0].metadata.page_number == 1
     assert elements[0].metadata.filetype == EXPECTED_FILETYPE
+    assert elements[0].metadata.page_name == EXCEPTED_PAGE_NAME
 
 
 def test_partition_xlsx_can_exclude_metadata(filename="example-docs/stanley-cups.xlsx"):
@@ -68,3 +72,4 @@ def test_partition_xlsx_can_exclude_metadata(filename="example-docs/stanley-cups
     assert elements[0].metadata.text_as_html is None
     assert elements[0].metadata.page_number is None
     assert elements[0].metadata.filetype is None
+    assert elements[0].metadata.page_name is None
