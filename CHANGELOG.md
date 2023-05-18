@@ -1,3 +1,9 @@
+## 0.6.7-dev5
+
+### Enhancements
+
+* Add `page_name` to metadata. Currently used for the sheet name in XLSX documents.
+
 ## 0.6.7-dev4
 
 ### Enhancements
