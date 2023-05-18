@@ -34,7 +34,7 @@ def test_partition_text_from_filename(filename, encoding):
     "filename",
     ["fake-text-utf-16.txt", "fake-text-utf-16-le.txt", "fake-text-utf-32.txt"],
 )
-def test_partition_text_from_filename_without_encoding(filename):
+def test_partition_text_from_filename_default_encoding(filename):
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
     elements = partition_text(filename=filename)
     assert len(elements) > 0
@@ -62,10 +62,32 @@ def test_partition_text_from_file():
     assert elements == EXPECTED_OUTPUT
 
 
+@pytest.mark.parametrize(
+    "filename",
+    ["fake-text-utf-16.txt", "fake-text-utf-16-le.txt", "fake-text-utf-32.txt"],
+)
+def test_partition_text_from_file_default_encoding(filename):
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+    elements = partition_text(filename=filename)
+    assert len(elements) > 0
+    assert elements == EXPECTED_OUTPUT
+
+
 def test_partition_text_from_bytes_file():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-text.txt")
     with open(filename, "rb") as f:
         elements = partition_text(file=f)
+    assert len(elements) > 0
+    assert elements == EXPECTED_OUTPUT
+
+
+@pytest.mark.parametrize(
+    "filename",
+    ["fake-text-utf-16.txt", "fake-text-utf-16-le.txt", "fake-text-utf-32.txt"],
+)
+def test_partition_text_from_bytes_file_default_encoding(filename):
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+    elements = partition_text(filename=filename)
     assert len(elements) > 0
     assert elements == EXPECTED_OUTPUT
 
