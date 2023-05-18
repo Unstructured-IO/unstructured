@@ -11,8 +11,8 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.file_utils.encoding import read_txt_file
+from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.partition.common import exactly_one
 from unstructured.partition.text_type import (
