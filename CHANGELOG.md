@@ -1,4 +1,4 @@
-## 0.6.7-dev6
+## 0.7.0
 
 ### Enhancements
 
@@ -10,6 +10,8 @@
 * Add Discord connector to pull messages from a list of channels
 * Refactor `unstructured/file-utils/filetype.py` to better utilise hashmap to return mime type.
 * Add local declaration of DOCX_MIME_TYPES and XLSX_MIME_TYPES for `test_filetype.py`.
+* Installing `detectron2` from source is no longer required when using the `local-inference`
+  extra.
 
 ### Features
 
@@ -23,6 +25,8 @@
   or `"hi_res"` strategies if `pytesseract` is not installed. Also adds the
   `required_dependencies` decorator for the `"hi_res"` and `"ocr_only"` strategies.
 * Fix to ensure `filename` is tracked in metadata for `docx` tables.
+* Better handling of the output order for multicolumn documents when using the `"hi_res"`
+  strategy.
 
 ## 0.6.6
 
