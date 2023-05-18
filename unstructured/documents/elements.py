@@ -25,6 +25,9 @@ class ElementMetadata:
     # Page numbers currenlty supported for PDF, HTML and PPT documents
     page_number: Optional[int] = None
 
+    # Page name. The sheet name in XLXS documents.
+    page_name: Optional[str] = None
+
     # Webpage specific metadata fields
     url: Optional[str] = None
 
