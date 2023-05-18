@@ -39,7 +39,7 @@ def get_leaf_elements(
 def partition_xml(
     filename: Optional[str] = None,
     file: Optional[Union[IO, SpooledTemporaryFile]] = None,
-    keep_xml_tags: bool = False,
+    xml_keep_tags: bool = False,
     xml_path: str = ".",
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
@@ -53,11 +53,11 @@ def partition_xml(
         A string defining the target filename path.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
-    keep_xml_tags
+    xml_keep_tags
         If True, will retain the XML tags in the output. Otherwise it will simply extract
         the text from within the tags.
     xml_path
-        The xml_path to use for extracting the text. Only used if keep_xml_tags=False
+        The xml_path to use for extracting the text. Only used if xml_keep_tags=False
     metadata_filename
         The filename to use for the metadata.
     encoding
@@ -69,7 +69,7 @@ def partition_xml(
     exactly_one(filename=filename, file=file)
     metadata_filename = metadata_filename or filename
 
-    if keep_xml_tags:
+    if xml_keep_tags:
         if filename:
             with open(filename) as f:
                 raw_text = f.read()

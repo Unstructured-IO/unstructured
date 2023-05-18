@@ -375,20 +375,20 @@ to disable SSL verification in the request.
 -----------------
 
 The ``partition_xml`` function processes XML documents.
-If ``keep_xml_tags=False``, the function only returns the text attributes from the tags.
-You can use ``xml_path`` in conjuntion with ``keep_xml_tags=False`` to restrict the text
+If ``xml_keep_tags=False``, the function only returns the text attributes from the tags.
+You can use ``xml_path`` in conjuntion with ``xml_keep_tags=False`` to restrict the text
 extraction to specific tags.
-If ``keep_xml_tags=True``, the function returns tag information in addition to tag text.
-``keep_xml_tags`` is ``False`` be default.
+If ``xml_keep_tags=True``, the function returns tag information in addition to tag text.
+``xml_keep_tags`` is ``False`` be default.
 
 
 .. code:: python
 
   from unstructured.partition.xml import partition_xml
 
-  elements = partition_xml(filename="example-docs/factbook.xml", keep_xml_tags=True)
+  elements = partition_xml(filename="example-docs/factbook.xml", xml_keep_tags=True)
 
-  elements = partition_xml(filename="example-docs/factbook.xml", keep_xml_tags=False)
+  elements = partition_xml(filename="example-docs/factbook.xml", xml_keep_tags=False)
 
 
 
