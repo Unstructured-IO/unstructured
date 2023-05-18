@@ -16,7 +16,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --s3-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
     --s3-anonymous \
     --structured-output-dir s3-small-batch-output \
-    --download-dir files-ingest-download \
+    --download-dir files-ingest-download/s3 \
     --preserve-downloads \
     --partition-strategy hi_res \
     --reprocess
