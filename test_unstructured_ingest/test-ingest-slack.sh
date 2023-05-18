@@ -13,7 +13,7 @@ fi
 PYTHONPATH=. ./unstructured/ingest/main.py \
       --slack-channels C052BGT7718 \
       --slack-token "${SLACK_TOKEN}" \
-      --download-dir slack-ingest-download \
+      --download-dir files-ingest-download \
       --structured-output-dir slack-ingest-output \
       --partition-strategy hi_res \
       --preserve-downloads \
