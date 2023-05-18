@@ -36,7 +36,9 @@ def mock_successful_post(url, **kwargs):
         "pages": [
             {
                 "number": 0,
-                "elements": [{"type": "Title", "text": "Charlie Brown and the Great Pumpkin"}],
+                "elements": [
+                    {"type": "Title", "text": "Charlie Brown and the Great Pumpkin"}
+                ],
             },
             {
                 "number": 1,
@@ -75,7 +77,9 @@ class MockDocumentLayout(layout.DocumentLayout):
         ]
 
 
-def test_partition_pdf_api(monkeypatch, filename="example-docs/layout-parser-paper-fast.pdf"):
+def test_partition_pdf_api(
+    monkeypatch, filename="example-docs/layout-parser-paper-fast.pdf"
+):
     monkeypatch.setattr(requests, "post", mock_successful_post)
     monkeypatch.setattr(requests, "get", mock_healthy_get)
 
@@ -160,14 +164,22 @@ def test_partition_pdf_api_raises_with_failed_api_call(
     ("url", "api_called", "local_called"),
     [("fakeurl", True, False), (None, False, True)],
 )
-def test_partition_pdf(url, api_called, local_called, monkeypatch):
-    monkeypatch.setattr(strategies, "is_pdf_text_extractable", lambda *args, **kwargs: True)
+def test_partition_pdf(
+    url,
+    api_called,
+    local_called,
+    monkeypatch,
+    filename="example-docs/layout-parser-paper-fast.pdf",
+):
+    monkeypatch.setattr(
+        strategies, "is_pdf_text_extractable", lambda *args, **kwargs: True
+    )
     with mock.patch.object(
         pdf,
         attribute="_partition_via_api",
         new=mock.MagicMock(),
     ), mock.patch.object(pdf, "_partition_pdf_or_image_local", mock.MagicMock()):
-        pdf.partition_pdf(filename="fake.pdf", strategy="hi_res", url=url)
+        pdf.partition_pdf(filename=filename, strategy="hi_res", url=url)
         assert pdf._partition_via_api.called == api_called
         assert pdf._partition_pdf_or_image_local.called == local_called
 
@@ -194,43 +206,67 @@ def test_partition_pdf_with_spooled_file(
     ("url", "api_called", "local_called"),
     [("fakeurl", True, False), (None, False, True)],
 )
-def test_partition_pdf_with_template(url, api_called, local_called, monkeypatch):
-    monkeypatch.setattr(strategies, "is_pdf_text_extractable", lambda *args, **kwargs: True)
+def test_partition_pdf_with_template(
+    url,
+    api_called,
+    local_called,
+    monkeypatch,
+    filename="example-docs/layout-parser-paper-fast.pdf",
+):
+    monkeypatch.setattr(
+        strategies, "is_pdf_text_extractable", lambda *args, **kwargs: True
+    )
     with mock.patch.object(
         pdf,
         attribute="_partition_via_api",
         new=mock.MagicMock(),
     ), mock.patch.object(pdf, "_partition_pdf_or_image_local", mock.MagicMock()):
-        pdf.partition_pdf(filename="fake.pdf", strategy="hi_res", url=url, template="checkbox")
+        pdf.partition_pdf(
+            filename=filename, strategy="hi_res", url=url, template="checkbox"
+        )
         assert pdf._partition_via_api.called == api_called
         assert pdf._partition_pdf_or_image_local.called == local_called
 
 
-def test_partition_pdf_with_auto_strategy(filename="example-docs/layout-parser-paper-fast.pdf"):
+def test_partition_pdf_with_auto_strategy(
+    filename="example-docs/layout-parser-paper-fast.pdf",
+):
     elements = pdf.partition_pdf(filename=filename, strategy="auto")
-    titles = [el for el in elements if el.category == "Title" and len(el.text.split(" ")) > 10]
-    title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
+    titles = [
+        el for el in elements if el.category == "Title" and len(el.text.split(" ")) > 10
+    ]
+    title = (
+        "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
+    )
     assert titles[0].text == title
     assert titles[0].metadata.filename == "layout-parser-paper-fast.pdf"
     assert titles[0].metadata.file_directory == "example-docs"
 
 
-def test_partition_pdf_with_page_breaks(filename="example-docs/layout-parser-paper-fast.pdf"):
+def test_partition_pdf_with_page_breaks(
+    filename="example-docs/layout-parser-paper-fast.pdf",
+):
     elements = pdf.partition_pdf(filename=filename, url=None, include_page_breaks=True)
     assert PageBreak() in elements
 
 
-def test_partition_pdf_with_no_page_breaks(filename="example-docs/layout-parser-paper-fast.pdf"):
+def test_partition_pdf_with_no_page_breaks(
+    filename="example-docs/layout-parser-paper-fast.pdf",
+):
     elements = pdf.partition_pdf(filename=filename, url=None)
     assert PageBreak() not in elements
 
 
-def test_partition_pdf_with_fast_strategy(filename="example-docs/layout-parser-paper-fast.pdf"):
+def test_partition_pdf_with_fast_strategy(
+    filename="example-docs/layout-parser-paper-fast.pdf",
+):
     elements = pdf.partition_pdf(filename=filename, url=None, strategy="fast")
     assert len(elements) > 10
 
 
-def test_partition_pdf_with_fast_groups_text(filename="example-docs/layout-parser-paper-fast.pdf"):
+def test_partition_pdf_with_fast_groups_text(
+    filename="example-docs/layout-parser-paper-fast.pdf",
+):
     elements = pdf.partition_pdf(filename=filename, url=None, strategy="fast")
 
     first_narrative_element = None
@@ -328,7 +364,9 @@ def test_partition_pdf_falls_back_to_hi_res_from_ocr_only(
         return dep not in ["pytesseract"]
 
     monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
-    monkeypatch.setattr(strategies, "is_pdf_text_extractable", lambda *args, **kwargs: False)
+    monkeypatch.setattr(
+        strategies, "is_pdf_text_extractable", lambda *args, **kwargs: False
+    )
 
     mock_return = [Text("Hello there!")]
     with mock.patch.object(
@@ -376,13 +414,17 @@ def test_partition_pdf_uses_table_extraction():
 def test_partition_pdf_with_copy_protection():
     filename = os.path.join("example-docs", "copy-protected.pdf")
     elements = pdf.partition_pdf(filename=filename, strategy="hi_res")
-    elements[0] == Title("LayoutParser: A Uniﬁed Toolkit for Deep Based Document Image Analysis")
+    elements[0] == Title(
+        "LayoutParser: A Uniﬁed Toolkit for Deep Based Document Image Analysis"
+    )
 
 
 def test_partition_pdf_with_copy_protection_fallback_to_hi_res(caplog):
     filename = os.path.join("example-docs", "copy-protected.pdf")
     elements = pdf.partition_pdf(filename=filename, strategy="fast")
-    elements[0] == Title("LayoutParser: A Uniﬁed Toolkit for Deep Based Document Image Analysis")
+    elements[0] == Title(
+        "LayoutParser: A Uniﬁed Toolkit for Deep Based Document Image Analysis"
+    )
     assert "PDF text is not extractable" in caplog.text
 
 
@@ -394,7 +436,9 @@ def test_partition_pdf_fails_if_pdf_not_processable(
         return dep not in ["detectron2", "pytesseract"]
 
     monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
-    monkeypatch.setattr(strategies, "is_pdf_text_extractable", lambda *args, **kwargs: False)
+    monkeypatch.setattr(
+        strategies, "is_pdf_text_extractable", lambda *args, **kwargs: False
+    )
 
     with pytest.raises(ValueError):
         pdf.partition_pdf(filename=filename)
