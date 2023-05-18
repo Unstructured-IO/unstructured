@@ -574,9 +574,7 @@ supported_filetypes = [
     not in (
         FileType.UNK,
         FileType.ZIP,
-        FileType.XML,
         FileType.XLS,
-        FileType.XLSX,
     )
 ]
 
