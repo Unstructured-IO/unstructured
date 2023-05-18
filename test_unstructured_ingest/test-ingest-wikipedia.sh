@@ -11,6 +11,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --structured-output-dir wikipedia-ingest-output \
     --num-processes 2 \
     --partition-strategy hi_res \
+    --preserve-downloads \
     --verbose
 
 set +e

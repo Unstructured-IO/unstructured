@@ -16,6 +16,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
         --discord-token "$DISCORD_TOKEN" \
         --download-dir discord-ingest-download \
         --structured-output-dir discord-ingest-output \
+        --preserve-downloads \
         --reprocess
 
 OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}

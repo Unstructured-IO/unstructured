@@ -12,6 +12,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --partition-by-api \
     --partition-strategy hi_res \
     --verbose \
+    --preserve-downloads \
     --reprocess
 
 set +e
