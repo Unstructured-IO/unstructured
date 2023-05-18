@@ -676,6 +676,7 @@ def main(
         )
 
         doc_connector = DiscordConnector(  # type: ignore
+            standard_config=standard_config,
             config=SimpleDiscordConfig(
                 channels=SimpleDiscordConfig.parse_channels(discord_channels),
                 days=discord_period,
