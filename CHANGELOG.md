@@ -13,6 +13,7 @@
 
 ### Features
 
+* Add `partition_xml` for XML files.
 * Add `partition_xlsx` for Microsoft Excel documents.
 
 ### Fixes
