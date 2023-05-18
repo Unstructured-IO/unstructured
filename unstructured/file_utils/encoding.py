@@ -27,12 +27,16 @@ COMMON_ENCODINGS = [
 ]
 
 
-def detect_file_encoding(filename: str = "", file: Optional[bytes] = None) -> Tuple[str, str]:
+def detect_file_encoding(filename: str = "", file: Optional[IO] = None) -> Tuple[str, str]:
     if filename:
         with open(filename, "rb") as f:
             binary_data = f.read()
     elif file:
-        binary_data = file
+        if 'b' in file.mode:
+            binary_data = file.read()
+        else:
+            with open(file.name, "rb") as f:
+                binary_data = f.read()
     else:
         raise FileNotFoundError("No filename nor file were specified")
 
@@ -78,17 +82,17 @@ def read_txt_file(
         else:
             encoding, file_text = detect_file_encoding(filename)
     elif file:
-        file_content = file.read()
-        if isinstance(file_content, bytes):
-            if encoding:
-                try:
+        if encoding:
+            try:
+                file_content = file.read()
+                if isinstance(file_content, bytes):
                     file_text = file_content.decode(encoding)
-                except (UnicodeDecodeError, UnicodeError) as error:
-                    raise error
-            else:
-                encoding, file_text = detect_file_encoding(file=file_content)
+                else:
+                    file_text = file_content
+            except (UnicodeDecodeError, UnicodeError) as error:
+                raise error
         else:
-            file_text = file_content
+            encoding, file_text = detect_file_encoding(file=file)
     else:
         raise FileNotFoundError("No filename was specified")
 
