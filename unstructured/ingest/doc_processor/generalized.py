@@ -13,8 +13,9 @@ def initialize():
     # Accessing this dictionary triggers standard model downloads for pdf processing.
     # There will be a better way to do this, see
     # https://github.com/Unstructured-IO/unstructured-inference/issues/55
-    MODEL_TYPES[None]["model_path"]
-    MODEL_TYPES[None]["config_path"]
+    # MODEL_TYPES[None]["model_path"]
+    # MODEL_TYPES[None]["config_path"]
+    pass
 
 
 def process_document(doc: "IngestDoc", **partition_kwargs) -> Optional[List[Dict[str, Any]]]:
