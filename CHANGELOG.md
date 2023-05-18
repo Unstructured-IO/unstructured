@@ -1,7 +1,8 @@
-## 0.6.7-dev4
+## 0.6.7-dev5
 
 ### Enhancements
 
+* Added ingest tests with `--fast` strategy on PDF documents
 * Add `file_directory` to metadata
 * Added a `--partition-strategy` parameter to unstructured-ingest so that users can specify
   partition strategy in CLI. For example, `--partition-strategy fast`.
