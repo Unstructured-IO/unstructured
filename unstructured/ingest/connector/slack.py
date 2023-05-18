@@ -3,7 +3,7 @@ import os
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import List, Optional
+from typing import List
 
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
@@ -172,6 +172,8 @@ class SlackIngestDoc(BaseIngestDoc):
 @requires_dependencies(dependencies=["slack_sdk"], extras="slack")
 class SlackConnector(BaseConnector):
     """Objects of this class support fetching document(s) from"""
+
+    config: SimpleSlackConfig
 
     def __init__(self, standard_config: StandardConnectorConfig, config: SimpleSlackConfig):
         super().__init__(standard_config, config)

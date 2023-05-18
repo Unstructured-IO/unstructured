@@ -680,9 +680,6 @@ def main(
                 channels=SimpleDiscordConfig.parse_channels(discord_channels),
                 days=discord_period,
                 token=discord_token,
-                download_dir=download_dir,
-                output_dir=structured_output_dir,
-                preserve_downloads=preserve_downloads,
                 verbose=verbose,
             ),
         )

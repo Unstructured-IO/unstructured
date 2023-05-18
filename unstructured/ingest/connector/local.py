@@ -75,6 +75,7 @@ class LocalIngestDoc(BaseIngestDoc):
 class LocalConnector(BaseConnector):
     """Objects of this class support fetching document(s) from local file system"""
 
+    config: SimpleLocalConfig
     ingest_doc_cls: Type[LocalIngestDoc] = LocalIngestDoc
 
     def __init__(

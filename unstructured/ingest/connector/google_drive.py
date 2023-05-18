@@ -4,7 +4,7 @@ import os
 from dataclasses import dataclass
 from mimetypes import guess_extension
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.file_utils.google_filetype import GOOGLE_DRIVE_EXPORT_TYPES
@@ -182,6 +182,8 @@ class GoogleDriveIngestDoc(BaseIngestDoc):
 
 class GoogleDriveConnector(BaseConnector):
     """Objects of this class support fetching documents from Google Drive"""
+
+    config: SimpleGoogleDriveConfig
 
     def __init__(self, standard_config: StandardConnectorConfig, config: SimpleGoogleDriveConfig):
         super().__init__(standard_config, config)

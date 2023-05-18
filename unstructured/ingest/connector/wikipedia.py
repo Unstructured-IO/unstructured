@@ -2,7 +2,7 @@ import json
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -136,6 +136,8 @@ class WikipediaIngestSummaryDoc(WikipediaIngestDoc):
 
 
 class WikipediaConnector(BaseConnector):
+    config: SimpleWikipediaConfig
+
     def __init__(self, config: SimpleWikipediaConfig, standard_config: StandardConnectorConfig):
         super().__init__(standard_config, config)
         self.cleanup_files = (
@@ -170,7 +172,7 @@ class WikipediaConnector(BaseConnector):
             auto_suggest=self.config.auto_suggest,
         )
         return [
-            WikipediaIngestTextDoc(self.config, page),
-            WikipediaIngestHTMLDoc(self.config, page),
-            WikipediaIngestSummaryDoc(self.config, page),
+            WikipediaIngestTextDoc(self.standard_config, self.config, page),
+            WikipediaIngestHTMLDoc(self.standard_config, self.config, page),
+            WikipediaIngestSummaryDoc(self.standard_config, self.config, page),
         ]

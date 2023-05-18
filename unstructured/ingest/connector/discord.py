@@ -3,12 +3,13 @@ import json
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Optional
+from typing import List
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
+    StandardConnectorConfig,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import (
@@ -61,11 +62,11 @@ class DiscordIngestDoc(BaseIngestDoc):
     # instantiated object)
     def _tmp_download_file(self):
         channel_file = self.channel + ".txt"
-        return Path(self.config.download_dir) / channel_file
+        return Path(self.standard_config.download_dir) / channel_file
 
     def _output_filename(self):
         output_file = self.channel + ".json"
-        return Path(self.config.output_dir) / output_file
+        return Path(self.standard_config.output_dir) / output_file
 
     def has_output(self):
         """Determine if structured output for this doc already exists."""
@@ -83,7 +84,7 @@ class DiscordIngestDoc(BaseIngestDoc):
 
         self._create_full_tmp_dir_path()
         if (
-            not self.config.re_download
+            not self.standard_config.re_download
             and self._tmp_download_file().is_file()
             and os.path.getsize(self._tmp_download_file())
         ):
@@ -137,7 +138,7 @@ class DiscordIngestDoc(BaseIngestDoc):
 
     def cleanup_file(self):
         """Removes the local copy the file after successful processing."""
-        if not self.config.preserve_downloads:
+        if not self.standard_config.preserve_downloads:
             if self.config.verbose:
                 logger.info(f"cleaning up channel {self.channel}")
             os.unlink(self._tmp_download_file())
@@ -146,9 +147,15 @@ class DiscordIngestDoc(BaseIngestDoc):
 class DiscordConnector(BaseConnector):
     """Objects of this class support fetching document(s) from"""
 
-    def __init__(self, config: SimpleDiscordConfig):
-        self.config = config
-        self.cleanup_files = not config.preserve_downloads
+    config: SimpleDiscordConfig
+
+    def __init__(
+        self,
+        standard_config: StandardConnectorConfig,
+        config: SimpleDiscordConfig,
+    ):
+        super().__init__(standard_config, config)
+        self.cleanup_files = not standard_config.preserve_downloads
 
     def cleanup(self, cur_dir=None):
         """cleanup linginering empty sub-dirs from s3 paths, but leave remaining files
@@ -157,7 +164,7 @@ class DiscordConnector(BaseConnector):
             return
 
         if cur_dir is None:
-            cur_dir = self.config.download_dir
+            cur_dir = self.standard_config.download_dir
         sub_dirs = os.listdir(cur_dir)
         os.chdir(cur_dir)
         for sub_dir in sub_dirs:
@@ -170,11 +177,12 @@ class DiscordConnector(BaseConnector):
 
     def initialize(self):
         """Verify that can get metadata for an object, validates connections info."""
-        os.mkdir(self.config.download_dir)
+        os.mkdir(self.standard_config.download_dir)
 
     def get_ingest_docs(self):
         return [
             DiscordIngestDoc(
+                self.standard_config,
                 self.config,
                 channel,
                 self.config.days,

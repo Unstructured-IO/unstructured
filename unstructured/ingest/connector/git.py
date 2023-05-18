@@ -9,7 +9,6 @@ from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
-    StandardConnectorConfig,
 )
 from unstructured.ingest.logger import logger
 

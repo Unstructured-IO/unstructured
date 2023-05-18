@@ -20,7 +20,7 @@ def test_process_file_metadata_include_filename(filename: str):
     ingest_doc = GitIngestDoc(
         standard_config=StandardConnectorConfig(
             download_dir=EXAMPLE_DOCS_DIRECTORY,
-            output_dir=""
+            output_dir="",
         ),
         path=filename,
         config=SimpleGitConfig(
@@ -39,7 +39,7 @@ def test_process_file_metadata_include_filename_pagenum(filename: str):
         standard_config=StandardConnectorConfig(
             download_dir=EXAMPLE_DOCS_DIRECTORY,
             output_dir="",
-            metadata_include="filename,page_number"
+            metadata_include="filename,page_number",
         ),
         path=filename,
         config=SimpleGitConfig(),
@@ -56,7 +56,7 @@ def test_process_file_metadata_exclude_filename(filename: str):
         standard_config=StandardConnectorConfig(
             download_dir=EXAMPLE_DOCS_DIRECTORY,
             output_dir="",
-            metadata_exclude="filename"
+            metadata_exclude="filename",
         ),
         path=filename,
         config=SimpleGitConfig(),
@@ -73,7 +73,7 @@ def test_process_file_metadata_exclude_filename_pagenum(filename: str):
         standard_config=StandardConnectorConfig(
             download_dir=EXAMPLE_DOCS_DIRECTORY,
             output_dir="",
-            metadata_exclude="filename,page_number"
+            metadata_exclude="filename,page_number",
         ),
         path=filename,
         config=SimpleGitConfig(),
@@ -88,7 +88,10 @@ def test_process_file_metadata_exclude_filename_pagenum(filename: str):
 @pytest.mark.parametrize("filename", test_files)
 def test_process_file_fields_include_default(filename: str):
     ingest_doc = GitIngestDoc(
-        standard_config=StandardConnectorConfig(download_dir=EXAMPLE_DOCS_DIRECTORY, output_dir=""),
+        standard_config=StandardConnectorConfig(
+            download_dir=EXAMPLE_DOCS_DIRECTORY,
+            output_dir="",
+        ),
         path=filename,
         config=SimpleGitConfig(),
     )
@@ -104,7 +107,7 @@ def test_process_file_fields_include_elementid(filename: str):
         standard_config=StandardConnectorConfig(
             download_dir=EXAMPLE_DOCS_DIRECTORY,
             output_dir="",
-            fields_include="element_id"
+            fields_include="element_id",
         ),
         path=filename,
         config=SimpleGitConfig(),
@@ -122,7 +125,7 @@ def test_process_file_flatten_metadata_filename(filename: str):
             download_dir=EXAMPLE_DOCS_DIRECTORY,
             output_dir="",
             metadata_include="filename",
-            flatten_metadata=True
+            flatten_metadata=True,
         ),
         path=filename,
         config=SimpleGitConfig(),
@@ -139,7 +142,7 @@ def test_process_file_flatten_metadata_filename_pagenum(filename: str):
             download_dir=EXAMPLE_DOCS_DIRECTORY,
             output_dir="",
             metadata_include="filename,page_number",
-            flatten_metadata=True
+            flatten_metadata=True,
         ),
         path=filename,
         config=SimpleGitConfig(),

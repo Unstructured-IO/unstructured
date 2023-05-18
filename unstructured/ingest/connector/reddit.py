@@ -2,7 +2,7 @@ import json
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -87,6 +87,8 @@ class RedditIngestDoc(BaseIngestDoc):
 
 @requires_dependencies(["praw"], extras="reddit")
 class RedditConnector(BaseConnector):
+    config: SimpleRedditConfig
+
     def __init__(self, standard_config: StandardConnectorConfig, config: SimpleRedditConfig):
         from praw import Reddit
 
@@ -96,7 +98,9 @@ class RedditConnector(BaseConnector):
             client_secret=config.client_secret,
             user_agent=config.user_agent,
         )
-        self.cleanup_files = not config.preserve_downloads and not config.download_only
+        self.cleanup_files = (
+            not standard_config.preserve_downloads and not standard_config.download_only
+        )
 
     def cleanup(self, cur_dir=None):
         if not self.cleanup_files:

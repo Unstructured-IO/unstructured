@@ -4,7 +4,7 @@ import urllib.request
 from dataclasses import dataclass
 from ftplib import FTP, error_perm
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import List, Union
 
 import requests
 from bs4 import BeautifulSoup
@@ -155,6 +155,8 @@ class BiomedIngestDoc(BaseIngestDoc):
 class BiomedConnector(BaseConnector):
     """Objects of this class support fetching documents from Biomedical literature FTP directory"""
 
+    config: SimpleBiomedConfig
+
     def __init__(self, standard_config: StandardConnectorConfig, config: SimpleBiomedConfig):
         super().__init__(standard_config, config)
         self.cleanup_files = (
@@ -172,10 +174,10 @@ class BiomedConnector(BaseConnector):
                         BiomedFileMeta(
                             ftp_path=url,
                             download_filepath=(
-                                Path(self.standard_standard_config.download_dir) / local_path
+                                Path(self.standard_config.download_dir) / local_path
                             ).resolve(),
                             output_filepath=(
-                                Path(self.standard_standard_config.output_dir) / local_path
+                                Path(self.standard_config.output_dir) / local_path
                             ).resolve(),
                         ),
                     )
