@@ -18,7 +18,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --structured-output-dir s3-small-batch-output \
     --preserve-downloads \
     --partition-strategy hi_res \
-    --download-dir s3-download \
     --reprocess
 
 OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
