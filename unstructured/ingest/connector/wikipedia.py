@@ -2,12 +2,13 @@ import json
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
+    StandardConnectorConfig,
 )
 from unstructured.ingest.logger import logger
 
@@ -19,20 +20,6 @@ if TYPE_CHECKING:
 class SimpleWikipediaConfig(BaseConnectorConfig):
     title: str
     auto_suggest: bool
-
-    # Standard Connector options
-    download_dir: str
-    # where to write structured data
-    output_dir: str
-    preserve_downloads: bool = False
-    re_download: bool = False
-    download_only: bool = False
-    metadata_include: Optional[str] = None
-    metadata_exclude: Optional[str] = None
-    partition_by_api: bool = False
-    partition_endpoint: str = "https://api.unstructured.io/general/v0/general"
-    fields_include: str = "element_id,text,type,metadata"
-    flatten_metadata: bool = False
 
 
 @dataclass
@@ -56,14 +43,18 @@ class WikipediaIngestDoc(BaseIngestDoc):
 
     def cleanup_file(self):
         """Removes the local copy of the file (or anything else) after successful processing."""
-        if not self.config.preserve_downloads and not self.config.download_only:
+        if not self.standard_config.preserve_downloads and not self.standard_config.download_only:
             logger.debug(f"Cleaning up {self}")
             os.unlink(self.filename)
 
     def get_file(self):
         """Fetches the "remote" doc and stores it locally on the filesystem."""
         self._create_full_tmp_dir_path()
-        if not self.config.re_download and self.filename.is_file() and self.filename.stat():
+        if (
+            not self.standard_config.re_download
+            and self.filename.is_file()
+            and self.filename.stat()
+        ):
             logger.debug(f"File exists: {self.filename}, skipping download")
             return
 
@@ -78,7 +69,7 @@ class WikipediaIngestDoc(BaseIngestDoc):
 
     def write_result(self):
         """Write the structured json result for this doc. result must be json serializable."""
-        if self.config.download_only:
+        if self.standard_config.download_only:
             return
         output_filename = self._output_filename()
         output_filename.parent.mkdir(parents=True, exist_ok=True)
@@ -91,7 +82,8 @@ class WikipediaIngestHTMLDoc(WikipediaIngestDoc):
     @property
     def filename(self) -> Path:
         return (
-            Path(self.config.download_dir) / f"{self.page.title}-{self.page.revision_id}.html"
+            Path(self.standard_config.download_dir)
+            / f"{self.page.title}-{self.page.revision_id}.html"
         ).resolve()
 
     @property
@@ -99,14 +91,18 @@ class WikipediaIngestHTMLDoc(WikipediaIngestDoc):
         return self.page.html()
 
     def _output_filename(self):
-        return Path(self.config.output_dir) / f"{self.page.title}-{self.page.revision_id}-html.json"
+        return (
+            Path(self.standard_config.output_dir)
+            / f"{self.page.title}-{self.page.revision_id}-html.json"
+        )
 
 
 class WikipediaIngestTextDoc(WikipediaIngestDoc):
     @property
     def filename(self) -> Path:
         return (
-            Path(self.config.download_dir) / f"{self.page.title}-{self.page.revision_id}.txt"
+            Path(self.standard_config.download_dir)
+            / f"{self.page.title}-{self.page.revision_id}.txt"
         ).resolve()
 
     @property
@@ -114,14 +110,17 @@ class WikipediaIngestTextDoc(WikipediaIngestDoc):
         return self.page.content
 
     def _output_filename(self):
-        return Path(self.config.output_dir) / f"{self.page.title}-{self.page.revision_id}-txt.json"
+        return (
+            Path(self.standard_config.output_dir)
+            / f"{self.page.title}-{self.page.revision_id}-txt.json"
+        )
 
 
 class WikipediaIngestSummaryDoc(WikipediaIngestDoc):
     @property
     def filename(self) -> Path:
         return (
-            Path(self.config.download_dir)
+            Path(self.standard_config.download_dir)
             / f"{self.page.title}-{self.page.revision_id}-summary.txt"
         ).resolve()
 
@@ -131,21 +130,26 @@ class WikipediaIngestSummaryDoc(WikipediaIngestDoc):
 
     def _output_filename(self):
         return (
-            Path(self.config.output_dir) / f"{self.page.title}-{self.page.revision_id}-summary.json"
+            Path(self.standard_config.output_dir)
+            / f"{self.page.title}-{self.page.revision_id}-summary.json"
         )
 
 
 class WikipediaConnector(BaseConnector):
-    def __init__(self, config: SimpleWikipediaConfig):
-        self.config = config
-        self.cleanup_files = not config.preserve_downloads and not config.download_only
+    config: SimpleWikipediaConfig
+
+    def __init__(self, config: SimpleWikipediaConfig, standard_config: StandardConnectorConfig):
+        super().__init__(standard_config, config)
+        self.cleanup_files = (
+            not standard_config.preserve_downloads and not standard_config.download_only
+        )
 
     def cleanup(self, cur_dir=None):
         if not self.cleanup_files:
             return
 
         if cur_dir is None:
-            cur_dir = self.config.download_dir
+            cur_dir = self.standard_config.download_dir
         sub_dirs = os.listdir(cur_dir)
         os.chdir(cur_dir)
         for sub_dir in sub_dirs:
@@ -162,9 +166,12 @@ class WikipediaConnector(BaseConnector):
     def get_ingest_docs(self):
         import wikipedia
 
-        page = wikipedia.page(self.config.title, auto_suggest=self.config.auto_suggest)
+        page = wikipedia.page(
+            self.config.title,
+            auto_suggest=self.config.auto_suggest,
+        )
         return [
-            WikipediaIngestTextDoc(self.config, page),
-            WikipediaIngestHTMLDoc(self.config, page),
-            WikipediaIngestSummaryDoc(self.config, page),
+            WikipediaIngestTextDoc(self.standard_config, self.config, page),
+            WikipediaIngestHTMLDoc(self.standard_config, self.config, page),
+            WikipediaIngestSummaryDoc(self.standard_config, self.config, page),
         ]

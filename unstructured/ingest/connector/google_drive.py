@@ -4,7 +4,7 @@ import os
 from dataclasses import dataclass
 from mimetypes import guess_extension
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.file_utils.google_filetype import GOOGLE_DRIVE_EXPORT_TYPES
@@ -12,6 +12,7 @@ from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
+    StandardConnectorConfig,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
@@ -70,21 +71,6 @@ class SimpleGoogleDriveConfig(BaseConnectorConfig):
     drive_id: str
     service_account_key: str
     extension: str
-
-    # Standard Connector options
-    download_dir: str
-    # where to write structured data, with the directory structure matching drive path
-    output_dir: str
-    re_download: bool = False
-    download_only: bool = False
-    preserve_downloads: bool = False
-    metadata_include: Optional[str] = None
-    metadata_exclude: Optional[str] = None
-    partition_by_api: bool = False
-    partition_endpoint: str = "https://api.unstructured.io/general/v0/general"
-    fields_include: str = "element_id,text,type,metadata"
-    flatten_metadata: bool = False
-
     recursive: bool = False
 
     def __post_init__(self):
@@ -110,9 +96,9 @@ class GoogleDriveIngestDoc(BaseIngestDoc):
 
     def cleanup_file(self):
         if (
-            not self.config.preserve_downloads
+            not self.standard_config.preserve_downloads
             and self.filename.is_file()
-            and not self.config.download_only
+            and not self.standard_config.download_only
         ):
             logger.debug(f"Cleaning up {self}")
             Path.unlink(self.filename)
@@ -127,7 +113,11 @@ class GoogleDriveIngestDoc(BaseIngestDoc):
         from googleapiclient.errors import HttpError
         from googleapiclient.http import MediaIoBaseDownload
 
-        if not self.config.re_download and self.filename.is_file() and self.filename.stat():
+        if (
+            not self.standard_config.re_download
+            and self.filename.is_file()
+            and self.filename.stat()
+        ):
             logger.debug(f"File exists: {self.filename}, skipping download")
             return
 
@@ -181,7 +171,7 @@ class GoogleDriveIngestDoc(BaseIngestDoc):
 
     def write_result(self):
         """Write the structured json result for this doc. result must be json serializable."""
-        if self.config.download_only:
+        if self.standard_config.download_only:
             return
         output_filename = self._output_filename()
         output_filename.parent.mkdir(parents=True, exist_ok=True)
@@ -193,9 +183,13 @@ class GoogleDriveIngestDoc(BaseIngestDoc):
 class GoogleDriveConnector(BaseConnector):
     """Objects of this class support fetching documents from Google Drive"""
 
-    def __init__(self, config):
-        self.config = config
-        self.cleanup_files = not self.config.preserve_downloads and not self.config.download_only
+    config: SimpleGoogleDriveConfig
+
+    def __init__(self, standard_config: StandardConnectorConfig, config: SimpleGoogleDriveConfig):
+        super().__init__(standard_config, config)
+        self.cleanup_files = (
+            not self.standard_config.preserve_downloads and not self.standard_config.download_only
+        )
 
     def _list_objects(self, drive_id, recursive=False):
         files = []
@@ -260,7 +254,12 @@ class GoogleDriveConnector(BaseConnector):
                 if page_token is None:
                     break
 
-        traverse(drive_id, Path(self.config.download_dir), Path(self.config.output_dir), recursive)
+        traverse(
+            drive_id,
+            Path(self.standard_config.download_dir),
+            Path(self.standard_config.output_dir),
+            recursive,
+        )
         return files
 
     def cleanup(self, cur_dir=None):
@@ -268,7 +267,7 @@ class GoogleDriveConnector(BaseConnector):
             return
 
         if cur_dir is None:
-            cur_dir = self.config.download_dir
+            cur_dir = self.standard_config.download_dir
 
         if cur_dir is None or not Path(cur_dir).is_dir():
             return
@@ -290,4 +289,4 @@ class GoogleDriveConnector(BaseConnector):
         files = self._list_objects(self.config.drive_id, self.config.recursive)
         # Setting to None because service object can't be pickled for multiprocessing.
         self.config.service = None
-        return [GoogleDriveIngestDoc(self.config, file) for file in files]
+        return [GoogleDriveIngestDoc(self.standard_config, self.config, file) for file in files]
