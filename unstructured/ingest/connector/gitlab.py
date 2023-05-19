@@ -64,7 +64,7 @@ class GitLabConnector(GitConnector):
             all=True,
         )
         return [
-            GitLabIngestDoc(self.config, element["path"], project)
+            GitLabIngestDoc(self.standard_config, self.config, element["path"], project)
             for element in git_tree
             if element["type"] == "blob"
             and self.is_file_type_supported(element["path"])

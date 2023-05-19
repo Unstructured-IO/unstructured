@@ -1,8 +1,21 @@
-## 0.6.7-dev7
+## 0.6.8-dev0
 
 ### Enhancements
 
 * Added ingest tests with `--fast` strategy on PDF documents
+
+### Features
+
+
+### Fixes
+
+
+## 0.6.7
+
+### Enhancements
+
+* Deprecate `--s3-url` in favor of `--remote-url` in CLI
+* Refactor out non-connector-specific config variables
 * Add `file_directory` to metadata
 * Add `page_name` to metadata. Currently used for the sheet name in XLSX documents.
 * Added a `--partition-strategy` parameter to unstructured-ingest so that users can specify

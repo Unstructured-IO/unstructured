@@ -10,27 +10,17 @@ from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
+    StandardConnectorConfig,
 )
 from unstructured.ingest.logger import logger
 
 
 @dataclass
 class SimpleLocalConfig(BaseConnectorConfig):
-    output_dir: str
-
     # Local specific options
     input_path: str
     recursive: bool = False
     file_glob: Optional[str] = None
-
-    # base connector options
-    download_only: bool = False
-    metadata_include: Optional[str] = None
-    metadata_exclude: Optional[str] = None
-    partition_by_api: bool = False
-    partition_endpoint: str = "https://api.unstructured.io/general/v0/general"
-    fields_include: str = "element_id,text,type,metadata"
-    flatten_metadata: bool = False
 
     def __post_init__(self):
         if os.path.isfile(self.input_path):
@@ -63,7 +53,7 @@ class LocalIngestDoc(BaseIngestDoc):
 
     def _output_filename(self):
         return (
-            Path(self.config.output_dir)
+            Path(self.standard_config.output_dir)
             / f"{self.path.replace(f'{self.config.input_path}/', '')}.json"
         )
 
@@ -73,7 +63,7 @@ class LocalIngestDoc(BaseIngestDoc):
 
     def write_result(self):
         """Write the structured json result for this doc. result must be json serializable."""
-        if self.config.download_only:
+        if self.standard_config.download_only:
             return
         output_filename = self._output_filename()
         output_filename.parent.mkdir(parents=True, exist_ok=True)
@@ -85,13 +75,15 @@ class LocalIngestDoc(BaseIngestDoc):
 class LocalConnector(BaseConnector):
     """Objects of this class support fetching document(s) from local file system"""
 
+    config: SimpleLocalConfig
     ingest_doc_cls: Type[LocalIngestDoc] = LocalIngestDoc
 
     def __init__(
         self,
+        standard_config: StandardConnectorConfig,
         config: SimpleLocalConfig,
     ):
-        self.config = config
+        super().__init__(standard_config, config)
 
     def cleanup(self, cur_dir=None):
         """Not applicable to local file system"""
@@ -122,6 +114,7 @@ class LocalConnector(BaseConnector):
     def get_ingest_docs(self):
         return [
             self.ingest_doc_cls(
+                self.standard_config,
                 self.config,
                 file,
             )
