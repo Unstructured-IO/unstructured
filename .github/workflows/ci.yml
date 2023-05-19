@@ -136,7 +136,6 @@ jobs:
         python${{ matrix.python-version}} -m venv .venv
         source .venv/bin/activate
         make install-ci
-        make install-detectron2
     - name: Test
       env:
         GH_READ_ONLY_ACCESS_TOKEN: ${{ secrets.GH_READ_ONLY_ACCESS_TOKEN }}
@@ -146,6 +145,7 @@ jobs:
         source .venv/bin/activate
         sudo apt-get update
         sudo apt-get install -y libmagic-dev poppler-utils libreoffice pandoc
+        make install-detectron2
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
         sudo apt-get install -y tesseract-ocr
         tesseract --version
