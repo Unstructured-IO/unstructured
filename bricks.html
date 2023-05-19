@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Examples" href="examples.html" /><link rel="prev" title="Getting Started" href="getting_started.html" />
 
   <link rel="shortcut icon" href="_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.03.27" />
-  <title>Bricks - Unstructured 0.6.7 documentation</title>
+  <title>Bricks - Unstructured 0.6.8 documentation</title>
   <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -431,7 +431,7 @@ If you call the <code class="docutils literal notranslate"><span class="pre">par
 file type and route it to the appropriate partitioning brick. All partitioning bricks
 called within <code class="docutils literal notranslate"><span class="pre">partition</span></code> are called using the default kwargs. Use the document-type
 specific bricks if you need to apply non-default settings.
-<code class="docutils literal notranslate"><span class="pre">partition</span></code> currently supports <code class="docutils literal notranslate"><span class="pre">.docx</span></code>, <code class="docutils literal notranslate"><span class="pre">.doc</span></code>, <code class="docutils literal notranslate"><span class="pre">.odt</span></code>, <code class="docutils literal notranslate"><span class="pre">.pptx</span></code>, <code class="docutils literal notranslate"><span class="pre">.ppt</span></code>, <code class="docutils literal notranslate"><span class="pre">.xlsx</span></code>, <code class="docutils literal notranslate"><span class="pre">.eml</span></code>, <code class="docutils literal notranslate"><span class="pre">.msg</span></code>, <code class="docutils literal notranslate"><span class="pre">.rtf</span></code>, <code class="docutils literal notranslate"><span class="pre">.epub</span></code>, <code class="docutils literal notranslate"><span class="pre">.html</span></code>, <code class="docutils literal notranslate"><span class="pre">.xml</span></code>, <code class="docutils literal notranslate"><span class="pre">.pdf</span></code>,
+<code class="docutils literal notranslate"><span class="pre">partition</span></code> currently supports <code class="docutils literal notranslate"><span class="pre">.docx</span></code>, <code class="docutils literal notranslate"><span class="pre">.doc</span></code>, <code class="docutils literal notranslate"><span class="pre">.odt</span></code>, <code class="docutils literal notranslate"><span class="pre">.pptx</span></code>, <code class="docutils literal notranslate"><span class="pre">.ppt</span></code>, <code class="docutils literal notranslate"><span class="pre">.xlsx</span></code>, <code class="docutils literal notranslate"><span class="pre">.csv</span></code>, <code class="docutils literal notranslate"><span class="pre">.eml</span></code>, <code class="docutils literal notranslate"><span class="pre">.msg</span></code>, <code class="docutils literal notranslate"><span class="pre">.rtf</span></code>, <code class="docutils literal notranslate"><span class="pre">.epub</span></code>, <code class="docutils literal notranslate"><span class="pre">.html</span></code>, <code class="docutils literal notranslate"><span class="pre">.xml</span></code>, <code class="docutils literal notranslate"><span class="pre">.pdf</span></code>,
 <code class="docutils literal notranslate"><span class="pre">.png</span></code>, <code class="docutils literal notranslate"><span class="pre">.jpg</span></code>, and <code class="docutils literal notranslate"><span class="pre">.txt</span></code> files.
 If you set the <code class="docutils literal notranslate"><span class="pre">include_page_breaks</span></code> kwarg to <code class="docutils literal notranslate"><span class="pre">True</span></code>, the output will include page breaks. This is only supported for <code class="docutils literal notranslate"><span class="pre">.pptx</span></code>, <code class="docutils literal notranslate"><span class="pre">.html</span></code>, <code class="docutils literal notranslate"><span class="pre">.pdf</span></code>,
 <code class="docutils literal notranslate"><span class="pre">.png</span></code>, and <code class="docutils literal notranslate"><span class="pre">.jpg</span></code>.
@@ -580,6 +580,19 @@ attribute in the element metadata will contain an HTML representation of the tab
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.xlsx</span> <span class="kn">import</span> <span class="n">partition_xlsx</span>
 
 <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_xlsx</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example-docs/stanley-cups.xlsx&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">elements</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">text_as_html</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="partition-csv">
+<h3><code class="docutils literal notranslate"><span class="pre">partition_csv</span></code><a class="headerlink" href="#partition-csv" title="Permalink to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">partition_csv</span></code> function pre-processes CSV files. The output is a single
+<code class="docutils literal notranslate"><span class="pre">Table</span></code> element. The <code class="docutils literal notranslate"><span class="pre">text_as_html</span></code> attribute in the element metadata will
+contain an HTML representation of the table.</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.csv</span> <span class="kn">import</span> <span class="n">partition_csv</span>
+
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_csv</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example-docs/stanley-cups.csv&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">elements</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">text_as_html</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -2084,6 +2097,7 @@ if specified.</p>
 <li><a class="reference internal" href="#partition-docx"><code class="docutils literal notranslate"><span class="pre">partition_docx</span></code></a></li>
 <li><a class="reference internal" href="#partition-doc"><code class="docutils literal notranslate"><span class="pre">partition_doc</span></code></a></li>
 <li><a class="reference internal" href="#partition-xlsx"><code class="docutils literal notranslate"><span class="pre">partition_xlsx</span></code></a></li>
+<li><a class="reference internal" href="#partition-csv"><code class="docutils literal notranslate"><span class="pre">partition_csv</span></code></a></li>
 <li><a class="reference internal" href="#partition-odt"><code class="docutils literal notranslate"><span class="pre">partition_odt</span></code></a></li>
 <li><a class="reference internal" href="#partition-pptx"><code class="docutils literal notranslate"><span class="pre">partition_pptx</span></code></a></li>
 <li><a class="reference internal" href="#partition-ppt"><code class="docutils literal notranslate"><span class="pre">partition_ppt</span></code></a></li>
