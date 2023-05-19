@@ -25,9 +25,7 @@ def partition_xlsx(
     file
         A file-like object using "rb" mode --> open(filename, "rb").
     metadata_filename
-        The filename to use for the metadata. Relevant because partition_doc converts the
-        document to .xlsx before partition. We want the original source filename in the
-        metadata.
+        The filename to use for the metadata.
     include_metadata
         Determines whether or not metadata is included in the output.
     """
