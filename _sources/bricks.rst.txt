@@ -83,7 +83,7 @@ If you call the ``partition`` function, ``unstructured`` will attempt to detect 
 file type and route it to the appropriate partitioning brick. All partitioning bricks
 called within ``partition`` are called using the default kwargs. Use the document-type
 specific bricks if you need to apply non-default settings.
-``partition`` currently supports ``.docx``, ``.doc``, ``.odt``, ``.pptx``, ``.ppt``, ``.eml``, ``.msg``, ``.rtf``, ``.epub``, ``.html``, ``.pdf``,
+``partition`` currently supports ``.docx``, ``.doc``, ``.odt``, ``.pptx``, ``.ppt``, ``.xlsx``, ``.eml``, ``.msg``, ``.rtf``, ``.epub``, ``.html``, ``.xml``, ``.pdf``,
 ``.png``, ``.jpg``, and ``.txt`` files.
 If you set the ``include_page_breaks`` kwarg to ``True``, the output will include page breaks. This is only supported for ``.pptx``, ``.html``, ``.pdf``,
 ``.png``, and ``.jpg``.
@@ -251,6 +251,24 @@ Examples:
   elements = partition_doc(filename="example-docs/fake.doc")
 
 
+``partition_xlsx``
+------------------
+
+The ``partition_xlsx`` function pre-processes Microsoft Excel documents. Each
+sheet in the Excel file will be stored as a ``Table`` object. The plain text
+of the sheet will be the ``text`` attribute of the ``Table``. The ``text_as_html``
+attribute in the element metadata will contain an HTML representation of the table.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.xlsx import partition_xlsx
+
+  elements = partition_xlsx(filename="example-docs/stanley-cups.xlsx")
+  print(elements[0].metadata.text_as_html)
+
+
 ``partition_odt``
 ------------------
 
@@ -353,6 +371,26 @@ to disable SSL verification in the request.
   elements = partition_html(url="https://python.org/", ssl_verify=False)
 
 
+``partition_xml``
+-----------------
+
+The ``partition_xml`` function processes XML documents.
+If ``xml_keep_tags=False``, the function only returns the text attributes from the tags.
+You can use ``xml_path`` in conjuntion with ``xml_keep_tags=False`` to restrict the text
+extraction to specific tags.
+If ``xml_keep_tags=True``, the function returns tag information in addition to tag text.
+``xml_keep_tags`` is ``False`` be default.
+
+
+.. code:: python
+
+  from unstructured.partition.xml import partition_xml
+
+  elements = partition_xml(filename="example-docs/factbook.xml", xml_keep_tags=True)
+
+  elements = partition_xml(filename="example-docs/factbook.xml", xml_keep_tags=False)
+
+
 
 ``partition_pdf``
 ---------------------
@@ -384,7 +422,7 @@ Examples:
 
 
 The ``strategy`` kwarg controls the method that will be used to process the PDF.
-The available strategies for PDFs are `"auto"`, `"hi_res"`, `"ocr_only"`, and `"fast"`.
+The available strategies for PDFs are ``"auto"``, ``"hi_res"``, ``"ocr_only"``, and ``"fast"``.
 
 The ``"auto"`` strategy will choose the partitioning strategy based on document characteristics and the function kwargs.
 If ``infer_table_structure`` is passed, the strategy will be ``"hi_res"`` because that is the only strategy that

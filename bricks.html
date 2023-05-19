@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Examples" href="examples.html" /><link rel="prev" title="Getting Started" href="getting_started.html" />
 
   <link rel="shortcut icon" href="_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.03.27" />
-  <title>Bricks - Unstructured 0.6.6 documentation</title>
+  <title>Bricks - Unstructured 0.6.7 documentation</title>
   <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -431,7 +431,7 @@ If you call the <code class="docutils literal notranslate"><span class="pre">par
 file type and route it to the appropriate partitioning brick. All partitioning bricks
 called within <code class="docutils literal notranslate"><span class="pre">partition</span></code> are called using the default kwargs. Use the document-type
 specific bricks if you need to apply non-default settings.
-<code class="docutils literal notranslate"><span class="pre">partition</span></code> currently supports <code class="docutils literal notranslate"><span class="pre">.docx</span></code>, <code class="docutils literal notranslate"><span class="pre">.doc</span></code>, <code class="docutils literal notranslate"><span class="pre">.odt</span></code>, <code class="docutils literal notranslate"><span class="pre">.pptx</span></code>, <code class="docutils literal notranslate"><span class="pre">.ppt</span></code>, <code class="docutils literal notranslate"><span class="pre">.eml</span></code>, <code class="docutils literal notranslate"><span class="pre">.msg</span></code>, <code class="docutils literal notranslate"><span class="pre">.rtf</span></code>, <code class="docutils literal notranslate"><span class="pre">.epub</span></code>, <code class="docutils literal notranslate"><span class="pre">.html</span></code>, <code class="docutils literal notranslate"><span class="pre">.pdf</span></code>,
+<code class="docutils literal notranslate"><span class="pre">partition</span></code> currently supports <code class="docutils literal notranslate"><span class="pre">.docx</span></code>, <code class="docutils literal notranslate"><span class="pre">.doc</span></code>, <code class="docutils literal notranslate"><span class="pre">.odt</span></code>, <code class="docutils literal notranslate"><span class="pre">.pptx</span></code>, <code class="docutils literal notranslate"><span class="pre">.ppt</span></code>, <code class="docutils literal notranslate"><span class="pre">.xlsx</span></code>, <code class="docutils literal notranslate"><span class="pre">.eml</span></code>, <code class="docutils literal notranslate"><span class="pre">.msg</span></code>, <code class="docutils literal notranslate"><span class="pre">.rtf</span></code>, <code class="docutils literal notranslate"><span class="pre">.epub</span></code>, <code class="docutils literal notranslate"><span class="pre">.html</span></code>, <code class="docutils literal notranslate"><span class="pre">.xml</span></code>, <code class="docutils literal notranslate"><span class="pre">.pdf</span></code>,
 <code class="docutils literal notranslate"><span class="pre">.png</span></code>, <code class="docutils literal notranslate"><span class="pre">.jpg</span></code>, and <code class="docutils literal notranslate"><span class="pre">.txt</span></code> files.
 If you set the <code class="docutils literal notranslate"><span class="pre">include_page_breaks</span></code> kwarg to <code class="docutils literal notranslate"><span class="pre">True</span></code>, the output will include page breaks. This is only supported for <code class="docutils literal notranslate"><span class="pre">.pptx</span></code>, <code class="docutils literal notranslate"><span class="pre">.html</span></code>, <code class="docutils literal notranslate"><span class="pre">.pdf</span></code>,
 <code class="docutils literal notranslate"><span class="pre">.png</span></code>, and <code class="docutils literal notranslate"><span class="pre">.jpg</span></code>.
@@ -570,6 +570,20 @@ before using <code class="docutils literal notranslate"><span class="pre">partit
 </pre></div>
 </div>
 </section>
+<section id="partition-xlsx">
+<h3><code class="docutils literal notranslate"><span class="pre">partition_xlsx</span></code><a class="headerlink" href="#partition-xlsx" title="Permalink to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">partition_xlsx</span></code> function pre-processes Microsoft Excel documents. Each
+sheet in the Excel file will be stored as a <code class="docutils literal notranslate"><span class="pre">Table</span></code> object. The plain text
+of the sheet will be the <code class="docutils literal notranslate"><span class="pre">text</span></code> attribute of the <code class="docutils literal notranslate"><span class="pre">Table</span></code>. The <code class="docutils literal notranslate"><span class="pre">text_as_html</span></code>
+attribute in the element metadata will contain an HTML representation of the table.</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.xlsx</span> <span class="kn">import</span> <span class="n">partition_xlsx</span>
+
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_xlsx</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example-docs/stanley-cups.xlsx&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">elements</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">text_as_html</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
 <section id="partition-odt">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_odt</span></code><a class="headerlink" href="#partition-odt" title="Permalink to this heading"></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">partition_odt</span></code> partitioning brick pre-processes Open Office documents
@@ -652,6 +666,22 @@ to disable SSL verification in the request.</p>
 </pre></div>
 </div>
 </section>
+<section id="partition-xml">
+<h3><code class="docutils literal notranslate"><span class="pre">partition_xml</span></code><a class="headerlink" href="#partition-xml" title="Permalink to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">partition_xml</span></code> function processes XML documents.
+If <code class="docutils literal notranslate"><span class="pre">xml_keep_tags=False</span></code>, the function only returns the text attributes from the tags.
+You can use <code class="docutils literal notranslate"><span class="pre">xml_path</span></code> in conjuntion with <code class="docutils literal notranslate"><span class="pre">xml_keep_tags=False</span></code> to restrict the text
+extraction to specific tags.
+If <code class="docutils literal notranslate"><span class="pre">xml_keep_tags=True</span></code>, the function returns tag information in addition to tag text.
+<code class="docutils literal notranslate"><span class="pre">xml_keep_tags</span></code> is <code class="docutils literal notranslate"><span class="pre">False</span></code> be default.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.xml</span> <span class="kn">import</span> <span class="n">partition_xml</span>
+
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_xml</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example-docs/factbook.xml&quot;</span><span class="p">,</span> <span class="n">xml_keep_tags</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_xml</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example-docs/factbook.xml&quot;</span><span class="p">,</span> <span class="n">xml_keep_tags</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
 <section id="partition-pdf">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code><a class="headerlink" href="#partition-pdf" title="Permalink to this heading"></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code> function segments a PDF document by using a document image analysis model.
@@ -676,7 +706,7 @@ install instructions. OCR is only applied if the text is not already available i
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">strategy</span></code> kwarg controls the method that will be used to process the PDF.
-The available strategies for PDFs are <cite>“auto”</cite>, <cite>“hi_res”</cite>, <cite>“ocr_only”</cite>, and <cite>“fast”</cite>.</p>
+The available strategies for PDFs are <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;hi_res&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;ocr_only&quot;</span></code>, and <code class="docutils literal notranslate"><span class="pre">&quot;fast&quot;</span></code>.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code> strategy will choose the partitioning strategy based on document characteristics and the function kwargs.
 If <code class="docutils literal notranslate"><span class="pre">infer_table_structure</span></code> is passed, the strategy will be <code class="docutils literal notranslate"><span class="pre">&quot;hi_res&quot;</span></code> because that is the only strategy that
 currently extracts tables for PDFs. Otherwise, <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code> will choose <code class="docutils literal notranslate"><span class="pre">&quot;fast&quot;</span></code> if the PDF text is extractable and
@@ -2053,10 +2083,12 @@ if specified.</p>
 <li><a class="reference internal" href="#partition-multiple-via-api"><code class="docutils literal notranslate"><span class="pre">partition_multiple_via_api</span></code></a></li>
 <li><a class="reference internal" href="#partition-docx"><code class="docutils literal notranslate"><span class="pre">partition_docx</span></code></a></li>
 <li><a class="reference internal" href="#partition-doc"><code class="docutils literal notranslate"><span class="pre">partition_doc</span></code></a></li>
+<li><a class="reference internal" href="#partition-xlsx"><code class="docutils literal notranslate"><span class="pre">partition_xlsx</span></code></a></li>
 <li><a class="reference internal" href="#partition-odt"><code class="docutils literal notranslate"><span class="pre">partition_odt</span></code></a></li>
 <li><a class="reference internal" href="#partition-pptx"><code class="docutils literal notranslate"><span class="pre">partition_pptx</span></code></a></li>
 <li><a class="reference internal" href="#partition-ppt"><code class="docutils literal notranslate"><span class="pre">partition_ppt</span></code></a></li>
 <li><a class="reference internal" href="#partition-html"><code class="docutils literal notranslate"><span class="pre">partition_html</span></code></a></li>
+<li><a class="reference internal" href="#partition-xml"><code class="docutils literal notranslate"><span class="pre">partition_xml</span></code></a></li>
 <li><a class="reference internal" href="#partition-pdf"><code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code></a></li>
 <li><a class="reference internal" href="#partition-image"><code class="docutils literal notranslate"><span class="pre">partition_image</span></code></a></li>
 <li><a class="reference internal" href="#partition-email"><code class="docutils literal notranslate"><span class="pre">partition_email</span></code></a></li>
