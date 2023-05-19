@@ -29,14 +29,14 @@ fi
 
 # Warn the user if they have an old image
 IMAGE_NAME="unstructured-ubuntu:latest"
-# CREATION_TIMESTAMP=$(docker inspect --format='{{.Created}}' "$IMAGE_NAME")
-# CREATION_DATE=$(date -d "$CREATION_TIMESTAMP" +%s)
-# CURRENT_DATE=$(date +%s)
-# AGE_DAYS=$(( (CURRENT_DATE - CREATION_DATE) / 86400 ))
-# if [ "$AGE_DAYS" -gt 6 ]; then
-#     echo "WARNING: The image \"$IMAGE_NAME\" is more than 7 days old ($AGE_DAYS days)."
-#     echo "You may want to 'docker rmi $IMAGE_NAME' and rerun this script if it is not current."
-# fi
+CREATION_TIMESTAMP=$(docker inspect --format='{{.Created}}' "$IMAGE_NAME")
+CREATION_DATE=$(date -d "$CREATION_TIMESTAMP" +%s)
+CURRENT_DATE=$(date +%s)
+AGE_DAYS=$(( (CURRENT_DATE - CREATION_DATE) / 86400 ))
+if [ "$AGE_DAYS" -gt 6 ]; then
+    echo "WARNING: The image \"$IMAGE_NAME\" is more than 7 days old ($AGE_DAYS days)."
+    echo "You may want to 'docker rmi $IMAGE_NAME' and rerun this script if it is not current."
+fi
 
 docker run --rm -v "$SCRIPT_DIR"/../unstructured:/root/unstructured -v \
    "$SCRIPT_DIR"/../test_unstructured_ingest:/root/test_unstructured_ingest \
