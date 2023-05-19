@@ -1,3 +1,13 @@
+## 0.6.9-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* Adds additional MIME types for CSV
+
 ## 0.6.8
 
 ### Enhancements
