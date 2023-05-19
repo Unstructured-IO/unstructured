@@ -67,6 +67,7 @@ class FileType(Enum):
     RTF = 41
     TXT = 42
     JSON = 43
+    CSV = 44
 
     # Markup Types
     HTML = 50
@@ -92,6 +93,7 @@ STR_TO_FILETYPE = {
     "image/jpeg": FileType.JPG,
     "image/png": FileType.PNG,
     "text/plain": FileType.TXT,
+    "text/csv": FileType.CSV,
     "text/markdown": FileType.MD,
     "text/x-markdown": FileType.MD,
     "application/epub": FileType.EPUB,
@@ -139,6 +141,7 @@ EXT_TO_FILETYPE = {
     ".epub": FileType.EPUB,
     ".msg": FileType.MSG,
     ".odt": FileType.ODT,
+    ".csv": FileType.CSV,
     None: FileType.UNK,
 }
 
