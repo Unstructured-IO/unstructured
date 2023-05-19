@@ -6,10 +6,10 @@ The unstructured library includes a CLI to batch ingest documents from (soon to 
 various) sources, storing structured outputs locally on the filesystem.
 
 For example, the following command processes all the documents in S3 in the
-`utic-dev-tech-fixtures` bucket with a prefix of `small-pdf-set/`. 
+`utic-dev-tech-fixtures` bucket with a prefix of `small-pdf-set/`.
 
     unstructured-ingest \
-       --s3-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
+       --remote-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
        --s3-anonymous \
        --structured-output-dir s3-small-batch-output \
        --num-processes 2
@@ -30,7 +30,7 @@ When testing from a local checkout rather than a pip-installed version of `unstr
 just execute `unstructured/ingest/main.py`, e.g.:
 
     PYTHONPATH=. ./unstructured/ingest/main.py \
-       --s3-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
+       --remote-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
        --s3-anonymous \
        --structured-output-dir s3-small-batch-output \
        --num-processes 2
