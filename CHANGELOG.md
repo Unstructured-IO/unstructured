@@ -2,6 +2,7 @@
 
 ### Enhancements
 
+* Deprecate `--s3-url` in favor of `--remote-url` in CLI
 * Refactor out non-connector-specific config variables
 * Add `file_directory` to metadata
 * Add `page_name` to metadata. Currently used for the sheet name in XLSX documents.
