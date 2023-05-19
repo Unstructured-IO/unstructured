@@ -3,6 +3,8 @@
 from typing import Any, Dict, List, Optional
 
 # from unstructured_inference.models.detectron2 import MODEL_TYPES
+from unstructured_inference.models.base import get_model
+
 from unstructured.ingest.interfaces import BaseIngestDoc as IngestDoc
 from unstructured.ingest.logger import logger
 
@@ -12,8 +14,7 @@ def initialize():
     # Accessing this dictionary triggers standard model downloads for pdf processing.
     # There will be a better way to do this, see
     # https://github.com/Unstructured-IO/unstructured-inference/issues/55
-    # MODEL_TYPES[None]["model_path"]
-    # MODEL_TYPES[None]["config_path"]
+    get_model()
     pass
 
 
