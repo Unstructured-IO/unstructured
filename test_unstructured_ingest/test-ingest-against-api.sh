@@ -8,11 +8,10 @@ cd "$SCRIPT_DIR"/.. || exit 1
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --local-input-path example-docs \
     --local-file-glob "*.pdf" \
-    --structured-output-dir api-ingest-output/api \
+    --structured-output-dir api-ingest-output \
     --partition-by-api \
     --partition-strategy hi_res \
     --verbose \
-    --preserve-downloads \
     --reprocess
 
 set +e

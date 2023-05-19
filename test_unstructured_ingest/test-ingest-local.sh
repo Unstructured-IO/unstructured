@@ -11,7 +11,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --local-file-glob "*.html" \
     --structured-output-dir local-ingest-output \
     --partition-strategy hi_res \
-    --preserve-downloads \
     --verbose \
     --reprocess
 
