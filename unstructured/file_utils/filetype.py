@@ -118,9 +118,17 @@ STR_TO_FILETYPE = {
     "application/vnd.ms-outlook": FileType.MSG,
 }
 
-FILETYPE_TO_MIMETYPE = {
-    v: k for k, v in STR_TO_FILETYPE.items() if k not in ("text/x-markdown", "application/epub+zip")
-}
+MIMETYPES_TO_EXCLUDE = [
+    "text/x-markdown",
+    "application/epub+zip",
+    "text/x-csv",
+    "application/csv",
+    "application/x-csv",
+    "text/comma-separated-values",
+    "text/x-comma-separated-values",
+]
+
+FILETYPE_TO_MIMETYPE = {v: k for k, v in STR_TO_FILETYPE.items() if k not in MIMETYPES_TO_EXCLUDE}
 
 EXT_TO_FILETYPE = {
     ".pdf": FileType.PDF,
