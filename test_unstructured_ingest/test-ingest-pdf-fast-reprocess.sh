@@ -24,7 +24,7 @@ set +e
 # to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
 
-    cp pdf-fast-reprocess-ingest-output test_unstructured_ingest/expected-structured-output/pdf-fast-reprocess/
+    cp -a pdf-fast-reprocess-ingest-output/* test_unstructured_ingest/expected-structured-output/pdf-fast-reprocess/
 
 elif ! diff -ru test_unstructured_ingest/expected-structured-output/pdf-fast-reprocess pdf-fast-reprocess-ingest-output ; then
 
