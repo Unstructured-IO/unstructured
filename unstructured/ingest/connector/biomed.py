@@ -7,6 +7,8 @@ from pathlib import Path
 from typing import List, Union
 
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util import Retry
 from bs4 import BeautifulSoup
 
 from unstructured.ingest.interfaces import (
@@ -26,6 +28,7 @@ PMC_DIR = "pub/pmc"
 PDF_DIR = "oa_pdf"
 
 
+
 @dataclass
 class BiomedFileMeta:
     ftp_path: str
@@ -43,6 +46,9 @@ class SimpleBiomedConfig(BaseConnectorConfig):
     id_: str
     from_: str
     until: str
+    max_retries: int = 5
+    request_timeout: int = 45
+    decay: float = 0.3
 
     def validate_api_inputs(self):
         valid = False
@@ -198,7 +204,16 @@ class BiomedConnector(BaseConnector):
             endpoint_url += f"&until={self.config.until}"
 
         while endpoint_url:
-            response = requests.get(endpoint_url)
+            session = requests.Session()
+            retries = Retry(
+                total=self.config.max_retries,
+                backoff_factor=self.config.decay,
+            )
+            adapter = HTTPAdapter(max_retries=retries)
+            session.mount("http://", adapter)
+            session.mount("https://", adapter)
+            session.timeout = self.config.request_timeout
+            response = session.get(endpoint_url)
             soup = BeautifulSoup(response.content, features="lxml")
             urls = [link["href"] for link in soup.find_all("link")]
 

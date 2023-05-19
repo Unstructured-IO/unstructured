@@ -28,6 +28,9 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
    --metadata-exclude filename,file_directory \
    --biomed-api-from "2019-01-02" \
    --biomed-api-until "2019-01-02+00:03:10" \
+   --biomed-max-retries 5 \
+   --biomed-max-request-time 30 \
+   --biomed-decay .3 \
    --structured-output-dir biomed-ingest-output-api  \
    --num-processes 2 \
    --partition-strategy hi_res \
