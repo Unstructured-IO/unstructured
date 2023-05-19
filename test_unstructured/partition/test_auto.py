@@ -294,6 +294,9 @@ def test_auto_partition_pdf_from_filename(pass_file_filename, content_type):
     assert elements[0].metadata.filename == os.path.basename(filename)
     assert elements[0].metadata.file_directory == os.path.split(filename)[0]
 
+    assert isinstance(elements[1], NarrativeText)
+    assert elements[1].text.startswith("Shen")
+
 
 def test_auto_partition_pdf_uses_table_extraction():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
@@ -341,6 +344,9 @@ def test_auto_partition_pdf_from_file(pass_file_filename, content_type):
 
     assert isinstance(elements[0], Title)
     assert elements[0].text.startswith("LayoutParser")
+
+    assert isinstance(elements[1], NarrativeText)
+    assert elements[1].text.startswith("Shen")
 
 
 def test_partition_pdf_doesnt_raise_warning():
