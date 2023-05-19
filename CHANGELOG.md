@@ -1,4 +1,4 @@
-## 0.6.8-dev0
+## 0.6.8-dev1
 
 ### Enhancements
 
@@ -6,6 +6,7 @@
 
 ### Features
 
+* Add `partition_csv` for CSV files.
 
 ### Fixes
 

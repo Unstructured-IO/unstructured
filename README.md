@@ -184,7 +184,7 @@ You can run this [Colab notebook](https://colab.research.google.com/drive/1U8VCj
 The following examples show how to get started with the `unstructured` library.
 
 You can parse **TXT**, **HTML**, **XML**, **PDF**, **EML**, **MSG**, **RTF**, **EPUB**, **DOC**, **DOCX**,
-**XLSX**, **ODT**, **PPT**, **PPTX**, **JPG**,
+**XLSX**, **CSV**, **ODT**, **PPT**, **PPTX**, **JPG**,
 and **PNG** documents with one line of code!
 <br></br>
 See our [documentation page](https://unstructured-io.github.io/unstructured) for a full description

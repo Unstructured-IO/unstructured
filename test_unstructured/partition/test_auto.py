@@ -693,3 +693,21 @@ def test_auto_partition_xlsx_from_file(filename="example-docs/stanley-cups.xlsx"
     assert elements[0].metadata.text_as_html == EXPECTED_XLSX_TABLE
     assert elements[0].metadata.page_number == 1
     assert elements[0].metadata.filetype == EXPECTED_XLSX_FILETYPE
+
+
+def test_auto_partition_csv_from_filename(filename="example-docs/stanley-cups.csv"):
+    elements = partition(filename=filename)
+
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_XLSX_TEXT
+    assert elements[0].metadata.text_as_html == EXPECTED_XLSX_TABLE
+    assert elements[0].metadata.filetype == "text/csv"
+
+
+def test_auto_partition_csv_from_file(filename="example-docs/stanley-cups.csv"):
+    with open(filename, "rb") as f:
+        elements = partition(file=f)
+
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_XLSX_TEXT
+    assert isinstance(elements[0], Table)
+    assert elements[0].metadata.text_as_html == EXPECTED_XLSX_TABLE
+    assert elements[0].metadata.filetype == "text/csv"
