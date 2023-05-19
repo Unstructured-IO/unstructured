@@ -2,7 +2,6 @@
 
 from typing import Any, Dict, List, Optional
 
-# from unstructured_inference.models.detectron2 import MODEL_TYPES
 from unstructured_inference.models.base import get_model
 
 from unstructured.ingest.interfaces import BaseIngestDoc as IngestDoc
@@ -15,7 +14,6 @@ def initialize():
     # There will be a better way to do this, see
     # https://github.com/Unstructured-IO/unstructured-inference/issues/55
     get_model()
-    pass
 
 
 def process_document(doc: "IngestDoc", **partition_kwargs) -> Optional[List[Dict[str, Any]]]:
