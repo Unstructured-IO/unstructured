@@ -31,7 +31,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --structured-output-dir github-downloadify-output \
     --partition-strategy hi_res \
     --reprocess \
-    --download-dir files-ingest-download \
+    --download-dir files-ingest-download/github \
     --preserve-downloads \
     --verbose $ACCESS_TOKEN_FLAGS
 

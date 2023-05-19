@@ -10,6 +10,7 @@ cd "$SCRIPT_DIR"/.. || exit 1
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --metadata-exclude filename,file_directory \
     --local-input-path files-ingest-download \
+    --local-recursive \
     --local-file-glob "*.pdf" \
     --structured-output-dir pdf-fast-reprocess-ingest-output \
     --partition-strategy fast \
@@ -23,7 +24,7 @@ set +e
 # to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
 
-    cp pdf-fast-reprocess-ingest-output/* test_unstructured_ingest/expected-structured-output/pdf-fast-reprocess/
+    cp pdf-fast-reprocess-ingest-output test_unstructured_ingest/expected-structured-output/pdf-fast-reprocess/
 
 elif ! diff -ru test_unstructured_ingest/expected-structured-output/pdf-fast-reprocess pdf-fast-reprocess-ingest-output ; then
 

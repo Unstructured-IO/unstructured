@@ -12,7 +12,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --structured-output-dir gitlab-ingest-output \
     --git-branch 'v0.0.7' \
     --partition-strategy hi_res \
-    --download-dir files-ingest-download \
+    --download-dir files-ingest-download/gitlab \
     --preserve-downloads \
     --verbose
 
