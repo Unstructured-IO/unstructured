@@ -17,7 +17,7 @@ installation.
 	* ``libreoffice`` (MS Office docs)
 	* ``pandocs`` (EPUBs, RTFs and Open Office docs)
 
-* Follow the instructions `here <https://github.com/Unstructured-IO/unstructured-inference#detectron2>`_ to install ``detectron2``. This is required is you would like to use customer models from the `LayoutParser Model Zoo <https://github.com/Unstructured-IO/unstructured-inference#using-models-from-the-layoutparser-model-zoo>`_.
+* Follow the instructions `here <https://github.com/Unstructured-IO/unstructured-inference#detectron2>`_ to install ``detectron2``. This is required if you would like to use custom models from the `LayoutParser Model Zoo <https://github.com/Unstructured-IO/unstructured-inference#using-models-from-the-layoutparser-model-zoo>`_.
 
 At this point, you should be able to run the following code:
 
