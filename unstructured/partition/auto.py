@@ -11,6 +11,7 @@ from unstructured.file_utils.filetype import (
 )
 from unstructured.logger import logger
 from unstructured.partition.common import exactly_one
+from unstructured.partition.csv import partition_csv
 from unstructured.partition.doc import partition_doc
 from unstructured.partition.docx import partition_docx
 from unstructured.partition.email import partition_email
@@ -198,6 +199,8 @@ def partition(
         elements = partition_json(filename=filename, file=file)
     elif filetype == FileType.XLSX:
         elements = partition_xlsx(filename=filename, file=file)
+    elif filetype == FileType.CSV:
+        elements = partition_csv(filename=filename, file=file)
     else:
         msg = "Invalid file" if not filename else f"Invalid file {filename}"
         raise ValueError(f"{msg}. The {filetype} file type is not supported in partition.")
