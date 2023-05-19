@@ -173,12 +173,6 @@ class MainProcess:
     "a directory or a single file. Supported protocols are: `s3`, `s3a`, `abfs`, and `az`.",
 )
 @click.option(
-    "--s3-url",
-    default=None,
-    help="Prefix of s3 objects (files) to download. E.g. s3://bucket1/path/. This value may "
-    "also be a single file. To be deprecated in favor of --remote-url.",
-)
-@click.option(
     "--s3-anonymous",
     is_flag=True,
     default=False,
@@ -399,7 +393,6 @@ class MainProcess:
 @click.option("-v", "--verbose", is_flag=True, default=False)
 def main(
     remote_url,
-    s3_url,  # TODO: deprecate this in the next minor release
     s3_anonymous,
     azure_account_name,
     azure_account_key,
@@ -491,13 +484,6 @@ def main(
         cache_path = Path.home() / ".cache" / "unstructured" / "ingest"
         if not cache_path.exists():
             cache_path.mkdir(parents=True, exist_ok=True)
-        if s3_url:
-            warnings.warn(
-                "The `--s3-url` option will be deprecated in favor of `--remote-url`"
-                " in the next minor release.",
-                DeprecationWarning,
-            )
-            remote_url = s3_url
         if remote_url:
             hashed_dir_name = hashlib.sha256(remote_url.encode("utf-8"))
         elif github_url:
@@ -561,7 +547,7 @@ def main(
             doc_connector = S3Connector(  # type: ignore
                 standard_config=standard_config,
                 config=SimpleS3Config(
-                    path=s3_url,
+                    path=remote_url,
                     access_kwargs={"anon": s3_anonymous},
                 ),
             )
