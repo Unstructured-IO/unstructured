@@ -1,4 +1,16 @@
-## 0.6.8-dev1
+## 0.6.9-dev1
+
+### Enhancements
+
+* Added ingest tests with `--fast` strategy on PDF documents
+
+### Features
+
+### Fixes
+
+* Adds additional MIME types for CSV
+
+## 0.6.8
 
 ### Enhancements
 
