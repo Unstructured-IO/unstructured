@@ -9,7 +9,7 @@ from unstructured.file_utils.filetype import FileType, add_metadata_with_filetyp
 from unstructured.partition.common import exactly_one, spooled_to_bytes_io_if_needed
 
 
-@add_metadata_with_filetype(FileType.XLSX)
+@add_metadata_with_filetype(FileType.CSV)
 def partition_csv(
     filename: Optional[str] = None,
     file: Optional[Union[IO, SpooledTemporaryFile]] = None,
@@ -34,7 +34,7 @@ def partition_csv(
     exactly_one(filename=filename, file=file)
 
     if filename:
-        table = pd.read_excel(filename, sheet_name=None)
+        table = pd.read_csv(filename)
     else:
         f = spooled_to_bytes_io_if_needed(cast(Union[BinaryIO, SpooledTemporaryFile], file))
         table = pd.read_csv(f)
