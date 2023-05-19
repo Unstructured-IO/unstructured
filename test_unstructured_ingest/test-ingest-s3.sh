@@ -5,6 +5,10 @@ set -e
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 cd "$SCRIPT_DIR"/.. || exit 1
 
+# NOTE(robinson) - uncomment the section below and regenerate test fixtures once
+# the ONNXRuntimeError issue in unstructured-inference is resolved
+# https://github.com/Unstructured-IO/unstructured-inference/issues/116
+
 # if [[ "$(find test_unstructured_ingest/expected-structured-output/s3-small-batch/ -type f -size +20k | wc -l)" -ne 3 ]]; then
 #     echo "The test fixtures in test_unstructured_ingest/expected-structured-output/ look suspicious. At least one of the files is too small."
 #     echo "Did you overwrite test fixtures with bad outputs?"
@@ -45,9 +49,3 @@ elif ! diff -ru test_unstructured_ingest/expected-structured-output/s3-small-bat
     exit 1
 
 fi
-#
-# if [ "$(find 's3-small-batch-output' -type f -printf '.' | wc -c)" != 3 ]; then
-#    echo
-#    echo "3 files should have been created."
-#    exit 1
-# fi
