@@ -93,6 +93,11 @@ STR_TO_FILETYPE = {
     "image/jpeg": FileType.JPG,
     "image/png": FileType.PNG,
     "text/plain": FileType.TXT,
+    "text/x-csv": FileType.CSV,
+    "application/csv": FileType.CSV,
+    "application/x-csv": FileType.CSV,
+    "text/comma-separated-values": FileType.CSV,
+    "text/x-comma-separated-values": FileType.CSV,
     "text/csv": FileType.CSV,
     "text/markdown": FileType.MD,
     "text/x-markdown": FileType.MD,
@@ -113,9 +118,17 @@ STR_TO_FILETYPE = {
     "application/vnd.ms-outlook": FileType.MSG,
 }
 
-FILETYPE_TO_MIMETYPE = {
-    v: k for k, v in STR_TO_FILETYPE.items() if k not in ("text/x-markdown", "application/epub+zip")
-}
+MIMETYPES_TO_EXCLUDE = [
+    "text/x-markdown",
+    "application/epub+zip",
+    "text/x-csv",
+    "application/csv",
+    "application/x-csv",
+    "text/comma-separated-values",
+    "text/x-comma-separated-values",
+]
+
+FILETYPE_TO_MIMETYPE = {v: k for k, v in STR_TO_FILETYPE.items() if k not in MIMETYPES_TO_EXCLUDE}
 
 EXT_TO_FILETYPE = {
     ".pdf": FileType.PDF,

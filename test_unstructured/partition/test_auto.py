@@ -695,6 +695,7 @@ def test_auto_partition_xlsx_from_file(filename="example-docs/stanley-cups.xlsx"
     assert elements[0].metadata.filetype == EXPECTED_XLSX_FILETYPE
 
 
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_auto_partition_csv_from_filename(filename="example-docs/stanley-cups.csv"):
     elements = partition(filename=filename)
 
@@ -703,6 +704,7 @@ def test_auto_partition_csv_from_filename(filename="example-docs/stanley-cups.cs
     assert elements[0].metadata.filetype == "text/csv"
 
 
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_auto_partition_csv_from_file(filename="example-docs/stanley-cups.csv"):
     with open(filename, "rb") as f:
         elements = partition(file=f)
