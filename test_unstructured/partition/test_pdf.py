@@ -404,7 +404,15 @@ def test_partition_pdf_fast_groups_text_in_text_box():
     filename = os.path.join("example-docs", "chevron-page.pdf")
     elements = pdf.partition_pdf(filename=filename, strategy="fast")
 
-    assert elements[0] == Title("eastern mediterranean")
+    assert elements[0] == Title(
+        "eastern mediterranean",
+        coordinates=(
+            (193.1741, 71.94000000000005),
+            (193.1741, 91.94000000000005),
+            (418.6881, 91.94000000000005),
+            (418.6881, 71.94000000000005),
+        ),
+    )
 
     assert isinstance(elements[1], NarrativeText)
     assert str(elements[1]).startswith("We")
@@ -412,4 +420,10 @@ def test_partition_pdf_fast_groups_text_in_text_box():
 
     assert elements[3] == Title(
         "kilograms CO₂e/boe carbon intensity from our Eastern Mediterranean operations in 2022",
+        coordinates=(
+            (69.4871, 222.4357),
+            (69.4871, 272.1607),
+            (197.8209, 272.1607),
+            (197.8209, 222.4357),
+        ),
     )

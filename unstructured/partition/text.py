@@ -90,17 +90,22 @@ def partition_text(
     for ctext in file_content:
         ctext = ctext.strip()
 
-        if ctext == "":
-            continue
-        if is_bulleted_text(ctext):
-            elements.append(ListItem(text=clean_bullets(ctext), metadata=metadata))
-        elif is_us_city_state_zip(ctext):
-            elements.append(Address(text=ctext, metadata=metadata))
-        elif is_possible_narrative_text(ctext):
-            elements.append(NarrativeText(text=ctext, metadata=metadata))
-        elif is_possible_title(ctext):
-            elements.append(Title(text=ctext, metadata=metadata))
-        else:
-            elements.append(Text(text=ctext, metadata=metadata))
+        if ctext:
+            element = element_from_text(ctext)
+            element.metadata = metadata
+            elements.append(element)
 
     return elements
+
+
+def element_from_text(text: str) -> Element:
+    if is_bulleted_text(text):
+        return ListItem(text=clean_bullets(text))
+    elif is_us_city_state_zip(text):
+        return Address(text=text)
+    elif is_possible_narrative_text(text):
+        return NarrativeText(text=text)
+    elif is_possible_title(text):
+        return Title(text=text)
+    else:
+        return Text(text=text)

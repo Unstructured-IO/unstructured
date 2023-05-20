@@ -1,6 +1,8 @@
-## 0.6.9-dev0
+## 0.6.9-dev1
 
 ### Enhancements
+
+* fast strategy for pdf now keeps element bounding box data
 
 ### Features
 
