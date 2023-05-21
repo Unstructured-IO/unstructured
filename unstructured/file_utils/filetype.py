@@ -137,6 +137,7 @@ EXT_TO_FILETYPE = {
     ".jpeg": FileType.JPG,
     ".txt": FileType.TXT,
     ".text": FileType.TXT,
+    ".log": FileType.TXT,
     ".eml": FileType.EML,
     ".xml": FileType.XML,
     ".htm": FileType.HTML,
