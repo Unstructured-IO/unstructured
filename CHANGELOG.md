@@ -1,8 +1,9 @@
-## 0.6.9-dev1
+## 0.6.9-dev2
 
 ### Enhancements
 
 * Added ingest tests with `--fast` strategy on PDF documents
+* fast strategy for pdf now keeps element bounding box data
 
 ### Features
 
