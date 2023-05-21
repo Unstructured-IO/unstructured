@@ -261,8 +261,8 @@
     }
   },
   {
-    "element_id": "7a4f82ed474f82c26a8b867becaf89ba",
-    "text": "Jan. 20",
+    "element_id": "f4a93992a1b09b3fa6200542fd6fde5a",
+    "text": "Jan. 21",
     "type": "Title",
     "metadata": {
       "filetype": "application/pdf",
@@ -270,8 +270,8 @@
     }
   },
   {
-    "element_id": "f4a93992a1b09b3fa6200542fd6fde5a",
-    "text": "Jan. 21",
+    "element_id": "7a4f82ed474f82c26a8b867becaf89ba",
+    "text": "Jan. 20",
     "type": "Title",
     "metadata": {
       "filetype": "application/pdf",
@@ -837,26 +837,8 @@
     }
   },
   {
-    "element_id": "2db6f66830132fc28078196c2b7f44b4",
-    "text": "Saudi Arabia Sub",
-    "type": "Title",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
-    "type": "ListItem",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "d46ddaac4bb338da7b51767214e69bf1",
-    "text": "Saharan Africa",
+    "element_id": "b2800ff802361713acee893ebae272f6",
+    "text": "Saudi Arabia Sub-Saharan Africa",
     "type": "Title",
     "metadata": {
       "filetype": "application/pdf",
@@ -2277,98 +2259,8 @@
     }
   },
   {
-    "element_id": "fd16a4bc793aaf8f43e033aedcc74570",
-    "text": "WEO Update © 2023",
-    "type": "Title",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
-    "type": "ListItem",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "be974453cd6a9000eee7ddf6890363b9",
-    "text": "ISBN: 979",
-    "type": "Title",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
-    "type": "ListItem",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "2c624232cdd221771294dfbb310aca00",
-    "text": "8",
-    "type": "UncategorizedText",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
-    "type": "ListItem",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "e3162ba5857b505db0739cfe33fb54a6",
-    "text": "40023",
-    "type": "UncategorizedText",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
-    "type": "ListItem",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "84a5092e4a5b6fe968fd523fb2fc917d",
-    "text": "224",
-    "type": "UncategorizedText",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
-    "type": "ListItem",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
-    "text": "4",
+    "element_id": "09b3166aab28edac8872d46b3b34ab02",
+    "text": "WEO Update © 2023 • ISBN: 979-8-40023-224-4",
     "type": "UncategorizedText",
     "metadata": {
       "filetype": "application/pdf",

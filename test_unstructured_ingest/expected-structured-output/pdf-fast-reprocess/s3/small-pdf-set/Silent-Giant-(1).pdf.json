@@ -486,44 +486,8 @@
     }
   },
   {
-    "element_id": "7b6417fe9eca607b6787fa1e2d4b8e93",
-    "text": " High",
-    "type": "Title",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
-    "type": "ListItem",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "3fbc41b5162dcb197dc9d6ed36e935c8",
-    "text": "carbon  Low",
-    "type": "Title",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
-    "type": "ListItem",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "28d79d50ff515a797803c4d5297b8feb",
-    "text": "carbon",
+    "element_id": "e3cf3e34001852adb7a17cf424bda9fc",
+    "text": " High-carbon  Low-carbon",
     "type": "Title",
     "metadata": {
       "filetype": "application/pdf",
@@ -1143,18 +1107,9 @@
     }
   },
   {
-    "element_id": "6dc76d1e1c35d4253537250288157d0c",
-    "text": "N uclear",
+    "element_id": "f280c2a253ebd5a7389dd0790fcbd56c",
+    "text": "N uclear*",
     "type": "Title",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
-    "type": "ListItem",
     "metadata": {
       "filetype": "application/pdf",
       "page_number": 1
@@ -1467,26 +1422,8 @@
     }
   },
   {
-    "element_id": "828fe8bd8de0f78564813271417a6c8f",
-    "text": " Non",
-    "type": "Title",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
-    "type": "ListItem",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "d926c30a7d873c4b897c90a016f8603e",
-    "text": "hydro",
+    "element_id": "baa49be4a9f9fab3b991718e0adb565e",
+    "text": " Non-hydro",
     "type": "Title",
     "metadata": {
       "filetype": "application/pdf",

@@ -144,8 +144,8 @@
     }
   },
   {
-    "element_id": "6b86b273ff34fce19d6b804eff5a3f57",
-    "text": "1",
+    "element_id": "d4735e3a265e16eee03f59718b9b5d03",
+    "text": "2",
     "type": "UncategorizedText",
     "metadata": {
       "filetype": "application/pdf",
@@ -153,8 +153,8 @@
     }
   },
   {
-    "element_id": "d4735e3a265e16eee03f59718b9b5d03",
-    "text": "2",
+    "element_id": "6b86b273ff34fce19d6b804eff5a3f57",
+    "text": "1",
     "type": "UncategorizedText",
     "metadata": {
       "filetype": "application/pdf",
@@ -234,26 +234,8 @@
     }
   },
   {
-    "element_id": "042468852639034ca969d11ee1496de5",
-    "text": "Electric power (non",
-    "type": "Title",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
-    "type": "ListItem",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "75e3322584c9440d62d180754f752322",
-    "text": "nuclear)",
+    "element_id": "1656c455012b016fbac5eac0a38397bd",
+    "text": "Electric power (non-nuclear)",
     "type": "Title",
     "metadata": {
       "filetype": "application/pdf",
@@ -279,26 +261,8 @@
     }
   },
   {
-    "element_id": "4b68ab3847feda7d6c62c1fbcbeebfa3",
-    "text": "X",
-    "type": "Title",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
-    "type": "ListItem",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "37311f699fdb1890b31df87bff82c125",
-    "text": "rays",
+    "element_id": "2f3122790ccc9e095abe1b5ceedddf88",
+    "text": "X-rays",
     "type": "Title",
     "metadata": {
       "filetype": "application/pdf",
@@ -333,15 +297,6 @@
     }
   },
   {
-    "element_id": "624b60c58c9d8bfb6ff1886c2fd605d2",
-    "text": "30",
-    "type": "UncategorizedText",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
     "element_id": "b7a56873cd771f2c446d369b649430b6",
     "text": "25",
     "type": "UncategorizedText",
@@ -351,8 +306,8 @@
     }
   },
   {
-    "element_id": "d1429f8178a04f7fc73a66edf10ab8b5",
-    "text": "",
+    "element_id": "624b60c58c9d8bfb6ff1886c2fd605d2",
+    "text": "30",
     "type": "UncategorizedText",
     "metadata": {
       "filetype": "application/pdf",
@@ -396,8 +351,8 @@
     }
   },
   {
-    "element_id": "d4735e3a265e16eee03f59718b9b5d03",
-    "text": "2",
+    "element_id": "d1429f8178a04f7fc73a66edf10ab8b5",
+    "text": "",
     "type": "UncategorizedText",
     "metadata": {
       "filetype": "application/pdf",
@@ -407,6 +362,15 @@
   {
     "element_id": "4b227777d4dd1fc61c6f884f48641d02",
     "text": "4",
+    "type": "UncategorizedText",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "d4735e3a265e16eee03f59718b9b5d03",
+    "text": "2",
     "type": "UncategorizedText",
     "metadata": {
       "filetype": "application/pdf",
@@ -828,26 +792,8 @@
     }
   },
   {
-    "element_id": "a93fe6624c16369a7323066bacc94854",
-    "text": "The low",
-    "type": "Title",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
-    "type": "ListItem",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "d97a9d1592b38c7c18232b88ac5ec22c",
-    "text": "dose question",
+    "element_id": "f5bda7d6ba9ea7120d7f4c11c8b8f1ae",
+    "text": "The low-dose question",
     "type": "Title",
     "metadata": {
       "filetype": "application/pdf",
@@ -900,27 +846,9 @@
     }
   },
   {
-    "element_id": "1bc0fbbc90d598796077a3f0f3366a8b",
-    "text": "Adopting an all",
+    "element_id": "6bb7c030badb0c440af61aec7f6976c4",
+    "text": "Adopting an all-hazards approach",
     "type": "NarrativeText",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
-    "type": "ListItem",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "bcc04066fee73bef9c55b5782a9a761a",
-    "text": "hazards approach",
-    "type": "Title",
     "metadata": {
       "filetype": "application/pdf",
       "page_number": 1
@@ -1269,26 +1197,8 @@
     }
   },
   {
-    "element_id": "81b74e0f0e234cf59653a94433ebaa6b",
-    "text": "professional/cancer",
-    "type": "Title",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
-    "type": "ListItem",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "6d36b92cd00296af622b568edf24d05e",
-    "text": "statistics/risk",
+    "element_id": "759772833f6756e511150b2a49233864",
+    "text": "professional/cancer-statistics/risk",
     "type": "Title",
     "metadata": {
       "filetype": "application/pdf",
@@ -1305,98 +1215,8 @@
     }
   },
   {
-    "element_id": "b9776d7ddf459c9ad5b0e1d6ac61e27b",
-    "text": "the",
-    "type": "Title",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
-    "type": "ListItem",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "a18b869b2e81c0c529552a3c4fa5c92e",
-    "text": "full",
-    "type": "Title",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
-    "type": "ListItem",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "bcde6928e538c63c2cb8b26055ef80e2",
-    "text": "costs",
-    "type": "Title",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
-    "type": "ListItem",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "28391d3bc64ec15cbb090426b04aa6b7",
-    "text": "of",
-    "type": "Title",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
-    "type": "ListItem",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "ae80c184961f8640e6dec0fca5bdef0d",
-    "text": "electricity",
-    "type": "Title",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
-    "type": "ListItem",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "abb1d63bf7244fb52d26e518456293fb",
-    "text": "provision?details=true",
+    "element_id": "7267222b91f507e040c69dad9af7941f",
+    "text": "the-full-costs-of-electricity-provision?details=true",
     "type": "Title",
     "metadata": {
       "filetype": "application/pdf",
@@ -1413,62 +1233,8 @@
     }
   },
   {
-    "element_id": "052dfa8b8db7958d5fd0607651726bdc",
-    "text": "sheets/detail/climate",
-    "type": "Title",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
-    "type": "ListItem",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "12ea12eace7d655f471ce55e34f89b1b",
-    "text": "change",
-    "type": "Title",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
-    "type": "ListItem",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "6201111b83a0cb5b0922cb37cc442b9a",
-    "text": "and",
-    "type": "Title",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
-    "type": "ListItem",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "62484e22a6a5ade1ba25cb1b7c55c4b8",
-    "text": "health",
+    "element_id": "86c0a0cef7faa217f386f75ead17dbec",
+    "text": "sheets/detail/climate-change-and-health",
     "type": "Title",
     "metadata": {
       "filetype": "application/pdf",
