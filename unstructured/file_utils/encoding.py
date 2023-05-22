@@ -58,6 +58,10 @@ def detect_file_encoding(filename: str = "", file: Optional[IO] = None) -> Tuple
             raise UnicodeDecodeError(
                 "Unable to determine the encoding of the file or match it with any "
                 "of the specified encodings.",
+                binary_data,
+                0,
+                len(binary_data),
+                "Invalid encoding",
             )
 
     else:
