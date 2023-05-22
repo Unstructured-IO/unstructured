@@ -8,7 +8,6 @@ ARG PIP_VERSION
 RUN yum -y update && \
   yum -y install poppler-utils xz-devel wget tar curl make which mailcap && \
   yum install -y epel-release && \
-  yum install -y pandoc && \
   yum -y install libreoffice && \
   yum clean all
 
@@ -63,6 +62,16 @@ RUN yum -y update && \
 ENV PATH="/usr/local/ssl/bin:${PATH}"
 ENV LD_LIBRARY_PATH="/usr/local/ssl/lib:$LD_LIBRARY_PATH"
 ENV SSL_CERT_FILE=/etc/ssl/certs/ca-bundle.crt
+
+# Install pandoc after SSL
+RUN yum -y update && \
+    yum -y install glibc glibc-devel gmp gmp-devel libffi libffi-devel zlib zlib-devel && \
+    wget https://github.com/jgm/pandoc/releases/download/3.1.2/pandoc-3.1.2-linux-arm64.tar.gz && \
+    tar xvf pandoc-3.1.2-linux-arm64.tar.gz && \
+    cd pandoc-3.1.2 && \
+    cp bin/pandoc /usr/local/bin/ && \
+    cd .. && \
+    yum clean all
 
 # Install Python
 RUN yum -y install bzip2-devel libffi-devel make git sqlite-devel && \
