@@ -1,7 +1,8 @@
-## 0.6.9-dev1
+## 0.6.9-dev2
 
 ### Enhancements
 
+* Supprts epub tests since pandoc is updated in base image
 * fast strategy for pdf now keeps element bounding box data
 
 ### Features
