@@ -68,7 +68,8 @@ def test_partition_text_from_file():
 )
 def test_partition_text_from_file_default_encoding(filename):
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-    elements = partition_text(filename=filename)
+    with open(filename) as f:
+        elements = partition_text(file=f)
     assert len(elements) > 0
     assert elements == EXPECTED_OUTPUT
 
@@ -87,7 +88,8 @@ def test_partition_text_from_bytes_file():
 )
 def test_partition_text_from_bytes_file_default_encoding(filename):
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-    elements = partition_text(filename=filename)
+    with open(filename, "rb") as f:
+        elements = partition_text(file=f)
     assert len(elements) > 0
     assert elements == EXPECTED_OUTPUT
 
