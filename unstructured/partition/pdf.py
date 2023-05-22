@@ -22,7 +22,7 @@ from unstructured.partition.common import (
     spooled_to_bytes_io_if_needed,
 )
 from unstructured.partition.strategies import determine_pdf_or_image_strategy
-from unstructured.partition.text import partition_text
+from unstructured.partition.text import element_from_text, partition_text
 from unstructured.utils import requires_dependencies
 
 
@@ -275,11 +275,16 @@ def _process_pdfminer_pages(
 
     for i, page in enumerate(extract_pages(fp)):  # type: ignore
         metadata = ElementMetadata(filename=filename, page_number=i + 1)
+        height = page.height
 
         text_segments = []
         for obj in page:
             # NOTE(robinson) - "Figure" is an example of an object type that does
             # not have a get_text method
+            x1, y2, x2, y1 = obj.bbox
+            y1 = height - y1
+            y2 = height - y2
+
             if not hasattr(obj, "get_text"):
                 continue
             _text = obj.get_text()
@@ -287,13 +292,10 @@ def _process_pdfminer_pages(
             _text = clean_extra_whitespace(_text)
             if _text.strip():
                 text_segments.append(_text)
-
-        text = "\n\n".join(text_segments)
-
-        _elements = partition_text(text=text)
-        for element in _elements:
-            element.metadata = metadata
-            elements.append(element)
+                element = element_from_text(_text)
+                element.coordinates = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
+                element.metadata = metadata
+                elements.append(element)
 
         if include_page_breaks:
             elements.append(PageBreak())
