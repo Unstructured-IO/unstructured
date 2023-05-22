@@ -83,7 +83,7 @@ If you call the ``partition`` function, ``unstructured`` will attempt to detect 
 file type and route it to the appropriate partitioning brick. All partitioning bricks
 called within ``partition`` are called using the default kwargs. Use the document-type
 specific bricks if you need to apply non-default settings.
-``partition`` currently supports ``.docx``, ``.doc``, ``.odt``, ``.pptx``, ``.ppt``, ``.xlsx``, ``.eml``, ``.msg``, ``.rtf``, ``.epub``, ``.html``, ``.pdf``,
+``partition`` currently supports ``.docx``, ``.doc``, ``.odt``, ``.pptx``, ``.ppt``, ``.xlsx``, ``.csv``, ``.eml``, ``.msg``, ``.rtf``, ``.epub``, ``.html``, ``.xml``, ``.pdf``,
 ``.png``, ``.jpg``, and ``.txt`` files.
 If you set the ``include_page_breaks`` kwarg to ``True``, the output will include page breaks. This is only supported for ``.pptx``, ``.html``, ``.pdf``,
 ``.png``, and ``.jpg``.
@@ -269,6 +269,23 @@ Examples:
   print(elements[0].metadata.text_as_html)
 
 
+``partition_csv``
+------------------
+
+The ``partition_csv`` function pre-processes CSV files. The output is a single
+``Table`` element. The ``text_as_html`` attribute in the element metadata will
+contain an HTML representation of the table.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.csv import partition_csv
+
+  elements = partition_csv(filename="example-docs/stanley-cups.csv")
+  print(elements[0].metadata.text_as_html)
+
+
 ``partition_odt``
 ------------------
 
@@ -369,6 +386,26 @@ to disable SSL verification in the request.
   # and turn off SSL verification
 
   elements = partition_html(url="https://python.org/", ssl_verify=False)
+
+
+``partition_xml``
+-----------------
+
+The ``partition_xml`` function processes XML documents.
+If ``xml_keep_tags=False``, the function only returns the text attributes from the tags.
+You can use ``xml_path`` in conjuntion with ``xml_keep_tags=False`` to restrict the text
+extraction to specific tags.
+If ``xml_keep_tags=True``, the function returns tag information in addition to tag text.
+``xml_keep_tags`` is ``False`` be default.
+
+
+.. code:: python
+
+  from unstructured.partition.xml import partition_xml
+
+  elements = partition_xml(filename="example-docs/factbook.xml", xml_keep_tags=True)
+
+  elements = partition_xml(filename="example-docs/factbook.xml", xml_keep_tags=False)
 
 
 

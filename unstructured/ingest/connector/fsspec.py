@@ -3,12 +3,13 @@ import os
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional, Type
+from typing import Type
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
+    StandardConnectorConfig,
 )
 from unstructured.ingest.logger import logger
 
@@ -23,23 +24,7 @@ SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
 class SimpleFsspecConfig(BaseConnectorConfig):
     # fsspec specific options
     path: str
-
-    # base connector options
-    download_dir: str
-    output_dir: str
-    preserve_downloads: bool = False
-    re_download: bool = False
-    download_only: bool = False
-    metadata_include: Optional[str] = None
-    metadata_exclude: Optional[str] = None
-    partition_by_api: bool = False
-    partition_endpoint: str = "https://api.unstructured.io/general/v0/general"
-    fields_include: str = "element_id,text,type,metadata"
-    flatten_metadata: bool = False
-
-    # fsspec specific options
     access_kwargs: dict = field(default_factory=dict)
-
     protocol: str = field(init=False)
     path_without_protocol: str = field(init=False)
     dir_path: str = field(init=False)
@@ -83,14 +68,14 @@ class FsspecIngestDoc(BaseIngestDoc):
     remote_file_path: str
 
     def _tmp_download_file(self):
-        return Path(self.config.download_dir) / self.remote_file_path.replace(
+        return Path(self.standard_config.download_dir) / self.remote_file_path.replace(
             f"{self.config.dir_path}/",
             "",
         )
 
     def _output_filename(self):
         return (
-            Path(self.config.output_dir)
+            Path(self.standard_config.output_dir)
             / f"{self.remote_file_path.replace(f'{self.config.dir_path}/', '')}.json"
         )
 
@@ -108,7 +93,7 @@ class FsspecIngestDoc(BaseIngestDoc):
 
         self._create_full_tmp_dir_path()
         if (
-            not self.config.re_download
+            not self.standard_config.re_download
             and self._tmp_download_file().is_file()
             and os.path.getsize(self._tmp_download_file())
         ):
@@ -124,7 +109,7 @@ class FsspecIngestDoc(BaseIngestDoc):
 
     def write_result(self):
         """Write the structured json result for this doc. result must be json serializable."""
-        if self.config.download_only:
+        if self.standard_config.download_only:
             return
         output_filename = self._output_filename()
         output_filename.parent.mkdir(parents=True, exist_ok=True)
@@ -139,7 +124,7 @@ class FsspecIngestDoc(BaseIngestDoc):
 
     def cleanup_file(self):
         """Removes the local copy of the file after successful processing."""
-        if not self.config.preserve_downloads and not self.config.download_only:
+        if not self.standard_config.preserve_downloads and not self.standard_config.download_only:
             logger.debug(f"Cleaning up {self}")
             os.unlink(self._tmp_download_file())
 
@@ -147,19 +132,23 @@ class FsspecIngestDoc(BaseIngestDoc):
 class FsspecConnector(BaseConnector):
     """Objects of this class support fetching document(s) from"""
 
+    config: SimpleFsspecConfig
     ingest_doc_cls: Type[FsspecIngestDoc] = FsspecIngestDoc
 
     def __init__(
         self,
+        standard_config: StandardConnectorConfig,
         config: SimpleFsspecConfig,
     ):
         from fsspec import AbstractFileSystem, get_filesystem_class
 
-        self.config = config
+        super().__init__(standard_config, config)
         self.fs: AbstractFileSystem = get_filesystem_class(self.config.protocol)(
             **self.config.access_kwargs,
         )
-        self.cleanup_files = not config.preserve_downloads and not config.download_only
+        self.cleanup_files = (
+            not standard_config.preserve_downloads and not standard_config.download_only
+        )
 
     def cleanup(self, cur_dir=None):
         """cleanup linginering empty sub-dirs from s3 paths, but leave remaining files
@@ -168,7 +157,7 @@ class FsspecConnector(BaseConnector):
             return
 
         if cur_dir is None:
-            cur_dir = self.config.download_dir
+            cur_dir = self.standard_config.download_dir
         sub_dirs = os.listdir(cur_dir)
         os.chdir(cur_dir)
         for sub_dir in sub_dirs:
@@ -193,6 +182,7 @@ class FsspecConnector(BaseConnector):
     def get_ingest_docs(self):
         return [
             self.ingest_doc_cls(
+                self.standard_config,
                 self.config,
                 file,
             )

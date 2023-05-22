@@ -4,6 +4,7 @@ import pathlib
 import pytest
 
 from unstructured.ingest.connector.git import GitIngestDoc, SimpleGitConfig
+from unstructured.ingest.interfaces import StandardConnectorConfig
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "example-docs")
@@ -17,9 +18,12 @@ test_files = [
 @pytest.mark.parametrize("filename", test_files)
 def test_process_file_metadata_include_filename(filename: str):
     ingest_doc = GitIngestDoc(
+        standard_config=StandardConnectorConfig(
+            download_dir=EXAMPLE_DOCS_DIRECTORY,
+            output_dir="",
+        ),
         path=filename,
         config=SimpleGitConfig(
-            download_dir=EXAMPLE_DOCS_DIRECTORY,
             metadata_include="filename",
         ),
     )
@@ -32,11 +36,13 @@ def test_process_file_metadata_include_filename(filename: str):
 @pytest.mark.parametrize("filename", test_files)
 def test_process_file_metadata_include_filename_pagenum(filename: str):
     ingest_doc = GitIngestDoc(
-        path=filename,
-        config=SimpleGitConfig(
+        standard_config=StandardConnectorConfig(
             download_dir=EXAMPLE_DOCS_DIRECTORY,
+            output_dir="",
             metadata_include="filename,page_number",
         ),
+        path=filename,
+        config=SimpleGitConfig(),
     )
     isd_elems = ingest_doc.process_file(strategy="hi_res")
 
@@ -47,11 +53,13 @@ def test_process_file_metadata_include_filename_pagenum(filename: str):
 @pytest.mark.parametrize("filename", test_files)
 def test_process_file_metadata_exclude_filename(filename: str):
     ingest_doc = GitIngestDoc(
-        path=filename,
-        config=SimpleGitConfig(
+        standard_config=StandardConnectorConfig(
             download_dir=EXAMPLE_DOCS_DIRECTORY,
+            output_dir="",
             metadata_exclude="filename",
         ),
+        path=filename,
+        config=SimpleGitConfig(),
     )
     isd_elems = ingest_doc.process_file(strategy="hi_res")
 
@@ -62,11 +70,13 @@ def test_process_file_metadata_exclude_filename(filename: str):
 @pytest.mark.parametrize("filename", test_files)
 def test_process_file_metadata_exclude_filename_pagenum(filename: str):
     ingest_doc = GitIngestDoc(
-        path=filename,
-        config=SimpleGitConfig(
+        standard_config=StandardConnectorConfig(
             download_dir=EXAMPLE_DOCS_DIRECTORY,
+            output_dir="",
             metadata_exclude="filename,page_number",
         ),
+        path=filename,
+        config=SimpleGitConfig(),
     )
     isd_elems = ingest_doc.process_file(strategy="hi_res")
 
@@ -78,10 +88,12 @@ def test_process_file_metadata_exclude_filename_pagenum(filename: str):
 @pytest.mark.parametrize("filename", test_files)
 def test_process_file_fields_include_default(filename: str):
     ingest_doc = GitIngestDoc(
-        path=filename,
-        config=SimpleGitConfig(
+        standard_config=StandardConnectorConfig(
             download_dir=EXAMPLE_DOCS_DIRECTORY,
+            output_dir="",
         ),
+        path=filename,
+        config=SimpleGitConfig(),
     )
     isd_elems = ingest_doc.process_file(strategy="hi_res")
 
@@ -92,11 +104,13 @@ def test_process_file_fields_include_default(filename: str):
 @pytest.mark.parametrize("filename", test_files)
 def test_process_file_fields_include_elementid(filename: str):
     ingest_doc = GitIngestDoc(
-        path=filename,
-        config=SimpleGitConfig(
+        standard_config=StandardConnectorConfig(
             download_dir=EXAMPLE_DOCS_DIRECTORY,
+            output_dir="",
             fields_include="element_id",
         ),
+        path=filename,
+        config=SimpleGitConfig(),
     )
     isd_elems = ingest_doc.process_file(strategy="hi_res")
 
@@ -107,12 +121,14 @@ def test_process_file_fields_include_elementid(filename: str):
 @pytest.mark.parametrize("filename", test_files)
 def test_process_file_flatten_metadata_filename(filename: str):
     ingest_doc = GitIngestDoc(
-        path=filename,
-        config=SimpleGitConfig(
+        standard_config=StandardConnectorConfig(
             download_dir=EXAMPLE_DOCS_DIRECTORY,
+            output_dir="",
             metadata_include="filename",
             flatten_metadata=True,
         ),
+        path=filename,
+        config=SimpleGitConfig(),
     )
     isd_elems = ingest_doc.process_file(strategy="hi_res")
     for elem in isd_elems:
@@ -122,12 +138,14 @@ def test_process_file_flatten_metadata_filename(filename: str):
 @pytest.mark.parametrize("filename", test_files)
 def test_process_file_flatten_metadata_filename_pagenum(filename: str):
     ingest_doc = GitIngestDoc(
-        path=filename,
-        config=SimpleGitConfig(
+        standard_config=StandardConnectorConfig(
             download_dir=EXAMPLE_DOCS_DIRECTORY,
+            output_dir="",
             metadata_include="filename,page_number",
             flatten_metadata=True,
         ),
+        path=filename,
+        config=SimpleGitConfig(),
     )
     isd_elems = ingest_doc.process_file(strategy="hi_res")
     for elem in isd_elems:

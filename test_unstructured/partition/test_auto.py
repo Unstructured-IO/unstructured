@@ -574,9 +574,7 @@ supported_filetypes = [
     not in (
         FileType.UNK,
         FileType.ZIP,
-        FileType.XML,
         FileType.XLS,
-        FileType.XLSX,
     )
 ]
 
@@ -611,6 +609,34 @@ def test_file_specific_produces_correct_filetype(filetype: FileType):
             elements = fun(str(file))
             assert all(el.metadata.filetype == FILETYPE_TO_MIMETYPE[filetype] for el in elements)
             break
+
+
+def test_auto_partition_xml_from_filename(filename="example-docs/factbook.xml"):
+    elements = partition(filename=filename, xml_keep_tags=False)
+
+    assert elements[0].text == "United States"
+    assert elements[0].metadata.filename == "factbook.xml"
+
+
+def test_auto_partition_xml_from_file(filename="example-docs/factbook.xml"):
+    with open(filename, "rb") as f:
+        elements = partition(file=f, xml_keep_tags=False)
+
+    assert elements[0].text == "United States"
+
+
+def test_auto_partition_xml_from_filename_with_tags(filename="example-docs/factbook.xml"):
+    elements = partition(filename=filename, xml_keep_tags=True)
+
+    assert elements[5].text == "<name>United States</name>"
+    assert elements[5].metadata.filename == "factbook.xml"
+
+
+def test_auto_partition_xml_from_file_with_tags(filename="example-docs/factbook.xml"):
+    with open(filename, "rb") as f:
+        elements = partition(file=f, xml_keep_tags=True)
+
+    assert elements[5].text == "<name>United States</name>"
 
 
 EXPECTED_XLSX_TABLE = """<table border="1" class="dataframe">
@@ -667,3 +693,23 @@ def test_auto_partition_xlsx_from_file(filename="example-docs/stanley-cups.xlsx"
     assert elements[0].metadata.text_as_html == EXPECTED_XLSX_TABLE
     assert elements[0].metadata.page_number == 1
     assert elements[0].metadata.filetype == EXPECTED_XLSX_FILETYPE
+
+
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
+def test_auto_partition_csv_from_filename(filename="example-docs/stanley-cups.csv"):
+    elements = partition(filename=filename)
+
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_XLSX_TEXT
+    assert elements[0].metadata.text_as_html == EXPECTED_XLSX_TABLE
+    assert elements[0].metadata.filetype == "text/csv"
+
+
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
+def test_auto_partition_csv_from_file(filename="example-docs/stanley-cups.csv"):
+    with open(filename, "rb") as f:
+        elements = partition(file=f)
+
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_XLSX_TEXT
+    assert isinstance(elements[0], Table)
+    assert elements[0].metadata.text_as_html == EXPECTED_XLSX_TABLE
+    assert elements[0].metadata.filetype == "text/csv"

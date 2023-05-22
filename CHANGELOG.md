@@ -1,8 +1,33 @@
-## 0.6.7-dev4
+## 0.6.9-dev1
 
 ### Enhancements
 
+* fast strategy for pdf now keeps element bounding box data
+
+### Features
+
+### Fixes
+
+* Adds additional MIME types for CSV
+
+## 0.6.8
+
+### Enhancements
+
+### Features
+
+* Add `partition_csv` for CSV files.
+
+### Fixes
+
+## 0.6.7
+
+### Enhancements
+
+* Deprecate `--s3-url` in favor of `--remote-url` in CLI
+* Refactor out non-connector-specific config variables
 * Add `file_directory` to metadata
+* Add `page_name` to metadata. Currently used for the sheet name in XLSX documents.
 * Added a `--partition-strategy` parameter to unstructured-ingest so that users can specify
   partition strategy in CLI. For example, `--partition-strategy fast`.
 * Added metadata for filetype.
@@ -12,6 +37,7 @@
 
 ### Features
 
+* Add `partition_xml` for XML files.
 * Add `partition_xlsx` for Microsoft Excel documents.
 
 ### Fixes
@@ -20,6 +46,7 @@
 * Makes `pytesseract` a function level import in `partition_pdf` so you can use the `"fast"`
   or `"hi_res"` strategies if `pytesseract` is not installed. Also adds the
   `required_dependencies` decorator for the `"hi_res"` and `"ocr_only"` strategies.
+* Fix to ensure `filename` is tracked in metadata for `docx` tables.
 
 ## 0.6.6
 

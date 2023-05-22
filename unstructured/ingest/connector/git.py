@@ -19,21 +19,6 @@ class SimpleGitConfig(BaseConnectorConfig):
     access_token: Optional[str]
     branch: Optional[str]
     file_glob: Optional[str]
-
-    # Standard Connector options
-    download_dir: str
-    # where to write structured data, with the directory structure matching the github repository
-    output_dir: str
-    preserve_downloads: bool = False
-    re_download: bool = False
-    download_only: bool = False
-    metadata_include: Optional[str] = None
-    metadata_exclude: Optional[str] = None
-    partition_by_api: bool = False
-    partition_endpoint: str = "https://api.unstructured.io/general/v0/general"
-    fields_include: str = "element_id,text,type,metadata"
-    flatten_metadata: bool = False
-
     repo_path: str = field(init=False, repr=False)
 
 
@@ -44,10 +29,10 @@ class GitIngestDoc(BaseIngestDoc):
 
     @property
     def filename(self):
-        return (Path(self.config.download_dir) / self.path).resolve()
+        return (Path(self.standard_config.download_dir) / self.path).resolve()
 
     def _output_filename(self):
-        return Path(self.config.output_dir) / f"{self.path}.json"
+        return Path(self.standard_config.output_dir) / f"{self.path}.json"
 
     def _create_full_tmp_dir_path(self):
         """includes directories in in the gitlab repository"""
@@ -55,14 +40,18 @@ class GitIngestDoc(BaseIngestDoc):
 
     def cleanup_file(self):
         """Removes the local copy of the file (or anything else) after successful processing."""
-        if not self.config.preserve_downloads and not self.config.download_only:
+        if not self.standard_config.preserve_downloads and not self.standard_config.download_only:
             logger.debug(f"Cleaning up {self}")
             os.unlink(self.filename)
 
     def get_file(self):
         """Fetches the "remote" doc and stores it locally on the filesystem."""
         self._create_full_tmp_dir_path()
-        if not self.config.re_download and self.filename.is_file() and self.filename.stat():
+        if (
+            not self.standard_config.re_download
+            and self.filename.is_file()
+            and self.filename.stat()
+        ):
             logger.debug(f"File exists: {self.filename}, skipping download")
             return
 
@@ -79,7 +68,7 @@ class GitIngestDoc(BaseIngestDoc):
 
     def write_result(self):
         """Write the structured json result for this doc. result must be json serializable."""
-        if self.config.download_only:
+        if self.standard_config.download_only:
             return
         output_filename = self._output_filename()
         output_filename.parent.mkdir(parents=True, exist_ok=True)
@@ -93,14 +82,16 @@ class GitConnector(BaseConnector):
     config: SimpleGitConfig
 
     def __post_init__(self) -> None:
-        self.cleanup_files = not self.config.preserve_downloads and not self.config.download_only
+        self.cleanup_files = (
+            not self.standard_config.preserve_downloads and not self.standard_config.download_only
+        )
 
     def cleanup(self, cur_dir=None):
         if not self.cleanup_files:
             return
 
         if cur_dir is None:
-            cur_dir = self.config.download_dir
+            cur_dir = self.standard_config.download_dir
         sub_dirs = os.listdir(cur_dir)
         os.chdir(cur_dir)
         for sub_dir in sub_dirs:
