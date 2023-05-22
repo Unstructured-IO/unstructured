@@ -64,13 +64,11 @@ ENV LD_LIBRARY_PATH="/usr/local/ssl/lib:$LD_LIBRARY_PATH"
 ENV SSL_CERT_FILE=/etc/ssl/certs/ca-bundle.crt
 
 # Install pandoc after SSL
-RUN yum -y update && \
-    yum -y install glibc glibc-devel gmp gmp-devel libffi libffi-devel zlib zlib-devel && \
-    wget https://github.com/jgm/pandoc/releases/download/3.1.2/pandoc-3.1.2-linux-arm64.tar.gz && \
+RUN wget https://github.com/jgm/pandoc/releases/download/3.1.2/pandoc-3.1.2-linux-arm64.tar.gz && \
     tar xvf pandoc-3.1.2-linux-arm64.tar.gz && \
     cd pandoc-3.1.2 && \
     cp bin/pandoc /usr/local/bin/ && \
-    cd .. && \
+    cd .. && rm -rf pandoc-3.1.2* && \
     yum clean all
 
 # Install Python
