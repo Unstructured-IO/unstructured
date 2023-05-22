@@ -1,3 +1,13 @@
+## 0.6.10
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* Adds functionality to try other common encodings if an error related to the encoding is raised and the user has not specified an encoding.
+
 ## 0.6.9-dev1
 
 ### Enhancements
