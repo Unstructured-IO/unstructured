@@ -5,4 +5,3 @@ pre-commit
 # NOTE(robinson) - Required pins for security scans
 jupyter-core>=4.11.2
 wheel>=0.38.1
-chardet>=5.1.0
