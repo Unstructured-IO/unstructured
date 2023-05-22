@@ -27,7 +27,6 @@ if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
     cp -a pdf-fast-reprocess-ingest-output/* test_unstructured_ingest/expected-structured-output/pdf-fast-reprocess/
 
 elif ! diff -ru test_unstructured_ingest/expected-structured-output/pdf-fast-reprocess pdf-fast-reprocess-ingest-output ; then
-
     echo
     echo "There are differences from the previously checked-in structured outputs."
     echo
