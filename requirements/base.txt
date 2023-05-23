@@ -18,6 +18,8 @@ certifi==2023.5.7
     #   requests
 cffi==1.15.1
     # via cryptography
+chardet==5.1.0
+    # via unstructured (setup.py)
 charset-normalizer==3.1.0
     # via
     #   pdfminer-six
