@@ -108,28 +108,28 @@ install-local-inference: install install-unstructured-inference install-detectro
 ## pip-compile:             compiles all base/dev/test requirements
 .PHONY: pip-compile
 pip-compile:
-	pip-compile --upgrade -o requirements/base.txt
+	pip-compile --upgrade requirements/base.in
 	# Extra requirements for huggingface staging functions
-	pip-compile --upgrade --extra huggingface -o requirements/huggingface.txt
+	pip-compile --upgrade requirements/huggingface.in
 	# NOTE(robinson) - We want the dependencies for detectron2 in the requirements.txt, but not
 	# the detectron2 repo itself. If detectron2 is in the requirements.txt file, an order of
 	# operations issue related to the torch library causes the install to fail
-	pip-compile --upgrade requirements/dev.in
 	pip-compile --upgrade requirements/test.in
+	pip-compile --upgrade requirements/dev.in
 	pip-compile --upgrade requirements/build.in
-	pip-compile --upgrade --extra local-inference -o requirements/local-inference.txt
+	pip-compile --upgrade requirements/local-inference.in
 	# NOTE(robinson) - doc/requirements.txt is where the GitHub action for building
 	# sphinx docs looks for additional requirements
 	cp requirements/build.txt docs/requirements.txt
-	pip-compile --upgrade --extra=s3        --output-file=requirements/ingest-s3.txt        requirements/base.txt setup.py
-	pip-compile --upgrade --extra=azure     --output-file=requirements/ingest-azure.txt     requirements/base.txt setup.py
-	pip-compile --upgrade --extra=discord   --output-file=requirements/ingest-azure.txt     requirements/base.txt setup.py
-	pip-compile --upgrade --extra=reddit    --output-file=requirements/ingest-reddit.txt    requirements/base.txt setup.py
-	pip-compile --upgrade --extra=github    --output-file=requirements/ingest-github.txt    requirements/base.txt setup.py
-	pip-compile --upgrade --extra=gitlab    --output-file=requirements/ingest-gitlab.txt    requirements/base.txt setup.py
-	pip-compile --upgrade --extra=slack     --output-file=requirements/ingest-slack.txt     requirements/base.txt setup.py
-	pip-compile --upgrade --extra=wikipedia --output-file=requirements/ingest-wikipedia.txt requirements/base.txt setup.py
-	pip-compile --upgrade --extra=google-drive --output-file=requirements/ingest-google-drive.txt  requirements/base.txt setup.py
+	pip-compile --upgrade requirements/ingest-s3.in
+	pip-compile --upgrade requirements/ingest-azure.in
+	pip-compile --upgrade requirements/ingest-azure.in
+	pip-compile --upgrade requirements/ingest-reddit.in
+	pip-compile --upgrade requirements/ingest-github.in
+	pip-compile --upgrade requirements/ingest-gitlab.in
+	pip-compile --upgrade requirements/ingest-slack.in
+	pip-compile --upgrade requirements/ingest-wikipedia.in
+	pip-compile --upgrade requirements/ingest-google-drive.in
 
 ## install-project-local:   install unstructured into your local python environment
 .PHONY: install-project-local
