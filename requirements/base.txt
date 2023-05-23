@@ -12,6 +12,7 @@ backoff==2.2.1
     # via argilla
 certifi==2023.5.7
     # via
+    #   -c requirements/base-constraints.in
     #   -r requirements/base.in
     #   httpcore
     #   httpx
