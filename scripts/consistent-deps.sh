@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 
 function join_by {
   local d=${1-} f=${2-}
@@ -11,13 +12,17 @@ excludefiles=("requirements/build.txt")
 shopt -s nullglob
 reqfiles=(requirements/*.txt)
 
-for excludefile in ${excludefiles[@]}
-do
-    reqfiles=( "${reqfiles[@]/$excludefile}" )
+for excludefile in "${excludefiles[@]}"; do
+  for i in "${!reqfiles[@]}"; do
+    if [[ ${reqfiles[i]} = "$excludefile" ]]; then
+      unset 'reqfiles[i]'
+    fi
+  done
 done
 
-echo "${reqfiles[@]}"
-reqstring="-r $(join_by ' -r ' ${reqfiles[@]})"
+
+reqstring=$(join_by ' -r ' "${reqfiles[@]}")
+reqstring="-r ${reqstring}"
 
 pipcommand="pip install --dry-run --ignore-installed ${reqstring}"
 $pipcommand
