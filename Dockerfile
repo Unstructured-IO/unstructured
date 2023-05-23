@@ -3,6 +3,7 @@
 FROM centos:centos7.9.2009
 
 ARG PIP_VERSION
+ARG ARCH
 
 # Install dependency packages
 RUN yum -y update && \
@@ -64,12 +65,12 @@ ENV LD_LIBRARY_PATH="/usr/local/ssl/lib:$LD_LIBRARY_PATH"
 ENV SSL_CERT_FILE=/etc/ssl/certs/ca-bundle.crt
 
 # Install pandoc after SSL
-RUN wget https://github.com/jgm/pandoc/releases/download/3.1.2/pandoc-3.1.2-linux-arm64.tar.gz && \
-    tar xvf pandoc-3.1.2-linux-arm64.tar.gz && \
+RUN if [ "${ARCH}" = "x86_64" ]; then export PANDOC_ARCH="amd64"; elif [ "${ARCH}" = "arm64" ] || [ "${ARCH}" = "aarch64" ]; then export PANDOC_ARCH="arm64"; fi && \
+    wget https://github.com/jgm/pandoc/releases/download/3.1.2/pandoc-3.1.2-linux-"${PANDOC_ARCH}".tar.gz && \
+    tar xvf pandoc-3.1.2-linux-"${PANDOC_ARCH}".tar.gz && \
     cd pandoc-3.1.2 && \
     cp bin/pandoc /usr/local/bin/ && \
-    cd .. && rm -rf pandoc-3.1.2* && \
-    yum clean all
+    cd .. && rm -rf pandoc-3.1.2*
 
 # Install Python
 RUN yum -y install bzip2-devel libffi-devel make git sqlite-devel && \
