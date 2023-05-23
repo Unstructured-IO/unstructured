@@ -198,6 +198,11 @@ version-sync:
 check-coverage:
 	coverage report --fail-under=95
 
+## check-deps:              check consistency of dependencies
+.PHONY: check-deps
+check-deps:
+	scripts/consistent-deps.sh
+
 ##########
 # Docker #
 ##########
