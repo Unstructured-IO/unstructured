@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+echo "Checking consistency of dependencies..."
+
 function join_by {
   local d=${1-} f=${2-}
   if shift 2; then
@@ -25,4 +27,9 @@ reqstring=$(join_by ' -r ' "${reqfiles[@]}")
 reqstring="-r ${reqstring}"
 
 pipcommand="pip install --dry-run --ignore-installed ${reqstring}"
-$pipcommand >> /dev/null
+if $($pipcommand >> /dev/null);
+then
+    echo "Everything looks fine!";
+else
+    exit 1
+fi
