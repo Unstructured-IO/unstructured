@@ -27,7 +27,7 @@ reqstring=$(join_by ' -r ' "${reqfiles[@]}")
 reqstring="-r ${reqstring}"
 
 pipcommand="pip install --dry-run --ignore-installed ${reqstring}"
-if $($pipcommand >> /dev/null);
+if $pipcommand >> /dev/null;
 then
     echo "Everything looks fine!";
 else
