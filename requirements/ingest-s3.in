@@ -1,0 +1,3 @@
+-c base.txt
+s3fs
+fsspec

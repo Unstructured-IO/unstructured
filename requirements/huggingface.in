@@ -1,0 +1,6 @@
+-c base.txt
+langdetect
+sacremoses
+sentencepiece
+torch
+transformers

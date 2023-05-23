@@ -1,0 +1,18 @@
+-c "base-constraints.in"
+argilla
+lxml
+msg_parser
+nltk
+openpyxl
+pandas
+pdfminer.six
+pillow
+pypandoc
+python-docx
+python-pptx
+python-magic
+markdown
+requests
+# NOTE(robinson) - The following dependencies are pinned
+# to address security scans
+certifi>=2022.12.07

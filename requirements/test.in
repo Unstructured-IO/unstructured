@@ -1,3 +1,4 @@
+-c base.txt
 black>=22.3.0
 coverage
 # NOTE(mrobinson) - Pinning click due to a unicode issue in black

@@ -1,0 +1,4 @@
+-c base.txt
+google-api-python-client
+# consistency with local-inference-pin
+protobuf<3.21
