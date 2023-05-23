@@ -1,7 +1,6 @@
 #!/bin/bash
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# "$SCRIPT_DIR/download-test-docs.sh"
 TEST_DOCS_FOLDER="$SCRIPT_DIR/docs"
 SLOW_FILES=("book-war-and-peace.txt")
 NUM_ITERATIONS=${NUM_ITERATIONS:-2}

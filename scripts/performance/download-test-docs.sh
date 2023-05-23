@@ -26,7 +26,7 @@ else
   echo "Local LOCAL_DOCS_DIR exists. Synchronizing local documents with S3..."
 
   # Sync files from S3 that don't exist locally
-  aws s3 sync "s3://$S3_BUCKET/$S3_DOCS_DIR" "$LOCAL_DOCS_DIR" --exclude "*" --include "*.*" --dryrun | grep "download:"
+  aws s3 sync "s3://$S3_BUCKET/$S3_DOCS_DIR" "$LOCAL_DOCS_DIR" --exclude "*" --include "*.*" | grep "download:"
 
   # Iterate through local files
   for file in "$LOCAL_DOCS_DIR"/*; do
