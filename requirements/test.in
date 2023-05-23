@@ -1,3 +1,4 @@
+-c constraints.in
 -c base.txt
 black>=22.3.0
 coverage

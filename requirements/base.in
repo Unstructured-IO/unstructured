@@ -1,4 +1,4 @@
--c "base-constraints.in"
+-c "constraints.in"
 argilla
 lxml
 msg_parser
@@ -13,6 +13,3 @@ python-pptx
 python-magic
 markdown
 requests
-# NOTE(robinson) - The following dependencies are pinned
-# to address security scans
-certifi>=2022.12.07
