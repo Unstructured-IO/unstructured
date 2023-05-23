@@ -2,10 +2,13 @@
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TEST_DOCS_FOLDER="$SCRIPT_DIR/docs"
+
+
 SLOW_FILES=("book-war-and-peace.txt")
 NUM_ITERATIONS=${NUM_ITERATIONS:-2}
 INSTANCE_TYPE=${INSTANCE_TYPE:-"unspecified"}
-# stats-name="$SCRIPT_DIR/get-stats-name.sh"
+
+
 # docker exec -it <container_name> "$SCRIPT_DIR/get-stats-name.sh"
 
 function process_file() {
@@ -43,8 +46,3 @@ done
 
 echo "Benchmarking completed. Results saved to $CSV_FILE"
 
-if [[ "$PUBLISH_RESULTS" == "true" ]]; then
-    RESULTS_BUCKET="$S3_BUCKET/$RESULTS_FOLDER"
-    echo "Publishing results to S3 bucket: $RESULTS_BUCKET"
-    aws s3 cp "$CSV_FILE" "s3://$RESULTS_BUCKET/${DATE}_benchmark_results_${INSTANCE_TYPE}_$("$SCRIPT_DIR/get-stats-name.sh").csv"
-fi
