@@ -123,7 +123,7 @@ pip-compile:
 	cp requirements/build.txt docs/requirements.txt
 	pip-compile --upgrade requirements/ingest-s3.in
 	pip-compile --upgrade requirements/ingest-azure.in
-	pip-compile --upgrade requirements/ingest-azure.in
+	pip-compile --upgrade requirements/ingest-discord.in
 	pip-compile --upgrade requirements/ingest-reddit.in
 	pip-compile --upgrade requirements/ingest-github.in
 	pip-compile --upgrade requirements/ingest-gitlab.in
