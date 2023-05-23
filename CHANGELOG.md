@@ -1,10 +1,12 @@
-## 0.6.9-dev1
+## 0.6.9-dev2
 
 ### Enhancements
 
 * fast strategy for pdf now keeps element bounding box data
 
 ### Features
+
+* Add max retries, request timeout and decay features for Biomed connector
 
 ### Fixes
 
