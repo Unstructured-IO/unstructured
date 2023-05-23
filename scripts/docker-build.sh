@@ -7,7 +7,6 @@ DOCKER_IMAGE="${DOCKER_IMAGE:-unstructured:dev}"
 
 DOCKER_BUILD_CMD=(docker buildx build --load -f Dockerfile \
   --build-arg PIP_VERSION="$PIP_VERSION" \
-  --build-arg ARCH="$ARCH" \
   --build-arg BUILDKIT_INLINE_CACHE=1 \
   --progress plain \
   --cache-from "$DOCKER_REPOSITORY":latest \
