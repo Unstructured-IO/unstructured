@@ -25,4 +25,4 @@ reqstring=$(join_by ' -r ' "${reqfiles[@]}")
 reqstring="-r ${reqstring}"
 
 pipcommand="pip install --dry-run --ignore-installed ${reqstring}"
-$pipcommand
+$pipcommand >> /dev/null
