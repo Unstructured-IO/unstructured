@@ -7,6 +7,7 @@
 certifi==2023.5.7
     # via
     #   -c requirements/base.txt
+    #   -c requirements/constraints.in
     #   requests
 charset-normalizer==3.1.0
     # via
@@ -30,6 +31,7 @@ update-checker==0.18.0
 urllib3==1.26.16
     # via
     #   -c requirements/base.txt
+    #   -c requirements/constraints.in
     #   requests
 websocket-client==1.5.2
     # via praw

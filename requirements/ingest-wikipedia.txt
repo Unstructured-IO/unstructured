@@ -9,6 +9,7 @@ beautifulsoup4==4.12.2
 certifi==2023.5.7
     # via
     #   -c requirements/base.txt
+    #   -c requirements/constraints.in
     #   requests
 charset-normalizer==3.1.0
     # via
@@ -27,6 +28,7 @@ soupsieve==2.4.1
 urllib3==1.26.16
     # via
     #   -c requirements/base.txt
+    #   -c requirements/constraints.in
     #   requests
 wikipedia==1.4.0
     # via -r requirements/ingest-wikipedia.in

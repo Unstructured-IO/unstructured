@@ -28,6 +28,7 @@ azure-storage-blob==12.16.0
 certifi==2023.5.7
     # via
     #   -c requirements/base.txt
+    #   -c requirements/constraints.in
     #   requests
 cffi==1.15.1
     # via
@@ -100,6 +101,7 @@ typing-extensions==4.6.0
 urllib3==1.26.16
     # via
     #   -c requirements/base.txt
+    #   -c requirements/constraints.in
     #   requests
 yarl==1.9.2
     # via aiohttp

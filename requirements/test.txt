@@ -11,6 +11,7 @@ black==23.3.0
 certifi==2023.5.7
     # via
     #   -c requirements/base.txt
+    #   -c requirements/constraints.in
     #   requests
 charset-normalizer==3.1.0
     # via
@@ -68,7 +69,7 @@ pluggy==1.0.0
     # via pytest
 pycodestyle==2.10.0
     # via flake8
-pydantic==1.10.7
+pydantic==1.10.8
     # via
     #   -c requirements/base.txt
     #   label-studio-sdk
@@ -117,6 +118,7 @@ typing-extensions==4.6.0
 urllib3==1.26.16
     # via
     #   -c requirements/base.txt
+    #   -c requirements/constraints.in
     #   requests
 vcrpy==4.2.1
     # via -r requirements/test.in

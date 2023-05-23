@@ -59,6 +59,7 @@ typing-extensions==4.6.0
 urllib3==1.26.16
     # via
     #   -c requirements/base.txt
+    #   -c requirements/constraints.in
     #   botocore
 wrapt==1.14.1
     # via

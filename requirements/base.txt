@@ -12,8 +12,7 @@ backoff==2.2.1
     # via argilla
 certifi==2023.5.7
     # via
-    #   -c requirements/base-constraints.in
-    #   -r requirements/base.in
+    #   -c requirements/constraints.in
     #   httpcore
     #   httpx
     #   requests
@@ -85,7 +84,7 @@ pillow==9.5.0
     #   python-pptx
 pycparser==2.21
     # via cffi
-pydantic==1.10.7
+pydantic==1.10.8
     # via argilla
 pygments==2.15.1
     # via rich
@@ -129,7 +128,7 @@ typing-extensions==4.6.0
     #   typer
 urllib3==1.26.16
     # via
-    #   -c requirements/base-constraints.in
+    #   -c requirements/constraints.in
     #   requests
 wrapt==1.14.1
     # via

@@ -13,6 +13,7 @@ anyio==3.6.2
 certifi==2023.5.7
     # via
     #   -c requirements/base.txt
+    #   -c requirements/constraints.in
     #   requests
 cffi==1.15.1
     # via
@@ -138,15 +139,17 @@ pillow==9.5.0
     #   torchvision
 portalocker==2.7.0
     # via iopath
-protobuf==4.23.1
-    # via onnxruntime
+protobuf==3.20.3
+    # via
+    #   -c requirements/constraints.in
+    #   onnxruntime
 pycocotools==2.0.6
     # via effdet
 pycparser==2.21
     # via
     #   -c requirements/base.txt
     #   cffi
-pydantic==1.10.7
+pydantic==1.10.8
     # via
     #   -c requirements/base.txt
     #   fastapi
@@ -236,6 +239,7 @@ unstructured-inference==0.4.4
 urllib3==1.26.16
     # via
     #   -c requirements/base.txt
+    #   -c requirements/constraints.in
     #   requests
 uvicorn==0.22.0
     # via unstructured-inference

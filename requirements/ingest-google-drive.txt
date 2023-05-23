@@ -9,6 +9,7 @@ cachetools==5.3.0
 certifi==2023.5.7
     # via
     #   -c requirements/base.txt
+    #   -c requirements/constraints.in
     #   requests
 charset-normalizer==3.1.0
     # via
@@ -37,7 +38,7 @@ idna==3.4
     #   requests
 protobuf==3.20.3
     # via
-    #   -r requirements/ingest-google-drive.in
+    #   -c requirements/constraints.in
     #   google-api-core
     #   googleapis-common-protos
 pyasn1==0.5.0
@@ -64,5 +65,6 @@ uritemplate==4.1.1
 urllib3==1.26.16
     # via
     #   -c requirements/base.txt
+    #   -c requirements/constraints.in
     #   google-auth
     #   requests

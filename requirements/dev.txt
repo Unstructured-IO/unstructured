@@ -129,6 +129,7 @@ jupyter-console==6.6.3
     # via jupyter
 jupyter-core==5.3.0
     # via
+    #   -c requirements/constraints.in
     #   ipykernel
     #   jupyter-client
     #   jupyter-console
@@ -363,7 +364,9 @@ webencodings==0.5.1
 websocket-client==1.5.2
     # via jupyter-server
 wheel==0.40.0
-    # via pip-tools
+    # via
+    #   -c requirements/constraints.in
+    #   pip-tools
 widgetsnbextension==4.0.7
     # via ipywidgets
 zipp==3.15.0
