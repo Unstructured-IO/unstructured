@@ -239,17 +239,17 @@ class MainProcess:
 @click.option(
     "--biomed-max-retries",
     default=1,
-    help="Max requests to OA Web Service API."
+    help="Max requests to OA Web Service API.",
 )
 @click.option(
     "--biomed-max-request-time",
     default=45,
-    help="(In seconds) Max request time to OA Web Service API."
+    help="(In seconds) Max request time to OA Web Service API.",
 )
 @click.option(
     "--biomed-decay",
     default=0.3,
-    help="(In float) Factor to multiply the delay between retries."
+    help="(In float) Factor to multiply the delay between retries.",
 )
 @click.option(
     "--wikipedia-page-title",
@@ -346,7 +346,8 @@ class MainProcess:
 @click.option(
     "--slack-token",
     default=None,
-    help="Bot token used to access Slack API, must have channels:history " "scope for the bot user",
+    help="Bot token used to access Slack API, must have channels:history "
+    "scope for the bot user",
 )
 @click.option(
     "--start-date",
@@ -528,7 +529,8 @@ def main(
             base_path = biomed_path
             if not biomed_path:
                 base_path = (
-                    f"{biomed_api_id or ''}-{biomed_api_from or ''}-" f"{biomed_api_until or ''}"
+                    f"{biomed_api_id or ''}-{biomed_api_from or ''}-"
+                    f"{biomed_api_until or ''}"
                 )
             hashed_dir_name = hashlib.sha256(
                 base_path.encode("utf-8"),
