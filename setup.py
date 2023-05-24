@@ -17,14 +17,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from typing import List
+from typing import List, Optional, Union
 
 from setuptools import find_packages, setup
 
 from unstructured.__version__ import __version__
 
 
-def load_requirements(file_list=None):
+def load_requirements(file_list: Optional[Union[str, List[str]]] = None) -> List[str]:
     if file_list is None:
         file_list = ["requirements/base.in"]
     if isinstance(file_list, str):
