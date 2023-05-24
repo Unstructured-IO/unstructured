@@ -1,7 +1,7 @@
+-c constraints.in
+-c base.txt
+-c test.txt
 jupyter
 ipython
 pip-tools
 pre-commit
-# NOTE(robinson) - Required pins for security scans
-jupyter-core>=4.11.2
-wheel>=0.38.1

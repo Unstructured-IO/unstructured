@@ -17,9 +17,27 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+from typing import List, Optional, Union
+
 from setuptools import find_packages, setup
 
 from unstructured.__version__ import __version__
+
+
+def load_requirements(file_list: Optional[Union[str, List[str]]] = None) -> List[str]:
+    if file_list is None:
+        file_list = ["requirements/base.in"]
+    if isinstance(file_list, str):
+        file_list = [file_list]
+    requirements: List[str] = []
+    for file in file_list:
+        with open(file, encoding="utf-8") as f:
+            requirements.extend(f.readlines())
+    requirements = [
+        req for req in requirements if not req.startswith("#") and not req.startswith("-")
+    ]
+    return requirements
+
 
 setup(
     name="unstructured",
@@ -49,54 +67,19 @@ setup(
     entry_points={
         "console_scripts": ["unstructured-ingest=unstructured.ingest.main:main"],
     },
-    install_requires=[
-        "argilla",
-        "chardet",
-        "lxml",
-        "msg_parser",
-        "nltk",
-        "openpyxl",
-        "pandas",
-        "pdfminer.six",
-        "pillow",
-        "pypandoc",
-        "python-docx",
-        "python-pptx",
-        "python-magic",
-        "markdown",
-        "requests",
-        # NOTE(robinson) - The following dependencies are pinned
-        # to address security scans
-        "certifi>=2022.12.07",
-    ],
+    install_requires=load_requirements(),
     extras_require={
-        "huggingface": [
-            "langdetect",
-            "sacremoses",
-            "sentencepiece",
-            "torch",
-            "transformers",
-        ],
-        "local-inference": [
-            "unstructured-inference==0.4.4",
-        ],
-        "s3": ["s3fs", "fsspec"],
-        "azure": ["adlfs", "fsspec"],
-        "discord": ["discord.py"],
-        "github": [
-            # NOTE - pygithub==1.58.0 fails due to https://github.com/PyGithub/PyGithub/issues/2436
-            # In the future, we can update this to pygithub>1.58.0
-            "pygithub==1.57.0",
-        ],
-        "gitlab": ["python-gitlab"],
-        "reddit": ["praw"],
-        "slack": ["slack_sdk"],
-        "wikipedia": ["wikipedia"],
-        "google-drive": [
-            "google-api-python-client",
-            # consistency with local-inference-pin
-            "protobuf<3.21",
-        ],
+        "huggingface": load_requirements("requirements/huggingface.in"),
+        "local-inference": load_requirements("requirements/local-inference.in"),
+        "s3": load_requirements("requirements/ingest-s3.in"),
+        "azure": load_requirements("requirements/ingest-azure.in"),
+        "discord": load_requirements("requirements/ingest-discord.in"),
+        "github": load_requirements("requirements/ingest-github.in"),
+        "gitlab": load_requirements("requirements/ingest-gitlab.in"),
+        "reddit": load_requirements("requirements/ingest-reddit.in"),
+        "slack": load_requirements("requirements/ingest-slack.in"),
+        "wikipedia": load_requirements("requirements/ingest-wikipedia.in"),
+        "google-drive": load_requirements("requirements/ingest-google-drive.in"),
     },
     package_dir={"unstructured": "unstructured"},
     package_data={"unstructured": ["nlp/*.txt"]},

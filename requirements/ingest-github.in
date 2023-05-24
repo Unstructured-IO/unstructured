@@ -1,0 +1,5 @@
+-c constraints.in
+-c base.txt
+# NOTE - pygithub==1.58.0 fails due to https://github.com/PyGithub/PyGithub/issues/2436
+# In the future, we can update this to pygithub>1.58.0
+pygithub==1.57.0
