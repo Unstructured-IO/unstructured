@@ -62,7 +62,7 @@ jobs:
       run: |
         python${{ matrix.python-version }} -m venv .venv
         source .venv/bin/activate
-        make install-ci
+        make install-base-pip-packages
     - name: Check for dependency conflicts
       run: |
         source .venv/bin/activate
