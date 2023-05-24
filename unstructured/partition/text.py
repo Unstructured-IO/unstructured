@@ -11,6 +11,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
+from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.partition.common import exactly_one
@@ -31,7 +32,7 @@ def partition_text(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
     text: Optional[str] = None,
-    encoding: Optional[str] = "utf-8",
+    encoding: Optional[str] = None,
     paragraph_grouper: Optional[Callable[[str], str]] = None,
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
@@ -60,16 +61,10 @@ def partition_text(
     exactly_one(filename=filename, file=file, text=text)
 
     if filename is not None:
-        with open(filename, encoding=encoding) as f:
-            try:
-                file_text = f.read()
-            except (UnicodeDecodeError, UnicodeError) as error:
-                raise error
+        encoding, file_text = read_txt_file(filename=filename, encoding=encoding)
 
     elif file is not None:
-        file_text = file.read()
-        if isinstance(file_text, bytes):
-            file_text = file_text.decode(encoding)
+        encoding, file_text = read_txt_file(file=file, encoding=encoding)
 
     elif text is not None:
         file_text = str(text)
