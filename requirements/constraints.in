@@ -1,3 +1,8 @@
+####################################################################################################
+# This file can house global constraints that aren't *direct* requirements of the package or any
+# extras. Putting a dependency here will only affect dependency sets that contain them -- in other
+# words, if something does not require a constraint, it will not be installed.
+####################################################################################################
 # NOTE(alan): Pinning to avoid conflicts with downstream ingest-s3
 urllib3<1.27, >=1.25.4
 # consistency with local-inference-pin
