@@ -1,7 +1,7 @@
 #!/bin/bash
 
 SLOW_FILES=("book-war-and-peace.txt")
-HI_RES_STRATEGY_FILES=("layout-parser-paper.pdf")
+HI_RES_STRATEGY_FILES=("layout-parser-paper-hi_res-16p.pdf")
 NUM_ITERATIONS=${NUM_ITERATIONS:-2}
 INSTANCE_TYPE=${INSTANCE_TYPE:-"unspecified"}
 
