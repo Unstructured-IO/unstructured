@@ -123,6 +123,7 @@ jobs:
       run: |
         python${{ matrix.python-version}} -m venv .venv
         source .venv/bin/activate
+        mkdir "$NLTK_DATA"
         make install-ci
     - name: Test
       run: |
@@ -158,6 +159,7 @@ jobs:
       run: |
         python${{ matrix.python-version}} -m venv .venv
         source .venv/bin/activate
+        mkdir "$NLTK_DATA"
         make install-ci
     - name: Test
       env:
