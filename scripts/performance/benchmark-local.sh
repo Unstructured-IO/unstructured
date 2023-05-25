@@ -1,7 +1,5 @@
 #!/bin/bash
 
-SLOW_FILES=("DA-619p.pdf" "layout-parser-paper-hi_res-16p.pdf" "layout-parser-paper-10p.jpg")
-HI_RES_STRATEGY_FILES=("layout-parser-paper-hi_res-16p.pdf")
 NUM_ITERATIONS=${NUM_ITERATIONS:-2}
 INSTANCE_TYPE=${INSTANCE_TYPE:-"unspecified"}
 GIT_HASH=${GIT_HASH:-"$(git rev-parse --short HEAD)"} # pass from host as default won't work in Docker container

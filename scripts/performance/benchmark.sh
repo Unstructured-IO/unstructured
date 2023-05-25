@@ -15,6 +15,7 @@ S3_RESULTS_DIR="performance-test/results"
 S3_DOCS_DIR="performance-test/docs"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SLOW_FILES=("DA-619p.pdf" "layout-parser-paper-hi_res-16p.pdf" "layout-parser-paper-10p.jpg")
+HI_RES_STRATEGY_FILES=("layout-parser-paper-hi_res-16p.pdf")
 GIT_HASH="$(git rev-parse --short HEAD)"
 
 aws s3 sync "s3://$S3_BUCKET/$S3_DOCS_DIR" "$SCRIPT_DIR/docs" --delete
@@ -40,13 +41,14 @@ if [[ "$DOCKER_TEST" == "true" ]]; then
     -e INSTANCE_TYPE="$INSTANCE_TYPE" \
     -e GIT_HASH="$GIT_HASH" \
     -e SLOW_FILES="${SLOW_FILES[*]}" \
+    -e HI_RES_STRATEGY_FILES="${HI_RES_STRATEGY_FILES[*]}" \
     -v "${SCRIPT_DIR}":/home/scripts/performance \
     unstructured:perf-test \
     bash /home/scripts/performance/benchmark-local.sh 2>&1 | tee >(while IFS= read -r line; do
         read_benchmark_logs_for_results
     done)
 else
-    NUM_ITERATIONS="$NUM_ITERATIONS" INSTANCE_TYPE="$INSTANCE_TYPE" GIT_HASH="$GIT_HASH" SLOW_FILES="${SLOW_FILES[*]}" "$SCRIPT_DIR"/benchmark-local.sh 2>&1 | \
+    NUM_ITERATIONS="$NUM_ITERATIONS" INSTANCE_TYPE="$INSTANCE_TYPE" GIT_HASH="$GIT_HASH" SLOW_FILES="${SLOW_FILES[*]}" HI_RES_STRATEGY_FILES="${HI_RES_STRATEGY_FILES[*]}" "$SCRIPT_DIR"/benchmark-local.sh 2>&1 | \
     tee >(while IFS= read -r line; do
         read_benchmark_logs_for_results
     done)
