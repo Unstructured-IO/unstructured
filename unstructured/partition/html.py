@@ -67,7 +67,7 @@ def partition_html(
         document = HTMLDocument.from_file(filename, parser=parser, encoding=encoding)
 
     elif file is not None:
-        _, file_text = read_txt_file(filename=filename, encoding=encoding)
+        _, file_text = read_txt_file(file=file, encoding=encoding)
         document = HTMLDocument.from_string(file_text, parser=parser)
 
     elif text is not None:
