@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# This is not intended to be called directly, but from scripts/performance/benchmark.sh. 
-# Separating this out into a separate script allows us to easily run the benchmark test inside a Docker container.
+# This is intended solely to be called by scripts/performance/benchmark.sh. 
+# This file is separated out to allow us to easily execute this part of the test script inside a Docker container.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TEST_DOCS_FOLDER="$SCRIPT_DIR/docs"
