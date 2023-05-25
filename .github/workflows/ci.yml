@@ -43,18 +43,16 @@ jobs:
       matrix:
         python-version: ["3.8"]
     runs-on: ubuntu-latest
-    env:
-      NLTK_DATA: ${{ github.workspace }}/nltk_data
+    needs: setup
     steps:
     - uses: actions/checkout@v3
     - uses: actions/cache@v3
       id: virtualenv-cache
       with:
-        path: |
-          .venv
-          nltk_data
+        path: .venv
         key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements/*.txt') }}
-        
+    # NOTE(robinson) - This is a fallback in case the lint job does not find the cache.
+    # We can take this out when we implement the fix in CORE-99
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
