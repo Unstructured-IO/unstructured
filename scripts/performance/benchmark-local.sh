@@ -17,7 +17,7 @@ function process_file() {
 
 mkdir -p "$SCRIPT_DIR/results" > /dev/null 2>&1
 DATE=$(date +"%Y-%m-%d_%H-%M-%S")
-RESULTS_FILE="$SCRIPT_DIR/results/${DATE}_benchmark_results_${INSTANCE_TYPE}_$("$SCRIPT_DIR/get-stats-name.sh").csv"
+RESULTS_FILE="$SCRIPT_DIR/results/${DATE}_benchmark_results_${INSTANCE_TYPE}_$("$SCRIPT_DIR/get-stats-name.sh")_$(git rev-parse --short HEAD).csv"
 echo "Test File,Iterations,Average Execution Time (s)" > "$RESULTS_FILE"
 
 echo "Warming up..."
