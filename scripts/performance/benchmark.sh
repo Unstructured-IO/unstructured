@@ -12,7 +12,10 @@
 
 S3_BUCKET="utic-dev-tech-fixtures"
 S3_RESULTS_DIR="performance-test/results"
+S3_DOCS_DIR="performance-test/docs"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+aws s3 sync "s3://$S3_BUCKET/$S3_DOCS_DIR" "$SCRIPT_DIR/docs" --delete
 # "$SCRIPT_DIR/download-test-docs.sh"
 
 # Save the results filename to a temporary file
