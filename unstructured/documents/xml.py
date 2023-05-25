@@ -4,6 +4,10 @@ from lxml import etree
 
 from unstructured.documents.base import Document, Page
 from unstructured.logger import logger
+from unstructured.partition.text import (
+    element_from_text,
+    split_by_paragraph,
+)
 
 VALID_PARSERS = Union[etree.HTMLParser, etree.XMLParser, None]
 
@@ -64,8 +68,18 @@ class XMLDocument(Document):
         if self.document_tree is None:
             try:
                 document_tree = etree.fromstring(content, self.parser)
+                if "<pre>" and "</pre>" in content:
+                    from bs4 import BeautifulSoup
+                    soup = BeautifulSoup(content, "html.parser")
+                    for element in soup.find_all("pre"):
+                        text_content = split_by_paragraph(element.get_text())
+                        for text in text_content:
+                            element = etree.Element("span")
+                            element.text = str(element_from_text(text=text))
+                            document_tree.append(element)
                 if document_tree is None:
                     raise ValueError("document_tree is None")
+
             # NOTE(robinson) - The following ValueError occurs with unicode strings. In that
             # case, we call back to encoding the string and passing in bytes.
             #     ValueError: Unicode strings with encoding declaration are not supported.
