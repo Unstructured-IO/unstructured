@@ -10,13 +10,17 @@
 #   - INSTANCE_TYPE: Type of benchmark instance (e.g., "c5.xlarge") (default: "unspecified")
 #   - PUBLISH_RESULTS: Set to "true" to publish results to S3 bucket (default: "false")
 
+SLOW_FILES=("DA-619p.pdf" "layout-parser-paper-hi_res-16p.pdf" "layout-parser-paper-10p.jpg")
+HI_RES_STRATEGY_FILES=("layout-parser-paper-hi_res-16p.pdf")
+NUM_ITERATIONS=${NUM_ITERATIONS:-2}
+INSTANCE_TYPE=${INSTANCE_TYPE:-"unspecified"}
+
 S3_BUCKET="utic-dev-tech-fixtures"
 S3_RESULTS_DIR="performance-test/results"
 S3_DOCS_DIR="performance-test/docs"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SLOW_FILES=("DA-619p.pdf" "layout-parser-paper-hi_res-16p.pdf" "layout-parser-paper-10p.jpg")
-HI_RES_STRATEGY_FILES=("layout-parser-paper-hi_res-16p.pdf")
 GIT_HASH="$(git rev-parse --short HEAD)"
+
 
 aws s3 sync "s3://$S3_BUCKET/$S3_DOCS_DIR" "$SCRIPT_DIR/docs" --delete
 

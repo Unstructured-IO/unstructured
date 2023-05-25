@@ -1,8 +1,7 @@
 #!/bin/bash
 
-NUM_ITERATIONS=${NUM_ITERATIONS:-2}
-INSTANCE_TYPE=${INSTANCE_TYPE:-"unspecified"}
-GIT_HASH=${GIT_HASH:-"$(git rev-parse --short HEAD)"} # pass from host as default won't work in Docker container
+# This is not intended to be called directly, but from scripts/performance/benchmark.sh. 
+# Separating this out into a separate script allows us to easily run the benchmark test inside a Docker container.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TEST_DOCS_FOLDER="$SCRIPT_DIR/docs"
