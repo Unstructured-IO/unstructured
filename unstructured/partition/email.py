@@ -6,6 +6,7 @@ from email.message import Message
 from functools import partial
 from typing import IO, Dict, List, Optional, Tuple, Union
 
+from unstructured.file_utils.encoding import read_txt_file
 from unstructured.partition.common import exactly_one
 
 if sys.version_info < (3, 8):
@@ -205,9 +206,6 @@ def partition_email(
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
     """
-    if not encoding:
-        encoding = "utf-8"
-
     if content_source not in VALID_CONTENT_SOURCES:
         raise ValueError(
             f"{content_source} is not a valid value for content_source. "
@@ -221,16 +219,11 @@ def partition_email(
     exactly_one(filename=filename, file=file, text=text)
 
     if filename is not None:
-        with open(filename) as f:
-            msg = email.message_from_file(f)
+        encoding, file_text = read_txt_file(filename=filename, encoding=encoding)
+        msg = email.message_from_string(file_text)
 
     elif file is not None:
-        file_content = file.read()
-        if isinstance(file_content, bytes):
-            file_text = file_content.decode(encoding)
-        else:
-            file_text = file_content
-
+        encoding, file_text = read_txt_file(file=file, encoding=encoding)
         msg = email.message_from_string(file_text)
 
     elif text is not None:
