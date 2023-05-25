@@ -14,6 +14,7 @@ S3_BUCKET="utic-dev-tech-fixtures"
 S3_RESULTS_DIR="performance-test/results"
 S3_DOCS_DIR="performance-test/docs"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+GIT_HASH="$(git rev-parse HEAD)"
 
 aws s3 sync "s3://$S3_BUCKET/$S3_DOCS_DIR" "$SCRIPT_DIR/docs" --delete
 # "$SCRIPT_DIR/download-test-docs.sh"
@@ -37,13 +38,14 @@ if [[ "$DOCKER_TEST" == "true" ]]; then
     --name unstructured-perf-test \
     -e NUM_ITERATIONS="$NUM_ITERATIONS" \
     -e INSTANCE_TYPE="$INSTANCE_TYPE" \
+    -e GIT_HASH="$GIT_HASH" \
     -v "${SCRIPT_DIR}":/home/scripts/performance \
     unstructured:perf-test \
     bash /home/scripts/performance/benchmark-local.sh 2>&1 | tee >(while IFS= read -r line; do
         read_benchmark_logs_for_results
     done)
 else
-    NUM_ITERATIONS="$NUM_ITERATIONS" INSTANCE_TYPE="$INSTANCE_TYPE" "$SCRIPT_DIR"/benchmark-local.sh 2>&1 | \
+    NUM_ITERATIONS="$NUM_ITERATIONS" INSTANCE_TYPE="$INSTANCE_TYPE" GIT_HASH="$GIT_HASH" "$SCRIPT_DIR"/benchmark-local.sh 2>&1 | \
     tee >(while IFS= read -r line; do
         read_benchmark_logs_for_results
     done)
