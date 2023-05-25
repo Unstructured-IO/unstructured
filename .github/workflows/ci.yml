@@ -57,13 +57,13 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Setup virtual environment (no cache hit)
-      if: steps.virtualenv-cache.outputs.cache-hit != 'true'
+      # if: steps.virtualenv-cache.outputs.cache-hit != 'true'
       run: |
         python${{ matrix.python-version }} -m venv .venv
         source .venv/bin/activate
         make install-ci
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
+    # - name: Setup tmate session
+    #   uses: mxschmitt/action-tmate@v3
     - name: Lint
       run: |
         source .venv/bin/activate
