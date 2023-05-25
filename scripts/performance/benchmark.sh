@@ -26,7 +26,7 @@ aws s3 sync "s3://$S3_BUCKET/$S3_DOCS_DIR" "$SCRIPT_DIR/docs" --delete
 
 # Save the results filename to a temporary file
 RESULTS_FILENAME_FILE=$(mktemp)
-trap "rm -f $RESULTS_FILENAME_FILE" EXIT
+trap 'rm -f $RESULTS_FILENAME_FILE' EXIT
 
 function read_benchmark_logs_for_results() {
     if [[ $line =~ Results\ saved\ to:\ ([^\ ]+) ]]; then

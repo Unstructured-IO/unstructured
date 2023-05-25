@@ -26,22 +26,23 @@ echo "Starting benchmark test..."
 for file in "$TEST_DOCS_FOLDER"/*; do
     echo "Testing file: $(basename "$file")"
 
-    if [[ " ${SLOW_FILES[@]} " =~ " $(basename "$file") " ]]; then
+    if [[ " ${SLOW_FILES[*]} " =~ $(basename "$file") ]]; then
         echo "File found in slow files list. Running once..."
         num_iterations=1
     else
+        # shellcheck disable=SC2153
         num_iterations=$NUM_ITERATIONS
     fi
     total_execution_time=0
     for ((i = 1; i <= num_iterations; i++)); do
         echo "Iteration $i"
         strategy="fast"
-        if [[ " ${HI_RES_STRATEGY_FILES[@]} " =~ " $(basename "$file") " ]]; then
+        if [[ " ${HI_RES_STRATEGY_FILES[*]} " =~ $(basename "$file") ]]; then
             echo "Testing with hi_res strategy"
             strategy="hi_res"
         fi
-        response=$( { time process_file "$file" "$strategy"; } 2>&1 )
-        if [[ $? -ne 0 ]]; then
+        
+        if ! response=$( { time process_file "$file" "$strategy"; } 2>&1 ); then
             echo "error: $response"
             exit 1
         fi
