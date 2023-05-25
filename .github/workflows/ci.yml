@@ -43,6 +43,8 @@ jobs:
       matrix:
         python-version: ["3.8"]
     runs-on: ubuntu-latest
+    env:
+      NLTK_DATA: ${{ github.workspace }}/nltk_data
     steps:
     - uses: actions/checkout@v3
     - uses: actions/cache@v3
@@ -50,7 +52,6 @@ jobs:
       with:
         path: |
           .venv
-          nltk_data
         key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements/*.txt') }}
         
     - name: Set up Python ${{ matrix.python-version }}
