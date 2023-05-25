@@ -251,13 +251,20 @@ def partition_email(
         #    <li>Item 1</li>=
         #    <li>Item 2<li>=
         # </ul>
+        if not encoding:
+            encoding = "utf-8"
         list_content = content.split("=\n")
         content = "".join(list_content)
         elements = partition_html(text=content, include_metadata=False)
         for element in elements:
             if isinstance(element, Text):
                 _replace_mime_encodings = partial(replace_mime_encodings, encoding=encoding)
-                element.apply(_replace_mime_encodings)
+                try:
+                    element.apply(_replace_mime_encodings)
+                except UnicodeDecodeError:
+                    # If decoding fails, try decoding with default encoding (utf-8)
+                    _replace_mime_encodings = partial(replace_mime_encodings)
+                    element.apply(_replace_mime_encodings)
     elif content_source == "text/plain":
         list_content = split_by_paragraph(content)
         elements = partition_text(text=content)
