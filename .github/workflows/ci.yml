@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 env:
-  GHA_CACHE_KEY: unstructured-${{ runner.os }}-${{ matrix.python-version }}-v1-${{ hashFiles('requirements/*.txt') }}
+  GHA_CACHE_KEY_SUFFIX: -v1-${{ hashFiles('requirements/*.txt') }}
 
 jobs:
   setup:
@@ -25,7 +25,7 @@ jobs:
         path: |
           .venv
           nltk_data
-        key: $GHA_CACHE_KEY
+        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_SUFFIX }}
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
@@ -50,7 +50,7 @@ jobs:
       id: virtualenv-cache
       with:
         path: .venv
-        key: $GHA_CACHE_KEY
+        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_SUFFIX }}
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
@@ -78,7 +78,7 @@ jobs:
       id: virtualenv-cache
       with:
         path: .venv
-        key: $GHA_CACHE_KEY
+        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_SUFFIX }}
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
@@ -118,7 +118,7 @@ jobs:
         path: |
           .venv
           nltk_data
-        key: $GHA_CACHE_KEY
+        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_SUFFIX }}
     - name: Setup virtual environment (no cache hit)
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
       run: |
@@ -154,7 +154,7 @@ jobs:
         path: |
           .venv
           nltk_data
-        key: $GHA_CACHE_KEY
+        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_SUFFIX }}
     - name: Setup virtual environment (no cache hit)
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
       run: |
@@ -211,7 +211,7 @@ jobs:
           path: |
             .venv
             nltk_data
-          key: $GHA_CACHE_KEY
+          key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_SUFFIX }}
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
