@@ -4,7 +4,7 @@ SLOW_FILES=("book-war-and-peace.txt")
 HI_RES_STRATEGY_FILES=("layout-parser-paper-hi_res-16p.pdf")
 NUM_ITERATIONS=${NUM_ITERATIONS:-2}
 INSTANCE_TYPE=${INSTANCE_TYPE:-"unspecified"}
-GIT_HASH=${GIT_HASH:-"$(git rev-parse HEAD)"} # pass from host as default won't work in Docker container
+GIT_HASH=${GIT_HASH:-"$(git rev-parse --short HEAD)"} # pass from host as default won't work in Docker container
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TEST_DOCS_FOLDER="$SCRIPT_DIR/docs"
@@ -13,6 +13,7 @@ TIMEFORMAT="%R"
 function process_file() {
     filepath=$1
     strategy=$2
+    # access element in the return value to make sure we got something back, otherwise error
     python3.8 -c 'from unstructured.partition.auto import partition; partition("'"$filepath"'", strategy="'"$strategy"'")[3]'
 }
 
