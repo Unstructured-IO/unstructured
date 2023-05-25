@@ -14,7 +14,7 @@ jobs:
   setup:
     strategy:
       matrix:
-        python-version: ["3.8","3.9","3.10"]
+        python-version: ["3.8"]
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
@@ -36,12 +36,15 @@ jobs:
       run: |
         python${{ matrix.python-version }} -m venv .venv
         source .venv/bin/activate
-        make install-cix
+        make install-ci
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+    
 
   check-deps:
     strategy:
       matrix:
-        python-version: ["3.8","3.9","3.10"]
+        python-version: ["3.8"]
     runs-on: ubuntu-latest
     needs: setup
     steps:
