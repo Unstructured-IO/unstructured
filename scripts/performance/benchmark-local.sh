@@ -1,25 +1,28 @@
 #!/bin/bash
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-TEST_DOCS_FOLDER="$SCRIPT_DIR/docs"
-
-
 SLOW_FILES=("book-war-and-peace.txt")
+HI_RES_STRATEGY_FILES=("layout-parser-paper_1-2.pdf" "layout-parser-paper_1-3.pdf")
 NUM_ITERATIONS=${NUM_ITERATIONS:-2}
 INSTANCE_TYPE=${INSTANCE_TYPE:-"unspecified"}
 
-
-# docker exec -it <container_name> "$SCRIPT_DIR/get-stats-name.sh"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+TEST_DOCS_FOLDER="$SCRIPT_DIR/docs"
+TIMEFORMAT="%R"
 
 function process_file() {
     filepath=$1
-    python3.8 -c 'from unstructured.partition.auto import partition; partition("'"$filepath"'")[3]'
+    strategy=$2
+    python3.8 -c 'from unstructured.partition.auto import partition; partition("'"$filepath"'", strategy="'"$strategy"'")[3]'
 }
 
 DATE=$(date +"%Y-%m-%d_%H-%M-%S")
-CSV_FILE="$SCRIPT_DIR/results/${DATE}_benchmark_results_${INSTANCE_TYPE}_$("$SCRIPT_DIR/get-stats-name.sh").csv"
-echo "Test File,Iterations,Execution Time (s)" > "$CSV_FILE"
+RESULTS_FILE="$SCRIPT_DIR/results/${DATE}_benchmark_results_${INSTANCE_TYPE}_$("$SCRIPT_DIR/get-stats-name.sh").csv"
+echo "Test File,Iterations,Average Execution Time (s)" > "$RESULTS_FILE"
 
+echo "Warming up..."
+process_file "$SCRIPT_DIR/warmup.pdf" "hi_res" > /dev/null
+
+echo "Starting benchmark test..."
 for file in "$TEST_DOCS_FOLDER"/*; do
     echo "Testing file: $(basename "$file")"
 
@@ -29,20 +32,31 @@ for file in "$TEST_DOCS_FOLDER"/*; do
     else
         num_iterations=$NUM_ITERATIONS
     fi
-
     total_execution_time=0
     for ((i = 1; i <= num_iterations; i++)); do
         echo "Iteration $i"
-        time_response=$( { time process_file "$file"; } 2>&1 )
-        if [ $? -ne 0 ]; then
-            echo "$time_response" # time_response is the error message
+        strategy="fast"
+        if [[ " ${HI_RES_STRATEGY_FILES[@]} " =~ " $(basename "$file") " ]]; then
+            echo "Using hi res"
+            strategy="hi_res"
+        fi
+        response=$( { time process_file "$file" "$strategy"; } 2>&1 )
+        if [[ $? -ne 0 ]]; then
+            echo "error: $response"
             exit 1
         fi
+        echo "$response"
+        time_response=$(echo "$response" | awk 'END { print }')
+        echo "Execution time: $time_response"
         total_execution_time=$(echo "$total_execution_time + $time_response" | bc)
+
     done
     average_time_seconds=$(echo "scale=3; $total_execution_time / $num_iterations" | bc)
-    echo "$(basename "$file"),$num_iterations,$average_time_seconds" >> "$CSV_FILE"
+    echo "Average execution time: $average_time_seconds"
+    echo "$(basename "$file"),$num_iterations,$average_time_seconds" >> "$RESULTS_FILE"
 done
 
-echo "Benchmarking completed. Results saved to $CSV_FILE"
+# NOTE: Be careful if updating this message. The benchmarking script looks for this message to get the CSV file name.
+echo "Benchmarking completed. Results saved to: $(basename "$RESULTS_FILE")"
+
 
