@@ -1,14 +1,27 @@
-## 0.6.9-dev2
+## 0.6.10-dev0
 
 ### Enhancements
 
 * Supprts epub tests since pandoc is updated in base image
+
+### Features
+
+
+### Fixes
+
+
+## 0.6.9
+
+### Enhancements
+
 * fast strategy for pdf now keeps element bounding box data
+* setup.py refactor
 
 ### Features
 
 ### Fixes
 
+* Adds functionality to try other common encodings if an error related to the encoding is raised and the user has not specified an encoding.
 * Adds additional MIME types for CSV
 
 ## 0.6.8

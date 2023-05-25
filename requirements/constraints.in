@@ -1,0 +1,15 @@
+####################################################################################################
+# This file can house global constraints that aren't *direct* requirements of the package or any
+# extras. Putting a dependency here will only affect dependency sets that contain them -- in other
+# words, if something does not require a constraint, it will not be installed.
+####################################################################################################
+# NOTE(alan): Pinning to avoid conflicts with downstream ingest-s3
+urllib3<1.27, >=1.25.4
+# consistency with local-inference-pin
+protobuf<3.21
+# NOTE(robinson) - Required pins for security scans
+jupyter-core>=4.11.2
+wheel>=0.38.1
+# NOTE(robinson) - The following pins are to address
+# vulnerabilities in dependency scans
+certifi>=2022.12.07

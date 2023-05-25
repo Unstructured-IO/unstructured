@@ -1,3 +1,5 @@
+-c constraints.in
+-c base.txt
 black>=22.3.0
 coverage
 # NOTE(mrobinson) - Pinning click due to a unicode issue in black
@@ -14,7 +16,3 @@ types-tabulate
 types-requests
 vcrpy
 ruff
-
-# NOTE(robinson) - The following pins are to address
-# vulnerabilities in dependency scans
-certifi>=2022.12.07
