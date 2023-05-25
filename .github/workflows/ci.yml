@@ -1,6 +1,9 @@
 name: CI
 
 on:
+  # NOTE(robinson) - We are limiting when we run CI avoid exceeding our 2,000 min/month limit.
+  # We can switch to running on push if we make this repo public or are fine with
+  # paying for CI minutes.
   push:
     branches: [ main ]
   pull_request:
@@ -20,9 +23,10 @@ jobs:
     - uses: actions/cache@v3
       id: virtualenv-cache
       with:
-        path:
+        path: |
           .venv
-        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-v100-${{ hashFiles('requirements/*.txt') }}
+          nltk_data
+        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements/*.txt') }}
         
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
@@ -34,34 +38,37 @@ jobs:
         python${{ matrix.python-version }} -m venv .venv
         source .venv/bin/activate
         make install-ci
-  lint:
-    needs: setup
-    strategy:
-      matrix:
-        python-version: ["3.8"]
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - uses: actions/cache/restore@v3
-      id: restore-virtualenv-cache
-      with:
-        path:
-          .venv
-        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-v100-${{ hashFiles('requirements/*.txt') }}
+
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+  # lint:
+  #   needs: setup
+  #   strategy:
+  #     matrix:
+  #       python-version: ["3.8"]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: actions/checkout@v3
+  #   - uses: actions/cache/restore@v3
+  #     id: restore-virtualenv-cache
+  #     with:
+  #       path:
+  #         .venv
+  #       key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements/*.txt') }}
         
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
-    # - name: Setup virtual environment (no cache hit)
-    #   if: steps.virtualenv-cache.outputs.cache-hit != 'true'
-    #   run: |
-    #     python${{ matrix.python-version }} -m venv .venv
-    #     source .venv/bin/activate
-    #     make install-ci
-    # - name: Setup tmate session
-    #   uses: mxschmitt/action-tmate@v3
-    - name: Lint
-      run: |
-        source .venv/bin/activate
-        make check
+  #   - name: Set up Python ${{ matrix.python-version }}
+  #     uses: actions/setup-python@v4
+  #     with:
+  #       python-version: ${{ matrix.python-version }}
+  #   - name: Setup virtual environment (no cache hit)
+  #     if: steps.virtualenv-cache.outputs.cache-hit != 'true'
+  #     run: |
+  #       python${{ matrix.python-version }} -m venv .venv
+  #       source .venv/bin/activate
+  #       make install-ci
+  #   # - name: Setup tmate session
+  #   #   uses: mxschmitt/action-tmate@v3
+  #   - name: Lint
+  #     run: |
+  #       source .venv/bin/activate
+  #       make check
