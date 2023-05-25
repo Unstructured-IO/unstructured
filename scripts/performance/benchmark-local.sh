@@ -38,7 +38,7 @@ for file in "$TEST_DOCS_FOLDER"/*; do
         echo "Iteration $i"
         strategy="fast"
         if [[ " ${HI_RES_STRATEGY_FILES[@]} " =~ " $(basename "$file") " ]]; then
-            echo "Using hi res"
+            echo "Testing with hi_res strategy"
             strategy="hi_res"
         fi
         response=$( { time process_file "$file" "$strategy"; } 2>&1 )
