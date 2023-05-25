@@ -1,7 +1,7 @@
 #!/bin/bash
 
 SLOW_FILES=("book-war-and-peace.txt")
-HI_RES_STRATEGY_FILES=("layout-parser-paper_1-2.pdf" "layout-parser-paper_1-3.pdf")
+HI_RES_STRATEGY_FILES=("layout-parser-paper.pdf")
 NUM_ITERATIONS=${NUM_ITERATIONS:-2}
 INSTANCE_TYPE=${INSTANCE_TYPE:-"unspecified"}
 
@@ -15,6 +15,7 @@ function process_file() {
     python3.8 -c 'from unstructured.partition.auto import partition; partition("'"$filepath"'", strategy="'"$strategy"'")[3]'
 }
 
+mkdir -p "$SCRIPT_DIR/results" > /dev/null 2>&1
 DATE=$(date +"%Y-%m-%d_%H-%M-%S")
 RESULTS_FILE="$SCRIPT_DIR/results/${DATE}_benchmark_results_${INSTANCE_TYPE}_$("$SCRIPT_DIR/get-stats-name.sh").csv"
 echo "Test File,Iterations,Average Execution Time (s)" > "$RESULTS_FILE"
