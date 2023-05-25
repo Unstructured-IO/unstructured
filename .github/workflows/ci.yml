@@ -1,9 +1,6 @@
 name: CI
 
 on:
-  # NOTE(robinson) - We are limiting when we run CI avoid exceeding our 2,000 min/month limit.
-  # We can switch to running on push if we make this repo public or are fine with
-  # paying for CI minutes.
   push:
     branches: [ main ]
   pull_request:
