@@ -23,6 +23,20 @@ def test_partition_html_from_filename():
 
 
 @pytest.mark.parametrize(
+    ("filename", "encoding", "error"),
+    [
+        ("example-10k-utf-16.html", "utf-8", UnicodeDecodeError),
+        ("example-steelJIS-datasheet-utf-16.html", "utf-8", UnicodeDecodeError),
+    ],
+)
+def test_partition_html_from_filename_raises_encoding_error(filename, encoding, error):
+    with pytest.raises(error):
+        filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+        with open(filename) as f:
+            partition_html(file=f, encoding=encoding)
+
+
+@pytest.mark.parametrize(
     "filename",
     ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html"],
 )
@@ -47,6 +61,20 @@ def test_partition_html_from_file():
 
 
 @pytest.mark.parametrize(
+    ("filename", "encoding", "error"),
+    [
+        ("example-10k-utf-16.html", "utf-8", UnicodeDecodeError),
+        ("example-steelJIS-datasheet-utf-16.html", "utf-8", UnicodeDecodeError),
+    ],
+)
+def test_partition_html_from_file_raises_encoding_error(filename, encoding, error):
+    with pytest.raises(error):
+        filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+        with open(filename) as f:
+            partition_html(file=f, encoding=encoding)
+
+
+@pytest.mark.parametrize(
     "filename",
     ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html"],
 )
@@ -55,6 +83,20 @@ def test_partition_html_from_file_default_encoding(filename):
     with open(filename) as f:
         elements = partition_html(file=f)
     assert len(elements) > 0
+
+
+@pytest.mark.parametrize(
+    ("filename", "encoding", "error"),
+    [
+        ("example-10k-utf-16.html", "utf-8", UnicodeDecodeError),
+        ("example-steelJIS-datasheet-utf-16.html", "utf-8", UnicodeDecodeError),
+    ],
+)
+def test_partition_html_from_file_rb_raises_encoding_error(filename, encoding, error):
+    with pytest.raises(error):
+        filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+        with open(filename, "rb") as f:
+            partition_html(file=f, encoding=encoding)
 
 
 @pytest.mark.parametrize(
