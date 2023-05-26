@@ -70,6 +70,7 @@ class XMLDocument(Document):
                 document_tree = etree.fromstring(content, self.parser)
                 if "<pre>" and "</pre>" in content:
                     from bs4 import BeautifulSoup
+
                     soup = BeautifulSoup(content, "html.parser")
                     for element in soup.find_all("pre"):
                         text_content = split_by_paragraph(element.get_text())
