@@ -31,11 +31,10 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Setup virtual environment (no cache hit)
-      # if: steps.virtualenv-cache.outputs.cache-hit != 'true'
       run: |
         python${{ matrix.python-version }} -m venv .venv
         source .venv/bin/activate
-        mkdir "$NLTK_DATA"
+        [ ! -d "$NLTK_DATA" ] && mkdir "$NLTK_DATA"
         make install-ci
 
   check-deps:
