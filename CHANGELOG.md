@@ -1,3 +1,15 @@
+## 0.6.11-dev0
+
+### Enhancements
+
+* Supprts epub tests since pandoc is updated in base image
+
+### Features
+
+
+### Fixes
+
+
 ## 0.6.10
 
 ### Enhancements
