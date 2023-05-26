@@ -2,7 +2,6 @@
 argilla
 chardet
 lxml
-lxrd
 msg_parser
 nltk
 openpyxl
@@ -15,3 +14,4 @@ python-pptx
 python-magic
 markdown
 requests
+xlrd
