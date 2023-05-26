@@ -8,6 +8,8 @@
 
 ### Fixes
 
+* Fix pre tag parsing
+
 ## 0.6.9
 
 ### Enhancements
