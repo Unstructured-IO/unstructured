@@ -19,7 +19,7 @@ certifi==2023.5.7
 cffi==1.15.1
     # via cryptography
 chardet==5.1.0
-    # via unstructured (setup.py)
+    # via -r requirements/base.in
 charset-normalizer==3.1.0
     # via
     #   pdfminer-six
@@ -123,7 +123,7 @@ tqdm==4.65.0
     #   nltk
 typer==0.9.0
     # via argilla
-typing-extensions==4.6.0
+typing-extensions==4.6.2
     # via
     #   pydantic
     #   rich
@@ -136,6 +136,8 @@ wrapt==1.14.1
     # via
     #   argilla
     #   deprecated
+xlrd==2.0.1
+    # via -r requirements/base.in
 xlsxwriter==3.1.1
     # via python-pptx
 zipp==3.15.0
