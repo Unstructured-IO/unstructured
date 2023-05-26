@@ -39,7 +39,7 @@ def partition(
     url: Optional[str] = None,
     include_page_breaks: bool = False,
     strategy: str = "auto",
-    encoding: str = "utf-8",
+    encoding: str = None,
     paragraph_grouper: Optional[Callable[[str], str]] = None,
     headers: Dict[str, str] = {},
     ssl_verify: bool = True,
