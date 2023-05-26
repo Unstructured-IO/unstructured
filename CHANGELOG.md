@@ -1,3 +1,13 @@
+## 0.6.10
+
+### Enhancements
+
+* XLS support from auto partiton
+
+### Features
+
+### Fixes
+
 ## 0.6.9
 
 ### Enhancements
