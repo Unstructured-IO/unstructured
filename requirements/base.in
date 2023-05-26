@@ -2,6 +2,7 @@
 argilla
 chardet
 lxml
+lxrd
 msg_parser
 nltk
 openpyxl
