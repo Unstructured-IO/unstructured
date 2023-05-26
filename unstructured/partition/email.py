@@ -263,8 +263,7 @@ def partition_email(
                     element.apply(_replace_mime_encodings)
                 except UnicodeDecodeError:
                     # If decoding fails, try decoding with default encoding (utf-8)
-                    _replace_mime_encodings = partial(replace_mime_encodings)
-                    element.apply(_replace_mime_encodings)
+                    element.apply(replace_mime_encodings)
     elif content_source == "text/plain":
         list_content = split_by_paragraph(content)
         elements = partition_text(text=content)
