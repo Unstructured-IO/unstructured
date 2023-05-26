@@ -173,8 +173,7 @@ class BiomedConnector(BaseConnector):
     ):
         super().__init__(standard_config, config)
         self.cleanup_files = (
-            not self.standard_config.preserve_downloads
-            and not self.standard_config.download_only
+            not self.standard_config.preserve_downloads and not self.standard_config.download_only
         )
 
     def _list_objects_api(self):
@@ -290,9 +289,7 @@ class BiomedConnector(BaseConnector):
                     download_filepath=(
                         Path(self.standard_config.download_dir) / local_path
                     ).resolve(),
-                    output_filepath=(
-                        Path(self.standard_config.output_dir) / local_path
-                    ).resolve(),
+                    output_filepath=(Path(self.standard_config.output_dir) / local_path).resolve(),
                 ),
             ]
         else:
@@ -329,6 +326,4 @@ class BiomedConnector(BaseConnector):
 
     def get_ingest_docs(self):
         files = self._list_objects_api() if self.config.is_api else self._list_objects()
-        return [
-            BiomedIngestDoc(self.standard_config, self.config, file) for file in files
-        ]
+        return [BiomedIngestDoc(self.standard_config, self.config, file) for file in files]
