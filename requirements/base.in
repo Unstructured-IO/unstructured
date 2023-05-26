@@ -1,0 +1,17 @@
+-c "constraints.in"
+argilla
+chardet
+lxml
+msg_parser
+nltk
+openpyxl
+pandas
+pdfminer.six
+pillow
+pypandoc
+python-docx
+python-pptx
+python-magic
+markdown
+requests
+xlrd

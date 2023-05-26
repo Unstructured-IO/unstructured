@@ -1,0 +1,12 @@
+include requirements/base.in
+include requirements/huggingface.in
+include requirements/local-inference.in
+include requirements/ingest-s3.in
+include requirements/ingest-azure.in
+include requirements/ingest-discord.in
+include requirements/ingest-github.in
+include requirements/ingest-gitlab.in
+include requirements/ingest-reddit.in
+include requirements/ingest-slack.in
+include requirements/ingest-wikipedia.in
+include requirements/ingest-google-drive.in

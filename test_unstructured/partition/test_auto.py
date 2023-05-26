@@ -695,6 +695,96 @@ def test_auto_partition_xlsx_from_file(filename="example-docs/stanley-cups.xlsx"
     assert elements[0].metadata.filetype == EXPECTED_XLSX_FILETYPE
 
 
+EXPECTED_XLS_TEXT_LEN = 883
+
+EXPECTED_XLS_INITIAL_45_CLEAN_TEXT = "MA What C datatypes are 8 bits? (assume i386)"
+
+EXPECTED_XLS_TABLE = (
+    """<table border="1" class="dataframe">
+  <tbody>
+    <tr>
+      <td>MA</td>
+      <td>What C datatypes are 8 bits? (assume i386)</td>
+      <td>int</td>
+      <td></td>
+      <td>float</td>
+      <td></td>
+      <td>double</td>
+      <td></td>
+      <td>char</td>
+    </tr>
+    <tr>
+      <td>TF</td>
+      <td>Bagpipes are awesome.</td>
+      <td>true</td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>ESS</td>
+      <td>How have the original Henry Hornbostel buildings """
+    """influenced campus architecture and design in the last 30 years?</td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>ORD</td>
+      <td>Rank the following in their order of operation.</td>
+      <td>Parentheses</td>
+      <td>Exponents</td>
+      <td>Division</td>
+      <td>Addition</td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>FIB</td>
+      <td>The student activities fee is</td>
+      <td>95</td>
+      <td>dollars for students enrolled in</td>
+      <td>19</td>
+      <td>units or more,</td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>MAT</td>
+      <td>Match the lower-case greek letter with its capital form.</td>
+      <td>λ</td>
+      <td>Λ</td>
+      <td>α</td>
+      <td>γ</td>
+      <td>Γ</td>
+      <td>φ</td>
+      <td>Φ</td>
+    </tr>
+  </tbody>
+</table>"""
+)
+
+
+def test_auto_partition_xls_from_filename(filename="example-docs/tests-example.xls"):
+    elements = partition(filename=filename)
+
+    assert all(isinstance(element, Table) for element in elements)
+    assert len(elements) == 3
+
+    assert clean_extra_whitespace(elements[0].text)[:45] == EXPECTED_XLS_INITIAL_45_CLEAN_TEXT
+    assert len(elements[0].text) == EXPECTED_XLS_TEXT_LEN
+    assert elements[0].metadata.text_as_html == EXPECTED_XLS_TABLE
+
+
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_auto_partition_csv_from_filename(filename="example-docs/stanley-cups.csv"):
     elements = partition(filename=filename)
