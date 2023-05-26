@@ -14,7 +14,6 @@
 
 * fast strategy for pdf now keeps element bounding box data
 * setup.py refactor
-* XLS support from auto partiton
 
 ### Features
 
