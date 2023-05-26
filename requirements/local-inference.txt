@@ -102,7 +102,7 @@ numpy==1.23.5
     #   transformers
 omegaconf==2.3.0
     # via effdet
-onnxruntime==1.14.1
+onnxruntime==1.15.0
     # via unstructured-inference
 opencv-python==4.7.0.72
     # via
@@ -226,7 +226,7 @@ tqdm==4.65.0
     #   transformers
 transformers==4.29.2
     # via unstructured-inference
-typing-extensions==4.6.0
+typing-extensions==4.6.2
     # via
     #   -c requirements/base.txt
     #   huggingface-hub

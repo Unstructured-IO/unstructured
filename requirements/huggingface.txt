@@ -90,7 +90,7 @@ tqdm==4.65.0
     #   transformers
 transformers==4.29.2
     # via -r requirements/huggingface.in
-typing-extensions==4.6.0
+typing-extensions==4.6.2
     # via
     #   -c requirements/base.txt
     #   huggingface-hub
