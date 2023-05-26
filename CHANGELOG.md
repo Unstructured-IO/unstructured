@@ -1,4 +1,4 @@
-## 0.6.10-dev0
+## 0.6.11-dev0
 
 ### Enhancements
 
@@ -9,6 +9,16 @@
 
 ### Fixes
 
+
+## 0.6.10
+
+### Enhancements
+
+* XLS support from auto partiton
+
+### Features
+
+### Fixes
 
 ## 0.6.9
 
