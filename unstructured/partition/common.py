@@ -93,14 +93,14 @@ def _add_element_metadata(
         )
         if isinstance(element, list):
             for _element in element:
-                _element.metadata = metadata.merge(_element.metadata)
+                _element.metadata = _element.metadata.merge(metadata)
             elements.extend(element)
         elif isinstance(element, PageBreak):
             page_number += 1
             if include_page_breaks:
                 elements.append(element)
         else:
-            element.metadata = metadata.merge(element.metadata)
+            element.metadata = element.metadata.merge(metadata)
             elements.append(element)
     return elements
 
