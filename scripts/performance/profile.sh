@@ -22,7 +22,9 @@
 # Package dependencies can be installed with `pip install -r requirements.txt`
 
 # Usage example:
-# ./performance_profiling.sh
+# ./scripts/performance/profile.sh
+
+# NOTE: because memray does not build wheels for ARM-Linux, this script can not run in an ARM Docker container on an M1 Mac (though emulated AMD would work).
 
 SCRIPT_DIR=$(dirname "$0")
 
