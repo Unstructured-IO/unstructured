@@ -2,7 +2,7 @@
 
 # Usage: 
 #   - Set the required environment variables (listed below)
-#   - Run the script: ./benchmark.sh
+#   - Run the script: ./scripts/performance/benchmark.sh
 
 # Environment Variables:
 #   - DOCKER_TEST: Set to "true" to run benchmark inside a Docker container (default: "false")
@@ -66,5 +66,5 @@ fi
 if [[ "$PUBLISH_RESULTS" == "true" ]]; then
     S3_RESULTS_PATH="$S3_BUCKET/$S3_RESULTS_DIR"
     echo "Publishing results to S3 bucket: $S3_RESULTS_PATH"
-    aws s3 cp "$SCRIPT_DIR/results/$results_filename" "s3://$S3_RESULTS_PATH/"
+    aws s3 cp "$SCRIPT_DIR/benchmark_results/$results_filename" "s3://$S3_RESULTS_PATH/"
 fi

@@ -14,9 +14,9 @@ function process_file() {
     python3.8 -c 'from unstructured.partition.auto import partition; partition("'"$filepath"'", strategy="'"$strategy"'")[3]'
 }
 
-mkdir -p "$SCRIPT_DIR/results" > /dev/null 2>&1
+mkdir -p "$SCRIPT_DIR/benchmark_results" > /dev/null 2>&1
 DATE=$(date +"%Y-%m-%d_%H-%M-%S")
-RESULTS_FILE="$SCRIPT_DIR/results/${DATE}_benchmark_results_${INSTANCE_TYPE}_$("$SCRIPT_DIR/get-stats-name.sh")_$GIT_HASH.csv"
+RESULTS_FILE="$SCRIPT_DIR/benchmark_results/${DATE}_benchmark_results_${INSTANCE_TYPE}_$("$SCRIPT_DIR/get-stats-name.sh")_$GIT_HASH.csv"
 echo "Test File,Iterations,Average Execution Time (s)" > "$RESULTS_FILE"
 
 echo "Warming up..."
