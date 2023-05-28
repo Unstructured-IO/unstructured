@@ -1,10 +1,9 @@
 #!/bin/bash
 
+# Performance profiling and visualization of code using cProfile and memray.
 
-# Script: Performance Profiling and Visualization
-# Description: This script enables performance profiling and visualization of code using cProfile and memray.
-# Author: Your Name
-# Version: 1.0
+# Environment Variables:
+#   - SYNC_S3_DOCS: Set to true to sync test documents from S3 (default: false)
 
 # Usage: 
 # - Run the script and choose the profiling mode: 'run' or 'view'.
@@ -25,7 +24,6 @@
 # Usage example:
 # ./performance_profiling.sh
 
-
 SCRIPT_DIR=$(dirname "$0")
 
 # Convert the relative path to module notation
@@ -43,8 +41,10 @@ S3_DOCS_DIR="performance-test/docs"
 # Create PROFILE_RESULTS_DIR if it doesn't exist
 mkdir -p "$PROFILE_RESULTS_DIR"
 
-# Sync files from S3 to the local "docs" directory
-aws s3 sync "s3://$S3_BUCKET/$S3_DOCS_DIR" "$SCRIPT_DIR/docs" --delete
+if [[ "$SYNC_S3_DOCS" == "true" ]]; then
+  # Sync files from S3 to the local "docs" directory
+  aws s3 sync "s3://$S3_BUCKET/$S3_DOCS_DIR" "$SCRIPT_DIR/docs"
+fi
 
 view_profile() {
   if [ -n "$1" ]; then
