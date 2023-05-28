@@ -50,7 +50,6 @@ view_profile() {
   if [ -n "$1" ]; then
     result_file="$1"
   fi
-  echo "result_file: $result_file"
 
   while true; do
     if [[ -z $result_file ]]; then
@@ -78,7 +77,6 @@ view_profile() {
     fi
 
     while true; do
-      echo "Result file: $result_file"
       read -p "Choose profile type: (1) time (2) memory (b) back, (q) quit: " -n 1 profile_type
       echo
 

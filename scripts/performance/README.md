@@ -8,7 +8,7 @@ The profiling script allows a user to inspect how time time and memory are spent
 ## Install
 Benchmarking requires no additional dependencies and should work without any initial setup.
 Profiling has a few dependencies which can be installed with: 
-`pip install -r requirements.txt`
+`pip install -r scripts/performance/requirements.txt`
 
 ## Run
 ### Benchmark
@@ -18,10 +18,10 @@ Export / assign desired environment variable settings:
 - INSTANCE_TYPE: Type of benchmark instance (e.g., "c5.xlarge") (default: "unspecified")
 - PUBLISH_RESULTS: Set to "true" to publish results to S3 bucket (default: "false")
 
-Usage: `./benchmark.sh`
+Usage: `./scripts/performance/benchmark.sh`
 
 ### Profile
-Usage: `./performance_profiling.sh`
+Usage: `./scripts/performance/profile.sh`
 - Run the script and choose the profiling mode: 'run' or 'view'.
 - In the 'run' mode, you can profile custom files or select existing test files.
 - In the 'view' mode, you can view previously generated profiling results.
