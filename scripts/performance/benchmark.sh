@@ -5,10 +5,11 @@
 #   - Run the script: ./scripts/performance/benchmark.sh
 
 # Environment Variables:
-#   - DOCKER_TEST: Set to "true" to run benchmark inside a Docker container (default: "false")
+#   - DOCKER_TEST: Set to "true" to run benchmark inside a Docker container (default: false)
 #   - NUM_ITERATIONS: Number of iterations for benchmark (e.g., 100) (default: 3)
 #   - INSTANCE_TYPE: Type of benchmark instance (e.g., "c5.xlarge") (default: "unspecified")
-#   - PUBLISH_RESULTS: Set to "true" to publish results to S3 bucket (default: "false")
+#   - PUBLISH_RESULTS: Set to "true" to publish results to S3 bucket (default: false)
+#   - SYNC_S3_DOCS: Set to "true" to sync test documents from S3 (default: false)
 
 SLOW_FILES=("DA-619p.pdf" "layout-parser-paper-hi_res-16p.pdf" "layout-parser-paper-10p.jpg")
 HI_RES_STRATEGY_FILES=("layout-parser-paper-hi_res-16p.pdf")
@@ -21,8 +22,10 @@ S3_DOCS_DIR="performance-test/docs"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 GIT_HASH="$(git rev-parse --short HEAD)"
 
-
-aws s3 sync "s3://$S3_BUCKET/$S3_DOCS_DIR" "$SCRIPT_DIR/docs" --delete
+if [[ "$SYNC_S3_DOCS" == "true" ]]; then
+  # Sync files from S3 to the local "docs" directory
+  aws s3 sync "s3://$S3_BUCKET/$S3_DOCS_DIR" "$SCRIPT_DIR/docs"
+fi
 
 # Save the results filename to a temporary file
 RESULTS_FILENAME_FILE=$(mktemp)
