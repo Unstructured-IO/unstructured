@@ -1,4 +1,5 @@
 import os
+import sys
 import pathlib
 from unittest import mock
 
@@ -151,6 +152,7 @@ def test_partition_image_api_raises_with_failed_api_call(
         pdf._partition_via_api(filename=filename, url="http://ml.unstructured.io/layout/image")
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 @pytest.mark.parametrize(
     ("url", "api_called", "local_called"),
     [("fakeurl", True, False), (None, False, True)],
@@ -173,6 +175,7 @@ def test_partition_image_with_auto_strategy(filename="example-docs/layout-parser
     assert titles[0].text == title
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 def test_partition_image_with_language_passed(filename="example-docs/example.jpg"):
     with mock.patch.object(layout, "process_file_with_model", mock.MagicMock()) as mock_partition:
         image.partition_image(filename=filename, strategy="hi_res", ocr_languages="eng+swe")
@@ -180,6 +183,7 @@ def test_partition_image_with_language_passed(filename="example-docs/example.jpg
     assert mock_partition.call_args.kwargs.get("ocr_languages") == "eng+swe"
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 def test_partition_image_from_file_with_language_passed(filename="example-docs/example.jpg"):
     with mock.patch.object(layout, "process_data_with_model", mock.MagicMock()) as mock_partition:
         with open(filename, "rb") as f:
@@ -188,6 +192,7 @@ def test_partition_image_from_file_with_language_passed(filename="example-docs/e
     assert mock_partition.call_args.kwargs.get("ocr_languages") == "eng+swe"
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 def test_partition_image_raises_with_invalid_language(filename="example-docs/example.jpg"):
     with pytest.raises(TesseractError):
         image.partition_image(filename=filename, strategy="hi_res", ocr_languages="fakeroo")

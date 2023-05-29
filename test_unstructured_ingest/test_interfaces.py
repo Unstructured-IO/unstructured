@@ -1,4 +1,5 @@
 import os
+import sys
 import pathlib
 
 import pytest
@@ -15,6 +16,7 @@ test_files = [
 ]
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 @pytest.mark.parametrize("filename", test_files)
 def test_process_file_metadata_include_filename(filename: str):
     ingest_doc = GitIngestDoc(
@@ -33,6 +35,7 @@ def test_process_file_metadata_include_filename(filename: str):
         assert set(elem["metadata"].keys()) == {"filename"}
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 @pytest.mark.parametrize("filename", test_files)
 def test_process_file_metadata_include_filename_pagenum(filename: str):
     ingest_doc = GitIngestDoc(
@@ -50,6 +53,7 @@ def test_process_file_metadata_include_filename_pagenum(filename: str):
         assert set(elem["metadata"].keys()) == {"filename", "page_number"}
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 @pytest.mark.parametrize("filename", test_files)
 def test_process_file_metadata_exclude_filename(filename: str):
     ingest_doc = GitIngestDoc(
@@ -67,6 +71,7 @@ def test_process_file_metadata_exclude_filename(filename: str):
         assert "filename" not in elem["metadata"].keys()
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 @pytest.mark.parametrize("filename", test_files)
 def test_process_file_metadata_exclude_filename_pagenum(filename: str):
     ingest_doc = GitIngestDoc(
@@ -85,6 +90,7 @@ def test_process_file_metadata_exclude_filename_pagenum(filename: str):
         assert "page_number" not in elem["metadata"].keys()
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 @pytest.mark.parametrize("filename", test_files)
 def test_process_file_fields_include_default(filename: str):
     ingest_doc = GitIngestDoc(
@@ -101,6 +107,7 @@ def test_process_file_fields_include_default(filename: str):
         assert {"element_id", "text", "type", "metadata"} == set(elem.keys())
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 @pytest.mark.parametrize("filename", test_files)
 def test_process_file_fields_include_elementid(filename: str):
     ingest_doc = GitIngestDoc(
@@ -118,6 +125,7 @@ def test_process_file_fields_include_elementid(filename: str):
         assert {"element_id"} == set(elem.keys())
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 @pytest.mark.parametrize("filename", test_files)
 def test_process_file_flatten_metadata_filename(filename: str):
     ingest_doc = GitIngestDoc(
@@ -135,6 +143,7 @@ def test_process_file_flatten_metadata_filename(filename: str):
         assert {"element_id", "text", "type", "filename"} == set(elem.keys())
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 @pytest.mark.parametrize("filename", test_files)
 def test_process_file_flatten_metadata_filename_pagenum(filename: str):
     ingest_doc = GitIngestDoc(

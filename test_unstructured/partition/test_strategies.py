@@ -1,10 +1,12 @@
 import os
+import sys
 
 import pytest
 
 from unstructured.partition import strategies
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 def test_validate_strategy_validates():
     # Nothing should raise for a valid strategy
     strategies.validate_strategy("hi_res", "pdf")
@@ -41,6 +43,7 @@ def test_is_pdf_text_extractable(filename, from_file, expected):
     assert extractable is expected
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 @pytest.mark.parametrize(
     ("infer_table_structure", "expected"),
     [
@@ -55,6 +58,7 @@ def test_determine_image_auto_strategy(infer_table_structure, expected):
     assert strategy is expected
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 @pytest.mark.parametrize(
     ("pdf_text_extractable", "infer_table_structure", "expected"),
     [

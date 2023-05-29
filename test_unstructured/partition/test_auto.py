@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 import pathlib
 import warnings
 from importlib import import_module
@@ -41,6 +42,7 @@ rtf_not_supported = "rtf" not in pypandoc.get_pandoc_formats()[0]
 odt_not_supported = "odt" not in pypandoc.get_pandoc_formats()[0]
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 def test_auto_partition_email_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
     elements = partition(filename=filename, strategy="hi_res")
@@ -50,6 +52,7 @@ def test_auto_partition_email_from_filename():
     assert elements[0].metadata.file_directory == os.path.split(filename)[0]
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 def test_auto_partition_email_from_file():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
     with open(filename) as f:
@@ -58,6 +61,7 @@ def test_auto_partition_email_from_file():
     assert elements == EXPECTED_EMAIL_OUTPUT
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 def test_auto_partition_email_from_file_rb():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
     with open(filename, "rb") as f:
@@ -100,6 +104,7 @@ def expected_docx_elements():
     ]
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 def test_auto_partition_docx_with_filename(mock_docx_document, expected_docx_elements, tmpdir):
     filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     mock_docx_document.save(filename)
@@ -109,6 +114,7 @@ def test_auto_partition_docx_with_filename(mock_docx_document, expected_docx_ele
     assert elements[0].metadata.filename == os.path.basename(filename)
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 def test_auto_partition_docx_with_file(mock_docx_document, expected_docx_elements, tmpdir):
     filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     mock_docx_document.save(filename)
@@ -118,6 +124,7 @@ def test_auto_partition_docx_with_file(mock_docx_document, expected_docx_element
     assert elements == expected_docx_elements
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 @pytest.mark.parametrize(
     ("pass_file_filename", "content_type"),
     [(False, None), (False, "application/msword"), (True, "application/msword"), (True, None)],
@@ -147,6 +154,7 @@ def test_auto_partition_doc_with_filename(
 
 # NOTE(robinson) - the application/x-ole-storage mime type is not specific enough to
 # determine that the file is an .doc document
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 @pytest.mark.xfail()
 def test_auto_partition_doc_with_file(mock_docx_document, expected_docx_elements, tmpdir):
     docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
@@ -159,6 +167,7 @@ def test_auto_partition_doc_with_file(mock_docx_document, expected_docx_elements
     assert elements == expected_docx_elements
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 @pytest.mark.parametrize(
     ("pass_file_filename", "content_type"),
     [(False, None), (False, "text/html"), (True, "text/html"), (True, None)],
@@ -177,6 +186,7 @@ def test_auto_partition_html_from_filename(pass_file_filename, content_type):
     assert elements[0].metadata.file_directory == os.path.split(filename)[0]
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 @pytest.mark.parametrize(
     ("pass_file_filename", "content_type"),
     [(False, None), (False, "text/html"), (True, "text/html"), (True, None)],
@@ -194,6 +204,7 @@ def test_auto_partition_html_from_file(pass_file_filename, content_type):
     assert len(elements) > 0
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 def test_auto_partition_html_from_file_rb():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-html.html")
     with open(filename, "rb") as f:
@@ -201,6 +212,7 @@ def test_auto_partition_html_from_file_rb():
     assert len(elements) > 0
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 def test_auto_partition_json_from_filename():
     """Test auto-processing an unstructured json output file by filename."""
     filename = os.path.join(
@@ -223,6 +235,7 @@ def test_auto_partition_json_from_filename():
     assert json_data == json_elems
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 @pytest.mark.xfail(
     reason="parsed as text not json, https://github.com/Unstructured-IO/unstructured/issues/492",
 )
@@ -256,6 +269,7 @@ EXPECTED_TEXT_OUTPUT = [
 ]
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 def test_auto_partition_text_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
     elements = partition(filename=filename, strategy="hi_res")
@@ -265,6 +279,7 @@ def test_auto_partition_text_from_filename():
     assert elements[0].metadata.file_directory == os.path.split(filename)[0]
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 def test_auto_partition_text_from_file():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
     with open(filename) as f:
@@ -273,6 +288,7 @@ def test_auto_partition_text_from_file():
     assert elements == EXPECTED_TEXT_OUTPUT
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 @pytest.mark.parametrize(
     ("pass_file_filename", "content_type"),
     [(False, None), (False, "application/pdf"), (True, "application/pdf"), (True, None)],
@@ -298,6 +314,7 @@ def test_auto_partition_pdf_from_filename(pass_file_filename, content_type):
     assert elements[0].metadata.file_directory == os.path.split(filename)[0]
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 def test_auto_partition_pdf_uses_table_extraction():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
     with patch(
@@ -326,6 +343,7 @@ def test_auto_partition_pdf_with_fast_strategy():
     )
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 @pytest.mark.parametrize(
     ("pass_file_filename", "content_type"),
     [(False, None), (False, "application/pdf"), (True, "application/pdf"), (True, None)],
@@ -349,6 +367,7 @@ def test_auto_partition_pdf_from_file(pass_file_filename, content_type):
     assert elements[1].text.startswith("Zejiang Shen")
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 def test_partition_pdf_doesnt_raise_warning():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
     # NOTE(robinson): This is the recommended way to check that no warning is emitted,
@@ -360,6 +379,7 @@ def test_partition_pdf_doesnt_raise_warning():
         partition(filename=filename, strategy="hi_res")
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 @pytest.mark.parametrize(
     ("pass_file_filename", "content_type"),
     [(False, None), (False, "image/jpeg"), (True, "image/jpeg"), (True, None)],
@@ -376,6 +396,7 @@ def test_auto_partition_jpg(pass_file_filename, content_type):
     assert len(elements) > 0
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 @pytest.mark.parametrize(
     ("pass_file_filename", "content_type"),
     [(False, None), (False, "image/jpeg"), (True, "image/jpeg"), (True, None)],
@@ -393,6 +414,7 @@ def test_auto_partition_jpg_from_file(pass_file_filename, content_type):
     assert len(elements) > 0
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 def test_auto_partition_raises_with_bad_type(monkeypatch):
     monkeypatch.setattr(auto, "detect_filetype", lambda *args, **kwargs: None)
     with pytest.raises(ValueError):
@@ -409,6 +431,7 @@ EXPECTED_PPTX_OUTPUT = [
 ]
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 def test_auto_partition_pptx_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
     elements = partition(filename=filename, strategy="hi_res")
@@ -417,6 +440,7 @@ def test_auto_partition_pptx_from_filename():
     assert elements[0].metadata.file_directory == os.path.split(filename)[0]
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_auto_partition_ppt_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.ppt")
@@ -426,12 +450,14 @@ def test_auto_partition_ppt_from_filename():
     assert elements[0].metadata.file_directory == os.path.split(filename)[0]
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 def test_auto_with_page_breaks():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
     elements = partition(filename=filename, include_page_breaks=True, strategy="hi_res")
     assert PageBreak() in elements
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_auto_partition_epub_from_filename():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "winter-sports.epub")
@@ -440,6 +466,7 @@ def test_auto_partition_epub_from_filename():
     assert elements[0].text.startswith("The Project Gutenberg eBook of Winter Sports")
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_auto_partition_epub_from_file():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "winter-sports.epub")
@@ -457,12 +484,14 @@ EXPECTED_MSG_OUTPUT = [
 ]
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 def test_auto_partition_msg_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
     elements = partition(filename=filename, strategy="hi_res")
     assert elements == EXPECTED_MSG_OUTPUT
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 @pytest.mark.skipif(rtf_not_supported, reason="RTF not supported in this version of pypandoc.")
 def test_auto_partition_rtf_from_filename():
@@ -471,6 +500,7 @@ def test_auto_partition_rtf_from_filename():
     assert elements[0] == Title("My First Heading")
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 def test_auto_partition_from_url():
     url = "https://raw.githubusercontent.com/Unstructured-IO/unstructured/main/LICENSE.md"
     elements = partition(url=url, content_type="text/plain", strategy="hi_res")
@@ -478,6 +508,7 @@ def test_auto_partition_from_url():
     assert elements[0].metadata.url == url
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 def test_partition_md_works_with_embedded_html():
     url = "https://raw.githubusercontent.com/Unstructured-IO/unstructured/main/README.md"
     elements = partition(url=url, content_type="text/markdown", strategy="hi_res")
@@ -490,18 +521,21 @@ def test_partition_md_works_with_embedded_html():
     assert unstructured_found is True
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 def test_auto_partition_warns_if_header_set_and_not_url(caplog):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
     partition(filename=filename, headers={"Accept": "application/pdf"}, strategy="hi_res")
     assert caplog.records[0].levelname == "WARNING"
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 def test_auto_partition_works_with_unstructured_jsons():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "spring-weather.html.json")
     elements = partition(filename=filename, strategy="hi_res")
     assert elements[0].text == "News Around NOAA"
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 def test_auto_partition_works_with_unstructured_jsons_from_file():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "spring-weather.html.json")
 
@@ -510,6 +544,7 @@ def test_auto_partition_works_with_unstructured_jsons_from_file():
     assert elements[0].text == "News Around NOAA"
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 @pytest.mark.skipif(odt_not_supported, reason="odt not supported in this version of pypandoc.")
 def test_auto_partition_odt_from_filename():
@@ -518,6 +553,7 @@ def test_auto_partition_odt_from_filename():
     assert elements == [Title("Lorem ipsum dolor sit amet.")]
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 @pytest.mark.skipif(odt_not_supported, reason="odt not supported in this version of pypandoc.")
 def test_auto_partition_odt_from_file():

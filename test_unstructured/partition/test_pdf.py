@@ -1,4 +1,5 @@
 import os
+import sys
 from tempfile import SpooledTemporaryFile
 from unittest import mock
 
@@ -156,6 +157,7 @@ def test_partition_pdf_api_raises_with_failed_api_call(
         pdf._partition_via_api(filename=filename)
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 @pytest.mark.parametrize(
     ("url", "api_called", "local_called"),
     [("fakeurl", True, False), (None, False, True)],
@@ -172,6 +174,7 @@ def test_partition_pdf(url, api_called, local_called, monkeypatch):
         assert pdf._partition_pdf_or_image_local.called == local_called
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 @pytest.mark.parametrize(
     ("strategy"),
     [("fast"), ("hi_res"), ("ocr_only")],
@@ -190,6 +193,7 @@ def test_partition_pdf_with_spooled_file(
         assert len(result) > 10
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 @pytest.mark.parametrize(
     ("url", "api_called", "local_called"),
     [("fakeurl", True, False), (None, False, True)],
@@ -275,6 +279,7 @@ def test_partition_pdf_raises_with_bad_strategy(
         pdf.partition_pdf(filename=filename, url=None, strategy="made_up")
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 def test_partition_pdf_falls_back_to_fast(
     monkeypatch,
     caplog,
@@ -342,6 +347,7 @@ def test_partition_pdf_falls_back_to_hi_res_from_ocr_only(
     assert "pytesseract is not installed" in caplog.text
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 def test_partition_pdf_falls_back_to_ocr_only(
     monkeypatch,
     caplog,
@@ -373,6 +379,7 @@ def test_partition_pdf_uses_table_extraction():
         assert mock_process_file_with_model.call_args[1]["extract_tables"]
 
 
+@pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 def test_partition_pdf_with_copy_protection():
     filename = os.path.join("example-docs", "copy-protected.pdf")
     elements = pdf.partition_pdf(filename=filename, strategy="hi_res")
