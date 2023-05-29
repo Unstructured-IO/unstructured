@@ -52,7 +52,7 @@ six==1.16.0
     # via
     #   -c requirements/base.txt
     #   python-dateutil
-typing-extensions==4.6.0
+typing-extensions==4.6.2
     # via
     #   -c requirements/base.txt
     #   aioitertools

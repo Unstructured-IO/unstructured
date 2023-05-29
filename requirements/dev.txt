@@ -39,8 +39,6 @@ cffi==1.15.1
     #   argon2-cffi-bindings
 cfgv==3.3.1
     # via pre-commit
-chardet==5.1.0
-    # via -r requirements/dev.in
 click==8.1.3
     # via
     #   -c requirements/base.txt
@@ -144,7 +142,7 @@ jupyter-core==5.3.0
     #   qtconsole
 jupyter-events==0.6.3
     # via jupyter-server
-jupyter-server==2.5.0
+jupyter-server==2.6.0
     # via
     #   nbclassic
     #   notebook-shim
@@ -192,6 +190,8 @@ notebook==6.5.4
     # via jupyter
 notebook-shim==0.2.3
     # via nbclassic
+overrides==7.3.1
+    # via jupyter-server
 packaging==23.1
     # via
     #   -c requirements/base.txt
@@ -221,7 +221,7 @@ platformdirs==3.5.1
     #   virtualenv
 pre-commit==3.3.2
     # via -r requirements/dev.in
-prometheus-client==0.16.0
+prometheus-client==0.17.0
     # via
     #   jupyter-server
     #   nbclassic
@@ -346,7 +346,7 @@ traitlets==5.9.0
     #   nbformat
     #   notebook
     #   qtconsole
-typing-extensions==4.6.0
+typing-extensions==4.6.2
     # via
     #   -c requirements/base.txt
     #   -c requirements/test.txt

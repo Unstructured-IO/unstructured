@@ -1,3 +1,25 @@
+## 0.6.11
+
+### Enhancements
+
+* Supprts epub tests since pandoc is updated in base image
+
+### Features
+
+
+### Fixes
+
+
+## 0.6.10
+
+### Enhancements
+
+* XLS support from auto partiton
+
+### Features
+
+### Fixes
+
 ## 0.6.9
 
 ### Enhancements

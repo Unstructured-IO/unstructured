@@ -105,6 +105,11 @@ install-detectron2: install-tensorboard
 .PHONY: install-local-inference
 install-local-inference: install install-unstructured-inference install-detectron2
 
+.PHONY: install-pandoc
+install-pandoc:
+	ARCH=${ARCH} ./scripts/install-pandoc.sh
+
+
 ## pip-compile:             compiles all base/dev/test requirements
 .PHONY: pip-compile
 pip-compile:
