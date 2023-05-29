@@ -219,8 +219,7 @@ class BiomedConnector(BaseConnector):
             adapter = HTTPAdapter(max_retries=retries)
             session.mount("http://", adapter)
             session.mount("https://", adapter)
-            session.timeout = self.config.request_timeout
-            response = session.get(endpoint_url)
+            response = session.get(endpoint_url, timeout=self.config.request_timeout)
             soup = BeautifulSoup(response.content, features="lxml")
             urls = [link["href"] for link in soup.find_all("link")]
 
