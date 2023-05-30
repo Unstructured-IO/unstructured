@@ -1,8 +1,19 @@
+## 0.6.12-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* Fixes an issue in `_add_element_metadata` that caused all elements to have `page_number=1`
+  in the element metadata.
+
 ## 0.6.11
 
 ### Enhancements
 
-* Supprts epub tests since pandoc is updated in base image
+* Supports epub tests since pandoc is updated in base image
 
 ### Features
 
