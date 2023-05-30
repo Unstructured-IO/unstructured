@@ -6,6 +6,9 @@
 
 ### Fixes
 
+* Fixes an issue in `_add_element_metadata` that caused all elements to have `page_number=1`
+  in the element metadata.
+* Adds `.log` as a file extension for TXT files.
 * Adds functionality to try other common encodings for email (`.eml`) files if an error related to the encoding is raised and the user has not specified an encoding.
 * Allow passed encoding to be used in the `replace_mime_encodings`
 
@@ -13,7 +16,7 @@
 
 ### Enhancements
 
-* Supprts epub tests since pandoc is updated in base image
+* Supports epub tests since pandoc is updated in base image
 
 ### Features
 
