@@ -1,6 +1,8 @@
-## 0.6.12-dev0
+## 0.6.12
 
 ### Enhancements
+
+* Updated inference package
 
 ### Features
 
