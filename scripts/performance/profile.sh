@@ -48,11 +48,154 @@ if [[ "$SYNC_S3_DOCS" == "true" ]]; then
   aws s3 sync "s3://$S3_BUCKET/$S3_DOCS_DIR" "$SCRIPT_DIR/docs"
 fi
 
+
+has_display() {
+  if [[ -z "$DISPLAY" ]]; then
+    return 0  # Display is set, indicating a graphical interface is present
+  else
+    return 1  # Display is not set, indicating a headless context
+  fi
+}
+
+view_profile_headless() {
+  # Several of the visualization options require a graphical interface. If DISPLAY is not set, we can't use those options.
+
+  extension=".bin"
+  result_file="${result_file%.*}$extension"
+
+  if [[ ! -f "$result_file" ]]; then
+    echo "Result file not found. Please choose a different profile type or go back."
+  else
+    while true; do
+      read -p "Choose visualization type: (1) tree (2) summary (3) stats (b) back, (q) quit: " -n 1 visualization_type
+      echo
+
+      if [[ $visualization_type == "b" ]]; then
+        unset result_file  # Unset the result_file variable to go back to the "Select a file" view
+        break
+      elif [[ $visualization_type == "q" ]]; then
+        exit 0
+      fi
+
+      case $visualization_type in
+        "1")
+          python3 -m memray tree "$result_file"
+          ;;
+        "2")
+          python3 -m memray summary "$result_file"
+          ;;
+        "3")
+          python3 -m memray stats "$result_file"
+          ;;
+        *)
+          echo "Invalid visualization type. Please try again."
+          ;;
+      esac
+    done
+  fi
+}
+
+view_profile_with_head() {
+  while true; do
+    read -p "Choose profile type: (1) time (2) memory (b) back, (q) quit: " -n 1 profile_type
+    echo
+
+    if [[ $profile_type == "b" ]]; then
+      unset result_file  # Unset the result_file variable to go back to the "Select a file" view
+      break
+    elif [[ $profile_type == "q" ]]; then
+      exit 0
+    fi
+
+    if [[ $profile_type == "1" ]]; then
+      extension=".prof"
+    elif [[ $profile_type == "2" ]]; then
+      extension=".bin"
+    else
+      echo "Invalid profile type. Please try again."
+      continue
+    fi
+
+    result_file="${result_file%.*}$extension"
+
+    if [[ ! -f "$result_file" ]]; then
+      echo "Result file not found. Please choose a different profile type or go back."
+      continue
+    fi
+
+    if [[ $profile_type == "2" ]]; then
+      while true; do
+        read -p "Choose visualization type: (1) flamegraph (2) table (3) tree (4) summary (5) stats (b) back, (q) quit: " -n 1 visualization_type
+        echo
+
+        if [[ $visualization_type == "b" ]]; then
+          break
+        elif [[ $visualization_type == "q" ]]; then
+          exit 0
+        fi
+
+        case $visualization_type in
+          "1")
+            rm -f "${result_file}.memray.html"
+            python3 -m memray flamegraph -o "${result_file}.memray.html" "$result_file"
+            open "${result_file}.memray.html"
+            ;;
+          "2")
+            rm -f "${result_file}.table.html"
+            python3 -m memray table -o "${result_file}.table.html" "$result_file"
+            open "${result_file}.table.html"
+            ;;
+          "3")
+            python3 -m memray tree "$result_file"
+            ;;
+          "4")
+            python3 -m memray summary "$result_file"
+            ;;
+          "5")
+            python3 -m memray stats "$result_file"
+            ;;
+          *)
+            echo "Invalid visualization type. Please try again."
+            ;;
+        esac
+      done
+    else
+      while true; do
+        read -p "Choose visualization type: (1) flamegraph (2) snakeviz (b) back, (q) quit: " -n 1 visualization_type
+        echo
+
+        if [[ $visualization_type == "b" ]]; then
+          break
+        elif [[ $visualization_type == "q" ]]; then
+          exit 0
+        fi
+
+        case $visualization_type in
+          "1")
+            flameprof_file="${result_file}.flameprof.svg"
+            rm -f "$flameprof_file"
+            python3 -m flameprof "$result_file" > "$flameprof_file"
+            open "$flameprof_file"
+            ;;
+          "2")
+            snakeviz "$result_file"
+            ;;
+          *)
+            echo "Invalid visualization type. Please try again."
+            ;;
+        esac
+      done
+    fi
+
+    break  # Return to the beginning
+  done
+}
+
 view_profile() {
+
   if [ -n "$1" ]; then
     result_file="$1"
   fi
-
   while true; do
     if [[ -z $result_file ]]; then
       echo "Available result files:"
@@ -78,99 +221,11 @@ view_profile() {
       result_file="${result_files[$selection]}"
     fi
 
-    while true; do
-      read -p "Choose profile type: (1) time (2) memory (b) back, (q) quit: " -n 1 profile_type
-      echo
-
-      if [[ $profile_type == "b" ]]; then
-        unset result_file  # Unset the result_file variable to go back to the "Select a file" view
-        break
-      elif [[ $profile_type == "q" ]]; then
-        exit 0
-      fi
-
-      if [[ $profile_type == "1" ]]; then
-        extension=".prof"
-      elif [[ $profile_type == "2" ]]; then
-        extension=".bin"
-      else
-        echo "Invalid profile type. Please try again."
-        continue
-      fi
-
-      result_file="${result_file%.*}$extension"
-
-      if [[ ! -f "$result_file" ]]; then
-        echo "Result file not found. Please choose a different profile type or go back."
-        continue
-      fi
-
-      if [[ $profile_type == "2" ]]; then
-        while true; do
-          read -p "Choose visualization type: (1) flamegraph (2) table (3) tree (4) summary (5) stats (b) back, (q) quit: " -n 1 visualization_type
-          echo
-
-          if [[ $visualization_type == "b" ]]; then
-            break
-          elif [[ $visualization_type == "q" ]]; then
-            exit 0
-          fi
-
-          case $visualization_type in
-            "1")
-              rm -f "${result_file}.memray.html"
-              python3 -m memray flamegraph -o "${result_file}.memray.html" "$result_file"
-              open "${result_file}.memray.html"
-              ;;
-            "2")
-              rm -f "${result_file}.table.html"
-              python3 -m memray table -o "${result_file}.table.html" "$result_file"
-              open "${result_file}.table.html"
-              ;;
-            "3")
-              python3 -m memray tree "$result_file"
-              ;;
-            "4")
-              python3 -m memray summary "$result_file"
-              ;;
-            "5")
-              python3 -m memray stats "$result_file"
-              ;;
-            *)
-              echo "Invalid visualization type. Please try again."
-              ;;
-          esac
-        done
-      else
-        while true; do
-          read -p "Choose visualization type: (1) flamegraph (2) snakeviz (b) back, (q) quit: " -n 1 visualization_type
-          echo
-
-          if [[ $visualization_type == "b" ]]; then
-            break
-          elif [[ $visualization_type == "q" ]]; then
-            exit 0
-          fi
-
-          case $visualization_type in
-            "1")
-              flameprof_file="${result_file}.flameprof.svg"
-              rm -f "$flameprof_file"
-              python3 -m flameprof "$result_file" > "$flameprof_file"
-              open "$flameprof_file"
-              ;;
-            "2")
-              snakeviz "$result_file"
-              ;;
-            *)
-              echo "Invalid visualization type. Please try again."
-              ;;
-          esac
-        done
-      fi
-
-      break  # Return to the beginning
-    done
+    if has_display; then
+      view_profile_with_head "$result_file"
+    else
+      view_profile_headless "$result_file"
+    fi
   done
 }
 
