@@ -316,7 +316,6 @@ def test_auto_partition_pdf_with_fast_strategy():
         file=None,
         url=None,
         include_page_breaks=False,
-        encoding="utf-8",
         infer_table_structure=False,
         strategy="fast",
         ocr_languages="eng",
