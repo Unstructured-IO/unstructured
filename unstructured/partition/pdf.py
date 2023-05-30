@@ -269,12 +269,12 @@ def _process_pdfminer_pages(
 
         text_segments = []
         for obj in page:
-            # NOTE(robinson) - "Figure" is an example of an object type that does
-            # not have a get_text method
             x1, y2, x2, y1 = obj.bbox
             y1 = height - y1
             y2 = height - y2
 
+            # NOTE(robinson) - "Figure" is an example of an object type that does
+            # not have a get_text method
             if not hasattr(obj, "get_text"):
                 continue
             _text = obj.get_text()
