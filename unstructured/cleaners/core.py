@@ -194,7 +194,7 @@ def replace_mime_encodings(text: str, encoding: str = "utf-8") -> str:
     -------
     5 w=E2=80-99s -> 5 w’s
     """
-    return quopri.decodestring(text.encode()).decode(encoding)
+    return quopri.decodestring(text.encode(encoding)).decode(encoding)
 
 
 def clean_prefix(text: str, pattern: str, ignore_case: bool = False, strip: bool = True) -> str:
