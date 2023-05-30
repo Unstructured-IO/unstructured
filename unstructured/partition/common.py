@@ -79,12 +79,11 @@ def _add_element_metadata(
     elements: List[Element] = []
     page_number: int = 1
     for layout_element in layout_elements:
-        try:
-            text_as_html = layout_element.text_as_html
-        except AttributeError:
-            text_as_html = None
-            
         element = normalize_layout_element(layout_element)
+        if hasattr(layout_element, "text_as_html"):
+            text_as_html: Optional[str] = layout_element.text_as_html
+        else:
+            text_as_html = None
         # NOTE(robinson) - defer to the page number that's already in the metadata
         # if it's available
         if hasattr(element, "metadata"):
