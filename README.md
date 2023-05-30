@@ -80,16 +80,10 @@ elements = partition(filename="example-docs/fake-email.eml")
 print("\n\n".join([str(el) for el in elements]))
 ```
 
-And if you installed with `local-inference`, you should be able to run this as well:
-
-```python
-from unstructured.partition.auto import partition
-
-elements = partition("example-docs/layout-parser-paper.pdf")
-print("\n\n".join([str(el) for el in elements]))
-```
-
-The `unstructured` library currently supports the following document types.
+The following table shows the document types the `unstructured` library currently supports.
+`partition` will recognize each of these document types and route the document to the
+appropriate partitioning function. If you already know your document type, you can use
+the partitioning function listed in the table directly.
 See our [documentation page](https://unstructured-io.github.io/unstructured/) for more details
 about the library.
 
@@ -201,10 +195,7 @@ you can also uninstall the hooks with `pre-commit uninstall`.
 You can run this [Colab notebook](https://colab.research.google.com/drive/1U8VCjY2-x8c6y5TYMbSFtQGlQVFHCVIW) to run the examples below.
 
 The following examples show how to get started with the `unstructured` library.
-
-You can parse **TXT**, **HTML**, **XML**, **PDF**, **EML**, **MSG**, **RTF**, **EPUB**, **DOC**, **DOCX**,
-**XLSX**, **CSV**, **ODT**, **PPT**, **PPTX**, **JPG**,
-and **PNG** documents with one line of code!
+You can parse over a dozen document types  with one line of code!
 <br></br>
 See our [documentation page](https://unstructured-io.github.io/unstructured) for a full description
 of the features in the library.
@@ -217,8 +208,8 @@ file-specific partitioning brick.
 If you are using the `partition` brick, you may need to install additional parameters via `pip install unstructured[local-inference]`. Ensure you first install `libmagic` using the
 instructions outlined [here](https://unstructured-io.github.io/unstructured/installing.html#filetype-detection)
 `partition` will always apply the default arguments. If you need
-advanced features, use a document-specific brick. The `partition` brick currently works for
-`.txt`, `.doc`, `.docx`, `.ppt`, `.pptx`, `.xlsx`, `.jpg`, `.png`, `.eml`, `.msg`, `.html`, and `.pdf` documents.
+advanced features, use a document-specific brick.
+See the table above for a full list of document types supported in the library.
 
 ```python
 from unstructured.partition.auto import partition
@@ -259,137 +250,9 @@ Deep Learning(DL)-based approaches are the state-of-the-art for a wide range of 
 including document image classiﬁcation [11,
 ```
 
-### HTML Parsing
-
-You can parse an HTML document using the following workflow:
-
-```python
-from unstructured.partition.html import partition_html
-
-elements = partition_html("example-docs/example-10k.html")
-print("\n\n".join([str(el) for el in elements[:5]]))
-```
-
-The print statement will show the following text:
-```
-UNITED STATES
-
-SECURITIES AND EXCHANGE COMMISSION
-
-Washington, D.C. 20549
-
-FORM 10-K
-
-ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934
-```
-
-And `elements` will be a list of elements in the HTML document, similar to the following:
-
-```python
-[<unstructured.documents.elements.Title at 0x169cbe820>,
- <unstructured.documents.elements.NarrativeText at 0x169cbe8e0>,
- <unstructured.documents.elements.NarrativeText at 0x169cbe3a0>]
-```
-
-### PDF Parsing
-
-You can use the following workflow to parse PDF documents.
-
-```python
-from unstructured.partition.pdf import partition_pdf
-
-elements = partition_pdf("example-docs/layout-parser-paper.pdf")
-```
-
-The output will look the same as the example from the document parsing section above.
-
-
-### E-mail Parsing
-
-The `partition_email` function within `unstructured` is helpful for parsing `.eml` files. Common
-e-mail clients such as Microsoft Outlook and Gmail support exporting e-mails as `.eml` files.
-`partition_email` accepts filenames, file-like object, and raw text as input. The following
-three snippets for parsing `.eml` files are equivalent:
-
-```python
-from unstructured.partition.email import partition_email
-
-elements = partition_email(filename="example-docs/fake-email.eml")
-
-with open("example-docs/fake-email.eml", "r") as f:
-  elements = partition_email(file=f)
-
-with open("example-docs/fake-email.eml", "r") as f:
-  text = f.read()
-elements = partition_email(text=text)
-```
-
-The `elements` output will look like the following:
-
-```python
-[<unstructured.documents.html.HTMLNarrativeText at 0x13ab14370>,
-<unstructured.documents.html.HTMLTitle at 0x106877970>,
-<unstructured.documents.html.HTMLListItem at 0x1068776a0>,
-<unstructured.documents.html.HTMLListItem at 0x13fe4b0a0>]
-```
-
-Run `print("\n\n".join([str(el) for el in elements]))` to get a string representation of the
-output, which looks like:
-
-```python
-This is a test email to use for unit tests.
-
-Important points:
-
-Roses are red
-
-Violets are blue
-```
-
-### Text Document Parsing
-
-The `partition_text` function within `unstructured` can be used to parse simple
-text files into elements.
-
-`partition_text` accepts filenames, file-like object, and raw text as input. The following three snippets are for parsing text files:
-
-```python
-from unstructured.partition.text import partition_text
-
-elements = partition_text(filename="example-docs/fake-text.txt")
-
-with open("example-docs/fake-text.txt", "r") as f:
-  elements = partition_text(file=f)
-
-with open("example-docs/fake-text.txt", "r") as f:
-  text = f.read()
-elements = partition_text(text=text)
-```
-
-The `elements` output will look like the following:
-
-```python
-[<unstructured.documents.html.HTMLNarrativeText at 0x13ab14370>,
-<unstructured.documents.html.HTMLTitle at 0x106877970>,
-<unstructured.documents.html.HTMLListItem at 0x1068776a0>,
-<unstructured.documents.html.HTMLListItem at 0x13fe4b0a0>]
-```
-
-Run `print("\n\n".join([str(el) for el in elements]))` to get a string representation of the
-output, which looks like:
-
-```python
-This is a test document to use for unit tests.
-
-Important points:
-
-Hamburgers are delicious
-
-Dogs are the best
-
-I love fuzzy blankets
-```
-
+See the [partitioning](https://unstructured-io.github.io/unstructured/bricks.html#partitioning)
+section in our documentation for a full list of options and instructions on how to use
+file-specific partitioning functions.
 
 ## :guardsman: Security Policy
 
