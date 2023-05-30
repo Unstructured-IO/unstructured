@@ -51,8 +51,6 @@ Checkout the [`unstructured-api` repo](https://github.com/Unstructured-IO/unstru
 to get started making API calls.
 You’ll also find instructions there about how to host your own version of the API.
 
-<br></br>
-
 ## :eight_pointed_black_star: Quick Start
 
 Use the following instructions to get up and running with `unstructured` and test your
