@@ -84,6 +84,12 @@ def _add_element_metadata(
             text_as_html: Optional[str] = layout_element.text_as_html
         else:
             text_as_html = None
+
+        # NOTE(robinson) - defer to the page number that's already in the metadata
+        # if it's available
+        if hasattr(element, "metadata"):
+            page_number = element.metadata.page_number or page_number
+
         metadata = ElementMetadata(
             filename=filename,
             filetype=filetype,
