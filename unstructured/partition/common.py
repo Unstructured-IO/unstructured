@@ -84,7 +84,6 @@ def _add_element_metadata(
             text_as_html: Optional[str] = layout_element.text_as_html
         else:
             text_as_html = None
-
         # NOTE(robinson) - defer to the page number that's already in the metadata
         # if it's available
         if hasattr(element, "metadata"):
@@ -107,6 +106,26 @@ def _add_element_metadata(
                 elements.append(element)
         else:
             element.metadata = metadata.merge(element.metadata)
+            elements.append(element)
+    return elements
+
+
+def _remove_element_metadata(
+    layout_elements,
+) -> List[Element]:
+    """Removes document metadata from the document element. Document metadata includes information
+    like the filename, source url, and page number."""
+    # Init an empty list of elements to write to
+    elements: List[Element] = []
+    metadata = ElementMetadata()
+    for layout_element in layout_elements:
+        element = normalize_layout_element(layout_element)
+        if isinstance(element, list):
+            for _element in element:
+                _element.metadata = metadata
+            elements.extend(element)
+        else:
+            element.metadata = metadata
             elements.append(element)
     return elements
 

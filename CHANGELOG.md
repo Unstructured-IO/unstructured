@@ -13,6 +13,7 @@
 * Adds `.log` as a file extension for TXT files.
 * Adds functionality to try other common encodings for email (`.eml`), html, and xml files if an error related to the encoding is raised and the user has not specified an encoding.
 * Allow passed encoding to be used in the `replace_mime_encodings`
+* Fixes page metadata for `partition_html` when `include_metadata=False`
 
 ## 0.6.11
 

@@ -8,7 +8,11 @@ from typing import IO, Callable, List, Optional
 
 from unstructured.documents.elements import Element, PageBreak
 from unstructured.nlp.patterns import LIST_OF_DICTS_PATTERN
-from unstructured.partition.common import _add_element_metadata, exactly_one
+from unstructured.partition.common import (
+    _add_element_metadata,
+    _remove_element_metadata,
+    exactly_one,
+)
 
 try:
     import magic
@@ -380,7 +384,9 @@ def add_metadata_with_filetype(filetype: FileType):
                     **metadata_kwargs,  # type: ignore
                 )
             else:
-                return elements
+                return _remove_element_metadata(
+                    elements,
+                )
 
         return wrapper
 
