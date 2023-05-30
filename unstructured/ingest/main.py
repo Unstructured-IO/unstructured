@@ -94,8 +94,11 @@ class MainProcess:
 
         self.cleanup()
 
+# 1, 2, 3, 6, 7, 10
+# 11, 12
 
 @click.command()
+@click.pass_context
 @click.option(
     "--max-docs",
     default=None,
@@ -392,6 +395,7 @@ class MainProcess:
 )
 @click.option("-v", "--verbose", is_flag=True, default=False)
 def main(
+    ctx,
     remote_url,
     s3_anonymous,
     azure_account_name,
@@ -445,6 +449,8 @@ def main(
     local_file_glob,
     download_only,
 ):
+    if not [param for param in ctx.command.params if param in ctx.params]:
+        return click.echo(ctx.get_help())
     if flatten_metadata and "metadata" not in fields_include:
         logger.warning(
             "`--flatten-metadata` is specified, but there is no metadata to flatten, "
