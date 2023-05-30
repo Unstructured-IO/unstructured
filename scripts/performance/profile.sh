@@ -119,22 +119,22 @@ view_profile() {
           case $visualization_type in
             "1")
               rm -f "${result_file}.memray.html"
-              python -m memray flamegraph -o "${result_file}.memray.html" "$result_file"
+              python3 -m memray flamegraph -o "${result_file}.memray.html" "$result_file"
               open "${result_file}.memray.html"
               ;;
             "2")
               rm -f "${result_file}.table.html"
-              python -m memray table -o "${result_file}.table.html" "$result_file"
+              python3 -m memray table -o "${result_file}.table.html" "$result_file"
               open "${result_file}.table.html"
               ;;
             "3")
-              python -m memray tree "$result_file"
+              python3 -m memray tree "$result_file"
               ;;
             "4")
-              python -m memray summary "$result_file"
+              python3 -m memray summary "$result_file"
               ;;
             "5")
-              python -m memray stats "$result_file"
+              python3 -m memray stats "$result_file"
               ;;
             *)
               echo "Invalid visualization type. Please try again."
@@ -156,7 +156,7 @@ view_profile() {
             "1")
               flameprof_file="${result_file}.flameprof.svg"
               rm -f "$flameprof_file"
-              flameprof "$result_file" > "$flameprof_file"
+              python3 -m flameprof "$result_file" > "$flameprof_file"
               open "$flameprof_file"
               ;;
             "2")
