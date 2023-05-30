@@ -193,7 +193,7 @@ you can also uninstall the hooks with `pre-commit uninstall`.
 You can run this [Colab notebook](https://colab.research.google.com/drive/1U8VCjY2-x8c6y5TYMbSFtQGlQVFHCVIW) to run the examples below.
 
 The following examples show how to get started with the `unstructured` library.
-You can parse over a dozen document types  with one line of code!
+You can parse over a dozen document types with one line of code!
 <br></br>
 See our [documentation page](https://unstructured-io.github.io/unstructured) for a full description
 of the features in the library.
