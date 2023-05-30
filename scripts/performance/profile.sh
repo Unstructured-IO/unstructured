@@ -4,6 +4,8 @@
 
 # Environment Variables:
 #   - SYNC_S3_DOCS: Set to true to sync test documents from S3 (default: false)
+#   - DOCKER_TEST: Set to true to run profiling inside a Docker container (default: false)
+#   - VOLUME_MOUNT: Set to the path of the volume mount for the Docker container (default: "")
 
 # Usage: 
 # - Run the script and choose the profiling mode: 'run' or 'view'.
@@ -25,6 +27,19 @@
 # ./scripts/performance/profile.sh
 
 # NOTE: because memray does not build wheels for ARM-Linux, this script can not run in an ARM Docker container on an M1 Mac (though emulated AMD would work).
+
+if [[ "$DOCKER_TEST" == "true" ]]; then
+  if [ -n "$VOLUME_MOUNT" ]; then
+    VOLUME_MOUNT_ARG=" -v $VOLUME_MOUNT:/home/unstructured/scripts"
+  fi
+  docker run \
+  -it \
+  --rm \
+  "$VOLUME_MOUNT_ARG" \
+  unstructured:dev \
+  /bin/bash -c "cd unstructured/; pip install -r scripts/performance/requirements.txt; ./scripts/performance/profile.sh"
+  exit 0
+fi
 
 SCRIPT_DIR=$(dirname "$0")
 
@@ -49,11 +64,11 @@ if [[ "$SYNC_S3_DOCS" == "true" ]]; then
 fi
 
 
-has_display() {
-  if [[ -z "$DISPLAY" ]]; then
-    return 0  # Display is set, indicating a graphical interface is present
+check_display() {
+  if system_profiler SPDisplaysDataType 2>/dev/null | grep -q "Display Type"; then
+    return 0  # Display is present
   else
-    return 1  # Display is not set, indicating a headless context
+    return 1  # Display is not present (headless context)
   fi
 }
 
@@ -221,7 +236,7 @@ view_profile() {
       result_file="${result_files[$selection]}"
     fi
 
-    if has_display; then
+    if check_display; then
       view_profile_with_head "$result_file"
     else
       view_profile_headless "$result_file"
@@ -252,7 +267,7 @@ run_profile() {
         echo "$i. ${test_files[$i]}"
       done
 
-      read -p "Enter the number corresponding to the test file you want to run (b to go back, q to quit): " selection
+      read -p "Enter the number corresponding to the test file you want to run followed by return (b to go back, q to quit): " selection
       if [[ $selection == "b" ]]; then
         return
       elif [[ $selection == "q" ]]; then
