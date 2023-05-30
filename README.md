@@ -89,6 +89,32 @@ elements = partition("example-docs/layout-parser-paper.pdf")
 print("\n\n".join([str(el) for el in elements]))
 ```
 
+The `unstructured` library currently supports the following document types.
+See our [documentation page](https://unstructured-io.github.io/unstructured/) for more details
+about the library.
+
+| Document Type | Partition Function | Strategies | Table Support | Options |
+| --- | --- | --- | --- | --- |
+| CSV Files (`.csv`) | `partition_csv` | N/A | Yes | None |
+| E-mails (`.eml`) | `partition_eml` | N/A | No | Encoding |
+| E-mails (`.msg`) | `partition_msg` | N/A | No | Encoding |
+| EPubs (`.epub`) | `partition_epub` | N/A | No | Include Page Breaks |
+| Excel Documents (`.xlsx`/`.xls`) | `partition_xlsx` | N/A | Yes | None |
+| HTML Pages (`.html`) | `partition_html` | N/A | No | Encoding; Include Page Breaks |
+| Images (`.png`/`.jpg`) | `partition_image` | `"auto"`, `"hi_res"`, `"ocr_only"` | Yes | Encoding; Include Page Breaks; Infer Table Structure; OCR Languages, Strategy |
+| Markdown (`.md`) | `partitin_md` | N/A | No | Include Page Breaks |
+| Open Office Documents (`.odt`) | `partition_odt` | N/A | Yes | None |
+| PDFs (`.pdf`) | `partition_pdf` | `"auto"`, `"fast"`, `"hi_res"`, `"ocr_only"` | Yes | Encoding; Include Page Breaks; Infer Table Structure; OCR Languages, Strategy |
+| Plain Text (`.txt`) | `partition_text` | N/A | No | Encoding, Paragraph Grouper |
+| Power Points (`.ppt`) | `partition_ppt` | N/A | No | Include Page Breaks |
+| Power Points (`.pptx`) | `partition_pptx` | N/A | No | Include Page Breaks |
+| Rich Text Files (`.rtf`) | `partition_rtf` | N/A | No | Include Page Breaks |
+| Word Documents (`.doc`) | `partition_doc` | N/A | Yes | None |
+| Word Documents (`.docx`) | `partition_docx` | N/A | Yes | None |
+| XML Documents (`.xml`) | `partition_xml` | N/A | No | Encoding; XML Keep Tags |
+
+
+
 ## :dizzy: Instructions for using the docker image
 
 The following instructions are intended to help you get up and running using Docker to interact with `unstructured`.
