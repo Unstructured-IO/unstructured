@@ -188,6 +188,8 @@ def test_partition_pdf_with_spooled_file(
         result = pdf.partition_pdf(file=spooled_temp_file, strategy=strategy)
         # validate that the result is a non-empty list of dicts
         assert len(result) > 10
+        # check that the pdf has multiple different page numbers
+        assert len({element.metadata.page_number for element in result}) > 1
 
 
 @pytest.mark.parametrize(
@@ -228,6 +230,8 @@ def test_partition_pdf_with_no_page_breaks(filename="example-docs/layout-parser-
 def test_partition_pdf_with_fast_strategy(filename="example-docs/layout-parser-paper-fast.pdf"):
     elements = pdf.partition_pdf(filename=filename, url=None, strategy="fast")
     assert len(elements) > 10
+    # check that the pdf has multiple different page numbers
+    assert len({element.metadata.page_number for element in elements}) > 1
 
 
 def test_partition_pdf_with_fast_groups_text(filename="example-docs/layout-parser-paper-fast.pdf"):
@@ -377,6 +381,8 @@ def test_partition_pdf_with_copy_protection():
     filename = os.path.join("example-docs", "copy-protected.pdf")
     elements = pdf.partition_pdf(filename=filename, strategy="hi_res")
     elements[0] == Title("LayoutParser: A Uniﬁed Toolkit for Deep Based Document Image Analysis")
+    # check that the pdf has multiple different page numbers
+    assert len({element.metadata.page_number for element in elements}) > 1
 
 
 def test_partition_pdf_with_copy_protection_fallback_to_hi_res(caplog):
