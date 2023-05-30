@@ -2,6 +2,7 @@ import xml.etree.ElementTree as ET
 from tempfile import SpooledTemporaryFile
 from typing import IO, BinaryIO, Optional, Union, cast
 
+from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import exactly_one, spooled_to_bytes_io_if_needed
 from unstructured.partition.text import partition_text
@@ -43,7 +44,7 @@ def partition_xml(
     xml_path: str = ".",
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
-    encoding: str = "utf-8",
+    encoding: Optional[str] = None,
 ):
     """Partitions an XML document into its document elements.
 
@@ -71,13 +72,9 @@ def partition_xml(
 
     if xml_keep_tags:
         if filename:
-            with open(filename) as f:
-                raw_text = f.read()
+            encoding, raw_text = read_txt_file(filename=filename, encoding=encoding)
         elif file:
-            f = spooled_to_bytes_io_if_needed(  # type: ignore
-                cast(Union[BinaryIO, SpooledTemporaryFile], file),
-            )
-            raw_text = f.read().decode(encoding)  # type: ignore
+            encoding, raw_text = read_txt_file(file=file, encoding=encoding)
     else:
         raw_text = get_leaf_elements(filename=filename, file=file, xml_path=xml_path)
     elements = partition_text(
