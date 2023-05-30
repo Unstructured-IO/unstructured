@@ -1,4 +1,15 @@
-## 0.6.11-dev0
+## 0.6.12-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* Adds functionality to try other common encodings for email (`.eml`) files if an error related to the encoding is raised and the user has not specified an encoding.
+* Allow passed encoding to be used in the `replace_mime_encodings`
+
+## 0.6.11
 
 ### Enhancements
 
