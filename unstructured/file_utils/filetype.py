@@ -208,6 +208,10 @@ def detect_filetype(
     if mime_type == "text/plain" and extension == ".json":
         return FileType.JSON
 
+    # NOTE(Crag): older magic lib does not differentiate between xls and doc
+    if mime_type == "application/msword" and extension == ".xls":
+        return FileType.XLS
+
     elif mime_type.endswith("xml"):
         if extension and (extension == ".html" or extension == ".htm"):
             return FileType.HTML

@@ -6,7 +6,6 @@ from importlib import import_module
 from unittest.mock import patch
 
 import docx
-import pypandoc
 import pytest
 
 from unstructured.cleaners.core import clean_extra_whitespace
@@ -37,8 +36,6 @@ EXPECTED_EMAIL_OUTPUT = [
 ]
 
 is_in_docker = os.path.exists("/.dockerenv")
-rtf_not_supported = "rtf" not in pypandoc.get_pandoc_formats()[0]
-odt_not_supported = "odt" not in pypandoc.get_pandoc_formats()[0]
 
 
 def test_auto_partition_email_from_filename():
@@ -432,7 +429,6 @@ def test_auto_with_page_breaks():
     assert PageBreak() in elements
 
 
-@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_auto_partition_epub_from_filename():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "winter-sports.epub")
     elements = partition(filename=filename, strategy="hi_res")
@@ -440,7 +436,6 @@ def test_auto_partition_epub_from_filename():
     assert elements[0].text.startswith("The Project Gutenberg eBook of Winter Sports")
 
 
-@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_auto_partition_epub_from_file():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "winter-sports.epub")
     with open(filename, "rb") as f:
@@ -463,8 +458,6 @@ def test_auto_partition_msg_from_filename():
     assert elements == EXPECTED_MSG_OUTPUT
 
 
-@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
-@pytest.mark.skipif(rtf_not_supported, reason="RTF not supported in this version of pypandoc.")
 def test_auto_partition_rtf_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-doc.rtf")
     elements = partition(filename=filename, strategy="hi_res")
@@ -510,16 +503,12 @@ def test_auto_partition_works_with_unstructured_jsons_from_file():
     assert elements[0].text == "News Around NOAA"
 
 
-@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
-@pytest.mark.skipif(odt_not_supported, reason="odt not supported in this version of pypandoc.")
 def test_auto_partition_odt_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.odt")
     elements = partition(filename=filename, strategy="hi_res")
     assert elements == [Title("Lorem ipsum dolor sit amet.")]
 
 
-@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
-@pytest.mark.skipif(odt_not_supported, reason="odt not supported in this version of pypandoc.")
 def test_auto_partition_odt_from_file():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.odt")
     with open(filename, "rb") as f:
@@ -590,12 +579,6 @@ FILETYPE_TO_MODULE = {
 @pytest.mark.parametrize("filetype", supported_filetypes)
 def test_file_specific_produces_correct_filetype(filetype: FileType):
     if filetype in (FileType.JPG, FileType.PNG):
-        pytest.skip()
-    if (filetype is FileType.RTF) and (is_in_docker or rtf_not_supported):
-        pytest.skip()
-    if (filetype is FileType.ODT) and (is_in_docker or odt_not_supported):
-        pytest.skip()
-    if (filetype is FileType.EPUB) and is_in_docker:
         pytest.skip()
     extension = filetype.name.lower()
     filetype_module = (
@@ -693,6 +676,96 @@ def test_auto_partition_xlsx_from_file(filename="example-docs/stanley-cups.xlsx"
     assert elements[0].metadata.text_as_html == EXPECTED_XLSX_TABLE
     assert elements[0].metadata.page_number == 1
     assert elements[0].metadata.filetype == EXPECTED_XLSX_FILETYPE
+
+
+EXPECTED_XLS_TEXT_LEN = 883
+
+EXPECTED_XLS_INITIAL_45_CLEAN_TEXT = "MA What C datatypes are 8 bits? (assume i386)"
+
+EXPECTED_XLS_TABLE = (
+    """<table border="1" class="dataframe">
+  <tbody>
+    <tr>
+      <td>MA</td>
+      <td>What C datatypes are 8 bits? (assume i386)</td>
+      <td>int</td>
+      <td></td>
+      <td>float</td>
+      <td></td>
+      <td>double</td>
+      <td></td>
+      <td>char</td>
+    </tr>
+    <tr>
+      <td>TF</td>
+      <td>Bagpipes are awesome.</td>
+      <td>true</td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>ESS</td>
+      <td>How have the original Henry Hornbostel buildings """
+    """influenced campus architecture and design in the last 30 years?</td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>ORD</td>
+      <td>Rank the following in their order of operation.</td>
+      <td>Parentheses</td>
+      <td>Exponents</td>
+      <td>Division</td>
+      <td>Addition</td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>FIB</td>
+      <td>The student activities fee is</td>
+      <td>95</td>
+      <td>dollars for students enrolled in</td>
+      <td>19</td>
+      <td>units or more,</td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>MAT</td>
+      <td>Match the lower-case greek letter with its capital form.</td>
+      <td>λ</td>
+      <td>Λ</td>
+      <td>α</td>
+      <td>γ</td>
+      <td>Γ</td>
+      <td>φ</td>
+      <td>Φ</td>
+    </tr>
+  </tbody>
+</table>"""
+)
+
+
+def test_auto_partition_xls_from_filename(filename="example-docs/tests-example.xls"):
+    elements = partition(filename=filename)
+
+    assert all(isinstance(element, Table) for element in elements)
+    assert len(elements) == 3
+
+    assert clean_extra_whitespace(elements[0].text)[:45] == EXPECTED_XLS_INITIAL_45_CLEAN_TEXT
+    assert len(elements[0].text) == EXPECTED_XLS_TEXT_LEN
+    assert elements[0].metadata.text_as_html == EXPECTED_XLS_TABLE
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")

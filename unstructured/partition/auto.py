@@ -197,7 +197,7 @@ def partition(
         )
     elif filetype == FileType.JSON:
         elements = partition_json(filename=filename, file=file)
-    elif filetype == FileType.XLSX:
+    elif (filetype == FileType.XLSX) or (filetype == FileType.XLS):
         elements = partition_xlsx(filename=filename, file=file)
     elif filetype == FileType.CSV:
         elements = partition_csv(filename=filename, file=file)
