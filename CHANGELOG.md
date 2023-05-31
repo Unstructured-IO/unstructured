@@ -1,8 +1,8 @@
-## 0.6.12
+## 0.7.0
 
 ### Enhancements
 
-* Updated inference package
+* Installing `detectron2` from source is no longer required when using the `local-inference` extra.
 
 ### Features
 
