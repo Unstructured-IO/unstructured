@@ -30,7 +30,7 @@ for file in "$TEST_DOCS_FOLDER"/*; do
         echo "Testing with hi_res strategy"
         strategy="hi_res"
     fi
-    if ! response=$(python3 -m "scripts.performance.partition_timing" "$file" "$num_iterations" "$strategy"); then
+    if ! response=$(python3 -m "scripts.performance.time_partition" "$file" "$num_iterations" "$strategy"); then
         echo "error: $response"
         exit 1
     fi
