@@ -1,4 +1,4 @@
-## 0.6.12-dev0
+## 0.6.12-dev1
 
 ### Enhancements
 
