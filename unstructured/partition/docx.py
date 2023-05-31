@@ -4,6 +4,7 @@ from tempfile import SpooledTemporaryFile
 from typing import IO, BinaryIO, List, Optional, Union, cast
 
 import docx
+from docx import table as docxtable
 import pypandoc
 from docx.oxml.shared import qn
 from docx.text.paragraph import Paragraph
@@ -153,7 +154,7 @@ def partition_docx(
     return elements
 
 
-def _convert_table_to_text(table, as_html):
+def _convert_table_to_text(table: docxtable.Table, as_html: bool) -> str:
     """
     Convert a table object from a Word document to an HTML table string using the tabulate library.
 
