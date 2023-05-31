@@ -4,8 +4,8 @@ from tempfile import SpooledTemporaryFile
 from typing import IO, BinaryIO, List, Optional, Union, cast
 
 import docx
-from docx import table as docxtable
 import pypandoc
+from docx import table as docxtable
 from docx.oxml.shared import qn
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
