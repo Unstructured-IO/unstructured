@@ -45,7 +45,7 @@ if [[ "$DOCKER_TEST" != "true" ]]; then
 fi
 
 SCRIPT_DIR=$(dirname "$0")
-
+ABS_SCRIPT_DIR=$(dirname "$(realpath "$0")")
 # Convert the relative path to module notation
 MODULE_PATH=${SCRIPT_DIR////.}
 # Remove the leading dot if it exists
@@ -67,11 +67,11 @@ if [[ "$SYNC_S3_DOCS" == "true" ]]; then
 fi
 
 if [[ "$DOCKER_TEST" == "true" ]]; then
-  docker run -it --rm -v scripts:/home/unstructured/scripts unstructured:dev /bin/bash -c "
+  docker run -it --rm -v $(dirname "$ABS_SCRIPT_DIR"):/home/unstructured/scripts unstructured:dev /bin/bash -c "
   cd unstructured/
   pip install -r scripts/performance/requirements.txt
-  echo "Warming the Docker container by running a small partitioning job..."
-  python3 -c 'from unstructured.partition.auto import partition; partition("'"$SCRIPT_DIR/warmup.pdf"'", strategy="hi_res")[1]'
+  echo \"Warming the Docker container by running a small partitioning job..\"
+  python3 -c 'from unstructured.partition.auto import partition; partition(\"'""$SCRIPT_DIR"/warmup.pdf"'\", strategy=\"hi_res\")[1]'
   ./scripts/performance/profile.sh
   "
   exit 0
