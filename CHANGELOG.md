@@ -6,6 +6,7 @@
 
 ### Fixes
 
+* Adds functionality to handle file-like object from url to the `read_txt_file` utility function
 * Remove the unused parameter `encoding` from `partition_pdf`
 * Change auto.py to have a `None` default for encoding
 * Fixes an issue in `_add_element_metadata` that caused all elements to have `page_number=1`
