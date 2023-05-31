@@ -11,7 +11,7 @@ function process_file() {
     filepath=$1
     strategy=$2
     # access element in the return value to make sure we got something back, otherwise error
-    python3.8 -c 'from unstructured.partition.auto import partition; partition("'"$filepath"'", strategy="'"$strategy"'")[3]'
+    python3 -c 'from unstructured.partition.auto import partition; partition("'"$filepath"'", strategy="'"$strategy"'")[3]'
 }
 
 mkdir -p "$SCRIPT_DIR/benchmark_results" > /dev/null 2>&1
