@@ -2,6 +2,8 @@
 
 ### Enhancements
 
+* Updates `.pptx` parsing to include text in tables.
+
 ### Features
 
 ### Fixes
