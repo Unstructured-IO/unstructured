@@ -32,14 +32,11 @@ def detect_file_encoding(filename: str = "", file: Optional[IO] = None) -> Tuple
         with open(filename, "rb") as f:
             binary_data = f.read()
     elif file:
-        if not hasattr(file, 'mode'):
+        if not hasattr(file, "mode") or "b" in file.mode:
             binary_data = file.read()
         else:
-            if "b" in file.mode:
-                binary_data = file.read()
-            else:
-                with open(file.name, "rb") as f:
-                    binary_data = f.read()
+            with open(file.name, "rb") as f:
+                binary_data = f.read()
     else:
         raise FileNotFoundError("No filename nor file were specified")
 
