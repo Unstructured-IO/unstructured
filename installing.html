@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Getting Started" href="getting_started.html" /><link rel="prev" title="Unstructured Core Library" href="index.html" />
 
   <link rel="shortcut icon" href="_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.05.20" />
-  <title>Installation - Unstructured 0.6.11 documentation</title>
+  <title>Installation - Unstructured 0.7.0 documentation</title>
   <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -391,13 +391,7 @@ installation.</p>
 </dd>
 </dl>
 </li>
-<li><dl class="simple">
-<dt>If you are parsing PDFs, run the following to install the <code class="docutils literal notranslate"><span class="pre">detectron2</span></code> model, which <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> uses for layout detection:</dt><dd><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;detectron2&#64;git+https://github.com/facebookresearch/detectron2.git&#64;e2ce8dc#egg=detectron2&quot;</span></code></p></li>
-</ul>
-</dd>
-</dl>
-</li>
+<li><p>Follow the instructions <a class="reference external" href="https://github.com/Unstructured-IO/unstructured-inference#detectron2">here</a> to install <code class="docutils literal notranslate"><span class="pre">detectron2</span></code>. This is required if you would like to use custom models from the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured-inference#using-models-from-the-layoutparser-model-zoo">LayoutParser Model Zoo</a>.</p></li>
 </ul>
 <p>At this point, you should be able to run the following code:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.auto</span> <span class="kn">import</span> <span class="n">partition</span>
