@@ -103,7 +103,7 @@ install-detectron2: install-tensorboard
 
 ## install-local-inference: installs requirements for local inference
 .PHONY: install-local-inference
-install-local-inference: install install-unstructured-inference install-detectron2
+install-local-inference: install install-unstructured-inference
 
 .PHONY: install-pandoc
 install-pandoc:
@@ -116,9 +116,6 @@ pip-compile:
 	pip-compile --upgrade requirements/base.in
 	# Extra requirements for huggingface staging functions
 	pip-compile --upgrade requirements/huggingface.in
-	# NOTE(robinson) - We want the dependencies for detectron2 in the requirements.txt, but not
-	# the detectron2 repo itself. If detectron2 is in the requirements.txt file, an order of
-	# operations issue related to the torch library causes the install to fail
 	pip-compile --upgrade requirements/test.in
 	pip-compile --upgrade requirements/dev.in
 	pip-compile --upgrade requirements/build.in

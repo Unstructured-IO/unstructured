@@ -1,7 +1,8 @@
-## 0.6.12-dev1
+## 0.7.0
 
 ### Enhancements
 
+* Installing `detectron2` from source is no longer required when using the `local-inference` extra.
 * Updates `.pptx` parsing to include text in tables.
 
 ### Features
