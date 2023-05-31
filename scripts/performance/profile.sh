@@ -36,7 +36,7 @@ check_python_module() {
   fi
 }
 validate_dependencies() {
-  check_python_module memory_profiler
+  check_python_module memray 
   check_python_module flameprof
 }
 validate_dependencies
