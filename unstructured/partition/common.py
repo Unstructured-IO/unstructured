@@ -3,6 +3,9 @@ from io import BytesIO
 from tempfile import SpooledTemporaryFile
 from typing import BinaryIO, List, Optional, Tuple, Union
 
+from docx import table as docxtable
+from tabulate import tabulate
+
 from unstructured.documents.elements import (
     TYPE_TO_TEXT_ELEMENT_MAP,
     CheckBox,
@@ -185,3 +188,22 @@ def spooled_to_bytes_io_if_needed(
     else:
         # Return the original file object if it's not a SpooledTemporaryFile
         return file_obj
+
+
+def convert_ms_office_table_to_text(table: docxtable.Table, as_html: bool = True):
+    """
+    Convert a table object from a Word document to an HTML table string using the tabulate library.
+
+    Args:
+        table (Table): A Table object.
+        as_html (bool): Whether to return the table as an HTML string (True) or a
+            plain text string (False)
+
+    Returns:
+        str: An table string representation of the input table.
+    """
+    fmt = "html" if as_html else "plain"
+    rows = list(table.rows)
+    headers = [cell.text for cell in rows[0].cells]
+    data = [[cell.text for cell in row.cells] for row in rows[1:]]
+    return tabulate(data, headers=headers, tablefmt=fmt)

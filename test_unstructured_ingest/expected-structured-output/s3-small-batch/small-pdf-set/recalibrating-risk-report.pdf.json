@@ -2,15 +2,6 @@
   {
     "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
     "text": "",
-    "type": "Title",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 1
-    }
-  },
-  {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
     "type": "FigureCaption",
     "metadata": {
       "filetype": "application/pdf",
@@ -24,15 +15,6 @@
     "metadata": {
       "filetype": "application/pdf",
       "page_number": 2
-    }
-  },
-  {
-    "element_id": "8e76a94ac8320d515375e625bef18292",
-    "text": "Summary",
-    "type": "Title",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 3
     }
   },
   {
@@ -90,15 +72,6 @@
     }
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "text": "",
-    "type": "Title",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 4
-    }
-  },
-  {
     "element_id": "0f6b417c120ef61e5b8ff40845b0700d",
     "text": "It is widely accepted that humans have skewed perceptions of risks, and the way we respond to them is shaped by these perceptions, rather than the actual threats posed. Approximately 1.35 millioni people die every year because of traffic accidents, in comparison with 257 aviation fatalities in 2019ii, yet more people are nervous about flying, fearing a rare deadly crash, than being in a fatal traffic accident. These numbers tell a powerful and well-established story: evaluations of risk are largely the result of emotions, rather than logic or facts. Although it is hard to recognize and accept that our perceptions may mislead us and curtail effective decision making, this is a well-established characteristic of humanity.",
     "type": "NarrativeText",
@@ -108,8 +81,8 @@
     }
   },
   {
-    "element_id": "bd1dfbb5e44d06cb012a94b10ac899ec",
-    "text": "Nuclear energy and the risk of radiation is one of the most extreme cases in which perceived and actual risks have diverged. The fear of radiation, whilst pre- dating the Second World War, was firmly established by the debate on the potential impacts of low-dose radiation from the fallout from nuclear weapons testing in the early years of the Cold War. Radiation in many ways became linked with the mental imagery of nuclear war, playing an important role in increasing public concern about radiation and its health effects. There is a well-established discrepancy between fact-based risk assessments and public perception of different risks. This is very much the case with nuclear power, and this is clearly highlighted in Figure 1, with laypersons ranking nuclear power as the highest risk out of 30 activities and technologies, with experts ranking nuclear as 20th. In many ways, popular culture’s depiction of radiation has played a role in ensuring that this discrepancy has remained, be it Godzilla, The Incredible Hulk, or The Simpsons,",
+    "element_id": "229123f88347e4e3d651e006d38d4a19",
+    "text": "Nuclear energy and the risk of radiation is one of the most extreme cases in which perceived and actual risks have diverged. The fear of radiation, whilst pre- dating the Second World War, was firmly established by the debate on the potential impacts of low-dose radiation from the fallout from nuclear weapons testing in the early years of the Cold War. Radiation in many ways became linked with the mental imagery of nuclear war, playing an important role in increasing public concern about radiation and its health effects. There is a well-established discrepancy between fact-based risk assessments and public perception of different risks. This is very much the case with nuclear power, and this is clearly highlighted in Figure 1, with laypersons ranking nuclear power as the highest risk out of 30 activities and technologies, with experts ranking nuclear as 20th. In many ways, popular culture’s depiction of radiation has played a role in ensuring that this discrepancy has remained,",
     "type": "NarrativeText",
     "metadata": {
       "filetype": "application/pdf",
@@ -135,8 +108,8 @@
     }
   },
   {
-    "element_id": "4d7c9c95f808a09f6b0bcfe8b255e537",
-    "text": "Figure 1. Ordering of perceived risks for 30 activities and technologies1,iii",
+    "element_id": "2857e024ca5c594b4aa0a79c0f646ccc",
+    "text": "Figure 1. Ordering of perceived risks for 30 and technologies1,iii",
     "type": "NarrativeText",
     "metadata": {
       "filetype": "application/pdf",
@@ -144,8 +117,8 @@
     }
   },
   {
-    "element_id": "5cf50f2ecefabf03c2ff0e88a28df688",
-    "text": "be it Godzilla, The Incredible Hulk, or The Simpsons, which regularly plays on the notion of radiation nuclear power plants causing three-eyed fish, something that has been firmly rejected as unscientific.",
+    "element_id": "8385a587db6c2fb7f84b89da002de9be",
+    "text": "it Godzilla, The Incredible Hulk, or The Simpsons, which regularly plays on the notion of radiation from power plants causing three-eyed fish, something that has been firmly rejected as unscientific.",
     "type": "NarrativeText",
     "metadata": {
       "filetype": "application/pdf",
@@ -162,8 +135,8 @@
     }
   },
   {
-    "element_id": "741992be8d995a688435b379a5548bb3",
-    "text": "In fact, scientific consensus is that when it comes to preventing exposure to radiation, nuclear power is much better than other electricity generators. A 2016 reportiii from the United Nations Scientific Committee on the Effects of Atomic Radiation (UNSCEAR) found that coal-generated electricity is responsible for more than half of the total global radiation exposure arising from electricity generation, while nuclear power contributed less than a fifth. Coal miners received high occupational exposure and workers in solar and wind farms received the highest occupational exposure associated with plant construction for the same",
+    "element_id": "902907535a6df300b401f418b25763fd",
+    "text": "In fact, scientific consensus is that when it comes to preventing exposure to radiation, nuclear power is much better than other electricity generators. A 2016 reportiii from the United Nations Scientific Committee on the Effects of Atomic Radiation (UNSCEAR) found that coal-generated electricity is responsible for more than half of the total global radiation exposure arising from electricity generation, while nuclear power contributed less than a fifth. Coal miners received high occupational exposure and workers in solar and wind farms received the highest occupational exposure associated with plant construction for the same amount of installed capacity.",
     "type": "NarrativeText",
     "metadata": {
       "filetype": "application/pdf",
@@ -171,26 +144,8 @@
     }
   },
   {
-    "element_id": "3d8430367bf97300ddf3963de02bb5f4",
-    "text": "1 The original study was published in 1978, but its findings have been confirmed by numerous studies since.",
-    "type": "NarrativeText",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 4
-    }
-  },
-  {
-    "element_id": "4891001fbe8126a596b85eb18d0e644c",
-    "text": "Natural Artificial  48% Radon  11% Medicine  14% Buildings & soil  0.4% Fallout  12% Food & water  0.4% Miscellaneous  10% Cosmic  0.2% Occupational  4% Thoron  0.04% Nuclear",
-    "type": "FigureCaption",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 5
-    }
-  },
-  {
-    "element_id": "f7d49d0ecd2677d0c0522813333a0faf",
-    "text": "Radon  11% Medicine Buildings & soil  0.4% Fallout Food & water  0.4% Miscellaneous Cosmic  0.2% Occupational Thoron  0.04% Nuclear",
+    "element_id": "f641635ec11670f6051d31318c4b57cc",
+    "text": "Natural Artificial  48% Radon  11% Medicine  14% Buildings & soil  0.4% Fallout  12% Food & water  0.4% Miscellaneous  10% Cosmic  0.2% Occupational  4% Thoron  0.04% Nuclear discharges",
     "type": "FigureCaption",
     "metadata": {
       "filetype": "application/pdf",
@@ -216,8 +171,8 @@
     }
   },
   {
-    "element_id": "f2f020a2d66ed9c32afcc917fe19bde8",
-    "text": "In terms of accidents, hydropower is the deadliest electricity generator, mostly due to collapsing dams and the consequences of flooding. The Banqiao Dam failure in 1975 led to at least 26,000 people drowning, and as many as 150,000 deaths resulting from the secondary effects of the accident. In comparison, radiation exposure following Chernobyl caused 54 deaths2, while no casualties due to radiation are likely to occur from the accident at Fukushima Daiichi.",
+    "element_id": "324ede6e69192609842b44fb957a5481",
+    "text": "In terms of accidents, hydropower is the deadliest electricity generator, mostly due to collapsing dams and the consequences of flooding. The Banqiao Dam failure in 1975 led to at least 26,000 people drowning, and as many as 150,000 deaths resulting from the secondary effects of the accident. In comparison, radiation exposure following Chernobyl caused 54 deaths2, while no casualties due to radiation are likely to occur from",
     "type": "NarrativeText",
     "metadata": {
       "filetype": "application/pdf",
@@ -225,8 +180,8 @@
     }
   },
   {
-    "element_id": "94a3cbbc248eb34d6c61e264228bc285",
-    "text": "24.6 25 20 18.4 15 10 4.6 5 2.8 0.07 0.04 0.02 0.01 0 Coal Oil Bio m ass atural gas Wind dropower Solar Nuclear N Hy raey WT rep seitilataF e",
+    "element_id": "5dded821e571f4199e9999618486548d",
+    "text": "25 20 18.4 15 10 4.6 5 2.8 0.07 0.04 0.02 0.01 0 Coal Oil Bio m ass atural gas Wind dropower Solar Nuclear N Hy raey WT rep seitilataF e",
     "type": "FigureCaption",
     "metadata": {
       "filetype": "application/pdf",
@@ -234,8 +189,8 @@
     }
   },
   {
-    "element_id": "8921c0f3c29bc04c22c9c40f4eef6613",
-    "text": "Figure 3. Comparison of number of fatalities due to electricity generation, including accidents and air pollution3",
+    "element_id": "50de4eefb819c1121a082f91715d92d6",
+    "text": "Figure 3. Comparison of number of fatalities due to electricity generation, including accidents and air",
     "type": "NarrativeText",
     "metadata": {
       "filetype": "application/pdf",
@@ -252,21 +207,12 @@
     }
   },
   {
-    "element_id": "e0e038d83d3158caf9f6f5d451612245",
-    "text": "2 Including 28 firefighters that were exposed to lethal amounts of radiation during the accident night, and 15 fatal cases of thyroid cancer. 3 Sources drawn upon: Markandya, A., & Wilkinson, P. (2007), Sovacool et al. (2016). Data for nuclear accidents modified to reflect the 2012 UNSCEAR report and the 2015 US NRC SOARCA study.",
+    "element_id": "f6db848aa7ea39e11f79659bd36dd9e8",
+    "text": "2 Including 28 firefighters that were exposed to lethal amounts of radiation during the accident night, and 15 fatal cases of thyroid 3 Sources drawn upon: Markandya, A., & Wilkinson, P. (2007), Sovacool et al. (2016). Data for nuclear accidents modified to reflect the 2012 UNSCEAR report and the 2015 US NRC SOARCA study.",
     "type": "NarrativeText",
     "metadata": {
       "filetype": "application/pdf",
       "page_number": 5
-    }
-  },
-  {
-    "element_id": "f5bda7d6ba9ea7120d7f4c11c8b8f1ae",
-    "text": "The low-dose question",
-    "type": "Title",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 6
     }
   },
   {
@@ -297,8 +243,8 @@
     }
   },
   {
-    "element_id": "378560bde4c3bebe7a6a60d16cab26a3",
-    "text": "By looking at radiation risks in isolation, we prolong the over-regulation of radiation in nuclear plants, driving costs, whilst not delivering any additional health benefits, in turn incentivising the use of more harmful sources. A recalibration is required, and this can only done by ensuring a holistic approach to risk is taken.",
+    "element_id": "16a119e3e5a216b271e971c83b93a048",
+    "text": "By looking at radiation risks in isolation, we prolong the over-regulation of radiation in nuclear plants, driving up costs, whilst not delivering any additional health benefits, in turn incentivising the use of more harmful energy sources. A recalibration is required, and this can only done by ensuring a holistic approach to risk is taken.",
     "type": "NarrativeText",
     "metadata": {
       "filetype": "application/pdf",
@@ -315,8 +261,8 @@
     }
   },
   {
-    "element_id": "a60df98e82ef6a952c120280b0d1d3d6",
-    "text": "an all-hazards approach",
+    "element_id": "6bb7c030badb0c440af61aec7f6976c4",
+    "text": "Adopting an all-hazards approach",
     "type": "Title",
     "metadata": {
       "filetype": "application/pdf",
@@ -324,8 +270,8 @@
     }
   },
   {
-    "element_id": "aaf7fc85be030f5d92648960ece07b1b",
-    "text": "Contemporary debates around nuclear energy often reflect the precautionary principle, a problematic concept applied across a range of regulatory and policy issues. A ‘strong’ interpretation of the precautionary principle, or a ‘as low as possible’ approach to risk, dictates that regulation is required whenever there is a potential adverse health risk, even if the evidence is not certain and regardless of the cost of regulation.",
+    "element_id": "b8866a018c886bd34c74c3f9c49848a9",
+    "text": "Contemporary debates around nuclear energy often reflect the precautionary principle, a problematic applied across a range of regulatory and policy issues. A ‘strong’ interpretation of the precautionary or a ‘as low as possible’ approach to risk, dictates that regulation is required whenever there is a adverse health risk, even if the evidence is not certain and regardless of the cost of regulation.",
     "type": "NarrativeText",
     "metadata": {
       "filetype": "application/pdf",
@@ -342,8 +288,8 @@
     }
   },
   {
-    "element_id": "1485f638a8e54c225ce8d0386176e3df",
-    "text": "However, the regulatory process and the policy debate around nuclear more broadly has long departed from the ALARA principle, no longer weighing cost versus benefits, or considering the overall advantages of nuclear energy, but rather looking at radiation in isolation. This has resulted in a subtle shift towards an ‘as low as possible’ mentality. Attempting to reduce radiation far below de facto safe levels has resulted in an escalation of costs and loss of public confidence, and in some cases has deprived communities of the many benefits nuclear energy provides. In practical terms, this has led to the continued use of more harmful energy sources,",
+    "element_id": "3108b5b0d698256fed9b109f93c70e16",
+    "text": "However, the regulatory process and the policy debate around nuclear more broadly has long departed from the ALARA principle, no longer weighing cost versus benefits, or considering the overall advantages of nuclear energy, but rather looking at radiation in isolation. This has resulted in a subtle shift towards an ‘as low as possible’ mentality. Attempting to reduce radiation far below de facto safe levels has resulted in an escalation of costs and loss of public confidence, and in some cases has deprived communities of the many benefits nuclear energy provides. In practical terms, this has led to the continued use of more harmful energy sources, such as fossil fuels.",
     "type": "NarrativeText",
     "metadata": {
       "filetype": "application/pdf",
@@ -405,8 +351,8 @@
     }
   },
   {
-    "element_id": "48874d301e0410a8910c48bf6a5deddf",
-    "text": "By looking at radiation risks in isolation, we have created something akin to a “radiation phobia”, that both directly and indirectly harms people around the world. For instance, it is well established that the vast majority of health impacts from Chernobyl and Fukushima Daiichi were not radiological, but rather psychosocial. There has been an observable and dramatic increase in depression, PTSD, substance abuse, and suicides following these events, which can be significantly attributed to the dissonance between the actual and perceived risks",
+    "element_id": "893eb8565c9befb34ba3f4534e02e80e",
+    "text": "By looking at radiation risks in isolation, we have created something akin to a “radiation phobia”, that both directly and indirectly harms people around the world. For instance, it is well established that the vast majority of health impacts from Chernobyl and Fukushima Daiichi were not radiological, but rather psychosocial. There has been an observable and dramatic increase in depression, PTSD, substance abuse, and suicides following these events, which can be significantly attributed to the dissonance between the actual and perceived risks of radiation, and the stigmatization they caused.",
     "type": "NarrativeText",
     "metadata": {
       "filetype": "application/pdf",
@@ -414,8 +360,8 @@
     }
   },
   {
-    "element_id": "5623a7ca3e5f662cb4098ae3f72f9898",
-    "text": "Similarly, many of the tremendous challenges the global community faces are significantly driven by this “radiation phobia”. Indeed, several of these issues have been considerably exacerbated by the fact that certain risks are given a disproportionate amount of focus, whereas others are de facto ignored. The global conversation around climate change is a prime example of this. The historical use of fossil fuels has contributed significantly to climate change through greenhouse gas emissions, causing unprecedented changes in the liveability of the Earth. By 2025, half of the world’s population will be living in water-stressed areas, as extreme heat and droughts are exacerbating water resources. Between 2030 and 2050, climate change is expected to be the cause of an additional 250,000 deaths per year, arising from malnutrition, malaria, diarrhoea and heat stressx. Yet, despite the huge risks associated with climate change, our addiction to coal, oil, and fossil gas remains, with fossil fuels providing 84% of global primary energy in 2019xii. The continued prioritization of fossil fuels at the expense of nuclear energy results in a considerable increase in",
+    "element_id": "4e7e78a6448d2d53859f492f8d150696",
+    "text": "Similarly, many of the tremendous challenges the global community faces are significantly driven by “radiation phobia”. Indeed, several of these issues have been considerably exacerbated by the fact certain risks are given a disproportionate amount of focus, whereas others are de facto ignored. global conversation around climate change is a prime example of this. The historical use of fossil fuels contributed significantly to climate change through greenhouse gas emissions, causing changes in the liveability of the Earth. By 2025, half of the world’s population will be living in areas, as extreme heat and droughts are exacerbating water resources. Between 2030 and 2050, change is expected to be the cause of an additional 250,000 deaths per year, arising from malaria, diarrhoea and heat stressx. Yet, despite the huge risks associated with climate change, our to coal, oil, and fossil gas remains, with fossil fuels providing 84% of global primary energy in 2019xii. continued prioritization of fossil fuels at the expense of nuclear energy results in a considerable increase",
     "type": "NarrativeText",
     "metadata": {
       "filetype": "application/pdf",
@@ -441,8 +387,8 @@
     }
   },
   {
-    "element_id": "bd051434f4157e51fd1185e80bd847f8",
-    "text": "AY nO",
+    "element_id": "f58b520072d30c4805940f5c99a306c3",
+    "text": "an ¥3 te,ay.",
     "type": "FigureCaption",
     "metadata": {
       "filetype": "application/pdf",
@@ -450,8 +396,8 @@
     }
   },
   {
-    "element_id": "9c664dbcdbf2c33b1ca97fb440d73f09",
-    "text": "Clearly, we have reached a point where we must establish a new conversation about the relative risks of nuclear, especially when risks created by other energy sources are considered. We cannot address of the global challenges we face without a significant increase in the use of nuclear energy. The effects of decades of looking at nuclear risks in isolation highlights just how crucial it is that regulators policymakers change the way they view nuclear energy, and transition towards an all-hazards ensuring that actions taken to mitigate risks do not result in creating more severe risks.",
+    "element_id": "f6b7867f0a5ebfbd0deb17d7b54f39cf",
+    "text": "Clearly, we have reached a point where we must establish a new conversation about the relative risks of using nuclear, especially when risks created by other energy sources are considered. We cannot address many of the global challenges we face without a significant increase in the use of nuclear energy. The detrimental effects of decades of looking at nuclear risks in isolation highlights just how crucial it is that regulators and policymakers change the way they view nuclear energy, and transition towards an all-hazards approach, ensuring that actions taken to mitigate risks do not result in creating more severe risks.",
     "type": "NarrativeText",
     "metadata": {
       "filetype": "application/pdf",
@@ -477,8 +423,8 @@
     }
   },
   {
-    "element_id": "533260e4d7afb457efe61c53a93718bf",
-    "text": "y[hee AESUROa er",
+    "element_id": "59a569516614e7fbdefa6a2aef6f50a7",
+    "text": "yeee PALEESO OOcrane a 72.",
     "type": "FigureCaption",
     "metadata": {
       "filetype": "application/pdf",
@@ -486,12 +432,12 @@
     }
   },
   {
-    "element_id": "a9a0dfbb37e60b5666a084163656b963",
-    "text": "World Health Organization (2020). Road traffic injuries. Available at: https://www.who.int/news-room/fact-sheets/",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "text": "",
     "type": "NarrativeText",
     "metadata": {
       "filetype": "application/pdf",
-      "page_number": 10
+      "page_number": 9
     }
   },
   {
@@ -675,8 +621,8 @@
     }
   },
   {
-    "element_id": "1ac6ca74378908dcdfa257d7a74811d4",
-    "text": "for ‘Preventing disease through health environments: a global assessment of the burden of disease from environmental risks’. Available at: data/themes/public-health-and-environment [Accessed on",
+    "element_id": "344de3a9e274d2ab3b8520eff809d3a4",
+    "text": "for ‘Preventing disease through health environments: global assessment of the burden of disease from environmental risks’. Available at: data/themes/public-health-and-environment [Accessed on",
     "type": "ListItem",
     "metadata": {
       "filetype": "application/pdf",
@@ -720,27 +666,9 @@
     }
   },
   {
-    "element_id": "c6a08effc66b98f97b41935503c289e7",
-    "text": "). Climate change and health. Available at: sheets/detail/climate-change-and-health xii BP,",
+    "element_id": "3c6d89ed3cff92d11cee90f16b4588e7",
+    "text": "). Climate change and health. Available at: sheets/detail/climate-change-and-health",
     "type": "ListItem",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 10
-    }
-  },
-  {
-    "element_id": "0c066b8c39bfce632de3fbad276e62c0",
-    "text": "BP Statistical Review of World Energy, London: BP.",
-    "type": "ListItem",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 10
-    }
-  },
-  {
-    "element_id": "210d2a8ecf9ba32451f4a6ebdd7fe27d",
-    "text": "United Nations Scientific Committee on the Effects of Radiation (2016). Report of the United Nations Scientific Committee on the Effects of Atomic Radiation. Accessed from: https://www.unscear.org/docs/publications/2016/",
-    "type": "NarrativeText",
     "metadata": {
       "filetype": "application/pdf",
       "page_number": 10
@@ -756,8 +684,17 @@
     }
   },
   {
-    "element_id": "839e196c008694b4c170e7ea2f34c2f0",
-    "text": "Nuclear Association +44 (0)20 7451 1520 www.world-nuclear.org Street info@world-nuclear.org WC2E 7HA Kingdom World Nuclear Association is the international organization that represents the global nuclear industry. Its mission is to promote a wider understanding of nuclear energy among key international influencers by producing authoritative information, developing common industry positions, and contributing to the energy debate.",
+    "element_id": "b6c39a9b3890b5132e4310c83d06b310",
+    "text": "Photo credits: Front cover & pages 1, 4, 6 left, 7 bottom: Adobe Stock; page 6 right: Getty Images; page 7 top: Uniper.",
+    "type": "NarrativeText",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 10
+    }
+  },
+  {
+    "element_id": "0fd83b0cc2c07c6946382addcc07e877",
+    "text": "Association +44 (0)20 7451 1520 www.world-nuclear.org Street info@world-nuclear.org 7HA World Nuclear Association is the international organization that represents the global nuclear industry. Its mission is to promote a wider understanding of nuclear energy among key international influencers by producing authoritative information, developing common industry positions, and contributing to the energy debate.",
     "type": "FigureCaption",
     "metadata": {
       "filetype": "application/pdf",

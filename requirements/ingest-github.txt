@@ -17,7 +17,7 @@ charset-normalizer==3.1.0
     # via
     #   -c requirements/base.txt
     #   requests
-deprecated==1.2.13
+deprecated==1.2.14
     # via
     #   -c requirements/base.txt
     #   pygithub
