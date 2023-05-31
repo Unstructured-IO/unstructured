@@ -55,8 +55,6 @@
 
 ### Enhancements
 
-* Added ingest tests with `--fast` strategy on PDF documents
-
 ### Features
 
 * Add `partition_csv` for CSV files.
