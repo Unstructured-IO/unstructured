@@ -5,7 +5,6 @@
 # Environment Variables:
 #   - SYNC_S3_DOCS: Set to true to sync test documents from S3 (default: false)
 #   - DOCKER_TEST: Set to true to run profiling inside a Docker container (default: false)
-#   - VOLUME_MOUNT: Set to the path of the volume mount for the Docker container (default: "")
 
 # Usage: 
 # - Run the script and choose the profiling mode: 'run' or 'view'.
@@ -28,18 +27,6 @@
 
 # NOTE: because memray does not build wheels for ARM-Linux, this script can not run in an ARM Docker container on an M1 Mac (though emulated AMD would work).
 
-if [[ "$DOCKER_TEST" == "true" ]]; then
-  if [ -n "$VOLUME_MOUNT" ]; then
-    VOLUME_MOUNT_ARG=" -v $VOLUME_MOUNT:/home/unstructured/scripts"
-  fi
-  docker run \
-  -it \
-  --rm \
-  "$VOLUME_MOUNT_ARG" \
-  unstructured:dev \
-  /bin/bash -c "cd unstructured/; pip install -r scripts/performance/requirements.txt; ./scripts/performance/profile.sh"
-  exit 0
-fi
 
 SCRIPT_DIR=$(dirname "$0")
 
@@ -63,6 +50,14 @@ if [[ "$SYNC_S3_DOCS" == "true" ]]; then
   aws s3 sync "s3://$S3_BUCKET/$S3_DOCS_DIR" "$SCRIPT_DIR/docs"
 fi
 
+if [[ "$DOCKER_TEST" == "true" ]]; then
+  docker run -it --rm -v scripts:/home/unstructured/scripts unstructured:dev /bin/bash -c "
+  cd unstructured/
+  pip install -r scripts/performance/requirements.txt
+  ./scripts/performance/profile.sh
+  "
+  exit 0
+fi
 
 check_display() {
   if system_profiler SPDisplaysDataType 2>/dev/null | grep -q "Display Type"; then

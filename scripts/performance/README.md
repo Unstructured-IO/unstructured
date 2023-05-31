@@ -27,6 +27,7 @@ Usage: `./scripts/performance/benchmark.sh`
 
 Export / assign desired environment variable settings:
 - SYNC_S3_DOCS: Set to true to sync test documents from S3 (default: false)
+- DOCKER_TEST: Set to true to run profiling inside a Docker container (default: false)
 
 Usage: `./scripts/performance/profile.sh`
 - Run the script and choose the profiling mode: 'run' or 'view'.
