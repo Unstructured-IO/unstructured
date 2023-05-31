@@ -6,7 +6,7 @@ if __name__ == "__main__":
     if len(sys.argv) < 3:
         print(
             "Please provide the path to the file as the first argument and the strategy as the "
-            "second argument."
+            "second argument.",
         )
         sys.exit(1)
 
