@@ -106,6 +106,17 @@ def test_partition_email_from_filename():
     assert elements == EXPECTED_OUTPUT
 
 
+@pytest.mark.parametrize(
+    "filename",
+    ["fake-email-utf-16.eml", "fake-email-utf-16-be.eml", "fake-email-utf-16-le.eml"],
+)
+def test_partition_email_from_filename_default_encoding(filename):
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+    elements = partition_email(filename=filename)
+    assert len(elements) > 0
+    assert elements == EXPECTED_OUTPUT
+
+
 def test_partition_email_from_file():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
     with open(filename) as f:
@@ -114,8 +125,32 @@ def test_partition_email_from_file():
     assert elements == EXPECTED_OUTPUT
 
 
+@pytest.mark.parametrize(
+    "filename",
+    ["fake-email-utf-16.eml", "fake-email-utf-16-be.eml", "fake-email-utf-16-le.eml"],
+)
+def test_partition_email_from_file_default_encoding(filename):
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+    with open(filename) as f:
+        elements = partition_email(file=f)
+    assert len(elements) > 0
+    assert elements == EXPECTED_OUTPUT
+
+
 def test_partition_email_from_file_rb():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
+    with open(filename, "rb") as f:
+        elements = partition_email(file=f)
+    assert len(elements) > 0
+    assert elements == EXPECTED_OUTPUT
+
+
+@pytest.mark.parametrize(
+    "filename",
+    ["fake-email-utf-16.eml", "fake-email-utf-16-be.eml", "fake-email-utf-16-le.eml"],
+)
+def test_partition_email_from_file_rb_default_encoding(filename):
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
     with open(filename, "rb") as f:
         elements = partition_email(file=f)
     assert len(elements) > 0

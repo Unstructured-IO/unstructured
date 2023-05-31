@@ -10,7 +10,6 @@ from unstructured.file_utils.file_conversion import convert_file_to_text
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
 
-@pytest.mark.xfail(reason="Requirements mismatch, should only fail in docker test")
 def test_convert_file_to_text():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "winter-sports.epub")
     html_text = convert_file_to_text(filename, source_format="epub", target_format="html")

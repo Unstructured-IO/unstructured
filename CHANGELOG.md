@@ -1,14 +1,54 @@
-## 0.6.9-dev2
+## 0.6.12-dev1
 
 ### Enhancements
 
 * Added ingest tests with `--fast` strategy on PDF documents
-* fast strategy for pdf now keeps element bounding box data
 
 ### Features
 
 ### Fixes
 
+* Fixes an issue in `_add_element_metadata` that caused all elements to have `page_number=1`
+  in the element metadata.
+* Adds `.log` as a file extension for TXT files.
+* Adds functionality to try other common encodings for email (`.eml`) files if an error related to the encoding is raised and the user has not specified an encoding.
+* Allow passed encoding to be used in the `replace_mime_encodings`
+* Fixes page metadata for `partition_html` when `include_metadata=False`
+
+## 0.6.11
+
+### Enhancements
+
+* Supports epub tests since pandoc is updated in base image
+
+### Features
+
+
+### Fixes
+
+
+## 0.6.10
+
+### Enhancements
+
+* XLS support from auto partiton
+
+### Features
+
+### Fixes
+
+## 0.6.9
+
+### Enhancements
+
+* fast strategy for pdf now keeps element bounding box data
+* setup.py refactor
+
+### Features
+
+### Fixes
+
+* Adds functionality to try other common encodings if an error related to the encoding is raised and the user has not specified an encoding.
 * Adds additional MIME types for CSV
 
 ## 0.6.8
