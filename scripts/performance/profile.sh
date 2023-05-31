@@ -70,6 +70,8 @@ if [[ "$DOCKER_TEST" == "true" ]]; then
   docker run -it --rm -v scripts:/home/unstructured/scripts unstructured:dev /bin/bash -c "
   cd unstructured/
   pip install -r scripts/performance/requirements.txt
+  echo "Warming the Docker container by running a small partitioning job..."
+  python3 -c 'from unstructured.partition.auto import partition; partition("'"$SCRIPT_DIR/warmup.pdf"'", strategy="hi_res")[1]'
   ./scripts/performance/profile.sh
   "
   exit 0
