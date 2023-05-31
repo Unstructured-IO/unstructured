@@ -12,15 +12,14 @@
 # - In the 'view' mode, you can view previously generated profiling results.
 # - The script supports time profiling with cProfile and memory profiling with memray.
 # - Users can choose different visualization options such as flamegraphs, tables, trees, summaries, and statistics.
-# - Test documents are synced from an S3 bucket to a local directory before running the profiles.
+# - Test documents are (optionally) synced from an S3 bucket to a local directory before running the profiles.
 
 # Dependencies:
-# - Python 3
 # - memray package for memory profiling and visualization.
 # - flameprof and snakeviz for time profiling and visualization.
 # - AWS CLI for syncing files from S3 (if applicable).
 
-# Package dependencies can be installed with `pip install -r requirements.txt`
+# Package dependencies can be installed with `pip install -r scripts/performance/requirements.txt`
 
 # Usage example:
 # ./scripts/performance/profile.sh
@@ -39,9 +38,11 @@ validate_dependencies() {
   check_python_module memray 
   check_python_module flameprof
 }
-validate_dependencies
 
-
+# only validate in non-docker context (since we install dependencies on the fly in docker)
+if [[ "$DOCKER_TEST" != "true" ]]; then
+  validate_dependencies
+fi
 
 SCRIPT_DIR=$(dirname "$0")
 
