@@ -72,7 +72,6 @@ def partition_pptx(
                     table_text += "\n"
                 if (table_text := table_text.strip()) != "":
                     elements.append(Text(text=table_text, metadata=metadata))
-                
                 continue
             if not shape.has_text_frame:
                 continue
