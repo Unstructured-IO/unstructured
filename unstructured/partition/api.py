@@ -71,9 +71,13 @@ def partition_via_api(
                 files=files,  # type: ignore
             )
     elif file is not None:
-        _filename = file_filename or ""
+        if file_filename is None:
+            raise ValueError(
+                "If file is specified in partition_via_api, "
+                "file_filename must be specified as well.",
+            )
         files = [
-            ("files", (_filename, file, content_type)),  # type: ignore
+            ("files", (file_filename, file, content_type)),  # type: ignore
         ]
         response = requests.post(api_url, headers=headers, data=data, files=files)  # type: ignore
 
