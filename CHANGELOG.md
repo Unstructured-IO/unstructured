@@ -1,3 +1,16 @@
+## 0.7.1-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* Add functionality to the `read_txt_file` utility function to handle file-like object from URL
+* Remove the unused parameter `encoding` from `partition_pdf`
+* Change auto.py to have a `None` default for encoding
+* Add functionality to try other common encodings for html and xml files if an error related to the encoding is raised and the user has not specified an encoding.
+
 ## 0.7.0
 
 ### Enhancements
