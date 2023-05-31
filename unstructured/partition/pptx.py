@@ -12,7 +12,6 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import exactly_one, spooled_to_bytes_io_if_needed
 from unstructured.partition.text_type import (
     is_possible_narrative_text,
@@ -22,7 +21,6 @@ from unstructured.partition.text_type import (
 OPENXML_SCHEMA_NAME = "{http://schemas.openxmlformats.org/drawingml/2006/main}"
 
 
-@add_metadata_with_filetype(FileType.PPTX)
 def partition_pptx(
     filename: Optional[str] = None,
     file: Optional[Union[IO, SpooledTemporaryFile]] = None,
@@ -63,10 +61,17 @@ def partition_pptx(
         metadata.page_number = i + 1
 
         for shape in _order_shapes(slide.shapes):
-            # NOTE(robinson) - we don't deal with tables yet, but so future humans can find
-            # it again, here are docs on how to deal with tables. The check for tables should
-            # be `if shape.has_table`
-            # ref: https://python-pptx.readthedocs.io/en/latest/user/table.html#adding-a-table
+            if shape.has_table:
+                table: pptx.table.Table = shape.table
+                table_text = ""
+                for rn in range(0, len(table.rows)):
+                    for cn in range(0, len(table.columns)):
+                        cell = table.cell(rn, cn)
+                        table_text += f"\t{cell.text}"
+                    table_text += "\n"
+                if table_text.strip() != "":
+                    elements.append(Text(text=table_text, metadata=metadata))
+                continue
             if not shape.has_text_frame:
                 continue
             # NOTE(robinson) - avoid processing shapes that are not on the actual slide
