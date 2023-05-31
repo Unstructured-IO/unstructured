@@ -1611,6 +1611,15 @@
     }
   },
   {
+    "element_id": "5901e461e70d7d066c71da67babb4124",
+    "text": "Figure 1.1. Global Financial Conditions: Selected Regions (Standard deviations from mean) 7 United States October Euro area 2022 6 China GFSR 5 Other AEs 4 Other EMs 3 2 1 0 –1 –2 –3 200066 0088 1100 1122 1144 1166 1188 2200 2222 Sources: Bloomberg Finance L.P.; Haver Analytics; national data sources; and IMF staff calculations. Note: AEs = advanced economies; EMs = emerging markets. GFSR= Global Financial Stability Report. Figure 1.2. Market-Implied Expectations of Policy Rates (Percent) Latest October 2022 GFSR 6 1. United States 2. Euro area 5 5 4 4 3 3 2 2 1 1 Oct. Apr. Oct. Dec. Dec. Oct. Apr. Oct. Dec. Dec. 22 23 23 24 26 22 23 23 24 26",
+    "type": "FigureCaption",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 11
+    }
+  },
+  {
     "element_id": "846222441c137ff4dd26599c31983da0",
     "text": "Overall, financial stability risks remain elevated as investors reassess their inflation and monetary policy outlook. Global financial conditions have eased somewhat since the October 2022 Global Financial Stability Report, driven largely by changing market expectations regarding the interest rate (Figure 1.1). While the expected peak in policy rates—the terminal rate—has risen, markets now also expect the subsequent fall in rates will be significantly faster, and than what was forecast in October (Figure 1.2). As a result, global bond yields have recently declined, corporate spreads have tightened, and equity markets have rebounded. That said, central banks are likely to continue to tighten monetary policy to fight inflation, and concerns that this restrictive stance could tip the economy into a recession have increased in major advanced economies.",
     "type": "NarrativeText",
@@ -1629,6 +1638,15 @@
     }
   },
   {
+    "element_id": "27fc6851780828d92752d50063772e95",
+    "text": "(Percent) Latest October 2022 GFSR 6 1. United States 2. Euro area 5 5 4 4 3 3 2 2 1 1 Oct. Apr. Oct. Dec. Dec. Oct. Apr. Oct. Dec. Dec. 22 23 23 24 26 22 23 23 24 26",
+    "type": "FigureCaption",
+    "metadata": {
+      "filetype": "application/pdf",
+      "page_number": 11
+    }
+  },
+  {
     "element_id": "c132cb2a45c3a5acc5a3378d939669a6",
     "text": "stubbornly high across most regions, labor markets are still tight, energy prices remain pressured by Russia’s ongoing war in Ukraine, and supply chain disruptions may reappear. To keep these risks in check, financial conditions will likely need to tighten further. If not, central banks may need to increase policy rates even more in order to achieve their inflation objectives.",
     "type": "NarrativeText",
@@ -1641,24 +1659,6 @@
     "element_id": "9dd76f161bac8d3fe0addee28eec2a35",
     "text": "Given the tension between rising recession risks and monetary policy uncertainty, markets have seen significant volatility.",
     "type": "Title",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 11
-    }
-  },
-  {
-    "element_id": "5901e461e70d7d066c71da67babb4124",
-    "text": "Figure 1.1. Global Financial Conditions: Selected Regions (Standard deviations from mean) 7 United States October Euro area 2022 6 China GFSR 5 Other AEs 4 Other EMs 3 2 1 0 –1 –2 –3 200066 0088 1100 1122 1144 1166 1188 2200 2222 Sources: Bloomberg Finance L.P.; Haver Analytics; national data sources; and IMF staff calculations. Note: AEs = advanced economies; EMs = emerging markets. GFSR= Global Financial Stability Report. Figure 1.2. Market-Implied Expectations of Policy Rates (Percent) Latest October 2022 GFSR 6 1. United States 2. Euro area 5 5 4 4 3 3 2 2 1 1 Oct. Apr. Oct. Dec. Dec. Oct. Apr. Oct. Dec. Dec. 22 23 23 24 26 22 23 23 24 26",
-    "type": "FigureCaption",
-    "metadata": {
-      "filetype": "application/pdf",
-      "page_number": 11
-    }
-  },
-  {
-    "element_id": "27fc6851780828d92752d50063772e95",
-    "text": "(Percent) Latest October 2022 GFSR 6 1. United States 2. Euro area 5 5 4 4 3 3 2 2 1 1 Oct. Apr. Oct. Dec. Dec. Oct. Apr. Oct. Dec. Dec. 22 23 23 24 26 22 23 23 24 26",
-    "type": "FigureCaption",
     "metadata": {
       "filetype": "application/pdf",
       "page_number": 11
