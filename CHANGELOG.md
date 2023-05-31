@@ -1,3 +1,45 @@
+## 0.7.0
+
+### Enhancements
+
+* Installing `detectron2` from source is no longer required when using the `local-inference` extra.
+* Updates `.pptx` parsing to include text in tables.
+
+### Features
+
+### Fixes
+
+* Fixes an issue in `_add_element_metadata` that caused all elements to have `page_number=1`
+  in the element metadata.
+* Adds `.log` as a file extension for TXT files.
+* Adds functionality to try other common encodings for email (`.eml`) files if an error related to the encoding is raised and the user has not specified an encoding.
+* Allow passed encoding to be used in the `replace_mime_encodings`
+* Fixes page metadata for `partition_html` when `include_metadata=False`
+* A `ValueError` now raises if `file_filename` is not specified when you use `partition_via_api`
+  with a file-like object.
+
+## 0.6.11
+
+### Enhancements
+
+* Supports epub tests since pandoc is updated in base image
+
+### Features
+
+
+### Fixes
+
+
+## 0.6.10
+
+### Enhancements
+
+* XLS support from auto partiton
+
+### Features
+
+### Fixes
+
 ## 0.6.9
 
 ### Enhancements

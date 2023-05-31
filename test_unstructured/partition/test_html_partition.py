@@ -22,6 +22,14 @@ def test_partition_html_from_filename():
     assert elements[0].metadata.file_directory == directory
 
 
+def test_partition_html_from_filename_metadata_false():
+    directory = os.path.join(DIRECTORY, "..", "..", "example-docs")
+    filename = os.path.join(directory, "example-10k.html")
+    elements = partition_html(filename=filename, include_metadata=False)
+    metadata_present = any(element.metadata.to_dict() for element in elements)
+    assert not metadata_present
+
+
 def test_partition_html_with_page_breaks():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "example-10k.html")
     elements = partition_html(filename=filename, include_page_breaks=True)

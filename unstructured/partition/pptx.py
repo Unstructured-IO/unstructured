@@ -9,11 +9,16 @@ from unstructured.documents.elements import (
     ListItem,
     NarrativeText,
     PageBreak,
+    Table,
     Text,
     Title,
 )
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
-from unstructured.partition.common import exactly_one, spooled_to_bytes_io_if_needed
+from unstructured.partition.common import (
+    convert_ms_office_table_to_text,
+    exactly_one,
+    spooled_to_bytes_io_if_needed,
+)
 from unstructured.partition.text_type import (
     is_possible_narrative_text,
     is_possible_title,
@@ -63,10 +68,17 @@ def partition_pptx(
         metadata.page_number = i + 1
 
         for shape in _order_shapes(slide.shapes):
-            # NOTE(robinson) - we don't deal with tables yet, but so future humans can find
-            # it again, here are docs on how to deal with tables. The check for tables should
-            # be `if shape.has_table`
-            # ref: https://python-pptx.readthedocs.io/en/latest/user/table.html#adding-a-table
+            if shape.has_table:
+                table: pptx.table.Table = shape.table
+                html_table = convert_ms_office_table_to_text(table, as_html=True)
+                text_table = convert_ms_office_table_to_text(table, as_html=False)
+                if (text_table := text_table.strip()) != "":
+                    metadata = ElementMetadata(
+                        filename=metadata_filename,
+                        text_as_html=html_table,
+                    )
+                    elements.append(Table(text=text_table, metadata=metadata))
+                continue
             if not shape.has_text_frame:
                 continue
             # NOTE(robinson) - avoid processing shapes that are not on the actual slide
