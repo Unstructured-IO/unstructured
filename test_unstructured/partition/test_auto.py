@@ -349,7 +349,7 @@ def test_auto_partition_pdf_from_file(pass_file_filename, content_type, request)
     request.applymarker(pytest.mark.xfail)
 
     assert isinstance(elements[1], NarrativeText)
-    assert elements[1].text.startswith("Shen")
+    assert elements[1].text.startswith("Zejiang Shen")
 
 
 def test_partition_pdf_doesnt_raise_warning():
