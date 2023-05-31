@@ -1,4 +1,4 @@
-## 0.6.12-dev0
+## 0.6.12-dev1
 
 ### Enhancements
 
@@ -12,6 +12,8 @@
 * Adds functionality to try other common encodings for email (`.eml`) files if an error related to the encoding is raised and the user has not specified an encoding.
 * Allow passed encoding to be used in the `replace_mime_encodings`
 * Fixes page metadata for `partition_html` when `include_metadata=False`
+* A `ValueError` now raises if `file_filename` is not specified when you use `partition_via_api`
+  with a file-like object.
 
 ## 0.6.11
 
