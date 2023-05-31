@@ -1,4 +1,5 @@
 import sys
+
 from unstructured.partition.auto import partition
 
 if __name__ == "__main__":

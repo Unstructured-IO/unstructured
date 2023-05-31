@@ -93,7 +93,7 @@ view_profile_headless() {
     echo "Result file not found. Please choose a different profile type or go back."
   else
     while true; do
-      read -p "Choose visualization type: (1) tree (2) summary (3) stats (b) back, (q) quit: " -n 1 visualization_type
+      read -r -p "Choose visualization type: (1) tree (2) summary (3) stats (b) back, (q) quit: " -n 1 visualization_type
       echo
 
       if [[ $visualization_type == "b" ]]; then
@@ -123,7 +123,7 @@ view_profile_headless() {
 
 view_profile_with_head() {
   while true; do
-    read -p "Choose profile type: (1) time (2) memory (b) back, (q) quit: " -n 1 profile_type
+    read -r -p "Choose profile type: (1) time (2) memory (b) back, (q) quit: " -n 1 profile_type
     echo
 
     if [[ $profile_type == "b" ]]; then
@@ -151,7 +151,7 @@ view_profile_with_head() {
 
     if [[ $profile_type == "2" ]]; then
       while true; do
-        read -p "Choose visualization type: (1) flamegraph (2) table (3) tree (4) summary (5) stats (b) back, (q) quit: " -n 1 visualization_type
+        read -r -p "Choose visualization type: (1) flamegraph (2) table (3) tree (4) summary (5) stats (b) back, (q) quit: " -n 1 visualization_type
         echo
 
         if [[ $visualization_type == "b" ]]; then
@@ -187,7 +187,7 @@ view_profile_with_head() {
       done
     else
       while true; do
-        read -p "Choose visualization type: (1) flamegraph (2) snakeviz (b) back, (q) quit: " -n 1 visualization_type
+        read -r -p "Choose visualization type: (1) flamegraph (2) snakeviz (b) back, (q) quit: " -n 1 visualization_type
         echo
 
         if [[ $visualization_type == "b" ]]; then
@@ -237,7 +237,7 @@ view_profile() {
         echo "$i. $filename"
       done
 
-      read -p "Enter the number corresponding to the result file you want to view (b to go back, q to quit): " selection
+      read -r -p "Enter the number corresponding to the result file you want to view (b to go back, q to quit): " selection
       if [[ $selection == "b" ]]; then
         return
       elif [[ $selection == "q" ]]; then
@@ -257,7 +257,7 @@ view_profile() {
 
 run_profile() {
   while true; do
-    read -p "Choose an option: 1) Existing test file, (2) Custom file, (b) back, (q) quit: " -n 1 option
+    read -r -p "Choose an option: 1) Existing test file, (2) Custom file, (b) back, (q) quit: " -n 1 option
     echo
 
     if [[ $option == "b" ]]; then
@@ -278,7 +278,7 @@ run_profile() {
         echo "$i. ${test_files[$i]}"
       done
 
-      read -p "Enter the number corresponding to the test file you want to run followed by return (b to go back, q to quit): " selection
+      read -r -p "Enter the number corresponding to the test file you want to run followed by return (b to go back, q to quit): " selection
       if [[ $selection == "b" ]]; then
         return
       elif [[ $selection == "q" ]]; then
@@ -287,7 +287,7 @@ run_profile() {
 
       TEST_FILE="${test_files[$selection]}"
     elif [[ $option == "2" ]]; then
-      read -p "Enter the path to the custom file: " TEST_FILE
+      read -r -p "Enter the path to the custom file: " TEST_FILE
     else
       echo "Invalid option. Please try again."
       continue
@@ -314,7 +314,7 @@ while true; do
   fi
   
   if [[ -z $result_file ]]; then
-    read -p "Choose mode: (1) run, (2) view, (q) quit: " -n 1 mode
+    read -r -p "Choose mode: (1) run, (2) view, (q) quit: " -n 1 mode
     echo
   fi
 
