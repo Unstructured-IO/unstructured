@@ -1,6 +1,7 @@
-import sys
 import os
+import sys
 import time
+
 from unstructured.partition.auto import partition
 
 
