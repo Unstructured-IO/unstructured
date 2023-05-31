@@ -40,10 +40,11 @@ function read_benchmark_logs_for_results() {
 }
 
 if [[ "$DOCKER_TEST" == "true" ]]; then
-    trap "docker rm -f unstructured-perf-test > /dev/null" EXIT
     DOCKER_IMAGE=unstructured:perf-test make docker-build 
+    docker rm -f unstructured-perf-test > /dev/null 2>&1
     docker run \
     --name unstructured-perf-test \
+    --rm \
     -e NUM_ITERATIONS="$NUM_ITERATIONS" \
     -e INSTANCE_TYPE="$INSTANCE_TYPE" \
     -e GIT_HASH="$GIT_HASH" \
