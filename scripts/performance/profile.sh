@@ -288,25 +288,55 @@ run_profile() {
         exit 0
       fi
 
-      TEST_FILE="${test_files[$selection]}"
+      test_file="${test_files[$selection]}"
     elif [[ $option == "2" ]]; then
-      read -r -p "Enter the path to the custom file: " TEST_FILE
+      read -r -p "Enter the path to the custom file: " test_file
     else
       echo "Invalid option. Please try again."
       continue
     fi
 
     # Delete the output files if they exist
-    rm -f "$PROFILE_RESULTS_DIR/${TEST_FILE##*/}.prof"
-    rm -f "$PROFILE_RESULTS_DIR/${TEST_FILE##*/}.bin"
+    rm -f "$PROFILE_RESULTS_DIR/${test_file##*/}.prof"
+    rm -f "$PROFILE_RESULTS_DIR/${test_file##*/}.bin"
+
+    # Pick the strategy
+    while true; do
+      read -r -p "Choose a strategy: 1) auto, (2) fast, (3) hi_res, (b) back, (q) quit: " -n 1 strategy_option
+      echo
+
+      if [[ $strategy_option == "b" ]]; then
+        return
+      elif [[ $strategy_option == "q" ]]; then
+        exit 0
+      fi
+
+      case $strategy_option in
+        "1")
+          strategy="auto"
+          break
+          ;;
+        "2")
+          strategy="fast"
+          break
+          ;;
+        "3")
+          strategy="hi_res"
+          break
+          ;;
+        *)
+          echo "Invalid strategy option. Please try again."
+          ;;
+      esac
+    done
 
     echo "Running time profile..."
-    python3 -m cProfile -s cumulative -o "$PROFILE_RESULTS_DIR/${TEST_FILE##*/}.prof" -m "$MODULE_PATH.run-partition" "$TEST_FILE"
+    python3 -m cProfile -s cumulative -o "$PROFILE_RESULTS_DIR/${test_file##*/}.prof" -m "$MODULE_PATH.run_partition" "$test_file" "$strategy"
     echo "Running memory profile..."
-    python3 -m memray run -o "$PROFILE_RESULTS_DIR/${TEST_FILE##*/}.bin" -m "$MODULE_PATH.run-partition" "$TEST_FILE"
+    python3 -m memray run -o "$PROFILE_RESULTS_DIR/${test_file##*/}.bin" -m "$MODULE_PATH.run_partition" "$test_file" "$strategy"
     echo "Profiling completed."
-    echo "Viewing results for $TEST_FILE"
-    result_file=$PROFILE_RESULTS_DIR/$(basename "$TEST_FILE")
+    echo "Viewing results for $test_file"
+    result_file=$PROFILE_RESULTS_DIR/$(basename "$test_file")
     view_profile "${result_file}.bin" # Go directly to view mode
   done
 }
