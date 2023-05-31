@@ -62,6 +62,18 @@ def test_partition_via_api_from_file(monkeypatch):
     assert elements[0] == NarrativeText("This is a test email to use for unit tests.")
 
 
+def test_partition_via_api_from_file_raises_without_filename(monkeypatch):
+    monkeypatch.setattr(
+        requests,
+        "post",
+        lambda *args, **kwargs: MockResponse(status_code=200),
+    )
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
+
+    with open(filename, "rb") as f, pytest.raises(ValueError):
+        partition_via_api(file=f, api_key="FAKEROO")
+
+
 def test_partition_via_api_raises_with_bad_response(monkeypatch):
     monkeypatch.setattr(
         requests,
