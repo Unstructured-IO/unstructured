@@ -5,11 +5,9 @@ from typing import IO, BinaryIO, List, Optional, Union, cast
 
 import docx
 import pypandoc
-from docx import table as docxtable
 from docx.oxml.shared import qn
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
-from tabulate import tabulate
 
 from unstructured.cleaners.core import clean_bullets
 from unstructured.documents.elements import (
@@ -23,7 +21,11 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
-from unstructured.partition.common import exactly_one, spooled_to_bytes_io_if_needed
+from unstructured.partition.common import (
+    convert_ms_office_table_to_text,
+    exactly_one,
+    spooled_to_bytes_io_if_needed,
+)
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_possible_narrative_text,
@@ -134,8 +136,8 @@ def partition_docx(
     for element_item in document.element.body:
         if element_item.tag.endswith("tbl"):
             table = document.tables[table_index]
-            html_table = _convert_table_to_text(table, as_html=True)
-            text_table = _convert_table_to_text(table, as_html=False)
+            html_table = convert_ms_office_table_to_text(table, as_html=True)
+            text_table = convert_ms_office_table_to_text(table, as_html=False)
             element = Table(text_table)
             if element is not None:
                 element.metadata = ElementMetadata(
@@ -152,24 +154,6 @@ def partition_docx(
                 elements.append(para_element)
 
     return elements
-
-
-def _convert_table_to_text(table: docxtable.Table, as_html: bool) -> str:
-    """
-    Convert a table object from a Word document to an HTML table string using the tabulate library.
-
-    Args:
-        table (Table): A Table object.
-        as_html (bool): Whether to return the table as an HTML string (True) or a
-            plain text string (False)
-
-    Returns:
-        str: An table string representation of the input table.
-    """
-    fmt = "html" if as_html else "plain"
-    headers = [cell.text for cell in table.rows[0].cells]
-    data = [[cell.text for cell in row.cells] for row in table.rows[1:]]
-    return tabulate(data, headers=headers, tablefmt=fmt)
 
 
 def _paragraph_to_element(paragraph: docx.text.paragraph.Paragraph) -> Optional[Text]:
