@@ -5,15 +5,11 @@ set -e
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 cd "$SCRIPT_DIR"/.. || exit 1
 
-# NOTE(robinson) - uncomment the section below and regenerate test fixtures once
-# the ONNXRuntimeError issue in unstructured-inference is resolved
-# https://github.com/Unstructured-IO/unstructured-inference/issues/116
-
-# if [[ "$(find test_unstructured_ingest/expected-structured-output/s3-small-batch/ -type f -size +20k | wc -l)" -ne 3 ]]; then
-#     echo "The test fixtures in test_unstructured_ingest/expected-structured-output/ look suspicious. At least one of the files is too small."
-#     echo "Did you overwrite test fixtures with bad outputs?"
-#     exit 1
-# fi
+if [[ "$(find test_unstructured_ingest/expected-structured-output/s3-small-batch/ -type f -size +20k | wc -l)" -ne 3 ]]; then
+    echo "The test fixtures in test_unstructured_ingest/expected-structured-output/ look suspicious. At least one of the files is too small."
+    echo "Did you overwrite test fixtures with bad outputs?"
+    exit 1
+fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --metadata-exclude filename,file_directory \
