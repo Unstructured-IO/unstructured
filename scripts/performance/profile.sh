@@ -74,6 +74,7 @@ view_profile_headless() {
   result_file="${result_file%.*}$extension"
 
   if [[ ! -f "$result_file" ]]; then
+    unset result_file  # Unset the result_file variable to go back to the "Select a file" view
     echo "Result file not found. Please choose a different profile type or go back."
   else
     while true; do
