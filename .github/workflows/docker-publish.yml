@@ -60,6 +60,7 @@ jobs:
     - name: Push images
       run: |
         # write to the build repository to cache for the publish-images job
+        ARCH=$(cut -d "/" -f2 <<< ${{ matrix.docker-platform }})
         docker push "$DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA"
   publish-images:
     runs-on: ubuntu-latest
