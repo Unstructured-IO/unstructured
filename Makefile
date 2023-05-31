@@ -235,3 +235,17 @@ docker-test:
 .PHONY: docker-smoke-test
 docker-smoke-test:
 	DOCKER_IMAGE=${DOCKER_IMAGE} ./scripts/docker-smoke-test.sh
+
+
+###########
+# Jupyter #
+###########
+
+.PHONY: docker-jupyter-notebook
+docker-jupyter-notebook:
+	docker run -p 8888:8888 --mount type=bind,source=$(realpath .),target=/home --entrypoint jupyter-notebook -t --rm ${DOCKER_IMAGE} --allow-root --port 8888 --ip 0.0.0.0 --NotebookApp.token='' --NotebookApp.password=''
+
+
+.PHONY: run-jupyter
+run-jupyter:
+	PYTHONPATH=$(realpath .) JUPYTER_PATH=$(realpath .) jupyter-notebook --NotebookApp.token='' --NotebookApp.password=''
