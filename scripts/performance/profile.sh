@@ -67,7 +67,7 @@ if [[ "$SYNC_S3_DOCS" == "true" ]]; then
 fi
 
 if [[ "$DOCKER_TEST" == "true" ]]; then
-  docker run -it --rm -v $(dirname "$ABS_SCRIPT_DIR"):/home/unstructured/scripts unstructured:dev /bin/bash -c "
+  docker run -it --rm -v "$(dirname $ABS_SCRIPT_DIR):/home/unstructured/scripts" unstructured:dev /bin/bash -c "
   cd unstructured/
   pip install -r scripts/performance/requirements.txt
   echo \"Warming the Docker container by running a small partitioning job..\"
