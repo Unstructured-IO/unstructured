@@ -1558,7 +1558,7 @@ for labels and annotations.
 -----------------------
 
 The ``stage_for_weaviate`` staging function prepares a list of ``Element`` objects for ingestion into
-the `Weaviate <https://weaviate.io/>`_ vector database. You can create a schema schema in Weaviate
+the `Weaviate <https://weaviate.io/>`_ vector database. You can create a schema in Weaviate
 for the `unstructured` outputs using the following workflow:
 
 .. code:: python
@@ -1578,7 +1578,7 @@ for the `unstructured` outputs using the following workflow:
 
 Once the schema is created, you can batch upload documents to Weaviate using the following workflow.
 See the `Weaviate documentation <https://weaviate.io/developers/weaviate>`_ for more details on
-options for uploading data and querying data once it has been uploaded.p
+options for uploading data and querying data once it has been uploaded.
 
 
 .. code:: python
