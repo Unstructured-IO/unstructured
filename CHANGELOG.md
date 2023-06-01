@@ -1,3 +1,13 @@
+## 0.7.1-dev1
+
+### Enhancements
+
+* Builds from Unstructured base image, built off of Rocky Linux 8.7
+
+### Features
+
+### Fixes
+
 ## 0.7.0
 
 ### Enhancements
