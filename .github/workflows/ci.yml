@@ -138,7 +138,7 @@ jobs:
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
         sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
         tesseract --version
-        pip install weaviate-client --no-deps
+        pip install weaviate-client
         make test
         make check-coverage
 
