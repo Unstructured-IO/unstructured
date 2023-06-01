@@ -1,3 +1,4 @@
+jupyter
 tqdm
 weaviate-client
 unstructured
