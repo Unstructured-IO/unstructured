@@ -18,14 +18,13 @@ def get_leaf_elements(
     xml_path: str = ".",
 ):
     if filename:
-        tree = ET.parse(filename)
+        _, raw_text = read_txt_file(filename=filename)
     elif file:
-        f = spooled_to_bytes_io_if_needed(
-            cast(Union[BinaryIO, SpooledTemporaryFile], file),
-        )
-        tree = ET.parse(f)  # type: ignore
+        _, raw_text = read_txt_file(file=file)
+    else:
+        raise ValueError("Either 'filename' or 'file' must be provided.")
 
-    root = tree.getroot()
+    root = ET.fromstring(raw_text)
     leaf_elements = []
 
     for elem in root.findall(xml_path):
@@ -72,9 +71,11 @@ def partition_xml(
 
     if xml_keep_tags:
         if filename:
-            encoding, raw_text = read_txt_file(filename=filename, encoding=encoding)
+            _, raw_text = read_txt_file(filename=filename, encoding=encoding)
         elif file:
-            encoding, raw_text = read_txt_file(file=file, encoding=encoding)
+            _, raw_text = read_txt_file(file=file, encoding=encoding)
+        else:
+            raise ValueError("Either 'filename' or 'file' must be provided.")
     else:
         raw_text = get_leaf_elements(filename=filename, file=file, xml_path=xml_path)
     elements = partition_text(
