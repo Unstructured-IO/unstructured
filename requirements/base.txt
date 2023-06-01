@@ -6,20 +6,20 @@
 #
 anyio==3.7.0
     # via httpcore
-argilla==1.7.0
-    # via -r requirements/base.in
+argilla==1.8.0
+    # via -r base.in
 backoff==2.2.1
     # via argilla
 certifi==2023.5.7
     # via
-    #   -c requirements/constraints.in
+    #   -c constraints.in
     #   httpcore
     #   httpx
     #   requests
 cffi==1.15.1
     # via cryptography
 chardet==5.1.0
-    # via -r requirements/base.in
+    # via -r base.in
 charset-normalizer==3.1.0
     # via
     #   pdfminer-six
@@ -36,8 +36,6 @@ deprecated==1.2.14
     # via argilla
 et-xmlfile==1.1.0
     # via openpyxl
-exceptiongroup==1.1.1
-    # via anyio
 h11==0.14.0
     # via httpcore
 httpcore==0.16.3
@@ -49,23 +47,21 @@ idna==3.4
     #   anyio
     #   requests
     #   rfc3986
-importlib-metadata==6.6.0
-    # via markdown
 joblib==1.2.0
     # via nltk
 lxml==4.9.2
     # via
-    #   -r requirements/base.in
+    #   -r base.in
     #   python-docx
     #   python-pptx
 markdown==3.4.3
-    # via -r requirements/base.in
+    # via -r base.in
 monotonic==1.6
     # via argilla
 msg-parser==1.2.0
-    # via -r requirements/base.in
+    # via -r base.in
 nltk==3.8.1
-    # via -r requirements/base.in
+    # via -r base.in
 numpy==1.23.5
     # via
     #   argilla
@@ -73,18 +69,18 @@ numpy==1.23.5
 olefile==0.46
     # via msg-parser
 openpyxl==3.1.2
-    # via -r requirements/base.in
+    # via -r base.in
 packaging==23.1
     # via argilla
 pandas==1.5.3
     # via
-    #   -r requirements/base.in
+    #   -r base.in
     #   argilla
 pdfminer-six==20221105
-    # via -r requirements/base.in
+    # via -r base.in
 pillow==9.5.0
     # via
-    #   -r requirements/base.in
+    #   -r base.in
     #   python-pptx
 pycparser==2.21
     # via cffi
@@ -93,21 +89,21 @@ pydantic==1.10.8
 pygments==2.15.1
     # via rich
 pypandoc==1.11
-    # via -r requirements/base.in
+    # via -r base.in
 python-dateutil==2.8.2
     # via pandas
 python-docx==0.8.11
-    # via -r requirements/base.in
+    # via -r base.in
 python-magic==0.4.27
-    # via -r requirements/base.in
+    # via -r base.in
 python-pptx==0.6.21
-    # via -r requirements/base.in
+    # via -r base.in
 pytz==2023.3
     # via pandas
 regex==2023.5.5
     # via nltk
 requests==2.31.0
-    # via -r requirements/base.in
+    # via -r base.in
 rfc3986[idna2008]==1.5.0
     # via httpx
 rich==13.0.1
@@ -119,8 +115,6 @@ sniffio==1.3.0
     #   anyio
     #   httpcore
     #   httpx
-tabulate==0.9.0
-    # via unstructured (setup.py)
 tqdm==4.65.0
     # via
     #   argilla
@@ -130,19 +124,16 @@ typer==0.9.0
 typing-extensions==4.6.2
     # via
     #   pydantic
-    #   rich
     #   typer
 urllib3==1.26.16
     # via
-    #   -c requirements/constraints.in
+    #   -c constraints.in
     #   requests
 wrapt==1.14.1
     # via
     #   argilla
     #   deprecated
 xlrd==2.0.1
-    # via -r requirements/base.in
+    # via -r base.in
 xlsxwriter==3.1.2
     # via python-pptx
-zipp==3.15.0
-    # via importlib-metadata
