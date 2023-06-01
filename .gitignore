@@ -151,7 +151,6 @@ tramp
 
 ## https://github.com/github/gitignore/blob/main/Global/VisualStudioCode.gitignore
 .vscode/*
-!.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json

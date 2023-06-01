@@ -131,9 +131,9 @@ jobs:
     - name: Test
       run: |
         source .venv/bin/activate
-        make install-detectron2
         sudo apt-get update
-        sudo apt-get install -y libmagic-dev poppler-utils libreoffice pandoc
+        sudo apt-get install -y libmagic-dev poppler-utils libreoffice
+        make install-pandoc
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
         sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
         tesseract --version
@@ -171,7 +171,6 @@ jobs:
         DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
       run: |
         source .venv/bin/activate
-        make install-detectron2
         sudo apt-get update
         sudo apt-get install -y libmagic-dev poppler-utils libreoffice pandoc
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
@@ -227,4 +226,3 @@ jobs:
           source .venv/bin/activate
           make docker-build
           make docker-test
-

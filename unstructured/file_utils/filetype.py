@@ -8,7 +8,11 @@ from typing import IO, Callable, List, Optional
 
 from unstructured.documents.elements import Element, PageBreak
 from unstructured.nlp.patterns import LIST_OF_DICTS_PATTERN
-from unstructured.partition.common import _add_element_metadata, exactly_one
+from unstructured.partition.common import (
+    _add_element_metadata,
+    _remove_element_metadata,
+    exactly_one,
+)
 
 try:
     import magic
@@ -137,6 +141,7 @@ EXT_TO_FILETYPE = {
     ".jpeg": FileType.JPG,
     ".txt": FileType.TXT,
     ".text": FileType.TXT,
+    ".log": FileType.TXT,
     ".eml": FileType.EML,
     ".xml": FileType.XML,
     ".htm": FileType.HTML,
@@ -207,6 +212,10 @@ def detect_filetype(
     # rather than "application/json". this corrects for that case.
     if mime_type == "text/plain" and extension == ".json":
         return FileType.JSON
+
+    # NOTE(Crag): older magic lib does not differentiate between xls and doc
+    if mime_type == "application/msword" and extension == ".xls":
+        return FileType.XLS
 
     elif mime_type.endswith("xml"):
         if extension and (extension == ".html" or extension == ".htm"):
@@ -375,7 +384,9 @@ def add_metadata_with_filetype(filetype: FileType):
                     **metadata_kwargs,  # type: ignore
                 )
             else:
-                return elements
+                return _remove_element_metadata(
+                    elements,
+                )
 
         return wrapper
 
