@@ -1,6 +1,7 @@
 import json
 import os
 
+import pytest
 from weaviate.schema.validate_schema import validate_schema
 
 from unstructured.partition.json import partition_json
