@@ -71,7 +71,7 @@ def determine_pdf_or_image_strategy(
     """Determines what strategy to use for processing PDFs or images, accounting for fallback
     logic if some dependencies are not available."""
     pytesseract_installed = dependency_exists("pytesseract")
-    detectron2_installed = dependency_exists("detectron2")
+    unstructured_inference_installed = dependency_exists("unstructured_inference")
 
     if is_image:
         validate_strategy(strategy, "image")
@@ -92,11 +92,13 @@ def determine_pdf_or_image_strategy(
     if file is not None:
         file.seek(0)  # type: ignore
 
-    if all([not detectron2_installed, not pytesseract_installed, not pdf_text_extractable]):
+    if all(
+        [not unstructured_inference_installed, not pytesseract_installed, not pdf_text_extractable],
+    ):
         raise ValueError(
-            "detectron2 is not installed, pytesseract is not installed "
+            "unstructured_inference is not installed, pytesseract is not installed "
             "and the text of the PDF is not extractable. "
-            "To process this file, install detectron2, install pytesseract, "
+            "To process this file, install unstructured_inference, install pytesseract, "
             "or remove copy protection from the PDF.",
         )
 
@@ -108,9 +110,9 @@ def determine_pdf_or_image_strategy(
         # NOTE(robinson) - fallback to ocr_only here because it is faster than hi_res
         return "ocr_only"
 
-    elif strategy == "hi_res" and not detectron2_installed:
+    elif strategy == "hi_res" and not unstructured_inference_installed:
         logger.warning(
-            "detectron2 is not installed. Cannot use the hi_res partitioning "
+            "unstructured_inference is not installed. Cannot use the hi_res partitioning "
             "strategy. Falling back to partitioning with another strategy.",
         )
         # NOTE(robinson) - fallback to ocr_only if possible because it is the most

@@ -98,8 +98,8 @@ about the library.
 | Open Office Documents (`.odt`) | `partition_odt` | N/A | Yes | None |
 | PDFs (`.pdf`) | `partition_pdf` | `"auto"`, `"fast"`, `"hi_res"`, `"ocr_only"` | Yes | Encoding; Include Page Breaks; Infer Table Structure; OCR Languages, Strategy |
 | Plain Text (`.txt`) | `partition_text` | N/A | No | Encoding, Paragraph Grouper |
-| Power Points (`.ppt`) | `partition_ppt` | N/A | No | Include Page Breaks |
-| Power Points (`.pptx`) | `partition_pptx` | N/A | No | Include Page Breaks |
+| Power Points (`.ppt`) | `partition_ppt` | N/A | Yes | Include Page Breaks |
+| Power Points (`.pptx`) | `partition_pptx` | N/A | Yes | Include Page Breaks |
 | Rich Text Files (`.rtf`) | `partition_rtf` | N/A | No | Include Page Breaks |
 | Word Documents (`.doc`) | `partition_doc` | N/A | Yes | None |
 | Word Documents (`.docx`) | `partition_docx` | N/A | Yes | None |
