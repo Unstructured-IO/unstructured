@@ -1,3 +1,13 @@
+## 0.7.2-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* Adds `tabulate` explicitly to dependencies
+
 ## 0.7.1
 
 ### Enhancements
