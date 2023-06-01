@@ -12,7 +12,7 @@ beautifulsoup4==4.12.2
     # via furo
 certifi==2023.5.7
     # via
-    #   -r requirements/build.in
+    #   -r build.in
     #   requests
 charset-normalizer==3.1.0
     # via requests
@@ -21,12 +21,10 @@ docutils==0.18.1
     #   sphinx
     #   sphinx-rtd-theme
 furo==2023.5.20
-    # via -r requirements/build.in
+    # via -r build.in
 idna==3.4
     # via requests
 imagesize==1.4.1
-    # via sphinx
-importlib-metadata==6.6.0
     # via sphinx
 jinja2==3.1.2
     # via sphinx
@@ -38,8 +36,6 @@ pygments==2.15.1
     # via
     #   furo
     #   sphinx
-pytz==2023.3
-    # via babel
 requests==2.31.0
     # via sphinx
 snowballstemmer==2.2.0
@@ -48,15 +44,15 @@ soupsieve==2.4.1
     # via beautifulsoup4
 sphinx==6.2.1
     # via
-    #   -r requirements/build.in
+    #   -r build.in
     #   furo
     #   sphinx-basic-ng
     #   sphinx-rtd-theme
     #   sphinxcontrib-jquery
 sphinx-basic-ng==1.0.0b1
     # via furo
-sphinx-rtd-theme==1.2.0rc3
-    # via -r requirements/build.in
+sphinx-rtd-theme==1.2.1
+    # via -r build.in
 sphinxcontrib-applehelp==1.0.4
     # via sphinx
 sphinxcontrib-devhelp==1.0.2
@@ -73,5 +69,3 @@ sphinxcontrib-serializinghtml==1.1.5
     # via sphinx
 urllib3==2.0.2
     # via requests
-zipp==3.15.0
-    # via importlib-metadata
