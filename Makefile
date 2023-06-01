@@ -40,6 +40,9 @@ install-nltk-models:
 
 .PHONY: install-test
 install-test:
+	# NOTE(robinson) - Installing weaviate-client like this because the requests
+	# version conflicts with label_studio_sdk.
+	python3 -m pip install weaviate-client --no-deps
 	python3 -m pip install -r requirements/test.txt
 
 .PHONY: install-dev
