@@ -1,8 +1,13 @@
+import contextlib
 import json
 import os
 
 import pytest
-from weaviate.schema.validate_schema import validate_schema
+
+# NOTE(robinson) - allows tests that do not require the weaviate client to
+# run for the docker container
+with contextlib.suppress(ModuleNotFoundError):
+    from weaviate.schema.validate_schema import validate_schema
 
 from unstructured.partition.json import partition_json
 from unstructured.staging.weaviate import (
