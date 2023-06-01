@@ -1554,6 +1554,58 @@ See the `LabelStudio docs <https://labelstud.io/tags/labels.html>`_ for a full l
 for labels and annotations.
 
 
+``stage_for_weaviate``
+-----------------------
+
+The ``stage_for_weaviate`` staging function prepares a list of ``Element`` objects for ingestion into
+the `Weaviate <https://weaviate.io/>`_ vector database. You can create a schema schema in Weaviate
+for the `unstructured` outputs using the following workflow:
+
+.. code:: python
+
+  from unstructured.staging.weaviate import create_unstructured_weaviate_class
+
+  import weaviate
+
+  # Change `class_name` if you want the class for unstructured documents in Weaviate
+  # to have a different name
+  unstructured_class = create_unstructured_weaviate_class(class_name="UnstructuredDocument")
+  schema = {"classes": [unstructured_class]}
+
+  client = weaviate.Client("http://localhost:8080")
+  client.schema.create(schema)
+
+
+Once the schema is created, you can batch upload documents to Weaviate using the following workflow.
+See the `Weaviate documentation <https://weaviate.io/developers/weaviate>`_ for more details on
+options for uploading data and querying data once it has been uploaded.p
+
+
+.. code:: python
+
+  from unstructured.partition.pdf import partition_pdf
+  from unstructured.staging.weaviate import stage_for_weaviate
+
+  import weaviate
+  from weaviate.util import generate_uuid5
+
+
+  filename = "example-docs/layout-parser-paper-fast.pdf"
+  elements = partition_pdf(filename=filename, strategy="fast")
+  data_objects = stage_for_weaviate(elements)
+
+  client = weaviate.Client("http://localhost:8080")
+
+  with client.batch(batch_size=10) as batch:
+      for data_object in tqdm.tqdm(data_objects):
+          batch.add_data_object(
+              data_object,
+              unstructured_class_name,
+              uuid=generate_uuid5(data_object),
+          )
+
+
+
 ``stage_for_baseplate``
 -----------------------
 
