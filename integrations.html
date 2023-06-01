@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="Examples" href="examples.html" />
 
   <link rel="shortcut icon" href="_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.05.20" />
-  <title>Integrations - Unstructured 0.7.0 documentation</title>
+  <title>Integrations - Unstructured 0.7.1 documentation</title>
   <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -431,6 +431,15 @@ the text from each element and their types such as <code class="docutils literal
 <p>You can format your JSON or CSV outputs for use with <a class="reference external" href="https://prodi.gy/docs/api-loaders">Prodigy</a> using the <a class="reference external" href="https://unstructured-io.github.io/unstructured/bricks.html#stage-for-prodigy">stage_for_prodigy</a> and <a class="reference external" href="https://unstructured-io.github.io/unstructured/bricks.html#stage-csv-for-prodigy">stage_csv_for_prodigy</a> staging bricks. After running <code class="docutils literal notranslate"><span class="pre">stage_for_prodigy</span></code> |
 <code class="docutils literal notranslate"><span class="pre">stage_csv_for_prodigy</span></code>, you can write the results to a <code class="docutils literal notranslate"><span class="pre">.json</span></code> | <code class="docutils literal notranslate"><span class="pre">.jsonl</span></code> or a <code class="docutils literal notranslate"><span class="pre">.csv</span></code> file that is ready to be used with Prodigy. Follow the links for more details on usage.</p>
 </section>
+<section id="integration-with-weaviate">
+<h2><code class="docutils literal notranslate"><span class="pre">Integration</span> <span class="pre">with</span> <span class="pre">Weaviate</span></code><a class="headerlink" href="#integration-with-weaviate" title="Permalink to this heading"></a></h2>
+<p><a class="reference external" href="https://weaviate.io/">Weaviate</a> is an open-source vector database that allows you to store data objects and vector embeddings
+from a variety of ML models. Storing text and embeddings in a vector database such as Weaviate is a key component of the
+<a class="reference external" href="https://medium.com/&#64;unstructured-io/llms-and-the-emerging-ml-tech-stack-bdb189c8be5c">emerging LLM tech stack</a>.
+See the <a class="reference external" href="https://unstructured-io.github.io/unstructured/bricks.html#stage-for-weaviate">stage_for_weaviate</a> docs for details
+on how to upload <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> outputs to Weaviate. An example notebook is also available
+<a class="reference external" href="https://github.com/Unstructured-IO/unstructured/tree/main/examples/weaviate">here</a>.</p>
+</section>
 </section>
 
         </article>
@@ -491,6 +500,7 @@ the text from each element and their types such as <code class="docutils literal
 <li><a class="reference internal" href="#integration-with-langchain"><code class="docutils literal notranslate"><span class="pre">Integration</span> <span class="pre">with</span> <span class="pre">LangChain</span></code></a></li>
 <li><a class="reference internal" href="#integration-with-pandas"><code class="docutils literal notranslate"><span class="pre">Integration</span> <span class="pre">with</span> <span class="pre">Pandas</span></code></a></li>
 <li><a class="reference internal" href="#integration-with-prodigy"><code class="docutils literal notranslate"><span class="pre">Integration</span> <span class="pre">with</span> <span class="pre">Prodigy</span></code></a></li>
+<li><a class="reference internal" href="#integration-with-weaviate"><code class="docutils literal notranslate"><span class="pre">Integration</span> <span class="pre">with</span> <span class="pre">Weaviate</span></code></a></li>
 </ul>
 </li>
 </ul>
