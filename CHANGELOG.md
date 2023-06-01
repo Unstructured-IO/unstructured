@@ -17,6 +17,7 @@
 * Fixes page metadata for `partition_html` when `include_metadata=False`
 * A `ValueError` now raises if `file_filename` is not specified when you use `partition_via_api`
   with a file-like object.
+* Re-enable test_upload_label_studio_data_with_sdk
 
 ## 0.6.11
 
