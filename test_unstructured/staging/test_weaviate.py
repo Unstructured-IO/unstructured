@@ -18,7 +18,6 @@ from unstructured.staging.weaviate import (
 is_in_docker = os.path.exists("/.dockerenv")
 
 
-@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_stage_for_weaviate(filename="example-docs/layout-parser-paper-fast.pdf"):
     element_dict = {
         "element_id": "015301d4f56aa4b20ec10ac889d2343f",
@@ -48,6 +47,7 @@ def test_stage_for_weaviate(filename="example-docs/layout-parser-paper-fast.pdf"
     }
 
 
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_weaviate_schema_is_valid():
     unstructured_class = create_unstructured_weaviate_class()
     schema = {"classes": [unstructured_class]}
