@@ -1,4 +1,5 @@
 import json
+import os
 
 from weaviate.schema.validate_schema import validate_schema
 
@@ -8,7 +9,10 @@ from unstructured.staging.weaviate import (
     stage_for_weaviate,
 )
 
+is_in_docker = os.path.exists("/.dockerenv")
 
+
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_stage_for_weaviate(filename="example-docs/layout-parser-paper-fast.pdf"):
     element_dict = {
         "element_id": "015301d4f56aa4b20ec10ac889d2343f",
