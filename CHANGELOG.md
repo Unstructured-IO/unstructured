@@ -1,3 +1,15 @@
+## 0.7.1
+
+### Enhancements
+
+### Features
+
+* Add `stage_for_weaviate` to stage `unstructured` outputs for upload to Weaviate, along with
+  a helper function for defining a class to use in Weaviate schemas.
+* Builds from Unstructured base image, built off of Rocky Linux 8.7, this resolves almost all CVE's in the image.
+
+### Fixes
+
 ## 0.7.0
 
 ### Enhancements
