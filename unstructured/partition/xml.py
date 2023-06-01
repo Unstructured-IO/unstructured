@@ -1,10 +1,10 @@
 import xml.etree.ElementTree as ET
 from tempfile import SpooledTemporaryFile
-from typing import IO, BinaryIO, Optional, Union, cast
+from typing import IO, Optional, Union
 
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
-from unstructured.partition.common import exactly_one, spooled_to_bytes_io_if_needed
+from unstructured.partition.common import exactly_one
 from unstructured.partition.text import partition_text
 
 

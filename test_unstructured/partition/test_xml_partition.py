@@ -100,6 +100,10 @@ def test_partition_xml_from_file_rb_with_tags_default_encoding(filename):
 )
 def test_partition_xml_from_file_rb_with_tags_raises_encoding_error(filename, encoding, error):
     file_path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-    with pytest.raises(error):
-        with open(file_path, "rb") as f:
-            partition_xml(file=f, xml_keep_tags=True, metadata_filename=file_path, encoding=encoding)
+    with pytest.raises(error), open(file_path, "rb") as f:
+        partition_xml(
+            file=f,
+            xml_keep_tags=True,
+            metadata_filename=file_path,
+            encoding=encoding,
+        )
