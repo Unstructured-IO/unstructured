@@ -265,6 +265,12 @@ def detect_filetype(
         else:
             return EXT_TO_FILETYPE.get(extension.lower(), filetype)
 
+    elif _is_code_mime_type(mime_type):
+        # NOTE(robinson) - we'll treat all code files as plain text for now.
+        # we can update this logic and add filetypes for specific languages
+        # later if needed.
+        return FileType.TXT
+
     # For everything else
     elif mime_type in STR_TO_FILETYPE:
         return STR_TO_FILETYPE[mime_type]
@@ -361,6 +367,29 @@ def document_to_element_list(
         filetype=filetype,
     )
     return elements
+
+
+PROGRAMMING_LANGUAGES = [
+    "javascript",
+    "python",
+    "java",
+    "c++",
+    "cpp",
+    "csharp",
+    "c#",
+    "php",
+    "ruby",
+    "swift",
+    "typescript",
+    "go",
+]
+
+
+def _is_code_mime_type(mime_type: str) -> bool:
+    """Checks to see if the MIME type is a MIME type that would be used for a code
+    file."""
+    mime_type = mime_type.lower()
+    return any(language in mime_type for language in PROGRAMMING_LANGUAGES)
 
 
 def add_metadata_with_filetype(filetype: FileType):
