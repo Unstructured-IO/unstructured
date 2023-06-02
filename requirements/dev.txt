@@ -4,7 +4,7 @@
 #
 #    pip-compile requirements/dev.in
 #
-anyio==3.6.2
+anyio==3.7.0
     # via
     #   -c requirements/base.txt
     #   jupyter-server
@@ -54,6 +54,11 @@ defusedxml==0.7.1
     # via nbconvert
 distlib==0.3.6
     # via virtualenv
+exceptiongroup==1.1.1
+    # via
+    #   -c requirements/base.txt
+    #   -c requirements/test.txt
+    #   anyio
 executing==1.2.0
     # via stack-data
 fastjsonschema==2.17.1
@@ -172,7 +177,7 @@ nbconvert==7.4.0
     #   jupyter-server
     #   nbclassic
     #   notebook
-nbformat==5.8.0
+nbformat==5.9.0
     # via
     #   jupyter-server
     #   nbclassic
@@ -265,7 +270,7 @@ pyyaml==6.0
     #   -c requirements/test.txt
     #   jupyter-events
     #   pre-commit
-pyzmq==25.0.2
+pyzmq==25.1.0
     # via
     #   ipykernel
     #   jupyter-client

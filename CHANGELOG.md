@@ -1,8 +1,50 @@
+## 0.7.2-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* Adds `tabulate` explicitly to dependencies
+
+## 0.7.1
+
+### Enhancements
+
+### Features
+
+* Add `stage_for_weaviate` to stage `unstructured` outputs for upload to Weaviate, along with
+  a helper function for defining a class to use in Weaviate schemas.
+* Builds from Unstructured base image, built off of Rocky Linux 8.7, this resolves almost all CVE's in the image.
+
+### Fixes
+
+## 0.7.0
+
+### Enhancements
+
+* Installing `detectron2` from source is no longer required when using the `local-inference` extra.
+* Updates `.pptx` parsing to include text in tables.
+
+### Features
+
+### Fixes
+
+* Fixes an issue in `_add_element_metadata` that caused all elements to have `page_number=1`
+  in the element metadata.
+* Adds `.log` as a file extension for TXT files.
+* Adds functionality to try other common encodings for email (`.eml`) files if an error related to the encoding is raised and the user has not specified an encoding.
+* Allow passed encoding to be used in the `replace_mime_encodings`
+* Fixes page metadata for `partition_html` when `include_metadata=False`
+* A `ValueError` now raises if `file_filename` is not specified when you use `partition_via_api`
+  with a file-like object.
+
 ## 0.6.11
 
 ### Enhancements
 
-* Supprts epub tests since pandoc is updated in base image
+* Supports epub tests since pandoc is updated in base image
 
 ### Features
 

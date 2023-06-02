@@ -41,6 +41,9 @@ install-nltk-models:
 .PHONY: install-test
 install-test:
 	python3 -m pip install -r requirements/test.txt
+	# NOTE(robinson) - Installing weaviate-client separately here because the requests
+	# version conflicts with label_studio_sdk
+	python3 -m pip install weaviate-client
 
 .PHONY: install-dev
 install-dev:
@@ -103,7 +106,7 @@ install-detectron2: install-tensorboard
 
 ## install-local-inference: installs requirements for local inference
 .PHONY: install-local-inference
-install-local-inference: install install-unstructured-inference install-detectron2
+install-local-inference: install install-unstructured-inference
 
 .PHONY: install-pandoc
 install-pandoc:
@@ -116,9 +119,6 @@ pip-compile:
 	pip-compile --upgrade requirements/base.in
 	# Extra requirements for huggingface staging functions
 	pip-compile --upgrade requirements/huggingface.in
-	# NOTE(robinson) - We want the dependencies for detectron2 in the requirements.txt, but not
-	# the detectron2 repo itself. If detectron2 is in the requirements.txt file, an order of
-	# operations issue related to the torch library causes the install to fail
 	pip-compile --upgrade requirements/test.in
 	pip-compile --upgrade requirements/dev.in
 	pip-compile --upgrade requirements/build.in
@@ -235,3 +235,17 @@ docker-test:
 .PHONY: docker-smoke-test
 docker-smoke-test:
 	DOCKER_IMAGE=${DOCKER_IMAGE} ./scripts/docker-smoke-test.sh
+
+
+###########
+# Jupyter #
+###########
+
+.PHONY: docker-jupyter-notebook
+docker-jupyter-notebook:
+	docker run -p 8888:8888 --mount type=bind,source=$(realpath .),target=/home --entrypoint jupyter-notebook -t --rm ${DOCKER_IMAGE} --allow-root --port 8888 --ip 0.0.0.0 --NotebookApp.token='' --NotebookApp.password=''
+
+
+.PHONY: run-jupyter
+run-jupyter:
+	PYTHONPATH=$(realpath .) JUPYTER_PATH=$(realpath .) jupyter-notebook --NotebookApp.token='' --NotebookApp.password=''
