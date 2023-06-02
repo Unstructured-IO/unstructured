@@ -132,6 +132,19 @@ def test_detect_text_csv(monkeypatch, filename="sample-docs/stanley-cup.csv"):
     assert filetype == FileType.CSV
 
 
+def test_detect_text_python_from_filename(monkeypatch, filename="unstructured/logger.py"):
+    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "text/x-script.python")
+    filetype = detect_filetype(filename=filename)
+    assert filetype == FileType.TXT
+
+
+def test_detect_text_python_from_file(monkeypatch, filename="unstructured/logger.py"):
+    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "text/x-script.python")
+    with open(filename, "rb") as f:
+        filetype = detect_filetype(file=f)
+    assert filetype == FileType.TXT
+
+
 def test_detect_xml_application_rtf(monkeypatch):
     monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "application/rtf")
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.rtf")
