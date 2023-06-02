@@ -792,3 +792,13 @@ def test_auto_partition_csv_from_file(filename="example-docs/stanley-cups.csv"):
     assert isinstance(elements[0], Table)
     assert elements[0].metadata.text_as_html == EXPECTED_XLSX_TABLE
     assert elements[0].metadata.filetype == "text/csv"
+
+
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
+def test_autopartition_html_pre_from_file(filename="example-docs/fake-html-pre.htm"):
+    elements = partition(filename=filename)
+
+    assert len(elements) > 0    
+    assert PageBreak() not in elements
+    assert elements[0].metadata.filetype == "text/html"
+    assert elements[0].metadata.filename == "fake-html-pre.htm"
