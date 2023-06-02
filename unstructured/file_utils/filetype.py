@@ -160,6 +160,20 @@ EXT_TO_FILETYPE = {
     ".msg": FileType.MSG,
     ".odt": FileType.ODT,
     ".csv": FileType.CSV,
+    # NOTE(robinson) - for now we are treating code files as plain text
+    ".js": FileType.TXT,
+    ".py": FileType.TXT,
+    ".java": FileType.TXT,
+    ".cpp": FileType.TXT,
+    ".cc": FileType.TXT,
+    ".cxx": FileType.TXT,
+    ".c": FileType.TXT,
+    ".cs": FileType.TXT,
+    ".php": FileType.TXT,
+    ".rb": FileType.TXT,
+    ".swift": FileType.TXT,
+    ".ts": FileType.TXT,
+    ".go": FileType.TXT,
     None: FileType.UNK,
 }
 
