@@ -1,4 +1,4 @@
-## 0.7.2-dev0
+## 0.7.2-dev1
 
 ### Enhancements
 
@@ -6,6 +6,7 @@
 
 ### Fixes
 
+* Re-enable test_upload_label_studio_data_with_sdk
 * Adds `tabulate` explicitly to dependencies
 * Fixes an issue in `metadata.page_number` of pptx files
 
@@ -40,7 +41,6 @@
 * Fixes page metadata for `partition_html` when `include_metadata=False`
 * A `ValueError` now raises if `file_filename` is not specified when you use `partition_via_api`
   with a file-like object.
-* Re-enable test_upload_label_studio_data_with_sdk
 
 ## 0.6.11
 

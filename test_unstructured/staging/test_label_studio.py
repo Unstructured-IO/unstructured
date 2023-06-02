@@ -14,8 +14,6 @@ def elements():
     return [Title(text="Title 1"), NarrativeText(text="Narrative 1")]
 
 
-# NOTE (rniko): for vcr, there is an issue running urllib3 v2 (we are currently using <v2)
-# on Python older than 3.10 (https://github.com/kevin1024/vcrpy/releases/tag/v4.3.1)
 @vcr.use_cassette(
     "test_unstructured/vcr_fixtures/cassettes/label_studio_upload.yaml",
     allow_playback_repeats=True,
