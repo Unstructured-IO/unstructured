@@ -395,7 +395,6 @@ PROGRAMMING_LANGUAGES = [
     "ruby",
     "swift",
     "typescript",
-    "go",
 ]
 
 
@@ -403,6 +402,10 @@ def _is_code_mime_type(mime_type: str) -> bool:
     """Checks to see if the MIME type is a MIME type that would be used for a code
     file."""
     mime_type = mime_type.lower()
+    # NOTE(robinson) - check this one explicitly to avoid conflicts with other
+    # MIME types that contain "go"
+    if mime_type == "text/x-go":
+        return True
     return any(language in mime_type for language in PROGRAMMING_LANGUAGES)
 
 

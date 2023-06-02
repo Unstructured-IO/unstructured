@@ -8,6 +8,7 @@ import pytest
 from unstructured.file_utils import filetype
 from unstructured.file_utils.filetype import (
     FileType,
+    _is_code_mime_type,
     _is_text_file_a_json,
     detect_filetype,
 )
@@ -143,6 +144,10 @@ def test_detect_text_python_from_file(monkeypatch, filename="unstructured/logger
     with open(filename, "rb") as f:
         filetype = detect_filetype(file=f)
     assert filetype == FileType.TXT
+
+
+def test_detects_go_mime_type():
+    assert _is_code_mime_type("text/x-go") is True
 
 
 def test_detect_xml_application_rtf(monkeypatch):
