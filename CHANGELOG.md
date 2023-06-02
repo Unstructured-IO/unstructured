@@ -1,4 +1,4 @@
-## 0.7.2-dev0
+## 0.7.2-dev1
 
 ### Enhancements
 
@@ -6,6 +6,7 @@
 
 ### Fixes
 
+* File detection now detects code files as plain text
 * Adds `tabulate` explicitly to dependencies
 * Fixes an issue in `metadata.page_number` of pptx files
 
