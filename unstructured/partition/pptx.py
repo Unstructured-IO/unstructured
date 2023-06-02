@@ -65,6 +65,7 @@ def partition_pptx(
     metadata = ElementMetadata(filename=metadata_filename)
     num_slides = len(presentation.slides)
     for i, slide in enumerate(presentation.slides):
+        metadata = ElementMetadata(**metadata.to_dict())
         metadata.page_number = i + 1
 
         for shape in _order_shapes(slide.shapes):
@@ -76,6 +77,7 @@ def partition_pptx(
                     metadata = ElementMetadata(
                         filename=metadata_filename,
                         text_as_html=html_table,
+                        page_number=metadata.page_number,
                     )
                     elements.append(Table(text=text_table, metadata=metadata))
                 continue
