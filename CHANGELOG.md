@@ -7,6 +7,7 @@
 ### Fixes
 
 * Adds `tabulate` explicitly to dependencies
+* Fixes an issue in `metadata.page_number` of pptx files
 
 ## 0.7.1
 
