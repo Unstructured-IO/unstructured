@@ -1,4 +1,4 @@
-## 0.7.2-dev2
+## 0.7.2-dev3
 
 ### Enhancements
 
@@ -6,6 +6,7 @@
 
 ### Fixes
 
+* Adds benchmark test with test docs in example-docs
 * Re-enable test_upload_label_studio_data_with_sdk
 * File detection now detects code files as plain text
 * Adds `tabulate` explicitly to dependencies
