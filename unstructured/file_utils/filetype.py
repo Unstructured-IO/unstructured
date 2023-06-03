@@ -178,6 +178,13 @@ EXT_TO_FILETYPE = {
 }
 
 
+def _resolve_symlink(file_path):
+    # Resolve the symlink to get the actual file path
+    if os.path.islink(file_path):
+        file_path = os.path.realpath(file_path)
+    return file_path
+
+
 def detect_filetype(
     filename: Optional[str] = None,
     content_type: Optional[str] = None,
@@ -199,7 +206,10 @@ def detect_filetype(
         _, extension = os.path.splitext(_filename)
         extension = extension.lower()
         if os.path.isfile(_filename) and LIBMAGIC_AVAILABLE:
-            mime_type = magic.from_file(filename or file_filename, mime=True)  # type: ignore
+            mime_type = magic.from_file(
+                _resolve_symlink(filename or file_filename),
+                mime=True,
+            )  # type: ignore
         else:
             return EXT_TO_FILETYPE.get(extension.lower(), FileType.UNK)
 
