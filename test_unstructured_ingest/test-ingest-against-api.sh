@@ -16,8 +16,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
 
 set +e
 
-if [ "$(find 'api-ingest-output' -type f -printf '.' | wc -c)" != 5 ]; then
+if [ "$(find 'api-ingest-output' -type f -printf '.' | wc -c)" != 7 ]; then
    echo
-   echo "5 files should have been created."
+   echo "7 files should have been created."
    exit 1
 fi
