@@ -8,7 +8,11 @@ from typing import IO, Callable, List, Optional
 
 from unstructured.documents.elements import Element, PageBreak
 from unstructured.nlp.patterns import LIST_OF_DICTS_PATTERN
-from unstructured.partition.common import _add_element_metadata, exactly_one
+from unstructured.partition.common import (
+    _add_element_metadata,
+    _remove_element_metadata,
+    exactly_one,
+)
 
 try:
     import magic
@@ -156,6 +160,20 @@ EXT_TO_FILETYPE = {
     ".msg": FileType.MSG,
     ".odt": FileType.ODT,
     ".csv": FileType.CSV,
+    # NOTE(robinson) - for now we are treating code files as plain text
+    ".js": FileType.TXT,
+    ".py": FileType.TXT,
+    ".java": FileType.TXT,
+    ".cpp": FileType.TXT,
+    ".cc": FileType.TXT,
+    ".cxx": FileType.TXT,
+    ".c": FileType.TXT,
+    ".cs": FileType.TXT,
+    ".php": FileType.TXT,
+    ".rb": FileType.TXT,
+    ".swift": FileType.TXT,
+    ".ts": FileType.TXT,
+    ".go": FileType.TXT,
     None: FileType.UNK,
 }
 
@@ -261,6 +279,12 @@ def detect_filetype(
         else:
             return EXT_TO_FILETYPE.get(extension.lower(), filetype)
 
+    elif _is_code_mime_type(mime_type):
+        # NOTE(robinson) - we'll treat all code files as plain text for now.
+        # we can update this logic and add filetypes for specific languages
+        # later if needed.
+        return FileType.TXT
+
     # For everything else
     elif mime_type in STR_TO_FILETYPE:
         return STR_TO_FILETYPE[mime_type]
@@ -359,6 +383,32 @@ def document_to_element_list(
     return elements
 
 
+PROGRAMMING_LANGUAGES = [
+    "javascript",
+    "python",
+    "java",
+    "c++",
+    "cpp",
+    "csharp",
+    "c#",
+    "php",
+    "ruby",
+    "swift",
+    "typescript",
+]
+
+
+def _is_code_mime_type(mime_type: str) -> bool:
+    """Checks to see if the MIME type is a MIME type that would be used for a code
+    file."""
+    mime_type = mime_type.lower()
+    # NOTE(robinson) - check this one explicitly to avoid conflicts with other
+    # MIME types that contain "go"
+    if mime_type == "text/x-go":
+        return True
+    return any(language in mime_type for language in PROGRAMMING_LANGUAGES)
+
+
 def add_metadata_with_filetype(filetype: FileType):
     def decorator(func: Callable):
         @wraps(func)
@@ -380,7 +430,9 @@ def add_metadata_with_filetype(filetype: FileType):
                     **metadata_kwargs,  # type: ignore
                 )
             else:
-                return elements
+                return _remove_element_metadata(
+                    elements,
+                )
 
         return wrapper
 

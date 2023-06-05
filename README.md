@@ -64,10 +64,10 @@ installation. NOTE: We do not currently support python 3.11, please use an older
     - `poppler-utils` (images and PDFs)
     - `tesseract-ocr` (images and PDFs)
     - `libreoffice` (MS Office docs)
-- If you are parsing PDFs, run the following to install the `detectron2` model, which
-  `unstructured` uses for layout detection:
-    - `pip install tensorboard>=2.12.2`
-    - `pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@e2ce8dc#egg=detectron2"`
+
+- If you are parsing PDFs and want to use a model from the [layoutparser model
+  zoo](https://github.com/Unstructured-IO/unstructured-inference#using-models-from-the-layoutparser-model-zoo),
+  use the instructions [here](https://github.com/Unstructured-IO/unstructured-inference#detectron2).
 
 At this point, you should be able to run the following code:
 
@@ -98,8 +98,8 @@ about the library.
 | Open Office Documents (`.odt`) | `partition_odt` | N/A | Yes | None |
 | PDFs (`.pdf`) | `partition_pdf` | `"auto"`, `"fast"`, `"hi_res"`, `"ocr_only"` | Yes | Encoding; Include Page Breaks; Infer Table Structure; OCR Languages, Strategy |
 | Plain Text (`.txt`) | `partition_text` | N/A | No | Encoding, Paragraph Grouper |
-| Power Points (`.ppt`) | `partition_ppt` | N/A | No | Include Page Breaks |
-| Power Points (`.pptx`) | `partition_pptx` | N/A | No | Include Page Breaks |
+| Power Points (`.ppt`) | `partition_ppt` | N/A | Yes | Include Page Breaks |
+| Power Points (`.pptx`) | `partition_pptx` | N/A | Yes | Include Page Breaks |
 | Rich Text Files (`.rtf`) | `partition_rtf` | N/A | No | Include Page Breaks |
 | Word Documents (`.doc`) | `partition_doc` | N/A | Yes | None |
 | Word Documents (`.docx`) | `partition_docx` | N/A | Yes | None |

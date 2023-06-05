@@ -162,3 +162,31 @@ def test_partition_pptx_orders_elements(tmpdir):
         NarrativeText("This is higher and should come first"),
         NarrativeText("This is lower and should come second"),
     ]
+
+
+EXPECTED_HTML_TABLE = """<table>
+<thead>
+<tr><th>Column 1  </th><th>Column 2  </th><th>Column 3  </th></tr>
+</thead>
+<tbody>
+<tr><td>Red       </td><td>Green     </td><td>Blue      </td></tr>
+<tr><td>Purple    </td><td>Orange    </td><td>Yellow    </td></tr>
+<tr><td>Tangerine </td><td>Pink      </td><td>Aqua      </td></tr>
+</tbody>
+</table>"""
+
+
+def test_partition_pptx_grabs_tables(filename="example-docs/fake-power-point-table.pptx"):
+    elements = partition_pptx(filename=filename)
+
+    assert elements[1].text.startswith("Column 1")
+    assert elements[1].text.strip().endswith("Aqua")
+    assert elements[1].metadata.text_as_html == EXPECTED_HTML_TABLE
+
+
+def test_partition_pptx_many_pages():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point-many-pages.pptx")
+    elements = partition_pptx(filename=filename)
+
+    # The page_number of PageBreak is None
+    assert set(filter(None, (elt.metadata.page_number for elt in elements))) == {1, 2}
