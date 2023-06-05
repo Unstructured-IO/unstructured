@@ -16,8 +16,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
 
 set +e
 
-if [ "$(find 'local-ingest-output' -type f -printf '.' | wc -c)" != 7 ]; then
+if [ "$(find 'local-ingest-output' -type f -printf '.' | wc -c)" != 9 ]; then
    echo
-   echo "7 files should have been created."
+   echo "9 files should have been created."
    exit 1
 fi
