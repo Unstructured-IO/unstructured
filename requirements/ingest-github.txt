@@ -12,11 +12,16 @@ certifi==2023.5.7
 cffi==1.15.1
     # via
     #   -c requirements/base.txt
+    #   cryptography
     #   pynacl
 charset-normalizer==3.1.0
     # via
     #   -c requirements/base.txt
     #   requests
+cryptography==41.0.1
+    # via
+    #   -c requirements/base.txt
+    #   pyjwt
 deprecated==1.2.14
     # via
     #   -c requirements/base.txt
@@ -29,9 +34,9 @@ pycparser==2.21
     # via
     #   -c requirements/base.txt
     #   cffi
-pygithub==1.57.0
+pygithub==1.58.2
     # via -r requirements/ingest-github.in
-pyjwt==2.7.0
+pyjwt[crypto]==2.7.0
     # via pygithub
 pynacl==1.5.0
     # via pygithub

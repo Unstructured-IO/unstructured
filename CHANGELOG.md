@@ -1,4 +1,4 @@
-## 0.7.1-dev0
+## 0.7.2-dev3
 
 ### Enhancements
 
@@ -6,10 +6,23 @@
 
 ### Fixes
 
-* Add functionality to the `read_txt_file` utility function to handle file-like object from URL
-* Remove the unused parameter `encoding` from `partition_pdf`
-* Change auto.py to have a `None` default for encoding
-* Add functionality to try other common encodings for html and xml files if an error related to the encoding is raised and the user has not specified an encoding.
+* Adds benchmark test with test docs in example-docs
+* Re-enable test_upload_label_studio_data_with_sdk
+* File detection now detects code files as plain text
+* Adds `tabulate` explicitly to dependencies
+* Fixes an issue in `metadata.page_number` of pptx files
+
+## 0.7.1
+
+### Enhancements
+
+### Features
+
+* Add `stage_for_weaviate` to stage `unstructured` outputs for upload to Weaviate, along with
+  a helper function for defining a class to use in Weaviate schemas.
+* Builds from Unstructured base image, built off of Rocky Linux 8.7, this resolves almost all CVE's in the image.
+
+### Fixes
 
 ## 0.7.0
 
