@@ -1,9 +1,10 @@
+from dataclasses import dataclass
 import os
 import pathlib
 
 import pytest
 
-from unstructured.ingest.connector.git import GitIngestDoc, SimpleGitConfig
+from unstructured.ingest.interfaces import BaseConnector, BaseConnectorConfig, BaseIngestDoc, StandardConnectorConfig
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "example-docs")
@@ -13,15 +14,33 @@ test_files = [
     "layout-parser-paper-fast.pdf",
 ]
 
+@dataclass
+class TestConfig(BaseConnectorConfig):
+    id: str
+    path: str
+
+@dataclass
+class TestIngestDoc(BaseIngestDoc):
+    pass
+
+@dataclass
+class TestConnector(BaseConnector):
+    config: TestConfig
+    pass
+
+
+
 
 @pytest.mark.parametrize("filename", test_files)
 def test_process_file_metadata_include_filename(filename: str):
     ingest_doc = GitIngestDoc(
         path=filename,
-        config=SimpleGitConfig(
+        config=SimpleGitConfig(),
+        standard_config=StandardConnectorConfig(
             download_dir=EXAMPLE_DOCS_DIRECTORY,
+            output_dir="",  # not used
             metadata_include="filename",
-        ),
+        )
     )
     isd_elems = ingest_doc.process_file(strategy="hi_res")
 
