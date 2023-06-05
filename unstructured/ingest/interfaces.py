@@ -151,12 +151,12 @@ class BaseIngestDoc(ABC):
                 response = requests.post(
                     f"{endpoint}",
                     files={"files": (str(self.filename), f)},
+                    # TODO: add m_data_source_metadata to unstructured-api pipeline_api and then
+                    # pass the stringified json here
                 )
 
             if response.status_code != 200:
                 raise RuntimeError(f"Caught {response.status_code} from API: {response.text}")
-
-            # inject data source metadata
 
             return response.json()
 
