@@ -8,6 +8,7 @@
 
 ### Fixes
 
+* Re-enable test_upload_label_studio_data_with_sdk
 * File detection now detects code files as plain text
 * Adds `tabulate` explicitly to dependencies
 * Fixes an issue in `metadata.page_number` of pptx files
