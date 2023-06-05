@@ -36,7 +36,6 @@ def partition_pdf(
     include_page_breaks: bool = False,
     strategy: str = "auto",
     infer_table_structure: bool = False,
-    encoding: str = "utf-8",
     ocr_languages: str = "eng",
 ) -> List[Element]:
     """Parses a pdf document into a list of interpreted elements.
@@ -68,8 +67,6 @@ def partition_pdf(
         I.e., rows and cells are preserved.
         Whether True or False, the "text" field is always present in any Table element
         and is the text content of the table (no structure).
-    encoding
-        The encoding method used to decode the text input. If None, utf-8 will be used.
     ocr_languages
         The languages to use for the Tesseract agent. To use a language, you'll first need
         to isntall the appropriate Tesseract language pack.
@@ -84,7 +81,6 @@ def partition_pdf(
         include_page_breaks=include_page_breaks,
         strategy=strategy,
         infer_table_structure=infer_table_structure,
-        encoding=encoding,
         ocr_languages=ocr_languages,
     )
 
@@ -99,7 +95,6 @@ def partition_pdf_or_image(
     include_page_breaks: bool = False,
     strategy: str = "auto",
     infer_table_structure: bool = False,
-    encoding: str = "utf-8",
     ocr_languages: str = "eng",
 ) -> List[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
@@ -141,7 +136,6 @@ def partition_pdf_or_image(
                 filename=filename,
                 file=spooled_to_bytes_io_if_needed(file),
                 include_page_breaks=include_page_breaks,
-                encoding=encoding,
             )
 
         elif strategy == "ocr_only":
@@ -231,7 +225,6 @@ def _partition_pdf_with_pdfminer(
     filename: str = "",
     file: Optional[BinaryIO] = None,
     include_page_breaks: bool = False,
-    encoding: str = "utf-8",
 ) -> List[Element]:
     """Partitions a PDF using PDFMiner instead of using a layoutmodel. Used for faster
     processing or detectron2 is not available.
@@ -248,7 +241,6 @@ def _partition_pdf_with_pdfminer(
             elements = _process_pdfminer_pages(
                 fp=fp,
                 filename=filename,
-                encoding=encoding,
                 include_page_breaks=include_page_breaks,
             )
 
@@ -257,7 +249,6 @@ def _partition_pdf_with_pdfminer(
         elements = _process_pdfminer_pages(
             fp=fp,
             filename=filename,
-            encoding=encoding,
             include_page_breaks=include_page_breaks,
         )
 
@@ -267,7 +258,6 @@ def _partition_pdf_with_pdfminer(
 def _process_pdfminer_pages(
     fp: BinaryIO,
     filename: str = "",
-    encoding: str = "utf-8",
     include_page_breaks: bool = False,
 ):
     """Uses PDF miner to split a document into pages and process them."""
