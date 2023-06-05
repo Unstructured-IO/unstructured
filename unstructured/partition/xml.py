@@ -1,10 +1,10 @@
 import xml.etree.ElementTree as ET
 from tempfile import SpooledTemporaryFile
-from typing import IO, Optional, Union
+from typing import IO, BinaryIO, Optional, Union, cast
 
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
-from unstructured.partition.common import exactly_one
+from unstructured.partition.common import exactly_one, spooled_to_bytes_io_if_needed
 from unstructured.partition.text import partition_text
 
 
@@ -20,7 +20,10 @@ def get_leaf_elements(
     if filename:
         _, raw_text = read_txt_file(filename=filename)
     elif file:
-        _, raw_text = read_txt_file(file=file)
+        f = spooled_to_bytes_io_if_needed(
+            cast(Union[BinaryIO, SpooledTemporaryFile], file),
+        )
+        _, raw_text = read_txt_file(file=f)
     else:
         raise ValueError("Either 'filename' or 'file' must be provided.")
 
@@ -73,7 +76,10 @@ def partition_xml(
         if filename:
             _, raw_text = read_txt_file(filename=filename, encoding=encoding)
         elif file:
-            _, raw_text = read_txt_file(file=file, encoding=encoding)
+            f = spooled_to_bytes_io_if_needed(
+                cast(Union[BinaryIO, SpooledTemporaryFile], file),
+            )
+            _, raw_text = read_txt_file(file=f, encoding=encoding)
         else:
             raise ValueError("Either 'filename' or 'file' must be provided.")
     else:
