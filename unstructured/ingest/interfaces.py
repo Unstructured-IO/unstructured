@@ -3,10 +3,11 @@ through Unstructured."""
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Optional
+from typing import Any, Dict, Optional
 
 import requests
 
+from unstructured.documents.elements import DataSourceMetadata
 from unstructured.ingest.logger import logger
 from unstructured.partition.auto import partition
 from unstructured.staging.base import convert_to_dict
@@ -89,6 +90,24 @@ class BaseIngestDoc(ABC):
     def filename(self):
         """The local filename of the document after fetching from remote source."""
 
+    @property
+    @abstractmethod
+    def source_url(self) -> str:
+        """The url of the source document."""
+
+    @property
+    @abstractmethod
+    def version(self) -> str:
+        """The version of the source document, this could be the last modified date, an
+        explicit version number, or anything else that can be used to uniquely identify
+        the version of the document."""
+
+    @property
+    @abstractmethod
+    def record_locator(self) -> Dict[str, Any]:  # Values must be JSON-serializable
+        """A dictionary with any data necessary to uniquely identify the document on
+        the source system."""
+
     @abstractmethod
     def cleanup_file(self):
         """Removes the local copy the file (or anything else) after successful processing."""
@@ -114,7 +133,13 @@ class BaseIngestDoc(ABC):
     def partition_file(self, **partition_kwargs):
         if not self.standard_config.partition_by_api:
             logger.debug("Using local partition")
-            elements = partition(filename=str(self.filename), **partition_kwargs)
+            elements = partition(
+                filename=str(self.filename),
+                data_source_metadata=DataSourceMetadata(
+                    url=self.source_url, version=self.version, record_locator=self.record_locator
+                ),
+                **partition_kwargs,
+            )
             return convert_to_dict(elements)
 
         else:
@@ -130,6 +155,8 @@ class BaseIngestDoc(ABC):
 
             if response.status_code != 200:
                 raise RuntimeError(f"Caught {response.status_code} from API: {response.text}")
+
+            # inject data source metadata
 
             return response.json()
 

@@ -16,7 +16,17 @@ class NoID(ABC):
 
 
 @dataclass
+class DataSourceMetadata:
+    """Metadata fields that pertain to the data source of the document."""
+
+    url: Optional[str] = None
+    version: Optional[str] = None
+    record_locator: Optional[Dict[str, Any]] = None  # Values must be JSON-serializable
+
+
+@dataclass
 class ElementMetadata:
+    data_source: Optional[DataSourceMetadata] = None
     filename: Optional[str] = None
     file_directory: Optional[str] = None
     date: Optional[str] = None
