@@ -6,10 +6,6 @@
 #
 antlr4-python3-runtime==4.9.3
     # via omegaconf
-anyio==3.6.2
-    # via
-    #   -c requirements/base.txt
-    #   starlette
 certifi==2023.5.7
     # via
     #   -c requirements/base.txt
@@ -24,15 +20,11 @@ charset-normalizer==3.1.0
     #   -c requirements/base.txt
     #   pdfminer-six
     #   requests
-click==8.1.3
-    # via
-    #   -c requirements/base.txt
-    #   uvicorn
 coloredlogs==15.0.1
     # via onnxruntime
 contourpy==1.0.7
     # via matplotlib
-cryptography==40.0.2
+cryptography==41.0.1
     # via
     #   -c requirements/base.txt
     #   pdfminer-six
@@ -40,24 +32,18 @@ cycler==0.11.0
     # via matplotlib
 effdet==0.4.1
     # via layoutparser
-fastapi==0.95.2
-    # via unstructured-inference
 filelock==3.12.0
     # via
     #   huggingface-hub
     #   torch
     #   transformers
-flatbuffers==23.5.9
+flatbuffers==23.5.26
     # via onnxruntime
 fonttools==4.39.4
     # via matplotlib
 fsspec==2023.5.0
     # via huggingface-hub
-h11==0.14.0
-    # via
-    #   -c requirements/base.txt
-    #   uvicorn
-huggingface-hub==0.14.1
+huggingface-hub==0.15.1
     # via
     #   timm
     #   transformers
@@ -67,7 +53,6 @@ humanfriendly==10.0
 idna==3.4
     # via
     #   -c requirements/base.txt
-    #   anyio
     #   requests
 importlib-resources==5.12.0
     # via matplotlib
@@ -149,10 +134,6 @@ pycparser==2.21
     # via
     #   -c requirements/base.txt
     #   cffi
-pydantic==1.10.8
-    # via
-    #   -c requirements/base.txt
-    #   fastapi
 pyparsing==3.0.9
     # via matplotlib
 pytesseract==0.3.10
@@ -193,12 +174,6 @@ six==1.16.0
     # via
     #   -c requirements/base.txt
     #   python-dateutil
-sniffio==1.3.0
-    # via
-    #   -c requirements/base.txt
-    #   anyio
-starlette==0.27.0
-    # via fastapi
 sympy==1.12
     # via
     #   onnxruntime
@@ -231,18 +206,14 @@ typing-extensions==4.6.2
     #   -c requirements/base.txt
     #   huggingface-hub
     #   iopath
-    #   pydantic
-    #   starlette
     #   torch
-unstructured-inference==0.4.4
+unstructured-inference==0.5.1
     # via -r requirements/local-inference.in
 urllib3==1.26.16
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   requests
-uvicorn==0.22.0
-    # via unstructured-inference
 wand==0.6.11
     # via pdfplumber
 zipp==3.15.0
