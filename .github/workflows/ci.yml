@@ -167,7 +167,11 @@ jobs:
         source .venv/bin/activate
         mkdir "$NLTK_DATA"
         make install-ci
-    - name: Test
+    - name: Test Ingest (unit)
+      run: |
+        source .venv/bin/activate
+        PYTHONPATH=. pytest test_unstructured_ingest/unit
+    - name: Test (end-to-end)
       env:
         GH_READ_ONLY_ACCESS_TOKEN: ${{ secrets.GH_READ_ONLY_ACCESS_TOKEN }}
         SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
