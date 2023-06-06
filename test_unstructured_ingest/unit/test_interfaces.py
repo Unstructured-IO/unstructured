@@ -1,9 +1,11 @@
 import os
 import pathlib
 from dataclasses import dataclass
+from typing import Any, Dict
 
 import pytest
 
+from unstructured.documents.elements import DataSourceMetadata
 from unstructured.ingest.connector.local import LocalIngestDoc, SimpleLocalConfig
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -26,7 +28,10 @@ class TestConfig(BaseConnectorConfig):
     id: str
     path: str
 
-TEST_CONFIG=TestConfig(id=TEST_ID, path=TEST_FILE_PATH)
+TEST_CONFIG = TestConfig(id=TEST_ID, path=TEST_FILE_PATH)
+TEST_SOURCE_URL = "test-source-url"
+TEST_VERSION = "1.1.1"
+TEST_RECORD_LOCATOR = {"id": "data-source-id"}
 
 @dataclass
 class TestIngestDoc(BaseIngestDoc):
@@ -34,7 +39,23 @@ class TestIngestDoc(BaseIngestDoc):
 
     @property
     def filename(self):
-        return "test"
+        return TEST_FILE_PATH
+    
+    @property
+    def source_url(self) -> str:
+        return TEST_SOURCE_URL
+   
+    @property 
+    def version(self) -> str:
+        return TEST_VERSION
+   
+    @property 
+    def record_locator(self) -> Dict[str, Any]:
+        return TEST_RECORD_LOCATOR
+    
+    @property 
+    def exists(self) -> bool:
+        return True
     
     def cleanup_file(self):
         pass
@@ -51,12 +72,43 @@ class TestIngestDoc(BaseIngestDoc):
 @pytest.fixture()
 def partition_test_results():
     # Reusable partition test results, calculated only once
-    return partition(filename=str(TEST_FILE_PATH))
+    result = partition(
+        filename=str(TEST_FILE_PATH),
+        data_source_metadata=DataSourceMetadata(
+            url=TEST_SOURCE_URL,
+            version=TEST_VERSION,
+            record_locator=TEST_RECORD_LOCATOR,
+        ),
+    )
+    return result
 
 @pytest.fixture()
 def partition_file_test_results(partition_test_results):
     # Reusable partition_file test results, calculated only once
     return convert_to_dict(partition_test_results)
+
+def test_partition_file():
+    """Validate partition_file returns a list of dictionaries with the expected keys,
+    metadatakeys, and data source metadata values."""
+    test_ingest_doc = TestIngestDoc(
+        config=TEST_CONFIG,
+        standard_config=StandardConnectorConfig(
+            download_dir=TEST_DOWNLOAD_DIR,
+            output_dir=TEST_OUTPUT_DIR,
+        ),
+    )
+    isd_elems = test_ingest_doc.partition_file()
+    assert len(isd_elems)
+    expected_keys = {"coordinates", "element_id", "text", "type", "metadata"}
+    expected_metadata_keys = {"data_source", "filename", "file_directory", "filetype", "page_number"}
+    for elem in isd_elems:
+        assert expected_keys == set(elem.keys())
+        assert expected_metadata_keys == set(elem["metadata"].keys())
+        data_source_metadata = elem["metadata"]["data_source"]
+        assert TEST_SOURCE_URL == data_source_metadata["url"]
+        assert TEST_VERSION == data_source_metadata["version"]
+        assert TEST_RECORD_LOCATOR == data_source_metadata["record_locator"]
+
 
 def test_process_file_fields_include_default(mocker, partition_test_results):
     """Validate when metadata_include and metadata_exclude are not set, all fields:
@@ -70,13 +122,16 @@ def test_process_file_fields_include_default(mocker, partition_test_results):
         standard_config=StandardConnectorConfig(
             download_dir=TEST_DOWNLOAD_DIR,
             output_dir=TEST_OUTPUT_DIR,
-            metadata_include="filename,page_number",
         ),
     )
     isd_elems = test_ingest_doc.process_file()
     assert len(isd_elems)
     for elem in isd_elems:
         assert {"element_id", "text", "type", "metadata"} == set(elem.keys())
+        data_source_metadata = elem["metadata"]["data_source"]
+        assert TEST_SOURCE_URL == data_source_metadata["url"]
+        assert TEST_VERSION == data_source_metadata["version"]
+        assert TEST_RECORD_LOCATOR == data_source_metadata["record_locator"]
 
 
 def test_process_file_metadata_includes_filename_and_page_number(mocker, partition_test_results):
@@ -130,10 +185,11 @@ def test_process_file_flatten_metadata(mocker, partition_test_results):
         standard_config=StandardConnectorConfig(
             download_dir=TEST_DOWNLOAD_DIR,
             output_dir=TEST_OUTPUT_DIR,
-            metadata_include="filename,page_number",
+            metadata_include="filename,page_number,data_source",
             flatten_metadata=True,
         ),
     )
     isd_elems = test_ingest_doc.process_file()
+    expected_keys = {"element_id", "text", "type", "filename", "page_number", "data_source"}
     for elem in isd_elems:
-        assert {"element_id", "text", "type", "filename", "page_number"} == set(elem.keys())
+        assert expected_keys == set(elem.keys())

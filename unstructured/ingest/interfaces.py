@@ -141,7 +141,9 @@ class BaseIngestDoc(ABC):
             elements = partition(
                 filename=str(self.filename),
                 data_source_metadata=DataSourceMetadata(
-                    url=self.source_url, version=self.version, record_locator=self.record_locator
+                    url=self.source_url,
+                    version=self.version,
+                    record_locator=self.record_locator,
                 ),
                 **partition_kwargs,
             )

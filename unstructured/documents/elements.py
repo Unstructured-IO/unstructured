@@ -21,6 +21,10 @@ class DataSourceMetadata:
     url: Optional[str] = None
     version: Optional[str] = None
     record_locator: Optional[Dict[str, Any]] = None  # Values must be JSON-serializable
+    
+    def to_dict(self):
+        return {key: value for key, value in self.__dict__.items() if value is not None}
+
 
 
 @dataclass
@@ -58,7 +62,9 @@ class ElementMetadata:
             self.filename = filename
 
     def to_dict(self):
-        return {key: value for key, value in self.__dict__.items() if value is not None}
+        dict = {key: value for key, value in self.__dict__.items() if value is not None}
+        dict["data_source"] = self.data_source.to_dict()
+        return dict
 
     @classmethod
     def from_dict(cls, input_dict):
