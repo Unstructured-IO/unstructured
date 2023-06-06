@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import collections
 import hashlib
 import logging
 import multiprocessing as mp
@@ -447,7 +448,9 @@ def main(
     local_file_glob,
     download_only,
 ):
-    if not [param for param in ctx.command.params if param in ctx.params]:
+    if collections.Counter(
+        [option.default for option in ctx.command.params]
+    ) == collections.Counter(ctx.params.values()):
         return click.echo(ctx.get_help())
     if flatten_metadata and "metadata" not in fields_include:
         logger.warning(
