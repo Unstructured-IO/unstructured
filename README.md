@@ -64,10 +64,10 @@ installation. NOTE: We do not currently support python 3.11, please use an older
     - `poppler-utils` (images and PDFs)
     - `tesseract-ocr` (images and PDFs)
     - `libreoffice` (MS Office docs)
-- If you are parsing PDFs, run the following to install the `detectron2` model, which
-  `unstructured` uses for layout detection:
-    - `pip install tensorboard>=2.12.2`
-    - `pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@e2ce8dc#egg=detectron2"`
+
+- If you are parsing PDFs and want to use a model from the [layoutparser model
+  zoo](https://github.com/Unstructured-IO/unstructured-inference#using-models-from-the-layoutparser-model-zoo),
+  use the instructions [here](https://github.com/Unstructured-IO/unstructured-inference#detectron2).
 
 At this point, you should be able to run the following code:
 

@@ -160,8 +160,29 @@ EXT_TO_FILETYPE = {
     ".msg": FileType.MSG,
     ".odt": FileType.ODT,
     ".csv": FileType.CSV,
+    # NOTE(robinson) - for now we are treating code files as plain text
+    ".js": FileType.TXT,
+    ".py": FileType.TXT,
+    ".java": FileType.TXT,
+    ".cpp": FileType.TXT,
+    ".cc": FileType.TXT,
+    ".cxx": FileType.TXT,
+    ".c": FileType.TXT,
+    ".cs": FileType.TXT,
+    ".php": FileType.TXT,
+    ".rb": FileType.TXT,
+    ".swift": FileType.TXT,
+    ".ts": FileType.TXT,
+    ".go": FileType.TXT,
     None: FileType.UNK,
 }
+
+
+def _resolve_symlink(file_path):
+    # Resolve the symlink to get the actual file path
+    if os.path.islink(file_path):
+        file_path = os.path.realpath(file_path)
+    return file_path
 
 
 def detect_filetype(
@@ -185,7 +206,10 @@ def detect_filetype(
         _, extension = os.path.splitext(_filename)
         extension = extension.lower()
         if os.path.isfile(_filename) and LIBMAGIC_AVAILABLE:
-            mime_type = magic.from_file(filename or file_filename, mime=True)  # type: ignore
+            mime_type = magic.from_file(
+                _resolve_symlink(filename or file_filename),
+                mime=True,
+            )  # type: ignore
         else:
             return EXT_TO_FILETYPE.get(extension.lower(), FileType.UNK)
 
@@ -264,6 +288,12 @@ def detect_filetype(
             return EXT_TO_FILETYPE.get(extension.lower(), FileType.ZIP)
         else:
             return EXT_TO_FILETYPE.get(extension.lower(), filetype)
+
+    elif _is_code_mime_type(mime_type):
+        # NOTE(robinson) - we'll treat all code files as plain text for now.
+        # we can update this logic and add filetypes for specific languages
+        # later if needed.
+        return FileType.TXT
 
     # For everything else
     elif mime_type in STR_TO_FILETYPE:
@@ -361,6 +391,32 @@ def document_to_element_list(
         filetype=filetype,
     )
     return elements
+
+
+PROGRAMMING_LANGUAGES = [
+    "javascript",
+    "python",
+    "java",
+    "c++",
+    "cpp",
+    "csharp",
+    "c#",
+    "php",
+    "ruby",
+    "swift",
+    "typescript",
+]
+
+
+def _is_code_mime_type(mime_type: str) -> bool:
+    """Checks to see if the MIME type is a MIME type that would be used for a code
+    file."""
+    mime_type = mime_type.lower()
+    # NOTE(robinson) - check this one explicitly to avoid conflicts with other
+    # MIME types that contain "go"
+    if mime_type == "text/x-go":
+        return True
+    return any(language in mime_type for language in PROGRAMMING_LANGUAGES)
 
 
 def add_metadata_with_filetype(filetype: FileType):
