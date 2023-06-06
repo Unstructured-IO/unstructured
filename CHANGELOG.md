@@ -1,16 +1,24 @@
-## 0.7.2-dev3
+## 0.7.2-dev6
 
 ### Enhancements
+
+* Bump version of base image to use new stable version of tesseract
 
 ### Features
 
 ### Fixes
 
+* Update the `read_txt_file` utility function to keep using `spooled_to_bytes_io_if_needed` for xml
+* Add functionality to the `read_txt_file` utility function to handle file-like object from URL
+* Remove the unused parameter `encoding` from `partition_pdf`
+* Change auto.py to have a `None` default for encoding
+* Add functionality to try other common encodings for html and xml files if an error related to the encoding is raised and the user has not specified an encoding.
 * Adds benchmark test with test docs in example-docs
 * Re-enable test_upload_label_studio_data_with_sdk
 * File detection now detects code files as plain text
 * Adds `tabulate` explicitly to dependencies
 * Fixes an issue in `metadata.page_number` of pptx files
+* Adds showing help if no parameters passed
 
 ## 0.7.1
 
