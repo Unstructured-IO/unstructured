@@ -7,7 +7,7 @@ from functools import wraps
 from typing import IO, Callable, List, Optional
 
 from unstructured.documents.elements import Element, PageBreak
-from unstructured.nlp.patterns import LIST_OF_DICTS_PATTERN
+from unstructured.nlp.patterns import JSON_PATTERN
 from unstructured.partition.common import (
     _add_element_metadata,
     _remove_element_metadata,
@@ -334,6 +334,27 @@ def _is_text_file_a_json(
 ):
     """Detects if a file that has a text/plain MIME type is a JSON file."""
     exactly_one(filename=filename, file=file)
+    if file is not None:
+        file.seek(0)
+        file_content = file.read(4096)
+        if isinstance(file_content, str):
+            file_text = file_content
+        else:
+            file_text = file_content.decode(errors="ignore")
+        file.seek(0)
+    elif filename is not None:
+        with open(filename) as f:
+            file_text = f.read()
+    return re.match(JSON_PATTERN, file_text) is not None
+
+
+def _is_text_file_a_csv(
+    filename: Optional[str] = None,
+    content_type: Optional[str] = None,
+    file: Optional[IO] = None,
+):
+    """Detects if a file that has a text/plain MIME type is a CSV file."""
+    exactly_one(filename=filename, file=file)
 
     if file is not None:
         file.seek(0)
@@ -347,7 +368,17 @@ def _is_text_file_a_json(
         with open(filename) as f:
             file_text = f.read()
 
-    return re.match(LIST_OF_DICTS_PATTERN, file_text) is not None
+    lines = file_text.strip().splitlines()
+    if len(lines) < 2:
+        return False
+
+    header = lines[0].split(",")
+    columns = len(header) if len(header) < 5 else 5
+
+    if any("," not in line for line in lines[1:columns]):
+        return False
+
+    return all(len(line.split(",")) == len(header) for line in lines[1:columns])
 
 
 def _check_eml_from_buffer(file: IO) -> bool:
@@ -359,7 +390,6 @@ def _check_eml_from_buffer(file: IO) -> bool:
         file_head = file_content.decode("utf-8", errors="ignore")
     else:
         file_head = file_content
-
     return EMAIL_HEAD_RE.match(file_head) is not None
 
 
