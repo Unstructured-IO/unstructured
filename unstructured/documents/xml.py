@@ -70,11 +70,10 @@ class XMLDocument(Document):
             try:
                 document_tree = etree.fromstring(content, self.parser)
                 if "<pre>" and "</pre>" in content:
-                    from bs4 import BeautifulSoup
 
-                    soup = BeautifulSoup(content, "html.parser")
-                    for element in soup.find_all("pre"):
-                        text_content = split_by_paragraph(element.get_text())
+                    tree = etree.HTML(content)
+                    for element in tree.xpath('//pre'):
+                        text_content = split_by_paragraph(element.text)
                         for text in text_content:
                             element = etree.Element("span")
                             element.text = str(element_from_text(text=text))

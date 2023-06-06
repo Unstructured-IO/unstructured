@@ -247,11 +247,12 @@ def test_emoji_appears_with_emoji_utf8_code():
     elements = partition_html(text=html_text)
     assert elements[0] == Title("Hello 😀")
 
+
 def test_patition_html_eith_pre_tag():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-html-pre.htm")
     elements = partition_html(filename=filename)
 
-    assert len(elements) > 0    
+    assert len(elements) > 0
     assert PageBreak() not in elements
     assert elements[0].metadata.filetype == "text/html"
     assert elements[0].metadata.filename == "fake-html-pre.htm"
