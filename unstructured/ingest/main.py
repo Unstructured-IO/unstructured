@@ -448,9 +448,9 @@ def main(
     local_file_glob,
     download_only,
 ):
-    if collections.Counter(
-        [option.default for option in ctx.command.params]
-    ) == collections.Counter(ctx.params.values()):
+    default_values = collections.Counter([option.default for option in ctx.command.params])
+    passed_values = collections.Counter(ctx.params.values())
+    if default_values == passed_values:
         return click.echo(ctx.get_help())
     if flatten_metadata and "metadata" not in fields_include:
         logger.warning(
