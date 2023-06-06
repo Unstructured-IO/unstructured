@@ -1,6 +1,8 @@
-## 0.7.2-dev4
+## 0.7.2-dev6
 
 ### Enhancements
+
+* Bump version of base image to use new stable version of tesseract
 
 ### Features
 
@@ -16,6 +18,7 @@
 * File detection now detects code files as plain text
 * Adds `tabulate` explicitly to dependencies
 * Fixes an issue in `metadata.page_number` of pptx files
+* Adds showing help if no parameters passed
 
 ## 0.7.1
 
