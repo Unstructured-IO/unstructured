@@ -877,7 +877,7 @@ Examples:
   import re
   from unstructured.cleaners.core import group_broken_paragraphs
 
-  para_split_re = re.compile(r"(\s*\nn\\s*){3}")
+  para_split_re = re.compile(r"(\s*\n\s*){3}")
 
   text = """The big brown fox
 
