@@ -3,6 +3,7 @@ from typing import List, Optional, Union
 from lxml import etree
 
 from unstructured.documents.base import Document, Page
+from unstructured.file_utils.encoding import read_txt_file
 from unstructured.logger import logger
 
 VALID_PARSERS = Union[etree.HTMLParser, etree.XMLParser, None]
@@ -104,8 +105,7 @@ class XMLDocument(Document):
         filename,
         parser: VALID_PARSERS = None,
         stylesheet: Optional[str] = None,
-        encoding: Optional[str] = "utf-8",
+        encoding: Optional[str] = None,
     ):
-        with open(filename, encoding=encoding) as f:
-            content = f.read()
+        _, content = read_txt_file(filename=filename, encoding=encoding)
         return cls.from_string(content, parser=parser, stylesheet=stylesheet)

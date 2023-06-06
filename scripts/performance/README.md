@@ -10,8 +10,6 @@ Benchmarking requires no additional dependencies and should work without any ini
 Profiling has a few dependencies which can be installed with: 
 `pip install -r scripts/performance/requirements.txt`
 
-Before running a test either populate the `docs` directory with test documents of interest or set environment variable SYNC_S3_DOCS=true
-
 ## Run
 ### Benchmark
 Export / assign desired environment variable settings:
@@ -19,14 +17,12 @@ Export / assign desired environment variable settings:
 - NUM_ITERATIONS: Number of iterations for benchmark (e.g., 100) (default: 3)
 - INSTANCE_TYPE: Type of benchmark instance (e.g., "c5.xlarge") (default: unspecified)
 - PUBLISH_RESULTS: Set to true to publish results to S3 bucket (default: false)
-- SYNC_S3_DOCS: Set to true to sync test documents from S3 (default: false)
 - 
 Usage: `./scripts/performance/benchmark.sh`
 
 ### Profile
 
 Export / assign desired environment variable settings:
-- SYNC_S3_DOCS: Set to true to sync test documents from S3 (default: false)
 - DOCKER_TEST: Set to true to run profiling inside a Docker container (default: false)
 
 Usage: `./scripts/performance/profile.sh`
