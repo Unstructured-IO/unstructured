@@ -3,11 +3,11 @@ through Unstructured."""
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 import requests
 
-from unstructured.documents.elements import DataSourceMetadata
+from unstructured.documents.elements import DataSourceMetadata, Element
 from unstructured.ingest.logger import logger
 from unstructured.partition.auto import partition
 from unstructured.staging.base import convert_to_dict
@@ -87,7 +87,7 @@ class BaseIngestDoc(ABC):
 
     @property
     @abstractmethod
-    def filename(self):
+    def filename(self) -> str:
         """The local filename of the document after fetching from remote source."""
 
     @property
@@ -108,6 +108,11 @@ class BaseIngestDoc(ABC):
         """A dictionary with any data necessary to uniquely identify the document on
         the source system."""
 
+    @property
+    @abstractmethod
+    def exists(self) -> bool:
+        """Whether the document exists on the remote source."""
+
     @abstractmethod
     def cleanup_file(self):
         """Removes the local copy the file (or anything else) after successful processing."""
@@ -121,7 +126,7 @@ class BaseIngestDoc(ABC):
         pass
 
     @abstractmethod
-    def has_output(self):
+    def has_output(self) -> bool:
         """Determine if structured output for this doc already exists."""
         pass
 
@@ -130,7 +135,7 @@ class BaseIngestDoc(ABC):
         """Write the structured json result for this doc. result must be json serializable."""
         pass
 
-    def partition_file(self, **partition_kwargs):
+    def partition_file(self, **partition_kwargs) -> List[Dict[str, Any]]:
         if not self.standard_config.partition_by_api:
             logger.debug("Using local partition")
             elements = partition(
@@ -160,9 +165,9 @@ class BaseIngestDoc(ABC):
 
             return response.json()
 
-    def process_file(self, **partition_kwargs):
+    def process_file(self, **partition_kwargs) -> Optional[List[Dict[str, Any]]]:
         if self.standard_config.download_only:
-            return
+            return None
         logger.info(f"Processing {self.filename}")
 
         isd_elems = self.partition_file(**partition_kwargs)
