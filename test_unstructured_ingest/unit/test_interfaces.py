@@ -51,12 +51,12 @@ class TestIngestDoc(BaseIngestDoc):
 @pytest.fixture()
 def partition_test_results():
     # Reusable partition test results, calculated only once
-    yield partition(filename=str(TEST_FILE_PATH))
+    return partition(filename=str(TEST_FILE_PATH))
 
 @pytest.fixture()
 def partition_file_test_results(partition_test_results):
     # Reusable partition_file test results, calculated only once
-    yield convert_to_dict(partition_test_results)
+    return convert_to_dict(partition_test_results)
 
 def test_process_file_fields_include_default(mocker, partition_test_results):
     """Validate when metadata_include and metadata_exclude are not set, all fields:
