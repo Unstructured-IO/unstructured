@@ -1,6 +1,8 @@
-## 0.7.2-dev5
+## 0.7.2-dev6
 
 ### Enhancements
+
+* Bump version of base image to use new stable version of tesseract
 
 ### Features
 
