@@ -131,6 +131,10 @@ def test_serialized_deserialize_elements_to_json(tmpdir):
     new_elements_filename = base.elements_from_json(filename=filename)
     assert elements == new_elements_filename
 
+    base.elements_to_json(elements, filename=filename, encoding="utf-8")
+    new_elements_filename = base.elements_from_json(filename=filename, encoding="utf-8")
+    assert elements == new_elements_filename
+
     elements_str = base.elements_to_json(elements)
     new_elements_text = base.elements_from_json(text=elements_str)
     assert elements == new_elements_text
