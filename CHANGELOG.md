@@ -1,3 +1,13 @@
+## 0.7.3-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* `partition_via_api` reflects that actual filetype for the file processed in the API.
+
 ## 0.7.2
 
 ### Enhancements
