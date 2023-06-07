@@ -101,7 +101,7 @@ class BaseIngestDoc(ABC):
         return None
 
     @property
-    def date_processed(self) -> str:
+    def date_processed(self) -> Optional[str]:
         """The date the document was last processed by Unstructured.
         self._date_processed is assigned internally in self.partition_file()"""
         return self._date_processed
@@ -132,7 +132,7 @@ class BaseIngestDoc(ABC):
         """The version of the source document, this could be the last modified date, an
         explicit version number, or anything else that can be used to uniquely identify
         the version of the document."""
-        None
+        return None
 
     @abstractmethod
     def cleanup_file(self):
