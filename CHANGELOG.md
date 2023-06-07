@@ -1,5 +1,6 @@
 ## 0.7.2
 
+
 ### Enhancements
 
 * Adds an optional encoding kwarg to `elements_to_json` and `elements_from_json`
