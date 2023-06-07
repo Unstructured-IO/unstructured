@@ -6,6 +6,8 @@
 
 ### Features
 
+* Add api key to script
+
 ### Fixes
 
 * Update the `read_txt_file` utility function to keep using `spooled_to_bytes_io_if_needed` for xml
