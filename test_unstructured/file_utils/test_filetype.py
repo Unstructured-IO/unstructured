@@ -370,7 +370,7 @@ def test_filetype_order():
     ("content", "expected"),
     [
         (b"d\xe2\x80", False),  # Invalid JSON
-        (b'{"key": "value"}', True),  # Valid JSON
+        (b'[{"key": "value"}]', True),  # Valid JSON
         (b"", False),  # Empty content
     ],
 )
@@ -385,7 +385,7 @@ def test_is_text_file_a_json(content, expected):
     ("content", "expected"),
     [
         (b"d\xe2\x80", False),  # Invalid CSV
-        (b'{"key": "value"}', False),  # Invalid CSV
+        (b'[{"key": "value"}]', False),  # Invalid CSV
         (b"column1,column2,column3\nvalue1,value2,value3\n", True),  # Valid CSV
         (b"", False),  # Empty content
     ],

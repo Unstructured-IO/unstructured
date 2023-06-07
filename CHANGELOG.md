@@ -1,4 +1,4 @@
-## 0.7.3-dev1
+## 0.7.3-dev2
 
 ### Enhancements
 
@@ -8,6 +8,7 @@
 
 ### Fixes
 
+* Filetype detection if a CSV has a `text/plain` MIME type
 * `convert_office_doc` no longers prints file conversion info messages to stdout.
 * `partition_via_api` reflects the actual filetype for the file processed in the API.
 
@@ -22,7 +23,6 @@
 
 ### Fixes
 
-* Filetype detection if a CSV has a text/plain MIME type
 * Update the `read_txt_file` utility function to keep using `spooled_to_bytes_io_if_needed` for xml
 * Add functionality to the `read_txt_file` utility function to handle file-like object from URL
 * Remove the unused parameter `encoding` from `partition_pdf`
