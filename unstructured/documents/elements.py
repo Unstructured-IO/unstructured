@@ -6,7 +6,7 @@ import os
 import pathlib
 from abc import ABC
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast
 
 
 class NoID(ABC):
@@ -66,8 +66,9 @@ class ElementMetadata:
 
     def to_dict(self):
         dict = {key: value for key, value in self.__dict__.items() if value is not None}
-        if dict.get("data_source"):
-            dict["data_source"] = self.data_source.to_dict()
+        if self.data_source:
+
+            dict["data_source"] = cast(self.data_source, DataSourceMetadata).to_dict()
         return dict
 
     @classmethod
