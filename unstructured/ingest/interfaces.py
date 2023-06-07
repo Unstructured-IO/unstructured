@@ -27,7 +27,7 @@ class StandardConnectorConfig:
     metadata_include: Optional[str] = None
     partition_by_api: bool = False
     partition_endpoint: str = "https://api.unstructured.io/general/v0/general"
-    partition_api_key: str = ""
+    api_key: str = ""
     preserve_downloads: bool = False
     re_download: bool = False
 
@@ -127,6 +127,7 @@ class BaseIngestDoc(ABC):
                 response = requests.post(
                     f"{endpoint}",
                     files={"files": (str(self.filename), f)},
+                    headers={"UNSTRUCTURED-API-KEY": self.standard_config.api_key}
                 )
 
             if response.status_code != 200:
