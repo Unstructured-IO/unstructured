@@ -3,8 +3,8 @@ import pathlib
 from dataclasses import dataclass
 from typing import Any, Dict
 
-from freezegun import freeze_time
 import pytest
+from freezegun import freeze_time
 
 from unstructured.documents.elements import DataSourceMetadata
 from unstructured.ingest.interfaces import (
@@ -120,12 +120,12 @@ def test_partition_file():
         assert expected_keys == set(elem.keys())
         assert expected_metadata_keys == set(elem["metadata"].keys())
         data_source_metadata = elem["metadata"]["data_source"]
-        assert TEST_SOURCE_URL == data_source_metadata["url"]
-        assert TEST_VERSION == data_source_metadata["version"]
-        assert TEST_RECORD_LOCATOR == data_source_metadata["record_locator"]
-        assert TEST_DATE_CREATED == data_source_metadata["date_created"]
-        assert TEST_DATE_MODIFIED == data_source_metadata["date_modified"]
-        assert TEST_DATE_PROCESSSED == data_source_metadata["date_processed"]
+        assert data_source_metadata["url"] == TEST_SOURCE_URL
+        assert data_source_metadata["version"] == TEST_VERSION
+        assert data_source_metadata["record_locator"] == TEST_RECORD_LOCATOR
+        assert data_source_metadata["date_created"] == TEST_DATE_CREATED
+        assert data_source_metadata["date_modified"] == TEST_DATE_MODIFIED
+        assert data_source_metadata["date_processed"] == TEST_DATE_PROCESSSED
 
 @freeze_time(TEST_DATE_PROCESSSED)
 def test_process_file_fields_include_default(mocker, partition_test_results):
@@ -149,12 +149,12 @@ def test_process_file_fields_include_default(mocker, partition_test_results):
     for elem in isd_elems:
         assert {"element_id", "text", "type", "metadata"} == set(elem.keys())
         data_source_metadata = elem["metadata"]["data_source"]
-        assert TEST_SOURCE_URL == data_source_metadata["url"]
-        assert TEST_VERSION == data_source_metadata["version"]
-        assert TEST_RECORD_LOCATOR == data_source_metadata["record_locator"]
-        assert TEST_DATE_CREATED == data_source_metadata["date_created"]
-        assert TEST_DATE_MODIFIED == data_source_metadata["date_modified"]
-        assert TEST_DATE_PROCESSSED == data_source_metadata["date_processed"]
+        assert data_source_metadata["url"] == TEST_SOURCE_URL
+        assert data_source_metadata["version"] == TEST_VERSION
+        assert data_source_metadata["record_locator"] == TEST_RECORD_LOCATOR
+        assert data_source_metadata["date_created"] == TEST_DATE_CREATED
+        assert data_source_metadata["date_modified"] == TEST_DATE_MODIFIED
+        assert data_source_metadata["date_processed"] == TEST_DATE_PROCESSSED
 
 
 def test_process_file_metadata_includes_filename_and_page_number(mocker, partition_test_results):

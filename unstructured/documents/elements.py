@@ -18,16 +18,16 @@ class NoID(ABC):
 @dataclass
 class DataSourceMetadata:
     """Metadata fields that pertain to the data source of the document."""
+
     url: Optional[str] = None
     version: Optional[str] = None
     record_locator: Optional[Dict[str, Any]] = None  # Values must be JSON-serializable
     date_created: Optional[str] = None
     date_modified: Optional[str] = None
     date_processed: Optional[str] = None
-    
+
     def to_dict(self):
         return {key: value for key, value in self.__dict__.items() if value is not None}
-
 
 
 @dataclass

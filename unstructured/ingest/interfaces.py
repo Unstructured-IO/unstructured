@@ -8,7 +8,7 @@ from typing import Any, Dict, List, Optional
 
 import requests
 
-from unstructured.documents.elements import DataSourceMetadata, Element
+from unstructured.documents.elements import DataSourceMetadata
 from unstructured.ingest.logger import logger
 from unstructured.partition.auto import partition
 from unstructured.staging.base import convert_to_dict
@@ -85,7 +85,7 @@ class BaseIngestDoc(ABC):
 
     standard_config: StandardConnectorConfig
     config: BaseConnectorConfig
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._date_processed = None
@@ -110,7 +110,7 @@ class BaseIngestDoc(ABC):
     def exists(self) -> Optional[bool]:
         """Whether the document exists on the remote source."""
         return None
-    
+
     @property
     @abstractmethod
     def filename(self) -> str:
@@ -159,8 +159,6 @@ class BaseIngestDoc(ABC):
     def partition_file(self, **partition_kwargs) -> List[Dict[str, Any]]:
         if not self.standard_config.partition_by_api:
             logger.debug("Using local partition")
-            date_processed = self.date_processed
-
             elements = partition(
                 filename=str(self.filename),
                 data_source_metadata=DataSourceMetadata(
@@ -194,8 +192,6 @@ class BaseIngestDoc(ABC):
             return response.json()
 
     def process_file(self, **partition_kwargs) -> Optional[List[Dict[str, Any]]]:
-        utcnow = datetime.utcnow()
-        utcnow_iso = datetime.utcnow().isoformat()
         self._date_processed = datetime.utcnow().isoformat()
         if self.standard_config.download_only:
             return None

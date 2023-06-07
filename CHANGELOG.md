@@ -1,4 +1,4 @@
-## 0.7.2-dev5
+## 0.7.2-dev6
 
 ### Enhancements
 
@@ -6,6 +6,7 @@
 
 ### Fixes
 
+* Update IngestDoc abstractions and add data source metadata in ElementMetadata
 * Update the `read_txt_file` utility function to keep using `spooled_to_bytes_io_if_needed` for xml
 * Add functionality to the `read_txt_file` utility function to handle file-like object from URL
 * Remove the unused parameter `encoding` from `partition_pdf`
