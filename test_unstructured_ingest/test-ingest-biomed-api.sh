@@ -25,16 +25,16 @@ if [[ "$(find test_unstructured_ingest/expected-structured-output/biomed-ingest-
 fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-   --metadata-exclude filename,file_directory \
-   --biomed-api-from "2019-01-02" \
-   --biomed-api-until "2019-01-02+00:03:10" \
-   --structured-output-dir biomed-ingest-output-api  \
-   --num-processes 2 \
-   --partition-strategy hi_res \
-   --reprocess \
-   --verbose \
-   --re-download \
-   --preserve-downloads
+    --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
+    --biomed-api-from "2019-01-02" \
+    --biomed-api-until "2019-01-02+00:03:10" \
+    --structured-output-dir biomed-ingest-output-api  \
+    --num-processes 2 \
+    --partition-strategy hi_res \
+    --reprocess \
+    --verbose \
+    --re-download \
+    --preserve-downloads
 
 OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
 
