@@ -3,6 +3,7 @@ through Unstructured."""
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 import requests
@@ -84,34 +85,54 @@ class BaseIngestDoc(ABC):
 
     standard_config: StandardConnectorConfig
     config: BaseConnectorConfig
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._date_processed = None
 
+    @property
+    def date_created(self) -> Optional[str]:
+        """The date the document was created on the source system."""
+        return None
+
+    @property
+    def date_modified(self) -> Optional[str]:
+        """The date the document was last modified on the source system."""
+        return None
+
+    @property
+    def date_processed(self) -> str:
+        """The date the document was last processed by Unstructured.
+        self._date_processed is assigned internally in self.partition_file()"""
+        return self._date_processed
+
+    @property
+    def exists(self) -> Optional[bool]:
+        """Whether the document exists on the remote source."""
+        return None
+    
     @property
     @abstractmethod
     def filename(self) -> str:
         """The local filename of the document after fetching from remote source."""
 
     @property
-    @abstractmethod
-    def source_url(self) -> str:
-        """The url of the source document."""
+    def record_locator(self) -> Optional[Dict[str, Any]]:  # Values must be JSON-serializable
+        """A dictionary with any data necessary to uniquely identify the document on
+        the source system."""
+        return None
 
     @property
-    @abstractmethod
-    def version(self) -> str:
+    def source_url(self) -> Optional[str]:
+        """The url of the source document."""
+        return None
+
+    @property
+    def version(self) -> Optional[str]:
         """The version of the source document, this could be the last modified date, an
         explicit version number, or anything else that can be used to uniquely identify
         the version of the document."""
-
-    @property
-    @abstractmethod
-    def record_locator(self) -> Dict[str, Any]:  # Values must be JSON-serializable
-        """A dictionary with any data necessary to uniquely identify the document on
-        the source system."""
-
-    @property
-    @abstractmethod
-    def exists(self) -> bool:
-        """Whether the document exists on the remote source."""
+        None
 
     @abstractmethod
     def cleanup_file(self):
@@ -138,12 +159,17 @@ class BaseIngestDoc(ABC):
     def partition_file(self, **partition_kwargs) -> List[Dict[str, Any]]:
         if not self.standard_config.partition_by_api:
             logger.debug("Using local partition")
+            date_processed = self.date_processed
+
             elements = partition(
                 filename=str(self.filename),
                 data_source_metadata=DataSourceMetadata(
                     url=self.source_url,
                     version=self.version,
                     record_locator=self.record_locator,
+                    date_created=self.date_created,
+                    date_modified=self.date_modified,
+                    date_processed=self.date_processed,
                 ),
                 **partition_kwargs,
             )
@@ -168,6 +194,9 @@ class BaseIngestDoc(ABC):
             return response.json()
 
     def process_file(self, **partition_kwargs) -> Optional[List[Dict[str, Any]]]:
+        utcnow = datetime.utcnow()
+        utcnow_iso = datetime.utcnow().isoformat()
+        self._date_processed = datetime.utcnow().isoformat()
         if self.standard_config.download_only:
             return None
         logger.info(f"Processing {self.filename}")

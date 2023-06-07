@@ -3,10 +3,10 @@ import pathlib
 from dataclasses import dataclass
 from typing import Any, Dict
 
+from freezegun import freeze_time
 import pytest
 
 from unstructured.documents.elements import DataSourceMetadata
-from unstructured.ingest.connector.local import LocalIngestDoc, SimpleLocalConfig
 from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
@@ -32,6 +32,9 @@ TEST_CONFIG = TestConfig(id=TEST_ID, path=TEST_FILE_PATH)
 TEST_SOURCE_URL = "test-source-url"
 TEST_VERSION = "1.1.1"
 TEST_RECORD_LOCATOR = {"id": "data-source-id"}
+TEST_DATE_CREATED = "2021-01-01T00:00:00"
+TEST_DATE_MODIFIED = "2021-01-02T00:00:00"
+TEST_DATE_PROCESSSED = "2022-12-13T15:44:08"
 
 @dataclass
 class TestIngestDoc(BaseIngestDoc):
@@ -52,6 +55,14 @@ class TestIngestDoc(BaseIngestDoc):
     @property 
     def record_locator(self) -> Dict[str, Any]:
         return TEST_RECORD_LOCATOR
+
+    @property 
+    def date_created(self) -> str:
+        return TEST_DATE_CREATED
+    
+    @property 
+    def date_modified(self) -> str:
+        return TEST_DATE_MODIFIED
     
     @property 
     def exists(self) -> bool:
@@ -78,6 +89,9 @@ def partition_test_results():
             url=TEST_SOURCE_URL,
             version=TEST_VERSION,
             record_locator=TEST_RECORD_LOCATOR,
+            date_created=TEST_DATE_CREATED,
+            date_modified=TEST_DATE_MODIFIED,
+            date_processed=TEST_DATE_PROCESSSED,
         ),
     )
     return result
@@ -97,6 +111,7 @@ def test_partition_file():
             output_dir=TEST_OUTPUT_DIR,
         ),
     )
+    test_ingest_doc._date_processed = TEST_DATE_PROCESSSED
     isd_elems = test_ingest_doc.partition_file()
     assert len(isd_elems)
     expected_keys = {"coordinates", "element_id", "text", "type", "metadata"}
@@ -108,12 +123,15 @@ def test_partition_file():
         assert TEST_SOURCE_URL == data_source_metadata["url"]
         assert TEST_VERSION == data_source_metadata["version"]
         assert TEST_RECORD_LOCATOR == data_source_metadata["record_locator"]
+        assert TEST_DATE_CREATED == data_source_metadata["date_created"]
+        assert TEST_DATE_MODIFIED == data_source_metadata["date_modified"]
+        assert TEST_DATE_PROCESSSED == data_source_metadata["date_processed"]
 
-
+@freeze_time(TEST_DATE_PROCESSSED)
 def test_process_file_fields_include_default(mocker, partition_test_results):
     """Validate when metadata_include and metadata_exclude are not set, all fields:
     ("element_id", "text", "type", "metadata") are included"""
-    mocker.patch(
+    mock_partition = mocker.patch(
         "unstructured.ingest.interfaces.partition",
         return_value=partition_test_results,
     )
@@ -126,12 +144,17 @@ def test_process_file_fields_include_default(mocker, partition_test_results):
     )
     isd_elems = test_ingest_doc.process_file()
     assert len(isd_elems)
+    assert mock_partition.call_count == 1
+    assert mock_partition.call_args.kwargs["data_source_metadata"].date_processed == TEST_DATE_PROCESSSED
     for elem in isd_elems:
         assert {"element_id", "text", "type", "metadata"} == set(elem.keys())
         data_source_metadata = elem["metadata"]["data_source"]
         assert TEST_SOURCE_URL == data_source_metadata["url"]
         assert TEST_VERSION == data_source_metadata["version"]
         assert TEST_RECORD_LOCATOR == data_source_metadata["record_locator"]
+        assert TEST_DATE_CREATED == data_source_metadata["date_created"]
+        assert TEST_DATE_MODIFIED == data_source_metadata["date_modified"]
+        assert TEST_DATE_PROCESSSED == data_source_metadata["date_processed"]
 
 
 def test_process_file_metadata_includes_filename_and_page_number(mocker, partition_test_results):
