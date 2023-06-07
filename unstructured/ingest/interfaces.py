@@ -213,7 +213,17 @@ class BaseIngestDoc(ABC):
             elif self.standard_config.metadata_exclude is not None:
                 ex_list = self.standard_config.metadata_exclude.split(",")
                 for ex in ex_list:
-                    elem["metadata"].pop(ex, None)  # type: ignore[attr-defined]
+                    if "." in ex:
+                        nested_fields = ex.split(".")
+                        current_elem = elem
+                        for field in nested_fields[:-1]:
+                            if field in current_elem:
+                                current_elem = current_elem[field]
+                        field_to_exclude = nested_fields[-1]
+                        if field_to_exclude in current_elem:
+                            current_elem.pop(field_to_exclude, None)
+                    else:
+                        elem["metadata"].pop(ex, None)  # type: ignore[attr-defined]
             elif self.standard_config.metadata_include is not None:
                 in_list = self.standard_config.metadata_include.split(",")
                 for k in list(elem["metadata"].keys()):  # type: ignore[attr-defined]
