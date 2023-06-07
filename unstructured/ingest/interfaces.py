@@ -113,7 +113,7 @@ class BaseIngestDoc(ABC):
 
     @property
     @abstractmethod
-    def filename(self) -> str:
+    def filename(self):
         """The local filename of the document after fetching from remote source."""
 
     @property

@@ -66,7 +66,8 @@ class ElementMetadata:
 
     def to_dict(self):
         dict = {key: value for key, value in self.__dict__.items() if value is not None}
-        dict["data_source"] = self.data_source.to_dict()
+        if dict.get("data_source"):
+            dict["data_source"] = self.data_source.to_dict()
         return dict
 
     @classmethod
