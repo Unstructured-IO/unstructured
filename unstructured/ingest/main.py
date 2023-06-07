@@ -154,7 +154,7 @@ class MainProcess:
 @click.option(
     "--api-key",
     default="",
-    help="API Key for partition endpoint."
+    help="API Key for partition endpoint.",
 )
 @click.option(
     "--local-input-path",

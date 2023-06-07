@@ -127,7 +127,7 @@ class BaseIngestDoc(ABC):
                 response = requests.post(
                     f"{endpoint}",
                     files={"files": (str(self.filename), f)},
-                    headers={"UNSTRUCTURED-API-KEY": self.standard_config.api_key}
+                    headers={"UNSTRUCTURED-API-KEY": self.standard_config.api_key},
                 )
 
             if response.status_code != 200:
