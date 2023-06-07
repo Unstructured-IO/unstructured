@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import collections
 import hashlib
 import logging
 import multiprocessing as mp
@@ -96,6 +97,7 @@ class MainProcess:
 
 
 @click.command()
+@click.pass_context
 @click.option(
     "--max-docs",
     default=None,
@@ -397,6 +399,7 @@ class MainProcess:
 )
 @click.option("-v", "--verbose", is_flag=True, default=False)
 def main(
+    ctx,
     remote_url,
     s3_anonymous,
     azure_account_name,
@@ -451,6 +454,10 @@ def main(
     local_file_glob,
     download_only,
 ):
+    default_values = collections.Counter([option.default for option in ctx.command.params])
+    passed_values = collections.Counter(ctx.params.values())
+    if default_values == passed_values:
+        return click.echo(ctx.get_help())
     if flatten_metadata and "metadata" not in fields_include:
         logger.warning(
             "`--flatten-metadata` is specified, but there is no metadata to flatten, "

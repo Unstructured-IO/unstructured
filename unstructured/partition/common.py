@@ -3,6 +3,9 @@ from io import BytesIO
 from tempfile import SpooledTemporaryFile
 from typing import BinaryIO, List, Optional, Tuple, Union
 
+from docx import table as docxtable
+from tabulate import tabulate
+
 from unstructured.documents.elements import (
     TYPE_TO_TEXT_ELEMENT_MAP,
     CheckBox,
@@ -84,6 +87,11 @@ def _add_element_metadata(
             text_as_html: Optional[str] = layout_element.text_as_html
         else:
             text_as_html = None
+        # NOTE(robinson) - defer to the page number that's already in the metadata
+        # if it's available
+        if hasattr(element, "metadata"):
+            page_number = element.metadata.page_number or page_number
+
         metadata = ElementMetadata(
             filename=filename,
             filetype=filetype,
@@ -101,6 +109,26 @@ def _add_element_metadata(
                 elements.append(element)
         else:
             element.metadata = metadata.merge(element.metadata)
+            elements.append(element)
+    return elements
+
+
+def _remove_element_metadata(
+    layout_elements,
+) -> List[Element]:
+    """Removes document metadata from the document element. Document metadata includes information
+    like the filename, source url, and page number."""
+    # Init an empty list of elements to write to
+    elements: List[Element] = []
+    metadata = ElementMetadata()
+    for layout_element in layout_elements:
+        element = normalize_layout_element(layout_element)
+        if isinstance(element, list):
+            for _element in element:
+                _element.metadata = metadata
+            elements.extend(element)
+        else:
+            element.metadata = metadata
             elements.append(element)
     return elements
 
@@ -160,3 +188,22 @@ def spooled_to_bytes_io_if_needed(
     else:
         # Return the original file object if it's not a SpooledTemporaryFile
         return file_obj
+
+
+def convert_ms_office_table_to_text(table: docxtable.Table, as_html: bool = True):
+    """
+    Convert a table object from a Word document to an HTML table string using the tabulate library.
+
+    Args:
+        table (Table): A Table object.
+        as_html (bool): Whether to return the table as an HTML string (True) or a
+            plain text string (False)
+
+    Returns:
+        str: An table string representation of the input table.
+    """
+    fmt = "html" if as_html else "plain"
+    rows = list(table.rows)
+    headers = [cell.text for cell in rows[0].cells]
+    data = [[cell.text for cell in row.cells] for row in rows[1:]]
+    return tabulate(data, headers=headers, tablefmt=fmt)

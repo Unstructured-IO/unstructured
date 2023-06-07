@@ -28,18 +28,6 @@
     <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" />
   </a>
 </div>
-<h2 align="center">
-  <p>Announcement!!!</p>
-</h2>
-<div align="center">
-  <p>We're excited to announce the public release of the unstructured.io hosted API! Now you can leverage Unstructured with a simple API call to render clean text in JSON format out of your images, documents, powerpoints, and more.</p>
-
-<p>Checkout the <a href="https://github.com/Unstructured-IO/unstructured-api#--">readme</a> here to get started making API calls. You’ll also find instructions there about how to host your own version of the API. Unstructured data just got easier!
-We'd love to hear your feedback, let us know how it goes in our <a
-  href="https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-1nlh1ot5d-dfY7zCRlhFboZrIWLA4Qgw">
-   community slack</a>. And stay tuned for improvements to both quality and performance over the coming months!
-<p><img src="easy.gif"></p></p>
-</div>
 
 <h3 align="center">
   <p>Open-Source Pre-Processing Tools for Unstructured Data</p>
@@ -58,7 +46,10 @@ about. Bricks in the library fall into three categories:
 - :performing_arts: ***Staging bricks*** that format data for downstream tasks, such as ML inference
   and data labeling.
 
-<br></br>
+Unstructured also provides the capabilities from `unstructured` as an API.
+Checkout the [`unstructured-api` repo](https://github.com/Unstructured-IO/unstructured-api)
+to get started making API calls.
+You’ll also find instructions there about how to host your own version of the API.
 
 ## :eight_pointed_black_star: Quick Start
 
@@ -73,10 +64,10 @@ installation. NOTE: We do not currently support python 3.11, please use an older
     - `poppler-utils` (images and PDFs)
     - `tesseract-ocr` (images and PDFs)
     - `libreoffice` (MS Office docs)
-- If you are parsing PDFs, run the following to install the `detectron2` model, which
-  `unstructured` uses for layout detection:
-    - `pip install tensorboard>=2.12.2`
-    - `pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@e2ce8dc#egg=detectron2"`
+
+- If you are parsing PDFs and want to use a model from the [layoutparser model
+  zoo](https://github.com/Unstructured-IO/unstructured-inference#using-models-from-the-layoutparser-model-zoo),
+  use the instructions [here](https://github.com/Unstructured-IO/unstructured-inference#detectron2).
 
 At this point, you should be able to run the following code:
 
@@ -87,14 +78,34 @@ elements = partition(filename="example-docs/fake-email.eml")
 print("\n\n".join([str(el) for el in elements]))
 ```
 
-And if you installed with `local-inference`, you should be able to run this as well:
+The following table shows the document types the `unstructured` library currently supports.
+`partition` will recognize each of these document types and route the document to the
+appropriate partitioning function. If you already know your document type, you can use
+the partitioning function listed in the table directly.
+See our [documentation page](https://unstructured-io.github.io/unstructured/) for more details
+about the library.
 
-```python
-from unstructured.partition.auto import partition
+| Document Type | Partition Function | Strategies | Table Support | Options |
+| --- | --- | --- | --- | --- |
+| CSV Files (`.csv`) | `partition_csv` | N/A | Yes | None |
+| E-mails (`.eml`) | `partition_eml` | N/A | No | Encoding |
+| E-mails (`.msg`) | `partition_msg` | N/A | No | Encoding |
+| EPubs (`.epub`) | `partition_epub` | N/A | Yes | Include Page Breaks |
+| Excel Documents (`.xlsx`/`.xls`) | `partition_xlsx` | N/A | Yes | None |
+| HTML Pages (`.html`) | `partition_html` | N/A | No | Encoding; Include Page Breaks |
+| Images (`.png`/`.jpg`) | `partition_image` | `"auto"`, `"hi_res"`, `"ocr_only"` | Yes | Encoding; Include Page Breaks; Infer Table Structure; OCR Languages, Strategy |
+| Markdown (`.md`) | `partitin_md` | N/A | Yes | Include Page Breaks |
+| Open Office Documents (`.odt`) | `partition_odt` | N/A | Yes | None |
+| PDFs (`.pdf`) | `partition_pdf` | `"auto"`, `"fast"`, `"hi_res"`, `"ocr_only"` | Yes | Encoding; Include Page Breaks; Infer Table Structure; OCR Languages, Strategy |
+| Plain Text (`.txt`) | `partition_text` | N/A | No | Encoding, Paragraph Grouper |
+| Power Points (`.ppt`) | `partition_ppt` | N/A | Yes | Include Page Breaks |
+| Power Points (`.pptx`) | `partition_pptx` | N/A | Yes | Include Page Breaks |
+| Rich Text Files (`.rtf`) | `partition_rtf` | N/A | Yes | Include Page Breaks |
+| Word Documents (`.doc`) | `partition_doc` | N/A | Yes | None |
+| Word Documents (`.docx`) | `partition_docx` | N/A | Yes | None |
+| XML Documents (`.xml`) | `partition_xml` | N/A | No | Encoding; XML Keep Tags |
 
-elements = partition("example-docs/layout-parser-paper.pdf")
-print("\n\n".join([str(el) for el in elements]))
-```
+
 
 ## :dizzy: Instructions for using the docker image
 
@@ -182,10 +193,7 @@ you can also uninstall the hooks with `pre-commit uninstall`.
 You can run this [Colab notebook](https://colab.research.google.com/drive/1U8VCjY2-x8c6y5TYMbSFtQGlQVFHCVIW) to run the examples below.
 
 The following examples show how to get started with the `unstructured` library.
-
-You can parse **TXT**, **HTML**, **XML**, **PDF**, **EML**, **MSG**, **RTF**, **EPUB**, **DOC**, **DOCX**,
-**XLSX**, **CSV**, **ODT**, **PPT**, **PPTX**, **JPG**,
-and **PNG** documents with one line of code!
+You can parse over a dozen document types with one line of code!
 <br></br>
 See our [documentation page](https://unstructured-io.github.io/unstructured) for a full description
 of the features in the library.
@@ -198,8 +206,8 @@ file-specific partitioning brick.
 If you are using the `partition` brick, you may need to install additional parameters via `pip install unstructured[local-inference]`. Ensure you first install `libmagic` using the
 instructions outlined [here](https://unstructured-io.github.io/unstructured/installing.html#filetype-detection)
 `partition` will always apply the default arguments. If you need
-advanced features, use a document-specific brick. The `partition` brick currently works for
-`.txt`, `.doc`, `.docx`, `.ppt`, `.pptx`, `.xlsx`, `.jpg`, `.png`, `.eml`, `.msg`, `.html`, and `.pdf` documents.
+advanced features, use a document-specific brick.
+See the table above for a full list of document types supported in the library.
 
 ```python
 from unstructured.partition.auto import partition
@@ -240,137 +248,9 @@ Deep Learning(DL)-based approaches are the state-of-the-art for a wide range of 
 including document image classiﬁcation [11,
 ```
 
-### HTML Parsing
-
-You can parse an HTML document using the following workflow:
-
-```python
-from unstructured.partition.html import partition_html
-
-elements = partition_html("example-docs/example-10k.html")
-print("\n\n".join([str(el) for el in elements[:5]]))
-```
-
-The print statement will show the following text:
-```
-UNITED STATES
-
-SECURITIES AND EXCHANGE COMMISSION
-
-Washington, D.C. 20549
-
-FORM 10-K
-
-ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934
-```
-
-And `elements` will be a list of elements in the HTML document, similar to the following:
-
-```python
-[<unstructured.documents.elements.Title at 0x169cbe820>,
- <unstructured.documents.elements.NarrativeText at 0x169cbe8e0>,
- <unstructured.documents.elements.NarrativeText at 0x169cbe3a0>]
-```
-
-### PDF Parsing
-
-You can use the following workflow to parse PDF documents.
-
-```python
-from unstructured.partition.pdf import partition_pdf
-
-elements = partition_pdf("example-docs/layout-parser-paper.pdf")
-```
-
-The output will look the same as the example from the document parsing section above.
-
-
-### E-mail Parsing
-
-The `partition_email` function within `unstructured` is helpful for parsing `.eml` files. Common
-e-mail clients such as Microsoft Outlook and Gmail support exporting e-mails as `.eml` files.
-`partition_email` accepts filenames, file-like object, and raw text as input. The following
-three snippets for parsing `.eml` files are equivalent:
-
-```python
-from unstructured.partition.email import partition_email
-
-elements = partition_email(filename="example-docs/fake-email.eml")
-
-with open("example-docs/fake-email.eml", "r") as f:
-  elements = partition_email(file=f)
-
-with open("example-docs/fake-email.eml", "r") as f:
-  text = f.read()
-elements = partition_email(text=text)
-```
-
-The `elements` output will look like the following:
-
-```python
-[<unstructured.documents.html.HTMLNarrativeText at 0x13ab14370>,
-<unstructured.documents.html.HTMLTitle at 0x106877970>,
-<unstructured.documents.html.HTMLListItem at 0x1068776a0>,
-<unstructured.documents.html.HTMLListItem at 0x13fe4b0a0>]
-```
-
-Run `print("\n\n".join([str(el) for el in elements]))` to get a string representation of the
-output, which looks like:
-
-```python
-This is a test email to use for unit tests.
-
-Important points:
-
-Roses are red
-
-Violets are blue
-```
-
-### Text Document Parsing
-
-The `partition_text` function within `unstructured` can be used to parse simple
-text files into elements.
-
-`partition_text` accepts filenames, file-like object, and raw text as input. The following three snippets are for parsing text files:
-
-```python
-from unstructured.partition.text import partition_text
-
-elements = partition_text(filename="example-docs/fake-text.txt")
-
-with open("example-docs/fake-text.txt", "r") as f:
-  elements = partition_text(file=f)
-
-with open("example-docs/fake-text.txt", "r") as f:
-  text = f.read()
-elements = partition_text(text=text)
-```
-
-The `elements` output will look like the following:
-
-```python
-[<unstructured.documents.html.HTMLNarrativeText at 0x13ab14370>,
-<unstructured.documents.html.HTMLTitle at 0x106877970>,
-<unstructured.documents.html.HTMLListItem at 0x1068776a0>,
-<unstructured.documents.html.HTMLListItem at 0x13fe4b0a0>]
-```
-
-Run `print("\n\n".join([str(el) for el in elements]))` to get a string representation of the
-output, which looks like:
-
-```python
-This is a test document to use for unit tests.
-
-Important points:
-
-Hamburgers are delicious
-
-Dogs are the best
-
-I love fuzzy blankets
-```
-
+See the [partitioning](https://unstructured-io.github.io/unstructured/bricks.html#partitioning)
+section in our documentation for a full list of options and instructions on how to use
+file-specific partitioning functions.
 
 ## :guardsman: Security Policy
 

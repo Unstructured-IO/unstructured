@@ -5,6 +5,7 @@ import requests
 from unstructured.documents.elements import Element
 from unstructured.documents.html import HTMLDocument
 from unstructured.documents.xml import VALID_PARSERS
+from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.file_conversion import convert_file_to_html_text
 from unstructured.file_utils.filetype import (
     FileType,
@@ -62,19 +63,11 @@ def partition_html(
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text, url=url)
 
-    if not encoding:
-        encoding = "utf-8"
-
     if filename is not None:
         document = HTMLDocument.from_file(filename, parser=parser, encoding=encoding)
 
     elif file is not None:
-        file_content = file.read()
-        if isinstance(file_content, bytes):
-            file_text = file_content.decode(encoding)
-        else:
-            file_text = file_content
-
+        _, file_text = read_txt_file(file=file, encoding=encoding)
         document = HTMLDocument.from_string(file_text, parser=parser)
 
     elif text is not None:

@@ -8,7 +8,11 @@ from typing import IO, Callable, List, Optional
 
 from unstructured.documents.elements import Element, PageBreak
 from unstructured.nlp.patterns import LIST_OF_DICTS_PATTERN
-from unstructured.partition.common import _add_element_metadata, exactly_one
+from unstructured.partition.common import (
+    _add_element_metadata,
+    _remove_element_metadata,
+    exactly_one,
+)
 
 try:
     import magic
@@ -137,6 +141,7 @@ EXT_TO_FILETYPE = {
     ".jpeg": FileType.JPG,
     ".txt": FileType.TXT,
     ".text": FileType.TXT,
+    ".log": FileType.TXT,
     ".eml": FileType.EML,
     ".xml": FileType.XML,
     ".htm": FileType.HTML,
@@ -155,8 +160,29 @@ EXT_TO_FILETYPE = {
     ".msg": FileType.MSG,
     ".odt": FileType.ODT,
     ".csv": FileType.CSV,
+    # NOTE(robinson) - for now we are treating code files as plain text
+    ".js": FileType.TXT,
+    ".py": FileType.TXT,
+    ".java": FileType.TXT,
+    ".cpp": FileType.TXT,
+    ".cc": FileType.TXT,
+    ".cxx": FileType.TXT,
+    ".c": FileType.TXT,
+    ".cs": FileType.TXT,
+    ".php": FileType.TXT,
+    ".rb": FileType.TXT,
+    ".swift": FileType.TXT,
+    ".ts": FileType.TXT,
+    ".go": FileType.TXT,
     None: FileType.UNK,
 }
+
+
+def _resolve_symlink(file_path):
+    # Resolve the symlink to get the actual file path
+    if os.path.islink(file_path):
+        file_path = os.path.realpath(file_path)
+    return file_path
 
 
 def detect_filetype(
@@ -180,7 +206,10 @@ def detect_filetype(
         _, extension = os.path.splitext(_filename)
         extension = extension.lower()
         if os.path.isfile(_filename) and LIBMAGIC_AVAILABLE:
-            mime_type = magic.from_file(filename or file_filename, mime=True)  # type: ignore
+            mime_type = magic.from_file(
+                _resolve_symlink(filename or file_filename),
+                mime=True,
+            )  # type: ignore
         else:
             return EXT_TO_FILETYPE.get(extension.lower(), FileType.UNK)
 
@@ -259,6 +288,12 @@ def detect_filetype(
             return EXT_TO_FILETYPE.get(extension.lower(), FileType.ZIP)
         else:
             return EXT_TO_FILETYPE.get(extension.lower(), filetype)
+
+    elif _is_code_mime_type(mime_type):
+        # NOTE(robinson) - we'll treat all code files as plain text for now.
+        # we can update this logic and add filetypes for specific languages
+        # later if needed.
+        return FileType.TXT
 
     # For everything else
     elif mime_type in STR_TO_FILETYPE:
@@ -358,6 +393,32 @@ def document_to_element_list(
     return elements
 
 
+PROGRAMMING_LANGUAGES = [
+    "javascript",
+    "python",
+    "java",
+    "c++",
+    "cpp",
+    "csharp",
+    "c#",
+    "php",
+    "ruby",
+    "swift",
+    "typescript",
+]
+
+
+def _is_code_mime_type(mime_type: str) -> bool:
+    """Checks to see if the MIME type is a MIME type that would be used for a code
+    file."""
+    mime_type = mime_type.lower()
+    # NOTE(robinson) - check this one explicitly to avoid conflicts with other
+    # MIME types that contain "go"
+    if mime_type == "text/x-go":
+        return True
+    return any(language in mime_type for language in PROGRAMMING_LANGUAGES)
+
+
 def add_metadata_with_filetype(filetype: FileType):
     def decorator(func: Callable):
         @wraps(func)
@@ -379,7 +440,9 @@ def add_metadata_with_filetype(filetype: FileType):
                     **metadata_kwargs,  # type: ignore
                 )
             else:
-                return elements
+                return _remove_element_metadata(
+                    elements,
+                )
 
         return wrapper
 

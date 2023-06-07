@@ -1,4 +1,4 @@
-from typing import IO, Optional, Tuple
+from typing import IO, Optional, Tuple, Union
 
 import chardet
 
@@ -27,20 +27,26 @@ COMMON_ENCODINGS = [
 ]
 
 
-def detect_file_encoding(filename: str = "", file: Optional[IO] = None) -> Tuple[str, str]:
+def detect_file_encoding(
+    filename: str = "",
+    file: Optional[Union[bytes, IO]] = None,
+) -> Tuple[str, str]:
     if filename:
         with open(filename, "rb") as f:
-            binary_data = f.read()
+            byte_data = f.read()
     elif file:
-        if "b" in file.mode:
-            binary_data = file.read()
+        if isinstance(file, bytes):
+            byte_data = file
         else:
-            with open(file.name, "rb") as f:
-                binary_data = f.read()
+            if not hasattr(file, "mode") or "b" in file.mode:
+                byte_data = file.read()
+            else:
+                with open(file.name, "rb") as f:
+                    byte_data = f.read()
     else:
         raise FileNotFoundError("No filename nor file were specified")
 
-    result = chardet.detect(binary_data)
+    result = chardet.detect(byte_data)
     encoding = result["encoding"]
     confidence = result["confidence"]
 
@@ -58,21 +64,21 @@ def detect_file_encoding(filename: str = "", file: Optional[IO] = None) -> Tuple
             raise UnicodeDecodeError(
                 "Unable to determine the encoding of the file or match it with any "
                 "of the specified encodings.",
-                binary_data,
+                byte_data,
                 0,
-                len(binary_data),
+                len(byte_data),
                 "Invalid encoding",
             )
 
     else:
-        file_text = binary_data.decode(encoding)
+        file_text = byte_data.decode(encoding)
 
     return encoding, file_text
 
 
 def read_txt_file(
     filename: str = "",
-    file: Optional[IO] = None,
+    file: Optional[Union[bytes, IO]] = None,
     encoding: Optional[str] = None,
 ) -> Tuple[str, str]:
     """Extracts document metadata from a plain text document."""
@@ -88,7 +94,7 @@ def read_txt_file(
     elif file:
         if encoding:
             try:
-                file_content = file.read()
+                file_content = file if isinstance(file, bytes) else file.read()
                 if isinstance(file_content, bytes):
                     file_text = file_content.decode(encoding)
                 else:
