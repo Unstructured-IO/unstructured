@@ -38,6 +38,9 @@ class MockResponse:
     }
 ]"""
 
+    def json(self):
+        return json.loads(self.text)
+
 
 def test_partition_via_api_from_filename(monkeypatch):
     monkeypatch.setattr(
@@ -138,6 +141,19 @@ class MockMultipleResponse:
         }
     ]
 ]"""
+
+
+def test_partition_multiple_via_api_with_single_filename(monkeypatch):
+    monkeypatch.setattr(
+        requests,
+        "post",
+        lambda *args, **kwargs: MockResponse(status_code=200),
+    )
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
+
+    elements = partition_multiple_via_api(filenames=[filename], api_key="FAKEROO")
+    assert elements[0][0] == NarrativeText("This is a test email to use for unit tests.")
+    assert elements[0][0].metadata.filetype == "message/rfc822"
 
 
 def test_partition_multiple_via_api_from_filenames(monkeypatch):
