@@ -4,9 +4,7 @@
     "text": "testing <@U051UBRR946> has joined the channel <@U04ST78RXU3> has joined the channel",
     "type": "NarrativeText",
     "metadata": {
-      "data_source": {
-        "date_processed": "2023-06-07T20:59:16.950673"
-      },
+      "data_source": {},
       "filename": "C052BGT7718.txt",
       "file_directory": "slack-ingest-download",
       "filetype": "text/plain",
