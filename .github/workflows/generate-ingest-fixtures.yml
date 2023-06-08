@@ -1,7 +1,7 @@
 name: Generate Ingest Test Fixtures and Create PR
 
 on:
-  push:
+  workflow_dispatch:
 
 jobs:
   setup:
@@ -74,12 +74,25 @@ jobs:
           make install-ingest-slack
           make install-ingest-wikipedia
           ./test_unstructured_ingest/test-ingest.sh
+      - name: Create Branch
+        id: branch
+        run: |
+          original_branch=$(git rev-parse --abbrev-ref HEAD)
+          suffix="-update-ingest-fixtures"
+          branch_name="$original_branch$suffix"
+          counter=1
+          while git show-ref --quiet "refs/heads/$branch_name"; do
+            branch_name="$original_branch$suffix$counter"
+            counter=$((counter+1))
+          done
+          git checkout -b "$branch_name"
+          echo "::set-output name=branch_name::$branch_name"
       - name: Commit and Push Changes
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-          git add .
-          git commit -m "Generated ingest test fixtures"
+          git add test_unstructured_ingest/expected-structured-output/.
+          git commit -m "Update ingest test fixtures"
           git push
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
@@ -90,3 +103,5 @@ jobs:
           body: |
             This pull request includes automatically generated test fixtures.
             Please review and merge if appropriate.
+          base: ${{ github.head_ref }}
+          head: ${{ steps.branch.outputs.branch_name }}
