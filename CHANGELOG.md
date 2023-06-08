@@ -1,6 +1,19 @@
-## 0.7.2-dev5
+## 0.7.3-dev0
 
 ### Enhancements
+
+* Update IngestDoc abstractions and add data source metadata in ElementMetadata
+
+### Features
+
+### Fixes
+
+## 0.7.2
+
+### Enhancements
+
+* Adds an optional encoding kwarg to `elements_to_json` and `elements_from_json`
+* Bump version of base image to use new stable version of tesseract
 
 ### Features
 
