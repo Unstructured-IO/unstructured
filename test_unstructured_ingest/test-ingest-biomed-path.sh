@@ -20,7 +20,7 @@ if [[ "$(find test_unstructured_ingest/expected-structured-output/biomed-ingest-
 fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-    --metadata-exclude filename,file_directory \
+    --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
     --biomed-path "oa_pdf/07/07/sbaa031.073.PMC7234218.pdf" \
     --structured-output-dir biomed-ingest-output-path \
     --num-processes 2 \
