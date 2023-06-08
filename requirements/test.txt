@@ -37,7 +37,7 @@ idna==3.4
     #   yarl
 iniconfig==2.0.0
     # via pytest
-label-studio-sdk==0.0.27
+label-studio-sdk==0.0.28
     # via -r test.in
 label-studio-tools==0.0.2
     # via label-studio-sdk
