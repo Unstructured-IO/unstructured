@@ -8,6 +8,8 @@
 
 ### Fixes
 
+* `partition_via_api` reflects the actual filetype for the file processed in the API.
+
 ## 0.7.2
 
 ### Enhancements
