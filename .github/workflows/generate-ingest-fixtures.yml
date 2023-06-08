@@ -1,0 +1,92 @@
+name: Generate Ingest Test Fixtures and Create PR
+
+on:
+  workflow_dispatch:
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    env:
+      NLTK_DATA: ${{ github.workspace }}/nltk_data
+      PYTHON_VERSION: "3.8"
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        id: virtualenv-cache
+        with:
+          path: |
+            .venv
+            nltk_data
+          key: unstructured-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Setup virtual environment (no cache hit)
+        run: |
+          python${{ env.PYTHON_VERSION }} -m venv .venv
+          source .venv/bin/activate
+          [ ! -d "$NLTK_DATA" ] && mkdir "$NLTK_DATA"
+          make install-ci
+
+  generate-fixtures:
+    runs-on: ubuntu-latest
+    env:
+      NLTK_DATA: ${{ github.workspace }}/nltk_data
+    needs: [setup]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache/restore@v3
+        id: virtualenv-cache
+        with:
+          path: |
+            .venv
+            nltk_data
+          key: unstructured-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+      - name: Setup virtual environment (no cache hit)
+        if: steps.virtualenv-cache.outputs.cache-hit != 'true'
+        run: |
+          python${{ env.PYTHON_VERSION }} -m venv .venv
+          source .venv/bin/activate
+          mkdir "$NLTK_DATA"
+          make install-ci
+      - name: Test Ingest (unit)
+        run: |
+          source .venv/bin/activate
+          PYTHONPATH=. pytest test_unstructured_ingest/unit
+      - name: Test (end-to-end)
+        env:
+          GH_READ_ONLY_ACCESS_TOKEN: ${{ secrets.GH_READ_ONLY_ACCESS_TOKEN }}
+          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+        run: |
+          source .venv/bin/activate
+          sudo apt-get update
+          sudo apt-get install -y libmagic-dev poppler-utils libreoffice pandoc
+          sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
+          sudo apt-get install -y tesseract-ocr
+          tesseract --version
+          make install-ingest-s3
+          make install-ingest-azure
+          make install-ingest-discord
+          make install-ingest-github
+          make install-ingest-gitlab
+          make install-ingest-slack
+          make install-ingest-wikipedia
+          ./test_unstructured_ingest/test-ingest.sh
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add .
+          git commit -m "Generated ingest test fixtures"
+          git push
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: Automated Pull Request
+          title: Generated Test Fixtures
+          body: |
+            This pull request includes automatically generated test fixtures.
+            Please review and merge if appropriate.
