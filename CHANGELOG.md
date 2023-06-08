@@ -1,4 +1,4 @@
-## 0.7.3-dev0
+## 0.7.3-dev1
 
 ### Enhancements
 
@@ -8,6 +8,7 @@
 
 ### Fixes
 
+* `convert_office_doc` no longers prints file conversion info messages to stdout.
 * `partition_via_api` reflects the actual filetype for the file processed in the API.
 
 ## 0.7.2
