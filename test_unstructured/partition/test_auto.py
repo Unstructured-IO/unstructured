@@ -502,7 +502,6 @@ def test_auto_partition_works_with_unstructured_jsons():
 
 def test_auto_partition_works_with_unstructured_jsons_from_file():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "spring-weather.html.json")
-
     with open(filename, "rb") as f:
         elements = partition(file=f, strategy="hi_res")
     assert elements[0].text == "News Around NOAA"

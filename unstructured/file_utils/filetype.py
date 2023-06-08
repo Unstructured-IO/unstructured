@@ -260,6 +260,9 @@ def detect_filetype(
         if _is_text_file_a_json(file=file, filename=filename):
             return FileType.JSON
 
+        if _is_text_file_a_csv(file=file, filename=filename):
+            return FileType.CSV
+
         if file and not extension and _check_eml_from_buffer(file=file) is True:
             return FileType.EML
 
@@ -327,14 +330,12 @@ def _detect_filetype_from_octet_stream(file: IO) -> FileType:
     return FileType.UNK
 
 
-def _is_text_file_a_json(
+def _read_file_start_for_type_check(
     filename: Optional[str] = None,
-    content_type: Optional[str] = None,
     file: Optional[IO] = None,
-):
-    """Detects if a file that has a text/plain MIME type is a JSON file."""
+) -> str:
+    """Reads the start of the file and returns the text content."""
     exactly_one(filename=filename, file=file)
-
     if file is not None:
         file.seek(0)
         file_content = file.read(4096)
@@ -343,11 +344,35 @@ def _is_text_file_a_json(
         else:
             file_text = file_content.decode(errors="ignore")
         file.seek(0)
-    elif filename is not None:
+    if filename is not None:
         with open(filename) as f:
-            file_text = f.read()
+            file_text = f.read(4096)
+    return file_text
 
+
+def _is_text_file_a_json(
+    filename: Optional[str] = None,
+    file: Optional[IO] = None,
+):
+    """Detects if a file that has a text/plain MIME type is a JSON file."""
+    file_text = _read_file_start_for_type_check(file=file, filename=filename)
     return re.match(LIST_OF_DICTS_PATTERN, file_text) is not None
+
+
+def _is_text_file_a_csv(
+    filename: Optional[str] = None,
+    file: Optional[IO] = None,
+):
+    """Detects if a file that has a text/plain MIME type is a CSV file."""
+    file_text = _read_file_start_for_type_check(file=file, filename=filename)
+    lines = file_text.strip().splitlines()
+    if len(lines) < 2:
+        return False
+    lines = lines[: len(lines)] if len(lines) < 10 else lines[:10]
+    header = lines[0].split(",")
+    if any("," not in line for line in lines):
+        return False
+    return all(len(line.split(",")) == len(header) for line in lines[:-1])
 
 
 def _check_eml_from_buffer(file: IO) -> bool:
@@ -359,7 +384,6 @@ def _check_eml_from_buffer(file: IO) -> bool:
         file_head = file_content.decode("utf-8", errors="ignore")
     else:
         file_head = file_content
-
     return EMAIL_HEAD_RE.match(file_head) is not None
 
 

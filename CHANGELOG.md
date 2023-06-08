@@ -1,4 +1,4 @@
-## 0.7.3-dev1
+## 0.7.3-dev2
 
 ### Enhancements
 
@@ -8,6 +8,7 @@
 
 ### Fixes
 
+* Filetype detection if a CSV has a `text/plain` MIME type
 * `convert_office_doc` no longers prints file conversion info messages to stdout.
 * `partition_via_api` reflects the actual filetype for the file processed in the API.
 
