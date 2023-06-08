@@ -50,7 +50,7 @@ jobs:
           source .venv/bin/activate
           mkdir "$NLTK_DATA"
           make install-ci
-      - name: Test (end-to-end)
+      - name: Generate Fixtures
         env:
           GH_READ_ONLY_ACCESS_TOKEN: ${{ secrets.GH_READ_ONLY_ACCESS_TOKEN }}
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
@@ -90,7 +90,7 @@ jobs:
           git config --global user.email "actions@github.com"
           git add test_unstructured_ingest/expected-structured-output/.
           git commit -m "Update ingest test fixtures"
-          git push
+          git push origin ${{ steps.branch.outputs.branch_name }}
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
