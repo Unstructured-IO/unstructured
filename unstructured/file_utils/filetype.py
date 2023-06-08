@@ -260,6 +260,9 @@ def detect_filetype(
         if _is_text_file_a_json(file=file, filename=filename):
             return FileType.JSON
 
+        if _is_text_file_a_csv(file=file, filename=filename):
+            return FileType.CSV
+
         if file and not extension and _check_eml_from_buffer(file=file) is True:
             return FileType.EML
 
