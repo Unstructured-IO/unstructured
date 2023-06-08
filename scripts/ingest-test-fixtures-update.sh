@@ -38,15 +38,17 @@ if [ "$AGE_DAYS" -gt 6 ]; then
     echo "You may want to 'docker rmi $IMAGE_NAME' and rerun this script if it is not current."
 fi
 
-docker run --rm -v "$SCRIPT_DIR"/../unstructured:/root/unstructured -v \
-   "$SCRIPT_DIR"/../test_unstructured_ingest:/root/test_unstructured_ingest \
-   -w /root "$IMAGE_NAME" \
-   bash -c "export OVERWRITE_FIXTURES=true && source ~/.bashrc && pyenv activate unstructured && tesseract --version &&
+docker run --rm -v "$SCRIPT_DIR"/../unstructured:/root/unstructured \
+    -v "$SCRIPT_DIR"/../test_unstructured_ingest:/root/test_unstructured_ingest \
+    ${DISCORD_TOKEN:+-e DISCORD_TOKEN="$DISCORD_TOKEN"} \
+    ${SLACK_TOKEN:+-e SLACK_TOKEN="$SLACK_TOKEN"} \
+    ${GH_READ_ONLY_ACCESS_TOKEN:+-e GH_READ_ONLY_ACCESS_TOKEN="$GH_READ_ONLY_ACCESS_TOKEN"} \
+    -w /root "$IMAGE_NAME" \
+    bash -c "export OVERWRITE_FIXTURES=true && source ~/.bashrc && pyenv activate unstructured && tesseract --version &&
                ./test_unstructured_ingest/test-ingest-azure.sh &&
                ./test_unstructured_ingest/test-ingest-discord.sh &&
                ./test_unstructured_ingest/test-ingest-github.sh &&
                ./test_unstructured_ingest/test-ingest-biomed-api.sh &&
                ./test_unstructured_ingest/test-ingest-biomed-path.sh &&
                ./test_unstructured_ingest/test-ingest-s3.sh &&
-               ./test_unstructured_ingest/test-ingest-slack.sh &&
                ./test_unstructured_ingest/test-ingest-slack.sh"
