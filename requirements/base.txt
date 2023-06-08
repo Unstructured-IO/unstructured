@@ -4,9 +4,9 @@
 #
 #    pip-compile requirements/base.in
 #
-anyio==3.6.2
+anyio==3.7.0
     # via httpcore
-argilla==1.7.0
+argilla==1.8.0
     # via -r requirements/base.in
 backoff==2.2.1
     # via argilla
@@ -30,12 +30,14 @@ click==8.1.3
     #   typer
 commonmark==0.9.1
     # via rich
-cryptography==40.0.2
+cryptography==41.0.1
     # via pdfminer-six
-deprecated==1.2.13
+deprecated==1.2.14
     # via argilla
 et-xmlfile==1.1.0
     # via openpyxl
+exceptiongroup==1.1.1
+    # via anyio
 h11==0.14.0
     # via httpcore
 httpcore==0.16.3
@@ -102,7 +104,7 @@ python-pptx==0.6.21
     # via -r requirements/base.in
 pytz==2023.3
     # via pandas
-regex==2023.5.5
+regex==2023.6.3
     # via nltk
 requests==2.31.0
     # via -r requirements/base.in
@@ -117,13 +119,15 @@ sniffio==1.3.0
     #   anyio
     #   httpcore
     #   httpx
+tabulate==0.9.0
+    # via -r requirements/base.in
 tqdm==4.65.0
     # via
     #   argilla
     #   nltk
 typer==0.9.0
     # via argilla
-typing-extensions==4.6.2
+typing-extensions==4.6.3
     # via
     #   pydantic
     #   rich
@@ -138,7 +142,7 @@ wrapt==1.14.1
     #   deprecated
 xlrd==2.0.1
     # via -r requirements/base.in
-xlsxwriter==3.1.1
+xlsxwriter==3.1.2
     # via python-pptx
 zipp==3.15.0
     # via importlib-metadata

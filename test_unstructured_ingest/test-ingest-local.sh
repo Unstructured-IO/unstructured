@@ -6,7 +6,7 @@ SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 cd "$SCRIPT_DIR"/.. || exit 1
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-    --metadata-exclude filename,file_directory \
+    --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
     --local-input-path example-docs \
     --local-file-glob "*.html" \
     --structured-output-dir local-ingest-output \
@@ -16,8 +16,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
 
 set +e
 
-if [ "$(find 'local-ingest-output' -type f -printf '.' | wc -c)" != 4 ]; then
+if [ "$(find 'local-ingest-output' -type f -printf '.' | wc -c)" != 9 ]; then
    echo
-   echo "4 files should have been created."
+   echo "9 files should have been created."
    exit 1
 fi

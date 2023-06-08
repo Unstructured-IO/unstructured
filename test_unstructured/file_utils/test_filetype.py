@@ -8,6 +8,8 @@ import pytest
 from unstructured.file_utils import filetype
 from unstructured.file_utils.filetype import (
     FileType,
+    _is_code_mime_type,
+    _is_text_file_a_csv,
     _is_text_file_a_json,
     detect_filetype,
 )
@@ -130,6 +132,23 @@ def test_detect_text_csv(monkeypatch, filename="sample-docs/stanley-cup.csv"):
     monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "text/csv")
     filetype = detect_filetype(filename=filename)
     assert filetype == FileType.CSV
+
+
+def test_detect_text_python_from_filename(monkeypatch, filename="unstructured/logger.py"):
+    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "text/x-script.python")
+    filetype = detect_filetype(filename=filename)
+    assert filetype == FileType.TXT
+
+
+def test_detect_text_python_from_file(monkeypatch, filename="unstructured/logger.py"):
+    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "text/x-script.python")
+    with open(filename, "rb") as f:
+        filetype = detect_filetype(file=f)
+    assert filetype == FileType.TXT
+
+
+def test_detects_go_mime_type():
+    assert _is_code_mime_type("text/x-go") is True
 
 
 def test_detect_xml_application_rtf(monkeypatch):
@@ -350,7 +369,9 @@ def test_filetype_order():
 @pytest.mark.parametrize(
     ("content", "expected"),
     [
-        (b"d\xe2\x80", False),
+        (b"d\xe2\x80", False),  # Invalid JSON
+        (b'[{"key": "value"}]', True),  # Valid JSON
+        (b"", False),  # Empty content
     ],
 )
 def test_is_text_file_a_json(content, expected):
@@ -358,3 +379,19 @@ def test_is_text_file_a_json(content, expected):
 
     with BytesIO(content) as f:
         assert _is_text_file_a_json(file=f) == expected
+
+
+@pytest.mark.parametrize(
+    ("content", "expected"),
+    [
+        (b"d\xe2\x80", False),  # Invalid CSV
+        (b'[{"key": "value"}]', False),  # Invalid CSV
+        (b"column1,column2,column3\nvalue1,value2,value3\n", True),  # Valid CSV
+        (b"", False),  # Empty content
+    ],
+)
+def test_is_text_file_a_csv(content, expected):
+    from io import BytesIO
+
+    with BytesIO(content) as f:
+        assert _is_text_file_a_csv(file=f) == expected

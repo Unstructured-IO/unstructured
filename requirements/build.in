@@ -1,6 +1,6 @@
 sphinx
 # NOTE(alan) - Pinning to resolve a conflict with sphinx. We can unpin on next sphinx_rtd_theme release.
-sphinx_rtd_theme==1.2.0rc3
+sphinx_rtd_theme==1.2.2
 furo
 
 # NOTE(robinson) - The following dependencies are pinned to address security scans

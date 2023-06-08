@@ -1,8 +1,58 @@
-## 0.6.12-dev1
+## 0.7.3-dev2
 
 ### Enhancements
 
-* Added ingest tests with `--fast` strategy on PDF documents
+* Update IngestDoc abstractions and add data source metadata in ElementMetadata
+
+### Features
+
+### Fixes
+
+* Filetype detection if a CSV has a `text/plain` MIME type
+* `convert_office_doc` no longers prints file conversion info messages to stdout.
+* `partition_via_api` reflects the actual filetype for the file processed in the API.
+
+## 0.7.2
+
+### Enhancements
+
+* Adds an optional encoding kwarg to `elements_to_json` and `elements_from_json`
+* Bump version of base image to use new stable version of tesseract
+
+### Features
+
+### Fixes
+
+* Update the `read_txt_file` utility function to keep using `spooled_to_bytes_io_if_needed` for xml
+* Add functionality to the `read_txt_file` utility function to handle file-like object from URL
+* Remove the unused parameter `encoding` from `partition_pdf`
+* Change auto.py to have a `None` default for encoding
+* Add functionality to try other common encodings for html and xml files if an error related to the encoding is raised and the user has not specified an encoding.
+* Adds benchmark test with test docs in example-docs
+* Re-enable test_upload_label_studio_data_with_sdk
+* File detection now detects code files as plain text
+* Adds `tabulate` explicitly to dependencies
+* Fixes an issue in `metadata.page_number` of pptx files
+* Adds showing help if no parameters passed
+
+## 0.7.1
+
+### Enhancements
+
+### Features
+
+* Add `stage_for_weaviate` to stage `unstructured` outputs for upload to Weaviate, along with
+  a helper function for defining a class to use in Weaviate schemas.
+* Builds from Unstructured base image, built off of Rocky Linux 8.7, this resolves almost all CVE's in the image.
+
+### Fixes
+
+## 0.7.0
+
+### Enhancements
+
+* Installing `detectron2` from source is no longer required when using the `local-inference` extra.
+* Updates `.pptx` parsing to include text in tables.
 
 ### Features
 
@@ -14,6 +64,8 @@
 * Adds functionality to try other common encodings for email (`.eml`) files if an error related to the encoding is raised and the user has not specified an encoding.
 * Allow passed encoding to be used in the `replace_mime_encodings`
 * Fixes page metadata for `partition_html` when `include_metadata=False`
+* A `ValueError` now raises if `file_filename` is not specified when you use `partition_via_api`
+  with a file-like object.
 
 ## 0.6.11
 
@@ -60,7 +112,6 @@
 * Add `partition_csv` for CSV files.
 
 ### Fixes
-
 
 ## 0.6.7
 
