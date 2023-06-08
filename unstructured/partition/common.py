@@ -15,6 +15,7 @@ from unstructured.documents.elements import (
     PageBreak,
     Text,
 )
+from unstructured.logger import logger
 from unstructured.nlp.patterns import ENUMERATED_BULLETS_RE, UNICODE_BULLETS_RE
 
 
@@ -139,18 +140,22 @@ def convert_office_doc(input_filename: str, output_directory: str, target_format
     # users who do not have LibreOffice installed
     # ref: https://stackoverflow.com/questions/38468442/
     #       multiple-doc-to-docx-file-conversion-using-python
+    command = [
+        "soffice",
+        "--headless",
+        "--convert-to",
+        target_format,
+        "--outdir",
+        output_directory,
+        input_filename,
+    ]
     try:
-        subprocess.call(
-            [
-                "soffice",
-                "--headless",
-                "--convert-to",
-                target_format,
-                "--outdir",
-                output_directory,
-                input_filename,
-            ],
+        process = subprocess.Popen(
+            command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
         )
+        output, error = process.communicate()
     except FileNotFoundError:
         raise FileNotFoundError(
             """soffice command was not found. Please install libreoffice
@@ -160,6 +165,10 @@ on your system and try again.
 - Mac: https://formulae.brew.sh/cask/libreoffice
 - Debian: https://wiki.debian.org/LibreOffice""",
         )
+
+    logger.info(output.decode().strip())
+    if error:
+        logger.error(output.decode().strip())
 
 
 def exactly_one(**kwargs) -> None:
