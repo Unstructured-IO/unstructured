@@ -2,6 +2,8 @@
 
 ### Enhancements
 
+* Update IngestDoc abstractions and add data source metadata in ElementMetadata
+
 ### Features
 
 ### Fixes

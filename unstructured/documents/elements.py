@@ -6,7 +6,7 @@ import os
 import pathlib
 from abc import ABC
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast
 
 
 class NoID(ABC):
@@ -16,7 +16,23 @@ class NoID(ABC):
 
 
 @dataclass
+class DataSourceMetadata:
+    """Metadata fields that pertain to the data source of the document."""
+
+    url: Optional[str] = None
+    version: Optional[str] = None
+    record_locator: Optional[Dict[str, Any]] = None  # Values must be JSON-serializable
+    date_created: Optional[str] = None
+    date_modified: Optional[str] = None
+    date_processed: Optional[str] = None
+
+    def to_dict(self):
+        return {key: value for key, value in self.__dict__.items() if value is not None}
+
+
+@dataclass
 class ElementMetadata:
+    data_source: Optional[DataSourceMetadata] = None
     filename: Optional[str] = None
     file_directory: Optional[str] = None
     date: Optional[str] = None
@@ -49,7 +65,10 @@ class ElementMetadata:
             self.filename = filename
 
     def to_dict(self):
-        return {key: value for key, value in self.__dict__.items() if value is not None}
+        dict = {key: value for key, value in self.__dict__.items() if value is not None}
+        if self.data_source:
+            dict["data_source"] = cast(DataSourceMetadata, self.data_source).to_dict()
+        return dict
 
     @classmethod
     def from_dict(cls, input_dict):
