@@ -104,7 +104,7 @@ python-pptx==0.6.21
     # via -r requirements/base.in
 pytz==2023.3
     # via pandas
-regex==2023.5.5
+regex==2023.6.3
     # via nltk
 requests==2.31.0
     # via -r requirements/base.in
@@ -127,7 +127,7 @@ tqdm==4.65.0
     #   nltk
 typer==0.9.0
     # via argilla
-typing-extensions==4.6.2
+typing-extensions==4.6.3
     # via
     #   pydantic
     #   rich

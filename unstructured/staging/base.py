@@ -47,6 +47,7 @@ def elements_to_json(
     elements: List[Element],
     filename: Optional[str] = None,
     indent: int = 4,
+    encoding: str = "utf-8",
 ) -> Optional[str]:
     """
     Saves a list of elements to a JSON file if filename is specified.
@@ -54,7 +55,7 @@ def elements_to_json(
     """
     element_dict = convert_to_dict(elements)
     if filename is not None:
-        with open(filename, "w") as f:
+        with open(filename, "w", encoding=encoding) as f:
             json.dump(element_dict, f, indent=indent)
             return None
     else:
@@ -105,12 +106,16 @@ def dict_to_elements(element_dict: List[Dict[str, Any]]) -> List[Element]:
     return isd_to_elements(element_dict)
 
 
-def elements_from_json(filename: str = "", text: str = "") -> List[Element]:
+def elements_from_json(
+    filename: str = "",
+    text: str = "",
+    encoding: str = "utf-8",
+) -> List[Element]:
     """Loads a list of elements from a JSON file or a string."""
     exactly_one(filename=filename, text=text)
 
     if filename:
-        with open(filename) as f:
+        with open(filename, encoding=encoding) as f:
             element_dict = json.load(f)
         return dict_to_elements(element_dict)
     else:

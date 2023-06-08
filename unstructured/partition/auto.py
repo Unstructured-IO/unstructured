@@ -3,6 +3,7 @@ from typing import IO, Callable, Dict, Optional, Tuple
 
 import requests
 
+from unstructured.documents.elements import DataSourceMetadata
 from unstructured.file_utils.filetype import (
     FILETYPE_TO_MIMETYPE,
     STR_TO_FILETYPE,
@@ -46,6 +47,7 @@ def partition(
     ocr_languages: str = "eng",
     pdf_infer_table_structure: bool = False,
     xml_keep_tags: bool = False,
+    data_source_metadata: Optional[DataSourceMetadata] = None,
 ):
     """Partitions a document into its constituent elements. Will use libmagic to determine
     the file's type and route it to the appropriate partitioning function. Applies the default
@@ -206,6 +208,7 @@ def partition(
 
     for element in elements:
         element.metadata.url = url
+        element.metadata.data_source = data_source_metadata
         if content_type is not None:
             out_filetype = STR_TO_FILETYPE.get(content_type)
             element.metadata.filetype = (
