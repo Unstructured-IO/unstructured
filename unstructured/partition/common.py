@@ -168,7 +168,7 @@ on your system and try again.
 
     logger.info(output.decode().strip())
     if error:
-        logger.error(output.decode().strip())
+        logger.error(error.decode().strip())
 
 
 def exactly_one(**kwargs) -> None:
