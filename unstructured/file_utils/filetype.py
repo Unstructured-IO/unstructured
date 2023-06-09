@@ -50,6 +50,7 @@ EXPECTED_PPTX_FILES = [
 
 class FileType(Enum):
     UNK = 0
+    EMPTY = 1
 
     # MS Office Types
     DOC = 10
@@ -121,6 +122,7 @@ STR_TO_FILETYPE = {
     "message/rfc822": FileType.EML,
     "application/x-ole-storage": FileType.MSG,
     "application/vnd.ms-outlook": FileType.MSG,
+    "inode/x-empty": FileType.EMPTY,
 }
 
 MIMETYPES_TO_EXCLUDE = [
@@ -299,6 +301,9 @@ def detect_filetype(
         # we can update this logic and add filetypes for specific languages
         # later if needed.
         return FileType.TXT
+
+    elif mime_type.endswith("empty"):
+        return FileType.EMPTY
 
     # For everything else
     elif mime_type in STR_TO_FILETYPE:
