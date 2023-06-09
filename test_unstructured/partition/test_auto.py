@@ -373,7 +373,7 @@ def test_auto_partition_jpg(pass_file_filename, content_type):
         filename=filename,
         file_filename=file_filename,
         content_type=content_type,
-        strategy="hi_res",
+        strategy="auto",
     )
     assert len(elements) > 0
 
@@ -390,7 +390,7 @@ def test_auto_partition_jpg_from_file(pass_file_filename, content_type):
             file=f,
             file_filename=file_filename,
             content_type=content_type,
-            strategy="hi_res",
+            strategy="auto",
         )
     assert len(elements) > 0
 
