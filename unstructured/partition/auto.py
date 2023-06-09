@@ -70,8 +70,8 @@ def partition(
     include_page_breaks
         If True, the output will include page breaks if the filetype supports it
     strategy
-        The strategy to use for partitioning the PDF. Uses a layout detection model if set
-        to 'hi_res', otherwise partition_pdf simply extracts the text from the document
+        The strategy to use for partitioning PDF/image. Uses a layout detection model if set
+        to 'hi_res', otherwise partition simply extracts the text from the document
         and processes it.
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
