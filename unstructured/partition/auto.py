@@ -203,6 +203,8 @@ def partition(
         elements = partition_xlsx(filename=filename, file=file)
     elif filetype == FileType.CSV:
         elements = partition_csv(filename=filename, file=file)
+    elif filetype == FileType.EMPTY:
+        elements = []
     else:
         msg = "Invalid file" if not filename else f"Invalid file {filename}"
         raise ValueError(f"{msg}. The {filetype} file type is not supported in partition.")

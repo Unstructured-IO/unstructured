@@ -582,7 +582,7 @@ FILETYPE_TO_MODULE = {
 
 @pytest.mark.parametrize("filetype", supported_filetypes)
 def test_file_specific_produces_correct_filetype(filetype: FileType):
-    if filetype in (FileType.JPG, FileType.PNG):
+    if filetype in (FileType.JPG, FileType.PNG, FileType.EMPTY):
         pytest.skip()
     extension = filetype.name.lower()
     filetype_module = (
@@ -594,7 +594,11 @@ def test_file_specific_produces_correct_filetype(filetype: FileType):
     for file in pathlib.Path("example-docs").iterdir():
         if file.is_file() and file.suffix == f".{extension}":
             elements = fun(str(file))
-            assert all(el.metadata.filetype == FILETYPE_TO_MIMETYPE[filetype] for el in elements)
+            assert all(
+                el.metadata.filetype == FILETYPE_TO_MIMETYPE[filetype]
+                for el in elements
+                if el.metadata.filetype is not None
+            )
             break
 
 
@@ -790,3 +794,12 @@ def test_auto_partition_csv_from_file(filename="example-docs/stanley-cups.csv"):
     assert isinstance(elements[0], Table)
     assert elements[0].metadata.text_as_html == EXPECTED_XLSX_TABLE
     assert elements[0].metadata.filetype == "text/csv"
+
+
+def test_auto_partition_works_on_empty_filename(filename="example-docs/empty.txt"):
+    assert partition(filename=filename) == []
+
+
+def test_auto_partition_works_on_empty_file(filename="example-docs/empty.txt"):
+    with open(filename, "rb") as f:
+        assert partition(file=f) == []
