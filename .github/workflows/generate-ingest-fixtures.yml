@@ -89,7 +89,7 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_CREATE_PR_TOKEN }}
           commit-message: Automated Pull Request
           title: Generated Test Fixtures
           body: |
