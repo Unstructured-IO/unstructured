@@ -90,10 +90,10 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.GH_CREATE_PR_TOKEN }}
-          commit-message: Automated Pull Request
+          path: test_unstructured_ingest/expected-structured-output
+          commit-message: "Update ingest test fixtures"
+          branch: ${{ steps.branch.outputs.branch_name }}
           title: Generated Test Fixtures
           body: |
-            This pull request includes automatically generated test fixtures.
+            This pull request includes automatically generated ingest test fixtures.
             Please review and merge if appropriate.
-          base: ${{ github.head_ref }}
-          head: ${{ steps.branch.outputs.branch_name }}
