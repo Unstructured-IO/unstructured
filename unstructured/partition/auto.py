@@ -170,6 +170,7 @@ def partition(
             file=file,  # type: ignore
             url=None,
             include_page_breaks=include_page_breaks,
+            strategy=strategy,
             ocr_languages=ocr_languages,
         )
     elif filetype == FileType.TXT:
