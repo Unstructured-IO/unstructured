@@ -395,3 +395,25 @@ def test_is_text_file_a_csv(content, expected):
 
     with BytesIO(content) as f:
         assert _is_text_file_a_csv(file=f) == expected
+
+
+def test_csv_json_check_with_filename_and_utf_32(filename="example-docs/fake-text-utf-32.txt"):
+    assert _is_text_file_a_csv(filename=filename) is False
+    assert _is_text_file_a_json(filename=filename) is False
+
+
+def test_csv_json_check_with_file_and_utf_32(filename="example-docs/fake-text-utf-32.txt"):
+    with open(filename, "rb") as f:
+        assert _is_text_file_a_csv(file=f) is False
+
+    with open(filename, "rb") as f:
+        assert _is_text_file_a_json(file=f) is False
+
+
+def test_detect_filetype_detects_empty_filename(filename="example-docs/empty.txt"):
+    assert detect_filetype(filename=filename) == FileType.EMPTY
+
+
+def test_detect_filetype_detects_empty_file(filename="example-docs/empty.txt"):
+    with open(filename, "rb") as f:
+        assert detect_filetype(file=f) == FileType.EMPTY

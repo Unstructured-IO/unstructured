@@ -7,6 +7,7 @@ from functools import wraps
 from typing import IO, Callable, List, Optional
 
 from unstructured.documents.elements import Element, PageBreak
+from unstructured.file_utils.encoding import detect_file_encoding
 from unstructured.nlp.patterns import LIST_OF_DICTS_PATTERN
 from unstructured.partition.common import (
     _add_element_metadata,
@@ -49,6 +50,7 @@ EXPECTED_PPTX_FILES = [
 
 class FileType(Enum):
     UNK = 0
+    EMPTY = 1
 
     # MS Office Types
     DOC = 10
@@ -120,6 +122,7 @@ STR_TO_FILETYPE = {
     "message/rfc822": FileType.EML,
     "application/x-ole-storage": FileType.MSG,
     "application/vnd.ms-outlook": FileType.MSG,
+    "inode/x-empty": FileType.EMPTY,
 }
 
 MIMETYPES_TO_EXCLUDE = [
@@ -190,6 +193,7 @@ def detect_filetype(
     content_type: Optional[str] = None,
     file: Optional[IO] = None,
     file_filename: Optional[str] = None,
+    encoding: Optional[str] = "utf-8",
 ) -> Optional[FileType]:
     """Use libmagic to determine a file's type. Helps determine which partition brick
     to use for a given file. A return value of None indicates a non-supported file type.
@@ -257,10 +261,10 @@ def detect_filetype(
         elif extension and extension == ".html":
             return FileType.HTML
 
-        if _is_text_file_a_json(file=file, filename=filename):
+        if _is_text_file_a_json(file=file, filename=filename, encoding=encoding):
             return FileType.JSON
 
-        if _is_text_file_a_csv(file=file, filename=filename):
+        if _is_text_file_a_csv(file=file, filename=filename, encoding=encoding):
             return FileType.CSV
 
         if file and not extension and _check_eml_from_buffer(file=file) is True:
@@ -298,6 +302,9 @@ def detect_filetype(
         # later if needed.
         return FileType.TXT
 
+    elif mime_type.endswith("empty"):
+        return FileType.EMPTY
+
     # For everything else
     elif mime_type in STR_TO_FILETYPE:
         return STR_TO_FILETYPE[mime_type]
@@ -333,6 +340,7 @@ def _detect_filetype_from_octet_stream(file: IO) -> FileType:
 def _read_file_start_for_type_check(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
+    encoding: Optional[str] = "utf-8",
 ) -> str:
     """Reads the start of the file and returns the text content."""
     exactly_one(filename=filename, file=file)
@@ -345,26 +353,33 @@ def _read_file_start_for_type_check(
             file_text = file_content.decode(errors="ignore")
         file.seek(0)
     if filename is not None:
-        with open(filename) as f:
-            file_text = f.read(4096)
+        try:
+            with open(filename, encoding=encoding) as f:
+                file_text = f.read(4096)
+        except UnicodeDecodeError:
+            encoding, _ = detect_file_encoding(filename=filename)
+            with open(filename, encoding=encoding) as f:
+                file_text = f.read(4096)
     return file_text
 
 
 def _is_text_file_a_json(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
+    encoding: Optional[str] = "utf-8",
 ):
     """Detects if a file that has a text/plain MIME type is a JSON file."""
-    file_text = _read_file_start_for_type_check(file=file, filename=filename)
+    file_text = _read_file_start_for_type_check(file=file, filename=filename, encoding=encoding)
     return re.match(LIST_OF_DICTS_PATTERN, file_text) is not None
 
 
 def _is_text_file_a_csv(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
+    encoding: Optional[str] = "utf-8",
 ):
     """Detects if a file that has a text/plain MIME type is a CSV file."""
-    file_text = _read_file_start_for_type_check(file=file, filename=filename)
+    file_text = _read_file_start_for_type_check(file=file, filename=filename, encoding=encoding)
     lines = file_text.strip().splitlines()
     if len(lines) < 2:
         return False
