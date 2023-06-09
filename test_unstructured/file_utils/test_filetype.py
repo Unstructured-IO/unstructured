@@ -409,3 +409,12 @@ def test_csv_json_check_with_file_and_utf_32(filename="example-docs/fake-text-ut
 
     with open(filename, "rb") as f:
         assert _is_text_file_a_json(file=f) is False
+
+
+def test_detect_filetype_detects_empty_filename(filename="example-docs/empty.txt"):
+    assert detect_filetype(filename=filename) == FileType.EMPTY
+
+
+def test_detect_filetype_detects_empty_file(filename="example-docs/empty.txt"):
+    with open(filename, "rb") as f:
+        assert detect_filetype(file=f) == FileType.EMPTY

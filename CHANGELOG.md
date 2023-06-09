@@ -3,6 +3,7 @@
 ### Enhancements
 
 * Enable MIME type detection if libmagic is not available
+* Adds handling for empty files in `detect_filetype` and `partition`.
 
 ### Features
 
