@@ -75,13 +75,8 @@ jobs:
         id: branch
         run: |
           original_branch=$(git rev-parse --abbrev-ref HEAD)
-          suffix="-update-ingest-fixtures"
+          suffix="-update-ingest-fixtures-$(git rev-parse --short HEAD)"
           branch_name="$original_branch$suffix"
-          counter=1
-          while git show-ref "refs/remotes/origin/$branch_name"; do
-            branch_name="$original_branch$suffix-$counter"
-            counter=$((counter+1))
-          done
           git checkout -b "$branch_name"
           echo "::set-output name=branch_name::$branch_name"
       - name: Commit and Push Changes
