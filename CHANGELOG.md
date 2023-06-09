@@ -2,12 +2,12 @@
 
 ### Enhancements
 
-* Allow passing kwargs to request data field for `partition_via_api` and `partition_multiple_via_api`
+* Allows passing kwargs to request data field for `partition_via_api` and `partition_multiple_via_api`
+* Adds handling for empty files in `detect_filetype` and `partition`.
 
 ### Features
 
 ### Fixes
-
 
 ## 0.7.3
 
