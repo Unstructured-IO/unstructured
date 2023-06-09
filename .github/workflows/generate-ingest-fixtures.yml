@@ -78,7 +78,7 @@ jobs:
           suffix="-update-ingest-fixtures"
           branch_name="$original_branch$suffix"
           counter=1
-          while git show-ref --quiet "refs/heads/$branch_name"; do
+          while git show-ref "refs/heads/$branch_name"; do
             counter=$((counter+1))
             branch_name="$original_branch$suffix$counter"
           done
