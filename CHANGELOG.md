@@ -1,7 +1,9 @@
-## 0.7.4-dev0
+## 0.7.4-dev1
 
 ### Enhancements
 
+* Adds functionality to sort elements in `partition_pdf` for `fast` strategy
+* Adds ingest tests with `--fast` strategy on PDF documents
 * Adds handling for empty files in `detect_filetype` and `partition`.
 
 ### Features
