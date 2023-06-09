@@ -220,7 +220,7 @@ def detect_filetype(
             )  # type: ignore
         elif os.path.isfile(_filename):
             mime_type = ft.guess_mime(filename)
-        if mime_type==None:
+        if mime_type == None:
             return EXT_TO_FILETYPE.get(extension, FileType.UNK)
 
     elif file is not None:
@@ -238,7 +238,7 @@ def detect_filetype(
                 "Filetype detection on file-like objects requires libmagic."
                 "Please install libmagic and try again.",
             )
-            
+
     else:
         raise ValueError("No filename, file, nor file_filename were specified.")
 
