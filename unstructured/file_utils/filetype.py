@@ -233,11 +233,11 @@ def detect_filetype(
         else:
             mime_type = ft.guess_mime(file.read(4096))
         if mime_type is None:
-            raise ImportError(
-                "libmagic is unavailable."
-                "Filetype detection on file-like objects requires libmagic."
-                "Please install libmagic and try again.",
+            logger.warning(
+                "libmagic is unavailable but assists in filetype detection on file-like objects."
+                "Please consider installing libmagic for better results.",
             )
+            return EXT_TO_FILETYPE.get(extension, FileType.UNK)
 
     else:
         raise ValueError("No filename, file, nor file_filename were specified.")

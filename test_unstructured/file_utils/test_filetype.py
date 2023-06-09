@@ -114,11 +114,12 @@ def test_detect_filetype_from_file(file, expected):
         assert detect_filetype(file=f) in expected
 
 
-def test_detect_filetype_from_file_raises_without_libmagic(monkeypatch):
+def test_detect_filetype_from_file_warning_without_libmagic(monkeypatch, caplog):
     monkeypatch.setattr(filetype, "LIBMAGIC_AVAILABLE", False)
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
-    with open(filename, "rb") as f, pytest.raises(ImportError):
+    with open(filename, "rb") as f:
         detect_filetype(file=f)
+        assert "WARNING" in caplog.text
 
 
 def test_detect_xml_application_xml(monkeypatch):
