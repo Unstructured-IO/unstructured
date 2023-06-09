@@ -74,21 +74,18 @@ jobs:
       - name: Create Branch
         id: branch
         run: |
-          original_branch=$(git rev-parse --abbrev-ref HEAD)
-          suffix="-update-ingest-fixtures-$(git rev-parse --short HEAD)"
-          branch_name="$original_branch$suffix"
-          git checkout -b "$branch_name"
+          branch_name=$(git rev-parse --abbrev-ref HEAD)
           echo "::set-output name=branch_name::$branch_name"
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.GH_CREATE_PR_TOKEN }}
-          path: test_unstructured_ingest/expected-structured-output
+          add-paths: test_unstructured_ingest/expected-structured-output
           commit-message: "Update ingest test fixtures"
           branch: ${{ steps.branch.outputs.branch_name }}
           title: Generated Test Fixtures
+          delete-branch: true
+          branch-suffix: short-commit-hash
           body: |
             This pull request includes automatically generated test fixtures.
             Please review and merge if appropriate.
-          base: ${{ github.head_ref }}
-          head: ${{ steps.branch.outputs.branch_name }}
