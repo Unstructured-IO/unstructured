@@ -1,3 +1,13 @@
+## 0.7.4-dev0
+
+### Enhancements
+
+* Adds handling for empty files in `detect_filetype` and `partition`.
+
+### Features
+
+### Fixes
+
 ## 0.7.3
 
 ### Enhancements
