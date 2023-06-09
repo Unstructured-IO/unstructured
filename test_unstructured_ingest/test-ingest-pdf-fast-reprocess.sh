@@ -8,7 +8,7 @@ cd "$SCRIPT_DIR"/.. || exit 1
 
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-    --metadata-exclude filename,file_directory \
+    --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
     --local-input-path files-ingest-download \
     --local-recursive \
     --local-file-glob "*.pdf" \
