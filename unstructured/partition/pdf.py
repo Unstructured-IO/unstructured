@@ -289,7 +289,13 @@ def _process_pdfminer_pages(
                 element.metadata = metadata
                 page_elements.append(element)
 
-        sorted_page_elements = sorted(page_elements, key=lambda el: (el.coordinates[0][1], el.coordinates[0][0]))
+        sorted_page_elements = sorted(
+            page_elements,
+            key=lambda el: (
+                el.coordinates[0][1] if el.coordinates else float("inf"),
+                el.coordinates[0][0] if el.coordinates else float("inf"),
+            ),
+        )
         elements += sorted_page_elements
 
         if include_page_breaks:
