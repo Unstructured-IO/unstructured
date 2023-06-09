@@ -1,3 +1,13 @@
+## 0.7.4-dev0
+
+### Enhancements
+
+* Enable MIME type detection if libmagic is not available
+
+### Features
+
+### Fixes
+
 ## 0.7.3
 
 ### Enhancements
