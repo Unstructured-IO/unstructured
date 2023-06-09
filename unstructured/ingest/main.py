@@ -172,7 +172,7 @@ class MainProcess:
     "--remote-url",
     default=None,
     help="Remote fsspec URL formatted as `protocol://dir/path`, it can contain both "
-    "a directory or a single file. Supported protocols are: `s3`, `s3a`, `abfs`, and `az`.",
+    "a directory or a single file. Supported protocols are: `gs`, `s3`, `s3a`, `abfs`, and `az`.",
 )
 @click.option(
     "--s3-anonymous",
@@ -558,6 +558,16 @@ def main(
                     access_kwargs={"anon": s3_anonymous},
                 ),
             )
+        elif protocol in ("gs"):
+            from unstructured.ingest.connector.gs import GsConnector, SimpleGsConfig
+
+            doc_connector = GsConnector(  # type: ignore
+                standard_config=standard_config,
+                config=SimpleGsConfig(
+                    path=remote_url,
+                    # access_kwargs={"anon": s3_anonymous},
+                ),
+            )
         elif protocol in ("abfs", "az"):
             from unstructured.ingest.connector.azure import (
                 AzureBlobStorageConnector,
@@ -583,7 +593,7 @@ def main(
         else:
             warnings.warn(
                 f"`fsspec` protocol {protocol} is not directly supported by `unstructured`,"
-                " so use it at your own risk. Supported protocols are `s3`, `s3a`, `abfs`,"
+                " so use it at your own risk. Supported protocols are `gs`, `s3`, `s3a`, `abfs`,"
                 " and `az`.",
                 UserWarning,
             )

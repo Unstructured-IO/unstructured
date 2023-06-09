@@ -17,6 +17,7 @@ SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
     "s3",
     "abfs",
     "az",
+    "gs",
 ]
 
 
