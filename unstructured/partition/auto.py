@@ -112,6 +112,7 @@ def partition(
             file=file,
             file_filename=file_filename,
             content_type=content_type,
+            encoding=encoding,
         )
 
     if file is not None:
@@ -230,5 +231,7 @@ def file_and_type_from_url(
     file = io.BytesIO(response.content)
 
     content_type = content_type or response.headers.get("Content-Type")
-    filetype = detect_filetype(file=file, content_type=content_type)
+    encoding = response.headers.get("Content-Encoding", "utf-8")
+
+    filetype = detect_filetype(file=file, content_type=content_type, encoding=encoding)
     return file, filetype
