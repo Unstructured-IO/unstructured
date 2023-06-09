@@ -74,7 +74,9 @@ jobs:
       - name: Create Branch
         id: branch
         run: |
-          branch_name=$(git rev-parse --abbrev-ref HEAD)
+          original_branch=$(git rev-parse --abbrev-ref HEAD)
+          suffix="-update-ingest-fixtures-$(git rev-parse --short HEAD)"
+          branch_name="$original_branch$suffix
           echo "::set-output name=branch_name::$branch_name"
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
@@ -85,7 +87,7 @@ jobs:
           branch: ${{ steps.branch.outputs.branch_name }}
           title: Generated Test Fixtures
           delete-branch: true
-          branch-suffix: short-commit-hash
           body: |
             This pull request includes automatically generated test fixtures.
             Please review and merge if appropriate.
+          base: ${{ github.head_ref }}
