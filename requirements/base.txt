@@ -6,7 +6,7 @@
 #
 anyio==3.7.0
     # via httpcore
-argilla==1.8.0
+argilla==1.9.0
     # via -r requirements/base.in
 backoff==2.2.1
     # via argilla
@@ -38,6 +38,8 @@ et-xmlfile==1.1.0
     # via openpyxl
 exceptiongroup==1.1.1
     # via anyio
+filetype==1.2.0
+    # via -r requirements/base.in
 h11==0.14.0
     # via httpcore
 httpcore==0.16.3
@@ -88,7 +90,7 @@ pillow==9.5.0
     #   python-pptx
 pycparser==2.21
     # via cffi
-pydantic==1.10.8
+pydantic==1.10.9
     # via argilla
 pygments==2.15.1
     # via rich

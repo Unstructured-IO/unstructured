@@ -6,6 +6,8 @@ from enum import Enum
 from functools import wraps
 from typing import IO, Callable, List, Optional
 
+import filetype as ft
+
 from unstructured.documents.elements import Element, PageBreak
 from unstructured.file_utils.encoding import detect_file_encoding
 from unstructured.nlp.patterns import LIST_OF_DICTS_PATTERN
@@ -198,13 +200,17 @@ def detect_filetype(
     """Use libmagic to determine a file's type. Helps determine which partition brick
     to use for a given file. A return value of None indicates a non-supported file type.
     """
+    mime_type = None
     exactly_one(filename=filename, file=file)
 
+    # first check (content_type)
     if content_type:
         filetype = STR_TO_FILETYPE.get(content_type)
         if filetype:
             return filetype
 
+    # second check (filename/file_name/file)
+    # continue if successfully define mime_type
     if filename or file_filename:
         _filename = filename or file_filename or ""
         _, extension = os.path.splitext(_filename)
@@ -214,8 +220,10 @@ def detect_filetype(
                 _resolve_symlink(filename or file_filename),
                 mime=True,
             )  # type: ignore
-        else:
-            return EXT_TO_FILETYPE.get(extension.lower(), FileType.UNK)
+        elif os.path.isfile(_filename):
+            mime_type = ft.guess_mime(filename)
+        if mime_type is None:
+            return EXT_TO_FILETYPE.get(extension, FileType.UNK)
 
     elif file is not None:
         extension = None
@@ -225,16 +233,19 @@ def detect_filetype(
         if LIBMAGIC_AVAILABLE:
             mime_type = magic.from_buffer(file.read(4096), mime=True)
         else:
-            raise ImportError(
-                "libmagic is unavailable. "
-                "Filetype detection on file-like objects requires libmagic. "
-                "Please install libmagic and try again.",
+            mime_type = ft.guess_mime(file.read(4096))
+        if mime_type is None:
+            logger.warning(
+                "libmagic is unavailable but assists in filetype detection on file-like objects."
+                "Please consider installing libmagic for better results.",
             )
+            return EXT_TO_FILETYPE.get(extension, FileType.UNK)
+
     else:
         raise ValueError("No filename, file, nor file_filename were specified.")
 
     """Mime type special cases."""
-
+    # third check (mime_type)
     # NOTE(crag): for older versions of the OS libmagic package, such as is currently
     # installed on the Unstructured docker image, .json files resolve to "text/plain"
     # rather than "application/json". this corrects for that case.
