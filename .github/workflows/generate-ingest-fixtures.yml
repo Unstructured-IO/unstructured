@@ -76,7 +76,7 @@ jobs:
         run: |
           original_branch=$(git rev-parse --abbrev-ref HEAD)
           suffix="-update-ingest-fixtures-$(git rev-parse --short HEAD)"
-          branch_name="$original_branch$suffix
+          branch_name="$original_branch$suffix"
           echo "::set-output name=branch_name::$branch_name"
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
