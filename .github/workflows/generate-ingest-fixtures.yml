@@ -79,8 +79,8 @@ jobs:
           branch_name="$original_branch$suffix"
           counter=1
           while git show-ref --quiet "refs/heads/$branch_name"; do
-            branch_name="$original_branch$suffix$counter"
             counter=$((counter+1))
+            branch_name="$original_branch$suffix$counter"
           done
           git checkout -b "$branch_name"
           echo "::set-output name=branch_name::$branch_name"
