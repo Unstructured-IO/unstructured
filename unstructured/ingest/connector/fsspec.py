@@ -1,6 +1,7 @@
 import json
 import os
 import re
+import shutil
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Type
@@ -127,7 +128,10 @@ class FsspecIngestDoc(BaseIngestDoc):
         """Removes the local copy of the file after successful processing."""
         if not self.standard_config.preserve_downloads and not self.standard_config.download_only:
             logger.debug(f"Cleaning up {self}")
-            os.unlink(self._tmp_download_file())
+            try:
+                os.unlink(self._tmp_download_file())
+            except: # Don't think we need to throw an error
+                logger.debug(f"failed to remove {self._tmp_download_file()}")
 
 
 class FsspecConnector(BaseConnector):
