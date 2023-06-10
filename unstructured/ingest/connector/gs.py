@@ -33,15 +33,15 @@ class GsConnector(FsspecConnector):
         super().__init__(standard_config, config)
 
     def find_files(self, directory):
-        """Recursively returns the files in a bucket"""
+        """Recursively returns the files in a bucket since fs.ls is only one level deep."""
         file_paths = []
 
         def add_files(directory):
-            for item in self.fs.ls(directory, detail=True):
-                if item["type"] =="directory":
-                    add_files(item["name"])
-                elif item["type"] == "file" and item["size"]>0:
-                    file_paths.append(item["name"])
+            for blob in self.fs.ls(directory, detail=True):
+                if blob.get("type") =="directory":
+                    add_files(blob.get("name"))
+                elif blob.get("type") == "file" and blob.get("size") > 0:
+                    file_paths.append(blob.get("name"))
 
         add_files(directory)
 
