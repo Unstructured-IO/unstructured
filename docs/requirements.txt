@@ -55,7 +55,7 @@ sphinx==6.2.1
     #   sphinxcontrib-jquery
 sphinx-basic-ng==1.0.0b1
     # via furo
-sphinx-rtd-theme==1.2.1
+sphinx-rtd-theme==1.2.2
     # via -r requirements/build.in
 sphinxcontrib-applehelp==1.0.4
     # via sphinx
@@ -71,7 +71,7 @@ sphinxcontrib-qthelp==1.0.3
     # via sphinx
 sphinxcontrib-serializinghtml==1.1.5
     # via sphinx
-urllib3==2.0.2
+urllib3==2.0.3
     # via requests
 zipp==3.15.0
     # via importlib-metadata
