@@ -32,10 +32,14 @@ class MockResponse:
                 "Matthew Robinson <mrobinson@unstructured.io>"
             ],
             "subject": "Test Email",
-            "filename": "fake-email.eml"
+            "filename": "fake-email.eml",
+            "filetype": "message/rfc822"
         }
     }
 ]"""
+
+    def json(self):
+        return json.loads(self.text)
 
 
 def test_partition_via_api_from_filename(monkeypatch):
@@ -47,6 +51,7 @@ def test_partition_via_api_from_filename(monkeypatch):
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
     elements = partition_via_api(filename=filename, api_key="FAKEROO")
     assert elements[0] == NarrativeText("This is a test email to use for unit tests.")
+    assert elements[0].metadata.filetype == "message/rfc822"
 
 
 def test_partition_via_api_from_file(monkeypatch):
@@ -60,6 +65,7 @@ def test_partition_via_api_from_file(monkeypatch):
     with open(filename, "rb") as f:
         elements = partition_via_api(file=f, file_filename=filename, api_key="FAKEROO")
     assert elements[0] == NarrativeText("This is a test email to use for unit tests.")
+    assert elements[0].metadata.filetype == "message/rfc822"
 
 
 def test_partition_via_api_from_file_raises_without_filename(monkeypatch):
@@ -110,7 +116,8 @@ class MockMultipleResponse:
                     "Matthew Robinson <mrobinson@unstructured.io>"
                 ],
                 "subject": "Test Email",
-                "filename": "fake-email.eml"
+                "filename": "fake-email.eml",
+                "filetype": "message/rfc822"
             }
         }
     ],
@@ -128,11 +135,25 @@ class MockMultipleResponse:
                     "Matthew Robinson <mrobinson@unstructured.io>"
                 ],
                 "subject": "Test Email",
-                "filename": "fake-email.eml"
+                "filename": "fake-email.eml",
+                "filetype": "message/rfc822"
             }
         }
     ]
 ]"""
+
+
+def test_partition_multiple_via_api_with_single_filename(monkeypatch):
+    monkeypatch.setattr(
+        requests,
+        "post",
+        lambda *args, **kwargs: MockResponse(status_code=200),
+    )
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
+
+    elements = partition_multiple_via_api(filenames=[filename], api_key="FAKEROO")
+    assert elements[0][0] == NarrativeText("This is a test email to use for unit tests.")
+    assert elements[0][0].metadata.filetype == "message/rfc822"
 
 
 def test_partition_multiple_via_api_from_filenames(monkeypatch):
@@ -150,6 +171,7 @@ def test_partition_multiple_via_api_from_filenames(monkeypatch):
     elements = partition_multiple_via_api(filenames=filenames, api_key="FAKEROO")
     assert len(elements) == 2
     assert elements[0][0] == NarrativeText("This is a test email to use for unit tests.")
+    assert elements[0][0].metadata.filetype == "message/rfc822"
 
 
 def test_partition_multiple_via_api_from_files(monkeypatch):
@@ -173,6 +195,7 @@ def test_partition_multiple_via_api_from_files(monkeypatch):
         )
     assert len(elements) == 2
     assert elements[0][0] == NarrativeText("This is a test email to use for unit tests.")
+    assert elements[0][0].metadata.filetype == "message/rfc822"
 
 
 def test_partition_multiple_via_api_raises_with_bad_response(monkeypatch):

@@ -1,4 +1,15 @@
-## 0.7.3-dev0
+## 0.7.4-dev0
+
+### Enhancements
+
+* Enable MIME type detection if libmagic is not available
+* Adds handling for empty files in `detect_filetype` and `partition`.
+
+### Features
+
+### Fixes
+
+## 0.7.3
 
 ### Enhancements
 
@@ -7,6 +18,11 @@
 ### Features
 
 ### Fixes
+
+* Pass `strategy` parameter down from `partition` for `partition_image`
+* Filetype detection if a CSV has a `text/plain` MIME type
+* `convert_office_doc` no longers prints file conversion info messages to stdout.
+* `partition_via_api` reflects the actual filetype for the file processed in the API.
 
 ## 0.7.2
 

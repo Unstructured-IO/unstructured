@@ -41,7 +41,7 @@ idna==3.4
     #   yarl
 iniconfig==2.0.0
     # via pytest
-label-studio-sdk==0.0.27
+label-studio-sdk==0.0.28
     # via -r requirements/test.in
 label-studio-tools==0.0.2
     # via label-studio-sdk
@@ -73,7 +73,7 @@ pluggy==1.0.0
     # via pytest
 pycodestyle==2.10.0
     # via flake8
-pydantic==1.10.8
+pydantic==1.10.9
     # via
     #   -c requirements/base.txt
     #   label-studio-sdk
@@ -97,7 +97,7 @@ requests==2.31.0
     # via
     #   -c requirements/base.txt
     #   label-studio-sdk
-ruff==0.0.270
+ruff==0.0.272
     # via -r requirements/test.in
 six==1.16.0
     # via

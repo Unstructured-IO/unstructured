@@ -373,7 +373,7 @@ def test_auto_partition_jpg(pass_file_filename, content_type):
         filename=filename,
         file_filename=file_filename,
         content_type=content_type,
-        strategy="hi_res",
+        strategy="auto",
     )
     assert len(elements) > 0
 
@@ -390,7 +390,7 @@ def test_auto_partition_jpg_from_file(pass_file_filename, content_type):
             file=f,
             file_filename=file_filename,
             content_type=content_type,
-            strategy="hi_res",
+            strategy="auto",
         )
     assert len(elements) > 0
 
@@ -502,7 +502,6 @@ def test_auto_partition_works_with_unstructured_jsons():
 
 def test_auto_partition_works_with_unstructured_jsons_from_file():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "spring-weather.html.json")
-
     with open(filename, "rb") as f:
         elements = partition(file=f, strategy="hi_res")
     assert elements[0].text == "News Around NOAA"
@@ -583,7 +582,7 @@ FILETYPE_TO_MODULE = {
 
 @pytest.mark.parametrize("filetype", supported_filetypes)
 def test_file_specific_produces_correct_filetype(filetype: FileType):
-    if filetype in (FileType.JPG, FileType.PNG):
+    if filetype in (FileType.JPG, FileType.PNG, FileType.EMPTY):
         pytest.skip()
     extension = filetype.name.lower()
     filetype_module = (
@@ -595,7 +594,11 @@ def test_file_specific_produces_correct_filetype(filetype: FileType):
     for file in pathlib.Path("example-docs").iterdir():
         if file.is_file() and file.suffix == f".{extension}":
             elements = fun(str(file))
-            assert all(el.metadata.filetype == FILETYPE_TO_MIMETYPE[filetype] for el in elements)
+            assert all(
+                el.metadata.filetype == FILETYPE_TO_MIMETYPE[filetype]
+                for el in elements
+                if el.metadata.filetype is not None
+            )
             break
 
 
@@ -791,3 +794,12 @@ def test_auto_partition_csv_from_file(filename="example-docs/stanley-cups.csv"):
     assert isinstance(elements[0], Table)
     assert elements[0].metadata.text_as_html == EXPECTED_XLSX_TABLE
     assert elements[0].metadata.filetype == "text/csv"
+
+
+def test_auto_partition_works_on_empty_filename(filename="example-docs/empty.txt"):
+    assert partition(filename=filename) == []
+
+
+def test_auto_partition_works_on_empty_file(filename="example-docs/empty.txt"):
+    with open(filename, "rb") as f:
+        assert partition(file=f) == []

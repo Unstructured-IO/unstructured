@@ -56,7 +56,7 @@ def expected_elements():
     ]
 
 
-def test_partition_doc_with_filename(mock_document, expected_elements, tmpdir):
+def test_partition_doc_with_filename(mock_document, expected_elements, tmpdir, capsys):
     docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
     mock_document.save(docx_filename)
@@ -66,6 +66,9 @@ def test_partition_doc_with_filename(mock_document, expected_elements, tmpdir):
     assert elements == expected_elements
     assert elements[0].metadata.filename == "mock_document.doc"
     assert elements[0].metadata.file_directory == tmpdir.dirname
+
+    assert capsys.readouterr().out == ""
+    assert capsys.readouterr().err == ""
 
 
 def test_partition_doc_matches_partition_docx(mock_document, expected_elements, tmpdir):
@@ -84,7 +87,7 @@ def test_partition_raises_with_missing_doc(mock_document, expected_elements, tmp
         partition_doc(filename=doc_filename)
 
 
-def test_partition_doc_with_file(mock_document, expected_elements, tmpdir):
+def test_partition_doc_with_file(mock_document, expected_elements, tmpdir, capsys):
     docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
     mock_document.save(docx_filename)
@@ -93,6 +96,9 @@ def test_partition_doc_with_file(mock_document, expected_elements, tmpdir):
     with open(doc_filename, "rb") as f:
         elements = partition_doc(file=f)
     assert elements == expected_elements
+
+    assert capsys.readouterr().out == ""
+    assert capsys.readouterr().err == ""
 
 
 def test_partition_doc_raises_with_both_specified(mock_document, tmpdir):
