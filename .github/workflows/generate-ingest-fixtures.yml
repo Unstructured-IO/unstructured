@@ -3,7 +3,7 @@ name: Generate Ingest Test Fixtures and Create PR
 on:
   push:
     branches:
-      - ci-update-ingest-test-fixtures
+      - 'ci-update-ingest-test-fixtures'
 
 jobs:
   setup:
