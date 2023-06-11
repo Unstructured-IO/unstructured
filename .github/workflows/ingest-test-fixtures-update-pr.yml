@@ -1,4 +1,4 @@
-name: Generate Ingest Test Fixtures and Create PR
+name: Ingest Test Fixtures Update PR
 
 on:
   push:
@@ -6,6 +6,7 @@ on:
 jobs:
   setup:
     runs-on: ubuntu-latest
+    if: contains(github.event.head_commit.message, 'ingest-test-fixtures-update'
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
       PYTHON_VERSION: "3.8"
@@ -34,7 +35,6 @@ jobs:
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup]
-    if: github.ref == 'refs/heads/ci-update-ingest-test-fixtures'
     steps:
       - uses: actions/checkout@v3
       - uses: actions/cache/restore@v3
@@ -44,8 +44,7 @@ jobs:
             .venv
             nltk_data
           key: unstructured-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
-      - name: Setup virtual environment (no cache hit)
-        if: steps.virtualenv-cache.outputs.cache-hit != 'true'
+      - name: Setup virtual environment (no cache hit))
         run: |
           python${{ env.PYTHON_VERSION }} -m venv .venv
           source .venv/bin/activate
