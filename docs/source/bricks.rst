@@ -783,22 +783,20 @@ Examples:
   clean_bullets("I love Morse Code! ●●●")
 
 
-``clean_ordered_bullets``
--------------------------
+``clean_dashes``
+----------------
 
-Remove alphanumeric bullets from the beginning of text up to three “sub-section” levels.
+Removes dashes from a section of text. Also handles special characters
+such as ``\u2013``.
 
 Examples:
 
 .. code:: python
 
-  from unstructured.cleaners.core import clean_ordered_bullets
+  from unstructured.cleaners.core import clean_dashes
 
-  # Returns "This is a very important point"
-  clean_bullets("1.1 This is a very important point")
-
-  # Returns "This is a very important point ●"
-  clean_bullets("a.b This is a very important point ●")
+  # Returns "ITEM 1A: RISK FACTORS"
+  clean_dashes("ITEM 1A: RISK-FACTORS\u2013")
 
 
 ``clean_extra_whitespace``
@@ -817,21 +815,86 @@ Examples:
   clean_extra_whitespace("ITEM 1A:     RISK FACTORS\n")
 
 
-``clean_dashes``
-----------------
+``clean_non_ascii_chars``
+-------------------------
 
-Removes dashes from a section of text. Also handles special characters
-such as ``\u2013``.
+Removes non-ascii characters from a string.
 
 Examples:
 
 .. code:: python
 
-  from unstructured.cleaners.core import clean_dashes
+  from unstructured.cleaners.core import clean_non_ascii_chars
 
-  # Returns "ITEM 1A: RISK FACTORS"
-  clean_dashes("ITEM 1A: RISK-FACTORS\u2013")
+  text = "\x88This text contains®non-ascii characters!●"
 
+  # Returns "This text containsnon-ascii characters!"
+  clean_non_ascii_chars(text)
+
+
+``clean_ordered_bullets``
+-------------------------
+
+Remove alphanumeric bullets from the beginning of text up to three “sub-section” levels.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.cleaners.core import clean_ordered_bullets
+
+  # Returns "This is a very important point"
+  clean_bullets("1.1 This is a very important point")
+
+  # Returns "This is a very important point ●"
+  clean_bullets("a.b This is a very important point ●")
+
+
+``clean_postfix``
+-----------------
+
+Removes the postfix from a string if they match a specified pattern.
+
+Options:
+
+* Ignores case if ``ignore_case`` is set to ``True``. The default is ``False``.
+* Strips trailing whitespace is ``strip`` is set to ``True``. The default is ``True``.
+
+
+Examples:
+
+.. code:: python
+
+  from unstructured.cleaners.core import clean_postfix
+
+  text = "The end! END"
+
+  # Returns "The end!"
+  clean_postfix(text, r"(END|STOP)", ignore_case=True)
+
+
+``clean_prefix``
+----------------
+
+Removes the prefix from a string if they match a specified pattern.
+
+Options:
+
+* Ignores case if ``ignore_case`` is set to ``True``. The default is ``False``.
+* Strips leading whitespace is ``strip`` is set to ``True``. The default is ``True``.
+
+
+Examples:
+
+.. code:: python
+
+  from unstructured.cleaners.core import clean_prefix
+
+  text = "SUMMARY: This is the best summary of all time!"
+
+  # Returns "This is the best summary of all time!"
+  clean_prefix(text, r"(SUMMARY|DESCRIPTION):", ignore_case=True)
+  
 
 ``clean_trailing_punctuation``
 -------------------------------
@@ -922,69 +985,6 @@ Examples:
 
   # Returns "A lovely quote"
   remove_punctuation("“A lovely quote!”")
-
-
-``clean_prefix``
-----------------
-
-Removes the prefix from a string if they match a specified pattern.
-
-Options:
-
-* Ignores case if ``ignore_case`` is set to ``True``. The default is ``False``.
-* Strips leading whitespace is ``strip`` is set to ``True``. The default is ``True``.
-
-
-Examples:
-
-.. code:: python
-
-  from unstructured.cleaners.core import clean_prefix
-
-  text = "SUMMARY: This is the best summary of all time!"
-
-  # Returns "This is the best summary of all time!"
-  clean_prefix(text, r"(SUMMARY|DESCRIPTION):", ignore_case=True)
-
-
-``clean_postfix``
------------------
-
-Removes the postfix from a string if they match a specified pattern.
-
-Options:
-
-* Ignores case if ``ignore_case`` is set to ``True``. The default is ``False``.
-* Strips trailing whitespace is ``strip`` is set to ``True``. The default is ``True``.
-
-
-Examples:
-
-.. code:: python
-
-  from unstructured.cleaners.core import clean_postfix
-
-  text = "The end! END"
-
-  # Returns "The end!"
-  clean_postfix(text, r"(END|STOP)", ignore_case=True)
-
-
-``clean_non_ascii_chars``
--------------------------
-
-Removes non-ascii characters from a string.
-
-Examples:
-
-.. code:: python
-
-  from unstructured.cleaners.core import clean_non_ascii_chars
-
-  text = "\x88This text contains®non-ascii characters!●"
-
-  # Returns "This text containsnon-ascii characters!"
-  clean_non_ascii_chars(text)
 
 
 ``extract_text_before``
