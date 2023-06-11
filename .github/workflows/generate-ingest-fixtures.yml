@@ -34,6 +34,7 @@ jobs:
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup]
+    if: github.ref == 'refs/heads/ci-update-ingest-test-fixtures'
     steps:
       - uses: actions/checkout@v3
       - uses: actions/cache/restore@v3
