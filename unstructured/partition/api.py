@@ -1,5 +1,4 @@
 import contextlib
-import json
 from typing import (
     IO,
     List,
@@ -10,7 +9,7 @@ import requests
 
 from unstructured.documents.elements import Element
 from unstructured.partition.common import exactly_one
-from unstructured.partition.json import partition_json
+from unstructured.staging.base import dict_to_elements, elements_from_json
 
 
 def partition_via_api(
@@ -82,7 +81,7 @@ def partition_via_api(
         response = requests.post(api_url, headers=headers, data=data, files=files)  # type: ignore
 
     if response.status_code == 200:
-        return partition_json(text=response.text)
+        return elements_from_json(text=response.text)
     else:
         raise ValueError(
             f"Receive unexpected status code {response.status_code} from the API.",
@@ -172,8 +171,14 @@ def partition_multiple_via_api(
 
     if response.status_code == 200:
         documents = []
-        for document in response.json():
-            documents.append(partition_json(text=json.dumps(document)))
+        response_list = response.json()
+        # NOTE(robinson) - this check is because if only one filename is passed, the return
+        # type from the API is a list of objects instead of a list of lists
+        if not isinstance(response_list[0], list):
+            response_list = [response_list]
+
+        for document in response_list:
+            documents.append(dict_to_elements(document))
         return documents
     else:
         raise ValueError(
