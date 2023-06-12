@@ -10,6 +10,7 @@
 
 ### Fixes
 
+* Reslove `grpcio` import issue on `weaviate.schema.validate_schema` for python 3.9 and 3.10
 * Remove building `detectron2` from source in Dockerfile
 
 ## 0.7.3

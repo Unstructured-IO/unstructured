@@ -34,6 +34,8 @@ flake8==6.0.0
     # via -r requirements/test.in
 freezegun==1.2.2
     # via -r requirements/test.in
+grpcio==1.54.2
+    # via -r requirements/test.in
 idna==3.4
     # via
     #   -c requirements/base.txt
