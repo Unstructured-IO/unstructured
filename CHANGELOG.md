@@ -1,4 +1,4 @@
-## 0.7.4-dev0
+## 0.7.4-dev1
 
 ### Enhancements
 
@@ -7,6 +7,8 @@
 ### Features
 
 ### Fixes
+
+* Adds handling for emails that do not have a datetime to extract.
 
 ## 0.7.3
 
