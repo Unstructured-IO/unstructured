@@ -603,6 +603,24 @@ Examples:
   elements = partition_epub(filename="example-docs/winter-sports.epub")
 
 
+``partition_rst``
+---------------------
+
+The ``partition_rst`` function processes ReStructured Text (``.rst``) documents. The function
+first converts the document to HTML using ``pandocs`` and then calls ``partition_html``.
+You'll need `pandocs <https://pandoc.org/installing.html>`_ installed on your system
+to use ``partition_rst``.
+
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.rst import partition_rst
+
+  elements = partition_rst(filename="example-docs/README.rst")
+
+
 ``partition_rtf``
 ---------------------
 
