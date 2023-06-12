@@ -51,7 +51,7 @@ frozenlist==1.3.3
     # via
     #   aiohttp
     #   aiosignal
-fsspec==2023.5.0
+fsspec==2023.6.0
     # via
     #   -r requirements/ingest-azure.in
     #   adlfs
