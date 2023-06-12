@@ -64,6 +64,10 @@ def test_extract_datetimetz():
     )
 
 
+def test_extract_datetimetz_works_with_no_date():
+    assert extract.extract_datetimetz("NO DATE HERE") is None
+
+
 @pytest.mark.parametrize(
     ("text", "expected"),
     [
