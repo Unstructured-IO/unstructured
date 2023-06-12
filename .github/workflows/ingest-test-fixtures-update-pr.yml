@@ -78,6 +78,21 @@ jobs:
           suffix="|ingest-test-fixtures-update-$(git rev-parse --short HEAD)"
           branch_name="$original_branch$suffix"
           echo "::set-output name=branch_name::$branch_name"
+      - name: Get PR Name
+        id: pr
+        run: |
+          # Get the commit SHA
+          commit_sha=$(git rev-parse HEAD)
+          
+          # Find the matching PRs for the commit
+          prs=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/commits/${commit_sha}/pulls")
+          
+          # Extract the first PR's title using jq
+          pr_name=$(echo "$prs" | jq -r '.[0].title')
+          
+          # Set the output variable
+          echo "::set-output name=pr_name::$pr_name"
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
@@ -85,8 +100,9 @@ jobs:
           add-paths: test_unstructured_ingest/expected-structured-output
           commit-message: "Update ingest test fixtures"
           branch: ${{ steps.branch.outputs.branch_name }}
-          title: "${{ github.event.pull_request.title }} <- Ingest Test Fixtures Update"
+          title: "${{ steps.pr.outputs.pr_name }} <- Ingest Test Fixtures Update"
           assignees: ${{ github.actor }}
+          reviewers: ${{ github.actor }}
           delete-branch: true
           body: |
             This pull request includes updated ingest test fixtures.
