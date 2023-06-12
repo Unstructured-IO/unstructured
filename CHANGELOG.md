@@ -1,8 +1,10 @@
-## 0.7.5-dev0
+## 0.7.5-dev1
 
 ### Enhancements
 
 ### Features
+
+* Adds `partition_rst` for processed ReStructured Text documents.
 
 ### Fixes
 
