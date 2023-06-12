@@ -92,6 +92,19 @@ def test_partition_via_api_raises_with_bad_response(monkeypatch):
         partition_via_api(filename=filename, api_key="FAKEROO")
 
 
+def test_partition_via_api_valid_request_data_kwargs():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf")
+
+    elements = partition_via_api(filename=filename, api_key="FAKEROO", strategy="fast")
+    assert isinstance(elements, list)
+
+
+def test_partition_via_api_invalid_request_data_kwargs():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf")
+    with pytest.raises(ValueError):
+        partition_via_api(filename=filename, api_key="FAKEROO", strategy="not_a_strategy")
+
+
 class MockMultipleResponse:
     def __init__(self, status_code):
         self.status_code = status_code
@@ -276,3 +289,27 @@ def test_partition_multiple_via_api_from_files_raises_without_filenames(monkeypa
                 files=files,
                 api_key="FAKEROO",
             )
+
+
+def test_partition_multiple_via_api_valid_request_data_kwargs():
+    filenames = [
+        os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf"),
+        os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.jpg"),
+    ]
+
+    elements = partition_multiple_via_api(filenames=filenames, api_key="FAKEROO", strategy="fast")
+    assert isinstance(elements, list)
+
+
+def test_partition_multiple_via_api_invalid_request_data_kwargs():
+    filenames = [
+        os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf"),
+        os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.jpg"),
+    ]
+
+    with pytest.raises(ValueError):
+        partition_multiple_via_api(
+            filenames=filenames,
+            api_key="FAKEROO",
+            strategy="not_a_strategy",
+        )
