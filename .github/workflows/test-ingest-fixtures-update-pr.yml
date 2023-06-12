@@ -37,6 +37,11 @@ jobs:
     # needs: [setup]
     steps:
       - uses: actions/checkout@v3
+
+      - name: Configure Git
+        run: |
+          git config --global user.email "ryannikolaidis@gmail.com"
+          git config --global user.name "ryannikolaidis"
       # - uses: actions/cache/restore@v3
       #   id: virtualenv-cache
       #   with:
@@ -85,7 +90,7 @@ jobs:
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GH_CREATE_PR_TOKEN }}
-          add-paths: test_unstructured_ingest/expected-structured-output
+          add-paths: test_unstructured_ingest/expected-structured-output/**
           commit-message: "Update ingest test fixtures"
           branch: ${{ steps.branch.outputs.branch_name }}
           title: Generated Test Fixtures
