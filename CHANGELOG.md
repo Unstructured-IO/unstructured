@@ -1,6 +1,9 @@
-## 0.7.5-dev0
+## 0.7.5-dev1
 
 ### Enhancements
+
+* Adds functionality to sort elements in `partition_pdf` for `fast` strategy
+* Adds ingest tests with `--fast` strategy on PDF documents
 
 ### Features
 
