@@ -10,6 +10,8 @@
 
 ### Fixes
 
+* Remove building `detectron2` from source in Dockerfile
+
 ## 0.7.3
 
 ### Enhancements
