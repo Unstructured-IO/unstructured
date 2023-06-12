@@ -19,7 +19,7 @@ def partition_via_api(
     file_filename: Optional[str] = None,
     api_url: str = "https://api.unstructured.io/general/v0/general",
     api_key: str = "",
-    **request_data_kwargs,
+    **request_kwargs,
 ) -> List[Element]:
     """Partitions a document using the Unstructured REST API. This is equivalent to
     running the document through partition.
@@ -42,7 +42,7 @@ def partition_via_api(
         The URL for the Unstructured API. Defaults to the hosted Unstructured API.
     api_key
         The API key to pass to the Unstructured API.
-    request_data_kwargs
+    request_kwargs
         Additional parameters to pass to the data field of the request to the Unstructured API.
         For example the `strategy` parameter.
     """
@@ -54,8 +54,8 @@ def partition_via_api(
     }
 
     # set default values for kwargs
-    strategy = request_data_kwargs.pop("strategy", "hi_res")
-    request_data_kwargs["strategy"] = strategy
+    strategy = request_kwargs.pop("strategy", "hi_res")
+    request_kwargs["strategy"] = strategy
 
     if filename is not None:
         with open(filename, "rb") as f:
@@ -65,7 +65,7 @@ def partition_via_api(
             response = requests.post(
                 api_url,
                 headers=headers,
-                data=request_data_kwargs,
+                data=request_kwargs,
                 files=files,  # type: ignore
             )
     elif file is not None:
@@ -80,7 +80,7 @@ def partition_via_api(
         response = requests.post(
             api_url,
             headers=headers,
-            data=request_data_kwargs,
+            data=request_kwargs,
             files=files,  # type: ignore
         )
 
@@ -99,7 +99,7 @@ def partition_multiple_via_api(
     file_filenames: Optional[List[str]] = None,
     api_url: str = "https://api.unstructured.io/general/v0/general",
     api_key: str = "",
-    **request_data_kwargs,
+    **request_kwargs,
 ) -> List[List[Element]]:
     """Partitions multiple document using the Unstructured REST API by batching
     the documents into a single HTTP request.
@@ -126,7 +126,7 @@ def partition_multiple_via_api(
         The URL for the Unstructured API. Defaults to the hosted Unstructured API.
     api_key
         The API key to pass to the Unstructured API.
-    request_data_kwargs
+    request_kwargs
         Additional parameters to pass to the data field of the request to the Unstructured API.
         For example the `strategy` parameter.
     """
@@ -136,8 +136,8 @@ def partition_multiple_via_api(
     }
 
     # set default values for kwargs
-    strategy = request_data_kwargs.pop("strategy", "hi_res")
-    request_data_kwargs["strategy"] = strategy
+    strategy = request_kwargs.pop("strategy", "hi_res")
+    request_kwargs["strategy"] = strategy
 
     if filenames is not None:
         if content_types and len(content_types) != len(filenames):
@@ -155,7 +155,7 @@ def partition_multiple_via_api(
             response = requests.post(
                 api_url,
                 headers=headers,
-                data=request_data_kwargs,
+                data=request_kwargs,
                 files=_files,  # type: ignore
             )
 
@@ -177,7 +177,7 @@ def partition_multiple_via_api(
         response = requests.post(
             api_url,
             headers=headers,
-            data=request_data_kwargs,
+            data=request_kwargs,
             files=_files,  # type: ignore
         )
 
