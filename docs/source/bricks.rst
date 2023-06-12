@@ -589,8 +589,8 @@ Examples:
 ---------------------
 
 The ``partition_epub`` function processes e-books in EPUB3 format. The function
-first converts the document to HTML using ``pandocs`` and then calls ``partition_html``.
-You'll need `pandocs <https://pandoc.org/installing.html>`_ installed on your system
+first converts the document to HTML using ``pandoc`` and then calls ``partition_html``.
+You'll need `pandoc <https://pandoc.org/installing.html>`_ installed on your system
 to use ``partition_epub``.
 
 
@@ -607,8 +607,8 @@ Examples:
 ---------------------
 
 The ``partition_rst`` function processes ReStructured Text (``.rst``) documents. The function
-first converts the document to HTML using ``pandocs`` and then calls ``partition_html``.
-You'll need `pandocs <https://pandoc.org/installing.html>`_ installed on your system
+first converts the document to HTML using ``pandoc`` and then calls ``partition_html``.
+You'll need `pandoc <https://pandoc.org/installing.html>`_ installed on your system
 to use ``partition_rst``.
 
 
