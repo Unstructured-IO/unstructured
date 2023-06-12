@@ -82,7 +82,7 @@ If you call the ``partition`` function, ``unstructured`` will attempt to detect 
 file type and route it to the appropriate partitioning brick. All partitioning bricks
 called within ``partition`` are called using the default kwargs. Use the document-type
 specific bricks if you need to apply non-default settings.
-``partition`` currently supports ``.docx``, ``.doc``, ``.odt``, ``.pptx``, ``.ppt``, ``.xlsx``, ``.csv``, ``.eml``, ``.msg``, ``.rtf``, ``.epub``, ``.html``, ``.xml``, ``.pdf``,
+``partition`` currently supports ``.docx``, ``.doc``, ``.odt``, ``.pptx``, ``.ppt``, ``.xlsx``, ``.csv``, ``.tsv``, ``.eml``, ``.msg``, ``.rtf``, ``.epub``, ``.html``, ``.xml``, ``.pdf``,
 ``.png``, ``.jpg``, and ``.txt`` files.
 If you set the ``include_page_breaks`` kwarg to ``True``, the output will include page breaks. This is only supported for ``.pptx``, ``.html``, ``.pdf``,
 ``.png``, and ``.jpg``.
@@ -205,7 +205,96 @@ metadata field indicating where the header or footer applies. Valid values are
 ``"primary"``, ``"first_page"`` and ``"even_page"``.
 
 
-``partition_email``
+``partition_doc``
+------------------
+
+The ``partition_doc`` partitioning brick pre-processes Microsoft Word documents
+saved in the ``.doc`` format. This partition brick uses a combination of the styling
+information in the document and the structure of the text to determine the type
+of a text element. The ``partition_doc`` can take a filename or file-like object
+as input.
+``partiton_doc`` uses ``libreoffice`` to convert the file to ``.docx`` and then
+calls ``partition_docx``. Ensure you have ``libreoffice`` installed
+before using ``partition_doc``.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.doc import partition_doc
+
+  elements = partition_doc(filename="example-docs/fake.doc")
+
+
+``partition_xlsx``
+------------------
+
+The ``partition_xlsx`` function pre-processes Microsoft Excel documents. Each
+sheet in the Excel file will be stored as a ``Table`` object. The plain text
+of the sheet will be the ``text`` attribute of the ``Table``. The ``text_as_html``
+attribute in the element metadata will contain an HTML representation of the table.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.xlsx import partition_xlsx
+
+  elements = partition_xlsx(filename="example-docs/stanley-cups.xlsx")
+  print(elements[0].metadata.text_as_html)
+
+
+``partition_csv``
+------------------
+
+The ``partition_csv`` function pre-processes CSV files. The output is a single
+``Table`` element. The ``text_as_html`` attribute in the element metadata will
+contain an HTML representation of the table.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.csv import partition_csv
+
+  elements = partition_csv(filename="example-docs/stanley-cups.csv")
+  print(elements[0].metadata.text_as_html)
+
+
+``partition_tsv``
+------------------
+
+The ``partition_tsv`` function pre-processes TSV files. The output is a single
+``Table`` element. The ``text_as_html`` attribute in the element metadata will
+contain an HTML representation of the table.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.tsv import partition_tsv
+
+  elements = partition_tsv(filename="example-docs/stanley-cups.tsv")
+  print(elements[0].metadata.text_as_html)
+
+
+``partition_odt``
+------------------
+
+The ``partition_odt`` partitioning brick pre-processes Open Office documents
+saved in the ``.odt`` format. The function first converts the document
+to ``.docx`` using ``pandoc`` and then processes it using ``partition_docx``.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.odt import partition_odt
+
+  elements = partition_odt(filename="example-docs/fake.odt")
+
+
+``partition_pptx``
 ---------------------
 
 The ``partition_email`` function partitions ``.eml`` documents and works with exports

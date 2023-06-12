@@ -74,6 +74,7 @@ class FileType(Enum):
     TXT = 42
     JSON = 43
     CSV = 44
+    TSV = 45
 
     # Markup Types
     HTML = 50
@@ -106,6 +107,7 @@ STR_TO_FILETYPE = {
     "text/comma-separated-values": FileType.CSV,
     "text/x-comma-separated-values": FileType.CSV,
     "text/csv": FileType.CSV,
+    "text/tsv": FileType.TSV,
     "text/markdown": FileType.MD,
     "text/x-markdown": FileType.MD,
     "text/x-rst": FileType.RST,
@@ -256,6 +258,9 @@ def detect_filetype(
     # rather than "application/json". this corrects for that case.
     if mime_type == "text/plain" and extension == ".json":
         return FileType.JSON
+    
+    if mime_type == "text/plain" and extension == ".tsv":
+        return FileType.TSV
 
     # NOTE(Crag): older magic lib does not differentiate between xls and doc
     if mime_type == "application/msword" and extension == ".xls":

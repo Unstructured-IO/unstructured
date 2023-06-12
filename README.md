@@ -88,6 +88,7 @@ about the library.
 | Document Type | Partition Function | Strategies | Table Support | Options |
 | --- | --- | --- | --- | --- |
 | CSV Files (`.csv`) | `partition_csv` | N/A | Yes | None |
+| TSV Files (`.tsv`) | `partition_tsv` | N/A | Yes | None |
 | E-mails (`.eml`) | `partition_eml` | N/A | No | Encoding |
 | E-mails (`.msg`) | `partition_msg` | N/A | No | Encoding |
 | EPubs (`.epub`) | `partition_epub` | N/A | Yes | Include Page Breaks |
