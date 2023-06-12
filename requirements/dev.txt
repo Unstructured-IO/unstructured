@@ -8,6 +8,10 @@ anyio==3.7.0
     # via
     #   -c requirements/base.txt
     #   jupyter-server
+appnope==0.1.3
+    # via
+    #   ipykernel
+    #   ipython
 argon2-cffi==21.3.0
     # via
     #   jupyter-server
@@ -59,7 +63,7 @@ executing==1.2.0
     # via stack-data
 fastjsonschema==2.17.1
     # via nbformat
-filelock==3.12.0
+filelock==3.12.1
     # via virtualenv
 fqdn==1.5.1
     # via jsonschema
@@ -215,7 +219,7 @@ pip-tools==6.13.0
     # via -r requirements/dev.in
 pkgutil-resolve-name==1.3.10
     # via jsonschema
-platformdirs==3.5.1
+platformdirs==3.5.3
     # via
     #   -c requirements/test.txt
     #   jupyter-core

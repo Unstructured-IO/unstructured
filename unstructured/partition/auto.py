@@ -26,6 +26,7 @@ from unstructured.partition.odt import partition_odt
 from unstructured.partition.pdf import partition_pdf
 from unstructured.partition.ppt import partition_ppt
 from unstructured.partition.pptx import partition_pptx
+from unstructured.partition.rst import partition_rst
 from unstructured.partition.rtf import partition_rtf
 from unstructured.partition.text import partition_text
 from unstructured.partition.xlsx import partition_xlsx
@@ -144,6 +145,12 @@ def partition(
         )
     elif filetype == FileType.EPUB:
         elements = partition_epub(
+            filename=filename,
+            file=file,
+            include_page_breaks=include_page_breaks,
+        )
+    elif filetype == FileType.RST:
+        elements = partition_rst(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,

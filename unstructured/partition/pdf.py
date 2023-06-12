@@ -269,6 +269,7 @@ def _process_pdfminer_pages(
         height = page.height
 
         text_segments = []
+        page_elements = []
         for obj in page:
             x1, y2, x2, y1 = obj.bbox
             y1 = height - y1
@@ -286,7 +287,16 @@ def _process_pdfminer_pages(
                 element = element_from_text(_text)
                 element.coordinates = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
                 element.metadata = metadata
-                elements.append(element)
+                page_elements.append(element)
+
+        sorted_page_elements = sorted(
+            page_elements,
+            key=lambda el: (
+                el.coordinates[0][1] if el.coordinates else float("inf"),
+                el.coordinates[0][0] if el.coordinates else float("inf"),
+            ),
+        )
+        elements += sorted_page_elements
 
         if include_page_breaks:
             elements.append(PageBreak())

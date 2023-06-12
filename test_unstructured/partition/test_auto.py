@@ -803,3 +803,18 @@ def test_auto_partition_works_on_empty_filename(filename="example-docs/empty.txt
 def test_auto_partition_works_on_empty_file(filename="example-docs/empty.txt"):
     with open(filename, "rb") as f:
         assert partition(file=f) == []
+
+
+def test_auto_partition_rst_from_filename(filename="example-docs/README.rst"):
+    elements = partition(filename=filename)
+
+    assert elements[0] == Title("Example Docs")
+    assert elements[0].metadata.filetype == "text/x-rst"
+
+
+def test_auto_partition_rst_from_file(filename="example-docs/README.rst"):
+    with open(filename, "rb") as f:
+        elements = partition(file=f, content_type="text/x-rst")
+
+    assert elements[0] == Title("Example Docs")
+    assert elements[0].metadata.filetype == "text/x-rst"

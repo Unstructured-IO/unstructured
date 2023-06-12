@@ -31,7 +31,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --num-processes 2 \
     --partition-strategy hi_res \
     --reprocess \
-    --download-dir biomed-download-path \
+    --download-dir files-ingest-download/biomed-path \
     --preserve-downloads \
     --verbose
 

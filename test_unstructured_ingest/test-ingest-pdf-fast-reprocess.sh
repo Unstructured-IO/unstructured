@@ -1,18 +1,19 @@
 #!/usr/bin/env bash
+# A local connector to process pre-downloaded PDFs under `files-ingest-download` dir with --fast startegy
 
 set -e
 
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 cd "$SCRIPT_DIR"/.. || exit 1
 
+
 PYTHONPATH=. ./unstructured/ingest/main.py \
-    --metadata-exclude filename \
-    --remote-url abfs://container1/ \
-    --azure-account-name azureunstructured1 \
-    --structured-output-dir azure-ingest-output \
-    --partition-strategy hi_res \
-    --download-dir files-ingest-download/azure \
-    --preserve-downloads \
+    --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
+    --local-input-path files-ingest-download \
+    --local-recursive \
+    --local-file-glob "*.pdf" \
+    --structured-output-dir pdf-fast-reprocess-ingest-output \
+    --partition-strategy fast \
     --reprocess \
     --num-processes 2
 
@@ -23,10 +24,9 @@ set +e
 # to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
 
-    cp azure-ingest-output/* test_unstructured_ingest/expected-structured-output/azure-blob-storage/
+    cp -a pdf-fast-reprocess-ingest-output/* test_unstructured_ingest/expected-structured-output/pdf-fast-reprocess/
 
-elif ! diff -ru test_unstructured_ingest/expected-structured-output/azure-blob-storage azure-ingest-output ; then
-
+elif ! diff -ru test_unstructured_ingest/expected-structured-output/pdf-fast-reprocess pdf-fast-reprocess-ingest-output ; then
     echo
     echo "There are differences from the previously checked-in structured outputs."
     echo
