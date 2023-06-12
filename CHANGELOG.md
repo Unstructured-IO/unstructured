@@ -7,6 +7,8 @@
 
 ### Features
 
+* Adds `partition_rst` for processed ReStructured Text documents.
+
 ### Fixes
 
 * Adds handling for emails that do not have a datetime to extract.

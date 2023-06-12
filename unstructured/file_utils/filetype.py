@@ -6,8 +6,6 @@ from enum import Enum
 from functools import wraps
 from typing import IO, Callable, List, Optional
 
-import filetype as ft
-
 from unstructured.documents.elements import Element, PageBreak
 from unstructured.file_utils.encoding import detect_file_encoding
 from unstructured.nlp.patterns import LIST_OF_DICTS_PATTERN
@@ -82,6 +80,7 @@ class FileType(Enum):
     XML = 51
     MD = 52
     EPUB = 53
+    RST = 54
 
     # Compressed Types
     ZIP = 60
@@ -109,6 +108,7 @@ STR_TO_FILETYPE = {
     "text/csv": FileType.CSV,
     "text/markdown": FileType.MD,
     "text/x-markdown": FileType.MD,
+    "text/x-rst": FileType.RST,
     "application/epub": FileType.EPUB,
     "application/epub+zip": FileType.EPUB,
     "application/json": FileType.JSON,
@@ -152,6 +152,7 @@ EXT_TO_FILETYPE = {
     ".htm": FileType.HTML,
     ".html": FileType.HTML,
     ".md": FileType.MD,
+    ".rst": FileType.RST,
     ".xlsx": FileType.XLSX,
     ".pptx": FileType.PPTX,
     ".png": FileType.PNG,
@@ -221,6 +222,8 @@ def detect_filetype(
                 mime=True,
             )  # type: ignore
         elif os.path.isfile(_filename):
+            import filetype as ft
+
             mime_type = ft.guess_mime(filename)
         if mime_type is None:
             return EXT_TO_FILETYPE.get(extension, FileType.UNK)
@@ -233,6 +236,8 @@ def detect_filetype(
         if LIBMAGIC_AVAILABLE:
             mime_type = magic.from_buffer(file.read(4096), mime=True)
         else:
+            import filetype as ft
+
             mime_type = ft.guess_mime(file.read(4096))
         if mime_type is None:
             logger.warning(
@@ -267,6 +272,8 @@ def detect_filetype(
             return FileType.EML
         elif extension and extension == ".md":
             return FileType.MD
+        elif extension and extension == ".rst":
+            return FileType.RST
         elif extension and extension == ".rtf":
             return FileType.RTF
         elif extension and extension == ".html":
