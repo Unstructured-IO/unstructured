@@ -30,7 +30,7 @@ jobs:
           [ ! -d "$NLTK_DATA" ] && mkdir "$NLTK_DATA"
           make install-ci
 
-  generate-fixtures:
+  update-fixtures-and-pr:
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
