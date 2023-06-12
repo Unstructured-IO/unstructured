@@ -12,7 +12,7 @@ def partition_rst(
     include_page_breaks: bool = False,
 ) -> List[Element]:
     """Partitions an RST document. The document is first converted to HTML and then
-    partitoned using partiton_html.
+    partitioned using partition_html.
 
     Parameters
     ----------
