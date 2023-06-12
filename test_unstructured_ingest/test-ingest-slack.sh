@@ -17,6 +17,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
    --download-dir slack-ingest-download \
    --structured-output-dir slack-ingest-output \
    --partition-strategy hi_res \
+   --preserve-downloads \
    --start-date 2023-04-01 \
    --end-date 2023-04-08T12:00:00-08:00 \
    --reprocess

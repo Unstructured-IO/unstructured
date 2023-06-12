@@ -2,6 +2,9 @@
 
 ### Enhancements
 
+* Adds functionality to sort elements in `partition_pdf` for `fast` strategy
+* Adds ingest tests with `--fast` strategy on PDF documents
+
 ### Features
 
 * Adds `partition_rst` for processed ReStructured Text documents.

@@ -475,11 +475,11 @@ def test_partition_pdf_fast_groups_text_in_text_box():
     assert str(elements[1]).endswith("Jordan and Egypt.")
 
     assert elements[3] == Title(
-        "kilograms CO₂e/boe carbon intensity from our Eastern Mediterranean operations in 2022",
+        "1st",
         coordinates=(
-            (69.4871, 222.4357),
-            (69.4871, 272.1607),
-            (197.8209, 272.1607),
-            (197.8209, 222.4357),
+            (273.9929, 181.16470000000004),
+            (273.9929, 226.16470000000004),
+            (333.59990000000005, 226.16470000000004),
+            (333.59990000000005, 181.16470000000004),
         ),
     )
