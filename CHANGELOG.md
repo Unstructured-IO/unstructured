@@ -1,7 +1,18 @@
-## 0.7.4-dev2
+## 0.7.5-dev0
 
 ### Enhancements
 
+### Features
+
+### Fixes
+
+* Adds handling for emails that do not have a datetime to extract.
+
+## 0.7.4
+
+### Enhancements
+
+* Allows passing kwargs to request data field for `partition_via_api` and `partition_multiple_via_api`
 * Enable MIME type detection if libmagic is not available
 * Adds handling for empty files in `detect_filetype` and `partition`.
 
@@ -9,7 +20,8 @@
 
 ### Fixes
 
-* Adds handling for emails that do not have a datetime to extract.
+* Reslove `grpcio` import issue on `weaviate.schema.validate_schema` for python 3.9 and 3.10
+* Remove building `detectron2` from source in Dockerfile
 
 ## 0.7.3
 
