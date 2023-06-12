@@ -1,0 +1,96 @@
+name: Ingest Test Fixtures Update PR
+
+on:
+  push:
+
+jobs:
+  # setup:
+  #   runs-on: ubuntu-latest
+  #   if: contains(github.event.head_commit.message, 'ingest-test-fixtures-update')
+  #   env:
+  #     NLTK_DATA: ${{ github.workspace }}/nltk_data
+  #     PYTHON_VERSION: "3.8"
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: actions/cache@v3
+  #       id: virtualenv-cache
+  #       with:
+  #         path: |
+  #           .venv
+  #           nltk_data
+  #         key: unstructured-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+  #     - name: Set up Python ${{ env.PYTHON_VERSION }}
+  #       uses: actions/setup-python@v4
+  #       with:
+  #         python-version: ${{ env.PYTHON_VERSION }}
+  #     - name: Setup virtual environment (no cache hit)
+  #       run: |
+  #         python${{ env.PYTHON_VERSION }} -m venv .venv
+  #         source .venv/bin/activate
+  #         [ ! -d "$NLTK_DATA" ] && mkdir "$NLTK_DATA"
+  #         make install-ci
+
+  update-fixtures-and-pr:
+    runs-on: ubuntu-latest
+    env:
+      NLTK_DATA: ${{ github.workspace }}/nltk_data
+    # needs: [setup]
+    steps:
+      - uses: actions/checkout@v3
+      # - uses: actions/cache/restore@v3
+      #   id: virtualenv-cache
+      #   with:
+      #     path: |
+      #       .venv
+      #       nltk_data
+      #     key: unstructured-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+      # - name: Setup virtual environment (no cache hit))
+      #   run: |
+      #     python${{ env.PYTHON_VERSION }} -m venv .venv
+      #     source .venv/bin/activate
+      #     mkdir "$NLTK_DATA"
+      #     make install-ci
+      # - name: Generate Fixtures
+      #   env:
+      #     GH_READ_ONLY_ACCESS_TOKEN: ${{ secrets.GH_READ_ONLY_ACCESS_TOKEN }}
+      #     SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+      #     DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+      #     OVERWRITE_FIXTURES: "true"
+      #   run: |
+      #     source .venv/bin/activate
+      #     sudo apt-get update
+      #     sudo apt-get install -y libmagic-dev poppler-utils libreoffice pandoc
+      #     sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
+      #     sudo apt-get install -y tesseract-ocr
+      #     tesseract --version
+      #     make install-ingest-s3
+      #     make install-ingest-azure
+      #     make install-ingest-discord
+      #     make install-ingest-github
+      #     make install-ingest-gitlab
+      #     make install-ingest-slack
+      #     make install-ingest-wikipedia
+      #     ./test_unstructured_ingest/test-ingest.sh
+      - name: Create empty test file
+        run: |
+          touch test_unstructured_ingest/expected-structured-output/new-file.txt
+      - name: Create Branch
+        id: branch
+        run: |
+          original_branch=$(git rev-parse --abbrev-ref HEAD)
+          suffix="-update-ingest-fixtures-$(git rev-parse --short HEAD)"
+          branch_name="$original_branch$suffix"
+          echo "::set-output name=branch_name::$branch_name"
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GH_CREATE_PR_TOKEN }}
+          add-paths: test_unstructured_ingest/expected-structured-output
+          commit-message: "Update ingest test fixtures"
+          branch: ${{ steps.branch.outputs.branch_name }}
+          title: Generated Test Fixtures
+          delete-branch: true
+          body: |
+            This pull request includes automatically generated test fixtures.
+            Please review and merge if appropriate.
+          base: ${{ github.head_ref }}

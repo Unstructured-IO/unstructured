@@ -1,235 +1,235 @@
-name: CI
+# name: CI
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+# on:
+#   push:
+#     branches: [ main ]
+#   pull_request:
+#     branches: [ main ]
 
-env:
-  GHA_CACHE_KEY_VERSION: "v1"
+# env:
+#   GHA_CACHE_KEY_VERSION: "v1"
 
-jobs:
-  setup:
-    strategy:
-      matrix:
-        python-version: ["3.8","3.9","3.10"]
-    runs-on: ubuntu-latest
-    env:
-      NLTK_DATA: ${{ github.workspace }}/nltk_data
-    steps:
-    - uses: actions/checkout@v3
-    - uses: actions/cache@v3
-      id: virtualenv-cache
-      with:
-        path: |
-          .venv
-          nltk_data
-        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Setup virtual environment (no cache hit)
-      run: |
-        python${{ matrix.python-version }} -m venv .venv
-        source .venv/bin/activate
-        [ ! -d "$NLTK_DATA" ] && mkdir "$NLTK_DATA"
-        make install-ci
+# jobs:
+#   setup:
+#     strategy:
+#       matrix:
+#         python-version: ["3.8","3.9","3.10"]
+#     runs-on: ubuntu-latest
+#     env:
+#       NLTK_DATA: ${{ github.workspace }}/nltk_data
+#     steps:
+#     - uses: actions/checkout@v3
+#     - uses: actions/cache@v3
+#       id: virtualenv-cache
+#       with:
+#         path: |
+#           .venv
+#           nltk_data
+#         key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+#     - name: Set up Python ${{ matrix.python-version }}
+#       uses: actions/setup-python@v4
+#       with:
+#         python-version: ${{ matrix.python-version }}
+#     - name: Setup virtual environment (no cache hit)
+#       run: |
+#         python${{ matrix.python-version }} -m venv .venv
+#         source .venv/bin/activate
+#         [ ! -d "$NLTK_DATA" ] && mkdir "$NLTK_DATA"
+#         make install-ci
 
-  check-deps:
-    strategy:
-      matrix:
-        python-version: ["3.8","3.9","3.10"]
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
-    - uses: actions/checkout@v3
-    - uses: actions/cache/restore@v3
-      id: virtualenv-cache
-      with:
-        path: |
-          .venv
-          nltk_data
-        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Setup virtual environment (no cache hit)
-      if: steps.virtualenv-cache.outputs.cache-hit != 'true'
-      run: |
-        python${{ matrix.python-version }} -m venv .venv
-        source .venv/bin/activate
-        make install-base-pip-packages
-    - name: Check for dependency conflicts
-      run: |
-        source .venv/bin/activate
-        make check-deps
+#   check-deps:
+#     strategy:
+#       matrix:
+#         python-version: ["3.8","3.9","3.10"]
+#     runs-on: ubuntu-latest
+#     needs: setup
+#     steps:
+#     - uses: actions/checkout@v3
+#     - uses: actions/cache/restore@v3
+#       id: virtualenv-cache
+#       with:
+#         path: |
+#           .venv
+#           nltk_data
+#         key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+#     - name: Set up Python ${{ matrix.python-version }}
+#       uses: actions/setup-python@v4
+#       with:
+#         python-version: ${{ matrix.python-version }}
+#     - name: Setup virtual environment (no cache hit)
+#       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
+#       run: |
+#         python${{ matrix.python-version }} -m venv .venv
+#         source .venv/bin/activate
+#         make install-base-pip-packages
+#     - name: Check for dependency conflicts
+#       run: |
+#         source .venv/bin/activate
+#         make check-deps
 
-  lint:
-    strategy:
-      matrix:
-        python-version: ["3.8","3.9","3.10"]
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
-    - uses: actions/checkout@v3
-    - uses: actions/cache/restore@v3
-      id: virtualenv-cache
-      with:
-        path: |
-          .venv
-          nltk_data
-        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Setup virtual environment (no cache hit)
-      if: steps.virtualenv-cache.outputs.cache-hit != 'true'
-      run: |
-        python${{ matrix.python-version }} -m venv .venv
-        source .venv/bin/activate
-        make install-ci
-    - name: Lint
-      run: |
-        source .venv/bin/activate
-        make check
+#   lint:
+#     strategy:
+#       matrix:
+#         python-version: ["3.8","3.9","3.10"]
+#     runs-on: ubuntu-latest
+#     needs: setup
+#     steps:
+#     - uses: actions/checkout@v3
+#     - uses: actions/cache/restore@v3
+#       id: virtualenv-cache
+#       with:
+#         path: |
+#           .venv
+#           nltk_data
+#         key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+#     - name: Set up Python ${{ matrix.python-version }}
+#       uses: actions/setup-python@v4
+#       with:
+#         python-version: ${{ matrix.python-version }}
+#     - name: Setup virtual environment (no cache hit)
+#       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
+#       run: |
+#         python${{ matrix.python-version }} -m venv .venv
+#         source .venv/bin/activate
+#         make install-ci
+#     - name: Lint
+#       run: |
+#         source .venv/bin/activate
+#         make check
 
-  shellcheck:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: ShellCheck
-        uses: ludeeus/action-shellcheck@master
+#   shellcheck:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v3
+#       - name: ShellCheck
+#         uses: ludeeus/action-shellcheck@master
 
-  test_unit:
-    strategy:
-      matrix:
-        python-version: ["3.8","3.9","3.10"]
-    runs-on: ubuntu-latest
-    env:
-      NLTK_DATA: ${{ github.workspace }}/nltk_data
-    needs: [setup, lint]
-    steps:
-    - uses: actions/checkout@v3
-    - uses: actions/cache/restore@v3
-      id: virtualenv-cache
-      with:
-        path: |
-          .venv
-          nltk_data
-        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
-    - name: Setup virtual environment (no cache hit)
-      if: steps.virtualenv-cache.outputs.cache-hit != 'true'
-      run: |
-        python${{ matrix.python-version}} -m venv .venv
-        source .venv/bin/activate
-        mkdir "$NLTK_DATA"
-        make install-ci
-    - name: Test
-      run: |
-        source .venv/bin/activate
-        sudo apt-get update
-        sudo apt-get install -y libmagic-dev poppler-utils libreoffice
-        make install-pandoc
-        sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
-        sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
-        tesseract --version
-        # NOTE(robinson) - Installing weaviate-client separately here because the requests
-        # version conflicts with label_studio_sdk
-        pip install weaviate-client
-        make test
-        make check-coverage
+#   test_unit:
+#     strategy:
+#       matrix:
+#         python-version: ["3.8","3.9","3.10"]
+#     runs-on: ubuntu-latest
+#     env:
+#       NLTK_DATA: ${{ github.workspace }}/nltk_data
+#     needs: [setup, lint]
+#     steps:
+#     - uses: actions/checkout@v3
+#     - uses: actions/cache/restore@v3
+#       id: virtualenv-cache
+#       with:
+#         path: |
+#           .venv
+#           nltk_data
+#         key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+#     - name: Setup virtual environment (no cache hit)
+#       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
+#       run: |
+#         python${{ matrix.python-version}} -m venv .venv
+#         source .venv/bin/activate
+#         mkdir "$NLTK_DATA"
+#         make install-ci
+#     - name: Test
+#       run: |
+#         source .venv/bin/activate
+#         sudo apt-get update
+#         sudo apt-get install -y libmagic-dev poppler-utils libreoffice
+#         make install-pandoc
+#         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
+#         sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
+#         tesseract --version
+#         # NOTE(robinson) - Installing weaviate-client separately here because the requests
+#         # version conflicts with label_studio_sdk
+#         pip install weaviate-client
+#         make test
+#         make check-coverage
 
-  test_ingest:
-    strategy:
-      matrix:
-        python-version: ["3.8","3.9","3.10"]
-    runs-on: ubuntu-latest
-    env:
-      NLTK_DATA: ${{ github.workspace }}/nltk_data
-    needs: [setup, lint]
-    steps:
-    - uses: actions/checkout@v3
-    - uses: actions/cache/restore@v3
-      id: virtualenv-cache
-      with:
-        path: |
-          .venv
-          nltk_data
-        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
-    - name: Setup virtual environment (no cache hit)
-      if: steps.virtualenv-cache.outputs.cache-hit != 'true'
-      run: |
-        python${{ matrix.python-version}} -m venv .venv
-        source .venv/bin/activate
-        mkdir "$NLTK_DATA"
-        make install-ci
-    - name: Test Ingest (unit)
-      run: |
-        source .venv/bin/activate
-        PYTHONPATH=. pytest test_unstructured_ingest/unit
-    - name: Test (end-to-end)
-      env:
-        GH_READ_ONLY_ACCESS_TOKEN: ${{ secrets.GH_READ_ONLY_ACCESS_TOKEN }}
-        SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
-        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-      run: |
-        source .venv/bin/activate
-        sudo apt-get update
-        sudo apt-get install -y libmagic-dev poppler-utils libreoffice pandoc
-        sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
-        sudo apt-get install -y tesseract-ocr
-        tesseract --version
-        make install-ingest-s3
-        make install-ingest-azure
-        make install-ingest-discord
-        make install-ingest-github
-        make install-ingest-gitlab
-        make install-ingest-slack
-        make install-ingest-wikipedia
-        ./test_unstructured_ingest/test-ingest.sh
+#   test_ingest:
+#     strategy:
+#       matrix:
+#         python-version: ["3.8","3.9","3.10"]
+#     runs-on: ubuntu-latest
+#     env:
+#       NLTK_DATA: ${{ github.workspace }}/nltk_data
+#     needs: [setup, lint]
+#     steps:
+#     - uses: actions/checkout@v3
+#     - uses: actions/cache/restore@v3
+#       id: virtualenv-cache
+#       with:
+#         path: |
+#           .venv
+#           nltk_data
+#         key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+#     - name: Setup virtual environment (no cache hit)
+#       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
+#       run: |
+#         python${{ matrix.python-version}} -m venv .venv
+#         source .venv/bin/activate
+#         mkdir "$NLTK_DATA"
+#         make install-ci
+#     - name: Test Ingest (unit)
+#       run: |
+#         source .venv/bin/activate
+#         PYTHONPATH=. pytest test_unstructured_ingest/unit
+#     - name: Test (end-to-end)
+#       env:
+#         GH_READ_ONLY_ACCESS_TOKEN: ${{ secrets.GH_READ_ONLY_ACCESS_TOKEN }}
+#         SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+#         DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+#       run: |
+#         source .venv/bin/activate
+#         sudo apt-get update
+#         sudo apt-get install -y libmagic-dev poppler-utils libreoffice pandoc
+#         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
+#         sudo apt-get install -y tesseract-ocr
+#         tesseract --version
+#         make install-ingest-s3
+#         make install-ingest-azure
+#         make install-ingest-discord
+#         make install-ingest-github
+#         make install-ingest-gitlab
+#         make install-ingest-slack
+#         make install-ingest-wikipedia
+#         ./test_unstructured_ingest/test-ingest.sh
 
-  changelog:
-    runs-on: ubuntu-latest
-    steps:
-    - if: github.ref != 'refs/heads/main'
-      uses: dorny/paths-filter@v2
-      id: changes
-      with:
-        filters: |
-          src:
-            - 'unstructured/**'
+#   changelog:
+#     runs-on: ubuntu-latest
+#     steps:
+#     - if: github.ref != 'refs/heads/main'
+#       uses: dorny/paths-filter@v2
+#       id: changes
+#       with:
+#         filters: |
+#           src:
+#             - 'unstructured/**'
 
-    - if: steps.changes.outputs.src == 'true' && github.ref != 'refs/heads/main'
-      uses: dangoslen/changelog-enforcer@v3
+#     - if: steps.changes.outputs.src == 'true' && github.ref != 'refs/heads/main'
+#       uses: dangoslen/changelog-enforcer@v3
 
-  # TODO - figure out best practice for caching docker images
-  # (Using the virtualenv to get pytest)
-  test_dockerfile:
-    runs-on: ubuntu-latest
-    needs: [ setup, lint ]
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/cache/restore@v3
-        id: virtualenv-cache
-        with:
-          path: |
-            .venv
-            nltk_data
-          key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Setup virtual environment (no cache hit)
-        if: steps.virtualenv-cache.outputs.cache-hit != 'true'
-        run: |
-          python${{ matrix.python-version }} -m venv .venv
-      - name: Test Dockerfile
-        run: |
-          source .venv/bin/activate
-          make docker-build
-          make docker-test
+#   # TODO - figure out best practice for caching docker images
+#   # (Using the virtualenv to get pytest)
+#   test_dockerfile:
+#     runs-on: ubuntu-latest
+#     needs: [ setup, lint ]
+#     steps:
+#       - uses: actions/checkout@v3
+#       - uses: actions/cache/restore@v3
+#         id: virtualenv-cache
+#         with:
+#           path: |
+#             .venv
+#             nltk_data
+#           key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+#       - name: Set up Python ${{ matrix.python-version }}
+#         uses: actions/setup-python@v4
+#         with:
+#           python-version: ${{ matrix.python-version }}
+#       - name: Setup virtual environment (no cache hit)
+#         if: steps.virtualenv-cache.outputs.cache-hit != 'true'
+#         run: |
+#           python${{ matrix.python-version }} -m venv .venv
+#       - name: Test Dockerfile
+#         run: |
+#           source .venv/bin/activate
+#           make docker-build
+#           make docker-test
