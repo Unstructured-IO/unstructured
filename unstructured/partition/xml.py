@@ -12,6 +12,10 @@ def is_leaf(elem):
     return not bool(elem)
 
 
+def is_string(elem):
+    return isinstance(elem.text, str)
+
+
 def get_leaf_elements(
     filename: Optional[str] = None,
     file: Optional[Union[IO, SpooledTemporaryFile]] = None,
@@ -32,7 +36,7 @@ def get_leaf_elements(
 
     for elem in root.findall(xml_path):
         for subelem in elem.iter():
-            if is_leaf(subelem):
+            if is_leaf(subelem) and is_string(subelem.text):
                 leaf_elements.append(subelem.text)
 
     return "\n".join(leaf_elements)  # type: ignore
