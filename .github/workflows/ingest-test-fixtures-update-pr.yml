@@ -100,7 +100,7 @@ jobs:
           add-paths: test_unstructured_ingest/expected-structured-output
           commit-message: "Update ingest test fixtures"
           branch: ${{ env.BRANCH_NAME }}
-          title: "${{ env.PR_NAME }} <- Ingest Test Fixtures Update"
+          title: "${{ env.PR_NAME }} <- Ingest test fixtures update"
           assignees: ${{ github.actor }}
           reviewers: ${{ github.actor }}
           delete-branch: true
