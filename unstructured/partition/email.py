@@ -182,6 +182,27 @@ def find_embedded_image(
     return Image(text=image_info[:-1]), element
 
 
+def parse_email(
+    filename: Optional[str] = None,
+    file: Optional[IO] = None,
+) -> Tuple[Optional[str], Message]:
+    if filename is not None:
+        with open(filename, "rb") as f:
+            msg = email.message_from_binary_file(f)
+    elif file is not None:
+        with open(file.name, "rb") as f:
+            msg = email.message_from_binary_file(f)
+    else:
+        raise ValueError("Either 'filename' or 'file' must be provided.")
+
+    charsets = msg.get_charsets() or []
+    for charset in charsets:
+        if charset and charset.strip():
+            return charset, msg
+
+    return None, msg
+
+
 @add_metadata_with_filetype(FileType.EML)
 def partition_email(
     filename: Optional[str] = None,
@@ -219,12 +240,15 @@ def partition_email(
     exactly_one(filename=filename, file=file, text=text)
 
     if filename is not None:
-        encoding, file_text = read_txt_file(filename=filename, encoding=encoding)
-        msg = email.message_from_string(file_text)
-
+        encoding, msg = parse_email(filename=filename)
+        if not encoding:
+            encoding, file_text = read_txt_file(filename=filename)
+            msg = email.message_from_string(file_text)
     elif file is not None:
-        encoding, file_text = read_txt_file(file=file, encoding=encoding)
-        msg = email.message_from_string(file_text)
+        encoding, msg = parse_email(file=file)
+        if not encoding:
+            encoding, file_text = read_txt_file(file=file)
+            msg = email.message_from_string(file_text)
 
     elif text is not None:
         _text: str = str(text)
