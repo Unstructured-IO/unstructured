@@ -18,6 +18,7 @@
 
 ### Features
 
+* Create `partition_tsv` and associated tests. Make additional changes to `detect_filetype`.
 * Adds `partition_rst` for processed ReStructured Text documents.
 
 ### Fixes
