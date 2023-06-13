@@ -1,7 +1,8 @@
-## 0.7.5-dev1
+## 0.7.5-dev2
 
 ### Enhancements
 
+* Updates `partition_docx` to include headers and footers in the output.
 * Adds functionality to sort elements in `partition_pdf` for `fast` strategy
 * Adds ingest tests with `--fast` strategy on PDF documents
 
