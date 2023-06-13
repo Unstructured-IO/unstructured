@@ -180,10 +180,13 @@ class BaseIngestDoc(ABC):
             logger.debug(f"Using remote partition ({endpoint})")
 
             with open(self.filename, "rb") as f:
+                headers_dict = {}
+                if len(self.standard_config.api_key) > 0:
+                    headers_dict["UNSTRUCTURED-API-KEY"] = self.standard_config.api_key
                 response = requests.post(
                     f"{endpoint}",
                     files={"files": (str(self.filename), f)},
-                    headers={"UNSTRUCTURED-API-KEY": self.standard_config.api_key},
+                    headers=headers_dict,
                     # TODO: add m_data_source_metadata to unstructured-api pipeline_api and then
                     # pass the stringified json here
                 )
