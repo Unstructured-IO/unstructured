@@ -232,9 +232,9 @@ def detect_filetype(
             return EXT_TO_FILETYPE.get(extension, FileType.UNK)
 
     elif file is not None:
-        try:
+        if hasattr(file, "name"):
             _, extension = os.path.splitext(file.name)
-        except AttributeError:
+        else:
             extension = ""
         extension = extension.lower()
         # NOTE(robinson) - the python-magic docs recommend reading at least the first 2048 bytes
