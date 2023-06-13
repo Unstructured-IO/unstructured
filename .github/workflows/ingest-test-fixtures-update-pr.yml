@@ -70,6 +70,10 @@ jobs:
           make install-ingest-azure
           make install-ingest-discord
           make install-ingest-github
+          make install-ingest-gitlab
+          make install-ingest-slack
+          make install-ingest-wikipedia
+          ./test_unstructured_ingest/test-ingest.sh
           make install
 
       - name: Save branch name to environment file
@@ -79,7 +83,7 @@ jobs:
           suffix="|ingest-test-fixtures-update-$(git rev-parse --short HEAD)"
           branch_name="$original_branch$suffix"
           echo "BRANCH_NAME=$branch_name" >> $GITHUB_ENV
-          
+
       - name: Save PR name to environment file
         id: pr
         run: |
