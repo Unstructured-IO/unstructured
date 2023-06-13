@@ -2,25 +2,17 @@ name: Ingest Test Fixtures Update PR
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 jobs:
   setup:
     runs-on: ubuntu-latest
-    # if: github.event.head_commit.message == 'ingest-test-fixtures-update'
+    if: contains(github.event.head_commit.message, 'ingest-test-fixtures-update')
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
       PYTHON_VERSION: "3.8"
     steps:
-      - name: Print Commit Message
-        run: |
-          echo "Commit Message: ${{ github.event.head_commit.message }}"
-          if [[ "${{ github.event.head_commit.message }}" == "ingest-test-fixtures-update" ]]; then
-            echo "Commit message matches 'ingest-test-fixtures-update'"
-          else
-            echo "Commit message does not match 'ingest-test-fixtures-update'"
-          fi
       - uses: actions/checkout@v3
       - uses: actions/cache@v3
         id: virtualenv-cache
@@ -39,6 +31,13 @@ jobs:
           source .venv/bin/activate
           [ ! -d "$NLTK_DATA" ] && mkdir "$NLTK_DATA"
           make install-ci
+      - name: Save branch name to environment file
+        id: branch
+        run: |
+          original_branch=$(git rev-parse --abbrev-ref HEAD)
+          suffix="|ingest-test-fixtures-update-$(git rev-parse --short HEAD)"
+          branch_name="$original_branch$suffix"
+          echo "BRANCH_NAME=$branch_name" >> $GITHUB_ENV
 
   update-fixtures-and-pr:
     runs-on: ubuntu-latest
@@ -60,7 +59,7 @@ jobs:
           source .venv/bin/activate
           mkdir "$NLTK_DATA"
           make install-ci
-      - name: Generate Fixtures
+      - name: Update test fixtures
         env:
           GH_READ_ONLY_ACCESS_TOKEN: ${{ secrets.GH_READ_ONLY_ACCESS_TOKEN }}
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
@@ -81,36 +80,22 @@ jobs:
           make install-ingest-slack
           make install-ingest-wikipedia
           ./test_unstructured_ingest/test-ingest.sh
-      - name: Create Branch Name
-        id: branch
-        run: |
-          original_branch=$(git rev-parse --abbrev-ref HEAD)
-          suffix="|ingest-test-fixtures-update-$(git rev-parse --short HEAD)"
-          branch_name="$original_branch$suffix"
-          echo "::set-output name=branch_name::$branch_name"
-      - name: Get PR Name
+      - name: Save PR name to environment file
         id: pr
         run: |
-          # Get the commit SHA
           commit_sha=$(git rev-parse HEAD)
-          
-          # Find the matching PRs for the commit
           prs=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             "https://api.github.com/repos/${{ github.repository }}/commits/${commit_sha}/pulls")
-          
-          # Extract the first PR's title using jq
           pr_name=$(echo "$prs" | jq -r '.[0].title')
-          
-          # Set the output variable
-          echo "::set-output name=pr_name::$pr_name"
+          echo "PR_NAME=$pr_name" >> $GITHUB_ENV
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GH_CREATE_PR_TOKEN }}
           add-paths: test_unstructured_ingest/expected-structured-output
           commit-message: "Update ingest test fixtures"
-          branch: ${{ steps.branch.outputs.branch_name }}
-          title: "${{ steps.pr.outputs.pr_name }} <- Ingest Test Fixtures Update"
+          branch: ${{ env.BRANCH_NAME }}
+          title: "${{ env.PR_NAME }} <- Ingest Test Fixtures Update"
           assignees: ${{ github.actor }}
           reviewers: ${{ github.actor }}
           delete-branch: true
