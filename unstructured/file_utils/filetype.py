@@ -278,14 +278,8 @@ def detect_filetype(
             return FileType.XML
 
     elif mime_type in TXT_MIME_TYPES or mime_type.startswith("text"):
-        if extension == ".eml":
-            return FileType.EML
-        elif extension == ".md":
-            return FileType.MD
-        elif extension == ".rtf":
-            return FileType.RTF
-        elif extension == ".html":
-            return FileType.HTML
+        if extension in [".eml", ".md", ".rtf", ".html"]:
+            return EXT_TO_FILETYPE.get(extension)
 
         if _is_text_file_a_json(file=file, filename=filename, encoding=encoding):
             return FileType.JSON
