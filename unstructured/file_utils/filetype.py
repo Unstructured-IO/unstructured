@@ -168,6 +168,7 @@ EXT_TO_FILETYPE = {
     ".msg": FileType.MSG,
     ".odt": FileType.ODT,
     ".csv": FileType.CSV,
+    ".tsv": FileType.TSV,
     # NOTE(robinson) - for now we are treating code files as plain text
     ".js": FileType.TXT,
     ".py": FileType.TXT,
@@ -231,7 +232,8 @@ def detect_filetype(
             return EXT_TO_FILETYPE.get(extension, FileType.UNK)
 
     elif file is not None:
-        extension = None
+        _, extension = os.path.splitext(file.name)
+        extension = extension.lower()
         # NOTE(robinson) - the python-magic docs recommend reading at least the first 2048 bytes
         # Increased to 4096 because otherwise .xlsx files get detected as a zip file
         # ref: https://github.com/ahupp/python-magic#usage
@@ -267,21 +269,19 @@ def detect_filetype(
         return FileType.XLS
 
     elif mime_type.endswith("xml"):
-        if extension and (extension == ".html" or extension == ".htm"):
+        if extension == ".html" or extension == ".htm":
             return FileType.HTML
         else:
             return FileType.XML
 
     elif mime_type in TXT_MIME_TYPES or mime_type.startswith("text"):
-        if extension and extension == ".eml":
+        if extension == ".eml":
             return FileType.EML
-        elif extension and extension == ".md":
+        elif extension == ".md":
             return FileType.MD
-        elif extension and extension == ".rst":
-            return FileType.RST
-        elif extension and extension == ".rtf":
+        elif extension == ".rtf":
             return FileType.RTF
-        elif extension and extension == ".html":
+        elif extension == ".html":
             return FileType.HTML
 
         if _is_text_file_a_json(file=file, filename=filename, encoding=encoding):
@@ -290,7 +290,7 @@ def detect_filetype(
         if _is_text_file_a_csv(file=file, filename=filename, encoding=encoding):
             return FileType.CSV
 
-        if file and not extension and _check_eml_from_buffer(file=file) is True:
+        if file and _check_eml_from_buffer(file=file) is True:
             return FileType.EML
 
         # Safety catch
@@ -300,14 +300,16 @@ def detect_filetype(
         return FileType.TXT
 
     elif mime_type == "application/octet-stream":
-        if file and not extension:
+        if extension == ".docx":
+            return FileType.DOCX
+        elif file:
             return _detect_filetype_from_octet_stream(file=file)
         else:
             return EXT_TO_FILETYPE.get(extension, FileType.UNK)
 
     elif mime_type == "application/zip":
         filetype = FileType.UNK
-        if file and not extension:
+        if file:
             filetype = _detect_filetype_from_octet_stream(file=file)
         elif filename is not None:
             with open(filename, "rb") as f:
@@ -315,9 +317,9 @@ def detect_filetype(
 
         extension = extension if extension else ""
         if filetype == FileType.UNK:
-            return EXT_TO_FILETYPE.get(extension.lower(), FileType.ZIP)
+            return FileType.ZIP
         else:
-            return EXT_TO_FILETYPE.get(extension.lower(), filetype)
+            return EXT_TO_FILETYPE.get(extension, filetype)
 
     elif _is_code_mime_type(mime_type):
         # NOTE(robinson) - we'll treat all code files as plain text for now.
