@@ -7,7 +7,9 @@ on:
 jobs:
   setup:
     runs-on: ubuntu-latest
-    if: github.event.head_commit.message == 'ingest-test-fixtures-update'
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'push' && contains(github.event.head_commit.message, 'ingest-test-fixtures-update'))
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
       PYTHON_VERSION: "3.8"
@@ -52,7 +54,7 @@ jobs:
             .venv
             nltk_data
           key: unstructured-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
-      - name: Setup virtual environment (no cache hit))
+      - name: Setup virtual environment (no cache hit)
         run: |
           python${{ env.PYTHON_VERSION }} -m venv .venv
           source .venv/bin/activate
@@ -75,10 +77,8 @@ jobs:
           make install-ingest-azure
           make install-ingest-discord
           make install-ingest-github
-          make install-ingest-gitlab
-          make install-ingest-slack
-          make install-ingest-wikipedia
-          ./test_unstructured_ingest/test-ingest.sh
+          make install
+
       - name: Save PR name to environment file
         id: pr
         run: |
@@ -87,6 +87,7 @@ jobs:
             "https://api.github.com/repos/${{ github.repository }}/commits/${commit_sha}/pulls")
           pr_name=$(echo "$prs" | jq -r '.[0].title')
           echo "PR_NAME=$pr_name" >> $GITHUB_ENV
+
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
