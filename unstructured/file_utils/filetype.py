@@ -258,14 +258,8 @@ def detect_filetype(
 
     """Mime type special cases."""
     # third check (mime_type)
-    # NOTE(crag): for older versions of the OS libmagic package, such as is currently
-    # installed on the Unstructured docker image, .json files resolve to "text/plain"
-    # rather than "application/json". this corrects for that case.
-    if mime_type == "text/plain" and extension == ".json":
-        return FileType.JSON
 
-    if mime_type == "text/plain" and extension == ".tsv":
-        return FileType.TSV
+
 
     # NOTE(Crag): older magic lib does not differentiate between xls and doc
     if mime_type == "application/msword" and extension == ".xls":
@@ -278,9 +272,9 @@ def detect_filetype(
             return FileType.XML
 
     elif mime_type in TXT_MIME_TYPES or mime_type.startswith("text"):
-        if extension in [".eml", ".md", ".rtf", ".html"]:
-            return EXT_TO_FILETYPE.get(extension)
-
+        # NOTE(crag): for older versions of the OS libmagic package, such as is currently
+        # installed on the Unstructured docker image, .json files resolve to "text/plain"
+        # rather than "application/json". this corrects for that case.
         if _is_text_file_a_json(file=file, filename=filename, encoding=encoding):
             return FileType.JSON
 
@@ -289,6 +283,9 @@ def detect_filetype(
 
         if file and _check_eml_from_buffer(file=file) is True:
             return FileType.EML
+        
+        if extension in [".eml", ".md", ".rtf", ".html", ".rst", ".tsv", ".json"]:
+            return EXT_TO_FILETYPE.get(extension)
 
         # Safety catch
         if mime_type in STR_TO_FILETYPE:
