@@ -9,6 +9,7 @@ from unstructured.file_utils import filetype
 from unstructured.file_utils.filetype import (
     FileType,
     _is_code_mime_type,
+    _is_text_file_a_csv,
     _is_text_file_a_json,
     detect_filetype,
 )
@@ -43,6 +44,8 @@ XLSX_MIME_TYPES = [
         ("fake-power-point.pptx", FileType.PPTX),
         ("winter-sports.epub", FileType.EPUB),
         ("spring-weather.html.json", FileType.JSON),
+        ("README.rst", FileType.RST),
+        ("README.md", FileType.MD),
         ("fake.odt", FileType.ODT),
     ],
 )
@@ -113,11 +116,12 @@ def test_detect_filetype_from_file(file, expected):
         assert detect_filetype(file=f) in expected
 
 
-def test_detect_filetype_from_file_raises_without_libmagic(monkeypatch):
+def test_detect_filetype_from_file_warning_without_libmagic(monkeypatch, caplog):
     monkeypatch.setattr(filetype, "LIBMAGIC_AVAILABLE", False)
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
-    with open(filename, "rb") as f, pytest.raises(ImportError):
+    with open(filename, "rb") as f:
         detect_filetype(file=f)
+        assert "WARNING" in caplog.text
 
 
 def test_detect_xml_application_xml(monkeypatch):
@@ -368,7 +372,9 @@ def test_filetype_order():
 @pytest.mark.parametrize(
     ("content", "expected"),
     [
-        (b"d\xe2\x80", False),
+        (b"d\xe2\x80", False),  # Invalid JSON
+        (b'[{"key": "value"}]', True),  # Valid JSON
+        (b"", False),  # Empty content
     ],
 )
 def test_is_text_file_a_json(content, expected):
@@ -376,3 +382,41 @@ def test_is_text_file_a_json(content, expected):
 
     with BytesIO(content) as f:
         assert _is_text_file_a_json(file=f) == expected
+
+
+@pytest.mark.parametrize(
+    ("content", "expected"),
+    [
+        (b"d\xe2\x80", False),  # Invalid CSV
+        (b'[{"key": "value"}]', False),  # Invalid CSV
+        (b"column1,column2,column3\nvalue1,value2,value3\n", True),  # Valid CSV
+        (b"", False),  # Empty content
+    ],
+)
+def test_is_text_file_a_csv(content, expected):
+    from io import BytesIO
+
+    with BytesIO(content) as f:
+        assert _is_text_file_a_csv(file=f) == expected
+
+
+def test_csv_json_check_with_filename_and_utf_32(filename="example-docs/fake-text-utf-32.txt"):
+    assert _is_text_file_a_csv(filename=filename) is False
+    assert _is_text_file_a_json(filename=filename) is False
+
+
+def test_csv_json_check_with_file_and_utf_32(filename="example-docs/fake-text-utf-32.txt"):
+    with open(filename, "rb") as f:
+        assert _is_text_file_a_csv(file=f) is False
+
+    with open(filename, "rb") as f:
+        assert _is_text_file_a_json(file=f) is False
+
+
+def test_detect_filetype_detects_empty_filename(filename="example-docs/empty.txt"):
+    assert detect_filetype(filename=filename) == FileType.EMPTY
+
+
+def test_detect_filetype_detects_empty_file(filename="example-docs/empty.txt"):
+    with open(filename, "rb") as f:
+        assert detect_filetype(file=f) == FileType.EMPTY

@@ -57,9 +57,10 @@ def partition_pdf(
         The strategy to use for partitioning the PDF. Valid strategies are "hi_res",
         "ocr_only", and "fast". When using the "hi_res" strategy, the function uses
         a layout detection model to identify document elements. When using the
-        "ocr_only" strategy, partition_image simply extracts the text from the
+        "ocr_only" strategy, partition_pdf simply extracts the text from the
         document using OCR and processes it. If the "fast" strategy is used, the text
-        is extracted directly from the PDF.
+        is extracted directly from the PDF. The default strategy `auto` will determine
+        when a page can be extracted using `fast` mode, otherwise it will fall back to `hi_res`.
     infer_table_structure
         Only applicable if `strategy=hi_res`.
         If True, any Table elements that are extracted will also have a metadata field
@@ -268,6 +269,7 @@ def _process_pdfminer_pages(
         height = page.height
 
         text_segments = []
+        page_elements = []
         for obj in page:
             x1, y2, x2, y1 = obj.bbox
             y1 = height - y1
@@ -285,7 +287,16 @@ def _process_pdfminer_pages(
                 element = element_from_text(_text)
                 element.coordinates = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
                 element.metadata = metadata
-                elements.append(element)
+                page_elements.append(element)
+
+        sorted_page_elements = sorted(
+            page_elements,
+            key=lambda el: (
+                el.coordinates[0][1] if el.coordinates else float("inf"),
+                el.coordinates[0][0] if el.coordinates else float("inf"),
+            ),
+        )
+        elements += sorted_page_elements
 
         if include_page_breaks:
             elements.append(PageBreak())

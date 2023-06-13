@@ -105,3 +105,4 @@ ENDS_IN_PUNCT_RE = re.compile(ENDS_IN_PUNCT_PATTERN)
 # NOTE(robinson) - Used to detect if text is in the expected "list of dicts"
 # format for document elements
 LIST_OF_DICTS_PATTERN = r"\A\s*\[\s*{?"
+JSON_PATTERN = r"^(?:\{.*\}|\[.*\])$"
