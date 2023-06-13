@@ -232,7 +232,10 @@ def detect_filetype(
             return EXT_TO_FILETYPE.get(extension, FileType.UNK)
 
     elif file is not None:
-        _, extension = os.path.splitext(file.name)
+        try:
+            _, extension = os.path.splitext(file.name)
+        except AttributeError:
+            extension = ""
         extension = extension.lower()
         # NOTE(robinson) - the python-magic docs recommend reading at least the first 2048 bytes
         # Increased to 4096 because otherwise .xlsx files get detected as a zip file
@@ -260,7 +263,7 @@ def detect_filetype(
     # rather than "application/json". this corrects for that case.
     if mime_type == "text/plain" and extension == ".json":
         return FileType.JSON
-    
+
     if mime_type == "text/plain" and extension == ".tsv":
         return FileType.TSV
 
