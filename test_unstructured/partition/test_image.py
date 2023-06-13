@@ -12,8 +12,6 @@ from unstructured.partition import image, pdf
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
-is_in_docker = os.path.exists("/.dockerenv")
-
 
 class MockResponse:
     def __init__(self, status_code, response):
