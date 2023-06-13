@@ -54,8 +54,11 @@ def detect_file_encoding(
         # Encoding detection failed, fallback to predefined encodings
         for enc in COMMON_ENCODINGS:
             try:
-                with open(filename, encoding=enc) as f:
-                    file_text = f.read()
+                if filename:
+                    with open(filename, encoding=enc) as f:
+                        file_text = f.read()
+                else:
+                    file_text = byte_data.decode(enc)
                 encoding = enc
                 break
             except (UnicodeDecodeError, UnicodeError):
