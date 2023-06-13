@@ -32,13 +32,6 @@ jobs:
           source .venv/bin/activate
           [ ! -d "$NLTK_DATA" ] && mkdir "$NLTK_DATA"
           make install-ci
-      - name: Save branch name to environment file
-        id: branch
-        run: |
-          original_branch=$(git rev-parse --abbrev-ref HEAD)
-          suffix="|ingest-test-fixtures-update-$(git rev-parse --short HEAD)"
-          branch_name="$original_branch$suffix"
-          echo "BRANCH_NAME=$branch_name" >> $GITHUB_ENV
 
   update-fixtures-and-pr:
     runs-on: ubuntu-latest
@@ -79,6 +72,14 @@ jobs:
           make install-ingest-github
           make install
 
+      - name: Save branch name to environment file
+        id: branch
+        run: |
+          original_branch=$(git rev-parse --abbrev-ref HEAD)
+          suffix="|ingest-test-fixtures-update-$(git rev-parse --short HEAD)"
+          branch_name="$original_branch$suffix"
+          echo "BRANCH_NAME=$branch_name" >> $GITHUB_ENV
+          
       - name: Save PR name to environment file
         id: pr
         run: |
