@@ -1,14 +1,13 @@
 name: Ingest Test Fixtures Update PR
 
 on:
-  pull_request:
-    branches: [main]
+  push:
   workflow_dispatch:
 
 jobs:
   setup:
     runs-on: ubuntu-latest
-    # if: contains(github.event.head_commit.message, 'ingest-test-fixtures-update')
+    if: github.event.head_commit.message == 'ingest-test-fixtures-update'
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
       PYTHON_VERSION: "3.8"
