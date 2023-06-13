@@ -3,6 +3,9 @@ name: Ingest Test Fixtures Update PR
 on:
   push:
   workflow_dispatch:
+  
+env:
+  GHA_CACHE_KEY_VERSION: "v1"
 
 jobs:
   setup:
