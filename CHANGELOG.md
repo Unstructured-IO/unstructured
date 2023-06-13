@@ -1,7 +1,53 @@
-## 0.7.2-dev6
+## 0.7.5-dev1
 
 ### Enhancements
 
+* Adds functionality to sort elements in `partition_pdf` for `fast` strategy
+* Adds ingest tests with `--fast` strategy on PDF documents
+
+### Features
+
+* Adds `partition_rst` for processed ReStructured Text documents.
+
+### Fixes
+
+* Adds handling for emails that do not have a datetime to extract.
+
+## 0.7.4
+
+### Enhancements
+
+* Allows passing kwargs to request data field for `partition_via_api` and `partition_multiple_via_api`
+* Enable MIME type detection if libmagic is not available
+* Adds handling for empty files in `detect_filetype` and `partition`.
+
+### Features
+
+### Fixes
+
+* Reslove `grpcio` import issue on `weaviate.schema.validate_schema` for python 3.9 and 3.10
+* Remove building `detectron2` from source in Dockerfile
+
+## 0.7.3
+
+### Enhancements
+
+* Update IngestDoc abstractions and add data source metadata in ElementMetadata
+
+### Features
+
+### Fixes
+
+* Pass `strategy` parameter down from `partition` for `partition_image`
+* Filetype detection if a CSV has a `text/plain` MIME type
+* `convert_office_doc` no longers prints file conversion info messages to stdout.
+* `partition_via_api` reflects the actual filetype for the file processed in the API.
+
+## 0.7.2
+
+### Enhancements
+
+* Adds an optional encoding kwarg to `elements_to_json` and `elements_from_json`
 * Bump version of base image to use new stable version of tesseract
 
 ### Features

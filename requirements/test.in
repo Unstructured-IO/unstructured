@@ -7,12 +7,14 @@ coverage
 # ref: https://github.com/psf/black/issues/2964
 click>=8.1
 flake8
+freezegun
+label_studio_sdk
 mypy
-types-Markdown
 pytest-cov
 pytest-mock
-label_studio_sdk
-types-tabulate
-types-requests
-vcrpy
 ruff
+types-Markdown
+types-requests
+types-tabulate
+vcrpy
+grpcio

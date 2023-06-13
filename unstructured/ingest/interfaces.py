@@ -3,10 +3,12 @@ through Unstructured."""
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Optional
+from datetime import datetime
+from typing import Any, Dict, List, Optional
 
 import requests
 
+from unstructured.documents.elements import DataSourceMetadata
 from unstructured.ingest.logger import logger
 from unstructured.partition.auto import partition
 from unstructured.staging.base import convert_to_dict
@@ -85,10 +87,53 @@ class BaseIngestDoc(ABC):
     standard_config: StandardConnectorConfig
     config: BaseConnectorConfig
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._date_processed = None
+
+    @property
+    def date_created(self) -> Optional[str]:
+        """The date the document was created on the source system."""
+        return None
+
+    @property
+    def date_modified(self) -> Optional[str]:
+        """The date the document was last modified on the source system."""
+        return None
+
+    @property
+    def date_processed(self) -> Optional[str]:
+        """The date the document was last processed by Unstructured.
+        self._date_processed is assigned internally in self.partition_file()"""
+        return self._date_processed
+
+    @property
+    def exists(self) -> Optional[bool]:
+        """Whether the document exists on the remote source."""
+        return None
+
     @property
     @abstractmethod
     def filename(self):
         """The local filename of the document after fetching from remote source."""
+
+    @property
+    def record_locator(self) -> Optional[Dict[str, Any]]:  # Values must be JSON-serializable
+        """A dictionary with any data necessary to uniquely identify the document on
+        the source system."""
+        return None
+
+    @property
+    def source_url(self) -> Optional[str]:
+        """The url of the source document."""
+        return None
+
+    @property
+    def version(self) -> Optional[str]:
+        """The version of the source document, this could be the last modified date, an
+        explicit version number, or anything else that can be used to uniquely identify
+        the version of the document."""
+        return None
 
     @abstractmethod
     def cleanup_file(self):
@@ -103,7 +148,7 @@ class BaseIngestDoc(ABC):
         pass
 
     @abstractmethod
-    def has_output(self):
+    def has_output(self) -> bool:
         """Determine if structured output for this doc already exists."""
         pass
 
@@ -112,10 +157,21 @@ class BaseIngestDoc(ABC):
         """Write the structured json result for this doc. result must be json serializable."""
         pass
 
-    def partition_file(self, **partition_kwargs):
+    def partition_file(self, **partition_kwargs) -> List[Dict[str, Any]]:
         if not self.standard_config.partition_by_api:
             logger.debug("Using local partition")
-            elements = partition(filename=str(self.filename), **partition_kwargs)
+            elements = partition(
+                filename=str(self.filename),
+                data_source_metadata=DataSourceMetadata(
+                    url=self.source_url,
+                    version=self.version,
+                    record_locator=self.record_locator,
+                    date_created=self.date_created,
+                    date_modified=self.date_modified,
+                    date_processed=self.date_processed,
+                ),
+                **partition_kwargs,
+            )
             return convert_to_dict(elements)
 
         else:
@@ -128,6 +184,8 @@ class BaseIngestDoc(ABC):
                     f"{endpoint}",
                     files={"files": (str(self.filename), f)},
                     headers={"UNSTRUCTURED-API-KEY": self.standard_config.api_key},
+                    # TODO: add m_data_source_metadata to unstructured-api pipeline_api and then
+                    # pass the stringified json here
                 )
 
             if response.status_code != 200:
@@ -135,9 +193,10 @@ class BaseIngestDoc(ABC):
 
             return response.json()
 
-    def process_file(self, **partition_kwargs):
+    def process_file(self, **partition_kwargs) -> Optional[List[Dict[str, Any]]]:
+        self._date_processed = datetime.utcnow().isoformat()
         if self.standard_config.download_only:
-            return
+            return None
         logger.info(f"Processing {self.filename}")
 
         isd_elems = self.partition_file(**partition_kwargs)
@@ -156,7 +215,17 @@ class BaseIngestDoc(ABC):
             elif self.standard_config.metadata_exclude is not None:
                 ex_list = self.standard_config.metadata_exclude.split(",")
                 for ex in ex_list:
-                    elem["metadata"].pop(ex, None)  # type: ignore[attr-defined]
+                    if "." in ex:  # handle nested fields
+                        nested_fields = ex.split(".")
+                        current_elem = elem
+                        for field in nested_fields[:-1]:
+                            if field in current_elem:
+                                current_elem = current_elem[field]
+                        field_to_exclude = nested_fields[-1]
+                        if field_to_exclude in current_elem:
+                            current_elem.pop(field_to_exclude, None)
+                    else:  # handle top-level fields
+                        elem["metadata"].pop(ex, None)  # type: ignore[attr-defined]
             elif self.standard_config.metadata_include is not None:
                 in_list = self.standard_config.metadata_include.split(",")
                 for k in list(elem["metadata"].keys()):  # type: ignore[attr-defined]
