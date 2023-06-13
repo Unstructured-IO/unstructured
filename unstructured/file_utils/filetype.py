@@ -259,8 +259,6 @@ def detect_filetype(
     """Mime type special cases."""
     # third check (mime_type)
 
-
-
     # NOTE(Crag): older magic lib does not differentiate between xls and doc
     if mime_type == "application/msword" and extension == ".xls":
         return FileType.XLS
@@ -283,7 +281,7 @@ def detect_filetype(
 
         if file and _check_eml_from_buffer(file=file) is True:
             return FileType.EML
-        
+
         if extension in [".eml", ".md", ".rtf", ".html", ".rst", ".tsv", ".json"]:
             return EXT_TO_FILETYPE.get(extension)
 
