@@ -236,7 +236,7 @@ def _get_headers_and_footers(
 
                 text = _join_paragraphs(_elem.paragraphs)
                 if text:
-                    header_footer_type = prefix or "primary"
+                    header_footer_type = prefix[:-1] or "primary"
                     metadata = ElementMetadata(
                         filename=metadata_filename,
                         header_footer_type=header_footer_type,
