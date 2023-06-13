@@ -32,6 +32,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --reprocess \
     --verbose \
     --re-download \
+    --download-dir files-ingest-download/biomed-api \
     --preserve-downloads
 
 OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
