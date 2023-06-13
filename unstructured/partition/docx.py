@@ -1,7 +1,7 @@
 import os
 import tempfile
 from tempfile import SpooledTemporaryFile
-from typing import IO, BinaryIO, List, Optional, Union, cast
+from typing import IO, BinaryIO, List, Optional, Tuple, Union, cast
 
 import docx
 import pypandoc
@@ -14,6 +14,8 @@ from unstructured.documents.elements import (
     Address,
     Element,
     ElementMetadata,
+    Footer,
+    Header,
     ListItem,
     NarrativeText,
     Table,
@@ -126,13 +128,20 @@ def partition_docx(
         document = docx.Document(filename)
     elif file is not None:
         document = docx.Document(
-            spooled_to_bytes_io_if_needed(cast(Union[BinaryIO, SpooledTemporaryFile], file)),
+            spooled_to_bytes_io_if_needed(
+                cast(Union[BinaryIO, SpooledTemporaryFile], file),
+            ),
         )
 
     metadata_filename = metadata_filename or filename
     elements: List[Element] = []
     table_index = 0
 
+    headers_and_footers = _get_headers_and_footers(document, metadata_filename)
+    if len(headers_and_footers) > 0:
+        elements.extend(headers_and_footers[0][0])
+
+    section = 0
     for element_item in document.element.body:
         if element_item.tag.endswith("tbl"):
             table = document.tables[table_index]
@@ -152,6 +161,15 @@ def partition_docx(
             if para_element is not None:
                 para_element.metadata = ElementMetadata(filename=metadata_filename)
                 elements.append(para_element)
+        elif element_item.tag.endswith("sectPr"):
+            if len(headers_and_footers) > section:
+                footers = headers_and_footers[section][1]
+                elements.extend(footers)
+
+            section += 1
+            if len(headers_and_footers) > section:
+                headers = headers_and_footers[section][0]
+                elements.extend(headers)
 
     return elements
 
@@ -195,6 +213,45 @@ def _text_to_element(text: str) -> Optional[Text]:
         return Text(text)
 
 
+def _join_paragraphs(paragraphs: List[docx.text.paragraph.Paragraph]) -> Optional[str]:
+    return "\n".join([paragraph.text for paragraph in paragraphs])
+
+
+def _get_headers_and_footers(
+    document: docx.document.Document,
+    metadata_filename: Optional[str],
+) -> List[Tuple[List[Header], List[Footer]]]:
+    headers_and_footers = []
+    attr_prefixes = ["", "first_page_", "even_page_"]
+
+    for section in document.sections:
+        headers = []
+        footers = []
+
+        for _type in ["header", "footer"]:
+            for prefix in attr_prefixes:
+                _elem = getattr(section, f"{prefix}{_type}", None)
+                if _elem is None:
+                    continue
+
+                text = _join_paragraphs(_elem.paragraphs)
+                if text:
+                    header_footer_type = prefix or "primary"
+                    metadata = ElementMetadata(
+                        filename=metadata_filename,
+                        header_footer_type=header_footer_type,
+                    )
+
+                    if _type == "header":
+                        headers.append(Header(text=text, metadata=metadata))
+                    elif _type == "footer":
+                        footers.append(Footer(text=text, metadata=metadata))
+
+        headers_and_footers.append((headers, footers))
+
+    return headers_and_footers
+
+
 def convert_and_partition_docx(
     source_format: str,
     filename: Optional[str] = None,
@@ -232,7 +289,12 @@ def convert_and_partition_docx(
 
     with tempfile.TemporaryDirectory() as tmpdir:
         docx_filename = os.path.join(tmpdir, f"{base_filename}.docx")
-        pypandoc.convert_file(filename, "docx", format=source_format, outputfile=docx_filename)
+        pypandoc.convert_file(
+            filename,
+            "docx",
+            format=source_format,
+            outputfile=docx_filename,
+        )
         elements = partition_docx(filename=docx_filename, metadata_filename=filename)
 
     return elements
