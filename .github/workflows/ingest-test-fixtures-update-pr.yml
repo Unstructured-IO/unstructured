@@ -13,6 +13,14 @@ jobs:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
       PYTHON_VERSION: "3.8"
     steps:
+      - name: Print Commit Message
+        run: |
+          echo "Commit Message: ${{ github.event.head_commit.message }}"
+          if [[ "${{ github.event.head_commit.message }}" == "ingest-test-fixtures-update" ]]; then
+            echo "Commit message matches 'ingest-test-fixtures-update'"
+          else
+            echo "Commit message does not match 'ingest-test-fixtures-update'"
+          fi
       - uses: actions/checkout@v3
       - uses: actions/cache@v3
         id: virtualenv-cache
