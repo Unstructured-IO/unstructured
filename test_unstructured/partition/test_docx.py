@@ -64,7 +64,7 @@ def test_partition_docx_with_filename(mock_document, expected_elements, tmpdir):
 
     elements = partition_docx(filename=filename)
     assert elements == expected_elements
-    assert elements[0].metadata.page_number == 0
+    assert elements[0].metadata.page_number is None
 
 
 def test_partition_docx_with_spooled_file(mock_document, expected_elements, tmpdir):

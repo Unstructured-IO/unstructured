@@ -11,8 +11,9 @@
 
 ### Fixes
 
-* Page number defaults to `0` instead of `1` when page number is not present in the metadata.
-  A page number of `0` indicates that page numbers are not being tracked for the document.
+* Page number defaults to `None` instead of `1` when page number is not present in the metadata.
+  A page number of `None` indicates that page numbers are not being tracked for the document
+  or that page numbers do not apply to the element in question..
 
 ## 0.7.5
 

@@ -105,7 +105,8 @@ def _add_element_metadata(
                 _element.metadata = metadata.merge(_element.metadata)
             elements.extend(element)
         elif isinstance(element, PageBreak):
-            page_number += 1
+            if page_number is not None:
+                page_number += 1
             element.metadata = metadata.merge(element.metadata)
             if include_page_breaks:
                 elements.append(element)
