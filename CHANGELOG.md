@@ -1,12 +1,18 @@
-## 0.7.6-dev0
+## 0.7.6-dev1
 
 ### Enhancements
+
+* Adds support for page numbers in `.docx` and `.doc` numbers when user or renderer
+  created page braks are present.
 
 ### Features
 
 * Updates `partition_docx` to include headers and footers in the output.
 
 ### Fixes
+
+* Page number defaults to `0` instead of `1` when page number is not present in the metadata.
+  A page number of `0` indicates that page numbers are not being tracked for the document.
 
 ## 0.7.5
 
