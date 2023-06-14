@@ -174,7 +174,8 @@ class MainProcess:
     "--remote-url",
     default=None,
     help="Remote fsspec URL formatted as `protocol://dir/path`, it can contain both "
-    "a directory or a single file. Supported protocols are: `gcs`, `gs`, `s3`, `s3a`, `abfs`, and `az`.",
+    "a directory or a single file. Supported protocols are: `gcs`, `gs`, `s3`, `s3a`, `abfs` "
+    "and `az`.",
 )
 # I think anonymous is embedded in code for right now
 @click.option(
@@ -395,7 +396,12 @@ class MainProcess:
     show_default=True,
     help="Number of parallel processes to process docs in.",
 )
-@click.option("--recursive", is_flag=True, default=False, help="Will recurse directories for S3, GCS and Azure storage.")
+@click.option(
+    "--recursive",
+    is_flag=True,
+    default=False,
+    help="Will recurse directories for S3, GCS and Azure storage.",
+)
 @click.option("-v", "--verbose", is_flag=True, default=False)
 def main(
     ctx,
@@ -564,14 +570,14 @@ def main(
                     access_kwargs={"anon": s3_anonymous},
                 ),
             )
-        elif protocol in ("gs","gcs"):
-            from unstructured.ingest.connector.gs import GsConnector, SimpleGsConfig
+        elif protocol in ("gs", "gcs"):
+            from unstructured.ingest.connector.gcs import GcsConnector, SimpleGcsConfig
 
-            doc_connector = GsConnector(  # type: ignore
+            doc_connector = GcsConnector(  # type: ignore
                 standard_config=standard_config,
-                config=SimpleGsConfig(
+                config=SimpleGcsConfig(
                     path=remote_url,
-                    recursive=recursive
+                    recursive=recursive,
                 ),
             )
         elif protocol in ("abfs", "az"):
@@ -600,8 +606,8 @@ def main(
         else:
             warnings.warn(
                 f"`fsspec` protocol {protocol} is not directly supported by `unstructured`,"
-                " so use it at your own risk. Supported protocols are `gcs`, `gs`, `s3`, `s3a`, `abfs`,"
-                " and `az`.",
+                " so use it at your own risk. Supported protocols are `gcs`, `gs`, `s3`, `s3a`,"
+                "`abfs` and `az`.",
                 UserWarning,
             )
 

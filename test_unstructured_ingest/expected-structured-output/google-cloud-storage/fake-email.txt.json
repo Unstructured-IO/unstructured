@@ -1,0 +1,112 @@
+[
+  {
+    "element_id": "855ecc17dee3ddb9d89d8f48740c9853",
+    "text": "MIME-Version: 1.0 Date: Fri, 16 Dec 2022 17:04:16 -0500 Message-ID: <CADc-_xaLB2FeVQ7mNsoX+NJb_7hAJhBKa_zet-rtgPGenj0uVw@mail.gmail.com> Subject: Test Email From: Matthew Robinson <mrobinson@unstructured.io> To: Matthew Robinson <mrobinson@unstructured.io> Content-Type: multipart/alternative; boundary=\"00000000000095c9b205eff92630\"",
+    "type": "UncategorizedText",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "c3db8e6c584627c190cc8e1750bdac9c",
+    "text": "-00000000000095c9b205eff92630",
+    "type": "ListItem",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "b91c2196ba2a3190ec703710671918b2",
+    "text": "Content-Type: text/plain; charset=\"UTF-8\"",
+    "type": "Title",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "f49fbd614ddf5b72e06f59e554e6ae2b",
+    "text": "This is a test email to use for unit tests.",
+    "type": "NarrativeText",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "9c218520320f238595f1fde74bdd137d",
+    "text": "Important points:",
+    "type": "Title",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "8522061b991b1db70453502d328fe07e",
+    "text": "Roses are red",
+    "type": "ListItem",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "c3c4527761d4e4b8d0a4c4a0d46954c8",
+    "text": "Violets are blue",
+    "type": "ListItem",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "c3db8e6c584627c190cc8e1750bdac9c",
+    "text": "-00000000000095c9b205eff92630",
+    "type": "ListItem",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "c30942ddb17655a8226bf9d50b5c2fb2",
+    "text": "Content-Type: text/html; charset=\"UTF-8\"",
+    "type": "Title",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "9f5297daa98b670a4529a64fb1e29067",
+    "text": "<div dir=\"ltr\"><div>This is a test email to use for unit tests.</div><div><br></div><div>Important points:</div><div><ul><li>Roses are red</li><li>Violets are blue</li></ul></div></div>",
+    "type": "NarrativeText",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "f09df5cef9c41280d2d859b808e5f658",
+    "text": "-00000000000095c9b205eff92630--",
+    "type": "ListItem",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain",
+      "page_number": 1
+    }
+  }
+]

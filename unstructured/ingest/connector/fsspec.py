@@ -87,7 +87,7 @@ class FsspecIngestDoc(BaseIngestDoc):
     def has_output(self):
         """Determine if structured output for this doc already exists."""
         return self._output_filename().is_file() and os.path.getsize(
-            self._output_filename()
+            self._output_filename(),
         )
 
     def _create_full_tmp_dir_path(self):
@@ -122,7 +122,7 @@ class FsspecIngestDoc(BaseIngestDoc):
         output_filename.parent.mkdir(parents=True, exist_ok=True)
         with open(output_filename, "w") as output_f:
             output_f.write(
-                json.dumps(self.isd_elems_no_filename, ensure_ascii=False, indent=2)
+                json.dumps(self.isd_elems_no_filename, ensure_ascii=False, indent=2),
             )
         logger.info(f"Wrote {output_filename}")
 
@@ -133,15 +133,12 @@ class FsspecIngestDoc(BaseIngestDoc):
 
     def cleanup_file(self):
         """Removes the local copy of the file after successful processing."""
-        if (
-            not self.standard_config.preserve_downloads
-            and not self.standard_config.download_only
-        ):
+        if not self.standard_config.preserve_downloads and not self.standard_config.download_only:
             logger.debug(f"Cleaning up {self}")
             try:
                 os.unlink(self._tmp_download_file())
-            except:  # Don't think we need to throw an error
-                logger.debug(f"Failed to remove {self._tmp_download_file()}")
+            except OSError as e:  # Don't think we need to throw an error
+                logger.debug(f"Failed to remove {self._tmp_download_file()} due to {e}")
 
 
 class FsspecConnector(BaseConnector):
@@ -201,7 +198,8 @@ class FsspecConnector(BaseConnector):
             return [
                 k
                 for k, v in self.fs.find(
-                    self.config.path_without_protocol, detail=True
+                    self.config.path_without_protocol,
+                    detail=True,
                 ).items()
                 if v.get("size") > 0
             ]

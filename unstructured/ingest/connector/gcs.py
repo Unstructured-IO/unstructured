@@ -11,23 +11,23 @@ from unstructured.utils import requires_dependencies
 
 
 @dataclass
-class SimpleGsConfig(SimpleFsspecConfig):
+class SimpleGcsConfig(SimpleFsspecConfig):
     pass
 
 
-class GsIngestDoc(FsspecIngestDoc):
+class GcsIngestDoc(FsspecIngestDoc):
     @requires_dependencies(["gcsfs", "fsspec"])
     def get_file(self):
         super().get_file()
 
 
 @requires_dependencies(["gcsfs", "fsspec"])
-class GsConnector(FsspecConnector):
-    ingest_doc_cls: Type[GsIngestDoc] = GsIngestDoc
+class GcsConnector(FsspecConnector):
+    ingest_doc_cls: Type[GcsIngestDoc] = GcsIngestDoc
 
     def __init__(
         self,
-        config: SimpleGsConfig,
+        config: SimpleGcsConfig,
         standard_config: StandardConnectorConfig,
     ) -> None:
         super().__init__(standard_config, config)
