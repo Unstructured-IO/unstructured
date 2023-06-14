@@ -77,11 +77,12 @@ def _add_element_metadata(
     filename: Optional[str] = None,
     filetype: Optional[str] = None,
     url: Optional[str] = None,
+    initial_page_number: Optional[int] = None,
 ) -> List[Element]:
     """Adds document metadata to the document element. Document metadata includes information
     like the filename, source url, and page number."""
     elements: List[Element] = []
-    page_number: Optional[int] = None
+    page_number: Optional[int] = initial_page_number
     for layout_element in layout_elements:
         element = normalize_layout_element(layout_element)
         if hasattr(layout_element, "text_as_html"):
@@ -92,7 +93,6 @@ def _add_element_metadata(
         # if it's available
         if hasattr(element, "metadata"):
             page_number = element.metadata.page_number or page_number
-
         metadata = ElementMetadata(
             filename=filename,
             filetype=filetype,
