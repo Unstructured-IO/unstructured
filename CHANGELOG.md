@@ -1,3 +1,13 @@
+## 0.7.6-dev0
+
+### Enhancements
+
+### Features
+
+* Updates `partition_docx` to include headers and footers in the output.
+
+### Fixes
+
 ## 0.7.5
 
 ### Enhancements
