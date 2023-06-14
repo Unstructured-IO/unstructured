@@ -137,7 +137,7 @@ class FsspecIngestDoc(BaseIngestDoc):
             logger.debug(f"Cleaning up {self}")
             try:
                 os.unlink(self._tmp_download_file())
-            except OSError as e:  # Don't think we need to throw an error
+            except OSError as e:  # Don't think we need to raise an exception
                 logger.debug(f"Failed to remove {self._tmp_download_file()} due to {e}")
 
 
