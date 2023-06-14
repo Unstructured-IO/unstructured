@@ -1,9 +1,11 @@
-## 0.7.5-dev1
+## 0.7.5-dev2
 
 ### Enhancements
 
 * Adds functionality to sort elements in `partition_pdf` for `fast` strategy
 * Adds ingest tests with `--fast` strategy on PDF documents
+* Adds --api-key to unstructured-ingest
+
 
 ### Features
 
