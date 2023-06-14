@@ -18,6 +18,7 @@ from unstructured.documents.elements import (
     Header,
     ListItem,
     NarrativeText,
+    PageBreak,
     Table,
     Text,
     Title,
@@ -106,6 +107,7 @@ def partition_docx(
     filename: Optional[str] = None,
     file: Optional[Union[IO, SpooledTemporaryFile]] = None,
     metadata_filename: Optional[str] = None,
+    include_page_breaks: bool = True,
 ) -> List[Element]:
     """Partitions Microsoft Word Documents in .docx format into its document elements.
 
@@ -180,6 +182,8 @@ def partition_docx(
 
         if page_number is not None and _element_contains_pagebreak(element_item):
             page_number += 1
+            if include_page_breaks:
+                elements.append(PageBreak())
 
     return elements
 
