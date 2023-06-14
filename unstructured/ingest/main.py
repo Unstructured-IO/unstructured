@@ -177,7 +177,6 @@ class MainProcess:
     "a directory or a single file. Supported protocols are: `gcs`, `gs`, `s3`, `s3a`, `abfs` "
     "and `az`.",
 )
-# I think anonymous is embedded in code for right now
 @click.option(
     "--s3-anonymous",
     is_flag=True,
