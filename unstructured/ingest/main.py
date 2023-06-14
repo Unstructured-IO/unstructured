@@ -32,6 +32,7 @@ class MainProcess:
         reprocess,
         verbose,
         max_docs,
+        recursive,
     ):
         # initialize the reader and writer
         self.doc_connector = doc_connector
@@ -40,6 +41,7 @@ class MainProcess:
         self.reprocess = reprocess
         self.verbose = verbose
         self.max_docs = max_docs
+        self.recursive = recursive
 
     def initialize(self):
         """Slower initialization things: check connections, load things into memory, etc."""
@@ -172,8 +174,9 @@ class MainProcess:
     "--remote-url",
     default=None,
     help="Remote fsspec URL formatted as `protocol://dir/path`, it can contain both "
-    "a directory or a single file. Supported protocols are: `gs`, `s3`, `s3a`, `abfs`, and `az`.",
+    "a directory or a single file. Supported protocols are: `gcs`, `gs`, `s3`, `s3a`, `abfs`, and `az`.",
 )
+# I think anonymous is embedded in code for right now
 @click.option(
     "--s3-anonymous",
     is_flag=True,
@@ -392,6 +395,7 @@ class MainProcess:
     show_default=True,
     help="Number of parallel processes to process docs in.",
 )
+@click.option("--recursive", is_flag=True, default=False, help="Will recurse directories for S3, GCS and Azure storage.")
 @click.option("-v", "--verbose", is_flag=True, default=False)
 def main(
     ctx,
@@ -434,6 +438,7 @@ def main(
     structured_output_dir,
     reprocess,
     num_processes,
+    recursive,
     verbose,
     metadata_include,
     metadata_exclude,
@@ -555,17 +560,18 @@ def main(
                 standard_config=standard_config,
                 config=SimpleS3Config(
                     path=remote_url,
+                    recursive=recursive,
                     access_kwargs={"anon": s3_anonymous},
                 ),
             )
-        elif protocol in ("gs"):
+        elif protocol in ("gs","gcs"):
             from unstructured.ingest.connector.gs import GsConnector, SimpleGsConfig
 
             doc_connector = GsConnector(  # type: ignore
                 standard_config=standard_config,
                 config=SimpleGsConfig(
                     path=remote_url,
-                    # access_kwargs={"anon": s3_anonymous},
+                    recursive=recursive
                 ),
             )
         elif protocol in ("abfs", "az"):
@@ -587,13 +593,14 @@ def main(
                 standard_config=standard_config,
                 config=SimpleAzureBlobStorageConfig(
                     path=remote_url,
+                    recursive=recursive,
                     access_kwargs=access_kwargs,
                 ),
             )
         else:
             warnings.warn(
                 f"`fsspec` protocol {protocol} is not directly supported by `unstructured`,"
-                " so use it at your own risk. Supported protocols are `gs`, `s3`, `s3a`, `abfs`,"
+                " so use it at your own risk. Supported protocols are `gcs`, `gs`, `s3`, `s3a`, `abfs`,"
                 " and `az`.",
                 UserWarning,
             )
@@ -756,6 +763,7 @@ def main(
         doc_processor_fn=process_document_with_partition_strategy,
         num_processes=num_processes,
         reprocess=reprocess,
+        recursive=recursive,
         verbose=verbose,
         max_docs=max_docs,
     ).run()

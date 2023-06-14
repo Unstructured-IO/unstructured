@@ -15,9 +15,11 @@ from unstructured.ingest.logger import logger
 
 SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
     "s3",
+    "s3a",
     "abfs",
     "az",
     "gs",
+    "gcs",
 ]
 
 
@@ -25,6 +27,7 @@ SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
 class SimpleFsspecConfig(BaseConnectorConfig):
     # fsspec specific options
     path: str
+    recursive: bool
     access_kwargs: dict = field(default_factory=dict)
     protocol: str = field(init=False)
     path_without_protocol: str = field(init=False)
@@ -47,6 +50,7 @@ class SimpleFsspecConfig(BaseConnectorConfig):
             return
 
         # valid path with a dir and/or file
+        # makes sure there is a trailing / on path
         match = re.match(rf"{self.protocol}://([^/\s]+?)/([^\s]*)", self.path)
         if not match:
             raise ValueError(
@@ -82,7 +86,9 @@ class FsspecIngestDoc(BaseIngestDoc):
 
     def has_output(self):
         """Determine if structured output for this doc already exists."""
-        return self._output_filename().is_file() and os.path.getsize(self._output_filename())
+        return self._output_filename().is_file() and os.path.getsize(
+            self._output_filename()
+        )
 
     def _create_full_tmp_dir_path(self):
         """Includes "directories" in the object path"""
@@ -115,22 +121,27 @@ class FsspecIngestDoc(BaseIngestDoc):
         output_filename = self._output_filename()
         output_filename.parent.mkdir(parents=True, exist_ok=True)
         with open(output_filename, "w") as output_f:
-            output_f.write(json.dumps(self.isd_elems_no_filename, ensure_ascii=False, indent=2))
+            output_f.write(
+                json.dumps(self.isd_elems_no_filename, ensure_ascii=False, indent=2)
+            )
         logger.info(f"Wrote {output_filename}")
 
     @property
     def filename(self):
-        """The filename of the file after downloading from s3"""
+        """The filename of the file after downloading from cloud"""
         return self._tmp_download_file()
 
     def cleanup_file(self):
         """Removes the local copy of the file after successful processing."""
-        if not self.standard_config.preserve_downloads and not self.standard_config.download_only:
+        if (
+            not self.standard_config.preserve_downloads
+            and not self.standard_config.download_only
+        ):
             logger.debug(f"Cleaning up {self}")
             try:
                 os.unlink(self._tmp_download_file())
-            except: # Don't think we need to throw an error
-                logger.debug(f"failed to remove {self._tmp_download_file()}")
+            except:  # Don't think we need to throw an error
+                logger.debug(f"Failed to remove {self._tmp_download_file()}")
 
 
 class FsspecConnector(BaseConnector):
@@ -155,7 +166,7 @@ class FsspecConnector(BaseConnector):
         )
 
     def cleanup(self, cur_dir=None):
-        """cleanup linginering empty sub-dirs from s3 paths, but leave remaining files
+        """cleanup linginering empty sub-dirs from cloud paths, but leave remaining files
         (and their paths) in tact as that indicates they were not processed"""
         if not self.cleanup_files:
             return
@@ -181,7 +192,19 @@ class FsspecConnector(BaseConnector):
             )
 
     def _list_files(self):
-        return self.fs.ls(self.config.path_without_protocol)
+        if not self.config.recursive:
+            # fs.ls does not walk directories
+            return self.fs.ls(self.config.path_without_protocol)
+        else:
+            # fs.find will recursively walk directories
+            # "size" is a common key for all the cloud protocols with fs
+            return [
+                k
+                for k, v in self.fs.find(
+                    self.config.path_without_protocol, detail=True
+                ).items()
+                if v.get("size") > 0
+            ]
 
     def get_ingest_docs(self):
         return [
