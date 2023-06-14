@@ -63,7 +63,7 @@ executing==1.2.0
     # via stack-data
 fastjsonschema==2.17.1
     # via nbformat
-filelock==3.12.1
+filelock==3.12.2
     # via virtualenv
 fqdn==1.5.1
     # via jsonschema
@@ -82,7 +82,7 @@ importlib-metadata==6.6.0
     #   nbconvert
 importlib-resources==5.12.0
     # via jsonschema
-ipykernel==6.23.1
+ipykernel==6.23.2
     # via
     #   ipywidgets
     #   jupyter
@@ -171,7 +171,7 @@ nbclassic==1.0.0
     # via notebook
 nbclient==0.8.0
     # via nbconvert
-nbconvert==7.4.0
+nbconvert==7.5.0
     # via
     #   jupyter
     #   jupyter-server
@@ -224,7 +224,7 @@ platformdirs==3.5.3
     #   -c requirements/test.txt
     #   jupyter-core
     #   virtualenv
-pre-commit==3.3.2
+pre-commit==3.3.3
     # via -r requirements/dev.in
 prometheus-client==0.17.0
     # via

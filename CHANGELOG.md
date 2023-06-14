@@ -1,11 +1,10 @@
-## 0.7.5-dev2
+## 0.7.5
 
 ### Enhancements
 
 * Adds functionality to sort elements in `partition_pdf` for `fast` strategy
 * Adds ingest tests with `--fast` strategy on PDF documents
 * Adds --api-key to unstructured-ingest
-
 
 ### Features
 
@@ -14,6 +13,7 @@
 ### Fixes
 
 * Adds handling for emails that do not have a datetime to extract.
+* Adds pdf2image package as core requirement of unstructured (with no extras)
 
 ## 0.7.4
 
