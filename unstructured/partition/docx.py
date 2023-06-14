@@ -141,6 +141,9 @@ def partition_docx(
     if len(headers_and_footers) > 0:
         elements.extend(headers_and_footers[0][0])
 
+    document_contains_pagebreaks = _element_contains_pagebreak(document._element)
+    page_number = 1 if document_contains_pagebreaks else None
+
     section = 0
     for element_item in document.element.body:
         if element_item.tag.endswith("tbl"):
@@ -152,6 +155,7 @@ def partition_docx(
                 element.metadata = ElementMetadata(
                     text_as_html=html_table,
                     filename=metadata_filename,
+                    page_number=page_number,
                 )
                 elements.append(element)
             table_index += 1
@@ -159,7 +163,10 @@ def partition_docx(
             paragraph = docx.text.paragraph.Paragraph(element_item, document)
             para_element: Optional[Text] = _paragraph_to_element(paragraph)
             if para_element is not None:
-                para_element.metadata = ElementMetadata(filename=metadata_filename)
+                para_element.metadata = ElementMetadata(
+                    filename=metadata_filename,
+                    page_number=page_number,
+                )
                 elements.append(para_element)
         elif element_item.tag.endswith("sectPr"):
             if len(headers_and_footers) > section:
@@ -170,6 +177,9 @@ def partition_docx(
             if len(headers_and_footers) > section:
                 headers = headers_and_footers[section][0]
                 elements.extend(headers)
+
+        if page_number is not None and _element_contains_pagebreak(element_item):
+            page_number += 1
 
     return elements
 
@@ -192,6 +202,21 @@ def _paragraph_to_element(paragraph: docx.text.paragraph.Paragraph) -> Optional[
         return _text_to_element(text)
     else:
         return element_class(text)
+
+
+def _element_contains_pagebreak(element) -> bool:
+    """Detects if an element contains a page break. Checks for both "hard" page breaks
+    (page breaks inserted by the user) and "soft" page breaks, which are somtimes
+    inserted by the MS Word renderer. Note that soft page breaks aren't always present.
+    Whether or not pages are tracked may depend on your Word renderer."""
+    page_break_indicators = [
+        ["w:br", 'type="page"'],  # "Hard" page break inserted by user
+        ["lastRenderedPageBreak"],  # "Soft" page break inserted by renderer
+    ]
+    for indicators in page_break_indicators:
+        if all(indicator in element.xml for indicator in indicators):
+            return True
+    return False
 
 
 def _text_to_element(text: str) -> Optional[Text]:
