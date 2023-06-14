@@ -204,6 +204,13 @@ elements will appear at the end. MSFT Word headers and footers have a ``header_f
 metadata field indicating where the header or footer applies. Valid values are
 ``"primary"``, ``"first_page"`` and ``"even_page"``.
 
+``partition_docx`` will include page numbers in the document metadata when page breaks
+are present in the document. The function will detect user inserted page breaks
+and page breaks inserted by the Word document renderer. Some (but not all) Word document renderers
+insert page breaks when you save the document. If your Word document renderer does not do that,
+you may not see page numbers in the output even if you see them visually when you open the
+document. If that is the case, you can try saving the document with a different renderer.
+
 
 ``partition_email``
 ---------------------
