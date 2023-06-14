@@ -152,6 +152,11 @@ class MainProcess:
     "Default: auto. Other strategies include `fast` and `hi_res`.",
 )
 @click.option(
+    "--api-key",
+    default="",
+    help="API Key for partition endpoint.",
+)
+@click.option(
     "--local-input-path",
     default=None,
     help="Path to the location in the local file system that will be processed.",
@@ -443,6 +448,7 @@ def main(
     partition_by_api,
     partition_endpoint,
     partition_strategy,
+    api_key,
     local_input_path,
     local_recursive,
     local_file_glob,
@@ -545,6 +551,7 @@ def main(
         partition_endpoint=partition_endpoint,
         preserve_downloads=preserve_downloads,
         re_download=re_download,
+        api_key=api_key,
     )
     if remote_url:
         protocol = urlparse(remote_url).scheme
