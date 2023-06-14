@@ -210,7 +210,7 @@ def _paragraph_to_element(paragraph: docx.text.paragraph.Paragraph) -> Optional[
 
 def _element_contains_pagebreak(element) -> bool:
     """Detects if an element contains a page break. Checks for both "hard" page breaks
-    (page breaks inserted by the user) and "soft" page breaks, which are somtimes
+    (page breaks inserted by the user) and "soft" page breaks, which are sometimes
     inserted by the MS Word renderer. Note that soft page breaks aren't always present.
     Whether or not pages are tracked may depend on your Word renderer."""
     page_break_indicators = [
