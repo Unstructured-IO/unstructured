@@ -81,7 +81,7 @@ def _add_element_metadata(
     """Adds document metadata to the document element. Document metadata includes information
     like the filename, source url, and page number."""
     elements: List[Element] = []
-    page_number: int = 0
+    page_number: Optional[int] = None
     for layout_element in layout_elements:
         element = normalize_layout_element(layout_element)
         if hasattr(layout_element, "text_as_html"):

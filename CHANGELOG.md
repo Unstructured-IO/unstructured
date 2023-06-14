@@ -2,8 +2,8 @@
 
 ### Enhancements
 
-* Adds support for page numbers in `.docx` and `.doc` numbers when user or renderer
-  created page braks are present.
+* Adds support for page numbers in `.docx` and `.doc` when user or renderer
+  created page breaks are present.
 
 ### Features
 
