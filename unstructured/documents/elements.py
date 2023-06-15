@@ -84,6 +84,8 @@ class ElementMetadata:
 
     def to_dict(self):
         _dict = {key: value for key, value in self.__dict__.items() if value is not None}
+        if "regex_metadata" in _dict and not _dict["regex_metadata"]:
+            _dict.pop("regex_metadata")
         if self.data_source:
             _dict["data_source"] = cast(DataSourceMetadata, self.data_source).to_dict()
         return _dict
