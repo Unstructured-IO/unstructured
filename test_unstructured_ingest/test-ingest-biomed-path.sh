@@ -6,13 +6,6 @@ set -e
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/.. || exit 1
 
-if [[ "$CI" == "true" ]]; then
-    if [ "$(( RANDOM % 10))" -lt 1 ] ; then
-        echo "Skipping ingest 90% of biomed tests to avoid the occaisonal ftp issue."
-        exit 0
-    fi
-fi
-
 if [[ "$(find test_unstructured_ingest/expected-structured-output/biomed-ingest-output-path/ -type f -size +10k | wc -l)" != 1 ]]; then
     echo "The test fixtures in test_unstructured_ingest/expected-structured-output/biomed-ingest-output-path/ look suspicious. At least one of the files is too small."
     echo "Did you overwrite test fixtures with bad outputs?"
