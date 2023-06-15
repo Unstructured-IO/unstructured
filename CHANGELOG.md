@@ -1,4 +1,4 @@
-## 0.7.6-dev1
+## 0.7.6-dev2
 
 ### Enhancements
 
@@ -8,6 +8,7 @@
 
 ### Features
 
+* Provides users with the ability to extract additional metadata via regex.
 * Updates `partition_docx` to include headers and footers in the output.
 * Create `partition_tsv` and associated tests. Make additional changes to `detect_filetype`.
 
