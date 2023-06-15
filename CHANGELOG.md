@@ -1,4 +1,4 @@
-## 0.7.6-dev2
+## 0.7.6-dev3
 
 ### Enhancements
 
@@ -9,6 +9,7 @@
 ### Features
 
 * Updates `partition_docx` to include headers and footers in the output.
+* Create `partition_tsv` and associated tests. Make additional changes to `detect_filetype`.
 
 ### Fixes
 
