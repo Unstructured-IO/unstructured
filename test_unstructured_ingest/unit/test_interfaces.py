@@ -43,31 +43,31 @@ class TestIngestDoc(BaseIngestDoc):
     @property
     def filename(self):
         return TEST_FILE_PATH
-    
+
     @property
     def source_url(self) -> str:
         return TEST_SOURCE_URL
-   
-    @property 
+
+    @property
     def version(self) -> str:
         return TEST_VERSION
-   
-    @property 
+
+    @property
     def record_locator(self) -> Dict[str, Any]:
         return TEST_RECORD_LOCATOR
 
-    @property 
+    @property
     def date_created(self) -> str:
         return TEST_DATE_CREATED
-    
-    @property 
+
+    @property
     def date_modified(self) -> str:
         return TEST_DATE_MODIFIED
-    
-    @property 
+
+    @property
     def exists(self) -> bool:
         return True
-    
+
     def cleanup_file(self):
         pass
 
@@ -76,7 +76,7 @@ class TestIngestDoc(BaseIngestDoc):
 
     def has_output(self):
         return True
-    
+
     def write_result(self, result):
         pass
 
@@ -115,7 +115,7 @@ def test_partition_file():
     isd_elems = test_ingest_doc.partition_file()
     assert len(isd_elems)
     expected_keys = {"coordinates", "element_id", "text", "type", "metadata"}
-    expected_metadata_keys = {"data_source", "filename", "file_directory", "filetype", "page_number"}
+    expected_metadata_keys = {"data_source", "filename", "file_directory", "filetype"}
     for elem in isd_elems:
         assert expected_keys == set(elem.keys())
         assert expected_metadata_keys == set(elem["metadata"].keys())
@@ -157,8 +157,8 @@ def test_process_file_fields_include_default(mocker, partition_test_results):
         assert data_source_metadata["date_processed"] == TEST_DATE_PROCESSSED
 
 
-def test_process_file_metadata_includes_filename_and_page_number(mocker, partition_test_results):
-    """Validate when metadata_include is set to "filename,page_number",
+def test_process_file_metadata_includes_filename_and_filetype(mocker, partition_test_results):
+    """Validate when metadata_include is set to "filename,filetype",
     only filename is included in metadata"""
     mocker.patch(
         "unstructured.ingest.interfaces.partition",
@@ -169,13 +169,13 @@ def test_process_file_metadata_includes_filename_and_page_number(mocker, partiti
         standard_config=StandardConnectorConfig(
             download_dir=TEST_DOWNLOAD_DIR,
             output_dir=TEST_OUTPUT_DIR,
-            metadata_include="filename,page_number",
+            metadata_include="filename,filetype",
         ),
     )
     isd_elems = test_ingest_doc.process_file()
     assert len(isd_elems)
     for elem in isd_elems:
-        assert set(elem["metadata"].keys()) == {"filename", "page_number"}
+        assert set(elem["metadata"].keys()) == {"filename", "filetype"}
 
 def test_process_file_metadata_exclude_filename_pagenum(mocker, partition_test_results):
     """Validate when metadata_exclude is set to "filename,page_number",
@@ -208,11 +208,11 @@ def test_process_file_flatten_metadata(mocker, partition_test_results):
         standard_config=StandardConnectorConfig(
             download_dir=TEST_DOWNLOAD_DIR,
             output_dir=TEST_OUTPUT_DIR,
-            metadata_include="filename,page_number,data_source",
+            metadata_include="filename,data_source",
             flatten_metadata=True,
         ),
     )
     isd_elems = test_ingest_doc.process_file()
-    expected_keys = {"element_id", "text", "type", "filename", "page_number", "data_source"}
+    expected_keys = {"element_id", "text", "type", "filename", "data_source"}
     for elem in isd_elems:
         assert expected_keys == set(elem.keys())

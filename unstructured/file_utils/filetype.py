@@ -446,6 +446,7 @@ def document_to_element_list(
         elements,
         include_page_breaks=include_page_breaks,
         filetype=filetype,
+        initial_page_number=1,
     )
     return elements
 
