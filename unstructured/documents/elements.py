@@ -18,6 +18,7 @@ class NoID(ABC):
     pass
 
 
+@dataclass
 class DataSourceMetadata:
     """Metadata fields that pertain to the data source of the document."""
 
