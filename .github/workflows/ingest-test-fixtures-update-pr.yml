@@ -61,6 +61,7 @@ jobs:
           GH_READ_ONLY_ACCESS_TOKEN: ${{ secrets.GH_READ_ONLY_ACCESS_TOKEN }}
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          GCP_INGEST_SERVICE_KEY: ${{ secrets.GCP_INGEST_SERVICE_KEY }}
           OVERWRITE_FIXTURES: "true"
         run: |
           source .venv/bin/activate
