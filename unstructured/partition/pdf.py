@@ -25,6 +25,8 @@ from unstructured.partition.strategies import determine_pdf_or_image_strategy
 from unstructured.partition.text import element_from_text, partition_text
 from unstructured.utils import requires_dependencies
 
+RE_MULTISPACE = re.compile(f"\s+")
+
 
 @add_metadata_with_filetype(FileType.PDF)
 def partition_pdf(
@@ -217,8 +219,11 @@ def _partition_pdf_or_image_local(
             ocr_languages=ocr_languages,
             extract_tables=infer_table_structure,
         )
+    elements = document_to_element_list(layout, include_page_breaks=include_page_breaks)
+    for el in elements:
+        el.text = re.sub(RE_MULTISPACE, " ", el.text.replace("\n", " ")).strip()
 
-    return document_to_element_list(layout, include_page_breaks=include_page_breaks)
+    return [el for el in elements if el.text]
 
 
 @requires_dependencies("pdfminer", "local-inference")
