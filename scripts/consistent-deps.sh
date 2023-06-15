@@ -36,7 +36,7 @@ reqstring=$(join_by ' -r ' "${reqfiles[@]}")
 reqstring="-r ${reqstring}"
 
 # This pip command will attempt to resolve the dependencies without installing anything.
-pipcommand="pip install --dry-run --ignore-installed ${reqstring}"
+pipcommand="python3 -m pip install --dry-run --ignore-installed ${reqstring}"
 if $pipcommand >> /dev/null;
 then
     echo "Everything looks fine!";
