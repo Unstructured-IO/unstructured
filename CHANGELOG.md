@@ -1,4 +1,4 @@
-## 0.7.6-dev1
+## 0.7.6-dev2
 
 ### Enhancements
 
@@ -13,6 +13,7 @@
 
 ### Fixes
 
+* Remove fake api key in test `partition_via_api` since we now require valid/empty api keys
 * Page number defaults to `None` instead of `1` when page number is not present in the metadata.
   A page number of `None` indicates that page numbers are not being tracked for the document
   or that page numbers do not apply to the element in question..
