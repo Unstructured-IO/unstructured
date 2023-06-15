@@ -16,7 +16,7 @@ def partition_tsv(
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
 ) -> List[Element]:
-    """Partitions Microsoft Excel Documents in .tsv format into its document elements.
+    """Partitions TSV files into document elements.
 
     Parameters
     ----------
