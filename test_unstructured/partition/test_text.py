@@ -145,3 +145,33 @@ the fox met a bear."""
         NarrativeText(text="The big brown fox was walking down the lane."),
         NarrativeText(text="At the end of the lane, the fox met a bear."),
     ]
+
+
+def test_partition_text_extract_match_regex_metadata():
+    text = "SPEAKER 1: It is my turn to speak now!"
+
+    elements = partition_text(text=text, regex_match_metadata={"speaker": r"SPEAKER \d{1,3}"})
+    assert elements[0].metadata.regex_metadata == {
+        "speaker": [{"text": "SPEAKER 1", "start": 0, "end": 9, "strategy": "match"}],
+    }
+
+
+def test_partition_text_extracts_search_regex_metadata():
+    text = "SPEAKER 2: I am speaking to SPEAKER 1"
+    elements = partition_text(text=text, regex_search_metadata={"speaker": r"SPEAKER \d{1,3}"})
+    assert elements[0].metadata.regex_metadata == {
+        "speaker": [
+            {"text": "SPEAKER 2", "start": 0, "end": 9, "strategy": "search"},
+            {"text": "SPEAKER 1", "start": 28, "end": 37, "strategy": "search"},
+        ],
+    }
+
+
+def test_partition_text_raises_with_overlapping_regex_metadata_keys():
+    text = "SPEAKER 2: I am speaking to SPEAKER 1"
+    with pytest.raises(ValueError):
+        partition_text(
+            text=text,
+            regex_match_metadata={"speaker": r"SPEAKER \d{1,3}"},
+            regex_search_metadata={"speaker": r"SPEAKER \d{1,3}"},
+        )
