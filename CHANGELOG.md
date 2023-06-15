@@ -2,6 +2,8 @@
 
 ### Enhancements
 
+* Adds retry logic for the unstructured-ingest Biomed connector
+
 ### Features
 
 * Updates `partition_docx` to include headers and footers in the output.
