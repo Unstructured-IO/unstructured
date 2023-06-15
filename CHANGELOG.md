@@ -1,6 +1,8 @@
-## 0.7.6-dev0
+## 0.7.6-dev1
 
 ### Enhancements
+
+* Adds retry logic for the unstructured-ingest Biomed connector
 
 ### Features
 
