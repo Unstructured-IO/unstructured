@@ -27,8 +27,8 @@ COMMON_ENCODINGS = [
 ]
 
 
-def format_encoding_str(encoding):
-    return encoding.lower().replace('_', '-')
+def format_encoding_str(encoding: str) -> str:
+    return encoding.lower().replace("_", "-")
 
 
 def detect_file_encoding(

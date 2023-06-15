@@ -6,7 +6,11 @@ from email.message import Message
 from functools import partial
 from typing import IO, Dict, List, Optional, Tuple, Union
 
-from unstructured.file_utils.encoding import read_txt_file, COMMON_ENCODINGS, format_encoding_str
+from unstructured.file_utils.encoding import (
+    COMMON_ENCODINGS,
+    format_encoding_str,
+    read_txt_file,
+)
 from unstructured.partition.common import exactly_one
 
 if sys.version_info < (3, 8):
@@ -202,7 +206,7 @@ def parse_email(
             encoding = charset
             break
 
-    formatted_encoding = format_encoding_str(encoding)
+    formatted_encoding = format_encoding_str(encoding) if encoding else None
 
     return formatted_encoding, msg
 
