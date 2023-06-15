@@ -76,7 +76,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
-    needs: [setup, lint]
+    needs: [setup, check-deps-and-lint]
     steps:
     - uses: actions/checkout@v3
     - uses: actions/cache/restore@v3
@@ -119,7 +119,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
-    needs: [setup, lint]
+    needs: [setup, check-deps-and-lint]
     steps:
     - uses: actions/checkout@v3
     - uses: actions/cache/restore@v3
@@ -183,7 +183,7 @@ jobs:
   # (Using the virtualenv to get pytest)
   test_dockerfile:
     runs-on: ubuntu-latest
-    needs: [ setup, lint ]
+    needs: [ setup, check-deps-and-lint ]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/cache/restore@v3
