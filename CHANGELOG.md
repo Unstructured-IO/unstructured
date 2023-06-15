@@ -18,6 +18,8 @@
 * Page number defaults to `None` instead of `1` when page number is not present in the metadata.
   A page number of `None` indicates that page numbers are not being tracked for the document
   or that page numbers do not apply to the element in question..
+* Fixes an issue with some pptx files. Assume pptx shapes are found in top left position of slide
+  in case the shape.top and shape.left attributes are `None`.
 
 ## 0.7.5
 
