@@ -314,6 +314,6 @@ def test_convert_to_iso_8601(time, expected):
 
 
 def test_partition_email_raises_with_no_html_content():
-    filename = os.path.join(example_dir, "email-3.eml")
+    filename = os.path.join(example_dir, "email-no-html-content-1.eml")
     with pytest.raises(ValueError):
         partition_email(filename=filename)
