@@ -244,6 +244,21 @@ class MainProcess:
     help="Until parameter for OA Web Service API.",
 )
 @click.option(
+    "--biomed-max-retries",
+    default=1,
+    help="Max requests to OA Web Service API.",
+)
+@click.option(
+    "--biomed-max-request-time",
+    default=45,
+    help="(In seconds) Max request time to OA Web Service API.",
+)
+@click.option(
+    "--biomed-decay",
+    default=0.3,
+    help="(In float) Factor to multiply the delay between retries.",
+)
+@click.option(
     "--wikipedia-page-title",
     default=None,
     help='Title of a Wikipedia page, e.g. "Open source software".',
@@ -413,6 +428,9 @@ def main(
     biomed_api_id,
     biomed_api_from,
     biomed_api_until,
+    biomed_max_retries,
+    biomed_max_request_time,
+    biomed_decay,
     wikipedia_page_title,
     wikipedia_auto_suggest,
     github_url,
@@ -720,6 +738,9 @@ def main(
                 id_=biomed_api_id,
                 from_=biomed_api_from,
                 until=biomed_api_until,
+                max_retries=biomed_max_retries,
+                request_timeout=biomed_max_request_time,
+                decay=biomed_decay,
             ),
         )
     elif local_input_path:
