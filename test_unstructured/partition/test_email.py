@@ -281,3 +281,9 @@ def test_partition_email_processes_fake_email_with_header():
 def test_convert_to_iso_8601(time, expected):
     iso_time = convert_to_iso_8601(time)
     assert iso_time == expected
+
+
+def test_partition_email_raises_with_no_html_content():
+    filename = os.path.join(example_dir, "email-3.eml")
+    with pytest.raises(ValueError):
+        partition_email(filename=filename)
