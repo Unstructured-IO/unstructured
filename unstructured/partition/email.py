@@ -6,7 +6,7 @@ from email.message import Message
 from functools import partial
 from typing import IO, Dict, List, Optional, Tuple, Union
 
-from unstructured.file_utils.encoding import read_txt_file
+from unstructured.file_utils.encoding import read_txt_file, COMMON_ENCODINGS, format_encoding_str
 from unstructured.partition.common import exactly_one
 
 if sys.version_info < (3, 8):
@@ -195,12 +195,16 @@ def parse_email(
     else:
         raise ValueError("Either 'filename' or 'file' must be provided.")
 
+    encoding = None
     charsets = msg.get_charsets() or []
     for charset in charsets:
         if charset and charset.strip():
-            return charset, msg
+            encoding = charset
+            break
 
-    return None, msg
+    formatted_encoding = format_encoding_str(encoding)
+
+    return formatted_encoding, msg
 
 
 @add_metadata_with_filetype(FileType.EML)
@@ -290,9 +294,21 @@ def partition_email(
                 _replace_mime_encodings = partial(replace_mime_encodings, encoding=encoding)
                 try:
                     element.apply(_replace_mime_encodings)
-                except UnicodeDecodeError:
-                    # If decoding fails, try decoding with default encoding (utf-8)
-                    element.apply(replace_mime_encodings)
+                except (UnicodeDecodeError, UnicodeError):
+                    # If decoding fails, try decoding through common encodings
+                    common_encodings = []
+                    for x in COMMON_ENCODINGS:
+                        _x = format_encoding_str(x)
+                        if _x != encoding:
+                            common_encodings.append(_x)
+
+                    for enc in common_encodings:
+                        try:
+                            _replace_mime_encodings = partial(replace_mime_encodings, encoding=enc)
+                            element.apply(_replace_mime_encodings)
+                            break
+                        except (UnicodeDecodeError, UnicodeError):
+                            continue
     elif content_source == "text/plain":
         list_content = split_by_paragraph(content)
         elements = partition_text(text=content, encoding=encoding)
