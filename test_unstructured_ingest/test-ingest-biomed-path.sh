@@ -22,6 +22,9 @@ fi
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
     --biomed-path "oa_pdf/07/07/sbaa031.073.PMC7234218.pdf" \
+    --biomed-max-retries 5 \
+    --biomed-max-request-time 30 \
+    --biomed-decay .3 \
     --structured-output-dir biomed-ingest-output-path \
     --num-processes 2 \
     --partition-strategy hi_res \
