@@ -9,6 +9,7 @@ from unstructured.documents.elements import (
     Header,
     ListItem,
     NarrativeText,
+    PageBreak,
     Table,
     Text,
     Title,
@@ -63,6 +64,7 @@ def test_partition_docx_with_filename(mock_document, expected_elements, tmpdir):
 
     elements = partition_docx(filename=filename)
     assert elements == expected_elements
+    assert elements[0].metadata.page_number is None
 
 
 def test_partition_docx_with_spooled_file(mock_document, expected_elements, tmpdir):
@@ -124,3 +126,17 @@ def test_partition_docx_grabs_header_and_footer(filename="example-docs/handbook-
     elements = partition_docx(filename=filename)
     assert elements[0] == Header("US Trustee Handbook")
     assert elements[-1] == Footer("Copyright")
+
+
+def test_partition_docx_includes_pages_if_present(filename="example-docs/handbook-1p.docx"):
+    elements = partition_docx(filename=filename, include_page_breaks=False)
+    assert PageBreak() not in elements
+    assert elements[1].metadata.page_number == 1
+    assert elements[-2].metadata.page_number == 2
+
+
+def test_partition_docx_includes_page_breaks(filename="example-docs/handbook-1p.docx"):
+    elements = partition_docx(filename=filename, include_page_breaks=True)
+    assert PageBreak() in elements
+    assert elements[1].metadata.page_number == 1
+    assert elements[-2].metadata.page_number == 2

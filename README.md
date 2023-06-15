@@ -102,8 +102,8 @@ about the library.
 | Power Points (`.pptx`) | `partition_pptx` | N/A | Yes | Include Page Breaks |
 | ReStructured Text (`.rst`) | `partition_rst` | N/A | Yes | Include Page Breaks |
 | Rich Text Files (`.rtf`) | `partition_rtf` | N/A | Yes | Include Page Breaks |
-| Word Documents (`.doc`) | `partition_doc` | N/A | Yes | None |
-| Word Documents (`.docx`) | `partition_docx` | N/A | Yes | None |
+| Word Documents (`.doc`) | `partition_doc` | N/A | Yes | Include Page Breaks |
+| Word Documents (`.docx`) | `partition_docx` | N/A | Yes | Include Page Breaks |
 | XML Documents (`.xml`) | `partition_xml` | N/A | No | Encoding; XML Keep Tags |
 
 
