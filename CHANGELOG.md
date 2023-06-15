@@ -2,6 +2,8 @@
 
 ### Enhancements
 
+* Adds support for page numbers in `.docx` and `.doc` when user or renderer
+  created page breaks are present.
 * Adds retry logic for the unstructured-ingest Biomed connector
 
 ### Features
@@ -10,6 +12,10 @@
 * Create `partition_tsv` and associated tests. Make additional changes to `detect_filetype`.
 
 ### Fixes
+
+* Page number defaults to `None` instead of `1` when page number is not present in the metadata.
+  A page number of `None` indicates that page numbers are not being tracked for the document
+  or that page numbers do not apply to the element in question..
 
 ## 0.7.5
 
