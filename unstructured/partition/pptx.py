@@ -83,11 +83,10 @@ def partition_pptx(
                 continue
             if not shape.has_text_frame:
                 continue
+            # NOTE(robinson) - avoid processing shapes that are not on the actual slide
             # NOTE - skip check if no top or left position (shape displayed top left)
-            if shape.top and shape.left:
-                # NOTE(robinson) - avoid processing shapes that are not on the actual slide
-                if shape.top < 0 or shape.left < 0:
-                    continue
+            if (shape.top and shape.left) and (shape.top < 0 or shape.left < 0):
+                continue
             for paragraph in shape.text_frame.paragraphs:
                 text = paragraph.text
                 if text.strip() == "":
