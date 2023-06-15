@@ -27,6 +27,10 @@ COMMON_ENCODINGS = [
 ]
 
 
+def format_encoding_str(encoding):
+    return encoding.lower().replace('_', '-')
+
+
 def detect_file_encoding(
     filename: str = "",
     file: Optional[Union[bytes, IO]] = None,
@@ -109,4 +113,6 @@ def read_txt_file(
     else:
         raise FileNotFoundError("No filename was specified")
 
-    return encoding, file_text
+    formatted_encoding = format_encoding_str(encoding)
+
+    return formatted_encoding, file_text
