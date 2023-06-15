@@ -108,14 +108,24 @@ def test_partition_email_from_filename():
 
 
 @pytest.mark.parametrize(
-    "filename",
-    ["fake-email-utf-16.eml", "fake-email-utf-16-be.eml", "fake-email-utf-16-le.eml"],
+    ("filename", "expected_output"),
+    [
+        ("fake-email-utf-16.eml", EXPECTED_OUTPUT),
+        ("fake-email-utf-16-be.eml", EXPECTED_OUTPUT),
+        ("fake-email-utf-16-le.eml", EXPECTED_OUTPUT),
+        ("email-replace-mime-encodings-error-1.eml", None),
+        ("email-replace-mime-encodings-error-2.eml", None),
+        ("email-replace-mime-encodings-error-3.eml", None),
+        ("email-replace-mime-encodings-error-4.eml", None),
+        ("email-replace-mime-encodings-error-5.eml", None),
+    ],
 )
-def test_partition_email_from_filename_default_encoding(filename):
+def test_partition_email_from_filename_default_encoding(filename, expected_output):
     filename = os.path.join(example_dir, filename)
     elements = partition_email(filename=filename)
     assert len(elements) > 0
-    assert elements == EXPECTED_OUTPUT
+    if expected_output:
+        assert elements == expected_output
 
 
 def test_partition_email_from_file():
@@ -127,15 +137,25 @@ def test_partition_email_from_file():
 
 
 @pytest.mark.parametrize(
-    "filename",
-    ["fake-email-utf-16.eml", "fake-email-utf-16-be.eml", "fake-email-utf-16-le.eml"],
+    ("filename", "expected_output"),
+    [
+        ("fake-email-utf-16.eml", EXPECTED_OUTPUT),
+        ("fake-email-utf-16-be.eml", EXPECTED_OUTPUT),
+        ("fake-email-utf-16-le.eml", EXPECTED_OUTPUT),
+        ("email-replace-mime-encodings-error-1.eml", None),
+        ("email-replace-mime-encodings-error-2.eml", None),
+        ("email-replace-mime-encodings-error-3.eml", None),
+        ("email-replace-mime-encodings-error-4.eml", None),
+        ("email-replace-mime-encodings-error-5.eml", None),
+    ],
 )
-def test_partition_email_from_file_default_encoding(filename):
+def test_partition_email_from_file_default_encoding(filename, expected_output):
     filename = os.path.join(example_dir, filename)
     with open(filename) as f:
         elements = partition_email(file=f)
     assert len(elements) > 0
-    assert elements == EXPECTED_OUTPUT
+    if expected_output:
+        assert elements == expected_output
 
 
 def test_partition_email_from_file_rb():
@@ -147,15 +167,25 @@ def test_partition_email_from_file_rb():
 
 
 @pytest.mark.parametrize(
-    "filename",
-    ["fake-email-utf-16.eml", "fake-email-utf-16-be.eml", "fake-email-utf-16-le.eml"],
+    ("filename", "expected_output"),
+    [
+        ("fake-email-utf-16.eml", EXPECTED_OUTPUT),
+        ("fake-email-utf-16-be.eml", EXPECTED_OUTPUT),
+        ("fake-email-utf-16-le.eml", EXPECTED_OUTPUT),
+        ("email-replace-mime-encodings-error-1.eml", None),
+        ("email-replace-mime-encodings-error-2.eml", None),
+        ("email-replace-mime-encodings-error-3.eml", None),
+        ("email-replace-mime-encodings-error-4.eml", None),
+        ("email-replace-mime-encodings-error-5.eml", None),
+    ],
 )
-def test_partition_email_from_file_rb_default_encoding(filename):
+def test_partition_email_from_file_rb_default_encoding(filename, expected_output):
     filename = os.path.join(example_dir, filename)
     with open(filename, "rb") as f:
         elements = partition_email(file=f)
     assert len(elements) > 0
-    assert elements == EXPECTED_OUTPUT
+    if expected_output:
+        assert elements == expected_output
 
 
 def test_partition_email_from_text_file():
