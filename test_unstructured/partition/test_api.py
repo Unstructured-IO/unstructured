@@ -95,7 +95,7 @@ def test_partition_via_api_raises_with_bad_response(monkeypatch):
 def test_partition_via_api_valid_request_data_kwargs():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf")
 
-    elements = partition_via_api(filename=filename, api_key="FAKEROO", strategy="fast")
+    elements = partition_via_api(filename=filename, api_key="", strategy="fast")
     assert isinstance(elements, list)
 
 
@@ -297,7 +297,7 @@ def test_partition_multiple_via_api_valid_request_data_kwargs():
         os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.jpg"),
     ]
 
-    elements = partition_multiple_via_api(filenames=filenames, api_key="FAKEROO", strategy="fast")
+    elements = partition_multiple_via_api(filenames=filenames, api_key="", strategy="fast")
     assert isinstance(elements, list)
 
 
