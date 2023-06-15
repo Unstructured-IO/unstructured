@@ -32,7 +32,6 @@ class MainProcess:
         reprocess,
         verbose,
         max_docs,
-        recursive,
     ):
         # initialize the reader and writer
         self.doc_connector = doc_connector
@@ -41,7 +40,6 @@ class MainProcess:
         self.reprocess = reprocess
         self.verbose = verbose
         self.max_docs = max_docs
-        self.recursive = recursive
 
     def initialize(self):
         """Slower initialization things: check connections, load things into memory, etc."""
@@ -159,12 +157,6 @@ class MainProcess:
     help="Path to the location in the local file system that will be processed.",
 )
 @click.option(
-    "--local-recursive",
-    is_flag=True,
-    default=False,
-    help="Support recursive local file processing.",
-)
-@click.option(
     "--local-file-glob",
     default=None,
     help="A comma-separated list of file globs to limit which types of local files are accepted,"
@@ -208,13 +200,6 @@ class MainProcess:
     "--drive-service-account-key",
     default=None,
     help="Path to the Google Drive service account json file.",
-)
-@click.option(
-    "--drive-recursive",
-    is_flag=True,
-    default=False,
-    help="Recursively download files in folders from the Google Drive ID, "
-    "otherwise stop at the files in provided folder level.",
 )
 @click.option(
     "--drive-extension",
@@ -399,7 +384,10 @@ class MainProcess:
     "--recursive",
     is_flag=True,
     default=False,
-    help="Will recurse directories for S3, GCS and Azure storage.",
+    help="Recursively download files in their respective folders"
+    "otherwise stop at the files in provided folder level."
+    " Supported protocols are: `gcs`, `gs`, `s3`, `s3a`, `abfs` "
+    "`az`, `google drive` and `local`.",
 )
 @click.option("-v", "--verbose", is_flag=True, default=False)
 def main(
@@ -411,7 +399,6 @@ def main(
     azure_connection_string,
     drive_id,
     drive_service_account_key,
-    drive_recursive,
     drive_extension,
     biomed_path,
     biomed_api_id,
@@ -454,7 +441,6 @@ def main(
     partition_endpoint,
     partition_strategy,
     local_input_path,
-    local_recursive,
     local_file_glob,
     download_only,
 ):
@@ -577,6 +563,7 @@ def main(
                 config=SimpleGcsConfig(
                     path=remote_url,
                     recursive=recursive,
+                    ####### access kwargs?
                 ),
             )
         elif protocol in ("abfs", "az"):
@@ -718,7 +705,7 @@ def main(
             config=SimpleGoogleDriveConfig(
                 drive_id=drive_id,
                 service_account_key=drive_service_account_key,
-                recursive=drive_recursive,
+                recursive=recursive,
                 extension=drive_extension,
             ),
         )
@@ -747,7 +734,7 @@ def main(
             standard_config=standard_config,
             config=SimpleLocalConfig(
                 input_path=local_input_path,
-                recursive=local_recursive,
+                recursive=recursive,
                 file_glob=local_file_glob,
             ),
         )
@@ -768,7 +755,6 @@ def main(
         doc_processor_fn=process_document_with_partition_strategy,
         num_processes=num_processes,
         reprocess=reprocess,
-        recursive=recursive,
         verbose=verbose,
         max_docs=max_docs,
     ).run()
