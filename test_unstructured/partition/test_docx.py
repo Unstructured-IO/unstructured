@@ -5,6 +5,8 @@ import pytest
 
 from unstructured.documents.elements import (
     Address,
+    Footer,
+    Header,
     ListItem,
     NarrativeText,
     Table,
@@ -116,3 +118,9 @@ def test_partition_docx_processes_table(filename="example-docs/fake_table.docx")
 </table>"""
     )
     assert elements[0].metadata.filename == "fake_table.docx"
+
+
+def test_partition_docx_grabs_header_and_footer(filename="example-docs/handbook-1p.docx"):
+    elements = partition_docx(filename=filename)
+    assert elements[0] == Header("US Trustee Handbook")
+    assert elements[-1] == Footer("Copyright")

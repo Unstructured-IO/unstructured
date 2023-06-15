@@ -198,6 +198,12 @@ Examples:
   with open("mydoc.docx", "rb") as f:
       elements = partition_docx(file=f)
 
+In Word documents, headers and footers are specified per section. In the output,
+the ``Header`` elements will appear at the beginning of a section and ``Footer``
+elements will appear at the end. MSFT Word headers and footers have a ``header_footer_type``
+metadata field indicating where the header or footer applies. Valid values are
+``"primary"``, ``"first_page"`` and ``"even_page"``.
+
 
 ``partition_email``
 ---------------------

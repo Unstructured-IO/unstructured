@@ -52,6 +52,9 @@ class ElementMetadata:
     sent_to: Optional[List[str]] = None
     subject: Optional[str] = None
 
+    # MSFT Word specific metadata fields
+    header_footer_type: Optional[str] = None
+
     # Text format metadata fields
     text_as_html: Optional[str] = None
 
@@ -265,6 +268,22 @@ class Table(Text):
     pass
 
 
+class Header(Text):
+    """An element for capturing document headers."""
+
+    category = "Header"
+
+    pass
+
+
+class Footer(Text):
+    """An element for capturing document footers."""
+
+    category = "Footer"
+
+    pass
+
+
 TYPE_TO_TEXT_ELEMENT_MAP: Dict[str, Any] = {
     "UncategorizedText": Text,
     "FigureCaption": FigureCaption,
@@ -278,4 +297,6 @@ TYPE_TO_TEXT_ELEMENT_MAP: Dict[str, Any] = {
     "Image": Image,
     "PageBreak": PageBreak,
     "Table": Table,
+    "Header": Header,
+    "Footer": Footer,
 }
