@@ -190,3 +190,10 @@ def test_partition_pptx_many_pages():
 
     # The page_number of PageBreak is None
     assert set(filter(None, (elt.metadata.page_number for elt in elements))) == {1, 2}
+
+def test_partition_pptx_malformed():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point-malformed.pptx")
+    elements = partition_pptx(filename=filename)
+
+    assert elements[0].text == "Problem Date Placeholder"
+    assert elements[1].text == "Test Slide"

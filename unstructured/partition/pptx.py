@@ -83,9 +83,11 @@ def partition_pptx(
                 continue
             if not shape.has_text_frame:
                 continue
-            # NOTE(robinson) - avoid processing shapes that are not on the actual slide
-            if shape.top < 0 or shape.left < 0:
-                continue
+            # NOTE - skip check if no top or left position (shape displayed top left)
+            if shape.top and shape.left:
+                # NOTE(robinson) - avoid processing shapes that are not on the actual slide
+                if shape.top < 0 or shape.left < 0:
+                    continue
             for paragraph in shape.text_frame.paragraphs:
                 text = paragraph.text
                 if text.strip() == "":
@@ -107,7 +109,7 @@ def partition_pptx(
 
 def _order_shapes(shapes):
     """Orders the shapes from top to bottom and left to right."""
-    return sorted(shapes, key=lambda x: (x.top, x.left))
+    return sorted(shapes, key=lambda x: (x.top or 0, x.left or 0))
 
 
 def _is_bulleted_paragraph(paragraph) -> bool:
