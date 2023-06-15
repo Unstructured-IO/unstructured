@@ -74,6 +74,7 @@ class FileType(Enum):
     TXT = 42
     JSON = 43
     CSV = 44
+    TSV = 45
 
     # Markup Types
     HTML = 50
@@ -106,6 +107,7 @@ STR_TO_FILETYPE = {
     "text/comma-separated-values": FileType.CSV,
     "text/x-comma-separated-values": FileType.CSV,
     "text/csv": FileType.CSV,
+    "text/tsv": FileType.TSV,
     "text/markdown": FileType.MD,
     "text/x-markdown": FileType.MD,
     "text/x-rst": FileType.RST,
@@ -166,6 +168,7 @@ EXT_TO_FILETYPE = {
     ".msg": FileType.MSG,
     ".odt": FileType.ODT,
     ".csv": FileType.CSV,
+    ".tsv": FileType.TSV,
     # NOTE(robinson) - for now we are treating code files as plain text
     ".js": FileType.TXT,
     ".py": FileType.TXT,
@@ -229,7 +232,11 @@ def detect_filetype(
             return EXT_TO_FILETYPE.get(extension, FileType.UNK)
 
     elif file is not None:
-        extension = None
+        if hasattr(file, "name"):
+            _, extension = os.path.splitext(file.name)
+        else:
+            extension = ""
+        extension = extension.lower()
         # NOTE(robinson) - the python-magic docs recommend reading at least the first 2048 bytes
         # Increased to 4096 because otherwise .xlsx files get detected as a zip file
         # ref: https://github.com/ahupp/python-magic#usage
@@ -251,42 +258,32 @@ def detect_filetype(
 
     """Mime type special cases."""
     # third check (mime_type)
-    # NOTE(crag): for older versions of the OS libmagic package, such as is currently
-    # installed on the Unstructured docker image, .json files resolve to "text/plain"
-    # rather than "application/json". this corrects for that case.
-    if mime_type == "text/plain" and extension == ".json":
-        return FileType.JSON
 
     # NOTE(Crag): older magic lib does not differentiate between xls and doc
     if mime_type == "application/msword" and extension == ".xls":
         return FileType.XLS
 
     elif mime_type.endswith("xml"):
-        if extension and (extension == ".html" or extension == ".htm"):
+        if extension == ".html" or extension == ".htm":
             return FileType.HTML
         else:
             return FileType.XML
 
     elif mime_type in TXT_MIME_TYPES or mime_type.startswith("text"):
-        if extension and extension == ".eml":
-            return FileType.EML
-        elif extension and extension == ".md":
-            return FileType.MD
-        elif extension and extension == ".rst":
-            return FileType.RST
-        elif extension and extension == ".rtf":
-            return FileType.RTF
-        elif extension and extension == ".html":
-            return FileType.HTML
-
+        # NOTE(crag): for older versions of the OS libmagic package, such as is currently
+        # installed on the Unstructured docker image, .json files resolve to "text/plain"
+        # rather than "application/json". this corrects for that case.
         if _is_text_file_a_json(file=file, filename=filename, encoding=encoding):
             return FileType.JSON
 
         if _is_text_file_a_csv(file=file, filename=filename, encoding=encoding):
             return FileType.CSV
 
-        if file and not extension and _check_eml_from_buffer(file=file) is True:
+        if file and _check_eml_from_buffer(file=file) is True:
             return FileType.EML
+
+        if extension in [".eml", ".md", ".rtf", ".html", ".rst", ".tsv", ".json"]:
+            return EXT_TO_FILETYPE.get(extension)
 
         # Safety catch
         if mime_type in STR_TO_FILETYPE:
@@ -295,14 +292,16 @@ def detect_filetype(
         return FileType.TXT
 
     elif mime_type == "application/octet-stream":
-        if file and not extension:
+        if extension == ".docx":
+            return FileType.DOCX
+        elif file:
             return _detect_filetype_from_octet_stream(file=file)
         else:
             return EXT_TO_FILETYPE.get(extension, FileType.UNK)
 
     elif mime_type == "application/zip":
         filetype = FileType.UNK
-        if file and not extension:
+        if file:
             filetype = _detect_filetype_from_octet_stream(file=file)
         elif filename is not None:
             with open(filename, "rb") as f:
@@ -310,9 +309,9 @@ def detect_filetype(
 
         extension = extension if extension else ""
         if filetype == FileType.UNK:
-            return EXT_TO_FILETYPE.get(extension.lower(), FileType.ZIP)
+            return FileType.ZIP
         else:
-            return EXT_TO_FILETYPE.get(extension.lower(), filetype)
+            return EXT_TO_FILETYPE.get(extension, filetype)
 
     elif _is_code_mime_type(mime_type):
         # NOTE(robinson) - we'll treat all code files as plain text for now.
