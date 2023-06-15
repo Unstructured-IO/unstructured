@@ -152,6 +152,11 @@ class MainProcess:
     "Default: auto. Other strategies include `fast` and `hi_res`.",
 )
 @click.option(
+    "--api-key",
+    default="",
+    help="API Key for partition endpoint.",
+)
+@click.option(
     "--local-input-path",
     default=None,
     help="Path to the location in the local file system that will be processed.",
@@ -237,6 +242,21 @@ class MainProcess:
     "--biomed-api-until",
     default=None,
     help="Until parameter for OA Web Service API.",
+)
+@click.option(
+    "--biomed-max-retries",
+    default=1,
+    help="Max requests to OA Web Service API.",
+)
+@click.option(
+    "--biomed-max-request-time",
+    default=45,
+    help="(In seconds) Max request time to OA Web Service API.",
+)
+@click.option(
+    "--biomed-decay",
+    default=0.3,
+    help="(In float) Factor to multiply the delay between retries.",
 )
 @click.option(
     "--wikipedia-page-title",
@@ -408,6 +428,9 @@ def main(
     biomed_api_id,
     biomed_api_from,
     biomed_api_until,
+    biomed_max_retries,
+    biomed_max_request_time,
+    biomed_decay,
     wikipedia_page_title,
     wikipedia_auto_suggest,
     github_url,
@@ -443,6 +466,7 @@ def main(
     partition_by_api,
     partition_endpoint,
     partition_strategy,
+    api_key,
     local_input_path,
     local_recursive,
     local_file_glob,
@@ -545,6 +569,7 @@ def main(
         partition_endpoint=partition_endpoint,
         preserve_downloads=preserve_downloads,
         re_download=re_download,
+        api_key=api_key,
     )
     if remote_url:
         protocol = urlparse(remote_url).scheme
@@ -713,6 +738,9 @@ def main(
                 id_=biomed_api_id,
                 from_=biomed_api_from,
                 until=biomed_api_until,
+                max_retries=biomed_max_retries,
+                request_timeout=biomed_max_request_time,
+                decay=biomed_decay,
             ),
         )
     elif local_input_path:

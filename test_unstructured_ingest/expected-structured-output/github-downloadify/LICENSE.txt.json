@@ -5,8 +5,7 @@
     "type": "Title",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain",
-      "page_number": 1
+      "filetype": "text/plain"
     }
   },
   {
@@ -15,8 +14,7 @@
     "type": "Title",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain",
-      "page_number": 1
+      "filetype": "text/plain"
     }
   },
   {
@@ -25,8 +23,7 @@
     "type": "NarrativeText",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain",
-      "page_number": 1
+      "filetype": "text/plain"
     }
   },
   {
@@ -35,8 +32,7 @@
     "type": "NarrativeText",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain",
-      "page_number": 1
+      "filetype": "text/plain"
     }
   },
   {
@@ -45,8 +41,7 @@
     "type": "NarrativeText",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain",
-      "page_number": 1
+      "filetype": "text/plain"
     }
   }
 ]
