@@ -36,7 +36,7 @@ to the sheet name in the Excel document.
 Microsoft Word Documents
 -------------------------
 
-Headers and footers in Word documents include a ``header_footer_type`` indicate which page
+Headers and footers in Word documents include a ``header_footer_type`` indicating which page
 a header or footer applies to. Valid values are ``"primary"``, ``"even_only"``, and ``"first_page"``.
 
 
@@ -75,7 +75,7 @@ The result will look like:
 
 .. code:: python
 
-  {'speaker': 
+  {'speaker':
     [
       {
         'text': 'SPEAKER 1:',
