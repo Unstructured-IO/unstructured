@@ -29,6 +29,7 @@ from unstructured.partition.pptx import partition_pptx
 from unstructured.partition.rst import partition_rst
 from unstructured.partition.rtf import partition_rtf
 from unstructured.partition.text import partition_text
+from unstructured.partition.tsv import partition_tsv
 from unstructured.partition.xlsx import partition_xlsx
 from unstructured.partition.xml import partition_xml
 
@@ -211,6 +212,8 @@ def partition(
         elements = partition_xlsx(filename=filename, file=file)
     elif filetype == FileType.CSV:
         elements = partition_csv(filename=filename, file=file)
+    elif filetype == FileType.TSV:
+        elements = partition_tsv(filename=filename, file=file)
     elif filetype == FileType.EMPTY:
         elements = []
     else:
