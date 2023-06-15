@@ -239,20 +239,27 @@ def partition_email(
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text)
 
+    detected_encoding = "utf-8"
     if filename is not None:
-        encoding, msg = parse_email(filename=filename)
-        if not encoding:
-            encoding, file_text = read_txt_file(filename=filename)
+        extracted_encoding, msg = parse_email(filename=filename)
+        if extracted_encoding:
+            detected_encoding = extracted_encoding
+        else:
+            detected_encoding, file_text = read_txt_file(filename=filename, encoding=encoding)
             msg = email.message_from_string(file_text)
     elif file is not None:
-        encoding, msg = parse_email(file=file)
-        if not encoding:
-            encoding, file_text = read_txt_file(file=file)
+        extracted_encoding, msg = parse_email(file=file)
+        if extracted_encoding:
+            detected_encoding = extracted_encoding
+        else:
+            detected_encoding, file_text = read_txt_file(file=file, encoding=encoding)
             msg = email.message_from_string(file_text)
-
     elif text is not None:
         _text: str = str(text)
         msg = email.message_from_string(_text)
+
+    if not encoding:
+        encoding = detected_encoding
 
     content_map: Dict[str, str] = {}
     for part in msg.walk():
@@ -275,8 +282,6 @@ def partition_email(
         #    <li>Item 1</li>=
         #    <li>Item 2<li>=
         # </ul>
-        if not encoding:
-            encoding = "utf-8"
         list_content = content.split("=\n")
         content = "".join(list_content)
         elements = partition_html(text=content, include_metadata=False)
@@ -290,7 +295,7 @@ def partition_email(
                     element.apply(replace_mime_encodings)
     elif content_source == "text/plain":
         list_content = split_by_paragraph(content)
-        elements = partition_text(text=content)
+        elements = partition_text(text=content, encoding=encoding)
 
     for idx, element in enumerate(elements):
         indices = has_embedded_image(element)
