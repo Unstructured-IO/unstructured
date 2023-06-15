@@ -6,7 +6,7 @@ import os
 import pathlib
 from abc import ABC
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast
+from typing import Any, Callable, Dict, List, Optional, Tuple, TypedDict, Union, cast
 
 
 class NoID(ABC):
@@ -15,7 +15,6 @@ class NoID(ABC):
     pass
 
 
-@dataclass
 class DataSourceMetadata:
     """Metadata fields that pertain to the data source of the document."""
 
@@ -28,6 +27,15 @@ class DataSourceMetadata:
 
     def to_dict(self):
         return {key: value for key, value in self.__dict__.items() if value is not None}
+
+
+class RegexMetadata(TypedDict):
+    """Metadata that is extracted from a document element via regex."""
+
+    text: str
+    start: int
+    end: int
+    strategy: str
 
 
 @dataclass
@@ -58,6 +66,9 @@ class ElementMetadata:
     # Text format metadata fields
     text_as_html: Optional[str] = None
 
+    # Metadata extracted via regex
+    regex_metadata: Optional[Dict[str, List[RegexMetadata]]] = None
+
     def __post_init__(self):
         if isinstance(self.filename, pathlib.Path):
             self.filename = str(self.filename)
@@ -68,10 +79,10 @@ class ElementMetadata:
             self.filename = filename
 
     def to_dict(self):
-        dict = {key: value for key, value in self.__dict__.items() if value is not None}
+        _dict = {key: value for key, value in self.__dict__.items() if value is not None}
         if self.data_source:
-            dict["data_source"] = cast(DataSourceMetadata, self.data_source).to_dict()
-        return dict
+            _dict["data_source"] = cast(DataSourceMetadata, self.data_source).to_dict()
+        return _dict
 
     @classmethod
     def from_dict(cls, input_dict):
@@ -89,6 +100,70 @@ class ElementMetadata:
         if self.date is not None:
             dt = datetime.datetime.fromisoformat(self.date)
         return dt
+
+
+def process_metadata():
+    def decorator(func: Callable):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            elements = func(*args, **kwargs)
+            sig = inspect.signature(func)
+            params = dict(**dict(zip(sig.parameters, args)), **kwargs)
+            for param in sig.parameters.values():
+                if param.name not in params and param.default is not param.empty:
+                    params[param.name] = param.default
+
+            regex_search_metadata: Dict["str", "str"] = params.get("regex_search_metadata", {})
+            regex_match_metadata: Dict["str", "str"] = params.get("regex_match_metadata", {})
+            elements = _add_regex_metadata(elements, regex_search_metadata, regex_match_metadata)
+
+            return elements
+
+        return wrapper
+
+    return decorator
+
+
+def _add_regex_metadata(
+    elements: List[Element],
+    regex_search_metadata: Optional[Dict[str, str]] = None,
+    regex_match_metadata: Optional[Dict[str, str]] = None,
+) -> List[Element]:
+    key_intersection = set(regex_search_metadata.keys()).intersection(
+        set(regex_match_metadata.keys())
+    )
+    if len(key_intersection) > 0:
+        raise ValueError(
+            "The following keys are included in regex_search_metadata and regex_match_metadata. ",
+            "Make sure the keys for these parameters do not overlap. ",
+            f"Overlapping keys: {key_intersection}",
+        )
+
+    for element in elements:
+        regex_metadata: RegexMetadata = {}
+        for field_name, pattern in regex_search_metadata:
+            for result in re.finditer(pattern, element.text):
+                start, end = result.span()
+                regex_metadata[field_name] = {
+                    "text": element.text[start:end],
+                    "start": start,
+                    "end": end,
+                    "strategy": "search",
+                }
+
+        for field_name, pattern in regex_match_metadata:
+            result = re.match(pattern, element.text)
+            start, end = result.span()
+            regex_metadata[field_name] = {
+                "text": element.text[start:end],
+                "start": start,
+                "end": end,
+                "strategy": "match",
+            }
+
+        element.metadata.regex_metadata = regex_metadata
+
+    return elements
 
 
 class Element(ABC):
