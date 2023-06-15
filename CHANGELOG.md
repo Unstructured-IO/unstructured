@@ -3,6 +3,7 @@
 ### Enhancements
 
 * Convert fast startegy to ocr_only for images
+* Adds retry logic for the unstructured-ingest Biomed connector
 
 ### Features
 

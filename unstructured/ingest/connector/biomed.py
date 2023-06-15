@@ -8,6 +8,8 @@ from typing import List, Union
 
 import requests
 from bs4 import BeautifulSoup
+from requests.adapters import HTTPAdapter
+from urllib3.util import Retry
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -43,6 +45,9 @@ class SimpleBiomedConfig(BaseConnectorConfig):
     id_: str
     from_: str
     until: str
+    max_retries: int = 5
+    request_timeout: int = 45
+    decay: float = 0.3
 
     def validate_api_inputs(self):
         valid = False
@@ -95,7 +100,9 @@ class SimpleBiomedConfig(BaseConnectorConfig):
                 elif "command successful" in response:
                     self.is_dir = True
                 else:
-                    raise ValueError("Something went wrong when validating the path: {path}.")
+                    raise ValueError(
+                        "Something went wrong when validating the path: {path}.",
+                    )
 
 
 @dataclass
@@ -148,7 +155,9 @@ class BiomedIngestDoc(BaseIngestDoc):
         output_filename = self._output_filename()
         output_filename.parent.mkdir(parents=True, exist_ok=True)
         with open(output_filename, "w") as output_f:
-            output_f.write(json.dumps(self.isd_elems_no_filename, ensure_ascii=False, indent=2))
+            output_f.write(
+                json.dumps(self.isd_elems_no_filename, ensure_ascii=False, indent=2),
+            )
         logger.info(f"Wrote {output_filename}")
 
 
@@ -157,7 +166,11 @@ class BiomedConnector(BaseConnector):
 
     config: SimpleBiomedConfig
 
-    def __init__(self, standard_config: StandardConnectorConfig, config: SimpleBiomedConfig):
+    def __init__(
+        self,
+        standard_config: StandardConnectorConfig,
+        config: SimpleBiomedConfig,
+    ):
         super().__init__(standard_config, config)
         self.cleanup_files = (
             not self.standard_config.preserve_downloads and not self.standard_config.download_only
@@ -198,7 +211,15 @@ class BiomedConnector(BaseConnector):
             endpoint_url += f"&until={self.config.until}"
 
         while endpoint_url:
-            response = requests.get(endpoint_url)
+            session = requests.Session()
+            retries = Retry(
+                total=self.config.max_retries,
+                backoff_factor=self.config.decay,
+            )
+            adapter = HTTPAdapter(max_retries=retries)
+            session.mount("http://", adapter)
+            session.mount("https://", adapter)
+            response = session.get(endpoint_url, timeout=self.config.request_timeout)
             soup = BeautifulSoup(response.content, features="lxml")
             urls = [link["href"] for link in soup.find_all("link")]
 
