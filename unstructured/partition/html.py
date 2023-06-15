@@ -2,7 +2,7 @@ from typing import IO, Dict, List, Optional
 
 import requests
 
-from unstructured.documents.elements import Element
+from unstructured.documents.elements import Element, process_metadata
 from unstructured.documents.html import HTMLDocument
 from unstructured.documents.xml import VALID_PARSERS
 from unstructured.file_utils.encoding import read_txt_file
@@ -17,6 +17,7 @@ from unstructured.partition.common import (
 )
 
 
+@process_metadata()
 @add_metadata_with_filetype(FileType.HTML)
 def partition_html(
     filename: Optional[str] = None,
@@ -29,6 +30,7 @@ def partition_html(
     headers: Dict[str, str] = {},
     ssl_verify: bool = True,
     parser: VALID_PARSERS = None,
+    **kwargs,
 ) -> List[Element]:
     """Partitions an HTML document into its constituent elements.
 
