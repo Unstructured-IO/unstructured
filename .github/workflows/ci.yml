@@ -108,7 +108,7 @@ jobs:
         tesseract --version
         # NOTE(robinson) - Installing weaviate-client separately here because the requests
         # version conflicts with label_studio_sdk
-        pip install weaviate-client
+        python${{ matrix.python-version}} -m pip install weaviate-client
         make test
         make check-coverage
 
