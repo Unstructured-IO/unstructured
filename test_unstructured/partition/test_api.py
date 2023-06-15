@@ -49,7 +49,7 @@ def test_partition_via_api_from_filename(monkeypatch):
         lambda *args, **kwargs: MockResponse(status_code=200),
     )
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
-    elements = partition_via_api(filename=filename, api_key="")
+    elements = partition_via_api(filename=filename)
     assert elements[0] == NarrativeText("This is a test email to use for unit tests.")
     assert elements[0].metadata.filetype == "message/rfc822"
 
@@ -63,7 +63,7 @@ def test_partition_via_api_from_file(monkeypatch):
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
 
     with open(filename, "rb") as f:
-        elements = partition_via_api(file=f, file_filename=filename, api_key="")
+        elements = partition_via_api(file=f, file_filename=filename)
     assert elements[0] == NarrativeText("This is a test email to use for unit tests.")
     assert elements[0].metadata.filetype == "message/rfc822"
 
@@ -77,7 +77,7 @@ def test_partition_via_api_from_file_raises_without_filename(monkeypatch):
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
 
     with open(filename, "rb") as f, pytest.raises(ValueError):
-        partition_via_api(file=f, api_key="")
+        partition_via_api(file=f)
 
 
 def test_partition_via_api_raises_with_bad_response(monkeypatch):
@@ -89,20 +89,20 @@ def test_partition_via_api_raises_with_bad_response(monkeypatch):
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
 
     with pytest.raises(ValueError):
-        partition_via_api(filename=filename, api_key="")
+        partition_via_api(filename=filename)
 
 
 def test_partition_via_api_valid_request_data_kwargs():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf")
 
-    elements = partition_via_api(filename=filename, api_key="", strategy="fast")
+    elements = partition_via_api(filename=filename, strategy="fast")
     assert isinstance(elements, list)
 
 
 def test_partition_via_api_invalid_request_data_kwargs():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf")
     with pytest.raises(ValueError):
-        partition_via_api(filename=filename, api_key="", strategy="not_a_strategy")
+        partition_via_api(filename=filename, strategy="not_a_strategy")
 
 
 class MockMultipleResponse:
@@ -164,7 +164,7 @@ def test_partition_multiple_via_api_with_single_filename(monkeypatch):
     )
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
 
-    elements = partition_multiple_via_api(filenames=[filename], api_key="")
+    elements = partition_multiple_via_api(filenames=[filename])
     assert elements[0][0] == NarrativeText("This is a test email to use for unit tests.")
     assert elements[0][0].metadata.filetype == "message/rfc822"
 
@@ -181,7 +181,7 @@ def test_partition_multiple_via_api_from_filenames(monkeypatch):
         os.path.join(DIRECTORY, "..", "..", "example-docs", "fake.docx"),
     ]
 
-    elements = partition_multiple_via_api(filenames=filenames, api_key="")
+    elements = partition_multiple_via_api(filenames=filenames)
     assert len(elements) == 2
     assert elements[0][0] == NarrativeText("This is a test email to use for unit tests.")
     assert elements[0][0].metadata.filetype == "message/rfc822"
@@ -204,7 +204,6 @@ def test_partition_multiple_via_api_from_files(monkeypatch):
         elements = partition_multiple_via_api(
             files=files,
             file_filenames=filenames,
-            api_key="",
         )
     assert len(elements) == 2
     assert elements[0][0] == NarrativeText("This is a test email to use for unit tests.")
@@ -224,7 +223,7 @@ def test_partition_multiple_via_api_raises_with_bad_response(monkeypatch):
     ]
 
     with pytest.raises(ValueError):
-        partition_multiple_via_api(filenames=filenames, api_key="")
+        partition_multiple_via_api(filenames=filenames)
 
 
 def test_partition_multiple_via_api_raises_with_content_types_size_mismatch(monkeypatch):
@@ -243,7 +242,6 @@ def test_partition_multiple_via_api_raises_with_content_types_size_mismatch(monk
         partition_multiple_via_api(
             filenames=filenames,
             content_types=["text/plain"],
-            api_key="",
         )
 
 
@@ -266,7 +264,6 @@ def test_partition_multiple_via_api_from_files_raises_with_size_mismatch(monkeyp
                 files=files,
                 file_filenames=filenames,
                 content_types=["text/plain"],
-                api_key="",
             )
 
 
@@ -287,7 +284,6 @@ def test_partition_multiple_via_api_from_files_raises_without_filenames(monkeypa
         with pytest.raises(ValueError):
             partition_multiple_via_api(
                 files=files,
-                api_key="",
             )
 
 
@@ -297,7 +293,7 @@ def test_partition_multiple_via_api_valid_request_data_kwargs():
         os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.jpg"),
     ]
 
-    elements = partition_multiple_via_api(filenames=filenames, api_key="", strategy="fast")
+    elements = partition_multiple_via_api(filenames=filenames, strategy="fast")
     assert isinstance(elements, list)
 
 
@@ -310,6 +306,5 @@ def test_partition_multiple_via_api_invalid_request_data_kwargs():
     with pytest.raises(ValueError):
         partition_multiple_via_api(
             filenames=filenames,
-            api_key="",
             strategy="not_a_strategy",
         )
