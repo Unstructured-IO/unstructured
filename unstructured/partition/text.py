@@ -10,6 +10,7 @@ from unstructured.documents.elements import (
     NarrativeText,
     Text,
     Title,
+    process_metadata,
 )
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
@@ -27,6 +28,7 @@ def split_by_paragraph(content: str) -> List[str]:
     return re.split(PARAGRAPH_PATTERN, content)
 
 
+@process_metadata()
 @add_metadata_with_filetype(FileType.TXT)
 def partition_text(
     filename: Optional[str] = None,
@@ -36,6 +38,7 @@ def partition_text(
     paragraph_grouper: Optional[Callable[[str], str]] = None,
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
+    **kwargs,
 ) -> List[Element]:
     """Partitions an .txt documents into its constituent elements.
     Parameters

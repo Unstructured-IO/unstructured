@@ -2,10 +2,13 @@ from __future__ import annotations
 
 import datetime
 import hashlib
+import inspect
 import os
 import pathlib
+import re
 from abc import ABC
 from dataclasses import dataclass
+from functools import wraps
 from typing import Any, Callable, Dict, List, Optional, Tuple, TypedDict, Union, cast
 
 
@@ -126,11 +129,11 @@ def process_metadata():
 
 def _add_regex_metadata(
     elements: List[Element],
-    regex_search_metadata: Optional[Dict[str, str]] = None,
-    regex_match_metadata: Optional[Dict[str, str]] = None,
+    regex_search_metadata: Dict[str, str] = {},
+    regex_match_metadata: Dict[str, str] = {},
 ) -> List[Element]:
     key_intersection = set(regex_search_metadata.keys()).intersection(
-        set(regex_match_metadata.keys())
+        set(regex_match_metadata.keys()),
     )
     if len(key_intersection) > 0:
         raise ValueError(
@@ -140,28 +143,37 @@ def _add_regex_metadata(
         )
 
     for element in elements:
-        regex_metadata: RegexMetadata = {}
-        for field_name, pattern in regex_search_metadata:
-            for result in re.finditer(pattern, element.text):
-                start, end = result.span()
-                regex_metadata[field_name] = {
-                    "text": element.text[start:end],
-                    "start": start,
-                    "end": end,
-                    "strategy": "search",
-                }
+        if isinstance(element, Text):
+            regex_metadata: Dict["str", List[RegexMetadata]] = {}
+            for field_name, pattern in regex_search_metadata.items():
+                results: List[RegexMetadata] = []
+                for result in re.finditer(pattern, element.text):
+                    start, end = result.span()
+                    results.append(
+                        {
+                            "text": element.text[start:end],
+                            "start": start,
+                            "end": end,
+                            "strategy": "search",
+                        },
+                    )
+                if len(results) > 0:
+                    regex_metadata[field_name] = results
 
-        for field_name, pattern in regex_match_metadata:
-            result = re.match(pattern, element.text)
-            start, end = result.span()
-            regex_metadata[field_name] = {
-                "text": element.text[start:end],
-                "start": start,
-                "end": end,
-                "strategy": "match",
-            }
+            for field_name, pattern in regex_match_metadata.items():
+                match_result: Optional[re.Match] = re.match(pattern, element.text)
+                if match_result is not None:
+                    start, end = match_result.span()
+                    regex_metadata[field_name] = [
+                        {
+                            "text": element.text[start:end],
+                            "start": start,
+                            "end": end,
+                            "strategy": "match",
+                        },
+                    ]
 
-        element.metadata.regex_metadata = regex_metadata
+            element.metadata.regex_metadata = regex_metadata
 
     return elements
 
