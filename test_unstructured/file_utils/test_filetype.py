@@ -41,6 +41,7 @@ XLSX_MIME_TYPES = [
         # NOTE(robinson) - currently failing in the docker tests because the detected
         # MIME type is text/csv
         # ("stanley-cups.csv", FileType.CSV),
+        ("stanley-cups.tsv", FileType.TSV),
         ("fake-power-point.pptx", FileType.PPTX),
         ("winter-sports.epub", FileType.EPUB),
         ("spring-weather.html.json", FileType.JSON),
@@ -67,6 +68,7 @@ def test_detect_filetype_from_filename(file, expected):
         ("fake-html.html", FileType.HTML),
         ("stanley-cups.xlsx", FileType.XLSX),
         ("stanley-cups.csv", FileType.CSV),
+        ("stanley-cups.tsv", FileType.TSV),
         ("fake-power-point.pptx", FileType.PPTX),
         ("winter-sports.epub", FileType.EPUB),
         ("fake-doc.rtf", FileType.RTF),
@@ -105,6 +107,7 @@ def test_detect_filetype_from_filename_with_extension(monkeypatch, file, expecte
         # NOTE(robinson) - currently failing in the docker tests because the detected
         # MIME type is text/csv
         # ("stanley-cups.csv", FileType.CSV),
+        ("stanley-cups.tsv", FileType.TSV),
         ("fake-power-point.pptx", FileType.PPTX),
         ("winter-sports.epub", FileType.EPUB),
     ],
