@@ -61,7 +61,10 @@ def get_file_info_from_file_contents(
         data["filename"] = []
 
     for i, file_content in enumerate(file_contents):
-        _, content_string = file_content.split(",")
+        if "," in file_content:
+            _, content_string = file_content.split(",")
+        else:
+            content_string = file_content
         content_bytes = base64.b64decode(content_string)
         f = io.BytesIO(content_bytes)
         filetype = detect_filetype(file=f)
