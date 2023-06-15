@@ -1,10 +1,11 @@
-## 0.7.6-dev0
+## 0.7.6-dev1
 
 ### Enhancements
 
 ### Features
 
 * Updates `partition_docx` to include headers and footers in the output.
+* Create `partition_tsv` and associated tests. Make additional changes to `detect_filetype`.
 
 ### Fixes
 
@@ -18,7 +19,6 @@
 
 ### Features
 
-* Create `partition_tsv` and associated tests. Make additional changes to `detect_filetype`.
 * Adds `partition_rst` for processed ReStructured Text documents.
 
 ### Fixes
