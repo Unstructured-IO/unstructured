@@ -26,8 +26,8 @@ from unstructured.partition.email import (
     partition_email_header,
 )
 
-DIRECTORY = pathlib.Path(__file__).parent.resolve()
-example_dir = os.path.join(DIRECTORY, "..", "..", "example-docs", "eml")
+FILE_DIRECTORY = pathlib.Path(__file__).parent.resolve()
+EXAMPLE_DOCS_DIRECTORY = os.path.join(FILE_DIRECTORY, "..", "..", "example-docs", "eml")
 
 
 EXPECTED_OUTPUT = [
@@ -101,7 +101,7 @@ ATTACH_EXPECTED_OUTPUT = [
 
 
 def test_partition_email_from_filename():
-    filename = os.path.join(example_dir, "fake-email.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
     elements = partition_email(filename=filename)
     assert len(elements) > 0
     assert elements == EXPECTED_OUTPUT
@@ -123,7 +123,7 @@ def test_partition_email_from_filename():
     ],
 )
 def test_partition_email_from_filename_default_encoding(filename, expected_output):
-    filename = os.path.join(example_dir, filename)
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, filename)
     elements = partition_email(filename=filename)
     assert len(elements) > 0
     if expected_output:
@@ -131,7 +131,7 @@ def test_partition_email_from_filename_default_encoding(filename, expected_outpu
 
 
 def test_partition_email_from_file():
-    filename = os.path.join(example_dir, "fake-email.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
     with open(filename) as f:
         elements = partition_email(file=f)
     assert len(elements) > 0
@@ -154,7 +154,7 @@ def test_partition_email_from_file():
     ],
 )
 def test_partition_email_from_file_default_encoding(filename, expected_output):
-    filename = os.path.join(example_dir, filename)
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, filename)
     with open(filename) as f:
         elements = partition_email(file=f)
     assert len(elements) > 0
@@ -163,7 +163,7 @@ def test_partition_email_from_file_default_encoding(filename, expected_output):
 
 
 def test_partition_email_from_file_rb():
-    filename = os.path.join(example_dir, "fake-email.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
     with open(filename, "rb") as f:
         elements = partition_email(file=f)
     assert len(elements) > 0
@@ -186,7 +186,7 @@ def test_partition_email_from_file_rb():
     ],
 )
 def test_partition_email_from_file_rb_default_encoding(filename, expected_output):
-    filename = os.path.join(example_dir, filename)
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, filename)
     with open(filename, "rb") as f:
         elements = partition_email(file=f)
     assert len(elements) > 0
@@ -195,7 +195,7 @@ def test_partition_email_from_file_rb_default_encoding(filename, expected_output
 
 
 def test_partition_email_from_text_file():
-    filename = os.path.join(example_dir, "fake-email.txt")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.txt")
     with open(filename) as f:
         elements = partition_email(file=f, content_source="text/plain")
     assert len(elements) > 0
@@ -203,7 +203,7 @@ def test_partition_email_from_text_file():
 
 
 def test_partition_email_from_text_file_with_headers():
-    filename = os.path.join(example_dir, "fake-email.txt")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.txt")
     with open(filename) as f:
         elements = partition_email(file=f, content_source="text/plain", include_headers=True)
     assert len(elements) > 0
@@ -211,7 +211,7 @@ def test_partition_email_from_text_file_with_headers():
 
 
 def test_partition_email_from_text():
-    filename = os.path.join(example_dir, "fake-email.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
     with open(filename) as f:
         text = f.read()
     elements = partition_email(text=text)
@@ -224,14 +224,14 @@ def test_partition_email_from_text_work_with_empty_string():
 
 
 def test_partition_email_from_filename_with_embedded_image():
-    filename = os.path.join(example_dir, "fake-email-image-embedded.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email-image-embedded.eml")
     elements = partition_email(filename=filename, content_source="text/plain")
     assert len(elements) > 0
     assert elements == IMAGE_EXPECTED_OUTPUT
 
 
 def test_partition_email_header():
-    filename = os.path.join(example_dir, "fake-email-header.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email-header.eml")
     with open(filename) as f:
         msg = email.message_from_file(f)
     elements = partition_email_header(msg)
@@ -240,7 +240,7 @@ def test_partition_email_header():
 
 
 def test_partition_email_has_metadata():
-    filename = os.path.join(example_dir, "fake-email-header.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email-header.eml")
     elements = partition_email(filename=filename)
     assert len(elements) > 0
     assert elements[0].metadata == ElementMetadata(
@@ -259,7 +259,7 @@ def test_partition_email_has_metadata():
 
 
 def test_extract_email_text_matches_html():
-    filename = os.path.join(example_dir, "fake-email-attachment.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email-attachment.eml")
     elements_from_text = partition_email(filename=filename, content_source="text/plain")
     elements_from_html = partition_email(filename=filename, content_source="text/html")
 
@@ -271,7 +271,7 @@ def test_extract_email_text_matches_html():
 
 
 def test_extract_attachment_info():
-    filename = os.path.join(example_dir, "fake-email-attachment.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email-attachment.eml")
     with open(filename) as f:
         msg = email.message_from_file(f)
     attachment_info = extract_attachment_info(msg)
@@ -285,7 +285,7 @@ def test_partition_email_raises_with_none_specified():
 
 
 def test_partition_email_raises_with_too_many_specified():
-    filename = os.path.join(example_dir, "fake-email.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
     with open(filename) as f:
         text = f.read()
 
@@ -294,13 +294,13 @@ def test_partition_email_raises_with_too_many_specified():
 
 
 def test_partition_email_raises_with_invalid_content_type():
-    filename = os.path.join(example_dir, "fake-email.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
     with pytest.raises(ValueError):
         partition_email(filename=filename, content_source="application/json")
 
 
 def test_partition_email_processes_fake_email_with_header():
-    filename = os.path.join(example_dir, "fake-email-header.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email-header.eml")
     elements = partition_email(filename=filename)
     assert len(elements) > 0
 
@@ -320,6 +320,6 @@ def test_convert_to_iso_8601(time, expected):
 
 
 def test_partition_email_raises_with_no_html_content():
-    filename = os.path.join(example_dir, "email-no-html-content-1.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "email-no-html-content-1.eml")
     with pytest.raises(ValueError):
         partition_email(filename=filename)
