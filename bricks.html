@@ -4,10 +4,10 @@
 <head><meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Examples" href="examples.html" /><link rel="prev" title="Getting Started" href="getting_started.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Metadata" href="metadata.html" /><link rel="prev" title="Getting Started" href="getting_started.html" />
 
   <link rel="shortcut icon" href="_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.05.20" />
-  <title>Bricks - Unstructured 0.7.5 documentation</title>
+  <title>Bricks - Unstructured 0.7.6 documentation</title>
   <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -295,7 +295,8 @@
   
 </a>
 <div class="social social--sidebar" style="margin-top: 1em; display: flex; justify-content: right; gap: 8px">
-  <a href="https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-1nlh1ot5d-dfY7zCRlhFboZrIWLA4Qgw"
+  <a
+    href="https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-1x7cgo0pg-PTptXWylzPQF9xZolzCnwQ"
     class="button--primary" target="_blank">Join <span aria-label="slack" class="slack-icon"></span></span></a>
     <div class="github-stars github-stars--sidebar"></div>
 </div><form class="sidebar-search-container" method="get" action="search.html" role="search">
@@ -309,6 +310,7 @@
 <li class="toctree-l1"><a class="reference internal" href="installing.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Bricks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metadata.html">Metadata</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="integrations.html">Integrations</a></li>
 </ul>
@@ -360,7 +362,7 @@
         </div>
         <article role="main">
           <div class="social social--main" style="margin-top: 1em; display: flex; justify-content: right; gap: 8px">
-  					<a href="https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-1nlh1ot5d-dfY7zCRlhFboZrIWLA4Qgw"
+            <a href="https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-1x7cgo0pg-PTptXWylzPQF9xZolzCnwQ"
               class="button--primary" target="_blank">Join <span aria-label="slack"
                 class="slack-icon"></span></span></a>
             <div class="github-stars github-stars--top-page"></div>
@@ -431,7 +433,7 @@ If you call the <code class="docutils literal notranslate"><span class="pre">par
 file type and route it to the appropriate partitioning brick. All partitioning bricks
 called within <code class="docutils literal notranslate"><span class="pre">partition</span></code> are called using the default kwargs. Use the document-type
 specific bricks if you need to apply non-default settings.
-<code class="docutils literal notranslate"><span class="pre">partition</span></code> currently supports <code class="docutils literal notranslate"><span class="pre">.docx</span></code>, <code class="docutils literal notranslate"><span class="pre">.doc</span></code>, <code class="docutils literal notranslate"><span class="pre">.odt</span></code>, <code class="docutils literal notranslate"><span class="pre">.pptx</span></code>, <code class="docutils literal notranslate"><span class="pre">.ppt</span></code>, <code class="docutils literal notranslate"><span class="pre">.xlsx</span></code>, <code class="docutils literal notranslate"><span class="pre">.csv</span></code>, <code class="docutils literal notranslate"><span class="pre">.eml</span></code>, <code class="docutils literal notranslate"><span class="pre">.msg</span></code>, <code class="docutils literal notranslate"><span class="pre">.rtf</span></code>, <code class="docutils literal notranslate"><span class="pre">.epub</span></code>, <code class="docutils literal notranslate"><span class="pre">.html</span></code>, <code class="docutils literal notranslate"><span class="pre">.xml</span></code>, <code class="docutils literal notranslate"><span class="pre">.pdf</span></code>,
+<code class="docutils literal notranslate"><span class="pre">partition</span></code> currently supports <code class="docutils literal notranslate"><span class="pre">.docx</span></code>, <code class="docutils literal notranslate"><span class="pre">.doc</span></code>, <code class="docutils literal notranslate"><span class="pre">.odt</span></code>, <code class="docutils literal notranslate"><span class="pre">.pptx</span></code>, <code class="docutils literal notranslate"><span class="pre">.ppt</span></code>, <code class="docutils literal notranslate"><span class="pre">.xlsx</span></code>, <code class="docutils literal notranslate"><span class="pre">.csv</span></code>, <code class="docutils literal notranslate"><span class="pre">.tsv</span></code>, <code class="docutils literal notranslate"><span class="pre">.eml</span></code>, <code class="docutils literal notranslate"><span class="pre">.msg</span></code>, <code class="docutils literal notranslate"><span class="pre">.rtf</span></code>, <code class="docutils literal notranslate"><span class="pre">.epub</span></code>, <code class="docutils literal notranslate"><span class="pre">.html</span></code>, <code class="docutils literal notranslate"><span class="pre">.xml</span></code>, <code class="docutils literal notranslate"><span class="pre">.pdf</span></code>,
 <code class="docutils literal notranslate"><span class="pre">.png</span></code>, <code class="docutils literal notranslate"><span class="pre">.jpg</span></code>, and <code class="docutils literal notranslate"><span class="pre">.txt</span></code> files.
 If you set the <code class="docutils literal notranslate"><span class="pre">include_page_breaks</span></code> kwarg to <code class="docutils literal notranslate"><span class="pre">True</span></code>, the output will include page breaks. This is only supported for <code class="docutils literal notranslate"><span class="pre">.pptx</span></code>, <code class="docutils literal notranslate"><span class="pre">.html</span></code>, <code class="docutils literal notranslate"><span class="pre">.pdf</span></code>,
 <code class="docutils literal notranslate"><span class="pre">.png</span></code>, and <code class="docutils literal notranslate"><span class="pre">.jpg</span></code>.
@@ -485,6 +487,19 @@ contain an HTML representation of the table.</p>
 </pre></div>
 </div>
 </section>
+<section id="partition-tsv">
+<h3><code class="docutils literal notranslate"><span class="pre">partition_tsv</span></code><a class="headerlink" href="#partition-tsv" title="Permalink to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">partition_tsv</span></code> function pre-processes TSV files. The output is a single
+<code class="docutils literal notranslate"><span class="pre">Table</span></code> element. The <code class="docutils literal notranslate"><span class="pre">text_as_html</span></code> attribute in the element metadata will
+contain an HTML representation of the table.</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.tsv</span> <span class="kn">import</span> <span class="n">partition_tsv</span>
+
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_tsv</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example-docs/stanley-cups.tsv&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">elements</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">text_as_html</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
 <section id="partition-doc">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_doc</span></code><a class="headerlink" href="#partition-doc" title="Permalink to this heading"></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">partition_doc</span></code> partitioning brick pre-processes Microsoft Word documents
@@ -526,6 +541,17 @@ as input, as shown in the two examples below.</p>
     <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_docx</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>In Word documents, headers and footers are specified per section. In the output,
+the <code class="docutils literal notranslate"><span class="pre">Header</span></code> elements will appear at the beginning of a section and <code class="docutils literal notranslate"><span class="pre">Footer</span></code>
+elements will appear at the end. MSFT Word headers and footers have a <code class="docutils literal notranslate"><span class="pre">header_footer_type</span></code>
+metadata field indicating where the header or footer applies. Valid values are
+<code class="docutils literal notranslate"><span class="pre">&quot;primary&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;first_page&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;even_page&quot;</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">partition_docx</span></code> will include page numbers in the document metadata when page breaks
+are present in the document. The function will detect user inserted page breaks
+and page breaks inserted by the Word document renderer. Some (but not all) Word document renderers
+insert page breaks when you save the document. If your Word document renderer does not do that,
+you may not see page numbers in the output even if you see them visually when you open the
+document. If that is the case, you can try saving the document with a different renderer.</p>
 </section>
 <section id="partition-email">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_email</span></code><a class="headerlink" href="#partition-email" title="Permalink to this heading"></a></h3>
@@ -2096,12 +2122,12 @@ distinct sentences and words.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="examples.html">
+          <a class="next-page" href="metadata.html">
             <div class="page-info">
               <div class="context">
                 <span>Next</span>
               </div>
-              <div class="title">Examples</div>
+              <div class="title">Metadata</div>
             </div>
           </a>
           <a class="prev-page" href="getting_started.html">
@@ -2150,6 +2176,7 @@ distinct sentences and words.</p>
 <li><a class="reference internal" href="#partitioning">Partitioning</a><ul>
 <li><a class="reference internal" href="#partition"><code class="docutils literal notranslate"><span class="pre">partition</span></code></a></li>
 <li><a class="reference internal" href="#partition-csv"><code class="docutils literal notranslate"><span class="pre">partition_csv</span></code></a></li>
+<li><a class="reference internal" href="#partition-tsv"><code class="docutils literal notranslate"><span class="pre">partition_tsv</span></code></a></li>
 <li><a class="reference internal" href="#partition-doc"><code class="docutils literal notranslate"><span class="pre">partition_doc</span></code></a></li>
 <li><a class="reference internal" href="#partition-docx"><code class="docutils literal notranslate"><span class="pre">partition_docx</span></code></a></li>
 <li><a class="reference internal" href="#partition-email"><code class="docutils literal notranslate"><span class="pre">partition_email</span></code></a></li>
