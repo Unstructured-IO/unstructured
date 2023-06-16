@@ -1,0 +1,20 @@
+[
+  {
+    "element_id": "7e8cd2056da73a7fefb6cd91f4e5d199",
+    "text": "Title",
+    "type": "Title",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    }
+  },
+  {
+    "element_id": "9870998df89c1da4e01378d0fd085106",
+    "text": "This is a good reason to continue",
+    "type": "NarrativeText",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    }
+  }
+]

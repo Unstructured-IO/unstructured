@@ -74,6 +74,11 @@ def determine_pdf_or_image_strategy(
     unstructured_inference_installed = dependency_exists("unstructured_inference")
 
     if is_image:
+        # Note(yuming): There is no fast strategy for images,
+        # use ocr_only as a fallback plan for consistency with PDFs.
+        # This can be removed once unstructured-api use auto as the default strategy.
+        if strategy == "fast":
+            strategy = "ocr_only"
         validate_strategy(strategy, "image")
         pdf_text_extractable = False
     else:
