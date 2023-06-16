@@ -1,10 +1,13 @@
-## 0.7.7-dev0
+## 0.7.7-dev1
 
 ### Enhancements
 
 ### Features
 
 ### Fixes
+
+* Adds an `html_assemble_articles` kwarg to `partition_html` to enable users to capture
+  content outside of `<article>` tags when `<article>` tags are present.
 
 ## 0.7.6
 
