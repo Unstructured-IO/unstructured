@@ -17,7 +17,7 @@ test_files = [
     "layout-parser-paper-fast.pdf",
     "fake-html.html",
     "fake.doc",
-    "fake-email.eml",
+    "eml/fake-email.eml",
     pytest.param(
         "fake-power-point.ppt",
         marks=pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container"),

@@ -36,11 +36,13 @@ EXPECTED_EMAIL_OUTPUT = [
     ListItem(text="Violets are blue"),
 ]
 
+EML_TEST_FILE = "eml/fake-email.eml"
+
 is_in_docker = os.path.exists("/.dockerenv")
 
 
 def test_auto_partition_email_from_filename():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, EML_TEST_FILE)
     elements = partition(filename=filename, strategy="hi_res")
     assert len(elements) > 0
     assert elements == EXPECTED_EMAIL_OUTPUT
@@ -49,7 +51,7 @@ def test_auto_partition_email_from_filename():
 
 
 def test_auto_partition_email_from_file():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, EML_TEST_FILE)
     with open(filename) as f:
         elements = partition(file=f, strategy="hi_res")
     assert len(elements) > 0
@@ -57,7 +59,7 @@ def test_auto_partition_email_from_file():
 
 
 def test_auto_partition_email_from_file_rb():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, EML_TEST_FILE)
     with open(filename, "rb") as f:
         elements = partition(file=f, strategy="hi_res")
     assert len(elements) > 0

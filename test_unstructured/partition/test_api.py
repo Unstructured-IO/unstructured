@@ -11,6 +11,8 @@ from unstructured.partition.api import partition_multiple_via_api, partition_via
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
+EML_TEST_FILE = "eml/fake-email.eml"
+
 
 class MockResponse:
     def __init__(self, status_code):
@@ -48,7 +50,7 @@ def test_partition_via_api_from_filename(monkeypatch):
         "post",
         lambda *args, **kwargs: MockResponse(status_code=200),
     )
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", EML_TEST_FILE)
     elements = partition_via_api(filename=filename)
     assert elements[0] == NarrativeText("This is a test email to use for unit tests.")
     assert elements[0].metadata.filetype == "message/rfc822"
@@ -60,7 +62,7 @@ def test_partition_via_api_from_file(monkeypatch):
         "post",
         lambda *args, **kwargs: MockResponse(status_code=200),
     )
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", EML_TEST_FILE)
 
     with open(filename, "rb") as f:
         elements = partition_via_api(file=f, file_filename=filename)
@@ -74,7 +76,7 @@ def test_partition_via_api_from_file_raises_without_filename(monkeypatch):
         "post",
         lambda *args, **kwargs: MockResponse(status_code=200),
     )
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", EML_TEST_FILE)
 
     with open(filename, "rb") as f, pytest.raises(ValueError):
         partition_via_api(file=f)
@@ -86,7 +88,7 @@ def test_partition_via_api_raises_with_bad_response(monkeypatch):
         "post",
         lambda *args, **kwargs: MockResponse(status_code=500),
     )
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", EML_TEST_FILE)
 
     with pytest.raises(ValueError):
         partition_via_api(filename=filename)
@@ -162,7 +164,7 @@ def test_partition_multiple_via_api_with_single_filename(monkeypatch):
         "post",
         lambda *args, **kwargs: MockResponse(status_code=200),
     )
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml")
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", EML_TEST_FILE)
 
     elements = partition_multiple_via_api(filenames=[filename])
     assert elements[0][0] == NarrativeText("This is a test email to use for unit tests.")
@@ -177,7 +179,7 @@ def test_partition_multiple_via_api_from_filenames(monkeypatch):
     )
 
     filenames = [
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml"),
+        os.path.join(DIRECTORY, "..", "..", "example-docs", "eml/fake-email.eml"),
         os.path.join(DIRECTORY, "..", "..", "example-docs", "fake.docx"),
     ]
 
@@ -195,7 +197,7 @@ def test_partition_multiple_via_api_from_files(monkeypatch):
     )
 
     filenames = [
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml"),
+        os.path.join(DIRECTORY, "..", "..", "example-docs", EML_TEST_FILE),
         os.path.join(DIRECTORY, "..", "..", "example-docs", "fake.docx"),
     ]
 
@@ -218,7 +220,7 @@ def test_partition_multiple_via_api_raises_with_bad_response(monkeypatch):
     )
 
     filenames = [
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml"),
+        os.path.join(DIRECTORY, "..", "..", "example-docs", EML_TEST_FILE),
         os.path.join(DIRECTORY, "..", "..", "example-docs", "fake.docx"),
     ]
 
@@ -253,7 +255,7 @@ def test_partition_multiple_via_api_from_files_raises_with_size_mismatch(monkeyp
     )
 
     filenames = [
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml"),
+        os.path.join(DIRECTORY, "..", "..", "example-docs", EML_TEST_FILE),
         os.path.join(DIRECTORY, "..", "..", "example-docs", "fake.docx"),
     ]
 
@@ -275,7 +277,7 @@ def test_partition_multiple_via_api_from_files_raises_without_filenames(monkeypa
     )
 
     filenames = [
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml"),
+        os.path.join(DIRECTORY, "..", "..", "example-docs", EML_TEST_FILE),
         os.path.join(DIRECTORY, "..", "..", "example-docs", "fake.docx"),
     ]
 
