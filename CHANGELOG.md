@@ -1,16 +1,26 @@
-## 0.7.6-dev3
+## 0.7.7-dev0
 
 ### Enhancements
-
 * Adds functionality to replace the `MIME` encodings for `eml` files with one of the common encodings if a `unicode` error occurs
 * Adds missed file-like object handling in `detect_file_encoding`
 * Adds functionality to extract charset info from `eml` files
+
+### Features
+
+### Fixes
+
+## 0.7.6
+
+### Enhancements
+
+* Convert fast startegy to ocr_only for images
 * Adds support for page numbers in `.docx` and `.doc` when user or renderer
   created page breaks are present.
 * Adds retry logic for the unstructured-ingest Biomed connector
 
 ### Features
 
+* Provides users with the ability to extract additional metadata via regex.
 * Updates `partition_docx` to include headers and footers in the output.
 * Create `partition_tsv` and associated tests. Make additional changes to `detect_filetype`.
 
