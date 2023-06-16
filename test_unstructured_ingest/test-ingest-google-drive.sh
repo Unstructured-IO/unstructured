@@ -13,7 +13,6 @@ fi
 # Create a temporary file
 GCP_INGEST_SERVICE_KEY_FILE=$(mktemp)
 echo "$GCP_INGEST_SERVICE_KEY" > "$GCP_INGEST_SERVICE_KEY_FILE"
-# cat "$GCP_INGEST_SERVICE_KEY_FILE"
 
 PYTHONPATH=. unstructured/ingest/main.py \
     --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
