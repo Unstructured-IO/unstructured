@@ -2,11 +2,9 @@ import json
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional, Type
+from typing import Optional
 
 import jq
-
-# from typing import Dict, Type
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import scan
 
@@ -36,8 +34,6 @@ class ElasticsearchFileMeta:
 class ElasticsearchIngestDoc(BaseIngestDoc):
     config: SimpleElasticsearchConfig
     file_meta: ElasticsearchFileMeta
-    # TODO: provide a better type hint
-    es: Type[Elasticsearch]
 
     # TODO: remove one of filename or _tmp_download_file, using a wrapper
     @property
@@ -104,7 +100,11 @@ class ElasticsearchIngestDoc(BaseIngestDoc):
         self.query_to_get_doc_by_id = {
             "query": {"bool": {"filter": {"term": {"_id": self.file_meta.document_id}}}},
         }
-        response = self.es.search(index=self.config.index_name, body=self.query_to_get_doc_by_id)
+
+        # TODO: instead of having a separate client for each doc,
+        # have a separate client for each process
+        es = Elasticsearch(self.config.url)
+        response = es.search(index=self.config.index_name, body=self.query_to_get_doc_by_id)
 
         self.document = self.get_text_fields(response)
 
@@ -158,7 +158,6 @@ class ElasticsearchConnector(BaseConnector):
                 self.standard_config,
                 self.config,
                 ElasticsearchFileMeta(self.config.index_name, id),
-                self.es,
             )
             for id in ids
         ]

@@ -83,21 +83,17 @@ class MainProcess:
             if not docs:
                 return
 
-        # TODO: enable multiprocessing
         # Debugging tip: use the below line and comment out the mp.Pool loop
         # block to remain in single process
-        for i, d in enumerate(docs[:25]):
-            print(i)
-            self.doc_processor_fn(d)
         # self.doc_processor_fn(docs[0])
         # self.doc_processor_fn(docs[1])
 
-        # with mp.Pool(
-        #     processes=self.num_processes,
-        #     initializer=ingest_log_streaming_init,
-        #     initargs=(logging.DEBUG if self.verbose else logging.INFO,),
-        # ) as pool:
-        #     pool.map(self.doc_processor_fn, docs)
+        with mp.Pool(
+            processes=self.num_processes,
+            initializer=ingest_log_streaming_init,
+            initargs=(logging.DEBUG if self.verbose else logging.INFO,),
+        ) as pool:
+            pool.map(self.doc_processor_fn, docs)
 
         # self.cleanup()
 
