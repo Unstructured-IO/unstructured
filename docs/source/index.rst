@@ -15,7 +15,10 @@ Library Documentation
   Check out this section to learn about basic workflows in ``unstructured``.
 
 :doc:`bricks`
-  Learning more about partitioning, cleaning, and staging bricks, included advanced usage patterns.
+  Learn more about partitioning, cleaning, and staging bricks, including advanced usage patterns.
+
+:doc:`metadata`
+  Learn more about how metadata is tracked in the ``unstructured`` library.
 
 :doc:`examples`
   Examples of other types of workflows within the ``unstructured`` package.
@@ -33,5 +36,6 @@ Library Documentation
    installing
    getting_started
    bricks
+   metadata
    examples
    integrations
