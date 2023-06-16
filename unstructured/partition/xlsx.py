@@ -4,17 +4,24 @@ from typing import IO, BinaryIO, List, Optional, Union, cast
 import lxml.html
 import pandas as pd
 
-from unstructured.documents.elements import Element, ElementMetadata, Table
+from unstructured.documents.elements import (
+    Element,
+    ElementMetadata,
+    Table,
+    process_metadata,
+)
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import exactly_one, spooled_to_bytes_io_if_needed
 
 
+@process_metadata()
 @add_metadata_with_filetype(FileType.XLSX)
 def partition_xlsx(
     filename: Optional[str] = None,
     file: Optional[Union[IO, SpooledTemporaryFile]] = None,
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
+    **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft Excel Documents in .xlsx format into its document elements.
 

@@ -29,6 +29,7 @@ from unstructured.documents.elements import (
     NarrativeText,
     Text,
     Title,
+    process_metadata,
 )
 from unstructured.documents.email_elements import (
     MetaData,
@@ -182,6 +183,7 @@ def find_embedded_image(
     return Image(text=image_info[:-1]), element
 
 
+@process_metadata()
 @add_metadata_with_filetype(FileType.EML)
 def partition_email(
     filename: Optional[str] = None,
@@ -190,6 +192,7 @@ def partition_email(
     content_source: str = "text/html",
     encoding: Optional[str] = None,
     include_headers: bool = False,
+    **kwargs,
 ) -> List[Element]:
     """Partitions an .eml documents into its constituent elements.
     Parameters

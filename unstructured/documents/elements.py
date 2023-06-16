@@ -2,11 +2,14 @@ from __future__ import annotations
 
 import datetime
 import hashlib
+import inspect
 import os
 import pathlib
+import re
 from abc import ABC
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast
+from functools import wraps
+from typing import Any, Callable, Dict, List, Optional, Tuple, TypedDict, Union, cast
 
 
 class NoID(ABC):
@@ -28,6 +31,14 @@ class DataSourceMetadata:
 
     def to_dict(self):
         return {key: value for key, value in self.__dict__.items() if value is not None}
+
+
+class RegexMetadata(TypedDict):
+    """Metadata that is extracted from a document element via regex."""
+
+    text: str
+    start: int
+    end: int
 
 
 @dataclass
@@ -58,6 +69,9 @@ class ElementMetadata:
     # Text format metadata fields
     text_as_html: Optional[str] = None
 
+    # Metadata extracted via regex
+    regex_metadata: Optional[Dict[str, List[RegexMetadata]]] = None
+
     def __post_init__(self):
         if isinstance(self.filename, pathlib.Path):
             self.filename = str(self.filename)
@@ -68,10 +82,12 @@ class ElementMetadata:
             self.filename = filename
 
     def to_dict(self):
-        dict = {key: value for key, value in self.__dict__.items() if value is not None}
+        _dict = {key: value for key, value in self.__dict__.items() if value is not None}
+        if "regex_metadata" in _dict and not _dict["regex_metadata"]:
+            _dict.pop("regex_metadata")
         if self.data_source:
-            dict["data_source"] = cast(DataSourceMetadata, self.data_source).to_dict()
-        return dict
+            _dict["data_source"] = cast(DataSourceMetadata, self.data_source).to_dict()
+        return _dict
 
     @classmethod
     def from_dict(cls, input_dict):
@@ -89,6 +105,58 @@ class ElementMetadata:
         if self.date is not None:
             dt = datetime.datetime.fromisoformat(self.date)
         return dt
+
+
+def process_metadata():
+    """Decorator for processing metadata for document elements."""
+
+    def decorator(func: Callable):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            elements = func(*args, **kwargs)
+            sig = inspect.signature(func)
+            params = dict(**dict(zip(sig.parameters, args)), **kwargs)
+            for param in sig.parameters.values():
+                if param.name not in params and param.default is not param.empty:
+                    params[param.name] = param.default
+
+            regex_metadata: Dict["str", "str"] = params.get("regex_metadata", {})
+            elements = _add_regex_metadata(elements, regex_metadata)
+
+            return elements
+
+        return wrapper
+
+    return decorator
+
+
+def _add_regex_metadata(
+    elements: List[Element],
+    regex_metadata: Dict[str, str] = {},
+) -> List[Element]:
+    """Adds metadata based on a user provided regular expression.
+    The additional metadata will be added to the regex_metadata
+    attrbuted in the element metadata."""
+    for element in elements:
+        if isinstance(element, Text):
+            _regex_metadata: Dict["str", List[RegexMetadata]] = {}
+            for field_name, pattern in regex_metadata.items():
+                results: List[RegexMetadata] = []
+                for result in re.finditer(pattern, element.text):
+                    start, end = result.span()
+                    results.append(
+                        {
+                            "text": element.text[start:end],
+                            "start": start,
+                            "end": end,
+                        },
+                    )
+                if len(results) > 0:
+                    _regex_metadata[field_name] = results
+
+            element.metadata.regex_metadata = _regex_metadata
+
+    return elements
 
 
 class Element(ABC):
