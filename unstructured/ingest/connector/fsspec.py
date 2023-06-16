@@ -79,10 +79,6 @@ class FsspecIngestDoc(BaseIngestDoc):
             / f"{self.remote_file_path.replace(f'{self.config.dir_path}/', '')}.json"
         )
 
-    def has_output(self):
-        """Determine if structured output for this doc already exists."""
-        return self._output_filename().is_file() and os.path.getsize(self._output_filename())
-
     def _create_full_tmp_dir_path(self):
         """Includes "directories" in the object path"""
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)

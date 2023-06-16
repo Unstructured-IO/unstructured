@@ -61,11 +61,6 @@ class GitIngestDoc(BaseIngestDoc):
     def _fetch_and_write(self) -> None:
         raise NotImplementedError()
 
-    def has_output(self):
-        """Determine if structured output for this doc already exists."""
-        output_filename = self._output_filename()
-        return output_filename.is_file() and output_filename.stat()
-
     def write_result(self):
         """Write the structured json result for this doc. result must be json serializable."""
         if self.standard_config.download_only:

@@ -57,10 +57,6 @@ class LocalIngestDoc(BaseIngestDoc):
             / f"{self.path.replace(f'{self.config.input_path}/', '')}.json"
         )
 
-    def has_output(self):
-        """Determine if structured output for this doc already exists."""
-        return self._output_filename().is_file() and os.path.getsize(self._output_filename())
-
     def write_result(self):
         """Write the structured json result for this doc. result must be json serializable."""
         if self.standard_config.download_only:

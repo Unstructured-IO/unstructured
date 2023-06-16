@@ -84,10 +84,6 @@ class SlackIngestDoc(BaseIngestDoc):
         output_file = self.channel + ".json"
         return Path(self.standard_config.output_dir) / output_file
 
-    def has_output(self):
-        """Determine if structured output for this doc already exists."""
-        return self._output_filename().is_file() and os.path.getsize(self._output_filename())
-
     def _create_full_tmp_dir_path(self):
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
 

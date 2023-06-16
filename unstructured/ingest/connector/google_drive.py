@@ -103,11 +103,6 @@ class GoogleDriveIngestDoc(BaseIngestDoc):
             logger.debug(f"Cleaning up {self}")
             Path.unlink(self.filename)
 
-    def has_output(self):
-        """Determine if structured output for this doc already exists."""
-        output_filename = self._output_filename()
-        return output_filename.is_file() and output_filename.stat()
-
     @requires_dependencies(["googleapiclient"], extras="google-drive")
     def get_file(self):
         from googleapiclient.errors import HttpError

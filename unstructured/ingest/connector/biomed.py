@@ -119,11 +119,6 @@ class BiomedIngestDoc(BaseIngestDoc):
             logger.debug(f"Cleaning up {self}")
             Path.unlink(self.filename)
 
-    def has_output(self):
-        """Determine if structured output for this doc already exists."""
-        output_filename = self._output_filename()
-        return output_filename.is_file() and output_filename.stat()
-
     def get_file(self):
         download_path = self.file_meta.download_filepath  # type: ignore
 

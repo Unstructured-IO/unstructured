@@ -147,9 +147,13 @@ class BaseIngestDoc(ABC):
         pass
 
     @abstractmethod
+    def _output_filename(self):
+        """Filename of the structured output for this doc."""
+        pass
+
     def has_output(self) -> bool:
         """Determine if structured output for this doc already exists."""
-        pass
+        return self._output_filename().is_file() and self._output_filename().stat().st_size
 
     @abstractmethod
     def write_result(self):
