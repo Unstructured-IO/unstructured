@@ -56,10 +56,8 @@ Advanced Metadata Options
 Extract Metadata with Regexes
 ------------------------------
 
-``unstructured`` allows users to extract additional metadata with regexes using the ``regex_match_metadata``
-and ``regex_search_metadata`` kwargs. ``regex_match_metadata`` will search for a pattern at the beginning
-of the text. ``regex_search_metadata`` will match results anywhere in the text. Here is an example
-of how to use these options:
+``unstructured`` allows users to extract additional metadata with regexes using the ``regex_metadata`` kwarg.
+Here is an example of how to extract regex metadata:
 
 
 .. code:: python
@@ -67,7 +65,7 @@ of how to use these options:
   from unstructured.partition.text import partition_text
 
   text = "SPEAKER 1: It is my turn to speak now!"
-  elements = partition_text(text=text, regex_match_metadata={"speaker": r"SPEAKER \d{1,3}:"})
+  elements = partition_text(text=text, regex_metadata={"speaker": r"SPEAKER \d{1,3}:"})
   elements[0].metadata.regex_metadata
 
 The result will look like:

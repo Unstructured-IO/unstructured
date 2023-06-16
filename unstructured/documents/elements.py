@@ -109,6 +109,8 @@ class ElementMetadata:
 
 
 def process_metadata():
+    """Decorator for processing metadata for document elements."""
+
     def decorator(func: Callable):
         @wraps(func)
         def wrapper(*args, **kwargs):
@@ -119,9 +121,8 @@ def process_metadata():
                 if param.name not in params and param.default is not param.empty:
                     params[param.name] = param.default
 
-            regex_search_metadata: Dict["str", "str"] = params.get("regex_search_metadata", {})
-            regex_match_metadata: Dict["str", "str"] = params.get("regex_match_metadata", {})
-            elements = _add_regex_metadata(elements, regex_search_metadata, regex_match_metadata)
+            regex_metadata: Dict["str", "str"] = params.get("regex_metadata", {})
+            elements = _add_regex_metadata(elements, regex_metadata)
 
             return elements
 
@@ -132,23 +133,15 @@ def process_metadata():
 
 def _add_regex_metadata(
     elements: List[Element],
-    regex_search_metadata: Dict[str, str] = {},
-    regex_match_metadata: Dict[str, str] = {},
+    regex_metadata: Dict[str, str] = {},
 ) -> List[Element]:
-    key_intersection = set(regex_search_metadata.keys()).intersection(
-        set(regex_match_metadata.keys()),
-    )
-    if len(key_intersection) > 0:
-        raise ValueError(
-            "The following keys are included in regex_search_metadata and regex_match_metadata. ",
-            "Make sure the keys for these parameters do not overlap. ",
-            f"Overlapping keys: {key_intersection}",
-        )
-
+    """Adds metadata based on a user provided regular expression.
+    The additional metadata will be added to the regex_metadata
+    attrbuted in the element metadata."""
     for element in elements:
         if isinstance(element, Text):
-            regex_metadata: Dict["str", List[RegexMetadata]] = {}
-            for field_name, pattern in regex_search_metadata.items():
+            _regex_metadata: Dict["str", List[RegexMetadata]] = {}
+            for field_name, pattern in regex_metadata.items():
                 results: List[RegexMetadata] = []
                 for result in re.finditer(pattern, element.text):
                     start, end = result.span()
@@ -161,22 +154,9 @@ def _add_regex_metadata(
                         },
                     )
                 if len(results) > 0:
-                    regex_metadata[field_name] = results
+                    _regex_metadata[field_name] = results
 
-            for field_name, pattern in regex_match_metadata.items():
-                match_result: Optional[re.Match] = re.match(pattern, element.text)
-                if match_result is not None:
-                    start, end = match_result.span()
-                    regex_metadata[field_name] = [
-                        {
-                            "text": element.text[start:end],
-                            "start": start,
-                            "end": end,
-                            "strategy": "match",
-                        },
-                    ]
-
-            element.metadata.regex_metadata = regex_metadata
+            element.metadata.regex_metadata = _regex_metadata
 
     return elements
 
