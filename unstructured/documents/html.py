@@ -20,7 +20,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.documents.xml import XMLDocument
+from unstructured.documents.xml import VALID_PARSERS, XMLDocument
 from unstructured.logger import logger
 from unstructured.partition.text_type import (
     is_bulleted_text,
@@ -426,5 +426,4 @@ def _find_articles(root: etree.Element, assemble_articles: bool = True) -> List[
     if len(articles) == 0:
         # NOTE(robinson) - ref: https://schema.org/Article
         articles = root.findall(".//div[@itemprop='articleBody']")
-    articles = []
     return [root] if len(articles) == 0 else articles

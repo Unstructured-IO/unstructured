@@ -93,7 +93,11 @@ class XMLDocument(Document):
 
     @classmethod
     def from_string(
-        cls, text: str, parser: VALID_PARSERS = None, stylesheet: Optional[str] = None, **kwargs
+        cls,
+        text: str,
+        parser: VALID_PARSERS = None,
+        stylesheet: Optional[str] = None,
+        **kwargs,
     ):
         """Supports reading in an XML file as a raw string rather than as a file."""
         logger.info("Reading document from string ...")

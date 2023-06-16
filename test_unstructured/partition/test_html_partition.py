@@ -246,3 +246,20 @@ def test_emoji_appears_with_emoji_utf8_code():
     html_text = """\n<html charset="utf-8"><p>Hello &#128512;</p></html>"""
     elements = partition_html(text=html_text)
     assert elements[0] == Title("Hello 😀")
+
+
+def test_partition_html_can_turn_off_assemble_articles():
+    html_text = """<html>
+    <article>
+        <h1>Some important stuff is going on!</h1>
+        <p>Here is a description of that stuff</p>
+    </article>
+    <article>
+        <h1>Some other important stuff is going on!</h1>
+        <p>Here is a description of that stuff</p>
+    </article>
+    <h4>This is outside of the article.</h4>
+</html>
+"""
+    elements = partition_html(text=html_text, html_assemble_articles=False)
+    assert elements[-1] == Title("This is outside of the article.")
