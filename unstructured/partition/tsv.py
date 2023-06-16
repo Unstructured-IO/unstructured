@@ -15,15 +15,15 @@ from unstructured.partition.common import exactly_one, spooled_to_bytes_io_if_ne
 
 
 @process_metadata()
-@add_metadata_with_filetype(FileType.CSV)
-def partition_csv(
+@add_metadata_with_filetype(FileType.TSV)
+def partition_tsv(
     filename: Optional[str] = None,
     file: Optional[Union[IO, SpooledTemporaryFile]] = None,
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
     **kwargs,
 ) -> List[Element]:
-    """Partitions Microsoft Excel Documents in .csv format into its document elements.
+    """Partitions TSV files into document elements.
 
     Parameters
     ----------
@@ -39,10 +39,10 @@ def partition_csv(
     exactly_one(filename=filename, file=file)
 
     if filename:
-        table = pd.read_csv(filename)
+        table = pd.read_csv(filename, sep="\t")
     else:
         f = spooled_to_bytes_io_if_needed(cast(Union[BinaryIO, SpooledTemporaryFile], file))
-        table = pd.read_csv(f)
+        table = pd.read_csv(f, sep="\t")
 
     metadata_filename = filename or metadata_filename
 
