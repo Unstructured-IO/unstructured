@@ -492,7 +492,7 @@ def test_partition_md_works_with_embedded_html():
 
 
 def test_auto_partition_warns_if_header_set_and_not_url(caplog):
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, EML_TEST_FILE)
     partition(filename=filename, headers={"Accept": "application/pdf"}, strategy="hi_res")
     assert caplog.records[0].levelname == "WARNING"
 
