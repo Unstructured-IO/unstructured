@@ -100,10 +100,6 @@ install-tensorboard:
 		python3 -m pip install tensorboard>=2.12.2;\
 	fi
 
-.PHONY: install-detectron2
-install-detectron2: install-tensorboard
-	python3 -m pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@e2ce8dc#egg=detectron2"
-
 ## install-local-inference: installs requirements for local inference
 .PHONY: install-local-inference
 install-local-inference: install install-unstructured-inference
