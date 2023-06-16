@@ -28,6 +28,12 @@ COMMON_ENCODINGS = [
 
 
 def format_encoding_str(encoding: str) -> str:
+    """Format input encoding string (e.g., `utf-8`, `iso-8859-1`, etc).
+        Parameters
+        ----------
+        encoding
+            The encoding string to be formatted (e.g., `UTF-8`, `utf_8`, `ISO-8859-1`, `iso_8859_1`, etc)
+        """
     return encoding.lower().replace("_", "-")
 
 
