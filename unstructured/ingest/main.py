@@ -170,6 +170,11 @@ class MainProcess:
     "and `az`.",
 )
 @click.option(
+    "--gcs-token",
+    default=None,
+    help="Token used to access Google Cloud. By default shouldn't be needed.",
+)
+@click.option(
     "--s3-anonymous",
     is_flag=True,
     default=False,
@@ -394,6 +399,7 @@ def main(
     ctx,
     remote_url,
     s3_anonymous,
+    gcs_token,
     azure_account_name,
     azure_account_key,
     azure_connection_string,
@@ -563,7 +569,7 @@ def main(
                 config=SimpleGcsConfig(
                     path=remote_url,
                     recursive=recursive,
-                    ####### access kwargs?
+                    access_kwargs={"token": gcs_token},
                 ),
             )
         elif protocol in ("abfs", "az"):
