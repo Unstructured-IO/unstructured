@@ -94,12 +94,6 @@ install-ingest-wikipedia:
 install-unstructured-inference:
 	python3 -m pip install -r requirements/local-inference.txt
 
-.PHONY: install-tensorboard
-install-tensorboard:
-	@if [ ${ARCH} = "arm64" ] || [ ${ARCH} = "aarch64" ]; then\
-		python3 -m pip install tensorboard>=2.12.2;\
-	fi
-
 ## install-local-inference: installs requirements for local inference
 .PHONY: install-local-inference
 install-local-inference: install install-unstructured-inference
