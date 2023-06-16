@@ -191,7 +191,11 @@ class FsspecConnector(BaseConnector):
         if not self.config.recursive:
             # fs.ls does not walk directories
             # directories that are listed in cloud storage can cause problems because they are seen as 0byte files
-            return [x.get("name") for x in self.fs.ls(self.config.path_without_protocol, detail=True) if x.get("size")>0]
+            return [
+                x.get("name")
+                for x in self.fs.ls(self.config.path_without_protocol, detail=True)
+                if x.get("size") > 0
+            ]
         else:
             # fs.find will recursively walk directories
             # "size" is a common key for all the cloud protocols with fs
