@@ -39,7 +39,6 @@ class RegexMetadata(TypedDict):
     text: str
     start: int
     end: int
-    strategy: str
 
 
 @dataclass
@@ -150,7 +149,6 @@ def _add_regex_metadata(
                             "text": element.text[start:end],
                             "start": start,
                             "end": end,
-                            "strategy": "search",
                         },
                     )
                 if len(results) > 0:

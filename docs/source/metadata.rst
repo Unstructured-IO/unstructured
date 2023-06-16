@@ -79,7 +79,6 @@ The result will look like:
         'text': 'SPEAKER 1:',
         'start': 0,
         'end': 10,
-        'strategy': 'match'
      }
     ]
   }

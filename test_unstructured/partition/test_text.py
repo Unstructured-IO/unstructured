@@ -152,5 +152,5 @@ def test_partition_text_extract_regex_metadata():
 
     elements = partition_text(text=text, regex_metadata={"speaker": r"SPEAKER \d{1,3}"})
     assert elements[0].metadata.regex_metadata == {
-        "speaker": [{"text": "SPEAKER 1", "start": 0, "end": 9, "strategy": "match"}],
+        "speaker": [{"text": "SPEAKER 1", "start": 0, "end": 9}],
     }
