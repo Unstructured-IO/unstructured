@@ -1,10 +1,10 @@
 import pytest
 
 from unstructured.documents.coordinates import (
-    convert_coordinate,
     CoordinateSystem,
     Orientation,
     RelativeCoordinateSystem,
+    convert_coordinate,
 )
 
 

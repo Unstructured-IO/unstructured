@@ -244,7 +244,7 @@ def test_partition_email_has_metadata():
     elements = partition_email(filename=filename)
     assert len(elements) > 0
     assert (
-        elements[0].metadata
+        elements[0].metadata.to_dict()
         == ElementMetadata(
             filename=filename,
             date="2022-12-16T17:04:16-05:00",

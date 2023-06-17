@@ -37,7 +37,7 @@ def test_partition_msg_from_filename():
     elements = partition_msg(filename=filename)
     assert elements == EXPECTED_MSG_OUTPUT
     assert (
-        elements[0].metadata
+        elements[0].metadata.to_dict()
         == ElementMetadata(
             filename=filename,
             date="2022-12-16T17:04:16-05:00",
