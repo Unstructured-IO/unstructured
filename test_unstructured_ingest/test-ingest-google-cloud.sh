@@ -5,19 +5,31 @@ set -e
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 cd "$SCRIPT_DIR"/.. || exit 1
 
-if [[ "$(find test_unstructured_ingest/expected-structured-output/google-cloud-storage/ -type f -size +2 | wc -l)" -ne 5 ]]; then
+if [[ "$(find test_unstructured_ingest/expected-structured-output/google-cloud-storage/ -type f -size +1 | wc -l)" -ne 1 ]]; then
     echo "The test fixtures in test_unstructured_ingest/expected-structured-output/ look suspicious. At least one of the files is too small."
     echo "Did you overwrite test fixtures with bad outputs?"
     exit 1
 fi
 
+if [ -z "$GCP_INGEST_SERVICE_KEY" ]; then
+   echo "Skipping Google Drive ingest test because the GCP_INGEST_SERVICE_KEY env var is not set."
+   exit 0
+fi
+
+# Create a temporary file
+GCP_INGEST_SERVICE_KEY_FILE=$(mktemp)
+cat "$GCP_INGEST_SERVICE_KEY" > "$GCP_INGEST_SERVICE_KEY_FILE"
+# echo "$GCP_INGEST_SERVICE_KEY" > "$GCP_INGEST_SERVICE_KEY_FILE"
+
+
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
-    --remote-url gs://unstructured_public/ \
+    --remote-url gs://utic-test-ingest-fixtures/ \
     --structured-output-dir gcs-output \
+    --gcs-token  "$GCP_INGEST_SERVICE_KEY_FILE" \
     --recursive \
     --preserve-downloads \
-    --reprocess
+    --reprocess 
 
 OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
 

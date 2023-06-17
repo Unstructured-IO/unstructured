@@ -172,7 +172,8 @@ class MainProcess:
 @click.option(
     "--gcs-token",
     default=None,
-    help="Token used to access Google Cloud. By default shouldn't be needed.",
+    help="Token used to access Google Cloud. GCSFS will attempt to use your default gcloud creds"
+    "or get creds from the google metadata service or fall back to anonymous access."
 )
 @click.option(
     "--s3-anonymous",
