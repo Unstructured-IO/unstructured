@@ -1,4 +1,4 @@
-## 0.7.7-dev1
+## 0.7.7-dev2
 
 ### Enhancements
 
@@ -7,6 +7,8 @@
 * Adds functionality to extract charset info from `eml` files
 
 ### Features
+
+* Added coordinate system class to track coordinate types and convert to different coordinate
 
 ### Fixes
 
