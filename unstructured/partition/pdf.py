@@ -10,7 +10,12 @@ from PIL import Image
 
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.coordinates import PixelSpace
-from unstructured.documents.elements import Element, ElementMetadata, PageBreak
+from unstructured.documents.elements import (
+    Element,
+    ElementMetadata,
+    PageBreak,
+    process_metadata,
+)
 from unstructured.file_utils.filetype import (
     FileType,
     add_metadata_with_filetype,
@@ -27,6 +32,7 @@ from unstructured.partition.text import element_from_text, partition_text
 from unstructured.utils import requires_dependencies
 
 
+@process_metadata()
 @add_metadata_with_filetype(FileType.PDF)
 def partition_pdf(
     filename: str = "",
@@ -38,6 +44,7 @@ def partition_pdf(
     strategy: str = "auto",
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
+    **kwargs,
 ) -> List[Element]:
     """Parses a pdf document into a list of interpreted elements.
     Parameters

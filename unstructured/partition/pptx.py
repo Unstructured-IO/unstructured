@@ -12,6 +12,7 @@ from unstructured.documents.elements import (
     Table,
     Text,
     Title,
+    process_metadata,
 )
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import (
@@ -27,12 +28,14 @@ from unstructured.partition.text_type import (
 OPENXML_SCHEMA_NAME = "{http://schemas.openxmlformats.org/drawingml/2006/main}"
 
 
+@process_metadata()
 @add_metadata_with_filetype(FileType.PPTX)
 def partition_pptx(
     filename: Optional[str] = None,
     file: Optional[Union[IO, SpooledTemporaryFile]] = None,
     include_page_breaks: bool = True,
     metadata_filename: Optional[str] = None,
+    **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft PowerPoint Documents in .pptx format into its document elements.
 
@@ -84,7 +87,8 @@ def partition_pptx(
             if not shape.has_text_frame:
                 continue
             # NOTE(robinson) - avoid processing shapes that are not on the actual slide
-            if shape.top < 0 or shape.left < 0:
+            # NOTE - skip check if no top or left position (shape displayed top left)
+            if (shape.top and shape.left) and (shape.top < 0 or shape.left < 0):
                 continue
             for paragraph in shape.text_frame.paragraphs:
                 text = paragraph.text
@@ -107,7 +111,7 @@ def partition_pptx(
 
 def _order_shapes(shapes):
     """Orders the shapes from top to bottom and left to right."""
-    return sorted(shapes, key=lambda x: (x.top, x.left))
+    return sorted(shapes, key=lambda x: (x.top or 0, x.left or 0))
 
 
 def _is_bulleted_paragraph(paragraph) -> bool:
