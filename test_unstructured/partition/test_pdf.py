@@ -6,6 +6,7 @@ import pytest
 import requests
 from unstructured_inference.inference import layout
 
+from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import NarrativeText, PageBreak, Text, Title
 from unstructured.partition import pdf, strategies
 
@@ -468,6 +469,7 @@ def test_partition_pdf_fast_groups_text_in_text_box():
             (418.6881, 91.94000000000005),
             (418.6881, 71.94000000000005),
         ),
+        coordinate_system=PixelSpace(width=612, height=792),
     )
 
     assert isinstance(elements[1], NarrativeText)
@@ -482,4 +484,5 @@ def test_partition_pdf_fast_groups_text_in_text_box():
             (333.59990000000005, 226.16470000000004),
             (333.59990000000005, 181.16470000000004),
         ),
+        coordinate_system=PixelSpace(width=612, height=792),
     )

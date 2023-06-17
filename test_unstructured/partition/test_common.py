@@ -15,10 +15,15 @@ def test_normalize_layout_element_dict():
     layout_element = {
         "type": "Title",
         "coordinates": [[1, 2], [3, 4], [5, 6], [7, 8]],
+        "coordinate_system": None,
         "text": "Some lovely text",
     }
     element = common.normalize_layout_element(layout_element)
-    assert element == Title(text="Some lovely text", coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]])
+    assert element == Title(
+        text="Some lovely text",
+        coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]],
+        coordinate_system=None,
+    )
 
 
 def test_normalize_layout_element_dict_caption():

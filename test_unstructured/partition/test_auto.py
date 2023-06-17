@@ -214,6 +214,9 @@ def test_auto_partition_json_from_filename():
     for elem in json_elems:
         # coordinates are always in the element data structures, even if None
         elem.pop("coordinates")
+        elem.pop("coordinate_system")
+        elem.pop("layout_width")
+        elem.pop("layout_height")
         elem.pop("metadata")
     for elem in json_data:
         elem.pop("metadata")
@@ -240,6 +243,7 @@ def test_auto_partition_json_from_file():
     for elem in json_elems:
         # coordinates are always in the element data structures, even if None
         elem.pop("coordinates")
+        elem.pop("coordinate_system")
     assert json_data == json_elems
 
 
@@ -431,7 +435,7 @@ def test_auto_partition_ppt_from_filename():
 def test_auto_with_page_breaks():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
     elements = partition(filename=filename, include_page_breaks=True, strategy="hi_res")
-    assert PageBreak() in elements
+    assert any(isinstance(element, PageBreak) for element in elements)
 
 
 def test_auto_partition_epub_from_filename():
