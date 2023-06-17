@@ -1,11 +1,14 @@
+from __future__ import annotations
+
 import inspect
 import os
 import re
 import zipfile
 from enum import Enum
 from functools import wraps
-from typing import IO, Callable, List, Optional
+from typing import IO, TYPE_CHECKING, Callable, List, Optional
 
+from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import Element, PageBreak
 from unstructured.file_utils.encoding import detect_file_encoding
 from unstructured.nlp.patterns import LIST_OF_DICTS_PATTERN
@@ -13,7 +16,11 @@ from unstructured.partition.common import (
     _add_element_metadata,
     _remove_element_metadata,
     exactly_one,
+    normalize_layout_element,
 )
+
+if TYPE_CHECKING:
+    from unstructured_inference.inference.layout import DocumentLayout
 
 try:
     import magic
@@ -421,32 +428,36 @@ def _check_eml_from_buffer(file: IO) -> bool:
 
 
 def document_to_element_list(
-    document,
+    document: "DocumentLayout",
     include_page_breaks: bool = False,
 ) -> List[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
     elements: List[Element] = []
-    image_formats: List[str] = []
     num_pages = len(document.pages)
     for i, page in enumerate(document.pages):
-        for element in page.elements:
-            elements.append(element)
+        for layout_element in page.elements:
+            element = normalize_layout_element(layout_element)
+            if isinstance(element, List):
+                for el in element:
+                    el.metadata.page_number = i + 1
+                elements.extend(element)
+                continue
+            else:
+                element.metadata.text_as_html = (
+                    layout_element.text_as_html if hasattr(layout_element, "text_as_html") else None
+                )
+                elements.append(element)
             if hasattr(page, "image"):
-                image_formats.append(page.image.format)
+                image_format = page.image.format
+                coordinate_system = PixelSpace(width=page.image.width, height=page.image.height)
+            else:
+                image_format = None
+                coordinate_system = None
+            element._coordinate_system = coordinate_system
+            _add_element_metadata(element, page_number=i + 1, filetype=image_format)
         if include_page_breaks and i < num_pages - 1:
             elements.append(PageBreak())
 
-    if image_formats and all(image_format == "PNG" for image_format in image_formats):
-        filetype = FileType.PNG.name
-    elif image_formats and all(image_format == "JPEG" for image_format in image_formats):
-        filetype = FileType.JPG.name
-    else:
-        filetype = None
-    elements = _add_element_metadata(
-        elements,
-        include_page_breaks=include_page_breaks,
-        filetype=filetype,
-    )
     return elements
 
 
@@ -489,13 +500,16 @@ def add_metadata_with_filetype(filetype: FileType):
             include_metadata = params.get("include_metadata", True)
             if include_metadata:
                 metadata_kwargs = {
-                    kwarg: params.get(kwarg) for kwarg in ("include_page_breaks", "filename", "url")
+                    kwarg: params.get(kwarg) for kwarg in ("filename", "url", "text_as_html")
                 }
-                return _add_element_metadata(
-                    elements,
-                    filetype=FILETYPE_TO_MIMETYPE[filetype],
-                    **metadata_kwargs,  # type: ignore
-                )
+                for element in elements:
+                    _add_element_metadata(
+                        element,
+                        filetype=FILETYPE_TO_MIMETYPE[filetype],
+                        **metadata_kwargs,  # type: ignore
+                    )
+
+                return elements
             else:
                 return _remove_element_metadata(
                     elements,
