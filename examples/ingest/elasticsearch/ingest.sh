@@ -1,17 +1,58 @@
 #!/usr/bin/env bash
 
-# Processes all the files in http://localhost:9200 in an index named 'movies' using the `unstructured` library.
-# This URL is assumed to serve an elasticsearch cluster with an index named 'movies'.
+# Runs a docker container to create an elasticsearch cluster,
+# fills the ES cluster with data,
+# processes all the files in the 'movies' index in the cluster using the `unstructured` library.
 
 # Structured outputs are stored in elasticsearch-ingest-output
 
-# TODO: provide inputs / outputs, and an elasticsearch server setup script to test automatically
+# TODO: provide inputs / outputs to test automatically
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/../../.. || exit 1
 
-PYTHONPATH=. ./unstructured/ingest/main.py \
-        --elasticsearch-url http://localhost:9200 \
-        --elasticsearch-index-name movies \
-        --jq-query '{ethnicity, director}' \
-        --structured-output-dir elasticsearch-ingest-output \
-        --num-processes 2 \
+# Create the elasticsearch cluster and get the container id
+output=$(docker run -d --rm -p 9200:9200 -p 9300:9300 -e "xpack.security.enabled=false" -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:8.7.0)
+container_id=$(echo $output | cut -c 1-12)
+echo $container
+
+url="http://localhost:9200/_cluster/health"
+status_code=0
+retry_count=0
+max_retries=6
+
+# Check the cluster status repeatedly until it becomes live or maximum retries are reached
+while [ "$status_code" -ne 200 ] && [ "$retry_count" -lt "$max_retries" ]; do
+
+  # Send a GET request to the cluster health API
+  response=$(curl -s -o /dev/null -w "%{http_code}" "$url")
+  status_code="$response"
+
+  # Process the files only when the ES cluster is live
+  if [ "$status_code" -eq 200 ]; then
+    echo "Cluster is live."
+
+    python examples/ingest/elasticsearch/elasticsearch_cluster.py
+
+    PYTHONPATH=. ./unstructured/ingest/main.py \
+            --elasticsearch-url http://localhost:9200 \
+            --elasticsearch-index-name movies \
+            --jq-query '{ethnicity, director}' \
+            --structured-output-dir elasticsearch-ingest-output \
+            --num-processes 2
+
+  else
+    ((retry_count++))
+    echo "Cluster is not available. Retrying in 5 seconds... (Attempt $retry_count)"
+    sleep 5
+  fi
+done
+
+# If cluster has not got live, exit after a certain number of tries
+if [ "$status_code" -ne 200 ]; then
+  echo "Cluster took an unusually long time to create (>25 seconds). Expected time is around 10 seconds. Exiting."
+fi
+
+# Kill the container so the script can be repeatedly run using the same ports
+docker stop "$container_id"
+# Kill even when there's an error from the previous commands
+trap "docker stop '$container_id'" ERR
