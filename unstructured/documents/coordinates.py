@@ -18,10 +18,11 @@ def convert_coordinate(old_t, old_t_max, new_t_max, t_orientation):
 
 
 class CoordinateSystem:
+    """A finite coordinate plane with given width and height."""
+
     orientation: Orientation
 
     def __init__(self, width: Union[int, float], height: Union[int, float]):
-        """Initialize a finite coordinate plane with given width and height."""
         self.width = width
         self.height = height
 
@@ -69,10 +70,11 @@ class CoordinateSystem:
 
 
 class RelativeCoordinateSystem(CoordinateSystem):
+    """Relative coordinate system where x and y are on a scale from 0 to 1."""
+
     orientation = Orientation.CARTESIAN
 
     def __init__(self):
-        """Relative coordinate system where x and y are on a scale from 0 to 1."""
         self.width = 1
         self.height = 1
 
