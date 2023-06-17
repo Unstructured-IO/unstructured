@@ -193,6 +193,28 @@ class Element(ABC):
             "metadata": self.metadata.to_dict(),
         }
 
+    def convert_coordinates_to_new_system(
+        self,
+        new_system: CoordinateSystem,
+        in_place=True,
+    ) -> Optional[Tuple[Tuple[Union[int, float], Union[int, float]], ...]]:
+        """Converts the element location coordinates to a new coordinate system. If inplace is true,
+        changes the coordinates in place and updates the coordinate system."""
+        if self._coordinate_system is None or self.coordinates is None:
+            return None
+        new_coordinates = tuple(
+            self._coordinate_system.convert_coordinates_to_new_system(
+                new_system=new_system,
+                x=x,
+                y=y,
+            )
+            for x, y in self.coordinates
+        )
+        if in_place:
+            self.coordinates = new_coordinates
+            self._coordinate_system = new_system
+        return new_coordinates
+
 
 class CheckBox(Element):
     """A checkbox with an attribute indicating whether its checked or not. Primarily used
