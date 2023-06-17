@@ -107,3 +107,16 @@ def test_convert_coordinate_to_new_system_none(coordinates, coordinate_system):
     coord = CoordinateSystem(100, 200)
     coord.orientation = Orientation.SCREEN
     assert element.convert_coordinates_to_new_system(coord) is None
+
+
+def test_coordinate_system():
+    coordinates = ((1, 2), (1, 4), (3, 4), (3, 2))
+    coordinate_system = RelativeCoordinateSystem()
+    element = Element(coordinates=coordinates, coordinate_system=coordinate_system)
+    expected_schema = {
+        "name": "RelativeCoordinateSystem",
+        "description": RelativeCoordinateSystem.__doc__,
+        "layout_width": 1,
+        "layout_height": 1,
+    }
+    assert element.coordinate_system == expected_schema
