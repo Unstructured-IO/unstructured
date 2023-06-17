@@ -215,6 +215,17 @@ class Element(ABC):
             self._coordinate_system = new_system
         return new_coordinates
 
+    @property
+    def coordinate_system(self) -> Optional[Dict[str, Optional[Union[str, int, float]]]]:
+        if self._coordinate_system is None:
+            return None
+        return {
+            "name": self._coordinate_system.__class__.__name__,
+            "description": self._coordinate_system.__doc__,
+            "layout_width": self._coordinate_system.width,
+            "layout_height": self._coordinate_system.height,
+        }
+
 
 class CheckBox(Element):
     """A checkbox with an attribute indicating whether its checked or not. Primarily used
