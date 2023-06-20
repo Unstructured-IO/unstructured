@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Metadata" href="metadata.html" /><link rel="prev" title="Getting Started" href="getting_started.html" />
 
   <link rel="shortcut icon" href="_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.05.20" />
-  <title>Bricks - Unstructured 0.7.6 documentation</title>
+  <title>Bricks - Unstructured 0.7.7 documentation</title>
   <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -634,6 +634,12 @@ to disable SSL verification in the request.</p>
 <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_html</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s2">&quot;https://python.org/&quot;</span><span class="p">,</span> <span class="n">ssl_verify</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>If you website contains news articles, it can be helpful to only grab content that appears in
+between the <code class="docutils literal notranslate"><span class="pre">&lt;article&gt;</span></code> tags, if the site uses that convention.
+To activate this behavior, you can set <code class="docutils literal notranslate"><span class="pre">html_assemble_articles=True</span></code>.
+If <code class="docutils literal notranslate"><span class="pre">html_assemble_articles</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, each <code class="docutils literal notranslate"><span class="pre">&lt;article&gt;</span></code> tag will be treated as a a page.
+If <code class="docutils literal notranslate"><span class="pre">html_assemble_articles</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code> and no <code class="docutils literal notranslate"><span class="pre">&lt;article&gt;</span></code> tags are present, the behavior
+is the same as <code class="docutils literal notranslate"><span class="pre">html_assemble_articles=False</span></code>.</p>
 </section>
 <section id="partition-image">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_image</span></code><a class="headerlink" href="#partition-image" title="Permalink to this heading"></a></h3>
