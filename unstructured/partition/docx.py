@@ -220,9 +220,10 @@ def _element_contains_pagebreak(element) -> bool:
         ["w:br", 'type="page"'],  # "Hard" page break inserted by user
         ["lastRenderedPageBreak"],  # "Soft" page break inserted by renderer
     ]
-    for indicators in page_break_indicators:
-        if all(indicator in element.xml for indicator in indicators):
-            return True
+    if hasattr(element, "xml"):
+        for indicators in page_break_indicators:
+            if all(indicator in element.xml for indicator in indicators):
+                return True
     return False
 
 

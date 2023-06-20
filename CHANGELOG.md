@@ -1,4 +1,4 @@
-## 0.7.7-dev2
+## 0.7.7
 
 ### Enhancements
 
@@ -11,6 +11,8 @@
 * Added coordinate system class to track coordinate types and convert to different coordinate
 
 ### Fixes
+
+* Check for the `xml` attribute on `element` before looking for pagebreaks in `partition_docx`.
 
 ## 0.7.6
 
