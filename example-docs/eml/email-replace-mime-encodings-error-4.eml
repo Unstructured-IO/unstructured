@@ -1,0 +1,643 @@
+X-Gmail-Labels: Archived,Category Forums,Unread
+Delivered-To: email@domain.com
+Received: by 2002:aca:b2d5:0:0:0:0:0 with SMTP id b204csp1494495oif;
+        Fri, 2 Sep 2022 07:11:36 -0700 (PDT)
+X-Received: by 2002:a05:620a:4104:b0:6c3:31ec:efcd with SMTP id j4-20020a05620a410400b006c331ecefcdmr1451575qko.259.1662127896643;
+        Fri, 02 Sep 2022 07:11:36 -0700 (PDT)
+ARC-Seal: i=3; a=rsa-sha256; t=1662127896; cv=pass;
+        d=google.com; s=arc-20160816;
+        b=G6SZButkPIRRPDp8Ghgc423SBUkuuwXcrAKsZ5DXK1n7Y1UXsIVptmYwj7dSWPpMUu
+         fBmomBZsnn0LjUUFCGGjYHvgCzEx9ON9ngClBVJZamT6bzNAWhtfOJT7qKhj3ypbTN05
+         lfm4m+ahBi5K3MrUNN8AY1OOjbpHionZ7y/9xARC2nqlqR9vGFp4epjPnztUa2d7gpEd
+         jCkz2m2fx7Ku/DJcXwuZYvUPG31mQI6kOIa1UP2Kz2GhFzFyIjff7rKvHeMAbGEhkiwp
+         9z4Eb1nj48IF0bRgEoUPsfzLDueHAtSOqTJ+hIduNnrUplro7jj9iLsn9OffTWv7qlD3
+         1E1g==
+ARC-Message-Signature: i=3; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=list-subscribe:list-archive:list-help:list-post:list-id
+         :mailing-list:precedence:list-unsubscribe:to:reply-to:message-id
+         :subject:mime-version:from:date:sender:dkim-signature;
+        bh=ZisNwKNB6XKijaaSsPpyp5N6YBN2JqIJJXMVCS6xXfk=;
+        b=jVJip5b6YD418lAOMNfjxJfoeFzGT6fkA3sv8im6F8xnBTYv7PHYG9j3ulU4NLCCXC
+         +0rrNEz5zwl2INkbvSTZ8ZxP+PtEa0wrhbkcaxZPbaBLQoOx3D2/GTrJMfedxl3pyb8S
+         La98XnyUSlWWTUMEXT9rD1psTVmos7OVqcGYiyEiQiiKWKvhUrZcWIgHEjzwn/mMYKHL
+         /SWycSvRzucETP6s+rkdNX0vA+3HZ+zC/9P/eweZJVZnCHamkZzzYQA0ui/PB+5SP+s8
+         t8O9z+2oU4uE1JxGLZj2zysemKvW84Ng5WMXkrg+g0WmYDzZV9xSIFgvqSlt2NyHGaMw
+         Jd8g==
+ARC-Authentication-Results: i=3; mx.google.com;
+       dkim=pass header.i=@webpage.com header.s=google header.b=OYaZJFny;
+       arc=pass (i=2 spf=pass spfdomain=em3230.company.net dkim=pass dkdomain=company.net);
+       spf=pass (google.com: domain of email@domain.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=email@domain.com
+Return-Path: <email@domain.com>
+Received: from mail-sor-f69.google.com (mail-sor-f69.google.com. [209.85.220.69])
+        by mx.google.com with SMTPS id e26-20020ac8491a000000b003445501b5casor1417944qtq.13.2022.09.02.07.11.36
+        for <email@domain.com>
+        (Google Transport Security);
+        Fri, 02 Sep 2022 07:11:36 -0700 (PDT)
+Received-SPF: pass (google.com: domain of email@domain.com designates 209.85.220.69 as permitted sender) client-ip=209.85.220.69;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@webpage.com header.s=google header.b=OYaZJFny;
+       arc=pass (i=2 spf=pass spfdomain=em3230.company.net dkim=pass dkdomain=company.net);
+       spf=pass (google.com: domain of email@domain.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=email@domain.com
+ARC-Seal: i=2; a=rsa-sha256; t=1662127896; cv=pass;
+        d=google.com; s=arc-20160816;
+        b=QmVmNwoyatBCsuSpOLH2O6zaDdP6/xQGYhNz3/4IDv99DBiiQt+lhHI3wDrvhu2/wk
+         S/JEUNNT/KRxc0b8zkOPxrCm/7Dyehp5YOq6JOvc8aktf/iuOAEzaGsledQNcawfCxi+
+         UN8cdP0ZHqv5qDl3eiu1pAQm6FgfMVgtQapB/lBAuVg3GUt2M7lelL7qD8wnBau+jsSL
+         hHq1pmB0m+Fv6YLE9VbhRYJKWe3GgLu6y4rRx8kLHNhs3/HhqJuSJq9/+sr/Drzsn9yr
+         FWu0riBNqHIXJOF6FlNArpWT+VUtcMBLHbs8s/iD6lVewYMfjbfCMn3ZLt709yr4oCxa
+         bEEw==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=list-subscribe:list-archive:list-help:list-post:list-id
+         :mailing-list:precedence:list-unsubscribe:to:reply-to:message-id
+         :subject:mime-version:from:date:sender:dkim-signature;
+        bh=ZisNwKNB6XKijaaSsPpyp5N6YBN2JqIJJXMVCS6xXfk=;
+        b=sGhBOLOf3fw9JfDi8uGlr6omrGDxxGrdkSh01h8TOq9+qPZ1yZRScbj9fM98G4iu8r
+         jqLH2UgSi9cjuJ/J66Dry9scgSayhT5ygJ2eIX0ROdCrtSxemNqJMkRj1P1REvJZQNqs
+         VAY5SwU5N5sh70Xq9l55lcEYUYKTydQyNKzTIJ8uW/bkAiePNvIpbkoIHPefFS0n0WLS
+         q2Mr7YNtemGuHBD1Av5a09Ec3nVAGgD7ljdM5119cckLFUUb1/L1Zdb3z5IEzII2EvxD
+         QXUu1itr9il4uDvS5Wggr9yF4hOjQdcm35RhRqwoybPSsEMx5biFvlr8IRGhAxqiA3Mj
+         ZzmA==
+ARC-Authentication-Results: i=2; mx.google.com;
+       dkim=pass header.i=@company.net header.s=s1 header.b=tLOaxCHS;
+       spf=pass (google.com: domain of bounces+28034542-74a3-hello=email@domain.com designates 168.245.57.185 as permitted sender) smtp.mailfrom="bounces+28034542-74a3-hello=email@domain.com"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=webpage.com; s=google;
+        h=list-subscribe:list-archive:list-help:list-post:list-id
+         :mailing-list:precedence:x-original-authentication-results
+         :x-original-sender:list-unsubscribe:to:reply-to:message-id:subject
+         :mime-version:from:date:sender:from:to:cc:subject:date;
+        bh=ZisNwKNB6XKijaaSsPpyp5N6YBN2JqIJJXMVCS6xXfk=;
+        b=OYaZJFnyJ2CzXm+3GB3eqInwhB5EeR5zrQG791W70U7y2mlD39yKIYNw+Ulf9NL3nV
+         E01S+tdurk85qg1JZUsE1yHTnvhYLIzjSWvfmkawO8atyuLQNUHFTA2lFxbOUtZpYPUp
+         E+u5xpIVNpF1qqdVffr4B8nBQq+Iu5EaAISxU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=list-subscribe:list-archive:list-help:list-post
+         :x-spam-checked-in-group:list-id:mailing-list:precedence
+         :x-original-authentication-results:x-original-sender
+         :list-unsubscribe:to:reply-to:message-id:subject:mime-version:from
+         :date:x-gm-message-state:sender:from:to:cc:subject:date;
+        bh=ZisNwKNB6XKijaaSsPpyp5N6YBN2JqIJJXMVCS6xXfk=;
+        b=J6ubiLS8rD+zNVNOpy7oJw4EPhBAX8edZzuh1P7Dli7PjEzqpA0pUkA+zKSdquwYPA
+         BlCqsyout2VqHsVxG2MRL0RS4Y5cMS58pk3dXyZwCMYr6xSNCg6hkaofsrykDQ92xgRF
+         UCJGjgZrXfyly3zpgYiE8MWKA/PsZuIunSIjMDZ7mGZ98qdSwtAKUpkiYQJlMzapxX0V
+         d/XgNCm5WoAQiQmU1ZwA+mqnAVCYyjAR5ugckyghmi4d1WWNLfnXcF1KQmfVEyMP+p86
+         U8sp35asqMtcJM5qyXwkasbCahmmoZ2ADL7FKcDnczVfO3E11o9fQ5kplP8WbzUkXFup
+         ZCoQ==
+Sender: email@domain.com
+X-Gm-Message-State: ACgBeo1obMS+F0xqIlT/+WkM0G/uI99y3bzQafGX47ZzejSrC+NboFDr
+	gJ9EIsn8IV8aHE6Vshr0WHgCl6CN
+X-Google-Smtp-Source: AA6agR7WQ0xg2w+Y6IUG3QrHOQ0p87bwD7owbrjTB2Mp0vDiQ9UPwoMWCk8CvYJ7B/998V01VVbyyQ==
+X-Received: by 2002:ac8:570d:0:b0:343:63be:e072 with SMTP id 13-20020ac8570d000000b0034363bee072mr28841868qtw.267.1662127896018;
+        Fri, 02 Sep 2022 07:11:36 -0700 (PDT)
+X-BeenThere: webpage.com
+Received: by 2002:a0c:dc07:0:b0:474:651c:ec46 with SMTP id s7-20020a0cdc07000000b00474651cec46ls2917745qvk.6.-pod-prod-gmail;
+ Fri, 02 Sep 2022 07:11:35 -0700 (PDT)
+X-Received: by 2002:a0c:a88a:0:b0:474:7f16:f272 with SMTP id x10-20020a0ca88a000000b004747f16f272mr29126448qva.4.1662127895257;
+        Fri, 02 Sep 2022 07:11:35 -0700 (PDT)
+X-BeenThere: email@domain.com
+Received: by 2002:a05:622a:1e0f:b0:343:4bc:65d4 with SMTP id
+ br15-20020a05622a1e0f00b0034304bc65d4ls3698424qtb.1.-pod-prod-gmail; Fri, 02
+ Sep 2022 07:11:34 -0700 (PDT)
+X-Received: by 2002:a05:622a:15d6:b0:344:6a92:d8ca with SMTP id d22-20020a05622a15d600b003446a92d8camr28385154qty.540.1662127894389;
+        Fri, 02 Sep 2022 07:11:34 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1662127894; cv=none;
+        d=google.com; s=arc-20160816;
+        b=rDmme4u16x21Z+8zG3s73Y8L4wFUq0Dn/0f9HLJIr1dEalYi45ZLN8rhUCLoNDVyE/
+         nrNlJ2fftd/RTxrDRBZK356Za0BvGT0131ZxDgpjgxYKGyaKse1Ej7358dNDulsmLMAY
+         pdeFBmZUIY4eZ+/V8giKdok6TwW0R8WGMQLxislfxyaaddHB+KZmcxL0FmDPZMCIucBl
+         2dMf5vUrdwdWwrtjmgDzwGdL+9GHCyV25D3OyxVZiASjigGDVx0cBd7WfXMp/CeJwOHJ
+         0Pp1Z+/A+qOIpoqcUpYnZ3eUJn9HaVL3GlHQpDCAO5p39KNDuArTZFKJP7aAmnMT00Gu
+         J06g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=list-unsubscribe:to:reply-to:message-id:subject:mime-version:from
+         :date:dkim-signature;
+        bh=ZisNwKNB6XKijaaSsPpyp5N6YBN2JqIJJXMVCS6xXfk=;
+        b=M7XTXtPG/a1KQXErEYuCRKEa2T7y1MTNb4PjZIwEPfJyu6b2spFrmtJ/+8VLBVLqgs
+         BI1aJcvLFVa1hRomXUWlbrZdd+pY1049fxI/26UBbwLU+0/6GOR7/E545dgg3opEMPDM
+         69OV8phwGCzhkLmkpgCZpKr/vWoZ92t2Zhfi5dnsN3EcJjiydMqkBlAoBx87BgYwMKAw
+         MNv3lmHPrlKHDjXYoCFkIGk+oPecWAze/YToNMPmX4PYWhv2ifD2jpmMjZQXoecE+KOk
+         6+jU8KZwIhb3uTiQVS/6la+fnR46VkQMIXasDdboKKDC3e8SQt0bWvMg3YbLEqiNrOZ8
+         mpbg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@company.net header.s=s1 header.b=tLOaxCHS;
+       spf=pass (google.com: domain of bounces+28034542-74a3-hello=email@domain.com designates 168.245.57.185 as permitted sender) smtp.mailfrom="bounces+28034542-74a3-hello=email@domain.com"
+Received: from xvfrpwbw.outbound-mail.sendgrid.net (xvfrpwbw.outbound-mail.sendgrid.net. [168.245.57.185])
+        by mx.google.com with ESMTPS id ba17-20020a056130041100b0039e6e4fb18bsi304781uab.192.2022.09.02.07.11.34
+        for <email@domain.com>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 02 Sep 2022 07:11:34 -0700 (PDT)
+Received-SPF: pass (google.com: domain of bounces+28034542-74a3-hello=email@domain.com designates 168.245.57.185 as permitted sender) client-ip=168.245.57.185;
+Content-Type: multipart/alternative; boundary=81e6b4acdd881839e8bc5555716380d83f2ea7aeab624181c44c5b64981d
+Date: Fri, 02 Sep 2022 14:11:33 +0000 (UTC)
+From: Someone K <email@domain.com>
+Mime-Version: 1.0
+Subject: Intellectual Property Protection for startups
+Message-ID: <oh__q4KBTFua_R9WUlGbjw@geopod-ismtpd-4-0>
+Reply-To: email@domain.com
+X-SG-EID: =?us-ascii?Q?kS9ADLQTolSE1KMCdO0YTdo+S99A14LKZ8DbZ2GNphHPW4no+l0TwfSK6brqhp?=
+ =?us-ascii?Q?DO5Y6mbEayYJ1+4OtezhXW+8lUlqUPa6yrHi5iL?=
+ =?us-ascii?Q?dq6iPT4GnPTfZKB9ylxL3TDRWN9WZ2bM=2Fx7awVc?=
+ =?us-ascii?Q?iVazwxlq+POjF2nsf7+jb6ffKxvS7BOK3h=2FzHKX?=
+ =?us-ascii?Q?sfa+=2FSVDnZBs+KdeljlC4PNQ80vK9qA57Zghlcc?=
+ =?us-ascii?Q?r3EO7xoqQnKsVHLX2W385x6mafOhXSQI79QOSd?=
+X-SG-ID: =?us-ascii?Q?3Pj6BAFONQhe5xn5MQIS2A+i7snYjEyY7JEK6a5vO1U9M6m23B6FxqsoPLYdQk?=
+ =?us-ascii?Q?mQgmeCgT+D8O4xaXwmNKkrJ=2Fr=2FGrqs40g5m54Dj?=
+ =?us-ascii?Q?1dL0dF3jn1kjbrW1fzT7G9j=2F8YcQKYmLZORDoAI?=
+ =?us-ascii?Q?zPqRWHhqmBPbqWGmeDYOr0tZr8NG3MH2QSWTr2z?=
+ =?us-ascii?Q?2UrQcAowq1RQw?=
+To: email@domain.com
+X-Entity-ID: Az4uC1hjfgwK2kjoZ8+3KA==
+List-Unsubscribe: <mailto:email@domain.com>,
+ <https://groups.google.com/a/webpage.com/group/hello/subscribe>
+X-Original-Sender: email@domain.com
+X-Original-Authentication-Results: mx.google.com;       dkim=pass
+ header.i=@company.net header.s=s1 header.b=tLOaxCHS;       spf=pass
+ (google.com: domain of bounces+28034542-74a3-hello=email@domain.com
+ designates 168.245.57.185 as permitted sender) smtp.mailfrom="bounces+28034542-74a3-hello=email@domain.com"
+Precedence: list
+Mailing-list: list email@domain.com; contact email@domain.com
+List-ID: <hello.webpage.com>
+X-Spam-Checked-In-Group: email@domain.com
+X-Google-Group-Id: 253566248012
+List-Post: <https://groups.google.com/a/webpage.com/group/hello/post>, <mailto:email@domain.com>
+List-Help: <https://support.google.com/a/webpage.com/bin/topic.py?topic=25838>,
+ <mailto:email@domain.com>
+List-Archive: <https://groups.google.com/a/webpage.com/group/hello/>
+List-Subscribe: <https://groups.google.com/a/webpage.com/group/hello/subscribe>,
+ <mailto:email@domain.com>
+
+--81e6b4acdd881839e8bc5555716380d83f2ea7aeab624181c44c5b64981d
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Mime-Version: 1.0
+
+Protect your startup
+
+Dear webpage=C2=A0 team,
+
+Hi! I=E2=80=99m Ihor, a representative of company! http://company.net/ - a =
+fully automated platform for intellectual property (IP) protection. As a fe=
+llow startup, we understand how it is important to protect your product and=
+ show the protection level for investors.
+
+Our technology allows you to certify your object of IP rights (design, soft=
+ware, pictures, content, etc.) monitors and protects your digital assets 24=
+/7 and worldwide, allowing you to delete copyright violations in just 5 sec=
+onds, without the burden of expensive legal fees and stacks of paper. We kn=
+ow from our 10+ years of experience in IP protection how to do it simple an=
+d fast.=C2=A0
+
+We are protecting clients products from the time of creation till successfu=
+l realization on the market.
+
+I am contacting you because we looked through your site webpage.com=C2=A0 a=
+nd want to emphasize that you are a great startup with a powerful product t=
+hat has to be protected.
+
+Please do not hesitate to contact me https://company.youcanbook.me, if you =
+want to get one free certificate that proves the rights of your product and=
+ 40% discount for future certificates with promocode COPYRIGHT40.
+
+We would be happy to learn more about your IP issues and show you how easy =
+it could be to deal with them with a demo.=C2=A0
+
+Our presentation deck is here:=C2=A0
+
+company! Sales Deck (Startups) https://docs.google.com/presentation/d/1-kuu=
+50CZOfIRAaJnycxQyQGpvIbeGO1B4_xJxW_pynY/edit?usp=3Dsharing
+
+Looking forward to getting to know you and learning more about your IP issu=
+es.
+
+Please feel free to contact me if you have any questions:
+
+https://company.youcanbook.me https://company.youcanbook.me
+
+https://t.me/companysupport https://t.me/companysupport
+
+email@domain.com
+
+Best regards,
+
+XX
+
+CEO
+
+
+email@domain.com mailto:email@domain.com
+
+company.net https://company.net/
+
+
+Unsubscribe https://u28034542.ct.sendgrid.net/asm/unsubscribe/?user_id=3D28=
+034542&data=3DmMBJbzK2M6naKBeUBWarsba7eE3535peHOL1tiXGq59oMDAwdTAwMOof53_W8=
+24JC12QOdASzTVkmTTJaLQ12l7_AwBlzMssXOsVJ9-88skSoE-ns0Qnu-zXjkK2w59A6SaMoLdK=
+TZzVafWOxniyt3ZDCrodW1h5rzlR_iXEhDjg3lI0ww9uaDkiQaiw1Qw_AFS9oc5fJUdbAR0R5_g=
+GIbyWdriEQsFOqqByXomehWJNmBnQAJ6iCXN7bz-1nrreZa_UIWRFgeqpz5qrRTx6sz-_GYTNi6=
+OFqZfCVht842nzL656bt82GcoRdS8-Za5eGlUearN9UTyPykdNJ4_iYwXmMk84xlp5GXFsgidf4=
+pENFU_lgeVL8PDwdeV002kyxR3_nkBbtxkfOJEb4IK9L7D9htg8Wvu5uzYi3o-EhbrEtepDFm8M=
+K_1HRqVJw_sevOIYpUpJqZjTOa2H8aozVr3msWQPn6aNuA5k5ubRTvEQwmyLkS-pV2o-dInv8tn=
+yZ5teVafpScHPrzXRPeL56FVM4uWjHV2oZUv7HQCyxcM6-khZYSLcwg=3D=3D - Unsubscribe=
+ Preferences https://u28034542.ct.sendgrid.net/asm/?user_id=3D28034542&data=
+=3D6BLF1RPijjH8LVYU-TvvQhMTHesjGzp3397J1gILxQ5oMDAwdTAwMO0f68OcHbEGlpysZExi=
+ZO8pLeQ3hrw5aBpTzKdzqM8-dtkU9KR5DgGtKn16D-lqUdcaZiKBnyPLjj99c70mJ47U2ZU-nBm=
+-_Ta39JJwFraJRrJwzBr_uRNvmu8hBGedt2Dfp26UNtOWmJksvgzYa3OTPXcCAc2ZUPJx5B8WWa=
+ajOoroJwxORC1UGqE3s1OvDvITwMM9tGwSXcYCZjj1untU1jIzt8c_G47pJEYHuSKPbYx1zbPob=
+mdC9OuXrfBH-h5MeFs1T2dpBA5rfNl53hkqH3a5zc7nHnO1xch_RvROmfH_8bFIpdfdRlsGJ1vM=
+ZfThERsdUWLSFjMHOmSdzrKM7R5ZvAZtPvQBAZGulbTjE2djrrLMtUqJnl3vH7MufYP9aYHQCBb=
+EESDaC_c8QdVjbqU6Z3AEMgEgoh1d2A0b0JXvxYdZTLWbBLQCfJraDyFpP4mIuxKf008lBNExA2=
+F1-lDAvv9xD-VmDmJR8is9
+--81e6b4acdd881839e8bc5555716380d83f2ea7aeab624181c44c5b64981d
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/html; charset=iso-8859-1
+Mime-Version: 1.0
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org=
+/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html data-editor-version=3D"2" class=3D"sg-campaigns" xmlns=3D"http://www.=
+w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dutf-8=
+" />
+    <meta name=3D"viewport" content=3D"width=3Ddevice-width, initial-scale=
+=3D1, minimum-scale=3D1, maximum-scale=3D1" /><!--[if !mso]><!-->
+    <meta http-equiv=3D"X-UA-Compatible" content=3D"IE=3DEdge" /><!--<![end=
+if]-->
+    <!--[if (gte mso 9)|(IE)]>
+    <xml>
+    <o:OfficeDocumentSettings>
+    <o:AllowPNG/>
+    <o:PixelsPerInch>96</o:PixelsPerInch>
+    </o:OfficeDocumentSettings>
+    </xml>
+    <![endif]-->
+    <!--[if (gte mso 9)|(IE)]>
+    <style type=3D"text/css">
+      body {width: 1200px;margin: 0 auto;}
+      table {border-collapse: collapse;}
+      table, td {mso-table-lspace: 0pt;mso-table-rspace: 0pt;}
+      img {-ms-interpolation-mode: bicubic;}
+    </style>
+    <![endif]-->
+
+    <style type=3D"text/css">
+      body, p, div {
+        font-family: arial;
+        font-size: 14px;
+      }
+      body {
+        color: #000000;
+      }
+      body a {
+        color: #1188E6;
+        text-decoration: none;
+      }
+      p { margin: 0; padding: 0; }
+      table.wrapper {
+        width:100% !important;
+        table-layout: fixed;
+        -webkit-font-smoothing: antialiased;
+        -webkit-text-size-adjust: 100%;
+        -moz-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+      }
+      img.max-width {
+        max-width: 100% !important;
+      }
+      .column.of-2 {
+        width: 50%;
+      }
+      .column.of-3 {
+        width: 33.333%;
+      }
+      .column.of-4 {
+        width: 25%;
+      }
+      @media screen and (max-width:480px) {
+        .preheader .rightColumnContent,
+        .footer .rightColumnContent {
+            text-align: left !important;
+        }
+        .preheader .rightColumnContent div,
+        .preheader .rightColumnContent span,
+        .footer .rightColumnContent div,
+        .footer .rightColumnContent span {
+          text-align: left !important;
+        }
+        .preheader .rightColumnContent,
+        .preheader .leftColumnContent {
+          font-size: 80% !important;
+          padding: 5px 0;
+        }
+        table.wrapper-mobile {
+          width: 100% !important;
+          table-layout: fixed;
+        }
+        img.max-width {
+          height: auto !important;
+          max-width: 480px !important;
+        }
+        a.bulletproof-button {
+          display: block !important;
+          width: auto !important;
+          font-size: 80%;
+          padding-left: 0 !important;
+          padding-right: 0 !important;
+        }
+        .columns {
+          width: 100% !important;
+        }
+        .column {
+          display: block !important;
+          width: 100% !important;
+          padding-left: 0 !important;
+          padding-right: 0 !important;
+          margin-left: 0 !important;
+          margin-right: 0 !important;
+        }
+      }
+    </style>
+    <!--user entered Head Start-->
+   =20
+     <!--End Head user entered-->
+  </head>
+  <body>
+    <center class=3D"wrapper" data-link-color=3D"#1188E6" data-body-style=
+=3D"font-size: 14px; font-family: arial; color: #000000; background-color: =
+#ffffff;">
+      <div class=3D"webkit">
+        <table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" width=3D"10=
+0%" class=3D"wrapper" bgcolor=3D"#ffffff">
+          <tr>
+            <td valign=3D"top" bgcolor=3D"#ffffff" width=3D"100%">
+              <table width=3D"100%" role=3D"content-container" class=3D"out=
+er" align=3D"center" cellpadding=3D"0" cellspacing=3D"0" border=3D"0">
+                <tr>
+                  <td width=3D"100%">
+                    <table width=3D"100%" cellpadding=3D"0" cellspacing=3D"=
+0" border=3D"0">
+                      <tr>
+                        <td>
+                          <!--[if mso]>
+                          <center>
+                          <table><tr><td width=3D"1200">
+                          <![endif]-->
+                          <table width=3D"100%" cellpadding=3D"0" cellspaci=
+ng=3D"0" border=3D"0" style=3D"width: 100%; max-width:1200px;" align=3D"cen=
+ter">
+                            <tr>
+                              <td role=3D"modules-container" style=3D"paddi=
+ng: 0px 0px 0px 0px; color: #000000; text-align: left;" bgcolor=3D"#ffffff"=
+ width=3D"100%" align=3D"left">
+                               =20
+    <table class=3D"module preheader preheader-hide" role=3D"module" data-t=
+ype=3D"preheader" border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D=
+"100%"
+           style=3D"display: none !important; mso-hide: all; visibility: hi=
+dden; opacity: 0; color: transparent; height: 0; width: 0;">
+      <tr>
+        <td role=3D"module-content">
+          <p>Protect your startup</p>
+        </td>
+      </tr>
+    </table>
+ =20
+    <table class=3D"module" role=3D"module" data-type=3D"text" border=3D"0"=
+ cellpadding=3D"0" cellspacing=3D"0" width=3D"100%" style=3D"table-layout: =
+fixed;">
+      <tr>
+        <td style=3D"padding:18px 0px 18px 0px;line-height:22px;text-align:=
+inherit;"
+            height=3D"100%"
+            valign=3D"top"
+            bgcolor=3D"">
+            <div>
+<div>Dear webpage=A0 team,<br />
+Hi! XX, a representative of <a href=3D"https://u28034542.ct.sen=
+dgrid.net/ls/click?upn=3DW8-2FzbHWWidBoH5b67FSQoJlgPQysQO4PaWr8jsCLnuI-3Dpj=
+gu_Zd6hRd3O-2Bi7TiTmhDOob5nwfnt4o9Ql2T1xC70mB76B8ulM-2Bor7Cwr-2BqXsz-2FVigE=
+c9uXKBi1-2BCS-2FUrpny3UtQjWsq2dkoxe4k7uyfqB8dkJoIxvL-2FClz9uIKniesoIiV1q67i=
+PdtoDj82U3paiY2FaoSDh1RvREsGwJip21eiLJObCh1qOzvBHZCHHNs1DAbNxIAftakOdyPcfAu=
+GGIormBMUZbxTUNec4UKFXEaz-2FwMJe6c18CzejZDXwag16ZYficQWnjLzKa9Gegnkaz7r-2F-=
+2BBbxWE1UL6byDZuPTHUZVvjgyo1bU1pxO-2FT3I3GaurKiM9GWjyQWp3WBqF7BOWvYC6c653n-=
+2BzSc1ILWa0gzE-2BA-2BlfnARD0NM7Kw3-2BzNJc-2BPY7xcrRo2Po7VsQfsS4pbg-3D-3D">L=
+awyerd!</a> - a fully automated platform for intellectual property (IP) pro=
+tection. As a fellow startup, we understand how it is important to protect =
+your product and show the protection level for investors.<br />
+&nbsp;<br />
+Our technology allows you to certify your object of IP rights (design, soft=
+ware, pictures, content, etc.) monitors and protects your digital assets 24=
+/7 and worldwide, allowing you to delete copyright violations in just 5 sec=
+onds, without the burden of expensive legal fees and stacks of paper. We kn=
+ow from our 10+ years of experience in IP protection how to do it simple an=
+d fast.&nbsp;<br />
+We are protecting clients products from the time of creation till successfu=
+l realization on the market.<br />
+&nbsp;<br />
+I am contacting you because we looked through your site webpage.com=A0 and =
+want to emphasize that you are a great startup with a powerful product that=
+ has to be protected.<br />
+Please do not hesitate to <a href=3D"https://u28034542.ct.sendgrid.net/ls/c=
+lick?upn=3DVW5xI0x4uBlfGXcQLfGg87xOJoLbBBfsafLsx6WLIS-2BE5N1o6DWQkcZ8OQmqF-=
+2Bzd2LRw_Zd6hRd3O-2Bi7TiTmhDOob5nwfnt4o9Ql2T1xC70mB76B8ulM-2Bor7Cwr-2BqXsz-=
+2FVigEc9uXKBi1-2BCS-2FUrpny3UtQjWsq2dkoxe4k7uyfqB8dkJoIxvL-2FClz9uIKniesoIi=
+V1q67iPdtoDj82U3paiY2FaoSDh1RvREsGwJip21eiLJObCh1qOzvBHZCHHNs1DAbNxIAftakOd=
+yPcfAuGGIormBMUZbxTUNec4UKFXEaz-2FzYzwNoxAzuqtPm8zvS0A0lcDiPju5TxZguWV4WIIy=
+HNBBEvlGLAA-2FJtLzjndWRfHYnvoxWnPRmme4Gmw9MuiWqeRR7aQE8-2Fc2RsCD8TChLud4qTy=
+A0foLA61AHpkCi5qsKgWJsHIwfGIeuMGiDqWapy-2BXuW43lSlCTNXmZlG9wmQ-3D-3D">conta=
+ct me</a>, if you want to <strong>get one free certificate</strong> that pr=
+oves the rights of your product and 40% discount for future certificates wi=
+th promocode <strong><span style=3D"font-family:courier,monospace;">COPYRIG=
+HT40</span></strong>.<br />
+We would be happy to learn more about your IP issues and show you how easy =
+it could be to deal with them with a demo.&nbsp;<br />
+&nbsp;<br />
+Our presentation deck is here:&nbsp;<br />
+<a href=3D"https://u28034542.ct.sendgrid.net/ls/click?upn=3DVW5xI0x4uBlfGXc=
+QLfGg88dU76xQWrD5UajQzJfAw5JZdu2xB1Z654mn-2F7QlwTqE6j7hNNDMDdgls9UxH4ee-2B-=
+2BCh0z-2BRr8BJTbAYMgeO-2BM-2BekFSd6zsHWKcsplotsml66-2BV9JVmSbF-2BAdMtLLRFKX=
+Q-3D-3DwrjO_Zd6hRd3O-2Bi7TiTmhDOob5nwfnt4o9Ql2T1xC70mB76B8ulM-2Bor7Cwr-2BqX=
+sz-2FVigEc9uXKBi1-2BCS-2FUrpny3UtQjWsq2dkoxe4k7uyfqB8dkJoIxvL-2FClz9uIKnies=
+oIiV1q67iPdtoDj82U3paiY2FaoSDh1RvREsGwJip21eiLJObCh1qOzvBHZCHHNs1DAbNxIAfta=
+kOdyPcfAuGGIormBMUZbxTUNec4UKFXEaz-2FxhVx0jhy1WiXp2vK3YKwlo-2BKgje0rTIqiF7U=
+YhREPXgv3Tyjw81VItgA3p665U64q7rTV0TvORke4X6trRgbIPZ33JMIP9978lAITokUMoC3LHp=
+iSIDGiNSp17Af9h-2B8Fp3HUmn5cMOPMcHvlgYcd8TmpqT2EBoZRDqXrzVyK-2Ffg-3D-3D">La=
+wyerd! Sales Deck (Startups)</a><br />
+&nbsp;</div>
+
+<div>Looking forward to getting to know you and learning more about your IP=
+ issues.<br />
+Please feel free to contact me if you have any questions:<br />
+<a href=3D"https://u28034542.ct.sendgrid.net/ls/click?upn=3DVW5xI0x4uBlfGXc=
+QLfGg87xOJoLbBBfsafLsx6WLIS-2BE5N1o6DWQkcZ8OQmqF-2Bzd3LSg_Zd6hRd3O-2Bi7TiTm=
+hDOob5nwfnt4o9Ql2T1xC70mB76B8ulM-2Bor7Cwr-2BqXsz-2FVigEc9uXKBi1-2BCS-2FUrpn=
+y3UtQjWsq2dkoxe4k7uyfqB8dkJoIxvL-2FClz9uIKniesoIiV1q67iPdtoDj82U3paiY2FaoSD=
+h1RvREsGwJip21eiLJObCh1qOzvBHZCHHNs1DAbNxIAftakOdyPcfAuGGIormBMUZbxTUNec4UK=
+FXEaz-2FwFihwvdRHdgvHFc56-2FzeNlY9oitkLJbbRj9MUatu8EmFeWqD1u-2BI7EjgT6lveFQ=
+CHW9LroZLgtf7RlO-2FfMQ5CSMwJarfPnBwHGLo8atdp7-2FyNAR-2Bxt4QCn6mSj6gU32T114X=
+4rdDcc5fSiRl59-2Fafwji3E-2B79bj1tOMUowVXTh5w-3D-3D">https://company.youcanb=
+ook.me</a><br />
+<a href=3D"https://u28034542.ct.sendgrid.net/ls/click?upn=3DVW5xI0x4uBlfGXc=
+QLfGg83hMq53JTnYT6bc5-2FM8z-2B9vWBxFcNBS4aJqfwc-2FH0oNPGkTA_Zd6hRd3O-2Bi7Ti=
+TmhDOob5nwfnt4o9Ql2T1xC70mB76B8ulM-2Bor7Cwr-2BqXsz-2FVigEc9uXKBi1-2BCS-2FUr=
+pny3UtQjWsq2dkoxe4k7uyfqB8dkJoIxvL-2FClz9uIKniesoIiV1q67iPdtoDj82U3paiY2Fao=
+SDh1RvREsGwJip21eiLJObCh1qOzvBHZCHHNs1DAbNxIAftakOdyPcfAuGGIormBMUZbxTUNec4=
+UKFXEaz-2Fxsh3004ZMyIrmWhteic-2FKQICLwre8WGucguUPhmBTvM22lQMmfwqbEDc6eESVMR=
+PCn-2Btj-2BD55X7swk31XgcEFaTAvASiNrM6A9f0CtTyREESuXPoqw-2FPIAgTRyy08ilu1Nai=
+jA64vWDuNMDD5k1HDXbC6rgu6N6Ss1h1s6K-2Fa1ag-3D-3D">https://t.me/companysuppo=
+rt</a><br />
+email@domain.com</div>
+
+<div>Best regards,</div>
+</div>
+
+        </td>
+      </tr>
+    </table>
+  <table class=3D"module" role=3D"module" data-type=3D"code" border=3D"0" c=
+ellpadding=3D"0" cellspacing=3D"0" width=3D"100%" style=3D"table-layout: fi=
+xed;">
+      <tr>
+        <td height=3D"100%" valign=3D"top">
+          <div><style>.sh-src a{text-decoration:none!important;}</style></d=
+iv> <br> <table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" class=3D"s=
+h-src" style=3D"margin: 0px; border-collapse: collapse;"><tbody><tr><td sty=
+le=3D"padding: 0px 1px 0px 0px;"><table cellpadding=3D"0" cellspacing=3D"0"=
+ border=3D"0" style=3D"border-collapse: separate; margin: 0px;"><tbody><tr>=
+<td valign=3D"middle" align=3D"center" style=3D"padding: 0px 11px 0px 0px; =
+vertical-align: middle;"><table cellpadding=3D"0" cellspacing=3D"0" border=
+=3D"0" style=3D"margin: 0px; border-collapse: collapse;"><tbody><tr><td sty=
+le=3D"padding: 0px 1px 0px 0px;"><p style=3D"margin: 1px;"><img src=3D"http=
+s://signaturehound.com/api/v1/file/10mwcfnl5majeq1" alt=3D"" title=3D"Profi=
+le Picture" width=3D"100" height=3D"23" style=3D"display: block; border: 0p=
+x; max-width: 100px;"></p></td></tr></tbody></table> <!----></td> <td style=
+=3D"padding: 1px 0px 0px; border-right-width: 2px; border-right-style: soli=
+d; border-right-color: rgb(0,0,0);"></td> <td valign=3D"middle" style=3D"pa=
+dding: 0px 1px 0px 11px; vertical-align: middle;"><table cellpadding=3D"0" =
+cellspacing=3D"0" border=3D"0" style=3D"margin: 0px; border-collapse: colla=
+pse;"><tbody><tr><td style=3D"padding: 0px 1px 6px 0px; font-family: Verdan=
+a, Geneva, sans-serif; font-size: 12px; line-height: 16px; white-space: now=
+rap;"><p style=3D"font-family: Verdana, Geneva, sans-serif; font-size: 12px=
+; line-height: 16px; font-weight: 700; color: rgb(0,0,0); white-space: nowr=
+ap; margin: 1px;">Someone K</p> <p style=3D"font-family: Verdana, Ge=
+neva, sans-serif; font-size: 12px; line-height: 16px; white-space: nowrap; =
+color: rgb(136,136,136); margin: 1px;">CEO</p> <!----> <p style=3D"font-fam=
+ily: Verdana, Geneva, sans-serif; font-size: 12px; line-height: 16px; white=
+-space: nowrap; color: rgb(136,136,136); margin: 1px;">company LLC</p></td>=
+</tr> <tr><td style=3D"padding: 0px 1px 0px 0px;"><table cellpadding=3D"0" =
+cellspacing=3D"0" border=3D"0" style=3D"margin: 0px; border-collapse: colla=
+pse;"><tbody><tr><td valign=3D"middle" style=3D"padding: 1px 5px 1px 0px; v=
+ertical-align: middle;"><p style=3D"margin: 1px;"><img src=3D"https://signa=
+turehound.com/api/v1/png/email/default/5200ff.png" alt=3D"" width=3D"15" he=
+ight=3D"15" style=3D"display: block; border: 0px; max-width: 15px;"></p></t=
+d> <td style=3D"font-family: Verdana, Geneva, sans-serif; font-size: 12px; =
+line-height: 16px; white-space: nowrap; color: rgb(136,136,135) !important;=
+ padding: 1px 0px; vertical-align: middle;"><p style=3D"margin: 1px;"><a hr=
+ef=3D"mailto:email@domain.com" target=3D"_blank" style=3D"font-fam=
+ily: Verdana, Geneva, sans-serif; font-size: 12px; line-height: 16px; white=
+-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;"=
+><span style=3D"font-family: Verdana, Geneva, sans-serif; font-size: 12px; =
+line-height: 16px; white-space: nowrap; color: rgb(136,136,136); text-decor=
+ation: none !important;">email@domain.com</span></a></p></td></tr>=
+  <!----> <tr><td valign=3D"middle" style=3D"padding: 1px 5px 1px 0px; vert=
+ical-align: middle;"><p style=3D"margin: 1px;"><img src=3D"https://signatur=
+ehound.com/api/v1/png/website/default/5200ff.png" alt=3D"" width=3D"15" hei=
+ght=3D"15" style=3D"display: block; border: 0px; max-width: 15px;"></p></td=
+> <td style=3D"font-family: Verdana, Geneva, sans-serif; font-size: 12px; l=
+ine-height: 16px; white-space: nowrap; color: rgb(136,136,135) !important; =
+font-weight: 700; padding: 1px 0px; vertical-align: middle;"><p style=3D"ma=
+rgin: 1px;"><a href=3D"https://u28034542.ct.sendgrid.net/ls/click?upn=3DVW5=
+xI0x4uBlfGXcQLfGg8-2B0VwJRtaBXq7fzryTFo4IE-3DC_QE_Zd6hRd3O-2Bi7TiTmhDOob5nw=
+fnt4o9Ql2T1xC70mB76B8ulM-2Bor7Cwr-2BqXsz-2FVigEc9uXKBi1-2BCS-2FUrpny3UtQjWs=
+q2dkoxe4k7uyfqB8dkJoIxvL-2FClz9uIKniesoIiV1q67iPdtoDj82U3paiY2FaoSDh1RvREsG=
+wJip21eiLJObCh1qOzvBHZCHHNs1DAbNxIAftakOdyPcfAuGGIormBMUZbxTUNec4UKFXEaz-2F=
+yLgmn6gpeUgmTNSoliGuVcj8bL7shQ8EJtJ-2Behbb10pLWogufuXPkA4OH5nipXaVZ-2F2vNqb=
+2uVoc0AHFJJHqQLQ4UQubmDM8hDWyrDZmJ9xepM-2FT6-2FgrkSn-2FuYp-2Bh0hFpOYGN3VgG6=
+Cda1fRCj0sj-2BQvQcTp6-2BF-2BA0pPEygHPRhA-3D-3D" target=3D"_blank" style=3D"=
+font-family: Verdana, Geneva, sans-serif; font-size: 12px; line-height: 16p=
+x; white-space: nowrap; color: rgb(136,136,136); font-weight: 700; text-dec=
+oration: none !important;"><span style=3D"font-family: Verdana, Geneva, san=
+s-serif; font-size: 12px; line-height: 16px; white-space: nowrap; color: rg=
+b(136,136,136); font-weight: 700; text-decoration: none !important;">lawyer=
+d.net</span></a></p></td></tr></tbody></table></td></tr> <tr><td style=3D"p=
+adding: 0px 1px 0px 0px;"><table cellpadding=3D"0" cellspacing=3D"0" border=
+=3D"0" style=3D"margin: 0px; border-collapse: collapse;"><tbody><tr><td wid=
+th=3D"24" style=3D"font-size: 0px; line-height: 0px; padding: 8px 1px 0px 0=
+px;"><p style=3D"margin: 1px;"><a href=3D"https://u28034542.ct.sendgrid.net=
+/ls/click?upn=3DVW5xI0x4uBlfGXcQLfGg8-2B4a9ACme7Ec5c6K1PocaJJfG9vWzlKXZfrEG=
+uWEWUpdoTs7UqjOfAsYSFu6umg6Cg-3D-3DbFuX_Zd6hRd3O-2Bi7TiTmhDOob5nwfnt4o9Ql2T=
+1xC70mB76B8ulM-2Bor7Cwr-2BqXsz-2FVigEc9uXKBi1-2BCS-2FUrpny3UtQjWsq2dkoxe4k7=
+uyfqB8dkJoIxvL-2FClz9uIKniesoIiV1q67iPdtoDj82U3paiY2FaoSDh1RvREsGwJip21eiLJ=
+ObCh1qOzvBHZCHHNs1DAbNxIAftakOdyPcfAuGGIormBMUZbxTUNec4UKFXEaz-2FzwrUQ-2FRm=
+7-2F0CqXIT7XhQeoj7r-2FPBR7gZC-2BEZ-2Brgdj2RuPCqKpz5NTVjpBf30QHrH2Lm4VWIkVfg=
+WYvGx8IDPTSoDoQAhSmEXEDNLKJ14kNvio6C9dADbaPpvabe4-2FNBD9y11UqunjvyCQ6uYeNyq=
+sE4UoSItgOxJOtEONA-2FmdHCA-3D-3D" target=3D"_blank"><img src=3D"https://sig=
+naturehound.com/api/v1/png/linkedin/square/5200ff.png" alt=3D"" width=3D"24=
+" height=3D"24" style=3D"display: block; border: 0px; max-width: 24px;"></a=
+></p></td> <td width=3D"2" style=3D"padding: 0px 0px 1px;"></td></tr></tbod=
+y></table></td></tr></tbody></table></td></tr></tbody></table></td></tr> <!=
+----> <!----> <!----> <tr><td style=3D"padding: 0px 1px 0px 0px;">
+          &nbsp;
+        </td></tr></tbody></table>
+        </td>
+      </tr>
+    </table><div data-role=3D"module-unsubscribe" class=3D"module unsubscri=
+be-css__unsubscribe___2CDlR" role=3D"module" data-type=3D"unsubscribe" styl=
+e=3D"color:#444444;font-size:12px;line-height:20px;padding:16px 16px 16px 1=
+6px;text-align:center"><p style=3D"font-family:Someone K;font-size:1=
+2px;line-height:20px"><a class=3D"Unsubscribe--unsubscribeLink" href=3D"htt=
+ps://u28034542.ct.sendgrid.net/asm/unsubscribe/?user_id=3D28034542&amp;data=
+=3DmMBJbzK2M6naKBeUBWarsba7eE3535peHOL1tiXGq59oMDAwdTAwMOof53_W824JC12QOdAS=
+zTVkmTTJaLQ12l7_AwBlzMssXOsVJ9-88skSoE-ns0Qnu-zXjkK2w59A6SaMoLdKTZzVafWOxni=
+yt3ZDCrodW1h5rzlR_iXEhDjg3lI0ww9uaDkiQaiw1Qw_AFS9oc5fJUdbAR0R5_gGIbyWdriEQs=
+FOqqByXomehWJNmBnQAJ6iCXN7bz-1nrreZa_UIWRFgeqpz5qrRTx6sz-_GYTNi6OFqZfCVht84=
+2nzL656bt82GcoRdS8-Za5eGlUearN9UTyPykdNJ4_iYwXmMk84xlp5GXFsgidf4pENFU_lgeVL=
+8PDwdeV002kyxR3_nkBbtxkfOJEb4IK9L7D9htg8Wvu5uzYi3o-EhbrEtepDFm8MK_1HRqVJw_s=
+evOIYpUpJqZjTOa2H8aozVr3msWQPn6aNuA5k5ubRTvEQwmyLkS-pV2o-dInv8tnyZ5teVafpSc=
+HPrzXRPeL56FVM4uWjHV2oZUv7HQCyxcM6-khZYSLcwg=3D=3D">Unsubscribe</a> - <a cl=
+ass=3D"Unsubscribe--unsubscribePreferences" href=3D"https://u28034542.ct.se=
+ndgrid.net/asm/?user_id=3D28034542&amp;data=3D6BLF1RPijjH8LVYU-TvvQhMTHesjG=
+zp3397J1gILxQ5oMDAwdTAwMO0f68OcHbEGlpysZExiZO8pLeQ3hrw5aBpTzKdzqM8-dtkU9KR5=
+DgGtKn16D-lqUdcaZiKBnyPLjj99c70mJ47U2ZU-nBm-_Ta39JJwFraJRrJwzBr_uRNvmu8hBGe=
+dt2Dfp26UNtOWmJksvgzYa3OTPXcCAc2ZUPJx5B8WWaajOoroJwxORC1UGqE3s1OvDvITwMM9tG=
+wSXcYCZjj1untU1jIzt8c_G47pJEYHuSKPbYx1zbPobmdC9OuXrfBH-h5MeFs1T2dpBA5rfNl53=
+hkqH3a5zc7nHnO1xch_RvROmfH_8bFIpdfdRlsGJ1vMZfThERsdUWLSFjMHOmSdzrKM7R5ZvAZt=
+PvQBAZGulbTjE2djrrLMtUqJnl3vH7MufYP9aYHQCBbEESDaC_c8QdVjbqU6Z3AEMgEgoh1d2A0=
+b0JXvxYdZTLWbBLQCfJraDyFpP4mIuxKf008lBNExA2F1-lDAvv9xD-VmDmJR8is9">Unsubscr=
+ibe Preferences</a></p></div>
+                              </td>
+                            </tr>
+                          </table>
+                          <!--[if mso]>
+                          </td></tr></table>
+                          </center>
+                          <![endif]-->
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </center>
+  <img src=3D"https://u28034542.ct.sendgrid.net/wf/open?upn=3DCmwAv3oRa0AH4=
+Hd1bWC6X3RiIy7enJvm9wD-2FqbJgYshOkq28tSlZzK1-2F8i0eqrlhs7-2Fh5WzByJSeEVgfn7=
+kSJTMQ7KFaZaeVBpSxGcnWV-2B66lJWYCO21QLBkmFBvwRrNKM33Og4h06KIK1NREioPsX8cbyM=
+EvQyRwsyJihXFluL6R0tIPSA2kcpRIZzsNnjfeNlA6FPBqXL55583yPe8eOQBY4enlv0mGOMw5K=
+PkyvxpmI2h5UO9ipjFCuYS5Fm0xJvAoM8DqO2TAEx2BPSLPLowkzK292VrbT93XH9U3ReVF4Osw=
+4gkE8NfzocvHvsmHSOLi-2B4iDPSX0OPao86mHR4dDbl2CSnBvNqqmks4OqXsPADF8BQd1niQUh=
+0JYHw-2FXwg231RA6-2BG0nKoDfkyek4zrUXEpaLz-2BdcuwxpLZ0Do-3D" alt=3D"" width=
+=3D"1" height=3D"1" border=3D"0" style=3D"height:1px !important;width:1px !=
+important;border-width:0 !important;margin-top:0 !important;margin-bottom:0=
+ !important;margin-right:0 !important;margin-left:0 !important;padding-top:=
+0 !important;padding-bottom:0 !important;padding-right:0 !important;padding=
+-left:0 !important;"/></body>
+</html>
+--81e6b4acdd881839e8bc5555716380d83f2ea7aeab624181c44c5b64981d--
+
+From 1745962899175222072@xxx Thu Oct 06 18:12:54 +0000 2022
+X-GM-THRID: 1745953147623409419
