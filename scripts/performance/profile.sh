@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Performance profiling and visualization of code using cProfile and memray.
 
