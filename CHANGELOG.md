@@ -1,4 +1,4 @@
-## 0.7.7-dev1
+## 0.7.7
 
 ### Enhancements
 
@@ -9,6 +9,8 @@
 ### Features
 
 ### Fixes
+
+* Check for the `xml` attribute on `element` before looking for pagebreaks in `partition_docx`.
 
 ## 0.7.6
 
