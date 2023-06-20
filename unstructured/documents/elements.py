@@ -11,6 +11,8 @@ from dataclasses import dataclass
 from functools import wraps
 from typing import Any, Callable, Dict, List, Optional, Tuple, TypedDict, Union, cast
 
+from unstructured.documents.coordinates import CoordinateSystem
+
 
 class NoID(ABC):
     """Class to indicate that an element do not have an ID."""
@@ -166,18 +168,62 @@ class Element(ABC):
         self,
         element_id: Union[str, NoID] = NoID(),
         coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
+        coordinate_system: Optional[CoordinateSystem] = None,
         metadata: ElementMetadata = ElementMetadata(),
     ):
         self.id: Union[str, NoID] = element_id
         self.coordinates: Optional[Tuple[Tuple[float, float], ...]] = coordinates
+        self._coordinate_system = coordinate_system
         self.metadata = metadata
 
     def to_dict(self) -> dict:
         return {
             "type": None,
             "coordinates": self.coordinates,
+            "coordinate_system": None
+            if self._coordinate_system is None
+            else str(self._coordinate_system.__class__.__name__),
+            "layout_width": None
+            if self._coordinate_system is None
+            else self._coordinate_system.width,
+            "layout_height": None
+            if self._coordinate_system is None
+            else self._coordinate_system.height,
             "element_id": self.id,
             "metadata": self.metadata.to_dict(),
+        }
+
+    def convert_coordinates_to_new_system(
+        self,
+        new_system: CoordinateSystem,
+        in_place=True,
+    ) -> Optional[Tuple[Tuple[Union[int, float], Union[int, float]], ...]]:
+        """Converts the element location coordinates to a new coordinate system. If inplace is true,
+        changes the coordinates in place and updates the coordinate system."""
+        if self._coordinate_system is None or self.coordinates is None:
+            return None
+        new_coordinates = tuple(
+            self._coordinate_system.convert_coordinates_to_new_system(
+                new_system=new_system,
+                x=x,
+                y=y,
+            )
+            for x, y in self.coordinates
+        )
+        if in_place:
+            self.coordinates = new_coordinates
+            self._coordinate_system = new_system
+        return new_coordinates
+
+    @property
+    def coordinate_system(self) -> Optional[Dict[str, Optional[Union[str, int, float]]]]:
+        if self._coordinate_system is None:
+            return None
+        return {
+            "name": self._coordinate_system.__class__.__name__,
+            "description": self._coordinate_system.__doc__,
+            "layout_width": self._coordinate_system.width,
+            "layout_height": self._coordinate_system.height,
         }
 
 
@@ -189,25 +235,27 @@ class CheckBox(Element):
         self,
         element_id: Union[str, NoID] = NoID(),
         coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
+        coordinate_system: Optional[CoordinateSystem] = None,
         checked: bool = False,
         metadata: ElementMetadata = ElementMetadata(),
     ):
-        self.id: Union[str, NoID] = element_id
-        self.coordinates: Optional[Tuple[Tuple[float, float], ...]] = coordinates
+        super().__init__(
+            element_id=element_id,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
+            metadata=metadata,
+        )
         self.checked: bool = checked
-        self.metadata = metadata
 
     def __eq__(self, other):
         return (self.checked == other.checked) and (self.coordinates) == (other.coordinates)
 
     def to_dict(self) -> dict:
-        return {
-            "type": "CheckBox",
-            "checked": self.checked,
-            "coordinates": self.coordinates,
-            "element_id": self.id,
-            "metadata": self.metadata.to_dict(),
-        }
+        out = super().to_dict()
+        out["type"] = "CheckBox"
+        out["checked"] = self.checked
+        out["element_id"] = self.id
+        return out
 
 
 class Text(Element):
@@ -220,6 +268,7 @@ class Text(Element):
         text: str,
         element_id: Union[str, NoID] = NoID(),
         coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
+        coordinate_system: Optional[CoordinateSystem] = None,
         metadata: ElementMetadata = ElementMetadata(),
     ):
         self.text: str = text
@@ -228,7 +277,12 @@ class Text(Element):
             # NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits
             element_id = hashlib.sha256(text.encode()).hexdigest()[:32]
 
-        super().__init__(element_id=element_id, metadata=metadata, coordinates=coordinates)
+        super().__init__(
+            element_id=element_id,
+            metadata=metadata,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
+        )
 
     def __str__(self):
         return self.text
@@ -238,18 +292,17 @@ class Text(Element):
             [
                 (self.text == other.text),
                 (self.coordinates == other.coordinates),
+                (self._coordinate_system == other._coordinate_system),
                 (self.category == other.category),
             ],
         )
 
     def to_dict(self) -> dict:
-        return {
-            "element_id": self.id,
-            "coordinates": self.coordinates,
-            "text": self.text,
-            "type": self.category,
-            "metadata": self.metadata.to_dict(),
-        }
+        out = super().to_dict()
+        out["element_id"] = self.id
+        out["type"] = self.category
+        out["text"] = self.text
+        return out
 
     def apply(self, *cleaners: Callable):
         """Applies a cleaning brick to the text element. The function that's passed in
@@ -323,6 +376,7 @@ class PageBreak(Text):
         text: Optional[str] = None,
         element_id: Union[str, NoID] = NoID(),
         coordinates: Optional[List[float]] = None,
+        coordinate_system: Optional[CoordinateSystem] = None,
         metadata: ElementMetadata = ElementMetadata(),
     ):
         super().__init__(text="<PAGE BREAK>")
