@@ -30,7 +30,7 @@ def partition_html(
     headers: Dict[str, str] = {},
     ssl_verify: bool = True,
     parser: VALID_PARSERS = None,
-    html_assemble_articles: bool = True,
+    html_assemble_articles: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Partitions an HTML document into its constituent elements.
