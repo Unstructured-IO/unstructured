@@ -15,6 +15,7 @@
 * Adds an `html_assemble_articles` kwarg to `partition_html` to enable users to capture
   control whether content outside of `<article>` tags is captured when
   `<article>` tags are present.
+* Check for the `xml` attribute on `element` before looking for pagebreaks in `partition_docx`.
 
 ## 0.7.6
 
