@@ -9,6 +9,7 @@ from pdfminer.utils import open_filename
 from PIL import Image
 
 from unstructured.cleaners.core import clean_extra_whitespace
+from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
     Element,
     ElementMetadata,
@@ -273,7 +274,7 @@ def _process_pdfminer_pages(
 
     for i, page in enumerate(extract_pages(fp)):  # type: ignore
         metadata = ElementMetadata(filename=filename, page_number=i + 1)
-        height = page.height
+        width, height = page.width, page.height
 
         text_segments = []
         page_elements = []
@@ -292,6 +293,10 @@ def _process_pdfminer_pages(
             if _text.strip():
                 text_segments.append(_text)
                 element = element_from_text(_text)
+                element._coordinate_system = PixelSpace(
+                    width=width,
+                    height=height,
+                )
                 element.coordinates = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
                 element.metadata = metadata
                 page_elements.append(element)

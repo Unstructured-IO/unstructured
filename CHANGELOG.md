@@ -8,6 +8,8 @@
 
 ### Features
 
+* Added coordinate system class to track coordinate types and convert to different coordinate
+
 ### Fixes
 
 * Adds an `html_assemble_articles` kwarg to `partition_html` to enable users to capture
