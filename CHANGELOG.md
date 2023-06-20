@@ -2,6 +2,10 @@
 
 ### Enhancements
 
+* Adds functionality to replace the `MIME` encodings for `eml` files with one of the common encodings if a `unicode` error occurs
+* Adds missed file-like object handling in `detect_file_encoding`
+* Adds functionality to extract charset info from `eml` files
+
 ### Features
 
 ### Fixes

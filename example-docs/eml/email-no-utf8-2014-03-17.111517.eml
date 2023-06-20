@@ -1,0 +1,377 @@
+From 1462821104707864209@xxx Mon Mar 17 11:15:17 +0000 2014
+X-GM-THRID: 1462821104707864209
+X-Gmail-Labels: Inbox,Important,Category Updates
+Delivered-To: slatest@gmail.com
+Received: by 10.216.66.71 with SMTP id g49csp96136wed;
+        Mon, 17 Mar 2014 04:15:16 -0700 (PDT)
+Return-Path: <3RNkmUwgTBzEab-eRcYlNPPbhagf.TbbTYR.PbZfYNiNTbTZNVY.PbZ@gaia.bounces.google.com>
+Received-SPF: pass (google.com: domain of 3RNkmUwgTBzEab-eRcYlNPPbhagf.TbbTYR.PbZfYNiNTbTZNVY.PbZ@gaia.bounces.google.com designates 10.112.85.197 as permitted sender) client-ip=10.112.85.197
+Authentication-Results: mr.google.com;
+       spf=pass (google.com: domain of 3RNkmUwgTBzEab-eRcYlNPPbhagf.TbbTYR.PbZfYNiNTbTZNVY.PbZ@gaia.bounces.google.com designates 10.112.85.197 as permitted sender) smtp.mail=3RNkmUwgTBzEab-eRcYlNPPbhagf.TbbTYR.PbZfYNiNTbTZNVY.PbZ@gaia.bounces.google.com;
+       dkim=pass header.i=@accounts.google.com
+X-Received: from mr.google.com ([10.112.85.197])
+        by 10.112.85.197 with SMTP id j5mr4444137lbz.20.1395054916934 (num_hops = 1);
+        Mon, 17 Mar 2014 04:15:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=accounts.google.com; s=20120806;
+        h=mime-version:date:message-id:subject:from:to:content-type;
+        bh=C1zlLt9m1CT7ZJnRpvpaNuwG0d6T973+uWUf3elVOWY=;
+        b=d6r0RNtMd+kYn9EM+cc/slvitbFQ2N+LK8m9xbLhEHtmNP+TgGolZ5oEXbibrBXps+
+         +HOlGtZChdmgTG5thFvoJ5fedE0/Ao5G+I1b6pRu7zycT7eWmv1VrPiweGKUoc9KAUs8
+         pMYGovgQf+WxfGUPgNlAlmUYDb+A4vXLEZ76lMK/xEotrq9D2U0gGF46Jzp1f2AiHFyy
+         L55pIIzgCUg8pZpgtmI2vTzKshr5M8IvKaUqR1MWVk8S1iOvd2fSqJgr1AmJWRoB2KR8
+         YJmPjNw1EwuugrdhbPwx0KSn+dKzNLjPWlIMiCUIbkzTjIMeC8T3RvBwd9c7KFdqDWoz
+         mKEQ==
+MIME-Version: 1.0
+X-Received: by 10.112.85.197 with SMTP id j5mr3398475lbz.20.1395054916778;
+ Mon, 17 Mar 2014 04:15:16 -0700 (PDT)
+X-Notifications: XEAAAAO9nJPsY7qiVefFhta7RTxs
+Date: Mon, 17 Mar 2014 11:15:04 +0000 (UTC)
+X-Account-Notification-Type: PASSWORD_CHANGE
+Message-ID: <jOOABqYPtvg7kqWVhkuTrw@notifications.google.com>
+Subject: Google Account password changed
+From: no-reply@accounts.google.com
+To: slatest@gmail.com
+Content-Type: multipart/mixed; boundary=001a11346808c1bc8804f4cb88d1
+
+--001a11346808c1bc8804f4cb88d1
+Content-Type: multipart/alternative; boundary=001a11346808c1bc8204f4cb88cf
+
+--001a11346808c1bc8204f4cb88cf
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed; delsp=yes
+
+
+Hi Slava,
+
+The password for your Google Account - slava.Gxyzxyz@gmail.com - was  
+recently changed.
+If you made this change, you don't need to do anything more.
+
+If you didn't change your password, your account might have been hijacked.  
+To get back into your account, you'll need to reset your password by  
+clicking this link:  
+https://accounts.google.com/RecoverAccount?fpOnly=1&source=ancpse&Email=slava.Gxyzxyz@gmail.com.
+
+To fix an issue or learn more about your account, visit our help center:
+https://support.google.com/accounts/bin/answer.py?answer=1628875.
+
+Sincerely,
+The Google Accounts team
+
+This email can't receive replies. For more information, visit the Google  
+Accounts Help Center  
+(https://support.google.com/accounts/bin/answer.py?answer=1628875).
+
+If slava.Gxyzxyz@gmail.com isn't your Google Account, click this link to  
+disconnect your email address from this account:
+https://accounts.google.com/AccountDisavow?adt=AOX8kxyzxyzxyzxyzxyzxyzxyzzRctqqns7QTuoScTHJ_5eXxky-CD_vhU6z
+
+
+You have received this mandatory email service announcement to update you  
+about important changes to your Google product or account.
+
+  (c) 2014 Google Inc., 1600 Amphitheatre Parkway, Mountain View, CA 94043,  
+USA
+
+
+--001a11346808c1bc8204f4cb88cf
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+
+
+
+
+
+
+
+
+  <html lang=3D"en">
+    <body style=3D"margin:0; padding: 0;">
+ =20
+  <table bgcolor=3D"#f1f1f1" width=3D"100%" height=3D"100%" align=3D"center=
+" height=3D"60" style=3D"border-collapse: collapse"  border=3D"0" cellspaci=
+ng=3D"0" cellpadding=3D"0">
+    <tr align=3D"center">
+      <td valign=3D"top">
+
+       =20
+        <table bgcolor=3D"#f1f1f1" height=3D"60" style=3D"border-collapse: =
+collapse"  border=3D"0" cellspacing=3D"0" cellpadding=3D"0">
+          <tr valign=3D"middle" height=3D"40">
+
+         =20
+          <td width=3D"9"></td>
+
+         =20
+          <td width=3D"217" valign=3D"middle">
+            <img src=3D"cid:google" border=3D"0" alt=3D"Google Accounts" st=
+yle=3D"display: block;" height=3D"40">
+          </td>
+
+         =20
+          <td width=3D"327" style=3D"font-size: 13px; font-family: arial, s=
+ans-serif; color: #777777; text-align: right">
+           =20
+              Slava Gxyzxyz
+           =20
+          </td>
+
+         =20
+          <td width=3D"10"></td>
+
+         =20
+         =20
+            <td><img src=3D"cid:profilephoto" /></td>
+         =20
+
+         =20
+          <td width=3D"10"></td>
+
+         =20
+          </tr>
+        </table>
+
+       =20
+        <table border=3D"1" bordercolor=3D"#e5e5e5" cellspacing=3D"0" cellp=
+adding=3D"0" bgcolor=3D"#ffffff" style=3D"text-align: left">
+
+         =20
+          <tr>
+            <td height=3D"15" style=3D"border-top: none; border-bottom: non=
+e; border-left: none; border-right: none;">
+            </td>
+          </tr>
+
+          <tr>
+           =20
+            <td width=3D"15" style=3D"border-top: none; border-bottom: none=
+; border-left: none; border-right: none;">
+            </td>
+
+           =20
+            <td width=3D"568" valign=3D"top" style=3D"font-size: 83%; borde=
+r-top: none; border-bottom: none; border-left: none; border-right: none; fo=
+nt-size: 13px; font-family: arial, sans-serif; color: #222222; line-height:=
+ 18px">
+           =20
+              Hi Slava,
+              <br />
+              <br />
+           =20
+
+
+The password for your Google Account - slava.Gxyzxyz@gmail.com - was recent=
+ly changed.
+
+<br />
+
+If you made this change, you don't need to do anything more.
+
+<br />
+<br />
+
+If you didn't change your password, your account might have been hijacked. =
+To get back into your account, you'll need to reset your password.
+
+<br />
+<br />
+
+<a href=3D"https://accounts.google.com/RecoverAccount?fpOnly=3D1&amp;source=
+=3Dancpse&amp;Email=3Dslava.Gxyzxyz@gmail.com" target=3D"_blank" style=3D"t=
+ext-align: center; font-size: 11px; font-family: arial, sans-serif; color: =
+white; font-weight: bold; border-color: #3079ed; background-color: #4d90fe;=
+ background-image: linear-gradient(top,#4d90fe,#4787ed); text-decoration: n=
+one; display:inline-block; height: 27px; padding-left: 8px; padding-right: =
+8px; line-height: 27px; border-radius: 2px; border-width: 1px;">
+  <span style=3D"color: white;">
+   =20
+      Reset password
+   =20
+  </span>
+</a>
+
+
+
+                <br />
+                <br />
+               =20
+                  Sincerely,<br />
+                  The Google Accounts team
+               =20
+                </td>
+               =20
+                <td width=3D"15" style=3D"border-top: none; border-bottom: =
+none; border-left: none; border-right: none;">
+                </td>
+
+              </tr>
+             =20
+              <tr>
+                <td height=3D"15" style=3D"border-top: none; border-bottom:=
+ none; border-left: none; border-right: none;">
+                </td>
+              </tr>
+
+             =20
+              <tr>
+
+               =20
+                <td width=3D"15" style=3D"border-top: none; border-bottom: =
+none; border-left: none; border-right: none;"></td>
+
+               =20
+                <td width=3D"568" style=3D"font-size: 11px; font-family: ar=
+ial, sans-serif; color: #777777; border-top: none; border-bottom: none; bor=
+der-left: none; border-right: none;">
+               =20
+                  This email can't receive replies. For more information, v=
+isit the <a href=3D"https://support.google.com/accounts/bin/answer.py?answe=
+r=3D1628875" style=3D"text-decoration: none; color: #4D90FE"><span style=3D=
+"color: #4D90FE;">Google Accounts Help Center</span></a>.
+               =20
+                </td>
+
+               =20
+                <td width=3D"15" style=3D"border-top: none; border-bottom: =
+none; border-left: none; border-right: none;"></td>
+              </tr>
+             =20
+                <tr>
+                  <td height=3D"15" style=3D"border-top: none; border-botto=
+m: none; border-left: none; border-right: none;">
+                  </td>
+                </tr>
+               =20
+                 =20
+                  <tr>
+                   =20
+                    <td width=3D"15" style=3D"border-top: none; border-bott=
+om: none; border-left: none; border-right: none;"></td>
+
+                    <td width=3D"568" style=3D"font-size: 11px; font-family=
+: arial, sans-serif; color: #777777; border-top: none; border-bottom: none;=
+ border-left: none; border-right: none;">
+                     =20
+                        If slava.Gxyzxyz@gmail.com isn't your Google Accoun=
+t, <a href=3D"https://accounts.google.com/AccountDisavow?adt=3DAOX8kiq1EhCJ=
+uK82OhiOWSYKXfzRctqqns7QTuoScTHJ_5eXxky-CD_vhU6z" target=3D"_blank">click h=
+ere</a> to disconnect your email address from this account.
+                     =20
+                    </td>
+                   =20
+                    <td width=3D"15" style=3D"border-top: none; border-bott=
+om: none; border-left: none; border-right: none;"></td>
+                  </tr>
+               =20
+             =20
+             =20
+              <tr>
+                <td height=3D"15" style=3D"border-top: none; border-bottom:=
+ none; border-left: none; border-right: none;">
+                </td>
+              </tr>
+            </table>
+
+           =20
+            <table bgcolor=3D"#f1f1f1" height=3D"80" style=3D"text-align: l=
+eft">
+              <tr valign=3D"middle">
+
+               =20
+                <td style=3D"font-size: 11px; font-family: arial, sans-seri=
+f; color: #777777;">
+                 =20
+                    You received this mandatory email service announcement =
+to update you about important changes to your Google product or account.
+                 =20
+                  <br />
+                  <br />
+                  <div style=3D"direction: ltr;">
+                 =20
+                    &copy; 2014 Google Inc., 1600 Amphitheatre Parkway, Mou=
+ntain View, CA 94043, USA
+                 =20
+                  </div>
+                </td>
+
+             =20
+              </tr>
+            </table>
+
+          </td>
+        </tr>
+      </table>
+
+     =20
+    </body>
+  </html>
+
+
+--001a11346808c1bc8204f4cb88cf--
+--001a11346808c1bc8804f4cb88d1
+Content-Type: image/png; name="google.png"
+Content-Disposition: attachment; filename="google.png"
+Content-Transfer-Encoding: base64
+Content-ID: <google>
+
+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
+9fJre47yRD8AAAAASUVORK5CYII=
+--001a11346808c1bc8804f4cb88d1
+Content-Type: image/png; name="profilephoto.png"
+Content-Disposition: attachment; filename="profilephoto.png"
+Content-Transfer-Encoding: base64
+Content-ID: <profilephoto>
+
+iVBORw0KGgoAAAANSUhEUgAAABsAAAAbCAIAAAACtmMCAAAAA3NCSVQICAjb4U/gAAAB7UlEQVRI
+idWUz2sTQRTHv+/N7CbZbAxqBLVtqIhob1KIUI89iP+B/55X/wDxIqIIiim09VCknsQYW7ApTerm
+h5mZ58EEmu1O12gvneO8+X7e253vd+jpW8G5Lj5f3AUh6twTROBpX+cgeb89h6g1jn+aL60kGZhy
+SS8vlSuxNuZfiYHG+83OxqduQTMRRPB6s9NYqa6tXh37oV6i1viwfbi124uL6kQPtbXbY6YH96/4
+Js2+GSL0B665c1QM0weKITd3jvoDRzQnsdVOAp1dDTS32sncxMHI+jRnV7OJIogjLS7bKeIkjrTP
+Rh6iQ32xbD0aK6gvlsXNRQQCTeuNWjK0qVIytOuNWqDJ53Sve6zFyp0KM141DwAwkRMB8Gjt2t3b
+lfHYpwOd/ZopBefQ3uv3ByYq6YUbETNseu6/mxGYxFkr3KpHIEAmuWaGiDfg2UStYCy+fkv2fgwP
+u7+O+8ZYUUxxSV2uhtdrxaWb5UKBrM3gpr/6T343Pna2P/eYwExMoKn3RMQJnMAYd285frhaKxTY
+OT+RCKORe/aiNbYSKI+Dp8taGVt58niheik8OemMe5TCy3f71uXjAChFYcDP3+xrNbM/QyTC94OR
+4nzcREzoJsbMXn3a4b60+qFpwenMzIk83eM/9ReT+BvKiMl2RJBzAgAAAABJRU5ErkJggg==
+--001a11346808c1bc8804f4cb88d1--
+

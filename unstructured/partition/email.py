@@ -6,7 +6,11 @@ from email.message import Message
 from functools import partial
 from typing import IO, Dict, List, Optional, Tuple, Union
 
-from unstructured.file_utils.encoding import read_txt_file
+from unstructured.file_utils.encoding import (
+    COMMON_ENCODINGS,
+    format_encoding_str,
+    read_txt_file,
+)
 from unstructured.partition.common import exactly_one
 
 if sys.version_info < (3, 8):
@@ -183,6 +187,31 @@ def find_embedded_image(
     return Image(text=image_info[:-1]), element
 
 
+def parse_email(
+    filename: Optional[str] = None,
+    file: Optional[IO] = None,
+) -> Tuple[Optional[str], Message]:
+    if filename is not None:
+        with open(filename, "rb") as f:
+            msg = email.message_from_binary_file(f)
+    elif file is not None:
+        with open(file.name, "rb") as f:
+            msg = email.message_from_binary_file(f)
+    else:
+        raise ValueError("Either 'filename' or 'file' must be provided.")
+
+    encoding = None
+    charsets = msg.get_charsets() or []
+    for charset in charsets:
+        if charset and charset.strip():
+            encoding = charset
+            break
+
+    formatted_encoding = format_encoding_str(encoding) if encoding else None
+
+    return formatted_encoding, msg
+
+
 @process_metadata()
 @add_metadata_with_filetype(FileType.EML)
 def partition_email(
@@ -221,17 +250,27 @@ def partition_email(
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text)
 
+    detected_encoding = "utf-8"
     if filename is not None:
-        encoding, file_text = read_txt_file(filename=filename, encoding=encoding)
-        msg = email.message_from_string(file_text)
-
+        extracted_encoding, msg = parse_email(filename=filename)
+        if extracted_encoding:
+            detected_encoding = extracted_encoding
+        else:
+            detected_encoding, file_text = read_txt_file(filename=filename, encoding=encoding)
+            msg = email.message_from_string(file_text)
     elif file is not None:
-        encoding, file_text = read_txt_file(file=file, encoding=encoding)
-        msg = email.message_from_string(file_text)
-
+        extracted_encoding, msg = parse_email(file=file)
+        if extracted_encoding:
+            detected_encoding = extracted_encoding
+        else:
+            detected_encoding, file_text = read_txt_file(file=file, encoding=encoding)
+            msg = email.message_from_string(file_text)
     elif text is not None:
         _text: str = str(text)
         msg = email.message_from_string(_text)
+
+    if not encoding:
+        encoding = detected_encoding
 
     content_map: Dict[str, str] = {}
     for part in msg.walk():
@@ -254,8 +293,6 @@ def partition_email(
         #    <li>Item 1</li>=
         #    <li>Item 2<li>=
         # </ul>
-        if not encoding:
-            encoding = "utf-8"
         list_content = content.split("=\n")
         content = "".join(list_content)
         elements = partition_html(text=content, include_metadata=False)
@@ -264,12 +301,24 @@ def partition_email(
                 _replace_mime_encodings = partial(replace_mime_encodings, encoding=encoding)
                 try:
                     element.apply(_replace_mime_encodings)
-                except UnicodeDecodeError:
-                    # If decoding fails, try decoding with default encoding (utf-8)
-                    element.apply(replace_mime_encodings)
+                except (UnicodeDecodeError, UnicodeError):
+                    # If decoding fails, try decoding through common encodings
+                    common_encodings = []
+                    for x in COMMON_ENCODINGS:
+                        _x = format_encoding_str(x)
+                        if _x != encoding:
+                            common_encodings.append(_x)
+
+                    for enc in common_encodings:
+                        try:
+                            _replace_mime_encodings = partial(replace_mime_encodings, encoding=enc)
+                            element.apply(_replace_mime_encodings)
+                            break
+                        except (UnicodeDecodeError, UnicodeError):
+                            continue
     elif content_source == "text/plain":
         list_content = split_by_paragraph(content)
-        elements = partition_text(text=content)
+        elements = partition_text(text=content, encoding=encoding)
 
     for idx, element in enumerate(elements):
         indices = has_embedded_image(element)
