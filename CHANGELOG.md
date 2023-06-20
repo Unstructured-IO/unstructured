@@ -1,4 +1,4 @@
-## 0.7.7-dev2
+## 0.7.7
 
 ### Enhancements
 
