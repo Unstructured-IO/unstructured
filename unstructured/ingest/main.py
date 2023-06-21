@@ -639,7 +639,6 @@ def main(
                 config=SimpleFsspecConfig(
                     path=remote_url,
                     recursive=recursive,
-                    access_kwargs=access_kwargs,
                 ),
             )
     elif github_url:
