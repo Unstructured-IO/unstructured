@@ -15,6 +15,7 @@ from unstructured.documents.elements import (
     Element,
     ElementMetadata,
     PageBreak,
+    Text,
     process_metadata,
 )
 from unstructured.file_utils.filetype import (
@@ -230,9 +231,10 @@ def _partition_pdf_or_image_local(
         )
     elements = document_to_element_list(layout, include_page_breaks=include_page_breaks)
     for el in elements:
-        el.text = re.sub(RE_MULTISPACE, " ", el.text.replace("\n", " ")).strip()
+        if isinstance(el, Text):
+            el.text = re.sub(RE_MULTISPACE, " ", el.text.replace("\n", " ")).strip()
 
-    return [el for el in elements if el.text]
+    return [el for el in elements if not isinstance(el, Text) or el.text]
 
 
 @requires_dependencies("pdfminer", "local-inference")
