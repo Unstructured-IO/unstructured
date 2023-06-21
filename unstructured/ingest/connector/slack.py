@@ -88,6 +88,7 @@ class SlackIngestDoc(BaseIngestDoc):
     def get_file(self):
         from slack_sdk import WebClient
         from slack_sdk.errors import SlackApiError
+
         """Fetches the data from a slack channel and stores it locally."""
 
         self._create_full_tmp_dir_path()
