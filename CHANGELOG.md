@@ -9,6 +9,7 @@
 ### Features
 
 * Added coordinate system class to track coordinate types and convert to different coordinate
+* Adds `partition_org` for processed Org Mode documents.
 
 ### Fixes
 

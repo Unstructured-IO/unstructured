@@ -45,6 +45,7 @@ XLSX_MIME_TYPES = [
         ("fake-power-point.pptx", FileType.PPTX),
         ("winter-sports.epub", FileType.EPUB),
         ("spring-weather.html.json", FileType.JSON),
+        ("README.org", FileType.ORG),
         ("README.rst", FileType.RST),
         ("README.md", FileType.MD),
         ("fake.odt", FileType.ODT),
