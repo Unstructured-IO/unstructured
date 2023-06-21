@@ -31,7 +31,7 @@ from unstructured.partition.strategies import determine_pdf_or_image_strategy
 from unstructured.partition.text import element_from_text, partition_text
 from unstructured.utils import requires_dependencies
 
-RE_MULTISPACE = re.compile(f"\s+")
+RE_MULTISPACE = re.compile(r"\s+")
 
 
 @process_metadata()
