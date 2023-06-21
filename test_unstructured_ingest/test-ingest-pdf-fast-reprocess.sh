@@ -10,7 +10,7 @@ cd "$SCRIPT_DIR"/.. || exit 1
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
     --local-input-path files-ingest-download \
-    --local-recursive \
+    --recursive \
     --local-file-glob "*.pdf" \
     --structured-output-dir pdf-fast-reprocess-ingest-output \
     --partition-strategy fast \
