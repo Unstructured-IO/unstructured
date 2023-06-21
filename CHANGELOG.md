@@ -1,8 +1,9 @@
-## 0.7.10-dev1
+## 0.7.10-dev2
 
 ### Enhancements
 
 * DRY connector refactor
+* Updated inference package
 
 ### Features
 
@@ -39,6 +40,8 @@
 * Adds recursive functionality to all fsspec connectors
 * Adds generic --recursive ingest flag
 
+=======
+>>>>>>> da76463 (Update changelog)
 ## 0.7.7
 
 ### Enhancements
