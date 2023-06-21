@@ -36,8 +36,9 @@ set +e
 
 # to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
-
-    cp gcs-output* test_unstructured_ingest/expected-structured-output/google-cloud-storage
+    EXPECTED_DIR=test_unstructured_ingest/expected-structured-output/google-cloud-storage
+    [ -d "$EXPECTED_DIR" ] && rm -rf "$EXPECTED_DIR"
+    cp -R gcs-output $EXPECTED_DIR
 
 elif ! diff -ru test_unstructured_ingest/expected-structured-output/google-cloud-storage gcs-output ; then
     echo
