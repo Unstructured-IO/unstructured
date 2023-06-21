@@ -1,12 +1,8 @@
-import json
 import os
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import List
-
-from slack_sdk import WebClient
-from slack_sdk.errors import SlackApiError
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -90,6 +86,8 @@ class SlackIngestDoc(BaseIngestDoc):
 
     @requires_dependencies(dependencies=["slack_sdk"], extras="slack")
     def get_file(self):
+        from slack_sdk import WebClient
+        from slack_sdk.errors import SlackApiError
         """Fetches the data from a slack channel and stores it locally."""
 
         self._create_full_tmp_dir_path()
