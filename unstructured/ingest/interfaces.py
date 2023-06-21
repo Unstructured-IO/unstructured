@@ -117,6 +117,11 @@ class BaseIngestDoc(ABC):
         """The local filename of the document after fetching from remote source."""
 
     @property
+    @abstractmethod
+    def _output_filename(self):
+        """Filename of the structured output for this doc."""
+
+    @property
     def record_locator(self) -> Optional[Dict[str, Any]]:  # Values must be JSON-serializable
         """A dictionary with any data necessary to uniquely identify the document on
         the source system."""
@@ -146,14 +151,9 @@ class BaseIngestDoc(ABC):
         """Fetches the "remote" doc and stores it locally on the filesystem."""
         pass
 
-    @abstractmethod
-    def _output_filename(self):
-        """Filename of the structured output for this doc."""
-        pass
-
     def has_output(self) -> bool:
         """Determine if structured output for this doc already exists."""
-        return self._output_filename().is_file() and self._output_filename().stat().st_size
+        return self._output_filename.is_file() and self._output_filename.stat().st_size
 
     @abstractmethod
     def write_result(self):

@@ -31,6 +31,7 @@ class GitIngestDoc(BaseIngestDoc):
     def filename(self):
         return (Path(self.standard_config.download_dir) / self.path).resolve()
 
+    @property
     def _output_filename(self):
         return Path(self.standard_config.output_dir) / f"{self.path}.json"
 
@@ -65,11 +66,10 @@ class GitIngestDoc(BaseIngestDoc):
         """Write the structured json result for this doc. result must be json serializable."""
         if self.standard_config.download_only:
             return
-        output_filename = self._output_filename()
-        output_filename.parent.mkdir(parents=True, exist_ok=True)
-        with open(output_filename, "w", encoding="utf8") as output_f:
+        self._output_filename.parent.mkdir(parents=True, exist_ok=True)
+        with open(self._output_filename, "w", encoding="utf8") as output_f:
             json.dump(self.isd_elems_no_filename, output_f, ensure_ascii=False, indent=2)
-        logger.info(f"Wrote {output_filename}")
+        logger.info(f"Wrote {self._output_filename}")
 
 
 @dataclass

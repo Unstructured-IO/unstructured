@@ -80,6 +80,7 @@ class SlackIngestDoc(BaseIngestDoc):
         channel_file = self.channel + ".txt"
         return Path(self.standard_config.download_dir) / channel_file
 
+    @property
     def _output_filename(self):
         output_file = self.channel + ".json"
         return Path(self.standard_config.output_dir) / output_file
@@ -139,11 +140,10 @@ class SlackIngestDoc(BaseIngestDoc):
 
     def write_result(self):
         """Write the structured json result for this doc. result must be json serializable."""
-        output_filename = self._output_filename()
-        output_filename.parent.mkdir(parents=True, exist_ok=True)
-        with open(output_filename, "w") as output_f:
+        self._output_filename.parent.mkdir(parents=True, exist_ok=True)
+        with open(self._output_filename, "w") as output_f:
             output_f.write(json.dumps(self.isd_elems_no_filename, ensure_ascii=False, indent=2))
-        logger.info(f"Wrote {output_filename}")
+        logger.info(f"Wrote {self._output_filename}")
 
     def convert_datetime(self, date_time):
         for format in DATE_FORMATS:

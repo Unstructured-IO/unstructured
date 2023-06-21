@@ -107,6 +107,7 @@ class BiomedIngestDoc(BaseIngestDoc):
     def filename(self):
         return Path(self.file_meta.download_filepath).resolve()  # type: ignore
 
+    @property
     def _output_filename(self):
         return Path(f"{self.file_meta.output_filepath}.json").resolve()
 
@@ -140,11 +141,10 @@ class BiomedIngestDoc(BaseIngestDoc):
         """Write the structured json result for this doc. result must be json serializable."""
         if self.standard_config.download_only:
             return
-        output_filename = self._output_filename()
-        output_filename.parent.mkdir(parents=True, exist_ok=True)
-        with open(output_filename, "w") as output_f:
+        self._output_filename.parent.mkdir(parents=True, exist_ok=True)
+        with open(self._output_filename, "w") as output_f:
             output_f.write(json.dumps(self.isd_elems_no_filename, ensure_ascii=False, indent=2))
-        logger.info(f"Wrote {output_filename}")
+        logger.info(f"Wrote {self._output_filename}")
 
 
 class BiomedConnector(BaseConnector):
