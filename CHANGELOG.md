@@ -1,3 +1,13 @@
+## 0.7.8-dev0
+
+### Enhancements
+
+* Updated inference package
+
+### Features
+
+### Fixes
+
 ## 0.7.7
 
 ### Enhancements
