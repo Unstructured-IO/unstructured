@@ -264,6 +264,33 @@ def _partition_pdf_with_pdfminer(
     return elements
 
 
+from pdfminer.layout import LTContainer, LTImage, LTItem, LTText, LTTextBox
+
+
+def render(item: LTItem) -> None:
+    if hasattr(item, "get_text"):
+        return item.get_text()
+
+    elif isinstance(item, LTContainer):
+        text = ""
+        for child in item:
+            text += render(child) or ""
+        return text
+    # elif isinstance(item, LTText):
+    #     return item.get_text()
+
+    elif isinstance(item, LTTextBox):
+        return "\n"
+
+    elif isinstance(item, LTImage):
+        # if self.imagewriter is not None:
+        #     return None
+        # self.imagewriter.export_image(item)
+        # else:
+        return "\n"
+    return "\n"
+
+
 def _process_pdfminer_pages(
     fp: BinaryIO,
     filename: str = "",
@@ -276,6 +303,9 @@ def _process_pdfminer_pages(
         metadata = ElementMetadata(filename=filename, page_number=i + 1)
         width, height = page.width, page.height
 
+        if i > 1:
+            break
+
         text_segments = []
         page_elements = []
         for obj in page:
@@ -285,9 +315,14 @@ def _process_pdfminer_pages(
 
             # NOTE(robinson) - "Figure" is an example of an object type that does
             # not have a get_text method
-            if not hasattr(obj, "get_text"):
+            # if not hasattr(obj, "get_text"):
+            #     continue
+            _text = render(obj)
+            # if i > 0:
+            #     import ipdb; ipdb.set_trace()
+            if not _text:
                 continue
-            _text = obj.get_text()
+            # _text = obj.get_text()
             _text = re.sub(PARAGRAPH_PATTERN, " ", _text)
             _text = clean_extra_whitespace(_text)
             if _text.strip():
