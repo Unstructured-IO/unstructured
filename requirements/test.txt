@@ -69,9 +69,9 @@ packaging==23.1
     #   pytest
 pathspec==0.11.1
     # via black
-platformdirs==3.6.0
+platformdirs==3.7.0
     # via black
-pluggy==1.0.0
+pluggy==1.2.0
     # via pytest
 pycodestyle==2.10.0
     # via flake8
@@ -99,7 +99,7 @@ requests==2.31.0
     # via
     #   -c requirements/base.txt
     #   label-studio-sdk
-ruff==0.0.273
+ruff==0.0.274
     # via -r requirements/test.in
 six==1.16.0
     # via
