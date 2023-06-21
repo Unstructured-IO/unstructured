@@ -1,3 +1,16 @@
+## 0.7.8-dev0
+
+### Enhancements
+
+* Adds recursive functionality to all fsspec connectors
+* Adds generic --recursive ingest flag
+
+### Features
+
+* Adds Google Cloud Service connector
+
+### Fixes
+
 ## 0.7.7
 
 ### Enhancements

@@ -15,8 +15,11 @@ from unstructured.ingest.logger import logger
 
 SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
     "s3",
+    "s3a",
     "abfs",
     "az",
+    "gs",
+    "gcs",
 ]
 
 
@@ -24,6 +27,7 @@ SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
 class SimpleFsspecConfig(BaseConnectorConfig):
     # fsspec specific options
     path: str
+    recursive: bool
     access_kwargs: dict = field(default_factory=dict)
     protocol: str = field(init=False)
     path_without_protocol: str = field(init=False)
@@ -106,14 +110,17 @@ class FsspecIngestDoc(BaseIngestDoc):
 
     @property
     def filename(self):
-        """The filename of the file after downloading from s3"""
+        """The filename of the file after downloading from cloud"""
         return self._tmp_download_file()
 
     def cleanup_file(self):
         """Removes the local copy of the file after successful processing."""
         if not self.standard_config.preserve_downloads and not self.standard_config.download_only:
             logger.debug(f"Cleaning up {self}")
-            os.unlink(self._tmp_download_file())
+            try:
+                os.unlink(self._tmp_download_file())
+            except OSError as e:  # Don't think we need to raise an exception
+                logger.debug(f"Failed to remove {self._tmp_download_file()} due to {e}")
 
 
 class FsspecConnector(BaseConnector):
@@ -138,7 +145,7 @@ class FsspecConnector(BaseConnector):
         )
 
     def cleanup(self, cur_dir=None):
-        """cleanup linginering empty sub-dirs from s3 paths, but leave remaining files
+        """cleanup linginering empty sub-dirs from cloud paths, but leave remaining files
         (and their paths) in tact as that indicates they were not processed"""
         if not self.cleanup_files:
             return
@@ -164,7 +171,26 @@ class FsspecConnector(BaseConnector):
             )
 
     def _list_files(self):
-        return self.fs.ls(self.config.path_without_protocol)
+        if not self.config.recursive:
+            # fs.ls does not walk directories
+            # directories that are listed in cloud storage can cause problems
+            # because they are seen as 0 byte files
+            return [
+                x.get("name")
+                for x in self.fs.ls(self.config.path_without_protocol, detail=True)
+                if x.get("size") > 0
+            ]
+        else:
+            # fs.find will recursively walk directories
+            # "size" is a common key for all the cloud protocols with fs
+            return [
+                k
+                for k, v in self.fs.find(
+                    self.config.path_without_protocol,
+                    detail=True,
+                ).items()
+                if v.get("size") > 0
+            ]
 
     def get_ingest_docs(self):
         return [
