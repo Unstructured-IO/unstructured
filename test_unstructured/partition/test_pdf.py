@@ -243,11 +243,10 @@ def test_partition_pdf_with_auto_strategy(
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
     elements = pdf.partition_pdf(filename=filename, strategy="auto")
-    titles = [el for el in elements if el.category == "Title" and len(el.text.split(" ")) > 10]
-    title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
-    assert titles[0].text == title
-    assert titles[0].metadata.filename == "layout-parser-paper-fast.pdf"
-    assert titles[0].metadata.file_directory == "example-docs"
+    title = "LayoutParser: A Uniﬁed Toolkit for DeepLearning Based Document Image Analysis"
+    assert elements[0].text == title
+    assert elements[0].metadata.filename == "layout-parser-paper-fast.pdf"
+    assert elements[0].metadata.file_directory == "example-docs"
 
 
 def test_partition_pdf_with_page_breaks(

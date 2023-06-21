@@ -303,11 +303,13 @@ def _process_pdfminer_pages(
             y1 = height - y1
             y2 = height - y2
 
-            _text = _extract_text(obj)
-            if not _text:
-                continue
+            if hasattr(obj, "get_text"):
+                _text = obj.get_text()
+                _text_snippets = [re.sub(PARAGRAPH_PATTERN, "", _text)]
+            else:
+                _text = _extract_text(obj)
+                _text_snippets = re.split(PARAGRAPH_PATTERN, _text)
 
-            _text_snippets = re.split(PARAGRAPH_PATTERN, _text)
             for _text in _text_snippets:
                 _text = clean_extra_whitespace(_text)
                 if _text.strip():
