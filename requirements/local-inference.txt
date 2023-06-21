@@ -87,7 +87,7 @@ numpy==1.23.5
     #   transformers
 omegaconf==2.3.0
     # via effdet
-onnxruntime==1.15.0
+onnxruntime==1.15.1
     # via unstructured-inference
 opencv-python==4.7.0.72
     # via
@@ -136,7 +136,7 @@ pycparser==2.21
     # via
     #   -c requirements/base.txt
     #   cffi
-pyparsing==3.0.9
+pyparsing==3.1.0
     # via matplotlib
 pytesseract==0.3.10
     # via layoutparser
@@ -211,7 +211,7 @@ typing-extensions==4.6.3
     #   huggingface-hub
     #   iopath
     #   torch
-unstructured-inference==0.5.1
+unstructured-inference==0.5.2
     # via -r requirements/local-inference.in
 urllib3==1.26.16
     # via
