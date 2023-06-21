@@ -82,11 +82,14 @@ pandas==1.5.3
     # via
     #   -r requirements/base.in
     #   argilla
+pdf2image==1.16.3
+    # via -r requirements/base.in
 pdfminer-six==20221105
     # via -r requirements/base.in
 pillow==9.5.0
     # via
     #   -r requirements/base.in
+    #   pdf2image
     #   python-pptx
 pycparser==2.21
     # via cffi

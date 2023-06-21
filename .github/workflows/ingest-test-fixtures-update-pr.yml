@@ -3,6 +3,9 @@ name: Ingest Test Fixtures Update PR
 on:
   push:
   workflow_dispatch:
+  
+env:
+  GHA_CACHE_KEY_VERSION: "v1"
 
 jobs:
   setup:
@@ -58,6 +61,7 @@ jobs:
           GH_READ_ONLY_ACCESS_TOKEN: ${{ secrets.GH_READ_ONLY_ACCESS_TOKEN }}
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          GCP_INGEST_SERVICE_KEY: ${{ secrets.GCP_INGEST_SERVICE_KEY }}
           OVERWRITE_FIXTURES: "true"
         run: |
           source .venv/bin/activate
@@ -69,6 +73,7 @@ jobs:
           make install-ingest-s3
           make install-ingest-azure
           make install-ingest-discord
+          make install-ingest-google-drive
           make install-ingest-github
           make install-ingest-gitlab
           make install-ingest-slack

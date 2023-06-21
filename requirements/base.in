@@ -7,6 +7,7 @@ msg_parser
 nltk
 openpyxl
 pandas
+pdf2image
 pdfminer.six
 pillow
 pypandoc

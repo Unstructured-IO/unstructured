@@ -145,3 +145,12 @@ the fox met a bear."""
         NarrativeText(text="The big brown fox was walking down the lane."),
         NarrativeText(text="At the end of the lane, the fox met a bear."),
     ]
+
+
+def test_partition_text_extract_regex_metadata():
+    text = "SPEAKER 1: It is my turn to speak now!"
+
+    elements = partition_text(text=text, regex_metadata={"speaker": r"SPEAKER \d{1,3}"})
+    assert elements[0].metadata.regex_metadata == {
+        "speaker": [{"text": "SPEAKER 1", "start": 0, "end": 9}],
+    }

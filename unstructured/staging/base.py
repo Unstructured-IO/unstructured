@@ -5,6 +5,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import pandas as pd
 
+from unstructured.documents import coordinates as coordinates_module
 from unstructured.documents.elements import (
     TYPE_TO_TEXT_ELEMENT_MAP,
     CheckBox,
@@ -19,6 +20,9 @@ TABLE_FIELDNAMES: List[str] = [
     "text",
     "element_id",
     "coordinates",
+    "coordinate_system",
+    "layout_width",
+    "layout_height",
     "filename",
     "page_number",
     "url",
@@ -72,6 +76,14 @@ def isd_to_elements(isd: List[Dict[str, Any]]) -> List[Element]:
         coordinates: Optional[Tuple[Tuple[float, float], ...]] = None
         if coord_value is not None:
             coordinates = tuple((x, y) for x, y in coord_value)
+        coordinate_system_name: Optional[str] = item.get("coordinate_system")
+        if coordinate_system_name is not None:
+            width = item["layout_width"]
+            height = item["layout_height"]
+            coordinate_system_class = getattr(coordinates_module, coordinate_system_name)
+            coordinate_system = coordinate_system_class(width, height)
+        else:
+            coordinate_system = None
 
         metadata = ElementMetadata()
         _metadata_dict = item.get("metadata")
@@ -86,6 +98,7 @@ def isd_to_elements(isd: List[Dict[str, Any]]) -> List[Element]:
                     element_id=element_id,
                     metadata=metadata,
                     coordinates=coordinates,
+                    coordinate_system=coordinate_system,
                 ),
             )
         elif item["type"] == "CheckBox":
@@ -95,6 +108,7 @@ def isd_to_elements(isd: List[Dict[str, Any]]) -> List[Element]:
                     element_id=element_id,
                     metadata=metadata,
                     coordinates=coordinates,
+                    coordinate_system=coordinate_system,
                 ),
             )
 
