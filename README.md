@@ -29,6 +29,17 @@
   </a>
 </div>
 
+<h2 align="center">
+  <p>API Announcement!</p>
+</h2>
+<div align="center">
+  <p>We'll be requiring API keys in the near future, to prevent any disruption get yours <a href="https://www.unstructured.io/api-key/">here</a> now!</p>
+
+<p>Checkout the <a href="https://github.com/Unstructured-IO/unstructured-api#--">readme</a> here to get started making API calls. 
+We'd love to hear your feedback, let us know how it goes in our
+  community slack. And stay tuned for improvements to both quality and performance!</p>
+</div>
+
 <h3 align="center">
   <p>Open-Source Pre-Processing Tools for Unstructured Data</p>
 </h3>
