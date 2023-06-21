@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:experimental
-FROM quay.io/unstructured-io/base-images:rocky8.7-1
+FROM quay.io/unstructured-io/base-images:rocky8.7-2 as base
 
 ARG PIP_VERSION
 
@@ -11,6 +11,7 @@ RUN mkdir ${HOME}/.ssh && chmod go-rwx ${HOME}/.ssh \
 ENV PYTHONPATH="${PYTHONPATH}:${HOME}"
 ENV PATH="/home/usr/.local/bin:${PATH}"
 
+FROM base as deps
 # Copy and install Unstructured
 COPY requirements requirements
 
@@ -32,11 +33,14 @@ RUN python3.8 -m pip install pip==${PIP_VERSION} && \
   dnf -y groupremove "Development Tools" && \
   dnf clean all
 
+RUN python3.8 -c "import nltk; nltk.download('punkt')" && \
+  python3.8 -c "import nltk; nltk.download('averaged_perceptron_tagger')"
+
+FROM deps as code
+
 COPY example-docs example-docs
 COPY unstructured unstructured
 
-RUN python3.8 -c "import nltk; nltk.download('punkt')" && \
-  python3.8 -c "import nltk; nltk.download('averaged_perceptron_tagger')" && \
-  python3.8 -c "from unstructured.ingest.doc_processor.generalized import initialize; initialize()"
+RUN python3.8 -c "from unstructured.ingest.doc_processor.generalized import initialize; initialize()"
 
 CMD ["/bin/bash"]

@@ -22,6 +22,7 @@ from unstructured.documents.elements import (
     Table,
     Text,
     Title,
+    process_metadata,
 )
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import (
@@ -102,12 +103,14 @@ def _get_paragraph_runs(paragraph):
 Paragraph.runs = property(lambda self: _get_paragraph_runs(self))
 
 
+@process_metadata()
 @add_metadata_with_filetype(FileType.DOCX)
 def partition_docx(
     filename: Optional[str] = None,
     file: Optional[Union[IO, SpooledTemporaryFile]] = None,
     metadata_filename: Optional[str] = None,
     include_page_breaks: bool = True,
+    **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft Word Documents in .docx format into its document elements.
 
@@ -217,9 +220,10 @@ def _element_contains_pagebreak(element) -> bool:
         ["w:br", 'type="page"'],  # "Hard" page break inserted by user
         ["lastRenderedPageBreak"],  # "Soft" page break inserted by renderer
     ]
-    for indicators in page_break_indicators:
-        if all(indicator in element.xml for indicator in indicators):
-            return True
+    if hasattr(element, "xml"):
+        for indicators in page_break_indicators:
+            if all(indicator in element.xml for indicator in indicators):
+                return True
     return False
 
 

@@ -1,10 +1,11 @@
 from typing import List, Optional
 
-from unstructured.documents.elements import Element
+from unstructured.documents.elements import Element, process_metadata
 from unstructured.partition.common import exactly_one
 from unstructured.partition.pdf import partition_pdf_or_image
 
 
+@process_metadata()
 def partition_image(
     filename: str = "",
     file: Optional[bytes] = None,
@@ -14,6 +15,7 @@ def partition_image(
     include_page_breaks: bool = False,
     ocr_languages: str = "eng",
     strategy: str = "auto",
+    **kwargs,
 ) -> List[Element]:
     """Parses an image into a list of interpreted elements.
 

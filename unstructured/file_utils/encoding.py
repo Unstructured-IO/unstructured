@@ -27,6 +27,17 @@ COMMON_ENCODINGS = [
 ]
 
 
+def format_encoding_str(encoding: str) -> str:
+    """Format input encoding string (e.g., `utf-8`, `iso-8859-1`, etc).
+    Parameters
+    ----------
+    encoding
+        The encoding string to be formatted (e.g., `UTF-8`, `utf_8`, `ISO-8859-1`, `iso_8859_1`,
+        etc).
+    """
+    return encoding.lower().replace("_", "-")
+
+
 def detect_file_encoding(
     filename: str = "",
     file: Optional[Union[bytes, IO]] = None,
@@ -54,8 +65,11 @@ def detect_file_encoding(
         # Encoding detection failed, fallback to predefined encodings
         for enc in COMMON_ENCODINGS:
             try:
-                with open(filename, encoding=enc) as f:
-                    file_text = f.read()
+                if filename:
+                    with open(filename, encoding=enc) as f:
+                        file_text = f.read()
+                else:
+                    file_text = byte_data.decode(enc)
                 encoding = enc
                 break
             except (UnicodeDecodeError, UnicodeError):
@@ -106,4 +120,6 @@ def read_txt_file(
     else:
         raise FileNotFoundError("No filename was specified")
 
-    return encoding, file_text
+    formatted_encoding = format_encoding_str(encoding)
+
+    return formatted_encoding, file_text

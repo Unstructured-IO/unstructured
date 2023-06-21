@@ -1,13 +1,34 @@
-## 0.7.6-dev2
+## 0.7.7
 
 ### Enhancements
 
+* Adds functionality to replace the `MIME` encodings for `eml` files with one of the common encodings if a `unicode` error occurs
+* Adds missed file-like object handling in `detect_file_encoding`
+* Adds functionality to extract charset info from `eml` files
+
+### Features
+
+* Added coordinate system class to track coordinate types and convert to different coordinate
+
+### Fixes
+
+* Adds an `html_assemble_articles` kwarg to `partition_html` to enable users to capture
+  control whether content outside of `<article>` tags is captured when
+  `<article>` tags are present.
+* Check for the `xml` attribute on `element` before looking for pagebreaks in `partition_docx`.
+
+## 0.7.6
+
+### Enhancements
+
+* Convert fast startegy to ocr_only for images
 * Adds support for page numbers in `.docx` and `.doc` when user or renderer
   created page breaks are present.
 * Adds retry logic for the unstructured-ingest Biomed connector
 
 ### Features
 
+* Provides users with the ability to extract additional metadata via regex.
 * Updates `partition_docx` to include headers and footers in the output.
 * Create `partition_tsv` and associated tests. Make additional changes to `detect_filetype`.
 
@@ -17,6 +38,8 @@
 * Page number defaults to `None` instead of `1` when page number is not present in the metadata.
   A page number of `None` indicates that page numbers are not being tracked for the document
   or that page numbers do not apply to the element in question..
+* Fixes an issue with some pptx files. Assume pptx shapes are found in top left position of slide
+  in case the shape.top and shape.left attributes are `None`.
 
 ## 0.7.5
 

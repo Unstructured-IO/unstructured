@@ -13,6 +13,7 @@ export OMP_THREAD_LIMIT=1
 ./test_unstructured_ingest/test-ingest-discord.sh
 ./test_unstructured_ingest/test-ingest-github.sh
 ./test_unstructured_ingest/test-ingest-gitlab.sh
+./test_unstructured_ingest/test-ingest-google-drive.sh
 ./test_unstructured_ingest/test-ingest-wikipedia.sh
 ./test_unstructured_ingest/test-ingest-biomed-api.sh
 ./test_unstructured_ingest/test-ingest-biomed-path.sh

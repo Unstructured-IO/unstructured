@@ -329,6 +329,15 @@ to disable SSL verification in the request.
   elements = partition_html(url="https://python.org/", ssl_verify=False)
 
 
+
+If you website contains news articles, it can be helpful to only grab content that appears in
+between the ``<article>`` tags, if the site uses that convention.
+To activate this behavior, you can set ``html_assemble_articles=True``.
+If ``html_assemble_articles`` is ``True``, each ``<article>`` tag will be treated as a a page.
+If ``html_assemble_articles`` is ``True`` and no ``<article>`` tags are present, the behavior
+is the same as ``html_assemble_articles=False``.
+
+
 ``partition_image``
 ---------------------
 

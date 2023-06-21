@@ -9,7 +9,13 @@ from pdfminer.utils import open_filename
 from PIL import Image
 
 from unstructured.cleaners.core import clean_extra_whitespace
-from unstructured.documents.elements import Element, ElementMetadata, PageBreak
+from unstructured.documents.coordinates import PixelSpace
+from unstructured.documents.elements import (
+    Element,
+    ElementMetadata,
+    PageBreak,
+    process_metadata,
+)
 from unstructured.file_utils.filetype import (
     FileType,
     add_metadata_with_filetype,
@@ -28,6 +34,7 @@ from unstructured.utils import requires_dependencies
 RE_MULTISPACE = re.compile(f"\s+")
 
 
+@process_metadata()
 @add_metadata_with_filetype(FileType.PDF)
 def partition_pdf(
     filename: str = "",
@@ -39,6 +46,7 @@ def partition_pdf(
     strategy: str = "auto",
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
+    **kwargs,
 ) -> List[Element]:
     """Parses a pdf document into a list of interpreted elements.
     Parameters
@@ -271,7 +279,7 @@ def _process_pdfminer_pages(
 
     for i, page in enumerate(extract_pages(fp)):  # type: ignore
         metadata = ElementMetadata(filename=filename, page_number=i + 1)
-        height = page.height
+        width, height = page.width, page.height
 
         text_segments = []
         page_elements = []
@@ -290,6 +298,10 @@ def _process_pdfminer_pages(
             if _text.strip():
                 text_segments.append(_text)
                 element = element_from_text(_text)
+                element._coordinate_system = PixelSpace(
+                    width=width,
+                    height=height,
+                )
                 element.coordinates = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
                 element.metadata = metadata
                 page_elements.append(element)
