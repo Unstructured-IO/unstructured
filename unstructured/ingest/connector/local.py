@@ -50,7 +50,7 @@ class LocalIngestDoc(BaseIngestDoc):
     def get_file(self):
         """Not applicable to local file system"""
         pass
-    
+
     @property
     def _output_filename(self):
         return (
