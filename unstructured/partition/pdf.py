@@ -5,6 +5,7 @@ from typing import BinaryIO, List, Optional, Union, cast
 
 import pdf2image
 from pdfminer.high_level import extract_pages
+from pdfminer.layout import LTContainer, LTImage, LTItem, LTTextBox
 from pdfminer.utils import open_filename
 from PIL import Image
 
@@ -264,29 +265,21 @@ def _partition_pdf_with_pdfminer(
     return elements
 
 
-from pdfminer.layout import LTContainer, LTImage, LTItem, LTText, LTTextBox
-
-
-def render(item: LTItem) -> None:
+def _extract_text(item: LTItem) -> str:
+    """Recursively extracts text from PDFMiner objects to account
+    for scenarios where the text is in a sub-container."""
     if hasattr(item, "get_text"):
         return item.get_text()
 
     elif isinstance(item, LTContainer):
         text = ""
         for child in item:
-            text += render(child) or ""
+            text += _extract_text(child) or ""
         return text
-    # elif isinstance(item, LTText):
-    #     return item.get_text()
 
-    elif isinstance(item, LTTextBox):
-        return "\n"
-
-    elif isinstance(item, LTImage):
-        # if self.imagewriter is not None:
-        #     return None
-        # self.imagewriter.export_image(item)
-        # else:
+    elif isinstance(item, (LTTextBox, LTImage)):
+        # TODO(robinson) - Support pulling text out of images
+        # https://github.com/pdfminer/pdfminer.six/blob/master/pdfminer/image.py#L90
         return "\n"
     return "\n"
 
@@ -303,9 +296,6 @@ def _process_pdfminer_pages(
         metadata = ElementMetadata(filename=filename, page_number=i + 1)
         width, height = page.width, page.height
 
-        if i > 1:
-            break
-
         text_segments = []
         page_elements = []
         for obj in page:
@@ -313,28 +303,23 @@ def _process_pdfminer_pages(
             y1 = height - y1
             y2 = height - y2
 
-            # NOTE(robinson) - "Figure" is an example of an object type that does
-            # not have a get_text method
-            # if not hasattr(obj, "get_text"):
-            #     continue
-            _text = render(obj)
-            # if i > 0:
-            #     import ipdb; ipdb.set_trace()
+            _text = _extract_text(obj)
             if not _text:
                 continue
-            # _text = obj.get_text()
-            _text = re.sub(PARAGRAPH_PATTERN, " ", _text)
-            _text = clean_extra_whitespace(_text)
-            if _text.strip():
-                text_segments.append(_text)
-                element = element_from_text(_text)
-                element._coordinate_system = PixelSpace(
-                    width=width,
-                    height=height,
-                )
-                element.coordinates = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
-                element.metadata = metadata
-                page_elements.append(element)
+
+            _text_snippets = re.split(PARAGRAPH_PATTERN, _text)
+            for _text in _text_snippets:
+                _text = clean_extra_whitespace(_text)
+                if _text.strip():
+                    text_segments.append(_text)
+                    element = element_from_text(_text)
+                    element._coordinate_system = PixelSpace(
+                        width=width,
+                        height=height,
+                    )
+                    element.coordinates = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
+                    element.metadata = metadata
+                    page_elements.append(element)
 
         sorted_page_elements = sorted(
             page_elements,
