@@ -5,7 +5,7 @@ set -e
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 cd "$SCRIPT_DIR"/.. || exit 1
 
-if [[ "$(find test_unstructured_ingest/expected-structured-output/google-cloud-storage/ -type f -size +1 | wc -l)" -ne 6 ]]; then
+if [[ "$(find test_unstructured_ingest/expected-structured-output/gcs/ -type f -size +1 | wc -l)" -ne 6 ]]; then
     echo "The test fixtures in test_unstructured_ingest/expected-structured-output/ look suspicious. At least one of the files is too small."
     echo "Did you overwrite test fixtures with bad outputs?"
     exit 1
@@ -36,11 +36,11 @@ set +e
 
 # to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
-    EXPECTED_DIR=test_unstructured_ingest/expected-structured-output/google-cloud-storage
+    EXPECTED_DIR=test_unstructured_ingest/expected-structured-output/gcs
     [ -d "$EXPECTED_DIR" ] && rm -rf "$EXPECTED_DIR"
     cp -R gcs-output $EXPECTED_DIR
 
-elif ! diff -ru test_unstructured_ingest/expected-structured-output/google-cloud-storage gcs-output ; then
+elif ! diff -ru test_unstructured_ingest/expected-structured-output/gcs gcs-output ; then
     echo
     echo "There are differences from the previously checked-in structured outputs."
     echo

@@ -20,6 +20,6 @@ export OMP_THREAD_LIMIT=1
 ./test_unstructured_ingest/test-ingest-local.sh
 ./test_unstructured_ingest/test-ingest-slack.sh
 ./test_unstructured_ingest/test-ingest-against-api.sh
-./test_unstructured_ingest/test-ingest-google-cloud.sh
+./test_unstructured_ingest/test-ingest-gcs.sh
 # NOTE(yuming): The following test should be put after any tests with --preserve-downloads option
 ./test_unstructured_ingest/test-ingest-pdf-fast-reprocess.sh
