@@ -106,7 +106,9 @@ pandas==1.5.3
     #   -c requirements/base.txt
     #   layoutparser
 pdf2image==1.16.3
-    # via layoutparser
+    # via
+    #   -c requirements/base.txt
+    #   layoutparser
 pdfminer-six==20221105
     # via
     #   -c requirements/base.txt

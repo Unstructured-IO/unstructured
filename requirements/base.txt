@@ -38,6 +38,8 @@ et-xmlfile==1.1.0
     # via openpyxl
 exceptiongroup==1.1.1
     # via anyio
+filetype==1.2.0
+    # via -r requirements/base.in
 h11==0.14.0
     # via httpcore
 httpcore==0.16.3
@@ -80,11 +82,14 @@ pandas==1.5.3
     # via
     #   -r requirements/base.in
     #   argilla
+pdf2image==1.16.3
+    # via -r requirements/base.in
 pdfminer-six==20221105
     # via -r requirements/base.in
 pillow==9.5.0
     # via
     #   -r requirements/base.in
+    #   pdf2image
     #   python-pptx
 pycparser==2.21
     # via cffi

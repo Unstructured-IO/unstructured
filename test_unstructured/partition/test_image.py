@@ -12,8 +12,6 @@ from unstructured.partition import image, pdf
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
-is_in_docker = os.path.exists("/.dockerenv")
-
 
 class MockResponse:
     def __init__(self, status_code, response):
@@ -193,7 +191,6 @@ def test_partition_image_raises_with_invalid_language(filename="example-docs/exa
         image.partition_image(filename=filename, strategy="hi_res", ocr_languages="fakeroo")
 
 
-@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_partition_image_with_ocr_detects_korean():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "english-and-korean.png")
     elements = image.partition_image(
@@ -206,7 +203,6 @@ def test_partition_image_with_ocr_detects_korean():
     assert elements[3].text.replace(" ", "").startswith("안녕하세요")
 
 
-@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_partition_image_with_ocr_detects_korean_from_file():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "english-and-korean.png")
 

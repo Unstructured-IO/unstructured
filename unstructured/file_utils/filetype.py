@@ -1,18 +1,26 @@
+from __future__ import annotations
+
 import inspect
 import os
 import re
 import zipfile
 from enum import Enum
 from functools import wraps
-from typing import IO, Callable, List, Optional
+from typing import IO, TYPE_CHECKING, Callable, List, Optional
 
+from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import Element, PageBreak
+from unstructured.file_utils.encoding import detect_file_encoding
 from unstructured.nlp.patterns import LIST_OF_DICTS_PATTERN
 from unstructured.partition.common import (
     _add_element_metadata,
     _remove_element_metadata,
     exactly_one,
+    normalize_layout_element,
 )
+
+if TYPE_CHECKING:
+    from unstructured_inference.inference.layout import DocumentLayout
 
 try:
     import magic
@@ -49,6 +57,7 @@ EXPECTED_PPTX_FILES = [
 
 class FileType(Enum):
     UNK = 0
+    EMPTY = 1
 
     # MS Office Types
     DOC = 10
@@ -72,12 +81,14 @@ class FileType(Enum):
     TXT = 42
     JSON = 43
     CSV = 44
+    TSV = 45
 
     # Markup Types
     HTML = 50
     XML = 51
     MD = 52
     EPUB = 53
+    RST = 54
 
     # Compressed Types
     ZIP = 60
@@ -103,8 +114,10 @@ STR_TO_FILETYPE = {
     "text/comma-separated-values": FileType.CSV,
     "text/x-comma-separated-values": FileType.CSV,
     "text/csv": FileType.CSV,
+    "text/tsv": FileType.TSV,
     "text/markdown": FileType.MD,
     "text/x-markdown": FileType.MD,
+    "text/x-rst": FileType.RST,
     "application/epub": FileType.EPUB,
     "application/epub+zip": FileType.EPUB,
     "application/json": FileType.JSON,
@@ -120,6 +133,7 @@ STR_TO_FILETYPE = {
     "message/rfc822": FileType.EML,
     "application/x-ole-storage": FileType.MSG,
     "application/vnd.ms-outlook": FileType.MSG,
+    "inode/x-empty": FileType.EMPTY,
 }
 
 MIMETYPES_TO_EXCLUDE = [
@@ -147,6 +161,7 @@ EXT_TO_FILETYPE = {
     ".htm": FileType.HTML,
     ".html": FileType.HTML,
     ".md": FileType.MD,
+    ".rst": FileType.RST,
     ".xlsx": FileType.XLSX,
     ".pptx": FileType.PPTX,
     ".png": FileType.PNG,
@@ -160,6 +175,7 @@ EXT_TO_FILETYPE = {
     ".msg": FileType.MSG,
     ".odt": FileType.ODT,
     ".csv": FileType.CSV,
+    ".tsv": FileType.TSV,
     # NOTE(robinson) - for now we are treating code files as plain text
     ".js": FileType.TXT,
     ".py": FileType.TXT,
@@ -190,17 +206,22 @@ def detect_filetype(
     content_type: Optional[str] = None,
     file: Optional[IO] = None,
     file_filename: Optional[str] = None,
+    encoding: Optional[str] = "utf-8",
 ) -> Optional[FileType]:
     """Use libmagic to determine a file's type. Helps determine which partition brick
     to use for a given file. A return value of None indicates a non-supported file type.
     """
+    mime_type = None
     exactly_one(filename=filename, file=file)
 
+    # first check (content_type)
     if content_type:
         filetype = STR_TO_FILETYPE.get(content_type)
         if filetype:
             return filetype
 
+    # second check (filename/file_name/file)
+    # continue if successfully define mime_type
     if filename or file_filename:
         _filename = filename or file_filename or ""
         _, extension = os.path.splitext(_filename)
@@ -210,61 +231,66 @@ def detect_filetype(
                 _resolve_symlink(filename or file_filename),
                 mime=True,
             )  # type: ignore
-        else:
-            return EXT_TO_FILETYPE.get(extension.lower(), FileType.UNK)
+        elif os.path.isfile(_filename):
+            import filetype as ft
+
+            mime_type = ft.guess_mime(filename)
+        if mime_type is None:
+            return EXT_TO_FILETYPE.get(extension, FileType.UNK)
 
     elif file is not None:
-        extension = None
+        if hasattr(file, "name"):
+            _, extension = os.path.splitext(file.name)
+        else:
+            extension = ""
+        extension = extension.lower()
         # NOTE(robinson) - the python-magic docs recommend reading at least the first 2048 bytes
         # Increased to 4096 because otherwise .xlsx files get detected as a zip file
         # ref: https://github.com/ahupp/python-magic#usage
         if LIBMAGIC_AVAILABLE:
             mime_type = magic.from_buffer(file.read(4096), mime=True)
         else:
-            raise ImportError(
-                "libmagic is unavailable. "
-                "Filetype detection on file-like objects requires libmagic. "
-                "Please install libmagic and try again.",
+            import filetype as ft
+
+            mime_type = ft.guess_mime(file.read(4096))
+        if mime_type is None:
+            logger.warning(
+                "libmagic is unavailable but assists in filetype detection on file-like objects."
+                "Please consider installing libmagic for better results.",
             )
+            return EXT_TO_FILETYPE.get(extension, FileType.UNK)
+
     else:
         raise ValueError("No filename, file, nor file_filename were specified.")
 
     """Mime type special cases."""
-
-    # NOTE(crag): for older versions of the OS libmagic package, such as is currently
-    # installed on the Unstructured docker image, .json files resolve to "text/plain"
-    # rather than "application/json". this corrects for that case.
-    if mime_type == "text/plain" and extension == ".json":
-        return FileType.JSON
+    # third check (mime_type)
 
     # NOTE(Crag): older magic lib does not differentiate between xls and doc
     if mime_type == "application/msword" and extension == ".xls":
         return FileType.XLS
 
     elif mime_type.endswith("xml"):
-        if extension and (extension == ".html" or extension == ".htm"):
+        if extension == ".html" or extension == ".htm":
             return FileType.HTML
         else:
             return FileType.XML
 
     elif mime_type in TXT_MIME_TYPES or mime_type.startswith("text"):
-        if extension and extension == ".eml":
-            return FileType.EML
-        elif extension and extension == ".md":
-            return FileType.MD
-        elif extension and extension == ".rtf":
-            return FileType.RTF
-        elif extension and extension == ".html":
-            return FileType.HTML
-
-        if _is_text_file_a_json(file=file, filename=filename):
+        # NOTE(crag): for older versions of the OS libmagic package, such as is currently
+        # installed on the Unstructured docker image, .json files resolve to "text/plain"
+        # rather than "application/json". this corrects for that case.
+        if _is_text_file_a_json(file=file, filename=filename, encoding=encoding):
             return FileType.JSON
 
-        if _is_text_file_a_csv(file=file, filename=filename):
+        if _is_text_file_a_csv(file=file, filename=filename, encoding=encoding):
             return FileType.CSV
 
-        if file and not extension and _check_eml_from_buffer(file=file) is True:
+        if file and _check_eml_from_buffer(file=file) is True:
             return FileType.EML
+
+        if extension in [".eml", ".md", ".rtf", ".html", ".rst", ".tsv", ".json"]:
+            return EXT_TO_FILETYPE.get(extension)
 
         # Safety catch
         if mime_type in STR_TO_FILETYPE:
@@ -273,14 +299,16 @@ def detect_filetype(
         return FileType.TXT
 
     elif mime_type == "application/octet-stream":
-        if file and not extension:
+        if extension == ".docx":
+            return FileType.DOCX
+        elif file:
             return _detect_filetype_from_octet_stream(file=file)
         else:
             return EXT_TO_FILETYPE.get(extension, FileType.UNK)
 
     elif mime_type == "application/zip":
         filetype = FileType.UNK
-        if file and not extension:
+        if file:
             filetype = _detect_filetype_from_octet_stream(file=file)
         elif filename is not None:
             with open(filename, "rb") as f:
@@ -288,15 +316,18 @@ def detect_filetype(
 
         extension = extension if extension else ""
         if filetype == FileType.UNK:
-            return EXT_TO_FILETYPE.get(extension.lower(), FileType.ZIP)
+            return FileType.ZIP
         else:
-            return EXT_TO_FILETYPE.get(extension.lower(), filetype)
+            return EXT_TO_FILETYPE.get(extension, filetype)
 
     elif _is_code_mime_type(mime_type):
         # NOTE(robinson) - we'll treat all code files as plain text for now.
         # we can update this logic and add filetypes for specific languages
         # later if needed.
         return FileType.TXT
+
+    elif mime_type.endswith("empty"):
+        return FileType.EMPTY
 
     # For everything else
     elif mime_type in STR_TO_FILETYPE:
@@ -333,6 +364,7 @@ def _detect_filetype_from_octet_stream(file: IO) -> FileType:
 def _read_file_start_for_type_check(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
+    encoding: Optional[str] = "utf-8",
 ) -> str:
     """Reads the start of the file and returns the text content."""
     exactly_one(filename=filename, file=file)
@@ -345,26 +377,33 @@ def _read_file_start_for_type_check(
             file_text = file_content.decode(errors="ignore")
         file.seek(0)
     if filename is not None:
-        with open(filename) as f:
-            file_text = f.read(4096)
+        try:
+            with open(filename, encoding=encoding) as f:
+                file_text = f.read(4096)
+        except UnicodeDecodeError:
+            encoding, _ = detect_file_encoding(filename=filename)
+            with open(filename, encoding=encoding) as f:
+                file_text = f.read(4096)
     return file_text
 
 
 def _is_text_file_a_json(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
+    encoding: Optional[str] = "utf-8",
 ):
     """Detects if a file that has a text/plain MIME type is a JSON file."""
-    file_text = _read_file_start_for_type_check(file=file, filename=filename)
+    file_text = _read_file_start_for_type_check(file=file, filename=filename, encoding=encoding)
     return re.match(LIST_OF_DICTS_PATTERN, file_text) is not None
 
 
 def _is_text_file_a_csv(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
+    encoding: Optional[str] = "utf-8",
 ):
     """Detects if a file that has a text/plain MIME type is a CSV file."""
-    file_text = _read_file_start_for_type_check(file=file, filename=filename)
+    file_text = _read_file_start_for_type_check(file=file, filename=filename, encoding=encoding)
     lines = file_text.strip().splitlines()
     if len(lines) < 2:
         return False
@@ -388,32 +427,36 @@ def _check_eml_from_buffer(file: IO) -> bool:
 
 
 def document_to_element_list(
-    document,
+    document: "DocumentLayout",
     include_page_breaks: bool = False,
 ) -> List[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
     elements: List[Element] = []
-    image_formats: List[str] = []
     num_pages = len(document.pages)
     for i, page in enumerate(document.pages):
-        for element in page.elements:
-            elements.append(element)
+        for layout_element in page.elements:
+            element = normalize_layout_element(layout_element)
+            if isinstance(element, List):
+                for el in element:
+                    el.metadata.page_number = i + 1
+                elements.extend(element)
+                continue
+            else:
+                element.metadata.text_as_html = (
+                    layout_element.text_as_html if hasattr(layout_element, "text_as_html") else None
+                )
+                elements.append(element)
             if hasattr(page, "image"):
-                image_formats.append(page.image.format)
+                image_format = page.image.format
+                coordinate_system = PixelSpace(width=page.image.width, height=page.image.height)
+            else:
+                image_format = None
+                coordinate_system = None
+            element._coordinate_system = coordinate_system
+            _add_element_metadata(element, page_number=i + 1, filetype=image_format)
         if include_page_breaks and i < num_pages - 1:
             elements.append(PageBreak())
 
-    if image_formats and all(image_format == "PNG" for image_format in image_formats):
-        filetype = FileType.PNG.name
-    elif image_formats and all(image_format == "JPEG" for image_format in image_formats):
-        filetype = FileType.JPG.name
-    else:
-        filetype = None
-    elements = _add_element_metadata(
-        elements,
-        include_page_breaks=include_page_breaks,
-        filetype=filetype,
-    )
     return elements
 
 
@@ -456,13 +499,16 @@ def add_metadata_with_filetype(filetype: FileType):
             include_metadata = params.get("include_metadata", True)
             if include_metadata:
                 metadata_kwargs = {
-                    kwarg: params.get(kwarg) for kwarg in ("include_page_breaks", "filename", "url")
+                    kwarg: params.get(kwarg) for kwarg in ("filename", "url", "text_as_html")
                 }
-                return _add_element_metadata(
-                    elements,
-                    filetype=FILETYPE_TO_MIMETYPE[filetype],
-                    **metadata_kwargs,  # type: ignore
-                )
+                for element in elements:
+                    _add_element_metadata(
+                        element,
+                        filetype=FILETYPE_TO_MIMETYPE[filetype],
+                        **metadata_kwargs,  # type: ignore
+                    )
+
+                return elements
             else:
                 return _remove_element_metadata(
                     elements,

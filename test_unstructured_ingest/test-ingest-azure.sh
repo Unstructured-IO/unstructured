@@ -11,6 +11,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --azure-account-name azureunstructured1 \
     --structured-output-dir azure-ingest-output \
     --partition-strategy hi_res \
+    --download-dir files-ingest-download/azure \
+    --preserve-downloads \
     --reprocess \
     --num-processes 2
 

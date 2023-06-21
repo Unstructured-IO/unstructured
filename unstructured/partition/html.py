@@ -2,7 +2,7 @@ from typing import IO, Dict, List, Optional
 
 import requests
 
-from unstructured.documents.elements import Element
+from unstructured.documents.elements import Element, process_metadata
 from unstructured.documents.html import HTMLDocument
 from unstructured.documents.xml import VALID_PARSERS
 from unstructured.file_utils.encoding import read_txt_file
@@ -17,6 +17,7 @@ from unstructured.partition.common import (
 )
 
 
+@process_metadata()
 @add_metadata_with_filetype(FileType.HTML)
 def partition_html(
     filename: Optional[str] = None,
@@ -29,6 +30,8 @@ def partition_html(
     headers: Dict[str, str] = {},
     ssl_verify: bool = True,
     parser: VALID_PARSERS = None,
+    html_assemble_articles: bool = False,
+    **kwargs,
 ) -> List[Element]:
     """Partitions an HTML document into its constituent elements.
 
@@ -64,15 +67,28 @@ def partition_html(
     exactly_one(filename=filename, file=file, text=text, url=url)
 
     if filename is not None:
-        document = HTMLDocument.from_file(filename, parser=parser, encoding=encoding)
+        document = HTMLDocument.from_file(
+            filename,
+            parser=parser,
+            encoding=encoding,
+            assemble_articles=html_assemble_articles,
+        )
 
     elif file is not None:
         _, file_text = read_txt_file(file=file, encoding=encoding)
-        document = HTMLDocument.from_string(file_text, parser=parser)
+        document = HTMLDocument.from_string(
+            file_text,
+            parser=parser,
+            assemble_articles=html_assemble_articles,
+        )
 
     elif text is not None:
         _text: str = str(text)
-        document = HTMLDocument.from_string(_text, parser=parser)
+        document = HTMLDocument.from_string(
+            _text,
+            parser=parser,
+            assemble_articles=html_assemble_articles,
+        )
 
     elif url is not None:
         response = requests.get(url, headers=headers, verify=ssl_verify)

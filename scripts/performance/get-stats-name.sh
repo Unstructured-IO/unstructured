@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # get a string representing the system stats. we should be able to infer
 # this from aws types, but this guarantees we have the info we need in all cases

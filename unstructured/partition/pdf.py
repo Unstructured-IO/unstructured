@@ -9,7 +9,13 @@ from pdfminer.utils import open_filename
 from PIL import Image
 
 from unstructured.cleaners.core import clean_extra_whitespace
-from unstructured.documents.elements import Element, ElementMetadata, PageBreak
+from unstructured.documents.coordinates import PixelSpace
+from unstructured.documents.elements import (
+    Element,
+    ElementMetadata,
+    PageBreak,
+    process_metadata,
+)
 from unstructured.file_utils.filetype import (
     FileType,
     add_metadata_with_filetype,
@@ -26,6 +32,7 @@ from unstructured.partition.text import element_from_text, partition_text
 from unstructured.utils import requires_dependencies
 
 
+@process_metadata()
 @add_metadata_with_filetype(FileType.PDF)
 def partition_pdf(
     filename: str = "",
@@ -37,6 +44,7 @@ def partition_pdf(
     strategy: str = "auto",
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
+    **kwargs,
 ) -> List[Element]:
     """Parses a pdf document into a list of interpreted elements.
     Parameters
@@ -57,9 +65,10 @@ def partition_pdf(
         The strategy to use for partitioning the PDF. Valid strategies are "hi_res",
         "ocr_only", and "fast". When using the "hi_res" strategy, the function uses
         a layout detection model to identify document elements. When using the
-        "ocr_only" strategy, partition_image simply extracts the text from the
+        "ocr_only" strategy, partition_pdf simply extracts the text from the
         document using OCR and processes it. If the "fast" strategy is used, the text
-        is extracted directly from the PDF.
+        is extracted directly from the PDF. The default strategy `auto` will determine
+        when a page can be extracted using `fast` mode, otherwise it will fall back to `hi_res`.
     infer_table_structure
         Only applicable if `strategy=hi_res`.
         If True, any Table elements that are extracted will also have a metadata field
@@ -265,9 +274,10 @@ def _process_pdfminer_pages(
 
     for i, page in enumerate(extract_pages(fp)):  # type: ignore
         metadata = ElementMetadata(filename=filename, page_number=i + 1)
-        height = page.height
+        width, height = page.width, page.height
 
         text_segments = []
+        page_elements = []
         for obj in page:
             x1, y2, x2, y1 = obj.bbox
             y1 = height - y1
@@ -283,9 +293,22 @@ def _process_pdfminer_pages(
             if _text.strip():
                 text_segments.append(_text)
                 element = element_from_text(_text)
+                element._coordinate_system = PixelSpace(
+                    width=width,
+                    height=height,
+                )
                 element.coordinates = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
                 element.metadata = metadata
-                elements.append(element)
+                page_elements.append(element)
+
+        sorted_page_elements = sorted(
+            page_elements,
+            key=lambda el: (
+                el.coordinates[0][1] if el.coordinates else float("inf"),
+                el.coordinates[0][0] if el.coordinates else float("inf"),
+            ),
+        )
+        elements += sorted_page_elements
 
         if include_page_breaks:
             elements.append(PageBreak())

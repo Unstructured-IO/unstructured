@@ -1,22 +1,10 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2317
-# NOTE(crag): remove above shellcheck line when the biomed issue is fixed
-echo "Skipping test-ingest-biomed-api.sh,"
-echo "see https://github.com/Unstructured-IO/unstructured/issues/468"
-echo
-exit 0
 
 set -e
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/.. || exit 1
-
-if [[ "$CI" == "true" ]]; then
-    if [ "$(( RANDOM % 10))" -lt 1 ] ; then
-        echo "Skipping ingest 90% of biomed tests to avoid occaisonal ftp issue."
-        exit 0
-    fi
-fi
 
 if [[ "$(find test_unstructured_ingest/expected-structured-output/biomed-ingest-output-api/ -type f -size +10k | wc -l)" != 2 ]]; then
     echo "The test fixtures in test_unstructured_ingest/expected-structured-output/biomed-ingest-output-api/ look suspicious. At least one of the files is too small."
@@ -28,12 +16,16 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
     --biomed-api-from "2019-01-02" \
     --biomed-api-until "2019-01-02+00:03:10" \
+    --biomed-max-retries 5 \
+    --biomed-max-request-time 30 \
+    --biomed-decay .3 \
     --structured-output-dir biomed-ingest-output-api  \
     --num-processes 2 \
     --partition-strategy hi_res \
     --reprocess \
     --verbose \
     --re-download \
+    --download-dir files-ingest-download/biomed-api \
     --preserve-downloads
 
 OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}

@@ -33,7 +33,7 @@ XLSX_MIME_TYPES = [
         ("fake.docx", FileType.DOCX),
         ("example.jpg", FileType.JPG),
         ("fake-text.txt", FileType.TXT),
-        ("fake-email.eml", FileType.EML),
+        ("eml/fake-email.eml", FileType.EML),
         ("factbook.xml", FileType.XML),
         ("example-10k.html", FileType.HTML),
         ("fake-html.html", FileType.HTML),
@@ -41,9 +41,12 @@ XLSX_MIME_TYPES = [
         # NOTE(robinson) - currently failing in the docker tests because the detected
         # MIME type is text/csv
         # ("stanley-cups.csv", FileType.CSV),
+        ("stanley-cups.tsv", FileType.TSV),
         ("fake-power-point.pptx", FileType.PPTX),
         ("winter-sports.epub", FileType.EPUB),
         ("spring-weather.html.json", FileType.JSON),
+        ("README.rst", FileType.RST),
+        ("README.md", FileType.MD),
         ("fake.odt", FileType.ODT),
     ],
 )
@@ -59,12 +62,13 @@ def test_detect_filetype_from_filename(file, expected):
         ("fake.docx", FileType.DOCX),
         ("example.jpg", FileType.JPG),
         ("fake-text.txt", FileType.TXT),
-        ("fake-email.eml", FileType.EML),
+        ("eml/fake-email.eml", FileType.EML),
         ("factbook.xml", FileType.XML),
         ("example-10k.html", FileType.HTML),
         ("fake-html.html", FileType.HTML),
         ("stanley-cups.xlsx", FileType.XLSX),
         ("stanley-cups.csv", FileType.CSV),
+        ("stanley-cups.tsv", FileType.TSV),
         ("fake-power-point.pptx", FileType.PPTX),
         ("winter-sports.epub", FileType.EPUB),
         ("fake-doc.rtf", FileType.RTF),
@@ -93,7 +97,7 @@ def test_detect_filetype_from_filename_with_extension(monkeypatch, file, expecte
         ("fake.docx", FileType.DOCX),
         ("example.jpg", FileType.JPG),
         ("fake-text.txt", FileType.TXT),
-        ("fake-email.eml", FileType.EML),
+        ("eml/fake-email.eml", FileType.EML),
         ("factbook.xml", FileType.XML),
         # NOTE(robinson) - For the document, some operating systems return
         # */xml and some return */html. Either could be acceptable depending on the OS
@@ -103,6 +107,7 @@ def test_detect_filetype_from_filename_with_extension(monkeypatch, file, expecte
         # NOTE(robinson) - currently failing in the docker tests because the detected
         # MIME type is text/csv
         # ("stanley-cups.csv", FileType.CSV),
+        ("stanley-cups.tsv", FileType.TSV),
         ("fake-power-point.pptx", FileType.PPTX),
         ("winter-sports.epub", FileType.EPUB),
     ],
@@ -114,11 +119,12 @@ def test_detect_filetype_from_file(file, expected):
         assert detect_filetype(file=f) in expected
 
 
-def test_detect_filetype_from_file_raises_without_libmagic(monkeypatch):
+def test_detect_filetype_from_file_warning_without_libmagic(monkeypatch, caplog):
     monkeypatch.setattr(filetype, "LIBMAGIC_AVAILABLE", False)
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
-    with open(filename, "rb") as f, pytest.raises(ImportError):
+    with open(filename, "rb") as f:
         detect_filetype(file=f)
+        assert "WARNING" in caplog.text
 
 
 def test_detect_xml_application_xml(monkeypatch):
@@ -352,7 +358,7 @@ def test_detect_filetype_detects_unknown_text_types_as_txt(monkeypatch, tmpdir):
 
 
 def test_detect_filetype_raises_with_both_specified():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "eml/fake-email.eml")
     with open(filename, "rb") as f, pytest.raises(ValueError):
         detect_filetype(filename=filename, file=f)
 
@@ -395,3 +401,25 @@ def test_is_text_file_a_csv(content, expected):
 
     with BytesIO(content) as f:
         assert _is_text_file_a_csv(file=f) == expected
+
+
+def test_csv_json_check_with_filename_and_utf_32(filename="example-docs/fake-text-utf-32.txt"):
+    assert _is_text_file_a_csv(filename=filename) is False
+    assert _is_text_file_a_json(filename=filename) is False
+
+
+def test_csv_json_check_with_file_and_utf_32(filename="example-docs/fake-text-utf-32.txt"):
+    with open(filename, "rb") as f:
+        assert _is_text_file_a_csv(file=f) is False
+
+    with open(filename, "rb") as f:
+        assert _is_text_file_a_json(file=f) is False
+
+
+def test_detect_filetype_detects_empty_filename(filename="example-docs/empty.txt"):
+    assert detect_filetype(filename=filename) == FileType.EMPTY
+
+
+def test_detect_filetype_detects_empty_file(filename="example-docs/empty.txt"):
+    with open(filename, "rb") as f:
+        assert detect_filetype(file=f) == FileType.EMPTY

@@ -92,10 +92,16 @@ class XMLDocument(Document):
         return self.document_tree
 
     @classmethod
-    def from_string(cls, text: str, parser: VALID_PARSERS = None, stylesheet: Optional[str] = None):
+    def from_string(
+        cls,
+        text: str,
+        parser: VALID_PARSERS = None,
+        stylesheet: Optional[str] = None,
+        **kwargs,
+    ):
         """Supports reading in an XML file as a raw string rather than as a file."""
         logger.info("Reading document from string ...")
-        doc = cls(parser=parser, stylesheet=stylesheet)
+        doc = cls(parser=parser, stylesheet=stylesheet, **kwargs)
         doc._read_xml(text)
         return doc
 
@@ -106,6 +112,7 @@ class XMLDocument(Document):
         parser: VALID_PARSERS = None,
         stylesheet: Optional[str] = None,
         encoding: Optional[str] = None,
+        **kwargs,
     ):
         _, content = read_txt_file(filename=filename, encoding=encoding)
-        return cls.from_string(content, parser=parser, stylesheet=stylesheet)
+        return cls.from_string(content, parser=parser, stylesheet=stylesheet, **kwargs)

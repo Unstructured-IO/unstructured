@@ -20,7 +20,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.documents.xml import XMLDocument
+from unstructured.documents.xml import VALID_PARSERS, XMLDocument
 from unstructured.logger import logger
 from unstructured.partition.text_type import (
     is_bulleted_text,
@@ -90,6 +90,15 @@ class HTMLDocument(XMLDocument):
     """Class for handling HTML documents. Uses rules based parsing to identify sections
     of interest within the document."""
 
+    def __init__(
+        self,
+        stylesheet: Optional[str] = None,
+        parser: VALID_PARSERS = None,
+        assemble_articles: bool = True,
+    ):
+        self.assembled_articles = assemble_articles
+        super().__init__(stylesheet=stylesheet, parser=parser)
+
     def _read(self) -> List[Page]:
         """Reads and structures and HTML document. If present, looks for article tags.
         if there are multiple article sections present, a page break is inserted between them.
@@ -101,7 +110,7 @@ class HTMLDocument(XMLDocument):
         etree.strip_elements(self.document_tree, ["script"])
         root = _find_main(self.document_tree)
 
-        articles = _find_articles(root)
+        articles = _find_articles(root, assemble_articles=self.assembled_articles)
         page_number = 0
         page = Page(number=page_number)
         for article in articles:
@@ -407,9 +416,12 @@ def _find_main(root: etree.Element) -> etree.Element:
     return main_tag_elem if main_tag_elem is not None else root
 
 
-def _find_articles(root: etree.Element) -> List[etree.Element]:
+def _find_articles(root: etree.Element, assemble_articles: bool = True) -> List[etree.Element]:
     """Tries to break the HTML document into distinct articles. If there are no article
     tags, the entire document is returned as a single item list."""
+    if assemble_articles is False:
+        return root
+
     articles = root.findall(".//article")
     if len(articles) == 0:
         # NOTE(robinson) - ref: https://schema.org/Article
