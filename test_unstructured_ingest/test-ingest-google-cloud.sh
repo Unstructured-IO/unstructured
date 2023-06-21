@@ -5,7 +5,7 @@ set -e
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 cd "$SCRIPT_DIR"/.. || exit 1
 
-if [[ "$(find test_unstructured_ingest/expected-structured-output/google-cloud-storage/ -type f -size +1 | wc -l)" -ne 1 ]]; then
+if [[ "$(find test_unstructured_ingest/expected-structured-output/google-cloud-storage/ -type f -size +1 | wc -l)" -ne 6 ]]; then
     echo "The test fixtures in test_unstructured_ingest/expected-structured-output/ look suspicious. At least one of the files is too small."
     echo "Did you overwrite test fixtures with bad outputs?"
     exit 1
