@@ -18,8 +18,7 @@ fi
 
 # Create a temporary file
 GCP_INGEST_SERVICE_KEY_FILE=$(mktemp)
-cat "$GCP_INGEST_SERVICE_KEY" > "$GCP_INGEST_SERVICE_KEY_FILE"
-# echo "$GCP_INGEST_SERVICE_KEY" > "$GCP_INGEST_SERVICE_KEY_FILE"
+echo "$GCP_INGEST_SERVICE_KEY" > "$GCP_INGEST_SERVICE_KEY_FILE"
 
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
