@@ -1,10 +1,17 @@
-## 0.7.8-dev0
+## 0.7.8-dev1
 
 ### Enhancements
 
 * Updated inference package
 
 ### Features
+
+* Adds recursive functionality to all fsspec connectors
+* Adds generic --recursive ingest flag
+
+### Features
+
+* Adds Google Cloud Service connector
 
 ### Fixes
 
