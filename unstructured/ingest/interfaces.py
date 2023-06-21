@@ -1,6 +1,7 @@
 """Defines Abstract Base Classes (ABC's) core to batch processing documents
 through Unstructured."""
 
+import json
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import datetime
@@ -156,10 +157,14 @@ class BaseIngestDoc(ABC):
         """Determine if structured output for this doc already exists."""
         return self._output_filename.is_file() and self._output_filename.stat().st_size
 
-    @abstractmethod
     def write_result(self):
         """Write the structured json result for this doc. result must be json serializable."""
-        pass
+        if self.standard_config.download_only:
+            return
+        self._output_filename.parent.mkdir(parents=True, exist_ok=True)
+        with open(self._output_filename, "w", encoding="utf8") as output_f:
+            json.dump(self.isd_elems_no_filename, output_f, ensure_ascii=False, indent=2)
+        logger.info(f"Wrote {self._output_filename}")
 
     def partition_file(self, **partition_kwargs) -> List[Dict[str, Any]]:
         if not self.standard_config.partition_by_api:

@@ -58,15 +58,6 @@ class LocalIngestDoc(BaseIngestDoc):
             / f"{self.path.replace(f'{self.config.input_path}/', '')}.json"
         )
 
-    def write_result(self):
-        """Write the structured json result for this doc. result must be json serializable."""
-        if self.standard_config.download_only:
-            return
-        self._output_filename.parent.mkdir(parents=True, exist_ok=True)
-        with open(self._output_filename, "w") as output_f:
-            output_f.write(json.dumps(self.isd_elems_no_filename, ensure_ascii=False, indent=2))
-        logger.info(f"Wrote {self._output_filename}")
-
 
 class LocalConnector(BaseConnector):
     """Objects of this class support fetching document(s) from local file system"""

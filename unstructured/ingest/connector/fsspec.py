@@ -104,15 +104,6 @@ class FsspecIngestDoc(BaseIngestDoc):
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         fs.get(rpath=self.remote_file_path, lpath=self._tmp_download_file().as_posix())
 
-    def write_result(self):
-        """Write the structured json result for this doc. result must be json serializable."""
-        if self.standard_config.download_only:
-            return
-        self._output_filename.parent.mkdir(parents=True, exist_ok=True)
-        with open(self._output_filename, "w") as output_f:
-            output_f.write(json.dumps(self.isd_elems_no_filename, ensure_ascii=False, indent=2))
-        logger.info(f"Wrote {self._output_filename}")
-
     @property
     def filename(self):
         """The filename of the file after downloading from s3"""

@@ -144,15 +144,6 @@ class BiomedIngestDoc(BaseIngestDoc):
 
         logger.debug(f"File downloaded: {self.file_meta.download_filepath}")
 
-    def write_result(self):
-        """Write the structured json result for this doc. result must be json serializable."""
-        if self.standard_config.download_only:
-            return
-        self._output_filename.parent.mkdir(parents=True, exist_ok=True)
-        with open(self._output_filename, "w") as output_f:
-            output_f.write(json.dumps(self.isd_elems_no_filename, ensure_ascii=False, indent=2))
-        logger.info(f"Wrote {self._output_filename}")
-
 
 class BiomedConnector(BaseConnector):
     """Objects of this class support fetching documents from Biomedical literature FTP directory"""

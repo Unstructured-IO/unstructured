@@ -63,15 +63,6 @@ class WikipediaIngestDoc(BaseIngestDoc):
         with open(self.filename, "w", encoding="utf8") as f:
             f.write(self.text)
 
-    def write_result(self):
-        """Write the structured json result for this doc. result must be json serializable."""
-        if self.standard_config.download_only:
-            return
-        self._output_filename.parent.mkdir(parents=True, exist_ok=True)
-        with open(self._output_filename, "w", encoding="utf8") as output_f:
-            json.dump(self.isd_elems_no_filename, output_f, ensure_ascii=False, indent=2)
-        logger.info(f"Wrote {self._output_filename}")
-
 
 class WikipediaIngestHTMLDoc(WikipediaIngestDoc):
     @property
