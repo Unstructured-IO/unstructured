@@ -151,7 +151,7 @@ class BaseIngestDoc(ABC):
     @staticmethod
     def skip_if_file_exists(func):
         """Decorator that checks if a file exists, is not empty, and should not re-download,
-        if so log a message indicating as much and skips the decorated function."""
+        if so log a message indicating as much and skip the decorated function."""
 
         @functools.wraps(func)
         def wrapper(self, *args, **kwargs):
@@ -275,7 +275,7 @@ class BaseIngestDoc(ABC):
 
 class IngestDocCleanupMixin:
     def cleanup_file(self):
-        """Removes the local copy of the file (or anything else) after successful processing."""
+        """Removes the local copy of the file after successful processing."""
         if (
             not self.standard_config.preserve_downloads
             and self.filename.is_file()
