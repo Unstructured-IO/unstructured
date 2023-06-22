@@ -55,9 +55,6 @@ class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 class GitConnector(ConnectorCleanupMixin, BaseConnector):
     config: SimpleGitConfig
 
-    def __post_init__(self):
-        super().__post_init__()
-
     def initialize(self):
         pass
 
