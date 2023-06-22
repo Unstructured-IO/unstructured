@@ -152,7 +152,7 @@ class MainProcess:
     "Default: auto. Other strategies include `fast` and `hi_res`.",
 )
 @click.option(
-    "--ocr-languages",
+    "--partition-ocr-languages",
     default="eng",
     help="A list of language packs to specify which languages to use for OCR, separated by '+' "
     "e.g. 'eng+deu' to use the English and German language packs. The appropriate Tesseract "
@@ -478,7 +478,7 @@ def main(
     partition_by_api,
     partition_endpoint,
     partition_strategy,
-    ocr_languages,
+    partition_ocr_languages,
     api_key,
     local_input_path,
     local_file_glob,
@@ -792,8 +792,8 @@ def main(
 
     process_document_with_partition_args = partial(
         process_document,
-        partition_strategy=partition_strategy,
-        ocr_languages=ocr_languages,
+        strategy=partition_strategy,
+        ocr_languages=partition_ocr_languages,
     )
 
     MainProcess(

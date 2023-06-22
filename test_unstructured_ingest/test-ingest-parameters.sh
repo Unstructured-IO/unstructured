@@ -9,8 +9,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
     --local-input-path example-docs/english-and-korean.png \
     --structured-output-dir parameterized-ingest-output \
-    --partition-strategy hi_res \
-    --ocr-languages eng+kor \
+    --partition-ocr-languages eng+kor \
     --verbose \
     --reprocess
 
