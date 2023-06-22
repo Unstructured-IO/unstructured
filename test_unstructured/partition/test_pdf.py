@@ -243,11 +243,10 @@ def test_partition_pdf_with_auto_strategy(
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
     elements = pdf.partition_pdf(filename=filename, strategy="auto")
-    titles = [el for el in elements if el.category == "Title" and len(el.text.split(" ")) > 10]
     title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
-    assert titles[0].text == title
-    assert titles[0].metadata.filename == "layout-parser-paper-fast.pdf"
-    assert titles[0].metadata.file_directory == "example-docs"
+    assert elements[0].text == title
+    assert elements[0].metadata.filename == "layout-parser-paper-fast.pdf"
+    assert elements[0].metadata.file_directory == "example-docs"
 
 
 def test_partition_pdf_with_page_breaks(
@@ -428,6 +427,13 @@ def test_partition_pdf_with_copy_protection():
     elements[0] == Title("LayoutParser: A Uniﬁed Toolkit for Deep Based Document Image Analysis")
     # check that the pdf has multiple different page numbers
     assert {element.metadata.page_number for element in elements} == {1, 2}
+
+
+def test_partition_pdf_requiring_recursive_text_grab(filename="example-docs/reliance.pdf"):
+    elements = pdf.partition_pdf(filename=filename, strategy="fast")
+    assert len(elements) > 50
+    assert elements[0].metadata.page_number == 1
+    assert elements[-1].metadata.page_number == 3
 
 
 def test_partition_pdf_with_copy_protection_fallback_to_hi_res(caplog):

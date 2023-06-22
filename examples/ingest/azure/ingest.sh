@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Processes all the files from abfs://container1/ in azureunstructured1 account, 
-# using the `unstructured` library.
+# using the `unstructured` library. 
 
 # Structured outputs are stored in azure-ingest-output/
 

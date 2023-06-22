@@ -287,9 +287,9 @@ def partition_email(
 
     content = content_map.get(content_source, "")
     if not content:
-        raise ValueError(f"{content_source} content not found in email")
+        elements = []
 
-    if content_source == "text/html":
+    elif content_source == "text/html":
         # NOTE(robinson) - In the .eml files, the HTML content gets stored in a format that
         # looks like the following, resulting in extraneous "=" characters in the output if
         # you don't clean it up
@@ -320,6 +320,7 @@ def partition_email(
                             break
                         except (UnicodeDecodeError, UnicodeError):
                             continue
+
     elif content_source == "text/plain":
         list_content = split_by_paragraph(content)
         elements = partition_text(text=content, encoding=encoding)
