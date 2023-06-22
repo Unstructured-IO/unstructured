@@ -1,0 +1,24 @@
+[
+  {
+    "element_id": "0baaf6f25d1c5da82d9e4a3229cd45bd",
+    "text": "American",
+    "type": "Title",
+    "metadata": {
+      "filename": "37.txt",
+      "file_directory": "/Users/ahmet/.cache/unstructured/ingest/8624c83b28/movies",
+      "filetype": "text/plain",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "cabf19ea088cb35d71fd151840390b86",
+    "text": "Mack Sennett",
+    "type": "Title",
+    "metadata": {
+      "filename": "37.txt",
+      "file_directory": "/Users/ahmet/.cache/unstructured/ingest/8624c83b28/movies",
+      "filetype": "text/plain",
+      "page_number": 1
+    }
+  }
+]

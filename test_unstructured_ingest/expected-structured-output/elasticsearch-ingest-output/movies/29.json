@@ -1,0 +1,24 @@
+[
+  {
+    "element_id": "0baaf6f25d1c5da82d9e4a3229cd45bd",
+    "text": "American",
+    "type": "Title",
+    "metadata": {
+      "filename": "29.txt",
+      "file_directory": "/Users/ahmet/.cache/unstructured/ingest/8624c83b28/movies",
+      "filetype": "text/plain",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "86571cd2751a0e8a6b370d39fb22ea9c",
+    "text": "Thomas H. Ince",
+    "type": "Title",
+    "metadata": {
+      "filename": "29.txt",
+      "file_directory": "/Users/ahmet/.cache/unstructured/ingest/8624c83b28/movies",
+      "filetype": "text/plain",
+      "page_number": 1
+    }
+  }
+]

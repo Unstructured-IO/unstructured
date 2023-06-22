@@ -1,0 +1,24 @@
+[
+  {
+    "element_id": "0baaf6f25d1c5da82d9e4a3229cd45bd",
+    "text": "American",
+    "type": "Title",
+    "metadata": {
+      "filename": "31.txt",
+      "file_directory": "/Users/ahmet/.cache/unstructured/ingest/8624c83b28/movies",
+      "filetype": "text/plain",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "fadea8b6ed9356dc2403502f9fd96ba1",
+    "text": "Harold M. Shaw",
+    "type": "Title",
+    "metadata": {
+      "filename": "31.txt",
+      "file_directory": "/Users/ahmet/.cache/unstructured/ingest/8624c83b28/movies",
+      "filetype": "text/plain",
+      "page_number": 1
+    }
+  }
+]

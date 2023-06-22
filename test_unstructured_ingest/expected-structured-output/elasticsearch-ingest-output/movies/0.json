@@ -1,0 +1,24 @@
+[
+  {
+    "element_id": "0baaf6f25d1c5da82d9e4a3229cd45bd",
+    "text": "American",
+    "type": "Title",
+    "metadata": {
+      "filename": "0.txt",
+      "file_directory": "/Users/ahmet/.cache/unstructured/ingest/8624c83b28/movies",
+      "filetype": "text/plain",
+      "page_number": 1
+    }
+  },
+  {
+    "element_id": "0d15a8bf4961deb609a392a8444e3520",
+    "text": "Cecil Hepworth",
+    "type": "Title",
+    "metadata": {
+      "filename": "0.txt",
+      "file_directory": "/Users/ahmet/.cache/unstructured/ingest/8624c83b28/movies",
+      "filetype": "text/plain",
+      "page_number": 1
+    }
+  }
+]
