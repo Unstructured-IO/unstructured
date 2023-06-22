@@ -1,6 +1,7 @@
 """Defines Abstract Base Classes (ABC's) core to batch processing documents
 through Unstructured."""
 
+import functools
 import json
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
@@ -145,6 +146,21 @@ class BaseIngestDoc(ABC):
     def cleanup_file(self):
         """Removes the local copy the file (or anything else) after successful processing."""
         pass
+
+    @staticmethod
+    def skip_if_file_exists(func):
+        """Decorator that checks if a file exists, is not empty, and should not re-download, 
+        if so log a message indicating as much and skips the decorated function."""
+        @functools.wraps(func)
+        def wrapper(self, *args, **kwargs):
+            if (
+                not self.standard_config.re_download
+                and self.has_output()
+            ):
+                logger.debug(f"File exists: {self.filename}, skipping {func.__name__}")
+                return None
+            return func(self, *args, **kwargs)
+        return wrapper
 
     # NOTE(crag): Future BaseIngestDoc classes could define get_file_object() methods
     # in addition to or instead of get_file()

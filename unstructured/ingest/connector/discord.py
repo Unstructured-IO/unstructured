@@ -71,6 +71,7 @@ class DiscordIngestDoc(BaseIngestDoc):
     def _create_full_tmp_dir_path(self):
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
 
+    @BaseIngestDoc.skip_if_file_exists
     @requires_dependencies(dependencies=["discord"], extras="discord")
     def get_file(self):
         """Actually fetches the data from discord and stores it locally."""
@@ -79,20 +80,9 @@ class DiscordIngestDoc(BaseIngestDoc):
         from discord.ext import commands
 
         self._create_full_tmp_dir_path()
-        if (
-            not self.standard_config.re_download
-            and self._tmp_download_file().is_file()
-            and os.path.getsize(self._tmp_download_file())
-        ):
-            if self.config.verbose:
-                logger.debug(f"File exists: {self._tmp_download_file()}, skipping download")
-            return
-
         if self.config.verbose:
             logger.debug(f"fetching {self} - PID: {os.getpid()}")
-
         messages: List[discord.Message] = []
-
         intents = discord.Intents.default()
         intents.message_content = True
         bot = commands.Bot(command_prefix=">", intents=intents)

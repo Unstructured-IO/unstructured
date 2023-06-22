@@ -126,21 +126,19 @@ class BiomedIngestDoc(BaseIngestDoc):
             logger.debug(f"Cleaning up {self}")
             Path.unlink(self.filename)
 
+    @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
         download_path = self.file_meta.download_filepath  # type: ignore
-
         dir_ = Path(os.path.dirname(download_path))  # type: ignore
         if not dir_.is_dir():
             logger.debug(f"Creating directory: {dir_}")
 
             if dir_:
                 dir_.mkdir(parents=True, exist_ok=True)
-
         urllib.request.urlretrieve(
             self.file_meta.ftp_path,  # type: ignore
             self.file_meta.download_filepath,
         )
-
         logger.debug(f"File downloaded: {self.file_meta.download_filepath}")
 
 

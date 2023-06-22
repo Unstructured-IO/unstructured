@@ -104,18 +104,11 @@ class GoogleDriveIngestDoc(BaseIngestDoc):
             logger.debug(f"Cleaning up {self}")
             Path.unlink(self.filename)
 
+    @BaseIngestDoc.skip_if_file_exists
     @requires_dependencies(["googleapiclient"], extras="google-drive")
     def get_file(self):
         from googleapiclient.errors import HttpError
         from googleapiclient.http import MediaIoBaseDownload
-
-        if (
-            not self.standard_config.re_download
-            and self.filename.is_file()
-            and self.filename.stat()
-        ):
-            logger.debug(f"File exists: {self.filename}, skipping download")
-            return
 
         self.config.service = create_service_account_object(self.config.service_account_key)
 
@@ -139,7 +132,6 @@ class GoogleDriveIngestDoc(BaseIngestDoc):
             request = self.config.service.files().get_media(fileId=self.file_meta.get("id"))
         file = io.BytesIO()
         downloader = MediaIoBaseDownload(file, request)
-
         downloaded = False
         try:
             while downloaded is False:

@@ -87,23 +87,15 @@ class FsspecIngestDoc(BaseIngestDoc):
         """Includes "directories" in the object path"""
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
 
+    @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
         """Fetches the file from the current filesystem and stores it locally."""
         from fsspec import AbstractFileSystem, get_filesystem_class
 
         self._create_full_tmp_dir_path()
-        if (
-            not self.standard_config.re_download
-            and self._tmp_download_file().is_file()
-            and os.path.getsize(self._tmp_download_file())
-        ):
-            logger.debug(f"File exists: {self._tmp_download_file()}, skipping download")
-            return
-
         fs: AbstractFileSystem = get_filesystem_class(self.config.protocol)(
             **self.config.access_kwargs,
         )
-
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         fs.get(rpath=self.remote_file_path, lpath=self._tmp_download_file().as_posix())
 

@@ -52,17 +52,10 @@ class RedditIngestDoc(BaseIngestDoc):
             logger.debug(f"Cleaning up {self}")
             os.unlink(self.filename)
 
+    @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
         """Fetches the "remote" doc and stores it locally on the filesystem."""
         self._create_full_tmp_dir_path()
-        if (
-            not self.standard_config.re_download
-            and self.filename.is_file()
-            and self.filename.stat()
-        ):
-            logger.debug(f"File exists: {self.filename}, skipping download")
-            return
-
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         # Write the title plus the body, if any
         text_to_write = f"# {self.post.title}\n{self.post.selftext}"
