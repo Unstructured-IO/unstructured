@@ -8,6 +8,7 @@ from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
+    ConnectorCleanupMixin,
     IngestDocCleanupMixin,
 )
 from unstructured.ingest.logger import logger
@@ -51,29 +52,8 @@ class GitIngestDoc(BaseIngestDoc, IngestDocCleanupMixin):
 
 
 @dataclass
-class GitConnector(BaseConnector):
+class GitConnector(BaseConnector, ConnectorCleanupMixin):
     config: SimpleGitConfig
-
-    def __post_init__(self) -> None:
-        self.cleanup_files = (
-            not self.standard_config.preserve_downloads and not self.standard_config.download_only
-        )
-
-    def cleanup(self, cur_dir=None):
-        if not self.cleanup_files:
-            return
-
-        if cur_dir is None:
-            cur_dir = self.standard_config.download_dir
-        sub_dirs = os.listdir(cur_dir)
-        os.chdir(cur_dir)
-        for sub_dir in sub_dirs:
-            # don't traverse symlinks, not that there every should be any
-            if os.path.isdir(sub_dir) and not os.path.islink(sub_dir):
-                self.cleanup(sub_dir)
-        os.chdir("..")
-        if len(os.listdir(cur_dir)) == 0:
-            os.rmdir(cur_dir)
 
     def initialize(self):
         pass

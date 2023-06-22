@@ -14,6 +14,7 @@ from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
+    ConnectorCleanupMixin,
     IngestDocCleanupMixin,
     StandardConnectorConfig,
 )
@@ -143,7 +144,7 @@ class BiomedIngestDoc(BaseIngestDoc, IngestDocCleanupMixin):
         logger.debug(f"File downloaded: {self.file_meta.download_filepath}")
 
 
-class BiomedConnector(BaseConnector):
+class BiomedConnector(BaseConnector, ConnectorCleanupMixin):
     """Objects of this class support fetching documents from Biomedical literature FTP directory"""
 
     config: SimpleBiomedConfig
@@ -154,9 +155,6 @@ class BiomedConnector(BaseConnector):
         config: SimpleBiomedConfig,
     ):
         super().__init__(standard_config, config)
-        self.cleanup_files = (
-            not self.standard_config.preserve_downloads and not self.standard_config.download_only
-        )
 
     def _list_objects_api(self):
         def urls_to_metadata(urls):
@@ -281,26 +279,6 @@ class BiomedConnector(BaseConnector):
             )
 
         return files
-
-    def cleanup(self, cur_dir=None):
-        if not self.cleanup_files:
-            return
-
-        if cur_dir is None:
-            cur_dir = self.standard_config.download_dir
-
-        if cur_dir is None or not Path(cur_dir).is_dir():
-            return
-
-        sub_dirs = os.listdir(cur_dir)
-        os.chdir(cur_dir)
-        for sub_dir in sub_dirs:
-            # don't traverse symlinks, not that there every should be any
-            if os.path.isdir(sub_dir) and not os.path.islink(sub_dir):
-                self.cleanup(sub_dir)
-        os.chdir("..")
-        if len(os.listdir(cur_dir)) == 0:
-            os.rmdir(cur_dir)
 
     def initialize(self):
         pass

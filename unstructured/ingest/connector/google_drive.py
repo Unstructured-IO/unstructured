@@ -12,6 +12,7 @@ from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
+    ConnectorCleanupMixin,
     IngestDocCleanupMixin,
     StandardConnectorConfig,
 )
@@ -159,16 +160,13 @@ class GoogleDriveIngestDoc(BaseIngestDoc, IngestDocCleanupMixin):
         logger.info(f"Wrote {self._output_filename}")
 
 
-class GoogleDriveConnector(BaseConnector):
+class GoogleDriveConnector(BaseConnector, ConnectorCleanupMixin):
     """Objects of this class support fetching documents from Google Drive"""
 
     config: SimpleGoogleDriveConfig
 
     def __init__(self, standard_config: StandardConnectorConfig, config: SimpleGoogleDriveConfig):
         super().__init__(standard_config, config)
-        self.cleanup_files = (
-            not self.standard_config.preserve_downloads and not self.standard_config.download_only
-        )
 
     def _list_objects(self, drive_id, recursive=False):
         files = []
@@ -240,26 +238,6 @@ class GoogleDriveConnector(BaseConnector):
             recursive,
         )
         return files
-
-    def cleanup(self, cur_dir=None):
-        if not self.cleanup_files:
-            return
-
-        if cur_dir is None:
-            cur_dir = self.standard_config.download_dir
-
-        if cur_dir is None or not Path(cur_dir).is_dir():
-            return
-
-        sub_dirs = os.listdir(cur_dir)
-        os.chdir(cur_dir)
-        for sub_dir in sub_dirs:
-            # don't traverse symlinks, not that there every should be any
-            if os.path.isdir(sub_dir) and not os.path.islink(sub_dir):
-                self.cleanup(sub_dir)
-        os.chdir("..")
-        if len(os.listdir(cur_dir)) == 0:
-            os.rmdir(cur_dir)
 
     def initialize(self):
         pass

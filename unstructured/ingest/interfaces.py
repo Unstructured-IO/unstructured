@@ -7,6 +7,7 @@ import os
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import datetime
+from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import requests
@@ -272,6 +273,24 @@ class BaseIngestDoc(ABC):
 
         return self.isd_elems_no_filename
 
+class ConnectorCleanupMixin:
+    def cleanup(self):
+        """Recursively clean up downloaded files and directories."""
+        if self.standard_config.preserve_downloads or self.standard_config.download_only:
+            return
+        if cur_dir is None:
+            cur_dir = self.standard_config.download_dir
+        if cur_dir is None or not Path(cur_dir).is_dir():
+            return
+        sub_dirs = os.listdir(cur_dir)
+        os.chdir(cur_dir)
+        for sub_dir in sub_dirs:
+            # don't traverse symlinks, not that there every should be any
+            if os.path.isdir(sub_dir) and not os.path.islink(sub_dir):
+                self.cleanup(sub_dir)
+        os.chdir("..")
+        if len(os.listdir(cur_dir)) == 0:
+            os.rmdir(cur_dir)
 
 class IngestDocCleanupMixin:
     def cleanup_file(self):

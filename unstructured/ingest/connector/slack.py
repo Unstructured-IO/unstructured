@@ -8,6 +8,7 @@ from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
+    ConnectorCleanupMixin,
     IngestDocCleanupMixin,
     StandardConnectorConfig,
 )
@@ -145,32 +146,13 @@ class SlackIngestDoc(BaseIngestDoc, IngestDocCleanupMixin):
 
 
 @requires_dependencies(dependencies=["slack_sdk"], extras="slack")
-class SlackConnector(BaseConnector):
+class SlackConnector(BaseConnector, ConnectorCleanupMixin):
     """Objects of this class support fetching document(s) from"""
 
     config: SimpleSlackConfig
 
     def __init__(self, standard_config: StandardConnectorConfig, config: SimpleSlackConfig):
         super().__init__(standard_config, config)
-        self.cleanup_files = not standard_config.preserve_downloads
-
-    def cleanup(self, cur_dir=None):
-        """cleanup linginering empty sub-dirs, but leave remaining files
-        (and their paths) in tact as that indicates they were not processed"""
-        if not self.cleanup_files:
-            return
-
-        if cur_dir is None:
-            cur_dir = self.standard_config.download_dir
-        sub_dirs = os.listdir(cur_dir)
-        os.chdir(cur_dir)
-        for sub_dir in sub_dirs:
-            # don't traverse symlinks, not that there every should be any
-            if os.path.isdir(sub_dir) and not os.path.islink(sub_dir):
-                self.cleanup(sub_dir)
-        os.chdir("..")
-        if len(os.listdir(cur_dir)) == 0:
-            os.rmdir(cur_dir)
 
     def initialize(self):
         """Verify that can get metadata for an object, validates connections info."""
