@@ -24,7 +24,7 @@ class SimpleWikipediaConfig(BaseConnectorConfig):
 
 
 @dataclass
-class WikipediaIngestDoc(IngestDocCleanupMixin, BaseConnector):
+class WikipediaIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleWikipediaConfig = field(repr=False)
     page: "WikipediaPage"
 

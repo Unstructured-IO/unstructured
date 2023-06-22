@@ -61,7 +61,7 @@ class SimpleFsspecConfig(BaseConnectorConfig):
 
 
 @dataclass
-class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc) :
+class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     """Class encapsulating fetching a doc and writing processed results (but not
     doing the processing!).
 

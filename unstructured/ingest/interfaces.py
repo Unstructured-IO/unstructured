@@ -273,7 +273,10 @@ class BaseIngestDoc(ABC):
 
         return self.isd_elems_no_filename
 
+
 class ConnectorCleanupMixin:
+    standard_config: StandardConnectorConfig
+
     def cleanup(self, cur_dir=None):
         """Recursively clean up downloaded files and directories."""
         if self.standard_config.preserve_downloads or self.standard_config.download_only:
@@ -292,7 +295,15 @@ class ConnectorCleanupMixin:
         if len(os.listdir(cur_dir)) == 0:
             os.rmdir(cur_dir)
 
+
 class IngestDocCleanupMixin:
+    standard_config: StandardConnectorConfig
+
+    @property
+    @abstractmethod
+    def filename(self):
+        """The local filename of the document after fetching from remote source."""
+
     def cleanup_file(self):
         """Removes the local copy of the file after successful processing."""
         if (
