@@ -63,6 +63,7 @@ class DiscordIngestDoc(BaseIngestDoc):
         channel_file = self.channel + ".txt"
         return Path(self.standard_config.download_dir) / channel_file
 
+    @property
     def _output_filename(self):
         output_file = self.channel + ".json"
         return Path(self.standard_config.output_dir) / output_file
