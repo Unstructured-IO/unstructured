@@ -16,7 +16,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
 
 set +e
 
-if [ "$(cat parameterized-ingest-output/example-docs/english-and-korean.png.json | grep 안녕하세요| wc -l)" != 1 ]; then
+if [ "$(grep -c 안녕하세요 parameterized-ingest-output/example-docs/english-and-korean.png.json)" != 1 ]; then
    echo
    echo "--ocr-languages parameter did not work. Did not partition with the specified language pack."
    exit 1
