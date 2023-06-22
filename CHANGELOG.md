@@ -1,7 +1,8 @@
-## 0.7.8-dev0
+## 0.7.8-dev1
 
 ### Enhancements
 
+* DRY connector refactor
 * Adds recursive functionality to all fsspec connectors
 * Adds generic --recursive ingest flag
 
