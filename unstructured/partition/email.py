@@ -4,6 +4,7 @@ import re
 import sys
 from email.message import Message
 from functools import partial
+from tempfile import SpooledTemporaryFile
 from typing import IO, Dict, List, Optional, Tuple, Union
 
 from unstructured.file_utils.encoding import (
@@ -11,7 +12,10 @@ from unstructured.file_utils.encoding import (
     format_encoding_str,
     read_txt_file,
 )
-from unstructured.partition.common import exactly_one
+from unstructured.partition.common import (
+    convert_to_bytes,
+    exactly_one,
+)
 
 if sys.version_info < (3, 8):
     from typing_extensions import Final
@@ -189,14 +193,14 @@ def find_embedded_image(
 
 def parse_email(
     filename: Optional[str] = None,
-    file: Optional[IO] = None,
+    file: Optional[Union[IO, SpooledTemporaryFile]] = None,
 ) -> Tuple[Optional[str], Message]:
     if filename is not None:
         with open(filename, "rb") as f:
             msg = email.message_from_binary_file(f)
     elif file is not None:
-        with open(file.name, "rb") as f:
-            msg = email.message_from_binary_file(f)
+        f_bytes = convert_to_bytes(file)
+        msg = email.message_from_bytes(f_bytes)
     else:
         raise ValueError("Either 'filename' or 'file' must be provided.")
 
@@ -216,7 +220,7 @@ def parse_email(
 @add_metadata_with_filetype(FileType.EML)
 def partition_email(
     filename: Optional[str] = None,
-    file: Optional[IO] = None,
+    file: Optional[Union[IO, SpooledTemporaryFile]] = None,
     text: Optional[str] = None,
     content_source: str = "text/html",
     encoding: Optional[str] = None,
