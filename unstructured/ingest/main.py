@@ -20,7 +20,7 @@ from unstructured.ingest.doc_processor.generalized import initialize, process_do
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 
 with suppress(RuntimeError):
-    mp.set_start_method("fork")
+    mp.set_start_method("spawn")
 
 
 class MainProcess:
