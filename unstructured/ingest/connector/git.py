@@ -24,7 +24,7 @@ class SimpleGitConfig(BaseConnectorConfig):
 
 
 @dataclass
-class GitIngestDoc(BaseIngestDoc, IngestDocCleanupMixin):
+class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleGitConfig = field(repr=False)
     path: str
 
@@ -52,7 +52,7 @@ class GitIngestDoc(BaseIngestDoc, IngestDocCleanupMixin):
 
 
 @dataclass
-class GitConnector(BaseConnector, ConnectorCleanupMixin):
+class GitConnector(ConnectorCleanupMixin, BaseConnector):
     config: SimpleGitConfig
 
     def initialize(self):

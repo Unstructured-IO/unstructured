@@ -57,7 +57,7 @@ class SimpleSlackConfig(BaseConnectorConfig):
 
 
 @dataclass
-class SlackIngestDoc(BaseIngestDoc, IngestDocCleanupMixin):
+class SlackIngestDoc(IngestDocCleanupMixin, BaseConnector):
     """Class encapsulating fetching a doc and writing processed results (but not
     doing the processing!).
 
@@ -146,7 +146,7 @@ class SlackIngestDoc(BaseIngestDoc, IngestDocCleanupMixin):
 
 
 @requires_dependencies(dependencies=["slack_sdk"], extras="slack")
-class SlackConnector(BaseConnector, ConnectorCleanupMixin):
+class SlackConnector(ConnectorCleanupMixin, BaseConnector):
     """Objects of this class support fetching document(s) from"""
 
     config: SimpleSlackConfig

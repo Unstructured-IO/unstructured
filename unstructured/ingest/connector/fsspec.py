@@ -61,7 +61,7 @@ class SimpleFsspecConfig(BaseConnectorConfig):
 
 
 @dataclass
-class FsspecIngestDoc(BaseIngestDoc, IngestDocCleanupMixin):
+class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc) :
     """Class encapsulating fetching a doc and writing processed results (but not
     doing the processing!).
 
@@ -107,7 +107,7 @@ class FsspecIngestDoc(BaseIngestDoc, IngestDocCleanupMixin):
         return self._tmp_download_file()
 
 
-class FsspecConnector(BaseConnector, ConnectorCleanupMixin):
+class FsspecConnector(ConnectorCleanupMixin, BaseConnector):
     """Objects of this class support fetching document(s) from"""
 
     config: SimpleFsspecConfig

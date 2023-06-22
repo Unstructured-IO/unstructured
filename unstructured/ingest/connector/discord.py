@@ -46,7 +46,7 @@ class SimpleDiscordConfig(BaseConnectorConfig):
 
 
 @dataclass
-class DiscordIngestDoc(BaseIngestDoc, IngestDocCleanupMixin):
+class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     """Class encapsulating fetching a doc and writing processed results (but not
     doing the processing!).
     Also includes a cleanup method. When things go wrong and the cleanup
@@ -117,7 +117,7 @@ class DiscordIngestDoc(BaseIngestDoc, IngestDocCleanupMixin):
         return self._tmp_download_file()
 
 
-class DiscordConnector(BaseConnector, ConnectorCleanupMixin):
+class DiscordConnector(ConnectorCleanupMixin, BaseConnector):
     """Objects of this class support fetching document(s) from"""
 
     config: SimpleDiscordConfig

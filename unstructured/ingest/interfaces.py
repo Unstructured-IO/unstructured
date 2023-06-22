@@ -274,7 +274,7 @@ class BaseIngestDoc(ABC):
         return self.isd_elems_no_filename
 
 class ConnectorCleanupMixin:
-    def cleanup(self):
+    def cleanup(self, cur_dir=None):
         """Recursively clean up downloaded files and directories."""
         if self.standard_config.preserve_downloads or self.standard_config.download_only:
             return

@@ -33,7 +33,7 @@ class SimpleRedditConfig(BaseConnectorConfig):
 
 
 @dataclass
-class RedditIngestDoc(BaseIngestDoc, IngestDocCleanupMixin):
+class RedditIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleRedditConfig = field(repr=False)
     post: "Submission"
 
@@ -60,7 +60,7 @@ class RedditIngestDoc(BaseIngestDoc, IngestDocCleanupMixin):
 
 
 @requires_dependencies(["praw"], extras="reddit")
-class RedditConnector(BaseConnector, ConnectorCleanupMixin):
+class RedditConnector(ConnectorCleanupMixin, BaseConnector):
     config: SimpleRedditConfig
 
     def __init__(self, standard_config: StandardConnectorConfig, config: SimpleRedditConfig):

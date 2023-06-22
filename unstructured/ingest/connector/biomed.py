@@ -107,7 +107,7 @@ class SimpleBiomedConfig(BaseConnectorConfig):
 
 
 @dataclass
-class BiomedIngestDoc(BaseIngestDoc, IngestDocCleanupMixin):
+class BiomedIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleBiomedConfig
     file_meta: BiomedFileMeta
 
@@ -144,7 +144,7 @@ class BiomedIngestDoc(BaseIngestDoc, IngestDocCleanupMixin):
         logger.debug(f"File downloaded: {self.file_meta.download_filepath}")
 
 
-class BiomedConnector(BaseConnector, ConnectorCleanupMixin):
+class BiomedConnector(ConnectorCleanupMixin, BaseConnector):
     """Objects of this class support fetching documents from Biomedical literature FTP directory"""
 
     config: SimpleBiomedConfig

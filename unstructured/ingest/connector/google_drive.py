@@ -85,7 +85,7 @@ class SimpleGoogleDriveConfig(BaseConnectorConfig):
 
 
 @dataclass
-class GoogleDriveIngestDoc(BaseIngestDoc, IngestDocCleanupMixin):
+class GoogleDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleGoogleDriveConfig
     file_meta: Dict
 
@@ -160,7 +160,7 @@ class GoogleDriveIngestDoc(BaseIngestDoc, IngestDocCleanupMixin):
         logger.info(f"Wrote {self._output_filename}")
 
 
-class GoogleDriveConnector(BaseConnector, ConnectorCleanupMixin):
+class GoogleDriveConnector(ConnectorCleanupMixin, BaseConnector):
     """Objects of this class support fetching documents from Google Drive"""
 
     config: SimpleGoogleDriveConfig

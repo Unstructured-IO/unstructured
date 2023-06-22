@@ -24,7 +24,7 @@ class SimpleWikipediaConfig(BaseConnectorConfig):
 
 
 @dataclass
-class WikipediaIngestDoc(BaseIngestDoc, IngestDocCleanupMixin):
+class WikipediaIngestDoc(IngestDocCleanupMixin, BaseConnector):
     config: SimpleWikipediaConfig = field(repr=False)
     page: "WikipediaPage"
 
@@ -112,7 +112,7 @@ class WikipediaIngestSummaryDoc(WikipediaIngestDoc):
         )
 
 
-class WikipediaConnector(BaseConnector, ConnectorCleanupMixin):
+class WikipediaConnector(ConnectorCleanupMixin, BaseConnector):
     config: SimpleWikipediaConfig
 
     def __init__(self, config: SimpleWikipediaConfig, standard_config: StandardConnectorConfig):
