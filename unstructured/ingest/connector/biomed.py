@@ -14,6 +14,7 @@ from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
+    IngestDocCleanupMixin,
     StandardConnectorConfig,
 )
 from unstructured.ingest.logger import logger
@@ -105,7 +106,7 @@ class SimpleBiomedConfig(BaseConnectorConfig):
 
 
 @dataclass
-class BiomedIngestDoc(BaseIngestDoc):
+class BiomedIngestDoc(BaseIngestDoc, IngestDocCleanupMixin):
     config: SimpleBiomedConfig
     file_meta: BiomedFileMeta
 

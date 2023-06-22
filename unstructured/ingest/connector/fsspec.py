@@ -8,6 +8,7 @@ from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
+    IngestDocCleanupMixin,
     StandardConnectorConfig,
 )
 from unstructured.ingest.logger import logger
@@ -59,7 +60,7 @@ class SimpleFsspecConfig(BaseConnectorConfig):
 
 
 @dataclass
-class FsspecIngestDoc(BaseIngestDoc):
+class FsspecIngestDoc(BaseIngestDoc, IngestDocCleanupMixin):
     """Class encapsulating fetching a doc and writing processed results (but not
     doing the processing!).
 
@@ -103,15 +104,6 @@ class FsspecIngestDoc(BaseIngestDoc):
     def filename(self):
         """The filename of the file after downloading from cloud"""
         return self._tmp_download_file()
-
-    def cleanup_file(self):
-        """Removes the local copy of the file after successful processing."""
-        if not self.standard_config.preserve_downloads and not self.standard_config.download_only:
-            logger.debug(f"Cleaning up {self}")
-            try:
-                os.unlink(self._tmp_download_file())
-            except OSError as e:  # Don't think we need to raise an exception
-                logger.debug(f"Failed to remove {self._tmp_download_file()} due to {e}")
 
 
 class FsspecConnector(BaseConnector):

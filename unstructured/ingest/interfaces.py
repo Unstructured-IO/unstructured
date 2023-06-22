@@ -3,6 +3,7 @@ through Unstructured."""
 
 import functools
 import json
+import os
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import datetime
@@ -149,17 +150,16 @@ class BaseIngestDoc(ABC):
 
     @staticmethod
     def skip_if_file_exists(func):
-        """Decorator that checks if a file exists, is not empty, and should not re-download, 
+        """Decorator that checks if a file exists, is not empty, and should not re-download,
         if so log a message indicating as much and skips the decorated function."""
+
         @functools.wraps(func)
         def wrapper(self, *args, **kwargs):
-            if (
-                not self.standard_config.re_download
-                and self.has_output()
-            ):
+            if not self.standard_config.re_download and self.has_output():
                 logger.debug(f"File exists: {self.filename}, skipping {func.__name__}")
                 return None
             return func(self, *args, **kwargs)
+
         return wrapper
 
     # NOTE(crag): Future BaseIngestDoc classes could define get_file_object() methods
@@ -271,3 +271,15 @@ class BaseIngestDoc(ABC):
             self.isd_elems_no_filename.append(elem)
 
         return self.isd_elems_no_filename
+
+
+class IngestDocCleanupMixin:
+    def cleanup_file(self):
+        """Removes the local copy of the file (or anything else) after successful processing."""
+        if (
+            not self.standard_config.preserve_downloads
+            and self.filename.is_file()
+            and not self.standard_config.download_only
+        ):
+            logger.debug(f"Cleaning up {self}")
+            os.unlink(self.filename)

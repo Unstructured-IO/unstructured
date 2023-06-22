@@ -8,6 +8,7 @@ from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
+    IngestDocCleanupMixin,
     StandardConnectorConfig,
 )
 from unstructured.ingest.logger import logger
@@ -55,7 +56,7 @@ class SimpleSlackConfig(BaseConnectorConfig):
 
 
 @dataclass
-class SlackIngestDoc(BaseIngestDoc):
+class SlackIngestDoc(BaseIngestDoc, IngestDocCleanupMixin):
     """Class encapsulating fetching a doc and writing processed results (but not
     doing the processing!).
 
@@ -141,13 +142,6 @@ class SlackIngestDoc(BaseIngestDoc):
     def filename(self):
         """The filename of the file created from a slack channel"""
         return self._tmp_download_file()
-
-    def cleanup_file(self):
-        """Removes the local copy the file after successful processing."""
-        if not self.standard_config.preserve_downloads:
-            if self.config.verbose:
-                logger.info(f"cleaning up channel {self.channel}")
-            os.unlink(self._tmp_download_file())
 
 
 @requires_dependencies(dependencies=["slack_sdk"], extras="slack")

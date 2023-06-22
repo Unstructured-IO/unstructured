@@ -8,6 +8,7 @@ from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
+    IngestDocCleanupMixin,
     StandardConnectorConfig,
 )
 from unstructured.ingest.logger import logger
@@ -44,7 +45,7 @@ class SimpleDiscordConfig(BaseConnectorConfig):
 
 
 @dataclass
-class DiscordIngestDoc(BaseIngestDoc):
+class DiscordIngestDoc(BaseIngestDoc, IngestDocCleanupMixin):
     """Class encapsulating fetching a doc and writing processed results (but not
     doing the processing!).
     Also includes a cleanup method. When things go wrong and the cleanup
@@ -113,13 +114,6 @@ class DiscordIngestDoc(BaseIngestDoc):
     def filename(self):
         """The filename of the file created from a discord channel"""
         return self._tmp_download_file()
-
-    def cleanup_file(self):
-        """Removes the local copy the file after successful processing."""
-        if not self.standard_config.preserve_downloads:
-            if self.config.verbose:
-                logger.info(f"cleaning up channel {self.channel}")
-            os.unlink(self._tmp_download_file())
 
 
 class DiscordConnector(BaseConnector):

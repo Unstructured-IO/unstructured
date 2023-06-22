@@ -12,6 +12,7 @@ from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
+    IngestDocCleanupMixin,
     StandardConnectorConfig,
 )
 from unstructured.ingest.logger import logger
@@ -83,7 +84,7 @@ class SimpleGoogleDriveConfig(BaseConnectorConfig):
 
 
 @dataclass
-class GoogleDriveIngestDoc(BaseIngestDoc):
+class GoogleDriveIngestDoc(BaseIngestDoc, IngestDocCleanupMixin):
     config: SimpleGoogleDriveConfig
     file_meta: Dict
 
@@ -94,15 +95,6 @@ class GoogleDriveIngestDoc(BaseIngestDoc):
     @property
     def _output_filename(self):
         return Path(f"{self.file_meta.get('output_filepath')}.json").resolve()
-
-    def cleanup_file(self):
-        if (
-            not self.standard_config.preserve_downloads
-            and self.filename.is_file()
-            and not self.standard_config.download_only
-        ):
-            logger.debug(f"Cleaning up {self}")
-            Path.unlink(self.filename)
 
     @BaseIngestDoc.skip_if_file_exists
     @requires_dependencies(["googleapiclient"], extras="google-drive")

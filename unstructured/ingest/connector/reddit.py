@@ -7,6 +7,7 @@ from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
+    IngestDocCleanupMixin,
     StandardConnectorConfig,
 )
 from unstructured.ingest.logger import logger
@@ -31,7 +32,7 @@ class SimpleRedditConfig(BaseConnectorConfig):
 
 
 @dataclass
-class RedditIngestDoc(BaseIngestDoc):
+class RedditIngestDoc(BaseIngestDoc, IngestDocCleanupMixin):
     config: SimpleRedditConfig = field(repr=False)
     post: "Submission"
 
@@ -45,12 +46,6 @@ class RedditIngestDoc(BaseIngestDoc):
 
     def _create_full_tmp_dir_path(self):
         self.filename.parent.mkdir(parents=True, exist_ok=True)
-
-    def cleanup_file(self):
-        """Removes the local copy of the file (or anything else) after successful processing."""
-        if not self.standard_config.preserve_downloads and not self.standard_config.download_only:
-            logger.debug(f"Cleaning up {self}")
-            os.unlink(self.filename)
 
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):

@@ -8,6 +8,7 @@ from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
+    IngestDocCleanupMixin,
 )
 from unstructured.ingest.logger import logger
 
@@ -22,7 +23,7 @@ class SimpleGitConfig(BaseConnectorConfig):
 
 
 @dataclass
-class GitIngestDoc(BaseIngestDoc):
+class GitIngestDoc(BaseIngestDoc, IngestDocCleanupMixin):
     config: SimpleGitConfig = field(repr=False)
     path: str
 
@@ -37,12 +38,6 @@ class GitIngestDoc(BaseIngestDoc):
     def _create_full_tmp_dir_path(self):
         """includes directories in in the gitlab repository"""
         self.filename.parent.mkdir(parents=True, exist_ok=True)
-
-    def cleanup_file(self):
-        """Removes the local copy of the file (or anything else) after successful processing."""
-        if not self.standard_config.preserve_downloads and not self.standard_config.download_only:
-            logger.debug(f"Cleaning up {self}")
-            os.unlink(self.filename)
 
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
