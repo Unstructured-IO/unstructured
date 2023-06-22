@@ -1,3 +1,14 @@
+## 0.7.8-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* Updates the `"fast"` strategy for `partition_pdf` so that it's able to recursively
+  grab text that's nested in non-text containers within a PDF.
+
 ## 0.7.7
 
 ### Enhancements
