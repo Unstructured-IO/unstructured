@@ -4,6 +4,7 @@
 
 * Adds recursive functionality to all fsspec connectors
 * Adds generic --recursive ingest flag
+* Adds --ocr-languages to unstructured-ingest
 
 ### Features
 
