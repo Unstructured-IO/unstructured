@@ -6,7 +6,7 @@
 #
 anyio==3.7.0
     # via httpcore
-argilla==1.9.0
+argilla==1.10.0
     # via -r requirements/base.in
 backoff==2.2.1
     # via argilla
@@ -51,7 +51,7 @@ idna==3.4
     #   anyio
     #   requests
     #   rfc3986
-importlib-metadata==6.6.0
+importlib-metadata==6.7.0
     # via markdown
 joblib==1.2.0
     # via nltk

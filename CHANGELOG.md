@@ -4,10 +4,13 @@
 
 ### Features
 
+* Adds Google Cloud Service connector
+
 ### Fixes
 
 * Updates the `"fast"` strategy for `partition_pdf` so that it's able to recursively
-  grab text that's nested in non-text containers within a PDF.
+* Adds recursive functionality to all fsspec connectors
+* Adds generic --recursive ingest flag
 
 ## 0.7.7
 
