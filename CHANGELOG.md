@@ -1,4 +1,4 @@
-## 0.7.8-dev0
+## 0.7.8-dev1
 
 ### Enhancements
 
@@ -10,6 +10,8 @@
 * Adds Google Cloud Service connector
 
 ### Fixes
+
+* `partition_email` now works if there is no message content
 
 ## 0.7.7
 
