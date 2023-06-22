@@ -5,6 +5,7 @@ from typing import BinaryIO, List, Optional, Union, cast
 
 import pdf2image
 from pdfminer.high_level import extract_pages
+from pdfminer.layout import LTContainer, LTImage, LTItem, LTTextBox
 from pdfminer.utils import open_filename
 from PIL import Image
 
@@ -271,6 +272,25 @@ def _partition_pdf_with_pdfminer(
     return elements
 
 
+def _extract_text(item: LTItem) -> str:
+    """Recursively extracts text from PDFMiner objects to account
+    for scenarios where the text is in a sub-container."""
+    if hasattr(item, "get_text"):
+        return item.get_text()
+
+    elif isinstance(item, LTContainer):
+        text = ""
+        for child in item:
+            text += _extract_text(child) or ""
+        return text
+
+    elif isinstance(item, (LTTextBox, LTImage)):
+        # TODO(robinson) - Support pulling text out of images
+        # https://github.com/pdfminer/pdfminer.six/blob/master/pdfminer/image.py#L90
+        return "\n"
+    return "\n"
+
+
 def _process_pdfminer_pages(
     fp: BinaryIO,
     filename: str = "",
@@ -290,23 +310,24 @@ def _process_pdfminer_pages(
             y1 = height - y1
             y2 = height - y2
 
-            # NOTE(robinson) - "Figure" is an example of an object type that does
-            # not have a get_text method
-            if not hasattr(obj, "get_text"):
-                continue
-            _text = obj.get_text()
-            _text = re.sub(PARAGRAPH_PATTERN, " ", _text)
-            _text = clean_extra_whitespace(_text)
-            if _text.strip():
-                text_segments.append(_text)
-                element = element_from_text(_text)
-                element._coordinate_system = PixelSpace(
-                    width=width,
-                    height=height,
-                )
-                element.coordinates = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
-                element.metadata = metadata
-                page_elements.append(element)
+            if hasattr(obj, "get_text"):
+                _text_snippets = [obj.get_text()]
+            else:
+                _text = _extract_text(obj)
+                _text_snippets = re.split(PARAGRAPH_PATTERN, _text)
+
+            for _text in _text_snippets:
+                _text = clean_extra_whitespace(_text)
+                if _text.strip():
+                    text_segments.append(_text)
+                    element = element_from_text(_text)
+                    element._coordinate_system = PixelSpace(
+                        width=width,
+                        height=height,
+                    )
+                    element.coordinates = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
+                    element.metadata = metadata
+                    page_elements.append(element)
 
         sorted_page_elements = sorted(
             page_elements,

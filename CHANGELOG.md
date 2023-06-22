@@ -15,6 +15,10 @@
 
 ### Fixes
 
+* Updates the `"fast"` strategy for `partition_pdf` so that it's able to recursively
+* Adds recursive functionality to all fsspec connectors
+* Adds generic --recursive ingest flag
+
 ## 0.7.7
 
 ### Enhancements
