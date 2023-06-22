@@ -49,6 +49,9 @@ class BaseConnector(ABC):
     standard_config: StandardConnectorConfig
     config: BaseConnectorConfig
 
+    def __post_init__(self):
+        super().__post_init__()
+
     def __init__(self, standard_config: StandardConnectorConfig, config: BaseConnectorConfig):
         """Expects a standard_config object that implements StandardConnectorConfig
         and config object that implements BaseConnectorConfig."""
