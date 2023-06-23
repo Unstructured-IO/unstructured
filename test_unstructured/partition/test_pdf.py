@@ -6,6 +6,7 @@ import pytest
 import requests
 from unstructured_inference.inference import layout
 
+from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import NarrativeText, PageBreak, Text, Title
 from unstructured.partition import pdf, strategies
 
@@ -204,7 +205,7 @@ def test_partition_pdf_with_spooled_file(
         # validate that the result is a non-empty list of dicts
         assert len(result) > 10
         # check that the pdf has multiple different page numbers
-        assert len({element.metadata.page_number for element in result}) > 1
+        assert {element.metadata.page_number for element in result} == {1, 2}
 
 
 @pytest.mark.parametrize(
@@ -242,11 +243,10 @@ def test_partition_pdf_with_auto_strategy(
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
     elements = pdf.partition_pdf(filename=filename, strategy="auto")
-    titles = [el for el in elements if el.category == "Title" and len(el.text.split(" ")) > 10]
     title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
-    assert titles[0].text == title
-    assert titles[0].metadata.filename == "layout-parser-paper-fast.pdf"
-    assert titles[0].metadata.file_directory == "example-docs"
+    assert elements[0].text == title
+    assert elements[0].metadata.filename == "layout-parser-paper-fast.pdf"
+    assert elements[0].metadata.file_directory == "example-docs"
 
 
 def test_partition_pdf_with_page_breaks(
@@ -269,7 +269,7 @@ def test_partition_pdf_with_fast_strategy(
     elements = pdf.partition_pdf(filename=filename, url=None, strategy="fast")
     assert len(elements) > 10
     # check that the pdf has multiple different page numbers
-    assert len({element.metadata.page_number for element in elements}) > 1
+    assert {element.metadata.page_number for element in elements} == {1, 2}
 
 
 def test_partition_pdf_with_fast_groups_text(
@@ -426,7 +426,14 @@ def test_partition_pdf_with_copy_protection():
     elements = pdf.partition_pdf(filename=filename, strategy="hi_res")
     elements[0] == Title("LayoutParser: A Uniﬁed Toolkit for Deep Based Document Image Analysis")
     # check that the pdf has multiple different page numbers
-    assert len({element.metadata.page_number for element in elements}) > 1
+    assert {element.metadata.page_number for element in elements} == {1, 2}
+
+
+def test_partition_pdf_requiring_recursive_text_grab(filename="example-docs/reliance.pdf"):
+    elements = pdf.partition_pdf(filename=filename, strategy="fast")
+    assert len(elements) > 50
+    assert elements[0].metadata.page_number == 1
+    assert elements[-1].metadata.page_number == 3
 
 
 def test_partition_pdf_with_copy_protection_fallback_to_hi_res(caplog):
@@ -468,6 +475,7 @@ def test_partition_pdf_fast_groups_text_in_text_box():
             (418.6881, 91.94000000000005),
             (418.6881, 71.94000000000005),
         ),
+        coordinate_system=PixelSpace(width=612, height=792),
     )
 
     assert isinstance(elements[1], NarrativeText)
@@ -482,4 +490,5 @@ def test_partition_pdf_fast_groups_text_in_text_box():
             (333.59990000000005, 226.16470000000004),
             (333.59990000000005, 181.16470000000004),
         ),
+        coordinate_system=PixelSpace(width=612, height=792),
     )

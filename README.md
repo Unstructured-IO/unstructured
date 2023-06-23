@@ -21,7 +21,7 @@
 <div>
   <p align="center">
   <a
-  href="https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-1nlh1ot5d-dfY7zCRlhFboZrIWLA4Qgw">
+  href="https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-1x7cgo0pg-PTptXWylzPQF9xZolzCnwQ">
     <img src="https://img.shields.io/badge/JOIN US ON SLACK-4A154B?style=for-the-badge&logo=slack&logoColor=white" />
   </a>
   <a href="https://www.linkedin.com/company/unstructuredio/">
@@ -74,7 +74,7 @@ At this point, you should be able to run the following code:
 ```python
 from unstructured.partition.auto import partition
 
-elements = partition(filename="example-docs/fake-email.eml")
+elements = partition(filename="example-docs/eml/fake-email.eml")
 print("\n\n".join([str(el) for el in elements]))
 ```
 
@@ -95,6 +95,7 @@ about the library.
 | HTML Pages (`.html`) | `partition_html` | N/A | No | Encoding; Include Page Breaks |
 | Images (`.png`/`.jpg`) | `partition_image` | `"auto"`, `"hi_res"`, `"ocr_only"` | Yes | Encoding; Include Page Breaks; Infer Table Structure; OCR Languages, Strategy |
 | Markdown (`.md`) | `partitin_md` | N/A | Yes | Include Page Breaks |
+| Org Mode (`.org`) | `partition_org` | N/A | Yes | Include Page Breaks |
 | Open Office Documents (`.odt`) | `partition_odt` | N/A | Yes | None |
 | PDFs (`.pdf`) | `partition_pdf` | `"auto"`, `"fast"`, `"hi_res"`, `"ocr_only"` | Yes | Encoding; Include Page Breaks; Infer Table Structure; OCR Languages, Strategy |
 | Plain Text (`.txt`) | `partition_text` | N/A | No | Encoding, Paragraph Grouper |
@@ -102,8 +103,11 @@ about the library.
 | Power Points (`.pptx`) | `partition_pptx` | N/A | Yes | Include Page Breaks |
 | ReStructured Text (`.rst`) | `partition_rst` | N/A | Yes | Include Page Breaks |
 | Rich Text Files (`.rtf`) | `partition_rtf` | N/A | Yes | Include Page Breaks |
+| TSV Files (`.tsv`) | `partition_tsv` | N/A | Yes | None |
 | Word Documents (`.doc`) | `partition_doc` | N/A | Yes | None |
 | Word Documents (`.docx`) | `partition_docx` | N/A | Yes | None |
+| Word Documents (`.doc`) | `partition_doc` | N/A | Yes | Include Page Breaks |
+| Word Documents (`.docx`) | `partition_docx` | N/A | Yes | Include Page Breaks |
 | XML Documents (`.xml`) | `partition_xml` | N/A | No | Encoding; XML Keep Tags |
 
 
@@ -165,12 +169,12 @@ locally if you are planning to contribute to the project.
 * Using `pyenv` to manage virtualenv's is recommended but not necessary
 	* Mac install instructions. See [here](https://github.com/Unstructured-IO/community#mac--homebrew) for more detailed instructions.
 		* `brew install pyenv-virtualenv`
-	  * `pyenv install 3.8.15`
+	  * `pyenv install 3.8.17`
   * Linux instructions are available [here](https://github.com/Unstructured-IO/community#linux).
 
 * Create a virtualenv to work in and activate it, e.g. for one named `unstructured`:
 
-	`pyenv  virtualenv 3.8.15 unstructured` <br />
+	`pyenv  virtualenv 3.8.17 unstructured` <br />
 	`pyenv activate unstructured`
 
 * Run `make install`

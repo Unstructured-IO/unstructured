@@ -8,6 +8,7 @@ from unittest.mock import patch
 import docx
 import pytest
 
+from test_unstructured.partition.test_constants import EXPECTED_TABLE, EXPECTED_TEXT
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import (
     Address,
@@ -35,11 +36,13 @@ EXPECTED_EMAIL_OUTPUT = [
     ListItem(text="Violets are blue"),
 ]
 
+EML_TEST_FILE = "eml/fake-email.eml"
+
 is_in_docker = os.path.exists("/.dockerenv")
 
 
 def test_auto_partition_email_from_filename():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, EML_TEST_FILE)
     elements = partition(filename=filename, strategy="hi_res")
     assert len(elements) > 0
     assert elements == EXPECTED_EMAIL_OUTPUT
@@ -48,7 +51,7 @@ def test_auto_partition_email_from_filename():
 
 
 def test_auto_partition_email_from_file():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, EML_TEST_FILE)
     with open(filename) as f:
         elements = partition(file=f, strategy="hi_res")
     assert len(elements) > 0
@@ -56,7 +59,7 @@ def test_auto_partition_email_from_file():
 
 
 def test_auto_partition_email_from_file_rb():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, EML_TEST_FILE)
     with open(filename, "rb") as f:
         elements = partition(file=f, strategy="hi_res")
     assert len(elements) > 0
@@ -214,6 +217,9 @@ def test_auto_partition_json_from_filename():
     for elem in json_elems:
         # coordinates are always in the element data structures, even if None
         elem.pop("coordinates")
+        elem.pop("coordinate_system")
+        elem.pop("layout_width")
+        elem.pop("layout_height")
         elem.pop("metadata")
     for elem in json_data:
         elem.pop("metadata")
@@ -240,6 +246,7 @@ def test_auto_partition_json_from_file():
     for elem in json_elems:
         # coordinates are always in the element data structures, even if None
         elem.pop("coordinates")
+        elem.pop("coordinate_system")
     assert json_data == json_elems
 
 
@@ -431,7 +438,7 @@ def test_auto_partition_ppt_from_filename():
 def test_auto_with_page_breaks():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
     elements = partition(filename=filename, include_page_breaks=True, strategy="hi_res")
-    assert PageBreak() in elements
+    assert any(isinstance(element, PageBreak) for element in elements)
 
 
 def test_auto_partition_epub_from_filename():
@@ -489,7 +496,7 @@ def test_partition_md_works_with_embedded_html():
 
 
 def test_auto_partition_warns_if_header_set_and_not_url(caplog):
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, EML_TEST_FILE)
     partition(filename=filename, headers={"Accept": "application/pdf"}, strategy="hi_res")
     assert caplog.records[0].levelname == "WARNING"
 
@@ -630,34 +637,6 @@ def test_auto_partition_xml_from_file_with_tags(filename="example-docs/factbook.
     assert elements[5].text == "<name>United States</name>"
 
 
-EXPECTED_XLSX_TABLE = """<table border="1" class="dataframe">
-  <tbody>
-    <tr>
-      <td>Team</td>
-      <td>Location</td>
-      <td>Stanley Cups</td>
-    </tr>
-    <tr>
-      <td>Blues</td>
-      <td>STL</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <td>Flyers</td>
-      <td>PHI</td>
-      <td>2</td>
-    </tr>
-    <tr>
-      <td>Maple Leafs</td>
-      <td>TOR</td>
-      <td>13</td>
-    </tr>
-  </tbody>
-</table>"""
-
-
-EXPECTED_XLSX_TEXT = "Team Location Stanley Cups Blues STL 1 Flyers PHI 2 Maple Leafs TOR 13"
-
 EXPECTED_XLSX_FILETYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
 
@@ -667,8 +646,8 @@ def test_auto_partition_xlsx_from_filename(filename="example-docs/stanley-cups.x
     assert all(isinstance(element, Table) for element in elements)
     assert len(elements) == 2
 
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_XLSX_TEXT
-    assert elements[0].metadata.text_as_html == EXPECTED_XLSX_TABLE
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
+    assert elements[0].metadata.text_as_html == EXPECTED_TABLE
     assert elements[0].metadata.page_number == 1
     assert elements[0].metadata.filetype == EXPECTED_XLSX_FILETYPE
 
@@ -680,8 +659,8 @@ def test_auto_partition_xlsx_from_file(filename="example-docs/stanley-cups.xlsx"
     assert all(isinstance(element, Table) for element in elements)
     assert len(elements) == 2
 
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_XLSX_TEXT
-    assert elements[0].metadata.text_as_html == EXPECTED_XLSX_TABLE
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
+    assert elements[0].metadata.text_as_html == EXPECTED_TABLE
     assert elements[0].metadata.page_number == 1
     assert elements[0].metadata.filetype == EXPECTED_XLSX_FILETYPE
 
@@ -780,8 +759,8 @@ def test_auto_partition_xls_from_filename(filename="example-docs/tests-example.x
 def test_auto_partition_csv_from_filename(filename="example-docs/stanley-cups.csv"):
     elements = partition(filename=filename)
 
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_XLSX_TEXT
-    assert elements[0].metadata.text_as_html == EXPECTED_XLSX_TABLE
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
+    assert elements[0].metadata.text_as_html == EXPECTED_TABLE
     assert elements[0].metadata.filetype == "text/csv"
 
 
@@ -790,9 +769,9 @@ def test_auto_partition_csv_from_file(filename="example-docs/stanley-cups.csv"):
     with open(filename, "rb") as f:
         elements = partition(file=f)
 
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_XLSX_TEXT
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
     assert isinstance(elements[0], Table)
-    assert elements[0].metadata.text_as_html == EXPECTED_XLSX_TABLE
+    assert elements[0].metadata.text_as_html == EXPECTED_TABLE
     assert elements[0].metadata.filetype == "text/csv"
 
 
@@ -803,6 +782,21 @@ def test_auto_partition_works_on_empty_filename(filename="example-docs/empty.txt
 def test_auto_partition_works_on_empty_file(filename="example-docs/empty.txt"):
     with open(filename, "rb") as f:
         assert partition(file=f) == []
+
+
+def test_auto_partition_org_from_filename(filename="example-docs/README.org"):
+    elements = partition(filename=filename)
+
+    assert elements[0] == Title("Example Docs")
+    assert elements[0].metadata.filetype == "text/org"
+
+
+def test_auto_partition_org_from_file(filename="example-docs/README.org"):
+    with open(filename, "rb") as f:
+        elements = partition(file=f, content_type="text/org")
+
+    assert elements[0] == Title("Example Docs")
+    assert elements[0].metadata.filetype == "text/org"
 
 
 def test_auto_partition_rst_from_filename(filename="example-docs/README.rst"):

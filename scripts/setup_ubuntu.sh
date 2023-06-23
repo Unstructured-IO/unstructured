@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set +u
 
 if [ -z "$1" ]; then
@@ -71,7 +71,7 @@ eval "$(pyenv virtualenv-init -)"
 EOT
         # install python
         source "$HOME"/.bashrc
-        pyenv install 3.8.15
+        pyenv install 3.8.17
     fi
 EOF
 

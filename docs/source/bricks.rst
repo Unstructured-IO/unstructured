@@ -82,7 +82,7 @@ If you call the ``partition`` function, ``unstructured`` will attempt to detect 
 file type and route it to the appropriate partitioning brick. All partitioning bricks
 called within ``partition`` are called using the default kwargs. Use the document-type
 specific bricks if you need to apply non-default settings.
-``partition`` currently supports ``.docx``, ``.doc``, ``.odt``, ``.pptx``, ``.ppt``, ``.xlsx``, ``.csv``, ``.eml``, ``.msg``, ``.rtf``, ``.epub``, ``.html``, ``.xml``, ``.pdf``,
+``partition`` currently supports ``.docx``, ``.doc``, ``.odt``, ``.pptx``, ``.ppt``, ``.xlsx``, ``.csv``, ``.tsv``, ``.eml``, ``.msg``, ``.rtf``, ``.epub``, ``.html``, ``.xml``, ``.pdf``,
 ``.png``, ``.jpg``, and ``.txt`` files.
 If you set the ``include_page_breaks`` kwarg to ``True``, the output will include page breaks. This is only supported for ``.pptx``, ``.html``, ``.pdf``,
 ``.png``, and ``.jpg``.
@@ -149,6 +149,23 @@ Examples:
   print(elements[0].metadata.text_as_html)
 
 
+``partition_tsv``
+------------------
+
+The ``partition_tsv`` function pre-processes TSV files. The output is a single
+``Table`` element. The ``text_as_html`` attribute in the element metadata will
+contain an HTML representation of the table.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.tsv import partition_tsv
+
+  elements = partition_tsv(filename="example-docs/stanley-cups.tsv")
+  print(elements[0].metadata.text_as_html)  
+
+
 ``partition_doc``
 ------------------
 
@@ -197,6 +214,19 @@ Examples:
 
   with open("mydoc.docx", "rb") as f:
       elements = partition_docx(file=f)
+
+In Word documents, headers and footers are specified per section. In the output,
+the ``Header`` elements will appear at the beginning of a section and ``Footer``
+elements will appear at the end. MSFT Word headers and footers have a ``header_footer_type``
+metadata field indicating where the header or footer applies. Valid values are
+``"primary"``, ``"first_page"`` and ``"even_page"``.
+
+``partition_docx`` will include page numbers in the document metadata when page breaks
+are present in the document. The function will detect user inserted page breaks
+and page breaks inserted by the Word document renderer. Some (but not all) Word document renderers
+insert page breaks when you save the document. If your Word document renderer does not do that,
+you may not see page numbers in the output even if you see them visually when you open the
+document. If that is the case, you can try saving the document with a different renderer.
 
 
 ``partition_email``
@@ -297,6 +327,15 @@ to disable SSL verification in the request.
   # and turn off SSL verification
 
   elements = partition_html(url="https://python.org/", ssl_verify=False)
+
+
+
+If you website contains news articles, it can be helpful to only grab content that appears in
+between the ``<article>`` tags, if the site uses that convention.
+To activate this behavior, you can set ``html_assemble_articles=True``.
+If ``html_assemble_articles`` is ``True``, each ``<article>`` tag will be treated as a a page.
+If ``html_assemble_articles`` is ``True`` and no ``<article>`` tags are present, the behavior
+is the same as ``html_assemble_articles=False``.
 
 
 ``partition_image``
@@ -551,6 +590,24 @@ Examples:
       elements = partition_pptx(file=f)
 
 
+``partition_org``
+---------------------
+
+The ``partition_org`` function processes Org Mode (``.org``) documents. The function
+first converts the document to HTML using ``pandoc`` and then calls ``partition_html``.
+You'll need `pandoc <https://pandoc.org/installing.html>`_ installed on your system
+to use ``partition_org``.
+
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.org import partition_org
+
+  elements = partition_org(filename="example-docs/README.org")
+
+
 ``partition_rst``
 ---------------------
 
@@ -567,7 +624,6 @@ Examples:
   from unstructured.partition.rst import partition_rst
 
   elements = partition_rst(filename="example-docs/README.rst")
-
 
 ``partition_rtf``
 ---------------------

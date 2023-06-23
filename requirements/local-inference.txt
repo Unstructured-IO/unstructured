@@ -22,7 +22,7 @@ charset-normalizer==3.1.0
     #   requests
 coloredlogs==15.0.1
     # via onnxruntime
-contourpy==1.0.7
+contourpy==1.1.0
     # via matplotlib
 cryptography==41.0.1
     # via
@@ -32,7 +32,7 @@ cycler==0.11.0
     # via matplotlib
 effdet==0.4.1
     # via layoutparser
-filelock==3.12.1
+filelock==3.12.2
     # via
     #   huggingface-hub
     #   torch
@@ -87,7 +87,7 @@ numpy==1.23.5
     #   transformers
 omegaconf==2.3.0
     # via effdet
-onnxruntime==1.15.0
+onnxruntime==1.15.1
     # via unstructured-inference
 opencv-python==4.7.0.72
     # via
@@ -106,7 +106,9 @@ pandas==1.5.3
     #   -c requirements/base.txt
     #   layoutparser
 pdf2image==1.16.3
-    # via layoutparser
+    # via
+    #   -c requirements/base.txt
+    #   layoutparser
 pdfminer-six==20221105
     # via
     #   -c requirements/base.txt
@@ -134,7 +136,7 @@ pycparser==2.21
     # via
     #   -c requirements/base.txt
     #   cffi
-pyparsing==3.0.9
+pyparsing==3.1.0
     # via matplotlib
 pytesseract==0.3.10
     # via layoutparser
@@ -201,7 +203,7 @@ tqdm==4.65.0
     #   huggingface-hub
     #   iopath
     #   transformers
-transformers==4.30.1
+transformers==4.30.2
     # via unstructured-inference
 typing-extensions==4.6.3
     # via
