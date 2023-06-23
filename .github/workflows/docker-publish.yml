@@ -45,6 +45,7 @@ jobs:
         DOCKER_BUILDKIT=1 docker buildx build --platform=$ARCH --load \
           --build-arg PIP_VERSION=$PIP_VERSION \
           --build-arg BUILDKIT_INLINE_CACHE=1 \
+          --provenance=false \
           --progress plain \
           --cache-from $DOCKER_BUILD_REPOSITORY:$ARCH \
           -t $DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA .
