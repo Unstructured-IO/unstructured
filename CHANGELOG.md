@@ -1,9 +1,9 @@
-## 0.7.9-dev0
+## 0.7.9-dev1
 
 ### Enhancements
 
-* Adds --partition-ocr-languages to unstructured-ingest
-
+* Improvements to string check for leafs in `partition_xml`.
+* Adds --partition-ocr-languages to unstructured-ingest.
 
 ### Features
 
