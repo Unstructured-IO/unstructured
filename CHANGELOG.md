@@ -1,4 +1,4 @@
-## 0.7.9-dev1
+## 0.7.9-dev2
 
 ### Enhancements
 
@@ -10,6 +10,8 @@
 * Adds `partition_org` for processed Org Mode documents.
 
 ### Fixes
+
+* Fix pre tag parsing for `partition_html`
 
 ## 0.7.8
 
@@ -188,13 +190,11 @@
 
 ### Enhancements
 
-* XLS support from auto partiton
+* XLS support from auto partition
 
 ### Features
 
 ### Fixes
-
-* Fix pre tag parsing
 
 ## 0.6.9
 
