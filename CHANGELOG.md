@@ -2,6 +2,9 @@
 
 ### Enhancements
 
+* Adds --partition-ocr-languages to unstructured-ingest
+
+
 ### Features
 
 * Adds `partition_org` for processed Org Mode documents.
