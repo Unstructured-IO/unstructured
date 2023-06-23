@@ -74,7 +74,7 @@ At this point, you should be able to run the following code:
 ```python
 from unstructured.partition.auto import partition
 
-elements = partition(filename="example-docs/fake-email.eml")
+elements = partition(filename="example-docs/eml/fake-email.eml")
 print("\n\n".join([str(el) for el in elements]))
 ```
 

@@ -20,7 +20,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --local-input-path example-docs \
     --structured-output-dir local-ingest-output \
     --num-processes 2 \
-    --local-recursive \
+    --recursive \
     --verbose \
 
 # Alternatively, you can call it using:
