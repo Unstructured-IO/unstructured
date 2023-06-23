@@ -1,0 +1,10 @@
+There are differences from the previously checked-in structured outputs.
+
+If these differences are acceptable, overwrite by the fixtures by setting the env var:
+
+  export OVERWRITE_FIXTURES=true
+
+and then rerun this script.
+
+NOTE: You'll likely just want to run scripts/ingest-test-fixtures-update.sh on x86_64 hardware
+to update fixtures for CI.
