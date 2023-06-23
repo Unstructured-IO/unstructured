@@ -23,7 +23,7 @@ jobs:
   build-images:
     strategy:
       matrix:
-        docker-platform: ["linux/arm64", "linux/amd64"]
+        docker-platform: ["linux/amd64"]
     runs-on: ubuntu-latest
     needs: set-short-sha
     env:
@@ -41,11 +41,15 @@ jobs:
     - name: Build images
       run: |
         ARCH=$(cut -d "/" -f2 <<< ${{ matrix.docker-platform }})
-        echo DOCKER_BUILDKIT=1 docker buildx build --platform=$ARCH --load \
+#        echo DOCKER_BUILDKIT=1 docker buildx build --platform=$ARCH --load \
+#          --build-arg PIP_VERSION=$PIP_VERSION \
+#          --build-arg BUILDKIT_INLINE_CACHE=1 \
+#          --progress plain \
+#          --cache-from $DOCKER_BUILD_REPOSITORY:$ARCH \
+#          -t $DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA .
+        echo DOCKER_BUILDKIT=1 docker build \
           --build-arg PIP_VERSION=$PIP_VERSION \
-          --build-arg BUILDKIT_INLINE_CACHE=1 \
           --progress plain \
-          --cache-from $DOCKER_BUILD_REPOSITORY:$ARCH \
           -t $DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA .
         DOCKER_BUILDKIT=1 docker build --platform=$ARCH \
           --build-arg PIP_VERSION=$PIP_VERSION \
