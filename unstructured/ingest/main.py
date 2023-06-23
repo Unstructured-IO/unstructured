@@ -152,6 +152,14 @@ class MainProcess:
     "Default: auto. Other strategies include `fast` and `hi_res`.",
 )
 @click.option(
+    "--partition-ocr-languages",
+    default="eng",
+    help="A list of language packs to specify which languages to use for OCR, separated by '+' "
+    "e.g. 'eng+deu' to use the English and German language packs. The appropriate Tesseract "
+    "language pack needs to be installed."
+    "Default: eng",
+)
+@click.option(
     "--api-key",
     default="",
     help="API Key for partition endpoint.",
@@ -160,12 +168,6 @@ class MainProcess:
     "--local-input-path",
     default=None,
     help="Path to the location in the local file system that will be processed.",
-)
-@click.option(
-    "--local-recursive",
-    is_flag=True,
-    default=False,
-    help="Support recursive local file processing.",
 )
 @click.option(
     "--local-file-glob",
@@ -177,7 +179,14 @@ class MainProcess:
     "--remote-url",
     default=None,
     help="Remote fsspec URL formatted as `protocol://dir/path`, it can contain both "
-    "a directory or a single file. Supported protocols are: `s3`, `s3a`, `abfs`, and `az`.",
+    "a directory or a single file. Supported protocols are: `gcs`, `gs`, `s3`, `s3a`, `abfs` "
+    "and `az`.",
+)
+@click.option(
+    "--gcs-token",
+    default=None,
+    help="Token used to access Google Cloud. GCSFS will attempt to use your default gcloud creds"
+    "or get creds from the google metadata service or fall back to anonymous access.",
 )
 @click.option(
     "--s3-anonymous",
@@ -210,13 +219,6 @@ class MainProcess:
     "--drive-service-account-key",
     default=None,
     help="Path to the Google Drive service account json file.",
-)
-@click.option(
-    "--drive-recursive",
-    is_flag=True,
-    default=False,
-    help="Recursively download files in folders from the Google Drive ID, "
-    "otherwise stop at the files in provided folder level.",
 )
 @click.option(
     "--drive-extension",
@@ -412,17 +414,26 @@ class MainProcess:
     show_default=True,
     help="Number of parallel processes to process docs in.",
 )
+@click.option(
+    "--recursive",
+    is_flag=True,
+    default=False,
+    help="Recursively download files in their respective folders"
+    "otherwise stop at the files in provided folder level."
+    " Supported protocols are: `gcs`, `gs`, `s3`, `s3a`, `abfs` "
+    "`az`, `google drive` and `local`.",
+)
 @click.option("-v", "--verbose", is_flag=True, default=False)
 def main(
     ctx,
     remote_url,
     s3_anonymous,
+    gcs_token,
     azure_account_name,
     azure_account_key,
     azure_connection_string,
     drive_id,
     drive_service_account_key,
-    drive_recursive,
     drive_extension,
     biomed_path,
     biomed_api_id,
@@ -457,6 +468,7 @@ def main(
     structured_output_dir,
     reprocess,
     num_processes,
+    recursive,
     verbose,
     metadata_include,
     metadata_exclude,
@@ -466,9 +478,9 @@ def main(
     partition_by_api,
     partition_endpoint,
     partition_strategy,
+    partition_ocr_languages,
     api_key,
     local_input_path,
-    local_recursive,
     local_file_glob,
     download_only,
 ):
@@ -580,7 +592,19 @@ def main(
                 standard_config=standard_config,
                 config=SimpleS3Config(
                     path=remote_url,
+                    recursive=recursive,
                     access_kwargs={"anon": s3_anonymous},
+                ),
+            )
+        elif protocol in ("gs", "gcs"):
+            from unstructured.ingest.connector.gcs import GcsConnector, SimpleGcsConfig
+
+            doc_connector = GcsConnector(  # type: ignore
+                standard_config=standard_config,
+                config=SimpleGcsConfig(
+                    path=remote_url,
+                    recursive=recursive,
+                    access_kwargs={"token": gcs_token},
                 ),
             )
         elif protocol in ("abfs", "az"):
@@ -602,14 +626,15 @@ def main(
                 standard_config=standard_config,
                 config=SimpleAzureBlobStorageConfig(
                     path=remote_url,
+                    recursive=recursive,
                     access_kwargs=access_kwargs,
                 ),
             )
         else:
             warnings.warn(
                 f"`fsspec` protocol {protocol} is not directly supported by `unstructured`,"
-                " so use it at your own risk. Supported protocols are `s3`, `s3a`, `abfs`,"
-                " and `az`.",
+                " so use it at your own risk. Supported protocols are `gcs`, `gs`, `s3`, `s3a`,"
+                "`abfs` and `az`.",
                 UserWarning,
             )
 
@@ -622,6 +647,7 @@ def main(
                 standard_config=standard_config,
                 config=SimpleFsspecConfig(
                     path=remote_url,
+                    recursive=recursive,
                 ),
             )
     elif github_url:
@@ -721,7 +747,7 @@ def main(
             config=SimpleGoogleDriveConfig(
                 drive_id=drive_id,
                 service_account_key=drive_service_account_key,
-                recursive=drive_recursive,
+                recursive=recursive,
                 extension=drive_extension,
             ),
         )
@@ -753,7 +779,7 @@ def main(
             standard_config=standard_config,
             config=SimpleLocalConfig(
                 input_path=local_input_path,
-                recursive=local_recursive,
+                recursive=recursive,
                 file_glob=local_file_glob,
             ),
         )
@@ -764,14 +790,15 @@ def main(
         logger.error("No connector-specific option was specified!")
         sys.exit(1)
 
-    process_document_with_partition_strategy = partial(
+    process_document_with_partition_args = partial(
         process_document,
         strategy=partition_strategy,
+        ocr_languages=partition_ocr_languages,
     )
 
     MainProcess(
         doc_connector=doc_connector,
-        doc_processor_fn=process_document_with_partition_strategy,
+        doc_processor_fn=process_document_with_partition_args,
         num_processes=num_processes,
         reprocess=reprocess,
         verbose=verbose,

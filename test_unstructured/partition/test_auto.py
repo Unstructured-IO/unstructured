@@ -36,11 +36,13 @@ EXPECTED_EMAIL_OUTPUT = [
     ListItem(text="Violets are blue"),
 ]
 
+EML_TEST_FILE = "eml/fake-email.eml"
+
 is_in_docker = os.path.exists("/.dockerenv")
 
 
 def test_auto_partition_email_from_filename():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, EML_TEST_FILE)
     elements = partition(filename=filename, strategy="hi_res")
     assert len(elements) > 0
     assert elements == EXPECTED_EMAIL_OUTPUT
@@ -49,7 +51,7 @@ def test_auto_partition_email_from_filename():
 
 
 def test_auto_partition_email_from_file():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, EML_TEST_FILE)
     with open(filename) as f:
         elements = partition(file=f, strategy="hi_res")
     assert len(elements) > 0
@@ -57,7 +59,7 @@ def test_auto_partition_email_from_file():
 
 
 def test_auto_partition_email_from_file_rb():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, EML_TEST_FILE)
     with open(filename, "rb") as f:
         elements = partition(file=f, strategy="hi_res")
     assert len(elements) > 0
@@ -215,6 +217,9 @@ def test_auto_partition_json_from_filename():
     for elem in json_elems:
         # coordinates are always in the element data structures, even if None
         elem.pop("coordinates")
+        elem.pop("coordinate_system")
+        elem.pop("layout_width")
+        elem.pop("layout_height")
         elem.pop("metadata")
     for elem in json_data:
         elem.pop("metadata")
@@ -241,6 +246,7 @@ def test_auto_partition_json_from_file():
     for elem in json_elems:
         # coordinates are always in the element data structures, even if None
         elem.pop("coordinates")
+        elem.pop("coordinate_system")
     assert json_data == json_elems
 
 
@@ -432,7 +438,7 @@ def test_auto_partition_ppt_from_filename():
 def test_auto_with_page_breaks():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
     elements = partition(filename=filename, include_page_breaks=True, strategy="hi_res")
-    assert PageBreak() in elements
+    assert any(isinstance(element, PageBreak) for element in elements)
 
 
 def test_auto_partition_epub_from_filename():
@@ -490,7 +496,7 @@ def test_partition_md_works_with_embedded_html():
 
 
 def test_auto_partition_warns_if_header_set_and_not_url(caplog):
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, EML_TEST_FILE)
     partition(filename=filename, headers={"Accept": "application/pdf"}, strategy="hi_res")
     assert caplog.records[0].levelname == "WARNING"
 
@@ -785,6 +791,21 @@ def test_auto_partition_works_on_empty_filename(filename="example-docs/empty.txt
 def test_auto_partition_works_on_empty_file(filename="example-docs/empty.txt"):
     with open(filename, "rb") as f:
         assert partition(file=f) == []
+
+
+def test_auto_partition_org_from_filename(filename="example-docs/README.org"):
+    elements = partition(filename=filename)
+
+    assert elements[0] == Title("Example Docs")
+    assert elements[0].metadata.filetype == "text/org"
+
+
+def test_auto_partition_org_from_file(filename="example-docs/README.org"):
+    with open(filename, "rb") as f:
+        elements = partition(file=f, content_type="text/org")
+
+    assert elements[0] == Title("Example Docs")
+    assert elements[0].metadata.filetype == "text/org"
 
 
 def test_auto_partition_rst_from_filename(filename="example-docs/README.rst"):

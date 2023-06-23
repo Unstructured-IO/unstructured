@@ -3,6 +3,7 @@ import json
 import os
 import pathlib
 import platform
+from tempfile import NamedTemporaryFile
 
 import pandas as pd
 import pytest
@@ -139,6 +140,7 @@ def test_serialized_deserialize_elements_to_json(tmpdir):
 
 def test_read_and_write_json_with_encoding(filename="example-docs/fake-text-utf-16-be.txt"):
     elements = partition_text(filename=filename)
-    base.elements_to_json(elements, filename=filename, encoding="utf-16")
-    new_elements_filename = base.elements_from_json(filename=filename, encoding="utf-16")
+    with NamedTemporaryFile() as tempfile:
+        base.elements_to_json(elements, filename=tempfile.name, encoding="utf-16")
+        new_elements_filename = base.elements_from_json(filename=tempfile.name, encoding="utf-16")
     assert elements == new_elements_filename

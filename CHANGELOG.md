@@ -1,10 +1,50 @@
-## 0.7.7-dev0
+## 0.7.9-dev1
+
+### Enhancements
+
+* Improvements to string check for leafs in `partition_xml`.
+* Adds --partition-ocr-languages to unstructured-ingest.
+
+### Features
+
+* Adds `partition_org` for processed Org Mode documents.
+
+### Fixes
+
+## 0.7.8
 
 ### Enhancements
 
 ### Features
 
+* Adds Google Cloud Service connector
+
 ### Fixes
+
+* Updates the `parse_email` for `partition_eml` so that `unstructured-api` passes the smoke tests
+* `partition_email` now works if there is no message content
+* Updates the `"fast"` strategy for `partition_pdf` so that it's able to recursively
+* Adds recursive functionality to all fsspec connectors
+* Adds generic --recursive ingest flag
+
+## 0.7.7
+
+### Enhancements
+
+* Adds functionality to replace the `MIME` encodings for `eml` files with one of the common encodings if a `unicode` error occurs
+* Adds missed file-like object handling in `detect_file_encoding`
+* Adds functionality to extract charset info from `eml` files
+
+### Features
+
+* Added coordinate system class to track coordinate types and convert to different coordinate
+
+### Fixes
+
+* Adds an `html_assemble_articles` kwarg to `partition_html` to enable users to capture
+  control whether content outside of `<article>` tags is captured when
+  `<article>` tags are present.
+* Check for the `xml` attribute on `element` before looking for pagebreaks in `partition_docx`.
 
 ## 0.7.6
 

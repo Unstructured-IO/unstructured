@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Mainly used for installing pandoc on CI
 set -euo pipefail
