@@ -59,9 +59,9 @@ docker stop "$container_id"
 # to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
 
-    cp github-downloadify-output/* test_unstructured_ingest/expected-structured-output/github-downloadify/
+    cp elasticsearch-ingest-output/* test_unstructured_ingest/expected-structured-output/elasticsearch-ingest-output/
 
-elif ! diff -ru test_unstructured_ingest/expected-structured-output/github-downloadify github-downloadify-output ; then
+elif ! diff -ru test_unstructured_ingest/expected-structured-output/elasticsearch-ingest-output elasticsearch-ingest-output ; then
     echo
     echo "There are differences from the previously checked-in structured outputs."
     echo
