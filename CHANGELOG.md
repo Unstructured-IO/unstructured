@@ -1,3 +1,13 @@
+## 0.7.9-dev0
+
+### Enhancements
+
+### Features
+
+* Adds `partition_org` for processed Org Mode documents.
+
+### Fixes
+
 ## 0.7.8
 
 ### Enhancements
