@@ -1,8 +1,16 @@
-## 0.7.8
+## 0.7.9-dev0
 
 ### Enhancements
 
 * Adds --partition-ocr-languages to unstructured-ingest
+
+### Features
+
+### Fixes
+
+## 0.7.8
+
+### Enhancements
 
 ### Features
 
