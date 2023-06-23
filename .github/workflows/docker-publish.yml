@@ -1,9 +1,8 @@
-name: Build And Push Docker Image
+OAname: Build And Push Docker Image
 
 on:
   push:
     branches:
-      - main
 
 env:
   DOCKER_REPOSITORY: quay.io/unstructured-io/unstructured
@@ -42,12 +41,19 @@ jobs:
     - name: Build images
       run: |
         ARCH=$(cut -d "/" -f2 <<< ${{ matrix.docker-platform }})
+        echo DOCKER_BUILDKIT=1 docker buildx build --platform=$ARCH --load \
+          --build-arg PIP_VERSION=$PIP_VERSION \
+          --build-arg BUILDKIT_INLINE_CACHE=1 \
+          --progress plain \
+          --cache-from $DOCKER_BUILD_REPOSITORY:$ARCH \
+          -t $DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA .
         DOCKER_BUILDKIT=1 docker buildx build --platform=$ARCH --load \
           --build-arg PIP_VERSION=$PIP_VERSION \
           --build-arg BUILDKIT_INLINE_CACHE=1 \
           --progress plain \
           --cache-from $DOCKER_BUILD_REPOSITORY:$ARCH \
           -t $DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA .
+        docker images
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
     - name: Test images
@@ -87,20 +93,20 @@ jobs:
     - name: Pull ARM image
       run: |
         docker pull $DOCKER_BUILD_REPOSITORY:arm64-$SHORT_SHA
-    - name: Push latest build tags for AMD and ARM
-      run: |
-        # these are used to construct the final manifest but also cache-from in subsequent runs
-        docker tag $DOCKER_BUILD_REPOSITORY:amd64-$SHORT_SHA $DOCKER_BUILD_REPOSITORY:amd64
-        docker push $DOCKER_BUILD_REPOSITORY:amd64
-        docker tag $DOCKER_BUILD_REPOSITORY:arm64-$SHORT_SHA $DOCKER_BUILD_REPOSITORY:arm64
-        docker push $DOCKER_BUILD_REPOSITORY:arm64
-    - name: Push multiarch manifest
-      run: |
-        docker manifest create ${DOCKER_REPOSITORY}:latest $DOCKER_BUILD_REPOSITORY:amd64 $DOCKER_BUILD_REPOSITORY:amd64
-        docker manifest push $DOCKER_REPOSITORY:latest
-        docker manifest create ${DOCKER_REPOSITORY}:$SHORT_SHA $DOCKER_BUILD_REPOSITORY:arm64 $DOCKER_BUILD_REPOSITORY:arm64
-        docker manifest push $DOCKER_REPOSITORY:$SHORT_SHA
-        VERSION=$(grep -Po '(?<=__version__ = ")[^"]*' unstructured/__version__.py)
-        docker manifest create ${DOCKER_REPOSITORY}:$VERSION $DOCKER_BUILD_REPOSITORY:amd64 $DOCKER_BUILD_REPOSITORY:arm64
-        docker manifest push $DOCKER_REPOSITORY:$VERSION
+#    - name: Push latest build tags for AMD and ARM
+#      run: |
+#        # these are used to construct the final manifest but also cache-from in subsequent runs
+#        docker tag $DOCKER_BUILD_REPOSITORY:amd64-$SHORT_SHA $DOCKER_BUILD_REPOSITORY:amd64
+#        docker push $DOCKER_BUILD_REPOSITORY:amd64
+#        docker tag $DOCKER_BUILD_REPOSITORY:arm64-$SHORT_SHA $DOCKER_BUILD_REPOSITORY:arm64
+#        docker push $DOCKER_BUILD_REPOSITORY:arm64
+#    - name: Push multiarch manifest
+#      run: |
+#        docker manifest create ${DOCKER_REPOSITORY}:latest $DOCKER_BUILD_REPOSITORY:amd64 $DOCKER_BUILD_REPOSITORY:amd64
+#        docker manifest push $DOCKER_REPOSITORY:latest
+#        docker manifest create ${DOCKER_REPOSITORY}:$SHORT_SHA $DOCKER_BUILD_REPOSITORY:arm64 $DOCKER_BUILD_REPOSITORY:arm64
+#        docker manifest push $DOCKER_REPOSITORY:$SHORT_SHA
+#        VERSION=$(grep -Po '(?<=__version__ = ")[^"]*' unstructured/__version__.py)
+#        docker manifest create ${DOCKER_REPOSITORY}:$VERSION $DOCKER_BUILD_REPOSITORY:amd64 $DOCKER_BUILD_REPOSITORY:arm64
+#        docker manifest push $DOCKER_REPOSITORY:$VERSION
 
