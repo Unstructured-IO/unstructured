@@ -14,7 +14,7 @@ def is_leaf(elem):
 
 
 def is_string(elem):
-    return isinstance(elem.text, str)
+    return isinstance(elem, str) or (hasattr(elem, "text") and isinstance(elem.text, str))
 
 
 def get_leaf_elements(
