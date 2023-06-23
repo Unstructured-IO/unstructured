@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-set -e
-
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/.. || exit 1
 
@@ -49,12 +47,11 @@ fi
 
 OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
 
-set +e
-
 # Kill the container so the script can be repeatedly run using the same ports
-docker stop "$container_id"
+"docker stop '$container_id'" ERR
+
 # # Kill even when there's an error from the previous commands
-# trap "docker stop '$container_id'" ERR
+trap "docker stop '$container_id'" ERR
 
 # to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
