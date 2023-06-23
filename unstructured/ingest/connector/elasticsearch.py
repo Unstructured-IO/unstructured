@@ -120,7 +120,9 @@ class ElasticsearchIngestDoc(BaseIngestDoc):
         output_filename = self._output_filename()
         output_filename.parent.mkdir(parents=True, exist_ok=True)
         with open(output_filename, "w") as output_f:
-            output_f.write(json.dumps(self.isd_elems_no_filename, ensure_ascii=False, indent=2))
+            output_f.write(
+                json.dumps(self.isd_elems_no_filename, ensure_ascii=False, indent=2) + "\n",
+            )
         logger.info(f"Wrote {output_filename}")
 
 

@@ -48,7 +48,7 @@ fi
 OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
 
 # Kill the container so the script can be repeatedly run using the same ports
-"docker stop '$container_id'" ERR
+docker stop "$container_id"
 
 # # Kill even when there's an error from the previous commands
 trap "docker stop '$container_id'" ERR
