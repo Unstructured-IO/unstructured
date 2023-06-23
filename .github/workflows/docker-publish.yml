@@ -47,6 +47,7 @@ jobs:
           --progress plain \
           --cache-from $DOCKER_BUILD_REPOSITORY:$ARCH \
           -t $DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA .
+        docker images
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
     - name: Test images
