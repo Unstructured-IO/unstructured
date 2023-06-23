@@ -775,7 +775,7 @@ def test_auto_partition_csv_from_file(filename="example-docs/stanley-cups.csv"):
     assert elements[0].metadata.filetype == "text/csv"
 
 
-def test_autopartition_html_pre_from_file(filename="example-docs/fake-html-pre.htm"):
+def test_auto_partition_html_pre_from_file(filename="example-docs/fake-html-pre.htm"):
     elements = partition(filename=filename)
 
     assert len(elements) > 0

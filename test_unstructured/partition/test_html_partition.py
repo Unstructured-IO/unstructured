@@ -265,7 +265,7 @@ def test_partition_html_can_turn_off_assemble_articles():
     assert elements[-1] == Title("This is outside of the article.")
 
 
-def test_patition_html_eith_pre_tag():
+def test_partition_html_with_pre_tag():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-html-pre.htm")
     elements = partition_html(filename=filename)
 
