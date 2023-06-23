@@ -89,6 +89,7 @@ class FileType(Enum):
     MD = 52
     EPUB = 53
     RST = 54
+    ORG = 55
 
     # Compressed Types
     ZIP = 60
@@ -117,6 +118,7 @@ STR_TO_FILETYPE = {
     "text/tsv": FileType.TSV,
     "text/markdown": FileType.MD,
     "text/x-markdown": FileType.MD,
+    "text/org": FileType.ORG,
     "text/x-rst": FileType.RST,
     "application/epub": FileType.EPUB,
     "application/epub+zip": FileType.EPUB,
@@ -161,6 +163,7 @@ EXT_TO_FILETYPE = {
     ".htm": FileType.HTML,
     ".html": FileType.HTML,
     ".md": FileType.MD,
+    ".org": FileType.ORG,
     ".rst": FileType.RST,
     ".xlsx": FileType.XLSX,
     ".pptx": FileType.PPTX,
@@ -289,7 +292,7 @@ def detect_filetype(
         if file and _check_eml_from_buffer(file=file) is True:
             return FileType.EML
 
-        if extension in [".eml", ".md", ".rtf", ".html", ".rst", ".tsv", ".json"]:
+        if extension in [".eml", ".md", ".rtf", ".html", ".rst", ".org", ".tsv", ".json"]:
             return EXT_TO_FILETYPE.get(extension)
 
         # Safety catch
