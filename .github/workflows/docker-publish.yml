@@ -41,16 +41,6 @@ jobs:
     - name: Build images
       run: |
         ARCH=$(cut -d "/" -f2 <<< ${{ matrix.docker-platform }})
-#        echo DOCKER_BUILDKIT=1 docker buildx build --platform=$ARCH --load \
-#          --build-arg PIP_VERSION=$PIP_VERSION \
-#          --build-arg BUILDKIT_INLINE_CACHE=1 \
-#          --progress plain \
-#          --cache-from $DOCKER_BUILD_REPOSITORY:$ARCH \
-#          -t $DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA .
-        echo DOCKER_BUILDKIT=1 docker build \
-          --build-arg PIP_VERSION=$PIP_VERSION \
-          --progress plain \
-          -t $DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA .
         DOCKER_BUILDKIT=1 docker build --platform=$ARCH \
           --build-arg PIP_VERSION=$PIP_VERSION \
           --progress plain \
