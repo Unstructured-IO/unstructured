@@ -378,6 +378,31 @@ class MainProcess:
     help="Number of days to go back in the history of discord channels, must be an number",
 )
 @click.option(
+    "--ms-client-id",
+    default = None,
+    help="Microsoft app client ID"
+)
+@click.option(
+    "--ms-client-cred",
+    default=None,
+    help="Microsoft App client secret"
+)
+@click.option(
+    "--ms-authority-url",
+    default=None,
+    help="Authentication token provider for MS apps, default is https://login.microsoftonline.com"
+)
+@click.option(
+    "--ms-tenant",
+    default=None,
+    help="ID or domain name associated with your Azure AD instance"
+)
+@click.option(
+    "--ms-user-pname",
+    default=None,
+    help="User principal name, usually is your Azure AD email."
+)
+@click.option(
     "--download-dir",
     help="Where files are downloaded to, defaults to `$HOME/.cache/unstructured/ingest/<SHA256>`.",
 )
@@ -455,6 +480,11 @@ def main(
     discord_channels,
     discord_token,
     discord_period,
+    ms_client_id,
+    ms_client_cred,
+    ms_auth_url,
+    ms_tenant,
+    ms_user_pname,
     download_dir,
     preserve_downloads,
     structured_output_dir,
