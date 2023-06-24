@@ -2,6 +2,8 @@ from typing import IO, Optional, Tuple, Union
 
 import chardet
 
+from unstructured.partition.common import convert_to_bytes
+
 ENCODE_REC_THRESHOLD = 0.5
 
 # popular encodings from https://en.wikipedia.org/wiki/Popularity_of_text_encodings
@@ -46,14 +48,7 @@ def detect_file_encoding(
         with open(filename, "rb") as f:
             byte_data = f.read()
     elif file:
-        if isinstance(file, bytes):
-            byte_data = file
-        else:
-            if not hasattr(file, "mode") or "b" in file.mode:
-                byte_data = file.read()
-            else:
-                with open(file.name, "rb") as f:
-                    byte_data = f.read()
+        byte_data = convert_to_bytes(file)
     else:
         raise FileNotFoundError("No filename nor file were specified")
 

@@ -15,7 +15,7 @@ def initialize():
 
 
 def process_document(doc: "IngestDoc", **partition_kwargs) -> Optional[List[Dict[str, Any]]]:
-    """Process any IngestDoc-like class of document with choosen Unstructured's partition logic.
+    """Process any IngestDoc-like class of document with chosen Unstructured's partition logic.
 
     Parameters
     ----------

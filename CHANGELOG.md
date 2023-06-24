@@ -1,3 +1,15 @@
+## 0.7.9
+
+### Enhancements
+
+* Combine inferred elements with extracted elements (from unstructured-inference bump to 0.5.2) 
+
+### Features
+
+### Fixes
+
+* Configure fallback for OCR token if paddleocr doesn't work to use tesseract (from unstructured-inference bump to 0.5.2) 
+
 ## 0.7.8
 
 ### Enhancements
@@ -8,6 +20,7 @@
 
 ### Fixes
 
+* Updates the `parse_email` for `partition_eml` so that `unstructured-api` passes the smoke tests
 * `partition_email` now works if there is no message content
 * Updates the `"fast"` strategy for `partition_pdf` so that it's able to recursively
 * Adds recursive functionality to all fsspec connectors
