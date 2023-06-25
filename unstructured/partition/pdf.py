@@ -145,7 +145,7 @@ def partition_pdf_or_image(
                 )
 
         elif strategy == "fast":
-            return _partition_pdf_with_pdfminer(
+            layout_elements = _partition_pdf_with_pdfminer(
                 filename=filename,
                 file=spooled_to_bytes_io_if_needed(file),
                 include_page_breaks=include_page_breaks,
@@ -154,7 +154,7 @@ def partition_pdf_or_image(
         elif strategy == "ocr_only":
             # NOTE(robinson): Catches file conversion warnings when running with PDFs
             with warnings.catch_warnings():
-                return _partition_pdf_or_image_with_ocr(
+                layout_elements = _partition_pdf_or_image_with_ocr(
                     filename=filename,
                     file=file,
                     include_page_breaks=include_page_breaks,
@@ -179,7 +179,14 @@ def partition_pdf_or_image(
             include_page_breaks=True,
         )
 
-    return layout_elements
+    sorted_page_elements = sorted(
+        layout_elements,
+        key=lambda el: (
+            round(el.coordinates[0][1]) if el.coordinates else float("inf"),
+            el.coordinates[0][0] if el.coordinates else float("inf"),
+        ),
+    )
+    return sorted_page_elements
 
 
 @requires_dependencies("unstructured_inference")
@@ -328,15 +335,6 @@ def _process_pdfminer_pages(
                     element.coordinates = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
                     element.metadata = metadata
                     page_elements.append(element)
-
-        sorted_page_elements = sorted(
-            page_elements,
-            key=lambda el: (
-                el.coordinates[0][1] if el.coordinates else float("inf"),
-                el.coordinates[0][0] if el.coordinates else float("inf"),
-            ),
-        )
-        elements += sorted_page_elements
 
         if include_page_breaks:
             elements.append(PageBreak())
