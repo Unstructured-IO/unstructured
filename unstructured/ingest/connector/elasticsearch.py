@@ -90,6 +90,7 @@ class ElasticsearchIngestDoc(BaseIngestDoc):
             document = json.loads(jq.compile(self.config.jq_query).input(document).text())
         return self.concatenate_dict_fields(document)
 
+    @requires_dependencies(["elasticsearch"])
     def get_file(self):
         if self.skip_file():
             logger.debug(f"File exists: {self.filename}, skipping download")
@@ -127,6 +128,7 @@ class ElasticsearchIngestDoc(BaseIngestDoc):
 
 
 @dataclass
+@requires_dependencies(["elasticsearch"])
 class ElasticsearchConnector(BaseConnector):
     config: SimpleElasticsearchConfig
 
@@ -136,7 +138,6 @@ class ElasticsearchConnector(BaseConnector):
     def cleanup(self, cur_dir=None):
         return super().cleanup(cur_dir)
 
-    @requires_dependencies(["elasticsearch"])
     def initialize(self):
         self.es = Elasticsearch(self.config.url)
         self.get_all_docs_query = {"query": {"match_all": {}}}

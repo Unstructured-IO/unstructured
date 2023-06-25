@@ -81,6 +81,7 @@ setup(
         "slack": load_requirements("requirements/ingest-slack.in"),
         "wikipedia": load_requirements("requirements/ingest-wikipedia.in"),
         "google-drive": load_requirements("requirements/ingest-google-drive.in"),
+        "elasticsearch": load_requirements("requirements/ingest-elasticsearch.in"),
     },
     package_dir={"unstructured": "unstructured"},
     package_data={"unstructured": ["nlp/*.txt"]},
