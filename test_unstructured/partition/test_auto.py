@@ -784,6 +784,21 @@ def test_auto_partition_works_on_empty_file(filename="example-docs/empty.txt"):
         assert partition(file=f) == []
 
 
+def test_auto_partition_org_from_filename(filename="example-docs/README.org"):
+    elements = partition(filename=filename)
+
+    assert elements[0] == Title("Example Docs")
+    assert elements[0].metadata.filetype == "text/org"
+
+
+def test_auto_partition_org_from_file(filename="example-docs/README.org"):
+    with open(filename, "rb") as f:
+        elements = partition(file=f, content_type="text/org")
+
+    assert elements[0] == Title("Example Docs")
+    assert elements[0].metadata.filetype == "text/org"
+
+
 def test_auto_partition_rst_from_filename(filename="example-docs/README.rst"):
     elements = partition(filename=filename)
 

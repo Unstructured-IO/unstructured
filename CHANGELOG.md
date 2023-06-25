@@ -1,8 +1,20 @@
-## 0.7.8-dev1
+## 0.7.9-dev2
 
 ### Enhancements
 
 * Updated inference package
+* Improvements to string check for leafs in `partition_xml`.
+* Adds --partition-ocr-languages to unstructured-ingest.
+
+### Features
+
+* Adds `partition_org` for processed Org Mode documents.
+
+### Fixes
+
+## 0.7.8
+
+### Enhancements
 
 ### Features
 
@@ -15,6 +27,8 @@
 
 ### Fixes
 
+* Updates the `parse_email` for `partition_eml` so that `unstructured-api` passes the smoke tests
+* `partition_email` now works if there is no message content
 * Updates the `"fast"` strategy for `partition_pdf` so that it's able to recursively
 * Adds recursive functionality to all fsspec connectors
 * Adds generic --recursive ingest flag
