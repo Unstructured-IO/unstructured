@@ -140,7 +140,7 @@ def partition_pdf_or_image(
                     template=out_template,
                     is_image=is_image,
                     infer_table_structure=infer_table_structure,
-                    include_page_breaks=True,
+                    include_page_breaks=include_page_breaks,
                     ocr_languages=ocr_languages,
                 )
 
@@ -179,14 +179,7 @@ def partition_pdf_or_image(
             include_page_breaks=True,
         )
 
-    sorted_page_elements = sorted(
-        layout_elements,
-        key=lambda el: (
-            round(el.coordinates[0][1]) if el.coordinates else float("inf"),
-            el.coordinates[0][0] if el.coordinates else float("inf"),
-        ),
-    )
-    return sorted_page_elements
+    return layout_elements
 
 
 @requires_dependencies("unstructured_inference")
@@ -338,6 +331,15 @@ def _process_pdfminer_pages(
 
         if include_page_breaks:
             elements.append(PageBreak())
+
+        sorted_page_elements = sorted(
+            page_elements,
+            key=lambda el: (
+                el.coordinates[0][1] if el.coordinates else float("inf"),
+                el.coordinates[0][0] if el.coordinates else float("inf"),
+            ),
+        )
+        elements += sorted_page_elements
 
     return elements
 
