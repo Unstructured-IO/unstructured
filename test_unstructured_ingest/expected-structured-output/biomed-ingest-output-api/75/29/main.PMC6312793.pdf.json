@@ -270,16 +270,6 @@
     "text": "https://doi.org/10.1016/j.dib.2018.12.055 2352-3409/& 2018 Published by Elsevier Inc. This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-nc-nd/4.0/)."
   },
   {
-    "type": "PageBreak",
-    "element_id": "5ea24028ea5addabb8f07dfff681501d",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "<PAGE BREAK>"
-  },
-  {
     "type": "UncategorizedText",
     "element_id": "e326e74f4607af7d370e049bc5d9e66a",
     "metadata": {
@@ -710,16 +700,6 @@
     "text": "All times are in minutes and integers. The planning duration is from 5 a.m. to around midnight. Each instance has two classes of trips, short trips and long trips, with 40% short trips and 60% long trips. The duration of a short trip is less than a total of 45 min and the travel time between the start"
   },
   {
-    "type": "PageBreak",
-    "element_id": "5ea24028ea5addabb8f07dfff681501d",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "<PAGE BREAK>"
-  },
-  {
     "type": "UncategorizedText",
     "element_id": "e326e74f4607af7d370e049bc5d9e66a",
     "metadata": {
@@ -1038,16 +1018,6 @@
       "page_number": 3
     },
     "text": "668,279.40 1,195,844.80 1,866,175.20 2,705,617.00 674,191.00 1,199,659.80 1,878,745.20 2,711,180.40 673,585.80 1,200,560.80 1,879,387.00 2,684,983.60"
-  },
-  {
-    "type": "PageBreak",
-    "element_id": "5ea24028ea5addabb8f07dfff681501d",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "<PAGE BREAK>"
   },
   {
     "type": "UncategorizedText",
