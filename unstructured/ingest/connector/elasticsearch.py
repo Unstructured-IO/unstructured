@@ -59,8 +59,6 @@ class ElasticsearchIngestDoc(BaseIngestDoc):
         pass
         """Removes the local copy the file after successful processing."""
         if not self.standard_config.preserve_downloads:
-            # TODO: forward standard config args and uncomment the if clause
-            # if self.config.verbose:
             logger.info(f"Cleaning up document {self.filename}")
             os.unlink(self._tmp_download_file())
 
@@ -93,7 +91,7 @@ class ElasticsearchIngestDoc(BaseIngestDoc):
     @requires_dependencies(["elasticsearch"])
     def get_file(self):
         if self.skip_file():
-            logger.debug(f"File exists: {self.filename}, skipping download")
+            logger.info(f"File exists: {self.filename}, skipping download")
             return
 
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
@@ -113,9 +111,10 @@ class ElasticsearchIngestDoc(BaseIngestDoc):
         with open(self.filename, "w", encoding="utf8") as f:
             f.write(self.document)
 
-    # TODO
     def has_output(self):
-        return super().has_output()
+        """Determine if structured output for this doc already exists."""
+        output_filename = self._output_filename()
+        return output_filename.is_file() and output_filename.stat()
 
     def write_result(self):
         output_filename = self._output_filename()
@@ -131,8 +130,6 @@ class ElasticsearchIngestDoc(BaseIngestDoc):
 @requires_dependencies(["elasticsearch"])
 class ElasticsearchConnector(BaseConnector):
     config: SimpleElasticsearchConfig
-
-    # TODO: update requires_dependencies decorators
 
     # TODO
     def cleanup(self, cur_dir=None):
