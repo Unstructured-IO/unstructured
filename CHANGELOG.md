@@ -1,3 +1,16 @@
+## 0.7.9-dev1
+
+### Enhancements
+
+* Improvements to string check for leafs in `partition_xml`.
+* Adds --partition-ocr-languages to unstructured-ingest.
+
+### Features
+
+* Adds `partition_org` for processed Org Mode documents.
+
+### Fixes
+
 ## 0.7.8
 
 ### Enhancements
