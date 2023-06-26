@@ -337,6 +337,7 @@ def _process_pdfminer_pages(
             key=lambda el: (
                 el.coordinates[0][1] if el.coordinates else float("inf"),
                 el.coordinates[0][0] if el.coordinates else float("inf"),
+                el.id,
             ),
         )
         elements += sorted_page_elements
