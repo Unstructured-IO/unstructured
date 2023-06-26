@@ -140,15 +140,6 @@
     "text": "Putting nuclear risk in context and perspective"
   },
   {
-    "type": "PageBreak",
-    "element_id": "5ea24028ea5addabb8f07dfff681501d",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf"
-    },
-    "text": "<PAGE BREAK>"
-  },
-  {
     "type": "UncategorizedText",
     "element_id": "327be60d66a34747047e1365e6bab727",
     "metadata": {
@@ -167,15 +158,6 @@
       "page_number": 2
     },
     "text": "Registered in England and Wales, company number 01215741. This report represents the views of individual experts, but does not necessarily represent those of any of the World Nuclear Association’s individual member organizations."
-  },
-  {
-    "type": "PageBreak",
-    "element_id": "5ea24028ea5addabb8f07dfff681501d",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf"
-    },
-    "text": "<PAGE BREAK>"
   },
   {
     "type": "UncategorizedText",
@@ -246,15 +228,6 @@
       "page_number": 3
     },
     "text": "1"
-  },
-  {
-    "type": "PageBreak",
-    "element_id": "5ea24028ea5addabb8f07dfff681501d",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf"
-    },
-    "text": "<PAGE BREAK>"
   },
   {
     "type": "UncategorizedText",
@@ -615,15 +588,6 @@
       "page_number": 4
     },
     "text": "2"
-  },
-  {
-    "type": "PageBreak",
-    "element_id": "5ea24028ea5addabb8f07dfff681501d",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf"
-    },
-    "text": "<PAGE BREAK>"
   },
   {
     "type": "UncategorizedText",
@@ -1026,15 +990,6 @@
     "text": "3"
   },
   {
-    "type": "PageBreak",
-    "element_id": "5ea24028ea5addabb8f07dfff681501d",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf"
-    },
-    "text": "<PAGE BREAK>"
-  },
-  {
     "type": "UncategorizedText",
     "element_id": "b6812463b15ddda3f2402dfda95d2c86",
     "metadata": {
@@ -1093,15 +1048,6 @@
       "page_number": 6
     },
     "text": "4"
-  },
-  {
-    "type": "PageBreak",
-    "element_id": "5ea24028ea5addabb8f07dfff681501d",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf"
-    },
-    "text": "<PAGE BREAK>"
   },
   {
     "type": "Title",
@@ -1264,15 +1210,6 @@
     "text": "5"
   },
   {
-    "type": "PageBreak",
-    "element_id": "5ea24028ea5addabb8f07dfff681501d",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf"
-    },
-    "text": "<PAGE BREAK>"
-  },
-  {
     "type": "Title",
     "element_id": "75ed57ac08703850c3e6aa55ac4aea97",
     "metadata": {
@@ -1323,15 +1260,6 @@
     "text": "6"
   },
   {
-    "type": "PageBreak",
-    "element_id": "5ea24028ea5addabb8f07dfff681501d",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf"
-    },
-    "text": "<PAGE BREAK>"
-  },
-  {
     "type": "FigureCaption",
     "element_id": "f58b520072d30c4805940f5c99a306c3",
     "metadata": {
@@ -1380,15 +1308,6 @@
       "page_number": 9
     },
     "text": "7"
-  },
-  {
-    "type": "PageBreak",
-    "element_id": "5ea24028ea5addabb8f07dfff681501d",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf"
-    },
-    "text": "<PAGE BREAK>"
   },
   {
     "type": "UncategorizedText",
@@ -1649,24 +1568,6 @@
       "page_number": 10
     },
     "text": "8"
-  },
-  {
-    "type": "PageBreak",
-    "element_id": "5ea24028ea5addabb8f07dfff681501d",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf"
-    },
-    "text": "<PAGE BREAK>"
-  },
-  {
-    "type": "PageBreak",
-    "element_id": "5ea24028ea5addabb8f07dfff681501d",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf"
-    },
-    "text": "<PAGE BREAK>"
   },
   {
     "type": "Image",
