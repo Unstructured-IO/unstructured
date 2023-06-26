@@ -67,7 +67,6 @@ class GitHubIngestDoc(GitIngestDoc):
 @dataclass
 class GitHubConnector(GitConnector):
     def __post_init__(self) -> None:
-        super().__post_init__()
         from github import Github
 
         self.github = Github(self.config.access_token)

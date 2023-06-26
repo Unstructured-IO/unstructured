@@ -1,4 +1,16 @@
-## 0.7.9-dev2
+## 0.7.10-dev1
+
+### Enhancements
+
+* DRY connector refactor
+
+### Features
+
+### Fixes
+
+* Fix pre tag parsing for `partition_html`
+
+## 0.7.9
 
 ### Enhancements
 
@@ -10,8 +22,6 @@
 * Adds `partition_org` for processed Org Mode documents.
 
 ### Fixes
-
-* Fix pre tag parsing for `partition_html`
 
 ## 0.7.8
 

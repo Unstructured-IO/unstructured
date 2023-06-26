@@ -1,5 +1,4 @@
 import datetime as dt
-import json
 import os
 from dataclasses import dataclass
 from pathlib import Path
@@ -9,6 +8,8 @@ from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
+    ConnectorCleanupMixin,
+    IngestDocCleanupMixin,
     StandardConnectorConfig,
 )
 from unstructured.ingest.logger import logger
@@ -45,7 +46,7 @@ class SimpleDiscordConfig(BaseConnectorConfig):
 
 
 @dataclass
-class DiscordIngestDoc(BaseIngestDoc):
+class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     """Class encapsulating fetching a doc and writing processed results (but not
     doing the processing!).
     Also includes a cleanup method. When things go wrong and the cleanup
@@ -64,17 +65,15 @@ class DiscordIngestDoc(BaseIngestDoc):
         channel_file = self.channel + ".txt"
         return Path(self.standard_config.download_dir) / channel_file
 
+    @property
     def _output_filename(self):
         output_file = self.channel + ".json"
         return Path(self.standard_config.output_dir) / output_file
 
-    def has_output(self):
-        """Determine if structured output for this doc already exists."""
-        return self._output_filename().is_file() and os.path.getsize(self._output_filename())
-
     def _create_full_tmp_dir_path(self):
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
 
+    @BaseIngestDoc.skip_if_file_exists
     @requires_dependencies(dependencies=["discord"], extras="discord")
     def get_file(self):
         """Actually fetches the data from discord and stores it locally."""
@@ -83,20 +82,9 @@ class DiscordIngestDoc(BaseIngestDoc):
         from discord.ext import commands
 
         self._create_full_tmp_dir_path()
-        if (
-            not self.standard_config.re_download
-            and self._tmp_download_file().is_file()
-            and os.path.getsize(self._tmp_download_file())
-        ):
-            if self.config.verbose:
-                logger.debug(f"File exists: {self._tmp_download_file()}, skipping download")
-            return
-
         if self.config.verbose:
             logger.debug(f"fetching {self} - PID: {os.getpid()}")
-
         messages: List[discord.Message] = []
-
         intents = discord.Intents.default()
         intents.message_content = True
         bot = commands.Bot(command_prefix=">", intents=intents)
@@ -123,28 +111,13 @@ class DiscordIngestDoc(BaseIngestDoc):
             for m in messages:
                 f.write(m.content + "\n")
 
-    def write_result(self):
-        """Write the structured json result for this doc. result must be json serializable."""
-        output_filename = self._output_filename()
-        output_filename.parent.mkdir(parents=True, exist_ok=True)
-        with open(output_filename, "w") as output_f:
-            output_f.write(json.dumps(self.isd_elems_no_filename, ensure_ascii=False, indent=2))
-        logger.info(f"Wrote {output_filename}")
-
     @property
     def filename(self):
         """The filename of the file created from a discord channel"""
         return self._tmp_download_file()
 
-    def cleanup_file(self):
-        """Removes the local copy the file after successful processing."""
-        if not self.standard_config.preserve_downloads:
-            if self.config.verbose:
-                logger.info(f"cleaning up channel {self.channel}")
-            os.unlink(self._tmp_download_file())
 
-
-class DiscordConnector(BaseConnector):
+class DiscordConnector(ConnectorCleanupMixin, BaseConnector):
     """Objects of this class support fetching document(s) from"""
 
     config: SimpleDiscordConfig
@@ -155,25 +128,6 @@ class DiscordConnector(BaseConnector):
         config: SimpleDiscordConfig,
     ):
         super().__init__(standard_config, config)
-        self.cleanup_files = not standard_config.preserve_downloads
-
-    def cleanup(self, cur_dir=None):
-        """cleanup linginering empty sub-dirs from s3 paths, but leave remaining files
-        (and their paths) in tact as that indicates they were not processed"""
-        if not self.cleanup_files:
-            return
-
-        if cur_dir is None:
-            cur_dir = self.standard_config.download_dir
-        sub_dirs = os.listdir(cur_dir)
-        os.chdir(cur_dir)
-        for sub_dir in sub_dirs:
-            # don't traverse symlinks, not that there every should be any
-            if os.path.isdir(sub_dir) and not os.path.islink(sub_dir):
-                self.cleanup(sub_dir)
-        os.chdir("..")
-        if len(os.listdir(cur_dir)) == 0:
-            os.rmdir(cur_dir)
 
     def initialize(self):
         """Verify that can get metadata for an object, validates connections info."""
