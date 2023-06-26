@@ -92,20 +92,31 @@ class ElasticsearchIngestDoc(BaseIngestDoc):
             return True
         return False
 
-    def concatenate_dict_fields(self, d):
-        """Concatenates all values for each key in a dictionary.
+    def flatten_values(self, value, seperator="\n", no_value_str=""):
+        """Flattens list or dict objects. Joins each value or item with
+        the seperator character. Keys are not included in the joined string.
+        When a dict value or a list item is None, no_value_str is used to
+        represent that value / item."""
+        if value is None:
+            return no_value_str
+
+        if isinstance(value, list):
+            flattened_values = [self.flatten_values(item, seperator) for item in value]
+            return seperator.join(flattened_values)
+
+        elif isinstance(value, dict):
+            flattened_values = [self.flatten_values(item, seperator) for item in value.values()]
+            return seperator.join(flattened_values)
+
+        else:
+            return str(value)
+
+    def concatenate_dict_fields(self, dictionary, seperator="\n"):
+        """Concatenates all values for each key in a dictionary in a nested manner.
         Used to parse a python dictionary to an aggregated string"""
-        result = ""
-        for key, value in d.items():
-            if value is None:
-                continue
-            elif isinstance(value, dict):
-                # TODO: test this
-                # TODO: add list support for subitems
-                result = self.concatenate_dict_fields(value)
-            else:
-                result += str(value) + "\n"
-        return result
+        values = [self.flatten_values(value, seperator) for value in dictionary.values()]
+        concatenated_values = seperator.join(values)
+        return concatenated_values
 
     def get_text_fields(self, elasticsearch_query_response):
         """Gets specific fields from the document that is fetched,
@@ -154,8 +165,8 @@ class ElasticsearchIngestDoc(BaseIngestDoc):
         logger.info(f"Wrote {output_filename}")
 
 
-@dataclass
 @requires_dependencies(["elasticsearch"])
+@dataclass
 class ElasticsearchConnector(BaseConnector):
     """Fetches particular fields from all documents in a given elasticsearch cluster and index"""
 
