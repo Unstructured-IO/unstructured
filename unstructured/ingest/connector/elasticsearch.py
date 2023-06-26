@@ -92,6 +92,7 @@ class ElasticsearchIngestDoc(BaseIngestDoc):
             return True
         return False
 
+    # TODO: change test fixtures such that nested dictionaries are included in documents
     def flatten_values(self, value, seperator="\n", no_value_str=""):
         """Flattens list or dict objects. Joins each value or item with
         the seperator character. Keys are not included in the joined string.
