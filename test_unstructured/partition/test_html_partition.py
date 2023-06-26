@@ -6,6 +6,7 @@ import pytest
 import requests
 from requests.models import Response
 
+from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import PageBreak, Title
 from unstructured.partition.html import partition_html
 
@@ -271,5 +272,7 @@ def test_partition_html_with_pre_tag():
 
     assert len(elements) > 0
     assert PageBreak() not in elements
+    assert clean_extra_whitespace(elements[0].text) == "[107th Congress Public Law 56]"
+    assert isinstance(elements[0], Title)
     assert elements[0].metadata.filetype == "text/html"
     assert elements[0].metadata.filename == "fake-html-pre.htm"
