@@ -14,7 +14,6 @@
 
 * Improvements to string check for leafs in `partition_xml`.
 * Adds --partition-ocr-languages to unstructured-ingest.
-* DRY connector refactor
 
 ### Features
 
