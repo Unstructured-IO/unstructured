@@ -590,6 +590,24 @@ Examples:
       elements = partition_pptx(file=f)
 
 
+``partition_org``
+---------------------
+
+The ``partition_org`` function processes Org Mode (``.org``) documents. The function
+first converts the document to HTML using ``pandoc`` and then calls ``partition_html``.
+You'll need `pandoc <https://pandoc.org/installing.html>`_ installed on your system
+to use ``partition_org``.
+
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.org import partition_org
+
+  elements = partition_org(filename="example-docs/README.org")
+
+
 ``partition_rst``
 ---------------------
 
@@ -606,7 +624,6 @@ Examples:
   from unstructured.partition.rst import partition_rst
 
   elements = partition_rst(filename="example-docs/README.rst")
-
 
 ``partition_rtf``
 ---------------------

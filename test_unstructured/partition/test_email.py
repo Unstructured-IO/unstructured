@@ -322,7 +322,7 @@ def test_convert_to_iso_8601(time, expected):
     assert iso_time == expected
 
 
-def test_partition_email_raises_with_no_html_content():
+def test_partition_email_still_works_with_no_content():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "email-no-html-content-1.eml")
-    with pytest.raises(ValueError):
-        partition_email(filename=filename)
+    elements = partition_email(filename=filename)
+    assert elements == []
