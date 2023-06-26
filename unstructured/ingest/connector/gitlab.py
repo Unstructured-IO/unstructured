@@ -47,7 +47,6 @@ class GitLabIngestDoc(GitIngestDoc):
 @dataclass
 class GitLabConnector(GitConnector):
     def __post_init__(self) -> None:
-        super().__post_init__()
         from gitlab import Gitlab
 
         self.gitlab = Gitlab(self.config.url, private_token=self.config.access_token)
