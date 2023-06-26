@@ -72,6 +72,8 @@ class XMLDocument(Document):
                 if "<pre>" and "</pre>" in content:
                     tree = etree.HTML(content)
                     for element in tree.xpath("//pre"):
+                        if not element.text:
+                            continue
                         text_content = split_by_paragraph(element.text)
                         for text in text_content:
                             element = etree.Element("span")
