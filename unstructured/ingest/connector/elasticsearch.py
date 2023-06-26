@@ -19,6 +19,14 @@ from unstructured.utils import requires_dependencies
 
 @dataclass
 class SimpleElasticsearchConfig(BaseConnectorConfig):
+    """Connector config where:
+    url is the url to access the elasticsearch server,
+    index_name is the name of the index to reach to,
+
+    and jq_query is a query to get specific fields from each document that is reached,
+    rather than getting and processing all fields in a document.
+    """
+
     url: str
     index_name: str
     jq_query: Optional[str]
@@ -26,12 +34,24 @@ class SimpleElasticsearchConfig(BaseConnectorConfig):
 
 @dataclass
 class ElasticsearchFileMeta:
+    """Metadata specifying:
+    name of the elasticsearch index that is being reached to,
+    and the id of document that is being reached to,
+    """
+
     index_name: str
     document_id: str
 
 
 @dataclass
 class ElasticsearchIngestDoc(BaseIngestDoc):
+    """Class encapsulating fetching a doc and writing processed results (but not
+    doing the processing!).
+
+    Current implementation creates a python Elasticsearch client to fetch each doc,
+    rather than creating a client for each thread.
+    """
+
     config: SimpleElasticsearchConfig
     file_meta: ElasticsearchFileMeta
 
@@ -63,6 +83,7 @@ class ElasticsearchIngestDoc(BaseIngestDoc):
             os.unlink(self._tmp_download_file())
 
     def skip_file(self):
+        """Returns a boolean value indicating if download for a file should be skipped"""
         if (
             not self.standard_config.re_download
             and self.filename.is_file()
@@ -72,17 +93,23 @@ class ElasticsearchIngestDoc(BaseIngestDoc):
         return False
 
     def concatenate_dict_fields(self, d):
+        """Concatenates all values for each key in a dictionary.
+        Used to parse a python dictionary to an aggregated string"""
         result = ""
         for key, value in d.items():
             if value is None:
                 continue
             elif isinstance(value, dict):
-                result = self.iterate_dict(value, result)
+                # TODO: test this
+                # TODO: add list support for subitems
+                result = self.concatenate_dict_fields(value)
             else:
                 result += str(value) + "\n"
         return result
 
     def get_text_fields(self, elasticsearch_query_response):
+        """Gets specific fields from the document that is fetched,
+        based on the jq query in the config"""
         document = elasticsearch_query_response["hits"]["hits"][0]["_source"]
         if self.config.jq_query:
             document = json.loads(jq.compile(self.config.jq_query).input(document).text())
@@ -117,6 +144,7 @@ class ElasticsearchIngestDoc(BaseIngestDoc):
         return output_filename.is_file() and output_filename.stat()
 
     def write_result(self):
+        """Writes processed documents to the disk"""
         output_filename = self._output_filename()
         output_filename.parent.mkdir(parents=True, exist_ok=True)
         with open(output_filename, "w") as output_f:
@@ -129,6 +157,8 @@ class ElasticsearchIngestDoc(BaseIngestDoc):
 @dataclass
 @requires_dependencies(["elasticsearch"])
 class ElasticsearchConnector(BaseConnector):
+    """Fetches particular fields from all documents in a given elasticsearch cluster and index"""
+
     config: SimpleElasticsearchConfig
 
     # TODO
@@ -142,6 +172,7 @@ class ElasticsearchConnector(BaseConnector):
 
     @requires_dependencies(["elasticsearch"])
     def _get_doc_ids(self):
+        """Fetches all document ids in an index"""
         hits = scan(
             self.es,
             query=self.get_all_docs_query,
@@ -152,6 +183,7 @@ class ElasticsearchConnector(BaseConnector):
         return [hit["_id"] for hit in hits]
 
     def get_ingest_docs(self):
+        """Fetches all documents in an index, using ids that are fetched with _get_doc_ids"""
         ids = self._get_doc_ids()
         return [
             ElasticsearchIngestDoc(
