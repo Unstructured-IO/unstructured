@@ -1,4 +1,14 @@
-## 0.7.9-dev2
+## 0.7.10-dev0
+
+### Enhancements
+
+* DRY connector refactor
+
+### Features
+
+### Fixes
+
+## 0.7.9
 
 ### Enhancements
 
