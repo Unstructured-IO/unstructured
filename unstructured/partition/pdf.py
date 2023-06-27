@@ -1,3 +1,4 @@
+import os
 import re
 import warnings
 from tempfile import SpooledTemporaryFile
@@ -37,12 +38,10 @@ from unstructured.utils import requires_dependencies
 def partition_pdf(
     filename: str = "",
     file: Optional[Union[BinaryIO, SpooledTemporaryFile]] = None,
-    token: Optional[str] = None,
     include_page_breaks: bool = False,
     strategy: str = "auto",
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
-    model_name: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Parses a pdf document into a list of interpreted elements.
@@ -75,8 +74,6 @@ def partition_pdf(
     ocr_languages
         The languages to use for the Tesseract agent. To use a language, you'll first need
         to isntall the appropriate Tesseract language pack.
-    model_name
-        A string defining the model to be used. Default None uses default model.
     """
     exactly_one(filename=filename, file=file)
     return partition_pdf_or_image(
@@ -86,7 +83,6 @@ def partition_pdf(
         strategy=strategy,
         infer_table_structure=infer_table_structure,
         ocr_languages=ocr_languages,
-        model_name=model_name,
     )
 
 
@@ -98,7 +94,6 @@ def partition_pdf_or_image(
     strategy: str = "auto",
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
-    model_name: Optional[str] = None,
 ) -> List[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
     # TODO(alan): Extract information about the filetype to be processed from the template
@@ -125,7 +120,6 @@ def partition_pdf_or_image(
                 infer_table_structure=infer_table_structure,
                 include_page_breaks=True,
                 ocr_languages=ocr_languages,
-                model_name=model_name,
             )
 
     elif strategy == "fast":
@@ -157,7 +151,6 @@ def _partition_pdf_or_image_local(
     infer_table_structure: bool = False,
     include_page_breaks: bool = False,
     ocr_languages: str = "eng",
-    model_name: Optional[str] = None,
 ) -> List[Element]:
     """Partition using package installed locally."""
     try:
@@ -180,6 +173,7 @@ def _partition_pdf_or_image_local(
             "running make install-local-inference from the root directory of the repository.",
         ) from e
 
+    model_name = os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME")
     if file is None:
         layout = process_file_with_model(
             filename,
