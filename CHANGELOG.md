@@ -1,4 +1,4 @@
-## 0.7.10-dev0
+## 0.7.10-dev1
 
 ### Enhancements
 
@@ -7,6 +7,8 @@
 ### Features
 
 ### Fixes
+
+* Fix pre tag parsing for `partition_html`
 
 ## 0.7.9
 
@@ -198,7 +200,7 @@
 
 ### Enhancements
 
-* XLS support from auto partiton
+* XLS support from auto partition
 
 ### Features
 
