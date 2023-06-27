@@ -47,7 +47,7 @@ def _split_content_size_n(content: str, n: int) -> List[str]:
     return segments
 
 
-def _split_to_fit_max_content(content: str, max_partition: int = 1500):
+def _split_to_fit_max_content(content: str, max_partition: int = 1500) -> List[str]:
     """Splits a section of content so that all of the elements fit into the
     max partition window."""
     sentences = sent_tokenize(content)
