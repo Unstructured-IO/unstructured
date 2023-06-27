@@ -86,9 +86,9 @@ def test_replace_mime_encodings_works_with_different_encodings():
     text = "5 w=E2=80-99s=E2=80-92"
     assert core.replace_mime_encodings(text=text, encoding="latin-1") == "5 wâ\x80-99sâ\x80-92"
 
+
 def test_replace_mime_encodings_works_with_right_to_left_encodings():
     text = "=EE=E0=E9=E4"
-    print(core.replace_mime_encodings(text=text, encoding="iso-8859-8"))
     assert core.replace_mime_encodings(text=text, encoding="iso-8859-8") == "מאיה"
 
 
