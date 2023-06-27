@@ -25,15 +25,24 @@ from unstructured.partition.text_type import (
 )
 
 
-def split_by_paragraph(content: str) -> List[str]:
-    return re.split(PARAGRAPH_PATTERN, content)
+def split_by_paragraph(content: str, max_partition: Optional[int] = 1500) -> List[str]:
+    paragraphs = re.split(PARAGRAPH_PATTERN, content)
+    if max_partition is None:
+        return paragraphs
+
+    split_paragraphs = []
+    for paragraph in paragraphs:
+        split_paragraphs.extend(
+            _split_to_fit_max_content(paragraph, max_partition=max_partition),
+        )
+    return split_paragraphs
 
 
 def _split_content_size_n(content: str, n: int) -> List[str]:
     """Splits a string into chunks that are at most size n."""
     segments = []
     for i in range(0, len(content), n):
-        segment = content[i : i + n]
+        segment = content[i : i + n]  # noqa: E203
         segments.append(segment)
     return segments
 
