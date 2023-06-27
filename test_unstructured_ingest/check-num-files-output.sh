@@ -4,14 +4,14 @@
 #
 # Arguments:
 #   - $1: The expected number of files in the output directory.
-#   - $2: Name of the output folder. This is used to determine the test directory path.
+#   - $2: Name of the output folder. This is used to determine the structured output path.
 
 set +e
 set -x
 
 EXPECTED_NUM_FILES=$1
 OUTPUT_FOLDER_NAME=$2
-SCRIPT_DIR=$(dirname "$(realpath "$0")")
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 
 if [[ "$(find "$OUTPUT_DIR" -type f -exec printf '.' \; | wc -c | xargs)" != "$EXPECTED_NUM_FILES" ]]; then

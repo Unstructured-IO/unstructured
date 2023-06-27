@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
-# Description: If the environment variable OVERWRITE_FIXTURES is set to "true", then this script will copy the output
-#              files to the expected output directory. Otherwise, it will compare the output files to the expected
+# Description: This will compare the structured output files to the expected
 #              output files and exit with an error if they are different.
+#              If the environment variable OVERWRITE_FIXTURES is set to "true", 
+#              then this script will instead copy the output files to the expected output directory.
 #
 # Arguments:
 #   - $1: Name of the output folder. This is used to determine the output directory and the expected output directory paths.
@@ -12,7 +13,7 @@
 
 set +e
 
-SCRIPT_DIR=$(dirname "$(realpath "$0")")
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
 OUTPUT_FOLDER_NAME=$1
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
