@@ -15,6 +15,7 @@ from unstructured.documents.elements import (
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
+from unstructured.nlp.tokenize import sent_tokenize
 from unstructured.partition.common import exactly_one
 from unstructured.partition.text_type import (
     is_bulleted_text,
@@ -26,6 +27,39 @@ from unstructured.partition.text_type import (
 
 def split_by_paragraph(content: str) -> List[str]:
     return re.split(PARAGRAPH_PATTERN, content)
+
+
+def _split_content_size_n(content: str, n: int) -> List[str]:
+    """Splits a string into chunks that are at most size n."""
+    segments = []
+    for i in range(0, len(content), n):
+        segment = content[i : i + n]
+        segments.append(segment)
+    return segments
+
+
+def _split_to_fit_max_content(content: str, max_partition: int = 1500):
+    """Splits a section of content so that all of the elements fit into the
+    max partition window."""
+    sentences = sent_tokenize(content)
+    num_sentences = len(sentences)
+
+    chunks = []
+    chunk = ""
+
+    for i, sentence in enumerate(sentences):
+        if len(sentence) > max_partition:
+            chunks.extend(_split_content_size_n(sentence, n=max_partition))
+
+        if len(chunk + " " + sentence) > max_partition:
+            chunks.append(chunk)
+            chunk = sentence
+        else:
+            chunk += " " + sentence
+            if i == num_sentences - 1:
+                chunks.append(chunk)
+
+    return chunks
 
 
 @process_metadata()
