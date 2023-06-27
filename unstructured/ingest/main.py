@@ -790,6 +790,25 @@ def main(
                 decay=biomed_decay,
             ),
         )
+    elif ms_client_id or ms_user_pname:
+        from unstructured.ingest.connector.one_drive import (
+            OneDriveConnector,
+            SimpleOneDriveConfig
+        )
+
+        doc_connector = OneDriveConnector(
+            standard_config=standard_config,
+            config=SimpleOneDriveConfig(
+                client_id= ms_client_id,
+                client_credential= ms_client_cred,
+                authority_url=ms_auth_url,
+                tenant=ms_tenant,
+                user_pname=ms_user_pname,
+                recursive=standard_config.recursive
+            )
+            
+        )
+    
     elif local_input_path:
         from unstructured.ingest.connector.local import (
             LocalConnector,

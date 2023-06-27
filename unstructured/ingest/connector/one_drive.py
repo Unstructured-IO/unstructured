@@ -1,7 +1,9 @@
+import json
 import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING
+from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
@@ -15,6 +17,8 @@ from unstructured.utils import requires_dependencies
 if TYPE_CHECKING:
     from office365.onedrive.driveitems import driveItem
 
+
+MAX_MB_SIZE = 512_000_000
 
 @dataclass
 class SimpleOneDriveConfig(BaseConnectorConfig):
@@ -57,27 +61,94 @@ class OneDriveIngestDoc(BaseIngestDoc):
     file: "driveItem"
 
     def __post_init__(self):
-        self.fname = self.file.name
-        self.fpath = self.file.get_property('parentReference','').split(':')[-1]
+        self.ext = ''.join(Path(self.file.name).suffixes)
+        if not self.ext:
+            raise ValueError(f"Unsupported file without extension. ")
+        
+        if self.ext not in EXT_TO_FILETYPE.keys():
+            raise ValueError(
+                f"Extension not supported. "
+                f"Value MUST be one of {', '.join([k for k in EXT_TO_FILETYPE if k is not None])}.",
+            )
+        self._set_download_paths()
+
+    def _set_download_paths(self) -> str:
+        """Sets download and output directories"""
+        dpath = Path(f'{self.standard_config.download_dir}')
+        opath = Path(f'{self.standard_config.output_dir}')
+
+        if pref := self.file.get_property('parentReference',None):
+            odir = pref.path.split(':')[-1]
+            dpath = dpath if odir == '' else (dpath/odir).resolve()
+            opath = opath if odir == '' else (opath/odir).resolve()
+         
+        dname = f'{self.file.get_property("id")}-{self.file.name}'
+        self.download_dir = dpath
+        self.download_filepath = (dpath / dname).resolve()
+        oname = f'{self.fname[:-len(self.ext)]}.json'
+        self.output_dir = opath
+        self.output_filepath = (opath / oname).resolve()
 
     @property
     def filename(self):
-        pass
+        return Path(self.download_filepath).resolve()
 
     def _output_filename(self):
-        pass
+        return Path(self.output_filepath).resolve()
 
     def cleanup_file(self):
-        pass
+        if (
+            not self.standard_config.preserve_downloads
+            and self.filename.is_file()
+            and not self.standard_config.download_only
+        ):
+            logger.debug(f"Cleaning up {self}")
+            Path.unlink(self.filename)
 
     def has_output(self) -> bool:
-        pass
+        """Determine if structured output for this doc already exists."""
+        return self._output_filename.is_file() and self._output_filename.stat()
 
+    @requires_dependencies(['office365'])
     def get_file(self):
-        pass
+        if (
+            not self.standard_config.re_download
+            and self.filename.is_file()
+            and self.filename.stat()
+        ):
+            logger.debug(f"File exists: {self.filename}, skipping download")
+            return
+
+        try:
+            fsize = self.file.get_property('size', 0)
+            self.output_dir.mkdir(parents=True, exist_ok=True)
+            if fsize > MAX_MB_SIZE:
+                logger.info(f'Downloading file with size: {fsize} bytes in chunks')
+                with self.filename.open(mode='wb') as f:
+                    self.file.download_session(f, chunk_size = 1024 * 1024 * 100).execute_query()
+            else:
+                with self.filename.open(mode='wb') as f:
+                    self.file.download(f).execute_query()
+
+        except Exception as e:
+            logger.error(f"Error while downloading and saving file: {self.filename}.")
+            logger.error(e)
+            return
+
+        logger.info(f'File downloaded: {self.filename}')
+        return
 
     def write_result(self):
-        pass
+        """Write the structured json result for this doc. result must be json serializable."""
+        if self.standard_config.download_only:
+            return
+        output_filename = self._output_filename()
+        output_filename.parent.mkdir(parents=True, exist_ok=True)
+        with output_filename.open(mode='w') as output_f:
+            output_f.write(json.dumps(self.isd_elems_no_filename, ensure_ascii=False, indent=2))
+        logger.info(f"Wrote {output_filename}")
+
+            
 
 class OneDriveConnector(BaseConnector):
 
