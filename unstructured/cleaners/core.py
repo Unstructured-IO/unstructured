@@ -3,14 +3,14 @@ import re
 import sys
 import unicodedata
 
+from unstructured.file_utils.encoding import (
+    format_encoding_str,
+)
 from unstructured.nlp.patterns import (
     DOUBLE_PARAGRAPH_PATTERN_RE,
     PARAGRAPH_PATTERN,
     PARAGRAPH_PATTERN_RE,
     UNICODE_BULLETS_RE,
-)
-from unstructured.file_utils.encoding import (
-    format_encoding_str,
 )
 
 

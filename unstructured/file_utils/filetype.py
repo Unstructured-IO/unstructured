@@ -280,11 +280,10 @@ def detect_filetype(
             return FileType.XML
 
     elif mime_type in TXT_MIME_TYPES or mime_type.startswith("text"):
-        
         if not encoding:
             encoding = "utf-8"
         formatted_encoding = format_encoding_str(encoding)
-        
+
         # NOTE(crag): for older versions of the OS libmagic package, such as is currently
         # installed on the Unstructured docker image, .json files resolve to "text/plain"
         # rather than "application/json". this corrects for that case.

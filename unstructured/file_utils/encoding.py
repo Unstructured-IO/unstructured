@@ -44,7 +44,7 @@ def format_encoding_str(encoding: str) -> str:
     # Special case for Arabic and Hebrew charsets with directional annotations
     annotated_encodings = ["iso-8859-6-i", "iso-8859-6-e", "iso-8859-8-i", "iso-8859-8-e"]
     if formatted_encoding in annotated_encodings:
-        formatted_encoding = formatted_encoding[:-2] # remove the annotation
+        formatted_encoding = formatted_encoding[:-2]  # remove the annotation
 
     return formatted_encoding
 
@@ -92,7 +92,7 @@ def detect_file_encoding(
         file_text = byte_data.decode(encoding)
 
     formatted_encoding = format_encoding_str(encoding)
-    
+
     return formatted_encoding, file_text
 
 
