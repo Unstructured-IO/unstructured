@@ -122,6 +122,7 @@ def test_partition_pdf_with_spooled_file(
         assert {element.metadata.page_number for element in result} == {1, 2}
 
 
+@mock.patch.dict(os.environ, {"UNSTRUCTURED_HI_RES_MODEL_NAME": "checkbox"})
 def test_partition_pdf_with_model_name(
     monkeypatch,
     filename="example-docs/layout-parser-paper-fast.pdf",
@@ -131,10 +132,16 @@ def test_partition_pdf_with_model_name(
         "is_pdf_text_extractable",
         lambda *args, **kwargs: True,
     )
-    with mock.patch.object(pdf, "_partition_pdf_or_image_local", mock.MagicMock()):
+    with mock.patch.object(layout, "process_file_with_model", mock.MagicMock()) as mock_process:
         pdf.partition_pdf(
             filename=filename,
             strategy="hi_res",
+        )
+        mock_process.assert_called_once_with(
+            filename,
+            is_image=False,
+            ocr_languages="eng",
+            extract_tables=False,
             model_name="checkbox",
         )
 
