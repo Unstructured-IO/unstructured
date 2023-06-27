@@ -62,6 +62,10 @@ install-ingest-google-drive:
 install-ingest-s3:
 	python3 -m pip install -r requirements/ingest-s3.txt
 
+.PHONY: install-ingest-gcs
+install-ingest-gcs:
+	python3 -m pip install -r requirements/ingest-gcs.txt
+
 .PHONY: install-ingest-azure
 install-ingest-azure:
 	python3 -m pip install -r requirements/ingest-azure.txt
@@ -97,16 +101,6 @@ install-ingest-elasticsearch:
 install-unstructured-inference:
 	python3 -m pip install -r requirements/local-inference.txt
 
-.PHONY: install-tensorboard
-install-tensorboard:
-	@if [ ${ARCH} = "arm64" ] || [ ${ARCH} = "aarch64" ]; then\
-		python3 -m pip install tensorboard>=2.12.2;\
-	fi
-
-.PHONY: install-detectron2
-install-detectron2: install-tensorboard
-	python3 -m pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@e2ce8dc#egg=detectron2"
-
 ## install-local-inference: installs requirements for local inference
 .PHONY: install-local-inference
 install-local-inference: install install-unstructured-inference
@@ -130,6 +124,7 @@ pip-compile:
 	# sphinx docs looks for additional requirements
 	cp requirements/build.txt docs/requirements.txt
 	pip-compile --upgrade requirements/ingest-s3.in
+	pip-compile --upgrade requirements/ingest-gcs.in
 	pip-compile --upgrade requirements/ingest-azure.in
 	pip-compile --upgrade requirements/ingest-discord.in
 	pip-compile --upgrade requirements/ingest-reddit.in

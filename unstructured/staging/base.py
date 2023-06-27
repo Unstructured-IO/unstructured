@@ -5,6 +5,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import pandas as pd
 
+from unstructured.documents import coordinates as coordinates_module
 from unstructured.documents.elements import (
     TYPE_TO_TEXT_ELEMENT_MAP,
     CheckBox,
@@ -19,6 +20,9 @@ TABLE_FIELDNAMES: List[str] = [
     "text",
     "element_id",
     "coordinates",
+    "coordinate_system",
+    "layout_width",
+    "layout_height",
     "filename",
     "page_number",
     "url",
@@ -47,6 +51,7 @@ def elements_to_json(
     elements: List[Element],
     filename: Optional[str] = None,
     indent: int = 4,
+    encoding: str = "utf-8",
 ) -> Optional[str]:
     """
     Saves a list of elements to a JSON file if filename is specified.
@@ -54,7 +59,7 @@ def elements_to_json(
     """
     element_dict = convert_to_dict(elements)
     if filename is not None:
-        with open(filename, "w") as f:
+        with open(filename, "w", encoding=encoding) as f:
             json.dump(element_dict, f, indent=indent)
             return None
     else:
@@ -71,6 +76,14 @@ def isd_to_elements(isd: List[Dict[str, Any]]) -> List[Element]:
         coordinates: Optional[Tuple[Tuple[float, float], ...]] = None
         if coord_value is not None:
             coordinates = tuple((x, y) for x, y in coord_value)
+        coordinate_system_name: Optional[str] = item.get("coordinate_system")
+        if coordinate_system_name is not None:
+            width = item["layout_width"]
+            height = item["layout_height"]
+            coordinate_system_class = getattr(coordinates_module, coordinate_system_name)
+            coordinate_system = coordinate_system_class(width, height)
+        else:
+            coordinate_system = None
 
         metadata = ElementMetadata()
         _metadata_dict = item.get("metadata")
@@ -85,6 +98,7 @@ def isd_to_elements(isd: List[Dict[str, Any]]) -> List[Element]:
                     element_id=element_id,
                     metadata=metadata,
                     coordinates=coordinates,
+                    coordinate_system=coordinate_system,
                 ),
             )
         elif item["type"] == "CheckBox":
@@ -94,6 +108,7 @@ def isd_to_elements(isd: List[Dict[str, Any]]) -> List[Element]:
                     element_id=element_id,
                     metadata=metadata,
                     coordinates=coordinates,
+                    coordinate_system=coordinate_system,
                 ),
             )
 
@@ -105,12 +120,16 @@ def dict_to_elements(element_dict: List[Dict[str, Any]]) -> List[Element]:
     return isd_to_elements(element_dict)
 
 
-def elements_from_json(filename: str = "", text: str = "") -> List[Element]:
+def elements_from_json(
+    filename: str = "",
+    text: str = "",
+    encoding: str = "utf-8",
+) -> List[Element]:
     """Loads a list of elements from a JSON file or a string."""
     exactly_one(filename=filename, text=text)
 
     if filename:
-        with open(filename) as f:
+        with open(filename, encoding=encoding) as f:
             element_dict = json.load(f)
         return dict_to_elements(element_dict)
     else:

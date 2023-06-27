@@ -36,15 +36,18 @@ def test_partition_msg_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
     elements = partition_msg(filename=filename)
     assert elements == EXPECTED_MSG_OUTPUT
-    assert elements[0].metadata == ElementMetadata(
-        filename=filename,
-        date="2022-12-16T17:04:16-05:00",
-        page_number=1,
-        url=None,
-        sent_from=["Matthew Robinson <mrobinson@unstructured.io>"],
-        sent_to=["Matthew Robinson (None)"],
-        subject="Test Email",
-        filetype="application/vnd.ms-outlook",
+    assert (
+        elements[0].metadata.to_dict()
+        == ElementMetadata(
+            filename=filename,
+            date="2022-12-16T17:04:16-05:00",
+            page_number=None,
+            url=None,
+            sent_from=["Matthew Robinson <mrobinson@unstructured.io>"],
+            sent_to=["Matthew Robinson (None)"],
+            subject="Test Email",
+            filetype="application/vnd.ms-outlook",
+        ).to_dict()
     )
 
 

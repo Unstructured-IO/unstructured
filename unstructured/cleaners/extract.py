@@ -1,6 +1,6 @@
 import datetime
 import re
-from typing import List
+from typing import List, Optional
 
 from unstructured.nlp.patterns import (
     EMAIL_ADDRESS_PATTERN,
@@ -75,9 +75,12 @@ def extract_mapi_id(text: str) -> List[str]:
     return mapi_ids
 
 
-def extract_datetimetz(text: str) -> datetime.datetime:
-    date_string = re.findall(EMAIL_DATETIMETZ_PATTERN, text)
-    return datetime.datetime.strptime(date_string[0], "%a, %d %b %Y %H:%M:%S %z")
+def extract_datetimetz(text: str) -> Optional[datetime.datetime]:
+    date_extractions = re.findall(EMAIL_DATETIMETZ_PATTERN, text)
+    if len(date_extractions) > 0:
+        return datetime.datetime.strptime(date_extractions[0], "%a, %d %b %Y %H:%M:%S %z")
+    else:
+        return None
 
 
 def extract_us_phone_number(text: str):

@@ -3,6 +3,7 @@ import json
 import os
 import pathlib
 import platform
+from tempfile import NamedTemporaryFile
 
 import pandas as pd
 import pytest
@@ -19,6 +20,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
+from unstructured.partition.text import partition_text
 from unstructured.staging import base
 
 
@@ -134,3 +136,11 @@ def test_serialized_deserialize_elements_to_json(tmpdir):
     elements_str = base.elements_to_json(elements)
     new_elements_text = base.elements_from_json(text=elements_str)
     assert elements == new_elements_text
+
+
+def test_read_and_write_json_with_encoding(filename="example-docs/fake-text-utf-16-be.txt"):
+    elements = partition_text(filename=filename)
+    with NamedTemporaryFile() as tempfile:
+        base.elements_to_json(elements, filename=tempfile.name, encoding="utf-16")
+        new_elements_filename = base.elements_from_json(filename=tempfile.name, encoding="utf-16")
+    assert elements == new_elements_filename

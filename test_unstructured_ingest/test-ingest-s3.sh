@@ -12,12 +12,13 @@ if [[ "$(find test_unstructured_ingest/expected-structured-output/s3-small-batch
 fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-    --metadata-exclude filename,file_directory \
+    --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
     --remote-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
     --s3-anonymous \
     --structured-output-dir s3-small-batch-output \
     --preserve-downloads \
     --partition-strategy hi_res \
+    --download-dir files-ingest-download/s3 \
     --reprocess
 
 OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}

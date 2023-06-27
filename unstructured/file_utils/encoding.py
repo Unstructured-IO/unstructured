@@ -2,6 +2,8 @@ from typing import IO, Optional, Tuple, Union
 
 import chardet
 
+from unstructured.partition.common import convert_to_bytes
+
 ENCODE_REC_THRESHOLD = 0.5
 
 # popular encodings from https://en.wikipedia.org/wiki/Popularity_of_text_encodings
@@ -27,6 +29,17 @@ COMMON_ENCODINGS = [
 ]
 
 
+def format_encoding_str(encoding: str) -> str:
+    """Format input encoding string (e.g., `utf-8`, `iso-8859-1`, etc).
+    Parameters
+    ----------
+    encoding
+        The encoding string to be formatted (e.g., `UTF-8`, `utf_8`, `ISO-8859-1`, `iso_8859_1`,
+        etc).
+    """
+    return encoding.lower().replace("_", "-")
+
+
 def detect_file_encoding(
     filename: str = "",
     file: Optional[Union[bytes, IO]] = None,
@@ -35,14 +48,7 @@ def detect_file_encoding(
         with open(filename, "rb") as f:
             byte_data = f.read()
     elif file:
-        if isinstance(file, bytes):
-            byte_data = file
-        else:
-            if not hasattr(file, "mode") or "b" in file.mode:
-                byte_data = file.read()
-            else:
-                with open(file.name, "rb") as f:
-                    byte_data = f.read()
+        byte_data = convert_to_bytes(file)
     else:
         raise FileNotFoundError("No filename nor file were specified")
 
@@ -54,8 +60,11 @@ def detect_file_encoding(
         # Encoding detection failed, fallback to predefined encodings
         for enc in COMMON_ENCODINGS:
             try:
-                with open(filename, encoding=enc) as f:
-                    file_text = f.read()
+                if filename:
+                    with open(filename, encoding=enc) as f:
+                        file_text = f.read()
+                else:
+                    file_text = byte_data.decode(enc)
                 encoding = enc
                 break
             except (UnicodeDecodeError, UnicodeError):
@@ -106,4 +115,6 @@ def read_txt_file(
     else:
         raise FileNotFoundError("No filename was specified")
 
-    return encoding, file_text
+    formatted_encoding = format_encoding_str(encoding)
+
+    return formatted_encoding, file_text

@@ -15,10 +15,15 @@ def test_normalize_layout_element_dict():
     layout_element = {
         "type": "Title",
         "coordinates": [[1, 2], [3, 4], [5, 6], [7, 8]],
+        "coordinate_system": None,
         "text": "Some lovely text",
     }
     element = common.normalize_layout_element(layout_element)
-    assert element == Title(text="Some lovely text", coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]])
+    assert element == Title(
+        text="Some lovely text",
+        coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]],
+        coordinate_system=None,
+    )
 
 
 def test_normalize_layout_element_dict_caption():
@@ -147,3 +152,19 @@ def test_normalize_layout_element_bulleted_list():
         ListItem(text="You're cool too.", coordinates=((1, 2), (1, 4), (3, 4), (3, 2))),
         ListItem(text="We're all cool!", coordinates=((1, 2), (1, 4), (3, 4), (3, 2))),
     ]
+
+
+class MockPopenWithError:
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def communicate(self):
+        return b"", b"an error occurred"
+
+
+def test_convert_office_doc_captures_errors(monkeypatch, caplog):
+    import subprocess
+
+    monkeypatch.setattr(subprocess, "Popen", MockPopenWithError)
+    common.convert_office_doc("no-real.docx", "fake-directory", target_format="docx")
+    assert "an error occurred" in caplog.text
