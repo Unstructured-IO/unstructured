@@ -5,8 +5,7 @@ cd "$SCRIPT_DIR"/.. || exit 1
 
 # Create the elasticsearch cluster and get the container id
 output=$(docker run -d --rm -p 9200:9200 -p 9300:9300 -e "xpack.security.enabled=false" -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:8.7.0)
-container_id=$(echo $output | cut -c 1-12)
-echo $container
+container_id=$(echo "$output" | cut -c 1-12)
 
 url="http://localhost:9200/_cluster/health"
 status_code=0
@@ -51,14 +50,14 @@ OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
 docker stop "$container_id"
 
 # # Kill even when there's an error from the previous commands
-trap 'docker stop '\'$container_id\' ERR
+trap 'docker stop "$container_id"' ERR
 
 # to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
 
     cp -R elasticsearch-ingest-output/* test_unstructured_ingest/expected-structured-output/elasticsearch-ingest-output/
 
-elif ! diff -ru test_unstructured_ingest/expected-structured-output/elasticsearch-ingest-output elasticsearch-ingest-output ; then
+elif ! diff -ru --ignore-matching-lines="date_processed" test_unstructured_ingest/expected-structured-output/elasticsearch-ingest-output elasticsearch-ingest-output ; then
     echo
     echo "There are differences from the previously checked-in structured outputs."
     echo

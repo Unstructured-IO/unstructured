@@ -13,7 +13,7 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 # Create the elasticsearch cluster and get the container id
 output=$(docker run -d --rm -p 9200:9200 -p 9300:9300 -e "xpack.security.enabled=false" -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:8.7.0)
 container_id=$(echo "$output" | cut -c 1-12)
-echo "$container_id"
+
 
 url="http://localhost:9200/_cluster/health"
 status_code=0
@@ -55,4 +55,4 @@ fi
 # Kill the container so the script can be repeatedly run using the same ports
 docker stop "$container_id"
 # Kill even when there's an error from the previous commands
-trap 'docker stop '\'$container_id\' ERR
+trap 'docker stop "$container_id"' ERR
