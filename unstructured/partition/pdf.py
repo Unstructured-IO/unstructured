@@ -51,11 +51,6 @@ def partition_pdf(
         A string defining the target filename path.
     file
         A file-like object as bytes --> open(filename, "rb").
-    url
-        A string endpoint to self-host an inference API, if desired. If None, local inference will
-        be used.
-    token
-        A string defining the authentication token for a self-host url, if applicable.
     strategy
         The strategy to use for partitioning the PDF. Valid strategies are "hi_res",
         "ocr_only", and "fast". When using the "hi_res" strategy, the function uses

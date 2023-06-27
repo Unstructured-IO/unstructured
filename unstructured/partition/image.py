@@ -22,11 +22,6 @@ def partition_image(
         A string defining the target filename path.
     file
         A file-like object as bytes --> open(filename, "rb").
-    url
-        A string endpoint to self-host an inference API, if desired. If None, local inference will
-        be used.
-    token
-        A string defining the authentication token for a self-host url, if applicable.
     ocr_languages
         The languages to use for the Tesseract agent. To use a language, you'll first need
         to install the appropriate Tesseract language pack.
