@@ -45,6 +45,7 @@ def partition_pdf(
     strategy: str = "auto",
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
+    model_name: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Parses a pdf document into a list of interpreted elements.
@@ -92,6 +93,7 @@ def partition_pdf(
         strategy=strategy,
         infer_table_structure=infer_table_structure,
         ocr_languages=ocr_languages,
+        model_name=model_name,
     )
 
 
@@ -106,6 +108,7 @@ def partition_pdf_or_image(
     strategy: str = "auto",
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
+    model_name: Optional[str] = None,
 ) -> List[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
     if url is None:
@@ -139,6 +142,7 @@ def partition_pdf_or_image(
                     infer_table_structure=infer_table_structure,
                     include_page_breaks=True,
                     ocr_languages=ocr_languages,
+                    model_name=model_name,
                 )
 
         elif strategy == "fast":
@@ -188,6 +192,7 @@ def _partition_pdf_or_image_local(
     infer_table_structure: bool = False,
     include_page_breaks: bool = False,
     ocr_languages: str = "eng",
+    model_name: Optional[str] = None,
 ) -> List[Element]:
     """Partition using package installed locally."""
     try:
@@ -217,6 +222,7 @@ def _partition_pdf_or_image_local(
             is_image=is_image,
             ocr_languages=ocr_languages,
             extract_tables=infer_table_structure,
+            model_name=model_name,
         )
     else:
         layout = process_data_with_model(
@@ -225,6 +231,7 @@ def _partition_pdf_or_image_local(
             is_image=is_image,
             ocr_languages=ocr_languages,
             extract_tables=infer_table_structure,
+            model_name=model_name,
         )
 
     return document_to_element_list(layout, include_page_breaks=include_page_breaks)
