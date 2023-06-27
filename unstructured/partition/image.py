@@ -9,12 +9,10 @@ from unstructured.partition.pdf import partition_pdf_or_image
 def partition_image(
     filename: str = "",
     file: Optional[bytes] = None,
-    url: Optional[str] = None,
-    template: Optional[str] = None,
-    token: Optional[str] = None,
     include_page_breaks: bool = False,
     ocr_languages: str = "eng",
     strategy: str = "auto",
+    model_name: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Parses an image into a list of interpreted elements.
@@ -46,16 +44,11 @@ def partition_image(
     """
     exactly_one(filename=filename, file=file)
 
-    if template is None:
-        template = "layout/image"
-
     return partition_pdf_or_image(
         filename=filename,
         file=file,
-        url=url,
-        template=template,
-        token=token,
         include_page_breaks=include_page_breaks,
         ocr_languages=ocr_languages,
         strategy=strategy,
+        model_name=model_name,
     )

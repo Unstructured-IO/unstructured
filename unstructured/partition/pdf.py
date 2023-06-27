@@ -83,7 +83,6 @@ def partition_pdf(
     return partition_pdf_or_image(
         filename=filename,
         file=file,
-        token=token,
         include_page_breaks=include_page_breaks,
         strategy=strategy,
         infer_table_structure=infer_table_structure,
