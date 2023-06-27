@@ -1,6 +1,6 @@
 import json
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
@@ -24,10 +24,10 @@ MAX_MB_SIZE = 512_000_000
 class SimpleOneDriveConfig(BaseConnectorConfig):
 
     client_id: str
-    client_credential: str
-    authority_url: str = 'https://login.microsoftonline.com'
-    tenant: str = 'common'
-    user_pname: str
+    client_credential: str = field(repr=False)
+    user_pname: str 
+    tenant: str= field(repr=False)
+    authority_url: str = field(repr=False)
     recursive: bool = False
 
     def __post_init__(self):
@@ -43,7 +43,7 @@ class SimpleOneDriveConfig(BaseConnectorConfig):
         from msal import ConfidentialClientApplication
         try:
             app = ConfidentialClientApplication(
-                authority=self.authority_url,
+                authority=f'{self.authority_url}/{self.tenant}',
                 client_id=self.client_id,
                 client_credential=self.client_credential)
             token = app.acquire_token_for_client(scopes=["https://graph.microsoft.com/.default"])
@@ -51,8 +51,6 @@ class SimpleOneDriveConfig(BaseConnectorConfig):
             logger.error("Couldn't set up credentials for OneDrive")
             raise exc
         return token
-
-
 
 @dataclass
 class OneDriveIngestDoc(BaseIngestDoc):
@@ -85,7 +83,7 @@ class OneDriveIngestDoc(BaseIngestDoc):
         dname = f'{self.file.get_property("id")}-{self.file.name}'
         self.download_dir = dpath
         self.download_filepath = (dpath / dname).resolve()
-        oname = f'{self.fname[:-len(self.ext)]}.json'
+        oname = f'{dname[:-len(self.ext)]}.json'
         self.output_dir = opath
         self.output_filepath = (opath / oname).resolve()
 
@@ -107,7 +105,7 @@ class OneDriveIngestDoc(BaseIngestDoc):
 
     def has_output(self) -> bool:
         """Determine if structured output for this doc already exists."""
-        return self._output_filename.is_file() and self._output_filename.stat()
+        return self._output_filename().is_file() and self._output_filename().stat()
 
     @requires_dependencies(['office365'])
     def get_file(self):
@@ -122,6 +120,11 @@ class OneDriveIngestDoc(BaseIngestDoc):
         try:
             fsize = self.file.get_property('size', 0)
             self.output_dir.mkdir(parents=True, exist_ok=True)
+            
+            if not self.download_dir.is_dir():
+                logger.debug(f"Creating directory: {self.download_dir}")
+                self.download_dir.mkdir(parents=True, exist_ok=True)
+
             if fsize > MAX_MB_SIZE:
                 logger.info(f'Downloading file with size: {fsize} bytes in chunks')
                 with self.filename.open(mode='wb') as f:
@@ -144,11 +147,15 @@ class OneDriveIngestDoc(BaseIngestDoc):
             return
         output_filename = self._output_filename()
         output_filename.parent.mkdir(parents=True, exist_ok=True)
+
+        if not self.output_dir.is_dir():
+            logger.debug(f"Creating directory: {self.output_dir}")
+            self.output_dir.mkdir(parents=True, exist_ok=True)
+
         with output_filename.open(mode='w') as output_f:
-            output_f.write(json.dumps(self.isd_elems_no_filename, ensure_ascii=False, indent=2))
+            output_f.write(json.dumps(self.isd_elems_no_filename[0], ensure_ascii=False, indent=2))
         logger.info(f"Wrote {output_filename}")
 
-            
 
 class OneDriveConnector(BaseConnector):
 
@@ -159,12 +166,12 @@ class OneDriveConnector(BaseConnector):
         self.cleanup_files = (
             not self.standard_config.preserve_downloads and not self.standard_config.download_only
         )
-        self.client = self._set_client
+        self._set_client()
 
     @requires_dependencies(['office365'])
     def _set_client(self):
         from office365.graph_client import GraphClient
-        return GraphClient(self.config.token_factory)
+        self.client = GraphClient(self.config.token_factory)
     
     def _list_objects(self, folder, recursive) -> list:
         drive_items = folder.children.get().execute_query()

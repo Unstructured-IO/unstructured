@@ -389,12 +389,12 @@ class MainProcess:
 )
 @click.option(
     "--ms-authority-url",
-    default=None,
+    default='https://login.microsoftonline.com',
     help="Authentication token provider for MS apps, default is https://login.microsoftonline.com"
 )
 @click.option(
     "--ms-tenant",
-    default=None,
+    default='common',
     help="ID or domain name associated with your Azure AD instance"
 )
 @click.option(
@@ -482,7 +482,7 @@ def main(
     discord_period,
     ms_client_id,
     ms_client_cred,
-    ms_auth_url,
+    ms_authority_url,
     ms_tenant,
     ms_user_pname,
     download_dir,
@@ -801,10 +801,10 @@ def main(
             config=SimpleOneDriveConfig(
                 client_id= ms_client_id,
                 client_credential= ms_client_cred,
-                authority_url=ms_auth_url,
-                tenant=ms_tenant,
                 user_pname=ms_user_pname,
-                recursive=standard_config.recursive
+                tenant=ms_tenant,
+                authority_url=ms_authority_url,
+                recursive=recursive
             )
             
         )
