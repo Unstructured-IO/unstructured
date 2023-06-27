@@ -10,6 +10,8 @@
 
 ### Fixes
 
+* Fix pre tag parsing for `partition_html`
+
 ## 0.7.9
 
 ### Enhancements
@@ -200,7 +202,7 @@
 
 ### Enhancements
 
-* XLS support from auto partiton
+* XLS support from auto partition
 
 ### Features
 
