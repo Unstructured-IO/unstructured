@@ -9,6 +9,9 @@ from unstructured.nlp.patterns import (
     PARAGRAPH_PATTERN_RE,
     UNICODE_BULLETS_RE,
 )
+from unstructured.file_utils.encoding import (
+    format_encoding_str,
+)
 
 
 def clean_non_ascii_chars(text) -> str:
@@ -194,7 +197,8 @@ def replace_mime_encodings(text: str, encoding: str = "utf-8") -> str:
     -------
     5 w=E2=80-99s -> 5 w’s
     """
-    return quopri.decodestring(text.encode(encoding)).decode(encoding)
+    formatted_encoding = format_encoding_str(encoding)
+    return quopri.decodestring(text.encode(formatted_encoding)).decode(formatted_encoding)
 
 
 def clean_prefix(text: str, pattern: str, ignore_case: bool = False, strip: bool = True) -> str:
@@ -264,4 +268,5 @@ def bytes_string_to_string(text: str, encoding: str = "utf-8"):
     """Converts a string representation of a byte string to a regular string using the
     specified encoding."""
     text_bytes = bytes([ord(char) for char in text])
-    return text_bytes.decode(encoding)
+    formatted_encoding = format_encoding_str(encoding)
+    return text_bytes.decode(formatted_encoding)

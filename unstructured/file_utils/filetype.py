@@ -10,7 +10,7 @@ from typing import IO, TYPE_CHECKING, Callable, List, Optional
 
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import Element, PageBreak
-from unstructured.file_utils.encoding import detect_file_encoding
+from unstructured.file_utils.encoding import detect_file_encoding, format_encoding_str
 from unstructured.nlp.patterns import LIST_OF_DICTS_PATTERN
 from unstructured.partition.common import (
     _add_element_metadata,
@@ -381,11 +381,12 @@ def _read_file_start_for_type_check(
         file.seek(0)
     if filename is not None:
         try:
-            with open(filename, encoding=encoding) as f:
+            formatted_encoding = format_encoding_str(encoding)
+            with open(filename, encoding=formatted_encoding) as f:
                 file_text = f.read(4096)
         except UnicodeDecodeError:
-            encoding, _ = detect_file_encoding(filename=filename)
-            with open(filename, encoding=encoding) as f:
+            formatted_encoding, _ = detect_file_encoding(filename=filename)
+            with open(filename, encoding=formatted_encoding) as f:
                 file_text = f.read(4096)
     return file_text
 

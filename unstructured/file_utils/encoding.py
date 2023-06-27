@@ -91,7 +91,9 @@ def detect_file_encoding(
     else:
         file_text = byte_data.decode(encoding)
 
-    return encoding, file_text
+    formatted_encoding = format_encoding_str(encoding)
+    
+    return formatted_encoding, file_text
 
 
 def read_txt_file(
@@ -102,28 +104,28 @@ def read_txt_file(
     """Extracts document metadata from a plain text document."""
     if filename:
         if encoding:
-            with open(filename, encoding=encoding) as f:
+            formatted_encoding = format_encoding_str(encoding)
+            with open(filename, encoding=formatted_encoding) as f:
                 try:
                     file_text = f.read()
                 except (UnicodeDecodeError, UnicodeError) as error:
                     raise error
         else:
-            encoding, file_text = detect_file_encoding(filename)
+            formatted_encoding, file_text = detect_file_encoding(filename)
     elif file:
         if encoding:
+            formatted_encoding = format_encoding_str(encoding)
             try:
                 file_content = file if isinstance(file, bytes) else file.read()
                 if isinstance(file_content, bytes):
-                    file_text = file_content.decode(encoding)
+                    file_text = file_content.decode(formatted_encoding)
                 else:
                     file_text = file_content
             except (UnicodeDecodeError, UnicodeError) as error:
                 raise error
         else:
-            encoding, file_text = detect_file_encoding(file=file)
+            formatted_encoding, file_text = detect_file_encoding(file=file)
     else:
         raise FileNotFoundError("No filename was specified")
-
-    formatted_encoding = format_encoding_str(encoding)
 
     return formatted_encoding, file_text
