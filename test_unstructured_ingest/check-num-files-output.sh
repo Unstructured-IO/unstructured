@@ -7,12 +7,14 @@
 #   - $2: Name of the output folder. This is used to determine the test directory path.
 
 set +e
+set -x
 
 EXPECTED_NUM_FILES=$1
 OUTPUT_FOLDER_NAME=$2
-EXPECTED_OUTPUT_DIR=$SCRIPT_DIR/expected-structured-output/$OUTPUT_FOLDER_NAME
+SCRIPT_DIR=$(dirname "$(realpath "$0")")
+OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 
-if [ "$(find "$EXPECTED_OUTPUT_DIR" -type f -printf '.' | wc -c)" != "$EXPECTED_NUM_FILES" ]; then
+if [[ "$(find "$OUTPUT_DIR" -type f -exec printf '.' \; | wc -c | xargs)" != "$EXPECTED_NUM_FILES" ]]; then
    echo
    echo "$EXPECTED_NUM_FILES files should have been created."
    exit 1
