@@ -16,16 +16,15 @@
 # Assign the neccesary permissions for the application to read from OneDrive.
 # https://learn.microsoft.com/en-us/graph/permissions-reference
  
-
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/../../.. || exit 1
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-    --ms-client-id "8ade2b29-1934-4fec-9b4a-f71215fae56d" \
-    --ms-client-cred "bAD8Q~xrZfV0UZOtmi61rCIEZA4RYVWxkrHlecAz" \
-    --ms-tenant "22175133-950a-4ca9-9fa9-c8d240fb8edc" \
-    --ms-user-pname "test-ingest-admin@030rx.onmicrosoft.com" \
-    --download-dir onedrive-ingest-input \
+    --ms-client-id "<Azure AD app client-id>" \
+    --ms-client-cred "<Azure AD app client-secret>" \
+    --ms-authority-url "<Authority URL, default is https://login.microsoftonline.com>" \
+    --ms-tenant "<Azure AD tenant_id, default is 'common'>" \
+    --ms-user-pname "<Azure AD principal name, in most cases is the email linked to the drive>" \
     --structured-output-dir onedrive-ingest-output \
     --num-processes 2 \
     --verbose
