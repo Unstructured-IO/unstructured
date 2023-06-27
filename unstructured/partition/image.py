@@ -23,9 +23,6 @@ def partition_image(
         A string defining the target filename path.
     file
         A file-like object as bytes --> open(filename, "rb").
-    template
-        A string defining the model to be used. Default None uses default model ("layout/image" url
-        if using the API).
     url
         A string endpoint to self-host an inference API, if desired. If None, local inference will
         be used.
@@ -41,12 +38,15 @@ def partition_image(
         partition_image simply extracts the text from the document using OCR and processes it.
         The default strategy `auto` will determine when a image can be extracted using
         `ocr_only` mode, otherwise it will fall back to `hi_res`.
+    model_name
+        A string defining the model to be used. Default None uses default model.
     """
     exactly_one(filename=filename, file=file)
 
     return partition_pdf_or_image(
         filename=filename,
         file=file,
+        is_image=True,
         include_page_breaks=include_page_breaks,
         ocr_languages=ocr_languages,
         strategy=strategy,

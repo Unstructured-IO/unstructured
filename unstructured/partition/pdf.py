@@ -52,9 +52,6 @@ def partition_pdf(
         A string defining the target filename path.
     file
         A file-like object as bytes --> open(filename, "rb").
-    template
-        A string defining the model to be used. Default None uses default model ("layout/pdf" url
-        if using the API).
     url
         A string endpoint to self-host an inference API, if desired. If None, local inference will
         be used.
@@ -78,6 +75,8 @@ def partition_pdf(
     ocr_languages
         The languages to use for the Tesseract agent. To use a language, you'll first need
         to isntall the appropriate Tesseract language pack.
+    model_name
+        A string defining the model to be used. Default None uses default model.
     """
     exactly_one(filename=filename, file=file)
     return partition_pdf_or_image(
