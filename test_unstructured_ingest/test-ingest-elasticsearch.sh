@@ -26,6 +26,7 @@ while [ "$status_code" -ne 200 ] && [ "$retry_count" -lt "$max_retries" ]; do
     python examples/ingest/elasticsearch/elasticsearch_cluster.py
 
     PYTHONPATH=. ./unstructured/ingest/main.py \
+            --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
             --elasticsearch-url http://localhost:9200 \
             --elasticsearch-index-name movies \
             --jq-query '{ethnicity, director}' \
@@ -57,7 +58,7 @@ if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
 
     cp -R elasticsearch-ingest-output/* test_unstructured_ingest/expected-structured-output/elasticsearch-ingest-output/
 
-elif ! diff -ru --ignore-matching-lines="date_processed" test_unstructured_ingest/expected-structured-output/elasticsearch-ingest-output elasticsearch-ingest-output ; then
+elif ! diff -ru test_unstructured_ingest/expected-structured-output/elasticsearch-ingest-output elasticsearch-ingest-output ; then
     echo
     echo "There are differences from the previously checked-in structured outputs."
     echo

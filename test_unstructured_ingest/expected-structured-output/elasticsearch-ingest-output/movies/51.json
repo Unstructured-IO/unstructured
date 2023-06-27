@@ -3,11 +3,7 @@
     "type": "Title",
     "element_id": "448180451c07fb56cf7da43ec9300be5",
     "metadata": {
-      "data_source": {
-        "date_processed": "2023-06-27T15:48:08.074047"
-      },
-      "filename": "51.txt",
-      "file_directory": "/Users/ahmet/.cache/unstructured/ingest/8624c83b28/movies",
+      "data_source": {},
       "filetype": "text/plain"
     },
     "text": "American Oscar Apfel, Cecil B. DeMille"

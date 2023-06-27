@@ -3,11 +3,7 @@
     "type": "Title",
     "element_id": "0baaf6f25d1c5da82d9e4a3229cd45bd",
     "metadata": {
-      "data_source": {
-        "date_processed": "2023-06-27T15:48:08.191301"
-      },
-      "filename": "47.txt",
-      "file_directory": "/Users/ahmet/.cache/unstructured/ingest/8624c83b28/movies",
+      "data_source": {},
       "filetype": "text/plain"
     },
     "text": "American"
@@ -16,11 +12,7 @@
     "type": "Title",
     "element_id": "2ac7798b427181278fb2b450e28f4902",
     "metadata": {
-      "data_source": {
-        "date_processed": "2023-06-27T15:48:08.191301"
-      },
-      "filename": "47.txt",
-      "file_directory": "/Users/ahmet/.cache/unstructured/ingest/8624c83b28/movies",
+      "data_source": {},
       "filetype": "text/plain"
     },
     "text": "D.W. Griffith"

@@ -3,11 +3,7 @@
     "type": "Title",
     "element_id": "708bc70c596d4c64f1c241014808febe",
     "metadata": {
-      "data_source": {
-        "date_processed": "2023-06-27T15:48:07.912517"
-      },
-      "filename": "40.txt",
-      "file_directory": "/Users/ahmet/.cache/unstructured/ingest/8624c83b28/movies",
+      "data_source": {},
       "filetype": "text/plain"
     },
     "text": "American Herbert Brenon and Carl Laemmle"
