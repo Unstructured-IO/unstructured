@@ -23,7 +23,6 @@ from unstructured.file_utils.filetype import (
     document_to_element_list,
 )
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
-from unstructured.partition import _partition_via_api
 from unstructured.partition.common import (
     exactly_one,
     spooled_to_bytes_io_if_needed,
@@ -38,8 +37,6 @@ from unstructured.utils import requires_dependencies
 def partition_pdf(
     filename: str = "",
     file: Optional[Union[BinaryIO, SpooledTemporaryFile]] = None,
-    url: Optional[str] = None,
-    template: str = "layout/pdf",
     token: Optional[str] = None,
     include_page_breaks: bool = False,
     strategy: str = "auto",
@@ -86,8 +83,6 @@ def partition_pdf(
     return partition_pdf_or_image(
         filename=filename,
         file=file,
-        url=url,
-        template=template,
         token=token,
         include_page_breaks=include_page_breaks,
         strategy=strategy,
@@ -100,9 +95,6 @@ def partition_pdf(
 def partition_pdf_or_image(
     filename: str = "",
     file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
-    url: Optional[str] = "https://ml.unstructured.io/",
-    template: str = "layout/pdf",
-    token: Optional[str] = None,
     is_image: bool = False,
     include_page_breaks: bool = False,
     strategy: str = "auto",
@@ -111,74 +103,50 @@ def partition_pdf_or_image(
     model_name: Optional[str] = None,
 ) -> List[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
-    if url is None:
-        # TODO(alan): Extract information about the filetype to be processed from the template
-        # route. Decoding the routing should probably be handled by a single function designed for
-        # that task so as routing design changes, those changes are implemented in a single
-        # function.
-        route_args = template.strip("/").split("/")
-        is_image = route_args[-1] == "image"
-        out_template: Optional[str] = template
-        if route_args[0] == "layout":
-            out_template = None
+    # TODO(alan): Extract information about the filetype to be processed from the template
+    # route. Decoding the routing should probably be handled by a single function designed for
+    # that task so as routing design changes, those changes are implemented in a single
+    # function.
 
-        strategy = determine_pdf_or_image_strategy(
-            strategy,
-            filename=filename,
-            file=file,
-            is_image=is_image,
-            infer_table_structure=infer_table_structure,
-        )
+    strategy = determine_pdf_or_image_strategy(
+        strategy,
+        filename=filename,
+        file=file,
+        is_image=is_image,
+        infer_table_structure=infer_table_structure,
+    )
 
-        if strategy == "hi_res":
-            # NOTE(robinson): Catches a UserWarning that occurs when detectron is called
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
-                layout_elements = _partition_pdf_or_image_local(
-                    filename=filename,
-                    file=spooled_to_bytes_io_if_needed(file),
-                    template=out_template,
-                    is_image=is_image,
-                    infer_table_structure=infer_table_structure,
-                    include_page_breaks=True,
-                    ocr_languages=ocr_languages,
-                    model_name=model_name,
-                )
-
-        elif strategy == "fast":
-            return _partition_pdf_with_pdfminer(
+    if strategy == "hi_res":
+        # NOTE(robinson): Catches a UserWarning that occurs when detectron is called
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            layout_elements = _partition_pdf_or_image_local(
                 filename=filename,
                 file=spooled_to_bytes_io_if_needed(file),
-                include_page_breaks=include_page_breaks,
+                is_image=is_image,
+                infer_table_structure=infer_table_structure,
+                include_page_breaks=True,
+                ocr_languages=ocr_languages,
+                model_name=model_name,
             )
 
-        elif strategy == "ocr_only":
-            # NOTE(robinson): Catches file conversion warnings when running with PDFs
-            with warnings.catch_warnings():
-                return _partition_pdf_or_image_with_ocr(
-                    filename=filename,
-                    file=file,
-                    include_page_breaks=include_page_breaks,
-                    ocr_languages=ocr_languages,
-                    is_image=is_image,
-                )
-
-    else:
-        # NOTE(alan): Remove these lines after different models are handled by routing
-        if template == "checkbox":
-            template = "layout/pdf"
-        # NOTE(alan): Remove after different models are handled by routing
-        data = {"model": "checkbox"} if (template == "checkbox") else None
-        url = f"{url.rstrip('/')}/{template.lstrip('/')}"
-        # NOTE(alan): Remove "data=data" after different models are handled by routing
-        layout_elements = _partition_via_api(
+    elif strategy == "fast":
+        return _partition_pdf_with_pdfminer(
             filename=filename,
-            file=cast(BinaryIO, file),
-            url=url,
-            token=token,
-            data=data,
-            include_page_breaks=True,
+            file=spooled_to_bytes_io_if_needed(file),
+            include_page_breaks=include_page_breaks,
         )
+
+    elif strategy == "ocr_only":
+        # NOTE(robinson): Catches file conversion warnings when running with PDFs
+        with warnings.catch_warnings():
+            return _partition_pdf_or_image_with_ocr(
+                filename=filename,
+                file=file,
+                include_page_breaks=include_page_breaks,
+                ocr_languages=ocr_languages,
+                is_image=is_image,
+            )
 
     return layout_elements
 
@@ -187,7 +155,6 @@ def partition_pdf_or_image(
 def _partition_pdf_or_image_local(
     filename: str = "",
     file: Optional[Union[bytes, BinaryIO]] = None,
-    template: Optional[str] = None,
     is_image: bool = False,
     infer_table_structure: bool = False,
     include_page_breaks: bool = False,
@@ -218,7 +185,6 @@ def _partition_pdf_or_image_local(
     if file is None:
         layout = process_file_with_model(
             filename,
-            template,
             is_image=is_image,
             ocr_languages=ocr_languages,
             extract_tables=infer_table_structure,
@@ -227,7 +193,6 @@ def _partition_pdf_or_image_local(
     else:
         layout = process_data_with_model(
             file,
-            template,
             is_image=is_image,
             ocr_languages=ocr_languages,
             extract_tables=infer_table_structure,
