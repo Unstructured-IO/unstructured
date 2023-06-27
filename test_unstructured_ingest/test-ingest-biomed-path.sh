@@ -9,8 +9,6 @@ OUTPUT_FOLDER_NAME=biomed-path
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
-sh "$SCRIPT_DIR"/check-num-files-expected-output.sh 1 $OUTPUT_FOLDER_NAME 10k
-
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --biomed-decay .3 \
     --biomed-max-request-time 30 \
@@ -26,3 +24,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --verbose
 
 sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
+sh "$SCRIPT_DIR"/check-num-files-expected-output.sh 1 $OUTPUT_FOLDER_NAME 10k

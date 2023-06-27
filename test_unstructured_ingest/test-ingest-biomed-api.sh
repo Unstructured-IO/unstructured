@@ -9,8 +9,6 @@ OUTPUT_FOLDER_NAME=biomed-api
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
-sh "$SCRIPT_DIR"/check-num-files-expected-output.sh 2 $OUTPUT_FOLDER_NAME 10k
-
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --biomed-api-from "2019-01-02" \
     --biomed-api-until "2019-01-02+00:03:10" \
@@ -28,3 +26,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --verbose
 
 sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
+sh "$SCRIPT_DIR"/check-num-files-expected-output.sh 2 $OUTPUT_FOLDER_NAME 10k
