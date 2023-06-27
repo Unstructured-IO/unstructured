@@ -69,16 +69,6 @@ class XMLDocument(Document):
         if self.document_tree is None:
             try:
                 document_tree = etree.fromstring(content, self.parser)
-                if "<pre>" and "</pre>" in content:
-                    tree = etree.HTML(content)
-                    for element in tree.xpath("//pre"):
-                        if not element.text:
-                            continue
-                        text_content = split_by_paragraph(element.text)
-                        for text in text_content:
-                            element = etree.Element("span")
-                            element.text = str(element_from_text(text=text))
-                            document_tree.append(element)
                 if document_tree is None:
                     raise ValueError("document_tree is None")
 
@@ -88,6 +78,17 @@ class XMLDocument(Document):
             #     Please use  bytes input or XML fragments without declaration.
             except ValueError:
                 document_tree = etree.fromstring(content.encode(), self.parser)
+
+            if "<pre>" and "</pre>" in content:
+                tree = etree.HTML(content)
+                for element in tree.xpath("//pre"):
+                    if not element.text:
+                        continue
+                    text_content = split_by_paragraph(element.text)
+                    for text in text_content:
+                        element = etree.Element("span")
+                        element.text = str(element_from_text(text=text))
+                        document_tree.append(element)
 
             if self.stylesheet:
                 if isinstance(self.parser, etree.HTMLParser):
