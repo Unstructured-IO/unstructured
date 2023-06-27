@@ -12,7 +12,7 @@ set +e
 EXPECTED_NUM_FILES=$1
 OUTPUT_FOLDER_NAME=$2
 EXPECTED_SIZE=$3
-SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
+SCRIPT_DIR=$(dirname "$(realpath "$0")")
 EXPECTED_OUTPUT_DIR=$SCRIPT_DIR/expected-structured-output/$OUTPUT_FOLDER_NAME
 NUM_FILES=$(find "$EXPECTED_OUTPUT_DIR" -type f -size +"$EXPECTED_SIZE" | wc -l)
 
