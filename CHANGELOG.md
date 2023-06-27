@@ -1,10 +1,12 @@
-## 0.7.10-dev0
+## 0.7.10-dev1
 
 ### Enhancements
 
 * DRY connector refactor
 
 ### Features
+
+* Add Elasticsearch connector for ingest cli to pull specific fields from all documents in an index.
 
 ### Fixes
 
