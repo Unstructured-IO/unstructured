@@ -10,6 +10,8 @@ ENCODE_REC_THRESHOLD = 0.5
 COMMON_ENCODINGS = [
     "utf_8",
     "iso_8859_1",
+    "iso_8859_6",
+    "iso_8859_8",
     "ascii",
     "big5",
     "utf_16",
@@ -37,7 +39,14 @@ def format_encoding_str(encoding: str) -> str:
         The encoding string to be formatted (e.g., `UTF-8`, `utf_8`, `ISO-8859-1`, `iso_8859_1`,
         etc).
     """
-    return encoding.lower().replace("_", "-")
+    formatted_encoding = encoding.lower().replace("_", "-")
+
+    # Special case for Arabic and Hebrew charsets with directional annotations
+    annotated_encodings = ["iso_8859_6_i", "iso_8859_6_e", "iso_8859_8_i", "iso_8859_8_e"]
+    if formatted_encoding in annotated_encodings:
+        formatted_encoding = formatted_encoding[:-2] # remove the annotation
+
+    return formatted_encoding
 
 
 def detect_file_encoding(
