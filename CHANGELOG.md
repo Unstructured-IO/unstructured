@@ -1,10 +1,12 @@
-## 0.7.10-dev1
+## 0.7.10-dev2
 
 ### Enhancements
 
 * DRY connector refactor
 
 ### Features
+
+* `hi_res` model for pdfs and images is selectable via environment variable.
 
 ### Fixes
 

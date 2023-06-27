@@ -12,7 +12,6 @@ def partition_image(
     include_page_breaks: bool = False,
     ocr_languages: str = "eng",
     strategy: str = "auto",
-    model_name: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Parses an image into a list of interpreted elements.
@@ -38,8 +37,6 @@ def partition_image(
         partition_image simply extracts the text from the document using OCR and processes it.
         The default strategy `auto` will determine when a image can be extracted using
         `ocr_only` mode, otherwise it will fall back to `hi_res`.
-    model_name
-        A string defining the model to be used. Default None uses default model.
     """
     exactly_one(filename=filename, file=file)
 
@@ -50,5 +47,4 @@ def partition_image(
         include_page_breaks=include_page_breaks,
         ocr_languages=ocr_languages,
         strategy=strategy,
-        model_name=model_name,
     )
