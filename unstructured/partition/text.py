@@ -81,6 +81,7 @@ def partition_text(
     paragraph_grouper: Optional[Callable[[str], str]] = None,
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
+    max_partition: Optional[int] = 1500,
     **kwargs,
 ) -> List[Element]:
     """Partitions an .txt documents into its constituent elements.
@@ -99,6 +100,9 @@ def partition_text(
         for formatting purposes.
     include_metadata
         Determines whether or not metadata is included in the output.
+    max_partition
+        The maximum number of characters to include in a partition. If None is passed,
+        no maximum is applied.
     """
     if text is not None and text.strip() == "" and not file and not filename:
         return []
@@ -120,7 +124,7 @@ def partition_text(
     else:
         file_text = group_broken_paragraphs(file_text)
 
-    file_content = split_by_paragraph(file_text)
+    file_content = split_by_paragraph(file_text, max_partition=max_partition)
 
     metadata_filename = metadata_filename or filename
 
