@@ -9,6 +9,7 @@
 ### Fixes
 
 * Fix pre tag parsing for `partition_html`
+* Fix lookup error for annotated Arabic and Hebrew encodings
 
 ## 0.7.9
 
