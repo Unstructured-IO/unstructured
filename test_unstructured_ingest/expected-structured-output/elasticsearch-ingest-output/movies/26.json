@@ -1,24 +1,28 @@
 [
   {
-    "element_id": "0baaf6f25d1c5da82d9e4a3229cd45bd",
-    "text": "American",
     "type": "Title",
+    "element_id": "0baaf6f25d1c5da82d9e4a3229cd45bd",
     "metadata": {
+      "data_source": {
+        "date_processed": "2023-06-27T15:48:07.630478"
+      },
       "filename": "26.txt",
       "file_directory": "/Users/ahmet/.cache/unstructured/ingest/8624c83b28/movies",
-      "filetype": "text/plain",
-      "page_number": 1
-    }
+      "filetype": "text/plain"
+    },
+    "text": "American"
   },
   {
-    "element_id": "2e4962b7e68ad0793f1821a929153a8d",
-    "text": "Theodore Marston",
     "type": "Title",
+    "element_id": "2e4962b7e68ad0793f1821a929153a8d",
     "metadata": {
+      "data_source": {
+        "date_processed": "2023-06-27T15:48:07.630478"
+      },
       "filename": "26.txt",
       "file_directory": "/Users/ahmet/.cache/unstructured/ingest/8624c83b28/movies",
-      "filetype": "text/plain",
-      "page_number": 1
-    }
+      "filetype": "text/plain"
+    },
+    "text": "Theodore Marston"
   }
 ]

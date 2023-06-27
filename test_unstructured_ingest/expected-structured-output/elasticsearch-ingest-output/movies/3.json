@@ -1,24 +1,28 @@
 [
   {
-    "element_id": "0baaf6f25d1c5da82d9e4a3229cd45bd",
-    "text": "American",
     "type": "Title",
+    "element_id": "0baaf6f25d1c5da82d9e4a3229cd45bd",
     "metadata": {
+      "data_source": {
+        "date_processed": "2023-06-27T15:48:07.269028"
+      },
       "filename": "3.txt",
       "file_directory": "/Users/ahmet/.cache/unstructured/ingest/8624c83b28/movies",
-      "filetype": "text/plain",
-      "page_number": 1
-    }
+      "filetype": "text/plain"
+    },
+    "text": "American"
   },
   {
-    "element_id": "9496aba3ea633310e2d669820269ad00",
-    "text": "Edwin Stanton Porter",
     "type": "Title",
+    "element_id": "9496aba3ea633310e2d669820269ad00",
     "metadata": {
+      "data_source": {
+        "date_processed": "2023-06-27T15:48:07.269028"
+      },
       "filename": "3.txt",
       "file_directory": "/Users/ahmet/.cache/unstructured/ingest/8624c83b28/movies",
-      "filetype": "text/plain",
-      "page_number": 1
-    }
+      "filetype": "text/plain"
+    },
+    "text": "Edwin Stanton Porter"
   }
 ]

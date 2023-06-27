@@ -1,24 +1,28 @@
 [
   {
-    "element_id": "0baaf6f25d1c5da82d9e4a3229cd45bd",
-    "text": "American",
     "type": "Title",
+    "element_id": "0baaf6f25d1c5da82d9e4a3229cd45bd",
     "metadata": {
+      "data_source": {
+        "date_processed": "2023-06-27T15:48:08.231843"
+      },
       "filename": "48.txt",
       "file_directory": "/Users/ahmet/.cache/unstructured/ingest/8624c83b28/movies",
-      "filetype": "text/plain",
-      "page_number": 1
-    }
+      "filetype": "text/plain"
+    },
+    "text": "American"
   },
   {
-    "element_id": "4056c21a1675646a9619149094b84f91",
-    "text": "Henry Lehrman",
     "type": "Title",
+    "element_id": "4056c21a1675646a9619149094b84f91",
     "metadata": {
+      "data_source": {
+        "date_processed": "2023-06-27T15:48:08.231843"
+      },
       "filename": "48.txt",
       "file_directory": "/Users/ahmet/.cache/unstructured/ingest/8624c83b28/movies",
-      "filetype": "text/plain",
-      "page_number": 1
-    }
+      "filetype": "text/plain"
+    },
+    "text": "Henry Lehrman"
   }
 ]

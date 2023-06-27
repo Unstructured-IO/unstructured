@@ -1,24 +1,28 @@
 [
   {
-    "element_id": "0baaf6f25d1c5da82d9e4a3229cd45bd",
-    "text": "American",
     "type": "Title",
+    "element_id": "0baaf6f25d1c5da82d9e4a3229cd45bd",
     "metadata": {
+      "data_source": {
+        "date_processed": "2023-06-27T15:48:07.950980"
+      },
       "filename": "41.txt",
       "file_directory": "/Users/ahmet/.cache/unstructured/ingest/8624c83b28/movies",
-      "filetype": "text/plain",
-      "page_number": 1
-    }
+      "filetype": "text/plain"
+    },
+    "text": "American"
   },
   {
-    "element_id": "48a82e42d925815614acc18521ec701c",
-    "text": "Lawrence Marston, Edwin Thanhouser",
     "type": "Title",
+    "element_id": "48a82e42d925815614acc18521ec701c",
     "metadata": {
+      "data_source": {
+        "date_processed": "2023-06-27T15:48:07.950980"
+      },
       "filename": "41.txt",
       "file_directory": "/Users/ahmet/.cache/unstructured/ingest/8624c83b28/movies",
-      "filetype": "text/plain",
-      "page_number": 1
-    }
+      "filetype": "text/plain"
+    },
+    "text": "Lawrence Marston, Edwin Thanhouser"
   }
 ]

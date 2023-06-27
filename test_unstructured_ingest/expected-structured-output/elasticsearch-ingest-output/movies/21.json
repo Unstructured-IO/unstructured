@@ -1,24 +1,28 @@
 [
   {
-    "element_id": "0baaf6f25d1c5da82d9e4a3229cd45bd",
-    "text": "American",
     "type": "Title",
+    "element_id": "0baaf6f25d1c5da82d9e4a3229cd45bd",
     "metadata": {
+      "data_source": {
+        "date_processed": "2023-06-27T15:48:07.434659"
+      },
       "filename": "21.txt",
       "file_directory": "/Users/ahmet/.cache/unstructured/ingest/8624c83b28/movies",
-      "filetype": "text/plain",
-      "page_number": 1
-    }
+      "filetype": "text/plain"
+    },
+    "text": "American"
   },
   {
-    "element_id": "fbe61054a20a89d9dfd6d44e9fbd4b08",
-    "text": "Otis Turner (unconfirmed)",
     "type": "Title",
+    "element_id": "fbe61054a20a89d9dfd6d44e9fbd4b08",
     "metadata": {
+      "data_source": {
+        "date_processed": "2023-06-27T15:48:07.434659"
+      },
       "filename": "21.txt",
       "file_directory": "/Users/ahmet/.cache/unstructured/ingest/8624c83b28/movies",
-      "filetype": "text/plain",
-      "page_number": 1
-    }
+      "filetype": "text/plain"
+    },
+    "text": "Otis Turner (unconfirmed)"
   }
 ]

@@ -51,12 +51,12 @@ OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
 docker stop "$container_id"
 
 # # Kill even when there's an error from the previous commands
-trap "docker stop '$container_id'" ERR
+trap 'docker stop '\'$container_id\' ERR
 
 # to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
 
-    cp elasticsearch-ingest-output/* test_unstructured_ingest/expected-structured-output/elasticsearch-ingest-output/
+    cp -R elasticsearch-ingest-output/* test_unstructured_ingest/expected-structured-output/elasticsearch-ingest-output/
 
 elif ! diff -ru test_unstructured_ingest/expected-structured-output/elasticsearch-ingest-output elasticsearch-ingest-output ; then
     echo
