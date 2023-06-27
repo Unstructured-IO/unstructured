@@ -92,7 +92,8 @@ class ElasticsearchIngestDoc(BaseIngestDoc):
             return True
         return False
 
-    # TODO: change test fixtures such that nested dictionaries are included in documents
+    # TODO: change test fixtures such that examples with
+    # nested dictionaries are included in test documents
     def flatten_values(self, value, seperator="\n", no_value_str=""):
         """Flattens list or dict objects. Joins each value or item with
         the seperator character. Keys are not included in the joined string.
@@ -173,9 +174,23 @@ class ElasticsearchConnector(BaseConnector):
 
     config: SimpleElasticsearchConfig
 
-    # TODO
     def cleanup(self, cur_dir=None):
-        return super().cleanup(cur_dir)
+        """Cleanup linginering empty sub-dirs, but leave remaining files
+        (and their paths) in tact as that indicates they were not processed."""
+        if not self.cleanup_files:
+            return
+
+        if cur_dir is None:
+            cur_dir = self.standard_config.download_dir
+        sub_dirs = os.listdir(cur_dir)
+        os.chdir(cur_dir)
+        for sub_dir in sub_dirs:
+            # don't traverse symlinks, not that there every should be any
+            if os.path.isdir(sub_dir) and not os.path.islink(sub_dir):
+                self.cleanup(sub_dir)
+        os.chdir("..")
+        if len(os.listdir(cur_dir)) == 0:
+            os.rmdir(cur_dir)
 
     def initialize(self):
         self.es = Elasticsearch(self.config.url)
