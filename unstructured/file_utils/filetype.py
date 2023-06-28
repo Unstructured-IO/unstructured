@@ -284,6 +284,9 @@ def detect_filetype(
             encoding = "utf-8"
         formatted_encoding = format_encoding_str(encoding)
 
+        if extension in [".eml", ".md", ".rtf", ".html", ".rst", ".org", ".csv", ".tsv", ".json"]:
+            return EXT_TO_FILETYPE.get(extension)
+
         # NOTE(crag): for older versions of the OS libmagic package, such as is currently
         # installed on the Unstructured docker image, .json files resolve to "text/plain"
         # rather than "application/json". this corrects for that case.
@@ -295,9 +298,6 @@ def detect_filetype(
 
         if file and _check_eml_from_buffer(file=file) is True:
             return FileType.EML
-
-        if extension in [".eml", ".md", ".rtf", ".html", ".rst", ".org", ".tsv", ".json"]:
-            return EXT_TO_FILETYPE.get(extension)
 
         # Safety catch
         if mime_type in STR_TO_FILETYPE:
