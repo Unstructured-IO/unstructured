@@ -390,6 +390,13 @@ def _is_text_file_a_json(
     return re.match(LIST_OF_DICTS_PATTERN, file_text) is not None
 
 
+def _count_commas(text: str):
+    """Counts the number of commas in a line, excluding commas in quotes."""
+    pattern = r"(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$),"
+    matches = re.findall(pattern, text)
+    return len(matches)
+
+
 def _is_text_file_a_csv(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
@@ -401,10 +408,10 @@ def _is_text_file_a_csv(
     if len(lines) < 2:
         return False
     lines = lines[: len(lines)] if len(lines) < 10 else lines[:10]
-    header = lines[0].split(",")
+    header_count = _count_commas(lines[0])
     if any("," not in line for line in lines):
         return False
-    return all(len(line.split(",")) == len(header) for line in lines[:-1])
+    return all(_count_commas(line) == header_count for line in lines[:1])
 
 
 def _check_eml_from_buffer(file: IO) -> bool:
