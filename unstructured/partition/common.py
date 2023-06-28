@@ -8,9 +8,11 @@ from typing import IO, TYPE_CHECKING, Any, BinaryIO, Dict, List, Optional, Tuple
 from docx import table as docxtable
 from tabulate import tabulate
 
+from unstructured.documents.coordinates import CoordinateSystem
 from unstructured.documents.elements import (
     TYPE_TO_TEXT_ELEMENT_MAP,
     CheckBox,
+    CoordinatesMetadata,
     Element,
     ElementMetadata,
     ListItem,
@@ -85,10 +87,19 @@ def _add_element_metadata(
     page_number: Optional[int] = None,
     url: Optional[str] = None,
     text_as_html: Optional[str] = None,
+    coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
+    coordinate_system: Optional[CoordinateSystem] = None,
 ) -> Element:
     """Adds document metadata to the document element. Document metadata includes information
     like the filename, source url, and page number."""
+    coordinates_metadata = CoordinatesMetadata(
+        points=coordinates,
+        coordinate_system=coordinate_system,
+    )
     metadata = ElementMetadata(
+        coordinates=coordinates_metadata.merge(element.metadata.coordinates)
+        if element.metadata.coordinates
+        else coordinates_metadata,
         filename=filename,
         filetype=filetype,
         page_number=page_number,

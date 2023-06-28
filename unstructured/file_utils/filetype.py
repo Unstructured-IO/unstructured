@@ -459,8 +459,16 @@ def document_to_element_list(
             else:
                 image_format = None
                 coordinate_system = None
-            element._coordinate_system = coordinate_system
-            _add_element_metadata(element, page_number=i + 1, filetype=image_format)
+            coordinates = (
+                element.metadata.coordinates.points if element.metadata.coordinates else None
+            )
+            _add_element_metadata(
+                element,
+                page_number=i + 1,
+                filetype=image_format,
+                coordinates=coordinates,
+                coordinate_system=coordinate_system,
+            )
         if include_page_breaks and i < num_pages - 1:
             elements.append(PageBreak())
 

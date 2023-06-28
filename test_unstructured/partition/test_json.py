@@ -45,8 +45,8 @@ def test_partition_json_from_filename(filename: str):
 
     assert len(elements) == len(test_elements)
     for i in range(len(elements)):
-        print(elements[i].coordinates)
-        print(test_elements[i].coordinates)
+        print(elements[i].metadata.coordinates.points)
+        print(test_elements[i].metadata.coordinates.points)
         assert elements[i] == test_elements[i]
 
 

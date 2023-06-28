@@ -35,6 +35,42 @@ class DataSourceMetadata:
         return {key: value for key, value in self.__dict__.items() if value is not None}
 
 
+@dataclass
+class CoordinatesMetadata:
+    """Metadata fields that pertain to the coordinates of the element."""
+
+    points: Optional[Tuple[Tuple[float, float], ...]] = None
+    coordinate_system: Optional[CoordinateSystem] = None
+
+    def __eq__(self, other):
+        return all(
+            [
+                (self.points == other.points),
+                (self.coordinate_system == other.coordinate_system),
+            ],
+        )
+
+    def merge(self, other: CoordinatesMetadata):
+        for k in self.__dict__:
+            if getattr(self, k) is None:
+                setattr(self, k, getattr(other, k))
+        return self
+
+    def to_dict(self):
+        return {
+            "points": self.points,
+            "coordinate_system": None
+            if self.coordinate_system is None
+            else str(self.coordinate_system.__class__.__name__),
+            "layout_width": None
+            if self.coordinate_system is None
+            else self.coordinate_system.width,
+            "layout_height": None
+            if self.coordinate_system is None
+            else self.coordinate_system.height,
+        }
+
+
 class RegexMetadata(TypedDict):
     """Metadata that is extracted from a document element via regex."""
 
@@ -45,6 +81,7 @@ class RegexMetadata(TypedDict):
 
 @dataclass
 class ElementMetadata:
+    coordinates: Optional[CoordinatesMetadata] = None
     data_source: Optional[DataSourceMetadata] = None
     filename: Optional[str] = None
     file_directory: Optional[str] = None
@@ -89,6 +126,8 @@ class ElementMetadata:
             _dict.pop("regex_metadata")
         if self.data_source:
             _dict["data_source"] = cast(DataSourceMetadata, self.data_source).to_dict()
+        if self.coordinates:
+            _dict["coordinates"] = cast(DataSourceMetadata, self.coordinates).to_dict()
         return _dict
 
     @classmethod
@@ -172,23 +211,15 @@ class Element(ABC):
         metadata: ElementMetadata = ElementMetadata(),
     ):
         self.id: Union[str, NoID] = element_id
-        self.coordinates: Optional[Tuple[Tuple[float, float], ...]] = coordinates
-        self._coordinate_system = coordinate_system
-        self.metadata = metadata
+        coordinates_metadata = CoordinatesMetadata(
+            points=coordinates,
+            coordinate_system=coordinate_system,
+        )
+        self.metadata = metadata.merge(ElementMetadata(coordinates=coordinates_metadata))
 
     def to_dict(self) -> dict:
         return {
             "type": None,
-            "coordinates": self.coordinates,
-            "coordinate_system": None
-            if self._coordinate_system is None
-            else str(self._coordinate_system.__class__.__name__),
-            "layout_width": None
-            if self._coordinate_system is None
-            else self._coordinate_system.width,
-            "layout_height": None
-            if self._coordinate_system is None
-            else self._coordinate_system.height,
             "element_id": self.id,
             "metadata": self.metadata.to_dict(),
         }
@@ -200,30 +231,34 @@ class Element(ABC):
     ) -> Optional[Tuple[Tuple[Union[int, float], Union[int, float]], ...]]:
         """Converts the element location coordinates to a new coordinate system. If inplace is true,
         changes the coordinates in place and updates the coordinate system."""
-        if self._coordinate_system is None or self.coordinates is None:
+        if (
+            not self.metadata.coordinates
+            or self.metadata.coordinates.points is None
+            or self.metadata.coordinates.coordinate_system is None
+        ):
             return None
         new_coordinates = tuple(
-            self._coordinate_system.convert_coordinates_to_new_system(
+            self.metadata.coordinates.coordinate_system.convert_coordinates_to_new_system(
                 new_system=new_system,
                 x=x,
                 y=y,
             )
-            for x, y in self.coordinates
+            for x, y in self.metadata.coordinates.points
         )
         if in_place:
-            self.coordinates = new_coordinates
-            self._coordinate_system = new_system
+            self.metadata.coordinates.points = new_coordinates
+            self.metadata.coordinates.coordinate_system = new_system
         return new_coordinates
 
     @property
     def coordinate_system(self) -> Optional[Dict[str, Optional[Union[str, int, float]]]]:
-        if self._coordinate_system is None:
+        if not self.metadata.coordinates or self.metadata.coordinates.coordinate_system is None:
             return None
         return {
-            "name": self._coordinate_system.__class__.__name__,
-            "description": self._coordinate_system.__doc__,
-            "layout_width": self._coordinate_system.width,
-            "layout_height": self._coordinate_system.height,
+            "name": self.metadata.coordinates.coordinate_system.__class__.__name__,
+            "description": self.metadata.coordinates.coordinate_system.__doc__,
+            "layout_width": self.metadata.coordinates.coordinate_system.width,
+            "layout_height": self.metadata.coordinates.coordinate_system.height,
         }
 
 
@@ -248,7 +283,9 @@ class CheckBox(Element):
         self.checked: bool = checked
 
     def __eq__(self, other):
-        return (self.checked == other.checked) and (self.coordinates) == (other.coordinates)
+        return (self.checked == other.checked) and (
+            self.metadata.coordinates == other.metadata.coordinates
+        )
 
     def to_dict(self) -> dict:
         out = super().to_dict()
@@ -291,8 +328,7 @@ class Text(Element):
         return all(
             [
                 (self.text == other.text),
-                (self.coordinates == other.coordinates),
-                (self._coordinate_system == other._coordinate_system),
+                (self.metadata.coordinates == other.metadata.coordinates),
                 (self.category == other.category),
             ],
         )
