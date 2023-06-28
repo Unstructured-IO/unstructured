@@ -374,9 +374,7 @@ class PageBreak(Text):
 
     category = "PageBreak"
 
-    def __init__(
-        self,
-    ):
+    def __init__(self):
         super().__init__(text="<PAGE BREAK>")
 
 
