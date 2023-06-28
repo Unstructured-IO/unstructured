@@ -161,3 +161,4 @@ def test_partition_text_doesnt_get_page_breaks():
     elements = partition_text(text=text)
     assert len(elements) == 1
     assert elements[0].text == text
+    assert not isinstance(elements[0], ListItem)
