@@ -321,7 +321,7 @@ def _process_pdfminer_pages(
                     points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
                     coordinates_metadata = CoordinatesMetadata(
                         points=points,
-                        coordinate_system=coordinate_system,
+                        system=coordinate_system,
                     )
                     element.metadata = ElementMetadata(
                         filename=filename,

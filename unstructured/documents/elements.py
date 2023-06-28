@@ -40,13 +40,13 @@ class CoordinatesMetadata:
     """Metadata fields that pertain to the coordinates of the element."""
 
     points: Optional[Tuple[Tuple[float, float], ...]] = None
-    coordinate_system: Optional[CoordinateSystem] = None
+    system: Optional[CoordinateSystem] = None
 
     def __eq__(self, other):
         return all(
             [
                 (self.points == other.points),
-                (self.coordinate_system == other.coordinate_system),
+                (self.system == other.system),
             ],
         )
 
@@ -59,15 +59,9 @@ class CoordinatesMetadata:
     def to_dict(self):
         return {
             "points": self.points,
-            "coordinate_system": None
-            if self.coordinate_system is None
-            else str(self.coordinate_system.__class__.__name__),
-            "layout_width": None
-            if self.coordinate_system is None
-            else self.coordinate_system.width,
-            "layout_height": None
-            if self.coordinate_system is None
-            else self.coordinate_system.height,
+            "system": None if self.system is None else str(self.system.__class__.__name__),
+            "layout_width": None if self.system is None else self.system.width,
+            "layout_height": None if self.system is None else self.system.height,
         }
 
 
@@ -213,7 +207,7 @@ class Element(ABC):
         self.id: Union[str, NoID] = element_id
         coordinates_metadata = CoordinatesMetadata(
             points=coordinates,
-            coordinate_system=coordinate_system,
+            system=coordinate_system,
         )
         self.metadata = metadata.merge(ElementMetadata(coordinates=coordinates_metadata))
 
@@ -234,11 +228,11 @@ class Element(ABC):
         if (
             not self.metadata.coordinates
             or self.metadata.coordinates.points is None
-            or self.metadata.coordinates.coordinate_system is None
+            or self.metadata.coordinates.system is None
         ):
             return None
         new_coordinates = tuple(
-            self.metadata.coordinates.coordinate_system.convert_coordinates_to_new_system(
+            self.metadata.coordinates.system.convert_coordinates_to_new_system(
                 new_system=new_system,
                 x=x,
                 y=y,
@@ -247,18 +241,18 @@ class Element(ABC):
         )
         if in_place:
             self.metadata.coordinates.points = new_coordinates
-            self.metadata.coordinates.coordinate_system = new_system
+            self.metadata.coordinates.system = new_system
         return new_coordinates
 
     @property
     def coordinate_system(self) -> Optional[Dict[str, Optional[Union[str, int, float]]]]:
-        if not self.metadata.coordinates or self.metadata.coordinates.coordinate_system is None:
+        if not self.metadata.coordinates or self.metadata.coordinates.system is None:
             return None
         return {
-            "name": self.metadata.coordinates.coordinate_system.__class__.__name__,
-            "description": self.metadata.coordinates.coordinate_system.__doc__,
-            "layout_width": self.metadata.coordinates.coordinate_system.width,
-            "layout_height": self.metadata.coordinates.coordinate_system.height,
+            "name": self.metadata.coordinates.system.__class__.__name__,
+            "description": self.metadata.coordinates.system.__doc__,
+            "layout_width": self.metadata.coordinates.system.width,
+            "layout_height": self.metadata.coordinates.system.height,
         }
 
 

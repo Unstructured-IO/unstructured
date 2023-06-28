@@ -91,7 +91,7 @@ def test_convert_coordinates_to_new_system(
     element.convert_coordinates_to_new_system(coord2, in_place=True)
     for new_coord, expected_coord in zip(element.metadata.coordinates.points, expected_coords):
         assert new_coord == pytest.approx(expected_coord)
-    assert element.metadata.coordinates.coordinate_system == coord2
+    assert element.metadata.coordinates.system == coord2
 
 
 @pytest.mark.parametrize(

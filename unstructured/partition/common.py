@@ -94,7 +94,7 @@ def _add_element_metadata(
     like the filename, source url, and page number."""
     coordinates_metadata = CoordinatesMetadata(
         points=coordinates,
-        coordinate_system=coordinate_system,
+        system=coordinate_system,
     )
     metadata = ElementMetadata(
         coordinates=coordinates_metadata.merge(element.metadata.coordinates)
