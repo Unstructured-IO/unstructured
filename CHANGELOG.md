@@ -11,7 +11,7 @@
 ### Fixes
 
 * CSV check now ignores escaped commas.
-* Fix for filetype exploration util for if file content does not have a commad.
+* Fix for filetype exploration util for if file content does not have a comma.
 * Fix pre tag parsing for `partition_html`
 * Fix lookup error for annotated Arabic and Hebrew encodings
 
