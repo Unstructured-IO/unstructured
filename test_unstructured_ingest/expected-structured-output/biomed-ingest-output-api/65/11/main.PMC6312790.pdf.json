@@ -351,6 +351,26 @@
   },
   {
     "type": "ListItem",
+    "element_id": "32ebb1abcc1c601ceb9c4e3c4faba0ca",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "("
+  },
+  {
+    "type": "ListItem",
+    "element_id": "86318fd3e77437c2a70833288422d1d4",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "in sulphuric acid solution using eco-friendly waste product, Results in Physics,"
+  },
+  {
+    "type": "ListItem",
     "element_id": "ab4b981b96a5176610e8eb85866b9c6c",
     "metadata": {
       "data_source": {},
@@ -358,6 +378,26 @@
       "page_number": 2
     },
     "text": "M H"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "ba5ec51d07a4ac0e951608704431d59a",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": ")"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "d4f85d36757c12f0c6dab57721287f32",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "–"
   },
   {
     "type": "ListItem",
@@ -388,46 +428,6 @@
       "page_number": 2
     },
     "text": "h, cleaned appropriately, dried and reweighed. Raw, analyzed The difference between the weight at a given time and the initial weight of the specimen was taken as the weight loss, which was used to calculate the corrosion rate and inhibition efﬁciency. Inhibitor concentration, exposure time Department of Chemical, Metallurgical and Materials Engineering, Tshwane University of Technology, Pretoria, South Africa Data are available within this article O. Sanni, A. P. I. Popoola, and O. S. I. Fayomi, Enhanced corrosion resistance of stainless steel type"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "86318fd3e77437c2a70833288422d1d4",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "in sulphuric acid solution using eco-friendly waste product, Results in Physics,"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "32ebb1abcc1c601ceb9c4e3c4faba0ca",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "("
-  },
-  {
-    "type": "ListItem",
-    "element_id": "ba5ec51d07a4ac0e951608704431d59a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": ")"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "d4f85d36757c12f0c6dab57721287f32",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "–"
   },
   {
     "type": "UncategorizedText",
@@ -2261,16 +2261,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "0c156d16287a78307e9e0220ead9ae3c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 6
-    },
-    "text": "(cid:3)"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "b84630a9e08df3b58aa3156c31355ffc",
     "metadata": {
       "data_source": {},
@@ -2278,6 +2268,16 @@
       "page_number": 6
     },
     "text": "(cid:1) Þ ¼ 87:6W DAT"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "0c156d16287a78307e9e0220ead9ae3c",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 6
+    },
+    "text": "(cid:3)"
   },
   {
     "type": "UncategorizedText",
