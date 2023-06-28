@@ -156,6 +156,13 @@ def test_partition_text_extract_regex_metadata():
     }
 
 
+def test_partition_text_splits_long_text(filename="example-docs/norwich-city.txt"):
+    elements = partition_text(filename=filename)
+    assert len(elements) > 0
+    assert elements[0].text.startswith("Iwan Roberts")
+    assert elements[-1].text.endswith("External links")
+
+
 def test_partition_text_doesnt_get_page_breaks():
     text = "--------------------"
     elements = partition_text(text=text)

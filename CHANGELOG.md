@@ -1,9 +1,22 @@
-## 0.7.10-dev5
+## 0.7.11-dev0
 
 ### Enhancements
 
-* DRY connector refactor
+### Features
+
 * Updated inference package
+
+### Fixes
+
+## 0.7.10
+
+### Enhancements
+
+* Adds a `max_partition` parameter to `partition_text`, `partition_pdf`, `partition_email`,
+  `partition_msg` and `partition_xml` that sets a limit for the size of an individual
+  document elements. Defaults to `1500` for everything except `partition_xml`, which has
+  a default value of `None`.
+* DRY connector refactor
 
 ### Features
 
