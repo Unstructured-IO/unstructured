@@ -431,4 +431,8 @@ def test_detect_filetype_skips_escape_commas_for_csv(tmpdir):
     filename = os.path.join(tmpdir.dirname, "csv-with-escaped-commas.csv")
     with open(filename, "w") as f:
         f.write(text)
+
     assert detect_filetype(filename=filename) == FileType.CSV
+
+    with open(filename, "rb") as f:
+        assert detect_filetype(file=f) == FileType.CSV
