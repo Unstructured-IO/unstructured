@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 
-# Processes several files in a nested folder structure from gs://unstructured_public/ 
+# Processes several files in a nested folder structure from dropbox://utic-test-ingest-fixtures/ 
 # through Unstructured's library in 2 processes.
+# Due to Dropbox's interesting sdk, to list and get the root folders/files we use `dropbox:// /`
+# Subfolders are stated as normal "dropbox://nested-1" 
+
+# To get or refresh an access token use dropbox_token.py
 
 # Structured outputs are stored in dropbox-output/
 
@@ -9,12 +13,9 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/../../.. || exit 1
 
-# 
-   # --remote-url "dropbox:// /" \
-#    --remote-url "dropbox://nested-1" \
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-   --remote-url "dropbox:// /" \
+   --remote-url "dropbox://nested-1" \
    --structured-output-dir dropbox-output \
    --dropbox-token  $DROPBOX_TOKEN \
    --num-processes 2 \

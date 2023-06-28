@@ -46,7 +46,6 @@ class SimpleFsspecConfig(BaseConnectorConfig):
         
         # dropbox root is an empty string
         match = re.match(rf"{self.protocol}://([\s])/", self.path)
-        logger.debug("**********dropbox")
         if match and self.protocol == "dropbox":
             self.dir_path = " "
             self.file_path = ""
