@@ -782,9 +782,9 @@ If ``xml_keep_tags=True``, the function returns tag information in addition to t
   elements = partition_xml(filename="example-docs/factbook.xml", xml_keep_tags=False)
 
 ``partition_xml`` includes a ``max_partition`` parameter that indicates the maximum character length for a document element.
-The default value is ``None``, meaning no maximum character count is applied and
-``partition_xml`` will process the whole XML file as a single element.
-You can disable partition sizes by setting ``max_partition`` to an integer value.
+The default value is ``1500``, which roughly corresponds to
+the average character length for a paragraph.
+You can disable ``max_partition`` by setting it to ``None``.
 
 
 

@@ -53,7 +53,7 @@ def partition_xml(
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
     encoding: Optional[str] = None,
-    max_partition: Optional[str] = None,
+    max_partition: Optional[int] = 1500,
     **kwargs,
 ) -> List[Element]:
     """Partitions an XML document into its document elements.
