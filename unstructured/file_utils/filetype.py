@@ -10,7 +10,7 @@ from typing import IO, TYPE_CHECKING, Callable, List, Optional
 
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import Element, PageBreak
-from unstructured.file_utils.encoding import detect_file_encoding
+from unstructured.file_utils.encoding import detect_file_encoding, format_encoding_str
 from unstructured.nlp.patterns import LIST_OF_DICTS_PATTERN
 from unstructured.partition.common import (
     _add_element_metadata,
@@ -280,13 +280,17 @@ def detect_filetype(
             return FileType.XML
 
     elif mime_type in TXT_MIME_TYPES or mime_type.startswith("text"):
+        if not encoding:
+            encoding = "utf-8"
+        formatted_encoding = format_encoding_str(encoding)
+
         # NOTE(crag): for older versions of the OS libmagic package, such as is currently
         # installed on the Unstructured docker image, .json files resolve to "text/plain"
         # rather than "application/json". this corrects for that case.
-        if _is_text_file_a_json(file=file, filename=filename, encoding=encoding):
+        if _is_text_file_a_json(file=file, filename=filename, encoding=formatted_encoding):
             return FileType.JSON
 
-        if _is_text_file_a_csv(file=file, filename=filename, encoding=encoding):
+        if _is_text_file_a_csv(file=file, filename=filename, encoding=formatted_encoding):
             return FileType.CSV
 
         if file and _check_eml_from_buffer(file=file) is True:
@@ -384,8 +388,8 @@ def _read_file_start_for_type_check(
             with open(filename, encoding=encoding) as f:
                 file_text = f.read(4096)
         except UnicodeDecodeError:
-            encoding, _ = detect_file_encoding(filename=filename)
-            with open(filename, encoding=encoding) as f:
+            formatted_encoding, _ = detect_file_encoding(filename=filename)
+            with open(filename, encoding=formatted_encoding) as f:
                 file_text = f.read(4096)
     return file_text
 
