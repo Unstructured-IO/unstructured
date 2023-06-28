@@ -124,7 +124,7 @@ def partition_pdf_or_image(
         return _partition_pdf_with_pdfminer(
             filename=filename,
             file=spooled_to_bytes_io_if_needed(file),
-            include_page_breaks=True,
+            include_page_breaks=include_page_breaks,
         )
 
     elif strategy == "ocr_only":
@@ -288,9 +288,6 @@ def _process_pdfminer_pages(
                     element.metadata = metadata
                     page_elements.append(element)
 
-        if include_page_breaks:
-            elements.append(PageBreak())
-
         sorted_page_elements = sorted(
             page_elements,
             key=lambda el: (
@@ -300,6 +297,9 @@ def _process_pdfminer_pages(
             ),
         )
         elements += sorted_page_elements
+
+        if include_page_breaks:
+            elements.append(PageBreak())
 
     return elements
 
