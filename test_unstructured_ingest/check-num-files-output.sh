@@ -7,7 +7,6 @@
 #   - $2: Name of the output folder. This is used to determine the structured output path.
 
 set +e
-set -x
 
 EXPECTED_NUM_FILES=$1
 OUTPUT_FOLDER_NAME=$2

@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
-# Description: This will compare the structured output files to the expected
-#              output files and exit with an error if they are different.
-#              If the environment variable OVERWRITE_FIXTURES is set to "true", 
+# Description: Compare the structured output files to the expected output files and exit with an error
+#              if they are different. If the environment variable OVERWRITE_FIXTURES is set not "false", 
 #              then this script will instead copy the output files to the expected output directory.
 #
 # Arguments:
