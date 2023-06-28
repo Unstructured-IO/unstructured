@@ -119,7 +119,7 @@ def test_partition_pdf_with_spooled_file(
         # validate that the result is a non-empty list of dicts
         assert len(result) > 10
         # check that the pdf has multiple different page numbers
-        assert len({element.metadata.page_number for element in result}) > 1
+        assert {element.metadata.page_number for element in result} == {1, 2}
 
 
 @mock.patch.dict(os.environ, {"UNSTRUCTURED_HI_RES_MODEL_NAME": "checkbox"})
@@ -333,7 +333,7 @@ def test_partition_pdf_with_copy_protection():
     elements = pdf.partition_pdf(filename=filename, strategy="hi_res")
     elements[0] == Title("LayoutParser: A Uniﬁed Toolkit for Deep Based Document Image Analysis")
     # check that the pdf has multiple different page numbers
-    assert len({element.metadata.page_number for element in elements}) > 1
+    assert len({element.metadata.page_number for element in elements}) == {1, 2}
 
 
 def test_partition_pdf_requiring_recursive_text_grab(filename="example-docs/reliance.pdf"):
