@@ -161,3 +161,11 @@ def test_partition_text_splits_long_text(filename="example-docs/norwich-city.txt
     assert len(elements) > 0
     assert elements[0].text.startswith("Iwan Roberts")
     assert elements[-1].text.endswith("External links")
+
+
+def test_partition_text_doesnt_get_page_breaks():
+    text = "--------------------"
+    elements = partition_text(text=text)
+    assert len(elements) == 1
+    assert elements[0].text == text
+    assert not isinstance(elements[0], ListItem)

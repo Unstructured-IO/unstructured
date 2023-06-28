@@ -1,4 +1,4 @@
-## 0.7.10-dev1
+## 0.7.10-dev4
 
 ### Enhancements
 
@@ -10,9 +10,16 @@
 
 ### Features
 
+* `hi_res` model for pdfs and images is selectable via environment variable.
+
 ### Fixes
 
+* CSV check now ignores escaped commas.
+* Fix for filetype exploration util when file content does not have a comma.
+* Adds negative lookahead to bullet pattern to avoid detecting plain text line
+  breaks like `-------` as list items.
 * Fix pre tag parsing for `partition_html`
+* Fix lookup error for annotated Arabic and Hebrew encodings
 
 ## 0.7.9
 
