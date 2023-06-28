@@ -424,3 +424,15 @@ def test_detect_filetype_detects_empty_filename(filename="example-docs/empty.txt
 def test_detect_filetype_detects_empty_file(filename="example-docs/empty.txt"):
     with open(filename, "rb") as f:
         assert detect_filetype(file=f) == FileType.EMPTY
+
+
+def test_detect_filetype_skips_escape_commas_for_csv(tmpdir):
+    text = 'A,A,A,A,A\nA,A,A,"A,A",A\nA,A,A,"A,A",A'
+    filename = os.path.join(tmpdir.dirname, "csv-with-escaped-commas.csv")
+    with open(filename, "w") as f:
+        f.write(text)
+
+    assert detect_filetype(filename=filename) == FileType.CSV
+
+    with open(filename, "rb") as f:
+        assert detect_filetype(file=f) == FileType.CSV
