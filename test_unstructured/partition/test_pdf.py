@@ -399,3 +399,12 @@ def test_partition_pdf_fast_groups_text_in_text_box():
         ),
         coordinate_system=PixelSpace(width=612, height=792),
     )
+
+
+# def test_partition_pdf_with_fast_strategy_from_file_exclude_metadata(
+#     filename="example-docs/layout-parser-paper-fast.pdf",
+# ):
+#     with open(filename, "rb") as f:
+#         elements = pdf.partition_pdf(file=f, url=None, strategy="fast", include_metadata=True)
+#     for i in range(len(elements)):
+#         assert any(elements[i].metadata.to_dict()) is False
