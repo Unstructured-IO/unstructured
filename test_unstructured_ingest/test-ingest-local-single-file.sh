@@ -4,7 +4,7 @@ set -e
 
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
-OUTPUT_FOLDER_NAME=pdf-fast-reprocess
+OUTPUT_FOLDER_NAME=local-single-file
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
