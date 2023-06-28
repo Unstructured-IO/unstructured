@@ -5,6 +5,11 @@ set -e
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 cd "$SCRIPT_DIR"/.. || exit 1
 
+if [ -z "$UNS_DEV_API_KEY" ]; then
+   echo "Skipping ingest test against api because the UNS_DEV_API_KEY env var is not set."
+   exit 0
+fi
+
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --local-input-path example-docs \
     --local-file-glob "*.pdf" \
