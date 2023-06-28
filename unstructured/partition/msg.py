@@ -29,7 +29,7 @@ def partition_msg(
         A file-like object using "rb" mode --> open(filename, "rb").
     max_partition
         The maximum number of characters to include in a partition. If None is passed,
-        no maximum is applied. Only applies if processing the text/plain content.
+        no maximum is applied. Only applies if processing text/plain content.
     """
     exactly_one(filename=filename, file=file)
 
