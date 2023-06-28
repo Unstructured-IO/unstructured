@@ -15,6 +15,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
 
 set +e
 
+OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
+
 # to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
 
