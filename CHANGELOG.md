@@ -1,3 +1,13 @@
+## 0.7.???????????????
+
+### Enhancements
+
+### Features
+
+* Adds Dropbox connector
+
+### Fixes
+
 ## 0.7.10-dev0
 
 ### Enhancements
