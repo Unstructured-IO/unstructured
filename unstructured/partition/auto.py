@@ -23,6 +23,7 @@ from unstructured.partition.json import partition_json
 from unstructured.partition.md import partition_md
 from unstructured.partition.msg import partition_msg
 from unstructured.partition.odt import partition_odt
+from unstructured.partition.org import partition_org
 from unstructured.partition.pdf import partition_pdf
 from unstructured.partition.ppt import partition_ppt
 from unstructured.partition.pptx import partition_pptx
@@ -50,6 +51,7 @@ def partition(
     pdf_infer_table_structure: bool = False,
     xml_keep_tags: bool = False,
     data_source_metadata: Optional[DataSourceMetadata] = None,
+    **kwargs,
 ):
     """Partitions a document into its constituent elements. Will use libmagic to determine
     the file's type and route it to the appropriate partitioning function. Applies the default
@@ -121,21 +123,22 @@ def partition(
         file.seek(0)
 
     if filetype == FileType.DOC:
-        elements = partition_doc(filename=filename, file=file)
+        elements = partition_doc(filename=filename, file=file, **kwargs)
     elif filetype == FileType.DOCX:
-        elements = partition_docx(filename=filename, file=file)
+        elements = partition_docx(filename=filename, file=file, **kwargs)
     elif filetype == FileType.ODT:
-        elements = partition_odt(filename=filename, file=file)
+        elements = partition_odt(filename=filename, file=file, **kwargs)
     elif filetype == FileType.EML:
-        elements = partition_email(filename=filename, file=file, encoding=encoding)
+        elements = partition_email(filename=filename, file=file, encoding=encoding, **kwargs)
     elif filetype == FileType.MSG:
-        elements = partition_msg(filename=filename, file=file)
+        elements = partition_msg(filename=filename, file=file, **kwargs)
     elif filetype == FileType.HTML:
         elements = partition_html(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,
             encoding=encoding,
+            **kwargs,
         )
     elif filetype == FileType.XML:
         elements = partition_xml(
@@ -143,24 +146,35 @@ def partition(
             file=file,
             encoding=encoding,
             xml_keep_tags=xml_keep_tags,
+            **kwargs,
         )
     elif filetype == FileType.EPUB:
         elements = partition_epub(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,
+            **kwargs,
+        )
+    elif filetype == FileType.ORG:
+        elements = partition_org(
+            filename=filename,
+            file=file,
+            include_page_breaks=include_page_breaks,
+            **kwargs,
         )
     elif filetype == FileType.RST:
         elements = partition_rst(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,
+            **kwargs,
         )
     elif filetype == FileType.MD:
         elements = partition_md(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,
+            **kwargs,
         )
     elif filetype == FileType.PDF:
         elements = partition_pdf(
@@ -171,6 +185,7 @@ def partition(
             infer_table_structure=pdf_infer_table_structure,
             strategy=strategy,
             ocr_languages=ocr_languages,
+            **kwargs,
         )
     elif (filetype == FileType.PNG) or (filetype == FileType.JPG):
         elements = partition_image(
@@ -180,6 +195,7 @@ def partition(
             include_page_breaks=include_page_breaks,
             strategy=strategy,
             ocr_languages=ocr_languages,
+            **kwargs,
         )
     elif filetype == FileType.TXT:
         elements = partition_text(
@@ -187,33 +203,37 @@ def partition(
             file=file,
             encoding=encoding,
             paragraph_grouper=paragraph_grouper,
+            **kwargs,
         )
     elif filetype == FileType.RTF:
         elements = partition_rtf(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,
+            **kwargs,
         )
     elif filetype == FileType.PPT:
         elements = partition_ppt(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,
+            **kwargs,
         )
     elif filetype == FileType.PPTX:
         elements = partition_pptx(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,
+            **kwargs,
         )
     elif filetype == FileType.JSON:
-        elements = partition_json(filename=filename, file=file)
+        elements = partition_json(filename=filename, file=file, **kwargs)
     elif (filetype == FileType.XLSX) or (filetype == FileType.XLS):
-        elements = partition_xlsx(filename=filename, file=file)
+        elements = partition_xlsx(filename=filename, file=file, **kwargs)
     elif filetype == FileType.CSV:
-        elements = partition_csv(filename=filename, file=file)
+        elements = partition_csv(filename=filename, file=file, **kwargs)
     elif filetype == FileType.TSV:
-        elements = partition_tsv(filename=filename, file=file)
+        elements = partition_tsv(filename=filename, file=file, **kwargs)
     elif filetype == FileType.EMPTY:
         elements = []
     else:

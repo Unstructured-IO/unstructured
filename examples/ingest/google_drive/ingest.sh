@@ -28,7 +28,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --drive-service-account-key "<path to drive service account key>" \
     --structured-output-dir google-drive-ingest-output \
     --num-processes 2 \
-    --drive-recursive \
+    --recursive \
     --verbose \
 #    --extension ".docx" # Ensures only .docx files are processed.
 

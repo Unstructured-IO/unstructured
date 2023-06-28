@@ -30,6 +30,16 @@
 </div>
 
 <h3 align="center">
+  <p>API Announcement!</p>
+</h3>
+
+<p>While access to the hosted Unstructured API will remain free, API Keys will soon be required to make requests. To prevent any disruption, get yours <a href="https://www.unstructured.io/api-key/">here</a> now and start using it today!</p>
+  
+<p>Checkout the <a href="https://github.com/Unstructured-IO/unstructured-api#--">readme</a> here to get started making API calls. 
+We'd love to hear your feedback, let us know how it goes in our
+  community slack. And stay tuned for improvements to both quality and performance!</p>
+
+<h3 align="center">
   <p>Open-Source Pre-Processing Tools for Unstructured Data</p>
 </h3>
 
@@ -74,7 +84,7 @@ At this point, you should be able to run the following code:
 ```python
 from unstructured.partition.auto import partition
 
-elements = partition(filename="example-docs/fake-email.eml")
+elements = partition(filename="example-docs/eml/fake-email.eml")
 print("\n\n".join([str(el) for el in elements]))
 ```
 
@@ -95,6 +105,7 @@ about the library.
 | HTML Pages (`.html`) | `partition_html` | N/A | No | Encoding; Include Page Breaks |
 | Images (`.png`/`.jpg`) | `partition_image` | `"auto"`, `"hi_res"`, `"ocr_only"` | Yes | Encoding; Include Page Breaks; Infer Table Structure; OCR Languages, Strategy |
 | Markdown (`.md`) | `partitin_md` | N/A | Yes | Include Page Breaks |
+| Org Mode (`.org`) | `partition_org` | N/A | Yes | Include Page Breaks |
 | Open Office Documents (`.odt`) | `partition_odt` | N/A | Yes | None |
 | PDFs (`.pdf`) | `partition_pdf` | `"auto"`, `"fast"`, `"hi_res"`, `"ocr_only"` | Yes | Encoding; Include Page Breaks; Infer Table Structure; OCR Languages, Strategy |
 | Plain Text (`.txt`) | `partition_text` | N/A | No | Encoding, Paragraph Grouper |
@@ -168,12 +179,12 @@ locally if you are planning to contribute to the project.
 * Using `pyenv` to manage virtualenv's is recommended but not necessary
 	* Mac install instructions. See [here](https://github.com/Unstructured-IO/community#mac--homebrew) for more detailed instructions.
 		* `brew install pyenv-virtualenv`
-	  * `pyenv install 3.8.15`
+	  * `pyenv install 3.8.17`
   * Linux instructions are available [here](https://github.com/Unstructured-IO/community#linux).
 
 * Create a virtualenv to work in and activate it, e.g. for one named `unstructured`:
 
-	`pyenv  virtualenv 3.8.15 unstructured` <br />
+	`pyenv  virtualenv 3.8.17 unstructured` <br />
 	`pyenv activate unstructured`
 
 * Run `make install`

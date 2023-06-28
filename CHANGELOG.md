@@ -1,21 +1,89 @@
-## 0.7.6-dev1
+## 0.7.10-dev3
 
 ### Enhancements
 
+* DRY connector refactor
+
+### Features
+
+* `hi_res` model for pdfs and images is selectable via environment variable.
+
+### Fixes
+
+* Fix pre tag parsing for `partition_html`
+* Fix lookup error for annotated Arabic and Hebrew encodings
+
+## 0.7.9
+
+### Enhancements
+
+* Improvements to string check for leafs in `partition_xml`.
+* Adds --partition-ocr-languages to unstructured-ingest.
+
+### Features
+
+* Adds `partition_org` for processed Org Mode documents.
+
+### Fixes
+
+## 0.7.8
+
+### Enhancements
+
+### Features
+
+* Adds Google Cloud Service connector
+
+### Fixes
+
+* Updates the `parse_email` for `partition_eml` so that `unstructured-api` passes the smoke tests
+* `partition_email` now works if there is no message content
+* Updates the `"fast"` strategy for `partition_pdf` so that it's able to recursively
+* Adds recursive functionality to all fsspec connectors
+* Adds generic --recursive ingest flag
+
+## 0.7.7
+
+### Enhancements
+
+* Adds functionality to replace the `MIME` encodings for `eml` files with one of the common encodings if a `unicode` error occurs
+* Adds missed file-like object handling in `detect_file_encoding`
+* Adds functionality to extract charset info from `eml` files
+
+### Features
+
+* Added coordinate system class to track coordinate types and convert to different coordinate
+
+### Fixes
+
+* Adds an `html_assemble_articles` kwarg to `partition_html` to enable users to capture
+  control whether content outside of `<article>` tags is captured when
+  `<article>` tags are present.
+* Check for the `xml` attribute on `element` before looking for pagebreaks in `partition_docx`.
+
+## 0.7.6
+
+### Enhancements
+
+* Convert fast startegy to ocr_only for images
 * Adds support for page numbers in `.docx` and `.doc` when user or renderer
   created page breaks are present.
 * Adds retry logic for the unstructured-ingest Biomed connector
 
 ### Features
 
+* Provides users with the ability to extract additional metadata via regex.
 * Updates `partition_docx` to include headers and footers in the output.
 * Create `partition_tsv` and associated tests. Make additional changes to `detect_filetype`.
 
 ### Fixes
 
+* Remove fake api key in test `partition_via_api` since we now require valid/empty api keys
 * Page number defaults to `None` instead of `1` when page number is not present in the metadata.
   A page number of `None` indicates that page numbers are not being tracked for the document
   or that page numbers do not apply to the element in question..
+* Fixes an issue with some pptx files. Assume pptx shapes are found in top left position of slide
+  in case the shape.top and shape.left attributes are `None`.
 
 ## 0.7.5
 
@@ -135,7 +203,7 @@
 
 ### Enhancements
 
-* XLS support from auto partiton
+* XLS support from auto partition
 
 ### Features
 

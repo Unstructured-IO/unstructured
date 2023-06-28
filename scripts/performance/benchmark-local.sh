@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # This is intended solely to be called by scripts/performance/benchmark.sh. 
 # This file is separated out to allow us to easily execute this part of the test script inside a Docker container.

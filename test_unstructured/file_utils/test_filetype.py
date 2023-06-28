@@ -33,7 +33,7 @@ XLSX_MIME_TYPES = [
         ("fake.docx", FileType.DOCX),
         ("example.jpg", FileType.JPG),
         ("fake-text.txt", FileType.TXT),
-        ("fake-email.eml", FileType.EML),
+        ("eml/fake-email.eml", FileType.EML),
         ("factbook.xml", FileType.XML),
         ("example-10k.html", FileType.HTML),
         ("fake-html.html", FileType.HTML),
@@ -45,6 +45,7 @@ XLSX_MIME_TYPES = [
         ("fake-power-point.pptx", FileType.PPTX),
         ("winter-sports.epub", FileType.EPUB),
         ("spring-weather.html.json", FileType.JSON),
+        ("README.org", FileType.ORG),
         ("README.rst", FileType.RST),
         ("README.md", FileType.MD),
         ("fake.odt", FileType.ODT),
@@ -62,7 +63,7 @@ def test_detect_filetype_from_filename(file, expected):
         ("fake.docx", FileType.DOCX),
         ("example.jpg", FileType.JPG),
         ("fake-text.txt", FileType.TXT),
-        ("fake-email.eml", FileType.EML),
+        ("eml/fake-email.eml", FileType.EML),
         ("factbook.xml", FileType.XML),
         ("example-10k.html", FileType.HTML),
         ("fake-html.html", FileType.HTML),
@@ -97,7 +98,7 @@ def test_detect_filetype_from_filename_with_extension(monkeypatch, file, expecte
         ("fake.docx", FileType.DOCX),
         ("example.jpg", FileType.JPG),
         ("fake-text.txt", FileType.TXT),
-        ("fake-email.eml", FileType.EML),
+        ("eml/fake-email.eml", FileType.EML),
         ("factbook.xml", FileType.XML),
         # NOTE(robinson) - For the document, some operating systems return
         # */xml and some return */html. Either could be acceptable depending on the OS
@@ -358,7 +359,7 @@ def test_detect_filetype_detects_unknown_text_types_as_txt(monkeypatch, tmpdir):
 
 
 def test_detect_filetype_raises_with_both_specified():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "eml/fake-email.eml")
     with open(filename, "rb") as f, pytest.raises(ValueError):
         detect_filetype(filename=filename, file=f)
 

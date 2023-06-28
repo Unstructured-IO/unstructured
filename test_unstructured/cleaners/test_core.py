@@ -87,6 +87,11 @@ def test_replace_mime_encodings_works_with_different_encodings():
     assert core.replace_mime_encodings(text=text, encoding="latin-1") == "5 wâ\x80-99sâ\x80-92"
 
 
+def test_replace_mime_encodings_works_with_right_to_left_encodings():
+    text = "=EE=E0=E9=E4"
+    assert core.replace_mime_encodings(text=text, encoding="iso-8859-8") == "מאיה"
+
+
 @pytest.mark.parametrize(
     ("text", "expected"),
     [

@@ -3,9 +3,9 @@ from tempfile import SpooledTemporaryFile
 from unittest import mock
 
 import pytest
-import requests
 from unstructured_inference.inference import layout
 
+from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import NarrativeText, PageBreak, Text, Title
 from unstructured.partition import pdf, strategies
 
@@ -77,35 +77,6 @@ class MockDocumentLayout(layout.DocumentLayout):
         ]
 
 
-def test_partition_pdf_api(
-    monkeypatch,
-    filename="example-docs/layout-parser-paper-fast.pdf",
-):
-    monkeypatch.setattr(requests, "post", mock_successful_post)
-    monkeypatch.setattr(requests, "get", mock_healthy_get)
-
-    partition_pdf_response = pdf._partition_via_api(filename)
-    assert partition_pdf_response[0]["type"] == "Title"
-    assert partition_pdf_response[0]["text"] == "Charlie Brown and the Great Pumpkin"
-    assert partition_pdf_response[1]["type"] == "Title"
-    assert partition_pdf_response[1]["text"] == "A Charlie Brown Christmas"
-
-
-def test_partition_pdf_api_page_breaks(
-    monkeypatch,
-    filename="example-docs/layout-parser-paper-fast.pdf",
-):
-    monkeypatch.setattr(requests, "post", mock_successful_post)
-    monkeypatch.setattr(requests, "get", mock_healthy_get)
-
-    partition_pdf_response = pdf._partition_via_api(filename, include_page_breaks=True)
-    assert partition_pdf_response[0]["type"] == "Title"
-    assert partition_pdf_response[0]["text"] == "Charlie Brown and the Great Pumpkin"
-    assert partition_pdf_response[1]["type"] == "PageBreak"
-    assert partition_pdf_response[2]["type"] == "Title"
-    assert partition_pdf_response[2]["text"] == "A Charlie Brown Christmas"
-
-
 @pytest.mark.parametrize(
     ("filename", "file"),
     [("example-docs/layout-parser-paper-fast.pdf", None), (None, b"0000")],
@@ -126,65 +97,9 @@ def test_partition_pdf_local(monkeypatch, filename, file):
     assert partition_pdf_response[0].text == "Charlie Brown and the Great Pumpkin"
 
 
-def test_partition_pdf_api_raises_with_no_filename(monkeypatch):
-    monkeypatch.setattr(requests, "post", mock_successful_post)
-    monkeypatch.setattr(requests, "get", mock_healthy_get)
-
-    with pytest.raises(FileNotFoundError):
-        pdf._partition_via_api(filename=None, file=None)
-
-
 def test_partition_pdf_local_raises_with_no_filename():
     with pytest.raises(FileNotFoundError):
         pdf._partition_pdf_or_image_local(filename="", file=None, is_image=False)
-
-
-def test_partition_pdf_api_raises_with_failed_healthcheck(
-    monkeypatch,
-    filename="example-docs/layout-parser-paper-fast.pdf",
-):
-    monkeypatch.setattr(requests, "post", mock_successful_post)
-    monkeypatch.setattr(requests, "get", mock_unhealthy_get)
-
-    with pytest.raises(ValueError):
-        pdf._partition_via_api(filename=filename)
-
-
-def test_partition_pdf_api_raises_with_failed_api_call(
-    monkeypatch,
-    filename="example-docs/layout-parser-paper-fast.pdf",
-):
-    monkeypatch.setattr(requests, "post", mock_unsuccessful_post)
-    monkeypatch.setattr(requests, "get", mock_healthy_get)
-
-    with pytest.raises(ValueError):
-        pdf._partition_via_api(filename=filename)
-
-
-@pytest.mark.parametrize(
-    ("url", "api_called", "local_called"),
-    [("fakeurl", True, False), (None, False, True)],
-)
-def test_partition_pdf(
-    url,
-    api_called,
-    local_called,
-    monkeypatch,
-    filename="example-docs/layout-parser-paper-fast.pdf",
-):
-    monkeypatch.setattr(
-        strategies,
-        "is_pdf_text_extractable",
-        lambda *args, **kwargs: True,
-    )
-    with mock.patch.object(
-        pdf,
-        attribute="_partition_via_api",
-        new=mock.MagicMock(),
-    ), mock.patch.object(pdf, "_partition_pdf_or_image_local", mock.MagicMock()):
-        pdf.partition_pdf(filename=filename, strategy="hi_res", url=url)
-        assert pdf._partition_via_api.called == api_called
-        assert pdf._partition_pdf_or_image_local.called == local_called
 
 
 @pytest.mark.parametrize(
@@ -207,14 +122,8 @@ def test_partition_pdf_with_spooled_file(
         assert {element.metadata.page_number for element in result} == {1, 2}
 
 
-@pytest.mark.parametrize(
-    ("url", "api_called", "local_called"),
-    [("fakeurl", True, False), (None, False, True)],
-)
-def test_partition_pdf_with_template(
-    url,
-    api_called,
-    local_called,
+@mock.patch.dict(os.environ, {"UNSTRUCTURED_HI_RES_MODEL_NAME": "checkbox"})
+def test_partition_pdf_with_model_name(
     monkeypatch,
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
@@ -223,30 +132,28 @@ def test_partition_pdf_with_template(
         "is_pdf_text_extractable",
         lambda *args, **kwargs: True,
     )
-    with mock.patch.object(
-        pdf,
-        attribute="_partition_via_api",
-        new=mock.MagicMock(),
-    ), mock.patch.object(pdf, "_partition_pdf_or_image_local", mock.MagicMock()):
+    with mock.patch.object(layout, "process_file_with_model", mock.MagicMock()) as mock_process:
         pdf.partition_pdf(
             filename=filename,
             strategy="hi_res",
-            url=url,
-            template="checkbox",
         )
-        assert pdf._partition_via_api.called == api_called
-        assert pdf._partition_pdf_or_image_local.called == local_called
+        mock_process.assert_called_once_with(
+            filename,
+            is_image=False,
+            ocr_languages="eng",
+            extract_tables=False,
+            model_name="checkbox",
+        )
 
 
 def test_partition_pdf_with_auto_strategy(
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
     elements = pdf.partition_pdf(filename=filename, strategy="auto")
-    titles = [el for el in elements if el.category == "Title" and len(el.text.split(" ")) > 10]
     title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
-    assert titles[0].text == title
-    assert titles[0].metadata.filename == "layout-parser-paper-fast.pdf"
-    assert titles[0].metadata.file_directory == "example-docs"
+    assert elements[0].text == title
+    assert elements[0].metadata.filename == "layout-parser-paper-fast.pdf"
+    assert elements[0].metadata.file_directory == "example-docs"
 
 
 def test_partition_pdf_with_page_breaks(
@@ -429,6 +336,13 @@ def test_partition_pdf_with_copy_protection():
     assert {element.metadata.page_number for element in elements} == {1, 2}
 
 
+def test_partition_pdf_requiring_recursive_text_grab(filename="example-docs/reliance.pdf"):
+    elements = pdf.partition_pdf(filename=filename, strategy="fast")
+    assert len(elements) > 50
+    assert elements[0].metadata.page_number == 1
+    assert elements[-1].metadata.page_number == 3
+
+
 def test_partition_pdf_with_copy_protection_fallback_to_hi_res(caplog):
     filename = os.path.join("example-docs", "copy-protected.pdf")
     elements = pdf.partition_pdf(filename=filename, strategy="fast")
@@ -468,6 +382,7 @@ def test_partition_pdf_fast_groups_text_in_text_box():
             (418.6881, 91.94000000000005),
             (418.6881, 71.94000000000005),
         ),
+        coordinate_system=PixelSpace(width=612, height=792),
     )
 
     assert isinstance(elements[1], NarrativeText)
@@ -482,4 +397,5 @@ def test_partition_pdf_fast_groups_text_in_text_box():
             (333.59990000000005, 226.16470000000004),
             (333.59990000000005, 181.16470000000004),
         ),
+        coordinate_system=PixelSpace(width=612, height=792),
     )

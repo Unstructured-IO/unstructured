@@ -56,7 +56,7 @@ mccabe==0.7.0
     # via flake8
 multidict==6.0.4
     # via yarl
-mypy==1.3.0
+mypy==1.4.0
     # via -r requirements/test.in
 mypy-extensions==1.0.0
     # via
@@ -69,7 +69,7 @@ packaging==23.1
     #   pytest
 pathspec==0.11.1
     # via black
-platformdirs==3.5.3
+platformdirs==3.6.0
     # via black
 pluggy==1.0.0
     # via pytest
@@ -87,7 +87,7 @@ pytest==7.3.2
     #   pytest-mock
 pytest-cov==4.1.0
     # via -r requirements/test.in
-pytest-mock==3.10.0
+pytest-mock==3.11.1
     # via -r requirements/test.in
 python-dateutil==2.8.2
     # via
@@ -99,7 +99,7 @@ requests==2.31.0
     # via
     #   -c requirements/base.txt
     #   label-studio-sdk
-ruff==0.0.272
+ruff==0.0.273
     # via -r requirements/test.in
 six==1.16.0
     # via
