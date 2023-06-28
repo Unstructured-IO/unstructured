@@ -9,6 +9,9 @@ OUTPUT_FOLDER_NAME=pdf-fast-reprocess
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 INPUT_PATH=$SCRIPT_DIR/download
 
+echo "REPROCESS INPUT PATH"
+ls "$INPUT_PATH"
+
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --local-file-glob "*.pdf" \
     --local-input-path "$INPUT_PATH" \
