@@ -1,4 +1,4 @@
-## 0.7.10-dev3
+## 0.7.10-dev4
 
 ### Enhancements
 
@@ -10,6 +10,8 @@
 
 ### Fixes
 
+* Adds negative lookahead to bullet pattern to avoid detecting plain text line
+  breaks like `-------` as list items.
 * Fix pre tag parsing for `partition_html`
 * Fix lookup error for annotated Arabic and Hebrew encodings
 
