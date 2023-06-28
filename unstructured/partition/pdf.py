@@ -229,7 +229,7 @@ def _partition_pdf_or_image_local(
             ocr_languages=ocr_languages,
             extract_tables=infer_table_structure,
         )
-    elements = document_to_element_list(layout, include_page_breaks=include_page_breaks, sort=True)
+    elements = document_to_element_list(layout, include_page_breaks=include_page_breaks, sort=False)
     for el in elements:
         if isinstance(el, Text):
             el.text = re.sub(RE_MULTISPACE, " ", el.text.replace("\n", " ")).strip()
