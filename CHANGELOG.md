@@ -10,6 +10,8 @@
 
 ### Fixes
 
+* CSV check now ignores escaped commas.
+* Fix for filetype exploration util when file content does not have a comma.
 * Adds negative lookahead to bullet pattern to avoid detecting plain text line
   breaks like `-------` as list items.
 * Fix pre tag parsing for `partition_html`
