@@ -7,11 +7,11 @@ SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
 OUTPUT_FOLDER_NAME=pdf-fast-reprocess
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
-DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
+INPUT_PATH=$SCRIPT_DIR/download
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --local-file-glob "*.pdf" \
-    --local-input-path "$DOWNLOAD_DIR" \
+    --local-input-path "$INPUT_PATH" \
     --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
     --num-processes 2 \
     --partition-strategy fast \
