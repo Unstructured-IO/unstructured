@@ -33,7 +33,7 @@ from unstructured.partition.strategies import determine_pdf_or_image_strategy
 from unstructured.partition.text import element_from_text, partition_text
 from unstructured.utils import requires_dependencies
 
-RE_MULTISPACE = re.compile(r"\s+")
+RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(r"\s+", re.DOTALL)
 
 
 @process_metadata()
@@ -196,11 +196,15 @@ def _partition_pdf_or_image_local(
             model_name=model_name,
         )
     elements = document_to_element_list(layout, include_page_breaks=include_page_breaks, sort=False)
+    out_elements = []
     for el in elements:
         if isinstance(el, Text):
-            el.text = re.sub(RE_MULTISPACE, " ", el.text.replace("\n", " ")).strip()
+            el.text = re.sub(RE_MULTISPACE_INCLUDING_NEWLINES, " ").strip()
+            if not el.text:
+                continue
+        out_elements.append(el)
 
-    return [el for el in elements if not isinstance(el, Text) or el.text]
+    return out_elements
 
 
 @requires_dependencies("pdfminer", "local-inference")
