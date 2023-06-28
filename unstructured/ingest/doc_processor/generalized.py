@@ -1,8 +1,8 @@
 """Process aribritrary files with the Unstructured library"""
 
+import os
 from typing import Any, Dict, List, Optional
 
-import os
 from unstructured_inference.models.base import get_model
 
 from unstructured.ingest.interfaces import BaseIngestDoc as IngestDoc
