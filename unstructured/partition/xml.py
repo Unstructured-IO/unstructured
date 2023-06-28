@@ -53,6 +53,7 @@ def partition_xml(
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
     encoding: Optional[str] = None,
+    max_partition: Optional[int] = 1500,
     **kwargs,
 ) -> List[Element]:
     """Partitions an XML document into its document elements.
@@ -75,6 +76,9 @@ def partition_xml(
     include_metadata
         Determines whether or not metadata is included in the metadata attribute on the
         elements in the output.
+    max_partition
+        The maximum number of characters to include in a partition. If None is passed,
+        no maximum is applied.
     """
     exactly_one(filename=filename, file=file)
     metadata_filename = metadata_filename or filename
@@ -95,6 +99,7 @@ def partition_xml(
         text=raw_text,
         metadata_filename=metadata_filename,
         include_metadata=include_metadata,
+        max_partition=max_partition,
     )
 
     return elements
