@@ -19,8 +19,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --reprocess \
     --structured-output-dir "$OUTPUT_DIR"
 
-OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
-
-set +e
-
 sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

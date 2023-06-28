@@ -25,7 +25,7 @@ if [ "$OVERWRITE_FIXTURES" != "false" ]; then
         rm -rf "$EXPECTED_OUTPUT_DIR"
     fi
     mkdir -p "$EXPECTED_OUTPUT_DIR"
-    cp -a "$OUTPUT_DIR"/* "$EXPECTED_OUTPUT_DIR"
+    cp -rf "$OUTPUT_DIR" "$EXPECTED_OUTPUT_DIR"
 elif ! diff -ru "$EXPECTED_OUTPUT_DIR" "$OUTPUT_DIR" ; then
     echo
     echo "There are differences from the previously checked-in structured outputs."
