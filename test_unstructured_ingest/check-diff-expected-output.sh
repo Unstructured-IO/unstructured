@@ -20,9 +20,11 @@ EXPECTED_OUTPUT_DIR=$SCRIPT_DIR/expected-structured-output/$OUTPUT_FOLDER_NAME
 
 # to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [ "$OVERWRITE_FIXTURES" != "false" ]; then
-    if [ ! -d "$EXPECTED_OUTPUT_DIR" ]; then
-        mkdir -p "$EXPECTED_OUTPUT_DIR"
+    # remove folder if it exists
+    if [ -d "$EXPECTED_OUTPUT_DIR" ]; then
+        rm -rf "$EXPECTED_OUTPUT_DIR"
     fi
+    mkdir -p "$EXPECTED_OUTPUT_DIR"
     cp -a "$OUTPUT_DIR"/* "$EXPECTED_OUTPUT_DIR"
 elif ! diff -ru "$EXPECTED_OUTPUT_DIR" "$OUTPUT_DIR" ; then
     echo
