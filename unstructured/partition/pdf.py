@@ -119,7 +119,7 @@ def partition_pdf_or_image(
                 file=spooled_to_bytes_io_if_needed(file),
                 is_image=is_image,
                 infer_table_structure=infer_table_structure,
-                include_page_breaks=True,
+                include_page_breaks=include_page_breaks,
                 ocr_languages=ocr_languages,
             )
 

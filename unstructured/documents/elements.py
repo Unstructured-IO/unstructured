@@ -374,15 +374,8 @@ class PageBreak(Text):
 
     category = "PageBreak"
 
-    def __init__(
-        self,
-        text: Optional[str] = None,
-        element_id: Union[str, NoID] = NoID(),
-        coordinates: Optional[List[float]] = None,
-        coordinate_system: Optional[CoordinateSystem] = None,
-        metadata: Optional[ElementMetadata] = None,
-    ):
-        super().__init__("<PAGE BREAK>")
+    def __init__(self, *args, **kwargs):
+        super().__init__(text="<PAGE BREAK>")
 
 
 class Table(Text):
