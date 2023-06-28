@@ -154,3 +154,11 @@ def test_partition_text_extract_regex_metadata():
     assert elements[0].metadata.regex_metadata == {
         "speaker": [{"text": "SPEAKER 1", "start": 0, "end": 9}],
     }
+
+
+def test_partition_text_doesnt_get_page_breaks():
+    text = "--------------------"
+    elements = partition_text(text=text)
+    assert len(elements) == 1
+    assert elements[0].text == text
+    assert not isinstance(elements[0], ListItem)
