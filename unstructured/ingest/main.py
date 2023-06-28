@@ -197,7 +197,7 @@ class MainProcess:
 @click.option(
     "--dropbox-token",
     default=None,
-    help="Dropbox developer token.",
+    help="Dropbox access token.",
 )
 @click.option(
     "--azure-account-name",
