@@ -57,7 +57,8 @@ UNICODE_BULLETS: Final[List[str]] = [
     "\x95",
     "·",
 ]
-UNICODE_BULLETS_RE = re.compile(f"(?:{'|'.join(UNICODE_BULLETS)})")
+BULLETS_PATTERN = "|".join(UNICODE_BULLETS)
+UNICODE_BULLETS_RE = re.compile(f"(?:{BULLETS_PATTERN})(?!{BULLETS_PATTERN})")
 
 ENUMERATED_BULLETS_RE = re.compile(r"(?:(?:\d{1,3}|[a-z][A-Z])\.?){1,3}")
 
