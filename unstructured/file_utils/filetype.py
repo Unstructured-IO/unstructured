@@ -502,6 +502,25 @@ def _is_code_mime_type(mime_type: str) -> bool:
 
 def add_metadata_with_filetype(filetype: FileType):
     def decorator(func: Callable):
+        if func.__doc__:
+            if (
+                "metadata_filename" in func.__code__.co_varnames
+                and "metadata_filename" not in func.__doc__
+            ):
+                func.__doc__ += (
+                    "\nMetadata Parameters:\n\tmetadata_filename:"
+                    + "\n\t\tThe filename to use in element metadata."
+                )
+            if (
+                "include_metadata" in func.__code__.co_varnames
+                and "include_metadata" not in func.__doc__
+            ):
+                func.__doc__ += (
+                    "\n\tinclude_metadata:"
+                    + """\n\t\tDetermines whether or not metadata is included in the metadata 
+                    attribute on the elements in the output."""
+                )
+            
         @wraps(func)
         def wrapper(*args, **kwargs):
             elements = func(*args, **kwargs)

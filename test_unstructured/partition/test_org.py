@@ -15,3 +15,18 @@ def test_partition_org_from_file(filename="example-docs/README.org"):
 
     assert elements[0] == Title("Example Docs")
     assert elements[0].metadata.filetype == "text/org"
+    
+
+def test_partition_org_from_filename_exclude_metadata(filename="example-docs/README.org"):
+    elements = partition_org(filename=filename, include_metadata=False)
+
+    for i in range(len(elements)):
+        assert any(elements[i].metadata.to_dict()) is False
+
+
+def test_partition_org_from_file_exclude_metadata(filename="example-docs/README.org"):
+    with open(filename, "rb") as f:
+        elements = partition_org(file=f, include_metadata=False)
+
+    for i in range(len(elements)):
+        assert any(elements[i].metadata.to_dict()) is False

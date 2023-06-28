@@ -17,6 +17,7 @@ def partition_msg(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
     max_partition: Optional[int] = 1500,
+    include_metadata: bool = True,
     **kwargs,
 ) -> List[Element]:
     """Partitions a MSFT Outlook .msg file

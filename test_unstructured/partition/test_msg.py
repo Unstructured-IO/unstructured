@@ -94,3 +94,20 @@ def test_partition_msg_raises_with_both_specified():
 def test_partition_msg_raises_with_neither():
     with pytest.raises(ValueError):
         partition_msg()
+
+
+def test_partition_msg_from_filename_exclude_metadata():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
+    elements = partition_msg(filename=filename, include_metadata=False)
+
+    for i in range(len(elements)):
+        assert any(elements[i].metadata.to_dict()) is False
+
+
+def test_partition_msg_from_file_exclude_metadata():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
+    with open(filename, "rb") as f:
+        elements = partition_msg(file=f, include_metadata=False)
+    
+    for i in range(len(elements)):
+        assert any(elements[i].metadata.to_dict()) is False
