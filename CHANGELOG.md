@@ -1,4 +1,4 @@
-## 0.7.10-dev3
+## 0.7.10-dev4
 
 ### Enhancements
 
@@ -10,6 +10,8 @@
 
 ### Fixes
 
+* CSV check now ignores escaped commas.
+* Fix for filetype exploration util for if file content does not have a commad.
 * Fix pre tag parsing for `partition_html`
 * Fix lookup error for annotated Arabic and Hebrew encodings
 
