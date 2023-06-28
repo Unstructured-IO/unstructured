@@ -75,11 +75,11 @@ class OneDriveIngestDoc(BaseIngestDoc):
         dpath = Path(f'{self.standard_config.download_dir}')
         opath = Path(f'{self.standard_config.output_dir}')
 
-        if pref := self.file.get_property('parentReference',None):
-            odir = pref.path.split(':')[-1]
-            dpath = dpath if odir == '' else (dpath/odir).resolve()
-            opath = opath if odir == '' else (opath/odir).resolve()
-         
+        if pref := self.file.get_property('parentReference','').path.split(':')[-1]:
+            odir = pref[1:] if pref[0] == '/' else pref
+            dpath = dpath if odir == '' else (dpath / odir).resolve()
+            opath = opath if odir == '' else (opath / odir).resolve()
+
         dname = f'{self.file.get_property("id")}-{self.file.name}'
         self.download_dir = dpath
         self.download_filepath = (dpath / dname).resolve()
@@ -143,6 +143,8 @@ class OneDriveIngestDoc(BaseIngestDoc):
 
     def write_result(self):
         """Write the structured json result for this doc. result must be json serializable."""
+
+
         if self.standard_config.download_only:
             return
         output_filename = self._output_filename()
