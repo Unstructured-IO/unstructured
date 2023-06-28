@@ -33,7 +33,7 @@ from unstructured.partition.strategies import determine_pdf_or_image_strategy
 from unstructured.partition.text import element_from_text, partition_text
 from unstructured.utils import requires_dependencies
 
-RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(r"\s+", re.DOTALL)
+RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
 
 
 @process_metadata()
@@ -199,7 +199,7 @@ def _partition_pdf_or_image_local(
     out_elements = []
     for el in elements:
         if isinstance(el, Text):
-            el.text = re.sub(RE_MULTISPACE_INCLUDING_NEWLINES, " ").strip()
+            el.text = re.sub(RE_MULTISPACE_INCLUDING_NEWLINES, " ", el.text).strip()
             if not el.text:
                 continue
         out_elements.append(el)
