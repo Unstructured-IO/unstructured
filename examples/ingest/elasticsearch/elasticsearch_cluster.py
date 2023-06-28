@@ -26,6 +26,4 @@ bulk(es, bulk_data)
 es.indices.refresh(index=INDEX_NAME)
 response = es.cat.count(index=INDEX_NAME, format="json")
 
-# This should hold if all csv rows are inserted succesfully
-# assert int(response[0]["count"]) == 1514
 print("Succesfully created and filled an Elasticsearch index for testing elasticsearch ingest.")

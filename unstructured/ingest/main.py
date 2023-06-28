@@ -94,7 +94,7 @@ class MainProcess:
         ) as pool:
             pool.map(self.doc_processor_fn, docs)
 
-        # self.cleanup()
+        self.cleanup()
 
 
 @click.command()
@@ -399,8 +399,9 @@ class MainProcess:
 @click.option(
     "--jq-query",
     default=None,
-    help="JQ query to get a subset of the fields from a JSON document, before processing it. \
-        For a group of JSON documents, it assumes that all of the documents have the same schema",
+    help="Currently only supported for Elasticsearch documents. \
+        JQ query to get a subset of the fields from a JSON document, before processing it. \
+        For a group of JSON documents, it assumes that all of the documents have the same schema.",
 )
 @click.option(
     "--download-dir",

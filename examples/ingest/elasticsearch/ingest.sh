@@ -14,6 +14,9 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 output=$(docker run -d --rm -p 9200:9200 -p 9300:9300 -e "xpack.security.enabled=false" -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:8.7.0)
 container_id=$(echo "$output" | cut -c 1-12)
 
+# Kill the container so the script can be repeatedly run using the same ports
+trap "docker stop $container_id" EXIT
+
 
 url="http://localhost:9200/_cluster/health"
 status_code=0
@@ -51,8 +54,3 @@ done
 if [ "$status_code" -ne 200 ]; then
   echo "Cluster took an unusually long time to create (>25 seconds). Expected time is around 10 seconds. Exiting."
 fi
-
-# Kill the container so the script can be repeatedly run using the same ports
-docker stop "$container_id"
-# Kill even when there's an error from the previous commands
-trap 'docker stop "$container_id"' ERR

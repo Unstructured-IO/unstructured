@@ -7,6 +7,9 @@ cd "$SCRIPT_DIR"/.. || exit 1
 output=$(docker run -d --rm -p 9200:9200 -p 9300:9300 -e "xpack.security.enabled=false" -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:8.7.0)
 container_id=$(echo "$output" | cut -c 1-12)
 
+# Kill the container so the script can be repeatedly run using the same ports
+trap "docker stop $container_id" EXIT
+
 url="http://localhost:9200/_cluster/health"
 status_code=0
 retry_count=0
@@ -29,7 +32,7 @@ while [ "$status_code" -ne 200 ] && [ "$retry_count" -lt "$max_retries" ]; do
             --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
             --elasticsearch-url http://localhost:9200 \
             --elasticsearch-index-name movies \
-            --jq-query '{ethnicity, director}' \
+            --jq-query '{ethnicity, director, plot}' \
             --structured-output-dir elasticsearch-ingest-output \
             --num-processes 2
 
@@ -46,12 +49,6 @@ if [ "$status_code" -ne 200 ]; then
 fi
 
 OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
-
-# Kill the container so the script can be repeatedly run using the same ports
-docker stop "$container_id"
-
-# # Kill even when there's an error from the previous commands
-trap 'docker stop "$container_id"' ERR
 
 # to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
