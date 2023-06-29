@@ -379,28 +379,28 @@ class MainProcess:
 )
 @click.option(
     "--ms-client-id",
-    default = None,
-    help="Microsoft app client ID"
+    default=None,
+    help="Microsoft app client ID",
 )
 @click.option(
     "--ms-client-cred",
     default=None,
-    help="Microsoft App client secret"
+    help="Microsoft App client secret",
 )
 @click.option(
     "--ms-authority-url",
-    default='https://login.microsoftonline.com',
-    help="Authentication token provider for MS apps, default is https://login.microsoftonline.com"
+    default="https://login.microsoftonline.com",
+    help="Authentication token provider for MS apps, default is https://login.microsoftonline.com",
 )
 @click.option(
     "--ms-tenant",
-    default='common',
-    help="ID or domain name associated with your Azure AD instance"
+    default="common",
+    help="ID or domain name associated with your Azure AD instance",
 )
 @click.option(
     "--ms-user-pname",
     default=None,
-    help="User principal name, usually is your Azure AD email."
+    help="User principal name, usually is your Azure AD email.",
 )
 @click.option(
     "--download-dir",
@@ -793,22 +793,21 @@ def main(
     elif ms_client_id or ms_user_pname:
         from unstructured.ingest.connector.one_drive import (
             OneDriveConnector,
-            SimpleOneDriveConfig
+            SimpleOneDriveConfig,
         )
 
-        doc_connector = OneDriveConnector(
+        doc_connector = OneDriveConnector( # type: ignore
             standard_config=standard_config,
             config=SimpleOneDriveConfig(
-                client_id= ms_client_id,
-                client_credential= ms_client_cred,
+                client_id=ms_client_id,
+                client_credential=ms_client_cred,
                 user_pname=ms_user_pname,
                 tenant=ms_tenant,
                 authority_url=ms_authority_url,
-                recursive=recursive
-            )
-            
+                recursive=recursive,
+            ),
         )
-    
+
     elif local_input_path:
         from unstructured.ingest.connector.local import (
             LocalConnector,
@@ -828,7 +827,7 @@ def main(
 
     else:
         logger.error("No connector-specific option was specified!")
-        sys.exit(1)
+        sys.exit(1)        
 
     process_document_with_partition_strategy = partial(
         process_document,
