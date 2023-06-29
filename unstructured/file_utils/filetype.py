@@ -469,7 +469,7 @@ def document_to_element_list(
             element._coordinate_system = coordinate_system
             _add_element_metadata(element, page_number=i + 1, filetype=image_format)
         if include_page_breaks and i < num_pages - 1:
-            elements.append(PageBreak())
+            elements.append(PageBreak(text=""))
 
     return elements
 

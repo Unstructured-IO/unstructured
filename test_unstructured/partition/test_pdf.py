@@ -6,7 +6,7 @@ import pytest
 from unstructured_inference.inference import layout
 
 from unstructured.documents.coordinates import PixelSpace
-from unstructured.documents.elements import NarrativeText, PageBreak, Text, Title
+from unstructured.documents.elements import NarrativeText, Text, Title
 from unstructured.partition import pdf, strategies
 
 
@@ -160,14 +160,14 @@ def test_partition_pdf_with_page_breaks(
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
     elements = pdf.partition_pdf(filename=filename, url=None, include_page_breaks=True)
-    assert PageBreak() in elements
+    assert "PageBreak" in [elem.category for elem in elements]
 
 
 def test_partition_pdf_with_no_page_breaks(
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
     elements = pdf.partition_pdf(filename=filename, url=None)
-    assert PageBreak() not in elements
+    assert "PageBreak" not in [elem.category for elem in elements]
 
 
 def test_partition_pdf_with_fast_strategy(
@@ -214,7 +214,7 @@ def test_partition_pdf_with_fast_strategy_and_page_breaks(
         include_page_breaks=True,
     )
     assert len(elements) > 10
-    assert PageBreak() in elements
+    assert "PageBreak" in [elem.category for elem in elements]
 
     assert "unstructured_inference is not installed" not in caplog.text
 
