@@ -3,9 +3,11 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/.. || exit 1
 
+
 (
-    chmod +x test_unstructured_ingest/test-ingest-elasticsearchhelper.sh
-    . test_unstructured_ingest/test-ingest-elasticsearchhelper.sh
+    echo $(pwd)
+    chmod +x scripts/elasticsearch-test-helpers/create-and-check-es.sh
+    . scripts/elasticsearch-test-helpers/create-and-check-es.sh
 
 )
 
