@@ -1,125 +1,5 @@
 [
   {
-    "type": "Image",
-    "element_id": "391389a0cccc411e793d0c8a4c722a9d",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "/Ol"
-  },
-  {
-    "type": "Image",
-    "element_id": "db13fc0664a426b509861776cb65f22a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "= Al"
-  },
-  {
-    "type": "Image",
-    "element_id": "46646e9d5e185e2387719eb2d19f22e7",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "LI"
-  },
-  {
-    "type": "Image",
-    "element_id": "4c85226bf4430ba6d64181ba5423e872",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "LE"
-  },
-  {
-    "type": "Image",
-    "element_id": "82386a7ffd73036c423c10fbbd8a61c3",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "(e)"
-  },
-  {
-    "type": "Image",
-    "element_id": "01da27006d39e572edbd10ac23d51177",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "\\S!"
-  },
-  {
-    "type": "Image",
-    "element_id": "07123e1f482356c415f684407a3b8723",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "lol"
-  },
-  {
-    "type": "Image",
-    "element_id": "68bd1bd95ba465c01242172601c742e2",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "Cl"
-  },
-  {
-    "type": "Image",
-    "element_id": "c749f3724722b6ae9cf470a0c688cc6f",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "IAT"
-  },
-  {
-    "type": "Image",
-    "element_id": "1209fbcb3c89b5bdb18393697648553c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "ATI"
-  },
-  {
-    "type": "Image",
-    "element_id": "96e2695eea52c9d2da458133ee5814dc",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "7]"
-  },
-  {
-    "type": "Image",
-    "element_id": "7ed36e239722df47b96215ff57b8c58a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "IC"
-  },
-  {
     "type": "UncategorizedText",
     "element_id": "d72f07e2c764ae90417305db928ebce1",
     "metadata": {
@@ -531,16 +411,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "f4ccd05b3271c386ee55d9876c745001",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "30"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "64aeb9975f234becd55bb4635e6e2f2d",
     "metadata": {
       "data_source": {},
@@ -548,6 +418,16 @@
       "page_number": 4
     },
     "text": "25"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "f4ccd05b3271c386ee55d9876c745001",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "30"
   },
   {
     "type": "NarrativeText",
@@ -1100,46 +980,6 @@
     "text": "If the potential of nuclear energy is to be fully realized, public health and safety approaches must be recalibrated to consider a wider range of factors when considering radiation, adopting an “all-hazards” approach. Such an approach must ensure that risks are placed within a proper perspective and context, rather than looking at them in isolation. We therefore must not look at the costs – be they economic, environmental, or public health – associated with an individual power plant in isolation, but rather the costs associated with it (and its alternatives) at a societal level (Figure 4). This would entail looking at the potential risks arising from the use of nuclear power and comparing these with the risks associated with not adopting nuclear power."
   },
   {
-    "type": "Image",
-    "element_id": "c9889d326ca46635644c051ced3cdde5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "Plant-levelproduction costsat market prices Grid-level costsof the electricitysystem ber Jest—"
-  },
-  {
-    "type": "Image",
-    "element_id": "2550e9a8245a64cdb4de02c91133865a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "Plant-levelproduction costsat market prices"
-  },
-  {
-    "type": "Image",
-    "element_id": "42d720f349fec23c92587b62b9d4f425",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "ber"
-  },
-  {
-    "type": "Image",
-    "element_id": "ac0eabe5bb8be09bb960b450a24fa778",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "Jest—"
-  },
-  {
     "type": "UncategorizedText",
     "element_id": "c679f20b20827cc120836b9b22b53492",
     "metadata": {
@@ -1261,13 +1101,13 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "f58b520072d30c4805940f5c99a306c3",
+    "element_id": "a2f88efdd6151fabb4a5244f289701db",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 9
     },
-    "text": "an ¥3 te,ay."
+    "text": "were 4a= teay."
   },
   {
     "type": "NarrativeText",
@@ -1568,16 +1408,6 @@
       "page_number": 10
     },
     "text": "8"
-  },
-  {
-    "type": "Image",
-    "element_id": "6d647fc38c561c01f7859e019345d367",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 12
-    },
-    "text": "+44 (0)20 7451 1520www.world-nuclear.orginfo@world-nuclear.org World Nuclear Association is the international organization that represents the global nuclear industry. Its mission is to promote a wider understanding of nuclear energy among key international influencers by producing authoritative information, developing common industry positions, and contributing to the energy debate."
   },
   {
     "type": "UncategorizedText",

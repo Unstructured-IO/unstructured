@@ -19,6 +19,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --preserve-downloads \
     --partition-strategy hi_res \
     --download-dir files-ingest-download/s3 \
+    --re-download \
     --reprocess
 
 OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}

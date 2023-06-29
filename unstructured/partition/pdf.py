@@ -5,10 +5,10 @@ from tempfile import SpooledTemporaryFile
 from typing import BinaryIO, List, Optional, Union, cast
 
 import pdf2image
+import PIL
 from pdfminer.high_level import extract_pages
 from pdfminer.layout import LTContainer, LTImage, LTItem, LTTextBox
 from pdfminer.utils import open_filename
-from PIL import Image
 
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.coordinates import PixelSpace
@@ -337,7 +337,7 @@ def _partition_pdf_or_image_with_ocr(
 
     if is_image:
         if file is not None:
-            image = Image.open(file)
+            image = PIL.Image.open(file)
             text = pytesseract.image_to_string(image, config=f"-l '{ocr_languages}'")
         else:
             text = pytesseract.image_to_string(filename, config=f"-l '{ocr_languages}'")
