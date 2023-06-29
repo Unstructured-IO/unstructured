@@ -16,6 +16,7 @@ from unstructured.partition.text import partition_text
 def partition_msg(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
+    max_partition: Optional[int] = 1500,
     **kwargs,
 ) -> List[Element]:
     """Partitions a MSFT Outlook .msg file
@@ -26,6 +27,9 @@ def partition_msg(
         A string defining the target filename path.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
+    max_partition
+        The maximum number of characters to include in a partition. If None is passed,
+        no maximum is applied. Only applies if processing text/plain content.
     """
     exactly_one(filename=filename, file=file)
 
@@ -41,7 +45,7 @@ def partition_msg(
     if "<html>" in text or "</div>" in text:
         elements = partition_html(text=text)
     else:
-        elements = partition_text(text=text)
+        elements = partition_text(text=text, max_partition=max_partition)
 
     metadata = build_msg_metadata(msg_obj, filename)
     for element in elements:

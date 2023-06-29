@@ -775,6 +775,17 @@ def test_auto_partition_csv_from_file(filename="example-docs/stanley-cups.csv"):
     assert elements[0].metadata.filetype == "text/csv"
 
 
+def test_auto_partition_html_pre_from_file(filename="example-docs/fake-html-pre.htm"):
+    elements = partition(filename=filename)
+
+    assert len(elements) > 0
+    assert "PageBreak" not in [elem.category for elem in elements]
+    assert clean_extra_whitespace(elements[0].text) == "[107th Congress Public Law 56]"
+    assert isinstance(elements[0], Title)
+    assert elements[0].metadata.filetype == "text/html"
+    assert elements[0].metadata.filename == "fake-html-pre.htm"
+
+
 def test_auto_partition_works_on_empty_filename(filename="example-docs/empty.txt"):
     assert partition(filename=filename) == []
 
