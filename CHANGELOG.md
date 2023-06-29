@@ -62,7 +62,6 @@
 * Adds recursive functionality to all fsspec connectors
 * Adds generic --recursive ingest flag
 
-
 ## 0.7.7
 
 ### Enhancements
