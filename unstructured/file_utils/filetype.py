@@ -516,11 +516,12 @@ def add_metadata_with_filetype(filetype: FileType):
                     kwarg: params.get(kwarg) for kwarg in ("filename", "url", "text_as_html")
                 }
                 for element in elements:
-                    _add_element_metadata(
-                        element,
-                        filetype=FILETYPE_TO_MIMETYPE[filetype],
-                        **metadata_kwargs,  # type: ignore
-                    )
+                    if element.metadata.attached_to_filename is None:
+                        _add_element_metadata(
+                            element,
+                            filetype=FILETYPE_TO_MIMETYPE[filetype],
+                            **metadata_kwargs,  # type: ignore
+                        )
 
                 return elements
             else:

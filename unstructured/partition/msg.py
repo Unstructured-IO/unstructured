@@ -18,6 +18,7 @@ def partition_msg(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
     max_partition: Optional[int] = 1500,
+    metadata_filename: Optional[str] = None,
     process_attachments: bool = False,
     attachment_partitioner: Optional[Callable] = None,
     **kwargs,
@@ -33,6 +34,8 @@ def partition_msg(
     max_partition
         The maximum number of characters to include in a partition. If None is passed,
         no maximum is applied. Only applies if processing text/plain content.
+    metadata_filename
+        The filename to use for the metadata.
     process_attachments
         If True, partition_email will process email attachments in addition to
         processing the content of the email itself.
@@ -49,13 +52,15 @@ def partition_msg(
         tmp.close()
         msg_obj = msg_parser.MsOxMessage(tmp.name)
 
+    metadata_filename = metadata_filename or filename
+
     text = msg_obj.body
     if "<html>" in text or "</div>" in text:
         elements = partition_html(text=text)
     else:
         elements = partition_text(text=text, max_partition=max_partition)
 
-    metadata = build_msg_metadata(msg_obj, filename)
+    metadata = build_msg_metadata(msg_obj, metadata_filename)
     for element in elements:
         element.metadata = metadata
 
@@ -64,12 +69,17 @@ def partition_msg(
             extract_msg_attachment_info(msg_obj=msg_obj, output_dir=tmpdir)
             attached_files = os.listdir(tmpdir)
             for attached_file in attached_files:
-                filename = os.path.join(tmpdir, attached_file)
+                attached_filename = os.path.join(tmpdir, attached_file)
                 if attachment_partitioner is None:
                     raise ValueError(
                         "Specify the attachment_partition kwarg to process attachments.",
                     )
-                elements.extend(attachment_partitioner(filename=filename))
+                attached_elements = attachment_partitioner(filename=attached_filename)
+                for element in attached_elements:
+                    element.metadata.filename = attached_file
+                    element.metadata.file_directory = None
+                    element.metadata.attached_to_filename = metadata_filename
+                    elements.append(element)
 
     return elements
 
