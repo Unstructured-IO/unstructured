@@ -6,13 +6,12 @@ SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 cd "$SCRIPT_DIR"/.. || exit 1
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-    --ms-client-id "<Azure AD app client-id>" \
-    --ms-client-cred "<Azure AD app client-secret>" \
-    --ms-authority-url "<Authority URL, default is https://login.microsoftonline.com>" \
-    --ms-tenant "<Azure AD tenant_id, default is 'common'>" \
-    --ms-user-pname "<Azure AD principal name, in most cases is the email linked to the drive>" \
+    --ms-client-id "$MS_CLIENT_ID" \
+    --ms-client-cred "$MS_CLIENT_CRED" \
+    --ms-tenant "22175133-950a-4ca9-9fa9-c8d240fb8edc" \
+    --ms-user-pname "test-ingest-admin@030rx.onmicrosoft.com" \
     --structured-output-dir onedrive-ingest-output \
-    --download-dir files-ingest-download/google-drive \
+    --download-dir files-ingest-download/onedrive \
     --partition-strategy hi_res \
     --preserve-downloads \
     --reprocess \
@@ -25,9 +24,9 @@ set +e
 # to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
 
-    cp google-drive-output/* test_unstructured_ingest/expected-structured-output/google-drive-output/
+    cp onedrive/* test_unstructured_ingest/expected-structured-output/onedrive/
 
-elif ! diff -ru test_unstructured_ingest/expected-structured-output/google-drive-output google-drive-output ; then
+elif ! diff -ru test_unstructured_ingest/expected-structured-output/onedrive onedrive ; then
 
     echo
     echo "There are differences from the previously checked-in structured outputs."

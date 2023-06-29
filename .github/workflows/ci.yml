@@ -185,6 +185,9 @@ jobs:
         SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
         DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
         GCP_INGEST_SERVICE_KEY: ${{ secrets.GCP_INGEST_SERVICE_KEY }}
+        MS_CLIENT_ID: ${{ secrets.MS_CLIENT_ID }}
+        MS_CLIENT_CRED: ${{ secrets.MS_CLIENT_CRED }}
+
       run: |
         source .venv/bin/activate
         sudo apt-get update
