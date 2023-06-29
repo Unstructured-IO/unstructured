@@ -146,7 +146,7 @@ jobs:
         # NOTE(robinson) - Installing weaviate-client separately here because the requests
         # version conflicts with label_studio_sdk
         pip install weaviate-client
-        CI=true make test
+        make test CI=true
         make check-coverage
 
   test_ingest:
@@ -247,4 +247,4 @@ jobs:
           source .venv/bin/activate
           echo "UNS_DEV_API_KEY=${{ secrets.UNS_DEV_API_KEY }}" > uns_test_env_file
           make docker-build
-          CI=true make docker-test
+          make docker-test CI=true 
