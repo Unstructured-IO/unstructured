@@ -1,13 +1,16 @@
-## 0.7.11-dev0
+## 0.7.11-dev1
 
 ### Enhancements
 
-### Features
+* Combine inferred elements with extracted elements (from unstructured-inference bump to 0.5.2) 
 
-* Updated inference package
+### Features
 
 ### Fixes
 
+* Fixed page breaks being given (incorrect) page numbers
+
+>>>>>>> origin/main
 ## 0.7.10
 
 ### Enhancements

@@ -107,7 +107,7 @@ def test_all_elements_preserved_when_serialized():
         ListItem(text="list", metadata=metadata, element_id="6"),
         Image(text="image", metadata=metadata, element_id="7"),
         Text(text="text", metadata=metadata, element_id="8"),
-        PageBreak(),
+        PageBreak(text=""),
     ]
 
     isd = base.convert_to_isd(elements)
@@ -126,7 +126,7 @@ def test_serialized_deserialize_elements_to_json(tmpdir):
         ListItem(text="list", metadata=metadata, element_id="6"),
         Image(text="image", metadata=metadata, element_id="7"),
         Text(text="text", metadata=metadata, element_id="8"),
-        PageBreak(),
+        PageBreak(text=""),
     ]
 
     base.elements_to_json(elements, filename=filename)

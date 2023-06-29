@@ -310,7 +310,7 @@ def _process_pdfminer_pages(
         elements += sorted_page_elements
 
         if include_page_breaks:
-            elements.append(PageBreak())
+            elements.append(PageBreak(text=""))
 
     return elements
 
@@ -353,5 +353,5 @@ def _partition_pdf_or_image_with_ocr(
                 elements.append(element)
 
             if include_page_breaks:
-                elements.append(PageBreak())
+                elements.append(PageBreak(text=""))
     return elements

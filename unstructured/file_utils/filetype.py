@@ -480,7 +480,7 @@ def document_to_element_list(
                 ),
             )
         if include_page_breaks and i < num_pages - 1:
-            page_elements.append(PageBreak())
+            page_elements.append(PageBreak(text=""))
         elements.extend(page_elements)
 
     return elements

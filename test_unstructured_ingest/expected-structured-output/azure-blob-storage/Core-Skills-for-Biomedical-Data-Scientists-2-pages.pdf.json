@@ -40,8 +40,63 @@
     "text": "2. Programming language expertise: biomedical data scientists should be fluent in at"
   },
   {
+<<<<<<< HEAD
     "type": "UncategorizedText",
     "element_id": "f5f4c576951865bd016d4be673f624ff",
+=======
+    "type": "ListItem",
+    "element_id": "5f86ba4abc2e566faf03d08d68497fe3",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "have a general working knowledge of the principles of biology, bioinformatics, and basic clinical science;"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "a7933384fcbc1b05de9f42caa2a53259",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "Programming language expertise: biomedical data scientists should be fluent in at least one programming language (typically R and/or Python);"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "574d13919f4ffba04df0cff8e3a96665",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "Predictive analytics, modeling, and machine learning: while a range of statistical methods may be useful, predictive analytics, modeling, and machine learning as especially important skills in biomedical data science;"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "2c2eabce11151dfe0837d521ad2bcc56",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "Team science and scientific communication: “soft” skills, like the ability to work well on teams and communicate effectively in both verbal and written venues, may be important as the more technical skills typically associated with data science."
+  },
+  {
+    "type": "ListItem",
+    "element_id": "186d6df0a7df1ef56ffd0aca24c8cb95",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "Responsible data stewardship: a successful data scientist must be able to implement best practices for data management and stewardship, as well as conduct research in an ethical manner that maintains data security and privacy."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "5e3d4670749a0f3753fa4bb1b328d156",
+>>>>>>> origin/main
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -50,6 +105,7 @@
     "text": "least one programming language (typically R and/or Python);"
   },
   {
+<<<<<<< HEAD
     "type": "UncategorizedText",
     "element_id": "8b02f539eb8ccee5b3fc24f66858188c",
     "metadata": {
@@ -112,6 +168,10 @@
   {
     "type": "UncategorizedText",
     "element_id": "2e3cec7bff1e8c8d8e0087f0bcfa89f0",
+=======
+    "type": "Title",
+    "element_id": "c6a6ea3046a1368cce3761309c6fc20e",
+>>>>>>> origin/main
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",

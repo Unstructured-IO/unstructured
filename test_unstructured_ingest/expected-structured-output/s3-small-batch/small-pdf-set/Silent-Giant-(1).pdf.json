@@ -10,6 +10,7 @@
     "text": "/Ol"
   },
   {
+<<<<<<< HEAD
     "type": "Image",
     "element_id": "db13fc0664a426b509861776cb65f22a",
     "metadata": {
@@ -150,6 +151,8 @@
     "text": "Executive Summary"
   },
   {
+=======
+>>>>>>> origin/main
     "type": "NarrativeText",
     "element_id": "1f4925fb064910ee923ccc1f6b20715b",
     "metadata": {
@@ -220,8 +223,43 @@
     "text": "In order to realise the full potential of nuclear energy we have identified three key areas where actions are required:"
   },
   {
+<<<<<<< HEAD
     "type": "UncategorizedText",
     "element_id": "9209d9a3c8ea19bed487dff9476428ee",
+=======
+    "type": "ListItem",
+    "element_id": "6618b2a00e54fc59aa8dd79fcf6c2a1b",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "The need to create a level playing field that values reliability and energy"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "9c4387f669c689e9af0a712fd494b2d7",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "The need for harmony in the nuclear regulatory environment"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "93e7dedc9d334470067ad2de1f9ee788",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "The need for a holistic safety paradigm for the whole electricity system."
+  },
+  {
+    "type": "FigureCaption",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+>>>>>>> origin/main
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -230,6 +268,7 @@
     "text": "• The need to create a level playing field that values reliability and energy security"
   },
   {
+<<<<<<< HEAD
     "type": "UncategorizedText",
     "element_id": "ae74ee3ddcecd2ffb75672d469c80a0e",
     "metadata": {
@@ -260,6 +299,8 @@
     "text": "1"
   },
   {
+=======
+>>>>>>> origin/main
     "type": "Title",
     "element_id": "257fa04b9d79fc46da551d720411595a",
     "metadata": {
@@ -740,6 +781,7 @@
     "text": "Figure 2. Worldwide electricity generation by fuel (1990-2016)ii"
   },
   {
+<<<<<<< HEAD
     "type": "UncategorizedText",
     "element_id": "53c234e5e8472b6ac51c1ae1cab3fe06",
     "metadata": {
@@ -752,6 +794,10 @@
   {
     "type": "NarrativeText",
     "element_id": "d841776bdfaae69274a3c8b898021653",
+=======
+    "type": "FigureCaption",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+>>>>>>> origin/main
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -787,7 +833,21 @@
       "filetype": "application/pdf",
       "page_number": 5
     },
+<<<<<<< HEAD
     "text": "3"
+=======
+    "text": "ee Nie"
+  },
+  {
+    "type": "FigureCaption",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 5
+    },
+    "text": ""
+>>>>>>> origin/main
   },
   {
     "type": "NarrativeText",
@@ -860,8 +920,13 @@
     "text": "4"
   },
   {
+<<<<<<< HEAD
     "type": "UncategorizedText",
     "element_id": "f807fe6dc767be2e7021d41540114b33",
+=======
+    "type": "FigureCaption",
+    "element_id": "6c02b88075198d1f1fec5ef5f2812a79",
+>>>>>>> origin/main
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1067,7 +1132,11 @@
       "filetype": "application/pdf",
       "page_number": 7
     },
+<<<<<<< HEAD
     "text": "5"
+=======
+    "text": ""
+>>>>>>> origin/main
   },
   {
     "type": "NarrativeText",
@@ -1410,6 +1479,7 @@
     "text": " Coal"
   },
   {
+<<<<<<< HEAD
     "type": "UncategorizedText",
     "element_id": "4393447bd3c1d55ea7f97417ecb1b36a",
     "metadata": {
@@ -1632,6 +1702,10 @@
   {
     "type": "UncategorizedText",
     "element_id": "ab8e9a58c47abe1aeff8ae620a0ed614",
+=======
+    "type": "FigureCaption",
+    "element_id": "d48fc1984014689cff1a8794c196a866",
+>>>>>>> origin/main
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1860,6 +1934,7 @@
     "text": "Nuclear energy offers a multitude of services beyond just electricity. With nuclear, we can decarbonize the way we heat our homes, provide process heat for industry, and ensure access to clean water. As freshwater supplies come under increasing pressure worldwide, nuclear reactors can provide desalination, ensuring a reliable flow of fresh drinking water in areas where it is scarce."
   },
   {
+<<<<<<< HEAD
     "type": "UncategorizedText",
     "element_id": "10159baf262b43a92d95db59dae1f72c",
     "metadata": {
@@ -1870,6 +1945,8 @@
     "text": "7"
   },
   {
+=======
+>>>>>>> origin/main
     "type": "NarrativeText",
     "element_id": "4c23c5c4e459d5f3f6f62cc6a06a816a",
     "metadata": {
@@ -2040,6 +2117,7 @@
     "text": "Photo credits: Front cover: Mike Baird; page 2: Vattenfall; page 4: Getty Images; page 5: Adobe Stock; page 6: Rosatom; page 8: Dean Calma, IAEA; page 10: Kazatomprom; page 11: EDF."
   },
   {
+<<<<<<< HEAD
     "type": "UncategorizedText",
     "element_id": "aa67a169b0bba217aa0aa88a65346920",
     "metadata": {
@@ -2052,6 +2130,10 @@
   {
     "type": "Image",
     "element_id": "6d647fc38c561c01f7859e019345d367",
+=======
+    "type": "FigureCaption",
+    "element_id": "0fd83b0cc2c07c6946382addcc07e877",
+>>>>>>> origin/main
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
