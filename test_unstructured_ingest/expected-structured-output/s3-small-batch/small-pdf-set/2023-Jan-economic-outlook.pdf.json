@@ -161,16 +161,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "884129b7691d98f541650f9974a03432",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "United States"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "46e79d62a98bd3d789932f6067e287f9",
     "metadata": {
       "data_source": {},
@@ -178,6 +168,16 @@
       "page_number": 3
     },
     "text": "Median country Brazil"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "884129b7691d98f541650f9974a03432",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "United States"
   },
   {
     "type": "UncategorizedText",
@@ -211,6 +211,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "982a4e27ceee8ebea442a9e655d514a2",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jan. 2019"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "977d74af7626f2abfd2ac76999c2b532",
     "metadata": {
       "data_source": {},
@@ -231,13 +241,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "982a4e27ceee8ebea442a9e655d514a2",
+    "element_id": "44ea2235bcfba828c66c9e07ae9de9ab",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 3
     },
-    "text": "Jan. 2019"
+    "text": "Jul. 20"
   },
   {
     "type": "UncategorizedText",
@@ -251,16 +261,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "d5190b32fd3af45c0dc1599725380144",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jan. 22"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "18f1504e5633185fe4f66dc0215c7e0f",
     "metadata": {
       "data_source": {},
@@ -271,6 +271,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "d5190b32fd3af45c0dc1599725380144",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jan. 22"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "5b7e9f3b7b7e91b3cb4e6195c1f36d25",
     "metadata": {
       "data_source": {},
@@ -278,16 +288,6 @@
       "page_number": 3
     },
     "text": "Jul. 22"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "44ea2235bcfba828c66c9e07ae9de9ab",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jul. 20"
   },
   {
     "type": "UncategorizedText",
@@ -341,6 +341,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "977d74af7626f2abfd2ac76999c2b532",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jul. 19"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "b02dddf9e55f98d11d6f969e781256c7",
     "metadata": {
       "data_source": {},
@@ -348,26 +358,6 @@
       "page_number": 3
     },
     "text": "Jan. 20"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "5abf188738ee99991cae53cd3942588b",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jan. 21"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "d5190b32fd3af45c0dc1599725380144",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jan. 22"
   },
   {
     "type": "UncategorizedText",
@@ -381,13 +371,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "977d74af7626f2abfd2ac76999c2b532",
+    "element_id": "5abf188738ee99991cae53cd3942588b",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 3
     },
-    "text": "Jul. 19"
+    "text": "Jan. 21"
   },
   {
     "type": "UncategorizedText",
@@ -398,6 +388,16 @@
       "page_number": 3
     },
     "text": "Jul. 21"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d5190b32fd3af45c0dc1599725380144",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jan. 22"
   },
   {
     "type": "UncategorizedText",
@@ -851,16 +851,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "f1c54cd860f2a7dfaf6d5e9cda3628d6",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "2024"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "2b05abac83ad534cb6c39d58f8516e93",
     "metadata": {
       "data_source": {},
@@ -868,6 +858,16 @@
       "page_number": 7
     },
     "text": "2021"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "f1c54cd860f2a7dfaf6d5e9cda3628d6",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "2024"
   },
   {
     "type": "UncategorizedText",

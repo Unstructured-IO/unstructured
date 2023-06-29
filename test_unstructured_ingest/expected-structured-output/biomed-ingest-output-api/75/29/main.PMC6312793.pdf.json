@@ -481,6 +481,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "4443614d5e9dada0ac5245412ed35771",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "the size,"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "ecdf365f1ccc984986436c659f2814db",
     "metadata": {
       "data_source": {},
@@ -498,16 +508,6 @@
       "page_number": 2
     },
     "text": "the problem instance,"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "4443614d5e9dada0ac5245412ed35771",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "the size,"
   },
   {
     "type": "UncategorizedText",

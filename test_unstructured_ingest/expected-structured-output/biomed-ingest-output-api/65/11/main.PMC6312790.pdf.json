@@ -1621,16 +1621,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "0c156d16287a78307e9e0220ead9ae3c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 6
-    },
-    "text": "(cid:3)"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "b84630a9e08df3b58aa3156c31355ffc",
     "metadata": {
       "data_source": {},
@@ -1638,6 +1628,16 @@
       "page_number": 6
     },
     "text": "(cid:1) Þ ¼ 87:6W DAT"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "0c156d16287a78307e9e0220ead9ae3c",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 6
+    },
+    "text": "(cid:3)"
   },
   {
     "type": "UncategorizedText",
