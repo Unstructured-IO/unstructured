@@ -1,13 +1,34 @@
-## 0.7.10-dev2
+## 0.7.11-dev1
 
 ### Enhancements
-
-* DRY connector refactor
 
 ### Features
 
 ### Fixes
 
+* Fix tests that call unstructured-api by passing through an api-key
+* Fixed page breaks being given (incorrect) page numbers
+
+## 0.7.10
+
+### Enhancements
+
+* Adds a `max_partition` parameter to `partition_text`, `partition_pdf`, `partition_email`,
+  `partition_msg` and `partition_xml` that sets a limit for the size of an individual
+  document elements. Defaults to `1500` for everything except `partition_xml`, which has
+  a default value of `None`.
+* DRY connector refactor
+
+### Features
+
+* `hi_res` model for pdfs and images is selectable via environment variable.
+
+### Fixes
+
+* CSV check now ignores escaped commas.
+* Fix for filetype exploration util when file content does not have a comma.
+* Adds negative lookahead to bullet pattern to avoid detecting plain text line
+  breaks like `-------` as list items.
 * Fix pre tag parsing for `partition_html`
 * Fix lookup error for annotated Arabic and Hebrew encodings
 

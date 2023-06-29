@@ -1,5 +1,6 @@
 """Process aribritrary files with the Unstructured library"""
 
+import os
 from typing import Any, Dict, List, Optional
 
 from unstructured_inference.models.base import get_model
@@ -9,9 +10,9 @@ from unstructured.ingest.logger import logger
 
 
 def initialize():
-    """Download default model (avoids subprocesses all doing the same)"""
-
-    get_model()
+    """Download default model or model specified by UNSTRUCTURED_HI_RES_MODEL_NAME environment
+    variable (avoids subprocesses all doing the same)"""
+    get_model(os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME"))
 
 
 def process_document(doc: "IngestDoc", **partition_kwargs) -> Optional[List[Dict[str, Any]]]:

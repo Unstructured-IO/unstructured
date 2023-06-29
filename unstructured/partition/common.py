@@ -23,11 +23,14 @@ from unstructured.logger import logger
 from unstructured.nlp.patterns import ENUMERATED_BULLETS_RE, UNICODE_BULLETS_RE
 
 if TYPE_CHECKING:
-    from unstructured_inference.inference.layoutelement import LayoutElement
+    from unstructured_inference.inference.layoutelement import (
+        LayoutElement,
+        LocationlessLayoutElement,
+    )
 
 
 def normalize_layout_element(
-    layout_element: Union["LayoutElement", Element, Dict[str, Any]],
+    layout_element: Union["LayoutElement", "LocationlessLayoutElement", Element, Dict[str, Any]],
 ) -> Union[Element, List[Element]]:
     """Converts an unstructured_inference LayoutElement object to an unstructured Element."""
 
@@ -36,7 +39,7 @@ def normalize_layout_element(
 
     # NOTE(alan): Won't the lines above ensure this never runs (PageBreak is a subclass of Element)?
     if isinstance(layout_element, PageBreak):
-        return PageBreak()
+        return PageBreak(text="")
 
     if not isinstance(layout_element, dict):
         layout_dict = layout_element.to_dict()

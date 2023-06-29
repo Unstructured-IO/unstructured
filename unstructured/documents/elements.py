@@ -285,8 +285,9 @@ class CheckBox(Element):
         coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         checked: bool = False,
-        metadata: ElementMetadata = ElementMetadata(),
+        metadata: Optional[ElementMetadata] = None,
     ):
+        metadata = metadata if metadata else ElementMetadata()
         super().__init__(
             element_id=element_id,
             coordinates=coordinates,
@@ -319,8 +320,9 @@ class Text(Element):
         element_id: Union[str, NoID] = NoID(),
         coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
-        metadata: ElementMetadata = ElementMetadata(),
+        metadata: Optional[ElementMetadata] = None,
     ):
+        metadata = metadata if metadata else ElementMetadata()
         self.text: str = text
 
         if isinstance(element_id, NoID):
@@ -419,16 +421,6 @@ class PageBreak(Text):
     """An element for capturing page breaks."""
 
     category = "PageBreak"
-
-    def __init__(
-        self,
-        text: Optional[str] = None,
-        element_id: Union[str, NoID] = NoID(),
-        coordinates: Optional[List[float]] = None,
-        coordinate_system: Optional[CoordinateSystem] = None,
-        metadata: ElementMetadata = ElementMetadata(),
-    ):
-        super().__init__(text="<PAGE BREAK>")
 
 
 class Table(Text):

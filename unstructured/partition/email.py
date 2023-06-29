@@ -225,6 +225,7 @@ def partition_email(
     content_source: str = "text/html",
     encoding: Optional[str] = None,
     include_headers: bool = False,
+    max_partition: Optional[int] = 1500,
     **kwargs,
 ) -> List[Element]:
     """Partitions an .eml documents into its constituent elements.
@@ -241,6 +242,9 @@ def partition_email(
         other: "text/plain"
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
+    max_partition
+        The maximum number of characters to include in a partition. If None is passed,
+        no maximum is applied. Only applies if processing the text/plain content.
     """
     if content_source not in VALID_CONTENT_SOURCES:
         raise ValueError(
@@ -323,7 +327,7 @@ def partition_email(
 
     elif content_source == "text/plain":
         list_content = split_by_paragraph(content)
-        elements = partition_text(text=content, encoding=encoding)
+        elements = partition_text(text=content, encoding=encoding, max_partition=max_partition)
 
     for idx, element in enumerate(elements):
         indices = has_embedded_image(element)
