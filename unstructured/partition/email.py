@@ -366,7 +366,7 @@ def partition_email(
                 attached_filename = os.path.join(tmpdir, attached_file)
                 if attachment_partitioner is None:
                     raise ValueError(
-                        "Specify the attachment_partition kwarg to process attachments.",
+                        "Specify the attachment_partitioner kwarg to process attachments.",
                     )
                 attached_elements = attachment_partitioner(filename=attached_filename)
                 for element in attached_elements:
