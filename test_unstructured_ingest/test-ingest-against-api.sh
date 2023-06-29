@@ -2,10 +2,6 @@
 
 set -e
 
-# TODO(crag): do not exit 0 but proceed with the test if an API key env var is defined
-# shellcheck disable=SC2317
-exit 0
-
 if [ -z "$UNS_API_KEY" ]; then
    echo "Skipping ingest test against api because the UNS_API_KEY env var is not set."
    exit 0
