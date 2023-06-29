@@ -374,9 +374,6 @@ class PageBreak(Text):
 
     category = "PageBreak"
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(text="<PAGE BREAK>")
-
 
 class Table(Text):
     """An element for capturing tables."""
