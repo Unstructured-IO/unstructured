@@ -156,7 +156,11 @@ class BaseIngestDoc(ABC):
 
         @functools.wraps(func)
         def wrapper(self, *args, **kwargs):
-            if not self.standard_config.re_download and self.has_output():
+            if (
+                not self.standard_config.re_download
+                and self.filename.is_file()
+                and self.filename.stat().st_size
+            ):
                 logger.debug(f"File exists: {self.filename}, skipping {func.__name__}")
                 return None
             return func(self, *args, **kwargs)
