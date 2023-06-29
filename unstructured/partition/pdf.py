@@ -204,7 +204,7 @@ def _partition_pdf_or_image_local(
         if isinstance(el, Image) and (
             el.text is not None and len(el.text) > 24 and el.text.find(" ") > -1
         ):
-            continue
+            out_elements.append(el)
         elif isinstance(el, PageBreak) and include_page_breaks:
             out_elements.append(cast(Element, el))
         elif isinstance(el, Text):
