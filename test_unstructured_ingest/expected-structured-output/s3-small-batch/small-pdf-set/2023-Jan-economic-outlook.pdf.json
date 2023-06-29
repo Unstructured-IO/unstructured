@@ -10,7 +10,6 @@
     "text": "INTERNATIONAL MONETARY FUND"
   },
   {
-<<<<<<< HEAD
     "type": "UncategorizedText",
     "element_id": "187c995b9064f8ad504b143c5547df00",
     "metadata": {
@@ -351,8 +350,6 @@
     "text": ")0:"
   },
   {
-=======
->>>>>>> origin/main
     "type": "Title",
     "element_id": "12d4f57c3f43b0afbdf88305940258bc",
     "metadata": {
@@ -410,171 +407,7 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-<<<<<<< HEAD
     "text": "tighter monetary conditions and lower growth potentially affecting financial and debt stability, it is necessary to deploy macroprudential tools and strengthen debt restructuring frameworks. Accelerating COVID-19 vaccinations in China would safeguard the recovery, with positive cross-border spillovers. Fiscal support should be better targeted at those most affected by elevated food and energy prices, and broad-based fiscal relief measures should be withdrawn. Stronger multilateral cooperation is essential to preserve the gains from the rules-based multilateral system and to mitigate climate change by limiting emissions and raising green investment."
-=======
-    "text": "World Economic Outlook (WEO) but below the historical ("
-  },
-  {
-    "type": "ListItem",
-    "element_id": "d4f85d36757c12f0c6dab57721287f32",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "–"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "59b64a4f379379f40c2e2dae648bbe86",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": ") average of"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "b862480cc8c7b262d4530f218b3962c5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "percent. The rise in central bank rates to fight inflation and Russia’s war in Ukraine continue to weigh on economic activity. The rapid spread of COVID-"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "a632a9497576b18f031b67b266292d8d",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "in China dampened growth in"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "db0dac31e953034b1cc9e005662be7f0",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": ", but the recent reopening has paved the way for a faster-than-expected recovery. Global inflation is expected to fall from"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "a43f44509d551e8afd0e0ed531d1dde9",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "percent in"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "663ea1bfffe5038f3f0cf667f14c4257",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "to"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "a43f44509d551e8afd0e0ed531d1dde9",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "percent in"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "6201111b83a0cb5b0922cb37cc442b9a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "and"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "a43f44509d551e8afd0e0ed531d1dde9",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "percent in"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "fa6c5a7a83e95f1ab9363fb9dc8b8356",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": ", still above pre-pandemic ("
-  },
-  {
-    "type": "ListItem",
-    "element_id": "d4f85d36757c12f0c6dab57721287f32",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "–"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "50da8ff0ab4f7688f69a954049e5ba08",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": ") levels of about"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "5ba319d9fbe1e3b52b493e171a834b9e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "percent.  The balance of risks remains tilted to the downside, but adverse risks have moderated since the October"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "0de8a0d46d66475dfca97336c93372c1",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "WEO. On the upside, a stronger boost from pent-up demand in numerous economies or a faster fall in inflation are plausible. On the downside, severe health outcomes in China could hold back the recovery, Russia’s war in Ukraine could escalate, and tighter global financing conditions could worsen debt distress. Financial markets could also suddenly reprice in response to adverse inflation news, while further geopolitical fragmentation could hamper economic progress.  In most economies, amid the cost-of-living crisis, the priority remains achieving sustained disinflation. With tighter monetary conditions and lower growth potentially affecting financial and debt stability, it is necessary to deploy macroprudential tools and strengthen debt restructuring frameworks. Accelerating COVID-"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "b7aeb9bedc9227d4a5d4e23dea450d11",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "vaccinations in China would safeguard the recovery, with positive cross-border spillovers. Fiscal support should be better targeted at those most affected by elevated food and energy prices, and broad-based fiscal relief measures should be withdrawn. Stronger multilateral cooperation is essential to preserve the gains from the rules-based multilateral system and to mitigate climate change by limiting emissions and raising green investment."
->>>>>>> origin/main
   },
   {
     "type": "Title",
@@ -617,7 +450,6 @@
     "text": "In the fourth quarter of 2022, however, this uptick is estimated to have faded in most—though not all––major economies. US growth remains stronger than expected, with consumers continuing to spend from their stock of savings (the personal saving rate is at its lowest in more than 60 years, except for July 2005), unemployment near historic lows, and plentiful job opportunities. But elsewhere, high-frequency activity indicators (such as business and consumer sentiment, purchasing manager surveys, and mobility indicators) generally point to a slowdown."
   },
   {
-<<<<<<< HEAD
     "type": "Image",
     "element_id": "2f8aa9f553e3e6cb449dfcd835ba6121",
     "metadata": {
@@ -1050,10 +882,6 @@
   {
     "type": "Image",
     "element_id": "70d495d01ecf09d40f891ea8f85e373c",
-=======
-    "type": "NarrativeText",
-    "element_id": "fe2b47d7f897185012ad14914e91f88c",
->>>>>>> origin/main
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1062,63 +890,8 @@
     "text": "cOn"
   },
   {
-<<<<<<< HEAD
     "type": "Image",
     "element_id": "7ed36e239722df47b96215ff57b8c58a",
-=======
-    "type": "ListItem",
-    "element_id": "d615791ee1bf405e42c8f0f1db787b41",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Monetary policy starts to bite. Signs are apparent that monetary policy tightening is starting to cool demand and inflation, but the full impact is unlikely to be realized before"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "5696667b43a2b853477cc8156d814518",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Global headline inflation appears to have peaked in the third quarter of"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "7c34e0dd921e1512fe90c9f84f8a2e7c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "(Figure"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "7f56e5da1507d0e19da4f73ce176727c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "). Prices of fuel and nonfuel commodities have declined, lowering headline inflation, notably in the United States, the euro area, and Latin America. But underlying (core) inflation has not yet peaked in most economies and remains well above pre-pandemic levels. It has persisted amid second-round effects from earlier cost shocks and tight labor markets with robust wage growth as consumer demand has remained resilient. Medium-term inflation expectations generally remain anchored, but some gauges are up. These developments have caused central banks to raise rates faster than expected, especially in the United States and the euro area, and to signal that rates will stay elevated for longer. Core inflation is declining in some economies that have completed their tightening cycle—such as Brazil. Financial markets are displaying high sensitivity to inflation news, with equity markets rising following recent releases of lower inflation data in anticipation of interest rate cuts (Box"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "8d8b457c43099ecc4a236724a2c42cca",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "), despite central banks’ communicating their resolve to tighten policy further. With the peak in US headline inflation and an acceleration in rate hikes by several non-US central banks, the"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "0cce65035ca66e9be782c845ddd606e2",
->>>>>>> origin/main
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1167,7 +940,6 @@
     "text": "ATE"
   },
   {
-<<<<<<< HEAD
     "type": "Image",
     "element_id": "620ca6f5fd0402d6883844603cfd99cc",
     "metadata": {
@@ -1348,8 +1120,6 @@
     "text": "Cy"
   },
   {
-=======
->>>>>>> origin/main
     "type": "NarrativeText",
     "element_id": "15d7968ef76d05b9b7d490cd2ebe6550",
     "metadata": {
@@ -1371,16 +1141,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "46e79d62a98bd3d789932f6067e287f9",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Median country Brazil"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "884129b7691d98f541650f9974a03432",
     "metadata": {
       "data_source": {},
@@ -1388,6 +1148,16 @@
       "page_number": 3
     },
     "text": "United States"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "46e79d62a98bd3d789932f6067e287f9",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Median country Brazil"
   },
   {
     "type": "UncategorizedText",
@@ -1421,16 +1191,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "982a4e27ceee8ebea442a9e655d514a2",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jan. 2019"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "977d74af7626f2abfd2ac76999c2b532",
     "metadata": {
       "data_source": {},
@@ -1451,13 +1211,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "44ea2235bcfba828c66c9e07ae9de9ab",
+    "element_id": "982a4e27ceee8ebea442a9e655d514a2",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 3
     },
-    "text": "Jul. 20"
+    "text": "Jan. 2019"
   },
   {
     "type": "UncategorizedText",
@@ -1471,16 +1231,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "18f1504e5633185fe4f66dc0215c7e0f",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jul. 21"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "d5190b32fd3af45c0dc1599725380144",
     "metadata": {
       "data_source": {},
@@ -1491,6 +1241,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "18f1504e5633185fe4f66dc0215c7e0f",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jul. 21"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "5b7e9f3b7b7e91b3cb4e6195c1f36d25",
     "metadata": {
       "data_source": {},
@@ -1498,6 +1258,16 @@
       "page_number": 3
     },
     "text": "Jul. 22"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "44ea2235bcfba828c66c9e07ae9de9ab",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jul. 20"
   },
   {
     "type": "UncategorizedText",
@@ -1551,16 +1321,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "977d74af7626f2abfd2ac76999c2b532",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jul. 19"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "b02dddf9e55f98d11d6f969e781256c7",
     "metadata": {
       "data_source": {},
@@ -1568,16 +1328,6 @@
       "page_number": 3
     },
     "text": "Jan. 20"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "44ea2235bcfba828c66c9e07ae9de9ab",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jul. 20"
   },
   {
     "type": "UncategorizedText",
@@ -1591,16 +1341,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "18f1504e5633185fe4f66dc0215c7e0f",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jul. 21"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "d5190b32fd3af45c0dc1599725380144",
     "metadata": {
       "data_source": {},
@@ -1608,6 +1348,36 @@
       "page_number": 3
     },
     "text": "Jan. 22"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "44ea2235bcfba828c66c9e07ae9de9ab",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jul. 20"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "977d74af7626f2abfd2ac76999c2b532",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jul. 19"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "18f1504e5633185fe4f66dc0215c7e0f",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jul. 21"
   },
   {
     "type": "UncategorizedText",
@@ -2410,7 +2180,6 @@
     "text": "In the United States, growth is projected to fall from 2.0 percent in 2022 to 1.4 percent in 2023 and 1.0 percent in 2024. With growth rebounding in the second half of 2024, growth in 2024 will be faster than in 2023 on a fourth-quarter-over-fourth-quarter basis, as in most advanced"
   },
   {
-<<<<<<< HEAD
     "type": "Image",
     "element_id": "0d36b3ba08d45859200bfff7e846d478",
     "metadata": {
@@ -2427,14 +2196,6 @@
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
-=======
-    "type": "ListItem",
-    "element_id": "bf580d50aefc21b403d562faa61f6064",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
->>>>>>> origin/main
     },
     "text": "al I"
   },
@@ -2444,11 +2205,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 4
-=======
-      "page_number": 5
->>>>>>> origin/main
     },
     "text": "| Mo"
   },
@@ -2458,11 +2215,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 4
-=======
-      "page_number": 5
->>>>>>> origin/main
     },
     "text": "y Fu"
   },
@@ -2472,11 +2225,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 4
-=======
-      "page_number": 5
->>>>>>> origin/main
     },
     "text": "nd |"
   },
@@ -2486,11 +2235,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 4
-=======
-      "page_number": 5
->>>>>>> origin/main
     },
     "text": "| 20"
   },
@@ -2500,11 +2245,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 4
-=======
-      "page_number": 5
->>>>>>> origin/main
     },
     "text": "202"
   },
@@ -2514,11 +2255,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 4
-=======
-      "page_number": 5
->>>>>>> origin/main
     },
     "text": "023"
   },
@@ -2528,11 +2265,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 4
-=======
-      "page_number": 5
->>>>>>> origin/main
     },
     "text": "nte"
   },
@@ -2542,11 +2275,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 4
-=======
-      "page_number": 5
->>>>>>> origin/main
     },
     "text": "atic"
   },
@@ -2556,11 +2285,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 4
-=======
-      "page_number": 5
->>>>>>> origin/main
     },
     "text": "eta"
   },
@@ -2570,11 +2295,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 4
-=======
-      "page_number": 5
->>>>>>> origin/main
     },
     "text": "202"
   },
@@ -2584,11 +2305,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 4
-=======
-      "page_number": 5
->>>>>>> origin/main
     },
     "text": "Inte"
   },
@@ -2598,11 +2315,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 4
-=======
-      "page_number": 5
->>>>>>> origin/main
     },
     "text": "iter"
   },
@@ -2612,11 +2325,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 4
-=======
-      "page_number": 5
->>>>>>> origin/main
     },
     "text": "em"
   },
@@ -2626,11 +2335,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 4
-=======
-      "page_number": 5
->>>>>>> origin/main
     },
     "text": "ma"
   },
@@ -2640,11 +2345,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 4
-=======
-      "page_number": 5
->>>>>>> origin/main
     },
     "text": "nati"
   },
@@ -2654,11 +2355,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 4
-=======
-      "page_number": 5
->>>>>>> origin/main
     },
     "text": "tion"
   },
@@ -2668,11 +2365,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 4
-=======
-      "page_number": 5
->>>>>>> origin/main
     },
     "text": "ona"
   },
@@ -2682,11 +2375,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 4
-=======
-      "page_number": 5
->>>>>>> origin/main
     },
     "text": "nal"
   },
@@ -2696,11 +2385,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 4
-=======
-      "page_number": 5
->>>>>>> origin/main
     },
     "text": "lon"
   },
@@ -3235,423 +2920,8 @@
     "text": "For emerging market and developing economies, growth is projected to rise modestly, from 3.9 percent in 2022 to 4.0 percent in 2023 and 4.2 percent in 2024, with an upward revision of 0.3 percentage point for 2023 and a downward revision of 0.1 percentage point for 2024. About half of emerging market and developing economies have lower growth in 2023 than in 2022."
   },
   {
-<<<<<<< HEAD
     "type": "UncategorizedText",
     "element_id": "7dd64588f448e9affc798f80b63b6365",
-=======
-    "type": "ListItem",
-    "element_id": "01d56e6753b2d96cd61e9ee53345e822",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "percent, respectively, after the deeper-than-expected slowdown in"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "663ea1bfffe5038f3f0cf667f14c4257",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "to"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "04ce161c4e84c16553dd9faebf61e256",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "percent attributable to China’s economy. China’s real GDP slowdown in the fourth quarter of"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "2e332f691d8b1c6d174f51caebe1f898",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "implies a"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "0d5c9a426e8adcc7926f2ff3715d4c2f",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "percentage point downgrade for"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "ecf612ad37c83736c73f8d64f203fd8b",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "growth to"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "4944c4cc85469425c381b21e6868d398",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "percent—the first time in more than"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e0821d21479d49d31b9e9f528ff603d3",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "years with China’s growth below the global average. Growth in China is projected to rise to"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "a43f44509d551e8afd0e0ed531d1dde9",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "percent in"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "611069a311ef3527b0e0724ecb6884f4",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": ", reflecting rapidly improving mobility, and to fall to"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "a43f44509d551e8afd0e0ed531d1dde9",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "percent in"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "43d8fec194cc17c890b8a6edb9510652",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "before settling at below"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "54ab95f8b28a71c9c9c47a951bd78c7e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "percent over the medium term amid declining business dynamism and slow progress on structural reforms. Growth in India is set to decline from"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "a43f44509d551e8afd0e0ed531d1dde9",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "percent in"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "663ea1bfffe5038f3f0cf667f14c4257",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "to"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "a43f44509d551e8afd0e0ed531d1dde9",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "percent in"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "3f69748ff623002874cfc2a28679a094",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "before picking up to"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "a43f44509d551e8afd0e0ed531d1dde9",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "percent in"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "5e32493eb30a078577d4ff34e23374b4",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": ", with resilient domestic demand despite external headwinds. Growth in the ASEAN-"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "80b3fec5d09796495837ce44a262ae18",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "countries (Indonesia, Malaysia, Philippines, Singapore, Thailand) is similarly projected to slow to"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "a43f44509d551e8afd0e0ed531d1dde9",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "percent in"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "b58b0e1583d9e74840929c81babc53ff",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "and then pick up to"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "a43f44509d551e8afd0e0ed531d1dde9",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "percent in"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "70e68a1bf24a1a4823291986069364b4",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "Growth in emerging and developing Europe is projected to have bottomed out in"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "b1d6b91b67c2afa5e322988d9462638d",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "at"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "ece01b4dc9a5b275f1941561cc4f87ed",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "percent and, since the October forecast, has been revised up for"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "a7e2d26e8d15814dd9c6a1bdc90585c8",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "by"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "b76fd1f7b451936c0758c62ba8f76b10",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "percentage point to"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "034559264b2eb68db2277784e5f4d6e4",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "percent. This reflects a smaller economic contraction in Russia in"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "2d250383d93d94536d58f6ae500a62f7",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "(estimated at –"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "a9b1991fc956134f0c19814fe3ec98a6",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "percent compared with a predicted –"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "75b774af68abbaa59858e7e9b9a8efb1",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "percent) followed by modestly positive growth in"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "0dcbbc50123843e99b38c83478c26568",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "At the current oil price cap level of the Group of Seven, Russian crude oil export volumes are not expected to be significantly affected, with Russian trade continuing to be redirected from sanctioning to non-sanctioning countries.  In Latin America and the Caribbean, growth is projected to decline from"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "a43f44509d551e8afd0e0ed531d1dde9",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "percent in"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "663ea1bfffe5038f3f0cf667f14c4257",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "to"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "a43f44509d551e8afd0e0ed531d1dde9",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "percent in"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "1b374edc4e0903bb12d65c3a01c7dab2",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": ", with an upward revision for"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "28391d3bc64ec15cbb090426b04aa6b7",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "of"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "7856bbad32f3d1af53b9dfb12d94e478",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "percentage point since October. The forecast revision reflects upgrades of"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "239eee3a0af266b960a3a6bc43206c2a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "percentage point for Brazil and"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "8ecdd96ba3c25c04692920cac2ce7ab3",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "percentage point for Mexico due to unexpected domestic demand resilience, higher-than-expected growth in"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "698cc450c2b88d928fb4a60e12d403c7",
->>>>>>> origin/main
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -3660,7 +2930,6 @@
     "text": " Growth in emerging and developing Asia is expected to rise in 2023 and 2024 to 5.3 percent and 5.2"
   },
   {
-<<<<<<< HEAD
     "type": "UncategorizedText",
     "element_id": "74af5288c060a6b7bc028cc0efcf59ea",
     "metadata": {
@@ -3677,14 +2946,6 @@
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5
-=======
-    "type": "ListItem",
-    "element_id": "90c93f9ea087de8b09b7dbed1b0e1438",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 6
->>>>>>> origin/main
     },
     "text": " Growth in emerging and developing Europe is projected to have bottomed out in 2022 at 0.7 percent and, since the October forecast, has been revised up for 2023 by 0.9 percentage point to 1.5 percent. This reflects a smaller economic contraction in Russia in 2022 (estimated at –2.2 percent compared with a predicted –3.4 percent) followed by modestly positive growth in 2023. At the current oil price cap level of the Group of Seven, Russian crude oil export volumes are not expected to be significantly affected, with Russian trade continuing to be redirected from sanctioning to non-sanctioning countries. In Latin America and the Caribbean, growth is projected to decline from 3.9 percent in 2022 to 1.8 percent in 2023, with an upward revision for 2023 of 0.1 percentage point since October. The forecast revision reflects upgrades of 0.2 percentage point for Brazil and 0.5 percentage point for Mexico due to unexpected domestic demand resilience, higher-than-expected growth in"
   },
@@ -3694,11 +2955,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 5
-=======
-      "page_number": 6
->>>>>>> origin/main
     },
     "text": ""
   },
@@ -3708,11 +2965,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 5
-=======
-      "page_number": 6
->>>>>>> origin/main
     },
     "text": "tin"
   },
@@ -3722,11 +2975,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 5
-=======
-      "page_number": 6
->>>>>>> origin/main
     },
     "text": "al I"
   },
@@ -3736,11 +2985,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 5
-=======
-      "page_number": 6
->>>>>>> origin/main
     },
     "text": "|Mo"
   },
@@ -3750,11 +2995,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 5
-=======
-      "page_number": 6
->>>>>>> origin/main
     },
     "text": ") Fu"
   },
@@ -3764,11 +3005,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 5
-=======
-      "page_number": 6
->>>>>>> origin/main
     },
     "text": "nd |"
   },
@@ -3778,11 +3015,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 5
-=======
-      "page_number": 6
->>>>>>> origin/main
     },
     "text": "y 20"
   },
@@ -3792,11 +3025,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 5
-=======
-      "page_number": 6
->>>>>>> origin/main
     },
     "text": "202"
   },
@@ -3806,11 +3035,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 5
-=======
-      "page_number": 6
->>>>>>> origin/main
     },
     "text": "023"
   },
@@ -3820,11 +3045,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 5
-=======
-      "page_number": 6
->>>>>>> origin/main
     },
     "text": "nte!"
   },
@@ -3834,11 +3055,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 5
-=======
-      "page_number": 6
->>>>>>> origin/main
     },
     "text": "atic"
   },
@@ -3848,11 +3065,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 5
-=======
-      "page_number": 6
->>>>>>> origin/main
     },
     "text": "eta"
   },
@@ -3862,11 +3075,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 5
-=======
-      "page_number": 6
->>>>>>> origin/main
     },
     "text": "202"
   },
@@ -3876,11 +3085,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 5
-=======
-      "page_number": 6
->>>>>>> origin/main
     },
     "text": "Inte"
   },
@@ -3890,11 +3095,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 5
-=======
-      "page_number": 6
->>>>>>> origin/main
     },
     "text": "iter!"
   },
@@ -3904,11 +3105,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 5
-=======
-      "page_number": 6
->>>>>>> origin/main
     },
     "text": "erm:"
   },
@@ -3918,11 +3115,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 5
-=======
-      "page_number": 6
->>>>>>> origin/main
     },
     "text": "rma"
   },
@@ -3932,11 +3125,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 5
-=======
-      "page_number": 6
->>>>>>> origin/main
     },
     "text": "nati"
   },
@@ -3946,11 +3135,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 5
-=======
-      "page_number": 6
->>>>>>> origin/main
     },
     "text": "tion"
   },
@@ -3960,11 +3145,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 5
-=======
-      "page_number": 6
->>>>>>> origin/main
     },
     "text": "ona"
   },
@@ -3974,11 +3155,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 5
-=======
-      "page_number": 6
->>>>>>> origin/main
     },
     "text": "nal"
   },
@@ -3988,11 +3165,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 5
-=======
-      "page_number": 6
->>>>>>> origin/main
     },
     "text": "Vion"
   },
@@ -4002,11 +3175,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 5
-=======
-      "page_number": 6
->>>>>>> origin/main
     },
     "text": "one"
   },
@@ -4016,11 +3185,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 5
-=======
-      "page_number": 6
->>>>>>> origin/main
     },
     "text": "nete"
   },
@@ -4030,11 +3195,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 5
-=======
-      "page_number": 6
->>>>>>> origin/main
     },
     "text": "stan"
   },
@@ -4044,11 +3205,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 5
-=======
-      "page_number": 6
->>>>>>> origin/main
     },
     "text": "ary"
   },
@@ -4058,11 +3215,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 5
-=======
-      "page_number": 6
->>>>>>> origin/main
     },
     "text": "und"
   },
@@ -4557,7 +3710,6 @@
     "text": "The balance of risks to the global outlook remains tilted to the downside, with scope for lower growth and higher inflation, but adverse risks have moderated since the October 2022 World Economic Outlook."
   },
   {
-<<<<<<< HEAD
     "type": "Image",
     "element_id": "0d36b3ba08d45859200bfff7e846d478",
     "metadata": {
@@ -5228,8 +4380,6 @@
     "text": "Table 1. Overview of the World Economic Outlook Projections)TDnenact et dnd nthe"
   },
   {
-=======
->>>>>>> origin/main
     "type": "NarrativeText",
     "element_id": "1ad611b76683e54171ae0b1fddd827ca",
     "metadata": {
@@ -5621,16 +4771,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "2b05abac83ad534cb6c39d58f8516e93",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "2021"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "f1c54cd860f2a7dfaf6d5e9cda3628d6",
     "metadata": {
       "data_source": {},
@@ -5638,6 +4778,16 @@
       "page_number": 7
     },
     "text": "2024"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "2b05abac83ad534cb6c39d58f8516e93",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "2021"
   },
   {
     "type": "UncategorizedText",
@@ -8390,7 +7540,6 @@
     "text": "up demand remains an upside risk to the growth outlook. In some advanced economies, recent data show that households are still on net adding to their stock of excess savings (as in some euro area countries and the United Kingdom) or have ample savings left (as in the United States). This leaves scope for a further boost to consumption—particularly of services, including tourism."
   },
   {
-<<<<<<< HEAD
     "type": "Image",
     "element_id": "ab547757da37eb600011051fb0e9fe0c",
     "metadata": {
@@ -8407,14 +7556,6 @@
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 7
-=======
-    "type": "ListItem",
-    "element_id": "31595d732706a9d1f5221b8041160c4d",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
->>>>>>> origin/main
     },
     "text": "al I"
   },
@@ -8424,11 +7565,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 7
-=======
-      "page_number": 8
->>>>>>> origin/main
     },
     "text": "|Mo"
   },
@@ -8438,11 +7575,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 7
-=======
-      "page_number": 8
->>>>>>> origin/main
     },
     "text": ") Fu"
   },
@@ -8452,11 +7585,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-<<<<<<< HEAD
       "page_number": 7
-=======
-      "page_number": 8
->>>>>>> origin/main
     },
     "text": "nd |"
   },
@@ -8861,63 +7990,8 @@
     "text": "cOn"
   },
   {
-<<<<<<< HEAD
     "type": "Image",
     "element_id": "7ed36e239722df47b96215ff57b8c58a",
-=======
-    "type": "ListItem",
-    "element_id": "7ccd317aad1affab0f48c3f6bd3d967f",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "China’s recovery stalling: Amid still-low population immunity levels and insufficient hospital capacity, especially outside the major urban areas, significant health consequences could hamper the recovery. A deepening crisis in the real estate market remains a major source of vulnerability, with risks of widespread defaults by developers and resulting financial sector instability. Spillovers to the rest of the world would operate primarily through lower demand and potentially renewed supply chain problems.  War in Ukraine escalating: An escalation of the war in Ukraine remains a major source of vulnerability, particularly for Europe and lower-income countries. Europe is facing lower-than- anticipated gas prices, having stored enough gas to make shortages unlikely this winter. However, refilling storage with much-diminished Russian flows will be challenging ahead of next winter, particularly if it is a very cold one and China’s energy demand picks up, causing price spikes. A possible increase in food prices from a failed extension of the Black Sea grain initiative would put further pressure on lower-income countries that are experiencing food insecurity and have limited budgetary room to cushion the impact on households and businesses. With elevated food and fuel prices, social unrest may increase.  Debt distress: Since October, sovereign spreads for emerging market and developing economies have modestly declined on the back of an easing in global financial conditions (Box"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "7d25d5e6b420f550ee5d31a69bf20a62",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": ") and dollar depreciation. About"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "3835743a23594dfc4f986dd17806d917",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "percent of low-income countries are estimated to be in debt distress, with an additional"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "9964d0eab2c4641cec6a86e84961799a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "percent at high risk of debt distress and about"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "3088902bf021ffa0e881cca74e99e47e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "percent of emerging market economies also at high risk. The combination of high debt levels from the pandemic, lower growth, and higher borrowing costs exacerbates the vulnerability of these economies, especially those with significant near-term dollar financing needs.  Inflation persisting: Persistent labor market tightness could translate into stronger-than-expected wage growth. Higher-than-expected oil, gas, and food prices from the war in Ukraine or from a faster rebound in China’s growth could again raise headline inflation and pass through into underlying inflation. Such developments could cause inflation expectations to de-anchor and require an even tighter monetary policy.  Sudden financial market repricing: A premature easing in financial conditions in response to lower headline inflation data could complicate anti-inflation policies and necessitate additional monetary tightening. For the same reason, unfavorable inflation data releases could trigger sudden repricing of assets and increase volatility in financial markets. Such movements could strain liquidity and the functioning of critical markets, with ripple effects on the real economy.  Geopolitical fragmentation: The war in Ukraine and the related international sanctions aimed at  pressuring Russia to end hostilities are splitting the world economy into blocs and reinforcing earlier geopolitical tensions, such as those associated with the US-China trade dispute."
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "5521d623f24c46d332eef5c721daf9ac",
->>>>>>> origin/main
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -8946,7 +8020,6 @@
     "text": "MI"
   },
   {
-<<<<<<< HEAD
     "type": "Image",
     "element_id": "70214179ace63e61612e4f90db3293b6",
     "metadata": {
@@ -9197,8 +8270,6 @@
     "text": " China’s recovery stalling: Amid still-low population immunity levels and insufficient hospital"
   },
   {
-=======
->>>>>>> origin/main
     "type": "NarrativeText",
     "element_id": "1bbcee85386321e6e8235a64d4c34d73",
     "metadata": {
@@ -10019,7 +9090,6 @@
     "text": "1 See “Geo-Economic Fragmentation and the Future of Multilateralism,” IMF Staff Discussion Note 2023/001."
   },
   {
-<<<<<<< HEAD
     "type": "Image",
     "element_id": "ab547757da37eb600011051fb0e9fe0c",
     "metadata": {
@@ -10700,8 +9770,6 @@
     "text": "Cy"
   },
   {
-=======
->>>>>>> origin/main
     "type": "NarrativeText",
     "element_id": "2e9a0eaddd75095d1bbb4fda6f2c4feb",
     "metadata": {
@@ -10762,7 +9830,6 @@
     "text": " Strengthening global trade: Strengthening the global trading system would address risks associated"
   },
   {
-<<<<<<< HEAD
     "type": "UncategorizedText",
     "element_id": "a5751b5964fbbc37b14db4811aeb37f4",
     "metadata": {
@@ -11215,10 +10282,6 @@
   {
     "type": "Image",
     "element_id": "0e1f5e74082ed333d383fa20680f0909",
-=======
-    "type": "FigureCaption",
-    "element_id": "5901e461e70d7d066c71da67babb4124",
->>>>>>> origin/main
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
