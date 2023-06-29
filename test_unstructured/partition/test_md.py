@@ -14,7 +14,7 @@ DIRECTORY = pathlib.Path(__file__).parent.resolve()
 def test_partition_md_from_filename():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "README.md")
     elements = partition_md(filename=filename)
-    assert PageBreak() not in elements
+    assert "PageBreak" not in [elem.category for elem in elements]
     assert len(elements) > 0
 
 
