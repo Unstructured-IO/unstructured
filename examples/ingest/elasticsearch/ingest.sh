@@ -23,7 +23,7 @@ wait
 container_id=$(<"$id_log_filepath")
 rm "$id_log_filepath"
 # Kill the container so the script can be repeatedly run using the same ports
-trap "docker stop $container_id" EXIT
+trap 'docker stop "$container_id"' EXIT
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
         --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
