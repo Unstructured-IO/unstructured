@@ -10,10 +10,13 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --local-input-path example-docs/english-and-korean.png \
     --structured-output-dir parameterized-ingest-output \
     --partition-ocr-languages eng+kor \
+    --partition-strategy ocr_only \
     --verbose \
     --reprocess
 
 set +e
+
+OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
 
 # to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
