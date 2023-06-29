@@ -149,7 +149,7 @@ uninstall-project-local:
 ## test:                    runs all unittests
 .PHONY: test
 test:
-    CI ?= false
+	CI ?= false
 	PYTHONPATH=. CI=$(CI) pytest test_${PACKAGE_NAME} --cov=${PACKAGE_NAME} --cov-report term-missing
 
 ## check:                   runs linters (includes tests)
@@ -222,7 +222,7 @@ docker-start-bash:
 
 .PHONY: docker-test
 docker-test:
-    CI ?= false
+	CI ?= false
 	docker run --rm \
 	-v ${CURRENT_DIR}/test_unstructured:/home/test_unstructured \
 	-v ${CURRENT_DIR}/test_unstructured_ingest:/home/test_unstructured_ingest \
