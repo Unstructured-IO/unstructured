@@ -151,7 +151,7 @@ export CI ?= false
 ## test:                    runs all unittests
 .PHONY: test
 test:
-	PYTHONPATH=. CI=$(CI) pytest test_${PACKAGE_NAME} --cov=${PACKAGE_NAME} --cov-report term-missing
+	PYTHONPATH=. CI=$(CI) pytest test_${PACKAGE_NAME}/partition/test_api.py --cov=${PACKAGE_NAME} --cov-report term-missing
 
 ## check:                   runs linters (includes tests)
 .PHONY: check

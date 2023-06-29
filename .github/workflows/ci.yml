@@ -134,7 +134,7 @@ jobs:
         make install-ci
     - name: Test
       env:
-        UNS_DEV_API_KEY: ${{ secrets.UNS_DEV_API_KEY }}
+        UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
       run: |
         source .venv/bin/activate
         sudo apt-get update
@@ -187,7 +187,7 @@ jobs:
         SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
         DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
         GCP_INGEST_SERVICE_KEY: ${{ secrets.GCP_INGEST_SERVICE_KEY }}
-        UNS_DEV_API_KEY: ${{ secrets.UNS_DEV_API_KEY }}
+        UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
       run: |
         source .venv/bin/activate
         sudo apt-get update
@@ -245,6 +245,6 @@ jobs:
       - name: Test Dockerfile
         run: |
           source .venv/bin/activate
-          echo "UNS_DEV_API_KEY=${{ secrets.UNS_DEV_API_KEY }}" > uns_test_env_file
+          echo "UNS_API_KEY=${{ secrets.UNS_API_KEY }}" > uns_test_env_file
           make docker-build
           make docker-test CI=true 

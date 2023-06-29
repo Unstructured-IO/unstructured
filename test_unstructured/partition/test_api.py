@@ -99,7 +99,8 @@ def test_partition_via_api_raises_with_bad_response(monkeypatch):
 def test_partition_via_api_valid_request_data_kwargs():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf")
 
-    elements = partition_via_api(filename=filename, strategy="fast")
+    elements = partition_via_api(filename=filename, strategy="fast", api_key=get_api_key())
+    
     assert isinstance(elements, list)
 
 
@@ -292,10 +293,10 @@ def test_partition_multiple_via_api_from_files_raises_without_filenames(monkeypa
 
 
 def get_api_key():
-    api_key = os.getenv("UNS_DEV_API_KEY")
-    print("TESTING API KEY", api_key)
+    api_key = os.getenv("UNS_API_KEY")
     if api_key is None:
-        raise ValueError("UNS_DEV_API_KEY environment variable not set")
+        raise ValueError("UNS_API_KEY environment variable not set")
+    return api_key
 
 
 @pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
