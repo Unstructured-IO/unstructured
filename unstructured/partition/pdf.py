@@ -119,7 +119,7 @@ def partition_pdf_or_image(
                 file=spooled_to_bytes_io_if_needed(file),
                 is_image=is_image,
                 infer_table_structure=infer_table_structure,
-                include_page_breaks=True,
+                include_page_breaks=include_page_breaks,
                 ocr_languages=ocr_languages,
             )
 
@@ -298,7 +298,7 @@ def _process_pdfminer_pages(
         elements += sorted_page_elements
 
         if include_page_breaks:
-            elements.append(PageBreak())
+            elements.append(PageBreak(text=""))
 
     return elements
 
@@ -341,5 +341,5 @@ def _partition_pdf_or_image_with_ocr(
                 elements.append(element)
 
             if include_page_breaks:
-                elements.append(PageBreak())
+                elements.append(PageBreak(text=""))
     return elements
