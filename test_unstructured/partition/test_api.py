@@ -101,7 +101,7 @@ def test_partition_via_api_valid_request_data_kwargs():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf")
 
     elements = partition_via_api(filename=filename, strategy="fast", api_key=get_api_key())
-    
+
     assert isinstance(elements, list)
 
 
