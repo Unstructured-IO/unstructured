@@ -62,6 +62,7 @@ jobs:
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
           GCP_INGEST_SERVICE_KEY: ${{ secrets.GCP_INGEST_SERVICE_KEY }}
+          UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
           OVERWRITE_FIXTURES: "true"
         run: |
           source .venv/bin/activate
@@ -80,7 +81,6 @@ jobs:
           make install-ingest-slack
           make install-ingest-wikipedia
           ./test_unstructured_ingest/test-ingest.sh
-          make install
 
       - name: Save branch name to environment file
         id: branch

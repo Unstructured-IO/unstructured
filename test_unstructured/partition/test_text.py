@@ -154,3 +154,18 @@ def test_partition_text_extract_regex_metadata():
     assert elements[0].metadata.regex_metadata == {
         "speaker": [{"text": "SPEAKER 1", "start": 0, "end": 9}],
     }
+
+
+def test_partition_text_splits_long_text(filename="example-docs/norwich-city.txt"):
+    elements = partition_text(filename=filename)
+    assert len(elements) > 0
+    assert elements[0].text.startswith("Iwan Roberts")
+    assert elements[-1].text.endswith("External links")
+
+
+def test_partition_text_doesnt_get_page_breaks():
+    text = "--------------------"
+    elements = partition_text(text=text)
+    assert len(elements) == 1
+    assert elements[0].text == text
+    assert not isinstance(elements[0], ListItem)
