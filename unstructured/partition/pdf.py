@@ -200,10 +200,12 @@ def _partition_pdf_or_image_local(
     out_elements = []
 
     for el in elements:
-        if isinstance(el, Image):
-            # the assumption is no text was extracted
+        # NOTE(crag): small chunks of text from Image elements tend to be garbage
+        if isinstance(el, Image) and (
+            el.text is not None and len(el.text) > 24 and el.text.find(" ") > -1
+        ):
             continue
-        if isinstance(el, PageBreak) and include_page_breaks:
+        elif isinstance(el, PageBreak) and include_page_breaks:
             out_elements.append(cast(Element, el))
         elif isinstance(el, Text):
             el.text = re.sub(RE_MULTISPACE_INCLUDING_NEWLINES, " ", el.text).strip()
