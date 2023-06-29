@@ -202,8 +202,10 @@ class Element(ABC):
         element_id: Union[str, NoID] = NoID(),
         coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
-        metadata: ElementMetadata = ElementMetadata(),
+        metadata: Optional[ElementMetadata] = None,
     ):
+        if metadata is None:
+            metadata = ElementMetadata()
         self.id: Union[str, NoID] = element_id
         coordinates_metadata = CoordinatesMetadata(
             points=coordinates,
