@@ -5,7 +5,6 @@ from unittest.mock import patch
 import pytest
 import requests
 
-from unstructured.documents.elements import PageBreak
 from unstructured.partition.md import partition_md
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -14,7 +13,7 @@ DIRECTORY = pathlib.Path(__file__).parent.resolve()
 def test_partition_md_from_filename():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "README.md")
     elements = partition_md(filename=filename)
-    assert PageBreak() not in elements
+    assert "PageBreak" not in [elem.category for elem in elements]
     assert len(elements) > 0
 
 

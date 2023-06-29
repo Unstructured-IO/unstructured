@@ -87,7 +87,7 @@ def test_partition_pptx_adds_page_breaks(tmpdir):
 
     assert elements == [
         NarrativeText(text="This is the first slide."),
-        PageBreak(),
+        PageBreak(text=""),
         NarrativeText(text="This is the second slide."),
     ]
 

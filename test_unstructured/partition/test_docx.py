@@ -9,7 +9,6 @@ from unstructured.documents.elements import (
     Header,
     ListItem,
     NarrativeText,
-    PageBreak,
     Table,
     Text,
     Title,
@@ -130,13 +129,13 @@ def test_partition_docx_grabs_header_and_footer(filename="example-docs/handbook-
 
 def test_partition_docx_includes_pages_if_present(filename="example-docs/handbook-1p.docx"):
     elements = partition_docx(filename=filename, include_page_breaks=False)
-    assert PageBreak() not in elements
+    assert "PageBreak" not in [elem.category for elem in elements]
     assert elements[1].metadata.page_number == 1
     assert elements[-2].metadata.page_number == 2
 
 
 def test_partition_docx_includes_page_breaks(filename="example-docs/handbook-1p.docx"):
     elements = partition_docx(filename=filename, include_page_breaks=True)
-    assert PageBreak() in elements
+    assert "PageBreak" in [elem.category for elem in elements]
     assert elements[1].metadata.page_number == 1
     assert elements[-2].metadata.page_number == 2

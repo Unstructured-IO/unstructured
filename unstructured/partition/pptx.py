@@ -104,7 +104,7 @@ def partition_pptx(
                     elements.append(Text(text=text, metadata=metadata))
 
         if include_page_breaks and i < num_slides - 1:
-            elements.append(PageBreak())
+            elements.append(PageBreak(text=""))
 
     return elements
 

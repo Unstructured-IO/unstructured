@@ -96,6 +96,7 @@ def test_partition_via_api_raises_with_bad_response(monkeypatch):
         partition_via_api(filename=filename)
 
 
+@pytest.mark.skip(reason="Temporary skip until since API key is now required")
 def test_partition_via_api_valid_request_data_kwargs():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf")
 
@@ -104,6 +105,7 @@ def test_partition_via_api_valid_request_data_kwargs():
     assert isinstance(elements, list)
 
 
+@pytest.mark.skip(reason="Temporary skip until since API key is now required")
 def test_partition_via_api_invalid_request_data_kwargs():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf")
     with pytest.raises(ValueError):

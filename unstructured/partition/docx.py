@@ -186,7 +186,7 @@ def partition_docx(
         if page_number is not None and _element_contains_pagebreak(element_item):
             page_number += 1
             if include_page_breaks:
-                elements.append(PageBreak())
+                elements.append(PageBreak(text=""))
 
     return elements
 

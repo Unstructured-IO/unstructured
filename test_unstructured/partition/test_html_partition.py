@@ -7,7 +7,7 @@ import requests
 from requests.models import Response
 
 from unstructured.cleaners.core import clean_extra_whitespace
-from unstructured.documents.elements import PageBreak, Title
+from unstructured.documents.elements import Title
 from unstructured.partition.html import partition_html
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -17,8 +17,8 @@ def test_partition_html_from_filename():
     directory = os.path.join(DIRECTORY, "..", "..", "example-docs")
     filename = os.path.join(directory, "example-10k.html")
     elements = partition_html(filename=filename)
-    assert PageBreak() not in elements
     assert len(elements) > 0
+    assert "PageBreak" not in [elem.category for elem in elements]
     assert elements[0].metadata.filename == "example-10k.html"
     assert elements[0].metadata.file_directory == directory
 
@@ -58,7 +58,7 @@ def test_partition_html_from_filename_metadata_false():
 def test_partition_html_with_page_breaks():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "example-10k.html")
     elements = partition_html(filename=filename, include_page_breaks=True)
-    assert PageBreak() in elements
+    assert "PageBreak" in [elem.category for elem in elements]
     assert len(elements) > 0
 
 
@@ -271,7 +271,7 @@ def test_partition_html_with_pre_tag():
     elements = partition_html(filename=filename)
 
     assert len(elements) > 0
-    assert PageBreak() not in elements
+    assert "PageBreak" not in [elem.category for elem in elements]
     assert clean_extra_whitespace(elements[0].text) == "[107th Congress Public Law 56]"
     assert isinstance(elements[0], Title)
     assert elements[0].metadata.filetype == "text/html"

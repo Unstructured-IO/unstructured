@@ -1,3 +1,13 @@
+## 0.7.11-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* Fixed page breaks being given (incorrect) page numbers
+
 ## 0.7.10
 
 ### Enhancements
