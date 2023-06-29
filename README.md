@@ -98,8 +98,8 @@ about the library.
 | Document Type | Partition Function | Strategies | Table Support | Options |
 | --- | --- | --- | --- | --- |
 | CSV Files (`.csv`) | `partition_csv` | N/A | Yes | None |
-| E-mails (`.eml`) | `partition_eml` | N/A | No | Encoding; Max Partition |
-| E-mails (`.msg`) | `partition_msg` | N/A | No | Encoding; Max Partition |
+| E-mails (`.eml`) | `partition_eml` | N/A | No | Encoding; Max Partition; Process Attachments |
+| E-mails (`.msg`) | `partition_msg` | N/A | No | Encoding; Max Partition; Process Attachments |
 | EPubs (`.epub`) | `partition_epub` | N/A | Yes | Include Page Breaks |
 | Excel Documents (`.xlsx`/`.xls`) | `partition_xlsx` | N/A | Yes | None |
 | HTML Pages (`.html`) | `partition_html` | N/A | No | Encoding; Include Page Breaks |

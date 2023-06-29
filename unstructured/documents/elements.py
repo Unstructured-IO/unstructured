@@ -50,6 +50,7 @@ class ElementMetadata:
     file_directory: Optional[str] = None
     date: Optional[str] = None
     filetype: Optional[str] = None
+    attached_to_filename: Optional[str] = None
 
     # Page numbers currenlty supported for PDF, HTML and PPT documents
     page_number: Optional[int] = None

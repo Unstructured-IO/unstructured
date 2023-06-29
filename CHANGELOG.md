@@ -1,8 +1,10 @@
-## 0.7.11-dev3
+## 0.7.11-dev4
 
 ### Enhancements
 
 * Combine inferred elements with extracted elements (from unstructured-inference bump to 0.5.2) 
+* `partition_email` and `partition_msg` will now process attachments if `process_attachments=True`
+  and a attachment partitioning functions is passed through with `attachment_partitioner=partition`.
 
 ### Features
 
