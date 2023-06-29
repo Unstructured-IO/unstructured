@@ -125,3 +125,10 @@ def test_partition_msg_can_process_attachments(
 
     assert elements[-1].text == "Hey this is a fake attachment!"
     assert elements[-1].metadata == expected_metadata
+
+
+def test_partition_msg_raises_with_no_partitioner(
+    filename="example-docs/fake-email-attachment.msg",
+):
+    with pytest.raises(ValueError):
+        partition_msg(filename=filename, process_attachments=True)
