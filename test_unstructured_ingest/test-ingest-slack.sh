@@ -6,7 +6,7 @@ SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
 OUTPUT_FOLDER_NAME=slack
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
-DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
+DOWNLOAD_DIR=$(realpath --relative-to="$PWD" "$SCRIPT_DIR")/download/$OUTPUT_FOLDER_NAME
 
 if [ -z "$SLACK_TOKEN" ]; then
    echo "Skipping Slack ingest test because the SLACK_TOKEN env var is not set."

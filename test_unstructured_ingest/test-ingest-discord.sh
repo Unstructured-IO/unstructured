@@ -6,7 +6,7 @@ SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
 OUTPUT_FOLDER_NAME=discord
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
-DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
+DOWNLOAD_DIR=$(realpath --relative-to="$PWD" "$SCRIPT_DIR")/download/$OUTPUT_FOLDER_NAME
 
 if [ -z "$DISCORD_TOKEN" ]; then
    echo "Skipping Discord ingest test because the DISCORD_TOKEN env var is not set."
@@ -17,7 +17,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
    --discord-channels 1099442333440802930,1099601456321003600 \
    --discord-token "$DISCORD_TOKEN" \
    --download-dir "$DOWNLOAD_DIR" \
-   --metadata-exclude metadata.data_source.date_processed \
+   --metadata-exclude file_directory,metadata.data_source.date_processed \
    --preserve-downloads \
    --reprocess \
     --structured-output-dir "$OUTPUT_DIR"
