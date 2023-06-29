@@ -96,7 +96,7 @@ def test_partition_md_from_filename_exclude_metadata():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "README.md")
     elements = partition_md(filename=filename, include_metadata=False)
     for i in range(len(elements)):
-        assert any(elements[i].metadata.to_dict()) == {}
+        assert elements[i].metadata.to_dict() == {}
 
 
 def test_partition_md_from_file_exclude_metadata():
@@ -104,7 +104,7 @@ def test_partition_md_from_file_exclude_metadata():
     with open(filename) as f:
         elements = partition_md(file=f, include_metadata=False)
     for i in range(len(elements)):
-        assert any(elements[i].metadata.to_dict()) == {}
+        assert elements[i].metadata.to_dict() == {}
 
 
 def test_partition_md_from_text_exclude_metadata():
@@ -113,4 +113,4 @@ def test_partition_md_from_text_exclude_metadata():
         text = f.read()
     elements = partition_md(text=text, include_metadata=False)
     for i in range(len(elements)):
-        assert any(elements[i].metadata.to_dict()) == {}
+        assert elements[i].metadata.to_dict() == {}

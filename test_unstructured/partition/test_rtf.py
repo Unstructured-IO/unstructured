@@ -26,7 +26,7 @@ def test_partition_rtf_from_filename_exclude_metadata():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-doc.rtf")
     elements = partition_rtf(filename=filename, include_metadata=False)
     for i in range(len(elements)):
-        assert any(elements[i].metadata.to_dict()) == {}
+        assert elements[i].metadata.to_dict() == {}
 
 
 def test_partition_rtf_from_file_exclude_metadata():
@@ -34,4 +34,4 @@ def test_partition_rtf_from_file_exclude_metadata():
     with open(filename, "rb") as f:
         elements = partition_rtf(file=f, include_metadata=False)
     for i in range(len(elements)):
-        assert any(elements[i].metadata.to_dict()) == {}
+        assert elements[i].metadata.to_dict() == {}

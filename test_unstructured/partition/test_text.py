@@ -179,7 +179,7 @@ def test_partition_text_from_filename_exclude_metadata(filename, encoding):
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
     elements = partition_text(filename=filename, encoding=encoding, include_metadata=False)
     for i in range(len(elements)):
-        assert any(elements[i].metadata.to_dict()) == {}
+        assert elements[i].metadata.to_dict() == {}
 
 
 def test_partition_text_from_file_exclude_metadata():
@@ -187,4 +187,4 @@ def test_partition_text_from_file_exclude_metadata():
     with open(filename) as f:
         elements = partition_text(file=f, include_metadata=False)
     for i in range(len(elements)):
-        assert any(elements[i].metadata.to_dict()) == {}
+        assert elements[i].metadata.to_dict() == {}

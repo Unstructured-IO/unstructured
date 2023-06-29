@@ -21,7 +21,7 @@ def test_partition_org_from_filename_exclude_metadata(filename="example-docs/REA
     elements = partition_org(filename=filename, include_metadata=False)
 
     for i in range(len(elements)):
-        assert any(elements[i].metadata.to_dict()) == {}
+        assert elements[i].metadata.to_dict() == {}
 
 
 def test_partition_org_from_file_exclude_metadata(filename="example-docs/README.org"):
@@ -29,4 +29,4 @@ def test_partition_org_from_file_exclude_metadata(filename="example-docs/README.
         elements = partition_org(file=f, include_metadata=False)
 
     for i in range(len(elements)):
-        assert any(elements[i].metadata.to_dict()) == {}
+        assert elements[i].metadata.to_dict() == {}

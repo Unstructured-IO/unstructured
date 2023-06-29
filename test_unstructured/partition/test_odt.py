@@ -27,7 +27,7 @@ def test_partition_odt_from_filename_exclude_metadata():
     elements = partition_odt(filename=filename, include_metadata=False)
 
     for i in range(len(elements)):
-        assert any(elements[i].metadata.to_dict()) == {}
+        assert elements[i].metadata.to_dict() == {}
 
 
 def test_partition_odt_from_file_exclude_metadata():
@@ -36,4 +36,4 @@ def test_partition_odt_from_file_exclude_metadata():
         elements = partition_odt(file=f, include_metadata=False)
 
     for i in range(len(elements)):
-        assert any(elements[i].metadata.to_dict()) == {}
+        assert elements[i].metadata.to_dict() == {}
