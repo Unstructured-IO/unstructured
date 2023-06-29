@@ -10,7 +10,6 @@
     "text": "/Ol"
   },
   {
-<<<<<<< HEAD
     "type": "Image",
     "element_id": "db13fc0664a426b509861776cb65f22a",
     "metadata": {
@@ -151,8 +150,6 @@
     "text": "© 2021 World Nuclear Association"
   },
   {
-=======
->>>>>>> origin/main
     "type": "NarrativeText",
     "element_id": "0e7b344a22dd76ce94588c537d418717",
     "metadata": {
@@ -163,7 +160,6 @@
     "text": "Registered in England and Wales, company number 01215741. This report represents the views of individual experts, but does not necessarily represent those of any of the World Nuclear Association’s individual member organizations."
   },
   {
-<<<<<<< HEAD
     "type": "UncategorizedText",
     "element_id": "2fa985d0a50e61b09ec22c447cc4b2c9",
     "metadata": {
@@ -174,8 +170,6 @@
     "text": "Executive Summary"
   },
   {
-=======
->>>>>>> origin/main
     "type": "NarrativeText",
     "element_id": "eeb2fd62f21f17d70b2c51f4857426fe",
     "metadata": {
@@ -236,7 +230,6 @@
     "text": "1"
   },
   {
-<<<<<<< HEAD
     "type": "UncategorizedText",
     "element_id": "6b3149c1769f5cd200ec2a0017b936dc",
     "metadata": {
@@ -247,8 +240,6 @@
     "text": "Perceived versus actual risk"
   },
   {
-=======
->>>>>>> origin/main
     "type": "NarrativeText",
     "element_id": "ce5bcf6b4fe24d62bd24d156d5bc965e",
     "metadata": {
@@ -300,6 +291,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "5378796307535df3ec8d8b15a2e2dc56",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "20"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "c27f9f502d68bddce24f18d230fddc23",
     "metadata": {
       "data_source": {},
@@ -310,13 +311,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "5378796307535df3ec8d8b15a2e2dc56",
+    "element_id": "4355a46b19d348dc2f57c046f8ef63d4",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "20"
+    "text": "1"
   },
   {
     "type": "UncategorizedText",
@@ -337,16 +338,6 @@
       "page_number": 4
     },
     "text": "Motor vehicles"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "4355a46b19d348dc2f57c046f8ef63d4",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "1"
   },
   {
     "type": "UncategorizedText",
@@ -410,16 +401,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "fe6688066e4058f4d28c3956c1545589",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": ""
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "4deedd21c16662f9a68c10e5f0dc0c3b",
     "metadata": {
       "data_source": {},
@@ -430,13 +411,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "54183f4323f377b737433a1e98229ead",
+    "element_id": "fe6688066e4058f4d28c3956c1545589",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "17"
+    "text": ""
   },
   {
     "type": "UncategorizedText",
@@ -447,6 +428,16 @@
       "page_number": 4
     },
     "text": "Electric power (non-nuclear)"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "54183f4323f377b737433a1e98229ead",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "17"
   },
   {
     "type": "UncategorizedText",
@@ -480,16 +471,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "f14b4987904bcb5814e4459a057ed4d2",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "22"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "a3be0dc10137e55fa5239085c3f800bc",
     "metadata": {
       "data_source": {},
@@ -497,6 +478,16 @@
       "page_number": 4
     },
     "text": "X-rays"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "f14b4987904bcb5814e4459a057ed4d2",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "22"
   },
   {
     "type": "UncategorizedText",
@@ -530,16 +521,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "f4ccd05b3271c386ee55d9876c745001",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "30"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "86c586f8129cc34e163eedd76b538fe8",
     "metadata": {
       "data_source": {},
@@ -547,6 +528,16 @@
       "page_number": 4
     },
     "text": "Vaccinations"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "f4ccd05b3271c386ee55d9876c745001",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "30"
   },
   {
     "type": "UncategorizedText",
@@ -579,7 +570,6 @@
     "text": "In fact, scientific consensus is that when it comes to preventing exposure to radiation, nuclear power is much better than other electricity generators. A 2016 reportiii from the United Nations Scientific Committee on the Effects of Atomic Radiation (UNSCEAR) found that coal-generated electricity is responsible for more than half of the total global radiation exposure arising from electricity generation, while nuclear power contributed less than a fifth. Coal miners received high occupational exposure and workers in solar and wind farms received the highest occupational exposure associated with plant construction for the same amount of installed capacity."
   },
   {
-<<<<<<< HEAD
     "type": "UncategorizedText",
     "element_id": "0d28f703c3b3aa9fee1f9f08fa688409",
     "metadata": {
@@ -602,10 +592,6 @@
   {
     "type": "UncategorizedText",
     "element_id": "e1cccd4114d41b7b658b1261e800a2da",
-=======
-    "type": "FigureCaption",
-    "element_id": "f641635ec11670f6051d31318c4b57cc",
->>>>>>> origin/main
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -984,7 +970,6 @@
     "text": "2 Including 28 firefighters that were exposed to lethal amounts of radiation during the accident night, and 15 fatal cases of thyroid cancer. 3 Sources drawn upon: Markandya, A., & Wilkinson, P. (2007), Sovacool et al. (2016). Data for nuclear accidents modified to reflect the"
   },
   {
-<<<<<<< HEAD
     "type": "UncategorizedText",
     "element_id": "18a2f3ecb51495d58963d69b364187e1",
     "metadata": {
@@ -1015,8 +1000,6 @@
     "text": "The low-dose question"
   },
   {
-=======
->>>>>>> origin/main
     "type": "NarrativeText",
     "element_id": "ec0fb27e2a16f77899bf83591cd2d0de",
     "metadata": {
@@ -1064,11 +1047,7 @@
       "filetype": "application/pdf",
       "page_number": 6
     },
-<<<<<<< HEAD
     "text": "4"
-=======
-    "text": ""
->>>>>>> origin/main
   },
   {
     "type": "Title",
@@ -1221,7 +1200,6 @@
     "text": "Equally, the adoption of an all-hazards approach means regulators should consider declaring when a risk is too low to be a public health concern, in line with what the U.S. Nuclear Regulatory Commission attempted to do with its Below Regulatory Concern policy statements in the 1980s and early 1990s. In the context of nuclear power, this means departing from the notion that LNT instils of no safe level of radiation, and adopting a regulatory framework which notes the impossibility of eradicating risks. Failing to do so will result in excessive regulation that continues to limit the full potential of nuclear power in tackling climate change and sees a continued reliance on objectively more harmful energy sources."
   },
   {
-<<<<<<< HEAD
     "type": "UncategorizedText",
     "element_id": "f0b5c2c2211c8d67ed15e75e656c7862",
     "metadata": {
@@ -1232,8 +1210,6 @@
     "text": "5"
   },
   {
-=======
->>>>>>> origin/main
     "type": "Title",
     "element_id": "75ed57ac08703850c3e6aa55ac4aea97",
     "metadata": {
@@ -1274,7 +1250,6 @@
     "text": "Equally, it is well established that living without access to electricity results in illness and death around the world, caused by everything from not having access to modern healthcare to household air pollution. As of today, 770 million people around the world do not have access to electricity, with over 75% of that population living in Sub-Saharan Africa. The world's poorest 4 billion people consume a mere 5% of the energy used in developed economies, and we need to find ways of delivering reliable electricity to the entire human population in a fashion that is sustainable. Household and ambient air pollution causes 8.7 million deaths each year, largely because of the continued use of fossil fuels. Widespread electrification is a key tool for delivering a just energy transition. Investment in nuclear, has become an urgent necessity. Discarding it, based on risk perceptions divorced from science, would be to abandon the moral obligation to ensure affordable, reliable, and sustainable energy for every community around the world."
   },
   {
-<<<<<<< HEAD
     "type": "UncategorizedText",
     "element_id": "06e9d52c1720fca412803e3b07c4b228",
     "metadata": {
@@ -1285,8 +1260,6 @@
     "text": "6"
   },
   {
-=======
->>>>>>> origin/main
     "type": "FigureCaption",
     "element_id": "f58b520072d30c4805940f5c99a306c3",
     "metadata": {
@@ -1337,7 +1310,6 @@
     "text": "7"
   },
   {
-<<<<<<< HEAD
     "type": "UncategorizedText",
     "element_id": "e56261e0bd30965b8e68ed2abb15b141",
     "metadata": {
@@ -1350,20 +1322,6 @@
   {
     "type": "UncategorizedText",
     "element_id": "b2c0b65d06ddfd791a02b4247b19dae3",
-=======
-    "type": "NarrativeText",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 9
-    },
-    "text": ""
-  },
-  {
-    "type": "ListItem",
-    "element_id": "648872f0c7ce536fdf889efb3f197ede",
->>>>>>> origin/main
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1602,7 +1560,6 @@
     "text": "Photo credits: Front cover & pages 1, 4, 6 left, 7 bottom: Adobe Stock; page 6 right: Getty Images; page 7 top: Uniper."
   },
   {
-<<<<<<< HEAD
     "type": "UncategorizedText",
     "element_id": "aa67a169b0bba217aa0aa88a65346920",
     "metadata": {
@@ -1615,10 +1572,6 @@
   {
     "type": "Image",
     "element_id": "6d647fc38c561c01f7859e019345d367",
-=======
-    "type": "FigureCaption",
-    "element_id": "0fd83b0cc2c07c6946382addcc07e877",
->>>>>>> origin/main
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
