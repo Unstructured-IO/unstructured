@@ -335,7 +335,7 @@ def test_partition_email_can_process_attachments(
 ):
     with open(filename) as f:
         msg = email.message_from_file(f)
-    attachment_info = extract_attachment_info(msg, output_dir=tmpdir.dirname)
+    extract_attachment_info(msg, output_dir=tmpdir.dirname)
     attachment_filename = os.path.join(tmpdir.dirname, ATTACH_EXPECTED_OUTPUT[0]["filename"])
     attachment_elements = partition_text(
         filename=attachment_filename,
