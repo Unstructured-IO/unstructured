@@ -15,7 +15,6 @@ from unstructured.documents.elements import (
     ElementMetadata,
     ListItem,
     NarrativeText,
-    PageBreak,
     Table,
     Text,
     Title,

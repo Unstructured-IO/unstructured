@@ -200,7 +200,7 @@ def _partition_pdf_or_image_local(
 
     for el in elements:
         if isinstance(el, PageBreak) and include_page_breaks:
-            out_elements.append(el)
+            out_elements.append(cast(Element, el))
         elif isinstance(el, Text):
             el.text = re.sub(RE_MULTISPACE_INCLUDING_NEWLINES, " ", el.text).strip()
             if not el.text:
