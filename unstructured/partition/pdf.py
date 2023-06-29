@@ -206,10 +206,12 @@ def _partition_pdf_or_image_local(
             and (el.text is None or len(el.text) < 24 or el.text.find(" ") == -1)
         ):
             continue
-        el.text = re.sub(RE_MULTISPACE_INCLUDING_NEWLINES, " ", el.text).strip()
-        if not el.text:
-            continue
-        out_elements.append(el)
+        # NOTE(crag): this is probably always a Text object, but check for the sake of typing
+        if isinstance(el, Text):
+            el.text = re.sub(RE_MULTISPACE_INCLUDING_NEWLINES, " ", el.text or "").strip()
+            if not el.text:
+                continue
+            out_elements.append(cast(Element, el))
 
     return out_elements
 
