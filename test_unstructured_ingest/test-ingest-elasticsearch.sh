@@ -7,6 +7,7 @@ id_log_filepath="scripts/elasticsearch-test-helpers/elasticsearch-docker_contain
 
 (
     chmod +x scripts/elasticsearch-test-helpers/create-and-check-es.sh
+    # shellcheck source=/dev/null
     . scripts/elasticsearch-test-helpers/create-and-check-es.sh
 
 )
