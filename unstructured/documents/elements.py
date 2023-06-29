@@ -111,6 +111,7 @@ class ElementMetadata:
 
 def process_metadata():
     """Decorator for processing metadata for document elements."""
+
     def decorator(func: Callable):
         if func.__doc__:
             if (
@@ -130,6 +131,7 @@ def process_metadata():
                     + """\n\t\tDetermines whether or not metadata is included in the metadata
                     attribute on the elements in the output."""
                 )
+
         @wraps(func)
         def wrapper(*args, **kwargs):
             elements = func(*args, **kwargs)
