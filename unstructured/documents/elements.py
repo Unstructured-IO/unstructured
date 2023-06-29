@@ -7,6 +7,7 @@ import os
 import pathlib
 import re
 from abc import ABC
+from copy import deepcopy
 from dataclasses import dataclass
 from functools import wraps
 from typing import Any, Callable, Dict, List, Optional, Tuple, TypedDict, Union, cast
@@ -63,6 +64,17 @@ class CoordinatesMetadata:
             "layout_width": None if self.system is None else self.system.width,
             "layout_height": None if self.system is None else self.system.height,
         }
+
+    @classmethod
+    def from_dict(cls, input_dict):
+        points = input_dict.get("points", None)
+        width = input_dict.get("layout_width", None)
+        height = input_dict.get("layout_height", None)
+        system = (
+            CoordinateSystem(width, height) if width is not None and height is not None else None
+        )
+        constructor_args = {"points": points, "system": system}
+        return cls(**constructor_args)
 
 
 class RegexMetadata(TypedDict):
@@ -121,12 +133,17 @@ class ElementMetadata:
         if self.data_source:
             _dict["data_source"] = cast(DataSourceMetadata, self.data_source).to_dict()
         if self.coordinates:
-            _dict["coordinates"] = cast(DataSourceMetadata, self.coordinates).to_dict()
+            _dict["coordinates"] = cast(CoordinatesMetadata, self.coordinates).to_dict()
         return _dict
 
     @classmethod
     def from_dict(cls, input_dict):
-        return cls(**input_dict)
+        constructor_args = deepcopy(input_dict)
+        if "coordinates" in constructor_args:
+            constructor_args["coordinates"] = CoordinatesMetadata.from_dict(
+                constructor_args["coordinates"],
+            )
+        return cls(**constructor_args)
 
     def merge(self, other: ElementMetadata):
         for k in self.__dict__:

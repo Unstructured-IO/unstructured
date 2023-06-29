@@ -1,11 +1,10 @@
 import csv
 import io
 import json
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 import pandas as pd
 
-from unstructured.documents import coordinates as coordinates_module
 from unstructured.documents.elements import (
     TYPE_TO_TEXT_ELEMENT_MAP,
     CheckBox,
@@ -72,19 +71,6 @@ def isd_to_elements(isd: List[Dict[str, Any]]) -> List[Element]:
 
     for item in isd:
         element_id: str = item.get("element_id", NoID())
-        coord_value: Optional[List[List[float]]] = item.get("coordinates")
-        coordinates: Optional[Tuple[Tuple[float, float], ...]] = None
-        if coord_value is not None:
-            coordinates = tuple((x, y) for x, y in coord_value)
-        coordinate_system_name: Optional[str] = item.get("coordinate_system")
-        if coordinate_system_name is not None:
-            width = item["layout_width"]
-            height = item["layout_height"]
-            coordinate_system_class = getattr(coordinates_module, coordinate_system_name)
-            coordinate_system = coordinate_system_class(width, height)
-        else:
-            coordinate_system = None
-
         metadata = ElementMetadata()
         _metadata_dict = item.get("metadata")
         if _metadata_dict is not None:
@@ -97,8 +83,6 @@ def isd_to_elements(isd: List[Dict[str, Any]]) -> List[Element]:
                     text=item["text"],
                     element_id=element_id,
                     metadata=metadata,
-                    coordinates=coordinates,
-                    coordinate_system=coordinate_system,
                 ),
             )
         elif item["type"] == "CheckBox":
@@ -107,8 +91,6 @@ def isd_to_elements(isd: List[Dict[str, Any]]) -> List[Element]:
                     checked=item["checked"],
                     element_id=element_id,
                     metadata=metadata,
-                    coordinates=coordinates,
-                    coordinate_system=coordinate_system,
                 ),
             )
 
