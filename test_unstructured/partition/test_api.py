@@ -15,6 +15,7 @@ EML_TEST_FILE = "eml/fake-email.eml"
 
 skip_outside_ci = os.getenv("CI", "").lower() in {"", "false", "f", "0"}
 
+
 class MockResponse:
     def __init__(self, status_code):
         self.status_code = status_code
@@ -289,10 +290,12 @@ def test_partition_multiple_via_api_from_files_raises_without_filenames(monkeypa
                 files=files,
             )
 
+
 def get_api_key():
     api_key = os.getenv("UNS_DEV_API_KEY")
     if api_key is None:
         raise ValueError("UNS_DEV_API_KEY environment variable not set")
+
 
 @pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
 def test_partition_multiple_via_api_valid_request_data_kwargs():
@@ -301,8 +304,11 @@ def test_partition_multiple_via_api_valid_request_data_kwargs():
         os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.jpg"),
     ]
 
-    elements = partition_multiple_via_api(filenames=filenames, strategy="fast", api_key=get_api_key())
+    elements = partition_multiple_via_api(
+        filenames=filenames, strategy="fast", api_key=get_api_key()
+    )
     assert isinstance(elements, list)
+
 
 @pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
 def test_partition_multiple_via_api_invalid_request_data_kwargs():
