@@ -46,8 +46,8 @@ def test_partition_xlsx_filename_exclude_metadata(filename="example-docs/stanley
     assert elements[0].metadata.page_number is None
     assert elements[0].metadata.filetype is None
     assert elements[0].metadata.page_name is None
-    
-    
+
+
 def test_partition_xlsx_from_file_exclude_metadata(filename="example-docs/stanley-cups.xlsx"):
     with open(filename, "rb") as f:
         elements = partition_xlsx(file=f, include_metadata=False)

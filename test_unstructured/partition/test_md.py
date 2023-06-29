@@ -114,4 +114,3 @@ def test_partition_md_from_text_exclude_metadata():
     elements = partition_md(text=text, include_metadata=False)
     for i in range(len(elements)):
         assert any(elements[i].metadata.to_dict()) is False
-    

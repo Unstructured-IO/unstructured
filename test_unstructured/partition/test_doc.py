@@ -114,20 +114,22 @@ def test_partition_doc_raises_with_both_specified(mock_document, tmpdir):
 def test_partition_doc_raises_with_neither():
     with pytest.raises(ValueError):
         partition_doc()
-        
+
+
 def test_partition_doc_with_file_exclude_metadata(mock_document, tmpdir):
     docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
     mock_document.save(docx_filename)
     convert_office_doc(docx_filename, tmpdir.dirname, "doc")
-    
+
     with open(doc_filename, "rb") as f:
         elements = partition_doc(file=f, include_metadata=False)
-        
+
     assert elements[0].metadata.filetype is None
     assert elements[0].metadata.page_name is None
     assert elements[0].metadata.filename is None
-    
+
+
 def test_partition_doc_with_filename_exclude_metadata(mock_document, tmpdir):
     docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
@@ -135,7 +137,7 @@ def test_partition_doc_with_filename_exclude_metadata(mock_document, tmpdir):
     convert_office_doc(docx_filename, tmpdir.dirname, "doc")
 
     elements = partition_doc(filename=doc_filename, include_metadata=False)
-        
+
     assert elements[0].metadata.filetype is None
     assert elements[0].metadata.page_name is None
     assert elements[0].metadata.filename is None

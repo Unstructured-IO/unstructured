@@ -347,7 +347,7 @@ def test_partition_email_from_text_file_exclude_metadata():
     assert elements[0].metadata.filename is None
 
 
-def test_partition_email_from_file():
+def test_partition_email_from_file_exclude_metadata():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
     with open(filename) as f:
         elements = partition_email(file=f, include_metadata=False)

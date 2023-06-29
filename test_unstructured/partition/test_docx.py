@@ -139,8 +139,8 @@ def test_partition_docx_includes_page_breaks(filename="example-docs/handbook-1p.
     assert "PageBreak" in [elem.category for elem in elements]
     assert elements[1].metadata.page_number == 1
     assert elements[-2].metadata.page_number == 2
-    
-    
+
+
 def test_partition_docx_with_filename_exclude_metadata(filename="example-docs/handbook-1p.docx"):
     elements = partition_docx(filename=filename, include_metadata=False)
     assert elements[0].metadata.filetype is None

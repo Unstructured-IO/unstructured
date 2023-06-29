@@ -31,8 +31,8 @@ def test_partition_tsv_filename_exclude_metadata(filename="example-docs/stanley-
     assert isinstance(elements[0], Table)
     assert elements[0].metadata.text_as_html is None
     assert elements[0].metadata.filetype is None
-    
-    
+
+
 def test_partition_tsv_from_file_exclude_metadata(filename="example-docs/stanley-cups.tsv"):
     with open(filename, "rb") as f:
         elements = partition_tsv(file=f, include_metadata=False)

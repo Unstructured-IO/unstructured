@@ -333,6 +333,10 @@ def convert_and_partition_docx(
             format=source_format,
             outputfile=docx_filename,
         )
-        elements = partition_docx(filename=docx_filename, metadata_filename=filename, include_metadata=include_metadata)
+        elements = partition_docx(
+            filename=docx_filename,
+            metadata_filename=filename,
+            include_metadata=include_metadata,
+        )
 
     return elements

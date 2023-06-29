@@ -15,8 +15,8 @@ def test_partition_rst_from_file(filename="example-docs/README.rst"):
 
     assert elements[0] == Title("Example Docs")
     assert elements[0].metadata.filetype == "text/x-rst"
-    
-    
+
+
 def test_partition_rst_from_filename_exclude_metadata(filename="example-docs/README.rst"):
     elements = partition_rst(filename=filename, include_metadata=False)
 

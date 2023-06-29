@@ -517,10 +517,10 @@ def add_metadata_with_filetype(filetype: FileType):
             ):
                 func.__doc__ += (
                     "\n\tinclude_metadata:"
-                    + """\n\t\tDetermines whether or not metadata is included in the metadata 
+                    + """\n\t\tDetermines whether or not metadata is included in the metadata
                     attribute on the elements in the output."""
                 )
-            
+
         @wraps(func)
         def wrapper(*args, **kwargs):
             elements = func(*args, **kwargs)

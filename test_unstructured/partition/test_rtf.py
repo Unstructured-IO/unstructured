@@ -20,8 +20,8 @@ def test_partition_rtf_from_file():
         elements = partition_rtf(file=f)
     assert len(elements) > 0
     assert elements[0] == Title("My First Heading")
-    
-    
+
+
 def test_partition_rtf_from_filename_exclude_metadata():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-doc.rtf")
     elements = partition_rtf(filename=filename, include_metadata=False)

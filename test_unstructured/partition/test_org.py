@@ -15,7 +15,7 @@ def test_partition_org_from_file(filename="example-docs/README.org"):
 
     assert elements[0] == Title("Example Docs")
     assert elements[0].metadata.filetype == "text/org"
-    
+
 
 def test_partition_org_from_filename_exclude_metadata(filename="example-docs/README.org"):
     elements = partition_org(filename=filename, include_metadata=False)
