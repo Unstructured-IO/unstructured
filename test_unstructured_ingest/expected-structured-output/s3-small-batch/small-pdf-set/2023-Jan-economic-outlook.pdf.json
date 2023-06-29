@@ -1231,16 +1231,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "18f1504e5633185fe4f66dc0215c7e0f",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jul. 21"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "5b7e9f3b7b7e91b3cb4e6195c1f36d25",
     "metadata": {
       "data_source": {},
@@ -1248,6 +1238,16 @@
       "page_number": 3
     },
     "text": "Jul. 22"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "18f1504e5633185fe4f66dc0215c7e0f",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jul. 21"
   },
   {
     "type": "UncategorizedText",
