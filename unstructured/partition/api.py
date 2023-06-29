@@ -152,9 +152,6 @@ def partition_multiple_via_api(
                 content_type = content_types[i] if content_types is not None else None
                 _files.append(("files", (filename, file, content_type)))
 
-            print(f"headers: {headers}")
-            print(f"request_kwargs: {request_kwargs}")
-            print(f"api_url: {api_url}")
             response = requests.post(
                 api_url,
                 headers=headers,
