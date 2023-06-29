@@ -1,11 +1,12 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/../.. || exit 1
 
+id_log_filepath="scripts/elasticsearch-test-helpers/elasticsearch-docker_container_id.txt"
+
 # Create the elasticsearch cluster and get the container id
 output=$(docker run -d --rm -p 9200:9200 -p 9300:9300 -e "xpack.security.enabled=false" -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:8.7.0)
 container_id=$(echo "$output" | cut -c 1-12)
-echo "$(pwd) create-and-check-es"
-echo $container_id > "test_unstructured_ingest/test-ingest-elasticsearch-docker_container_id.txt"
+echo "$container_id" > "$id_log_filepath"
 
 url="http://localhost:9200/_cluster/health"
 status_code=0

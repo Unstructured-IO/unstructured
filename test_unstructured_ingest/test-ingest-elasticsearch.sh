@@ -3,9 +3,9 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/.. || exit 1
 
+id_log_filepath="scripts/elasticsearch-test-helpers/elasticsearch-docker_container_id.txt"
 
 (
-    echo $(pwd)
     chmod +x scripts/elasticsearch-test-helpers/create-and-check-es.sh
     . scripts/elasticsearch-test-helpers/create-and-check-es.sh
 
@@ -14,8 +14,8 @@ cd "$SCRIPT_DIR"/.. || exit 1
 wait
 
 # Read the container id from the temporary file
-container_id=$(<"test_unstructured_ingest/test-ingest-elasticsearch-docker_container_id.txt")
-rm test_unstructured_ingest/test-ingest-elasticsearch-docker_container_id.txt
+container_id=$(<"$id_log_filepath")
+rm "$id_log_filepath"
 # Kill the container so the script can be repeatedly run using the same ports
 trap "docker stop $container_id" EXIT
 

@@ -8,11 +8,10 @@
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/../../.. || exit 1
-echo $(pwd)
 
+id_log_filepath="scripts/elasticsearch-test-helpers/elasticsearch-docker_container_id.txt"
 
 (
-    echo $(pwd)
     chmod +x scripts/elasticsearch-test-helpers/create-and-check-es.sh
     . scripts/elasticsearch-test-helpers/create-and-check-es.sh
 
@@ -21,12 +20,8 @@ echo $(pwd)
 wait
 
 # Read the container id from the temporary file
-echo "$(pwd) before container id"
-ls "examples"
-ls "examples/ingest"
-ls "examples/ingest/elasticsearch"
-container_id=$(<"examples/ingest/elasticsearch/elasticsearch-docker_container_id.txt")
-rm examples/ingest/elasticsearch/elasticsearch-docker_container_id.txt
+container_id=$(<"$id_log_filepath")
+rm "$id_log_filepath"
 # Kill the container so the script can be repeatedly run using the same ports
 trap "docker stop $container_id" EXIT
 
