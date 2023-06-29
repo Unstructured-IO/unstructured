@@ -37,7 +37,7 @@ def normalize_layout_element(
 
     # NOTE(alan): Won't the lines above ensure this never runs (PageBreak is a subclass of Element)?
     if isinstance(layout_element, PageBreak):
-        return PageBreak()
+        return PageBreak(text="")
 
     if not isinstance(layout_element, dict):
         layout_dict = layout_element.to_dict()
