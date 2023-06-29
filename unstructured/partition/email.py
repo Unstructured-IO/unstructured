@@ -1,11 +1,12 @@
 import datetime
 import email
+import os
 import re
 import sys
 from email.message import Message
 from functools import partial
-from tempfile import SpooledTemporaryFile
-from typing import IO, Dict, List, Optional, Tuple, Union
+from tempfile import SpooledTemporaryFile, TemporaryDirectory
+from typing import IO, Callable, Dict, List, Optional, Tuple, Union
 
 from unstructured.file_utils.encoding import (
     COMMON_ENCODINGS,
@@ -226,6 +227,8 @@ def partition_email(
     encoding: Optional[str] = None,
     include_headers: bool = False,
     max_partition: Optional[int] = 1500,
+    process_attachments: bool = False,
+    attachment_partitioner: Optional[Callable] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions an .eml documents into its constituent elements.
@@ -245,6 +248,9 @@ def partition_email(
     max_partition
         The maximum number of characters to include in a partition. If None is passed,
         no maximum is applied. Only applies if processing the text/plain content.
+    process_attachments
+        If True, partition_email will process email attachments in addition to
+        processing the content of the email itself.
     """
     if content_source not in VALID_CONTENT_SOURCES:
         raise ValueError(
@@ -335,6 +341,18 @@ def partition_email(
             image_info, clean_element = find_embedded_image(element, indices)
             elements[idx] = clean_element
             elements.insert(idx + 1, image_info)
+
+    if process_attachments:
+        with TemporaryDirectory() as tmpdir:
+            extract_attachment_info(msg, tmpdir)
+            attached_files = os.listdir(tmpdir)
+            for attached_file in attached_files:
+                filename = os.path.join(tmpdir, attached_file)
+                if attachment_partitioner is None:
+                    raise ValueError(
+                        "Specify the attachment_partition kwarg to process attachments.",
+                    )
+                elements.extend(attachment_partitioner(filename=filename))
 
     header: List[Element] = []
     if include_headers:
