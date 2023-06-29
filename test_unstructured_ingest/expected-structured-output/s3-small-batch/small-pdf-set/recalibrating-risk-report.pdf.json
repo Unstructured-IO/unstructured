@@ -171,16 +171,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "5378796307535df3ec8d8b15a2e2dc56",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "20"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "c27f9f502d68bddce24f18d230fddc23",
     "metadata": {
       "data_source": {},
@@ -191,13 +181,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "4355a46b19d348dc2f57c046f8ef63d4",
+    "element_id": "5378796307535df3ec8d8b15a2e2dc56",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "1"
+    "text": "20"
   },
   {
     "type": "UncategorizedText",
@@ -218,6 +208,16 @@
       "page_number": 4
     },
     "text": "Motor vehicles"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "4355a46b19d348dc2f57c046f8ef63d4",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "1"
   },
   {
     "type": "UncategorizedText",
@@ -281,16 +281,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "4deedd21c16662f9a68c10e5f0dc0c3b",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": ""
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "fe6688066e4058f4d28c3956c1545589",
     "metadata": {
       "data_source": {},
@@ -301,13 +291,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "17e163c12e373356715be3ef6e240ae9",
+    "element_id": "4deedd21c16662f9a68c10e5f0dc0c3b",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "Electric power (non-nuclear)"
+    "text": ""
   },
   {
     "type": "UncategorizedText",
@@ -318,6 +308,16 @@
       "page_number": 4
     },
     "text": "17"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "17e163c12e373356715be3ef6e240ae9",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "Electric power (non-nuclear)"
   },
   {
     "type": "UncategorizedText",
@@ -351,16 +351,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "a3be0dc10137e55fa5239085c3f800bc",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "X-rays"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "f14b4987904bcb5814e4459a057ed4d2",
     "metadata": {
       "data_source": {},
@@ -368,6 +358,16 @@
       "page_number": 4
     },
     "text": "22"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "a3be0dc10137e55fa5239085c3f800bc",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "X-rays"
   },
   {
     "type": "UncategorizedText",
@@ -401,16 +401,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "86c586f8129cc34e163eedd76b538fe8",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "Vaccinations"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "f4ccd05b3271c386ee55d9876c745001",
     "metadata": {
       "data_source": {},
@@ -418,6 +408,16 @@
       "page_number": 4
     },
     "text": "30"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "86c586f8129cc34e163eedd76b538fe8",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "Vaccinations"
   },
   {
     "type": "UncategorizedText",
