@@ -81,7 +81,6 @@ jobs:
           make install-ingest-slack
           make install-ingest-wikipedia
           ./test_unstructured_ingest/test-ingest.sh
-          make install
 
       - name: Save branch name to environment file
         id: branch
