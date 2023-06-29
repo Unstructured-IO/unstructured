@@ -15,6 +15,7 @@ from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
     Element,
     ElementMetadata,
+    Image,
     PageBreak,
     Text,
     process_metadata,
@@ -199,6 +200,9 @@ def _partition_pdf_or_image_local(
     out_elements = []
 
     for el in elements:
+        if isinstance(el, Image):
+            # the assumption is no text was extracted
+            continue
         if isinstance(el, PageBreak) and include_page_breaks:
             out_elements.append(cast(Element, el))
         elif isinstance(el, Text):
