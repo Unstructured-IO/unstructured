@@ -5,7 +5,6 @@ from unittest.mock import patch
 import pytest
 import requests
 
-from unstructured.documents.elements import PageBreak
 from unstructured.partition.md import partition_md
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()

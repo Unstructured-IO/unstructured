@@ -9,7 +9,6 @@ from unstructured.documents.elements import (
     Header,
     ListItem,
     NarrativeText,
-    PageBreak,
     Table,
     Text,
     Title,

@@ -6,7 +6,7 @@ import pytest
 from unstructured_inference.inference import layout
 
 from unstructured.documents.coordinates import PixelSpace
-from unstructured.documents.elements import NarrativeText, PageBreak, Text, Title
+from unstructured.documents.elements import NarrativeText, Text, Title
 from unstructured.partition import pdf, strategies
 
 
