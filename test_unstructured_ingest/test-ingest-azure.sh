@@ -2,43 +2,21 @@
 
 set -e
 
-SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
+SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
+OUTPUT_FOLDER_NAME=azure
+OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
+DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-    --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
-    --remote-url abfs://container1/ \
     --azure-account-name azureunstructured1 \
-    --structured-output-dir azure-ingest-output \
+    --download-dir "$DOWNLOAD_DIR" \
+    --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
+    --num-processes 2 \
     --partition-strategy hi_res \
-    --download-dir files-ingest-download/azure \
     --preserve-downloads \
+    --remote-url abfs://container1/ \
     --reprocess \
-    --num-processes 2
+    --structured-output-dir "$OUTPUT_DIR"
 
-OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
-
-set +e
-
-# to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
-if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
-
-    cp azure-ingest-output/* test_unstructured_ingest/expected-structured-output/azure-blob-storage/
-
-elif ! diff -ru test_unstructured_ingest/expected-structured-output/azure-blob-storage azure-ingest-output ; then
-
-    echo
-    echo "There are differences from the previously checked-in structured outputs."
-    echo
-    echo "If these differences are acceptable, overwrite by the fixtures by setting the env var:"
-    echo
-    echo "  export OVERWRITE_FIXTURES=true"
-    echo
-    echo "and then rerun this script."
-    echo
-    echo "NOTE: You'll likely just want to run scripts/ingest-test-fixtures-update.sh on x86_64 hardware"
-    echo "to update fixtures for CI."
-    echo
-    exit 1
-
-fi
+sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

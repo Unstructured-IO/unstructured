@@ -25,6 +25,7 @@ from unstructured.partition.email import (
     partition_email,
     partition_email_header,
 )
+from unstructured.partition.text import partition_text
 
 FILE_DIRECTORY = pathlib.Path(__file__).parent.resolve()
 EXAMPLE_DOCS_DIRECTORY = os.path.join(FILE_DIRECTORY, "..", "..", "example-docs", "eml")
@@ -326,3 +327,42 @@ def test_partition_email_still_works_with_no_content():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "email-no-html-content-1.eml")
     elements = partition_email(filename=filename)
     assert elements == []
+
+
+def test_partition_email_can_process_attachments(
+    tmpdir,
+    filename="example-docs/eml/fake-email-attachment.eml",
+):
+    with open(filename) as f:
+        msg = email.message_from_file(f)
+    extract_attachment_info(msg, output_dir=tmpdir.dirname)
+    attachment_filename = os.path.join(tmpdir.dirname, ATTACH_EXPECTED_OUTPUT[0]["filename"])
+    attachment_elements = partition_text(
+        filename=attachment_filename,
+        metadata_filename=attachment_filename,
+    )
+    expected_metadata = attachment_elements[0].metadata
+    expected_metadata.file_directory = None
+    expected_metadata.attached_to_filename = filename
+
+    elements = partition_email(
+        filename=filename,
+        attachment_partitioner=partition_text,
+        process_attachments=True,
+    )
+
+    assert elements[0].text.startswith("Hello!")
+
+    for element in elements[:-1]:
+        assert element.metadata.filename == "fake-email-attachment.eml"
+        assert element.metadata.subject == "Fake email with attachment"
+
+    assert elements[-1].text == "Hey this is a fake attachment!"
+    assert elements[-1].metadata == expected_metadata
+
+
+def test_partition_msg_raises_with_no_partitioner(
+    filename="example-docs/eml/fake-email-attachment.eml",
+):
+    with pytest.raises(ValueError):
+        partition_email(filename=filename, process_attachments=True)

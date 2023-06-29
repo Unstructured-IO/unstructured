@@ -207,7 +207,7 @@ def test_auto_partition_json_from_filename():
         "..",
         "test_unstructured_ingest",
         "expected-structured-output",
-        "azure-blob-storage",
+        "azure",
         "spring-weather.html.json",
     )
     with open(filename) as json_f:
