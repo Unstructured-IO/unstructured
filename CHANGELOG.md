@@ -1,6 +1,9 @@
-## 0.7.11-dev0
+## 0.7.11-dev1
 
 ### Enhancements
+
+* `partition_email` and `partition_msg` will now process attachments if `process_attachments=True`
+  and a attachment partitioning functions is passed through with `attachment_partitioner=partition`.
 
 ### Features
 
