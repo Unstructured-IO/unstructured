@@ -411,16 +411,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "64aeb9975f234becd55bb4635e6e2f2d",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "25"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "f4ccd05b3271c386ee55d9876c745001",
     "metadata": {
       "data_source": {},
@@ -428,6 +418,16 @@
       "page_number": 4
     },
     "text": "30"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "64aeb9975f234becd55bb4635e6e2f2d",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "25"
   },
   {
     "type": "NarrativeText",

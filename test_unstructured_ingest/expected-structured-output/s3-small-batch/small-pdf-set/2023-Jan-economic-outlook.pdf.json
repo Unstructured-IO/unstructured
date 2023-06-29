@@ -341,16 +341,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "5abf188738ee99991cae53cd3942588b",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jan. 21"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "b02dddf9e55f98d11d6f969e781256c7",
     "metadata": {
       "data_source": {},
@@ -358,6 +348,16 @@
       "page_number": 3
     },
     "text": "Jan. 20"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "5abf188738ee99991cae53cd3942588b",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jan. 21"
   },
   {
     "type": "UncategorizedText",
