@@ -1920,6 +1920,16 @@
     "text": "8"
   },
   {
+    "type": "Image",
+    "element_id": "6d647fc38c561c01f7859e019345d367",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 12
+    },
+    "text": "+44 (0)20 7451 1520www.world-nuclear.orginfo@world-nuclear.org World Nuclear Association is the international organization that represents the global nuclear industry. Its mission is to promote a wider understanding of nuclear energy among key international influencers by producing authoritative information, developing common industry positions, and contributing to the energy debate."
+  },
+  {
     "type": "UncategorizedText",
     "element_id": "821daa4396c0087d9d5ee9240bc5c85c",
     "metadata": {
