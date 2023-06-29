@@ -197,8 +197,11 @@ def _partition_pdf_or_image_local(
         )
     elements = document_to_element_list(layout, include_page_breaks=include_page_breaks, sort=False)
     out_elements = []
+
     for el in elements:
-        if isinstance(el, Text):
+        if isinstance(el, PageBreak) and include_page_breaks:
+            out_elements.append(el)
+        elif isinstance(el, Text):
             el.text = re.sub(RE_MULTISPACE_INCLUDING_NEWLINES, " ", el.text).strip()
             if not el.text:
                 continue
