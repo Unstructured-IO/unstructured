@@ -1,4 +1,4 @@
-## 0.7.11-dev1
+## 0.7.11-dev2
 
 ### Enhancements
 
@@ -9,7 +9,9 @@
 
 ### Fixes
 
+* Fix tests that call unstructured-api by passing through an api-key
 * Fixed page breaks being given (incorrect) page numbers
+* Fix skipping download on ingest when a source document exists locally
 
 ## 0.7.10
 
