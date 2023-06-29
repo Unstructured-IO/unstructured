@@ -293,6 +293,7 @@ def test_partition_multiple_via_api_from_files_raises_without_filenames(monkeypa
 
 def get_api_key():
     api_key = os.getenv("UNS_DEV_API_KEY")
+    print("TESTING API KEY", api_key)
     if api_key is None:
         raise ValueError("UNS_DEV_API_KEY environment variable not set")
 
