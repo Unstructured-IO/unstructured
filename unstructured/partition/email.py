@@ -349,18 +349,6 @@ def partition_email(
             elements[idx] = clean_element
             elements.insert(idx + 1, image_info)
 
-    if process_attachments:
-        with TemporaryDirectory() as tmpdir:
-            extract_attachment_info(msg, tmpdir)
-            attached_files = os.listdir(tmpdir)
-            for attached_file in attached_files:
-                filename = os.path.join(tmpdir, attached_file)
-                if attachment_partitioner is None:
-                    raise ValueError(
-                        "Specify the attachment_partition kwarg to process attachments.",
-                    )
-                elements.extend(attachment_partitioner(filename=filename))
-
     header: List[Element] = []
     if include_headers:
         header = partition_email_header(msg)
