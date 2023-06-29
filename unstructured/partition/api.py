@@ -110,7 +110,7 @@ def partition_multiple_via_api(
 
     Parameters
     ----------
-    filename
+    filenames
         A list of strings defining the target filename paths.
     content_types
         A list of strings defining the file contents in MIME types.

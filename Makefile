@@ -146,10 +146,12 @@ uninstall-project-local:
 # Test and Lint #
 #################
 
+export CI ?= false
+
 ## test:                    runs all unittests
 .PHONY: test
 test:
-	PYTHONPATH=. pytest test_${PACKAGE_NAME} --cov=${PACKAGE_NAME} --cov-report term-missing
+	PYTHONPATH=. CI=$(CI) pytest test_${PACKAGE_NAME} --cov=${PACKAGE_NAME} --cov-report term-missing
 
 ## check:                   runs linters (includes tests)
 .PHONY: check
@@ -224,8 +226,9 @@ docker-test:
 	docker run --rm \
 	-v ${CURRENT_DIR}/test_unstructured:/home/test_unstructured \
 	-v ${CURRENT_DIR}/test_unstructured_ingest:/home/test_unstructured_ingest \
+	$(if $(wildcard uns_test_env_file),--env-file uns_test_env_file,) \
 	$(DOCKER_IMAGE) \
-	bash -c "pytest $(if $(TEST_NAME),-k $(TEST_NAME),) test_unstructured"
+	bash -c "CI=$(CI) pytest $(if $(TEST_NAME),-k $(TEST_NAME),) test_unstructured"
 
 .PHONY: docker-smoke-test
 docker-smoke-test:
