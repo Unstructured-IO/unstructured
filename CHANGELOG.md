@@ -10,7 +10,6 @@
 
 * Fixed page breaks being given (incorrect) page numbers
 
->>>>>>> origin/main
 ## 0.7.10
 
 ### Enhancements
@@ -63,8 +62,7 @@
 * Adds recursive functionality to all fsspec connectors
 * Adds generic --recursive ingest flag
 
-=======
->>>>>>> da76463 (Update changelog)
+
 ## 0.7.7
 
 ### Enhancements
