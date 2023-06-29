@@ -6,7 +6,7 @@ input_dir=s3://utic-dev-tech-fixtures/partition-strategy-evaluation/pdf/lang/
 function list_s3_dirs() {
   # s3 doesn't have a notion of directories, need to do some parsing to get them from a particular s3 path
   path=$1
-  aws s3 ls "$path" | sed \$d | awk '{print $2}' | grep -E '/' | awk '{ print substr( $0, 1, length($0)-1 ) }'
+  aws s3 ls "$path" | grep -E '/' | awk '{ print substr( $2, 1, length($2)-1 ) }'
 }
 
 function run_inference() {
