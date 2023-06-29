@@ -209,9 +209,8 @@ def _partition_pdf_or_image_local(
         # NOTE(crag): this is probably always a Text object, but check for the sake of typing
         if isinstance(el, Text):
             el.text = re.sub(RE_MULTISPACE_INCLUDING_NEWLINES, " ", el.text or "").strip()
-            if not el.text:
-                continue
-            out_elements.append(cast(Element, el))
+            if el.text or isinstance(el, PageBreak):
+                out_elements.append(cast(Element, el))
 
     return out_elements
 

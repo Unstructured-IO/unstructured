@@ -24,6 +24,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --partition-strategy hi_res \
     --reprocess \
     --verbose \
+    --re-download \
     --download-dir files-ingest-download/biomed-api \
     --preserve-downloads
 
