@@ -38,4 +38,4 @@ def test_partition_tsv_from_file_exclude_metadata(filename="example-docs/stanley
         elements = partition_tsv(file=f, include_metadata=False)
 
     for i in range(len(elements)):
-        assert any(elements[i].metadata.to_dict()) is False
+        assert any(elements[i].metadata.to_dict()) == {}

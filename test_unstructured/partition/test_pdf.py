@@ -408,7 +408,7 @@ def test_partition_pdf_with_auto_strategy_exclude_metadata(
     title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
     assert elements[0].text == title
     for i in range(len(elements)):
-        assert any(elements[i].metadata.to_dict()) is False
+        assert any(elements[i].metadata.to_dict()) == {}
 
 
 def test_partition_pdf_with_fast_strategy_from_file_exclude_metadata(
@@ -417,4 +417,4 @@ def test_partition_pdf_with_fast_strategy_from_file_exclude_metadata(
     with open(filename, "rb") as f:
         elements = pdf.partition_pdf(file=f, url=None, strategy="fast", include_metadata=False)
     for i in range(len(elements)):
-        assert any(elements[i].metadata.to_dict()) is False
+        assert any(elements[i].metadata.to_dict()) == {}

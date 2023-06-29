@@ -119,7 +119,7 @@ def test_partition_xml_from_filename_exclude_metadata(filename):
 
     assert elements[0].text == "United States"
     for i in range(len(elements)):
-        assert any(elements[i].metadata.to_dict()) is False
+        assert any(elements[i].metadata.to_dict()) == {}
 
 
 @pytest.mark.parametrize(
@@ -138,4 +138,4 @@ def test_partition_xml_from_file_exclude_metadata(filename):
 
     assert elements[0].text == "United States"
     for i in range(len(elements)):
-        assert any(elements[i].metadata.to_dict()) is False
+        assert any(elements[i].metadata.to_dict()) == {}

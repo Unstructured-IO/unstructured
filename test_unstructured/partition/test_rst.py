@@ -21,7 +21,7 @@ def test_partition_rst_from_filename_exclude_metadata(filename="example-docs/REA
     elements = partition_rst(filename=filename, include_metadata=False)
 
     for i in range(len(elements)):
-        assert any(elements[i].metadata.to_dict()) is False
+        assert any(elements[i].metadata.to_dict()) == {}
 
 
 def test_partition_rst_from_file_exclude_metadata(filename="example-docs/README.rst"):
@@ -29,4 +29,4 @@ def test_partition_rst_from_file_exclude_metadata(filename="example-docs/README.
         elements = partition_rst(file=f, include_metadata=False)
 
     for i in range(len(elements)):
-        assert any(elements[i].metadata.to_dict()) is False
+        assert any(elements[i].metadata.to_dict()) == {}

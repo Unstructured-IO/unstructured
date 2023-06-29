@@ -101,7 +101,7 @@ def test_partition_msg_from_filename_exclude_metadata():
     elements = partition_msg(filename=filename, include_metadata=False)
 
     for i in range(len(elements)):
-        assert any(elements[i].metadata.to_dict()) is False
+        assert any(elements[i].metadata.to_dict()) == {}
 
 
 def test_partition_msg_from_file_exclude_metadata():
@@ -110,4 +110,4 @@ def test_partition_msg_from_file_exclude_metadata():
         elements = partition_msg(file=f, include_metadata=False)
 
     for i in range(len(elements)):
-        assert any(elements[i].metadata.to_dict()) is False
+        assert any(elements[i].metadata.to_dict()) == {}

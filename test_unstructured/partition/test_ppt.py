@@ -53,7 +53,7 @@ def test_partition_ppt_from_filename_exclude_metadata():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.ppt")
     elements = partition_ppt(filename=filename, include_metadata=False)
     for i in range(len(elements)):
-        assert any(elements[i].metadata.to_dict()) is False
+        assert any(elements[i].metadata.to_dict()) == {}
 
 
 def test_partition_ppt_from_file_exclude_metadata():
@@ -61,4 +61,4 @@ def test_partition_ppt_from_file_exclude_metadata():
     with open(filename, "rb") as f:
         elements = partition_ppt(file=f, include_metadata=False)
     for i in range(len(elements)):
-        assert any(elements[i].metadata.to_dict()) is False
+        assert any(elements[i].metadata.to_dict()) == {}
