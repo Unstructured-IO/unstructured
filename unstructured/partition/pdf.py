@@ -200,20 +200,15 @@ def _partition_pdf_or_image_local(
     out_elements = []
 
     for el in elements:
-        if (
-            (
-                # NOTE(crag): small chunks of text from Image elements tend to be garbage
-                isinstance(el, Image)
-                and (el.text is not None and len(el.text) > 24 and el.text.find(" ") > -1)
-            )
-            or isinstance(el, PageBreak)
-            and include_page_breaks
+        if (isinstance(el, PageBreak) and not include_page_breaks) or (
+            # NOTE(crag): small chunks of text from Image elements tend to be garbage
+            isinstance(el, Image)
+            and (el.text is None or len(el.text) < 24 or el.text.find(" ") == -1)
         ):
-            out_elements.append(cast(Element, el))
-        elif isinstance(el, Text):
-            el.text = re.sub(RE_MULTISPACE_INCLUDING_NEWLINES, " ", el.text).strip()
-            if not el.text:
-                continue
+            continue
+        el.text = re.sub(RE_MULTISPACE_INCLUDING_NEWLINES, " ", el.text).strip()
+        if not el.text:
+            continue
         out_elements.append(el)
 
     return out_elements
