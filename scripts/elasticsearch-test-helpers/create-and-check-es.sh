@@ -1,6 +1,6 @@
-#!/bin/bash
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-cd "$SCRIPT_DIR"/../.. || exit 1
+#!/usr/bin/env bash
+
+SCRIPT_DIR=$(dirname "$(realpath "$0")")
 
 # Create the Elasticsearch cluster and get the container id
 docker run -d --rm -p 9200:9200 -p 9300:9300 -e "xpack.security.enabled=false" -e "discovery.type=single-node" --name es-test docker.elastic.co/elasticsearch/elasticsearch:8.7.0
@@ -23,7 +23,7 @@ while [ "$status_code" -ne 200 ] && [ "$retry_count" -lt "$max_retries" ]; do
   # Process the files only when the Elasticsearch cluster is live
   if [ "$status_code" -eq 200 ]; then
     echo "Cluster is live."
-    python scripts/elasticsearch-test-helpers/create_and_fill_es.py
+    python "$SCRIPT_DIR/create_and_fill_es.py"
   else
     ((retry_count++))
     echo "Cluster is not available. Retrying in 5 seconds... (Attempt $retry_count)"
