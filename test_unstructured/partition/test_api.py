@@ -95,6 +95,7 @@ def test_partition_via_api_raises_with_bad_response(monkeypatch):
     with pytest.raises(ValueError):
         partition_via_api(filename=filename)
 
+
 @pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
 def test_partition_via_api_valid_request_data_kwargs():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf")
