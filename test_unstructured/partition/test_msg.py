@@ -5,6 +5,7 @@ import msg_parser
 import pytest
 
 from unstructured.documents.elements import (
+    CoordinatesMetadata,
     ElementMetadata,
     ListItem,
     NarrativeText,
@@ -39,6 +40,7 @@ def test_partition_msg_from_filename():
     assert (
         elements[0].metadata.to_dict()
         == ElementMetadata(
+            coordinates=CoordinatesMetadata(),
             filename=filename,
             date="2022-12-16T17:04:16-05:00",
             page_number=None,
