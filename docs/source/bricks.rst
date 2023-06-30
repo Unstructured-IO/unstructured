@@ -273,6 +273,22 @@ the average character length for a paragraph.
 You can disable ``max_partition`` by setting it to ``None``.
 
 
+You can optionally partition e-mail attachments by setting ``process_attachments=True``.
+If you set ``process_attachments=True``, you'll also need to pass in a partitioning
+function to ``attachment_partitioner``. The following is an example of what the
+workflow looks like:
+
+.. code:: python
+
+  from unstructured.partition.auto import partition
+  from unstructured.partition.email import partition_email
+
+  filename = "example-docs/eml/fake-email-attachment.eml"
+  elements = partition_email(
+    filename=filename, process_attachments=True, attachment_partitioner=partition
+  )
+
+
 ``partition_epub``
 ---------------------
 
@@ -437,6 +453,22 @@ This parameter only applies if ``"text/plain"`` is selected as the ``content_sou
 The default value is ``1500``, which roughly corresponds to
 the average character length for a paragraph.
 You can disable ``max_partition`` by setting it to ``None``.
+
+
+You can optionally partition e-mail attachments by setting ``process_attachments=True``.
+If you set ``process_attachments=True``, you'll also need to pass in a partitioning
+function to ``attachment_partitioner``. The following is an example of what the
+workflow looks like:
+
+.. code:: python
+
+  from unstructured.partition.auto import partition
+  from unstructured.partition.msg import partition_msg
+
+  filename = "example-docs/fake-email-attachment.msg"
+  elements = partition_msg(
+    filename=filename, process_attachments=True, attachment_partitioner=partition
+  )
 
 
 ``partition_multiple_via_api``

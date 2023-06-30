@@ -10,6 +10,7 @@ from unstructured.partition.docx import convert_and_partition_docx
 def partition_odt(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
+    include_metadata: bool = True,
     **kwargs,
 ) -> List[Element]:
     """Partitions Open Office Documents in .odt format into its document elements.

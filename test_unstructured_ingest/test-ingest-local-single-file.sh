@@ -2,37 +2,20 @@
 
 set -e
 
-SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
+SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
+OUTPUT_FOLDER_NAME=local-single-file
+OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
     --local-input-path example-docs/english-and-korean.png \
-    --structured-output-dir parameterized-ingest-output \
+    --structured-output-dir "$OUTPUT_DIR" \
     --partition-ocr-languages eng+kor \
+    --partition-strategy ocr_only \
     --verbose \
     --reprocess
 
 set +e
 
-# to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
-if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
-
-    cp -r parameterized-ingest-output/ test_unstructured_ingest/expected-structured-output/
-
-elif ! diff -ru test_unstructured_ingest/expected-structured-output/parameterized-ingest-output parameterized-ingest-output ; then
-    echo
-    echo "There are differences from the previously checked-in structured outputs."
-    echo
-    echo "If these differences are acceptable, overwrite by the fixtures by setting the env var:"
-    echo
-    echo "  export OVERWRITE_FIXTURES=true"
-    echo
-    echo "and then rerun this script."
-    echo
-    echo "NOTE: You'll likely just want to run scripts/ingest-test-fixtures-update.sh on x86_64 hardware"
-    echo "to update fixtures for CI,"
-    echo
-    exit 1
-
-fi
+sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

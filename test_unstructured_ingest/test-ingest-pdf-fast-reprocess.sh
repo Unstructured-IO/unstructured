@@ -3,42 +3,23 @@
 
 set -e
 
-SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
+SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
+OUTPUT_FOLDER_NAME=pdf-fast-reprocess
+OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
+INPUT_PATH=$SCRIPT_DIR/download
 
+echo "REPROCESS INPUT PATH"
+ls "$INPUT_PATH"
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-    --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
-    --local-input-path files-ingest-download \
-    --recursive \
     --local-file-glob "*.pdf" \
-    --structured-output-dir pdf-fast-reprocess-ingest-output \
+    --local-input-path "$INPUT_PATH" \
+    --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
+    --num-processes 2 \
     --partition-strategy fast \
+    --recursive \
     --reprocess \
-    --num-processes 2
+    --structured-output-dir "$OUTPUT_DIR"
 
-OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
-
-set +e
-
-# to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
-if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
-
-    cp -a pdf-fast-reprocess-ingest-output/* test_unstructured_ingest/expected-structured-output/pdf-fast-reprocess/
-
-elif ! diff -ru test_unstructured_ingest/expected-structured-output/pdf-fast-reprocess pdf-fast-reprocess-ingest-output ; then
-    echo
-    echo "There are differences from the previously checked-in structured outputs."
-    echo
-    echo "If these differences are acceptable, overwrite by the fixtures by setting the env var:"
-    echo
-    echo "  export OVERWRITE_FIXTURES=true"
-    echo
-    echo "and then rerun this script."
-    echo
-    echo "NOTE: You'll likely just want to run scripts/ingest-test-fixtures-update.sh on x86_64 hardware"
-    echo "to update fixtures for CI."
-    echo
-    exit 1
-
-fi
+sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

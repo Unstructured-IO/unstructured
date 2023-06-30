@@ -93,7 +93,7 @@ six==1.16.0
     #   azure-core
     #   azure-identity
     #   isodate
-typing-extensions==4.6.3
+typing-extensions==4.7.0
     # via
     #   -c requirements/base.txt
     #   azure-core

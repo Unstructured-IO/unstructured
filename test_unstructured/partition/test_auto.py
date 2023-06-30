@@ -15,7 +15,6 @@ from unstructured.documents.elements import (
     ElementMetadata,
     ListItem,
     NarrativeText,
-    PageBreak,
     Table,
     Text,
     Title,
@@ -208,7 +207,7 @@ def test_auto_partition_json_from_filename():
         "..",
         "test_unstructured_ingest",
         "expected-structured-output",
-        "azure-blob-storage",
+        "azure",
         "spring-weather.html.json",
     )
     with open(filename) as json_f:
@@ -438,7 +437,7 @@ def test_auto_partition_ppt_from_filename():
 def test_auto_with_page_breaks():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
     elements = partition(filename=filename, include_page_breaks=True, strategy="hi_res")
-    assert any(isinstance(element, PageBreak) for element in elements)
+    assert "PageBreak" in [elem.category for elem in elements]
 
 
 def test_auto_partition_epub_from_filename():
