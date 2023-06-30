@@ -3,7 +3,6 @@ import pathlib
 from unittest import mock
 
 import pytest
-import requests
 import torch
 from pytesseract import TesseractError
 from unstructured_inference.inference import layout
