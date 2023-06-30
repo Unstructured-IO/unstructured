@@ -443,23 +443,25 @@ def _check_eml_from_buffer(file: IO) -> bool:
 def document_to_element_list(
     document: "DocumentLayout",
     include_page_breaks: bool = False,
+    sort: bool = False,
 ) -> List[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
     elements: List[Element] = []
     num_pages = len(document.pages)
     for i, page in enumerate(document.pages):
+        page_elements: List[Element] = []
         for layout_element in page.elements:
             element = normalize_layout_element(layout_element)
             if isinstance(element, List):
                 for el in element:
                     el.metadata.page_number = i + 1
-                elements.extend(element)
+                page_elements.extend(element)
                 continue
             else:
                 element.metadata.text_as_html = (
                     layout_element.text_as_html if hasattr(layout_element, "text_as_html") else None
                 )
-                elements.append(element)
+                page_elements.append(element)
             if hasattr(page, "image"):
                 image_format = page.image.format
                 coordinate_system = PixelSpace(width=page.image.width, height=page.image.height)
@@ -468,8 +470,18 @@ def document_to_element_list(
                 coordinate_system = None
             element._coordinate_system = coordinate_system
             _add_element_metadata(element, page_number=i + 1, filetype=image_format)
+        if sort:
+            page_elements = sorted(
+                page_elements,
+                key=lambda el: (
+                    el.coordinates[0][1] if el.coordinates else float("inf"),
+                    el.coordinates[0][0] if el.coordinates else float("inf"),
+                    el.id,
+                ),
+            )
         if include_page_breaks and i < num_pages - 1:
-            elements.append(PageBreak(text=""))
+            page_elements.append(PageBreak(text=""))
+        elements.extend(page_elements)
 
     return elements
 
