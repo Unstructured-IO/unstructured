@@ -12,7 +12,12 @@ from dataclasses import dataclass
 from functools import wraps
 from typing import Any, Callable, Dict, List, Optional, Tuple, TypedDict, Union, cast
 
-from unstructured.documents.coordinates import CoordinateSystem
+from unstructured.documents.coordinates import (
+    CoordinateSystem,
+    PixelSpace,
+    PointSpace,
+    RelativeCoordinateSystem,
+)
 
 
 class NoID(ABC):
@@ -67,12 +72,31 @@ class CoordinatesMetadata:
 
     @classmethod
     def from_dict(cls, input_dict):
-        points = input_dict.get("points", None)
+        # `input_dict` may contain a tuple of tuples or a list of lists
+        def convert_to_tuple_of_tuples(sequence_of_sequences):
+            subsequences = []
+            for seq in sequence_of_sequences:
+                if isinstance(seq, list):
+                    subsequences.append(tuple(seq))
+                elif isinstance(seq, tuple):
+                    subsequences.append(seq)
+            return tuple(subsequences)
+
+        input_points = input_dict.get("points", None)
+        points = convert_to_tuple_of_tuples(input_points) if input_points is not None else None
         width = input_dict.get("layout_width", None)
         height = input_dict.get("layout_height", None)
-        system = (
-            CoordinateSystem(width, height) if width is not None and height is not None else None
-        )
+        system = None
+        if width is not None and height is not None:
+            if input_dict.get("system", None) == "PixelSpace":
+                system = PixelSpace(width, height)
+            elif input_dict.get("system", None) == "PointSpace":
+                system = PointSpace(width, height)
+            elif input_dict.get("system", None) == "RelativeCoordinateSystem":
+                system = RelativeCoordinateSystem(width, height)
+            elif input_dict.get("system", None) == "CoordinateSystem":
+                system = CoordinateSystem(width, height)
+
         constructor_args = {"points": points, "system": system}
         return cls(**constructor_args)
 
