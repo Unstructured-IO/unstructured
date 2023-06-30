@@ -169,3 +169,22 @@ def test_partition_text_doesnt_get_page_breaks():
     assert len(elements) == 1
     assert elements[0].text == text
     assert not isinstance(elements[0], ListItem)
+
+
+@pytest.mark.parametrize(
+    ("filename", "encoding"),
+    [("fake-text.txt", "utf-8"), ("fake-text.txt", None), ("fake-text-utf-16-be.txt", "utf-16-be")],
+)
+def test_partition_text_from_filename_exclude_metadata(filename, encoding):
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+    elements = partition_text(filename=filename, encoding=encoding, include_metadata=False)
+    for i in range(len(elements)):
+        assert elements[i].metadata.to_dict() == {}
+
+
+def test_partition_text_from_file_exclude_metadata():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-text.txt")
+    with open(filename) as f:
+        elements = partition_text(file=f, include_metadata=False)
+    for i in range(len(elements)):
+        assert elements[i].metadata.to_dict() == {}

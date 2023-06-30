@@ -5,10 +5,10 @@ from tempfile import SpooledTemporaryFile
 from typing import BinaryIO, List, Optional, Union, cast
 
 import pdf2image
+import PIL
 from pdfminer.high_level import extract_pages
 from pdfminer.layout import LTContainer, LTImage, LTItem, LTTextBox
 from pdfminer.utils import open_filename
-from PIL import Image
 
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.coordinates import PixelSpace
@@ -16,7 +16,9 @@ from unstructured.documents.elements import (
     CoordinatesMetadata,
     Element,
     ElementMetadata,
+    Image,
     PageBreak,
+    Text,
     process_metadata,
 )
 from unstructured.file_utils.filetype import (
@@ -33,6 +35,8 @@ from unstructured.partition.strategies import determine_pdf_or_image_strategy
 from unstructured.partition.text import element_from_text, partition_text
 from unstructured.utils import requires_dependencies
 
+RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
+
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.PDF)
@@ -44,6 +48,7 @@ def partition_pdf(
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
     max_partition: Optional[int] = 1500,
+    include_metadata: bool = True,
     **kwargs,
 ) -> List[Element]:
     """Parses a pdf document into a list of interpreted elements.
@@ -193,8 +198,23 @@ def _partition_pdf_or_image_local(
             extract_tables=infer_table_structure,
             model_name=model_name,
         )
+    elements = document_to_element_list(layout, include_page_breaks=include_page_breaks, sort=False)
+    out_elements = []
 
-    return document_to_element_list(layout, include_page_breaks=include_page_breaks)
+    for el in elements:
+        if (isinstance(el, PageBreak) and not include_page_breaks) or (
+            # NOTE(crag): small chunks of text from Image elements tend to be garbage
+            isinstance(el, Image)
+            and (el.text is None or len(el.text) < 24 or el.text.find(" ") == -1)
+        ):
+            continue
+        # NOTE(crag): this is probably always a Text object, but check for the sake of typing
+        if isinstance(el, Text):
+            el.text = re.sub(RE_MULTISPACE_INCLUDING_NEWLINES, " ", el.text or "").strip()
+            if el.text or isinstance(el, PageBreak):
+                out_elements.append(cast(Element, el))
+
+    return out_elements
 
 
 @requires_dependencies("pdfminer", "local-inference")
@@ -301,6 +321,7 @@ def _process_pdfminer_pages(
             key=lambda el: (
                 el.metadata.coordinates.points[0][1] if el.metadata.coordinates else float("inf"),
                 el.metadata.coordinates.points[0][0] if el.metadata.coordinates else float("inf"),
+                el.id,
             ),
         )
         elements += sorted_page_elements
@@ -326,7 +347,7 @@ def _partition_pdf_or_image_with_ocr(
 
     if is_image:
         if file is not None:
-            image = Image.open(file)
+            image = PIL.Image.open(file)
             text = pytesseract.image_to_string(image, config=f"-l '{ocr_languages}'")
         else:
             text = pytesseract.image_to_string(filename, config=f"-l '{ocr_languages}'")

@@ -412,3 +412,22 @@ def test_partition_pdf_fast_groups_text_in_text_box():
         ),
     )
     assert elements[3] == Title("1st", metadata=expected_elem_metadata_3)
+
+
+def test_partition_pdf_with_auto_strategy_exclude_metadata(
+    filename="example-docs/layout-parser-paper-fast.pdf",
+):
+    elements = pdf.partition_pdf(filename=filename, strategy="auto", include_metadata=False)
+    title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
+    assert elements[0].text == title
+    for i in range(len(elements)):
+        assert elements[i].metadata.to_dict() == {}
+
+
+def test_partition_pdf_with_fast_strategy_from_file_exclude_metadata(
+    filename="example-docs/layout-parser-paper-fast.pdf",
+):
+    with open(filename, "rb") as f:
+        elements = pdf.partition_pdf(file=f, url=None, strategy="fast", include_metadata=False)
+    for i in range(len(elements)):
+        assert elements[i].metadata.to_dict() == {}

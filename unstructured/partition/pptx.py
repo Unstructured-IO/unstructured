@@ -35,6 +35,7 @@ def partition_pptx(
     file: Optional[Union[IO, SpooledTemporaryFile]] = None,
     include_page_breaks: bool = True,
     metadata_filename: Optional[str] = None,
+    include_metadata: bool = True,
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft PowerPoint Documents in .pptx format into its document elements.
