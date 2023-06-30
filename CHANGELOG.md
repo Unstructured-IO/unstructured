@@ -10,6 +10,8 @@
 
 ### Features
 
+* Set strategy `hi_res` if GPU is available.
+
 ### Fixes
 
 * Fix tests that call unstructured-api by passing through an api-key
