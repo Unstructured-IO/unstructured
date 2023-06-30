@@ -398,7 +398,8 @@ class MainProcess:
 @click.option(
     "--ms-authority-url",
     default="https://login.microsoftonline.com",
-    help="Authentication token provider for Microsoft apps, default is https://login.microsoftonline.com",
+    help="Authentication token provider for Microsoft apps, default is "
+    "https://login.microsoftonline.com",
 )
 @click.option(
     "--ms-tenant",
