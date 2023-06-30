@@ -2,48 +2,22 @@
 
 set -e
 
-SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
+SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
+OUTPUT_FOLDER_NAME=s3
+OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
+DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
-if [[ "$(find test_unstructured_ingest/expected-structured-output/s3-small-batch/ -type f -size +20k | wc -l)" -ne 3 ]]; then
-    echo "The test fixtures in test_unstructured_ingest/expected-structured-output/ look suspicious. At least one of the files is too small."
-    echo "Did you overwrite test fixtures with bad outputs?"
-    exit 1
-fi
+sh "$SCRIPT_DIR"/check-num-files-expected-output.sh 3 $OUTPUT_FOLDER_NAME 20k
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
+    --download-dir "$DOWNLOAD_DIR" \
     --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
-    --remote-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
-    --s3-anonymous \
-    --structured-output-dir s3-small-batch-output \
-    --preserve-downloads \
     --partition-strategy hi_res \
-    --download-dir files-ingest-download/s3 \
-    --re-download \
-    --reprocess
+    --preserve-downloads \
+    --remote-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
+    --reprocess \
+    --s3-anonymous \
+    --structured-output-dir "$OUTPUT_DIR"
 
-OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
-
-set +e
-
-# to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
-if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
-
-    cp s3-small-batch-output/small-pdf-set/* test_unstructured_ingest/expected-structured-output/s3-small-batch/small-pdf-set/
-
-elif ! diff -ru test_unstructured_ingest/expected-structured-output/s3-small-batch s3-small-batch-output ; then
-    echo
-    echo "There are differences from the previously checked-in structured outputs."
-    echo
-    echo "If these differences are acceptable, overwrite by the fixtures by setting the env var:"
-    echo
-    echo "  export OVERWRITE_FIXTURES=true"
-    echo
-    echo "and then rerun this script."
-    echo
-    echo "NOTE: You'll likely just want to run scripts/ingest-test-fixtures-update.sh on x86_64 hardware"
-    echo "to update fixtures for CI,"
-    echo
-    exit 1
-
-fi
+sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
