@@ -21,8 +21,6 @@ from unstructured.ingest.connector.fsspec import (
 from unstructured.ingest.interfaces import StandardConnectorConfig
 from unstructured.utils import requires_dependencies
 
-from unstructured.ingest.logger import logger
-
 
 class MissingFolderError(Exception):
     """There is no folder by that name. For root try `dropbox:// /`"""
@@ -45,7 +43,9 @@ class DropboxIngestDoc(FsspecIngestDoc):
         # Dropbox uses an empty string `""`, or a space `" "`` or a `" /"` to list root
         if self.config.dir_path == " ":
             return Path(self.standard_config.output_dir) / re.sub(
-                "^/", "", f"{self.remote_file_path}.json"
+                "^/",
+                "",
+                f"{self.remote_file_path}.json",
             )
         else:
             return (
@@ -59,11 +59,13 @@ class DropboxIngestDoc(FsspecIngestDoc):
         # Dropbox uses an empty string `""`, or a space `" "`` or a `" /"` to list root
         if self.config.dir_path == " ":
             return Path(self.standard_config.download_dir) / re.sub(
-                "^/", "", self.remote_file_path
+                "^/",
+                "",
+                self.remote_file_path,
             )
         else:
             return Path(
-                self.standard_config.download_dir
+                self.standard_config.download_dir,
             ) / self.remote_file_path.replace(
                 f"/{self.config.dir_path}/",
                 "",
@@ -93,7 +95,7 @@ class DropboxConnector(FsspecConnector):
             )
         else:
             raise MissingFolderError(
-                "There is no folder by that name. For root try `dropbox:// /`"
+                "There is no folder by that name. For root try `dropbox:// /`",
             )
 
     def _list_files(self):
@@ -101,11 +103,13 @@ class DropboxConnector(FsspecConnector):
         # creates some complications in path joining so a custom path is created here.
         if not self.config.recursive:
             # fs.ls does not walk directories
-            # directories that are listed in cloud storage can cause problems because they are seen as 0byte files
+            # directories that are listed in cloud storage can cause problems because they are seen
+            # as 0byte files
             return [
                 x.get("name")
                 for x in self.fs.ls(
-                    f"/{self.config.path_without_protocol}", detail=True
+                    f"/{self.config.path_without_protocol}",
+                    detail=True,
                 )
                 if x.get("size")
             ]

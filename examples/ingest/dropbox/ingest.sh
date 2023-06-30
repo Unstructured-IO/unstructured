@@ -18,7 +18,7 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 PYTHONPATH=. ./unstructured/ingest/main.py \
    --remote-url "dropbox:// /" \
    --structured-output-dir dropbox-output \
-   --dropbox-token  $DROPBOX_TOKEN \
+   --dropbox-token  "$DROPBOX_TOKEN" \
    --num-processes 2 \
    --recursive \
    --verbose 

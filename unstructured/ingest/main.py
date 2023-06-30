@@ -614,14 +614,17 @@ def main(
                 ),
             )
         elif protocol in ("dropbox"):
-            from unstructured.ingest.connector.dropbox import DropboxConnector, SimpleDropboxConfig
+            from unstructured.ingest.connector.dropbox import (
+                DropboxConnector,
+                SimpleDropboxConfig,
+            )
 
             doc_connector = DropboxConnector(  # type: ignore
                 standard_config=standard_config,
                 config=SimpleDropboxConfig(
                     path=remote_url,
                     recursive=recursive,
-                    access_kwargs={"token": dropbox_token}
+                    access_kwargs={"token": dropbox_token},
                 ),
             )
         elif protocol in ("abfs", "az"):
