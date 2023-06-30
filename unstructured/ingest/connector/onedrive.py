@@ -9,13 +9,15 @@ from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
+    ConnectorCleanupMixin,
+    IngestDocCleanupMixin,
     StandardConnectorConfig,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
-    from office365.onedrive.driveitems import driveItem
+    from office365.onedrive.driveitems.driveItem import DriveItem
 
 
 MAX_MB_SIZE = 512_000_000
@@ -56,9 +58,9 @@ class SimpleOneDriveConfig(BaseConnectorConfig):
 
 
 @dataclass
-class OneDriveIngestDoc(BaseIngestDoc):
+class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleOneDriveConfig
-    file: "driveItem.DriveItem"
+    file: "DriveItem"
 
     def __post_init__(self):
         self.ext = "".join(Path(self.file.name).suffixes)
@@ -93,32 +95,13 @@ class OneDriveIngestDoc(BaseIngestDoc):
     def filename(self):
         return Path(self.download_filepath).resolve()
 
+    @property
     def _output_filename(self):
         return Path(self.output_filepath).resolve()
 
-    def cleanup_file(self):
-        if (
-            not self.standard_config.preserve_downloads
-            and self.filename.is_file()
-            and not self.standard_config.download_only
-        ):
-            logger.debug(f"Cleaning up {self}")
-            Path.unlink(self.filename)
-
-    def has_output(self) -> bool:
-        """Determine if structured output for this doc already exists."""
-        return self._output_filename().is_file() and self._output_filename().stat()
-
+    @BaseIngestDoc.skip_if_file_exists
     @requires_dependencies(["office365"])
     def get_file(self):
-        if (
-            not self.standard_config.re_download
-            and self.filename.is_file()
-            and self.filename.stat()
-        ):
-            logger.debug(f"File exists: {self.filename}, skipping download")
-            return
-
         try:
             fsize = self.file.get_property("size", 0)
             self.output_dir.mkdir(parents=True, exist_ok=True)
@@ -134,40 +117,19 @@ class OneDriveIngestDoc(BaseIngestDoc):
             else:
                 with self.filename.open(mode="wb") as f:
                     self.file.download(f).execute_query()
-
         except Exception as e:
             logger.error(f"Error while downloading and saving file: {self.filename}.")
             logger.error(e)
             return
-
         logger.info(f"File downloaded: {self.filename}")
         return
 
-    def write_result(self):
-        """Write the structured json result for this doc. result must be json serializable."""
 
-        if self.standard_config.download_only:
-            return
-        output_filename = self._output_filename()
-        output_filename.parent.mkdir(parents=True, exist_ok=True)
-
-        if not self.output_dir.is_dir():
-            logger.debug(f"Creating directory: {self.output_dir}")
-            self.output_dir.mkdir(parents=True, exist_ok=True)
-
-        with output_filename.open(mode="w") as output_f:
-            output_f.write(json.dumps(self.isd_elems_no_filename[0], ensure_ascii=False, indent=2))
-        logger.info(f"Wrote {output_filename}")
-
-
-class OneDriveConnector(BaseConnector):
+class OneDriveConnector(ConnectorCleanupMixin, BaseConnector):
     config: SimpleOneDriveConfig
 
     def __init__(self, standard_config: StandardConnectorConfig, config: SimpleOneDriveConfig):
         super().__init__(standard_config, config)
-        self.cleanup_files = (
-            not self.standard_config.preserve_downloads and not self.standard_config.download_only
-        )
         self._set_client()
 
     @requires_dependencies(["office365"])
@@ -176,7 +138,7 @@ class OneDriveConnector(BaseConnector):
 
         self.client = GraphClient(self.config.token_factory)
 
-    def _list_objects(self, folder, recursive) -> List[driveItem.DriveItem]:
+    def _list_objects(self, folder, recursive) -> List["DriveItem"]:
         drive_items = folder.children.get().execute_query()
         files = [d for d in drive_items if d.is_file]
         if not recursive:
@@ -185,22 +147,6 @@ class OneDriveConnector(BaseConnector):
         for f in folders:
             files += self._list_objects(f, recursive)
         return files
-
-    def cleanup(self, cur_dir=None):
-        if not self.cleanup_files:
-            return
-
-        if cur_dir is None:
-            cur_dir = self.standard_config.download_dir
-        sub_dirs = os.listdir(cur_dir)
-        os.chdir(cur_dir)
-        for sub_dir in sub_dirs:
-            # don't traverse symlinks, not that there every should be any
-            if os.path.isdir(sub_dir) and not os.path.islink(sub_dir):
-                self.cleanup(sub_dir)
-        os.chdir("..")
-        if len(os.listdir(cur_dir)) == 0:
-            os.rmdir(cur_dir)
 
     def initialize(self):
         pass

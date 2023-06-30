@@ -81,6 +81,7 @@ jobs:
           make install-ingest-google-drive
           make install-ingest-github
           make install-ingest-gitlab
+          make install-ingest-onedrive
           make install-ingest-slack
           make install-ingest-wikipedia
           ./test_unstructured_ingest/test-ingest.sh

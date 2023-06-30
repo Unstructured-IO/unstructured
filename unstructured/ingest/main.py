@@ -800,7 +800,7 @@ def main(
             ),
         )
     elif ms_client_id or ms_user_pname:
-        from unstructured.ingest.connector.one_drive import (
+        from unstructured.ingest.connector.onedrive import (
             OneDriveConnector,
             SimpleOneDriveConfig,
         )
