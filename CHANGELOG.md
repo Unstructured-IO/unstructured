@@ -1,3 +1,17 @@
+## 0.7.12-dev0
+
+### Enhancements
+
+* Adds `include_metadata` kwarg to `partition_doc`, `partition_docx`, `partition_email`, `partition_epub`, `partition_json`, `partition_msg`, `partition_odt`, `partition_org`, `partition_pdf`, `partition_ppt`, `partition_pptx`, `partition_rst`, and `partition_rtf`
+
+### Features
+
+### Fixes
+
+* Fix tests that call unstructured-api by passing through an api-key
+* Fixed page breaks being given (incorrect) page numbers
+* Fix skipping download on ingest when a source document exists locally
+
 ## 0.7.11
 
 ### Enhancements

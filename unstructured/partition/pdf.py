@@ -47,6 +47,7 @@ def partition_pdf(
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
     max_partition: Optional[int] = 1500,
+    include_metadata: bool = True,
     **kwargs,
 ) -> List[Element]:
     """Parses a pdf document into a list of interpreted elements.

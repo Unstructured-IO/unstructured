@@ -90,3 +90,27 @@ def test_partition_md_raises_with_too_many_specified():
 
     with pytest.raises(ValueError):
         partition_md(filename=filename, text=text)
+
+
+def test_partition_md_from_filename_exclude_metadata():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "README.md")
+    elements = partition_md(filename=filename, include_metadata=False)
+    for i in range(len(elements)):
+        assert elements[i].metadata.to_dict() == {}
+
+
+def test_partition_md_from_file_exclude_metadata():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "README.md")
+    with open(filename) as f:
+        elements = partition_md(file=f, include_metadata=False)
+    for i in range(len(elements)):
+        assert elements[i].metadata.to_dict() == {}
+
+
+def test_partition_md_from_text_exclude_metadata():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "README.md")
+    with open(filename) as f:
+        text = f.read()
+    elements = partition_md(text=text, include_metadata=False)
+    for i in range(len(elements)):
+        assert elements[i].metadata.to_dict() == {}

@@ -227,6 +227,7 @@ def partition_email(
     encoding: Optional[str] = None,
     include_headers: bool = False,
     max_partition: Optional[int] = 1500,
+    include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
     process_attachments: bool = False,
     attachment_partitioner: Optional[Callable] = None,
@@ -235,7 +236,7 @@ def partition_email(
     """Partitions an .eml documents into its constituent elements.
     Parameters
     ----------
-     filename
+    filename
         A string defining the target filename path.
     file
         A file-like object using "r" mode --> open(filename, "r").

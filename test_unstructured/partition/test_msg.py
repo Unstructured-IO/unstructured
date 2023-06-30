@@ -97,6 +97,23 @@ def test_partition_msg_raises_with_neither():
         partition_msg()
 
 
+def test_partition_msg_from_filename_exclude_metadata():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
+    elements = partition_msg(filename=filename, include_metadata=False)
+
+    for i in range(len(elements)):
+        assert elements[i].metadata.to_dict() == {}
+
+
+def test_partition_msg_from_file_exclude_metadata():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
+    with open(filename, "rb") as f:
+        elements = partition_msg(file=f, include_metadata=False)
+
+    for i in range(len(elements)):
+        assert elements[i].metadata.to_dict() == {}
+
+
 def test_partition_msg_can_process_attachments(
     tmpdir,
     filename="example-docs/fake-email-attachment.msg",

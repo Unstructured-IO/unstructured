@@ -329,6 +329,35 @@ def test_partition_email_still_works_with_no_content():
     assert elements == []
 
 
+def test_partition_email_from_filename_exclude_metadata():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email-header.eml")
+    elements = partition_email(filename=filename, include_metadata=False)
+    assert elements[0].metadata.get_date() is None
+    assert elements[0].metadata.filetype is None
+    assert elements[0].metadata.page_name is None
+    assert elements[0].metadata.filename is None
+
+
+def test_partition_email_from_text_file_exclude_metadata():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.txt")
+    with open(filename) as f:
+        elements = partition_email(file=f, content_source="text/plain", include_metadata=False)
+    assert elements[0].metadata.get_date() is None
+    assert elements[0].metadata.filetype is None
+    assert elements[0].metadata.page_name is None
+    assert elements[0].metadata.filename is None
+
+
+def test_partition_email_from_file_exclude_metadata():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
+    with open(filename) as f:
+        elements = partition_email(file=f, include_metadata=False)
+    assert elements[0].metadata.get_date() is None
+    assert elements[0].metadata.filetype is None
+    assert elements[0].metadata.page_name is None
+    assert elements[0].metadata.filename is None
+
+
 def test_partition_email_can_process_attachments(
     tmpdir,
     filename="example-docs/eml/fake-email-attachment.eml",
