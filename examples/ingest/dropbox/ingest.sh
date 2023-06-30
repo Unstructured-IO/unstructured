@@ -2,8 +2,9 @@
 
 # Processes several files in a nested folder structure from dropbox://utic-test-ingest-fixtures/ 
 # through Unstructured's library in 2 processes.
-# Due to Dropbox's interesting sdk, to list and get the root folders/files we use "dropbox:// /"
-# Subfolders are stated as normal "dropbox://nested-1" 
+# Due to Dropbox's interesting sdk:
+# if you want files and folders from the root directory use `"dropbox:// /"`
+# if your files and folders are in a subfolder it is normal like `dropbox://nested-1`
 
 # To get or refresh an access token use dropbox_token.py
 
