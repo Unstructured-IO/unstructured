@@ -82,7 +82,7 @@ importlib-metadata==6.7.0
     #   nbconvert
 importlib-resources==5.12.0
     # via jsonschema
-ipykernel==6.23.2
+ipykernel==6.23.3
     # via
     #   ipywidgets
     #   jupyter
@@ -121,7 +121,7 @@ jsonschema[format-nongpl]==4.17.3
     #   nbformat
 jupyter==1.0.0
     # via -r requirements/dev.in
-jupyter-client==8.2.0
+jupyter-client==8.3.0
     # via
     #   ipykernel
     #   jupyter-console
@@ -147,7 +147,7 @@ jupyter-core==5.3.1
     #   qtconsole
 jupyter-events==0.6.3
     # via jupyter-server
-jupyter-server==2.6.0
+jupyter-server==2.7.0
     # via
     #   nbclassic
     #   notebook-shim
@@ -219,7 +219,7 @@ pip-tools==6.13.0
     # via -r requirements/dev.in
 pkgutil-resolve-name==1.3.10
     # via jsonschema
-platformdirs==3.6.0
+platformdirs==3.8.0
     # via
     #   -c requirements/test.txt
     #   jupyter-core
@@ -352,12 +352,12 @@ traitlets==5.9.0
     #   nbformat
     #   notebook
     #   qtconsole
-typing-extensions==4.6.3
+typing-extensions==4.7.0
     # via
     #   -c requirements/base.txt
     #   -c requirements/test.txt
     #   ipython
-uri-template==1.2.0
+uri-template==1.3.0
     # via jsonschema
 virtualenv==20.23.1
     # via pre-commit
@@ -369,7 +369,7 @@ webencodings==0.5.1
     # via
     #   bleach
     #   tinycss2
-websocket-client==1.6.0
+websocket-client==1.6.1
     # via jupyter-server
 wheel==0.40.0
     # via

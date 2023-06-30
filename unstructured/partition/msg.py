@@ -1,5 +1,6 @@
+import os
 import tempfile
-from typing import IO, Dict, List, Optional
+from typing import IO, Callable, Dict, List, Optional
 
 import msg_parser
 
@@ -18,6 +19,9 @@ def partition_msg(
     file: Optional[IO] = None,
     max_partition: Optional[int] = 1500,
     include_metadata: bool = True,
+    metadata_filename: Optional[str] = None,
+    process_attachments: bool = False,
+    attachment_partitioner: Optional[Callable] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions a MSFT Outlook .msg file
@@ -31,6 +35,13 @@ def partition_msg(
     max_partition
         The maximum number of characters to include in a partition. If None is passed,
         no maximum is applied. Only applies if processing text/plain content.
+    metadata_filename
+        The filename to use for the metadata.
+    process_attachments
+        If True, partition_email will process email attachments in addition to
+        processing the content of the email itself.
+    attachment_partitioner
+        The partitioning function to use to process attachments.
     """
     exactly_one(filename=filename, file=file)
 
@@ -42,15 +53,34 @@ def partition_msg(
         tmp.close()
         msg_obj = msg_parser.MsOxMessage(tmp.name)
 
+    metadata_filename = metadata_filename or filename
+
     text = msg_obj.body
     if "<html>" in text or "</div>" in text:
         elements = partition_html(text=text)
     else:
         elements = partition_text(text=text, max_partition=max_partition)
 
-    metadata = build_msg_metadata(msg_obj, filename)
+    metadata = build_msg_metadata(msg_obj, metadata_filename)
     for element in elements:
         element.metadata = metadata
+
+    if process_attachments:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            extract_msg_attachment_info(msg_obj=msg_obj, output_dir=tmpdir)
+            attached_files = os.listdir(tmpdir)
+            for attached_file in attached_files:
+                attached_filename = os.path.join(tmpdir, attached_file)
+                if attachment_partitioner is None:
+                    raise ValueError(
+                        "Specify the attachment_partitioner kwarg to process attachments.",
+                    )
+                attached_elements = attachment_partitioner(filename=attached_filename)
+                for element in attached_elements:
+                    element.metadata.filename = attached_file
+                    element.metadata.file_directory = None
+                    element.metadata.attached_to_filename = metadata_filename
+                    elements.append(element)
 
     return elements
 
@@ -79,11 +109,12 @@ def build_msg_metadata(msg_obj: msg_parser.MsOxMessage, filename: Optional[str])
 
 
 def extract_msg_attachment_info(
-    filename: str,
+    filename: Optional[str] = None,
     file: Optional[IO] = None,
     output_dir: Optional[str] = None,
+    msg_obj: Optional[msg_parser.MsOxMessage] = None,
 ) -> List[Dict[str, str]]:
-    exactly_one(filename=filename, file=file)
+    exactly_one(filename=filename, file=file, msg_obj=msg_obj)
 
     if filename is not None:
         msg_obj = msg_parser.MsOxMessage(filename)
@@ -92,6 +123,8 @@ def extract_msg_attachment_info(
         tmp.write(file.read())
         tmp.close()
         msg_obj = msg_parser.MsOxMessage(tmp.name)
+    elif msg_obj is not None:
+        msg_obj = msg_obj
 
     list_attachments = []
 
@@ -106,8 +139,8 @@ def extract_msg_attachment_info(
         list_attachments.append(attachment_info)
 
         if output_dir is not None:
-            filename = output_dir + "/" + attachment_info["filename"]
-            with open(filename, "wb") as f:
+            output_filename = output_dir + "/" + attachment_info["filename"]
+            with open(output_filename, "wb") as f:
                 f.write(attachment.data)
 
     return list_attachments

@@ -1,0 +1,132 @@
+[
+  {
+    "type": "UncategorizedText",
+    "element_id": "a81f2feee790a4c2cf749889073d947a",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "Lisa Federer, MLIS, Data Science Training Coordinator"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "c8e51fdc53c202393adad77f7f93ee5a",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "Executive Summary"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "04ff84b51fab69c07381ac794b740243",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "1. General biomedical subject matter knowledge: biomedical data scientists should have a general working knowledge of the principles of biology, bioinformatics, and basic clinical science;"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "a88d172116b68102146559d58fdb6669",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "2. Programming language expertise: biomedical data scientists should be fluent in at"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "f5f4c576951865bd016d4be673f624ff",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "least one programming language (typically R and/or Python);"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "8b02f539eb8ccee5b3fc24f66858188c",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "3. Predictive analytics, modeling, and machine learning: while a range of statistical methods may be useful, predictive analytics, modeling, and machine learning emerged as especially important skills in biomedical data science;"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "469e981f34d1e6f2b420574ed8e932d2",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "4. Team science and scientific communication: “soft” skills, like the ability to work well on teams and communicate effectively in both verbal and written venues, may be as important as the more technical skills typically associated with data science."
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "4b8fc76cbba0e2fef79ff8bc668b1401",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "5. Responsible data stewardship: a successful data scientist must be able to implement best practices for data management and stewardship, as well as conduct research in an ethical manner that maintains data security and privacy."
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "69da7754428f154ee3b2906214d31ad9",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "The report further details specific skills and expertise relevant to biomedical data scientists."
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "37486ef32cbf05082d5dbff0581db762",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "Motivation"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "9fc51802fc970310e99a77b9f29af9ab",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "Core Skills for Biomedical Data Scientists _____________________________________________________________________________________________"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "2e3cec7bff1e8c8d8e0087f0bcfa89f0",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "a) Responses to a 2017 Kaggle1 survey2 of over 16,000 self-identified data scientists working across many industries. Analysis of the Kaggle survey responses from the current data science workforce provided insights into the current generation of data scientists, including how they were trained and what programming and analysis skills they use."
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "8c90963d8f3da9bf0465279550af369a",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "2"
+  }
+]

@@ -6,21 +6,19 @@ if [ -z "$UNS_API_KEY" ]; then
    echo "Skipping ingest test against api because the UNS_API_KEY env var is not set."
    exit 0
 fi
+SCRIPT_DIR=$(dirname "$(realpath "$0")")
+cd "$SCRIPT_DIR"/.. || exit 1
+OUTPUT_FOLDER_NAME=api-ingest-output
+OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --api-key "$UNS_API_KEY" \
-    --local-input-path example-docs \
     --local-file-glob "*.pdf" \
-    --structured-output-dir api-ingest-output \
+    --local-input-path example-docs \
     --partition-by-api \
     --partition-strategy hi_res \
-    --verbose \
-    --reprocess
+    --reprocess \
+    --structured-output-dir "$OUTPUT_DIR" \
+    --verbose
 
-set +e
-
-if [ "$(find 'api-ingest-output' -type f -printf '.' | wc -c)" != 8 ]; then
-   echo
-   echo "8 files should have been created."
-   exit 1
-fi
+sh "$SCRIPT_DIR"/check-num-files-output.sh 8 $OUTPUT_FOLDER_NAME

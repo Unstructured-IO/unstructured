@@ -1,11 +1,12 @@
 import datetime
 import email
+import os
 import re
 import sys
 from email.message import Message
 from functools import partial
-from tempfile import SpooledTemporaryFile
-from typing import IO, Dict, List, Optional, Tuple, Union
+from tempfile import SpooledTemporaryFile, TemporaryDirectory
+from typing import IO, Callable, Dict, List, Optional, Tuple, Union
 
 from unstructured.file_utils.encoding import (
     COMMON_ENCODINGS,
@@ -227,6 +228,9 @@ def partition_email(
     include_headers: bool = False,
     max_partition: Optional[int] = 1500,
     include_metadata: bool = True,
+    metadata_filename: Optional[str] = None,
+    process_attachments: bool = False,
+    attachment_partitioner: Optional[Callable] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions an .eml documents into its constituent elements.
@@ -246,6 +250,13 @@ def partition_email(
     max_partition
         The maximum number of characters to include in a partition. If None is passed,
         no maximum is applied. Only applies if processing the text/plain content.
+    metadata_filename
+        The filename to use for the metadata.
+    process_attachments
+        If True, partition_email will process email attachments in addition to
+        processing the content of the email itself.
+    attachment_partitioner
+        The partitioning function to use to process attachments.
     """
     if content_source not in VALID_CONTENT_SOURCES:
         raise ValueError(
@@ -258,6 +269,8 @@ def partition_email(
 
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text)
+
+    metadata_filename = metadata_filename or filename
 
     detected_encoding = "utf-8"
     if filename is not None:
@@ -342,7 +355,25 @@ def partition_email(
         header = partition_email_header(msg)
     all_elements = header + elements
 
-    metadata = build_email_metadata(msg, filename=filename)
+    metadata = build_email_metadata(msg, filename=metadata_filename)
     for element in all_elements:
         element.metadata = metadata
+
+    if process_attachments:
+        with TemporaryDirectory() as tmpdir:
+            extract_attachment_info(msg, tmpdir)
+            attached_files = os.listdir(tmpdir)
+            for attached_file in attached_files:
+                attached_filename = os.path.join(tmpdir, attached_file)
+                if attachment_partitioner is None:
+                    raise ValueError(
+                        "Specify the attachment_partitioner kwarg to process attachments.",
+                    )
+                attached_elements = attachment_partitioner(filename=attached_filename)
+                for element in attached_elements:
+                    element.metadata.filename = attached_file
+                    element.metadata.file_directory = None
+                    element.metadata.attached_to_filename = metadata_filename
+                    all_elements.append(element)
+
     return all_elements

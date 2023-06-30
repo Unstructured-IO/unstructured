@@ -1,8 +1,27 @@
-## 0.7.11-dev2
+## 0.7.12-dev0
 
 ### Enhancements
 
 * Adds `include_metadata` kwarg to `partition_doc`, `partition_docx`, `partition_email`, `partition_epub`, `partition_json`, `partition_msg`, `partition_odt`, `partition_org`, `partition_pdf`, `partition_ppt`, `partition_pptx`, `partition_rst`, and `partition_rtf`
+
+### Features
+
+### Fixes
+
+* Fix tests that call unstructured-api by passing through an api-key
+* Fixed page breaks being given (incorrect) page numbers
+* Fix skipping download on ingest when a source document exists locally
+
+## 0.7.11
+
+### Enhancements
+
+* More deterministic element ordering when using `hi_res` PDF parsing strategy (from unstructured-inference bump to 0.5.4)
+* Make large model available (from unstructured-inference bump to 0.5.3)
+* Combine inferred elements with extracted elements (from unstructured-inference bump to 0.5.2) 
+* `partition_email` and `partition_msg` will now process attachments if `process_attachments=True`
+  and a attachment partitioning functions is passed through with `attachment_partitioner=partition`.
+
 ### Features
 
 ### Fixes
