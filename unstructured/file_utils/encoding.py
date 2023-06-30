@@ -10,6 +10,8 @@ ENCODE_REC_THRESHOLD = 0.5
 COMMON_ENCODINGS = [
     "utf_8",
     "iso_8859_1",
+    "iso_8859_6",
+    "iso_8859_8",
     "ascii",
     "big5",
     "utf_16",
@@ -37,7 +39,14 @@ def format_encoding_str(encoding: str) -> str:
         The encoding string to be formatted (e.g., `UTF-8`, `utf_8`, `ISO-8859-1`, `iso_8859_1`,
         etc).
     """
-    return encoding.lower().replace("_", "-")
+    formatted_encoding = encoding.lower().replace("_", "-")
+
+    # Special case for Arabic and Hebrew charsets with directional annotations
+    annotated_encodings = ["iso-8859-6-i", "iso-8859-6-e", "iso-8859-8-i", "iso-8859-8-e"]
+    if formatted_encoding in annotated_encodings:
+        formatted_encoding = formatted_encoding[:-2]  # remove the annotation
+
+    return formatted_encoding
 
 
 def detect_file_encoding(
@@ -82,7 +91,9 @@ def detect_file_encoding(
     else:
         file_text = byte_data.decode(encoding)
 
-    return encoding, file_text
+    formatted_encoding = format_encoding_str(encoding)
+
+    return formatted_encoding, file_text
 
 
 def read_txt_file(
@@ -93,28 +104,28 @@ def read_txt_file(
     """Extracts document metadata from a plain text document."""
     if filename:
         if encoding:
-            with open(filename, encoding=encoding) as f:
+            formatted_encoding = format_encoding_str(encoding)
+            with open(filename, encoding=formatted_encoding) as f:
                 try:
                     file_text = f.read()
                 except (UnicodeDecodeError, UnicodeError) as error:
                     raise error
         else:
-            encoding, file_text = detect_file_encoding(filename)
+            formatted_encoding, file_text = detect_file_encoding(filename)
     elif file:
         if encoding:
+            formatted_encoding = format_encoding_str(encoding)
             try:
                 file_content = file if isinstance(file, bytes) else file.read()
                 if isinstance(file_content, bytes):
-                    file_text = file_content.decode(encoding)
+                    file_text = file_content.decode(formatted_encoding)
                 else:
                     file_text = file_content
             except (UnicodeDecodeError, UnicodeError) as error:
                 raise error
         else:
-            encoding, file_text = detect_file_encoding(file=file)
+            formatted_encoding, file_text = detect_file_encoding(file=file)
     else:
         raise FileNotFoundError("No filename was specified")
-
-    formatted_encoding = format_encoding_str(encoding)
 
     return formatted_encoding, file_text

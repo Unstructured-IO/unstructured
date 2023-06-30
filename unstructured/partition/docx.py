@@ -110,6 +110,7 @@ def partition_docx(
     file: Optional[Union[IO, SpooledTemporaryFile]] = None,
     metadata_filename: Optional[str] = None,
     include_page_breaks: bool = True,
+    include_metadata: bool = True,
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft Word Documents in .docx format into its document elements.
@@ -186,7 +187,7 @@ def partition_docx(
         if page_number is not None and _element_contains_pagebreak(element_item):
             page_number += 1
             if include_page_breaks:
-                elements.append(PageBreak())
+                elements.append(PageBreak(text=""))
 
     return elements
 
@@ -289,6 +290,7 @@ def convert_and_partition_docx(
     source_format: str,
     filename: Optional[str] = None,
     file: Optional[IO] = None,
+    include_metadata: bool = True,
 ) -> List[Element]:
     """Converts a document to DOCX and then partitions it using partition_html. Works with
     any file format support by pandoc.
@@ -301,6 +303,9 @@ def convert_and_partition_docx(
         A string defining the target filename path.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
+    include_metadata
+        Determines whether or not metadata is included in the metadata attribute on the
+        elements in the output.
     """
     if filename is None:
         filename = ""
@@ -328,6 +333,10 @@ def convert_and_partition_docx(
             format=source_format,
             outputfile=docx_filename,
         )
-        elements = partition_docx(filename=docx_filename, metadata_filename=filename)
+        elements = partition_docx(
+            filename=docx_filename,
+            metadata_filename=filename,
+            include_metadata=include_metadata,
+        )
 
     return elements

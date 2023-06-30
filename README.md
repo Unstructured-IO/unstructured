@@ -34,8 +34,8 @@
 </h3>
 
 <p>While access to the hosted Unstructured API will remain free, API Keys will soon be required to make requests. To prevent any disruption, get yours <a href="https://www.unstructured.io/api-key/">here</a> now and start using it today!</p>
-  
-<p>Checkout the <a href="https://github.com/Unstructured-IO/unstructured-api#--">readme</a> here to get started making API calls. 
+
+<p>Checkout the <a href="https://github.com/Unstructured-IO/unstructured-api#--">readme</a> here to get started making API calls.
 We'd love to hear your feedback, let us know how it goes in our
   community slack. And stay tuned for improvements to both quality and performance!</p>
 
@@ -98,8 +98,8 @@ about the library.
 | Document Type | Partition Function | Strategies | Table Support | Options |
 | --- | --- | --- | --- | --- |
 | CSV Files (`.csv`) | `partition_csv` | N/A | Yes | None |
-| E-mails (`.eml`) | `partition_eml` | N/A | No | Encoding |
-| E-mails (`.msg`) | `partition_msg` | N/A | No | Encoding |
+| E-mails (`.eml`) | `partition_eml` | N/A | No | Encoding; Max Partition; Process Attachments |
+| E-mails (`.msg`) | `partition_msg` | N/A | No | Encoding; Max Partition; Process Attachments |
 | EPubs (`.epub`) | `partition_epub` | N/A | Yes | Include Page Breaks |
 | Excel Documents (`.xlsx`/`.xls`) | `partition_xlsx` | N/A | Yes | None |
 | HTML Pages (`.html`) | `partition_html` | N/A | No | Encoding; Include Page Breaks |
@@ -107,8 +107,8 @@ about the library.
 | Markdown (`.md`) | `partitin_md` | N/A | Yes | Include Page Breaks |
 | Org Mode (`.org`) | `partition_org` | N/A | Yes | Include Page Breaks |
 | Open Office Documents (`.odt`) | `partition_odt` | N/A | Yes | None |
-| PDFs (`.pdf`) | `partition_pdf` | `"auto"`, `"fast"`, `"hi_res"`, `"ocr_only"` | Yes | Encoding; Include Page Breaks; Infer Table Structure; OCR Languages, Strategy |
-| Plain Text (`.txt`) | `partition_text` | N/A | No | Encoding, Paragraph Grouper |
+| PDFs (`.pdf`) | `partition_pdf` | `"auto"`, `"fast"`, `"hi_res"`, `"ocr_only"` | Yes | Encoding; Include Page Breaks; Infer Table Structure; Max Partition; OCR Languages, Strategy |
+| Plain Text (`.txt`) | `partition_text` | N/A | No | Encoding; Max Partition; Paragraph Grouper |
 | Power Points (`.ppt`) | `partition_ppt` | N/A | Yes | Include Page Breaks |
 | Power Points (`.pptx`) | `partition_pptx` | N/A | Yes | Include Page Breaks |
 | ReStructured Text (`.rst`) | `partition_rst` | N/A | Yes | Include Page Breaks |
@@ -118,7 +118,7 @@ about the library.
 | Word Documents (`.docx`) | `partition_docx` | N/A | Yes | None |
 | Word Documents (`.doc`) | `partition_doc` | N/A | Yes | Include Page Breaks |
 | Word Documents (`.docx`) | `partition_docx` | N/A | Yes | Include Page Breaks |
-| XML Documents (`.xml`) | `partition_xml` | N/A | No | Encoding; XML Keep Tags |
+| XML Documents (`.xml`) | `partition_xml` | N/A | No | Encoding; Max Partition; XML Keep Tags |
 
 
 
