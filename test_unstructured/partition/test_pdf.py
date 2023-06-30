@@ -10,7 +10,9 @@ from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import NarrativeText, Text, Title
 from unstructured.partition import pdf, strategies
 
-is_gpu_available = torch.cuda.is_available() or (torch.backends.mps.is_available() and torch.backends.mps.is_built())
+is_gpu_available = torch.cuda.is_available() or (
+    torch.backends.mps.is_available() and torch.backends.mps.is_built()
+)
 
 
 class MockResponse:
@@ -403,16 +405,17 @@ def test_partition_pdf_fast_groups_text_in_text_box():
         coordinate_system=PixelSpace(width=612, height=792),
     )
 
+
 @pytest.mark.skipif(
     not is_gpu_available,
-    reason="Skipping this test, GPU is not avaible"
+    reason="Skipping this test, GPU is not avaible",
 )
 def test_partition_pdf_auto_gpu_strategy(filename="example-docs/copy-protected.pdf"):
     without_strategy_elements = pdf.partition_pdf(filename=filename)
     hi_res_elements = pdf.partition_pdf(filename=filename, strategy="hi_res")
     fast_elements = pdf.partition_pdf(filename=filename, strategy="fast")
     ocr_only_elements = pdf.partition_pdf(filename=filename, strategy="ocr_only")
-    
+
     assert len(without_strategy_elements) == len(hi_res_elements)
     assert without_strategy_elements == hi_res_elements
     assert len(without_strategy_elements) != len(fast_elements)

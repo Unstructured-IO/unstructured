@@ -1,8 +1,7 @@
-import torch
-
 from tempfile import SpooledTemporaryFile
 from typing import BinaryIO, Dict, List, Optional, Union, cast
 
+import torch
 from pdfminer.pdfpage import PDFPage, PDFTextExtractionNotAllowed
 from pdfminer.utils import open_filename
 
@@ -75,7 +74,9 @@ def determine_pdf_or_image_strategy(
     pytesseract_installed = dependency_exists("pytesseract")
     unstructured_inference_installed = dependency_exists("unstructured_inference")
     if not strategy:
-        if torch.cuda.is_available() or (torch.backends.mps.is_available() and torch.backends.mps.is_built()):
+        if torch.cuda.is_available() or (
+            torch.backends.mps.is_available() and torch.backends.mps.is_built()
+        ):
             strategy = "hi_res"
         else:
             strategy = "auto"

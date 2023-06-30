@@ -39,7 +39,9 @@ EXPECTED_EMAIL_OUTPUT = [
 EML_TEST_FILE = "eml/fake-email.eml"
 
 is_in_docker = os.path.exists("/.dockerenv")
-is_gpu_available = torch.cuda.is_available() or (torch.backends.mps.is_available() and torch.backends.mps.is_built())
+is_gpu_available = torch.cuda.is_available() or (
+    torch.backends.mps.is_available() and torch.backends.mps.is_built()
+)
 
 
 def test_auto_partition_email_from_filename():
@@ -825,18 +827,18 @@ def test_auto_partition_rst_from_file(filename="example-docs/README.rst"):
     assert elements[0] == Title("Example Docs")
     assert elements[0].metadata.filetype == "text/x-rst"
 
+
 @pytest.mark.skipif(
     not is_gpu_available,
-    reason="Skipping this test, GPU is not avaible"
+    reason="Skipping this test, GPU is not avaible",
 )
 def test_auto_partition_auto_gpu_strategy(filename="example-docs/layout-parser-paper-10p.jpg"):
     without_strategy_elements = partition(filename=filename)
     hi_res_elements = partition(filename=filename, strategy="hi_res")
     fast_elements = partition(filename=filename, strategy="fast")
     ocr_only_elements = partition(filename=filename, strategy="ocr_only")
-    
+
     assert len(without_strategy_elements) == len(hi_res_elements)
     assert without_strategy_elements == hi_res_elements
     assert len(without_strategy_elements) != len(fast_elements)
     assert len(without_strategy_elements) != len(ocr_only_elements)
-    
