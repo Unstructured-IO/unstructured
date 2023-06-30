@@ -390,7 +390,7 @@ class MainProcess:
 @click.option(
     "--ms-authority-url",
     default="https://login.microsoftonline.com",
-    help="Authentication token provider for MS apps, default is https://login.microsoftonline.com",
+    help="Authentication token provider for Microsoft apps, default is https://login.microsoftonline.com",
 )
 @click.option(
     "--ms-tenant",
@@ -796,7 +796,7 @@ def main(
             SimpleOneDriveConfig,
         )
 
-        doc_connector = OneDriveConnector( # type: ignore
+        doc_connector = OneDriveConnector(  # type: ignore
             standard_config=standard_config,
             config=SimpleOneDriveConfig(
                 client_id=ms_client_id,
@@ -827,7 +827,7 @@ def main(
 
     else:
         logger.error("No connector-specific option was specified!")
-        sys.exit(1)        
+        sys.exit(1)
 
     process_document_with_partition_strategy = partial(
         process_document,

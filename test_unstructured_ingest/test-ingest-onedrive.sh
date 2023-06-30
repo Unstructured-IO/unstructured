@@ -12,7 +12,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --ms-tenant "<Azure AD tenant_id, default is 'common'>" \
     --ms-user-pname "<Azure AD principal name, in most cases is the email linked to the drive>" \
     --structured-output-dir onedrive-ingest-output \
-    --download-dir files-ingest-download/google-drive \
+    --download-dir files-ingest-download/onedrive \
     --partition-strategy hi_res \
     --preserve-downloads \
     --reprocess \
@@ -25,9 +25,9 @@ set +e
 # to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
 
-    cp google-drive-output/* test_unstructured_ingest/expected-structured-output/google-drive-output/
+    cp onedrive-output/* test_unstructured_ingest/expected-structured-output/onedrive-output/
 
-elif ! diff -ru test_unstructured_ingest/expected-structured-output/google-drive-output google-drive-output ; then
+elif ! diff -ru test_unstructured_ingest/expected-structured-output/onedrive-output onedrive-output ; then
 
     echo
     echo "There are differences from the previously checked-in structured outputs."

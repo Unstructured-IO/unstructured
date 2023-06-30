@@ -2,7 +2,7 @@ import json
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.ingest.interfaces import (
@@ -58,7 +58,7 @@ class SimpleOneDriveConfig(BaseConnectorConfig):
 @dataclass
 class OneDriveIngestDoc(BaseIngestDoc):
     config: SimpleOneDriveConfig
-    file: "driveItem"
+    file: "driveItem.DriveItem"
 
     def __post_init__(self):
         self.ext = "".join(Path(self.file.name).suffixes)
@@ -73,21 +73,21 @@ class OneDriveIngestDoc(BaseIngestDoc):
         self._set_download_paths()
 
     def _set_download_paths(self) -> None:
-        """Sets download and output directories"""
-        dpath = Path(f"{self.standard_config.download_dir}")
-        opath = Path(f"{self.standard_config.output_dir}")
+        """Parses the folder structure from the source and creates the download and output paths"""
+        download_path = Path(f"{self.standard_config.download_dir}")
+        output_path = Path(f"{self.standard_config.output_dir}")
 
-        if pref := self.file.get_property("parentReference", "").path.split(":")[-1]:
-            odir = pref[1:] if pref[0] == "/" else pref
-            dpath = dpath if odir == "" else (dpath / odir).resolve()
-            opath = opath if odir == "" else (opath / odir).resolve()
+        if parent_ref := self.file.get_property("parentReference", "").path.split(":")[-1]:
+            odir = parent_ref[1:] if parent_ref[0] == "/" else parent_ref
+            download_path = download_path if odir == "" else (download_path / odir).resolve()
+            output_path = output_path if odir == "" else (output_path / odir).resolve()
 
         dname = f'{self.file.get_property("id")}-{self.file.name}'
-        self.download_dir = dpath
-        self.download_filepath = (dpath / dname).resolve()
+        self.download_dir = download_path
+        self.download_filepath = (download_path / dname).resolve()
         oname = f"{dname[:-len(self.ext)]}.json"
-        self.output_dir = opath
-        self.output_filepath = (opath / oname).resolve()
+        self.output_dir = output_path
+        self.output_filepath = (output_path / oname).resolve()
 
     @property
     def filename(self):
@@ -176,7 +176,7 @@ class OneDriveConnector(BaseConnector):
 
         self.client = GraphClient(self.config.token_factory)
 
-    def _list_objects(self, folder, recursive) -> list:
+    def _list_objects(self, folder, recursive) -> List[driveItem.DriveItem]:
         drive_items = folder.children.get().execute_query()
         files = [d for d in drive_items if d.is_file]
         if not recursive:
