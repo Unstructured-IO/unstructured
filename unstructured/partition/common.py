@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import subprocess
-from io import BytesIO
+from io import BufferedReader, BytesIO, TextIOWrapper
 from tempfile import SpooledTemporaryFile
-from typing import TYPE_CHECKING, Any, BinaryIO, Dict, List, Optional, Tuple, Union
+from typing import IO, TYPE_CHECKING, Any, BinaryIO, Dict, List, Optional, Tuple, Union
 
 from docx import table as docxtable
 from tabulate import tabulate
@@ -21,11 +21,14 @@ from unstructured.logger import logger
 from unstructured.nlp.patterns import ENUMERATED_BULLETS_RE, UNICODE_BULLETS_RE
 
 if TYPE_CHECKING:
-    from unstructured_inference.inference.layoutelement import LayoutElement
+    from unstructured_inference.inference.layoutelement import (
+        LayoutElement,
+        LocationlessLayoutElement,
+    )
 
 
 def normalize_layout_element(
-    layout_element: Union["LayoutElement", Element, Dict[str, Any]],
+    layout_element: Union["LayoutElement", "LocationlessLayoutElement", Element, Dict[str, Any]],
 ) -> Union[Element, List[Element]]:
     """Converts an unstructured_inference LayoutElement object to an unstructured Element."""
 
@@ -34,7 +37,7 @@ def normalize_layout_element(
 
     # NOTE(alan): Won't the lines above ensure this never runs (PageBreak is a subclass of Element)?
     if isinstance(layout_element, PageBreak):
-        return PageBreak()
+        return PageBreak(text="")
 
     if not isinstance(layout_element, dict):
         layout_dict = layout_element.to_dict()
@@ -182,6 +185,25 @@ def spooled_to_bytes_io_if_needed(
     else:
         # Return the original file object if it's not a SpooledTemporaryFile
         return file_obj
+
+
+def convert_to_bytes(
+    file: Optional[Union[bytes, SpooledTemporaryFile, IO]] = None,
+) -> bytes:
+    if isinstance(file, bytes):
+        f_bytes = file
+    elif isinstance(file, SpooledTemporaryFile):
+        file.seek(0)
+        f_bytes = file.read()
+    elif isinstance(file, BytesIO):
+        f_bytes = file.getvalue()
+    elif isinstance(file, (TextIOWrapper, BufferedReader)):
+        with open(file.name, "rb") as f:
+            f_bytes = f.read()
+    else:
+        raise ValueError("Invalid file-like object type")
+
+    return f_bytes
 
 
 def convert_ms_office_table_to_text(table: docxtable.Table, as_html: bool = True):

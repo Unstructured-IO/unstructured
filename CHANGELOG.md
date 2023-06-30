@@ -1,4 +1,72 @@
-## 0.7.8-dev1
+## 0.7.12-dev0
+
+### Enhancements
+
+* Adds `include_metadata` kwarg to `partition_doc`, `partition_docx`, `partition_email`, `partition_epub`, `partition_json`, `partition_msg`, `partition_odt`, `partition_org`, `partition_pdf`, `partition_ppt`, `partition_pptx`, `partition_rst`, and `partition_rtf`
+
+### Features
+
+### Fixes
+
+* Fix tests that call unstructured-api by passing through an api-key
+* Fixed page breaks being given (incorrect) page numbers
+* Fix skipping download on ingest when a source document exists locally
+
+## 0.7.11
+
+### Enhancements
+
+* More deterministic element ordering when using `hi_res` PDF parsing strategy (from unstructured-inference bump to 0.5.4)
+* Make large model available (from unstructured-inference bump to 0.5.3)
+* Combine inferred elements with extracted elements (from unstructured-inference bump to 0.5.2) 
+* `partition_email` and `partition_msg` will now process attachments if `process_attachments=True`
+  and a attachment partitioning functions is passed through with `attachment_partitioner=partition`.
+
+### Features
+
+### Fixes
+
+* Fix tests that call unstructured-api by passing through an api-key
+* Fixed page breaks being given (incorrect) page numbers
+* Fix skipping download on ingest when a source document exists locally
+
+## 0.7.10
+
+### Enhancements
+
+* Adds a `max_partition` parameter to `partition_text`, `partition_pdf`, `partition_email`,
+  `partition_msg` and `partition_xml` that sets a limit for the size of an individual
+  document elements. Defaults to `1500` for everything except `partition_xml`, which has
+  a default value of `None`.
+* DRY connector refactor
+
+### Features
+
+* `hi_res` model for pdfs and images is selectable via environment variable.
+
+### Fixes
+
+* CSV check now ignores escaped commas.
+* Fix for filetype exploration util when file content does not have a comma.
+* Adds negative lookahead to bullet pattern to avoid detecting plain text line
+  breaks like `-------` as list items.
+* Fix pre tag parsing for `partition_html`
+* Fix lookup error for annotated Arabic and Hebrew encodings
+
+## 0.7.9
+
+### Enhancements
+
+* Improvements to string check for leafs in `partition_xml`.
+* Adds --partition-ocr-languages to unstructured-ingest.
+
+### Features
+
+* Adds `partition_org` for processed Org Mode documents.
+
+### Fixes
+
+## 0.7.8
 
 ### Enhancements
 
@@ -8,6 +76,7 @@
 
 ### Fixes
 
+* Updates the `parse_email` for `partition_eml` so that `unstructured-api` passes the smoke tests
 * `partition_email` now works if there is no message content
 * Updates the `"fast"` strategy for `partition_pdf` so that it's able to recursively
 * Adds recursive functionality to all fsspec connectors
@@ -174,7 +243,7 @@
 
 ### Enhancements
 
-* XLS support from auto partiton
+* XLS support from auto partition
 
 ### Features
 

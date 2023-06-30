@@ -165,6 +165,7 @@ def test_contains_us_phone_number(text, expected):
         ("- This is a fine point!", True),
         ("This is NOT a fine point!", False),  # No bullet point
         ("I love morse code! ● ● ● --- ● ● ●", False),  # Not at the beginning
+        ("----------------------------", False),  # Too long
     ],
 )
 def test_is_bulletized_text(text, expected):

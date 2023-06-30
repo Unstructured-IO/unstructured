@@ -87,7 +87,7 @@ def test_partition_pptx_adds_page_breaks(tmpdir):
 
     assert elements == [
         NarrativeText(text="This is the first slide."),
-        PageBreak(),
+        PageBreak(text=""),
         NarrativeText(text="This is the second slide."),
     ]
 
@@ -198,3 +198,16 @@ def test_partition_pptx_malformed():
 
     assert elements[0].text == "Problem Date Placeholder"
     assert elements[1].text == "Test Slide"
+
+
+def test_partition_pptx_from_filename_exclude_metadata():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
+    elements = partition_pptx(filename=filename, include_metadata=False)
+    assert elements == EXPECTED_PPTX_OUTPUT
+
+
+def test_partition_pptx_from_file_exclude_metadata():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
+    with open(filename, "rb") as f:
+        elements = partition_pptx(file=f, include_metadata=False)
+    assert elements == EXPECTED_PPTX_OUTPUT

@@ -152,6 +152,14 @@ class MainProcess:
     "Default: auto. Other strategies include `fast` and `hi_res`.",
 )
 @click.option(
+    "--partition-ocr-languages",
+    default="eng",
+    help="A list of language packs to specify which languages to use for OCR, separated by '+' "
+    "e.g. 'eng+deu' to use the English and German language packs. The appropriate Tesseract "
+    "language pack needs to be installed."
+    "Default: eng",
+)
+@click.option(
     "--api-key",
     default="",
     help="API Key for partition endpoint.",
@@ -500,6 +508,7 @@ def main(
     partition_by_api,
     partition_endpoint,
     partition_strategy,
+    partition_ocr_languages,
     api_key,
     local_input_path,
     local_file_glob,
@@ -829,14 +838,15 @@ def main(
         logger.error("No connector-specific option was specified!")
         sys.exit(1)
 
-    process_document_with_partition_strategy = partial(
+    process_document_with_partition_args = partial(
         process_document,
         strategy=partition_strategy,
+        ocr_languages=partition_ocr_languages,
     )
 
     MainProcess(
         doc_connector=doc_connector,
-        doc_processor_fn=process_document_with_partition_strategy,
+        doc_processor_fn=process_document_with_partition_args,
         num_processes=num_processes,
         reprocess=reprocess,
         verbose=verbose,

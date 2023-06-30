@@ -1,17 +1,15 @@
-import json
 import os
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import List
 
-from slack_sdk import WebClient
-from slack_sdk.errors import SlackApiError
-
 from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
+    ConnectorCleanupMixin,
+    IngestDocCleanupMixin,
     StandardConnectorConfig,
 )
 from unstructured.ingest.logger import logger
@@ -59,7 +57,7 @@ class SimpleSlackConfig(BaseConnectorConfig):
 
 
 @dataclass
-class SlackIngestDoc(BaseIngestDoc):
+class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     """Class encapsulating fetching a doc and writing processed results (but not
     doing the processing!).
 
@@ -80,30 +78,23 @@ class SlackIngestDoc(BaseIngestDoc):
         channel_file = self.channel + ".txt"
         return Path(self.standard_config.download_dir) / channel_file
 
+    @property
     def _output_filename(self):
         output_file = self.channel + ".json"
         return Path(self.standard_config.output_dir) / output_file
 
-    def has_output(self):
-        """Determine if structured output for this doc already exists."""
-        return self._output_filename().is_file() and os.path.getsize(self._output_filename())
-
     def _create_full_tmp_dir_path(self):
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
 
+    @BaseIngestDoc.skip_if_file_exists
     @requires_dependencies(dependencies=["slack_sdk"], extras="slack")
     def get_file(self):
+        from slack_sdk import WebClient
+        from slack_sdk.errors import SlackApiError
+
         """Fetches the data from a slack channel and stores it locally."""
 
         self._create_full_tmp_dir_path()
-        if (
-            not self.standard_config.re_download
-            and self._tmp_download_file().is_file()
-            and os.path.getsize(self._tmp_download_file())
-        ):
-            if self.config.verbose:
-                logger.debug(f"File exists: {self._tmp_download_file()}, skipping download")
-            return
 
         if self.config.verbose:
             logger.debug(f"fetching channel {self.channel} - PID: {os.getpid()}")
@@ -141,14 +132,6 @@ class SlackIngestDoc(BaseIngestDoc):
             for message in messages:
                 channel_file.write(message["text"] + "\n")
 
-    def write_result(self):
-        """Write the structured json result for this doc. result must be json serializable."""
-        output_filename = self._output_filename()
-        output_filename.parent.mkdir(parents=True, exist_ok=True)
-        with open(output_filename, "w") as output_f:
-            output_f.write(json.dumps(self.isd_elems_no_filename, ensure_ascii=False, indent=2))
-        logger.info(f"Wrote {output_filename}")
-
     def convert_datetime(self, date_time):
         for format in DATE_FORMATS:
             try:
@@ -161,41 +144,15 @@ class SlackIngestDoc(BaseIngestDoc):
         """The filename of the file created from a slack channel"""
         return self._tmp_download_file()
 
-    def cleanup_file(self):
-        """Removes the local copy the file after successful processing."""
-        if not self.standard_config.preserve_downloads:
-            if self.config.verbose:
-                logger.info(f"cleaning up channel {self.channel}")
-            os.unlink(self._tmp_download_file())
-
 
 @requires_dependencies(dependencies=["slack_sdk"], extras="slack")
-class SlackConnector(BaseConnector):
+class SlackConnector(ConnectorCleanupMixin, BaseConnector):
     """Objects of this class support fetching document(s) from"""
 
     config: SimpleSlackConfig
 
     def __init__(self, standard_config: StandardConnectorConfig, config: SimpleSlackConfig):
         super().__init__(standard_config, config)
-        self.cleanup_files = not standard_config.preserve_downloads
-
-    def cleanup(self, cur_dir=None):
-        """cleanup linginering empty sub-dirs, but leave remaining files
-        (and their paths) in tact as that indicates they were not processed"""
-        if not self.cleanup_files:
-            return
-
-        if cur_dir is None:
-            cur_dir = self.standard_config.download_dir
-        sub_dirs = os.listdir(cur_dir)
-        os.chdir(cur_dir)
-        for sub_dir in sub_dirs:
-            # don't traverse symlinks, not that there every should be any
-            if os.path.isdir(sub_dir) and not os.path.islink(sub_dir):
-                self.cleanup(sub_dir)
-        os.chdir("..")
-        if len(os.listdir(cur_dir)) == 0:
-            os.rmdir(cur_dir)
 
     def initialize(self):
         """Verify that can get metadata for an object, validates connections info."""

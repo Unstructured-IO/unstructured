@@ -24,10 +24,18 @@ def test_partition_tsv_from_file(filename="example-docs/stanley-cups.tsv"):
     assert elements[0].metadata.filetype == EXPECTED_FILETYPE
 
 
-def test_partition_tsv_can_exclude_metadata(filename="example-docs/stanley-cups.tsv"):
+def test_partition_tsv_filename_exclude_metadata(filename="example-docs/stanley-cups.tsv"):
     elements = partition_tsv(filename=filename, include_metadata=False)
 
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
     assert isinstance(elements[0], Table)
     assert elements[0].metadata.text_as_html is None
     assert elements[0].metadata.filetype is None
+
+
+def test_partition_tsv_from_file_exclude_metadata(filename="example-docs/stanley-cups.tsv"):
+    with open(filename, "rb") as f:
+        elements = partition_tsv(file=f, include_metadata=False)
+
+    for i in range(len(elements)):
+        assert elements[i].metadata.to_dict() == {}

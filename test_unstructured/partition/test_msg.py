@@ -11,6 +11,7 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.partition.msg import extract_msg_attachment_info, partition_msg
+from unstructured.partition.text import partition_text
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "..", "example-docs")
@@ -94,3 +95,57 @@ def test_partition_msg_raises_with_both_specified():
 def test_partition_msg_raises_with_neither():
     with pytest.raises(ValueError):
         partition_msg()
+
+
+def test_partition_msg_from_filename_exclude_metadata():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
+    elements = partition_msg(filename=filename, include_metadata=False)
+
+    for i in range(len(elements)):
+        assert elements[i].metadata.to_dict() == {}
+
+
+def test_partition_msg_from_file_exclude_metadata():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
+    with open(filename, "rb") as f:
+        elements = partition_msg(file=f, include_metadata=False)
+
+    for i in range(len(elements)):
+        assert elements[i].metadata.to_dict() == {}
+
+
+def test_partition_msg_can_process_attachments(
+    tmpdir,
+    filename="example-docs/fake-email-attachment.msg",
+):
+    extract_msg_attachment_info(filename=filename, output_dir=tmpdir.dirname)
+    attachment_filename = os.path.join(tmpdir.dirname, ATTACH_EXPECTED_OUTPUT[0]["filename"])
+    attachment_elements = partition_text(
+        filename=attachment_filename,
+        metadata_filename=attachment_filename,
+    )
+    expected_metadata = attachment_elements[0].metadata
+    expected_metadata.file_directory = None
+    expected_metadata.attached_to_filename = filename
+
+    elements = partition_msg(
+        filename=filename,
+        attachment_partitioner=partition_text,
+        process_attachments=True,
+    )
+
+    assert elements[0].text.startswith("Hello!")
+
+    for element in elements[:-1]:
+        assert element.metadata.filename == "fake-email-attachment.msg"
+        assert element.metadata.subject == "Fake email with attachment"
+
+    assert elements[-1].text == "Hey this is a fake attachment!"
+    assert elements[-1].metadata == expected_metadata
+
+
+def test_partition_msg_raises_with_no_partitioner(
+    filename="example-docs/fake-email-attachment.msg",
+):
+    with pytest.raises(ValueError):
+        partition_msg(filename=filename, process_attachments=True)

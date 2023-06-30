@@ -1,9 +1,13 @@
 """Defines Abstract Base Classes (ABC's) core to batch processing documents
 through Unstructured."""
 
+import functools
+import json
+import os
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import datetime
+from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import requests
@@ -118,6 +122,11 @@ class BaseIngestDoc(ABC):
         """The local filename of the document after fetching from remote source."""
 
     @property
+    @abstractmethod
+    def _output_filename(self):
+        """Filename of the structured output for this doc."""
+
+    @property
     def record_locator(self) -> Optional[Dict[str, Any]]:  # Values must be JSON-serializable
         """A dictionary with any data necessary to uniquely identify the document on
         the source system."""
@@ -140,6 +149,24 @@ class BaseIngestDoc(ABC):
         """Removes the local copy the file (or anything else) after successful processing."""
         pass
 
+    @staticmethod
+    def skip_if_file_exists(func):
+        """Decorator that checks if a file exists, is not empty, and should not re-download,
+        if so log a message indicating as much and skip the decorated function."""
+
+        @functools.wraps(func)
+        def wrapper(self, *args, **kwargs):
+            if (
+                not self.standard_config.re_download
+                and self.filename.is_file()
+                and self.filename.stat().st_size
+            ):
+                logger.debug(f"File exists: {self.filename}, skipping {func.__name__}")
+                return None
+            return func(self, *args, **kwargs)
+
+        return wrapper
+
     # NOTE(crag): Future BaseIngestDoc classes could define get_file_object() methods
     # in addition to or instead of get_file()
     @abstractmethod
@@ -147,15 +174,18 @@ class BaseIngestDoc(ABC):
         """Fetches the "remote" doc and stores it locally on the filesystem."""
         pass
 
-    @abstractmethod
     def has_output(self) -> bool:
         """Determine if structured output for this doc already exists."""
-        pass
+        return self._output_filename.is_file() and self._output_filename.stat().st_size
 
-    @abstractmethod
     def write_result(self):
         """Write the structured json result for this doc. result must be json serializable."""
-        pass
+        if self.standard_config.download_only:
+            return
+        self._output_filename.parent.mkdir(parents=True, exist_ok=True)
+        with open(self._output_filename, "w", encoding="utf8") as output_f:
+            json.dump(self.isd_elems_no_filename, output_f, ensure_ascii=False, indent=2)
+        logger.info(f"Wrote {self._output_filename}")
 
     def partition_file(self, **partition_kwargs) -> List[Dict[str, Any]]:
         if not self.standard_config.partition_by_api:
@@ -246,3 +276,44 @@ class BaseIngestDoc(ABC):
             self.isd_elems_no_filename.append(elem)
 
         return self.isd_elems_no_filename
+
+
+class ConnectorCleanupMixin:
+    standard_config: StandardConnectorConfig
+
+    def cleanup(self, cur_dir=None):
+        """Recursively clean up downloaded files and directories."""
+        if self.standard_config.preserve_downloads or self.standard_config.download_only:
+            return
+        if cur_dir is None:
+            cur_dir = self.standard_config.download_dir
+        if cur_dir is None or not Path(cur_dir).is_dir():
+            return
+        sub_dirs = os.listdir(cur_dir)
+        os.chdir(cur_dir)
+        for sub_dir in sub_dirs:
+            # don't traverse symlinks, not that there every should be any
+            if os.path.isdir(sub_dir) and not os.path.islink(sub_dir):
+                self.cleanup(sub_dir)
+        os.chdir("..")
+        if len(os.listdir(cur_dir)) == 0:
+            os.rmdir(cur_dir)
+
+
+class IngestDocCleanupMixin:
+    standard_config: StandardConnectorConfig
+
+    @property
+    @abstractmethod
+    def filename(self):
+        """The local filename of the document after fetching from remote source."""
+
+    def cleanup_file(self):
+        """Removes the local copy of the file after successful processing."""
+        if (
+            not self.standard_config.preserve_downloads
+            and self.filename.is_file()
+            and not self.standard_config.download_only
+        ):
+            logger.debug(f"Cleaning up {self}")
+            os.unlink(self.filename)
