@@ -6,50 +6,50 @@
 #
 certifi==2023.5.7
     # via
-    #   -c requirements/base.txt
-    #   -c requirements/constraints.in
+    #   -c base.txt
+    #   -c constraints.in
     #   requests
 cffi==1.15.1
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   cryptography
     #   pynacl
 charset-normalizer==3.1.0
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   requests
 cryptography==41.0.1
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   pyjwt
 deprecated==1.2.14
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   pygithub
 idna==3.4
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   requests
 pycparser==2.21
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   cffi
-pygithub==1.58.2
-    # via -r requirements/ingest-github.in
+pygithub==1.59.0
+    # via -r ingest-github.in
 pyjwt[crypto]==2.7.0
     # via pygithub
 pynacl==1.5.0
     # via pygithub
 requests==2.31.0
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   pygithub
 urllib3==1.26.16
     # via
-    #   -c requirements/base.txt
-    #   -c requirements/constraints.in
+    #   -c base.txt
+    #   -c constraints.in
     #   requests
 wrapt==1.14.1
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   deprecated
