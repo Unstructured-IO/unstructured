@@ -12,6 +12,8 @@ from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
+    ConnectorCleanupMixin,
+    IngestDocCleanupMixin,
     StandardConnectorConfig,
 )
 from unstructured.ingest.logger import logger
@@ -45,7 +47,7 @@ class ElasticsearchFileMeta:
 
 
 @dataclass
-class ElasticsearchIngestDoc(BaseIngestDoc):
+class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     """Class encapsulating fetching a doc and writing processed results (but not
     doing the processing!).
 
@@ -72,6 +74,7 @@ class ElasticsearchIngestDoc(BaseIngestDoc):
             / f"{self.file_meta.document_id}.txt"
         ).resolve()
 
+    @property
     def _output_filename(self):
         output_file = self.file_meta.document_id + ".json"
         return Path(self.standard_config.output_dir) / self.config.index_name / output_file
@@ -130,6 +133,7 @@ class ElasticsearchIngestDoc(BaseIngestDoc):
         return self.concatenate_dict_fields(document)
 
     @requires_dependencies(["elasticsearch"])
+    @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
         if self.skip_file():
             logger.info(f"File exists: {self.filename}, skipping download")
@@ -152,25 +156,10 @@ class ElasticsearchIngestDoc(BaseIngestDoc):
         with open(self.filename, "w", encoding="utf8") as f:
             f.write(self.document)
 
-    def has_output(self):
-        """Determine if structured output for this doc already exists."""
-        output_filename = self._output_filename()
-        return output_filename.is_file() and output_filename.stat()
-
-    def write_result(self):
-        """Writes processed documents to the disk"""
-        output_filename = self._output_filename()
-        output_filename.parent.mkdir(parents=True, exist_ok=True)
-        with open(output_filename, "w") as output_f:
-            output_f.write(
-                json.dumps(self.isd_elems_no_filename, ensure_ascii=False, indent=2) + "\n",
-            )
-        logger.info(f"Wrote {output_filename}")
-
 
 @requires_dependencies(["elasticsearch"])
 @dataclass
-class ElasticsearchConnector(BaseConnector):
+class ElasticsearchConnector(ConnectorCleanupMixin, BaseConnector):
     """Fetches particular fields from all documents in a given elasticsearch cluster and index"""
 
     config: SimpleElasticsearchConfig
@@ -181,27 +170,6 @@ class ElasticsearchConnector(BaseConnector):
         config: SimpleElasticsearchConfig,
     ):
         super().__init__(standard_config, config)
-        self.cleanup_files = (
-            not standard_config.preserve_downloads and not standard_config.download_only
-        )
-
-    def cleanup(self, cur_dir=None):
-        """Cleanup linginering empty sub-dirs, but leave remaining files
-        (and their paths) in tact as that indicates they were not processed."""
-        if not self.cleanup_files:
-            return
-
-        if cur_dir is None:
-            cur_dir = self.standard_config.download_dir
-        sub_dirs = os.listdir(cur_dir)
-        os.chdir(cur_dir)
-        for sub_dir in sub_dirs:
-            # don't traverse symlinks, not that there every should be any
-            if os.path.isdir(sub_dir) and not os.path.islink(sub_dir):
-                self.cleanup(sub_dir)
-        os.chdir("..")
-        if len(os.listdir(cur_dir)) == 0:
-            os.rmdir(cur_dir)
 
     def initialize(self):
         self.es = Elasticsearch(self.config.url)
