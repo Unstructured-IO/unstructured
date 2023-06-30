@@ -7,11 +7,11 @@ from unstructured.partition.pdf import partition_pdf_or_image
 
 @process_metadata()
 def partition_image(
-    filename: str = "",
+    filename: Optional[str] = None,
     file: Optional[bytes] = None,
     include_page_breaks: bool = False,
     ocr_languages: str = "eng",
-    strategy: str = "auto",
+    strategy: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Parses an image into a list of interpreted elements.

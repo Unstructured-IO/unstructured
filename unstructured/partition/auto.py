@@ -42,7 +42,7 @@ def partition(
     file_filename: Optional[str] = None,
     url: Optional[str] = None,
     include_page_breaks: bool = False,
-    strategy: str = "auto",
+    strategy: Optional[str] = None,
     encoding: Optional[str] = None,
     paragraph_grouper: Optional[Callable[[str], str]] = None,
     headers: Dict[str, str] = {},

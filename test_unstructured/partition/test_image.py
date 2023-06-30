@@ -3,6 +3,8 @@ import pathlib
 from unittest import mock
 
 import pytest
+import requests
+import torch
 from pytesseract import TesseractError
 from unstructured_inference.inference import layout
 
@@ -10,6 +12,7 @@ from unstructured.documents.elements import Title
 from unstructured.partition import image, pdf
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
+is_gpu_available = torch.cuda.is_available() or (torch.backends.mps.is_available() and torch.backends.mps.is_built())
 
 
 class MockResponse:
@@ -160,3 +163,19 @@ def test_partition_image_raises_with_bad_strategy():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "english-and-korean.png")
     with pytest.raises(ValueError):
         image.partition_image(filename=filename, strategy="fakeroo")
+
+
+@pytest.mark.skipif(
+    not is_gpu_available,
+    reason="Skipping this test, GPU is not avaible"
+)
+def test_partition_image_auto_gpu_strategy(filename="example-docs/layout-parser-paper-10p.jpg"):
+    without_strategy_elements = image.partition_image(filename=filename)
+    hi_res_elements = image.partition_image(filename=filename, strategy="hi_res")
+    fast_elements = image.partition_image(filename=filename, strategy="fast")
+    ocr_only_elements = image.partition_image(filename=filename, strategy="ocr_only")
+    
+    assert len(without_strategy_elements) == len(hi_res_elements)
+    assert without_strategy_elements == hi_res_elements
+    assert len(without_strategy_elements) != len(fast_elements)
+    assert len(without_strategy_elements) != len(ocr_only_elements)

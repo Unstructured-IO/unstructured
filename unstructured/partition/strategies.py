@@ -1,3 +1,5 @@
+import torch
+
 from tempfile import SpooledTemporaryFile
 from typing import BinaryIO, Dict, List, Optional, Union, cast
 
@@ -62,8 +64,8 @@ def is_pdf_text_extractable(
 
 
 def determine_pdf_or_image_strategy(
-    strategy: str,
-    filename: str = "",
+    strategy: Optional[str],
+    filename: str = "none",
     file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
     is_image: bool = False,
     infer_table_structure: bool = False,
@@ -72,6 +74,11 @@ def determine_pdf_or_image_strategy(
     logic if some dependencies are not available."""
     pytesseract_installed = dependency_exists("pytesseract")
     unstructured_inference_installed = dependency_exists("unstructured_inference")
+    if not strategy:
+        if torch.cuda.is_available() or (torch.backends.mps.is_available() and torch.backends.mps.is_built()):
+            strategy = "hi_res"
+        else:
+            strategy = "auto"
 
     if is_image:
         # Note(yuming): There is no fast strategy for images,
