@@ -357,6 +357,7 @@ def test_partition_email_from_file_exclude_metadata():
     assert elements[0].metadata.page_name is None
     assert elements[0].metadata.filename is None
 
+
 def test_partition_email_can_process_attachments(
     tmpdir,
     filename="example-docs/eml/fake-email-attachment.eml",
