@@ -4,7 +4,7 @@
 #
 #    pip-compile requirements/ingest-s3.in
 #
-aiobotocore==2.5.0
+aiobotocore==2.5.1
     # via s3fs
 aiohttp==3.8.4
     # via
@@ -18,7 +18,7 @@ async-timeout==4.0.2
     # via aiohttp
 attrs==23.1.0
     # via aiohttp
-botocore==1.29.76
+botocore==1.29.161
     # via aiobotocore
 charset-normalizer==3.1.0
     # via
@@ -52,7 +52,7 @@ six==1.16.0
     # via
     #   -c requirements/base.txt
     #   python-dateutil
-typing-extensions==4.6.3
+typing-extensions==4.7.0
     # via
     #   -c requirements/base.txt
     #   aioitertools
