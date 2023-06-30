@@ -199,13 +199,13 @@ jobs:
         make install-ingest-s3
         make install-ingest-azure
         make install-ingest-discord
+        make install-ingest-elasticsearch
         make install-ingest-gcs
         make install-ingest-google-drive
         make install-ingest-github
         make install-ingest-gitlab
         make install-ingest-slack
         make install-ingest-wikipedia
-        make install-ingest-elasticsearch
         ./test_unstructured_ingest/test-ingest.sh
 
   changelog:
