@@ -38,7 +38,7 @@ def validate_strategy(strategy: str, filetype: str):
 
 
 def is_pdf_text_extractable(
-    filename: str = "",
+    filename: Optional[str] = "",
     file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
 ):
     """Checks to see if the text from a PDF document is extractable. Sometimes the
@@ -64,7 +64,7 @@ def is_pdf_text_extractable(
 
 def determine_pdf_or_image_strategy(
     strategy: Optional[str],
-    filename: str = "none",
+    filename: Optional[str] = "none",
     file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
     is_image: bool = False,
     infer_table_structure: bool = False,

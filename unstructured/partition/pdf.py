@@ -91,7 +91,7 @@ def partition_pdf(
 
 
 def partition_pdf_or_image(
-    filename: str = "",
+    filename: Optional[str] = "",
     file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
     is_image: bool = False,
     include_page_breaks: bool = False,
