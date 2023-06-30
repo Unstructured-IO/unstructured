@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Metadata" href="metadata.html" /><link rel="prev" title="Getting Started" href="getting_started.html" />
 
   <link rel="shortcut icon" href="_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.05.20" />
-  <title>Bricks - Unstructured 0.7.10 documentation</title>
+  <title>Bricks - Unstructured 0.7.11 documentation</title>
   <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -590,6 +590,19 @@ This parameter only applies if <code class="docutils literal notranslate"><span 
 The default value is <code class="docutils literal notranslate"><span class="pre">1500</span></code>, which roughly corresponds to
 the average character length for a paragraph.
 You can disable <code class="docutils literal notranslate"><span class="pre">max_partition</span></code> by setting it to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+<p>You can optionally partition e-mail attachments by setting <code class="docutils literal notranslate"><span class="pre">process_attachments=True</span></code>.
+If you set <code class="docutils literal notranslate"><span class="pre">process_attachments=True</span></code>, you’ll also need to pass in a partitioning
+function to <code class="docutils literal notranslate"><span class="pre">attachment_partitioner</span></code>. The following is an example of what the
+workflow looks like:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.auto</span> <span class="kn">import</span> <span class="n">partition</span>
+<span class="kn">from</span> <span class="nn">unstructured.partition.email</span> <span class="kn">import</span> <span class="n">partition_email</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;example-docs/eml/fake-email-attachment.eml&quot;</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_email</span><span class="p">(</span>
+  <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">process_attachments</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">attachment_partitioner</span><span class="o">=</span><span class="n">partition</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 </section>
 <section id="partition-epub">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_epub</span></code><a class="headerlink" href="#partition-epub" title="Permalink to this heading"></a></h3>
@@ -715,6 +728,19 @@ This parameter only applies if <code class="docutils literal notranslate"><span 
 The default value is <code class="docutils literal notranslate"><span class="pre">1500</span></code>, which roughly corresponds to
 the average character length for a paragraph.
 You can disable <code class="docutils literal notranslate"><span class="pre">max_partition</span></code> by setting it to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+<p>You can optionally partition e-mail attachments by setting <code class="docutils literal notranslate"><span class="pre">process_attachments=True</span></code>.
+If you set <code class="docutils literal notranslate"><span class="pre">process_attachments=True</span></code>, you’ll also need to pass in a partitioning
+function to <code class="docutils literal notranslate"><span class="pre">attachment_partitioner</span></code>. The following is an example of what the
+workflow looks like:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.auto</span> <span class="kn">import</span> <span class="n">partition</span>
+<span class="kn">from</span> <span class="nn">unstructured.partition.msg</span> <span class="kn">import</span> <span class="n">partition_msg</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;example-docs/fake-email-attachment.msg&quot;</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_msg</span><span class="p">(</span>
+  <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">process_attachments</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">attachment_partitioner</span><span class="o">=</span><span class="n">partition</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 </section>
 <section id="partition-multiple-via-api">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_multiple_via_api</span></code><a class="headerlink" href="#partition-multiple-via-api" title="Permalink to this heading"></a></h3>
