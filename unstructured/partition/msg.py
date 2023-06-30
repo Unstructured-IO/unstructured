@@ -18,6 +18,7 @@ def partition_msg(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
     max_partition: Optional[int] = 1500,
+    include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
     process_attachments: bool = False,
     attachment_partitioner: Optional[Callable] = None,
