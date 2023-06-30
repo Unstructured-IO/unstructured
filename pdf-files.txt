@@ -1,8 +1,0 @@
-1. DA-1p.pdf
-1. DA-619p.pdf
-1. chevron-page.pdf
-1. copy-protected.pdf
-1. fake-memo.pdf
-1. layout-parser-paper-fast.pdf
-1. layout-parser-paper.pdf
-1. reliance.pdf

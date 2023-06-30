@@ -1,3 +1,0 @@
-1. fake-email-attachment.msg
-1. fake-email-multiple-attachments.msg
-1. fake-email.msg

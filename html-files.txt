@@ -1,9 +1,0 @@
-1. example-10k-1p.html
-1. example-10k-230p.html
-1. example-10k-utf-16.html
-1. example-10k.html
-1. example-steelJIS-datasheet-utf-16.html
-1. example-steelJIS-datasheet.html
-1. example-with-scripts.html
-1. fake-html.html
-1. ideas-page.html

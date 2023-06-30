@@ -1,8 +1,0 @@
-1. book-war-and-peace-1225p.txt
-1. book-war-and-peace-1p.txt
-1. empty.txt
-1. fake-text-utf-16-be.txt
-1. fake-text-utf-16-le.txt
-1. fake-text-utf-16.txt
-1. fake-text-utf-32.txt
-1. fake-text.txt

@@ -1,6 +1,0 @@
-1. fake-power-point-malformed.pptx
-1. fake-power-point-many-pages.pptx
-1. fake-power-point-table.pptx
-1. fake-power-point.pptx
-1. science-exploration-1p.pptx
-1. science-exploration-369p.pptx
