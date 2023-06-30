@@ -1,6 +1,7 @@
 import json
 import os
 from dataclasses import dataclass
+import hashlib
 from pathlib import Path
 from typing import Optional
 
@@ -67,38 +68,18 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             / f"{self.file_meta.document_id}.txt"
         ).resolve()
 
-    def _tmp_download_file(self):
-        return (
-            Path(self.standard_config.download_dir)
-            / self.file_meta.index_name
-            / f"{self.file_meta.document_id}.txt"
-        ).resolve()
-
     @property
     def _output_filename(self):
-        output_file = self.file_meta.document_id + ".json"
+        """ Create filename document id combined with a hash of the query to uniquely identify
+        the output file."""
+        # Generate SHA256 hash and take the first 8 characters
+        query_hash = hashlib.sha256((self.config.jq_query or "").encode()).hexdigest()[:8]
+        output_file = f"{self.file_meta.document_id}-{query_hash}.json"
         return Path(self.standard_config.output_dir) / self.config.index_name / output_file
-
-    def cleanup_file(self):
-        pass
-        """Removes the local copy the file after successful processing."""
-        if not self.standard_config.preserve_downloads:
-            logger.info(f"Cleaning up document {self.filename}")
-            os.unlink(self._tmp_download_file())
-
-    def skip_file(self):
-        """Returns a boolean value indicating if download for a file should be skipped"""
-        if (
-            not self.standard_config.re_download
-            and self.filename.is_file()
-            and self.filename.stat()
-        ):
-            return True
-        return False
 
     # TODO: change test fixtures such that examples with
     # nested dictionaries are included in test documents
-    def flatten_values(self, value, seperator="\n", no_value_str=""):
+    def _flatten_values(self, value, seperator="\n", no_value_str=""):
         """Flattens list or dict objects. Joins each value or item with
         the seperator character. Keys are not included in the joined string.
         When a dict value or a list item is None, no_value_str is used to
@@ -107,51 +88,34 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             return no_value_str
 
         if isinstance(value, list):
-            flattened_values = [self.flatten_values(item, seperator) for item in value]
+            flattened_values = [self._flatten_values(item, seperator) for item in value]
             return seperator.join(flattened_values)
 
         elif isinstance(value, dict):
-            flattened_values = [self.flatten_values(item, seperator) for item in value.values()]
+            flattened_values = [self._flatten_values(item, seperator) for item in value.values()]
             return seperator.join(flattened_values)
 
         else:
             return str(value)
 
-    def concatenate_dict_fields(self, dictionary, seperator="\n"):
+    def _concatenate_dict_fields(self, dictionary, seperator="\n"):
         """Concatenates all values for each key in a dictionary in a nested manner.
         Used to parse a python dictionary to an aggregated string"""
-        values = [self.flatten_values(value, seperator) for value in dictionary.values()]
+        values = [self._flatten_values(value, seperator) for value in dictionary.values()]
         concatenated_values = seperator.join(values)
         return concatenated_values
-
-    def get_text_fields(self, elasticsearch_query_response):
-        """Gets specific fields from the document that is fetched,
-        based on the jq query in the config"""
-        document = elasticsearch_query_response["hits"]["hits"][0]["_source"]
-        if self.config.jq_query:
-            document = json.loads(jq.compile(self.config.jq_query).input(document).text())
-        return self.concatenate_dict_fields(document)
 
     @requires_dependencies(["elasticsearch"])
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
-        if self.skip_file():
-            logger.info(f"File exists: {self.filename}, skipping download")
-            return
-
-        logger.debug(f"Fetching {self} - PID: {os.getpid()}")
-
-        self.query_to_get_doc_by_id = {
-            "bool": {"filter": {"term": {"_id": self.file_meta.document_id}}},
-        }
-
+        logger.debug(f"Fetching {self} - PID: {os.getpid()}")        
         # TODO: instead of having a separate client for each doc,
         # have a separate client for each process
         es = Elasticsearch(self.config.url)
-        response = es.search(index=self.config.index_name, query=self.query_to_get_doc_by_id)
-
-        self.document = self.get_text_fields(response)
-
+        document = es.get(index=self.config.index_name, id=self.file_meta.document_id)
+        self.document = self._concatenate_dict_fields(document)
+        if self.config.jq_query:
+           self.document = json.loads(jq.compile(self.config.jq_query).input(document).text())
         self.filename.parent.mkdir(parents=True, exist_ok=True)
         with open(self.filename, "w", encoding="utf8") as f:
             f.write(self.document)
