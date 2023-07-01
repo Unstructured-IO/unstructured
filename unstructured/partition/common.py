@@ -95,14 +95,16 @@ def _add_element_metadata(
 ) -> Element:
     """Adds document metadata to the document element. Document metadata includes information
     like the filename, source url, and page number."""
-    coordinates_metadata = CoordinatesMetadata(
-        points=coordinates,
-        system=coordinate_system,
+    coordinates_metadata = (
+        CoordinatesMetadata(
+            points=coordinates,
+            system=coordinate_system,
+        )
+        if coordinates is not None and coordinate_system is not None
+        else None
     )
     metadata = ElementMetadata(
-        coordinates=coordinates_metadata.merge(element.metadata.coordinates)
-        if element.metadata.coordinates
-        else coordinates_metadata,
+        coordinates=coordinates_metadata if element.metadata.coordinates else coordinates_metadata,
         filename=filename,
         filetype=filetype,
         page_number=page_number,

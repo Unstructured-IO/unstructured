@@ -45,22 +45,23 @@ class DataSourceMetadata:
 class CoordinatesMetadata:
     """Metadata fields that pertain to the coordinates of the element."""
 
-    points: Optional[Tuple[Tuple[float, float], ...]] = None
-    system: Optional[CoordinateSystem] = None
+    points: Tuple[Tuple[float, float], ...]
+    system: CoordinateSystem
 
     def __eq__(self, other):
-        return all(
-            [
-                (self.points == other.points),
-                (self.system == other.system),
-            ],
-        )
-
-    def merge(self, other: CoordinatesMetadata):
-        for k in self.__dict__:
-            if getattr(self, k) is None:
-                setattr(self, k, getattr(other, k))
-        return self
+        if self is None and other is None:
+            return True
+        elif self is None and other is not None:
+            return False
+        elif self is not None and other is None:
+            return False
+        else:
+            return all(
+                [
+                    (self.points == other.points),
+                    (self.system == other.system),
+                ],
+            )
 
     def to_dict(self):
         return {
@@ -164,7 +165,7 @@ class ElementMetadata:
     @classmethod
     def from_dict(cls, input_dict):
         constructor_args = deepcopy(input_dict)
-        if "coordinates" in constructor_args:
+        if constructor_args.get("coordinates", None) is not None:
             constructor_args["coordinates"] = CoordinatesMetadata.from_dict(
                 constructor_args["coordinates"],
             )
@@ -268,9 +269,13 @@ class Element(ABC):
         if metadata is None:
             metadata = ElementMetadata()
         self.id: Union[str, NoID] = element_id
-        coordinates_metadata = CoordinatesMetadata(
-            points=coordinates,
-            system=coordinate_system,
+        coordinates_metadata = (
+            CoordinatesMetadata(
+                points=coordinates,
+                system=coordinate_system,
+            )
+            if coordinates is not None and coordinate_system is not None
+            else None
         )
         self.metadata = metadata.merge(ElementMetadata(coordinates=coordinates_metadata))
 
