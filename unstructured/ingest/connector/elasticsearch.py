@@ -112,10 +112,13 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         # TODO: instead of having a separate client for each doc,
         # have a separate client for each process
         es = Elasticsearch(self.config.url)
-        document = es.get(index=self.config.index_name, id=self.file_meta.document_id)
-        self.document = self._concatenate_dict_fields(document)
+        document_dict = es.get(
+            index=self.config.index_name,
+            id=self.file_meta.document_id
+        ).body["_source"]
         if self.config.jq_query:
-           self.document = json.loads(jq.compile(self.config.jq_query).input(document).text())
+           document_dict = json.loads(jq.compile(self.config.jq_query).input(document_dict).text())
+        self.document = self._concatenate_dict_fields(document_dict)
         self.filename.parent.mkdir(parents=True, exist_ok=True)
         with open(self.filename, "w", encoding="utf8") as f:
             f.write(self.document)
