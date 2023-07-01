@@ -49,19 +49,14 @@ class CoordinatesMetadata:
     system: CoordinateSystem
 
     def __eq__(self, other):
-        if self is None and other is None:
-            return True
-        elif self is None and other is not None:
+        if other is None:
             return False
-        elif self is not None and other is None:
-            return False
-        else:
-            return all(
-                [
-                    (self.points == other.points),
-                    (self.system == other.system),
-                ],
-            )
+        return all(
+            [
+                (self.points == other.points),
+                (self.system == other.system),
+            ],
+        )
 
     def to_dict(self):
         return {
