@@ -405,9 +405,9 @@ class MainProcess:
     "--jq-query",
     default=None,
     help="JQ query to get and concatenate a subset of the fields from a JSON document. "
-        "For a group of JSON documents, it assumes that all of the documents have the same schema. "
-        "Currently only supported for the Elasticsearch connector. "
-        "Example: --jq-query '{meta, body}'",
+    "For a group of JSON documents, it assumes that all of the documents have the same schema. "
+    "Currently only supported for the Elasticsearch connector. "
+    "Example: --jq-query '{meta, body}'",
 )
 @click.option(
     "--download-dir",
