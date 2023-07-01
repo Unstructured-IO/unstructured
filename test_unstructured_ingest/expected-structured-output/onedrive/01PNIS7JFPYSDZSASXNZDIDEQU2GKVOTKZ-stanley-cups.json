@@ -3,11 +3,8 @@
     "type": "Table",
     "element_id": "f8db6c6e535705336195aa2c1d23d414",
     "metadata": {
-      "data_source": {
-        "date_processed": "2023-07-01T00:35:34.969142"
-      },
+      "data_source": {},
       "filename": "01PNIS7JFPYSDZSASXNZDIDEQU2GKVOTKZ-stanley-cups.xlsx",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/onedrive",
       "filetype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       "page_number": 1,
       "page_name": "Stanley Cups",
@@ -19,11 +16,8 @@
     "type": "Table",
     "element_id": "20f5163a43ac6eb04a40d269d3ad0663",
     "metadata": {
-      "data_source": {
-        "date_processed": "2023-07-01T00:35:34.969142"
-      },
+      "data_source": {},
       "filename": "01PNIS7JFPYSDZSASXNZDIDEQU2GKVOTKZ-stanley-cups.xlsx",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/onedrive",
       "filetype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       "page_number": 2,
       "page_name": "Stanley Cups Since 67",
