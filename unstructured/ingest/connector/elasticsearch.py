@@ -1,7 +1,7 @@
+import hashlib
 import json
 import os
 from dataclasses import dataclass
-import hashlib
 from pathlib import Path
 from typing import Optional
 
@@ -70,7 +70,7 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @property
     def _output_filename(self):
-        """ Create filename document id combined with a hash of the query to uniquely identify
+        """Create filename document id combined with a hash of the query to uniquely identify
         the output file."""
         # Generate SHA256 hash and take the first 8 characters
         query_hash = hashlib.sha256((self.config.jq_query or "").encode()).hexdigest()[:8]
@@ -108,16 +108,16 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @requires_dependencies(["elasticsearch"])
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
-        logger.debug(f"Fetching {self} - PID: {os.getpid()}")        
+        logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         # TODO: instead of having a separate client for each doc,
         # have a separate client for each process
         es = Elasticsearch(self.config.url)
         document_dict = es.get(
             index=self.config.index_name,
-            id=self.file_meta.document_id
+            id=self.file_meta.document_id,
         ).body["_source"]
         if self.config.jq_query:
-           document_dict = json.loads(jq.compile(self.config.jq_query).input(document_dict).text())
+            document_dict = json.loads(jq.compile(self.config.jq_query).input(document_dict).text())
         self.document = self._concatenate_dict_fields(document_dict)
         self.filename.parent.mkdir(parents=True, exist_ok=True)
         with open(self.filename, "w", encoding="utf8") as f:
