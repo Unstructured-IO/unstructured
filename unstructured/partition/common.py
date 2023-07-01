@@ -104,7 +104,7 @@ def _add_element_metadata(
         else None
     )
     metadata = ElementMetadata(
-        coordinates=coordinates_metadata if element.metadata.coordinates else coordinates_metadata,
+        coordinates=coordinates_metadata,
         filename=filename,
         filetype=filetype,
         page_number=page_number,
