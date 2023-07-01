@@ -1,4 +1,4 @@
-## 0.7.12-dev0
+## 0.7.12-dev1
 
 ### Enhancements
 
@@ -7,6 +7,7 @@
 ### Features
 
 * Add Elasticsearch connector for ingest cli to pull specific fields from all documents in an index.
+* Adds Dropbox connector
 
 ### Fixes
 
