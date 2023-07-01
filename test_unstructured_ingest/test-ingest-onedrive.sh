@@ -19,6 +19,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --ms-client-id "$MS_CLIENT_ID" \
     --ms-tenant "22175133-950a-4ca9-9fa9-c8d240fb8edc" \
     --ms-user-pname "test-ingest-admin@030rx.onmicrosoft.com" \
+    --metadata-exclude file_directory,metadata.data_source.date_processed \
     --num-processes 2 \
     --partition-strategy hi_res \
     --preserve-downloads \
