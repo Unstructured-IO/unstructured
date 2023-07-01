@@ -399,14 +399,15 @@ class MainProcess:
 @click.option(
     "--elasticsearch-index-name",
     default=None,
-    help="Name for the elasticsearch index to pull data from",
+    help="Name for the Elasticsearch index to pull data from",
 )
 @click.option(
     "--jq-query",
     default=None,
-    help="Currently only supported for Elasticsearch documents. \
-        JQ query to get a subset of the fields from a JSON document, before processing it. \
-        For a group of JSON documents, it assumes that all of the documents have the same schema.",
+    help="JQ query to get and concatenate a subset of the fields from a JSON document. "
+        "For a group of JSON documents, it assumes that all of the documents have the same schema. "
+        "Currently only supported for the Elasticsearch connector. "
+        "Example: --jq-query '{meta, body}'",
 )
 @click.option(
     "--download-dir",
