@@ -94,7 +94,7 @@ class CoordinatesMetadata:
             elif input_dict.get("system", None) == "PointSpace":
                 system = PointSpace(width, height)
             elif input_dict.get("system", None) == "RelativeCoordinateSystem":
-                system = RelativeCoordinateSystem(width, height)
+                system = RelativeCoordinateSystem()
             elif input_dict.get("system", None) == "CoordinateSystem":
                 system = CoordinateSystem(width, height)
 
@@ -311,17 +311,6 @@ class Element(ABC):
             self.metadata.coordinates.points = new_coordinates
             self.metadata.coordinates.system = new_system
         return new_coordinates
-
-    @property
-    def coordinate_system(self) -> Optional[Dict[str, Optional[Union[str, int, float]]]]:
-        if not self.metadata.coordinates or self.metadata.coordinates.system is None:
-            return None
-        return {
-            "name": self.metadata.coordinates.system.__class__.__name__,
-            "description": self.metadata.coordinates.system.__doc__,
-            "layout_width": self.metadata.coordinates.system.width,
-            "layout_height": self.metadata.coordinates.system.height,
-        }
 
 
 class CheckBox(Element):

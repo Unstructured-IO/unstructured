@@ -9,7 +9,7 @@ from unstructured.documents.coordinates import (
     Orientation,
     RelativeCoordinateSystem,
 )
-from unstructured.documents.elements import Element, NoID, Text
+from unstructured.documents.elements import CoordinatesMetadata, Element, NoID, Text
 
 
 def test_text_id():
@@ -109,14 +109,32 @@ def test_convert_coordinate_to_new_system_none(coordinates, coordinate_system):
     assert element.convert_coordinates_to_new_system(coord) is None
 
 
-def test_coordinate_system():
+def test_element_constructor_coordinates_present():
     coordinates = ((1, 2), (1, 4), (3, 4), (3, 2))
     coordinate_system = RelativeCoordinateSystem()
     element = Element(coordinates=coordinates, coordinate_system=coordinate_system)
+    expected_coordinates_metadata = CoordinatesMetadata(
+        points=coordinates,
+        system=coordinate_system,
+    )
+    assert element.metadata.coordinates == expected_coordinates_metadata
+
+
+def test_element_constructor_coordinates_absent():
+    element = Element()
+    assert element.metadata.coordinates is None
+
+
+def test_coordinate_metadata_serdes():
+    coordinates = ((1, 2), (1, 4), (3, 4), (3, 2))
+    coordinate_system = RelativeCoordinateSystem()
+    coordinates_metadata = CoordinatesMetadata(points=coordinates, system=coordinate_system)
     expected_schema = {
-        "name": "RelativeCoordinateSystem",
-        "description": RelativeCoordinateSystem.__doc__,
-        "layout_width": 1,
         "layout_height": 1,
+        "layout_width": 1,
+        "points": ((1, 2), (1, 4), (3, 4), (3, 2)),
+        "system": "RelativeCoordinateSystem",
     }
-    assert element.coordinate_system == expected_schema
+    coordinates_metadata_dict = coordinates_metadata.to_dict()
+    assert coordinates_metadata_dict == expected_schema
+    assert CoordinatesMetadata.from_dict(coordinates_metadata_dict) == coordinates_metadata
