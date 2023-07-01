@@ -3,11 +3,8 @@
     "type": "NarrativeText",
     "element_id": "c08fcabe68ba13b7a7cc6592bd5513a8",
     "metadata": {
-      "data_source": {
-        "date_processed": "2023-07-01T00:35:33.836229"
-      },
+      "data_source": {},
       "filename": "01PNIS7JHT77TO3JE2GBBLVBH2A7AXG7HT-ideas-page.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/onedrive",
       "filetype": "text/html",
       "page_number": 1
     },
