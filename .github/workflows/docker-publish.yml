@@ -2,7 +2,9 @@ name: Build And Push Docker Image
 
 on:
   push:
-    - main
+    branches:
+      - main
+
 env:
   DOCKER_REPOSITORY: quay.io/unstructured-io/unstructured
   DOCKER_BUILD_REPOSITORY: quay.io/unstructured-io/build-unstructured
