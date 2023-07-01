@@ -6,25 +6,15 @@
 
 # Structured outputs are stored in elasticsearch-ingest-output
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-cd "$SCRIPT_DIR"/../../.. || exit 1
+SCRIPT_DIR=$(dirname "$(realpath "$0")")
+cd "$SCRIPT_DIR"/.. || exit 1
 
-id_log_filepath="scripts/elasticsearch-test-helpers/elasticsearch-docker_container_id.txt"
-
-(
-    chmod +x scripts/elasticsearch-test-helpers/create-and-check-es.sh
-    # shellcheck source=/dev/null
-    . scripts/elasticsearch-test-helpers/create-and-check-es.sh
-
-)
-
+# shellcheck source=/dev/null
+sh scripts/elasticsearch-test-helpers/create-and-check-es.sh
 wait
 
-# Read the container id from the temporary file
-container_id=$(<"$id_log_filepath")
-rm "$id_log_filepath"
 # Kill the container so the script can be repeatedly run using the same ports
-trap 'docker stop "$container_id"' EXIT
+trap 'echo "Stopping Elasticsearch Docker container"; docker stop es-test' EXIT
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
         --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
