@@ -66,6 +66,10 @@ install-ingest-s3:
 install-ingest-gcs:
 	python3 -m pip install -r requirements/ingest-gcs.txt
 
+.PHONY: install-ingest-dropbox
+install-ingest-dropbox:
+	python3 -m pip install -r requirements/ingest-dropbox.txt
+
 .PHONY: install-ingest-azure
 install-ingest-azure:
 	python3 -m pip install -r requirements/ingest-azure.txt
@@ -126,6 +130,7 @@ pip-compile:
 	cp requirements/build.txt docs/requirements.txt
 	pip-compile --upgrade requirements/ingest-s3.in
 	pip-compile --upgrade requirements/ingest-gcs.in
+	pip-compile --upgrade requirements/ingest-dropbox.in
 	pip-compile --upgrade requirements/ingest-azure.in
 	pip-compile --upgrade requirements/ingest-discord.in
 	pip-compile --upgrade requirements/ingest-reddit.in

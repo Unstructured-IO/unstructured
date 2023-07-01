@@ -201,6 +201,7 @@ jobs:
         make install-ingest-s3
         make install-ingest-azure
         make install-ingest-discord
+        make install-ingest-dropbox
         make install-ingest-gcs
         make install-ingest-google-drive
         make install-ingest-github
