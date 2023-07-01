@@ -86,6 +86,7 @@ class MainProcess:
         # Debugging tip: use the below line and comment out the mp.Pool loop
         # block to remain in single process
         # self.doc_processor_fn(docs[0])
+
         with mp.Pool(
             processes=self.num_processes,
             initializer=ingest_log_streaming_init,
@@ -391,6 +392,24 @@ class MainProcess:
     help="Number of days to go back in the history of discord channels, must be an number",
 )
 @click.option(
+    "--elasticsearch-url",
+    default=None,
+    help='URL to the Elasticsearch cluster, e.g. "http://localhost:9200"',
+)
+@click.option(
+    "--elasticsearch-index-name",
+    default=None,
+    help="Name for the Elasticsearch index to pull data from",
+)
+@click.option(
+    "--jq-query",
+    default=None,
+    help="JQ query to get and concatenate a subset of the fields from a JSON document. "
+    "For a group of JSON documents, it assumes that all of the documents have the same schema. "
+    "Currently only supported for the Elasticsearch connector. "
+    "Example: --jq-query '{meta, body}'",
+)
+@click.option(
     "--download-dir",
     help="Where files are downloaded to, defaults to `$HOME/.cache/unstructured/ingest/<SHA256>`.",
 )
@@ -469,6 +488,9 @@ def main(
     discord_channels,
     discord_token,
     discord_period,
+    elasticsearch_url,
+    elasticsearch_index_name,
+    jq_query,
     download_dir,
     preserve_downloads,
     structured_output_dir,
@@ -563,6 +585,10 @@ def main(
                 )
             hashed_dir_name = hashlib.sha256(
                 base_path.encode("utf-8"),
+            )
+        elif elasticsearch_url:
+            hashed_dir_name = hashlib.sha256(
+                f"{elasticsearch_url}_{elasticsearch_index_name}".encode("utf-8"),
             )
         else:
             raise ValueError(
@@ -801,6 +827,20 @@ def main(
                 input_path=local_input_path,
                 recursive=recursive,
                 file_glob=local_file_glob,
+            ),
+        )
+    elif elasticsearch_url:
+        from unstructured.ingest.connector.elasticsearch import (
+            ElasticsearchConnector,
+            SimpleElasticsearchConfig,
+        )
+
+        doc_connector = ElasticsearchConnector(  # type: ignore
+            standard_config=standard_config,
+            config=SimpleElasticsearchConfig(
+                url=elasticsearch_url,
+                index_name=elasticsearch_index_name,
+                jq_query=jq_query,
             ),
         )
     # Check for other connector-specific options here and define the doc_connector object
