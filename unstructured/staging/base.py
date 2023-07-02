@@ -18,10 +18,10 @@ TABLE_FIELDNAMES: List[str] = [
     "type",
     "text",
     "element_id",
-    "coordinates",
-    "coordinate_system",
-    "layout_width",
-    "layout_height",
+    "coordinates_points",
+    "coordinates_system",
+    "coordinates_layout_width",
+    "coordinates_layout_height",
     "filename",
     "page_number",
     "url",
@@ -119,6 +119,17 @@ def elements_from_json(
         return dict_to_elements(element_dict)
 
 
+def flatten_dict(dictionary, parent_key="", separator="_"):
+    flattened_dict = {}
+    for key, value in dictionary.items():
+        new_key = f"{parent_key}{separator}{key}" if parent_key else key
+        if isinstance(value, dict):
+            flattened_dict.update(flatten_dict(value, new_key, separator))
+        else:
+            flattened_dict[new_key] = value
+    return flattened_dict
+
+
 def convert_to_isd_csv(elements: List[Element]) -> str:
     """
     Returns the representation of document elements as an Initial Structured Document (ISD)
@@ -128,7 +139,7 @@ def convert_to_isd_csv(elements: List[Element]) -> str:
     # NOTE(robinson) - flatten metadata and add it to the table
     for row in rows:
         metadata = row.pop("metadata")
-        for key, value in metadata.items():
+        for key, value in flatten_dict(metadata).items():
             if key in TABLE_FIELDNAMES:
                 row[key] = value
 

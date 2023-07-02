@@ -1,6 +1,7 @@
 from typing import Dict, List, TypedDict
 
 from unstructured.documents.elements import Text
+from unstructured.staging.base import flatten_dict
 
 
 class BaseplateRow(TypedDict):
@@ -32,16 +33,6 @@ def stage_for_baseplate(elements: List[Text]) -> BaseplateRows:
     https://docs.baseplate.ai/api-reference/documents/overview
     https://docs.baseplate.ai/api-reference/documents/upsert-data-rows
     """
-
-    def flatten_dict(dictionary, parent_key="", separator="_"):
-        flattened_dict = {}
-        for key, value in dictionary.items():
-            new_key = f"{parent_key}{separator}{key}" if parent_key else key
-            if isinstance(value, dict):
-                flattened_dict.update(flatten_dict(value, new_key, separator))
-            else:
-                flattened_dict[new_key] = value
-        return flattened_dict
 
     rows: List[BaseplateRow] = []
     for element in elements:
