@@ -258,7 +258,7 @@ def detect_filetype(
             mime_type = ft.guess_mime(file.read(4096))
         if mime_type is None:
             logger.warning(
-                "libmagic is unavailable but assists in filetype detection on file-like objects."
+                "libmagic is unavailable but assists in filetype detection on file-like objects. "
                 "Please consider installing libmagic for better results.",
             )
             return EXT_TO_FILETYPE.get(extension, FileType.UNK)
