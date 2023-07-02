@@ -109,7 +109,7 @@ def test_convert_coordinate_to_new_system_none(coordinates, coordinate_system):
     assert element.convert_coordinates_to_new_system(coord) is None
 
 
-def test_element_constructor_coordinates_present():
+def test_element_constructor_coordinates_all_present():
     coordinates = ((1, 2), (1, 4), (3, 4), (3, 2))
     coordinate_system = RelativeCoordinateSystem()
     element = Element(coordinates=coordinates, coordinate_system=coordinate_system)
@@ -120,8 +120,13 @@ def test_element_constructor_coordinates_present():
     assert element.metadata.coordinates == expected_coordinates_metadata
 
 
-def test_element_constructor_coordinates_absent():
-    element = Element()
+def test_element_constructor_coordinates_points_absent():
+    element = Element(coordinate_system=RelativeCoordinateSystem())
+    assert element.metadata.coordinates is None
+
+
+def test_element_constructor_coordinates_system_absent():
+    element = Element(coordinates=((1, 2), (1, 4), (3, 4), (3, 2)))
     assert element.metadata.coordinates is None
 
 

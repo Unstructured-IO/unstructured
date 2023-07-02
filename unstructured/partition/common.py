@@ -31,6 +31,7 @@ if TYPE_CHECKING:
 
 def normalize_layout_element(
     layout_element: Union["LayoutElement", "LocationlessLayoutElement", Element, Dict[str, Any]],
+    coordinate_system: Optional[CoordinateSystem] = None,
 ) -> Union[Element, List[Element]]:
     """Converts an unstructured_inference LayoutElement object to an unstructured Element."""
 
@@ -50,22 +51,33 @@ def normalize_layout_element(
     coordinates = layout_dict.get("coordinates")
     element_type = layout_dict.get("type")
 
+    # Both `coordinates` and `coordinate_system` must be present
+    # in order to add coordinates metadata to the element.
     if element_type == "List":
-        return layout_list_to_list_items(text, coordinates)
+        return layout_list_to_list_items(
+            text,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
+        )
     elif element_type in TYPE_TO_TEXT_ELEMENT_MAP:
         _element_class = TYPE_TO_TEXT_ELEMENT_MAP[element_type]
-        return _element_class(text=text, coordinates=coordinates)
+        return _element_class(
+            text=text,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
+        )
     elif element_type == "Checked":
-        return CheckBox(checked=True, coordinates=coordinates)
+        return CheckBox(checked=True, coordinates=coordinates, coordinate_system=coordinate_system)
     elif element_type == "Unchecked":
-        return CheckBox(checked=False, coordinates=coordinates)
+        return CheckBox(checked=False, coordinates=coordinates, coordinate_system=coordinate_system)
     else:
-        return Text(text=text, coordinates=coordinates)
+        return Text(text=text, coordinates=coordinates, coordinate_system=coordinate_system)
 
 
 def layout_list_to_list_items(
     text: str,
     coordinates: Tuple[Tuple[float, float], ...],
+    coordinate_system: Optional[CoordinateSystem] = None,
 ) -> List[Element]:
     """Converts a list LayoutElement to a list of ListItem elements."""
     split_items = ENUMERATED_BULLETS_RE.split(text)
@@ -76,8 +88,14 @@ def layout_list_to_list_items(
     list_items: List[Element] = []
     for text_segment in split_items:
         if len(text_segment.strip()) > 0:
+            # Both `coordinates` and `coordinate_system` must be present
+            # in order to add coordinates metadata to the element.
             list_items.append(
-                ListItem(text=text_segment.strip(), coordinates=coordinates),
+                ListItem(
+                    text=text_segment.strip(),
+                    coordinates=coordinates,
+                    coordinate_system=coordinate_system,
+                ),
             )
 
     return list_items

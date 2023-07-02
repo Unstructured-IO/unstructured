@@ -451,7 +451,13 @@ def document_to_element_list(
     for i, page in enumerate(document.pages):
         page_elements: List[Element] = []
         for layout_element in page.elements:
-            element = normalize_layout_element(layout_element)
+            if hasattr(page, "image"):
+                image_format = page.image.format
+                coordinate_system = PixelSpace(width=page.image.width, height=page.image.height)
+            else:
+                image_format = None
+                coordinate_system = None
+            element = normalize_layout_element(layout_element, coordinate_system=coordinate_system)
             if isinstance(element, List):
                 for el in element:
                     el.metadata.page_number = i + 1
@@ -462,12 +468,6 @@ def document_to_element_list(
                     layout_element.text_as_html if hasattr(layout_element, "text_as_html") else None
                 )
                 page_elements.append(element)
-            if hasattr(page, "image"):
-                image_format = page.image.format
-                coordinate_system = PixelSpace(width=page.image.width, height=page.image.height)
-            else:
-                image_format = None
-                coordinate_system = None
             coordinates = (
                 element.metadata.coordinates.points if element.metadata.coordinates else None
             )
