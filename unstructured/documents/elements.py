@@ -13,9 +13,8 @@ from functools import wraps
 from typing import Any, Callable, Dict, List, Optional, Tuple, TypedDict, Union, cast
 
 from unstructured.documents.coordinates import (
+    TYPE_TO_COORDINATE_SYSTEM_MAP,
     CoordinateSystem,
-    PixelSpace,
-    PointSpace,
     RelativeCoordinateSystem,
 )
 
@@ -83,16 +82,14 @@ class CoordinatesMetadata:
         width = input_dict.get("layout_width", None)
         height = input_dict.get("layout_height", None)
         system = None
-        if width is not None and height is not None:
-            if input_dict.get("system", None) == "PixelSpace":
-                system = PixelSpace(width, height)
-            elif input_dict.get("system", None) == "PointSpace":
-                system = PointSpace(width, height)
-            elif input_dict.get("system", None) == "RelativeCoordinateSystem":
-                system = RelativeCoordinateSystem()
-            elif input_dict.get("system", None) == "CoordinateSystem":
-                system = CoordinateSystem(width, height)
-
+        if input_dict.get("system", None) == "RelativeCoordinateSystem":
+            system = RelativeCoordinateSystem()
+        elif (
+            width is not None
+            and height is not None
+            and input_dict.get("system", None) in TYPE_TO_COORDINATE_SYSTEM_MAP
+        ):
+            system = TYPE_TO_COORDINATE_SYSTEM_MAP[input_dict["system"]](width, height)
         constructor_args = {"points": points, "system": system}
         return cls(**constructor_args)
 

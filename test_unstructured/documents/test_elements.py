@@ -143,3 +143,26 @@ def test_coordinate_metadata_serdes():
     coordinates_metadata_dict = coordinates_metadata.to_dict()
     assert coordinates_metadata_dict == expected_schema
     assert CoordinatesMetadata.from_dict(coordinates_metadata_dict) == coordinates_metadata
+
+
+def test_element_to_dict():
+    coordinates = ((1, 2), (1, 4), (3, 4), (3, 2))
+    coordinate_system = RelativeCoordinateSystem()
+    element = Element(
+        element_id="awt32t1",
+        coordinates=coordinates,
+        coordinate_system=coordinate_system,
+    )
+    expected = {
+        "metadata": {
+            "coordinates": {
+                "layout_height": 1,
+                "layout_width": 1,
+                "points": ((1, 2), (1, 4), (3, 4), (3, 2)),
+                "system": "RelativeCoordinateSystem",
+            },
+        },
+        "type": None,
+        "element_id": "awt32t1",
+    }
+    assert element.to_dict() == expected
