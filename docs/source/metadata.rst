@@ -33,6 +33,9 @@ the ``y`` coordinate increases in the downward direction.
 ``PixelSpace``, which is used for representing the coordinates of images. The coordinate system has a
 name, orientation, layout width, and layout height.
 
+Information about the element’s coordinates (including the coordinate system name, coordinate points,
+the layout width, and the layout height) can be accessed with `element.to_dict()["metadata"]["coordinates"]`.
+
 The coordinates of an element can be changed to a new coordinate system by using the
 ``Element.convert_coordinates_to_new_system`` method. If the ``in_place`` flag is ``True``, the
 coordinate system and points of the element are updated in place and the new coordinates are
