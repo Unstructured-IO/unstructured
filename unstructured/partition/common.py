@@ -48,11 +48,10 @@ def normalize_layout_element(
         layout_dict = layout_element
 
     text = layout_dict.get("text")
-    coordinates = layout_dict.get("coordinates")
-    element_type = layout_dict.get("type")
-
     # Both `coordinates` and `coordinate_system` must be present
     # in order to add coordinates metadata to the element.
+    coordinates = layout_dict.get("coordinates")
+    element_type = layout_dict.get("type")
     if element_type == "List":
         return layout_list_to_list_items(
             text,
@@ -77,7 +76,7 @@ def normalize_layout_element(
 def layout_list_to_list_items(
     text: str,
     coordinates: Tuple[Tuple[float, float], ...],
-    coordinate_system: Optional[CoordinateSystem] = None,
+    coordinate_system: CoordinateSystem,
 ) -> List[Element]:
     """Converts a list LayoutElement to a list of ListItem elements."""
     split_items = ENUMERATED_BULLETS_RE.split(text)

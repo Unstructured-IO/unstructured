@@ -47,6 +47,15 @@ class CoordinatesMetadata:
     points: Tuple[Tuple[float, float], ...]
     system: CoordinateSystem
 
+    def __init__(self, points, system):
+        # Both `points` and `system` must be present; one is not meaningful without the other.
+        if (points is None and system is not None) or (points is not None and system is None):
+            raise ValueError(
+                "Coordinates points should not exist without coordinates system and vice versa.",
+            )
+        self.points = points
+        self.system = system
+
     def __eq__(self, other):
         if other is None:
             return False
@@ -262,12 +271,14 @@ class Element(ABC):
             metadata = ElementMetadata()
         self.id: Union[str, NoID] = element_id
         coordinates_metadata = (
-            CoordinatesMetadata(
-                points=coordinates,
-                system=coordinate_system,
+            None
+            if coordinates is None and coordinate_system is None
+            else (
+                CoordinatesMetadata(
+                    points=coordinates,
+                    system=coordinate_system,
+                )
             )
-            if coordinates is not None and coordinate_system is not None
-            else None
         )
         self.metadata = metadata.merge(ElementMetadata(coordinates=coordinates_metadata))
 
@@ -285,11 +296,7 @@ class Element(ABC):
     ) -> Optional[Tuple[Tuple[Union[int, float], Union[int, float]], ...]]:
         """Converts the element location coordinates to a new coordinate system. If inplace is true,
         changes the coordinates in place and updates the coordinate system."""
-        if (
-            not self.metadata.coordinates
-            or self.metadata.coordinates.points is None
-            or self.metadata.coordinates.system is None
-        ):
+        if self.metadata.coordinates is None:
             return None
         new_coordinates = tuple(
             self.metadata.coordinates.system.convert_coordinates_to_new_system(

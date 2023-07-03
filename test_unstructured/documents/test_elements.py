@@ -94,16 +94,8 @@ def test_convert_coordinates_to_new_system(
     assert element.metadata.coordinates.system == coord2
 
 
-@pytest.mark.parametrize(
-    ("coordinates", "coordinate_system"),
-    [
-        (None, None),
-        (((1, 2), (1, 4), (3, 4), (3, 2)), None),
-        (None, RelativeCoordinateSystem()),
-    ],
-)
-def test_convert_coordinate_to_new_system_none(coordinates, coordinate_system):
-    element = Element(coordinates=coordinates, coordinate_system=coordinate_system)
+def test_convert_coordinate_to_new_system_none():
+    element = Element(coordinates=None, coordinate_system=None)
     coord = CoordinateSystem(100, 200)
     coord.orientation = Orientation.SCREEN
     assert element.convert_coordinates_to_new_system(coord) is None
@@ -121,13 +113,21 @@ def test_element_constructor_coordinates_all_present():
 
 
 def test_element_constructor_coordinates_points_absent():
-    element = Element(coordinate_system=RelativeCoordinateSystem())
-    assert element.metadata.coordinates is None
+    with pytest.raises(ValueError) as exc_info:
+        Element(coordinate_system=RelativeCoordinateSystem())
+    assert (
+        str(exc_info.value)
+        == "Coordinates points should not exist without coordinates system and vice versa."
+    )
 
 
 def test_element_constructor_coordinates_system_absent():
-    element = Element(coordinates=((1, 2), (1, 4), (3, 4), (3, 2)))
-    assert element.metadata.coordinates is None
+    with pytest.raises(ValueError) as exc_info:
+        Element(coordinates=((1, 2), (1, 4), (3, 4), (3, 2)))
+    assert (
+        str(exc_info.value)
+        == "Coordinates points should not exist without coordinates system and vice versa."
+    )
 
 
 def test_coordinate_metadata_serdes():
