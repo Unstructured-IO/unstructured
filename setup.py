@@ -82,6 +82,8 @@ setup(
         "wikipedia": load_requirements("requirements/ingest-wikipedia.in"),
         "google-drive": load_requirements("requirements/ingest-google-drive.in"),
         "gcs": load_requirements("requirements/ingest-gcs.in"),
+        "elasticsearch": load_requirements("requirements/ingest-elasticsearch.in"),
+        "dropbox": load_requirements("requirements/ingest-dropbox.in"),
     },
     package_dir={"unstructured": "unstructured"},
     package_data={"unstructured": ["nlp/*.txt"]},

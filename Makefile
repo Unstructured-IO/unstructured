@@ -66,6 +66,10 @@ install-ingest-s3:
 install-ingest-gcs:
 	python3 -m pip install -r requirements/ingest-gcs.txt
 
+.PHONY: install-ingest-dropbox
+install-ingest-dropbox:
+	python3 -m pip install -r requirements/ingest-dropbox.txt
+
 .PHONY: install-ingest-azure
 install-ingest-azure:
 	python3 -m pip install -r requirements/ingest-azure.txt
@@ -94,6 +98,9 @@ install-ingest-slack:
 install-ingest-wikipedia:
 	python3 -m pip install -r requirements/ingest-wikipedia.txt
 
+.PHONY: install-ingest-elasticsearch
+install-ingest-elasticsearch:
+	python3 -m pip install -r requirements/ingest-elasticsearch.txt
 .PHONY: install-unstructured-inference
 install-unstructured-inference:
 	python3 -m pip install -r requirements/local-inference.txt
@@ -122,6 +129,7 @@ pip-compile:
 	cp requirements/build.txt docs/requirements.txt
 	pip-compile --upgrade requirements/ingest-s3.in
 	pip-compile --upgrade requirements/ingest-gcs.in
+	pip-compile --upgrade requirements/ingest-dropbox.in
 	pip-compile --upgrade requirements/ingest-azure.in
 	pip-compile --upgrade requirements/ingest-discord.in
 	pip-compile --upgrade requirements/ingest-reddit.in
@@ -130,6 +138,7 @@ pip-compile:
 	pip-compile --upgrade requirements/ingest-slack.in
 	pip-compile --upgrade requirements/ingest-wikipedia.in
 	pip-compile --upgrade requirements/ingest-google-drive.in
+	pip-compile --upgrade requirements/ingest-elasticsearch.in
 
 ## install-project-local:   install unstructured into your local python environment
 .PHONY: install-project-local

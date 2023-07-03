@@ -86,6 +86,7 @@ class MainProcess:
         # Debugging tip: use the below line and comment out the mp.Pool loop
         # block to remain in single process
         # self.doc_processor_fn(docs[0])
+
         with mp.Pool(
             processes=self.num_processes,
             initializer=ingest_log_streaming_init,
@@ -180,7 +181,7 @@ class MainProcess:
     default=None,
     help="Remote fsspec URL formatted as `protocol://dir/path`, it can contain both "
     "a directory or a single file. Supported protocols are: `gcs`, `gs`, `s3`, `s3a`, `abfs` "
-    "and `az`.",
+    "`az` and `dropbox`.",
 )
 @click.option(
     "--gcs-token",
@@ -193,6 +194,11 @@ class MainProcess:
     is_flag=True,
     default=False,
     help="Connect to s3 without local AWS credentials.",
+)
+@click.option(
+    "--dropbox-token",
+    default=None,
+    help="Dropbox access token.",
 )
 @click.option(
     "--azure-account-name",
@@ -386,6 +392,24 @@ class MainProcess:
     help="Number of days to go back in the history of discord channels, must be an number",
 )
 @click.option(
+    "--elasticsearch-url",
+    default=None,
+    help='URL to the Elasticsearch cluster, e.g. "http://localhost:9200"',
+)
+@click.option(
+    "--elasticsearch-index-name",
+    default=None,
+    help="Name for the Elasticsearch index to pull data from",
+)
+@click.option(
+    "--jq-query",
+    default=None,
+    help="JQ query to get and concatenate a subset of the fields from a JSON document. "
+    "For a group of JSON documents, it assumes that all of the documents have the same schema. "
+    "Currently only supported for the Elasticsearch connector. "
+    "Example: --jq-query '{meta, body}'",
+)
+@click.option(
     "--download-dir",
     help="Where files are downloaded to, defaults to `$HOME/.cache/unstructured/ingest/<SHA256>`.",
 )
@@ -421,13 +445,14 @@ class MainProcess:
     help="Recursively download files in their respective folders"
     "otherwise stop at the files in provided folder level."
     " Supported protocols are: `gcs`, `gs`, `s3`, `s3a`, `abfs` "
-    "`az`, `google drive` and `local`.",
+    "`az`, `google drive`, `dropbox` and `local`.",
 )
 @click.option("-v", "--verbose", is_flag=True, default=False)
 def main(
     ctx,
     remote_url,
     s3_anonymous,
+    dropbox_token,
     gcs_token,
     azure_account_name,
     azure_account_key,
@@ -463,6 +488,9 @@ def main(
     discord_channels,
     discord_token,
     discord_period,
+    elasticsearch_url,
+    elasticsearch_index_name,
+    jq_query,
     download_dir,
     preserve_downloads,
     structured_output_dir,
@@ -558,6 +586,10 @@ def main(
             hashed_dir_name = hashlib.sha256(
                 base_path.encode("utf-8"),
             )
+        elif elasticsearch_url:
+            hashed_dir_name = hashlib.sha256(
+                f"{elasticsearch_url}_{elasticsearch_index_name}".encode("utf-8"),
+            )
         else:
             raise ValueError(
                 "This connector does not support saving downloads to ~/.cache/  ,"
@@ -607,6 +639,20 @@ def main(
                     access_kwargs={"token": gcs_token},
                 ),
             )
+        elif protocol in ("dropbox"):
+            from unstructured.ingest.connector.dropbox import (
+                DropboxConnector,
+                SimpleDropboxConfig,
+            )
+
+            doc_connector = DropboxConnector(  # type: ignore
+                standard_config=standard_config,
+                config=SimpleDropboxConfig(
+                    path=remote_url,
+                    recursive=recursive,
+                    access_kwargs={"token": dropbox_token},
+                ),
+            )
         elif protocol in ("abfs", "az"):
             from unstructured.ingest.connector.azure import (
                 AzureBlobStorageConnector,
@@ -634,7 +680,7 @@ def main(
             warnings.warn(
                 f"`fsspec` protocol {protocol} is not directly supported by `unstructured`,"
                 " so use it at your own risk. Supported protocols are `gcs`, `gs`, `s3`, `s3a`,"
-                "`abfs` and `az`.",
+                "`dropbox`, `abfs` and `az`.",
                 UserWarning,
             )
 
@@ -781,6 +827,20 @@ def main(
                 input_path=local_input_path,
                 recursive=recursive,
                 file_glob=local_file_glob,
+            ),
+        )
+    elif elasticsearch_url:
+        from unstructured.ingest.connector.elasticsearch import (
+            ElasticsearchConnector,
+            SimpleElasticsearchConfig,
+        )
+
+        doc_connector = ElasticsearchConnector(  # type: ignore
+            standard_config=standard_config,
+            config=SimpleElasticsearchConfig(
+                url=elasticsearch_url,
+                index_name=elasticsearch_index_name,
+                jq_query=jq_query,
             ),
         )
     # Check for other connector-specific options here and define the doc_connector object

@@ -21,6 +21,7 @@ SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
     "az",
     "gs",
     "gcs",
+    "dropbox",
 ]
 
 
@@ -42,6 +43,13 @@ class SimpleFsspecConfig(BaseConnectorConfig):
                 f"Protocol {self.protocol} not supported yet, only "
                 f"{SUPPORTED_REMOTE_FSSPEC_PROTOCOLS} are supported.",
             )
+
+        # dropbox root is an empty string
+        match = re.match(rf"{self.protocol}://([\s])/", self.path)
+        if match and self.protocol == "dropbox":
+            self.dir_path = " "
+            self.file_path = ""
+            return
 
         # just a path with no trailing prefix
         match = re.match(rf"{self.protocol}://([^/\s]+?)(/*)$", self.path)

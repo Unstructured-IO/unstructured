@@ -1,10 +1,20 @@
-## 0.7.12-dev0
+## 0.7.13-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+## 0.7.12
 
 ### Enhancements
 
 * Adds `include_metadata` kwarg to `partition_doc`, `partition_docx`, `partition_email`, `partition_epub`, `partition_json`, `partition_msg`, `partition_odt`, `partition_org`, `partition_pdf`, `partition_ppt`, `partition_pptx`, `partition_rst`, and `partition_rtf`
-
 ### Features
+
+* Add Elasticsearch connector for ingest cli to pull specific fields from all documents in an index.
+* Adds Dropbox connector
 
 ### Fixes
 
