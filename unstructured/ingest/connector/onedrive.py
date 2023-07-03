@@ -14,7 +14,7 @@ from unstructured.ingest.interfaces import (
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
-from office365.onedrive.driveitems import driveItem
+from office365.onedrive.driveitems.driveItem import DriveItem
 
 
 MAX_MB_SIZE = 512_000_000
@@ -57,7 +57,7 @@ class SimpleOneDriveConfig(BaseConnectorConfig):
 @dataclass
 class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleOneDriveConfig
-    file: "DriveItem"
+    file: DriveItem
 
     def __post_init__(self):
         self.ext = "".join(Path(self.file.name).suffixes)
@@ -134,7 +134,7 @@ class OneDriveConnector(ConnectorCleanupMixin, BaseConnector):
 
         self.client = GraphClient(self.config.token_factory)
 
-    def _list_objects(self, folder, recursive) -> List["DriveItem"]:
+    def _list_objects(self, folder, recursive) -> List[DriveItem]:
         drive_items = folder.children.get().execute_query()
         files = [d for d in drive_items if d.is_file]
         if not recursive:
