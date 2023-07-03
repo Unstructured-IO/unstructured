@@ -15,6 +15,7 @@ def partition_json(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
     text: Optional[str] = None,
+    include_metadata: bool = True,
     **kwargs,
 ) -> List[Element]:
     """Partitions an .json document into its constituent elements."""

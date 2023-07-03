@@ -66,6 +66,10 @@ install-ingest-s3:
 install-ingest-gcs:
 	python3 -m pip install -r requirements/ingest-gcs.txt
 
+.PHONY: install-ingest-dropbox
+install-ingest-dropbox:
+	python3 -m pip install -r requirements/ingest-dropbox.txt
+
 .PHONY: install-ingest-azure
 install-ingest-azure:
 	python3 -m pip install -r requirements/ingest-azure.txt
@@ -81,6 +85,10 @@ install-ingest-github:
 .PHONY: install-ingest-gitlab
 install-ingest-gitlab:
 	python3 -m pip install -r requirements/ingest-gitlab.txt
+
+.PHONY: install-ingest-onedrive
+install-ingest-onedrive:
+	python3 -m pip install -r requirements/ingest-onedrive.txt
 
 .PHONY: install-ingest-reddit
 install-ingest-reddit:
@@ -122,6 +130,7 @@ pip-compile:
 	cp requirements/build.txt docs/requirements.txt
 	pip-compile --upgrade requirements/ingest-s3.in
 	pip-compile --upgrade requirements/ingest-gcs.in
+	pip-compile --upgrade requirements/ingest-dropbox.in
 	pip-compile --upgrade requirements/ingest-azure.in
 	pip-compile --upgrade requirements/ingest-discord.in
 	pip-compile --upgrade requirements/ingest-reddit.in
@@ -146,10 +155,12 @@ uninstall-project-local:
 # Test and Lint #
 #################
 
+export CI ?= false
+
 ## test:                    runs all unittests
 .PHONY: test
 test:
-	PYTHONPATH=. pytest test_${PACKAGE_NAME} --cov=${PACKAGE_NAME} --cov-report term-missing
+	PYTHONPATH=. CI=$(CI) pytest test_${PACKAGE_NAME} --cov=${PACKAGE_NAME} --cov-report term-missing
 
 ## check:                   runs linters (includes tests)
 .PHONY: check
@@ -224,8 +235,9 @@ docker-test:
 	docker run --rm \
 	-v ${CURRENT_DIR}/test_unstructured:/home/test_unstructured \
 	-v ${CURRENT_DIR}/test_unstructured_ingest:/home/test_unstructured_ingest \
+	$(if $(wildcard uns_test_env_file),--env-file uns_test_env_file,) \
 	$(DOCKER_IMAGE) \
-	bash -c "pytest $(if $(TEST_NAME),-k $(TEST_NAME),) test_unstructured"
+	bash -c "CI=$(CI) pytest $(if $(TEST_NAME),-k $(TEST_NAME),) test_unstructured"
 
 .PHONY: docker-smoke-test
 docker-smoke-test:

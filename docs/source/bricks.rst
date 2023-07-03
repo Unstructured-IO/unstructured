@@ -163,7 +163,7 @@ Examples:
   from unstructured.partition.tsv import partition_tsv
 
   elements = partition_tsv(filename="example-docs/stanley-cups.tsv")
-  print(elements[0].metadata.text_as_html)  
+  print(elements[0].metadata.text_as_html)
 
 
 ``partition_doc``
@@ -263,6 +263,30 @@ Examples:
   with open("example-docs/fake-email.eml", "r") as f:
       text = f.read()
   elements = partition_email(text=text, include_headers=True)
+
+
+``partition_email`` includes a ``max_partition`` parameter that indicates the maximum character
+length for a document element.
+This parameter only applies if ``"text/plain"`` is selected as the ``content_source``.
+The default value is ``1500``, which roughly corresponds to
+the average character length for a paragraph.
+You can disable ``max_partition`` by setting it to ``None``.
+
+
+You can optionally partition e-mail attachments by setting ``process_attachments=True``.
+If you set ``process_attachments=True``, you'll also need to pass in a partitioning
+function to ``attachment_partitioner``. The following is an example of what the
+workflow looks like:
+
+.. code:: python
+
+  from unstructured.partition.auto import partition
+  from unstructured.partition.email import partition_email
+
+  filename = "example-docs/eml/fake-email-attachment.eml"
+  elements = partition_email(
+    filename=filename, process_attachments=True, attachment_partitioner=partition
+  )
 
 
 ``partition_epub``
@@ -423,6 +447,29 @@ Examples:
 
   elements = partition_msg(filename="example-docs/fake-email.msg")
 
+``partition_msg`` includes a ``max_partition`` parameter that indicates the maximum character
+length for a document element.
+This parameter only applies if ``"text/plain"`` is selected as the ``content_source``.
+The default value is ``1500``, which roughly corresponds to
+the average character length for a paragraph.
+You can disable ``max_partition`` by setting it to ``None``.
+
+
+You can optionally partition e-mail attachments by setting ``process_attachments=True``.
+If you set ``process_attachments=True``, you'll also need to pass in a partitioning
+function to ``attachment_partitioner``. The following is an example of what the
+workflow looks like:
+
+.. code:: python
+
+  from unstructured.partition.auto import partition
+  from unstructured.partition.msg import partition_msg
+
+  filename = "example-docs/fake-email-attachment.msg"
+  elements = partition_msg(
+    filename=filename, process_attachments=True, attachment_partitioner=partition
+  )
+
 
 ``partition_multiple_via_api``
 ------------------------------
@@ -531,7 +578,7 @@ If the PDF text is not extractable, ``partition_pdf`` will fall back to ``"ocr_o
 ``"fast"`` strategy in most cases where the PDF has extractable text.
 
 If a PDF is copy protected, ``partition_pdf`` can process the document with the ``"hi_res"`` strategy (which
-will treat it like an image), but cannot process the document with the ``"fast"`` strategy. 
+will treat it like an image), but cannot process the document with the ``"fast"`` strategy.
 If the user chooses ``"fast"`` on a copy protected PDF, ``partition_pdf`` will fall back to the ``"hi_res"``
 strategy. If ``detectron2`` is not installed, ``partition_pdf`` will fail for copy protected
 PDFs because the document will not be processable by any of the available methods.
@@ -547,6 +594,14 @@ Examples:
 
   # This will output a warning and fall back to hi_res
   elements = partition_pdf("example-docs/copy-protected.pdf", strategy="fast")
+
+
+``partition_pdf`` includes a ``max_partition`` parameter that indicates the maximum character
+length for a document element.
+This parameter only applies if the ``"ocr_only"`` strategy is used for partitioning.
+The default value is ``1500``, which roughly corresponds to
+the average character length for a paragraph.
+You can disable ``max_partition`` by setting it to ``None``.
 
 
 ``partition_ppt``
@@ -590,6 +645,24 @@ Examples:
       elements = partition_pptx(file=f)
 
 
+``partition_org``
+---------------------
+
+The ``partition_org`` function processes Org Mode (``.org``) documents. The function
+first converts the document to HTML using ``pandoc`` and then calls ``partition_html``.
+You'll need `pandoc <https://pandoc.org/installing.html>`_ installed on your system
+to use ``partition_org``.
+
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.org import partition_org
+
+  elements = partition_org(filename="example-docs/README.org")
+
+
 ``partition_rst``
 ---------------------
 
@@ -606,7 +679,6 @@ Examples:
   from unstructured.partition.rst import partition_rst
 
   elements = partition_rst(filename="example-docs/README.rst")
-
 
 ``partition_rtf``
 ---------------------
@@ -667,6 +739,12 @@ Examples:
   fox met a bear."""
 
   partition_text(text=text, paragraph_grouper=group_broken_paragraphs)
+
+``partition_text`` includes a ``max_partition`` parameter that indicates the maximum character
+length for a document element.
+The default value is ``1500``, which roughly corresponds to
+the average character length for a paragraph.
+You can disable ``max_partition`` by setting it to ``None``.
 
 
 ``partition_via_api``
@@ -734,6 +812,12 @@ If ``xml_keep_tags=True``, the function returns tag information in addition to t
   elements = partition_xml(filename="example-docs/factbook.xml", xml_keep_tags=True)
 
   elements = partition_xml(filename="example-docs/factbook.xml", xml_keep_tags=False)
+
+``partition_xml`` includes a ``max_partition`` parameter that indicates the maximum character length for a document element.
+The default value is ``1500``, which roughly corresponds to
+the average character length for a paragraph.
+You can disable ``max_partition`` by setting it to ``None``.
+
 
 
 ########

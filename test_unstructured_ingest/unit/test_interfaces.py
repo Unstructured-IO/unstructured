@@ -47,6 +47,10 @@ class TestIngestDoc(BaseIngestDoc):
         return TEST_FILE_PATH
 
     @property
+    def _output_filename(self):
+        return TEST_FILE_PATH + ".json"
+    
+    @property
     def source_url(self) -> str:
         return TEST_SOURCE_URL
 

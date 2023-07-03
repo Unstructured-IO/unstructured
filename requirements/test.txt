@@ -34,7 +34,7 @@ flake8==6.0.0
     # via -r requirements/test.in
 freezegun==1.2.2
     # via -r requirements/test.in
-grpcio==1.54.2
+grpcio==1.56.0
     # via -r requirements/test.in
 idna==3.4
     # via
@@ -43,7 +43,7 @@ idna==3.4
     #   yarl
 iniconfig==2.0.0
     # via pytest
-label-studio-sdk==0.0.28
+label-studio-sdk==0.0.29
     # via -r requirements/test.in
 label-studio-tools==0.0.2
     # via label-studio-sdk
@@ -56,7 +56,7 @@ mccabe==0.7.0
     # via flake8
 multidict==6.0.4
     # via yarl
-mypy==1.4.0
+mypy==1.4.1
     # via -r requirements/test.in
 mypy-extensions==1.0.0
     # via
@@ -69,9 +69,9 @@ packaging==23.1
     #   pytest
 pathspec==0.11.1
     # via black
-platformdirs==3.6.0
+platformdirs==3.8.0
     # via black
-pluggy==1.0.0
+pluggy==1.2.0
     # via pytest
 pycodestyle==2.10.0
     # via flake8
@@ -81,7 +81,7 @@ pydantic==1.10.9
     #   label-studio-sdk
 pyflakes==3.0.1
     # via flake8
-pytest==7.3.2
+pytest==7.4.0
     # via
     #   pytest-cov
     #   pytest-mock
@@ -99,7 +99,7 @@ requests==2.31.0
     # via
     #   -c requirements/base.txt
     #   label-studio-sdk
-ruff==0.0.273
+ruff==0.0.275
     # via -r requirements/test.in
 six==1.16.0
     # via
@@ -120,7 +120,7 @@ types-tabulate==0.9.0.2
     # via -r requirements/test.in
 types-urllib3==1.26.25.13
     # via types-requests
-typing-extensions==4.6.3
+typing-extensions==4.7.0
     # via
     #   -c requirements/base.txt
     #   black
@@ -132,7 +132,7 @@ urllib3==1.26.16
     #   -c requirements/constraints.in
     #   requests
     #   vcrpy
-vcrpy==4.3.1
+vcrpy==5.0.0
     # via -r requirements/test.in
 wrapt==1.14.1
     # via

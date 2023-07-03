@@ -1,6 +1,5 @@
 import fnmatch
 import glob
-import json
 import os
 from dataclasses import dataclass
 from pathlib import Path
@@ -51,25 +50,12 @@ class LocalIngestDoc(BaseIngestDoc):
         """Not applicable to local file system"""
         pass
 
+    @property
     def _output_filename(self):
         return (
             Path(self.standard_config.output_dir)
             / f"{self.path.replace(f'{self.config.input_path}/', '')}.json"
         )
-
-    def has_output(self):
-        """Determine if structured output for this doc already exists."""
-        return self._output_filename().is_file() and os.path.getsize(self._output_filename())
-
-    def write_result(self):
-        """Write the structured json result for this doc. result must be json serializable."""
-        if self.standard_config.download_only:
-            return
-        output_filename = self._output_filename()
-        output_filename.parent.mkdir(parents=True, exist_ok=True)
-        with open(output_filename, "w") as output_f:
-            output_f.write(json.dumps(self.isd_elems_no_filename, ensure_ascii=False, indent=2))
-        logger.info(f"Wrote {output_filename}")
 
 
 class LocalConnector(BaseConnector):

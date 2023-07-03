@@ -50,6 +50,7 @@ class ElementMetadata:
     file_directory: Optional[str] = None
     date: Optional[str] = None
     filetype: Optional[str] = None
+    attached_to_filename: Optional[str] = None
 
     # Page numbers currenlty supported for PDF, HTML and PPT documents
     page_number: Optional[int] = None
@@ -113,6 +114,25 @@ def process_metadata():
     """Decorator for processing metadata for document elements."""
 
     def decorator(func: Callable):
+        if func.__doc__:
+            if (
+                "metadata_filename" in func.__code__.co_varnames
+                and "metadata_filename" not in func.__doc__
+            ):
+                func.__doc__ += (
+                    "\nMetadata Parameters:\n\tmetadata_filename:"
+                    + "\n\t\tThe filename to use in element metadata."
+                )
+            if (
+                "include_metadata" in func.__code__.co_varnames
+                and "include_metadata" not in func.__doc__
+            ):
+                func.__doc__ += (
+                    "\n\tinclude_metadata:"
+                    + """\n\t\tDetermines whether or not metadata is included in the metadata
+                    attribute on the elements in the output."""
+                )
+
         @wraps(func)
         def wrapper(*args, **kwargs):
             elements = func(*args, **kwargs)
@@ -169,8 +189,9 @@ class Element(ABC):
         element_id: Union[str, NoID] = NoID(),
         coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
-        metadata: ElementMetadata = ElementMetadata(),
+        metadata: Optional[ElementMetadata] = None,
     ):
+        metadata = metadata if metadata else ElementMetadata()
         self.id: Union[str, NoID] = element_id
         self.coordinates: Optional[Tuple[Tuple[float, float], ...]] = coordinates
         self._coordinate_system = coordinate_system
@@ -237,8 +258,9 @@ class CheckBox(Element):
         coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         checked: bool = False,
-        metadata: ElementMetadata = ElementMetadata(),
+        metadata: Optional[ElementMetadata] = None,
     ):
+        metadata = metadata if metadata else ElementMetadata()
         super().__init__(
             element_id=element_id,
             coordinates=coordinates,
@@ -269,8 +291,9 @@ class Text(Element):
         element_id: Union[str, NoID] = NoID(),
         coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
-        metadata: ElementMetadata = ElementMetadata(),
+        metadata: Optional[ElementMetadata] = None,
     ):
+        metadata = metadata if metadata else ElementMetadata()
         self.text: str = text
 
         if isinstance(element_id, NoID):
@@ -370,16 +393,6 @@ class PageBreak(Text):
     """An element for capturing page breaks."""
 
     category = "PageBreak"
-
-    def __init__(
-        self,
-        text: Optional[str] = None,
-        element_id: Union[str, NoID] = NoID(),
-        coordinates: Optional[List[float]] = None,
-        coordinate_system: Optional[CoordinateSystem] = None,
-        metadata: ElementMetadata = ElementMetadata(),
-    ):
-        super().__init__(text="<PAGE BREAK>")
 
 
 class Table(Text):

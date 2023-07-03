@@ -3,54 +3,28 @@
 
 set -e
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
+OUTPUT_FOLDER_NAME=biomed-api
+OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
+DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
-if [[ "$(find test_unstructured_ingest/expected-structured-output/biomed-ingest-output-api/ -type f -size +10k | wc -l)" != 2 ]]; then
-    echo "The test fixtures in test_unstructured_ingest/expected-structured-output/biomed-ingest-output-api/ look suspicious. At least one of the files is too small."
-    echo "Did you overwrite test fixtures with bad outputs?"
-    exit 1
-fi
+sh "$SCRIPT_DIR"/check-num-files-expected-output.sh 2 $OUTPUT_FOLDER_NAME 10k
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-    --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
     --biomed-api-from "2019-01-02" \
     --biomed-api-until "2019-01-02+00:03:10" \
-    --biomed-max-retries 5 \
-    --biomed-max-request-time 30 \
     --biomed-decay .3 \
-    --structured-output-dir biomed-ingest-output-api  \
+    --biomed-max-request-time 30 \
+    --biomed-max-retries 5 \
+    --download-dir "$DOWNLOAD_DIR" \
+    --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
     --num-processes 2 \
     --partition-strategy hi_res \
-    --reprocess \
-    --verbose \
+    --preserve-downloads \
     --re-download \
-    --download-dir files-ingest-download/biomed-api \
-    --preserve-downloads
+    --reprocess \
+    --structured-output-dir "$OUTPUT_DIR" \
+    --verbose
 
-OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
-
-set +x
-
-# to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
-if [[ "$OVERWRITE_FIXTURES" != "false" ]]; then
-
-    OWNER_GROUP=$(stat -c "%u:%g" test_unstructured_ingest/expected-structured-output/biomed-ingest-output-api)
-    rsync -rv --chown="$OWNER_GROUP" biomed-ingest-output-api/ test_unstructured_ingest/expected-structured-output/biomed-ingest-output-api
-
-elif ! diff -ru biomed-ingest-output-api test_unstructured_ingest/expected-structured-output/biomed-ingest-output-api ; then
-    echo
-    echo "There are differences from the previously checked-in structured outputs."
-    echo
-    echo "If these differences are acceptable, overwrite by the fixtures by setting the env var:"
-    echo
-    echo "  export OVERWRITE_FIXTURES=true"
-    echo
-    echo "and then rerun this script."
-    echo
-    echo "NOTE: You'll likely just want to run scripts/ingest-test-fixtures-update.sh on x86_64 hardware"
-    echo "to update fixtures for CI."
-    echo
-    exit 1
-
-fi
+sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

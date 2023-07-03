@@ -47,3 +47,18 @@ def test_partition_ppt_raises_with_both_specified():
 def test_partition_ppt_raises_with_neither():
     with pytest.raises(ValueError):
         partition_ppt()
+
+
+def test_partition_ppt_from_filename_exclude_metadata():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.ppt")
+    elements = partition_ppt(filename=filename, include_metadata=False)
+    for i in range(len(elements)):
+        assert elements[i].metadata.to_dict() == {}
+
+
+def test_partition_ppt_from_file_exclude_metadata():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.ppt")
+    with open(filename, "rb") as f:
+        elements = partition_ppt(file=f, include_metadata=False)
+    for i in range(len(elements)):
+        assert elements[i].metadata.to_dict() == {}

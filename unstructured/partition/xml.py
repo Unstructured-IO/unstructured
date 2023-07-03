@@ -13,6 +13,10 @@ def is_leaf(elem):
     return not bool(elem)
 
 
+def is_string(elem):
+    return isinstance(elem, str) or (hasattr(elem, "text") and isinstance(elem.text, str))
+
+
 def get_leaf_elements(
     filename: Optional[str] = None,
     file: Optional[Union[IO, SpooledTemporaryFile]] = None,
@@ -33,7 +37,7 @@ def get_leaf_elements(
 
     for elem in root.findall(xml_path):
         for subelem in elem.iter():
-            if is_leaf(subelem):
+            if is_leaf(subelem) and is_string(subelem.text):
                 leaf_elements.append(subelem.text)
 
     return "\n".join(leaf_elements)  # type: ignore
@@ -49,6 +53,7 @@ def partition_xml(
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
     encoding: Optional[str] = None,
+    max_partition: Optional[int] = 1500,
     **kwargs,
 ) -> List[Element]:
     """Partitions an XML document into its document elements.
@@ -71,6 +76,9 @@ def partition_xml(
     include_metadata
         Determines whether or not metadata is included in the metadata attribute on the
         elements in the output.
+    max_partition
+        The maximum number of characters to include in a partition. If None is passed,
+        no maximum is applied.
     """
     exactly_one(filename=filename, file=file)
     metadata_filename = metadata_filename or filename
@@ -91,6 +99,7 @@ def partition_xml(
         text=raw_text,
         metadata_filename=metadata_filename,
         include_metadata=include_metadata,
+        max_partition=max_partition,
     )
 
     return elements

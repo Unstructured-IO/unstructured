@@ -14,6 +14,7 @@ def partition_doc(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
     include_page_breaks: bool = True,
+    include_metadata: bool = True,
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft Word Documents in .doc format into its document elements.
@@ -51,6 +52,7 @@ def partition_doc(
             filename=docx_filename,
             metadata_filename=filename,
             include_page_breaks=include_page_breaks,
+            include_metadata=include_metadata,
         )
 
     return elements

@@ -23,6 +23,7 @@ from unstructured.partition.json import partition_json
 from unstructured.partition.md import partition_md
 from unstructured.partition.msg import partition_msg
 from unstructured.partition.odt import partition_odt
+from unstructured.partition.org import partition_org
 from unstructured.partition.pdf import partition_pdf
 from unstructured.partition.ppt import partition_ppt
 from unstructured.partition.pptx import partition_pptx
@@ -149,6 +150,13 @@ def partition(
         )
     elif filetype == FileType.EPUB:
         elements = partition_epub(
+            filename=filename,
+            file=file,
+            include_page_breaks=include_page_breaks,
+            **kwargs,
+        )
+    elif filetype == FileType.ORG:
+        elements = partition_org(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,
