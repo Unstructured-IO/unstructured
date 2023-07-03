@@ -5,6 +5,7 @@
 ### Features
 
 ### Fixes
+* Fix KeyError when `isd_to_elements` doesn't find a type
 
 ## 0.7.12
 

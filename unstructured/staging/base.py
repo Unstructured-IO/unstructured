@@ -90,7 +90,7 @@ def isd_to_elements(isd: List[Dict[str, Any]]) -> List[Element]:
         if _metadata_dict is not None:
             metadata = ElementMetadata.from_dict(_metadata_dict)
 
-        if item["type"] in TYPE_TO_TEXT_ELEMENT_MAP:
+        if item.get("type") in TYPE_TO_TEXT_ELEMENT_MAP:
             _text_class = TYPE_TO_TEXT_ELEMENT_MAP[item["type"]]
             elements.append(
                 _text_class(
@@ -101,10 +101,10 @@ def isd_to_elements(isd: List[Dict[str, Any]]) -> List[Element]:
                     coordinate_system=coordinate_system,
                 ),
             )
-        elif item["type"] == "CheckBox":
+        elif item.get("type") == "CheckBox":
             elements.append(
                 CheckBox(
-                    checked=item["checked"],
+                    checked=item.get("checked"),
                     element_id=element_id,
                     metadata=metadata,
                     coordinates=coordinates,
