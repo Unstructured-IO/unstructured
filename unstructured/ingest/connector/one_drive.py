@@ -14,8 +14,7 @@ from unstructured.ingest.interfaces import (
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
-if TYPE_CHECKING:
-    from office365.onedrive.driveitems import driveItem
+from office365.onedrive.driveitems import driveItem
 
 
 MAX_MB_SIZE = 512_000_000
@@ -34,7 +33,7 @@ class SimpleOneDriveConfig(BaseConnectorConfig):
         if not (self.client_id and self.client_credential and self.user_pname):
             raise ValueError(
                 "Please provide one of the following mandatory values:"
-                "\n-client_id\n-client_credential\n-user_principal_name",
+                "\n-ms-client_id\n-ms-client_cred\n-ms-user-pname",
             )
         self.token_factory = self._acquire_token
 
@@ -82,10 +81,9 @@ class OneDriveIngestDoc(BaseIngestDoc):
             download_path = download_path if odir == "" else (download_path / odir).resolve()
             output_path = output_path if odir == "" else (output_path / odir).resolve()
 
-        dname = f'{self.file.get_property("id")}-{self.file.name}'
         self.download_dir = download_path
-        self.download_filepath = (download_path / dname).resolve()
-        oname = f"{dname[:-len(self.ext)]}.json"
+        self.download_filepath = (download_path / self.file.name).resolve()
+        oname = f"{self.file.name[:-len(self.ext)]}.json"
         self.output_dir = output_path
         self.output_filepath = (output_path / oname).resolve()
 
