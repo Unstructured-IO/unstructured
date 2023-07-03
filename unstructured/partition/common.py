@@ -76,7 +76,7 @@ def normalize_layout_element(
 def layout_list_to_list_items(
     text: str,
     coordinates: Tuple[Tuple[float, float], ...],
-    coordinate_system: CoordinateSystem,
+    coordinate_system: Optional[CoordinateSystem],
 ) -> List[Element]:
     """Converts a list LayoutElement to a list of ListItem elements."""
     split_items = ENUMERATED_BULLETS_RE.split(text)
