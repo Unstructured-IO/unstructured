@@ -1,0 +1,139 @@
+X-Gmail-Labels: Archived,Category Updates,Unread
+Delivered-To: email@domain.com
+Received: by 2002:a05:651c:98a:0:0:0:0 with SMTP id b10csp1857290ljq;
+        Mon, 10 Oct 2022 05:14:10 -0700 (PDT)
+X-Google-Smtp-Source: AMsMyM59wmLQXJ73eH+8nTYP0CP3MwUawP3ir019apX61OB0CVRaP92eFI9REGn5dNV33Tf9I/vw
+X-Received: by 2002:a6b:be86:0:b0:6b9:7a46:479f with SMTP id o128-20020a6bbe86000000b006b97a46479fmr8507790iof.130.1665404050586;
+        Mon, 10 Oct 2022 05:14:10 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1665404050; cv=none;
+        d=google.com; s=arc-20160816;
+        b=EKi4xY7ACAVUDqLPuhCP59ecwcnpS+zY+pOcRCiUIiuvLfKwdZ39nuQKuXzhKMuaKR
+         NTfIJY7Y0tWtuPQGJ+2ZCtjqJyqqorZhB71CQXe9yLQxT1iu5Z39XBbFyfix+3ylRQH/
+         G4N7OXn/P1baycsYs15y3/uetDje+NvFrkkq2OYjcBhXEwZn531vEiEp2zcL+wBDvjVI
+         NtGaXkN7HuH6X38Siz0CMHj1YLHtjGnrCjXNHa9iXjIV4Uja4WzS9Jl65Nu5bTjZegtr
+         uIHB+q2XOiOU1GhZB4GCRLxrj4msCBgHqtJ0qBId9k1WhVku57ovMiiUvJDtF3gyMk/h
+         9gOw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:mime-version:subject:message-id:to:from
+         :date:dkim-signature;
+        bh=Ub9henOpe5XmdF/KsWVEJ2CSvdKWuLqCTVvS2++iE6A=;
+        b=a3fGmj/w8651iTjLw887qBJS32RMpFKrxxvYoegQU9b6Gt2vqzvsB90dg67rUq4iV1
+         uqrSmPphkOCKu6C0kYf22t1xOmG745zxnnfIGwi79I03kQZ1HX0IQBecGooVOlROIyN8
+         Q00Y3256iXAXB2qEPc4cBCSFamO9XjWuCkP2PNLqxYZrdGjUYUVo5vmvdI3EP1hvxipq
+         nWxjNQ+lH2UiLnBzb4Gfe7acrvkhKz9gbfXIhMPsvDBIi3bxNXmi3ID2nHXJmpYHWMq8
+         UwsmAq/X3lxmhLfmkkOWTuujYVjDWOzbzfZbv7sWJgdgur4sOUgxGpRLaZJPO3gib2B7
+         F0dA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@github.com header.s=pf2014 header.b=NcXDBg+m;
+       spf=pass (google.com: domain of email@domain.com designates 192.30.252.211 as permitted sender) smtp.mailfrom=email@domain.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=github.com
+Return-Path: <email@domain.com>
+Received: from out-28.smtp.github.com (out-28.smtp.github.com. [192.30.252.211])
+        by mx.google.com with ESMTPS id s3-20020a056e0210c300b002f8e9246e7asi9145395ilj.14.2022.10.10.05.14.10
+        for <email@domain.com>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 10 Oct 2022 05:14:10 -0700 (PDT)
+Received-SPF: pass (google.com: domain of email@domain.com designates 192.30.252.211 as permitted sender) client-ip=192.30.252.211;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@github.com header.s=pf2014 header.b=NcXDBg+m;
+       spf=pass (google.com: domain of email@domain.com designates 192.30.252.211 as permitted sender) smtp.mailfrom=email@domain.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=github.com
+Received: from github-lowworker-bf9f1da.ash1-iad.github.net (github-lowworker-bf9f1da.ash1-iad.github.net [10.56.117.24])
+	by smtp.github.com (Postfix) with ESMTP id 01F7390008F
+	for <email@domain.com>; Mon, 10 Oct 2022 05:14:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=github.com;
+	s=pf2014; t=1665404050;
+	bh=Ub9henOpe5XmdF/KsWVEJ2CSvdKWuLqCTVvS2++iE6A=;
+	h=Date:From:To:Subject:From;
+	b=NcXDBg+mI5wZwGHJkZSkoax1lOe+r3MZEyz2E+47Ce1s/4a4EQoeSGyQroedLgUnA
+	 lVoA13APnvt/kYa8k5Y348gK4qEKfQwpcC1gQkZfgUjgjQ6tacnRsZDl96AGH9vclW
+	 Kj/tO7vx4xOGBUHqfzkdokHV0ms5rzrBJ0tv8lic=
+Date: Mon, 10 Oct 2022 05:14:09 -0700
+From: GitHub <email@domain.com>
+To: email@domain.com
+Message-ID: <email@domain.com>
+Subject: [GitHub] Subscribed to 63 nf-core repositories
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Auto-Response-Suppress: All
+
+Hey there, we=E2=80=99re just writing to let you know that you=E2=80=99ve=
+ automatically started watching several repositories on GitHub.=0D
+=0D
+You=E2=80=99ll receive notifications for all issues, pull requests, and c=
+omments that happen inside the repository. If you would like to stop watc=
+hing any of these repositories, you can manage your settings here:=0D
+=0D
+  https://github.com/nf-core/cookiecutter/subscription=0D
+  https://github.com/nf-core/tools/subscription=0D
+  https://github.com/nf-core/logos/subscription=0D
+  https://github.com/nf-core/methylseq/subscription=0D
+  https://github.com/nf-core/test-datasets/subscription=0D
+  https://github.com/nf-core/rnaseq/subscription=0D
+  https://github.com/nf-core/exoseq/subscription=0D
+  https://github.com/nf-core/nf-co.re/subscription=0D
+  https://github.com/nf-core/chipseq/subscription=0D
+  https://github.com/nf-core/vipr/subscription=0D
+  https://github.com/nf-core/mag/subscription=0D
+  https://github.com/nf-core/eager/subscription=0D
+  https://github.com/nf-core/hlatyping/subscription=0D
+  https://github.com/nf-core/smrnaseq/subscription=0D
+  https://github.com/nf-core/ampliseq/subscription=0D
+  https://github.com/nf-core/neutronstar/subscription=0D
+  https://github.com/nf-core/rnafusion/subscription=0D
+  https://github.com/nf-core/atacseq/subscription=0D
+  https://github.com/nf-core/nascent/subscription=0D
+  https://github.com/nf-core/configs/subscription=0D
+  https://github.com/nf-core/epitopeprediction/subscription=0D
+  https://github.com/nf-core/airrflow/subscription=0D
+  https://github.com/nf-core/bacass/subscription=0D
+  https://github.com/nf-core/scrnaseq/subscription=0D
+  https://github.com/nf-core/hic/subscription=0D
+  https://github.com/nf-core/proteomicslfq/subscription=0D
+  https://github.com/nf-core/sarek/subscription=0D
+  https://github.com/nf-core/cageseq/subscription=0D
+  https://github.com/nf-core/bactmap/subscription=0D
+  https://github.com/nf-core/mnaseseq/subscription=0D
+  https://github.com/nf-core/kmermaid/subscription=0D
+  https://github.com/nf-core/crisprvar/subscription=0D
+  https://github.com/nf-core/imcyto/subscription=0D
+  https://github.com/nf-core/modules/subscription=0D
+  https://github.com/nf-core/nanoseq/subscription=0D
+  https://github.com/nf-core/demultiplex/subscription=0D
+  https://github.com/nf-core/viralrecon/subscription=0D
+  https://github.com/nf-core/gwas/subscription=0D
+  https://github.com/nf-core/dualrnaseq/subscription=0D
+  https://github.com/nf-core/clipseq/subscription=0D
+  https://github.com/nf-core/cutandrun/subscription=0D
+  https://github.com/nf-core/circrna/subscription=0D
+  https://github.com/nf-core/vscode-extensionpack/subscription=0D
+  https://github.com/nf-core/rnavar/subscription=0D
+  https://github.com/nf-core/fetchngs/subscription=0D
+  https://github.com/nf-core/raredisease/subscription=0D
+  https://github.com/nf-core/hicar/subscription=0D
+  https://github.com/nf-core/circdna/subscription=0D
+  https://github.com/nf-core/funcscan/subscription=0D
+  https://github.com/nf-core/ssds/subscription=0D
+  https://github.com/nf-core/nanostring/subscription=0D
+  https://github.com/nf-core/genomeannotator/subscription=0D
+  https://github.com/nf-core/taxprofiler/subscription=0D
+  https://github.com/nf-core/spatialtranscriptomics/subscription=0D
+  https://github.com/nf-core/proteinfold/subscription=0D
+  https://github.com/nf-core/prettier-plugin-nextflow/subscription=0D
+  https://github.com/nf-core/genomeassembler/subscription=0D
+  https://github.com/nf-core/hgtseq/subscription=0D
+  https://github.com/nf-core/isoseq/subscription=0D
+  https://github.com/nf-core/rnadnavar/subscription=0D
+  https://github.com/nf-core/crisprseq/subscription=0D
+  https://github.com/nf-core/genomeskim/subscription=0D
+  https://github.com/nf-core/fastquorum/subscription=0D
+=0D
+You automatically watched these repositories because you=E2=80=99ve been =
+given access to them.=0D
+=0D
+Thanks!=0D
+
+From 1751394755051884550@xxx Mon Dec 05 17:09:55 +0000 2022
+X-GM-THRID: 1751394755051884550

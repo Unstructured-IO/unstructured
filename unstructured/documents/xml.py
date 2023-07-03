@@ -3,7 +3,12 @@ from typing import List, Optional, Union
 from lxml import etree
 
 from unstructured.documents.base import Document, Page
+from unstructured.file_utils.encoding import read_txt_file
 from unstructured.logger import logger
+from unstructured.partition.text import (
+    element_from_text,
+    split_by_paragraph,
+)
 
 VALID_PARSERS = Union[etree.HTMLParser, etree.XMLParser, None]
 
@@ -66,12 +71,24 @@ class XMLDocument(Document):
                 document_tree = etree.fromstring(content, self.parser)
                 if document_tree is None:
                     raise ValueError("document_tree is None")
+
             # NOTE(robinson) - The following ValueError occurs with unicode strings. In that
             # case, we call back to encoding the string and passing in bytes.
             #     ValueError: Unicode strings with encoding declaration are not supported.
             #     Please use  bytes input or XML fragments without declaration.
             except ValueError:
                 document_tree = etree.fromstring(content.encode(), self.parser)
+
+            if "<pre>" and "</pre>" in content:
+                tree = etree.HTML(content)
+                for element in tree.xpath("//pre"):
+                    if not element.text:
+                        continue
+                    text_content = split_by_paragraph(element.text)
+                    for text in text_content:
+                        element = etree.Element("span")
+                        element.text = str(element_from_text(text=text))
+                        document_tree.append(element)
 
             if self.stylesheet:
                 if isinstance(self.parser, etree.HTMLParser):
@@ -91,10 +108,16 @@ class XMLDocument(Document):
         return self.document_tree
 
     @classmethod
-    def from_string(cls, text: str, parser: VALID_PARSERS = None, stylesheet: Optional[str] = None):
+    def from_string(
+        cls,
+        text: str,
+        parser: VALID_PARSERS = None,
+        stylesheet: Optional[str] = None,
+        **kwargs,
+    ):
         """Supports reading in an XML file as a raw string rather than as a file."""
         logger.info("Reading document from string ...")
-        doc = cls(parser=parser, stylesheet=stylesheet)
+        doc = cls(parser=parser, stylesheet=stylesheet, **kwargs)
         doc._read_xml(text)
         return doc
 
@@ -104,8 +127,8 @@ class XMLDocument(Document):
         filename,
         parser: VALID_PARSERS = None,
         stylesheet: Optional[str] = None,
-        encoding: Optional[str] = "utf-8",
+        encoding: Optional[str] = None,
+        **kwargs,
     ):
-        with open(filename, encoding=encoding) as f:
-            content = f.read()
-        return cls.from_string(content, parser=parser, stylesheet=stylesheet)
+        _, content = read_txt_file(filename=filename, encoding=encoding)
+        return cls.from_string(content, parser=parser, stylesheet=stylesheet, **kwargs)

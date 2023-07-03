@@ -1,15 +1,18 @@
 from typing import IO, List, Optional
 
-from unstructured.documents.elements import Element
+from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.html import convert_and_partition_html
 
 
+@process_metadata()
 @add_metadata_with_filetype(FileType.EPUB)
 def partition_epub(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
     include_page_breaks: bool = False,
+    include_metadata: bool = True,
+    **kwargs,
 ) -> List[Element]:
     """Partitions an EPUB document. The document is first converted to HTML and then
     partitoned using partiton_html.

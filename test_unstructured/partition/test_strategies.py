@@ -74,3 +74,11 @@ def test_determine_image_pdf_strategy(pdf_text_extractable, infer_table_structur
         infer_table_structure=infer_table_structure,
     )
     assert strategy is expected
+
+
+def test_determine_pdf_or_image_strategy_fallback_ocr():
+    strategy = strategies.determine_pdf_or_image_strategy(
+        strategy="fast",
+        is_image=True,
+    )
+    assert strategy == "ocr_only"

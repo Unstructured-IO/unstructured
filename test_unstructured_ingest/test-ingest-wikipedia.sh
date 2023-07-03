@@ -2,21 +2,20 @@
 
 set -e
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
+OUTPUT_FOLDER_NAME=wikipedia
+OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
+DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
+    --download-dir "$DOWNLOAD_DIR" \
     --metadata-exclude filename,file_directory \
-    --wikipedia-page-title "Open Source Software" \
-    --structured-output-dir wikipedia-ingest-output \
     --num-processes 2 \
     --partition-strategy hi_res \
-    --verbose
+    --preserve-downloads \
+    --structured-output-dir "$OUTPUT_DIR" \
+    --verbose \
+    --wikipedia-page-title "Open Source Software"
 
-set +e
-
-if [ "$(find 'wikipedia-ingest-output' -type f -printf '.' | wc -c)" != 3 ]; then
-   echo
-   echo "3 files should have been created."
-   exit 1
-fi
+sh "$SCRIPT_DIR"/check-num-files-output.sh 3 $OUTPUT_FOLDER_NAME

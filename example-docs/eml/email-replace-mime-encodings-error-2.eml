@@ -1,0 +1,505 @@
+X-Gmail-Labels: Archived,Important,Category Forums,Unread
+Delivered-To: email@domain.com
+Received: by 2002:a05:6520:2557:b0:258:b5a2:9a1 with SMTP id cu23csp99781lkb;
+        Thu, 30 Mar 2023 11:00:43 -0700 (PDT)
+X-Received: by 2002:a05:6a20:baa5:b0:dc:e183:26cc with SMTP id fb37-20020a056a20baa500b000dce18326ccmr22121966pzb.23.1680199243395;
+        Thu, 30 Mar 2023 11:00:43 -0700 (PDT)
+ARC-Seal: i=3; a=rsa-sha256; t=1680199243; cv=pass;
+        d=google.com; s=arc-20160816;
+        b=zf3aDyMdtzML6N6OFWNECEmgqfDAxjfvhxiDEN/6POhUGBJq5XQvkeFRhnqKvuZZxy
+         7iaIurn0SqH2QS2gAUus7xL0RktDCQxD+ttAM5uE4G+N6W4/NgQxH+dhOBtkPrGEb5nE
+         42g4OFoOA64YQM6zOBGHu+fCHezDUUxNEWGH/DsD7BZTltk4nanMnPok5KYkif76l4BU
+         XlarGHCWAq0+dcFg/368Hh+rOtAhiR88oMHS9opZchc1Na/Q+i01KdsS8Vfqhy93XWMo
+         xH3MezQh7vJpepMrqtpBOLUKnM/DhAbtYUCyr4YHHYKZY9yD23vk5jZrMug9EbJdP+X+
+         g2yQ==
+ARC-Message-Signature: i=3; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=list-unsubscribe:list-subscribe:list-archive:list-help:list-post
+         :list-id:mailing-list:precedence:content-language:importance
+         :thread-index:mime-version:message-id:date:subject:in-reply-to
+         :references:to:from:sender:dkim-signature;
+        bh=D7Wf7anmuBCeL/ZQfgU9Tyg9blpKpozFd2lPq2C4IhM=;
+        b=Hu8ZVKktBNBIKzwr9lS+7EH+g+fK+0WNtOgAOwjKe5oIPToIVdr6LncDQ5vV/JgdiN
+         KkZ0wXMGb8ApbJopZuRFWUbQ194Qme5YboN1ZVTn7SGpLBh21+L4dAD0p2XiIedCc0zY
+         CY4MEqG6TUWON8ZSlRWzEOIQ0JjVkMqEHb1DoIenVglteHSggx+SNZs8dtNomY/WExqz
+         D6P9nSd7BCHsnZsCZykrknEqDHrDJcmMyxZpEfKjZRIoPoLcUKCgIKQRsWR7CauccclT
+         Y2aQqdNWxeCcocEQGLvNCXNbZSRX3KEvnFrNeEYSrkyQgR/UeLuDG8FOiG6ZK473uEpH
+         fXKA==
+ARC-Authentication-Results: i=3; mx.google.com;
+       dkim=pass header.i=@webpage.com header.s=google header.b=DmPqo2BP;
+       arc=pass (i=2 spf=pass spfdomain=aptaintell.com dkim=pass dkdomain=rediffmailpro.com);
+       spf=pass (google.com: domain of email@domain.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=email@domain.com
+Return-Path: <email@domain.com>
+Received: from mail-sor-f69.google.com (mail-sor-f69.google.com. [209.85.220.69])
+        by mx.google.com with SMTPS id c1-20020aa78801000000b0061995eabe83sor167574pfo.56.2023.03.30.11.00.43
+        for <email@domain.com>
+        (Google Transport Security);
+        Thu, 30 Mar 2023 11:00:43 -0700 (PDT)
+Received-SPF: pass (google.com: domain of email@domain.com designates 209.85.220.69 as permitted sender) client-ip=209.85.220.69;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@webpage.com header.s=google header.b=DmPqo2BP;
+       arc=pass (i=2 spf=pass spfdomain=aptaintell.com dkim=pass dkdomain=rediffmailpro.com);
+       spf=pass (google.com: domain of email@domain.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=email@domain.com
+ARC-Seal: i=2; a=rsa-sha256; t=1680199243; cv=pass;
+        d=google.com; s=arc-20160816;
+        b=wE0k0KTTP/OsBAu+ybmmJvBUJVKitL50w/2g5JFKyRcVaH26CbyUu1s+t9lUtKlg6t
+         KlWOQFQE1othqJAggyVieb9IHsEvTFTIugg46e5PxUUwqV2V0PA6FYxyRIUQf25qUCP6
+         OYO7AJJ2xLLj7u4dLcsluMqaCwqTZFfXRNZZxsfqDU/hCjiod/28Yo//Qyx5BtqNEaiY
+         Kzk+Xe4J05/kOKzBwol2z7cXDwSAD2m05UIV925LuBxKdX/3Su4iV9K+hIltKU/0Sf/S
+         41rQ8frn1hvmENj2X8o+PbCvmUuNirbZzBr6JjDSSv6jU47/wg1sUIjw+Ay7ogA8svs7
+         MjjQ==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=list-unsubscribe:list-subscribe:list-archive:list-help:list-post
+         :list-id:mailing-list:precedence:content-language:importance
+         :thread-index:mime-version:message-id:date:subject:in-reply-to
+         :references:to:from:sender:dkim-signature;
+        bh=D7Wf7anmuBCeL/ZQfgU9Tyg9blpKpozFd2lPq2C4IhM=;
+        b=0WsUhXIj+V9gzUwZCKJTdh560F3dmpKF3xkdQXQ1Y3Irle4C77ICWE5i+F6Czpsx9o
+         zoDZQsGa9OBGblpXTIiNmWG5AEtxe6MS+3hMoyrD2bObRq91Dfwx38vMn4RuddiYQT7c
+         iqwS53jT5i4w9m5A4IC6q2aTkPq7wVe+MENNWPGHQvs+ZhUWD5yX/gUP0tG9pAsxm4+B
+         vbnTEZ+Mlik/VR/aqQeB7oJK2zBIMyvZu/JLZ1I6kVbBERws1bcZnNLJagxT/cWwJKo5
+         Qw2pCQaBdg2yBWX+W7tSaBkxCMAA5BGzcHuoGLF9Ogv1BGCGi/g0ew9Y5mr5xFw90Xs2
+         01oQ==
+ARC-Authentication-Results: i=2; mx.google.com;
+       dkim=pass header.i=@rediffmailpro.com header.s=epro header.b=EiT5JEqL;
+       spf=pass (google.com: domain of email@domain.com designates 119.252.152.31 as permitted sender) smtp.mailfrom=email@domain.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=webpage.com; s=google; t=1680199243;
+        h=list-unsubscribe:list-subscribe:list-archive:list-help:list-post
+         :list-id:mailing-list:precedence:x-original-authentication-results
+         :x-original-sender:content-language:importance:thread-index
+         :mime-version:message-id:date:subject:in-reply-to:references:to:from
+         :sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=D7Wf7anmuBCeL/ZQfgU9Tyg9blpKpozFd2lPq2C4IhM=;
+        b=DmPqo2BPBx1Mq82bi1bxAzvGsQ6D/ijpI3l0ieU6N9jUYnWvH7pSuiMwA5BEAFpGMZ
+         bN1/EzzkRrHYfsp5FjzQx/zedNez4jkDFm4s0p0TDay00Zk5AZtF3iRJxy1Pm2A3/w7z
+         VPAdcqWpbq/RIMI8iV2igTSK1X+awFE0VAorc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680199243;
+        h=list-unsubscribe:list-subscribe:list-archive:list-help:list-post
+         :x-spam-checked-in-group:list-id:mailing-list:precedence
+         :x-original-authentication-results:x-original-sender
+         :content-language:importance:thread-index:mime-version:message-id
+         :date:subject:in-reply-to:references:to:from:x-gm-message-state
+         :sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=D7Wf7anmuBCeL/ZQfgU9Tyg9blpKpozFd2lPq2C4IhM=;
+        b=0hwrwY8tyNUM+cgDljMMh8tcH6qDUUfL/W6MIetNnCQgLKIf9Lpuen0mZv7NIfkL5J
+         +BcFTlvZ4Bp525nYK8Gp19YLh6YaKNLO+g7x2nskAtXz+OHkwG/3+WAvn8MIv0dVwjnH
+         2Z9w574IRK3ui6f+HAnbnQpB/h522tJblN1nPklsyi7MpN0k0y6mDKpIFYtrdnIiCqb1
+         vRR2maXCjScKB0BQPfPkwwua8PgkCjk5An2hNe/dv0nqQ1eFziqDjn5Z4aFkmWsQkbjc
+         Hku6t4emAR5L5h5x26PC1CtieE1ex4fYnhqFwTvxmUyMyQVm59TuMXGULi3QoAeOx8+m
+         AIIg==
+Sender: email@domain.com
+X-Gm-Message-State: AAQBX9eEFzCHz46ynsQc2qXxMguQ/+4V0lAS1ybKvfnxP4cjATLE49uX
+	eL5YLIVbp3fz3B9WqtTUlpwMDfvt
+X-Google-Smtp-Source: AK7set/ENlM2O9mkpX2Ha9M1bOVL8eyCT80MEU/Poy0zd6cQED/1AKoCDkHYPu4LC4sdBY0nGGHgWg==
+X-Received: by 2002:a05:6a00:2d0d:b0:623:7446:7075 with SMTP id fa13-20020a056a002d0d00b0062374467075mr12528164pfb.2.1680199242911;
+        Thu, 30 Mar 2023 11:00:42 -0700 (PDT)
+X-BeenThere: webpage.com
+Received: by 2002:a05:6a00:3307:b0:61d:9178:80de with SMTP id
+ cq7-20020a056a00330700b0061d917880dels817798pfb.2.-pod-prod-gmail; Thu, 30
+ Mar 2023 11:00:41 -0700 (PDT)
+X-Received: by 2002:a05:6a00:1881:b0:627:e180:abed with SMTP id x1-20020a056a00188100b00627e180abedmr12874021pfh.1.1680199241649;
+        Thu, 30 Mar 2023 11:00:41 -0700 (PDT)
+X-BeenThere: email@domain.com
+Received: by 2002:a17:90b:4cc8:b0:234:bff4:2e74 with SMTP id
+ nd8-20020a17090b4cc800b00234bff42e74ls3078332pjb.1.-pod-preprod-gmail; Thu,
+ 30 Mar 2023 11:00:41 -0700 (PDT)
+X-Received: by 2002:a17:903:41cf:b0:1a1:a800:96a7 with SMTP id u15-20020a17090341cf00b001a1a80096a7mr29010392ple.8.1680199238760;
+        Thu, 30 Mar 2023 11:00:38 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1680199238; cv=none;
+        d=google.com; s=arc-20160816;
+        b=FXTmCzU58W8r/ZNDiEGRZJ3Mz80t80+kLtJVSKo/KI57tMgbg94Faebee/hTCMX0mi
+         NuY1tycpQsu+Z6BIyTHkk8nQSUN2GGYVmOvW+GZgFVu5lkBXz5rPQFDCg/QXBNNgTpbK
+         HnUGPWxbp/XpuOK/F7n/hrV47OMzhXb9Mivyf6xTs6LLAm3APA5MVbVEQyZl7NhgcGFl
+         QschCh5gF4lQcfvNKLxv+8y/us2AVgHsz8JWE52IE4ialxPiXE9B5jSR3/eZoULv5QFR
+         fj8tJ9VwJ2aSUfI/j9AkSfm+JLWQsUvJ/uz0x12TXCNIsWCNSOvEsqj2TLo2jSrPK0E3
+         TA/A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=disposition-notification-to:content-language:importance
+         :thread-index:mime-version:message-id:date:subject:in-reply-to
+         :references:to:from:dkim-signature;
+        bh=D7Wf7anmuBCeL/ZQfgU9Tyg9blpKpozFd2lPq2C4IhM=;
+        b=m+bf+Z+//rZoBky4+cIJkKSeRy9xGaercZJHgNEt/rvpywV95C9vn9c9L62Hmiwchx
+         pNPxWDrC/+f0SkDot3cCLxRQpX1yesSEwzzkEXUibi/FQtusr4GLdaS3iKvoSUmnyQUd
+         d1fJJgSbvx899siz486okS0u8tJ/KusuijoTRyrKBx3t8n6cwWKEwLc/HtEWX0X77a5t
+         Ate/jcA0vadKNNdUJyK7/fuQcCCC5oE7fL2lzgtdHdWmkrsqfjeOhigxs1jrZ4iQm2QC
+         p0VzJqLLAlqOMR52RiFy+Cbm9xgPY/IlylA2WZ6VgSHejTvRvSfH05wSU6OTQNdNYTFv
+         cZLg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@rediffmailpro.com header.s=epro header.b=EiT5JEqL;
+       spf=pass (google.com: domain of email@domain.com designates 119.252.152.31 as permitted sender) smtp.mailfrom=email@domain.com
+Received: from pro152-31.mxout.rediffmailpro.com (pro152-31.mxout.rediffmailpro.com. [119.252.152.31])
+        by mx.google.com with ESMTPS id c9-20020a170903234900b0019e25cff4f5si2649plh.617.2023.03.30.11.00.38
+        for <email@domain.com>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 30 Mar 2023 11:00:38 -0700 (PDT)
+Received-SPF: pass (google.com: domain of email@domain.com designates 119.252.152.31 as permitted sender) client-ip=119.252.152.31;
+Received: from pro-236-102.rediffmailpro.com (unknown [10.50.252.5])
+	by pro152-31.mxout.rediffmailpro.com (Postfix) with ESMTP id 4231F1E0B27
+	for <email@domain.com>; Thu, 30 Mar 2023 23:30:37 +0530 (IST)
+X-REDIFF-Delivered-Remotely-To: email@domain.com
+Received: (qmail 32448 invoked from network); 30 Mar 2023 18:00:37 -0000
+x-m-msg: 388bebb4ee4e45633ad15c14b8bad855; a6da7d6asas6dasd77; 5dad65ad5sd;
+X-OUT-VDRT-SpamState: 0\LEGIT
+X-OUT-VDRT-SpamScore: 0
+X-OUT-VDRT-SpamCause: "gggruggvucftvghtrhhoucdtuddrgedvhedrvdehledgvdekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecutffgfffkhffhnecuuegrihhlohhuthemuceftddtnecunecujfgurhephffvfhgjufffkfggtgfrigfothgkpfesrhdtreepvddtudenucfhrhhomhepfdfgmhhmrgcurfgvrghrshhonhdfuceovghmmhgrrdhpsegrphhtrghinhhtvghllhdrtghomheqnecuggftrfgrthhtvghrnhepiefgiedvffdufeefheefjedvleetffelveduvdejleevieetgeffheekteektedvnecukfhppedutdeirdehuddrudeiuddrvdefkeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedutdeirdehuddrudeiuddrvdefkedpmhgrihhlfhhrohhmpegvmhhmrgdrphesrghpthgrihhnthgvlhhlrdgtohhmpdhnsggprhgtphhtthhopedupdhrtghpthhtohephhgvlhhlohessghiohhmrghgvgdrnhgvthdpmhhouggvpehsmhhtphhouhht"
+X-Dedup-Identifier: 1680199237_32441_32264_pro-236-102
+Received: from unknown (HELO Admin11PC) (email@domain.com@106.51.161.238)
+  by mailserver with ESMTPS (AES128-SHA encrypted); 30 Mar 2023 18:00:37 -0000
+From: "Someone Real" <email@domain.com>
+To: <email@domain.com>
+References:
+In-Reply-To:
+Subject: RE: Random Expo Expo 2023
+Date: Thu, 30 Mar 2023 14:00:24 -0400
+Message-ID: <!&!AAAAAAAAAAAYAAAAAAAAANUTD+ZzPqlBtPyABIdBhSrCgAAAEAAAAMi/+RkFMYRAqRwphTQaczABAAAAAA==@aptaintell.com>
+MIME-Version: 1.0
+Content-Type: multipart/related;
+	boundary="----=_NextPart_000_2349_01D9630F.FB2474F0"
+X-Priority: 1 (Highest)
+X-MSMail-Priority: High
+X-Mailer: Microsoft Outlook 14.0
+Thread-Index: AdliW8FmeqpbemC4S5KTxToUWPaJGgA1b4Gw
+Importance: High
+Content-Language: en-us
+X-Original-Sender: email@domain.com
+X-Original-Authentication-Results: mx.google.com;       dkim=pass
+ header.i=@rediffmailpro.com header.s=epro header.b=EiT5JEqL;       spf=pass
+ (google.com: domain of email@domain.com designates 119.252.152.31 as
+ permitted sender) smtp.mailfrom=email@domain.com
+Precedence: list
+Mailing-list: list email@domain.com; contact email@domain.com
+List-ID: <hello.webpage.com>
+X-Spam-Checked-In-Group: email@domain.com
+X-Google-Group-Id: 253566248012
+List-Post: <https://groups.google.com/a/webpage.com/group/hello/post>, <mailto:email@domain.com>
+List-Help: <https://support.google.com/a/webpage.com/bin/topic.py?topic=25838>,
+ <mailto:email@domain.com>
+List-Archive: <https://groups.google.com/a/webpage.com/group/hello/>
+List-Subscribe: <https://groups.google.com/a/webpage.com/group/hello/subscribe>,
+ <mailto:email@domain.com>
+List-Unsubscribe: <mailto:email@domain.com>,
+ <https://groups.google.com/a/webpage.com/group/hello/subscribe>
+
+This is a multipart message in MIME format.
+
+------=_NextPart_000_2349_01D9630F.FB2474F0
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_001_234A_01D9630F.FB2474F0"
+
+
+------=_NextPart_001_234A_01D9630F.FB2474F0
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+=20
+
+=20
+
+Hi,
+
+=20
+
+Did you get a chance to review my previous email?
+
+=20
+
+I appreciate if you could let me know your interest in acquiring the
+Attendee list.
+
+=20
+
+Regards,
+
+Someone Real
+
+=20
+
+From: Someone Real [mailto:email@domain.com]=20
+Sent: Wednesday, March 29, 2023 12:30 PM
+To: 'email@domain.com'
+Subject: Random Expo Expo 2023
+Importance: High
+
+=20
+
+=20
+
+=20
+
+Dear Exhibitor,
+
+=20
+
+Wishing you all the best for Random Expo Conference & Expo2023.
+
+=20
+
+Could you let me know if you want to receive Pre-Show Registered =
+Attendee
+list  by emails?
+
+=20
+
+You can send Pre-Show Invitation mailers using these lists and increase =
+foot
+fall at your booth.
+
+=20
+
+Reply as  =93 Yes we=92re interested=94.
+
+=20
+
+If not reply " we=B4re not interested".
+
+=20
+
+Regards,
+
+Someone Real - (Events & Tradeshow Specialist)
+
+
+
+=20
+
+
+------=_NextPart_001_234A_01D9630F.FB2474F0
+Content-Type: text/html;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+<META HTTP-EQUIV=3D"Content-Type" CONTENT=3D"text/html; =
+charset=3Diso-8859-1">
+<html xmlns:v=3D"urn:schemas-microsoft-com:vml" =
+xmlns:o=3D"urn:schemas-microsoft-com:office:office" =
+xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
+xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" =
+xmlns=3D"http://www.w3.org/TR/REC-html40"><head><meta name=3DGenerator =
+content=3D"Microsoft Word 14 (filtered medium)"><!--[if =
+!mso]><style>v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+w\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style><![endif]--><style><!--
+/* Font Definitions */
+@font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;}
+@font-face
+	{font-family:Tahoma;
+	panose-1:2 11 6 4 3 5 4 4 2 4;}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0in;
+	margin-bottom:.0001pt;
+	font-size:11.0pt;
+	font-family:"Calibri","sans-serif";}
+a:link, span.MsoHyperlink
+	{mso-style-priority:99;
+	color:blue;
+	text-decoration:underline;}
+a:visited, span.MsoHyperlinkFollowed
+	{mso-style-priority:99;
+	color:purple;
+	text-decoration:underline;}
+p.MsoAcetate, li.MsoAcetate, div.MsoAcetate
+	{mso-style-priority:99;
+	mso-style-link:"Balloon Text Char";
+	margin:0in;
+	margin-bottom:.0001pt;
+	font-size:8.0pt;
+	font-family:"Tahoma","sans-serif";}
+p.MsoNoSpacing, li.MsoNoSpacing, div.MsoNoSpacing
+	{mso-style-priority:1;
+	margin:0in;
+	margin-bottom:.0001pt;
+	font-size:10.0pt;
+	font-family:"Calibri","sans-serif";}
+span.BalloonTextChar
+	{mso-style-name:"Balloon Text Char";
+	mso-style-priority:99;
+	mso-style-link:"Balloon Text";
+	font-family:"Tahoma","sans-serif";}
+span.EmailStyle20
+	{mso-style-type:personal;
+	font-family:"Calibri","sans-serif";
+	color:windowtext;
+	font-weight:normal;
+	font-style:normal;}
+span.EmailStyle21
+	{mso-style-type:personal-reply;
+	font-family:"Calibri","sans-serif";
+	color:#1F497D;
+	font-weight:normal;
+	font-style:normal;}
+.MsoChpDefault
+	{mso-style-type:export-only;
+	font-size:10.0pt;}
+@page WordSection1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.0in 1.0in 1.0in;}
+div.WordSection1
+	{page:WordSection1;}
+--></style><!--[if gte mso 9]><xml>
+<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
+</xml><![endif]--><!--[if gte mso 9]><xml>
+<o:shapelayout v:ext=3D"edit">
+<o:idmap v:ext=3D"edit" data=3D"1" />
+</o:shapelayout></xml><![endif]--></head><body lang=3DEN-US link=3Dblue =
+vlink=3Dpurple><div class=3DWordSection1><p class=3DMsoNormal><span =
+style=3D'color:#1F497D'><o:p>&nbsp;</o:p></span></p><p =
+class=3DMsoNormal><span =
+style=3D'color:#1F497D'><o:p>&nbsp;</o:p></span></p><div><p =
+class=3DMsoNormal><span =
+style=3D'font-size:10.0pt;font-family:"Arial","sans-serif";color:#1F497D'=
+>Hi,<o:p></o:p></span></p><p class=3DMsoNormal><span =
+style=3D'font-size:10.0pt;font-family:"Arial","sans-serif";color:#1F497D'=
+><o:p>&nbsp;</o:p></span></p><p class=3DMsoNormal><span =
+style=3D'font-size:10.0pt;font-family:"Arial","sans-serif";color:#1F497D'=
+>Did you get a chance to review my previous =
+email?<o:p></o:p></span></p><p class=3DMsoNormal><span =
+style=3D'font-size:10.0pt;font-family:"Arial","sans-serif";color:#1F497D'=
+><o:p>&nbsp;</o:p></span></p><p class=3DMsoNormal><span =
+style=3D'font-size:10.0pt;font-family:"Arial","sans-serif";color:#1F497D'=
+>I appreciate if you could let me know your interest in acquiring the =
+Attendee list.<o:p></o:p></span></p><p class=3DMsoNormal><span =
+style=3D'font-size:10.0pt;font-family:"Arial","sans-serif";color:#1F497D'=
+><o:p>&nbsp;</o:p></span></p><p class=3DMsoNormal><span =
+style=3D'font-size:10.0pt;font-family:"Arial","sans-serif";color:#1F497D'=
+>Regards,<o:p></o:p></span></p><p class=3DMsoNormal><b><span =
+style=3D'font-size:10.0pt;font-family:"Arial","sans-serif";color:#1F497D'=
+>Someone Real<o:p></o:p></span></b></p></div><p class=3DMsoNormal><span =
+style=3D'color:#1F497D'><o:p>&nbsp;</o:p></span></p><div><div =
+style=3D'border:none;border-top:solid #B5C4DF 1.0pt;padding:3.0pt 0in =
+0in 0in'><p class=3DMsoNormal><b><span =
+style=3D'font-size:10.0pt;font-family:"Tahoma","sans-serif"'>From:</span>=
+</b><span style=3D'font-size:10.0pt;font-family:"Tahoma","sans-serif"'> =
+Someone Real [mailto:email@domain.com] <br><b>Sent:</b> Wednesday, =
+March 29, 2023 12:30 PM<br><b>To:</b> =
+'email@domain.com'<br><b>Subject:</b> Random Expo Expo =
+2023<br><b>Importance:</b> High<o:p></o:p></span></p></div></div><p =
+class=3DMsoNormal><o:p>&nbsp;</o:p></p><p =
+class=3DMsoNormal><o:p>&nbsp;</o:p></p><p =
+class=3DMsoNormal><o:p>&nbsp;</o:p></p><p class=3DMsoNormal>Dear =
+Exhibitor,<o:p></o:p></p><p class=3DMsoNormal><o:p>&nbsp;</o:p></p><p =
+class=3DMsoNormal>Wishing you all the best for <b>Random Expo =
+Conference &amp; Expo2023.</b><o:p></o:p></p><p =
+class=3DMsoNormal><o:p>&nbsp;</o:p></p><p class=3DMsoNormal>Could you =
+let me know if you want to receive Pre-Show Registered Attendee =
+list&nbsp; by emails?<o:p></o:p></p><p =
+class=3DMsoNormal><o:p>&nbsp;</o:p></p><p class=3DMsoNormal>You can send =
+Pre-Show Invitation mailers using these lists and increase foot fall at =
+your booth.<o:p></o:p></p><p class=3DMsoNormal><o:p>&nbsp;</o:p></p><p =
+class=3DMsoNormal>Reply as&nbsp; <b>&#8220;</b> <b>Yes we&#8217;re =
+interested&#8221;.</b><o:p></o:p></p><p =
+class=3DMsoNormal><o:p>&nbsp;</o:p></p><p class=3DMsoNormal>If not reply =
+<b>&quot;</b> <b>we=B4re not interested&quot;.<o:p></o:p></b></p><p =
+class=3DMsoNormal><o:p>&nbsp;</o:p></p><p =
+class=3DMsoNormal>Regards,<o:p></o:p></p><p class=3DMsoNormal><b>Emma =
+Pearson</b> - (Events &amp; Tradeshow Specialist)<o:p></o:p></p><p =
+class=3DMsoNormal><img width=3D253 height=3D45 id=3D"Picture_x0020_2" =
+src=3D"cid:image001.jpg@01D9630F.F8692580"><o:p></o:p></p><p =
+class=3DMsoNormal><o:p>&nbsp;</o:p></p></div></body></html>
+------=_NextPart_001_234A_01D9630F.FB2474F0--
+
+------=_NextPart_000_2349_01D9630F.FB2474F0
+Content-Type: image/jpeg;
+	name="image001.jpg"
+Content-Transfer-Encoding: base64
+Content-ID: <image001.jpg@01D9630F.F8692580>
+
+/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAoHBwkHBgoJCAkLCwoMDxkQDw4ODx4WFxIZJCAmJSMg
+IyIoLTkwKCo2KyIjMkQyNjs9QEBAJjBGS0U+Sjk/QD3/2wBDAQsLCw8NDx0QEB09KSMpPT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT3/wAARCAAtAP0DASIA
+AhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQA
+AAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3
+ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWm
+p6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEA
+AwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSEx
+BhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElK
+U1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3
+uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDP8F+C
+B4ut7uQ3ptvs7qmBHu3ZGfWumPwYXHGstn/rgP8AGpfgx/x4at/12j/9BNSto/iRvii17b/aY9ME
+wZnaX92ybRkbc8/lWEYrlTserVrVPayipWSOTvfh1ead4lsNMubhTb3zlY7qNehAyQQe9V/Gngwe
+EWtALw3P2jd1Tbtxj3969E8b3UWoazomiW161veyXPm+bDgvCAp5/HNcn418J6mmp6TYjVbrVJ7t
+nWMXGAI8Yyfp6/SlKCV7IujXnJxc3bR/PfU8/or1SP4R6bGkdvd6y4vpFJVVCjOOuFPJArgvE3hy
+68MasbK6IcEb4pVGBIvr7H1FZuDWrOmniKdR8sWdPonwwXWPDlvqh1NovOiMnliIHGM8Zz7Vb074
+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
+
+------=_NextPart_000_2349_01D9630F.FB2474F0--
+
+
+From 1746302718057899036@xxx Mon Oct 10 12:14:10 +0000 2022
+X-GM-THRID: 1746302718057899036

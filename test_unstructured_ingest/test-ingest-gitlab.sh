@@ -2,22 +2,21 @@
 
 set -e
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
+OUTPUT_FOLDER_NAME=gitlab
+OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
+DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-    --metadata-exclude filename,file_directory \
-    --gitlab-url https://gitlab.com/gitlab-com/content-sites/docsy-gitlab \
-    --git-file-glob '*.md,*.txt' \
-    --structured-output-dir gitlab-ingest-output \
+    --download-dir "$DOWNLOAD_DIR" \
     --git-branch 'v0.0.7' \
+    --git-file-glob '*.md,*.txt' \
+    --gitlab-url https://gitlab.com/gitlab-com/content-sites/docsy-gitlab \
+    --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
     --partition-strategy hi_res \
+    --preserve-downloads \
+    --structured-output-dir "$OUTPUT_DIR" \
     --verbose
 
-set +e
-
-if [ "$(find 'gitlab-ingest-output' -type f -printf '.' | wc -c)" != 2 ]; then
-   echo
-   echo "2 files should have been created."
-   exit 1
-fi
+sh "$SCRIPT_DIR"/check-num-files-output.sh 2 $OUTPUT_FOLDER_NAME

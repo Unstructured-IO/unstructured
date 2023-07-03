@@ -121,6 +121,10 @@ jobs:
           .venv
           nltk_data
         key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
     - name: Setup virtual environment (no cache hit)
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
       run: |
@@ -129,6 +133,8 @@ jobs:
         mkdir "$NLTK_DATA"
         make install-ci
     - name: Test
+      env:
+        UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
       run: |
         source .venv/bin/activate
         sudo apt-get update
@@ -140,7 +146,7 @@ jobs:
         # NOTE(robinson) - Installing weaviate-client separately here because the requests
         # version conflicts with label_studio_sdk
         pip install weaviate-client
-        make test
+        make test CI=true
         make check-coverage
 
   test_ingest:
@@ -160,6 +166,10 @@ jobs:
           .venv
           nltk_data
         key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
     - name: Setup virtual environment (no cache hit)
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
       run: |
@@ -167,21 +177,32 @@ jobs:
         source .venv/bin/activate
         mkdir "$NLTK_DATA"
         make install-ci
-    - name: Test
+    - name: Test Ingest (unit)
+      run: |
+        source .venv/bin/activate
+        PYTHONPATH=. pytest test_unstructured_ingest/unit
+    - name: Test (end-to-end)
       env:
         GH_READ_ONLY_ACCESS_TOKEN: ${{ secrets.GH_READ_ONLY_ACCESS_TOKEN }}
         SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
         DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+        GCP_INGEST_SERVICE_KEY: ${{ secrets.GCP_INGEST_SERVICE_KEY }}
+        UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
       run: |
         source .venv/bin/activate
         sudo apt-get update
         sudo apt-get install -y libmagic-dev poppler-utils libreoffice pandoc
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
         sudo apt-get install -y tesseract-ocr
+        sudo apt-get install -y tesseract-ocr-kor
         tesseract --version
         make install-ingest-s3
         make install-ingest-azure
         make install-ingest-discord
+        make install-ingest-elasticsearch
+        make install-ingest-dropbox
+        make install-ingest-gcs
+        make install-ingest-google-drive
         make install-ingest-github
         make install-ingest-gitlab
         make install-ingest-slack
@@ -227,5 +248,6 @@ jobs:
       - name: Test Dockerfile
         run: |
           source .venv/bin/activate
+          echo "UNS_API_KEY=${{ secrets.UNS_API_KEY }}" > uns_test_env_file
           make docker-build
-          make docker-test
+          make docker-test CI=true 

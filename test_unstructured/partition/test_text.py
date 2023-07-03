@@ -145,3 +145,46 @@ the fox met a bear."""
         NarrativeText(text="The big brown fox was walking down the lane."),
         NarrativeText(text="At the end of the lane, the fox met a bear."),
     ]
+
+
+def test_partition_text_extract_regex_metadata():
+    text = "SPEAKER 1: It is my turn to speak now!"
+
+    elements = partition_text(text=text, regex_metadata={"speaker": r"SPEAKER \d{1,3}"})
+    assert elements[0].metadata.regex_metadata == {
+        "speaker": [{"text": "SPEAKER 1", "start": 0, "end": 9}],
+    }
+
+
+def test_partition_text_splits_long_text(filename="example-docs/norwich-city.txt"):
+    elements = partition_text(filename=filename)
+    assert len(elements) > 0
+    assert elements[0].text.startswith("Iwan Roberts")
+    assert elements[-1].text.endswith("External links")
+
+
+def test_partition_text_doesnt_get_page_breaks():
+    text = "--------------------"
+    elements = partition_text(text=text)
+    assert len(elements) == 1
+    assert elements[0].text == text
+    assert not isinstance(elements[0], ListItem)
+
+
+@pytest.mark.parametrize(
+    ("filename", "encoding"),
+    [("fake-text.txt", "utf-8"), ("fake-text.txt", None), ("fake-text-utf-16-be.txt", "utf-16-be")],
+)
+def test_partition_text_from_filename_exclude_metadata(filename, encoding):
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+    elements = partition_text(filename=filename, encoding=encoding, include_metadata=False)
+    for i in range(len(elements)):
+        assert elements[i].metadata.to_dict() == {}
+
+
+def test_partition_text_from_file_exclude_metadata():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-text.txt")
+    with open(filename) as f:
+        elements = partition_text(file=f, include_metadata=False)
+    for i in range(len(elements)):
+        assert elements[i].metadata.to_dict() == {}

@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import subprocess
-from io import BytesIO
+from io import BufferedReader, BytesIO, TextIOWrapper
 from tempfile import SpooledTemporaryFile
-from typing import BinaryIO, List, Optional, Tuple, Union
+from typing import IO, TYPE_CHECKING, Any, BinaryIO, Dict, List, Optional, Tuple, Union
 
 from docx import table as docxtable
 from tabulate import tabulate
@@ -15,18 +17,27 @@ from unstructured.documents.elements import (
     PageBreak,
     Text,
 )
+from unstructured.logger import logger
 from unstructured.nlp.patterns import ENUMERATED_BULLETS_RE, UNICODE_BULLETS_RE
 
+if TYPE_CHECKING:
+    from unstructured_inference.inference.layoutelement import (
+        LayoutElement,
+        LocationlessLayoutElement,
+    )
 
-def normalize_layout_element(layout_element) -> Union[Element, List[Element]]:
-    """Converts a list of unstructured_inference DocumentLayout objects to a list of
-    unstructured Elements."""
+
+def normalize_layout_element(
+    layout_element: Union["LayoutElement", "LocationlessLayoutElement", Element, Dict[str, Any]],
+) -> Union[Element, List[Element]]:
+    """Converts an unstructured_inference LayoutElement object to an unstructured Element."""
 
     if isinstance(layout_element, Element):
         return layout_element
 
+    # NOTE(alan): Won't the lines above ensure this never runs (PageBreak is a subclass of Element)?
     if isinstance(layout_element, PageBreak):
-        return PageBreak()
+        return PageBreak(text="")
 
     if not isinstance(layout_element, dict):
         layout_dict = layout_element.to_dict()
@@ -71,46 +82,24 @@ def layout_list_to_list_items(
 
 
 def _add_element_metadata(
-    layout_elements,
-    include_page_breaks: bool = False,
+    element: Element,
     filename: Optional[str] = None,
     filetype: Optional[str] = None,
+    page_number: Optional[int] = None,
     url: Optional[str] = None,
-) -> List[Element]:
+    text_as_html: Optional[str] = None,
+) -> Element:
     """Adds document metadata to the document element. Document metadata includes information
     like the filename, source url, and page number."""
-    elements: List[Element] = []
-    page_number: int = 1
-    for layout_element in layout_elements:
-        element = normalize_layout_element(layout_element)
-        if hasattr(layout_element, "text_as_html"):
-            text_as_html: Optional[str] = layout_element.text_as_html
-        else:
-            text_as_html = None
-        # NOTE(robinson) - defer to the page number that's already in the metadata
-        # if it's available
-        if hasattr(element, "metadata"):
-            page_number = element.metadata.page_number or page_number
-
-        metadata = ElementMetadata(
-            filename=filename,
-            filetype=filetype,
-            url=url,
-            page_number=page_number,
-            text_as_html=text_as_html,
-        )
-        if isinstance(element, list):
-            for _element in element:
-                _element.metadata = metadata.merge(_element.metadata)
-            elements.extend(element)
-        elif isinstance(element, PageBreak):
-            page_number += 1
-            if include_page_breaks:
-                elements.append(element)
-        else:
-            element.metadata = metadata.merge(element.metadata)
-            elements.append(element)
-    return elements
+    metadata = ElementMetadata(
+        filename=filename,
+        filetype=filetype,
+        page_number=page_number,
+        url=url,
+        text_as_html=text_as_html,
+    )
+    element.metadata = metadata.merge(element.metadata)
+    return element
 
 
 def _remove_element_metadata(
@@ -139,18 +128,22 @@ def convert_office_doc(input_filename: str, output_directory: str, target_format
     # users who do not have LibreOffice installed
     # ref: https://stackoverflow.com/questions/38468442/
     #       multiple-doc-to-docx-file-conversion-using-python
+    command = [
+        "soffice",
+        "--headless",
+        "--convert-to",
+        target_format,
+        "--outdir",
+        output_directory,
+        input_filename,
+    ]
     try:
-        subprocess.call(
-            [
-                "soffice",
-                "--headless",
-                "--convert-to",
-                target_format,
-                "--outdir",
-                output_directory,
-                input_filename,
-            ],
+        process = subprocess.Popen(
+            command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
         )
+        output, error = process.communicate()
     except FileNotFoundError:
         raise FileNotFoundError(
             """soffice command was not found. Please install libreoffice
@@ -160,6 +153,10 @@ on your system and try again.
 - Mac: https://formulae.brew.sh/cask/libreoffice
 - Debian: https://wiki.debian.org/LibreOffice""",
         )
+
+    logger.info(output.decode().strip())
+    if error:
+        logger.error(error.decode().strip())
 
 
 def exactly_one(**kwargs) -> None:
@@ -188,6 +185,25 @@ def spooled_to_bytes_io_if_needed(
     else:
         # Return the original file object if it's not a SpooledTemporaryFile
         return file_obj
+
+
+def convert_to_bytes(
+    file: Optional[Union[bytes, SpooledTemporaryFile, IO]] = None,
+) -> bytes:
+    if isinstance(file, bytes):
+        f_bytes = file
+    elif isinstance(file, SpooledTemporaryFile):
+        file.seek(0)
+        f_bytes = file.read()
+    elif isinstance(file, BytesIO):
+        f_bytes = file.getvalue()
+    elif isinstance(file, (TextIOWrapper, BufferedReader)):
+        with open(file.name, "rb") as f:
+            f_bytes = f.read()
+    else:
+        raise ValueError("Invalid file-like object type")
+
+    return f_bytes
 
 
 def convert_ms_office_table_to_text(table: docxtable.Table, as_html: bool = True):

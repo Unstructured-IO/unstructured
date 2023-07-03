@@ -1,9 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Performance profiling and visualization of code using cProfile and memray.
 
 # Environment Variables:
-#   - SYNC_S3_DOCS: Set to true to sync test documents from S3 (default: false)
 #   - DOCKER_TEST: Set to true to run profiling inside a Docker container (default: false)
 
 # Usage: 
@@ -54,16 +53,8 @@ MODULE_PATH=${MODULE_PATH#\.}
 
 PROFILE_RESULTS_DIR="$SCRIPT_DIR/profile_results"
 
-S3_BUCKET="utic-dev-tech-fixtures"
-S3_DOCS_DIR="performance-test/docs"
-
 # Create PROFILE_RESULTS_DIR if it doesn't exist
 mkdir -p "$PROFILE_RESULTS_DIR"
-
-if [[ "$SYNC_S3_DOCS" == "true" ]]; then
-  # Sync files from S3 to the local "docs" directory
-  aws s3 sync "s3://$S3_BUCKET/$S3_DOCS_DIR" "$SCRIPT_DIR/docs"
-fi
 
 if [[ "$DOCKER_TEST" == "true" ]]; then
   SCRIPT_PARENT_DIR=$(dirname "$(dirname "$(realpath "$0")")")
@@ -71,7 +62,7 @@ if [[ "$DOCKER_TEST" == "true" ]]; then
   cd unstructured/
   pip install -r scripts/performance/requirements.txt
   echo \"Warming the Docker container by running a small partitioning job..\"
-  python3 -c 'from unstructured.partition.auto import partition; partition(\"'""$SCRIPT_DIR/warmup.pdf'\", strategy=\"hi_res\")[1]'
+  python3 -c 'from unstructured.partition.auto import partition; partition(\"'""$SCRIPT_DIR/warmup_docs/warmup.pdf'\", strategy=\"hi_res\")[1]'
   ./scripts/performance/profile.sh
   "
   exit 0

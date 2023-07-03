@@ -12,6 +12,8 @@ from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
+    ConnectorCleanupMixin,
+    IngestDocCleanupMixin,
     StandardConnectorConfig,
 )
 from unstructured.ingest.logger import logger
@@ -83,7 +85,7 @@ class SimpleGoogleDriveConfig(BaseConnectorConfig):
 
 
 @dataclass
-class GoogleDriveIngestDoc(BaseIngestDoc):
+class GoogleDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleGoogleDriveConfig
     file_meta: Dict
 
@@ -91,35 +93,15 @@ class GoogleDriveIngestDoc(BaseIngestDoc):
     def filename(self):
         return Path(self.file_meta.get("download_filepath")).resolve()  # type: ignore
 
+    @property
     def _output_filename(self):
         return Path(f"{self.file_meta.get('output_filepath')}.json").resolve()
 
-    def cleanup_file(self):
-        if (
-            not self.standard_config.preserve_downloads
-            and self.filename.is_file()
-            and not self.standard_config.download_only
-        ):
-            logger.debug(f"Cleaning up {self}")
-            Path.unlink(self.filename)
-
-    def has_output(self):
-        """Determine if structured output for this doc already exists."""
-        output_filename = self._output_filename()
-        return output_filename.is_file() and output_filename.stat()
-
+    @BaseIngestDoc.skip_if_file_exists
     @requires_dependencies(["googleapiclient"], extras="google-drive")
     def get_file(self):
         from googleapiclient.errors import HttpError
         from googleapiclient.http import MediaIoBaseDownload
-
-        if (
-            not self.standard_config.re_download
-            and self.filename.is_file()
-            and self.filename.stat()
-        ):
-            logger.debug(f"File exists: {self.filename}, skipping download")
-            return
 
         self.config.service = create_service_account_object(self.config.service_account_key)
 
@@ -143,7 +125,6 @@ class GoogleDriveIngestDoc(BaseIngestDoc):
             request = self.config.service.files().get_media(fileId=self.file_meta.get("id"))
         file = io.BytesIO()
         downloader = MediaIoBaseDownload(file, request)
-
         downloaded = False
         try:
             while downloaded is False:
@@ -173,23 +154,19 @@ class GoogleDriveIngestDoc(BaseIngestDoc):
         """Write the structured json result for this doc. result must be json serializable."""
         if self.standard_config.download_only:
             return
-        output_filename = self._output_filename()
-        output_filename.parent.mkdir(parents=True, exist_ok=True)
-        with open(output_filename, "w") as output_f:
+        self._output_filename.parent.mkdir(parents=True, exist_ok=True)
+        with open(self._output_filename, "w") as output_f:
             output_f.write(json.dumps(self.isd_elems_no_filename, ensure_ascii=False, indent=2))
-        logger.info(f"Wrote {output_filename}")
+        logger.info(f"Wrote {self._output_filename}")
 
 
-class GoogleDriveConnector(BaseConnector):
+class GoogleDriveConnector(ConnectorCleanupMixin, BaseConnector):
     """Objects of this class support fetching documents from Google Drive"""
 
     config: SimpleGoogleDriveConfig
 
     def __init__(self, standard_config: StandardConnectorConfig, config: SimpleGoogleDriveConfig):
         super().__init__(standard_config, config)
-        self.cleanup_files = (
-            not self.standard_config.preserve_downloads and not self.standard_config.download_only
-        )
 
     def _list_objects(self, drive_id, recursive=False):
         files = []
@@ -261,26 +238,6 @@ class GoogleDriveConnector(BaseConnector):
             recursive,
         )
         return files
-
-    def cleanup(self, cur_dir=None):
-        if not self.cleanup_files:
-            return
-
-        if cur_dir is None:
-            cur_dir = self.standard_config.download_dir
-
-        if cur_dir is None or not Path(cur_dir).is_dir():
-            return
-
-        sub_dirs = os.listdir(cur_dir)
-        os.chdir(cur_dir)
-        for sub_dir in sub_dirs:
-            # don't traverse symlinks, not that there every should be any
-            if os.path.isdir(sub_dir) and not os.path.islink(sub_dir):
-                self.cleanup(sub_dir)
-        os.chdir("..")
-        if len(os.listdir(cur_dir)) == 0:
-            os.rmdir(cur_dir)
 
     def initialize(self):
         pass

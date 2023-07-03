@@ -9,13 +9,13 @@ from unittest.mock import patch
 import docx
 import pytest
 
+from test_unstructured.partition.test_constants import EXPECTED_TABLE, EXPECTED_TEXT
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import (
     Address,
     ElementMetadata,
     ListItem,
     NarrativeText,
-    PageBreak,
     Table,
     Text,
     Title,
@@ -36,12 +36,14 @@ EXPECTED_EMAIL_OUTPUT = [
     ListItem(text="Violets are blue"),
 ]
 
+EML_TEST_FILE = "eml/fake-email.eml"
+
 is_in_docker = os.path.exists("/.dockerenv")
 
 
 @pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 def test_auto_partition_email_from_filename():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, EML_TEST_FILE)
     elements = partition(filename=filename, strategy="hi_res")
     assert len(elements) > 0
     assert elements == EXPECTED_EMAIL_OUTPUT
@@ -51,7 +53,7 @@ def test_auto_partition_email_from_filename():
 
 @pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 def test_auto_partition_email_from_file():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, EML_TEST_FILE)
     with open(filename) as f:
         elements = partition(file=f, strategy="hi_res")
     assert len(elements) > 0
@@ -60,7 +62,7 @@ def test_auto_partition_email_from_file():
 
 @pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 def test_auto_partition_email_from_file_rb():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, EML_TEST_FILE)
     with open(filename, "rb") as f:
         elements = partition(file=f, strategy="hi_res")
     assert len(elements) > 0
@@ -217,7 +219,7 @@ def test_auto_partition_json_from_filename():
         "..",
         "test_unstructured_ingest",
         "expected-structured-output",
-        "azure-blob-storage",
+        "azure",
         "spring-weather.html.json",
     )
     with open(filename) as json_f:
@@ -226,6 +228,9 @@ def test_auto_partition_json_from_filename():
     for elem in json_elems:
         # coordinates are always in the element data structures, even if None
         elem.pop("coordinates")
+        elem.pop("coordinate_system")
+        elem.pop("layout_width")
+        elem.pop("layout_height")
         elem.pop("metadata")
     for elem in json_data:
         elem.pop("metadata")
@@ -253,6 +258,7 @@ def test_auto_partition_json_from_file():
     for elem in json_elems:
         # coordinates are always in the element data structures, even if None
         elem.pop("coordinates")
+        elem.pop("coordinate_system")
     assert json_data == json_elems
 
 
@@ -336,7 +342,6 @@ def test_auto_partition_pdf_with_fast_strategy():
         file=None,
         url=None,
         include_page_breaks=False,
-        encoding="utf-8",
         infer_table_structure=False,
         strategy="fast",
         ocr_languages="eng",
@@ -394,7 +399,7 @@ def test_auto_partition_jpg(pass_file_filename, content_type):
         filename=filename,
         file_filename=file_filename,
         content_type=content_type,
-        strategy="hi_res",
+        strategy="auto",
     )
     assert len(elements) > 0
 
@@ -412,7 +417,7 @@ def test_auto_partition_jpg_from_file(pass_file_filename, content_type):
             file=f,
             file_filename=file_filename,
             content_type=content_type,
-            strategy="hi_res",
+            strategy="auto",
         )
     assert len(elements) > 0
 
@@ -457,7 +462,7 @@ def test_auto_partition_ppt_from_filename():
 def test_auto_with_page_breaks():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
     elements = partition(filename=filename, include_page_breaks=True, strategy="hi_res")
-    assert PageBreak() in elements
+    assert "PageBreak" in [elem.category for elem in elements]
 
 
 @pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
@@ -522,7 +527,7 @@ def test_partition_md_works_with_embedded_html():
 
 @pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 def test_auto_partition_warns_if_header_set_and_not_url(caplog):
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, EML_TEST_FILE)
     partition(filename=filename, headers={"Accept": "application/pdf"}, strategy="hi_res")
     assert caplog.records[0].levelname == "WARNING"
 
@@ -537,7 +542,6 @@ def test_auto_partition_works_with_unstructured_jsons():
 @pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
 def test_auto_partition_works_with_unstructured_jsons_from_file():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "spring-weather.html.json")
-
     with open(filename, "rb") as f:
         elements = partition(file=f, strategy="hi_res")
     assert elements[0].text == "News Around NOAA"
@@ -620,7 +624,7 @@ FILETYPE_TO_MODULE = {
 
 @pytest.mark.parametrize("filetype", supported_filetypes)
 def test_file_specific_produces_correct_filetype(filetype: FileType):
-    if filetype in (FileType.JPG, FileType.PNG):
+    if filetype in (FileType.JPG, FileType.PNG, FileType.EMPTY):
         pytest.skip()
     extension = filetype.name.lower()
     filetype_module = (
@@ -632,7 +636,11 @@ def test_file_specific_produces_correct_filetype(filetype: FileType):
     for file in pathlib.Path("example-docs").iterdir():
         if file.is_file() and file.suffix == f".{extension}":
             elements = fun(str(file))
-            assert all(el.metadata.filetype == FILETYPE_TO_MIMETYPE[filetype] for el in elements)
+            assert all(
+                el.metadata.filetype == FILETYPE_TO_MIMETYPE[filetype]
+                for el in elements
+                if el.metadata.filetype is not None
+            )
             break
 
 
@@ -664,34 +672,6 @@ def test_auto_partition_xml_from_file_with_tags(filename="example-docs/factbook.
     assert elements[5].text == "<name>United States</name>"
 
 
-EXPECTED_XLSX_TABLE = """<table border="1" class="dataframe">
-  <tbody>
-    <tr>
-      <td>Team</td>
-      <td>Location</td>
-      <td>Stanley Cups</td>
-    </tr>
-    <tr>
-      <td>Blues</td>
-      <td>STL</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <td>Flyers</td>
-      <td>PHI</td>
-      <td>2</td>
-    </tr>
-    <tr>
-      <td>Maple Leafs</td>
-      <td>TOR</td>
-      <td>13</td>
-    </tr>
-  </tbody>
-</table>"""
-
-
-EXPECTED_XLSX_TEXT = "Team Location Stanley Cups Blues STL 1 Flyers PHI 2 Maple Leafs TOR 13"
-
 EXPECTED_XLSX_FILETYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
 
@@ -701,8 +681,8 @@ def test_auto_partition_xlsx_from_filename(filename="example-docs/stanley-cups.x
     assert all(isinstance(element, Table) for element in elements)
     assert len(elements) == 2
 
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_XLSX_TEXT
-    assert elements[0].metadata.text_as_html == EXPECTED_XLSX_TABLE
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
+    assert elements[0].metadata.text_as_html == EXPECTED_TABLE
     assert elements[0].metadata.page_number == 1
     assert elements[0].metadata.filetype == EXPECTED_XLSX_FILETYPE
 
@@ -714,8 +694,8 @@ def test_auto_partition_xlsx_from_file(filename="example-docs/stanley-cups.xlsx"
     assert all(isinstance(element, Table) for element in elements)
     assert len(elements) == 2
 
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_XLSX_TEXT
-    assert elements[0].metadata.text_as_html == EXPECTED_XLSX_TABLE
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
+    assert elements[0].metadata.text_as_html == EXPECTED_TABLE
     assert elements[0].metadata.page_number == 1
     assert elements[0].metadata.filetype == EXPECTED_XLSX_FILETYPE
 
@@ -814,8 +794,8 @@ def test_auto_partition_xls_from_filename(filename="example-docs/tests-example.x
 def test_auto_partition_csv_from_filename(filename="example-docs/stanley-cups.csv"):
     elements = partition(filename=filename)
 
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_XLSX_TEXT
-    assert elements[0].metadata.text_as_html == EXPECTED_XLSX_TABLE
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
+    assert elements[0].metadata.text_as_html == EXPECTED_TABLE
     assert elements[0].metadata.filetype == "text/csv"
 
 
@@ -824,7 +804,57 @@ def test_auto_partition_csv_from_file(filename="example-docs/stanley-cups.csv"):
     with open(filename, "rb") as f:
         elements = partition(file=f)
 
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_XLSX_TEXT
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
     assert isinstance(elements[0], Table)
-    assert elements[0].metadata.text_as_html == EXPECTED_XLSX_TABLE
+    assert elements[0].metadata.text_as_html == EXPECTED_TABLE
     assert elements[0].metadata.filetype == "text/csv"
+
+
+def test_auto_partition_html_pre_from_file(filename="example-docs/fake-html-pre.htm"):
+    elements = partition(filename=filename)
+
+    assert len(elements) > 0
+    assert "PageBreak" not in [elem.category for elem in elements]
+    assert clean_extra_whitespace(elements[0].text) == "[107th Congress Public Law 56]"
+    assert isinstance(elements[0], Title)
+    assert elements[0].metadata.filetype == "text/html"
+    assert elements[0].metadata.filename == "fake-html-pre.htm"
+
+
+def test_auto_partition_works_on_empty_filename(filename="example-docs/empty.txt"):
+    assert partition(filename=filename) == []
+
+
+def test_auto_partition_works_on_empty_file(filename="example-docs/empty.txt"):
+    with open(filename, "rb") as f:
+        assert partition(file=f) == []
+
+
+def test_auto_partition_org_from_filename(filename="example-docs/README.org"):
+    elements = partition(filename=filename)
+
+    assert elements[0] == Title("Example Docs")
+    assert elements[0].metadata.filetype == "text/org"
+
+
+def test_auto_partition_org_from_file(filename="example-docs/README.org"):
+    with open(filename, "rb") as f:
+        elements = partition(file=f, content_type="text/org")
+
+    assert elements[0] == Title("Example Docs")
+    assert elements[0].metadata.filetype == "text/org"
+
+
+def test_auto_partition_rst_from_filename(filename="example-docs/README.rst"):
+    elements = partition(filename=filename)
+
+    assert elements[0] == Title("Example Docs")
+    assert elements[0].metadata.filetype == "text/x-rst"
+
+
+def test_auto_partition_rst_from_file(filename="example-docs/README.rst"):
+    with open(filename, "rb") as f:
+        elements = partition(file=f, content_type="text/x-rst")
+
+    assert elements[0] == Title("Example Docs")
+    assert elements[0].metadata.filetype == "text/x-rst"

@@ -6,7 +6,7 @@
 #
 anyio==3.7.0
     # via httpcore
-argilla==1.8.0
+argilla==1.12.0
     # via -r requirements/base.in
 backoff==2.2.1
     # via argilla
@@ -38,6 +38,8 @@ et-xmlfile==1.1.0
     # via openpyxl
 exceptiongroup==1.1.1
     # via anyio
+filetype==1.2.0
+    # via -r requirements/base.in
 h11==0.14.0
     # via httpcore
 httpcore==0.16.3
@@ -49,9 +51,9 @@ idna==3.4
     #   anyio
     #   requests
     #   rfc3986
-importlib-metadata==6.6.0
+importlib-metadata==6.7.0
     # via markdown
-joblib==1.2.0
+joblib==1.3.1
     # via nltk
 lxml==4.9.2
     # via
@@ -80,15 +82,18 @@ pandas==1.5.3
     # via
     #   -r requirements/base.in
     #   argilla
+pdf2image==1.16.3
+    # via -r requirements/base.in
 pdfminer-six==20221105
     # via -r requirements/base.in
 pillow==9.5.0
     # via
     #   -r requirements/base.in
+    #   pdf2image
     #   python-pptx
 pycparser==2.21
     # via cffi
-pydantic==1.10.8
+pydantic==1.10.9
     # via argilla
 pygments==2.15.1
     # via rich
@@ -104,7 +109,7 @@ python-pptx==0.6.21
     # via -r requirements/base.in
 pytz==2023.3
     # via pandas
-regex==2023.5.5
+regex==2023.6.3
     # via nltk
 requests==2.31.0
     # via -r requirements/base.in
@@ -125,13 +130,12 @@ tqdm==4.65.0
     # via
     #   argilla
     #   nltk
-typer==0.9.0
+typer==0.7.0
     # via argilla
-typing-extensions==4.6.2
+typing-extensions==4.7.0
     # via
     #   pydantic
     #   rich
-    #   typer
 urllib3==1.26.16
     # via
     #   -c requirements/constraints.in

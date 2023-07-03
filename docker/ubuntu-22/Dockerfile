@@ -13,11 +13,13 @@ COPY Makefile Makefile
 
 SHELL ["/bin/bash", "-c"]
 
-RUN source ~/.bashrc && pyenv virtualenv 3.8.15 unstructured && \
+RUN source ~/.bashrc && pyenv virtualenv 3.8.17 unstructured && \
     source ~/.pyenv/versions/unstructured/bin/activate && \
     make install-ci && \
     make install-ingest-s3 && \
     make install-ingest-azure && \
     make install-ingest-github && \
     make install-ingest-gitlab && \
-    make install-ingest-wikipedia
+    make install-ingest-wikipedia && \
+    make install-ingest-discord && \
+    make install install-ingest-slack

@@ -1,22 +1,31 @@
+import os
 import re
 import warnings
 from tempfile import SpooledTemporaryFile
 from typing import BinaryIO, List, Optional, Union, cast
 
 import pdf2image
+import PIL
 from pdfminer.high_level import extract_pages
+from pdfminer.layout import LTContainer, LTImage, LTItem, LTTextBox
 from pdfminer.utils import open_filename
-from PIL import Image
 
 from unstructured.cleaners.core import clean_extra_whitespace
-from unstructured.documents.elements import Element, ElementMetadata, PageBreak
+from unstructured.documents.coordinates import PixelSpace
+from unstructured.documents.elements import (
+    Element,
+    ElementMetadata,
+    Image,
+    PageBreak,
+    Text,
+    process_metadata,
+)
 from unstructured.file_utils.filetype import (
     FileType,
     add_metadata_with_filetype,
     document_to_element_list,
 )
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
-from unstructured.partition import _partition_via_api
 from unstructured.partition.common import (
     exactly_one,
     spooled_to_bytes_io_if_needed,
@@ -25,19 +34,21 @@ from unstructured.partition.strategies import determine_pdf_or_image_strategy
 from unstructured.partition.text import element_from_text, partition_text
 from unstructured.utils import requires_dependencies
 
+RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
 
+
+@process_metadata()
 @add_metadata_with_filetype(FileType.PDF)
 def partition_pdf(
     filename: str = "",
     file: Optional[Union[BinaryIO, SpooledTemporaryFile]] = None,
-    url: Optional[str] = None,
-    template: str = "layout/pdf",
-    token: Optional[str] = None,
     include_page_breaks: bool = False,
     strategy: str = "auto",
     infer_table_structure: bool = False,
-    encoding: str = "utf-8",
     ocr_languages: str = "eng",
+    max_partition: Optional[int] = 1500,
+    include_metadata: bool = True,
+    **kwargs,
 ) -> List[Element]:
     """Parses a pdf document into a list of interpreted elements.
     Parameters
@@ -46,21 +57,14 @@ def partition_pdf(
         A string defining the target filename path.
     file
         A file-like object as bytes --> open(filename, "rb").
-    template
-        A string defining the model to be used. Default None uses default model ("layout/pdf" url
-        if using the API).
-    url
-        A string endpoint to self-host an inference API, if desired. If None, local inference will
-        be used.
-    token
-        A string defining the authentication token for a self-host url, if applicable.
     strategy
         The strategy to use for partitioning the PDF. Valid strategies are "hi_res",
         "ocr_only", and "fast". When using the "hi_res" strategy, the function uses
         a layout detection model to identify document elements. When using the
-        "ocr_only" strategy, partition_image simply extracts the text from the
+        "ocr_only" strategy, partition_pdf simply extracts the text from the
         document using OCR and processes it. If the "fast" strategy is used, the text
-        is extracted directly from the PDF.
+        is extracted directly from the PDF. The default strategy `auto` will determine
+        when a page can be extracted using `fast` mode, otherwise it will fall back to `hi_res`.
     infer_table_structure
         Only applicable if `strategy=hi_res`.
         If True, any Table elements that are extracted will also have a metadata field
@@ -68,109 +72,80 @@ def partition_pdf(
         I.e., rows and cells are preserved.
         Whether True or False, the "text" field is always present in any Table element
         and is the text content of the table (no structure).
-    encoding
-        The encoding method used to decode the text input. If None, utf-8 will be used.
     ocr_languages
         The languages to use for the Tesseract agent. To use a language, you'll first need
         to isntall the appropriate Tesseract language pack.
+    max_partition
+        The maximum number of characters to include in a partition. If None is passed,
+        no maximum is applied. Only applies to the "ocr_only" strategy.
     """
     exactly_one(filename=filename, file=file)
     return partition_pdf_or_image(
         filename=filename,
         file=file,
-        url=url,
-        template=template,
-        token=token,
         include_page_breaks=include_page_breaks,
         strategy=strategy,
         infer_table_structure=infer_table_structure,
-        encoding=encoding,
         ocr_languages=ocr_languages,
+        max_partition=max_partition,
     )
 
 
 def partition_pdf_or_image(
     filename: str = "",
     file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
-    url: Optional[str] = "https://ml.unstructured.io/",
-    template: str = "layout/pdf",
-    token: Optional[str] = None,
     is_image: bool = False,
     include_page_breaks: bool = False,
     strategy: str = "auto",
     infer_table_structure: bool = False,
-    encoding: str = "utf-8",
     ocr_languages: str = "eng",
+    max_partition: Optional[int] = 1500,
 ) -> List[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
-    if url is None:
-        # TODO(alan): Extract information about the filetype to be processed from the template
-        # route. Decoding the routing should probably be handled by a single function designed for
-        # that task so as routing design changes, those changes are implemented in a single
-        # function.
-        route_args = template.strip("/").split("/")
-        is_image = route_args[-1] == "image"
-        out_template: Optional[str] = template
-        if route_args[0] == "layout":
-            out_template = None
+    # TODO(alan): Extract information about the filetype to be processed from the template
+    # route. Decoding the routing should probably be handled by a single function designed for
+    # that task so as routing design changes, those changes are implemented in a single
+    # function.
 
-        strategy = determine_pdf_or_image_strategy(
-            strategy,
-            filename=filename,
-            file=file,
-            is_image=is_image,
-            infer_table_structure=infer_table_structure,
-        )
+    strategy = determine_pdf_or_image_strategy(
+        strategy,
+        filename=filename,
+        file=file,
+        is_image=is_image,
+        infer_table_structure=infer_table_structure,
+    )
 
-        if strategy == "hi_res":
-            # NOTE(robinson): Catches a UserWarning that occurs when detectron is called
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
-                layout_elements = _partition_pdf_or_image_local(
-                    filename=filename,
-                    file=spooled_to_bytes_io_if_needed(file),
-                    template=out_template,
-                    is_image=is_image,
-                    infer_table_structure=infer_table_structure,
-                    include_page_breaks=True,
-                    ocr_languages=ocr_languages,
-                )
-
-        elif strategy == "fast":
-            return _partition_pdf_with_pdfminer(
+    if strategy == "hi_res":
+        # NOTE(robinson): Catches a UserWarning that occurs when detectron is called
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            layout_elements = _partition_pdf_or_image_local(
                 filename=filename,
                 file=spooled_to_bytes_io_if_needed(file),
+                is_image=is_image,
+                infer_table_structure=infer_table_structure,
                 include_page_breaks=include_page_breaks,
-                encoding=encoding,
+                ocr_languages=ocr_languages,
             )
 
-        elif strategy == "ocr_only":
-            # NOTE(robinson): Catches file conversion warnings when running with PDFs
-            with warnings.catch_warnings():
-                return _partition_pdf_or_image_with_ocr(
-                    filename=filename,
-                    file=file,
-                    include_page_breaks=include_page_breaks,
-                    ocr_languages=ocr_languages,
-                    is_image=is_image,
-                )
-
-    else:
-        # NOTE(alan): Remove these lines after different models are handled by routing
-        if template == "checkbox":
-            template = "layout/pdf"
-        # NOTE(alan): Remove after different models are handled by routing
-        data = {"model": "checkbox"} if (template == "checkbox") else None
-        url = f"{url.rstrip('/')}/{template.lstrip('/')}"
-        # NOTE(alan): Remove "data=data" after different models are handled by routing
-        layout_elements = _partition_via_api(
+    elif strategy == "fast":
+        return _partition_pdf_with_pdfminer(
             filename=filename,
-            file=cast(BinaryIO, file),
-            url=url,
-            token=token,
-            data=data,
-            include_page_breaks=True,
+            file=spooled_to_bytes_io_if_needed(file),
+            include_page_breaks=include_page_breaks,
         )
+
+    elif strategy == "ocr_only":
+        # NOTE(robinson): Catches file conversion warnings when running with PDFs
+        with warnings.catch_warnings():
+            return _partition_pdf_or_image_with_ocr(
+                filename=filename,
+                file=file,
+                include_page_breaks=include_page_breaks,
+                ocr_languages=ocr_languages,
+                is_image=is_image,
+                max_partition=max_partition,
+            )
 
     return layout_elements
 
@@ -179,7 +154,6 @@ def partition_pdf_or_image(
 def _partition_pdf_or_image_local(
     filename: str = "",
     file: Optional[Union[bytes, BinaryIO]] = None,
-    template: Optional[str] = None,
     is_image: bool = False,
     infer_table_structure: bool = False,
     include_page_breaks: bool = False,
@@ -206,24 +180,40 @@ def _partition_pdf_or_image_local(
             "running make install-local-inference from the root directory of the repository.",
         ) from e
 
+    model_name = os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME")
     if file is None:
         layout = process_file_with_model(
             filename,
-            template,
             is_image=is_image,
             ocr_languages=ocr_languages,
             extract_tables=infer_table_structure,
+            model_name=model_name,
         )
     else:
         layout = process_data_with_model(
             file,
-            template,
             is_image=is_image,
             ocr_languages=ocr_languages,
             extract_tables=infer_table_structure,
+            model_name=model_name,
         )
+    elements = document_to_element_list(layout, include_page_breaks=include_page_breaks, sort=False)
+    out_elements = []
 
-    return document_to_element_list(layout, include_page_breaks=include_page_breaks)
+    for el in elements:
+        if (isinstance(el, PageBreak) and not include_page_breaks) or (
+            # NOTE(crag): small chunks of text from Image elements tend to be garbage
+            isinstance(el, Image)
+            and (el.text is None or len(el.text) < 24 or el.text.find(" ") == -1)
+        ):
+            continue
+        # NOTE(crag): this is probably always a Text object, but check for the sake of typing
+        if isinstance(el, Text):
+            el.text = re.sub(RE_MULTISPACE_INCLUDING_NEWLINES, " ", el.text or "").strip()
+            if el.text or isinstance(el, PageBreak):
+                out_elements.append(cast(Element, el))
+
+    return out_elements
 
 
 @requires_dependencies("pdfminer", "local-inference")
@@ -231,7 +221,6 @@ def _partition_pdf_with_pdfminer(
     filename: str = "",
     file: Optional[BinaryIO] = None,
     include_page_breaks: bool = False,
-    encoding: str = "utf-8",
 ) -> List[Element]:
     """Partitions a PDF using PDFMiner instead of using a layoutmodel. Used for faster
     processing or detectron2 is not available.
@@ -248,7 +237,6 @@ def _partition_pdf_with_pdfminer(
             elements = _process_pdfminer_pages(
                 fp=fp,
                 filename=filename,
-                encoding=encoding,
                 include_page_breaks=include_page_breaks,
             )
 
@@ -257,17 +245,34 @@ def _partition_pdf_with_pdfminer(
         elements = _process_pdfminer_pages(
             fp=fp,
             filename=filename,
-            encoding=encoding,
             include_page_breaks=include_page_breaks,
         )
 
     return elements
 
 
+def _extract_text(item: LTItem) -> str:
+    """Recursively extracts text from PDFMiner objects to account
+    for scenarios where the text is in a sub-container."""
+    if hasattr(item, "get_text"):
+        return item.get_text()
+
+    elif isinstance(item, LTContainer):
+        text = ""
+        for child in item:
+            text += _extract_text(child) or ""
+        return text
+
+    elif isinstance(item, (LTTextBox, LTImage)):
+        # TODO(robinson) - Support pulling text out of images
+        # https://github.com/pdfminer/pdfminer.six/blob/master/pdfminer/image.py#L90
+        return "\n"
+    return "\n"
+
+
 def _process_pdfminer_pages(
     fp: BinaryIO,
     filename: str = "",
-    encoding: str = "utf-8",
     include_page_breaks: bool = False,
 ):
     """Uses PDF miner to split a document into pages and process them."""
@@ -275,30 +280,46 @@ def _process_pdfminer_pages(
 
     for i, page in enumerate(extract_pages(fp)):  # type: ignore
         metadata = ElementMetadata(filename=filename, page_number=i + 1)
-        height = page.height
+        width, height = page.width, page.height
 
         text_segments = []
+        page_elements = []
         for obj in page:
             x1, y2, x2, y1 = obj.bbox
             y1 = height - y1
             y2 = height - y2
 
-            # NOTE(robinson) - "Figure" is an example of an object type that does
-            # not have a get_text method
-            if not hasattr(obj, "get_text"):
-                continue
-            _text = obj.get_text()
-            _text = re.sub(PARAGRAPH_PATTERN, " ", _text)
-            _text = clean_extra_whitespace(_text)
-            if _text.strip():
-                text_segments.append(_text)
-                element = element_from_text(_text)
-                element.coordinates = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
-                element.metadata = metadata
-                elements.append(element)
+            if hasattr(obj, "get_text"):
+                _text_snippets = [obj.get_text()]
+            else:
+                _text = _extract_text(obj)
+                _text_snippets = re.split(PARAGRAPH_PATTERN, _text)
+
+            for _text in _text_snippets:
+                _text = clean_extra_whitespace(_text)
+                if _text.strip():
+                    text_segments.append(_text)
+                    element = element_from_text(_text)
+                    element._coordinate_system = PixelSpace(
+                        width=width,
+                        height=height,
+                    )
+                    element.coordinates = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
+                    element.metadata = metadata
+                    page_elements.append(element)
+
+        sorted_page_elements = sorted(
+            page_elements,
+            key=lambda el: (
+                el.coordinates[0][1] if el.coordinates else float("inf"),
+                el.coordinates[0][0] if el.coordinates else float("inf"),
+                el.id,
+            ),
+        )
+        elements += sorted_page_elements
 
         if include_page_breaks:
-            elements.append(PageBreak())
+            elements.append(PageBreak(text=""))
 
     return elements
 
@@ -310,6 +331,7 @@ def _partition_pdf_or_image_with_ocr(
     include_page_breaks: bool = False,
     ocr_languages: str = "eng",
     is_image: bool = False,
+    max_partition: Optional[int] = 1500,
 ):
     """Partitions and image or PDF using Tesseract OCR. For PDFs, each page is converted
     to an image prior to processing."""
@@ -317,11 +339,11 @@ def _partition_pdf_or_image_with_ocr(
 
     if is_image:
         if file is not None:
-            image = Image.open(file)
+            image = PIL.Image.open(file)
             text = pytesseract.image_to_string(image, config=f"-l '{ocr_languages}'")
         else:
             text = pytesseract.image_to_string(filename, config=f"-l '{ocr_languages}'")
-        elements = partition_text(text=text)
+        elements = partition_text(text=text, max_partition=max_partition)
     else:
         elements = []
         if file is not None:
@@ -334,11 +356,11 @@ def _partition_pdf_or_image_with_ocr(
             metadata = ElementMetadata(filename=filename, page_number=i + 1)
             text = pytesseract.image_to_string(image, config=f"-l '{ocr_languages}'")
 
-            _elements = partition_text(text=text)
+            _elements = partition_text(text=text, max_partition=max_partition)
             for element in _elements:
                 element.metadata = metadata
                 elements.append(element)
 
             if include_page_breaks:
-                elements.append(PageBreak())
+                elements.append(PageBreak(text=""))
     return elements

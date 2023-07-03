@@ -2,22 +2,18 @@
 
 set -e
 
-SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
+SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
+OUTPUT_FOLDER_NAME=local
+OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-    --metadata-exclude filename,file_directory \
-    --local-input-path example-docs \
     --local-file-glob "*.html" \
-    --structured-output-dir local-ingest-output \
+    --local-input-path example-docs \
+    --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
     --partition-strategy hi_res \
-    --verbose \
-    --reprocess
+    --reprocess \
+    --structured-output-dir "$OUTPUT_DIR" \
+    --verbose
 
-set +e
-
-if [ "$(find 'local-ingest-output' -type f -printf '.' | wc -c)" != 4 ]; then
-   echo
-   echo "4 files should have been created."
-   exit 1
-fi
+sh "$SCRIPT_DIR"/check-num-files-output.sh 9 $OUTPUT_FOLDER_NAME

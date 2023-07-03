@@ -1,5 +1,4 @@
 import contextlib
-import json
 from typing import (
     IO,
     List,
@@ -10,7 +9,7 @@ import requests
 
 from unstructured.documents.elements import Element
 from unstructured.partition.common import exactly_one
-from unstructured.partition.json import partition_json
+from unstructured.staging.base import dict_to_elements, elements_from_json
 
 
 def partition_via_api(
@@ -18,9 +17,9 @@ def partition_via_api(
     content_type: Optional[str] = None,
     file: Optional[IO] = None,
     file_filename: Optional[str] = None,
-    strategy: str = "hi_res",
     api_url: str = "https://api.unstructured.io/general/v0/general",
     api_key: str = "",
+    **request_kwargs,
 ) -> List[Element]:
     """Partitions a document using the Unstructured REST API. This is equivalent to
     running the document through partition.
@@ -39,14 +38,13 @@ def partition_via_api(
         A file-like object using "rb" mode --> open(filename, "rb").
     file_filename
         When file is not None, the filename (string) to store in element metadata. E.g. "foo.txt"
-    strategy
-        The strategy to use for partitioning the PDF. Uses a layout detection model if set
-        to 'hi_res', otherwise partition_pdf simply extracts the text from the document
-        and processes it.
     api_url
         The URL for the Unstructured API. Defaults to the hosted Unstructured API.
     api_key
         The API key to pass to the Unstructured API.
+    request_kwargs
+        Additional parameters to pass to the data field of the request to the Unstructured API.
+        For example the `strategy` parameter.
     """
     exactly_one(filename=filename, file=file)
 
@@ -55,9 +53,9 @@ def partition_via_api(
         "UNSTRUCTURED-API-KEY": api_key,
     }
 
-    data = {
-        "strategy": strategy,
-    }
+    # set default values for kwargs
+    strategy = request_kwargs.pop("strategy", "hi_res")
+    request_kwargs["strategy"] = strategy
 
     if filename is not None:
         with open(filename, "rb") as f:
@@ -67,7 +65,7 @@ def partition_via_api(
             response = requests.post(
                 api_url,
                 headers=headers,
-                data=data,
+                data=request_kwargs,
                 files=files,  # type: ignore
             )
     elif file is not None:
@@ -79,10 +77,15 @@ def partition_via_api(
         files = [
             ("files", (file_filename, file, content_type)),  # type: ignore
         ]
-        response = requests.post(api_url, headers=headers, data=data, files=files)  # type: ignore
+        response = requests.post(
+            api_url,
+            headers=headers,
+            data=request_kwargs,
+            files=files,  # type: ignore
+        )
 
     if response.status_code == 200:
-        return partition_json(text=response.text)
+        return elements_from_json(text=response.text)
     else:
         raise ValueError(
             f"Receive unexpected status code {response.status_code} from the API.",
@@ -94,9 +97,9 @@ def partition_multiple_via_api(
     content_types: Optional[List[str]] = None,
     files: Optional[List[str]] = None,
     file_filenames: Optional[List[str]] = None,
-    strategy: str = "hi_res",
     api_url: str = "https://api.unstructured.io/general/v0/general",
     api_key: str = "",
+    **request_kwargs,
 ) -> List[List[Element]]:
     """Partitions multiple document using the Unstructured REST API by batching
     the documents into a single HTTP request.
@@ -107,7 +110,7 @@ def partition_multiple_via_api(
 
     Parameters
     ----------
-    filename
+    filenames
         A list of strings defining the target filename paths.
     content_types
         A list of strings defining the file contents in MIME types.
@@ -123,15 +126,18 @@ def partition_multiple_via_api(
         The URL for the Unstructured API. Defaults to the hosted Unstructured API.
     api_key
         The API key to pass to the Unstructured API.
+    request_kwargs
+        Additional parameters to pass to the data field of the request to the Unstructured API.
+        For example the `strategy` parameter.
     """
     headers = {
         "ACCEPT": "application/json",
         "UNSTRUCTURED-API-KEY": api_key,
     }
 
-    data = {
-        "strategy": strategy,
-    }
+    # set default values for kwargs
+    strategy = request_kwargs.pop("strategy", "hi_res")
+    request_kwargs["strategy"] = strategy
 
     if filenames is not None:
         if content_types and len(content_types) != len(filenames):
@@ -149,7 +155,7 @@ def partition_multiple_via_api(
             response = requests.post(
                 api_url,
                 headers=headers,
-                data=data,
+                data=request_kwargs,
                 files=_files,  # type: ignore
             )
 
@@ -168,12 +174,23 @@ def partition_multiple_via_api(
             filename = file_filenames[i]
             _files.append(("files", (filename, _file, content_type)))
 
-        response = requests.post(api_url, headers=headers, data=data, files=_files)  # type: ignore
+        response = requests.post(
+            api_url,
+            headers=headers,
+            data=request_kwargs,
+            files=_files,  # type: ignore
+        )
 
     if response.status_code == 200:
         documents = []
-        for document in response.json():
-            documents.append(partition_json(text=json.dumps(document)))
+        response_list = response.json()
+        # NOTE(robinson) - this check is because if only one filename is passed, the return
+        # type from the API is a list of objects instead of a list of lists
+        if not isinstance(response_list[0], list):
+            response_list = [response_list]
+
+        for document in response_list:
+            documents.append(dict_to_elements(document))
         return documents
     else:
         raise ValueError(

@@ -22,7 +22,7 @@ charset-normalizer==3.1.0
     #   requests
 coloredlogs==15.0.1
     # via onnxruntime
-contourpy==1.0.7
+contourpy==1.1.0
     # via matplotlib
 cryptography==41.0.1
     # via
@@ -32,16 +32,16 @@ cycler==0.11.0
     # via matplotlib
 effdet==0.4.1
     # via layoutparser
-filelock==3.12.0
+filelock==3.12.2
     # via
     #   huggingface-hub
     #   torch
     #   transformers
 flatbuffers==23.5.26
     # via onnxruntime
-fonttools==4.39.4
+fonttools==4.40.0
     # via matplotlib
-fsspec==2023.5.0
+fsspec==2023.6.0
     # via huggingface-hub
 huggingface-hub==0.15.1
     # via
@@ -64,7 +64,7 @@ kiwisolver==1.4.4
     # via matplotlib
 layoutparser[layoutmodels,tesseract]==0.3.4
     # via unstructured-inference
-markupsafe==2.1.2
+markupsafe==2.1.3
     # via jinja2
 matplotlib==3.7.1
     # via pycocotools
@@ -87,7 +87,7 @@ numpy==1.23.5
     #   transformers
 omegaconf==2.3.0
     # via effdet
-onnxruntime==1.15.0
+onnxruntime==1.15.1
     # via unstructured-inference
 opencv-python==4.7.0.72
     # via
@@ -106,7 +106,9 @@ pandas==1.5.3
     #   -c requirements/base.txt
     #   layoutparser
 pdf2image==1.16.3
-    # via layoutparser
+    # via
+    #   -c requirements/base.txt
+    #   layoutparser
 pdfminer-six==20221105
     # via
     #   -c requirements/base.txt
@@ -134,7 +136,7 @@ pycparser==2.21
     # via
     #   -c requirements/base.txt
     #   cffi
-pyparsing==3.0.9
+pyparsing==3.1.0
     # via matplotlib
 pytesseract==0.3.10
     # via layoutparser
@@ -156,7 +158,7 @@ pyyaml==6.0
     #   omegaconf
     #   timm
     #   transformers
-regex==2023.5.5
+regex==2023.6.3
     # via
     #   -c requirements/base.txt
     #   transformers
@@ -167,7 +169,9 @@ requests==2.31.0
     #   torchvision
     #   transformers
 safetensors==0.3.1
-    # via timm
+    # via
+    #   timm
+    #   transformers
 scipy==1.10.1
     # via layoutparser
 six==1.16.0
@@ -199,15 +203,15 @@ tqdm==4.65.0
     #   huggingface-hub
     #   iopath
     #   transformers
-transformers==4.29.2
+transformers==4.30.2
     # via unstructured-inference
-typing-extensions==4.6.2
+typing-extensions==4.7.0
     # via
     #   -c requirements/base.txt
     #   huggingface-hub
     #   iopath
     #   torch
-unstructured-inference==0.5.1
+unstructured-inference==0.5.4
     # via -r requirements/local-inference.in
 urllib3==1.26.16
     # via

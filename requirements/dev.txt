@@ -63,7 +63,7 @@ executing==1.2.0
     # via stack-data
 fastjsonschema==2.17.1
     # via nbformat
-filelock==3.12.0
+filelock==3.12.2
     # via virtualenv
 fqdn==1.5.1
     # via jsonschema
@@ -75,14 +75,14 @@ idna==3.4
     #   -c requirements/test.txt
     #   anyio
     #   jsonschema
-importlib-metadata==6.6.0
+importlib-metadata==6.7.0
     # via
     #   -c requirements/base.txt
     #   jupyter-client
     #   nbconvert
 importlib-resources==5.12.0
     # via jsonschema
-ipykernel==6.23.1
+ipykernel==6.23.3
     # via
     #   ipywidgets
     #   jupyter
@@ -113,7 +113,7 @@ jinja2==3.1.2
     #   nbclassic
     #   nbconvert
     #   notebook
-jsonpointer==2.3
+jsonpointer==2.4
     # via jsonschema
 jsonschema[format-nongpl]==4.17.3
     # via
@@ -121,7 +121,7 @@ jsonschema[format-nongpl]==4.17.3
     #   nbformat
 jupyter==1.0.0
     # via -r requirements/dev.in
-jupyter-client==8.2.0
+jupyter-client==8.3.0
     # via
     #   ipykernel
     #   jupyter-console
@@ -132,7 +132,7 @@ jupyter-client==8.2.0
     #   qtconsole
 jupyter-console==6.6.3
     # via jupyter
-jupyter-core==5.3.0
+jupyter-core==5.3.1
     # via
     #   -c requirements/constraints.in
     #   ipykernel
@@ -147,7 +147,7 @@ jupyter-core==5.3.0
     #   qtconsole
 jupyter-events==0.6.3
     # via jupyter-server
-jupyter-server==2.6.0
+jupyter-server==2.7.0
     # via
     #   nbclassic
     #   notebook-shim
@@ -157,7 +157,7 @@ jupyterlab-pygments==0.2.2
     # via nbconvert
 jupyterlab-widgets==3.0.7
     # via ipywidgets
-markupsafe==2.1.2
+markupsafe==2.1.3
     # via
     #   jinja2
     #   nbconvert
@@ -165,13 +165,13 @@ matplotlib-inline==0.1.6
     # via
     #   ipykernel
     #   ipython
-mistune==2.0.5
+mistune==3.0.1
     # via nbconvert
 nbclassic==1.0.0
     # via notebook
 nbclient==0.8.0
     # via nbconvert
-nbconvert==7.4.0
+nbconvert==7.6.0
     # via
     #   jupyter
     #   jupyter-server
@@ -219,12 +219,12 @@ pip-tools==6.13.0
     # via -r requirements/dev.in
 pkgutil-resolve-name==1.3.10
     # via jsonschema
-platformdirs==3.5.1
+platformdirs==3.8.0
     # via
     #   -c requirements/test.txt
     #   jupyter-core
     #   virtualenv
-pre-commit==3.3.2
+pre-commit==3.3.3
     # via -r requirements/dev.in
 prometheus-client==0.17.0
     # via
@@ -261,6 +261,7 @@ pyrsistent==0.19.3
 python-dateutil==2.8.2
     # via
     #   -c requirements/base.txt
+    #   -c requirements/test.txt
     #   arrow
     #   jupyter-client
 python-json-logger==2.0.7
@@ -351,14 +352,14 @@ traitlets==5.9.0
     #   nbformat
     #   notebook
     #   qtconsole
-typing-extensions==4.6.2
+typing-extensions==4.7.0
     # via
     #   -c requirements/base.txt
     #   -c requirements/test.txt
     #   ipython
-uri-template==1.2.0
+uri-template==1.3.0
     # via jsonschema
-virtualenv==20.23.0
+virtualenv==20.23.1
     # via pre-commit
 wcwidth==0.2.6
     # via prompt-toolkit
@@ -368,7 +369,7 @@ webencodings==0.5.1
     # via
     #   bleach
     #   tinycss2
-websocket-client==1.5.2
+websocket-client==1.6.1
     # via jupyter-server
 wheel==0.40.0
     # via

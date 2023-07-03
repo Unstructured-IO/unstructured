@@ -62,6 +62,14 @@ install-ingest-google-drive:
 install-ingest-s3:
 	python3 -m pip install -r requirements/ingest-s3.txt
 
+.PHONY: install-ingest-gcs
+install-ingest-gcs:
+	python3 -m pip install -r requirements/ingest-gcs.txt
+
+.PHONY: install-ingest-dropbox
+install-ingest-dropbox:
+	python3 -m pip install -r requirements/ingest-dropbox.txt
+
 .PHONY: install-ingest-azure
 install-ingest-azure:
 	python3 -m pip install -r requirements/ingest-azure.txt
@@ -90,19 +98,12 @@ install-ingest-slack:
 install-ingest-wikipedia:
 	python3 -m pip install -r requirements/ingest-wikipedia.txt
 
+.PHONY: install-ingest-elasticsearch
+install-ingest-elasticsearch:
+	python3 -m pip install -r requirements/ingest-elasticsearch.txt
 .PHONY: install-unstructured-inference
 install-unstructured-inference:
 	python3 -m pip install -r requirements/local-inference.txt
-
-.PHONY: install-tensorboard
-install-tensorboard:
-	@if [ ${ARCH} = "arm64" ] || [ ${ARCH} = "aarch64" ]; then\
-		python3 -m pip install tensorboard>=2.12.2;\
-	fi
-
-.PHONY: install-detectron2
-install-detectron2: install-tensorboard
-	python3 -m pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@e2ce8dc#egg=detectron2"
 
 ## install-local-inference: installs requirements for local inference
 .PHONY: install-local-inference
@@ -127,6 +128,8 @@ pip-compile:
 	# sphinx docs looks for additional requirements
 	cp requirements/build.txt docs/requirements.txt
 	pip-compile --upgrade requirements/ingest-s3.in
+	pip-compile --upgrade requirements/ingest-gcs.in
+	pip-compile --upgrade requirements/ingest-dropbox.in
 	pip-compile --upgrade requirements/ingest-azure.in
 	pip-compile --upgrade requirements/ingest-discord.in
 	pip-compile --upgrade requirements/ingest-reddit.in
@@ -135,6 +138,7 @@ pip-compile:
 	pip-compile --upgrade requirements/ingest-slack.in
 	pip-compile --upgrade requirements/ingest-wikipedia.in
 	pip-compile --upgrade requirements/ingest-google-drive.in
+	pip-compile --upgrade requirements/ingest-elasticsearch.in
 
 ## install-project-local:   install unstructured into your local python environment
 .PHONY: install-project-local
@@ -151,10 +155,12 @@ uninstall-project-local:
 # Test and Lint #
 #################
 
+export CI ?= false
+
 ## test:                    runs all unittests
 .PHONY: test
 test:
-	PYTHONPATH=. pytest test_${PACKAGE_NAME} --cov=${PACKAGE_NAME} --cov-report term-missing
+	PYTHONPATH=. CI=$(CI) pytest test_${PACKAGE_NAME} --cov=${PACKAGE_NAME} --cov-report term-missing
 
 ## check:                   runs linters (includes tests)
 .PHONY: check
@@ -229,8 +235,9 @@ docker-test:
 	docker run --rm \
 	-v ${CURRENT_DIR}/test_unstructured:/home/test_unstructured \
 	-v ${CURRENT_DIR}/test_unstructured_ingest:/home/test_unstructured_ingest \
+	$(if $(wildcard uns_test_env_file),--env-file uns_test_env_file,) \
 	$(DOCKER_IMAGE) \
-	bash -c "pytest $(if $(TEST_NAME),-k $(TEST_NAME),) test_unstructured"
+	bash -c "CI=$(CI) pytest $(if $(TEST_NAME),-k $(TEST_NAME),) test_unstructured"
 
 .PHONY: docker-smoke-test
 docker-smoke-test:

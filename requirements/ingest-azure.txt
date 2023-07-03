@@ -14,7 +14,7 @@ async-timeout==4.0.2
     # via aiohttp
 attrs==23.1.0
     # via aiohttp
-azure-core==1.27.0
+azure-core==1.27.1
     # via
     #   adlfs
     #   azure-identity
@@ -51,7 +51,7 @@ frozenlist==1.3.3
     # via
     #   aiohttp
     #   aiosignal
-fsspec==2023.5.0
+fsspec==2023.6.0
     # via
     #   -r requirements/ingest-azure.in
     #   adlfs
@@ -93,7 +93,7 @@ six==1.16.0
     #   azure-core
     #   azure-identity
     #   isodate
-typing-extensions==4.6.2
+typing-extensions==4.7.0
     # via
     #   -c requirements/base.txt
     #   azure-core

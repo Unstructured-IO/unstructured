@@ -1,4 +1,3 @@
-import json
 import os
 import urllib.request
 from dataclasses import dataclass
@@ -8,11 +7,15 @@ from typing import List, Union
 
 import requests
 from bs4 import BeautifulSoup
+from requests.adapters import HTTPAdapter
+from urllib3.util import Retry
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
+    ConnectorCleanupMixin,
+    IngestDocCleanupMixin,
     StandardConnectorConfig,
 )
 from unstructured.ingest.logger import logger
@@ -43,6 +46,9 @@ class SimpleBiomedConfig(BaseConnectorConfig):
     id_: str
     from_: str
     until: str
+    max_retries: int = 5
+    request_timeout: int = 45
+    decay: float = 0.3
 
     def validate_api_inputs(self):
         valid = False
@@ -95,11 +101,13 @@ class SimpleBiomedConfig(BaseConnectorConfig):
                 elif "command successful" in response:
                     self.is_dir = True
                 else:
-                    raise ValueError("Something went wrong when validating the path: {path}.")
+                    raise ValueError(
+                        "Something went wrong when validating the path: {path}.",
+                    )
 
 
 @dataclass
-class BiomedIngestDoc(BaseIngestDoc):
+class BiomedIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleBiomedConfig
     file_meta: BiomedFileMeta
 
@@ -107,6 +115,7 @@ class BiomedIngestDoc(BaseIngestDoc):
     def filename(self):
         return Path(self.file_meta.download_filepath).resolve()  # type: ignore
 
+    @property
     def _output_filename(self):
         return Path(f"{self.file_meta.output_filepath}.json").resolve()
 
@@ -119,49 +128,33 @@ class BiomedIngestDoc(BaseIngestDoc):
             logger.debug(f"Cleaning up {self}")
             Path.unlink(self.filename)
 
-    def has_output(self):
-        """Determine if structured output for this doc already exists."""
-        output_filename = self._output_filename()
-        return output_filename.is_file() and output_filename.stat()
-
+    @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
         download_path = self.file_meta.download_filepath  # type: ignore
-
         dir_ = Path(os.path.dirname(download_path))  # type: ignore
         if not dir_.is_dir():
             logger.debug(f"Creating directory: {dir_}")
 
             if dir_:
                 dir_.mkdir(parents=True, exist_ok=True)
-
         urllib.request.urlretrieve(
             self.file_meta.ftp_path,  # type: ignore
             self.file_meta.download_filepath,
         )
-
         logger.debug(f"File downloaded: {self.file_meta.download_filepath}")
 
-    def write_result(self):
-        """Write the structured json result for this doc. result must be json serializable."""
-        if self.standard_config.download_only:
-            return
-        output_filename = self._output_filename()
-        output_filename.parent.mkdir(parents=True, exist_ok=True)
-        with open(output_filename, "w") as output_f:
-            output_f.write(json.dumps(self.isd_elems_no_filename, ensure_ascii=False, indent=2))
-        logger.info(f"Wrote {output_filename}")
 
-
-class BiomedConnector(BaseConnector):
+class BiomedConnector(ConnectorCleanupMixin, BaseConnector):
     """Objects of this class support fetching documents from Biomedical literature FTP directory"""
 
     config: SimpleBiomedConfig
 
-    def __init__(self, standard_config: StandardConnectorConfig, config: SimpleBiomedConfig):
+    def __init__(
+        self,
+        standard_config: StandardConnectorConfig,
+        config: SimpleBiomedConfig,
+    ):
         super().__init__(standard_config, config)
-        self.cleanup_files = (
-            not self.standard_config.preserve_downloads and not self.standard_config.download_only
-        )
 
     def _list_objects_api(self):
         def urls_to_metadata(urls):
@@ -198,7 +191,15 @@ class BiomedConnector(BaseConnector):
             endpoint_url += f"&until={self.config.until}"
 
         while endpoint_url:
-            response = requests.get(endpoint_url)
+            session = requests.Session()
+            retries = Retry(
+                total=self.config.max_retries,
+                backoff_factor=self.config.decay,
+            )
+            adapter = HTTPAdapter(max_retries=retries)
+            session.mount("http://", adapter)
+            session.mount("https://", adapter)
+            response = session.get(endpoint_url, timeout=self.config.request_timeout)
             soup = BeautifulSoup(response.content, features="lxml")
             urls = [link["href"] for link in soup.find_all("link")]
 
@@ -278,26 +279,6 @@ class BiomedConnector(BaseConnector):
             )
 
         return files
-
-    def cleanup(self, cur_dir=None):
-        if not self.cleanup_files:
-            return
-
-        if cur_dir is None:
-            cur_dir = self.standard_config.download_dir
-
-        if cur_dir is None or not Path(cur_dir).is_dir():
-            return
-
-        sub_dirs = os.listdir(cur_dir)
-        os.chdir(cur_dir)
-        for sub_dir in sub_dirs:
-            # don't traverse symlinks, not that there every should be any
-            if os.path.isdir(sub_dir) and not os.path.islink(sub_dir):
-                self.cleanup(sub_dir)
-        os.chdir("..")
-        if len(os.listdir(cur_dir)) == 0:
-            os.rmdir(cur_dir)
 
     def initialize(self):
         pass

@@ -1,0 +1,309 @@
+X-Gmail-Labels: Archived,Important,Category Personal,Unread
+Delivered-To: email@domain.com
+Received: by 2002:a05:6520:817:b0:1a2:7c89:3418 with SMTP id x23csp756888lkw;
+        Tue, 1 Mar 2022 08:19:13 -0800 (PST)
+X-Received: by 2002:adf:e288:0:b0:1e3:36c0:91cc with SMTP id v8-20020adfe288000000b001e336c091ccmr19869924wri.41.1646151552405;
+        Tue, 01 Mar 2022 08:19:12 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1646151552; cv=none;
+        d=google.com; s=arc-20160816;
+        b=sqbVp767fwHgTbmrtHYBxS6XKXmYaj6Mj5wKgU0HQQVdkpmK1B4TmiQhmL6Zlku37l
+         IvphTws0zvFrQNEVbet+HAs+7vlYmgTT+wFEAPcZsxyusK8sVfyQlflHM7KCNpVouTFd
+         nG7i2MVvqPkv31cWwJPLExH132Qb3nm+ljeKLIvUySE1gYSE0iCUwUV3HbwFiXGwjoXQ
+         0gzr1CQPetZVCtc6WH1MbxuUgA7zT/HrAfDnQ4WhzKT8OGI9HXkBUSIjldK5MPPIlXDP
+         yM5E1JcyXSggO0TAe0NIPT7DItBI2wfbsjZtuuODAWn/uEdWg1ZDSYbZM5GmqoVwqo1/
+         f+FQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=disposition-notification-to:content-language:thread-index
+         :mime-version:message-id:date:subject:to:from:return-receipt-to
+         :dkim-signature;
+        bh=sUM/mzXzhmvAhGNBm0ixfcL+oTRsIxvcPLzmtDd6JTk=;
+        b=PF26qwPysVyBvAxXt5rztVry20hCdKgU+jUPtN+BDlP0PwqyToFw+fX70H8heERWoi
+         XrqogHtzK0ErtELAi2ebBaxWbrItYOWxisA/Bx7LzURKDsJV9OK6YgHQfYSNfs6/YnUw
+         6xHK7pmA4Pb9r/783mpABZrdLDQUOAYJNAmnfxEQxi6+1+vW6g5EftuSEteKU/ipINMY
+         v1lFTxhJvW2EjNIBAD5SzmosDeV+WPYgpMguvARAkX9uB/c3GENcI6AQCqfBSqpr/+lu
+         vF5jzwCIQLGEZ9WUCx7MMea4Q+zMpqRUU1tQB295TJXOc418vOH1S4zDC5EHNq37lqGy
+         /Byw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@cw-event.com header.s=google header.b="h/6eaAUk";
+       spf=pass (google.com: domain of email@domain.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=email@domain.com
+Return-Path: <email@domain.com>
+Received: from mail-sor-f41.google.com (mail-sor-f41.google.com. [209.85.220.41])
+        by mx.google.com with SMTPS id i12-20020adfaacc000000b001ede4df6ef4sor1543550wrc.8.2022.03.01.08.19.12
+        for <email@domain.com>
+        (Google Transport Security);
+        Tue, 01 Mar 2022 08:19:12 -0800 (PST)
+Received-SPF: pass (google.com: domain of email@domain.com designates 209.85.220.41 as permitted sender) client-ip=209.85.220.41;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@cw-event.com header.s=google header.b="h/6eaAUk";
+       spf=pass (google.com: domain of email@domain.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=email@domain.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cw-event.com; s=google;
+        h=return-receipt-to:from:to:subject:date:message-id:mime-version
+         :thread-index:content-language:disposition-notification-to;
+        bh=sUM/mzXzhmvAhGNBm0ixfcL+oTRsIxvcPLzmtDd6JTk=;
+        b=h/6eaAUkGO/TVie01ViWyEW5xNeH+iYEstzSZjjpcqgwf4m7+OZgKV+x5n1oU5nhlk
+         VWbjGb0jvrKxv8jtP6E29NwxlP/JYxhhZgrcBisWlmK/jt4thqaGumcNSRnww5wfvvZS
+         TX7Dci1YkNt8FnRh6YhF9aS4U1dm3lywElV+2dy/bYwDuKtLI8xHmRyaFc/MTUCy4SgQ
+         SX22kIeJeJx1Lo27mE4y3ehz52LUjav5xZFVS1m+CuFoVkq3193Srmd2Sq236nxgEOc1
+         Yaj2YbM7WZpq4K4cHEGlhqDlz055FR4HONqipphhJn5+wKhRd6PSir+Ybvm33gUQ8A6e
+         Y5Wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:return-receipt-to:from:to:subject:date
+         :message-id:mime-version:thread-index:content-language
+         :disposition-notification-to;
+        bh=sUM/mzXzhmvAhGNBm0ixfcL+oTRsIxvcPLzmtDd6JTk=;
+        b=0t7wxPAekKSEalNw5rSlKx0YovW/yPrSKAdf0SAxPmoquhvtgudQIKP3Fgk4wyFeRC
+         OOOaV2+HYE62Yw6ZfI1Tc1EthlIiO1q4VCanWp9+ayEWhp9sEoZSOapOLRRoUZ/HDMh3
+         NFh1cPPymperx5qz5c++iTCV7zfILJhaVciGfzXohxmoigivOPpYT6UHLcbuYbzkpiey
+         Gble858k9BPyxAbHsGaAjejIOyqvi2RVjSFbsCFMOCpG8gwnYPWeBz6GEIEupPBUjGu3
+         fiossxEFPKZSG8cox2Pp6E8cRbOxPF8KTNKn81iKVuetRtynpn0QdAj7pPjYB27Fwqa3
+         Nbsg==
+X-Gm-Message-State: AOAM5333lpipEiofVOQP2wqjMdGnqV2V8MU87XZOIerVGl+c6AAh6L69
+	zzW+MEDbU718WfyyNPr9XRfooBO/6JBDzIl2
+X-Google-Smtp-Source: ABdhPJxGjQAK7WGXUeCgYI81hmJG35ug3C87H19fUPxqDeiMcnnmWasEX7R9GYVg4uAI1qVkce8UKg==
+X-Received: by 2002:a05:6000:1814:b0:1f0:21f4:399e with SMTP id m20-20020a056000181400b001f021f4399emr1976636wrh.188.1646151549580;
+        Tue, 01 Mar 2022 08:19:09 -0800 (PST)
+Return-Path: <email@domain.com>
+Received: from AsieduCW ([102.176.94.103])
+        by smtp.gmail.com with ESMTPSA id i20-20020a05600c355400b0038164ef5418sm3238165wmq.32.2022.03.01.08.19.04
+        for <email@domain.com>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 01 Mar 2022 08:19:08 -0800 (PST)
+Return-Receipt-To: "Someone" <email@domain.com>
+From: "Someone" <email@domain.com>
+To: <email@domain.com>
+Subject: GLOBAL SPONSORSHIP OPPORTUNITY - BIOPROCESSING SUMMIT
+Date: Tue, 1 Mar 2022 08:19:03 -0800
+Message-ID: <0a3901d82d88$125ebb30$371c3190$@cw-event.com>
+MIME-Version: 1.0
+Content-Type: multipart/mixed;
+	boundary="----=_NextPart_000_0A3A_01D82D45.043B7B30"
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AdgtiA4u3uKdslQZSg6fty2sxNxmfw==
+Content-Language: en-us
+Disposition-Notification-To: "Someone" <email@domain.com>
+
+This is a multipart message in MIME format.
+
+------=_NextPart_000_0A3A_01D82D45.043B7B30
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_001_0A3B_01D82D45.043B7B30"
+
+
+------=_NextPart_001_0A3B_01D82D45.043B7B30
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+
+To the attention of:
+
+Marketing department
+
+Sales department
+
+Events Sponsorship department
+
+
+
+I am contacting you regarding a sponsorship opportunity at our upcoming
+Bioprocessing Summit, which will take place on 21st - 22nd April, 2022 |
+Berlin, Germany.
+
+
+
+Find attached the agenda the of the event.
+
+
+
+Our exhibition/sponsorship packages offer a wide range of opportunities
+like:
+
+. Speaking slots to share your experience with a senior audience
+
+. Exhibition locations to develop relationships with your target market
+
+. Marketing visibility to improve your reputation within the industry etc.
+
+. Wish list of companies you want to meet can be provided to us so we can
+invite them for you
+
+. One-to-one meetings if you wish to meet some specific people on our
+participants list
+
+
+
+The summit will bring together C-level decision makers from a range of
+industries such as Biotechnology, Pharmaceuticals, Machinery, Food
+Production, Food & Beverages etc
+
+Expected companies include ThermoFisher, Takeda, Sanofi, Abbvie, Novartis,
+Repligen, GSK, AstraZeneca, Merck serona etc. In terms of audience
+expectation, we anticipate around 150+ attendees based on previous events.
+
+
+
+Please note that a limited number of sponsor slots are reserved in the
+agenda and will be considered on a first come first served basis. If this
+opportunity is something that you would like to explore, please let me know
+so I can send the sponsorship packages for your consideration. You can also
+request for the packages from our website  <http://www.randomworld.com>
+www.randomworld.com
+
+If you are not the responsible person, please share the information with the
+relevant persons. Thank you and I look forward to hearing from you.
+
+
+
+Kind regards,
+
+
+
+Someone| Project Manager
+
+
+
+Email:  <mailto:email@domain.com> email@domain.com
+
+
+
+
+------=_NextPart_001_0A3B_01D82D45.043B7B30
+Content-Type: text/html;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+<html xmlns:v=3D"urn:schemas-microsoft-com:vml" =
+xmlns:o=3D"urn:schemas-microsoft-com:office:office" =
+xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
+xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" =
+xmlns=3D"http://www.w3.org/TR/REC-html40"><head><META =
+HTTP-EQUIV=3D"Content-Type" CONTENT=3D"text/html; =
+charset=3Dus-ascii"><meta name=3DGenerator content=3D"Microsoft Word 15 =
+(filtered medium)"><style><!--
+/* Font Definitions */
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0in;
+	font-size:11.0pt;
+	font-family:"Calibri",sans-serif;}
+a:link, span.MsoHyperlink
+	{mso-style-priority:99;
+	color:#0563C1;
+	text-decoration:underline;}
+span.EmailStyle17
+	{mso-style-type:personal-compose;
+	font-family:"Calibri",sans-serif;
+	color:windowtext;}
+.MsoChpDefault
+	{mso-style-type:export-only;
+	font-family:"Calibri",sans-serif;}
+@page WordSection1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.0in 1.0in 1.0in;}
+div.WordSection1
+	{page:WordSection1;}
+--></style><!--[if gte mso 9]><xml>
+<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
+</xml><![endif]--><!--[if gte mso 9]><xml>
+<o:shapelayout v:ext=3D"edit">
+<o:idmap v:ext=3D"edit" data=3D"1" />
+</o:shapelayout></xml><![endif]--></head><body lang=3DEN-US =
+link=3D"#0563C1" vlink=3D"#954F72" style=3D'word-wrap:break-word'><div =
+class=3DWordSection1><p class=3DMsoNormal><a name=3D"_Hlk88112840"><span =
+lang=3DEN-GB>To the attention of:<o:p></o:p></span></a></p><p =
+class=3DMsoNormal><span style=3D'mso-bookmark:_Hlk88112840'><span =
+lang=3DEN-GB>Marketing department<o:p></o:p></span></span></p><p =
+class=3DMsoNormal><span style=3D'mso-bookmark:_Hlk88112840'><span =
+lang=3DEN-GB>Sales department<o:p></o:p></span></span></p><p =
+class=3DMsoNormal><span style=3D'mso-bookmark:_Hlk88112840'><span =
+lang=3DEN-GB>Events Sponsorship =
+department<o:p></o:p></span></span></p><p class=3DMsoNormal><span =
+style=3D'mso-bookmark:_Hlk88112840'><span =
+lang=3DEN-GB><o:p>&nbsp;</o:p></span></span></p><p =
+class=3DMsoNormal><span style=3D'mso-bookmark:_Hlk88112840'><span =
+lang=3DEN-GB>I am contacting you regarding a sponsorship opportunity at =
+our upcoming <b><span =
+style=3D'color:#222222;background:white'>Bioprocessing =
+Summit</span></b><span style=3D'color:#222222;background:white'>,</span> =
+which will take place on <b><span =
+style=3D'color:#222222;background:white'>21st &#8211; 22nd April, 2022 | =
+Berlin, Germany.</span></b><o:p></o:p></span></span></p><p =
+class=3DMsoNormal><span style=3D'mso-bookmark:_Hlk88112840'><span =
+lang=3DEN-GB><o:p>&nbsp;</o:p></span></span></p><p =
+class=3DMsoNormal><span style=3D'mso-bookmark:_Hlk88112840'><span =
+lang=3DEN-GB>Find attached the agenda the of the =
+event.<o:p></o:p></span></span></p><p class=3DMsoNormal><span =
+style=3D'mso-bookmark:_Hlk88112840'><span =
+lang=3DEN-GB><o:p>&nbsp;</o:p></span></span></p><p =
+class=3DMsoNormal><span style=3D'mso-bookmark:_Hlk88112840'><span =
+lang=3DEN-GB>Our exhibition/sponsorship packages offer a wide range of =
+opportunities like:<o:p></o:p></span></span></p><p =
+class=3DMsoNormal><span style=3D'mso-bookmark:_Hlk88112840'><span =
+lang=3DEN-GB>&#8226; Speaking slots to share your experience with a =
+senior audience<o:p></o:p></span></span></p><p class=3DMsoNormal><span =
+style=3D'mso-bookmark:_Hlk88112840'><span lang=3DEN-GB>&#8226; =
+Exhibition locations to develop relationships with your target =
+market<o:p></o:p></span></span></p><p class=3DMsoNormal><span =
+style=3D'mso-bookmark:_Hlk88112840'><span lang=3DEN-GB>&#8226; Marketing =
+visibility to improve your reputation within the industry =
+etc.<o:p></o:p></span></span></p><p class=3DMsoNormal><span =
+style=3D'mso-bookmark:_Hlk88112840'><span lang=3DEN-GB>&#8226; Wish list =
+of companies you want to meet can be provided to us so we can invite =
+them for you<o:p></o:p></span></span></p><p class=3DMsoNormal><span =
+style=3D'mso-bookmark:_Hlk88112840'><span lang=3DEN-GB>&#8226; =
+One-to-one meetings if you wish to meet some specific people on our =
+participants list<o:p></o:p></span></span></p><p class=3DMsoNormal><span =
+style=3D'mso-bookmark:_Hlk88112840'><span =
+lang=3DEN-GB><o:p>&nbsp;</o:p></span></span></p><p =
+class=3DMsoNormal><span style=3D'mso-bookmark:_Hlk88112840'><span =
+lang=3DEN-GB>The summit will bring together C-level decision makers from =
+a range of industries such as Biotechnology, Pharmaceuticals, Machinery, =
+Food Production, Food &amp; Beverages etc<o:p></o:p></span></span></p><p =
+class=3DMsoNormal><span style=3D'mso-bookmark:_Hlk88112840'><span =
+lang=3DEN-GB>Expected companies include ThermoFisher, Takeda, Sanofi, =
+Abbvie, Novartis, Repligen, GSK, AstraZeneca, Merck serona etc. In terms =
+of audience expectation, we anticipate around 150+ attendees based on =
+previous events. <o:p></o:p></span></span></p><p class=3DMsoNormal><span =
+style=3D'mso-bookmark:_Hlk88112840'><span =
+lang=3DEN-GB><o:p>&nbsp;</o:p></span></span></p><p =
+class=3DMsoNormal><span style=3D'mso-bookmark:_Hlk88112840'><span =
+lang=3DEN-GB>Please note that a limited number of sponsor slots are =
+reserved in the agenda and will be considered on a first come first =
+served basis. If this opportunity is something that you would like to =
+explore, please let me know so I can send the sponsorship packages for =
+your consideration. You can also request for the packages from our =
+website </span></span><a href=3D"http://www.randomworld.com"><span =
+style=3D'mso-bookmark:_Hlk88112840'><span =
+lang=3DEN-GB>www.randomworld.com</span></span><span =
+style=3D'mso-bookmark:_Hlk88112840'></span></a><span =
+style=3D'mso-bookmark:_Hlk88112840'> </span><span =
+style=3D'mso-bookmark:_Hlk88112840'><span =
+lang=3DEN-GB><o:p></o:p></span></span></p><p class=3DMsoNormal><span =
+style=3D'mso-bookmark:_Hlk88112840'><span lang=3DEN-GB>If you are not =
+the responsible person, please share the information with the relevant =
+persons. Thank you and I look forward to hearing from =
+you.<o:p></o:p></span></span></p><p class=3DMsoNormal><span =
+style=3D'mso-bookmark:_Hlk88112840'><span =
+lang=3DEN-GB><o:p>&nbsp;</o:p></span></span></p><p =
+class=3DMsoNormal><span style=3D'mso-bookmark:_Hlk88112840'><span =
+lang=3DEN-GB>Kind regards,<o:p></o:p></span></span></p><span =
+style=3D'mso-bookmark:_Hlk88112840'></span><p =
+class=3DMsoNormal><o:p>&nbsp;</o:p></p><p class=3DMsoNormal><b><span =
+style=3D'font-size:12.0pt;color:black'>Someone</span></b><span =
+style=3D'font-size:12.0pt;color:black'>|&nbsp;Project&nbsp;Manager<o:p></=
+o:p></span></p><p class=3DMsoNormal><span =
+style=3D'font-size:12.0pt;color:#C00000'>Random World=
+Ltd.<o:p></o:p></span></p><p class=3DMsoNormal>
+<span =
+style=3D'font-size:12.0pt;color:black'>Email: <a =
+href=3D"mailto:email@domain.com"><span =
+style=3D'color:black;text-decoration:none'>email@domain.com</span></a><o=
+:p></o:p></span></p><p =
+class=3DMsoNormal><o:p>&nbsp;</o:p></p></div></body></html>

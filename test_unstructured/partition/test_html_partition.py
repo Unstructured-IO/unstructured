@@ -6,7 +6,8 @@ import pytest
 import requests
 from requests.models import Response
 
-from unstructured.documents.elements import PageBreak, Title
+from unstructured.cleaners.core import clean_extra_whitespace
+from unstructured.documents.elements import Title
 from unstructured.partition.html import partition_html
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -16,10 +17,34 @@ def test_partition_html_from_filename():
     directory = os.path.join(DIRECTORY, "..", "..", "example-docs")
     filename = os.path.join(directory, "example-10k.html")
     elements = partition_html(filename=filename)
-    assert PageBreak() not in elements
     assert len(elements) > 0
+    assert "PageBreak" not in [elem.category for elem in elements]
     assert elements[0].metadata.filename == "example-10k.html"
     assert elements[0].metadata.file_directory == directory
+
+
+@pytest.mark.parametrize(
+    ("filename", "encoding", "error"),
+    [
+        ("example-10k-utf-16.html", "utf-8", UnicodeDecodeError),
+        ("example-steelJIS-datasheet-utf-16.html", "utf-8", UnicodeDecodeError),
+    ],
+)
+def test_partition_html_from_filename_raises_encoding_error(filename, encoding, error):
+    with pytest.raises(error):
+        filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+        with open(filename) as f:
+            partition_html(file=f, encoding=encoding)
+
+
+@pytest.mark.parametrize(
+    "filename",
+    ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html"],
+)
+def test_partition_html_from_filename_default_encoding(filename):
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+    elements = partition_html(filename=filename)
+    assert len(elements) > 0
 
 
 def test_partition_html_from_filename_metadata_false():
@@ -33,13 +58,63 @@ def test_partition_html_from_filename_metadata_false():
 def test_partition_html_with_page_breaks():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "example-10k.html")
     elements = partition_html(filename=filename, include_page_breaks=True)
-    assert PageBreak() in elements
+    assert "PageBreak" in [elem.category for elem in elements]
     assert len(elements) > 0
 
 
 def test_partition_html_from_file():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "example-10k.html")
     with open(filename) as f:
+        elements = partition_html(file=f)
+    assert len(elements) > 0
+
+
+@pytest.mark.parametrize(
+    ("filename", "encoding", "error"),
+    [
+        ("example-10k-utf-16.html", "utf-8", UnicodeDecodeError),
+        ("example-steelJIS-datasheet-utf-16.html", "utf-8", UnicodeDecodeError),
+    ],
+)
+def test_partition_html_from_file_raises_encoding_error(filename, encoding, error):
+    with pytest.raises(error):
+        filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+        with open(filename) as f:
+            partition_html(file=f, encoding=encoding)
+
+
+@pytest.mark.parametrize(
+    "filename",
+    ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html"],
+)
+def test_partition_html_from_file_default_encoding(filename):
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+    with open(filename) as f:
+        elements = partition_html(file=f)
+    assert len(elements) > 0
+
+
+@pytest.mark.parametrize(
+    ("filename", "encoding", "error"),
+    [
+        ("example-10k-utf-16.html", "utf-8", UnicodeDecodeError),
+        ("example-steelJIS-datasheet-utf-16.html", "utf-8", UnicodeDecodeError),
+    ],
+)
+def test_partition_html_from_file_rb_raises_encoding_error(filename, encoding, error):
+    with pytest.raises(error):
+        filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+        with open(filename, "rb") as f:
+            partition_html(file=f, encoding=encoding)
+
+
+@pytest.mark.parametrize(
+    "filename",
+    ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html"],
+)
+def test_partition_html_from_file_rb_default_encoding(filename):
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+    with open(filename, "rb") as f:
         elements = partition_html(file=f)
     assert len(elements) > 0
 
@@ -172,3 +247,32 @@ def test_emoji_appears_with_emoji_utf8_code():
     html_text = """\n<html charset="utf-8"><p>Hello &#128512;</p></html>"""
     elements = partition_html(text=html_text)
     assert elements[0] == Title("Hello 😀")
+
+
+def test_partition_html_can_turn_off_assemble_articles():
+    html_text = """<html>
+    <article>
+        <h1>Some important stuff is going on!</h1>
+        <p>Here is a description of that stuff</p>
+    </article>
+    <article>
+        <h1>Some other important stuff is going on!</h1>
+        <p>Here is a description of that stuff</p>
+    </article>
+    <h4>This is outside of the article.</h4>
+</html>
+"""
+    elements = partition_html(text=html_text, html_assemble_articles=False)
+    assert elements[-1] == Title("This is outside of the article.")
+
+
+def test_partition_html_with_pre_tag():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-html-pre.htm")
+    elements = partition_html(filename=filename)
+
+    assert len(elements) > 0
+    assert "PageBreak" not in [elem.category for elem in elements]
+    assert clean_extra_whitespace(elements[0].text) == "[107th Congress Public Law 56]"
+    assert isinstance(elements[0], Title)
+    assert elements[0].metadata.filetype == "text/html"
+    assert elements[0].metadata.filename == "fake-html-pre.htm"

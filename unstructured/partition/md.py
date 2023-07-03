@@ -3,7 +3,7 @@ from typing import IO, List, Optional, Union
 import markdown
 import requests
 
-from unstructured.documents.elements import Element
+from unstructured.documents.elements import Element, process_metadata
 from unstructured.documents.xml import VALID_PARSERS
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import exactly_one
@@ -16,6 +16,7 @@ def optional_decode(contents: Union[str, bytes]) -> str:
     return contents
 
 
+@process_metadata()
 @add_metadata_with_filetype(FileType.MD)
 def partition_md(
     filename: Optional[str] = None,
@@ -25,6 +26,7 @@ def partition_md(
     include_page_breaks: bool = False,
     include_metadata: bool = True,
     parser: VALID_PARSERS = None,
+    **kwargs,
 ) -> List[Element]:
     # Verify that only one of the arguments was provided
     if text is None:

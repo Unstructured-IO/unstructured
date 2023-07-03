@@ -4,6 +4,11 @@ import pytest
 
 from unstructured.cleaners.core import clean_prefix
 from unstructured.cleaners.translate import translate_text
+from unstructured.documents.coordinates import (
+    CoordinateSystem,
+    Orientation,
+    RelativeCoordinateSystem,
+)
 from unstructured.documents.elements import Element, NoID, Text
 
 
@@ -38,3 +43,80 @@ def test_apply_raises_if_func_does_not_produce_string():
     text_element = Text(text="[1] A Textbook on Crocodile Habitats")
     with pytest.raises(ValueError):
         text_element.apply(lambda s: 1)
+
+
+@pytest.mark.parametrize(
+    ("coordinates", "orientation1", "orientation2", "expected_coords"),
+    [
+        (
+            ((1, 2), (1, 4), (3, 4), (3, 2)),
+            Orientation.CARTESIAN,
+            Orientation.CARTESIAN,
+            ((10, 20), (10, 40), (30, 40), (30, 20)),
+        ),
+        (
+            ((1, 2), (1, 4), (3, 4), (3, 2)),
+            Orientation.CARTESIAN,
+            Orientation.SCREEN,
+            ((10, 1980), (10, 1960), (30, 1960), (30, 1980)),
+        ),
+        (
+            ((1, 2), (1, 4), (3, 4), (3, 2)),
+            Orientation.SCREEN,
+            Orientation.CARTESIAN,
+            ((10, 1980), (10, 1960), (30, 1960), (30, 1980)),
+        ),
+        (
+            ((1, 2), (1, 4), (3, 4), (3, 2)),
+            Orientation.SCREEN,
+            Orientation.SCREEN,
+            ((10, 20), (10, 40), (30, 40), (30, 20)),
+        ),
+    ],
+)
+def test_convert_coordinates_to_new_system(
+    coordinates,
+    orientation1,
+    orientation2,
+    expected_coords,
+):
+    coord1 = CoordinateSystem(100, 200)
+    coord1.orientation = orientation1
+    coord2 = CoordinateSystem(1000, 2000)
+    coord2.orientation = orientation2
+    element = Element(coordinates=coordinates, coordinate_system=coord1)
+    new_coords = element.convert_coordinates_to_new_system(coord2)
+    for new_coord, expected_coord in zip(new_coords, expected_coords):
+        new_coord == pytest.approx(expected_coord)
+    element.convert_coordinates_to_new_system(coord2, in_place=True)
+    for new_coord, expected_coord in zip(element.coordinates, expected_coords):
+        assert new_coord == pytest.approx(expected_coord)
+    assert element._coordinate_system == coord2
+
+
+@pytest.mark.parametrize(
+    ("coordinates", "coordinate_system"),
+    [
+        (None, None),
+        (((1, 2), (1, 4), (3, 4), (3, 2)), None),
+        (None, RelativeCoordinateSystem()),
+    ],
+)
+def test_convert_coordinate_to_new_system_none(coordinates, coordinate_system):
+    element = Element(coordinates=coordinates, coordinate_system=coordinate_system)
+    coord = CoordinateSystem(100, 200)
+    coord.orientation = Orientation.SCREEN
+    assert element.convert_coordinates_to_new_system(coord) is None
+
+
+def test_coordinate_system():
+    coordinates = ((1, 2), (1, 4), (3, 4), (3, 2))
+    coordinate_system = RelativeCoordinateSystem()
+    element = Element(coordinates=coordinates, coordinate_system=coordinate_system)
+    expected_schema = {
+        "name": "RelativeCoordinateSystem",
+        "description": RelativeCoordinateSystem.__doc__,
+        "layout_width": 1,
+        "layout_height": 1,
+    }
+    assert element.coordinate_system == expected_schema

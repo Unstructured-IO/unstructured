@@ -17,7 +17,7 @@ test_files = [
     "layout-parser-paper-fast.pdf",
     "fake-html.html",
     "fake.doc",
-    "fake-email.eml",
+    "eml/fake-email.eml",
     pytest.param(
         "fake-power-point.ppt",
         marks=pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container"),
@@ -35,7 +35,8 @@ def test_partition_json_from_filename(filename: str):
     elements = partition(filename=path)
 
     with tempfile.TemporaryDirectory() as tmpdir:
-        test_path = os.path.join(tmpdir, filename + ".json")
+        _filename = os.path.basename(filename)
+        test_path = os.path.join(tmpdir, _filename + ".json")
         elements_to_json(elements, filename=test_path, indent=2)
         test_elements = partition_json(filename=test_path)
 
@@ -55,7 +56,8 @@ def test_partition_json_from_file(filename: str):
     elements = partition(filename=path)
 
     with tempfile.TemporaryDirectory() as tmpdir:
-        test_path = os.path.join(tmpdir, filename + ".json")
+        _filename = os.path.basename(filename)
+        test_path = os.path.join(tmpdir, _filename + ".json")
         elements_to_json(elements, filename=test_path, indent=2)
         with open(test_path) as f:
             test_elements = partition_json(file=f)
@@ -74,7 +76,8 @@ def test_partition_json_from_text(filename: str):
     elements = partition(filename=path)
 
     with tempfile.TemporaryDirectory() as tmpdir:
-        test_path = os.path.join(tmpdir, filename + ".json")
+        _filename = os.path.basename(filename)
+        test_path = os.path.join(tmpdir, _filename + ".json")
         elements_to_json(elements, filename=test_path, indent=2)
         with open(test_path) as f:
             text = f.read()
@@ -122,3 +125,51 @@ def test_partition_json_raises_with_too_many_specified():
 
     with pytest.raises(ValueError):
         partition_json(filename=test_path, file=f, text=text)
+
+
+@pytest.mark.parametrize("filename", test_files)
+def test_partition_json_from_filename_exclude_metadata(filename: str):
+    path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+    elements = partition(filename=path)
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        _filename = os.path.basename(filename)
+        test_path = os.path.join(tmpdir, _filename + ".json")
+        elements_to_json(elements, filename=test_path, indent=2)
+        test_elements = partition_json(filename=test_path, include_metadata=False)
+
+    for i in range(len(test_elements)):
+        assert any(test_elements[i].metadata.to_dict()) is False
+
+
+@pytest.mark.parametrize("filename", test_files)
+def test_partition_json_from_file_exclude_metadata(filename: str):
+    path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+    elements = partition(filename=path)
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        _filename = os.path.basename(filename)
+        test_path = os.path.join(tmpdir, _filename + ".json")
+        elements_to_json(elements, filename=test_path, indent=2)
+        with open(test_path) as f:
+            test_elements = partition_json(file=f, include_metadata=False)
+
+    for i in range(len(test_elements)):
+        assert any(test_elements[i].metadata.to_dict()) is False
+
+
+@pytest.mark.parametrize("filename", test_files)
+def test_partition_json_from_text_exclude_metadata(filename: str):
+    path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+    elements = partition(filename=path)
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        _filename = os.path.basename(filename)
+        test_path = os.path.join(tmpdir, _filename + ".json")
+        elements_to_json(elements, filename=test_path, indent=2)
+        with open(test_path) as f:
+            text = f.read()
+        test_elements = partition_json(text=text, include_metadata=False)
+
+    for i in range(len(test_elements)):
+        assert any(test_elements[i].metadata.to_dict()) is False

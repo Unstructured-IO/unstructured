@@ -1,0 +1,296 @@
+X-Gmail-Labels: Archived,Category Updates,Unread
+Delivered-To: email@domain.com
+Received: by 2002:a05:6520:4584:b0:227:1173:a5f9 with SMTP id s4csp864896lkv;
+        Fri, 28 Oct 2022 01:59:14 -0700 (PDT)
+X-Google-Smtp-Source: AMsMyM50ImdCaqE4bQJd0k0t5eGzL5NdTi5dR0+2R7YXWA7wHjZPvJN6seLSi+pMbOcXbDTdraAP
+X-Received: by 2002:a0c:f081:0:b0:4b4:3768:36 with SMTP id g1-20020a0cf081000000b004b437680036mr44365337qvk.113.1666947553849;
+        Fri, 28 Oct 2022 01:59:13 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1666947553; cv=none;
+        d=google.com; s=arc-20160816;
+        b=iOGz4GIpxLIuwmN2J+ulbxWURZFTHuo56XVqzuVPduRJqpPWWReGua6gCiRt29+y0k
+         j8M7Yc8MqL3OBy+ZjG7G4RfCxUNphKiX+FVYULngBcc9uWp3uEnOxRGUnEoEsglyIF/x
+         jk2vyzsJq3k8zTzZVOUtQhm9D0PDiwX6p8DHT20ph0ireN9uLVqQp5xVv9bR38X2hI2L
+         yeNjAU7dZQwRxHuOX9zt3OipUp0GfxKAVCRhRxLsHu6+TzLcXbz8ZCkRtgLJ9INJI2PJ
+         rcAnBF/H/i/JwWg2ZMhgaXM5pOIMoQzIHVS3kD5w8abK6d+XxIOCE0Wdeiz6f7Htij8v
+         iPYQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=to:feedback-id:subject:message-id:mime-version:from:date
+         :content-transfer-encoding:dkim-signature;
+        bh=wulvfI0juwEe+KpkVgBERAN4Rscfl9MCE+PUCd3gA1s=;
+        b=J2jKmgl/R8Kc5KXf6VD5jUCkKfuEczt7/92F0J1SDCRGzdWrU6COR35S4zK1aarXhn
+         q/1Yw9hmfRTFKqgPfxH+W0csc7sNGahgIUPcXta9UBVrI6cTikLVWEPxb7PqgezanAz3
+         DBlIY7G/aaKkFiYhI1MwDajX+ylGQnQiq7rYcn7HQxXXDcH72C6BEAaMt1LnWIcre13f
+         slOusAl88H5IRTmKequZADAnfmRRvOntUBgxDQp+SNoGglfgIXQZyCWogzfvMe1276Zh
+         1tmTGEH1rkLjNxHceDZQ4YVpN5kNgrW0/H63bIflDMKF9xHO2oGjsUlQNteOXNYJpj48
+         I08w==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@zoom.us header.s=sg header.b=vA0jHu6I;
+       spf=pass (google.com: domain of bounces+15636778-78ee-pol=email@domain.com designates 159.183.220.232 as permitted sender) smtp.mailfrom="bounces+15636778-78ee-pol=email@domain.com";
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=zoom.us
+Return-Path: <bounces+15636778-78ee-pol=email@domain.com>
+Received: from o29.sg.zoom.us (o29.sg.zoom.us. [159.183.220.232])
+        by mx.google.com with ESMTPS id g11-20020ac842cb000000b0039ce9741c46si2215643qtm.185.2022.10.28.01.59.13
+        for <email@domain.com>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Oct 2022 01:59:13 -0700 (PDT)
+Received-SPF: pass (google.com: domain of bounces+15636778-78ee-pol=email@domain.com designates 159.183.220.232 as permitted sender) client-ip=159.183.220.232;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@zoom.us header.s=sg header.b=vA0jHu6I;
+       spf=pass (google.com: domain of bounces+15636778-78ee-pol=email@domain.com designates 159.183.220.232 as permitted sender) smtp.mailfrom="bounces+15636778-78ee-pol=email@domain.com";
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=zoom.us
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zoom.us;
+	h=content-transfer-encoding:content-type:from:mime-version:subject:to:
+	cc;
+	s=sg; bh=wulvfI0juwEe+KpkVgBERAN4Rscfl9MCE+PUCd3gA1s=;
+	b=vA0jHu6I94XaR4JGswIyFDHa9ADONozcztR3ONtuJExhtKqTldoMzkxuiOnCEE/DU5jJ
+	WT6+Rl+WzlgA+EMYmU1pR8Z9yyO/JUF8FXwfm6jFB+dydsSJVTR49MypoFftHFVTdDTo7y
+	ozf9XJ9B7R46QdANaWdUMoOr+6pS65POMJUPinyi1Ax+KGAktTFakY4zJesJDUTLuBLcnB
+	uTyzr5N20LChyMiRnjZVLfVIj47d3+IsbHAIF2irQtnZNTO1VR/XBYc6JfWHDgj+scZJf6
+	bXDlN1aEJnKwYJF//Cf4nLaToJpDWFUAKfH3uY2UUTjp1RszIut3A6G9IQjhqyEw==
+Received: by filterdrecv-6467f6ffdb-cpp5w with SMTP id filterdrecv-6467f6ffdb-cpp5w-1-635B99E0-E
+        2022-10-28 08:59:12.138681438 +0000 UTC m=+2632476.180501407
+Received: from MTU2MzY3Nzg (unknown)
+	by geopod-ismtpd-2-2 (SG) with HTTP
+	id OYKTVL8bRwayw3F6Pdbr5g
+	Fri, 28 Oct 2022 08:59:12.135 +0000 (UTC)
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/html; charset=us-ascii
+Date: Fri, 28 Oct 2022 08:59:12 +0000 (UTC)
+From: Zoom <email@domain.com>
+Mime-Version: 1.0
+Message-ID: <OYKTVL8bRwayw3F6Pdbr5g@geopod-ismtpd-2-2>
+Subject: Someone has joined your meeting - Someone: 45
+ Minute Meeting
+Feedback-ID: JBH:us06:Someone has joined your meeting - Someone: 45 Minute Meeting:Zoom
+X-SG-EID:
+ =?us-ascii?Q?KDPpbW8pFa435o7hjkPt95uEztMiNTszLxSdUw1PsB2OCAYeZjlfYbzMeTGtUm?=
+ =?us-ascii?Q?DNE00jAQ+6kDnf8QHu0j3TlGgF7Udbar=2FXQ6z9J?=
+ =?us-ascii?Q?UegXDAn6xADxSHYjve00k+GveRAYwv9R+feK7aA?=
+ =?us-ascii?Q?WM6ClAeFPL0UEfmaeNyXLBTqY1ZyQM=2FVlOgwAH6?=
+ =?us-ascii?Q?GzrqLgQWstjvbndM3a87WpGV8SfuThjd60vfSaz?=
+ =?us-ascii?Q?o16pVMJrFY6pp5WHQ=3D?=
+X-SG-ID:
+ =?us-ascii?Q?N2C25iY2uzGMFz6rgvQsb+OYre8JAtHg42YjIOd6WXBavsD1IQJCtFTM7OAzta?=
+ =?us-ascii?Q?f7JKknAVT=2F97My48s0nuwItdlLuwzYXjjYtJRep?=
+ =?us-ascii?Q?Ryiq2mNUNjGDrJHhVzQICOguSQCdBmdGCe3CJye?=
+ =?us-ascii?Q?0tLwSfXBXEOI8v1kOQbeZP2LRnsDOMyETNJnefd?=
+ =?us-ascii?Q?u7aqSK+0gvi+WlhXSuZev9iM3I+BecQUwlg+ZSr?=
+ =?us-ascii?Q?dpSFbYcSKolX0oDyotZHmROFSI7kXiYUFf3MWe8?=
+ =?us-ascii?Q?1ITbBB0cuN3V3pJOYbwNuzVVUP0VUzgvCbQXS1a?=
+ =?us-ascii?Q?03CfNWDeN33Tnla8OHFc6p9KZOJyEdMtrUfOM2=2F?=
+ =?us-ascii?Q?vcafVz4i0AGFlEh04g7UZM=2Fl08chwGNR7USJSpg?=
+ =?us-ascii?Q?mz43KYReSEzEqjy1J2iAQd9UEiHbv8kEoN7XBVt?=
+ =?us-ascii?Q?YW9vxxBlZakipLOCQhhK3ZMe9sMDSiHZtuu5H5G?=
+ =?us-ascii?Q?U5fKFIJZJcSLovUvxCHZeA8oO3sCFZK19PaY3Vx?=
+ =?us-ascii?Q?XirEgLn57Ud=2F0ObU4gVHiQqhaWV7+SSSjDNP82F?=
+ =?us-ascii?Q?yGj32ykbP9uhvdoz7+XOgVunVXipaXZOKK7aIl7?=
+ =?us-ascii?Q?wIjBCRLbpLoP5HKik9NdB+8um4DbQ=3D=3D?=
+To: email@domain.com
+X-Entity-ID: E9fQdb7jZf9hEpFVcRMWjw==
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.=
+w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns=3D"http://www.w3.org/1999/xhtml">
+<head>
+    <meta content=3D"text/html; charset=3Dutf-8" http-equiv=3D"Content-Type=
+"/>
+</head>
+<body style=3D"height: 100% !important; width: 100% !important; background-=
+color: #f4f5f9; margin: 0; padding: 0;">
+<table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" align=3D"center" st=
+yle=3D"font-size: 13px;color:#39394d;font-family: Arial;background-color: #=
+f4f5f9; width: 100%; height: 100%;padding-bottom: 10px;" border=3D"0" cellp=
+adding=3D"0" cellspacing=3D"0" align=3D"center">
+    <tr>
+        <td style=3D"vertical-align: top">
+            <table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" align=
+=3D"center" style=3D"width: 592px;">
+                <tr>
+                    <td style=3D"vertical-align: top;padding: 0px; backgrou=
+nd-color: #f4f5f9">
+                        <table border=3D"0" cellpadding=3D"0" cellspacing=
+=3D"0" align=3D"center"
+                               style=3D"margin-left: 0px;margin-right: 0px;=
+width: 100%;background-color: #ffffff;padding-bottom: 37px;">
+
+                            <tr>
+                                <td style=3D"padding-top: 30px;padding-bott=
+om: 10px;background-color:#f4f5f9;text-align: center">
+                                    <a href=3D"https://zoom.us">
+                                        <img src=3D"https://us06st1.zoom.us=
+/static/6.2.9277/image/new/ZoomLogo.png" style=3D"border-style: solid;" wid=
+th=3D"110" height=3D"25" border=3D"0"/>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style=3D"padding-left: 28px;padding-rig=
+ht: 28px;">
+                                    <table border=3D"0" cellpadding=3D"0" c=
+ellspacing=3D"0" align=3D"center" style=3D"width: 100%;font-size: 13px;colo=
+r: #39394d;font-family: Arial;">
+                                        <tr>
+                                            <td colspan=3D"2" style=3D"vert=
+ical-align: top; padding-top: 57px;padding-bottom: 10px;">Hi  Someone ,<=
+/td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan=3D"2" style=3D"vert=
+ical-align: top;line-height: 25px;">
+                                                    Someone has=
+ joined your meeting:
+                                            </td>
+                                        </tr>
+
+                                                <tr style=3D"height: 8px;">=
+</tr>
+                                                <tr>
+                                                    <td style=3D"height: 18=
+px;width: 22%;vertical-align: top;color:#747487">
+                                                        <strong>Topic</stro=
+ng>
+                                                    </td>
+                                                    <td style=3D"vertical-a=
+lign: top;"><strong>Someone: 45 Minute Meeting</strong></td>
+                                                </tr>
+                                                <tr style=3D"height: 8px;">=
+</tr>
+                                                <tr>
+                                                    <td style=3D"height: 18=
+px;width: 22%;vertical-align: top;color:#747487">
+                                                        <strong>Meeting ID<=
+/strong>
+                                                    </td>
+                                                    <td style=3D"vertical-a=
+lign: top;">869 1664 1575</td>
+                                                </tr>
+                                                <tr style=3D"height: 8px;">=
+</tr>
+                                                <tr>
+                                                    <td style=3D"height: 18=
+px;width: 22%;vertical-align: top;color:#747487"><strong>Time</strong></td>
+                                                    <td style=3D"vertical-a=
+lign: top;">Oct 28, 2022 11:00 AM Stockholm</td>
+                                                </tr>
+
+                                        <tr>
+                                            <td colspan=3D"2" style=3D"vert=
+ical-align: top; padding-top: 15px;padding-bottom: 15px">
+                                                <table border=3D"0" cellpad=
+ding=3D"0" cellspacing=3D"0" align=3D"left">
+                                                    <tbody>
+                                                    <tr>
+                                                        <td style=3D"paddin=
+g-left:30px;padding-top: 10px; padding-bottom: 10px; background-color: #2D8=
+CFF; border-top-left-radius: 8px; border-bottom-left-radius: 8px;">
+                                                            &nbsp;
+                                                        </td>
+                                                        <td style=3D"backgr=
+ound-color:#2D8CFF; font-family:helvetica,arial; font-size:16px; line-heigh=
+t:20px; font-weight: 700; padding-top: 10px; padding-bottom: 10px;">
+                                                            <a style=3D"col=
+or:#FFFFFF;text-decoration: none;" href=3D"https://us06web.zoom.us/s/869166=
+41575">
+                                                                Start Meeti=
+ng
+                                                            </a>
+                                                        </td>
+                                                        <td style=3D"paddin=
+g-right:30px;padding-top: 10px; padding-bottom: 10px; background-color: #2D=
+8CFF; border-top-right-radius: 8px; border-bottom-right-radius: 8px;">
+                                                            &nbsp;
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <table border=3D"0" cellpadding=3D"0" c=
+ellspacing=3D"0" align=3D"center" style=3D"width: 100%;font-size: 13px;colo=
+r: #39394d;font-family: Arial;">
+                                        <tr>
+                                            <td style=3D"padding-top: 28px;=
+padding-bottom: 28px;">
+                                                Thank you for choosing Zoom=
+.<br>
+                                                -The Zoom Team
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style=3D"padding-top: 30px; padding-bot=
+tom: 30px; background-color: #FFFFFF; border-top-color:#F0F2F4; border-top-=
+style: solid; border-top-width: 1px;">
+                                    <table align=3D"center" border=3D"0" ce=
+llpadding=3D"0" cellspacing=3D"0">
+                                        <tbody>
+                                        <tr>
+                                            <td>
+                                                <a href=3D"https://twitter.=
+com/zoom_us" style=3D"text-decoration: none;">
+                                                    <img alt=3D"" border=3D=
+"0" height=3D"25" src=3D"https://go.pardot.com/l/84442/2015-06-24/wht/84442=
+/5264/twitter.png"
+                                                         style=3D"width: 25=
+px; height: 25px; border-width: 0px; border-style: solid;"
+                                                    />
+                                                </a>
+                                            </td>
+                                            <td style=3D"padding-left:10px;=
+ padding-right: 10px;">
+                                                <a href=3D"https://www.link=
+edin.com/company/zoom-video-communications/"
+                                                   style=3D"text-decoration=
+: none;">
+                                                    <img alt=3D"" border=3D=
+"0" height=3D"25" src=3D"https://go.pardot.com/l/84442/2015-06-24/wj1/84442=
+/5270/linkedin.png"
+                                                         style=3D"width: 25=
+px; height: 25px; border-width: 0px; border-style: solid;"
+                                                    />
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a href=3D"https://blog.zoo=
+m.us/" style=3D"text-decoration: none;">
+                                                    <img alt=3D"" border=3D=
+"0" src=3D"https://go.pardot.com/l/84442/2015-06-24/wv9/84442/5282/zoomblog=
+.png"
+                                                         style=3D"width: 25=
+px; height: 25px; border-width: 0px; border-style: solid;"
+                                                    />
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <table align=3D"center" border=3D"0" ce=
+llpadding=3D"0" cellspacing=3D"0" width=3D"100%">
+                                        <tbody>
+                                        <tr>
+                                            <td style=3D"font-family:helvet=
+ica,arial; font-size:12px; line-height:18px; color:#999999; text-align:cent=
+er; padding-top: 10px;">
+                                                Copyright &copy;2022 Zoom V=
+ideo Communications, Inc. All rights reserved.
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
+
+From 1759159613117388594@xxx Wed Mar 01 10:09:01 +0000 2023
+X-GM-THRID: 1759159613117388594

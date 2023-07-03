@@ -87,7 +87,7 @@ def test_partition_pptx_adds_page_breaks(tmpdir):
 
     assert elements == [
         NarrativeText(text="This is the first slide."),
-        PageBreak(),
+        PageBreak(text=""),
         NarrativeText(text="This is the second slide."),
     ]
 
@@ -182,3 +182,32 @@ def test_partition_pptx_grabs_tables(filename="example-docs/fake-power-point-tab
     assert elements[1].text.startswith("Column 1")
     assert elements[1].text.strip().endswith("Aqua")
     assert elements[1].metadata.text_as_html == EXPECTED_HTML_TABLE
+
+
+def test_partition_pptx_many_pages():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point-many-pages.pptx")
+    elements = partition_pptx(filename=filename)
+
+    # The page_number of PageBreak is None
+    assert set(filter(None, (elt.metadata.page_number for elt in elements))) == {1, 2}
+
+
+def test_partition_pptx_malformed():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point-malformed.pptx")
+    elements = partition_pptx(filename=filename)
+
+    assert elements[0].text == "Problem Date Placeholder"
+    assert elements[1].text == "Test Slide"
+
+
+def test_partition_pptx_from_filename_exclude_metadata():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
+    elements = partition_pptx(filename=filename, include_metadata=False)
+    assert elements == EXPECTED_PPTX_OUTPUT
+
+
+def test_partition_pptx_from_file_exclude_metadata():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
+    with open(filename, "rb") as f:
+        elements = partition_pptx(file=f, include_metadata=False)
+    assert elements == EXPECTED_PPTX_OUTPUT

@@ -57,7 +57,8 @@ UNICODE_BULLETS: Final[List[str]] = [
     "\x95",
     "·",
 ]
-UNICODE_BULLETS_RE = re.compile(f"(?:{'|'.join(UNICODE_BULLETS)})")
+BULLETS_PATTERN = "|".join(UNICODE_BULLETS)
+UNICODE_BULLETS_RE = re.compile(f"(?:{BULLETS_PATTERN})(?!{BULLETS_PATTERN})")
 
 ENUMERATED_BULLETS_RE = re.compile(r"(?:(?:\d{1,3}|[a-z][A-Z])\.?){1,3}")
 
@@ -70,7 +71,9 @@ EMAIL_HEAD_RE = re.compile(EMAIL_HEAD_PATTERN)
 # (incluing \r and \n chars) on either side
 PARAGRAPH_PATTERN = r"\s*\n\s*"  # noqa: W605 NOTE(harrell)
 
-PARAGRAPH_PATTERN_RE = re.compile(f"((?:{'|'.join(UNICODE_BULLETS)})|{PARAGRAPH_PATTERN})")
+PARAGRAPH_PATTERN_RE = re.compile(
+    f"((?:{BULLETS_PATTERN})|{PARAGRAPH_PATTERN})(?!{BULLETS_PATTERN}|$)",
+)
 DOUBLE_PARAGRAPH_PATTERN_RE = re.compile("(" + PARAGRAPH_PATTERN + "){2}")
 
 # IP Address examples: ba23::58b5:2236:45g2:88h2 or 10.0.2.01
@@ -105,3 +108,4 @@ ENDS_IN_PUNCT_RE = re.compile(ENDS_IN_PUNCT_PATTERN)
 # NOTE(robinson) - Used to detect if text is in the expected "list of dicts"
 # format for document elements
 LIST_OF_DICTS_PATTERN = r"\A\s*\[\s*{?"
+JSON_PATTERN = r"^(?:\{.*\}|\[.*\])$"

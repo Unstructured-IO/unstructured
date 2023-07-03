@@ -2,17 +2,20 @@ import os
 import tempfile
 from typing import IO, List, Optional
 
-from unstructured.documents.elements import Element
+from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import convert_office_doc, exactly_one
 from unstructured.partition.pptx import partition_pptx
 
 
+@process_metadata()
 @add_metadata_with_filetype(FileType.PPT)
 def partition_ppt(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
     include_page_breaks: bool = False,
+    include_metadata: bool = True,
+    **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft PowerPoint Documents in .ppt format into their document elements.
 

@@ -5,6 +5,8 @@ import pytest
 
 from unstructured.documents.elements import (
     Address,
+    Footer,
+    Header,
     ListItem,
     NarrativeText,
     Table,
@@ -61,6 +63,7 @@ def test_partition_docx_with_filename(mock_document, expected_elements, tmpdir):
 
     elements = partition_docx(filename=filename)
     assert elements == expected_elements
+    assert elements[0].metadata.page_number is None
 
 
 def test_partition_docx_with_spooled_file(mock_document, expected_elements, tmpdir):
@@ -116,3 +119,41 @@ def test_partition_docx_processes_table(filename="example-docs/fake_table.docx")
 </table>"""
     )
     assert elements[0].metadata.filename == "fake_table.docx"
+
+
+def test_partition_docx_grabs_header_and_footer(filename="example-docs/handbook-1p.docx"):
+    elements = partition_docx(filename=filename)
+    assert elements[0] == Header("US Trustee Handbook")
+    assert elements[-1] == Footer("Copyright")
+
+
+def test_partition_docx_includes_pages_if_present(filename="example-docs/handbook-1p.docx"):
+    elements = partition_docx(filename=filename, include_page_breaks=False)
+    assert "PageBreak" not in [elem.category for elem in elements]
+    assert elements[1].metadata.page_number == 1
+    assert elements[-2].metadata.page_number == 2
+
+
+def test_partition_docx_includes_page_breaks(filename="example-docs/handbook-1p.docx"):
+    elements = partition_docx(filename=filename, include_page_breaks=True)
+    assert "PageBreak" in [elem.category for elem in elements]
+    assert elements[1].metadata.page_number == 1
+    assert elements[-2].metadata.page_number == 2
+
+
+def test_partition_docx_with_filename_exclude_metadata(filename="example-docs/handbook-1p.docx"):
+    elements = partition_docx(filename=filename, include_metadata=False)
+    assert elements[0].metadata.filetype is None
+    assert elements[0].metadata.page_name is None
+    assert elements[0].metadata.filename is None
+
+
+def test_partition_docx_with_file_exclude_metadata(mock_document, tmpdir):
+    filename = os.path.join(tmpdir.dirname, "mock_document.docx")
+    mock_document.save(filename)
+
+    with open(filename, "rb") as f:
+        elements = partition_docx(file=f, include_metadata=False)
+    assert elements[0].metadata.filetype is None
+    assert elements[0].metadata.page_name is None
+    assert elements[0].metadata.filename is None

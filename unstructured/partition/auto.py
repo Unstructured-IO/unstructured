@@ -3,6 +3,7 @@ from typing import IO, Callable, Dict, Optional, Tuple
 
 import requests
 
+from unstructured.documents.elements import DataSourceMetadata
 from unstructured.file_utils.filetype import (
     FILETYPE_TO_MIMETYPE,
     STR_TO_FILETYPE,
@@ -22,11 +23,14 @@ from unstructured.partition.json import partition_json
 from unstructured.partition.md import partition_md
 from unstructured.partition.msg import partition_msg
 from unstructured.partition.odt import partition_odt
+from unstructured.partition.org import partition_org
 from unstructured.partition.pdf import partition_pdf
 from unstructured.partition.ppt import partition_ppt
 from unstructured.partition.pptx import partition_pptx
+from unstructured.partition.rst import partition_rst
 from unstructured.partition.rtf import partition_rtf
 from unstructured.partition.text import partition_text
+from unstructured.partition.tsv import partition_tsv
 from unstructured.partition.xlsx import partition_xlsx
 from unstructured.partition.xml import partition_xml
 
@@ -39,13 +43,15 @@ def partition(
     url: Optional[str] = None,
     include_page_breaks: bool = False,
     strategy: str = "auto",
-    encoding: str = "utf-8",
+    encoding: Optional[str] = None,
     paragraph_grouper: Optional[Callable[[str], str]] = None,
     headers: Dict[str, str] = {},
     ssl_verify: bool = True,
     ocr_languages: str = "eng",
     pdf_infer_table_structure: bool = False,
     xml_keep_tags: bool = False,
+    data_source_metadata: Optional[DataSourceMetadata] = None,
+    **kwargs,
 ):
     """Partitions a document into its constituent elements. Will use libmagic to determine
     the file's type and route it to the appropriate partitioning function. Applies the default
@@ -68,8 +74,8 @@ def partition(
     include_page_breaks
         If True, the output will include page breaks if the filetype supports it
     strategy
-        The strategy to use for partitioning the PDF. Uses a layout detection model if set
-        to 'hi_res', otherwise partition_pdf simply extracts the text from the document
+        The strategy to use for partitioning PDF/image. Uses a layout detection model if set
+        to 'hi_res', otherwise partition simply extracts the text from the document
         and processes it.
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
@@ -110,27 +116,29 @@ def partition(
             file=file,
             file_filename=file_filename,
             content_type=content_type,
+            encoding=encoding,
         )
 
     if file is not None:
         file.seek(0)
 
     if filetype == FileType.DOC:
-        elements = partition_doc(filename=filename, file=file)
+        elements = partition_doc(filename=filename, file=file, **kwargs)
     elif filetype == FileType.DOCX:
-        elements = partition_docx(filename=filename, file=file)
+        elements = partition_docx(filename=filename, file=file, **kwargs)
     elif filetype == FileType.ODT:
-        elements = partition_odt(filename=filename, file=file)
+        elements = partition_odt(filename=filename, file=file, **kwargs)
     elif filetype == FileType.EML:
-        elements = partition_email(filename=filename, file=file, encoding=encoding)
+        elements = partition_email(filename=filename, file=file, encoding=encoding, **kwargs)
     elif filetype == FileType.MSG:
-        elements = partition_msg(filename=filename, file=file)
+        elements = partition_msg(filename=filename, file=file, **kwargs)
     elif filetype == FileType.HTML:
         elements = partition_html(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,
             encoding=encoding,
+            **kwargs,
         )
     elif filetype == FileType.XML:
         elements = partition_xml(
@@ -138,18 +146,35 @@ def partition(
             file=file,
             encoding=encoding,
             xml_keep_tags=xml_keep_tags,
+            **kwargs,
         )
     elif filetype == FileType.EPUB:
         elements = partition_epub(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,
+            **kwargs,
+        )
+    elif filetype == FileType.ORG:
+        elements = partition_org(
+            filename=filename,
+            file=file,
+            include_page_breaks=include_page_breaks,
+            **kwargs,
+        )
+    elif filetype == FileType.RST:
+        elements = partition_rst(
+            filename=filename,
+            file=file,
+            include_page_breaks=include_page_breaks,
+            **kwargs,
         )
     elif filetype == FileType.MD:
         elements = partition_md(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,
+            **kwargs,
         )
     elif filetype == FileType.PDF:
         elements = partition_pdf(
@@ -157,10 +182,10 @@ def partition(
             file=file,  # type: ignore
             url=None,
             include_page_breaks=include_page_breaks,
-            encoding=encoding,
             infer_table_structure=pdf_infer_table_structure,
             strategy=strategy,
             ocr_languages=ocr_languages,
+            **kwargs,
         )
     elif (filetype == FileType.PNG) or (filetype == FileType.JPG):
         elements = partition_image(
@@ -168,7 +193,9 @@ def partition(
             file=file,  # type: ignore
             url=None,
             include_page_breaks=include_page_breaks,
+            strategy=strategy,
             ocr_languages=ocr_languages,
+            **kwargs,
         )
     elif filetype == FileType.TXT:
         elements = partition_text(
@@ -176,37 +203,46 @@ def partition(
             file=file,
             encoding=encoding,
             paragraph_grouper=paragraph_grouper,
+            **kwargs,
         )
     elif filetype == FileType.RTF:
         elements = partition_rtf(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,
+            **kwargs,
         )
     elif filetype == FileType.PPT:
         elements = partition_ppt(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,
+            **kwargs,
         )
     elif filetype == FileType.PPTX:
         elements = partition_pptx(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,
+            **kwargs,
         )
     elif filetype == FileType.JSON:
-        elements = partition_json(filename=filename, file=file)
+        elements = partition_json(filename=filename, file=file, **kwargs)
     elif (filetype == FileType.XLSX) or (filetype == FileType.XLS):
-        elements = partition_xlsx(filename=filename, file=file)
+        elements = partition_xlsx(filename=filename, file=file, **kwargs)
     elif filetype == FileType.CSV:
-        elements = partition_csv(filename=filename, file=file)
+        elements = partition_csv(filename=filename, file=file, **kwargs)
+    elif filetype == FileType.TSV:
+        elements = partition_tsv(filename=filename, file=file, **kwargs)
+    elif filetype == FileType.EMPTY:
+        elements = []
     else:
         msg = "Invalid file" if not filename else f"Invalid file {filename}"
         raise ValueError(f"{msg}. The {filetype} file type is not supported in partition.")
 
     for element in elements:
         element.metadata.url = url
+        element.metadata.data_source = data_source_metadata
         if content_type is not None:
             out_filetype = STR_TO_FILETYPE.get(content_type)
             element.metadata.filetype = (
@@ -228,5 +264,7 @@ def file_and_type_from_url(
     file = io.BytesIO(response.content)
 
     content_type = content_type or response.headers.get("Content-Type")
-    filetype = detect_filetype(file=file, content_type=content_type)
+    encoding = response.headers.get("Content-Encoding", "utf-8")
+
+    filetype = detect_filetype(file=file, content_type=content_type, encoding=encoding)
     return file, filetype
