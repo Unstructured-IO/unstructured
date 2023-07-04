@@ -52,10 +52,13 @@ class LocalIngestDoc(BaseIngestDoc):
 
     @property
     def _output_filename(self):
-        return (
-            Path(self.standard_config.output_dir)
-            / f"{self.path.replace(f'{self.config.input_path}/', '')}.json"
+        input_path = Path(self.config.input_path)
+        basename = (
+            f"{Path(self.path).name}.json"
+            if input_path.is_file()
+            else f"{Path(self.path).relative_to(input_path)}.json"
         )
+        return Path(self.standard_config.output_dir) / basename
 
 
 class LocalConnector(BaseConnector):
