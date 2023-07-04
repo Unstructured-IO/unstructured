@@ -269,7 +269,7 @@ def partition_email(
 
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text)
-
+    
     metadata_filename = metadata_filename or filename
 
     detected_encoding = "utf-8"
@@ -317,7 +317,11 @@ def partition_email(
         # </ul>
         list_content = content.split("=\n")
         content = "".join(list_content)
-        elements = partition_html(text=content, include_metadata=False)
+        elements = partition_html(
+            text=content,
+            include_metadata=False,
+            metadata_filename=metadata_filename,
+        )
         for element in elements:
             if isinstance(element, Text):
                 _replace_mime_encodings = partial(replace_mime_encodings, encoding=encoding)
@@ -341,7 +345,12 @@ def partition_email(
 
     elif content_source == "text/plain":
         list_content = split_by_paragraph(content)
-        elements = partition_text(text=content, encoding=encoding, max_partition=max_partition)
+        elements = partition_text(
+            text=content, 
+            encoding=encoding, 
+            max_partition=max_partition, 
+            metadata_filename=metadata_filename,
+        )
 
     for idx, element in enumerate(elements):
         indices = has_embedded_image(element)
@@ -358,6 +367,24 @@ def partition_email(
     metadata = build_email_metadata(msg, filename=metadata_filename)
     for element in all_elements:
         element.metadata = metadata
+
+    if process_attachments:
+        with TemporaryDirectory() as tmpdir:
+            extract_attachment_info(msg, tmpdir)
+            attached_files = os.listdir(tmpdir)
+            for attached_file in attached_files:
+                attached_filename = os.path.join(tmpdir, attached_file)
+                if attachment_partitioner is None:
+                    raise ValueError(
+                        "Specify the attachment_partitioner kwarg to process attachments.",
+                    )
+                attached_elements = attachment_partitioner(filename=attached_filename)
+                for element in attached_elements:
+                    element.metadata.filename = attached_file
+                    element.metadata.file_directory = None
+                    element.metadata.attached_to_filename = metadata_filename
+                    all_elements.append(element)
+
 
     if process_attachments:
         with TemporaryDirectory() as tmpdir:

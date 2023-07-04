@@ -12,6 +12,7 @@ def test_partition_csv_from_filename(filename="example-docs/stanley-cups.csv"):
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
     assert elements[0].metadata.text_as_html == EXPECTED_TABLE
     assert elements[0].metadata.filetype == EXPECTED_FILETYPE
+    assert elements[0].metadata.filename == "stanley-cups.csv"
 
 
 def test_partition_csv_from_file(filename="example-docs/stanley-cups.csv"):
@@ -22,6 +23,7 @@ def test_partition_csv_from_file(filename="example-docs/stanley-cups.csv"):
     assert isinstance(elements[0], Table)
     assert elements[0].metadata.text_as_html == EXPECTED_TABLE
     assert elements[0].metadata.filetype == EXPECTED_FILETYPE
+    assert elements[0].metadata.filename is None
 
 
 def test_partition_csv_can_exclude_metadata(filename="example-docs/stanley-cups.csv"):
@@ -31,3 +33,4 @@ def test_partition_csv_can_exclude_metadata(filename="example-docs/stanley-cups.
     assert isinstance(elements[0], Table)
     assert elements[0].metadata.text_as_html is None
     assert elements[0].metadata.filetype is None
+    assert elements[0].metadata.filename is None

@@ -64,6 +64,15 @@ def test_partition_docx_with_filename(mock_document, expected_elements, tmpdir):
     elements = partition_docx(filename=filename)
     assert elements == expected_elements
     assert elements[0].metadata.page_number is None
+    for element in elements:
+        assert element.metadata.filename == "mock_document.docx"
+
+
+def test_partition_docx_with_filename_metadata(mock_document, tmpdir):
+    filename = os.path.join(tmpdir.dirname, "mock_document.docx")
+    mock_document.save(filename)
+    elements = partition_docx(filename=filename, metadata_filename="test")
+    assert all(element.metadata.filename == "test" for element in elements)
 
 
 def test_partition_docx_with_spooled_file(mock_document, expected_elements, tmpdir):
@@ -79,6 +88,8 @@ def test_partition_docx_with_spooled_file(mock_document, expected_elements, tmpd
         spooled_temp_file.seek(0)
         elements = partition_docx(file=spooled_temp_file)
         assert elements == expected_elements
+        for element in elements:
+            assert element.metadata.filename is None
 
 
 def test_partition_docx_with_file(mock_document, expected_elements, tmpdir):
@@ -88,6 +99,8 @@ def test_partition_docx_with_file(mock_document, expected_elements, tmpdir):
     with open(filename, "rb") as f:
         elements = partition_docx(file=f)
     assert elements == expected_elements
+    for element in elements:
+        assert element.metadata.filename is None
 
 
 def test_partition_docx_raises_with_both_specified(mock_document, tmpdir):
@@ -125,6 +138,8 @@ def test_partition_docx_grabs_header_and_footer(filename="example-docs/handbook-
     elements = partition_docx(filename=filename)
     assert elements[0] == Header("US Trustee Handbook")
     assert elements[-1] == Footer("Copyright")
+    for element in elements:
+        assert element.metadata.filename == "handbook-1p.docx"
 
 
 def test_partition_docx_includes_pages_if_present(filename="example-docs/handbook-1p.docx"):
@@ -132,6 +147,8 @@ def test_partition_docx_includes_pages_if_present(filename="example-docs/handboo
     assert "PageBreak" not in [elem.category for elem in elements]
     assert elements[1].metadata.page_number == 1
     assert elements[-2].metadata.page_number == 2
+    for element in elements:
+        assert element.metadata.filename == "handbook-1p.docx"
 
 
 def test_partition_docx_includes_page_breaks(filename="example-docs/handbook-1p.docx"):
@@ -139,6 +156,8 @@ def test_partition_docx_includes_page_breaks(filename="example-docs/handbook-1p.
     assert "PageBreak" in [elem.category for elem in elements]
     assert elements[1].metadata.page_number == 1
     assert elements[-2].metadata.page_number == 2
+    for element in elements:
+        assert element.metadata.filename == "handbook-1p.docx"
 
 
 def test_partition_docx_with_filename_exclude_metadata(filename="example-docs/handbook-1p.docx"):

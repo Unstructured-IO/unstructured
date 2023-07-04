@@ -31,8 +31,6 @@ def partition_tsv(
         A string defining the target filename path.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
-    metadata_filename
-        The filename to use for the metadata.
     include_metadata
         Determines whether or not metadata is included in the output.
     """

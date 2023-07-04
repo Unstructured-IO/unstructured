@@ -24,10 +24,12 @@ EXPECTED_OUTPUT = [
     [("fake-text.txt", "utf-8"), ("fake-text.txt", None), ("fake-text-utf-16-be.txt", "utf-16-be")],
 )
 def test_partition_text_from_filename(filename, encoding):
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-    elements = partition_text(filename=filename, encoding=encoding)
+    filename_path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+    elements = partition_text(filename=filename_path, encoding=encoding)
     assert len(elements) > 0
     assert elements == EXPECTED_OUTPUT
+    for element in elements:
+        assert element.metadata.filename == filename
 
 
 @pytest.mark.parametrize(
@@ -35,10 +37,12 @@ def test_partition_text_from_filename(filename, encoding):
     ["fake-text-utf-16.txt", "fake-text-utf-16-le.txt", "fake-text-utf-32.txt"],
 )
 def test_partition_text_from_filename_default_encoding(filename):
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-    elements = partition_text(filename=filename)
+    filename_path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+    elements = partition_text(filename=filename_path)
     assert len(elements) > 0
     assert elements == EXPECTED_OUTPUT
+    for element in elements:
+        assert element.metadata.filename == filename
 
 
 @pytest.mark.parametrize(
@@ -60,6 +64,8 @@ def test_partition_text_from_file():
         elements = partition_text(file=f)
     assert len(elements) > 0
     assert elements == EXPECTED_OUTPUT
+    for element in elements:
+        assert element.metadata.filename is None
 
 
 @pytest.mark.parametrize(
@@ -67,11 +73,13 @@ def test_partition_text_from_file():
     ["fake-text-utf-16.txt", "fake-text-utf-16-le.txt", "fake-text-utf-32.txt"],
 )
 def test_partition_text_from_file_default_encoding(filename):
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-    with open(filename) as f:
+    filename_path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+    with open(filename_path) as f:
         elements = partition_text(file=f)
     assert len(elements) > 0
     assert elements == EXPECTED_OUTPUT
+    for element in elements:
+        assert element.metadata.filename is None
 
 
 def test_partition_text_from_bytes_file():
@@ -80,6 +88,8 @@ def test_partition_text_from_bytes_file():
         elements = partition_text(file=f)
     assert len(elements) > 0
     assert elements == EXPECTED_OUTPUT
+    for element in elements:
+        assert element.metadata.filename is None
 
 
 @pytest.mark.parametrize(
@@ -87,11 +97,13 @@ def test_partition_text_from_bytes_file():
     ["fake-text-utf-16.txt", "fake-text-utf-16-le.txt", "fake-text-utf-32.txt"],
 )
 def test_partition_text_from_bytes_file_default_encoding(filename):
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-    with open(filename, "rb") as f:
+    filename_path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+    with open(filename_path, "rb") as f:
         elements = partition_text(file=f)
     assert len(elements) > 0
     assert elements == EXPECTED_OUTPUT
+    for element in elements:
+        assert element.metadata.filename is None
 
 
 def test_partition_text_from_text():
@@ -101,6 +113,8 @@ def test_partition_text_from_text():
     elements = partition_text(text=text)
     assert len(elements) > 0
     assert elements == EXPECTED_OUTPUT
+    for element in elements:
+        assert element.metadata.filename is None
 
 
 def test_partition_text_from_text_works_with_empty_string():
@@ -131,6 +145,8 @@ def test_partition_text_captures_everything_even_with_linebreaks():
         Title(text="VERY IMPORTANT MEMO"),
         Address(text="DOYLESTOWN, PA 18901"),
     ]
+    for element in elements:
+        assert element.metadata.filename is None
 
 
 def test_partition_text_groups_broken_paragraphs():
@@ -145,6 +161,8 @@ the fox met a bear."""
         NarrativeText(text="The big brown fox was walking down the lane."),
         NarrativeText(text="At the end of the lane, the fox met a bear."),
     ]
+    for element in elements:
+        assert element.metadata.filename is None
 
 
 def test_partition_text_extract_regex_metadata():
@@ -154,6 +172,8 @@ def test_partition_text_extract_regex_metadata():
     assert elements[0].metadata.regex_metadata == {
         "speaker": [{"text": "SPEAKER 1", "start": 0, "end": 9}],
     }
+    for element in elements:
+        assert element.metadata.filename is None
 
 
 def test_partition_text_splits_long_text(filename="example-docs/norwich-city.txt"):

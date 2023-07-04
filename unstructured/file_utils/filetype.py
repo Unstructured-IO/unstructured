@@ -514,6 +514,16 @@ def _is_code_mime_type(mime_type: str) -> bool:
 
 def add_metadata_with_filetype(filetype: FileType):
     def decorator(func: Callable):
+        if (
+            func.__doc__
+            and "metadata_filename" in func.__code__.co_varnames
+            and "metadata_filename" not in func.__doc__
+        ):
+            func.__doc__ += (
+                "\nMetadata Parameters:\n\tmetadata_filename:"
+                + "\n\t\tThe filename to use in element metadata."
+            )
+
         @wraps(func)
         def wrapper(*args, **kwargs):
             elements = func(*args, **kwargs)
@@ -524,9 +534,13 @@ def add_metadata_with_filetype(filetype: FileType):
                     params[param.name] = param.default
             include_metadata = params.get("include_metadata", True)
             if include_metadata:
+                if params.get("metadata_filename"):
+                    params["filename"] = params.get("metadata_filename")
+
                 metadata_kwargs = {
                     kwarg: params.get(kwarg) for kwarg in ("filename", "url", "text_as_html")
                 }
+
                 for element in elements:
                     # NOTE(robinson) - Attached files have already run through this logic
                     # in their own partitioning function

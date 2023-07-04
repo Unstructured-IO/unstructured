@@ -56,6 +56,7 @@ def partition_pptx(
 
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file)
+    metadata_filename = metadata_filename or filename
 
     if filename is not None:
         presentation = pptx.Presentation(filename)
@@ -65,7 +66,6 @@ def partition_pptx(
         )
 
     elements: List[Element] = []
-    metadata_filename = metadata_filename or filename
     metadata = ElementMetadata(filename=metadata_filename)
     num_slides = len(presentation.slides)
     for i, slide in enumerate(presentation.slides):

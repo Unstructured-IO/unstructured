@@ -44,6 +44,7 @@ def partition_msg(
         The partitioning function to use to process attachments.
     """
     exactly_one(filename=filename, file=file)
+    metadata_filename = metadata_filename or filename
 
     if filename is not None:
         msg_obj = msg_parser.MsOxMessage(filename)
@@ -86,7 +87,7 @@ def partition_msg(
 
 
 def build_msg_metadata(msg_obj: msg_parser.MsOxMessage, filename: Optional[str]) -> ElementMetadata:
-    """Creates an ElementMetadata object from the header information in the emai."""
+    """Creates an ElementMetadata object from the header information in the email."""
     email_date = getattr(msg_obj, "sent_date", None)
     if email_date is not None:
         email_date = convert_to_iso_8601(email_date)

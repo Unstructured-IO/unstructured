@@ -177,6 +177,8 @@ def test_partition_pdf_with_fast_strategy(
     assert len(elements) > 10
     # check that the pdf has multiple different page numbers
     assert {element.metadata.page_number for element in elements} == {1, 2}
+    for element in elements:
+        assert element.metadata.filename == "layout-parser-paper-fast.pdf"
 
 
 def test_partition_pdf_with_fast_groups_text(
@@ -189,10 +191,10 @@ def test_partition_pdf_with_fast_groups_text(
         if isinstance(element, NarrativeText):
             first_narrative_element = element
             break
-
     assert len(first_narrative_element.text) > 1000
     assert first_narrative_element.text.startswith("Abstract. Recent advances")
     assert first_narrative_element.text.endswith("https://layout-parser.github.io.")
+    assert first_narrative_element.metadata.filename == "layout-parser-paper-fast.pdf"
 
 
 def test_partition_pdf_with_fast_strategy_from_file(
@@ -217,6 +219,8 @@ def test_partition_pdf_with_fast_strategy_and_page_breaks(
     assert "PageBreak" in [elem.category for elem in elements]
 
     assert "unstructured_inference is not installed" not in caplog.text
+    for element in elements:
+        assert element.metadata.filename == "layout-parser-paper-fast.pdf"
 
 
 def test_partition_pdf_raises_with_bad_strategy(
@@ -384,11 +388,9 @@ def test_partition_pdf_fast_groups_text_in_text_box():
         ),
         coordinate_system=PixelSpace(width=612, height=792),
     )
-
     assert isinstance(elements[1], NarrativeText)
     assert str(elements[1]).startswith("We")
     assert str(elements[1]).endswith("Jordan and Egypt.")
-
     assert elements[3] == Title(
         "1st",
         coordinates=(

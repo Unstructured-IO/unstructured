@@ -12,6 +12,8 @@ def test_partition_tsv_from_filename(filename="example-docs/stanley-cups.tsv"):
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
     assert elements[0].metadata.text_as_html == EXPECTED_TABLE
     assert elements[0].metadata.filetype == EXPECTED_FILETYPE
+    for element in elements:
+        assert element.metadata.filename == "stanley-cups.tsv"
 
 
 def test_partition_tsv_from_file(filename="example-docs/stanley-cups.tsv"):
@@ -22,6 +24,8 @@ def test_partition_tsv_from_file(filename="example-docs/stanley-cups.tsv"):
     assert isinstance(elements[0], Table)
     assert elements[0].metadata.text_as_html == EXPECTED_TABLE
     assert elements[0].metadata.filetype == EXPECTED_FILETYPE
+    for element in elements:
+        assert element.metadata.filename is None
 
 
 def test_partition_tsv_filename_exclude_metadata(filename="example-docs/stanley-cups.tsv"):
@@ -31,6 +35,8 @@ def test_partition_tsv_filename_exclude_metadata(filename="example-docs/stanley-
     assert isinstance(elements[0], Table)
     assert elements[0].metadata.text_as_html is None
     assert elements[0].metadata.filetype is None
+    for element in elements:
+        assert element.metadata.filename is None
 
 
 def test_partition_tsv_from_file_exclude_metadata(filename="example-docs/stanley-cups.tsv"):

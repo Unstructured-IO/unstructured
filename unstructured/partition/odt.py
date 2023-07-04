@@ -11,6 +11,7 @@ def partition_odt(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
     include_metadata: bool = True,
+    metadata_filename: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions Open Office Documents in .odt format into its document elements.
@@ -22,4 +23,10 @@ def partition_odt(
     file
         A file-like object using "rb" mode --> open(filename, "rb").
     """
-    return convert_and_partition_docx(source_format="odt", filename=filename, file=file)
+    metadata_filename = metadata_filename or filename
+    return convert_and_partition_docx(
+        source_format="odt",
+        filename=filename,
+        file=file,
+        metadata_filename=metadata_filename,
+    )

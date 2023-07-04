@@ -12,6 +12,14 @@ def test_partition_odt_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.odt")
     elements = partition_odt(filename=filename)
     assert elements == [Title("Lorem ipsum dolor sit amet.")]
+    for element in elements:
+        assert element.metadata.filename == "fake.odt"
+
+
+def test_partition_odt_from_filename_with_metadata_filename():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.odt")
+    elements = partition_odt(filename=filename, metadata_filename="test")
+    assert all(element.metadata.filename == "test" for element in elements)
 
 
 def test_partition_odt_from_file():

@@ -23,6 +23,14 @@ def test_partition_html_from_filename():
     assert elements[0].metadata.file_directory == directory
 
 
+def test_partition_html_from_filename_with_metadata_filename():
+    directory = os.path.join(DIRECTORY, "..", "..", "example-docs")
+    filename = os.path.join(directory, "example-10k.html")
+    elements = partition_html(filename=filename, metadata_filename="test")
+    assert len(elements) > 0
+    assert all(element.metadata.filename == "test" for element in elements)
+
+
 @pytest.mark.parametrize(
     ("filename", "encoding", "error"),
     [
@@ -42,9 +50,11 @@ def test_partition_html_from_filename_raises_encoding_error(filename, encoding, 
     ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html"],
 )
 def test_partition_html_from_filename_default_encoding(filename):
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-    elements = partition_html(filename=filename)
+    filename_path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+    elements = partition_html(filename=filename_path)
     assert len(elements) > 0
+    for element in elements:
+        assert element.metadata.filename == filename
 
 
 def test_partition_html_from_filename_metadata_false():
@@ -60,6 +70,8 @@ def test_partition_html_with_page_breaks():
     elements = partition_html(filename=filename, include_page_breaks=True)
     assert "PageBreak" in [elem.category for elem in elements]
     assert len(elements) > 0
+    for element in elements:
+        assert element.metadata.filename == "example-10k.html"
 
 
 def test_partition_html_from_file():
@@ -67,6 +79,8 @@ def test_partition_html_from_file():
     with open(filename) as f:
         elements = partition_html(file=f)
     assert len(elements) > 0
+    for element in elements:
+        assert element.metadata.filename is None
 
 
 @pytest.mark.parametrize(
@@ -79,7 +93,7 @@ def test_partition_html_from_file():
 def test_partition_html_from_file_raises_encoding_error(filename, encoding, error):
     with pytest.raises(error):
         filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-        with open(filename) as f:
+        with open(filename) as f, pytest.raises(UnicodeEncodeError):
             partition_html(file=f, encoding=encoding)
 
 

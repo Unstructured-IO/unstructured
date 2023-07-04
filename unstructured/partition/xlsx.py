@@ -31,8 +31,6 @@ def partition_xlsx(
         A string defining the target filename path.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
-    metadata_filename
-        The filename to use for the metadata.
     include_metadata
         Determines whether or not metadata is included in the output.
     """
@@ -44,7 +42,7 @@ def partition_xlsx(
         f = spooled_to_bytes_io_if_needed(cast(Union[BinaryIO, SpooledTemporaryFile], file))
         sheets = pd.read_excel(f, sheet_name=None)
 
-    metadata_filename = filename or metadata_filename
+    metadata_filename = metadata_filename or filename
 
     elements: List[Element] = []
     page_number = 0

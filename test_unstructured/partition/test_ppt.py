@@ -23,6 +23,14 @@ def test_partition_ppt_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.ppt")
     elements = partition_ppt(filename=filename)
     assert elements == EXPECTED_PPT_OUTPUT
+    for element in elements:
+        assert element.metadata.filename == "fake-power-point.ppt"
+
+
+def test_partition_ppt_from_filename_with_metadata_filename():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.ppt")
+    elements = partition_ppt(filename=filename, metadata_filename="test")
+    assert all(element.metadata.filename == "test" for element in elements)
 
 
 def test_partition_ppt_raises_with_missing_file():
@@ -36,6 +44,9 @@ def test_partition_ppt_from_file():
     with open(filename, "rb") as f:
         elements = partition_ppt(file=f)
     assert elements == EXPECTED_PPT_OUTPUT
+    # # TODO(jennings) the filename is changed after parsing
+    # for element in elements:
+    #     assert element.metadata.filename == "fake-power-point.ppt"
 
 
 def test_partition_ppt_raises_with_both_specified():

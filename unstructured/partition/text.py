@@ -109,6 +109,7 @@ def partition_text(
 
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text)
+    metadata_filename = metadata_filename or filename
 
     if filename is not None:
         encoding, file_text = read_txt_file(filename=filename, encoding=encoding)

@@ -15,6 +15,7 @@ def partition_doc(
     file: Optional[IO] = None,
     include_page_breaks: bool = True,
     include_metadata: bool = True,
+    metadata_filename: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft Word Documents in .doc format into its document elements.
@@ -30,6 +31,7 @@ def partition_doc(
     if filename is None:
         filename = ""
     exactly_one(filename=filename, file=file)
+    metadata_filename = metadata_filename or filename
 
     if len(filename) > 0:
         _, filename_no_path = os.path.split(os.path.abspath(filename))
@@ -50,7 +52,7 @@ def partition_doc(
         docx_filename = os.path.join(tmpdir, f"{base_filename}.docx")
         elements = partition_docx(
             filename=docx_filename,
-            metadata_filename=filename,
+            metadata_filename=metadata_filename,
             include_page_breaks=include_page_breaks,
             include_metadata=include_metadata,
         )
