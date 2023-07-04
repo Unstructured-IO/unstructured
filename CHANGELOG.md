@@ -1,10 +1,12 @@
-## 0.7.13-dev0
+## 0.7.13-dev1
 
 ### Enhancements
 
 ### Features
 
 ### Fixes
+
+* Fix _output_filename for local connector, allowing single files to be written correctly to the disk
 
 ## 0.7.12
 
@@ -28,7 +30,7 @@
 
 * More deterministic element ordering when using `hi_res` PDF parsing strategy (from unstructured-inference bump to 0.5.4)
 * Make large model available (from unstructured-inference bump to 0.5.3)
-* Combine inferred elements with extracted elements (from unstructured-inference bump to 0.5.2) 
+* Combine inferred elements with extracted elements (from unstructured-inference bump to 0.5.2)
 * `partition_email` and `partition_msg` will now process attachments if `process_attachments=True`
   and a attachment partitioning functions is passed through with `attachment_partitioner=partition`.
 

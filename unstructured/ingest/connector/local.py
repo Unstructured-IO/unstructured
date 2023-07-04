@@ -51,7 +51,11 @@ class LocalIngestDoc(BaseIngestDoc):
         pass
 
     @property
-    def _output_filename(self):
+    def _output_filename(self) -> Path:
+        """Returns output filename for the doc.
+        If input path argument is a file itself, it returns the filename of the doc.
+        If input path argument is a folder, it returns the relative path of the doc.
+        """
         input_path = Path(self.config.input_path)
         basename = (
             f"{Path(self.path).name}.json"
