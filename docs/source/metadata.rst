@@ -50,15 +50,15 @@ returned. If the ``in_place`` flag is ``False``, only the altered coordinates ar
 	coordinate_system = PixelSpace(width=850, height=1100)
 	element = Element(coordinates=coordinates, coordinate_system=coordinate_system)
 	print(element.metadata.coordinates.to_dict())
-    print(element.metadata.coordinates.system.orientation)
-    print(element.metadata.coordinates.system.width)
-    print(element.metadata.coordinates.system.height)
+	print(element.metadata.coordinates.system.orientation)
+	print(element.metadata.coordinates.system.width)
+	print(element.metadata.coordinates.system.height)
 	element.convert_coordinates_to_new_system(RelativeCoordinateSystem(), in_place=True)
 	# Should now be in terms of new coordinate system
 	print(element.metadata.coordinates.to_dict())
-    print(element.metadata.coordinates.system.orientation)
-    print(element.metadata.coordinates.system.width)
-    print(element.metadata.coordinates.system.height)
+	print(element.metadata.coordinates.system.orientation)
+	print(element.metadata.coordinates.system.width)
+	print(element.metadata.coordinates.system.height)
 
 Email
 -----
