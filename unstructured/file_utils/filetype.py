@@ -207,7 +207,7 @@ def _resolve_symlink(file_path):
 def detect_filetype(
     filename: Optional[str] = None,
     content_type: Optional[str] = None,
-    file: Optional[IO] = None,
+    file: Optional[IO[bytes]] = None,
     file_filename: Optional[str] = None,
     encoding: Optional[str] = "utf-8",
 ) -> Optional[FileType]:
@@ -370,7 +370,7 @@ def _detect_filetype_from_octet_stream(file: IO) -> FileType:
 
 def _read_file_start_for_type_check(
     filename: Optional[str] = None,
-    file: Optional[IO] = None,
+    file: Optional[IO[bytes]] = None,
     encoding: Optional[str] = "utf-8",
 ) -> str:
     """Reads the start of the file and returns the text content."""
@@ -396,7 +396,7 @@ def _read_file_start_for_type_check(
 
 def _is_text_file_a_json(
     filename: Optional[str] = None,
-    file: Optional[IO] = None,
+    file: Optional[IO[bytes]] = None,
     encoding: Optional[str] = "utf-8",
 ):
     """Detects if a file that has a text/plain MIME type is a JSON file."""
@@ -413,7 +413,7 @@ def _count_commas(text: str):
 
 def _is_text_file_a_csv(
     filename: Optional[str] = None,
-    file: Optional[IO] = None,
+    file: Optional[IO[bytes]] = None,
     encoding: Optional[str] = "utf-8",
 ):
     """Detects if a file that has a text/plain MIME type is a CSV file."""

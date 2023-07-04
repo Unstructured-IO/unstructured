@@ -194,7 +194,7 @@ def find_embedded_image(
 
 def parse_email(
     filename: Optional[str] = None,
-    file: Optional[Union[IO, SpooledTemporaryFile]] = None,
+    file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
 ) -> Tuple[Optional[str], Message]:
     if filename is not None:
         with open(filename, "rb") as f:
@@ -221,7 +221,7 @@ def parse_email(
 @add_metadata_with_filetype(FileType.EML)
 def partition_email(
     filename: Optional[str] = None,
-    file: Optional[Union[IO, SpooledTemporaryFile]] = None,
+    file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
     text: Optional[str] = None,
     content_source: str = "text/html",
     encoding: Optional[str] = None,

@@ -32,7 +32,7 @@ OPENXML_SCHEMA_NAME = "{http://schemas.openxmlformats.org/drawingml/2006/main}"
 @add_metadata_with_filetype(FileType.PPTX)
 def partition_pptx(
     filename: Optional[str] = None,
-    file: Optional[Union[IO, SpooledTemporaryFile]] = None,
+    file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
     include_page_breaks: bool = True,
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,

@@ -19,7 +19,7 @@ def is_string(elem):
 
 def get_leaf_elements(
     filename: Optional[str] = None,
-    file: Optional[Union[IO, SpooledTemporaryFile]] = None,
+    file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
     xml_path: str = ".",
 ):
     if filename:
@@ -47,7 +47,7 @@ def get_leaf_elements(
 @add_metadata_with_filetype(FileType.XML)
 def partition_xml(
     filename: Optional[str] = None,
-    file: Optional[Union[IO, SpooledTemporaryFile]] = None,
+    file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
     xml_keep_tags: bool = False,
     xml_path: str = ".",
     metadata_filename: Optional[str] = None,

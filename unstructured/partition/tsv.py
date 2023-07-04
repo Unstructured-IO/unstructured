@@ -18,7 +18,7 @@ from unstructured.partition.common import exactly_one, spooled_to_bytes_io_if_ne
 @add_metadata_with_filetype(FileType.TSV)
 def partition_tsv(
     filename: Optional[str] = None,
-    file: Optional[Union[IO, SpooledTemporaryFile]] = None,
+    file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
     **kwargs,

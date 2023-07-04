@@ -25,7 +25,7 @@ def convert_file_to_text(filename: str, source_format: str, target_format: str) 
 def convert_file_to_html_text(
     source_format: str,
     filename: Optional[str] = None,
-    file: Optional[IO] = None,
+    file: Optional[IO[bytes]] = None,
 ) -> str:
     """Converts a document to HTML raw text. Enables the doucment to be
     processed using the partition_html function."""

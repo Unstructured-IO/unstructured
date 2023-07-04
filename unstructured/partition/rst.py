@@ -9,7 +9,7 @@ from unstructured.partition.html import convert_and_partition_html
 @add_metadata_with_filetype(FileType.RST)
 def partition_rst(
     filename: Optional[str] = None,
-    file: Optional[IO] = None,
+    file: Optional[IO[bytes]] = None,
     include_page_breaks: bool = False,
     include_metadata: bool = True,
     **kwargs,

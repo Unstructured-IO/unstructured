@@ -9,7 +9,7 @@ from unstructured.partition.docx import convert_and_partition_docx
 @add_metadata_with_filetype(FileType.ODT)
 def partition_odt(
     filename: Optional[str] = None,
-    file: Optional[IO] = None,
+    file: Optional[IO[bytes]] = None,
     include_metadata: bool = True,
     **kwargs,
 ) -> List[Element]:

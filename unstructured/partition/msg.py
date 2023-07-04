@@ -16,7 +16,7 @@ from unstructured.partition.text import partition_text
 @add_metadata_with_filetype(FileType.MSG)
 def partition_msg(
     filename: Optional[str] = None,
-    file: Optional[IO] = None,
+    file: Optional[IO[bytes]] = None,
     max_partition: Optional[int] = 1500,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
@@ -110,7 +110,7 @@ def build_msg_metadata(msg_obj: msg_parser.MsOxMessage, filename: Optional[str])
 
 def extract_msg_attachment_info(
     filename: Optional[str] = None,
-    file: Optional[IO] = None,
+    file: Optional[IO[bytes]] = None,
     output_dir: Optional[str] = None,
     msg_obj: Optional[msg_parser.MsOxMessage] = None,
 ) -> List[Dict[str, str]]:

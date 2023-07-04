@@ -12,7 +12,7 @@ from unstructured.partition.pptx import partition_pptx
 @add_metadata_with_filetype(FileType.PPT)
 def partition_ppt(
     filename: Optional[str] = None,
-    file: Optional[IO] = None,
+    file: Optional[IO[bytes]] = None,
     include_page_breaks: bool = False,
     include_metadata: bool = True,
     **kwargs,
