@@ -163,8 +163,7 @@ class MainProcess:
 @click.option(
     "--encoding",
     default="utf-8",
-    help="Text encoding to use when reading documents. "
-    "Default: utf-8",
+    help="Text encoding to use when reading documents. Default: utf-8",
 )
 @click.option(
     "--api-key",
