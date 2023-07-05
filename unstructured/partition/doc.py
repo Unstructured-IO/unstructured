@@ -57,6 +57,6 @@ def partition_doc(
         # remove tmp.name from filename if parsing file
         if file:
             for element in elements:
-                element.metadata.filename = metadata_filename 
+                element.metadata.filename = metadata_filename
 
     return elements
