@@ -13,7 +13,7 @@ from unstructured.staging.base import dict_to_elements
 @add_metadata_with_filetype(FileType.JSON)
 def partition_json(
     filename: Optional[str] = None,
-    file: Optional[IO] = None,
+    file: Optional[IO[bytes]] = None,
     text: Optional[str] = None,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
