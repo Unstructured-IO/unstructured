@@ -1,4 +1,6 @@
 from __future__ import annotations
+import os
+from datetime import datetime
 
 import subprocess
 from io import BufferedReader, BytesIO, TextIOWrapper
@@ -29,9 +31,22 @@ if TYPE_CHECKING:
     )
 
 
+def get_last_modified_date(filename: str) -> str:
+    modify_date = datetime.fromtimestamp(os.path.getmtime(filename))
+    modify_date = modify_date.strftime("%Y-%m-%dT%H:%M:%S%z")
+    return modify_date
+
+
+def get_last_modifile_date_from_file(file: Union[IO, SpooledTemporaryFile]) -> str:
+    filename = file.name
+    modify_date = get_last_modified_date(filename)
+    return modify_date
+
+
 def normalize_layout_element(
-    layout_element: Union["LayoutElement", "LocationlessLayoutElement", Element, Dict[str, Any]],
-    coordinate_system: Optional[CoordinateSystem] = None,
+    layout_element: Union[
+        "LayoutElement", "LocationlessLayoutElement", Element, Dict[str, Any]
+    ],
 ) -> Union[Element, List[Element]]:
     """Converts an unstructured_inference LayoutElement object to an unstructured Element."""
 
@@ -66,11 +81,17 @@ def normalize_layout_element(
             coordinate_system=coordinate_system,
         )
     elif element_type == "Checked":
-        return CheckBox(checked=True, coordinates=coordinates, coordinate_system=coordinate_system)
+        return CheckBox(
+            checked=True, coordinates=coordinates, coordinate_system=coordinate_system
+        )
     elif element_type == "Unchecked":
-        return CheckBox(checked=False, coordinates=coordinates, coordinate_system=coordinate_system)
+        return CheckBox(
+            checked=False, coordinates=coordinates, coordinate_system=coordinate_system
+        )
     else:
-        return Text(text=text, coordinates=coordinates, coordinate_system=coordinate_system)
+        return Text(
+            text=text, coordinates=coordinates, coordinate_system=coordinate_system
+        )
 
 
 def layout_list_to_list_items(
