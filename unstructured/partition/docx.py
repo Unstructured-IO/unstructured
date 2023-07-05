@@ -129,7 +129,6 @@ def partition_docx(
 
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file)
-    # metadata_filename = metadata_filename or filename
 
     if filename is not None:
         document = docx.Document(filename)
@@ -286,7 +285,6 @@ def _get_headers_and_footers(
     return headers_and_footers
 
 
-@add_metadata_with_filetype(FileType.ODT)
 def convert_and_partition_docx(
     source_format: str,
     filename: Optional[str] = None,

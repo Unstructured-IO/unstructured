@@ -270,8 +270,6 @@ def partition_email(
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text)
 
-    # metadata_filename = metadata_filename or filename
-
     detected_encoding = "utf-8"
     if filename is not None:
         extracted_encoding, msg = parse_email(filename=filename)
@@ -290,7 +288,6 @@ def partition_email(
     elif text is not None:
         _text: str = str(text)
         msg = email.message_from_string(_text)
-
     if not encoding:
         encoding = detected_encoding
 
@@ -382,7 +379,7 @@ def partition_email(
                 for element in attached_elements:
                     element.metadata.filename = attached_file
                     element.metadata.file_directory = None
-                    element.metadata.attached_to_filename = metadata_filename or attached_filename
+                    element.metadata.attached_to_filename = metadata_filename or filename
                     all_elements.append(element)
 
     return all_elements

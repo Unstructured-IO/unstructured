@@ -89,7 +89,6 @@ def partition_pdf(
         infer_table_structure=infer_table_structure,
         ocr_languages=ocr_languages,
         max_partition=max_partition,
-        # metadata_filename=metadata_filename
     )
 
 
@@ -102,7 +101,6 @@ def partition_pdf_or_image(
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
     max_partition: Optional[int] = 1500,
-    # metadata_filename: Optional[str] = None
 ) -> List[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
     # TODO(alan): Extract information about the filetype to be processed from the template
