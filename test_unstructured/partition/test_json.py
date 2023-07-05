@@ -46,6 +46,23 @@ def test_partition_json_from_filename(filename: str):
     assert len(elements) == len(test_elements)
     for i in range(len(elements)):
         assert elements[i] == test_elements[i]
+        assert elements[i].metadata.filename == filename.split("/")[-1]
+
+
+@pytest.mark.parametrize("filename", test_files)
+def test_partition_json_from_filename_with_metadata_filename(filename: str):
+    path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+    elements = partition(filename=path)
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        _filename = os.path.basename(filename)
+        test_path = os.path.join(tmpdir, _filename + ".json")
+        elements_to_json(elements, filename=test_path, indent=2)
+        test_elements = partition_json(filename=test_path, metadata_filename="test")
+
+    assert len(test_elements) > 0
+    assert len(str(test_elements[0])) > 0
+    assert all(element.metadata.filename == "test" for element in test_elements)
 
 
 @pytest.mark.parametrize("filename", test_files)
@@ -62,10 +79,26 @@ def test_partition_json_from_file(filename: str):
 
     assert len(elements) > 0
     assert len(str(elements[0])) > 0
-
     assert len(elements) == len(test_elements)
     for i in range(len(elements)):
         assert elements[i] == test_elements[i]
+        assert elements[i].metadata.filename == filename.split("/")[-1]
+
+
+@pytest.mark.parametrize("filename", test_files)
+def test_partition_json_from_file_with_metadata_filename(filename: str):
+    path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+    elements = partition(filename=path)
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        _filename = os.path.basename(filename)
+        test_path = os.path.join(tmpdir, _filename + ".json")
+        elements_to_json(elements, filename=test_path, indent=2)
+        with open(test_path) as f:
+            test_elements = partition_json(file=f, metadata_filename="test")
+
+    for i in range(len(test_elements)):
+        assert test_elements[i].metadata.filename == "test"
 
 
 @pytest.mark.parametrize("filename", test_files)
@@ -83,10 +116,10 @@ def test_partition_json_from_text(filename: str):
 
     assert len(elements) > 0
     assert len(str(elements[0])) > 0
-
     assert len(elements) == len(test_elements)
     for i in range(len(elements)):
         assert elements[i] == test_elements[i]
+        assert elements[i].metadata.filename == filename.split("/")[-1]
 
 
 def test_partition_json_raises_with_none_specified():

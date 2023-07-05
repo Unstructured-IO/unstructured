@@ -4,6 +4,8 @@
 
 ### Features
 
+* Add metadata_filename parameter across all partition functions
+
 ### Fixes
 * Fix KeyError when `isd_to_elements` doesn't find a type
 

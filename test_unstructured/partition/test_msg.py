@@ -51,6 +51,14 @@ def test_partition_msg_from_filename():
             filetype="application/vnd.ms-outlook",
         ).to_dict()
     )
+    for element in elements:
+        assert element.metadata.filename == "fake-email.msg"
+
+
+def test_partition_msg_from_filename_with_metadata_filename():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
+    elements = partition_msg(filename=filename, metadata_filename="test")
+    assert all(element.metadata.filename == "test" for element in elements)
 
 
 class MockMsOxMessage:
@@ -78,6 +86,17 @@ def test_partition_msg_from_file():
     with open(filename, "rb") as f:
         elements = partition_msg(file=f)
     assert elements == EXPECTED_MSG_OUTPUT
+    for element in elements:
+        assert element.metadata.filename is None
+
+
+def test_partition_msg_from_file_with_metadata_filename():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
+    with open(filename, "rb") as f:
+        elements = partition_msg(file=f, metadata_filename="test")
+    assert elements == EXPECTED_MSG_OUTPUT
+    for element in elements:
+        assert element.metadata.filename == "test"
 
 
 def test_extract_attachment_info():

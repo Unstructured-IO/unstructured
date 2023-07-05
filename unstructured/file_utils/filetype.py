@@ -536,9 +536,13 @@ def add_metadata_with_filetype(filetype: FileType):
                     params[param.name] = param.default
             include_metadata = params.get("include_metadata", True)
             if include_metadata:
+                if params.get("metadata_filename"):
+                    params["filename"] = params.get("metadata_filename")
+
                 metadata_kwargs = {
                     kwarg: params.get(kwarg) for kwarg in ("filename", "url", "text_as_html")
                 }
+
                 for element in elements:
                     # NOTE(robinson) - Attached files have already run through this logic
                     # in their own partitioning function

@@ -117,7 +117,7 @@ def partition_docx(
 
     Parameters
     ----------
-     filename
+    filename
         A string defining the target filename path.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
@@ -139,7 +139,6 @@ def partition_docx(
             ),
         )
 
-    metadata_filename = metadata_filename or filename
     elements: List[Element] = []
     table_index = 0
 
@@ -291,6 +290,7 @@ def convert_and_partition_docx(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
     include_metadata: bool = True,
+    metadata_filename: Optional[str] = None,
 ) -> List[Element]:
     """Converts a document to DOCX and then partitions it using partition_html. Works with
     any file format support by pandoc.
@@ -335,7 +335,7 @@ def convert_and_partition_docx(
         )
         elements = partition_docx(
             filename=docx_filename,
-            metadata_filename=filename,
+            metadata_filename=metadata_filename,
             include_metadata=include_metadata,
         )
 

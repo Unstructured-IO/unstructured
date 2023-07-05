@@ -65,8 +65,7 @@ def partition_pptx(
         )
 
     elements: List[Element] = []
-    metadata_filename = metadata_filename or filename
-    metadata = ElementMetadata(filename=metadata_filename)
+    metadata = ElementMetadata(filename=metadata_filename or filename)
     num_slides = len(presentation.slides)
     for i, slide in enumerate(presentation.slides):
         metadata = ElementMetadata.from_dict(metadata.to_dict())
@@ -79,7 +78,7 @@ def partition_pptx(
                 text_table = convert_ms_office_table_to_text(table, as_html=False)
                 if (text_table := text_table.strip()) != "":
                     metadata = ElementMetadata(
-                        filename=metadata_filename,
+                        filename=metadata_filename or filename,
                         text_as_html=html_table,
                         page_number=metadata.page_number,
                     )

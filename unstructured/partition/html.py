@@ -31,6 +31,7 @@ def partition_html(
     ssl_verify: bool = True,
     parser: VALID_PARSERS = None,
     html_assemble_articles: bool = False,
+    metadata_filename: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions an HTML document into its constituent elements.
@@ -62,7 +63,6 @@ def partition_html(
     """
     if text is not None and text.strip() == "" and not file and not filename and not url:
         return []
-
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text, url=url)
 
@@ -109,6 +109,7 @@ def convert_and_partition_html(
     filename: Optional[str] = None,
     file: Optional[IO] = None,
     include_page_breaks: bool = False,
+    metadata_filename: Optional[str] = None,
 ) -> List[Element]:
     """Converts a document to HTML and then partitions it using partition_html. Works with
     any file format support by pandoc.
@@ -121,9 +122,10 @@ def convert_and_partition_html(
         A string defining the target filename path.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
-
     include_page_breaks
-        If True, the output will include page breaks if the filetype supports it
+        If True, the output will include page breaks if the filetype supports it.
+    metadata_filename
+        The filename to use in element metadata.
     """
     html_text = convert_file_to_html_text(source_format=source_format, filename=filename, file=file)
     # NOTE(robinson) - pypandoc returns a text string with unicode encoding
@@ -132,4 +134,5 @@ def convert_and_partition_html(
         text=html_text,
         include_page_breaks=include_page_breaks,
         encoding="unicode",
+        metadata_filename=metadata_filename,
     )
