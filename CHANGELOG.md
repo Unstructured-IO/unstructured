@@ -10,7 +10,6 @@
 * Fix KeyError when `isd_to_elements` doesn't find a type
 * Fix _output_filename for local connector, allowing single files to be written correctly to the disk
 * Allow an `--encoding` to be set for ingestion script
-
 ### BREAKING CHANGES
 
 * Information about an element's location is no longer returned as top-level attributes of an element. Instead, it is returned in the `coordinates` attribute of the element's metadata.
