@@ -69,8 +69,6 @@ def partition_xml(
         the text from within the tags.
     xml_path
         The xml_path to use for extracting the text. Only used if xml_keep_tags=False
-    metadata_filename
-        The filename to use for the metadata.
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
     include_metadata
@@ -81,7 +79,6 @@ def partition_xml(
         no maximum is applied.
     """
     exactly_one(filename=filename, file=file)
-    metadata_filename = metadata_filename or filename
 
     if xml_keep_tags:
         if filename:

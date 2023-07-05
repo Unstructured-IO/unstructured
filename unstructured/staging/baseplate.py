@@ -1,6 +1,7 @@
 from typing import Dict, List, TypedDict
 
 from unstructured.documents.elements import Text
+from unstructured.staging.base import flatten_dict
 
 
 class BaseplateRow(TypedDict):
@@ -32,13 +33,17 @@ def stage_for_baseplate(elements: List[Text]) -> BaseplateRows:
     https://docs.baseplate.ai/api-reference/documents/overview
     https://docs.baseplate.ai/api-reference/documents/upsert-data-rows
     """
+
     rows: List[BaseplateRow] = []
     for element in elements:
         element_dict = element.to_dict()
         metadata = element_dict.pop("metadata")
         row: BaseplateRow = {
-            "data": element_dict,
-            "metadata": metadata,
+            # Baseplate maps each key in the row's data object to a column in the dataset and
+            # each key in the row's metadata object to a metadata column in the dataset.
+            # We infer that Baseplate cannot map a nested object to a column in its dataset.
+            "data": flatten_dict(element_dict),
+            "metadata": flatten_dict(metadata),
         }
         rows.append(row)
 

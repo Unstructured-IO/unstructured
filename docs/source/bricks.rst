@@ -1531,7 +1531,6 @@ The output will look like:
             {
                 "data": {
                     "element_id": "ad270eefd1cc68d15f4d3e51666d4dc8",
-                    "coordinates": None,
                     "text": "A Wonderful Story About A Fox",
                     "type": "Title",
                 },
@@ -1540,7 +1539,6 @@ The output will look like:
             {
                 "data": {
                     "element_id": "8275769fdd1804f9f2b55ad3c9b0ef1b",
-                    "coordinates": None,
                     "text": "A fox ran into the chicken coop and the chickens flew off!",
                     "type": "NarrativeText",
                 },

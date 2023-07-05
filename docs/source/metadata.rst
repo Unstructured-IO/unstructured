@@ -18,6 +18,48 @@ the source file:
 * ``page_number``
 
 
+####################
+Element coordinates
+####################
+
+Some document types support location data for the elements, usually in the form of bounding boxes.
+If it exists, an element's location data is available with ``element.metadata.coordinates``.
+
+The ``coordinates`` property of an ``ElementMetadata`` stores:
+* points: These specify the corners of the bounding box starting from the top left corner and
+proceeding counter-clockwise. The points represent pixels, the origin is in the top left and
+the ``y`` coordinate increases in the downward direction.
+* system: The points have an associated coordinate system. A typical example of a coordinate system is
+``PixelSpace``, which is used for representing the coordinates of images. The coordinate system has a
+name, orientation, layout width, and layout height.
+
+Information about the element’s coordinates (including the coordinate system name, coordinate points,
+the layout width, and the layout height) can be accessed with `element.to_dict()["metadata"]["coordinates"]`.
+
+The coordinates of an element can be changed to a new coordinate system by using the
+``Element.convert_coordinates_to_new_system`` method. If the ``in_place`` flag is ``True``, the
+coordinate system and points of the element are updated in place and the new coordinates are
+returned. If the ``in_place`` flag is ``False``, only the altered coordinates are returned.
+
+.. code:: python
+
+	from unstructured.documents.elements import Element
+	from unstructured.documents.coordinates import PixelSpace, RelativeCoordinateSystem
+
+	coordinates = ((10, 10), (10, 100), (200, 100), (200, 10))
+	coordinate_system = PixelSpace(width=850, height=1100)
+	element = Element(coordinates=coordinates, coordinate_system=coordinate_system)
+	print(element.metadata.coordinates.to_dict())
+	print(element.metadata.coordinates.system.orientation)
+	print(element.metadata.coordinates.system.width)
+	print(element.metadata.coordinates.system.height)
+	element.convert_coordinates_to_new_system(RelativeCoordinateSystem(), in_place=True)
+	# Should now be in terms of new coordinate system
+	print(element.metadata.coordinates.to_dict())
+	print(element.metadata.coordinates.system.orientation)
+	print(element.metadata.coordinates.system.width)
+	print(element.metadata.coordinates.system.height)
+
 Email
 -----
 

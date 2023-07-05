@@ -10,7 +10,7 @@ OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --local-file-glob "*.html" \
     --local-input-path example-docs \
-    --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
+    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed \
     --partition-strategy hi_res \
     --reprocess \
     --structured-output-dir "$OUTPUT_DIR" \
