@@ -38,7 +38,7 @@ from unstructured.partition.xml import partition_xml
 def partition(
     filename: Optional[str] = None,
     content_type: Optional[str] = None,
-    file: Optional[IO] = None,
+    file: Optional[IO[bytes]] = None,
     file_filename: Optional[str] = None,
     url: Optional[str] = None,
     include_page_breaks: bool = False,

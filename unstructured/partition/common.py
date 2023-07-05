@@ -218,7 +218,7 @@ def spooled_to_bytes_io_if_needed(
 
 
 def convert_to_bytes(
-    file: Optional[Union[bytes, SpooledTemporaryFile, IO]] = None,
+    file: Optional[Union[bytes, SpooledTemporaryFile, IO[bytes]]] = None,
 ) -> bytes:
     if isinstance(file, bytes):
         f_bytes = file

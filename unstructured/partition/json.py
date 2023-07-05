@@ -13,12 +13,23 @@ from unstructured.staging.base import dict_to_elements
 @add_metadata_with_filetype(FileType.JSON)
 def partition_json(
     filename: Optional[str] = None,
-    file: Optional[IO] = None,
+    file: Optional[IO[bytes]] = None,
     text: Optional[str] = None,
     include_metadata: bool = True,
+    metadata_filename: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
-    """Partitions an .json document into its constituent elements."""
+    """Partitions an .json document into its constituent elements.
+
+    Parameters
+    ----------
+    filename
+        A string defining the target filename path.
+    file
+        A file-like object as bytes --> open(filename, "rb").
+    text
+        The string representation of the .json document.
+    """
     if text is not None and text.strip() == "" and not file and not filename:
         return []
 

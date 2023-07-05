@@ -195,7 +195,7 @@ def find_embedded_image(
 
 def parse_email(
     filename: Optional[str] = None,
-    file: Optional[Union[IO, SpooledTemporaryFile]] = None,
+    file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
 ) -> Tuple[Optional[str], Message]:
     if filename is not None:
         with open(filename, "rb") as f:
@@ -222,7 +222,7 @@ def parse_email(
 @add_metadata_with_filetype(FileType.EML)
 def partition_email(
     filename: Optional[str] = None,
-    file: Optional[Union[IO, SpooledTemporaryFile]] = None,
+    file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
     text: Optional[str] = None,
     content_source: str = "text/html",
     encoding: Optional[str] = None,
@@ -271,8 +271,6 @@ def partition_email(
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text)
 
-    metadata_filename = metadata_filename or filename
-
     detected_encoding = "utf-8"
     if filename is not None:
         extracted_encoding, msg = parse_email(filename=filename)
@@ -291,7 +289,6 @@ def partition_email(
     elif text is not None:
         _text: str = str(text)
         msg = email.message_from_string(_text)
-
     if not encoding:
         encoding = detected_encoding
 
@@ -318,7 +315,11 @@ def partition_email(
         # </ul>
         list_content = content.split("=\n")
         content = "".join(list_content)
-        elements = partition_html(text=content, include_metadata=False)
+        elements = partition_html(
+            text=content,
+            include_metadata=False,
+            metadata_filename=metadata_filename,
+        )
         for element in elements:
             if isinstance(element, Text):
                 _replace_mime_encodings = partial(replace_mime_encodings, encoding=encoding)
@@ -342,7 +343,12 @@ def partition_email(
 
     elif content_source == "text/plain":
         list_content = split_by_paragraph(content)
-        elements = partition_text(text=content, encoding=encoding, max_partition=max_partition)
+        elements = partition_text(
+            text=content,
+            encoding=encoding,
+            max_partition=max_partition,
+            metadata_filename=metadata_filename or filename,
+        )
 
     for idx, element in enumerate(elements):
         indices = has_embedded_image(element)
@@ -356,7 +362,7 @@ def partition_email(
         header = partition_email_header(msg)
     all_elements = header + elements
 
-    metadata = build_email_metadata(msg, filename=metadata_filename)
+    metadata = build_email_metadata(msg, filename=metadata_filename or filename)
     for element in all_elements:
         element.metadata = metadata
 
@@ -374,7 +380,7 @@ def partition_email(
                 for element in attached_elements:
                     element.metadata.filename = attached_file
                     element.metadata.file_directory = None
-                    element.metadata.attached_to_filename = metadata_filename
+                    element.metadata.attached_to_filename = metadata_filename or filename
                     all_elements.append(element)
 
     return all_elements

@@ -4,7 +4,11 @@
 
 ### Features
 
+* Add metadata_filename parameter across all partition functions
+
 ### Fixes
+* Fix KeyError when `isd_to_elements` doesn't find a type
+* Fix _output_filename for local connector, allowing single files to be written correctly to the disk
 
 * Fix for cases where an invalid encoding is extracted from an email header.
 

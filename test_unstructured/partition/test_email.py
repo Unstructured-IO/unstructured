@@ -106,6 +106,15 @@ def test_partition_email_from_filename():
     elements = partition_email(filename=filename)
     assert len(elements) > 0
     assert elements == EXPECTED_OUTPUT
+    for element in elements:
+        assert element.metadata.filename == "fake-email.eml"
+
+
+def test_partition_email_from_filename_with_metadata_filename():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
+    elements = partition_email(filename=filename, metadata_filename="test")
+    assert len(elements) > 0
+    assert all(element.metadata.filename == "test" for element in elements)
 
 
 def test_partition_email_from_filename_malformed_encoding():
@@ -131,11 +140,13 @@ def test_partition_email_from_filename_malformed_encoding():
     ],
 )
 def test_partition_email_from_filename_default_encoding(filename, expected_output):
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, filename)
-    elements = partition_email(filename=filename)
+    filename_path = os.path.join(EXAMPLE_DOCS_DIRECTORY, filename)
+    elements = partition_email(filename=filename_path)
     assert len(elements) > 0
     if expected_output:
         assert elements == expected_output
+    for element in elements:
+        assert element.metadata.filename == filename
 
 
 def test_partition_email_from_file():
@@ -144,6 +155,8 @@ def test_partition_email_from_file():
         elements = partition_email(file=f)
     assert len(elements) > 0
     assert elements == EXPECTED_OUTPUT
+    for element in elements:
+        assert element.metadata.filename is None
 
 
 @pytest.mark.parametrize(
@@ -162,12 +175,14 @@ def test_partition_email_from_file():
     ],
 )
 def test_partition_email_from_file_default_encoding(filename, expected_output):
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, filename)
-    with open(filename) as f:
+    filename_path = os.path.join(EXAMPLE_DOCS_DIRECTORY, filename)
+    with open(filename_path) as f:
         elements = partition_email(file=f)
     assert len(elements) > 0
     if expected_output:
         assert elements == expected_output
+    for element in elements:
+        assert element.metadata.filename is None
 
 
 def test_partition_email_from_file_rb():
@@ -176,6 +191,8 @@ def test_partition_email_from_file_rb():
         elements = partition_email(file=f)
     assert len(elements) > 0
     assert elements == EXPECTED_OUTPUT
+    for element in elements:
+        assert element.metadata.filename is None
 
 
 @pytest.mark.parametrize(
@@ -194,12 +211,14 @@ def test_partition_email_from_file_rb():
     ],
 )
 def test_partition_email_from_file_rb_default_encoding(filename, expected_output):
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, filename)
-    with open(filename, "rb") as f:
+    filename_path = os.path.join(EXAMPLE_DOCS_DIRECTORY, filename)
+    with open(filename_path, "rb") as f:
         elements = partition_email(file=f)
     assert len(elements) > 0
     if expected_output:
         assert elements == expected_output
+    for element in elements:
+        assert element.metadata.filename is None
 
 
 def test_partition_email_from_text_file():
@@ -208,6 +227,8 @@ def test_partition_email_from_text_file():
         elements = partition_email(file=f, content_source="text/plain")
     assert len(elements) > 0
     assert elements == EXPECTED_OUTPUT
+    for element in elements:
+        assert element.metadata.filename is None
 
 
 def test_partition_email_from_text_file_with_headers():
@@ -216,6 +237,8 @@ def test_partition_email_from_text_file_with_headers():
         elements = partition_email(file=f, content_source="text/plain", include_headers=True)
     assert len(elements) > 0
     assert elements == ALL_EXPECTED_OUTPUT
+    for element in elements:
+        assert element.metadata.filename is None
 
 
 def test_partition_email_from_text():
@@ -225,6 +248,8 @@ def test_partition_email_from_text():
     elements = partition_email(text=text)
     assert len(elements) > 0
     assert elements == EXPECTED_OUTPUT
+    for element in elements:
+        assert element.metadata.filename is None
 
 
 def test_partition_email_from_text_work_with_empty_string():
@@ -236,18 +261,22 @@ def test_partition_email_from_filename_with_embedded_image():
     elements = partition_email(filename=filename, content_source="text/plain")
     assert len(elements) > 0
     assert elements == IMAGE_EXPECTED_OUTPUT
+    for element in elements:
+        assert element.metadata.filename == "fake-email-image-embedded.eml"
 
 
-def test_partition_email_header():
+def test_partition_email_from_file_with_header():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email-header.eml")
     with open(filename) as f:
         msg = email.message_from_file(f)
     elements = partition_email_header(msg)
     assert len(elements) > 0
     assert elements == RECEIVED_HEADER_OUTPUT
+    for element in elements:
+        assert element.metadata.filename is None
 
 
-def test_partition_email_has_metadata():
+def test_partition_email_from_filename_has_metadata():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email-header.eml")
     elements = partition_email(filename=filename)
     assert len(elements) > 0
@@ -265,21 +294,22 @@ def test_partition_email_has_metadata():
             filetype="message/rfc822",
         ).to_dict()
     )
-
     expected_dt = datetime.datetime.fromisoformat("2022-12-16T17:04:16-05:00")
     assert elements[0].metadata.get_date() == expected_dt
+    for element in elements:
+        assert element.metadata.filename == "fake-email-header.eml"
 
 
 def test_extract_email_text_matches_html():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email-attachment.eml")
     elements_from_text = partition_email(filename=filename, content_source="text/plain")
     elements_from_html = partition_email(filename=filename, content_source="text/html")
-
     assert len(elements_from_text) == len(elements_from_html)
     # NOTE(robinson) - checking each individually is necessary because the text/html returns
     # HTMLTitle, HTMLNarrativeText, etc
     for i, element in enumerate(elements_from_text):
         assert element == elements_from_text[i]
+        assert element.metadata.filename == "fake-email-attachment.eml"
 
 
 def test_extract_attachment_info():
@@ -300,7 +330,6 @@ def test_partition_email_raises_with_too_many_specified():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
     with open(filename) as f:
         text = f.read()
-
     with pytest.raises(ValueError):
         partition_email(filename=filename, text=text)
 
@@ -315,6 +344,8 @@ def test_partition_email_processes_fake_email_with_header():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email-header.eml")
     elements = partition_email(filename=filename)
     assert len(elements) > 0
+    for element in elements:
+        assert element.metadata.filename == "fake-email-header.eml"
 
 
 @pytest.mark.parametrize(

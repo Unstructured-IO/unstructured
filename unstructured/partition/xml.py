@@ -19,7 +19,7 @@ def is_string(elem):
 
 def get_leaf_elements(
     filename: Optional[str] = None,
-    file: Optional[Union[IO, SpooledTemporaryFile]] = None,
+    file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
     xml_path: str = ".",
 ):
     if filename:
@@ -47,7 +47,7 @@ def get_leaf_elements(
 @add_metadata_with_filetype(FileType.XML)
 def partition_xml(
     filename: Optional[str] = None,
-    file: Optional[Union[IO, SpooledTemporaryFile]] = None,
+    file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
     xml_keep_tags: bool = False,
     xml_path: str = ".",
     metadata_filename: Optional[str] = None,
@@ -69,8 +69,6 @@ def partition_xml(
         the text from within the tags.
     xml_path
         The xml_path to use for extracting the text. Only used if xml_keep_tags=False
-    metadata_filename
-        The filename to use for the metadata.
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
     include_metadata
@@ -81,7 +79,6 @@ def partition_xml(
         no maximum is applied.
     """
     exactly_one(filename=filename, file=file)
-    metadata_filename = metadata_filename or filename
 
     if xml_keep_tags:
         if filename:
