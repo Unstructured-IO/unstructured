@@ -4,14 +4,6 @@
 
 ### Features
 
-### Fixes
-
-### BREAKING CHANGES
-
-### Enhancements
-
-### Features
-
 * Add metadata_filename parameter across all partition functions
 
 ### Fixes
