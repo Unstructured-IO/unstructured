@@ -17,12 +17,13 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --download-dir "$DOWNLOAD_DIR" \
     --ms-client-cred "$MS_CLIENT_CRED" \
     --ms-client-id "$MS_CLIENT_ID" \
-    --ms-tenant "22175133-950a-4ca9-9fa9-c8d240fb8edc" \
-    --ms-user-pname "test-ingest-admin@030rx.onmicrosoft.com" \
+    --ms-tenant "3d60a7e5-1e32-414e-839b-1c6e6782613d" \
+    --ms-user-pname "devops@unstructuredio.onmicrosoft.com" \
     --metadata-exclude file_directory,metadata.data_source.date_processed \
     --num-processes 2 \
     --partition-strategy hi_res \
     --preserve-downloads \
+    --recursive \
     --reprocess \
     --structured-output-dir "$OUTPUT_DIR"
 
