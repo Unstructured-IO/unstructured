@@ -1,4 +1,4 @@
-## 0.8.0-dev0
+## 0.8.0-dev1
 
 ### Enhancements
 
@@ -8,6 +8,7 @@
 
 ### Fixes
 * Fix KeyError when `isd_to_elements` doesn't find a type
+* Fix _output_filename for local connector, allowing single files to be written correctly to the disk
 
 ### BREAKING CHANGES
 
