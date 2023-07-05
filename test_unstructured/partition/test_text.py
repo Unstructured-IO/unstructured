@@ -32,6 +32,14 @@ def test_partition_text_from_filename(filename, encoding):
         assert element.metadata.filename == filename
 
 
+def test_partition_text_from_filename_with_metadata_filename():
+    filename_path = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-text.txt")
+    elements = partition_text(filename=filename_path, encoding="utf-8", metadata_filename="test")
+    assert elements == EXPECTED_OUTPUT
+    for element in elements:
+        assert element.metadata.filename == "test"
+
+
 @pytest.mark.parametrize(
     "filename",
     ["fake-text-utf-16.txt", "fake-text-utf-16-le.txt", "fake-text-utf-32.txt"],
@@ -66,6 +74,16 @@ def test_partition_text_from_file():
     assert elements == EXPECTED_OUTPUT
     for element in elements:
         assert element.metadata.filename is None
+        
+        
+def test_partition_text_from_file_with_metadata_filename():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-text.txt")
+    with open(filename) as f:
+        elements = partition_text(file=f, metadata_filename="test")
+    assert len(elements) > 0
+    assert elements == EXPECTED_OUTPUT
+    for element in elements:
+        assert element.metadata.filename == "test"
 
 
 @pytest.mark.parametrize(

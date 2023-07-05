@@ -52,7 +52,6 @@ def partition_md(
     if text is None:
         text = ""
     exactly_one(filename=filename, file=file, text=text, url=url)
-    metadata_filename = metadata_filename or filename
 
     if filename is not None:
         with open(filename, encoding="utf8") as f:

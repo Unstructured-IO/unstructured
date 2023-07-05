@@ -46,7 +46,16 @@ def test_partition_ppt_from_file():
     assert elements == EXPECTED_PPT_OUTPUT
     # # TODO(jennings) the filename is changed after parsing
     # for element in elements:
-    #     assert element.metadata.filename == "fake-power-point.ppt"
+    #     assert element.metadata.filename is None
+        
+        
+def test_partition_ppt_from_file_with_metadata_filename():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.ppt")
+    with open(filename, "rb") as f:
+        elements = partition_ppt(file=f, metadata_filename="test")
+    assert elements == EXPECTED_PPT_OUTPUT
+    for element in elements:
+        assert element.metadata.filename == "test"
 
 
 def test_partition_ppt_raises_with_both_specified():

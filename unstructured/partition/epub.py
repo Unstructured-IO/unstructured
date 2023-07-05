@@ -27,7 +27,6 @@ def partition_epub(
     include_page_breaks
         If True, the output will include page breaks if the filetype supports it.
     """
-    metadata_filename = metadata_filename or filename
     return convert_and_partition_html(
         source_format="epub",
         filename=filename,

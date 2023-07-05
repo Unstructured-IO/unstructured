@@ -79,7 +79,6 @@ def partition_xml(
         no maximum is applied.
     """
     exactly_one(filename=filename, file=file)
-    metadata_filename = metadata_filename or filename
 
     if xml_keep_tags:
         if filename:

@@ -87,6 +87,15 @@ def test_partition_msg_from_file():
     assert elements == EXPECTED_MSG_OUTPUT
     for element in elements:
         assert element.metadata.filename is None
+        
+        
+def test_partition_msg_from_file():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
+    with open(filename, "rb") as f:
+        elements = partition_msg(file=f, metadata_filename="test")
+    assert elements == EXPECTED_MSG_OUTPUT
+    for element in elements:
+        assert element.metadata.filename == "test"
 
 
 def test_extract_attachment_info():

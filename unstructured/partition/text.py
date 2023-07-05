@@ -109,7 +109,6 @@ def partition_text(
 
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text)
-    metadata_filename = metadata_filename or filename
 
     if filename is not None:
         encoding, file_text = read_txt_file(filename=filename, encoding=encoding)
@@ -127,11 +126,9 @@ def partition_text(
 
     file_content = split_by_paragraph(file_text, max_partition=max_partition)
 
-    metadata_filename = metadata_filename or filename
-
     elements: List[Element] = []
     metadata = (
-        ElementMetadata(filename=metadata_filename) if include_metadata else ElementMetadata()
+        ElementMetadata(filename=metadata_filename or filename) if include_metadata else ElementMetadata()
     )
     for ctext in file_content:
         ctext = ctext.strip()

@@ -22,6 +22,14 @@ def test_partition_rst_from_file(filename="example-docs/README.rst"):
     assert elements[0].metadata.filetype == "text/x-rst"
     for element in elements:
         assert element.metadata.filename is None
+        
+        
+def test_partition_rst_from_file(filename="example-docs/README.rst"):
+    with open(filename, "rb") as f:
+        elements = partition_rst(file=f, metadata_filename="test")
+    assert elements[0] == Title("Example Docs")
+    for element in elements:
+        assert element.metadata.filename == "test"
 
 
 def test_partition_rst_from_filename_exclude_metadata(filename="example-docs/README.rst"):

@@ -269,8 +269,8 @@ def partition_email(
 
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text)
-    
-    metadata_filename = metadata_filename or filename
+
+    # metadata_filename = metadata_filename or filename
 
     detected_encoding = "utf-8"
     if filename is not None:
@@ -349,7 +349,7 @@ def partition_email(
             text=content, 
             encoding=encoding, 
             max_partition=max_partition, 
-            metadata_filename=metadata_filename,
+            metadata_filename=metadata_filename or filename,
         )
 
     for idx, element in enumerate(elements):
@@ -364,7 +364,7 @@ def partition_email(
         header = partition_email_header(msg)
     all_elements = header + elements
 
-    metadata = build_email_metadata(msg, filename=metadata_filename)
+    metadata = build_email_metadata(msg, filename=metadata_filename or filename)
     for element in all_elements:
         element.metadata = metadata
 
@@ -382,25 +382,7 @@ def partition_email(
                 for element in attached_elements:
                     element.metadata.filename = attached_file
                     element.metadata.file_directory = None
-                    element.metadata.attached_to_filename = metadata_filename
-                    all_elements.append(element)
-
-
-    if process_attachments:
-        with TemporaryDirectory() as tmpdir:
-            extract_attachment_info(msg, tmpdir)
-            attached_files = os.listdir(tmpdir)
-            for attached_file in attached_files:
-                attached_filename = os.path.join(tmpdir, attached_file)
-                if attachment_partitioner is None:
-                    raise ValueError(
-                        "Specify the attachment_partitioner kwarg to process attachments.",
-                    )
-                attached_elements = attachment_partitioner(filename=attached_filename)
-                for element in attached_elements:
-                    element.metadata.filename = attached_file
-                    element.metadata.file_directory = None
-                    element.metadata.attached_to_filename = metadata_filename
+                    element.metadata.attached_to_filename = metadata_filename or attached_filename
                     all_elements.append(element)
 
     return all_elements

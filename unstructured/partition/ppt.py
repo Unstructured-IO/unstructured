@@ -33,7 +33,6 @@ def partition_ppt(
     if filename is None:
         filename = ""
     exactly_one(filename=filename, file=file)
-    metadata_filename = metadata_filename or filename
 
     if len(filename) > 0:
         _, filename_no_path = os.path.split(os.path.abspath(filename))

@@ -31,6 +31,15 @@ def test_partition_rtf_from_file():
     assert elements[0] == Title("My First Heading")
     for element in elements:
         assert element.metadata.filename is None
+        
+        
+def test_partition_rtf_from_file_with_metadata_filename():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-doc.rtf")
+    with open(filename, "rb") as f:
+        elements = partition_rtf(file=f, metadata_filename="test")
+    assert elements[0] == Title("My First Heading")
+    for element in elements:
+        assert element.metadata.filename == "test"
 
 
 def test_partition_rtf_from_filename_exclude_metadata():

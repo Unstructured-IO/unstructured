@@ -44,7 +44,6 @@ def partition_msg(
         The partitioning function to use to process attachments.
     """
     exactly_one(filename=filename, file=file)
-    metadata_filename = metadata_filename or filename
 
     if filename is not None:
         msg_obj = msg_parser.MsOxMessage(filename)
@@ -54,15 +53,13 @@ def partition_msg(
         tmp.close()
         msg_obj = msg_parser.MsOxMessage(tmp.name)
 
-    metadata_filename = metadata_filename or filename
-
     text = msg_obj.body
     if "<html>" in text or "</div>" in text:
         elements = partition_html(text=text)
     else:
         elements = partition_text(text=text, max_partition=max_partition)
 
-    metadata = build_msg_metadata(msg_obj, metadata_filename)
+    metadata = build_msg_metadata(msg_obj, metadata_filename or filename)
     for element in elements:
         element.metadata = metadata
 
@@ -80,7 +77,7 @@ def partition_msg(
                 for element in attached_elements:
                     element.metadata.filename = attached_file
                     element.metadata.file_directory = None
-                    element.metadata.attached_to_filename = metadata_filename
+                    element.metadata.attached_to_filename = metadata_filename or filename
                     elements.append(element)
 
     return elements

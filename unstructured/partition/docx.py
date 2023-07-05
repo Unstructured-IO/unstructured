@@ -117,7 +117,7 @@ def partition_docx(
 
     Parameters
     ----------
-     filename
+    filename
         A string defining the target filename path.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
@@ -129,7 +129,7 @@ def partition_docx(
 
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file)
-    metadata_filename = metadata_filename or filename
+    # metadata_filename = metadata_filename or filename
 
     if filename is not None:
         document = docx.Document(filename)
@@ -312,7 +312,6 @@ def convert_and_partition_docx(
     if filename is None:
         filename = ""
     exactly_one(filename=filename, file=file)
-    metadata_filename = metadata_filename or filename
 
     if len(filename) > 0:
         _, filename_no_path = os.path.split(os.path.abspath(filename))
@@ -338,7 +337,7 @@ def convert_and_partition_docx(
         )
         elements = partition_docx(
             filename=docx_filename,
-            metadata_filename=filename,
+            metadata_filename=metadata_filename,
             include_metadata=include_metadata,
         )
 

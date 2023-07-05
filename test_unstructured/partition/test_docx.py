@@ -57,7 +57,7 @@ def expected_elements():
     ]
 
 
-def test_partition_docx_with_filename(mock_document, expected_elements, tmpdir):
+def test_partition_docx_from_filename(mock_document, expected_elements, tmpdir):
     filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     mock_document.save(filename)
 
@@ -68,7 +68,7 @@ def test_partition_docx_with_filename(mock_document, expected_elements, tmpdir):
         assert element.metadata.filename == "mock_document.docx"
 
 
-def test_partition_docx_with_filename_metadata(mock_document, tmpdir):
+def test_partition_docx_from_filename_with_metadata_filename(mock_document, tmpdir):
     filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     mock_document.save(filename)
     elements = partition_docx(filename=filename, metadata_filename="test")
@@ -92,7 +92,7 @@ def test_partition_docx_with_spooled_file(mock_document, expected_elements, tmpd
             assert element.metadata.filename is None
 
 
-def test_partition_docx_with_file(mock_document, expected_elements, tmpdir):
+def test_partition_docx_from_file(mock_document, expected_elements, tmpdir):
     filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     mock_document.save(filename)
 
@@ -101,6 +101,17 @@ def test_partition_docx_with_file(mock_document, expected_elements, tmpdir):
     assert elements == expected_elements
     for element in elements:
         assert element.metadata.filename is None
+        
+        
+def test_partition_docx_from_file_with_metadata_filename(mock_document, expected_elements, tmpdir):
+    filename = os.path.join(tmpdir.dirname, "mock_document.docx")
+    mock_document.save(filename)
+
+    with open(filename, "rb") as f:
+        elements = partition_docx(file=f, metadata_filename="test")
+    assert elements == expected_elements
+    for element in elements:
+        assert element.metadata.filename == "test"
 
 
 def test_partition_docx_raises_with_both_specified(mock_document, tmpdir):
@@ -160,14 +171,14 @@ def test_partition_docx_includes_page_breaks(filename="example-docs/handbook-1p.
         assert element.metadata.filename == "handbook-1p.docx"
 
 
-def test_partition_docx_with_filename_exclude_metadata(filename="example-docs/handbook-1p.docx"):
+def test_partition_docx_from_filename_exclude_metadata(filename="example-docs/handbook-1p.docx"):
     elements = partition_docx(filename=filename, include_metadata=False)
     assert elements[0].metadata.filetype is None
     assert elements[0].metadata.page_name is None
     assert elements[0].metadata.filename is None
 
 
-def test_partition_docx_with_file_exclude_metadata(mock_document, tmpdir):
+def test_partition_docx_from_file_exclude_metadata(mock_document, tmpdir):
     filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     mock_document.save(filename)
 

@@ -23,7 +23,6 @@ def partition_odt(
     file
         A file-like object using "rb" mode --> open(filename, "rb").
     """
-    metadata_filename = metadata_filename or filename
     return convert_and_partition_docx(
         source_format="odt",
         filename=filename,

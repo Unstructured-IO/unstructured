@@ -42,15 +42,13 @@ def partition_csv(
         f = spooled_to_bytes_io_if_needed(cast(Union[BinaryIO, SpooledTemporaryFile], file))
         table = pd.read_csv(f)
 
-    metadata_filename = filename or metadata_filename
-
     html_text = table.to_html(index=False, header=False, na_rep="")
     text = lxml.html.document_fromstring(html_text).text_content()
 
     if include_metadata:
         metadata = ElementMetadata(
             text_as_html=html_text,
-            filename=metadata_filename,
+            filename=metadata_filename or filename,
         )
     else:
         metadata = ElementMetadata()

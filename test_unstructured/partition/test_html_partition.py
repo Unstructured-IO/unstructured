@@ -81,6 +81,15 @@ def test_partition_html_from_file():
     assert len(elements) > 0
     for element in elements:
         assert element.metadata.filename is None
+        
+
+def test_partition_html_from_file_with_metadata_filename():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "example-10k.html")
+    with open(filename) as f:
+        elements = partition_html(file=f, metadata_filename="test")
+    assert len(elements) > 0
+    for element in elements:
+        assert element.metadata.filename == "test"
 
 
 @pytest.mark.parametrize(
@@ -290,3 +299,13 @@ def test_partition_html_with_pre_tag():
     assert isinstance(elements[0], Title)
     assert elements[0].metadata.filetype == "text/html"
     assert elements[0].metadata.filename == "fake-html-pre.htm"
+
+
+def test_partition_html_from_filename_exclude_metadata():
+    directory = os.path.join(DIRECTORY, "..", "..", "example-docs")
+    filename = os.path.join(directory, "example-10k.html")
+    elements = partition_html(filename=filename, include_metadata=False)
+    assert len(elements) > 0
+    assert "PageBreak" not in [elem.category for elem in elements]
+    assert elements[0].metadata.filename is None
+    assert elements[0].metadata.file_directory is None
