@@ -420,26 +420,6 @@
     "text": "The results of the experiment are presented in this session. The results obtained from weight loss method for stainless steel Type 316 immersed in 0.5 M H2SO4 solution in the absence and presence of different concentrations of egg shell powder (ES) are presented in Figs. 1–3 respectively. It can be seen clearly from these Figures that the efﬁciency of egg shell powder increase with the inhibitor con- centration, The increase in its efﬁciency could be as a result of increase in the constituent molecule"
   },
   {
-    "type": "Image",
-    "element_id": "ee3e819265e5f824ca75a1690e33f016",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "10g8g6g4g2gControl _w- _w-"
-  },
-  {
-    "type": "Image",
-    "element_id": "ee3e819265e5f824ca75a1690e33f016",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "10g8g6g4g2gControl _w- _w-"
-  },
-  {
     "type": "UncategorizedText",
     "element_id": "f4ccd05b3271c386ee55d9876c745001",
     "metadata": {
@@ -1131,13 +1111,13 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "fd05531c0ece0ec9ff1ba904dc9b19a9",
+    "element_id": "b5ee6af3d776b0bbd2e581a3ab2ab2e1",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "Potential (Vv)”°in°}anryT T T0.00001 0.001 olCurrent Density (A/cm2)"
+    "text": "Potential (Vv)nm°in°}aryT T T0.00001 0.001 olCurrent Density (A/cm2)"
   },
   {
     "type": "UncategorizedText",
@@ -1491,13 +1471,13 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "375075bb707adf9fea5e08f86293a661",
+    "element_id": "6959a323ee23c858c3b1411b05db6ebf",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "SEMHV!Q0.0KY WD: 14.89 mmm‘30M MAO: 209 x Det: DOE ecfomsence In nanos pact"
+    "text": "SEM HV: Q0KY WD: 14.89 rmrm‘DEM MAO: 209 x Det: DOE Pecforsence In nenospact"
   },
   {
     "type": "NarrativeText",
@@ -1511,13 +1491,13 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "3e996ba2c3a810184e9b64695925e010",
+    "element_id": "a0463ca888a6f2c8c3ba40ba47be0f2f",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "gEOOzeeSemny. 200RV | WD: 1424 renn rtiiist VEGAS TeEScan|20 pm Fertormaros in nancepace!"
+    "text": "gEOOwaeSemny. z00RV | WD: 1424 renn rtirint VEoa3 Tescan20 yin Fertormaros in nancepace|"
   },
   {
     "type": "NarrativeText",
@@ -1531,13 +1511,13 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "4efdd72f1bf2fc1a4d9613da9b3efaf8",
+    "element_id": "a9bc28448ebad437288bf5538fb09482",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "SEM HY: 20.0KU‘BEM IAAG: 400 x 5"
+    "text": "SEM HY: 20.0KVBEM IAAG: 400 x 5"
   },
   {
     "type": "NarrativeText",
