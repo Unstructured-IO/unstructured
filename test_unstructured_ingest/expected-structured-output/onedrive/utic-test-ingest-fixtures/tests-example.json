@@ -1,0 +1,41 @@
+[
+  {
+    "type": "Table",
+    "element_id": "b3e92c24311471ee2c4884b010dd55a0",
+    "metadata": {
+      "data_source": {},
+      "filename": "tests-example.xls",
+      "filetype": "application/vnd.ms-excel",
+      "page_number": 1,
+      "page_name": "Example Test",
+      "text_as_html": "<table border=\"1\" class=\"dataframe\">\n  <tbody>\n    <tr>\n      <td>MA</td>\n      <td>What C datatypes are 8 bits? (assume i386)</td>\n      <td>int</td>\n      <td></td>\n      <td>float</td>\n      <td></td>\n      <td>double</td>\n      <td></td>\n      <td>char</td>\n    </tr>\n    <tr>\n      <td>TF</td>\n      <td>Bagpipes are awesome.</td>\n      <td>true</td>\n      <td></td>\n      <td></td>\n      <td></td>\n      <td></td>\n      <td></td>\n      <td></td>\n    </tr>\n    <tr>\n      <td>ESS</td>\n      <td>How have the original Henry Hornbostel buildings influenced campus architecture and design in the last 30 years?</td>\n      <td></td>\n      <td></td>\n      <td></td>\n      <td></td>\n      <td></td>\n      <td></td>\n      <td></td>\n    </tr>\n    <tr>\n      <td>ORD</td>\n      <td>Rank the following in their order of operation.</td>\n      <td>Parentheses</td>\n      <td>Exponents</td>\n      <td>Division</td>\n      <td>Addition</td>\n      <td></td>\n      <td></td>\n      <td></td>\n    </tr>\n    <tr>\n      <td>FIB</td>\n      <td>The student activities fee is</td>\n      <td>95</td>\n      <td>dollars for students enrolled in</td>\n      <td>19</td>\n      <td>units or more,</td>\n      <td></td>\n      <td></td>\n      <td></td>\n    </tr>\n    <tr>\n      <td>MAT</td>\n      <td>Match the lower-case greek letter with its capital form.</td>\n      <td>λ</td>\n      <td>Λ</td>\n      <td>α</td>\n      <td>γ</td>\n      <td>Γ</td>\n      <td>φ</td>\n      <td>Φ</td>\n    </tr>\n  </tbody>\n</table>"
+    },
+    "text": "\n  \n    \n      MA\n      What C datatypes are 8 bits? (assume i386)\n      int\n      \n      float\n      \n      double\n      \n      char\n    \n    \n      TF\n      Bagpipes are awesome.\n      true\n      \n      \n      \n      \n      \n      \n    \n    \n      ESS\n      How have the original Henry Hornbostel buildings influenced campus architecture and design in the last 30 years?\n      \n      \n      \n      \n      \n      \n      \n    \n    \n      ORD\n      Rank the following in their order of operation.\n      Parentheses\n      Exponents\n      Division\n      Addition\n      \n      \n      \n    \n    \n      FIB\n      The student activities fee is\n      95\n      dollars for students enrolled in\n      19\n      units or more,\n      \n      \n      \n    \n    \n      MAT\n      Match the lower-case greek letter with its capital form.\n      λ\n      Λ\n      α\n      γ\n      Γ\n      φ\n      Φ\n    \n  \n"
+  },
+  {
+    "type": "Table",
+    "element_id": "adf2eb068afa00f6dfaa4adf8195ce25",
+    "metadata": {
+      "data_source": {},
+      "filename": "tests-example.xls",
+      "filetype": "application/vnd.ms-excel",
+      "page_number": 2,
+      "page_name": "Format Abbr.",
+      "text_as_html": "<table border=\"1\" class=\"dataframe\">\n  <tbody>\n    <tr>\n      <td></td>\n      <td></td>\n    </tr>\n    <tr>\n      <td></td>\n      <td></td>\n    </tr>\n    <tr>\n      <td>http://www.cmu.edu/blackboard</td>\n      <td></td>\n    </tr>\n    <tr>\n      <td></td>\n      <td></td>\n    </tr>\n    <tr>\n      <td>Question Format Abbreviations</td>\n      <td></td>\n    </tr>\n    <tr>\n      <td></td>\n      <td></td>\n    </tr>\n    <tr>\n      <td>Abbreviation</td>\n      <td>Question Type</td>\n    </tr>\n    <tr>\n      <td>MC</td>\n      <td>Multiple Choice</td>\n    </tr>\n    <tr>\n      <td>MA</td>\n      <td>Multiple Answer</td>\n    </tr>\n    <tr>\n      <td>TF</td>\n      <td>True/False</td>\n    </tr>\n    <tr>\n      <td>ESS</td>\n      <td>Essay</td>\n    </tr>\n    <tr>\n      <td>ORD</td>\n      <td>Ordering</td>\n    </tr>\n    <tr>\n      <td>MAT</td>\n      <td>Matching</td>\n    </tr>\n    <tr>\n      <td>FIB</td>\n      <td>Fill in the Blank</td>\n    </tr>\n    <tr>\n      <td>FIL</td>\n      <td>File response</td>\n    </tr>\n    <tr>\n      <td>NUM</td>\n      <td>Numeric Response</td>\n    </tr>\n    <tr>\n      <td>SR</td>\n      <td>Short response</td>\n    </tr>\n    <tr>\n      <td>OP</td>\n      <td>Opinion</td>\n    </tr>\n    <tr>\n      <td>FIB_PLUS</td>\n      <td>Multiple Fill in the Blank</td>\n    </tr>\n    <tr>\n      <td>JUMBLED_SENTENCE</td>\n      <td>Jumbled Sentence</td>\n    </tr>\n    <tr>\n      <td>QUIZ_BOWL</td>\n      <td>Quiz Bowl</td>\n    </tr>\n  </tbody>\n</table>"
+    },
+    "text": "\n  \n    \n      \n      \n    \n    \n      \n      \n    \n    \n      http://www.cmu.edu/blackboard\n      \n    \n    \n      \n      \n    \n    \n      Question Format Abbreviations\n      \n    \n    \n      \n      \n    \n    \n      Abbreviation\n      Question Type\n    \n    \n      MC\n      Multiple Choice\n    \n    \n      MA\n      Multiple Answer\n    \n    \n      TF\n      True/False\n    \n    \n      ESS\n      Essay\n    \n    \n      ORD\n      Ordering\n    \n    \n      MAT\n      Matching\n    \n    \n      FIB\n      Fill in the Blank\n    \n    \n      FIL\n      File response\n    \n    \n      NUM\n      Numeric Response\n    \n    \n      SR\n      Short response\n    \n    \n      OP\n      Opinion\n    \n    \n      FIB_PLUS\n      Multiple Fill in the Blank\n    \n    \n      JUMBLED_SENTENCE\n      Jumbled Sentence\n    \n    \n      QUIZ_BOWL\n      Quiz Bowl\n    \n  \n"
+  },
+  {
+    "type": "Table",
+    "element_id": "55c06f516945f32a0187cfd94ba7e074",
+    "metadata": {
+      "data_source": {},
+      "filename": "tests-example.xls",
+      "filetype": "application/vnd.ms-excel",
+      "page_number": 3,
+      "page_name": "Readme",
+      "text_as_html": "<table border=\"1\" class=\"dataframe\">\n  <tbody>\n    <tr>\n      <td></td>\n    </tr>\n    <tr>\n      <td></td>\n    </tr>\n    <tr>\n      <td>http://www.cmu.edu/blackboard</td>\n    </tr>\n    <tr>\n      <td></td>\n    </tr>\n    <tr>\n      <td>File Information</td>\n    </tr>\n    <tr>\n      <td></td>\n    </tr>\n    <tr>\n      <td></td>\n    </tr>\n    <tr>\n      <td>Source</td>\n    </tr>\n    <tr>\n      <td>http://www.cmu.edu/blackboard/files/evaluate/tests-example.xls</td>\n    </tr>\n    <tr>\n      <td></td>\n    </tr>\n    <tr>\n      <td></td>\n    </tr>\n    <tr>\n      <td>Version</td>\n    </tr>\n    <tr>\n      <td>1.0 (January 2012)</td>\n    </tr>\n    <tr>\n      <td></td>\n    </tr>\n    <tr>\n      <td></td>\n    </tr>\n    <tr>\n      <td>Contact</td>\n    </tr>\n    <tr>\n      <td>bb-help@andrew.cmu.edu</td>\n    </tr>\n    <tr>\n      <td></td>\n    </tr>\n    <tr>\n      <td></td>\n    </tr>\n    <tr>\n      <td>About</td>\n    </tr>\n    <tr>\n      <td>This is an example and template for preparing Blackboard tests offline. See the full directions at: http://www.cmu.edu/blackboard/evaluate#manage_tests/import_questions</td>\n    </tr>\n  </tbody>\n</table>"
+    },
+    "text": "\n  \n    \n      \n    \n    \n      \n    \n    \n      http://www.cmu.edu/blackboard\n    \n    \n      \n    \n    \n      File Information\n    \n    \n      \n    \n    \n      \n    \n    \n      Source\n    \n    \n      http://www.cmu.edu/blackboard/files/evaluate/tests-example.xls\n    \n    \n      \n    \n    \n      \n    \n    \n      Version\n    \n    \n      1.0 (January 2012)\n    \n    \n      \n    \n    \n      \n    \n    \n      Contact\n    \n    \n      bb-help@andrew.cmu.edu\n    \n    \n      \n    \n    \n      \n    \n    \n      About\n    \n    \n      This is an example and template for preparing Blackboard tests offline. See the full directions at: http://www.cmu.edu/blackboard/evaluate#manage_tests/import_questions\n    \n  \n"
+  }
+]
