@@ -75,7 +75,7 @@ def _split_to_fit_max_content(content: str, max_partition: int = 1500) -> List[s
 @add_metadata_with_filetype(FileType.TXT)
 def partition_text(
     filename: Optional[str] = None,
-    file: Optional[IO] = None,
+    file: Optional[IO[bytes]] = None,
     text: Optional[str] = None,
     encoding: Optional[str] = None,
     paragraph_grouper: Optional[Callable[[str], str]] = None,

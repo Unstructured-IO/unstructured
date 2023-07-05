@@ -20,7 +20,7 @@ def optional_decode(contents: Union[str, bytes]) -> str:
 @add_metadata_with_filetype(FileType.MD)
 def partition_md(
     filename: Optional[str] = None,
-    file: Optional[IO] = None,
+    file: Optional[IO[bytes]] = None,
     text: Optional[str] = None,
     url: Optional[str] = None,
     include_page_breaks: bool = False,

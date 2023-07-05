@@ -12,7 +12,7 @@ from unstructured.partition.docx import partition_docx
 @add_metadata_with_filetype(FileType.DOC)
 def partition_doc(
     filename: Optional[str] = None,
-    file: Optional[IO] = None,
+    file: Optional[IO[bytes]] = None,
     include_page_breaks: bool = True,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,

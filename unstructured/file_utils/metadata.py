@@ -41,7 +41,7 @@ class Metadata:
 
 def get_docx_metadata(
     filename: str = "",
-    file: Optional[IO] = None,
+    file: Optional[IO[bytes]] = None,
 ) -> Metadata:
     """Extracts document metadata from a Microsoft .docx document."""
     if filename:
@@ -74,7 +74,7 @@ def get_docx_metadata(
 
 def get_xlsx_metadata(
     filename: str = "",
-    file: Optional[IO] = None,
+    file: Optional[IO[bytes]] = None,
 ) -> Metadata:
     """Extracts document metadata from a Microsoft .xlsx document."""
     if filename:
@@ -108,7 +108,7 @@ def get_xlsx_metadata(
 
 def get_jpg_metadata(
     filename: str = "",
-    file: Optional[IO] = None,
+    file: Optional[IO[bytes]] = None,
 ) -> Metadata:
     """Extracts metadata from a JPG image, including EXIF metadata."""
     if filename:

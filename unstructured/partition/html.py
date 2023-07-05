@@ -21,7 +21,7 @@ from unstructured.partition.common import (
 @add_metadata_with_filetype(FileType.HTML)
 def partition_html(
     filename: Optional[str] = None,
-    file: Optional[IO] = None,
+    file: Optional[IO[bytes]] = None,
     text: Optional[str] = None,
     url: Optional[str] = None,
     encoding: Optional[str] = None,
@@ -107,7 +107,7 @@ def partition_html(
 def convert_and_partition_html(
     source_format: str,
     filename: Optional[str] = None,
-    file: Optional[IO] = None,
+    file: Optional[IO[bytes]] = None,
     include_page_breaks: bool = False,
     metadata_filename: Optional[str] = None,
 ) -> List[Element]:

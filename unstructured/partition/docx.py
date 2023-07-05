@@ -107,7 +107,7 @@ Paragraph.runs = property(lambda self: _get_paragraph_runs(self))
 @add_metadata_with_filetype(FileType.DOCX)
 def partition_docx(
     filename: Optional[str] = None,
-    file: Optional[Union[IO, SpooledTemporaryFile]] = None,
+    file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
     metadata_filename: Optional[str] = None,
     include_page_breaks: bool = True,
     include_metadata: bool = True,
@@ -288,7 +288,7 @@ def _get_headers_and_footers(
 def convert_and_partition_docx(
     source_format: str,
     filename: Optional[str] = None,
-    file: Optional[IO] = None,
+    file: Optional[IO[bytes]] = None,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
 ) -> List[Element]:
