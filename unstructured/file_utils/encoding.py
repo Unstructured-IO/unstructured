@@ -51,7 +51,7 @@ def format_encoding_str(encoding: str) -> str:
 
 def detect_file_encoding(
     filename: str = "",
-    file: Optional[Union[bytes, IO]] = None,
+    file: Optional[Union[bytes, IO[bytes]]] = None,
 ) -> Tuple[str, str]:
     if filename:
         with open(filename, "rb") as f:
@@ -98,7 +98,7 @@ def detect_file_encoding(
 
 def read_txt_file(
     filename: str = "",
-    file: Optional[Union[bytes, IO]] = None,
+    file: Optional[Union[bytes, IO[bytes]]] = None,
     encoding: Optional[str] = None,
 ) -> Tuple[str, str]:
     """Extracts document metadata from a plain text document."""

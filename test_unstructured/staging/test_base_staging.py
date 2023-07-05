@@ -46,6 +46,7 @@ def test_isd_to_elements():
         {"text": "Blurb2", "type": "Title"},
         {"text": "Blurb3", "type": "ListItem"},
         {"text": "Blurb4", "type": "BulletedText"},
+        {"text": "No Type"},
     ]
 
     elements = base.isd_to_elements(isd)
