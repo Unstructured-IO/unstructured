@@ -49,6 +49,15 @@ def format_encoding_str(encoding: str) -> str:
     return formatted_encoding
 
 
+def validate_encoding(encoding: str) -> bool:
+    """Checks if an encoding string is valid. Helps to avoid errors in cases where
+    invalid encodings are extracted from malformed documents."""
+    for common_encoding in COMMON_ENCODINGS:
+        if format_encoding_str(common_encoding) == format_encoding_str(encoding):
+            return True
+    return False
+
+
 def detect_file_encoding(
     filename: str = "",
     file: Optional[Union[bytes, IO]] = None,
