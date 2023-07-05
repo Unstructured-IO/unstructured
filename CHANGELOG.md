@@ -1,8 +1,10 @@
-## 0.7.13-dev0
+## 0.7.13-dev1
 
 ### Enhancements
 
 ### Features
+
+* Add metadata_filename parameter across all partition functions
 
 ### Fixes
 
