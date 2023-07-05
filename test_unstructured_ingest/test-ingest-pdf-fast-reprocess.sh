@@ -15,7 +15,7 @@ ls "$INPUT_PATH"
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --local-file-glob "*.pdf" \
     --local-input-path "$INPUT_PATH" \
-    --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
+    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed \
     --num-processes 2 \
     --partition-strategy fast \
     --recursive \
