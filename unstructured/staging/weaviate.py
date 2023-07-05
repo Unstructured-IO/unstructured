@@ -8,6 +8,9 @@ class Properties(TypedDict):
     dataType: List[str]
 
 
+exclude_metadata_keys = ("data_source", "coordinates")
+
+
 def stage_for_weaviate(elements: List[Text]) -> List[Dict[str, Any]]:
     """Converts a list of elements into a list of dictionaries that can be uploaded to
     Weaviate. The outputs will conform to the schema created with
@@ -20,6 +23,9 @@ def stage_for_weaviate(elements: List[Text]) -> List[Dict[str, Any]]:
     data: List[Dict[str, Any]] = []
     for element in elements:
         properties = element.metadata.to_dict()
+        for k in exclude_metadata_keys:
+            if k in properties:
+                del properties[k]
         properties["text"] = element.text
         properties["category"] = element.category
         data.append(properties)
@@ -52,8 +58,6 @@ def create_unstructured_weaviate_class(class_name: str = "UnstructuredDocument")
             "dataType": ["text"],
         },
     ]
-
-    exclude_metadata_keys = ["data_source"]
 
     for name, annotation in ElementMetadata.__annotations__.items():
         if name not in exclude_metadata_keys:

@@ -13,6 +13,7 @@ from pdfminer.utils import open_filename
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
+    CoordinatesMetadata,
     Element,
     ElementMetadata,
     Image,
@@ -279,7 +280,6 @@ def _process_pdfminer_pages(
     elements: List[Element] = []
 
     for i, page in enumerate(extract_pages(fp)):  # type: ignore
-        metadata = ElementMetadata(filename=filename, page_number=i + 1)
         width, height = page.width, page.height
 
         text_segments = []
@@ -300,19 +300,27 @@ def _process_pdfminer_pages(
                 if _text.strip():
                     text_segments.append(_text)
                     element = element_from_text(_text)
-                    element._coordinate_system = PixelSpace(
+                    coordinate_system = PixelSpace(
                         width=width,
                         height=height,
                     )
-                    element.coordinates = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
-                    element.metadata = metadata
+                    points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
+                    coordinates_metadata = CoordinatesMetadata(
+                        points=points,
+                        system=coordinate_system,
+                    )
+                    element.metadata = ElementMetadata(
+                        filename=filename,
+                        page_number=i + 1,
+                        coordinates=coordinates_metadata,
+                    )
                     page_elements.append(element)
 
         sorted_page_elements = sorted(
             page_elements,
             key=lambda el: (
-                el.coordinates[0][1] if el.coordinates else float("inf"),
-                el.coordinates[0][0] if el.coordinates else float("inf"),
+                el.metadata.coordinates.points[0][1] if el.metadata.coordinates else float("inf"),
+                el.metadata.coordinates.points[0][0] if el.metadata.coordinates else float("inf"),
                 el.id,
             ),
         )

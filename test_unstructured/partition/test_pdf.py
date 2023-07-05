@@ -3,10 +3,17 @@ from tempfile import SpooledTemporaryFile
 from unittest import mock
 
 import pytest
+from PIL import Image
 from unstructured_inference.inference import layout
 
 from unstructured.documents.coordinates import PixelSpace
-from unstructured.documents.elements import NarrativeText, Text, Title
+from unstructured.documents.elements import (
+    CoordinatesMetadata,
+    ElementMetadata,
+    NarrativeText,
+    Text,
+    Title,
+)
 from unstructured.partition import pdf, strategies
 
 
@@ -50,8 +57,9 @@ def mock_successful_post(url, **kwargs):
 
 
 class MockPageLayout(layout.PageLayout):
-    def __init__(self, number: int):
-        pass
+    def __init__(self, number: int, image: Image):
+        self.number = number
+        self.image = image
 
     @property
     def elements(self):
@@ -71,9 +79,7 @@ class MockDocumentLayout(layout.DocumentLayout):
     @property
     def pages(self):
         return [
-            MockPageLayout(
-                number=0,
-            ),
+            MockPageLayout(number=0, image=Image.new("1", (1, 1))),
         ]
 
 
@@ -373,32 +379,39 @@ def test_partition_pdf_fails_if_pdf_not_processable(
 def test_partition_pdf_fast_groups_text_in_text_box():
     filename = os.path.join("example-docs", "chevron-page.pdf")
     elements = pdf.partition_pdf(filename=filename, strategy="fast")
-
-    assert elements[0] == Title(
-        "eastern mediterranean",
-        coordinates=(
-            (193.1741, 71.94000000000005),
-            (193.1741, 91.94000000000005),
-            (418.6881, 91.94000000000005),
-            (418.6881, 71.94000000000005),
-        ),
-        coordinate_system=PixelSpace(width=612, height=792),
+    expected_coordinate_points_0 = (
+        (193.1741, 71.94000000000005),
+        (193.1741, 91.94000000000005),
+        (418.6881, 91.94000000000005),
+        (418.6881, 71.94000000000005),
     )
+    expected_coordinate_system_0 = PixelSpace(width=612, height=792)
+    expected_elem_metadata_0 = ElementMetadata(
+        coordinates=CoordinatesMetadata(
+            points=expected_coordinate_points_0,
+            system=expected_coordinate_system_0,
+        ),
+    )
+    assert elements[0] == Title("eastern mediterranean", metadata=expected_elem_metadata_0)
 
     assert isinstance(elements[1], NarrativeText)
     assert str(elements[1]).startswith("We")
     assert str(elements[1]).endswith("Jordan and Egypt.")
 
-    assert elements[3] == Title(
-        "1st",
-        coordinates=(
-            (273.9929, 181.16470000000004),
-            (273.9929, 226.16470000000004),
-            (333.59990000000005, 226.16470000000004),
-            (333.59990000000005, 181.16470000000004),
-        ),
-        coordinate_system=PixelSpace(width=612, height=792),
+    expected_coordinate_points_3 = (
+        (273.9929, 181.16470000000004),
+        (273.9929, 226.16470000000004),
+        (333.59990000000005, 226.16470000000004),
+        (333.59990000000005, 181.16470000000004),
     )
+    expected_coordinate_system_3 = PixelSpace(width=612, height=792)
+    expected_elem_metadata_3 = ElementMetadata(
+        coordinates=CoordinatesMetadata(
+            points=expected_coordinate_points_3,
+            system=expected_coordinate_system_3,
+        ),
+    )
+    assert elements[3] == Title("1st", metadata=expected_elem_metadata_3)
 
 
 def test_partition_pdf_with_auto_strategy_exclude_metadata(
