@@ -3,17 +3,10 @@ from tempfile import SpooledTemporaryFile
 from unittest import mock
 
 import pytest
-from PIL import Image
 from unstructured_inference.inference import layout
 
 from unstructured.documents.coordinates import PixelSpace
-from unstructured.documents.elements import (
-    CoordinatesMetadata,
-    ElementMetadata,
-    NarrativeText,
-    Text,
-    Title,
-)
+from unstructured.documents.elements import NarrativeText, Text, Title
 from unstructured.partition import pdf, strategies
 
 
@@ -57,9 +50,8 @@ def mock_successful_post(url, **kwargs):
 
 
 class MockPageLayout(layout.PageLayout):
-    def __init__(self, number: int, image: Image):
-        self.number = number
-        self.image = image
+    def __init__(self, number: int):
+        pass
 
     @property
     def elements(self):
@@ -79,7 +71,9 @@ class MockDocumentLayout(layout.DocumentLayout):
     @property
     def pages(self):
         return [
-            MockPageLayout(number=0, image=Image.new("1", (1, 1))),
+            MockPageLayout(
+                number=0,
+            ),
         ]
 
 
@@ -183,8 +177,6 @@ def test_partition_pdf_with_fast_strategy(
     assert len(elements) > 10
     # check that the pdf has multiple different page numbers
     assert {element.metadata.page_number for element in elements} == {1, 2}
-    for element in elements:
-        assert element.metadata.filename == "layout-parser-paper-fast.pdf"
 
 
 def test_partition_pdf_with_fast_groups_text(
@@ -197,10 +189,10 @@ def test_partition_pdf_with_fast_groups_text(
         if isinstance(element, NarrativeText):
             first_narrative_element = element
             break
+
     assert len(first_narrative_element.text) > 1000
     assert first_narrative_element.text.startswith("Abstract. Recent advances")
     assert first_narrative_element.text.endswith("https://layout-parser.github.io.")
-    assert first_narrative_element.metadata.filename == "layout-parser-paper-fast.pdf"
 
 
 def test_partition_pdf_with_fast_strategy_from_file(
@@ -225,8 +217,6 @@ def test_partition_pdf_with_fast_strategy_and_page_breaks(
     assert "PageBreak" in [elem.category for elem in elements]
 
     assert "unstructured_inference is not installed" not in caplog.text
-    for element in elements:
-        assert element.metadata.filename == "layout-parser-paper-fast.pdf"
 
 
 def test_partition_pdf_raises_with_bad_strategy(
@@ -383,60 +373,32 @@ def test_partition_pdf_fails_if_pdf_not_processable(
 def test_partition_pdf_fast_groups_text_in_text_box():
     filename = os.path.join("example-docs", "chevron-page.pdf")
     elements = pdf.partition_pdf(filename=filename, strategy="fast")
-    expected_coordinate_points_0 = (
-        (193.1741, 71.94000000000005),
-        (193.1741, 91.94000000000005),
-        (418.6881, 91.94000000000005),
-        (418.6881, 71.94000000000005),
-    )
-    expected_coordinate_system_0 = PixelSpace(width=612, height=792)
-    expected_elem_metadata_0 = ElementMetadata(
-        coordinates=CoordinatesMetadata(
-            points=expected_coordinate_points_0,
-            system=expected_coordinate_system_0,
+
+    assert elements[0] == Title(
+        "eastern mediterranean",
+        coordinates=(
+            (193.1741, 71.94000000000005),
+            (193.1741, 91.94000000000005),
+            (418.6881, 91.94000000000005),
+            (418.6881, 71.94000000000005),
         ),
+        coordinate_system=PixelSpace(width=612, height=792),
     )
-    assert elements[0] == Title("eastern mediterranean", metadata=expected_elem_metadata_0)
+
     assert isinstance(elements[1], NarrativeText)
     assert str(elements[1]).startswith("We")
     assert str(elements[1]).endswith("Jordan and Egypt.")
 
-    expected_coordinate_points_3 = (
-        (273.9929, 181.16470000000004),
-        (273.9929, 226.16470000000004),
-        (333.59990000000005, 226.16470000000004),
-        (333.59990000000005, 181.16470000000004),
-    )
-    expected_coordinate_system_3 = PixelSpace(width=612, height=792)
-    expected_elem_metadata_3 = ElementMetadata(
-        coordinates=CoordinatesMetadata(
-            points=expected_coordinate_points_3,
-            system=expected_coordinate_system_3,
+    assert elements[3] == Title(
+        "1st",
+        coordinates=(
+            (273.9929, 181.16470000000004),
+            (273.9929, 226.16470000000004),
+            (333.59990000000005, 226.16470000000004),
+            (333.59990000000005, 181.16470000000004),
         ),
+        coordinate_system=PixelSpace(width=612, height=792),
     )
-    assert elements[3] == Title("1st", metadata=expected_elem_metadata_3)
-
-
-def test_partition_pdf_with_metadata_filename(
-    filename="example-docs/layout-parser-paper-fast.pdf",
-):
-    elements = pdf.partition_pdf(
-        filename=filename,
-        url=None,
-        include_page_breaks=True,
-        metadata_filename="test",
-    )
-    for element in elements:
-        assert element.metadata.filename == "test"
-
-
-def test_partition_pdf_with_fast_strategy_from_file_with_metadata_filename(
-    filename="example-docs/layout-parser-paper-fast.pdf",
-):
-    with open(filename, "rb") as f:
-        elements = pdf.partition_pdf(file=f, url=None, strategy="fast", metadata_filename="test")
-    for element in elements:
-        assert element.metadata.filename == "test"
 
 
 def test_partition_pdf_with_auto_strategy_exclude_metadata(
