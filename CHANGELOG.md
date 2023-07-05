@@ -14,7 +14,6 @@
 
 * Information about an element's location is no longer returned as top-level attributes of an element. Instead, it is returned in the `coordinates` attribute of the element's metadata.
 
-
 ## 0.7.12
 
 ### Enhancements
