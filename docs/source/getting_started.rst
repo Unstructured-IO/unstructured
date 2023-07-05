@@ -111,43 +111,6 @@ The following code shows how you can limit your output to only narrative text wi
 
 
 ####################
-Element coordinates
-####################
-
-Some document types support location data for the elements, usually in the form of bounding boxes. 
-The ``coordinates`` property of an ``Element`` stores the coordinates of the corners of the 
-bounding box starting from the top left corner and proceeding counter-clockwise. If the 
-coordinates are not available, the ``coordinates`` property is ``None``. 
-
-The coordinates have an associated coordinate system. A typical example of a coordinate system is 
-``PixelSpace``, which is used for representing the coordinates of images. The coordinates 
-represent pixels, the origin is in the top left and the ``y`` coordinate increases in the 
-downward direction. Information about the coordinate system is found in the 
-``Element.coordinate_system`` property, including the coordinate system name, a description, the 
-layout width, and the layout height.
-
-The coordinates of an element can be changed to a new coordinate system by using the 
-``Element.convert_coordinates_to_new_system`` method. If the ``in_place`` flag is ``True``, the 
-coordinate system and coordinates of the element are updated in place and the new coordinates are 
-returned. If the ``in_place`` flag is ``False``, only the altered coordinates are returned.
-
-.. code:: python
-
-	from unstructured.documents.elements import Element
-	from unstructured.documents.coordinates import PixelSpace, RelativeCoordinateSystem
-
-	coordinates = ((10, 10), (10, 100), (200, 100), (200, 10))
-	coordinate_system = PixelSpace(width=850, height=1100)
-	element = Element(coordinates=coordinates, coordinate_system=coordinate_system)
-	print(element.coordinate_system)
-	print(element.coordinate)
-	element.convert_coordinates_to_new_system(RelativeCoordinateSystem(), in_place=True)
-	# Should now be in terms of new coordinate system
-	print(element.coordinate_system)
-	print(element.coordinate)
-
-
-####################
 Serializing Elements
 ####################
 
@@ -173,7 +136,7 @@ serializing and deserializing an ``Element`` list.
 
     elements_to_json(elements, filename=filename)
     new_elements = elements_from_json(filename=filename)
-    
+
     # alternatively, one can also serialize/deserialize to/from a string with:
     serialized_elements_json = elements_to_json(elements)
     new_elements = elements_from_json(text=serialized_elements_json)

@@ -451,7 +451,13 @@ def document_to_element_list(
     for i, page in enumerate(document.pages):
         page_elements: List[Element] = []
         for layout_element in page.elements:
-            element = normalize_layout_element(layout_element)
+            if hasattr(page, "image"):
+                image_format = page.image.format
+                coordinate_system = PixelSpace(width=page.image.width, height=page.image.height)
+            else:
+                image_format = None
+                coordinate_system = None
+            element = normalize_layout_element(layout_element, coordinate_system=coordinate_system)
             if isinstance(element, List):
                 for el in element:
                     el.metadata.page_number = i + 1
@@ -462,20 +468,26 @@ def document_to_element_list(
                     layout_element.text_as_html if hasattr(layout_element, "text_as_html") else None
                 )
                 page_elements.append(element)
-            if hasattr(page, "image"):
-                image_format = page.image.format
-                coordinate_system = PixelSpace(width=page.image.width, height=page.image.height)
-            else:
-                image_format = None
-                coordinate_system = None
-            element._coordinate_system = coordinate_system
-            _add_element_metadata(element, page_number=i + 1, filetype=image_format)
+            coordinates = (
+                element.metadata.coordinates.points if element.metadata.coordinates else None
+            )
+            _add_element_metadata(
+                element,
+                page_number=i + 1,
+                filetype=image_format,
+                coordinates=coordinates,
+                coordinate_system=coordinate_system,
+            )
         if sort:
             page_elements = sorted(
                 page_elements,
                 key=lambda el: (
-                    el.coordinates[0][1] if el.coordinates else float("inf"),
-                    el.coordinates[0][0] if el.coordinates else float("inf"),
+                    el.metadata.coordinates.points[0][1]
+                    if el.metadata.coordinates
+                    else float("inf"),
+                    el.metadata.coordinates.points[0][0]
+                    if el.metadata.coordinates
+                    else float("inf"),
                     el.id,
                 ),
             )

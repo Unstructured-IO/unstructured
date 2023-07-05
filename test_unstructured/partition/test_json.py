@@ -45,8 +45,6 @@ def test_partition_json_from_filename(filename: str):
 
     assert len(elements) == len(test_elements)
     for i in range(len(elements)):
-        print(elements[i].coordinates)
-        print(test_elements[i].coordinates)
         assert elements[i] == test_elements[i]
         assert elements[i].metadata.filename == filename.split("/")[-1]
 

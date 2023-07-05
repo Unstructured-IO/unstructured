@@ -1,4 +1,4 @@
-## 0.7.13-dev1
+## 0.8.0-dev0
 
 ### Enhancements
 
@@ -7,6 +7,10 @@
 * Add metadata_filename parameter across all partition functions
 
 ### Fixes
+
+### BREAKING CHANGES
+
+* Information about an element's location is no longer returned as top-level attributes of an element. Instead, it is returned in the `coordinates` attribute of the element's metadata.
 
 ## 0.7.12
 
@@ -30,7 +34,7 @@
 
 * More deterministic element ordering when using `hi_res` PDF parsing strategy (from unstructured-inference bump to 0.5.4)
 * Make large model available (from unstructured-inference bump to 0.5.3)
-* Combine inferred elements with extracted elements (from unstructured-inference bump to 0.5.2) 
+* Combine inferred elements with extracted elements (from unstructured-inference bump to 0.5.2)
 * `partition_email` and `partition_msg` will now process attachments if `process_attachments=True`
   and a attachment partitioning functions is passed through with `attachment_partitioner=partition`.
 
