@@ -15,7 +15,7 @@ from unstructured.staging.base import dict_to_elements, elements_from_json
 def partition_via_api(
     filename: Optional[str] = None,
     content_type: Optional[str] = None,
-    file: Optional[IO] = None,
+    file: Optional[IO[bytes]] = None,
     file_filename: Optional[str] = None,
     api_url: str = "https://api.unstructured.io/general/v0/general",
     api_key: str = "",

@@ -21,18 +21,23 @@ is_in_docker = os.path.exists("/.dockerenv")
 def test_stage_for_weaviate(filename="example-docs/layout-parser-paper-fast.pdf"):
     element_dict = {
         "element_id": "015301d4f56aa4b20ec10ac889d2343f",
-        "coordinates": (
-            (157.62199999999999, 114.23496279999995),
-            (157.62199999999999, 146.5141628),
-            (457.7358962799999, 146.5141628),
-            (457.7358962799999, 114.23496279999995),
-        ),
         "text": "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis",
         "type": "Title",
         "metadata": {
             "filename": "layout-parser-paper-fast.pdf",
             "filetype": "application/json",
             "page_number": 1,
+            "coordinates": {
+                "points": (
+                    (157.62199999999999, 114.23496279999995),
+                    (157.62199999999999, 146.5141628),
+                    (457.7358962799999, 146.5141628),
+                    (457.7358962799999, 114.23496279999995),
+                ),
+                "system": "PixelSpace",
+                "layout_width": 324,
+                "layout_height": 450,
+            },
         },
     }
 

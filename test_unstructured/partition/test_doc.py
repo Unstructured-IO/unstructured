@@ -56,19 +56,32 @@ def expected_elements():
     ]
 
 
-def test_partition_doc_with_filename(mock_document, expected_elements, tmpdir, capsys):
+def test_partition_doc_from_filename(mock_document, expected_elements, tmpdir, capsys):
+    docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
+    doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
+    mock_document.save(docx_filename)
+    convert_office_doc(docx_filename, tmpdir.dirname, "doc")
+    elements = partition_doc(filename=doc_filename)
+    assert elements == expected_elements
+    assert elements[0].metadata.filename == "mock_document.doc"
+    assert elements[0].metadata.file_directory == tmpdir.dirname
+    assert capsys.readouterr().out == ""
+    assert capsys.readouterr().err == ""
+
+
+def test_partition_doc_from_filename_with_metadata_filename(
+    mock_document,
+    expected_elements,
+    tmpdir,
+):
     docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
     mock_document.save(docx_filename)
     convert_office_doc(docx_filename, tmpdir.dirname, "doc")
 
-    elements = partition_doc(filename=doc_filename)
+    elements = partition_doc(filename=doc_filename, metadata_filename="test")
     assert elements == expected_elements
-    assert elements[0].metadata.filename == "mock_document.doc"
-    assert elements[0].metadata.file_directory == tmpdir.dirname
-
-    assert capsys.readouterr().out == ""
-    assert capsys.readouterr().err == ""
+    assert all(element.metadata.filename == "test" for element in elements)
 
 
 def test_partition_doc_matches_partition_docx(mock_document, expected_elements, tmpdir):
@@ -76,8 +89,7 @@ def test_partition_doc_matches_partition_docx(mock_document, expected_elements, 
     doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
     mock_document.save(docx_filename)
     convert_office_doc(docx_filename, tmpdir.dirname, "doc")
-
-    partition_doc(filename=doc_filename) == partition_docx(filename=docx_filename)
+    assert partition_doc(filename=doc_filename) == partition_docx(filename=docx_filename)
 
 
 def test_partition_raises_with_missing_doc(mock_document, expected_elements, tmpdir):
@@ -87,7 +99,7 @@ def test_partition_raises_with_missing_doc(mock_document, expected_elements, tmp
         partition_doc(filename=doc_filename)
 
 
-def test_partition_doc_with_file(mock_document, expected_elements, tmpdir, capsys):
+def test_partition_doc_from_file(mock_document, expected_elements, tmpdir, capsys):
     docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
     mock_document.save(docx_filename)
@@ -96,9 +108,22 @@ def test_partition_doc_with_file(mock_document, expected_elements, tmpdir, capsy
     with open(doc_filename, "rb") as f:
         elements = partition_doc(file=f)
     assert elements == expected_elements
-
     assert capsys.readouterr().out == ""
     assert capsys.readouterr().err == ""
+    for element in elements:
+        assert element.metadata.filename is None
+
+
+def test_partition_doc_from_file_with_metadata_filename(mock_document, tmpdir):
+    docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
+    doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
+    mock_document.save(docx_filename)
+    convert_office_doc(docx_filename, tmpdir.dirname, "doc")
+
+    with open(doc_filename, "rb") as f:
+        elements = partition_doc(file=f, metadata_filename="test")
+    for element in elements:
+        assert element.metadata.filename == "test"
 
 
 def test_partition_doc_raises_with_both_specified(mock_document, tmpdir):
@@ -116,7 +141,7 @@ def test_partition_doc_raises_with_neither():
         partition_doc()
 
 
-def test_partition_doc_with_file_exclude_metadata(mock_document, tmpdir):
+def test_partition_doc_from_file_exclude_metadata(mock_document, tmpdir):
     docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
     mock_document.save(docx_filename)
@@ -130,7 +155,7 @@ def test_partition_doc_with_file_exclude_metadata(mock_document, tmpdir):
     assert elements[0].metadata.filename is None
 
 
-def test_partition_doc_with_filename_exclude_metadata(mock_document, tmpdir):
+def test_partition_doc_from_filename_exclude_metadata(mock_document, tmpdir):
     docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
     mock_document.save(docx_filename)

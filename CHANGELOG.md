@@ -1,11 +1,27 @@
-## 0.7.12-dev1
+## 0.8.0-dev1
+
+### Enhancements
+
+### Features
+
+* Add metadata_filename parameter across all partition functions
+
+### Fixes
+* Fix KeyError when `isd_to_elements` doesn't find a type
+* Fix _output_filename for local connector, allowing single files to be written correctly to the disk
+
+### BREAKING CHANGES
+
+* Information about an element's location is no longer returned as top-level attributes of an element. Instead, it is returned in the `coordinates` attribute of the element's metadata.
+
+## 0.7.12
 
 ### Enhancements
 
 * Adds `include_metadata` kwarg to `partition_doc`, `partition_docx`, `partition_email`, `partition_epub`, `partition_json`, `partition_msg`, `partition_odt`, `partition_org`, `partition_pdf`, `partition_ppt`, `partition_pptx`, `partition_rst`, and `partition_rtf`
-
 ### Features
 
+* Add Elasticsearch connector for ingest cli to pull specific fields from all documents in an index.
 * Adds Dropbox connector
 
 ### Fixes
@@ -20,7 +36,7 @@
 
 * More deterministic element ordering when using `hi_res` PDF parsing strategy (from unstructured-inference bump to 0.5.4)
 * Make large model available (from unstructured-inference bump to 0.5.3)
-* Combine inferred elements with extracted elements (from unstructured-inference bump to 0.5.2) 
+* Combine inferred elements with extracted elements (from unstructured-inference bump to 0.5.2)
 * `partition_email` and `partition_msg` will now process attachments if `process_attachments=True`
   and a attachment partitioning functions is passed through with `attachment_partitioner=partition`.
 

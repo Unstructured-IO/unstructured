@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Tuple, Union
+from typing import Any, Dict, Tuple, Union
 
 
 class Orientation(Enum):
@@ -91,3 +91,10 @@ class PointSpace(CoordinateSystem):
     right."""
 
     orientation = Orientation.CARTESIAN
+
+
+TYPE_TO_COORDINATE_SYSTEM_MAP: Dict[str, Any] = {
+    "PixelSpace": PixelSpace,
+    "PointSpace": PointSpace,
+    "CoordinateSystem": CoordinateSystem,
+}

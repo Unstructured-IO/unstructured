@@ -102,6 +102,9 @@ install-ingest-slack:
 install-ingest-wikipedia:
 	python3 -m pip install -r requirements/ingest-wikipedia.txt
 
+.PHONY: install-ingest-elasticsearch
+install-ingest-elasticsearch:
+	python3 -m pip install -r requirements/ingest-elasticsearch.txt
 .PHONY: install-unstructured-inference
 install-unstructured-inference:
 	python3 -m pip install -r requirements/local-inference.txt
@@ -139,6 +142,7 @@ pip-compile:
 	pip-compile --upgrade requirements/ingest-slack.in
 	pip-compile --upgrade requirements/ingest-wikipedia.in
 	pip-compile --upgrade requirements/ingest-google-drive.in
+	pip-compile --upgrade requirements/ingest-elasticsearch.in
 
 ## install-project-local:   install unstructured into your local python environment
 .PHONY: install-project-local
