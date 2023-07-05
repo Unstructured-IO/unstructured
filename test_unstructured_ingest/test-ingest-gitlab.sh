@@ -13,7 +13,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --git-branch 'v0.0.7' \
     --git-file-glob '*.md,*.txt' \
     --gitlab-url https://gitlab.com/gitlab-com/content-sites/docsy-gitlab \
-    --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
+    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed \
     --partition-strategy hi_res \
     --preserve-downloads \
     --structured-output-dir "$OUTPUT_DIR" \

@@ -31,8 +31,6 @@ def partition_tsv(
         A string defining the target filename path.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
-    metadata_filename
-        The filename to use for the metadata.
     include_metadata
         Determines whether or not metadata is included in the output.
     """
@@ -44,15 +42,13 @@ def partition_tsv(
         f = spooled_to_bytes_io_if_needed(cast(Union[BinaryIO, SpooledTemporaryFile], file))
         table = pd.read_csv(f, sep="\t")
 
-    metadata_filename = filename or metadata_filename
-
     html_text = table.to_html(index=False, header=False, na_rep="")
     text = lxml.html.document_fromstring(html_text).text_content()
 
     if include_metadata:
         metadata = ElementMetadata(
             text_as_html=html_text,
-            filename=metadata_filename,
+            filename=metadata_filename or filename,
         )
     else:
         metadata = ElementMetadata()

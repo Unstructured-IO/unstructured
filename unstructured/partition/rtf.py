@@ -12,6 +12,7 @@ def partition_rtf(
     file: Optional[IO[bytes]] = None,
     include_page_breaks: bool = False,
     include_metadata: bool = True,
+    metadata_filename: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions an RTF document. The document is first converted to HTML and then
@@ -31,4 +32,5 @@ def partition_rtf(
         filename=filename,
         file=file,
         include_page_breaks=include_page_breaks,
+        metadata_filename=metadata_filename,
     )

@@ -26,8 +26,28 @@ def partition_md(
     include_page_breaks: bool = False,
     include_metadata: bool = True,
     parser: VALID_PARSERS = None,
+    metadata_filename: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
+    """Partitions a markdown file into its constituent elements
+
+    Parameters
+    ----------
+    filename
+        A string defining the target filename path.
+    file
+        A file-like object using "rb" mode --> open(filename, "rb").
+    text
+        The string representation of the markdown document.
+    url
+        The URL of a webpage to parse. Only for URLs that return a markdown document.
+    include_page_breaks
+        If True, the output will include page breaks if the filetype supports it.
+    include_metadata
+        Determines whether or not metadata is included in the output.
+    parser
+        The parser to use for parsing the markdown document. If None, default parser will be used.
+    """
     # Verify that only one of the arguments was provided
     if text is None:
         text = ""
@@ -58,4 +78,5 @@ def partition_md(
         include_page_breaks=include_page_breaks,
         include_metadata=include_metadata,
         parser=parser,
+        metadata_filename=metadata_filename,
     )

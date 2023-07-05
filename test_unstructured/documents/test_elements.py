@@ -9,7 +9,7 @@ from unstructured.documents.coordinates import (
     Orientation,
     RelativeCoordinateSystem,
 )
-from unstructured.documents.elements import Element, NoID, Text
+from unstructured.documents.elements import CoordinatesMetadata, Element, NoID, Text
 
 
 def test_text_id():
@@ -89,34 +89,80 @@ def test_convert_coordinates_to_new_system(
     for new_coord, expected_coord in zip(new_coords, expected_coords):
         new_coord == pytest.approx(expected_coord)
     element.convert_coordinates_to_new_system(coord2, in_place=True)
-    for new_coord, expected_coord in zip(element.coordinates, expected_coords):
+    for new_coord, expected_coord in zip(element.metadata.coordinates.points, expected_coords):
         assert new_coord == pytest.approx(expected_coord)
-    assert element._coordinate_system == coord2
+    assert element.metadata.coordinates.system == coord2
 
 
-@pytest.mark.parametrize(
-    ("coordinates", "coordinate_system"),
-    [
-        (None, None),
-        (((1, 2), (1, 4), (3, 4), (3, 2)), None),
-        (None, RelativeCoordinateSystem()),
-    ],
-)
-def test_convert_coordinate_to_new_system_none(coordinates, coordinate_system):
-    element = Element(coordinates=coordinates, coordinate_system=coordinate_system)
+def test_convert_coordinate_to_new_system_none():
+    element = Element(coordinates=None, coordinate_system=None)
     coord = CoordinateSystem(100, 200)
     coord.orientation = Orientation.SCREEN
     assert element.convert_coordinates_to_new_system(coord) is None
 
 
-def test_coordinate_system():
+def test_element_constructor_coordinates_all_present():
     coordinates = ((1, 2), (1, 4), (3, 4), (3, 2))
     coordinate_system = RelativeCoordinateSystem()
     element = Element(coordinates=coordinates, coordinate_system=coordinate_system)
+    expected_coordinates_metadata = CoordinatesMetadata(
+        points=coordinates,
+        system=coordinate_system,
+    )
+    assert element.metadata.coordinates == expected_coordinates_metadata
+
+
+def test_element_constructor_coordinates_points_absent():
+    with pytest.raises(ValueError) as exc_info:
+        Element(coordinate_system=RelativeCoordinateSystem())
+    assert (
+        str(exc_info.value)
+        == "Coordinates points should not exist without coordinates system and vice versa."
+    )
+
+
+def test_element_constructor_coordinates_system_absent():
+    with pytest.raises(ValueError) as exc_info:
+        Element(coordinates=((1, 2), (1, 4), (3, 4), (3, 2)))
+    assert (
+        str(exc_info.value)
+        == "Coordinates points should not exist without coordinates system and vice versa."
+    )
+
+
+def test_coordinate_metadata_serdes():
+    coordinates = ((1, 2), (1, 4), (3, 4), (3, 2))
+    coordinate_system = RelativeCoordinateSystem()
+    coordinates_metadata = CoordinatesMetadata(points=coordinates, system=coordinate_system)
     expected_schema = {
-        "name": "RelativeCoordinateSystem",
-        "description": RelativeCoordinateSystem.__doc__,
-        "layout_width": 1,
         "layout_height": 1,
+        "layout_width": 1,
+        "points": ((1, 2), (1, 4), (3, 4), (3, 2)),
+        "system": "RelativeCoordinateSystem",
     }
-    assert element.coordinate_system == expected_schema
+    coordinates_metadata_dict = coordinates_metadata.to_dict()
+    assert coordinates_metadata_dict == expected_schema
+    assert CoordinatesMetadata.from_dict(coordinates_metadata_dict) == coordinates_metadata
+
+
+def test_element_to_dict():
+    coordinates = ((1, 2), (1, 4), (3, 4), (3, 2))
+    coordinate_system = RelativeCoordinateSystem()
+    element = Element(
+        element_id="awt32t1",
+        coordinates=coordinates,
+        coordinate_system=coordinate_system,
+    )
+    expected = {
+        "metadata": {
+            "coordinates": {
+                "layout_height": 1,
+                "layout_width": 1,
+                "points": ((1, 2), (1, 4), (3, 4), (3, 2)),
+                "system": "RelativeCoordinateSystem",
+            },
+        },
+        "type": None,
+        "element_id": "awt32t1",
+    }
+    assert element.to_dict() == expected

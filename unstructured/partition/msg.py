@@ -53,15 +53,13 @@ def partition_msg(
         tmp.close()
         msg_obj = msg_parser.MsOxMessage(tmp.name)
 
-    metadata_filename = metadata_filename or filename
-
     text = msg_obj.body
     if "<html>" in text or "</div>" in text:
         elements = partition_html(text=text)
     else:
         elements = partition_text(text=text, max_partition=max_partition)
 
-    metadata = build_msg_metadata(msg_obj, metadata_filename)
+    metadata = build_msg_metadata(msg_obj, metadata_filename or filename)
     for element in elements:
         element.metadata = metadata
 
@@ -79,14 +77,14 @@ def partition_msg(
                 for element in attached_elements:
                     element.metadata.filename = attached_file
                     element.metadata.file_directory = None
-                    element.metadata.attached_to_filename = metadata_filename
+                    element.metadata.attached_to_filename = metadata_filename or filename
                     elements.append(element)
 
     return elements
 
 
 def build_msg_metadata(msg_obj: msg_parser.MsOxMessage, filename: Optional[str]) -> ElementMetadata:
-    """Creates an ElementMetadata object from the header information in the emai."""
+    """Creates an ElementMetadata object from the header information in the email."""
     email_date = getattr(msg_obj, "sent_date", None)
     if email_date is not None:
         email_date = convert_to_iso_8601(email_date)

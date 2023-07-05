@@ -11,6 +11,7 @@ def partition_org(
     file: Optional[IO[bytes]] = None,
     include_page_breaks: bool = False,
     include_metadata: bool = True,
+    metadata_filename: Optional[str] = None,
 ) -> List[Element]:
     """Partitions an org document. The document is first converted to HTML and then
     partitioned using partition_html.
@@ -29,4 +30,5 @@ def partition_org(
         filename=filename,
         file=file,
         include_page_breaks=include_page_breaks,
+        metadata_filename=metadata_filename,
     )

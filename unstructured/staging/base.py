@@ -1,11 +1,10 @@
 import csv
 import io
 import json
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 import pandas as pd
 
-from unstructured.documents import coordinates as coordinates_module
 from unstructured.documents.elements import (
     TYPE_TO_TEXT_ELEMENT_MAP,
     CheckBox,
@@ -19,10 +18,10 @@ TABLE_FIELDNAMES: List[str] = [
     "type",
     "text",
     "element_id",
-    "coordinates",
-    "coordinate_system",
-    "layout_width",
-    "layout_height",
+    "coordinates_points",
+    "coordinates_system",
+    "coordinates_layout_width",
+    "coordinates_layout_height",
     "filename",
     "page_number",
     "url",
@@ -72,43 +71,26 @@ def isd_to_elements(isd: List[Dict[str, Any]]) -> List[Element]:
 
     for item in isd:
         element_id: str = item.get("element_id", NoID())
-        coord_value: Optional[List[List[float]]] = item.get("coordinates")
-        coordinates: Optional[Tuple[Tuple[float, float], ...]] = None
-        if coord_value is not None:
-            coordinates = tuple((x, y) for x, y in coord_value)
-        coordinate_system_name: Optional[str] = item.get("coordinate_system")
-        if coordinate_system_name is not None:
-            width = item["layout_width"]
-            height = item["layout_height"]
-            coordinate_system_class = getattr(coordinates_module, coordinate_system_name)
-            coordinate_system = coordinate_system_class(width, height)
-        else:
-            coordinate_system = None
-
         metadata = ElementMetadata()
         _metadata_dict = item.get("metadata")
         if _metadata_dict is not None:
             metadata = ElementMetadata.from_dict(_metadata_dict)
 
-        if item["type"] in TYPE_TO_TEXT_ELEMENT_MAP:
+        if item.get("type") in TYPE_TO_TEXT_ELEMENT_MAP:
             _text_class = TYPE_TO_TEXT_ELEMENT_MAP[item["type"]]
             elements.append(
                 _text_class(
                     text=item["text"],
                     element_id=element_id,
                     metadata=metadata,
-                    coordinates=coordinates,
-                    coordinate_system=coordinate_system,
                 ),
             )
-        elif item["type"] == "CheckBox":
+        elif item.get("type") == "CheckBox":
             elements.append(
                 CheckBox(
                     checked=item["checked"],
                     element_id=element_id,
                     metadata=metadata,
-                    coordinates=coordinates,
-                    coordinate_system=coordinate_system,
                 ),
             )
 
@@ -137,6 +119,17 @@ def elements_from_json(
         return dict_to_elements(element_dict)
 
 
+def flatten_dict(dictionary, parent_key="", separator="_"):
+    flattened_dict = {}
+    for key, value in dictionary.items():
+        new_key = f"{parent_key}{separator}{key}" if parent_key else key
+        if isinstance(value, dict):
+            flattened_dict.update(flatten_dict(value, new_key, separator))
+        else:
+            flattened_dict[new_key] = value
+    return flattened_dict
+
+
 def convert_to_isd_csv(elements: List[Element]) -> str:
     """
     Returns the representation of document elements as an Initial Structured Document (ISD)
@@ -146,7 +139,7 @@ def convert_to_isd_csv(elements: List[Element]) -> str:
     # NOTE(robinson) - flatten metadata and add it to the table
     for row in rows:
         metadata = row.pop("metadata")
-        for key, value in metadata.items():
+        for key, value in flatten_dict(metadata).items():
             if key in TABLE_FIELDNAMES:
                 row[key] = value
 

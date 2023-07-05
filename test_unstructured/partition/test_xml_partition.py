@@ -20,6 +20,14 @@ def test_partition_xml_from_filename(filename):
     assert elements[0].metadata.filename == filename
 
 
+def test_partition_xml_from_filename_with_metadata_filename():
+    file_path = os.path.join(DIRECTORY, "..", "..", "example-docs", "factbook.xml")
+    elements = partition_xml(filename=file_path, xml_keep_tags=False, metadata_filename="test")
+
+    assert elements[0].text == "United States"
+    assert elements[0].metadata.filename == "test"
+
+
 @pytest.mark.parametrize(
     "filename",
     ["factbook.xml", "factbook-utf-16.xml"],
@@ -31,6 +39,15 @@ def test_partition_xml_from_file(filename):
 
     assert elements[0].text == "United States"
     assert elements[0].metadata.filename == filename
+
+
+def test_partition_xml_from_file_with_metadata_filename():
+    file_path = os.path.join(DIRECTORY, "..", "..", "example-docs", "factbook.xml")
+    with open(file_path) as f:
+        elements = partition_xml(file=f, xml_keep_tags=False, metadata_filename="test")
+
+    assert elements[0].text == "United States"
+    assert elements[0].metadata.filename == "test"
 
 
 @pytest.mark.parametrize(
