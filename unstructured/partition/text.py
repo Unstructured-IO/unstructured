@@ -128,7 +128,9 @@ def partition_text(
 
     elements: List[Element] = []
     metadata = (
-        ElementMetadata(filename=metadata_filename or filename) if include_metadata else ElementMetadata()
+        ElementMetadata(filename=metadata_filename or filename)
+        if include_metadata
+        else ElementMetadata()
     )
     for ctext in file_content:
         ctext = ctext.strip()

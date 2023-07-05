@@ -81,7 +81,7 @@ def test_partition_html_from_file():
     assert len(elements) > 0
     for element in elements:
         assert element.metadata.filename is None
-        
+
 
 def test_partition_html_from_file_with_metadata_filename():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "example-10k.html")

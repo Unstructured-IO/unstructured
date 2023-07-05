@@ -113,8 +113,8 @@ def test_partition_doc_from_file(mock_document, expected_elements, tmpdir, capsy
     # TODO(jennings) the filename is changed after parsing
     # for element in elements:
     #     assert element.metadata.filename is None
-        
-        
+
+
 def test_partition_doc_from_file_with_metadata_filename(mock_document, tmpdir):
     docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")

@@ -14,9 +14,11 @@ def test_partition_tsv_from_filename(filename="example-docs/stanley-cups.tsv"):
     assert elements[0].metadata.filetype == EXPECTED_FILETYPE
     for element in elements:
         assert element.metadata.filename == "stanley-cups.tsv"
-        
-        
-def test_partition_tsv_from_filename_with_metadata_filename(filename="example-docs/stanley-cups.tsv"):
+
+
+def test_partition_tsv_from_filename_with_metadata_filename(
+    filename="example-docs/stanley-cups.tsv",
+):
     elements = partition_tsv(filename=filename, metadata_filename="test")
 
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
@@ -34,8 +36,8 @@ def test_partition_tsv_from_file(filename="example-docs/stanley-cups.tsv"):
     assert elements[0].metadata.filetype == EXPECTED_FILETYPE
     for element in elements:
         assert element.metadata.filename is None
-        
-        
+
+
 def test_partition_tsv_from_file_with_metadata_filename(filename="example-docs/stanley-cups.tsv"):
     with open(filename, "rb") as f:
         elements = partition_tsv(file=f, metadata_filename="test")

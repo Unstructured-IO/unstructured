@@ -30,8 +30,8 @@ def test_partition_epub_from_file():
     assert elements[0].text.startswith("The Project Gutenberg eBook of Winter Sports")
     for element in elements:
         assert element.metadata.filename is None
-        
-        
+
+
 def test_partition_epub_from_file_with_metadata_filename():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "winter-sports.epub")
     with open(filename, "rb") as f:
@@ -39,7 +39,7 @@ def test_partition_epub_from_file_with_metadata_filename():
     assert len(elements) > 0
     for element in elements:
         assert element.metadata.filename == "test"
-        
+
 
 def test_partition_epub_from_filename_exclude_metadata():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "winter-sports.epub")

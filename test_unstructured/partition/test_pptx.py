@@ -32,8 +32,8 @@ def test_partition_pptx_from_filename():
     assert elements == EXPECTED_PPTX_OUTPUT
     for element in elements:
         assert element.metadata.filename == "fake-power-point.pptx"
-        
-        
+
+
 def test_partition_pptx_from_filename_with_metadata_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
     elements = partition_pptx(filename=filename, metadata_filename="test")
@@ -55,7 +55,7 @@ def test_partition_pptx_with_spooled_file():
         assert elements == EXPECTED_PPTX_OUTPUT
         for element in elements:
             assert element.metadata.filename is None
-            
+
 
 def test_partition_pptx_from_file():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
@@ -64,8 +64,8 @@ def test_partition_pptx_from_file():
     assert elements == EXPECTED_PPTX_OUTPUT
     for element in elements:
         assert element.metadata.filename is None
-        
-        
+
+
 def test_partition_pptx_from_file_with_metadata_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
     with open(filename, "rb") as f:

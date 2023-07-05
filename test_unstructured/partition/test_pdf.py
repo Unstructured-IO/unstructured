@@ -406,11 +406,16 @@ def test_partition_pdf_fast_groups_text_in_text_box():
 def test_partition_pdf_with_metadata_filename(
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
-    elements = pdf.partition_pdf(filename=filename, url=None, include_page_breaks=True, metadata_filename="test")
+    elements = pdf.partition_pdf(
+        filename=filename,
+        url=None,
+        include_page_breaks=True,
+        metadata_filename="test",
+    )
     for element in elements:
         assert element.metadata.filename == "test"
-        
-        
+
+
 def test_partition_pdf_with_fast_strategy_from_file_with_metadata_filename(
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):

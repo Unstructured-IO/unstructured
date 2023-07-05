@@ -343,9 +343,9 @@ def partition_email(
     elif content_source == "text/plain":
         list_content = split_by_paragraph(content)
         elements = partition_text(
-            text=content, 
-            encoding=encoding, 
-            max_partition=max_partition, 
+            text=content,
+            encoding=encoding,
+            max_partition=max_partition,
             metadata_filename=metadata_filename or filename,
         )
 

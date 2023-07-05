@@ -85,7 +85,7 @@ def test_partition_json_from_file(filename: str):
     for i in range(len(elements)):
         assert elements[i] == test_elements[i]
         assert elements[i].metadata.filename == filename.split("/")[-1]
-        
+
 
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_json_from_file_with_metadata_filename(filename: str):

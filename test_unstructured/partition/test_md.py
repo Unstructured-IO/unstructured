@@ -17,9 +17,9 @@ def test_partition_md_from_filename():
     assert len(elements) > 0
     for element in elements:
         assert element.metadata.filename == "README.md"
-        
-        
-def test_partition_md_from_filename():
+
+
+def test_partition_md_from_filename_with_metadata_filename():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "README.md")
     elements = partition_md(filename=filename, metadata_filename="test")
     assert "PageBreak" not in [elem.category for elem in elements]

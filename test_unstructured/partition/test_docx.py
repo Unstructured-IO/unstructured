@@ -101,8 +101,8 @@ def test_partition_docx_from_file(mock_document, expected_elements, tmpdir):
     assert elements == expected_elements
     for element in elements:
         assert element.metadata.filename is None
-        
-        
+
+
 def test_partition_docx_from_file_with_metadata_filename(mock_document, expected_elements, tmpdir):
     filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     mock_document.save(filename)

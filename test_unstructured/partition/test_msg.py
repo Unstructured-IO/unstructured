@@ -87,9 +87,9 @@ def test_partition_msg_from_file():
     assert elements == EXPECTED_MSG_OUTPUT
     for element in elements:
         assert element.metadata.filename is None
-        
-        
-def test_partition_msg_from_file():
+
+
+def test_partition_msg_from_file_with_metadata_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
     with open(filename, "rb") as f:
         elements = partition_msg(file=f, metadata_filename="test")
