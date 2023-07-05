@@ -311,8 +311,6 @@ def test_extract_attachment_info():
     attachment_info = extract_attachment_info(msg)
     assert len(attachment_info) > 0
     assert attachment_info == ATTACH_EXPECTED_OUTPUT
-    # TODO(jennings) the filename is changed after parsing
-    # assert attachment_info[0].get("filename", None) == "fake-email-attachment.eml"
 
 
 def test_partition_email_raises_with_none_specified():

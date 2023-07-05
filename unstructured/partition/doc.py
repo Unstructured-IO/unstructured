@@ -43,8 +43,7 @@ def partition_doc(
         tmp.close()
         filename = tmp.name
         _, filename_no_path = os.path.split(os.path.abspath(tmp.name))
-
-    base_filename, _ = os.path.splitext(filename_no_path)
+        base_filename, _ = os.path.splitext(filename_no_path)
 
     with tempfile.TemporaryDirectory() as tmpdir:
         convert_office_doc(filename, tmpdir, target_format="docx")
@@ -55,5 +54,9 @@ def partition_doc(
             include_page_breaks=include_page_breaks,
             include_metadata=include_metadata,
         )
+        # remove tmp.name from filename if parsing file
+        if file:
+            for element in elements:
+                element.metadata.filename = metadata_filename 
 
     return elements

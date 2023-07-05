@@ -103,8 +103,6 @@ def test_extract_attachment_info():
     attachment_info = extract_msg_attachment_info(filename)
     assert len(attachment_info) > 0
     assert attachment_info == ATTACH_EXPECTED_OUTPUT
-    # # TODO(jennings) the filename is changed after parsing
-    # assert attachment_info[0].get("filename") == "fake-email-attachment.msg"
 
 
 def test_partition_msg_raises_with_both_specified():

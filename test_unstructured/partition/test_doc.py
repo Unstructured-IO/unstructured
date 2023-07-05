@@ -110,9 +110,8 @@ def test_partition_doc_from_file(mock_document, expected_elements, tmpdir, capsy
     assert elements == expected_elements
     assert capsys.readouterr().out == ""
     assert capsys.readouterr().err == ""
-    # TODO(jennings) the filename is changed after parsing
-    # for element in elements:
-    #     assert element.metadata.filename is None
+    for element in elements:
+        assert element.metadata.filename is None
 
 
 def test_partition_doc_from_file_with_metadata_filename(mock_document, tmpdir):

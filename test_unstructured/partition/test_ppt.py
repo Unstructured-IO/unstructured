@@ -44,9 +44,8 @@ def test_partition_ppt_from_file():
     with open(filename, "rb") as f:
         elements = partition_ppt(file=f)
     assert elements == EXPECTED_PPT_OUTPUT
-    # # TODO(jennings) the filename is changed after parsing
-    # for element in elements:
-    #     assert element.metadata.filename is None
+    for element in elements:
+        assert element.metadata.filename is None
 
 
 def test_partition_ppt_from_file_with_metadata_filename():
