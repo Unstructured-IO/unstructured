@@ -1,4 +1,4 @@
-## 0.7.13-dev1
+## 0.8.0-dev1
 
 ### Enhancements
 
@@ -7,6 +7,10 @@
 ### Fixes
 
 * Fix for cases where an invalid encoding is extracted from an email header.
+
+### BREAKING CHANGES
+
+* Information about an element's location is no longer returned as top-level attributes of an element. Instead, it is returned in the `coordinates` attribute of the element's metadata.
 
 ## 0.7.12
 
