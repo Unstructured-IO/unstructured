@@ -214,11 +214,6 @@ def test_auto_partition_json_from_filename():
         json_data = json.load(json_f)
     json_elems = json.loads(elements_to_json(partition(filename=filename, strategy="hi_res")))
     for elem in json_elems:
-        # coordinates are always in the element data structures, even if None
-        elem.pop("coordinates")
-        elem.pop("coordinate_system")
-        elem.pop("layout_width")
-        elem.pop("layout_height")
         elem.pop("metadata")
     for elem in json_data:
         elem.pop("metadata")

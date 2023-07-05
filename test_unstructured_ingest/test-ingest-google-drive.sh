@@ -22,7 +22,7 @@ PYTHONPATH=. unstructured/ingest/main.py \
     --download-dir "$DOWNLOAD_DIR" \
     --drive-id 1OQZ66OHBE30rNsNa7dweGLfRmXvkT_jr \
     --drive-service-account-key "$GCP_INGEST_SERVICE_KEY_FILE" \
-    --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
+    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed \
     --num-processes 2 \
     --partition-strategy hi_res \
     --preserve-downloads \

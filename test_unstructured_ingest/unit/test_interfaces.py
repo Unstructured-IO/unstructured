@@ -49,7 +49,7 @@ class TestIngestDoc(BaseIngestDoc):
     @property
     def _output_filename(self):
         return TEST_FILE_PATH + ".json"
-    
+
     @property
     def source_url(self) -> str:
         return TEST_SOURCE_URL
@@ -124,15 +124,13 @@ def test_partition_file():
     isd_elems = test_ingest_doc.partition_file()
     assert len(isd_elems)
     expected_keys = {
-        "coordinates",
-        "coordinate_system",
-        "layout_width",
-        "layout_height",
         "element_id",
         "text",
         "type",
         "metadata",
     }
+    # The document in TEST_FILE_PATH does not have elements with coordinates so
+    # partition is not expected to return coordinates metadata.
     expected_metadata_keys = {"data_source", "filename", "file_directory", "filetype"}
     for elem in isd_elems:
         assert expected_keys == set(elem.keys())
