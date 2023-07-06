@@ -51,3 +51,73 @@ def test_partition_csv_can_exclude_metadata(filename="example-docs/stanley-cups.
     assert elements[0].metadata.text_as_html is None
     assert elements[0].metadata.filetype is None
     assert elements[0].metadata.filename is None
+
+
+def test_partition_csv_metadata_date(mocker, filename="example-docs/stanley-cups.csv"):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    mocker.patch(
+        "unstructured.partition.csv.get_last_modified_date",
+        return_value=mocked_last_modification_date,
+    )
+    elements = partition_csv(filename=filename)
+
+    print(elements[0].metadata.date)
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
+    assert isinstance(elements[0], Table)
+    assert elements[0].metadata.date == mocked_last_modification_date
+
+
+def test_partition_csv_custom_metadata_date(
+    mocker, filename="example-docs/stanley-cups.csv"
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    expected_last_modification_date = "2020-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.csv.get_last_modified_date",
+        return_value=mocked_last_modification_date,
+    )
+
+    elements = partition_csv(
+        filename=filename, metadata_date=expected_last_modification_date
+    )
+
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
+    assert isinstance(elements[0], Table)
+    assert elements[0].metadata.date == expected_last_modification_date
+
+
+def test_partition_csv_from_file_metadata_date(
+    mocker, filename="example-docs/stanley-cups.csv",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.csv.get_last_modifile_date_from_file", return_value=mocked_last_modification_date
+    )
+
+    with open(filename, "rb") as f:
+        elements = partition_csv(file=f)
+
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
+    assert isinstance(elements[0], Table)
+    assert elements[0].metadata.date == mocked_last_modification_date
+
+
+def test_partition_csv_from_file_custom_metadata_date(
+    mocker, filename="example-docs/stanley-cups.csv",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    expected_last_modification_date = "2020-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.csv.get_last_modifile_date_from_file", return_value=mocked_last_modification_date
+    )
+
+
+    with open(filename, "rb") as f:
+        elements = partition_csv(file=f, metadata_date=expected_last_modification_date)
+
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
+    assert isinstance(elements[0], Table)
+    assert elements[0].metadata.date == expected_last_modification_date
