@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import TYPE_CHECKING, List
+from typing import List
+
+from office365.onedrive.driveitems.driveItem import DriveItem
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.ingest.interfaces import (
@@ -13,9 +15,6 @@ from unstructured.ingest.interfaces import (
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
-
-from office365.onedrive.driveitems.driveItem import DriveItem
-
 
 MAX_MB_SIZE = 512_000_000
 
