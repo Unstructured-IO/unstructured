@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import datetime
 import inspect
 import os
 import re
@@ -148,7 +149,9 @@ MIMETYPES_TO_EXCLUDE = [
     "text/x-comma-separated-values",
 ]
 
-FILETYPE_TO_MIMETYPE = {v: k for k, v in STR_TO_FILETYPE.items() if k not in MIMETYPES_TO_EXCLUDE}
+FILETYPE_TO_MIMETYPE = {
+    v: k for k, v in STR_TO_FILETYPE.items() if k not in MIMETYPES_TO_EXCLUDE
+}
 
 EXT_TO_FILETYPE = {
     ".pdf": FileType.PDF,
@@ -300,16 +303,30 @@ def detect_filetype(
             encoding = "utf-8"
         formatted_encoding = format_encoding_str(encoding)
 
-        if extension in PLAIN_TEXT_EXTENSIONS:
+        if extension in [
+            ".eml",
+            ".md",
+            ".rtf",
+            ".html",
+            ".rst",
+            ".org",
+            ".csv",
+            ".tsv",
+            ".json",
+        ]:
             return EXT_TO_FILETYPE.get(extension)
 
         # NOTE(crag): for older versions of the OS libmagic package, such as is currently
         # installed on the Unstructured docker image, .json files resolve to "text/plain"
         # rather than "application/json". this corrects for that case.
-        if _is_text_file_a_json(file=file, filename=filename, encoding=formatted_encoding):
+        if _is_text_file_a_json(
+            file=file, filename=filename, encoding=formatted_encoding
+        ):
             return FileType.JSON
 
-        if _is_text_file_a_csv(file=file, filename=filename, encoding=formatted_encoding):
+        if _is_text_file_a_csv(
+            file=file, filename=filename, encoding=formatted_encoding
+        ):
             return FileType.CSV
 
         if file and _check_eml_from_buffer(file=file) is True:
@@ -416,7 +433,9 @@ def _is_text_file_a_json(
     encoding: Optional[str] = "utf-8",
 ):
     """Detects if a file that has a text/plain MIME type is a JSON file."""
-    file_text = _read_file_start_for_type_check(file=file, filename=filename, encoding=encoding)
+    file_text = _read_file_start_for_type_check(
+        file=file, filename=filename, encoding=encoding
+    )
     return re.match(LIST_OF_DICTS_PATTERN, file_text) is not None
 
 
@@ -433,7 +452,9 @@ def _is_text_file_a_csv(
     encoding: Optional[str] = "utf-8",
 ):
     """Detects if a file that has a text/plain MIME type is a CSV file."""
-    file_text = _read_file_start_for_type_check(file=file, filename=filename, encoding=encoding)
+    file_text = _read_file_start_for_type_check(
+        file=file, filename=filename, encoding=encoding
+    )
     lines = file_text.strip().splitlines()
     if len(lines) < 2:
         return False
@@ -460,6 +481,7 @@ def document_to_element_list(
     document: "DocumentLayout",
     include_page_breaks: bool = False,
     sort: bool = False,
+    last_modification_date: Optional[datetime] = None,
 ) -> List[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
     elements: List[Element] = []
@@ -469,11 +491,17 @@ def document_to_element_list(
         for layout_element in page.elements:
             if hasattr(page, "image") and hasattr(layout_element, "coordinates"):
                 image_format = page.image.format
-                coordinate_system = PixelSpace(width=page.image.width, height=page.image.height)
+                coordinate_system = PixelSpace(
+                    width=page.image.width, height=page.image.height
+                )
             else:
                 image_format = None
                 coordinate_system = None
-            element = normalize_layout_element(layout_element, coordinate_system=coordinate_system)
+            element = normalize_layout_element(
+                layout_element, coordinate_system=coordinate_system
+            )
+            if last_modification_date:
+                element.metadata.date = last_modification_date
             if isinstance(element, List):
                 for el in element:
                     el.metadata.page_number = i + 1
@@ -481,11 +509,15 @@ def document_to_element_list(
                 continue
             else:
                 element.metadata.text_as_html = (
-                    layout_element.text_as_html if hasattr(layout_element, "text_as_html") else None
+                    layout_element.text_as_html
+                    if hasattr(layout_element, "text_as_html")
+                    else None
                 )
                 page_elements.append(element)
             coordinates = (
-                element.metadata.coordinates.points if element.metadata.coordinates else None
+                element.metadata.coordinates.points
+                if element.metadata.coordinates
+                else None
             )
             _add_element_metadata(
                 element,
@@ -556,7 +588,8 @@ def add_metadata_with_filetype(filetype: FileType):
                     params["filename"] = params.get("metadata_filename")
 
                 metadata_kwargs = {
-                    kwarg: params.get(kwarg) for kwarg in ("filename", "url", "text_as_html")
+                    kwarg: params.get(kwarg)
+                    for kwarg in ("filename", "url", "text_as_html")
                 }
 
                 for element in elements:
