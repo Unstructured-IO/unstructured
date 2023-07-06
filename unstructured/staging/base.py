@@ -176,7 +176,7 @@ def convert_to_csv(elements: List[Element]) -> str:
     return convert_to_isd_csv(elements)
 
 
-def convert_to_dataframe(elements: List[Element]) -> pd.DataFrame:
+def convert_to_dataframe(elements: List[Element], drop_empty_cols: bool = True) -> pd.DataFrame:
     """Converts document elements to a pandas DataFrame. The dataframe contains the
     following columns:
         text: the element text
@@ -184,4 +184,7 @@ def convert_to_dataframe(elements: List[Element]) -> pd.DataFrame:
     """
     csv_string = convert_to_isd_csv(elements)
     csv_string_io = io.StringIO(csv_string)
-    return pd.read_csv(csv_string_io, sep=",")
+    df = pd.read_csv(csv_string_io, sep=",")
+    if drop_empty_cols:
+        df.dropna(axis=1, how="all", inplace=True)
+    return df
