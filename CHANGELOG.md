@@ -2,6 +2,8 @@
 
 ### Enhancements
 
+* Allow model used for hi res pdf partition strategy to be chosen when called.
+
 ### Features
 
 * Add metadata_filename parameter across all partition functions
