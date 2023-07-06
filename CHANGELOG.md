@@ -1,4 +1,4 @@
-## 0.8.0-dev1
+## 0.8.0-dev2
 
 ### Enhancements
 
@@ -7,6 +7,7 @@
 * Add metadata_filename parameter across all partition functions
 
 ### Fixes
+* Adjust encoding recognition threshold value in `detect_file_encoding`
 * Fix KeyError when `isd_to_elements` doesn't find a type
 * Fix _output_filename for local connector, allowing single files to be written correctly to the disk
 
