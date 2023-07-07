@@ -211,7 +211,7 @@ typing-extensions==4.7.0
     #   huggingface-hub
     #   iopath
     #   torch
-unstructured-inference==0.5.4
+unstructured-inference==0.5.5
     # via -r requirements/local-inference.in
 urllib3==1.26.16
     # via
