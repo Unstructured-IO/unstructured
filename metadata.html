@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Examples" href="examples.html" /><link rel="prev" title="Bricks" href="bricks.html" />
 
   <link rel="shortcut icon" href="_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.05.20" />
-  <title>Metadata - Unstructured 0.7.12 documentation</title>
+  <title>Metadata - Unstructured 0.8.0 documentation</title>
   <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -385,28 +385,63 @@ the source file:</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">filetype</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">page_number</span></code></p></li>
 </ul>
+<section id="element-coordinates">
+<h2>Element coordinates<a class="headerlink" href="#element-coordinates" title="Permalink to this heading"></a></h2>
+<p>Some document types support location data for the elements, usually in the form of bounding boxes.
+If it exists, an element’s location data is available with <code class="docutils literal notranslate"><span class="pre">element.metadata.coordinates</span></code>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">coordinates</span></code> property of an <code class="docutils literal notranslate"><span class="pre">ElementMetadata</span></code> stores:
+* points: These specify the corners of the bounding box starting from the top left corner and
+proceeding counter-clockwise. The points represent pixels, the origin is in the top left and
+the <code class="docutils literal notranslate"><span class="pre">y</span></code> coordinate increases in the downward direction.
+* system: The points have an associated coordinate system. A typical example of a coordinate system is
+<code class="docutils literal notranslate"><span class="pre">PixelSpace</span></code>, which is used for representing the coordinates of images. The coordinate system has a
+name, orientation, layout width, and layout height.</p>
+<p>Information about the element’s coordinates (including the coordinate system name, coordinate points,
+the layout width, and the layout height) can be accessed with <cite>element.to_dict()[“metadata”][“coordinates”]</cite>.</p>
+<p>The coordinates of an element can be changed to a new coordinate system by using the
+<code class="docutils literal notranslate"><span class="pre">Element.convert_coordinates_to_new_system</span></code> method. If the <code class="docutils literal notranslate"><span class="pre">in_place</span></code> flag is <code class="docutils literal notranslate"><span class="pre">True</span></code>, the
+coordinate system and points of the element are updated in place and the new coordinates are
+returned. If the <code class="docutils literal notranslate"><span class="pre">in_place</span></code> flag is <code class="docutils literal notranslate"><span class="pre">False</span></code>, only the altered coordinates are returned.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.documents.elements</span> <span class="kn">import</span> <span class="n">Element</span>
+<span class="kn">from</span> <span class="nn">unstructured.documents.coordinates</span> <span class="kn">import</span> <span class="n">PixelSpace</span><span class="p">,</span> <span class="n">RelativeCoordinateSystem</span>
+
+<span class="n">coordinates</span> <span class="o">=</span> <span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="n">coordinate_system</span> <span class="o">=</span> <span class="n">PixelSpace</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">850</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">1100</span><span class="p">)</span>
+<span class="n">element</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="n">coordinates</span><span class="o">=</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">coordinate_system</span><span class="o">=</span><span class="n">coordinate_system</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">coordinates</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">coordinates</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">orientation</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">coordinates</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">coordinates</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
+<span class="n">element</span><span class="o">.</span><span class="n">convert_coordinates_to_new_system</span><span class="p">(</span><span class="n">RelativeCoordinateSystem</span><span class="p">(),</span> <span class="n">in_place</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># Should now be in terms of new coordinate system</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">coordinates</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">coordinates</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">orientation</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">coordinates</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">coordinates</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
+</pre></div>
+</div>
 <section id="email">
-<h2>Email<a class="headerlink" href="#email" title="Permalink to this heading"></a></h2>
+<h3>Email<a class="headerlink" href="#email" title="Permalink to this heading"></a></h3>
 <p>Emails will include <code class="docutils literal notranslate"><span class="pre">sent_from</span></code>, <code class="docutils literal notranslate"><span class="pre">sent_to</span></code>, and <code class="docutils literal notranslate"><span class="pre">subject</span></code> metadata.
 <code class="docutils literal notranslate"><span class="pre">sent_from</span></code> is a list of strings because the <a class="reference external" href="https://www.rfc-editor.org/rfc/rfc822">RFC 822</a>
 spec for emails allows for multiple sent from email addresses.</p>
 </section>
 <section id="microsoft-excel-documents">
-<h2>Microsoft Excel Documents<a class="headerlink" href="#microsoft-excel-documents" title="Permalink to this heading"></a></h2>
+<h3>Microsoft Excel Documents<a class="headerlink" href="#microsoft-excel-documents" title="Permalink to this heading"></a></h3>
 <p>For Excel documents, <code class="docutils literal notranslate"><span class="pre">ElementMetadata</span></code> will contain a <code class="docutils literal notranslate"><span class="pre">page_name</span></code> element, which corresponds
 to the sheet name in the Excel document.</p>
 </section>
 <section id="microsoft-word-documents">
-<h2>Microsoft Word Documents<a class="headerlink" href="#microsoft-word-documents" title="Permalink to this heading"></a></h2>
+<h3>Microsoft Word Documents<a class="headerlink" href="#microsoft-word-documents" title="Permalink to this heading"></a></h3>
 <p>Headers and footers in Word documents include a <code class="docutils literal notranslate"><span class="pre">header_footer_type</span></code> indicating which page
 a header or footer applies to. Valid values are <code class="docutils literal notranslate"><span class="pre">&quot;primary&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;even_only&quot;</span></code>, and <code class="docutils literal notranslate"><span class="pre">&quot;first_page&quot;</span></code>.</p>
 </section>
 <section id="webpages">
-<h2>Webpages<a class="headerlink" href="#webpages" title="Permalink to this heading"></a></h2>
+<h3>Webpages<a class="headerlink" href="#webpages" title="Permalink to this heading"></a></h3>
 <p>Elements from webpages will include a <code class="docutils literal notranslate"><span class="pre">url</span></code> metadata field, corresponding to the URL for the webpage.</p>
 </section>
 <section id="extract-metadata-with-regexes">
-<h2>Extract Metadata with Regexes<a class="headerlink" href="#extract-metadata-with-regexes" title="Permalink to this heading"></a></h2>
+<h3>Extract Metadata with Regexes<a class="headerlink" href="#extract-metadata-with-regexes" title="Permalink to this heading"></a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">unstructured</span></code> allows users to extract additional metadata with regexes using the <code class="docutils literal notranslate"><span class="pre">regex_metadata</span></code> kwarg.
 Here is an example of how to extract regex metadata:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.text</span> <span class="kn">import</span> <span class="n">partition_text</span>
@@ -428,6 +463,7 @@ Here is an example of how to extract regex metadata:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
+</section>
 </section>
 </section>
 
@@ -487,11 +523,14 @@ Here is an example of how to extract regex metadata:</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Metadata</a><ul>
+<li><a class="reference internal" href="#element-coordinates">Element coordinates</a><ul>
 <li><a class="reference internal" href="#email">Email</a></li>
 <li><a class="reference internal" href="#microsoft-excel-documents">Microsoft Excel Documents</a></li>
 <li><a class="reference internal" href="#microsoft-word-documents">Microsoft Word Documents</a></li>
 <li><a class="reference internal" href="#webpages">Webpages</a></li>
 <li><a class="reference internal" href="#extract-metadata-with-regexes">Extract Metadata with Regexes</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
