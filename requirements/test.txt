@@ -43,7 +43,7 @@ label-studio-sdk==0.0.29
     # via -r test.in
 label-studio-tools==0.0.2
     # via label-studio-sdk
-lxml==4.9.2
+lxml==4.9.3
     # via
     #   -c base.txt
     #   label-studio-sdk
