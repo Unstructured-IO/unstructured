@@ -418,6 +418,17 @@ class MainProcess:
     help="User principal name, usually is your Azure AD email.",
 )
 @click.option(
+    "--ms-sharepoint-site",
+    default=None,
+    help="Sharepoint site url.",
+)
+@click.option(
+    "--ms-sharepoint-pages",
+    is_flag=True,
+    default=False,
+    help="Process site pages.",
+)
+@click.option(
     "--elasticsearch-url",
     default=None,
     help='URL to the Elasticsearch cluster, e.g. "http://localhost:9200"',
@@ -519,6 +530,8 @@ def main(
     ms_authority_url,
     ms_tenant,
     ms_user_pname,
+    ms_sharepoint_site,
+    ms_sharepoint_pages,
     elasticsearch_url,
     elasticsearch_index_name,
     jq_query,
@@ -846,7 +859,7 @@ def main(
                 decay=biomed_decay,
             ),
         )
-    elif ms_client_id or ms_user_pname:
+    elif ms_client_id and ms_user_pname:
         from unstructured.ingest.connector.onedrive import (
             OneDriveConnector,
             SimpleOneDriveConfig,
@@ -861,6 +874,22 @@ def main(
                 tenant=ms_tenant,
                 authority_url=ms_authority_url,
                 recursive=recursive,
+            ),
+        )
+
+    elif ms_client_id and ms_sharepoint_site:
+        from unstructured.ingest.connector.sharepoint import (
+            SharepointConnector,
+            SimpleSharepointConfig,
+        )
+
+        doc_connector = SharepointConnector(
+            standard_config=standard_config,
+            config=SimpleSharepointConfig(
+                client_id=ms_client_id,
+                client_credential=ms_client_cred,
+                site_url=ms_sharepoint_site,
+                process_pages=ms_sharepoint_pages,
             ),
         )
 
