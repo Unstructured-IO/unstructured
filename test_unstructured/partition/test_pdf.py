@@ -129,7 +129,7 @@ def test_partition_pdf_with_spooled_file(
 
 
 @mock.patch.dict(os.environ, {"UNSTRUCTURED_HI_RES_MODEL_NAME": "checkbox"})
-def test_partition_pdf_with_model_name(
+def test_partition_pdf_with_model_name_env_var(
     monkeypatch,
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
@@ -143,6 +143,26 @@ def test_partition_pdf_with_model_name(
             filename=filename,
             strategy="hi_res",
         )
+        mock_process.assert_called_once_with(
+            filename,
+            is_image=False,
+            ocr_languages="eng",
+            extract_tables=False,
+            model_name="checkbox",
+        )
+
+
+def test_partition_pdf_with_model_name(
+    monkeypatch,
+    filename="example-docs/layout-parser-paper-fast.pdf",
+):
+    monkeypatch.setattr(
+        strategies,
+        "is_pdf_text_extractable",
+        lambda *args, **kwargs: True,
+    )
+    with mock.patch.object(layout, "process_file_with_model", mock.MagicMock()) as mock_process:
+        pdf.partition_pdf(filename=filename, strategy="hi_res", model_name="checkbox")
         mock_process.assert_called_once_with(
             filename,
             is_image=False,
