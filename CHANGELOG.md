@@ -1,8 +1,9 @@
-## 0.8.0-dev2
+## 0.8.0
 
 ### Enhancements
 
 * Allow model used for hi res pdf partition strategy to be chosen when called.
+* Updated inference package
 
 ### Features
 
