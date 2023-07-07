@@ -7,12 +7,14 @@
 
 ### Features
 
-* Add metadata_filename parameter across all partition functions
+* Add `metadata_filename` parameter across all partition functions
 
 ### Fixes
+
+* Update to ensure `convert_to_datafame` grabs all of the metadata fields.
 * Adjust encoding recognition threshold value in `detect_file_encoding`
 * Fix KeyError when `isd_to_elements` doesn't find a type
-* Fix _output_filename for local connector, allowing single files to be written correctly to the disk
+* Fix `_output_filename` for local connector, allowing single files to be written correctly to the disk
 
 * Fix for cases where an invalid encoding is extracted from an email header.
 
