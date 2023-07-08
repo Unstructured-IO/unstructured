@@ -94,6 +94,18 @@ def partition_pdf(
     )
 
 
+def extractable_elements(
+    filename: str = "",
+    file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
+    include_page_breaks: bool = False,
+):
+    return _partition_pdf_with_pdfminer(
+        filename=filename,
+        file=file,
+        include_page_breaks=include_page_breaks,
+    )
+
+
 def partition_pdf_or_image(
     filename: str = "",
     file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
@@ -111,12 +123,25 @@ def partition_pdf_or_image(
     # that task so as routing design changes, those changes are implemented in a single
     # function.
 
+    if not is_image:
+        extracted_elements = extractable_elements(
+            filename=filename,
+            file=spooled_to_bytes_io_if_needed(file),
+            include_page_breaks=include_page_breaks,
+        )
+        pdf_text_extractable = any(
+            isinstance(el, Text) and el.text.strip() for el in extracted_elements
+        )
+    else:
+        pdf_text_extractable = False
+
     strategy = determine_pdf_or_image_strategy(
         strategy,
         filename=filename,
         file=file,
         is_image=is_image,
         infer_table_structure=infer_table_structure,
+        pdf_text_extractable=pdf_text_extractable,
     )
 
     if strategy == "hi_res":
@@ -134,11 +159,7 @@ def partition_pdf_or_image(
             )
 
     elif strategy == "fast":
-        return _partition_pdf_with_pdfminer(
-            filename=filename,
-            file=spooled_to_bytes_io_if_needed(file),
-            include_page_breaks=include_page_breaks,
-        )
+        return extracted_elements
 
     elif strategy == "ocr_only":
         # NOTE(robinson): Catches file conversion warnings when running with PDFs

@@ -1,3 +1,13 @@
+## 0.8.1-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* Fixed `auto` strategy detected scanned document as having extractable text and using `fast` strategy, resulting in no output.
+
 ## 0.8.0
 
 ### Enhancements
