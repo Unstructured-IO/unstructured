@@ -84,6 +84,7 @@ setup(
         "gcs": load_requirements("requirements/ingest-gcs.in"),
         "elasticsearch": load_requirements("requirements/ingest-elasticsearch.in"),
         "dropbox": load_requirements("requirements/ingest-dropbox.in"),
+        "confluence": load_requirements("requirements/ingest-confluence.in"),
     },
     package_dir={"unstructured": "unstructured"},
     package_data={"unstructured": ["nlp/*.txt"]},
