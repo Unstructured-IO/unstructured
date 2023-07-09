@@ -76,6 +76,7 @@ jobs:
           tesseract --version
           make install-ingest-s3
           make install-ingest-azure
+          make install-ingest-confluence
           make install-ingest-discord
           make install-ingest-elasticsearch
           make install-ingest-dropbox
