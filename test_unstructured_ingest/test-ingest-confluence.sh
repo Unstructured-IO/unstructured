@@ -4,11 +4,16 @@ set -e
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
 
-source "./../../secrets/confluence2.txt"
+# source "./../../secrets/confluence2.txt"
 
 OUTPUT_FOLDER_NAME=confluence
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
+
+if [ -z "$CONFLUENCE_USER_EMAIL" ] or [ -z "$CONFLUENCE_API_TOKEN" ]; then
+   echo "Skipping Confluence ingest test because the CONFLUENCE_USER_EMAIL or CONFLUENCE_API_TOKEN env var is not set."
+   exit 0
+fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --download-dir "$DOWNLOAD_DIR" \
