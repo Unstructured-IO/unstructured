@@ -410,6 +410,23 @@ class MainProcess:
     "Example: --jq-query '{meta, body}'",
 )
 @click.option(
+    "--confluence-url",
+    default=None,
+    help='URL to Confluence Cloud, e.g. "unstructured-ingest-test.atlassian.net"',
+)
+@click.option(
+    "--confluence-user-email",
+    default=None,
+    help="Email to authenticate into Confluence Cloud",
+)
+@click.option(
+    "--confluence-api-token",
+    default=None,
+    help="API Token to authenticate into Confluence Cloud. \
+        Check https://developer.atlassian.com/cloud/confluence/basic-auth-for-rest-apis/ \
+        for more info.",
+)
+@click.option(
     "--download-dir",
     help="Where files are downloaded to, defaults to `$HOME/.cache/unstructured/ingest/<SHA256>`.",
 )
@@ -491,6 +508,9 @@ def main(
     elasticsearch_url,
     elasticsearch_index_name,
     jq_query,
+    confluence_url,
+    confluence_user_email,
+    confluence_api_token,
     download_dir,
     preserve_downloads,
     structured_output_dir,
@@ -589,6 +609,10 @@ def main(
         elif elasticsearch_url:
             hashed_dir_name = hashlib.sha256(
                 f"{elasticsearch_url}_{elasticsearch_index_name}".encode("utf-8"),
+            )
+        elif confluence_url:
+            hashed_dir_name = hashlib.sha256(
+                f"{confluence_url}".encode("utf-8"),
             )
         else:
             raise ValueError(
@@ -841,6 +865,20 @@ def main(
                 url=elasticsearch_url,
                 index_name=elasticsearch_index_name,
                 jq_query=jq_query,
+            ),
+        )
+    elif confluence_url:
+        from unstructured.ingest.connector.confluence import (
+            ConfluenceConnector,
+            SimpleConfluenceConfig,
+        )
+
+        doc_connector = ConfluenceConnector(  # type: ignore
+            standard_config=standard_config,
+            config=SimpleConfluenceConfig(
+                url=confluence_url,
+                user_email=confluence_user_email,
+                api_token=confluence_api_token,
             ),
         )
     # Check for other connector-specific options here and define the doc_connector object
