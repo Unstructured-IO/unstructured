@@ -1,14 +1,33 @@
-## 0.8.0-dev1
+## 0.8.1-dev1
 
 ### Enhancements
 
+* Add support for Python 3.11
+
 ### Features
 
-* Add metadata_filename parameter across all partition functions
+### Fixes
+
+* Fixed `auto` strategy detected scanned document as having extractable text and using `fast` strategy, resulting in no output.
+* Fix list detection in MS Word documents.
+
+## 0.8.0
+
+### Enhancements
+
+* Allow model used for hi res pdf partition strategy to be chosen when called.
+* Updated inference package
+
+### Features
+
+* Add `metadata_filename` parameter across all partition functions
 
 ### Fixes
+
+* Update to ensure `convert_to_datafame` grabs all of the metadata fields.
+* Adjust encoding recognition threshold value in `detect_file_encoding`
 * Fix KeyError when `isd_to_elements` doesn't find a type
-* Fix _output_filename for local connector, allowing single files to be written correctly to the disk
+* Fix `_output_filename` for local connector, allowing single files to be written correctly to the disk
 
 * Fix for cases where an invalid encoding is extracted from an email header.
 

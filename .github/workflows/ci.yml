@@ -146,6 +146,7 @@ jobs:
         # NOTE(robinson) - Installing weaviate-client separately here because the requests
         # version conflicts with label_studio_sdk
         pip install weaviate-client
+        pip install argilla
         make test CI=true
         make check-coverage
 

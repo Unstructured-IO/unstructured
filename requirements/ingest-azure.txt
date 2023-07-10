@@ -14,7 +14,7 @@ async-timeout==4.0.2
     # via aiohttp
 attrs==23.1.0
     # via aiohttp
-azure-core==1.27.1
+azure-core==1.28.0
     # via
     #   adlfs
     #   azure-identity
@@ -35,7 +35,7 @@ cffi==1.15.1
     #   -c requirements/base.txt
     #   azure-datalake-store
     #   cryptography
-charset-normalizer==3.1.0
+charset-normalizer==3.2.0
     # via
     #   -c requirements/base.txt
     #   aiohttp
@@ -93,9 +93,8 @@ six==1.16.0
     #   azure-core
     #   azure-identity
     #   isodate
-typing-extensions==4.7.0
+typing-extensions==4.7.1
     # via
-    #   -c requirements/base.txt
     #   azure-core
     #   azure-storage-blob
 urllib3==1.26.16

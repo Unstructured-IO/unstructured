@@ -4,7 +4,7 @@ import chardet
 
 from unstructured.partition.common import convert_to_bytes
 
-ENCODE_REC_THRESHOLD = 0.5
+ENCODE_REC_THRESHOLD = 0.8
 
 # popular encodings from https://en.wikipedia.org/wiki/Popularity_of_text_encodings
 COMMON_ENCODINGS = [
