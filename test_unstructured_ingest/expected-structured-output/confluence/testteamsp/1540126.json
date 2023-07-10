@@ -91,23 +91,23 @@
   },
   {
     "type": "Title",
-    "element_id": "79460e9e6dc0425f64f667b308b09ee0",
+    "element_id": "4e2022d4483a407d85060675f64fbe17",
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1
     },
-    "text": "\\uD83E\\uDD14Â Problem Statement"
+    "text": "\\uD83E\\uDD14 Problem Statement"
   },
   {
     "type": "Title",
-    "element_id": "3c256e93a7af2ea45caf1e125396e448",
+    "element_id": "81163675915a75217e4116686fdca412",
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1
     },
-    "text": "ðŸŽ¯Â Scope"
+    "text": "🎯 Scope"
   },
   {
     "type": "NarrativeText",
@@ -201,13 +201,13 @@
   },
   {
     "type": "Title",
-    "element_id": "0562b6eabfa63cbb64f54875b45851cd",
+    "element_id": "e8b61a28d07e977379b42df455a1cde4",
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1
     },
-    "text": "\\uD83D\\uDDD3Â Timeline"
+    "text": "\\uD83D\\uDDD3 Timeline"
   },
   {
     "type": "Title",
@@ -291,13 +291,13 @@
   },
   {
     "type": "Title",
-    "element_id": "4e652cb3952681c4a44f665f971dd39b",
+    "element_id": "e1cc184f345d146586fb12527c4fa696",
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1
     },
-    "text": "\\uD83D\\uDEA9Â Milestones and deadlines"
+    "text": "\\uD83D\\uDEA9 Milestones and deadlines"
   },
   {
     "type": "Title",
@@ -341,12 +341,12 @@
   },
   {
     "type": "Title",
-    "element_id": "3ec7a45be8c01b91b046603b18900eb8",
+    "element_id": "890c9b6d8d69ca1de5fd7a8b83fe78ff",
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1
     },
-    "text": "\\uD83D\\uDD17Â Reference materials"
+    "text": "\\uD83D\\uDD17 Reference materials"
   }
 ]

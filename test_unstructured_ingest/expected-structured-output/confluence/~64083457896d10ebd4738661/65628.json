@@ -11,13 +11,13 @@
   },
   {
     "type": "Title",
-    "element_id": "a45f98784cdcd2b45af4aaea6133681a",
+    "element_id": "1749e90b61ae5ea8859b927415ecf3de",
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1
     },
-    "text": "üìÑ Recent pages that I've worked on"
+    "text": "📄 Recent pages that I've worked on"
   },
   {
     "type": "Title",
@@ -31,33 +31,33 @@
   },
   {
     "type": "ListItem",
-    "element_id": "bc9bf9fbd5481f63ec6345fed85b658e",
+    "element_id": "90a1ffa1cadd422cfe05d6efa6503e50",
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1
     },
-    "text": "Overview\n            \n            \n                Jun 30, 2023 ‚Ä¢ contributed by ryan"
+    "text": "Overview\n            \n            \n                Jun 30, 2023 • contributed by ryan"
   },
   {
     "type": "ListItem",
-    "element_id": "00366a79cd2f6bc51cb415eb9a8b5f75",
+    "element_id": "817b22f2ed823a49b608b969010fd111",
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1
     },
-    "text": "Getting started in Confluence\n            \n            \n                Jun 30, 2023 ‚Ä¢ contributed by ryan"
+    "text": "Getting started in Confluence\n            \n            \n                Jun 30, 2023 • contributed by ryan"
   },
   {
     "type": "ListItem",
-    "element_id": "bdae36b87f2f509c0fe7a33ae29f1725",
+    "element_id": "82a425617f6ff688335d227aab77adc5",
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1
     },
-    "text": "ryan\n            \n            \n                Jun 30, 2023 ‚Ä¢ contributed by ryan"
+    "text": "ryan\n            \n            \n                Jun 30, 2023 • contributed by ryan"
   },
   {
     "type": "Title",
@@ -81,53 +81,23 @@
   },
   {
     "type": "Title",
-    "element_id": "d6520cfe55aa2c709a19bb4318eca017",
+    "element_id": "8fd2c85152eb5e0750f65b52027e68c4",
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1
     },
-    "text": "üñê Get in touch"
+    "text": "🖐 Get in touch"
   },
   {
-    "type": "Title",
-    "element_id": "42d720c04cb1a346335c94d034f1236a",
+    "type": "UncategorizedText",
+    "element_id": "93b2d3447a7fdd7df7cef8c0d0599d04",
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1
     },
-    "text": "‚úâÔ∏è"
-  },
-  {
-    "type": "Title",
-    "element_id": "9fa12a81eed8ba6e1d4359e99794e410",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/html",
-      "page_number": 1
-    },
-    "text": "üíº"
-  },
-  {
-    "type": "Title",
-    "element_id": "812c12c0d3e9d12df3fad9c67c9e5f17",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/html",
-      "page_number": 1
-    },
-    "text": "üîó"
-  },
-  {
-    "type": "Title",
-    "element_id": "f93c4b569a6e30486aefa0751f983c8f",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/html",
-      "page_number": 1
-    },
-    "text": "üë§"
+    "text": "✉️"
   },
   {
     "type": "NarrativeText",

@@ -11,13 +11,13 @@
   },
   {
     "type": "Title",
-    "element_id": "a45f98784cdcd2b45af4aaea6133681a",
+    "element_id": "1749e90b61ae5ea8859b927415ecf3de",
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1
     },
-    "text": "üìÑ Recent pages that I've worked on"
+    "text": "📄 Recent pages that I've worked on"
   },
   {
     "type": "Title",
@@ -31,53 +31,53 @@
   },
   {
     "type": "ListItem",
-    "element_id": "5abdee4fa3f8b6cddc7cc7ce680c4b5e",
+    "element_id": "c6def57998bd4453c37dd1253463514d",
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1
     },
-    "text": "Testdoc2\n            \n            \n                yesterday at 7:00 pm ‚Ä¢ contributed by ahmet"
+    "text": "Testdoc2\n            \n            \n                Jul 08, 2023 • contributed by ahmet"
   },
   {
     "type": "ListItem",
-    "element_id": "9aacf82c126b98ed033e3db51a97b5c4",
+    "element_id": "b8c8f8855db121429f45e50f0e8f2346",
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1
     },
-    "text": "image-20230709-020021.png\n            \n            \n                yesterday at 7:00 pm ‚Ä¢ attached by ahmet"
+    "text": "image-20230709-020021.png\n            \n            \n                Jul 08, 2023 • attached by ahmet"
   },
   {
     "type": "ListItem",
-    "element_id": "8a50a41bc0b73c676358dfa0303e14bf",
+    "element_id": "04763d1e40d9a0cd9ec2c6c4a5ed4575",
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1
     },
-    "text": "image-20230709-015203.png\n            \n            \n                yesterday at 6:52 pm ‚Ä¢ attached by ahmet"
+    "text": "image-20230709-015203.png\n            \n            \n                Jul 08, 2023 • attached by ahmet"
   },
   {
     "type": "ListItem",
-    "element_id": "f0a909779439bf1cb708b0554be5491c",
+    "element_id": "b4562fc5c118e7b4ab68cbf4b9c4e7ba",
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1
     },
-    "text": "Overview\n            \n            \n                Jul 07, 2023 ‚Ä¢ contributed by ahmet"
+    "text": "Overview\n            \n            \n                Jul 07, 2023 • contributed by ahmet"
   },
   {
     "type": "ListItem",
-    "element_id": "ce19df570e9bc05c9518ab11a44a2298",
+    "element_id": "5774d5e57ca228df6ed57a9e7688e8da",
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1
     },
-    "text": "ahmet\n            \n            \n                Jul 07, 2023 ‚Ä¢ contributed by ahmet"
+    "text": "ahmet\n            \n            \n                Jul 07, 2023 • contributed by ahmet"
   },
   {
     "type": "Title",
@@ -101,53 +101,23 @@
   },
   {
     "type": "Title",
-    "element_id": "d6520cfe55aa2c709a19bb4318eca017",
+    "element_id": "8fd2c85152eb5e0750f65b52027e68c4",
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1
     },
-    "text": "üñê Get in touch"
+    "text": "🖐 Get in touch"
   },
   {
-    "type": "Title",
-    "element_id": "42d720c04cb1a346335c94d034f1236a",
+    "type": "UncategorizedText",
+    "element_id": "93b2d3447a7fdd7df7cef8c0d0599d04",
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1
     },
-    "text": "‚úâÔ∏è"
-  },
-  {
-    "type": "Title",
-    "element_id": "9fa12a81eed8ba6e1d4359e99794e410",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/html",
-      "page_number": 1
-    },
-    "text": "üíº"
-  },
-  {
-    "type": "Title",
-    "element_id": "812c12c0d3e9d12df3fad9c67c9e5f17",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/html",
-      "page_number": 1
-    },
-    "text": "üîó"
-  },
-  {
-    "type": "Title",
-    "element_id": "f93c4b569a6e30486aefa0751f983c8f",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/html",
-      "page_number": 1
-    },
-    "text": "üë§"
+    "text": "✉️"
   },
   {
     "type": "NarrativeText",
