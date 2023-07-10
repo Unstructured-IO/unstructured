@@ -8,6 +8,8 @@ from enum import Enum
 from functools import wraps
 from typing import IO, TYPE_CHECKING, Callable, List, Optional
 
+from unstructured_inference.inference.layoutelement import LocationlessLayoutElement
+
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import Element, PageBreak
 from unstructured.file_utils.encoding import detect_file_encoding, format_encoding_str
@@ -451,7 +453,7 @@ def document_to_element_list(
     for i, page in enumerate(document.pages):
         page_elements: List[Element] = []
         for layout_element in page.elements:
-            if hasattr(page, "image"):
+            if hasattr(page, "image") and not isinstance(layout_element, LocationlessLayoutElement):
                 image_format = page.image.format
                 coordinate_system = PixelSpace(width=page.image.width, height=page.image.height)
             else:
