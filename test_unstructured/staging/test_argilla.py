@@ -1,8 +1,12 @@
+import os
+
 import argilla as rg
 import pytest
 
 from unstructured.documents.elements import NarrativeText, Title
 from unstructured.staging import argilla
+
+is_in_docker = os.path.exists("/.dockerenv")
 
 
 @pytest.fixture()
@@ -10,6 +14,7 @@ def elements():
     return [Title(text="example"), NarrativeText(text="another example")]
 
 
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 @pytest.mark.parametrize(
     ("task_name", "dataset_type", "extra_kwargs"),
     [
@@ -55,6 +60,7 @@ def test_stage_for_argilla(elements, task_name, dataset_type, extra_kwargs):
             assert getattr(record, kwarg) in extra_kwargs[kwarg]
 
 
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 @pytest.mark.parametrize(
     ("task_name", "error", "error_message", "extra_kwargs"),
     [
