@@ -13,7 +13,7 @@ jobs:
   setup:
     strategy:
       matrix:
-        python-version: ["3.8","3.9","3.10"]
+        python-version: ["3.8","3.9","3.10","3.11"]
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
@@ -40,7 +40,7 @@ jobs:
   check-deps:
     strategy:
       matrix:
-        python-version: ["3.8","3.9","3.10"]
+        python-version: ["3.8","3.9","3.10","3.11"]
     runs-on: ubuntu-latest
     needs: setup
     steps:
@@ -70,7 +70,7 @@ jobs:
   lint:
     strategy:
       matrix:
-        python-version: ["3.8","3.9","3.10"]
+        python-version: ["3.8","3.9","3.10","3.11"]
     runs-on: ubuntu-latest
     needs: setup
     steps:
@@ -107,7 +107,7 @@ jobs:
   test_unit:
     strategy:
       matrix:
-        python-version: ["3.8","3.9","3.10"]
+        python-version: ["3.8","3.9","3.10","3.11"]
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
@@ -146,13 +146,14 @@ jobs:
         # NOTE(robinson) - Installing weaviate-client separately here because the requests
         # version conflicts with label_studio_sdk
         pip install weaviate-client
+        pip install argilla
         make test CI=true
         make check-coverage
 
   test_ingest:
     strategy:
       matrix:
-        python-version: ["3.8","3.9","3.10"]
+        python-version: ["3.8","3.9","3.10","3.11"]
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
@@ -250,4 +251,4 @@ jobs:
           source .venv/bin/activate
           echo "UNS_API_KEY=${{ secrets.UNS_API_KEY }}" > uns_test_env_file
           make docker-build
-          make docker-test CI=true 
+          make docker-test CI=true

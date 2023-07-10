@@ -15,7 +15,7 @@ cffi==1.15.1
     # via
     #   -c requirements/base.txt
     #   cryptography
-charset-normalizer==3.1.0
+charset-normalizer==3.2.0
     # via
     #   -c requirements/base.txt
     #   pdfminer-six
@@ -43,7 +43,7 @@ fonttools==4.40.0
     # via matplotlib
 fsspec==2023.6.0
     # via huggingface-hub
-huggingface-hub==0.15.1
+huggingface-hub==0.16.4
     # via
     #   timm
     #   transformers
@@ -54,7 +54,7 @@ idna==3.4
     # via
     #   -c requirements/base.txt
     #   requests
-importlib-resources==5.12.0
+importlib-resources==6.0.0
     # via matplotlib
 iopath==0.1.10
     # via layoutparser
@@ -66,13 +66,13 @@ layoutparser[layoutmodels,tesseract]==0.3.4
     # via unstructured-inference
 markupsafe==2.1.3
     # via jinja2
-matplotlib==3.7.1
+matplotlib==3.7.2
     # via pycocotools
 mpmath==1.3.0
     # via sympy
 networkx==3.1
     # via torch
-numpy==1.23.5
+numpy==1.24.4
     # via
     #   -c requirements/base.txt
     #   contourpy
@@ -89,19 +89,18 @@ omegaconf==2.3.0
     # via effdet
 onnxruntime==1.15.1
     # via unstructured-inference
-opencv-python==4.7.0.72
+opencv-python==4.8.0.74
     # via
     #   layoutparser
     #   unstructured-inference
 packaging==23.1
     # via
-    #   -c requirements/base.txt
     #   huggingface-hub
     #   matplotlib
     #   onnxruntime
     #   pytesseract
     #   transformers
-pandas==1.5.3
+pandas==2.0.3
     # via
     #   -c requirements/base.txt
     #   layoutparser
@@ -115,7 +114,7 @@ pdfminer-six==20221105
     #   pdfplumber
 pdfplumber==0.9.0
     # via layoutparser
-pillow==9.5.0
+pillow==10.0.0
     # via
     #   -c requirements/base.txt
     #   layoutparser
@@ -136,8 +135,10 @@ pycparser==2.21
     # via
     #   -c requirements/base.txt
     #   cffi
-pyparsing==3.1.0
-    # via matplotlib
+pyparsing==3.0.9
+    # via
+    #   -c requirements/constraints.in
+    #   matplotlib
 pytesseract==0.3.10
     # via layoutparser
 python-dateutil==2.8.2
@@ -205,12 +206,15 @@ tqdm==4.65.0
     #   transformers
 transformers==4.30.2
     # via unstructured-inference
-typing-extensions==4.7.0
+typing-extensions==4.7.1
     # via
-    #   -c requirements/base.txt
     #   huggingface-hub
     #   iopath
     #   torch
+tzdata==2023.3
+    # via
+    #   -c requirements/base.txt
+    #   pandas
 unstructured-inference==0.5.5
     # via -r requirements/local-inference.in
 urllib3==1.26.16
@@ -220,7 +224,7 @@ urllib3==1.26.16
     #   requests
 wand==0.6.11
     # via pdfplumber
-zipp==3.15.0
+zipp==3.16.0
     # via
     #   -c requirements/base.txt
     #   importlib-resources
