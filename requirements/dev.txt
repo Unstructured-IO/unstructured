@@ -4,10 +4,8 @@
 #
 #    pip-compile requirements/dev.in
 #
-anyio==3.7.0
-    # via
-    #   -c requirements/base.txt
-    #   jupyter-server
+anyio==3.7.1
+    # via jupyter-server
 appnope==0.1.3
     # via
     #   ipykernel
@@ -24,7 +22,9 @@ arrow==1.2.3
 asttokens==2.2.1
     # via stack-data
 attrs==23.1.0
-    # via jsonschema
+    # via
+    #   jsonschema
+    #   referencing
 backcall==0.2.0
     # via ipython
 beautifulsoup4==4.12.2
@@ -39,7 +39,7 @@ cffi==1.15.1
     #   argon2-cffi-bindings
 cfgv==3.3.1
     # via pre-commit
-click==8.1.3
+click==8.1.4
     # via
     #   -c requirements/base.txt
     #   -c requirements/test.txt
@@ -54,9 +54,8 @@ defusedxml==0.7.1
     # via nbconvert
 distlib==0.3.6
     # via virtualenv
-exceptiongroup==1.1.1
+exceptiongroup==1.1.2
     # via
-    #   -c requirements/base.txt
     #   -c requirements/test.txt
     #   anyio
 executing==1.2.0
@@ -75,14 +74,16 @@ idna==3.4
     #   -c requirements/test.txt
     #   anyio
     #   jsonschema
-importlib-metadata==6.7.0
+importlib-metadata==6.8.0
     # via
     #   -c requirements/base.txt
     #   jupyter-client
     #   nbconvert
-importlib-resources==5.12.0
-    # via jsonschema
-ipykernel==6.23.3
+importlib-resources==6.0.0
+    # via
+    #   jsonschema
+    #   jsonschema-specifications
+ipykernel==6.24.0
     # via
     #   ipywidgets
     #   jupyter
@@ -101,7 +102,7 @@ ipython-genutils==0.2.0
     #   nbclassic
     #   notebook
     #   qtconsole
-ipywidgets==8.0.6
+ipywidgets==8.0.7
     # via jupyter
 isoduration==20.11.0
     # via jsonschema
@@ -115,10 +116,12 @@ jinja2==3.1.2
     #   notebook
 jsonpointer==2.4
     # via jsonschema
-jsonschema[format-nongpl]==4.17.3
+jsonschema[format-nongpl]==4.18.0
     # via
     #   jupyter-events
     #   nbformat
+jsonschema-specifications==2023.6.1
+    # via jsonschema
 jupyter==1.0.0
     # via -r requirements/dev.in
 jupyter-client==8.3.0
@@ -155,7 +158,7 @@ jupyter-server-terminals==0.4.4
     # via jupyter-server
 jupyterlab-pygments==0.2.2
     # via nbconvert
-jupyterlab-widgets==3.0.7
+jupyterlab-widgets==3.0.8
     # via ipywidgets
 markupsafe==2.1.3
     # via
@@ -177,7 +180,7 @@ nbconvert==7.6.0
     #   jupyter-server
     #   nbclassic
     #   notebook
-nbformat==5.9.0
+nbformat==5.9.1
     # via
     #   jupyter-server
     #   nbclassic
@@ -199,7 +202,6 @@ overrides==7.3.1
     # via jupyter-server
 packaging==23.1
     # via
-    #   -c requirements/base.txt
     #   -c requirements/test.txt
     #   build
     #   ipykernel
@@ -215,11 +217,11 @@ pexpect==4.8.0
     # via ipython
 pickleshare==0.7.5
     # via ipython
-pip-tools==6.13.0
+pip-tools==6.14.0
     # via -r requirements/dev.in
 pkgutil-resolve-name==1.3.10
     # via jsonschema
-platformdirs==3.8.0
+platformdirs==3.8.1
     # via
     #   -c requirements/test.txt
     #   jupyter-core
@@ -231,7 +233,7 @@ prometheus-client==0.17.0
     #   jupyter-server
     #   nbclassic
     #   notebook
-prompt-toolkit==3.0.38
+prompt-toolkit==3.0.39
     # via
     #   ipython
     #   jupyter-console
@@ -249,15 +251,12 @@ pycparser==2.21
     #   cffi
 pygments==2.15.1
     # via
-    #   -c requirements/base.txt
     #   ipython
     #   jupyter-console
     #   nbconvert
     #   qtconsole
 pyproject-hooks==1.0.0
     # via build
-pyrsistent==0.19.3
-    # via jsonschema
 python-dateutil==2.8.2
     # via
     #   -c requirements/base.txt
@@ -284,6 +283,10 @@ qtconsole==5.4.3
     # via jupyter
 qtpy==2.3.1
     # via qtconsole
+referencing==0.29.1
+    # via
+    #   jsonschema
+    #   jsonschema-specifications
 rfc3339-validator==0.1.4
     # via
     #   jsonschema
@@ -292,6 +295,10 @@ rfc3986-validator==0.1.1
     # via
     #   jsonschema
     #   jupyter-events
+rpds-py==0.8.10
+    # via
+    #   jsonschema
+    #   referencing
 send2trash==1.8.2
     # via
     #   jupyter-server
@@ -306,9 +313,7 @@ six==1.16.0
     #   python-dateutil
     #   rfc3339-validator
 sniffio==1.3.0
-    # via
-    #   -c requirements/base.txt
-    #   anyio
+    # via anyio
 soupsieve==2.4.1
     # via beautifulsoup4
 stack-data==0.6.2
@@ -325,6 +330,7 @@ tomli==2.0.1
     # via
     #   -c requirements/test.txt
     #   build
+    #   pip-tools
     #   pyproject-hooks
 tornado==6.3.2
     # via
@@ -352,9 +358,8 @@ traitlets==5.9.0
     #   nbformat
     #   notebook
     #   qtconsole
-typing-extensions==4.7.0
+typing-extensions==4.7.1
     # via
-    #   -c requirements/base.txt
     #   -c requirements/test.txt
     #   ipython
 uri-template==1.3.0
@@ -375,9 +380,9 @@ wheel==0.40.0
     # via
     #   -c requirements/constraints.in
     #   pip-tools
-widgetsnbextension==4.0.7
+widgetsnbextension==4.0.8
     # via ipywidgets
-zipp==3.15.0
+zipp==3.16.0
     # via
     #   -c requirements/base.txt
     #   importlib-metadata

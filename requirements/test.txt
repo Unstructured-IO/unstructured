@@ -13,11 +13,11 @@ certifi==2023.5.7
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   requests
-charset-normalizer==3.1.0
+charset-normalizer==3.2.0
     # via
     #   -c requirements/base.txt
     #   requests
-click==8.1.3
+click==8.1.4
     # via
     #   -c requirements/base.txt
     #   -r requirements/test.in
@@ -26,10 +26,8 @@ coverage[toml]==7.2.7
     # via
     #   -r requirements/test.in
     #   pytest-cov
-exceptiongroup==1.1.1
-    # via
-    #   -c requirements/base.txt
-    #   pytest
+exceptiongroup==1.1.2
+    # via pytest
 flake8==6.0.0
     # via -r requirements/test.in
 freezegun==1.2.2
@@ -47,7 +45,7 @@ label-studio-sdk==0.0.29
     # via -r requirements/test.in
 label-studio-tools==0.0.2
     # via label-studio-sdk
-lxml==4.9.2
+lxml==4.9.3
     # via
     #   -c requirements/base.txt
     #   label-studio-sdk
@@ -64,21 +62,18 @@ mypy-extensions==1.0.0
     #   mypy
 packaging==23.1
     # via
-    #   -c requirements/base.txt
     #   black
     #   pytest
 pathspec==0.11.1
     # via black
-platformdirs==3.8.0
+platformdirs==3.8.1
     # via black
 pluggy==1.2.0
     # via pytest
 pycodestyle==2.10.0
     # via flake8
-pydantic==1.10.9
-    # via
-    #   -c requirements/base.txt
-    #   label-studio-sdk
+pydantic==1.10.11
+    # via label-studio-sdk
 pyflakes==3.0.1
     # via flake8
 pytest==7.4.0
@@ -99,7 +94,7 @@ requests==2.31.0
     # via
     #   -c requirements/base.txt
     #   label-studio-sdk
-ruff==0.0.275
+ruff==0.0.277
     # via -r requirements/test.in
 six==1.16.0
     # via
@@ -120,9 +115,8 @@ types-tabulate==0.9.0.2
     # via -r requirements/test.in
 types-urllib3==1.26.25.13
     # via types-requests
-typing-extensions==4.7.0
+typing-extensions==4.7.1
     # via
-    #   -c requirements/base.txt
     #   black
     #   mypy
     #   pydantic
@@ -134,9 +128,7 @@ urllib3==1.26.16
     #   vcrpy
 vcrpy==5.0.0
     # via -r requirements/test.in
-wrapt==1.14.1
-    # via
-    #   -c requirements/base.txt
-    #   vcrpy
+wrapt==1.15.0
+    # via vcrpy
 yarl==1.9.2
     # via vcrpy

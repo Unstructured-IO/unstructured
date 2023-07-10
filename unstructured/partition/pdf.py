@@ -90,6 +90,19 @@ def partition_pdf(
         infer_table_structure=infer_table_structure,
         ocr_languages=ocr_languages,
         max_partition=max_partition,
+        **kwargs,
+    )
+
+
+def extractable_elements(
+    filename: str = "",
+    file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
+    include_page_breaks: bool = False,
+):
+    return _partition_pdf_with_pdfminer(
+        filename=filename,
+        file=file,
+        include_page_breaks=include_page_breaks,
     )
 
 
@@ -102,6 +115,7 @@ def partition_pdf_or_image(
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
     max_partition: Optional[int] = 1500,
+    **kwargs,
 ) -> List[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
     # TODO(alan): Extract information about the filetype to be processed from the template
@@ -109,12 +123,25 @@ def partition_pdf_or_image(
     # that task so as routing design changes, those changes are implemented in a single
     # function.
 
+    if not is_image:
+        extracted_elements = extractable_elements(
+            filename=filename,
+            file=spooled_to_bytes_io_if_needed(file),
+            include_page_breaks=include_page_breaks,
+        )
+        pdf_text_extractable = any(
+            isinstance(el, Text) and el.text.strip() for el in extracted_elements
+        )
+    else:
+        pdf_text_extractable = False
+
     strategy = determine_pdf_or_image_strategy(
         strategy,
         filename=filename,
         file=file,
         is_image=is_image,
         infer_table_structure=infer_table_structure,
+        pdf_text_extractable=pdf_text_extractable,
     )
 
     if strategy == "hi_res":
@@ -128,14 +155,11 @@ def partition_pdf_or_image(
                 infer_table_structure=infer_table_structure,
                 include_page_breaks=include_page_breaks,
                 ocr_languages=ocr_languages,
+                **kwargs,
             )
 
     elif strategy == "fast":
-        return _partition_pdf_with_pdfminer(
-            filename=filename,
-            file=spooled_to_bytes_io_if_needed(file),
-            include_page_breaks=include_page_breaks,
-        )
+        return extracted_elements
 
     elif strategy == "ocr_only":
         # NOTE(robinson): Catches file conversion warnings when running with PDFs
@@ -160,6 +184,8 @@ def _partition_pdf_or_image_local(
     infer_table_structure: bool = False,
     include_page_breaks: bool = False,
     ocr_languages: str = "eng",
+    model_name: Optional[str] = None,
+    **kwargs,
 ) -> List[Element]:
     """Partition using package installed locally."""
     try:
@@ -182,7 +208,7 @@ def _partition_pdf_or_image_local(
             "running make install-local-inference from the root directory of the repository.",
         ) from e
 
-    model_name = os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME")
+    model_name = model_name if model_name else os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME")
     if file is None:
         layout = process_file_with_model(
             filename,

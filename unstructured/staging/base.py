@@ -14,22 +14,27 @@ from unstructured.documents.elements import (
 )
 from unstructured.partition.common import exactly_one
 
+
+def _get_metadata_table_fieldnames():
+    metadata_fields = list(ElementMetadata.__annotations__.keys())
+    metadata_fields.remove("coordinates")
+    metadata_fields.extend(
+        [
+            "sender",
+            "coordinates_points",
+            "coordinates_system",
+            "coordinates_layout_width",
+            "coordinates_layout_height",
+        ],
+    )
+    return metadata_fields
+
+
 TABLE_FIELDNAMES: List[str] = [
     "type",
     "text",
     "element_id",
-    "coordinates_points",
-    "coordinates_system",
-    "coordinates_layout_width",
-    "coordinates_layout_height",
-    "filename",
-    "page_number",
-    "url",
-    "sent_from",
-    "sent_to",
-    "subject",
-    "sender",
-]
+] + _get_metadata_table_fieldnames()
 
 
 def convert_to_isd(elements: List[Element]) -> List[Dict[str, Any]]:
@@ -130,17 +135,28 @@ def flatten_dict(dictionary, parent_key="", separator="_"):
     return flattened_dict
 
 
+def _get_table_fieldnames(rows):
+    table_fieldnames = list(TABLE_FIELDNAMES)
+    for row in rows:
+        metadata = row["metadata"]
+        for key in flatten_dict(metadata):
+            if key.startswith("regex_metadata") and key not in table_fieldnames:
+                table_fieldnames.append(key)
+    return table_fieldnames
+
+
 def convert_to_isd_csv(elements: List[Element]) -> str:
     """
     Returns the representation of document elements as an Initial Structured Document (ISD)
     in CSV Format.
     """
     rows: List[Dict[str, Any]] = convert_to_isd(elements)
+    table_fieldnames = _get_table_fieldnames(rows)
     # NOTE(robinson) - flatten metadata and add it to the table
     for row in rows:
         metadata = row.pop("metadata")
         for key, value in flatten_dict(metadata).items():
-            if key in TABLE_FIELDNAMES:
+            if key in table_fieldnames:
                 row[key] = value
 
         if row.get("sent_from"):
@@ -149,7 +165,7 @@ def convert_to_isd_csv(elements: List[Element]) -> str:
                 row["sender"] = row["sender"][0]
 
     with io.StringIO() as buffer:
-        csv_writer = csv.DictWriter(buffer, fieldnames=TABLE_FIELDNAMES)
+        csv_writer = csv.DictWriter(buffer, fieldnames=table_fieldnames)
         csv_writer.writeheader()
         csv_writer.writerows(rows)
         return buffer.getvalue()
@@ -160,7 +176,7 @@ def convert_to_csv(elements: List[Element]) -> str:
     return convert_to_isd_csv(elements)
 
 
-def convert_to_dataframe(elements: List[Element]) -> pd.DataFrame:
+def convert_to_dataframe(elements: List[Element], drop_empty_cols: bool = True) -> pd.DataFrame:
     """Converts document elements to a pandas DataFrame. The dataframe contains the
     following columns:
         text: the element text
@@ -168,4 +184,7 @@ def convert_to_dataframe(elements: List[Element]) -> pd.DataFrame:
     """
     csv_string = convert_to_isd_csv(elements)
     csv_string_io = io.StringIO(csv_string)
-    return pd.read_csv(csv_string_io, sep=",")
+    df = pd.read_csv(csv_string_io, sep=",")
+    if drop_empty_cols:
+        df.dropna(axis=1, how="all", inplace=True)
+    return df
