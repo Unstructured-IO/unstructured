@@ -107,7 +107,7 @@ Paragraph.runs = property(lambda self: _get_paragraph_runs(self))
 @add_metadata_with_filetype(FileType.DOCX)
 def partition_docx(
     filename: Optional[str] = None,
-    file: Optional[Union[IO, SpooledTemporaryFile]] = None,
+    file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
     metadata_filename: Optional[str] = None,
     include_page_breaks: bool = True,
     include_metadata: bool = True,
@@ -117,7 +117,7 @@ def partition_docx(
 
     Parameters
     ----------
-     filename
+    filename
         A string defining the target filename path.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
@@ -139,7 +139,6 @@ def partition_docx(
             ),
         )
 
-    metadata_filename = metadata_filename or filename
     elements: List[Element] = []
     table_index = 0
 
@@ -289,8 +288,9 @@ def _get_headers_and_footers(
 def convert_and_partition_docx(
     source_format: str,
     filename: Optional[str] = None,
-    file: Optional[IO] = None,
+    file: Optional[IO[bytes]] = None,
     include_metadata: bool = True,
+    metadata_filename: Optional[str] = None,
 ) -> List[Element]:
     """Converts a document to DOCX and then partitions it using partition_html. Works with
     any file format support by pandoc.
@@ -335,7 +335,7 @@ def convert_and_partition_docx(
         )
         elements = partition_docx(
             filename=docx_filename,
-            metadata_filename=filename,
+            metadata_filename=metadata_filename,
             include_metadata=include_metadata,
         )
 

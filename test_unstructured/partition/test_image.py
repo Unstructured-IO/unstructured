@@ -4,6 +4,7 @@ import pathlib
 from unittest import mock
 
 import pytest
+from PIL import Image
 from pytesseract import TesseractError
 from unstructured_inference.inference import layout
 
@@ -51,8 +52,9 @@ def mock_successful_post(url, **kwargs):
 
 
 class MockPageLayout(layout.PageLayout):
-    def __init__(self, number: int):
-        pass
+    def __init__(self, number: int, image: Image):
+        self.number = number
+        self.image = image
 
     @property
     def elements(self):
@@ -72,9 +74,7 @@ class MockDocumentLayout(layout.DocumentLayout):
     @property
     def pages(self):
         return [
-            MockPageLayout(
-                number=0,
-            ),
+            MockPageLayout(number=0, image=Image.new("1", (1, 1))),
         ]
 
 

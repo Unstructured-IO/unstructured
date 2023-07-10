@@ -75,7 +75,7 @@ def _split_to_fit_max_content(content: str, max_partition: int = 1500) -> List[s
 @add_metadata_with_filetype(FileType.TXT)
 def partition_text(
     filename: Optional[str] = None,
-    file: Optional[IO] = None,
+    file: Optional[IO[bytes]] = None,
     text: Optional[str] = None,
     encoding: Optional[str] = None,
     paragraph_grouper: Optional[Callable[[str], str]] = None,
@@ -126,11 +126,11 @@ def partition_text(
 
     file_content = split_by_paragraph(file_text, max_partition=max_partition)
 
-    metadata_filename = metadata_filename or filename
-
     elements: List[Element] = []
     metadata = (
-        ElementMetadata(filename=metadata_filename) if include_metadata else ElementMetadata()
+        ElementMetadata(filename=metadata_filename or filename)
+        if include_metadata
+        else ElementMetadata()
     )
     for ctext in file_content:
         ctext = ctext.strip()

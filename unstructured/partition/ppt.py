@@ -12,9 +12,10 @@ from unstructured.partition.pptx import partition_pptx
 @add_metadata_with_filetype(FileType.PPT)
 def partition_ppt(
     filename: Optional[str] = None,
-    file: Optional[IO] = None,
+    file: Optional[IO[bytes]] = None,
     include_page_breaks: bool = False,
     include_metadata: bool = True,
+    metadata_filename: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft PowerPoint Documents in .ppt format into their document elements.
@@ -50,6 +51,11 @@ def partition_ppt(
     with tempfile.TemporaryDirectory() as tmpdir:
         convert_office_doc(filename, tmpdir, target_format="pptx")
         pptx_filename = os.path.join(tmpdir, f"{base_filename}.pptx")
-        elements = partition_pptx(filename=pptx_filename, metadata_filename=filename)
+        elements = partition_pptx(filename=pptx_filename, metadata_filename=metadata_filename)
+
+    # remove tmp.name from filename if parsing file
+    if file:
+        for element in elements:
+            element.metadata.filename = metadata_filename
 
     return elements

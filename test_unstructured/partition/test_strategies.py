@@ -3,7 +3,7 @@ import sys
 
 import pytest
 
-from unstructured.partition import strategies
+from unstructured.partition import pdf, strategies
 
 
 @pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")
@@ -26,9 +26,11 @@ def test_validate_strategy_raises_for_bad_strategy():
     ("filename", "from_file", "expected"),
     [
         ("layout-parser-paper-fast.pdf", True, True),
-        ("copy-protected.pdf", True, False),
+        ("copy-protected.pdf", True, True),
+        ("loremipsum-flat.pdf", True, False),
         ("layout-parser-paper-fast.pdf", False, True),
-        ("copy-protected.pdf", False, False),
+        ("copy-protected.pdf", False, True),
+        ("loremipsum-flat.pdf", False, False),
     ],
 )
 def test_is_pdf_text_extractable(filename, from_file, expected):
@@ -36,11 +38,11 @@ def test_is_pdf_text_extractable(filename, from_file, expected):
 
     if from_file:
         with open(filename, "rb") as f:
-            extractable = strategies.is_pdf_text_extractable(file=f)
+            extractable = pdf.extractable_elements(file=f)
     else:
-        extractable = strategies.is_pdf_text_extractable(filename=filename)
+        extractable = pdf.extractable_elements(filename=filename)
 
-    assert extractable is expected
+    assert bool(extractable) is expected
 
 
 @pytest.mark.skipif(sys.version_info > (3, 10), reason="Python version higher than 3.10.*")

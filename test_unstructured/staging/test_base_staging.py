@@ -20,6 +20,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
+from unstructured.partition.email import partition_email
 from unstructured.partition.text import partition_text
 from unstructured.staging import base
 
@@ -46,6 +47,7 @@ def test_isd_to_elements():
         {"text": "Blurb2", "type": "Title"},
         {"text": "Blurb3", "type": "ListItem"},
         {"text": "Blurb4", "type": "BulletedText"},
+        {"text": "No Type"},
     ]
 
     elements = base.isd_to_elements(isd)
@@ -79,6 +81,25 @@ def test_convert_to_dataframe():
     )
     assert df.type.equals(expected_df.type) is True
     assert df.text.equals(expected_df.text) is True
+
+
+def test_convert_to_dataframe_maintains_fields(
+    filename="example-docs/eml/fake-email-attachment.eml",
+):
+    elements = partition_email(
+        filename=filename,
+        process_attachements=True,
+        regex_metadata={"hello": r"Hello", "punc": r"[!]"},
+    )
+    df = base.convert_to_dataframe(elements)
+    for element in elements:
+        metadata = element.metadata.to_dict()
+        for key in metadata:
+            if not key.startswith("regex_metadata"):
+                assert key in df.columns
+
+    assert "regex_metadata_hello" in df.columns
+    assert "regex_metadata_punc" in df.columns
 
 
 @pytest.mark.skipif(

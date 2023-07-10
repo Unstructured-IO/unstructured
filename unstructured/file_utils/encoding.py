@@ -4,7 +4,7 @@ import chardet
 
 from unstructured.partition.common import convert_to_bytes
 
-ENCODE_REC_THRESHOLD = 0.5
+ENCODE_REC_THRESHOLD = 0.8
 
 # popular encodings from https://en.wikipedia.org/wiki/Popularity_of_text_encodings
 COMMON_ENCODINGS = [
@@ -49,9 +49,18 @@ def format_encoding_str(encoding: str) -> str:
     return formatted_encoding
 
 
+def validate_encoding(encoding: str) -> bool:
+    """Checks if an encoding string is valid. Helps to avoid errors in cases where
+    invalid encodings are extracted from malformed documents."""
+    for common_encoding in COMMON_ENCODINGS:
+        if format_encoding_str(common_encoding) == format_encoding_str(encoding):
+            return True
+    return False
+
+
 def detect_file_encoding(
     filename: str = "",
-    file: Optional[Union[bytes, IO]] = None,
+    file: Optional[Union[bytes, IO[bytes]]] = None,
 ) -> Tuple[str, str]:
     if filename:
         with open(filename, "rb") as f:
@@ -98,7 +107,7 @@ def detect_file_encoding(
 
 def read_txt_file(
     filename: str = "",
-    file: Optional[Union[bytes, IO]] = None,
+    file: Optional[Union[bytes, IO[bytes]]] = None,
     encoding: Optional[str] = None,
 ) -> Tuple[str, str]:
     """Extracts document metadata from a plain text document."""

@@ -7,11 +7,16 @@ import os
 import pathlib
 import re
 from abc import ABC
+from copy import deepcopy
 from dataclasses import dataclass
 from functools import wraps
 from typing import Any, Callable, Dict, List, Optional, Tuple, TypedDict, Union, cast
 
-from unstructured.documents.coordinates import CoordinateSystem
+from unstructured.documents.coordinates import (
+    TYPE_TO_COORDINATE_SYSTEM_MAP,
+    CoordinateSystem,
+    RelativeCoordinateSystem,
+)
 
 
 class NoID(ABC):
@@ -35,6 +40,69 @@ class DataSourceMetadata:
         return {key: value for key, value in self.__dict__.items() if value is not None}
 
 
+@dataclass
+class CoordinatesMetadata:
+    """Metadata fields that pertain to the coordinates of the element."""
+
+    points: Tuple[Tuple[float, float], ...]
+    system: CoordinateSystem
+
+    def __init__(self, points, system):
+        # Both `points` and `system` must be present; one is not meaningful without the other.
+        if (points is None and system is not None) or (points is not None and system is None):
+            raise ValueError(
+                "Coordinates points should not exist without coordinates system and vice versa.",
+            )
+        self.points = points
+        self.system = system
+
+    def __eq__(self, other):
+        if other is None:
+            return False
+        return all(
+            [
+                (self.points == other.points),
+                (self.system == other.system),
+            ],
+        )
+
+    def to_dict(self):
+        return {
+            "points": self.points,
+            "system": None if self.system is None else str(self.system.__class__.__name__),
+            "layout_width": None if self.system is None else self.system.width,
+            "layout_height": None if self.system is None else self.system.height,
+        }
+
+    @classmethod
+    def from_dict(cls, input_dict):
+        # `input_dict` may contain a tuple of tuples or a list of lists
+        def convert_to_tuple_of_tuples(sequence_of_sequences):
+            subsequences = []
+            for seq in sequence_of_sequences:
+                if isinstance(seq, list):
+                    subsequences.append(tuple(seq))
+                elif isinstance(seq, tuple):
+                    subsequences.append(seq)
+            return tuple(subsequences)
+
+        input_points = input_dict.get("points", None)
+        points = convert_to_tuple_of_tuples(input_points) if input_points is not None else None
+        width = input_dict.get("layout_width", None)
+        height = input_dict.get("layout_height", None)
+        system = None
+        if input_dict.get("system", None) == "RelativeCoordinateSystem":
+            system = RelativeCoordinateSystem()
+        elif (
+            width is not None
+            and height is not None
+            and input_dict.get("system", None) in TYPE_TO_COORDINATE_SYSTEM_MAP
+        ):
+            system = TYPE_TO_COORDINATE_SYSTEM_MAP[input_dict["system"]](width, height)
+        constructor_args = {"points": points, "system": system}
+        return cls(**constructor_args)
+
+
 class RegexMetadata(TypedDict):
     """Metadata that is extracted from a document element via regex."""
 
@@ -45,6 +113,7 @@ class RegexMetadata(TypedDict):
 
 @dataclass
 class ElementMetadata:
+    coordinates: Optional[CoordinatesMetadata] = None
     data_source: Optional[DataSourceMetadata] = None
     filename: Optional[str] = None
     file_directory: Optional[str] = None
@@ -90,11 +159,18 @@ class ElementMetadata:
             _dict.pop("regex_metadata")
         if self.data_source:
             _dict["data_source"] = cast(DataSourceMetadata, self.data_source).to_dict()
+        if self.coordinates:
+            _dict["coordinates"] = cast(CoordinatesMetadata, self.coordinates).to_dict()
         return _dict
 
     @classmethod
     def from_dict(cls, input_dict):
-        return cls(**input_dict)
+        constructor_args = deepcopy(input_dict)
+        if constructor_args.get("coordinates", None) is not None:
+            constructor_args["coordinates"] = CoordinatesMetadata.from_dict(
+                constructor_args["coordinates"],
+            )
+        return cls(**constructor_args)
 
     def merge(self, other: ElementMetadata):
         for k in self.__dict__:
@@ -191,25 +267,24 @@ class Element(ABC):
         coordinate_system: Optional[CoordinateSystem] = None,
         metadata: Optional[ElementMetadata] = None,
     ):
-        metadata = metadata if metadata else ElementMetadata()
+        if metadata is None:
+            metadata = ElementMetadata()
         self.id: Union[str, NoID] = element_id
-        self.coordinates: Optional[Tuple[Tuple[float, float], ...]] = coordinates
-        self._coordinate_system = coordinate_system
-        self.metadata = metadata
+        coordinates_metadata = (
+            None
+            if coordinates is None and coordinate_system is None
+            else (
+                CoordinatesMetadata(
+                    points=coordinates,
+                    system=coordinate_system,
+                )
+            )
+        )
+        self.metadata = metadata.merge(ElementMetadata(coordinates=coordinates_metadata))
 
     def to_dict(self) -> dict:
         return {
             "type": None,
-            "coordinates": self.coordinates,
-            "coordinate_system": None
-            if self._coordinate_system is None
-            else str(self._coordinate_system.__class__.__name__),
-            "layout_width": None
-            if self._coordinate_system is None
-            else self._coordinate_system.width,
-            "layout_height": None
-            if self._coordinate_system is None
-            else self._coordinate_system.height,
             "element_id": self.id,
             "metadata": self.metadata.to_dict(),
         }
@@ -221,31 +296,20 @@ class Element(ABC):
     ) -> Optional[Tuple[Tuple[Union[int, float], Union[int, float]], ...]]:
         """Converts the element location coordinates to a new coordinate system. If inplace is true,
         changes the coordinates in place and updates the coordinate system."""
-        if self._coordinate_system is None or self.coordinates is None:
+        if self.metadata.coordinates is None:
             return None
         new_coordinates = tuple(
-            self._coordinate_system.convert_coordinates_to_new_system(
+            self.metadata.coordinates.system.convert_coordinates_to_new_system(
                 new_system=new_system,
                 x=x,
                 y=y,
             )
-            for x, y in self.coordinates
+            for x, y in self.metadata.coordinates.points
         )
         if in_place:
-            self.coordinates = new_coordinates
-            self._coordinate_system = new_system
+            self.metadata.coordinates.points = new_coordinates
+            self.metadata.coordinates.system = new_system
         return new_coordinates
-
-    @property
-    def coordinate_system(self) -> Optional[Dict[str, Optional[Union[str, int, float]]]]:
-        if self._coordinate_system is None:
-            return None
-        return {
-            "name": self._coordinate_system.__class__.__name__,
-            "description": self._coordinate_system.__doc__,
-            "layout_width": self._coordinate_system.width,
-            "layout_height": self._coordinate_system.height,
-        }
 
 
 class CheckBox(Element):
@@ -270,7 +334,9 @@ class CheckBox(Element):
         self.checked: bool = checked
 
     def __eq__(self, other):
-        return (self.checked == other.checked) and (self.coordinates) == (other.coordinates)
+        return (self.checked == other.checked) and (
+            self.metadata.coordinates == other.metadata.coordinates
+        )
 
     def to_dict(self) -> dict:
         out = super().to_dict()
@@ -314,8 +380,7 @@ class Text(Element):
         return all(
             [
                 (self.text == other.text),
-                (self.coordinates == other.coordinates),
-                (self._coordinate_system == other._coordinate_system),
+                (self.metadata.coordinates == other.metadata.coordinates),
                 (self.category == other.category),
             ],
         )

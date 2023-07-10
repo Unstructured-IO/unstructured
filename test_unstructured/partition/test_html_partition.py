@@ -12,6 +12,10 @@ from unstructured.partition.html import partition_html
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
+EXPECTED_OUTPUT_LANGUAGE_DE = [
+    Title(text="Jahresabschluss zum Geschäftsjahr vom 01.01.2020 bis zum 31.12.2020"),
+]
+
 
 def test_partition_html_from_filename():
     directory = os.path.join(DIRECTORY, "..", "..", "example-docs")
@@ -21,6 +25,14 @@ def test_partition_html_from_filename():
     assert "PageBreak" not in [elem.category for elem in elements]
     assert elements[0].metadata.filename == "example-10k.html"
     assert elements[0].metadata.file_directory == directory
+
+
+def test_partition_html_from_filename_with_metadata_filename():
+    directory = os.path.join(DIRECTORY, "..", "..", "example-docs")
+    filename = os.path.join(directory, "example-10k.html")
+    elements = partition_html(filename=filename, metadata_filename="test")
+    assert len(elements) > 0
+    assert all(element.metadata.filename == "test" for element in elements)
 
 
 @pytest.mark.parametrize(
@@ -39,12 +51,16 @@ def test_partition_html_from_filename_raises_encoding_error(filename, encoding, 
 
 @pytest.mark.parametrize(
     "filename",
-    ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html"],
+    ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html", "fake-html-lang-de.html"],
 )
 def test_partition_html_from_filename_default_encoding(filename):
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-    elements = partition_html(filename=filename)
+    filename_path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+    elements = partition_html(filename=filename_path)
     assert len(elements) > 0
+    for element in elements:
+        assert element.metadata.filename == filename
+    if filename == "fake-html-lang-de.html":
+        assert elements == EXPECTED_OUTPUT_LANGUAGE_DE
 
 
 def test_partition_html_from_filename_metadata_false():
@@ -60,6 +76,8 @@ def test_partition_html_with_page_breaks():
     elements = partition_html(filename=filename, include_page_breaks=True)
     assert "PageBreak" in [elem.category for elem in elements]
     assert len(elements) > 0
+    for element in elements:
+        assert element.metadata.filename == "example-10k.html"
 
 
 def test_partition_html_from_file():
@@ -67,6 +85,17 @@ def test_partition_html_from_file():
     with open(filename) as f:
         elements = partition_html(file=f)
     assert len(elements) > 0
+    for element in elements:
+        assert element.metadata.filename is None
+
+
+def test_partition_html_from_file_with_metadata_filename():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "example-10k.html")
+    with open(filename) as f:
+        elements = partition_html(file=f, metadata_filename="test")
+    assert len(elements) > 0
+    for element in elements:
+        assert element.metadata.filename == "test"
 
 
 @pytest.mark.parametrize(
@@ -79,19 +108,21 @@ def test_partition_html_from_file():
 def test_partition_html_from_file_raises_encoding_error(filename, encoding, error):
     with pytest.raises(error):
         filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-        with open(filename) as f:
+        with open(filename) as f, pytest.raises(UnicodeEncodeError):
             partition_html(file=f, encoding=encoding)
 
 
 @pytest.mark.parametrize(
     "filename",
-    ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html"],
+    ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html", "fake-html-lang-de.html"],
 )
 def test_partition_html_from_file_default_encoding(filename):
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
     with open(filename) as f:
         elements = partition_html(file=f)
     assert len(elements) > 0
+    if filename == "fake-html-lang-de.html":
+        assert elements == EXPECTED_OUTPUT_LANGUAGE_DE
 
 
 @pytest.mark.parametrize(
@@ -110,13 +141,15 @@ def test_partition_html_from_file_rb_raises_encoding_error(filename, encoding, e
 
 @pytest.mark.parametrize(
     "filename",
-    ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html"],
+    ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html", "fake-html-lang-de.html"],
 )
 def test_partition_html_from_file_rb_default_encoding(filename):
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
     with open(filename, "rb") as f:
         elements = partition_html(file=f)
     assert len(elements) > 0
+    if filename == "fake-html-lang-de.html":
+        assert elements == EXPECTED_OUTPUT_LANGUAGE_DE
 
 
 def test_partition_html_from_text():
@@ -276,3 +309,13 @@ def test_partition_html_with_pre_tag():
     assert isinstance(elements[0], Title)
     assert elements[0].metadata.filetype == "text/html"
     assert elements[0].metadata.filename == "fake-html-pre.htm"
+
+
+def test_partition_html_from_filename_exclude_metadata():
+    directory = os.path.join(DIRECTORY, "..", "..", "example-docs")
+    filename = os.path.join(directory, "example-10k.html")
+    elements = partition_html(filename=filename, include_metadata=False)
+    assert len(elements) > 0
+    assert "PageBreak" not in [elem.category for elem in elements]
+    assert elements[0].metadata.filename is None
+    assert elements[0].metadata.file_directory is None
