@@ -1,4 +1,4 @@
-name: Ahmet - Ingest Test Fixtures Update PR py 3.10 trial
+name: Ingest Test Fixtures Update PR
 
 on:
   push:
