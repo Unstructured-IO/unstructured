@@ -4,8 +4,5 @@
 #
 #    pip-compile requirements/ingest-slack.in
 #
---extra-index-url https://pypi.ngc.nvidia.com
---trusted-host pypi.ngc.nvidia.com
-
 slack-sdk==3.21.3
     # via -r requirements/ingest-slack.in

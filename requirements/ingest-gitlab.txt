@@ -4,9 +4,6 @@
 #
 #    pip-compile requirements/ingest-gitlab.in
 #
---extra-index-url https://pypi.ngc.nvidia.com
---trusted-host pypi.ngc.nvidia.com
-
 certifi==2023.5.7
     # via
     #   -c requirements/base.txt

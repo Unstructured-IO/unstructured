@@ -4,9 +4,6 @@
 #
 #    pip-compile requirements/ingest-s3.in
 #
---extra-index-url https://pypi.ngc.nvidia.com
---trusted-host pypi.ngc.nvidia.com
-
 aiobotocore==2.5.2
     # via s3fs
 aiohttp==3.8.4

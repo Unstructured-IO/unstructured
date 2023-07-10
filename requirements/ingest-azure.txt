@@ -4,9 +4,6 @@
 #
 #    pip-compile requirements/ingest-azure.in
 #
---extra-index-url https://pypi.ngc.nvidia.com
---trusted-host pypi.ngc.nvidia.com
-
 adlfs==2023.4.0
     # via -r requirements/ingest-azure.in
 aiohttp==3.8.4
@@ -17,7 +14,7 @@ async-timeout==4.0.2
     # via aiohttp
 attrs==23.1.0
     # via aiohttp
-azure-core==1.27.1
+azure-core==1.28.0
     # via
     #   adlfs
     #   azure-identity

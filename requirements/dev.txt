@@ -4,9 +4,6 @@
 #
 #    pip-compile requirements/dev.in
 #
---extra-index-url https://pypi.ngc.nvidia.com
---trusted-host pypi.ngc.nvidia.com
-
 anyio==3.7.1
     # via jupyter-server
 appnope==0.1.3

@@ -4,9 +4,6 @@
 #
 #    pip-compile requirements/test.in
 #
---extra-index-url https://pypi.ngc.nvidia.com
---trusted-host pypi.ngc.nvidia.com
-
 appdirs==1.4.4
     # via label-studio-tools
 black==23.3.0

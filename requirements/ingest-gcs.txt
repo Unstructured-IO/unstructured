@@ -4,9 +4,6 @@
 #
 #    pip-compile requirements/ingest-gcs.in
 #
---extra-index-url https://pypi.ngc.nvidia.com
---trusted-host pypi.ngc.nvidia.com
-
 aiohttp==3.8.4
     # via gcsfs
 aiosignal==1.3.1

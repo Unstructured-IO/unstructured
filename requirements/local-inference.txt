@@ -4,9 +4,6 @@
 #
 #    pip-compile requirements/local-inference.in
 #
---extra-index-url https://pypi.ngc.nvidia.com
---trusted-host pypi.ngc.nvidia.com
-
 antlr4-python3-runtime==4.9.3
     # via omegaconf
 certifi==2023.5.7
@@ -139,7 +136,9 @@ pycparser==2.21
     #   -c requirements/base.txt
     #   cffi
 pyparsing==3.0.9
-    # via matplotlib
+    # via
+    #   -c requirements/constraints.in
+    #   matplotlib
 pytesseract==0.3.10
     # via layoutparser
 python-dateutil==2.8.2
