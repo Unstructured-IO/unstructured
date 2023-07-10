@@ -4,6 +4,9 @@
 #
 #    pip-compile requirements/ingest-azure.in
 #
+--extra-index-url https://pypi.ngc.nvidia.com
+--trusted-host pypi.ngc.nvidia.com
+
 adlfs==2023.4.0
     # via -r requirements/ingest-azure.in
 aiohttp==3.8.4
@@ -35,7 +38,7 @@ cffi==1.15.1
     #   -c requirements/base.txt
     #   azure-datalake-store
     #   cryptography
-charset-normalizer==3.1.0
+charset-normalizer==3.2.0
     # via
     #   -c requirements/base.txt
     #   aiohttp
@@ -93,9 +96,8 @@ six==1.16.0
     #   azure-core
     #   azure-identity
     #   isodate
-typing-extensions==4.7.0
+typing-extensions==4.7.1
     # via
-    #   -c requirements/base.txt
     #   azure-core
     #   azure-storage-blob
 urllib3==1.26.16

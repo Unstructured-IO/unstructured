@@ -4,6 +4,9 @@
 #
 #    pip-compile requirements/ingest-wikipedia.in
 #
+--extra-index-url https://pypi.ngc.nvidia.com
+--trusted-host pypi.ngc.nvidia.com
+
 beautifulsoup4==4.12.2
     # via wikipedia
 certifi==2023.5.7
@@ -11,7 +14,7 @@ certifi==2023.5.7
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   requests
-charset-normalizer==3.1.0
+charset-normalizer==3.2.0
     # via
     #   -c requirements/base.txt
     #   requests

@@ -4,7 +4,10 @@
 #
 #    pip-compile requirements/ingest-s3.in
 #
-aiobotocore==2.5.1
+--extra-index-url https://pypi.ngc.nvidia.com
+--trusted-host pypi.ngc.nvidia.com
+
+aiobotocore==2.5.2
     # via s3fs
 aiohttp==3.8.4
     # via
@@ -20,7 +23,7 @@ attrs==23.1.0
     # via aiohttp
 botocore==1.29.161
     # via aiobotocore
-charset-normalizer==3.1.0
+charset-normalizer==3.2.0
     # via
     #   -c requirements/base.txt
     #   aiohttp
@@ -52,18 +55,14 @@ six==1.16.0
     # via
     #   -c requirements/base.txt
     #   python-dateutil
-typing-extensions==4.7.0
-    # via
-    #   -c requirements/base.txt
-    #   aioitertools
+typing-extensions==4.7.1
+    # via aioitertools
 urllib3==1.26.16
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   botocore
-wrapt==1.14.1
-    # via
-    #   -c requirements/base.txt
-    #   aiobotocore
+wrapt==1.15.0
+    # via aiobotocore
 yarl==1.9.2
     # via aiohttp

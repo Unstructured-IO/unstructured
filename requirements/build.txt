@@ -4,6 +4,9 @@
 #
 #    pip-compile requirements/build.in
 #
+--extra-index-url https://pypi.ngc.nvidia.com
+--trusted-host pypi.ngc.nvidia.com
+
 alabaster==0.7.13
     # via sphinx
 babel==2.12.1
@@ -14,7 +17,7 @@ certifi==2023.5.7
     # via
     #   -r requirements/build.in
     #   requests
-charset-normalizer==3.1.0
+charset-normalizer==3.2.0
     # via requests
 docutils==0.18.1
     # via
@@ -26,7 +29,7 @@ idna==3.4
     # via requests
 imagesize==1.4.1
     # via sphinx
-importlib-metadata==6.7.0
+importlib-metadata==6.8.0
     # via sphinx
 jinja2==3.1.2
     # via sphinx
@@ -53,7 +56,7 @@ sphinx==6.2.1
     #   sphinx-basic-ng
     #   sphinx-rtd-theme
     #   sphinxcontrib-jquery
-sphinx-basic-ng==1.0.0b1
+sphinx-basic-ng==1.0.0b2
     # via furo
 sphinx-rtd-theme==1.2.2
     # via -r requirements/build.in
@@ -73,5 +76,5 @@ sphinxcontrib-serializinghtml==1.1.5
     # via sphinx
 urllib3==2.0.3
     # via requests
-zipp==3.15.0
+zipp==3.16.0
     # via importlib-metadata

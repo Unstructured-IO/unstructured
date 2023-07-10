@@ -4,21 +4,24 @@
 #
 #    pip-compile requirements/ingest-google-drive.in
 #
+--extra-index-url https://pypi.ngc.nvidia.com
+--trusted-host pypi.ngc.nvidia.com
+
 cachetools==5.3.1
     # via google-auth
 certifi==2023.5.7
     # via
-    #   -c base.txt
-    #   -c constraints.in
+    #   -c requirements/base.txt
+    #   -c requirements/constraints.in
     #   requests
-charset-normalizer==3.1.0
+charset-normalizer==3.2.0
     # via
-    #   -c base.txt
+    #   -c requirements/base.txt
     #   requests
 google-api-core==2.11.1
     # via google-api-python-client
 google-api-python-client==2.92.0
-    # via -r ingest-google-drive.in
+    # via -r requirements/ingest-google-drive.in
 google-auth==2.21.0
     # via
     #   google-api-core
@@ -34,11 +37,11 @@ httplib2==0.22.0
     #   google-auth-httplib2
 idna==3.4
     # via
-    #   -c base.txt
+    #   -c requirements/base.txt
     #   requests
 protobuf==3.20.3
     # via
-    #   -c constraints.in
+    #   -c requirements/constraints.in
     #   google-api-core
     #   googleapis-common-protos
 pyasn1==0.5.0
@@ -51,20 +54,20 @@ pyparsing==3.1.0
     # via httplib2
 requests==2.31.0
     # via
-    #   -c base.txt
+    #   -c requirements/base.txt
     #   google-api-core
 rsa==4.9
     # via google-auth
 six==1.16.0
     # via
-    #   -c base.txt
+    #   -c requirements/base.txt
     #   google-auth
     #   google-auth-httplib2
 uritemplate==4.1.1
     # via google-api-python-client
 urllib3==1.26.16
     # via
-    #   -c base.txt
-    #   -c constraints.in
+    #   -c requirements/base.txt
+    #   -c requirements/constraints.in
     #   google-auth
     #   requests
