@@ -1,6 +1,8 @@
-## 0.8.1-dev0
+## 0.8.1-dev1
 
 ### Enhancements
+
+* Add support for Python 3.11
 
 ### Features
 
