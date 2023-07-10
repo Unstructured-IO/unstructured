@@ -148,8 +148,8 @@ def partition_docx(
 
     document_contains_pagebreaks = _element_contains_pagebreak(document._element)
     page_number = 1 if document_contains_pagebreaks else None
-
     section = 0
+    is_list = False
     for element_item in document.element.body:
         if element_item.tag.endswith("tbl"):
             table = document.tables[table_index]
@@ -165,14 +165,17 @@ def partition_docx(
                 elements.append(element)
             table_index += 1
         elif element_item.tag.endswith("p"):
+            if "<w:numPr>" in element_item.xml:
+                is_list = True
             paragraph = docx.text.paragraph.Paragraph(element_item, document)
-            para_element: Optional[Text] = _paragraph_to_element(paragraph)
+            para_element: Optional[Text] = _paragraph_to_element(paragraph, is_list)
             if para_element is not None:
                 para_element.metadata = ElementMetadata(
                     filename=metadata_filename,
                     page_number=page_number,
                 )
                 elements.append(para_element)
+            is_list = False
         elif element_item.tag.endswith("sectPr"):
             if len(headers_and_footers) > section:
                 footers = headers_and_footers[section][1]
@@ -191,7 +194,10 @@ def partition_docx(
     return elements
 
 
-def _paragraph_to_element(paragraph: docx.text.paragraph.Paragraph) -> Optional[Text]:
+def _paragraph_to_element(
+    paragraph: docx.text.paragraph.Paragraph,
+    is_list=False,
+) -> Optional[Text]:
     """Converts a docx Paragraph object into the appropriate unstructured document element.
     If the paragraph style is "Normal" or unknown, we try to predict the element type from the
     raw text."""
@@ -205,7 +211,9 @@ def _paragraph_to_element(paragraph: docx.text.paragraph.Paragraph) -> Optional[
 
     # NOTE(robinson) - The "Normal" style name will return None since it's in the mapping.
     # Unknown style names will also return None
-    if element_class is None:
+    if is_list:
+        return _text_to_element(text, is_list)
+    elif element_class is None:
         return _text_to_element(text)
     else:
         return element_class(text)
@@ -227,9 +235,9 @@ def _element_contains_pagebreak(element) -> bool:
     return False
 
 
-def _text_to_element(text: str) -> Optional[Text]:
+def _text_to_element(text: str, is_list=False) -> Optional[Text]:
     """Converts raw text into an unstructured Text element."""
-    if is_bulleted_text(text):
+    if is_bulleted_text(text) or is_list:
         clean_text = clean_bullets(text).strip()
         return ListItem(text=clean_bullets(text)) if clean_text else None
 

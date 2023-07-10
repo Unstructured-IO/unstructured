@@ -1,4 +1,4 @@
-## 0.8.1-dev0
+## 0.8.1-dev1
 
 ### Enhancements
 
@@ -7,6 +7,7 @@
 ### Fixes
 
 * Fixed `auto` strategy detected scanned document as having extractable text and using `fast` strategy, resulting in no output.
+* Fix list detection in MS Word documents.
 
 ## 0.8.0
 
