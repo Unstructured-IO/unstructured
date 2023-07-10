@@ -14,7 +14,7 @@ cffi==1.15.1
     #   -c requirements/base.txt
     #   cryptography
     #   pynacl
-charset-normalizer==3.1.0
+charset-normalizer==3.2.0
     # via
     #   -c requirements/base.txt
     #   requests
@@ -23,9 +23,7 @@ cryptography==41.0.1
     #   -c requirements/base.txt
     #   pyjwt
 deprecated==1.2.14
-    # via
-    #   -c requirements/base.txt
-    #   pygithub
+    # via pygithub
 idna==3.4
     # via
     #   -c requirements/base.txt
@@ -49,7 +47,5 @@ urllib3==1.26.16
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   requests
-wrapt==1.14.1
-    # via
-    #   -c requirements/base.txt
-    #   deprecated
+wrapt==1.15.0
+    # via deprecated

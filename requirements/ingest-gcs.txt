@@ -19,7 +19,7 @@ certifi==2023.5.7
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   requests
-charset-normalizer==3.1.0
+charset-normalizer==3.2.0
     # via
     #   -c requirements/base.txt
     #   aiohttp
@@ -49,7 +49,7 @@ google-auth==2.21.0
     #   google-cloud-storage
 google-auth-oauthlib==1.0.0
     # via gcsfs
-google-cloud-core==2.3.2
+google-cloud-core==2.3.3
     # via google-cloud-storage
 google-cloud-storage==2.10.0
     # via gcsfs

@@ -2,6 +2,8 @@
 
 ### Enhancements
 
+* Add support for Python 3.11
+
 ### Features
 
 ### Fixes
