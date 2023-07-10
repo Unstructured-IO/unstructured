@@ -3,11 +3,12 @@ import os
 import pytest
 
 from unstructured.documents.elements import NarrativeText, Title
-from unstructured.staging import argilla
 
 is_in_docker = os.path.exists("/.dockerenv")
 if not is_in_docker:
     import argilla as rg
+
+    from unstructured.staging import argilla
 
     @pytest.fixture()
     def elements():
