@@ -45,7 +45,6 @@ class ConfluenceFileMeta:
 
 @dataclass
 class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
-    # TODO: update docstring
     """Class encapsulating fetching a doc and writing processed results (but not
     doing the processing!).
 
@@ -113,11 +112,6 @@ class ConfluenceConnector(ConnectorCleanupMixin, BaseConnector):
             password=self.config.api_token,
         )
 
-        # TODO: should we put this as a connection-check?
-        # try:
-        # confluence.get_all_spaces(start=0, limit=1, expand=None)
-        # except: ...
-
     @requires_dependencies(["atlassian"])
     def _get_all_space_ids(self, start: int = 0, limit: int = 500, expand=None):
         """Fetches all spaces in a confluence domain"""
@@ -157,12 +151,6 @@ class ConfluenceConnector(ConnectorCleanupMixin, BaseConnector):
         ]
         return doc_ids_flattened
 
-    # TODO: different document subset selection options:
-    # 1-get all docs in all spaces
-    # 2-get all docs in just one space
-    # 3-get some docs using a list of (space name | id) pairs
-
-    # TODO for version 2: processing comments, images, doctext
     def get_ingest_docs(self):
         """Fetches all documents in a confluence space"""
         doc_ids = self._get_all_doc_ids_in_all_spaces()
