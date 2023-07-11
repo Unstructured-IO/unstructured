@@ -1,4 +1,4 @@
-## 0.8.1-dev2
+## 0.8.1
 
 ### Enhancements
 
@@ -12,6 +12,7 @@
 
 * Fixed `auto` strategy detected scanned document as having extractable text and using `fast` strategy, resulting in no output.
 * Fix list detection in MS Word documents.
+* Don't instantiate an element with a coordinate system when there isn't a way to get its location data.
 
 ## 0.8.0
 
