@@ -22,6 +22,7 @@ def partition_msg(
     metadata_filename: Optional[str] = None,
     process_attachments: bool = False,
     attachment_partitioner: Optional[Callable] = None,
+    min_partition: Optional[int] = 0,
     **kwargs,
 ) -> List[Element]:
     """Partitions a MSFT Outlook .msg file
@@ -42,6 +43,9 @@ def partition_msg(
         processing the content of the email itself.
     attachment_partitioner
         The partitioning function to use to process attachments.
+    min_partition
+        The minimum number of characters to include in a partition. Only applies if 
+        processing text/plain content.
     """
     exactly_one(filename=filename, file=file)
 
@@ -57,7 +61,7 @@ def partition_msg(
     if "<html>" in text or "</div>" in text:
         elements = partition_html(text=text)
     else:
-        elements = partition_text(text=text, max_partition=max_partition)
+        elements = partition_text(text=text, max_partition=max_partition, min_partition=min_partition)
 
     metadata = build_msg_metadata(msg_obj, metadata_filename or filename)
     for element in elements:

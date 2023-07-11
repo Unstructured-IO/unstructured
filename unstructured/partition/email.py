@@ -232,6 +232,7 @@ def partition_email(
     metadata_filename: Optional[str] = None,
     process_attachments: bool = False,
     attachment_partitioner: Optional[Callable] = None,
+    min_partition: Optional[int] = 0,
     **kwargs,
 ) -> List[Element]:
     """Partitions an .eml documents into its constituent elements.
@@ -258,6 +259,9 @@ def partition_email(
         processing the content of the email itself.
     attachment_partitioner
         The partitioning function to use to process attachments.
+    min_partition
+        The minimum number of characters to include in a partition. Only applies if 
+        processing the text/plain content.
     """
     if content_source not in VALID_CONTENT_SOURCES:
         raise ValueError(
@@ -348,6 +352,7 @@ def partition_email(
             encoding=encoding,
             max_partition=max_partition,
             metadata_filename=metadata_filename or filename,
+            min_partition=min_partition,
         )
 
     for idx, element in enumerate(elements):

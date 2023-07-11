@@ -26,7 +26,11 @@ from unstructured.partition.text_type import (
 )
 
 
-def split_by_paragraph(content: str, max_partition: Optional[int] = 1500) -> List[str]:
+def split_by_paragraph(
+    content: str, 
+    max_partition: Optional[int] = 1500, 
+    min_partition: Optional[int] = 0,
+) -> List[str]:
     paragraphs = re.split(PARAGRAPH_PATTERN, content)
     if max_partition is None:
         return paragraphs
@@ -34,7 +38,11 @@ def split_by_paragraph(content: str, max_partition: Optional[int] = 1500) -> Lis
     split_paragraphs = []
     for paragraph in paragraphs:
         split_paragraphs.extend(
-            _split_to_fit_max_content(paragraph, max_partition=max_partition),
+            _split_to_fit_max_min_content(
+                paragraph, 
+                max_partition=max_partition, 
+                min_partition=min_partition
+            ),
         )
     return split_paragraphs
 
@@ -48,9 +56,13 @@ def _split_content_size_n(content: str, n: int) -> List[str]:
     return segments
 
 
-def _split_to_fit_max_content(content: str, max_partition: int = 1500) -> List[str]:
+def _split_to_fit_max_min_content(
+    content: str, 
+    max_partition: Optional[int] = 1500, 
+    min_partition: Optional[int] = 0,
+) -> List[str]:
     """Splits a section of content so that all of the elements fit into the
-    max partition window."""
+    max/min partition window."""
     sentences = sent_tokenize(content)
     num_sentences = len(sentences)
 
@@ -58,15 +70,17 @@ def _split_to_fit_max_content(content: str, max_partition: int = 1500) -> List[s
     chunk = ""
 
     for i, sentence in enumerate(sentences):
+        
         if len(sentence) > max_partition:
             chunks.extend(_split_content_size_n(sentence, n=max_partition))
 
         if len(chunk + " " + sentence) > max_partition:
-            chunks.append(chunk)
+            if len(chunk) >= min_partition:
+                chunks.append(chunk)
             chunk = sentence
         else:
             chunk += " " + sentence
-            if i == num_sentences - 1:
+            if i == num_sentences - 1 and len(chunk) <= min_partition:
                 chunks.append(chunk)
 
     return chunks
@@ -83,6 +97,7 @@ def partition_text(
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
     max_partition: Optional[int] = 1500,
+    min_partition: Optional[int] = 0,
     **kwargs,
 ) -> List[Element]:
     """Partitions an .txt documents into its constituent elements.
@@ -104,6 +119,8 @@ def partition_text(
     max_partition
         The maximum number of characters to include in a partition. If None is passed,
         no maximum is applied.
+    min_partition
+        The minimum number of characters to include in a partition.
     """
     if text is not None and text.strip() == "" and not file and not filename:
         return []
@@ -125,7 +142,7 @@ def partition_text(
     else:
         file_text = group_broken_paragraphs(file_text)
 
-    file_content = split_by_paragraph(file_text, max_partition=max_partition)
+    file_content = split_by_paragraph(file_text, max_partition=max_partition, min_partition=min_partition)
 
     elements: List[Element] = []
     metadata = (
