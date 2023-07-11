@@ -1,3 +1,14 @@
+## 0.8.2-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* Adds `.txt`, `.text`, and `.tab` to list of extensions to check if file
+  has a `text/plain` MIME type.
+
 ## 0.8.1
 
 ### Enhancements
