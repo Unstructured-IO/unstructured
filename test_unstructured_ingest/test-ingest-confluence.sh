@@ -10,7 +10,7 @@ OUTPUT_FOLDER_NAME=confluence
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
-if [ -z "$CONFLUENCE_USER_EMAIL" ] or [ -z "$CONFLUENCE_API_TOKEN" ]; then
+if [ -z "$CONFLUENCE_USER_EMAIL" ] || [ -z "$CONFLUENCE_API_TOKEN" ]; then
    echo "Skipping Confluence ingest test because the CONFLUENCE_USER_EMAIL or CONFLUENCE_API_TOKEN env var is not set."
    exit 0
 fi
