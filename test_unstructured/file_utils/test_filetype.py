@@ -4,6 +4,9 @@ import zipfile
 
 import magic
 import pytest
+from PIL import Image
+from unstructured_inference.inference import layout
+from unstructured_inference.inference.layoutelement import LocationlessLayoutElement
 
 from unstructured.file_utils import filetype
 from unstructured.file_utils.filetype import (
@@ -12,6 +15,7 @@ from unstructured.file_utils.filetype import (
     _is_text_file_a_csv,
     _is_text_file_a_json,
     detect_filetype,
+    document_to_element_list,
 )
 
 FILE_DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -24,6 +28,29 @@ DOCX_MIME_TYPES = [
 XLSX_MIME_TYPES = [
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 ]
+
+
+class MockPageLayout(layout.PageLayout):
+    def __init__(self, number: int, image: Image):
+        self.number = number
+        self.image = image
+
+    @property
+    def elements(self):
+        return [
+            LocationlessLayoutElement(
+                type="Headline",
+                text="Charlie Brown and the Great Pumpkin",
+            ),
+        ]
+
+
+class MockDocumentLayout(layout.DocumentLayout):
+    @property
+    def pages(self):
+        return [
+            MockPageLayout(number=1, image=Image.new("1", (1, 1))),
+        ]
 
 
 @pytest.mark.parametrize(
@@ -436,3 +463,9 @@ def test_detect_filetype_skips_escape_commas_for_csv(tmpdir):
 
     with open(filename, "rb") as f:
         assert detect_filetype(file=f) == FileType.CSV
+
+
+def test_document_to_element_list_omits_coord_system_when_coord_points_absent():
+    layout_elem_absent_coordinates = MockDocumentLayout()
+    elements = document_to_element_list(layout_elem_absent_coordinates)
+    assert elements[0].metadata.coordinates is None
