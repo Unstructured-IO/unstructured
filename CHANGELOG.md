@@ -1,3 +1,13 @@
+## 0.8.2-dev0
+
+### Enhancements
+
+### Features
+
+* Add Confluence connector for ingest cli to pull the body text from all documents from all spaces in a confluence domain.
+
+### Fixes
+
 ## 0.8.1
 
 ### Enhancements
@@ -5,8 +15,6 @@
 * Add support for Python 3.11
 
 ### Features
-
-* Add Confluence connector for ingest cli to pull the body text from all documents from all spaces in a confluence domain.
 
 ### Fixes
 
