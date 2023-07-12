@@ -1,7 +1,8 @@
 import re
-from typing import IO, Callable, List, Optional
+from typing import IO, Callable, List, Optional, Tuple
 
 from unstructured.cleaners.core import clean_bullets, group_broken_paragraphs
+from unstructured.documents.coordinates import CoordinateSystem
 from unstructured.documents.elements import (
     Address,
     Element,
@@ -143,14 +144,26 @@ def partition_text(
     return elements
 
 
-def element_from_text(text: str) -> Element:
+def element_from_text(
+    text: str,
+    coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
+    coordinate_system: Optional[CoordinateSystem] = None,
+) -> Element:
     if is_bulleted_text(text):
-        return ListItem(text=clean_bullets(text))
+        return ListItem(
+            text=clean_bullets(text),
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
+        )
     elif is_us_city_state_zip(text):
-        return Address(text=text)
+        return Address(text=text, coordinates=coordinates, coordinate_system=coordinate_system)
     elif is_possible_narrative_text(text):
-        return NarrativeText(text=text)
+        return NarrativeText(
+            text=text,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
+        )
     elif is_possible_title(text):
-        return Title(text=text)
+        return Title(text=text, coordinates=coordinates, coordinate_system=coordinate_system)
     else:
-        return Text(text=text)
+        return Text(text=text, coordinates=coordinates, coordinate_system=coordinate_system)

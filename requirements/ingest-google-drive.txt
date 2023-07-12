@@ -11,7 +11,7 @@ certifi==2023.5.7
     #   -c base.txt
     #   -c constraints.in
     #   requests
-charset-normalizer==3.1.0
+charset-normalizer==3.2.0
     # via
     #   -c base.txt
     #   requests
@@ -36,7 +36,7 @@ idna==3.4
     # via
     #   -c base.txt
     #   requests
-protobuf==3.20.3
+protobuf==4.23.4
     # via
     #   -c constraints.in
     #   google-api-core
@@ -47,8 +47,10 @@ pyasn1==0.5.0
     #   rsa
 pyasn1-modules==0.3.0
     # via google-auth
-pyparsing==3.1.0
-    # via httplib2
+pyparsing==3.0.9
+    # via
+    #   -c constraints.in
+    #   httplib2
 requests==2.31.0
     # via
     #   -c base.txt

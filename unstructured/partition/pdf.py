@@ -326,12 +326,16 @@ def _process_pdfminer_pages(
                 _text = clean_extra_whitespace(_text)
                 if _text.strip():
                     text_segments.append(_text)
-                    element = element_from_text(_text)
                     coordinate_system = PixelSpace(
                         width=width,
                         height=height,
                     )
                     points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
+                    element = element_from_text(
+                        _text,
+                        coordinates=points,
+                        coordinate_system=coordinate_system,
+                    )
                     coordinates_metadata = CoordinatesMetadata(
                         points=points,
                         system=coordinate_system,
