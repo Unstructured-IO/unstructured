@@ -356,7 +356,7 @@ def test_partition_html_from_file_metadata_date(
     mocked_last_modification_date = "2029-07-05T09:24:28"
 
     mocker.patch(
-        "unstructured.partition.html.get_last_modifile_date_from_file",
+        "unstructured.partition.html.get_last_modified_date_from_file",
         return_value=mocked_last_modification_date,
     )
 
@@ -393,7 +393,7 @@ def test_partition_html_from_file_custom_metadata_date(
     expected_last_modification_date = "2020-07-05T09:24:28"
 
     mocker.patch(
-        "unstructured.partition.html.get_last_modifile_date_from_file",
+        "unstructured.partition.html.get_last_modified_date_from_file",
         return_value=mocked_last_modification_date,
     )
 
