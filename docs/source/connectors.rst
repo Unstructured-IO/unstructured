@@ -16,7 +16,9 @@ To run this example, you'll first need to install the S3 dependencies as shown `
 
 For a full list of the options the CLI accepts check ``unstructured-ingest --help``.
 
-NOTE: Keep in mind that you will need to have all the appropriate extras and dependencies for the file types of the documents contained in your data storage platform. You can find more information about this in the `installation guide <https://unstructured-io.github.io/unstructured/installing.html>`_.
+You can also use connectors with the ``unstructured`` API. For this you'll need to use the ``--partition-by-api`` flag and pass in your API key with ``--api-key``. Additionaly, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
+
+NOTE: Keep in mind that you will need to have all the appropriate extras and dependencies for the file types of the documents contained in your data storage platform if you're running this locally. You can find more information about this in the `installation guide <https://unstructured-io.github.io/unstructured/installing.html>`_.
 
 
 ``Azure Connector``
