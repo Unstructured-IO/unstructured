@@ -16,7 +16,7 @@ from unstructured.partition.common import (
     exactly_one,
     spooled_to_bytes_io_if_needed,
     get_last_modified_date,
-    get_last_modifile_date_from_file,
+    get_last_modified_date_from_file,
 )
 
 
@@ -55,7 +55,7 @@ def partition_csv(
         last_modification_date = get_last_modified_date(filename)
 
     else:
-        last_modification_date = get_last_modifile_date_from_file(file)
+        last_modification_date = get_last_modified_date_from_file(file)
         f = spooled_to_bytes_io_if_needed(
             cast(Union[BinaryIO, SpooledTemporaryFile], file)
         )
