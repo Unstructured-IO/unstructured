@@ -37,8 +37,12 @@ def get_last_modified_date(filename: str) -> str:
     return modify_date
 
 
-def get_last_modifile_date_from_file(file: Union[IO, SpooledTemporaryFile]) -> str:
+def get_last_modifile_date_from_file(
+    file: Union[IO, SpooledTemporaryFile]
+) -> Union[str, None]:
     filename = file.name
+    if not filename:
+        return
     modify_date = get_last_modified_date(filename)
     return modify_date
 
