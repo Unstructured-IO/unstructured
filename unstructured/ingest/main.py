@@ -423,6 +423,12 @@ class MainProcess:
     help="Sharepoint site url.",
 )
 @click.option(
+    "--ms-sharepoint-folder",
+    is_flag=False,
+    default="Shared Documents",
+    help="Site document folder name. Default 'Shared Documents'",
+)
+@click.option(
     "--ms-sharepoint-pages",
     is_flag=True,
     default=False,
@@ -531,6 +537,7 @@ def main(
     ms_tenant,
     ms_user_pname,
     ms_sharepoint_site,
+    ms_sharepoint_folder,
     ms_sharepoint_pages,
     elasticsearch_url,
     elasticsearch_index_name,
@@ -889,6 +896,7 @@ def main(
                 client_id=ms_client_id,
                 client_credential=ms_client_cred,
                 site_url=ms_sharepoint_site,
+                folder=ms_sharepoint_folder,
                 process_pages=ms_sharepoint_pages,
             ),
         )

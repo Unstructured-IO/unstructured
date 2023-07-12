@@ -26,6 +26,7 @@ class SimpleSharepointConfig(BaseConnectorConfig):
     client_id: str
     client_credential: str = field(repr=False)
     site_url: str
+    folder: str
     process_pages: bool = False
     recursive: bool = False
 
@@ -53,21 +54,22 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 f"Value MUST be one of {', '.join([k for k in EXT_TO_FILETYPE if k is not None])}.",
             )
         self._set_download_paths()
+        #print(self.file.name)
+        #print(self.download_dir)
+        #print(self.download_filepath)
+        #print(self.output_dir)
+        #print(self.output_filepath)
+        #print('-------')
 
     def _set_download_paths(self) -> None:
         """Parses the folder structure from the source and creates the download and output paths"""
         download_path = Path(f"{self.standard_config.download_dir}")
         output_path = Path(f"{self.standard_config.output_dir}")
-
-        if parent_ref := self.file.get_property("parentReference", "").path.split(":")[-1]:
-            odir = parent_ref[1:] if parent_ref[0] == "/" else parent_ref
-            download_path = download_path if odir == "" else (download_path / odir).resolve()
-            output_path = output_path if odir == "" else (output_path / odir).resolve()
-
-        self.download_dir = download_path
-        self.download_filepath = (download_path / self.file.name).resolve()
-        oname = f"{self.file.name[:-len(self.ext)]}.json"
-        self.output_dir = output_path
+        parent = Path(self.file.serverRelativeUrl[1:])
+        self.download_dir = (download_path / parent.parent).resolve()
+        self.download_filepath = (download_path / parent).resolve()
+        oname = f"{str(parent)[:-len(self.ext)]}.json"
+        self.output_dir = (output_path / parent.parent).resolve()
         self.output_filepath = (output_path / oname).resolve()
 
     @property
@@ -116,7 +118,7 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
         from office365.runtime.auth.client_credential import ClientCredential
         from office365.sharepoint.client_context import ClientContext
 
-        self.client = ClientContext(self.site_url).with_credentials(
+        self.client = ClientContext(self.config.site_url).with_credentials(
             ClientCredential(self.config.client_id, self.config.client_credential)
         )
 
@@ -129,18 +131,15 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
             files += self._list_objects(f, recursive)
         return files
 
-    def _list_pages(self) -> List["File"]:
-        pages = self.client.site_pages.pages.get().execute_query()
-        output = []
-        for page in pages:
-            file = self.client.web.get_file_by_server_relative_path(page.file_name)
-            output.append(file)
-        return output
+    def _list_pages(self) -> List["SitePage"]:
+        pass
 
     def initialize(self):
         pass
 
     def get_ingest_docs(self):
-        drive = self.client.users[self.config.user_pname].drive.get().execute_query()
-        files = self._list_objects(drive.root, self.config.recursive)
+        root_folder = self.client.web.get_folder_by_server_relative_path(self.config.folder)
+        files = self._list_files(root_folder, self.config.recursive)
+        #if self.config.process_pages:
+        #    files += self._list_pages()
         return [SharepointIngestDoc(self.standard_config, self.config, f) for f in files]
