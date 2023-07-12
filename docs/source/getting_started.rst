@@ -114,7 +114,7 @@ Tables
 ######
 
 For ``Table`` elements, the raw text of the table will be stored in the ``text`` attribute for the Element, and HTML representation
-of the table will be available in the element metadat under ``element.metadata.text_as_html``. For most documents where
+of the table will be available in the element metadata under ``element.metadata.text_as_html``. For most documents where
 table extraction is available, the ``partition`` function will extract tables automatically if they are present.
 For PDFs and images, table extraction requires a relatively expensive call to a table recognition model, and so for those
 document types table extraction is an option you need to enable. If you would like to extract tables for PDFs or images,
