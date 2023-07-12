@@ -2,8 +2,6 @@ Connectors
 ==========
 Connect your preprocessing pipeline with your favorite data storage platforms, and batch process all your documents using the provided CLI to store structured outputs locally on your filesystem. 
 
-To use any connector you'll need to first install ``local-inference``. You can find more information about this in the `installation guide <https://unstructured-io.github.io/unstructured/installing.html>`_.
-
 You can then use any connector with the ``unstructured-ingest`` command in the terminal. For example, the following command processes all the documents in S3 in the utic-dev-tech-fixtures bucket with a prefix of small-pdf-set/
 
 .. code:: shell
@@ -17,6 +15,8 @@ You can then use any connector with the ``unstructured-ingest`` command in the t
 To run this example, you'll first need to install the S3 dependencies as shown `here <https://unstructured-io.github.io/unstructured/connectors.html#s3-connector>`_.
 
 For a full list of the options the CLI accepts check ``unstructured-ingest --help``.
+
+NOTE: Keep in mind that you will need to have all the appropriate extras and dependencies for the file types of the documents contained in your data storage platform. You can find more information about this in the `installation guide <https://unstructured-io.github.io/unstructured/installing.html>`_.
 
 
 ``Azure Connector``
@@ -52,9 +52,9 @@ You can preprocess documents stored in Elasticsearch by using the `Elasticsearch
 To install all dependencies for this connector run: ``pip install unstructured[elasticsearch]``
 
 
-``GCS Connector``
+``Google Cloud Storage Connector``
 ------------------
-You can batch load the files you have stored in GCS with the `GCS Connector <https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/connector/gcs.py>`_. You can find an example of how to use it `here <https://github.com/Unstructured-IO/unstructured/blob/f5541c7b0b1e2fc47ec88da5e02080d60e1441e2/examples/ingest/google_cloud_storage/ingest.sh>`_.
+You can batch load the files you have stored in Google Cloud Storage with the `GCS Connector <https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/connector/gcs.py>`_. You can find an example of how to use it `here <https://github.com/Unstructured-IO/unstructured/blob/f5541c7b0b1e2fc47ec88da5e02080d60e1441e2/examples/ingest/google_cloud_storage/ingest.sh>`_.
 
 To install all dependencies for this connector run: ``pip install unstructured[gcs]``
 
