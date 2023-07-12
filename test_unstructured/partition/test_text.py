@@ -199,6 +199,12 @@ def test_partition_text_splits_long_text(filename="example-docs/norwich-city.txt
     assert len(elements) > 0
     assert elements[0].text.startswith("Iwan Roberts")
     assert elements[-1].text.endswith("External links")
+    
+
+def test_partition_text_splits_long_text_max_partition(filename="example-docs/norwich-city.txt"):
+    elements = partition_text(filename=filename)
+    elements_max_part = partition_text(filename=filename, max_partition=500)
+    assert len(elements) < len(elements_max_part)
 
 
 def test_partition_text_doesnt_get_page_breaks():

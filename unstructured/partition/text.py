@@ -1,5 +1,6 @@
 import re
 from typing import IO, Callable, List, Optional, Tuple
+import textwrap
 
 from unstructured.cleaners.core import clean_bullets, group_broken_paragraphs
 from unstructured.documents.coordinates import CoordinateSystem
@@ -38,7 +39,7 @@ def split_by_paragraph(
     split_paragraphs = []
     for paragraph in paragraphs:
         split_paragraphs.extend(
-            _split_to_fit_max_min_content(
+            _split_content_to_fit_min_max(
                 paragraph, 
                 max_partition=max_partition, 
                 min_partition=min_partition
@@ -50,13 +51,30 @@ def split_by_paragraph(
 def _split_content_size_n(content: str, n: int) -> List[str]:
     """Splits a string into chunks that are at most size n."""
     segments = []
-    for i in range(0, len(content), n):
-        segment = content[i : i + n]  # noqa: E203
-        segments.append(segment)
+    if len(content) < n*2:
+        segments = split_content_in_half(content)
+    else:
+        segments = textwrap.wrap(content, width=n)
     return segments
 
 
-def _split_to_fit_max_min_content(
+def split_content_in_half(content: str) -> List[str]:
+    """Splits a string in half without breaking apart any words."""
+    mid = len(content) // 2
+    left = content[:mid].rstrip()
+    right = content[mid:].lstrip()
+    if not right or content[mid] == ' ':
+        return left, right
+    elif not left or content[mid-1] == ' ':
+        return left.rstrip(), right.lstrip()
+    else:
+        i = mid
+        while content[i] != ' ':
+            i += 1
+        return [content[:i].rstrip(), content[i:].lstrip()]
+
+
+def _split_content_to_fit_min_max(
     content: str, 
     max_partition: Optional[int] = 1500, 
     min_partition: Optional[int] = 0,
@@ -64,24 +82,38 @@ def _split_to_fit_max_min_content(
     """Splits a section of content so that all of the elements fit into the
     max/min partition window."""
     sentences = sent_tokenize(content)
-    num_sentences = len(sentences)
 
     chunks = []
-    chunk = ""
-
-    for i, sentence in enumerate(sentences):
-        
+    tmp = ""
+    for sentence in sentences:
         if len(sentence) > max_partition:
-            chunks.extend(_split_content_size_n(sentence, n=max_partition))
+            if tmp:
+                chunks.append(tmp)
+                tmp = ""
+            segments = (_split_content_size_n(sentence, n=max_partition))
+            chunks.extend(segments[:-1])
+            tmp = segments[-1]
+        elif len(sentence) >= min_partition:
+            if len(tmp + " " + sentence) > max_partition:
+                if len(tmp) >= min_partition:
+                    chunks.append(tmp)
+                    tmp = ""
+                elif not tmp:
+                    chunks.append(sentence)
+                else:
+                    chunks.extend(_split_content_size_n(tmp + " " + sentence, n=max_partition))
+            else:
+                if not tmp:
+                    chunks.append(sentence)
+                else:
+                    chunks.extend([tmp, sentence])
+                    tmp = ""
+        else: 
+            tmp += " " + sentence
+            tmp = tmp.strip()
 
-        if len(chunk + " " + sentence) > max_partition:
-            if len(chunk) >= min_partition:
-                chunks.append(chunk)
-            chunk = sentence
-        else:
-            chunk += " " + sentence
-            if i == num_sentences - 1 and len(chunk) <= min_partition:
-                chunks.append(chunk)
+    if tmp:
+        chunks.append(tmp)
 
     return chunks
 
@@ -124,6 +156,9 @@ def partition_text(
     """
     if text is not None and text.strip() == "" and not file and not filename:
         return []
+    
+    if min_partition > max_partition or min_partition < 0 or max_partition < 0:
+        raise ValueError("Invalid values for min_partition and/or max_partition.")
 
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text)
