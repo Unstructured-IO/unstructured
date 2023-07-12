@@ -644,7 +644,7 @@ def main(
         elif ms_sharepoint_site:
             hashed_dir_name = hashlib.sha256(
                 f"{ms_sharepoint_site}_{ms_sharepoint_folder}".encode("utf-8"),
-            )            
+            )
         else:
             raise ValueError(
                 "This connector does not support saving downloads to ~/.cache/  ,"
