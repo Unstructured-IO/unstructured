@@ -1,3 +1,16 @@
+## 0.8.1-dev0
+
+### Enhancements
+ 
+* set the file's current position to the beginning after reading the file in `convert_to_bytes`
+
+### Features
+
+### Fixes
+
+* Add functionality to write images to computer storage temporarily instead of keeping them in memory for `ocr_only` strategy 
+* Add functionality to convert a PDF in small chunks of pages at a time for `ocr_only` strategy
+
 ## 0.8.1
 
 ### Enhancements
