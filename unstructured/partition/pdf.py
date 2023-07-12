@@ -1,5 +1,6 @@
 import os
 import re
+import tempfile
 import warnings
 from tempfile import SpooledTemporaryFile
 from typing import BinaryIO, List, Optional, Union, cast
@@ -28,6 +29,7 @@ from unstructured.file_utils.filetype import (
 )
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.partition.common import (
+    convert_to_bytes,
     exactly_one,
     spooled_to_bytes_io_if_needed,
 )
@@ -371,6 +373,7 @@ def _partition_pdf_or_image_with_ocr(
     ocr_languages: str = "eng",
     is_image: bool = False,
     max_partition: Optional[int] = 1500,
+    chunk_size: int = 100,
 ):
     """Partitions and image or PDF using Tesseract OCR. For PDFs, each page is converted
     to an image prior to processing."""
@@ -386,12 +389,37 @@ def _partition_pdf_or_image_with_ocr(
     else:
         elements = []
         if file is not None:
-            document = pdf2image.convert_from_bytes(file.read())  # type: ignore
-            file.seek(0)  # type: ignore
+            f_bytes = convert_to_bytes(file)
+            if not isinstance(file, bytes):
+                file.seek(0)
+            info = pdf2image.pdfinfo_from_bytes(f_bytes)
         else:
-            document = pdf2image.convert_from_path(filename)
+            f_bytes = None
+            info = pdf2image.pdfinfo_from_path(filename)
 
-        for i, image in enumerate(document):
+        # Convert a PDF in small chunks of pages at a time (e.g. 1-10, 11-20... and so on)
+        total_pages = info["Pages"]
+        images = []
+        for start_page in range(1, total_pages + 1, chunk_size):
+            end_page = min(start_page + chunk_size - 1, total_pages)
+            with tempfile.TemporaryDirectory() as tmpdir:
+                if f_bytes is not None:
+                    chunk_images = pdf2image.convert_from_bytes(
+                        f_bytes,
+                        first_page=start_page,
+                        last_page=end_page,
+                        output_folder=tmpdir,
+                    )
+                else:
+                    chunk_images = pdf2image.convert_from_path(
+                        filename,
+                        first_page=start_page,
+                        last_page=end_page,
+                        output_folder=tmpdir,
+                    )
+                images += chunk_images
+
+        for i, image in enumerate(images):
             metadata = ElementMetadata(filename=filename, page_number=i + 1)
             text = pytesseract.image_to_string(image, config=f"-l '{ocr_languages}'")
 
