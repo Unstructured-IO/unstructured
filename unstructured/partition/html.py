@@ -16,7 +16,7 @@ from unstructured.file_utils.filetype import (
 from unstructured.partition.common import (
     exactly_one,
     get_last_modified_date,
-    get_last_modifile_date_from_file,
+    get_last_modified_date_from_file,
 )
 
 
@@ -89,7 +89,7 @@ def partition_html(
         )
 
     elif file is not None:
-        last_modification_date = get_last_modifile_date_from_file(file)
+        last_modification_date = get_last_modified_date_from_file(file)
         _, file_text = read_txt_file(file=file, encoding=encoding)
         document = HTMLDocument.from_string(
             file_text,
@@ -131,6 +131,7 @@ def convert_and_partition_html(
     file: Optional[IO[bytes]] = None,
     include_page_breaks: bool = False,
     metadata_filename: Optional[str] = None,
+    last_modication_date: Optional[datetime] = None,
 ) -> List[Element]:
     """Converts a document to HTML and then partitions it using partition_html. Works with
     any file format support by pandoc.
@@ -147,6 +148,8 @@ def convert_and_partition_html(
         If True, the output will include page breaks if the filetype supports it.
     metadata_filename
         The filename to use in element metadata.
+    last_modication_date
+        The last modified date for the document.
     """
     html_text = convert_file_to_html_text(
         source_format=source_format, filename=filename, file=file
@@ -158,4 +161,5 @@ def convert_and_partition_html(
         include_page_breaks=include_page_breaks,
         encoding="unicode",
         metadata_filename=metadata_filename,
+        metadata_date=last_modication_date,
     )
