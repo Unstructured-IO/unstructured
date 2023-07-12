@@ -11,13 +11,13 @@ certifi==2023.5.7
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   requests
-charset-normalizer==3.1.0
+charset-normalizer==3.2.0
     # via
     #   -c requirements/base.txt
     #   requests
 google-api-core==2.11.1
     # via google-api-python-client
-google-api-python-client==2.91.0
+google-api-python-client==2.92.0
     # via -r requirements/ingest-google-drive.in
 google-auth==2.21.0
     # via
@@ -47,8 +47,10 @@ pyasn1==0.5.0
     #   rsa
 pyasn1-modules==0.3.0
     # via google-auth
-pyparsing==3.1.0
-    # via httplib2
+pyparsing==3.0.9
+    # via
+    #   -c requirements/constraints.in
+    #   httplib2
 requests==2.31.0
     # via
     #   -c requirements/base.txt

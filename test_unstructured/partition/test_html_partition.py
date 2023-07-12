@@ -12,6 +12,10 @@ from unstructured.partition.html import partition_html
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
+EXPECTED_OUTPUT_LANGUAGE_DE = [
+    Title(text="Jahresabschluss zum Geschäftsjahr vom 01.01.2020 bis zum 31.12.2020"),
+]
+
 
 def test_partition_html_from_filename():
     directory = os.path.join(DIRECTORY, "..", "..", "example-docs")
@@ -47,7 +51,7 @@ def test_partition_html_from_filename_raises_encoding_error(filename, encoding, 
 
 @pytest.mark.parametrize(
     "filename",
-    ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html"],
+    ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html", "fake-html-lang-de.html"],
 )
 def test_partition_html_from_filename_default_encoding(filename):
     filename_path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
@@ -55,6 +59,8 @@ def test_partition_html_from_filename_default_encoding(filename):
     assert len(elements) > 0
     for element in elements:
         assert element.metadata.filename == filename
+    if filename == "fake-html-lang-de.html":
+        assert elements == EXPECTED_OUTPUT_LANGUAGE_DE
 
 
 def test_partition_html_from_filename_metadata_false():
@@ -108,13 +114,15 @@ def test_partition_html_from_file_raises_encoding_error(filename, encoding, erro
 
 @pytest.mark.parametrize(
     "filename",
-    ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html"],
+    ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html", "fake-html-lang-de.html"],
 )
 def test_partition_html_from_file_default_encoding(filename):
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
     with open(filename) as f:
         elements = partition_html(file=f)
     assert len(elements) > 0
+    if filename == "fake-html-lang-de.html":
+        assert elements == EXPECTED_OUTPUT_LANGUAGE_DE
 
 
 @pytest.mark.parametrize(
@@ -133,13 +141,15 @@ def test_partition_html_from_file_rb_raises_encoding_error(filename, encoding, e
 
 @pytest.mark.parametrize(
     "filename",
-    ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html"],
+    ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html", "fake-html-lang-de.html"],
 )
 def test_partition_html_from_file_rb_default_encoding(filename):
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
     with open(filename, "rb") as f:
         elements = partition_html(file=f)
     assert len(elements) > 0
+    if filename == "fake-html-lang-de.html":
+        assert elements == EXPECTED_OUTPUT_LANGUAGE_DE
 
 
 def test_partition_html_from_text():

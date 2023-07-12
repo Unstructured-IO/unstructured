@@ -12,6 +12,7 @@ from unstructured.file_utils.encoding import (
     COMMON_ENCODINGS,
     format_encoding_str,
     read_txt_file,
+    validate_encoding,
 )
 from unstructured.partition.common import (
     convert_to_bytes,
@@ -208,7 +209,7 @@ def parse_email(
     encoding = None
     charsets = msg.get_charsets() or []
     for charset in charsets:
-        if charset and charset.strip():
+        if charset and charset.strip() and validate_encoding(charset):
             encoding = charset
             break
 

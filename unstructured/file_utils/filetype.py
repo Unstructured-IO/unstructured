@@ -451,7 +451,7 @@ def document_to_element_list(
     for i, page in enumerate(document.pages):
         page_elements: List[Element] = []
         for layout_element in page.elements:
-            if hasattr(page, "image"):
+            if hasattr(page, "image") and hasattr(layout_element, "coordinates"):
                 image_format = page.image.format
                 coordinate_system = PixelSpace(width=page.image.width, height=page.image.height)
             else:

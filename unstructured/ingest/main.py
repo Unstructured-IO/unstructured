@@ -97,7 +97,7 @@ class MainProcess:
         self.cleanup()
 
 
-@click.command()
+@click.command()  # type: ignore
 @click.pass_context
 @click.option(
     "--max-docs",
@@ -953,4 +953,4 @@ def main(
 
 
 if __name__ == "__main__":
-    main()
+    main()  # type: ignore

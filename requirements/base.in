@@ -1,5 +1,4 @@
 -c "constraints.in"
-argilla
 chardet
 filetype
 lxml

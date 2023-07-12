@@ -117,6 +117,13 @@ def test_partition_email_from_filename_with_metadata_filename():
     assert all(element.metadata.filename == "test" for element in elements)
 
 
+def test_partition_email_from_filename_malformed_encoding():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email-malformed-encoding.eml")
+    elements = partition_email(filename=filename)
+    assert len(elements) > 0
+    assert elements == EXPECTED_OUTPUT
+
+
 @pytest.mark.parametrize(
     ("filename", "expected_output"),
     [
