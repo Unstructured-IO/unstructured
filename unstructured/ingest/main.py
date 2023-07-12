@@ -394,7 +394,7 @@ class MainProcess:
 @click.option(
     "--ms-client-id",
     default=None,
-    help="Microsoft app client ID",
+    help="Microsoft/Sharepoint app client ID",
 )
 @click.option(
     "--ms-client-cred",
@@ -641,6 +641,10 @@ def main(
             hashed_dir_name = hashlib.sha256(
                 f"{elasticsearch_url}_{elasticsearch_index_name}".encode("utf-8"),
             )
+        elif ms_sharepoint_site:
+            hashed_dir_name = hashlib.sha256(
+                f"{ms_sharepoint_site}_{ms_sharepoint_folder}".encode("utf-8"),
+            )            
         else:
             raise ValueError(
                 "This connector does not support saving downloads to ~/.cache/  ,"
