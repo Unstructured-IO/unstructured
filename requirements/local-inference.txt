@@ -8,25 +8,27 @@ antlr4-python3-runtime==4.9.3
     # via omegaconf
 certifi==2023.5.7
     # via
-    #   -c requirements/base.txt
-    #   -c requirements/constraints.in
+    #   -c base.txt
+    #   -c constraints.in
     #   requests
 cffi==1.15.1
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   cryptography
 charset-normalizer==3.2.0
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   pdfminer-six
     #   requests
+cmake==3.26.4
+    # via triton
 coloredlogs==15.0.1
     # via onnxruntime
 contourpy==1.1.0
     # via matplotlib
 cryptography==41.0.1
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   pdfminer-six
 cycler==0.11.0
     # via matplotlib
@@ -37,6 +39,7 @@ filelock==3.12.2
     #   huggingface-hub
     #   torch
     #   transformers
+    #   triton
 flatbuffers==23.5.26
     # via onnxruntime
 fonttools==4.40.0
@@ -52,10 +55,8 @@ humanfriendly==10.0
     # via coloredlogs
 idna==3.4
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   requests
-importlib-resources==6.0.0
-    # via matplotlib
 iopath==0.1.10
     # via layoutparser
 jinja2==3.1.2
@@ -64,6 +65,8 @@ kiwisolver==1.4.4
     # via matplotlib
 layoutparser[layoutmodels,tesseract]==0.3.4
     # via unstructured-inference
+lit==16.0.6
+    # via triton
 markupsafe==2.1.3
     # via jinja2
 matplotlib==3.7.2
@@ -74,7 +77,7 @@ networkx==3.1
     # via torch
 numpy==1.24.4
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   contourpy
     #   layoutparser
     #   matplotlib
@@ -85,6 +88,31 @@ numpy==1.24.4
     #   scipy
     #   torchvision
     #   transformers
+nvidia-cublas-cu11==11.10.3.66
+    # via
+    #   nvidia-cudnn-cu11
+    #   nvidia-cusolver-cu11
+    #   torch
+nvidia-cuda-cupti-cu11==11.7.101
+    # via torch
+nvidia-cuda-nvrtc-cu11==11.7.99
+    # via torch
+nvidia-cuda-runtime-cu11==11.7.99
+    # via torch
+nvidia-cudnn-cu11==8.5.0.96
+    # via torch
+nvidia-cufft-cu11==10.9.0.58
+    # via torch
+nvidia-curand-cu11==10.2.10.91
+    # via torch
+nvidia-cusolver-cu11==11.4.0.1
+    # via torch
+nvidia-cusparse-cu11==11.7.4.91
+    # via torch
+nvidia-nccl-cu11==2.14.3
+    # via torch
+nvidia-nvtx-cu11==11.7.91
+    # via torch
 omegaconf==2.3.0
     # via effdet
 onnxruntime==1.15.1
@@ -102,21 +130,21 @@ packaging==23.1
     #   transformers
 pandas==2.0.3
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   layoutparser
 pdf2image==1.16.3
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   layoutparser
 pdfminer-six==20221105
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   pdfplumber
 pdfplumber==0.9.0
     # via layoutparser
 pillow==10.0.0
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   layoutparser
     #   matplotlib
     #   pdf2image
@@ -125,32 +153,32 @@ pillow==10.0.0
     #   torchvision
 portalocker==2.7.0
     # via iopath
-protobuf==3.20.3
+protobuf==4.23.4
     # via
-    #   -c requirements/constraints.in
+    #   -c constraints.in
     #   onnxruntime
 pycocotools==2.0.6
     # via effdet
 pycparser==2.21
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   cffi
 pyparsing==3.0.9
     # via
-    #   -c requirements/constraints.in
+    #   -c constraints.in
     #   matplotlib
 pytesseract==0.3.10
     # via layoutparser
 python-dateutil==2.8.2
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   matplotlib
     #   pandas
 python-multipart==0.0.6
     # via unstructured-inference
 pytz==2023.3
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   pandas
 pyyaml==6.0
     # via
@@ -161,11 +189,11 @@ pyyaml==6.0
     #   transformers
 regex==2023.6.3
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   transformers
 requests==2.31.0
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   huggingface-hub
     #   torchvision
     #   transformers
@@ -177,7 +205,7 @@ scipy==1.10.1
     # via layoutparser
 six==1.16.0
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   python-dateutil
 sympy==1.12
     # via
@@ -193,6 +221,7 @@ torch==2.0.1
     #   layoutparser
     #   timm
     #   torchvision
+    #   triton
 torchvision==0.15.2
     # via
     #   effdet
@@ -200,12 +229,14 @@ torchvision==0.15.2
     #   timm
 tqdm==4.65.0
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   huggingface-hub
     #   iopath
     #   transformers
 transformers==4.30.2
     # via unstructured-inference
+triton==2.0.0
+    # via torch
 typing-extensions==4.7.1
     # via
     #   huggingface-hub
@@ -213,18 +244,23 @@ typing-extensions==4.7.1
     #   torch
 tzdata==2023.3
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   pandas
 unstructured-inference==0.5.5
-    # via -r requirements/local-inference.in
+    # via -r local-inference.in
 urllib3==1.26.16
     # via
-    #   -c requirements/base.txt
-    #   -c requirements/constraints.in
+    #   -c base.txt
+    #   -c constraints.in
     #   requests
 wand==0.6.11
     # via pdfplumber
-zipp==3.16.0
+wheel==0.40.0
     # via
-    #   -c requirements/base.txt
-    #   importlib-resources
+    #   -c constraints.in
+    #   nvidia-cublas-cu11
+    #   nvidia-cuda-cupti-cu11
+    #   nvidia-cuda-runtime-cu11
+    #   nvidia-curand-cu11
+    #   nvidia-cusparse-cu11
+    #   nvidia-nvtx-cu11
