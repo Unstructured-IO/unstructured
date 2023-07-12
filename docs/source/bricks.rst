@@ -751,8 +751,7 @@ You can disable ``max_partition`` by setting it to ``None``.
 ---------------------
 
 ``partition_via_api`` allows users to partition documents using the hosted Unstructured API.
-The API partitions documents using the automatic ``partition`` function. Currently, the API
-supports all filetypes except for RTF and EPUBs.
+The API partitions documents using the automatic ``partition`` function.
 This is helpful if you're hosting
 the API yourself or running it locally through a container. You can pass in your API key
 using the ``api_key`` kwarg. You can use the ``content_type`` kwarg to pass in the MIME
