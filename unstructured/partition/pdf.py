@@ -390,8 +390,6 @@ def _partition_pdf_or_image_with_ocr(
         elements = []
         if file is not None:
             f_bytes = convert_to_bytes(file)
-            if not isinstance(file, bytes):
-                file.seek(0)
             info = pdf2image.pdfinfo_from_bytes(f_bytes)
         else:
             f_bytes = None
