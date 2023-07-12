@@ -771,7 +771,7 @@ type for the file. If you do not explicitly pass it, the MIME type will be infer
 
 
 You can pass additional settings such as ``strategy``, ``ocr_languages`` and ``encoding`` to the
-API through optional ``request_kwargs``. These options get added to the request body when the
+API through optional kwargs. These options get added to the request body when the
 API is called.
 See `the API documentation <https://api.unstructured.io/general/docs>`_ for a full list of
 settings supported by the API.
