@@ -179,6 +179,7 @@ EXT_TO_FILETYPE = {
     ".odt": FileType.ODT,
     ".csv": FileType.CSV,
     ".tsv": FileType.TSV,
+    ".tab": FileType.TSV,
     # NOTE(robinson) - for now we are treating code files as plain text
     ".js": FileType.TXT,
     ".py": FileType.TXT,
@@ -195,6 +196,21 @@ EXT_TO_FILETYPE = {
     ".go": FileType.TXT,
     None: FileType.UNK,
 }
+
+PLAIN_TEXT_EXTENSIONS = [
+    ".txt",
+    ".text",
+    ".eml",
+    ".md",
+    ".rtf",
+    ".html",
+    ".rst",
+    ".org",
+    ".csv",
+    ".tsv",
+    ".tab",
+    ".json",
+]
 
 
 def _resolve_symlink(file_path):
@@ -284,7 +300,7 @@ def detect_filetype(
             encoding = "utf-8"
         formatted_encoding = format_encoding_str(encoding)
 
-        if extension in [".eml", ".md", ".rtf", ".html", ".rst", ".org", ".csv", ".tsv", ".json"]:
+        if extension in PLAIN_TEXT_EXTENSIONS:
             return EXT_TO_FILETYPE.get(extension)
 
         # NOTE(crag): for older versions of the OS libmagic package, such as is currently
