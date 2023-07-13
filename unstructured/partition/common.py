@@ -51,6 +51,7 @@ def normalize_layout_element(
     layout_element: Union[
         "LayoutElement", "LocationlessLayoutElement", Element, Dict[str, Any]
     ],
+    coordinate_system: Optional[CoordinateSystem] = None,
 ) -> Union[Element, List[Element]]:
     """Converts an unstructured_inference LayoutElement object to an unstructured Element."""
 
