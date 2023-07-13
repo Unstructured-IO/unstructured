@@ -415,7 +415,7 @@ def _partition_pdf_or_image_with_ocr(
                         output_folder=tmpdir,
                     )
                 for i, image in zip(range(start_page, end_page + 1), chunk_images):
-                    metadata = ElementMetadata(filename=filename, page_number=i + 1)
+                    metadata = ElementMetadata(filename=filename, page_number=i)
                     text = pytesseract.image_to_string(image, config=f"-l '{ocr_languages}'")
 
                     _elements = partition_text(text=text, max_partition=max_partition)
