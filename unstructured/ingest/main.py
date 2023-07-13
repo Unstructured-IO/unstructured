@@ -392,6 +392,37 @@ class MainProcess:
     help="Number of days to go back in the history of discord channels, must be an number",
 )
 @click.option(
+    "--ms-client-id",
+    default=None,
+    help="Microsoft app client ID",
+)
+@click.option(
+    "--ms-client-cred",
+    default=None,
+    help="Microsoft App client secret",
+)
+@click.option(
+    "--ms-authority-url",
+    default="https://login.microsoftonline.com",
+    help="Authentication token provider for Microsoft apps, default is "
+    "https://login.microsoftonline.com",
+)
+@click.option(
+    "--ms-tenant",
+    default="common",
+    help="ID or domain name associated with your Azure AD instance",
+)
+@click.option(
+    "--ms-user-pname",
+    default=None,
+    help="User principal name, usually is your Azure AD email.",
+)
+@click.option(
+    "--ms-onedrive-folder",
+    default=None,
+    help="Folder to start parsing files from.",
+)
+@click.option(
     "--elasticsearch-url",
     default=None,
     help='URL to the Elasticsearch cluster, e.g. "http://localhost:9200"',
@@ -488,6 +519,12 @@ def main(
     discord_channels,
     discord_token,
     discord_period,
+    ms_client_id,
+    ms_client_cred,
+    ms_authority_url,
+    ms_tenant,
+    ms_user_pname,
+    ms_onedrive_folder,
     elasticsearch_url,
     elasticsearch_index_name,
     jq_query,
@@ -589,6 +626,10 @@ def main(
         elif elasticsearch_url:
             hashed_dir_name = hashlib.sha256(
                 f"{elasticsearch_url}_{elasticsearch_index_name}".encode("utf-8"),
+            )
+        elif ms_user_pname:
+            hashed_dir_name = hashlib.sha256(
+                f"{ms_tenant}_{ms_user_pname}".encode("utf-8"),
             )
         else:
             raise ValueError(
@@ -815,6 +856,25 @@ def main(
                 decay=biomed_decay,
             ),
         )
+    elif ms_client_id or ms_user_pname:
+        from unstructured.ingest.connector.onedrive import (
+            OneDriveConnector,
+            SimpleOneDriveConfig,
+        )
+
+        doc_connector = OneDriveConnector(  # type: ignore
+            standard_config=standard_config,
+            config=SimpleOneDriveConfig(
+                client_id=ms_client_id,
+                client_credential=ms_client_cred,
+                user_pname=ms_user_pname,
+                tenant=ms_tenant,
+                authority_url=ms_authority_url,
+                folder=ms_onedrive_folder,
+                recursive=recursive,
+            ),
+        )
+
     elif local_input_path:
         from unstructured.ingest.connector.local import (
             LocalConnector,
