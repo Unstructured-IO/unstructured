@@ -42,12 +42,13 @@ def partition_doc(
     exactly_one(filename=filename, file=file)
 
     if len(filename) > 0:
-        last_modification_date = get_last_modified_date(filename)
-
         _, filename_no_path = os.path.split(os.path.abspath(filename))
         base_filename, _ = os.path.splitext(filename_no_path)
         if not os.path.exists(filename):
             raise ValueError(f"The file {filename} does not exist.")
+        
+        last_modification_date = get_last_modified_date(filename)
+
     elif file is not None:
         tmp = tempfile.NamedTemporaryFile(delete=False)
         tmp.write(file.read())
