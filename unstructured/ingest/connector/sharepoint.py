@@ -80,13 +80,17 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return Path(self.output_filepath).resolve()
 
     def _get_page(self):
+        """Retrieves HTML content of the Sharepoint site through the CanvasContent1 and
+        LayoutWebpartsContent1"""
+
         try:
-            content_labels = ["CanvasContent1"]
+            content_labels = ["CanvasContent1", "LayoutWebpartsContent1"]
             content = self.file.listItemAllFields.select(content_labels).get().execute_query()
             pld = ""
             for label in content_labels:
-                c = content.properties.get(label, "")
-                pld = pld if not c else pld + c
+                label_content = content.properties.get(label, "")
+                if label_content:
+                    pld = pld + " " + label_content
 
             self.output_dir.mkdir(parents=True, exist_ok=True)
             if not self.download_dir.is_dir():
