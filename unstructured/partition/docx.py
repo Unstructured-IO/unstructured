@@ -315,6 +315,7 @@ def convert_and_partition_docx(
     file: Optional[IO[bytes]] = None,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
+    metadata_date: Optional[datetime] = None
 ) -> List[Element]:
     """Converts a document to DOCX and then partitions it using partition_html. Works with
     any file format support by pandoc.
@@ -361,6 +362,7 @@ def convert_and_partition_docx(
             filename=docx_filename,
             metadata_filename=metadata_filename,
             include_metadata=include_metadata,
+            metadata_date=metadata_date
         )
 
     return elements
