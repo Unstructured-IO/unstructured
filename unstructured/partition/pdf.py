@@ -96,6 +96,7 @@ def partition_pdf(
         infer_table_structure=infer_table_structure,
         ocr_languages=ocr_languages,
         max_partition=max_partition,
+        metadata_date=metadata_date,
         **kwargs,
     )
 
@@ -104,11 +105,13 @@ def extractable_elements(
     filename: str = "",
     file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
     include_page_breaks: bool = False,
+    metadata_date: Optional[datetime] = None,
 ):
     return _partition_pdf_with_pdfminer(
         filename=filename,
         file=file,
         include_page_breaks=include_page_breaks,
+        metadata_date=metadata_date,
     )
 
 
@@ -142,11 +145,15 @@ def partition_pdf_or_image(
     # that task so as routing design changes, those changes are implemented in a single
     # function.
 
+    last_modification_date = get_the_last_modification_date_pdf_or_img(
+        file=file, filename=filename
+    )
     if not is_image:
         extracted_elements = extractable_elements(
             filename=filename,
             file=spooled_to_bytes_io_if_needed(file),
             include_page_breaks=include_page_breaks,
+            metadata_date=metadata_date if metadata_date else last_modification_date,
         )
         pdf_text_extractable = any(
             isinstance(el, Text) and el.text.strip() for el in extracted_elements
@@ -154,9 +161,6 @@ def partition_pdf_or_image(
     else:
         pdf_text_extractable = False
 
-    last_modification_date = get_the_last_modification_date_pdf_or_img(
-        file=file, filename=filename
-    )
     strategy = determine_pdf_or_image_strategy(
         strategy,
         filename=filename,
@@ -177,7 +181,7 @@ def partition_pdf_or_image(
                 infer_table_structure=infer_table_structure,
                 include_page_breaks=include_page_breaks,
                 ocr_languages=ocr_languages,
-                modification_date=metadata_date
+                metadata_date=metadata_date
                 if metadata_date
                 else last_modification_date,
                 **kwargs,
@@ -196,7 +200,7 @@ def partition_pdf_or_image(
                 ocr_languages=ocr_languages,
                 is_image=is_image,
                 max_partition=max_partition,
-                modification_date=metadata_date
+                metadata_date=metadata_date
                 if metadata_date
                 else last_modification_date,
             )
@@ -211,7 +215,7 @@ def _partition_pdf_or_image_local(
     include_page_breaks: bool = False,
     ocr_languages: str = "eng",
     model_name: Optional[str] = None,
-    modification_date: Optional[str] = None,
+    metadata_date: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partition using package installed locally."""
@@ -258,7 +262,7 @@ def _partition_pdf_or_image_local(
         layout,
         include_page_breaks=include_page_breaks,
         sort=False,
-        last_modification_date=modification_date,
+        last_modification_date=metadata_date,
     )
     out_elements = []
 
@@ -285,7 +289,7 @@ def _partition_pdf_with_pdfminer(
     filename: str = "",
     file: Optional[BinaryIO] = None,
     include_page_breaks: bool = False,
-    modification_date: Optional[str] = None,
+    metadata_date: Optional[str] = None,
 ) -> List[Element]:
     """Partitions a PDF using PDFMiner instead of using a layoutmodel. Used for faster
     processing or detectron2 is not available.
@@ -303,6 +307,7 @@ def _partition_pdf_with_pdfminer(
                 fp=fp,
                 filename=filename,
                 include_page_breaks=include_page_breaks,
+                metadata_date=metadata_date,
             )
 
     elif file:
@@ -311,6 +316,7 @@ def _partition_pdf_with_pdfminer(
             fp=fp,
             filename=filename,
             include_page_breaks=include_page_breaks,
+            metadata_date=metadata_date,
         )
 
     return elements
@@ -339,6 +345,7 @@ def _process_pdfminer_pages(
     fp: BinaryIO,
     filename: str = "",
     include_page_breaks: bool = False,
+    metadata_date: Optional[datetime] = None,
 ):
     """Uses PDF miner to split a document into pages and process them."""
     elements: List[Element] = []
@@ -381,6 +388,7 @@ def _process_pdfminer_pages(
                         filename=filename,
                         page_number=i + 1,
                         coordinates=coordinates_metadata,
+                        date=metadata_date,
                     )
                     page_elements.append(element)
 
@@ -412,7 +420,7 @@ def _partition_pdf_or_image_with_ocr(
     ocr_languages: str = "eng",
     is_image: bool = False,
     max_partition: Optional[int] = 1500,
-    modification_date: Optional[str] = None,
+    metadata_date: Optional[str] = None,
 ):
     """Partitions and image or PDF using Tesseract OCR. For PDFs, each page is converted
     to an image prior to processing."""
@@ -425,7 +433,7 @@ def _partition_pdf_or_image_with_ocr(
         else:
             text = pytesseract.image_to_string(filename, config=f"-l '{ocr_languages}'")
         elements = partition_text(
-            text=text, max_partition=max_partition, modification_date=modification_date
+            text=text, max_partition=max_partition, modification_date=metadata_date
         )
     else:
         elements = []
@@ -437,7 +445,7 @@ def _partition_pdf_or_image_with_ocr(
 
         for i, image in enumerate(document):
             metadata = ElementMetadata(
-                filename=filename, page_number=i + 1, date=modification_date
+                filename=filename, page_number=i + 1, date=metadata_date
             )
             text = pytesseract.image_to_string(image, config=f"-l '{ocr_languages}'")
 
