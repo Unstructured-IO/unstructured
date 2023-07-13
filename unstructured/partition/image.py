@@ -1,5 +1,5 @@
 from typing import List, Optional
-
+from datetime import datetime
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.partition.common import exactly_one
 from unstructured.partition.pdf import partition_pdf_or_image
@@ -12,6 +12,7 @@ def partition_image(
     include_page_breaks: bool = False,
     ocr_languages: str = "eng",
     strategy: str = "auto",
+    metadata_date: Optional[datetime] = None,
     **kwargs,
 ) -> List[Element]:
     """Parses an image into a list of interpreted elements.
@@ -32,6 +33,9 @@ def partition_image(
         partition_image simply extracts the text from the document using OCR and processes it.
         The default strategy `auto` will determine when a image can be extracted using
         `ocr_only` mode, otherwise it will fall back to `hi_res`.
+    metadata_date
+        The last modified date for the document.
+
     """
     exactly_one(filename=filename, file=file)
 
@@ -42,4 +46,5 @@ def partition_image(
         include_page_breaks=include_page_breaks,
         ocr_languages=ocr_languages,
         strategy=strategy,
+        metadata_date=metadata_date,
     )
