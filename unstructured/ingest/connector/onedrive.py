@@ -153,6 +153,6 @@ class OneDriveConnector(ConnectorCleanupMixin, BaseConnector):
         if fpath := self.config.folder:
             root = root.get_by_path(fpath).get().execute_query()
             if root is None or not root.is_folder:
-                raise ValueError(f'Unable to find directory, given: {fpath}')
+                raise ValueError(f"Unable to find directory, given: {fpath}")
         files = self._list_objects(root, self.config.recursive)
         return [OneDriveIngestDoc(self.standard_config, self.config, f) for f in files]
