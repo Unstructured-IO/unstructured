@@ -21,7 +21,11 @@ EXPECTED_OUTPUT = [
 
 @pytest.mark.parametrize(
     ("filename", "encoding"),
-    [("fake-text.txt", "utf-8"), ("fake-text.txt", None), ("fake-text-utf-16-be.txt", "utf-16-be")],
+    [
+        ("fake-text.txt", "utf-8"),
+        ("fake-text.txt", None),
+        ("fake-text-utf-16-be.txt", "utf-16-be"),
+    ],
 )
 def test_partition_text_from_filename(filename, encoding):
     filename_path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
@@ -34,7 +38,9 @@ def test_partition_text_from_filename(filename, encoding):
 
 def test_partition_text_from_filename_with_metadata_filename():
     filename_path = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-text.txt")
-    elements = partition_text(filename=filename_path, encoding="utf-8", metadata_filename="test")
+    elements = partition_text(
+        filename=filename_path, encoding="utf-8", metadata_filename="test"
+    )
     assert elements == EXPECTED_OUTPUT
     for element in elements:
         assert element.metadata.filename == "test"
@@ -211,11 +217,17 @@ def test_partition_text_doesnt_get_page_breaks():
 
 @pytest.mark.parametrize(
     ("filename", "encoding"),
-    [("fake-text.txt", "utf-8"), ("fake-text.txt", None), ("fake-text-utf-16-be.txt", "utf-16-be")],
+    [
+        ("fake-text.txt", "utf-8"),
+        ("fake-text.txt", None),
+        ("fake-text-utf-16-be.txt", "utf-16-be"),
+    ],
 )
 def test_partition_text_from_filename_exclude_metadata(filename, encoding):
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-    elements = partition_text(filename=filename, encoding=encoding, include_metadata=False)
+    elements = partition_text(
+        filename=filename, encoding=encoding, include_metadata=False
+    )
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
 
@@ -226,3 +238,102 @@ def test_partition_text_from_file_exclude_metadata():
         elements = partition_text(file=f, include_metadata=False)
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
+
+
+def test_partition_text_metadata_date(
+    mocker,
+    filename="example-docs/fake-text.txt",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.text.get_last_modified_date",
+        return_value=mocked_last_modification_date,
+    )
+
+    elements = partition_text(
+        filename=filename,
+    )
+
+    assert elements[0].metadata.date == mocked_last_modification_date
+
+
+def test_partition_text_with_custom_metadata_date(
+    mocker,
+    filename="example-docs/fake-text.txt",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    expected_last_modification_date = "2020-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.text.get_last_modified_date",
+        return_value=mocked_last_modification_date,
+    )
+
+    elements = partition_text(
+        filename=filename, metadata_date=expected_last_modification_date
+    )
+
+    assert elements[0].metadata.date == expected_last_modification_date
+
+
+def test_partition_text_from_file_metadata_date(
+    mocker,
+    filename="example-docs/fake-text.txt",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.text.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+
+    with open(filename, "rb") as f:
+        elements = partition_text(
+            file=f,
+        )
+
+    assert elements[0].metadata.date == mocked_last_modification_date
+
+
+def test_partition_text_from_file_with_custom_metadata_date(
+    mocker,
+    filename="example-docs/fake-text.txt",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    expected_last_modification_date = "2020-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.text.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+
+    with open(filename, "rb") as f:
+        elements = partition_text(file=f, metadata_date=expected_last_modification_date)
+
+    assert elements[0].metadata.date == expected_last_modification_date
+
+
+def test_partition_text_from_text_metadata_date(
+    filename="example-docs/fake-text.txt",
+):
+    with open(filename) as f:
+        text = f.read()
+
+    elements = partition_text(
+        text=text,
+    )
+    assert elements[0].metadata.date == None
+
+
+def test_partition_text_from_file_with_custom_metadata_date(
+    filename="example-docs/fake-text.txt",
+):
+    expected_last_modification_date = "2020-07-05T09:24:28"
+
+    with open(filename) as f:
+        text = f.read()
+
+    elements = partition_text(text=text, metadata_date=expected_last_modification_date)
+
+    assert elements[0].metadata.date == expected_last_modification_date
