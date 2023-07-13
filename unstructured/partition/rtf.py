@@ -1,4 +1,5 @@
 from typing import IO, List, Optional
+from datetime import datetime
 
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
@@ -13,6 +14,8 @@ def partition_rtf(
     include_page_breaks: bool = False,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
+    metadata_date: Optional[datetime] = None,
+
     **kwargs,
 ) -> List[Element]:
     """Partitions an RTF document. The document is first converted to HTML and then
@@ -26,6 +29,8 @@ def partition_rtf(
         A file-like object using "rb" mode --> open(filename, "rb").
     include_page_breaks
         If True, the output will include page breaks if the filetype supports it
+    metadata_date
+        The last modified date for the document.
     """
     return convert_and_partition_html(
         source_format="rtf",
@@ -33,4 +38,5 @@ def partition_rtf(
         file=file,
         include_page_breaks=include_page_breaks,
         metadata_filename=metadata_filename,
+        metadata_date=metadata_date
     )
