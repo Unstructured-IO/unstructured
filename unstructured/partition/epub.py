@@ -36,17 +36,11 @@ def partition_epub(
         The last modified date for the document.
 
     """
-    last_modification_date = None
-    if filename:
-        last_modification_date = get_last_modified_date(filename)
-    elif file:
-        last_modification_date = get_last_modified_date_from_file(file)
-
     return convert_and_partition_html(
         source_format="epub",
         filename=filename,
         file=file,
         include_page_breaks=include_page_breaks,
         metadata_filename=metadata_filename,
-        last_modication_date=metadata_date if metadata_date else last_modification_date,
+        metadata_date=metadata_date
     )
