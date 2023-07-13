@@ -41,14 +41,14 @@ def partition_json(
 
     exactly_one(filename=filename, file=file, text=text)
 
-    last_modified_date = None
+    last_modification_date = None
     if filename is not None:
-        last_modified_date = get_last_modified_date(filename)
+        last_modification_date = get_last_modified_date(filename)
         with open(filename, encoding="utf8") as f:
             file_text = f.read()
 
     elif file is not None:
-        last_modified_date = get_last_modified_date_from_file(file)
+        last_modification_date = get_last_modified_date_from_file(file)
 
         file_content = file.read()
         if isinstance(file_content, str):
@@ -71,7 +71,7 @@ def partition_json(
         raise ValueError("Not a valid json")
 
     for element in elements:
-        element.metadata.date = metadata_date if metadata_date else last_modified_date
+        element.metadata.date = metadata_date if metadata_date else last_modification_date
     # NOTE(Nathan): in future PR, try extracting items that look like text
     #               if file_text is a valid json but not an unstructured json
 
