@@ -1,11 +1,16 @@
 import json
+from datetime import datetime
 import re
 from typing import IO, List, Optional
 
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.nlp.patterns import LIST_OF_DICTS_PATTERN
-from unstructured.partition.common import exactly_one
+from unstructured.partition.common import (
+    exactly_one,
+    get_last_modified_date,
+    get_last_modified_date_from_file,
+)
 from unstructured.staging.base import dict_to_elements
 
 
@@ -17,6 +22,7 @@ def partition_json(
     text: Optional[str] = None,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
+    metadata_date: Optional[datetime] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions an .json document into its constituent elements.
@@ -35,16 +41,22 @@ def partition_json(
 
     exactly_one(filename=filename, file=file, text=text)
 
+    last_modified_date = None
     if filename is not None:
+        last_modified_date = get_last_modified_date(filename)
         with open(filename, encoding="utf8") as f:
             file_text = f.read()
+
     elif file is not None:
+        last_modified_date = get_last_modified_date_from_file(file)
+
         file_content = file.read()
         if isinstance(file_content, str):
             file_text = file_content
         else:
             file_text = file_content.decode()
         file.seek(0)
+
     elif text is not None:
         file_text = str(text)
 
@@ -58,6 +70,8 @@ def partition_json(
     except json.JSONDecodeError:
         raise ValueError("Not a valid json")
 
+    for element in elements:
+        element.metadata.date = metadata_date if metadata_date else last_modified_date
     # NOTE(Nathan): in future PR, try extracting items that look like text
     #               if file_text is a valid json but not an unstructured json
 
