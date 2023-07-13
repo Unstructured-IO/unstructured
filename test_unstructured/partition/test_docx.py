@@ -171,6 +171,21 @@ def test_partition_docx_includes_page_breaks(filename="example-docs/handbook-1p.
         assert element.metadata.filename == "handbook-1p.docx"
 
 
+def test_partition_docx_detects_lists(filename="example-docs/example-list-items-multiple.docx"):
+    elements = partition_docx(filename=filename)
+    list_elements = []
+    narrative_elements = []
+    for element in elements:
+        if isinstance(element, ListItem):
+            list_elements.append(element)
+        else:
+            narrative_elements.append(element)
+    assert elements[-1] == ListItem(
+        "This is simply dummy text of the printing and typesetting industry.",
+    )
+    assert len(list_elements) == 10
+
+
 def test_partition_docx_from_filename_exclude_metadata(filename="example-docs/handbook-1p.docx"):
     elements = partition_docx(filename=filename, include_metadata=False)
     assert elements[0].metadata.filetype is None
