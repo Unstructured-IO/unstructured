@@ -28,6 +28,8 @@ def partition_rst(
         A file-like object using "rb" mode --> open(filename, "rb").
     include_page_breaks
         If True, the output will include page breaks if the filetype supports it.
+    metadata_date
+        The last modified date for the document.
     """
     return convert_and_partition_html(
         source_format="rst",
