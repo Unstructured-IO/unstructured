@@ -131,6 +131,8 @@ to disable SSL verification in the request.
   elements = partition(url=url)
   elements = partition(url=url, content_type="text/markdown")
 
+For more information about the ``partition`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/partition/auto.py>`_.
+
 
 ``partition_csv``
 ------------------
@@ -148,22 +150,7 @@ Examples:
   elements = partition_csv(filename="example-docs/stanley-cups.csv")
   print(elements[0].metadata.text_as_html)
 
-
-``partition_tsv``
-------------------
-
-The ``partition_tsv`` function pre-processes TSV files. The output is a single
-``Table`` element. The ``text_as_html`` attribute in the element metadata will
-contain an HTML representation of the table.
-
-Examples:
-
-.. code:: python
-
-  from unstructured.partition.tsv import partition_tsv
-
-  elements = partition_tsv(filename="example-docs/stanley-cups.tsv")
-  print(elements[0].metadata.text_as_html)
+For more information about the ``partition_csv`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/partition/csv.py>`_.
 
 
 ``partition_doc``
@@ -185,6 +172,8 @@ Examples:
   from unstructured.partition.doc import partition_doc
 
   elements = partition_doc(filename="example-docs/fake.doc")
+
+For more information about the ``partition_doc`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/partition/doc.py>`_.
 
 
 ``partition_docx``
@@ -227,6 +216,8 @@ and page breaks inserted by the Word document renderer. Some (but not all) Word 
 insert page breaks when you save the document. If your Word document renderer does not do that,
 you may not see page numbers in the output even if you see them visually when you open the
 document. If that is the case, you can try saving the document with a different renderer.
+
+For more information about the ``partition_docx`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/partition/docx.py>`_.
 
 
 ``partition_email``
@@ -288,6 +279,8 @@ workflow looks like:
     filename=filename, process_attachments=True, attachment_partitioner=partition
   )
 
+For more information about the ``partition_email`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/email.py>`_.
+
 
 ``partition_epub``
 ---------------------
@@ -305,6 +298,8 @@ Examples:
   from unstructured.partition.epub import partition_epub
 
   elements = partition_epub(filename="example-docs/winter-sports.epub")
+
+For more information about the ``partition_epub`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/epub.py>`_.
 
 
 ``partition_html``
@@ -361,6 +356,8 @@ If ``html_assemble_articles`` is ``True``, each ``<article>`` tag will be treate
 If ``html_assemble_articles`` is ``True`` and no ``<article>`` tags are present, the behavior
 is the same as ``html_assemble_articles=False``.
 
+For more information about the ``partition_html`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/html.py>`_.
+
 
 ``partition_image``
 ---------------------
@@ -416,6 +413,8 @@ have the Korean language pack for Tesseract installed on your system.
   filename = "example-docs/english-and-korean.png"
   elements = partition_image(filename=filename, ocr_languages="eng+kor", strategy="ocr_only")
 
+For more information about the ``partition_image`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/image.py>`_.
+
 
 ``partition_md``
 ---------------------
@@ -431,6 +430,8 @@ Examples:
   from unstructured.partition.md import partition_md
 
   elements = partition_md(filename="README.md")
+
+For more information about the ``partition_md`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/md.py>`_.
 
 
 ``partition_msg``
@@ -469,6 +470,8 @@ workflow looks like:
   elements = partition_msg(
     filename=filename, process_attachments=True, attachment_partitioner=partition
   )
+
+For more information about the ``partition_msg`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/msg.py>`_.
 
 
 ``partition_multiple_via_api``
@@ -509,6 +512,8 @@ Examples:
       files = [stack.enter_context(open(filename, "rb")) for filename in filenames]
       documents = partition_multiple_via_api(files=files, file_filenames=filenames)
 
+For more information about the ``partition_multiple_via_api`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/api.py>`_.
+
 
 ``partition_odt``
 ------------------
@@ -524,6 +529,28 @@ Examples:
   from unstructured.partition.odt import partition_odt
 
   elements = partition_odt(filename="example-docs/fake.odt")
+
+For more information about the ``partition_odt`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/odt.py>`_.
+
+
+``partition_org``
+---------------------
+
+The ``partition_org`` function processes Org Mode (``.org``) documents. The function
+first converts the document to HTML using ``pandoc`` and then calls ``partition_html``.
+You'll need `pandoc <https://pandoc.org/installing.html>`_ installed on your system
+to use ``partition_org``.
+
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.org import partition_org
+
+  elements = partition_org(filename="example-docs/README.org")
+
+For more information about the ``partition_org`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/org.py>`_.
 
 
 ``partition_pdf``
@@ -603,6 +630,8 @@ The default value is ``1500``, which roughly corresponds to
 the average character length for a paragraph.
 You can disable ``max_partition`` by setting it to ``None``.
 
+For more information about the ``partition_pdf`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/pdf.py>`_.
+
 
 ``partition_ppt``
 ---------------------
@@ -622,6 +651,8 @@ Examples:
   from unstructured.partition.ppt import partition_ppt
 
   elements = partition_ppt(filename="example-docs/fake-power-point.ppt")
+
+For more information about the ``partition_ppt`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/ppt.py>`_.
 
 
 ``partition_pptx``
@@ -644,23 +675,7 @@ Examples:
   with open("example-docs/fake-power-point.pptx", "rb") as f:
       elements = partition_pptx(file=f)
 
-
-``partition_org``
----------------------
-
-The ``partition_org`` function processes Org Mode (``.org``) documents. The function
-first converts the document to HTML using ``pandoc`` and then calls ``partition_html``.
-You'll need `pandoc <https://pandoc.org/installing.html>`_ installed on your system
-to use ``partition_org``.
-
-
-Examples:
-
-.. code:: python
-
-  from unstructured.partition.org import partition_org
-
-  elements = partition_org(filename="example-docs/README.org")
+For more information about the ``partition_pptx`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/pptx.py>`_.
 
 
 ``partition_rst``
@@ -680,6 +695,9 @@ Examples:
 
   elements = partition_rst(filename="example-docs/README.rst")
 
+For more information about the ``partition_rst`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/rst.py>`_.
+
+
 ``partition_rtf``
 ---------------------
 
@@ -696,6 +714,8 @@ Examples:
   from unstructured.partition.rtf import partition_rtf
 
   elements = partition_rtf(filename="example-docs/fake-doc.rtf")
+
+For more information about the ``partition_rtf`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/rtf.py>`_.
 
 
 ``partition_text``
@@ -745,6 +765,27 @@ length for a document element.
 The default value is ``1500``, which roughly corresponds to
 the average character length for a paragraph.
 You can disable ``max_partition`` by setting it to ``None``.
+
+For more information about the ``partition_text`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/text.py>`_.
+
+
+``partition_tsv``
+------------------
+
+The ``partition_tsv`` function pre-processes TSV files. The output is a single
+``Table`` element. The ``text_as_html`` attribute in the element metadata will
+contain an HTML representation of the table.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.tsv import partition_tsv
+
+  elements = partition_tsv(filename="example-docs/stanley-cups.tsv")
+  print(elements[0].metadata.text_as_html)
+
+For more information about the ``partition_tsv`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/partition/tsv.py>`_.
 
 
 ``partition_via_api``
@@ -802,6 +843,7 @@ documentation on how to run the API as a container locally.
     filename=filename, api_url="http://localhost:5000/general/v0/general"
   )
 
+For more information about the ``partition_via_api`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/api.py>`_.
 
 
 ``partition_xlsx``
@@ -820,6 +862,8 @@ Examples:
 
   elements = partition_xlsx(filename="example-docs/stanley-cups.xlsx")
   print(elements[0].metadata.text_as_html)
+
+For more information about the ``partition_xlsx`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/xlsx.py>`_.
 
 
 ``partition_xml``
@@ -846,6 +890,7 @@ The default value is ``1500``, which roughly corresponds to
 the average character length for a paragraph.
 You can disable ``max_partition`` by setting it to ``None``.
 
+For more information about the ``partition_xml`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/xml.py>`_.
 
 
 ########
@@ -931,6 +976,8 @@ Examples:
   # The output should be "Hello 😀"
   elements[0].text
 
+For more information about the ``bytes_string_to_string`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
+
 
 ``clean``
 ---------
@@ -959,6 +1006,8 @@ Examples:
   # Returns "ITEM 1A: RISK FACTORS"
   clean("ITEM 1A:     RISK-FACTORS", extra_whitespace=True, dashes=True)
 
+For more information about the ``clean`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
+
 
 ``clean_bullets``
 -----------------
@@ -978,6 +1027,8 @@ Examples:
   # Returns "I love Morse Code! ●●●"
   clean_bullets("I love Morse Code! ●●●")
 
+For more information about the ``clean_bullets`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
+
 
 ``clean_dashes``
 ----------------
@@ -994,6 +1045,8 @@ Examples:
   # Returns "ITEM 1A: RISK FACTORS"
   clean_dashes("ITEM 1A: RISK-FACTORS\u2013")
 
+For more information about the ``clean_dashes`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
+
 
 ``clean_extra_whitespace``
 --------------------------
@@ -1009,6 +1062,8 @@ Examples:
 
   # Returns "ITEM 1A: RISK FACTORS"
   clean_extra_whitespace("ITEM 1A:     RISK FACTORS\n")
+
+For more information about the ``clean_extra_whitespace`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
 
 
 ``clean_non_ascii_chars``
@@ -1027,6 +1082,8 @@ Examples:
   # Returns "This text containsnon-ascii characters!"
   clean_non_ascii_chars(text)
 
+For more information about the ``clean_non_ascii_chars`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
+
 
 ``clean_ordered_bullets``
 -------------------------
@@ -1044,6 +1101,8 @@ Examples:
 
   # Returns "This is a very important point ●"
   clean_bullets("a.b This is a very important point ●")
+
+For more information about the ``clean_ordered_bullets`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
 
 
 ``clean_postfix``
@@ -1068,6 +1127,8 @@ Examples:
   # Returns "The end!"
   clean_postfix(text, r"(END|STOP)", ignore_case=True)
 
+For more information about the ``clean_postfix`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
+
 
 ``clean_prefix``
 ----------------
@@ -1091,6 +1152,8 @@ Examples:
   # Returns "This is the best summary of all time!"
   clean_prefix(text, r"(SUMMARY|DESCRIPTION):", ignore_case=True)
 
+For more information about the ``clean_prefix`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
+
 
 ``clean_trailing_punctuation``
 -------------------------------
@@ -1105,6 +1168,8 @@ Examples:
 
   # Returns "ITEM 1A: RISK FACTORS"
   clean_trailing_punctuation("ITEM 1A: RISK FACTORS.")
+
+For more information about the ``clean_trailing_punctuation`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
 
 
 ``extract_datetimetz``
@@ -1125,6 +1190,8 @@ object from the input string.
   # Returns datetime.datetime(2021, 3, 26, 11, 4, 9, tzinfo=datetime.timezone(datetime.timedelta(seconds=43200)))
   extract_datetimetz(text)
 
+For more information about the ``extract_datetimetz`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py>`_.
+
 
 ``extract_email_address``
 --------------------------
@@ -1142,6 +1209,8 @@ addresses in the input string.
   # Returns "['me@email.com', 'you@email.com']"
   extract_email_address(text)
 
+For more information about the ``extract_email_address`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py>`_.
+
 
 ``extract_ip_address``
 ------------------------
@@ -1158,6 +1227,8 @@ returns a list of all IP address in input string.
 
   # Returns "['ba23::58b5:2236:45g2:88h2', '10.0.2.01']"
   extract_ip_address(text)
+
+For more information about the ``extract_ip_address`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py>`_.
 
 
 ``extract_ip_address_name``
@@ -1178,6 +1249,8 @@ IP addresses in the input string.
   # Returns "['ABC.DEF.local', 'ABC.DEF.local2']"
   extract_ip_address_name(text)
 
+For more information about the ``extract_ip_address_name`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py>`_.
+
 
 ``extract_mapi_id``
 ----------------------
@@ -1197,6 +1270,8 @@ containing the ``mapi id`` in the input string.
   # Returns "['32.88.5467.123']"
   extract_mapi_id(text)
 
+For more information about the ``extract_mapi_id`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py>`_.
+
 
 ``extract_ordered_bullets``
 ---------------------------
@@ -1214,6 +1289,8 @@ Examples:
 
   # Returns ("a", "1", None)
   extract_ordered_bullets("a.1 This is a very important point")
+
+For more information about the ``extract_ordered_bullets`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py>`_.
 
 
 ``extract_text_after``
@@ -1238,6 +1315,8 @@ Examples:
   # Returns "Look at me, I'm flying!"
   extract_text_after(text, r"SPEAKER \d{1}:")
 
+For more information about the ``extract_text_after`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py>`_.
+
 
 ``extract_text_before``
 -----------------------
@@ -1261,6 +1340,8 @@ Examples:
   # Returns "Here I am!"
   extract_text_before(text, r"STOP")
 
+For more information about the ``extract_text_before`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py>`_.
+
 
 ``extract_us_phone_number``
 ---------------------------
@@ -1275,6 +1356,8 @@ Examples:
 
   # Returns "215-867-5309"
   extract_us_phone_number("Phone number: 215-867-5309")
+
+For more information about the ``extract_us_phone_number`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py>`_.
 
 
 ``group_broken_paragraphs``
@@ -1319,6 +1402,8 @@ Examples:
 
   group_broken_paragraphs(text, paragraph_split=para_split_re)
 
+For more information about the ``group_broken_paragraphs`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
+
 
 ``remove_punctuation``
 --------------------------
@@ -1333,6 +1418,8 @@ Examples:
 
   # Returns "A lovely quote"
   remove_punctuation("“A lovely quote!”")
+
+For more information about the ``remove_punctuation`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
 
 
 ``replace_unicode_quotes``
@@ -1351,6 +1438,8 @@ Examples:
 
   # Returns ""‘A lovely quote!’"
   replace_unicode_characters("\x91A lovely quote!\x92")
+
+For more information about the ``replace_unicode_quotes`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
 
 
 ``translate_text``
@@ -1382,6 +1471,8 @@ Examples:
 
   # Output is "I can also translate Russian!"
   translate_text("Я тоже можно переводать русский язык!", "ru", "en")
+
+For more information about the ``translate_text`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/translate.py>`_.
 
 
 #######
@@ -1419,6 +1510,8 @@ Examples:
   elements = [Title(text="Title"), NarrativeText(text="Narrative")]
   isd_csv = convert_to_csv(elements)
 
+For more information about the ``convert_to_csv`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/base.py>`_.
+
 
 ``convert_to_dataframe``
 ------------------------
@@ -1437,6 +1530,8 @@ Examples:
   elements = [Title(text="Title"), NarrativeText(text="Narrative")]
   df = convert_to_dataframe(elements)
 
+  For more information about the ``convert_to_dataframe`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/base.py>`_.
+
 
 ``convert_to_dict``
 --------------------
@@ -1453,6 +1548,8 @@ Examples:
 
   elements = [Title(text="Title"), NarrativeText(text="Narrative")]
   isd = convert_to_dict(elements)
+
+For more information about the ``convert_to_dict`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/base.py>`_.
 
 
 ``dict_to_elements``
@@ -1475,6 +1572,8 @@ Examples:
   # [ Title(text="My Title"), NarrativeText(text="My Narrative")]
   elements = dict_to_elements(isd)
 
+For more information about the ``dict_to_elements`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/base.py>`_.
+
 
 ``stage_csv_for_prodigy``
 --------------------------
@@ -1496,6 +1595,8 @@ Examples:
   # The resulting CSV file is ready to be used with Prodigy
   with open("prodigy.csv", "w") as csv_file:
       csv_file.write(prodigy_csv_data)
+
+For more information about the ``stage_csv_for_prodigy`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/prodigy.py>`_.
 
 
 ``stage_for_argilla``
@@ -1522,6 +1623,8 @@ Examples:
   metadata = [{"type": "title"}, {"type": "text"}]
 
   argilla_dataset = stage_for_argilla(elements, "text_classification", metadata=metadata)
+
+For more information about the ``stage_for_argilla`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/argilla.py>`_.
 
 
 ``stage_for_baseplate``
@@ -1575,6 +1678,8 @@ The output will look like:
         ],
     }
 
+For more information about the ``stage_for_baseplate`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/baseplate.py>`_.
+
 
 ``stage_for_datasaur``
 --------------------------
@@ -1610,6 +1715,8 @@ Example:
   elements  = [Text("Hi my name is Matt.")]
   entities = [[{"text": "Matt", "type": "PER", "start_idx": 11, "end_idx": 15}]]
   datasaur_data = stage_for_datasaur(elements, entities)
+
+For more information about the ``stage_for_datasaur`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/datasaur.py>`_.
 
 
 ``stage_for_label_box``
@@ -1675,6 +1782,8 @@ files to an S3 bucket.
           fs.put_file(lpath=filepath, rpath=os.path.join(S3_BUCKET_NAME, upload_key))
 
   upload_staged_files()
+
+For more information about the ``stage_for_label_box`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/label_box.py>`_.
 
 
 ``stage_for_label_studio``
@@ -1838,6 +1947,8 @@ task in LabelStudio:
 See the `LabelStudio docs <https://labelstud.io/tags/labels.html>`_ for a full list of options
 for labels and annotations.
 
+For more information about the ``stage_for_label_studio`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/label_studio.py>`_.
+
 
 ``stage_for_prodigy``
 --------------------------
@@ -1878,6 +1989,8 @@ use the ``save_as_jsonl`` utility function to save the formatted data to a ``.js
 
   # The resulting jsonl file is ready to be used with Prodigy.
   save_as_jsonl(prodigy_data, "prodigy.jsonl")
+
+For more information about the ``stage_for_prodigy`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/prodigy.py>`_.
 
 
 ``stage_for_transformers``
@@ -1961,6 +2074,8 @@ The following optional keyword arguments can be specified in
 
     results = [nlp(chunk) for chunk in chunks]
 
+For more information about the ``stage_for_transformers`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/huggingface.py>`_.
+
 
 ``stage_for_weaviate``
 -----------------------
@@ -2012,6 +2127,8 @@ options for uploading data and querying data once it has been uploaded.
               uuid=generate_uuid5(data_object),
           )
 
+For more information about the ``stage_for_weaviate`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/weaviate.py>`_.
+
 
 ######################
 Other helper functions
@@ -2034,6 +2151,8 @@ Examples:
 
   # Returns True because the text includes a phone number
   contains_us_phone_number("Phone number: 215-867-5309")
+
+For more information about the ``contains_us_phone_number`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/text_type.py>`_.
 
 
 ``contains_verb``
@@ -2066,6 +2185,8 @@ Examples:
   example_2 = "A friendly dog"
   contains_verb(example_2)
 
+For more information about the ``contains_verb`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/text_type.py>`_.
+
 
 ``exceeds_cap_ratio``
 ---------------------
@@ -2092,6 +2213,8 @@ Examples:
   # Returns False because the text is more than 1% caps
   exceeds_cap_ratio(example_2, threshold=0.01)
 
+For more information about the ``exceeds_cap_ratio`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/text_type.py>`_.
+
 
 ``extract_attachment_info``
 ----------------------------
@@ -2109,6 +2232,8 @@ if specified.
   with open("example-docs/fake-email-attachment.eml", "r") as f:
       msg = email.message_from_file(f)
   attachment_info = extract_attachment_info(msg, output_dir="example-docs")
+
+For more information about the ``extract_attachment_info`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/email.py>`_.
 
 
 ``is_bulleted_text``
@@ -2128,6 +2253,8 @@ Examples:
 
   # Returns False
   is_bulleted_text("I love Morse Code! ●●●")
+
+For more information about the ``is_bulleted_text`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/text_type.py>`_.
 
 
 ``is_possible_narrative_text``
@@ -2174,6 +2301,8 @@ Examples:
   example_3 = "OLD MCDONALD HAD A FARM"
   is_possible_narrative_text(example_3, cap_threshold=1.0)
 
+For more information about the ``is_possible_narrative_text`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/text_type.py>`_.
+
 
 ``is_possible_title``
 ---------------------
@@ -2218,6 +2347,8 @@ Examples:
   example_3 = "Make sure you brush your teeth. Do it before you go to bed."
   is_possible_title(example_3, sentence_min_length=5)
 
+For more information about the ``is_possible_title`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/text_type.py>`_.
+
 
 ``sentence_count``
 ------------------
@@ -2240,3 +2371,5 @@ Examples:
 
   # Returns 1 because the first sentence in the example does not contain five word tokens.
   sentence_count(example, min_length=5)
+
+For more information about the ``sentence_count`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/text_type.py>`_.
