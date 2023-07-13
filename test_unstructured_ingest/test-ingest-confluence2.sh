@@ -4,7 +4,9 @@ set -e
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
 
-OUTPUT_FOLDER_NAME=confluence
+# Tests the scenario where --confluence-list-of-spaces has been provided, with
+# a big number of documents in the spaces.
+OUTPUT_FOLDER_NAME=confluence2
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
@@ -18,7 +20,9 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --confluence-url https://unstructured-ingest-test.atlassian.net \
     --confluence-user-email "$CONFLUENCE_USER_EMAIL" \
     --confluence-api-token "$CONFLUENCE_API_TOKEN" \
-    --confluence-num-of-spaces 3 \
+    --confluence-num-of-spaces 10 \
+    --confluence-list-of-spaces testteamsp1 \
+    --confluence-num-of-docs-from-each-space 250 \
     --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
     --num-processes 2 \
     --preserve-downloads \
