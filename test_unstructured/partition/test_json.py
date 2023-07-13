@@ -208,15 +208,11 @@ def test_partition_json_from_text_exclude_metadata(filename: str):
         assert any(test_elements[i].metadata.to_dict()) is False
 
 
-########################
-
-
 def test_partition_json_metadata_date(
     mocker,
     filename="example-docs/spring-weather.html.json",
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
-    # expected_last_modification_date = "2020-07-05T09:24:28"
 
     mocker.patch(
         "unstructured.partition.json.get_last_modified_date",
@@ -254,7 +250,6 @@ def test_partition_json_from_file_metadata_date(
     filename="example-docs/spring-weather.html.json",
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
-    # expected_last_modification_date = "2020-07-05T09:24:28"
 
     mocker.patch(
         "unstructured.partition.json.get_last_modified_date_from_file",

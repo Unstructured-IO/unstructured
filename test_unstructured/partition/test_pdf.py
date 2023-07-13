@@ -479,10 +479,6 @@ def test_partition_pdf_with_fast_strategy_from_file_exclude_metadata(
         assert elements[i].metadata.to_dict() == {}
 
 
-#######################################
-#######################################
-
-
 def test_partition_pdf_with_auto_strategy_metadata_date(
     mocker,
     filename="example-docs/copy-protected.pdf",

@@ -63,7 +63,6 @@ def test_partition_csv_metadata_date(mocker, filename="example-docs/stanley-cups
     )
     elements = partition_csv(filename=filename)
 
-    print(elements[0].metadata.date)
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
     assert isinstance(elements[0], Table)
     assert elements[0].metadata.date == mocked_last_modification_date
