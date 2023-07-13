@@ -1,4 +1,5 @@
 from typing import IO, List, Optional
+from datetime import datetime
 
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
@@ -13,6 +14,7 @@ def partition_rst(
     include_page_breaks: bool = False,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
+    metadata_date: Optional[datetime] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions an RST document. The document is first converted to HTML and then
@@ -33,4 +35,5 @@ def partition_rst(
         file=file,
         include_page_breaks=include_page_breaks,
         metadata_filename=metadata_filename,
+        metadata_date=metadata_date,
     )
