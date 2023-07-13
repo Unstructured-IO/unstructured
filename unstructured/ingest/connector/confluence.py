@@ -1,6 +1,8 @@
+import math
 import os
 from dataclasses import dataclass
 from pathlib import Path
+from typing import List
 
 from atlassian import Confluence
 
@@ -30,6 +32,9 @@ class SimpleConfluenceConfig(BaseConnectorConfig):
     user_email: str
     api_token: str
     url: str
+    list_of_spaces: List[str]
+    number_of_spaces: int
+    number_of_docs_from_each_space: int
 
 
 @dataclass
@@ -41,6 +46,26 @@ class ConfluenceFileMeta:
 
     space_id: str
     document_id: str
+
+
+def scroll_wrapper(func):
+    def wrapper(*args, **kwargs):
+        """Wraps a function to obtain scroll functionality."""
+        kwargs["limit"] = min(500, kwargs["number_of_items_to_fetch"])
+
+        kwargs["start"] = 0 if "start" not in kwargs else kwargs["start"]
+
+        all_results = []
+        num_iterations = math.ceil(kwargs["number_of_items_to_fetch"] / kwargs["limit"])
+        del kwargs["number_of_items_to_fetch"]
+
+        for _ in range(num_iterations):
+            all_results += func(*args, **kwargs)["results"]
+            kwargs["start"] += kwargs["limit"]
+
+        return all_results
+
+    return wrapper
 
 
 @dataclass
@@ -113,10 +138,17 @@ class ConfluenceConnector(ConnectorCleanupMixin, BaseConnector):
         )
 
     @requires_dependencies(["atlassian"])
-    def _get_all_space_ids(self, start: int = 0, limit: int = 500, expand=None):
-        """Fetches all spaces in a confluence domain"""
-        results = self.confluence.get_all_spaces(start=start, limit=limit, expand=expand)
-        space_ids = [space["key"] for space in results["results"]]
+    def _get_space_ids(self, number_of_spaces_to_fetch: int = 500, expand=None):
+        """Fetches spaces in a confluence domain."""
+
+        get_all_spaces_with_scroll = scroll_wrapper(self.confluence.get_all_spaces)
+
+        all_results = get_all_spaces_with_scroll(
+            number_of_items_to_fetch=number_of_spaces_to_fetch,
+            expand=expand,
+        )
+
+        space_ids = [space["key"] for space in all_results]
         return space_ids
 
     @requires_dependencies(["atlassian"])
@@ -142,7 +174,7 @@ class ConfluenceConnector(ConnectorCleanupMixin, BaseConnector):
 
     @requires_dependencies(["atlassian"])
     def _get_all_doc_ids_in_all_spaces(self):
-        space_ids = self._get_all_space_ids()
+        space_ids = self._get_space_ids(number_of_spaces_to_fetch=self.config.number_of_spaces)
         doc_ids_all = [self._get_all_docs_ids_in_space(space_id) for space_id in space_ids]
         doc_ids_flattened = [
             (space_id, doc_id)

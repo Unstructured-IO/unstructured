@@ -427,6 +427,26 @@ class MainProcess:
         for more info.",
 )
 @click.option(
+    "--confluence-list-of-spaces",
+    default=None,
+    help="A list of confluence space ids to be fetched. From each fetched space, \
+        --confluence-num-of-docs-from-each-space number of docs will be ingested. \
+        --confluence-list-of-spaces and --confluence-num-of-spaces cannot be used at the same time",
+)
+@click.option(
+    "--confluence-num-of-spaces",
+    default=500,
+    help="Number of confluence space ids to be fetched. From each fetched space, \
+        --confluence-num-of-docs-from-each-space number of docs will be ingested. \
+        --confluence-list-of-spaces and --confluence-num-of-spaces cannot be used at the same time",
+)
+@click.option(
+    "--confluence-num-of-docs-from-each-space",
+    default=100,
+    help="Number of documents to be aimed to be ingested from each fetched confluence space. \
+        If any space has fewer documents, all the documents from that space will be ingested.",
+)
+@click.option(
     "--download-dir",
     help="Where files are downloaded to, defaults to `$HOME/.cache/unstructured/ingest/<SHA256>`.",
 )
@@ -511,6 +531,9 @@ def main(
     confluence_url,
     confluence_user_email,
     confluence_api_token,
+    confluence_list_of_spaces,
+    confluence_num_of_spaces,
+    confluence_num_of_docs_from_each_space,
     download_dir,
     preserve_downloads,
     structured_output_dir,
@@ -879,6 +902,9 @@ def main(
                 url=confluence_url,
                 user_email=confluence_user_email,
                 api_token=confluence_api_token,
+                list_of_spaces=confluence_list_of_spaces,
+                number_of_spaces=confluence_num_of_spaces,
+                number_of_docs_from_each_space=confluence_num_of_docs_from_each_space,
             ),
         )
     # Check for other connector-specific options here and define the doc_connector object
