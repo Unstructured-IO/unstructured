@@ -444,7 +444,8 @@ class MainProcess:
     "--confluence-num-of-docs-from-each-space",
     default=100,
     help="Number of documents to be aimed to be ingested from each fetched confluence space. \
-        If any space has fewer documents, all the documents from that space will be ingested.",
+        If any space has fewer documents, all the documents from that space will be ingested. \
+        Documents are not necessarily ingested in order of creation date.",
 )
 @click.option(
     "--download-dir",
