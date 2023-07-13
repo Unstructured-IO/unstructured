@@ -27,7 +27,7 @@ class SimpleOneDriveConfig(BaseConnectorConfig):
     user_pname: str
     tenant: str = field(repr=False)
     authority_url: str = field(repr=False)
-    folder: str = field(default=True)
+    folder: str = field(default="")
     recursive: bool = False
 
     def __post_init__(self):
