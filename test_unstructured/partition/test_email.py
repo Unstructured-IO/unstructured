@@ -241,6 +241,20 @@ def test_partition_email_from_text_file_with_headers():
         assert element.metadata.filename is None
 
 
+def test_partition_email_from_text_file_max():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.txt")
+    with open(filename) as f:
+        elements = partition_email(file=f, content_source="text/plain", max_partition=20)
+    assert len(elements) == 6
+
+
+# def test_partition_email_from_text_file_min():
+#     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.txt")
+#     with open(filename) as f:
+#         elements = partition_email(file=f, content_source="text/plain", min_partition=1000)
+#     assert len(elements) == 1
+
+
 def test_partition_email_from_text():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
     with open(filename) as f:

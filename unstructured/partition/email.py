@@ -274,7 +274,6 @@ def partition_email(
 
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text)
-
     detected_encoding = "utf-8"
     if filename is not None:
         extracted_encoding, msg = parse_email(filename=filename)
@@ -346,7 +345,12 @@ def partition_email(
                             continue
 
     elif content_source == "text/plain":
-        list_content = split_by_paragraph(content)
+        # import pdb;pdb.set_trace()
+        # list_content = split_by_paragraph(
+        #     content,
+        #     min_partition=min_partition,
+        #     max_partition=max_partition,
+        # )
         elements = partition_text(
             text=content,
             encoding=encoding,

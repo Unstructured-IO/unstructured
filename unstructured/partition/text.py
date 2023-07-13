@@ -1,5 +1,4 @@
 import re
-from typing import IO, Callable, List, Optional, Tuple
 import textwrap
 from typing import IO, Callable, List, Optional, Tuple
 
@@ -30,9 +29,10 @@ from unstructured.partition.text_type import (
 
 def split_by_paragraph(
     content: str,
-    max_partition: int = 1500,
-    min_partition: int = 0,
+    max_partition: Optional[int] = 1500,
+    min_partition: Optional[int] = 0,
 ) -> List[str]:
+    # import pdb;pdb.set_trace()
     paragraphs = re.split(PARAGRAPH_PATTERN, content)
     if max_partition is None:
         return paragraphs
@@ -77,8 +77,8 @@ def split_content_in_half(content: str) -> Tuple[str, str]:
 
 def _split_content_to_fit_min_max(
     content: str,
-    max_partition: int = 1500,
-    min_partition: int = 0,
+    max_partition: Optional[int] = 1500,
+    min_partition: Optional[int] = 0,
 ) -> List[str]:
     """Splits a section of content so that all of the elements fit into the
     max/min partition window."""
@@ -87,14 +87,18 @@ def _split_content_to_fit_min_max(
     chunks = []
     tmp = ""
     for sentence in sentences:
-        if len(sentence) > max_partition:
+        if max_partition is not None and len(sentence) > max_partition:
             if tmp:
                 chunks.append(tmp)
                 tmp = ""
             segments = _split_content_size_n(sentence, n=max_partition)
             chunks.extend(segments[:-1])
             tmp = segments[-1]
-        elif len(sentence) >= min_partition:
+        elif (
+            min_partition is not None
+            and max_partition is not None
+            and len(sentence) >= min_partition
+        ):
             if len(tmp + " " + sentence) > max_partition:
                 if len(tmp) >= min_partition:
                     chunks.append(tmp)
@@ -129,8 +133,8 @@ def partition_text(
     paragraph_grouper: Optional[Callable[[str], str]] = None,
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
-    max_partition: int = 1500,
-    min_partition: int = 0,
+    max_partition: Optional[int] = 1500,
+    min_partition: Optional[int] = 0,
     **kwargs,
 ) -> List[Element]:
     """Partitions an .txt documents into its constituent elements.
@@ -158,7 +162,11 @@ def partition_text(
     if text is not None and text.strip() == "" and not file and not filename:
         return []
 
-    if min_partition > max_partition or min_partition < 0 or max_partition < 0:
+    if (
+        min_partition is not None
+        and max_partition is not None
+        and (min_partition > max_partition or min_partition < 0 or max_partition < 0)
+    ):
         raise ValueError("Invalid values for min_partition and/or max_partition.")
 
     # Verify that only one of the arguments was provided

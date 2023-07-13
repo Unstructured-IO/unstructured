@@ -215,6 +215,29 @@ def test_partition_text_splits_long_text_max_partition(filename="example-docs/no
     assert len(elements) < len(elements_max_part)
 
 
+def test_partition_text_min_max():
+    segments = partition_text(
+        text=min_max_text,
+        max_partition=75,
+        min_partition=3,
+    )
+    expected = [
+        "This is a story.",
+        "This is a story that doesn't matter because",
+        "it is just being used as an example.",
+        "Hi.",
+        "Hello.",
+        "Howdy.",
+        "Hola.",
+        "The example is simple and repetitive and long",
+        "and somewhat boring, but it serves a purpose.",
+        "End.",
+    ]
+
+    for segment, test_segment in zip(segments, expected):
+        assert segment.text == test_segment
+
+
 def test_split_content_to_fit_min_max():
     segments = _split_content_to_fit_min_max(
         content=min_max_text,
