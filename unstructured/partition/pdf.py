@@ -83,7 +83,7 @@ def partition_pdf(
         The maximum number of characters to include in a partition. If None is passed,
         no maximum is applied. Only applies to the "ocr_only" strategy.
     min_partition
-        The minimum number of characters to include in a partition. Only applies if 
+        The minimum number of characters to include in a partition. Only applies if
         processing text/plain content.
     """
     exactly_one(filename=filename, file=file)
@@ -425,7 +425,11 @@ def _partition_pdf_or_image_with_ocr(
             text = pytesseract.image_to_string(image, config=f"-l '{ocr_languages}'")
         else:
             text = pytesseract.image_to_string(filename, config=f"-l '{ocr_languages}'")
-        elements = partition_text(text=text, max_partition=max_partition, min_partition=min_partition)
+        elements = partition_text(
+            text=text,
+            max_partition=max_partition,
+            min_partition=min_partition,
+        )
     else:
         elements = []
         page_number = 0
@@ -434,7 +438,11 @@ def _partition_pdf_or_image_with_ocr(
             metadata = ElementMetadata(filename=filename, page_number=page_number)
             text = pytesseract.image_to_string(image, config=f"-l '{ocr_languages}'")
 
-            _elements = partition_text(text=text, max_partition=max_partition, min_partition=min_partition)
+            _elements = partition_text(
+                text=text,
+                max_partition=max_partition,
+                min_partition=min_partition,
+            )
             for element in _elements:
                 element.metadata = metadata
                 elements.append(element)

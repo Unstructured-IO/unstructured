@@ -5,7 +5,7 @@ import pytest
 
 from unstructured.cleaners.core import group_broken_paragraphs
 from unstructured.documents.elements import Address, ListItem, NarrativeText, Title
-from unstructured.partition.text import partition_text
+from unstructured.partition.text import _split_content_to_fit_min_max, partition_text
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
@@ -17,6 +17,14 @@ EXPECTED_OUTPUT = [
     ListItem(text="Dogs are the best"),
     ListItem(text="I love fuzzy blankets"),
 ]
+
+min_max_text = """This is a story. This is a story that doesn't matter
+ because it is just being used as an example. Hi. Hello. Howdy. Hola.
+ The example is simple and repetitive and long and somewhat boring,
+ but it serves a purpose. End.""".replace(
+    "\n",
+    "",
+)
 
 
 @pytest.mark.parametrize(
@@ -199,12 +207,47 @@ def test_partition_text_splits_long_text(filename="example-docs/norwich-city.txt
     assert len(elements) > 0
     assert elements[0].text.startswith("Iwan Roberts")
     assert elements[-1].text.endswith("External links")
-    
+
 
 def test_partition_text_splits_long_text_max_partition(filename="example-docs/norwich-city.txt"):
     elements = partition_text(filename=filename)
     elements_max_part = partition_text(filename=filename, max_partition=500)
     assert len(elements) < len(elements_max_part)
+
+
+def test_split_content_to_fit_min_max():
+    segments = _split_content_to_fit_min_max(
+        content=min_max_text,
+        max_partition=75,
+        min_partition=6,
+    )
+    assert segments == [
+        "This is a story.",
+        "This is a story that doesn't matter because",
+        "it is just being used as an example. Hi.",
+        "Hello.",
+        "Howdy.",
+        "Hola.",  # Not joined with the next segment because that one is above the max partition
+        "The example is simple and repetitive and long",
+        "and somewhat boring, but it serves a purpose. End.",
+    ]
+    segments = _split_content_to_fit_min_max(
+        content=min_max_text,
+        max_partition=75,
+        min_partition=3,
+    )
+    assert segments == [
+        "This is a story.",
+        "This is a story that doesn't matter because",
+        "it is just being used as an example.",
+        "Hi.",
+        "Hello.",
+        "Howdy.",
+        "Hola.",
+        "The example is simple and repetitive and long",
+        "and somewhat boring, but it serves a purpose.",
+        "End.",
+    ]
 
 
 def test_partition_text_doesnt_get_page_breaks():

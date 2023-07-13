@@ -260,7 +260,7 @@ def partition_email(
     attachment_partitioner
         The partitioning function to use to process attachments.
     min_partition
-        The minimum number of characters to include in a partition. Only applies if 
+        The minimum number of characters to include in a partition. Only applies if
         processing the text/plain content.
     """
     if content_source not in VALID_CONTENT_SOURCES:
