@@ -418,6 +418,11 @@ class MainProcess:
     help="User principal name, usually is your Azure AD email.",
 )
 @click.option(
+    "--ms-onedrive-folder",
+    default=None,
+    help="Folder to start parsing files from.",
+)
+@click.option(
     "--elasticsearch-url",
     default=None,
     help='URL to the Elasticsearch cluster, e.g. "http://localhost:9200"',
@@ -519,6 +524,7 @@ def main(
     ms_authority_url,
     ms_tenant,
     ms_user_pname,
+    ms_onedrive_folder,
     elasticsearch_url,
     elasticsearch_index_name,
     jq_query,
@@ -620,6 +626,10 @@ def main(
         elif elasticsearch_url:
             hashed_dir_name = hashlib.sha256(
                 f"{elasticsearch_url}_{elasticsearch_index_name}".encode("utf-8"),
+            )
+        elif ms_user_pname:
+            hashed_dir_name = hashlib.sha256(
+                f"{ms_tenant}_{ms_user_pname}".encode("utf-8"),
             )
         else:
             raise ValueError(
@@ -860,6 +870,7 @@ def main(
                 user_pname=ms_user_pname,
                 tenant=ms_tenant,
                 authority_url=ms_authority_url,
+                folder=ms_onedrive_folder,
                 recursive=recursive,
             ),
         )
