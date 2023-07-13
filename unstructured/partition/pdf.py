@@ -397,7 +397,6 @@ def _partition_pdf_or_image_with_ocr(
 
         # Convert a PDF in small chunks of pages at a time (e.g. 1-10, 11-20... and so on)
         total_pages = info["Pages"]
-        images = []
         for start_page in range(1, total_pages + 1, chunk_size):
             end_page = min(start_page + chunk_size - 1, total_pages)
             with tempfile.TemporaryDirectory() as tmpdir:
@@ -415,17 +414,16 @@ def _partition_pdf_or_image_with_ocr(
                         last_page=end_page,
                         output_folder=tmpdir,
                     )
-                images += chunk_images
+                for i, image in zip(range(start_page, end_page + 1), chunk_images):
+                    metadata = ElementMetadata(filename=filename, page_number=i + 1)
+                    text = pytesseract.image_to_string(image, config=f"-l '{ocr_languages}'")
 
-        for i, image in enumerate(images):
-            metadata = ElementMetadata(filename=filename, page_number=i + 1)
-            text = pytesseract.image_to_string(image, config=f"-l '{ocr_languages}'")
+                    _elements = partition_text(text=text, max_partition=max_partition)
+                    for element in _elements:
+                        element.metadata = metadata
+                        elements.append(element)
 
-            _elements = partition_text(text=text, max_partition=max_partition)
-            for element in _elements:
-                element.metadata = metadata
-                elements.append(element)
+                    if include_page_breaks:
+                        elements.append(PageBreak(text=""))
 
-            if include_page_breaks:
-                elements.append(PageBreak(text=""))
     return elements
