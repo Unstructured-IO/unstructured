@@ -433,7 +433,7 @@ def _partition_pdf_or_image_with_ocr(
         else:
             text = pytesseract.image_to_string(filename, config=f"-l '{ocr_languages}'")
         elements = partition_text(
-            text=text, max_partition=max_partition, modification_date=metadata_date
+            text=text, max_partition=max_partition, metadata_date=metadata_date
         )
     else:
         elements = []
