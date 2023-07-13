@@ -1,3 +1,4 @@
+from datetime import datetime
 from tempfile import SpooledTemporaryFile
 from typing import IO, BinaryIO, List, Optional, Union, cast
 
@@ -19,6 +20,8 @@ from unstructured.partition.common import (
     convert_ms_office_table_to_text,
     exactly_one,
     spooled_to_bytes_io_if_needed,
+    get_last_modified_date,
+    get_last_modified_date_from_file,
 )
 from unstructured.partition.text_type import (
     is_possible_narrative_text,
@@ -36,6 +39,7 @@ def partition_pptx(
     include_page_breaks: bool = True,
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
+    metadata_date: Optional[datetime] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft PowerPoint Documents in .pptx format into its document elements.
@@ -52,16 +56,26 @@ def partition_pptx(
         The filename to use for the metadata. Relevant because partition_ppt converts the
         document .pptx before partition. We want the original source filename in the
         metadata.
+    metadata_date
+        The last modified date for the document.
+
+
     """
 
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file)
-
+    last_modification_date = None
     if filename is not None:
+        if not filename.startswith("/tmp"):
+            last_modification_date = get_last_modified_date(filename)
+
         presentation = pptx.Presentation(filename)
     elif file is not None:
+        last_modification_date = get_last_modified_date_from_file(file)
         presentation = pptx.Presentation(
-            spooled_to_bytes_io_if_needed(cast(Union[BinaryIO, SpooledTemporaryFile], file)),
+            spooled_to_bytes_io_if_needed(
+                cast(Union[BinaryIO, SpooledTemporaryFile], file)
+            ),
         )
 
     elements: List[Element] = []
@@ -69,6 +83,7 @@ def partition_pptx(
     num_slides = len(presentation.slides)
     for i, slide in enumerate(presentation.slides):
         metadata = ElementMetadata.from_dict(metadata.to_dict())
+        metadata.date = metadata_date if metadata_date else last_modification_date
         metadata.page_number = i + 1
 
         for shape in _order_shapes(slide.shapes):
@@ -81,6 +96,7 @@ def partition_pptx(
                         filename=metadata_filename or filename,
                         text_as_html=html_table,
                         page_number=metadata.page_number,
+                        date=metadata_date if metadata_date else last_modification_date,
                     )
                     elements.append(Table(text=text_table, metadata=metadata))
                 continue
