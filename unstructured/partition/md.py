@@ -53,6 +53,8 @@ def partition_md(
         Determines whether or not metadata is included in the output.
     parser
         The parser to use for parsing the markdown document. If None, default parser will be used.
+    metadata_date
+        The last modified date for the document.
     """
     # Verify that only one of the arguments was provided
     if text is None:

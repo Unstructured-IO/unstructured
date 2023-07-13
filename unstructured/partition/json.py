@@ -35,6 +35,8 @@ def partition_json(
         A file-like object as bytes --> open(filename, "rb").
     text
         The string representation of the .json document.
+    metadata_date
+        The last modified date for the document.
     """
     if text is not None and text.strip() == "" and not file and not filename:
         return []
