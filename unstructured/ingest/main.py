@@ -441,7 +441,7 @@ class MainProcess:
         --confluence-list-of-spaces and --confluence-num-of-spaces cannot be used at the same time",
 )
 @click.option(
-    "--confluence-num-of-docs-from-each-space",
+    "--confluence-max-num-of-docs-from-each-space",
     default=100,
     help="Number of documents to be aimed to be ingested from each fetched confluence space. \
         If any space has fewer documents, all the documents from that space will be ingested. \
