@@ -1,4 +1,4 @@
-## 0.8.2-dev1
+## 0.8.2-dev2
 
 ### Enhancements
 
@@ -6,6 +6,7 @@
 
 ### Fixes
 
+* Enables filters to be passed to `partition_doc` so it doesn't error with LibreOffice7.
 * Adds Onedrive connector.
 
 ## 0.8.2-dev0
