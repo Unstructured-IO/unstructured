@@ -92,5 +92,5 @@ def partition_md(
         include_metadata=include_metadata,
         parser=parser,
         metadata_filename=metadata_filename,
-        metadata_date=metadata_date if metadata_date else last_modification_date,
+        metadata_date=metadata_date or last_modification_date,
     )

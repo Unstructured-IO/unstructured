@@ -83,7 +83,7 @@ def partition_pptx(
     num_slides = len(presentation.slides)
     for i, slide in enumerate(presentation.slides):
         metadata = ElementMetadata.from_dict(metadata.to_dict())
-        metadata.date = metadata_date if metadata_date else last_modification_date
+        metadata.date = metadata_date or last_modification_date
         metadata.page_number = i + 1
 
         for shape in _order_shapes(slide.shapes):
@@ -96,7 +96,7 @@ def partition_pptx(
                         filename=metadata_filename or filename,
                         text_as_html=html_table,
                         page_number=metadata.page_number,
-                        date=metadata_date if metadata_date else last_modification_date,
+                        date=metadata_date or last_modification_date,
                     )
                     elements.append(Table(text=text_table, metadata=metadata))
                 continue

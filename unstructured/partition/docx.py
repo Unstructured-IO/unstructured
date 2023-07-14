@@ -173,7 +173,7 @@ def partition_docx(
                     text_as_html=html_table,
                     filename=metadata_filename,
                     page_number=page_number,
-                    date=metadata_date if metadata_date else last_modification_date,
+                    date=metadata_date or last_modification_date,
 
                 )
                 elements.append(element)
@@ -187,7 +187,7 @@ def partition_docx(
                 para_element.metadata = ElementMetadata(
                     filename=metadata_filename,
                     page_number=page_number,
-                    date=metadata_date if metadata_date else last_modification_date,
+                    date=metadata_date or last_modification_date,
 
                 )
                 elements.append(para_element)

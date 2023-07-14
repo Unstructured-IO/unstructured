@@ -119,9 +119,7 @@ def partition_html(
     return document_to_element_list(
         document,
         include_page_breaks=include_page_breaks,
-        last_modification_date=metadata_date
-        if metadata_date
-        else last_modification_date,
+        last_modification_date=metadata_date or last_modification_date,
     )
 
 
@@ -167,5 +165,5 @@ def convert_and_partition_html(
         include_page_breaks=include_page_breaks,
         encoding="unicode",
         metadata_filename=metadata_filename,
-        metadata_date=metadata_date if metadata_date else last_modification_date,
+        metadata_date=metadata_date or last_modification_date,
     )

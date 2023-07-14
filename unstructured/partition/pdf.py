@@ -153,7 +153,7 @@ def partition_pdf_or_image(
             filename=filename,
             file=spooled_to_bytes_io_if_needed(file),
             include_page_breaks=include_page_breaks,
-            metadata_date=metadata_date if metadata_date else last_modification_date,
+            metadata_date=metadata_date or last_modification_date,
         )
         pdf_text_extractable = any(
             isinstance(el, Text) and el.text.strip() for el in extracted_elements
@@ -181,9 +181,7 @@ def partition_pdf_or_image(
                 infer_table_structure=infer_table_structure,
                 include_page_breaks=include_page_breaks,
                 ocr_languages=ocr_languages,
-                metadata_date=metadata_date
-                if metadata_date
-                else last_modification_date,
+                metadata_date=metadata_date or last_modification_date,
                 **kwargs,
             )
 
@@ -200,9 +198,7 @@ def partition_pdf_or_image(
                 ocr_languages=ocr_languages,
                 is_image=is_image,
                 max_partition=max_partition,
-                metadata_date=metadata_date
-                if metadata_date
-                else last_modification_date,
+                metadata_date=metadata_date or last_modification_date,
             )
 
 

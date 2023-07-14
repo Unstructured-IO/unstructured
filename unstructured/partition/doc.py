@@ -67,7 +67,7 @@ def partition_doc(
             metadata_filename=metadata_filename,
             include_page_breaks=include_page_breaks,
             include_metadata=include_metadata,
-            metadata_date=metadata_date if metadata_date else last_modification_date,
+            metadata_date=metadata_date or last_modification_date,
         )
         # remove tmp.name from filename if parsing file
         if file:

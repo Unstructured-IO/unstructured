@@ -40,5 +40,5 @@ def partition_odt(
         filename=filename,
         file=file,
         metadata_filename=metadata_filename,
-        metadata_date=metadata_date if metadata_date else last_modification_date
+        metadata_date=metadata_date or last_modification_date
     )

@@ -68,7 +68,7 @@ def partition_csv(
         metadata = ElementMetadata(
             text_as_html=html_text,
             filename=metadata_filename or filename,
-            date=metadata_date if metadata_date else last_modification_date,
+            date=metadata_date or last_modification_date,
         )
     else:
         metadata = ElementMetadata()
