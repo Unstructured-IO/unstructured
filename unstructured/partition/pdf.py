@@ -1,9 +1,8 @@
 import os
 import re
-import tempfile
 import warnings
 from tempfile import SpooledTemporaryFile
-from typing import BinaryIO, List, Optional, Union, cast
+from typing import BinaryIO, Iterator, List, Optional, Union, cast
 
 import pdf2image
 import PIL
@@ -365,6 +364,38 @@ def _process_pdfminer_pages(
     return elements
 
 
+def convert_pdf_to_images(
+    filename: str = "",
+    file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
+    chunk_size: int = 10,
+) -> Iterator[List[object]]:
+    # Convert a PDF in small chunks of pages at a time (e.g. 1-10, 11-20... and so on)
+    exactly_one(filename=filename, file=file)
+    if file is not None:
+        f_bytes = convert_to_bytes(file)
+        info = pdf2image.pdfinfo_from_bytes(f_bytes)
+    else:
+        f_bytes = None
+        info = pdf2image.pdfinfo_from_path(filename)
+
+    total_pages = info["Pages"]
+    for start_page in range(1, total_pages + 1, chunk_size):
+        end_page = min(start_page + chunk_size - 1, total_pages)
+        if f_bytes is not None:
+            chunk_images = pdf2image.convert_from_bytes(
+                f_bytes,
+                first_page=start_page,
+                last_page=end_page,
+            )
+        else:
+            chunk_images = pdf2image.convert_from_path(
+                filename,
+                first_page=start_page,
+                last_page=end_page,
+            )
+        yield chunk_images
+
+
 @requires_dependencies("pytesseract")
 def _partition_pdf_or_image_with_ocr(
     filename: str = "",
@@ -373,7 +404,6 @@ def _partition_pdf_or_image_with_ocr(
     ocr_languages: str = "eng",
     is_image: bool = False,
     max_partition: Optional[int] = 1500,
-    chunk_size: int = 100,
 ):
     """Partitions and image or PDF using Tesseract OCR. For PDFs, each page is converted
     to an image prior to processing."""
@@ -388,44 +418,18 @@ def _partition_pdf_or_image_with_ocr(
         elements = partition_text(text=text, max_partition=max_partition)
     else:
         elements = []
-        if file is not None:
-            f_bytes = convert_to_bytes(file)
-            info = pdf2image.pdfinfo_from_bytes(f_bytes)
-        else:
-            f_bytes = None
-            info = pdf2image.pdfinfo_from_path(filename)
+        page_number = 0
+        for images in convert_pdf_to_images(filename, file):
+            for image in images:
+                page_number += 1
+                metadata = ElementMetadata(filename=filename, page_number=page_number)
+                text = pytesseract.image_to_string(image, config=f"-l '{ocr_languages}'")
 
-        # Convert a PDF in small chunks of pages at a time (e.g. 1-10, 11-20... and so on)
-        total_pages = info["Pages"]
-        images = []
-        for start_page in range(1, total_pages + 1, chunk_size):
-            end_page = min(start_page + chunk_size - 1, total_pages)
-            with tempfile.TemporaryDirectory() as tmpdir:
-                if f_bytes is not None:
-                    chunk_images = pdf2image.convert_from_bytes(
-                        f_bytes,
-                        first_page=start_page,
-                        last_page=end_page,
-                        output_folder=tmpdir,
-                    )
-                else:
-                    chunk_images = pdf2image.convert_from_path(
-                        filename,
-                        first_page=start_page,
-                        last_page=end_page,
-                        output_folder=tmpdir,
-                    )
-                images += chunk_images
+                _elements = partition_text(text=text, max_partition=max_partition)
+                for element in _elements:
+                    element.metadata = metadata
+                    elements.append(element)
 
-        for i, image in enumerate(images):
-            metadata = ElementMetadata(filename=filename, page_number=i + 1)
-            text = pytesseract.image_to_string(image, config=f"-l '{ocr_languages}'")
-
-            _elements = partition_text(text=text, max_partition=max_partition)
-            for element in _elements:
-                element.metadata = metadata
-                elements.append(element)
-
-            if include_page_breaks:
-                elements.append(PageBreak(text=""))
+                if include_page_breaks:
+                    elements.append(PageBreak(text=""))
     return elements
