@@ -1,5 +1,4 @@
 from typing import IO, Dict, List, Optional
-from datetime import datetime
 
 import requests
 
@@ -35,7 +34,7 @@ def partition_html(
     parser: VALID_PARSERS = None,
     html_assemble_articles: bool = False,
     metadata_filename: Optional[str] = None,
-    metadata_date: Optional[datetime] = None,
+    metadata_date: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions an HTML document into its constituent elements.
@@ -67,13 +66,7 @@ def partition_html(
     metadata_date
         The last modified date for the document.
     """
-    if (
-        text is not None
-        and text.strip() == ""
-        and not file
-        and not filename
-        and not url
-    ):
+    if text is not None and text.strip() == "" and not file and not filename and not url:
         return []
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text, url=url)
@@ -129,7 +122,7 @@ def convert_and_partition_html(
     file: Optional[IO[bytes]] = None,
     include_page_breaks: bool = False,
     metadata_filename: Optional[str] = None,
-    metadata_date: Optional[datetime] = None,
+    metadata_date: Optional[str] = None,
 ) -> List[Element]:
     """Converts a document to HTML and then partitions it using partition_html. Works with
     any file format support by pandoc.
@@ -156,7 +149,9 @@ def convert_and_partition_html(
     elif file:
         last_modification_date = get_last_modified_date_from_file(file)
     html_text = convert_file_to_html_text(
-        source_format=source_format, filename=filename, file=file
+        source_format=source_format,
+        filename=filename,
+        file=file,
     )
     # NOTE(robinson) - pypandoc returns a text string with unicode encoding
     # ref: https://github.com/JessicaTegner/pypandoc#usage

@@ -81,7 +81,6 @@ def test_partition_docx_with_spooled_file(mock_document, expected_elements, tmpd
     filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     mock_document.save(filename)
 
-
     with open(filename, "rb") as test_file:
         spooled_temp_file = SpooledTemporaryFile()
         spooled_temp_file.write(test_file.read())
@@ -203,6 +202,7 @@ def test_partition_docx_from_file_exclude_metadata(mock_document, tmpdir):
     assert elements[0].metadata.page_name is None
     assert elements[0].metadata.filename is None
 
+
 def test_partition_docx_metadata_date(
     mocker,
     filename="example-docs/fake.docx",
@@ -232,7 +232,8 @@ def test_partition_docx_metadata_date_with_custom_metadata(
     )
 
     elements = partition_docx(
-        filename=filename, metadata_date=expected_last_modified_date
+        filename=filename,
+        metadata_date=expected_last_modified_date,
     )
 
     assert elements[0].metadata.date == expected_last_modified_date
@@ -283,4 +284,4 @@ def test_partition_docx_from_file_without_metadata_date(
         sf.seek(0)
         elements = partition_docx(file=sf)
 
-    assert elements[0].metadata.date == None
+    assert elements[0].metadata.date is None

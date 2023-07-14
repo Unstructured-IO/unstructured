@@ -1,5 +1,4 @@
 from tempfile import SpooledTemporaryFile
-from datetime import datetime
 from typing import IO, BinaryIO, List, Optional, Union, cast
 
 import lxml.html
@@ -14,9 +13,9 @@ from unstructured.documents.elements import (
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import (
     exactly_one,
-    spooled_to_bytes_io_if_needed,
     get_last_modified_date,
     get_last_modified_date_from_file,
+    spooled_to_bytes_io_if_needed,
 )
 
 
@@ -27,7 +26,7 @@ def partition_xlsx(
     file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
-    metadata_date: Optional[datetime] = None,
+    metadata_date: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft Excel Documents in .xlsx format into its document elements.
@@ -49,9 +48,9 @@ def partition_xlsx(
         sheets = pd.read_excel(filename, sheet_name=None)
         last_modification_date = get_last_modified_date(filename)
 
-    else:
+    elif file:
         f = spooled_to_bytes_io_if_needed(
-            cast(Union[BinaryIO, SpooledTemporaryFile], file)
+            cast(Union[BinaryIO, SpooledTemporaryFile], file),
         )
         sheets = pd.read_excel(f, sheet_name=None)
         last_modification_date = get_last_modified_date_from_file(file)

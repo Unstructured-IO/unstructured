@@ -3,7 +3,6 @@ from typing import IO, BinaryIO, List, Optional, Union, cast
 
 import lxml.html
 import pandas as pd
-from datetime import datetime
 
 from unstructured.documents.elements import (
     Element,
@@ -14,9 +13,9 @@ from unstructured.documents.elements import (
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import (
     exactly_one,
-    spooled_to_bytes_io_if_needed,
     get_last_modified_date,
     get_last_modified_date_from_file,
+    spooled_to_bytes_io_if_needed,
 )
 
 
@@ -26,10 +25,11 @@ def partition_csv(
     filename: Optional[str] = None,
     file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
     metadata_filename: Optional[str] = None,
-    metadata_date: Optional[datetime] = None,
+    metadata_date: Optional[str] = None,
     include_metadata: bool = True,
     **kwargs,
 ) -> List[Element]:
+    print(metadata_date, type(metadata_date))
     """Partitions Microsoft Excel Documents in .csv format into its document elements.
 
         Parameters
@@ -54,10 +54,10 @@ def partition_csv(
         table = pd.read_csv(filename)
         last_modification_date = get_last_modified_date(filename)
 
-    else:
+    elif file:
         last_modification_date = get_last_modified_date_from_file(file)
         f = spooled_to_bytes_io_if_needed(
-            cast(Union[BinaryIO, SpooledTemporaryFile], file)
+            cast(Union[BinaryIO, SpooledTemporaryFile], file),
         )
         table = pd.read_csv(f)
 

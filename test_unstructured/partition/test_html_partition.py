@@ -190,7 +190,9 @@ def test_partition_html_from_url():
         text = f.read()
 
     response = MockResponse(
-        text=text, status_code=200, headers={"Content-Type": "text/html"}
+        text=text,
+        status_code=200,
+        headers={"Content-Type": "text/html"},
     )
     with patch.object(requests, "get", return_value=response) as _:
         elements = partition_html(url="https://fake.url")
@@ -204,7 +206,9 @@ def test_partition_html_from_url_raises_with_bad_status_code():
         text = f.read()
 
     response = MockResponse(
-        text=text, status_code=500, headers={"Content-Type": "text/html"}
+        text=text,
+        status_code=500,
+        headers={"Content-Type": "text/html"},
     )
     with patch.object(requests, "get", return_value=response) as _:
         with pytest.raises(ValueError):
@@ -232,7 +236,9 @@ def test_partition_from_url_uses_headers(mocker):
 
     response = Response()
     response.status_code = 200
-    response._content = b"<html><head></head><body><p>What do i know? Who needs to know it?</p></body></html>"
+    response._content = (
+        b"<html><head></head><body><p>What do i know? Who needs to know it?</p></body></html>"
+    )
     response.headers = {"Content-Type": "text/html"}
 
     mock_get = mocker.patch("requests.get", return_value=response)
@@ -267,7 +273,11 @@ def test_partition_html_on_ideas_page():
 
 def test_user_without_file_write_permission_can_partition_html(tmp_path, monkeypatch):
     example_filename = os.path.join(
-        DIRECTORY, "..", "..", "example-docs", "example-10k.html"
+        DIRECTORY,
+        "..",
+        "..",
+        "example-docs",
+        "example-10k.html",
     )
 
     # create a file with no write permissions
@@ -351,7 +361,8 @@ def test_partition_html_metadata_date(mocker, filename="example-docs/fake-html.h
 
 
 def test_partition_html_from_file_metadata_date(
-    mocker, filename="example-docs/fake-html.html"
+    mocker,
+    filename="example-docs/fake-html.html",
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
 
@@ -368,7 +379,8 @@ def test_partition_html_from_file_metadata_date(
 
 
 def test_partition_html_custom_metadata_date(
-    mocker, filename="example-docs/fake-html.html"
+    mocker,
+    filename="example-docs/fake-html.html",
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
     expected_last_modification_date = "2020-07-05T09:24:28"
@@ -379,7 +391,8 @@ def test_partition_html_custom_metadata_date(
     )
 
     elements = partition_html(
-        filename=filename, metadata_date=expected_last_modification_date
+        filename=filename,
+        metadata_date=expected_last_modification_date,
     )
 
     assert isinstance(elements[0], Title)
@@ -387,7 +400,8 @@ def test_partition_html_custom_metadata_date(
 
 
 def test_partition_html_from_file_custom_metadata_date(
-    mocker, filename="example-docs/fake-html.html"
+    mocker,
+    filename="example-docs/fake-html.html",
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
     expected_last_modification_date = "2020-07-05T09:24:28"

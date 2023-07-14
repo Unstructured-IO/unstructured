@@ -1,5 +1,5 @@
 from typing import List, Optional
-from datetime import datetime
+
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.partition.common import exactly_one
 from unstructured.partition.pdf import partition_pdf_or_image
@@ -12,7 +12,7 @@ def partition_image(
     include_page_breaks: bool = False,
     ocr_languages: str = "eng",
     strategy: str = "auto",
-    metadata_date: Optional[datetime] = None,
+    metadata_date: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Parses an image into a list of interpreted elements.

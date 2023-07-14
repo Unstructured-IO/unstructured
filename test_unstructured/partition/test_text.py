@@ -39,7 +39,9 @@ def test_partition_text_from_filename(filename, encoding):
 def test_partition_text_from_filename_with_metadata_filename():
     filename_path = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-text.txt")
     elements = partition_text(
-        filename=filename_path, encoding="utf-8", metadata_filename="test"
+        filename=filename_path,
+        encoding="utf-8",
+        metadata_filename="test",
     )
     assert elements == EXPECTED_OUTPUT
     for element in elements:
@@ -226,7 +228,9 @@ def test_partition_text_doesnt_get_page_breaks():
 def test_partition_text_from_filename_exclude_metadata(filename, encoding):
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
     elements = partition_text(
-        filename=filename, encoding=encoding, include_metadata=False
+        filename=filename,
+        encoding=encoding,
+        include_metadata=False,
     )
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
@@ -271,7 +275,8 @@ def test_partition_text_with_custom_metadata_date(
     )
 
     elements = partition_text(
-        filename=filename, metadata_date=expected_last_modification_date
+        filename=filename,
+        metadata_date=expected_last_modification_date,
     )
 
     assert elements[0].metadata.date == expected_last_modification_date
@@ -323,10 +328,10 @@ def test_partition_text_from_text_metadata_date(
     elements = partition_text(
         text=text,
     )
-    assert elements[0].metadata.date == None
+    assert elements[0].metadata.date is None
 
 
-def test_partition_text_from_file_with_custom_metadata_date(
+def test_partition_text_from_text_with_custom_metadata_date(
     filename="example-docs/fake-text.txt",
 ):
     expected_last_modification_date = "2020-07-05T09:24:28"

@@ -1,8 +1,8 @@
 from __future__ import annotations
-import os
-from datetime import datetime
 
+import os
 import subprocess
+from datetime import datetime
 from io import BufferedReader, BytesIO, TextIOWrapper
 from tempfile import SpooledTemporaryFile
 from typing import IO, TYPE_CHECKING, Any, BinaryIO, Dict, List, Optional, Tuple, Union
@@ -31,22 +31,20 @@ if TYPE_CHECKING:
     )
 
 
-def get_last_modified_date(filename: str) -> str:
+def get_last_modified_date(filename: str) -> Union[str, None]:
     modify_date = datetime.fromtimestamp(os.path.getmtime(filename))
-    modify_date = modify_date.strftime("%Y-%m-%dT%H:%M:%S%z")
-    return modify_date
+    return modify_date.strftime("%Y-%m-%dT%H:%M:%S%z")
 
 
 def get_last_modified_date_from_file(
-    file: Union[IO, SpooledTemporaryFile]
+    file: Union[IO[bytes], SpooledTemporaryFile, BinaryIO, bytes],
 ) -> Union[str, None]:
-    try:
+    filename = None
+    if hasattr(file, "name"):
         filename = file.name
-    except:
-        return
 
     if not filename:
-        return
+        return None
 
     modify_date = get_last_modified_date(filename)
     return modify_date
@@ -54,7 +52,10 @@ def get_last_modified_date_from_file(
 
 def normalize_layout_element(
     layout_element: Union[
-        "LayoutElement", "LocationlessLayoutElement", Element, Dict[str, Any]
+        "LayoutElement",
+        "LocationlessLayoutElement",
+        Element,
+        Dict[str, Any],
     ],
     coordinate_system: Optional[CoordinateSystem] = None,
 ) -> Union[Element, List[Element]]:
@@ -92,15 +93,21 @@ def normalize_layout_element(
         )
     elif element_type == "Checked":
         return CheckBox(
-            checked=True, coordinates=coordinates, coordinate_system=coordinate_system
+            checked=True,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
         )
     elif element_type == "Unchecked":
         return CheckBox(
-            checked=False, coordinates=coordinates, coordinate_system=coordinate_system
+            checked=False,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
         )
     else:
         return Text(
-            text=text, coordinates=coordinates, coordinate_system=coordinate_system
+            text=text,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
         )
 
 

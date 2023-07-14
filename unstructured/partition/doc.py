@@ -1,7 +1,6 @@
 import os
 import tempfile
 from typing import IO, List, Optional
-from datetime import datetime
 
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
@@ -22,7 +21,7 @@ def partition_doc(
     include_page_breaks: bool = True,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
-    metadata_date: Optional[datetime] = None,
+    metadata_date: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft Word Documents in .doc format into its document elements.
@@ -46,7 +45,7 @@ def partition_doc(
         base_filename, _ = os.path.splitext(filename_no_path)
         if not os.path.exists(filename):
             raise ValueError(f"The file {filename} does not exist.")
-        
+
         last_modification_date = get_last_modified_date(filename)
 
     elif file is not None:

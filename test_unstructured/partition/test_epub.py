@@ -59,7 +59,8 @@ def test_partition_epub_from_file_exlcude_metadata():
 
 
 def test_partition_epub_metadata_date(
-    mocker, filename="example-docs/winter-sports.epub"
+    mocker,
+    filename="example-docs/winter-sports.epub",
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
     mocker.patch(

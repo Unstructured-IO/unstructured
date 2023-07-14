@@ -1,5 +1,4 @@
 from typing import IO, List, Optional
-from datetime import datetime
 
 from unstructured.documents.elements import Element
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
@@ -13,7 +12,7 @@ def partition_org(
     include_page_breaks: bool = False,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
-    metadata_date: Optional[datetime] = None,
+    metadata_date: Optional[str] = None,
 ) -> List[Element]:
     """Partitions an org document. The document is first converted to HTML and then
     partitioned using partition_html.

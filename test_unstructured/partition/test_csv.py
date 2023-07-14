@@ -143,4 +143,4 @@ def test_partition_csv_from_file_without_metadata(
 
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
     assert isinstance(elements[0], Table)
-    assert elements[0].metadata.date == None
+    assert elements[0].metadata.date is None

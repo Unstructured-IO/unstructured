@@ -1,6 +1,5 @@
 import os
 import tempfile
-from datetime import datetime
 from typing import IO, List, Optional
 
 from unstructured.documents.elements import Element, process_metadata
@@ -22,7 +21,7 @@ def partition_ppt(
     include_page_breaks: bool = False,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
-    metadata_date: Optional[datetime] = None,
+    metadata_date: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft PowerPoint Documents in .ppt format into their document elements.

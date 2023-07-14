@@ -1,5 +1,4 @@
 from typing import IO, List, Optional, Union
-from datetime import datetime
 
 import markdown
 import requests
@@ -32,7 +31,7 @@ def partition_md(
     include_metadata: bool = True,
     parser: VALID_PARSERS = None,
     metadata_filename: Optional[str] = None,
-    metadata_date: Optional[datetime] = None,
+    metadata_date: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions a markdown file into its constituent elements
@@ -79,7 +78,7 @@ def partition_md(
         content_type = response.headers.get("Content-Type", "")
         if not content_type.startswith("text/markdown"):
             raise ValueError(
-                f"Expected content type text/markdown. Got {content_type}."
+                f"Expected content type text/markdown. Got {content_type}.",
             )
 
         text = response.text

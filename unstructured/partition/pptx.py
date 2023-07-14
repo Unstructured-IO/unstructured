@@ -1,4 +1,3 @@
-from datetime import datetime
 from tempfile import SpooledTemporaryFile
 from typing import IO, BinaryIO, List, Optional, Union, cast
 
@@ -19,9 +18,9 @@ from unstructured.file_utils.filetype import FileType, add_metadata_with_filetyp
 from unstructured.partition.common import (
     convert_ms_office_table_to_text,
     exactly_one,
-    spooled_to_bytes_io_if_needed,
     get_last_modified_date,
     get_last_modified_date_from_file,
+    spooled_to_bytes_io_if_needed,
 )
 from unstructured.partition.text_type import (
     is_possible_narrative_text,
@@ -39,7 +38,7 @@ def partition_pptx(
     include_page_breaks: bool = True,
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
-    metadata_date: Optional[datetime] = None,
+    metadata_date: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft PowerPoint Documents in .pptx format into its document elements.
@@ -74,7 +73,7 @@ def partition_pptx(
         last_modification_date = get_last_modified_date_from_file(file)
         presentation = pptx.Presentation(
             spooled_to_bytes_io_if_needed(
-                cast(Union[BinaryIO, SpooledTemporaryFile], file)
+                cast(Union[BinaryIO, SpooledTemporaryFile], file),
             ),
         )
 

@@ -1,6 +1,5 @@
 import re
 from typing import IO, Callable, List, Optional, Tuple
-from datetime import datetime
 
 from unstructured.cleaners.core import clean_bullets, group_broken_paragraphs
 from unstructured.documents.coordinates import CoordinateSystem
@@ -88,7 +87,7 @@ def partition_text(
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
     max_partition: Optional[int] = 1500,
-    metadata_date: Optional[datetime] = None,
+    metadata_date: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions an .txt documents into its constituent elements.
@@ -171,7 +170,9 @@ def element_from_text(
         )
     elif is_us_city_state_zip(text):
         return Address(
-            text=text, coordinates=coordinates, coordinate_system=coordinate_system
+            text=text,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
         )
     elif is_possible_narrative_text(text):
         return NarrativeText(
@@ -181,9 +182,13 @@ def element_from_text(
         )
     elif is_possible_title(text):
         return Title(
-            text=text, coordinates=coordinates, coordinate_system=coordinate_system
+            text=text,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
         )
     else:
         return Text(
-            text=text, coordinates=coordinates, coordinate_system=coordinate_system
+            text=text,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
         )

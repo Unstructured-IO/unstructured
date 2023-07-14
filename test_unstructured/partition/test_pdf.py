@@ -135,7 +135,9 @@ def test_partition_pdf_with_model_name_env_var(
 ):
     monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
     with mock.patch.object(
-        layout, "process_file_with_model", mock.MagicMock()
+        layout,
+        "process_file_with_model",
+        mock.MagicMock(),
     ) as mock_process:
         pdf.partition_pdf(filename=filename, strategy="hi_res")
         mock_process.assert_called_once_with(
@@ -153,7 +155,9 @@ def test_partition_pdf_with_model_name(
 ):
     monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
     with mock.patch.object(
-        layout, "process_file_with_model", mock.MagicMock()
+        layout,
+        "process_file_with_model",
+        mock.MagicMock(),
     ) as mock_process:
         pdf.partition_pdf(filename=filename, strategy="hi_res", model_name="checkbox")
         mock_process.assert_called_once_with(
@@ -169,9 +173,7 @@ def test_partition_pdf_with_auto_strategy(
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
     elements = pdf.partition_pdf(filename=filename, strategy="auto")
-    title = (
-        "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
-    )
+    title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
     assert elements[0].text == title
     assert elements[0].metadata.filename == "layout-parser-paper-fast.pdf"
     assert elements[0].metadata.file_directory == "example-docs"
@@ -353,7 +355,7 @@ def test_partition_pdf_with_copy_protection():
     filename = os.path.join("example-docs", "copy-protected.pdf")
     elements = pdf.partition_pdf(filename=filename, strategy="hi_res")
     elements[0] == Title(
-        "LayoutParser: A Uniﬁed Toolkit for Deep Based Document Image Analysis"
+        "LayoutParser: A Uniﬁed Toolkit for Deep Based Document Image Analysis",
     )
     # check that the pdf has multiple different page numbers
     assert {element.metadata.page_number for element in elements} == {1, 2}
@@ -408,7 +410,8 @@ def test_partition_pdf_fast_groups_text_in_text_box():
         ),
     )
     assert elements[0] == Title(
-        "eastern mediterranean", metadata=expected_elem_metadata_0
+        "eastern mediterranean",
+        metadata=expected_elem_metadata_0,
     )
     assert isinstance(elements[1], NarrativeText)
     assert str(elements[1]).startswith("We")
@@ -448,7 +451,10 @@ def test_partition_pdf_with_fast_strategy_from_file_with_metadata_filename(
 ):
     with open(filename, "rb") as f:
         elements = pdf.partition_pdf(
-            file=f, url=None, strategy="fast", metadata_filename="test"
+            file=f,
+            url=None,
+            strategy="fast",
+            metadata_filename="test",
         )
     for element in elements:
         assert element.metadata.filename == "test"
@@ -458,11 +464,11 @@ def test_partition_pdf_with_auto_strategy_exclude_metadata(
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
     elements = pdf.partition_pdf(
-        filename=filename, strategy="auto", include_metadata=False
+        filename=filename,
+        strategy="auto",
+        include_metadata=False,
     )
-    title = (
-        "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
-    )
+    title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
     assert elements[0].text == title
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
@@ -473,7 +479,10 @@ def test_partition_pdf_with_fast_strategy_from_file_exclude_metadata(
 ):
     with open(filename, "rb") as f:
         elements = pdf.partition_pdf(
-            file=f, url=None, strategy="fast", include_metadata=False
+            file=f,
+            url=None,
+            strategy="fast",
+            include_metadata=False,
         )
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
@@ -510,7 +519,8 @@ def test_partition_pdf_with_auto_strategy_custom_metadata_date(
     )
 
     elements = pdf.partition_pdf(
-        filename=filename, metadata_date=expected_last_modification_date
+        filename=filename,
+        metadata_date=expected_last_modification_date,
     )
 
     assert elements[0].metadata.date == expected_last_modification_date
@@ -623,7 +633,8 @@ def test_partition_pdf_from_file_with_auto_strategy_custom_metadata_date(
 
     with open(filename, "rb") as f:
         elements = pdf.partition_pdf(
-            file=f, metadata_date=expected_last_modification_date
+            file=f,
+            metadata_date=expected_last_modification_date,
         )
 
     assert elements[0].metadata.date == expected_last_modification_date
@@ -660,7 +671,9 @@ def test_partition_pdf_from_file_with_ocr_only_strategy_custom_metadata_date(
 
     with open(filename, "rb") as f:
         elements = pdf.partition_pdf(
-            file=f, metadata_date=expected_last_modification_date, strategy="ocr_only"
+            file=f,
+            metadata_date=expected_last_modification_date,
+            strategy="ocr_only",
         )
 
     assert elements[0].metadata.date == expected_last_modification_date
@@ -697,7 +710,9 @@ def test_partition_pdf_from_file_with_hi_res_strategy_custom_metadata_date(
 
     with open(filename, "rb") as f:
         elements = pdf.partition_pdf(
-            file=f, metadata_date=expected_last_modification_date, strategy="hi_res"
+            file=f,
+            metadata_date=expected_last_modification_date,
+            strategy="hi_res",
         )
 
     assert elements[0].metadata.date == expected_last_modification_date

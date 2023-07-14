@@ -69,7 +69,9 @@ def test_partition_md_from_url():
         text = f.read()
 
     response = MockResponse(
-        text=text, status_code=200, headers={"Content-Type": "text/markdown"}
+        text=text,
+        status_code=200,
+        headers={"Content-Type": "text/markdown"},
     )
     with patch.object(requests, "get", return_value=response) as _:
         elements = partition_md(url="https://fake.url")
@@ -85,7 +87,9 @@ def test_partition_md_from_url_raises_with_bad_status_code():
         text = f.read()
 
     response = MockResponse(
-        text=text, status_code=500, headers={"Content-Type": "text/html"}
+        text=text,
+        status_code=500,
+        headers={"Content-Type": "text/html"},
     )
     with patch.object(requests, "get", return_value=response) as _:
         with pytest.raises(ValueError):
@@ -176,7 +180,8 @@ def test_partition_md_with_custom_metadata_date(
     )
 
     elements = partition_md(
-        filename=filename, metadata_date=expected_last_modification_date
+        filename=filename,
+        metadata_date=expected_last_modification_date,
     )
 
     assert elements[0].metadata.date == expected_last_modification_date

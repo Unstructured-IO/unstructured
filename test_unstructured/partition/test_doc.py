@@ -4,7 +4,6 @@ from tempfile import SpooledTemporaryFile
 import docx
 import pytest
 
-
 from unstructured.documents.elements import (
     Address,
     ListItem,
@@ -35,7 +34,8 @@ def mock_document():
     document.add_paragraph("", style="Normal")
     # NOTE(robinson) - this should get picked up as a narrative text
     document.add_paragraph(
-        "This is my first thought. This is my second thought.", style="Normal"
+        "This is my first thought. This is my second thought.",
+        style="Normal",
     )
     document.add_paragraph("This is my third thought.", style="Body Text")
     # NOTE(robinson) - this should just be regular text
@@ -201,7 +201,8 @@ def test_partition_doc_metadata_date_with_custom_metadata(
     )
 
     elements = partition_doc(
-        filename=filename, metadata_date=expected_last_modified_date
+        filename=filename,
+        metadata_date=expected_last_modified_date,
     )
 
     assert elements[0].metadata.date == expected_last_modified_date
@@ -252,4 +253,4 @@ def test_partition_doc_from_file_without_metadata_date(
         sf.seek(0)
         elements = partition_doc(file=sf)
 
-    assert elements[0].metadata.date == None
+    assert elements[0].metadata.date is None

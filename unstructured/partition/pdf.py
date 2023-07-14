@@ -3,7 +3,6 @@ import re
 import warnings
 from tempfile import SpooledTemporaryFile
 from typing import BinaryIO, List, Optional, Union, cast
-from datetime import datetime
 
 import pdf2image
 import PIL
@@ -30,9 +29,9 @@ from unstructured.file_utils.filetype import (
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.partition.common import (
     exactly_one,
-    spooled_to_bytes_io_if_needed,
     get_last_modified_date,
     get_last_modified_date_from_file,
+    spooled_to_bytes_io_if_needed,
 )
 from unstructured.partition.strategies import determine_pdf_or_image_strategy
 from unstructured.partition.text import element_from_text, partition_text
@@ -53,7 +52,7 @@ def partition_pdf(
     max_partition: Optional[int] = 1500,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
-    metadata_date: Optional[datetime] = None,
+    metadata_date: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Parses a pdf document into a list of interpreted elements.
@@ -105,7 +104,7 @@ def extractable_elements(
     filename: str = "",
     file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
     include_page_breaks: bool = False,
-    metadata_date: Optional[datetime] = None,
+    metadata_date: Optional[str] = None,
 ):
     return _partition_pdf_with_pdfminer(
         filename=filename,
@@ -136,7 +135,7 @@ def partition_pdf_or_image(
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
     max_partition: Optional[int] = 1500,
-    metadata_date: Optional[datetime] = None,
+    metadata_date: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
@@ -146,7 +145,8 @@ def partition_pdf_or_image(
     # function.
 
     last_modification_date = get_the_last_modification_date_pdf_or_img(
-        file=file, filename=filename
+        file=file,
+        filename=filename,
     )
     if not is_image:
         extracted_elements = extractable_elements(
@@ -174,7 +174,7 @@ def partition_pdf_or_image(
         # NOTE(robinson): Catches a UserWarning that occurs when detectron is called
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            return _partition_pdf_or_image_local(
+            layout_elements = _partition_pdf_or_image_local(
                 filename=filename,
                 file=spooled_to_bytes_io_if_needed(file),
                 is_image=is_image,
@@ -200,6 +200,7 @@ def partition_pdf_or_image(
                 max_partition=max_partition,
                 metadata_date=metadata_date or last_modification_date,
             )
+    return layout_elements
 
 
 @requires_dependencies("unstructured_inference")
@@ -235,9 +236,7 @@ def _partition_pdf_or_image_local(
             "running make install-local-inference from the root directory of the repository.",
         ) from e
 
-    model_name = (
-        model_name if model_name else os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME")
-    )
+    model_name = model_name if model_name else os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME")
     if file is None:
         layout = process_file_with_model(
             filename,
@@ -272,7 +271,9 @@ def _partition_pdf_or_image_local(
         # NOTE(crag): this is probably always a Text object, but check for the sake of typing
         if isinstance(el, Text):
             el.text = re.sub(
-                RE_MULTISPACE_INCLUDING_NEWLINES, " ", el.text or ""
+                RE_MULTISPACE_INCLUDING_NEWLINES,
+                " ",
+                el.text or "",
             ).strip()
             if el.text or isinstance(el, PageBreak):
                 out_elements.append(cast(Element, el))
@@ -341,7 +342,7 @@ def _process_pdfminer_pages(
     fp: BinaryIO,
     filename: str = "",
     include_page_breaks: bool = False,
-    metadata_date: Optional[datetime] = None,
+    metadata_date: Optional[str] = None,
 ):
     """Uses PDF miner to split a document into pages and process them."""
     elements: List[Element] = []
@@ -391,12 +392,8 @@ def _process_pdfminer_pages(
         sorted_page_elements = sorted(
             page_elements,
             key=lambda el: (
-                el.metadata.coordinates.points[0][1]
-                if el.metadata.coordinates
-                else float("inf"),
-                el.metadata.coordinates.points[0][0]
-                if el.metadata.coordinates
-                else float("inf"),
+                el.metadata.coordinates.points[0][1] if el.metadata.coordinates else float("inf"),
+                el.metadata.coordinates.points[0][0] if el.metadata.coordinates else float("inf"),
                 el.id,
             ),
         )
@@ -429,7 +426,9 @@ def _partition_pdf_or_image_with_ocr(
         else:
             text = pytesseract.image_to_string(filename, config=f"-l '{ocr_languages}'")
         elements = partition_text(
-            text=text, max_partition=max_partition, metadata_date=metadata_date
+            text=text,
+            max_partition=max_partition,
+            metadata_date=metadata_date,
         )
     else:
         elements = []
@@ -441,7 +440,9 @@ def _partition_pdf_or_image_with_ocr(
 
         for i, image in enumerate(document):
             metadata = ElementMetadata(
-                filename=filename, page_number=i + 1, date=metadata_date
+                filename=filename,
+                page_number=i + 1,
+                date=metadata_date,
             )
             text = pytesseract.image_to_string(image, config=f"-l '{ocr_languages}'")
 

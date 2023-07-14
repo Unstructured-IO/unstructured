@@ -40,7 +40,7 @@ def mock_successful_post(url, **kwargs):
             {
                 "number": 0,
                 "elements": [
-                    {"type": "Title", "text": "Charlie Brown and the Great Pumpkin"}
+                    {"type": "Title", "text": "Charlie Brown and the Great Pumpkin"},
                 ],
             },
             {
@@ -96,7 +96,9 @@ def test_partition_image_local(monkeypatch, filename, file):
     )
 
     partition_image_response = pdf._partition_pdf_or_image_local(
-        filename, file, is_image=True
+        filename,
+        file,
+        is_image=True,
     )
     assert partition_image_response[0].text == "Charlie Brown and the Great Pumpkin"
 
@@ -111,19 +113,21 @@ def test_partition_image_with_auto_strategy(
     filename="example-docs/layout-parser-paper-fast.jpg",
 ):
     elements = image.partition_image(filename=filename, strategy="auto")
-    titles = [
-        el for el in elements if el.category == "Title" and len(el.text.split(" ")) > 10
-    ]
+    titles = [el for el in elements if el.category == "Title" and len(el.text.split(" ")) > 10]
     title = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
     assert titles[0].text == title
 
 
 def test_partition_image_with_language_passed(filename="example-docs/example.jpg"):
     with mock.patch.object(
-        layout, "process_file_with_model", mock.MagicMock()
+        layout,
+        "process_file_with_model",
+        mock.MagicMock(),
     ) as mock_partition:
         image.partition_image(
-            filename=filename, strategy="hi_res", ocr_languages="eng+swe"
+            filename=filename,
+            strategy="hi_res",
+            ocr_languages="eng+swe",
         )
 
     assert mock_partition.call_args.kwargs.get("ocr_languages") == "eng+swe"
@@ -133,10 +137,11 @@ def test_partition_image_from_file_with_language_passed(
     filename="example-docs/example.jpg",
 ):
     with mock.patch.object(
-        layout, "process_data_with_model", mock.MagicMock()
-    ) as mock_partition:
-        with open(filename, "rb") as f:
-            image.partition_image(file=f, strategy="hi_res", ocr_languages="eng+swe")
+        layout,
+        "process_data_with_model",
+        mock.MagicMock(),
+    ) as mock_partition, open(filename, "rb") as f:
+        image.partition_image(file=f, strategy="hi_res", ocr_languages="eng+swe")
 
     assert mock_partition.call_args.kwargs.get("ocr_languages") == "eng+swe"
 
@@ -146,13 +151,19 @@ def test_partition_image_raises_with_invalid_language(
 ):
     with pytest.raises(TesseractError):
         image.partition_image(
-            filename=filename, strategy="hi_res", ocr_languages="fakeroo"
+            filename=filename,
+            strategy="hi_res",
+            ocr_languages="fakeroo",
         )
 
 
 def test_partition_image_with_ocr_detects_korean():
     filename = os.path.join(
-        DIRECTORY, "..", "..", "example-docs", "english-and-korean.png"
+        DIRECTORY,
+        "..",
+        "..",
+        "example-docs",
+        "english-and-korean.png",
     )
     elements = image.partition_image(
         filename=filename,
@@ -166,7 +177,11 @@ def test_partition_image_with_ocr_detects_korean():
 
 def test_partition_image_with_ocr_detects_korean_from_file():
     filename = os.path.join(
-        DIRECTORY, "..", "..", "example-docs", "english-and-korean.png"
+        DIRECTORY,
+        "..",
+        "..",
+        "example-docs",
+        "english-and-korean.png",
     )
 
     with open(filename, "rb") as f:
@@ -182,14 +197,19 @@ def test_partition_image_with_ocr_detects_korean_from_file():
 
 def test_partition_image_raises_with_bad_strategy():
     filename = os.path.join(
-        DIRECTORY, "..", "..", "example-docs", "english-and-korean.png"
+        DIRECTORY,
+        "..",
+        "..",
+        "example-docs",
+        "english-and-korean.png",
     )
     with pytest.raises(ValueError):
         image.partition_image(filename=filename, strategy="fakeroo")
 
 
 def test_partition_image_metadata_date(
-    mocker, filename="example-docs/english-and-korean.png"
+    mocker,
+    filename="example-docs/english-and-korean.png",
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
     mocker.patch(
@@ -202,7 +222,8 @@ def test_partition_image_metadata_date(
 
 
 def test_partition_image_with_hi_res_strategy_metadata_date(
-    mocker, filename="example-docs/english-and-korean.png"
+    mocker,
+    filename="example-docs/english-and-korean.png",
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
     mocker.patch(
@@ -215,7 +236,8 @@ def test_partition_image_with_hi_res_strategy_metadata_date(
 
 
 def test_partition_image_metadata_date_custom_metadata_date(
-    mocker, filename="example-docs/english-and-korean.png"
+    mocker,
+    filename="example-docs/english-and-korean.png",
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
     expected_last_modification_date = "2009-07-05T09:24:28"
@@ -225,14 +247,16 @@ def test_partition_image_metadata_date_custom_metadata_date(
         return_value=mocked_last_modification_date,
     )
     elements = image.partition_image(
-        filename=filename, metadata_date=expected_last_modification_date
+        filename=filename,
+        metadata_date=expected_last_modification_date,
     )
 
     assert elements[0].metadata.date == expected_last_modification_date
 
 
 def test_partition_image_with_hi_res_strategy_metadata_date_custom_metadata_date(
-    mocker, filename="example-docs/english-and-korean.png"
+    mocker,
+    filename="example-docs/english-and-korean.png",
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
     expected_last_modification_date = "2009-07-05T09:24:28"
@@ -251,7 +275,8 @@ def test_partition_image_with_hi_res_strategy_metadata_date_custom_metadata_date
 
 
 def test_partition_image_from_file_metadata_date(
-    mocker, filename="example-docs/english-and-korean.png"
+    mocker,
+    filename="example-docs/english-and-korean.png",
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
     mocker.patch(
@@ -265,7 +290,8 @@ def test_partition_image_from_file_metadata_date(
 
 
 def test_partition_image_from_file_with_hi_res_strategy_metadata_date(
-    mocker, filename="example-docs/english-and-korean.png"
+    mocker,
+    filename="example-docs/english-and-korean.png",
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
     mocker.patch(
@@ -280,7 +306,8 @@ def test_partition_image_from_file_with_hi_res_strategy_metadata_date(
 
 
 def test_partition_image_from_file_metadata_date_custom_metadata_date(
-    mocker, filename="example-docs/english-and-korean.png"
+    mocker,
+    filename="example-docs/english-and-korean.png",
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
     expected_last_modification_date = "2009-07-05T09:24:28"
@@ -291,14 +318,16 @@ def test_partition_image_from_file_metadata_date_custom_metadata_date(
     )
     with open(filename, "rb") as f:
         elements = image.partition_image(
-            file=f, metadata_date=expected_last_modification_date
+            file=f,
+            metadata_date=expected_last_modification_date,
         )
 
     assert elements[0].metadata.date == expected_last_modification_date
 
 
 def test_partition_image_from_file_with_hi_res_strategy_metadata_date_custom_metadata_date(
-    mocker, filename="example-docs/english-and-korean.png"
+    mocker,
+    filename="example-docs/english-and-korean.png",
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
     expected_last_modification_date = "2009-07-05T09:24:28"
@@ -309,7 +338,9 @@ def test_partition_image_from_file_with_hi_res_strategy_metadata_date_custom_met
     )
     with open(filename, "rb") as f:
         elements = image.partition_image(
-            file=f, metadata_date=expected_last_modification_date, stratefy="hi_res"
+            file=f,
+            metadata_date=expected_last_modification_date,
+            stratefy="hi_res",
         )
 
     assert elements[0].metadata.date == expected_last_modification_date

@@ -1,16 +1,15 @@
 import xml.etree.ElementTree as ET
 from tempfile import SpooledTemporaryFile
 from typing import IO, BinaryIO, List, Optional, Union, cast
-from datetime import datetime
 
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import (
     exactly_one,
-    spooled_to_bytes_io_if_needed,
     get_last_modified_date,
     get_last_modified_date_from_file,
+    spooled_to_bytes_io_if_needed,
 )
 from unstructured.partition.text import partition_text
 
@@ -20,9 +19,7 @@ def is_leaf(elem):
 
 
 def is_string(elem):
-    return isinstance(elem, str) or (
-        hasattr(elem, "text") and isinstance(elem.text, str)
-    )
+    return isinstance(elem, str) or (hasattr(elem, "text") and isinstance(elem.text, str))
 
 
 def get_leaf_elements(
@@ -62,7 +59,7 @@ def partition_xml(
     include_metadata: bool = True,
     encoding: Optional[str] = None,
     max_partition: Optional[int] = 1500,
-    metadata_date: Optional[datetime] = None,
+    metadata_date: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions an XML document into its document elements.

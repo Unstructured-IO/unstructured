@@ -1,5 +1,4 @@
 import json
-from datetime import datetime
 import re
 from typing import IO, List, Optional
 
@@ -22,7 +21,7 @@ def partition_json(
     text: Optional[str] = None,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
-    metadata_date: Optional[datetime] = None,
+    metadata_date: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions an .json document into its constituent elements.

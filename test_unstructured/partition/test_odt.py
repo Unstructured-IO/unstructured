@@ -54,6 +54,7 @@ def test_partition_odt_from_file_exclude_metadata():
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
 
+
 def test_partition_odt_metadata_date(
     mocker,
     filename="example-docs/fake.odt",
@@ -85,7 +86,8 @@ def test_partition_odt_with_custom_metadata_date(
     )
 
     elements = partition_odt(
-        filename=filename, metadata_date=expected_last_modification_date
+        filename=filename,
+        metadata_date=expected_last_modification_date,
     )
 
     assert elements[0].metadata.date == expected_last_modification_date

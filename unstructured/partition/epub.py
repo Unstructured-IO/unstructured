@@ -1,13 +1,8 @@
 from typing import IO, List, Optional
-from datetime import datetime
 
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.html import convert_and_partition_html
-from unstructured.partition.common import (
-    get_last_modified_date,
-    get_last_modified_date_from_file,
-)
 
 
 @process_metadata()
@@ -18,7 +13,7 @@ def partition_epub(
     include_page_breaks: bool = False,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
-    metadata_date: Optional[datetime] = None,
+    metadata_date: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions an EPUB document. The document is first converted to HTML and then
@@ -42,5 +37,5 @@ def partition_epub(
         file=file,
         include_page_breaks=include_page_breaks,
         metadata_filename=metadata_filename,
-        metadata_date=metadata_date
+        metadata_date=metadata_date,
     )

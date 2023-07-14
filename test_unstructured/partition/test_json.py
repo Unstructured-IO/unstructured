@@ -21,7 +21,8 @@ test_files = [
     pytest.param(
         "fake-power-point.ppt",
         marks=pytest.mark.skipif(
-            is_in_docker, reason="Skipping this test in Docker container"
+            is_in_docker,
+            reason="Skipping this test in Docker container",
         ),
     ),
     "fake.docx",
@@ -239,7 +240,8 @@ def test_partition_json_with_custom_metadata_date(
     )
 
     elements = partition_json(
-        filename=filename, metadata_date=expected_last_modification_date
+        filename=filename,
+        metadata_date=expected_last_modification_date,
     )
 
     assert elements[0].metadata.date == expected_last_modification_date
