@@ -39,7 +39,7 @@ def partition_xlsx(
         A file-like object using "rb" mode --> open(filename, "rb").
     include_metadata
         Determines whether or not metadata is included in the output.
-    modification_date
+    metadata_date
         The day of the last modification
     """
     exactly_one(filename=filename, file=file)

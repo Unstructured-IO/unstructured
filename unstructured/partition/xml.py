@@ -83,7 +83,7 @@ def partition_xml(
     max_partition
         The maximum number of characters to include in a partition. If None is passed,
         no maximum is applied.
-    modification_date
+    metadata_date
         The day of the last modification
 
     """

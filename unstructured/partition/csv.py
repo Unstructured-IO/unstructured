@@ -38,13 +38,10 @@ def partition_csv(
             A string defining the target filename path.
         file
             A file-like object using "rb" mode --> open(filename, "rb").
-    <<<<<<< HEAD
-    =======
         metadata_filename
             The filename to use for the metadata.
         metadata_date
             The last modified date for the document.
-    >>>>>>> feat: add date field to metadata from csv file
         include_metadata
             Determines whether or not metadata is included in the output.
     """

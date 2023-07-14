@@ -109,7 +109,7 @@ def partition_text(
     max_partition
         The maximum number of characters to include in a partition. If None is passed,
         no maximum is applied.
-    modification_date
+    metadata_date
         The day of the last modification
     """
     if text is not None and text.strip() == "" and not file and not filename:
