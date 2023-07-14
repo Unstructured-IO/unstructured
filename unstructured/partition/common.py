@@ -225,6 +225,7 @@ def convert_to_bytes(
     elif isinstance(file, SpooledTemporaryFile):
         file.seek(0)
         f_bytes = file.read()
+        file.seek(0)
     elif isinstance(file, BytesIO):
         f_bytes = file.getvalue()
     elif isinstance(file, (TextIOWrapper, BufferedReader)):
