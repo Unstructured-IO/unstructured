@@ -16,9 +16,9 @@ charset-normalizer==3.2.0
     # via
     #   pdfminer-six
     #   requests
-click==8.1.4
+click==8.1.5
     # via nltk
-cryptography==41.0.1
+cryptography==41.0.2
     # via pdfminer-six
 et-xmlfile==1.1.0
     # via openpyxl
@@ -92,5 +92,5 @@ xlrd==2.0.1
     # via -r requirements/base.in
 xlsxwriter==3.1.2
     # via python-pptx
-zipp==3.16.0
+zipp==3.16.1
     # via importlib-metadata
