@@ -32,8 +32,8 @@ class SimpleConfluenceConfig(BaseConnectorConfig):
     api_token: str
     url: str
     list_of_spaces: str
-    number_of_spaces: int
-    number_of_docs_from_each_space: int
+    max_number_of_spaces: int
+    max_number_of_docs_from_each_space: int
 
 
 @dataclass
@@ -145,7 +145,7 @@ class ConfluenceConnector(ConnectorCleanupMixin, BaseConnector):
         self.list_of_spaces = None
         if self.config.list_of_spaces:
             self.list_of_spaces = self.config.list_of_spaces.split(",")
-            if self.config.number_of_spaces:
+            if self.config.max_number_of_spaces:
                 logger.warning(
                     """--confluence-list-of-spaces and --confluence-num-of-spaces cannot
                     be used at the same time. Connector will only fetch the
@@ -159,7 +159,7 @@ class ConfluenceConnector(ConnectorCleanupMixin, BaseConnector):
         get_spaces_with_scroll = scroll_wrapper(self.confluence.get_all_spaces)
 
         all_results = get_spaces_with_scroll(
-            number_of_items_to_fetch=self.config.number_of_spaces,
+            number_of_items_to_fetch=self.config.max_number_of_spaces,
         )
 
         space_ids = [space["key"] for space in all_results]
@@ -174,7 +174,7 @@ class ConfluenceConnector(ConnectorCleanupMixin, BaseConnector):
         get_pages_with_scroll = scroll_wrapper(self.confluence.get_all_pages_from_space)
         results = get_pages_with_scroll(
             space=space_id,
-            number_of_items_to_fetch=self.config.number_of_docs_from_each_space,
+            number_of_items_to_fetch=self.config.max_number_of_docs_from_each_space,
             content_type=content_type,
         )
 

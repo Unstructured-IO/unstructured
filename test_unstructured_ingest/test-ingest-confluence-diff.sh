@@ -20,7 +20,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --confluence-url https://unstructured-ingest-test.atlassian.net \
     --confluence-user-email "$CONFLUENCE_USER_EMAIL" \
     --confluence-api-token "$CONFLUENCE_API_TOKEN" \
-    --confluence-num-of-spaces 4 \
+    --confluence-max-num-of-spaces 4 \
     --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
     --num-processes 2 \
     --preserve-downloads \

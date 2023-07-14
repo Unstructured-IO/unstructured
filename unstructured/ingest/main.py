@@ -533,8 +533,8 @@ def main(
     confluence_user_email,
     confluence_api_token,
     confluence_list_of_spaces,
-    confluence_num_of_spaces,
-    confluence_num_of_docs_from_each_space,
+    confluence_max_num_of_spaces,
+    confluence_max_num_of_docs_from_each_space,
     download_dir,
     preserve_downloads,
     structured_output_dir,
@@ -904,8 +904,8 @@ def main(
                 user_email=confluence_user_email,
                 api_token=confluence_api_token,
                 list_of_spaces=confluence_list_of_spaces,
-                number_of_spaces=confluence_num_of_spaces,
-                number_of_docs_from_each_space=confluence_num_of_docs_from_each_space,
+                max_number_of_spaces=confluence_max_num_of_spaces,
+                max_number_of_docs_from_each_space=confluence_max_num_of_docs_from_each_space,
             ),
         )
     # Check for other connector-specific options here and define the doc_connector object
