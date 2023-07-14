@@ -100,7 +100,13 @@ def test_partition_msg_from_file_with_metadata_filename():
 
 
 def test_extract_attachment_info():
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email-attachment.msg")
+    filename = os.path.join(
+        DIRECTORY,
+        "..",
+        "..",
+        "example-docs",
+        "fake-email-attachment.msg",
+    )
     attachment_info = extract_msg_attachment_info(filename)
     assert len(attachment_info) > 0
     assert attachment_info == ATTACH_EXPECTED_OUTPUT
@@ -139,7 +145,10 @@ def test_partition_msg_can_process_attachments(
     filename="example-docs/fake-email-attachment.msg",
 ):
     extract_msg_attachment_info(filename=filename, output_dir=tmpdir.dirname)
-    attachment_filename = os.path.join(tmpdir.dirname, ATTACH_EXPECTED_OUTPUT[0]["filename"])
+    attachment_filename = os.path.join(
+        tmpdir.dirname,
+        ATTACH_EXPECTED_OUTPUT[0]["filename"],
+    )
     attachment_elements = partition_text(
         filename=attachment_filename,
         metadata_filename=attachment_filename,
@@ -169,3 +178,27 @@ def test_partition_msg_raises_with_no_partitioner(
 ):
     with pytest.raises(ValueError):
         partition_msg(filename=filename, process_attachments=True)
+
+
+def test_partition_msg_from_file_custom_metadata_date(
+    filename="example-docs/fake-email.msg",
+):
+    expected_last_modification_date = "2020-07-05T09:24:28"
+
+    with open(filename, "rb") as f:
+        elements = partition_msg(file=f, metadata_date=expected_last_modification_date)
+
+    assert elements[0].metadata.date == expected_last_modification_date
+
+
+def test_partition_msg_custom_metadata_date(
+    filename="example-docs/fake-email.msg",
+):
+    expected_last_modification_date = "2020-07-05T09:24:28"
+
+    elements = partition_msg(
+        filename=filename,
+        metadata_date=expected_last_modification_date,
+    )
+
+    assert elements[0].metadata.date == expected_last_modification_date
