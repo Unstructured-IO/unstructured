@@ -71,7 +71,11 @@ def _parse_received_data(data: str) -> List[Element]:
         elements.append(ReceivedInfo(name="mapi_id", text=mapi_id[0]))
     if datetimetz:
         elements.append(
-            ReceivedInfo(name="received_datetimetz", text=str(datetimetz), datestamp=datetimetz),
+            ReceivedInfo(
+                name="received_datetimetz",
+                text=str(datetimetz),
+                datestamp=datetimetz,
+            ),
         )
     return elements
 
@@ -104,7 +108,11 @@ def partition_email_header(msg: Message) -> List[Element]:
     return elements
 
 
-def build_email_metadata(msg: Message, filename: Optional[str]) -> ElementMetadata:
+def build_email_metadata(
+    msg: Message,
+    filename: Optional[str],
+    metadata_date: Optional[str] = None,
+) -> ElementMetadata:
     """Creates an ElementMetadata object from the header information in the email."""
     header_dict = dict(msg.raw_items())
     email_date = header_dict.get("Date")
@@ -123,7 +131,7 @@ def build_email_metadata(msg: Message, filename: Optional[str]) -> ElementMetada
         sent_to=sent_to,
         sent_from=sent_from,
         subject=header_dict.get("Subject"),
-        date=email_date,
+        date=metadata_date or email_date,
         filename=filename,
     )
 
@@ -133,7 +141,9 @@ def convert_to_iso_8601(time: str) -> Optional[str]:
     cleaned_time = clean_extra_whitespace(time)
     regex_match = EMAIL_DATETIMETZ_PATTERN_RE.search(cleaned_time)
     if regex_match is None:
-        logger.warning(f"{time} did not match RFC-2822 format. Unable to extract the time.")
+        logger.warning(
+            f"{time} did not match RFC-2822 format. Unable to extract the time.",
+        )
         return None
 
     start, end = regex_match.span()
@@ -161,7 +171,9 @@ def extract_attachment_info(
                 key, value = item.split("=")
                 key = clean_extra_whitespace(key.replace('"', ""))
                 value = clean_extra_whitespace(value.replace('"', ""))
-                attachment_info[clean_extra_whitespace(key)] = clean_extra_whitespace(value)
+                attachment_info[clean_extra_whitespace(key)] = clean_extra_whitespace(
+                    value,
+                )
             attachment_info["payload"] = part.get_payload(decode=True)
             list_attachments.append(attachment_info)
 
@@ -230,6 +242,7 @@ def partition_email(
     max_partition: Optional[int] = 1500,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
+    metadata_date: Optional[str] = None,
     process_attachments: bool = False,
     attachment_partitioner: Optional[Callable] = None,
     **kwargs,
@@ -258,6 +271,8 @@ def partition_email(
         processing the content of the email itself.
     attachment_partitioner
         The partitioning function to use to process attachments.
+    metadata_date
+        The last modified date for the document.
     """
     if content_source not in VALID_CONTENT_SOURCES:
         raise ValueError(
@@ -277,7 +292,10 @@ def partition_email(
         if extracted_encoding:
             detected_encoding = extracted_encoding
         else:
-            detected_encoding, file_text = read_txt_file(filename=filename, encoding=encoding)
+            detected_encoding, file_text = read_txt_file(
+                filename=filename,
+                encoding=encoding,
+            )
             msg = email.message_from_string(file_text)
     elif file is not None:
         extracted_encoding, msg = parse_email(file=file)
@@ -322,7 +340,10 @@ def partition_email(
         )
         for element in elements:
             if isinstance(element, Text):
-                _replace_mime_encodings = partial(replace_mime_encodings, encoding=encoding)
+                _replace_mime_encodings = partial(
+                    replace_mime_encodings,
+                    encoding=encoding,
+                )
                 try:
                     element.apply(_replace_mime_encodings)
                 except (UnicodeDecodeError, UnicodeError):
@@ -335,7 +356,10 @@ def partition_email(
 
                     for enc in common_encodings:
                         try:
-                            _replace_mime_encodings = partial(replace_mime_encodings, encoding=enc)
+                            _replace_mime_encodings = partial(
+                                replace_mime_encodings,
+                                encoding=enc,
+                            )
                             element.apply(_replace_mime_encodings)
                             break
                         except (UnicodeDecodeError, UnicodeError):
@@ -362,7 +386,11 @@ def partition_email(
         header = partition_email_header(msg)
     all_elements = header + elements
 
-    metadata = build_email_metadata(msg, filename=metadata_filename or filename)
+    metadata = build_email_metadata(
+        msg,
+        filename=metadata_filename or filename,
+        metadata_date=metadata_date,
+    )
     for element in all_elements:
         element.metadata = metadata
 
