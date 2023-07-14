@@ -86,6 +86,10 @@ install-ingest-github:
 install-ingest-gitlab:
 	python3 -m pip install -r requirements/ingest-gitlab.txt
 
+.PHONY: install-ingest-onedrive
+install-ingest-onedrive:
+	python3 -m pip install -r requirements/ingest-onedrive.txt
+
 .PHONY: install-ingest-reddit
 install-ingest-reddit:
 	python3 -m pip install -r requirements/ingest-reddit.txt

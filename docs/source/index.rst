@@ -17,6 +17,9 @@ Library Documentation
 :doc:`bricks`
   Learn more about partitioning, cleaning, and staging bricks, including advanced usage patterns.
 
+:doc:`connectors`
+  Connect to your favortite data storage platforms for an efortless batch processing of your files.
+
 :doc:`metadata`
   Learn more about how metadata is tracked in the ``unstructured`` library.
 
@@ -36,6 +39,7 @@ Library Documentation
    installing
    getting_started
    bricks
+   connectors
    metadata
    examples
    integrations
