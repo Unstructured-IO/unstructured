@@ -1,3 +1,13 @@
+## 0.8.2-dev1
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* Adds Onedrive connector.
+
 ## 0.8.2-dev0
 
 ### Enhancements
