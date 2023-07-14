@@ -17,7 +17,7 @@ from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.nlp.tokenize import sent_tokenize
-from unstructured.partition.common import exactly_one
+from unstructured.partition.common import exactly_one, filter_element_types
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_possible_narrative_text,
@@ -83,6 +83,8 @@ def partition_text(
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
     max_partition: Optional[int] = 1500,
+    include_element_types: Optional[List[Element]] = None,
+    exclude_element_types: Optional[List[Element]] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions an .txt documents into its constituent elements.
@@ -104,6 +106,10 @@ def partition_text(
     max_partition
         The maximum number of characters to include in a partition. If None is passed,
         no maximum is applied.
+    include_element_types
+        Determines which Elements included in the output.
+    exclude_element_types
+        Determines which Elements excluded in the output.
     """
     if text is not None and text.strip() == "" and not file and not filename:
         return []
@@ -141,6 +147,13 @@ def partition_text(
             element.metadata = metadata
             elements.append(element)
 
+    if include_element_types or exclude_element_types:
+        elements = filter_element_types(
+            elements,
+            include_element_types,
+            exclude_element_types,
+        )
+
     return elements
 
 
@@ -156,7 +169,11 @@ def element_from_text(
             coordinate_system=coordinate_system,
         )
     elif is_us_city_state_zip(text):
-        return Address(text=text, coordinates=coordinates, coordinate_system=coordinate_system)
+        return Address(
+            text=text,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
+        )
     elif is_possible_narrative_text(text):
         return NarrativeText(
             text=text,
@@ -164,6 +181,14 @@ def element_from_text(
             coordinate_system=coordinate_system,
         )
     elif is_possible_title(text):
-        return Title(text=text, coordinates=coordinates, coordinate_system=coordinate_system)
+        return Title(
+            text=text,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
+        )
     else:
-        return Text(text=text, coordinates=coordinates, coordinate_system=coordinate_system)
+        return Text(
+            text=text,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
+        )
