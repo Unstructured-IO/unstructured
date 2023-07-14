@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches: [ main ]
 
 env:
   DOCKER_REPOSITORY: quay.io/unstructured-io/unstructured
