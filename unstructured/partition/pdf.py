@@ -368,7 +368,7 @@ def convert_pdf_to_images(
     filename: str = "",
     file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
     chunk_size: int = 10,
-) -> Iterator[List[object]]:
+) -> Iterator[PIL.Image.Image]:
     # Convert a PDF in small chunks of pages at a time (e.g. 1-10, 11-20... and so on)
     exactly_one(filename=filename, file=file)
     if file is not None:
