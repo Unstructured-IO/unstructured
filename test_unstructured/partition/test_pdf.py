@@ -109,8 +109,41 @@ def test_partition_pdf_local_raises_with_no_filename():
 
 
 @pytest.mark.parametrize(
-    ("strategy"),
-    [("fast"), ("hi_res"), ("ocr_only")],
+    "strategy",
+    ["fast", "hi_res", "ocr_only"],
+)
+def test_partition_pdf_with_filename(
+    strategy,
+    filename="example-docs/layout-parser-paper-fast.pdf",
+):
+    # Test that the partition_pdf function can handle filename
+    result = pdf.partition_pdf(filename=filename, strategy=strategy)
+    # validate that the result is a non-empty list of dicts
+    assert len(result) > 10
+    # check that the pdf has multiple different page numbers
+    assert {element.metadata.page_number for element in result} == {1, 2}
+
+
+@pytest.mark.parametrize(
+    "strategy",
+    ["fast", "hi_res", "ocr_only"],
+)
+def test_partition_pdf_with_file_rb(
+    strategy,
+    filename="example-docs/layout-parser-paper-fast.pdf",
+):
+    # Test that the partition_pdf function can handle BufferedReader
+    with open(filename, "rb") as f:
+        result = pdf.partition_pdf(file=f, strategy=strategy)
+        # validate that the result is a non-empty list of dicts
+        assert len(result) > 10
+        # check that the pdf has multiple different page numbers
+        assert {element.metadata.page_number for element in result} == {1, 2}
+
+
+@pytest.mark.parametrize(
+    "strategy",
+    ["fast", "hi_res", "ocr_only"],
 )
 def test_partition_pdf_with_spooled_file(
     strategy,

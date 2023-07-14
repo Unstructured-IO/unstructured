@@ -13,7 +13,7 @@ charset-normalizer==3.2.0
     # via
     #   -c requirements/base.txt
     #   requests
-click==8.1.4
+click==8.1.5
     # via
     #   -c requirements/base.txt
     #   sacremoses

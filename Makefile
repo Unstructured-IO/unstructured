@@ -148,6 +148,7 @@ pip-compile:
 	pip-compile --upgrade requirements/ingest-wikipedia.in
 	pip-compile --upgrade requirements/ingest-google-drive.in
 	pip-compile --upgrade requirements/ingest-elasticsearch.in
+	pip-compile --upgrade requirements/ingest-onedrive.in
 	pip-compile --upgrade requirements/ingest-confluence.in
 
 ## install-project-local:   install unstructured into your local python environment
