@@ -1,0 +1,164 @@
+[
+  {
+    "type": "NarrativeText",
+    "element_id": "9b4e914a81186ae14dfcf15cef171a54",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "<div class=\"contentLayout2\"> <div class=\"columnLayout fixed-width\" data-layout=\"fixed-width\"> <div class=\"cell normal\" data-type=\"normal\"> <div class=\"innerCell\"> <h2 id=\"Getthemostoutofyourteamspace-Createastellaroverview\">Create a stellar overview</h2><p>The overview is the first page visitors will see when they visit your space, so it helps to include some information on what the space is about and what your team is working on.</p></div> </div> </div> <div class=\"columnLayout two-equal\" data-layout=\"two-equal\"> <div class=\"cell normal\" data-type=\"normal\"> <div class=\"innerCell\"> <span class=\"confluence-embedded-file-wrapper image-center-wrapper\"><img class=\"confluence-embedded-image image-center\" loading=\"lazy\" src=\"https://unstructured-ingest-test.atlassian.net/wiki/download/attachments/1605956/overview.svg?version=1&amp;modificationDate=1688907285640&amp;cacheVersion=1&amp;api=v2\" data-image-src=\"https://unstructured-ingest-test.atlassian.net/wiki/download/attachments/1605956/overview.svg?version=1&amp;modificationDate=1688907285640&amp;cacheVersion=1&amp;api=v2\" data-height=\"737\" data-width=\"606\" data-unresolved-comment-count=\"0\" data-linked-resource-id=\"1507349\" data-linked-resource-version=\"1\" data-linked-resource-type=\"attachment\" data-linked-resource-default-alias=\"overview.svg\" data-base-url=\"https://unstructured-ingest-test.atlassian.net/wiki\" data-linked-resource-content-type=\"image/svg+xml\" data-linked-resource-container-id=\"1605956\" data-linked-resource-contain"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "aa1ec7134d5e24fab5adeae03848fc96",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "er-version=\"1\" data-media-id=\"5e27219e-9c8e-4f37-a4d7-5240f3ecf447\" data-media-type=\"file\"></span><p /></div> </div> <div class=\"cell normal\" data-type=\"normal\"> <div class=\"innerCell\"> <p><strong>Add a header image.</strong> This gives your overview visual appeal and makes it welcoming for visitors.</p><p><strong>Explain what the space is for."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "e36c3d87ffff1bd6161af3ec13f5b20d",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "<div class=\"contentLayout2\"> <div class=\"columnLayout fixed-width\" data-layout=\"fixed-width\"> <div class=\"cell normal\" data-type=\"normal\"> <div class=\"innerCell\"> <h2 id=\"Getthemostoutofyourteamspace-Createastellaroverview\">Create a stellar overview</h2><p>The overview is the first page visitors will see when they visit your space, so it helps to include some information on what the space is about and what your team is working on.</p></div> </div> </div> <div class=\"columnLayout two-equal\" data-layout=\"two-equal\"> <div class=\"cell normal\" data-type=\"normal\"> <div class=\"innerCell\"> <span class=\"confluence-embedded-file-wrapper image-center-wrapper\"><img class=\"confluence-embedded-image image-center\" loading=\"lazy\" src=\"https://unstructured-ingest-test.atlassian.net/wiki/download/attachments/1605956/overview.svg?version=1&amp;modificationDate=1688907285640&amp;cacheVersion=1&amp;api=v2\" data-image-src=\"https://unstructured-ingest-test.atlassian.net/wiki/download/attachments/1605956/overview.svg?version=1&amp;modificationDate=1688907285640&amp;cacheVersion=1&amp;api=v2\" data-height=\"737\" data-width=\"606\" data-unresolved-comment-count=\"0\" data-linked-resource-id=\"1507349\" data-linked-resource-version=\"1\" data-linked-resource-type=\"attachment\" data-linked-resource-default-alias=\"overview.svg\" data-base-url=\"https://unstructured-ingest-test.atlassian.net/wiki\" data-linked-resource-content-type=\"image/svg+xml\" data-linked-resource-container-id=\"1605956\" data-linked-resource-container-version=\"1\" data-media-id=\"5e27219e-9c8e-4f37-a4d7-5240f3ecf447\" data-media-type=\"file\"></span><p /></div> </div> <div class=\"cell normal\" data-type=\"normal\"> <div class=\"innerCell\"> <p><strong>Add a header image.</strong> This gives your overview visual appeal and makes it welcoming for visitors.</p><p><strong>Explain what the space is for."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "9de92f674aa5d5f536280bbc71143276",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "</strong>Start by summarizing the purpose of the space. This could be your team's mission statement or a brief description of the kind of work you do.</p><p><strong>Share team goals.</strong> Add links to your team's <a href=\"https://www.atlassian.com/software/confluence/templates/okrs\" class=\"external-link\" rel=\"nofollow\">OKRs</a>, <a href=\"https://www.atlassian.com/software/confluence/templates/project-plan\" class=\"external-link\" rel=\"nofollow\">project plans</a>, and <a href=\"https://www.atlassian.com/software/confluence/templates/product-roadmap\" class=\"external-link\" rel=\"nofollow\">product roadmaps</a> so visitors can quickly get a sense of your team's goals.</p><p><strong>Tell people how to contact you.</strong> Share your timezone and links to Slack channels, email aliases, or other contact details your team uses so visitors can contact you with questions or feedback about your team's work.</p></div> </div> </div> <div class=\"columnLayout fixed-width\" data-layout=\"fixed-width\"> <div class=\"cell normal\" data-type=\"normal\"> <div class=\"innerCell\"> <h2 id=\"Getthemostoutofyourteamspace-Useshortcutsforeasyaccess\">Use shortcuts for easy access</h2><p>Shortcuts are helpful for important pages that members of a space might need to get to often. These shortcuts are added and organized by the space administrator."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "440adb8a1dab8531519de07d1dc1ef23",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "<a href=\"https://support.atlassian.com/confluence-cloud/docs/comment-on-pages-and-blog-posts/\" class=\"external-link\" rel=\"nofollow\"><u>Inline comments</u></a> allow anyone (or everyone) to huddle around an idea while referencing key information on the project page.</p><p>To leave an inline comment, highlight text on the page and the comment icon will appear.</p><span class=\"confluence-embedded-file-wrapper image-center-wrapper confluence-embedded-manual-size\"><img class=\"confluence-embedded-image image-center\" width=\"442\" loading=\"lazy\" src=\"https://unstructured-ingest-test.atlassian.net/wiki/download/thumbnails/1605956/inline_comment.svg?version=1&amp;modificationDate=1688907286335&amp;cacheVersion=1&amp;api=v2&amp;width=442&amp;height=99\" data-image-src=\"https://unstructured-ingest-test.atlassian.net/wiki/download/attachments/1605956/inline_comment.svg?version=1&amp;modificationDate=1688907286335&amp;cacheVersion=1&amp;api=v2\" data-height=\"134\" data-width=\"792\" data-unresolved-comment-count=\"0\" data-linked-resource-id=\"1507358\" data-linked-resource-version=\"1\" data-linked-resource-type=\"attachment\" data-linked-resource-default-alias=\"inline_comment.svg\" data-base-url=\"https://unstructured-ingest-test.atlassian.net/wiki\" data-linked-resource-content-type=\"image/svg+xml\" data-linked-resource-container-id=\"1605956\" data-linked-resource-container-version=\"1\" data-media-id=\"b114fdc8-d7b4-4493-83aa-367f513cbad9\" data-media-type=\"file\" srcset=\"https://unstructured-ingest-test.atla"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "b733aba77843ebd7496849375176deb7",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "ssian.net/wiki/download/thumbnails/1605956/inline_comment.svg?version=1&amp;modificationDate=1688907286335&amp;cacheVersion=1&amp;api=v2&amp;width=604&amp;height=136 2x, https://unstructured-ingest-test.atlassian.net/wiki/download/thumbnails/1605956/inline_comment.svg?version=1&amp;modificationDate=1688907286335&amp;cacheVersion=1&amp;api=v2&amp;width=442&amp;height=99 1x\"></span><p>Team members with permission to access the page can respond to any comment."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "fcba5ed09b6de7b2eb97acc66245e3a1",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "Space admins can link to pages in the space, other related spaces, or relevant external web content as well as reorder the shortcuts as needed.</p><span class=\"confluence-embedded-file-wrapper image-center-wrapper\"><img class=\"confluence-embedded-image image-center\" loading=\"lazy\" src=\"https://unstructured-ingest-test.atlassian.net/wiki/download/attachments/1605956/shortcuts.svg?version=1&amp;modificationDate=1688907288893&amp;cacheVersion=1&amp;api=v2\" data-image-src=\"https://unstructured-ingest-test.atlassian.net/wiki/download/attachments/1605956/shortcuts.svg?version=1&amp;modificationDate=1688907288893&amp;cacheVersion=1&amp;api=v2\" data-height=\"311\" data-width=\"856\" data-unresolved-comment-count=\"0\" data-linked-resource-id=\"1507382\" data-linked-resource-version=\"1\" data-linked-resource-type=\"attachment\" data-linked-resource-default-alias=\"shortcuts.svg\" data-base-url=\"https://unstructured-ingest-test.atlassian.net/wiki\" data-linked-resource-content-type=\"image/svg+xml\" data-linked-resource-container-id=\"1605956\" data-linked-resource-container-version=\"1\" data-media-id=\"1105e8bf-35e8-4ff6-8b63-857fb839b11e\" data-media-type=\"file\"></span><p /><h2 id=\"Getthemostoutofyourteamspace-Startdiscussionswithinlinecomments\">💭Start discussions with inline comments</h2><p>Thoughtful responses can get lost and lose context as email replies pile up. And if you neglect to copy someone or want to add them later on, it's difficult for them to get up to speed."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "df6267202d3150304eab8b83b7d118dc",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "<a href=\"https://support.atlassian.com/confluence-cloud/docs/comment-on-pages-and-blog-posts/\" class=\"external-link\" rel=\"nofollow\"><u>Inline comments</u></a> allow anyone (or everyone) to huddle around an idea while referencing key information on the project page.</p><p>To leave an inline comment, highlight text on the page and the comment icon will appear.</p><span class=\"confluence-embedded-file-wrapper image-center-wrapper confluence-embedded-manual-size\"><img class=\"confluence-embedded-image image-center\" width=\"442\" loading=\"lazy\" src=\"https://unstructured-ingest-test.atlassian.net/wiki/download/thumbnails/1605956/inline_comment.svg?version=1&amp;modificationDate=1688907286335&amp;cacheVersion=1&amp;api=v2&amp;width=442&amp;height=99\" data-image-src=\"https://unstructured-ingest-test.atlassian.net/wiki/download/attachments/1605956/inline_comment.svg?version=1&amp;modificationDate=1688907286335&amp;cacheVersion=1&amp;api=v2\" data-height=\"134\" data-width=\"792\" data-unresolved-comment-count=\"0\" data-linked-resource-id=\"1507358\" data-linked-resource-version=\"1\" data-linked-resource-type=\"attachment\" data-linked-resource-default-alias=\"inline_comment.svg\" data-base-url=\"https://unstructured-ingest-test.atlassian.net/wiki\" data-linked-resource-content-type=\"image/svg+xml\" data-linked-resource-container-id=\"1605956\" data-linked-resource-container-version=\"1\" data-media-id=\"b114fdc8-d7b4-4493-83aa-367f513cbad9\" data-media-type=\"file\" srcset=\"https://unstructured-ingest-test.atlassian.net/wiki/download/thumbnails/1605956/inline_comment.svg?version=1&amp;modificationDate=1688907286335&amp;cacheVersion=1&amp;api=v2&amp;width=604&amp;height=136 2x, https://unstructured-ingest-test.atlassian.net/wiki/download/thumbnails/1605956/inline_comment.svg?version=1&amp;modificationDate=1688907286335&amp;cacheVersion=1&amp;api=v2&amp;width=442&amp;height=99 1x\"></span><p>Team members with permission to access the page can respond to any comment."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "638547ed1792045d7b068d301828f954",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "Select the individual to ask a question or assign a task.</p></div> </div> <div class=\"cell normal\" data-type=\"normal\"> <div class=\"innerCell\"> <span class=\"confluence-embedded-file-wrapper image-center-wrapper confluence-embedded-manual-size\"><img class=\"confluence-embedded-image image-center\" width=\"442\" loading=\"lazy\" src=\"https://unstructured-ingest-test.atlassian.net/wiki/download/thumbnails/1605956/teamspace_mention.svg?version=1&amp;modificationDate=1688907289571&amp;cacheVersion=1&amp;api=v2&amp;width=442&amp;height=417\" data-image-src=\"https://unstructured-ingest-test.atlassian.net/wiki/download/attachments/1605956/teamspace_mention.svg?version=1&amp;modificationDate=1688907289571&amp;cacheVersion=1&amp;api=v2\" data-height=\"442\" data-width=\"364\" data-unresolved-comment-count=\"0\" data-linked-resource-id=\"1507387\" data-linked-resource-version=\"1\" data-linked-resource-type=\"attachment\" data-linked-resource-default-alias=\"teamspace_mention.svg\" data-base-url=\"https://unstructured-ingest-test.atlassian.net/wiki\" data-linked-resource-content-type=\"image/svg+xml\" data-linked-resource-container-id=\"1605956\" data-linked-resource-container-version=\"1\" data-media-id=\"a4d48dd9-5546-4f59-b35f-9b865764acf3\" data-media-type=\"file\" srcset=\"https://unstructured-ingest-test.atlassian.net/wiki/download/thumbnails/1605956/teamspace_mention.svg?version=1&amp;modificationDate=1688907289571&amp;cacheVersion=1&amp;api=v2&amp;width=496&amp;height=468 2x, https://unstructured-ingest-test.atla"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "04df8851769181dc029d4fa6e0619cf5",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "ssian.net/wiki/download/thumbnails/1605956/teamspace_mention.svg?version=1&amp;modificationDate=1688907289571&amp;cacheVersion=1&amp;api=v2&amp;width=442&amp;height=417 1x\"></span></div> </div> </div> <div class=\"columnLayout fixed-width\" data-layout=\"fixed-width\"> <div class=\"cell normal\" data-type=\"normal\"> <div class=\"innerCell\"> <h2 id=\"Getthemostoutofyourteamspace-Endorseideaswithreactions\">👏Endorse ideas with reactions</h2></div> </div> </div> <div class=\"columnLayout two-equal\" data-layout=\"two-equal\"> <div class=\"cell normal\" data-type=\"normal\"> <div class=\"innerCell\"> <p>Use reactions when you want to support a comment or acknowledge you've seen one without clogging up the thread with another comment.</p><p>You can also use reactions on a page or blog post."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "753c0355099cadc193412b01f3288cd2",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "Plus, when a comment thread comes to its natural conclusion, comments can be resolved and cleared away.</p><h2 id=\"Getthemostoutofyourteamspace-Loopinteammemberswith@mentions\">👋Loop in team members with @mentions</h2></div> </div> </div> <div class=\"columnLayout two-equal\" data-layout=\"two-equal\"> <div class=\"cell normal\" data-type=\"normal\"> <div class=\"innerCell\"> <p /><p><a href=\"https://support.atlassian.com/confluence-cloud/docs/mention-a-person-or-team/\" class=\"external-link\" rel=\"nofollow\"><u>@mentions</u></a> on Confluence function like @mentions on social media platforms like Twitter, Instagram, and Slack. Type the @ symbol on a Confluence page or in a comment, begin spelling a team member's first name, and a list will appear."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "d557163e9cb05caaec9f91e8e48e52bc",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "The author of the content will be notified, and if enough team members react or add comments to the content, it'll be surfaced on Confluence home feed</p></div> </div> <div class=\"cell normal\" data-type=\"normal\"> <div class=\"innerCell\"> <p /><span class=\"confluence-embedded-file-wrapper image-center-wrapper\"><img class=\"confluence-embedded-image image-center\" loading=\"lazy\" src=\"https://unstructured-ingest-test.atlassian.net/wiki/download/attachments/1605956/reactions.svg?version=1&amp;modificationDate=1688907286993&amp;cacheVersion=1&amp;api=v2\" data-image-src=\"https://unstructured-ingest-test.atlassian.net/wiki/download/attachments/1605956/reactions.svg?version=1&amp;modificationDate=1688907286993&amp;cacheVersion=1&amp;api=v2\" data-height=\"154\" data-width=\"516\" data-unresolved-comment-count=\"0\" data-linked-resource-id=\"1507364\" data-linked-resource-version=\"1\" data-linked-resource-type=\"attachment\" data-linked-resource-default-alias=\"reactions.svg\" data-base-url=\"https://unstructured-ingest-test.atlassian.net/wiki\" data-linked-resource-content-type=\"image/svg+xml\" data-linked-resource-container-id=\"1605956\" data-linked-resource-container-version=\"1\" data-media-id=\"aa9c0a9e-ec69-49f8-8a4c-705ceaf08ced\" data-media-type=\"file\"></span><p /></div> </div> </div> <div class=\"columnLayout fixed-width\" data-layout=\"fixed-width\"> <div class=\"cell normal\" data-type=\"normal\"> <div class=\"innerCell\"> <p /><h2 id=\"Getthemostoutofyourteamspace-TakeyourConfluencespacetothenextlevel\">Take"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "94965a599dc5153f463c8f3d45b049f0",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "your Confluence space to the next level</h2></div> </div> </div> <div class=\"columnLayout two-equal\" data-layout=\"two-equal\"> <div class=\"cell normal\" data-type=\"normal\"> <div class=\"innerCell\"> <p>Extend the capabilities of your Confluence pages by  adding extra functionality or including dynamic content.</p><p><strong>To add functionality:</strong></p><ol><li><p>Type ' / ' to open the list of items available to use</p></li><li><p>Find the item to be inserted and select it</p></li><li><p>Select <strong>Insert</strong></p></li></ol></div> </div> <div class=\"cell normal\" data-type=\"normal\"> <div class=\"innerCell\"> <span class=\"confluence-embedded-file-wrapper image-center-wrapper confluence-embedded-manual-size\"><img class=\"confluence-embedded-image image-center\" width=\"544\" loading=\"lazy\" src=\"https://unstructured-ingest-test.atlassian.net/wiki/download/thumbnails/1605956/slash_menu.svg?version=1&amp;modificationDate=1688907287621&amp;cacheVersion=1&amp;api=v2&amp;width=544&amp;height=586\" data-image-src=\"https://unstructured-ingest-test.atlassian.net/wiki/download/attachments/1605956/slash_menu.svg?version=1&amp;modificationDate=1688907287621&amp;cacheVersion=1&amp;api=v2\" data-height=\"460\" data-width=\"390\" data-unresolved-comment-count=\"0\" data-linked-resource-id=\"1507370\" data-linked-resource-version=\"1\" data-linked-resource-type=\"attachment\" data-linked-resource-default-alias=\"slash_menu.svg\" data-base-url=\"https://unstructured-ingest-test.atlassian.net/wiki\" data-linked-"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "9c1d0e8a0957c2144ffffc7473349340",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "resource-content-type=\"image/svg+xml\" data-linked-resource-container-id=\"1605956\" data-linked-resource-container-version=\"1\" data-media-id=\"aeeed1d0-afd6-4cdd-aa1c-c7f463c059dd\" data-media-type=\"file\" srcset=\"https://unstructured-ingest-test.atlassian.net/wiki/download/thumbnails/1605956/slash_menu.svg?version=1&amp;modificationDate=1688907287621&amp;cacheVersion=1&amp;api=v2&amp;width=718&amp;height=774 2x, https://unstructured-ingest-test.atlassian.net/wiki/download/thumbnails/1605956/slash_menu.svg?version=1&amp;modificationDate=1688907287621&amp;cacheVersion=1&amp;api=v2&amp;width=544&amp;height=586 1x\"></span></div> </div> </div> <div class=\"columnLayout fixed-width\" data-layout=\"fixed-width\"> <div class=\"cell normal\" data-type=\"normal\"> <div class=\"innerCell\"> <h2 id=\"Getthemostoutofyourteamspace-UsefulelementsforTeamspace\">Useful elements for Team space</h2></div> </div> </div> <div class=\"columnLayout two-equal\" data-layout=\"two-equal\"> <div class=\"cell normal\" data-type=\"normal\"> <div class=\"innerCell\"> <p><strong>Introduce the team</strong></p><p>Add <a href=\"https://support.atlassian.com/confluence-cloud/docs/insert-the-user-profile-macro/\" class=\"external-link\" rel=\"nofollow\">user profiles</a> to display a short summary of a given Confluence user's profile with their role, profile photo and contact details.</p></div> </div> <div class=\"cell normal\" data-type=\"normal\"> <div class=\"innerCell\"> <span class=\"confluence-embedded-file-wrapper image-center-wrapper\"><img"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "652f0dd842e66b45518e28b4a389cc67",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "class=\"confluence-embedded-image image-center\" loading=\"lazy\" src=\"https://unstructured-ingest-test.atlassian.net/wiki/download/attachments/1605956/teamspace_introduce.svg?version=1&amp;modificationDate=1688907290201&amp;cacheVersion=1&amp;api=v2\" data-image-src=\"https://unstructured-ingest-test.atlassian.net/wiki/download/attachments/1605956/teamspace_introduce.svg?version=1&amp;modificationDate=1688907290201&amp;cacheVersion=1&amp;api=v2\" data-height=\"220\" data-width=\"360\" data-unresolved-comment-count=\"0\" data-linked-resource-id=\"1507392\" data-linked-resource-version=\"1\" data-linked-resource-type=\"attachment\" data-linked-resource-default-alias=\"teamspace_introduce.svg\" data-base-url=\"https://unstructured-ingest-test.atlassian.net/wiki\" data-linked-resource-content-type=\"image/svg+xml\" data-linked-resource-container-id=\"1605956\" data-linked-resource-container-version=\"1\" data-media-id=\"d357c264-b08c-40ff-bb80-06afbdfde6cf\" data-media-type=\"file\"></span></div> </div> </div> <div class=\"columnLayout two-equal\" data-layout=\"two-equal\"> <div class=\"cell normal\" data-type=\"normal\"> <div class=\"innerCell\"> <span class=\"confluence-embedded-file-wrapper image-center-wrapper\"><img class=\"confluence-embedded-image image-center\" loading=\"lazy\" src=\"https://unstructured-ingest-test.atlassian.net/wiki/download/attachments/1605956/teamspace_announcements.svg?version=1&amp;modificationDate=1688907290847&amp;cacheVersion=1&amp;api=v2\" data-image-src=\"https://unstructured-ingest-test.atlass"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "1101e3664beea17025289a35ec5cf11a",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "ian.net/wiki/download/attachments/1605956/teamspace_announcements.svg?version=1&amp;modificationDate=1688907290847&amp;cacheVersion=1&amp;api=v2\" data-height=\"342\" data-width=\"452\" data-unresolved-comment-count=\"0\" data-linked-resource-id=\"1507397\" data-linked-resource-version=\"1\" data-linked-resource-type=\"attachment\" data-linked-resource-default-alias=\"teamspace_announcements.svg\" data-base-url=\"https://unstructured-ingest-test.atlassian.net/wiki\" data-linked-resource-content-type=\"image/svg+xml\" data-linked-resource-container-id=\"1605956\" data-linked-resource-container-version=\"1\" data-media-id=\"47f29229-b1ed-4a23-a919-06fe8017900b\" data-media-type=\"file\"></span></div> </div> <div class=\"cell normal\" data-type=\"normal\"> <div class=\"innerCell\"> <p /><p><strong>Share news and announcements with your team</strong></p><p>Display a stream of latest <a href=\"https://support.atlassian.com/confluence-cloud/docs/insert-the-blog-posts-macro/\" class=\"external-link\" rel=\"nofollow\">blog posts</a> so your team can easily see what's been going on.</p></div> </div> </div> <div class=\"columnLayout two-equal\" data-layout=\"two-equal\"> <div class=\"cell normal\" data-type=\"normal\"> <div class=\"innerCell\"> <p /><p><strong>Display a list of important pages</strong></p><p>Paste in page URLs to create smart links, or use the <a href=\"https://support.atlassian.com/confluence-cloud/docs/insert-the-content-report-table-macro/\" class=\"external-link\" rel=\"nofollow\">content report table</a> to create a l"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "39bb698fe0a6445be841467a38c960f9",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "ist of all the pages in the space.</p></div> </div> <div class=\"cell normal\" data-type=\"normal\"> <div class=\"innerCell\"> <span class=\"confluence-embedded-file-wrapper image-center-wrapper\"><img class=\"confluence-embedded-image image-center\" loading=\"lazy\" src=\"https://unstructured-ingest-test.atlassian.net/wiki/download/attachments/1605956/content_report.svg?version=1&amp;modificationDate=1688907288249&amp;cacheVersion=1&amp;api=v2\" data-image-src=\"https://unstructured-ingest-test.atlassian.net/wiki/download/attachments/1605956/content_report.svg?version=1&amp;modificationDate=1688907288249&amp;cacheVersion=1&amp;api=v2\" data-height=\"268\" data-width=\"585\" data-unresolved-comment-count=\"0\" data-linked-resource-id=\"1507377\" data-linked-resource-version=\"1\" data-linked-resource-type=\"attachment\" data-linked-resource-default-alias=\"content_report.svg\" data-base-url=\"https://unstructured-ingest-test.atlassian.net/wiki\" data-linked-resource-content-type=\"image/svg+xml\" data-linked-resource-container-id=\"1605956\" data-linked-resource-container-version=\"1\" data-media-id=\"6c32b0f2-cd71-4de7-a514-d10ec588d550\" data-media-type=\"file\"></span></div> </div> </div> <div class=\"columnLayout fixed-width\" data-layout=\"fixed-width\"> <div class=\"cell normal\" data-type=\"normal\"> <div class=\"innerCell\"> <p /></div> </div> </div> </div>"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "898d78b642ee3f19c027f846e30df9a5",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "Select the individual to ask a question or assign a task.</p></div> </div> <div class=\"cell normal\" data-type=\"normal\"> <div class=\"innerCell\"> <span class=\"confluence-embedded-file-wrapper image-center-wrapper confluence-embedded-manual-size\"><img class=\"confluence-embedded-image image-center\" width=\"442\" loading=\"lazy\" src=\"https://unstructured-ingest-test.atlassian.net/wiki/download/thumbnails/1605956/teamspace_mention.svg?version=1&amp;modificationDate=1688907289571&amp;cacheVersion=1&amp;api=v2&amp;width=442&amp;height=417\" data-image-src=\"https://unstructured-ingest-test.atlassian.net/wiki/download/attachments/1605956/teamspace_mention.svg?version=1&amp;modificationDate=1688907289571&amp;cacheVersion=1&amp;api=v2\" data-height=\"442\" data-width=\"364\" data-unresolved-comment-count=\"0\" data-linked-resource-id=\"1507387\" data-linked-resource-version=\"1\" data-linked-resource-type=\"attachment\" data-linked-resource-default-alias=\"teamspace_mention.svg\" data-base-url=\"https://unstructured-ingest-test.atlassian.net/wiki\" data-linked-resource-content-type=\"image/svg+xml\" data-linked-resource-container-id=\"1605956\" data-linked-resource-container-version=\"1\" data-media-id=\"a4d48dd9-5546-4f59-b35f-9b865764acf3\" data-media-type=\"file\" srcset=\"https://unstructured-ingest-test.atlassian.net/wiki/download/thumbnails/1605956/teamspace_mention.svg?version=1&amp;modificationDate=1688907289571&amp;cacheVersion=1&amp;api=v2&amp;width=496&amp;height=468 2x, https://unstructured-ingest-test.atlassian.net/wiki/download/thumbnails/1605956/teamspace_mention.svg?version=1&amp;modificationDate=1688907289571&amp;cacheVersion=1&amp;api=v2&amp;width=442&amp;height=417 1x\"></span></div> </div> </div> <div class=\"columnLayout fixed-width\" data-layout=\"fixed-width\"> <div class=\"cell normal\" data-type=\"normal\"> <div class=\"innerCell\"> <h2 id=\"Getthemostoutofyourteamspace-Endorseideaswithreactions\">👏Endorse ideas with reactions</h2></div> </div> </div> <div class=\"columnLayout two-equal\" data-layout=\"two-equal\"> <div class=\"cell normal\" data-type=\"normal\"> <div class=\"innerCell\"> <p>Use reactions when you want to support a comment or acknowledge you've seen one without clogging up the thread with another comment.</p><p>You can also use reactions on a page or blog post."
+  }
+]

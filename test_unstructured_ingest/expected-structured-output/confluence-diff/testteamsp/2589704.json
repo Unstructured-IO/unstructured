@@ -1,0 +1,11 @@
+[
+  {
+    "type": "NarrativeText",
+    "element_id": "b989a68ef425b8e49d9863484f35b72e",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "<p>This document aims to test the numeric limits on document fetching. When <code>--confluence-num-of-docs-from-each-space</code> is set to <code>4</code>, this doc shouldn’t be fetched. </p>"
+  }
+]

@@ -1,0 +1,20 @@
+[
+  {
+    "type": "NarrativeText",
+    "element_id": "4e567bedfd784df18674c89308a97abb",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "<div class=\"confluence-information-macro confluence-information-macro-information conf-macro output-block\" data-hasbody=\"true\" data-macro-name=\"info\" data-macro-id=\"8928fdb7-38bf-4b1d-ab0a-eff2fdea25f3\"><span class=\"aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon\"> </span><div class=\"confluence-information-macro-body\"><p>Copy and paste this section for each week.</p></div></div><div class=\"confluence-information-macro confluence-information-macro-tip conf-macro output-block\" data-hasbody=\"true\" data-macro-name=\"tip\" data-macro-id=\"ca574033-2536-4e39-ab36-774b3092a323\"><span class=\"aui-icon aui-icon-small aui-iconfont-approve confluence-information-macro-icon\"> </span><div class=\"confluence-information-macro-body\"><p><strong>Win</strong></p><ol><li><p> </p></li><li><p> </p></li><li><p> </p></li></ol></div></div><div class=\"confluence-information-macro confluence-information-macro-warning conf-macro output-block\" data-hasbody=\"true\" data-macro-name=\"warning\" data-macro-id=\"11e7b9a9-2370-405e-b6fb-ad3c119e2a75\"><span class=\"aui-icon aui-icon-small aui-iconfont-error confluence-information-macro-icon\"> </span><div class=\"confluence-information-macro-body\"><p><strong>Needs input</strong></p><ol><li><p> </p></li><li><p> </p></li><li><p> </p></li></ol></div></div><div class=\"panel conf-macro output-block\" style=\"background-color: #EAE6FF;border-color: #998DD9;border-width: 1px;\" data-hasbody=\"true\" data-macro-name=\"panel\" data-macro-id=\"\"><div class=\"pane"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "c1ce75c337f91ae791f3cfdd70316544",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "lContent\" style=\"background-color: #EAE6FF;\"> <p><strong>Focus</strong></p><ol><li><p> </p></li><li><p> </p></li></ol> </div></div><div class=\"table-wrap\"><table data-layout=\"default\" class=\"confluenceTable\"><colgroup><col style=\"width: 156.0px;\"/><col style=\"width: 602.0px;\"/></colgroup><tbody><tr><th class=\"confluenceTh\"><p><strong>Notes</strong></p></th><th data-highlight-colour=\"#ffffff\" class=\"confluenceTh\"><p></p></th></tr><tr><td data-highlight-colour=\"#f4f5f7\" class=\"confluenceTd\"><p><strong>Important Links</strong></p></td><td class=\"confluenceTd\"><p></p></td></tr></tbody></table></div>"
+  }
+]
