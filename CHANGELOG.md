@@ -1,12 +1,16 @@
-## 0.8.2-dev0
+## 0.8.2-dev2
 
 ### Enhancements
 
 ### Features
 
 * Add Confluence connector for ingest cli to pull the body text from all documents from all spaces in a confluence domain.
+* Adds Onedrive connector.
 
 ### Fixes
+
+* Adds `.txt`, `.text`, and `.tab` to list of extensions to check if file
+  has a `text/plain` MIME type.
 
 ## 0.8.1
 
