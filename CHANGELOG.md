@@ -2,7 +2,7 @@
 
 ### Enhancements
 
-* Removed old error message that's superceded by `requires_dependencies`.
+* Removed old error message that's superseded by `requires_dependencies`.
 
 ### Features
 
