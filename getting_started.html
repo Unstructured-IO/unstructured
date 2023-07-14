@@ -4,10 +4,10 @@
 <head><meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Bricks" href="bricks.html" /><link rel="prev" title="Installation" href="installing.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Unstructured API" href="api.html" /><link rel="prev" title="Installation" href="installing.html" />
 
   <link rel="shortcut icon" href="_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.05.20" />
-  <title>Getting Started - Unstructured 0.8.1 documentation</title>
+  <title>Getting Started - Unstructured 0.8.2 documentation</title>
   <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -309,7 +309,9 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installing.html">Installation</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Unstructured API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bricks.html">Bricks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="connectors.html">Connectors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="metadata.html">Metadata</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="integrations.html">Integrations</a></li>
@@ -459,6 +461,34 @@ The following code shows how you can limit your output to only narrative text wi
 </pre></div>
 </div>
 </section>
+<section id="tables">
+<h2>Tables<a class="headerlink" href="#tables" title="Permalink to this heading"></a></h2>
+<p>For <code class="docutils literal notranslate"><span class="pre">Table</span></code> elements, the raw text of the table will be stored in the <code class="docutils literal notranslate"><span class="pre">text</span></code> attribute for the Element, and HTML representation
+of the table will be available in the element metadata under <code class="docutils literal notranslate"><span class="pre">element.metadata.text_as_html</span></code>. For most documents where
+table extraction is available, the <code class="docutils literal notranslate"><span class="pre">partition</span></code> function will extract tables automatically if they are present.
+For PDFs and images, table extraction requires a relatively expensive call to a table recognition model, and so for those
+document types table extraction is an option you need to enable. If you would like to extract tables for PDFs or images,
+pass in <code class="docutils literal notranslate"><span class="pre">infer_table_structured=True</span></code>. Here is an example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.pdf</span> <span class="kn">import</span> <span class="n">partition_pdf</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;example-docs/layout-parser-paper.pdf&quot;</span>
+
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_pdf</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">infer_table_structure</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">tables</span> <span class="o">=</span> <span class="p">[</span><span class="n">el</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">elements</span> <span class="k">if</span> <span class="n">el</span><span class="o">.</span><span class="n">category</span> <span class="o">==</span> <span class="s2">&quot;Table&quot;</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">tables</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tables</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">text_as_html</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The text will look like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Dataset</span> <span class="n">Base</span> <span class="n">Model1</span> <span class="n">Large</span> <span class="n">Model</span> <span class="n">Notes</span> <span class="n">PubLayNet</span> <span class="p">[</span><span class="mi">38</span><span class="p">]</span> <span class="n">F</span> <span class="o">/</span> <span class="n">M</span> <span class="n">M</span> <span class="n">Layouts</span> <span class="n">of</span> <span class="n">modern</span> <span class="n">scientific</span> <span class="n">documents</span> <span class="n">PRImA</span> <span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="n">M</span> <span class="o">-</span> <span class="n">Layouts</span> <span class="n">of</span> <span class="n">scanned</span> <span class="n">modern</span> <span class="n">magazines</span> <span class="ow">and</span> <span class="n">scientific</span> <span class="n">reports</span> <span class="n">Newspaper</span> <span class="p">[</span><span class="mi">17</span><span class="p">]</span> <span class="n">F</span> <span class="o">-</span> <span class="n">Layouts</span> <span class="n">of</span> <span class="n">scanned</span> <span class="n">US</span> <span class="n">newspapers</span> <span class="kn">from</span> <span class="nn">the</span> <span class="mi">20</span><span class="n">th</span> <span class="n">century</span> <span class="n">TableBank</span> <span class="p">[</span><span class="mi">18</span><span class="p">]</span> <span class="n">F</span> <span class="n">F</span> <span class="n">Table</span> <span class="n">region</span> <span class="n">on</span> <span class="n">modern</span> <span class="n">scientific</span> <span class="ow">and</span> <span class="n">business</span> <span class="n">document</span> <span class="n">HJDataset</span> <span class="p">[</span><span class="mi">31</span><span class="p">]</span> <span class="n">F</span> <span class="o">/</span> <span class="n">M</span> <span class="o">-</span> <span class="n">Layouts</span> <span class="n">of</span> <span class="n">history</span> <span class="n">Japanese</span> <span class="n">documents</span>
+</pre></div>
+</div>
+<p>And the <code class="docutils literal notranslate"><span class="pre">text_as_html</span></code> metadata will look like this:</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">table</span><span class="p">&gt;&lt;</span><span class="nt">thead</span><span class="p">&gt;&lt;</span><span class="nt">th</span><span class="p">&gt;</span>Dataset<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;&lt;</span><span class="nt">th</span><span class="p">&gt;</span>| Base Model’<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;&lt;</span><span class="nt">th</span><span class="p">&gt;</span>| Notes<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;&lt;/</span><span class="nt">thead</span><span class="p">&gt;&lt;</span><span class="nt">tr</span><span class="p">&gt;&lt;</span><span class="nt">td</span><span class="p">&gt;</span>PubLayNet<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;&lt;</span><span class="nt">td</span><span class="p">&gt;</span>[38] F/M<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Layouts of modern scientific documents<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;&lt;/</span><span class="nt">tr</span><span class="p">&gt;&lt;</span><span class="nt">tr</span><span class="p">&gt;&lt;</span><span class="nt">td</span><span class="p">&gt;</span>PRImA [3]<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;&lt;</span><span class="nt">td</span><span class="p">&gt;</span>M<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Layouts of scanned modern magazines and scientific reports<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;&lt;/</span><span class="nt">tr</span><span class="p">&gt;&lt;</span><span class="nt">tr</span><span class="p">&gt;&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Newspaper<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;&lt;</span><span class="nt">td</span><span class="p">&gt;</span>F<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Layouts of scanned US newspapers from the 20th century<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;&lt;/</span><span class="nt">tr</span><span class="p">&gt;&lt;</span><span class="nt">tr</span><span class="p">&gt;&lt;</span><span class="nt">td</span><span class="p">&gt;</span>TableBank<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;&lt;</span><span class="nt">td</span><span class="p">&gt;</span>F<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Table region on modern scientific and business document<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;&lt;/</span><span class="nt">tr</span><span class="p">&gt;&lt;</span><span class="nt">tr</span><span class="p">&gt;&lt;</span><span class="nt">td</span><span class="p">&gt;</span>HJDataset [31]<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;&lt;</span><span class="nt">td</span><span class="p">&gt;</span>F/M<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Layouts of history Japanese documents<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;&lt;/</span><span class="nt">tr</span><span class="p">&gt;&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</section>
 <section id="serializing-elements">
 <h2>Serializing Elements<a class="headerlink" href="#serializing-elements" title="Permalink to this heading"></a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> library includes helper functions for
@@ -529,12 +559,12 @@ looks like the following:</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="bricks.html">
+          <a class="next-page" href="api.html">
             <div class="page-info">
               <div class="context">
                 <span>Next</span>
               </div>
-              <div class="title">Bricks</div>
+              <div class="title">Unstructured API</div>
             </div>
           </a>
           <a class="prev-page" href="installing.html">
@@ -582,6 +612,7 @@ looks like the following:</p>
 <li><a class="reference internal" href="#">Getting Started</a><ul>
 <li><a class="reference internal" href="#partitioning-a-document">Partitioning a document</a></li>
 <li><a class="reference internal" href="#document-elements">Document elements</a></li>
+<li><a class="reference internal" href="#tables">Tables</a></li>
 <li><a class="reference internal" href="#serializing-elements">Serializing Elements</a></li>
 <li><a class="reference internal" href="#converting-elements-to-a-dictionary-or-json">Converting elements to a dictionary or JSON</a></li>
 <li><a class="reference internal" href="#wrapping-it-all-up">Wrapping it all up</a></li>

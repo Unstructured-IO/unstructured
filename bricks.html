@@ -4,10 +4,10 @@
 <head><meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Metadata" href="metadata.html" /><link rel="prev" title="Getting Started" href="getting_started.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Connectors" href="connectors.html" /><link rel="prev" title="Unstructured API" href="api.html" />
 
   <link rel="shortcut icon" href="_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.05.20" />
-  <title>Bricks - Unstructured 0.8.1 documentation</title>
+  <title>Bricks - Unstructured 0.8.2 documentation</title>
   <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -309,7 +309,9 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installing.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Unstructured API</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Bricks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="connectors.html">Connectors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="metadata.html">Metadata</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="integrations.html">Integrations</a></li>
@@ -473,6 +475,7 @@ to disable SSL verification in the request.</p>
 <span class="n">elements</span> <span class="o">=</span> <span class="n">partition</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">content_type</span><span class="o">=</span><span class="s2">&quot;text/markdown&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">partition</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/partition/auto.py">source code here</a>.</p>
 </section>
 <section id="partition-csv">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_csv</span></code><a class="headerlink" href="#partition-csv" title="Permalink to this heading"></a></h3>
@@ -486,19 +489,7 @@ contain an HTML representation of the table.</p>
 <span class="nb">print</span><span class="p">(</span><span class="n">elements</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">text_as_html</span><span class="p">)</span>
 </pre></div>
 </div>
-</section>
-<section id="partition-tsv">
-<h3><code class="docutils literal notranslate"><span class="pre">partition_tsv</span></code><a class="headerlink" href="#partition-tsv" title="Permalink to this heading"></a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">partition_tsv</span></code> function pre-processes TSV files. The output is a single
-<code class="docutils literal notranslate"><span class="pre">Table</span></code> element. The <code class="docutils literal notranslate"><span class="pre">text_as_html</span></code> attribute in the element metadata will
-contain an HTML representation of the table.</p>
-<p>Examples:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.tsv</span> <span class="kn">import</span> <span class="n">partition_tsv</span>
-
-<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_tsv</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example-docs/stanley-cups.tsv&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">elements</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">text_as_html</span><span class="p">)</span>
-</pre></div>
-</div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">partition_csv</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/partition/csv.py">source code here</a>.</p>
 </section>
 <section id="partition-doc">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_doc</span></code><a class="headerlink" href="#partition-doc" title="Permalink to this heading"></a></h3>
@@ -516,6 +507,7 @@ before using <code class="docutils literal notranslate"><span class="pre">partit
 <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_doc</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example-docs/fake.doc&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">partition_doc</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/partition/doc.py">source code here</a>.</p>
 </section>
 <section id="partition-docx">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_docx</span></code><a class="headerlink" href="#partition-docx" title="Permalink to this heading"></a></h3>
@@ -552,6 +544,7 @@ and page breaks inserted by the Word document renderer. Some (but not all) Word 
 insert page breaks when you save the document. If your Word document renderer does not do that,
 you may not see page numbers in the output even if you see them visually when you open the
 document. If that is the case, you can try saving the document with a different renderer.</p>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">partition_docx</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/partition/docx.py">source code here</a>.</p>
 </section>
 <section id="partition-email">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_email</span></code><a class="headerlink" href="#partition-email" title="Permalink to this heading"></a></h3>
@@ -603,6 +596,7 @@ workflow looks like:</p>
 <span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">partition_email</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/email.py">source code here</a>.</p>
 </section>
 <section id="partition-epub">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_epub</span></code><a class="headerlink" href="#partition-epub" title="Permalink to this heading"></a></h3>
@@ -616,6 +610,7 @@ to use <code class="docutils literal notranslate"><span class="pre">partition_ep
 <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_epub</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example-docs/winter-sports.epub&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">partition_epub</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/epub.py">source code here</a>.</p>
 </section>
 <section id="partition-html">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_html</span></code><a class="headerlink" href="#partition-html" title="Permalink to this heading"></a></h3>
@@ -659,6 +654,7 @@ To activate this behavior, you can set <code class="docutils literal notranslate
 If <code class="docutils literal notranslate"><span class="pre">html_assemble_articles</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, each <code class="docutils literal notranslate"><span class="pre">&lt;article&gt;</span></code> tag will be treated as a a page.
 If <code class="docutils literal notranslate"><span class="pre">html_assemble_articles</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code> and no <code class="docutils literal notranslate"><span class="pre">&lt;article&gt;</span></code> tags are present, the behavior
 is the same as <code class="docutils literal notranslate"><span class="pre">html_assemble_articles=False</span></code>.</p>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">partition_html</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/html.py">source code here</a>.</p>
 </section>
 <section id="partition-image">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_image</span></code><a class="headerlink" href="#partition-image" title="Permalink to this heading"></a></h3>
@@ -700,6 +696,7 @@ have the Korean language pack for Tesseract installed on your system.</p>
 <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">ocr_languages</span><span class="o">=</span><span class="s2">&quot;eng+kor&quot;</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="s2">&quot;ocr_only&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">partition_image</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/image.py">source code here</a>.</p>
 </section>
 <section id="partition-md">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_md</span></code><a class="headerlink" href="#partition-md" title="Permalink to this heading"></a></h3>
@@ -711,6 +708,7 @@ following workflow shows how to use <code class="docutils literal notranslate"><
 <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_md</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;README.md&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">partition_md</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/md.py">source code here</a>.</p>
 </section>
 <section id="partition-msg">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_msg</span></code><a class="headerlink" href="#partition-msg" title="Permalink to this heading"></a></h3>
@@ -741,6 +739,7 @@ workflow looks like:</p>
 <span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">partition_msg</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/msg.py">source code here</a>.</p>
 </section>
 <section id="partition-multiple-via-api">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_multiple_via_api</span></code><a class="headerlink" href="#partition-multiple-via-api" title="Permalink to this heading"></a></h3>
@@ -773,6 +772,7 @@ for example:</p>
     <span class="n">documents</span> <span class="o">=</span> <span class="n">partition_multiple_via_api</span><span class="p">(</span><span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">,</span> <span class="n">file_filenames</span><span class="o">=</span><span class="n">filenames</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">partition_multiple_via_api</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/api.py">source code here</a>.</p>
 </section>
 <section id="partition-odt">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_odt</span></code><a class="headerlink" href="#partition-odt" title="Permalink to this heading"></a></h3>
@@ -785,6 +785,21 @@ to <code class="docutils literal notranslate"><span class="pre">.docx</span></co
 <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_odt</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example-docs/fake.odt&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">partition_odt</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/odt.py">source code here</a>.</p>
+</section>
+<section id="partition-org">
+<h3><code class="docutils literal notranslate"><span class="pre">partition_org</span></code><a class="headerlink" href="#partition-org" title="Permalink to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">partition_org</span></code> function processes Org Mode (<code class="docutils literal notranslate"><span class="pre">.org</span></code>) documents. The function
+first converts the document to HTML using <code class="docutils literal notranslate"><span class="pre">pandoc</span></code> and then calls <code class="docutils literal notranslate"><span class="pre">partition_html</span></code>.
+You’ll need <a class="reference external" href="https://pandoc.org/installing.html">pandoc</a> installed on your system
+to use <code class="docutils literal notranslate"><span class="pre">partition_org</span></code>.</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.org</span> <span class="kn">import</span> <span class="n">partition_org</span>
+
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_org</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example-docs/README.org&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">partition_org</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/org.py">source code here</a>.</p>
 </section>
 <section id="partition-pdf">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code><a class="headerlink" href="#partition-pdf" title="Permalink to this heading"></a></h3>
@@ -847,6 +862,7 @@ This parameter only applies if the <code class="docutils literal notranslate"><s
 The default value is <code class="docutils literal notranslate"><span class="pre">1500</span></code>, which roughly corresponds to
 the average character length for a paragraph.
 You can disable <code class="docutils literal notranslate"><span class="pre">max_partition</span></code> by setting it to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/pdf.py">source code here</a>.</p>
 </section>
 <section id="partition-ppt">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_ppt</span></code><a class="headerlink" href="#partition-ppt" title="Permalink to this heading"></a></h3>
@@ -863,6 +879,7 @@ before using <code class="docutils literal notranslate"><span class="pre">partit
 <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_ppt</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example-docs/fake-power-point.ppt&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">partition_ppt</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/ppt.py">source code here</a>.</p>
 </section>
 <section id="partition-pptx">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_pptx</span></code><a class="headerlink" href="#partition-pptx" title="Permalink to this heading"></a></h3>
@@ -880,19 +897,7 @@ as input, as shown in the two examples below.</p>
     <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_pptx</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
 </pre></div>
 </div>
-</section>
-<section id="partition-org">
-<h3><code class="docutils literal notranslate"><span class="pre">partition_org</span></code><a class="headerlink" href="#partition-org" title="Permalink to this heading"></a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">partition_org</span></code> function processes Org Mode (<code class="docutils literal notranslate"><span class="pre">.org</span></code>) documents. The function
-first converts the document to HTML using <code class="docutils literal notranslate"><span class="pre">pandoc</span></code> and then calls <code class="docutils literal notranslate"><span class="pre">partition_html</span></code>.
-You’ll need <a class="reference external" href="https://pandoc.org/installing.html">pandoc</a> installed on your system
-to use <code class="docutils literal notranslate"><span class="pre">partition_org</span></code>.</p>
-<p>Examples:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.org</span> <span class="kn">import</span> <span class="n">partition_org</span>
-
-<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_org</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example-docs/README.org&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">partition_pptx</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/pptx.py">source code here</a>.</p>
 </section>
 <section id="partition-rst">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_rst</span></code><a class="headerlink" href="#partition-rst" title="Permalink to this heading"></a></h3>
@@ -906,6 +911,7 @@ to use <code class="docutils literal notranslate"><span class="pre">partition_rs
 <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_rst</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example-docs/README.rst&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">partition_rst</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/rst.py">source code here</a>.</p>
 </section>
 <section id="partition-rtf">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_rtf</span></code><a class="headerlink" href="#partition-rtf" title="Permalink to this heading"></a></h3>
@@ -919,6 +925,7 @@ to use <code class="docutils literal notranslate"><span class="pre">partition_rt
 <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_rtf</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example-docs/fake-doc.rtf&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">partition_rtf</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/rtf.py">source code here</a>.</p>
 </section>
 <section id="partition-text">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_text</span></code><a class="headerlink" href="#partition-text" title="Permalink to this heading"></a></h3>
@@ -960,23 +967,33 @@ length for a document element.
 The default value is <code class="docutils literal notranslate"><span class="pre">1500</span></code>, which roughly corresponds to
 the average character length for a paragraph.
 You can disable <code class="docutils literal notranslate"><span class="pre">max_partition</span></code> by setting it to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">partition_text</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/text.py">source code here</a>.</p>
+</section>
+<section id="partition-tsv">
+<h3><code class="docutils literal notranslate"><span class="pre">partition_tsv</span></code><a class="headerlink" href="#partition-tsv" title="Permalink to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">partition_tsv</span></code> function pre-processes TSV files. The output is a single
+<code class="docutils literal notranslate"><span class="pre">Table</span></code> element. The <code class="docutils literal notranslate"><span class="pre">text_as_html</span></code> attribute in the element metadata will
+contain an HTML representation of the table.</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.tsv</span> <span class="kn">import</span> <span class="n">partition_tsv</span>
+
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_tsv</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example-docs/stanley-cups.tsv&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">elements</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">text_as_html</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">partition_tsv</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/partition/tsv.py">source code here</a>.</p>
 </section>
 <section id="partition-via-api">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_via_api</span></code><a class="headerlink" href="#partition-via-api" title="Permalink to this heading"></a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">partition_via_api</span></code> allows users to partition documents using the hosted Unstructured API.
-The API partitions documents using the automatic <code class="docutils literal notranslate"><span class="pre">partition</span></code> function. Currently, the API
-supports all filetypes except for RTF and EPUBs.
-To use another URL for the API use the <code class="docutils literal notranslate"><span class="pre">api_url</span></code> kwarg. This is helpful if you’re hosting
+The API partitions documents using the automatic <code class="docutils literal notranslate"><span class="pre">partition</span></code> function.
+This is helpful if you’re hosting
 the API yourself or running it locally through a container. You can pass in your API key
 using the <code class="docutils literal notranslate"><span class="pre">api_key</span></code> kwarg. You can use the <code class="docutils literal notranslate"><span class="pre">content_type</span></code> kwarg to pass in the MIME
 type for the file. If you do not explicitly pass it, the MIME type will be inferred.</p>
-<p>See <a class="reference external" href="https://api.unstructured.io/general/docs">here</a> for the hosted API swagger documentation
-and <a class="reference external" href="https://github.com/Unstructured-IO/unstructured-api#dizzy-instructions-for-using-the-docker-image">here</a> for
-documentation on how to run the API as a container locally.</p>
-<p>Examples:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.api</span> <span class="kn">import</span> <span class="n">partition_via_api</span>
 
-<span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;example-docs/fake-email.eml&quot;</span>
+<span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;example-docs/eml/fake-email.eml&quot;</span>
 
 <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_via_api</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;MY_API_KEY&quot;</span><span class="p">,</span> <span class="n">content_type</span><span class="o">=</span><span class="s2">&quot;message/rfc822&quot;</span><span class="p">)</span>
 
@@ -984,6 +1001,34 @@ documentation on how to run the API as a container locally.</p>
   <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_via_api</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">file_filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;MY_API_KEY&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>You can pass additional settings such as <code class="docutils literal notranslate"><span class="pre">strategy</span></code>, <code class="docutils literal notranslate"><span class="pre">ocr_languages</span></code> and <code class="docutils literal notranslate"><span class="pre">encoding</span></code> to the
+API through optional kwargs. These options get added to the request body when the
+API is called.
+See <a class="reference external" href="https://api.unstructured.io/general/docs">the API documentation</a> for a full list of
+settings supported by the API.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.api</span> <span class="kn">import</span> <span class="n">partition_via_api</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;example-docs/DA-1p.pdf&quot;</span>
+
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_via_api</span><span class="p">(</span>
+  <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="n">pdf_infer_table_structure</span><span class="o">=</span><span class="s2">&quot;true&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>If you are self-hosting or running the API locally, you can use the <code class="docutils literal notranslate"><span class="pre">api_url</span></code> kwarg
+to point the <code class="docutils literal notranslate"><span class="pre">partition_via_api</span></code> function at your self-hosted or local API.
+See <a class="reference external" href="https://github.com/Unstructured-IO/unstructured-api#dizzy-instructions-for-using-the-docker-image">here</a> for
+documentation on how to run the API as a container locally.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.api</span> <span class="kn">import</span> <span class="n">partition_via_api</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;example-docs/eml/fake-email.eml&quot;</span>
+
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_via_api</span><span class="p">(</span>
+  <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">api_url</span><span class="o">=</span><span class="s2">&quot;http://localhost:5000/general/v0/general&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">partition_via_api</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/api.py">source code here</a>.</p>
 </section>
 <section id="partition-xlsx">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_xlsx</span></code><a class="headerlink" href="#partition-xlsx" title="Permalink to this heading"></a></h3>
@@ -998,6 +1043,7 @@ attribute in the element metadata will contain an HTML representation of the tab
 <span class="nb">print</span><span class="p">(</span><span class="n">elements</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">text_as_html</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">partition_xlsx</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/xlsx.py">source code here</a>.</p>
 </section>
 <section id="partition-xml">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_xml</span></code><a class="headerlink" href="#partition-xml" title="Permalink to this heading"></a></h3>
@@ -1018,6 +1064,7 @@ If <code class="docutils literal notranslate"><span class="pre">xml_keep_tags=Tr
 The default value is <code class="docutils literal notranslate"><span class="pre">1500</span></code>, which roughly corresponds to
 the average character length for a paragraph.
 You can disable <code class="docutils literal notranslate"><span class="pre">max_partition</span></code> by setting it to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">partition_xml</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/xml.py">source code here</a>.</p>
 </section>
 </section>
 <section id="cleaning">
@@ -1078,6 +1125,7 @@ by the HTML parser. In that case, the encoded bytes get processed.</p>
 <span class="n">elements</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">bytes_string_to_string</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py">source code here</a>.</p>
 </section>
 <section id="clean">
 <h3><code class="docutils literal notranslate"><span class="pre">clean</span></code><a class="headerlink" href="#clean" title="Permalink to this heading"></a></h3>
@@ -1101,6 +1149,7 @@ and trailing punctuation. Optionally, you can choose to lowercase the output.</p
 <span class="n">clean</span><span class="p">(</span><span class="s2">&quot;ITEM 1A:     RISK-FACTORS&quot;</span><span class="p">,</span> <span class="n">extra_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dashes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">clean</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py">source code here</a>.</p>
 </section>
 <section id="clean-bullets">
 <h3><code class="docutils literal notranslate"><span class="pre">clean_bullets</span></code><a class="headerlink" href="#clean-bullets" title="Permalink to this heading"></a></h3>
@@ -1116,6 +1165,7 @@ text are not removed.</p>
 <span class="n">clean_bullets</span><span class="p">(</span><span class="s2">&quot;I love Morse Code! ●●●&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">clean_bullets</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py">source code here</a>.</p>
 </section>
 <section id="clean-dashes">
 <h3><code class="docutils literal notranslate"><span class="pre">clean_dashes</span></code><a class="headerlink" href="#clean-dashes" title="Permalink to this heading"></a></h3>
@@ -1128,6 +1178,7 @@ such as <code class="docutils literal notranslate"><span class="pre">\u2013</spa
 <span class="n">clean_dashes</span><span class="p">(</span><span class="s2">&quot;ITEM 1A: RISK-FACTORS</span><span class="se">\u2013</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">clean_dashes</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py">source code here</a>.</p>
 </section>
 <section id="clean-extra-whitespace">
 <h3><code class="docutils literal notranslate"><span class="pre">clean_extra_whitespace</span></code><a class="headerlink" href="#clean-extra-whitespace" title="Permalink to this heading"></a></h3>
@@ -1140,6 +1191,7 @@ such as <code class="docutils literal notranslate"><span class="pre">\xa0</span>
 <span class="n">clean_extra_whitespace</span><span class="p">(</span><span class="s2">&quot;ITEM 1A:     RISK FACTORS</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">clean_extra_whitespace</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py">source code here</a>.</p>
 </section>
 <section id="clean-non-ascii-chars">
 <h3><code class="docutils literal notranslate"><span class="pre">clean_non_ascii_chars</span></code><a class="headerlink" href="#clean-non-ascii-chars" title="Permalink to this heading"></a></h3>
@@ -1153,6 +1205,7 @@ such as <code class="docutils literal notranslate"><span class="pre">\xa0</span>
 <span class="n">clean_non_ascii_chars</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">clean_non_ascii_chars</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py">source code here</a>.</p>
 </section>
 <section id="clean-ordered-bullets">
 <h3><code class="docutils literal notranslate"><span class="pre">clean_ordered_bullets</span></code><a class="headerlink" href="#clean-ordered-bullets" title="Permalink to this heading"></a></h3>
@@ -1167,6 +1220,7 @@ such as <code class="docutils literal notranslate"><span class="pre">\xa0</span>
 <span class="n">clean_bullets</span><span class="p">(</span><span class="s2">&quot;a.b This is a very important point ●&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">clean_ordered_bullets</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py">source code here</a>.</p>
 </section>
 <section id="clean-postfix">
 <h3><code class="docutils literal notranslate"><span class="pre">clean_postfix</span></code><a class="headerlink" href="#clean-postfix" title="Permalink to this heading"></a></h3>
@@ -1185,6 +1239,7 @@ such as <code class="docutils literal notranslate"><span class="pre">\xa0</span>
 <span class="n">clean_postfix</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;(END|STOP)&quot;</span><span class="p">,</span> <span class="n">ignore_case</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">clean_postfix</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py">source code here</a>.</p>
 </section>
 <section id="clean-prefix">
 <h3><code class="docutils literal notranslate"><span class="pre">clean_prefix</span></code><a class="headerlink" href="#clean-prefix" title="Permalink to this heading"></a></h3>
@@ -1203,6 +1258,7 @@ such as <code class="docutils literal notranslate"><span class="pre">\xa0</span>
 <span class="n">clean_prefix</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;(SUMMARY|DESCRIPTION):&quot;</span><span class="p">,</span> <span class="n">ignore_case</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">clean_prefix</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py">source code here</a>.</p>
 </section>
 <section id="clean-trailing-punctuation">
 <h3><code class="docutils literal notranslate"><span class="pre">clean_trailing_punctuation</span></code><a class="headerlink" href="#clean-trailing-punctuation" title="Permalink to this heading"></a></h3>
@@ -1214,6 +1270,7 @@ such as <code class="docutils literal notranslate"><span class="pre">\xa0</span>
 <span class="n">clean_trailing_punctuation</span><span class="p">(</span><span class="s2">&quot;ITEM 1A: RISK FACTORS.&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">clean_trailing_punctuation</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py">source code here</a>.</p>
 </section>
 <section id="extract-datetimetz">
 <h3><code class="docutils literal notranslate"><span class="pre">extract_datetimetz</span></code><a class="headerlink" href="#extract-datetimetz" title="Permalink to this heading"></a></h3>
@@ -1230,6 +1287,7 @@ object from the input string.</p>
 <span class="n">extract_datetimetz</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">extract_datetimetz</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py">source code here</a>.</p>
 </section>
 <section id="extract-email-address">
 <h3><code class="docutils literal notranslate"><span class="pre">extract_email_address</span></code><a class="headerlink" href="#extract-email-address" title="Permalink to this heading"></a></h3>
@@ -1244,6 +1302,7 @@ addresses in the input string.</p>
 <span class="n">extract_email_address</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">extract_email_address</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py">source code here</a>.</p>
 </section>
 <section id="extract-ip-address">
 <h3><code class="docutils literal notranslate"><span class="pre">extract_ip_address</span></code><a class="headerlink" href="#extract-ip-address" title="Permalink to this heading"></a></h3>
@@ -1258,6 +1317,7 @@ returns a list of all IP address in input string.</p>
 <span class="n">extract_ip_address</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">extract_ip_address</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py">source code here</a>.</p>
 </section>
 <section id="extract-ip-address-name">
 <h3><code class="docutils literal notranslate"><span class="pre">extract_ip_address_name</span></code><a class="headerlink" href="#extract-ip-address-name" title="Permalink to this heading"></a></h3>
@@ -1274,6 +1334,7 @@ IP addresses in the input string.</p>
 <span class="n">extract_ip_address_name</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">extract_ip_address_name</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py">source code here</a>.</p>
 </section>
 <section id="extract-mapi-id">
 <h3><code class="docutils literal notranslate"><span class="pre">extract_mapi_id</span></code><a class="headerlink" href="#extract-mapi-id" title="Permalink to this heading"></a></h3>
@@ -1290,6 +1351,7 @@ containing the <code class="docutils literal notranslate"><span class="pre">mapi
 <span class="n">extract_mapi_id</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">extract_mapi_id</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py">source code here</a>.</p>
 </section>
 <section id="extract-ordered-bullets">
 <h3><code class="docutils literal notranslate"><span class="pre">extract_ordered_bullets</span></code><a class="headerlink" href="#extract-ordered-bullets" title="Permalink to this heading"></a></h3>
@@ -1304,6 +1366,7 @@ containing the <code class="docutils literal notranslate"><span class="pre">mapi
 <span class="n">extract_ordered_bullets</span><span class="p">(</span><span class="s2">&quot;a.1 This is a very important point&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">extract_ordered_bullets</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py">source code here</a>.</p>
 </section>
 <section id="extract-text-after">
 <h3><code class="docutils literal notranslate"><span class="pre">extract_text_after</span></code><a class="headerlink" href="#extract-text-after" title="Permalink to this heading"></a></h3>
@@ -1322,6 +1385,7 @@ containing the <code class="docutils literal notranslate"><span class="pre">mapi
 <span class="n">extract_text_after</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;SPEAKER \d</span><span class="si">{1}</span><span class="s2">:&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">extract_text_after</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py">source code here</a>.</p>
 </section>
 <section id="extract-text-before">
 <h3><code class="docutils literal notranslate"><span class="pre">extract_text_before</span></code><a class="headerlink" href="#extract-text-before" title="Permalink to this heading"></a></h3>
@@ -1340,6 +1404,7 @@ containing the <code class="docutils literal notranslate"><span class="pre">mapi
 <span class="n">extract_text_before</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;STOP&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">extract_text_before</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py">source code here</a>.</p>
 </section>
 <section id="extract-us-phone-number">
 <h3><code class="docutils literal notranslate"><span class="pre">extract_us_phone_number</span></code><a class="headerlink" href="#extract-us-phone-number" title="Permalink to this heading"></a></h3>
@@ -1351,6 +1416,7 @@ containing the <code class="docutils literal notranslate"><span class="pre">mapi
 <span class="n">extract_us_phone_number</span><span class="p">(</span><span class="s2">&quot;Phone number: 215-867-5309&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">extract_us_phone_number</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py">source code here</a>.</p>
 </section>
 <section id="group-broken-paragraphs">
 <h3><code class="docutils literal notranslate"><span class="pre">group_broken_paragraphs</span></code><a class="headerlink" href="#group-broken-paragraphs" title="Permalink to this heading"></a></h3>
@@ -1389,6 +1455,7 @@ default. You can change that behavior with the <code class="docutils literal not
 <span class="n">group_broken_paragraphs</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">paragraph_split</span><span class="o">=</span><span class="n">para_split_re</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">group_broken_paragraphs</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py">source code here</a>.</p>
 </section>
 <section id="remove-punctuation">
 <h3><code class="docutils literal notranslate"><span class="pre">remove_punctuation</span></code><a class="headerlink" href="#remove-punctuation" title="Permalink to this heading"></a></h3>
@@ -1400,6 +1467,7 @@ default. You can change that behavior with the <code class="docutils literal not
 <span class="n">remove_punctuation</span><span class="p">(</span><span class="s2">&quot;“A lovely quote!”&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">remove_punctuation</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py">source code here</a>.</p>
 </section>
 <section id="replace-unicode-quotes">
 <h3><code class="docutils literal notranslate"><span class="pre">replace_unicode_quotes</span></code><a class="headerlink" href="#replace-unicode-quotes" title="Permalink to this heading"></a></h3>
@@ -1414,6 +1482,7 @@ default. You can change that behavior with the <code class="docutils literal not
 <span class="n">replace_unicode_characters</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x91</span><span class="s2">A lovely quote!</span><span class="se">\x92</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">replace_unicode_quotes</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py">source code here</a>.</p>
 </section>
 <section id="translate-text">
 <h3><code class="docutils literal notranslate"><span class="pre">translate_text</span></code><a class="headerlink" href="#translate-text" title="Permalink to this heading"></a></h3>
@@ -1440,6 +1509,7 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;e
 <span class="n">translate_text</span><span class="p">(</span><span class="s2">&quot;Я тоже можно переводать русский язык!&quot;</span><span class="p">,</span> <span class="s2">&quot;ru&quot;</span><span class="p">,</span> <span class="s2">&quot;en&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">translate_text</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/translate.py">source code here</a>.</p>
 </section>
 </section>
 <section id="staging">
@@ -1467,6 +1537,7 @@ We can take this data and directly upload it into LabelStudio to quickly get sta
 <span class="n">isd_csv</span> <span class="o">=</span> <span class="n">convert_to_csv</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">convert_to_csv</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/base.py">source code here</a>.</p>
 </section>
 <section id="convert-to-dataframe">
 <h3><code class="docutils literal notranslate"><span class="pre">convert_to_dataframe</span></code><a class="headerlink" href="#convert-to-dataframe" title="Permalink to this heading"></a></h3>
@@ -1474,11 +1545,13 @@ We can take this data and directly upload it into LabelStudio to quickly get sta
 will have a <code class="docutils literal notranslate"><span class="pre">text</span></code> column with the text from the element and a <code class="docutils literal notranslate"><span class="pre">type</span></code> column
 indicating the element type, such as <code class="docutils literal notranslate"><span class="pre">NarrativeText</span></code> or <code class="docutils literal notranslate"><span class="pre">Title</span></code>.</p>
 <p>Examples:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.documents.elements</span> <span class="kn">import</span> <span class="n">Title</span><span class="p">,</span> <span class="n">NarrativeText</span>
-<span class="kn">from</span> <span class="nn">unstructured.staging.base</span> <span class="kn">import</span> <span class="n">convert_to_dataframe</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>from unstructured.documents.elements import Title, NarrativeText
+from unstructured.staging.base import convert_to_dataframe
 
-<span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="n">Title</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Title&quot;</span><span class="p">),</span> <span class="n">NarrativeText</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Narrative&quot;</span><span class="p">)]</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">convert_to_dataframe</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span>
+elements = [Title(text=&quot;Title&quot;), NarrativeText(text=&quot;Narrative&quot;)]
+df = convert_to_dataframe(elements)
+
+For more information about the ``convert_to_dataframe`` brick, you can check the `source code here &lt;https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/base.py&gt;`_.
 </pre></div>
 </div>
 </section>
@@ -1494,6 +1567,7 @@ for representing documents in <code class="docutils literal notranslate"><span c
 <span class="n">isd</span> <span class="o">=</span> <span class="n">convert_to_dict</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">convert_to_dict</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/base.py">source code here</a>.</p>
 </section>
 <section id="dict-to-elements">
 <h3><code class="docutils literal notranslate"><span class="pre">dict_to_elements</span></code><a class="headerlink" href="#dict-to-elements" title="Permalink to this heading"></a></h3>
@@ -1511,6 +1585,7 @@ for representing documents in <code class="docutils literal notranslate"><span c
 <span class="n">elements</span> <span class="o">=</span> <span class="n">dict_to_elements</span><span class="p">(</span><span class="n">isd</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">dict_to_elements</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/base.py">source code here</a>.</p>
 </section>
 <section id="stage-csv-for-prodigy">
 <h3><code class="docutils literal notranslate"><span class="pre">stage_csv_for_prodigy</span></code><a class="headerlink" href="#stage-csv-for-prodigy" title="Permalink to this heading"></a></h3>
@@ -1529,6 +1604,7 @@ write the results to a CSV file that is ready to be used with Prodigy.</p>
     <span class="n">csv_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">prodigy_csv_data</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">stage_csv_for_prodigy</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/prodigy.py">source code here</a>.</p>
 </section>
 <section id="stage-for-argilla">
 <h3><code class="docutils literal notranslate"><span class="pre">stage_for_argilla</span></code><a class="headerlink" href="#stage-for-argilla" title="Permalink to this heading"></a></h3>
@@ -1550,6 +1626,7 @@ is used by default.</p>
 <span class="n">argilla_dataset</span> <span class="o">=</span> <span class="n">stage_for_argilla</span><span class="p">(</span><span class="n">elements</span><span class="p">,</span> <span class="s2">&quot;text_classification&quot;</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">stage_for_argilla</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/argilla.py">source code here</a>.</p>
 </section>
 <section id="stage-for-baseplate">
 <h3><code class="docutils literal notranslate"><span class="pre">stage_for_baseplate</span></code><a class="headerlink" href="#stage-for-baseplate" title="Permalink to this heading"></a></h3>
@@ -1597,6 +1674,7 @@ to Baseplate. The following example code shows how to use the <code class="docut
   <span class="p">}</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">stage_for_baseplate</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/baseplate.py">source code here</a>.</p>
 </section>
 <section id="stage-for-datasaur">
 <h3><code class="docutils literal notranslate"><span class="pre">stage_for_datasaur</span></code><a class="headerlink" href="#stage-for-datasaur" title="Permalink to this heading"></a></h3>
@@ -1626,6 +1704,7 @@ list for any elements that do not have any entities.</p>
 <span class="n">datasaur_data</span> <span class="o">=</span> <span class="n">stage_for_datasaur</span><span class="p">(</span><span class="n">elements</span><span class="p">,</span> <span class="n">entities</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">stage_for_datasaur</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/datasaur.py">source code here</a>.</p>
 </section>
 <section id="stage-for-label-box">
 <h3><code class="docutils literal notranslate"><span class="pre">stage_for_label_box</span></code><a class="headerlink" href="#stage-for-label-box" title="Permalink to this heading"></a></h3>
@@ -1686,6 +1765,7 @@ files to an S3 bucket.</p>
 <span class="n">upload_staged_files</span><span class="p">()</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">stage_for_label_box</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/label_box.py">source code here</a>.</p>
 </section>
 <section id="stage-for-label-studio">
 <h3><code class="docutils literal notranslate"><span class="pre">stage_for_label_studio</span></code><a class="headerlink" href="#stage-for-label-studio" title="Permalink to this heading"></a></h3>
@@ -1832,6 +1912,7 @@ task in LabelStudio:</p>
 </div>
 <p>See the <a class="reference external" href="https://labelstud.io/tags/labels.html">LabelStudio docs</a> for a full list of options
 for labels and annotations.</p>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">stage_for_label_studio</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/label_studio.py">source code here</a>.</p>
 </section>
 <section id="stage-for-prodigy">
 <h3><code class="docutils literal notranslate"><span class="pre">stage_for_prodigy</span></code><a class="headerlink" href="#stage-for-prodigy" title="Permalink to this heading"></a></h3>
@@ -1866,6 +1947,7 @@ use the <code class="docutils literal notranslate"><span class="pre">save_as_jso
 <span class="n">save_as_jsonl</span><span class="p">(</span><span class="n">prodigy_data</span><span class="p">,</span> <span class="s2">&quot;prodigy.jsonl&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">stage_for_prodigy</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/prodigy.py">source code here</a>.</p>
 </section>
 <section id="stage-for-transformers">
 <h3><code class="docutils literal notranslate"><span class="pre">stage_for_transformers</span></code><a class="headerlink" href="#stage-for-transformers" title="Permalink to this heading"></a></h3>
@@ -1945,6 +2027,7 @@ the example above to include the following:</p>
 </pre></div>
 </div>
 </div></blockquote>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">stage_for_transformers</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/huggingface.py">source code here</a>.</p>
 </section>
 <section id="stage-for-weaviate">
 <h3><code class="docutils literal notranslate"><span class="pre">stage_for_weaviate</span></code><a class="headerlink" href="#stage-for-weaviate" title="Permalink to this heading"></a></h3>
@@ -1989,6 +2072,7 @@ options for uploading data and querying data once it has been uploaded.</p>
         <span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">stage_for_weaviate</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/weaviate.py">source code here</a>.</p>
 </section>
 </section>
 <section id="other-helper-functions">
@@ -2005,6 +2089,7 @@ You can see a list of the available helper functions below:</p>
 <span class="n">contains_us_phone_number</span><span class="p">(</span><span class="s2">&quot;Phone number: 215-867-5309&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">contains_us_phone_number</span></code> function, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/text_type.py">source code here</a>.</p>
 </section>
 <section id="contains-verb">
 <h3><code class="docutils literal notranslate"><span class="pre">contains_verb</span></code><a class="headerlink" href="#contains-verb" title="Permalink to this heading"></a></h3>
@@ -2033,6 +2118,7 @@ The following part of speech tags are identified as verbs:</p>
 <span class="n">contains_verb</span><span class="p">(</span><span class="n">example_2</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">contains_verb</span></code> function, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/text_type.py">source code here</a>.</p>
 </section>
 <section id="exceeds-cap-ratio">
 <h3><code class="docutils literal notranslate"><span class="pre">exceeds_cap_ratio</span></code><a class="headerlink" href="#exceeds-cap-ratio" title="Permalink to this heading"></a></h3>
@@ -2055,6 +2141,7 @@ defaults to <code class="docutils literal notranslate"><span class="pre">0.3</sp
 <span class="n">exceeds_cap_ratio</span><span class="p">(</span><span class="n">example_2</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">exceeds_cap_ratio</span></code> function, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/text_type.py">source code here</a>.</p>
 </section>
 <section id="extract-attachment-info">
 <h3><code class="docutils literal notranslate"><span class="pre">extract_attachment_info</span></code><a class="headerlink" href="#extract-attachment-info" title="Permalink to this heading"></a></h3>
@@ -2070,6 +2157,7 @@ if specified.</p>
 <span class="n">attachment_info</span> <span class="o">=</span> <span class="n">extract_attachment_info</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;example-docs&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">extract_attachment_info</span></code> function, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/email.py">source code here</a>.</p>
 </section>
 <section id="is-bulleted-text">
 <h3><code class="docutils literal notranslate"><span class="pre">is_bulleted_text</span></code><a class="headerlink" href="#is-bulleted-text" title="Permalink to this heading"></a></h3>
@@ -2085,6 +2173,7 @@ triggers if the bullet point appears at the start of the snippet.</p>
 <span class="n">is_bulleted_text</span><span class="p">(</span><span class="s2">&quot;I love Morse Code! ●●●&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">is_bulleted_text</span></code> function, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/text_type.py">source code here</a>.</p>
 </section>
 <section id="is-possible-narrative-text">
 <h3><code class="docutils literal notranslate"><span class="pre">is_possible_narrative_text</span></code><a class="headerlink" href="#is-possible-narrative-text" title="Permalink to this heading"></a></h3>
@@ -2126,6 +2215,7 @@ The environment variables takes precedence over the kwarg.</p></li>
 <span class="n">is_possible_narrative_text</span><span class="p">(</span><span class="n">example_3</span><span class="p">,</span> <span class="n">cap_threshold</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">is_possible_narrative_text</span></code> function, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/text_type.py">source code here</a>.</p>
 </section>
 <section id="is-possible-title">
 <h3><code class="docutils literal notranslate"><span class="pre">is_possible_title</span></code><a class="headerlink" href="#is-possible-title" title="Permalink to this heading"></a></h3>
@@ -2164,6 +2254,7 @@ The environment variables takes precedence over the kwarg.</p></li>
 <span class="n">is_possible_title</span><span class="p">(</span><span class="n">example_3</span><span class="p">,</span> <span class="n">sentence_min_length</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">is_possible_title</span></code> function, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/text_type.py">source code here</a>.</p>
 </section>
 <section id="sentence-count">
 <h3><code class="docutils literal notranslate"><span class="pre">sentence_count</span></code><a class="headerlink" href="#sentence-count" title="Permalink to this heading"></a></h3>
@@ -2183,6 +2274,7 @@ distinct sentences and words.</p>
 <span class="n">sentence_count</span><span class="p">(</span><span class="n">example</span><span class="p">,</span> <span class="n">min_length</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">sentence_count</span></code> function, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/text_type.py">source code here</a>.</p>
 </section>
 </section>
 </section>
@@ -2192,21 +2284,21 @@ distinct sentences and words.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="metadata.html">
+          <a class="next-page" href="connectors.html">
             <div class="page-info">
               <div class="context">
                 <span>Next</span>
               </div>
-              <div class="title">Metadata</div>
+              <div class="title">Connectors</div>
             </div>
           </a>
-          <a class="prev-page" href="getting_started.html">
+          <a class="prev-page" href="api.html">
             <div class="page-info">
               <div class="context">
                 <span>Previous</span>
               </div>
               
-              <div class="title">Getting Started</div>
+              <div class="title">Unstructured API</div>
               
             </div>
           </a>
@@ -2246,7 +2338,6 @@ distinct sentences and words.</p>
 <li><a class="reference internal" href="#partitioning">Partitioning</a><ul>
 <li><a class="reference internal" href="#partition"><code class="docutils literal notranslate"><span class="pre">partition</span></code></a></li>
 <li><a class="reference internal" href="#partition-csv"><code class="docutils literal notranslate"><span class="pre">partition_csv</span></code></a></li>
-<li><a class="reference internal" href="#partition-tsv"><code class="docutils literal notranslate"><span class="pre">partition_tsv</span></code></a></li>
 <li><a class="reference internal" href="#partition-doc"><code class="docutils literal notranslate"><span class="pre">partition_doc</span></code></a></li>
 <li><a class="reference internal" href="#partition-docx"><code class="docutils literal notranslate"><span class="pre">partition_docx</span></code></a></li>
 <li><a class="reference internal" href="#partition-email"><code class="docutils literal notranslate"><span class="pre">partition_email</span></code></a></li>
@@ -2257,13 +2348,14 @@ distinct sentences and words.</p>
 <li><a class="reference internal" href="#partition-msg"><code class="docutils literal notranslate"><span class="pre">partition_msg</span></code></a></li>
 <li><a class="reference internal" href="#partition-multiple-via-api"><code class="docutils literal notranslate"><span class="pre">partition_multiple_via_api</span></code></a></li>
 <li><a class="reference internal" href="#partition-odt"><code class="docutils literal notranslate"><span class="pre">partition_odt</span></code></a></li>
+<li><a class="reference internal" href="#partition-org"><code class="docutils literal notranslate"><span class="pre">partition_org</span></code></a></li>
 <li><a class="reference internal" href="#partition-pdf"><code class="docutils literal notranslate"><span class="pre">partition_pdf</span></code></a></li>
 <li><a class="reference internal" href="#partition-ppt"><code class="docutils literal notranslate"><span class="pre">partition_ppt</span></code></a></li>
 <li><a class="reference internal" href="#partition-pptx"><code class="docutils literal notranslate"><span class="pre">partition_pptx</span></code></a></li>
-<li><a class="reference internal" href="#partition-org"><code class="docutils literal notranslate"><span class="pre">partition_org</span></code></a></li>
 <li><a class="reference internal" href="#partition-rst"><code class="docutils literal notranslate"><span class="pre">partition_rst</span></code></a></li>
 <li><a class="reference internal" href="#partition-rtf"><code class="docutils literal notranslate"><span class="pre">partition_rtf</span></code></a></li>
 <li><a class="reference internal" href="#partition-text"><code class="docutils literal notranslate"><span class="pre">partition_text</span></code></a></li>
+<li><a class="reference internal" href="#partition-tsv"><code class="docutils literal notranslate"><span class="pre">partition_tsv</span></code></a></li>
 <li><a class="reference internal" href="#partition-via-api"><code class="docutils literal notranslate"><span class="pre">partition_via_api</span></code></a></li>
 <li><a class="reference internal" href="#partition-xlsx"><code class="docutils literal notranslate"><span class="pre">partition_xlsx</span></code></a></li>
 <li><a class="reference internal" href="#partition-xml"><code class="docutils literal notranslate"><span class="pre">partition_xml</span></code></a></li>
