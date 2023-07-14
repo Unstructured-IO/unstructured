@@ -919,21 +919,21 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "e00c8d3751fc8aeb9d393841e7282f67",
+    "element_id": "22037445e99591549ff49bde531eb1d1",
     "metadata": {
       "data_source": {},
       "filetype": "text/plain"
     },
-    "text": "<ul class=\"inline-task-list\" data-inline-tasks-content-id=\"65627\"><li data-inline-task-id=\"17\"><span class=\"placeholder-inline-tasks\"><strong><span style=\"color: rgb(64,50,148);\">Press </span></strong><code>c</code><strong><span style=\"color: rgb(64,50,148);\"> to create a page at any time.</span></strong></span></li></ul><p><a href=\"https://www.atlassian.com/software/confluence/guides/get-started/create-content\" class=\"external-link\" rel=\"nofollow\">Learn more about pages</a></p><div id=\"expander-565057747\" class=\"expand-container conf-macro output-block\" data-hasbody=\"true\" data-macro-name=\"expand\" data-macro-id=\"6346fc62-755c-4e64-81f3-7fa337f7ae3a\"><div id=\"expander-control-565057747\" class=\"expand-control\"><span class=\"expand-control-icon icon\"> </span><span class=\"expand-control-text\">Visualize the relationship between spaces and pages</span></div><div id=\"expander-content-565057747\" class=\"expand-content expand-hidden\"><span class=\"confluence-embedded-file-wrapper image-center-wrapper confluence-embedded-manual-size\"><img class=\"confluence-embedded-image confluence-external-resource image-center\" alt=\"Image depicting Confluence organization system made up of spaces and pages\" width=\"680\" src=\"https://wac-cdn.atlassian.com/dam/jcr:68112c56-b891-45fe-8b74-1d4f46afb5d1/getting_started_confluence_model.png\" data-image-src=\"https://wac-cdn.atlassian.com/dam/jcr:68112c56-b891-45fe-8b74-1d4f46afb5d1/getting_started_confluence_model.png\" loading=\"lazy\" /></span></div></div><p st"
+    "text": "<ul class=\"inline-task-list\" data-inline-tasks-content-id=\"65627\"><li data-inline-task-id=\"17\"><span class=\"placeholder-inline-tasks\"><strong><span style=\"color: rgb(64,50,148);\">Press </span></strong><code>c</code><strong><span style=\"color: rgb(64,50,148);\"> to create a page at any time.</span></strong></span></li></ul><p><a href=\"https://www.atlassian.com/software/confluence/guides/get-started/create-content\" class=\"external-link\" rel=\"nofollow\">Learn more about pages</a></p><div id=\"expander-1814324878\" class=\"expand-container conf-macro output-block\" data-hasbody=\"true\" data-macro-name=\"expand\" data-macro-id=\"6346fc62-755c-4e64-81f3-7fa337f7ae3a\"><div id=\"expander-control-1814324878\" class=\"expand-control\"><span class=\"expand-control-icon icon\"> </span><span class=\"expand-control-text\">Visualize the relationship between spaces and pages</span></div><div id=\"expander-content-1814324878\" class=\"expand-content expand-hidden\"><span class=\"confluence-embedded-file-wrapper image-center-wrapper confluence-embedded-manual-size\"><img class=\"confluence-embedded-image confluence-external-resource image-center\" alt=\"Image depicting Confluence organization system made up of spaces and pages\" width=\"680\" src=\"https://wac-cdn.atlassian.com/dam/jcr:68112c56-b891-45fe-8b74-1d4f46afb5d1/getting_started_confluence_model.png\" data-image-src=\"https://wac-cdn.atlassian.com/dam/jcr:68112c56-b891-45fe-8b74-1d4f46afb5d1/getting_started_confluence_model.png\" loading=\"lazy\" /></span></div></div><p"
   },
   {
     "type": "NarrativeText",
-    "element_id": "b89210b4cbf74497b68a148b5ce626f8",
+    "element_id": "7b33afcc6daaf18bdd19587bd0e92be4",
     "metadata": {
       "data_source": {},
       "filetype": "text/plain"
     },
-    "text": "yle=\"text-align: right;\"><a href=\"#On-this-page\" rel=\"nofollow\">Back to top ⤴</a></p><hr/><h1 id=\"GettingstartedinConfluence-Makingpurposefulcontent\"><strong><span style=\"color: rgb(101,84,192);\">Making purposeful content</span></strong></h1><p /></div> </div> </div> <div class=\"columnLayout two-left-sidebar\" data-layout=\"two-left-sidebar\"> <div class=\"cell aside\" data-type=\"aside\"> <div class=\"innerCell\">"
+    "text": "style=\"text-align: right;\"><a href=\"#On-this-page\" rel=\"nofollow\">Back to top ⤴</a></p><hr/><h1 id=\"GettingstartedinConfluence-Makingpurposefulcontent\"><strong><span style=\"color: rgb(101,84,192);\">Making purposeful content</span></strong></h1><p /></div> </div> </div> <div class=\"columnLayout two-left-sidebar\" data-layout=\"two-left-sidebar\"> <div class=\"cell aside\" data-type=\"aside\"> <div class=\"innerCell\">"
   },
   {
     "type": "NarrativeText",
@@ -3169,12 +3169,12 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "c16d952149f77020a9e60de845645748",
+    "element_id": "a3f98baac9cbeb2f03ebb1fc627bc552",
     "metadata": {
       "data_source": {},
       "filetype": "text/plain"
     },
-    "text": "They allow you to remark on content, add important information, ask questions, and generally drive collaboration and teamwork.</p><p>@mention a teammate to bring them into the conversation, and they can reply to and/or like comments.</p><div class=\"table-wrap\"><table data-layout=\"default\" data-local-id=\"4fc4332a-417b-403a-87e1-5c5b62392a52\" class=\"confluenceTable\"><colgroup><col style=\"width: 680.0px;\"/></colgroup><tbody><tr><td data-highlight-colour=\"#e6fcff\" class=\"confluenceTd\"><span class=\"confluence-embedded-file-wrapper image-center-wrapper confluence-embedded-manual-size\"><img class=\"confluence-embedded-image confluence-external-resource image-center\" height=\"360\" width=\"640\" src=\"https://wac-cdn.atlassian.com/dam/jcr:227fea49-b5b6-4a01-921e-1931f7919848/getting_started_mentions_and_comments.gif\" data-image-src=\"https://wac-cdn.atlassian.com/dam/jcr:227fea49-b5b6-4a01-921e-1931f7919848/getting_started_mentions_and_comments.gif\" loading=\"lazy\"></span></td></tr></tbody></table></div><div id=\"expander-1919662350\" class=\"expand-container conf-macro output-block\" data-hasbody=\"true\" data-macro-name=\"expand\" data-macro-id=\"df6dd18b-3034-43e2-b244-04fef062271c\"><div id=\"expander-control-1919662350\" class=\"expand-control\"><span class=\"expand-control-icon icon\"> </span><span class=\"expand-control-text\">Leave comments for your team in different places, depending on the type of feedback you have:</span></div><div id=\"expander-content-1919662350\" class=\"expand-content expand-hidde"
+    "text": "They allow you to remark on content, add important information, ask questions, and generally drive collaboration and teamwork.</p><p>@mention a teammate to bring them into the conversation, and they can reply to and/or like comments.</p><div class=\"table-wrap\"><table data-layout=\"default\" data-local-id=\"4fc4332a-417b-403a-87e1-5c5b62392a52\" class=\"confluenceTable\"><colgroup><col style=\"width: 680.0px;\"/></colgroup><tbody><tr><td data-highlight-colour=\"#e6fcff\" class=\"confluenceTd\"><span class=\"confluence-embedded-file-wrapper image-center-wrapper confluence-embedded-manual-size\"><img class=\"confluence-embedded-image confluence-external-resource image-center\" height=\"360\" width=\"640\" src=\"https://wac-cdn.atlassian.com/dam/jcr:227fea49-b5b6-4a01-921e-1931f7919848/getting_started_mentions_and_comments.gif\" data-image-src=\"https://wac-cdn.atlassian.com/dam/jcr:227fea49-b5b6-4a01-921e-1931f7919848/getting_started_mentions_and_comments.gif\" loading=\"lazy\"></span></td></tr></tbody></table></div><div id=\"expander-1011811958\" class=\"expand-container conf-macro output-block\" data-hasbody=\"true\" data-macro-name=\"expand\" data-macro-id=\"df6dd18b-3034-43e2-b244-04fef062271c\"><div id=\"expander-control-1011811958\" class=\"expand-control\"><span class=\"expand-control-icon icon\"> </span><span class=\"expand-control-text\">Leave comments for your team in different places, depending on the type of feedback you have:</span></div><div id=\"expander-content-1011811958\" class=\"expand-content expand-hidde"
   },
   {
     "type": "NarrativeText",
