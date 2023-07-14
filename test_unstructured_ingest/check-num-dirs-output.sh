@@ -21,6 +21,6 @@ if [ "$NUMBER_OF_FOUND_DIRS" != "$EXPECTED_NUM_DIRS" ]; then
    echo "$EXPECTED_NUM_DIRS directories were expected to be found."
    echo "$NUMBER_OF_FOUND_DIRS directories were found instead."
    echo "Name of the directories found:"
-   echo "$(find "$OUTPUT_DIR" -type d)"
+   find "$OUTPUT_DIR" -type d
    exit 1
 fi
