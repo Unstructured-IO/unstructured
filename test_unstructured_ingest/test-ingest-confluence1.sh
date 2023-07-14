@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 set -e
 
+# Description: This test checks if all the processed content is the same as the expected outputs.
+
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
 
-# Tests the scenario where there is no --confluence-list-of-spaces provided, with
-# a low number of documents in the spaces.
-OUTPUT_FOLDER_NAME=confluence1
+OUTPUT_FOLDER_NAME=confluence-diff
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
@@ -21,7 +21,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --confluence-user-email "$CONFLUENCE_USER_EMAIL" \
     --confluence-api-token "$CONFLUENCE_API_TOKEN" \
     --confluence-num-of-spaces 4 \
-    --confluence-num-of-docs-from-each-space 4 \
     --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
     --num-processes 2 \
     --preserve-downloads \
