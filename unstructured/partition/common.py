@@ -30,7 +30,12 @@ if TYPE_CHECKING:
 
 
 def normalize_layout_element(
-    layout_element: Union["LayoutElement", "LocationlessLayoutElement", Element, Dict[str, Any]],
+    layout_element: Union[
+        "LayoutElement",
+        "LocationlessLayoutElement",
+        Element,
+        Dict[str, Any],
+    ],
     coordinate_system: Optional[CoordinateSystem] = None,
 ) -> Union[Element, List[Element]]:
     """Converts an unstructured_inference LayoutElement object to an unstructured Element."""
@@ -66,11 +71,23 @@ def normalize_layout_element(
             coordinate_system=coordinate_system,
         )
     elif element_type == "Checked":
-        return CheckBox(checked=True, coordinates=coordinates, coordinate_system=coordinate_system)
+        return CheckBox(
+            checked=True,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
+        )
     elif element_type == "Unchecked":
-        return CheckBox(checked=False, coordinates=coordinates, coordinate_system=coordinate_system)
+        return CheckBox(
+            checked=False,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
+        )
     else:
-        return Text(text=text, coordinates=coordinates, coordinate_system=coordinate_system)
+        return Text(
+            text=text,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
+        )
 
 
 def layout_list_to_list_items(
@@ -280,3 +297,31 @@ def convert_ms_office_table_to_text(table: docxtable.Table, as_html: bool = True
     headers = [cell.text for cell in rows[0].cells]
     data = [[cell.text for cell in row.cells] for row in rows[1:]]
     return tabulate(data, headers=headers, tablefmt=fmt)
+
+
+def filter_element_types(
+    elements: List[Element],
+    include_element_types: Optional[List[Element]] = None,
+    exclude_element_types: Optional[List[Element]] = None,
+) -> List[Element]:
+    exactly_one(
+        include_element_types=include_element_types,
+        exclude_element_types=exclude_element_types,
+    )
+
+    filtered_elements: List[Element] = []
+    if include_element_types:
+        for element in elements:
+            if type(element) in include_element_types:
+                filtered_elements.append(element)
+
+        return filtered_elements
+
+    elif exclude_element_types:
+        for element in elements:
+            if type(element) not in exclude_element_types:
+                filtered_elements.append(element)
+
+        return filtered_elements
+
+    return elements
