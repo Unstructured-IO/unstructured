@@ -500,8 +500,6 @@ def document_to_element_list(
             element = normalize_layout_element(
                 layout_element, coordinate_system=coordinate_system
             )
-            if last_modification_date:
-                element.metadata.date = last_modification_date
             if isinstance(element, List):
                 for el in element:
                     if last_modification_date:
