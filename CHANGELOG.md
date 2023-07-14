@@ -1,6 +1,8 @@
-## 0.8.2-dev1
+## 0.8.2-dev2
 
 ### Enhancements
+
+* Removed old error message that's superceded by `requires_dependencies`.
 
 ### Features
 
