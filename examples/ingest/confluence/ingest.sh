@@ -12,6 +12,14 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 # --confluence-user-email "$CONFLUENCE_USER_EMAIL"
 # --confluence-api-token "$CONFLUENCE_API_TOKEN"
 
+# Other arguments that you can use:
+# --confluence-max-num-of-spaces 10
+#     --> The maximum number of spaces to be ingested. Set as 10 in the example.
+# --confluence-list-of-spaces testteamsp1,testteamsp2
+#     --> A comma separated list of space ids for the spaces to be ingested.
+#     --> Avoid using --confluence-list-of-spaces and --confluence-max-num-of-spaces at the same time.
+# --confluence-max-num-of-docs-from-each-space 250 \
+#     --> The maximum number of documents to be ingested from each space. Set as 250 in the example.
 PYTHONPATH=. ./unstructured/ingest/main.py \
         --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
         --confluence-url https://unstructured-ingest-test.atlassian.net \
