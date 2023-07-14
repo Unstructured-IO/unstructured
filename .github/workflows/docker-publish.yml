@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches: [ main ]
 
 env:
   DOCKER_REPOSITORY: quay.io/unstructured-io/unstructured
@@ -110,4 +112,3 @@ jobs:
         VERSION=$(grep -Po '(?<=__version__ = ")[^"]*' unstructured/__version__.py)
         docker manifest create ${DOCKER_REPOSITORY}:$VERSION $DOCKER_BUILD_REPOSITORY:amd64 $DOCKER_BUILD_REPOSITORY:arm64
         docker manifest push $DOCKER_REPOSITORY:$VERSION
-
