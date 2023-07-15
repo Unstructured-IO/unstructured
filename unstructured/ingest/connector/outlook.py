@@ -1,7 +1,10 @@
-from dataclasses import dataclass, field
+import os
+import hashlib
+from collections import defaultdict
 from pathlib import Path
 from typing import List
-import os
+from dataclasses import dataclass, field
+from itertools import chain
 
 from office365.onedrive.driveitems.driveItem import DriveItem
 
@@ -17,16 +20,17 @@ from unstructured.ingest.interfaces import (
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
-MAX_MB_SIZE = 512_000_000
-
 
 @dataclass
 class SimpleOutlookConfig(BaseConnectorConfig):
+    """This class is getting the token."""
+
     client_id: str
     client_credential: str = field(repr=False)
     user_pname: str
     tenant: str = field(repr=False)
     authority_url: str = field(repr=False)
+    ms_outlook_folders: List[str]
     recursive: bool = False
 
     def __post_init__(self):
@@ -47,11 +51,18 @@ class SimpleOutlookConfig(BaseConnectorConfig):
                 client_id=self.client_id,
                 client_credential=self.client_credential,
             )
-            token = app.acquire_token_for_client(scopes=["https://graph.microsoft.com/.default"])
+            token = app.acquire_token_for_client(
+                scopes=["https://graph.microsoft.com/.default"]
+            )
         except ValueError as exc:
             logger.error("Couldn't set up credentials for Outlook")
             raise exc
         return token
+    
+    @staticmethod
+    def parse_channels(channel_str: str) -> List[str]:
+        """Parses a comma separated list of channels into a list."""
+        return [x.strip() for x in channel_str.split(",")]
 
 
 @dataclass
@@ -60,33 +71,22 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     file: DriveItem
 
     def __post_init__(self):
-        # breakpoint()
-        # self.ext = "".join(Path(self.file.name).suffixes)
-        # if not self.ext:
-        #     raise ValueError("Unsupported file without extension.")
-
-        # if self.ext not in EXT_TO_FILETYPE.keys():
-        #     raise ValueError(
-        #         f"Extension not supported. "
-        #         f"Value MUST be one of {', '.join([k for k in EXT_TO_FILETYPE if k is not None])}.",
-        #     )
         self._set_download_paths()
+
+    def hash_mail_name(self, id):
+        """Outlook email ids are 152 char long. Hash to shorten."""
+        return hashlib.sha256(id.encode("utf-8")).hexdigest()[:16]
 
     def _set_download_paths(self) -> None:
         """Parses the folder structure from the source and creates the download and output paths"""
         download_path = Path(f"{self.standard_config.download_dir}")
         output_path = Path(f"{self.standard_config.output_dir}")
 
-        # breakpoint()
-
-        # if parent_ref := self.file.get_property("parentReference", "").path.split(":")[-1]:
-        #     odir = parent_ref[1:] if parent_ref[0] == "/" else parent_ref
-        #     download_path = download_path if odir == "" else (download_path / odir).resolve()
-        #     output_path = output_path if odir == "" else (output_path / odir).resolve()
-
         self.download_dir = download_path
-        self.download_filepath = (download_path / f"{self.file.id[-10:]}.eml").resolve()
-        oname = f"{self.file.id[-10:]}.eml.json"
+        self.download_filepath = (
+            download_path / f"{self.hash_mail_name(self.file.id)}.eml"
+        ).resolve()
+        oname = f"{self.hash_mail_name(self.file.id)}.eml.json"
         self.output_dir = output_path
         self.output_filepath = (output_path / oname).resolve()
 
@@ -105,26 +105,21 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             if not self.download_dir.is_dir():
                 logger.debug(f"Creating directory: {self.download_dir}")
                 self.download_dir.mkdir(parents=True, exist_ok=True)
-            
-            with open(os.path.join(self.download_dir, self.file.id[-10:] + ".eml"), 'wb') as local_file:
-                self.file.download(local_file).execute_query()  # download MIME representation of a message
-            print("Message downloaded into {0}".format(local_file.name))
-            # fsize = self.file.get_property("size", 0)
-            # self.output_dir.mkdir(parents=True, exist_ok=True)
 
-            # if not self.download_dir.is_dir():
-            #     logger.debug(f"Creating directory: {self.download_dir}")
-            #     self.download_dir.mkdir(parents=True, exist_ok=True)
+            with open(
+                os.path.join(
+                    self.download_dir, self.hash_mail_name(self.file.id) + ".eml"
+                ),
+                "wb",
+            ) as local_file:
+                self.file.download(
+                    local_file
+                ).execute_query()  # download MIME representation of a message
 
-            # if fsize > MAX_MB_SIZE:
-            #     logger.info(f"Downloading file with size: {fsize} bytes in chunks")
-            #     with self.filename.open(mode="wb") as f:
-            #         self.file.download_session(f, chunk_size=1024 * 1024 * 100).execute_query()
-            # else:
-            #     with self.filename.open(mode="wb") as f:
-            #         self.file.download(f).execute_query()
         except Exception as e:
-            logger.error(f"Error while downloading and saving file: {self.file.subject}.")
+            logger.error(
+                f"Error while downloading and saving file: {self.file.subject}."
+            )
             logger.error(e)
             return
         logger.info(f"File downloaded: {self.file.subject}")
@@ -134,39 +129,63 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 class OutlookConnector(ConnectorCleanupMixin, BaseConnector):
     config: SimpleOutlookConfig
 
-    def __init__(self, standard_config: StandardConnectorConfig, config: SimpleOutlookConfig):
+    def __init__(
+        self, standard_config: StandardConnectorConfig, config: SimpleOutlookConfig
+    ):
         super().__init__(standard_config, config)
         self._set_client()
+        self.get_folder_ids()
 
     @requires_dependencies(["office365"])
     def _set_client(self):
         from office365.graph_client import GraphClient
 
         self.client = GraphClient(self.config.token_factory)
-        print(self.client)
-
-    # def _list_objects(self, folder, recursive=False):
-    #     drive_items = folder.children.get().execute_query()
-    #     files = [d for d in drive_items if d.is_file]
-    #     if not recursive:
-    #         return files
-    #     folders = [d for d in drive_items if d.is_folder]
-    #     for f in folders:
-    #         files += self._list_objects(f, recursive)
-    #     return files
-
 
     def initialize(self):
         pass
 
-    def get_ingest_docs(self):
-        # drive = self.client.users[self.config.user_pname].drive.get().execute_query()
-        mail = self.client.users[self.config.user_pname].messages.get().execute_query()
-        # breakpoint()
-        # for message in mail:  # type: Message
-        #     with open(os.path.join("/Users/davidpotter/Documents/Unstructured/unstructured-onedrive_connector/OUTLOOK", message.id + ".eml"), 'wb') as local_file:
-        #         message.download(local_file).execute_query()  # download MIME representation of a message
-        #     print("Message downloaded into {0}".format(local_file.name))
+    def recurse_folders(self, folder_id, main_folder_dict):
+        subfolders = (
+            self.client.users[self.config.user_pname]
+            .mail_folders[folder_id]
+            .child_folders.get()
+            .execute_query()
+        )
+        for subfolder in subfolders:
+            for k, v in main_folder_dict.items():
+                if subfolder.get_property("parentFolderId") in v:
+                    v.append(subfolder.id)
+            if subfolder.get_property("childFolderCount") > 0:
+                self.recurse_folders(subfolder.id, main_folder_dict)
 
-        # mail_files = self._list_objects(mail)
-        return [OutlookIngestDoc(self.standard_config, self.config, f) for f in mail]
+    def get_folder_ids(self):
+        self.root_folders = defaultdict(list)
+        root_folders_with_subfolders = []
+        root_folders = (
+            self.client.users[self.config.user_pname].mail_folders.get().execute_query()
+        )
+
+        for folder in root_folders:
+            self.root_folders[folder.display_name].append(folder.id)
+            if folder.get_property("childFolderCount") > 0:
+                root_folders_with_subfolders.append(folder.id)
+
+        for folder in root_folders_with_subfolders:
+            self.recurse_folders(folder, self.root_folders)
+
+        self.selected_folder_ids = list(
+            chain.from_iterable(
+                [
+                    v
+                    for k, v in self.root_folders.items()
+                    if k.lower() in [x.lower() for x in self.config.ms_outlook_folders]
+                ]
+            )
+        )
+
+    def get_ingest_docs(self):
+        mail = self.client.users[self.config.user_pname].messages.get().top(10000).execute_query()
+        filtered_mail = [m for m in mail if m.parent_folder_id in self.selected_folder_ids]
+
+        return [OutlookIngestDoc(self.standard_config, self.config, f) for f in filtered_mail]

@@ -418,9 +418,9 @@ class MainProcess:
     help="User principal name, usually is your Azure AD email.",
 )
 @click.option(
-    "--ms-outlook-folder",
+    "--ms-outlook-folders",
     default=None,
-    help="Folder to download email messages from.",
+    help="Comma separated list of folders to download email messages from. Use quotes if spaces in folder names.",
 )
 @click.option(
     "--elasticsearch-url",
@@ -524,7 +524,7 @@ def main(
     ms_authority_url,
     ms_tenant,
     ms_user_pname,
-    ms_outlook_folder,
+    ms_outlook_folders,
     elasticsearch_url,
     elasticsearch_index_name,
     jq_query,
@@ -852,7 +852,7 @@ def main(
                 decay=biomed_decay,
             ),
         )
-    elif ms_client_id and ms_user_pname and ms_outlook_folder:
+    elif ms_client_id and ms_user_pname and ms_outlook_folders:
         from unstructured.ingest.connector.outlook import (
             OutlookConnector,
             SimpleOutlookConfig,
@@ -866,6 +866,7 @@ def main(
                 user_pname=ms_user_pname,
                 tenant=ms_tenant,
                 authority_url=ms_authority_url,
+                ms_outlook_folders = SimpleOutlookConfig.parse_channels(ms_outlook_folders),
                 recursive=recursive,
             ),
         )

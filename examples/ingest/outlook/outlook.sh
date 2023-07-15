@@ -26,7 +26,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --ms-authority-url "https://login.microsoftonline.com" \
     --ms-tenant "$MS_TENANT" \
     --ms-user-pname "$MS_USER_PNAME" \
-    --ms-outlook-folder "Inbox" \
+    --ms-outlook-folders "Inbox,Sent Items" \
     --structured-output-dir outlook-ingest-output \
     --num-processes 2 \
     --download-dir outlook-download \
