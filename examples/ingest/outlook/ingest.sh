@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 
-# Processes the Unstructured-IO/unstructured repository
-# through Unstructured's library in 2 processes.
+# Processes Outlook emails through Unstructured's library
 
-# Structured outputs are stored in onedrive-ingest-output/
+# Structured outputs are stored in outlook-output/
 
 # NOTE, this script is not ready-to-run!
-# You must enter a Azure AD app client-id, client secret and user principal name  
+# You must enter a Azure AD app client-id, client secret, tenant-id, and email   
 # before running. 
 
 # To get the credentials for your Azure AD app, follow these steps:
@@ -15,7 +14,9 @@
 
 # Assign the neccesary permissions for the application to read from OneDrive.
 # https://learn.microsoft.com/en-us/graph/permissions-reference
-# user-pname is the email address of the Outlook mailbox
+
+
+##################### user-pname is the email address of the Outlook mailbox
  
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/../../.. || exit 1
@@ -23,11 +24,11 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --ms-client-id "$MS_CLIENT_ID" \
     --ms-client-cred "$MS_CLIENT_CRED" \
-    --ms-authority-url "https://login.microsoftonline.com" \
+    --ms-authority-url https://login.microsoftonline.com \
     --ms-tenant "$MS_TENANT" \
     --ms-user-pname "$MS_USER_PNAME" \
-    --ms-outlook-folders "Inbox,Sent Items" \
-    --structured-output-dir outlook-ingest-output \
+    --ms-outlook-folders Inbox,"Sent Items" \
+    --structured-output-dir outlook-output \
     --num-processes 2 \
     --download-dir outlook-download \
     --recursive \

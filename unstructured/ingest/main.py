@@ -420,7 +420,7 @@ class MainProcess:
 @click.option(
     "--ms-outlook-folders",
     default=None,
-    help="Comma separated list of folders to download email messages from. Use quotes if spaces in folder names.",
+    help="Comma separated list of folders to download email messages from. Do not specify subfolders. Use quotes if spaces in folder names.",
 )
 @click.option(
     "--elasticsearch-url",

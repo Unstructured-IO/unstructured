@@ -20,6 +20,10 @@ from unstructured.ingest.interfaces import (
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
+MAX_NUM_EMAILS = 10000
+
+class MissingFolderError(Exception):
+    """There are no root folders with those names. """
 
 @dataclass
 class SimpleOutlookConfig(BaseConnectorConfig):
@@ -58,7 +62,7 @@ class SimpleOutlookConfig(BaseConnectorConfig):
             logger.error("Couldn't set up credentials for Outlook")
             raise exc
         return token
-    
+
     @staticmethod
     def parse_channels(channel_str: str) -> List[str]:
         """Parses a comma separated list of channels into a list."""
@@ -183,9 +187,23 @@ class OutlookConnector(ConnectorCleanupMixin, BaseConnector):
                 ]
             )
         )
+        if not self.selected_folder_ids:
+            raise MissingFolderError(
+                f"There are no root folders with the names: {self.config.ms_outlook_folders}",
+            )
 
     def get_ingest_docs(self):
-        mail = self.client.users[self.config.user_pname].messages.get().top(10000).execute_query()
-        filtered_mail = [m for m in mail if m.parent_folder_id in self.selected_folder_ids]
+        mail = (
+            self.client.users[self.config.user_pname]
+            .messages.get()
+            .top(MAX_NUM_EMAILS)
+            .execute_query()
+        )
+        filtered_mail = [
+            m for m in mail if m.parent_folder_id in self.selected_folder_ids
+        ]
 
-        return [OutlookIngestDoc(self.standard_config, self.config, f) for f in filtered_mail]
+        return [
+            OutlookIngestDoc(self.standard_config, self.config, f)
+            for f in filtered_mail
+        ]
