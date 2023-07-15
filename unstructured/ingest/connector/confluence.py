@@ -123,7 +123,7 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 @requires_dependencies(["atlassian"])
 @dataclass
 class ConfluenceConnector(ConnectorCleanupMixin, BaseConnector):
-    """Fetches the body field from all documents from all spaces in a Confluence Cloud instance."""
+    """Fetches the body field from all documents from all spaces in a Confluence Cloud instance"""
 
     config: SimpleConfluenceConfig
 
@@ -183,7 +183,6 @@ class ConfluenceConnector(ConnectorCleanupMixin, BaseConnector):
 
     @requires_dependencies(["atlassian"])
     def _get_doc_ids_within_spaces(self):
-
         space_ids = self._get_space_ids() if not self.list_of_spaces else self.list_of_spaces
 
         doc_ids_all = [self._get_docs_ids_within_one_space(space_id=id) for id in space_ids]
