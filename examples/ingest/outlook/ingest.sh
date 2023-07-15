@@ -22,7 +22,6 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --ms-client-id "$MS_CLIENT_ID" \
     --ms-client-cred "$MS_CLIENT_CRED" \
-    --ms-authority-url https://login.microsoftonline.com \
     --ms-tenant "$MS_TENANT" \
     --ms-user-email "$MS_USER_EMAIL" \
     --ms-outlook-folders Inbox,"Sent Items" \
