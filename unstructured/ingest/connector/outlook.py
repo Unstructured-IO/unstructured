@@ -31,14 +31,14 @@ class SimpleOutlookConfig(BaseConnectorConfig):
 
     client_id: str
     client_credential: str = field(repr=False)
-    user_pname: str
+    user_email: str
     tenant: str = field(repr=False)
     authority_url: str = field(repr=False)
     ms_outlook_folders: List[str]
     recursive: bool = False
 
     def __post_init__(self):
-        if not (self.client_id and self.client_credential and self.user_pname):
+        if not (self.client_id and self.client_credential and self.user_email):
             raise ValueError(
                 "Please provide one of the following mandatory values:"
                 "\n-ms-client_id\n-ms-client_cred\n-ms-user-pname",
@@ -151,7 +151,7 @@ class OutlookConnector(ConnectorCleanupMixin, BaseConnector):
 
     def recurse_folders(self, folder_id, main_folder_dict):
         subfolders = (
-            self.client.users[self.config.user_pname]
+            self.client.users[self.config.user_email]
             .mail_folders[folder_id]
             .child_folders.get()
             .execute_query()
@@ -167,7 +167,7 @@ class OutlookConnector(ConnectorCleanupMixin, BaseConnector):
         self.root_folders = defaultdict(list)
         root_folders_with_subfolders = []
         root_folders = (
-            self.client.users[self.config.user_pname].mail_folders.get().execute_query()
+            self.client.users[self.config.user_email].mail_folders.get().execute_query()
         )
 
         for folder in root_folders:
@@ -194,7 +194,7 @@ class OutlookConnector(ConnectorCleanupMixin, BaseConnector):
 
     def get_ingest_docs(self):
         mail = (
-            self.client.users[self.config.user_pname]
+            self.client.users[self.config.user_email]
             .messages.get()
             .top(MAX_NUM_EMAILS)
             .execute_query()

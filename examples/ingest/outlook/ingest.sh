@@ -16,8 +16,6 @@
 # https://learn.microsoft.com/en-us/graph/permissions-reference
 
 
-##################### user-pname is the email address of the Outlook mailbox
- 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/../../.. || exit 1
 
@@ -26,10 +24,9 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --ms-client-cred "$MS_CLIENT_CRED" \
     --ms-authority-url https://login.microsoftonline.com \
     --ms-tenant "$MS_TENANT" \
-    --ms-user-pname "$MS_USER_PNAME" \
+    --ms-user-email "$MS_USER_EMAIL" \
     --ms-outlook-folders Inbox,"Sent Items" \
     --structured-output-dir outlook-output \
     --num-processes 2 \
-    --download-dir outlook-download \
     --recursive \
     --verbose
