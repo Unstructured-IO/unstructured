@@ -39,9 +39,7 @@
 We'd love to hear your feedback, let us know how it goes in our
   community slack. And stay tuned for improvements to both quality and performance!</p>
 
-<h3 align="center">
-  <p>Open-Source Pre-Processing Tools for Unstructured Data</p>
-</h3>
+## Open-Source Pre-Processing Tools for Unstructured Data
 
 The `unstructured` library provides open-source components for pre-processing text documents
 such as **PDFs**, **HTML** and **Word** Documents. These components are packaged as *bricks* 🧱, which provide
@@ -61,8 +59,18 @@ Checkout the [`unstructured-api` repo](https://github.com/Unstructured-IO/unstru
 to get started making API calls.
 You’ll also find instructions there about how to host your own version of the API.
 
+
+## Documentation
+This README gives an overview of how to install, use and develop the library.
+For more comprehensive documentation, visit https://unstructured-io.github.io/unstructured/ .
+
+
 ## :eight_pointed_black_star: Quick Start
 
+There are two ways to use the library: 1) install it or 2) run a container
+
+
+### Installing the library
 Use the following instructions to get up and running with `unstructured` and test your
 installation. NOTE: We do not currently support python 3.11, please use an older version.
 
@@ -74,10 +82,9 @@ installation. NOTE: We do not currently support python 3.11, please use an older
     - `poppler-utils` (images and PDFs)
     - `tesseract-ocr` (images and PDFs)
     - `libreoffice` (MS Office docs)
-
-- If you are parsing PDFs and want to use a model from the [layoutparser model
-  zoo](https://github.com/Unstructured-IO/unstructured-inference#using-models-from-the-layoutparser-model-zoo),
-  use the instructions [here](https://github.com/Unstructured-IO/unstructured-inference#detectron2).
+    - `pandocs` (EPUBs, RTFs and Open Office docs)
+- For suggestions on how to install on Windows and to learn about dependencies for other features, see the
+  installation documentation [here](https://unstructured-io.github.io/unstructured/installing.html).
 
 At this point, you should be able to run the following code:
 
@@ -88,41 +95,10 @@ elements = partition(filename="example-docs/eml/fake-email.eml")
 print("\n\n".join([str(el) for el in elements]))
 ```
 
-The following table shows the document types the `unstructured` library currently supports.
-`partition` will recognize each of these document types and route the document to the
-appropriate partitioning function. If you already know your document type, you can use
-the partitioning function listed in the table directly.
-See our [documentation page](https://unstructured-io.github.io/unstructured/) for more details
-about the library.
-
-| Document Type | Partition Function | Strategies | Table Support | Options |
-| --- | --- | --- | --- | --- |
-| CSV Files (`.csv`) | `partition_csv` | N/A | Yes | None |
-| E-mails (`.eml`) | `partition_eml` | N/A | No | Encoding; Max Partition; Process Attachments |
-| E-mails (`.msg`) | `partition_msg` | N/A | No | Encoding; Max Partition; Process Attachments |
-| EPubs (`.epub`) | `partition_epub` | N/A | Yes | Include Page Breaks |
-| Excel Documents (`.xlsx`/`.xls`) | `partition_xlsx` | N/A | Yes | None |
-| HTML Pages (`.html`) | `partition_html` | N/A | No | Encoding; Include Page Breaks |
-| Images (`.png`/`.jpg`) | `partition_image` | `"auto"`, `"hi_res"`, `"ocr_only"` | Yes | Encoding; Include Page Breaks; Infer Table Structure; OCR Languages, Strategy |
-| Markdown (`.md`) | `partitin_md` | N/A | Yes | Include Page Breaks |
-| Org Mode (`.org`) | `partition_org` | N/A | Yes | Include Page Breaks |
-| Open Office Documents (`.odt`) | `partition_odt` | N/A | Yes | None |
-| PDFs (`.pdf`) | `partition_pdf` | `"auto"`, `"fast"`, `"hi_res"`, `"ocr_only"` | Yes | Encoding; Include Page Breaks; Infer Table Structure; Max Partition; OCR Languages, Strategy |
-| Plain Text (`.txt`) | `partition_text` | N/A | No | Encoding; Max Partition; Paragraph Grouper |
-| Power Points (`.ppt`) | `partition_ppt` | N/A | Yes | Include Page Breaks |
-| Power Points (`.pptx`) | `partition_pptx` | N/A | Yes | Include Page Breaks |
-| ReStructured Text (`.rst`) | `partition_rst` | N/A | Yes | Include Page Breaks |
-| Rich Text Files (`.rtf`) | `partition_rtf` | N/A | Yes | Include Page Breaks |
-| TSV Files (`.tsv`) | `partition_tsv` | N/A | Yes | None |
-| Word Documents (`.doc`) | `partition_doc` | N/A | Yes | None |
-| Word Documents (`.docx`) | `partition_docx` | N/A | Yes | None |
-| Word Documents (`.doc`) | `partition_doc` | N/A | Yes | Include Page Breaks |
-| Word Documents (`.docx`) | `partition_docx` | N/A | Yes | Include Page Breaks |
-| XML Documents (`.xml`) | `partition_xml` | N/A | No | Encoding; Max Partition; XML Keep Tags |
+To dive deeper into how to use the library, visit the [Quick Tour](https://github.com/Unstructured-IO/unstructured#clap-quick-tour) below.
 
 
-
-## :dizzy: Instructions for using the docker image
+### Using the library in a container
 
 The following instructions are intended to help you get up and running using Docker to interact with `unstructured`.
 See [here](https://docs.docker.com/get-docker/) if you don't already have docker installed on your machine.
@@ -170,39 +146,6 @@ python3
 >>> elements = partition_text(filename="example-docs/fake-text.txt")
 ```
 
-
-## :coffee: Installation Instructions for Local Development
-
-The following instructions are intended to help you get up and running with `unstructured`
-locally if you are planning to contribute to the project.
-
-* Using `pyenv` to manage virtualenv's is recommended but not necessary
-	* Mac install instructions. See [here](https://github.com/Unstructured-IO/community#mac--homebrew) for more detailed instructions.
-		* `brew install pyenv-virtualenv`
-	  * `pyenv install 3.8.17`
-  * Linux instructions are available [here](https://github.com/Unstructured-IO/community#linux).
-
-* Create a virtualenv to work in and activate it, e.g. for one named `unstructured`:
-
-	`pyenv  virtualenv 3.8.17 unstructured` <br />
-	`pyenv activate unstructured`
-
-* Run `make install`
-
-* Optional:
-  * To install models and dependencies for processing images and PDFs locally, run `make install-local-inference`.
-  * For processing image files, `tesseract` is required. See [here](https://tesseract-ocr.github.io/tessdoc/Installation.html) for installation instructions.
-  * For processing PDF files, `tesseract` and `poppler` are required. The [pdf2image docs](https://pdf2image.readthedocs.io/en/latest/installation.html) have instructions on installing `poppler` across various platforms.
-
-Additionally, if you're planning to contribute to `unstructured`, we provide you an optional `pre-commit` configuration
-file to ensure your code matches the formatting and linting standards used in `unstructured`.
-If you'd prefer not having code changes auto-tidied before every commit, you can use  `make check` to see
-whether any linting or formatting changes should be applied, and `make tidy` to apply them.
-
-If using the optional `pre-commit`, you'll just need to install the hooks with `pre-commit install` since the
-`pre-commit` package is installed as part of `make install` mentioned above. Finally, if you decided to use `pre-commit`
-you can also uninstall the hooks with `pre-commit uninstall`.
-
 ## :clap: Quick Tour
 
 You can run this [Colab notebook](https://colab.research.google.com/drive/1U8VCjY2-x8c6y5TYMbSFtQGlQVFHCVIW) to run the examples below.
@@ -215,14 +158,9 @@ of the features in the library.
 
 ### Document Parsing
 
-The easiest way to parse a document in unstructured is to use the `partition` brick. If you
-use `partition` brick, `unstructured` will detect the file type and route it to the appropriate
-file-specific partitioning brick.
+The easiest way to parse a document in unstructured is to use the `partition` brick.
 If you are using the `partition` brick, you may need to install additional parameters via `pip install unstructured[local-inference]`. Ensure you first install `libmagic` using the
-instructions outlined [here](https://unstructured-io.github.io/unstructured/installing.html#filetype-detection)
-`partition` will always apply the default arguments. If you need
-advanced features, use a document-specific brick.
-See the table above for a full list of document types supported in the library.
+instructions outlined [here](https://unstructured-io.github.io/unstructured/installing.html#filetype-detection).
 
 ```python
 from unstructured.partition.auto import partition
@@ -263,9 +201,75 @@ Deep Learning(DL)-based approaches are the state-of-the-art for a wide range of 
 including document image classiﬁcation [11,
 ```
 
+
+The following table shows the document types the `unstructured` library currently supports.
+`partition` will detect the file type and route it to the appropriate
+file-specific partitioning brick with the default arguments. If you already know your document type or need
+advanced features, use the partitioning function listed in the table directly.
+
+| Document Type | Partition Function | Strategies | Table Support | Options |
+| --- | --- | --- | --- | --- |
+| CSV Files (`.csv`) | `partition_csv` | N/A | Yes | None |
+| E-mails (`.eml`) | `partition_eml` | N/A | No | Encoding; Max Partition; Process Attachments |
+| E-mails (`.msg`) | `partition_msg` | N/A | No | Encoding; Max Partition; Process Attachments |
+| EPubs (`.epub`) | `partition_epub` | N/A | Yes | Include Page Breaks |
+| Excel Documents (`.xlsx`/`.xls`) | `partition_xlsx` | N/A | Yes | None |
+| HTML Pages (`.html`) | `partition_html` | N/A | No | Encoding; Include Page Breaks |
+| Images (`.png`/`.jpg`) | `partition_image` | `"auto"`, `"hi_res"`, `"ocr_only"` | Yes | Encoding; Include Page Breaks; Infer Table Structure; OCR Languages, Strategy |
+| Markdown (`.md`) | `partitin_md` | N/A | Yes | Include Page Breaks |
+| Org Mode (`.org`) | `partition_org` | N/A | Yes | Include Page Breaks |
+| Open Office Documents (`.odt`) | `partition_odt` | N/A | Yes | None |
+| PDFs (`.pdf`) | `partition_pdf` | `"auto"`, `"fast"`, `"hi_res"`, `"ocr_only"` | Yes | Encoding; Include Page Breaks; Infer Table Structure; Max Partition; OCR Languages, Strategy |
+| Plain Text (`.txt`) | `partition_text` | N/A | No | Encoding; Max Partition; Paragraph Grouper |
+| Power Points (`.ppt`) | `partition_ppt` | N/A | Yes | Include Page Breaks |
+| Power Points (`.pptx`) | `partition_pptx` | N/A | Yes | Include Page Breaks |
+| ReStructured Text (`.rst`) | `partition_rst` | N/A | Yes | Include Page Breaks |
+| Rich Text Files (`.rtf`) | `partition_rtf` | N/A | Yes | Include Page Breaks |
+| TSV Files (`.tsv`) | `partition_tsv` | N/A | Yes | None |
+| Word Documents (`.doc`) | `partition_doc` | N/A | Yes | None |
+| Word Documents (`.docx`) | `partition_docx` | N/A | Yes | None |
+| Word Documents (`.doc`) | `partition_doc` | N/A | Yes | Include Page Breaks |
+| Word Documents (`.docx`) | `partition_docx` | N/A | Yes | Include Page Breaks |
+| XML Documents (`.xml`) | `partition_xml` | N/A | No | Encoding; Max Partition; XML Keep Tags |
+
 See the [partitioning](https://unstructured-io.github.io/unstructured/bricks.html#partitioning)
 section in our documentation for a full list of options and instructions on how to use
-file-specific partitioning functions.
+file-specific partitioning functions. Our [documentation](https://unstructured-io.github.io/unstructured/) also includes details
+about other features in the library.
+
+
+## :coffee: Instructions for Local Development
+
+The following instructions are intended to help you get up and running with `unstructured`
+locally if you are planning to contribute to the project.
+
+* Using `pyenv` to manage virtualenv's is recommended but not necessary
+	* Mac install instructions. See [here](https://github.com/Unstructured-IO/community#mac--homebrew) for more detailed instructions.
+		* `brew install pyenv-virtualenv`
+	  * `pyenv install 3.8.17`
+  * Linux instructions are available [here](https://github.com/Unstructured-IO/community#linux).
+
+* Create a virtualenv to work in and activate it, e.g. for one named `unstructured`:
+
+	`pyenv  virtualenv 3.8.17 unstructured` <br />
+	`pyenv activate unstructured`
+
+* Run `make install`
+
+* Optional:
+  * To install models and dependencies for processing images and PDFs locally, run `make install-local-inference`.
+  * For processing image files, `tesseract` is required. See [here](https://tesseract-ocr.github.io/tessdoc/Installation.html) for installation instructions.
+  * For processing PDF files, `tesseract` and `poppler` are required. The [pdf2image docs](https://pdf2image.readthedocs.io/en/latest/installation.html) have instructions on installing `poppler` across various platforms.
+
+Additionally, if you're planning to contribute to `unstructured`, we provide you an optional `pre-commit` configuration
+file to ensure your code matches the formatting and linting standards used in `unstructured`.
+If you'd prefer not having code changes auto-tidied before every commit, you can use  `make check` to see
+whether any linting or formatting changes should be applied, and `make tidy` to apply them.
+
+If using the optional `pre-commit`, you'll just need to install the hooks with `pre-commit install` since the
+`pre-commit` package is installed as part of `make install` mentioned above. Finally, if you decided to use `pre-commit`
+you can also uninstall the hooks with `pre-commit uninstall`.
+
 
 ## :guardsman: Security Policy
 
@@ -277,5 +281,5 @@ information on how to report security vulnerabilities.
 | Section | Description |
 |-|-|
 | [Company Website](https://unstructured.io) | Unstructured.io product and company info |
-| [Documentation](https://unstructured-io.github.io/unstructured) | Full API documentation |
+| [Documentation](https://unstructured-io.github.io/unstructured) | Full documentation |
 | [Batch Processing](Ingest.md) | Ingesting batches of documents through Unstructured |

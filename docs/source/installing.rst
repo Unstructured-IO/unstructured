@@ -5,17 +5,22 @@ Quick Start
 -----------
 
 Use the following instructions to get up and running with ``unstructured`` and test your
-installation.
+installation. NOTE: We do not currently support python 3.11; please use an older version.
 
 * Install the Python SDK with ``pip install "unstructured[local-inference]"``
 	* If you do not need to process PDFs or images, you can run ``pip install unstructured``
 
 * Install the following system dependencies if they are not already available on your system. Depending on what document types you're parsing, you may not need all of these.
 	* ``libmagic-dev`` (filetype detection)
+		- Instructions for each OS here: https://unstructured-io.github.io/unstructured/installing.html#filetype-detection
 	* ``poppler-utils`` (images and PDFs)
+		- On Mac: brew install poppler
 	* ``tesseract-ocr`` (images and PDFs)
+		- On Mac: brew install tesseract-lang
 	* ``libreoffice`` (MS Office docs)
+		- On Mac: brew install --cask libreoffice
 	* ``pandocs`` (EPUBs, RTFs and Open Office docs)
+		- On Mac: brew install pandoc
 
 * Follow the instructions `here <https://github.com/Unstructured-IO/unstructured-inference#detectron2>`_ to install ``detectron2``. This is required if you would like to use custom models from the `LayoutParser Model Zoo <https://github.com/Unstructured-IO/unstructured-inference#using-models-from-the-layoutparser-model-zoo>`_.
 
