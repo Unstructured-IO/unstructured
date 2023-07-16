@@ -174,7 +174,9 @@ class OutlookConnector(ConnectorCleanupMixin, BaseConnector):
         """Sets the mail folder ids and subfolder ids for requested root mail folders."""
         self.root_folders = defaultdict(list)
         root_folders_with_subfolders = []
-        get_root_folders = self.client.users[self.config.user_email].mail_folders.get().execute_query()
+        get_root_folders = (
+            self.client.users[self.config.user_email].mail_folders.get().execute_query()
+        )
 
         for folder in get_root_folders:
             self.root_folders[folder.display_name].append(folder.id)
