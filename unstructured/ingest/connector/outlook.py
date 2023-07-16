@@ -1,14 +1,13 @@
-import os
 import hashlib
+import os
 from collections import defaultdict
-from pathlib import Path
-from typing import List
 from dataclasses import dataclass, field
 from itertools import chain
+from pathlib import Path
+from typing import List
 
 from office365.onedrive.driveitems.driveItem import DriveItem
 
-from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
@@ -22,8 +21,10 @@ from unstructured.utils import requires_dependencies
 
 MAX_NUM_EMAILS = 10000
 
+
 class MissingFolderError(Exception):
-    """There are no root folders with those names. """
+    """There are no root folders with those names."""
+
 
 @dataclass
 class SimpleOutlookConfig(BaseConnectorConfig):
@@ -41,12 +42,13 @@ class SimpleOutlookConfig(BaseConnectorConfig):
         if not (self.client_id and self.client_credential and self.user_email):
             raise ValueError(
                 "Please provide one of the following mandatory values:"
-                "\n-ms-client_id\n-ms-client_cred\n-ms-user-pname",
+                "\n--ms-client_id\n--ms-client_cred\n--ms-user-email",
             )
         self.token_factory = self._acquire_token
 
     @requires_dependencies(["msal"])
     def _acquire_token(self):
+        logger.info("******** PPPPPPPPPPPPPPPPPP acquire token *********")
         from msal import ConfidentialClientApplication
 
         try:
@@ -56,7 +58,7 @@ class SimpleOutlookConfig(BaseConnectorConfig):
                 client_credential=self.client_credential,
             )
             token = app.acquire_token_for_client(
-                scopes=["https://graph.microsoft.com/.default"]
+                scopes=["https://graph.microsoft.com/.default"],
             )
         except ValueError as exc:
             logger.error("Couldn't set up credentials for Outlook")
@@ -64,9 +66,9 @@ class SimpleOutlookConfig(BaseConnectorConfig):
         return token
 
     @staticmethod
-    def parse_channels(channel_str: str) -> List[str]:
-        """Parses a comma separated list of channels into a list."""
-        return [x.strip() for x in channel_str.split(",")]
+    def parse_folders(folder_str: str) -> List[str]:
+        """Parses a comma separated string of Outlook folders into a list."""
+        return [x.strip() for x in folder_str.split(",")]
 
 
 @dataclass
@@ -78,11 +80,11 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         self._set_download_paths()
 
     def hash_mail_name(self, id):
-        """Outlook email ids are 152 char long. Hash to shorten."""
+        """Outlook email ids are 152 char long. Hash to shorten to 16."""
         return hashlib.sha256(id.encode("utf-8")).hexdigest()[:16]
 
     def _set_download_paths(self) -> None:
-        """Parses the folder structure from the source and creates the download and output paths"""
+        """Creates paths for downloading and parsing."""
         download_path = Path(f"{self.standard_config.download_dir}")
         output_path = Path(f"{self.standard_config.output_dir}")
 
@@ -105,6 +107,7 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @BaseIngestDoc.skip_if_file_exists
     @requires_dependencies(["office365"])
     def get_file(self):
+        """Relies on Office365 python sdk message object to do the download."""
         try:
             if not self.download_dir.is_dir():
                 logger.debug(f"Creating directory: {self.download_dir}")
@@ -112,17 +115,18 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
             with open(
                 os.path.join(
-                    self.download_dir, self.hash_mail_name(self.file.id) + ".eml"
+                    self.download_dir,
+                    self.hash_mail_name(self.file.id) + ".eml",
                 ),
                 "wb",
             ) as local_file:
                 self.file.download(
-                    local_file
+                    local_file,
                 ).execute_query()  # download MIME representation of a message
 
         except Exception as e:
             logger.error(
-                f"Error while downloading and saving file: {self.file.subject}."
+                f"Error while downloading and saving file: {self.file.subject}.",
             )
             logger.error(e)
             return
@@ -134,7 +138,9 @@ class OutlookConnector(ConnectorCleanupMixin, BaseConnector):
     config: SimpleOutlookConfig
 
     def __init__(
-        self, standard_config: StandardConnectorConfig, config: SimpleOutlookConfig
+        self,
+        standard_config: StandardConnectorConfig,
+        config: SimpleOutlookConfig,
     ):
         super().__init__(standard_config, config)
         self._set_client()
@@ -150,6 +156,8 @@ class OutlookConnector(ConnectorCleanupMixin, BaseConnector):
         pass
 
     def recurse_folders(self, folder_id, main_folder_dict):
+        """We only get a count of subfolders for any folder.
+        Have to make additional calls to get subfolder ids."""
         subfolders = (
             self.client.users[self.config.user_email]
             .mail_folders[folder_id]
@@ -164,11 +172,10 @@ class OutlookConnector(ConnectorCleanupMixin, BaseConnector):
                 self.recurse_folders(subfolder.id, main_folder_dict)
 
     def get_folder_ids(self):
+        """Sets the mail folder ids and subfolder ids for requested root mail folders."""
         self.root_folders = defaultdict(list)
         root_folders_with_subfolders = []
-        root_folders = (
-            self.client.users[self.config.user_email].mail_folders.get().execute_query()
-        )
+        root_folders = self.client.users[self.config.user_email].mail_folders.get().execute_query()
 
         for folder in root_folders:
             self.root_folders[folder.display_name].append(folder.id)
@@ -178,14 +185,15 @@ class OutlookConnector(ConnectorCleanupMixin, BaseConnector):
         for folder in root_folders_with_subfolders:
             self.recurse_folders(folder, self.root_folders)
 
+        # Narrow down all mail folder ids (plus all subfolders) to the ones that were requested.
         self.selected_folder_ids = list(
             chain.from_iterable(
                 [
                     v
                     for k, v in self.root_folders.items()
                     if k.lower() in [x.lower() for x in self.config.ms_outlook_folders]
-                ]
-            )
+                ],
+            ),
         )
         if not self.selected_folder_ids:
             raise MissingFolderError(
@@ -193,17 +201,13 @@ class OutlookConnector(ConnectorCleanupMixin, BaseConnector):
             )
 
     def get_ingest_docs(self):
+        """Returns a list of all the message objects that are in the requested root folder."""
         mail = (
             self.client.users[self.config.user_email]
             .messages.get()
             .top(MAX_NUM_EMAILS)
             .execute_query()
         )
-        filtered_mail = [
-            m for m in mail if m.parent_folder_id in self.selected_folder_ids
-        ]
+        filtered_mail = [m for m in mail if m.parent_folder_id in self.selected_folder_ids]
 
-        return [
-            OutlookIngestDoc(self.standard_config, self.config, f)
-            for f in filtered_mail
-        ]
+        return [OutlookIngestDoc(self.standard_config, self.config, f) for f in filtered_mail]

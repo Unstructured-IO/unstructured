@@ -430,7 +430,8 @@ class MainProcess:
 @click.option(
     "--ms-outlook-folders",
     default=None,
-    help="Comma separated list of folders to download email messages from. Do not specify subfolders. Use quotes if spaces in folder names.",
+    help="Comma separated list of folders to download email messages from. "
+    "Do not specify subfolders. Use quotes if spaces in folder names.",
 )
 @click.option(
     "--elasticsearch-url",
@@ -870,7 +871,7 @@ def main(
                 decay=biomed_decay,
             ),
         )
-    elif ms_client_id or ms_user_pname:
+    elif ms_client_id and ms_user_pname:
         from unstructured.ingest.connector.onedrive import (
             OneDriveConnector,
             SimpleOneDriveConfig,
@@ -903,7 +904,7 @@ def main(
                 user_email=ms_user_email,
                 tenant=ms_tenant,
                 authority_url=ms_authority_url,
-                ms_outlook_folders = SimpleOutlookConfig.parse_channels(ms_outlook_folders),
+                ms_outlook_folders=SimpleOutlookConfig.parse_folders(ms_outlook_folders),
                 recursive=recursive,
             ),
         )
