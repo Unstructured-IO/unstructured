@@ -33,6 +33,12 @@
   <p>API Announcement!</p>
 </h3>
 
+We are thrilled to announce the launch of our new API with Unstructured's Chipper model to deliver superior performance when processing high-resolution, complex documents. To start using this API request with Chipper model, you can utilize the `hi_res` strategy as stated in the API documentation [here](https://unstructured-io.github.io/unstructured/api.html#strategies).
+
+<h4 align="left">
+  <p>Creating Unstructured API Keys &#128273;</p>
+</h4>
+
 <p>While access to the hosted Unstructured API will remain free, API Keys will soon be required to make requests. To prevent any disruption, get yours <a href="https://www.unstructured.io/api-key/">here</a> now and start using it today!</p>
 
 <p>Checkout the <a href="https://github.com/Unstructured-IO/unstructured-api#--">readme</a> here to get started making API calls.
