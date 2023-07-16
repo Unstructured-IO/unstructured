@@ -174,9 +174,9 @@ class OutlookConnector(ConnectorCleanupMixin, BaseConnector):
         """Sets the mail folder ids and subfolder ids for requested root mail folders."""
         self.root_folders = defaultdict(list)
         root_folders_with_subfolders = []
-        root_folders = self.client.users[self.config.user_email].mail_folders.get().execute_query()
+        get_root_folders = self.client.users[self.config.user_email].mail_folders.get().execute_query()
 
-        for folder in root_folders:
+        for folder in get_root_folders:
             self.root_folders[folder.display_name].append(folder.id)
             if folder.get_property("childFolderCount") > 0:
                 root_folders_with_subfolders.append(folder.id)
@@ -201,12 +201,12 @@ class OutlookConnector(ConnectorCleanupMixin, BaseConnector):
 
     def get_ingest_docs(self):
         """Returns a list of all the message objects that are in the requested root folder."""
-        mail = (
+        messages = (
             self.client.users[self.config.user_email]
             .messages.get()
             .top(MAX_NUM_EMAILS)
             .execute_query()
         )
-        filtered_mail = [m for m in mail if m.parent_folder_id in self.selected_folder_ids]
+        filtered_messages = [m for m in messages if m.parent_folder_id in self.selected_folder_ids]
 
-        return [OutlookIngestDoc(self.standard_config, self.config, f) for f in filtered_mail]
+        return [OutlookIngestDoc(self.standard_config, self.config, f) for f in filtered_messages]

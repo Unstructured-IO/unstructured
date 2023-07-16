@@ -12,7 +12,7 @@
 # https://learn.microsoft.com/en-us/graph/auth-register-app-v2
 # https://learn.microsoft.com/en-us/graph/auth-v2-service
 
-# Assign the neccesary permissions for the application to read from OneDrive.
+# Assign the neccesary permissions for the application to read from mail.
 # https://learn.microsoft.com/en-us/graph/permissions-reference
 
 
