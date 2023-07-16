@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Processes Outlook emails through Unstructured's library
+# Processes Outlook emails through Unstructured's library. Does not download attachments.
 
 # Structured outputs are stored in outlook-output/
 
