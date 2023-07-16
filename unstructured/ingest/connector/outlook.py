@@ -48,7 +48,6 @@ class SimpleOutlookConfig(BaseConnectorConfig):
 
     @requires_dependencies(["msal"])
     def _acquire_token(self):
-        logger.info("******** PPPPPPPPPPPPPPPPPP acquire token *********")
         from msal import ConfidentialClientApplication
 
         try:

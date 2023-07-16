@@ -1,3 +1,13 @@
+## 0.8.3-dev1
+
+### Enhancements
+
+### Features
+
+* Adds Outlook connector.
+
+### Fixes
+
 ## 0.8.2-dev1
 
 ### Enhancements

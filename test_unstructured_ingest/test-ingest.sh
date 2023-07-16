@@ -22,6 +22,7 @@ export OMP_THREAD_LIMIT=1
 ./test_unstructured_ingest/test-ingest-against-api.sh
 ./test_unstructured_ingest/test-ingest-gcs.sh
 ./test_unstructured_ingest/test-ingest-onedrive.sh
+./test_unstructured_ingest/test-ingest-outlook.sh
 ./test_unstructured_ingest/test-ingest-elasticsearch.sh
 ./test_unstructured_ingest/test-ingest-local-single-file.sh
 # NOTE(yuming): The following test should be put after any tests with --preserve-downloads option

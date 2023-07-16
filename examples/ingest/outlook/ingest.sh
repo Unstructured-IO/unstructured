@@ -22,7 +22,7 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --ms-client-id "$MS_CLIENT_ID" \
     --ms-client-cred "$MS_CLIENT_CRED" \
-    --ms-tenant "$MS_TENANT" \
+    --ms-tenant "$MS_TENANT_ID" \
     --ms-user-email "$MS_USER_EMAIL" \
     --ms-outlook-folders Inbox,"Sent Items" \
     --structured-output-dir outlook-output \

@@ -190,6 +190,8 @@ jobs:
         GCP_INGEST_SERVICE_KEY: ${{ secrets.GCP_INGEST_SERVICE_KEY }}
         MS_CLIENT_ID: ${{ secrets.MS_CLIENT_ID }}
         MS_CLIENT_CRED: ${{ secrets.MS_CLIENT_CRED }}
+        MS_TENANT_ID: ${{ secrets.MS_TENANT_ID }}
+        MS_USER_EMAIL: ${{ secrets.MS_USER_EMAIL }}
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
       run: |
         source .venv/bin/activate
@@ -209,6 +211,7 @@ jobs:
         make install-ingest-github
         make install-ingest-gitlab
         make install-ingest-onedrive
+        make install-ingest-outlook
         make install-ingest-slack
         make install-ingest-wikipedia
         ./test_unstructured_ingest/test-ingest.sh
