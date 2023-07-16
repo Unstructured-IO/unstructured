@@ -1,0 +1,230 @@
+(Pdb) self.file
+<office365.outlook.mail.messages.message.Message object at 0x28add4580>
+(Pdb) vars(file)
+*** NameError: name 'file' is not defined
+(Pdb) pp vars(self.file)
+{'_context': <office365.graph_client.GraphClient object at 0x2898e6c10>,
+ '_entity_type_name': None,
+ '_parent_collection': [<office365.outlook.mail.messages.message.Message object at 0x28add4580>, <office365.outlook.mail.messages.message.Message object at 0x28add4af0>, <office365.outlook.mail.messages.message.Message object at 0x28adfb130>, <office365.outlook.mail.messages.message.Message object at 0x28adfb4f0>, <office365.outlook.mail.messages.message.Message object at 0x28adfb8b0>, <office365.outlook.mail.messages.message.Message object at 0x28adfbc70>, <office365.outlook.mail.messages.message.Message object at 0x28adff070>, <office365.outlook.mail.messages.message.Message object at 0x28adff490>, <office365.outlook.mail.messages.message.Message object at 0x28add4250>, <office365.outlook.mail.messages.message.Message object at 0x28adc1f70>],
+ '_properties': {'bccRecipients': [],
+                 'body': <office365.outlook.mail.item_body.ItemBody object at 0x28add4a60>,
+                 'bodyPreview': 'View a summary of the updates.\r\n'
+                                '\r\n'
+                                '\r\n'
+                                '\r\n'
+                                'As a new admin to the Microsoft 365 admin '
+                                'center, you’ll get weekly emails from the '
+                                'message center about upcoming changes to your '
+                                'services until July 14, 2023. Update your '
+                                'preferences to continue getting emails like t',
+                 'categories': [],
+                 'ccRecipients': [],
+                 'changeKey': 'CQAAABYAAADZYn/lfnvLSqIcW/YsN8ebAAAPqI7t',
+                 'conversationId': 'AAQkAGE2MmEwNzFlLWVjYzAtNDNhZS04ZGM1LTFjYmMzZDhiMmI0MAAQAK0pkua9L_JNmhNdg2lPU7A=',
+                 'conversationIndex': 'AQHZsuIzrSmS5r0v4k2aE12DaU9TsA==',
+                 'createdDateTime': datetime.datetime(2023, 7, 10, 3, 54, 18),
+                 'flag': {'flagStatus': 'notFlagged'},
+                 'from': {'emailAddress': {'address': 'o365mc@microsoft.com',
+                                           'name': 'Microsoft 365 Message '
+                                                   'center'}},
+                 'hasAttachments': False,
+                 'id': 'AAMkAGE2MmEwNzFlLWVjYzAtNDNhZS04ZGM1LTFjYmMzZDhiMmI0MABGAAAAAADc1MfJYetSQ6QZntYrI9k4BwDZYn-lfnvLSqIcW-YsN8ebAAAAAAEMAADZYn-lfnvLSqIcW-YsN8ebAAAPrrrYAAA=',
+                 'importance': 'normal',
+                 'inferenceClassification': 'focused',
+                 'internetMessageId': '<1e902bfe-e99a-4f3a-87ba-b9423d94afaf@az.eastus.unknown.microsoft.com>',
+                 'isDeliveryReceiptRequested': None,
+                 'isDraft': False,
+                 'isRead': False,
+                 'isReadReceiptRequested': False,
+                 'lastModifiedDateTime': datetime.datetime(2023, 7, 10, 3, 59, 36),
+                 'parentFolderId': 'AQMkAGE2MmEwNzFlLWVjYwAwLTQzYWUtOGRjNS0xY2JjM2Q4YjJiNDAALgAAA9zUx8lh61JDpBme1isj2TgBANlif_V_e8tKohxb9iw3x5sAAAIBDAAAAA==',
+                 'receivedDateTime': '2023-07-10T03:54:19Z',
+                 'replyTo': [],
+                 'sender': <office365.outlook.mail.recipient.Recipient object at 0x28add4f10>,
+                 'sentDateTime': '2023-07-10T03:54:13Z',
+                 'subject': 'Weekly digest: Microsoft service updates',
+                 'toRecipients': [<office365.outlook.mail.recipient.Recipient object at 0x28add4fd0>],
+                 'webLink': 'https://outlook.office365.com/owa/?ItemID=AAMkAGE2MmEwNzFlLWVjYzAtNDNhZS04ZGM1LTFjYmMzZDhiMmI0MABGAAAAAADc1MfJYetSQ6QZntYrI9k4BwDZYn%2FlfnvLSqIcW%2FYsN8ebAAAAAAEMAADZYn%2FlfnvLSqIcW%2FYsN8ebAAAPrrrYAAA%3D&exvsurl=1&viewmodel=ReadMessageItem'},
+ '_query_options': ,
+ '_resource_path': /users/devops@unstructuredio.onmicrosoft.com/messages/AAMkAGE2MmEwNzFlLWVjYzAtNDNhZS04ZGM1LTFjYmMzZDhiMmI0MABGAAAAAADc1MfJYetSQ6QZntYrI9k4BwDZYn-lfnvLSqIcW-YsN8ebAAAAAAEMAADZYn-lfnvLSqIcW-YsN8ebAAAPrrrYAAA=,
+ '_ser_property_names': ['toRecipients', 'bccRecipients', 'ccRecipients']}
+
+
+
+
+
+import msal
+from office365.graph_client import GraphClient
+
+from office365.onedrive.driveitems.driveItem import DriveItem
+from office365.outlook.mail.folders.folder import MailFolder
+
+
+def acquire_token():
+    """
+    Acquire token via MSAL
+    """
+    authority_url = 'https://login.microsoftonline.com/3d60a7e5-1e32-414e-839b-1c6e6782613d'
+    app = msal.ConfidentialClientApplication(
+        authority=authority_url,
+        client_id='1be61e22-4213-4fc1-9e95-75c93866e2a3',
+        client_credential='4~98Q~6bVqDpvJdxtmWnop_kZ.J4EqjZz2G0pb2B'
+    )
+    token = app.acquire_token_for_client(scopes=["https://graph.microsoft.com/.default"])
+    return token
+
+client = GraphClient(acquire_token)
+
+# def list_objects(folder, recursive=True):
+#         drive_items = folder.children.get().execute_query()
+#         files = [d for d in drive_items if d.is_file]
+#         if not recursive:
+#             return files
+#         folders = [d for d in drive_items if d.is_folder]
+#         for f in folders:
+#             files += list_objects(f, recursive)
+#         return files
+
+# drive = client.users["devops@unstructuredio.onmicrosoft.com"].drive.get().execute_query()
+# files = list_objects(drive.root)
+# print(drive)
+# print(files)
+
+# mail_folders is from user.py
+# m = client.users["devops@unstructuredio.onmicrosoft.com"].mail_folders.get().execute_query()
+m = client.users["devops@unstructuredio.onmicrosoft.com"].messages.get().execute_query()
+mf = client.users["devops@unstructuredio.onmicrosoft.com"].mail_folders.get().execute_query()
+ou = client.users["devops@unstructuredio.onmicrosoft.com"].outlook.get().execute_query()
+# m = client.users["devops@unstructuredio.onmicrosoft.com"].mail_folders.messages.get().execute_query()
+for fold in mf:
+    breakpoint()
+    print(fold.display_name)
+    print(fold.total_item_count)
+    print(fold.)
+    
+
+    print(fold)
+print(m)
+breakpoint()
+for item in m:
+    breakpoint()
+    print(item.subject)
+    print(item.has_attachments)
+    print(item.body.content)
+    print(item.get_property("subject"))
+    print(item.get_property("from"))
+    print(item.get_property("body").content)
+
+
+
+
+
+
+
+
+ <office365.onedrive.driveitems.driveItem.DriveItem object at 0x28d6d3b80>
+(Pdb) pp vars(self.file)
+{'_context': <office365.graph_client.GraphClient object at 0x28c43cca0>,
+ '_entity_type_name': None,
+ '_parent_collection': [<office365.onedrive.driveitems.driveItem.DriveItem object at 0x28d6ee100>, <office365.onedrive.driveitems.driveItem.DriveItem object at 0x28d6d3b80>],
+ '_properties': {'@microsoft.graph.downloadUrl': 'https://unstructuredio-my.sharepoint.com/personal/devops_unstructuredio_onmicrosoft_com/_layouts/15/download.aspx?UniqueId=e3da88c4-da31-483f-a2d4-1a96ea0701d9&Translate=false&tempauth=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwMDAwMDAwMy0wMDAwLTBmZjEtY2UwMC0wMDAwMDAwMDAwMDAvdW5zdHJ1Y3R1cmVkaW8tbXkuc2hhcmVwb2ludC5jb21AM2Q2MGE3ZTUtMWUzMi00MTRlLTgzOWItMWM2ZTY3ODI2MTNkIiwiaXNzIjoiMDAwMDAwMDMtMDAwMC0wZmYxLWNlMDAtMDAwMDAwMDAwMDAwIiwibmJmIjoiMTY4OTEzMDI4MyIsImV4cCI6IjE2ODkxMzM4ODMiLCJlbmRwb2ludHVybCI6IldlS0ZDbko4ZE93Y3czcVFpcktzaXJBZHpNREovQ09wb3lFMFJZUXJmb289IiwiZW5kcG9pbnR1cmxMZW5ndGgiOiIxNzUiLCJpc2xvb3BiYWNrIjoiVHJ1ZSIsImNpZCI6InBuamM2SmQxVGtDQVZocDRjRFA1TkE9PSIsInZlciI6Imhhc2hlZHByb29mdG9rZW4iLCJzaXRlaWQiOiJNR1ZrT0dZM1pHVXRZelkwWkMwME5qRmpMVGt4Tm1VdE9HUTJPVGt5TVRKalpqSXgiLCJhcHBfZGlzcGxheW5hbWUiOiJ1bnN0cnVjdHVyZWQtaW5nZXN0LXRlc3QiLCJuYW1laWQiOiIxYmU2MWUyMi00MjEzLTRmYzEtOWU5NS03NWM5Mzg2NmUyYTNAM2Q2MGE3ZTUtMWUzMi00MTRlLTgzOWItMWM2ZTY3ODI2MTNkIiwicm9sZXMiOiJzZWxlY3RlZHNpdGVzIGFsbHNpdGVzLnJlYWQgYWxsZmlsZXMucmVhZCBhbGxwcm9maWxlcy5yZWFkIiwidHQiOiIxIiwiaXBhZGRyIjoiNDAuMTI2LjI2LjE2MCJ9.GwwFIX2RQvSojVEcyDghk5RhebYlWrR_g88B6T02_UM&ApiVersion=2.0',
+                 'cTag': '"c:{E3DA88C4-DA31-483F-A2D4-1A96EA0701D9},1"',
+                 'createdBy': <office365.directory.permissions.identity_set.IdentitySet object at 0x28d6d33a0>,
+                 'createdDateTime': '2023-07-05T22:22:00Z',
+                 'eTag': '"{E3DA88C4-DA31-483F-A2D4-1A96EA0701D9},2"',
+                 'file': <office365.onedrive.files.file.File object at 0x28d6d3fd0>,
+                 'fileSystemInfo': <office365.onedrive.files.system_info.FileSystemInfo object at 0x28d6d3fa0>,
+                 'id': '01GJEMG6GERDNOGMO2H5EKFVA2S3VAOAOZ',
+                 'lastModifiedBy': <office365.directory.permissions.identity_set.IdentitySet object at 0x28d6d3370>,
+                 'lastModifiedDateTime': '2023-07-05T22:22:00Z',
+                 'name': 'fake-text.txt',
+                 'parentReference': <office365.onedrive.listitems.item_reference.ItemReference object at 0x28d6d3e80>,
+                 'shared': <office365.onedrive.shares.shared.Shared object at 0x28d6d3f10>,
+                 'size': 169,
+                 'webUrl': 'https://unstructuredio-my.sharepoint.com/personal/devops_unstructuredio_onmicrosoft_com/Documents/fake-text.txt'},
+ '_query_options': ,
+ '_resource_path': /drives/b!3vfYDk3GHEaRbo1pkhLPIRXZrzTLHCtCm5WV6KY1m_0-lOjrjQaAS6X30Pv_E4VX/items/01GJEMG6GERDNOGMO2H5EKFVA2S3VAOAOZ,
+ '_ser_property_names': []}
+
+
+ (Pdb) self.file.parentReference
+*** AttributeError: 'DriveItem' object has no attribute 'parentReference'
+(Pdb) self.file.get_property("parentReference", "")
+<office365.onedrive.listitems.item_reference.ItemReference object at 0x28d6d3e80>
+
+
+
+Definitely check if email parses. It does. But has issues.
+
+TODO:
+*Paging (maybe not). Currently setting top to 10000. But no way to test. since that just gets the objects and downloads individually we may be ok.
+*identifying folder in
+set download direcrory
+comments
+*do we need quotes?
+* try except logging for folders.
+*why is creating directory happening twice? parallel processing?
+*max docs
+
+change terminology hash_mail_name ~ hash_message_id
+
+
+
+https://developer.microsoft.com/en-us/graph/graph-explorer
+
+https://graph.microsoft.com/v1.0/users/devops@unstructuredio.onmicrosoft.com/mailFolders/Inbox/childFolders
+
+https://graph.microsoft.com/v1.0/users/devops@unstructuredio.onmicrosoft.com/mailFolders/AAMkAGE2MmEwNzFlLWVjYzAtNDNhZS04ZGM1LTFjYmMzZDhiMmI0MAAuAAAAAADc1MfJYetSQ6QZntYrI9k4AQDZYn-lfnvLSqIcW-YsN8ebAAAPrqNlAAA=/childFolders
+
+
+https://graph.microsoft.com/v1.0/users/devops@unstructuredio.onmicrosoft.com/mailFolders/Inbox/sss is what it tries to call
+
+
+
+
+Yuku737208!EEl39 new email address pw for test-ingest
+
+eLOdh39!!sl8!ddI
+
+
+test-ingest@unstructuredio.onmicrosoft.com
+Action Required
+Your organization requires additional security information. Follow the prompts to download and set up the Microsoft Authenticator app.
+Use a different account
+Learn more about the Microsoft Authenticator app
+You have 14 days until this is required.
+
+
+test-ingest@unstructuredio.onmicrosoft.com
+
+
+--ms-user-pname "$MS_USER_PNAME" \
+
+
+    --download-dir outlook-download \
+
+
+
+
+@click.option(
+    "--ms-user-email",
+    default=None,
+    help="Outlook email to download messages from.",
+)
+@click.option(
+    "--ms-outlook-folders",
+    default=None,
+    help="Comma separated list of folders to download email messages from. Do not specify subfolders. Use quotes if spaces in folder names.",
+)@click.option(
+    "--ms-user-email",
+    default=None,
+    help="Outlook email to download messages from.",
+)
+@click.option(
+    "--ms-outlook-folders",
+    default=None,
+    help="Comma separated list of folders to download email messages from. Do not specify subfolders. Use quotes if spaces in folder names.",
+)
+
+    ms_user_email,
+    ms_outlook_folders,

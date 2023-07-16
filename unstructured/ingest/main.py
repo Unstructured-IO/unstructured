@@ -423,6 +423,16 @@ class MainProcess:
     help="Folder to start parsing files from.",
 )
 @click.option(
+    "--ms-user-email",
+    default=None,
+    help="Outlook email to download messages from.",
+)
+@click.option(
+    "--ms-outlook-folders",
+    default=None,
+    help="Comma separated list of folders to download email messages from. Do not specify subfolders. Use quotes if spaces in folder names.",
+)
+@click.option(
     "--elasticsearch-url",
     default=None,
     help='URL to the Elasticsearch cluster, e.g. "http://localhost:9200"',
@@ -525,6 +535,8 @@ def main(
     ms_tenant,
     ms_user_pname,
     ms_onedrive_folder,
+    ms_user_email,
+    ms_outlook_folders,
     elasticsearch_url,
     elasticsearch_index_name,
     jq_query,
@@ -892,24 +904,6 @@ def main(
                 tenant=ms_tenant,
                 authority_url=ms_authority_url,
                 ms_outlook_folders = SimpleOutlookConfig.parse_channels(ms_outlook_folders),
-                recursive=recursive,
-            ),
-        )
-
-    elif ms_client_id or ms_user_pname:
-        from unstructured.ingest.connector.onedrive import (
-            OneDriveConnector,
-            SimpleOneDriveConfig,
-        )
-
-        doc_connector = OneDriveConnector(  # type: ignore
-            standard_config=standard_config,
-            config=SimpleOneDriveConfig(
-                client_id=ms_client_id,
-                client_credential=ms_client_cred,
-                user_pname=ms_user_pname,
-                tenant=ms_tenant,
-                authority_url=ms_authority_url,
                 recursive=recursive,
             ),
         )
