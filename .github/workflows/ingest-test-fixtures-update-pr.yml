@@ -63,6 +63,8 @@ jobs:
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
           GCP_INGEST_SERVICE_KEY: ${{ secrets.GCP_INGEST_SERVICE_KEY }}
           UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
+          MS_CLIENT_ID: ${{ secrets.MS_CLIENT_ID }}
+          MS_CLIENT_CRED: ${{ secrets.MS_CLIENT_CRED }}
           OVERWRITE_FIXTURES: "true"
         run: |
           source .venv/bin/activate
@@ -81,6 +83,7 @@ jobs:
           make install-ingest-google-drive
           make install-ingest-github
           make install-ingest-gitlab
+          make install-ingest-onedrive
           make install-ingest-slack
           make install-ingest-wikipedia
           ./test_unstructured_ingest/test-ingest.sh

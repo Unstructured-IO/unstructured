@@ -418,14 +418,9 @@ class MainProcess:
     help="User principal name, usually is your Azure AD email.",
 )
 @click.option(
-    "--ms-user-email",
+    "--ms-onedrive-folder",
     default=None,
-    help="Outlook email to download messages from.",
-)
-@click.option(
-    "--ms-outlook-folders",
-    default=None,
-    help="Comma separated list of folders to download email messages from. Do not specify subfolders. Use quotes if spaces in folder names.",
+    help="Folder to start parsing files from.",
 )
 @click.option(
     "--elasticsearch-url",
@@ -529,8 +524,7 @@ def main(
     ms_authority_url,
     ms_tenant,
     ms_user_pname,
-    ms_user_email,
-    ms_outlook_folders,
+    ms_onedrive_folder,
     elasticsearch_url,
     elasticsearch_index_name,
     jq_query,
@@ -632,6 +626,10 @@ def main(
         elif elasticsearch_url:
             hashed_dir_name = hashlib.sha256(
                 f"{elasticsearch_url}_{elasticsearch_index_name}".encode("utf-8"),
+            )
+        elif ms_user_pname:
+            hashed_dir_name = hashlib.sha256(
+                f"{ms_tenant}_{ms_user_pname}".encode("utf-8"),
             )
         elif ms_user_email:
             hashed_dir_name = hashlib.sha256(ms_user_email.encode("utf-8"))
@@ -860,6 +858,25 @@ def main(
                 decay=biomed_decay,
             ),
         )
+    elif ms_client_id or ms_user_pname:
+        from unstructured.ingest.connector.onedrive import (
+            OneDriveConnector,
+            SimpleOneDriveConfig,
+        )
+
+        doc_connector = OneDriveConnector(  # type: ignore
+            standard_config=standard_config,
+            config=SimpleOneDriveConfig(
+                client_id=ms_client_id,
+                client_credential=ms_client_cred,
+                user_pname=ms_user_pname,
+                tenant=ms_tenant,
+                authority_url=ms_authority_url,
+                folder=ms_onedrive_folder,
+                recursive=recursive,
+            ),
+        )
+
     elif ms_client_id and ms_user_email:
         from unstructured.ingest.connector.outlook import (
             OutlookConnector,

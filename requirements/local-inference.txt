@@ -24,7 +24,7 @@ coloredlogs==15.0.1
     # via onnxruntime
 contourpy==1.1.0
     # via matplotlib
-cryptography==41.0.1
+cryptography==41.0.2
     # via
     #   -c requirements/base.txt
     #   pdfminer-six
@@ -39,7 +39,7 @@ filelock==3.12.2
     #   transformers
 flatbuffers==23.5.26
     # via onnxruntime
-fonttools==4.40.0
+fonttools==4.41.0
     # via matplotlib
 fsspec==2023.6.0
     # via huggingface-hub
@@ -125,7 +125,7 @@ pillow==10.0.0
     #   torchvision
 portalocker==2.7.0
     # via iopath
-protobuf==3.20.3
+protobuf==4.23.4
     # via
     #   -c requirements/constraints.in
     #   onnxruntime
@@ -224,7 +224,7 @@ urllib3==1.26.16
     #   requests
 wand==0.6.11
     # via pdfplumber
-zipp==3.16.0
+zipp==3.16.1
     # via
     #   -c requirements/base.txt
     #   importlib-resources

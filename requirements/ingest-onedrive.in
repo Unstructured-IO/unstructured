@@ -1,0 +1,5 @@
+-c constraints.in
+-c base.txt
+msal
+Office365-REST-Python-Client
+cryptography==41.0.2

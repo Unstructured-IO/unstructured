@@ -86,6 +86,10 @@ install-ingest-github:
 install-ingest-gitlab:
 	python3 -m pip install -r requirements/ingest-gitlab.txt
 
+.PHONY: install-ingest-onedrive
+install-ingest-onedrive:
+	python3 -m pip install -r requirements/ingest-onedrive.txt
+
 .PHONY: install-ingest-reddit
 install-ingest-reddit:
 	python3 -m pip install -r requirements/ingest-reddit.txt
@@ -139,6 +143,7 @@ pip-compile:
 	pip-compile --upgrade requirements/ingest-wikipedia.in
 	pip-compile --upgrade requirements/ingest-google-drive.in
 	pip-compile --upgrade requirements/ingest-elasticsearch.in
+	pip-compile --upgrade requirements/ingest-onedrive.in
 
 ## install-project-local:   install unstructured into your local python environment
 .PHONY: install-project-local
