@@ -36,13 +36,14 @@ def partition_pptx(
     include_page_breaks: bool = True,
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
+    include_slide_notes: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft PowerPoint Documents in .pptx format into its document elements.
 
     Parameters
     ----------
-     filename
+    filename
         A string defining the target filename path.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
@@ -52,6 +53,8 @@ def partition_pptx(
         The filename to use for the metadata. Relevant because partition_ppt converts the
         document .pptx before partition. We want the original source filename in the
         metadata.
+    include_slide_notes
+        If True, includes the slide notes as element
     """
 
     # Verify that only one of the arguments was provided
@@ -70,8 +73,7 @@ def partition_pptx(
     for i, slide in enumerate(presentation.slides):
         metadata = ElementMetadata.from_dict(metadata.to_dict())
         metadata.page_number = i + 1
-
-        if slide.has_notes_slide:
+        if include_slide_notes and slide.has_notes_slide:
             notes_slide = slide.notes_slide
             if notes_slide.notes_text_frame != None:
                 notes_text_frame = notes_slide.notes_text_frame
