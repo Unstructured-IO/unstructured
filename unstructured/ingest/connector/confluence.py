@@ -91,7 +91,7 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return (
             Path(self.standard_config.download_dir)
             / self.file_meta.space_id
-            / f"{self.file_meta.document_id}.txt"
+            / f"{self.file_meta.document_id}.html"
         ).resolve()
 
     @property
