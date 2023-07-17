@@ -17,6 +17,8 @@ def partition_doc(
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
     libre_office_filter: Optional[str] = "MS Word 2007 XML",
+    include_element_types: Optional[List[Element]] = None,
+    exclude_element_types: Optional[List[Element]] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft Word Documents in .doc format into its document elements.
@@ -31,6 +33,10 @@ def partition_doc(
         The filter to use when coverting to .doc. The default is the
         filter that is required when using LibreOffice7. Pass in None
         if you do not want to apply any filter.
+    include_element_types
+        Determines which Elements included in the output.
+    exclude_element_types
+        Determines which Elements excluded in the output.
     """
     # Verify that only one of the arguments was provided
     if filename is None:
@@ -63,6 +69,8 @@ def partition_doc(
             metadata_filename=metadata_filename,
             include_page_breaks=include_page_breaks,
             include_metadata=include_metadata,
+            include_element_types=include_element_types,
+            exclude_element_types=exclude_element_types,
         )
         # remove tmp.name from filename if parsing file
         if file:
