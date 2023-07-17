@@ -1,20 +1,152 @@
 [
   {
-    "type": "NarrativeText",
-    "element_id": "7cea6c538630214492f90168d295570a",
+    "type": "Title",
+    "element_id": "35054d4d1455c734e83a868656b4ad16",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/html",
+      "page_number": 1
     },
-    "text": "<h2 id=\"Template-Meetingnotes-Date\">\\uD83D\\uDDD3 Date</h2><p /><h2 id=\"Template-Meetingnotes-Participants\">\\uD83D\\uDC65 Participants</h2><p></p><ul><li><p /></li><li><p></p></li></ul><h2 id=\"Template-Meetingnotes-Goals\">\\uD83E\\uDD45 Goals</h2><p></p><ul><li><p /></li></ul><h2 id=\"Template-Meetingnotes-Discussiontopics\">\\uD83D\\uDDE3 Discussion topics</h2><div class=\"table-wrap\"><table data-layout=\"default\" class=\"confluenceTable\"><colgroup><col style=\"width: 120.0px;\"/><col style=\"width: 120.0px;\"/><col style=\"width: 127.0px;\"/><col style=\"width: 392.0px;\"/></colgroup><tbody><tr><th data-highlight-colour=\"#deebff\" class=\"confluenceTh\"><p><strong>Time</strong></p></th><th data-highlight-colour=\"#deebff\" class=\"confluenceTh\"><p><strong>Item</strong></p></th><th data-highlight-colour=\"#deebff\" class=\"confluenceTh\"><p><strong>Presenter</strong></p></th><th data-highlight-colour=\"#deebff\" class=\"confluenceTh\"><p><strong>Notes</strong></p></th></tr><tr><td class=\"confluenceTd\"><p /></td><td class=\"confluenceTd\"><p /></td><td class=\"confluenceTd\"><p /></td><td class=\"confluenceTd\"><ul><li><p></p></li></ul></td></tr><tr><td class=\"confluenceTd\"><p><br/></p></td><td class=\"confluenceTd\"><p><br/></p></td><td class=\"confluenceTd\"><p><br/></p></td><td class=\"confluenceTd\"><p><br/></p></td></tr></tbody></table></div><h2 id=\"Template-Meetingnotes-Actionitems\">✅ Action items</h2><p></p><ul class=\"inline-task-list\" data-inline-tasks-content-id=\"1605928\"><li data-inline-task-id=\"\"><span>&nbsp;"
+    "text": "\\uD83D\\uDDD3 Date"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "8203db6c1d647087a277997a059e417d",
+    "type": "Title",
+    "element_id": "0126c1353ddd7c8dfdb29f252a64a344",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/html",
+      "page_number": 1
     },
-    "text": "</span></li></ul><h2 id=\"Template-Meetingnotes-Decisions\">⤴ Decisions</h2><p></p><ul class=\"decision-list\" />"
+    "text": "\\uD83D\\uDC65 Participants"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": ""
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": ""
+  },
+  {
+    "type": "Title",
+    "element_id": "fa64ff027cbc0c6929bc75d3c78c94c3",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": "\\uD83E\\uDD45 Goals"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": ""
+  },
+  {
+    "type": "Title",
+    "element_id": "537ea1b14dcba1742bdbd4a5fbfb488c",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": "\\uD83D\\uDDE3 Discussion topics"
+  },
+  {
+    "type": "Title",
+    "element_id": "33b93476cf597a3330653b66a658983d",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": "Time"
+  },
+  {
+    "type": "Title",
+    "element_id": "652bcc3a478428893cc505ae19f847b4",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": "Item"
+  },
+  {
+    "type": "Title",
+    "element_id": "9ef077a1231ea3b71df182b87db1cb7f",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": "Presenter"
+  },
+  {
+    "type": "Title",
+    "element_id": "8a7525b1492fb84833f5c4a69b30f4bf",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": "Notes"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": ""
+  },
+  {
+    "type": "Title",
+    "element_id": "f158a8eaf72c7e9511d5e8ee03692652",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": "✅ Action items"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": ""
+  },
+  {
+    "type": "Title",
+    "element_id": "addb0aa08f77b69fa754ba55c6600c8a",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": "⤴ Decisions"
   }
 ]

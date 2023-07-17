@@ -1,1316 +1,352 @@
 [
   {
-    "type": "NarrativeText",
-    "element_id": "4e43137145853bfd0ac14ca0bd3d1d5f",
+    "type": "Title",
+    "element_id": "9fe4c68ec20dda7c6b1d3f760e5e6af6",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/html",
+      "page_number": 1
     },
-    "text": "<div class=\"table-wrap\"><table data-layout=\"default\" data-local-id=\"2ceb427c-7784-4683-a0c6-b787b6b134b3\" class=\"confluenceTable\"><colgroup><col style=\"width: 179.0px;\"/><col style=\"width: 581.0px;\"/></colgroup><tbody><tr><td data-highlight-colour=\"#f4f5f7\" class=\"confluenceTd\"><p><strong>Driver</strong></p></td><td class=\"confluenceTd\"><p></p></td></tr><tr><td data-highlight-colour=\"#f4f5f7\" class=\"confluenceTd\"><p><strong>Approver</strong></p></td><td class=\"confluenceTd\"><p></p></td></tr><tr><td data-highlight-colour=\"#f4f5f7\" class=\"confluenceTd\"><p><strong>Contributors</strong></p></td><td class=\"confluenceTd\"><p></p></td></tr><tr><td data-highlight-colour=\"#f4f5f7\" class=\"confluenceTd\"><p><strong>Informed</strong></p></td><td class=\"confluenceTd\"><p></p></td></tr><tr><td data-highlight-colour=\"#f4f5f7\" class=\"confluenceTd\"><p><strong>Objective</strong></p></td><td class=\"confluenceTd\"><p></p></td></tr><tr><td data-highlight-colour=\"#f4f5f7\" class=\"confluenceTd\"><p><strong>Due date</strong></p></td><td class=\"confluenceTd\"><p></p></td></tr><tr><td data-highlight-colour=\"#f4f5f7\" class=\"confluenceTd\"><p><strong>Key outcomes</strong></p></td><td class=\"confluenceTd\"><p></p></td></tr><tr><td data-highlight-colour=\"#f4f5f7\" class=\"confluenceTd\"><p><strong>Status</strong></p></td><td class=\"confluenceTd\"><p><span class=\"status-macro aui-lozenge conf-macro output-inline\" data-hasbody=\"false\" data-macro-name=\"status\" data-macro-id=\"90de2698-62c7-46a5-b6da-fc6adf69ebb4\">NOT STAR"
+    "text": "Driver"
+  },
+  {
+    "type": "Title",
+    "element_id": "3ebb5648c8bcb2934590555c69356e27",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": "Approver"
+  },
+  {
+    "type": "Title",
+    "element_id": "350ad433c42fe8cecdb38439f33947ea",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": "Contributors"
+  },
+  {
+    "type": "Title",
+    "element_id": "31a717c19407f215d8bcd329fc82e646",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": "Informed"
+  },
+  {
+    "type": "Title",
+    "element_id": "3b20adc3b2ce1c15ea6880c3151baabe",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": "Objective"
+  },
+  {
+    "type": "Title",
+    "element_id": "e1cb6d30fa3f17ee1e50b2bcf1967374",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": "Due date"
+  },
+  {
+    "type": "Title",
+    "element_id": "80f5b18f225fca5e493dc48e4e60e8c7",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": "Key outcomes"
+  },
+  {
+    "type": "Title",
+    "element_id": "920e413c7d411b61ef3e8c63b1cb6ad0",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": "Status"
+  },
+  {
+    "type": "Title",
+    "element_id": "a54416fced47600988250cacdb064691",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": "NOT STARTED / IN PROGRESS / COMPLETE"
+  },
+  {
+    "type": "Title",
+    "element_id": "4e2022d4483a407d85060675f64fbe17",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": "\\uD83E\\uDD14 Problem Statement"
+  },
+  {
+    "type": "Title",
+    "element_id": "81163675915a75217e4116686fdca412",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": "🎯 Scope"
   },
   {
     "type": "NarrativeText",
-    "element_id": "df63dd60e224d05a7d3fd691063d3ff7",
+    "element_id": "0e5c4ed000097332e1e1b29a96fefd56",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/html",
+      "page_number": 1
     },
-    "text": "TED</span> / <span class=\"status-macro aui-lozenge aui-lozenge-current conf-macro output-inline\" data-hasbody=\"false\" data-macro-name=\"status\" data-macro-id=\"a9840cc7-049c-4ef5-a772-74ccf9680569\">IN PROGRESS</span> / <span class=\"status-macro aui-lozenge aui-lozenge-success conf-macro output-inline\" data-hasbody=\"false\" data-macro-name=\"status\" data-macro-id=\"588d71c8-1110-4b3f-81f0-68e4696bd61f\">COMPLETE</span></p></td></tr></tbody></table></div><p /><h2 id=\"Template-Projectplan-ProblemStatement\">\\uD83E\\uDD14 Problem Statement</h2><p></p><h2 id=\"Template-Projectplan-Scope\">🎯 Scope</h2><div class=\"table-wrap\"><table data-layout=\"default\" data-local-id=\"babeb9ad-a2d2-4afd-bdb5-206cbaf6adc8\" class=\"confluenceTable\"><colgroup><col style=\"width: 187.0px;\"/><col style=\"width: 571.0px;\"/></colgroup><tbody><tr><th data-highlight-colour=\"#e3fcef\" class=\"confluenceTh\"><p><strong>Must have:</strong></p></th><th data-highlight-colour=\"#ffffff\" class=\"confluenceTh\"><ul><li><p></p></li><li><p /></li></ul></th></tr><tr><td data-highlight-colour=\"#fffae6\" class=\"confluenceTd\"><p><strong>Nice to have:</strong></p></td><td class=\"confluenceTd\"><ul><li><p></p></li><li><p /></li></ul></td></tr><tr><td data-highlight-colour=\"#ffebe6\" class=\"confluenceTd\"><p><strong>Not in scope:</strong></p></td><td class=\"confluenceTd\"><ul><li><p></p></li><li><p /></li></ul></td></tr></tbody></table></div><p /><h2 id=\"Template-Projectplan-Timeline\">\\uD83D\\uDDD3 Timeline</h2><p></p><div class=\"conf-macro output-"
+    "text": "Must have:"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": ""
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": ""
   },
   {
     "type": "NarrativeText",
-    "element_id": "2cbd7764b6792e796fb27584ee3c461e",
+    "element_id": "d29e06627b1fec1ecf65bce63fc5fda5",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/html",
+      "page_number": 1
     },
-    "text": "block\" data-hasbody=\"false\" data-macro-name=\"roadmap\" data-macro-id=\"1526b447-0de1-4153-9546-c785e201427a\" data-layout=\"default\" data-local-id=\"9e8291fe-da82-4bd4-81ab-62890be482a9\"><!--style should be put here to apply css for svg immediately -->"
-  },
-  {
-    "type": "Title",
-    "element_id": "7681f551e91f891fa8988f41eb7adccf",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "<style>"
-  },
-  {
-    "type": "Title",
-    "element_id": "d98c8226c027d8ad9423c229c7dcb2d5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ".roadmap"
+    "text": "Nice to have:"
   },
   {
     "type": "ListItem",
     "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/html",
+      "page_number": 1
     },
     "text": ""
-  },
-  {
-    "type": "Title",
-    "element_id": "27d66c0dcef19a926429158d80111b95",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "macro"
   },
   {
     "type": "ListItem",
     "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/html",
+      "page_number": 1
     },
     "text": ""
   },
   {
     "type": "Title",
-    "element_id": "6e64e6c86046516248377c2fbc8418f9",
+    "element_id": "7f999c0456e4e85cc028aa6ed90455d4",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/html",
+      "page_number": 1
     },
-    "text": "view {"
-  },
-  {
-    "type": "Title",
-    "element_id": "4fa00029d5b13baa7a199572cc60090d",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "position: relative;"
-  },
-  {
-    "type": "Title",
-    "element_id": "795ea3efa43d0872b63bf0067be97553",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "font"
+    "text": "Not in scope:"
   },
   {
     "type": "ListItem",
     "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/html",
+      "page_number": 1
     },
     "text": ""
-  },
-  {
-    "type": "Title",
-    "element_id": "c3a8961dd0670d8c8e233f790a6283c4",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "size: 14px;"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "d10b36aa74a59bcf4a88185837f658af",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "}"
-  },
-  {
-    "type": "Title",
-    "element_id": "d98c8226c027d8ad9423c229c7dcb2d5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ".roadmap"
   },
   {
     "type": "ListItem",
     "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/html",
+      "page_number": 1
     },
     "text": ""
   },
   {
     "type": "Title",
-    "element_id": "27d66c0dcef19a926429158d80111b95",
+    "element_id": "e8b61a28d07e977379b42df455a1cde4",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/html",
+      "page_number": 1
     },
-    "text": "macro"
+    "text": "\\uD83D\\uDDD3 Timeline"
   },
   {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ""
-  },
-  {
-    "type": "Title",
-    "element_id": "385f06801ba09dae9ae769146cdc303b",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "view svg {"
-  },
-  {
-    "type": "Title",
-    "element_id": "fe45d93837eaa1cda6c92d5e23ac2bd0",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "overflow: hidden;"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "d10b36aa74a59bcf4a88185837f658af",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "}"
-  },
-  {
-    "type": "Title",
-    "element_id": "d98c8226c027d8ad9423c229c7dcb2d5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ".roadmap"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ""
-  },
-  {
-    "type": "Title",
-    "element_id": "27d66c0dcef19a926429158d80111b95",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "macro"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ""
-  },
-  {
-    "type": "Title",
-    "element_id": "86cfa2d52e19851aec08cb509a908622",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "view .svg"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ""
-  },
-  {
-    "type": "Title",
-    "element_id": "30cb4f2fdaaa2b1f4fbf19c734e0ade1",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "overlay {"
-  },
-  {
-    "type": "Title",
-    "element_id": "df6b746c93c8cb19ecfd0aac5bc444dc",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "position: absolute;"
-  },
-  {
-    "type": "Title",
-    "element_id": "6e0233be236e6cd95a7ccc66287b572b",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "top: 0;"
-  },
-  {
-    "type": "Title",
-    "element_id": "3c38af6319ca23ce8266167991b7e677",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "bottom: 0;"
-  },
-  {
-    "type": "Title",
-    "element_id": "8aeb2f96114509072a1da097eabecb6d",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "left: 0;"
-  },
-  {
-    "type": "Title",
-    "element_id": "34b5a972db1a86ee68ed987368f25cb1",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "right: 0;"
-  },
-  {
-    "type": "Title",
-    "element_id": "1cdf95bd12e993d5aaf216f5f4ac1148",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "pointer"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ""
-  },
-  {
-    "type": "Title",
-    "element_id": "aa78b3f0619eb42fc07f6533dc113248",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "events: none;"
-  },
-  {
-    "type": "Title",
-    "element_id": "fe45d93837eaa1cda6c92d5e23ac2bd0",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "overflow: hidden;"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "d10b36aa74a59bcf4a88185837f658af",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "}"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "6c8dc8c79378dd7103b842e2d632a80b",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ".roadmap-macro-view .svg-bar-overlay { position: absolute; width: 100%; height: 100%; clip: rect(auto, auto, auto, 51px); }"
-  },
-  {
-    "type": "Title",
-    "element_id": "d98c8226c027d8ad9423c229c7dcb2d5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ".roadmap"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ""
-  },
-  {
-    "type": "Title",
-    "element_id": "27d66c0dcef19a926429158d80111b95",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "macro"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ""
-  },
-  {
-    "type": "Title",
-    "element_id": "8ac0e23185a74514d9a745b55fdeb1f7",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "view .overlay"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ""
-  },
-  {
-    "type": "Title",
-    "element_id": "e726dc623872e9c4a82a84780f28b242",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "element {"
-  },
-  {
-    "type": "Title",
-    "element_id": "1cdf95bd12e993d5aaf216f5f4ac1148",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "pointer"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ""
-  },
-  {
-    "type": "Title",
-    "element_id": "8ba2e843a02a0532f421cea063cdbc11",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "events: auto;"
-  },
-  {
-    "type": "Title",
-    "element_id": "df6b746c93c8cb19ecfd0aac5bc444dc",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "position: absolute;"
-  },
-  {
-    "type": "Title",
-    "element_id": "26f8567f2569182294c3fa5b9f9cb227",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "box"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ""
-  },
-  {
-    "type": "Title",
-    "element_id": "30033495109486a34c95be221f1e331e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "sizing: border"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ""
-  },
-  {
-    "type": "Title",
-    "element_id": "800a70d2d660f92ddf239e33a202698d",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "box;"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "d10b36aa74a59bcf4a88185837f658af",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "}"
-  },
-  {
-    "type": "Title",
-    "element_id": "d98c8226c027d8ad9423c229c7dcb2d5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ".roadmap"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ""
-  },
-  {
-    "type": "Title",
-    "element_id": "27d66c0dcef19a926429158d80111b95",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "macro"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ""
-  },
-  {
-    "type": "Title",
-    "element_id": "65e2a7036f89f707c6795003230a3d0a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "view .ellipsis {"
-  },
-  {
-    "type": "Title",
-    "element_id": "018fa96a44715c90bf93be148069cb28",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "white"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ""
-  },
-  {
-    "type": "Title",
-    "element_id": "8e356dbb110d58d77ca47e20dfdf6318",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "space: nowrap;"
-  },
-  {
-    "type": "Title",
-    "element_id": "fe45d93837eaa1cda6c92d5e23ac2bd0",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "overflow: hidden;"
-  },
-  {
-    "type": "Title",
-    "element_id": "982d9e3eb996f559e633f4d194def376",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "text"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ""
-  },
-  {
-    "type": "Title",
-    "element_id": "5a891ee5b5bc59bb0a2e4c0ca1e2c513",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "overflow: ellipsis;"
-  },
-  {
-    "type": "Title",
-    "element_id": "982d9e3eb996f559e633f4d194def376",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "text"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ""
-  },
-  {
-    "type": "Title",
-    "element_id": "3ae2876ed73475d21af4a2620da3c000",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "align: center;"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "d10b36aa74a59bcf4a88185837f658af",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "}"
-  },
-  {
-    "type": "Title",
-    "element_id": "d98c8226c027d8ad9423c229c7dcb2d5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ".roadmap"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ""
-  },
-  {
-    "type": "Title",
-    "element_id": "27d66c0dcef19a926429158d80111b95",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "macro"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ""
-  },
-  {
-    "type": "Title",
-    "element_id": "486aa367eee8d313e64d9ba2e114b14f",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "view .lane"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ""
-  },
-  {
-    "type": "Title",
-    "element_id": "d444582c2f11d20c32d431ed8f0ab37b",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "title {"
-  },
-  {
-    "type": "Title",
-    "element_id": "38a9c1e721584da284b90ceea4ed7eb8",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "line"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ""
-  },
-  {
-    "type": "Title",
-    "element_id": "7a33c5d148070f3e430c009a33d30bd7",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "height: 36px;"
-  },
-  {
-    "type": "Title",
-    "element_id": "39895496136af2d584277dfca46b4def",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "padding: 0 12px;"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "d10b36aa74a59bcf4a88185837f658af",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "}"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "32bbd0bd78625f2c26e2ba88a934d6fc",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ".roadmap-macro-view .bar-title { line-height: 38px; padding: 0 8px; cursor: pointer; background-color: rgba(0, 0, 0, 0); /*tips to make whole div clickable in IE(>=8) */ }"
-  },
-  {
-    "type": "Title",
-    "element_id": "d98c8226c027d8ad9423c229c7dcb2d5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ".roadmap"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ""
-  },
-  {
-    "type": "Title",
-    "element_id": "27d66c0dcef19a926429158d80111b95",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "macro"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ""
-  },
-  {
-    "type": "Title",
-    "element_id": "66dfe26d10f71128f064ba186c119f26",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "view .rotate"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ""
-  },
-  {
-    "type": "Title",
-    "element_id": "03518e448d9e80b41628885add620542",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "text {"
-  },
-  {
-    "type": "Title",
-    "element_id": "706189abe1a4b7dcf9ad1dc40b755820",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "transform: translate(0, 100%) rotate(270deg);"
-  },
-  {
-    "type": "Title",
-    "element_id": "aa214ea38326805d95661c3ad1643cc0",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "transform"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ""
-  },
-  {
-    "type": "Title",
-    "element_id": "1ff8f1c9ff89953a831d23d13ecddefa",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "origin: 0 0 0;"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ""
-  },
-  {
-    "type": "Title",
-    "element_id": "79941e86ee521fe0633492b135d0f6ec",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "webkit"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ""
-  },
-  {
-    "type": "Title",
-    "element_id": "706189abe1a4b7dcf9ad1dc40b755820",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "transform: translate(0, 100%) rotate(270deg);"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ""
-  },
-  {
     "type": "Title",
-    "element_id": "79941e86ee521fe0633492b135d0f6ec",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "webkit"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "element_id": "5043f71fbc70e35c0be413d4135be99f",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/html",
+      "page_number": 1
     },
-    "text": ""
+    "text": "Lane 1"
   },
   {
     "type": "Title",
-    "element_id": "aa214ea38326805d95661c3ad1643cc0",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "transform"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "element_id": "d5a2e177c588bf0c4f914baa4fae85b6",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/html",
+      "page_number": 1
     },
-    "text": ""
+    "text": "Lane 2"
   },
   {
     "type": "Title",
-    "element_id": "48530dc18661275febd6ba09823c4cee",
+    "element_id": "c98ba1acbd22a15ddddfc244cbd8a2db",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/html",
+      "page_number": 1
     },
-    "text": "origin: 0% 0%;"
+    "text": "Feature 1"
   },
   {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ""
-  },
-  {
     "type": "Title",
-    "element_id": "f785c3ce1d580c8f22c1db8a14cf1268",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "ms"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "element_id": "e04620c8b3b611b3fefecef89baa63a9",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/html",
+      "page_number": 1
     },
-    "text": ""
+    "text": "Feature 2"
   },
   {
     "type": "Title",
-    "element_id": "706189abe1a4b7dcf9ad1dc40b755820",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "transform: translate(0, 100%) rotate(270deg);"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "element_id": "82e522a86692cc50ee5c020c8e6ce6a0",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/html",
+      "page_number": 1
     },
-    "text": ""
+    "text": "Feature 3"
   },
   {
     "type": "Title",
-    "element_id": "f785c3ce1d580c8f22c1db8a14cf1268",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "ms"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "element_id": "822f7c45ea725c535970aab819a8ff10",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/html",
+      "page_number": 1
     },
-    "text": ""
+    "text": "Feature 4"
   },
   {
     "type": "Title",
-    "element_id": "aa214ea38326805d95661c3ad1643cc0",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "transform"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "element_id": "6e0f6eca4ff17d3377c1c3e8e1f73457",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/html",
+      "page_number": 1
     },
-    "text": ""
+    "text": "iOS app"
   },
   {
     "type": "Title",
-    "element_id": "48530dc18661275febd6ba09823c4cee",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "origin: 0% 0%;"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "d10b36aa74a59bcf4a88185837f658af",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "}"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "73b3e5342e8dc7539967d9ebf4fd05ab",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "/* Default */ .roadmap-macro-view svg { fill: var(--ds-text, black); stroke: var(--ds-text, black); } /* Background */ .roadmap-macro-view svg g[fill=\"white\"][stroke=\"white\"] { fill: var(--ds-surface, white); stroke: var(--ds-surface, white); } /* Axis Text */ .roadmap-macro-view svg g[fill=\"rgb(112,112,112)\"][stroke=\"rgb(112,112,112)\"] { fill: var(--ds-text-subtlest, #707070); stroke: var(--ds-text-subtlest, #707070); } /* Grid */ .roadmap-macro-view svg g[fill=\"rgb(209,209,209)\"][stroke=\"rgb(209,209,209)\"] { fill: var(--ds-border, #d1d1d1); stroke: var(--ds-border, #d1d1d1); } .roadmap-macro-view svg g rect[stroke=\"rgb(209,209,209)\"] { stroke: var(--ds-border, #d1d1d1); } /* Markers */ .roadmap-macro-view svg g[fill=\"rgb(208,68,55)\"][stroke=\"rgb(208,68,55)\"] { fill: var(--ds-border-accent-red, #d04437); stroke: var(--ds-border-accent-red, #d04437); } /* Lane/Bar Text */ .roadmap-macro-view > div > .svg-overlay > div.lane-title, .roadmap-macro-view > div > .svg-overlay > .svg-bar-overlay > div.bar-title { /* Using !important here because this needs to beat out inline CSS styles, and because this selector is specific enough to not clash with other styles */ color: var(--ds-text-inverse, #fff) !important; }"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "6e7377162ce9cceca9239b25efc84906",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "/* Roadmap.COLORS */ .roadmap-macro-view svg g[fill=\"rgb(250,219,142)\"][stroke=\"rgb(250,219,142)\"] { fill: var(--ds-background-accent-yellow-bolder, #fadb8e); stroke: var(--ds-background-accent-yellow-bolder, #fadb8e); } .roadmap-macro-view svg g rect[stroke=\"rgb(246,195,66)\"] { stroke: var(--ds-background-accent-yellow-bolder, #f6c342); } .roadmap-macro-view svg g rect[fill=\"rgb(246,195,66)\"] { stroke: var(--ds-background-accent-yellow-bolder, #f6c342); } .roadmap-macro-view svg g[fill=\"rgb(246,195,66)\"][stroke=\"rgb(246,195,66)\"] { fill: var(--ds-background-accent-yellow-bolder, #f6c342); stroke: var(--ds-background-accent-yellow-bolder, #f6c342); }"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "8a4f2862d24b62316065f11faa81ec74",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ".roadmap-macro-view svg g[fill=\"rgb(108,159,211)\"][stroke=\"rgb(108,159,211)\"] { fill: var(--ds-background-accent-blue-bolder, #6c9fd3); stroke: var(--ds-background-accent-blue-bolder, #6c9fd3); } .roadmap-macro-view svg g rect[stroke=\"rgb(59,127,196)\"] { stroke: var(--ds-background-accent-blue-bolder, #3b7fc4); } .roadmap-macro-view svg g[fill=\"rgb(59,127,196)\"][stroke=\"rgb(59,127,196)\"] { fill: var(--ds-background-accent-blue-bolder, #3b7fc4); stroke: var(--ds-background-accent-blue-bolder, #3b7fc4); }"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "8c17cb66f64dbb129593ff9622d5ae13",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ".roadmap-macro-view svg g[fill=\"rgb(220,115,105)\"][stroke=\"rgb(220,115,105)\"] { fill: var(--ds-background-accent-red-bolder, #dc7369); stroke: var(--ds-background-accent-red-bolder, #dc7369); } .roadmap-macro-view svg g rect[stroke=\"rgb(208,68,55)\"] { stroke: var(--ds-background-accent-red-bolder, #d04437); } .roadmap-macro-view svg g[fill=\"rgb(208,68,55)\"][stroke=\"rgb(208,68,55)\"] { fill: var(--ds-background-accent-red-bolder, #d04437); stroke: var(--ds-background-accent-red-bolder, #d04437); }"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "a4ce57997ea0b270cea947dc56a298b0",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ".roadmap-macro-view svg g[fill=\"rgb(170,196,89)\"][stroke=\"rgb(170,196,89)\"] { fill: var(--ds-background-accent-green-bolder, #aac459); stroke: var(--ds-background-accent-green-bolder, #aac459); } .roadmap-macro-view svg g rect[stroke=\"rgb(142,176,33)\"] { stroke: var(--ds-background-accent-green-bolder, #8eb021); } .roadmap-macro-view svg g[fill=\"rgb(142,176,33)\"][stroke=\"rgb(142,176,33)\"] { fill: var(--ds-background-accent-green-bolder, #8eb021); stroke: var(--ds-background-accent-green-bolder, #8eb021); }"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "f33e9f942e40035848b85479936becdd",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ".roadmap-macro-view svg g[fill=\"rgb(239,138,96)\"][stroke=\"rgb(239,138,96)\"] { fill: var(--ds-background-accent-orange-bolder, #ef8a60); stroke: var(--ds-background-accent-orange-bolder, #ef8a60); } .roadmap-macro-view svg g rect[stroke=\"rgb(234,99,43)\"] { stroke: var(--ds-background-accent-orange-bolder, #ea632b); } .roadmap-macro-view svg g[fill=\"rgb(234,99,43)\"][stroke=\"rgb(234,99,43)\"] { fill: var(--ds-background-accent-orange-bolder, #ea632b); stroke: var(--ds-background-accent-orange-bolder, #ea632b); }"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "2605b6e445fd0acba4f868562a439263",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ".roadmap-macro-view svg g[fill=\"rgb(140,119,161)\"][stroke=\"rgb(140,119,161)\"] { fill: var(--ds-background-accent-purple-bolder, #8c77a1); stroke: var(--ds-background-accent-purple-bolder, #8c77a1); } .roadmap-macro-view svg g rect[stroke=\"rgb(101,73,130)\"] { stroke: var(--ds-background-accent-purple-bolder, #654982); } .roadmap-macro-view svg g[fill=\"rgb(101,73,130)\"][stroke=\"rgb(101,73,130)\"] { fill: var(--ds-background-accent-purple-bolder, #654982); stroke: var(--ds-background-accent-purple-bolder, #654982); }"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "86677a5bd8dabf5f9c64bab07538efd7",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ".roadmap-macro-view svg g[fill=\"rgb(245,133,152)\"][stroke=\"rgb(245,133,152)\"] { fill: var(--ds-background-accent-magenta-bolder, #f58598); stroke: var(--ds-background-accent-magenta-bolder, #f58598); } .roadmap-macro-view svg g rect[stroke=\"rgb(241,92,117)\"] { stroke: var(--ds-background-accent-magenta-bolder, #f15c75); } .roadmap-macro-view svg g[fill=\"rgb(241,92,117)\"][stroke=\"rgb(241,92,117)\"] { fill: var(--ds-background-accent-magenta-bolder, #f15c75); stroke: var(--ds-background-accent-magenta-bolder, #f15c75); }"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "b3fee0359d0b550160fae2c66eacee56",
+    "element_id": "0b60fe04b3c5c3c76371b6eca8b19c8e",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/html",
+      "page_number": 1
     },
-    "text": ".roadmap-macro-view svg g[fill=\"rgb(161,132,107)\"][stroke=\"rgb(161,132,107)\"] { fill: var(--ds-background-accent-teal-bolder, #a1846b); stroke: var(--ds-background-accent-teal-bolder, #a1846b); } .roadmap-macro-view svg g rect[stroke=\"rgb(129,91,58)\"] { stroke: var(--ds-background-accent-teal-bolder, #815b3a); } .roadmap-macro-view svg g[fill=\"rgb(129,91,58)\"][stroke=\"rgb(129,91,58)\"] { fill: var(--ds-background-accent-teal-bolder, #815b3a); stroke: var(--ds-background-accent-teal-bolder, #815b3a); } </style>"
+    "text": "Android app"
   },
   {
     "type": "Title",
-    "element_id": "ccc3d194770160d839cae918ab005b3e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "<div class=\"roadmap"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "element_id": "e1cc184f345d146586fb12527c4fa696",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/html",
+      "page_number": 1
     },
-    "text": ""
+    "text": "\\uD83D\\uDEA9 Milestones and deadlines"
   },
   {
     "type": "Title",
-    "element_id": "27d66c0dcef19a926429158d80111b95",
+    "element_id": "9e86248cf2351e388065b80307b7ac00",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/html",
+      "page_number": 1
     },
-    "text": "macro"
+    "text": "Milestone"
   },
   {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": ""
-  },
-  {
     "type": "Title",
-    "element_id": "db71c7c884a9f60569687f8f7626e267",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "view\" data"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "element_id": "4b1b8aa3608a26da451ae0630d75b60a",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/html",
+      "page_number": 1
     },
-    "text": ""
+    "text": "Owner"
   },
   {
     "type": "Title",
-    "element_id": "3de1580490d2abf875facdf5acf9d01a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "roadmap"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "element_id": "6fcb38ddc858fc8592e4f693d04a2ed1",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/html",
+      "page_number": 1
     },
-    "text": ""
+    "text": "Deadline"
   },
   {
     "type": "Title",
-    "element_id": "27d66c0dcef19a926429158d80111b95",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "macro"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "element_id": "920e413c7d411b61ef3e8c63b1cb6ad0",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/html",
+      "page_number": 1
     },
-    "text": ""
+    "text": "Status"
   },
   {
     "type": "Title",
-    "element_id": "25587da8d55584dcfb295a3db03f5d3b",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "view=\"{&quot;id&quot;:1540126, &quot;version&quot;:1, &quot;hash&quot;:&quot;bf72b0d2e5ea24888f6179cf74c6606f&quot;, &quot;canUserEditPage&quot;:true}\">"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "be841f37251871860012d0e66dc2bed6",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "<svg fill-opacity=\"1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" color-rendering=\"auto\" color-interpolation=\"auto\" text-rendering=\"auto\" stroke=\"black\" data-roadmap-id=\"08866f4f-65df-4923-83e0-3af9ded51bfc\" stroke-linecap=\"square\" width=\"1007\" stroke-miterlimit=\"10\" shape-rendering=\"auto\" stroke-opacity=\"1\" fill=\"black\" stroke-dasharray=\"none\" font-weight=\"normal\" stroke-width=\"1\" height=\"447\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"'Dialog'\" font-style=\"normal\" stroke-linejoin=\"miter\" font-size=\"12px\" stroke-dashoffset=\"0\" image-rendering=\"auto\"><!--Generated by the Batik Graphics2D SVG Generator--><defs id=\"genericDefs\"/><g><g fill=\"white\" stroke=\"white\"><rect x=\"0\" width=\"1007\" height=\"447\" y=\"0\" stroke=\"none\"/></g><g stroke-linecap=\"round\" font-size=\"13px\" fill=\"rgb(112,112,112)\" text-rendering=\"geometricPrecision\" font-family=\"sans-serif\" stroke-linejoin=\"round\" stroke-dasharray=\"3.5,6.5\" stroke=\"rgb(112,112,112)\" stroke-width=\"0.3\" stroke-miterlimit=\"1\"><line y2=\"356\" fill=\"none\" x1=\"57\" x2=\"57\" y1=\"70\"/><text x=\"95\" xml:space=\"preserve\" y=\"50\" stroke=\"none\">Oct</text><text x=\"90\" xml:space=\"preserve\" y=\"35\" roadmap-column-text=\"true\" font-weight=\"bold\" stroke=\"none\">2021</text><line y2=\"356\" fill=\"none\" x1=\"157\" x2=\"157\" y1=\"70\"/><text x=\"194\" xml:space=\"preserve\" y=\"50\" roadmap-column-text=\"true\" stroke=\"none\">Nov</text><line y2=\"356\" fill=\"none\" x1=\"257\" x2=\"257\" y1=\"70\"/><text x=\"294\" xml:space=\"preserve\" y=\"50\" roadmap-column-text=\"true\" stroke=\"none\">Dec</"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "0b4b8160534ac775f72f574e2e9b7d0a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "text><line y2=\"356\" fill=\"none\" x1=\"357\" x2=\"357\" y1=\"70\"/><text x=\"396\" xml:space=\"preserve\" y=\"50\" stroke=\"none\">Jan</text><text x=\"390\" xml:space=\"preserve\" y=\"35\" roadmap-column-text=\"true\" font-weight=\"bold\" stroke=\"none\">2022</text><line y2=\"356\" fill=\"none\" x1=\"457\" x2=\"457\" y1=\"70\"/><text x=\"495\" xml:space=\"preserve\" y=\"50\" roadmap-column-text=\"true\" stroke=\"none\">Feb</text><line y2=\"356\" fill=\"none\" x1=\"557\" x2=\"557\" y1=\"70\"/><text x=\"594\" xml:space=\"preserve\" y=\"50\" roadmap-column-text=\"true\" stroke=\"none\">Mar</text><line y2=\"356\" fill=\"none\" x1=\"657\" x2=\"657\" y1=\"70\"/><text x=\"695\" xml:space=\"preserve\" y=\"50\" roadmap-column-text=\"true\" stroke=\"none\">Apr</text><line y2=\"356\" fill=\"none\" x1=\"757\" x2=\"757\" y1=\"70\"/><text x=\"793\" xml:space=\"preserve\" y=\"50\" roadmap-column-text=\"true\" stroke=\"none\">May</text><line y2=\"356\" fill=\"none\" x1=\"857\" x2=\"857\" y1=\"70\"/><text x=\"896\" xml:space=\"preserve\" y=\"50\" roadmap-column-text=\"true\" stroke=\"none\">Jun</text></g><g fill=\"rgb(220,115,105)\" text-rendering=\"geometricPrecision\" font-weight=\"bold\" font-family=\"sans-serif\" stroke=\"rgb(220,115,105)\"><rect x=\"130\" y=\"123\" width=\"198\" rx=\"2\" ry=\"2\" height=\"37\" stroke=\"none\"/><rect x=\"130\" data-roadmap-bar=\"{id:99880195-7faf-4b2f-ac44-a38516c4cad5,title:Feature 1,description:This is the first bar.,startDate:Oct 23, 2021, 5:06:32 PM,duration:2.0,rowIndex:1,pageLink:{}}\" y=\"123\" fill=\"none\" width=\"198\" rx=\"2\" ry=\"2\" height=\"37\" stroke=\"rgb(208,68,55)\"/></g><g fill=\"rgb(220,115,105)\" text"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "4af7681b9ef1fee3b3f3e65e3111447e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "rendering=\"geometricPrecision\" font-weight=\"bold\" font-family=\"sans-serif\" stroke=\"rgb(220,115,105)\"><rect x=\"358\" y=\"168\" width=\"142\" rx=\"2\" ry=\"2\" height=\"37\" stroke=\"none\"/><rect x=\"358\" data-roadmap-bar=\"{id:604cae13-314a-4848-b142-95d3570aa3db,title:Feature 2,description:This is the second bar.,startDate:Jan 1, 2022, 2:43:57 PM,duration:1.4356435643564356,rowIndex:2,pageLink:{}}\" y=\"168\" fill=\"none\" width=\"142\" rx=\"2\" ry=\"2\" height=\"37\" stroke=\"rgb(208,68,55)\"/></g><g fill=\"rgb(220,115,105)\" text-rendering=\"geometricPrecision\" font-weight=\"bold\" font-family=\"sans-serif\" stroke=\"rgb(220,115,105)\"><rect x=\"579\" y=\"78\" width=\"142\" rx=\"2\" ry=\"2\" height=\"37\" stroke=\"none\"/><rect x=\"579\" data-roadmap-bar=\"{id:739eee1a-3ad0-4154-a8a7-d630942c1b71,title:Feature 3,description:,startDate:Mar 8, 2022, 1:25:32 AM,duration:1.4356435643564356,rowIndex:0,pageLink:{}}\" y=\"78\" fill=\"none\" width=\"142\" rx=\"2\" ry=\"2\" height=\"37\" stroke=\"rgb(208,68,55)\"/></g><g fill=\"rgb(220,115,105)\" text-rendering=\"geometricPrecision\" font-weight=\"bold\" font-family=\"sans-serif\" stroke=\"rgb(220,115,105)\"><rect x=\"754\" y=\"213\" width=\"164\" rx=\"2\" ry=\"2\" height=\"37\" stroke=\"none\"/><rect x=\"754\" data-roadmap-bar=\"{id:d2721513-87bf-4ea5-9981-d3971248c8f5,title:Feature 4,description:,startDate:Apr 30, 2022, 2:36:49 AM,duration:1.6633663366336633,rowIndex:3,pageLink:{}}\" y=\"213\" fill=\"none\" width=\"164\" rx=\"2\" ry=\"2\" height=\"37\" stroke=\"rgb(208,68,55)\"/></g><g fill=\"rgb(108,159,211)\" text-rendering=\"geometricPreci"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "42c6a578d8372fc7d3878109e791d49e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "sion\" font-weight=\"bold\" font-family=\"sans-serif\" stroke=\"rgb(108,159,211)\"><rect x=\"98\" y=\"266\" width=\"248\" rx=\"2\" ry=\"2\" height=\"37\" stroke=\"none\"/><rect x=\"98\" data-roadmap-bar=\"{id:b10f9e72-539a-4a31-88bd-746bd09d7f1e,title:iOS app,description:This is the third bar.,startDate:Oct 13, 2021, 9:23:10 PM,duration:2.5,rowIndex:0,pageLink:{}}\" y=\"266\" fill=\"none\" width=\"248\" rx=\"2\" ry=\"2\" height=\"37\" stroke=\"rgb(59,127,196)\"/></g><g fill=\"rgb(108,159,211)\" text-rendering=\"geometricPrecision\" font-weight=\"bold\" font-family=\"sans-serif\" stroke=\"rgb(108,159,211)\"><rect x=\"641\" y=\"311\" width=\"166\" rx=\"2\" ry=\"2\" height=\"37\" stroke=\"none\"/><rect x=\"641\" data-roadmap-bar=\"{id:e329a842-d49c-4f39-83ee-4d7af06dece7,title:Android app,description:,startDate:Mar 27, 2022, 3:08:19 AM,duration:1.683168316831683,rowIndex:1,pageLink:{}}\" y=\"311\" fill=\"none\" width=\"166\" rx=\"2\" ry=\"2\" height=\"37\" stroke=\"rgb(59,127,196)\"/></g><g fill=\"white\" text-rendering=\"geometricPrecision\" font-weight=\"bold\" font-family=\"sans-serif\" stroke=\"white\"><rect x=\"0\" width=\"57\" height=\"367\" y=\"0\" stroke=\"none\"/><rect x=\"957\" width=\"50\" height=\"367\" y=\"0\" stroke=\"none\"/><rect x=\"10\" y=\"70\" fill=\"rgb(208,68,55)\" width=\"37\" rx=\"0\" ry=\"0\" height=\"188\" stroke=\"none\"/><rect x=\"10\" y=\"70\" fill=\"none\" width=\"37\" rx=\"0\" ry=\"0\" height=\"188\" stroke=\"rgb(209,209,209)\"/></g><g fill=\"rgb(59,127,196)\" text-rendering=\"geometricPrecision\" font-size=\"13px\" font-weight=\"bold\" font-family=\"sans-serif\" stroke=\"rgb(59,127,196)\"><rect x=\"1"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "d8341618e91a2d86f7b29a64624a37c4",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "0\" y=\"258\" width=\"37\" rx=\"0\" ry=\"0\" height=\"98\" stroke=\"none\"/><rect x=\"10\" y=\"258\" fill=\"none\" width=\"37\" rx=\"0\" ry=\"0\" height=\"98\" stroke=\"rgb(209,209,209)\"/></g><g fill=\"rgb(209,209,209)\" text-rendering=\"geometricPrecision\" font-size=\"13px\" font-weight=\"bold\" font-family=\"sans-serif\" stroke=\"rgb(209,209,209)\"><line y2=\"70\" fill=\"none\" x1=\"20\" x2=\"957\" y1=\"70\"/><line y2=\"258\" fill=\"none\" x1=\"20\" x2=\"957\" y1=\"258\"/><line y2=\"356\" fill=\"none\" x1=\"20\" x2=\"957\" y1=\"356\"/><line y2=\"356\" fill=\"none\" x1=\"957\" x2=\"957\" y1=\"70\"/></g></g></svg>"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "b573c33299de645aa6d9240953cc8f01",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "<div xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"><div class=\"svg-overlay\" style=\"width:957px\"><div title=\"Lane 1\" style=\"left:10px; top:70px; width:188px; height:37px; color:#ffffff; margin-top:151px\" class=\"overlay-element ellipsis rotate-text lane-title\">Lane 1</div><div title=\"Lane 2\" style=\"left:10px; top:258px; width:98px; height:37px; color:#ffffff; margin-top:61px\" class=\"overlay-element ellipsis rotate-text lane-title\">Lane 2</div><div class=\"svg-bar-overlay\"><div title=\"Feature 1\" style=\"left:130px; top:123px; width:198px; color:#ffffff\" class=\"overlay-element ellipsis bar-title\" data-roadmap-bar=\"{&quot;id&quot;:&quot;99880195-7faf-4b2f-ac44-a38516c4cad5&quot;,&quot;title&quot;:&quot;Feature 1&quot;,&quot;description&quot;:&quot;This is the first bar.&quot;,&quot;startDate&quot;:&quot;Oct 23, 2021, 5:06:32 PM&quot;,&quot;duration&quot;:2.0,&quot;rowIndex&quot;:1,&quot;pageLink&quot;:{}}\"><p class=\"ellipsis\">Feature 1</p></div><div title=\"Feature 2\" style=\"left:358px; top:168px; width:142px; color:#ffffff\" class=\"overlay-element ellipsis bar-title\" data-roadmap-bar=\"{&quot;id&quot;:&quot;604cae13-314a-4848-b142-95d3570aa3db&quot;,&quot;title&quot;:&quot;Feature 2&quot;,&quot;description&quot;:&quot;This is the second bar.&quot;,&quot;startDate&quot;:&quot;Jan 1, 2022, 2:43:57 PM&quot;,&quot;duration&quot;:1.4356435643564356,&quot;rowIndex&quot;:2,&quot;pageLink&quot;:{}}\"><p class=\"ellipsis\">Feature 2</p></div><div title=\"Feature 3\""
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "0493fe5f01e7ba716967f7d457922bdd",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "style=\"left:579px; top:78px; width:142px; color:#ffffff\" class=\"overlay-element ellipsis bar-title\" data-roadmap-bar=\"{&quot;id&quot;:&quot;739eee1a-3ad0-4154-a8a7-d630942c1b71&quot;,&quot;title&quot;:&quot;Feature 3&quot;,&quot;description&quot;:&quot;&quot;,&quot;startDate&quot;:&quot;Mar 8, 2022, 1:25:32 AM&quot;,&quot;duration&quot;:1.4356435643564356,&quot;rowIndex&quot;:0,&quot;pageLink&quot;:{}}\"><p class=\"ellipsis\">Feature 3</p></div><div title=\"Feature 4\" style=\"left:754px; top:213px; width:164px; color:#ffffff\" class=\"overlay-element ellipsis bar-title\" data-roadmap-bar=\"{&quot;id&quot;:&quot;d2721513-87bf-4ea5-9981-d3971248c8f5&quot;,&quot;title&quot;:&quot;Feature 4&quot;,&quot;description&quot;:&quot;&quot;,&quot;startDate&quot;:&quot;Apr 30, 2022, 2:36:49 AM&quot;,&quot;duration&quot;:1.6633663366336633,&quot;rowIndex&quot;:3,&quot;pageLink&quot;:{}}\"><p class=\"ellipsis\">Feature 4</p></div><div title=\"iOS app\" style=\"left:98px; top:266px; width:248px; color:#ffffff\" class=\"overlay-element ellipsis bar-title\" data-roadmap-bar=\"{&quot;id&quot;:&quot;b10f9e72-539a-4a31-88bd-746bd09d7f1e&quot;,&quot;title&quot;:&quot;iOS app&quot;,&quot;description&quot;:&quot;This is the third bar.&quot;,&quot;startDate&quot;:&quot;Oct 13, 2021, 9:23:10 PM&quot;,&quot;duration&quot;:2.5,&quot;rowIndex&quot;:0,&quot;pageLink&quot;:{}}\"><p class=\"ellipsis\">iOS app</p></div><div title=\"Android app\" style=\"left:641px; top:311px; width:166px; color:#ffffff\" class=\"overlay-element ellips"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "f63d5567dabd4bb2db2c65ef0c7279fc",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "is bar-title\" data-roadmap-bar=\"{&quot;id&quot;:&quot;e329a842-d49c-4f39-83ee-4d7af06dece7&quot;,&quot;title&quot;:&quot;Android app&quot;,&quot;description&quot;:&quot;&quot;,&quot;startDate&quot;:&quot;Mar 27, 2022, 3:08:19 AM&quot;,&quot;duration&quot;:1.683168316831683,&quot;rowIndex&quot;:1,&quot;pageLink&quot;:{}}\"><p class=\"ellipsis\">Android app</p></div></div></div></div>"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "5e939cce533f080d89d57d44d3f558f2",
+    "element_id": "890c9b6d8d69ca1de5fd7a8b83fe78ff",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/html",
+      "page_number": 1
     },
-    "text": "</div> </div><p></p><p /><h2 id=\"Template-Projectplan-Milestonesanddeadlines\">\\uD83D\\uDEA9 Milestones and deadlines</h2><div class=\"table-wrap\"><table data-layout=\"default\" data-local-id=\"6e1a109f-f31a-4aed-875c-dce95c1b555b\" class=\"confluenceTable\"><colgroup><col style=\"width: 348.0px;\"/><col style=\"width: 142.0px;\"/><col style=\"width: 131.0px;\"/><col style=\"width: 139.0px;\"/></colgroup><tbody><tr><th class=\"confluenceTh\"><p><strong>Milestone</strong></p></th><th class=\"confluenceTh\"><p><strong>Owner</strong></p></th><th class=\"confluenceTh\"><p><strong>Deadline</strong></p></th><th class=\"confluenceTh\"><p><strong>Status</strong></p></th></tr><tr><td class=\"confluenceTd\"><p></p></td><td class=\"confluenceTd\"><p></p></td><td class=\"confluenceTd\"><p></p></td><td class=\"confluenceTd\"><p /></td></tr><tr><td class=\"confluenceTd\"><p /></td><td class=\"confluenceTd\"><p /></td><td class=\"confluenceTd\"><p /></td><td class=\"confluenceTd\"><p /></td></tr><tr><td class=\"confluenceTd\"><p /></td><td class=\"confluenceTd\"><p /></td><td class=\"confluenceTd\"><p /></td><td class=\"confluenceTd\"><p /></td></tr></tbody></table></div><h2 id=\"Template-Projectplan-Referencematerials\">\\uD83D\\uDD17 Reference materials</h2><p></p><p />"
+    "text": "\\uD83D\\uDD17 Reference materials"
   }
 ]
