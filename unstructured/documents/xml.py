@@ -7,7 +7,7 @@ from unstructured.file_utils.encoding import read_txt_file
 from unstructured.logger import logger
 from unstructured.partition.text import (
     element_from_text,
-    split_by_paragraph,
+    partition_text,
 )
 
 VALID_PARSERS = Union[etree.HTMLParser, etree.XMLParser, None]
@@ -84,7 +84,7 @@ class XMLDocument(Document):
                 for element in tree.xpath("//pre"):
                     if not element.text:
                         continue
-                    text_content = split_by_paragraph(element.text)
+                    text_content = partition_text(text=element.text)
                     for text in text_content:
                         element = etree.Element("span")
                         element.text = str(element_from_text(text=text))

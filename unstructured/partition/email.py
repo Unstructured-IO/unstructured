@@ -52,7 +52,7 @@ from unstructured.file_utils.filetype import FileType, add_metadata_with_filetyp
 from unstructured.logger import logger
 from unstructured.nlp.patterns import EMAIL_DATETIMETZ_PATTERN_RE
 from unstructured.partition.html import partition_html
-from unstructured.partition.text import partition_text, split_by_paragraph
+from unstructured.partition.text import partition_text
 
 VALID_CONTENT_SOURCES: Final[List[str]] = ["text/html", "text/plain"]
 
@@ -345,12 +345,6 @@ def partition_email(
                             continue
 
     elif content_source == "text/plain":
-        # import pdb;pdb.set_trace()
-        # list_content = split_by_paragraph(
-        #     content,
-        #     min_partition=min_partition,
-        #     max_partition=max_partition,
-        # )
         elements = partition_text(
             text=content,
             encoding=encoding,
