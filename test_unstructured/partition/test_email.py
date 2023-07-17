@@ -19,6 +19,7 @@ from unstructured.documents.email_elements import (
     Sender,
     Subject,
 )
+from unstructured.documents.html import HTMLTitle
 from unstructured.partition.email import (
     convert_to_iso_8601,
     extract_attachment_info,
@@ -234,7 +235,11 @@ def test_partition_email_from_text_file():
 def test_partition_email_from_text_file_with_headers():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.txt")
     with open(filename) as f:
-        elements = partition_email(file=f, content_source="text/plain", include_headers=True)
+        elements = partition_email(
+            file=f,
+            content_source="text/plain",
+            include_headers=True,
+        )
     assert len(elements) > 0
     assert elements == ALL_EXPECTED_OUTPUT
     for element in elements:
@@ -380,7 +385,11 @@ def test_partition_email_from_filename_exclude_metadata():
 def test_partition_email_from_text_file_exclude_metadata():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.txt")
     with open(filename) as f:
-        elements = partition_email(file=f, content_source="text/plain", include_metadata=False)
+        elements = partition_email(
+            file=f,
+            content_source="text/plain",
+            include_metadata=False,
+        )
     assert elements[0].metadata.get_date() is None
     assert elements[0].metadata.filetype is None
     assert elements[0].metadata.page_name is None
@@ -404,7 +413,10 @@ def test_partition_email_can_process_attachments(
     with open(filename) as f:
         msg = email.message_from_file(f)
     extract_attachment_info(msg, output_dir=tmpdir.dirname)
-    attachment_filename = os.path.join(tmpdir.dirname, ATTACH_EXPECTED_OUTPUT[0]["filename"])
+    attachment_filename = os.path.join(
+        tmpdir.dirname,
+        ATTACH_EXPECTED_OUTPUT[0]["filename"],
+    )
     attachment_elements = partition_text(
         filename=attachment_filename,
         metadata_filename=attachment_filename,
@@ -434,3 +446,61 @@ def test_partition_msg_raises_with_no_partitioner(
 ):
     with pytest.raises(ValueError):
         partition_email(filename=filename, process_attachments=True)
+
+
+def test_partition_email_with_include_element_types(
+    filename="example-docs/eml/fake-email.eml",
+):
+    element_types = [HTMLTitle]
+    elements = partition_email(
+        filename=filename,
+        include_metadata=False,
+        include_element_types=element_types,
+    )
+
+    for element in elements:
+        assert type(element) in element_types
+
+
+def test_partition_email_with_exclude_element_types(
+    filename="example-docs/eml/fake-email.eml",
+):
+    element_types = [HTMLTitle]
+    elements = partition_email(
+        filename=filename,
+        include_metadata=False,
+        exclude_element_types=element_types,
+    )
+
+    for element in elements:
+        assert type(element) not in element_types
+
+
+def test_partition_email_from_file_with_include_element_types(
+    filename="example-docs/eml/fake-email.eml",
+):
+    element_types = [HTMLTitle]
+    with open(filename, "rb") as f:
+        elements = partition_email(
+            file=f,
+            include_metadata=False,
+            include_element_types=element_types,
+        )
+
+    for element in elements:
+        assert type(element) in element_types
+
+
+def test_partition_email_from_file_with_exclude_element_types(
+    filename="example-docs/eml/fake-email.eml",
+):
+    element_types = [HTMLTitle]
+    with open(filename, "rb") as f:
+        elements = partition_email(
+            file=f,
+            include_metadata=False,
+            exclude_element_types=element_types,
+        )
+
+    for element in elements:
+        assert type(element) not in element_types
