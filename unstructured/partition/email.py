@@ -17,6 +17,7 @@ from unstructured.file_utils.encoding import (
 from unstructured.partition.common import (
     convert_to_bytes,
     exactly_one,
+    filter_element_types,
 )
 
 if sys.version_info < (3, 8):
@@ -71,7 +72,11 @@ def _parse_received_data(data: str) -> List[Element]:
         elements.append(ReceivedInfo(name="mapi_id", text=mapi_id[0]))
     if datetimetz:
         elements.append(
-            ReceivedInfo(name="received_datetimetz", text=str(datetimetz), datestamp=datetimetz),
+            ReceivedInfo(
+                name="received_datetimetz",
+                text=str(datetimetz),
+                datestamp=datetimetz,
+            ),
         )
     return elements
 
@@ -133,7 +138,9 @@ def convert_to_iso_8601(time: str) -> Optional[str]:
     cleaned_time = clean_extra_whitespace(time)
     regex_match = EMAIL_DATETIMETZ_PATTERN_RE.search(cleaned_time)
     if regex_match is None:
-        logger.warning(f"{time} did not match RFC-2822 format. Unable to extract the time.")
+        logger.warning(
+            f"{time} did not match RFC-2822 format. Unable to extract the time.",
+        )
         return None
 
     start, end = regex_match.span()
@@ -161,7 +168,9 @@ def extract_attachment_info(
                 key, value = item.split("=")
                 key = clean_extra_whitespace(key.replace('"', ""))
                 value = clean_extra_whitespace(value.replace('"', ""))
-                attachment_info[clean_extra_whitespace(key)] = clean_extra_whitespace(value)
+                attachment_info[clean_extra_whitespace(key)] = clean_extra_whitespace(
+                    value,
+                )
             attachment_info["payload"] = part.get_payload(decode=True)
             list_attachments.append(attachment_info)
 
@@ -232,6 +241,8 @@ def partition_email(
     metadata_filename: Optional[str] = None,
     process_attachments: bool = False,
     attachment_partitioner: Optional[Callable] = None,
+    include_element_types: Optional[List[Element]] = None,
+    exclude_element_types: Optional[List[Element]] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions an .eml documents into its constituent elements.
@@ -258,6 +269,10 @@ def partition_email(
         processing the content of the email itself.
     attachment_partitioner
         The partitioning function to use to process attachments.
+    include_element_types
+        Determines which Elements included in the output.
+    exclude_element_types
+        Determines which Elements excluded in the output.
     """
     if content_source not in VALID_CONTENT_SOURCES:
         raise ValueError(
@@ -277,7 +292,10 @@ def partition_email(
         if extracted_encoding:
             detected_encoding = extracted_encoding
         else:
-            detected_encoding, file_text = read_txt_file(filename=filename, encoding=encoding)
+            detected_encoding, file_text = read_txt_file(
+                filename=filename,
+                encoding=encoding,
+            )
             msg = email.message_from_string(file_text)
     elif file is not None:
         extracted_encoding, msg = parse_email(file=file)
@@ -322,7 +340,10 @@ def partition_email(
         )
         for element in elements:
             if isinstance(element, Text):
-                _replace_mime_encodings = partial(replace_mime_encodings, encoding=encoding)
+                _replace_mime_encodings = partial(
+                    replace_mime_encodings,
+                    encoding=encoding,
+                )
                 try:
                     element.apply(_replace_mime_encodings)
                 except (UnicodeDecodeError, UnicodeError):
@@ -335,7 +356,10 @@ def partition_email(
 
                     for enc in common_encodings:
                         try:
-                            _replace_mime_encodings = partial(replace_mime_encodings, encoding=enc)
+                            _replace_mime_encodings = partial(
+                                replace_mime_encodings,
+                                encoding=enc,
+                            )
                             element.apply(_replace_mime_encodings)
                             break
                         except (UnicodeDecodeError, UnicodeError):
@@ -380,7 +404,15 @@ def partition_email(
                 for element in attached_elements:
                     element.metadata.filename = attached_file
                     element.metadata.file_directory = None
-                    element.metadata.attached_to_filename = metadata_filename or filename
+                    element.metadata.attached_to_filename = (
+                        metadata_filename or filename
+                    )
                     all_elements.append(element)
 
+    if include_element_types or exclude_element_types:
+        all_elements = filter_element_types(
+            elements=all_elements,
+            include_element_types=include_element_types,
+            exclude_element_types=exclude_element_types,
+        )
     return all_elements
