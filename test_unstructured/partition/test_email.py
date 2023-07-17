@@ -248,11 +248,11 @@ def test_partition_email_from_text_file_max():
     assert len(elements) == 6
 
 
-def test_partition_email_from_text_file_min():
+def test_partition_email_from_text_file_raises_value_error():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.txt")
-    with open(filename) as f:
-        elements = partition_email(file=f, content_source="text/plain", min_partition=1000)
-    assert len(elements) == 1
+    with pytest.raises(ValueError):
+        with open(filename) as f:
+            partition_email(file=f, content_source="text/plain", min_partition=1000)
 
 
 def test_partition_email_from_text():

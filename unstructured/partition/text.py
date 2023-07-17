@@ -124,7 +124,6 @@ def combine_paragraphs_less_than_min(
                         tmp_paragraph = ""
                         break
                 for z, para in enumerate(split_paragraphs[x+1:], start=1):
-                    import pdb; pdb.set_trace()
                     if max_partition is not None and len(tmp_paragraph + "\n" + para) < max_partition:
                         tmp_paragraph += "\n" + para
                         y = z + x + 1
