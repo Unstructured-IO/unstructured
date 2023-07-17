@@ -1,6 +1,7 @@
 ## 0.8.2-dev2
 
 ### Enhancements
+* Add min_partition kwarg to that combines elements below a specified threshold and modifies splitting of strings longer than max partition so words are not split.
 
 ### Features
 
