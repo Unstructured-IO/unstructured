@@ -17,7 +17,7 @@ idna==3.4
     # via
     #   -c requirements/base.txt
     #   requests
-praw==7.7.0
+praw==7.7.1
     # via -r requirements/ingest-reddit.in
 prawcore==2.3.0
     # via praw

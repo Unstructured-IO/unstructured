@@ -6,7 +6,7 @@
 #
 appdirs==1.4.4
     # via label-studio-tools
-black==23.3.0
+black==23.7.0
     # via -r requirements/test.in
 certifi==2023.5.7
     # via
@@ -17,7 +17,7 @@ charset-normalizer==3.2.0
     # via
     #   -c requirements/base.txt
     #   requests
-click==8.1.4
+click==8.1.5
     # via
     #   -c requirements/base.txt
     #   -r requirements/test.in
@@ -94,7 +94,7 @@ requests==2.31.0
     # via
     #   -c requirements/base.txt
     #   label-studio-sdk
-ruff==0.0.277
+ruff==0.0.278
     # via -r requirements/test.in
 six==1.16.0
     # via

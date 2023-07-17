@@ -418,6 +418,11 @@ class MainProcess:
     help="User principal name, usually is your Azure AD email.",
 )
 @click.option(
+    "--ms-onedrive-folder",
+    default=None,
+    help="Folder to start parsing files from.",
+)
+@click.option(
     "--ms-sharepoint-site",
     default=None,
     help="Sharepoint site url.",
@@ -536,6 +541,7 @@ def main(
     ms_authority_url,
     ms_tenant,
     ms_user_pname,
+    ms_onedrive_folder,
     ms_sharepoint_site,
     ms_sharepoint_folder,
     ms_sharepoint_pages,
@@ -640,6 +646,10 @@ def main(
         elif elasticsearch_url:
             hashed_dir_name = hashlib.sha256(
                 f"{elasticsearch_url}_{elasticsearch_index_name}".encode("utf-8"),
+            )
+        elif ms_user_pname:
+            hashed_dir_name = hashlib.sha256(
+                f"{ms_tenant}_{ms_user_pname}".encode("utf-8"),
             )
         elif ms_sharepoint_site:
             hashed_dir_name = hashlib.sha256(
@@ -870,7 +880,7 @@ def main(
                 decay=biomed_decay,
             ),
         )
-    elif ms_client_id and ms_user_pname:
+    elif ms_client_id or ms_user_pname:
         from unstructured.ingest.connector.onedrive import (
             OneDriveConnector,
             SimpleOneDriveConfig,
@@ -884,6 +894,7 @@ def main(
                 user_pname=ms_user_pname,
                 tenant=ms_tenant,
                 authority_url=ms_authority_url,
+                folder=ms_onedrive_folder,
                 recursive=recursive,
             ),
         )

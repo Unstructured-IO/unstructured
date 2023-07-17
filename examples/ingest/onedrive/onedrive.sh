@@ -7,7 +7,7 @@
 
 # NOTE, this script is not ready-to-run!
 # You must enter a Azure AD app client-id, client secret and user principal name  
-# before running. 
+# before running. 
 
 # To get the credentials for your Azure AD app, follow these steps:
 # https://learn.microsoft.com/en-us/graph/auth-register-app-v2

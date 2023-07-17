@@ -1,8 +1,6 @@
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List
-
-from office365.onedrive.driveitems.driveItem import DriveItem
+from typing import TYPE_CHECKING, List
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.ingest.interfaces import (
@@ -16,6 +14,9 @@ from unstructured.ingest.interfaces import (
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
+if TYPE_CHECKING:
+    from office365.onedrive.driveitems.driveItem import DriveItem
+
 MAX_MB_SIZE = 512_000_000
 
 
@@ -26,6 +27,7 @@ class SimpleOneDriveConfig(BaseConnectorConfig):
     user_pname: str
     tenant: str = field(repr=False)
     authority_url: str = field(repr=False)
+    folder: str = field(default="")
     recursive: bool = False
 
     def __post_init__(self):
@@ -56,7 +58,7 @@ class SimpleOneDriveConfig(BaseConnectorConfig):
 @dataclass
 class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleOneDriveConfig
-    file: DriveItem
+    file: "DriveItem"
 
     def __post_init__(self):
         self.ext = "".join(Path(self.file.name).suffixes)
@@ -133,7 +135,7 @@ class OneDriveConnector(ConnectorCleanupMixin, BaseConnector):
 
         self.client = GraphClient(self.config.token_factory)
 
-    def _list_objects(self, folder, recursive) -> List[DriveItem]:
+    def _list_objects(self, folder, recursive) -> List["DriveItem"]:
         drive_items = folder.children.get().execute_query()
         files = [d for d in drive_items if d.is_file]
         if not recursive:
@@ -147,6 +149,10 @@ class OneDriveConnector(ConnectorCleanupMixin, BaseConnector):
         pass
 
     def get_ingest_docs(self):
-        drive = self.client.users[self.config.user_pname].drive.get().execute_query()
-        files = self._list_objects(drive.root, self.config.recursive)
+        root = self.client.users[self.config.user_pname].drive.get().execute_query().root
+        if fpath := self.config.folder:
+            root = root.get_by_path(fpath).get().execute_query()
+            if root is None or not root.is_folder:
+                raise ValueError(f"Unable to find directory, given: {fpath}")
+        files = self._list_objects(root, self.config.recursive)
         return [OneDriveIngestDoc(self.standard_config, self.config, f) for f in files]
