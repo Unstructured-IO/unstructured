@@ -73,9 +73,9 @@ def partition_pptx(
     for i, slide in enumerate(presentation.slides):
         metadata = ElementMetadata.from_dict(metadata.to_dict())
         metadata.page_number = i + 1
-        if include_slide_notes and slide.has_notes_slide == True:
+        if include_slide_notes and slide.has_notes_slide is True:
             notes_slide = slide.notes_slide
-            if notes_slide.notes_text_frame != None:
+            if notes_slide.notes_text_frame is not None:
                 notes_text_frame = notes_slide.notes_text_frame
                 notes_text = notes_text_frame.text
                 if notes_text.strip() != "":
