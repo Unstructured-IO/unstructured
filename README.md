@@ -72,7 +72,7 @@ There are two ways to use the library: 1) install it or 2) run a container
 
 ### Installing the library
 Use the following instructions to get up and running with `unstructured` and test your
-installation. NOTE: We do not currently support python 3.11, please use an older version.
+installation.
 
 - Install the Python SDK with `pip install "unstructured[local-inference]"`
 		- If you do not need to process PDFs or images, you can run `pip install unstructured`
