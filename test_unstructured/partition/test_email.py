@@ -250,9 +250,8 @@ def test_partition_email_from_text_file_max():
 
 def test_partition_email_from_text_file_raises_value_error():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.txt")
-    with pytest.raises(ValueError):
-        with open(filename) as f:
-            partition_email(file=f, content_source="text/plain", min_partition=1000)
+    with pytest.raises(ValueError), open(filename) as f:
+        partition_email(file=f, content_source="text/plain", min_partition=1000)
 
 
 def test_partition_email_from_text():

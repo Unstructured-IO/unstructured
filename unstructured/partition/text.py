@@ -31,9 +31,9 @@ def _split_in_half_at_breakpoint(
     content: str,
     breakpoint: str = " ",
 ) -> List[str]:
-    """Splits a segment of content at the breakpoint closest to the middle"""  
+    """Splits a segment of content at the breakpoint closest to the middle"""
     mid = len(content) // 2
-    for i in range(len(content)//2):
+    for i in range(len(content) // 2):
         if content[mid + i] == breakpoint:
             mid += i
             break
@@ -41,11 +41,12 @@ def _split_in_half_at_breakpoint(
             mid += -i
             break
 
-    return content[:mid].rstrip(), content[mid:].lstrip()
+    return [content[:mid].rstrip(), content[mid:].lstrip()]
 
 
 def _split_content_size_n(content: str, n: int) -> List[str]:
-    """Splits a section of content into chunks that are at most size n without breaking apart words."""
+    """Splits a section of content into chunks that are at most
+    size n without breaking apart words."""
     segments = []
     if len(content) < n * 2:
         segments = list(_split_in_half_at_breakpoint(content))
@@ -100,37 +101,44 @@ def split_content_to_fit_min_max(
         chunks.append(tmp)
 
     return chunks
-    
-    
+
+
 def combine_paragraphs_less_than_min(
     split_paragraphs: List[str],
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
 ) -> List[str]:
     """Combine paragraphs less than min_partition while not exceeding max_partition."""
-    file_content = []
+    file_content: List[str] = []
     tmp_paragraph = ""
     y = 0
     for x, paragraph in enumerate(split_paragraphs):
         if y > x:
             continue
         if min_partition is not None and len(paragraph) < min_partition:
-            tmp_paragraph += paragraph + "\n" 
-            while (
-                len(tmp_paragraph.strip()) < min_partition
-            ):
+            tmp_paragraph += paragraph + "\n"
+            while len(tmp_paragraph.strip()) < min_partition:
                 if x + 1 == len(split_paragraphs):
-                        file_content[-1] += tmp_paragraph.rstrip()
-                        tmp_paragraph = ""
-                        break
-                for z, para in enumerate(split_paragraphs[x+1:], start=1):
-                    if max_partition is not None and len(tmp_paragraph + "\n" + para) < max_partition:
+                    file_content[-1] += tmp_paragraph.rstrip()
+                    tmp_paragraph = ""
+                    break
+                for z, para in enumerate(split_paragraphs[x + 1 :], start=1):  # noqa
+                    if (
+                        max_partition is not None
+                        and len(tmp_paragraph + "\n" + para) < max_partition
+                    ):
                         tmp_paragraph += "\n" + para
                         y = z + x + 1
                     if len(tmp_paragraph.strip()) > min_partition:
                         break
-                    elif len(tmp_paragraph + "\n" + para) < min_partition and len(tmp_paragraph + "\n" + para) > max_partition:
-                        raise ValueError("min_partition and max_partition are defined too close together")
+                    elif (
+                        max_partition is not None
+                        and len(tmp_paragraph + "\n" + para) < min_partition
+                        and len(tmp_paragraph + "\n" + para) > max_partition
+                    ):
+                        raise ValueError(
+                            "`min_partition` and `max_partition` are defined too close together",
+                        )
             file_content.append(tmp_paragraph.strip())
             tmp_paragraph = ""
         else:
@@ -152,8 +160,9 @@ def partition_text(
     min_partition: Optional[int] = 0,
     **kwargs,
 ) -> List[Element]:
-    """Partitions an .txt documents into its constituent paragraph elements. 
-    If paragraphs are below "min_partition" or above "max_partition" boundaries, they are combined or split.
+    """Partitions an .txt documents into its constituent paragraph elements.
+    If paragraphs are below "min_partition" or above "max_partition" boundaries,
+    they are combined or split.
     Parameters
     ----------
     filename
@@ -202,28 +211,28 @@ def partition_text(
     else:
         file_text = group_broken_paragraphs(file_text)
 
-    if len(file_text) < min_partition:
+    if min_partition is not None and len(file_text) < min_partition:
         raise ValueError("`min_partition` cannot be larger than the length of file contents.")
-    
+
     split_paragraphs = re.split(PARAGRAPH_PATTERN, file_text)
-    
+
     paragraphs = combine_paragraphs_less_than_min(
-        split_paragraphs=split_paragraphs, 
+        split_paragraphs=split_paragraphs,
         max_partition=max_partition,
         min_partition=min_partition,
     )
-    
+
     file_content = []
-    
+
     for paragraph in paragraphs:
         file_content.extend(
             split_content_to_fit_min_max(
-                content=paragraph, 
+                content=paragraph,
                 max_partition=max_partition,
-                min_partition=min_partition, 
-            )
+                min_partition=min_partition,
+            ),
         )
-    
+
     elements: List[Element] = []
     metadata = (
         ElementMetadata(filename=metadata_filename or filename)

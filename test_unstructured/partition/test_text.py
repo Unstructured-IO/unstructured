@@ -5,7 +5,11 @@ import pytest
 
 from unstructured.cleaners.core import group_broken_paragraphs
 from unstructured.documents.elements import Address, ListItem, NarrativeText, Title
-from unstructured.partition.text import split_content_to_fit_min_max, partition_text, combine_paragraphs_less_than_min
+from unstructured.partition.text import (
+    combine_paragraphs_less_than_min,
+    partition_text,
+    split_content_to_fit_min_max,
+)
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
@@ -36,6 +40,7 @@ SHORT_PARAGRAPHS = [
     "The example is simple and repetitive and long and somewhat boring, but it serves a purpose.",
     "End.",
 ]
+
 
 @pytest.mark.parametrize(
     ("filename", "encoding"),
@@ -252,18 +257,18 @@ def test_partition_text_min_max():
         min_partition=7,
     )
     expected = [
-        'This is a story.', 
-        'This is a story that', 
-        "doesn't matter", 
-        'because it is just', 
-        'being used as an', 
-        'example. Hi. Hello. Howdy. Hola.', 
-        'The example is', 
-        'simple and', 
-        'repetitive and long', 
-        'and somewhat boring,', 
-        'but it serves a', 
-        'purpose. End.'
+        "This is a story.",
+        "This is a story that",
+        "doesn't matter",
+        "because it is just",
+        "being used as an",
+        "example. Hi. Hello. Howdy. Hola.",
+        "The example is",
+        "simple and",
+        "repetitive and long",
+        "and somewhat boring,",
+        "but it serves a",
+        "purpose. End.",
     ]
     for segment, test_segment in zip(segments, expected):
         assert segment.text == test_segment
@@ -285,7 +290,7 @@ def test_split_content_to_fit_min_max():
         "The example is simple and repetitive and long",
         "and somewhat boring, but it serves a purpose. End.",
     ]
-    
+
     segments = split_content_to_fit_min_max(
         content=MIN_MAX_TEXT,
         max_partition=75,
@@ -307,11 +312,13 @@ def test_split_content_to_fit_min_max():
 
 def test_combine_paragraphs_less_than_min():
     segments = combine_paragraphs_less_than_min(
-    SHORT_PARAGRAPHS,
-    max_partition=1500,
-    min_partition=7,
+        SHORT_PARAGRAPHS,
+        max_partition=1500,
+        min_partition=7,
     )
-    import pdb; pdb.set_trace()
+    import pdb
+
+    pdb.set_trace()
     assert len(segments) < len(SHORT_PARAGRAPHS)
 
 
