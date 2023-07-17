@@ -1,6 +1,7 @@
 import os
 import pathlib
 
+from unstructured.documents.html import HTMLTitle
 from unstructured.partition.epub import partition_epub
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -56,3 +57,61 @@ def test_partition_epub_from_file_exlcude_metadata():
     assert elements[0].metadata.filetype is None
     assert elements[0].metadata.page_name is None
     assert elements[0].metadata.filename is None
+
+
+def test_partition_epub_with_include_element_types(
+    filename="example-docs/winter-sports.epub",
+):
+    element_types = [HTMLTitle]
+    elements = partition_epub(
+        filename=filename,
+        include_metadata=False,
+        include_element_types=element_types,
+    )
+
+    for element in elements:
+        assert type(element) in element_types
+
+
+def test_partition_epub_with_exclude_element_types(
+    filename="example-docs/winter-sports.epub",
+):
+    element_types = [HTMLTitle]
+    elements = partition_epub(
+        filename=filename,
+        include_metadata=False,
+        exclude_element_types=element_types,
+    )
+
+    for element in elements:
+        assert type(element) not in element_types
+
+
+def test_partition_epub_from_file_with_include_element_types(
+    filename="example-docs/winter-sports.epub",
+):
+    element_types = [HTMLTitle]
+    with open(filename, "rb") as f:
+        elements = partition_epub(
+            file=f,
+            include_metadata=False,
+            include_element_types=element_types,
+        )
+
+    for element in elements:
+        assert type(element) in element_types
+
+
+def test_partition_epub_from_file_with_exclude_element_types(
+    filename="example-docs/winter-sports.epub",
+):
+    element_types = [HTMLTitle]
+    with open(filename, "rb") as f:
+        elements = partition_epub(
+            file=f,
+            include_metadata=False,
+            exclude_element_types=element_types,
+        )
+
+    for element in elements:
+        assert type(element) not in element_types
