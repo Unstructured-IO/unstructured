@@ -4,6 +4,8 @@
 
 ### Features
 
+* Add slide notes to pptx
+
 ### Fixes
 
 * Enables filters to be passed to `partition_doc` so it doesn't error with LibreOffice7.
