@@ -1,11 +1,12 @@
 [
   {
     "type": "Title",
-    "element_id": "52ce86ad3a1a9ac8307dafb067fdfb9e",
+    "element_id": "ab0e2c4143f4f6815306af9c90bcc21a",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/html",
+      "page_number": 1
     },
-    "text": "<p>Test text</p>"
+    "text": "Test text"
   }
 ]
