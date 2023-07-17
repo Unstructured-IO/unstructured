@@ -71,6 +71,14 @@ def partition_pptx(
         metadata = ElementMetadata.from_dict(metadata.to_dict())
         metadata.page_number = i + 1
 
+        if slide.has_notes_slide:
+            notes_slide = slide.notes_slide
+            if notes_slide.notes_text_frame != None:
+                notes_text_frame = notes_slide.notes_text_frame
+                notes_text = notes_text_frame.text
+                if notes_text.strip() != "":
+                    elements.append(NarrativeText(text=notes_text, metadata=metadata))
+
         for shape in _order_shapes(slide.shapes):
             if shape.has_table:
                 table: pptx.table.Table = shape.table
