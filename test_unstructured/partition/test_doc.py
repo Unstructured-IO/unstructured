@@ -32,7 +32,10 @@ def mock_document():
     # NOTE(robinson) - this should get dropped because it is empty
     document.add_paragraph("", style="Normal")
     # NOTE(robinson) - this should get picked up as a narrative text
-    document.add_paragraph("This is my first thought. This is my second thought.", style="Normal")
+    document.add_paragraph(
+        "This is my first thought. This is my second thought.",
+        style="Normal",
+    )
     document.add_paragraph("This is my third thought.", style="Body Text")
     # NOTE(robinson) - this should just be regular text
     document.add_paragraph("2023")
@@ -89,7 +92,9 @@ def test_partition_doc_matches_partition_docx(mock_document, expected_elements, 
     doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
     mock_document.save(docx_filename)
     convert_office_doc(docx_filename, tmpdir.dirname, "doc")
-    assert partition_doc(filename=doc_filename) == partition_docx(filename=docx_filename)
+    assert partition_doc(filename=doc_filename) == partition_docx(
+        filename=docx_filename,
+    )
 
 
 def test_partition_raises_with_missing_doc(mock_document, expected_elements, tmpdir):
@@ -181,3 +186,57 @@ def test_partition_doc_from_filename_exclude_metadata(mock_document, tmpdir):
     assert elements[0].metadata.filetype is None
     assert elements[0].metadata.page_name is None
     assert elements[0].metadata.filename is None
+
+
+def test_partition_doc_with_include_element_types(filename="example-docs/fake.doc"):
+    element_types = [Title]
+    elements = partition_doc(
+        filename=filename,
+        include_metadata=False,
+        include_element_types=element_types,
+    )
+
+    for element in elements:
+        assert type(element) in element_types
+
+
+def test_partition_doc_with_exclude_element_types(filename="example-docs/fake.doc"):
+    element_types = [Title]
+    elements = partition_doc(
+        filename=filename,
+        include_metadata=False,
+        exclude_element_types=element_types,
+    )
+
+    for element in elements:
+        assert type(element) not in element_types
+
+
+def test_partition_doc_from_file_with_include_element_types(
+    filename="example-docs/fake.doc",
+):
+    element_types = [Title]
+    with open(filename, "rb") as f:
+        elements = partition_doc(
+            file=f,
+            include_metadata=False,
+            include_element_types=element_types,
+        )
+
+    for element in elements:
+        assert type(element) in element_types
+
+
+def test_partition_doc_from_file_with_exclude_element_types(
+    filename="example-docs/fake.doc",
+):
+    element_types = [Title]
+    with open(filename, "rb") as f:
+        elements = partition_doc(
+            file=f,
+            include_metadata=False,
+            exclude_element_types=element_types,
+        )
+
+    for element in elements:
+        assert type(element) not in element_types
