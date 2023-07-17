@@ -156,7 +156,7 @@ def convert_office_doc(
     input_filename: str,
     output_directory: str,
     target_format: str = "docx",
-    target_filter: Optional[str] = "MS Word 2007 XML",
+    target_filter: Optional[str] = None,
 ):
     """Converts a .doc file to a .docx file using the libreoffice CLI.
 
@@ -169,8 +169,8 @@ def convert_office_doc(
     target_format: str
         The desired output format
     target_filter: str
-        The output filter name to use when converting. The default is the filter
-        that is required when using LibreOffice7. See references below for details.
+        The output filter name to use when converting. See references below
+        for details.
 
     References
     ----------
