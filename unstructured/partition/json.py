@@ -5,7 +5,7 @@ from typing import IO, List, Optional
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.nlp.patterns import LIST_OF_DICTS_PATTERN
-from unstructured.partition.common import exactly_one
+from unstructured.partition.common import exactly_one, filter_element_types
 from unstructured.staging.base import dict_to_elements
 
 
@@ -17,6 +17,8 @@ def partition_json(
     text: Optional[str] = None,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
+    include_element_types: Optional[List[Element]] = None,
+    exclude_element_types: Optional[List[Element]] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions an .json document into its constituent elements.
@@ -29,6 +31,10 @@ def partition_json(
         A file-like object as bytes --> open(filename, "rb").
     text
         The string representation of the .json document.
+    include_element_types
+        Determines which Elements included in the output.
+    exclude_element_types
+        Determines which Elements excluded in the output.
     """
     if text is not None and text.strip() == "" and not file and not filename:
         return []
@@ -59,6 +65,12 @@ def partition_json(
         raise ValueError("Not a valid json")
 
     # NOTE(Nathan): in future PR, try extracting items that look like text
-    #               if file_text is a valid json but not an unstructured json
-
+    #
+    #              if file_text is a valid json but not an unstructured json
+    if include_element_types or exclude_element_types:
+        elements = filter_element_types(
+            elements=elements,
+            include_element_types=include_element_types,
+            exclude_element_types=exclude_element_types,
+        )
     return elements
