@@ -4,6 +4,7 @@ import tempfile
 
 import pytest
 
+from unstructured.documents.elements import Title
 from unstructured.partition.auto import partition
 from unstructured.partition.json import partition_json
 from unstructured.staging.base import elements_to_json
@@ -204,3 +205,61 @@ def test_partition_json_from_text_exclude_metadata(filename: str):
 
     for i in range(len(test_elements)):
         assert any(test_elements[i].metadata.to_dict()) is False
+
+
+def test_partition_json_with_include_element_types(
+    filename="example-docs/spring-weather.html.json",
+):
+    element_types = [Title]
+    elements = partition_json(
+        filename=filename,
+        include_metadata=False,
+        include_element_types=element_types,
+    )
+
+    for element in elements:
+        assert type(element) in element_types
+
+
+def test_partition_json_with_exclude_element_types(
+    filename="example-docs/spring-weather.html.json",
+):
+    element_types = [Title]
+    elements = partition_json(
+        filename=filename,
+        include_metadata=False,
+        exclude_element_types=element_types,
+    )
+
+    for element in elements:
+        assert type(element) not in element_types
+
+
+def test_partition_json_from_file_with_include_element_types(
+    filename="example-docs/spring-weather.html.json",
+):
+    element_types = [Title]
+    with open(filename, "rb") as f:
+        elements = partition_json(
+            file=f,
+            include_metadata=False,
+            include_element_types=element_types,
+        )
+
+    for element in elements:
+        assert type(element) in element_types
+
+
+def test_partition_json_from_file_with_exclude_element_types(
+    filename="example-docs/spring-weather.html.json",
+):
+    element_types = [Title]
+    with open(filename, "rb") as f:
+        elements = partition_json(
+            file=f,
+            include_metadata=False,
+            exclude_element_types=element_types,
+        )
+
+    for element in elements:
+        assert type(element) not in element_types
