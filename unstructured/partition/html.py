@@ -32,6 +32,8 @@ def partition_html(
     parser: VALID_PARSERS = None,
     html_assemble_articles: bool = False,
     metadata_filename: Optional[str] = None,
+    include_element_types: Optional[List[Element]] = None,
+    exclude_element_types: Optional[List[Element]] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions an HTML document into its constituent elements.
@@ -60,6 +62,10 @@ def partition_html(
         in the HTTP request.
     parser
         The parser to use for parsing the HTML document. If None, default parser will be used.
+    include_element_types
+        Determines which Elements included in the output.
+    exclude_element_types
+        Determines which Elements excluded in the output.
     """
     if text is not None and text.strip() == "" and not file and not filename and not url:
         return []
@@ -101,7 +107,12 @@ def partition_html(
 
         document = HTMLDocument.from_string(response.text, parser=parser)
 
-    return document_to_element_list(document, include_page_breaks=include_page_breaks)
+    return document_to_element_list(
+        document,
+        include_page_breaks=include_page_breaks,
+        include_element_types=include_element_types,
+        exclude_element_types=exclude_element_types,
+    )
 
 
 def convert_and_partition_html(
@@ -110,6 +121,8 @@ def convert_and_partition_html(
     file: Optional[IO[bytes]] = None,
     include_page_breaks: bool = False,
     metadata_filename: Optional[str] = None,
+    include_element_types: Optional[List[Element]] = None,
+    exclude_element_types: Optional[List[Element]] = None,
 ) -> List[Element]:
     """Converts a document to HTML and then partitions it using partition_html. Works with
     any file format support by pandoc.
@@ -126,8 +139,17 @@ def convert_and_partition_html(
         If True, the output will include page breaks if the filetype supports it.
     metadata_filename
         The filename to use in element metadata.
+    include_element_types
+        Determines which Elements included in the output.
+    exclude_element_types
+        Determines which Elements excluded in the output.
+
     """
-    html_text = convert_file_to_html_text(source_format=source_format, filename=filename, file=file)
+    html_text = convert_file_to_html_text(
+        source_format=source_format,
+        filename=filename,
+        file=file,
+    )
     # NOTE(robinson) - pypandoc returns a text string with unicode encoding
     # ref: https://github.com/JessicaTegner/pypandoc#usage
     return partition_html(
@@ -135,4 +157,6 @@ def convert_and_partition_html(
         include_page_breaks=include_page_breaks,
         encoding="unicode",
         metadata_filename=metadata_filename,
+        include_element_types=include_element_types,
+        exclude_element_types=exclude_element_types,
     )
