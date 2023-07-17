@@ -28,6 +28,7 @@ from unstructured.file_utils.filetype import FileType, add_metadata_with_filetyp
 from unstructured.partition.common import (
     convert_ms_office_table_to_text,
     exactly_one,
+    filter_element_types,
     spooled_to_bytes_io_if_needed,
 )
 from unstructured.partition.text_type import (
@@ -111,6 +112,8 @@ def partition_docx(
     metadata_filename: Optional[str] = None,
     include_page_breaks: bool = True,
     include_metadata: bool = True,
+    include_element_types: Optional[List[Element]] = None,
+    exclude_element_types: Optional[List[Element]] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft Word Documents in .docx format into its document elements.
@@ -125,6 +128,10 @@ def partition_docx(
         The filename to use for the metadata. Relevant because partition_doc converts the
         document to .docx before partition. We want the original source filename in the
         metadata.
+    include_element_types
+        Determines which Elements included in the output.
+    exclude_element_types
+        Determines which Elements excluded in the output.
     """
 
     # Verify that only one of the arguments was provided
@@ -191,6 +198,12 @@ def partition_docx(
             if include_page_breaks:
                 elements.append(PageBreak(text=""))
 
+    if include_element_types or exclude_element_types:
+        elements = filter_element_types(
+            elements=elements,
+            include_element_types=include_element_types,
+            exclude_element_types=exclude_element_types,
+        )
     return elements
 
 
