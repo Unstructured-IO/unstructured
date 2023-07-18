@@ -404,9 +404,7 @@ def partition_email(
                 for element in attached_elements:
                     element.metadata.filename = attached_file
                     element.metadata.file_directory = None
-                    element.metadata.attached_to_filename = (
-                        metadata_filename or filename
-                    )
+                    element.metadata.attached_to_filename = metadata_filename or filename
                     all_elements.append(element)
 
     if include_element_types or exclude_element_types:

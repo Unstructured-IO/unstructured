@@ -225,9 +225,7 @@ def _partition_pdf_or_image_local(
             "running make install-local-inference from the root directory of the repository.",
         ) from e
 
-    model_name = (
-        model_name if model_name else os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME")
-    )
+    model_name = model_name if model_name else os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME")
     if file is None:
         layout = process_file_with_model(
             filename,
@@ -245,7 +243,9 @@ def _partition_pdf_or_image_local(
             model_name=model_name,
         )
     elements = document_to_element_list(
-        layout, include_page_breaks=include_page_breaks, sort=False
+        layout,
+        include_page_breaks=include_page_breaks,
+        sort=False,
     )
     out_elements = []
 
@@ -259,7 +259,9 @@ def _partition_pdf_or_image_local(
         # NOTE(crag): this is probably always a Text object, but check for the sake of typing
         if isinstance(el, Text):
             el.text = re.sub(
-                RE_MULTISPACE_INCLUDING_NEWLINES, " ", el.text or ""
+                RE_MULTISPACE_INCLUDING_NEWLINES,
+                " ",
+                el.text or "",
             ).strip()
             if el.text or isinstance(el, PageBreak):
                 out_elements.append(cast(Element, el))
@@ -373,12 +375,8 @@ def _process_pdfminer_pages(
         sorted_page_elements = sorted(
             page_elements,
             key=lambda el: (
-                el.metadata.coordinates.points[0][1]
-                if el.metadata.coordinates
-                else float("inf"),
-                el.metadata.coordinates.points[0][0]
-                if el.metadata.coordinates
-                else float("inf"),
+                el.metadata.coordinates.points[0][1] if el.metadata.coordinates else float("inf"),
+                el.metadata.coordinates.points[0][0] if el.metadata.coordinates else float("inf"),
                 el.id,
             ),
         )

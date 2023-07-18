@@ -83,9 +83,7 @@ def partition_msg(
                 for element in attached_elements:
                     element.metadata.filename = attached_file
                     element.metadata.file_directory = None
-                    element.metadata.attached_to_filename = (
-                        metadata_filename or filename
-                    )
+                    element.metadata.attached_to_filename = metadata_filename or filename
                     elements.append(element)
 
     if include_element_types or exclude_element_types:
@@ -98,7 +96,8 @@ def partition_msg(
 
 
 def build_msg_metadata(
-    msg_obj: msg_parser.MsOxMessage, filename: Optional[str]
+    msg_obj: msg_parser.MsOxMessage,
+    filename: Optional[str],
 ) -> ElementMetadata:
     """Creates an ElementMetadata object from the header information in the email."""
     email_date = getattr(msg_obj, "sent_date", None)
