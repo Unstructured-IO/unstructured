@@ -1,5 +1,6 @@
 from unstructured.documents.elements import Title
 from unstructured.partition.org import partition_org
+from unstructured.documents.html import HTMLTitle
 
 
 def test_partition_org_from_filename(filename="example-docs/README.org"):
@@ -45,3 +46,60 @@ def test_partition_org_from_file_exclude_metadata(filename="example-docs/README.
 
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
+
+def test_partition_org_with_include_element_types(
+    filename="example-docs/README.org",
+):
+    element_types = [HTMLTitle]
+    elements = partition_org(
+        filename=filename,
+        include_metadata=False,
+        include_element_types=element_types,
+    )
+
+    for element in elements:
+        assert type(element) in element_types
+
+
+def test_partition_org_with_exclude_element_types(
+    filename="example-docs/README.org",
+):
+    element_types = [HTMLTitle]
+    elements = partition_org(
+        filename=filename,
+        include_metadata=False,
+        exclude_element_types=element_types,
+    )
+
+    for element in elements:
+        assert type(element) not in element_types
+
+
+def test_partition_org_from_file_with_include_element_types(
+    filename="example-docs/README.org",
+):
+    element_types = [HTMLTitle]
+    with open(filename, "rb") as f:
+        elements = partition_org(
+            file=f,
+            include_metadata=False,
+            include_element_types=element_types,
+        )
+
+    for element in elements:
+        assert type(element) in element_types
+
+
+def test_partition_org_from_file_with_exclude_element_types(
+    filename="example-docs/README.org",
+):
+    element_types = [HTMLTitle]
+    with open(filename, "rb") as f:
+        elements = partition_org(
+            file=f,
+            include_metadata=False,
+            exclude_element_types=element_types,
+        )
+
+    for element in elements:
+        assert type(element) not in element_types
