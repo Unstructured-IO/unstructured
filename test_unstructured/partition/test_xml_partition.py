@@ -3,6 +3,7 @@ import pathlib
 
 import pytest
 
+from unstructured.documents.elements import Title
 from unstructured.partition.xml import partition_xml
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -156,3 +157,61 @@ def test_partition_xml_from_file_exclude_metadata(filename):
     assert elements[0].text == "United States"
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
+
+
+def test_partition_xml_with_include_element_types(
+    filename="example-docs/factbook.xml",
+):
+    element_types = [Title]
+    elements = partition_xml(
+        filename=filename,
+        include_metadata=False,
+        include_element_types=element_types,
+    )
+
+    for element in elements:
+        assert type(element) in element_types
+
+
+def test_partition_xml_with_exclude_element_types(
+    filename="example-docs/factbook.xml",
+):
+    element_types = [Title]
+    elements = partition_xml(
+        filename=filename,
+        include_metadata=False,
+        exclude_element_types=element_types,
+    )
+
+    for element in elements:
+        assert type(element) not in element_types
+
+
+def test_partition_xml_from_file_with_include_element_types(
+    filename="example-docs/factbook.xml",
+):
+    element_types = [Title]
+    with open(filename, "rb") as f:
+        elements = partition_xml(
+            file=f,
+            include_metadata=False,
+            include_element_types=element_types,
+        )
+
+    for element in elements:
+        assert type(element) in element_types
+
+
+def test_partition_xml_from_file_with_exclude_element_types(
+    filename="example-docs/factbook.xml",
+):
+    element_types = [Title]
+    with open(filename, "rb") as f:
+        elements = partition_xml(
+            file=f,
+            include_metadata=False,
+            exclude_element_types=element_types,
+        )
+
+    for element in elements:
+        assert type(element) not in element_types
