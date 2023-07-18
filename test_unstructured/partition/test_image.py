@@ -160,3 +160,61 @@ def test_partition_image_raises_with_bad_strategy():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "english-and-korean.png")
     with pytest.raises(ValueError):
         image.partition_image(filename=filename, strategy="fakeroo")
+
+
+def test_partition_image_with_include_element_types(
+    filename="example-docs/layout-parser-paper-fast.jpg",
+):
+    element_types = [Title]
+    elements = image.partition_image(
+        filename=filename,
+        include_metadata=False,
+        include_element_types=element_types,
+    )
+
+    for element in elements:
+        assert type(element) in element_types
+
+
+def test_partition_image_with_exclude_element_types(
+    filename="example-docs/layout-parser-paper-fast.jpg",
+):
+    element_types = [Title]
+    elements = image.partition_image(
+        filename=filename,
+        include_metadata=False,
+        exclude_element_types=element_types,
+    )
+
+    for element in elements:
+        assert type(element) not in element_types
+
+
+def test_partition_image_from_file_with_include_element_types(
+    filename="example-docs/layout-parser-paper-fast.jpg",
+):
+    element_types = [Title]
+    with open(filename, "rb") as f:
+        elements = image.partition_image(
+            file=f,
+            include_metadata=False,
+            include_element_types=element_types,
+        )
+
+    for element in elements:
+        assert type(element) in element_types
+
+
+def test_partition_image_from_file_with_exclude_element_types(
+    filename="example-docs/layout-parser-paper-fast.jpg",
+):
+    element_types = [Title]
+    with open(filename, "rb") as f:
+        elements = image.partition_image(
+            file=f,
+            include_metadata=False,
+            exclude_element_types=element_types,
+        )
+
+    for element in elements:
+        assert type(element) not in element_types
