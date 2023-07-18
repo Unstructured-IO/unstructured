@@ -312,6 +312,8 @@ def convert_and_partition_docx(
     file: Optional[IO[bytes]] = None,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
+    include_element_types: Optional[List[Element]] = None,
+    exclude_element_types: Optional[List[Element]] = None,
 ) -> List[Element]:
     """Converts a document to DOCX and then partitions it using partition_html. Works with
     any file format support by pandoc.
@@ -327,6 +329,10 @@ def convert_and_partition_docx(
     include_metadata
         Determines whether or not metadata is included in the metadata attribute on the
         elements in the output.
+    include_element_types
+        Determines which Elements included in the output.
+    exclude_element_types
+        Determines which Elements excluded in the output.
     """
     if filename is None:
         filename = ""
@@ -358,6 +364,8 @@ def convert_and_partition_docx(
             filename=docx_filename,
             metadata_filename=metadata_filename,
             include_metadata=include_metadata,
+            include_element_types=include_element_types,
+            exclude_element_types=exclude_element_types,
         )
 
     return elements
