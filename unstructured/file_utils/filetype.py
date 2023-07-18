@@ -16,6 +16,7 @@ from unstructured.partition.common import (
     _add_element_metadata,
     _remove_element_metadata,
     exactly_one,
+    filter_element_types,
     normalize_layout_element,
 )
 
@@ -306,10 +307,18 @@ def detect_filetype(
         # NOTE(crag): for older versions of the OS libmagic package, such as is currently
         # installed on the Unstructured docker image, .json files resolve to "text/plain"
         # rather than "application/json". this corrects for that case.
-        if _is_text_file_a_json(file=file, filename=filename, encoding=formatted_encoding):
+        if _is_text_file_a_json(
+            file=file,
+            filename=filename,
+            encoding=formatted_encoding,
+        ):
             return FileType.JSON
 
-        if _is_text_file_a_csv(file=file, filename=filename, encoding=formatted_encoding):
+        if _is_text_file_a_csv(
+            file=file,
+            filename=filename,
+            encoding=formatted_encoding,
+        ):
             return FileType.CSV
 
         if file and _check_eml_from_buffer(file=file) is True:
@@ -416,7 +425,11 @@ def _is_text_file_a_json(
     encoding: Optional[str] = "utf-8",
 ):
     """Detects if a file that has a text/plain MIME type is a JSON file."""
-    file_text = _read_file_start_for_type_check(file=file, filename=filename, encoding=encoding)
+    file_text = _read_file_start_for_type_check(
+        file=file,
+        filename=filename,
+        encoding=encoding,
+    )
     return re.match(LIST_OF_DICTS_PATTERN, file_text) is not None
 
 
@@ -433,7 +446,11 @@ def _is_text_file_a_csv(
     encoding: Optional[str] = "utf-8",
 ):
     """Detects if a file that has a text/plain MIME type is a CSV file."""
-    file_text = _read_file_start_for_type_check(file=file, filename=filename, encoding=encoding)
+    file_text = _read_file_start_for_type_check(
+        file=file,
+        filename=filename,
+        encoding=encoding,
+    )
     lines = file_text.strip().splitlines()
     if len(lines) < 2:
         return False
@@ -460,6 +477,8 @@ def document_to_element_list(
     document: "DocumentLayout",
     include_page_breaks: bool = False,
     sort: bool = False,
+    include_element_types: Optional[List[Element]] = None,
+    exclude_element_types: Optional[List[Element]] = None,
 ) -> List[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
     elements: List[Element] = []
@@ -469,11 +488,17 @@ def document_to_element_list(
         for layout_element in page.elements:
             if hasattr(page, "image") and hasattr(layout_element, "coordinates"):
                 image_format = page.image.format
-                coordinate_system = PixelSpace(width=page.image.width, height=page.image.height)
+                coordinate_system = PixelSpace(
+                    width=page.image.width,
+                    height=page.image.height,
+                )
             else:
                 image_format = None
                 coordinate_system = None
-            element = normalize_layout_element(layout_element, coordinate_system=coordinate_system)
+            element = normalize_layout_element(
+                layout_element,
+                coordinate_system=coordinate_system,
+            )
             if isinstance(element, List):
                 for el in element:
                     el.metadata.page_number = i + 1
@@ -510,7 +535,12 @@ def document_to_element_list(
         if include_page_breaks and i < num_pages - 1:
             page_elements.append(PageBreak(text=""))
         elements.extend(page_elements)
-
+    if include_element_types or exclude_element_types:
+        elements = filter_element_types(
+            elements=elements,
+            include_element_types=include_element_types,
+            exclude_element_types=exclude_element_types,
+        )
     return elements
 
 
