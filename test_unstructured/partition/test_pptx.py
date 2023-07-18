@@ -245,3 +245,61 @@ def test_partition_pptx_from_file_exclude_metadata():
     with open(filename, "rb") as f:
         elements = partition_pptx(file=f, include_metadata=False)
     assert elements == EXPECTED_PPTX_OUTPUT
+
+
+def test_partition_pptx_with_include_element_types(
+    filename="example-docs/fake-power-point.pptx",
+):
+    element_types = [Title]
+    elements = partition_pptx(
+        filename=filename,
+        include_metadata=False,
+        include_element_types=element_types,
+    )
+
+    for element in elements:
+        assert type(element) in element_types
+
+
+def test_partition_pptx_with_exclude_element_types(
+    filename="example-docs/fake-power-point.pptx",
+):
+    element_types = [Title]
+    elements = partition_pptx(
+        filename=filename,
+        include_metadata=False,
+        exclude_element_types=element_types,
+    )
+
+    for element in elements:
+        assert type(element) not in element_types
+
+
+def test_partition_pptx_from_file_with_include_element_types(
+    filename="example-docs/fake-power-point.pptx",
+):
+    element_types = [Title]
+    with open(filename, "rb") as f:
+        elements = partition_pptx(
+            file=f,
+            include_metadata=False,
+            include_element_types=element_types,
+        )
+
+    for element in elements:
+        assert type(element) in element_types
+
+
+def test_partition_pptx_from_file_with_exclude_element_types(
+    filename="example-docs/fake-power-point.pptx",
+):
+    element_types = [Title]
+    with open(filename, "rb") as f:
+        elements = partition_pptx(
+            file=f,
+            include_metadata=False,
+            exclude_element_types=element_types,
+        )
+
+    for element in elements:
+        assert type(element) not in element_types
