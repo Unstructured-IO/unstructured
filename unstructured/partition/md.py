@@ -27,6 +27,8 @@ def partition_md(
     include_metadata: bool = True,
     parser: VALID_PARSERS = None,
     metadata_filename: Optional[str] = None,
+    include_element_types: Optional[List[Element]] = None,
+    exclude_element_types: Optional[List[Element]] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions a markdown file into its constituent elements
@@ -47,6 +49,10 @@ def partition_md(
         Determines whether or not metadata is included in the output.
     parser
         The parser to use for parsing the markdown document. If None, default parser will be used.
+    include_element_types
+        Determines which Elements included in the output.
+    exclude_element_types
+        Determines which Elements excluded in the output.
     """
     # Verify that only one of the arguments was provided
     if text is None:
@@ -67,7 +73,9 @@ def partition_md(
 
         content_type = response.headers.get("Content-Type", "")
         if not content_type.startswith("text/markdown"):
-            raise ValueError(f"Expected content type text/markdown. Got {content_type}.")
+            raise ValueError(
+                f"Expected content type text/markdown. Got {content_type}."
+            )
 
         text = response.text
 
@@ -79,4 +87,6 @@ def partition_md(
         include_metadata=include_metadata,
         parser=parser,
         metadata_filename=metadata_filename,
+        include_element_types=include_element_types,
+        exclude_element_types=exclude_element_types,
     )
