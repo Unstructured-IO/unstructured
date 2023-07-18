@@ -78,13 +78,12 @@ class XMLDocument(Document):
             #     Please use  bytes input or XML fragments without declaration.
             except ValueError:
                 document_tree = etree.fromstring(content.encode(), self.parser)
-
             if "<pre>" and "</pre>" in content:
                 tree = etree.HTML(content)
                 for element in tree.xpath("//pre"):
                     if not element.text:
                         continue
-                    text_content = [element.text for element in partition_text(text=element.text)]
+                    text_content = [element.text for element in partition_text(text=element.text, paragraph_grouper=False)]
                     for text in text_content:
                         element = etree.Element("span")
                         element.text = str(element_from_text(text=text))

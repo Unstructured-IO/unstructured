@@ -220,8 +220,10 @@ def partition_text(
 
     elif text is not None:
         file_text = str(text)
-
-    if paragraph_grouper is not None:
+    
+    if paragraph_grouper == False:
+        pass
+    elif paragraph_grouper is not None:
         file_text = paragraph_grouper(file_text)
     else:
         file_text = group_broken_paragraphs(file_text)

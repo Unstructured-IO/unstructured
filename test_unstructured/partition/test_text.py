@@ -316,9 +316,6 @@ def test_combine_paragraphs_less_than_min():
         max_partition=1500,
         min_partition=7,
     )
-    import pdb
-
-    pdb.set_trace()
     assert len(segments) < len(SHORT_PARAGRAPHS)
 
 
