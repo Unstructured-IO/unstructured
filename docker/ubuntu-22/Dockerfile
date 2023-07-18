@@ -22,4 +22,5 @@ RUN source ~/.bashrc && pyenv virtualenv 3.8.17 unstructured && \
     make install-ingest-gitlab && \
     make install-ingest-wikipedia && \
     make install-ingest-discord && \
-    make install install-ingest-slack
+    make install install-ingest-slack && \
+    make install-ingest-confluence
