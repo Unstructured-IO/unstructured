@@ -12,6 +12,8 @@ def partition_org(
     include_page_breaks: bool = False,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
+    include_element_types: Optional[List[Element]] = None,
+    exclude_element_types: Optional[List[Element]] = None,
 ) -> List[Element]:
     """Partitions an org document. The document is first converted to HTML and then
     partitioned using partition_html.
@@ -24,6 +26,10 @@ def partition_org(
         A file-like object using "rb" mode --> open(filename, "rb").
     include_page_breaks
         If True, the output will include page breaks if the filetype supports it
+    include_element_types
+        Determines which Elements included in the output.
+    exclude_element_types
+        Determines which Elements excluded in the output.
     """
     return convert_and_partition_html(
         source_format="org",
@@ -31,4 +37,6 @@ def partition_org(
         file=file,
         include_page_breaks=include_page_breaks,
         metadata_filename=metadata_filename,
+        include_element_types=include_element_types,
+        exclude_element_types=exclude_element_types,
     )
