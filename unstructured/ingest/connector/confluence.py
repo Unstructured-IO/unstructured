@@ -96,7 +96,7 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @property
     def _output_filename(self):
-        """Create output file path based on output directory, space id and document id"""
+        """Create output file path based on output directory, space id and document id."""
         output_file = f"{self.file_meta.document_id}.json"
         return Path(self.standard_config.output_dir) / self.file_meta.space_id / output_file
 
