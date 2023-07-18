@@ -467,9 +467,11 @@ def document_to_element_list(
     for i, page in enumerate(document.pages):
         page_elements: List[Element] = []
         for layout_element in page.elements:
-            if hasattr(page, "image") and hasattr(layout_element, "coordinates"):
-                image_format = page.image.format
-                coordinate_system = PixelSpace(width=page.image.width, height=page.image.height)
+            if hasattr(page, "image_metadata") and hasattr(layout_element, "coordinates"):
+                image_format = page.image_metadata.get("format")
+                image_width = page.image_metadata.get("width")
+                image_height = page.image_metadata.get("height")
+                coordinate_system = PixelSpace(width=image_width, height=image_height)
             else:
                 image_format = None
                 coordinate_system = None
