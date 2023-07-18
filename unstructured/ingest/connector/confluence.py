@@ -76,7 +76,7 @@ def scroll_wrapper(func):
 @dataclass
 class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     """Class encapsulating fetching a doc and writing processed results (but not
-    doing the processing!).
+    doing the processing).
 
     Current implementation creates a Confluence connection object
     to fetch each doc, rather than creating a it for each thread.
