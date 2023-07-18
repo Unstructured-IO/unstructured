@@ -169,3 +169,61 @@ def test_partition_msg_raises_with_no_partitioner(
 ):
     with pytest.raises(ValueError):
         partition_msg(filename=filename, process_attachments=True)
+
+
+def test_partition_msg_with_include_element_types(
+    filename="example-docs/fake-email.msg",
+):
+    element_types = [Title]
+    elements = partition_msg(
+        filename=filename,
+        include_metadata=False,
+        include_element_types=element_types,
+    )
+
+    for element in elements:
+        assert type(element) in element_types
+
+
+def test_partition_msg_with_exclude_element_types(
+    filename="example-docs/fake-email.msg",
+):
+    element_types = [Title]
+    elements = partition_msg(
+        filename=filename,
+        include_metadata=False,
+        exclude_element_types=element_types,
+    )
+
+    for element in elements:
+        assert type(element) not in element_types
+
+
+def test_partition_msg_from_file_with_include_element_types(
+    filename="example-docs/fake-email.msg",
+):
+    element_types = [Title]
+    with open(filename, "rb") as f:
+        elements = partition_msg(
+            file=f,
+            include_metadata=False,
+            include_element_types=element_types,
+        )
+
+    for element in elements:
+        assert type(element) in element_types
+
+
+def test_partition_msg_from_file_with_exclude_element_types(
+    filename="example-docs/fake-email.msg",
+):
+    element_types = [Title]
+    with open(filename, "rb") as f:
+        elements = partition_msg(
+            file=f,
+            include_metadata=False,
+            exclude_element_types=element_types,
+        )
+
+    for element in elements:
+        assert type(element) not in element_types
