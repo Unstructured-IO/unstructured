@@ -5,8 +5,8 @@ from unittest.mock import patch
 import pytest
 import requests
 
-from unstructured.partition.md import partition_md
 from unstructured.documents.html import HTMLTitle
+from unstructured.partition.md import partition_md
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 

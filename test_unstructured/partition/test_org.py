@@ -1,6 +1,6 @@
 from unstructured.documents.elements import Title
-from unstructured.partition.org import partition_org
 from unstructured.documents.html import HTMLTitle
+from unstructured.partition.org import partition_org
 
 
 def test_partition_org_from_filename(filename="example-docs/README.org"):
@@ -46,6 +46,7 @@ def test_partition_org_from_file_exclude_metadata(filename="example-docs/README.
 
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
+
 
 def test_partition_org_with_include_element_types(
     filename="example-docs/README.org",

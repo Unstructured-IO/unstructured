@@ -34,7 +34,8 @@ def mock_document():
     document.add_paragraph("", style="Normal")
     # NOTE(robinson) - this should get picked up as a narrative text
     document.add_paragraph(
-        "This is my first thought. This is my second thought.", style="Normal"
+        "This is my first thought. This is my second thought.",
+        style="Normal",
     )
     document.add_paragraph("This is my third thought.", style="Body Text")
     # NOTE(robinson) - this should just be regular text
@@ -106,7 +107,9 @@ def test_partition_docx_from_file(mock_document, expected_elements, tmpdir):
 
 
 def test_partition_docx_from_file_with_metadata_filename(
-    mock_document, expected_elements, tmpdir
+    mock_document,
+    expected_elements,
+    tmpdir,
 ):
     filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     mock_document.save(filename)
@@ -228,7 +231,7 @@ def test_partition_docx_with_include_element_types(filename="example-docs/fake.d
         assert type(element) in element_types
 
 
-def test_partition_doc_with_exclude_element_types(filename="example-docs/fake.docx"):
+def test_partition_docx_with_exclude_element_types(filename="example-docs/fake.docx"):
     element_types = [Title]
     elements = partition_docx(
         filename=filename,
@@ -240,7 +243,7 @@ def test_partition_doc_with_exclude_element_types(filename="example-docs/fake.do
         assert type(element) not in element_types
 
 
-def test_partition_doc_from_file_with_include_element_types(
+def test_partition_docx_from_file_with_include_element_types(
     filename="example-docs/fake.docx",
 ):
     element_types = [Title]
@@ -255,7 +258,7 @@ def test_partition_doc_from_file_with_include_element_types(
         assert type(element) in element_types
 
 
-def test_partition_doc_from_file_with_exclude_element_types(
+def test_partition_docx_from_file_with_exclude_element_types(
     filename="example-docs/fake.docx",
 ):
     element_types = [Title]

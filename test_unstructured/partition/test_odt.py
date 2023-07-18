@@ -54,6 +54,7 @@ def test_partition_odt_from_file_exclude_metadata():
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
 
+
 def test_partition_odt_with_include_element_types(
     filename="example-docs/fake.odt",
 ):
