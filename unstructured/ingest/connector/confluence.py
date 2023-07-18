@@ -123,7 +123,7 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 @requires_dependencies(["atlassian"])
 @dataclass
 class ConfluenceConnector(ConnectorCleanupMixin, BaseConnector):
-    """Fetches the body field from all documents from all spaces in a Confluence Cloud instance"""
+    """Fetches body fields from all documents within all spaces in a Confluence Cloud instance."""
 
     config: SimpleConfluenceConfig
 
