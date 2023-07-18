@@ -81,3 +81,61 @@ def test_partition_ppt_from_file_exclude_metadata():
         elements = partition_ppt(file=f, include_metadata=False)
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
+
+
+def test_partition_ppt_with_include_element_types(
+    filename="example-docs/fake-power-point.ppt",
+):
+    element_types = [Title]
+    elements = partition_ppt(
+        filename=filename,
+        include_metadata=False,
+        include_element_types=element_types,
+    )
+
+    for element in elements:
+        assert type(element) in element_types
+
+
+def test_partition_ppt_with_exclude_element_types(
+    filename="example-docs/fake-power-point.ppt",
+):
+    element_types = [Title]
+    elements = partition_ppt(
+        filename=filename,
+        include_metadata=False,
+        exclude_element_types=element_types,
+    )
+
+    for element in elements:
+        assert type(element) not in element_types
+
+
+def test_partition_ppt_from_file_with_include_element_types(
+    filename="example-docs/fake-power-point.ppt",
+):
+    element_types = [Title]
+    with open(filename, "rb") as f:
+        elements = partition_ppt(
+            file=f,
+            include_metadata=False,
+            include_element_types=element_types,
+        )
+
+    for element in elements:
+        assert type(element) in element_types
+
+
+def test_partition_ppt_from_file_with_exclude_element_types(
+    filename="example-docs/fake-power-point.ppt",
+):
+    element_types = [Title]
+    with open(filename, "rb") as f:
+        elements = partition_ppt(
+            file=f,
+            include_metadata=False,
+            exclude_element_types=element_types,
+        )
+
+    for element in elements:
+        assert type(element) not in element_types
