@@ -195,7 +195,7 @@ class ConfluenceConnector(ConnectorCleanupMixin, BaseConnector):
         return doc_ids_flattened
 
     def get_ingest_docs(self):
-        """Fetches all documents in a confluence space"""
+        """Fetches all documents in a confluence space."""
         doc_ids = self._get_doc_ids_within_spaces()
         return [
             ConfluenceIngestDoc(
