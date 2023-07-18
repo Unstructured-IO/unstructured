@@ -490,3 +490,61 @@ def test_partition_pdf_with_fast_strategy_from_file_exclude_metadata(
         elements = pdf.partition_pdf(file=f, url=None, strategy="fast", include_metadata=False)
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
+
+
+def test_partition_pdf_with_include_element_types(
+    filename="example-docs/layout-parser-paper-fast.pdf",
+):
+    element_types = [Title]
+    elements = pdf.partition_pdf(
+        filename=filename,
+        include_metadata=False,
+        include_element_types=element_types,
+    )
+
+    for element in elements:
+        assert type(element) in element_types
+
+
+def test_partition_pdf_with_exclude_element_types(
+    filename="example-docs/layout-parser-paper-fast.pdf",
+):
+    element_types = [Title]
+    elements = pdf.partition_pdf(
+        filename=filename,
+        include_metadata=False,
+        exclude_element_types=element_types,
+    )
+
+    for element in elements:
+        assert type(element) not in element_types
+
+
+def test_partition_pdf_from_file_with_include_element_types(
+    filename="example-docs/layout-parser-paper-fast.pdf",
+):
+    element_types = [Title]
+    with open(filename, "rb") as f:
+        elements = pdf.partition_pdf(
+            file=f,
+            include_metadata=False,
+            include_element_types=element_types,
+        )
+
+    for element in elements:
+        assert type(element) in element_types
+
+
+def test_partition_pdf_from_file_with_exclude_element_types(
+    filename="example-docs/layout-parser-paper-fast.pdf",
+):
+    element_types = [Title]
+    with open(filename, "rb") as f:
+        elements = pdf.partition_pdf(
+            file=f,
+            include_metadata=False,
+            exclude_element_types=element_types,
+        )
+
+    for element in elements:
+        assert type(element) not in element_types
