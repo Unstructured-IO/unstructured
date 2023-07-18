@@ -5,7 +5,11 @@ from typing import IO, BinaryIO, List, Optional, Union, cast
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
-from unstructured.partition.common import exactly_one, spooled_to_bytes_io_if_needed
+from unstructured.partition.common import (
+    exactly_one,
+    filter_element_types,
+    spooled_to_bytes_io_if_needed,
+)
 from unstructured.partition.text import partition_text
 
 
@@ -54,6 +58,8 @@ def partition_xml(
     include_metadata: bool = True,
     encoding: Optional[str] = None,
     max_partition: Optional[int] = 1500,
+    include_element_types: Optional[List[Element]] = None,
+    exclude_element_types: Optional[List[Element]] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions an XML document into its document elements.
@@ -77,6 +83,10 @@ def partition_xml(
     max_partition
         The maximum number of characters to include in a partition. If None is passed,
         no maximum is applied.
+    include_element_types
+        Determines which Elements included in the output.
+    exclude_element_types
+        Determines which Elements excluded in the output.
     """
     exactly_one(filename=filename, file=file)
 
@@ -97,6 +107,14 @@ def partition_xml(
         metadata_filename=metadata_filename,
         include_metadata=include_metadata,
         max_partition=max_partition,
+        include_element_types=include_element_types,
+        exclude_element_types=exclude_element_types,
     )
 
+    if include_element_types or exclude_element_types:
+        elements = filter_element_types(
+            elements,
+            include_element_types,
+            exclude_element_types,
+        )
     return elements
