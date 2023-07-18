@@ -147,6 +147,9 @@ The ``ocr_only`` strategy runs the document through Tesseract for OCR. Currently
 
 For the best of all worlds, ``auto`` will determine when a page can be extracted using ``fast`` or ``ocr_only`` mode, otherwise, it will fall back to hi_res.
 
+Beta Version: ``hi_res`` Strategy with Chipper Model
+-----------------------------------------------------
+
 To use the ``hi_res`` strategy with **Chipper** model, pass the argument for ``hi_res_model_name`` as shown in the code block below.
 
 .. code:: shell

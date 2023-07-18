@@ -33,17 +33,13 @@
   <p>API Announcement!</p>
 </h3>
 
-We are thrilled to announce the launch of our new API with Unstructured's Chipper model to deliver superior performance when processing high-resolution, complex documents. To start using this API request with Chipper model, you can utilize the `hi_res` strategy as stated in the API documentation [here](https://unstructured-io.github.io/unstructured/api.html#strategies).
+We are thrilled to announce our newly launched [Unstructured API](https://unstructured-io.github.io/unstructured/api.html). While access to the hosted Unstructured API will remain free, API Keys will soon be required to make requests. To prevent disruption, get yours [here](https://www.unstructured.io/api-key/) now and start using it today! Check out the [readme](https://github.com/Unstructured-IO/unstructured-api#--) here to get started making API calls.</p>
 
-<h4 align="left">
-  <p>Creating Unstructured API Keys &#128273;</p>
-</h4>
+#### :rocket: Beta Feature: Chipper Model
 
-<p>While access to the hosted Unstructured API will remain free, API Keys will soon be required to make requests. To prevent any disruption, get yours <a href="https://www.unstructured.io/api-key/">here</a> now and start using it today!</p>
+We are releasing the beta version of our Chipper model to deliver superior performance when processing high-resolution, complex documents. To start using the Chipper model in your API request, you can utilize the `hi_res` strategy. Please refer to the documentation [here](https://unstructured-io.github.io/unstructured/api.html#strategies).
 
-<p>Checkout the <a href="https://github.com/Unstructured-IO/unstructured-api#--">readme</a> here to get started making API calls.
-We'd love to hear your feedback, let us know how it goes in our
-  community slack. And stay tuned for improvements to both quality and performance!</p>
+As the Chipper model is in beta version, we welcome feedback and suggestions. For those interested in testing the Chipper model, we encourage you to connect with us on [Slack community](https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-1x7cgo0pg-PTptXWylzPQF9xZolzCnwQ).
 
 <h3 align="center">
   <p>Open-Source Pre-Processing Tools for Unstructured Data</p>
