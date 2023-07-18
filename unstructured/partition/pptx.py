@@ -18,6 +18,7 @@ from unstructured.file_utils.filetype import FileType, add_metadata_with_filetyp
 from unstructured.partition.common import (
     convert_ms_office_table_to_text,
     exactly_one,
+    filter_element_types,
     spooled_to_bytes_io_if_needed,
 )
 from unstructured.partition.text_type import (
@@ -37,6 +38,8 @@ def partition_pptx(
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
     include_slide_notes: bool = False,
+    include_element_types: Optional[List[Element]] = None,
+    exclude_element_types: Optional[List[Element]] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft PowerPoint Documents in .pptx format into its document elements.
@@ -55,6 +58,10 @@ def partition_pptx(
         metadata.
     include_slide_notes
         If True, includes the slide notes as element
+    include_element_types
+        Determines which Elements included in the output.
+    exclude_element_types
+        Determines which Elements excluded in the output.
     """
 
     # Verify that only one of the arguments was provided
@@ -64,7 +71,9 @@ def partition_pptx(
         presentation = pptx.Presentation(filename)
     elif file is not None:
         presentation = pptx.Presentation(
-            spooled_to_bytes_io_if_needed(cast(Union[BinaryIO, SpooledTemporaryFile], file)),
+            spooled_to_bytes_io_if_needed(
+                cast(Union[BinaryIO, SpooledTemporaryFile], file),
+            ),
         )
 
     elements: List[Element] = []
@@ -116,6 +125,12 @@ def partition_pptx(
         if include_page_breaks and i < num_slides - 1:
             elements.append(PageBreak(text=""))
 
+    if include_element_types or exclude_element_types:
+        elements = filter_element_types(
+            elements=elements,
+            include_element_types=include_element_types,
+            exclude_element_types=exclude_element_types,
+        )
     return elements
 
 
