@@ -12,6 +12,8 @@ def partition_image(
     include_page_breaks: bool = False,
     ocr_languages: str = "eng",
     strategy: str = "auto",
+    include_element_types: Optional[List[Element]] = None,
+    exclude_element_types: Optional[List[Element]] = None,
     **kwargs,
 ) -> List[Element]:
     """Parses an image into a list of interpreted elements.
@@ -32,6 +34,10 @@ def partition_image(
         partition_image simply extracts the text from the document using OCR and processes it.
         The default strategy `auto` will determine when a image can be extracted using
         `ocr_only` mode, otherwise it will fall back to `hi_res`.
+    include_element_types
+        Determines which Elements included in the output.
+    exclude_element_types
+        Determines which Elements excluded in the output.
     """
     exactly_one(filename=filename, file=file)
 
@@ -42,4 +48,6 @@ def partition_image(
         include_page_breaks=include_page_breaks,
         ocr_languages=ocr_languages,
         strategy=strategy,
+        include_element_types=include_element_types,
+        exclude_element_types=exclude_element_types,
     )
