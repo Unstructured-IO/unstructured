@@ -6,7 +6,7 @@ import msg_parser
 
 from unstructured.documents.elements import Element, ElementMetadata, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
-from unstructured.partition.common import exactly_one
+from unstructured.partition.common import exactly_one, filter_element_types
 from unstructured.partition.email import convert_to_iso_8601
 from unstructured.partition.html import partition_html
 from unstructured.partition.text import partition_text
@@ -22,6 +22,8 @@ def partition_msg(
     metadata_filename: Optional[str] = None,
     process_attachments: bool = False,
     attachment_partitioner: Optional[Callable] = None,
+    include_element_types: Optional[List[Element]] = None,
+    exclude_element_types: Optional[List[Element]] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions a MSFT Outlook .msg file
@@ -42,6 +44,10 @@ def partition_msg(
         processing the content of the email itself.
     attachment_partitioner
         The partitioning function to use to process attachments.
+    include_element_types
+        Determines which Elements included in the output.
+    exclude_element_types
+        Determines which Elements excluded in the output.
     """
     exactly_one(filename=filename, file=file)
 
@@ -77,13 +83,23 @@ def partition_msg(
                 for element in attached_elements:
                     element.metadata.filename = attached_file
                     element.metadata.file_directory = None
-                    element.metadata.attached_to_filename = metadata_filename or filename
+                    element.metadata.attached_to_filename = (
+                        metadata_filename or filename
+                    )
                     elements.append(element)
 
+    if include_element_types or exclude_element_types:
+        elements = filter_element_types(
+            elements=elements,
+            include_element_types=include_element_types,
+            exclude_element_types=exclude_element_types,
+        )
     return elements
 
 
-def build_msg_metadata(msg_obj: msg_parser.MsOxMessage, filename: Optional[str]) -> ElementMetadata:
+def build_msg_metadata(
+    msg_obj: msg_parser.MsOxMessage, filename: Optional[str]
+) -> ElementMetadata:
     """Creates an ElementMetadata object from the header information in the email."""
     email_date = getattr(msg_obj, "sent_date", None)
     if email_date is not None:
