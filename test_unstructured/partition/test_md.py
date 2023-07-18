@@ -6,6 +6,7 @@ import pytest
 import requests
 
 from unstructured.partition.md import partition_md
+from unstructured.documents.html import HTMLTitle
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
@@ -139,3 +140,61 @@ def test_partition_md_from_text_exclude_metadata():
     elements = partition_md(text=text, include_metadata=False)
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
+
+
+def test_partition_md_with_include_element_types(
+    filename="example-docs/spring-weather.html.json",
+):
+    element_types = [HTMLTitle]
+    elements = partition_md(
+        filename=filename,
+        include_metadata=False,
+        include_element_types=element_types,
+    )
+
+    for element in elements:
+        assert type(element) in element_types
+
+
+def test_partition_md_with_exclude_element_types(
+    filename="example-docs/spring-weather.html.json",
+):
+    element_types = [HTMLTitle]
+    elements = partition_md(
+        filename=filename,
+        include_metadata=False,
+        exclude_element_types=element_types,
+    )
+
+    for element in elements:
+        assert type(element) not in element_types
+
+
+def test_partition_md_from_file_with_include_element_types(
+    filename="example-docs/spring-weather.html.json",
+):
+    element_types = [HTMLTitle]
+    with open(filename, "rb") as f:
+        elements = partition_md(
+            file=f,
+            include_metadata=False,
+            include_element_types=element_types,
+        )
+
+    for element in elements:
+        assert type(element) in element_types
+
+
+def test_partition_md_from_file_with_exclude_element_types(
+    filename="example-docs/spring-weather.html.json",
+):
+    element_types = [HTMLTitle]
+    with open(filename, "rb") as f:
+        elements = partition_md(
+            file=f,
+            include_metadata=False,
+            exclude_element_types=element_types,
+        )
+
+    for element in elements:
+        assert type(element) not in element_types
