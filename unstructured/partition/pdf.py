@@ -30,6 +30,7 @@ from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.partition.common import (
     convert_to_bytes,
     exactly_one,
+    filter_element_types,
     spooled_to_bytes_io_if_needed,
 )
 from unstructured.partition.strategies import determine_pdf_or_image_strategy
@@ -51,6 +52,8 @@ def partition_pdf(
     max_partition: Optional[int] = 1500,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
+    include_element_types: Optional[List[Element]] = None,
+    exclude_element_types: Optional[List[Element]] = None,
     **kwargs,
 ) -> List[Element]:
     """Parses a pdf document into a list of interpreted elements.
@@ -81,6 +84,10 @@ def partition_pdf(
     max_partition
         The maximum number of characters to include in a partition. If None is passed,
         no maximum is applied. Only applies to the "ocr_only" strategy.
+    include_element_types
+        Determines which Elements included in the output.
+    exclude_element_types
+        Determines which Elements excluded in the output.
     """
     exactly_one(filename=filename, file=file)
     return partition_pdf_or_image(
@@ -91,6 +98,8 @@ def partition_pdf(
         infer_table_structure=infer_table_structure,
         ocr_languages=ocr_languages,
         max_partition=max_partition,
+        include_element_types=include_element_types,
+        exclude_element_types=exclude_element_types,
         **kwargs,
     )
 
@@ -116,6 +125,8 @@ def partition_pdf_or_image(
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
     max_partition: Optional[int] = 1500,
+    include_element_types: Optional[List[Element]] = None,
+    exclude_element_types: Optional[List[Element]] = None,
     **kwargs,
 ) -> List[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
@@ -149,7 +160,7 @@ def partition_pdf_or_image(
         # NOTE(robinson): Catches a UserWarning that occurs when detectron is called
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            layout_elements = _partition_pdf_or_image_local(
+            elements = _partition_pdf_or_image_local(
                 filename=filename,
                 file=spooled_to_bytes_io_if_needed(file),
                 is_image=is_image,
@@ -160,12 +171,12 @@ def partition_pdf_or_image(
             )
 
     elif strategy == "fast":
-        return extracted_elements
+        elements = extracted_elements
 
     elif strategy == "ocr_only":
         # NOTE(robinson): Catches file conversion warnings when running with PDFs
         with warnings.catch_warnings():
-            return _partition_pdf_or_image_with_ocr(
+            elements = _partition_pdf_or_image_with_ocr(
                 filename=filename,
                 file=file,
                 include_page_breaks=include_page_breaks,
@@ -173,8 +184,13 @@ def partition_pdf_or_image(
                 is_image=is_image,
                 max_partition=max_partition,
             )
-
-    return layout_elements
+    if include_element_types or exclude_element_types:
+        elements = filter_element_types(
+            elements=elements,
+            include_element_types=include_element_types,
+            exclude_element_types=exclude_element_types,
+        )
+    return elements
 
 
 @requires_dependencies("unstructured_inference")
@@ -209,7 +225,9 @@ def _partition_pdf_or_image_local(
             "running make install-local-inference from the root directory of the repository.",
         ) from e
 
-    model_name = model_name if model_name else os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME")
+    model_name = (
+        model_name if model_name else os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME")
+    )
     if file is None:
         layout = process_file_with_model(
             filename,
@@ -226,7 +244,9 @@ def _partition_pdf_or_image_local(
             extract_tables=infer_table_structure,
             model_name=model_name,
         )
-    elements = document_to_element_list(layout, include_page_breaks=include_page_breaks, sort=False)
+    elements = document_to_element_list(
+        layout, include_page_breaks=include_page_breaks, sort=False
+    )
     out_elements = []
 
     for el in elements:
@@ -238,7 +258,9 @@ def _partition_pdf_or_image_local(
             continue
         # NOTE(crag): this is probably always a Text object, but check for the sake of typing
         if isinstance(el, Text):
-            el.text = re.sub(RE_MULTISPACE_INCLUDING_NEWLINES, " ", el.text or "").strip()
+            el.text = re.sub(
+                RE_MULTISPACE_INCLUDING_NEWLINES, " ", el.text or ""
+            ).strip()
             if el.text or isinstance(el, PageBreak):
                 out_elements.append(cast(Element, el))
 
@@ -351,8 +373,12 @@ def _process_pdfminer_pages(
         sorted_page_elements = sorted(
             page_elements,
             key=lambda el: (
-                el.metadata.coordinates.points[0][1] if el.metadata.coordinates else float("inf"),
-                el.metadata.coordinates.points[0][0] if el.metadata.coordinates else float("inf"),
+                el.metadata.coordinates.points[0][1]
+                if el.metadata.coordinates
+                else float("inf"),
+                el.metadata.coordinates.points[0][0]
+                if el.metadata.coordinates
+                else float("inf"),
                 el.id,
             ),
         )
