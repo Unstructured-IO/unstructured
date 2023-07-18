@@ -53,3 +53,56 @@ def test_partition_odt_from_file_exclude_metadata():
 
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
+
+def test_partition_odt_with_include_element_types(
+    filename="example-docs/fake.odt",
+):
+    element_types = [Title]
+    elements = partition_odt(
+        filename=filename,
+        include_element_types=element_types,
+    )
+
+    for element in elements:
+        assert type(element) in element_types
+
+
+def test_partition_odt_with_exclude_element_types(
+    filename="example-docs/fake.odt",
+):
+    element_types = [Title]
+    elements = partition_odt(
+        filename=filename,
+        exclude_element_types=element_types,
+    )
+
+    for element in elements:
+        assert type(element) not in element_types
+
+
+def test_partition_odt_from_file_with_include_element_types(
+    filename="example-docs/fake.odt",
+):
+    element_types = [Title]
+    with open(filename, "rb") as f:
+        elements = partition_odt(
+            file=f,
+            include_element_types=element_types,
+        )
+
+    for element in elements:
+        assert type(element) in element_types
+
+
+def test_partition_odt_from_file_with_exclude_element_types(
+    filename="example-docs/fake.odt",
+):
+    element_types = [Title]
+    with open(filename, "rb") as f:
+        elements = partition_odt(
+            file=f,
+            exclude_element_types=element_types,
+        )
+
+    for element in elements:
+        assert type(element) not in element_types
