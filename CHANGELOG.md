@@ -1,23 +1,15 @@
-## 0.8.2-dev2
-
-### Enhancements
-
-### Features
-
-* Add slide notes to pptx
-
-### Fixes
-
-* Enables filters to be passed to `partition_doc` so it doesn't error with LibreOffice7.
-* Adds Onedrive connector.
-
-## 0.8.2-dev0
+## 0.8.2-dev3
 
 ### Enhancements
 
 * set the file's current position to the beginning after reading the file in `convert_to_bytes`
+* Add slide notes to pptx
 
 ### Features
+
+* Adds Onedrive connector.
+* Add Confluence connector for ingest cli to pull the body text from all documents from all spaces in a confluence domain.
+
 
 ### Fixes
 
@@ -25,6 +17,7 @@
 * Add functionality to convert a PDF in small chunks of pages at a time for `ocr_only` strategy
 * Adds `.txt`, `.text`, and `.tab` to list of extensions to check if file
   has a `text/plain` MIME type.
+* Enables filters to be passed to `partition_doc` so it doesn't error with LibreOffice7.
 
 ## 0.8.1
 
