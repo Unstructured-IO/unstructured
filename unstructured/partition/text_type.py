@@ -17,6 +17,7 @@ from unstructured.nlp.patterns import (
     UNICODE_BULLETS_RE,
     US_CITY_STATE_ZIP_RE,
     US_PHONE_NUMBERS_RE,
+    EMAIL_ADDRESS_PATTERN_RE,
 )
 from unstructured.nlp.tokenize import pos_tag, sent_tokenize, word_tokenize
 
@@ -78,7 +79,9 @@ def is_possible_narrative_text(
         return False
 
     non_alpha_threshold = float(
-        os.environ.get("UNSTRUCTURED_NARRATIVE_TEXT_NON_ALPHA_THRESHOLD", non_alpha_threshold),
+        os.environ.get(
+            "UNSTRUCTURED_NARRATIVE_TEXT_NON_ALPHA_THRESHOLD", non_alpha_threshold
+        ),
     )
     if under_non_alpha_ratio(text, threshold=non_alpha_threshold):
         return False
@@ -304,3 +307,8 @@ def is_us_city_state_zip(text) -> bool:
     DOYLESTOWN, PENNSYLVANIA 18901
     """
     return US_CITY_STATE_ZIP_RE.match(text.strip()) is not None
+
+
+def is_email_address(text) -> bool:
+    """Check if the given text is the email address"""
+    return EMAIL_ADDRESS_PATTERN_RE.match(text.strip()) is not None
