@@ -250,8 +250,6 @@ jobs:
         mkdir "$NLTK_DATA"
         make install-ci
     - name: Test Unstructured API Unit
-      env:
-        UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
       run: |
         source .venv/bin/activate
         sudo apt-get update && sudo apt-get install --yes poppler-utils libreoffice
@@ -263,6 +261,7 @@ jobs:
         make install-project-local
         git clone --depth 1 https://github.com/Unstructured-IO/unstructured-api.git
         cd unstructured-api
+        make install
         make test
 
   changelog:
