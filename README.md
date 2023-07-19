@@ -116,8 +116,6 @@ about the library.
 | ReStructured Text (`.rst`) | `partition_rst` | N/A | Yes | Include Page Breaks |
 | Rich Text Files (`.rtf`) | `partition_rtf` | N/A | Yes | Include Page Breaks |
 | TSV Files (`.tsv`) | `partition_tsv` | N/A | Yes | None |
-| Word Documents (`.doc`) | `partition_doc` | N/A | Yes | None |
-| Word Documents (`.docx`) | `partition_docx` | N/A | Yes | None |
 | Word Documents (`.doc`) | `partition_doc` | N/A | Yes | Include Page Breaks |
 | Word Documents (`.docx`) | `partition_docx` | N/A | Yes | Include Page Breaks |
 | XML Documents (`.xml`) | `partition_xml` | N/A | No | Encoding; Max Partition; XML Keep Tags |
