@@ -418,20 +418,28 @@ class MainProcess:
     help="User principal name, usually is your Azure AD email.",
 )
 @click.option(
-    "--ms-onedrive-folder",
+    "--ms-onedrive-path",
     default=None,
     help="Folder to start parsing files from.",
 )
 @click.option(
     "--ms-sharepoint-site",
     default=None,
-    help="Sharepoint site url.",
+    help="Sharepoint site url. Process either base url e.g https://[tenant].sharepoint.com \
+        or relative sites https://[tenant].sharepoint.com/sites/<site_name>.",
 )
 @click.option(
-    "--ms-sharepoint-folder",
-    is_flag=False,
+    "--ms-sharepoint-path",
     default="Shared Documents",
-    help="Site document folder name. Default 'Shared Documents'",
+    help="Path to start parsing files from. If the connector is to process all sites within the tenant \
+        this filter will be applied to all sites document libraries. Default 'Shared Documents'",
+)
+@click.option(
+    "--ms-sharepoint-all",
+    is_flag=True,
+    default=False,
+    help="Process all sites within the tenant. Requires for the app to be registered at a tenant \
+        level and a site url in https://[tenant]-admin.sharepoint.com.",
 )
 @click.option(
     "--ms-sharepoint-pages",
@@ -541,9 +549,10 @@ def main(
     ms_authority_url,
     ms_tenant,
     ms_user_pname,
-    ms_onedrive_folder,
+    ms_onedrive_path,
     ms_sharepoint_site,
-    ms_sharepoint_folder,
+    ms_sharepoint_path,
+    ms_sharepoint_all,
     ms_sharepoint_pages,
     elasticsearch_url,
     elasticsearch_index_name,
@@ -653,7 +662,7 @@ def main(
             )
         elif ms_sharepoint_site:
             hashed_dir_name = hashlib.sha256(
-                f"{ms_sharepoint_site}_{ms_sharepoint_folder}".encode("utf-8"),
+                f"{ms_sharepoint_site}_{ms_sharepoint_path}".encode("utf-8"),
             )
         else:
             raise ValueError(
@@ -880,7 +889,7 @@ def main(
                 decay=biomed_decay,
             ),
         )
-    elif ms_client_id or ms_user_pname:
+    elif ms_client_id and ms_user_pname:
         from unstructured.ingest.connector.onedrive import (
             OneDriveConnector,
             SimpleOneDriveConfig,
@@ -894,7 +903,7 @@ def main(
                 user_pname=ms_user_pname,
                 tenant=ms_tenant,
                 authority_url=ms_authority_url,
-                folder=ms_onedrive_folder,
+                path=ms_onedrive_path,
                 recursive=recursive,
             ),
         )
@@ -905,13 +914,14 @@ def main(
             SimpleSharepointConfig,
         )
 
-        doc_connector = SharepointConnector(
+        doc_connector = SharepointConnector(  #  type: ignore
             standard_config=standard_config,
             config=SimpleSharepointConfig(
                 client_id=ms_client_id,
                 client_credential=ms_client_cred,
                 site_url=ms_sharepoint_site,
-                folder=ms_sharepoint_folder,
+                path=ms_sharepoint_path,
+                process_all=ms_sharepoint_all,
                 process_pages=ms_sharepoint_pages,
             ),
         )

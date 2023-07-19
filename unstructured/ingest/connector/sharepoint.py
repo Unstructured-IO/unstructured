@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
+from html import unescape
 from pathlib import Path
 from typing import TYPE_CHECKING, List
+from urllib.parse import urlparse
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.ingest.interfaces import (
@@ -16,7 +18,6 @@ from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
     from office365.sharepoint.files.file import File
-    from office365.sharepoint.publishing.pages.page import SitePage
 
 MAX_MB_SIZE = 512_000_000
 
@@ -26,7 +27,8 @@ class SimpleSharepointConfig(BaseConnectorConfig):
     client_id: str
     client_credential: str = field(repr=False)
     site_url: str
-    folder: str
+    path: str
+    process_all: bool = False
     process_pages: bool = False
     recursive: bool = False
 
@@ -42,7 +44,7 @@ class SimpleSharepointConfig(BaseConnectorConfig):
 class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleSharepointConfig
     file: "File"
-    meta: "SitePage"
+    meta: dict
 
     def __post_init__(self):
         self.ext = "".join(Path(self.file.name).suffixes) if self.meta is None else ".html"
@@ -60,11 +62,15 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         """Parses the folder structure from the source and creates the download and output paths"""
         download_path = Path(f"{self.standard_config.download_dir}")
         output_path = Path(f"{self.standard_config.output_dir}")
-        parent = (
-            Path(self.file.serverRelativeUrl[1:])
-            if self.meta is None
-            else Path(self.meta.get_property("Url", "")).with_suffix(self.ext)
-        )
+        if self.meta is not None:
+            parent = (
+                Path(self.meta["url"]).with_suffix(self.ext)
+                if (self.meta["site_path"] is None)
+                else Path(self.meta["site_path"] + "/" + self.meta["url"]).with_suffix(self.ext)
+            )
+        else:
+            parent = Path(self.file.serverRelativeUrl[1:])
+
         self.download_dir = (download_path / parent.parent).resolve()
         self.download_filepath = (download_path / parent).resolve()
         oname = f"{str(parent)[:-len(self.ext)]}.json"
@@ -86,17 +92,21 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         try:
             content_labels = ["CanvasContent1", "LayoutWebpartsContent1"]
             content = self.file.listItemAllFields.select(content_labels).get().execute_query()
-            pld = ""
-            for label in content_labels:
-                label_content = content.properties.get(label, "")
-                if label_content:
-                    pld = pld + " " + label_content
+            pld = (content.properties.get("LayoutWebpartsContent1", "") or "") + (
+                content.properties.get("CanvasContent1", "") or ""
+            )
+
+            if pld != "":
+                pld = unescape(pld)
+            else:
+                logger.info(f"Skipping page {self.meta['url']} as it has no retrievable content.")
+                self.output_filepath = Path("")
+                return
 
             self.output_dir.mkdir(parents=True, exist_ok=True)
             if not self.download_dir.is_dir():
                 logger.debug(f"Creating directory: {self.download_dir}")
                 self.download_dir.mkdir(parents=True, exist_ok=True)
-
             with self.filename.open(mode="w") as f:
                 f.write(pld)
         except Exception as e:
@@ -139,15 +149,31 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
 class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
     config: SimpleSharepointConfig
+    tenant: None
 
     def __init__(self, standard_config: StandardConnectorConfig, config: SimpleSharepointConfig):
         super().__init__(standard_config, config)
-        self._set_client()
+        self._setup_client()
 
     @requires_dependencies(["office365"])
-    def _set_client(self):
+    def _setup_client(self):
         from office365.runtime.auth.client_credential import ClientCredential
         from office365.sharepoint.client_context import ClientContext
+
+        if self.config.process_all:
+            parsed_url = urlparse(self.config.site_url)
+            site_hostname = (parsed_url.hostname or "").split(".")
+            tenant_url = site_hostname[0].split("-")
+            if tenant_url[-1] != "admin" or (
+                parsed_url.path is not None and parsed_url.path != "/"
+            ):
+                raise ValueError(
+                    "A site url in the form of https://[tenant]-admin.sharepoint.com \
+                        is required to process all sites within a tenant.",
+                )
+            self.base_site_url = parsed_url._replace(
+                netloc=parsed_url.netloc.replace(site_hostname[0], tenant_url[0]),
+            ).geturl()
 
         self.client = ClientContext(self.config.site_url).with_credentials(
             ClientCredential(self.config.client_id, self.config.client_credential),
@@ -162,33 +188,70 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
             files += self._list_objects(f, recursive)
         return files
 
-    def _list_pages(self) -> List["File"]:
-        pages = self.client.site_pages.pages.get().execute_query()
+    def _list_pages(self, site_client) -> list:
+        pages = site_client.site_pages.pages.get().execute_query()
         pfiles = []
+
         for page_meta in pages:
-            site_url = page_meta.get_property("Url", None)
-            if site_url is None:
+            page_url = page_meta.get_property("Url", None)
+            if page_url is None:
                 logger.info("Missing site_url. Omitting page... ")
                 break
-            site_url = f"/{site_url}" if site_url[0] != "/" else site_url
-            file_page = self.client.web.get_file_by_server_relative_path(site_url)
-            pfiles.append([file_page, page_meta])
+            page_url = f"/{page_url}" if page_url[0] != "/" else page_url
+            file_page = site_client.web.get_file_by_server_relative_path(page_url)
+            site_path = (
+                None if (spath := (urlparse(site_client.base_url).path or "")) == "/" else spath[1:]
+            )
+            pfiles.append(
+                [file_page, {"url": page_meta.get_property("Url", None), "site_path": site_path}],
+            )
 
         return pfiles
 
     def initialize(self):
         pass
 
-    def get_ingest_docs(self):
-        root_folder = self.client.web.get_folder_by_server_relative_path(self.config.folder)
+    def _ingest_site_docs(self, site_client) -> List[SharepointIngestDoc]:
+        root_folder = site_client.web.get_folder_by_server_relative_path(self.config.path)
         files = self._list_files(root_folder, self.config.recursive)
-        file_output = [
-            SharepointIngestDoc(self.standard_config, self.config, f, None) for f in files
-        ]
+        output = [SharepointIngestDoc(self.standard_config, self.config, f, None) for f in files]
+
         if self.config.process_pages:
-            page_files = self._list_pages()
+            page_files = self._list_pages(site_client)
             page_output = [
                 SharepointIngestDoc(self.standard_config, self.config, f[0], f[1])
                 for f in page_files
             ]
-        return file_output + page_output
+            output = output + page_output
+        return output
+
+    def _filter_site_url(self, site):
+        if site.url is None:
+            return False
+        return (
+            (site.url[0 : len(self.base_site_url)] == self.base_site_url)
+            and ("/sites/" in site.url)
+            and all(c == "0" for c in site.get_property("GroupId", "").replace("-", ""))
+        )  # checks if its not a group, NOTE: do we want to process sharepoint groups?
+
+    @requires_dependencies(["office365"])
+    def get_ingest_docs(self):
+        if self.config.process_all:
+            from office365.runtime.auth.client_credential import ClientCredential
+            from office365.sharepoint.client_context import ClientContext
+            from office365.sharepoint.tenant.administration.tenant import Tenant
+
+            tenant = Tenant(self.client)
+            tenant_sites = tenant.get_site_properties_from_sharepoint_by_filters().execute_query()
+            tenant_sites = [s.url for s in tenant_sites if self._filter_site_url(s)]
+            tenant_sites.append(self.base_site_url)
+            ingest_docs = []
+            for site_url in set(tenant_sites):
+                logger.info(f"Processing docs for site: {site_url}")
+                site_client = ClientContext(site_url).with_credentials(
+                    ClientCredential(self.config.client_id, self.config.client_credential),
+                )
+                ingest_docs = ingest_docs + self._ingest_site_docs(site_client)
+            return ingest_docs
+        else:
+            return self._ingest_site_docs(self.client)

@@ -20,8 +20,9 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --ms-client-id "<Microsoft Sharepoint app client-id>" \
     --ms-client-cred "<Microsoft Sharepoint app client-secret>" \
-    --ms-sharepoint-site "<e.g https://contoso.sharepoint.com>" \
-    --ms-sharepoint-pages \
+    --ms-sharepoint-site "<e.g https://contoso.sharepoint.com or https://contoso.admin.sharepoint.com for tenant operations>" \
+    --ms-sharepoint-pages \ "Flag to process pages within the site" \
+    --ms-sharepoint-all \  "Flag to process all sites within the tenant" \
     --structured-output-dir sharepoint-ingest-output \
     --num-processes 2 \
     --verbose
