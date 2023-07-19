@@ -1,9 +1,10 @@
-## 0.8.2-dev3
+## 0.8.2-dev4
 
 ### Enhancements
 
 * set the file's current position to the beginning after reading the file in `convert_to_bytes`
 * Add slide notes to pptx
+* Add `--encoding` directive to ingest
 
 ### Features
 
