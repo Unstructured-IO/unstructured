@@ -245,7 +245,7 @@ jobs:
         source .venv/bin/activate
         mkdir "$NLTK_DATA"
         make install-ci
-    - name: Test
+    - name: Test Unstructured API Unit
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
       run: |
@@ -257,7 +257,8 @@ jobs:
         tesseract --version
         make install-nltk-models
         make install-project-local
-        git clone
+        git clone --depth 1 https://github.com/Unstructured-IO/unstructured-api.git
+        cd unstructured-api
         make test
 
   changelog:
