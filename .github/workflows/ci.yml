@@ -216,6 +216,50 @@ jobs:
         make install-ingest-wikipedia
         ./test_unstructured_ingest/test-ingest.sh
 
+  test_unstructured_api_unit:
+    strategy:
+      matrix:
+        # NOTE(yuming): Unstructured API only use Python 3.8
+        python-version: ["3.8"]
+    runs-on: ubuntu-latest
+    env:
+      NLTK_DATA: ${{ github.workspace }}/nltk_data
+    needs: [setup, lint]
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/cache/restore@v3
+      id: virtualenv-cache
+      with:
+        path: |
+          .venv
+          nltk_data
+        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Setup virtual environment (no cache hit)
+      if: steps.virtualenv-cache.outputs.cache-hit != 'true'
+      run: |
+        python${{ matrix.python-version}} -m venv .venv
+        source .venv/bin/activate
+        mkdir "$NLTK_DATA"
+        make install-ci
+    - name: Test
+      env:
+        UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
+      run: |
+        source .venv/bin/activate
+        sudo apt-get update && sudo apt-get install --yes poppler-utils libreoffice
+        make install-pandoc
+        sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
+        sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
+        tesseract --version
+        make install-nltk-models
+        make install-project-local
+        git clone
+        make test
+
   changelog:
     runs-on: ubuntu-latest
     steps:
