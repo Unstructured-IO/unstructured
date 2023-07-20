@@ -70,7 +70,6 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             )
         else:
             parent = Path(self.file.serverRelativeUrl[1:])
-
         self.download_dir = (download_path / parent.parent).resolve()
         self.download_filepath = (download_path / parent).resolve()
         oname = f"{str(parent)[:-len(self.ext)]}.json"
@@ -95,13 +94,13 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             pld = (content.properties.get("LayoutWebpartsContent1", "") or "") + (
                 content.properties.get("CanvasContent1", "") or ""
             )
-
             if pld != "":
                 pld = unescape(pld)
             else:
-                logger.info(f"Skipping page {self.meta['url']} as it has no retrievable content.")
-                self.output_filepath = Path("")
-                return
+                logger.info(
+                    f"Page {self.meta['url']} as it has no retrievable content. Dumping empty doc.",
+                )
+                pld = "<div></div>"
 
             self.output_dir.mkdir(parents=True, exist_ok=True)
             if not self.download_dir.is_dir():
@@ -199,9 +198,9 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
                 break
             page_url = f"/{page_url}" if page_url[0] != "/" else page_url
             file_page = site_client.web.get_file_by_server_relative_path(page_url)
-            site_path = (
-                None if (spath := (urlparse(site_client.base_url).path or "")) == "/" else spath[1:]
-            )
+            site_path = None
+            if (spath := (urlparse(site_client.base_url).path)) and (spath != "/"):
+                site_path = spath[1:]
             pfiles.append(
                 [file_page, {"url": page_meta.get_property("Url", None), "site_path": site_path}],
             )
@@ -211,8 +210,13 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
     def initialize(self):
         pass
 
-    def _ingest_site_docs(self, site_client) -> List[SharepointIngestDoc]:
+    def _ingest_site_docs(self, site_client) -> List["SharepointIngestDoc"]:
         root_folder = site_client.web.get_folder_by_server_relative_path(self.config.path)
+        if root_folder.select("Exists").get().execute_query().exists:
+            logger.info(
+                f"Folder {self.config.path} does not exist. Skipping site {site_client.base_url}",
+            )
+            return []
         files = self._list_files(root_folder, self.config.recursive)
         output = [SharepointIngestDoc(self.standard_config, self.config, f, None) for f in files]
 
