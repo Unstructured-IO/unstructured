@@ -431,8 +431,9 @@ class MainProcess:
 @click.option(
     "--ms-sharepoint-path",
     default="Shared Documents",
-    help="Path to start parsing files from. If the connector is to process all sites within the tenant \
-        this filter will be applied to all sites document libraries. Default 'Shared Documents'",
+    help="Path to start parsing files from. If the connector is to process all sites \
+    within the tenant this filter will be applied to all sites document libraries. \
+    Default 'Shared Documents'",
 )
 @click.option(
     "--ms-sharepoint-all",
@@ -962,7 +963,7 @@ def main(
             SimpleSharepointConfig,
         )
 
-        doc_connector = SharepointConnector(  #  type: ignore
+        doc_connector = SharepointConnector(#  type: ignore
             standard_config=standard_config,
             config=SimpleSharepointConfig(
                 client_id=ms_client_id,

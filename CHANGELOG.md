@@ -1,3 +1,9 @@
+## 0.8.2-dev4
+
+### Features
+
+* Adds Sharepoint connector.
+
 ## 0.8.2-dev3
 
 ### Enhancements

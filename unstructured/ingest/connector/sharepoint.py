@@ -233,7 +233,7 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
         if site.url is None:
             return False
         return (
-            (site.url[0 : len(self.base_site_url)] == self.base_site_url)
+            (site.url[0:len(self.base_site_url)] == self.base_site_url)
             and ("/sites/" in site.url)
             and all(c == "0" for c in site.get_property("GroupId", "").replace("-", ""))
         )  # checks if its not a group, NOTE: do we want to process sharepoint groups?
