@@ -13,11 +13,11 @@ from unstructured.cleaners.core import remove_punctuation
 from unstructured.logger import trace_logger
 from unstructured.nlp.english_words import ENGLISH_WORDS
 from unstructured.nlp.patterns import (
+    EMAIL_ADDRESS_PATTERN_RE,
     ENDS_IN_PUNCT_RE,
     UNICODE_BULLETS_RE,
     US_CITY_STATE_ZIP_RE,
     US_PHONE_NUMBERS_RE,
-    EMAIL_ADDRESS_PATTERN_RE,
 )
 from unstructured.nlp.tokenize import pos_tag, sent_tokenize, word_tokenize
 
@@ -80,7 +80,8 @@ def is_possible_narrative_text(
 
     non_alpha_threshold = float(
         os.environ.get(
-            "UNSTRUCTURED_NARRATIVE_TEXT_NON_ALPHA_THRESHOLD", non_alpha_threshold
+            "UNSTRUCTURED_NARRATIVE_TEXT_NON_ALPHA_THRESHOLD",
+            non_alpha_threshold,
         ),
     )
     if under_non_alpha_ratio(text, threshold=non_alpha_threshold):
