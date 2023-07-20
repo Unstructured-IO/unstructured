@@ -1,4 +1,4 @@
-## 0.8.2-dev3
+## 0.8.2-dev4
 
 ### Enhancements
 
@@ -13,6 +13,7 @@
 
 ### Fixes
 
+* Use the `image_metadata` property of the `PageLayout` instance to get the page image info in the `document_to_element_list`
 * Add functionality to write images to computer storage temporarily instead of keeping them in memory for `ocr_only` strategy
 * Add functionality to convert a PDF in small chunks of pages at a time for `ocr_only` strategy
 * Adds `.txt`, `.text`, and `.tab` to list of extensions to check if file
