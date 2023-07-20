@@ -963,7 +963,7 @@ def main(
             SimpleSharepointConfig,
         )
 
-        doc_connector = SharepointConnector(  #  type: ignore
+        doc_connector = SharepointConnector(  # type: ignore
             standard_config=standard_config,
             config=SimpleSharepointConfig(
                 client_id=ms_client_id,
