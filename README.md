@@ -33,7 +33,7 @@
   <p>API Announcement!</p>
 </h3>
 
-We are thrilled to announce our newly launched [Unstructured API](https://unstructured-io.github.io/unstructured/api.html). While access to the hosted Unstructured API will remain free, API Keys will soon be required to make requests. To prevent disruption, get yours [here](https://www.unstructured.io/api-key/) now and start using it today! Check out the [readme](https://github.com/Unstructured-IO/unstructured-api#--) here to get started making API calls.</p>
+We are thrilled to announce our newly launched [Unstructured API](https://unstructured-io.github.io/unstructured/api.html). While access to the hosted Unstructured API will remain free, API Keys are required to make requests. To prevent disruption, get yours [here](https://www.unstructured.io/api-key/) now and start using it today! Check out the [readme](https://github.com/Unstructured-IO/unstructured-api#--) here to get started making API calls.</p>
 
 #### :rocket: Beta Feature: Chipper Model
 
