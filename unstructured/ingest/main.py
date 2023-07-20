@@ -466,6 +466,44 @@ class MainProcess:
     "Example: --jq-query '{meta, body}'",
 )
 @click.option(
+    "--confluence-url",
+    default=None,
+    help='URL to Confluence Cloud, e.g. "unstructured-ingest-test.atlassian.net"',
+)
+@click.option(
+    "--confluence-user-email",
+    default=None,
+    help="Email to authenticate into Confluence Cloud",
+)
+@click.option(
+    "--confluence-api-token",
+    default=None,
+    help="API Token to authenticate into Confluence Cloud. \
+        Check https://developer.atlassian.com/cloud/confluence/basic-auth-for-rest-apis/ \
+        for more info.",
+)
+@click.option(
+    "--confluence-list-of-spaces",
+    default=None,
+    help="A list of confluence space ids to be fetched. From each fetched space, \
+        --confluence-num-of-docs-from-each-space number of docs will be ingested. \
+        --confluence-list-of-spaces and --confluence-num-of-spaces cannot be used at the same time",
+)
+@click.option(
+    "--confluence-max-num-of-spaces",
+    default=500,
+    help="Number of confluence space ids to be fetched. From each fetched space, \
+        --confluence-num-of-docs-from-each-space number of docs will be ingested. \
+        --confluence-list-of-spaces and --confluence-num-of-spaces cannot be used at the same time",
+)
+@click.option(
+    "--confluence-max-num-of-docs-from-each-space",
+    default=100,
+    help="Number of documents to be aimed to be ingested from each fetched confluence space. \
+        If any space has fewer documents, all the documents from that space will be ingested. \
+        Documents are not necessarily ingested in order of creation date.",
+)
+@click.option(
     "--download-dir",
     help="Where files are downloaded to, defaults to `$HOME/.cache/unstructured/ingest/<SHA256>`.",
 )
@@ -557,6 +595,12 @@ def main(
     elasticsearch_url,
     elasticsearch_index_name,
     jq_query,
+    confluence_url,
+    confluence_user_email,
+    confluence_api_token,
+    confluence_list_of_spaces,
+    confluence_max_num_of_spaces,
+    confluence_max_num_of_docs_from_each_space,
     download_dir,
     preserve_downloads,
     structured_output_dir,
@@ -663,6 +707,10 @@ def main(
         elif ms_sharepoint_site:
             hashed_dir_name = hashlib.sha256(
                 f"{ms_sharepoint_site}_{ms_sharepoint_path}".encode("utf-8"),
+            )
+        elif confluence_url:
+            hashed_dir_name = hashlib.sha256(
+                f"{confluence_url}".encode("utf-8"),
             )
         else:
             raise ValueError(
@@ -952,6 +1000,23 @@ def main(
                 url=elasticsearch_url,
                 index_name=elasticsearch_index_name,
                 jq_query=jq_query,
+            ),
+        )
+    elif confluence_url:
+        from unstructured.ingest.connector.confluence import (
+            ConfluenceConnector,
+            SimpleConfluenceConfig,
+        )
+
+        doc_connector = ConfluenceConnector(  # type: ignore
+            standard_config=standard_config,
+            config=SimpleConfluenceConfig(
+                url=confluence_url,
+                user_email=confluence_user_email,
+                api_token=confluence_api_token,
+                list_of_spaces=confluence_list_of_spaces,
+                max_number_of_spaces=confluence_max_num_of_spaces,
+                max_number_of_docs_from_each_space=confluence_max_num_of_docs_from_each_space,
             ),
         )
     # Check for other connector-specific options here and define the doc_connector object
