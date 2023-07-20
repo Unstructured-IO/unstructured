@@ -37,7 +37,7 @@ pycparser==2.21
     # via
     #   -c requirements/base.txt
     #   cffi
-pyjwt[crypto]==2.8.0
+pyjwt[crypto]==2.7.0
     # via msal
 pytz==2023.3
     # via
