@@ -2,7 +2,8 @@
 
 ### Enhancements
 
-* set the file's current position to the beginning after reading the file in `convert_to_bytes`
+* Update functionality to retrieve image metadata from a page for `document_to_element_list`
+* Set the file's current position to the beginning after reading the file in `convert_to_bytes`
 * Add slide notes to pptx
 
 ### Features
