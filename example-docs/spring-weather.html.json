@@ -222,5 +222,13 @@
     "metadata": {
       "page_number": 1
     }
+  },
+  {
+    "element_id": "a8a00c356d2fa1461d532a1088274f32",
+    "text": "fake.m@gmail.com",
+    "type": "EmailAddress",
+    "metadata": {
+      "page_number": 1
+    }
   }
 ]
