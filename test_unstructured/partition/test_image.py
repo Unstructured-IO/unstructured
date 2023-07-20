@@ -7,7 +7,7 @@ from PIL import Image
 from pytesseract import TesseractError
 from unstructured_inference.inference import layout
 
-from unstructured.documents.elements import Title
+from unstructured.documents.elements import EmailAddress, Title
 from unstructured.partition import image, pdf
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -39,7 +39,9 @@ def mock_successful_post(url, **kwargs):
         "pages": [
             {
                 "number": 0,
-                "elements": [{"type": "Title", "text": "Charlie Brown and the Great Pumpkin"}],
+                "elements": [
+                    {"type": "Title", "text": "Charlie Brown and the Great Pumpkin"},
+                ],
             },
             {
                 "number": 1,
@@ -93,7 +95,11 @@ def test_partition_image_local(monkeypatch, filename, file):
         lambda *args, **kwargs: MockDocumentLayout(),
     )
 
-    partition_image_response = pdf._partition_pdf_or_image_local(filename, file, is_image=True)
+    partition_image_response = pdf._partition_pdf_or_image_local(
+        filename,
+        file,
+        is_image=True,
+    )
     assert partition_image_response[0].text == "Charlie Brown and the Great Pumpkin"
 
 
@@ -103,7 +109,9 @@ def test_partition_image_local_raises_with_no_filename():
         pdf._partition_pdf_or_image_local(filename="", file=None, is_image=True)
 
 
-def test_partition_image_with_auto_strategy(filename="example-docs/layout-parser-paper-fast.jpg"):
+def test_partition_image_with_auto_strategy(
+    filename="example-docs/layout-parser-paper-fast.jpg",
+):
     elements = image.partition_image(filename=filename, strategy="auto")
     titles = [el for el in elements if el.category == "Title" and len(el.text.split(" ")) > 10]
     title = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
@@ -111,27 +119,52 @@ def test_partition_image_with_auto_strategy(filename="example-docs/layout-parser
 
 
 def test_partition_image_with_language_passed(filename="example-docs/example.jpg"):
-    with mock.patch.object(layout, "process_file_with_model", mock.MagicMock()) as mock_partition:
-        image.partition_image(filename=filename, strategy="hi_res", ocr_languages="eng+swe")
+    with mock.patch.object(
+        layout,
+        "process_file_with_model",
+        mock.MagicMock(),
+    ) as mock_partition:
+        image.partition_image(
+            filename=filename,
+            strategy="hi_res",
+            ocr_languages="eng+swe",
+        )
 
     assert mock_partition.call_args.kwargs.get("ocr_languages") == "eng+swe"
 
 
-def test_partition_image_from_file_with_language_passed(filename="example-docs/example.jpg"):
-    with mock.patch.object(layout, "process_data_with_model", mock.MagicMock()) as mock_partition:
-        with open(filename, "rb") as f:
-            image.partition_image(file=f, strategy="hi_res", ocr_languages="eng+swe")
+def test_partition_image_from_file_with_language_passed(
+    filename="example-docs/example.jpg",
+):
+    with mock.patch.object(
+        layout,
+        "process_data_with_model",
+        mock.MagicMock(),
+    ) as mock_partition, open(filename, "rb") as f:
+        image.partition_image(file=f, strategy="hi_res", ocr_languages="eng+swe")
 
     assert mock_partition.call_args.kwargs.get("ocr_languages") == "eng+swe"
 
 
-def test_partition_image_raises_with_invalid_language(filename="example-docs/example.jpg"):
+def test_partition_image_raises_with_invalid_language(
+    filename="example-docs/example.jpg",
+):
     with pytest.raises(TesseractError):
-        image.partition_image(filename=filename, strategy="hi_res", ocr_languages="fakeroo")
+        image.partition_image(
+            filename=filename,
+            strategy="hi_res",
+            ocr_languages="fakeroo",
+        )
 
 
 def test_partition_image_with_ocr_detects_korean():
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "english-and-korean.png")
+    filename = os.path.join(
+        DIRECTORY,
+        "..",
+        "..",
+        "example-docs",
+        "english-and-korean.png",
+    )
     elements = image.partition_image(
         filename=filename,
         ocr_languages="eng+kor",
@@ -143,7 +176,13 @@ def test_partition_image_with_ocr_detects_korean():
 
 
 def test_partition_image_with_ocr_detects_korean_from_file():
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "english-and-korean.png")
+    filename = os.path.join(
+        DIRECTORY,
+        "..",
+        "..",
+        "example-docs",
+        "english-and-korean.png",
+    )
 
     with open(filename, "rb") as f:
         elements = image.partition_image(
@@ -157,6 +196,20 @@ def test_partition_image_with_ocr_detects_korean_from_file():
 
 
 def test_partition_image_raises_with_bad_strategy():
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "english-and-korean.png")
+    filename = os.path.join(
+        DIRECTORY,
+        "..",
+        "..",
+        "example-docs",
+        "english-and-korean.png",
+    )
     with pytest.raises(ValueError):
         image.partition_image(filename=filename, strategy="fakeroo")
+
+
+def test_partition_iamge_from_filename_with_email_address():
+    directory = os.path.join(DIRECTORY, "..", "..", "example-docs")
+    filename = os.path.join(directory, "fake-image-with-email.jpg")
+    elements = image.partition_image(filename=filename, include_metadata=False)
+
+    assert type(elements[-1]) is EmailAddress

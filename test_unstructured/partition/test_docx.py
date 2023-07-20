@@ -5,6 +5,7 @@ import pytest
 
 from unstructured.documents.elements import (
     Address,
+    EmailAddress,
     Footer,
     Header,
     ListItem,
@@ -39,6 +40,8 @@ def mock_document():
     document.add_paragraph("2023")
     # NOTE(robinson) - this should be an address
     document.add_paragraph("DOYLESTOWN, PA 18901")
+    # NOTE - this should be a email address
+    document.add_paragraph("fake.mail@gmail.com")
 
     return document
 
@@ -54,6 +57,7 @@ def expected_elements():
         NarrativeText("This is my third thought."),
         Text("2023"),
         Address("DOYLESTOWN, PA 18901"),
+        EmailAddress("fake.mail@gmail.com"),
     ]
 
 
@@ -194,6 +198,17 @@ def test_partition_docx_from_filename_exclude_metadata(filename="example-docs/ha
 
 
 def test_partition_docx_from_file_exclude_metadata(mock_document, tmpdir):
+    filename = os.path.join(tmpdir.dirname, "mock_document.docx")
+    mock_document.save(filename)
+
+    with open(filename, "rb") as f:
+        elements = partition_docx(file=f, include_metadata=False)
+    assert elements[0].metadata.filetype is None
+    assert elements[0].metadata.page_name is None
+    assert elements[0].metadata.filename is None
+
+
+def test_partition_docx_from_file_wi(mock_document, tmpdir):
     filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     mock_document.save(filename)
 

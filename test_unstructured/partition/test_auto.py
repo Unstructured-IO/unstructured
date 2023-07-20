@@ -13,6 +13,7 @@ from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import (
     Address,
     ElementMetadata,
+    EmailAddress,
     ListItem,
     NarrativeText,
     Table,
@@ -78,7 +79,10 @@ def mock_docx_document():
     # NOTE(robinson) - this should get dropped because it is empty
     document.add_paragraph("", style="Normal")
     # NOTE(robinson) - this should get picked up as a narrative text
-    document.add_paragraph("This is my first thought. This is my second thought.", style="Normal")
+    document.add_paragraph(
+        "This is my first thought. This is my second thought.",
+        style="Normal",
+    )
     document.add_paragraph("This is my third thought.", style="Body Text")
     # NOTE(robinson) - this should just be regular text
     document.add_paragraph("2023")
@@ -99,7 +103,11 @@ def expected_docx_elements():
     ]
 
 
-def test_auto_partition_docx_with_filename(mock_docx_document, expected_docx_elements, tmpdir):
+def test_auto_partition_docx_with_filename(
+    mock_docx_document,
+    expected_docx_elements,
+    tmpdir,
+):
     filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     mock_docx_document.save(filename)
 
@@ -108,7 +116,11 @@ def test_auto_partition_docx_with_filename(mock_docx_document, expected_docx_ele
     assert elements[0].metadata.filename == os.path.basename(filename)
 
 
-def test_auto_partition_docx_with_file(mock_docx_document, expected_docx_elements, tmpdir):
+def test_auto_partition_docx_with_file(
+    mock_docx_document,
+    expected_docx_elements,
+    tmpdir,
+):
     filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     mock_docx_document.save(filename)
 
@@ -119,7 +131,12 @@ def test_auto_partition_docx_with_file(mock_docx_document, expected_docx_element
 
 @pytest.mark.parametrize(
     ("pass_file_filename", "content_type"),
-    [(False, None), (False, "application/msword"), (True, "application/msword"), (True, None)],
+    [
+        (False, None),
+        (False, "application/msword"),
+        (True, "application/msword"),
+        (True, None),
+    ],
 )
 def test_auto_partition_doc_with_filename(
     mock_docx_document,
@@ -147,7 +164,11 @@ def test_auto_partition_doc_with_filename(
 # NOTE(robinson) - the application/x-ole-storage mime type is not specific enough to
 # determine that the file is an .doc document
 @pytest.mark.xfail()
-def test_auto_partition_doc_with_file(mock_docx_document, expected_docx_elements, tmpdir):
+def test_auto_partition_doc_with_file(
+    mock_docx_document,
+    expected_docx_elements,
+    tmpdir,
+):
     docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
     mock_docx_document.save(docx_filename)
@@ -212,7 +233,9 @@ def test_auto_partition_json_from_filename():
     )
     with open(filename) as json_f:
         json_data = json.load(json_f)
-    json_elems = json.loads(elements_to_json(partition(filename=filename, strategy="hi_res")))
+    json_elems = json.loads(
+        elements_to_json(partition(filename=filename, strategy="hi_res")),
+    )
     for elem in json_elems:
         elem.pop("metadata")
     for elem in json_data:
@@ -236,7 +259,9 @@ def test_auto_partition_json_from_file():
     with open(filename) as json_f:
         json_data = json.load(json_f)
     with open(filename, encoding="utf-8") as partition_f:
-        json_elems = json.loads(elements_to_json(partition(file=partition_f, strategy="hi_res")))
+        json_elems = json.loads(
+            elements_to_json(partition(file=partition_f, strategy="hi_res")),
+        )
     for elem in json_elems:
         # coordinates are always in the element data structures, even if None
         elem.pop("coordinates")
@@ -273,7 +298,12 @@ def test_auto_partition_text_from_file():
 
 @pytest.mark.parametrize(
     ("pass_file_filename", "content_type"),
-    [(False, None), (False, "application/pdf"), (True, "application/pdf"), (True, None)],
+    [
+        (False, None),
+        (False, "application/pdf"),
+        (True, "application/pdf"),
+        (True, None),
+    ],
 )
 def test_auto_partition_pdf_from_filename(pass_file_filename, content_type, request):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
@@ -312,7 +342,11 @@ def test_auto_partition_pdf_with_fast_strategy():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
 
     mock_return = [NarrativeText("Hello there!")]
-    with patch.object(auto, "partition_pdf", return_value=mock_return) as mock_partition:
+    with patch.object(
+        auto,
+        "partition_pdf",
+        return_value=mock_return,
+    ) as mock_partition:
         partition(filename=filename, strategy="fast")
 
     mock_partition.assert_called_once_with(
@@ -328,7 +362,12 @@ def test_auto_partition_pdf_with_fast_strategy():
 
 @pytest.mark.parametrize(
     ("pass_file_filename", "content_type"),
-    [(False, None), (False, "application/pdf"), (True, "application/pdf"), (True, None)],
+    [
+        (False, None),
+        (False, "application/pdf"),
+        (True, "application/pdf"),
+        (True, None),
+    ],
 )
 def test_auto_partition_pdf_from_file(pass_file_filename, content_type, request):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
@@ -409,6 +448,7 @@ EXPECTED_PPTX_OUTPUT = [
     ListItem(text="Use _TextFrame.add_paragraph() for subsequent bullets"),
     NarrativeText(text="Here is a lot of text!"),
     NarrativeText(text="Here is some text in a text box!"),
+    EmailAddress(text="fake.mail@gmail.com"),
 ]
 
 
@@ -491,7 +531,11 @@ def test_partition_md_works_with_embedded_html():
 
 def test_auto_partition_warns_if_header_set_and_not_url(caplog):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, EML_TEST_FILE)
-    partition(filename=filename, headers={"Accept": "application/pdf"}, strategy="hi_res")
+    partition(
+        filename=filename,
+        headers={"Accept": "application/pdf"},
+        strategy="hi_res",
+    )
     assert caplog.records[0].levelname == "WARNING"
 
 
@@ -511,7 +555,7 @@ def test_auto_partition_works_with_unstructured_jsons_from_file():
 def test_auto_partition_odt_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.odt")
     elements = partition(filename=filename, strategy="hi_res")
-    assert elements == [Title("Lorem ipsum dolor sit amet.")]
+    assert elements == [Title("Lorem ipsum dolor sit amet."), EmailAddress("fakemail@gmail.com")]
 
 
 def test_auto_partition_odt_from_file():
@@ -519,7 +563,7 @@ def test_auto_partition_odt_from_file():
     with open(filename, "rb") as f:
         elements = partition(file=f, strategy="hi_res")
 
-    assert elements == [Title("Lorem ipsum dolor sit amet.")]
+    assert elements == [Title("Lorem ipsum dolor sit amet."), EmailAddress("fakemail@gmail.com")]
 
 
 @pytest.mark.parametrize(
@@ -535,7 +579,10 @@ def test_auto_adds_filetype_to_metadata(content_type, routing_func, expected):
         f"unstructured.partition.auto.partition_{routing_func}",
         lambda *args, **kwargs: [Text("text 1"), Text("text 2")],
     ):
-        elements = partition("example-docs/layout-parser-paper-fast.pdf", content_type=content_type)
+        elements = partition(
+            "example-docs/layout-parser-paper-fast.pdf",
+            content_type=content_type,
+        )
     assert len(elements) == 2
     assert all(el.metadata.filetype == expected for el in elements)
 
@@ -556,7 +603,10 @@ def test_auto_filetype_overrides_file_specific(content_type, expected):
             Text("text 2", metadata=pdf_metadata),
         ],
     ):
-        elements = partition("example-docs/layout-parser-paper-fast.pdf", content_type=content_type)
+        elements = partition(
+            "example-docs/layout-parser-paper-fast.pdf",
+            content_type=content_type,
+        )
     assert len(elements) == 2
     assert all(el.metadata.filetype == expected for el in elements)
 
@@ -617,7 +667,9 @@ def test_auto_partition_xml_from_file(filename="example-docs/factbook.xml"):
     assert elements[0].text == "United States"
 
 
-def test_auto_partition_xml_from_filename_with_tags(filename="example-docs/factbook.xml"):
+def test_auto_partition_xml_from_filename_with_tags(
+    filename="example-docs/factbook.xml",
+):
     elements = partition(filename=filename, xml_keep_tags=True)
 
     assert elements[5].text == "<name>United States</name>"

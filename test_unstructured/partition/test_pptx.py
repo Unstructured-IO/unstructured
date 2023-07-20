@@ -5,6 +5,7 @@ import pptx
 import pytest
 
 from unstructured.documents.elements import (
+    EmailAddress,
     ListItem,
     NarrativeText,
     PageBreak,
@@ -23,6 +24,7 @@ EXPECTED_PPTX_OUTPUT = [
     ListItem(text="Use _TextFrame.add_paragraph() for subsequent bullets"),
     NarrativeText(text="Here is a lot of text!"),
     NarrativeText(text="Here is some text in a text box!"),
+    EmailAddress(text="fake.mail@gmail.com"),
 ]
 
 
@@ -205,7 +207,9 @@ EXPECTED_HTML_TABLE = """<table>
 </table>"""
 
 
-def test_partition_pptx_grabs_tables(filename="example-docs/fake-power-point-table.pptx"):
+def test_partition_pptx_grabs_tables(
+    filename="example-docs/fake-power-point-table.pptx",
+):
     elements = partition_pptx(filename=filename)
 
     assert elements[1].text.startswith("Column 1")

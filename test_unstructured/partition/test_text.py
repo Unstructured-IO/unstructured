@@ -4,7 +4,13 @@ import pathlib
 import pytest
 
 from unstructured.cleaners.core import group_broken_paragraphs
-from unstructured.documents.elements import Address, ListItem, NarrativeText, Title
+from unstructured.documents.elements import (
+    Address,
+    EmailAddress,
+    ListItem,
+    NarrativeText,
+    Title,
+)
 from unstructured.partition.text import partition_text
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -21,7 +27,11 @@ EXPECTED_OUTPUT = [
 
 @pytest.mark.parametrize(
     ("filename", "encoding"),
-    [("fake-text.txt", "utf-8"), ("fake-text.txt", None), ("fake-text-utf-16-be.txt", "utf-16-be")],
+    [
+        ("fake-text.txt", "utf-8"),
+        ("fake-text.txt", None),
+        ("fake-text-utf-16-be.txt", "utf-16-be"),
+    ],
 )
 def test_partition_text_from_filename(filename, encoding):
     filename_path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
@@ -34,7 +44,11 @@ def test_partition_text_from_filename(filename, encoding):
 
 def test_partition_text_from_filename_with_metadata_filename():
     filename_path = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-text.txt")
-    elements = partition_text(filename=filename_path, encoding="utf-8", metadata_filename="test")
+    elements = partition_text(
+        filename=filename_path,
+        encoding="utf-8",
+        metadata_filename="test",
+    )
     assert elements == EXPECTED_OUTPUT
     for element in elements:
         assert element.metadata.filename == "test"
@@ -157,11 +171,13 @@ def test_partition_text_captures_everything_even_with_linebreaks():
     text = """
     VERY IMPORTANT MEMO
     DOYLESTOWN, PA 18901
+    fakemail@gmail.com
     """
     elements = partition_text(text=text)
     assert elements == [
         Title(text="VERY IMPORTANT MEMO"),
         Address(text="DOYLESTOWN, PA 18901"),
+        EmailAddress(text="fakemail@gmail.com"),
     ]
     for element in elements:
         assert element.metadata.filename is None
@@ -211,11 +227,19 @@ def test_partition_text_doesnt_get_page_breaks():
 
 @pytest.mark.parametrize(
     ("filename", "encoding"),
-    [("fake-text.txt", "utf-8"), ("fake-text.txt", None), ("fake-text-utf-16-be.txt", "utf-16-be")],
+    [
+        ("fake-text.txt", "utf-8"),
+        ("fake-text.txt", None),
+        ("fake-text-utf-16-be.txt", "utf-16-be"),
+    ],
 )
 def test_partition_text_from_filename_exclude_metadata(filename, encoding):
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-    elements = partition_text(filename=filename, encoding=encoding, include_metadata=False)
+    elements = partition_text(
+        filename=filename,
+        encoding=encoding,
+        include_metadata=False,
+    )
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
 
@@ -226,3 +250,17 @@ def test_partition_text_from_file_exclude_metadata():
         elements = partition_text(file=f, include_metadata=False)
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
+
+
+def test_partition_text_from_file__with_email_type():
+    filename = os.path.join(
+        DIRECTORY,
+        "..",
+        "..",
+        "example-docs",
+        "fake-text-with-email.txt",
+    )
+    with open(filename) as f:
+        elements = partition_text(file=f, include_metadata=False)
+
+    assert elements[-1] == EmailAddress("mr.fake@fake.com")

@@ -5,6 +5,7 @@ from unittest.mock import patch
 import pytest
 import requests
 
+from unstructured.documents.html import HTMLEmailAddress
 from unstructured.partition.md import partition_md
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -139,3 +140,9 @@ def test_partition_md_from_text_exclude_metadata():
     elements = partition_md(text=text, include_metadata=False)
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
+
+
+def test_partition_md_from_filename_with_email_type(tmpdir):
+    path = os.path.join(DIRECTORY, "..", "..", "example-docs", "README.md")
+    elements = partition_md(filename=path, metadata_filename="test")
+    assert type(elements[-1]) is HTMLEmailAddress

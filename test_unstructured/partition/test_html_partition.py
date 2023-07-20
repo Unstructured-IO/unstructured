@@ -8,6 +8,7 @@ from requests.models import Response
 
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import Title
+from unstructured.documents.html import HTMLEmailAddress
 from unstructured.partition.html import partition_html
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -319,3 +320,11 @@ def test_partition_html_from_filename_exclude_metadata():
     assert "PageBreak" not in [elem.category for elem in elements]
     assert elements[0].metadata.filename is None
     assert elements[0].metadata.file_directory is None
+
+
+def test_partition_html_from_filename_with_email_address():
+    directory = os.path.join(DIRECTORY, "..", "..", "example-docs")
+    filename = os.path.join(directory, "fake-html.html")
+    elements = partition_html(filename=filename, include_metadata=False)
+
+    assert type(elements[-1]) is HTMLEmailAddress

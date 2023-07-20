@@ -3,7 +3,7 @@ import pathlib
 
 import pytest
 
-from unstructured.documents.elements import ListItem, NarrativeText, Title
+from unstructured.documents.elements import EmailAddress, ListItem, NarrativeText, Title
 from unstructured.partition.ppt import partition_ppt
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -16,6 +16,7 @@ EXPECTED_PPT_OUTPUT = [
     ListItem(text="Use _TextFrame.add_paragraph() for subsequent bullets"),
     NarrativeText(text="Here is a lot of text!"),
     NarrativeText(text="Here is some text in a text box!"),
+    EmailAddress(text="fake.mail@gmail.com"),
 ]
 
 

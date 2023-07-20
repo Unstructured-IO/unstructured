@@ -2,6 +2,7 @@ import os
 import pathlib
 
 from unstructured.documents.elements import Title
+from unstructured.documents.html import HTMLEmailAddress
 from unstructured.partition.rtf import partition_rtf
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -12,6 +13,7 @@ def test_partition_rtf_from_filename():
     elements = partition_rtf(filename=filename)
     assert len(elements) > 0
     assert elements[0] == Title("My First Heading")
+    assert type(elements[-1]) is HTMLEmailAddress
     for element in elements:
         assert element.metadata.filename == "fake-doc.rtf"
 
@@ -29,6 +31,8 @@ def test_partition_rtf_from_file():
         elements = partition_rtf(file=f)
     assert len(elements) > 0
     assert elements[0] == Title("My First Heading")
+    assert type(elements[-1]) is HTMLEmailAddress
+
     for element in elements:
         assert element.metadata.filename is None
 
@@ -38,6 +42,7 @@ def test_partition_rtf_from_file_with_metadata_filename():
     with open(filename, "rb") as f:
         elements = partition_rtf(file=f, metadata_filename="test")
     assert elements[0] == Title("My First Heading")
+    assert type(elements[-1]) is HTMLEmailAddress
     for element in elements:
         assert element.metadata.filename == "test"
 

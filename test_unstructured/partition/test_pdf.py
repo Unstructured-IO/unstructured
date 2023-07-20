@@ -10,6 +10,7 @@ from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
     CoordinatesMetadata,
     ElementMetadata,
+    EmailAddress,
     NarrativeText,
     Text,
     Title,
@@ -490,3 +491,10 @@ def test_partition_pdf_with_fast_strategy_from_file_exclude_metadata(
         elements = pdf.partition_pdf(file=f, url=None, strategy="fast", include_metadata=False)
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
+
+
+def test_partition_md_from_filename_with_email_type(
+    filename="example-docs/fake-pdf-with-email.pdf",
+):
+    elements = pdf.partition_pdf(filename=filename, metadata_filename="test")
+    assert type(elements[-1]) is EmailAddress
