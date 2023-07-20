@@ -7,6 +7,7 @@ from unstructured.documents.elements import (
     Address,
     Element,
     ElementMetadata,
+    EmailAddress,
     ListItem,
     NarrativeText,
     Text,
@@ -20,6 +21,7 @@ from unstructured.nlp.tokenize import sent_tokenize
 from unstructured.partition.common import exactly_one
 from unstructured.partition.text_type import (
     is_bulleted_text,
+    is_email_address,
     is_possible_narrative_text,
     is_possible_title,
     is_us_city_state_zip,
@@ -157,6 +159,8 @@ def element_from_text(
         )
     elif is_us_city_state_zip(text):
         return Address(text=text, coordinates=coordinates, coordinate_system=coordinate_system)
+    elif is_email_address(text):
+        return EmailAddress(text=text)
     elif is_possible_narrative_text(text):
         return NarrativeText(
             text=text,

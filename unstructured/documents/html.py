@@ -15,6 +15,7 @@ from unstructured.documents.base import Page
 from unstructured.documents.elements import (
     Address,
     Element,
+    EmailAddress,
     ListItem,
     NarrativeText,
     Text,
@@ -24,6 +25,7 @@ from unstructured.documents.xml import VALID_PARSERS, XMLDocument
 from unstructured.logger import logger
 from unstructured.partition.text_type import (
     is_bulleted_text,
+    is_email_address,
     is_possible_narrative_text,
     is_possible_title,
     is_us_city_state_zip,
@@ -64,6 +66,12 @@ class HTMLText(TagsMixin, Text):
 
 class HTMLAddress(TagsMixin, Address):
     """Address with tag information."""
+
+    pass
+
+
+class HTMLEmailAddress(TagsMixin, EmailAddress):
+    """Address with tag information"""
 
     pass
 
@@ -141,7 +149,10 @@ class HTMLDocument(XMLDocument):
                     element, next_element = _process_list_item(tag_elem)
                     if element is not None:
                         page.elements.append(element)
-                        descendanttag_elems = _get_bullet_descendants(tag_elem, next_element)
+                        descendanttag_elems = _get_bullet_descendants(
+                            tag_elem,
+                            next_element,
+                        )
 
                 elif tag_elem.tag in PAGEBREAK_TAGS and len(page.elements) > 0:
                     pages.append(page)
@@ -211,7 +222,9 @@ class HTMLDocument(XMLDocument):
                 # NOTE(robinson) - Skipping for test coverage because this condition is impossible.
                 # Added type check because from_pages is a method on Document. Without the type
                 # check, mypy complains about returning Document instead of HTMLDocument
-                raise ValueError(f"Unexpected class: {self.__class__.__name__}")  # pragma: no cover
+                raise ValueError(
+                    f"Unexpected class: {self.__class__.__name__}",
+                )  # pragma: no cover
             return out
 
 
@@ -231,16 +244,25 @@ def _parse_tag(
     return _text_to_element(text, tag_elem.tag, ancestortags)
 
 
-def _text_to_element(text: str, tag: str, ancestortags: Tuple[str, ...]) -> Optional[Element]:
+def _text_to_element(
+    text: str,
+    tag: str,
+    ancestortags: Tuple[str, ...],
+) -> Optional[Element]:
     """Given the text of an element, the tag type and the ancestor tags, produces the appropriate
     HTML element."""
     if is_bulleted_text(text):
         if not clean_bullets(text):
             return None
-        return HTMLListItem(text=clean_bullets(text), tag=tag, ancestortags=ancestortags)
+        return HTMLListItem(
+            text=clean_bullets(text),
+            tag=tag,
+            ancestortags=ancestortags,
+        )
     elif is_us_city_state_zip(text):
         return HTMLAddress(text=text, tag=tag, ancestortags=ancestortags)
-
+    elif is_email_address(text):
+        return HTMLEmailAddress(text=text, tag=tag)
     if len(text) < 2:
         return None
     elif is_narrative_tag(text, tag):
@@ -331,7 +353,9 @@ def _process_list_item(
         next_text = _construct_text(next_element)
         # NOTE(robinson) - Only consider elements with limited depth. Otherwise,
         # it could be the text representation of a giant div
-        empty_elems_len = len([el for el in tag_elem.getchildren() if el.tag in EMPTY_TAGS])
+        empty_elems_len = len(
+            [el for el in tag_elem.getchildren() if el.tag in EMPTY_TAGS],
+        )
         if len(tag_elem) > max_predecessor_len + empty_elems_len:
             return None, None
         if next_text:
@@ -385,12 +409,17 @@ def _is_bulleted_table(tag_elem) -> bool:
     return True
 
 
-def _has_adjacent_bulleted_spans(tag_elem: etree.Element, children: List[etree.Element]) -> bool:
+def _has_adjacent_bulleted_spans(
+    tag_elem: etree.Element,
+    children: List[etree.Element],
+) -> bool:
     """Checks to see if a div contains two or more adjacent spans beginning with a bullet. If
     this is the case, it is treated as a single bulleted text element."""
     if tag_elem.tag == "div":
         all_spans = all(child.tag == "span" for child in children)
-        _is_bulleted = children[0].text is not None and is_bulleted_text(children[0].text)
+        _is_bulleted = children[0].text is not None and is_bulleted_text(
+            children[0].text,
+        )
         if all_spans and _is_bulleted:
             return True
     return False
@@ -416,7 +445,10 @@ def _find_main(root: etree.Element) -> etree.Element:
     return main_tag_elem if main_tag_elem is not None else root
 
 
-def _find_articles(root: etree.Element, assemble_articles: bool = True) -> List[etree.Element]:
+def _find_articles(
+    root: etree.Element,
+    assemble_articles: bool = True,
+) -> List[etree.Element]:
     """Tries to break the HTML document into distinct articles. If there are no article
     tags, the entire document is returned as a single item list."""
     if assemble_articles is False:
