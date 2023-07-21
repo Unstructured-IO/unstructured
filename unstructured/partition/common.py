@@ -120,6 +120,7 @@ def _add_element_metadata(
         if coordinates is not None and coordinate_system is not None
         else None
     )
+    links = element.links if hasattr(element, "links") else []
     metadata = ElementMetadata(
         coordinates=coordinates_metadata,
         filename=filename,
@@ -127,6 +128,7 @@ def _add_element_metadata(
         page_number=page_number,
         url=url,
         text_as_html=text_as_html,
+        links=links,
     )
     element.metadata = metadata.merge(element.metadata)
     return element
