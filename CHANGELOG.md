@@ -1,8 +1,9 @@
-## 0.8.2-dev3
+## 0.8.2-dev4
 
 ### Enhancements
 
-* set the file's current position to the beginning after reading the file in `convert_to_bytes`
+* Links are now tracked in `partition_html` output.
+* Set the file's current position to the beginning after reading the file in `convert_to_bytes`
 * Add slide notes to pptx
 
 ### Features
