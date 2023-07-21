@@ -7,7 +7,7 @@ import requests
 from requests.models import Response
 
 from unstructured.cleaners.core import clean_extra_whitespace
-from unstructured.documents.elements import ListItem, NarrativeText, Text, Title
+from unstructured.documents.elements import ListItem, NarrativeText, Title
 from unstructured.partition.html import partition_html
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
