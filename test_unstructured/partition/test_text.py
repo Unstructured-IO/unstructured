@@ -8,7 +8,7 @@ from unstructured.documents.elements import Address, ListItem, NarrativeText, Ti
 from unstructured.partition.text import (
     combine_paragraphs_less_than_min,
     partition_text,
-    split_content_to_fit_min_max,
+    split_content_to_fit_max,
 )
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -30,16 +30,22 @@ MIN_MAX_TEXT = """This is a story. This is a story that doesn't matter
     "",
 )
 
-SHORT_PARAGRAPHS = [
-    "This is a story.",
-    "This is a story that doesn't matter because it is just being used as an example.",
-    "Hi.",
-    "Hello.",
-    "Howdy.",
-    "Hola.",
-    "The example is simple and repetitive and long and somewhat boring, but it serves a purpose.",
-    "End.",
-]
+SHORT_PARAGRAPHS = """This is a story.
+
+This is a story that doesn't matter because it is just being used as an example.
+
+Hi.
+
+Hello.
+
+Howdy.
+
+Hola.
+
+The example is simple and repetitive and long and somewhat boring, but it serves a purpose.
+
+End.
+"""
 
 
 @pytest.mark.parametrize(
@@ -232,27 +238,21 @@ def test_partition_text_splits_long_text_max_partition(filename="example-docs/no
 
 def test_partition_text_min_max():
     segments = partition_text(
-        text=MIN_MAX_TEXT,
-        max_partition=75,
-        min_partition=3,
+        text=SHORT_PARAGRAPHS,
+        min_partition=6,
     )
     expected = [
-        "This is a story.",
-        "This is a story that doesn't matter because",
-        "it is just being used as an example.",
-        "Hi.",
-        "Hello.",
-        "Howdy.",
-        "Hola.",
-        "The example is simple and repetitive and long",
-        "and somewhat boring, but it serves a purpose.",
-        "End.",
+        'This is a story.', 
+        "This is a story that doesn't matter because it is just being used as an example.", 
+        'Hi. Hello.', 
+        'Howdy.', 
+        'Hola. The example is simple and repetitive and long and somewhat boring, but it serves a purpose. End.'
     ]
     for segment, test_segment in zip(segments, expected):
         assert segment.text == test_segment
-
+    
     segments = partition_text(
-        text=MIN_MAX_TEXT,
+        text=SHORT_PARAGRAPHS,
         max_partition=20,
         min_partition=7,
     )
@@ -262,7 +262,9 @@ def test_partition_text_min_max():
         "doesn't matter",
         "because it is just",
         "being used as an",
-        "example. Hi. Hello. Howdy. Hola.",
+        "example.",
+        "Hi. Hello.",
+        "Howdy. Hola.",
         "The example is",
         "simple and",
         "repetitive and long",
@@ -274,45 +276,23 @@ def test_partition_text_min_max():
         assert segment.text == test_segment
 
 
-def test_split_content_to_fit_min_max():
-    segments = split_content_to_fit_min_max(
+def test_split_content_to_fit_max():
+    segments = split_content_to_fit_max(
         content=MIN_MAX_TEXT,
         max_partition=75,
-        min_partition=6,
     )
     assert segments == [
         "This is a story.",
         "This is a story that doesn't matter because",
-        "it is just being used as an example. Hi.",
-        "Hello.",
-        "Howdy.",
-        "Hola.",  # Not joined with the next segment because that one is above the max partition
+        "it is just being used as an example. Hi. Hello. Howdy. Hola.",
         "The example is simple and repetitive and long",
         "and somewhat boring, but it serves a purpose. End.",
-    ]
-
-    segments = split_content_to_fit_min_max(
-        content=MIN_MAX_TEXT,
-        max_partition=75,
-        min_partition=3,
-    )
-    assert segments == [
-        "This is a story.",
-        "This is a story that doesn't matter because",
-        "it is just being used as an example.",
-        "Hi.",
-        "Hello.",
-        "Howdy.",
-        "Hola.",
-        "The example is simple and repetitive and long",
-        "and somewhat boring, but it serves a purpose.",
-        "End.",
     ]
 
 
 def test_combine_paragraphs_less_than_min():
     segments = combine_paragraphs_less_than_min(
-        SHORT_PARAGRAPHS,
+        SHORT_PARAGRAPHS.split("\n\n"),
         max_partition=1500,
         min_partition=7,
     )

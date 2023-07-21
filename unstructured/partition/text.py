@@ -55,15 +55,14 @@ def _split_content_size_n(content: str, n: int) -> List[str]:
     return segments
 
 
-def split_content_to_fit_min_max(
+def split_content_to_fit_max(
     content: str,
     max_partition: Optional[int] = 1500,
-    min_partition: Optional[int] = 0,
 ) -> List[str]:
-    """Splits a section of content so that all of the elements fit into the
-    max/min partition window."""
+    """Splits a paragraph or section of content so that all of the elements fit into the
+    max partition window."""
     sentences = sent_tokenize(content)
-    chunks = []
+    chunks = [] 
     tmp_chunk = ""
     for sentence in sentences:
         if max_partition is not None and len(sentence) > max_partition:
@@ -73,34 +72,16 @@ def split_content_to_fit_min_max(
             segments = _split_content_size_n(sentence, n=max_partition)
             chunks.extend(segments[:-1])
             tmp_chunk = segments[-1]
-        elif (
-            min_partition is not None
-            and max_partition is not None
-            and len(sentence) >= min_partition
-        ):
+        else:  
             if len(tmp_chunk + " " + sentence) > max_partition:
-                if len(tmp_chunk) >= min_partition:
-                    chunks.append(tmp_chunk)
-                    tmp_chunk = ""
-                elif not tmp_chunk:
-                    chunks.append(sentence)
-                else:
-                    chunks.extend(
-                        _split_content_size_n(
-                            tmp_chunk + " " + sentence,
-                            n=max_partition,
-                        ),
-                    )
+                chunks.append(tmp_chunk)
+                tmp_chunk = sentence
             else:
                 if not tmp_chunk:
-                    chunks.append(sentence)
+                    tmp_chunk = sentence
                 else:
-                    chunks.extend([tmp_chunk, sentence])
-                    tmp_chunk = ""
-        else:
-            tmp_chunk += " " + sentence
-            tmp_chunk = tmp_chunk.strip()
-
+                    tmp_chunk += " " + sentence
+                    tmp_chunk = tmp_chunk.strip()
     if tmp_chunk:
         chunks.append(tmp_chunk)
 
@@ -113,6 +94,8 @@ def combine_paragraphs_less_than_min(
     min_partition: Optional[int] = 0,
 ) -> List[str]:
     """Combine paragraphs less than `min_partition` while not exceeding `max_partition`."""
+    if type(split_paragraphs) is not list:
+        raise ValueError("`split_paragraphs` is not a list")
     file_content: List[str] = []
     tmp_paragraph = ""
     next_index = 0
@@ -128,7 +111,7 @@ def combine_paragraphs_less_than_min(
                 if current_index + 1 == len(split_paragraphs):
                     # If it's the last paragraph, append the paragraph
                     # to the previous content
-                    file_content[-1] += tmp_paragraph.rstrip()
+                    file_content[-1] += " " + tmp_paragraph.rstrip()
                     tmp_paragraph = ""
                     break
                 for offset_index, para in enumerate(
@@ -231,8 +214,8 @@ def partition_text(
     if min_partition is not None and len(file_text) < min_partition:
         raise ValueError("`min_partition` cannot be larger than the length of file contents.")
 
-    split_paragraphs = re.split(PARAGRAPH_PATTERN, file_text)
-
+    split_paragraphs = re.split(PARAGRAPH_PATTERN, file_text.strip())
+    
     paragraphs = combine_paragraphs_less_than_min(
         split_paragraphs=split_paragraphs,
         max_partition=max_partition,
@@ -243,10 +226,9 @@ def partition_text(
 
     for paragraph in paragraphs:
         file_content.extend(
-            split_content_to_fit_min_max(
+            split_content_to_fit_max(
                 content=paragraph,
                 max_partition=max_partition,
-                min_partition=min_partition,
             ),
         )
 
