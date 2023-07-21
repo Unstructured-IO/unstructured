@@ -99,14 +99,29 @@ def test_partition_raises_with_missing_doc(mock_document, expected_elements, tmp
         partition_doc(filename=doc_filename)
 
 
-def test_partition_doc_from_file(mock_document, expected_elements, tmpdir, capsys):
+def test_partition_doc_from_file_with_filter(mock_document, expected_elements, tmpdir, capsys):
     docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
     mock_document.save(docx_filename)
     convert_office_doc(docx_filename, tmpdir.dirname, "doc")
 
     with open(doc_filename, "rb") as f:
-        elements = partition_doc(file=f)
+        elements = partition_doc(file=f, libre_office_filter="MS Word 2007 XML")
+    assert elements == expected_elements
+    assert capsys.readouterr().out == ""
+    assert capsys.readouterr().err == ""
+    for element in elements:
+        assert element.metadata.filename is None
+
+
+def test_partition_doc_from_file_with_no_filter(mock_document, expected_elements, tmpdir, capsys):
+    docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
+    doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
+    mock_document.save(docx_filename)
+    convert_office_doc(docx_filename, tmpdir.dirname, "doc")
+
+    with open(doc_filename, "rb") as f:
+        elements = partition_doc(file=f, libre_office_filter=None)
     assert elements == expected_elements
     assert capsys.readouterr().out == ""
     assert capsys.readouterr().err == ""
