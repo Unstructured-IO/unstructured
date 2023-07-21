@@ -35,7 +35,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": "Weather.gov",
+          "url": "https://www.weather.gov"
+        }
+      ]
     },
     "text": "Weather.gov >"
   },
@@ -45,7 +51,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": "News Around NOAA",
+          "url": "https://www.weather.gov/news"
+        }
+      ]
     },
     "text": "News Around NOAA > Are You Weather-Ready for the Spring?"
   },
@@ -55,7 +67,93 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": "Weather Safety",
+          "url": "http://www.weather.gov/safetycampaign"
+        },
+        {
+          "text": "Air Quality",
+          "url": "https://www.weather.gov/safety/airquality"
+        },
+        {
+          "text": "Beach Hazards",
+          "url": "https://www.weather.gov/safety/beachhazards"
+        },
+        {
+          "text": "Cold",
+          "url": "https://www.weather.gov/safety/cold"
+        },
+        {
+          "text": "Cold Water",
+          "url": "https://www.weather.gov/safety/coldwater"
+        },
+        {
+          "text": "Drought",
+          "url": "https://www.weather.gov/safety/drought"
+        },
+        {
+          "text": "Floods",
+          "url": "https://www.weather.gov/safety/flood"
+        },
+        {
+          "text": "Fog",
+          "url": "https://www.weather.gov/safety/fog"
+        },
+        {
+          "text": "Heat",
+          "url": "https://www.weather.gov/safety/heat"
+        },
+        {
+          "text": " Hurricanes",
+          "url": "https://www.weather.gov/safety/hurricane"
+        },
+        {
+          "text": " Lightning Safety",
+          "url": "https://www.weather.gov/safety/lightning"
+        },
+        {
+          "text": "Rip Currents",
+          "url": "https://www.weather.gov/safety/ripcurrent"
+        },
+        {
+          "text": "Safe Boating",
+          "url": "https://www.weather.gov/safety/safeboating"
+        },
+        {
+          "text": "Space Weather",
+          "url": "https://www.weather.gov/safety/space"
+        },
+        {
+          "text": "Sun (Ultraviolet Radiation)",
+          "url": "https://www.weather.gov/safety/heat-uv"
+        },
+        {
+          "text": " Thunderstorms & Tornadoes",
+          "url": "https://www.weather.gov/safety/thunderstorm"
+        },
+        {
+          "text": "Tornado",
+          "url": "https://www.weather.gov/safety/tornado"
+        },
+        {
+          "text": "Tsunami",
+          "url": "https://www.weather.gov/safety/tsunami"
+        },
+        {
+          "text": "Wildfire",
+          "url": "https://www.weather.gov/safety/wildfire"
+        },
+        {
+          "text": "Wind",
+          "url": "https://www.weather.gov/safety/wind"
+        },
+        {
+          "text": "Winter",
+          "url": "https://www.weather.gov/safety/winter "
+        }
+      ]
     },
     "text": "Weather Safety                                                                                                        Air Quality                                                                            Beach Hazards                                                                            Cold                                                                            Cold Water                                                                            Drought                                                                            Floods                                                                            Fog                                                                            Heat                                                                             Hurricanes                                                                             Lightning Safety                                                                            Rip Currents                                                                            Safe Boating                                                                            Space Weather                                                                            Sun (Ultraviolet Radiation)                                                                             Thunderstorms & Tornadoes                                                                            Tornado                                                                            Tsunami                                                                            Wildfire                                                                            Wind                                                                            Winter"
   },
@@ -65,7 +163,37 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": "Safety Campaigns",
+          "url": "https://www.weather.gov/safetycampaign"
+        },
+        {
+          "text": "Seasonal Safety Campaigns",
+          "url": "https://www.weather.gov/safetycampaign"
+        },
+        {
+          "text": "#SafePlaceSelfie",
+          "url": "https://www.weather.gov/wrn/safeplaceselfie"
+        },
+        {
+          "text": "Deaf & Hard of Hearing",
+          "url": "https://www.weather.gov/wrn/dhh-safety"
+        },
+        {
+          "text": "Intellectual Disabilities",
+          "url": "https://www.weather.gov/wrn/intellectualdisabilities"
+        },
+        {
+          "text": "Spanish-language Content",
+          "url": "https://www.weather.gov/wrn/fall2020-espanol-sm"
+        },
+        {
+          "text": "The Great Outdoors",
+          "url": "https://www.noaa.gov/explainers/great-outdoors-weather-safety"
+        }
+      ]
     },
     "text": "Safety Campaigns                                                                                                        Seasonal Safety Campaigns                                                                            #SafePlaceSelfie                                                                            Deaf & Hard of Hearing                                                                            Intellectual Disabilities                                                                            Spanish-language Content                                                                            The Great Outdoors"
   },
@@ -75,7 +203,61 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": "Ambassador",
+          "url": "https://www.weather.gov/wrn/ambassadors"
+        },
+        {
+          "text": "About WRN Ambassadors",
+          "url": "https://www.weather.gov/wrn/ambassadors"
+        },
+        {
+          "text": "Become an Ambassador",
+          "url": "https://www.weather.gov/wrn/amb-tou"
+        },
+        {
+          "text": "Ambassadors of Excellence",
+          "url": "https://www.weather.gov/wrn/ambassador_recognition"
+        },
+        {
+          "text": "People of WRN",
+          "url": "https://www.weather.gov/people/"
+        },
+        {
+          "text": " FAQS",
+          "url": "https://www.weather.gov/wrn/amb-faqs"
+        },
+        {
+          "text": "Tell Your Success Story",
+          "url": "https://docs.google.com/forms/d/e/1FAIpQLScPHee5WAyC5K1LZ3pWLa2zjaM1HZSKN4_AxGUc6RaCy_gxLA/viewform"
+        },
+        {
+          "text": " Success Stories",
+          "url": " https://www.weather.gov/wrn/success-stories"
+        },
+        {
+          "text": "Tri-fold",
+          "url": "http://www.weather.gov/media/wrn/WRN_Ambassador_Trifold.pdf"
+        },
+        {
+          "text": "Aviation",
+          "url": "https://www.weather.gov/wrn/aviation"
+        },
+        {
+          "text": " Current Ambassadors",
+          "url": " http://www.weather.gov/wrn/current-ambassadors"
+        },
+        {
+          "text": "Brochure",
+          "url": "http://www.weather.gov/media/wrn/WRN_Ambassador_Flyer.pdf"
+        },
+        {
+          "text": "En Español",
+          "url": "https://www.weather.gov/wrn/en-espanol"
+        }
+      ]
     },
     "text": "Ambassador                                                                                                        About WRN Ambassadors                                                                            Become an Ambassador                                                                            Ambassadors of Excellence                                                                            People of WRN                                                                             FAQS                                                                            Tell Your Success Story                                                                             Success Stories                                                                            Tri-fold                                                                            Aviation                                                                             Current Ambassadors                                                                            Brochure                                                                            En Español"
   },
@@ -85,7 +267,53 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": "Education",
+          "url": "http://www.weather.gov/owlie/"
+        },
+        {
+          "text": "NWS Education Home",
+          "url": "http://www.weather.gov/owlie/"
+        },
+        {
+          "text": "Be A Force Of Nature",
+          "url": "https://www.weather.gov/wrn/force"
+        },
+        {
+          "text": "WRN Kids Flyer",
+          "url": " http://www.weather.gov/media/owlie/nws_kids_fact_sheet2.pdf"
+        },
+        {
+          "text": "Wireless Emergency Alerts",
+          "url": "https://www.weather.gov/wrn/wea"
+        },
+        {
+          "text": "NOAA Weather Radio",
+          "url": "http://www.nws.noaa.gov/nwr/"
+        },
+        {
+          "text": "Mobile Weather",
+          "url": "https://www.weather.gov/wrn/mobile-phone"
+        },
+        {
+          "text": "Brochures",
+          "url": "http://www.weather.gov/owlie/publication_brochures"
+        },
+        {
+          "text": "Hourly Weather Forecast",
+          "url": "https://www.weather.gov/wrn/hourly-weather-graph"
+        },
+        {
+          "text": "Citizen Science",
+          "url": "http://www.weather.gov/media/wrn/citizen_science_page.pdf"
+        },
+        {
+          "text": "Intellectual Disabilities",
+          "url": "https://www.weather.gov/wrn/intellectualdisabilities"
+        }
+      ]
     },
     "text": "Education                                                                                                        NWS Education Home                                                                            Be A Force Of Nature                                                                            WRN Kids Flyer                                                                            Wireless Emergency Alerts                                                                            NOAA Weather Radio                                                                            Mobile Weather                                                                            Brochures                                                                            Hourly Weather Forecast                                                                            Citizen Science                                                                            Intellectual Disabilities"
   },
@@ -95,7 +323,49 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": "Collaboration",
+          "url": "https://www.weather.gov/wrn/collaborate"
+        },
+        {
+          "text": "Get Involved ",
+          "url": "https://www.weather.gov/wrn/get-involved"
+        },
+        {
+          "text": "Social Media",
+          "url": "http://www.weather.gov/socialmedia"
+        },
+        {
+          "text": "WRN Ambassadors ​",
+          "url": "https://www.weather.gov/wrn/ambassadors"
+        },
+        {
+          "text": "Enterprise Resources",
+          "url": "https://www.weather.gov/enterprise/"
+        },
+        {
+          "text": "StormReady",
+          "url": "http://www.weather.gov/stormready/"
+        },
+        {
+          "text": "TsunamiReady",
+          "url": "https://www.weather.gov/tsunamiready/"
+        },
+        {
+          "text": "NWSChat (core partners only)",
+          "url": "https://nwschat.weather.gov/"
+        },
+        {
+          "text": "InteractiveNWS (iNWS) (core partners only)​",
+          "url": "https://inws.ncep.noaa.gov/"
+        },
+        {
+          "text": "SKYWARN",
+          "url": "https://www.weather.gov/SKYWARN"
+        }
+      ]
     },
     "text": "Collaboration                                                                                                        Get Involved                                                                             Social Media                                                                            WRN Ambassadors ​                                                                            Enterprise Resources                                                                            StormReady                                                                            TsunamiReady                                                                            NWSChat (core partners only)                                                                            InteractiveNWS (iNWS) (core partners only)​                                                                            SKYWARN"
   },
@@ -105,7 +375,29 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": " News & Events",
+          "url": "http://www.weather.gov/news/"
+        },
+        {
+          "text": "Latest News",
+          "url": " http://www.weather.gov/news/"
+        },
+        {
+          "text": "Calendar",
+          "url": "https://www.weather.gov/wrn/calendar"
+        },
+        {
+          "text": "Meetings & Workshops",
+          "url": " https://www.weather.gov/wrn/workshops"
+        },
+        {
+          "text": "NWS Aware Newsletter",
+          "url": "https://www.weather.gov/publications/aware"
+        }
+      ]
     },
     "text": "News & Events                                                                                                        Latest News                                                                            Calendar                                                                            Meetings & Workshops                                                                            NWS Aware Newsletter"
   },
@@ -115,7 +407,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": "International",
+          "url": "https://www.weather.gov/wrn/wrns"
+        }
+      ]
     },
     "text": "International"
   },
@@ -125,7 +423,53 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": "About",
+          "url": "https://www.weather.gov/wrn/about"
+        },
+        {
+          "text": "Contact Us",
+          "url": " https://www.weather.gov/wrn/contact"
+        },
+        {
+          "text": " What is WRN?",
+          "url": "https://www.weather.gov/wrn/about"
+        },
+        {
+          "text": " WRN FAQ",
+          "url": "https://www.weather.gov/wrn/faqs"
+        },
+        {
+          "text": "WRN Brochure",
+          "url": "http://www.weather.gov/media/wrn/WRN_Ambassador_Flyer.pdf"
+        },
+        {
+          "text": "Hazard Simplification",
+          "url": "https://www.weather.gov/hazardsimplification/"
+        },
+        {
+          "text": "IDSS Brochure",
+          "url": "https://www.weather.gov/media/wrn/2018-IDSS2-Pager.pdf"
+        },
+        {
+          "text": "Roadmap",
+          "url": "http://www.weather.gov/media/wrn/nws_wrn_roadmap_final_april17.pdf"
+        },
+        {
+          "text": "Strategic Plan",
+          "url": "https://www.weather.gov/media/wrn/NWS_Weather-Ready-Nation_Strategic_Plan_2019-2022.pdf"
+        },
+        {
+          "text": "WRN International",
+          "url": " https://www.weather.gov/wrn/international"
+        },
+        {
+          "text": "Social Science",
+          "url": "https://vlab.noaa.gov/web/nws-social-science"
+        }
+      ]
     },
     "text": "About                                                                                                        Contact Us                                                                             What is WRN?                                                                             WRN FAQ                                                                            WRN Brochure                                                                            Hazard Simplification                                                                            IDSS Brochure                                                                            Roadmap                                                                            Strategic Plan                                                                            WRN International                                                                            Social Science"
   },
@@ -165,7 +509,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": "Spring Safety website",
+          "url": "https://www.weather.gov/wrn/spring-safety"
+        }
+      ]
     },
     "text": "Second, encourage others to become Weather-Ready as well. Share the message by taking advantage of our vast array of weather safety content – everything posted on our Spring Safety website is freely available, and we encourage sharing on social media networks. Also remember those who are most vulnerable, like an elderly family member or neighbor who might have limited mobility or is isolated. Reach out to those who are at higher risk of being impacted by extreme weather, and help them get prepared. This simple act of caring could become heroic."
   },
@@ -175,7 +525,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": "infographics",
+          "url": "https://www.weather.gov/wrn/spring-infographics"
+        }
+      ]
     },
     "text": "This spring, the campaign is focused on heat dangers. Heat illness and death can occur even in spring’s moderately warm weather. The majority of all heat-related deaths occur outside of heat waves and roughly a third of child hot car deaths occur outside of the summer months. Learn more by viewing the infographics that are now available."
   },
@@ -195,7 +551,25 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": "US Dept of Commerce",
+          "url": "http://www.commerce.gov"
+        },
+        {
+          "text": "National Oceanic and Atmospheric Administration",
+          "url": "http://www.noaa.gov"
+        },
+        {
+          "text": "National Weather Service",
+          "url": "https://www.weather.gov"
+        },
+        {
+          "text": "Comments? Questions? Please Contact Us.",
+          "url": "https://www.weather.gov/news/contact"
+        }
+      ]
     },
     "text": "US Dept of Commerce\n                        National Oceanic and Atmospheric Administration\n                        National Weather Service\n                        News Around NOAA1325 East West HighwaySilver Spring, MD 20910Comments? Questions? Please Contact Us."
   },
@@ -205,7 +579,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": "Disclaimer",
+          "url": "https://www.weather.gov/disclaimer"
+        }
+      ]
     },
     "text": "Disclaimer"
   },
@@ -215,7 +595,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": "Information Quality",
+          "url": "http://www.cio.noaa.gov/services_programs/info_quality.html"
+        }
+      ]
     },
     "text": "Information Quality"
   },
@@ -225,7 +611,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": "Help",
+          "url": "https://www.weather.gov/help"
+        }
+      ]
     },
     "text": "Help"
   },
@@ -235,7 +627,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": "Glossary",
+          "url": "http://www.weather.gov/glossary"
+        }
+      ]
     },
     "text": "Glossary"
   },
@@ -245,7 +643,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": "Privacy Policy",
+          "url": "https://www.weather.gov/privacy"
+        }
+      ]
     },
     "text": "Privacy Policy"
   },
@@ -255,7 +659,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": "Freedom of Information Act (FOIA)",
+          "url": "https://www.noaa.gov/foia-freedom-of-information-act"
+        }
+      ]
     },
     "text": "Freedom of Information Act (FOIA)"
   },
@@ -265,7 +675,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": "About Us",
+          "url": "https://www.weather.gov/about"
+        }
+      ]
     },
     "text": "About Us"
   },
@@ -275,7 +691,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": "Career Opportunities",
+          "url": "https://www.weather.gov/careers"
+        }
+      ]
     },
     "text": "Career Opportunities"
   }

@@ -55,7 +55,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": "https://www.youtube.com/embed/kaNPNbAT-as%22",
+          "url": "https://www.youtube.com/embed/kaNPNbAT-as%22"
+        }
+      ]
     },
     "text": "https://www.youtube.com/embed/kaNPNbAT-as%22"
   },
@@ -75,7 +81,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": "Create",
+          "url": "https://confluence.atlassian.com/conf73/create-a-space-991927526.html"
+        }
+      ]
     },
     "text": "Spaces are places for individuals, teams, and companies to organize and work on ideas, projects, documentation, and announcements. Spaces can be customized and integrated with both Atlassian tools and others. Create as many spaces as you need to get things done:"
   },
@@ -155,7 +167,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": "Learn more about spaces",
+          "url": "https://www.atlassian.com/software/confluence/guides/get-started/set-up"
+        }
+      ]
     },
     "text": "Learn more about spaces"
   },
@@ -205,7 +223,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": "Learn more about pages",
+          "url": "https://www.atlassian.com/software/confluence/guides/get-started/create-content"
+        }
+      ]
     },
     "text": "Learn more about pages"
   },
@@ -225,7 +249,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": "Back to top ⤴",
+          "url": "#On-this-page"
+        }
+      ]
     },
     "text": "Back to top ⤴"
   },
@@ -295,7 +325,17 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 2
+      "page_number": 2,
+      "links": [
+        {
+          "text": "Learn more about page templates",
+          "url": "https://support.atlassian.com/confluence-cloud/docs/create-a-page-from-a-template"
+        },
+        {
+          "text": "Browse space templates",
+          "url": "https://support.atlassian.com/confluence-cloud/docs/create-a-space-from-a-template"
+        }
+      ]
     },
     "text": "Learn more about page templates | Browse space templates"
   },
@@ -335,7 +375,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 2
+      "page_number": 2,
+      "links": [
+        {
+          "text": "Learn more about elements",
+          "url": "https://support.atlassian.com/confluence-cloud/docs/create-a-space-from-a-template"
+        }
+      ]
     },
     "text": "Learn more about elements"
   },
@@ -375,7 +421,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 2
+      "page_number": 2,
+      "links": [
+        {
+          "text": "Learn more about page header images",
+          "url": "https://support.atlassian.com/confluence-cloud/docs/make-your-page-and-its-title-more-memorable"
+        }
+      ]
     },
     "text": "Learn more about page header images"
   },
@@ -385,7 +437,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 2
+      "page_number": 2,
+      "links": [
+        {
+          "text": "Back to top ⤴",
+          "url": "#On-this-page"
+        }
+      ]
     },
     "text": "Back to top ⤴"
   },
@@ -435,7 +493,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 3
+      "page_number": 3,
+      "links": [
+        {
+          "text": "Learn more about collaborative editing",
+          "url": "https://support.atlassian.com/confluence-cloud/docs/create-edit-and-publish-a-page/#Collaborative-editing"
+        }
+      ]
     },
     "text": "Learn more about collaborative editing"
   },
@@ -515,7 +579,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 3
+      "page_number": 3,
+      "links": [
+        {
+          "text": "Learn more about comments",
+          "url": "https://support.atlassian.com/confluence-cloud/docs/comment-on-pages-and-blog-posts/"
+        }
+      ]
     },
     "text": "Learn more about comments"
   },
@@ -525,7 +595,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 3
+      "page_number": 3,
+      "links": [
+        {
+          "text": "Back to top ⤴",
+          "url": "#On-this-page"
+        }
+      ]
     },
     "text": "Back to top ⤴"
   },
@@ -565,7 +641,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 4
+      "page_number": 4,
+      "links": [
+        {
+          "text": "Learn more about the page tree",
+          "url": "https://support.atlassian.com/confluence-cloud/docs/move-copy-and-hide-pages/"
+        }
+      ]
     },
     "text": "Learn more about the page tree"
   },
@@ -605,7 +687,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 4
+      "page_number": 4,
+      "links": [
+        {
+          "text": "Learn more about space overview",
+          "url": "https://support.atlassian.com/confluence-cloud/docs/set-up-your-space-homepage/"
+        }
+      ]
     },
     "text": "Learn more about space overview"
   },
@@ -675,7 +763,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 4
+      "page_number": 4,
+      "links": [
+        {
+          "text": "Learn more about sharing pages and blog posts",
+          "url": "https://support.atlassian.com/confluence-cloud/docs/share-a-page-or-blog-post/"
+        }
+      ]
     },
     "text": "Learn more about sharing pages and blog posts"
   },
@@ -715,7 +809,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 4
+      "page_number": 4,
+      "links": [
+        {
+          "text": "Learn more about tables",
+          "url": "https://confluence.atlassian.com/conf73/tables-991927743.html"
+        }
+      ]
     },
     "text": "Learn more about tables"
   },
@@ -755,7 +855,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 4
+      "page_number": 4,
+      "links": [
+        {
+          "text": "Learn more about drafts",
+          "url": "https://confluence.atlassian.com/doc/drafts-149040.html"
+        }
+      ]
     },
     "text": "Learn more about drafts"
   },
@@ -765,7 +871,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 4
+      "page_number": 4,
+      "links": [
+        {
+          "text": "Back to top ⤴",
+          "url": "#On-this-page"
+        }
+      ]
     },
     "text": "Back to top ⤴"
   },
@@ -855,7 +967,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 5
+      "page_number": 5,
+      "links": [
+        {
+          "text": "https://www.youtube.com/watch?v=ohtDFXNAUns",
+          "url": "https://www.youtube.com/watch?v=ohtDFXNAUns"
+        }
+      ]
     },
     "text": "https://www.youtube.com/watch?v=ohtDFXNAUns"
   },
@@ -865,7 +983,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 5
+      "page_number": 5,
+      "links": [
+        {
+          "text": "Back to top ⤴",
+          "url": "#On-this-page"
+        }
+      ]
     },
     "text": "Back to top ⤴"
   }

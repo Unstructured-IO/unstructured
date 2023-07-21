@@ -195,7 +195,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": "This is the link for unstructured . io.",
+          "url": "https://www.unstructured.io/"
+        }
+      ]
     },
     "text": "This is the link for unstructured . io."
   },
