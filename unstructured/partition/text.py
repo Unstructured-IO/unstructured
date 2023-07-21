@@ -62,7 +62,7 @@ def split_content_to_fit_max(
     """Splits a paragraph or section of content so that all of the elements fit into the
     max partition window."""
     sentences = sent_tokenize(content)
-    chunks = [] 
+    chunks = []
     tmp_chunk = ""
     for sentence in sentences:
         if max_partition is not None and len(sentence) > max_partition:
@@ -72,8 +72,8 @@ def split_content_to_fit_max(
             segments = _split_content_size_n(sentence, n=max_partition)
             chunks.extend(segments[:-1])
             tmp_chunk = segments[-1]
-        else:  
-            if len(tmp_chunk + " " + sentence) > max_partition:
+        else:
+            if max_partition is not None and len(tmp_chunk + " " + sentence) > max_partition:
                 chunks.append(tmp_chunk)
                 tmp_chunk = sentence
             else:
@@ -215,7 +215,7 @@ def partition_text(
         raise ValueError("`min_partition` cannot be larger than the length of file contents.")
 
     split_paragraphs = re.split(PARAGRAPH_PATTERN, file_text.strip())
-    
+
     paragraphs = combine_paragraphs_less_than_min(
         split_paragraphs=split_paragraphs,
         max_partition=max_partition,

@@ -242,15 +242,19 @@ def test_partition_text_min_max():
         min_partition=6,
     )
     expected = [
-        'This is a story.', 
-        "This is a story that doesn't matter because it is just being used as an example.", 
-        'Hi. Hello.', 
-        'Howdy.', 
-        'Hola. The example is simple and repetitive and long and somewhat boring, but it serves a purpose. End.'
+        "This is a story.",
+        "This is a story that doesn't matter because it is just being used as an example.",
+        "Hi. Hello.",
+        "Howdy.",
+        """Hola. The example is simple and repetitive and long and somewhat boring,
+ but it serves a purpose. End.""".replace(
+            "\n",
+            "",
+        ),
     ]
     for segment, test_segment in zip(segments, expected):
         assert segment.text == test_segment
-    
+
     segments = partition_text(
         text=SHORT_PARAGRAPHS,
         max_partition=20,
