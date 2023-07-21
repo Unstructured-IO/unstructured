@@ -221,6 +221,10 @@ class HTMLDocument(XMLDocument):
 
 def _get_links_from_tag(tag_elem: etree.Element) -> List[Link]:
     links: List[Link] = []
+    href = tag_elem.get("href")
+    if href:
+        links.append({"text": tag_elem.text, "url": href})
+
     for tag in tag_elem.iterdescendants():
         href = tag.get("href")
         if href:
@@ -346,7 +350,8 @@ def _process_list_item(
     we can skip processing if bullets are found in a div element."""
     if tag_elem.tag in LIST_ITEM_TAGS:
         text = _construct_text(tag_elem)
-        return HTMLListItem(text=text, tag=tag_elem.tag), tag_elem
+        links = _get_links_from_tag(tag_elem)
+        return HTMLListItem(text=text, tag=tag_elem.tag, links=links), tag_elem
 
     elif tag_elem.tag == "div":
         text = _construct_text(tag_elem)
