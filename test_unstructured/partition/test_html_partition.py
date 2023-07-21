@@ -7,7 +7,7 @@ import requests
 from requests.models import Response
 
 from unstructured.cleaners.core import clean_extra_whitespace
-from unstructured.documents.elements import ListItem, NarrativeText, Title
+from unstructured.documents.elements import ListItem, NarrativeText, Text, Title
 from unstructured.partition.html import partition_html
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -329,6 +329,7 @@ def test_partition_html_grabs_links():
             <li><a href="https://en.wikipedia.org/wiki/Parrot">Parrots</a></li>
             <li>Dogs</li>
         </ul>
+        <a href="/loner">A lone link!</a>
     </html>"""
     elements = partition_html(text=html_text)
 
@@ -353,3 +354,11 @@ def test_partition_html_grabs_links():
 
     assert elements[3] == ListItem("Dogs")
     assert elements[3].metadata.links == []
+
+    assert elements[4] == Title("A lone link!")
+    assert elements[4].metadata.links == [
+        {
+            "text": "A lone link!",
+            "url": "/loner",
+        },
+    ]
