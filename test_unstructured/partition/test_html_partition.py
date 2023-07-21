@@ -342,7 +342,7 @@ def test_partition_html_grabs_links():
     ]
 
     assert elements[1] == NarrativeText("Here is a list of my favorite things")
-    assert elements[1].metadata.links == []
+    assert elements[1].metadata.links is None
 
     assert elements[2] == ListItem("Parrots")
     assert elements[2].metadata.links == [
@@ -353,7 +353,7 @@ def test_partition_html_grabs_links():
     ]
 
     assert elements[3] == ListItem("Dogs")
-    assert elements[3].metadata.links == []
+    assert elements[3].metadata.links is None
 
     assert elements[4] == Title("A lone link!")
     assert elements[4].metadata.links == [
