@@ -15,6 +15,7 @@ from unstructured.documents.base import Page
 from unstructured.documents.elements import (
     Address,
     Element,
+    Link,
     ListItem,
     NarrativeText,
     Text,
@@ -46,6 +47,7 @@ class TagsMixin:
         *args,
         tag: Optional[str] = None,
         ancestortags: Sequence[str] = (),
+        links: Sequence[Link] = [],
         **kwargs,
     ):
         if tag is None:
@@ -53,6 +55,7 @@ class TagsMixin:
         else:
             self.tag = tag
         self.ancestortags = ancestortags
+        self.links = links
         super().__init__(*args, **kwargs)
 
 
@@ -128,7 +131,8 @@ class HTMLDocument(XMLDocument):
                         descendanttag_elems = tuple(tag_elem.iterdescendants())
 
                 elif _is_container_with_text(tag_elem):
-                    element = _text_to_element(tag_elem.text, "div", ())
+                    links = _get_links_from_tag(tag_elem)
+                    element = _text_to_element(tag_elem.text, "div", (), links)
                     if element is not None:
                         page.elements.append(element)
 
@@ -215,6 +219,15 @@ class HTMLDocument(XMLDocument):
             return out
 
 
+def _get_links_from_tag(tag_elem: etree.Element) -> List[Link]:
+    links: List[Link] = []
+    for tag in tag_elem.iterdescendants():
+        href = tag.get("href")
+        if href:
+            links.append({"text": tag.text, "url": href})
+    return links
+
+
 def _parse_tag(
     tag_elem: etree.Element,
 ) -> Optional[Element]:
@@ -223,32 +236,44 @@ def _parse_tag(
     processing the document tree again. In the future we might want to keep descendants too,
     but we don't have a use for them at the moment."""
     ancestortags: Tuple[str, ...] = tuple(el.tag for el in tag_elem.iterancestors())[::-1]
+    links = _get_links_from_tag(tag_elem)
+
     if tag_elem.tag == "script":
         return None
     text = _construct_text(tag_elem)
     if not text:
         return None
-    return _text_to_element(text, tag_elem.tag, ancestortags)
+    return _text_to_element(text, tag_elem.tag, ancestortags, links=links)
 
 
-def _text_to_element(text: str, tag: str, ancestortags: Tuple[str, ...]) -> Optional[Element]:
+def _text_to_element(
+    text: str,
+    tag: str,
+    ancestortags: Tuple[str, ...],
+    links: List[Link] = [],
+) -> Optional[Element]:
     """Given the text of an element, the tag type and the ancestor tags, produces the appropriate
     HTML element."""
     if is_bulleted_text(text):
         if not clean_bullets(text):
             return None
-        return HTMLListItem(text=clean_bullets(text), tag=tag, ancestortags=ancestortags)
+        return HTMLListItem(
+            text=clean_bullets(text),
+            tag=tag,
+            ancestortags=ancestortags,
+            links=links,
+        )
     elif is_us_city_state_zip(text):
-        return HTMLAddress(text=text, tag=tag, ancestortags=ancestortags)
+        return HTMLAddress(text=text, tag=tag, ancestortags=ancestortags, links=links)
 
     if len(text) < 2:
         return None
     elif is_narrative_tag(text, tag):
-        return HTMLNarrativeText(text, tag=tag, ancestortags=ancestortags)
+        return HTMLNarrativeText(text, tag=tag, ancestortags=ancestortags, links=links)
     elif is_possible_title(text):
-        return HTMLTitle(text, tag=tag, ancestortags=ancestortags)
+        return HTMLTitle(text, tag=tag, ancestortags=ancestortags, links=links)
     else:
-        return HTMLText(text, tag=tag, ancestortags=ancestortags)
+        return HTMLText(text, tag=tag, ancestortags=ancestortags, links=links)
 
 
 def _is_container_with_text(tag_elem: etree.Element) -> bool:

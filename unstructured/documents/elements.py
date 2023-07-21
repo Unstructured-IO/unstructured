@@ -111,6 +111,13 @@ class RegexMetadata(TypedDict):
     end: int
 
 
+class Link(TypedDict):
+    """Metadata related to extracted links"""
+
+    text: Optional[str]
+    url: str
+
+
 @dataclass
 class ElementMetadata:
     coordinates: Optional[CoordinatesMetadata] = None
