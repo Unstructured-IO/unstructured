@@ -189,25 +189,10 @@ def _partition_pdf_or_image_local(
     **kwargs,
 ) -> List[Element]:
     """Partition using package installed locally."""
-    try:
-        from unstructured_inference.inference.layout import (
-            process_data_with_model,
-            process_file_with_model,
-        )
-    except ModuleNotFoundError as e:
-        raise Exception(
-            "unstructured_inference module not found... try running pip install "
-            "unstructured[local-inference] if you installed the unstructured library as a package. "
-            "If you cloned the unstructured repository, try running make install-local-inference "
-            "from the root directory of the repository.",
-        ) from e
-    except ImportError as e:
-        raise Exception(
-            "There was a problem importing unstructured_inference module - it may not be installed "
-            "correctly... try running pip install unstructured[local-inference] if you installed "
-            "the unstructured library as a package. If you cloned the unstructured repository, try "
-            "running make install-local-inference from the root directory of the repository.",
-        ) from e
+    from unstructured_inference.inference.layout import (
+        process_data_with_model,
+        process_file_with_model,
+    )
 
     model_name = model_name if model_name else os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME")
     if file is None:
