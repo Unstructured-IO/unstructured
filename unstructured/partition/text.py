@@ -124,20 +124,22 @@ def combine_paragraphs_less_than_min(
                         tmp_paragraph += "\n" + para
                         # Update `next_index` to skip already combined paragraphs
                         next_index = offset_index + current_index + 1
+
                     if len(tmp_paragraph.strip()) > min_partition:
                         break  # Stop combining if the combined paragraphs
                         # meet the `min_partition`` requirement
                     elif (
                         max_partition is not None
-                        and len(tmp_paragraph + "\n" + para) < min_partition
+                        and len(tmp_paragraph) < min_partition
                         and len(tmp_paragraph + "\n" + para) > max_partition
                     ):
                         raise ValueError(
                             "`min_partition` and `max_partition` are defined too close together",
                         )
+            # Add the combined paragraph to the final result
             file_content.append(
                 tmp_paragraph.strip(),
-            )  # Add the combined paragraph to the final result
+            )
             tmp_paragraph = ""
         else:
             file_content.append(paragraph)

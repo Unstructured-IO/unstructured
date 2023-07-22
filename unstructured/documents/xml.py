@@ -83,11 +83,11 @@ class XMLDocument(Document):
                 for element in tree.xpath("//pre"):
                     if not element.text:
                         continue
-                    
+
                     text_content = []
                     for element in partition_text(text=element.text, paragraph_grouper=False):
                         text_content.append(element.text)
-                        
+
                     for text in text_content:
                         element = etree.Element("span")
                         element.text = str(element_from_text(text=text))
