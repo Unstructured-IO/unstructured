@@ -161,6 +161,11 @@ class MainProcess:
     "Default: eng",
 )
 @click.option(
+    "--encoding",
+    default="utf-8",
+    help="Text encoding to use when reading documents. Default: utf-8",
+)
+@click.option(
     "--api-key",
     default="",
     help="API Key for partition endpoint.",
@@ -618,6 +623,7 @@ def main(
     partition_endpoint,
     partition_strategy,
     partition_ocr_languages,
+    encoding,
     api_key,
     local_input_path,
     local_file_glob,
@@ -1031,6 +1037,7 @@ def main(
         process_document,
         strategy=partition_strategy,
         ocr_languages=partition_ocr_languages,
+        encoding=encoding,
     )
 
     MainProcess(
