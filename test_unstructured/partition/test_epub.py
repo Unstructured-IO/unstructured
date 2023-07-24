@@ -56,3 +56,25 @@ def test_partition_epub_from_file_exlcude_metadata():
     assert elements[0].metadata.filetype is None
     assert elements[0].metadata.page_name is None
     assert elements[0].metadata.filename is None
+
+
+def test_partition_epub_with_include_path_in_metadata_filename(
+    filename="example-docs/winter-sports.epub",
+):
+    elements = partition_epub(filename=filename, include_path_in_metadata_filename=True)
+
+    assert elements[0].metadata.filename == filename
+    assert elements[0].metadata.file_directory is None
+
+
+def test_partition_epub_with_include_path_in_metadata_filename_and_metadata_filename(
+    filename="example-docs/winter-sports.epub",
+):
+    elements = partition_epub(
+        filename=filename,
+        include_path_in_metadata_filename=True,
+        metadata_filename="TEST",
+    )
+
+    assert elements[0].metadata.filename == "example-docs/TEST"
+    assert elements[0].metadata.file_directory is None
