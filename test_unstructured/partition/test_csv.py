@@ -35,7 +35,9 @@ def test_partition_csv_from_file(filename="example-docs/stanley-cups.csv"):
     assert elements[0].metadata.filename is None
 
 
-def test_partition_csv_from_file_with_metadata_filename(filename="example-docs/stanley-cups.csv"):
+def test_partition_csv_from_file_with_metadata_filename(
+    filename="example-docs/stanley-cups.csv",
+):
     with open(filename, "rb") as f:
         elements = partition_csv(file=f, metadata_filename="test")
 
@@ -51,3 +53,29 @@ def test_partition_csv_can_exclude_metadata(filename="example-docs/stanley-cups.
     assert elements[0].metadata.text_as_html is None
     assert elements[0].metadata.filetype is None
     assert elements[0].metadata.filename is None
+
+
+def test_partition_csv_with_include_path_in_metadata_filename(
+    filename="example-docs/stanley-cups.csv",
+):
+    elements = partition_csv(filename=filename, include_path_in_metadata_filename=True)
+
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
+    assert isinstance(elements[0], Table)
+    assert elements[0].metadata.filename == filename
+    assert elements[0].metadata.file_directory is None
+
+
+def test_partition_csv_with_include_path_in_metadata_filename_and_metadata_filename(
+    filename="example-docs/stanley-cups.csv",
+):
+    elements = partition_csv(
+        filename=filename,
+        include_path_in_metadata_filename=True,
+        metadata_filename="TEST",
+    )
+
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
+    assert isinstance(elements[0], Table)
+    assert elements[0].metadata.filename == "example-docs/TEST"
+    assert elements[0].metadata.file_directory is None
