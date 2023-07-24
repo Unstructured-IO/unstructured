@@ -96,6 +96,24 @@ def test_partition_via_api_raises_with_bad_response(monkeypatch):
     with pytest.raises(ValueError):
         partition_via_api(filename=filename)
 
+########################################################################################################################### shreya
+def test_partition_via_api_with_no_strategy():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.jpg")
+
+    elements = partition_via_api(filename=filename, api_key=get_api_key())
+
+    # check that strategy was not passed to partition
+    assert elements[0].metadata.get("coordinates") is None
+
+def test_partition_via_api_with_image_hi_res_strategy_includes_coordinates():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.jpg")
+
+    elements = partition_via_api(filename=filename, strategy="hi_res", api_key=get_api_key())
+
+    assert elements[0].metadata.get("coordinates") is not None
+
+########################################################################################################################### shreya
+
 
 @pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
 @pytest.mark.skipif(skip_not_on_main, reason="Skipping test run outside of main branch")
