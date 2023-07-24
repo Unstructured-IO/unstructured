@@ -70,7 +70,10 @@ def elements_to_json(
         return json.dumps(element_dict, indent=indent)
 
 
-def isd_to_elements(isd: List[Dict[str, Any]]) -> List[Element]:
+def isd_to_elements(
+    isd: List[Dict[str, Any]],
+    include_path_in_metadata_filename: bool = False,
+) -> List[Element]:
     """Converts an Initial Structured Data (ISD) dictionary to a list of elements."""
     elements: List[Element] = []
 
@@ -79,7 +82,13 @@ def isd_to_elements(isd: List[Dict[str, Any]]) -> List[Element]:
         metadata = ElementMetadata()
         _metadata_dict = item.get("metadata")
         if _metadata_dict is not None:
-            metadata = ElementMetadata.from_dict(_metadata_dict)
+            print(_metadata_dict)
+            metadata = ElementMetadata.from_dict(
+                {
+                    **_metadata_dict,
+                    "include_path_in_metadata_filename": include_path_in_metadata_filename,
+                },
+            )
 
         if item.get("type") in TYPE_TO_TEXT_ELEMENT_MAP:
             _text_class = TYPE_TO_TEXT_ELEMENT_MAP[item["type"]]
@@ -102,9 +111,12 @@ def isd_to_elements(isd: List[Dict[str, Any]]) -> List[Element]:
     return elements
 
 
-def dict_to_elements(element_dict: List[Dict[str, Any]]) -> List[Element]:
+def dict_to_elements(
+    element_dict: List[Dict[str, Any]],
+    include_path_in_metadata_filename: bool = False,
+) -> List[Element]:
     """Converts a dictionary representation of an element list into List[Element]."""
-    return isd_to_elements(element_dict)
+    return isd_to_elements(element_dict, include_path_in_metadata_filename)
 
 
 def elements_from_json(
@@ -176,7 +188,10 @@ def convert_to_csv(elements: List[Element]) -> str:
     return convert_to_isd_csv(elements)
 
 
-def convert_to_dataframe(elements: List[Element], drop_empty_cols: bool = True) -> pd.DataFrame:
+def convert_to_dataframe(
+    elements: List[Element],
+    drop_empty_cols: bool = True,
+) -> pd.DataFrame:
     """Converts document elements to a pandas DataFrame. The dataframe contains the
     following columns:
         text: the element text

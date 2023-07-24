@@ -17,6 +17,7 @@ def partition_json(
     text: Optional[str] = None,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
+    include_path_in_metadata_filename: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Partitions an .json document into its constituent elements.
@@ -29,6 +30,8 @@ def partition_json(
         A file-like object as bytes --> open(filename, "rb").
     text
         The string representation of the .json document.
+    include_path_in_metadata_filename
+        Determines whether or not metadata filename will contain full path
     """
     if text is not None and text.strip() == "" and not file and not filename:
         return []
