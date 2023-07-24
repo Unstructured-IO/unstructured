@@ -59,6 +59,8 @@ def partition_html(
         in the HTTP request.
     parser
         The parser to use for parsing the HTML document. If None, default parser will be used.
+    include_path_in_metadata_filename
+        Determines whether or not metadata filename will contain full path
     """
     if text is not None and text.strip() == "" and not file and not filename and not url:
         return []
