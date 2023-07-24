@@ -215,7 +215,7 @@ tzdata==2023.3
     # via
     #   -c requirements/base.txt
     #   pandas
-unstructured-inference==0.5.5
+unstructured-inference==0.5.6
     # via -r requirements/local-inference.in
 urllib3==1.26.16
     # via
