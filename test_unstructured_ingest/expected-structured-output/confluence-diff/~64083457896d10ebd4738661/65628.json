@@ -35,7 +35,17 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": "Overview",
+          "url": "/wiki/spaces/~64083457896d10ebd4738661/overview"
+        },
+        {
+          "text": "ryan",
+          "url": "/wiki/display/~64083457896d10ebd4738661"
+        }
+      ]
     },
     "text": "Overview\n            \n            \n                Jun 30, 2023 • contributed by ryan"
   },
@@ -45,7 +55,17 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": "Getting started in Confluence",
+          "url": "/wiki/spaces/~64083457896d10ebd4738661/pages/65627/Getting+started+in+Confluence"
+        },
+        {
+          "text": "ryan",
+          "url": "/wiki/display/~64083457896d10ebd4738661"
+        }
+      ]
     },
     "text": "Getting started in Confluence\n            \n            \n                Jun 30, 2023 • contributed by ryan"
   },
@@ -55,7 +75,17 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": "ryan",
+          "url": "/wiki/spaces/~64083457896d10ebd4738661"
+        },
+        {
+          "text": "ryan",
+          "url": "/wiki/display/~64083457896d10ebd4738661"
+        }
+      ]
     },
     "text": "ryan\n            \n            \n                Jun 30, 2023 • contributed by ryan"
   },
