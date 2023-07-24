@@ -82,3 +82,24 @@ def test_partition_xlsx_from_file_exclude_metadata(filename="example-docs/stanle
     assert elements[0].metadata.filetype is None
     assert elements[0].metadata.page_name is None
     assert elements[0].metadata.filename is None
+
+def test_partition_tsv_with_include_path_in_metadata_filename(
+    filename="example-docs/stanley-cups.xlsx",
+):
+    elements = partition_xlsx(filename=filename, include_path_in_metadata_filename=True)
+
+    assert elements[0].metadata.filename == filename
+    assert elements[0].metadata.file_directory is None
+
+
+def test_partition_xlsx_with_include_path_in_metadata_filename_and_metadata_filename(
+    filename="example-docs/stanley-cups.xlsx",
+):
+    elements = partition_xlsx(
+        filename=filename,
+        include_path_in_metadata_filename=True,
+        metadata_filename="TEST",
+    )
+
+    assert elements[0].metadata.filename == "example-docs/TEST"
+    assert elements[0].metadata.file_directory is None
