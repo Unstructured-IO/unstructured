@@ -51,6 +51,7 @@ def partition_pdf(
     max_partition: Optional[int] = 1500,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
+    include_path_in_metadata_filename: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Parses a pdf document into a list of interpreted elements.
@@ -81,6 +82,8 @@ def partition_pdf(
     max_partition
         The maximum number of characters to include in a partition. If None is passed,
         no maximum is applied. Only applies to the "ocr_only" strategy.
+    include_path_in_metadata_filename
+        Determines whether or not metadata filename will contain full path
     """
     exactly_one(filename=filename, file=file)
     return partition_pdf_or_image(
@@ -91,6 +94,7 @@ def partition_pdf(
         infer_table_structure=infer_table_structure,
         ocr_languages=ocr_languages,
         max_partition=max_partition,
+        include_path_in_metadata_filename=include_path_in_metadata_filename,
         **kwargs,
     )
 
@@ -99,11 +103,13 @@ def extractable_elements(
     filename: str = "",
     file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
     include_page_breaks: bool = False,
+    include_path_in_metadata_filename: bool = False,
 ):
     return _partition_pdf_with_pdfminer(
         filename=filename,
         file=file,
         include_page_breaks=include_page_breaks,
+        include_path_in_metadata_filename=include_path_in_metadata_filename,
     )
 
 
@@ -116,6 +122,7 @@ def partition_pdf_or_image(
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
     max_partition: Optional[int] = 1500,
+    include_path_in_metadata_filename: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
@@ -129,6 +136,7 @@ def partition_pdf_or_image(
             filename=filename,
             file=spooled_to_bytes_io_if_needed(file),
             include_page_breaks=include_page_breaks,
+            include_path_in_metadata_filename=include_path_in_metadata_filename,
         )
         pdf_text_extractable = any(
             isinstance(el, Text) and el.text.strip() for el in extracted_elements
@@ -156,6 +164,7 @@ def partition_pdf_or_image(
                 infer_table_structure=infer_table_structure,
                 include_page_breaks=include_page_breaks,
                 ocr_languages=ocr_languages,
+                include_path_in_metadata_filename=include_path_in_metadata_filename,
                 **kwargs,
             )
 
@@ -172,6 +181,7 @@ def partition_pdf_or_image(
                 ocr_languages=ocr_languages,
                 is_image=is_image,
                 max_partition=max_partition,
+                include_path_in_metadata_filename=include_path_in_metadata_filename,
             )
 
     return layout_elements
@@ -186,6 +196,7 @@ def _partition_pdf_or_image_local(
     include_page_breaks: bool = False,
     ocr_languages: str = "eng",
     model_name: Optional[str] = None,
+    include_path_in_metadata_filename: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Partition using package installed locally."""
@@ -211,7 +222,12 @@ def _partition_pdf_or_image_local(
             extract_tables=infer_table_structure,
             model_name=model_name,
         )
-    elements = document_to_element_list(layout, include_page_breaks=include_page_breaks, sort=False)
+    elements = document_to_element_list(
+        layout,
+        include_page_breaks=include_page_breaks,
+        sort=False,
+        include_path_in_metadata_filename=include_path_in_metadata_filename,
+    )
     out_elements = []
 
     for el in elements:
@@ -223,7 +239,11 @@ def _partition_pdf_or_image_local(
             continue
         # NOTE(crag): this is probably always a Text object, but check for the sake of typing
         if isinstance(el, Text):
-            el.text = re.sub(RE_MULTISPACE_INCLUDING_NEWLINES, " ", el.text or "").strip()
+            el.text = re.sub(
+                RE_MULTISPACE_INCLUDING_NEWLINES,
+                " ",
+                el.text or "",
+            ).strip()
             if el.text or isinstance(el, PageBreak):
                 out_elements.append(cast(Element, el))
 
@@ -235,6 +255,7 @@ def _partition_pdf_with_pdfminer(
     filename: str = "",
     file: Optional[BinaryIO] = None,
     include_page_breaks: bool = False,
+    include_path_in_metadata_filename: bool = False,
 ) -> List[Element]:
     """Partitions a PDF using PDFMiner instead of using a layoutmodel. Used for faster
     processing or detectron2 is not available.
@@ -252,6 +273,7 @@ def _partition_pdf_with_pdfminer(
                 fp=fp,
                 filename=filename,
                 include_page_breaks=include_page_breaks,
+                include_path_in_metadata_filename=include_path_in_metadata_filename,
             )
 
     elif file:
@@ -260,6 +282,7 @@ def _partition_pdf_with_pdfminer(
             fp=fp,
             filename=filename,
             include_page_breaks=include_page_breaks,
+            include_path_in_metadata_filename=include_path_in_metadata_filename,
         )
 
     return elements
@@ -288,6 +311,7 @@ def _process_pdfminer_pages(
     fp: BinaryIO,
     filename: str = "",
     include_page_breaks: bool = False,
+    include_path_in_metadata_filename: bool = False,
 ):
     """Uses PDF miner to split a document into pages and process them."""
     elements: List[Element] = []
@@ -330,6 +354,7 @@ def _process_pdfminer_pages(
                         filename=filename,
                         page_number=i + 1,
                         coordinates=coordinates_metadata,
+                        include_path_in_metadata_filename=include_path_in_metadata_filename,
                     )
                     page_elements.append(element)
 
@@ -391,6 +416,7 @@ def _partition_pdf_or_image_with_ocr(
     ocr_languages: str = "eng",
     is_image: bool = False,
     max_partition: Optional[int] = 1500,
+    include_path_in_metadata_filename: bool = False,
 ):
     """Partitions and image or PDF using Tesseract OCR. For PDFs, each page is converted
     to an image prior to processing."""
@@ -408,7 +434,11 @@ def _partition_pdf_or_image_with_ocr(
         page_number = 0
         for image in convert_pdf_to_images(filename, file):
             page_number += 1
-            metadata = ElementMetadata(filename=filename, page_number=page_number)
+            metadata = ElementMetadata(
+                filename=filename,
+                page_number=page_number,
+                include_path_in_metadata_filename=include_path_in_metadata_filename,
+            )
             text = pytesseract.image_to_string(image, config=f"-l '{ocr_languages}'")
 
             _elements = partition_text(text=text, max_partition=max_partition)
