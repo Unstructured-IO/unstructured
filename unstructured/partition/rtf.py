@@ -13,6 +13,7 @@ def partition_rtf(
     include_page_breaks: bool = False,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
+    include_path_in_metadata_filename: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Partitions an RTF document. The document is first converted to HTML and then
@@ -26,6 +27,8 @@ def partition_rtf(
         A file-like object using "rb" mode --> open(filename, "rb").
     include_page_breaks
         If True, the output will include page breaks if the filetype supports it
+    include_path_in_metadata_filename
+        Determines whether or not metadata filename will contain full path
     """
     return convert_and_partition_html(
         source_format="rtf",
@@ -33,4 +36,5 @@ def partition_rtf(
         file=file,
         include_page_breaks=include_page_breaks,
         metadata_filename=metadata_filename,
+        include_path_in_metadata_filename=include_path_in_metadata_filename,
     )
