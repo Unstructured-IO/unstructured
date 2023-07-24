@@ -111,6 +111,7 @@ def partition_docx(
     metadata_filename: Optional[str] = None,
     include_page_breaks: bool = True,
     include_metadata: bool = True,
+    include_path_in_metadata_filename: Optional[bool] = False,
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft Word Documents in .docx format into its document elements.
@@ -125,6 +126,8 @@ def partition_docx(
         The filename to use for the metadata. Relevant because partition_doc converts the
         document to .docx before partition. We want the original source filename in the
         metadata.
+    include_path_in_metadata_filename
+        Determines whether or not metadata filename will contain full path
     """
 
     # Verify that only one of the arguments was provided
@@ -161,6 +164,7 @@ def partition_docx(
                     text_as_html=html_table,
                     filename=metadata_filename,
                     page_number=page_number,
+                    include_path_in_metadata_filename=include_path_in_metadata_filename,
                 )
                 elements.append(element)
             table_index += 1
@@ -173,6 +177,7 @@ def partition_docx(
                 para_element.metadata = ElementMetadata(
                     filename=metadata_filename,
                     page_number=page_number,
+                    include_path_in_metadata_filename=include_path_in_metadata_filename,
                 )
                 elements.append(para_element)
             is_list = False
@@ -261,6 +266,7 @@ def _join_paragraphs(paragraphs: List[docx.text.paragraph.Paragraph]) -> Optiona
 def _get_headers_and_footers(
     document: docx.document.Document,
     metadata_filename: Optional[str],
+    include_path_in_metadata_filename: Optional[bool] = False,
 ) -> List[Tuple[List[Header], List[Footer]]]:
     headers_and_footers = []
     attr_prefixes = ["", "first_page_", "even_page_"]
@@ -281,6 +287,7 @@ def _get_headers_and_footers(
                     metadata = ElementMetadata(
                         filename=metadata_filename,
                         header_footer_type=header_footer_type,
+                        include_path_in_metadata_filename=include_path_in_metadata_filename,
                     )
 
                     if _type == "header":
