@@ -53,3 +53,25 @@ def test_partition_odt_from_file_exclude_metadata():
 
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
+
+
+def test_partition_odt_with_include_path_in_metadata_filename(
+    filename="example-docs/fake.odt",
+):
+    elements = partition_odt(filename=filename, include_path_in_metadata_filename=True)
+
+    assert elements[0].metadata.filename == filename
+    assert elements[0].metadata.file_directory is None
+
+
+def test_partition_odt_with_include_path_in_metadata_filename_and_metadata_filename(
+    filename="example-docs/fake.odt",
+):
+    elements = partition_odt(
+        filename=filename,
+        include_path_in_metadata_filename=True,
+        metadata_filename="TEST",
+    )
+
+    assert elements[0].metadata.filename == "example-docs/TEST"
+    assert elements[0].metadata.file_directory is None
