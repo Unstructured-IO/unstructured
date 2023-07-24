@@ -434,3 +434,25 @@ def test_partition_msg_raises_with_no_partitioner(
 ):
     with pytest.raises(ValueError):
         partition_email(filename=filename, process_attachments=True)
+
+
+def test_partition_email_with_include_path_in_metadata_filename(
+    filename="example-docs/eml/fake-email.eml",
+):
+    elements = partition_email(filename=filename, include_path_in_metadata_filename=True)
+
+    assert elements[0].metadata.filename == filename
+    assert elements[0].metadata.file_directory is None
+
+
+def test_partition_email_with_include_path_in_metadata_filename_and_metadata_filename(
+    filename="example-docs/eml/fake-email.eml",
+):
+    elements = partition_email(
+        filename=filename,
+        include_path_in_metadata_filename=True,
+        metadata_filename="TEST",
+    )
+
+    assert elements[0].metadata.filename == "example-docs/eml/TEST"
+    assert elements[0].metadata.file_directory is None
