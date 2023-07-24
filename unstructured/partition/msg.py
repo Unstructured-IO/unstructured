@@ -22,6 +22,7 @@ def partition_msg(
     metadata_filename: Optional[str] = None,
     process_attachments: bool = False,
     attachment_partitioner: Optional[Callable] = None,
+    include_path_in_metadata_filename: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Partitions a MSFT Outlook .msg file
@@ -42,6 +43,8 @@ def partition_msg(
         processing the content of the email itself.
     attachment_partitioner
         The partitioning function to use to process attachments.
+    include_path_in_metadata_filename
+        Determines whether or not metadata filename will contain full path
     """
     exactly_one(filename=filename, file=file)
 
@@ -55,11 +58,22 @@ def partition_msg(
 
     text = msg_obj.body
     if "<html>" in text or "</div>" in text:
-        elements = partition_html(text=text)
+        elements = partition_html(
+            text=text,
+            include_path_in_metadata_filename=include_path_in_metadata_filename,
+        )
     else:
-        elements = partition_text(text=text, max_partition=max_partition)
+        elements = partition_text(
+            text=text,
+            max_partition=max_partition,
+            include_path_in_metadata_filename=include_path_in_metadata_filename,
+        )
 
-    metadata = build_msg_metadata(msg_obj, metadata_filename or filename)
+    metadata = build_msg_metadata(
+        msg_obj,
+        metadata_filename or filename,
+        include_path_in_metadata_filename=include_path_in_metadata_filename,
+    )
     for element in elements:
         element.metadata = metadata
 
@@ -77,13 +91,19 @@ def partition_msg(
                 for element in attached_elements:
                     element.metadata.filename = attached_file
                     element.metadata.file_directory = None
-                    element.metadata.attached_to_filename = metadata_filename or filename
+                    element.metadata.attached_to_filename = (
+                        metadata_filename or filename
+                    )
                     elements.append(element)
 
     return elements
 
 
-def build_msg_metadata(msg_obj: msg_parser.MsOxMessage, filename: Optional[str]) -> ElementMetadata:
+def build_msg_metadata(
+    msg_obj: msg_parser.MsOxMessage,
+    filename: Optional[str],
+    include_path_in_metadata_filename: bool = False,
+) -> ElementMetadata:
     """Creates an ElementMetadata object from the header information in the email."""
     email_date = getattr(msg_obj, "sent_date", None)
     if email_date is not None:
@@ -103,6 +123,7 @@ def build_msg_metadata(msg_obj: msg_parser.MsOxMessage, filename: Optional[str])
         subject=getattr(msg_obj, "subject", None),
         date=email_date,
         filename=filename,
+        include_path_in_metadata_filename=include_path_in_metadata_filename,
     )
 
 
