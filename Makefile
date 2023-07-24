@@ -173,6 +173,10 @@ export CI ?= false
 test:
 	PYTHONPATH=. CI=$(CI) pytest test_${PACKAGE_NAME} --cov=${PACKAGE_NAME} --cov-report term-missing
 
+.PHONY: test-unstructured-api-unit
+test-unstructured-api-unit:
+	scripts/test-unstructured-api-unit.sh
+
 ## check:                   runs linters (includes tests)
 .PHONY: check
 check: check-src check-tests check-version
