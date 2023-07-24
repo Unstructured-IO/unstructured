@@ -163,7 +163,9 @@ def element_from_text(
         )
     elif is_us_city_state_zip(text):
         return Address(
-            text=text, coordinates=coordinates, coordinate_system=coordinate_system
+            text=text,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
         )
     elif is_possible_narrative_text(text):
         return NarrativeText(
@@ -173,9 +175,13 @@ def element_from_text(
         )
     elif is_possible_title(text):
         return Title(
-            text=text, coordinates=coordinates, coordinate_system=coordinate_system
+            text=text,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
         )
     else:
         return Text(
-            text=text, coordinates=coordinates, coordinate_system=coordinate_system
+            text=text,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
         )
