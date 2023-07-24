@@ -83,6 +83,7 @@ def partition_text(
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
     max_partition: Optional[int] = 1500,
+    include_path_in_metadata_filename: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Partitions an .txt documents into its constituent elements.
@@ -104,6 +105,8 @@ def partition_text(
     max_partition
         The maximum number of characters to include in a partition. If None is passed,
         no maximum is applied.
+    include_path_in_metadata_filename
+        Determines whether or not metadata filename will contain full path
     """
     if text is not None and text.strip() == "" and not file and not filename:
         return []
@@ -129,7 +132,10 @@ def partition_text(
 
     elements: List[Element] = []
     metadata = (
-        ElementMetadata(filename=metadata_filename or filename)
+        ElementMetadata(
+            filename=metadata_filename or filename,
+            include_path_in_metadata_filename=include_path_in_metadata_filename,
+        )
         if include_metadata
         else ElementMetadata()
     )
@@ -156,7 +162,9 @@ def element_from_text(
             coordinate_system=coordinate_system,
         )
     elif is_us_city_state_zip(text):
-        return Address(text=text, coordinates=coordinates, coordinate_system=coordinate_system)
+        return Address(
+            text=text, coordinates=coordinates, coordinate_system=coordinate_system
+        )
     elif is_possible_narrative_text(text):
         return NarrativeText(
             text=text,
@@ -164,6 +172,10 @@ def element_from_text(
             coordinate_system=coordinate_system,
         )
     elif is_possible_title(text):
-        return Title(text=text, coordinates=coordinates, coordinate_system=coordinate_system)
+        return Title(
+            text=text, coordinates=coordinates, coordinate_system=coordinate_system
+        )
     else:
-        return Text(text=text, coordinates=coordinates, coordinate_system=coordinate_system)
+        return Text(
+            text=text, coordinates=coordinates, coordinate_system=coordinate_system
+        )
