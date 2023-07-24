@@ -15,6 +15,7 @@ from unstructured.nlp.patterns import LIST_OF_DICTS_PATTERN
 from unstructured.partition.common import (
     _add_element_metadata,
     _remove_element_metadata,
+    create_metadata_filename,
     exactly_one,
     normalize_layout_element,
 )
@@ -306,10 +307,18 @@ def detect_filetype(
         # NOTE(crag): for older versions of the OS libmagic package, such as is currently
         # installed on the Unstructured docker image, .json files resolve to "text/plain"
         # rather than "application/json". this corrects for that case.
-        if _is_text_file_a_json(file=file, filename=filename, encoding=formatted_encoding):
+        if _is_text_file_a_json(
+            file=file,
+            filename=filename,
+            encoding=formatted_encoding,
+        ):
             return FileType.JSON
 
-        if _is_text_file_a_csv(file=file, filename=filename, encoding=formatted_encoding):
+        if _is_text_file_a_csv(
+            file=file,
+            filename=filename,
+            encoding=formatted_encoding,
+        ):
             return FileType.CSV
 
         if file and _check_eml_from_buffer(file=file) is True:
@@ -416,7 +425,11 @@ def _is_text_file_a_json(
     encoding: Optional[str] = "utf-8",
 ):
     """Detects if a file that has a text/plain MIME type is a JSON file."""
-    file_text = _read_file_start_for_type_check(file=file, filename=filename, encoding=encoding)
+    file_text = _read_file_start_for_type_check(
+        file=file,
+        filename=filename,
+        encoding=encoding,
+    )
     return re.match(LIST_OF_DICTS_PATTERN, file_text) is not None
 
 
@@ -433,7 +446,11 @@ def _is_text_file_a_csv(
     encoding: Optional[str] = "utf-8",
 ):
     """Detects if a file that has a text/plain MIME type is a CSV file."""
-    file_text = _read_file_start_for_type_check(file=file, filename=filename, encoding=encoding)
+    file_text = _read_file_start_for_type_check(
+        file=file,
+        filename=filename,
+        encoding=encoding,
+    )
     lines = file_text.strip().splitlines()
     if len(lines) < 2:
         return False
@@ -460,6 +477,7 @@ def document_to_element_list(
     document: "DocumentLayout",
     include_page_breaks: bool = False,
     sort: bool = False,
+    include_path_in_metadata_filename: Optional[bool] = None,
 ) -> List[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
     elements: List[Element] = []
@@ -469,11 +487,17 @@ def document_to_element_list(
         for layout_element in page.elements:
             if hasattr(page, "image") and hasattr(layout_element, "coordinates"):
                 image_format = page.image.format
-                coordinate_system = PixelSpace(width=page.image.width, height=page.image.height)
+                coordinate_system = PixelSpace(
+                    width=page.image.width,
+                    height=page.image.height,
+                )
             else:
                 image_format = None
                 coordinate_system = None
-            element = normalize_layout_element(layout_element, coordinate_system=coordinate_system)
+            element = normalize_layout_element(
+                layout_element,
+                coordinate_system=coordinate_system,
+            )
             if isinstance(element, List):
                 for el in element:
                     el.metadata.page_number = i + 1
@@ -493,6 +517,7 @@ def document_to_element_list(
                 filetype=image_format,
                 coordinates=coordinates,
                 coordinate_system=coordinate_system,
+                include_path_in_metadata_filename=include_path_in_metadata_filename,
             )
         if sort:
             page_elements = sorted(
@@ -552,13 +577,31 @@ def add_metadata_with_filetype(filetype: FileType):
                     params[param.name] = param.default
             include_metadata = params.get("include_metadata", True)
             if include_metadata:
-                if params.get("metadata_filename"):
+                metadata_filename = params.get("metadata_filename")
+                include_path_in_metadata_filename = params.get(
+                    "include_path_in_metadata_filename",
+                )
+                filename = params.get("filename")
+
+                if metadata_filename and not include_path_in_metadata_filename:
                     params["filename"] = params.get("metadata_filename")
 
-                metadata_kwargs = {
-                    kwarg: params.get(kwarg) for kwarg in ("filename", "url", "text_as_html")
-                }
+                if metadata_filename and include_path_in_metadata_filename and filename:
+                    params["filename"] = create_metadata_filename(
+                        filename=filename,
+                        metadata_filename=metadata_filename,
+                    )
 
+                metadata_kwargs = {
+                    kwarg: params.get(kwarg)
+                    for kwarg in (
+                        "filename",
+                        "url",
+                        "text_as_html",
+                        "include_path_in_metadata_filename",
+                        "metadata_filename",
+                    )
+                }
                 for element in elements:
                     # NOTE(robinson) - Attached files have already run through this logic
                     # in their own partitioning function

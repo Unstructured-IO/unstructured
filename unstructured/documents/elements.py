@@ -8,7 +8,7 @@ import pathlib
 import re
 from abc import ABC
 from copy import deepcopy
-from dataclasses import dataclass
+from dataclasses import InitVar, dataclass
 from functools import wraps
 from typing import Any, Callable, Dict, List, Optional, Tuple, TypedDict, Union, cast
 
@@ -143,12 +143,13 @@ class ElementMetadata:
 
     # Metadata extracted via regex
     regex_metadata: Optional[Dict[str, List[RegexMetadata]]] = None
+    include_path_in_metadata_filename: InitVar[Optional[bool]] = None
 
-    def __post_init__(self):
-        if isinstance(self.filename, pathlib.Path):
+    def __post_init__(self, include_path_in_metadata_filename):
+        if isinstance(self.filename, pathlib.Path) or include_path_in_metadata_filename:
             self.filename = str(self.filename)
 
-        if self.filename is not None:
+        if self.filename is not None and not include_path_in_metadata_filename:
             file_directory, filename = os.path.split(self.filename)
             self.file_directory = file_directory or None
             self.filename = filename

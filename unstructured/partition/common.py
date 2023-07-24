@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import subprocess
 from io import BufferedReader, BytesIO, TextIOWrapper
 from tempfile import SpooledTemporaryFile
@@ -30,7 +31,12 @@ if TYPE_CHECKING:
 
 
 def normalize_layout_element(
-    layout_element: Union["LayoutElement", "LocationlessLayoutElement", Element, Dict[str, Any]],
+    layout_element: Union[
+        "LayoutElement",
+        "LocationlessLayoutElement",
+        Element,
+        Dict[str, Any],
+    ],
     coordinate_system: Optional[CoordinateSystem] = None,
 ) -> Union[Element, List[Element]]:
     """Converts an unstructured_inference LayoutElement object to an unstructured Element."""
@@ -66,11 +72,23 @@ def normalize_layout_element(
             coordinate_system=coordinate_system,
         )
     elif element_type == "Checked":
-        return CheckBox(checked=True, coordinates=coordinates, coordinate_system=coordinate_system)
+        return CheckBox(
+            checked=True,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
+        )
     elif element_type == "Unchecked":
-        return CheckBox(checked=False, coordinates=coordinates, coordinate_system=coordinate_system)
+        return CheckBox(
+            checked=False,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
+        )
     else:
-        return Text(text=text, coordinates=coordinates, coordinate_system=coordinate_system)
+        return Text(
+            text=text,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
+        )
 
 
 def layout_list_to_list_items(
@@ -103,12 +121,14 @@ def layout_list_to_list_items(
 def _add_element_metadata(
     element: Element,
     filename: Optional[str] = None,
+    metadata_filename: Optional[str] = None,
     filetype: Optional[str] = None,
     page_number: Optional[int] = None,
     url: Optional[str] = None,
     text_as_html: Optional[str] = None,
     coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
     coordinate_system: Optional[CoordinateSystem] = None,
+    include_path_in_metadata_filename: Optional[bool] = False,
 ) -> Element:
     """Adds document metadata to the document element. Document metadata includes information
     like the filename, source url, and page number."""
@@ -120,6 +140,7 @@ def _add_element_metadata(
         if coordinates is not None and coordinate_system is not None
         else None
     )
+
     metadata = ElementMetadata(
         coordinates=coordinates_metadata,
         filename=filename,
@@ -127,8 +148,11 @@ def _add_element_metadata(
         page_number=page_number,
         url=url,
         text_as_html=text_as_html,
+        include_path_in_metadata_filename=include_path_in_metadata_filename,
     )
+
     element.metadata = metadata.merge(element.metadata)
+
     return element
 
 
@@ -280,3 +304,15 @@ def convert_ms_office_table_to_text(table: docxtable.Table, as_html: bool = True
     headers = [cell.text for cell in rows[0].cells]
     data = [[cell.text for cell in row.cells] for row in rows[1:]]
     return tabulate(data, headers=headers, tablefmt=fmt)
+
+
+def create_metadata_filename(
+    filename: str,
+    metadata_filename: str,
+) -> Union[str, None]:
+    """Create new path for metadata filename"""
+
+    directory_path, _ = os.path.split(filename)
+    if not directory_path:
+        return metadata_filename
+    return f"{directory_path}/{metadata_filename}"
