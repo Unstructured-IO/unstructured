@@ -45,3 +45,25 @@ def test_partition_rst_from_file_exclude_metadata(filename="example-docs/README.
 
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
+
+
+def test_partition_rst_with_include_path_in_metadata_filename(
+    filename="example-docs/README.rst",
+):
+    elements = partition_rst(filename=filename, include_path_in_metadata_filename=True)
+
+    assert elements[0].metadata.filename == filename
+    assert elements[0].metadata.file_directory is None
+
+
+def test_partition_rst_with_include_path_in_metadata_filename_and_metadata_filename(
+    filename="example-docs/README.rst",
+):
+    elements = partition_rst(
+        filename=filename,
+        include_path_in_metadata_filename=True,
+        metadata_filename="TEST",
+    )
+
+    assert elements[0].metadata.filename == "example-docs/TEST"
+    assert elements[0].metadata.file_directory is None
