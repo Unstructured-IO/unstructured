@@ -2,6 +2,7 @@ import contextlib
 import json
 import os
 import pathlib
+import time
 
 import pytest
 import requests
@@ -96,19 +97,25 @@ def test_partition_via_api_raises_with_bad_response(monkeypatch):
     with pytest.raises(ValueError):
         partition_via_api(filename=filename)
 
+
 def test_partition_via_api_with_no_strategy():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.jpg")
 
-    elements = partition_via_api(filename=filename, api_key=get_api_key())
+    elements_no_strategy = partition_via_api(filename=filename, api_key=get_api_key())
+    elements_hi_res = partition_via_api(filename=filename, strategy="hi_res", api_key=get_api_key())
 
-    # confirm that hi_res strategy was not passed to partition by ensuring coordinates were not included
-    assert elements[0].metadata.coordinates is None
-    
+    # confirm that hi_res strategy was not passed as defaukt to partition by comparing outputs
+    assert elements_no_strategy[0].text.startswith("arXiv")
+    assert elements_hi_res[0].text.startswith("LayoutParser")
+
 
 def test_partition_via_api_with_image_hi_res_strategy_includes_coordinates():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.jpg")
 
-    elements = partition_via_api(filename=filename, strategy="hi_res", api_key=get_api_key())
+    # coordinates param must be explicitly included in the API call, to limit payload size when not needed
+    elements = partition_via_api(
+        filename=filename, strategy="hi_res", coordinates="true", api_key=get_api_key()
+    )
 
     assert elements[0].metadata.coordinates is not None
 
