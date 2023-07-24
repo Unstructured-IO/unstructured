@@ -12,9 +12,7 @@ from unstructured.file_utils.filetype import (
     add_metadata_with_filetype,
     document_to_element_list,
 )
-from unstructured.partition.common import (
-    exactly_one,
-)
+from unstructured.partition.common import exactly_one
 
 
 @process_metadata()
@@ -32,6 +30,7 @@ def partition_html(
     parser: VALID_PARSERS = None,
     html_assemble_articles: bool = False,
     metadata_filename: Optional[str] = None,
+    include_path_in_metadata_filename: Optional[bool] = False,
     **kwargs,
 ) -> List[Element]:
     """Partitions an HTML document into its constituent elements.
@@ -101,7 +100,11 @@ def partition_html(
 
         document = HTMLDocument.from_string(response.text, parser=parser)
 
-    return document_to_element_list(document, include_page_breaks=include_page_breaks)
+    return document_to_element_list(
+        document,
+        include_page_breaks=include_page_breaks,
+        include_path_in_metadata_filename=include_path_in_metadata_filename,
+    )
 
 
 def convert_and_partition_html(
@@ -110,6 +113,7 @@ def convert_and_partition_html(
     file: Optional[IO[bytes]] = None,
     include_page_breaks: bool = False,
     metadata_filename: Optional[str] = None,
+    include_path_in_metadata_filename: Optional[bool] = False,
 ) -> List[Element]:
     """Converts a document to HTML and then partitions it using partition_html. Works with
     any file format support by pandoc.
@@ -126,8 +130,14 @@ def convert_and_partition_html(
         If True, the output will include page breaks if the filetype supports it.
     metadata_filename
         The filename to use in element metadata.
+    include_path_in_metadata_filename
+        Determines whether or not metadata filename will contain full path
     """
-    html_text = convert_file_to_html_text(source_format=source_format, filename=filename, file=file)
+    html_text = convert_file_to_html_text(
+        source_format=source_format,
+        filename=filename,
+        file=file,
+    )
     # NOTE(robinson) - pypandoc returns a text string with unicode encoding
     # ref: https://github.com/JessicaTegner/pypandoc#usage
     return partition_html(
@@ -135,4 +145,5 @@ def convert_and_partition_html(
         include_page_breaks=include_page_breaks,
         encoding="unicode",
         metadata_filename=metadata_filename,
+        include_path_in_metadata_filename=include_path_in_metadata_filename,
     )
