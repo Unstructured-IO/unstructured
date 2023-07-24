@@ -236,8 +236,9 @@ jobs:
         key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
     - name: Set up flag for running Unstructured API unit tests
       run: |
-        # NOTE(yuming): Change this env to true if there is a breaking change in Unstructured repo
-        # that will break unstructured api unit tests
+        # NOTE: Change env `SKIP_API_UNIT_FOR_BREAKING_CHANGE` to true
+        # if there is a breaking change in Unstructured repo that will
+        # break unstructured api unit tests
         echo "SKIP_API_UNIT_FOR_BREAKING_CHANGE=false" >> $GITHUB_ENV
     - name: Set up Python ${{ matrix.python-version }}
       if: env.SKIP_API_UNIT_FOR_BREAKING_CHANGE == 'false'
