@@ -167,7 +167,11 @@ def test_partition_pdf_with_model_name_env_var(
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
     monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
-    with mock.patch.object(layout, "process_file_with_model", mock.MagicMock()) as mock_process:
+    with mock.patch.object(
+        layout,
+        "process_file_with_model",
+        mock.MagicMock(),
+    ) as mock_process:
         pdf.partition_pdf(filename=filename, strategy="hi_res")
         mock_process.assert_called_once_with(
             filename,
@@ -183,7 +187,11 @@ def test_partition_pdf_with_model_name(
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
     monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
-    with mock.patch.object(layout, "process_file_with_model", mock.MagicMock()) as mock_process:
+    with mock.patch.object(
+        layout,
+        "process_file_with_model",
+        mock.MagicMock(),
+    ) as mock_process:
         pdf.partition_pdf(filename=filename, strategy="hi_res", model_name="checkbox")
         mock_process.assert_called_once_with(
             filename,
@@ -198,7 +206,9 @@ def test_partition_pdf_with_auto_strategy(
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
     elements = pdf.partition_pdf(filename=filename, strategy="auto")
-    title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
+    title = (
+        "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
+    )
     assert elements[0].text == title
     assert elements[0].metadata.filename == "layout-parser-paper-fast.pdf"
     assert elements[0].metadata.file_directory == "example-docs"
@@ -379,12 +389,16 @@ def test_partition_pdf_uses_table_extraction():
 def test_partition_pdf_with_copy_protection():
     filename = os.path.join("example-docs", "copy-protected.pdf")
     elements = pdf.partition_pdf(filename=filename, strategy="hi_res")
-    elements[0] == Title("LayoutParser: A Uniﬁed Toolkit for Deep Based Document Image Analysis")
+    elements[0] == Title(
+        "LayoutParser: A Uniﬁed Toolkit for Deep Based Document Image Analysis",
+    )
     # check that the pdf has multiple different page numbers
     assert {element.metadata.page_number for element in elements} == {1, 2}
 
 
-def test_partition_pdf_requiring_recursive_text_grab(filename="example-docs/reliance.pdf"):
+def test_partition_pdf_requiring_recursive_text_grab(
+    filename="example-docs/reliance.pdf",
+):
     elements = pdf.partition_pdf(filename=filename, strategy="fast")
     assert len(elements) > 50
     assert elements[0].metadata.page_number == 1
@@ -430,7 +444,10 @@ def test_partition_pdf_fast_groups_text_in_text_box():
             system=expected_coordinate_system_0,
         ),
     )
-    assert elements[0] == Title("eastern mediterranean", metadata=expected_elem_metadata_0)
+    assert elements[0] == Title(
+        "eastern mediterranean",
+        metadata=expected_elem_metadata_0,
+    )
     assert isinstance(elements[1], NarrativeText)
     assert str(elements[1]).startswith("We")
     assert str(elements[1]).endswith("Jordan and Egypt.")
@@ -468,7 +485,12 @@ def test_partition_pdf_with_fast_strategy_from_file_with_metadata_filename(
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
     with open(filename, "rb") as f:
-        elements = pdf.partition_pdf(file=f, url=None, strategy="fast", metadata_filename="test")
+        elements = pdf.partition_pdf(
+            file=f,
+            url=None,
+            strategy="fast",
+            metadata_filename="test",
+        )
     for element in elements:
         assert element.metadata.filename == "test"
 
@@ -476,8 +498,14 @@ def test_partition_pdf_with_fast_strategy_from_file_with_metadata_filename(
 def test_partition_pdf_with_auto_strategy_exclude_metadata(
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
-    elements = pdf.partition_pdf(filename=filename, strategy="auto", include_metadata=False)
-    title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
+    elements = pdf.partition_pdf(
+        filename=filename,
+        strategy="auto",
+        include_metadata=False,
+    )
+    title = (
+        "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
+    )
     assert elements[0].text == title
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
@@ -487,6 +515,99 @@ def test_partition_pdf_with_fast_strategy_from_file_exclude_metadata(
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
     with open(filename, "rb") as f:
-        elements = pdf.partition_pdf(file=f, url=None, strategy="fast", include_metadata=False)
+        elements = pdf.partition_pdf(
+            file=f,
+            url=None,
+            strategy="fast",
+            include_metadata=False,
+        )
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
+
+
+def test_partition_pdf_with_include_path_in_metadata_filename_01(
+    filename="example-docs/chevron-page.pdf",
+):
+    elements = pdf.partition_pdf(
+        filename=filename,
+        include_path_in_metadata_filename=True,
+    )
+
+    assert elements[0].metadata.filename == filename
+    assert elements[0].metadata.file_directory is None
+
+
+def test_partition_pdf_with_include_path_in_metadata_filename_and_metadata_filename_01(
+    filename="example-docs/chevron-page.pdf",
+):
+    """Test partition pdf with default 'fast' strategy"""
+    elements = pdf.partition_pdf(
+        filename=filename,
+        include_path_in_metadata_filename=True,
+        metadata_filename="TEST",
+    )
+
+    assert elements[0].metadata.filename == "example-docs/TEST"
+    assert elements[0].metadata.file_directory is None
+
+
+def test_partition_pdf_with_include_path_in_metadata_filename_02(
+    filename="example-docs/chevron-page.pdf",
+):
+    """Test partition pdf with default 'fast' strategy"""
+
+    elements = pdf.partition_pdf(
+        filename=filename,
+        include_path_in_metadata_filename=True,
+        strategy="hi_res",
+    )
+
+    assert elements[0].metadata.filename == filename
+    assert elements[0].metadata.file_directory is None
+
+
+def test_partition_pdf_with_include_path_in_metadata_filename_and_metadata_filename_02(
+    filename="example-docs/chevron-page.pdf",
+):
+    """Test partition pdf with 'hi_res' strategy"""
+
+    elements = pdf.partition_pdf(
+        filename=filename,
+        include_path_in_metadata_filename=True,
+        metadata_filename="TEST",
+        strategy="hi_res",
+    )
+
+    assert elements[0].metadata.filename == "example-docs/TEST"
+    assert elements[0].metadata.file_directory is None
+
+
+def test_partition_pdf_with_include_path_in_metadata_filename_03(
+    filename="example-docs/chevron-page.pdf",
+):
+    """Test partition pdf with 'ocr_only' strategy"""
+
+    elements = pdf.partition_pdf(
+        filename=filename,
+        include_path_in_metadata_filename=True,
+        strategy="ocr_only",
+    )
+
+    assert elements[0].metadata.filename == filename
+    assert elements[0].metadata.file_directory is None
+
+
+def test_partition_pdf_with_include_path_in_metadata_filename_and_metadata_filename_03(
+    filename="example-docs/chevron-page.pdf",
+):
+    """Test partition pdf with 'ocr_only' strategy"""
+
+    elements = pdf.partition_pdf(
+        filename=filename,
+        include_path_in_metadata_filename=True,
+        metadata_filename="TEST",
+        strategy="ocr_only",
+    )
+
+    assert elements[0].metadata.filename == "example-docs/TEST"
+    assert elements[0].metadata.file_directory is None
