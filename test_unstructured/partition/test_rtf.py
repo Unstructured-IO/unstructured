@@ -55,3 +55,24 @@ def test_partition_rtf_from_file_exclude_metadata():
         elements = partition_rtf(file=f, include_metadata=False)
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
+
+def test_partition_rtf_with_include_path_in_metadata_filename(
+    filename="example-docs/fake-doc.rtf",
+):
+    elements = partition_rtf(filename=filename, include_path_in_metadata_filename=True)
+
+    assert elements[0].metadata.filename == filename
+    assert elements[0].metadata.file_directory is None
+
+
+def test_partition_rtf_with_include_path_in_metadata_filename_and_metadata_filename(
+    filename="example-docs/fake-doc.rtf",
+):
+    elements = partition_rtf(
+        filename=filename,
+        include_path_in_metadata_filename=True,
+        metadata_filename="TEST",
+    )
+
+    assert elements[0].metadata.filename == "example-docs/TEST"
+    assert elements[0].metadata.file_directory is None
