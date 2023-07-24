@@ -2,7 +2,6 @@ import contextlib
 import json
 import os
 import pathlib
-import time
 
 import pytest
 import requests
@@ -114,7 +113,10 @@ def test_partition_via_api_with_image_hi_res_strategy_includes_coordinates():
 
     # coordinates param must be explicitly included in the API call, to limit payload size when not needed
     elements = partition_via_api(
-        filename=filename, strategy="hi_res", coordinates="true", api_key=get_api_key()
+        filename=filename,
+        strategy="hi_res",
+        coordinates="true",
+        api_key=get_api_key(),
     )
 
     assert elements[0].metadata.coordinates is not None
