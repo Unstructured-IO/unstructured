@@ -181,3 +181,23 @@ def test_partition_doc_from_filename_exclude_metadata(mock_document, tmpdir):
     assert elements[0].metadata.filetype is None
     assert elements[0].metadata.page_name is None
     assert elements[0].metadata.filename is None
+
+
+def test_partition_doc_with_include_path_in_metadata_filename(filename="example-docs/fake.doc"):
+    elements = partition_doc(filename=filename, include_path_in_metadata_filename=True)
+
+    assert elements[0].metadata.filename == filename
+    assert elements[0].metadata.file_directory is None
+
+
+def test_partition_doc_with_include_path_in_metadata_filename_and_metadata_filename(
+    filename="example-docs/fake.doc",
+):
+    elements = partition_doc(
+        filename=filename,
+        include_path_in_metadata_filename=True,
+        metadata_filename="TEST",
+    )
+
+    assert elements[0].metadata.filename == "example-docs/TEST"
+    assert elements[0].metadata.file_directory is None
