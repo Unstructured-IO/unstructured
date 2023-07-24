@@ -16,6 +16,7 @@ def partition_ppt(
     include_page_breaks: bool = False,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
+    include_path_in_metadata_filename: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft PowerPoint Documents in .ppt format into their document elements.
@@ -28,6 +29,8 @@ def partition_ppt(
         A file-like object using "rb" mode --> open(filename, "rb").
     include_page_breaks
         If True, includes a PageBreak element between slides
+    include_path_in_metadata_filename
+        Determines whether or not metadata filename will contain full path
     """
     # Verify that only one of the arguments was provided
     if filename is None:
@@ -56,7 +59,11 @@ def partition_ppt(
             target_filter="Impress MS PowerPoint 2007 XML",
         )
         pptx_filename = os.path.join(tmpdir, f"{base_filename}.pptx")
-        elements = partition_pptx(filename=pptx_filename, metadata_filename=metadata_filename)
+        elements = partition_pptx(
+            filename=pptx_filename,
+            metadata_filename=metadata_filename,
+            include_path_in_metadata_filename=include_path_in_metadata_filename,
+        )
 
     # remove tmp.name from filename if parsing file
     if file:
