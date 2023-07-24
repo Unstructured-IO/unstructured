@@ -82,7 +82,6 @@ def isd_to_elements(
         metadata = ElementMetadata()
         _metadata_dict = item.get("metadata")
         if _metadata_dict is not None:
-            print(_metadata_dict)
             metadata = ElementMetadata.from_dict(
                 {
                     **_metadata_dict,

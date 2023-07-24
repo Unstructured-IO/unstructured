@@ -66,7 +66,6 @@ def test_partition_tsv_from_file_exclude_metadata(filename="example-docs/stanley
         assert elements[i].metadata.to_dict() == {}
 
 
-
 def test_partition_tsv_with_include_path_in_metadata_filename(
     filename="example-docs/stanley-cups.tsv",
 ):

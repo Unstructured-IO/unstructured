@@ -91,9 +91,7 @@ def partition_msg(
                 for element in attached_elements:
                     element.metadata.filename = attached_file
                     element.metadata.file_directory = None
-                    element.metadata.attached_to_filename = (
-                        metadata_filename or filename
-                    )
+                    element.metadata.attached_to_filename = metadata_filename or filename
                     elements.append(element)
 
     return elements

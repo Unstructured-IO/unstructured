@@ -246,6 +246,7 @@ def test_partition_pptx_from_file_exclude_metadata():
         elements = partition_pptx(file=f, include_metadata=False)
     assert elements == EXPECTED_PPTX_OUTPUT
 
+
 def test_partition_pptx_with_include_path_in_metadata_filename(
     filename="example-docs/fake-power-point.pptx",
 ):

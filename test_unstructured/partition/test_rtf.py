@@ -56,6 +56,7 @@ def test_partition_rtf_from_file_exclude_metadata():
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
 
+
 def test_partition_rtf_with_include_path_in_metadata_filename(
     filename="example-docs/fake-doc.rtf",
 ):
