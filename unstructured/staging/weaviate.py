@@ -60,6 +60,8 @@ def create_unstructured_weaviate_class(class_name: str = "UnstructuredDocument")
     ]
 
     for name, annotation in ElementMetadata.__annotations__.items():
+        if annotation.startswith("InitVar"):
+            continue
         if name not in exclude_metadata_keys:
             data_type = _annotation_to_weaviate_data_type(annotation)
             properties.append(
