@@ -384,6 +384,14 @@ def test_partition_pdf_with_copy_protection():
     assert {element.metadata.page_number for element in elements} == {1, 2}
 
 
+def test_partition_pdf_with_dpi():
+    filename = os.path.join("example-docs", "copy-protected.pdf")
+    elements = pdf.partition_pdf(filename=filename, strategy="hi_res", pdf_image_dpi=100)
+    elements[0] == Title("LayoutParser: A Uniﬁed Toolkit for Deep Based Document Image Analysis")
+    # check that the pdf has multiple different page numbers
+    assert {element.metadata.page_number for element in elements} == {1, 2}
+
+
 def test_partition_pdf_requiring_recursive_text_grab(filename="example-docs/reliance.pdf"):
     elements = pdf.partition_pdf(filename=filename, strategy="fast")
     assert len(elements) > 50
