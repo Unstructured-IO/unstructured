@@ -4,6 +4,8 @@
 
 * Links are now tracked in `partition_html` output.
 * Set the file's current position to the beginning after reading the file in `convert_to_bytes`
+* Add min_partition kwarg to that combines elements below a specified threshold and modifies splitting of strings longer than max partition so words are not split.
+* set the file's current position to the beginning after reading the file in `convert_to_bytes`
 * Add slide notes to pptx
 
 ### Features

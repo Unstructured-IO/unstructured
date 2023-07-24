@@ -44,6 +44,20 @@ def test_from_string(sample_document):
     assert type_tag.text.strip() == "10-K"
 
 
+def test_from_string_with_pre_tag():
+    sample_document = """
+    <pre>
+    <SEC-DOCUMENT>
+    <TYPE>10-K
+    <COMPANY>Proctor & Gamble
+    </SEC-DOCUMENT>
+    </pre>
+    """
+    xml_document = XMLDocument.from_string(sample_document)
+    type_tag = xml_document.document_tree.find(".//type")
+    assert type_tag.text.strip() == "10-K"
+
+
 def test_read_with_stylesheet():
     filename = os.path.join(FILEPATH, "..", "..", "example-docs", "factbook.xml")
     stylesheet = os.path.join(FILEPATH, "..", "..", "example-docs", "unsupported", "factbook.xsl")
