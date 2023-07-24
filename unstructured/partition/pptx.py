@@ -68,16 +68,15 @@ def partition_pptx(
     elif file is not None:
         presentation = pptx.Presentation(
             spooled_to_bytes_io_if_needed(
-                cast(Union[BinaryIO, SpooledTemporaryFile], file)
+                cast(Union[BinaryIO, SpooledTemporaryFile], file),
             ),
         )
 
     elements: List[Element] = []
-    metadata = ElementMetadata(filename=metadata_filename or filename)
+    metadata = ElementMetadata(filename=metadata_filename or filename, include_path_in_metadata_filename=include_path_in_metadata_filename)
     num_slides = len(presentation.slides)
     for i, slide in enumerate(presentation.slides):
-        metadata = ElementMetadata.from_dict(metadata.to_dict())
-        metadata.include_path_in_metadata_filename = include_path_in_metadata_filename
+        metadata = ElementMetadata.from_dict({**metadata.to_dict(), "include_path_in_metadata_filename": include_path_in_metadata_filename})
         metadata.page_number = i + 1
         if include_slide_notes and slide.has_notes_slide is True:
             notes_slide = slide.notes_slide
