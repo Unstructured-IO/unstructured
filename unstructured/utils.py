@@ -50,8 +50,10 @@ def requires_dependencies(
 def dependency_exists(dependency):
     try:
         importlib.import_module(dependency)
-    except ImportError:
-        return False
+    except ImportError as e:
+        # Check to make sure this isn't some unrelated import error.
+        if dependency in repr(e):
+            return False
     return True
 
 

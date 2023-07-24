@@ -19,6 +19,7 @@
 * Adds `.txt`, `.text`, and `.tab` to list of extensions to check if file
   has a `text/plain` MIME type.
 * Enables filters to be passed to `partition_doc` so it doesn't error with LibreOffice7.
+* Removed old error message that's superseded by `requires_dependencies`.
 
 ## 0.8.1
 
