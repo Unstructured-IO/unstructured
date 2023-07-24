@@ -51,7 +51,11 @@ def test_partition_html_from_filename_raises_encoding_error(filename, encoding, 
 
 @pytest.mark.parametrize(
     "filename",
-    ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html", "fake-html-lang-de.html"],
+    [
+        "example-10k-utf-16.html",
+        "example-steelJIS-datasheet-utf-16.html",
+        "fake-html-lang-de.html",
+    ],
 )
 def test_partition_html_from_filename_default_encoding(filename):
     filename_path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
@@ -114,7 +118,11 @@ def test_partition_html_from_file_raises_encoding_error(filename, encoding, erro
 
 @pytest.mark.parametrize(
     "filename",
-    ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html", "fake-html-lang-de.html"],
+    [
+        "example-10k-utf-16.html",
+        "example-steelJIS-datasheet-utf-16.html",
+        "fake-html-lang-de.html",
+    ],
 )
 def test_partition_html_from_file_default_encoding(filename):
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
@@ -141,7 +149,11 @@ def test_partition_html_from_file_rb_raises_encoding_error(filename, encoding, e
 
 @pytest.mark.parametrize(
     "filename",
-    ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html", "fake-html-lang-de.html"],
+    [
+        "example-10k-utf-16.html",
+        "example-steelJIS-datasheet-utf-16.html",
+        "fake-html-lang-de.html",
+    ],
 )
 def test_partition_html_from_file_rb_default_encoding(filename):
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
@@ -177,7 +189,11 @@ def test_partition_html_from_url():
     with open(filename) as f:
         text = f.read()
 
-    response = MockResponse(text=text, status_code=200, headers={"Content-Type": "text/html"})
+    response = MockResponse(
+        text=text,
+        status_code=200,
+        headers={"Content-Type": "text/html"},
+    )
     with patch.object(requests, "get", return_value=response) as _:
         elements = partition_html(url="https://fake.url")
 
@@ -189,7 +205,11 @@ def test_partition_html_from_url_raises_with_bad_status_code():
     with open(filename) as f:
         text = f.read()
 
-    response = MockResponse(text=text, status_code=500, headers={"Content-Type": "text/html"})
+    response = MockResponse(
+        text=text,
+        status_code=500,
+        headers={"Content-Type": "text/html"},
+    )
     with patch.object(requests, "get", return_value=response) as _:
         with pytest.raises(ValueError):
             partition_html(url="https://fake.url")
@@ -252,7 +272,13 @@ def test_partition_html_on_ideas_page():
 
 
 def test_user_without_file_write_permission_can_partition_html(tmp_path, monkeypatch):
-    example_filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "example-10k.html")
+    example_filename = os.path.join(
+        DIRECTORY,
+        "..",
+        "..",
+        "example-docs",
+        "example-10k.html",
+    )
 
     # create a file with no write permissions
     read_only_file = tmp_path / "example-10k-readonly.html"
@@ -318,4 +344,26 @@ def test_partition_html_from_filename_exclude_metadata():
     assert len(elements) > 0
     assert "PageBreak" not in [elem.category for elem in elements]
     assert elements[0].metadata.filename is None
+    assert elements[0].metadata.file_directory is None
+
+
+def test_partition_html_with_include_path_in_metadata_filename(
+    filename="example-docs/example-steelJIS-datasheet.html",
+):
+    elements = partition_html(filename=filename, include_path_in_metadata_filename=True)
+
+    assert elements[0].metadata.filename == filename
+    assert elements[0].metadata.file_directory is None
+
+
+def test_partition_html_with_include_path_in_metadata_filename_and_metadata_filename(
+    filename="example-docs/example-steelJIS-datasheet.html",
+):
+    elements = partition_html(
+        filename=filename,
+        include_path_in_metadata_filename=True,
+        metadata_filename="TEST",
+    )
+
+    assert elements[0].metadata.filename == "example-docs/TEST"
     assert elements[0].metadata.file_directory is None
