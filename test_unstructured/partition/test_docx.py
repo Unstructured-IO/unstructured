@@ -33,7 +33,10 @@ def mock_document():
     # NOTE(robinson) - this should get dropped because it is empty
     document.add_paragraph("", style="Normal")
     # NOTE(robinson) - this should get picked up as a narrative text
-    document.add_paragraph("This is my first thought. This is my second thought.", style="Normal")
+    document.add_paragraph(
+        "This is my first thought. This is my second thought.",
+        style="Normal",
+    )
     document.add_paragraph("This is my third thought.", style="Body Text")
     # NOTE(robinson) - this should just be regular text
     document.add_paragraph("2023")
@@ -103,7 +106,11 @@ def test_partition_docx_from_file(mock_document, expected_elements, tmpdir):
         assert element.metadata.filename is None
 
 
-def test_partition_docx_from_file_with_metadata_filename(mock_document, expected_elements, tmpdir):
+def test_partition_docx_from_file_with_metadata_filename(
+    mock_document,
+    expected_elements,
+    tmpdir,
+):
     filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     mock_document.save(filename)
 
@@ -145,7 +152,9 @@ def test_partition_docx_processes_table(filename="example-docs/fake_table.docx")
     assert elements[0].metadata.filename == "fake_table.docx"
 
 
-def test_partition_docx_grabs_header_and_footer(filename="example-docs/handbook-1p.docx"):
+def test_partition_docx_grabs_header_and_footer(
+    filename="example-docs/handbook-1p.docx",
+):
     elements = partition_docx(filename=filename)
     assert elements[0] == Header("US Trustee Handbook")
     assert elements[-1] == Footer("Copyright")
@@ -153,7 +162,9 @@ def test_partition_docx_grabs_header_and_footer(filename="example-docs/handbook-
         assert element.metadata.filename == "handbook-1p.docx"
 
 
-def test_partition_docx_includes_pages_if_present(filename="example-docs/handbook-1p.docx"):
+def test_partition_docx_includes_pages_if_present(
+    filename="example-docs/handbook-1p.docx",
+):
     elements = partition_docx(filename=filename, include_page_breaks=False)
     assert "PageBreak" not in [elem.category for elem in elements]
     assert elements[1].metadata.page_number == 1
@@ -171,7 +182,9 @@ def test_partition_docx_includes_page_breaks(filename="example-docs/handbook-1p.
         assert element.metadata.filename == "handbook-1p.docx"
 
 
-def test_partition_docx_detects_lists(filename="example-docs/example-list-items-multiple.docx"):
+def test_partition_docx_detects_lists(
+    filename="example-docs/example-list-items-multiple.docx",
+):
     elements = partition_docx(filename=filename)
     list_elements = []
     narrative_elements = []
@@ -186,7 +199,9 @@ def test_partition_docx_detects_lists(filename="example-docs/example-list-items-
     assert len(list_elements) == 10
 
 
-def test_partition_docx_from_filename_exclude_metadata(filename="example-docs/handbook-1p.docx"):
+def test_partition_docx_from_filename_exclude_metadata(
+    filename="example-docs/handbook-1p.docx",
+):
     elements = partition_docx(filename=filename, include_metadata=False)
     assert elements[0].metadata.filetype is None
     assert elements[0].metadata.page_name is None
@@ -202,3 +217,25 @@ def test_partition_docx_from_file_exclude_metadata(mock_document, tmpdir):
     assert elements[0].metadata.filetype is None
     assert elements[0].metadata.page_name is None
     assert elements[0].metadata.filename is None
+
+
+def test_partition_docx_with_include_path_in_metadata_filename(
+    filename="example-docs/fake.docx",
+):
+    elements = partition_docx(filename=filename, include_path_in_metadata_filename=True)
+
+    assert elements[0].metadata.filename == filename
+    assert elements[0].metadata.file_directory is None
+
+
+def test_partition_docx_with_include_path_in_metadata_filename_and_metadata_filename(
+    filename="example-docs/fake.docx",
+):
+    elements = partition_docx(
+        filename=filename,
+        include_path_in_metadata_filename=True,
+        metadata_filename="TEST",
+    )
+
+    assert elements[0].metadata.filename == "example-docs/TEST"
+    assert elements[0].metadata.file_directory is None
