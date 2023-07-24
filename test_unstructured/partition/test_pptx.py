@@ -245,3 +245,24 @@ def test_partition_pptx_from_file_exclude_metadata():
     with open(filename, "rb") as f:
         elements = partition_pptx(file=f, include_metadata=False)
     assert elements == EXPECTED_PPTX_OUTPUT
+
+def test_partition_pptx_with_include_path_in_metadata_filename(
+    filename="example-docs/fake-power-point.pptx",
+):
+    elements = partition_pptx(filename=filename, include_path_in_metadata_filename=True)
+
+    assert elements[0].metadata.filename == filename
+    assert elements[0].metadata.file_directory is None
+
+
+def test_partition_pptx_with_include_path_in_metadata_filename_and_metadata_filename(
+    filename="example-docs/fake-power-point.pptx",
+):
+    elements = partition_pptx(
+        filename=filename,
+        include_path_in_metadata_filename=True,
+        metadata_filename="TEST",
+    )
+
+    assert elements[0].metadata.filename == "example-docs/TEST"
+    assert elements[0].metadata.file_directory is None
