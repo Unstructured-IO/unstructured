@@ -156,3 +156,25 @@ def test_partition_xml_from_file_exclude_metadata(filename):
     assert elements[0].text == "United States"
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
+
+
+def test_partition_xml_with_include_path_in_metadata_filename(
+    filename="example-docs/factbook.xml",
+):
+    elements = partition_xml(filename=filename, include_path_in_metadata_filename=True)
+
+    assert elements[0].metadata.filename == filename
+    assert elements[0].metadata.file_directory is None
+
+
+def test_partition_xml_with_include_path_in_metadata_filename_and_metadata_filename(
+    filename="example-docs/factbook.xml",
+):
+    elements = partition_xml(
+        filename=filename,
+        include_path_in_metadata_filename=True,
+        metadata_filename="TEST",
+    )
+
+    assert elements[0].metadata.filename == "example-docs/TEST"
+    assert elements[0].metadata.file_directory is None
