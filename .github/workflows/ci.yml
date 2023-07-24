@@ -238,18 +238,26 @@ jobs:
           .venv
           nltk_data
         key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+    - name: Set up flag for running Unstructured API unit tests
+      run: |
+        # NOTE(yuming): Change this env to true if there is a breaking change in Unstructured repo
+        # that will break unstructured api unit tests
+        echo "SKIP_API_UNIT_FOR_BREAKING_CHANGE=false" >> $GITHUB_ENV
+
     - name: Set up Python ${{ matrix.python-version }}
+      if: env.SKIP_API_UNIT_FOR_BREAKING_CHANGE =='true'
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
     - name: Setup virtual environment (no cache hit)
-      if: steps.virtualenv-cache.outputs.cache-hit != 'true'
+      if: steps.virtualenv-cache.outputs.cache-hit != 'true' &&  env.SKIP_API_UNIT_FOR_BREAKING_CHANGE == 'true'
       run: |
         python${{ matrix.python-version}} -m venv .venv
         source .venv/bin/activate
         mkdir "$NLTK_DATA"
         make install-ci
     - name: Test Unstructured API Unit
+      if: env.SKIP_API_UNIT_FOR_BREAKING_CHANGE =='true'
       run: |
         source .venv/bin/activate
         sudo apt-get update && sudo apt-get install --yes poppler-utils libreoffice
@@ -258,11 +266,7 @@ jobs:
         sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
         tesseract --version
         make install-nltk-models
-        make install-project-local
-        git clone --depth 1 https://github.com/Unstructured-IO/unstructured-api.git
-        cd unstructured-api
-        make install
-        make test
+        make test-unstructured-api-unit
 
   changelog:
     runs-on: ubuntu-latest
