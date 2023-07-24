@@ -204,3 +204,25 @@ def test_partition_json_from_text_exclude_metadata(filename: str):
 
     for i in range(len(test_elements)):
         assert any(test_elements[i].metadata.to_dict()) is False
+
+
+def test_partition_json_with_include_path_in_metadata_filename(
+    filename="example-docs/spring-weather.html.json",
+):
+    elements = partition_json(filename=filename, include_path_in_metadata_filename=True)
+
+    assert elements[0].metadata.filename == filename
+    assert elements[0].metadata.file_directory is None
+
+
+def test_partition_json_with_include_path_in_metadata_filename_and_metadata_filename(
+    filename="example-docs/spring-weather.html.json",
+):
+    elements = partition_json(
+        filename=filename,
+        include_path_in_metadata_filename=True,
+        metadata_filename="TEST",
+    )
+
+    assert elements[0].metadata.filename == "example-docs/TEST"
+    assert elements[0].metadata.file_directory is None
