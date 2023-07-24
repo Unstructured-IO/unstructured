@@ -240,19 +240,19 @@ jobs:
         # that will break unstructured api unit tests
         echo "SKIP_API_UNIT_FOR_BREAKING_CHANGE=false" >> $GITHUB_ENV
     - name: Set up Python ${{ matrix.python-version }}
-      if: env.SKIP_API_UNIT_FOR_BREAKING_CHANGE =='true'
+      if: env.SKIP_API_UNIT_FOR_BREAKING_CHANGE == 'false'
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
     - name: Setup virtual environment (no cache hit)
-      if: steps.virtualenv-cache.outputs.cache-hit != 'true' &&  env.SKIP_API_UNIT_FOR_BREAKING_CHANGE == 'true'
+      if: steps.virtualenv-cache.outputs.cache-hit != 'true' &&  env.SKIP_API_UNIT_FOR_BREAKING_CHANGE == 'false'
       run: |
         python${{ matrix.python-version}} -m venv .venv
         source .venv/bin/activate
         mkdir "$NLTK_DATA"
         make install-ci
     - name: Test Unstructured API Unit
-      if: env.SKIP_API_UNIT_FOR_BREAKING_CHANGE =='true'
+      if: env.SKIP_API_UNIT_FOR_BREAKING_CHANGE == 'false'
       run: |
         source .venv/bin/activate
         sudo apt-get update && sudo apt-get install --yes poppler-utils libreoffice
