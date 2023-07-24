@@ -1,4 +1,4 @@
-## 0.8.2-dev3
+## 0.8.2-dev4
 
 ### Enhancements
 * Add min_partition kwarg to that combines elements below a specified threshold and modifies splitting of strings longer than max partition so words are not split.
@@ -18,6 +18,7 @@
 * Adds `.txt`, `.text`, and `.tab` to list of extensions to check if file
   has a `text/plain` MIME type.
 * Enables filters to be passed to `partition_doc` so it doesn't error with LibreOffice7.
+* Removed old error message that's superseded by `requires_dependencies`.
 
 ## 0.8.1
 
