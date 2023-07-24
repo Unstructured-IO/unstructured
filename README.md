@@ -33,11 +33,13 @@
   <p>API Announcement!</p>
 </h3>
 
-<p>While access to the hosted Unstructured API will remain free, API Keys will soon be required to make requests. To prevent any disruption, get yours <a href="https://www.unstructured.io/api-key/">here</a> now and start using it today!</p>
+We are thrilled to announce our newly launched [Unstructured API](https://unstructured-io.github.io/unstructured/api.html). While access to the hosted Unstructured API will remain free, API Keys are required to make requests. To prevent disruption, get yours [here](https://unstructured.io/#get-api-key) now and start using it today! Check out the [readme](https://github.com/Unstructured-IO/unstructured-api#--) here to get started making API calls.</p>
 
-<p>Checkout the <a href="https://github.com/Unstructured-IO/unstructured-api#--">readme</a> here to get started making API calls.
-We'd love to hear your feedback, let us know how it goes in our
-  community slack. And stay tuned for improvements to both quality and performance!</p>
+#### :rocket: Beta Feature: Chipper Model
+
+We are releasing the beta version of our Chipper model to deliver superior performance when processing high-resolution, complex documents. To start using the Chipper model in your API request, you can utilize the `hi_res` strategy. Please refer to the documentation [here](https://unstructured-io.github.io/unstructured/api.html#strategies).
+
+As the Chipper model is in beta version, we welcome feedback and suggestions. For those interested in testing the Chipper model, we encourage you to connect with us on [Slack community](https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-1x7cgo0pg-PTptXWylzPQF9xZolzCnwQ).
 
 <h3 align="center">
   <p>Open-Source Pre-Processing Tools for Unstructured Data</p>
@@ -61,66 +63,15 @@ Checkout the [`unstructured-api` repo](https://github.com/Unstructured-IO/unstru
 to get started making API calls.
 You’ll also find instructions there about how to host your own version of the API.
 
+## :bookmark: Documentation
+This README gives an overview of how to install, use and develop the library.
+For more comprehensive documentation, visit https://unstructured-io.github.io/unstructured/ .
+
 ## :eight_pointed_black_star: Quick Start
 
-Use the following instructions to get up and running with `unstructured` and test your
-installation. NOTE: We do not currently support python 3.11, please use an older version.
+There are two ways to use the library: 1) run a container or 2) install it
 
-- Install the Python SDK with `pip install "unstructured[local-inference]"`
-		- If you do not need to process PDFs or images, you can run `pip install unstructured`
-- Install the following system dependencies if they are not already available on your system.
-  Depending on what document types you're parsing, you may not need all of these.
-    - `libmagic-dev` (filetype detection)
-    - `poppler-utils` (images and PDFs)
-    - `tesseract-ocr` (images and PDFs)
-    - `libreoffice` (MS Office docs)
-
-- If you are parsing PDFs and want to use a model from the [layoutparser model
-  zoo](https://github.com/Unstructured-IO/unstructured-inference#using-models-from-the-layoutparser-model-zoo),
-  use the instructions [here](https://github.com/Unstructured-IO/unstructured-inference#detectron2).
-
-At this point, you should be able to run the following code:
-
-```python
-from unstructured.partition.auto import partition
-
-elements = partition(filename="example-docs/eml/fake-email.eml")
-print("\n\n".join([str(el) for el in elements]))
-```
-
-The following table shows the document types the `unstructured` library currently supports.
-`partition` will recognize each of these document types and route the document to the
-appropriate partitioning function. If you already know your document type, you can use
-the partitioning function listed in the table directly.
-See our [documentation page](https://unstructured-io.github.io/unstructured/) for more details
-about the library.
-
-| Document Type | Partition Function | Strategies | Table Support | Options |
-| --- | --- | --- | --- | --- |
-| CSV Files (`.csv`) | `partition_csv` | N/A | Yes | None |
-| E-mails (`.eml`) | `partition_eml` | N/A | No | Encoding; Max Partition; Process Attachments |
-| E-mails (`.msg`) | `partition_msg` | N/A | No | Encoding; Max Partition; Process Attachments |
-| EPubs (`.epub`) | `partition_epub` | N/A | Yes | Include Page Breaks |
-| Excel Documents (`.xlsx`/`.xls`) | `partition_xlsx` | N/A | Yes | None |
-| HTML Pages (`.html`) | `partition_html` | N/A | No | Encoding; Include Page Breaks |
-| Images (`.png`/`.jpg`) | `partition_image` | `"auto"`, `"hi_res"`, `"ocr_only"` | Yes | Encoding; Include Page Breaks; Infer Table Structure; OCR Languages, Strategy |
-| Markdown (`.md`) | `partitin_md` | N/A | Yes | Include Page Breaks |
-| Org Mode (`.org`) | `partition_org` | N/A | Yes | Include Page Breaks |
-| Open Office Documents (`.odt`) | `partition_odt` | N/A | Yes | None |
-| PDFs (`.pdf`) | `partition_pdf` | `"auto"`, `"fast"`, `"hi_res"`, `"ocr_only"` | Yes | Encoding; Include Page Breaks; Infer Table Structure; Max Partition; OCR Languages, Strategy |
-| Plain Text (`.txt`) | `partition_text` | N/A | No | Encoding; Max Partition; Paragraph Grouper |
-| Power Points (`.ppt`) | `partition_ppt` | N/A | Yes | Include Page Breaks |
-| Power Points (`.pptx`) | `partition_pptx` | N/A | Yes | Include Page Breaks |
-| ReStructured Text (`.rst`) | `partition_rst` | N/A | Yes | Include Page Breaks |
-| Rich Text Files (`.rtf`) | `partition_rtf` | N/A | Yes | Include Page Breaks |
-| TSV Files (`.tsv`) | `partition_tsv` | N/A | Yes | None |
-| Word Documents (`.doc`) | `partition_doc` | N/A | Yes | Include Page Breaks |
-| Word Documents (`.docx`) | `partition_docx` | N/A | Yes | Include Page Breaks |
-| XML Documents (`.xml`) | `partition_xml` | N/A | No | Encoding; Max Partition; XML Keep Tags |
-
-
-
-## :dizzy: Instructions for using the docker image
+### Using the library in a container
 
 The following instructions are intended to help you get up and running using Docker to interact with `unstructured`.
 See [here](https://docs.docker.com/get-docker/) if you don't already have docker installed on your machine.
@@ -167,6 +118,63 @@ python3
 >>> from unstructured.partition.text import partition_text
 >>> elements = partition_text(filename="example-docs/fake-text.txt")
 ```
+
+### Installing the library
+Use the following instructions to get up and running with `unstructured` and test your
+installation.
+
+- Install the Python SDK with `pip install "unstructured[local-inference]"`
+		- If you do not need to process PDFs or images, you can run `pip install unstructured`
+- Install the following system dependencies if they are not already available on your system.
+  Depending on what document types you're parsing, you may not need all of these.
+    - `libmagic-dev` (filetype detection)
+    - `poppler-utils` (images and PDFs)
+    - `tesseract-ocr` (images and PDFs)
+    - `libreoffice` (MS Office docs)
+    - `pandoc` (EPUBs, RTFs and Open Office docs)
+
+- For suggestions on how to install on Windows and to learn about dependencies for other features, see the
+  installation documentation [here](https://unstructured-io.github.io/unstructured/installing.html).
+
+At this point, you should be able to run the following code:
+
+```python
+from unstructured.partition.auto import partition
+
+elements = partition(filename="example-docs/eml/fake-email.eml")
+print("\n\n".join([str(el) for el in elements]))
+```
+
+The following table shows the document types the `unstructured` library currently supports.
+`partition` will recognize each of these document types and route the document to the
+appropriate partitioning function. If you already know your document type, you can use
+the partitioning function listed in the table directly.
+See our [documentation page](https://unstructured-io.github.io/unstructured/) for more details
+about the library.
+
+| Document Type | Partition Function | Strategies | Table Support | Options |
+| --- | --- | --- | --- | --- |
+| CSV Files (`.csv`) | `partition_csv` | N/A | Yes | None |
+| E-mails (`.eml`) | `partition_eml` | N/A | No | Encoding; Max Partition; Process Attachments |
+| E-mails (`.msg`) | `partition_msg` | N/A | No | Encoding; Max Partition; Process Attachments |
+| EPubs (`.epub`) | `partition_epub` | N/A | Yes | Include Page Breaks |
+| Excel Documents (`.xlsx`/`.xls`) | `partition_xlsx` | N/A | Yes | None |
+| HTML Pages (`.html`) | `partition_html` | N/A | No | Encoding; Include Page Breaks |
+| Images (`.png`/`.jpg`) | `partition_image` | `"auto"`, `"hi_res"`, `"ocr_only"` | Yes | Encoding; Include Page Breaks; Infer Table Structure; OCR Languages, Strategy |
+| Markdown (`.md`) | `partitin_md` | N/A | Yes | Include Page Breaks |
+| Org Mode (`.org`) | `partition_org` | N/A | Yes | Include Page Breaks |
+| Open Office Documents (`.odt`) | `partition_odt` | N/A | Yes | None |
+| PDFs (`.pdf`) | `partition_pdf` | `"auto"`, `"fast"`, `"hi_res"`, `"ocr_only"` | Yes | Encoding; Include Page Breaks; Infer Table Structure; Max Partition; OCR Languages, Strategy |
+| Plain Text (`.txt`) | `partition_text` | N/A | No | Encoding; Max Partition; Paragraph Grouper |
+| Power Points (`.ppt`) | `partition_ppt` | N/A | Yes | Include Page Breaks |
+| Power Points (`.pptx`) | `partition_pptx` | N/A | Yes | Include Page Breaks |
+| ReStructured Text (`.rst`) | `partition_rst` | N/A | Yes | Include Page Breaks |
+| Rich Text Files (`.rtf`) | `partition_rtf` | N/A | Yes | Include Page Breaks |
+| TSV Files (`.tsv`) | `partition_tsv` | N/A | Yes | None |
+| Word Documents (`.doc`) | `partition_doc` | N/A | Yes | Include Page Breaks |
+| Word Documents (`.docx`) | `partition_docx` | N/A | Yes | Include Page Breaks |
+| XML Documents (`.xml`) | `partition_xml` | N/A | No | Encoding; Max Partition; XML Keep Tags |
+
 
 
 ## :coffee: Installation Instructions for Local Development
