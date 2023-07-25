@@ -62,6 +62,7 @@ def normalize_layout_element(
     """Converts an unstructured_inference LayoutElement object to an unstructured Element."""
 
     if isinstance(layout_element, Element):
+        print("return1", layout_element.__dict__)
         return layout_element
 
     # NOTE(alan): Won't the lines above ensure this never runs (PageBreak is a subclass of Element)?
