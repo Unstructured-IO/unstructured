@@ -111,7 +111,7 @@ def test_partition_via_api_with_no_strategy():
 def test_partition_via_api_with_image_hi_res_strategy_includes_coordinates():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.jpg")
 
-    # coordinates param must be explicitly included in the API call, to limit payload size when not needed
+    # coordinates not included by default to limit payload size
     elements = partition_via_api(
         filename=filename,
         strategy="hi_res",
