@@ -399,7 +399,7 @@ class MainProcess:
 @click.option(
     "--ms-client-id",
     default=None,
-    help="Microsoft/Sharepoint app client ID",
+    help="Microsoft app client ID",
 )
 @click.option(
     "--ms-client-cred",
@@ -426,6 +426,16 @@ class MainProcess:
     "--ms-onedrive-path",
     default=None,
     help="Folder to start parsing files from.",
+)
+@click.option(
+    "--ms-sharepoint-client-id",
+    default=None,
+    help="Sharepoint app client ID",
+)
+@click.option(
+    "--ms-sharepoint-client-cred",
+    default=None,
+    help="Sharepoint app secret",
 )
 @click.option(
     "--ms-sharepoint-site",
@@ -594,6 +604,8 @@ def main(
     ms_tenant,
     ms_user_pname,
     ms_onedrive_path,
+    ms_sharepoint_client_id,
+    ms_sharepoint_client_cred,
     ms_sharepoint_site,
     ms_sharepoint_path,
     ms_sharepoint_all,
@@ -963,7 +975,7 @@ def main(
             ),
         )
 
-    elif ms_client_id and ms_sharepoint_site:
+    elif ms_sharepoint_client_id and ms_sharepoint_site:
         from unstructured.ingest.connector.sharepoint import (
             SharepointConnector,
             SimpleSharepointConfig,
@@ -972,8 +984,8 @@ def main(
         doc_connector = SharepointConnector(  # type: ignore
             standard_config=standard_config,
             config=SimpleSharepointConfig(
-                client_id=ms_client_id,
-                client_credential=ms_client_cred,
+                client_id=ms_sharepoint_client_id,
+                client_credential=ms_sharepoint_client_cred,
                 site_url=ms_sharepoint_site,
                 path=ms_sharepoint_path,
                 process_all=ms_sharepoint_all,

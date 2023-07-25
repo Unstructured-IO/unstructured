@@ -84,26 +84,27 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def _output_filename(self):
         return Path(self.output_filepath).resolve()
-    
+
     @property
     def date_created(self) -> Optional[str]:
         if self.meta:
-            return self.meta['page'].properties.get('FirstPublished', None)
+            return self.meta["page"].properties.get("FirstPublished", None)
         return self.file.time_created
-    
-    @property 
+
+    @property
     def date_modified(self) -> Optional[str]:
         if self.meta:
-            return self.meta['page'].properties.get('Modified', None)
+            return self.meta["page"].properties.get("Modified", None)
         return self.file.time_last_modified
 
     @property
     def exists(self) -> Optional[bool]:
         if self.meta:
-            return self.meta['page'].properties.get('FileName', None) and \
-                    self.meta['page'].properties.get('UniqueId', None)
+            return self.meta["page"].properties.get("FileName", None) and self.meta[
+                "page"
+            ].properties.get("UniqueId", None)
         return self.file.exists
-    
+
     @property
     def record_locator(self) -> Optional[Dict[str, Any]]:
         if self.meta:
@@ -113,10 +114,10 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def version(self) -> Optional[bool]:
         if self.meta:
-            return self.meta['page'].properties.get('Version', '')
+            return self.meta["page"].properties.get("Version", "")
 
         if (n_versions := len(self.file.versions)) > 0:
-            return self.file.versions[n_versions-1].properties.get('id', None)
+            return self.file.versions[n_versions - 1].properties.get("id", None)
         return None
 
     def _get_page(self):
@@ -133,7 +134,8 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 pld = unescape(pld)
             else:
                 logger.info(
-                    f"Page {self.meta['page'].get_property('Url', '')} as it has no retrievable content. Dumping empty doc.",
+                    f"Page {self.meta['page'].get_property('Url', '')} has no retrievable content. \
+                      Dumping empty doc.",
                 )
                 pld = "<div></div>"
 
@@ -268,7 +270,7 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
         if site.url is None:
             return False
         return (
-            (site.url[0 : len(self.base_site_url)] == self.base_site_url)
+            (site.url[0:len(self.base_site_url)] == self.base_site_url)
             and ("/sites/" in site.url)
             and all(c == "0" for c in site.get_property("GroupId", "").replace("-", ""))
         )  # checks if its not a group, NOTE: do we want to process sharepoint groups?

@@ -18,8 +18,8 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/../../.. || exit 1
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-    --ms-client-id "<Microsoft Sharepoint app client-id>" \
-    --ms-client-cred "<Microsoft Sharepoint app client-secret>" \
+    --ms-sharepoint-client-id "<Microsoft Sharepoint app client-id>" \
+    --ms-sharepoint-client-cred "<Microsoft Sharepoint app client-secret>" \
     --ms-sharepoint-site "<e.g https://contoso.sharepoint.com or https://contoso.admin.sharepoint.com for tenant operations>" \
     --ms-sharepoint-pages "Flag to process pages within the site" \
     --ms-sharepoint-all "Flag to process all sites within the tenant" \

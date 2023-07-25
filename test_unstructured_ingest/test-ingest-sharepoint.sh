@@ -8,14 +8,14 @@ OUTPUT_FOLDER_NAME=Sharepoint
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
-if [ -z "$MS_CLIENT_ID" ] || [ -z "$MS_CLIENT_CRED" ]; then
+if [ -z "$SHAREPOINT_CLIENT_ID" ] || [ -z "$SHAREPOINT_CRED" ]; then
    echo "Skipping Sharepoint ingest test because the MS_CLIENT_ID or MS_CLIENT_CRED env var is not set."
    exit 0
 fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-    --ms-client-id "$SHAREPOINT_CLIENTID" \
-    --ms-client-cred "$SHAREPOINT_CRED" \
+    --ms-sharepoint-client-id "$SHAREPOINT_CLIENT_ID" \
+    --ms-sharepoint-client-cred "$SHAREPOINT_CRED" \
     --ms-sharepoint-site "$SHAREPOINT_SITE" \
     --ms-sharepoint-folder "Shared Documents" \
     --ms-sharepoint-pages \
