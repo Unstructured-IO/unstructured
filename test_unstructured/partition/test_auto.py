@@ -538,7 +538,7 @@ def test_auto_partition_odt_from_file():
 @pytest.mark.parametrize(
     ("content_type", "routing_func", "expected"),
     [
-        ("application/json", "json", "application/json"),
+        ("text/csv", "csv", "text/csv"),
         ("text/html", "html", "text/html"),
         ("jdsfjdfsjkds", "pdf", None),
     ],
