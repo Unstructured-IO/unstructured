@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import inspect
-import json
 import os
 import re
 import zipfile
@@ -312,7 +311,7 @@ def detect_filetype(
 
         if file and _check_eml_from_buffer(file=file) is True:
             return FileType.EML
-        
+
         if extension in PLAIN_TEXT_EXTENSIONS:
             return EXT_TO_FILETYPE.get(extension)
 
@@ -418,14 +417,14 @@ def _is_text_file_a_json(
 ):
     """Detects if a file that has a text/plain MIME type is a JSON file."""
     file_text = _read_file_start_for_type_check(file=file, filename=filename, encoding=encoding)
-    text_without_strings = re.sub(r'"(?:\\.|[^"\\])*"', '', file_text)
+    text_without_strings = re.sub(r'"(?:\\.|[^"\\])*"', "", file_text)
 
     if not re.match(VALID_JSON_CHARACTERS, text_without_strings):
         return False
-    
+
     if not re.match(JSON_PATTERN, file_text):
         return False
-    
+
     return True
 
 

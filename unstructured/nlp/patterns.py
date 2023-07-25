@@ -112,12 +112,13 @@ LIST_OF_DICTS_PATTERN = r"\A\s*\[\s*{?"
 # (?s) dot all (including newline characters)
 # \{(?=.*:) opening brace and at least one colon
 # .*? any characters (non-greedy)
-# (?:\}|$) non-capturing group that matches either the closing brace } or the end of the string to handle cases where the JSON is cut off
+# (?:\}|$) non-capturing group that matches either the closing brace } or the end of
+# the string to handle cases where the JSON is cut off
 # | or
 # \[(?s:.*?)\] matches the opening bracket [ in a JSON array and any characters inside the array
-# (?:$|,|\]) non-capturing group that matches either the end of the string, a comma ,, or the closing bracket ] to handle cases where the JSON array is cut off
+# (?:$|,|\]) non-capturing group that matches either the end of the string, a comma,
+# or the closing bracket to handle cases where the JSON array is cut off
 JSON_PATTERN = r"(?s)\{(?=.*:).*?(?:\}|$)|\[(?s:.*?)\](?:$|,|\])"
 
 # taken from https://stackoverflow.com/a/3845829/12406158
-VALID_JSON_CHARACTERS = r'[,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]'
-
+VALID_JSON_CHARACTERS = r"[,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]"
