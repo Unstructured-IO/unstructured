@@ -1,33 +1,35 @@
-## 0.8.3
-
-### Enhancements
+## 0.8.2-dev6
 
 ### Features
 
 Adds not required parameter `metadata_date` for each type of partition. If `metadata_date` is not passed metadata date takes from the file (if it is possible)
 
-### Fixes
-
-## 0.8.2-dev1
+## 0.8.2-dev5
 
 ### Enhancements
 
-### Features
+*   Update functionality to retrieve image metadata from a page for `document_to_element_list`
+*   Links are now tracked in `partition_html` output.
+*   Set the file's current position to the beginning after reading the file in `convert_to_bytes`
+*   Add min\_partition kwarg to that combines elements below a specified threshold and modifies splitting of strings longer than max partition so words are not split.
+*   set the file's current position to the beginning after reading the file in `convert_to_bytes`
+*   Add slide notes to pptx
+*   Add `--encoding` directive to ingest
 
-### Fixes
+### Features
 
 *   Adds Onedrive connector.
-
-## 0.8.2-dev0
-
-### Enhancements
-
-### Features
+*   Add Confluence connector for ingest cli to pull the body text from all documents from all spaces in a confluence domain.
 
 ### Fixes
 
+*   Use the `image_metadata` property of the `PageLayout` instance to get the page image info in the `document_to_element_list`
+*   Add functionality to write images to computer storage temporarily instead of keeping them in memory for `ocr_only` strategy
+*   Add functionality to convert a PDF in small chunks of pages at a time for `ocr_only` strategy
 *   Adds `.txt`, `.text`, and `.tab` to list of extensions to check if file  
     has a `text/plain` MIME type.
+*   Enables filters to be passed to `partition_doc` so it doesn't error with LibreOffice7.
+*   Removed old error message that's superseded by `requires_dependencies`.
 
 ## 0.8.1
 

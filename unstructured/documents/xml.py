@@ -1,13 +1,13 @@
 from typing import List, Optional, Union
 
-from lxml import etree
+from lxml import etree, html
 
 from unstructured.documents.base import Document, Page
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.logger import logger
 from unstructured.partition.text import (
     element_from_text,
-    split_by_paragraph,
+    partition_text,
 )
 
 VALID_PARSERS = Union[etree.HTMLParser, etree.XMLParser, None]
@@ -69,6 +69,7 @@ class XMLDocument(Document):
         if self.document_tree is None:
             try:
                 document_tree = etree.fromstring(content, self.parser)
+                print("document_tree", document_tree)
                 if document_tree is None:
                     raise ValueError("document_tree is None")
 
@@ -78,17 +79,26 @@ class XMLDocument(Document):
             #     Please use  bytes input or XML fragments without declaration.
             except ValueError:
                 document_tree = etree.fromstring(content.encode(), self.parser)
-
             if "<pre>" and "</pre>" in content:
                 tree = etree.HTML(content)
                 for element in tree.xpath("//pre"):
                     if not element.text:
                         continue
-                    text_content = split_by_paragraph(element.text)
+
+                    text_content = []
+                    for element in partition_text(text=element.text, paragraph_grouper=False):
+                        text_content.append(element.text)
+
                     for text in text_content:
                         element = etree.Element("span")
                         element.text = str(element_from_text(text=text))
                         document_tree.append(element)
+            if "</a>" in content:
+                tree = html.fromstring(content)
+                links = list(tree.iterlinks())
+                print("here", links)
+                for el in document_tree:
+                    print(el)
 
             if self.stylesheet:
                 if isinstance(self.parser, etree.HTMLParser):
@@ -105,6 +115,7 @@ class XMLDocument(Document):
 
             self.document_tree = document_tree
 
+        print("self.document_tree", self.document_tree)
         return self.document_tree
 
     @classmethod
@@ -131,4 +142,6 @@ class XMLDocument(Document):
         **kwargs,
     ):
         _, content = read_txt_file(filename=filename, encoding=encoding)
+        print("_____", _)
+        print("content", content)
         return cls.from_string(content, parser=parser, stylesheet=stylesheet, **kwargs)

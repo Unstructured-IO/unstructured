@@ -39,13 +39,14 @@ def partition_pptx(
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
     metadata_date: Optional[str] = None,
+    include_slide_notes: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft PowerPoint Documents in .pptx format into its document elements.
 
     Parameters
     ----------
-     filename
+    filename
         A string defining the target filename path.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
@@ -59,6 +60,8 @@ def partition_pptx(
         The last modified date for the document.
 
 
+    include_slide_notes
+        If True, includes the slide notes as element
     """
 
     # Verify that only one of the arguments was provided
@@ -84,6 +87,13 @@ def partition_pptx(
         metadata = ElementMetadata.from_dict(metadata.to_dict())
         metadata.date = metadata_date or last_modification_date
         metadata.page_number = i + 1
+        if include_slide_notes and slide.has_notes_slide is True:
+            notes_slide = slide.notes_slide
+            if notes_slide.notes_text_frame is not None:
+                notes_text_frame = notes_slide.notes_text_frame
+                notes_text = notes_text_frame.text
+                if notes_text.strip() != "":
+                    elements.append(NarrativeText(text=notes_text, metadata=metadata))
 
         for shape in _order_shapes(slide.shapes):
             if shape.has_table:

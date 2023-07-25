@@ -14,6 +14,9 @@ Library Documentation
 :doc:`getting_started`
   Check out this section to learn about basic workflows in ``unstructured``.
 
+:doc:`api`
+  Access all the power of ``unstructured`` through the ``unstructured-api`` or learn to host it locally.
+
 :doc:`bricks`
   Learn more about partitioning, cleaning, and staging bricks, including advanced usage patterns.
 
@@ -38,6 +41,7 @@ Library Documentation
 
    installing
    getting_started
+   api
    bricks
    connectors
    metadata

@@ -39,7 +39,7 @@ cffi==1.15.1
     #   argon2-cffi-bindings
 cfgv==3.3.1
     # via pre-commit
-click==8.1.4
+click==8.1.5
     # via
     #   -c requirements/base.txt
     #   -c requirements/test.txt
@@ -116,7 +116,7 @@ jinja2==3.1.2
     #   notebook
 jsonpointer==2.4
     # via jsonschema
-jsonschema[format-nongpl]==4.18.0
+jsonschema[format-nongpl]==4.18.3
     # via
     #   jupyter-events
     #   nbformat
@@ -228,7 +228,7 @@ platformdirs==3.8.1
     #   virtualenv
 pre-commit==3.3.3
     # via -r requirements/dev.in
-prometheus-client==0.17.0
+prometheus-client==0.17.1
     # via
     #   jupyter-server
     #   nbclassic
@@ -382,7 +382,7 @@ wheel==0.40.0
     #   pip-tools
 widgetsnbextension==4.0.8
     # via ipywidgets
-zipp==3.16.0
+zipp==3.16.1
     # via
     #   -c requirements/base.txt
     #   importlib-metadata

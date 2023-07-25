@@ -176,14 +176,7 @@ def test_partition_image_with_ocr_detects_korean():
 
 
 def test_partition_image_with_ocr_detects_korean_from_file():
-    filename = os.path.join(
-        DIRECTORY,
-        "..",
-        "..",
-        "example-docs",
-        "english-and-korean.png",
-    )
-
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "english-and-korean.png")
     with open(filename, "rb") as f:
         elements = image.partition_image(
             file=f,

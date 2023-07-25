@@ -1,6 +1,6 @@
 Connectors
 ==========
-Connect your preprocessing pipeline with your favorite data storage platforms, and batch process all your documents using the provided CLI to store structured outputs locally on your filesystem. 
+Connect your preprocessing pipeline with your favorite data storage platforms, and batch process all your documents using the provided CLI to store structured outputs locally on your filesystem.
 
 You can then use any connector with the ``unstructured-ingest`` command in the terminal. For example, the following command processes all the documents in S3 in the utic-dev-tech-fixtures bucket with a prefix of small-pdf-set/
 
@@ -85,6 +85,13 @@ To install all dependencies for this connector run: ``pip install unstructured[g
 ``Local Connector``
 ---------------------
 You can batch load your unstructured files in a local directory for preprocessing using the `Local Connector <https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/connector/local.py>`_. You can find an example of how to use it `here <https://github.com/Unstructured-IO/unstructured/blob/f5541c7b0b1e2fc47ec88da5e02080d60e1441e2/examples/ingest/local/ingest.sh>`_.
+
+
+``OneDrive Connector``
+---------------------
+You can batch process documents stored in Microsoft OneDrive with the `OneDrive Connector <https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/connector/onedrive.py>`_. You can find an example of how to use it `here <https://github.com/Unstructured-IO/unstructured/blob/main/examples/ingest/onedrive/onedrive.sh>`_.
+
+To install all dependencies for this connector run: ``pip install unstructured[onedrive]``
 
 
 ``Reddit Connector``

@@ -108,6 +108,8 @@ def partition_html(
             raise ValueError(f"Expected content type text/html. Got {content_type}.")
 
         document = HTMLDocument.from_string(response.text, parser=parser)
+    
+    print("doc", document.__dict__)
 
     return document_to_element_list(
         document,

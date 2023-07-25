@@ -61,7 +61,12 @@ def partition_ppt(
     base_filename, _ = os.path.splitext(filename_no_path)
 
     with tempfile.TemporaryDirectory() as tmpdir:
-        convert_office_doc(filename, tmpdir, target_format="pptx")
+        convert_office_doc(
+            filename,
+            tmpdir,
+            target_format="pptx",
+            target_filter="Impress MS PowerPoint 2007 XML",
+        )
         pptx_filename = os.path.join(tmpdir, f"{base_filename}.pptx")
         elements = partition_pptx(
             filename=pptx_filename,
