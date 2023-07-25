@@ -7,7 +7,7 @@ import requests
 from requests.models import Response
 
 from unstructured.cleaners.core import clean_extra_whitespace
-from unstructured.documents.elements import Title
+from unstructured.documents.elements import ListItem, NarrativeText, Title
 from unstructured.partition.html import partition_html
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -367,3 +367,44 @@ def test_partition_html_with_include_path_in_metadata_filename_and_metadata_file
 
     assert elements[0].metadata.filename == "example-docs/TEST"
     assert elements[0].metadata.file_directory is None
+def test_partition_html_grabs_links():
+    html_text = """<html>
+        <p>Hello there I am a <a href="/link">very important link!</a></p>
+        <p>Here is a list of my favorite things</p>
+        <ul>
+            <li><a href="https://en.wikipedia.org/wiki/Parrot">Parrots</a></li>
+            <li>Dogs</li>
+        </ul>
+        <a href="/loner">A lone link!</a>
+    </html>"""
+    elements = partition_html(text=html_text)
+
+    assert elements[0] == NarrativeText("Hello there I am a very important link!")
+    assert elements[0].metadata.links == [
+        {
+            "text": "very important link!",
+            "url": "/link",
+        },
+    ]
+
+    assert elements[1] == NarrativeText("Here is a list of my favorite things")
+    assert elements[1].metadata.links is None
+
+    assert elements[2] == ListItem("Parrots")
+    assert elements[2].metadata.links == [
+        {
+            "text": "Parrots",
+            "url": "https://en.wikipedia.org/wiki/Parrot",
+        },
+    ]
+
+    assert elements[3] == ListItem("Dogs")
+    assert elements[3].metadata.links is None
+
+    assert elements[4] == Title("A lone link!")
+    assert elements[4].metadata.links == [
+        {
+            "text": "A lone link!",
+            "url": "/loner",
+        },
+    ]

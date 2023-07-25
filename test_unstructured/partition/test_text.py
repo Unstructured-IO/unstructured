@@ -5,7 +5,11 @@ import pytest
 
 from unstructured.cleaners.core import group_broken_paragraphs
 from unstructured.documents.elements import Address, ListItem, NarrativeText, Title
-from unstructured.partition.text import partition_text
+from unstructured.partition.text import (
+    combine_paragraphs_less_than_min,
+    partition_text,
+    split_content_to_fit_max,
+)
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
@@ -17,6 +21,31 @@ EXPECTED_OUTPUT = [
     ListItem(text="Dogs are the best"),
     ListItem(text="I love fuzzy blankets"),
 ]
+
+MIN_MAX_TEXT = """This is a story. This is a story that doesn't matter
+ because it is just being used as an example. Hi. Hello. Howdy. Hola.
+ The example is simple and repetitive and long and somewhat boring,
+ but it serves a purpose. End.""".replace(
+    "\n",
+    "",
+)
+
+SHORT_PARAGRAPHS = """This is a story.
+
+This is a story that doesn't matter because it is just being used as an example.
+
+Hi.
+
+Hello.
+
+Howdy.
+
+Hola.
+
+The example is simple and repetitive and long and somewhat boring, but it serves a purpose.
+
+End.
+"""
 
 
 @pytest.mark.parametrize(
@@ -199,6 +228,79 @@ def test_partition_text_splits_long_text(filename="example-docs/norwich-city.txt
     assert len(elements) > 0
     assert elements[0].text.startswith("Iwan Roberts")
     assert elements[-1].text.endswith("External links")
+
+
+def test_partition_text_splits_long_text_max_partition(filename="example-docs/norwich-city.txt"):
+    elements = partition_text(filename=filename)
+    elements_max_part = partition_text(filename=filename, max_partition=500)
+    assert len(elements) < len(elements_max_part)
+
+
+def test_partition_text_min_max():
+    segments = partition_text(
+        text=SHORT_PARAGRAPHS,
+        min_partition=6,
+    )
+    expected = [
+        "This is a story.",
+        "This is a story that doesn't matter because it is just being used as an example.",
+        "Hi. Hello.",
+        "Howdy.",
+        """Hola. The example is simple and repetitive and long and somewhat boring,
+ but it serves a purpose. End.""".replace(
+            "\n",
+            "",
+        ),
+    ]
+    for segment, test_segment in zip(segments, expected):
+        assert segment.text == test_segment
+
+    segments = partition_text(
+        text=SHORT_PARAGRAPHS,
+        max_partition=20,
+        min_partition=7,
+    )
+    expected = [
+        "This is a story.",
+        "This is a story that",
+        "doesn't matter",
+        "because it is just",
+        "being used as an",
+        "example.",
+        "Hi. Hello.",
+        "Howdy. Hola.",
+        "The example is",
+        "simple and",
+        "repetitive and long",
+        "and somewhat boring,",
+        "but it serves a",
+        "purpose. End.",
+    ]
+    for segment, test_segment in zip(segments, expected):
+        assert segment.text == test_segment
+
+
+def test_split_content_to_fit_max():
+    segments = split_content_to_fit_max(
+        content=MIN_MAX_TEXT,
+        max_partition=75,
+    )
+    assert segments == [
+        "This is a story.",
+        "This is a story that doesn't matter because",
+        "it is just being used as an example. Hi. Hello. Howdy. Hola.",
+        "The example is simple and repetitive and long",
+        "and somewhat boring, but it serves a purpose. End.",
+    ]
+
+
+def test_combine_paragraphs_less_than_min():
+    segments = combine_paragraphs_less_than_min(
+        SHORT_PARAGRAPHS.split("\n\n"),
+        max_partition=1500,
+        min_partition=7,
+    )
+    assert len(segments) < len(SHORT_PARAGRAPHS)
 
 
 def test_partition_text_doesnt_get_page_breaks():

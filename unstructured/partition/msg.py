@@ -18,6 +18,7 @@ def partition_msg(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
     max_partition: Optional[int] = 1500,
+    min_partition: Optional[int] = 0,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
     process_attachments: bool = False,
@@ -36,6 +37,9 @@ def partition_msg(
     max_partition
         The maximum number of characters to include in a partition. If None is passed,
         no maximum is applied. Only applies if processing text/plain content.
+    min_partition
+        The minimum number of characters to include in a partition. Only applies if
+        processing text/plain content.
     metadata_filename
         The filename to use for the metadata.
     process_attachments
@@ -67,6 +71,7 @@ def partition_msg(
             text=text,
             max_partition=max_partition,
             include_path_in_metadata_filename=include_path_in_metadata_filename,
+            min_partition=min_partition,
         )
 
     metadata = build_msg_metadata(
@@ -74,6 +79,7 @@ def partition_msg(
         metadata_filename or filename,
         include_path_in_metadata_filename=include_path_in_metadata_filename,
     )
+
     for element in elements:
         element.metadata = metadata
 

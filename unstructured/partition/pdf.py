@@ -49,6 +49,7 @@ def partition_pdf(
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
     max_partition: Optional[int] = 1500,
+    min_partition: Optional[int] = 0,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
     include_path_in_metadata_filename: bool = False,
@@ -82,6 +83,9 @@ def partition_pdf(
     max_partition
         The maximum number of characters to include in a partition. If None is passed,
         no maximum is applied. Only applies to the "ocr_only" strategy.
+    min_partition
+        The minimum number of characters to include in a partition. Only applies if
+        processing text/plain content.
     include_path_in_metadata_filename
         Determines whether or not metadata filename will contain full path
     """
@@ -94,6 +98,7 @@ def partition_pdf(
         infer_table_structure=infer_table_structure,
         ocr_languages=ocr_languages,
         max_partition=max_partition,
+        min_partition=min_partition,
         include_path_in_metadata_filename=include_path_in_metadata_filename,
         **kwargs,
     )
@@ -122,6 +127,7 @@ def partition_pdf_or_image(
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
     max_partition: Optional[int] = 1500,
+    min_partition: Optional[int] = 0,
     include_path_in_metadata_filename: bool = False,
     **kwargs,
 ) -> List[Element]:
@@ -182,6 +188,7 @@ def partition_pdf_or_image(
                 is_image=is_image,
                 max_partition=max_partition,
                 include_path_in_metadata_filename=include_path_in_metadata_filename,
+                min_partition=min_partition,
             )
 
     return layout_elements
@@ -416,6 +423,7 @@ def _partition_pdf_or_image_with_ocr(
     ocr_languages: str = "eng",
     is_image: bool = False,
     max_partition: Optional[int] = 1500,
+    min_partition: Optional[int] = 0,
     include_path_in_metadata_filename: bool = False,
 ):
     """Partitions and image or PDF using Tesseract OCR. For PDFs, each page is converted
@@ -428,7 +436,11 @@ def _partition_pdf_or_image_with_ocr(
             text = pytesseract.image_to_string(image, config=f"-l '{ocr_languages}'")
         else:
             text = pytesseract.image_to_string(filename, config=f"-l '{ocr_languages}'")
-        elements = partition_text(text=text, max_partition=max_partition)
+        elements = partition_text(
+            text=text,
+            max_partition=max_partition,
+            min_partition=min_partition,
+        )
     else:
         elements = []
         page_number = 0
@@ -441,7 +453,11 @@ def _partition_pdf_or_image_with_ocr(
             )
             text = pytesseract.image_to_string(image, config=f"-l '{ocr_languages}'")
 
-            _elements = partition_text(text=text, max_partition=max_partition)
+            _elements = partition_text(
+                text=text,
+                max_partition=max_partition,
+                min_partition=min_partition,
+            )
             for element in _elements:
                 element.metadata = metadata
                 elements.append(element)

@@ -11,6 +11,7 @@ from unstructured_inference.inference.layoutelement import LocationlessLayoutEle
 from unstructured.file_utils import filetype
 from unstructured.file_utils.filetype import (
     FileType,
+    _get_page_image_metadata,
     _is_code_mime_type,
     _is_text_file_a_csv,
     _is_text_file_a_json,
@@ -469,3 +470,9 @@ def test_document_to_element_list_omits_coord_system_when_coord_points_absent():
     layout_elem_absent_coordinates = MockDocumentLayout()
     elements = document_to_element_list(layout_elem_absent_coordinates)
     assert elements[0].metadata.coordinates is None
+
+
+def test_get_page_image_metadata_and_coordinate_system():
+    doc = MockDocumentLayout()
+    metadata = _get_page_image_metadata(doc.pages[0])
+    assert type(metadata) == dict

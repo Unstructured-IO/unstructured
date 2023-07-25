@@ -52,7 +52,7 @@ from unstructured.file_utils.filetype import FileType, add_metadata_with_filetyp
 from unstructured.logger import logger
 from unstructured.nlp.patterns import EMAIL_DATETIMETZ_PATTERN_RE
 from unstructured.partition.html import partition_html
-from unstructured.partition.text import partition_text, split_by_paragraph
+from unstructured.partition.text import partition_text
 
 VALID_CONTENT_SOURCES: Final[List[str]] = ["text/html", "text/plain"]
 
@@ -241,6 +241,7 @@ def partition_email(
     encoding: Optional[str] = None,
     include_headers: bool = False,
     max_partition: Optional[int] = 1500,
+    min_partition: Optional[int] = 0,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
     process_attachments: bool = False,
@@ -265,6 +266,9 @@ def partition_email(
     max_partition
         The maximum number of characters to include in a partition. If None is passed,
         no maximum is applied. Only applies if processing the text/plain content.
+    min_partition
+        The minimum number of characters to include in a partition. Only applies if
+        processing the text/plain content.
     metadata_filename
         The filename to use for the metadata.
     process_attachments
@@ -286,7 +290,6 @@ def partition_email(
 
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text)
-
     detected_encoding = "utf-8"
     if filename is not None:
         extracted_encoding, msg = parse_email(filename=filename)
@@ -368,13 +371,13 @@ def partition_email(
                             continue
 
     elif content_source == "text/plain":
-        list_content = split_by_paragraph(content)
         elements = partition_text(
             text=content,
             encoding=encoding,
             max_partition=max_partition,
             metadata_filename=metadata_filename or filename,
             include_path_in_metadata_filename=include_path_in_metadata_filename,
+            min_partition=min_partition,
         )
 
     for idx, element in enumerate(elements):
