@@ -380,6 +380,25 @@ def test_partition_pdf_doesnt_raise_warning():
     ("pass_file_filename", "content_type"),
     [(False, None), (False, "image/jpeg"), (True, "image/jpeg"), (True, None)],
 )
+def test_auto_partition_image_default_strategy_hi_res(pass_file_filename, content_type):
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.jpg")
+    file_filename = filename if pass_file_filename else None
+    elements = partition(
+        filename=filename,
+        file_filename=file_filename,
+        content_type=content_type,
+        strategy="auto",
+    )
+
+    # should be same result as test_partition_image_default_strategy_hi_res() in test_image.py
+    first_line = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
+    assert elements[0].text == first_line
+
+
+@pytest.mark.parametrize(
+    ("pass_file_filename", "content_type"),
+    [(False, None), (False, "image/jpeg"), (True, "image/jpeg"), (True, None)],
+)
 def test_auto_partition_jpg(pass_file_filename, content_type):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.jpg")
     file_filename = filename if pass_file_filename else None

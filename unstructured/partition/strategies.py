@@ -57,7 +57,7 @@ def determine_pdf_or_image_strategy(
 
     if strategy == "auto":
         if is_image:
-            strategy = _determine_image_auto_strategy(infer_table_structure=infer_table_structure)
+            strategy = _determine_image_auto_strategy()
         else:
             strategy = _determine_pdf_auto_strategy(
                 pdf_text_extractable=pdf_text_extractable,
@@ -114,7 +114,7 @@ def determine_pdf_or_image_strategy(
     return strategy
 
 
-def _determine_image_auto_strategy(infer_table_structure: bool = False):
+def _determine_image_auto_strategy():
     """If "auto" is passed in as the strategy, determines what strategy to use
     for images."""
     # Use hi_res as the only default since images are only about one page
