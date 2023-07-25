@@ -5,6 +5,7 @@
     "metadata": {
       "data_source": {},
       "filename": "fake-text.txt",
+      "date": "2023-07-25T15:02:55",
       "filetype": "text/plain"
     },
     "text": "This is a test document to use for unit tests."
@@ -15,6 +16,7 @@
     "metadata": {
       "data_source": {},
       "filename": "fake-text.txt",
+      "date": "2023-07-25T15:02:55",
       "filetype": "text/plain"
     },
     "text": "Doylestown, PA 18901"
@@ -25,6 +27,7 @@
     "metadata": {
       "data_source": {},
       "filename": "fake-text.txt",
+      "date": "2023-07-25T15:02:55",
       "filetype": "text/plain"
     },
     "text": "Important points:"
@@ -35,6 +38,7 @@
     "metadata": {
       "data_source": {},
       "filename": "fake-text.txt",
+      "date": "2023-07-25T15:02:55",
       "filetype": "text/plain"
     },
     "text": "Hamburgers are delicious"
@@ -45,6 +49,7 @@
     "metadata": {
       "data_source": {},
       "filename": "fake-text.txt",
+      "date": "2023-07-25T15:02:55",
       "filetype": "text/plain"
     },
     "text": "Dogs are the best"
@@ -55,6 +60,7 @@
     "metadata": {
       "data_source": {},
       "filename": "fake-text.txt",
+      "date": "2023-07-25T15:02:55",
       "filetype": "text/plain"
     },
     "text": "I love fuzzy blankets"
