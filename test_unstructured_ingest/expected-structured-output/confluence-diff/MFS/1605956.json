@@ -45,7 +45,21 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": "OKRs",
+          "url": "https://www.atlassian.com/software/confluence/templates/okrs"
+        },
+        {
+          "text": "project plans",
+          "url": "https://www.atlassian.com/software/confluence/templates/project-plan"
+        },
+        {
+          "text": "product roadmaps",
+          "url": "https://www.atlassian.com/software/confluence/templates/product-roadmap"
+        }
+      ]
     },
     "text": "Share team goals. Add links to your team's OKRs, project plans, and product roadmaps so visitors can quickly get a sense of your team's goals."
   },
@@ -95,7 +109,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": null,
+          "url": "https://support.atlassian.com/confluence-cloud/docs/comment-on-pages-and-blog-posts/"
+        }
+      ]
     },
     "text": "Thoughtful responses can get lost and lose context as email replies pile up. And if you neglect to copy someone or want to add them later on, it's difficult for them to get up to speed. Inline comments allow anyone (or everyone) to huddle around an idea while referencing key information on the project page."
   },
@@ -135,7 +155,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": null,
+          "url": "https://support.atlassian.com/confluence-cloud/docs/mention-a-person-or-team/"
+        }
+      ]
     },
     "text": "@mentions on Confluence function like @mentions on social media platforms like Twitter, Instagram, and Slack. Type the @ symbol on a Confluence page or in a comment, begin spelling a team member's first name, and a list will appear. Select the individual to ask a question or assign a task."
   },
@@ -255,7 +281,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": "user profiles",
+          "url": "https://support.atlassian.com/confluence-cloud/docs/insert-the-user-profile-macro/"
+        }
+      ]
     },
     "text": "Add user profiles to display a short summary of a given Confluence user's profile with their role, profile photo and contact details."
   },
@@ -275,7 +307,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": "blog posts",
+          "url": "https://support.atlassian.com/confluence-cloud/docs/insert-the-blog-posts-macro/"
+        }
+      ]
     },
     "text": "Display a stream of latest blog posts so your team can easily see what's been going on."
   },
@@ -295,7 +333,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": "content report table",
+          "url": "https://support.atlassian.com/confluence-cloud/docs/insert-the-content-report-table-macro/"
+        }
+      ]
     },
     "text": "Paste in page URLs to create smart links, or use the content report table to create a list of all the pages in the space."
   }

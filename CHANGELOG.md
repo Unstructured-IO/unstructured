@@ -1,19 +1,20 @@
-## 0.8.3
-
-### Enhancements
+## 0.8.2-dev6
 
 ### Features
 
 *   Adds new element type `EmailAddress` for recognising email address in the  text
 
-### Fixes
-
-## 0.8.2-dev3
+## 0.8.2-dev5
 
 ### Enhancements
 
-*   set the file's current position to the beginning after reading the file in `convert_to_bytes`
-*   Add slide notes to pptx
+* Update functionality to retrieve image metadata from a page for `document_to_element_list`
+* Links are now tracked in `partition_html` output.
+* Set the file's current position to the beginning after reading the file in `convert_to_bytes`
+* Add min_partition kwarg to that combines elements below a specified threshold and modifies splitting of strings longer than max partition so words are not split.
+* set the file's current position to the beginning after reading the file in `convert_to_bytes`
+* Add slide notes to pptx
+* Add `--encoding` directive to ingest
 
 ### Features
 
@@ -22,12 +23,20 @@
 
 ### Fixes
 
-*   Add functionality to write images to computer storage temporarily instead of keeping them in memory for `ocr_only` strategy
-*   Add functionality to convert a PDF in small chunks of pages at a time for `ocr_only` strategy
-*   Adds `.txt`, `.text`, and `.tab` to list of extensions to check if file  
-    has a `text/plain` MIME type.
-*   Enables filters to be passed to `partition_doc` so it doesn't error with LibreOffice7.
+* Use the `image_metadata` property of the `PageLayout` instance to get the page image info in the `document_to_element_list`
+* Add functionality to write images to computer storage temporarily instead of keeping them in memory for `ocr_only` strategy
+* Add functionality to convert a PDF in small chunks of pages at a time for `ocr_only` strategy
+* Adds `.txt`, `.text`, and `.tab` to list of extensions to check if file
+  has a `text/plain` MIME type.
+* Enables filters to be passed to `partition_doc` so it doesn't error with LibreOffice7.
+* Removed old error message that's superseded by `requires_dependencies`.
 
+## 0.8.2-dev3
+
+### Enhancements
+
+*   set the file's current position to the beginning after reading the file in `convert_to_bytes`
+*   Add slide notes to pptx
 ## 0.8.1
 
 ### Enhancements
