@@ -435,7 +435,7 @@ def _is_text_file_a_json(
         return False
 
     return True
-  
+
 
 def _count_commas(text: str):
     """Counts the number of commas in a line, excluding commas in quotes."""
