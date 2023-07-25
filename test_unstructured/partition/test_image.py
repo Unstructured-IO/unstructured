@@ -110,6 +110,19 @@ def test_partition_image_with_auto_strategy(filename="example-docs/layout-parser
     assert titles[0].text == title
 
 
+def test_partition_image_with_table_extraction(
+    filename="example-docs/layout-parser-paper-with-table.jpg",
+):
+    elements = image.partition_image(
+        filename=filename,
+        strategy="hi_res",
+        infer_table_structure=True,
+    )
+    table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
+    assert len(table) == 1
+    assert "Layouts of history Japanese documents" in table[0]
+
+
 def test_partition_image_with_language_passed(filename="example-docs/example.jpg"):
     with mock.patch.object(layout, "process_file_with_model", mock.MagicMock()) as mock_partition:
         image.partition_image(filename=filename, strategy="hi_res", ocr_languages="eng+swe")

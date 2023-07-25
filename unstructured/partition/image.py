@@ -10,6 +10,7 @@ def partition_image(
     filename: str = "",
     file: Optional[bytes] = None,
     include_page_breaks: bool = False,
+    infer_table_structure: bool = False,
     ocr_languages: str = "eng",
     strategy: str = "auto",
     **kwargs,
@@ -22,6 +23,15 @@ def partition_image(
         A string defining the target filename path.
     file
         A file-like object as bytes --> open(filename, "rb").
+    include_page_breaks
+        If True, includes page breaks at the end of each page in the document.
+    infer_table_structure
+        Only applicable if `strategy=hi_res`.
+        If True, any Table elements that are extracted will also have a metadata field
+        named "text_as_html" where the table's text content is rendered into an html string.
+        I.e., rows and cells are preserved.
+        Whether True or False, the "text" field is always present in any Table element
+        and is the text content of the table (no structure).
     ocr_languages
         The languages to use for the Tesseract agent. To use a language, you'll first need
         to install the appropriate Tesseract language pack.
@@ -40,6 +50,7 @@ def partition_image(
         file=file,
         is_image=True,
         include_page_breaks=include_page_breaks,
+        infer_table_structure=infer_table_structure,
         ocr_languages=ocr_languages,
         strategy=strategy,
     )

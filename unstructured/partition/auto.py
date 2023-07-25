@@ -193,6 +193,7 @@ def partition(
             file=file,  # type: ignore
             url=None,
             include_page_breaks=include_page_breaks,
+            infer_table_structure=pdf_infer_table_structure,
             strategy=strategy,
             ocr_languages=ocr_languages,
             **kwargs,
