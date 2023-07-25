@@ -11,7 +11,7 @@ from typing import IO, TYPE_CHECKING, Callable, List, Optional
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import Element, PageBreak
 from unstructured.file_utils.encoding import detect_file_encoding, format_encoding_str
-from unstructured.nlp.patterns import LIST_OF_DICTS_PATTERN
+from unstructured.nlp.patterns import JSON_PATTERN, VALID_JSON_CHARACTERS
 from unstructured.partition.common import (
     _add_element_metadata,
     _remove_element_metadata,
@@ -301,9 +301,6 @@ def detect_filetype(
             encoding = "utf-8"
         formatted_encoding = format_encoding_str(encoding)
 
-        if extension in PLAIN_TEXT_EXTENSIONS:
-            return EXT_TO_FILETYPE.get(extension)
-
         # NOTE(crag): for older versions of the OS libmagic package, such as is currently
         # installed on the Unstructured docker image, .json files resolve to "text/plain"
         # rather than "application/json". this corrects for that case.
@@ -323,6 +320,9 @@ def detect_filetype(
 
         if file and _check_eml_from_buffer(file=file) is True:
             return FileType.EML
+
+        if extension in PLAIN_TEXT_EXTENSIONS:
+            return EXT_TO_FILETYPE.get(extension)
 
         # Safety catch
         if mime_type in STR_TO_FILETYPE:
@@ -425,13 +425,17 @@ def _is_text_file_a_json(
     encoding: Optional[str] = "utf-8",
 ):
     """Detects if a file that has a text/plain MIME type is a JSON file."""
-    file_text = _read_file_start_for_type_check(
-        file=file,
-        filename=filename,
-        encoding=encoding,
-    )
-    return re.match(LIST_OF_DICTS_PATTERN, file_text) is not None
+    file_text = _read_file_start_for_type_check(file=file, filename=filename, encoding=encoding)
+    text_without_strings = re.sub(r'"(?:\\.|[^"\\])*"', "", file_text)
 
+    if not re.match(VALID_JSON_CHARACTERS, text_without_strings):
+        return False
+
+    if not re.match(JSON_PATTERN, file_text):
+        return False
+
+    return True
+  
 
 def _count_commas(text: str):
     """Counts the number of commas in a line, excluding commas in quotes."""
