@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 from datetime import datetime
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
@@ -110,6 +110,10 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def exists(self) -> Optional[bool]:
         return (self.file.name is not None) and (self.file.get_property("size", 0) > 0)
     
+    @property
+    def record_locator(self) -> Optional[Dict[str, Any]]:
+        return self.file.to_json()
+
     @property
     def version(self) -> Optional[bool]:
         if (n_versions := len(self.file.versions)) > 0:
