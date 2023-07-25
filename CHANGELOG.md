@@ -34,6 +34,8 @@
 
 ### Enhancements
 
+* Set the default strategy for partitioning images to `hi_res`
+
 ### Features
 
 ### Fixes
