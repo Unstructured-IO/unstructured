@@ -1,7 +1,8 @@
-## 0.8.2-dev6
+## 0.8.2-dev7
 
 ### Enhancements
 
+* Pass parameter `pdf_infer_table_structure` in partition_image to support image table extration
 * Update functionality to retrieve image metadata from a page for `document_to_element_list`
 * Links are now tracked in `partition_html` output.
 * Set the file's current position to the beginning after reading the file in `convert_to_bytes`
