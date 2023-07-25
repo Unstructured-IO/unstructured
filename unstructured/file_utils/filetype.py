@@ -540,6 +540,10 @@ def document_to_element_list(
             coordinates = (
                 element.metadata.coordinates.points if element.metadata.coordinates else None
             )
+            print("element", element["tag"])
+            url = None
+            if element["tag"] == "a":
+                url
             _add_element_metadata(
                 element,
                 page_number=i + 1,
@@ -562,6 +566,7 @@ def document_to_element_list(
             )
         if include_page_breaks and i < num_pages - 1:
             page_elements.append(PageBreak(text=""))
+        print("page_element", page_elements)
         elements.extend(page_elements)
 
     return elements
