@@ -220,6 +220,19 @@ def test_auto_partition_json_from_filename():
     assert json_data == json_elems
 
 
+def test_auto_partition_json_raises_with_unprocessable_json(tmpdir):
+    # NOTE(robinson) - This is unprocessable because it is not a list of dicts,
+    # per the Unstructured ISD format
+    text = '{"hi": "there"}'
+
+    filename = os.path.join(tmpdir, "unprocessable.json")
+    with open(filename, "w") as f:
+        f.write(text)
+
+    with pytest.raises(ValueError):
+        partition(filename=filename)
+
+
 @pytest.mark.xfail(
     reason="parsed as text not json, https://github.com/Unstructured-IO/unstructured/issues/492",
 )
