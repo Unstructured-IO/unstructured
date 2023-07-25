@@ -278,7 +278,7 @@ def _text_to_element(
             text=clean_bullets(text),
             tag=tag,
             ancestortags=ancestortags,
-                        links=links,
+            links=links,
         )
     elif is_us_city_state_zip(text):
         return HTMLAddress(text=text, tag=tag, ancestortags=ancestortags, links=links)

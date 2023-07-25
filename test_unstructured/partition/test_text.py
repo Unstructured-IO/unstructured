@@ -4,13 +4,12 @@ import pathlib
 import pytest
 
 from unstructured.cleaners.core import group_broken_paragraphs
-
 from unstructured.documents.elements import (
     Address,
+    EmailAddress,
     ListItem,
     NarrativeText,
     Title,
-    EmailAddress,
 )
 from unstructured.partition.text import (
     combine_paragraphs_less_than_min,

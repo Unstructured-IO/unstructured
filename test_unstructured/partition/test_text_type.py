@@ -295,6 +295,7 @@ def test_item_titles():
 def test_is_us_city_state_zip(text, expected):
     assert text_type.is_us_city_state_zip(text) is expected
 
+
 @pytest.mark.parametrize(
     ("text", "expected"),
     [

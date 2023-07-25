@@ -7,8 +7,8 @@ import requests
 from requests.models import Response
 
 from unstructured.cleaners.core import clean_extra_whitespace
-from unstructured.documents.html import HTMLEmailAddress
 from unstructured.documents.elements import ListItem, NarrativeText, Title
+from unstructured.documents.html import HTMLEmailAddress
 from unstructured.partition.html import partition_html
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -328,6 +328,8 @@ def test_partition_html_from_filename_with_email_address():
     elements = partition_html(filename=filename, include_metadata=False)
 
     assert type(elements[-1]) is HTMLEmailAddress
+
+
 def test_partition_html_grabs_links():
     html_text = """<html>
         <p>Hello there I am a <a href="/link">very important link!</a></p>
