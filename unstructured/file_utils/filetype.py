@@ -493,10 +493,6 @@ def document_to_element_list(
             coordinates = (
                 element.metadata.coordinates.points if element.metadata.coordinates else None
             )
-            print("element", element["tag"])
-            url = None
-            if element["tag"] == "a":
-                url
             _add_element_metadata(
                 element,
                 page_number=i + 1,
