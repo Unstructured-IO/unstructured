@@ -20,7 +20,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --ms-tenant "3d60a7e5-1e32-414e-839b-1c6e6782613d" \
     --ms-user-pname "devops@unstructuredio.onmicrosoft.com" \
     --ms-onedrive-folder '/utic-test-ingest-fixtures' \
-    --metadata-exclude file_directory,metadata.data_source.date_processed \
+    --metadata-exclude file_directory,metadata.data_source.date_processed,metadata.date \
     --num-processes 2 \
     --partition-strategy hi_res \
     --preserve-downloads \
