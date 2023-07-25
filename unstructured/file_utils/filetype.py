@@ -21,7 +21,7 @@ from unstructured.partition.common import (
 )
 
 if TYPE_CHECKING:
-    from unstructured_inference.inference.layout import DocumentLayout
+    from unstructured_inference.inference.layout import DocumentLayout, PageLayout
 
 try:
     import magic
@@ -485,20 +485,20 @@ def document_to_element_list(
     num_pages = len(document.pages)
     for i, page in enumerate(document.pages):
         page_elements: List[Element] = []
+
+        page_image_metadata = _get_page_image_metadata(page)
+        image_format = page_image_metadata.get("format")
+        image_width = page_image_metadata.get("width")
+        image_height = page_image_metadata.get("height")
+
         for layout_element in page.elements:
-            if hasattr(page, "image") and hasattr(layout_element, "coordinates"):
-                image_format = page.image.format
-                coordinate_system = PixelSpace(
-                    width=page.image.width,
-                    height=page.image.height,
-                )
+            if image_width and image_height and hasattr(layout_element, "coordinates"):
+                coordinate_system = PixelSpace(width=image_width, height=image_height)
             else:
-                image_format = None
                 coordinate_system = None
-            element = normalize_layout_element(
-                layout_element,
-                coordinate_system=coordinate_system,
-            )
+
+            element = normalize_layout_element(layout_element, coordinate_system=coordinate_system)
+
             if isinstance(element, List):
                 for el in element:
                     el.metadata.page_number = i + 1
@@ -534,6 +534,7 @@ def document_to_element_list(
             )
         if include_page_breaks and i < num_pages - 1:
             page_elements.append(PageBreak(text=""))
+        print("page_element", page_elements)
         elements.extend(page_elements)
     if include_element_types or exclude_element_types:
         elements = filter_element_types(
@@ -542,6 +543,34 @@ def document_to_element_list(
             exclude_element_types=exclude_element_types,
         )
     return elements
+
+
+def _get_page_image_metadata(
+    page: PageLayout,
+) -> dict:
+    """Retrieve image metadata and coordinate system from a page."""
+
+    image = getattr(page, "image", None)
+    image_metadata = getattr(page, "image_metadata", None)
+
+    if image:
+        image_format = image.format
+        image_width = image.width
+        image_height = image.height
+    elif image_metadata:
+        image_format = image_metadata.get("format")
+        image_width = image_metadata.get("width")
+        image_height = image_metadata.get("height")
+    else:
+        image_format = None
+        image_width = None
+        image_height = None
+
+    return {
+        "format": image_format,
+        "width": image_width,
+        "height": image_height,
+    }
 
 
 PROGRAMMING_LANGUAGES = [

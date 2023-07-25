@@ -41,6 +41,7 @@ def normalize_layout_element(
     """Converts an unstructured_inference LayoutElement object to an unstructured Element."""
 
     if isinstance(layout_element, Element):
+        print("return1", layout_element.__dict__)
         return layout_element
 
     # NOTE(alan): Won't the lines above ensure this never runs (PageBreak is a subclass of Element)?
@@ -57,6 +58,7 @@ def normalize_layout_element(
     # in order to add coordinates metadata to the element.
     coordinates = layout_dict.get("coordinates")
     element_type = layout_dict.get("type")
+    print("element_type", element_type)
     if element_type == "List":
         return layout_list_to_list_items(
             text,
@@ -137,6 +139,7 @@ def _add_element_metadata(
         if coordinates is not None and coordinate_system is not None
         else None
     )
+    links = element.links if hasattr(element, "links") and len(element.links) > 0 else None
     metadata = ElementMetadata(
         coordinates=coordinates_metadata,
         filename=filename,
@@ -144,6 +147,7 @@ def _add_element_metadata(
         page_number=page_number,
         url=url,
         text_as_html=text_as_html,
+        links=links,
     )
     element.metadata = metadata.merge(element.metadata)
     return element

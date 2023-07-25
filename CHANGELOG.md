@@ -1,4 +1,4 @@
-## 0.8.3
+## 0.8.2-dev7
 
 ### Enhancements
 
@@ -8,15 +8,27 @@ Adds `include_element_types` and  `exclude_element_types` to doc, docx, email, 
 
 ### Fixes
 
-## 0.8.2-dev2
+## 0.8.2-dev6
 
 ### Enhancements
 
 ### Features
 
 *   Add slide notes to pptx
+## 0.8.2-dev5
 
-### Fixes
+### Enhancements
+
+* Update functionality to retrieve image metadata from a page for `document_to_element_list`
+* Links are now tracked in `partition_html` output.
+* Set the file's current position to the beginning after reading the file in `convert_to_bytes`
+* Add min_partition kwarg to that combines elements below a specified threshold and modifies splitting of strings longer than max partition so words are not split.
+* set the file's current position to the beginning after reading the file in `convert_to_bytes`
+* Add slide notes to pptx
+* Add `--encoding` directive to ingest
+
+
+### Features
 
 *   Enables filters to be passed to `partition_doc` so it doesn't error with LibreOffice7.
 *   Adds Onedrive connector.
@@ -29,12 +41,19 @@ Adds `include_element_types` and  `exclude_element_types` to doc, docx, email, 
 
 ### Features
 
+* Adds Onedrive connector.
+* Add Confluence connector for ingest cli to pull the body text from all documents from all spaces in a confluence domain.
+
+
 ### Fixes
 
-*   Add functionality to write images to computer storage temporarily instead of keeping them in memory for `ocr_only` strategy
-*   Add functionality to convert a PDF in small chunks of pages at a time for `ocr_only` strategy
-*   Adds `.txt`, `.text`, and `.tab` to list of extensions to check if file  
-    has a `text/plain` MIME type.
+* Use the `image_metadata` property of the `PageLayout` instance to get the page image info in the `document_to_element_list`
+* Add functionality to write images to computer storage temporarily instead of keeping them in memory for `ocr_only` strategy
+* Add functionality to convert a PDF in small chunks of pages at a time for `ocr_only` strategy
+* Adds `.txt`, `.text`, and `.tab` to list of extensions to check if file
+  has a `text/plain` MIME type.
+* Enables filters to be passed to `partition_doc` so it doesn't error with LibreOffice7.
+* Removed old error message that's superseded by `requires_dependencies`.
 
 ## 0.8.1
 

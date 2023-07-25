@@ -58,6 +58,7 @@ def partition_xml(
     include_metadata: bool = True,
     encoding: Optional[str] = None,
     max_partition: Optional[int] = 1500,
+    min_partition: Optional[int] = 0,
     include_element_types: Optional[List[Element]] = None,
     exclude_element_types: Optional[List[Element]] = None,
     **kwargs,
@@ -83,6 +84,8 @@ def partition_xml(
     max_partition
         The maximum number of characters to include in a partition. If None is passed,
         no maximum is applied.
+    min_partition
+        The minimum number of characters to include in a partition.
     include_element_types
         Determines which Elements included in the output.
     exclude_element_types
@@ -107,6 +110,7 @@ def partition_xml(
         metadata_filename=metadata_filename,
         include_metadata=include_metadata,
         max_partition=max_partition,
+        min_partition=min_partition,
         include_element_types=include_element_types,
         exclude_element_types=exclude_element_types,
     )

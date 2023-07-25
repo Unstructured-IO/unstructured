@@ -186,3 +186,5 @@ tags
 
 # Ruff cache
 .ruff_cache/
+
+unstructured-inference/
