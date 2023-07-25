@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, Optional
+from datetime import datetime
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.ingest.interfaces import (
@@ -71,6 +72,7 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 f"Value MUST be one of {', '.join([k for k in EXT_TO_FILETYPE if k is not None])}.",
             )
         self._set_download_paths()
+        self._date_processed = datetime.utcnow().isoformat()
 
     def _set_download_paths(self) -> None:
         """Parses the folder structure from the source and creates the download and output paths"""
@@ -95,6 +97,24 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def _output_filename(self):
         return Path(self.output_filepath).resolve()
+    
+    @property
+    def date_created(self) -> Optional[str]:
+        return self.file.created_datetime
+    
+    @property 
+    def date_modified(self) -> Optional[str]:
+        return self.file.last_modified_datetime
+
+    @property
+    def exists(self) -> Optional[bool]:
+        return (self.file.name is not None) and (self.file.get_property("size", 0) > 0)
+    
+    @property
+    def version(self) -> Optional[bool]:
+        if (n_versions := len(self.file.versions)) > 0:
+            return self.file.versions[n_versions-1].properties.get('id', None)
+        return None
 
     @BaseIngestDoc.skip_if_file_exists
     @requires_dependencies(["office365"])
@@ -144,6 +164,14 @@ class OneDriveConnector(ConnectorCleanupMixin, BaseConnector):
         for f in folders:
             files += self._list_objects(f, recursive)
         return files
+    
+    def list_drives(self):
+        """
+        Lists tenants' drives visible by the client. Does not include personal drives.
+        Returns: collection of Drive objects.
+        """
+        drives = self.client.drives.get().execute_query()
+        return drives
 
     def initialize(self):
         pass
