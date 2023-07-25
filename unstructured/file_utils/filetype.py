@@ -300,16 +300,34 @@ def detect_filetype(
             encoding = "utf-8"
         formatted_encoding = format_encoding_str(encoding)
 
-        if extension in PLAIN_TEXT_EXTENSIONS:
+        if extension in [
+            ".eml",
+            ".md",
+            ".rtf",
+            ".html",
+            ".rst",
+            ".org",
+            ".csv",
+            ".tsv",
+            ".json",
+        ]:
             return EXT_TO_FILETYPE.get(extension)
 
         # NOTE(crag): for older versions of the OS libmagic package, such as is currently
         # installed on the Unstructured docker image, .json files resolve to "text/plain"
         # rather than "application/json". this corrects for that case.
-        if _is_text_file_a_json(file=file, filename=filename, encoding=formatted_encoding):
+        if _is_text_file_a_json(
+            file=file,
+            filename=filename,
+            encoding=formatted_encoding,
+        ):
             return FileType.JSON
 
-        if _is_text_file_a_csv(file=file, filename=filename, encoding=formatted_encoding):
+        if _is_text_file_a_csv(
+            file=file,
+            filename=filename,
+            encoding=formatted_encoding,
+        ):
             return FileType.CSV
 
         if file and _check_eml_from_buffer(file=file) is True:
@@ -416,7 +434,11 @@ def _is_text_file_a_json(
     encoding: Optional[str] = "utf-8",
 ):
     """Detects if a file that has a text/plain MIME type is a JSON file."""
-    file_text = _read_file_start_for_type_check(file=file, filename=filename, encoding=encoding)
+    file_text = _read_file_start_for_type_check(
+        file=file,
+        filename=filename,
+        encoding=encoding,
+    )
     return re.match(LIST_OF_DICTS_PATTERN, file_text) is not None
 
 
@@ -433,7 +455,11 @@ def _is_text_file_a_csv(
     encoding: Optional[str] = "utf-8",
 ):
     """Detects if a file that has a text/plain MIME type is a CSV file."""
-    file_text = _read_file_start_for_type_check(file=file, filename=filename, encoding=encoding)
+    file_text = _read_file_start_for_type_check(
+        file=file,
+        filename=filename,
+        encoding=encoding,
+    )
     lines = file_text.strip().splitlines()
     if len(lines) < 2:
         return False
@@ -460,6 +486,7 @@ def document_to_element_list(
     document: "DocumentLayout",
     include_page_breaks: bool = False,
     sort: bool = False,
+    last_modification_date: Optional[str] = None,
 ) -> List[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
     elements: List[Element] = []
@@ -482,10 +509,14 @@ def document_to_element_list(
 
             if isinstance(element, List):
                 for el in element:
+                    if last_modification_date:
+                        el.metadata.date = last_modification_date
                     el.metadata.page_number = i + 1
                 page_elements.extend(element)
                 continue
             else:
+                if last_modification_date:
+                    element.metadata.date = last_modification_date
                 element.metadata.text_as_html = (
                     layout_element.text_as_html if hasattr(layout_element, "text_as_html") else None
                 )
@@ -515,6 +546,7 @@ def document_to_element_list(
             )
         if include_page_breaks and i < num_pages - 1:
             page_elements.append(PageBreak(text=""))
+        print("page_element", page_elements)
         elements.extend(page_elements)
 
     return elements

@@ -167,7 +167,11 @@ def test_partition_pdf_with_model_name_env_var(
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
     monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
-    with mock.patch.object(layout, "process_file_with_model", mock.MagicMock()) as mock_process:
+    with mock.patch.object(
+        layout,
+        "process_file_with_model",
+        mock.MagicMock(),
+    ) as mock_process:
         pdf.partition_pdf(filename=filename, strategy="hi_res")
         mock_process.assert_called_once_with(
             filename,
@@ -183,7 +187,11 @@ def test_partition_pdf_with_model_name(
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
     monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
-    with mock.patch.object(layout, "process_file_with_model", mock.MagicMock()) as mock_process:
+    with mock.patch.object(
+        layout,
+        "process_file_with_model",
+        mock.MagicMock(),
+    ) as mock_process:
         pdf.partition_pdf(filename=filename, strategy="hi_res", model_name="checkbox")
         mock_process.assert_called_once_with(
             filename,
@@ -379,12 +387,16 @@ def test_partition_pdf_uses_table_extraction():
 def test_partition_pdf_with_copy_protection():
     filename = os.path.join("example-docs", "copy-protected.pdf")
     elements = pdf.partition_pdf(filename=filename, strategy="hi_res")
-    elements[0] == Title("LayoutParser: A Uniﬁed Toolkit for Deep Based Document Image Analysis")
+    elements[0] == Title(
+        "LayoutParser: A Uniﬁed Toolkit for Deep Based Document Image Analysis",
+    )
     # check that the pdf has multiple different page numbers
     assert {element.metadata.page_number for element in elements} == {1, 2}
 
 
-def test_partition_pdf_requiring_recursive_text_grab(filename="example-docs/reliance.pdf"):
+def test_partition_pdf_requiring_recursive_text_grab(
+    filename="example-docs/reliance.pdf",
+):
     elements = pdf.partition_pdf(filename=filename, strategy="fast")
     assert len(elements) > 50
     assert elements[0].metadata.page_number == 1
@@ -430,7 +442,10 @@ def test_partition_pdf_fast_groups_text_in_text_box():
             system=expected_coordinate_system_0,
         ),
     )
-    assert elements[0] == Title("eastern mediterranean", metadata=expected_elem_metadata_0)
+    assert elements[0] == Title(
+        "eastern mediterranean",
+        metadata=expected_elem_metadata_0,
+    )
     assert isinstance(elements[1], NarrativeText)
     assert str(elements[1]).startswith("We")
     assert str(elements[1]).endswith("Jordan and Egypt.")
@@ -468,7 +483,12 @@ def test_partition_pdf_with_fast_strategy_from_file_with_metadata_filename(
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
     with open(filename, "rb") as f:
-        elements = pdf.partition_pdf(file=f, url=None, strategy="fast", metadata_filename="test")
+        elements = pdf.partition_pdf(
+            file=f,
+            url=None,
+            strategy="fast",
+            metadata_filename="test",
+        )
     for element in elements:
         assert element.metadata.filename == "test"
 
@@ -476,7 +496,11 @@ def test_partition_pdf_with_fast_strategy_from_file_with_metadata_filename(
 def test_partition_pdf_with_auto_strategy_exclude_metadata(
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
-    elements = pdf.partition_pdf(filename=filename, strategy="auto", include_metadata=False)
+    elements = pdf.partition_pdf(
+        filename=filename,
+        strategy="auto",
+        include_metadata=False,
+    )
     title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
     assert elements[0].text == title
     for i in range(len(elements)):
@@ -487,6 +511,241 @@ def test_partition_pdf_with_fast_strategy_from_file_exclude_metadata(
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
     with open(filename, "rb") as f:
-        elements = pdf.partition_pdf(file=f, url=None, strategy="fast", include_metadata=False)
+        elements = pdf.partition_pdf(
+            file=f,
+            url=None,
+            strategy="fast",
+            include_metadata=False,
+        )
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
+
+
+def test_partition_pdf_with_auto_strategy_metadata_date(
+    mocker,
+    filename="example-docs/copy-protected.pdf",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.pdf.get_last_modified_date",
+        return_value=mocked_last_modification_date,
+    )
+
+    elements = pdf.partition_pdf(
+        filename=filename,
+    )
+
+    assert elements[0].metadata.date == mocked_last_modification_date
+
+
+def test_partition_pdf_with_auto_strategy_custom_metadata_date(
+    mocker,
+    filename="example-docs/copy-protected.pdf",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    expected_last_modification_date = "2020-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.pdf.get_last_modified_date",
+        return_value=mocked_last_modification_date,
+    )
+
+    elements = pdf.partition_pdf(
+        filename=filename,
+        metadata_date=expected_last_modification_date,
+    )
+
+    assert elements[0].metadata.date == expected_last_modification_date
+
+
+def test_partition_pdf_with_orc_only_strategy_metadata_date(
+    mocker,
+    filename="example-docs/copy-protected.pdf",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.pdf.get_last_modified_date",
+        return_value=mocked_last_modification_date,
+    )
+
+    elements = pdf.partition_pdf(filename=filename, strategy="ocr_only")
+
+    assert elements[0].metadata.date == mocked_last_modification_date
+
+
+def test_partition_pdf_with_ocr_only_strategy_custom_metadata_date(
+    mocker,
+    filename="example-docs/copy-protected.pdf",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    expected_last_modification_date = "2020-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.pdf.get_last_modified_date",
+        return_value=mocked_last_modification_date,
+    )
+
+    elements = pdf.partition_pdf(
+        filename=filename,
+        metadata_date=expected_last_modification_date,
+        strategy="ocr_only",
+    )
+
+    assert elements[0].metadata.date == expected_last_modification_date
+
+
+def test_partition_pdf_with_hi_res_strategy_metadata_date(
+    mocker,
+    filename="example-docs/copy-protected.pdf",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.pdf.get_last_modified_date",
+        return_value=mocked_last_modification_date,
+    )
+
+    elements = pdf.partition_pdf(filename=filename, strategy="hi_res")
+
+    assert elements[0].metadata.date == mocked_last_modification_date
+
+
+def test_partition_pdf_with_hi_res_strategy_custom_metadata_date(
+    mocker,
+    filename="example-docs/copy-protected.pdf",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    expected_last_modification_date = "2020-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.pdf.get_last_modified_date",
+        return_value=mocked_last_modification_date,
+    )
+
+    elements = pdf.partition_pdf(
+        filename=filename,
+        metadata_date=expected_last_modification_date,
+        strategy="hi_res",
+    )
+
+    assert elements[0].metadata.date == expected_last_modification_date
+
+
+def test_partition_pdf_from_file_with_auto_strategy_metadata_date(
+    mocker,
+    filename="example-docs/copy-protected.pdf",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.pdf.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+
+    with open(filename, "rb") as f:
+        elements = pdf.partition_pdf(
+            file=f,
+        )
+
+    assert elements[0].metadata.date == mocked_last_modification_date
+
+
+def test_partition_pdf_from_file_with_auto_strategy_custom_metadata_date(
+    mocker,
+    filename="example-docs/copy-protected.pdf",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    expected_last_modification_date = "2020-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.pdf.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+
+    with open(filename, "rb") as f:
+        elements = pdf.partition_pdf(
+            file=f,
+            metadata_date=expected_last_modification_date,
+        )
+
+    assert elements[0].metadata.date == expected_last_modification_date
+
+
+def test_partition_pdf_from_file_with_ocr_only_strategy_metadata_date(
+    mocker,
+    filename="example-docs/copy-protected.pdf",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.pdf.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+
+    with open(filename, "rb") as f:
+        elements = pdf.partition_pdf(file=f, strategy="ocr_only")
+
+    assert elements[0].metadata.date == mocked_last_modification_date
+
+
+def test_partition_pdf_from_file_with_ocr_only_strategy_custom_metadata_date(
+    mocker,
+    filename="example-docs/copy-protected.pdf",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    expected_last_modification_date = "2020-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.pdf.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+
+    with open(filename, "rb") as f:
+        elements = pdf.partition_pdf(
+            file=f,
+            metadata_date=expected_last_modification_date,
+            strategy="ocr_only",
+        )
+
+    assert elements[0].metadata.date == expected_last_modification_date
+
+
+def test_partition_pdf_from_file_with_hi_res_strategy_metadata_date(
+    mocker,
+    filename="example-docs/copy-protected.pdf",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.pdf.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+
+    with open(filename, "rb") as f:
+        elements = pdf.partition_pdf(file=f, strategy="hi_res")
+
+    assert elements[0].metadata.date == mocked_last_modification_date
+
+
+def test_partition_pdf_from_file_with_hi_res_strategy_custom_metadata_date(
+    mocker,
+    filename="example-docs/copy-protected.pdf",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    expected_last_modification_date = "2020-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.pdf.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+
+    with open(filename, "rb") as f:
+        elements = pdf.partition_pdf(
+            file=f,
+            metadata_date=expected_last_modification_date,
+            strategy="hi_res",
+        )
+
+    assert elements[0].metadata.date == expected_last_modification_date
