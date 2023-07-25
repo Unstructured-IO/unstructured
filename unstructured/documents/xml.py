@@ -108,6 +108,7 @@ class XMLDocument(Document):
 
             self.document_tree = document_tree
 
+
         return self.document_tree
 
     @classmethod
@@ -134,5 +135,4 @@ class XMLDocument(Document):
         **kwargs,
     ):
         _, content = read_txt_file(filename=filename, encoding=encoding)
-
         return cls.from_string(content, parser=parser, stylesheet=stylesheet, **kwargs)
