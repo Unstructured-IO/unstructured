@@ -75,6 +75,7 @@
 * Add slide notes to pptx
 * Add `--encoding` directive to ingest
 * Improve json detection by `detect_filetype`
+* Set the default strategy for partitioning images to `hi_res`
 
 ### Features
 
