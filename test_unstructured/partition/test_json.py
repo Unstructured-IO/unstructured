@@ -204,3 +204,17 @@ def test_partition_json_from_text_exclude_metadata(filename: str):
 
     for i in range(len(test_elements)):
         assert any(test_elements[i].metadata.to_dict()) is False
+
+
+def test_partition_json_raises_with_unprocessable_json():
+    # NOTE(robinson) - This is unprocessable because it is not a list of dicts,
+    # per the Unstructured ISD format
+    text = '{"hi": "there"}'
+    with pytest.raises(ValueError):
+        partition_json(text=text)
+
+
+def test_partition_json_raises_with_invalid_json():
+    text = '[{"hi": "there"}]]'
+    with pytest.raises(ValueError):
+        partition_json(text=text)
