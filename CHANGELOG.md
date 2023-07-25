@@ -1,4 +1,4 @@
-## 0.8.2-dev5
+## 0.8.2-dev6
 
 ### Enhancements
 
@@ -9,6 +9,7 @@
 * set the file's current position to the beginning after reading the file in `convert_to_bytes`
 * Add slide notes to pptx
 * Add `--encoding` directive to ingest
+* Improve json detection by `detect_filetype`
 
 ### Features
 
