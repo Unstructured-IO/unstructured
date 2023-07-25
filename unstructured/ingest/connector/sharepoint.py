@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from html import unescape
 from pathlib import Path
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 from urllib.parse import urlparse
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
@@ -63,10 +63,11 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         download_path = Path(f"{self.standard_config.download_dir}")
         output_path = Path(f"{self.standard_config.output_dir}")
         if self.meta is not None:
+            page_url = self.meta["page"].get_property("Url", "")
             parent = (
-                Path(self.meta["url"]).with_suffix(self.ext)
+                Path(page_url).with_suffix(self.ext)
                 if (self.meta["site_path"] is None)
-                else Path(self.meta["site_path"] + "/" + self.meta["url"]).with_suffix(self.ext)
+                else Path(self.meta["site_path"] + "/" + page_url).with_suffix(self.ext)
             )
         else:
             parent = Path(self.file.serverRelativeUrl[1:])
@@ -83,6 +84,40 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def _output_filename(self):
         return Path(self.output_filepath).resolve()
+    
+    @property
+    def date_created(self) -> Optional[str]:
+        if self.meta:
+            return self.meta['page'].properties.get('FirstPublished', None)
+        return self.file.time_created
+    
+    @property 
+    def date_modified(self) -> Optional[str]:
+        if self.meta:
+            return self.meta['page'].properties.get('Modified', None)
+        return self.file.time_last_modified
+
+    @property
+    def exists(self) -> Optional[bool]:
+        if self.meta:
+            return self.meta['page'].properties.get('FileName', None) and \
+                    self.meta['page'].properties.get('UniqueId', None)
+        return self.file.exists
+    
+    @property
+    def record_locator(self) -> Optional[Dict[str, Any]]:
+        if self.meta:
+            return self.meta["page"].to_json()
+        return self.file.to_json()
+
+    @property
+    def version(self) -> Optional[bool]:
+        if self.meta:
+            return self.meta['page'].properties.get('Version', '')
+
+        if (n_versions := len(self.file.versions)) > 0:
+            return self.file.versions[n_versions-1].properties.get('id', None)
+        return None
 
     def _get_page(self):
         """Retrieves HTML content of the Sharepoint site through the CanvasContent1 and
@@ -98,7 +133,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 pld = unescape(pld)
             else:
                 logger.info(
-                    f"Page {self.meta['url']} as it has no retrievable content. Dumping empty doc.",
+                    f"Page {self.meta['page'].get_property('Url', '')} as it has no retrievable content. Dumping empty doc.",
                 )
                 pld = "<div></div>"
 
@@ -116,7 +151,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     def _get_file(self):
         try:
-            fsize = self.file.get_property("size", 0)
+            fsize = self.file.length
             self.output_dir.mkdir(parents=True, exist_ok=True)
 
             if not self.download_dir.is_dir():
@@ -184,7 +219,7 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
         if not recursive:
             return files
         for f in folder.folders:
-            files += self._list_objects(f, recursive)
+            files += self._list_files(f, recursive)
         return files
 
     def _list_pages(self, site_client) -> list:
@@ -202,7 +237,7 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
             if (spath := (urlparse(site_client.base_url).path)) and (spath != "/"):
                 site_path = spath[1:]
             pfiles.append(
-                [file_page, {"url": page_meta.get_property("Url", None), "site_path": site_path}],
+                [file_page, {"page": page_meta, "site_path": site_path}],
             )
 
         return pfiles
