@@ -437,6 +437,8 @@ def test_partition_html_from_text_custom_metadata_date(
 
     assert isinstance(elements[0], Title)
     assert elements[0].metadata.date == expected_last_modification_date
+
+
 def test_partition_html_grabs_links():
     html_text = """<html>
         <p>Hello there I am a <a href="/link">very important link!</a></p>

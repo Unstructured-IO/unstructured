@@ -229,9 +229,7 @@ def _partition_pdf_or_image_local(
         process_file_with_model,
     )
 
-    model_name = (
-        model_name if model_name else os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME")
-    )
+    model_name = model_name if model_name else os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME")
     if file is None:
         layout = process_file_with_model(
             filename,
@@ -387,12 +385,8 @@ def _process_pdfminer_pages(
         sorted_page_elements = sorted(
             page_elements,
             key=lambda el: (
-                el.metadata.coordinates.points[0][1]
-                if el.metadata.coordinates
-                else float("inf"),
-                el.metadata.coordinates.points[0][0]
-                if el.metadata.coordinates
-                else float("inf"),
+                el.metadata.coordinates.points[0][1] if el.metadata.coordinates else float("inf"),
+                el.metadata.coordinates.points[0][0] if el.metadata.coordinates else float("inf"),
                 el.id,
             ),
         )
