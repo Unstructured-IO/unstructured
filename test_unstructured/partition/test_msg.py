@@ -161,6 +161,7 @@ def test_partition_msg_can_process_attachments(
         filename=filename,
         attachment_partitioner=partition_text,
         process_attachments=True,
+        metadata_date="2029-07-05T09:24:28",
     )
 
     assert elements[0].text.startswith("Hello!")
