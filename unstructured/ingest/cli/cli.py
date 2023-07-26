@@ -244,6 +244,7 @@ ingest.add_command(cli_cmds.biomed)
 ingest.add_command(cli_cmds.onedrive)
 ingest.add_command(cli_cmds.outlook)
 ingest.add_command(cli_cmds.local)
+ingest.add_command(cli_cmds.elasticsearch)
 
 
 if __name__ == "__main__":

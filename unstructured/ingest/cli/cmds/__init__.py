@@ -4,6 +4,7 @@ from .azure import azure
 from .biomed import biomed
 from .discord import discord
 from .dropbox import dropbox
+from .elasticsearch import elasticsearch
 from .fsspec import fsspec
 from .gcs import gcs
 from .github import github
@@ -33,4 +34,5 @@ __all__ = [
     "onedrive",
     "outlook",
     "local",
+    "elasticsearch",
 ]
