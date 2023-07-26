@@ -29,7 +29,6 @@ def partition_csv(
     include_metadata: bool = True,
     **kwargs,
 ) -> List[Element]:
-    print(metadata_date, type(metadata_date))
     """Partitions Microsoft Excel Documents in .csv format into its document elements.
 
         Parameters
