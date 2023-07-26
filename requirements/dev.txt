@@ -101,7 +101,7 @@ importlib-resources==6.0.0
     #   jsonschema-specifications
     #   jupyterlab
     #   notebook
-ipykernel==6.24.0
+ipykernel==6.25.0
     # via
     #   ipywidgets
     #   jupyter
@@ -197,7 +197,7 @@ mistune==3.0.1
     # via nbconvert
 nbclient==0.8.0
     # via nbconvert
-nbconvert==7.7.2
+nbconvert==7.7.3
     # via
     #   jupyter
     #   jupyter-server

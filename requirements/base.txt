@@ -35,7 +35,7 @@ lxml==4.9.3
     #   -r requirements/base.in
     #   python-docx
     #   python-pptx
-markdown==3.4.3
+markdown==3.4.4
     # via -r requirements/base.in
 msg-parser==1.2.0
     # via -r requirements/base.in
