@@ -89,9 +89,17 @@ You can batch load your unstructured files in a local directory for preprocessin
 
 ``OneDrive Connector``
 ---------------------
-You can batch process documents stored in Microsoft OneDrive with the `OneDrive Connector <https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/connector/onedrive.py>`_. You can find an example of how to use it `here <https://github.com/Unstructured-IO/unstructured/blob/main/examples/ingest/onedrive/onedrive.sh>`_.
+You can batch process documents stored in Microsoft OneDrive with the `OneDrive Connector <https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/connector/onedrive.py>`_. You can find an example of how to use it `here <https://github.com/Unstructured-IO/unstructured/blob/main/examples/ingest/onedrive/ingest.sh>`_.
 
-To install all dependencies for this connector run: ``pip install unstructured[onedrive]``
+To install all dependencies for this connector run: ``pip install "unstructured[onedrive]"``
+
+
+``Outlook Connector``
+---------------------
+You can batch process email stored in Microsoft Outlook with the `Outlook Connector <https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/connector/outlook.py>`_. You can find an example of how to use it `here <https://github.com/Unstructured-IO/unstructured/blob/main/examples/ingest/outlook/ingest.sh>`_.
+
+To install all dependencies for this connector run: ``pip install "unstructured[outlook]"``
+
 
 
 ``Reddit Connector``
