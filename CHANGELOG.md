@@ -50,9 +50,6 @@
 
 ### Fixes
 
-* NLTK now only gets downloaded if necessary.
-* Handling for empty tables in Word Documents and PowerPoints.
-
 ## 0.8.4
 
 ### Enhancements
