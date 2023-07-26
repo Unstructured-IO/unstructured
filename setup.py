@@ -87,6 +87,7 @@ setup(
         "dropbox": load_requirements("requirements/ingest-dropbox.in"),
         "onedrive": load_requirements("requirements/ingest-onedrive.in"),
         "outlook": load_requirements("requirements/ingest-outlook.in"),
+        "confluence": load_requirements("requirements/ingest-confluence.in"),
     },
     package_dir={"unstructured": "unstructured"},
     package_data={"unstructured": ["nlp/*.txt"]},

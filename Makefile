@@ -109,6 +109,11 @@ install-ingest-wikipedia:
 .PHONY: install-ingest-elasticsearch
 install-ingest-elasticsearch:
 	python3 -m pip install -r requirements/ingest-elasticsearch.txt
+
+.PHONY: install-ingest-confluence
+install-ingest-confluence:
+	python3 -m pip install -r requirements/ingest-confluence.txt
+
 .PHONY: install-unstructured-inference
 install-unstructured-inference:
 	python3 -m pip install -r requirements/local-inference.txt
@@ -148,6 +153,7 @@ pip-compile:
 	pip-compile --upgrade requirements/ingest-google-drive.in
 	pip-compile --upgrade requirements/ingest-elasticsearch.in
 	pip-compile --upgrade requirements/ingest-onedrive.in
+	pip-compile --upgrade requirements/ingest-confluence.in
 
 ## install-project-local:   install unstructured into your local python environment
 .PHONY: install-project-local

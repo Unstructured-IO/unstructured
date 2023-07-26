@@ -120,6 +120,7 @@ def _add_element_metadata(
         if coordinates is not None and coordinate_system is not None
         else None
     )
+    links = element.links if hasattr(element, "links") and len(element.links) > 0 else None
     metadata = ElementMetadata(
         coordinates=coordinates_metadata,
         filename=filename,
@@ -127,6 +128,7 @@ def _add_element_metadata(
         page_number=page_number,
         url=url,
         text_as_html=text_as_html,
+        links=links,
     )
     element.metadata = metadata.merge(element.metadata)
     return element
@@ -152,8 +154,34 @@ def _remove_element_metadata(
     return elements
 
 
-def convert_office_doc(input_filename: str, output_directory: str, target_format: str):
-    """Converts a .doc file to a .docx file using the libreoffice CLI."""
+def convert_office_doc(
+    input_filename: str,
+    output_directory: str,
+    target_format: str = "docx",
+    target_filter: Optional[str] = None,
+):
+    """Converts a .doc file to a .docx file using the libreoffice CLI.
+
+    Parameters
+    ----------
+    input_filename: str
+        The name of the .doc file to convert to .docx
+    output_directory: str
+        The output directory for the convert .docx file
+    target_format: str
+        The desired output format
+    target_filter: str
+        The output filter name to use when converting. See references below
+        for details.
+
+    References
+    ----------
+    https://stackoverflow.com/questions/52277264/convert-doc-to-docx-using-soffice-not-working
+    https://git.libreoffice.org/core/+/refs/heads/master/filter/source/config/fragments/filters
+
+    """
+    if target_filter is not None:
+        target_format = f"{target_format}:{target_filter}"
     # NOTE(robinson) - In the future can also include win32com client as a fallback for windows
     # users who do not have LibreOffice installed
     # ref: https://stackoverflow.com/questions/38468442/

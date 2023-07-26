@@ -16,6 +16,7 @@ def partition_doc(
     include_page_breaks: bool = True,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
+    libre_office_filter: Optional[str] = "MS Word 2007 XML",
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft Word Documents in .doc format into its document elements.
@@ -26,6 +27,10 @@ def partition_doc(
         A string defining the target filename path.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
+    libre_office_filter
+        The filter to use when coverting to .doc. The default is the
+        filter that is required when using LibreOffice7. Pass in None
+        if you do not want to apply any filter.
     """
     # Verify that only one of the arguments was provided
     if filename is None:
@@ -46,7 +51,12 @@ def partition_doc(
         base_filename, _ = os.path.splitext(filename_no_path)
 
     with tempfile.TemporaryDirectory() as tmpdir:
-        convert_office_doc(filename, tmpdir, target_format="docx")
+        convert_office_doc(
+            filename,
+            tmpdir,
+            target_format="docx",
+            target_filter=libre_office_filter,
+        )
         docx_filename = os.path.join(tmpdir, f"{base_filename}.docx")
         elements = partition_docx(
             filename=docx_filename,
