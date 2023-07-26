@@ -19,6 +19,8 @@ from unstructured.ingest.connector.wikipedia import (
 from unstructured.ingest.doc_processor.generalized import initialize, process_document
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 
+from boxsdk import JWTAuth
+
 with suppress(RuntimeError):
     mp.set_start_method("spawn")
 
@@ -85,14 +87,14 @@ class MainProcess:
 
         # Debugging tip: use the below line and comment out the mp.Pool loop
         # block to remain in single process
-        # self.doc_processor_fn(docs[0])
+        self.doc_processor_fn(docs[0])
 
-        with mp.Pool(
-            processes=self.num_processes,
-            initializer=ingest_log_streaming_init,
-            initargs=(logging.DEBUG if self.verbose else logging.INFO,),
-        ) as pool:
-            pool.map(self.doc_processor_fn, docs)
+        # with mp.Pool(
+        #     processes=self.num_processes,
+        #     initializer=ingest_log_streaming_init,
+        #     initargs=(logging.DEBUG if self.verbose else logging.INFO,),
+        # ) as pool:
+        #     pool.map(self.doc_processor_fn, docs)
 
         self.cleanup()
 
@@ -740,7 +742,23 @@ def main(
                     access_kwargs={"token": gcs_token},
                 ),
             )
-        elif protocol in ("dropbox"):
+        elif protocol == "box":
+            from unstructured.ingest.connector.box import (
+                BoxConnector,
+                SimpleBoxConfig,
+            )
+            print("*************** BOX")
+
+
+            doc_connector = BoxConnector(  # type: ignore
+                standard_config=standard_config,
+                config=SimpleBoxConfig(
+                    path=remote_url,
+                    recursive=recursive,
+                    access_kwargs={"oauth": JWTAuth.from_settings_file("/Users/davidpotter/Documents/Unstructured/BoxJWT/unstructured_key.json")},
+                ),
+            )
+        elif protocol == "dropbox":
             from unstructured.ingest.connector.dropbox import (
                 DropboxConnector,
                 SimpleDropboxConfig,
@@ -752,20 +770,6 @@ def main(
                     path=remote_url,
                     recursive=recursive,
                     access_kwargs={"token": dropbox_token},
-                ),
-            )
-        elif protocol in ("box"):
-            from unstructured.ingest.connector.box import (
-                BoxConnector,
-                SimpleBoxConfig,
-            )
-
-            doc_connector = BoxConnector(  # type: ignore
-                standard_config=standard_config,
-                config=SimpleBoxConfig(
-                    path=remote_url,
-                    recursive=recursive,
-                    access_kwargs={"jwt": box_jwt},
                 ),
             )
         elif protocol in ("abfs", "az"):

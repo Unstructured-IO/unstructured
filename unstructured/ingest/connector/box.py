@@ -1,3 +1,14 @@
+"""
+Make sure the app is a collaborator for your folder (maybe as co-owner, but editor shoud be fine)
+Make sure you have write all files to download
+Maybe check Make api calls as the as-user header
+REAUTHORIZE the app after making any changes.
+
+
+
+"""
+
+
 from dataclasses import dataclass
 from typing import Type
 
