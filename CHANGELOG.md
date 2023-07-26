@@ -1,4 +1,4 @@
-## 0.8.3-dev0
+## 0.8.5-dev0
 
 ### Enhancements
 
@@ -6,7 +6,7 @@
 
 ### Fixes
 
-## 0.8.2
+## 0.8.4
 
 ### Enhancements
 
