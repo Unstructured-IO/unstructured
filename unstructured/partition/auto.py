@@ -84,7 +84,7 @@ def partition(
     headers
         The headers to be used in conjunction with the HTTP request if URL is set.
     skip_infer_table_types
-        The document types that you want to skip table extration
+        The document types that you want to skip table extraction with.
     ssl_verify
         If the URL parameter is set, determines whether or not partition uses SSL verification
         in the HTTP request.
