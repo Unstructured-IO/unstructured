@@ -2,6 +2,7 @@
 
 ### Enhancements
 
+* Adds optional Unstructured API unit tests in CI
 * Tracks last modified date for all document types.
 
 ### Features
