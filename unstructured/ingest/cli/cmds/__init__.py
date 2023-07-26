@@ -2,6 +2,7 @@ from google_drive import gdrive
 
 from .azure import azure
 from .biomed import biomed
+from .confluence import confluence
 from .discord import discord
 from .dropbox import dropbox
 from .elasticsearch import elasticsearch
@@ -35,4 +36,5 @@ __all__ = [
     "outlook",
     "local",
     "elasticsearch",
+    "confluence",
 ]

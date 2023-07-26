@@ -245,6 +245,7 @@ ingest.add_command(cli_cmds.onedrive)
 ingest.add_command(cli_cmds.outlook)
 ingest.add_command(cli_cmds.local)
 ingest.add_command(cli_cmds.elasticsearch)
+ingest.add_command(cli_cmds.confluence)
 
 
 if __name__ == "__main__":
