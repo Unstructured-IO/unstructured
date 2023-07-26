@@ -308,3 +308,16 @@ def test_partition_json_from_text_with_custom_metadata_date(
     elements = partition_json(text=text, metadata_date=expected_last_modification_date)
 
     assert elements[0].metadata.date == expected_last_modification_date
+
+def test_partition_json_raises_with_unprocessable_json():
+    # NOTE(robinson) - This is unprocessable because it is not a list of dicts,
+    # per the Unstructured ISD format
+    text = '{"hi": "there"}'
+    with pytest.raises(ValueError):
+        partition_json(text=text)
+
+
+def test_partition_json_raises_with_invalid_json():
+    text = '[{"hi": "there"}]]'
+    with pytest.raises(ValueError):
+        partition_json(text=text)

@@ -1,15 +1,40 @@
-## 0.8.2-dev6
+## 0.8.4-dev0
 
 ### Enhancements
 
-Adds not required parameter `metadata_date` for each type of partition. If `metadata_date` is not passed metadata date takes from the file (if it is possible)
-*   Update functionality to retrieve image metadata from a page for `document_to_element_list`
-*   Links are now tracked in `partition_html` output.
-*   Set the file's current position to the beginning after reading the file in `convert_to_bytes`
-*   Add min\_partition kwarg to that combines elements below a specified threshold and modifies splitting of strings longer than max partition so words are not split.
-*   set the file's current position to the beginning after reading the file in `convert_to_bytes`
-*   Add slide notes to pptx
-*   Add `--encoding` directive to ingest
+* Tracks last modified date for all document types.
+
+### Features
+
+### Fixes
+
+
+## 0.8.3
+
+### Enhancements
+
+### Features
+
+* Adds Outlook connector
+* Add support for dpi parameter in inference library
+
+### Fixes
+
+* Fixes issue with email partitioning where From field was being assigned the To field value.
+
+## 0.8.2
+
+### Enhancements
+
+* Additional tests and refactor of JSON detection.
+* Update functionality to retrieve image metadata from a page for `document_to_element_list`
+* Links are now tracked in `partition_html` output.
+* Set the file's current position to the beginning after reading the file in `convert_to_bytes`
+* Add `min_partition` kwarg to that combines elements below a specified threshold and modifies splitting of strings longer than max partition so words are not split.
+* set the file's current position to the beginning after reading the file in `convert_to_bytes`
+* Add slide notes to pptx
+* Add `--encoding` directive to ingest
+* Improve json detection by `detect_filetype`
 
 ### Features
 

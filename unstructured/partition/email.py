@@ -119,7 +119,7 @@ def build_email_metadata(
     if email_date is not None:
         email_date = convert_to_iso_8601(email_date)
 
-    sent_from = header_dict.get("To")
+    sent_from = header_dict.get("From")
     if sent_from is not None:
         sent_from = [sender.strip() for sender in sent_from.split(",")]
 

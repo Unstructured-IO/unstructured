@@ -294,7 +294,7 @@ def test_partition_email_from_file_with_header():
 
 
 def test_partition_email_from_filename_has_metadata():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email-header.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
     elements = partition_email(filename=filename)
     assert len(elements) > 0
     assert (
@@ -306,7 +306,7 @@ def test_partition_email_from_filename_has_metadata():
             page_number=None,
             url=None,
             sent_from=["Matthew Robinson <mrobinson@unstructured.io>"],
-            sent_to=["Matthew Robinson <mrobinson@unstructured.io>"],
+            sent_to=["NotMatthew <NotMatthew@notunstructured.com>"],
             subject="Test Email",
             filetype="message/rfc822",
         ).to_dict()
@@ -314,7 +314,7 @@ def test_partition_email_from_filename_has_metadata():
     expected_dt = datetime.datetime.fromisoformat("2022-12-16T17:04:16-05:00")
     assert elements[0].metadata.get_date() == expected_dt
     for element in elements:
-        assert element.metadata.filename == "fake-email-header.eml"
+        assert element.metadata.filename == "fake-email.eml"
 
 
 def test_extract_email_text_matches_html():

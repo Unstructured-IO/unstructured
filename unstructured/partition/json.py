@@ -1,15 +1,19 @@
 import json
-import re
 from typing import IO, List, Optional
 
 from unstructured.documents.elements import Element, process_metadata
-from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
-from unstructured.nlp.patterns import LIST_OF_DICTS_PATTERN
+from unstructured.file_utils.filetype import (
+    FileType,
+    add_metadata_with_filetype,
+    is_json_processable,
+)
+from unstructured.partition.common import exactly_one
 from unstructured.partition.common import (
     exactly_one,
     get_last_modified_date,
     get_last_modified_date_from_file,
 )
+
 from unstructured.staging.base import dict_to_elements
 
 
@@ -61,9 +65,10 @@ def partition_json(
     elif text is not None:
         file_text = str(text)
 
-    # NOTE(Nathan): we expect file_text to be a list of dicts (optimization)
-    if not re.match(LIST_OF_DICTS_PATTERN, file_text):
-        raise ValueError("Json schema does not match the Unstructured schema")
+    if not is_json_processable(file_text=file_text):
+        raise ValueError(
+            "JSON cannot be partitioned. Schema does not match the Unstructured schema.",
+        )
 
     try:
         dict = json.loads(file_text)

@@ -231,12 +231,18 @@ def _partition_pdf_or_image_local(
 
     model_name = model_name if model_name else os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME")
     if file is None:
+        pdf_image_dpi = kwargs.pop("pdf_image_dpi", None)
+        process_file_with_model_kwargs = {
+            "is_image": is_image,
+            "ocr_languages": ocr_languages,
+            "extract_tables": infer_table_structure,
+            "model_name": model_name,
+        }
+        if pdf_image_dpi:
+            process_file_with_model_kwargs["pdf_image_dpi"] = pdf_image_dpi
         layout = process_file_with_model(
             filename,
-            is_image=is_image,
-            ocr_languages=ocr_languages,
-            extract_tables=infer_table_structure,
-            model_name=model_name,
+            **process_file_with_model_kwargs,
         )
     else:
         layout = process_data_with_model(
