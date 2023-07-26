@@ -237,6 +237,7 @@ ingest.add_command(cli_cmds.github)
 ingest.add_command(cli_cmds.gitlab)
 ingest.add_command(cli_cmds.reddit)
 ingest.add_command(cli_cmds.slack)
+ingest.add_command(cli_cmds.discord)
 
 
 if __name__ == "__main__":
