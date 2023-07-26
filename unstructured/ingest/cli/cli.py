@@ -231,6 +231,7 @@ def ingest(
 ingest.add_command(cli_cmds.s3)
 ingest.add_command(cli_cmds.google)
 ingest.add_command(cli_cmds.dropbox)
+ingest.add_command(cli_cmds.azure)
 
 
 if __name__ == "__main__":
