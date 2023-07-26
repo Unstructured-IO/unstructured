@@ -78,11 +78,10 @@ def biomed(
     base_path = path
     if not path:
         base_path = f"{api_id or ''}-{api_from or ''}-" f"{api_until or ''}"
-    hashed_dir_name = str(
-        hashlib.sha256(
-            base_path.encode("utf-8"),
-        ),
+    hashed_dir_name = hashlib.sha256(
+        base_path.encode("utf-8"),
     )
+
     update_download_dir_hash(ctx_dict=context_dict, hashed_dir_name=hashed_dir_name, logger=logger)
 
     from unstructured.ingest.connector.biomed import (

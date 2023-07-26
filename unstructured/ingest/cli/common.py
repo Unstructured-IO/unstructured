@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import hashlib
 import logging
 from functools import partial
@@ -26,11 +28,15 @@ def map_to_standard_config(ctx_dict: dict) -> StandardConnectorConfig:
 
 
 def update_download_dir_remote_url(ctx_dict: dict, remote_url: str, logger: logging.Logger) -> None:
-    hashed_dir_name = str(hashlib.sha256(remote_url.encode("utf-8")))
+    hashed_dir_name = hashlib.sha256(remote_url.encode("utf-8"))
     update_download_dir_hash(ctx_dict=ctx_dict, hashed_dir_name=hashed_dir_name, logger=logger)
 
 
-def update_download_dir_hash(ctx_dict: dict, hashed_dir_name: str, logger: logging.Logger):
+def update_download_dir_hash(
+    ctx_dict: dict,
+    hashed_dir_name: hashlib._Hash,
+    logger: logging.Logger,
+):
     if ctx_dict["local_input_path"] is None and not ctx_dict["download_dir"]:
         cache_path = Path.home() / ".cache" / "unstructured" / "ingest"
         if not cache_path.exists():

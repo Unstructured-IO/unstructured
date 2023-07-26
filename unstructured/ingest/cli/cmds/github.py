@@ -52,10 +52,8 @@ def github(ctx, url, git_access_token, git_branch, git_file_glob):
             },
         ),
     )
-    hashed_dir_name = str(
-        hashlib.sha256(
-            f"{url}_{git_branch}".encode("utf-8"),
-        ),
+    hashed_dir_name = hashlib.sha256(
+        f"{url}_{git_branch}".encode("utf-8"),
     )
     update_download_dir_hash(ctx_dict=context_dict, hashed_dir_name=hashed_dir_name, logger=logger)
 
