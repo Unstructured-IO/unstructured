@@ -8,6 +8,7 @@ from .gitlab import gitlab
 from .reddit import reddit
 from .s3 import s3
 from .slack import slack
+from .wikipedia import wikipedia
 
 __all__ = [
     "gcs",
@@ -20,4 +21,5 @@ __all__ = [
     "reddit",
     "slack",
     "discord",
+    "wikipedia",
 ]
