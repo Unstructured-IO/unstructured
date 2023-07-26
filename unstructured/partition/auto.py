@@ -293,12 +293,12 @@ def decide_table_extraction(
 ) -> bool:
     if filetype == FileType.PDF:
         if "pdf" in skip_infer_table_types and pdf_infer_table_structure:
-            raise ValueError(
+            logger.warning(
                 f"Conflict between variables skip_infer_table_types: {skip_infer_table_types}"
-                f"and pdf_infer_table_structure: {pdf_infer_table_structure}.",
+                f"and pdf_infer_table_structure: {pdf_infer_table_structure},"
+                "please reset skip_infer_table_types to turn on table extraction for PDFs.",
             )
-        else:
-            return pdf_infer_table_structure
+        return ("pdf" in skip_infer_table_types) is False or pdf_infer_table_structure
     elif filetype == FileType.PNG:
         return ("png" in skip_infer_table_types) is False
     elif filetype == FileType.JPG:
