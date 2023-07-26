@@ -241,7 +241,8 @@ jobs:
     - name: Set up flag for running Unstructured API unit tests
       run: |
         # NOTE: Change env `SKIP_API_UNIT_FOR_BREAKING_CHANGE` to true if there is a breaking change in Unstructured repo that will break unstructured api unit tests
-        echo "SKIP_API_UNIT_FOR_BREAKING_CHANGE=false" >> $GITHUB_ENV
+        # TODO: Change env back to false once API unit tests is in sync with unstructured repo
+        echo "SKIP_API_UNIT_FOR_BREAKING_CHANGE=true" >> $GITHUB_ENV
     - name: Set up Python ${{ matrix.python-version }}
       if: env.SKIP_API_UNIT_FOR_BREAKING_CHANGE == 'false'
       uses: actions/setup-python@v4
