@@ -69,6 +69,7 @@ class XMLDocument(Document):
         if self.document_tree is None:
             try:
                 document_tree = etree.fromstring(content, self.parser)
+                print("document_tree", document_tree)
                 if document_tree is None:
                     raise ValueError("document_tree is None")
 
@@ -92,6 +93,12 @@ class XMLDocument(Document):
                         element = etree.Element("span")
                         element.text = str(element_from_text(text=text))
                         document_tree.append(element)
+            if "</a>" in content:
+                tree = html.fromstring(content)
+                links = list(tree.iterlinks())
+                print("here", links)
+                for el in document_tree:
+                    print(el)
 
             if self.stylesheet:
                 if isinstance(self.parser, etree.HTMLParser):
@@ -108,6 +115,7 @@ class XMLDocument(Document):
 
             self.document_tree = document_tree
 
+        print("self.document_tree", self.document_tree)
         return self.document_tree
 
     @classmethod
@@ -134,5 +142,4 @@ class XMLDocument(Document):
         **kwargs,
     ):
         _, content = read_txt_file(filename=filename, encoding=encoding)
-
         return cls.from_string(content, parser=parser, stylesheet=stylesheet, **kwargs)
