@@ -8,6 +8,7 @@ from .fsspec import fsspec
 from .gcs import gcs
 from .github import github
 from .gitlab import gitlab
+from .onedrive import onedrive
 from .reddit import reddit
 from .s3 import s3
 from .slack import slack
@@ -27,4 +28,5 @@ __all__ = [
     "wikipedia",
     "gdrive",
     "biomed",
+    "onedrive",
 ]
