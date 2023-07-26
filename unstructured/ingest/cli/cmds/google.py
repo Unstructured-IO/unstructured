@@ -13,16 +13,10 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
 @click.command()
 @click.pass_context
 @click.option(
-    "--anonymous",
-    is_flag=True,
-    default=False,
-    help="Connect to s3 without local AWS credentials.",
-)
-@click.option(
     "--remote-url",
     required=True,
     help="Remote fsspec URL formatted as `protocol://dir/path`, it can contain both "
-    "a directory or a single file. Supported protocols are: `s3`, `s3a`",
+    "a directory or a single file. Supported protocols are: `gcs`, `gs`,",
 )
 @click.option(
     "--recursive",
@@ -30,9 +24,15 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
     default=False,
     help="Recursively download files in their respective folders"
     "otherwise stop at the files in provided folder level."
-    " Supported protocols are: `s3`, `s3a`",
+    " Supported protocols are: `gcs`, `gs`,",
 )
-def s3(ctx, anonymous, remote_url, recursive):
+@click.option(
+    "--gcs-token",
+    default=None,
+    help="Token used to access Google Cloud. GCSFS will attempt to use your default gcloud creds"
+    "or get creds from the google metadata service or fall back to anonymous access.",
+)
+def google(ctx, remote_url, recursive, gcs_token):
     context_dict = ctx.obj
     ingest_log_streaming_init(logging.DEBUG if context_dict["verbose"] else logging.INFO)
 
@@ -40,23 +40,23 @@ def s3(ctx, anonymous, remote_url, recursive):
     logger.debug(
         "params: {}".format(
             {
-                "anonymous": anonymous,
                 "remote_url": remote_url,
                 "recursive": recursive,
+                "gcs_token": gcs_token,
             },
         ),
     )
 
     update_download_dir(ctx_dict=context_dict, remote_url=remote_url, logger=logger)
 
-    from unstructured.ingest.connector.s3 import S3Connector, SimpleS3Config
+    from unstructured.ingest.connector.gcs import GcsConnector, SimpleGcsConfig
 
-    doc_connector = S3Connector(  # type: ignore
+    doc_connector = GcsConnector(  # type: ignore
         standard_config=map_to_standard_config(context_dict),
-        config=SimpleS3Config(
+        config=SimpleGcsConfig(
             path=remote_url,
             recursive=recursive,
-            access_kwargs={"anon": anonymous},
+            access_kwargs={"token": gcs_token},
         ),
     )
 

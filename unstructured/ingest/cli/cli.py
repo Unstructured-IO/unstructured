@@ -3,7 +3,7 @@ import logging
 import click
 from click import ClickException
 
-from unstructured.ingest.cli.cmds.s3 import s3
+import unstructured.ingest.cli.cmds as cli_cmds
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 
 
@@ -228,7 +228,9 @@ def ingest(
 
 
 # Add all subcommands
-ingest.add_command(s3)
+ingest.add_command(cli_cmds.s3)
+ingest.add_command(cli_cmds.google)
+ingest.add_command(cli_cmds.dropbox)
 
 
 if __name__ == "__main__":

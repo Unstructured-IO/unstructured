@@ -13,16 +13,10 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
 @click.command()
 @click.pass_context
 @click.option(
-    "--anonymous",
-    is_flag=True,
-    default=False,
-    help="Connect to s3 without local AWS credentials.",
-)
-@click.option(
     "--remote-url",
     required=True,
     help="Remote fsspec URL formatted as `protocol://dir/path`, it can contain both "
-    "a directory or a single file. Supported protocols are: `s3`, `s3a`",
+    "a directory or a single file. Supported protocols are: `gcs`, `gs`,",
 )
 @click.option(
     "--recursive",
@@ -30,9 +24,14 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
     default=False,
     help="Recursively download files in their respective folders"
     "otherwise stop at the files in provided folder level."
-    " Supported protocols are: `s3`, `s3a`",
+    " Supported protocols are: `gcs`, `gs`,",
 )
-def s3(ctx, anonymous, remote_url, recursive):
+@click.option(
+    "--dropbox-token",
+    default=None,
+    help="Dropbox access token.",
+)
+def dropbox(ctx, remote_url, recursive, dropbox_token):
     context_dict = ctx.obj
     ingest_log_streaming_init(logging.DEBUG if context_dict["verbose"] else logging.INFO)
 
@@ -40,23 +39,26 @@ def s3(ctx, anonymous, remote_url, recursive):
     logger.debug(
         "params: {}".format(
             {
-                "anonymous": anonymous,
                 "remote_url": remote_url,
                 "recursive": recursive,
+                "dropbox_token": dropbox_token,
             },
         ),
     )
 
     update_download_dir(ctx_dict=context_dict, remote_url=remote_url, logger=logger)
 
-    from unstructured.ingest.connector.s3 import S3Connector, SimpleS3Config
+    from unstructured.ingest.connector.dropbox import (
+        DropboxConnector,
+        SimpleDropboxConfig,
+    )
 
-    doc_connector = S3Connector(  # type: ignore
+    doc_connector = DropboxConnector(  # type: ignore
         standard_config=map_to_standard_config(context_dict),
-        config=SimpleS3Config(
+        config=SimpleDropboxConfig(
             path=remote_url,
             recursive=recursive,
-            access_kwargs={"anon": anonymous},
+            access_kwargs={"token": dropbox_token},
         ),
     )
 
