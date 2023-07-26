@@ -14,26 +14,26 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
 @click.command()
 @click.pass_context
 @click.option(
-    "--discord-channels",
+    "--channels",
     required=True,
     help="A comma separated list of discord channel ids to ingest from.",
 )
 @click.option(
-    "--discord-token",
+    "--token",
     required=True,
     help="Bot token used to access Discord API, must have "
     "READ_MESSAGE_HISTORY scope for the bot user",
 )
 @click.option(
-    "--discord-period",
+    "--period",
     default=None,
     help="Number of days to go back in the history of discord channels, must be a number",
 )
 def discord(
     ctx,
-    discord_channels,
-    discord_token,
-    discord_period,
+    channels,
+    token,
+    period,
 ):
     context_dict = ctx.obj
     ingest_log_streaming_init(logging.DEBUG if context_dict["verbose"] else logging.INFO)
@@ -42,15 +42,15 @@ def discord(
     logger.debug(
         "params: {}".format(
             {
-                "discord_channels": discord_channels,
-                "discord_token": discord_token,
-                "discord_period": discord_period,
+                "channels": channels,
+                "token": token,
+                "period": period,
             },
         ),
     )
     hashed_dir_name = str(
         hashlib.sha256(
-            discord_channels.encode("utf-8"),
+            channels.encode("utf-8"),
         ),
     )
     update_download_dir_hash(ctx_dict=context_dict, hashed_dir_name=hashed_dir_name, logger=logger)
@@ -63,9 +63,9 @@ def discord(
     doc_connector = DiscordConnector(  # type: ignore
         standard_config=map_to_standard_config(context_dict),
         config=SimpleDiscordConfig(
-            channels=SimpleDiscordConfig.parse_channels(discord_channels),
-            days=discord_period,
-            token=discord_token,
+            channels=SimpleDiscordConfig.parse_channels(channels),
+            days=period,
+            token=token,
             verbose=context_dict["verbose"],
         ),
     )

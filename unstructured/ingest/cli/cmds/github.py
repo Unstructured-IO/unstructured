@@ -14,7 +14,7 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
 @click.command()
 @click.pass_context
 @click.option(
-    "--github-url",
+    "--url",
     required=True,
     help='URL to GitHub repository, e.g. "https://github.com/Unstructured-IO/unstructured",'
     ' or a repository owner/name pair, e.g. "Unstructured-IO/unstructured"',
@@ -37,7 +37,7 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
     help="A comma-separated list of file globs to limit which types of files are accepted,"
     " e.g. '*.html,*.txt'",
 )
-def github(ctx, github_url, git_access_token, git_branch, git_file_glob):
+def github(ctx, url, git_access_token, git_branch, git_file_glob):
     context_dict = ctx.obj
     ingest_log_streaming_init(logging.DEBUG if context_dict["verbose"] else logging.INFO)
 
@@ -45,7 +45,7 @@ def github(ctx, github_url, git_access_token, git_branch, git_file_glob):
     logger.debug(
         "params: {}".format(
             {
-                "github_url": github_url,
+                "url": url,
                 "git_access_token": git_access_token,
                 "git_branch": git_branch,
                 "git_file_glob": git_file_glob,
@@ -54,7 +54,7 @@ def github(ctx, github_url, git_access_token, git_branch, git_file_glob):
     )
     hashed_dir_name = str(
         hashlib.sha256(
-            f"{github_url}_{git_branch}".encode("utf-8"),
+            f"{url}_{git_branch}".encode("utf-8"),
         ),
     )
     update_download_dir_hash(ctx_dict=context_dict, hashed_dir_name=hashed_dir_name, logger=logger)
@@ -67,7 +67,7 @@ def github(ctx, github_url, git_access_token, git_branch, git_file_glob):
     doc_connector = GitHubConnector(  # type: ignore
         standard_config=map_to_standard_config(context_dict),
         config=SimpleGitHubConfig(
-            url=github_url,
+            url=url,
             access_token=git_access_token,
             branch=git_branch,
             file_glob=git_file_glob,

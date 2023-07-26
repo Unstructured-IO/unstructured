@@ -27,12 +27,12 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
     " Supported protocols are: `gcs`, `gs`,",
 )
 @click.option(
-    "--gcs-token",
+    "--token",
     required=True,
     help="Token used to access Google Cloud. GCSFS will attempt to use your default gcloud creds"
     "or get creds from the google metadata service or fall back to anonymous access.",
 )
-def gcs(ctx, remote_url, recursive, gcs_token):
+def gcs(ctx, remote_url, recursive, token):
     context_dict = ctx.obj
     ingest_log_streaming_init(logging.DEBUG if context_dict["verbose"] else logging.INFO)
 
@@ -42,7 +42,7 @@ def gcs(ctx, remote_url, recursive, gcs_token):
             {
                 "remote_url": remote_url,
                 "recursive": recursive,
-                "gcs_token": gcs_token,
+                "token": token,
             },
         ),
     )
@@ -56,7 +56,7 @@ def gcs(ctx, remote_url, recursive, gcs_token):
         config=SimpleGcsConfig(
             path=remote_url,
             recursive=recursive,
-            access_kwargs={"token": gcs_token},
+            access_kwargs={"token": token},
         ),
     )
 

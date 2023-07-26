@@ -27,18 +27,18 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
     " Supported protocols are: `abfs`, `az`,",
 )
 @click.option(
-    "--azure-account-name",
+    "--account-name",
     default=None,
     help="Azure Blob Storage or DataLake account name.",
 )
 @click.option(
-    "--azure-account-key",
+    "--account-key",
     default=None,
     help="Azure Blob Storage or DataLake account key (not required if "
     "`azure_account_name` is public).",
 )
 @click.option(
-    "--azure-connection-string",
+    "--connection-string",
     default=None,
     help="Azure Blob Storage or DataLake connection string.",
 )
@@ -46,9 +46,9 @@ def azure(
     ctx,
     remote_url,
     recursive,
-    azure_account_name,
-    azure_account_key,
-    azure_connection_string,
+    account_name,
+    account_key,
+    connection_string,
 ):
     context_dict = ctx.obj
     ingest_log_streaming_init(logging.DEBUG if context_dict["verbose"] else logging.INFO)
@@ -59,9 +59,9 @@ def azure(
             {
                 "remote_url": remote_url,
                 "recursive": recursive,
-                "azure_account_name": azure_account_name,
-                "azure_account_key": azure_account_key,
-                "azure_connection_string": azure_connection_string,
+                "account_name": account_name,
+                "account_key": account_key,
+                "connection_string": connection_string,
             },
         ),
     )
@@ -73,13 +73,13 @@ def azure(
         SimpleAzureBlobStorageConfig,
     )
 
-    if azure_account_name:
+    if account_name:
         access_kwargs = {
-            "account_name": azure_account_name,
-            "account_key": azure_account_key,
+            "account_name": account_name,
+            "account_key": account_key,
         }
-    elif azure_connection_string:
-        access_kwargs = {"connection_string": azure_connection_string}
+    elif connection_string:
+        access_kwargs = {"connection_string": connection_string}
     else:
         access_kwargs = {}
     doc_connector = AzureBlobStorageConnector(  # type: ignore

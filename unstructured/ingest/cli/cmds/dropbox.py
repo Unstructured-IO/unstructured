@@ -27,11 +27,11 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
     " Supported protocols are: `gcs`, `gs`,",
 )
 @click.option(
-    "--dropbox-token",
+    "--token",
     required=True,
     help="Dropbox access token.",
 )
-def dropbox(ctx, remote_url, recursive, dropbox_token):
+def dropbox(ctx, remote_url, recursive, token):
     context_dict = ctx.obj
     ingest_log_streaming_init(logging.DEBUG if context_dict["verbose"] else logging.INFO)
 
@@ -41,7 +41,7 @@ def dropbox(ctx, remote_url, recursive, dropbox_token):
             {
                 "remote_url": remote_url,
                 "recursive": recursive,
-                "dropbox_token": dropbox_token,
+                "token": token,
             },
         ),
     )
@@ -58,7 +58,7 @@ def dropbox(ctx, remote_url, recursive, dropbox_token):
         config=SimpleDropboxConfig(
             path=remote_url,
             recursive=recursive,
-            access_kwargs={"token": dropbox_token},
+            access_kwargs={"token": token},
         ),
     )
 
