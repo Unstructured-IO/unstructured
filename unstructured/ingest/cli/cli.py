@@ -242,6 +242,7 @@ ingest.add_command(cli_cmds.wikipedia)
 ingest.add_command(cli_cmds.gdrive)
 ingest.add_command(cli_cmds.biomed)
 ingest.add_command(cli_cmds.onedrive)
+ingest.add_command(cli_cmds.outlook)
 
 
 if __name__ == "__main__":
