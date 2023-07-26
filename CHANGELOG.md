@@ -15,12 +15,7 @@
 
 ### Features
 
-* Adds Outlook connector
-* Add support for dpi parameter in inference library
-
 ### Fixes
-
-* Fixes issue with email partitioning where From field was being assigned the To field value.
 
 ## 0.8.2
 
