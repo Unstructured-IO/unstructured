@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Connectors" href="connectors.html" /><link rel="prev" title="Unstructured API" href="api.html" />
 
   <link rel="shortcut icon" href="_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.05.20" />
-  <title>Bricks - Unstructured 0.8.2 documentation</title>
+  <title>Bricks - Unstructured 0.8.3 documentation</title>
   <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -655,6 +655,10 @@ If <code class="docutils literal notranslate"><span class="pre">html_assemble_ar
 If <code class="docutils literal notranslate"><span class="pre">html_assemble_articles</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code> and no <code class="docutils literal notranslate"><span class="pre">&lt;article&gt;</span></code> tags are present, the behavior
 is the same as <code class="docutils literal notranslate"><span class="pre">html_assemble_articles=False</span></code>.</p>
 <p>For more information about the <code class="docutils literal notranslate"><span class="pre">partition_html</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/html.py">source code here</a>.</p>
+<p>If a section of text in the HTML document contains links, they will be tracked in the <code class="docutils literal notranslate"><span class="pre">links</span></code>
+attribute in the element metadata. Each link in the list is a dictionary that contains
+<code class="docutils literal notranslate"><span class="pre">text</span></code> and <code class="docutils literal notranslate"><span class="pre">url</span></code> keys. Links are tracked in other partitioning functions that call <code class="docutils literal notranslate"><span class="pre">partition_html</span></code>
+as well, such as <code class="docutils literal notranslate"><span class="pre">partition_email</span></code> and <code class="docutils literal notranslate"><span class="pre">partition_rst</span></code>.</p>
 </section>
 <section id="partition-image">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_image</span></code><a class="headerlink" href="#partition-image" title="Permalink to this heading"></a></h3>
@@ -1545,15 +1549,14 @@ We can take this data and directly upload it into LabelStudio to quickly get sta
 will have a <code class="docutils literal notranslate"><span class="pre">text</span></code> column with the text from the element and a <code class="docutils literal notranslate"><span class="pre">type</span></code> column
 indicating the element type, such as <code class="docutils literal notranslate"><span class="pre">NarrativeText</span></code> or <code class="docutils literal notranslate"><span class="pre">Title</span></code>.</p>
 <p>Examples:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>from unstructured.documents.elements import Title, NarrativeText
-from unstructured.staging.base import convert_to_dataframe
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.documents.elements</span> <span class="kn">import</span> <span class="n">Title</span><span class="p">,</span> <span class="n">NarrativeText</span>
+<span class="kn">from</span> <span class="nn">unstructured.staging.base</span> <span class="kn">import</span> <span class="n">convert_to_dataframe</span>
 
-elements = [Title(text=&quot;Title&quot;), NarrativeText(text=&quot;Narrative&quot;)]
-df = convert_to_dataframe(elements)
-
-For more information about the ``convert_to_dataframe`` brick, you can check the `source code here &lt;https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/base.py&gt;`_.
+<span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="n">Title</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Title&quot;</span><span class="p">),</span> <span class="n">NarrativeText</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Narrative&quot;</span><span class="p">)]</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">convert_to_dataframe</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">convert_to_dataframe</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/base.py">source code here</a>.</p>
 </section>
 <section id="convert-to-dict">
 <h3><code class="docutils literal notranslate"><span class="pre">convert_to_dict</span></code><a class="headerlink" href="#convert-to-dict" title="Permalink to this heading"></a></h3>
