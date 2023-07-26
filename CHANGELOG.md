@@ -1,7 +1,8 @@
-## 0.8.5-dev0
+## 0.8.5-dev1
 
 ### Enhancements
 
+* Adds optional Unstructured API unit tests in CI
 * Tracks last modified date for all document types.
 
 ### Features
