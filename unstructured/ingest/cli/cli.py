@@ -234,6 +234,7 @@ ingest.add_command(cli_cmds.dropbox)
 ingest.add_command(cli_cmds.azure)
 ingest.add_command(cli_cmds.fsspec)
 ingest.add_command(cli_cmds.github)
+ingest.add_command(cli_cmds.gitlab)
 
 
 if __name__ == "__main__":
