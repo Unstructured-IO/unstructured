@@ -1,3 +1,15 @@
+## 0.8.3
+
+### Enhancements
+
+### Features
+
+* Adds Outlook connector
+
+### Fixes
+
+* Fixes issue with email partitioning where From field was being assigned the To field value.
+
 ## 0.8.2-dev7
 
 ### Enhancements
