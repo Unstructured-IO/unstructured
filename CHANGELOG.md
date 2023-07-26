@@ -1,8 +1,18 @@
+## 0.8.5
+
+### Enhancements
+
+* Add parameter `skip_infer_table_types` to enable (skip) table extraction for other doc types
+
+### Features
+
+### Fixes
+
+
 ## 0.8.3
 
 ### Enhancements
 
-* Pass parameter `pdf_infer_table_structure` in partition_image to support image table extration
 
 ### Features
 
