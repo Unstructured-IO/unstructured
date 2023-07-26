@@ -266,6 +266,6 @@ def test_partition_doc_from_file_without_metadata_date(
         sf = SpooledTemporaryFile()
         sf.write(f.read())
         sf.seek(0)
-        elements = partition_doc(file=sf)
+        elements = partition_doc(file=sf, metadata_date=None)
 
     assert elements[0].metadata.date is None
