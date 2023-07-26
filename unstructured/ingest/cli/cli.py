@@ -232,6 +232,7 @@ ingest.add_command(cli_cmds.s3)
 ingest.add_command(cli_cmds.google)
 ingest.add_command(cli_cmds.dropbox)
 ingest.add_command(cli_cmds.azure)
+ingest.add_command(cli_cmds.fsspec)
 
 
 if __name__ == "__main__":
