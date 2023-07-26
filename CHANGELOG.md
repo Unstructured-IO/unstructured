@@ -1,3 +1,13 @@
+## 0.8.5-dev0
+
+### Enhancements
+
+* Tracks last modified date for all document types.
+
+### Features
+
+### Fixes
+
 ## 0.8.4
 
 ### Enhancements

@@ -64,9 +64,7 @@ class DropboxIngestDoc(FsspecIngestDoc):
                 self.remote_file_path,
             )
         else:
-            return Path(
-                self.standard_config.download_dir,
-            ) / self.remote_file_path.replace(
+            return Path(self.standard_config.download_dir) / self.remote_file_path.replace(
                 f"/{self.config.dir_path}/",
                 "",
             )

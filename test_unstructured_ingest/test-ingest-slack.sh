@@ -16,7 +16,7 @@ fi
 PYTHONPATH=. ./unstructured/ingest/main.py \
    --download-dir "$DOWNLOAD_DIR" \
    --end-date 2023-04-08T12:00:00-08:00 \
-   --metadata-exclude coordinates,file_directory,metadata.data_source.date_processed \
+   --metadata-exclude coordinates,file_directory,metadata.data_source.date_processed,metadata.date \
    --partition-strategy hi_res \
    --preserve-downloads \
    --reprocess \
