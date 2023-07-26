@@ -37,7 +37,6 @@
   has a `text/plain` MIME type.
 * Enables filters to be passed to `partition_doc` so it doesn't error with LibreOffice7.
 * Removed old error message that's superseded by `requires_dependencies`.
-* Removes using `hi_res` as the default strategy value for `partition_via_api` and `partition_multiple_via_api`
 
 ## 0.8.1
 
