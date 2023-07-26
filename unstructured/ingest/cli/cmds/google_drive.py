@@ -15,12 +15,12 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
 @click.pass_context
 @click.option(
     "--drive-id",
-    default=None,
+    required=True,
     help="Google Drive File or Folder ID.",
 )
 @click.option(
     "--drive-service-account-key",
-    default=None,
+    required=True,
     help="Path to the Google Drive service account json file.",
 )
 @click.option(

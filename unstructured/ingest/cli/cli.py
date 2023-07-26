@@ -240,6 +240,7 @@ ingest.add_command(cli_cmds.slack)
 ingest.add_command(cli_cmds.discord)
 ingest.add_command(cli_cmds.wikipedia)
 ingest.add_command(cli_cmds.gdrive)
+ingest.add_command(cli_cmds.biomed)
 
 
 if __name__ == "__main__":

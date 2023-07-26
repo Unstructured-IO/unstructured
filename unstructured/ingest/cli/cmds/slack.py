@@ -15,13 +15,13 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
 @click.pass_context
 @click.option(
     "--slack-channels",
-    default=None,
+    required=True,
     help="Comma separated list of Slack channel IDs to pull messages from, "
     "can be a public or private channel",
 )
 @click.option(
     "--slack-token",
-    default=None,
+    required=True,
     help="Bot token used to access Slack API, must have channels:history " "scope for the bot user",
 )
 @click.option(

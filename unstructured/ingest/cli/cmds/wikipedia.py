@@ -15,7 +15,7 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
 @click.pass_context
 @click.option(
     "--wikipedia-page-title",
-    default=None,
+    required=True,
     help='Title of a Wikipedia page, e.g. "Open source software".',
 )
 @click.option(

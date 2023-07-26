@@ -1,6 +1,7 @@
 from google_drive import gdrive
 
 from .azure import azure
+from .biomed import biomed
 from .discord import discord
 from .dropbox import dropbox
 from .fsspec import fsspec
@@ -25,4 +26,5 @@ __all__ = [
     "discord",
     "wikipedia",
     "gdrive",
+    "biomed",
 ]

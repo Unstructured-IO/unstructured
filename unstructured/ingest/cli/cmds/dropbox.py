@@ -28,7 +28,7 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
 )
 @click.option(
     "--dropbox-token",
-    default=None,
+    required=True,
     help="Dropbox access token.",
 )
 def dropbox(ctx, remote_url, recursive, dropbox_token):

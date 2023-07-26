@@ -15,13 +15,13 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
 @click.pass_context
 @click.option(
     "--github-url",
-    default=None,
+    required=True,
     help='URL to GitHub repository, e.g. "https://github.com/Unstructured-IO/unstructured",'
     ' or a repository owner/name pair, e.g. "Unstructured-IO/unstructured"',
 )
 @click.option(
     "--git-access-token",
-    default=None,
+    required=True,
     help="A GitHub or GitLab access token, see https://docs.github.com/en/authentication "
     " or https://docs.gitlab.com/ee/api/rest/index.html#personalprojectgroup-access-tokens",
 )

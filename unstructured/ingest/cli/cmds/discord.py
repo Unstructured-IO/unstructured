@@ -15,19 +15,19 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
 @click.pass_context
 @click.option(
     "--discord-channels",
-    default=None,
+    required=True,
     help="A comma separated list of discord channel ids to ingest from.",
 )
 @click.option(
     "--discord-token",
-    default=None,
+    required=True,
     help="Bot token used to access Discord API, must have "
     "READ_MESSAGE_HISTORY scope for the bot user",
 )
 @click.option(
     "--discord-period",
     default=None,
-    help="Number of days to go back in the history of discord channels, must be an number",
+    help="Number of days to go back in the history of discord channels, must be a number",
 )
 def discord(
     ctx,

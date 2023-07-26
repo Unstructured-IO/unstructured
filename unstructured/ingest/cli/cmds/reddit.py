@@ -15,19 +15,19 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
 @click.pass_context
 @click.option(
     "--subreddit-name",
-    default=None,
+    required=True,
     help='The name of a subreddit, without the "r\\", e.g. "machinelearning"',
 )
 @click.option(
     "--reddit-client-id",
-    default=None,
+    required=True,
     help="The client ID, see "
     "https://praw.readthedocs.io/en/stable/getting_started/quick_start.html#prerequisites"
     " for more information.",
 )
 @click.option(
     "--reddit-client-secret",
-    default=None,
+    required=True,
     help="The client secret, see "
     "https://praw.readthedocs.io/en/stable/getting_started/quick_start.html#prerequisites"
     " for more information.",
