@@ -4,12 +4,12 @@ set -e
 
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
-OUTPUT_FOLDER_NAME=onedrive
+OUTPUT_FOLDER_NAME=outlook
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
-if [ -z "$MS_CLIENT_ID" ] || [ -z "$MS_CLIENT_CRED" ]; then
-   echo "Skipping OneDrive ingest test because the MS_CLIENT_ID or MS_CLIENT_CRED env var is not set."
+if [ -z "$MS_CLIENT_ID" ] || [ -z "$MS_CLIENT_CRED" ] || [ -z "$MS_TENANT_ID" ] || [ -z "$MS_USER_EMAIL" ]; then
+   echo "Skipping Outlook ingest test because the MS_CLIENT_ID or MS_CLIENT_CRED or MS_TENANT_ID or MS_USER_EMAIL env var is not set."
    exit 0
 fi
 
@@ -18,11 +18,10 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --ms-client-cred "$MS_CLIENT_CRED" \
     --ms-client-id "$MS_CLIENT_ID" \
     --ms-tenant "$MS_TENANT_ID" \
-    --ms-user-pname "$MS_USER_PNAME" \
-    --ms-onedrive-folder '/utic-test-ingest-fixtures' \
+    --ms-user-email "$MS_USER_EMAIL" \
+    --ms-outlook-folders IntegrationTest \
     --metadata-exclude file_directory,metadata.data_source.date_processed \
     --num-processes 2 \
-    --partition-strategy hi_res \
     --preserve-downloads \
     --recursive \
     --reprocess \

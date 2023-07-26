@@ -85,6 +85,8 @@ setup(
         "gcs": load_requirements("requirements/ingest-gcs.in"),
         "elasticsearch": load_requirements("requirements/ingest-elasticsearch.in"),
         "dropbox": load_requirements("requirements/ingest-dropbox.in"),
+        "onedrive": load_requirements("requirements/ingest-onedrive.in"),
+        "outlook": load_requirements("requirements/ingest-outlook.in"),
         "confluence": load_requirements("requirements/ingest-confluence.in"),
     },
     package_dir={"unstructured": "unstructured"},

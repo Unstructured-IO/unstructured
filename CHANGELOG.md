@@ -1,4 +1,12 @@
-## 0.8.2-dev7
+## 0.8.3-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+## 0.8.2
 
 ### Enhancements
 
@@ -14,12 +22,14 @@
 
 ### Features
 
+* Adds Outlook connector
+* Add support for dpi parameter in inference library
 * Adds Onedrive connector.
 * Add Confluence connector for ingest cli to pull the body text from all documents from all spaces in a confluence domain.
 
-
 ### Fixes
 
+* Fixes issue with email partitioning where From field was being assigned the To field value.
 * Use the `image_metadata` property of the `PageLayout` instance to get the page image info in the `document_to_element_list`
 * Add functionality to write images to computer storage temporarily instead of keeping them in memory for `ocr_only` strategy
 * Add functionality to convert a PDF in small chunks of pages at a time for `ocr_only` strategy
@@ -27,6 +37,7 @@
   has a `text/plain` MIME type.
 * Enables filters to be passed to `partition_doc` so it doesn't error with LibreOffice7.
 * Removed old error message that's superseded by `requires_dependencies`.
+* Removes using `hi_res` as the default strategy value for `partition_via_api` and `partition_multiple_via_api`
 
 ## 0.8.1
 
