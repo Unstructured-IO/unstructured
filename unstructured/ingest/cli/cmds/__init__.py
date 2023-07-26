@@ -8,6 +8,7 @@ from .fsspec import fsspec
 from .gcs import gcs
 from .github import github
 from .gitlab import gitlab
+from .local import local
 from .onedrive import onedrive
 from .outlook import outlook
 from .reddit import reddit
@@ -31,4 +32,5 @@ __all__ = [
     "biomed",
     "onedrive",
     "outlook",
+    "local",
 ]
