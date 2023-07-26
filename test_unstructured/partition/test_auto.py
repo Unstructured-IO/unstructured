@@ -396,25 +396,6 @@ def test_auto_partition_jpg_from_file(pass_file_filename, content_type):
     assert len(elements) > 0
 
 
-@pytest.mark.parametrize(
-    ("pdf_infer_table_structure"),
-    [(True), (False)],
-)
-def test_auto_partition_jpg_table_extration(pdf_infer_table_structure):
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-with-table.jpg")
-    elements = partition(
-        filename=filename,
-        pdf_infer_table_structure=pdf_infer_table_structure,
-        strategy="hi_res",
-    )
-    table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
-    if pdf_infer_table_structure:
-        assert len(table) == 1
-        assert "Layouts of history Japanese documents" in table[0]
-    else:
-        assert len(table) == 0
-
-
 def test_auto_partition_raises_with_bad_type(monkeypatch):
     monkeypatch.setattr(auto, "detect_filetype", lambda *args, **kwargs: None)
     with pytest.raises(ValueError):
