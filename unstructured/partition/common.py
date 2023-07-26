@@ -318,6 +318,10 @@ def convert_ms_office_table_to_text(table: docxtable.Table, as_html: bool = True
     """
     fmt = "html" if as_html else "plain"
     rows = list(table.rows)
-    headers = [cell.text for cell in rows[0].cells]
-    data = [[cell.text for cell in row.cells] for row in rows[1:]]
-    return tabulate(data, headers=headers, tablefmt=fmt)
+    if len(rows) > 0:
+        headers = [cell.text for cell in rows[0].cells]
+        data = [[cell.text for cell in row.cells] for row in rows[1:]]
+        table_text = tabulate(data, headers=headers, tablefmt=fmt)
+    else:
+        table_text = ""
+    return table_text
