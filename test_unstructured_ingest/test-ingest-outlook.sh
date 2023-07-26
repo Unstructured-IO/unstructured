@@ -15,16 +15,20 @@ fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --download-dir "$DOWNLOAD_DIR" \
-    --ms-client-cred "$MS_CLIENT_CRED" \
-    --ms-client-id "$MS_CLIENT_ID" \
-    --ms-tenant "$MS_TENANT_ID" \
-    --ms-user-email "$MS_USER_EMAIL" \
-    --ms-outlook-folders IntegrationTest \
     --metadata-exclude file_directory,metadata.data_source.date_processed \
     --num-processes 2 \
     --preserve-downloads \
-    --recursive \
     --reprocess \
-    --structured-output-dir "$OUTPUT_DIR"
+    --structured-output-dir "$OUTPUT_DIR" \
+    --verbose \
+    outlook \
+    --client-cred "$MS_CLIENT_CRED" \
+    --client-id "$MS_CLIENT_ID" \
+    --tenant "$MS_TENANT_ID" \
+    --user-email "$MS_USER_EMAIL" \
+    --outlook-folders IntegrationTest \
+    --recursive
+
+
 
 sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

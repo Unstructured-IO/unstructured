@@ -1,5 +1,3 @@
-from google_drive import gdrive
-
 from .azure import azure
 from .biomed import biomed
 from .confluence import confluence
@@ -10,6 +8,7 @@ from .fsspec import fsspec
 from .gcs import gcs
 from .github import github
 from .gitlab import gitlab
+from .google_drive import gdrive
 from .local import local
 from .onedrive import onedrive
 from .outlook import outlook

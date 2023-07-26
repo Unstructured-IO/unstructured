@@ -23,17 +23,19 @@ fi
 # We expect the test to ignore --confluence-num-of-spaces and use --confluence-list-of-spaces.
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --download-dir "$DOWNLOAD_DIR" \
-    --confluence-url https://unstructured-ingest-test.atlassian.net \
-    --confluence-user-email "$CONFLUENCE_USER_EMAIL" \
-    --confluence-api-token "$CONFLUENCE_API_TOKEN" \
-    --confluence-max-num-of-spaces 10 \
-    --confluence-list-of-spaces testteamsp1 \
-    --confluence-max-num-of-docs-from-each-space 250 \
     --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.date \
     --num-processes 2 \
     --preserve-downloads \
     --reprocess \
-    --structured-output-dir "$OUTPUT_DIR"
+    --structured-output-dir "$OUTPUT_DIR" \
+    --verbose \
+    confluence \
+    --url https://unstructured-ingest-test.atlassian.net \
+    --user-email "$CONFLUENCE_USER_EMAIL" \
+    --api-token "$CONFLUENCE_API_TOKEN" \
+    --max-num-of-spaces 10 \
+    --list-of-spaces testteamsp1 \
+    --max-num-of-docs-from-each-space 250 \
 
 OUTPUT_SUBFOLDER_NAME=testteamsp1
 

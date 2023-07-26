@@ -24,13 +24,15 @@ fi
 #shellcheck disable=SC2086
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --download-dir "$DOWNLOAD_DIR" \
-    --git-file-glob '*.html,*.txt' \
-    --github-url dcneiner/Downloadify \
     --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.date \
     --partition-strategy hi_res \
     --preserve-downloads \
     --reprocess \
     --structured-output-dir "$OUTPUT_DIR" \
-    --verbose $ACCESS_TOKEN_FLAGS
+    --verbose \
+    github \
+    --url dcneiner/Downloadify \
+    --git-file-glob '*.html,*.txt' \
+    $ACCESS_TOKEN_FLAGS
 
 sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

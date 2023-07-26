@@ -20,13 +20,16 @@ echo "$GCP_INGEST_SERVICE_KEY" >"$GCP_INGEST_SERVICE_KEY_FILE"
 
 PYTHONPATH=. unstructured/ingest/main.py \
     --download-dir "$DOWNLOAD_DIR" \
-    --drive-id 1OQZ66OHBE30rNsNa7dweGLfRmXvkT_jr \
-    --drive-service-account-key "$GCP_INGEST_SERVICE_KEY_FILE" \
     --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.date \
     --num-processes 2 \
     --partition-strategy hi_res \
     --preserve-downloads \
     --reprocess \
-    --structured-output-dir "$OUTPUT_DIR"
+    --structured-output-dir "$OUTPUT_DIR" \
+    --verbose \
+    gdrive \
+    --id 1OQZ66OHBE30rNsNa7dweGLfRmXvkT_jr \
+    --service-account-key "$GCP_INGEST_SERVICE_KEY_FILE"
+
 
 sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

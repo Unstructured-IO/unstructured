@@ -42,7 +42,7 @@ class SimpleOutlookConfig(BaseConnectorConfig):
         if not (self.client_id and self.client_credential and self.user_email):
             raise ValueError(
                 "Please provide one of the following mandatory values:"
-                "\n--ms-client_id\n--ms-client_cred\n--ms-user-email",
+                "\n--client_id\n--client_cred\n--user-email",
             )
         self.token_factory = self._acquire_token
 

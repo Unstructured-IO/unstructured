@@ -21,7 +21,7 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
 )
 @click.option(
     "--git-access-token",
-    required=True,
+    default=None,
     help="A GitHub or GitLab access token, see https://docs.github.com/en/authentication "
     " or https://docs.gitlab.com/ee/api/rest/index.html#personalprojectgroup-access-tokens",
 )

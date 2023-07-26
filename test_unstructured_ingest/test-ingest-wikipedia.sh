@@ -16,6 +16,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --preserve-downloads \
     --structured-output-dir "$OUTPUT_DIR" \
     --verbose \
-    --wikipedia-page-title "Open Source Software"
+    wikipedia \
+    --page-title "Open Source Software"
 
 sh "$SCRIPT_DIR"/check-num-files-output.sh 3 $OUTPUT_FOLDER_NAME

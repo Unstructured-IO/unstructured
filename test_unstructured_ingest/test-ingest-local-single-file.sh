@@ -9,12 +9,13 @@ OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.date \
-    --local-input-path example-docs/english-and-korean.png \
     --structured-output-dir "$OUTPUT_DIR" \
     --partition-ocr-languages eng+kor \
     --partition-strategy ocr_only \
     --verbose \
-    --reprocess
+    --reprocess \
+    local \
+    --input-path example-docs/english-and-korean.png
 
 set +e
 

@@ -35,11 +35,6 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
     help="ID or domain name associated with your Azure AD instance",
 )
 @click.option(
-    "--user-pname",
-    required=True,
-    help="User principal name, usually is your Azure AD email.",
-)
-@click.option(
     "--user-email",
     default=None,
     help="Outlook email to download messages from.",

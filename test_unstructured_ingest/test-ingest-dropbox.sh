@@ -20,12 +20,15 @@ DROPBOX_ACCESS_TOKEN=$(jq -r '.access_token' <<< "$DROPBOX_RESPONSE")
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --download-dir "$DOWNLOAD_DIR" \
-    --dropbox-token  "$DROPBOX_ACCESS_TOKEN" \
     --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.date \
     --preserve-downloads \
-    --recursive \
-    --remote-url "dropbox:// /" \
     --reprocess \
-    --structured-output-dir "$OUTPUT_DIR"
+    --structured-output-dir "$OUTPUT_DIR" \
+    --verbose \
+    dropbox \
+    --token  "$DROPBOX_ACCESS_TOKEN" \
+    --recursive \
+    --remote-url "dropbox:// /"
+
 
 sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

@@ -18,14 +18,16 @@ trap 'echo "Stopping Elasticsearch Docker container"; docker stop es-test' EXIT
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --download-dir "$DOWNLOAD_DIR" \
-    --elasticsearch-index-name movies \
-    --elasticsearch-url http://localhost:9200 \
-    --jq-query '{ethnicity, director, plot}' \
     --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.date \
     --num-processes 2 \
     --preserve-downloads \
     --reprocess \
-    --structured-output-dir "$OUTPUT_DIR"
+    --structured-output-dir "$OUTPUT_DIR" \
+    --verbose \
+    elasticsearch \
+    --index-name movies \
+    --url http://localhost:9200 \
+    --jq-query '{ethnicity, director, plot}'
 
 echo "SCRIPT_DIR: $SCRIPT_DIR"
 sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

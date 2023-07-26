@@ -1,6 +1,7 @@
 import logging
 
 import click
+from click import ClickException
 
 from unstructured.ingest.cli.common import (
     map_to_standard_config,
@@ -65,6 +66,11 @@ def azure(
             },
         ),
     )
+
+    if not account_name and not connection_string:
+        raise ClickException(
+            "missing either --account-name or --connection-string",
+        )
 
     update_download_dir_remote_url(ctx_dict=context_dict, remote_url=remote_url, logger=logger)
 

@@ -45,17 +45,6 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
     help="Folder to start parsing files from.",
 )
 @click.option(
-    "--user-email",
-    default=None,
-    help="Outlook email to download messages from.",
-)
-@click.option(
-    "--outlook-folders",
-    default=None,
-    help="Comma separated list of folders to download email messages from. "
-    "Do not specify subfolders. Use quotes if spaces in folder names.",
-)
-@click.option(
     "--recursive",
     is_flag=True,
     default=False,
