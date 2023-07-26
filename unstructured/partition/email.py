@@ -265,18 +265,18 @@ def partition_email(
     max_partition
         The maximum number of characters to include in a partition. If None is passed,
         no maximum is applied. Only applies if processing the text/plain content.
-    min_partition
-        The minimum number of characters to include in a partition. Only applies if
-        processing the text/plain content.
     metadata_filename
         The filename to use for the metadata.
+    metadata_date
+        The last modified date for the document.
     process_attachments
         If True, partition_email will process email attachments in addition to
         processing the content of the email itself.
     attachment_partitioner
         The partitioning function to use to process attachments.
-    metadata_date
-        The last modified date for the document.
+    min_partition
+        The minimum number of characters to include in a partition. Only applies if
+        processing the text/plain content.
     """
     if content_source not in VALID_CONTENT_SOURCES:
         raise ValueError(
