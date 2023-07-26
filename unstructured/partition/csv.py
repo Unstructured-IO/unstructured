@@ -31,18 +31,18 @@ def partition_csv(
 ) -> List[Element]:
     """Partitions Microsoft Excel Documents in .csv format into its document elements.
 
-        Parameters
-        ----------
-        filename
-            A string defining the target filename path.
-        file
-            A file-like object using "rb" mode --> open(filename, "rb").
-        metadata_filename
-            The filename to use for the metadata.
-        metadata_date
-            The last modified date for the document.
-        include_metadata
-            Determines whether or not metadata is included in the output.
+    Parameters
+    ----------
+    filename
+        A string defining the target filename path.
+    file
+        A file-like object using "rb" mode --> open(filename, "rb").
+    metadata_filename
+        The filename to use for the metadata.
+    metadata_date
+        The last modified date for the document.
+    include_metadata
+        Determines whether or not metadata is included in the output.
     """
     exactly_one(filename=filename, file=file)
 
