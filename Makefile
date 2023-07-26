@@ -90,6 +90,10 @@ install-ingest-gitlab:
 install-ingest-onedrive:
 	python3 -m pip install -r requirements/ingest-onedrive.txt
 
+.PHONY: install-ingest-outlook
+install-ingest-outlook:
+	python3 -m pip install -r requirements/ingest-outlook.txt
+
 .PHONY: install-ingest-reddit
 install-ingest-reddit:
 	python3 -m pip install -r requirements/ingest-reddit.txt

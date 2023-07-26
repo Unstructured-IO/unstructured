@@ -9,6 +9,7 @@ from unstructured.file_utils.filetype import (
     STR_TO_FILETYPE,
     FileType,
     detect_filetype,
+    is_json_processable,
 )
 from unstructured.logger import logger
 from unstructured.partition.common import exactly_one
@@ -237,6 +238,11 @@ def partition(
             **kwargs,
         )
     elif filetype == FileType.JSON:
+        if not is_json_processable(filename=filename, file=file):
+            raise ValueError(
+                "Detected a JSON file that does not conform to the Unstructured schema. "
+                "partition_json currently only processes serialized Unstructured output.",
+            )
         elements = partition_json(filename=filename, file=file, **kwargs)
     elif (filetype == FileType.XLSX) or (filetype == FileType.XLS):
         elements = partition_xlsx(filename=filename, file=file, **kwargs)

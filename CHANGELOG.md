@@ -1,12 +1,27 @@
-## 0.8.2
+## 0.8.3
 
 ### Enhancements
 
 * Pass parameter `pdf_infer_table_structure` in partition_image to support image table extration
+
+### Features
+
+* Adds Outlook connector
+* Add support for dpi parameter in inference library
+
+### Fixes
+
+* Fixes issue with email partitioning where From field was being assigned the To field value.
+
+## 0.8.2
+
+### Enhancements
+
+* Additional tests and refactor of JSON detection.
 * Update functionality to retrieve image metadata from a page for `document_to_element_list`
 * Links are now tracked in `partition_html` output.
 * Set the file's current position to the beginning after reading the file in `convert_to_bytes`
-* Add min_partition kwarg to that combines elements below a specified threshold and modifies splitting of strings longer than max partition so words are not split.
+* Add `min_partition` kwarg to that combines elements below a specified threshold and modifies splitting of strings longer than max partition so words are not split.
 * set the file's current position to the beginning after reading the file in `convert_to_bytes`
 * Add slide notes to pptx
 * Add `--encoding` directive to ingest

@@ -12,3 +12,5 @@ include requirements/ingest-reddit.in
 include requirements/ingest-slack.in
 include requirements/ingest-wikipedia.in
 include requirements/ingest-google-drive.in
+include requirements/ingest-outlook.in
+include requirements/ingest-onedrive.in

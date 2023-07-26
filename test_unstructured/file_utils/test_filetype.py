@@ -77,7 +77,7 @@ class MockDocumentLayout(layout.DocumentLayout):
         ("README.rst", FileType.RST),
         ("README.md", FileType.MD),
         ("fake.odt", FileType.ODT),
-        ("fake-incomplete-json.txt", FileType.JSON),
+        ("fake-incomplete-json.txt", FileType.TXT),
     ],
 )
 def test_detect_filetype_from_filename(file, expected):
@@ -141,7 +141,7 @@ def test_detect_filetype_from_filename_with_extension(monkeypatch, file, expecte
         ("stanley-cups.tsv", FileType.TSV),
         ("fake-power-point.pptx", FileType.PPTX),
         ("winter-sports.epub", FileType.EPUB),
-        ("fake-incomplete-json.txt", FileType.JSON),
+        ("fake-incomplete-json.txt", FileType.TXT),
     ],
 )
 def test_detect_filetype_from_file(file, expected):
