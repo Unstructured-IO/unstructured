@@ -236,6 +236,7 @@ ingest.add_command(cli_cmds.fsspec)
 ingest.add_command(cli_cmds.github)
 ingest.add_command(cli_cmds.gitlab)
 ingest.add_command(cli_cmds.reddit)
+ingest.add_command(cli_cmds.slack)
 
 
 if __name__ == "__main__":
