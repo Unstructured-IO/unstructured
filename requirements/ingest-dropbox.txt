@@ -4,7 +4,7 @@
 #
 #    pip-compile requirements/ingest-dropbox.in
 #
-certifi==2023.7.22
+certifi==2023.5.7
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in

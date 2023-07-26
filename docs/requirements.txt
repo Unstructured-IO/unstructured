@@ -10,7 +10,7 @@ babel==2.12.1
     # via sphinx
 beautifulsoup4==4.12.2
     # via furo
-certifi==2023.7.22
+certifi==2023.5.7
     # via
     #   -r requirements/build.in
     #   requests
@@ -71,7 +71,7 @@ sphinxcontrib-qthelp==1.0.3
     # via sphinx
 sphinxcontrib-serializinghtml==1.1.5
     # via sphinx
-urllib3==2.0.4
+urllib3==2.0.3
     # via requests
-zipp==3.16.2
+zipp==3.16.1
     # via importlib-metadata
