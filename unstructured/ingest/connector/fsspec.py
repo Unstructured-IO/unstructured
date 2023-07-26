@@ -166,9 +166,9 @@ class FsspecConnector(ConnectorCleanupMixin, BaseConnector):
     def get_ingest_docs(self):
         return [
             self.ingest_doc_cls(
-                self.standard_config,
-                self.config,
-                file,
+                standard_config=self.standard_config,
+                config=self.config,
+                remote_file_path=file,
             )
             for file in self._list_files()
         ]

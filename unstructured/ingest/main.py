@@ -428,6 +428,17 @@ class MainProcess:
     help="Folder to start parsing files from.",
 )
 @click.option(
+    "--ms-user-email",
+    default=None,
+    help="Outlook email to download messages from.",
+)
+@click.option(
+    "--ms-outlook-folders",
+    default=None,
+    help="Comma separated list of folders to download email messages from. "
+    "Do not specify subfolders. Use quotes if spaces in folder names.",
+)
+@click.option(
     "--elasticsearch-url",
     default=None,
     help='URL to the Elasticsearch cluster, e.g. "http://localhost:9200"',
@@ -568,6 +579,8 @@ def main(
     ms_tenant,
     ms_user_pname,
     ms_onedrive_folder,
+    ms_user_email,
+    ms_outlook_folders,
     elasticsearch_url,
     elasticsearch_index_name,
     jq_query,
@@ -681,6 +694,8 @@ def main(
             hashed_dir_name = hashlib.sha256(
                 f"{ms_tenant}_{ms_user_pname}".encode("utf-8"),
             )
+        elif ms_user_email:
+            hashed_dir_name = hashlib.sha256(ms_user_email.encode("utf-8"))
         elif confluence_url:
             hashed_dir_name = hashlib.sha256(
                 f"{confluence_url}".encode("utf-8"),
@@ -910,7 +925,7 @@ def main(
                 decay=biomed_decay,
             ),
         )
-    elif ms_client_id or ms_user_pname:
+    elif ms_client_id and ms_user_pname:
         from unstructured.ingest.connector.onedrive import (
             OneDriveConnector,
             SimpleOneDriveConfig,
@@ -925,6 +940,25 @@ def main(
                 tenant=ms_tenant,
                 authority_url=ms_authority_url,
                 folder=ms_onedrive_folder,
+                recursive=recursive,
+            ),
+        )
+
+    elif ms_client_id and ms_user_email:
+        from unstructured.ingest.connector.outlook import (
+            OutlookConnector,
+            SimpleOutlookConfig,
+        )
+
+        doc_connector = OutlookConnector(  # type: ignore
+            standard_config=standard_config,
+            config=SimpleOutlookConfig(
+                client_id=ms_client_id,
+                client_credential=ms_client_cred,
+                user_email=ms_user_email,
+                tenant=ms_tenant,
+                authority_url=ms_authority_url,
+                ms_outlook_folders=SimpleOutlookConfig.parse_folders(ms_outlook_folders),
                 recursive=recursive,
             ),
         )
