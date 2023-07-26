@@ -291,17 +291,23 @@ def decide_table_extraction(
     skip_infer_table_types: List[str],
     pdf_infer_table_structure: bool,
 ) -> bool:
+    FILETYPE_MAPPING = {
+        FileType.PDF: "pdf",
+        FileType.PNG: "png",
+        FileType.JPG: "jpg",
+    }
+
     if filetype == FileType.PDF:
-        if "pdf" in skip_infer_table_types and pdf_infer_table_structure:
+        if FILETYPE_MAPPING[filetype] in skip_infer_table_types and pdf_infer_table_structure:
             logger.warning(
                 f"Conflict between variables skip_infer_table_types: {skip_infer_table_types}"
                 f"and pdf_infer_table_structure: {pdf_infer_table_structure},"
                 "please reset skip_infer_table_types to turn on table extraction for PDFs.",
             )
-        return ("pdf" in skip_infer_table_types) is False or pdf_infer_table_structure
-    elif filetype == FileType.PNG:
-        return ("png" in skip_infer_table_types) is False
-    elif filetype == FileType.JPG:
-        return ("jpg" in skip_infer_table_types) is False
-    else:
-        return False
+        return (
+            not (FILETYPE_MAPPING[filetype] in skip_infer_table_types) or pdf_infer_table_structure
+        )
+
+    return filetype in FILETYPE_MAPPING and not (
+        FILETYPE_MAPPING[filetype] in skip_infer_table_types
+    )
