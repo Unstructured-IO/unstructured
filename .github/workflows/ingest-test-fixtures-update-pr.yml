@@ -69,6 +69,7 @@ jobs:
           MS_CLIENT_CRED: ${{ secrets.MS_CLIENT_CRED }}
           MS_TENANT_ID: ${{ secrets.MS_TENANT_ID }}
           MS_USER_EMAIL: ${{ secrets.MS_USER_EMAIL }}
+          MS_USER_PNAME: ${{ secrets.MS_USER_PNAME }}
           OVERWRITE_FIXTURES: "true"
         run: |
           source .venv/bin/activate

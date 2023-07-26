@@ -195,6 +195,7 @@ jobs:
         MS_TENANT_ID: ${{ secrets.MS_TENANT_ID }}
         MS_USER_EMAIL: ${{ secrets.MS_USER_EMAIL }}
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
+        MS_USER_PNAME: ${{ secrets.MS_USER_PNAME }}
       run: |
         source .venv/bin/activate
         sudo apt-get update
