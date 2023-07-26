@@ -446,7 +446,7 @@ class MainProcess:
 @click.option(
     "--ms-sharepoint-path",
     default="Shared Documents",
-    help="Path to start parsing files from. If the connector is to process all sites \
+    help="Path from which to start parsing files. If the connector is to process all sites \
     within the tenant this filter will be applied to all sites document libraries. \
     Default 'Shared Documents'",
 )
@@ -454,14 +454,14 @@ class MainProcess:
     "--ms-sharepoint-all",
     is_flag=True,
     default=False,
-    help="Process all sites within the tenant. Requires for the app to be registered at a tenant \
+    help="Process all sites within the tenant. Requires the app to be registered at a tenant \
         level and a site url in https://[tenant]-admin.sharepoint.com.",
 )
 @click.option(
-    "--ms-sharepoint-pages",
+    "--ms-sharepoint-files-only",
     is_flag=True,
     default=False,
-    help="Process site pages.",
+    help="Process only files.",
 )
 @click.option(
     "--elasticsearch-url",
@@ -609,7 +609,7 @@ def main(
     ms_sharepoint_site,
     ms_sharepoint_path,
     ms_sharepoint_all,
-    ms_sharepoint_pages,
+    ms_sharepoint_files_only,
     elasticsearch_url,
     elasticsearch_index_name,
     jq_query,
@@ -989,7 +989,7 @@ def main(
                 site_url=ms_sharepoint_site,
                 path=ms_sharepoint_path,
                 process_all=ms_sharepoint_all,
-                process_pages=ms_sharepoint_pages,
+                process_pages=(not ms_sharepoint_files_only),
             ),
         )
 

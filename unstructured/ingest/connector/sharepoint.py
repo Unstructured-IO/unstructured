@@ -112,7 +112,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return self.file.to_json()
 
     @property
-    def version(self) -> Optional[bool]:
+    def version(self) -> Optional[str]:
         if self.meta:
             return self.meta["page"].properties.get("Version", "")
 
@@ -270,7 +270,7 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
         if site.url is None:
             return False
         return (
-            (site.url[0:len(self.base_site_url)] == self.base_site_url)
+            (site.url[0 : len(self.base_site_url)] == self.base_site_url)  # noqa: E203
             and ("/sites/" in site.url)
             and all(c == "0" for c in site.get_property("GroupId", "").replace("-", ""))
         )  # checks if its not a group, NOTE: do we want to process sharepoint groups?
