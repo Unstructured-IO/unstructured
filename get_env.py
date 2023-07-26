@@ -81,27 +81,6 @@ def is_brew_package_installed(package_name):
     return False
 
 
-def is_apt_package_installed(package_name):
-    """
-    Check if an apt package is installed
-
-    Args:
-        package_name (str): The package to check
-
-    Returns:
-        bool: True if package is installed, False otherwise
-    """
-    if not command_exists('dpkg'):
-        return False
-    result = subprocess.run(
-        ["dpkg", "--get-selections"], stdout=subprocess.PIPE, text=True, check=True
-    )
-    for line in result.stdout.splitlines():
-        if line.lower().startswith(package_name.lower() + "\t"):
-            return True
-    return False
-
-
 def get_python_package_version(package_name):
     """
     Get the version of a Python package
@@ -116,26 +95,6 @@ def get_python_package_version(package_name):
         return pkg_resources.get_distribution(package_name).version
     except pkg_resources.DistributionNotFound:
         return None
-
-
-def is_dnf_or_yum_package_installed(package_name):
-    """
-    Check if a dnf or yum package is installed
-
-    Args:
-        package_name (str): The package to check
-
-    Returns:
-        bool: True if package is installed, False otherwise
-    """
-    if command_exists("dnf"):
-        result = subprocess.run(["dnf", "list", "installed", package_name], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True)
-    elif command_exists("yum"):
-        result = subprocess.run(["yum", "list", "installed", package_name], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True)
-    else:
-        return False
-
-    return package_name in result.stdout
 
 
 def get_brew_package_version(package_name):
@@ -159,54 +118,6 @@ def get_brew_package_version(package_name):
     )
     for line in result.stdout.splitlines():
         return line
-    return None
-
-
-def get_apt_package_version(package_name):
-    """
-    Get the version of an apt package
-
-    Args:
-        package_name (str): The package to check
-
-    Returns:
-        str: Version of the package, None if package is not installed
-    """
-    if not command_exists('apt'):
-        return None
-    
-    result = subprocess.run(
-        ["apt", "show", package_name],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.DEVNULL,
-        text=True,
-    )
-    for line in result.stdout.splitlines():
-        if line.startswith("Version:"):
-            return line.split("Version:")[1].strip()
-    return None
-
-
-def get_dnf_or_yum_package_version(package_name):
-    """
-    Get the version of a dnf or yum package
-
-    Args:
-        package_name (str): The package to check
-
-    Returns:
-        str: Version of the package, None if package is not installed
-    """
-    if command_exists("dnf"):
-        result = subprocess.run(["dnf", "list", package_name], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True)
-    elif command_exists("yum"):
-        result = subprocess.run(["yum", "list", package_name], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True)
-    else:
-        return None
-
-    for line in result.stdout.splitlines():
-        if package_name in line:
-            return line.split()[1]  # The version is the second column
     return None
 
 
@@ -262,8 +173,8 @@ def main():
     else:
         print("Torch is not installed")
 
-    if is_brew_package_installed("tesseract") or is_apt_package_installed("tesseract") or is_python_package_installed("pytesseract"):
-        print("Tesseract version: ", get_brew_package_version("tesseract") or get_apt_package_version("tesseract") or get_python_package_version("pytesseract"))
+    if is_brew_package_installed("tesseract") or is_python_package_installed("pytesseract"):
+        print("Tesseract version: ", get_brew_package_version("tesseract") or get_python_package_version("pytesseract"))
     else:
         print("Tesseract is not installed")
 
@@ -272,8 +183,8 @@ def main():
     else:
         print("PaddleOCR is not installed")
 
-    if is_brew_package_installed("libmagic") or is_apt_package_installed("libmagic1") or is_dnf_or_yum_package_installed("libmagic"):
-        print("Libmagic version: ", get_brew_package_version("libmagic") or get_apt_package_version("libmagic1") or get_dnf_or_yum_package_version("libmagic"))
+    if is_brew_package_installed("libmagic"):
+        print("Libmagic version: ", get_brew_package_version("libmagic"))
     else:
         libmagic_version = get_libmagic_version()
         if libmagic_version:
@@ -282,8 +193,8 @@ def main():
             print("Libmagic is not installed")
 
 
-    if is_brew_package_installed("libreoffice") or is_apt_package_installed("libreoffice") or is_dnf_or_yum_package_installed("libreoffice"):
-        print("LibreOffice version: ", get_brew_package_version("libreoffice") or get_apt_package_version("libreoffice") or get_dnf_or_yum_package_version("libreoffice"))
+    if is_brew_package_installed("libreoffice"):
+        print("LibreOffice version: ", get_brew_package_version("libreoffice"))
     else:
         libreoffice_version = get_libreoffice_version()
         if libreoffice_version:
@@ -296,7 +207,7 @@ if __name__ == "__main__":
     main()
 
 
-# on Mac
+# Output example on Mac
 # OS version:  macOS-13.4.1-arm64-arm-64bit
 # Python version:  3.8.17
 # unstructured version:  0.5.11
@@ -308,7 +219,7 @@ if __name__ == "__main__":
 # Libmagic version:  ==> libmagic: stable 5.44 (bottled)
 # LibreOffice version:  ==> libreoffice: 7.5.4
 
-# on Rocky Linux
+# Output example on Rocky Linux
 # OS version:  Linux-5.15.49-linuxkit-pr-aarch64-with-glibc2.28
 # Python version:  3.8.17
 # unstructured version:  0.8.1
