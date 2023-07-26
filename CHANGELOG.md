@@ -1,4 +1,4 @@
-## 0.8.5-dev0
+## 0.8.5-dev1
 
 ### Enhancements
 
@@ -7,6 +7,8 @@
 ### Features
 
 ### Fixes
+
+* Handling for empty tables in Word Documents and PowerPoints.
 
 ## 0.8.4
 
