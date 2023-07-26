@@ -229,10 +229,11 @@ def ingest(
 
 # Add all subcommands
 ingest.add_command(cli_cmds.s3)
-ingest.add_command(cli_cmds.google)
+ingest.add_command(cli_cmds.gcs)
 ingest.add_command(cli_cmds.dropbox)
 ingest.add_command(cli_cmds.azure)
 ingest.add_command(cli_cmds.fsspec)
+ingest.add_command(cli_cmds.github)
 
 
 if __name__ == "__main__":

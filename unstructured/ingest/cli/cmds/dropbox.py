@@ -5,7 +5,7 @@ import click
 from unstructured.ingest.cli.common import (
     map_to_standard_config,
     process_documents,
-    update_download_dir,
+    update_download_dir_remote_url,
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 
@@ -46,7 +46,7 @@ def dropbox(ctx, remote_url, recursive, dropbox_token):
         ),
     )
 
-    update_download_dir(ctx_dict=context_dict, remote_url=remote_url, logger=logger)
+    update_download_dir_remote_url(ctx_dict=context_dict, remote_url=remote_url, logger=logger)
 
     from unstructured.ingest.connector.dropbox import (
         DropboxConnector,

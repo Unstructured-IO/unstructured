@@ -25,12 +25,16 @@ def map_to_standard_config(ctx_dict: dict) -> StandardConnectorConfig:
     )
 
 
-def update_download_dir(ctx_dict: dict, remote_url: str, logger: logging.Logger) -> None:
+def update_download_dir_remote_url(ctx_dict: dict, remote_url: str, logger: logging.Logger) -> None:
+    hashed_dir_name = str(hashlib.sha256(remote_url.encode("utf-8")))
+    update_download_dir_hash(ctx_dict=ctx_dict, hashed_dir_name=hashed_dir_name, logger=logger)
+
+
+def update_download_dir_hash(ctx_dict: dict, hashed_dir_name: str, logger: logging.Logger):
     if ctx_dict["local_input_path"] is None and not ctx_dict["download_dir"]:
         cache_path = Path.home() / ".cache" / "unstructured" / "ingest"
         if not cache_path.exists():
             cache_path.mkdir(parents=True, exist_ok=True)
-        hashed_dir_name = hashlib.sha256(remote_url.encode("utf-8"))
         download_dir = cache_path / hashed_dir_name.hexdigest()[:10]
         if ctx_dict["preserve_downloads"]:
             logger.warning(

@@ -5,7 +5,7 @@ import click
 from unstructured.ingest.cli.common import (
     map_to_standard_config,
     process_documents,
-    update_download_dir,
+    update_download_dir_remote_url,
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 
@@ -32,7 +32,7 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
     help="Token used to access Google Cloud. GCSFS will attempt to use your default gcloud creds"
     "or get creds from the google metadata service or fall back to anonymous access.",
 )
-def google(ctx, remote_url, recursive, gcs_token):
+def gcs(ctx, remote_url, recursive, gcs_token):
     context_dict = ctx.obj
     ingest_log_streaming_init(logging.DEBUG if context_dict["verbose"] else logging.INFO)
 
@@ -47,7 +47,7 @@ def google(ctx, remote_url, recursive, gcs_token):
         ),
     )
 
-    update_download_dir(ctx_dict=context_dict, remote_url=remote_url, logger=logger)
+    update_download_dir_remote_url(ctx_dict=context_dict, remote_url=remote_url, logger=logger)
 
     from unstructured.ingest.connector.gcs import GcsConnector, SimpleGcsConfig
 
