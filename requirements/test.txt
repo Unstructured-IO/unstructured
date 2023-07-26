@@ -8,7 +8,7 @@ appdirs==1.4.4
     # via label-studio-tools
 black==23.7.0
     # via -r requirements/test.in
-certifi==2023.7.22
+certifi==2023.5.7
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
@@ -17,7 +17,7 @@ charset-normalizer==3.2.0
     # via
     #   -c requirements/base.txt
     #   requests
-click==8.1.6
+click==8.1.5
     # via
     #   -c requirements/base.txt
     #   -r requirements/test.in
@@ -32,7 +32,7 @@ flake8==6.0.0
     # via -r requirements/test.in
 freezegun==1.2.2
     # via -r requirements/test.in
-grpcio==1.56.2
+grpcio==1.56.0
     # via -r requirements/test.in
 idna==3.4
     # via
@@ -66,13 +66,13 @@ packaging==23.1
     #   pytest
 pathspec==0.11.1
     # via black
-platformdirs==3.9.1
+platformdirs==3.8.1
     # via black
 pluggy==1.2.0
     # via pytest
 pycodestyle==2.10.0
     # via flake8
-pydantic==1.10.12
+pydantic==1.10.11
     # via label-studio-sdk
 pyflakes==3.0.1
     # via flake8
@@ -88,13 +88,13 @@ python-dateutil==2.8.2
     # via
     #   -c requirements/base.txt
     #   freezegun
-pyyaml==6.0.1
+pyyaml==6.0
     # via vcrpy
 requests==2.31.0
     # via
     #   -c requirements/base.txt
     #   label-studio-sdk
-ruff==0.0.280
+ruff==0.0.278
     # via -r requirements/test.in
 six==1.16.0
     # via
@@ -107,13 +107,13 @@ tomli==2.0.1
     #   coverage
     #   mypy
     #   pytest
-types-markdown==3.4.2.10
+types-markdown==3.4.2.9
     # via -r requirements/test.in
-types-requests==2.31.0.2
+types-requests==2.31.0.1
     # via -r requirements/test.in
-types-tabulate==0.9.0.3
+types-tabulate==0.9.0.2
     # via -r requirements/test.in
-types-urllib3==1.26.25.14
+types-urllib3==1.26.25.13
     # via types-requests
 typing-extensions==4.7.1
     # via

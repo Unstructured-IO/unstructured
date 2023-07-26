@@ -4,7 +4,7 @@
 #
 #    pip-compile requirements/base.in
 #
-certifi==2023.7.22
+certifi==2023.5.7
     # via
     #   -c requirements/constraints.in
     #   requests
@@ -16,7 +16,7 @@ charset-normalizer==3.2.0
     # via
     #   pdfminer-six
     #   requests
-click==8.1.6
+click==8.1.5
     # via nltk
 cryptography==41.0.2
     # via pdfminer-six
@@ -35,7 +35,7 @@ lxml==4.9.3
     #   -r requirements/base.in
     #   python-docx
     #   python-pptx
-markdown==3.4.4
+markdown==3.4.3
     # via -r requirements/base.in
 msg-parser==1.2.0
     # via -r requirements/base.in
@@ -92,5 +92,5 @@ xlrd==2.0.1
     # via -r requirements/base.in
 xlsxwriter==3.1.2
     # via python-pptx
-zipp==3.16.2
+zipp==3.16.1
     # via importlib-metadata
