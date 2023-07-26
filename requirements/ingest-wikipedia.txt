@@ -6,7 +6,7 @@
 #
 beautifulsoup4==4.12.2
     # via wikipedia
-certifi==2023.7.22
+certifi==2023.5.7
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in

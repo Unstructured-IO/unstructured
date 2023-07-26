@@ -4,7 +4,7 @@
 #
 #    pip-compile requirements/ingest-onedrive.in
 #
-certifi==2023.7.22
+certifi==2023.5.7
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
@@ -27,17 +27,17 @@ idna==3.4
     # via
     #   -c requirements/base.txt
     #   requests
-msal==1.23.0
+msal==1.22.0
     # via
     #   -r requirements/ingest-onedrive.in
     #   office365-rest-python-client
-office365-rest-python-client==2.4.3
+office365-rest-python-client==2.4.2
     # via -r requirements/ingest-onedrive.in
 pycparser==2.21
     # via
     #   -c requirements/base.txt
     #   cffi
-pyjwt[crypto]==2.8.0
+pyjwt[crypto]==2.7.0
     # via msal
 pytz==2023.3
     # via
