@@ -1,3 +1,5 @@
+from google_drive import gdrive
+
 from .azure import azure
 from .discord import discord
 from .dropbox import dropbox
@@ -22,4 +24,5 @@ __all__ = [
     "slack",
     "discord",
     "wikipedia",
+    "gdrive",
 ]

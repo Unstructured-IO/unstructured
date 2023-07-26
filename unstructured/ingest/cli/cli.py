@@ -239,6 +239,7 @@ ingest.add_command(cli_cmds.reddit)
 ingest.add_command(cli_cmds.slack)
 ingest.add_command(cli_cmds.discord)
 ingest.add_command(cli_cmds.wikipedia)
+ingest.add_command(cli_cmds.gdrive)
 
 
 if __name__ == "__main__":
