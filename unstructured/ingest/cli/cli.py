@@ -235,6 +235,7 @@ ingest.add_command(cli_cmds.azure)
 ingest.add_command(cli_cmds.fsspec)
 ingest.add_command(cli_cmds.github)
 ingest.add_command(cli_cmds.gitlab)
+ingest.add_command(cli_cmds.reddit)
 
 
 if __name__ == "__main__":
