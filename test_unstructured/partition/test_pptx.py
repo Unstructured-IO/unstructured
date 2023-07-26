@@ -205,7 +205,9 @@ EXPECTED_HTML_TABLE = """<table>
 </table>"""
 
 
-def test_partition_pptx_grabs_tables(filename="example-docs/fake-power-point-table.pptx"):
+def test_partition_pptx_grabs_tables(
+    filename="example-docs/fake-power-point-table.pptx",
+):
     elements = partition_pptx(filename=filename)
 
     assert elements[1].text.startswith("Column 1")
@@ -245,3 +247,78 @@ def test_partition_pptx_from_file_exclude_metadata():
     with open(filename, "rb") as f:
         elements = partition_pptx(file=f, include_metadata=False)
     assert elements == EXPECTED_PPTX_OUTPUT
+
+
+def test_partition_pptx_metadata_date(
+    mocker,
+    filename="example-docs/fake-power-point-malformed.pptx",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.pptx.get_last_modified_date",
+        return_value=mocked_last_modification_date,
+    )
+
+    elements = partition_pptx(
+        filename=filename,
+    )
+
+    assert elements[0].metadata.date == mocked_last_modification_date
+
+
+def test_partition_pptx_with_custom_metadata_date(
+    mocker,
+    filename="example-docs/fake-power-point-malformed.pptx",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    expected_last_modification_date = "2020-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.pptx.get_last_modified_date",
+        return_value=mocked_last_modification_date,
+    )
+
+    elements = partition_pptx(
+        filename=filename,
+        metadata_date=expected_last_modification_date,
+    )
+
+    assert elements[0].metadata.date == expected_last_modification_date
+
+
+def test_partition_pptx_from_file_metadata_date(
+    mocker,
+    filename="example-docs/fake-power-point-malformed.pptx",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.pptx.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+
+    with open(filename, "rb") as f:
+        elements = partition_pptx(
+            file=f,
+        )
+
+    assert elements[0].metadata.date == mocked_last_modification_date
+
+
+def test_partition_pptx_from_file_with_custom_metadata_date(
+    mocker,
+    filename="example-docs/fake-power-point-malformed.pptx",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    expected_last_modification_date = "2020-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.pptx.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+
+    with open(filename, "rb") as f:
+        elements = partition_pptx(file=f, metadata_date=expected_last_modification_date)
+
+    assert elements[0].metadata.date == expected_last_modification_date
