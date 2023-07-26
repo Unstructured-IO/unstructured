@@ -19,7 +19,7 @@ from unstructured.ingest.interfaces import (
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
-MAX_NUM_EMAILS = 10000
+MAX_NUM_EMAILS = 1000000  # Maximum number of emails per folder
 
 
 class MissingFolderError(Exception):
@@ -202,13 +202,29 @@ class OutlookConnector(ConnectorCleanupMixin, BaseConnector):
             )
 
     def get_ingest_docs(self):
-        """Returns a list of all the message objects that are in the requested root folder."""
-        messages = (
-            self.client.users[self.config.user_email]
-            .messages.get()
-            .top(MAX_NUM_EMAILS)
-            .execute_query()
-        )
-        filtered_messages = [m for m in messages if m.parent_folder_id in self.selected_folder_ids]
+        """Returns a list of all the message objects that are in the requested root folder(s)."""
+        filtered_messages = []
 
-        return [OutlookIngestDoc(self.standard_config, self.config, f) for f in filtered_messages]
+        # Get all the relevant messages in the selected folders/subfolders.
+        for folder_id in self.selected_folder_ids:
+            messages = (
+                self.client.users[self.config.user_email]
+                .mail_folders[folder_id]
+                .messages.get()
+                .top(MAX_NUM_EMAILS)  # Prevents the return from paging
+                .execute_query()
+            )
+            # Skip empty list if there are no messages in folder.
+            if messages:
+                filtered_messages.append(messages)
+
+        # Filtered messages have an un-downloadable resource path.
+        # So we get each message object individually.
+        individual_messages = []
+        for m in list(chain.from_iterable(filtered_messages)):
+            messages = (
+                self.client.users[self.config.user_email].messages[m.id].get().execute_query()
+            )
+            individual_messages.append(messages)
+
+        return [OutlookIngestDoc(self.standard_config, self.config, f) for f in individual_messages]
