@@ -186,7 +186,7 @@ class MainProcess:
     default=None,
     help="Remote fsspec URL formatted as `protocol://dir/path`, it can contain both "
     "a directory or a single file. Supported protocols are: `gcs`, `gs`, `s3`, `s3a`, `abfs` "
-    "`az` and `dropbox`.",
+    "`az`, `dropbox`, and `box`.",
 )
 @click.option(
     "--gcs-token",
@@ -204,6 +204,11 @@ class MainProcess:
     "--dropbox-token",
     default=None,
     help="Dropbox access token.",
+)
+@click.option(
+    "--box-jwt",
+    default=None,
+    help="Box JWT token.",
 )
 @click.option(
     "--azure-account-name",
@@ -519,7 +524,7 @@ class MainProcess:
     help="Recursively download files in their respective folders"
     "otherwise stop at the files in provided folder level."
     " Supported protocols are: `gcs`, `gs`, `s3`, `s3a`, `abfs` "
-    "`az`, `google drive`, `dropbox` and `local`.",
+    "`az`, `google drive`, `dropbox`, `box` and `local`.",
 )
 @click.option("-v", "--verbose", is_flag=True, default=False)
 def main(
@@ -527,6 +532,7 @@ def main(
     remote_url,
     s3_anonymous,
     dropbox_token,
+    box_jwt,
     gcs_token,
     azure_account_name,
     azure_account_key,
@@ -748,6 +754,20 @@ def main(
                     access_kwargs={"token": dropbox_token},
                 ),
             )
+        elif protocol in ("box"):
+            from unstructured.ingest.connector.box import (
+                BoxConnector,
+                SimpleBoxConfig,
+            )
+
+            doc_connector = BoxConnector(  # type: ignore
+                standard_config=standard_config,
+                config=SimpleBoxConfig(
+                    path=remote_url,
+                    recursive=recursive,
+                    access_kwargs={"jwt": box_jwt},
+                ),
+            )
         elif protocol in ("abfs", "az"):
             from unstructured.ingest.connector.azure import (
                 AzureBlobStorageConnector,
@@ -775,7 +795,7 @@ def main(
             warnings.warn(
                 f"`fsspec` protocol {protocol} is not directly supported by `unstructured`,"
                 " so use it at your own risk. Supported protocols are `gcs`, `gs`, `s3`, `s3a`,"
-                "`dropbox`, `abfs` and `az`.",
+                "`dropbox`, `abfs`, `az` and `box`.",
                 UserWarning,
             )
 
