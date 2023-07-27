@@ -1,4 +1,4 @@
-## 0.8.5-dev1
+## 0.8.5-dev2
 
 ### Enhancements
 
@@ -8,6 +8,8 @@
 ### Features
 
 ### Fixes
+
+* NLTK now only gets downloaded if necessary.
 
 ## 0.8.4
 
