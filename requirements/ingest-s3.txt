@@ -6,7 +6,7 @@
 #
 aiobotocore==2.5.2
     # via s3fs
-aiohttp==3.8.4
+aiohttp==3.8.5
     # via
     #   aiobotocore
     #   s3fs
