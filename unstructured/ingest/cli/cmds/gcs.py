@@ -15,7 +15,7 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
 @click.command()
 @click.option(
     "--token",
-    required=True,
+    default=None,
     help="Token used to access Google Cloud. GCSFS will attempt to use your default gcloud creds"
     "or get creds from the google metadata service or fall back to anonymous access.",
 )

@@ -14,7 +14,6 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
 
 
 @click.command()
-@click.pass_context
 @click.option(
     "--id",
     required=True,
@@ -31,6 +30,7 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
     help="Path to the Google Drive service account json file.",
 )
 def gdrive(**options):
+    print(options)
     gdrive_fn(**options)
 
 

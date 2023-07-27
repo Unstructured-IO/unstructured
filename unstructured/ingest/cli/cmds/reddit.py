@@ -73,7 +73,7 @@ def reddit_fn(**options):
             client_secret=options["client_secret"],
             user_agent=options["user_agent"],
             search_query=options["user_agent"],
-            num_posts=options["user_agent"],
+            num_posts=options["num_posts"],
         ),
     )
 
