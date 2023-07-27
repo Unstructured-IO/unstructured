@@ -10,7 +10,7 @@ DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --download-dir "$DOWNLOAD_DIR" \
-    --metadata-exclude coordinates,filename,file_directory \
+    --metadata-exclude coordinates,filename,file_directory,metadata.date \
     --num-processes 2 \
     --partition-strategy hi_res \
     --preserve-downloads \

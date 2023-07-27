@@ -18,6 +18,8 @@ from unstructured.file_utils.filetype import FileType, add_metadata_with_filetyp
 from unstructured.partition.common import (
     convert_ms_office_table_to_text,
     exactly_one,
+    get_last_modified_date,
+    get_last_modified_date_from_file,
     spooled_to_bytes_io_if_needed,
 )
 from unstructured.partition.text_type import (
@@ -36,6 +38,7 @@ def partition_pptx(
     include_page_breaks: bool = True,
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
+    metadata_date: Optional[str] = None,
     include_slide_notes: bool = False,
     **kwargs,
 ) -> List[Element]:
@@ -53,18 +56,28 @@ def partition_pptx(
         The filename to use for the metadata. Relevant because partition_ppt converts the
         document .pptx before partition. We want the original source filename in the
         metadata.
+    metadata_date
+        The last modified date for the document.
+
+
     include_slide_notes
         If True, includes the slide notes as element
     """
 
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file)
-
+    last_modification_date = None
     if filename is not None:
+        if not filename.startswith("/tmp"):
+            last_modification_date = get_last_modified_date(filename)
+
         presentation = pptx.Presentation(filename)
     elif file is not None:
+        last_modification_date = get_last_modified_date_from_file(file)
         presentation = pptx.Presentation(
-            spooled_to_bytes_io_if_needed(cast(Union[BinaryIO, SpooledTemporaryFile], file)),
+            spooled_to_bytes_io_if_needed(
+                cast(Union[BinaryIO, SpooledTemporaryFile], file),
+            ),
         )
 
     elements: List[Element] = []
@@ -72,6 +85,7 @@ def partition_pptx(
     num_slides = len(presentation.slides)
     for i, slide in enumerate(presentation.slides):
         metadata = ElementMetadata.from_dict(metadata.to_dict())
+        metadata.date = metadata_date or last_modification_date
         metadata.page_number = i + 1
         if include_slide_notes and slide.has_notes_slide is True:
             notes_slide = slide.notes_slide
@@ -91,6 +105,7 @@ def partition_pptx(
                         filename=metadata_filename or filename,
                         text_as_html=html_table,
                         page_number=metadata.page_number,
+                        date=metadata_date or last_modification_date,
                     )
                     elements.append(Table(text=text_table, metadata=metadata))
                 continue

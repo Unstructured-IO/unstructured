@@ -1,4 +1,5 @@
 import os
+from tempfile import SpooledTemporaryFile
 
 import docx
 import pytest
@@ -32,7 +33,10 @@ def mock_document():
     # NOTE(robinson) - this should get dropped because it is empty
     document.add_paragraph("", style="Normal")
     # NOTE(robinson) - this should get picked up as a narrative text
-    document.add_paragraph("This is my first thought. This is my second thought.", style="Normal")
+    document.add_paragraph(
+        "This is my first thought. This is my second thought.",
+        style="Normal",
+    )
     document.add_paragraph("This is my third thought.", style="Body Text")
     # NOTE(robinson) - this should just be regular text
     document.add_paragraph("2023")
@@ -181,3 +185,87 @@ def test_partition_doc_from_filename_exclude_metadata(mock_document, tmpdir):
     assert elements[0].metadata.filetype is None
     assert elements[0].metadata.page_name is None
     assert elements[0].metadata.filename is None
+
+
+def test_partition_doc_metadata_date(
+    mocker,
+    filename="example-docs/fake.doc",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.doc.get_last_modified_date",
+        return_value=mocked_last_modification_date,
+    )
+
+    elements = partition_doc(filename=filename)
+
+    assert elements[0].metadata.date == mocked_last_modification_date
+
+
+def test_partition_doc_metadata_date_with_custom_metadata(
+    mocker,
+    filename="example-docs/fake.doc",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    expected_last_modified_date = "2020-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.doc.get_last_modified_date",
+        return_value=mocked_last_modification_date,
+    )
+
+    elements = partition_doc(
+        filename=filename,
+        metadata_date=expected_last_modified_date,
+    )
+
+    assert elements[0].metadata.date == expected_last_modified_date
+
+
+def test_partition_doc_from_file_metadata_date(
+    mocker,
+    filename="example-docs/fake.doc",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.doc.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+
+    with open(filename, "rb") as f:
+        elements = partition_doc(file=f)
+
+    assert elements[0].metadata.date == mocked_last_modification_date
+
+
+def test_partition_doc_from_file_metadata_date_with_custom_metadata(
+    mocker,
+    filename="example-docs/fake.doc",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    expected_last_modified_date = "2020-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.doc.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+    with open(filename, "rb") as f:
+        elements = partition_doc(file=f, metadata_date=expected_last_modified_date)
+
+    assert elements[0].metadata.date == expected_last_modified_date
+
+
+def test_partition_doc_from_file_without_metadata_date(
+    filename="example-docs/fake.doc",
+):
+    """Test partition_doc() with file that are not possible to get last modified date"""
+
+    with open(filename, "rb") as f:
+        sf = SpooledTemporaryFile()
+        sf.write(f.read())
+        sf.seek(0)
+        elements = partition_doc(file=sf, metadata_date=None)
+
+    assert elements[0].metadata.date is None

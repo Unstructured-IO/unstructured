@@ -26,7 +26,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --download-dir "$DOWNLOAD_DIR" \
     --git-file-glob '*.html,*.txt' \
     --github-url dcneiner/Downloadify \
-    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed \
+    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.date \
     --partition-strategy hi_res \
     --preserve-downloads \
     --reprocess \
