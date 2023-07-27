@@ -294,12 +294,12 @@ def decide_table_extraction(
     doc_type = filetype.name.lower() if filetype else None
 
     if doc_type == "pdf":
-        if pdf_infer_table_structure:
+        if doc_type in skip_infer_table_types and pdf_infer_table_structure:
             logger.warning(
                 f"Conflict between variables skip_infer_table_types: {skip_infer_table_types}"
                 f"and pdf_infer_table_structure: {pdf_infer_table_structure},"
                 "please reset skip_infer_table_types to turn on table extraction for PDFs.",
             )
-        return pdf_infer_table_structure
+        return not (doc_type in skip_infer_table_types) or pdf_infer_table_structure
 
     return not (doc_type in skip_infer_table_types)
