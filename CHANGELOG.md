@@ -1,4 +1,4 @@
-## 0.8.5-dev1
+## 0.8.5-dev2
 
 ### Enhancements
 
@@ -9,6 +9,7 @@
 
 ### Fixes
 
+* NLTK now only gets downloaded if necessary.
 * Handling for empty tables in Word Documents and PowerPoints.
 
 ## 0.8.4
