@@ -131,6 +131,19 @@ install-pandoc:
 .PHONY: pip-compile
 pip-compile:
 	pip-compile --upgrade requirements/base.in
+
+	# Extra requirements that are specific to document types
+	pip-compile --upgrade requirements/extra-docx.in
+	pip-compile --upgrade requirements/extra-html.in
+	pip-compile --upgrade requirements/extra-html-pandoc.in
+	pip-compile --upgrade requirements/extra-image.in
+	pip-compile --upgrade requirements/extra-markdown.in
+	pip-compile --upgrade requirements/extra-msg.in
+	pip-compile --upgrade requirements/extra-pdf.in
+	pip-compile --upgrade requirements/extra-pptx.in
+	pip-compile --upgrade requirements/extra-tables.in
+	pip-compile --upgrade requirements/extra-xlsx.in
+
 	# Extra requirements for huggingface staging functions
 	pip-compile --upgrade requirements/huggingface.in
 	pip-compile --upgrade requirements/test.in
