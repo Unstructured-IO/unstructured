@@ -1,5 +1,5 @@
 import io
-from typing import IO, Callable, Dict, Optional, Tuple
+from typing import IO, Callable, Dict, List, Optional, Tuple
 
 import requests
 
@@ -47,6 +47,7 @@ def partition(
     encoding: Optional[str] = None,
     paragraph_grouper: Optional[Callable[[str], str]] = None,
     headers: Dict[str, str] = {},
+    skip_infer_table_types: List[str] = ["pdf", "jpg", "png"],
     ssl_verify: bool = True,
     ocr_languages: str = "eng",
     pdf_infer_table_structure: bool = False,
@@ -82,6 +83,8 @@ def partition(
         The encoding method used to decode the text input. If None, utf-8 will be used.
     headers
         The headers to be used in conjunction with the HTTP request if URL is set.
+    skip_infer_table_types
+        The document types that you want to skip table extraction with.
     ssl_verify
         If the URL parameter is set, determines whether or not partition uses SSL verification
         in the HTTP request.
@@ -122,6 +125,12 @@ def partition(
 
     if file is not None:
         file.seek(0)
+
+    infer_table_structure = decide_table_extraction(
+        filetype,
+        skip_infer_table_types,
+        pdf_infer_table_structure,
+    )
 
     if filetype == FileType.DOC:
         elements = partition_doc(filename=filename, file=file, **kwargs)
@@ -183,7 +192,7 @@ def partition(
             file=file,  # type: ignore
             url=None,
             include_page_breaks=include_page_breaks,
-            infer_table_structure=pdf_infer_table_structure,
+            infer_table_structure=infer_table_structure,
             strategy=strategy,
             ocr_languages=ocr_languages,
             **kwargs,
@@ -194,6 +203,7 @@ def partition(
             file=file,  # type: ignore
             url=None,
             include_page_breaks=include_page_breaks,
+            infer_table_structure=infer_table_structure,
             strategy=strategy,
             ocr_languages=ocr_languages,
             **kwargs,
@@ -274,3 +284,22 @@ def file_and_type_from_url(
 
     filetype = detect_filetype(file=file, content_type=content_type, encoding=encoding)
     return file, filetype
+
+
+def decide_table_extraction(
+    filetype: Optional[FileType],
+    skip_infer_table_types: List[str],
+    pdf_infer_table_structure: bool,
+) -> bool:
+    doc_type = filetype.name.lower() if filetype else None
+
+    if doc_type == "pdf":
+        if doc_type in skip_infer_table_types and pdf_infer_table_structure:
+            logger.warning(
+                f"Conflict between variables skip_infer_table_types: {skip_infer_table_types}"
+                f"and pdf_infer_table_structure: {pdf_infer_table_structure},"
+                "please reset skip_infer_table_types to turn on table extraction for PDFs.",
+            )
+        return not (doc_type in skip_infer_table_types) or pdf_infer_table_structure
+
+    return not (doc_type in skip_infer_table_types)
