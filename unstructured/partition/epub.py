@@ -9,37 +9,6 @@ from unstructured.partition.common import (
     exactly_one,
     _add_element_metadata,
 )
-
-
-def split_and_add_metadata_for_epub_file(filename):
-    book = epub.read_epub(filename)
-    toc_items = [item for item in book.toc]
-    elements = []
-    
-    for toc_item in toc_items:
-        # Some spine items may be tuple with second item as a linear flag
-        if isinstance(toc_item, tuple):
-            toc_item = toc_item[0]
-            
-        href = toc_item.href.split("#")[0]
-        title = toc_item.title
-        item = book.get_item_with_href(href)
-
-        if item is not None:
-            # Convert the item content to a string
-            html_content = item.get_content().decode()
-        
-        section_elements = partition_html(text=html_content)
-        
-        for element in section_elements:
-            _add_element_metadata(
-                element, 
-                epub_section=title,
-            )
-            elements.append(element)
-    
-    return elements
-        
             
 
 @process_metadata()
@@ -73,10 +42,38 @@ def partition_epub(
         filename = ""
         
     if file is not None:
-        tmp = tempfile.NamedTemporaryFile(delete=False)
-        tmp.write(file.read())
-        tmp.close()
-        filename = tmp.name
+        with tempfile.NamedTemporaryFile(delete=False) as tmp:
+            tmp.write(file.read())
+            filename = tmp.name
         
-    return split_and_add_metadata_for_epub_file(filename)
+    book = epub.read_epub(filename)
+    toc_items = [item for item in book.toc]
+    elements = []
+    
+    for toc_item in toc_items:
+        # Some toc items may be tuple
+        if isinstance(toc_item, tuple):
+            toc_item = toc_item[0]
+            
+        href = toc_item.href.split("#")[0]
+        title = toc_item.title
+        item = book.get_item_with_href(href)
+
+        if item is not None:
+            try:
+                # Convert the item content to a string
+                html_content = item.get_content().decode()
+                section_elements = partition_html(text=html_content)
+            except Exception as e:
+                print(f"Error reading content from item: {e}")
+                section_elements = []
+        
+        for element in section_elements:
+            _add_element_metadata(
+                element, 
+                epub_section=title,
+            )
+            elements.append(element)
+    
+    return elements
          
