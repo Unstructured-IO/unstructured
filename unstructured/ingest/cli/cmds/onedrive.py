@@ -46,6 +46,10 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
     help="User principal name, usually is your Azure AD email.",
 )
 def onedrive(**options):
+    onedrive_fn(**options)
+
+
+def onedrive_fn(**options):
     run_init_checks(options=options)
     ingest_log_streaming_init(logging.DEBUG if options["verbose"] else logging.INFO)
     log_options(options=options)

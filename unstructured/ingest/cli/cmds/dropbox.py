@@ -19,6 +19,10 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
     help="Dropbox access token.",
 )
 def dropbox(**options):
+    dropbox_fn(**options)
+
+
+def dropbox_fn(**options):
     run_init_checks(options=options)
     ingest_log_streaming_init(logging.DEBUG if options["verbose"] else logging.INFO)
     log_options(options=options)

@@ -38,6 +38,10 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
     help="Bot token used to access Slack API, must have channels:history " "scope for the bot user",
 )
 def slack(**options):
+    slack_fn(**options)
+
+
+def slack_fn(**options):
     run_init_checks(options=options)
     ingest_log_streaming_init(logging.DEBUG if options["verbose"] else logging.INFO)
     log_options(options=options)

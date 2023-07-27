@@ -31,6 +31,10 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
     help="Path to the Google Drive service account json file.",
 )
 def gdrive(**options):
+    gdrive_fn(**options)
+
+
+def gdrive_fn(**options):
     run_init_checks(options=options)
     ingest_log_streaming_init(logging.DEBUG if options["verbose"] else logging.INFO)
     log_options(options=options)

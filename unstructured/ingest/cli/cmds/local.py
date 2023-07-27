@@ -21,6 +21,10 @@ from unstructured.ingest.cli.common import (
     help="Path to the location in the local file system that will be processed.",
 )
 def local(**options):
+    local_fn(**options)
+
+
+def local_fn(**options):
     run_init_checks(options=options)
     log_options(options=options)
 

@@ -33,6 +33,10 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
     help='URL to the Elasticsearch cluster, e.g. "http://localhost:9200"',
 )
 def elasticsearch(**options):
+    elasticsearch_fn(**options)
+
+
+def elasticsearch_fn(**options):
     run_init_checks(options=options)
     ingest_log_streaming_init(logging.DEBUG if options["verbose"] else logging.INFO)
     log_options(options=options)

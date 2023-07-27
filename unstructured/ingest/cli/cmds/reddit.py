@@ -47,6 +47,10 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
     " for more information.",
 )
 def reddit(**options):
+    reddit_fn(**options)
+
+
+def reddit_fn(**options):
     run_init_checks(options=options)
     ingest_log_streaming_init(logging.DEBUG if options["verbose"] else logging.INFO)
     log_options(options=options)

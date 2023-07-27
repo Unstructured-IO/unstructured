@@ -39,6 +39,10 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
     ' or a repository owner/name pair, e.g. "Unstructured-IO/unstructured"',
 )
 def github(**options):
+    github_fn(**options)
+
+
+def github_fn(**options):
     run_init_checks(options=options)
     ingest_log_streaming_init(logging.DEBUG if options["verbose"] else logging.INFO)
     log_options(options=options)

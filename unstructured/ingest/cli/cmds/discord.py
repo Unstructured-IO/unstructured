@@ -31,6 +31,10 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
     "READ_MESSAGE_HISTORY scope for the bot user",
 )
 def discord(**options):
+    discord_fn(**options)
+
+
+def discord_fn(**options):
     run_init_checks(options=options)
     ingest_log_streaming_init(logging.DEBUG if options["verbose"] else logging.INFO)
     log_options(options=options)

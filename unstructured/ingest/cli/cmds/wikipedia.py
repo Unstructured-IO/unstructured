@@ -26,6 +26,10 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
     help='Title of a Wikipedia page, e.g. "Open source software".',
 )
 def wikipedia(**options):
+    wikipedia_fn(**options)
+
+
+def wikipedia_fn(**options):
     run_init_checks(options=options)
     ingest_log_streaming_init(logging.DEBUG if options["verbose"] else logging.INFO)
     log_options(options=options)

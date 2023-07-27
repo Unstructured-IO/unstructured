@@ -52,6 +52,10 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
 def biomed(
     **options,
 ):
+    biomed_fn(**options)
+
+
+def biomed_fn(**options):
     run_init_checks(options=options)
     ingest_log_streaming_init(logging.DEBUG if options["verbose"] else logging.INFO)
     log_options(options=options)

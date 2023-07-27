@@ -20,6 +20,10 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
     help="Connect to s3 without local AWS credentials.",
 )
 def s3(**options):
+    s3_fn(**options)
+
+
+def s3_fn(**options):
     run_init_checks(options=options)
     ingest_log_streaming_init(logging.DEBUG if options["verbose"] else logging.INFO)
     log_options(options=options)
