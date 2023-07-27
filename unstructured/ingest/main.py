@@ -2,4 +2,4 @@
 from unstructured.ingest.cli.cli import ingest
 
 if __name__ == "__main__":
-    ingest(obj={})
+    ingest()

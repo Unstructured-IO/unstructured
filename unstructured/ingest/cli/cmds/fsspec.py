@@ -5,21 +5,16 @@ from urllib.parse import urlparse
 import click
 
 from unstructured.ingest.cli.common import (
+    log_options,
     map_to_standard_config,
     process_documents,
+    run_init_checks,
     update_download_dir_remote_url,
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 
 
 @click.command()
-@click.pass_context
-@click.option(
-    "--remote-url",
-    required=True,
-    help="Remote fsspec URL formatted as `protocol://dir/path`, it can contain both "
-    "a directory or a single file.",
-)
 @click.option(
     "--recursive",
     is_flag=True,
@@ -27,23 +22,20 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
     help="Recursively download files in their respective folders"
     "otherwise stop at the files in provided folder level.",
 )
-def fsspec(ctx, remote_url, recursive):
-    context_dict = ctx.obj
-    ingest_log_streaming_init(logging.DEBUG if context_dict["verbose"] else logging.INFO)
+@click.option(
+    "--remote-url",
+    required=True,
+    help="Remote fsspec URL formatted as `protocol://dir/path`, it can contain both "
+    "a directory or a single file.",
+)
+def fsspec(**options):
+    run_init_checks(options=options)
+    ingest_log_streaming_init(logging.DEBUG if options["verbose"] else logging.INFO)
+    log_options(options=options)
 
-    logger.debug(f"parent params: {context_dict}")
-    logger.debug(
-        "params: {}".format(
-            {
-                "remote_url": remote_url,
-                "recursive": recursive,
-            },
-        ),
-    )
+    update_download_dir_remote_url(options=options, remote_url=options["remote_url"], logger=logger)
 
-    update_download_dir_remote_url(ctx_dict=context_dict, remote_url=remote_url, logger=logger)
-
-    protocol = urlparse(remote_url).scheme
+    protocol = urlparse(options["remote_url"]).scheme
     warnings.warn(
         f"`fsspec` protocol {protocol} is not directly supported by `unstructured`,"
         " so use it at your own risk. Supported protocols are `gcs`, `gs`, `s3`, `s3a`,"
@@ -57,11 +49,11 @@ def fsspec(ctx, remote_url, recursive):
     )
 
     doc_connector = FsspecConnector(  # type: ignore
-        standard_config=map_to_standard_config(context_dict),
+        standard_config=map_to_standard_config(options=options),
         config=SimpleFsspecConfig(
-            path=remote_url,
-            recursive=recursive,
+            path=options["remote_url"],
+            recursive=options["recursive"],
         ),
     )
 
-    process_documents(doc_connector=doc_connector, ctx_dict=context_dict)
+    process_documents(doc_connector=doc_connector, options=options)

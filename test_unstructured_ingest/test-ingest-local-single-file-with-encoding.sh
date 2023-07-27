@@ -8,12 +8,12 @@ OUTPUT_FOLDER_NAME=local-single-file-with-encoding
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
+    local \
     --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.date \
     --structured-output-dir "$OUTPUT_DIR" \
     --encoding cp1252 \
     --verbose \
     --reprocess \
-    local \
     --input-path example-docs/fake-html-cp1252.html
 
 set +e

@@ -4,47 +4,36 @@ import logging
 import click
 
 from unstructured.ingest.cli.common import (
+    log_options,
     map_to_standard_config,
     process_documents,
+    run_init_checks,
     update_download_dir_hash,
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 
 
 @click.command()
-@click.pass_context
-@click.option(
-    "--page-title",
-    required=True,
-    help='Title of a Wikipedia page, e.g. "Open source software".',
-)
 @click.option(
     "--auto-suggest",
     default=True,
     help="Whether to automatically suggest a page if the exact page was not found."
     " Set to False if the wrong Wikipedia page is fetched.",
 )
-def wikipedia(
-    ctx,
-    page_title,
-    auto_suggest,
-):
-    context_dict = ctx.obj
-    ingest_log_streaming_init(logging.DEBUG if context_dict["verbose"] else logging.INFO)
+@click.option(
+    "--page-title",
+    required=True,
+    help='Title of a Wikipedia page, e.g. "Open source software".',
+)
+def wikipedia(**options):
+    run_init_checks(options=options)
+    ingest_log_streaming_init(logging.DEBUG if options["verbose"] else logging.INFO)
+    log_options(options=options)
 
-    logger.debug(f"parent params: {context_dict}")
-    logger.debug(
-        "params: {}".format(
-            {
-                "page_title": page_title,
-                "auto_suggest": auto_suggest,
-            },
-        ),
-    )
     hashed_dir_name = hashlib.sha256(
-        page_title.encode("utf-8"),
+        options["page_title"].encode("utf-8"),
     )
-    update_download_dir_hash(ctx_dict=context_dict, hashed_dir_name=hashed_dir_name, logger=logger)
+    update_download_dir_hash(options=options, hashed_dir_name=hashed_dir_name, logger=logger)
 
     from unstructured.ingest.connector.wikipedia import (
         SimpleWikipediaConfig,
@@ -52,11 +41,11 @@ def wikipedia(
     )
 
     doc_connector = WikipediaConnector(  # type: ignore
-        standard_config=map_to_standard_config(context_dict),
+        standard_config=map_to_standard_config(options=options),
         config=SimpleWikipediaConfig(
-            title=page_title,
-            auto_suggest=auto_suggest,
+            title=options["page_title"],
+            auto_suggest=options["auto_suggest"],
         ),
     )
 
-    process_documents(doc_connector=doc_connector, ctx_dict=context_dict)
+    process_documents(doc_connector=doc_connector, options=options)

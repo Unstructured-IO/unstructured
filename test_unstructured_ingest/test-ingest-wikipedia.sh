@@ -9,6 +9,7 @@ OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
+    wikipedia \
     --download-dir "$DOWNLOAD_DIR" \
     --metadata-exclude coordinates,filename,file_directory,metadata.date \
     --num-processes 2 \
@@ -16,7 +17,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --preserve-downloads \
     --structured-output-dir "$OUTPUT_DIR" \
     --verbose \
-    wikipedia \
     --page-title "Open Source Software"
 
 sh "$SCRIPT_DIR"/check-num-files-output.sh 3 $OUTPUT_FOLDER_NAME

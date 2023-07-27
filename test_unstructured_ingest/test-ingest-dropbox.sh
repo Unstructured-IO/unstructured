@@ -19,13 +19,13 @@ DROPBOX_RESPONSE=$(curl https://api.dropbox.com/oauth2/token -d refresh_token="$
 DROPBOX_ACCESS_TOKEN=$(jq -r '.access_token' <<< "$DROPBOX_RESPONSE")
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
+    dropbox \
     --download-dir "$DOWNLOAD_DIR" \
     --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.date \
     --preserve-downloads \
     --reprocess \
     --structured-output-dir "$OUTPUT_DIR" \
     --verbose \
-    dropbox \
     --token  "$DROPBOX_ACCESS_TOKEN" \
     --recursive \
     --remote-url "dropbox:// /"

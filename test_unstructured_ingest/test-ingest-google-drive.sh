@@ -19,6 +19,7 @@ GCP_INGEST_SERVICE_KEY_FILE=$(mktemp)
 echo "$GCP_INGEST_SERVICE_KEY" >"$GCP_INGEST_SERVICE_KEY_FILE"
 
 PYTHONPATH=. unstructured/ingest/main.py \
+    gdrive \
     --download-dir "$DOWNLOAD_DIR" \
     --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.date \
     --num-processes 2 \
@@ -27,7 +28,6 @@ PYTHONPATH=. unstructured/ingest/main.py \
     --reprocess \
     --structured-output-dir "$OUTPUT_DIR" \
     --verbose \
-    gdrive \
     --id 1OQZ66OHBE30rNsNa7dweGLfRmXvkT_jr \
     --service-account-key "$GCP_INGEST_SERVICE_KEY_FILE"
 

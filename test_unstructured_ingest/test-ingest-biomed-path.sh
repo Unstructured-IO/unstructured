@@ -12,6 +12,7 @@ DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 sh "$SCRIPT_DIR"/check-num-files-expected-output.sh 1 $OUTPUT_FOLDER_NAME 10k
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
+    biomed \
     --download-dir "$DOWNLOAD_DIR" \
     --metadata-exclude coordinates,filename,file_directory,metadata.date,metadata.data_source.date_processed \
     --num-processes 2 \
@@ -20,7 +21,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --reprocess \
     --structured-output-dir "$OUTPUT_DIR" \
     --verbose \
-    biomed \
     --decay .3 \
     --max-request-time 30 \
     --max-retries 5 \

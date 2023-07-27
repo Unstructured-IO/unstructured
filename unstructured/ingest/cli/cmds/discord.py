@@ -4,19 +4,25 @@ import logging
 import click
 
 from unstructured.ingest.cli.common import (
+    log_options,
     map_to_standard_config,
     process_documents,
+    run_init_checks,
     update_download_dir_hash,
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 
 
 @click.command()
-@click.pass_context
 @click.option(
     "--channels",
     required=True,
     help="A comma separated list of discord channel ids to ingest from.",
+)
+@click.option(
+    "--period",
+    default=None,
+    help="Number of days to go back in the history of discord channels, must be a number",
 )
 @click.option(
     "--token",
@@ -24,34 +30,15 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
     help="Bot token used to access Discord API, must have "
     "READ_MESSAGE_HISTORY scope for the bot user",
 )
-@click.option(
-    "--period",
-    default=None,
-    help="Number of days to go back in the history of discord channels, must be a number",
-)
-def discord(
-    ctx,
-    channels,
-    token,
-    period,
-):
-    context_dict = ctx.obj
-    ingest_log_streaming_init(logging.DEBUG if context_dict["verbose"] else logging.INFO)
+def discord(**options):
+    run_init_checks(options=options)
+    ingest_log_streaming_init(logging.DEBUG if options["verbose"] else logging.INFO)
+    log_options(options=options)
 
-    logger.debug(f"parent params: {context_dict}")
-    logger.debug(
-        "params: {}".format(
-            {
-                "channels": channels,
-                "token": token,
-                "period": period,
-            },
-        ),
-    )
     hashed_dir_name = hashlib.sha256(
-        channels.encode("utf-8"),
+        options["channels"].encode("utf-8"),
     )
-    update_download_dir_hash(ctx_dict=context_dict, hashed_dir_name=hashed_dir_name, logger=logger)
+    update_download_dir_hash(options=options, hashed_dir_name=hashed_dir_name, logger=logger)
 
     from unstructured.ingest.connector.discord import (
         DiscordConnector,
@@ -59,13 +46,13 @@ def discord(
     )
 
     doc_connector = DiscordConnector(  # type: ignore
-        standard_config=map_to_standard_config(context_dict),
+        standard_config=map_to_standard_config(options=options),
         config=SimpleDiscordConfig(
-            channels=SimpleDiscordConfig.parse_channels(channels),
-            days=period,
-            token=token,
-            verbose=context_dict["verbose"],
+            channels=SimpleDiscordConfig.parse_channels(options["channels"]),
+            days=options["period"],
+            token=options["token"],
+            verbose=options["verbose"],
         ),
     )
 
-    process_documents(doc_connector=doc_connector, ctx_dict=context_dict)
+    process_documents(doc_connector=doc_connector, options=options)

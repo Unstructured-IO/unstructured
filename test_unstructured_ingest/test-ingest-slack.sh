@@ -10,6 +10,7 @@ DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
+   slack \
    --download-dir "$DOWNLOAD_DIR" \
    --metadata-exclude coordinates,file_directory,metadata.data_source.date_processed,metadata.date \
    --partition-strategy hi_res \
@@ -17,7 +18,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
    --reprocess \
    --structured-output-dir "$OUTPUT_DIR" \
    --verbose \
-   slack \
    --channels C052BGT7718 \
    --token "${SLACK_TOKEN}" \
    --start-date 2023-04-01 \

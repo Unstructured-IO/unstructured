@@ -16,6 +16,7 @@ if [ -z "$CONFLUENCE_USER_EMAIL" ] || [ -z "$CONFLUENCE_API_TOKEN" ]; then
 fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
+    confluence \
     --download-dir "$DOWNLOAD_DIR" \
     --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.date \
     --num-processes 2 \
@@ -23,7 +24,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --reprocess \
     --structured-output-dir "$OUTPUT_DIR" \
     --verbose \
-    confluence \
     --url https://unstructured-ingest-test.atlassian.net \
     --user-email "$CONFLUENCE_USER_EMAIL" \
     --api-token "$CONFLUENCE_API_TOKEN" \

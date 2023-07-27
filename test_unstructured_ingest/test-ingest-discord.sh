@@ -14,13 +14,13 @@ if [ -z "$DISCORD_TOKEN" ]; then
 fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
+    discord \
    --download-dir "$DOWNLOAD_DIR" \
    --metadata-exclude coordinates,file_directory,metadata.data_source.date_processed,metadata.date \
    --preserve-downloads \
    --reprocess \
     --structured-output-dir "$OUTPUT_DIR" \
     --verbose \
-    discord \
     --channels 1099442333440802930,1099601456321003600 \
     --token "$DISCORD_TOKEN" \
 

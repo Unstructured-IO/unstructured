@@ -4,8 +4,10 @@ import logging
 import click
 
 from unstructured.ingest.cli.common import (
+    log_options,
     map_to_standard_config,
     process_documents,
+    run_init_checks,
     update_download_dir_hash,
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
@@ -19,11 +21,6 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
     help="Google Drive File or Folder ID.",
 )
 @click.option(
-    "--service-account-key",
-    required=True,
-    help="Path to the Google Drive service account json file.",
-)
-@click.option(
     "--extension",
     default=None,
     help="Filters the files to be processed based on extension e.g. .jpg, .docx, etc.",
@@ -35,31 +32,20 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
     help="Recursively download files in their respective folders"
     "otherwise stop at the files in provided folder level.",
 )
-def gdrive(
-    ctx,
-    id,
-    service_account_key,
-    extension,
-    recursive,
-):
-    context_dict = ctx.obj
-    ingest_log_streaming_init(logging.DEBUG if context_dict["verbose"] else logging.INFO)
+@click.option(
+    "--service-account-key",
+    required=True,
+    help="Path to the Google Drive service account json file.",
+)
+def gdrive(**options):
+    run_init_checks(options=options)
+    ingest_log_streaming_init(logging.DEBUG if options["verbose"] else logging.INFO)
+    log_options(options=options)
 
-    logger.debug(f"parent params: {context_dict}")
-    logger.debug(
-        "params: {}".format(
-            {
-                "id": id,
-                "service_account_key": service_account_key,
-                "extension": extension,
-                "recursive": recursive,
-            },
-        ),
-    )
     hashed_dir_name = hashlib.sha256(
-        id.encode("utf-8"),
+        options["id"].encode("utf-8"),
     )
-    update_download_dir_hash(ctx_dict=context_dict, hashed_dir_name=hashed_dir_name, logger=logger)
+    update_download_dir_hash(options=options, hashed_dir_name=hashed_dir_name, logger=logger)
 
     from unstructured.ingest.connector.google_drive import (
         GoogleDriveConnector,
@@ -67,13 +53,13 @@ def gdrive(
     )
 
     doc_connector = GoogleDriveConnector(  # type: ignore
-        standard_config=map_to_standard_config(context_dict),
+        standard_config=map_to_standard_config(options=options),
         config=SimpleGoogleDriveConfig(
-            drive_id=id,
-            service_account_key=service_account_key,
-            recursive=recursive,
-            extension=extension,
+            drive_id=options["id"],
+            service_account_key=options["service_account_key"],
+            recursive=options["recursive"],
+            extension=options["extension"],
         ),
     )
 
-    process_documents(doc_connector=doc_connector, ctx_dict=context_dict)
+    process_documents(doc_connector=doc_connector, options=options)

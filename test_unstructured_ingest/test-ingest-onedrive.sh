@@ -14,6 +14,7 @@ if [ -z "$MS_CLIENT_ID" ] || [ -z "$MS_CLIENT_CRED" ] || [ -z "$MS_USER_PNAME" ]
 fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
+    onedrive \
     --download-dir "$DOWNLOAD_DIR" \
     --metadata-exclude file_directory,metadata.data_source.date_processed,metadata.date \
     --num-processes 2 \
@@ -22,7 +23,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --reprocess \
     --structured-output-dir "$OUTPUT_DIR" \
     --verbose \
-    onedrive \
     --client-cred "$MS_CLIENT_CRED" \
     --client-id "$MS_CLIENT_ID" \
     --tenant "$MS_TENANT_ID" \

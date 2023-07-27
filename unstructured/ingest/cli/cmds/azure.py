@@ -4,20 +4,31 @@ import click
 from click import ClickException
 
 from unstructured.ingest.cli.common import (
+    log_options,
     map_to_standard_config,
     process_documents,
+    run_init_checks,
     update_download_dir_remote_url,
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 
 
 @click.command()
-@click.pass_context
 @click.option(
-    "--remote-url",
-    required=True,
-    help="Remote fsspec URL formatted as `protocol://dir/path`, it can contain both "
-    "a directory or a single file. Supported protocols are: `abfs`, `az`,",
+    "--account-key",
+    default=None,
+    help="Azure Blob Storage or DataLake account key (not required if "
+    "`azure_account_name` is public).",
+)
+@click.option(
+    "--account-name",
+    default=None,
+    help="Azure Blob Storage or DataLake account name.",
+)
+@click.option(
+    "--connection-string",
+    default=None,
+    help="Azure Blob Storage or DataLake connection string.",
 )
 @click.option(
     "--recursive",
@@ -28,73 +39,44 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
     " Supported protocols are: `abfs`, `az`,",
 )
 @click.option(
-    "--account-name",
-    default=None,
-    help="Azure Blob Storage or DataLake account name.",
+    "--remote-url",
+    required=True,
+    help="Remote fsspec URL formatted as `protocol://dir/path`, it can contain both "
+    "a directory or a single file. Supported protocols are: `abfs`, `az`,",
 )
-@click.option(
-    "--account-key",
-    default=None,
-    help="Azure Blob Storage or DataLake account key (not required if "
-    "`azure_account_name` is public).",
-)
-@click.option(
-    "--connection-string",
-    default=None,
-    help="Azure Blob Storage or DataLake connection string.",
-)
-def azure(
-    ctx,
-    remote_url,
-    recursive,
-    account_name,
-    account_key,
-    connection_string,
-):
-    context_dict = ctx.obj
-    ingest_log_streaming_init(logging.DEBUG if context_dict["verbose"] else logging.INFO)
+def azure(**options):
+    run_init_checks(options=options)
+    ingest_log_streaming_init(logging.DEBUG if options["verbose"] else logging.INFO)
+    log_options(options=options)
 
-    logger.debug(f"parent params: {context_dict}")
-    logger.debug(
-        "params: {}".format(
-            {
-                "remote_url": remote_url,
-                "recursive": recursive,
-                "account_name": account_name,
-                "account_key": account_key,
-                "connection_string": connection_string,
-            },
-        ),
-    )
-
-    if not account_name and not connection_string:
+    if not options["account_name"] and not options["connection_string"]:
         raise ClickException(
             "missing either --account-name or --connection-string",
         )
 
-    update_download_dir_remote_url(ctx_dict=context_dict, remote_url=remote_url, logger=logger)
+    update_download_dir_remote_url(options=options, remote_url=options["remote_url"], logger=logger)
 
     from unstructured.ingest.connector.azure import (
         AzureBlobStorageConnector,
         SimpleAzureBlobStorageConfig,
     )
 
-    if account_name:
+    if options["account_name"]:
         access_kwargs = {
-            "account_name": account_name,
-            "account_key": account_key,
+            "account_name": options["account_name"],
+            "account_key": options["account_key"],
         }
-    elif connection_string:
-        access_kwargs = {"connection_string": connection_string}
+    elif options["connection_string"]:
+        access_kwargs = {"connection_string": options["connection_string"]}
     else:
         access_kwargs = {}
     doc_connector = AzureBlobStorageConnector(  # type: ignore
-        standard_config=map_to_standard_config(context_dict),
+        standard_config=map_to_standard_config(options=options),
         config=SimpleAzureBlobStorageConfig(
-            path=remote_url,
-            recursive=recursive,
+            path=options["remote_url"],
+            recursive=options["recursive"],
             access_kwargs=access_kwargs,
         ),
     )
 
-    process_documents(doc_connector=doc_connector, ctx_dict=context_dict)
+    process_documents(doc_connector=doc_connector, options=options)

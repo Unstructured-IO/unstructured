@@ -18,13 +18,13 @@ GCP_INGEST_SERVICE_KEY_FILE=$(mktemp)
 echo "$GCP_INGEST_SERVICE_KEY" >"$GCP_INGEST_SERVICE_KEY_FILE"
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
+    gcs \
     --download-dir "$DOWNLOAD_DIR" \
     --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.date \
     --preserve-downloads \
     --reprocess \
     --structured-output-dir "$OUTPUT_DIR" \
     --verbose \
-    gcs \
     --token "$GCP_INGEST_SERVICE_KEY_FILE" \
     --recursive \
     --remote-url gs://utic-test-ingest-fixtures/

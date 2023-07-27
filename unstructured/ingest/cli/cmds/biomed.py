@@ -4,20 +4,16 @@ import logging
 import click
 
 from unstructured.ingest.cli.common import (
+    log_options,
     map_to_standard_config,
     process_documents,
+    run_init_checks,
     update_download_dir_hash,
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 
 
 @click.command()
-@click.pass_context
-@click.option(
-    "--path",
-    default=None,
-    help="PMC Open Access FTP Directory Path.",
-)
 @click.option(
     "--api-id",
     default=None,
@@ -34,9 +30,14 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
     help="Until parameter for OA Web Service API.",
 )
 @click.option(
-    "--max-retries",
-    default=1,
-    help="Max requests to OA Web Service API.",
+    "--decay",
+    default=0.3,
+    help="(In float) Factor to multiply the delay between retries.",
+)
+@click.option(
+    "--path",
+    default=None,
+    help="PMC Open Access FTP Directory Path.",
 )
 @click.option(
     "--max-request-time",
@@ -44,45 +45,29 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
     help="(In seconds) Max request time to OA Web Service API.",
 )
 @click.option(
-    "--decay",
-    default=0.3,
-    help="(In float) Factor to multiply the delay between retries.",
+    "--max-retries",
+    default=1,
+    help="Max requests to OA Web Service API.",
 )
 def biomed(
-    ctx,
-    path,
-    api_id,
-    api_from,
-    api_until,
-    max_retries,
-    max_request_time,
-    decay,
+    **options,
 ):
-    context_dict = ctx.obj
-    ingest_log_streaming_init(logging.DEBUG if context_dict["verbose"] else logging.INFO)
+    run_init_checks(options=options)
+    ingest_log_streaming_init(logging.DEBUG if options["verbose"] else logging.INFO)
+    log_options(options=options)
 
-    logger.debug(f"parent params: {context_dict}")
-    logger.debug(
-        "params: {}".format(
-            {
-                "path": path,
-                "api_id": api_id,
-                "api_from": api_from,
-                "api_until": api_until,
-                "max_retries": max_retries,
-                "max_request_time": max_request_time,
-                "decay": decay,
-            },
-        ),
-    )
-    base_path = path
-    if not path:
-        base_path = f"{api_id or ''}-{api_from or ''}-" f"{api_until or ''}"
+    base_path = options["path"]
+    if not options["path"]:
+        base_path = "{}-{}-{}".format(
+            options.get("api_id", ""),
+            options.get("api_from", ""),
+            options.get("api_until", ""),
+        )
     hashed_dir_name = hashlib.sha256(
         base_path.encode("utf-8"),
     )
 
-    update_download_dir_hash(ctx_dict=context_dict, hashed_dir_name=hashed_dir_name, logger=logger)
+    update_download_dir_hash(options=options, hashed_dir_name=hashed_dir_name, logger=logger)
 
     from unstructured.ingest.connector.biomed import (
         BiomedConnector,
@@ -90,16 +75,16 @@ def biomed(
     )
 
     doc_connector = BiomedConnector(  # type: ignore
-        standard_config=map_to_standard_config(context_dict),
+        standard_config=map_to_standard_config(options=options),
         config=SimpleBiomedConfig(
-            path=path,
-            id_=api_id,
-            from_=api_from,
-            until=api_until,
-            max_retries=max_retries,
-            request_timeout=max_request_time,
-            decay=decay,
+            path=options["path"],
+            id_=options["api_id"],
+            from_=options["api_from"],
+            until=options["api_until"],
+            max_retries=options["max_retries"],
+            request_timeout=options["max_request_time"],
+            decay=options["decay"],
         ),
     )
 
-    process_documents(doc_connector=doc_connector, ctx_dict=context_dict)
+    process_documents(doc_connector=doc_connector, options=options)

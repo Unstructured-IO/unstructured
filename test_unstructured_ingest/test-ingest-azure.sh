@@ -9,6 +9,7 @@ OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
+    azure \
     --download-dir "$DOWNLOAD_DIR" \
     --metadata-exclude coordinates,filename,file_directory,metadata.date,metadata.data_source.date_processed \
     --num-processes 2 \
@@ -17,7 +18,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --reprocess \
     --structured-output-dir "$OUTPUT_DIR" \
     --verbose \
-    azure \
     --account-name azureunstructured1 \
     --remote-url abfs://container1/
 
