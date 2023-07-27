@@ -31,7 +31,7 @@ msal==1.23.0
     # via
     #   -r requirements/ingest-outlook.in
     #   office365-rest-python-client
-office365-rest-python-client==2.4.3
+office365-rest-python-client==2.4.2
     # via -r requirements/ingest-outlook.in
 pycparser==2.21
     # via
