@@ -30,20 +30,6 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
     default=None,
     help="Azure Blob Storage or DataLake connection string.",
 )
-@click.option(
-    "--recursive",
-    is_flag=True,
-    default=False,
-    help="Recursively download files in their respective folders"
-    "otherwise stop at the files in provided folder level."
-    " Supported protocols are: `abfs`, `az`,",
-)
-@click.option(
-    "--remote-url",
-    required=True,
-    help="Remote fsspec URL formatted as `protocol://dir/path`, it can contain both "
-    "a directory or a single file. Supported protocols are: `abfs`, `az`,",
-)
 def azure(**options):
     run_init_checks(options=options)
     ingest_log_streaming_init(logging.DEBUG if options["verbose"] else logging.INFO)

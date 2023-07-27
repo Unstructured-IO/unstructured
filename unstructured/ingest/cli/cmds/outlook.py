@@ -37,13 +37,6 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
     "Do not specify subfolders. Use quotes if spaces in folder names.",
 )
 @click.option(
-    "--recursive",
-    is_flag=True,
-    default=False,
-    help="Recursively download files in their respective folders"
-    "otherwise stop at the files in provided folder level.",
-)
-@click.option(
     "--tenant",
     default="common",
     help="ID or domain name associated with your Azure AD instance",

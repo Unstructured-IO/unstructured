@@ -20,13 +20,6 @@ from unstructured.ingest.cli.common import (
     required=True,
     help="Path to the location in the local file system that will be processed.",
 )
-@click.option(
-    "--recursive",
-    is_flag=True,
-    default=False,
-    help="Recursively download files in their respective folders"
-    "otherwise stop at the files in provided folder level.",
-)
 def local(**options):
     run_init_checks(options=options)
     log_options(options=options)

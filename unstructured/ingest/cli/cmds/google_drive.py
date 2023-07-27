@@ -26,13 +26,6 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
     help="Filters the files to be processed based on extension e.g. .jpg, .docx, etc.",
 )
 @click.option(
-    "--recursive",
-    is_flag=True,
-    default=False,
-    help="Recursively download files in their respective folders"
-    "otherwise stop at the files in provided folder level.",
-)
-@click.option(
     "--service-account-key",
     required=True,
     help="Path to the Google Drive service account json file.",
