@@ -72,6 +72,7 @@ setup(
     install_requires=load_requirements(),
     extras_require={
         # Document specific extra requirements
+        "all-docs": load_requirements("requirements/extra-all-docs.in"),
         "csv": load_requirements("requirements/extra-csv.in"),
         "docx": load_requirements("requirements/extra-docx.in"),
         "epub": load_requirements("requirements/extra-html-pandoc.in"),
@@ -106,7 +107,7 @@ setup(
 
         # Legacy extra requirements
         "huggingface": load_requirements("requirements/huggingface.in"),
-        "local-inference": load_requirements("requirements/local-inference.in"),
+        "local-inference": load_requirements("requirements/extra-all-docs.in"),
     },
     package_dir={"unstructured": "unstructured"},
     package_data={"unstructured": ["nlp/*.txt"]},

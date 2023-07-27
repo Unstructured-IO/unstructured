@@ -133,6 +133,7 @@ pip-compile:
 	pip-compile --upgrade requirements/base.in
 
 	# Extra requirements that are specific to document types
+	pip-compile --upgrade requirements/extra-all-docs.in
 	pip-compile --upgrade requirements/extra-csv.in
 	pip-compile --upgrade requirements/extra-docx.in
 	pip-compile --upgrade requirements/extra-html.in
