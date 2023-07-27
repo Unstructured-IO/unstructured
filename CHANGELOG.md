@@ -1,7 +1,8 @@
-## 0.8.5-dev2
+## 0.8.5
 
 ### Enhancements
 
+* Add parameter `skip_infer_table_types` to enable (skip) table extraction for other doc types
 * Adds optional Unstructured API unit tests in CI
 * Tracks last modified date for all document types.
 
