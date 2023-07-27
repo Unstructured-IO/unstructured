@@ -71,8 +71,23 @@ setup(
     },
     install_requires=load_requirements(),
     extras_require={
-        "huggingface": load_requirements("requirements/huggingface.in"),
-        "local-inference": load_requirements("requirements/local-inference.in"),
+        # Document specific extra requirements
+        "csv": load_requirements("requirements/extra-csv.in"),
+        "docx": load_requirements("requirements/extra-docx.in"),
+        "epub": load_requirements("requirements/extra-html-pandoc.in"),
+        "html": load_requirements("requirements/extra-html.in"),
+        "image": load_requirements("requirements/extra-pdf-image.in"),
+        "markdown": load_requirements("requirements/extra-markdown.in"),
+        "msg": load_requirements("requirements/extra-msg.in"),
+        "org": load_requirements("requirements/extra-html-pandoc.in"),
+        "pdf": load_requirements("requirements/extra-pdf-image.in"),
+        "pptx": load_requirements("requirements/extra-pptx.in"),
+        "rtf": load_requirements("requirements/extra-html-pandoc.in"),
+        "rst": load_requirements("requirements/extra-html-pandoc.in"),
+        "tsv": load_requirements("requirements/extra-tsv.in"),
+        "xlsx": load_requirements("requirements/extra-xlsx.in"),
+
+        # Extra requirements for data connectors
         "s3": load_requirements("requirements/ingest-s3.in"),
         "azure": load_requirements("requirements/ingest-azure.in"),
         "discord": load_requirements("requirements/ingest-discord.in"),
@@ -88,6 +103,10 @@ setup(
         "onedrive": load_requirements("requirements/ingest-onedrive.in"),
         "outlook": load_requirements("requirements/ingest-outlook.in"),
         "confluence": load_requirements("requirements/ingest-confluence.in"),
+
+        # Legacy extra requirements
+        "huggingface": load_requirements("requirements/huggingface.in"),
+        "local-inference": load_requirements("requirements/local-inference.in"),
     },
     package_dir={"unstructured": "unstructured"},
     package_data={"unstructured": ["nlp/*.txt"]},
