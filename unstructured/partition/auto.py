@@ -42,11 +42,14 @@ if dependency_exists("lxml") and dependency_exists("markdown"):
     from unstructured.partition.md import partition_md
 
 
+if dependency_exists("msg_parser"):
+    from unstructured.partition.msg import partition_msg
+
+
 from unstructured.partition.common import exactly_one
 from unstructured.partition.email import partition_email
 from unstructured.partition.image import partition_image
 from unstructured.partition.json import partition_json
-from unstructured.partition.msg import partition_msg
 from unstructured.partition.pdf import partition_pdf
 from unstructured.partition.ppt import partition_ppt
 from unstructured.partition.pptx import partition_pptx

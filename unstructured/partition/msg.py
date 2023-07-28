@@ -10,10 +10,12 @@ from unstructured.partition.common import exactly_one
 from unstructured.partition.email import convert_to_iso_8601
 from unstructured.partition.html import partition_html
 from unstructured.partition.text import partition_text
+from unstructured.utils import requires_dependencies
 
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.MSG)
+@requires_dependencies(["msg_parser"], extras="msg")
 def partition_msg(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
