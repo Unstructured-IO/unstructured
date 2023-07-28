@@ -39,7 +39,7 @@ def test_get_directory_file_info(tmpdir):
     assert isinstance(file_info, pd.DataFrame)
     assert set(file_info["filename"].to_list()) == {"filename1.txt", "filename2.txt"}
 
-    means = file_info.groupby("filetype").mean()
+    means = file_info.groupby("filetype").mean(numeric_only=True)
     assert means.columns.to_list() == ["filesize"]
 
 
@@ -69,7 +69,7 @@ def test_get_file_info(tmpdir):
     assert isinstance(file_info, pd.DataFrame)
     assert set(file_info["filename"].to_list()) == {"filename1.txt", "filename2.txt"}
 
-    means = file_info.groupby("filetype").mean()
+    means = file_info.groupby("filetype").mean(numeric_only=True)
     assert means.columns.to_list() == ["filesize"]
 
 

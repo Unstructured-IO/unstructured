@@ -1,23 +1,64 @@
-## 0.8.2-dev5
+## 0.8.7
 
 ### Enhancements
 
-* Update functionality to retrieve image metadata from a page for `document_to_element_list`
-* Links are now tracked in `partition_html` output.
-* Set the file's current position to the beginning after reading the file in `convert_to_bytes`
-* Add min_partition kwarg to that combines elements below a specified threshold and modifies splitting of strings longer than max partition so words are not split.
-* set the file's current position to the beginning after reading the file in `convert_to_bytes`
-* Add slide notes to pptx
-* Add `--encoding` directive to ingest
+* Put back useful function `split_by_paragraph`
 
 ### Features
 
-* Adds Onedrive connector.
-* Add Confluence connector for ingest cli to pull the body text from all documents from all spaces in a confluence domain.
+### Fixes
 
+* Fix argument order in NLTK download step
+
+## 0.8.6
+
+### Enhancements
+
+### Features
 
 ### Fixes
 
+* Remove debug print lines and non-functional code
+
+## 0.8.5
+
+### Enhancements
+
+* Add parameter `skip_infer_table_types` to enable (skip) table extraction for other doc types
+* Adds optional Unstructured API unit tests in CI
+* Tracks last modified date for all document types.
+
+### Features
+
+### Fixes
+
+* NLTK now only gets downloaded if necessary.
+* Handling for empty tables in Word Documents and PowerPoints.
+
+## 0.8.4
+
+### Enhancements
+
+* Additional tests and refactor of JSON detection.
+* Update functionality to retrieve image metadata from a page for `document_to_element_list`
+* Links are now tracked in `partition_html` output.
+* Set the file's current position to the beginning after reading the file in `convert_to_bytes`
+* Add `min_partition` kwarg to that combines elements below a specified threshold and modifies splitting of strings longer than max partition so words are not split.
+* set the file's current position to the beginning after reading the file in `convert_to_bytes`
+* Add slide notes to pptx
+* Add `--encoding` directive to ingest
+* Improve json detection by `detect_filetype`
+
+### Features
+
+* Adds Outlook connector
+* Add support for dpi parameter in inference library
+* Adds Onedrive connector.
+* Add Confluence connector for ingest cli to pull the body text from all documents from all spaces in a confluence domain.
+
+### Fixes
+
+* Fixes issue with email partitioning where From field was being assigned the To field value.
 * Use the `image_metadata` property of the `PageLayout` instance to get the page image info in the `document_to_element_list`
 * Add functionality to write images to computer storage temporarily instead of keeping them in memory for `ocr_only` strategy
 * Add functionality to convert a PDF in small chunks of pages at a time for `ocr_only` strategy
@@ -25,6 +66,7 @@
   has a `text/plain` MIME type.
 * Enables filters to be passed to `partition_doc` so it doesn't error with LibreOffice7.
 * Removed old error message that's superseded by `requires_dependencies`.
+* Removes using `hi_res` as the default strategy value for `partition_via_api` and `partition_multiple_via_api`
 
 ## 0.8.1
 

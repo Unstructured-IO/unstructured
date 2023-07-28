@@ -11,7 +11,12 @@ from unstructured.documents.elements import (
     process_metadata,
 )
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
-from unstructured.partition.common import exactly_one, spooled_to_bytes_io_if_needed
+from unstructured.partition.common import (
+    exactly_one,
+    get_last_modified_date,
+    get_last_modified_date_from_file,
+    spooled_to_bytes_io_if_needed,
+)
 
 
 @process_metadata()
@@ -20,6 +25,7 @@ def partition_csv(
     filename: Optional[str] = None,
     file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
     metadata_filename: Optional[str] = None,
+    metadata_date: Optional[str] = None,
     include_metadata: bool = True,
     **kwargs,
 ) -> List[Element]:
@@ -31,6 +37,10 @@ def partition_csv(
         A string defining the target filename path.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
+    metadata_filename
+        The filename to use for the metadata.
+    metadata_date
+        The last modified date for the document.
     include_metadata
         Determines whether or not metadata is included in the output.
     """
@@ -38,8 +48,13 @@ def partition_csv(
 
     if filename:
         table = pd.read_csv(filename)
-    else:
-        f = spooled_to_bytes_io_if_needed(cast(Union[BinaryIO, SpooledTemporaryFile], file))
+        last_modification_date = get_last_modified_date(filename)
+
+    elif file:
+        last_modification_date = get_last_modified_date_from_file(file)
+        f = spooled_to_bytes_io_if_needed(
+            cast(Union[BinaryIO, SpooledTemporaryFile], file),
+        )
         table = pd.read_csv(f)
 
     html_text = table.to_html(index=False, header=False, na_rep="")
@@ -49,6 +64,7 @@ def partition_csv(
         metadata = ElementMetadata(
             text_as_html=html_text,
             filename=metadata_filename or filename,
+            date=metadata_date or last_modification_date,
         )
     else:
         metadata = ElementMetadata()

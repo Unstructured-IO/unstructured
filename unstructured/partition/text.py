@@ -18,13 +18,43 @@ from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.nlp.tokenize import sent_tokenize
-from unstructured.partition.common import exactly_one
+from unstructured.partition.common import (
+    exactly_one,
+    get_last_modified_date,
+    get_last_modified_date_from_file,
+)
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_possible_narrative_text,
     is_possible_title,
     is_us_city_state_zip,
 )
+
+
+def split_by_paragraph(
+    file_text: str,
+    min_partition: Optional[int] = 0,
+    max_partition: Optional[int] = 1500,
+) -> List[str]:
+    split_paragraphs = re.split(PARAGRAPH_PATTERN, file_text.strip())
+
+    paragraphs = combine_paragraphs_less_than_min(
+        split_paragraphs=split_paragraphs,
+        max_partition=max_partition,
+        min_partition=min_partition,
+    )
+
+    file_content = []
+
+    for paragraph in paragraphs:
+        file_content.extend(
+            split_content_to_fit_max(
+                content=paragraph,
+                max_partition=max_partition,
+            ),
+        )
+
+    return file_content
 
 
 def _split_in_half_at_breakpoint(
@@ -158,6 +188,7 @@ def partition_text(
     include_metadata: bool = True,
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
+    metadata_date: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions an .txt documents into its constituent paragraph elements.
@@ -183,6 +214,8 @@ def partition_text(
         no maximum is applied.
     min_partition
         The minimum number of characters to include in a partition.
+    metadata_date
+        The day of the last modification
     """
     if text is not None and text.strip() == "" and not file and not filename:
         return []
@@ -197,11 +230,14 @@ def partition_text(
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text)
 
+    last_modification_date = None
     if filename is not None:
         encoding, file_text = read_txt_file(filename=filename, encoding=encoding)
+        last_modification_date = get_last_modified_date(filename)
 
     elif file is not None:
         encoding, file_text = read_txt_file(file=file, encoding=encoding)
+        last_modification_date = get_last_modified_date_from_file(file)
 
     elif text is not None:
         file_text = str(text)
@@ -216,27 +252,18 @@ def partition_text(
     if min_partition is not None and len(file_text) < min_partition:
         raise ValueError("`min_partition` cannot be larger than the length of file contents.")
 
-    split_paragraphs = re.split(PARAGRAPH_PATTERN, file_text.strip())
-
-    paragraphs = combine_paragraphs_less_than_min(
-        split_paragraphs=split_paragraphs,
-        max_partition=max_partition,
+    file_content = split_by_paragraph(
+        file_text,
         min_partition=min_partition,
+        max_partition=max_partition,
     )
-
-    file_content = []
-
-    for paragraph in paragraphs:
-        file_content.extend(
-            split_content_to_fit_max(
-                content=paragraph,
-                max_partition=max_partition,
-            ),
-        )
 
     elements: List[Element] = []
     metadata = (
-        ElementMetadata(filename=metadata_filename or filename)
+        ElementMetadata(
+            filename=metadata_filename or filename,
+            date=metadata_date or last_modification_date,
+        )
         if include_metadata
         else ElementMetadata()
     )
@@ -263,7 +290,11 @@ def element_from_text(
             coordinate_system=coordinate_system,
         )
     elif is_us_city_state_zip(text):
-        return Address(text=text, coordinates=coordinates, coordinate_system=coordinate_system)
+        return Address(
+            text=text,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
+        )
     elif is_possible_narrative_text(text):
         return NarrativeText(
             text=text,
@@ -271,6 +302,14 @@ def element_from_text(
             coordinate_system=coordinate_system,
         )
     elif is_possible_title(text):
-        return Title(text=text, coordinates=coordinates, coordinate_system=coordinate_system)
+        return Title(
+            text=text,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
+        )
     else:
-        return Text(text=text, coordinates=coordinates, coordinate_system=coordinate_system)
+        return Text(
+            text=text,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
+        )

@@ -21,7 +21,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --confluence-user-email "$CONFLUENCE_USER_EMAIL" \
     --confluence-api-token "$CONFLUENCE_API_TOKEN" \
     --confluence-max-num-of-spaces 4 \
-    --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
+    --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.date \
     --num-processes 2 \
     --preserve-downloads \
     --reprocess \
