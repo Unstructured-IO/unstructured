@@ -172,7 +172,6 @@ pip-compile:
 	pip-compile --upgrade requirements/base.in
 
 	# Extra requirements that are specific to document types
-	pip-compile --upgrade requirements/extra-all-docs.in
 	pip-compile --upgrade requirements/extra-csv.in
 	pip-compile --upgrade requirements/extra-docx.in
 	pip-compile --upgrade requirements/extra-pandoc.in
@@ -188,7 +187,6 @@ pip-compile:
 	pip-compile --upgrade requirements/test.in
 	pip-compile --upgrade requirements/dev.in
 	pip-compile --upgrade requirements/build.in
-	pip-compile --upgrade requirements/local-inference.in
 	# NOTE(robinson) - doc/requirements.txt is where the GitHub action for building
 	# sphinx docs looks for additional requirements
 	cp requirements/build.txt docs/requirements.txt
