@@ -2,6 +2,7 @@ import subprocess
 import platform
 import pkg_resources
 
+
 def command_exists(command):
     """
     Check if a command exists in the system
@@ -68,13 +69,17 @@ def is_brew_package_installed(package_name):
     Returns:
         bool: True if package is installed, False otherwise
     """
-    if not command_exists('brew'):
+    if not command_exists("brew"):
         return False
-    result = subprocess.run(['brew', 'list'], stdout=subprocess.PIPE, text=True, check=True)
+    result = subprocess.run(
+        ["brew", "list"], stdout=subprocess.PIPE, text=True, check=True
+    )
     for line in result.stdout.splitlines():
         if line.lower().startswith(package_name.lower()):
             return True
-    result = subprocess.run(['brew', 'list', '--cask'], stdout=subprocess.PIPE, text=True, check=True)
+    result = subprocess.run(
+        ["brew", "list", "--cask"], stdout=subprocess.PIPE, text=True, check=True
+    )
     for line in result.stdout.splitlines():
         if line.lower().startswith(package_name.lower()):
             return True
@@ -107,9 +112,9 @@ def get_brew_package_version(package_name):
     Returns:
         str: Version of the package, None if package is not installed
     """
-    if not command_exists('brew'):
+    if not command_exists("brew"):
         return None
-    
+
     result = subprocess.run(
         ["brew", "info", package_name],
         stdout=subprocess.PIPE,
@@ -128,7 +133,12 @@ def get_libmagic_version():
     Returns:
         str: Version of libmagic, None if libmagic is not installed
     """
-    result = subprocess.run(['file', '--version', '--headless'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    result = subprocess.run(
+        ["file", "--version", "--headless"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
     return result.stdout.strip()
 
 
@@ -139,7 +149,12 @@ def get_libreoffice_version():
     Returns:
         str: Version of LibreOffice, None if LibreOffice is not installed
     """
-    result = subprocess.run(['libreoffice', '--version', '--headless'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    result = subprocess.run(
+        ["libreoffice", "--version", "--headless"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
     return result.stdout.strip()
 
 
@@ -173,13 +188,25 @@ def main():
     else:
         print("Torch is not installed")
 
-    if is_brew_package_installed("tesseract") or is_python_package_installed("pytesseract"):
-        print("Tesseract version: ", get_brew_package_version("tesseract") or get_python_package_version("pytesseract"))
+    if is_brew_package_installed("tesseract") or is_python_package_installed(
+        "pytesseract"
+    ):
+        print(
+            "Tesseract version: ",
+            get_brew_package_version("tesseract")
+            or get_python_package_version("pytesseract"),
+        )
     else:
         print("Tesseract is not installed")
 
-    if is_python_package_installed("paddlepaddle") or is_python_package_installed("paddleocr"):
-        print("PaddleOCR version: ", get_python_package_version("paddlepaddle") or get_python_package_version("paddleocr"))
+    if is_python_package_installed("paddlepaddle") or is_python_package_installed(
+        "paddleocr"
+    ):
+        print(
+            "PaddleOCR version: ",
+            get_python_package_version("paddlepaddle")
+            or get_python_package_version("paddleocr"),
+        )
     else:
         print("PaddleOCR is not installed")
 
@@ -193,7 +220,7 @@ def main():
             print("Libmagic is not installed")
 
     # Check if the current operating system is not Windows before printing LibreOffice version
-    if platform.system() != 'Windows':
+    if platform.system() != "Windows":
         if is_brew_package_installed("libreoffice"):
             print("LibreOffice version: ", get_brew_package_version("libreoffice"))
         else:
@@ -202,15 +229,6 @@ def main():
                 print("LibreOffice version: ", libreoffice_version)
             else:
                 print("LibreOffice is not installed")
-
-#    if is_brew_package_installed("libreoffice"):
-#        print("LibreOffice version: ", get_brew_package_version("libreoffice"))
-#    else:
-#        libreoffice_version = get_libreoffice_version()
-#        if libreoffice_version:
-#            print("LibreOffice version: ", libreoffice_version)
-#        else:
-#            print("LibreOffice is not installed")
 
 
 if __name__ == "__main__":
@@ -242,7 +260,7 @@ if __name__ == "__main__":
 # magic file from /etc/magic:/usr/share/misc/magic
 # LibreOffice version:  LibreOffice 6.4.7.2 40(Build:2)
 
-# Output on Windows 
+# Output on Windows
 # OS version:  Windows-10-10.0.20348-SP0
 # Python version:  3.10.10
 # unstructured version:  0.8.5
