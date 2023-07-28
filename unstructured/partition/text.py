@@ -31,6 +31,32 @@ from unstructured.partition.text_type import (
 )
 
 
+def split_by_paragraph(
+    file_text: str,
+    min_partition: Optional[int] = 0,
+    max_partition: Optional[int] = 1500,
+) -> List[str]:
+    split_paragraphs = re.split(PARAGRAPH_PATTERN, file_text.strip())
+
+    paragraphs = combine_paragraphs_less_than_min(
+        split_paragraphs=split_paragraphs,
+        max_partition=max_partition,
+        min_partition=min_partition,
+    )
+
+    file_content = []
+
+    for paragraph in paragraphs:
+        file_content.extend(
+            split_content_to_fit_max(
+                content=paragraph,
+                max_partition=max_partition,
+            ),
+        )
+
+    return file_content
+
+
 def _split_in_half_at_breakpoint(
     content: str,
     breakpoint: str = " ",
@@ -226,23 +252,11 @@ def partition_text(
     if min_partition is not None and len(file_text) < min_partition:
         raise ValueError("`min_partition` cannot be larger than the length of file contents.")
 
-    split_paragraphs = re.split(PARAGRAPH_PATTERN, file_text.strip())
-
-    paragraphs = combine_paragraphs_less_than_min(
-        split_paragraphs=split_paragraphs,
-        max_partition=max_partition,
+    file_content = split_by_paragraph(
+        file_text,
         min_partition=min_partition,
+        max_partition=max_partition,
     )
-
-    file_content = []
-
-    for paragraph in paragraphs:
-        file_content.extend(
-            split_content_to_fit_max(
-                content=paragraph,
-                max_partition=max_partition,
-            ),
-        )
 
     elements: List[Element] = []
     metadata = (
