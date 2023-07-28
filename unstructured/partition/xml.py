@@ -12,6 +12,7 @@ from unstructured.partition.common import (
     spooled_to_bytes_io_if_needed,
 )
 from unstructured.partition.text import partition_text
+from unstructured.utils import requires_dependencies
 
 
 def is_leaf(elem):
@@ -50,6 +51,7 @@ def get_leaf_elements(
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.XML)
+@requires_dependencies(["lxml"], extras="xml")
 def partition_xml(
     filename: Optional[str] = None,
     file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,

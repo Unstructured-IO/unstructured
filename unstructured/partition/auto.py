@@ -34,9 +34,13 @@ if dependency_exists("lxml") and dependency_exists("pypandoc"):
     from unstructured.partition.rtf import partition_rtf
 
 
+if dependency_exists("lxml"):
+    from unstructured.partition.html import partition_html
+    from unstructured.partition.xml import partition_xml
+
+
 from unstructured.partition.common import exactly_one
 from unstructured.partition.email import partition_email
-from unstructured.partition.html import partition_html
 from unstructured.partition.image import partition_image
 from unstructured.partition.json import partition_json
 from unstructured.partition.md import partition_md
@@ -46,7 +50,6 @@ from unstructured.partition.ppt import partition_ppt
 from unstructured.partition.pptx import partition_pptx
 from unstructured.partition.text import partition_text
 from unstructured.partition.xlsx import partition_xlsx
-from unstructured.partition.xml import partition_xml
 
 
 def partition(

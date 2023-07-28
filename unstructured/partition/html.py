@@ -17,10 +17,12 @@ from unstructured.partition.common import (
     get_last_modified_date,
     get_last_modified_date_from_file,
 )
+from unstructured.utils import requires_dependencies
 
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.HTML)
+@requires_dependencies(["lxml"], extras="html")
 def partition_html(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,

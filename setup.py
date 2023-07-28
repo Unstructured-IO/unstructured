@@ -126,6 +126,7 @@ setup(
         "rst": rst_reqs,
         "tsv": tsv_reqs,
         "xlsx": xlsx_reqs,
+        "xml": html_reqs,
         # Extra requirements for data connectors
         "s3": load_requirements("requirements/ingest-s3.in"),
         "azure": load_requirements("requirements/ingest-azure.in"),
