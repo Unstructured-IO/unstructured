@@ -1,3 +1,13 @@
+## 0.9.0
+
+### Enhancements
+
+* Dependencies are now split by document type, creating a slimmer base installation.
+
+### Features
+
+### Fixes
+
 ## 0.8.7
 
 ### Enhancements
