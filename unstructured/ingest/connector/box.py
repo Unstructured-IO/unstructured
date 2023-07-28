@@ -9,7 +9,7 @@ REAUTHORIZE the app after making any changes.
 """
 
 import json
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Type
 
 from boxsdk import JWTAuth
@@ -27,10 +27,13 @@ from unstructured.utils import requires_dependencies
 class SimpleBoxConfig(SimpleFsspecConfig):
     def __post_init__(self):
         super().__post_init__()
-        # We are passing in a jwt json string via command line. Need to convert that to an Oauth2 object.
-        self.access_kwargs["oauth"] = JWTAuth.from_settings_dictionary(json.loads(self.access_kwargs["oauth_json"]))
-        del self.access_kwargs["oauth_json"] # String is no longer needed.
-    
+        # We are passing in a jwt json string via command line.
+        # Need to convert that to an Oauth2 object.
+        self.access_kwargs["oauth"] = JWTAuth.from_settings_dictionary(
+            json.loads(self.access_kwargs["oauth_json"]),
+        )
+        del self.access_kwargs["oauth_json"]  # Oauth json is no longer needed.
+
     def __getstate__(self):
         """
         NOTE: This should not be a permanent solution.
@@ -45,7 +48,6 @@ class SimpleBoxConfig(SimpleFsspecConfig):
         state["access_kwargs"]["oauth"]._rsa_private_key._rsa_cdata = None
         state["access_kwargs"]["oauth"]._rsa_private_key._evp_pkey = None
         return state
-
 
 
 class BoxIngestDoc(FsspecIngestDoc):

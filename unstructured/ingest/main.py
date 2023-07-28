@@ -760,9 +760,6 @@ def main(
                 BoxConnector,
                 SimpleBoxConfig,
             )
-            # oauth=JWTAuth.from_settings_file("/Users/davidpotter/Documents/Unstructured/BoxJWT/unstructured_key.json")
-            # # oauth._refresh_lock = None
-
 
             doc_connector = BoxConnector(  # type: ignore
                 standard_config=standard_config,
