@@ -88,7 +88,7 @@ ipykernel==6.25.0
     #   jupyter-console
     #   jupyterlab
     #   qtconsole
-ipython==8.13.2
+ipython==8.12.2
     # via
     #   -c requirements/constraints.in
     #   -r requirements/dev.in
