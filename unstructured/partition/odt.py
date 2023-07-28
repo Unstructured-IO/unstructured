@@ -7,12 +7,10 @@ from unstructured.partition.common import (
     get_last_modified_date_from_file,
 )
 from unstructured.partition.docx import convert_and_partition_docx
-from unstructured.utils import requires_dependencies
 
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.ODT)
-@requires_dependencies(["python-docx", "pypandoc"], extras="odt")
 def partition_odt(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,

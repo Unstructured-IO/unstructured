@@ -12,6 +12,13 @@ from unstructured.file_utils.filetype import (
     is_json_processable,
 )
 from unstructured.logger import logger
+from unstructured.partition.common import exactly_one
+from unstructured.partition.email import partition_email
+from unstructured.partition.json import partition_json
+from unstructured.partition.ppt import partition_ppt
+from unstructured.partition.pptx import partition_pptx
+from unstructured.partition.text import partition_text
+from unstructured.partition.xlsx import partition_xlsx
 from unstructured.utils import dependency_exists
 
 if dependency_exists("pandas") and dependency_exists("lxml"):
@@ -46,15 +53,12 @@ if dependency_exists("msg_parser"):
     from unstructured.partition.msg import partition_msg
 
 
-from unstructured.partition.common import exactly_one
-from unstructured.partition.email import partition_email
-from unstructured.partition.image import partition_image
-from unstructured.partition.json import partition_json
-from unstructured.partition.pdf import partition_pdf
-from unstructured.partition.ppt import partition_ppt
-from unstructured.partition.pptx import partition_pptx
-from unstructured.partition.text import partition_text
-from unstructured.partition.xlsx import partition_xlsx
+pdf_imports = ["pdf2image", "pdfminer", "PIL"]
+if all(dependency_exists(dep) for dep in pdf_imports):
+    from unstructured.partition.pdf import partition_pdf
+
+if dependency_exists("unstructured_inference"):
+    from unstructured.partition.image import partition_image
 
 
 def partition(

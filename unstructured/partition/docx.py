@@ -37,7 +37,7 @@ from unstructured.partition.text_type import (
     is_possible_title,
     is_us_city_state_zip,
 )
-from unstructured.utils import dependency_exists, requires_dependencies
+from unstructured.utils import dependency_exists
 
 if dependency_exists("pypandoc"):
     import pypandoc
@@ -110,7 +110,6 @@ Paragraph.runs = property(lambda self: _get_paragraph_runs(self))
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.DOCX)
-@requires_dependencies(["python-docx"], extras="docx")
 def partition_docx(
     filename: Optional[str] = None,
     file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
@@ -310,7 +309,6 @@ def _get_headers_and_footers(
     return headers_and_footers
 
 
-@requires_dependencies(["pypandoc"], extras="odt")
 def convert_and_partition_docx(
     source_format: str,
     filename: Optional[str] = None,

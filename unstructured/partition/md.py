@@ -12,7 +12,6 @@ from unstructured.partition.common import (
     get_last_modified_date_from_file,
 )
 from unstructured.partition.html import partition_html
-from unstructured.utils import requires_dependencies
 
 
 def optional_decode(contents: Union[str, bytes]) -> str:
@@ -23,7 +22,6 @@ def optional_decode(contents: Union[str, bytes]) -> str:
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.MD)
-@requires_dependencies(["lxml", "markdown"], extras="md")
 def partition_md(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,

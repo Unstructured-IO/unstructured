@@ -1,7 +1,0 @@
--c constraints.in
--c base.txt
-
-pdf2image
-pdfminer.six
-pillow
-unstructured-inference==0.5.7
