@@ -1,5 +1,5 @@
-import textwrap
 import re
+import textwrap
 from typing import IO, Callable, List, Optional, Tuple
 
 from unstructured.cleaners.core import (
