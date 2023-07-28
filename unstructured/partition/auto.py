@@ -19,9 +19,16 @@ if dependency_exists("pandas") and dependency_exists("lxml"):
     from unstructured.partition.tsv import partition_tsv
 
 
+if dependency_exists("python-docx"):
+    from unstructured.partition.doc import partition_doc
+    from unstructured.partition.docx import partition_docx
+
+
+if dependency_exists("python-docx") and dependency_exists("pypandoc"):
+    from unstructured.partition.odt import partition_odt
+
+
 from unstructured.partition.common import exactly_one
-from unstructured.partition.doc import partition_doc
-from unstructured.partition.docx import partition_docx
 from unstructured.partition.email import partition_email
 from unstructured.partition.epub import partition_epub
 from unstructured.partition.html import partition_html
@@ -29,7 +36,6 @@ from unstructured.partition.image import partition_image
 from unstructured.partition.json import partition_json
 from unstructured.partition.md import partition_md
 from unstructured.partition.msg import partition_msg
-from unstructured.partition.odt import partition_odt
 from unstructured.partition.org import partition_org
 from unstructured.partition.pdf import partition_pdf
 from unstructured.partition.ppt import partition_ppt

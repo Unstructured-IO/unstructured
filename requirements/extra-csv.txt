@@ -4,6 +4,8 @@
 #
 #    pip-compile requirements/extra-csv.in
 #
+lxml==4.9.3
+    # via -r requirements/extra-csv.in
 numpy==1.24.4
     # via pandas
 pandas==2.0.3

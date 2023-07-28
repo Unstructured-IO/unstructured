@@ -140,6 +140,7 @@ pip-compile:
 	pip-compile --upgrade requirements/extra-html-pandoc.in
 	pip-compile --upgrade requirements/extra-markdown.in
 	pip-compile --upgrade requirements/extra-msg.in
+	pip-compile --upgrade requirements/extra-odt.in
 	pip-compile --upgrade requirements/extra-pdf-image.in
 	pip-compile --upgrade requirements/extra-pptx.in
 	pip-compile --upgrade requirements/extra-xlsx.in

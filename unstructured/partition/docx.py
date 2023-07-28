@@ -4,7 +4,6 @@ from tempfile import SpooledTemporaryFile
 from typing import IO, BinaryIO, List, Optional, Tuple, Union, cast
 
 import docx
-import pypandoc
 from docx.oxml.shared import qn
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
@@ -38,6 +37,10 @@ from unstructured.partition.text_type import (
     is_possible_title,
     is_us_city_state_zip,
 )
+from unstructured.utils import dependency_exists, requires_dependencies
+
+if dependency_exists("pypandoc"):
+    import pypandoc
 
 # NOTE(robinson) - documentation on built in styles can be found at the link below
 # ref: https://python-docx.readthedocs.io/en/latest/user/
@@ -107,6 +110,7 @@ Paragraph.runs = property(lambda self: _get_paragraph_runs(self))
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.DOCX)
+@requires_dependencies(["python-docx"], extras="docx")
 def partition_docx(
     filename: Optional[str] = None,
     file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
@@ -306,6 +310,7 @@ def _get_headers_and_footers(
     return headers_and_footers
 
 
+@requires_dependencies(["pypandoc"], extras="odt")
 def convert_and_partition_docx(
     source_format: str,
     filename: Optional[str] = None,
@@ -314,7 +319,7 @@ def convert_and_partition_docx(
     metadata_filename: Optional[str] = None,
     metadata_date: Optional[str] = None,
 ) -> List[Element]:
-    """Converts a document to DOCX and then partitions it using partition_html. Works with
+    """Converts a document to DOCX and then partitions it using partition_docx. Works with
     any file format support by pandoc.
 
     Parameters

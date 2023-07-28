@@ -11,10 +11,12 @@ from unstructured.partition.common import (
     get_last_modified_date_from_file,
 )
 from unstructured.partition.docx import partition_docx
+from unstructured.utils import requires_dependencies
 
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.DOC)
+@requires_dependencies(["python-docx"], extras="docx")
 def partition_doc(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,

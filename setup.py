@@ -48,6 +48,7 @@ html_reqs = load_requirements("requirements/extra-html.in")
 image_reqs = load_requirements("requirements/extra-pdf-image.in")
 markdown_reqs = load_requirements("requirements/extra-markdown.in")
 msg_reqs = load_requirements("requirements/extra-msg.in")
+odt_reqs = load_requirements("requirements/extra-odt.in")
 org_reqs = load_requirements("requirements/extra-html-pandoc.in")
 pdf_reqs = load_requirements("requirements/extra-pdf-image.in")
 pptx_reqs = load_requirements("requirements/extra-pptx.in")
@@ -65,6 +66,7 @@ all_doc_reqs = list(
         + image_reqs
         + markdown_reqs
         + msg_reqs
+        + odt_reqs
         + org_reqs
         + pdf_reqs
         + pptx_reqs
@@ -116,6 +118,7 @@ setup(
         "html": html_reqs,
         "image": image_reqs,
         "msg": msg_reqs,
+        "odt": odt_reqs,
         "org": org_reqs,
         "pdf": pdf_reqs,
         "pptx": pptx_reqs,
