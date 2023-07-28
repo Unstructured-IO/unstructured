@@ -117,6 +117,7 @@ setup(
         "epub": epub_reqs,
         "html": html_reqs,
         "image": image_reqs,
+        "md": markdown_reqs,
         "msg": msg_reqs,
         "odt": odt_reqs,
         "org": org_reqs,
