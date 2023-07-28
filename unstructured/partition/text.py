@@ -1,5 +1,5 @@
-import re
 import textwrap
+import re
 from typing import IO, Callable, List, Optional, Tuple
 
 from unstructured.cleaners.core import clean_bullets, group_broken_paragraphs, auto_paragraph_grouper
