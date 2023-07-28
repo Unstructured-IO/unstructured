@@ -42,7 +42,8 @@ def pos_tag(text: str) -> List[Tuple[str, str]]:
     """A wrapper around the NLTK POS tagger with LRU caching enabled."""
     _download_nltk_package_if_not_present(package_category="tokenizers", package_name="punkt")
     _download_nltk_package_if_not_present(
-        package_category="taggers", package_name="averaged_perceptron_tagger"
+        package_category="taggers",
+        package_name="averaged_perceptron_tagger",
     )
     # NOTE(robinson) - Splitting into sentences before tokenizing. The helps with
     # situations like "ITEM 1A. PROPERTIES" where "PROPERTIES" can be mistaken
