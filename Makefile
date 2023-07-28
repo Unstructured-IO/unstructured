@@ -53,6 +53,14 @@ install-dev:
 install-build:
 	python3 -m pip install -r requirements/build.txt
 
+.PHONY: install-csv
+install-csv:
+	python3 -m pip install -r requirements/extra-csv.txt
+
+.PHONY: install-docx
+install-docx:
+	python3 -m pip install -r requirements/extra-docx.txt
+
 .PHONY: install-ingest-google-drive
 install-ingest-google-drive:
 	python3 -m pip install -r requirements/ingest-google-drive.txt
