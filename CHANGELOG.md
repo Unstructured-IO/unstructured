@@ -1,3 +1,13 @@
+## 0.8.8
+
+### Enhancements
+
+* Set the default strategy for partitioning images to `hi_res`
+
+### Features
+
+### Fixes
+
 ## 0.9.0
 
 ### Enhancements
@@ -11,7 +21,6 @@
 ### Features
 
 ### Fixes
-
 
 * Rename "date" field to "last_modified"
 * Adds Box connector
@@ -33,8 +42,6 @@
 ## 0.8.6
 
 ### Enhancements
-
-* Set the default strategy for partitioning images to `hi_res`
 
 ### Features
 
@@ -75,7 +82,6 @@
 * Add slide notes to pptx
 * Add `--encoding` directive to ingest
 * Improve json detection by `detect_filetype`
-* Set the default strategy for partitioning images to `hi_res`
 
 ### Features
 
