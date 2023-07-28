@@ -5,7 +5,9 @@
 #    pip-compile requirements/extra-odt.in
 #
 lxml==4.9.3
-    # via python-docx
+    # via
+    #   -c requirements/base.txt
+    #   python-docx
 pypandoc==1.11
     # via -r requirements/extra-odt.in
 python-docx==0.8.11

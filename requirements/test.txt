@@ -47,6 +47,7 @@ label-studio-tools==0.0.2
     # via label-studio-sdk
 lxml==4.9.3
     # via
+    #   -c requirements/base.txt
     #   label-studio-sdk
     #   label-studio-tools
 mccabe==0.7.0

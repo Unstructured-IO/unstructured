@@ -14,11 +14,13 @@ from unstructured.file_utils.filetype import (
 from unstructured.logger import logger
 from unstructured.partition.common import exactly_one
 from unstructured.partition.email import partition_email
+from unstructured.partition.html import partition_html
 from unstructured.partition.json import partition_json
 from unstructured.partition.text import partition_text
+from unstructured.partition.xml import partition_xml
 from unstructured.utils import dependency_exists
 
-if dependency_exists("pandas") and dependency_exists("lxml"):
+if dependency_exists("pandas"):
     from unstructured.partition.csv import partition_csv
     from unstructured.partition.tsv import partition_tsv
 
@@ -31,18 +33,15 @@ if dependency_exists("docx"):
 if dependency_exists("docx") and dependency_exists("pypandoc"):
     from unstructured.partition.odt import partition_odt
 
-if dependency_exists("lxml") and dependency_exists("pypandoc"):
+
+if dependency_exists("pypandoc"):
     from unstructured.partition.epub import partition_epub
     from unstructured.partition.org import partition_org
     from unstructured.partition.rst import partition_rst
     from unstructured.partition.rtf import partition_rtf
 
 
-if dependency_exists("lxml"):
-    from unstructured.partition.html import partition_html
-    from unstructured.partition.xml import partition_xml
-
-if dependency_exists("lxml") and dependency_exists("markdown"):
+if dependency_exists("markdown"):
     from unstructured.partition.md import partition_md
 
 

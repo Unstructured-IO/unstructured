@@ -136,8 +136,7 @@ pip-compile:
 	pip-compile --upgrade requirements/extra-all-docs.in
 	pip-compile --upgrade requirements/extra-csv.in
 	pip-compile --upgrade requirements/extra-docx.in
-	pip-compile --upgrade requirements/extra-html.in
-	pip-compile --upgrade requirements/extra-html-pandoc.in
+	pip-compile --upgrade requirements/extra-pandoc.in
 	pip-compile --upgrade requirements/extra-markdown.in
 	pip-compile --upgrade requirements/extra-msg.in
 	pip-compile --upgrade requirements/extra-odt.in

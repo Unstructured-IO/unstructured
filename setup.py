@@ -53,7 +53,7 @@ org_reqs = load_requirements("requirements/extra-html-pandoc.in")
 pdf_reqs = load_requirements("requirements/extra-pdf-image.in")
 pptx_reqs = load_requirements("requirements/extra-pptx.in")
 rtf_reqs = load_requirements("requirements/extra-html-pandoc.in")
-rst_reqs = load_requirements("requirements/extra-html-pandoc.in")
+rst_reqs = load_requirements("requirements/extra-pandoc.in")
 tsv_reqs = load_requirements("requirements/extra-csv.in")
 xlsx_reqs = load_requirements("requirements/extra-xlsx.in")
 
@@ -62,7 +62,6 @@ all_doc_reqs = list(
         csv_reqs
         + docx_reqs
         + epub_reqs
-        + html_reqs
         + image_reqs
         + markdown_reqs
         + msg_reqs
@@ -115,7 +114,6 @@ setup(
         "csv": csv_reqs,
         "docx": docx_reqs,
         "epub": epub_reqs,
-        "html": html_reqs,
         "image": image_reqs,
         "md": markdown_reqs,
         "msg": msg_reqs,
@@ -127,7 +125,6 @@ setup(
         "rst": rst_reqs,
         "tsv": tsv_reqs,
         "xlsx": xlsx_reqs,
-        "xml": html_reqs,
         # Extra requirements for data connectors
         "s3": load_requirements("requirements/ingest-s3.in"),
         "azure": load_requirements("requirements/ingest-azure.in"),

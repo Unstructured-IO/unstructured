@@ -1,4 +1,4 @@
 -c constraints.in
 -c base.txt
 
-lxml
+pypandoc

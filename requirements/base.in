@@ -2,6 +2,7 @@
 chardet
 filetype
 python-magic
+lxml
 nltk
 tabulate
 requests

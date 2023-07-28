@@ -5,6 +5,8 @@
 #    pip-compile requirements/extra-docx.in
 #
 lxml==4.9.3
-    # via python-docx
+    # via
+    #   -c requirements/base.txt
+    #   python-docx
 python-docx==0.8.11
     # via -r requirements/extra-docx.in

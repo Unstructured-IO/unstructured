@@ -1,8 +1,7 @@
 -c constraints.in
 -c base.txt
 -c extra-csv.txt
--c extra-html.txt
--c extra-html-pandoc.txt
+-c extra-pandoc.txt
 -c extra-markdown.txt
 -c extra-msg.txt
 -c extra-pdf-image.txt
