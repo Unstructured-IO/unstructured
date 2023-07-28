@@ -3,9 +3,11 @@ from typing import IO, List, Optional
 from unstructured.documents.elements import Element
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.html import convert_and_partition_html
+from unstructured.utils import requires_dependencies
 
 
 @add_metadata_with_filetype(FileType.ORG)
+@requires_dependencies(["lxml", "pypandoc"], extras="org")
 def partition_org(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,

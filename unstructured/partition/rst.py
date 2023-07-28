@@ -3,10 +3,12 @@ from typing import IO, List, Optional
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.html import convert_and_partition_html
+from unstructured.utils import requires_dependencies
 
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.RST)
+@requires_dependencies(["lxml", "pypandoc"], extras="rst")
 def partition_rst(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
