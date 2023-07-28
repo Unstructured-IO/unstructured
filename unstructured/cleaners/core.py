@@ -102,8 +102,8 @@ def group_bullet_paragraph(paragraph: str) -> list:
 
 def group_broken_paragraphs(
     text: str,
-    line_split: re.Pattern = PARAGRAPH_PATTERN_RE,
-    paragraph_split: re.Pattern = DOUBLE_PARAGRAPH_PATTERN_RE,
+    line_split: re.Pattern = LINE_BREAK_RE,
+    paragraph_split: re.Pattern = DOUBLE_PARAGRAPH_PATTERN_RE
 ) -> str:
     """Groups paragraphs that have line breaks for visual/formatting purposes.
     For example:
