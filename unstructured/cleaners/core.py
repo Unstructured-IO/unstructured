@@ -2,7 +2,6 @@ import quopri
 import re
 import sys
 import unicodedata
-from typing import Optional
 
 from unstructured.file_utils.encoding import (
     format_encoding_str,
@@ -11,8 +10,6 @@ from unstructured.nlp.patterns import (
     DOUBLE_PARAGRAPH_PATTERN_RE,
     LINE_BREAK_RE,
     PARAGRAPH_PATTERN,
-    PARAGRAPH_PATTERN_RE,
-    REFERENCE_PATTERN_RE,
     UNICODE_BULLETS_RE,
 )
 
@@ -112,14 +109,18 @@ def blank_line_grouper(
 def auto_paragraph_grouper(
     text: str,
     line_split: re.Pattern = LINE_BREAK_RE,
-    max_line_count: Optional[int] = 2000,
+    max_line_count: int = 2000,
     threshold: float = 0.5,
 ) -> str:
     """
     Checks the ratio of new line (\n) over the total max_line_count
-    if the ratio of new line is less than the threshold, the document is considered a new-line grouping type
-    and returned the original text
-    if the ratio of new line is greater than or equal to the threshold, the document is considered a blank-line grouping type
+
+    If the ratio of new line is less than the threshold,
+    the document is considered a new-line grouping type
+    and return the original text
+
+    If the ratio of new line is greater than or equal to the threshold,
+    the document is considered a blank-line grouping type
     and passed on to blank_line_grouper function
     """
     lines = line_split.split(text)
@@ -131,7 +132,8 @@ def auto_paragraph_grouper(
             empty_line_count += 1
     ratio = empty_line_count / line_count
 
-    # NOTE(klaijan) - for ratio < threshold, we pass to new-line grouper, otherwise to blank-line grouper
+    # NOTE(klaijan) - for ratio < threshold, we pass to new-line grouper,
+    # otherwise to blank-line grouper
     if ratio < threshold:
         return text
     else:

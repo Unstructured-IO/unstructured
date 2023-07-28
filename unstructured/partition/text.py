@@ -5,7 +5,6 @@ from typing import IO, Callable, List, Optional, Tuple
 from unstructured.cleaners.core import (
     auto_paragraph_grouper,
     clean_bullets,
-    group_broken_paragraphs,
 )
 from unstructured.documents.coordinates import CoordinateSystem
 from unstructured.documents.elements import (
