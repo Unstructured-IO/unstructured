@@ -15,3 +15,5 @@ wheel>=0.38.1
 certifi>=2022.12.07
 # From pycocotools in local-inference
 pyparsing<3.1.0
+# NOTE(robinson) - Numpy dropped Python 3.8 support in 1.25.0
+numpy<1.25.0

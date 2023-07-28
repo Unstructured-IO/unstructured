@@ -5,5 +5,3 @@ sacremoses
 sentencepiece
 torch
 transformers
-# NOTE(robinson) - Numpy dropped Python 3.8 support in 1.25.0
-numpy<1.25.0
