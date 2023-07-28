@@ -1,10 +1,9 @@
 import quopri
 import re
 import sys
-
+import unicodedata
 from typing import Optional
 
-import unicodedata
 from unstructured.file_utils.encoding import (
     format_encoding_str,
 )
@@ -14,9 +13,7 @@ from unstructured.nlp.patterns import (
     LINE_BREAK_RE,
     PARAGRAPH_PATTERN,
     PARAGRAPH_PATTERN_RE,
-    UNICODE_BULLETS_RE,
     REFERENCE_PATTERN_RE,
-    LINE_BREAK_RE,
     UNICODE_BULLETS_RE_0W,
 )
 
