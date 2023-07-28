@@ -21,7 +21,7 @@ install-base: install-base-pip-packages install-nltk-models
 install: install-base-pip-packages install-dev install-nltk-models install-test install-huggingface install-unstructured-inference
 
 .PHONY: install-ci
-install-ci: install-base-pip-packages install-nltk-models install-huggingface install-unstructured-inference install-test
+install-ci: install-base-pip-packages install-nltk-models install-huggingface install-all-docs install-test
 
 .PHONY: install-base-pip-packages
 install-base-pip-packages:
@@ -60,6 +60,37 @@ install-csv:
 .PHONY: install-docx
 install-docx:
 	python3 -m pip install -r requirements/extra-docx.txt
+
+.PHONY: install-odt
+install-odt:
+	python3 -m pip install -r requirements/extra-odt.txt
+
+.PHONY: install-pypandoc
+install-pypandoc:
+	python3 -m pip install -r requirements/extra-pandoc.txt
+
+.PHONY: install-markdown
+install-markdown:
+	python3 -m pip install -r requirements/extra-markdown.txt
+
+.PHONY: install-msg
+install-msg:
+	python3 -m pip install -r requirements/extra-msg.txt
+
+.PHONY: install-pdf-image
+install-pdf-image:
+	python3 -m pip install -r requirements/extra-pdf-image.txt
+
+.PHONY: install-pptx
+install-pptx:
+	python3 -m pip install -r requirements/extra-pptx.txt
+
+.PHONY: install-xlsx
+install-xlsx:
+	python3 -m pip install -r requirements/extra-xlsx.txt
+
+.PHONY: install-all-docs
+install-all-docs: install-base install-csv install-docx install-docx install-odt install-pypandoc install-markdown install-msg install-pdf-image install-pptx install-xlsx
 
 .PHONY: install-ingest-google-drive
 install-ingest-google-drive:
@@ -128,7 +159,7 @@ install-unstructured-inference:
 
 ## install-local-inference: installs requirements for local inference
 .PHONY: install-local-inference
-install-local-inference: install install-unstructured-inference
+install-local-inference: install install-all-docs
 
 .PHONY: install-pandoc
 install-pandoc:
