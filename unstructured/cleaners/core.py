@@ -2,7 +2,6 @@ import quopri
 import re
 import sys
 import unicodedata
-from typing import Optional
 
 from unstructured.file_utils.encoding import (
     format_encoding_str,
