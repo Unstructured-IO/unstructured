@@ -3,8 +3,6 @@ import io
 import json
 from typing import Any, Dict, List, Optional
 
-import pandas as pd
-
 from unstructured.documents.elements import (
     TYPE_TO_TEXT_ELEMENT_MAP,
     CheckBox,
@@ -13,6 +11,10 @@ from unstructured.documents.elements import (
     NoID,
 )
 from unstructured.partition.common import exactly_one
+from unstructured.utils import dependency_exists, requires_dependencies
+
+if dependency_exists("pandas"):
+    import pandas as pd
 
 
 def _get_metadata_table_fieldnames():
@@ -176,11 +178,14 @@ def convert_to_csv(elements: List[Element]) -> str:
     return convert_to_isd_csv(elements)
 
 
-def convert_to_dataframe(elements: List[Element], drop_empty_cols: bool = True) -> pd.DataFrame:
+@requires_dependencies(["pandas"])
+def convert_to_dataframe(elements: List[Element], drop_empty_cols: bool = True):
     """Converts document elements to a pandas DataFrame. The dataframe contains the
     following columns:
         text: the element text
         type: the text type (NarrativeText, Title, etc)
+
+    Output is pd.DataFrame
     """
     csv_string = convert_to_isd_csv(elements)
     csv_string_io = io.StringIO(csv_string)
