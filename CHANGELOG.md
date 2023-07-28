@@ -8,6 +8,7 @@
 
 ### Fixes
 
+* Fix argument order in NLTK download step
 
 ## 0.8.6
 
