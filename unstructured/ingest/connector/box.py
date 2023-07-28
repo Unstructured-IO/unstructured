@@ -23,12 +23,29 @@ from unstructured.utils import requires_dependencies
 
 @dataclass
 class SimpleBoxConfig(SimpleFsspecConfig):
+    # def __getstate__(self):
+    #     print("GETTING GETSTATE &&&&&&&&")
+    #     """
+    #     NOTE: This should not be a permanent solution.
+    #     Multiprocessing fails when it tries to pickle some Locks in the SimpleBoxConfig.
+    #     __getstate__ is called right before an object gets pickled.
+    #     We are setting those attributes to None to allow pickling.
+    #     """
+    #     state = self.__dict__.copy()
+    #     # state["access_kwargs"]["oauth"]._refresh_lock = None
+    #     # state["access_kwargs"]["oauth"]._rsa_private_key._blinding_lock = None
+    #     # state["access_kwargs"]["oauth"]._rsa_private_key._backend = None
+    #     # state["access_kwargs"]["oauth"]._rsa_private_key._rsa_cdata = None
+    #     # state["access_kwargs"]["oauth"]._rsa_private_key._evp_pkey = None
+    #     return state
     pass
+
 
 
 class BoxIngestDoc(FsspecIngestDoc):
     @requires_dependencies(["boxfs", "fsspec"], extras="box")
     def get_file(self):
+        print("########### GET FILE box")
         super().get_file()
 
 

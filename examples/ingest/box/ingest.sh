@@ -5,13 +5,14 @@
 
 # Structured outputs are stored in box-output/
 
+#   --box-jwt "$BOX_JWT" \
+
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/../../.. || exit 1
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-   --remote-url box://utic-test-ingest-fixtures/ \
+   --remote-url box://utic-test-ingest-fixtures \
    --structured-output-dir box-output \
-   --box-jwt "$BOX_JWT" \
    --num-processes 2 \
    --recursive \
    --verbose 

@@ -53,7 +53,9 @@ class MainProcess:
         self.doc_connector.cleanup()
 
     def _filter_docs_with_outputs(self, docs):
+        print("&&&& filter docs with outputs")
         num_docs_all = len(docs)
+        print("((((((( num docs all . main )))))))")
         docs = [doc for doc in docs if not doc.has_output()]
         if self.max_docs is not None:
             if num_docs_all > self.max_docs:
@@ -77,17 +79,25 @@ class MainProcess:
         self.initialize()
 
         # fetch the list of lazy downloading IngestDoc obj's
+        print("%%%% lazy get docs")
         docs = self.doc_connector.get_ingest_docs()
 
         # remove docs that have already been processed
         if not self.reprocess:
+            print("****** filter docs with outputs")
             docs = self._filter_docs_with_outputs(docs)
             if not docs:
                 return
 
+        print("********&&&&&&&##### doc_processor")
         # Debugging tip: use the below line and comment out the mp.Pool loop
         # block to remain in single process
         self.doc_processor_fn(docs[0])
+
+        print("@@@@@@@@@@@@@@ docs")
+
+        print(docs)
+        # breakpoint()
 
         # with mp.Pool(
         #     processes=self.num_processes,
@@ -748,6 +758,8 @@ def main(
                 SimpleBoxConfig,
             )
             print("*************** BOX")
+            oauth=JWTAuth.from_settings_file("/Users/davidpotter/Documents/Unstructured/BoxJWT/unstructured_key.json")
+            # oauth._refresh_lock = None
 
 
             doc_connector = BoxConnector(  # type: ignore
@@ -755,7 +767,7 @@ def main(
                 config=SimpleBoxConfig(
                     path=remote_url,
                     recursive=recursive,
-                    access_kwargs={"oauth": JWTAuth.from_settings_file("/Users/davidpotter/Documents/Unstructured/BoxJWT/unstructured_key.json")},
+                    access_kwargs={"oauth": oauth},
                 ),
             )
         elif protocol == "dropbox":
