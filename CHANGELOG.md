@@ -1,4 +1,4 @@
-## 0.8.6-dev1
+## 0.8.6
 
 ### Enhancements
 
