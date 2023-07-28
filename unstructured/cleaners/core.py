@@ -14,7 +14,7 @@ from unstructured.nlp.patterns import (
     PARAGRAPH_PATTERN_RE,
     UNICODE_BULLETS_RE,
     REFERENCE_PATTERN_RE,
-    LINE_BREAK_RE
+    LINE_BREAK_RE,
 )
 
 
@@ -71,7 +71,7 @@ def clean_ordered_bullets(text) -> str:
 def blank_line_grouper(
     text: str,
     line_split: re.Pattern = LINE_BREAK_RE,
-    paragraph_split: re.Pattern = DOUBLE_PARAGRAPH_PATTERN_RE
+    paragraph_split: re.Pattern = DOUBLE_PARAGRAPH_PATTERN_RE,
 ) -> str:
     """Groups paragraphs that have line breaks for visual/formatting purposes.
     For example:
@@ -112,7 +112,7 @@ def auto_paragraph_grouper(
     text: str,
     line_split: re.Pattern = LINE_BREAK_RE,
     max_line_count: Optional[int] = 2000,
-    threshold: float = 0.5
+    threshold: float = 0.5,
 ) -> str:
     """
     Checks the ratio of new line (\n) over the total max_line_count 
