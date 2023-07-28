@@ -15,8 +15,6 @@ from unstructured.logger import logger
 from unstructured.partition.common import exactly_one
 from unstructured.partition.email import partition_email
 from unstructured.partition.json import partition_json
-from unstructured.partition.ppt import partition_ppt
-from unstructured.partition.pptx import partition_pptx
 from unstructured.partition.text import partition_text
 from unstructured.partition.xlsx import partition_xlsx
 from unstructured.utils import dependency_exists
@@ -26,12 +24,12 @@ if dependency_exists("pandas") and dependency_exists("lxml"):
     from unstructured.partition.tsv import partition_tsv
 
 
-if dependency_exists("python-docx"):
+if dependency_exists("docx"):
     from unstructured.partition.doc import partition_doc
     from unstructured.partition.docx import partition_docx
 
 
-if dependency_exists("python-docx") and dependency_exists("pypandoc"):
+if dependency_exists("docx") and dependency_exists("pypandoc"):
     from unstructured.partition.odt import partition_odt
 
 if dependency_exists("lxml") and dependency_exists("pypandoc"):
@@ -57,8 +55,14 @@ pdf_imports = ["pdf2image", "pdfminer", "PIL"]
 if all(dependency_exists(dep) for dep in pdf_imports):
     from unstructured.partition.pdf import partition_pdf
 
+
 if dependency_exists("unstructured_inference"):
     from unstructured.partition.image import partition_image
+
+
+if dependency_exists("pptx"):
+    from unstructured.partition.ppt import partition_ppt
+    from unstructured.partition.pptx import partition_pptx
 
 
 def partition(
