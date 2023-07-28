@@ -1,7 +1,30 @@
-## 0.8.5-dev1
+## 0.8.7
 
 ### Enhancements
 
+* Put back useful function `split_by_paragraph`
+
+### Features
+
+### Fixes
+
+* Fix argument order in NLTK download step
+
+## 0.8.6
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* Remove debug print lines and non-functional code
+
+## 0.8.5
+
+### Enhancements
+
+* Add parameter `skip_infer_table_types` to enable (skip) table extraction for other doc types
 * Adds optional Unstructured API unit tests in CI
 * Tracks last modified date for all document types.
 * Add auto_paragraph_grouper to detect new-line and blank-line new paragraph for .txt files.
@@ -9,6 +32,9 @@
 ### Features
 
 ### Fixes
+
+* NLTK now only gets downloaded if necessary.
+* Handling for empty tables in Word Documents and PowerPoints.
 
 ## 0.8.4
 
