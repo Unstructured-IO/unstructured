@@ -1,3 +1,13 @@
+## 0.8.7
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* Put back useful function `split_by_paragraph`
+
 ## 0.8.6
 
 ### Enhancements
