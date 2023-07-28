@@ -44,8 +44,10 @@ mpmath==1.3.0
     # via sympy
 networkx==3.1
     # via torch
-numpy==1.25.1
-    # via transformers
+numpy==1.24.4
+    # via
+    #   -r requirements/huggingface.in
+    #   transformers
 packaging==23.1
     # via
     #   huggingface-hub
