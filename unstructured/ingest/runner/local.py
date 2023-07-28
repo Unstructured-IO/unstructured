@@ -3,7 +3,7 @@ from typing import Optional
 
 from unstructured.ingest.interfaces import ProcessorConfigs, StandardConnectorConfig
 from unstructured.ingest.logger import ingest_log_streaming_init
-from unstructured.ingest.process import process_documents
+from unstructured.ingest.processor import process_documents
 
 
 def local(

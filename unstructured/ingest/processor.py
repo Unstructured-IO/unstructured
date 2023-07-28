@@ -14,7 +14,7 @@ with suppress(RuntimeError):
     mp.set_start_method("spawn")
 
 
-class Process:
+class Processor:
     def __init__(
         self,
         doc_connector,
@@ -100,7 +100,7 @@ def process_documents(
         encoding=processor_config.encoding,
     )
 
-    Process(
+    Processor(
         doc_connector=doc_connector,
         doc_processor_fn=process_document_with_partition_args,
         num_processes=processor_config.num_processes,
