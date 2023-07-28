@@ -12,6 +12,8 @@
 
 ### Enhancements
 
+* Put back useful function `split_by_paragraph`
+
 ### Features
 
 ### Fixes
