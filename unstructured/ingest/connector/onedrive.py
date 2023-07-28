@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, Optional
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.ingest.interfaces import (
@@ -22,12 +22,12 @@ MAX_MB_SIZE = 512_000_000
 
 @dataclass
 class SimpleOneDriveConfig(BaseConnectorConfig):
-    client_id: str
-    client_credential: str = field(repr=False)
+    client_id: Optional[str]
+    client_credential: Optional[str] = field(repr=False)
     user_pname: str
     tenant: str = field(repr=False)
-    authority_url: str = field(repr=False)
-    folder: str = field(default="")
+    authority_url: Optional[str] = field(repr=False)
+    folder: Optional[str] = field(default="")
     recursive: bool = False
 
     def __post_init__(self):

@@ -4,7 +4,7 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from itertools import chain
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from office365.onedrive.driveitems.driveItem import DriveItem
 
@@ -30,11 +30,11 @@ class MissingFolderError(Exception):
 class SimpleOutlookConfig(BaseConnectorConfig):
     """This class is getting the token."""
 
-    client_id: str
-    client_credential: str = field(repr=False)
+    client_id: Optional[str]
+    client_credential: Optional[str] = field(repr=False)
     user_email: str
-    tenant: str = field(repr=False)
-    authority_url: str = field(repr=False)
+    tenant: Optional[str] = field(repr=False)
+    authority_url: Optional[str] = field(repr=False)
     ms_outlook_folders: List[str]
     recursive: bool = False
 

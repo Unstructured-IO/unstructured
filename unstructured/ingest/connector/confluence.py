@@ -2,6 +2,7 @@ import math
 import os
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Optional
 
 from atlassian import Confluence
 
@@ -28,10 +29,10 @@ class SimpleConfluenceConfig(BaseConnectorConfig):
     for more info on the api_token.
     """
 
-    user_email: str
-    api_token: str
+    user_email: Optional[str]
+    api_token: Optional[str]
     url: str
-    list_of_spaces: str
+    list_of_spaces: Optional[str]
     max_number_of_spaces: int
     max_number_of_docs_from_each_space: int
 

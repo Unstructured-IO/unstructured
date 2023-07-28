@@ -1,16 +1,17 @@
-import hashlib
 import logging
 
 import click
 
 from unstructured.ingest.cli.common import (
+    add_recursive_option,
+    add_shared_options,
     log_options,
+    map_to_processor_config,
     map_to_standard_config,
-    process_documents,
     run_init_checks,
-    update_download_dir_hash,
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
+from unstructured.ingest.runner import outlook as outlook_fn
 
 
 @click.command()
@@ -47,33 +48,21 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
     help="Outlook email to download messages from.",
 )
 def outlook(**options):
-    outlook_fn(**options)
+    verbose = options.get("verbose", False)
+    ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
+    log_options(options)
+    try:
+        run_init_checks(**options)
+        connector_config = map_to_standard_config(options)
+        processor_config = map_to_processor_config(options)
+        outlook_fn(connector_config=connector_config, processor_config=processor_config, **options)
+    except Exception as e:
+        logger.error(e, exc_info=True)
+        raise click.ClickException(str(e)) from e
 
 
-def outlook_fn(**options):
-    run_init_checks(options=options)
-    ingest_log_streaming_init(logging.DEBUG if options["verbose"] else logging.INFO)
-    log_options(options=options)
-
-    hashed_dir_name = hashlib.sha256(options["user_email"].encode("utf-8"))
-    update_download_dir_hash(options=options, hashed_dir_name=hashed_dir_name, logger=logger)
-
-    from unstructured.ingest.connector.outlook import (
-        OutlookConnector,
-        SimpleOutlookConfig,
-    )
-
-    doc_connector = OutlookConnector(  # type: ignore
-        standard_config=map_to_standard_config(options=options),
-        config=SimpleOutlookConfig(
-            client_id=options["client_id"],
-            client_credential=options["client_cred"],
-            user_email=options["user_email"],
-            tenant=options["tenant"],
-            authority_url=options["authority_url"],
-            ms_outlook_folders=SimpleOutlookConfig.parse_folders(options["outlook_folders"]),
-            recursive=options["recursive"],
-        ),
-    )
-
-    process_documents(doc_connector=doc_connector, options=options)
+def get_cmd() -> click.Command:
+    cmd = outlook
+    add_recursive_option(cmd)
+    add_shared_options(cmd)
+    return cmd

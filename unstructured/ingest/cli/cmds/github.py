@@ -1,16 +1,16 @@
-import hashlib
 import logging
 
 import click
 
 from unstructured.ingest.cli.common import (
+    add_shared_options,
     log_options,
+    map_to_processor_config,
     map_to_standard_config,
-    process_documents,
     run_init_checks,
-    update_download_dir_hash,
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
+from unstructured.ingest.runner import github as github_fn
 
 
 @click.command()
@@ -39,34 +39,20 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
     ' or a repository owner/name pair, e.g. "Unstructured-IO/unstructured"',
 )
 def github(**options):
-    github_fn(**options)
+    verbose = options.get("verbose", False)
+    ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
+    log_options(options)
+    try:
+        run_init_checks(**options)
+        connector_config = map_to_standard_config(options)
+        processor_config = map_to_processor_config(options)
+        github_fn(connector_config=connector_config, processor_config=processor_config, **options)
+    except Exception as e:
+        logger.error(e, exc_info=True)
+        raise click.ClickException(str(e)) from e
 
 
-def github_fn(**options):
-    run_init_checks(options=options)
-    ingest_log_streaming_init(logging.DEBUG if options["verbose"] else logging.INFO)
-    log_options(options=options)
-
-    hashed_dir_name = hashlib.sha256(
-        "{url}_{git_branch}".format(url=options["url"], git_branch=options["git_branch"]).encode(
-            "utf-8",
-        ),
-    )
-    update_download_dir_hash(options=options, hashed_dir_name=hashed_dir_name, logger=logger)
-
-    from unstructured.ingest.connector.github import (
-        GitHubConnector,
-        SimpleGitHubConfig,
-    )
-
-    doc_connector = GitHubConnector(  # type: ignore
-        standard_config=map_to_standard_config(options=options),
-        config=SimpleGitHubConfig(
-            url=options["url"],
-            access_token=options["git_access_token"],
-            branch=options["git_branch"],
-            file_glob=options["git_file_glob"],
-        ),
-    )
-
-    process_documents(doc_connector=doc_connector, options=options)
+def get_cmd() -> click.Command:
+    cmd = github
+    add_shared_options(cmd)
+    return cmd

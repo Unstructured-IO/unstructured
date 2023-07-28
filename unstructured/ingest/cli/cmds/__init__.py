@@ -1,39 +1,39 @@
-from .azure import azure
-from .biomed import biomed
-from .confluence import confluence
-from .discord import discord
-from .dropbox import dropbox
-from .elasticsearch import elasticsearch
-from .fsspec import fsspec
-from .gcs import gcs
-from .github import github
-from .gitlab import gitlab
-from .google_drive import gdrive
-from .local import local
-from .onedrive import onedrive
-from .outlook import outlook
-from .reddit import reddit
-from .s3 import s3
-from .slack import slack
-from .wikipedia import wikipedia
+from .azure import get_cmd as azure
+from .biomed import get_cmd as biomed
+from .confluence import get_cmd as confluence
+from .discord import get_cmd as discord
+from .dropbox import get_cmd as dropbox
+from .elasticsearch import get_cmd as elasticsearch
+from .fsspec import get_cmd as fsspec
+from .gcs import get_cmd as gcs
+from .github import get_cmd as github
+from .gitlab import get_cmd as gitlab
+from .google_drive import get_cmd as gdrive
+from .local import get_cmd as local
+from .onedrive import get_cmd as onedrive
+from .outlook import get_cmd as outlook
+from .reddit import get_cmd as reddit
+from .s3 import get_cmd as s3
+from .slack import get_cmd as slack
+from .wikipedia import get_cmd as wikipedia
 
 __all__ = [
-    "gcs",
-    "s3",
-    "dropbox",
     "azure",
+    "biomed",
+    "confluence",
+    "discord",
+    "dropbox",
+    "elasticsearch",
     "fsspec",
+    "gcs",
+    "gdrive",
     "github",
     "gitlab",
-    "reddit",
-    "slack",
-    "discord",
-    "wikipedia",
-    "gdrive",
-    "biomed",
+    "local",
     "onedrive",
     "outlook",
-    "local",
-    "elasticsearch",
-    "confluence",
+    "reddit",
+    "s3",
+    "slack",
+    "wikipedia",
 ]

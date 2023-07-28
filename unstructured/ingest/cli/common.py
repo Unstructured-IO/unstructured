@@ -1,58 +1,64 @@
-from __future__ import annotations
-
-import hashlib
 import logging
-from functools import partial
-from pathlib import Path
+from typing import Optional
 
 from click import ClickException, Command, Option
 
-from unstructured.ingest.doc_processor.generalized import process_document
-from unstructured.ingest.interfaces import BaseConnector, StandardConnectorConfig
+from unstructured.ingest.interfaces import (
+    ProcessorConfigs,
+    StandardConnectorConfig,
+)
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.process import Process
 
 
-def run_init_checks(options: dict):
-    ingest_log_streaming_init(logging.DEBUG if options["verbose"] else logging.INFO)
+def run_init_checks(
+    verbose: bool,
+    local_input_path: Optional[str],
+    download_dir: Optional[str],
+    metadata_exclude: Optional[str],
+    metadata_include: Optional[str],
+    flatten_metadata: bool,
+    fields_include: str,
+    partition_by_api: bool,
+    partition_endpoint: Optional[str],
+    preserve_downloads: bool,
+    download_only: bool,
+    **kwargs,
+):
+    ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
     # Initial breaking checks
-    if options["local_input_path"] is not None and options["download_dir"]:
+    if local_input_path is not None and download_dir:
         raise ClickException(
             "Files should already be in local file system: there is nothing to download, "
             "but --download-dir is specified.",
         )
-    if options["metadata_exclude"] is not None and options["metadata_include"] is not None:
+    if metadata_exclude is not None and metadata_include is not None:
         raise ClickException(
             "Arguments `--metadata-include` and `--metadata-exclude` are "
             "mutually exclusive with each other.",
         )
 
     # Warnings
-    if options["flatten_metadata"] and "metadata" not in options["fields_include"]:
+    if flatten_metadata and "metadata" not in fields_include:
         logger.warning(
             "`--flatten-metadata` is specified, but there is no metadata to flatten, "
-            "since `metadata` is not specified in `--fields-include`.",
+            "since `--metadata` is not specified in `--fields-include`.",
         )
-    if "metadata" not in options["fields_include"] and (
-        options["metadata_include"] or options["metadata_exclude"]
-    ):
+    if "metadata" not in fields_include and (metadata_include or metadata_exclude):
         logger.warning(
-            "Either `--metadata-include` or `--metadata-exclude` is specified"
-            " while metadata is not specified in --fields-include.",
+            "Either '--metadata-include` or `--metadata-exclude` is specified"
+            " while metadata is not specified in fields-include.",
         )
 
     if (
-        not options["partition_by_api"]
-        and options["partition_endpoint"] != "https://api.unstructured.io/general/v0/general"
+        not partition_by_api
+        and partition_endpoint != "https://api.unstructured.io/general/v0/general"
     ):
         logger.warning(
             "Ignoring --partition-endpoint because --partition-by-api was not set",
         )
-    if (not options["preserve_downloads"] and not options["download_only"]) and options[
-        "download_dir"
-    ]:
+    if (not preserve_downloads and not download_only) and download_dir:
         logger.warning(
-            "Not preserving downloaded files but --download_dir is specified",
+            "Not preserving downloaded files but download_dir is specified",
         )
 
 
@@ -94,45 +100,38 @@ def map_to_standard_config(options: dict) -> StandardConnectorConfig:
     )
 
 
-def update_download_dir_remote_url(options: dict, remote_url: str, logger: logging.Logger) -> None:
-    hashed_dir_name = hashlib.sha256(remote_url.encode("utf-8"))
-    update_download_dir_hash(options=options, hashed_dir_name=hashed_dir_name, logger=logger)
-
-
-def update_download_dir_hash(
-    options: dict,
-    hashed_dir_name: hashlib._Hash,
-    logger: logging.Logger,
-):
-    if options["local_input_path"] is None and not options["download_dir"]:
-        cache_path = Path.home() / ".cache" / "unstructured" / "ingest"
-        if not cache_path.exists():
-            cache_path.mkdir(parents=True, exist_ok=True)
-        download_dir = cache_path / hashed_dir_name.hexdigest()[:10]
-        if options["preserve_downloads"]:
-            logger.warning(
-                f"Preserving downloaded files but --download-dir is not specified,"
-                f" using {download_dir}",
-            )
-        options["download_dir"] = download_dir
-
-
-def process_documents(doc_connector: BaseConnector, options: dict) -> None:
-    process_document_with_partition_args = partial(
-        process_document,
-        strategy=options["partition_strategy"],
-        ocr_languages=options["partition_ocr_languages"],
+def map_to_processor_config(options: dict) -> ProcessorConfigs:
+    return ProcessorConfigs(
+        partition_strategy=options["partition_strategy"],
+        partition_ocr_languages=options["partition_ocr_languages"],
         encoding=options["encoding"],
-    )
-
-    Process(
-        doc_connector=doc_connector,
-        doc_processor_fn=process_document_with_partition_args,
         num_processes=options["num_processes"],
         reprocess=options["reprocess"],
-        verbose=options["verbose"],
         max_docs=options["max_docs"],
-    ).run()
+    )
+
+
+def add_remote_url_option(cmd: Command):
+    cmd.params.append(
+        Option(
+            ["--remote-url"],
+            required=True,
+            help="Remote fsspec URL formatted as `protocol://dir/path`, it can contain both "
+            "a directory or a single file.",
+        ),
+    )
+
+
+def add_recursive_option(cmd: Command):
+    cmd.params.append(
+        Option(
+            ["--recursive"],
+            is_flag=True,
+            default=False,
+            help="Recursively download files in their respective folders"
+            "otherwise stop at the files in provided folder level.",
+        ),
+    )
 
 
 def add_shared_options(cmd: Command):

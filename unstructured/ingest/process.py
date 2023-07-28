@@ -1,8 +1,13 @@
 import logging
 import multiprocessing as mp
 from contextlib import suppress
+from functools import partial
 
-from unstructured.ingest.doc_processor.generalized import initialize
+from unstructured.ingest.doc_processor.generalized import initialize, process_document
+from unstructured.ingest.interfaces import (
+    BaseConnector,
+    ProcessorConfigs,
+)
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 
 with suppress(RuntimeError):
@@ -81,3 +86,25 @@ class Process:
             pool.map(self.doc_processor_fn, docs)
 
         self.cleanup()
+
+
+def process_documents(
+    doc_connector: BaseConnector,
+    processor_config: ProcessorConfigs,
+    verbose=bool,
+) -> None:
+    process_document_with_partition_args = partial(
+        process_document,
+        strategy=processor_config.partition_strategy,
+        ocr_languages=processor_config.partition_ocr_languages,
+        encoding=processor_config.encoding,
+    )
+
+    Process(
+        doc_connector=doc_connector,
+        doc_processor_fn=process_document_with_partition_args,
+        num_processes=processor_config.num_processes,
+        reprocess=processor_config.reprocess,
+        verbose=verbose,
+        max_docs=processor_config.max_docs,
+    ).run()

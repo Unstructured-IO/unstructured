@@ -25,7 +25,7 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     gdrive \
-    --id "<file or folder id>" \
+    --drive-id "<file or folder id>" \
     --service-account-key "<path to drive service account key>" \
     --structured-output-dir google-drive-ingest-output \
     --num-processes 2 \

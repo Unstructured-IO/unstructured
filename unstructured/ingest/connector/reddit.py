@@ -1,7 +1,7 @@
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -21,10 +21,10 @@ if TYPE_CHECKING:
 @dataclass
 class SimpleRedditConfig(BaseConnectorConfig):
     subreddit_name: str
-    client_id: str
-    client_secret: str
-    user_agent: str
-    search_query: str
+    client_id: Optional[str]
+    client_secret: Optional[str]
+    user_agent: Optional[str]
+    search_query: Optional[str]
     num_posts: int
 
     def __post_init__(self):
