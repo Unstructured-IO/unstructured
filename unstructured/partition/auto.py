@@ -27,21 +27,23 @@ if dependency_exists("python-docx"):
 if dependency_exists("python-docx") and dependency_exists("pypandoc"):
     from unstructured.partition.odt import partition_odt
 
+if dependency_exists("lxml") and dependency_exists("pypandoc"):
+    from unstructured.partition.epub import partition_epub
+    from unstructured.partition.org import partition_org
+    from unstructured.partition.rst import partition_rst
+    from unstructured.partition.rtf import partition_rtf
+
 
 from unstructured.partition.common import exactly_one
 from unstructured.partition.email import partition_email
-from unstructured.partition.epub import partition_epub
 from unstructured.partition.html import partition_html
 from unstructured.partition.image import partition_image
 from unstructured.partition.json import partition_json
 from unstructured.partition.md import partition_md
 from unstructured.partition.msg import partition_msg
-from unstructured.partition.org import partition_org
 from unstructured.partition.pdf import partition_pdf
 from unstructured.partition.ppt import partition_ppt
 from unstructured.partition.pptx import partition_pptx
-from unstructured.partition.rst import partition_rst
-from unstructured.partition.rtf import partition_rtf
 from unstructured.partition.text import partition_text
 from unstructured.partition.xlsx import partition_xlsx
 from unstructured.partition.xml import partition_xml
