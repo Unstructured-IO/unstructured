@@ -1,3 +1,13 @@
+## 0.8.7
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* Fix argument order in NLTK download step
+
 ## 0.8.6
 
 ### Enhancements
