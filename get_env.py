@@ -192,15 +192,25 @@ def main():
         else:
             print("Libmagic is not installed")
 
-
-    if is_brew_package_installed("libreoffice"):
-        print("LibreOffice version: ", get_brew_package_version("libreoffice"))
-    else:
-        libreoffice_version = get_libreoffice_version()
-        if libreoffice_version:
-            print("LibreOffice version: ", libreoffice_version)
+    # Check if the current operating system is not Windows before printing LibreOffice version
+    if platform.system() != 'Windows':
+        if is_brew_package_installed("libreoffice"):
+            print("LibreOffice version: ", get_brew_package_version("libreoffice"))
         else:
-            print("LibreOffice is not installed")
+            libreoffice_version = get_libreoffice_version()
+            if libreoffice_version:
+                print("LibreOffice version: ", libreoffice_version)
+            else:
+                print("LibreOffice is not installed")
+
+#    if is_brew_package_installed("libreoffice"):
+#        print("LibreOffice version: ", get_brew_package_version("libreoffice"))
+#    else:
+#        libreoffice_version = get_libreoffice_version()
+#        if libreoffice_version:
+#            print("LibreOffice version: ", libreoffice_version)
+#        else:
+#            print("LibreOffice is not installed")
 
 
 if __name__ == "__main__":
