@@ -53,9 +53,11 @@ def is_python_package_installed(package_name):
     result = subprocess.run(
         ["pip", "list"], stdout=subprocess.PIPE, text=True, check=True
     )
+
     for line in result.stdout.splitlines():
         if line.lower().startswith(package_name.lower()):
             return True
+
     return False
 
 
@@ -71,18 +73,23 @@ def is_brew_package_installed(package_name):
     """
     if not command_exists("brew"):
         return False
+
     result = subprocess.run(
         ["brew", "list"], stdout=subprocess.PIPE, text=True, check=True
     )
+
     for line in result.stdout.splitlines():
         if line.lower().startswith(package_name.lower()):
             return True
+
     result = subprocess.run(
         ["brew", "list", "--cask"], stdout=subprocess.PIPE, text=True, check=True
     )
+
     for line in result.stdout.splitlines():
         if line.lower().startswith(package_name.lower()):
             return True
+
     return False
 
 
@@ -121,8 +128,10 @@ def get_brew_package_version(package_name):
         stderr=subprocess.DEVNULL,
         text=True,
     )
+
     for line in result.stdout.splitlines():
         return line
+
     return None
 
 
@@ -139,6 +148,7 @@ def get_libmagic_version():
         stderr=subprocess.PIPE,
         text=True,
     )
+
     return result.stdout.strip()
 
 
@@ -155,6 +165,7 @@ def get_libreoffice_version():
         stderr=subprocess.PIPE,
         text=True,
     )
+
     return result.stdout.strip()
 
 
@@ -188,9 +199,8 @@ def main():
     else:
         print("Torch is not installed")
 
-    if is_brew_package_installed("tesseract") or is_python_package_installed(
-        "pytesseract"
-    ):
+    if is_brew_package_installed("tesseract") or \
+        is_python_package_installed("pytesseract"):
         print(
             "Tesseract version: ",
             get_brew_package_version("tesseract")
@@ -199,9 +209,8 @@ def main():
     else:
         print("Tesseract is not installed")
 
-    if is_python_package_installed("paddlepaddle") or is_python_package_installed(
-        "paddleocr"
-    ):
+    if is_python_package_installed("paddlepaddle") or \
+        is_python_package_installed("paddleocr"):
         print(
             "PaddleOCR version: ",
             get_python_package_version("paddlepaddle")
@@ -219,7 +228,6 @@ def main():
         else:
             print("Libmagic is not installed")
 
-    # Check if the current operating system is not Windows before printing LibreOffice version
     if platform.system() != "Windows":
         if is_brew_package_installed("libreoffice"):
             print("LibreOffice version: ", get_brew_package_version("libreoffice"))
