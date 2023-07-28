@@ -7,7 +7,6 @@ from io import BufferedReader, BytesIO, TextIOWrapper
 from tempfile import SpooledTemporaryFile
 from typing import IO, TYPE_CHECKING, Any, BinaryIO, Dict, List, Optional, Tuple, Union
 
-from docx import table as docxtable
 from tabulate import tabulate
 
 from unstructured.documents.coordinates import CoordinateSystem
@@ -304,12 +303,12 @@ def convert_to_bytes(
     return f_bytes
 
 
-def convert_ms_office_table_to_text(table: docxtable.Table, as_html: bool = True):
+def convert_ms_office_table_to_text(table, as_html: bool = True):
     """
     Convert a table object from a Word document to an HTML table string using the tabulate library.
 
     Args:
-        table (Table): A Table object.
+        table (Table): A docx.table.Table object.
         as_html (bool): Whether to return the table as an HTML string (True) or a
             plain text string (False)
 

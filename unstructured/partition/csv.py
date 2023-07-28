@@ -17,10 +17,12 @@ from unstructured.partition.common import (
     get_last_modified_date_from_file,
     spooled_to_bytes_io_if_needed,
 )
+from unstructured.utils import requires_dependencies
 
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.CSV)
+@requires_dependencies(["pandas", "lxml"], extras="csv")
 def partition_csv(
     filename: Optional[str] = None,
     file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,

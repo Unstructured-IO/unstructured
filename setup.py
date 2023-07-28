@@ -71,8 +71,8 @@ all_doc_reqs = list(
         + rtf_reqs
         + rst_reqs
         + tsv_reqs
-        + xlsx_reqs
-    )
+        + xlsx_reqs,
+    ),
 )
 
 

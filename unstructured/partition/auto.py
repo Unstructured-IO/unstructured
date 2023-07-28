@@ -12,8 +12,14 @@ from unstructured.file_utils.filetype import (
     is_json_processable,
 )
 from unstructured.logger import logger
+from unstructured.utils import dependency_exists
+
+if dependency_exists("pandas") and dependency_exists("lxml"):
+    from unstructured.partition.csv import partition_csv
+    from unstructured.partition.tsv import partition_tsv
+
+
 from unstructured.partition.common import exactly_one
-from unstructured.partition.csv import partition_csv
 from unstructured.partition.doc import partition_doc
 from unstructured.partition.docx import partition_docx
 from unstructured.partition.email import partition_email
@@ -31,7 +37,6 @@ from unstructured.partition.pptx import partition_pptx
 from unstructured.partition.rst import partition_rst
 from unstructured.partition.rtf import partition_rtf
 from unstructured.partition.text import partition_text
-from unstructured.partition.tsv import partition_tsv
 from unstructured.partition.xlsx import partition_xlsx
 from unstructured.partition.xml import partition_xml
 
