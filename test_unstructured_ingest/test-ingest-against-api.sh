@@ -12,6 +12,7 @@ OUTPUT_FOLDER_NAME=api-ingest-output
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
+    local \
     --api-key "$UNS_API_KEY" \
     --metadata-exclude coordinates,metadata.date \
     --partition-by-api \
@@ -19,7 +20,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --reprocess \
     --structured-output-dir "$OUTPUT_DIR" \
     --verbose \
-    local \
     --file-glob "*.pdf" \
     --input-path example-docs
 
