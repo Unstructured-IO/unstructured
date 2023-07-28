@@ -102,11 +102,6 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def get_file(self):
         """Fetches the file from the current filesystem and stores it locally."""
         from fsspec import AbstractFileSystem, get_filesystem_class
-        print("******* remote file path")
-        print(self.remote_file_path)
-
-        print("******* local path")
-        print(self._tmp_download_file().as_posix())
 
         self._create_full_tmp_dir_path()
         fs: AbstractFileSystem = get_filesystem_class(self.config.protocol)(
