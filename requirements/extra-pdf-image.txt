@@ -162,8 +162,10 @@ safetensors==0.3.1
     # via
     #   timm
     #   transformers
-scipy==1.11.1
-    # via layoutparser
+scipy==1.10.1
+    # via
+    #   -c requirements/constraints.in
+    #   layoutparser
 six==1.16.0
     # via python-dateutil
 sympy==1.12
