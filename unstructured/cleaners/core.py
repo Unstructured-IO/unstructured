@@ -1,20 +1,19 @@
 import quopri
 import re
 import sys
-
+import unicodedata
 from typing import Optional
 
-import unicodedata
 from unstructured.file_utils.encoding import (
     format_encoding_str,
 )
 from unstructured.nlp.patterns import (
     DOUBLE_PARAGRAPH_PATTERN_RE,
+    LINE_BREAK_RE,
     PARAGRAPH_PATTERN,
     PARAGRAPH_PATTERN_RE,
-    UNICODE_BULLETS_RE,
     REFERENCE_PATTERN_RE,
-    LINE_BREAK_RE,
+    UNICODE_BULLETS_RE,
 )
 
 
@@ -68,6 +67,7 @@ def clean_ordered_bullets(text) -> str:
 
     return text_cl
 
+
 def blank_line_grouper(
     text: str,
     line_split: re.Pattern = LINE_BREAK_RE,
@@ -108,6 +108,7 @@ def blank_line_grouper(
 
     return "\n\n".join(clean_paragraphs)
 
+
 def auto_paragraph_grouper(
     text: str,
     line_split: re.Pattern = LINE_BREAK_RE,
@@ -115,7 +116,7 @@ def auto_paragraph_grouper(
     threshold: float = 0.5,
 ) -> str:
     """
-    Checks the ratio of new line (\n) over the total max_line_count 
+    Checks the ratio of new line (\n) over the total max_line_count
     if the ratio of new line is less than the threshold, the document is considered a new-line grouping type
     and returned the original text
     if the ratio of new line is greater than or equal to the threshold, the document is considered a blank-line grouping type
@@ -135,6 +136,7 @@ def auto_paragraph_grouper(
         return text
     else:
         return blank_line_grouper(text)
+
 
 # TODO(robinson) - There's likely a cleaner was to accomplish this and get all of the
 # unicode characters instead of just the quotes. Doing this for now since quotes are
