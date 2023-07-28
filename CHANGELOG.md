@@ -1,3 +1,13 @@
+## 0.8.6
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* Remove debug print lines and non-functional code
+
 ## 0.8.5
 
 ### Enhancements

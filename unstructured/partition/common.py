@@ -77,7 +77,6 @@ def normalize_layout_element(
     # in order to add coordinates metadata to the element.
     coordinates = layout_dict.get("coordinates")
     element_type = layout_dict.get("type")
-    print("element_type", element_type)
     if element_type == "List":
         return layout_list_to_list_items(
             text,
