@@ -12,9 +12,9 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/../../.. || exit 1
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
+   --box-jwt "$BOX_JWT" \
    --remote-url box://utic-test-ingest-fixtures \
    --structured-output-dir box-output \
    --num-processes 2 \
-   --box-jwt "$BOX_JWT" \
    --recursive \
    --verbose 
