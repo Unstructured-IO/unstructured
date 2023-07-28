@@ -12,10 +12,14 @@ beautifulsoup4==4.12.2
     # via furo
 certifi==2023.7.22
     # via
+    #   -c requirements/base.txt
+    #   -c requirements/constraints.in
     #   -r requirements/build.in
     #   requests
 charset-normalizer==3.2.0
-    # via requests
+    # via
+    #   -c requirements/base.txt
+    #   requests
 docutils==0.18.1
     # via
     #   sphinx
@@ -23,7 +27,9 @@ docutils==0.18.1
 furo==2023.7.26
     # via -r requirements/build.in
 idna==3.4
-    # via requests
+    # via
+    #   -c requirements/base.txt
+    #   requests
 imagesize==1.4.1
     # via sphinx
 jinja2==3.1.2
@@ -37,7 +43,9 @@ pygments==2.15.1
     #   furo
     #   sphinx
 requests==2.31.0
-    # via sphinx
+    # via
+    #   -c requirements/base.txt
+    #   sphinx
 snowballstemmer==2.2.0
     # via sphinx
 soupsieve==2.4.1
@@ -67,5 +75,8 @@ sphinxcontrib-qthelp==1.0.3
     # via sphinx
 sphinxcontrib-serializinghtml==1.1.5
     # via sphinx
-urllib3==2.0.4
-    # via requests
+urllib3==1.26.16
+    # via
+    #   -c requirements/base.txt
+    #   -c requirements/constraints.in
+    #   requests

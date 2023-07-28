@@ -18,3 +18,7 @@ pyparsing<3.1.0
 # NOTE(robinson) - Numpy dropped Python 3.8 support in 1.25.0
 numpy<1.25.0
 scipy<1.11.0
+IPython<8.14
+# NOTE(robinson) - See this issue here
+# https://github.com/facebookresearch/detectron2/issues/5010
+Pillow<10.0.0
