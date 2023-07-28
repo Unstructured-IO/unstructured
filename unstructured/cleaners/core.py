@@ -3,6 +3,8 @@ import re
 import sys
 import unicodedata
 
+from typing import Optional
+
 from unstructured.file_utils.encoding import (
     format_encoding_str,
 )
@@ -11,6 +13,8 @@ from unstructured.nlp.patterns import (
     PARAGRAPH_PATTERN,
     PARAGRAPH_PATTERN_RE,
     UNICODE_BULLETS_RE,
+    REFERENCE_PATTERN_RE,
+    LINE_BREAK_RE
 )
 
 
@@ -107,6 +111,52 @@ def group_broken_paragraphs(
 
     return "\n\n".join(clean_paragraphs)
 
+def blank_line_grouper(
+    text: str,
+    line_split: re.Pattern = LINE_BREAK_RE,
+    paragraph_split: re.Pattern = DOUBLE_PARAGRAPH_PATTERN_RE
+) -> str:
+    paragraphs = paragraph_split.split(text)
+    clean_paragraphs = []
+    for paragraph in paragraphs:
+        if not paragraph.strip():
+            continue
+        # NOTE(robinson) - This block is to account for lines like the following that shouldn't be
+        # grouped together, but aren't separated by a double line break.
+        #     Apache License
+        #     Version 2.0, January 2004
+        #     http://www.apache.org/licenses/
+        para_split = line_split.split(paragraph)
+        all_lines_short = all(len(line.strip().split(" ")) < 5 for line in para_split)
+        if UNICODE_BULLETS_RE.match(paragraph.strip()):
+            clean_paragraphs.extend(re.split(PARAGRAPH_PATTERN, paragraph))
+        elif all_lines_short:
+            clean_paragraphs.extend([line for line in para_split if line.strip()])
+        else:
+            clean_paragraphs.append(re.sub(PARAGRAPH_PATTERN, " ", paragraph))
+
+    return "\n\n".join(clean_paragraphs)
+
+def auto_paragraph_grouper(
+    text: str,
+    line_split: re.Pattern = LINE_BREAK_RE,
+    max_line_count: Optional[int] = 2000,
+    threshold: float = 0.5
+) -> str:
+    lines = line_split.split(text)
+    line_count, empty_line_count = 0, 0
+    for line in lines:
+        line_count += 1
+        if not line.strip():
+            empty_line_count += 1
+    line_count = min(line_count, max_line_count)
+    ratio = empty_line_count / line_count
+
+    # NOTE(klaijan) - for ratio < threshold, we pass to new-line grouper, otherwise to blank-line grouper
+    if ratio < threshold:
+        return text
+    else:
+        return blank_line_grouper(text)
 
 # TODO(robinson) - There's likely a cleaner was to accomplish this and get all of the
 # unicode characters instead of just the quotes. Doing this for now since quotes are
