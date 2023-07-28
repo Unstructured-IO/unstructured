@@ -28,7 +28,7 @@ from unstructured.ingest.runner import onedrive as onedrive_fn
 )
 @click.option(
     "--client-cred",
-    default=None,
+    required=True,
     help="Microsoft App client secret",
 )
 @click.option(

@@ -71,7 +71,7 @@ class SimpleGoogleDriveConfig(BaseConnectorConfig):
 
     # Google Drive Specific Options
     drive_id: str
-    service_account_key: Optional[str]
+    service_account_key: str
     extension: Optional[str]
     recursive: bool = False
 

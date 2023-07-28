@@ -41,6 +41,7 @@ from unstructured.ingest.runner import reddit as reddit_fn
 )
 @click.option(
     "--user-agent",
+    required=True,
     default="Unstructured Ingest Subreddit fetcher",
     help="The user agent to use on the Reddit API, see "
     "https://praw.readthedocs.io/en/stable/getting_started/quick_start.html#prerequisites"

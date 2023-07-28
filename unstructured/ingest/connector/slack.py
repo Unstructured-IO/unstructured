@@ -26,7 +26,7 @@ class SimpleSlackConfig(BaseConnectorConfig):
     """Connector config to process all messages by channel id's."""
 
     channels: List[str]
-    token: Optional[str]
+    token: str
     oldest: Optional[str]
     latest: Optional[str]
     verbose: bool = False
@@ -67,7 +67,7 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     config: SimpleSlackConfig
     channel: str
-    token: Optional[str]
+    token: str
     oldest: Optional[str]
     latest: Optional[str]
 

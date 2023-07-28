@@ -13,7 +13,7 @@ def slack(
     connector_config: StandardConnectorConfig,
     processor_config: ProcessorConfigs,
     channels: str,
-    token: Optional[str],
+    token: str,
     start_date: Optional[str],
     end_date: Optional[str],
     **kwargs,

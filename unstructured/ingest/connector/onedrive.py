@@ -22,8 +22,8 @@ MAX_MB_SIZE = 512_000_000
 
 @dataclass
 class SimpleOneDriveConfig(BaseConnectorConfig):
-    client_id: Optional[str]
-    client_credential: Optional[str] = field(repr=False)
+    client_id: str
+    client_credential: str = field(repr=False)
     user_pname: str
     tenant: str = field(repr=False)
     authority_url: Optional[str] = field(repr=False)
@@ -33,7 +33,7 @@ class SimpleOneDriveConfig(BaseConnectorConfig):
     def __post_init__(self):
         if not (self.client_id and self.client_credential and self.user_pname):
             raise ValueError(
-                "Please provide one of the following mandatory values:"
+                "Please provide all the following mandatory values:"
                 "\n-ms-client_id\n-ms-client_cred\n-ms-user-pname",
             )
         self.token_factory = self._acquire_token

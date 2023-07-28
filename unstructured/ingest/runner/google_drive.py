@@ -12,7 +12,7 @@ def gdrive(
     verbose: bool,
     connector_config: StandardConnectorConfig,
     processor_config: ProcessorConfigs,
-    service_account_key: Optional[str],
+    service_account_key: str,
     recursive: bool,
     drive_id: str,
     extension: Optional[str],

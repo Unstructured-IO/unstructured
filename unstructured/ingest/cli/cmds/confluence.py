@@ -49,7 +49,7 @@ from unstructured.ingest.runner import confluence as confluence_fn
 )
 @click.option(
     "--user-email",
-    default=None,
+    required=True,
     help="Email to authenticate into Confluence Cloud",
 )
 def confluence(

@@ -29,8 +29,8 @@ class SimpleConfluenceConfig(BaseConnectorConfig):
     for more info on the api_token.
     """
 
-    user_email: Optional[str]
-    api_token: Optional[str]
+    user_email: str
+    api_token: str
     url: str
     list_of_spaces: Optional[str]
     max_number_of_spaces: int

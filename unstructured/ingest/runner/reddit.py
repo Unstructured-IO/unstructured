@@ -15,7 +15,7 @@ def reddit(
     subreddit_name: str,
     client_id: Optional[str],
     client_secret: Optional[str],
-    user_agent: Optional[str],
+    user_agent: str,
     search_query: Optional[str],
     num_posts: int,
     **kwargs,
