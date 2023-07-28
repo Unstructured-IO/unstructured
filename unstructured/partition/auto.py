@@ -16,7 +16,6 @@ from unstructured.partition.common import exactly_one
 from unstructured.partition.email import partition_email
 from unstructured.partition.json import partition_json
 from unstructured.partition.text import partition_text
-from unstructured.partition.xlsx import partition_xlsx
 from unstructured.utils import dependency_exists
 
 if dependency_exists("pandas") and dependency_exists("lxml"):
@@ -63,6 +62,10 @@ if dependency_exists("unstructured_inference"):
 if dependency_exists("pptx"):
     from unstructured.partition.ppt import partition_ppt
     from unstructured.partition.pptx import partition_pptx
+
+
+if dependency_exists("pandas") and dependency_exists("openpyxl"):
+    from unstructured.partition.xlsx import partition_xlsx
 
 
 def partition(
