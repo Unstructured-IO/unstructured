@@ -92,9 +92,6 @@ class XMLDocument(Document):
                         element = etree.Element("span")
                         element.text = str(element_from_text(text=text))
                         document_tree.append(element)
-            if "</a>" in content:
-                tree = html.fromstring(content)
-                links = list(tree.iterlinks())
 
             if self.stylesheet:
                 if isinstance(self.parser, etree.HTMLParser):
