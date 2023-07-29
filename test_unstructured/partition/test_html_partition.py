@@ -357,7 +357,7 @@ def test_partition_html_metadata_date(mocker, filename="example-docs/fake-html.h
     elements = partition_html(filename=filename)
 
     assert isinstance(elements[0], Title)
-    assert elements[0].metadata.date == mocked_last_modification_date
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
 
 
 def test_partition_html_from_file_metadata_date(
@@ -375,7 +375,7 @@ def test_partition_html_from_file_metadata_date(
         elements = partition_html(file=f)
 
     assert isinstance(elements[0], Title)
-    assert elements[0].metadata.date == mocked_last_modification_date
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
 
 
 def test_partition_html_custom_metadata_date(
@@ -396,7 +396,7 @@ def test_partition_html_custom_metadata_date(
     )
 
     assert isinstance(elements[0], Title)
-    assert elements[0].metadata.date == expected_last_modification_date
+    assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
 def test_partition_html_from_file_custom_metadata_date(
@@ -415,14 +415,14 @@ def test_partition_html_from_file_custom_metadata_date(
         elements = partition_html(file=f, metadata_date=expected_last_modification_date)
 
     assert isinstance(elements[0], Title)
-    assert elements[0].metadata.date == expected_last_modification_date
+    assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
 def test_partition_html_from_text_metadata_date(filename="example-docs/fake-html.html"):
     elements = partition_html(text="<html><div><p>TEST</p></div></html>")
 
     assert isinstance(elements[0], Title)
-    assert elements[0].metadata.date is None
+    assert elements[0].metadata.last_modified is None
 
 
 def test_partition_html_from_text_custom_metadata_date(
@@ -436,7 +436,7 @@ def test_partition_html_from_text_custom_metadata_date(
     )
 
     assert isinstance(elements[0], Title)
-    assert elements[0].metadata.date == expected_last_modification_date
+    assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
 def test_partition_html_grabs_links():

@@ -70,7 +70,7 @@ def test_partition_odt_metadata_date(
         filename=filename,
     )
 
-    assert elements[0].metadata.date == mocked_last_modification_date
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
 
 
 def test_partition_odt_with_custom_metadata_date(
@@ -90,7 +90,7 @@ def test_partition_odt_with_custom_metadata_date(
         metadata_date=expected_last_modification_date,
     )
 
-    assert elements[0].metadata.date == expected_last_modification_date
+    assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
 def test_partition_odt_from_file_metadata_date(
@@ -109,7 +109,7 @@ def test_partition_odt_from_file_metadata_date(
             file=f,
         )
 
-    assert elements[0].metadata.date == mocked_last_modification_date
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
 
 
 def test_partition_odt_from_file_with_custom_metadata_date(
@@ -127,4 +127,4 @@ def test_partition_odt_from_file_with_custom_metadata_date(
     with open(filename, "rb") as f:
         elements = partition_odt(file=f, metadata_date=expected_last_modification_date)
 
-    assert elements[0].metadata.date == expected_last_modification_date
+    assert elements[0].metadata.last_modified == expected_last_modification_date
