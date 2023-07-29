@@ -124,7 +124,7 @@ class ElementMetadata:
     data_source: Optional[DataSourceMetadata] = None
     filename: Optional[str] = None
     file_directory: Optional[str] = None
-    date: Optional[str] = None
+    last_modified: Optional[str] = None
     filetype: Optional[str] = None
     attached_to_filename: Optional[str] = None
 

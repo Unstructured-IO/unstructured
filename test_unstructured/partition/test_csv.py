@@ -65,7 +65,7 @@ def test_partition_csv_metadata_date(mocker, filename="example-docs/stanley-cups
 
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
     assert isinstance(elements[0], Table)
-    assert elements[0].metadata.date == mocked_last_modification_date
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
 
 
 def test_partition_csv_custom_metadata_date(
@@ -87,7 +87,7 @@ def test_partition_csv_custom_metadata_date(
 
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
     assert isinstance(elements[0], Table)
-    assert elements[0].metadata.date == expected_last_modification_date
+    assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
 def test_partition_csv_from_file_metadata_date(
@@ -106,7 +106,7 @@ def test_partition_csv_from_file_metadata_date(
 
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
     assert isinstance(elements[0], Table)
-    assert elements[0].metadata.date == mocked_last_modification_date
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
 
 
 def test_partition_csv_from_file_custom_metadata_date(
@@ -126,7 +126,7 @@ def test_partition_csv_from_file_custom_metadata_date(
 
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
     assert isinstance(elements[0], Table)
-    assert elements[0].metadata.date == expected_last_modification_date
+    assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
 def test_partition_csv_from_file_without_metadata(
@@ -143,4 +143,4 @@ def test_partition_csv_from_file_without_metadata(
 
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
     assert isinstance(elements[0], Table)
-    assert elements[0].metadata.date is None
+    assert elements[0].metadata.last_modified is None

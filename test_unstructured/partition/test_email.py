@@ -468,7 +468,7 @@ def test_partition_email_from_file_custom_metadata_date(
     with open(filename) as f:
         elements = partition_email(file=f, metadata_date=expected_last_modification_date)
 
-    assert elements[0].metadata.date == expected_last_modification_date
+    assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
 def test_partition_email_custom_metadata_date(
@@ -481,4 +481,4 @@ def test_partition_email_custom_metadata_date(
         metadata_date=expected_last_modification_date,
     )
 
-    assert elements[0].metadata.date == expected_last_modification_date
+    assert elements[0].metadata.last_modified == expected_last_modification_date

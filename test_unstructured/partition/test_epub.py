@@ -69,7 +69,7 @@ def test_partition_epub_metadata_date(
     )
     elements = partition_epub(filename=filename)
 
-    assert elements[0].metadata.date == mocked_last_modification_date
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
 
 
 def test_partition_epub_custom_metadata_date(
@@ -89,7 +89,7 @@ def test_partition_epub_custom_metadata_date(
         metadata_date=expected_last_modification_date,
     )
 
-    assert elements[0].metadata.date == expected_last_modification_date
+    assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
 def test_partition_epub_from_file_metadata_date(
@@ -106,7 +106,7 @@ def test_partition_epub_from_file_metadata_date(
     with open(filename, "rb") as f:
         elements = partition_epub(file=f)
 
-    assert elements[0].metadata.date == mocked_last_modification_date
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
 
 
 def test_partition_epub_from_file_custom_metadata_date(
@@ -124,4 +124,4 @@ def test_partition_epub_from_file_custom_metadata_date(
     with open(filename, "rb") as f:
         elements = partition_epub(file=f, metadata_date=expected_last_modification_date)
 
-    assert elements[0].metadata.date == expected_last_modification_date
+    assert elements[0].metadata.last_modified == expected_last_modification_date

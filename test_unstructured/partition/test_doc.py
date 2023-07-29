@@ -200,7 +200,7 @@ def test_partition_doc_metadata_date(
 
     elements = partition_doc(filename=filename)
 
-    assert elements[0].metadata.date == mocked_last_modification_date
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
 
 
 def test_partition_doc_metadata_date_with_custom_metadata(
@@ -220,7 +220,7 @@ def test_partition_doc_metadata_date_with_custom_metadata(
         metadata_date=expected_last_modified_date,
     )
 
-    assert elements[0].metadata.date == expected_last_modified_date
+    assert elements[0].metadata.last_modified == expected_last_modified_date
 
 
 def test_partition_doc_from_file_metadata_date(
@@ -237,7 +237,7 @@ def test_partition_doc_from_file_metadata_date(
     with open(filename, "rb") as f:
         elements = partition_doc(file=f)
 
-    assert elements[0].metadata.date == mocked_last_modification_date
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
 
 
 def test_partition_doc_from_file_metadata_date_with_custom_metadata(
@@ -254,7 +254,7 @@ def test_partition_doc_from_file_metadata_date_with_custom_metadata(
     with open(filename, "rb") as f:
         elements = partition_doc(file=f, metadata_date=expected_last_modified_date)
 
-    assert elements[0].metadata.date == expected_last_modified_date
+    assert elements[0].metadata.last_modified == expected_last_modified_date
 
 
 def test_partition_doc_from_file_without_metadata_date(
@@ -268,4 +268,4 @@ def test_partition_doc_from_file_without_metadata_date(
         sf.seek(0)
         elements = partition_doc(file=sf, metadata_date=None)
 
-    assert elements[0].metadata.date is None
+    assert elements[0].metadata.last_modified is None

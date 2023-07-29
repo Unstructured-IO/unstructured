@@ -224,7 +224,7 @@ def test_partition_json_metadata_date(
         filename=filename,
     )
 
-    assert elements[0].metadata.date == mocked_last_modification_date
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
 
 
 def test_partition_json_with_custom_metadata_date(
@@ -244,7 +244,7 @@ def test_partition_json_with_custom_metadata_date(
         metadata_date=expected_last_modification_date,
     )
 
-    assert elements[0].metadata.date == expected_last_modification_date
+    assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
 def test_partition_json_from_file_metadata_date(
@@ -263,7 +263,7 @@ def test_partition_json_from_file_metadata_date(
             file=f,
         )
 
-    assert elements[0].metadata.date == mocked_last_modification_date
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
 
 
 def test_partition_json_from_file_with_custom_metadata_date(
@@ -281,7 +281,7 @@ def test_partition_json_from_file_with_custom_metadata_date(
     with open(filename, "rb") as f:
         elements = partition_json(file=f, metadata_date=expected_last_modification_date)
 
-    assert elements[0].metadata.date == expected_last_modification_date
+    assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
 def test_partition_json_from_text_metadata_date(
@@ -294,7 +294,7 @@ def test_partition_json_from_text_metadata_date(
         text=text,
     )
 
-    assert elements[0].metadata.date is None
+    assert elements[0].metadata.last_modified is None
 
 
 def test_partition_json_from_text_with_custom_metadata_date(
@@ -307,7 +307,7 @@ def test_partition_json_from_text_with_custom_metadata_date(
 
     elements = partition_json(text=text, metadata_date=expected_last_modification_date)
 
-    assert elements[0].metadata.date == expected_last_modification_date
+    assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
 def test_partition_json_raises_with_unprocessable_json():
