@@ -127,6 +127,6 @@ def test_partition_rtf_from_file_with_custom_metadata_date(
     )
 
     with open(filename, "rb") as f:
-        elements = partition_rtf(file=f, metadata_date=expected_last_modification_date)
+        elements = partition_rtf(file=f, metadata_last_modified=expected_last_modification_date)
 
     assert elements[0].metadata.last_modified == expected_last_modification_date

@@ -42,7 +42,7 @@ def test_partition_msg_from_filename():
         == ElementMetadata(
             coordinates=None,
             filename=filename,
-            date="2022-12-16T17:04:16-05:00",
+            last_modified="2022-12-16T17:04:16-05:00",
             page_number=None,
             url=None,
             sent_from=["Matthew Robinson <mrobinson@unstructured.io>"],
@@ -161,7 +161,7 @@ def test_partition_msg_can_process_attachments(
         filename=filename,
         attachment_partitioner=partition_text,
         process_attachments=True,
-        metadata_date="2029-07-05T09:24:28",
+        metadata_last_modified="2029-07-05T09:24:28",
     )
 
     assert elements[0].text.startswith("Hello!")
@@ -187,7 +187,7 @@ def test_partition_msg_from_file_custom_metadata_date(
     expected_last_modification_date = "2020-07-05T09:24:28"
 
     with open(filename, "rb") as f:
-        elements = partition_msg(file=f, metadata_date=expected_last_modification_date)
+        elements = partition_msg(file=f, metadata_last_modified=expected_last_modification_date)
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
 
@@ -199,7 +199,7 @@ def test_partition_msg_custom_metadata_date(
 
     elements = partition_msg(
         filename=filename,
-        metadata_date=expected_last_modification_date,
+        metadata_last_modified=expected_last_modification_date,
     )
 
     assert elements[0].metadata.last_modified == expected_last_modification_date

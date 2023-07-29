@@ -186,11 +186,11 @@ class ElementMetadata:
                 setattr(self, k, getattr(other, k))
         return self
 
-    def get_date(self) -> Optional[datetime.datetime]:
+    def get_last_modified(self) -> Optional[datetime.datetime]:
         """Converts the date field to a datetime object."""
         dt = None
-        if self.date is not None:
-            dt = datetime.datetime.fromisoformat(self.date)
+        if self.last_modified is not None:
+            dt = datetime.datetime.fromisoformat(self.last_modified)
         return dt
 
 

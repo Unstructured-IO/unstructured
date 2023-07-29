@@ -254,7 +254,7 @@ def test_partition_image_metadata_date_custom_metadata_date(
     )
     elements = image.partition_image(
         filename=filename,
-        metadata_date=expected_last_modification_date,
+        metadata_last_modified=expected_last_modification_date,
     )
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
@@ -274,7 +274,7 @@ def test_partition_image_with_hi_res_strategy_metadata_date_custom_metadata_date
     elements = image.partition_image(
         filename=filename,
         stratefy="hi_res",
-        metadata_date=expected_last_modification_date,
+        metadata_last_modified=expected_last_modification_date,
     )
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
@@ -325,7 +325,7 @@ def test_partition_image_from_file_metadata_date_custom_metadata_date(
     with open(filename, "rb") as f:
         elements = image.partition_image(
             file=f,
-            metadata_date=expected_last_modification_date,
+            metadata_last_modified=expected_last_modification_date,
         )
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
@@ -345,7 +345,7 @@ def test_partition_image_from_file_with_hi_res_strategy_metadata_date_custom_met
     with open(filename, "rb") as f:
         elements = image.partition_image(
             file=f,
-            metadata_date=expected_last_modification_date,
+            metadata_last_modified=expected_last_modification_date,
             stratefy="hi_res",
         )
 

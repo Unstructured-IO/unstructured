@@ -14,7 +14,7 @@ sh "$SCRIPT_DIR"/check-num-files-expected-output.sh 2 $OUTPUT_FOLDER_NAME 10k
 PYTHONPATH=. ./unstructured/ingest/main.py \
     biomed \
     --download-dir "$DOWNLOAD_DIR" \
-    --metadata-exclude coordinates,filename,file_directory,metadata.date,metadata.data_source.date_processed \
+    --metadata-exclude coordinates,filename,file_directory,metadata.last_modified,metadata.data_source.date_processed \
     --num-processes 2 \
     --partition-strategy hi_res \
     --preserve-downloads \

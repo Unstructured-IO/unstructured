@@ -233,7 +233,7 @@ def test_partition_docx_metadata_date_with_custom_metadata(
 
     elements = partition_docx(
         filename=filename,
-        metadata_date=expected_last_modified_date,
+        metadata_last_modified=expected_last_modified_date,
     )
 
     assert elements[0].metadata.last_modified == expected_last_modified_date
@@ -268,7 +268,7 @@ def test_partition_docx_from_file_metadata_date_with_custom_metadata(
         return_value=mocked_last_modification_date,
     )
     with open(filename, "rb") as f:
-        elements = partition_docx(file=f, metadata_date=expected_last_modified_date)
+        elements = partition_docx(file=f, metadata_last_modified=expected_last_modified_date)
 
     assert elements[0].metadata.last_modified == expected_last_modified_date
 

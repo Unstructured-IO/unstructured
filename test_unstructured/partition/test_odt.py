@@ -87,7 +87,7 @@ def test_partition_odt_with_custom_metadata_date(
 
     elements = partition_odt(
         filename=filename,
-        metadata_date=expected_last_modification_date,
+        metadata_last_modified=expected_last_modification_date,
     )
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
@@ -125,6 +125,6 @@ def test_partition_odt_from_file_with_custom_metadata_date(
     )
 
     with open(filename, "rb") as f:
-        elements = partition_odt(file=f, metadata_date=expected_last_modification_date)
+        elements = partition_odt(file=f, metadata_last_modified=expected_last_modification_date)
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
