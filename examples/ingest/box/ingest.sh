@@ -12,7 +12,7 @@
 # Maybe check 'Make api calls as the as-user header'
 # REAUTHORIZE app after making any of the above changes
 
-# box-app-cred is a json string from the App Settings section of your Box App
+# box-app-cred is a json file from the App Settings section of your Box App
 # More info here:
 # https://developer.box.com/guides/authentication/jwt/jwt-setup/
 

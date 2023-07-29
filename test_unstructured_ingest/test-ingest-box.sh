@@ -13,9 +13,14 @@ if [ -z "$BOX_APP_CRED" ]; then
    exit 0
 fi
 
+# Create temporary service key file
+BOX_APP_CRED_FILE=$(mktemp)
+echo "$BOX_APP_CRED" >"$BOX_APP_CRED_FILE"
+
+
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --download-dir "$DOWNLOAD_DIR" \
-    --box-app-cred "$BOX_APP_CRED" \
+    --box-app-cred "$BOX_APP_CRED_FILE" \
     --remote-url box://utic-test-ingest-fixtures \
     --structured-output-dir box-output \
     --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.date \

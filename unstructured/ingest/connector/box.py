@@ -8,7 +8,6 @@ Maybe check 'Make api calls as the as-user header'
 REAUTHORIZE app after making any of the above changes
 """
 
-import json
 from dataclasses import dataclass
 from typing import Type
 
@@ -31,13 +30,12 @@ class AccessTokenError(Exception):
 class SimpleBoxConfig(SimpleFsspecConfig):
     def __post_init__(self):
         super().__post_init__()
-        # We are passing in a jwt json string via command line.
+        # We are passing in a json file path via the envt. variable.
         # Need to convert that to an Oauth2 object.
         try:
-            self.access_kwargs["oauth"] = JWTAuth.from_settings_dictionary(
-                json.loads(self.access_kwargs["box_app_cred"]),
+            self.access_kwargs["oauth"] = JWTAuth.from_settings_file(
+                self.access_kwargs["box_app_cred"],
             )
-            del self.access_kwargs["box_app_cred"]  # json is no longer needed.
         except (TypeError, ValueError, KeyError) as e:
             raise AccessTokenError(f"Problem with box-app-cred: {e}")
 
