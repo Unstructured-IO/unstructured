@@ -565,7 +565,7 @@ def test_partition_pdf_with_auto_strategy_custom_metadata_date(
 
     elements = pdf.partition_pdf(
         filename=filename,
-        metadata_date=expected_last_modification_date,
+        metadata_last_modified=expected_last_modification_date,
     )
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
@@ -601,7 +601,7 @@ def test_partition_pdf_with_ocr_only_strategy_custom_metadata_date(
 
     elements = pdf.partition_pdf(
         filename=filename,
-        metadata_date=expected_last_modification_date,
+        metadata_last_modified=expected_last_modification_date,
         strategy="ocr_only",
     )
 
@@ -638,7 +638,7 @@ def test_partition_pdf_with_hi_res_strategy_custom_metadata_date(
 
     elements = pdf.partition_pdf(
         filename=filename,
-        metadata_date=expected_last_modification_date,
+        metadata_last_modified=expected_last_modification_date,
         strategy="hi_res",
     )
 
@@ -679,7 +679,7 @@ def test_partition_pdf_from_file_with_auto_strategy_custom_metadata_date(
     with open(filename, "rb") as f:
         elements = pdf.partition_pdf(
             file=f,
-            metadata_date=expected_last_modification_date,
+            metadata_last_modified=expected_last_modification_date,
         )
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
@@ -717,7 +717,7 @@ def test_partition_pdf_from_file_with_ocr_only_strategy_custom_metadata_date(
     with open(filename, "rb") as f:
         elements = pdf.partition_pdf(
             file=f,
-            metadata_date=expected_last_modification_date,
+            metadata_last_modified=expected_last_modification_date,
             strategy="ocr_only",
         )
 
@@ -756,7 +756,7 @@ def test_partition_pdf_from_file_with_hi_res_strategy_custom_metadata_date(
     with open(filename, "rb") as f:
         elements = pdf.partition_pdf(
             file=f,
-            metadata_date=expected_last_modification_date,
+            metadata_last_modified=expected_last_modification_date,
             strategy="hi_res",
         )
 

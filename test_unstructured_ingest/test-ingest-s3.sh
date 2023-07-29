@@ -12,7 +12,7 @@ sh "$SCRIPT_DIR"/check-num-files-expected-output.sh 3 $OUTPUT_FOLDER_NAME 20k
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --download-dir "$DOWNLOAD_DIR" \
-    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.date \
+    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified \
     --partition-strategy hi_res \
     --preserve-downloads \
     --remote-url s3://utic-dev-tech-fixtures/small-pdf-set/ \

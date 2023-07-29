@@ -29,7 +29,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --confluence-max-num-of-spaces 10 \
     --confluence-list-of-spaces testteamsp1 \
     --confluence-max-num-of-docs-from-each-space 250 \
-    --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.date \
+    --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.last_modified \
     --num-processes 2 \
     --preserve-downloads \
     --reprocess \

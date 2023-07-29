@@ -21,7 +21,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --elasticsearch-index-name movies \
     --elasticsearch-url http://localhost:9200 \
     --jq-query '{ethnicity, director, plot}' \
-    --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.date \
+    --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.last_modified \
     --num-processes 2 \
     --preserve-downloads \
     --reprocess \

@@ -15,7 +15,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --api-key "$UNS_API_KEY" \
     --local-file-glob "*.pdf" \
     --local-input-path example-docs \
-    --metadata-exclude coordinates,metadata.date \
+    --metadata-exclude coordinates,metadata.last_modified \
     --partition-by-api \
     --partition-strategy hi_res \
     --reprocess \

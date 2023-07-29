@@ -21,7 +21,7 @@ DROPBOX_ACCESS_TOKEN=$(jq -r '.access_token' <<< "$DROPBOX_RESPONSE")
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --download-dir "$DOWNLOAD_DIR" \
     --dropbox-token  "$DROPBOX_ACCESS_TOKEN" \
-    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.date \
+    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified \
     --preserve-downloads \
     --recursive \
     --remote-url "dropbox:// /" \

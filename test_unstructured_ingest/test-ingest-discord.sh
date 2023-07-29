@@ -17,7 +17,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
    --discord-channels 1099442333440802930,1099601456321003600 \
    --discord-token "$DISCORD_TOKEN" \
    --download-dir "$DOWNLOAD_DIR" \
-   --metadata-exclude coordinates,file_directory,metadata.data_source.date_processed,metadata.date \
+   --metadata-exclude coordinates,file_directory,metadata.data_source.date_processed,metadata.last_modified \
    --preserve-downloads \
    --reprocess \
     --structured-output-dir "$OUTPUT_DIR"
