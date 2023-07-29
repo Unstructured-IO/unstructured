@@ -22,6 +22,8 @@ from unstructured.ingest.connector.fsspec import (
 from unstructured.ingest.interfaces import StandardConnectorConfig
 from unstructured.utils import requires_dependencies
 
+class AccessTokenError(Exception):
+    """There is a problem with the Access Token."""
 
 @dataclass
 class SimpleBoxConfig(SimpleFsspecConfig):
@@ -29,10 +31,15 @@ class SimpleBoxConfig(SimpleFsspecConfig):
         super().__post_init__()
         # We are passing in a jwt json string via command line.
         # Need to convert that to an Oauth2 object.
-        self.access_kwargs["oauth"] = JWTAuth.from_settings_dictionary(
-            json.loads(self.access_kwargs["box_app_cred"]),
-        )
-        del self.access_kwargs["box_app_cred"]  # Oauth json is no longer needed.
+        try:
+            self.access_kwargs["oauth"] = JWTAuth.from_settings_dictionary(
+                json.loads(self.access_kwargs["box_app_cred"]),
+            )
+            del self.access_kwargs["box_app_cred"]  # json is no longer needed.
+        except (TypeError, ValueError, KeyError) as e:
+            raise AccessTokenError(f"Problem with box-app-cred: {e}")
+
+
 
     def __getstate__(self):
         """
