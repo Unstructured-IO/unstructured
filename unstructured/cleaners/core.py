@@ -65,7 +65,7 @@ def clean_ordered_bullets(text) -> str:
 
     return text_cl
 
-def group_broken_paragraph(
+def group_broken_paragraphs(
     text: str,
     line_split: re.Pattern = PARAGRAPH_PATTERN_RE,
     paragraph_split: re.Pattern = DOUBLE_PARAGRAPH_PATTERN_RE,
