@@ -12,8 +12,7 @@ from unstructured.nlp.patterns import (
     LINE_BREAK_RE,
     PARAGRAPH_PATTERN,
     PARAGRAPH_PATTERN_RE,
-    REFERENCE_PATTERN_RE,
-    UNICODE_BULLETS_RE_0W,
+    UNICODE_BULLETS_RE,
 )
 
 
@@ -98,7 +97,7 @@ def group_bullet_paragraph(paragraph: str) -> list:
 
 def group_broken_paragraphs(
     text: str,
-    line_split: re.Pattern = LINE_BREAK_RE,
+    line_split: re.Pattern = PARAGRAPH_PATTERN_RE,
     paragraph_split: re.Pattern = DOUBLE_PARAGRAPH_PATTERN_RE,
 ) -> str:
     """Groups paragraphs that have line breaks for visual/formatting purposes.
@@ -217,7 +216,6 @@ def auto_paragraph_grouper(
         return new_line_grouper(text)
     else:
         return blank_line_grouper(text)
-
 
 # TODO(robinson) - There's likely a cleaner was to accomplish this and get all of the
 # unicode characters instead of just the quotes. Doing this for now since quotes are
