@@ -22,8 +22,10 @@ from unstructured.ingest.connector.fsspec import (
 from unstructured.ingest.interfaces import StandardConnectorConfig
 from unstructured.utils import requires_dependencies
 
+
 class AccessTokenError(Exception):
     """There is a problem with the Access Token."""
+
 
 @dataclass
 class SimpleBoxConfig(SimpleFsspecConfig):
@@ -38,8 +40,6 @@ class SimpleBoxConfig(SimpleFsspecConfig):
             del self.access_kwargs["box_app_cred"]  # json is no longer needed.
         except (TypeError, ValueError, KeyError) as e:
             raise AccessTokenError(f"Problem with box-app-cred: {e}")
-
-
 
     def __getstate__(self):
         """
