@@ -27,6 +27,13 @@ You can batch process documents stored in your Azure Blob Container using the `A
 
 To install all dependencies for this connector run: ``pip install "unstructured[azure]"``
 
+``Box Connector``
+----------------------
+You can batch process unstructured documents in your Box by using the `Box Connector <https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/connector/box.py>`_. You can find an example of how to use it `here <https://github.com/Unstructured-IO/unstructured/blob/f5541c7b0b1e2fc47ec88da5e02080d60e1441e2/examples/ingest/box/ingest.sh>`_.
+
+To install all dependencies for this connector run: ``pip install "unstructured[box]"``
+
+
 
 ``BioMed Connector``
 ---------------------

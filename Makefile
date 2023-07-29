@@ -74,6 +74,10 @@ install-ingest-dropbox:
 install-ingest-azure:
 	python3 -m pip install -r requirements/ingest-azure.txt
 
+.PHONY: install-ingest-box
+install-ingest-box:
+	python3 -m pip install -r requirements/ingest-box.txt
+
 .PHONY: install-ingest-discord
 install-ingest-discord:
 	pip install -r requirements/ingest-discord.txt
