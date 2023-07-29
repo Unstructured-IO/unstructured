@@ -10,6 +10,7 @@ from unstructured.nlp.patterns import (
     DOUBLE_PARAGRAPH_PATTERN_RE,
     LINE_BREAK_RE,
     PARAGRAPH_PATTERN,
+    PARAGRAPH_PATTERN_RE,
     UNICODE_BULLETS_RE,
 )
 
@@ -64,10 +65,9 @@ def clean_ordered_bullets(text) -> str:
 
     return text_cl
 
-
-def blank_line_grouper(
+def group_broken_paragraph(
     text: str,
-    line_split: re.Pattern = LINE_BREAK_RE,
+    line_split: re.Pattern = PARAGRAPH_PATTERN_RE,
     paragraph_split: re.Pattern = DOUBLE_PARAGRAPH_PATTERN_RE,
 ) -> str:
     """Groups paragraphs that have line breaks for visual/formatting purposes.
@@ -105,6 +105,57 @@ def blank_line_grouper(
 
     return "\n\n".join(clean_paragraphs)
 
+def one_line_grouper(
+    text: str,
+    paragraph_split: re.Pattern = LINE_BREAK_RE,
+) -> str:
+    """
+    Concatenates text document that has one-line paragraph break pattern
+
+    For example,
+
+    Iwan Roberts
+    Roberts celebrating after scoring a goal for Norwich City
+    in 2004
+
+    Will be returned as:
+
+    Iwan Roberts\n\nRoberts celebrating after scoring a goal for Norwich City\n\nin 2004
+    """
+    paragraphs = paragraph_split.split(text)
+    clean_paragraphs = []
+    for paragraph in paragraphs:
+        if not paragraph.strip():
+            continue
+        clean_paragraphs.append(paragraph)
+    return "\n\n".join(clean_paragraphs)
+
+def blank_line_grouper(
+    text: str,
+    paragraph_split: re.Pattern = DOUBLE_PARAGRAPH_PATTERN_RE,
+) -> str:
+    """
+    Concatenates text document that has blank-line paragraph break pattern
+
+    For example,
+
+    Vestibulum auctor dapibus neque.
+    
+    Nunc dignissim risus id metus.
+
+    Will be returned as:
+
+    Vestibulum auctor dapibus neque.\n\nNunc dignissim risus id metus.\n\n
+
+    """
+    paragraphs = paragraph_split.split(text)
+    clean_paragraphs = []
+    for paragraph in paragraphs:
+        if not paragraph.strip():
+            continue
+        clean_paragraphs.append(re.sub(PARAGRAPH_PATTERN, " ", paragraph))
+    return "\n\n".join(clean_paragraphs)
+
 
 def auto_paragraph_grouper(
     text: str,
@@ -135,10 +186,9 @@ def auto_paragraph_grouper(
     # NOTE(klaijan) - for ratio < threshold, we pass to new-line grouper,
     # otherwise to blank-line grouper
     if ratio < threshold:
-        return text
+        return one_line_grouper(text)
     else:
         return blank_line_grouper(text)
-
 
 # TODO(robinson) - There's likely a cleaner was to accomplish this and get all of the
 # unicode characters instead of just the quotes. Doing this for now since quotes are
