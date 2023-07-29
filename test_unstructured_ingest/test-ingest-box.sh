@@ -8,14 +8,14 @@ OUTPUT_FOLDER_NAME=box
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
-if [ -z "$BOX_JWT" ]; then
-   echo "Skipping Box ingest test because the BOX_JWT is not set."
+if [ -z "$BOX_APP_CRED" ]; then
+   echo "Skipping Box ingest test because the BOX_APP_CRED is not set."
    exit 0
 fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --download-dir "$DOWNLOAD_DIR" \
-    --box-jwt "$BOX_JWT" \
+    --box-app-cred "$BOX_APP_CRED" \
     --remote-url box://utic-test-ingest-fixtures \
     --structured-output-dir box-output \
     --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed \

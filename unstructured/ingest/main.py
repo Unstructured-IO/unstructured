@@ -206,9 +206,9 @@ class MainProcess:
     help="Dropbox access token.",
 )
 @click.option(
-    "--box-jwt",
+    "--box-app-cred",
     default=None,
-    help="Box JWT token.",
+    help="Box JWT app credential as json.",
 )
 @click.option(
     "--azure-account-name",
@@ -543,7 +543,7 @@ def main(
     remote_url,
     s3_anonymous,
     dropbox_token,
-    box_jwt,
+    box_app_cred,
     gcs_token,
     azure_account_name,
     azure_account_key,
@@ -766,7 +766,7 @@ def main(
                 config=SimpleBoxConfig(
                     path=remote_url,
                     recursive=recursive,
-                    access_kwargs={"oauth_json": box_jwt},
+                    access_kwargs={"box_app_cred": box_app_cred},
                 ),
             )
         elif protocol == "dropbox":

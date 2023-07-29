@@ -1,11 +1,11 @@
 """
-Make sure the app is a collaborator for your folder (maybe as co-owner, but editor shoud be fine)
-Make sure you have write all files to download
-Maybe check Make api calls as the as-user header
-REAUTHORIZE the app after making any changes.
-
-
-
+Box Connector
+Box does not make it simple to download files with an App.
+First of all, this does not work with a free Box account.
+Make sure the App service email is a collaborator for your folder (co-owner or editor)
+Make sure you have the 'write all files' application scope
+Maybe check 'Make api calls as the as-user header'
+REAUTHORIZE app after making any of the above changes
 """
 
 import json
@@ -30,9 +30,9 @@ class SimpleBoxConfig(SimpleFsspecConfig):
         # We are passing in a jwt json string via command line.
         # Need to convert that to an Oauth2 object.
         self.access_kwargs["oauth"] = JWTAuth.from_settings_dictionary(
-            json.loads(self.access_kwargs["oauth_json"]),
+            json.loads(self.access_kwargs["box_app_cred"]),
         )
-        del self.access_kwargs["oauth_json"]  # Oauth json is no longer needed.
+        del self.access_kwargs["box_app_cred"]  # Oauth json is no longer needed.
 
     def __getstate__(self):
         """
