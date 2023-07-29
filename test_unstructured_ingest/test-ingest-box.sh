@@ -18,7 +18,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --box-app-cred "$BOX_APP_CRED" \
     --remote-url box://utic-test-ingest-fixtures \
     --structured-output-dir box-output \
-    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed \
+    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.date \
     --num-processes 2 \
     --preserve-downloads \
     --recursive \
