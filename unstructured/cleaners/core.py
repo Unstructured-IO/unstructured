@@ -13,6 +13,7 @@ from unstructured.nlp.patterns import (
     PARAGRAPH_PATTERN,
     PARAGRAPH_PATTERN_RE,
     UNICODE_BULLETS_RE,
+    UNICODE_BULLETS_RE_0W,
 )
 
 
