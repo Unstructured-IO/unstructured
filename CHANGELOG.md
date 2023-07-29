@@ -1,3 +1,13 @@
+## 0.8.8
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* Rename "date" field to "last_modified"
+
 ## 0.8.7
 
 ### Enhancements
