@@ -108,7 +108,7 @@ class XMLDocument(Document):
 
             self.document_tree = document_tree
 
-
+ 
         return self.document_tree
 
     @classmethod
