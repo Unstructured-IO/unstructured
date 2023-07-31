@@ -1,15 +1,13 @@
-from typing import IO, List, Optional
-from ebooklib import epub
 import tempfile
+from typing import IO, List, Optional
+
+from ebooklib import epub
 
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
+from unstructured.partition.common import exactly_one
 from unstructured.partition.html import partition_html
-from unstructured.partition.common import (
-    exactly_one,
-    _add_element_metadata,
-)
-            
+
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.EPUB)
@@ -40,21 +38,21 @@ def partition_epub(
     exactly_one(filename=filename, file=file)
     if filename is None:
         filename = ""
-        
+
     if file is not None:
         with tempfile.NamedTemporaryFile(delete=False) as tmp:
             tmp.write(file.read())
             filename = tmp.name
-        
+
     book = epub.read_epub(filename)
-    toc_items = [item for item in book.toc]
+    toc_items = list(book.toc)
     elements = []
-    
+
     for toc_item in toc_items:
         # Some toc items may be tuple
         if isinstance(toc_item, tuple):
             toc_item = toc_item[0]
-            
+
         href = toc_item.href.split("#")[0]
         title = toc_item.title
         item = book.get_item_with_href(href)
@@ -67,8 +65,7 @@ def partition_epub(
             except Exception as e:
                 print(f"Error reading content from item: {e}")
                 section_elements = []
-        
+
         elements.extend(section_elements)
-    
+
     return elements
-         
