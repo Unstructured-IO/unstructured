@@ -6,9 +6,6 @@
 
 # Structured outputs are stored in elasticsearch-ingest-output
 
-SCRIPT_DIR=$(dirname "$(realpath "$0")")
-cd "$SCRIPT_DIR"/.. || exit 1
-
 # shellcheck source=/dev/null
 sh scripts/elasticsearch-test-helpers/create-and-check-es.sh
 wait
@@ -17,9 +14,10 @@ wait
 trap 'echo "Stopping Elasticsearch Docker container"; docker stop es-test' EXIT
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
+        elasticsearch \
         --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
-        --elasticsearch-url http://localhost:9200 \
-        --elasticsearch-index-name movies \
+        --url http://localhost:9200 \
+        --index-name movies \
         --jq-query '{ethnicity, director, plot}' \
         --structured-output-dir elasticsearch-ingest-output \
         --num-processes 2
