@@ -11,7 +11,7 @@ def partition_image(
     file: Optional[bytes] = None,
     include_page_breaks: bool = False,
     ocr_languages: str = "eng",
-    strategy: Optional[str] = None,
+    strategy: str = "auto",
     **kwargs,
 ) -> List[Element]:
     """Parses an image into a list of interpreted elements.
