@@ -108,7 +108,7 @@ def test_partition_multiple_via_api_with_single_filename(monkeypatch):
 
     elements = partition_multiple_via_api(filenames=[filename])
     assert elements[0][0] == NarrativeText(
-        "This is a test email to use for unit tests."
+        "This is a test email to use for unit tests.",
     )
     assert elements[0][0].metadata.filetype == "message/rfc822"
 
@@ -128,7 +128,7 @@ def test_partition_multiple_via_api_from_filenames(monkeypatch):
     elements = partition_multiple_via_api(filenames=filenames)
     assert len(elements) == 2
     assert elements[0][0] == NarrativeText(
-        "This is a test email to use for unit tests."
+        "This is a test email to use for unit tests.",
     )
     assert elements[0][0].metadata.filetype == "message/rfc822"
 
@@ -153,7 +153,7 @@ def test_partition_multiple_via_api_from_files(monkeypatch):
         )
     assert len(elements) == 2
     assert elements[0][0] == NarrativeText(
-        "This is a test email to use for unit tests."
+        "This is a test email to use for unit tests.",
     )
     assert elements[0][0].metadata.filetype == "message/rfc822"
 
@@ -249,10 +249,18 @@ def get_api_key():
 def test_partition_multiple_via_api_valid_request_data_kwargs():
     filenames = [
         os.path.join(
-            DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf"
+            DIRECTORY,
+            "..",
+            "..",
+            "example-docs",
+            "layout-parser-paper-fast.pdf",
         ),
         os.path.join(
-            DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.jpg"
+            DIRECTORY,
+            "..",
+            "..",
+            "example-docs",
+            "layout-parser-paper-fast.jpg",
         ),
     ]
 
@@ -268,10 +276,18 @@ def test_partition_multiple_via_api_valid_request_data_kwargs():
 def test_partition_multiple_via_api_invalid_request_data_kwargs():
     filenames = [
         os.path.join(
-            DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf"
+            DIRECTORY,
+            "..",
+            "..",
+            "example-docs",
+            "layout-parser-paper-fast.pdf",
         ),
         os.path.join(
-            DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.jpg"
+            DIRECTORY,
+            "..",
+            "..",
+            "example-docs",
+            "layout-parser-paper-fast.jpg",
         ),
     ]
     with pytest.raises(ValueError):
