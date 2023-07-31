@@ -17,10 +17,10 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --download-dir "$DOWNLOAD_DIR" \
     --ms-client-cred "$MS_CLIENT_CRED" \
     --ms-client-id "$MS_CLIENT_ID" \
-    --ms-tenant "3d60a7e5-1e32-414e-839b-1c6e6782613d" \
-    --ms-user-pname "devops@unstructuredio.onmicrosoft.com" \
+    --ms-tenant "$MS_TENANT_ID" \
+    --ms-user-pname "$MS_USER_PNAME" \
     --ms-onedrive-folder '/utic-test-ingest-fixtures' \
-    --metadata-exclude file_directory,metadata.data_source.date_processed \
+    --metadata-exclude file_directory,metadata.data_source.date_processed,metadata.date \
     --num-processes 2 \
     --partition-strategy hi_res \
     --preserve-downloads \

@@ -1,5 +1,5 @@
 PACKAGE_NAME := unstructured
-PIP_VERSION := 23.1.2
+PIP_VERSION := 23.2.1
 CURRENT_DIR := $(shell pwd)
 ARCH := $(shell uname -m)
 
@@ -90,6 +90,10 @@ install-ingest-gitlab:
 install-ingest-onedrive:
 	python3 -m pip install -r requirements/ingest-onedrive.txt
 
+.PHONY: install-ingest-outlook
+install-ingest-outlook:
+	python3 -m pip install -r requirements/ingest-outlook.txt
+
 .PHONY: install-ingest-reddit
 install-ingest-reddit:
 	python3 -m pip install -r requirements/ingest-reddit.txt
@@ -172,6 +176,10 @@ export CI ?= false
 .PHONY: test
 test:
 	PYTHONPATH=. CI=$(CI) pytest test_${PACKAGE_NAME} --cov=${PACKAGE_NAME} --cov-report term-missing
+
+.PHONY: test-unstructured-api-unit
+test-unstructured-api-unit:
+	scripts/test-unstructured-api-unit.sh
 
 ## check:                   runs linters (includes tests)
 .PHONY: check

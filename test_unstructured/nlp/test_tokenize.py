@@ -68,3 +68,10 @@ def test_pos_tag_caches(monkeypatch):
     assert tokenize.pos_tag.cache_info().currsize == 0
     tokenize.pos_tag("Greetings! I am from outer space.")
     assert tokenize.pos_tag.cache_info().currsize == 1
+
+
+def test_tokenizers_functions_run():
+    sentence = "I am a big brown bear. What are you?"
+    tokenize.sent_tokenize(sentence)
+    tokenize.word_tokenize(sentence)
+    tokenize.pos_tag(sentence)

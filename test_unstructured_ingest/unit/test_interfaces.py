@@ -131,7 +131,7 @@ def test_partition_file():
     }
     # The document in TEST_FILE_PATH does not have elements with coordinates so
     # partition is not expected to return coordinates metadata.
-    expected_metadata_keys = {"data_source", "filename", "file_directory", "filetype"}
+    expected_metadata_keys = {"data_source", "filename", "file_directory", "filetype", "date"}
     for elem in isd_elems:
         assert expected_keys == set(elem.keys())
         assert expected_metadata_keys == set(elem["metadata"].keys())

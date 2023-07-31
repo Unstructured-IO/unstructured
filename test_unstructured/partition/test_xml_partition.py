@@ -156,3 +156,78 @@ def test_partition_xml_from_file_exclude_metadata(filename):
     assert elements[0].text == "United States"
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
+
+
+def test_partition_xml_metadata_date(
+    mocker,
+    filename="example-docs/factbook.xml",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.xml.get_last_modified_date",
+        return_value=mocked_last_modification_date,
+    )
+
+    elements = partition_xml(
+        filename=filename,
+    )
+
+    assert elements[0].metadata.date == mocked_last_modification_date
+
+
+def test_partition_xml_with_custom_metadata_date(
+    mocker,
+    filename="example-docs/factbook.xml",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    expected_last_modification_date = "2020-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.xml.get_last_modified_date",
+        return_value=mocked_last_modification_date,
+    )
+
+    elements = partition_xml(
+        filename=filename,
+        metadata_date=expected_last_modification_date,
+    )
+
+    assert elements[0].metadata.date == expected_last_modification_date
+
+
+def test_partition_xml_from_file_metadata_date(
+    mocker,
+    filename="example-docs/factbook.xml",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.xml.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+
+    with open(filename, "rb") as f:
+        elements = partition_xml(
+            file=f,
+        )
+
+    assert elements[0].metadata.date == mocked_last_modification_date
+
+
+def test_partition_xml_from_file_with_custom_metadata_date(
+    mocker,
+    filename="example-docs/factbook.xml",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    expected_last_modification_date = "2020-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.xml.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+
+    with open(filename, "rb") as f:
+        elements = partition_xml(file=f, metadata_date=expected_last_modification_date)
+
+    assert elements[0].metadata.date == expected_last_modification_date
