@@ -17,7 +17,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --ms-sharepoint-client-id "$SHAREPOINT_CLIENT_ID" \
     --ms-sharepoint-client-cred "$SHAREPOINT_CRED" \
     --ms-sharepoint-site "$SHAREPOINT_SITE" \
-    --ms-sharepoint-folder "Shared Documents" \
+    --ms-sharepoint-path "Shared Documents" \
     --metadata-exclude file_directory,metadata.data_source.date_processed \
     --num-processes 2 \
     --partition-strategy hi_res \

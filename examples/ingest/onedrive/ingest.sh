@@ -23,6 +23,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --ms-client-id "<Azure AD app client-id>" \
     --ms-client-cred "<Azure AD app client-secret>" \
     --ms-authority-url "<Authority URL, default is https://login.microsoftonline.com>" \
+    --ms-onedrive-path "<Path from which to start parsing files.>" \
     --ms-tenant "<Azure AD tenant_id, default is 'common'>" \
     --ms-user-pname "<Azure AD principal name, in most cases is the email linked to the drive>" \
     --structured-output-dir onedrive-ingest-output \

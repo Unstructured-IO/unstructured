@@ -19,7 +19,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --ms-client-id "$MS_CLIENT_ID" \
     --ms-tenant "$MS_TENANT_ID" \
     --ms-user-pname "$MS_USER_PNAME" \
-    --ms-onedrive-folder '/utic-test-ingest-fixtures' \
+    --ms-onedrive-path '/utic-test-ingest-fixtures' \
     --metadata-exclude file_directory,metadata.data_source.date_processed,metadata.date \
     --num-processes 2 \
     --partition-strategy hi_res \
