@@ -102,7 +102,6 @@ def partition_html(
 
         document = HTMLDocument.from_string(response.text, parser=parser)
 
-    print("doc", document.__dict__)
 
     return document_to_element_list(
         document,
