@@ -1,3 +1,12 @@
+## 0.8.8-dev0
+
+### Enhancements
+* Add section and chapter info via `epub_section` to metadata for partitioning epub documents
+
+### Features
+
+### Fixes
+
 ## 0.8.7
 
 ### Enhancements
