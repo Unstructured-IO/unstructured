@@ -9,11 +9,12 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/../../.. || exit 1
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-    --gitlab-url https://gitlab.com/gitlab-com/content-sites/docsy-gitlab \
+    gitlab \
+    --url https://gitlab.com/gitlab-com/content-sites/docsy-gitlab \
     --git-branch 'v0.0.7' \
     --structured-output-dir gitlab-ingest-output \
     --num-processes 2 \
     --verbose
 
 # Alternatively, you can call it using:
-# unstructured-ingest --gitlab-url ...
+# unstructured-ingest gitlab --gitlab-url ...
