@@ -7,8 +7,9 @@ You can then use any connector with the ``unstructured-ingest`` command in the t
 .. code:: shell
 
   unstructured-ingest \
+    s3 \
     --remote-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
-    --s3-anonymous \
+    --anonymous \
     --structured-output-dir s3-small-batch-output \
     --num-processes 2
 

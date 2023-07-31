@@ -37,6 +37,11 @@
 * Add parameter `skip_infer_table_types` to enable (skip) table extraction for other doc types
 * Adds optional Unstructured API unit tests in CI
 * Tracks last modified date for all document types.
+* refactor the ingest cli to better support expanding supported connectors
+
+## 0.8.3
+
+### Enhancements
 
 ### Features
 

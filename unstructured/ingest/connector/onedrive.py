@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, Optional
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.ingest.interfaces import (
@@ -26,14 +26,14 @@ class SimpleOneDriveConfig(BaseConnectorConfig):
     client_credential: str = field(repr=False)
     user_pname: str
     tenant: str = field(repr=False)
-    authority_url: str = field(repr=False)
-    folder: str = field(default="")
+    authority_url: Optional[str] = field(repr=False)
+    folder: Optional[str] = field(default="")
     recursive: bool = False
 
     def __post_init__(self):
         if not (self.client_id and self.client_credential and self.user_pname):
             raise ValueError(
-                "Please provide one of the following mandatory values:"
+                "Please provide all the following mandatory values:"
                 "\n-ms-client_id\n-ms-client_cred\n-ms-user-pname",
             )
         self.token_factory = self._acquire_token
