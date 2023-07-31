@@ -71,7 +71,11 @@ def partition_html(
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text, url=url)
 
-    last_modification_date = None
+    if kwargs.get("last_modification_date"):
+        last_modification_date = kwargs.pop("last_modification_date")
+    else:
+        last_modification_date = None
+
     if filename is not None:
         last_modification_date = get_last_modified_date(filename)
         document = HTMLDocument.from_file(
@@ -113,6 +117,7 @@ def partition_html(
         document,
         include_page_breaks=include_page_breaks,
         last_modification_date=metadata_date or last_modification_date,
+        **kwargs,
     )
 
 
@@ -123,6 +128,7 @@ def convert_and_partition_html(
     include_page_breaks: bool = False,
     metadata_filename: Optional[str] = None,
     metadata_date: Optional[str] = None,
+    **kwargs,
 ) -> List[Element]:
     """Converts a document to HTML and then partitions it using partition_html. Works with
     any file format support by pandoc.
@@ -142,8 +148,8 @@ def convert_and_partition_html(
     last_modication_date
         The last modified date for the document.
     """
-
-    last_modification_date = None
+    # import pdb; pdb.set_trace()
+    last_modification_date = kwargs.get("last_modification_date")
     if filename:
         last_modification_date = get_last_modified_date(filename)
     elif file:
@@ -161,4 +167,5 @@ def convert_and_partition_html(
         encoding="unicode",
         metadata_filename=metadata_filename,
         metadata_date=metadata_date or last_modification_date,
+        **kwargs,
     )

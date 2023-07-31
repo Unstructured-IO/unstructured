@@ -5,7 +5,11 @@ from ebooklib import epub
 
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
-from unstructured.partition.common import exactly_one
+from unstructured.partition.common import (
+    exactly_one,
+    get_last_modified_date,
+    get_last_modified_date_from_file,
+)
 from unstructured.partition.html import partition_html
 
 
@@ -33,7 +37,6 @@ def partition_epub(
         If True, the output will include page breaks if the filetype supports it
     metadata_date
         The last modified date for the document.
-
     """
     exactly_one(filename=filename, file=file)
     if filename is None:
@@ -43,6 +46,9 @@ def partition_epub(
         with tempfile.NamedTemporaryFile(delete=False) as tmp:
             tmp.write(file.read())
             filename = tmp.name
+        last_modification_date = get_last_modified_date_from_file(file)
+    else:
+        last_modification_date = get_last_modified_date(filename)
 
     book = epub.read_epub(filename)
     toc_items = list(book.toc)
@@ -61,7 +67,13 @@ def partition_epub(
             try:
                 # Convert the item content to a string
                 html_content = item.get_content().decode()
-                section_elements = partition_html(text=html_content, epub_section=title)
+                section_elements = partition_html(
+                    text=html_content,
+                    epub_section=title,
+                    metadata_date=metadata_date,
+                    last_modification_date=metadata_date or last_modification_date,
+                    **kwargs,
+                )
             except Exception as e:
                 print(f"Error reading content from item: {e}")
                 section_elements = []
