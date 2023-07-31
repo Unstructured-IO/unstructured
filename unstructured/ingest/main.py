@@ -1005,7 +1005,7 @@ def main(
                 path=ms_sharepoint_path,
                 process_all=ms_sharepoint_all,
                 process_pages=(not ms_sharepoint_files_only),
-            )
+            ),
         )
     elif ms_client_id and ms_user_email:
         from unstructured.ingest.connector.outlook import (
