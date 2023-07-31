@@ -47,97 +47,6 @@ class MockResponse:
         return json.loads(self.text)
 
 
-def test_partition_via_api_from_filename(monkeypatch):
-    monkeypatch.setattr(
-        requests,
-        "post",
-        lambda *args, **kwargs: MockResponse(status_code=200),
-    )
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", EML_TEST_FILE)
-    elements = partition_via_api(filename=filename)
-    assert elements[0] == NarrativeText("This is a test email to use for unit tests.")
-    assert elements[0].metadata.filetype == "message/rfc822"
-
-
-def test_partition_via_api_from_file(monkeypatch):
-    monkeypatch.setattr(
-        requests,
-        "post",
-        lambda *args, **kwargs: MockResponse(status_code=200),
-    )
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", EML_TEST_FILE)
-
-    with open(filename, "rb") as f:
-        elements = partition_via_api(file=f, file_filename=filename)
-    assert elements[0] == NarrativeText("This is a test email to use for unit tests.")
-    assert elements[0].metadata.filetype == "message/rfc822"
-
-
-def test_partition_via_api_from_file_raises_without_filename(monkeypatch):
-    monkeypatch.setattr(
-        requests,
-        "post",
-        lambda *args, **kwargs: MockResponse(status_code=200),
-    )
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", EML_TEST_FILE)
-
-    with open(filename, "rb") as f, pytest.raises(ValueError):
-        partition_via_api(file=f)
-
-
-def test_partition_via_api_raises_with_bad_response(monkeypatch):
-    monkeypatch.setattr(
-        requests,
-        "post",
-        lambda *args, **kwargs: MockResponse(status_code=500),
-    )
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", EML_TEST_FILE)
-
-    with pytest.raises(ValueError):
-        partition_via_api(filename=filename)
-
-
-def test_partition_via_api_with_no_strategy():
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.jpg")
-
-    elements_no_strategy = partition_via_api(filename=filename, api_key=get_api_key())
-    elements_hi_res = partition_via_api(filename=filename, strategy="hi_res", api_key=get_api_key())
-
-    # confirm that hi_res strategy was not passed as defaukt to partition by comparing outputs
-    assert elements_no_strategy[0].text.startswith("arXiv")
-    assert elements_hi_res[0].text.startswith("LayoutParser")
-
-
-def test_partition_via_api_with_image_hi_res_strategy_includes_coordinates():
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.jpg")
-
-    # coordinates not included by default to limit payload size
-    elements = partition_via_api(
-        filename=filename,
-        strategy="hi_res",
-        coordinates="true",
-        api_key=get_api_key(),
-    )
-
-    assert elements[0].metadata.coordinates is not None
-
-
-@pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
-@pytest.mark.skipif(skip_not_on_main, reason="Skipping test run outside of main branch")
-def test_partition_via_api_valid_request_data_kwargs():
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf")
-
-    elements = partition_via_api(filename=filename, strategy="fast", api_key=get_api_key())
-
-    assert isinstance(elements, list)
-
-
-def test_partition_via_api_invalid_request_data_kwargs():
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf")
-    with pytest.raises(ValueError):
-        partition_via_api(filename=filename, strategy="not_a_strategy", api_key=get_api_key())
-
-
 class MockMultipleResponse:
     def __init__(self, status_code):
         self.status_code = status_code
@@ -198,7 +107,9 @@ def test_partition_multiple_via_api_with_single_filename(monkeypatch):
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", EML_TEST_FILE)
 
     elements = partition_multiple_via_api(filenames=[filename])
-    assert elements[0][0] == NarrativeText("This is a test email to use for unit tests.")
+    assert elements[0][0] == NarrativeText(
+        "This is a test email to use for unit tests."
+    )
     assert elements[0][0].metadata.filetype == "message/rfc822"
 
 
@@ -216,7 +127,9 @@ def test_partition_multiple_via_api_from_filenames(monkeypatch):
 
     elements = partition_multiple_via_api(filenames=filenames)
     assert len(elements) == 2
-    assert elements[0][0] == NarrativeText("This is a test email to use for unit tests.")
+    assert elements[0][0] == NarrativeText(
+        "This is a test email to use for unit tests."
+    )
     assert elements[0][0].metadata.filetype == "message/rfc822"
 
 
@@ -239,7 +152,9 @@ def test_partition_multiple_via_api_from_files(monkeypatch):
             file_filenames=filenames,
         )
     assert len(elements) == 2
-    assert elements[0][0] == NarrativeText("This is a test email to use for unit tests.")
+    assert elements[0][0] == NarrativeText(
+        "This is a test email to use for unit tests."
+    )
     assert elements[0][0].metadata.filetype == "message/rfc822"
 
 
@@ -259,7 +174,9 @@ def test_partition_multiple_via_api_raises_with_bad_response(monkeypatch):
         partition_multiple_via_api(filenames=filenames)
 
 
-def test_partition_multiple_via_api_raises_with_content_types_size_mismatch(monkeypatch):
+def test_partition_multiple_via_api_raises_with_content_types_size_mismatch(
+    monkeypatch,
+):
     monkeypatch.setattr(
         requests,
         "post",
@@ -331,8 +248,12 @@ def get_api_key():
 @pytest.mark.skipif(skip_not_on_main, reason="Skipping test run outside of main branch")
 def test_partition_multiple_via_api_valid_request_data_kwargs():
     filenames = [
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf"),
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.jpg"),
+        os.path.join(
+            DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf"
+        ),
+        os.path.join(
+            DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.jpg"
+        ),
     ]
 
     elements = partition_multiple_via_api(
@@ -346,8 +267,12 @@ def test_partition_multiple_via_api_valid_request_data_kwargs():
 @pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
 def test_partition_multiple_via_api_invalid_request_data_kwargs():
     filenames = [
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf"),
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.jpg"),
+        os.path.join(
+            DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf"
+        ),
+        os.path.join(
+            DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.jpg"
+        ),
     ]
     with pytest.raises(ValueError):
         partition_multiple_via_api(
