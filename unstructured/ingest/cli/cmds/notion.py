@@ -24,7 +24,7 @@ from unstructured.ingest.runner import notion as notion_fn
     required=True,
     help="API key for Notion api",
 )
-def slack(**options):
+def notion(**options):
     verbose = options.get("verbose", False)
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
     log_options(options)
@@ -39,6 +39,6 @@ def slack(**options):
 
 
 def get_cmd() -> click.Command:
-    cmd = slack
+    cmd = notion
     add_shared_options(cmd)
     return cmd
