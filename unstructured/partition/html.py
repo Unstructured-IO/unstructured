@@ -148,7 +148,6 @@ def convert_and_partition_html(
     last_modication_date
         The last modified date for the document.
     """
-    # import pdb; pdb.set_trace()
     last_modification_date = kwargs.get("last_modification_date")
     if filename:
         last_modification_date = get_last_modified_date(filename)
