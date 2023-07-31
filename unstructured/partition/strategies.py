@@ -1,7 +1,6 @@
 from tempfile import SpooledTemporaryFile
 from typing import BinaryIO, Dict, List, Optional, Union, cast
 
-import torch
 from pdfminer.pdfpage import PDFPage, PDFTextExtractionNotAllowed
 from pdfminer.utils import open_filename
 
@@ -63,7 +62,7 @@ def is_pdf_text_extractable(
 
 
 def determine_pdf_or_image_strategy(
-    strategy: Optional[str],
+    strategy: str,
     filename: Optional[str] = "none",
     file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
     is_image: bool = False,
@@ -73,13 +72,10 @@ def determine_pdf_or_image_strategy(
     logic if some dependencies are not available."""
     pytesseract_installed = dependency_exists("pytesseract")
     unstructured_inference_installed = dependency_exists("unstructured_inference")
-    if not strategy:
-        if torch.cuda.is_available() or (
-            torch.backends.mps.is_available() and torch.backends.mps.is_built()
-        ):
-            strategy = "hi_res"
-        else:
-            strategy = "auto"
+    torch_installed = dependency_exists("torch")
+
+    if not strategy and torch_installed:
+        strategy = _is_gpu_available()
 
     if is_image:
         # Note(yuming): There is no fast strategy for images,
@@ -95,7 +91,9 @@ def determine_pdf_or_image_strategy(
 
     if strategy == "auto":
         if is_image:
-            strategy = _determine_image_auto_strategy(infer_table_structure=infer_table_structure)
+            strategy = _determine_image_auto_strategy(
+                infer_table_structure=infer_table_structure,
+            )
         else:
             strategy = _determine_pdf_auto_strategy(
                 pdf_text_extractable=pdf_text_extractable,
@@ -106,7 +104,11 @@ def determine_pdf_or_image_strategy(
         file.seek(0)  # type: ignore
 
     if all(
-        [not unstructured_inference_installed, not pytesseract_installed, not pdf_text_extractable],
+        [
+            not unstructured_inference_installed,
+            not pytesseract_installed,
+            not pdf_text_extractable,
+        ],
     ):
         raise ValueError(
             "unstructured_inference is not installed, pytesseract is not installed "
@@ -176,3 +178,16 @@ def _determine_pdf_auto_strategy(
         return "fast"
     else:
         return "ocr_only"
+
+
+def _is_gpu_available():
+    import torch
+
+    if torch.cuda.is_available() or (
+        torch.backends.mps.is_available() and torch.backends.mps.is_built()
+    ):
+        strategy = "hi_res"
+    else:
+        strategy = "auto"
+
+    return strategy
