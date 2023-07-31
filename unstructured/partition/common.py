@@ -148,6 +148,7 @@ def _add_element_metadata(
     coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
     coordinate_system: Optional[CoordinateSystem] = None,
     epub_section: Optional[str] = None,
+    **kwargs,
 ) -> Element:
     """Adds document metadata to the document element. Document metadata includes information
     like the filename, source url, and page number."""

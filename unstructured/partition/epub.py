@@ -63,17 +63,12 @@ def partition_epub(
             try:
                 # Convert the item content to a string
                 html_content = item.get_content().decode()
-                section_elements = partition_html(text=html_content)
+                section_elements = partition_html(text=html_content, epub_section=title)
             except Exception as e:
                 print(f"Error reading content from item: {e}")
                 section_elements = []
         
-        for element in section_elements:
-            _add_element_metadata(
-                element, 
-                epub_section=title,
-            )
-            elements.append(element)
+        elements.extend(section_elements)
     
     return elements
          
