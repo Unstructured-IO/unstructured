@@ -29,6 +29,7 @@ class SimpleBoxConfig(SimpleFsspecConfig):
     @requires_dependencies(["boxfs"], extras="box")
     def __post_init__(self):
         from boxsdk import JWTAuth
+
         super().__post_init__()
         # We are passing in a json file path via the envt. variable.
         # Need to convert that to an Oauth2 object.

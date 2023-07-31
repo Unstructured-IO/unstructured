@@ -21,6 +21,7 @@ from .wikipedia import wikipedia
 __all__ = [
     "azure",
     "biomed",
+    "box",
     "confluence",
     "discord",
     "dropbox",
