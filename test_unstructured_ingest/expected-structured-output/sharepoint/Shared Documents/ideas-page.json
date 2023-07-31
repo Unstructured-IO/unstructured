@@ -4,12 +4,51 @@
     "element_id": "c08fcabe68ba13b7a7cc6592bd5513a8",
     "metadata": {
       "data_source": {
-        "date_processed": "2023-07-20T06:33:54.363346"
+        "record_locator": {
+          "CheckInComment": "",
+          "CheckOutType": 2,
+          "ContentTag": "{0DFE3D76-00C0-42DB-AE1B-8CF22D4B3F10},1,1",
+          "CustomizedPageStatus": 0,
+          "ETag": "\"{0DFE3D76-00C0-42DB-AE1B-8CF22D4B3F10},1\"",
+          "Exists": true,
+          "ExistsAllowThrowForPolicyFailures": true,
+          "IrmEnabled": false,
+          "Length": "6161",
+          "Level": 1,
+          "LinkingUri": null,
+          "LinkingUrl": "",
+          "MajorVersion": 1,
+          "MinorVersion": 0,
+          "Name": "ideas-page.html",
+          "ServerRelativeUrl": "/Shared Documents/ideas-page.html",
+          "TimeCreated": "2023-06-16T05:04:47Z",
+          "TimeLastModified": "2023-06-16T05:04:47Z",
+          "Title": "How to Get New Ideas",
+          "UIVersion": 512,
+          "UIVersionLabel": "1.0",
+          "UniqueId": "0dfe3d76-00c0-42db-ae1b-8cf22d4b3f10",
+          "ServerRelativePath": {
+            "DecodedUrl": "/Shared Documents/ideas-page.html"
+          }
+        },
+        "date_created": "2023-06-16T05:04:47Z",
+        "date_modified": "2023-06-16T05:04:47Z",
+        "date_processed": "2023-07-31T07:56:47.396017"
       },
       "filename": "ideas-page.html",
       "file_directory": "/Users/rvztz/.cache/unstructured/ingest/95f260da5f/Shared Documents",
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "links": [
+        {
+          "text": null,
+          "url": "index.html"
+        },
+        {
+          "text": null,
+          "url": "https://twitter.com/stef/status/1617222428727586816"
+        }
+      ]
     },
     "text": "January 2023(Someone fed my essays into GPT to make something that could answer\nquestions based on them, then asked it where good ideas come from.  The\nanswer was ok, but not what I would have said. This is what I would have said.)The way to get new ideas is to notice anomalies: what seems strange,\nor missing, or broken? You can see anomalies in everyday life (much\nof standup comedy is based on this), but the best place to look for\nthem is at the frontiers of knowledge.Knowledge grows fractally.\nFrom a distance its edges look smooth, but when you learn enough\nto get close to one, you'll notice it's full of gaps. These gaps\nwill seem obvious; it will seem inexplicable that no one has tried\nx or wondered about y. In the best case, exploring such gaps yields\nwhole new fractal buds."
   }

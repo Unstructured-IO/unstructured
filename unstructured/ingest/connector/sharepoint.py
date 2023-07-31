@@ -47,7 +47,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     meta: dict
 
     def __post_init__(self):
-        self.ext = "".join(Path(self.file.name).suffixes) if self.meta is None else ".html"
+        self.ext = "".join(Path(self.file.name).suffixes) if not self.meta else ".html"
         if not self.ext:
             raise ValueError("Unsupported file without extension.")
 
@@ -62,7 +62,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         """Parses the folder structure from the source and creates the download and output paths"""
         download_path = Path(f"{self.standard_config.download_dir}")
         output_path = Path(f"{self.standard_config.output_dir}")
-        if self.meta is not None:
+        if self.meta:
             page_url = self.meta["page"].get_property("Url", "")
             parent = (
                 Path(page_url).with_suffix(self.ext)
@@ -176,7 +176,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @BaseIngestDoc.skip_if_file_exists
     @requires_dependencies(["office365"])
     def get_file(self):
-        if self.meta is None:
+        if not self.meta:
             self._get_file()
         else:
             self._get_page()
@@ -215,32 +215,47 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
             ClientCredential(self.config.client_id, self.config.client_credential),
         )
 
-    def _list_files(self, root, recursive) -> List["File"]:
-        folder = root.expand(["Files", "Folders"]).get().execute_query()
-        files = list(folder.files)
-        if not recursive:
+    @requires_dependencies(["office365"])
+    def _list_files(self, folder, recursive) -> List["File"]:
+        from office365.runtime.client_request_exception import ClientRequestException
+
+        try:
+            items = folder.expand(["Files", "Folders"]).get().execute_query()
+            files = list(items.files)
+            if not recursive:
+                return files
+            for f in items.itemss:
+                files += self._list_files(f, recursive)
             return files
-        for f in folder.folders:
-            files += self._list_files(f, recursive)
-        return files
+        except ClientRequestException as e:
+            if e.response.status_code != 404:
+                logger.info("Caught an error while processing documents %s", e.response.text)
+            return []
 
+    @requires_dependencies(["office365"])
     def _list_pages(self, site_client) -> list:
-        pages = site_client.site_pages.pages.get().execute_query()
-        pfiles = []
+        from office365.runtime.client_request_exception import ClientRequestException
 
-        for page_meta in pages:
-            page_url = page_meta.get_property("Url", None)
-            if page_url is None:
-                logger.info("Missing site_url. Omitting page... ")
-                break
-            page_url = f"/{page_url}" if page_url[0] != "/" else page_url
-            file_page = site_client.web.get_file_by_server_relative_path(page_url)
-            site_path = None
-            if (spath := (urlparse(site_client.base_url).path)) and (spath != "/"):
-                site_path = spath[1:]
-            pfiles.append(
-                [file_page, {"page": page_meta, "site_path": site_path}],
-            )
+        try:
+            pages = site_client.site_pages.pages.get().execute_query()
+            pfiles = []
+
+            for page_meta in pages:
+                page_url = page_meta.get_property("Url", None)
+                if page_url is None:
+                    logger.info("Missing site_url. Omitting page... ")
+                    break
+                page_url = f"/{page_url}" if page_url[0] != "/" else page_url
+                file_page = site_client.web.get_file_by_server_relative_path(page_url)
+                site_path = None
+                if (spath := (urlparse(site_client.base_url).path)) and (spath != "/"):
+                    site_path = spath[1:]
+                pfiles.append(
+                    [file_page, {"page": page_meta, "site_path": site_path}],
+                )
+        except ClientRequestException as e:
+            logger.info("Caught an error while processing pages %s", e.response.text)
+            return []
 
         return pfiles
 
@@ -249,16 +264,17 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
 
     def _ingest_site_docs(self, site_client) -> List["SharepointIngestDoc"]:
         root_folder = site_client.web.get_folder_by_server_relative_path(self.config.path)
-        if root_folder.select("Exists").get().execute_query().exists:
-            logger.info(
-                f"Folder {self.config.path} does not exist. Skipping site {site_client.base_url}",
-            )
-            return []
         files = self._list_files(root_folder, self.config.recursive)
-        output = [SharepointIngestDoc(self.standard_config, self.config, f, None) for f in files]
-
+        if not files:
+            logger.info(
+                f"Couldn't process files in path {self.config.path} \
+                for site {site_client.base_url}",
+            )
+        output = [SharepointIngestDoc(self.standard_config, self.config, f, {}) for f in files]
         if self.config.process_pages:
             page_files = self._list_pages(site_client)
+            if not page_files:
+                logger.info(f"Couldn't process pages for site {site_client.base_url}")
             page_output = [
                 SharepointIngestDoc(self.standard_config, self.config, f[0], f[1])
                 for f in page_files
@@ -269,11 +285,9 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
     def _filter_site_url(self, site):
         if site.url is None:
             return False
-        return (
-            (site.url[0 : len(self.base_site_url)] == self.base_site_url)  # noqa: E203
-            and ("/sites/" in site.url)
-            and all(c == "0" for c in site.get_property("GroupId", "").replace("-", ""))
-        )  # checks if its not a group, NOTE: do we want to process sharepoint groups?
+        return (site.url[0 : len(self.base_site_url)] == self.base_site_url) and (  # noqa: E203
+            "/sites/" in site.url
+        )
 
     @requires_dependencies(["office365"])
     def get_ingest_docs(self):
@@ -286,7 +300,7 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
             tenant_sites = tenant.get_site_properties_from_sharepoint_by_filters().execute_query()
             tenant_sites = [s.url for s in tenant_sites if self._filter_site_url(s)]
             tenant_sites.append(self.base_site_url)
-            ingest_docs = []
+            ingest_docs: List[SharepointIngestDoc] = []
             for site_url in set(tenant_sites):
                 logger.info(f"Processing docs for site: {site_url}")
                 site_client = ClientContext(site_url).with_credentials(
