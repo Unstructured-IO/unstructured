@@ -145,6 +145,7 @@ pip-compile:
 	# sphinx docs looks for additional requirements
 	cp requirements/build.txt docs/requirements.txt
 	pip-compile --upgrade requirements/ingest-s3.in
+	pip-compile --upgrade requirements/ingest-box.in
 	pip-compile --upgrade requirements/ingest-gcs.in
 	pip-compile --upgrade requirements/ingest-dropbox.in
 	pip-compile --upgrade requirements/ingest-azure.in

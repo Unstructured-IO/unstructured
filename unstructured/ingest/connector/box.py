@@ -11,8 +11,6 @@ REAUTHORIZE app after making any of the above changes
 from dataclasses import dataclass
 from typing import Type
 
-from boxsdk import JWTAuth
-
 from unstructured.ingest.connector.fsspec import (
     FsspecConnector,
     FsspecIngestDoc,
@@ -28,16 +26,18 @@ class AccessTokenError(Exception):
 
 @dataclass
 class SimpleBoxConfig(SimpleFsspecConfig):
+    @requires_dependencies(["boxfs"], extras="box")
     def __post_init__(self):
+        from boxsdk import JWTAuth
         super().__post_init__()
         # We are passing in a json file path via the envt. variable.
         # Need to convert that to an Oauth2 object.
         try:
             self.access_kwargs["oauth"] = JWTAuth.from_settings_file(
-                self.access_kwargs["box_app_cred"],
+                self.access_kwargs["box_app_config"],
             )
         except (TypeError, ValueError, KeyError) as e:
-            raise AccessTokenError(f"Problem with box-app-cred: {e}")
+            raise AccessTokenError(f"Problem with box_app_config: {e}")
 
     def __getstate__(self):
         """
