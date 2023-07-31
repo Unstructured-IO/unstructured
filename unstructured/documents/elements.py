@@ -142,6 +142,9 @@ class ElementMetadata:
     sent_from: Optional[List[str]] = None
     sent_to: Optional[List[str]] = None
     subject: Optional[str] = None
+    
+    # Epub specific metadata fields
+    epub_section: Optional[str] = None
 
     # MSFT Word specific metadata fields
     header_footer_type: Optional[str] = None
