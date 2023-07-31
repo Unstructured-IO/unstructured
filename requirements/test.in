@@ -6,6 +6,7 @@ coverage
 # can remove after black drops support for Python 3.6
 # ref: https://github.com/psf/black/issues/2964
 click>=8.1
+types-click
 flake8
 freezegun
 label_studio_sdk
