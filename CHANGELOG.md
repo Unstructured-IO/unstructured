@@ -46,8 +46,6 @@
 * Rename "date" field to "last_modified"
 * Adds Box connector
 
-### Fixes
-
 ## 0.8.7
 
 ### Enhancements
@@ -172,7 +170,7 @@ Fix for cases where an invalid encoding is extracted from an email header.
 
 ### Enhancements
 
-Adds `include_metadata` kwarg to `partition_doc`, `partition_docx`, `partition_email`, `partition_epub`, `partition_json`, `partition_msg`, `partition_odt`, `partition_org`, `partition_pdf`, `partition_ppt`, `partition_pptx`, `partition_rst`, and `partition_rtf`
+* Adds `include_metadata` kwarg to `partition_doc`, `partition_docx`, `partition_email`, `partition_epub`, `partition_json`, `partition_msg`, `partition_odt`, `partition_org`, `partition_pdf`, `partition_ppt`, `partition_pptx`, `partition_rst`, and `partition_rtf`
 
 ### Features
 
@@ -540,8 +538,8 @@ Adds Dropbox connector
 
 ### Enhancements
 
-*   Added logic to `partition_pdf` for detecting copy protected PDFs and falling back  
-    to the hi res strategy when necessary.
+* Added logic to `partition_pdf` for detecting copy protected PDFs and falling back
+  to the hi res strategy when necessary.
 
 ### Features
 
@@ -613,14 +611,10 @@ Adds Dropbox connector
 *   Added method to utils to allow date time format validation
 
 ### Features
-
-Add Slack connector to pull messages for a specific channel
-
-Add --partition-by-api parameter to unstructured-ingest
-
-Added `partition_rtf` for processing rich text files.
-
-`partition` now accepts a `url` kwarg in addition to `file` and `filename`.
+* Add Slack connector to pull messages for a specific channel
+* Add --partition-by-api parameter to unstructured-ingest
+* Added `partition_rtf` for processing rich text files.
+* `partition` now accepts a `url` kwarg in addition to `file` and `filename`.
 
 ### Fixes
 
