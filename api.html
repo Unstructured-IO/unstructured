@@ -6,10 +6,10 @@
   <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Bricks" href="bricks.html" /><link rel="prev" title="Getting Started" href="getting_started.html" />
 
-  <link rel="shortcut icon" href="_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.05.20" />
-  <title>Unstructured API - Unstructured 0.8.2 documentation</title>
+  <link rel="shortcut icon" href="_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
+  <title>Unstructured API - Unstructured 0.9.0 documentation</title>
   <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-  <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
+  <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
   <link rel="stylesheet" type="text/css" href="_static/unstructured.css" />
   
@@ -499,6 +499,23 @@
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">ocr_only</span></code> strategy runs the document through Tesseract for OCR. Currently, <code class="docutils literal notranslate"><span class="pre">hi_res</span></code> has difficulty ordering elements for documents with multiple columns. If you have a document with multiple columns that do not have extractable text, it’s recommended that you use the <code class="docutils literal notranslate"><span class="pre">ocr_only</span></code> strategy. Please be aware that <code class="docutils literal notranslate"><span class="pre">ocr_only</span></code> will fall back to another strategy if Tesseract is not available.</p>
 <p>For the best of all worlds, <code class="docutils literal notranslate"><span class="pre">auto</span></code> will determine when a page can be extracted using <code class="docutils literal notranslate"><span class="pre">fast</span></code> or <code class="docutils literal notranslate"><span class="pre">ocr_only</span></code> mode, otherwise, it will fall back to hi_res.</p>
+<section id="beta-version-hi-res-strategy-with-chipper-model">
+<h4>Beta Version: <code class="docutils literal notranslate"><span class="pre">hi_res</span></code> Strategy with Chipper Model<a class="headerlink" href="#beta-version-hi-res-strategy-with-chipper-model" title="Permalink to this heading"></a></h4>
+<p>To use the <code class="docutils literal notranslate"><span class="pre">hi_res</span></code> strategy with <strong>Chipper</strong> model, pass the argument for <code class="docutils literal notranslate"><span class="pre">hi_res_model_name</span></code> as shown in the code block below.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-X<span class="w"> </span><span class="s1">&#39;POST&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w"> </span><span class="s1">&#39;https://api.unstructured.io/general/v0/general&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w"> </span>-H<span class="w"> </span><span class="s1">&#39;accept: application/json&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w"> </span>-H<span class="w"> </span><span class="s1">&#39;Content-Type: multipart/form-data&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w"> </span>-H<span class="w"> </span><span class="s1">&#39;unstructured-api-key: &lt;YOUR API KEY&gt;&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w"> </span>-F<span class="w"> </span><span class="s1">&#39;strategy=hi_res&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w"> </span>-F<span class="w"> </span><span class="s1">&#39;hi_res_model_name=chipper&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w"> </span>-F<span class="w"> </span><span class="s1">&#39;files=@sample-docs/layout-parser-paper-fast.pdf&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w"> </span>-F<span class="w"> </span><span class="s1">&#39;strategy=hi_res&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-C<span class="w"> </span>.<span class="w"> </span><span class="p">|</span><span class="w"> </span>less<span class="w"> </span>-R
+</pre></div>
+</div>
+<p><em>Please note that the Chipper model does not currently support the coordinates argument.</em></p>
+</section>
 </section>
 <section id="xml-tags">
 <h3>XML Tags<a class="headerlink" href="#xml-tags" title="Permalink to this heading"></a></h3>
@@ -623,7 +640,10 @@
 <li><a class="reference internal" href="#ocr-languages">OCR Languages</a></li>
 <li><a class="reference internal" href="#output-format">Output Format</a></li>
 <li><a class="reference internal" href="#pdf-table-extraction">PDF Table Extraction</a></li>
-<li><a class="reference internal" href="#strategies">Strategies</a></li>
+<li><a class="reference internal" href="#strategies">Strategies</a><ul>
+<li><a class="reference internal" href="#beta-version-hi-res-strategy-with-chipper-model">Beta Version: <code class="docutils literal notranslate"><span class="pre">hi_res</span></code> Strategy with Chipper Model</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#xml-tags">XML Tags</a></li>
 </ul>
 </li>

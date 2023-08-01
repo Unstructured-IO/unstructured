@@ -6,10 +6,10 @@
   <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Metadata" href="metadata.html" /><link rel="prev" title="Bricks" href="bricks.html" />
 
-  <link rel="shortcut icon" href="_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.05.20" />
-  <title>Connectors - Unstructured 0.8.2 documentation</title>
+  <link rel="shortcut icon" href="_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
+  <title>Connectors - Unstructured 0.9.0 documentation</title>
   <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-  <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
+  <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
   <link rel="stylesheet" type="text/css" href="_static/unstructured.css" />
   
@@ -375,8 +375,9 @@
 <p>Connect your preprocessing pipeline with your favorite data storage platforms, and batch process all your documents using the provided CLI to store structured outputs locally on your filesystem.</p>
 <p>You can then use any connector with the <code class="docutils literal notranslate"><span class="pre">unstructured-ingest</span></code> command in the terminal. For example, the following command processes all the documents in S3 in the utic-dev-tech-fixtures bucket with a prefix of small-pdf-set/</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>unstructured-ingest<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>s3<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--remote-url<span class="w"> </span>s3://utic-dev-tech-fixtures/small-pdf-set/<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--s3-anonymous<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--anonymous<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--structured-output-dir<span class="w"> </span>s3-small-batch-output<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--num-processes<span class="w"> </span><span class="m">2</span>
 </pre></div>
@@ -388,7 +389,12 @@
 <section id="azure-connector">
 <h2><code class="docutils literal notranslate"><span class="pre">Azure</span> <span class="pre">Connector</span></code><a class="headerlink" href="#azure-connector" title="Permalink to this heading"></a></h2>
 <p>You can batch process documents stored in your Azure Blob Container using the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/connector/azure.py">Azure Connector</a>. You can find an example of how to use it <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/f5541c7b0b1e2fc47ec88da5e02080d60e1441e2/examples/ingest/azure/ingest.sh">here</a>.</p>
-<p>To install all dependencies for this connector run: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">unstructured[azure]</span></code></p>
+<p>To install all dependencies for this connector run: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;unstructured[azure]&quot;</span></code></p>
+</section>
+<section id="box-connector">
+<h2><code class="docutils literal notranslate"><span class="pre">Box</span> <span class="pre">Connector</span></code><a class="headerlink" href="#box-connector" title="Permalink to this heading"></a></h2>
+<p>You can batch process unstructured documents in your Box by using the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/connector/box.py">Box Connector</a>. You can find an example of how to use it <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/f5541c7b0b1e2fc47ec88da5e02080d60e1441e2/examples/ingest/box/ingest.sh">here</a>.</p>
+<p>To install all dependencies for this connector run: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;unstructured[box]&quot;</span></code></p>
 </section>
 <section id="biomed-connector">
 <h2><code class="docutils literal notranslate"><span class="pre">BioMed</span> <span class="pre">Connector</span></code><a class="headerlink" href="#biomed-connector" title="Permalink to this heading"></a></h2>
@@ -397,61 +403,71 @@
 <section id="discord-connector">
 <h2><code class="docutils literal notranslate"><span class="pre">Discord</span> <span class="pre">Connector</span></code><a class="headerlink" href="#discord-connector" title="Permalink to this heading"></a></h2>
 <p>You can preprocess your Discord channel using the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/connector/discord.py">Discord Connector</a>. You can find an example of how to use it <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/f5541c7b0b1e2fc47ec88da5e02080d60e1441e2/examples/ingest/discord/ingest.sh">here</a>.</p>
-<p>To install all dependencies for this connector run: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">unstructured[discord]</span></code></p>
+<p>To install all dependencies for this connector run: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;unstructured[discord]&quot;</span></code></p>
 </section>
 <section id="dropbox-connector">
 <h2><code class="docutils literal notranslate"><span class="pre">Dropbox</span> <span class="pre">Connector</span></code><a class="headerlink" href="#dropbox-connector" title="Permalink to this heading"></a></h2>
 <p>You can batch process unstructured documents in your Dropbox by using the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/connector/dropbox.py">Dropbox Connector</a>. You can find an example of how to use it <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/f5541c7b0b1e2fc47ec88da5e02080d60e1441e2/examples/ingest/dropbox/ingest.sh">here</a>.</p>
-<p>To install all dependencies for this connector run: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">unstructured[dropbox]</span></code></p>
+<p>To install all dependencies for this connector run: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;unstructured[dropbox]&quot;</span></code></p>
 </section>
 <section id="elasticsearch-connector">
 <h2><code class="docutils literal notranslate"><span class="pre">Elasticsearch</span> <span class="pre">Connector</span></code><a class="headerlink" href="#elasticsearch-connector" title="Permalink to this heading"></a></h2>
 <p>You can preprocess documents stored in Elasticsearch by using the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/connector/elasticsearch.py">Elasticsearch Connector</a>. You can find an example of how to use it <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/f5541c7b0b1e2fc47ec88da5e02080d60e1441e2/examples/ingest/elasticsearch/ingest.sh">here</a>.</p>
-<p>To install all dependencies for this connector run: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">unstructured[elasticsearch]</span></code></p>
+<p>To install all dependencies for this connector run: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;unstructured[elasticsearch]&quot;</span></code></p>
 </section>
 <section id="google-cloud-storage-connector">
 <h2><code class="docutils literal notranslate"><span class="pre">Google</span> <span class="pre">Cloud</span> <span class="pre">Storage</span> <span class="pre">Connector</span></code><a class="headerlink" href="#google-cloud-storage-connector" title="Permalink to this heading"></a></h2>
 <p>You can batch load the files you have stored in Google Cloud Storage with the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/connector/gcs.py">GCS Connector</a>. You can find an example of how to use it <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/f5541c7b0b1e2fc47ec88da5e02080d60e1441e2/examples/ingest/google_cloud_storage/ingest.sh">here</a>.</p>
-<p>To install all dependencies for this connector run: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">unstructured[gcs]</span></code></p>
+<p>To install all dependencies for this connector run: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;unstructured[gcs]&quot;</span></code></p>
 </section>
 <section id="github-connector">
 <h2><code class="docutils literal notranslate"><span class="pre">Github</span> <span class="pre">Connector</span></code><a class="headerlink" href="#github-connector" title="Permalink to this heading"></a></h2>
 <p>You can process files in a Github repository using the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/connector/github.py">Github Connector</a>. You can find an example of how to use it <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/f5541c7b0b1e2fc47ec88da5e02080d60e1441e2/examples/ingest/github/ingest.sh">here</a>.</p>
-<p>To install all dependencies for this connector run: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">unstructured[github]</span></code></p>
+<p>To install all dependencies for this connector run: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;unstructured[github]&quot;</span></code></p>
 </section>
 <section id="gitlab-connector">
 <h2><code class="docutils literal notranslate"><span class="pre">Gitlab</span> <span class="pre">Connector</span></code><a class="headerlink" href="#gitlab-connector" title="Permalink to this heading"></a></h2>
 <p>You can batch load files in a Gitlab repository using the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/connector/gitlab.py">Gitlab Connector</a>. You can find an example of how to use it <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/f5541c7b0b1e2fc47ec88da5e02080d60e1441e2/examples/ingest/gitlab/ingest.sh">here</a>.</p>
-<p>To install all dependencies for this connector run: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">unstructured[gitlab]</span></code></p>
+<p>To install all dependencies for this connector run: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;unstructured[gitlab]&quot;</span></code></p>
 </section>
 <section id="google-drive-connector">
 <h2><code class="docutils literal notranslate"><span class="pre">Google</span> <span class="pre">Drive</span> <span class="pre">Connector</span></code><a class="headerlink" href="#google-drive-connector" title="Permalink to this heading"></a></h2>
 <p>You can batch process documents stored in your Google Drive with the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/connector/google_drive.py">Google Drive Connector</a>. You can find an example of how to use it <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/f5541c7b0b1e2fc47ec88da5e02080d60e1441e2/examples/ingest/google_drive/ingest.sh">here</a>.</p>
-<p>To install all dependencies for this connector run: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">unstructured[google-drive]</span></code></p>
+<p>To install all dependencies for this connector run: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;unstructured[google-drive]&quot;</span></code></p>
 </section>
 <section id="local-connector">
 <h2><code class="docutils literal notranslate"><span class="pre">Local</span> <span class="pre">Connector</span></code><a class="headerlink" href="#local-connector" title="Permalink to this heading"></a></h2>
 <p>You can batch load your unstructured files in a local directory for preprocessing using the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/connector/local.py">Local Connector</a>. You can find an example of how to use it <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/f5541c7b0b1e2fc47ec88da5e02080d60e1441e2/examples/ingest/local/ingest.sh">here</a>.</p>
 </section>
+<section id="onedrive-connector">
+<h2><code class="docutils literal notranslate"><span class="pre">OneDrive</span> <span class="pre">Connector</span></code><a class="headerlink" href="#onedrive-connector" title="Permalink to this heading"></a></h2>
+<p>You can batch process documents stored in Microsoft OneDrive with the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/connector/onedrive.py">OneDrive Connector</a>. You can find an example of how to use it <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/main/examples/ingest/onedrive/ingest.sh">here</a>.</p>
+<p>To install all dependencies for this connector run: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;unstructured[onedrive]&quot;</span></code></p>
+</section>
+<section id="outlook-connector">
+<h2><code class="docutils literal notranslate"><span class="pre">Outlook</span> <span class="pre">Connector</span></code><a class="headerlink" href="#outlook-connector" title="Permalink to this heading"></a></h2>
+<p>You can batch process email stored in Microsoft Outlook with the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/connector/outlook.py">Outlook Connector</a>. You can find an example of how to use it <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/main/examples/ingest/outlook/ingest.sh">here</a>.</p>
+<p>To install all dependencies for this connector run: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;unstructured[outlook]&quot;</span></code></p>
+</section>
 <section id="reddit-connector">
 <h2><code class="docutils literal notranslate"><span class="pre">Reddit</span> <span class="pre">Connector</span></code><a class="headerlink" href="#reddit-connector" title="Permalink to this heading"></a></h2>
 <p>You can use the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/connector/reddit.py">Reddit Connector</a> to preprocess a Reddit thread. You can find an example of how to use it <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/f5541c7b0b1e2fc47ec88da5e02080d60e1441e2/examples/ingest/reddit/ingest.sh">here</a>.</p>
-<p>To install all dependencies for this connector run: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">unstructured[reddit]</span></code></p>
+<p>To install all dependencies for this connector run: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;unstructured[reddit]&quot;</span></code></p>
 </section>
 <section id="s3-connector">
 <h2><code class="docutils literal notranslate"><span class="pre">S3</span> <span class="pre">Connector</span></code><a class="headerlink" href="#s3-connector" title="Permalink to this heading"></a></h2>
 <p>You can process your files stored in S3 in batch using the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/connector/s3.py">S3 Connector</a>. You can find an example of how to use it <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/f5541c7b0b1e2fc47ec88da5e02080d60e1441e2/examples/ingest/s3-small-batch/ingest.sh">here</a>.</p>
-<p>To install all dependencies for this connector run: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">unstructured[s3]</span></code></p>
+<p>To install all dependencies for this connector run: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;unstructured[s3]&quot;</span></code></p>
 </section>
 <section id="slack-connector">
 <h2><code class="docutils literal notranslate"><span class="pre">Slack</span> <span class="pre">Connector</span></code><a class="headerlink" href="#slack-connector" title="Permalink to this heading"></a></h2>
 <p>Using the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/connector/slack.py">Slack Connector</a> you can batch process a channel. You can find an example of how to use it <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/f5541c7b0b1e2fc47ec88da5e02080d60e1441e2/examples/ingest/slack/ingest.sh">here</a>.</p>
-<p>To install all dependencies for this connector run: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">unstructured[slack]</span></code></p>
+<p>To install all dependencies for this connector run: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;unstructured[slack]&quot;</span></code></p>
 </section>
 <section id="wikipedia-connector">
 <h2><code class="docutils literal notranslate"><span class="pre">Wikipedia</span> <span class="pre">Connector</span></code><a class="headerlink" href="#wikipedia-connector" title="Permalink to this heading"></a></h2>
 <p>You can load and process a Wikipedia page using the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/connector/slack.py">Wikipedia Connector</a> to preprocess for your model. You can find an example of how to use it <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/f5541c7b0b1e2fc47ec88da5e02080d60e1441e2/examples/ingest/wikipedia/ingest.sh">here</a>.</p>
-<p>To install all dependencies for this connector run: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">unstructured[wikipedia]</span></code></p>
+<p>To install all dependencies for this connector run: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;unstructured[wikipedia]&quot;</span></code></p>
 </section>
 </section>
 
@@ -512,6 +528,7 @@
             <ul>
 <li><a class="reference internal" href="#">Connectors</a><ul>
 <li><a class="reference internal" href="#azure-connector"><code class="docutils literal notranslate"><span class="pre">Azure</span> <span class="pre">Connector</span></code></a></li>
+<li><a class="reference internal" href="#box-connector"><code class="docutils literal notranslate"><span class="pre">Box</span> <span class="pre">Connector</span></code></a></li>
 <li><a class="reference internal" href="#biomed-connector"><code class="docutils literal notranslate"><span class="pre">BioMed</span> <span class="pre">Connector</span></code></a></li>
 <li><a class="reference internal" href="#discord-connector"><code class="docutils literal notranslate"><span class="pre">Discord</span> <span class="pre">Connector</span></code></a></li>
 <li><a class="reference internal" href="#dropbox-connector"><code class="docutils literal notranslate"><span class="pre">Dropbox</span> <span class="pre">Connector</span></code></a></li>
@@ -521,6 +538,8 @@
 <li><a class="reference internal" href="#gitlab-connector"><code class="docutils literal notranslate"><span class="pre">Gitlab</span> <span class="pre">Connector</span></code></a></li>
 <li><a class="reference internal" href="#google-drive-connector"><code class="docutils literal notranslate"><span class="pre">Google</span> <span class="pre">Drive</span> <span class="pre">Connector</span></code></a></li>
 <li><a class="reference internal" href="#local-connector"><code class="docutils literal notranslate"><span class="pre">Local</span> <span class="pre">Connector</span></code></a></li>
+<li><a class="reference internal" href="#onedrive-connector"><code class="docutils literal notranslate"><span class="pre">OneDrive</span> <span class="pre">Connector</span></code></a></li>
+<li><a class="reference internal" href="#outlook-connector"><code class="docutils literal notranslate"><span class="pre">Outlook</span> <span class="pre">Connector</span></code></a></li>
 <li><a class="reference internal" href="#reddit-connector"><code class="docutils literal notranslate"><span class="pre">Reddit</span> <span class="pre">Connector</span></code></a></li>
 <li><a class="reference internal" href="#s3-connector"><code class="docutils literal notranslate"><span class="pre">S3</span> <span class="pre">Connector</span></code></a></li>
 <li><a class="reference internal" href="#slack-connector"><code class="docutils literal notranslate"><span class="pre">Slack</span> <span class="pre">Connector</span></code></a></li>
