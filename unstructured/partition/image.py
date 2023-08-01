@@ -41,14 +41,8 @@ def partition_image(
             "ocr_only". When using the "hi_res" strategy, the function uses a layout detection
             model if to identify document elements. When using the "ocr_only" strategy,
             partition_image simply extracts the text from the document using OCR and processes it.
-    <<<<<<< HEAD
-            The default strategy `auto` will determine when a image can be extracted using
-            `ocr_only` mode, otherwise it will fall back to `hi_res`.
-        metadata_last_modified
-    =======
             The default strategy is `hi_res`.
-        metadata_date
-    >>>>>>> 2a1e725 (set default image strategy to hi_res, test, update changelog)
+        metadata_last_modified
             The last modified date for the document.
 
 
