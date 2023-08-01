@@ -593,3 +593,4 @@ def test_partition_html_grabs_emphasized_texts():
     assert elements[4].metadata.emphasized_texts == [
         {"text": "A lone span text!", "tag": "span"},
     ]
+
