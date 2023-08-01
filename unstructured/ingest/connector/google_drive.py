@@ -76,7 +76,7 @@ class SimpleGoogleDriveConfig(BaseConnectorConfig):
     recursive: bool = False
 
     def __post_init__(self):
-        if self.extension and self.extension not in EXT_TO_FILETYPE.keys():
+        if self.extension and self.extension not in EXT_TO_FILETYPE:
             raise ValueError(
                 f"Extension not supported. "
                 f"Value MUST be one of {', '.join([k for k in EXT_TO_FILETYPE if k is not None])}.",

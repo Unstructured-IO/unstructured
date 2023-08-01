@@ -18,7 +18,7 @@ install-base: install-base-pip-packages install-nltk-models
 
 ## install:                 installs all test, dev, and experimental requirements
 .PHONY: install
-install: install-base-pip-packages install-dev install-nltk-models install-test install-huggingface install-unstructured-inference
+install: install-base-pip-packages install-dev install-nltk-models install-test install-huggingface install-all-docs
 
 .PHONY: install-ci
 install-ci: install-base-pip-packages install-nltk-models install-huggingface install-all-docs install-test

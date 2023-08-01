@@ -163,7 +163,7 @@ def convert_to_isd_csv(elements: List[Element]) -> str:
 
         if row.get("sent_from"):
             row["sender"] = row.get("sent_from")
-            if type(row["sender"]) == list:
+            if isinstance(row["sender"], list):
                 row["sender"] = row["sender"][0]
 
     with io.StringIO() as buffer:
