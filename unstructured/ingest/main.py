@@ -495,6 +495,29 @@ class MainProcess:
         Documents are not necessarily ingested in order of creation date.",
 )
 @click.option(
+    "--airtable-personal-access-token",
+    default=None,
+    help="Personal access token to authenticate into Airtable. \
+        Check https://support.airtable.com/docs/airtable-api-key-deprecation-notice for more info.",
+)
+@click.option(
+    "--airtable-list-of-paths",
+    default=None,
+    help="""List of paths describing the set of locations to ingest data from within Airtable.
+    list_of_airtable_paths: path1 path2 path3 ….
+    airtable_path: base_id/table_id(optional)/view_id(optional)/
+
+    Here is an example for one list_of_airtable_paths:
+        base1/			                → gets all rows and columns within all tables inside base1
+        base1/table1            		→ gets all rows and columns within described table
+        base1/table1/view1	            → gets the rows and columns that are visible in view1
+
+    Examples to invalid airtable_paths:
+        table1          → has to mention base to be valid
+        base1/view1     → has to mention table to be valid
+    """,
+)
+@click.option(
     "--download-dir",
     help="Where files are downloaded to, defaults to `$HOME/.cache/unstructured/ingest/<SHA256>`.",
 )
@@ -590,6 +613,8 @@ def main(
     confluence_list_of_spaces,
     confluence_max_num_of_spaces,
     confluence_max_num_of_docs_from_each_space,
+    airtable_personal_access_token,
+    airtable_list_of_paths,
     download_dir,
     preserve_downloads,
     structured_output_dir,
@@ -699,6 +724,10 @@ def main(
         elif confluence_url:
             hashed_dir_name = hashlib.sha256(
                 f"{confluence_url}".encode("utf-8"),
+            )
+        elif airtable_personal_access_token:
+            hashed_dir_name = hashlib.sha256(
+                f"{airtable_personal_access_token}".encode("utf-8"),
             )
         else:
             raise ValueError(
@@ -1006,6 +1035,20 @@ def main(
                 list_of_spaces=confluence_list_of_spaces,
                 max_number_of_spaces=confluence_max_num_of_spaces,
                 max_number_of_docs_from_each_space=confluence_max_num_of_docs_from_each_space,
+            ),
+        )
+
+    elif airtable_personal_access_token:
+        from unstructured.ingest.connector.airtable import (
+            AirtableConnector,
+            SimpleAirtableConfig,
+        )
+
+        doc_connector = AirtableConnector(  # type: ignore
+            standard_config=standard_config,
+            config=SimpleAirtableConfig(
+                personal_access_token=airtable_personal_access_token,
+                list_of_paths=airtable_list_of_paths,
             ),
         )
     # Check for other connector-specific options here and define the doc_connector object

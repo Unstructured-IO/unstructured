@@ -26,6 +26,7 @@ export OMP_THREAD_LIMIT=1
 ./test_unstructured_ingest/test-ingest-elasticsearch.sh
 ./test_unstructured_ingest/test-ingest-confluence-diff.sh
 ./test_unstructured_ingest/test-ingest-confluence-large.sh
+./test_unstructured_ingest/test-ingest-airtable.sh
 ./test_unstructured_ingest/test-ingest-local-single-file.sh
 ./test_unstructured_ingest/test-ingest-local-single-file-with-encoding.sh
 # NOTE(yuming): The following test should be put after any tests with --preserve-downloads option

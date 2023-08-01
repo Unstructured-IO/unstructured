@@ -1,0 +1,515 @@
+[
+  {
+    "type": "Title",
+    "element_id": "ef63aed8c2daa2f139c1fc490c2265cf",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "rec7sbsctCScGkSx1"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d398b29d3dbbb9bf201d4c7e1c19ff9d",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "2023"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": ""
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "19b100ab7725c612f3d80ff203ca53ce",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "07"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": ""
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "dd228627baef38d97bfa17397ab43fca",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "28T17:25:07.000Z"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d398b29d3dbbb9bf201d4c7e1c19ff9d",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "2023"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": ""
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "19b100ab7725c612f3d80ff203ca53ce",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "07"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": ""
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "624b60c58c9d8bfb6ff1886c2fd605d2",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "30"
+  },
+  {
+    "type": "Title",
+    "element_id": "11a6767d5674c7e45f7e00dc52576227",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "Done"
+  },
+  {
+    "type": "Title",
+    "element_id": "f7d69aacce42a104fa4798411168274b",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "Define goals and targets"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d398b29d3dbbb9bf201d4c7e1c19ff9d",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "2023"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": ""
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "19b100ab7725c612f3d80ff203ca53ce",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "07"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": ""
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "670671cd97404156226e507973f2ab83",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "27"
+  },
+  {
+    "type": "Title",
+    "element_id": "f793de205ead5ac302c4a1627829dea4",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "Low"
+  },
+  {
+    "type": "Title",
+    "element_id": "d5edb0a86ede52baa13350401b367ab6",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "recEYtu9btjn3Z94P"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d398b29d3dbbb9bf201d4c7e1c19ff9d",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "2023"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": ""
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "19b100ab7725c612f3d80ff203ca53ce",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "07"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": ""
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "dd228627baef38d97bfa17397ab43fca",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "28T17:25:07.000Z"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d398b29d3dbbb9bf201d4c7e1c19ff9d",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "2023"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": ""
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "323783be9a53a31e158ec9600626a470",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "08"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": ""
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "19b100ab7725c612f3d80ff203ca53ce",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "07"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "100ec1bc78a4cc8383c90b5c2e09d728",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "To do"
+  },
+  {
+    "type": "Title",
+    "element_id": "0a691662e31a48315a5348392a88c421",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "Finalize budget"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d398b29d3dbbb9bf201d4c7e1c19ff9d",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "2023"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": ""
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "323783be9a53a31e158ec9600626a470",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "08"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": ""
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "6cd5b6e51936a442b973660c21553dd2",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "04"
+  },
+  {
+    "type": "Title",
+    "element_id": "c4ebc6d4a5832cd9415f906ad0366111",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "High"
+  },
+  {
+    "type": "Title",
+    "element_id": "392851aa184b017f263215f4ae3b0a30",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "recWmAa3mY5afyRn0"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d398b29d3dbbb9bf201d4c7e1c19ff9d",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "2023"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": ""
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "19b100ab7725c612f3d80ff203ca53ce",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "07"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": ""
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "dd228627baef38d97bfa17397ab43fca",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "28T17:25:07.000Z"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d398b29d3dbbb9bf201d4c7e1c19ff9d",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "2023"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": ""
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "323783be9a53a31e158ec9600626a470",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "08"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": ""
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "0b8efa5a3bf104413a725c6ff0459a6b",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "03"
+  },
+  {
+    "type": "Title",
+    "element_id": "c1f88e9d6c4145cf0530ae020155384d",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "In progress"
+  },
+  {
+    "type": "Title",
+    "element_id": "74b09eaa6714e7c28d8de2075887cdf0",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "Create workback plan"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d398b29d3dbbb9bf201d4c7e1c19ff9d",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "2023"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": ""
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "19b100ab7725c612f3d80ff203ca53ce",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "07"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": ""
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "eb1e33e8a81b697b75855af6bfcdbcbf",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "31"
+  },
+  {
+    "type": "Title",
+    "element_id": "8e588cd187741f1cd76f5fab77b72087",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "Medium"
+  }
+]
