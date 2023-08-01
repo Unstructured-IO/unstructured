@@ -3,9 +3,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
-from pyairtable import Api
-from pyairtable.metadata import get_api_bases, get_base_schema
-
 from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
@@ -108,6 +105,7 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         # TODO: instead of having a separate connection object for each doc,
         # have a separate connection object for each process
+        from pyairtable import Api
 
         self.api = Api(self.config.personal_access_token)
         table = self.api.table(self.file_meta.base_id, self.file_meta.table_id)
@@ -119,7 +117,6 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             f.write(self.document)
 
 
-@requires_dependencies(["pyairtable"])
 @dataclass
 class AirtableConnector(ConnectorCleanupMixin, BaseConnector):
     """Fetches tables or views from an Airtable org."""
@@ -135,6 +132,8 @@ class AirtableConnector(ConnectorCleanupMixin, BaseConnector):
 
     @requires_dependencies(["pyairtable"])
     def initialize(self):
+        from pyairtable import Api
+
         if self.config.list_of_paths:
             self.list_of_paths = self.config.list_of_paths.split()
 
@@ -142,10 +141,14 @@ class AirtableConnector(ConnectorCleanupMixin, BaseConnector):
 
     @requires_dependencies(["pyairtable"])
     def _find_and_assign_base_ids(self):
+        from pyairtable.metadata import get_api_bases
+
         self.base_ids = [base["id"] for base in get_api_bases(self.api)["bases"]]
 
     @requires_dependencies(["pyairtable"])
     def _get_table_ids_within_bases(self):
+        from pyairtable.metadata import get_base_schema
+
         bases = [(base_id, self.api.base(base_id)) for base_id in self.base_ids]
 
         metadata_for_each_base = [
