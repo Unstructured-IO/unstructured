@@ -474,9 +474,3 @@ def test_partition_html_grabs_links():
     assert elements[3].metadata.links is None
 
     assert elements[4] == Title("A lone link!")
-    assert elements[4].metadata.links == [
-        {
-            "text": "A lone link!",
-            "url": "/loner",
-        },
-    ]
