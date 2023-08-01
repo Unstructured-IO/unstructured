@@ -9,7 +9,7 @@ OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     local \
-    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.date \
+    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified \
     --partition-strategy hi_res \
     --reprocess \
     --structured-output-dir "$OUTPUT_DIR" \

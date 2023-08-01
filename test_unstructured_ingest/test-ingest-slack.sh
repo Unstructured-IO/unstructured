@@ -12,7 +12,7 @@ DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 PYTHONPATH=. ./unstructured/ingest/main.py \
    slack \
    --download-dir "$DOWNLOAD_DIR" \
-   --metadata-exclude coordinates,file_directory,metadata.data_source.date_processed,metadata.date \
+   --metadata-exclude coordinates,file_directory,metadata.data_source.date_processed,metadata.last_modified \
    --partition-strategy hi_res \
    --preserve-downloads \
    --reprocess \

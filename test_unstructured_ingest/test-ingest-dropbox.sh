@@ -21,7 +21,7 @@ DROPBOX_ACCESS_TOKEN=$(jq -r '.access_token' <<< "$DROPBOX_RESPONSE")
 PYTHONPATH=. ./unstructured/ingest/main.py \
     dropbox \
     --download-dir "$DOWNLOAD_DIR" \
-    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.date \
+    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified \
     --preserve-downloads \
     --reprocess \
     --structured-output-dir "$OUTPUT_DIR" \

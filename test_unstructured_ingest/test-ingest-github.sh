@@ -25,7 +25,7 @@ fi
 PYTHONPATH=. ./unstructured/ingest/main.py \
     github \
     --download-dir "$DOWNLOAD_DIR" \
-    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.date \
+    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified \
     --partition-strategy hi_res \
     --preserve-downloads \
     --reprocess \

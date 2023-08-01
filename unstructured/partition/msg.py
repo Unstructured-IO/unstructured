@@ -20,7 +20,7 @@ def partition_msg(
     max_partition: Optional[int] = 1500,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
-    metadata_date: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
     process_attachments: bool = False,
     attachment_partitioner: Optional[Callable] = None,
     min_partition: Optional[int] = 0,
@@ -44,7 +44,7 @@ def partition_msg(
         processing the content of the email itself.
     attachment_partitioner
         The partitioning function to use to process attachments.
-    metadata_date
+    metadata_last_modified
         The last modified date for the document.
     min_partition
         The minimum number of characters to include in a partition. Only applies if
@@ -73,7 +73,7 @@ def partition_msg(
     metadata = build_msg_metadata(
         msg_obj,
         metadata_filename or filename,
-        metadata_date=metadata_date,
+        metadata_last_modified=metadata_last_modified,
     )
     for element in elements:
         element.metadata = metadata
@@ -101,7 +101,7 @@ def partition_msg(
 def build_msg_metadata(
     msg_obj: msg_parser.MsOxMessage,
     filename: Optional[str],
-    metadata_date: Optional[str],
+    metadata_last_modified: Optional[str],
 ) -> ElementMetadata:
     """Creates an ElementMetadata object from the header information in the email."""
     email_date = getattr(msg_obj, "sent_date", None)
@@ -120,7 +120,7 @@ def build_msg_metadata(
         sent_to=sent_to,
         sent_from=sent_from,
         subject=getattr(msg_obj, "subject", None),
-        date=metadata_date or email_date,
+        last_modified=metadata_last_modified or email_date,
         filename=filename,
     )
 
