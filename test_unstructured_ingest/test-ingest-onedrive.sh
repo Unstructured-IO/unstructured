@@ -16,7 +16,7 @@ fi
 PYTHONPATH=. ./unstructured/ingest/main.py \
     onedrive \
     --download-dir "$DOWNLOAD_DIR" \
-    --metadata-exclude file_directory,metadata.data_source.date_processed,metadata.date \
+    --metadata-exclude file_directory,metadata.data_source.date_processed,metadata.last_modified \
     --num-processes 2 \
     --partition-strategy hi_res \
     --preserve-downloads \

@@ -1,4 +1,4 @@
-## 0.8.8-dev0
+## 0.8.8
 
 ### Enhancements
 
@@ -6,7 +6,7 @@
 
 ### Fixes
 
-* Not HTML files that use `convert_and_partition_html` function (`.rtf`, `.rst` , `.org`, `epub`) mark title as `Title` instead of `HTMLTitle`
+* Rename "date" field to "last_modified"
 * Adds Box connector
 
 ### Fixes

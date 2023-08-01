@@ -23,7 +23,7 @@ def partition_json(
     text: Optional[str] = None,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
-    metadata_date: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions an .json document into its constituent elements.
@@ -36,7 +36,7 @@ def partition_json(
         A file-like object as bytes --> open(filename, "rb").
     text
         The string representation of the .json document.
-    metadata_date
+    metadata_last_modified
         The last modified date for the document.
     """
     if text is not None and text.strip() == "" and not file and not filename:
@@ -75,7 +75,7 @@ def partition_json(
         raise ValueError("Not a valid json")
 
     for element in elements:
-        element.metadata.date = metadata_date or last_modification_date
+        element.metadata.last_modified = metadata_last_modified or last_modification_date
     # NOTE(Nathan): in future PR, try extracting items that look like text
     #               if file_text is a valid json but not an unstructured json
 
