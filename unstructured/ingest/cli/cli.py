@@ -29,14 +29,15 @@ subcommands = [
     cli_cmds.local,
     cli_cmds.elasticsearch,
     cli_cmds.confluence,
+    cli_cmds.sharepoint,
 ]
 
 for subcommand in subcommands:
-    ingest.add_command(subcommand())
+    ingest.add_command(subcommand())  # type: ignore
 
 
 def get_cmd() -> click.Command:
-    cmd = ingest
+    cmd = ingest  # type: ignore
     # Add all subcommands
     for subcommand in subcommands:
         # add_shared_options(cmd)

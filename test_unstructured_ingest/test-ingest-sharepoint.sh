@@ -14,17 +14,20 @@ if [ -z "$SHAREPOINT_CLIENT_ID" ] || [ -z "$SHAREPOINT_CRED" ]; then
 fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-    --ms-sharepoint-client-id "$SHAREPOINT_CLIENT_ID" \
-    --ms-sharepoint-client-cred "$SHAREPOINT_CRED" \
-    --ms-sharepoint-site "$SHAREPOINT_SITE" \
-    --ms-sharepoint-path "Shared Documents" \
+    sharepoint \
+    --download-dir "$DOWNLOAD_DIR" \
     --metadata-exclude file_directory,metadata.data_source.date_processed \
     --num-processes 2 \
     --partition-strategy hi_res \
     --preserve-downloads \
-    --recursive \
     --reprocess \
+    --structured-output-dir "$OUTPUT_DIR" \
+    --verbose \
+    --client-cred "$SHAREPOINT_CRED" \
+    --client-id "$SHAREPOINT_CLIENT_ID" \
+    --site "$SHAREPOINT_SITE" \
+    --path "Shared Documents" \
+    --recursive \
     --download-dir "$DOWNLOAD_DIR" \
-    --structured-output-dir "$OUTPUT_DIR"
 
 sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
