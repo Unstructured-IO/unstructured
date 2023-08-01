@@ -7,6 +7,9 @@
 ### Fixes
 
 * Rename "date" field to "last_modified"
+* Adds Box connector
+
+### Fixes
 
 ## 0.8.7
 
