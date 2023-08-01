@@ -220,6 +220,7 @@ def test_partition_image_default_strategy_hi_res():
 
     first_line = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
     assert elements[0].text == first_line
+    assert elements[0].metadata.coordinates is not None
 
 
 def test_partition_image_metadata_date(

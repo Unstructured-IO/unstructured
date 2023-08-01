@@ -393,6 +393,7 @@ def test_auto_partition_image_default_strategy_hi_res(pass_file_filename, conten
     # should be same result as test_partition_image_default_strategy_hi_res() in test_image.py
     first_line = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
     assert elements[0].text == first_line
+    assert elements[0].metadata.coordinates is not None
 
 
 @pytest.mark.parametrize(
