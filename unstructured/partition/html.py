@@ -78,11 +78,6 @@ def partition_html(
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text, url=url)
 
-    if kwargs.get("last_modification_date"):
-        last_modification_date = kwargs.pop("last_modification_date")
-    else:
-        last_modification_date = None
-
     if filename is not None:
         last_modification_date = get_last_modified_date(filename)
         document = HTMLDocument.from_file(
@@ -127,6 +122,7 @@ def partition_html(
         document,
         include_page_breaks=include_page_breaks,
         last_modification_date=metadata_last_modified or last_modification_date,
+        **kwargs,
     )
 
 
@@ -153,10 +149,9 @@ def convert_and_partition_html(
         If True, the output will include page breaks if the filetype supports it.
     metadata_filename
         The filename to use in element metadata.
-    last_modication_date
+    metadata_last_modified
         The last modified date for the document.
     """
-    last_modification_date = kwargs.get("last_modification_date")
     if filename:
         last_modification_date = get_last_modified_date(filename)
     elif file:
