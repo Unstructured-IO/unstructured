@@ -20,7 +20,7 @@ __all__ = [
     "wikipedia",
 ]
 
-# Function to get the 'get_cmd' function lazily
+# Function to get the 'get_cmd'
 def get_command_function(command_name):
     return getattr(__import__(f"{__name__}.{command_name}", fromlist=["get_cmd"]), "get_cmd")
 
