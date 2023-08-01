@@ -1,7 +1,8 @@
 import subprocess
 import platform
 import pkg_resources
-
+import shutil
+from unstructured.utils import dependency_exists
 
 def command_exists(command):
     """
@@ -13,11 +14,7 @@ def command_exists(command):
     Returns:
         bool: True if command exists, False otherwise
     """
-    try:
-        subprocess.run([command], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        return True
-    except FileNotFoundError:
-        return False
+    return shutil.which(command) is not None
 
 
 def get_python_version():
@@ -176,12 +173,12 @@ def main():
     print("OS version: ", get_os_version())
     print("Python version: ", get_python_version())
 
-    if is_python_package_installed("unstructured"):
+    if dependency_exists("unstructured"):
         print("unstructured version: ", get_python_package_version("unstructured"))
     else:
         print("unstructured is not installed")
 
-    if is_python_package_installed("unstructured-inference"):
+    if dependency_exists("unstructured_inference"):
         print(
             "unstructured-inference version: ",
             get_python_package_version("unstructured-inference"),
@@ -189,32 +186,30 @@ def main():
     else:
         print("unstructured-inference is not installed")
 
-    if is_python_package_installed("detectron2"):
-        print("Detectron2 version: ", get_python_package_version("detectron2"))
+    if dependency_exists("pytesseract"):
+        print(
+            "pytesseract version: ",
+            get_python_package_version("pytesseract"),
+        )
     else:
-        print("Detectron2 is not installed")
+        print("pytesseract is not installed")
 
-    if is_python_package_installed("torch"):
+    if dependency_exists("torch"):
         print("Torch version: ", get_python_package_version("torch"))
     else:
         print("Torch is not installed")
 
-    if is_brew_package_installed("tesseract") or \
-        is_python_package_installed("pytesseract"):
-        print(
-            "Tesseract version: ",
-            get_brew_package_version("tesseract")
-            or get_python_package_version("pytesseract"),
-        )
+    if dependency_exists("detectron2"):
+        print("Detectron2 version: ", get_python_package_version("detectron2"))
     else:
-        print("Tesseract is not installed")
+        print("Detectron2 is not installed")
 
     if is_python_package_installed("paddlepaddle") or \
         is_python_package_installed("paddleocr"):
         print(
             "PaddleOCR version: ",
-            get_python_package_version("paddlepaddle")
-            or get_python_package_version("paddleocr"),
+            get_python_package_version("paddlepaddle") or \
+            get_python_package_version("paddleocr")
         )
     else:
         print("PaddleOCR is not installed")
