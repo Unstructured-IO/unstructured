@@ -65,7 +65,7 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         if not self.ext:
             raise ValueError("Unsupported file without extension.")
 
-        if self.ext not in EXT_TO_FILETYPE.keys():
+        if self.ext not in EXT_TO_FILETYPE:
             raise ValueError(
                 f"Extension not supported. "
                 f"Value MUST be one of {', '.join([k for k in EXT_TO_FILETYPE if k is not None])}.",
