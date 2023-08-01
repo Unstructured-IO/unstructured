@@ -7,8 +7,15 @@ Quick Start
 Use the following instructions to get up and running with ``unstructured`` and test your
 installation.
 
-* Install the Python SDK with ``pip install "unstructured[local-inference]"``
-	* If you do not need to process PDFs or images, you can run ``pip install unstructured``
+* Install the Python SDK with ``pip install unstructured``
+	* Plain text files, HTML, XML, JSON and Emails do not require any extra dependencies.
+	* If you need to process other document types, you can install the extras required for those documents
+		with ``pip install "unstructured[docx,pptx]"``.
+	* To install the extras for every document type, use ``pip install "unstructured[all-docs]"``.
+	* For ``unstructured<0.9.0``, you can install the extras for all document types with
+		``pip install "unstructured[local-inference]"``. The ``local-inference`` extra is still
+		supported in newer versions for backward compatibility, but may be deprecated in a future version.
+		The ``all-docs`` extra is the officially supported installation pattern.
 
 * Install the following system dependencies if they are not already available on your system. Depending on what document types you're parsing, you may not need all of these.
 	* ``libmagic-dev`` (filetype detection)
