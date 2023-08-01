@@ -166,7 +166,6 @@ def new_line_grouper(
 
 def blank_line_grouper(
     text: str,
-    paragraph_split: re.Pattern = DOUBLE_PARAGRAPH_PATTERN_RE,
 ) -> str:
     """
     Concatenates text document that has blank-line paragraph break pattern
@@ -179,8 +178,9 @@ def blank_line_grouper(
 
     Will be returned as:
 
-    Vestibulum auctor dapibus neque.\n\nNunc dignissim risus id metus.\n\n
+    "Vestibulum auctor dapibus neque.\n\nNunc dignissim risus id metus.\n\n"
 
+    The function is now calling group_broken_paragraphs function.
     """
     return group_broken_paragraphs(text)
 
@@ -217,6 +217,7 @@ def auto_paragraph_grouper(
         return new_line_grouper(text)
     else:
         return blank_line_grouper(text)
+
 
 # TODO(robinson) - There's likely a cleaner was to accomplish this and get all of the
 # unicode characters instead of just the quotes. Doing this for now since quotes are
