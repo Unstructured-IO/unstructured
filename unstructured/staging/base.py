@@ -179,7 +179,7 @@ def convert_to_csv(elements: List[Element]) -> str:
 
 
 @requires_dependencies(["pandas"])
-def convert_to_dataframe(elements: List[Element], drop_empty_cols: bool = True):
+def convert_to_dataframe(elements: List[Element], drop_empty_cols: bool = True) -> "pd.DataFrame":
     """Converts document elements to a pandas DataFrame. The dataframe contains the
     following columns:
         text: the element text

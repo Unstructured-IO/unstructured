@@ -22,6 +22,10 @@ from unstructured.documents.elements import (
 )
 from unstructured.logger import logger
 from unstructured.nlp.patterns import ENUMERATED_BULLETS_RE, UNICODE_BULLETS_RE
+from unstructured.utils import dependency_exists
+
+if dependency_exists("docx"):
+    import docx.table as docxtable
 
 if TYPE_CHECKING:
     from unstructured_inference.inference.layoutelement import (
@@ -302,7 +306,7 @@ def convert_to_bytes(
     return f_bytes
 
 
-def convert_ms_office_table_to_text(table, as_html: bool = True):
+def convert_ms_office_table_to_text(table: "docxtable.Table", as_html: bool = True) -> str:
     """
     Convert a table object from a Word document to an HTML table string using the tabulate library.
 
