@@ -9,8 +9,9 @@ For example, the following command processes all the documents in S3 in the
 `utic-dev-tech-fixtures` bucket with a prefix of `small-pdf-set/`.
 
     unstructured-ingest \
+       s3 \
        --remote-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
-       --s3-anonymous \
+       --anonymous \
        --structured-output-dir s3-small-batch-output \
        --num-processes 2
 
@@ -30,19 +31,19 @@ When testing from a local checkout rather than a pip-installed version of `unstr
 just execute `unstructured/ingest/main.py`, e.g.:
 
     PYTHONPATH=. ./unstructured/ingest/main.py \
+       s3 \
        --remote-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
-       --s3-anonymous \
+       --anonymous \
        --structured-output-dir s3-small-batch-output \
        --num-processes 2
 
 ## Adding Data Connectors
 
-To add a connector, refer to [unstructured/ingest/connector/github.py](unstructured/ingest/connector/github.py) as example that implements the three relelvant abstract base classes.
+To add a connector, refer to [unstructured/ingest/connector/github.py](unstructured/ingest/connector/github.py) as example that implements the three relevant abstract base classes.
 
 If the connector has an available `fsspec` implementation, then refer to [unstructured/ingest/connector/s3.py](unstructured/ingest/connector/s3.py).
 
-Then, update [unstructured/ingest/main.py](unstructured/ingest/main.py) to instantiate
-the connector specific to your class if its command line options are invoked.
+Then, update [unstructured/ingest/main.py/cli](unstructured/ingest/cli) to add a subcommand associated with the connector, and hook it up to the parent group.
 
 Create at least one folder [examples/ingest](examples/ingest) with an easily reproducible
 script that shows the new connector in action.
@@ -60,7 +61,7 @@ In checklist form, the above steps are summarized as:
 
 - [ ] Create a new module under [unstructured/ingest/connector/](unstructured/ingest/connector/) implementing the 3 abstract base classes, similar to [unstructured/ingest/connector/github.py](unstructured/ingest/connector/github.py).
   - [ ] The subclass of `BaseIngestDoc` overrides `process_file()` if extra processing logic is needed other than what is provided by [auto.partition()](unstructured/partition/auto.py).
-- [ ] Update [unstructured/ingest/main.py](unstructured/ingest/main.py) with support for the new connector.
+- [ ] Update [unstructured/ingest/cli](unstructured/ingest/cli) with support for the new connector.
 - [ ] Create a folder under [examples/ingest](examples/ingest) that includes at least one well documented script.
 - [ ] Add a script test_unstructured_ingest/test-ingest-\<the-new-data-source\>.sh. It's json output files should have a total of no more than 100K.
 - [ ] Git add the expected outputs under test_unstructured_ingest/expected-structured-output/\<folder-name-relevant-to-your-dataset\> so the above test passes in CI.

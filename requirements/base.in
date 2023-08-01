@@ -1,19 +1,8 @@
 -c "constraints.in"
 chardet
 filetype
-lxml
-msg_parser
-nltk
-openpyxl
-pandas
-pdf2image
-pdfminer.six
-pillow
-pypandoc
-python-docx
-python-pptx
 python-magic
-markdown
-requests
+lxml
+nltk
 tabulate
-xlrd
+requests
