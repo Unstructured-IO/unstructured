@@ -63,57 +63,33 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return (
             Path(self.standard_config.download_dir)
             / self.file_meta.base_id
-            / f"{self.file_meta.table_id}.txt"
+            / f"{self.file_meta.table_id}.csv"
         ).resolve()
 
     @property
     def _output_filename(self):
         """Create output file path based on output directory, ."""
-        output_file = f"{self.file_meta.table_id}.txt"
+        output_file = f"{self.file_meta.table_id}.json"
         return Path(self.standard_config.output_dir) / self.file_meta.base_id / output_file
 
-    def _flatten_values(self, value, seperator="\n", no_value_str=""):
-        """Flattens list or dict objects. Joins each value or item with
-        the seperator character. Keys are not included in the joined string.
-        When a dict value or a list item is None, no_value_str is used to
-        represent that value / item."""
-        if value is None:
-            return no_value_str
-
-        if isinstance(value, list):
-            flattened_values = [self._flatten_values(item, seperator) for item in value]
-            return seperator.join(flattened_values)
-
-        elif isinstance(value, dict):
-            flattened_values = [self._flatten_values(item, seperator) for item in value.values()]
-            return seperator.join(flattened_values)
-
-        else:
-            return str(value)
-
-    def _concatenate_dict_fields(self, dictionary, seperator="\n"):
-        """Concatenates all values for each key in a dictionary in a nested manner.
-        Used to parse a python dictionary to an aggregated string"""
-        values = [self._flatten_values(value, seperator) for value in dictionary.values()]
-        concatenated_values = seperator.join(values)
-        return concatenated_values
-
-    @requires_dependencies(["pyairtable"])
+    @requires_dependencies(["pyairtable", "pandas"])
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
 
         # TODO: instead of having a separate connection object for each doc,
         # have a separate connection object for each process
+        import pandas as pd
         from pyairtable import Api
 
         self.api = Api(self.config.personal_access_token)
         table = self.api.table(self.file_meta.base_id, self.file_meta.table_id)
-        self.document = self._concatenate_dict_fields({"table": table.all()})
+
+        df = pd.DataFrame.from_dict([row["fields"] for row in table.all()])
+        self.document = df.to_csv()
         self.filename.parent.mkdir(parents=True, exist_ok=True)
 
         with open(self.filename, "w", encoding="utf8") as f:
-            # import pdb; pdb.set_trace()
             f.write(self.document)
 
 
