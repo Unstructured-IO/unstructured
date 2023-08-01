@@ -1,8 +1,9 @@
 import os
 from dataclasses import dataclass, field
+from datetime import datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, Optional
-from datetime import datetime
+
 import pytz
 
 from unstructured.ingest.interfaces import (
@@ -63,25 +64,25 @@ class RedditIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def date_created(self) -> Optional[str]:
         return datetime.fromtimestamp(self.post.created_utc, pytz.utc).isoformat()
-    
-    @property 
+
+    @property
     def date_modified(self) -> Optional[str]:
         return None
 
     @property
     def exists(self) -> Optional[bool]:
-        return (self.post.author == "[deleted]" or self.post.auth is None) \
-            and (self.post.selftext == '[deleted]' or self.post.selftext == '[removed]') 
-    
+        return (self.post.author == "[deleted]" or self.post.auth is None) and (
+            self.post.selftext == "[deleted]" or self.post.selftext == "[removed]"
+        )
+
     @property
     def record_locator(self) -> Optional[Dict[str, Any]]:
-        return dict(permalink=self.post.permalink,
-                    url=self.post.url,
-                    id=self.post.id)
+        return {"permalink": self.post.permalink, "url": self.post.url, "id": self.post.id}
 
     @property
     def version(self) -> Optional[str]:
         return self.post.id
+
 
 @requires_dependencies(["praw"], extras="reddit")
 class RedditConnector(ConnectorCleanupMixin, BaseConnector):

@@ -2,7 +2,7 @@ import os
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Optional
+from typing import TYPE_CHECKING, Any, Dict, Optional, Type
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -13,9 +13,10 @@ from unstructured.ingest.interfaces import (
     StandardConnectorConfig,
 )
 from unstructured.ingest.logger import logger
+
 if TYPE_CHECKING:
     from fsspec import AbstractFileSystem
-    
+
 
 SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
     "s3",
@@ -118,19 +119,19 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def filename(self):
         """The filename of the file after downloading from cloud"""
         return self._tmp_download_file()
-    
+
     @property
     def date_created(self) -> Optional[str]:
         return self.fs.created(self.remote_file_path).isoformat()
 
-    @property 
+    @property
     def date_modified(self) -> Optional[str]:
         return self.fs.modified(self.remote_file_path).isoformat()
 
     @property
     def exists(self) -> Optional[bool]:
         return self.fs.exists(self.remote_file_path)
-    
+
     @property
     def record_locator(self) -> Optional[Dict[str, Any]]:
         """Returns the equivalent of ls in dict"""
@@ -139,7 +140,6 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def version(self) -> Optional[str]:
         return str(self.fs.checksum(self.remote_file_path))
-
 
 
 class FsspecConnector(ConnectorCleanupMixin, BaseConnector):
@@ -196,6 +196,7 @@ class FsspecConnector(ConnectorCleanupMixin, BaseConnector):
                 standard_config=self.standard_config,
                 config=self.config,
                 remote_file_path=file,
+                fs=self.fs,
             )
             for file in self._list_files()
         ]
