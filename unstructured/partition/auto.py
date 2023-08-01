@@ -132,7 +132,8 @@ def partition(
         pdf_infer_table_structure,
     )
 
-    kwargs.setdefault("metadata_filename", filename or file_filename)
+    if file is not None and file_filename is not None:
+        kwargs.setdefault("metadata_filename", file_filename)
 
     if filetype == FileType.DOC:
         elements = partition_doc(filename=filename, file=file, **kwargs)

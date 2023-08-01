@@ -8,6 +8,7 @@
 
 * Rename "date" field to "last_modified"
 * Adds Box connector
+* Pass file_filename metadata when partitioning file object
 
 ### Fixes
 
