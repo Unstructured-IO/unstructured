@@ -10,6 +10,7 @@ def ingest():
 
 # Dynamically update shared options for supported subcommands
 subcommands = [
+    cli_cmds.box,
     cli_cmds.s3,
     cli_cmds.gcs,
     cli_cmds.dropbox,
