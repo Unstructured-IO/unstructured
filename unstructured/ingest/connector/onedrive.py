@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.ingest.interfaces import (
@@ -95,6 +95,28 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def _output_filename(self):
         return Path(self.output_filepath).resolve()
+    
+    @property
+    def date_created(self) -> Optional[str]:
+        return self.file.created_datetime
+    
+    @property 
+    def date_modified(self) -> Optional[str]:
+        return self.file.last_modified_datetime
+
+    @property
+    def exists(self) -> Optional[bool]:
+        return (self.file.name is not None) and (self.file.get_property("size", 0) > 0)
+    
+    @property
+    def record_locator(self) -> Optional[Dict[str, Any]]:
+        return self.file.to_json()
+
+    @property
+    def version(self) -> Optional[str]:
+        if (n_versions := len(self.file.versions)) > 0:
+            return self.file.versions[n_versions-1].properties.get('id', None)
+        return None
 
     @BaseIngestDoc.skip_if_file_exists
     @requires_dependencies(["office365"])
