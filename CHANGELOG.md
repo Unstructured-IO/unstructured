@@ -1,3 +1,13 @@
+## 0.9.1-dev0
+
+### Enhancements
+
+* Track emphasized texts in `partition_html` output.
+
+### Features
+
+### Fixes
+
 ## 0.9.0
 
 ### Enhancements
