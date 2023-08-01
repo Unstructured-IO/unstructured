@@ -3,7 +3,7 @@ name: Ingest Test Fixtures Update PR
 on:
   push:
   workflow_dispatch:
-  
+
 env:
   GHA_CACHE_KEY_VERSION: "v1"
 
@@ -61,8 +61,16 @@ jobs:
           GH_READ_ONLY_ACCESS_TOKEN: ${{ secrets.GH_READ_ONLY_ACCESS_TOKEN }}
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          CONFLUENCE_USER_EMAIL: ${{ secrets.CONFLUENCE_USER_EMAIL }}
+          CONFLUENCE_API_TOKEN: ${{ secrets.CONFLUENCE_API_TOKEN }}
           GCP_INGEST_SERVICE_KEY: ${{ secrets.GCP_INGEST_SERVICE_KEY }}
           UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
+          MS_CLIENT_ID: ${{ secrets.MS_CLIENT_ID }}
+          MS_CLIENT_CRED: ${{ secrets.MS_CLIENT_CRED }}
+          MS_TENANT_ID: ${{ secrets.MS_TENANT_ID }}
+          MS_USER_EMAIL: ${{ secrets.MS_USER_EMAIL }}
+          MS_USER_PNAME: ${{ secrets.MS_USER_PNAME }}
+          BOX_APP_CRED: ${{ secrets.BOX_APP_CRED }}
           OVERWRITE_FIXTURES: "true"
         run: |
           source .venv/bin/activate
@@ -74,6 +82,8 @@ jobs:
           tesseract --version
           make install-ingest-s3
           make install-ingest-azure
+          make install-ingest-box
+          make install-ingest-confluence
           make install-ingest-discord
           make install-ingest-elasticsearch
           make install-ingest-dropbox
@@ -81,6 +91,8 @@ jobs:
           make install-ingest-google-drive
           make install-ingest-github
           make install-ingest-gitlab
+          make install-ingest-onedrive
+          make install-ingest-outlook
           make install-ingest-slack
           make install-ingest-wikipedia
           ./test_unstructured_ingest/test-ingest.sh

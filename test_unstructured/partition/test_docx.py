@@ -1,4 +1,5 @@
 import os
+from tempfile import SpooledTemporaryFile
 
 import docx
 import pytest
@@ -79,8 +80,6 @@ def test_partition_docx_with_spooled_file(mock_document, expected_elements, tmpd
     # Test that the partition_docx function can handle a SpooledTemporaryFile
     filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     mock_document.save(filename)
-
-    from tempfile import SpooledTemporaryFile
 
     with open(filename, "rb") as test_file:
         spooled_temp_file = SpooledTemporaryFile()
@@ -171,6 +170,21 @@ def test_partition_docx_includes_page_breaks(filename="example-docs/handbook-1p.
         assert element.metadata.filename == "handbook-1p.docx"
 
 
+def test_partition_docx_detects_lists(filename="example-docs/example-list-items-multiple.docx"):
+    elements = partition_docx(filename=filename)
+    list_elements = []
+    narrative_elements = []
+    for element in elements:
+        if isinstance(element, ListItem):
+            list_elements.append(element)
+        else:
+            narrative_elements.append(element)
+    assert elements[-1] == ListItem(
+        "This is simply dummy text of the printing and typesetting industry.",
+    )
+    assert len(list_elements) == 10
+
+
 def test_partition_docx_from_filename_exclude_metadata(filename="example-docs/handbook-1p.docx"):
     elements = partition_docx(filename=filename, include_metadata=False)
     assert elements[0].metadata.filetype is None
@@ -187,3 +201,87 @@ def test_partition_docx_from_file_exclude_metadata(mock_document, tmpdir):
     assert elements[0].metadata.filetype is None
     assert elements[0].metadata.page_name is None
     assert elements[0].metadata.filename is None
+
+
+def test_partition_docx_metadata_date(
+    mocker,
+    filename="example-docs/fake.docx",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.docx.get_last_modified_date",
+        return_value=mocked_last_modification_date,
+    )
+
+    elements = partition_docx(filename=filename)
+
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
+
+
+def test_partition_docx_metadata_date_with_custom_metadata(
+    mocker,
+    filename="example-docs/fake.docx",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    expected_last_modified_date = "2020-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.docx.get_last_modified_date",
+        return_value=mocked_last_modification_date,
+    )
+
+    elements = partition_docx(
+        filename=filename,
+        metadata_last_modified=expected_last_modified_date,
+    )
+
+    assert elements[0].metadata.last_modified == expected_last_modified_date
+
+
+def test_partition_docx_from_file_metadata_date(
+    mocker,
+    filename="example-docs/fake.docx",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.docx.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+
+    with open(filename, "rb") as f:
+        elements = partition_docx(file=f)
+
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
+
+
+def test_partition_docx_from_file_metadata_date_with_custom_metadata(
+    mocker,
+    filename="example-docs/fake.docx",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    expected_last_modified_date = "2020-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.docx.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+    with open(filename, "rb") as f:
+        elements = partition_docx(file=f, metadata_last_modified=expected_last_modified_date)
+
+    assert elements[0].metadata.last_modified == expected_last_modified_date
+
+
+def test_partition_docx_from_file_without_metadata_date(
+    filename="example-docs/fake.docx",
+):
+    """Test partition_docx() with file that are not possible to get last modified date"""
+
+    with open(filename, "rb") as f:
+        sf = SpooledTemporaryFile()
+        sf.write(f.read())
+        sf.seek(0)
+        elements = partition_docx(file=sf)
+
+    assert elements[0].metadata.last_modified is None

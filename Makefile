@@ -1,5 +1,5 @@
 PACKAGE_NAME := unstructured
-PIP_VERSION := 23.1.2
+PIP_VERSION := 23.2.1
 CURRENT_DIR := $(shell pwd)
 ARCH := $(shell uname -m)
 
@@ -18,10 +18,10 @@ install-base: install-base-pip-packages install-nltk-models
 
 ## install:                 installs all test, dev, and experimental requirements
 .PHONY: install
-install: install-base-pip-packages install-dev install-nltk-models install-test install-huggingface install-unstructured-inference
+install: install-base-pip-packages install-dev install-nltk-models install-test install-huggingface install-all-docs
 
 .PHONY: install-ci
-install-ci: install-base-pip-packages install-nltk-models install-huggingface install-unstructured-inference install-test
+install-ci: install-base-pip-packages install-nltk-models install-huggingface install-all-docs install-test
 
 .PHONY: install-base-pip-packages
 install-base-pip-packages:
@@ -53,6 +53,45 @@ install-dev:
 install-build:
 	python3 -m pip install -r requirements/build.txt
 
+.PHONY: install-csv
+install-csv:
+	python3 -m pip install -r requirements/extra-csv.txt
+
+.PHONY: install-docx
+install-docx:
+	python3 -m pip install -r requirements/extra-docx.txt
+
+.PHONY: install-odt
+install-odt:
+	python3 -m pip install -r requirements/extra-odt.txt
+
+.PHONY: install-pypandoc
+install-pypandoc:
+	python3 -m pip install -r requirements/extra-pandoc.txt
+
+.PHONY: install-markdown
+install-markdown:
+	python3 -m pip install -r requirements/extra-markdown.txt
+
+.PHONY: install-msg
+install-msg:
+	python3 -m pip install -r requirements/extra-msg.txt
+
+.PHONY: install-pdf-image
+install-pdf-image:
+	python3 -m pip install -r requirements/extra-pdf-image.txt
+
+.PHONY: install-pptx
+install-pptx:
+	python3 -m pip install -r requirements/extra-pptx.txt
+
+.PHONY: install-xlsx
+install-xlsx:
+	python3 -m pip install -r requirements/extra-xlsx.txt
+
+.PHONY: install-all-docs
+install-all-docs: install-base install-csv install-docx install-docx install-odt install-pypandoc install-markdown install-msg install-pdf-image install-pptx install-xlsx
+
 .PHONY: install-ingest-google-drive
 install-ingest-google-drive:
 	python3 -m pip install -r requirements/ingest-google-drive.txt
@@ -74,6 +113,10 @@ install-ingest-dropbox:
 install-ingest-azure:
 	python3 -m pip install -r requirements/ingest-azure.txt
 
+.PHONY: install-ingest-box
+install-ingest-box:
+	python3 -m pip install -r requirements/ingest-box.txt
+
 .PHONY: install-ingest-discord
 install-ingest-discord:
 	pip install -r requirements/ingest-discord.txt
@@ -85,6 +128,14 @@ install-ingest-github:
 .PHONY: install-ingest-gitlab
 install-ingest-gitlab:
 	python3 -m pip install -r requirements/ingest-gitlab.txt
+
+.PHONY: install-ingest-onedrive
+install-ingest-onedrive:
+	python3 -m pip install -r requirements/ingest-onedrive.txt
+
+.PHONY: install-ingest-outlook
+install-ingest-outlook:
+	python3 -m pip install -r requirements/ingest-outlook.txt
 
 .PHONY: install-ingest-reddit
 install-ingest-reddit:
@@ -101,13 +152,18 @@ install-ingest-wikipedia:
 .PHONY: install-ingest-elasticsearch
 install-ingest-elasticsearch:
 	python3 -m pip install -r requirements/ingest-elasticsearch.txt
+
+.PHONY: install-ingest-confluence
+install-ingest-confluence:
+	python3 -m pip install -r requirements/ingest-confluence.txt
+
 .PHONY: install-unstructured-inference
 install-unstructured-inference:
 	python3 -m pip install -r requirements/local-inference.txt
 
 ## install-local-inference: installs requirements for local inference
 .PHONY: install-local-inference
-install-local-inference: install install-unstructured-inference
+install-local-inference: install install-all-docs
 
 .PHONY: install-pandoc
 install-pandoc:
@@ -118,16 +174,28 @@ install-pandoc:
 .PHONY: pip-compile
 pip-compile:
 	pip-compile --upgrade requirements/base.in
+
+	# Extra requirements that are specific to document types
+	pip-compile --upgrade requirements/extra-csv.in
+	pip-compile --upgrade requirements/extra-docx.in
+	pip-compile --upgrade requirements/extra-pandoc.in
+	pip-compile --upgrade requirements/extra-markdown.in
+	pip-compile --upgrade requirements/extra-msg.in
+	pip-compile --upgrade requirements/extra-odt.in
+	pip-compile --upgrade requirements/extra-pdf-image.in
+	pip-compile --upgrade requirements/extra-pptx.in
+	pip-compile --upgrade requirements/extra-xlsx.in
+
 	# Extra requirements for huggingface staging functions
 	pip-compile --upgrade requirements/huggingface.in
 	pip-compile --upgrade requirements/test.in
 	pip-compile --upgrade requirements/dev.in
 	pip-compile --upgrade requirements/build.in
-	pip-compile --upgrade requirements/local-inference.in
 	# NOTE(robinson) - doc/requirements.txt is where the GitHub action for building
 	# sphinx docs looks for additional requirements
 	cp requirements/build.txt docs/requirements.txt
 	pip-compile --upgrade requirements/ingest-s3.in
+	pip-compile --upgrade requirements/ingest-box.in
 	pip-compile --upgrade requirements/ingest-gcs.in
 	pip-compile --upgrade requirements/ingest-dropbox.in
 	pip-compile --upgrade requirements/ingest-azure.in
@@ -139,6 +207,9 @@ pip-compile:
 	pip-compile --upgrade requirements/ingest-wikipedia.in
 	pip-compile --upgrade requirements/ingest-google-drive.in
 	pip-compile --upgrade requirements/ingest-elasticsearch.in
+	pip-compile --upgrade requirements/ingest-onedrive.in
+	pip-compile --upgrade requirements/ingest-outlook.in
+	pip-compile --upgrade requirements/ingest-confluence.in
 
 ## install-project-local:   install unstructured into your local python environment
 .PHONY: install-project-local
@@ -161,6 +232,10 @@ export CI ?= false
 .PHONY: test
 test:
 	PYTHONPATH=. CI=$(CI) pytest test_${PACKAGE_NAME} --cov=${PACKAGE_NAME} --cov-report term-missing
+
+.PHONY: test-unstructured-api-unit
+test-unstructured-api-unit:
+	scripts/test-unstructured-api-unit.sh
 
 ## check:                   runs linters (includes tests)
 .PHONY: check

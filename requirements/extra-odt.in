@@ -1,0 +1,5 @@
+-c constraints.in
+-c base.txt
+
+python-docx
+pypandoc

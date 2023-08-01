@@ -7,7 +7,7 @@ import requests
 from requests.models import Response
 
 from unstructured.cleaners.core import clean_extra_whitespace
-from unstructured.documents.elements import Title
+from unstructured.documents.elements import ListItem, NarrativeText, Title
 from unstructured.partition.html import partition_html
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -51,7 +51,11 @@ def test_partition_html_from_filename_raises_encoding_error(filename, encoding, 
 
 @pytest.mark.parametrize(
     "filename",
-    ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html", "fake-html-lang-de.html"],
+    [
+        "example-10k-utf-16.html",
+        "example-steelJIS-datasheet-utf-16.html",
+        "fake-html-lang-de.html",
+    ],
 )
 def test_partition_html_from_filename_default_encoding(filename):
     filename_path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
@@ -114,7 +118,11 @@ def test_partition_html_from_file_raises_encoding_error(filename, encoding, erro
 
 @pytest.mark.parametrize(
     "filename",
-    ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html", "fake-html-lang-de.html"],
+    [
+        "example-10k-utf-16.html",
+        "example-steelJIS-datasheet-utf-16.html",
+        "fake-html-lang-de.html",
+    ],
 )
 def test_partition_html_from_file_default_encoding(filename):
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
@@ -141,7 +149,11 @@ def test_partition_html_from_file_rb_raises_encoding_error(filename, encoding, e
 
 @pytest.mark.parametrize(
     "filename",
-    ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html", "fake-html-lang-de.html"],
+    [
+        "example-10k-utf-16.html",
+        "example-steelJIS-datasheet-utf-16.html",
+        "fake-html-lang-de.html",
+    ],
 )
 def test_partition_html_from_file_rb_default_encoding(filename):
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
@@ -177,7 +189,11 @@ def test_partition_html_from_url():
     with open(filename) as f:
         text = f.read()
 
-    response = MockResponse(text=text, status_code=200, headers={"Content-Type": "text/html"})
+    response = MockResponse(
+        text=text,
+        status_code=200,
+        headers={"Content-Type": "text/html"},
+    )
     with patch.object(requests, "get", return_value=response) as _:
         elements = partition_html(url="https://fake.url")
 
@@ -189,7 +205,11 @@ def test_partition_html_from_url_raises_with_bad_status_code():
     with open(filename) as f:
         text = f.read()
 
-    response = MockResponse(text=text, status_code=500, headers={"Content-Type": "text/html"})
+    response = MockResponse(
+        text=text,
+        status_code=500,
+        headers={"Content-Type": "text/html"},
+    )
     with patch.object(requests, "get", return_value=response) as _:
         with pytest.raises(ValueError):
             partition_html(url="https://fake.url")
@@ -252,7 +272,13 @@ def test_partition_html_on_ideas_page():
 
 
 def test_user_without_file_write_permission_can_partition_html(tmp_path, monkeypatch):
-    example_filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "example-10k.html")
+    example_filename = os.path.join(
+        DIRECTORY,
+        "..",
+        "..",
+        "example-docs",
+        "example-10k.html",
+    )
 
     # create a file with no write permissions
     read_only_file = tmp_path / "example-10k-readonly.html"
@@ -319,3 +345,138 @@ def test_partition_html_from_filename_exclude_metadata():
     assert "PageBreak" not in [elem.category for elem in elements]
     assert elements[0].metadata.filename is None
     assert elements[0].metadata.file_directory is None
+
+
+def test_partition_html_metadata_date(mocker, filename="example-docs/fake-html.html"):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.html.get_last_modified_date",
+        return_value=mocked_last_modification_date,
+    )
+    elements = partition_html(filename=filename)
+
+    assert isinstance(elements[0], Title)
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
+
+
+def test_partition_html_from_file_metadata_date(
+    mocker,
+    filename="example-docs/fake-html.html",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.html.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+
+    with open(filename) as f:
+        elements = partition_html(file=f)
+
+    assert isinstance(elements[0], Title)
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
+
+
+def test_partition_html_custom_metadata_date(
+    mocker,
+    filename="example-docs/fake-html.html",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    expected_last_modification_date = "2020-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.html.get_last_modified_date",
+        return_value=mocked_last_modification_date,
+    )
+
+    elements = partition_html(
+        filename=filename,
+        metadata_last_modified=expected_last_modification_date,
+    )
+
+    assert isinstance(elements[0], Title)
+    assert elements[0].metadata.last_modified == expected_last_modification_date
+
+
+def test_partition_html_from_file_custom_metadata_date(
+    mocker,
+    filename="example-docs/fake-html.html",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    expected_last_modification_date = "2020-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.html.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+
+    with open(filename) as f:
+        elements = partition_html(file=f, metadata_last_modified=expected_last_modification_date)
+
+    assert isinstance(elements[0], Title)
+    assert elements[0].metadata.last_modified == expected_last_modification_date
+
+
+def test_partition_html_from_text_metadata_date(filename="example-docs/fake-html.html"):
+    elements = partition_html(text="<html><div><p>TEST</p></div></html>")
+
+    assert isinstance(elements[0], Title)
+    assert elements[0].metadata.last_modified is None
+
+
+def test_partition_html_from_text_custom_metadata_date(
+    filename="example-docs/fake-html.html",
+):
+    expected_last_modification_date = "2020-07-05T09:24:28"
+
+    elements = partition_html(
+        text="<html><div><p>TEST</p></div></html>",
+        metadata_last_modified=expected_last_modification_date,
+    )
+
+    assert isinstance(elements[0], Title)
+    assert elements[0].metadata.last_modified == expected_last_modification_date
+
+
+def test_partition_html_grabs_links():
+    html_text = """<html>
+        <p>Hello there I am a <a href="/link">very important link!</a></p>
+        <p>Here is a list of my favorite things</p>
+        <ul>
+            <li><a href="https://en.wikipedia.org/wiki/Parrot">Parrots</a></li>
+            <li>Dogs</li>
+        </ul>
+        <a href="/loner">A lone link!</a>
+    </html>"""
+    elements = partition_html(text=html_text)
+
+    assert elements[0] == NarrativeText("Hello there I am a very important link!")
+    assert elements[0].metadata.links == [
+        {
+            "text": "very important link!",
+            "url": "/link",
+        },
+    ]
+
+    assert elements[1] == NarrativeText("Here is a list of my favorite things")
+    assert elements[1].metadata.links is None
+
+    assert elements[2] == ListItem("Parrots")
+    assert elements[2].metadata.links == [
+        {
+            "text": "Parrots",
+            "url": "https://en.wikipedia.org/wiki/Parrot",
+        },
+    ]
+
+    assert elements[3] == ListItem("Dogs")
+    assert elements[3].metadata.links is None
+
+    assert elements[4] == Title("A lone link!")
+    assert elements[4].metadata.links == [
+        {
+            "text": "A lone link!",
+            "url": "/loner",
+        },
+    ]

@@ -13,7 +13,7 @@ jobs:
   setup:
     strategy:
       matrix:
-        python-version: ["3.8","3.9","3.10"]
+        python-version: ["3.8","3.9","3.10","3.11"]
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
@@ -40,7 +40,7 @@ jobs:
   check-deps:
     strategy:
       matrix:
-        python-version: ["3.8","3.9","3.10"]
+        python-version: ["3.8","3.9","3.10","3.11"]
     runs-on: ubuntu-latest
     needs: setup
     steps:
@@ -70,7 +70,7 @@ jobs:
   lint:
     strategy:
       matrix:
-        python-version: ["3.8","3.9","3.10"]
+        python-version: ["3.8","3.9","3.10","3.11"]
     runs-on: ubuntu-latest
     needs: setup
     steps:
@@ -107,7 +107,7 @@ jobs:
   test_unit:
     strategy:
       matrix:
-        python-version: ["3.8","3.9","3.10"]
+        python-version: ["3.8","3.9","3.10","3.11"]
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
@@ -146,13 +146,14 @@ jobs:
         # NOTE(robinson) - Installing weaviate-client separately here because the requests
         # version conflicts with label_studio_sdk
         pip install weaviate-client
+        pip install argilla
         make test CI=true
         make check-coverage
 
   test_ingest:
     strategy:
       matrix:
-        python-version: ["3.8","3.9","3.10"]
+        python-version: ["3.8","3.9","3.10","3.11"]
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
@@ -186,8 +187,16 @@ jobs:
         GH_READ_ONLY_ACCESS_TOKEN: ${{ secrets.GH_READ_ONLY_ACCESS_TOKEN }}
         SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
         DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+        CONFLUENCE_USER_EMAIL: ${{ secrets.CONFLUENCE_USER_EMAIL }}
+        CONFLUENCE_API_TOKEN: ${{ secrets.CONFLUENCE_API_TOKEN }}
         GCP_INGEST_SERVICE_KEY: ${{ secrets.GCP_INGEST_SERVICE_KEY }}
+        MS_CLIENT_ID: ${{ secrets.MS_CLIENT_ID }}
+        MS_CLIENT_CRED: ${{ secrets.MS_CLIENT_CRED }}
+        MS_TENANT_ID: ${{ secrets.MS_TENANT_ID }}
+        MS_USER_EMAIL: ${{ secrets.MS_USER_EMAIL }}
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
+        MS_USER_PNAME: ${{ secrets.MS_USER_PNAME }}
+        BOX_APP_CRED: ${{ secrets.BOX_APP_CRED }}
       run: |
         source .venv/bin/activate
         sudo apt-get update
@@ -198,6 +207,8 @@ jobs:
         tesseract --version
         make install-ingest-s3
         make install-ingest-azure
+        make install-ingest-box
+        make install-ingest-confluence
         make install-ingest-discord
         make install-ingest-elasticsearch
         make install-ingest-dropbox
@@ -205,9 +216,58 @@ jobs:
         make install-ingest-google-drive
         make install-ingest-github
         make install-ingest-gitlab
+        make install-ingest-onedrive
+        make install-ingest-outlook
         make install-ingest-slack
         make install-ingest-wikipedia
         ./test_unstructured_ingest/test-ingest.sh
+
+  test_unstructured_api_unit:
+    strategy:
+      matrix:
+        # NOTE(yuming): Unstructured API only use Python 3.8
+        python-version: ["3.8"]
+    runs-on: ubuntu-latest
+    env:
+      NLTK_DATA: ${{ github.workspace }}/nltk_data
+    needs: [setup, lint]
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/cache/restore@v3
+      id: virtualenv-cache
+      with:
+        path: |
+          .venv
+          nltk_data
+        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+    - name: Set up flag for running Unstructured API unit tests
+      run: |
+        # NOTE: Change env `SKIP_API_UNIT_FOR_BREAKING_CHANGE` to true if there is a breaking change in Unstructured repo that will break unstructured api unit tests
+        # TODO: Change env back to false once API unit tests is in sync with unstructured repo
+        echo "SKIP_API_UNIT_FOR_BREAKING_CHANGE=true" >> $GITHUB_ENV
+    - name: Set up Python ${{ matrix.python-version }}
+      if: env.SKIP_API_UNIT_FOR_BREAKING_CHANGE == 'false'
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Setup virtual environment (no cache hit)
+      if: steps.virtualenv-cache.outputs.cache-hit != 'true' &&  env.SKIP_API_UNIT_FOR_BREAKING_CHANGE == 'false'
+      run: |
+        python${{ matrix.python-version}} -m venv .venv
+        source .venv/bin/activate
+        mkdir "$NLTK_DATA"
+        make install-ci
+    - name: Test Unstructured API Unit
+      if: env.SKIP_API_UNIT_FOR_BREAKING_CHANGE == 'false'
+      run: |
+        source .venv/bin/activate
+        sudo apt-get update && sudo apt-get install --yes poppler-utils libreoffice
+        make install-pandoc
+        sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
+        sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
+        tesseract --version
+        make install-nltk-models
+        make test-unstructured-api-unit
 
   changelog:
     runs-on: ubuntu-latest
@@ -250,4 +310,4 @@ jobs:
           source .venv/bin/activate
           echo "UNS_API_KEY=${{ secrets.UNS_API_KEY }}" > uns_test_env_file
           make docker-build
-          make docker-test CI=true 
+          make docker-test CI=true

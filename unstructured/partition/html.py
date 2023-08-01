@@ -14,6 +14,8 @@ from unstructured.file_utils.filetype import (
 )
 from unstructured.partition.common import (
     exactly_one,
+    get_last_modified_date,
+    get_last_modified_date_from_file,
 )
 
 
@@ -32,6 +34,7 @@ def partition_html(
     parser: VALID_PARSERS = None,
     html_assemble_articles: bool = False,
     metadata_filename: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions an HTML document into its constituent elements.
@@ -60,13 +63,17 @@ def partition_html(
         in the HTTP request.
     parser
         The parser to use for parsing the HTML document. If None, default parser will be used.
+    metadata_last_modified
+        The last modified date for the document.
     """
     if text is not None and text.strip() == "" and not file and not filename and not url:
         return []
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text, url=url)
 
+    last_modification_date = None
     if filename is not None:
+        last_modification_date = get_last_modified_date(filename)
         document = HTMLDocument.from_file(
             filename,
             parser=parser,
@@ -75,6 +82,7 @@ def partition_html(
         )
 
     elif file is not None:
+        last_modification_date = get_last_modified_date_from_file(file)
         _, file_text = read_txt_file(file=file, encoding=encoding)
         document = HTMLDocument.from_string(
             file_text,
@@ -101,7 +109,11 @@ def partition_html(
 
         document = HTMLDocument.from_string(response.text, parser=parser)
 
-    return document_to_element_list(document, include_page_breaks=include_page_breaks)
+    return document_to_element_list(
+        document,
+        include_page_breaks=include_page_breaks,
+        last_modification_date=metadata_last_modified or last_modification_date,
+    )
 
 
 def convert_and_partition_html(
@@ -110,6 +122,7 @@ def convert_and_partition_html(
     file: Optional[IO[bytes]] = None,
     include_page_breaks: bool = False,
     metadata_filename: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
 ) -> List[Element]:
     """Converts a document to HTML and then partitions it using partition_html. Works with
     any file format support by pandoc.
@@ -126,8 +139,20 @@ def convert_and_partition_html(
         If True, the output will include page breaks if the filetype supports it.
     metadata_filename
         The filename to use in element metadata.
+    last_modication_date
+        The last modified date for the document.
     """
-    html_text = convert_file_to_html_text(source_format=source_format, filename=filename, file=file)
+
+    last_modification_date = None
+    if filename:
+        last_modification_date = get_last_modified_date(filename)
+    elif file:
+        last_modification_date = get_last_modified_date_from_file(file)
+    html_text = convert_file_to_html_text(
+        source_format=source_format,
+        filename=filename,
+        file=file,
+    )
     # NOTE(robinson) - pypandoc returns a text string with unicode encoding
     # ref: https://github.com/JessicaTegner/pypandoc#usage
     return partition_html(
@@ -135,4 +160,5 @@ def convert_and_partition_html(
         include_page_breaks=include_page_breaks,
         encoding="unicode",
         metadata_filename=metadata_filename,
+        metadata_last_modified=metadata_last_modified or last_modification_date,
     )

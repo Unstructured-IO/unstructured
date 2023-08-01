@@ -2,7 +2,7 @@ import os
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -27,8 +27,8 @@ class SimpleSlackConfig(BaseConnectorConfig):
 
     channels: List[str]
     token: str
-    oldest: str
-    latest: str
+    oldest: Optional[str]
+    latest: Optional[str]
     verbose: bool = False
 
     def validate_inputs(self):
@@ -68,8 +68,8 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleSlackConfig
     channel: str
     token: str
-    oldest: str
-    latest: str
+    oldest: Optional[str]
+    latest: Optional[str]
 
     # NOTE(crag): probably doesn't matter,  but intentionally not defining tmp_download_file
     # __post_init__ for multiprocessing simplicity (no Path objects in initially

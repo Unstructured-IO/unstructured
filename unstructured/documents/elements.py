@@ -111,13 +111,20 @@ class RegexMetadata(TypedDict):
     end: int
 
 
+class Link(TypedDict):
+    """Metadata related to extracted links"""
+
+    text: Optional[str]
+    url: str
+
+
 @dataclass
 class ElementMetadata:
     coordinates: Optional[CoordinatesMetadata] = None
     data_source: Optional[DataSourceMetadata] = None
     filename: Optional[str] = None
     file_directory: Optional[str] = None
-    date: Optional[str] = None
+    last_modified: Optional[str] = None
     filetype: Optional[str] = None
     attached_to_filename: Optional[str] = None
 
@@ -129,6 +136,7 @@ class ElementMetadata:
 
     # Webpage specific metadata fields
     url: Optional[str] = None
+    links: Optional[List[Link]] = None
 
     # E-mail specific metadata fields
     sent_from: Optional[List[str]] = None
@@ -178,11 +186,11 @@ class ElementMetadata:
                 setattr(self, k, getattr(other, k))
         return self
 
-    def get_date(self) -> Optional[datetime.datetime]:
+    def get_last_modified(self) -> Optional[datetime.datetime]:
         """Converts the date field to a datetime object."""
         dt = None
-        if self.date is not None:
-            dt = datetime.datetime.fromisoformat(self.date)
+        if self.last_modified is not None:
+            dt = datetime.datetime.fromisoformat(self.last_modified)
         return dt
 
 

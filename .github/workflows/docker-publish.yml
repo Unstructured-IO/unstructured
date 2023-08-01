@@ -103,11 +103,10 @@ jobs:
         docker push $DOCKER_BUILD_REPOSITORY:arm64
     - name: Push multiarch manifest
       run: |
-        docker manifest create ${DOCKER_REPOSITORY}:latest $DOCKER_BUILD_REPOSITORY:amd64 $DOCKER_BUILD_REPOSITORY:amd64
+        docker manifest create ${DOCKER_REPOSITORY}:latest $DOCKER_BUILD_REPOSITORY:amd64 $DOCKER_BUILD_REPOSITORY:arm64
         docker manifest push $DOCKER_REPOSITORY:latest
-        docker manifest create ${DOCKER_REPOSITORY}:$SHORT_SHA $DOCKER_BUILD_REPOSITORY:arm64 $DOCKER_BUILD_REPOSITORY:arm64
+        docker manifest create ${DOCKER_REPOSITORY}:$SHORT_SHA $DOCKER_BUILD_REPOSITORY:amd64 $DOCKER_BUILD_REPOSITORY:arm64
         docker manifest push $DOCKER_REPOSITORY:$SHORT_SHA
         VERSION=$(grep -Po '(?<=__version__ = ")[^"]*' unstructured/__version__.py)
         docker manifest create ${DOCKER_REPOSITORY}:$VERSION $DOCKER_BUILD_REPOSITORY:amd64 $DOCKER_BUILD_REPOSITORY:arm64
         docker manifest push $DOCKER_REPOSITORY:$VERSION
-

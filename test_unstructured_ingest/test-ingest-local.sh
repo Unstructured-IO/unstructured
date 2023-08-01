@@ -8,12 +8,13 @@ OUTPUT_FOLDER_NAME=local
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-    --local-file-glob "*.html" \
-    --local-input-path example-docs \
-    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed \
+    local \
+    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified \
     --partition-strategy hi_res \
     --reprocess \
     --structured-output-dir "$OUTPUT_DIR" \
-    --verbose
+    --verbose \
+    --file-glob "*.html" \
+    --input-path example-docs
 
 sh "$SCRIPT_DIR"/check-num-files-output.sh 9 $OUTPUT_FOLDER_NAME

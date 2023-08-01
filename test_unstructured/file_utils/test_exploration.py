@@ -10,6 +10,10 @@ from unstructured.file_utils.filetype import FileType
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
 
+is_in_docker = os.path.exists("/.dockerenv")
+
+
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_get_directory_file_info(tmpdir):
     file_info_test = os.path.join(tmpdir, "file_info_test")
     if not os.path.exists(file_info_test):
@@ -35,10 +39,11 @@ def test_get_directory_file_info(tmpdir):
     assert isinstance(file_info, pd.DataFrame)
     assert set(file_info["filename"].to_list()) == {"filename1.txt", "filename2.txt"}
 
-    means = file_info.groupby("filetype").mean()
+    means = file_info.groupby("filetype").mean(numeric_only=True)
     assert means.columns.to_list() == ["filesize"]
 
 
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_get_file_info(tmpdir):
     file_info_test = os.path.join(tmpdir, "file_info_test")
     if not os.path.exists(file_info_test):
@@ -64,7 +69,7 @@ def test_get_file_info(tmpdir):
     assert isinstance(file_info, pd.DataFrame)
     assert set(file_info["filename"].to_list()) == {"filename1.txt", "filename2.txt"}
 
-    means = file_info.groupby("filetype").mean()
+    means = file_info.groupby("filetype").mean(numeric_only=True)
     assert means.columns.to_list() == ["filesize"]
 
 
