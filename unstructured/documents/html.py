@@ -238,13 +238,16 @@ def _get_links_from_tag(tag_elem: etree.Element) -> List[Link]:
 def _get_emphasized_texts_from_tag(tag_elem: etree.Element):
     emphasized_texts = []
     tags_to_track = ["strong", "em", "span", "b", "i"]
+    if tag_elem is None:
+        return []
+
     if tag_elem.tag in tags_to_track:
-        text = _construct_text(tag_elem)
+        text = _construct_text(tag_elem, False)
         if text:
             emphasized_texts.append({"text": text, "tag": tag_elem.tag})
 
     for descendant_tag_elem in tag_elem.iterdescendants(*tags_to_track):
-        text = _construct_text(descendant_tag_elem)
+        text = _construct_text(descendant_tag_elem, False)
         if text:
             emphasized_texts.append({"text": text, "tag": descendant_tag_elem.tag})
 
@@ -355,14 +358,14 @@ def is_narrative_tag(text: str, tag: str) -> bool:
     return tag not in HEADING_TAGS and is_possible_narrative_text(text)
 
 
-def _construct_text(tag_elem: etree.Element) -> str:
+def _construct_text(tag_elem: etree.Element, include_tail_text: bool = True) -> str:
     """Extracts text from a text tag element."""
     text = ""
     for item in tag_elem.itertext():
         if item:
             text += item
 
-    if tag_elem.tail:
+    if include_tail_text and tag_elem.tail:
         text = text + tag_elem.tail
 
     text = replace_unicode_quotes(text)
