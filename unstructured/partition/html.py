@@ -122,6 +122,7 @@ def partition_html(
     if skip_headers_and_footers:
         document = filter_footer_and_header(document) 
 
+
     return document_to_element_list(
         document,
         include_page_breaks=include_page_breaks,
