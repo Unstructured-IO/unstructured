@@ -26,7 +26,7 @@ def partition_xlsx(
     file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
-    metadata_date: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft Excel Documents in .xlsx format into its document elements.
@@ -39,7 +39,7 @@ def partition_xlsx(
         A file-like object using "rb" mode --> open(filename, "rb").
     include_metadata
         Determines whether or not metadata is included in the output.
-    metadata_date
+    metadata_last_modified
         The day of the last modification
     """
     exactly_one(filename=filename, file=file)
@@ -68,7 +68,7 @@ def partition_xlsx(
                 page_name=sheet_name,
                 page_number=page_number,
                 filename=metadata_filename or filename,
-                date=metadata_date or last_modification_date,
+                last_modified=metadata_last_modified or last_modification_date,
             )
         else:
             metadata = ElementMetadata()

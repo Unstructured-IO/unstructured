@@ -16,7 +16,7 @@ def partition_odt(
     file: Optional[IO[bytes]] = None,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
-    metadata_date: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions Open Office Documents in .odt format into its document elements.
@@ -27,7 +27,7 @@ def partition_odt(
         A string defining the target filename path.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
-    metadata_date
+    metadata_last_modified
         The last modified date for the document.
     """
 
@@ -42,5 +42,5 @@ def partition_odt(
         filename=filename,
         file=file,
         metadata_filename=metadata_filename,
-        metadata_date=metadata_date or last_modification_date,
+        metadata_last_modified=metadata_last_modified or last_modification_date,
     )

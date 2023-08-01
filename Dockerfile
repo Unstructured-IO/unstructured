@@ -22,6 +22,7 @@ RUN python3.8 -m pip install pip==${PIP_VERSION} && \
   pip install --no-cache -r requirements/huggingface.txt && \
   pip install --no-cache -r requirements/dev.txt && \
   pip install --no-cache -r requirements/ingest-azure.txt && \
+  pip install --no-cache -r requirements/ingest-box.txt && \
   pip install --no-cache -r requirements/ingest-github.txt && \
   pip install --no-cache -r requirements/ingest-gitlab.txt && \
   pip install --no-cache -r requirements/ingest-google-drive.txt && \
