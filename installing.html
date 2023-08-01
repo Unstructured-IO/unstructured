@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Getting Started" href="getting_started.html" /><link rel="prev" title="Unstructured Core Library" href="index.html" />
 
   <link rel="shortcut icon" href="_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Installation - Unstructured 0.8.8 documentation</title>
+  <title>Installation - Unstructured 0.9.0 documentation</title>
   <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -378,8 +378,21 @@
 installation.</p>
 <ul class="simple">
 <li><dl class="simple">
-<dt>Install the Python SDK with <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;unstructured[local-inference]&quot;</span></code></dt><dd><ul>
-<li><p>If you do not need to process PDFs or images, you can run <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">unstructured</span></code></p></li>
+<dt>Install the Python SDK with <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">unstructured</span></code></dt><dd><ul>
+<li><p>Plain text files, HTML, XML, JSON and Emails do not require any extra dependencies.</p></li>
+<li><dl class="simple">
+<dt>If you need to process other document types, you can install the extras required for those documents</dt><dd><p>with <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;unstructured[docx,pptx]&quot;</span></code>.</p>
+</dd>
+</dl>
+</li>
+<li><p>To install the extras for every document type, use <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;unstructured[all-docs]&quot;</span></code>.</p></li>
+<li><dl class="simple">
+<dt>For <code class="docutils literal notranslate"><span class="pre">unstructured&lt;0.9.0</span></code>, you can install the extras for all document types with</dt><dd><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;unstructured[local-inference]&quot;</span></code>. The <code class="docutils literal notranslate"><span class="pre">local-inference</span></code> extra is still
+supported in newer versions for backward compatibility, but may be deprecated in a future version.
+The <code class="docutils literal notranslate"><span class="pre">all-docs</span></code> extra is the officially supported installation pattern.</p>
+</dd>
+</dl>
+</li>
 </ul>
 </dd>
 </dl>
