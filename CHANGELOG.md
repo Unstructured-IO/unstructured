@@ -1,3 +1,9 @@
+## 0.9.0
+
+### Enhancements
+
+* Dependencies are now split by document type, creating a slimmer base installation.
+
 ## 0.8.8
 
 ### Enhancements
@@ -5,6 +11,7 @@
 ### Features
 
 ### Fixes
+
 
 * Rename "date" field to "last_modified"
 * Adds Box connector

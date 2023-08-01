@@ -216,8 +216,8 @@ def test_process_file_metadata_exclude_filename_pagenum(mocker, partition_test_r
     isd_elems = test_ingest_doc.process_file()
     assert len(isd_elems)
     for elem in isd_elems:
-        assert "filename" not in elem["metadata"].keys()
-        assert "page_number" not in elem["metadata"].keys()
+        assert "filename" not in elem["metadata"]
+        assert "page_number" not in elem["metadata"]
 
 
 def test_process_file_flatten_metadata(mocker, partition_test_results):
