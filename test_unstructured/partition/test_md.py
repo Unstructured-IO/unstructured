@@ -164,7 +164,7 @@ def test_partition_md_metadata_date(
         filename=filename,
     )
 
-    assert elements[0].metadata.date == mocked_last_modification_date
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
 
 
 def test_partition_md_with_custom_metadata_date(
@@ -181,10 +181,10 @@ def test_partition_md_with_custom_metadata_date(
 
     elements = partition_md(
         filename=filename,
-        metadata_date=expected_last_modification_date,
+        metadata_last_modified=expected_last_modification_date,
     )
 
-    assert elements[0].metadata.date == expected_last_modification_date
+    assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
 def test_partition_md_from_file_metadata_date(
@@ -203,7 +203,7 @@ def test_partition_md_from_file_metadata_date(
             file=f,
         )
 
-    assert elements[0].metadata.date == mocked_last_modification_date
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
 
 
 def test_partition_md_from_file_with_custom_metadata_date(
@@ -219,9 +219,9 @@ def test_partition_md_from_file_with_custom_metadata_date(
     )
 
     with open(filename, "rb") as f:
-        elements = partition_md(file=f, metadata_date=expected_last_modification_date)
+        elements = partition_md(file=f, metadata_last_modified=expected_last_modification_date)
 
-    assert elements[0].metadata.date == expected_last_modification_date
+    assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
 def test_partition_md_from_text_metadata_date(
@@ -234,7 +234,7 @@ def test_partition_md_from_text_metadata_date(
         text=text,
     )
 
-    assert elements[0].metadata.date is None
+    assert elements[0].metadata.last_modified is None
 
 
 def test_partition_md_from_text_with_custom_metadata_date(
@@ -245,6 +245,6 @@ def test_partition_md_from_text_with_custom_metadata_date(
     with open(filename) as f:
         text = f.read()
 
-    elements = partition_md(text=text, metadata_date=expected_last_modification_date)
+    elements = partition_md(text=text, metadata_last_modified=expected_last_modification_date)
 
-    assert elements[0].metadata.date == expected_last_modification_date
+    assert elements[0].metadata.last_modified == expected_last_modification_date

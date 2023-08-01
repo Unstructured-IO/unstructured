@@ -13,7 +13,7 @@ def partition_image(
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
     strategy: str = "auto",
-    metadata_date: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Parses an image into a list of interpreted elements.
@@ -43,7 +43,7 @@ def partition_image(
         partition_image simply extracts the text from the document using OCR and processes it.
         The default strategy `auto` will determine when a image can be extracted using
         `ocr_only` mode, otherwise it will fall back to `hi_res`.
-    metadata_date
+    metadata_last_modified
         The last modified date for the document.
 
     """
@@ -57,5 +57,5 @@ def partition_image(
         infer_table_structure=infer_table_structure,
         ocr_languages=ocr_languages,
         strategy=strategy,
-        metadata_date=metadata_date,
+        metadata_last_modified=metadata_last_modified,
     )

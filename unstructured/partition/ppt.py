@@ -21,7 +21,7 @@ def partition_ppt(
     include_page_breaks: bool = False,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
-    metadata_date: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft PowerPoint Documents in .ppt format into their document elements.
@@ -34,7 +34,7 @@ def partition_ppt(
         A file-like object using "rb" mode --> open(filename, "rb").
     include_page_breaks
         If True, includes a PageBreak element between slides
-    metadata_date
+    metadata_last_modified
         The last modified date for the document.
     """
     # Verify that only one of the arguments was provided
@@ -71,7 +71,7 @@ def partition_ppt(
         elements = partition_pptx(
             filename=pptx_filename,
             metadata_filename=metadata_filename,
-            metadata_date=metadata_date or last_modification_date,
+            metadata_last_modified=metadata_last_modified or last_modification_date,
         )
 
     # remove tmp.name from filename if parsing file

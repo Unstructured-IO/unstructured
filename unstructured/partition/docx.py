@@ -116,7 +116,7 @@ def partition_docx(
     metadata_filename: Optional[str] = None,
     include_page_breaks: bool = True,
     include_metadata: bool = True,
-    metadata_date: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft Word Documents in .docx format into its document elements.
@@ -131,7 +131,7 @@ def partition_docx(
         The filename to use for the metadata. Relevant because partition_doc converts the
         document to .docx before partition. We want the original source filename in the
         metadata.
-    metadata_date
+    metadata_last_modified
         The last modified date for the document.
     """
 
@@ -175,7 +175,7 @@ def partition_docx(
                     text_as_html=html_table,
                     filename=metadata_filename,
                     page_number=page_number,
-                    date=metadata_date or last_modification_date,
+                    last_modified=metadata_last_modified or last_modification_date,
                 )
                 elements.append(element)
             table_index += 1
@@ -188,7 +188,7 @@ def partition_docx(
                 para_element.metadata = ElementMetadata(
                     filename=metadata_filename,
                     page_number=page_number,
-                    date=metadata_date or last_modification_date,
+                    last_modified=metadata_last_modified or last_modification_date,
                 )
                 elements.append(para_element)
             is_list = False
@@ -315,7 +315,7 @@ def convert_and_partition_docx(
     file: Optional[IO[bytes]] = None,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
-    metadata_date: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
 ) -> List[Element]:
     """Converts a document to DOCX and then partitions it using partition_docx. Works with
     any file format support by pandoc.
@@ -362,7 +362,7 @@ def convert_and_partition_docx(
             filename=docx_filename,
             metadata_filename=metadata_filename,
             include_metadata=include_metadata,
-            metadata_date=metadata_date,
+            metadata_last_modified=metadata_last_modified,
         )
 
     return elements

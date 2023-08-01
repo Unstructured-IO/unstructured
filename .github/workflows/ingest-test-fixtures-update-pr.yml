@@ -70,6 +70,7 @@ jobs:
           MS_TENANT_ID: ${{ secrets.MS_TENANT_ID }}
           MS_USER_EMAIL: ${{ secrets.MS_USER_EMAIL }}
           MS_USER_PNAME: ${{ secrets.MS_USER_PNAME }}
+          BOX_APP_CRED: ${{ secrets.BOX_APP_CRED }}
           OVERWRITE_FIXTURES: "true"
         run: |
           source .venv/bin/activate
@@ -81,6 +82,7 @@ jobs:
           tesseract --version
           make install-ingest-s3
           make install-ingest-azure
+          make install-ingest-box
           make install-ingest-confluence
           make install-ingest-discord
           make install-ingest-elasticsearch
