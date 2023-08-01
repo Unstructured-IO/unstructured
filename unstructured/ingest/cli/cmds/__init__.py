@@ -1,5 +1,6 @@
 from .azure import get_cmd as azure
 from .biomed import get_cmd as biomed
+from .box import get_cmd as box
 from .confluence import get_cmd as confluence
 from .discord import get_cmd as discord
 from .dropbox import get_cmd as dropbox
@@ -20,6 +21,7 @@ from .wikipedia import get_cmd as wikipedia
 __all__ = [
     "azure",
     "biomed",
+    "box",
     "confluence",
     "discord",
     "dropbox",

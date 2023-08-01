@@ -1,3 +1,13 @@
+## 0.8.8-dev0
+
+### Enhancements
+
+### Features
+
+* Adds Box connector
+
+### Fixes
+
 ## 0.8.7
 
 ### Enhancements

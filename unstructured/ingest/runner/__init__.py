@@ -1,5 +1,6 @@
 from .azure import azure
 from .biomed import biomed
+from .box import box
 from .confluence import confluence
 from .discord import discord
 from .dropbox import dropbox
@@ -20,6 +21,7 @@ from .wikipedia import wikipedia
 __all__ = [
     "azure",
     "biomed",
+    "box",
     "confluence",
     "discord",
     "dropbox",
