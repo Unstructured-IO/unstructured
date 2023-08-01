@@ -26,7 +26,7 @@ def notion(
         logger=logger,
     )
 
-    from unstructured.ingest.connector.notion import (
+    from unstructured.ingest.connector.notion.connector import (
         NotionConnector,
         SimpleNotionConfig,
     )
