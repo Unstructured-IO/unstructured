@@ -15,8 +15,7 @@ installation.
 	* For ``unstructured<0.9.0``, you can install the extras for all document types with
 		``pip install "unstructured[local-inference]"``. The ``local-inference`` extra is still
 		supported in newer versions for backward compatibility, but may be deprecated in a future version.
-		The ``all-docs`` extra is the officially support installation pattern.
-	* If you do not need to process PDFs or images, you can run ``pip install unstructured``
+		The ``all-docs`` extra is the officially supported installation pattern.
 
 * Install the following system dependencies if they are not already available on your system. Depending on what document types you're parsing, you may not need all of these.
 	* ``libmagic-dev`` (filetype detection)
