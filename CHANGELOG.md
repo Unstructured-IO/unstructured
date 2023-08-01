@@ -1,3 +1,14 @@
+## 0.8.9-dev0
+
+### Enhancements
+
+### Features
+
+* Adds Sharepoint connector.
+
+### Fixes
+
+
 ## 0.8.8
 
 ### Enhancements
@@ -18,8 +29,6 @@
 * Put back useful function `split_by_paragraph`
 
 ### Features
-
-* Adds Sharepoint connector.
 
 ### Fixes
 
