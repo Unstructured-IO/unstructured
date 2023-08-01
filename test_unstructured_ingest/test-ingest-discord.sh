@@ -16,7 +16,7 @@ fi
 PYTHONPATH=. ./unstructured/ingest/main.py \
     discord \
    --download-dir "$DOWNLOAD_DIR" \
-   --metadata-exclude coordinates,file_directory,metadata.data_source.date_processed,metadata.date \
+   --metadata-exclude coordinates,file_directory,metadata.data_source.date_processed,metadata.last_modified \
    --preserve-downloads \
    --reprocess \
     --structured-output-dir "$OUTPUT_DIR" \

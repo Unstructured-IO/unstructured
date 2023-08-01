@@ -18,7 +18,7 @@ fi
 PYTHONPATH=. ./unstructured/ingest/main.py \
     confluence \
     --download-dir "$DOWNLOAD_DIR" \
-    --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.date \
+    --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.last_modified \
     --num-processes 2 \
     --preserve-downloads \
     --reprocess \

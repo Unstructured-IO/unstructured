@@ -31,7 +31,7 @@ def partition_md(
     include_metadata: bool = True,
     parser: VALID_PARSERS = None,
     metadata_filename: Optional[str] = None,
-    metadata_date: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions a markdown file into its constituent elements
@@ -52,7 +52,7 @@ def partition_md(
         Determines whether or not metadata is included in the output.
     parser
         The parser to use for parsing the markdown document. If None, default parser will be used.
-    metadata_date
+    metadata_last_modified
         The last modified date for the document.
     """
     # Verify that only one of the arguments was provided
@@ -91,5 +91,5 @@ def partition_md(
         include_metadata=include_metadata,
         parser=parser,
         metadata_filename=metadata_filename,
-        metadata_date=metadata_date or last_modification_date,
+        metadata_last_modified=metadata_last_modified or last_modification_date,
     )

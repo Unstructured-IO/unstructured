@@ -1,9 +1,12 @@
-## 0.8.8-dev0
+## 0.8.8
 
 ### Enhancements
 
 ### Features
 
+### Fixes
+
+* Rename "date" field to "last_modified"
 * Adds Box connector
 
 ### Fixes
