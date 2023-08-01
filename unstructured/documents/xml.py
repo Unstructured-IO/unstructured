@@ -1,6 +1,6 @@
 from typing import List, Optional, Union
 
-from lxml import etree, html
+from lxml import etree
 
 from unstructured.documents.base import Document, Page
 from unstructured.file_utils.encoding import read_txt_file
@@ -92,9 +92,6 @@ class XMLDocument(Document):
                         element = etree.Element("span")
                         element.text = str(element_from_text(text=text))
                         document_tree.append(element)
-            if "</a>" in content:
-                tree = html.fromstring(content)
-                links = list(tree.iterlinks())
 
             if self.stylesheet:
                 if isinstance(self.parser, etree.HTMLParser):
