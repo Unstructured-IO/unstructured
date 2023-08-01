@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Metadata" href="metadata.html" /><link rel="prev" title="Bricks" href="bricks.html" />
 
   <link rel="shortcut icon" href="_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Connectors - Unstructured 0.8.7 documentation</title>
+  <title>Connectors - Unstructured 0.8.8 documentation</title>
   <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -375,8 +375,9 @@
 <p>Connect your preprocessing pipeline with your favorite data storage platforms, and batch process all your documents using the provided CLI to store structured outputs locally on your filesystem.</p>
 <p>You can then use any connector with the <code class="docutils literal notranslate"><span class="pre">unstructured-ingest</span></code> command in the terminal. For example, the following command processes all the documents in S3 in the utic-dev-tech-fixtures bucket with a prefix of small-pdf-set/</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>unstructured-ingest<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>s3<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--remote-url<span class="w"> </span>s3://utic-dev-tech-fixtures/small-pdf-set/<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--s3-anonymous<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--anonymous<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--structured-output-dir<span class="w"> </span>s3-small-batch-output<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--num-processes<span class="w"> </span><span class="m">2</span>
 </pre></div>
@@ -389,6 +390,11 @@
 <h2><code class="docutils literal notranslate"><span class="pre">Azure</span> <span class="pre">Connector</span></code><a class="headerlink" href="#azure-connector" title="Permalink to this heading"></a></h2>
 <p>You can batch process documents stored in your Azure Blob Container using the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/connector/azure.py">Azure Connector</a>. You can find an example of how to use it <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/f5541c7b0b1e2fc47ec88da5e02080d60e1441e2/examples/ingest/azure/ingest.sh">here</a>.</p>
 <p>To install all dependencies for this connector run: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;unstructured[azure]&quot;</span></code></p>
+</section>
+<section id="box-connector">
+<h2><code class="docutils literal notranslate"><span class="pre">Box</span> <span class="pre">Connector</span></code><a class="headerlink" href="#box-connector" title="Permalink to this heading"></a></h2>
+<p>You can batch process unstructured documents in your Box by using the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/connector/box.py">Box Connector</a>. You can find an example of how to use it <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/f5541c7b0b1e2fc47ec88da5e02080d60e1441e2/examples/ingest/box/ingest.sh">here</a>.</p>
+<p>To install all dependencies for this connector run: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;unstructured[box]&quot;</span></code></p>
 </section>
 <section id="biomed-connector">
 <h2><code class="docutils literal notranslate"><span class="pre">BioMed</span> <span class="pre">Connector</span></code><a class="headerlink" href="#biomed-connector" title="Permalink to this heading"></a></h2>
@@ -522,6 +528,7 @@
             <ul>
 <li><a class="reference internal" href="#">Connectors</a><ul>
 <li><a class="reference internal" href="#azure-connector"><code class="docutils literal notranslate"><span class="pre">Azure</span> <span class="pre">Connector</span></code></a></li>
+<li><a class="reference internal" href="#box-connector"><code class="docutils literal notranslate"><span class="pre">Box</span> <span class="pre">Connector</span></code></a></li>
 <li><a class="reference internal" href="#biomed-connector"><code class="docutils literal notranslate"><span class="pre">BioMed</span> <span class="pre">Connector</span></code></a></li>
 <li><a class="reference internal" href="#discord-connector"><code class="docutils literal notranslate"><span class="pre">Discord</span> <span class="pre">Connector</span></code></a></li>
 <li><a class="reference internal" href="#dropbox-connector"><code class="docutils literal notranslate"><span class="pre">Dropbox</span> <span class="pre">Connector</span></code></a></li>
