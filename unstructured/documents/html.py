@@ -235,7 +235,7 @@ def _get_links_from_tag(tag_elem: etree.Element) -> List[Link]:
     return links
 
 
-def _get_emphasized_texts_from_tag(tag_elem: etree.Element):
+def _get_emphasized_texts_from_tag(tag_elem: etree.Element) -> List[dict]:
     emphasized_texts = []
     tags_to_track = ["strong", "em", "span", "b", "i"]
     if tag_elem is None:

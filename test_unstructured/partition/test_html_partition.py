@@ -480,3 +480,41 @@ def test_partition_html_grabs_links():
             "url": "/loner",
         },
     ]
+
+
+def test_partition_html_grabs_emphasized_texts():
+    html_text = """<html>
+        <p>Hello there I am a very <strong>important</strong> text!</p>
+        <p>Here is a <span>list</span> of <b>my <i>favorite</i> things</b></p>
+        <ul>
+            <li><em>Parrots</em></li>
+            <li>Dogs</li>
+        </ul>
+        <span>A lone span text!</span>
+    </html>"""
+    elements = partition_html(text=html_text)
+
+    assert elements[0] == NarrativeText("Hello there I am a very important text!")
+    assert elements[0].metadata.emphasized_texts == [
+        {"text": "important", "tag": "strong"},
+    ]
+
+    assert elements[1] == NarrativeText("Here is a list of my favorite things")
+    assert elements[1].metadata.emphasized_texts == [
+        {"text": "list", "tag": "span"},
+        {"text": "my favorite things", "tag": "b"},
+        {"text": "favorite", "tag": "i"},
+    ]
+
+    assert elements[2] == ListItem("Parrots")
+    assert elements[2].metadata.emphasized_texts == [
+        {"text": "Parrots", "tag": "em"},
+    ]
+
+    assert elements[3] == ListItem("Dogs")
+    assert elements[3].metadata.emphasized_texts is None
+
+    assert elements[4] == Title("A lone span text!")
+    assert elements[4].metadata.emphasized_texts == [
+        {"text": "A lone span text!", "tag": "span"},
+    ]
