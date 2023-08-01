@@ -14,3 +14,4 @@ include requirements/ingest-wikipedia.in
 include requirements/ingest-google-drive.in
 include requirements/ingest-outlook.in
 include requirements/ingest-onedrive.in
+include requirements/ingest-box.in

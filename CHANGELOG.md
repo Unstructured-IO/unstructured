@@ -1,4 +1,4 @@
-## 0.8.8
+## 0.8.8-dev0
 
 ### Enhancements
 
@@ -6,7 +6,10 @@
 
 ### Fixes
 
-*   Not HTML files that use `convert_and_partition_html` function (`.rtf`, `.rst` , `.org`, `epub`) mark title as `Title` instead of `HTMLTitle`
+* Not HTML files that use `convert_and_partition_html` function (`.rtf`, `.rst` , `.org`, `epub`) mark title as `Title` instead of `HTMLTitle`
+* Adds Box connector
+
+### Fixes
 
 ## 0.8.7
 
