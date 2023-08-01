@@ -6,7 +6,6 @@ import pytest
 from unstructured.cleaners.core import group_broken_paragraphs
 from unstructured.documents.elements import (
     Address,
-    EmailAddress,
     ListItem,
     NarrativeText,
     Title,
@@ -200,13 +199,11 @@ def test_partition_text_captures_everything_even_with_linebreaks():
     text = """
     VERY IMPORTANT MEMO
     DOYLESTOWN, PA 18901
-    fakemail@gmail.com
     """
     elements = partition_text(text=text)
     assert elements == [
         Title(text="VERY IMPORTANT MEMO"),
         Address(text="DOYLESTOWN, PA 18901"),
-        EmailAddress(text="fakemail@gmail.com"),
     ]
     for element in elements:
         assert element.metadata.filename is None
@@ -354,17 +351,3 @@ def test_partition_text_from_file_exclude_metadata():
         elements = partition_text(file=f, include_metadata=False)
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
-
-
-def test_partition_text_from_file__with_email_type():
-    filename = os.path.join(
-        DIRECTORY,
-        "..",
-        "..",
-        "example-docs",
-        "fake-text-with-email.txt",
-    )
-    with open(filename) as f:
-        elements = partition_text(file=f, include_metadata=False)
-
-    assert elements[-1] == EmailAddress("mr.fake@fake.com")

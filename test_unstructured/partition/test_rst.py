@@ -1,11 +1,10 @@
-from unstructured.documents.elements import EmailAddress, Title
+from unstructured.documents.elements import Title
 from unstructured.partition.rst import partition_rst
 
 
 def test_partition_rst_from_filename(filename="example-docs/README.rst"):
     elements = partition_rst(filename=filename)
     assert elements[0] == Title("Example Docs")
-    assert elements[-1] == EmailAddress("fake.mail@gmail.com")
     assert elements[0].metadata.filetype == "text/x-rst"
     for element in elements:
         assert element.metadata.filename == "README.rst"

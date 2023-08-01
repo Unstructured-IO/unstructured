@@ -7,7 +7,7 @@ from PIL import Image
 from pytesseract import TesseractError
 from unstructured_inference.inference import layout
 
-from unstructured.documents.elements import EmailAddress, Title
+from unstructured.documents.elements import Title
 from unstructured.partition import image, pdf
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -198,11 +198,3 @@ def test_partition_image_raises_with_bad_strategy():
     )
     with pytest.raises(ValueError):
         image.partition_image(filename=filename, strategy="fakeroo")
-
-
-def test_partition_iamge_from_filename_with_email_address():
-    directory = os.path.join(DIRECTORY, "..", "..", "example-docs")
-    filename = os.path.join(directory, "fake-image-with-email.jpg")
-    elements = image.partition_image(filename=filename, include_metadata=False)
-
-    assert type(elements[-1]) is EmailAddress

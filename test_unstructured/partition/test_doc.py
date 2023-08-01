@@ -5,7 +5,6 @@ import pytest
 
 from unstructured.documents.elements import (
     Address,
-    EmailAddress,
     ListItem,
     NarrativeText,
     Text,
@@ -39,8 +38,6 @@ def mock_document():
     document.add_paragraph("2023")
     # NOTE(robinson) - this should be an address
     document.add_paragraph("DOYLESTOWN, PA 18901")
-    # NOTE - this should be a email address
-    document.add_paragraph("fake.mail@gmail.com")
 
     return document
 
@@ -56,7 +53,6 @@ def expected_elements():
         NarrativeText("This is my third thought."),
         Text("2023"),
         Address("DOYLESTOWN, PA 18901"),
-        EmailAddress("fake.mail@gmail.com"),
     ]
 
 

@@ -1,4 +1,4 @@
-from unstructured.documents.elements import EmailAddress, Title
+from unstructured.documents.elements import Title
 from unstructured.partition.org import partition_org
 
 
@@ -7,7 +7,6 @@ def test_partition_org_from_filename(filename="example-docs/README.org"):
 
     assert elements[0] == Title("Example Docs")
     assert elements[0].metadata.filetype == "text/org"
-    assert elements[-1] == EmailAddress("fakemail@gmail.com")
 
 
 def test_partition_org_from_filename_with_metadata_filename(
@@ -25,7 +24,6 @@ def test_partition_org_from_file(filename="example-docs/README.org"):
 
     assert elements[0] == Title("Example Docs")
     assert elements[0].metadata.filetype == "text/org"
-    assert elements[-1] == EmailAddress("fakemail@gmail.com")
 
 
 def test_partition_org_from_file_with_metadata_filename(

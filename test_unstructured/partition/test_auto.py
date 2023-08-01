@@ -13,7 +13,6 @@ from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import (
     Address,
     ElementMetadata,
-    EmailAddress,
     ListItem,
     NarrativeText,
     Table,
@@ -448,7 +447,6 @@ EXPECTED_PPTX_OUTPUT = [
     ListItem(text="Use _TextFrame.add_paragraph() for subsequent bullets"),
     NarrativeText(text="Here is a lot of text!"),
     NarrativeText(text="Here is some text in a text box!"),
-    EmailAddress(text="fake.mail@gmail.com"),
 ]
 
 
@@ -555,7 +553,7 @@ def test_auto_partition_works_with_unstructured_jsons_from_file():
 def test_auto_partition_odt_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.odt")
     elements = partition(filename=filename, strategy="hi_res")
-    assert elements == [Title("Lorem ipsum dolor sit amet."), EmailAddress("fakemail@gmail.com")]
+    assert elements == [Title("Lorem ipsum dolor sit amet.")]
 
 
 def test_auto_partition_odt_from_file():
@@ -563,7 +561,7 @@ def test_auto_partition_odt_from_file():
     with open(filename, "rb") as f:
         elements = partition(file=f, strategy="hi_res")
 
-    assert elements == [Title("Lorem ipsum dolor sit amet."), EmailAddress("fakemail@gmail.com")]
+    assert elements == [Title("Lorem ipsum dolor sit amet.")]
 
 
 @pytest.mark.parametrize(

@@ -4,7 +4,6 @@ import tempfile
 
 import pytest
 
-from unstructured.documents.elements import EmailAddress
 from unstructured.partition.auto import partition
 from unstructured.partition.json import partition_json
 from unstructured.staging.base import elements_to_json
@@ -205,9 +204,3 @@ def test_partition_json_from_text_exclude_metadata(filename: str):
 
     for i in range(len(test_elements)):
         assert any(test_elements[i].metadata.to_dict()) is False
-
-
-def test_partition_json_from_filename_with_email_type(tmpdir):
-    path = os.path.join(DIRECTORY, "..", "..", "example-docs", "spring-weather.html.json")
-    elements = partition_json(filename=path)
-    assert type(elements[-1]) is EmailAddress
