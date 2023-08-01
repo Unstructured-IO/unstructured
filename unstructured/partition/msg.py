@@ -18,11 +18,11 @@ def partition_msg(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
     max_partition: Optional[int] = 1500,
-    min_partition: Optional[int] = 0,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
     process_attachments: bool = False,
     attachment_partitioner: Optional[Callable] = None,
+    min_partition: Optional[int] = 0,
     include_path_in_metadata_filename: bool = False,
     **kwargs,
 ) -> List[Element]:

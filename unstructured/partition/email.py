@@ -241,11 +241,11 @@ def partition_email(
     encoding: Optional[str] = None,
     include_headers: bool = False,
     max_partition: Optional[int] = 1500,
-    min_partition: Optional[int] = 0,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
     process_attachments: bool = False,
     attachment_partitioner: Optional[Callable] = None,
+    min_partition: Optional[int] = 0,
     include_path_in_metadata_filename: Optional[bool] = False,
     **kwargs,
 ) -> List[Element]:

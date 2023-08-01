@@ -49,9 +49,9 @@ def partition_pdf(
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
     max_partition: Optional[int] = 1500,
-    min_partition: Optional[int] = 0,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
+    min_partition: Optional[int] = 0,
     include_path_in_metadata_filename: bool = False,
     **kwargs,
 ) -> List[Element]:
