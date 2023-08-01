@@ -1,6 +1,6 @@
 from typing import List, Optional, Union
 
-from lxml import etree, html
+from lxml import etree
 
 from unstructured.documents.base import Document, Page
 from unstructured.file_utils.encoding import read_txt_file
