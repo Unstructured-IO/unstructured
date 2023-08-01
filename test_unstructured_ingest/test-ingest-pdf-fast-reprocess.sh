@@ -14,7 +14,7 @@ ls "$INPUT_PATH"
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     local \
-    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.date \
+    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified \
     --num-processes 2 \
     --partition-strategy fast \
     --reprocess \

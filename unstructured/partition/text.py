@@ -188,7 +188,7 @@ def partition_text(
     include_metadata: bool = True,
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
-    metadata_date: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions an .txt documents into its constituent paragraph elements.
@@ -214,7 +214,7 @@ def partition_text(
         no maximum is applied.
     min_partition
         The minimum number of characters to include in a partition.
-    metadata_date
+    metadata_last_modified
         The day of the last modification
     """
     if text is not None and text.strip() == "" and not file and not filename:
@@ -262,7 +262,7 @@ def partition_text(
     metadata = (
         ElementMetadata(
             filename=metadata_filename or filename,
-            date=metadata_date or last_modification_date,
+            last_modified=metadata_last_modified or last_modification_date,
         )
         if include_metadata
         else ElementMetadata()
