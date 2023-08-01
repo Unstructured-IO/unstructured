@@ -28,6 +28,5 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --site "$SHAREPOINT_SITE" \
     --path "Shared Documents" \
     --recursive \
-    --download-dir "$DOWNLOAD_DIR" \
 
 sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
