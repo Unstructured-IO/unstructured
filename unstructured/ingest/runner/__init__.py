@@ -1,22 +1,4 @@
-from .azure import azure
-from .biomed import biomed
-from .confluence import confluence
-from .discord import discord
-from .dropbox import dropbox
-from .elasticsearch import elasticsearch
-from .fsspec import fsspec
-from .gcs import gcs
-from .github import github
-from .gitlab import gitlab
-from .google_drive import gdrive
-from .local import local
-from .onedrive import onedrive
-from .outlook import outlook
-from .reddit import reddit
-from .s3 import s3
-from .slack import slack
-from .wikipedia import wikipedia
-
+# List of command modules (module names as strings)
 __all__ = [
     "azure",
     "biomed",
@@ -26,9 +8,9 @@ __all__ = [
     "elasticsearch",
     "fsspec",
     "gcs",
-    "gdrive",
     "github",
     "gitlab",
+    "google_drive",
     "local",
     "onedrive",
     "outlook",
@@ -37,3 +19,8 @@ __all__ = [
     "slack",
     "wikipedia",
 ]
+
+# Loop through the command modules and generate import statements and __all__ list
+for module_name in __all__:
+    import_statement = f"from .{module_name} import {module_name}"
+    exec(import_statement)  # Execute the import statement to bring the module into the current namespace

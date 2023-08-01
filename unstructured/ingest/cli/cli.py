@@ -21,7 +21,7 @@ subcommands = [
     cli_cmds.slack,
     cli_cmds.discord,
     cli_cmds.wikipedia,
-    cli_cmds.gdrive,
+    cli_cmds.google_drive,
     cli_cmds.biomed,
     cli_cmds.onedrive,
     cli_cmds.outlook,
