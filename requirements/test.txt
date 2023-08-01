@@ -107,6 +107,8 @@ tomli==2.0.1
     #   coverage
     #   mypy
     #   pytest
+types-click==7.1.8
+    # via -r requirements/test.in
 types-markdown==3.4.2.10
     # via -r requirements/test.in
 types-requests==2.31.0.2

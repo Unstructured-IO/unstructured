@@ -74,6 +74,10 @@ install-ingest-dropbox:
 install-ingest-azure:
 	python3 -m pip install -r requirements/ingest-azure.txt
 
+.PHONY: install-ingest-box
+install-ingest-box:
+	python3 -m pip install -r requirements/ingest-box.txt
+
 .PHONY: install-ingest-discord
 install-ingest-discord:
 	pip install -r requirements/ingest-discord.txt
@@ -141,6 +145,7 @@ pip-compile:
 	# sphinx docs looks for additional requirements
 	cp requirements/build.txt docs/requirements.txt
 	pip-compile --upgrade requirements/ingest-s3.in
+	pip-compile --upgrade requirements/ingest-box.in
 	pip-compile --upgrade requirements/ingest-gcs.in
 	pip-compile --upgrade requirements/ingest-dropbox.in
 	pip-compile --upgrade requirements/ingest-azure.in

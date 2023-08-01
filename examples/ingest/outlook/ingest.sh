@@ -5,8 +5,8 @@
 # Structured outputs are stored in outlook-output/
 
 # NOTE, this script is not ready-to-run!
-# You must enter a Azure AD app client-id, client secret, tenant-id, and email   
-# before running. 
+# You must enter a Azure AD app client-id, client secret, tenant-id, and email
+# before running.
 
 # To get the credentials for your Azure AD app, follow these steps:
 # https://learn.microsoft.com/en-us/graph/auth-register-app-v2
@@ -20,11 +20,12 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/../../.. || exit 1
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-    --ms-client-id "$MS_CLIENT_ID" \
-    --ms-client-cred "$MS_CLIENT_CRED" \
-    --ms-tenant "$MS_TENANT_ID" \
-    --ms-user-email "$MS_USER_EMAIL" \
-    --ms-outlook-folders Inbox,"Sent Items" \
+    outlook \
+    --client-id "$MS_CLIENT_ID" \
+    --client-cred "$MS_CLIENT_CRED" \
+    --tenant "$MS_TENANT_ID" \
+    --user-email "$MS_USER_EMAIL" \
+    --outlook-folders Inbox,"Sent Items" \
     --structured-output-dir outlook-output \
     --num-processes 2 \
     --recursive \
