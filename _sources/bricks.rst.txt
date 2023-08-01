@@ -358,11 +358,6 @@ is the same as ``html_assemble_articles=False``.
 
 For more information about the ``partition_html`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/html.py>`_.
 
-If a section of text in the HTML document contains links, they will be tracked in the ``links``
-attribute in the element metadata. Each link in the list is a dictionary that contains
-``text`` and ``url`` keys. Links are tracked in other partitioning functions that call ``partition_html``
-as well, such as ``partition_email`` and ``partition_rst``.
-
 
 ``partition_image``
 ---------------------
@@ -1535,7 +1530,7 @@ Examples:
   elements = [Title(text="Title"), NarrativeText(text="Narrative")]
   df = convert_to_dataframe(elements)
 
-For more information about the ``convert_to_dataframe`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/base.py>`_.
+  For more information about the ``convert_to_dataframe`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/base.py>`_.
 
 
 ``convert_to_dict``
