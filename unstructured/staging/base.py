@@ -195,6 +195,8 @@ def filter_element_types(
     include_element_types: Optional[List[Element]] = None,
     exclude_element_types: Optional[List[Element]] = None,
 ) -> List[Element]:
+    
+    """Filters document elements by element type"""
     exactly_one(
         include_element_types=include_element_types,
         exclude_element_types=exclude_element_types,
