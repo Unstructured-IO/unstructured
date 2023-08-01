@@ -4,6 +4,7 @@ import pkg_resources
 import shutil
 from unstructured.utils import dependency_exists
 
+
 def command_exists(command):
     """
     Check if a command exists in the system
@@ -208,8 +209,8 @@ def main():
         is_python_package_installed("paddleocr"):
         print(
             "PaddleOCR version: ",
-            get_python_package_version("paddlepaddle") or \
-            get_python_package_version("paddleocr")
+            get_python_package_version("paddlepaddle")
+            or get_python_package_version("paddleocr"),
         )
     else:
         print("PaddleOCR is not installed")
@@ -236,41 +237,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-# Output on Mac
-# OS version:  macOS-13.4.1-arm64-arm-64bit
-# Python version:  3.8.17
-# unstructured version:  0.5.11
-# unstructured-inference version:  0.3.2
-# Detectron2 version:  0.6
-# Torch version:  2.0.0
-# Tesseract version:  ==> tesseract: stable 5.3.1 (bottled), HEAD
-# PaddleOCR version:  2.5.0
-# Libmagic version:  ==> libmagic: stable 5.44 (bottled)
-# LibreOffice version:  ==> libreoffice: 7.5.4
-
-# Output on Rocky Linux
-# OS version:  Linux-5.15.49-linuxkit-pr-aarch64-with-glibc2.28
-# Python version:  3.8.17
-# unstructured version:  0.8.1
-# unstructured-inference version:  0.5.5
-# Detectron2 is not installed
-# Torch version:  2.0.1
-# Tesseract version:  0.3.10
-# PaddleOCR version:  2.6.1.3
-# Libmagic version: file-5.33
-# magic file from /etc/magic:/usr/share/misc/magic
-# LibreOffice version:  LibreOffice 6.4.7.2 40(Build:2)
-
-# Output on Windows
-# OS version:  Windows-10-10.0.20348-SP0
-# Python version:  3.10.10
-# unstructured version:  0.8.5
-# unstructured-inference version:  0.5.7
-# Detectron2 version:  0.5
-# Torch version:  2.0.1
-# Tesseract version:  0.3.10
-# PaddleOCR version:  2.6.1.3
-# Libmagic version: file-5.44
-# magic file from /usr/share/misc/magic
