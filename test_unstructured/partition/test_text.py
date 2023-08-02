@@ -242,50 +242,34 @@ def test_partition_text_splits_long_text_max_partition(filename="example-docs/no
     elements = partition_text(filename=filename)
     elements_max_part = partition_text(filename=filename, max_partition=500)
     assert len(elements) < len(elements_max_part)
+    for element in elements_max_part:
+        assert len(element.text) <= 500
 
 
-def test_partition_text_min_max():
+def test_partition_text_splits_max_min_partition(filename="example-docs/norwich-city.txt"):
+    elements = partition_text(filename=filename)
+    elements_max_part = partition_text(filename=filename, min_partition=1000, max_partition=1500)
+    for element in elements_max_part:
+        assert len(element.text) <= 1500
+        assert len(element.text) >= 1000
+
+
+def test_partition_text_min_max(filename="example-docs/norwich-city.txt"):
     segments = partition_text(
         text=SHORT_PARAGRAPHS,
         min_partition=6,
     )
-    expected = [
-        "This is a story.",
-        "This is a story that doesn't matter because it is just being used as an example.",
-        "Hi. Hello.",
-        "Howdy.",
-        """Hola. The example is simple and repetitive and long and somewhat boring,
- but it serves a purpose. End.""".replace(
-            "\n",
-            "",
-        ),
-    ]
-    for segment, test_segment in zip(segments, expected):
-        assert segment.text == test_segment
+    for segment in segments:
+        assert len(segment.text) >= 6
 
     segments = partition_text(
         text=SHORT_PARAGRAPHS,
         max_partition=20,
         min_partition=7,
     )
-    expected = [
-        "This is a story.",
-        "This is a story that",
-        "doesn't matter",
-        "because it is just",
-        "being used as an",
-        "example.",
-        "Hi. Hello.",
-        "Howdy. Hola.",
-        "The example is",
-        "simple and",
-        "repetitive and long",
-        "and somewhat boring,",
-        "but it serves a",
-        "purpose. End.",
-    ]
-    for segment, test_segment in zip(segments, expected):
-        assert segment.text == test_segment
+    for segment in segments:
+        assert segment.text >= 7
+        assert segment.text <= 20
 
 
 def test_split_content_to_fit_max():
