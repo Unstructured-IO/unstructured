@@ -47,10 +47,9 @@ def determine_pdf_or_image_strategy(
 
     if is_image:
         # Note(yuming): There is no fast strategy for images,
-        # use ocr_only as a fallback plan for consistency with PDFs.
-        # This can be removed once unstructured-api use auto as the default strategy.
+        # use hi_res as a fallback plan since it is the auto default.
         if strategy == "fast":
-            strategy = "ocr_only"
+            strategy = "hi_res"
         validate_strategy(strategy, "image")
         pdf_text_extractable = False
     else:
@@ -58,7 +57,7 @@ def determine_pdf_or_image_strategy(
 
     if strategy == "auto":
         if is_image:
-            strategy = _determine_image_auto_strategy(infer_table_structure=infer_table_structure)
+            strategy = _determine_image_auto_strategy()
         else:
             strategy = _determine_pdf_auto_strategy(
                 pdf_text_extractable=pdf_text_extractable,
@@ -115,13 +114,11 @@ def determine_pdf_or_image_strategy(
     return strategy
 
 
-def _determine_image_auto_strategy(infer_table_structure: bool = False):
+def _determine_image_auto_strategy():
     """If "auto" is passed in as the strategy, determines what strategy to use
     for images."""
-    if infer_table_structure is True:
-        return "hi_res"
-    else:
-        return "ocr_only"
+    # Use hi_res as the only default since images are only about one page
+    return "hi_res"
 
 
 def _determine_pdf_auto_strategy(
