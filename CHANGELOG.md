@@ -3,6 +3,7 @@
 ### Enhancements
 
 * Set the default strategy for partitioning images to `hi_res`
+* Add page break parameter section in API documentation to sync with change in Prod API
 
 ### Features
 
