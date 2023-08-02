@@ -1,4 +1,4 @@
-## 0.9.1-dev0
+## 0.9.1-dev1
 
 ### Enhancements
 
@@ -8,6 +8,8 @@
 ### Features
 
 ### Fixes
+
+* Fixed emoji bug in `partition_xlsx`.
 
 ## 0.9.0
 
