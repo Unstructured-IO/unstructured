@@ -1,4 +1,4 @@
-## 0.9.1-dev0
+## 0.9.1-dev1
 
 ### Enhancements
 
@@ -8,6 +8,8 @@
 ### Features
 
 ### Fixes
+
+* Skip ingest test on missing Slack token
 
 ## 0.9.0
 
