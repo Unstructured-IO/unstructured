@@ -1,7 +1,8 @@
 import platform
-import pkg_resources
 import shutil
 import subprocess
+
+import pkg_resources
 
 from unstructured.utils import dependency_exists
 
@@ -216,7 +217,7 @@ def main():
         print("Detectron2 is not installed")
 
     if is_python_package_installed("paddlepaddle") or is_python_package_installed(
-        "paddleocr"
+        "paddleocr",
     ):
         print(
             "PaddleOCR version: ",
