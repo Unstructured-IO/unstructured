@@ -1,12 +1,15 @@
-## 0.9.1-dev0
+## 0.9.1-dev1
 
 ### Enhancements
 
+* Set the default strategy for partitioning images to `hi_res`
 * Add page break parameter section in API documentation to sync with change in Prod API
 
 ### Features
 
 ### Fixes
+
+* Skip ingest test on missing Slack token
 
 ## 0.9.0
 
@@ -21,7 +24,6 @@
 ### Features
 
 ### Fixes
-
 
 * Rename "date" field to "last_modified"
 * Adds Box connector
