@@ -36,25 +36,24 @@ def split_by_paragraph(
     min_partition: Optional[int] = 0,
     max_partition: Optional[int] = 1500,
 ) -> List[str]:
-    split_paragraphs = re.split(PARAGRAPH_PATTERN, file_text.strip())
+    paragraphs = re.split(PARAGRAPH_PATTERN, file_text.strip())
 
-    paragraphs = combine_paragraphs_less_than_min(
-        split_paragraphs=split_paragraphs,
-        max_partition=max_partition,
-        min_partition=min_partition,
-    )
-
-    file_content = []
-
+    split_paragraphs = []
     for paragraph in paragraphs:
-        file_content.extend(
+        split_paragraphs.extend(
             split_content_to_fit_max(
                 content=paragraph,
                 max_partition=max_partition,
             ),
         )
 
-    return file_content
+    combined_paragraphs = combine_paragraphs_less_than_min(
+        split_paragraphs=split_paragraphs,
+        max_partition=max_partition,
+        min_partition=min_partition,
+    )
+
+    return combined_paragraphs
 
 
 def _split_in_half_at_breakpoint(
@@ -125,6 +124,8 @@ def combine_paragraphs_less_than_min(
 ) -> List[str]:
     """Combine paragraphs less than `min_partition` while not exceeding `max_partition`."""
     min_partition = min_partition or 0
+    max_partition = max_partition or 1500
+
     combined_paras = []
     combined_idxs = []
     for i, para in enumerate(split_paragraphs):
@@ -136,12 +137,7 @@ def combine_paragraphs_less_than_min(
         else:
             combined_para = para
             for j, next_para in enumerate(split_paragraphs[i + 1 :]):  # noqa
-                if len(combined_para) >= min_partition:
-                    break
-                elif (
-                    max_partition is not None
-                    and len(combined_para) + len(next_para) + 1 <= max_partition
-                ):
+                if len(combined_para) + len(next_para) + 1 <= max_partition:
                     combined_idxs.append(i + j + 1)
                     combined_para += " " + next_para
                 else:

@@ -245,13 +245,22 @@ def test_partition_text_splits_long_text_max_partition(filename="example-docs/no
     for element in elements_max_part:
         assert len(element.text) <= 500
 
+    # Make sure combined text is all the same
+    assert " ".join([el.text for el in elements]) == " ".join([el.text for el in elements_max_part])
+
 
 def test_partition_text_splits_max_min_partition(filename="example-docs/norwich-city.txt"):
     elements = partition_text(filename=filename)
     elements_max_part = partition_text(filename=filename, min_partition=1000, max_partition=1500)
-    for element in elements_max_part:
-        assert len(element.text) <= 1500
-        assert len(element.text) >= 1000
+    for i, element in enumerate(elements_max_part):
+        # NOTE(robinson) - the last element does not have a next element to merge with,
+        # so it can be short
+        if i < len(elements_max_part) - 1:
+            assert len(element.text) <= 1500
+            assert len(element.text) >= 1000
+
+    # Make sure combined text is all the same
+    assert " ".join([el.text for el in elements]) == " ".join([el.text for el in elements_max_part])
 
 
 def test_partition_text_min_max(filename="example-docs/norwich-city.txt"):
@@ -259,17 +268,23 @@ def test_partition_text_min_max(filename="example-docs/norwich-city.txt"):
         text=SHORT_PARAGRAPHS,
         min_partition=6,
     )
-    for segment in segments:
-        assert len(segment.text) >= 6
+    for i, segment in enumerate(segments):
+        # NOTE(robinson) - the last element does not have a next element to merge with,
+        # so it can be short
+        if i < len(segments) - 1:
+            assert len(segment.text) >= 6
 
     segments = partition_text(
         text=SHORT_PARAGRAPHS,
         max_partition=20,
         min_partition=7,
     )
-    for segment in segments:
-        assert segment.text >= 7
-        assert segment.text <= 20
+    for i, segment in enumerate(segments):
+        # NOTE(robinson) - the last element does not have a next element to merge with,
+        # so it can be short
+        if i < len(segments) - 1:
+            assert len(segment.text) >= 7
+            assert len(segment.text) <= 20
 
 
 def test_split_content_to_fit_max():
