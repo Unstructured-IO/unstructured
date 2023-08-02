@@ -1,4 +1,4 @@
-## 0.9.1-dev0
+## 0.9.1-dev1
 
 ### Enhancements
 
@@ -102,7 +102,7 @@
 *   Use the `image_metadata` property of the `PageLayout` instance to get the page image info in the `document_to_element_list`
 *   Add functionality to write images to computer storage temporarily instead of keeping them in memory for `ocr_only` strategy
 *   Add functionality to convert a PDF in small chunks of pages at a time for `ocr_only` strategy
-*   Adds `.txt`, `.text`, and `.tab` to list of extensions to check if file  
+*   Adds `.txt`, `.text`, and `.tab` to list of extensions to check if file
     has a `text/plain` MIME type.
 *   Enables filters to be passed to `partition_doc` so it doesn't error with LibreOffice7.
 *   Removed old error message that's superseded by `requires_dependencies`.
@@ -174,7 +174,7 @@ Adds Dropbox connector
 *   More deterministic element ordering when using `hi_res` PDF parsing strategy (from unstructured-inference bump to 0.5.4)
 *   Make large model available (from unstructured-inference bump to 0.5.3)
 *   Combine inferred elements with extracted elements (from unstructured-inference bump to 0.5.2)
-*   `partition_email` and `partition_msg` will now process attachments if `process_attachments=True`  
+*   `partition_email` and `partition_msg` will now process attachments if `process_attachments=True`
     and a attachment partitioning functions is passed through with `attachment_partitioner=partition`.
 
 ### Features
@@ -189,9 +189,9 @@ Adds Dropbox connector
 
 ### Enhancements
 
-*   Adds a `max_partition` parameter to `partition_text`, `partition_pdf`, `partition_email`,  
-    `partition_msg` and `partition_xml` that sets a limit for the size of an individual  
-    document elements. Defaults to `1500` for everything except `partition_xml`, which has  
+*   Adds a `max_partition` parameter to `partition_text`, `partition_pdf`, `partition_email`,
+    `partition_msg` and `partition_xml` that sets a limit for the size of an individual
+    document elements. Defaults to `1500` for everything except `partition_xml`, which has
     a default value of `None`.
 *   DRY connector refactor
 
@@ -203,7 +203,7 @@ Adds Dropbox connector
 
 *   CSV check now ignores escaped commas.
 *   Fix for filetype exploration util when file content does not have a comma.
-*   Adds negative lookahead to bullet pattern to avoid detecting plain text line  
+*   Adds negative lookahead to bullet pattern to avoid detecting plain text line
     breaks like `-------` as list items.
 *   Fix pre tag parsing for `partition_html`
 *   Fix lookup error for annotated Arabic and Hebrew encodings
@@ -251,8 +251,8 @@ Adds Dropbox connector
 
 ### Fixes
 
-*   Adds an `html_assemble_articles` kwarg to `partition_html` to enable users to capture  
-    control whether content outside of `<article>` tags is captured when  
+*   Adds an `html_assemble_articles` kwarg to `partition_html` to enable users to capture
+    control whether content outside of `<article>` tags is captured when
     `<article>` tags are present.
 *   Check for the `xml` attribute on `element` before looking for pagebreaks in `partition_docx`.
 
@@ -261,7 +261,7 @@ Adds Dropbox connector
 ### Enhancements
 
 *   Convert fast startegy to ocr\_only for images
-*   Adds support for page numbers in `.docx` and `.doc` when user or renderer  
+*   Adds support for page numbers in `.docx` and `.doc` when user or renderer
     created page breaks are present.
 *   Adds retry logic for the unstructured-ingest Biomed connector
 
@@ -274,10 +274,10 @@ Adds Dropbox connector
 ### Fixes
 
 *   Remove fake api key in test `partition_via_api` since we now require valid/empty api keys
-*   Page number defaults to `None` instead of `1` when page number is not present in the metadata.  
-    A page number of `None` indicates that page numbers are not being tracked for the document  
+*   Page number defaults to `None` instead of `1` when page number is not present in the metadata.
+    A page number of `None` indicates that page numbers are not being tracked for the document
     or that page numbers do not apply to the element in question..
-*   Fixes an issue with some pptx files. Assume pptx shapes are found in top left position of slide  
+*   Fixes an issue with some pptx files. Assume pptx shapes are found in top left position of slide
     in case the shape.top and shape.left attributes are `None`.
 
 ## 0.7.5
@@ -356,7 +356,7 @@ Adds Dropbox connector
 
 ### Features
 
-*   Add `stage_for_weaviate` to stage `unstructured` outputs for upload to Weaviate, along with  
+*   Add `stage_for_weaviate` to stage `unstructured` outputs for upload to Weaviate, along with
     a helper function for defining a class to use in Weaviate schemas.
 *   Builds from Unstructured base image, built off of Rocky Linux 8.7, this resolves almost all CVE's in the image.
 
@@ -373,13 +373,13 @@ Adds Dropbox connector
 
 ### Fixes
 
-*   Fixes an issue in `_add_element_metadata` that caused all elements to have `page_number=1`  
+*   Fixes an issue in `_add_element_metadata` that caused all elements to have `page_number=1`
     in the element metadata.
 *   Adds `.log` as a file extension for TXT files.
 *   Adds functionality to try other common encodings for email (`.eml`) files if an error related to the encoding is raised and the user has not specified an encoding.
 *   Allow passed encoding to be used in the `replace_mime_encodings`
 *   Fixes page metadata for `partition_html` when `include_metadata=False`
-*   A `ValueError` now raises if `file_filename` is not specified when you use `partition_via_api`  
+*   A `ValueError` now raises if `file_filename` is not specified when you use `partition_via_api`
     with a file-like object.
 
 ## 0.6.11
@@ -434,7 +434,7 @@ Adds Dropbox connector
 *   Refactor out non-connector-specific config variables
 *   Add `file_directory` to metadata
 *   Add `page_name` to metadata. Currently used for the sheet name in XLSX documents.
-*   Added a `--partition-strategy` parameter to unstructured-ingest so that users can specify  
+*   Added a `--partition-strategy` parameter to unstructured-ingest so that users can specify
     partition strategy in CLI. For example, `--partition-strategy fast`.
 *   Added metadata for filetype.
 *   Add Discord connector to pull messages from a list of channels
@@ -449,8 +449,8 @@ Adds Dropbox connector
 ### Fixes
 
 *   Supports `hml` filetype for partition as a variation of html filetype.
-*   Makes `pytesseract` a function level import in `partition_pdf` so you can use the `"fast"`  
-    or `"hi_res"` strategies if `pytesseract` is not installed. Also adds the  
+*   Makes `pytesseract` a function level import in `partition_pdf` so you can use the `"fast"`
+    or `"hi_res"` strategies if `pytesseract` is not installed. Also adds the
     `required_dependencies` decorator for the `"hi_res"` and `"ocr_only"` strategies.
 *   Fix to ensure `filename` is tracked in metadata for `docx` tables.
 
@@ -458,9 +458,9 @@ Adds Dropbox connector
 
 ### Enhancements
 
-*   Adds an `"auto"` strategy that chooses the partitioning strategy based on document  
-    characteristics and function kwargs. This is the new default strategy for `partition_pdf`  
-    and `partition_image`. Users can maintain existing behavior by explicitly setting  
+*   Adds an `"auto"` strategy that chooses the partitioning strategy based on document
+    characteristics and function kwargs. This is the new default strategy for `partition_pdf`
+    and `partition_image`. Users can maintain existing behavior by explicitly setting
     `strategy="hi_res"`.
 *   Added an additional trace logger for NLP debugging.
 *   Add `get_date` method to `ElementMetadata` for converting the datestring to a `datetime` object.
@@ -474,7 +474,7 @@ Adds Dropbox connector
 ### Fixes
 
 *   `fileutils/file_type` check json and eml decode ignore error
-*   `partition_email` was updated to more flexibly handle deviations from the RFC-2822 standard.  
+*   `partition_email` was updated to more flexibly handle deviations from the RFC-2822 standard.
     The time in the metadata returns `None` if the time does not match RFC-2822 at all.
 *   Include all metadata fields when converting to dataframe or CSV
 
@@ -492,7 +492,7 @@ Adds Dropbox connector
 
 ### Enhancements
 
-*   Added an "ocr\_only" strategy for `partition_pdf`. Refactored the strategy decision  
+*   Added an "ocr\_only" strategy for `partition_pdf`. Refactored the strategy decision
     logic into its own module.
 
 ### Features
@@ -507,21 +507,21 @@ Adds Dropbox connector
 
 ### Features
 
-*   Added `partition_multiple_via_api` for partitioning multiple documents in a single REST  
+*   Added `partition_multiple_via_api` for partitioning multiple documents in a single REST
     API call.
 *   Added `stage_for_baseplate` function to prepare outputs for ingestion into Baseplate.
 *   Added `partition_odt` for processing Open Office documents.
 
 ### Fixes
 
-*   Updates the grouping logic in the `partition_pdf` fast strategy to group together text  
+*   Updates the grouping logic in the `partition_pdf` fast strategy to group together text
     in the same bounding box.
 
 ## 0.6.2
 
 ### Enhancements
 
-*   Added logic to `partition_pdf` for detecting copy protected PDFs and falling back  
+*   Added logic to `partition_pdf` for detecting copy protected PDFs and falling back
     to the hi res strategy when necessary.
 
 ### Features
@@ -547,11 +547,11 @@ Adds Dropbox connector
 
 ### Enhancements
 
-*   Adds an `ssl_verify` kwarg to `partition` and `partition_html` to enable turning off  
+*   Adds an `ssl_verify` kwarg to `partition` and `partition_html` to enable turning off
     SSL verification for HTTP requests. SSL verification is on by default.
-*   Allows users to pass in ocr language to `partition_pdf` and `partition_image` through  
-    the `ocr_language` kwarg. `ocr_language` corresponds to the code for the language pack  
-    in Tesseract. You will need to install the relevant Tesseract language pack to use a  
+*   Allows users to pass in ocr language to `partition_pdf` and `partition_image` through
+    the `ocr_language` kwarg. `ocr_language` corresponds to the code for the language pack
+    in Tesseract. You will need to install the relevant Tesseract language pack to use a
     given language.
 
 ### Features
@@ -561,7 +561,7 @@ Adds Dropbox connector
 
 ### Fixes
 
-*   Adds an `ssl_verify` kwarg to `partition` and `partition_html` to enable turning off  
+*   Adds an `ssl_verify` kwarg to `partition` and `partition_html` to enable turning off
     SSL verification for HTTP requests. SSL verification is on by default.
 
 ## 0.5.13
@@ -663,17 +663,17 @@ Added `partition_rtf` for processing rich text files.
 
 ### Fixes
 
-*   `convert_file_to_text` now passes through the `source_format` and `target_format` kwargs.  
+*   `convert_file_to_text` now passes through the `source_format` and `target_format` kwargs.
     Previously they were hard coded.
-*   Partitioning functions that accept a `text` kwarg no longer raise an error if an empty  
+*   Partitioning functions that accept a `text` kwarg no longer raise an error if an empty
     string is passed (and empty list of elements is returned instead).
 *   `partition_json` no longer fails if the input is an empty list.
-*   Fixed bug in `chunk_by_attention_window` that caused the last word in segments to be cut-off  
+*   Fixed bug in `chunk_by_attention_window` that caused the last word in segments to be cut-off
     in some cases.
 
 ### BREAKING CHANGES
 
-*   `stage_for_transformers` now returns a list of elements, making it consistent with other  
+*   `stage_for_transformers` now returns a list of elements, making it consistent with other
     staging bricks
 
 ## 0.5.7
@@ -712,22 +712,22 @@ Added `partition_rtf` for processing rich text files.
 
 *   Added Biomedical literature connector for ingest cli.
 *   Add `FsspecConnector` to easily integrate any existing `fsspec` filesystem as a connector.
-*   Rename `s3_connector.py` to `s3.py` for readability and consistency with the  
+*   Rename `s3_connector.py` to `s3.py` for readability and consistency with the
     rest of the connectors.
-*   Now `S3Connector` relies on `s3fs` instead of on `boto3`, and it inherits  
+*   Now `S3Connector` relies on `s3fs` instead of on `boto3`, and it inherits
     from `FsspecConnector`.
-*   Adds an `UNSTRUCTURED_LANGUAGE_CHECKS` environment variable to control whether or not language  
-    specific checks like vocabulary and POS tagging are applied. Set to `"true"` for higher  
+*   Adds an `UNSTRUCTURED_LANGUAGE_CHECKS` environment variable to control whether or not language
+    specific checks like vocabulary and POS tagging are applied. Set to `"true"` for higher
     resolution partitioning and `"false"` for faster processing.
 *   Improves `detect_filetype` warning to include filename when provided.
-*   Adds a "fast" strategy for partitioning PDFs with PDFMiner. Also falls back to the "fast"  
+*   Adds a "fast" strategy for partitioning PDFs with PDFMiner. Also falls back to the "fast"
     strategy if detectron2 is not available.
-*   Start deprecation life cycle for `unstructured-ingest --s3-url` option, to be deprecated in  
+*   Start deprecation life cycle for `unstructured-ingest --s3-url` option, to be deprecated in
     favor of `--remote-url`.
 
 ### Features
 
-*   Add `AzureBlobStorageConnector` based on its `fsspec` implementation inheriting  
+*   Add `AzureBlobStorageConnector` based on its `fsspec` implementation inheriting
     from `FsspecConnector`
 *   Add `partition_epub` for partitioning e-books in EPUB3 format.
 
@@ -746,7 +746,7 @@ Added `partition_rtf` for processing rich text files.
 
 ### Features
 
-*   Add `--wikipedia-auto-suggest` argument to the ingest CLI to disable automatic redirection  
+*   Add `--wikipedia-auto-suggest` argument to the ingest CLI to disable automatic redirection
     to pages with similar names.
 *   Add setup script for Amazon Linux 2
 *   Add optional `encoding` argument to the `partition_(text/email/html)` functions.
@@ -760,16 +760,16 @@ Added `partition_rtf` for processing rich text files.
 ### Enhancements
 
 *   Fully move from printing to logging.
-*   `unstructured-ingest` now uses a default `--download_dir` of `$HOME/.cache/unstructured/ingest`  
+*   `unstructured-ingest` now uses a default `--download_dir` of `$HOME/.cache/unstructured/ingest`
     rather than a "tmp-ingest-" dir in the working directory.
 
 ### Features
 
 ### Fixes
 
-*   `setup_ubuntu.sh` no longer fails in some contexts by interpreting  
+*   `setup_ubuntu.sh` no longer fails in some contexts by interpreting
     `DEBIAN_FRONTEND=noninteractive` as a command
-*   `unstructured-ingest` no longer re-downloads files when --preserve-downloads  
+*   `unstructured-ingest` no longer re-downloads files when --preserve-downloads
     is used without --download-dir.
 *   Fixed an issue that was causing text to be skipped in some HTML documents.
 
@@ -782,14 +782,14 @@ Added `partition_rtf` for processing rich text files.
 ### Fixes
 
 *   Fixes an error causing JavaScript to appear in the output of `partition_html` sometimes.
-*   Fix several issues with the `requires_dependencies` decorator, including the error message  
+*   Fix several issues with the `requires_dependencies` decorator, including the error message
     and how it was used, which had caused an error for `unstructured-ingest --github-url ...`.
 
 ## 0.5.0
 
 ### Enhancements
 
-*   Add `requires_dependencies` Python decorator to check dependencies are installed before  
+*   Add `requires_dependencies` Python decorator to check dependencies are installed before
     instantiating a class or running a function
 
 ### Features
@@ -799,7 +799,7 @@ Added `partition_rtf` for processing rich text files.
 ### Fixes
 
 *   Fix `process_document` file cleaning on failure
-*   Fixes an error introduced in the metadata tracking commit that caused `NarrativeText`  
+*   Fixes an error introduced in the metadata tracking commit that caused `NarrativeText`
     and `FigureCaption` elements to be represented as `Text` in HTML documents.
 
 ## 0.4.16
@@ -825,7 +825,7 @@ Added `partition_rtf` for processing rich text files.
 ### Enhancements
 
 *   Added `elements_to_json` and `elements_from_json` for easier serialization/deserialization
-*   `convert_to_dict`, `dict_to_elements` and `convert_to_csv` are now aliases for functions  
+*   `convert_to_dict`, `dict_to_elements` and `convert_to_csv` are now aliases for functions
     that use the ISD terminology.
 
 ### Fixes
@@ -868,7 +868,7 @@ Added `partition_rtf` for processing rich text files.
 ## 0.4.7
 
 *   Added the ability to pull an HTML document from a url in `partition_html`.
-*   Added the the ability to get file summary info from lists of filenames and lists  
+*   Added the the ability to get file summary info from lists of filenames and lists
     of file contents.
 *   Added optional page break to `partition` for `.pptx`, `.pdf`, images, and `.html` files.
 *   Added `to_dict` method to document elements.
@@ -877,17 +877,17 @@ Added `partition_rtf` for processing rich text files.
 ## 0.4.6
 
 *   Loosen the default cap threshold to `0.5`.
-*   Add a `UNSTRUCTURED_NARRATIVE_TEXT_CAP_THRESHOLD` environment variable for controlling  
+*   Add a `UNSTRUCTURED_NARRATIVE_TEXT_CAP_THRESHOLD` environment variable for controlling
     the cap ratio threshold.
 *   Unknown text elements are identified as `Text` for HTML and plain text documents.
-*   `Body Text` styles no longer default to `NarrativeText` for Word documents. The style information  
+*   `Body Text` styles no longer default to `NarrativeText` for Word documents. The style information
     is insufficient to determine that the text is narrative.
 *   Upper cased text is lower cased before checking for verbs. This helps avoid some missed verbs.
 *   Adds an `Address` element for capturing elements that only contain an address.
 *   Suppress the `UserWarning` when detectron is called.
 *   Checks that titles and narrative test have at least one English word.
 *   Checks that titles and narrative text are at least 50% alpha characters.
-*   Restricts titles to a maximum word length. Adds a `UNSTRUCTURED_TITLE_MAX_WORD_LENGTH`  
+*   Restricts titles to a maximum word length. Adds a `UNSTRUCTURED_TITLE_MAX_WORD_LENGTH`
     environment variable for controlling the max number of words in a title.
 *   Updated `partition_pptx` to order the elements on the page
 
@@ -921,7 +921,7 @@ Added `partition_rtf` for processing rich text files.
 
 ## 0.4.0
 
-*   Added generic `partition` brick that detects the file type and routes a file to the appropriate  
+*   Added generic `partition` brick that detects the file type and routes a file to the appropriate
     partitioning brick.
 *   Added a file type detection module.
 *   Updated `partition_html` and `partition_eml` to support file-like objects in 'rb' mode.
@@ -942,11 +942,11 @@ Added `partition_rtf` for processing rich text files.
 *   Add support for local inference
 *   Add new pattern to recognize plain text dash bullets
 *   Add test for bullet patterns
-*   Fix for `partition_html` that allows for processing `div` tags that have both text and child  
+*   Fix for `partition_html` that allows for processing `div` tags that have both text and child
     elements
 *   Add ability to extract document metadata from `.docx`, `.xlsx`, and `.jpg` files.
 *   Helper functions for identifying and extracting phone numbers
-*   Add new function `extract_attachment_info` that extracts and decodes the attachment  
+*   Add new function `extract_attachment_info` that extracts and decodes the attachment
     of an email.
 *   Staging brick to convert a list of `Element`s to a `pandas` dataframe.
 *   Add plain text functionality to `partition_email`
