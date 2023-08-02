@@ -32,7 +32,7 @@ if dependency_exists("docx"):
 
 if dependency_exists("docx") and dependency_exists("pypandoc"):
     from unstructured.partition.odt import partition_odt
-    
+
 
 if dependency_exists("ebooklib"):
     from unstructured.partition.epub import partition_epub
