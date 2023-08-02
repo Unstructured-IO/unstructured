@@ -1,0 +1,61 @@
+interactions:
+- request:
+    body: "--e8c9025ff98fef3123a8e5d3aff99f12\r\nContent-Disposition: form-data; name=\"\
+      strategy\"\r\n\r\nhi_res\r\n--e8c9025ff98fef3123a8e5d3aff99f12\r\nContent-Disposition:\
+      \ form-data; name=\"files\"; filename=\"/Users/jscheier/projects/unstructured/test_unstructured/partition/../../example-docs/eml/fake-email.eml\"\
+      \r\n\r\nMIME-Version: 1.0\r\nDate: Fri, 16 Dec 2022 17:04:16 -0500\r\nMessage-ID:\
+      \ <CADc-_xaLB2FeVQ7mNsoX+NJb_7hAJhBKa_zet-rtgPGenj0uVw@mail.gmail.com>\r\nSubject:\
+      \ Test Email\r\nFrom: Matthew Robinson <mrobinson@unstructured.io>\r\nTo: NotMatthew\
+      \ <NotMatthew@notunstructured.com>\r\nContent-Type: multipart/alternative; boundary=\"\
+      00000000000095c9b205eff92630\"\r\n\r\n--00000000000095c9b205eff92630\r\nContent-Type:\
+      \ text/plain; charset=\"UTF-8\"\r\n\r\nThis is a test email to use for unit\
+      \ tests.\r\n\r\nImportant points:\r\n\r\n   - Roses are red\r\n   - Violets\
+      \ are blue\r\n\r\n--00000000000095c9b205eff92630\r\nContent-Type: text/html;\
+      \ charset=\"UTF-8\"\r\n\r\n<div dir=\"ltr\"><div>This is a test email to use\
+      \ for unit tests.</div><div><br></div><div>Important points:</div><div><ul><li>Roses\
+      \ are red</li><li>Violets are blue</li></ul></div></div>\r\n\r\n--00000000000095c9b205eff92630--\r\
+      \n--e8c9025ff98fef3123a8e5d3aff99f12--\r\n"
+    headers:
+      ACCEPT:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1164'
+      Content-Type:
+      - multipart/form-data; boundary=e8c9025ff98fef3123a8e5d3aff99f12
+      UNSTRUCTURED-API-KEY:
+      - <scrubbed>
+      User-Agent:
+      - python-requests/2.31.0
+    method: POST
+    uri: https://api.unstructured.io/general/v0/general
+  response:
+    body:
+      string: '[{"type":"NarrativeText","element_id":"f49fbd614ddf5b72e06f59e554e6ae2b","metadata":{"date":"2022-12-16T17:04:16-05:00","filetype":"message/rfc822","sent_from":["NotMatthew
+        <NotMatthew@notunstructured.com>"],"sent_to":["NotMatthew <NotMatthew@notunstructured.com>"],"subject":"Test
+        Email","filename":"fake-email.eml"},"text":"This is a test email to use for
+        unit tests."},{"type":"Title","element_id":"9c218520320f238595f1fde74bdd137d","metadata":{"date":"2022-12-16T17:04:16-05:00","filetype":"message/rfc822","sent_from":["NotMatthew
+        <NotMatthew@notunstructured.com>"],"sent_to":["NotMatthew <NotMatthew@notunstructured.com>"],"subject":"Test
+        Email","filename":"fake-email.eml"},"text":"Important points:"},{"type":"ListItem","element_id":"8522061b991b1db70453502d328fe07e","metadata":{"date":"2022-12-16T17:04:16-05:00","filetype":"message/rfc822","sent_from":["NotMatthew
+        <NotMatthew@notunstructured.com>"],"sent_to":["NotMatthew <NotMatthew@notunstructured.com>"],"subject":"Test
+        Email","filename":"fake-email.eml"},"text":"Roses are red"},{"type":"ListItem","element_id":"c3c4527761d4e4b8d0a4c4a0d46954c8","metadata":{"date":"2022-12-16T17:04:16-05:00","filetype":"message/rfc822","sent_from":["NotMatthew
+        <NotMatthew@notunstructured.com>"],"sent_to":["NotMatthew <NotMatthew@notunstructured.com>"],"subject":"Test
+        Email","filename":"fake-email.eml"},"text":"Violets are blue"}]'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1384'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 02 Aug 2023 18:16:37 GMT
+      server:
+      - uvicorn
+    status:
+      code: 200
+      message: OK
+version: 1

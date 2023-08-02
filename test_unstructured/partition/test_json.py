@@ -1,13 +1,16 @@
+import contextlib
 import os
 import pathlib
 import tempfile
 
 import pytest
+import vcr
 
-from unstructured.partition.auto import partition
+from unstructured.partition.api import partition_via_api
 from unstructured.partition.json import partition_json
 from unstructured.staging.base import elements_to_json
 
+API_KEY = os.environ.get('UNSTRUCTURED_API_KEY', '<REPLACE_ME>')
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
 is_in_docker = os.path.exists("/.dockerenv")
@@ -32,10 +35,23 @@ test_files = [
 is_in_docker = os.path.exists("/.dockerenv")
 
 
+# WARNING! You will need to set up API key, remove the cassettes, and re-run if
+# partitioning behavior changes. Remember to also scrub the UNSTRUCTURED-API-KEY
+# header before checking in.
+@contextlib.contextmanager
+def partition_file_via_api_in_cassette(filename):
+    with vcr.use_cassette(
+        f"test_unstructured/vcr_fixtures/cassettes/json_{filename.split('/')[-1]}.yaml",
+        allow_playback_repeats=True,
+    ):
+        yield
+
+
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_json_from_filename(filename: str):
     path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-    elements = partition(filename=path)
+    with partition_file_via_api_in_cassette(filename):
+        elements = partition_via_api(filename=path, api_key=API_KEY)
 
     with tempfile.TemporaryDirectory() as tmpdir:
         _filename = os.path.basename(filename)
@@ -55,7 +71,8 @@ def test_partition_json_from_filename(filename: str):
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_json_from_filename_with_metadata_filename(filename: str):
     path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-    elements = partition(filename=path)
+    with partition_file_via_api_in_cassette(filename):
+        elements = partition_via_api(filename=path, api_key=API_KEY)
 
     with tempfile.TemporaryDirectory() as tmpdir:
         _filename = os.path.basename(filename)
@@ -71,7 +88,8 @@ def test_partition_json_from_filename_with_metadata_filename(filename: str):
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_json_from_file(filename: str):
     path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-    elements = partition(filename=path)
+    with partition_file_via_api_in_cassette(filename):
+        elements = partition_via_api(filename=path, api_key=API_KEY)
 
     with tempfile.TemporaryDirectory() as tmpdir:
         _filename = os.path.basename(filename)
@@ -91,7 +109,8 @@ def test_partition_json_from_file(filename: str):
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_json_from_file_with_metadata_filename(filename: str):
     path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-    elements = partition(filename=path)
+    with partition_file_via_api_in_cassette(filename):
+        elements = partition_via_api(filename=path, api_key=API_KEY)
 
     with tempfile.TemporaryDirectory() as tmpdir:
         _filename = os.path.basename(filename)
@@ -107,7 +126,8 @@ def test_partition_json_from_file_with_metadata_filename(filename: str):
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_json_from_text(filename: str):
     path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-    elements = partition(filename=path)
+    with partition_file_via_api_in_cassette(filename):
+        elements = partition_via_api(filename=path, api_key=API_KEY)
 
     with tempfile.TemporaryDirectory() as tmpdir:
         _filename = os.path.basename(filename)
@@ -140,7 +160,8 @@ def test_partition_json_works_with_empty_list():
 
 def test_partition_json_raises_with_too_many_specified():
     path = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-text.txt")
-    elements = partition(filename=path)
+    with partition_file_via_api_in_cassette(filename):
+        elements = partition_via_api(filename=path, api_key=API_KEY)
 
     with tempfile.TemporaryDirectory() as tmpdir:
         test_path = os.path.join(tmpdir, "fake-text.txt.json")
@@ -164,7 +185,8 @@ def test_partition_json_raises_with_too_many_specified():
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_json_from_filename_exclude_metadata(filename: str):
     path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-    elements = partition(filename=path)
+    with partition_file_via_api_in_cassette(filename):
+        elements = partition_via_api(filename=path, api_key=API_KEY)
 
     with tempfile.TemporaryDirectory() as tmpdir:
         _filename = os.path.basename(filename)
@@ -179,7 +201,8 @@ def test_partition_json_from_filename_exclude_metadata(filename: str):
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_json_from_file_exclude_metadata(filename: str):
     path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-    elements = partition(filename=path)
+    with partition_file_via_api_in_cassette(filename):
+        elements = partition_via_api(filename=path, api_key=API_KEY)
 
     with tempfile.TemporaryDirectory() as tmpdir:
         _filename = os.path.basename(filename)
@@ -195,7 +218,8 @@ def test_partition_json_from_file_exclude_metadata(filename: str):
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_json_from_text_exclude_metadata(filename: str):
     path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-    elements = partition(filename=path)
+    with partition_file_via_api_in_cassette(filename):
+        elements = partition_via_api(filename=path, api_key=API_KEY)
 
     with tempfile.TemporaryDirectory() as tmpdir:
         _filename = os.path.basename(filename)
@@ -216,7 +240,7 @@ def test_partition_json_metadata_date(
     mocked_last_modification_date = "2029-07-05T09:24:28"
 
     mocker.patch(
-        "unstructured.partition.json.get_last_modified_date",
+        "unstructured.partition_via_api.json.get_last_modified_date",
         return_value=mocked_last_modification_date,
     )
 
@@ -235,7 +259,7 @@ def test_partition_json_with_custom_metadata_date(
     expected_last_modification_date = "2020-07-05T09:24:28"
 
     mocker.patch(
-        "unstructured.partition.json.get_last_modified_date",
+        "unstructured.partition_via_api.json.get_last_modified_date",
         return_value=mocked_last_modification_date,
     )
 
@@ -254,7 +278,7 @@ def test_partition_json_from_file_metadata_date(
     mocked_last_modification_date = "2029-07-05T09:24:28"
 
     mocker.patch(
-        "unstructured.partition.json.get_last_modified_date_from_file",
+        "unstructured.partition_via_api.json.get_last_modified_date_from_file",
         return_value=mocked_last_modification_date,
     )
 
@@ -274,12 +298,14 @@ def test_partition_json_from_file_with_custom_metadata_date(
     expected_last_modification_date = "2020-07-05T09:24:28"
 
     mocker.patch(
-        "unstructured.partition.json.get_last_modified_date_from_file",
+        "unstructured.partition_via_api.json.get_last_modified_date_from_file",
         return_value=mocked_last_modification_date,
     )
 
     with open(filename, "rb") as f:
-        elements = partition_json(file=f, metadata_last_modified=expected_last_modification_date)
+        elements = partition_json(
+            file=f, metadata_last_modified=expected_last_modification_date
+        )
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
 
@@ -305,8 +331,11 @@ def test_partition_json_from_text_with_custom_metadata_date(
     with open(filename) as f:
         text = f.read()
 
-    elements = partition_json(text=text, metadata_last_modified=expected_last_modification_date)
+    elements = partition_json(
+        text=text, metadata_last_modified=expected_last_modification_date
+    )
 
+    raise ValueError(dir(elements[0].metadata))
     assert elements[0].metadata.last_modified == expected_last_modification_date
 
 

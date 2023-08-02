@@ -1,0 +1,49 @@
+interactions:
+- request:
+    body: "--df0279460083540903a06848ab23736d\r\nContent-Disposition: form-data; name=\"\
+      strategy\"\r\n\r\nhi_res\r\n--df0279460083540903a06848ab23736d\r\nContent-Disposition:\
+      \ form-data; name=\"files\"; filename=\"/Users/jscheier/projects/unstructured/test_unstructured/partition/../../example-docs/fake-text.txt\"\
+      \r\n\r\nThis is a test document to use for unit tests.\n\nDoylestown, PA 18901\n\
+      \nImportant points:\n\n   - Hamburgers are delicious\n   - Dogs are the best\n\
+      \   - I love fuzzy blankets\n\r\n--df0279460083540903a06848ab23736d--\r\n"
+    headers:
+      ACCEPT:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '499'
+      Content-Type:
+      - multipart/form-data; boundary=df0279460083540903a06848ab23736d
+      UNSTRUCTURED-API-KEY:
+      - <scrubbed>
+      User-Agent:
+      - python-requests/2.31.0
+    method: POST
+    uri: https://api.unstructured.io/general/v0/general
+  response:
+    body:
+      string: '[{"type":"NarrativeText","element_id":"1df8eeb8be847c3a1a7411e3be3e0396","metadata":{"filetype":"text/plain","filename":"fake-text.txt"},"text":"This
+        is a test document to use for unit tests."},{"type":"Address","element_id":"a9d4657034aa3fdb5177f1325e912362","metadata":{"filetype":"text/plain","filename":"fake-text.txt"},"text":"Doylestown,
+        PA 18901"},{"type":"Title","element_id":"9c218520320f238595f1fde74bdd137d","metadata":{"filetype":"text/plain","filename":"fake-text.txt"},"text":"Important
+        points:"},{"type":"ListItem","element_id":"39a3ae572581d0f1fe7511fd7b3aa414","metadata":{"filetype":"text/plain","filename":"fake-text.txt"},"text":"Hamburgers
+        are delicious"},{"type":"ListItem","element_id":"fc1adcb8eaceac694e500a103f9f698f","metadata":{"filetype":"text/plain","filename":"fake-text.txt"},"text":"Dogs
+        are the best"},{"type":"ListItem","element_id":"0b61e826b1c4ab05750184da72b89f83","metadata":{"filetype":"text/plain","filename":"fake-text.txt"},"text":"I
+        love fuzzy blankets"}]'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '999'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 02 Aug 2023 18:16:24 GMT
+      server:
+      - uvicorn
+    status:
+      code: 200
+      message: OK
+version: 1

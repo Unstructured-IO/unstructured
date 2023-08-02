@@ -1,0 +1,45 @@
+interactions:
+- request:
+    body: "--cef7cc94e9ea863c877e65a3f94e817b\r\nContent-Disposition: form-data; name=\"\
+      strategy\"\r\n\r\nhi_res\r\n--cef7cc94e9ea863c877e65a3f94e817b\r\nContent-Disposition:\
+      \ form-data; name=\"files\"; filename=\"/Users/jscheier/projects/unstructured/test_unstructured/partition/../../example-docs/fake-html.html\"\
+      \r\n\r\n<!DOCTYPE html>\n<html>\n<body>\n\n<h1>My First Heading</h1>\n<p>My\
+      \ first paragraph.</p>\n\n</body>\n</html>\n\r\n--cef7cc94e9ea863c877e65a3f94e817b--\r\
+      \n"
+    headers:
+      ACCEPT:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '432'
+      Content-Type:
+      - multipart/form-data; boundary=cef7cc94e9ea863c877e65a3f94e817b
+      UNSTRUCTURED-API-KEY:
+      - <scrubbed>
+      User-Agent:
+      - python-requests/2.31.0
+    method: POST
+    uri: https://api.unstructured.io/general/v0/general
+  response:
+    body:
+      string: '[{"type":"Title","element_id":"0540311f6c077fe8f797080918b8d74b","metadata":{"filetype":"text/html","page_number":1,"filename":"fake-html.html"},"text":"My
+        First Heading"},{"type":"Title","element_id":"399af454cb1368b8257ed406b430de84","metadata":{"filetype":"text/html","page_number":1,"filename":"fake-html.html"},"text":"My
+        first paragraph."}]'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '346'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 02 Aug 2023 18:16:35 GMT
+      server:
+      - uvicorn
+    status:
+      code: 200
+      message: OK
+version: 1
