@@ -1,0 +1,6 @@
+-c constraints.in
+-c base.txt
+
+openpyxl
+pandas
+xlrd
