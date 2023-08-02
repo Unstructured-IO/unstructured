@@ -107,7 +107,7 @@ def group_broken_paragraphs(
     return "\n\n".join(clean_paragraphs)
 
 
-def one_line_grouper(
+def new_line_grouper(
     text: str,
     paragraph_split: re.Pattern = LINE_BREAK_RE,
 ) -> str:
@@ -183,7 +183,7 @@ def auto_paragraph_grouper(
     # NOTE(klaijan) - for ratio < threshold, we pass to new-line grouper,
     # otherwise to blank-line grouper
     if ratio < threshold:
-        return one_line_grouper(text)
+        return new_line_grouper(text)
     else:
         return blank_line_grouper(text)
 
