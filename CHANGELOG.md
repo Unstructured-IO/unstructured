@@ -1,4 +1,4 @@
-## 0.9.1-dev0
+## 0.9.1-dev1
 
 ### Enhancements
 
@@ -8,6 +8,9 @@
 ### Features
 
 ### Fixes
+
+* Simplifies `min_partition` logic; makes partitions falling below the `min_partition`
+  less likely.
 
 ## 0.9.0
 
