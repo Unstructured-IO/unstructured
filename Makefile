@@ -178,6 +178,7 @@ pip-compile:
 	# Extra requirements that are specific to document types
 	pip-compile --upgrade requirements/extra-csv.in
 	pip-compile --upgrade requirements/extra-docx.in
+	pip-compile --upgrade requirements/extra-epub.in
 	pip-compile --upgrade requirements/extra-pandoc.in
 	pip-compile --upgrade requirements/extra-markdown.in
 	pip-compile --upgrade requirements/extra-msg.in
