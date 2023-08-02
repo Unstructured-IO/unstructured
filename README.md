@@ -278,6 +278,10 @@ file-specific partitioning functions.
 See our [security policy](https://github.com/Unstructured-IO/unstructured/security/policy) for
 information on how to report security vulnerabilities.
 
+## :bug: Reporting Bugs
+
+Encountered a bug? Please create a new [GitHub issue](https://github.com/Unstructured-IO/unstructured/issues/new/choose) and use our bug report template to describe the problem. To help us diagnose the issue, use the `python scripts/collect_env.py` command to gather your system's environment information and include it in your report. Your assistance helps us continuously improve our software - thank you!
+
 ## :books: Learn more
 
 | Section | Description |
