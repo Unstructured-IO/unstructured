@@ -69,6 +69,7 @@ class SimpleGoogleDriveConfig(BaseConnectorConfig):
     """Connector config where drive_id is the id of the document to process or
     the folder to process all documents from."""
 
+
     # Google Drive Specific Options
     drive_id: str
     service_account_key: str
@@ -81,6 +82,8 @@ class SimpleGoogleDriveConfig(BaseConnectorConfig):
                 f"Extension not supported. "
                 f"Value MUST be one of {', '.join([k for k in EXT_TO_FILETYPE if k is not None])}.",
             )
+        
+        logger.debug("creating service key")
         self.service = create_service_account_object(self.service_account_key, self.drive_id)
 
 
@@ -170,12 +173,13 @@ class GoogleDriveConnector(ConnectorCleanupMixin, BaseConnector):
 
     def _list_objects(self, drive_id, recursive=False):
         files = []
+        service = create_service_account_object(self.config.service_account_key)
 
         def traverse(drive_id, download_dir, output_dir, recursive=False):
             page_token = None
             while True:
                 response = (
-                    self.config.service.files()
+                    service.files()
                     .list(
                         spaces="drive",
                         fields="nextPageToken, files(id, name, mimeType)",
@@ -245,5 +249,4 @@ class GoogleDriveConnector(ConnectorCleanupMixin, BaseConnector):
     def get_ingest_docs(self):
         files = self._list_objects(self.config.drive_id, self.config.recursive)
         # Setting to None because service object can't be pickled for multiprocessing.
-        self.config.service = None
         return [GoogleDriveIngestDoc(self.standard_config, self.config, file) for file in files]
