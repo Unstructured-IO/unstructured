@@ -10,7 +10,7 @@ from unstructured.partition.api import partition_via_api
 from unstructured.partition.json import partition_json
 from unstructured.staging.base import elements_to_json
 
-API_KEY = os.environ.get('UNSTRUCTURED_API_KEY', '<REPLACE_ME>')
+API_KEY = os.environ.get("UNSTRUCTURED_API_KEY", "<REPLACE_ME>")
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
 is_in_docker = os.path.exists("/.dockerenv")
@@ -304,7 +304,8 @@ def test_partition_json_from_file_with_custom_metadata_date(
 
     with open(filename, "rb") as f:
         elements = partition_json(
-            file=f, metadata_last_modified=expected_last_modification_date
+            file=f,
+            metadata_last_modified=expected_last_modification_date,
         )
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
@@ -332,7 +333,8 @@ def test_partition_json_from_text_with_custom_metadata_date(
         text = f.read()
 
     elements = partition_json(
-        text=text, metadata_last_modified=expected_last_modification_date
+        text=text,
+        metadata_last_modified=expected_last_modification_date,
     )
 
     raise ValueError(dir(elements[0].metadata))
