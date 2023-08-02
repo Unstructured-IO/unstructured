@@ -425,7 +425,11 @@ def _is_text_file_a_json(
     encoding: Optional[str] = "utf-8",
 ):
     """Detects if a file that has a text/plain MIME type is a JSON file."""
-    file_text = _read_file_start_for_type_check(file=file, filename=filename, encoding=encoding)
+    file_text = _read_file_start_for_type_check(
+        file=file,
+        filename=filename,
+        encoding=encoding,
+    )
     text_without_strings = re.sub(r'"(?:\\.|[^"\\])*"', "", file_text)
 
     if not re.match(VALID_JSON_CHARACTERS, text_without_strings):
@@ -481,7 +485,6 @@ def document_to_element_list(
     document: "DocumentLayout",
     include_page_breaks: bool = False,
     sort: bool = False,
-    include_path_in_metadata_filename: Optional[bool] = None,
 ) -> List[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
     elements: List[Element] = []
@@ -500,7 +503,10 @@ def document_to_element_list(
             else:
                 coordinate_system = None
 
-            element = normalize_layout_element(layout_element, coordinate_system=coordinate_system)
+            element = normalize_layout_element(
+                layout_element,
+                coordinate_system=coordinate_system,
+            )
 
             if isinstance(element, List):
                 for el in element:
@@ -521,7 +527,6 @@ def document_to_element_list(
                 filetype=image_format,
                 coordinates=coordinates,
                 coordinate_system=coordinate_system,
-                include_path_in_metadata_filename=include_path_in_metadata_filename,
             )
         if sort:
             page_elements = sorted(
@@ -623,6 +628,10 @@ def add_metadata_with_filetype(filetype: FileType):
                         filename=filename,
                         metadata_filename=metadata_filename,
                     )
+                if params["filename"] is not None and not include_path_in_metadata_filename:
+                    file_directory, filename = os.path.split(params["filename"])
+                    params["file_directory"] = file_directory or None
+                    params["filename"] = filename
 
                 metadata_kwargs = {
                     kwarg: params.get(kwarg)
@@ -630,8 +639,8 @@ def add_metadata_with_filetype(filetype: FileType):
                         "filename",
                         "url",
                         "text_as_html",
-                        "include_path_in_metadata_filename",
                         "metadata_filename",
+                        "file_directory",
                     )
                 }
                 for element in elements:
