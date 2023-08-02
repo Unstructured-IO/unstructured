@@ -1,4 +1,4 @@
-## 0.9.1-dev1
+## 0.9.1-dev2
 
 ### Enhancements
 
@@ -9,6 +9,7 @@
 
 ### Fixes
 
+* Skip ingest test on missing Slack token
 * Add Dropbox variables to CI environments
 
 ## 0.9.0
