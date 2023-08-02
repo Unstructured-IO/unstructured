@@ -18,7 +18,7 @@ from unstructured.partition.common import (
 )
 from unstructured.utils import dependency_exists
 
-if dependency_exists("beautifulsoup4"):
+if dependency_exists("bs4"):
     from lxml.html.soupparser import fromstring as html_string_parser
 else:
     from lxml.html import document_fromstring as html_string_parser
