@@ -34,12 +34,28 @@ class User(FromJSONMixin, GetTextMixin):
         return text
 
 
+@dataclass
 class People(User):
     person: dict = field(default_factory=dict)
 
 
-class Bots(User):
+@dataclass
+class Bots(FromJSONMixin, GetTextMixin):
+    object: dict
+    id: str
     bot: dict
     owner: dict
     type: str
     workspace_name: str
+    name: Optional[str] = None
+    avatar_url: Optional[str] = None
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        return cls(**data)
+
+    def get_text(self) -> Optional[str]:
+        text = self.name
+        if self.avatar_url:
+            text = f"[{text}]({self.avatar_url}"
+        return text

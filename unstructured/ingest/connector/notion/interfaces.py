@@ -20,3 +20,11 @@ class BlockBase(FromJSONMixin, GetTextMixin):
     @abstractmethod
     def can_have_children() -> bool:
         pass
+
+
+class DBPropertyBase(FromJSONMixin):
+    pass
+
+
+class DBCellBase(FromJSONMixin):
+    pass

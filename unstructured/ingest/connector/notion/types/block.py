@@ -80,7 +80,3 @@ class Block(FromJSONMixin, GetTextMixin):
             return self.block.get_text()
         else:
             return None
-
-
-if __name__ == "__main__":
-    print(type(blocks.Table))
