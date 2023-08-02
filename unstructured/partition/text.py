@@ -124,7 +124,8 @@ def combine_paragraphs_less_than_min(
 ) -> List[str]:
     """Combine paragraphs less than `min_partition` while not exceeding `max_partition`."""
     min_partition = min_partition or 0
-    max_partition = max_partition or 1500
+    max_possible_partition = len(" ".join(split_paragraphs))
+    max_partition = max_partition or max_possible_partition
 
     combined_paras = []
     combined_idxs = []
