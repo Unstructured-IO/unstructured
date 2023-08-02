@@ -868,6 +868,11 @@ Examples:
   elements = partition_xlsx(filename="example-docs/stanley-cups.xlsx")
   print(elements[0].metadata.text_as_html)
 
+
+If your Excel file contains emojis and you notice them missing in the output, try
+running ``pip install beautifulsoup4``. If beautiful soup is installed, ``partition_xlsx``
+will use that to parse the table instead of the base `lxml` parser.
+
 For more information about the ``partition_xlsx`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/xlsx.py>`_.
 
 
