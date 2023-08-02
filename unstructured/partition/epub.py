@@ -51,27 +51,32 @@ def partition_epub(
         last_modification_date = get_last_modified_date(filename)
 
     book = epub.read_epub(filename)
-    toc_items = list(book.toc)
+    html_items = [item for item in book.items if isinstance(item, epub.EpubHtml)]
+    toc_href_and_title = []
     elements = []
 
-    for toc_item in toc_items:
-        # Some toc items may be tuple
-        if isinstance(toc_item, tuple):
-            toc_item = toc_item[0]
+    for item in book.toc:
+        # Some toc items may be tuple of multiple items, but all have the same href
+        if isinstance(item, tuple):
+            toc_href_and_title.append((item[0].href.split("#")[0], item[0].title))
+        else:
+            toc_href_and_title.append((item.href.split("#")[0], item.title))
 
-        href = toc_item.href.split("#")[0]
-        title = toc_item.title
-        item = book.get_item_with_href(href)
+    for item in html_items:
+        item_title = None
+        item_content = item.get_content().decode()
+        item_href = item.file_name
 
-        if item is not None:
-            # Convert the item content to a string
-            html_content = item.get_content().decode()
-            section_elements = partition_html(
-                text=html_content,
-                section=title,
-                metadata_last_modified=metadata_last_modified or last_modification_date,
-                **kwargs,
-            )
+        for href, title in toc_href_and_title:
+            if item_href == href:
+                item_title = title
+
+        section_elements = partition_html(
+            text=item_content,
+            section=item_title,
+            metadata_last_modified=metadata_last_modified or last_modification_date,
+            **kwargs,
+        )
 
         elements.extend(section_elements)
 
