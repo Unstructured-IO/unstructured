@@ -8,7 +8,7 @@ attrs==23.1.0
     # via boxsdk
 boxfs==0.2.0
     # via -r requirements/ingest-box.in
-boxsdk[jwt]==3.8.0
+boxsdk[jwt]==3.8.1
     # via boxfs
 certifi==2023.7.22
     # via
@@ -16,17 +16,13 @@ certifi==2023.7.22
     #   -c requirements/constraints.in
     #   requests
 cffi==1.15.1
-    # via
-    #   -c requirements/base.txt
-    #   cryptography
+    # via cryptography
 charset-normalizer==3.2.0
     # via
     #   -c requirements/base.txt
     #   requests
 cryptography==41.0.2
-    # via
-    #   -c requirements/base.txt
-    #   boxsdk
+    # via boxsdk
 fsspec==2023.6.0
     # via
     #   -r requirements/ingest-box.in
@@ -36,15 +32,11 @@ idna==3.4
     #   -c requirements/base.txt
     #   requests
 pycparser==2.21
-    # via
-    #   -c requirements/base.txt
-    #   cffi
+    # via cffi
 pyjwt==2.8.0
     # via boxsdk
 python-dateutil==2.8.2
-    # via
-    #   -c requirements/base.txt
-    #   boxsdk
+    # via boxsdk
 requests==2.31.0
     # via
     #   -c requirements/base.txt
@@ -53,9 +45,7 @@ requests==2.31.0
 requests-toolbelt==1.0.0
     # via boxsdk
 six==1.16.0
-    # via
-    #   -c requirements/base.txt
-    #   python-dateutil
+    # via python-dateutil
 urllib3==1.26.16
     # via
     #   -c requirements/base.txt

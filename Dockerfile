@@ -30,7 +30,15 @@ RUN python3.8 -m pip install pip==${PIP_VERSION} && \
   pip install --no-cache -r requirements/ingest-s3.txt && \
   pip install --no-cache -r requirements/ingest-slack.txt && \
   pip install --no-cache -r requirements/ingest-wikipedia.txt && \
-  pip install --no-cache -r requirements/local-inference.txt && \
+  pip install --no-cache -r requirements/extra-csv.txt && \
+  pip install --no-cache -r requirements/extra-docx.txt && \
+  pip install --no-cache -r requirements/extra-markdown.txt && \
+  pip install --no-cache -r requirements/extra-msg.txt && \
+  pip install --no-cache -r requirements/extra-odt.txt && \
+  pip install --no-cache -r requirements/extra-pandoc.txt && \
+  pip install --no-cache -r requirements/extra-pdf-image.txt && \
+  pip install --no-cache -r requirements/extra-pptx.txt && \
+  pip install --no-cache -r requirements/extra-xlsx.txt && \
   dnf -y groupremove "Development Tools" && \
   dnf clean all
 

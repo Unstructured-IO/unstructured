@@ -1,3 +1,20 @@
+## 0.9.1-dev0
+
+### Enhancements
+
+* Set the default strategy for partitioning images to `hi_res`
+* Add page break parameter section in API documentation to sync with change in Prod API
+
+### Features
+
+### Fixes
+
+## 0.9.0
+
+### Enhancements
+
+* Dependencies are now split by document type, creating a slimmer base installation.
+
 ## 0.8.8
 
 ### Enhancements
