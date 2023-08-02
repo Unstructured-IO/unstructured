@@ -35,8 +35,15 @@ test_files = [
 is_in_docker = os.path.exists("/.dockerenv")
 
 
-# WARNING! You will need to set up API key, remove the cassettes, and re-run if
-# partitioning behavior changes. Remember to also scrub the UNSTRUCTURED-API-KEY
+# WARNING! You will need to
+#
+#    * Set up API key as UNSTRUCTURED_API_KEY in your environment
+#    * Remove the cassettes in test_unstructured/vcr_fixtures,
+#    * Re-run tests
+# 
+# partitioning behavior changes.
+# 
+# Remember to also scrub the UNSTRUCTURED-API-KEY
 # header before checking in.
 @contextlib.contextmanager
 def partition_file_via_api_in_cassette(filename):
@@ -240,7 +247,7 @@ def test_partition_json_metadata_date(
     mocked_last_modification_date = "2029-07-05T09:24:28"
 
     mocker.patch(
-        "unstructured.partition_via_api.json.get_last_modified_date",
+        "unstructured.partition.json.get_last_modified_date",
         return_value=mocked_last_modification_date,
     )
 
@@ -259,7 +266,7 @@ def test_partition_json_with_custom_metadata_date(
     expected_last_modification_date = "2020-07-05T09:24:28"
 
     mocker.patch(
-        "unstructured.partition_via_api.json.get_last_modified_date",
+        "unstructured.partition.json.get_last_modified_date",
         return_value=mocked_last_modification_date,
     )
 
@@ -278,7 +285,7 @@ def test_partition_json_from_file_metadata_date(
     mocked_last_modification_date = "2029-07-05T09:24:28"
 
     mocker.patch(
-        "unstructured.partition_via_api.json.get_last_modified_date_from_file",
+        "unstructured.partition.json.get_last_modified_date_from_file",
         return_value=mocked_last_modification_date,
     )
 
@@ -298,7 +305,7 @@ def test_partition_json_from_file_with_custom_metadata_date(
     expected_last_modification_date = "2020-07-05T09:24:28"
 
     mocker.patch(
-        "unstructured.partition_via_api.json.get_last_modified_date_from_file",
+        "unstructured.partition.json.get_last_modified_date_from_file",
         return_value=mocked_last_modification_date,
     )
 
