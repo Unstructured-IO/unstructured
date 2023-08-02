@@ -5,7 +5,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Say hello to your colleagues who want to know your name, pronouns, role, team and location (or if you're remote).",
+          "tag": "span"
+        }
+      ]
     },
     "text": "Say hello to your colleagues who want to know your name, pronouns, role, team and location (or if you're remote)."
   },
@@ -45,6 +51,12 @@
           "text": "ryan",
           "url": "/wiki/display/~64083457896d10ebd4738661"
         }
+      ],
+      "emphasized_texts": [
+        {
+          "text": "•",
+          "tag": "span"
+        }
       ]
     },
     "text": "Overview\n            \n            \n                Jun 30, 2023 • contributed by ryan"
@@ -65,6 +77,12 @@
           "text": "ryan",
           "url": "/wiki/display/~64083457896d10ebd4738661"
         }
+      ],
+      "emphasized_texts": [
+        {
+          "text": "•",
+          "tag": "span"
+        }
       ]
     },
     "text": "Getting started in Confluence\n            \n            \n                Jun 30, 2023 • contributed by ryan"
@@ -84,6 +102,12 @@
         {
           "text": "ryan",
           "url": "/wiki/display/~64083457896d10ebd4738661"
+        }
+      ],
+      "emphasized_texts": [
+        {
+          "text": "•",
+          "tag": "span"
         }
       ]
     },
@@ -135,7 +159,17 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "End with a bang! Some options are:",
+          "tag": "span"
+        },
+        {
+          "text": "<Insert company name>",
+          "tag": "span"
+        }
+      ]
     },
     "text": "End with a bang! Some options are: \"I am so grateful to be here at <Insert company name> and very excited to get started!\" or \"Looking forward to meeting all of you!\" or \"Can't wait to get to know all of you!\""
   }

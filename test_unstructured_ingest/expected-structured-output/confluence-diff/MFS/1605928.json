@@ -75,7 +75,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Time",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Time"
   },
@@ -85,7 +91,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Item",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Item"
   },
@@ -95,7 +107,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Presenter",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Presenter"
   },
@@ -105,7 +123,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Notes",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Notes"
   },

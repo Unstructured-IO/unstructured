@@ -5,7 +5,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Driver",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Driver"
   },
@@ -15,7 +21,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Approver",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Approver"
   },
@@ -25,7 +37,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Contributors",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Contributors"
   },
@@ -35,7 +53,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Informed",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Informed"
   },
@@ -45,7 +69,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Objective",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Objective"
   },
@@ -55,7 +85,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Due date",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Due date"
   },
@@ -65,7 +101,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Key outcomes",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Key outcomes"
   },
@@ -75,7 +117,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Status",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Status"
   },
@@ -85,7 +133,21 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "NOT STARTED",
+          "tag": "span"
+        },
+        {
+          "text": "IN PROGRESS",
+          "tag": "span"
+        },
+        {
+          "text": "COMPLETE",
+          "tag": "span"
+        }
+      ]
     },
     "text": "NOT STARTED / IN PROGRESS / COMPLETE"
   },
@@ -115,7 +177,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Must have:",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Must have:"
   },
@@ -145,7 +213,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Nice to have:",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Nice to have:"
   },
@@ -175,7 +249,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Not in scope:",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Not in scope:"
   },
@@ -305,7 +385,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Milestone",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Milestone"
   },
@@ -315,7 +401,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Owner",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Owner"
   },
@@ -325,7 +417,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Deadline",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Deadline"
   },
@@ -335,7 +433,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Status",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Status"
   },
