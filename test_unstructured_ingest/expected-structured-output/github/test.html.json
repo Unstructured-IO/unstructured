@@ -71,7 +71,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 2
+      "page_number": 2,
+      "emphasized_texts": [
+        {
+          "text": "Downloadify.create('downloadify',{",
+          "tag": "span"
+        }
+      ]
     },
     "text": "Downloadify.create('downloadify',{"
   },
@@ -81,7 +87,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 3
+      "page_number": 3,
+      "emphasized_texts": [
+        {
+          "text": "filename: function(){",
+          "tag": "span"
+        }
+      ]
     },
     "text": "filename: function(){"
   },
@@ -91,7 +103,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 4
+      "page_number": 4,
+      "emphasized_texts": [
+        {
+          "text": "return document.getElementById('filename').value;",
+          "tag": "span"
+        }
+      ]
     },
     "text": "return document.getElementById('filename').value;"
   },
@@ -101,7 +119,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 5
+      "page_number": 5,
+      "emphasized_texts": [
+        {
+          "text": "},",
+          "tag": "span"
+        }
+      ]
     },
     "text": "},"
   },
@@ -111,7 +135,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 6
+      "page_number": 6,
+      "emphasized_texts": [
+        {
+          "text": "data: function(){",
+          "tag": "span"
+        }
+      ]
     },
     "text": "data: function(){"
   },
@@ -121,7 +151,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 7
+      "page_number": 7,
+      "emphasized_texts": [
+        {
+          "text": "return document.getElementById('data').value;",
+          "tag": "span"
+        }
+      ]
     },
     "text": "return document.getElementById('data').value;"
   },
@@ -131,7 +167,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 8
+      "page_number": 8,
+      "emphasized_texts": [
+        {
+          "text": "},",
+          "tag": "span"
+        }
+      ]
     },
     "text": "},"
   },
@@ -141,7 +183,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 9
+      "page_number": 9,
+      "emphasized_texts": [
+        {
+          "text": "onComplete: function(){",
+          "tag": "span"
+        }
+      ]
     },
     "text": "onComplete: function(){"
   },
@@ -151,7 +199,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 10
+      "page_number": 10,
+      "emphasized_texts": [
+        {
+          "text": "alert('Your File Has Been Saved! ');",
+          "tag": "span"
+        }
+      ]
     },
     "text": "alert('Your File Has Been Saved! ');"
   },
@@ -161,7 +215,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 11
+      "page_number": 11,
+      "emphasized_texts": [
+        {
+          "text": "},",
+          "tag": "span"
+        }
+      ]
     },
     "text": "},"
   },
@@ -171,7 +231,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 12
+      "page_number": 12,
+      "emphasized_texts": [
+        {
+          "text": "onCancel: function(){",
+          "tag": "span"
+        }
+      ]
     },
     "text": "onCancel: function(){"
   },
@@ -181,7 +247,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 13
+      "page_number": 13,
+      "emphasized_texts": [
+        {
+          "text": "alert('You have cancelled the saving of this file. ');",
+          "tag": "span"
+        }
+      ]
     },
     "text": "alert('You have cancelled the saving of this file. ');"
   },
@@ -191,7 +263,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 14
+      "page_number": 14,
+      "emphasized_texts": [
+        {
+          "text": "},",
+          "tag": "span"
+        }
+      ]
     },
     "text": "},"
   },
@@ -201,7 +279,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 15
+      "page_number": 15,
+      "emphasized_texts": [
+        {
+          "text": "onError: function(){",
+          "tag": "span"
+        }
+      ]
     },
     "text": "onError: function(){"
   },
@@ -211,7 +295,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 16
+      "page_number": 16,
+      "emphasized_texts": [
+        {
+          "text": "alert('You must put something in the File Contents or there will be nothing to save! ');",
+          "tag": "span"
+        }
+      ]
     },
     "text": "alert('You must put something in the File Contents or there will be nothing to save! ');"
   },
@@ -221,7 +311,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 17
+      "page_number": 17,
+      "emphasized_texts": [
+        {
+          "text": "},",
+          "tag": "span"
+        }
+      ]
     },
     "text": "},"
   },
@@ -231,7 +327,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 18
+      "page_number": 18,
+      "emphasized_texts": [
+        {
+          "text": "swf: 'media/downloadify.swf',",
+          "tag": "span"
+        }
+      ]
     },
     "text": "swf: 'media/downloadify.swf',"
   },
@@ -241,7 +343,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 19
+      "page_number": 19,
+      "emphasized_texts": [
+        {
+          "text": "downloadImage: 'images/download.png',",
+          "tag": "span"
+        }
+      ]
     },
     "text": "downloadImage: 'images/download.png',"
   },
@@ -251,7 +359,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 20
+      "page_number": 20,
+      "emphasized_texts": [
+        {
+          "text": "width: 100,",
+          "tag": "span"
+        }
+      ]
     },
     "text": "width: 100,"
   },
@@ -261,7 +375,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 21
+      "page_number": 21,
+      "emphasized_texts": [
+        {
+          "text": "height: 30,",
+          "tag": "span"
+        }
+      ]
     },
     "text": "height: 30,"
   },
@@ -271,7 +391,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 22
+      "page_number": 22,
+      "emphasized_texts": [
+        {
+          "text": "transparent: true,",
+          "tag": "span"
+        }
+      ]
     },
     "text": "transparent: true,"
   },
@@ -281,7 +407,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 23
+      "page_number": 23,
+      "emphasized_texts": [
+        {
+          "text": "append: false",
+          "tag": "span"
+        }
+      ]
     },
     "text": "append: false"
   },
@@ -291,7 +423,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 24
+      "page_number": 24,
+      "emphasized_texts": [
+        {
+          "text": "});",
+          "tag": "span"
+        }
+      ]
     },
     "text": "});"
   }

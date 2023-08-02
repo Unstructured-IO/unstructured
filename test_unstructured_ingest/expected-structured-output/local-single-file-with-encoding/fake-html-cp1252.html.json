@@ -35,7 +35,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 2
+      "page_number": 2,
+      "emphasized_texts": [
+        {
+          "text": "¡\t¢\t£\t¤\t¥\t¦\t§\t¨\t©\tª\t«\t¬\tSHY\t®\t¯",
+          "tag": "span"
+        }
+      ]
     },
     "text": "¡\t¢\t£\t¤\t¥\t¦\t§\t¨\t©\tª\t«\t¬\tSHY\t®\t¯"
   },
@@ -45,7 +51,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 3
+      "page_number": 3,
+      "emphasized_texts": [
+        {
+          "text": "°\t±\t²\t³\t´\tµ\t¶\t·\t¸\t¹\tº\t»\t¼\t½\t¾\t¿",
+          "tag": "span"
+        }
+      ]
     },
     "text": "°\t±\t²\t³\t´\tµ\t¶\t·\t¸\t¹\tº\t»\t¼\t½\t¾\t¿"
   },
@@ -55,7 +67,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 4
+      "page_number": 4,
+      "emphasized_texts": [
+        {
+          "text": "À\tÁ\tÂ\tÃ\tÄ\tÅ\tÆ\tÇ\tÈ\tÉ\tÊ\tË\tÌ\tÍ\tÎ\tÏ",
+          "tag": "span"
+        }
+      ]
     },
     "text": "À\tÁ\tÂ\tÃ\tÄ\tÅ\tÆ\tÇ\tÈ\tÉ\tÊ\tË\tÌ\tÍ\tÎ\tÏ"
   },
@@ -65,7 +83,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 5
+      "page_number": 5,
+      "emphasized_texts": [
+        {
+          "text": "Ð\tÑ\tÒ\tÓ\tÔ\tÕ\tÖ\t×\tØ\tÙ\tÚ\tÛ\tÜ\tÝ\tÞ\tß",
+          "tag": "span"
+        }
+      ]
     },
     "text": "Ð\tÑ\tÒ\tÓ\tÔ\tÕ\tÖ\t×\tØ\tÙ\tÚ\tÛ\tÜ\tÝ\tÞ\tß"
   },
@@ -75,7 +99,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 6
+      "page_number": 6,
+      "emphasized_texts": [
+        {
+          "text": "à\tá\tâ\tã\tä\tå\tæ\tç\tè\té\tê\të\tì\tí\tî\tï",
+          "tag": "span"
+        }
+      ]
     },
     "text": "à\tá\tâ\tã\tä\tå\tæ\tç\tè\té\tê\të\tì\tí\tî\tï"
   },
@@ -85,7 +115,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 7
+      "page_number": 7,
+      "emphasized_texts": [
+        {
+          "text": "ð\tñ\tò\tó\tô\tõ\tö\t÷\tø\tù\tú\tû\tü\tý\tþ\tÿ",
+          "tag": "span"
+        }
+      ]
     },
     "text": "ð\tñ\tò\tó\tô\tõ\tö\t÷\tø\tù\tú\tû\tü\tý\tþ\tÿ"
   }
