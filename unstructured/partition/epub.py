@@ -63,6 +63,8 @@ def partition_epub(
             toc_href_and_title.append((item.href.split("#")[0], item.title))
 
     for item in html_items:
+        # not all html_items show up in the toc, 
+        # so some elements will still have `None` for metadata.section
         item_title = None
         item_content = item.get_content().decode()
         item_href = item.file_name
