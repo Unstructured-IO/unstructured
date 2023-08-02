@@ -61,7 +61,7 @@ Encoding
 You can specify the encoding to use to decode the text input. If no value is provided, ``utf-8`` will be used.
 
 .. code:: shell
-	
+
   curl -X 'POST' \
   'https://api.unstructured.io/general/v0/general' \
   -H 'accept: application/json'  \
@@ -78,7 +78,7 @@ OCR Languages
 You can also specify what languages to use for OCR with the ``ocr_languages`` kwarg. See the `Tesseract documentation <https://github.com/tesseract-ocr/tessdata>`_ for a full list of languages and install instructions. OCR is only applied if the text is not already available in the PDF document.
 
 .. code:: shell
-	
+
   curl -X 'POST' \
   'https://api.unstructured.io/general/v0/general' \
   -H 'accept: application/json' \
@@ -97,7 +97,7 @@ Output Format
 By default the result will be in ``json``, but it can be set to ``text/csv`` to get data in ``csv`` format:
 
 .. code:: shell
-	
+
   curl -X 'POST' \
   'https://api.unstructured.io/general/v0/general' \
   -H 'accept: application/json' \
@@ -106,6 +106,21 @@ By default the result will be in ``json``, but it can be set to ``text/csv`` to 
   -F 'files=@sample-docs/family-day.eml' \
   -F 'output_format="text/csv"'
 
+Page Break
+===========
+
+Pass the `include_page_breaks` parameter to `true` to include `PageBreak` elements in the output.
+
+.. code:: shell
+
+  curl -X 'POST' \
+  'https://api.unstructured.io/general/v0/general' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: multipart/form-data' \
+  -H 'unstructured-api-key: <YOUR API KEY>' \
+  -F 'files=@sample-docs/family-day.eml' \
+  -F 'include_page_breaks=true' \
+  | jq -C . | less -R
 
 PDF Table Extraction
 =====================
@@ -133,7 +148,7 @@ Four strategies are available for processing PDF/Images files: ``hi_res``, ``fas
 On the other hand, ``hi_res`` is the better choice for PDFs that may have text within embedded images, or for achieving greater precision of `element types <https://unstructured-io.github.io/unstructured/getting_started.html#document-elements>`_ in the response JSON. Be aware that ``hi_res`` requests may take 20 times longer to process compared to the ``fast`` option. See the example below for making a ``hi_res`` request.
 
 .. code:: shell
-	
+
   curl -X 'POST' \
   'https://api.unstructured.io/general/v0/general' \
   -H 'accept: application/json' \
@@ -173,7 +188,7 @@ XML Tags
 When processing XML documents, set the ``xml_keep_tags`` parameter to ``true`` to retain the XML tags in the output. If not specified, it will simply extract the text from within the tags.
 
 .. code:: shell
-	
+
   curl -X 'POST' \
   'https://api.unstructured.io/general/v0/general' \
   -H 'accept: application/json'  \
@@ -199,13 +214,13 @@ NOTE: Multi-platform images are built to support both x86_64 and Apple silicon h
 Docker images is built for all pushes to ``main``. Each image is tagged with the corresponding short commit hash (e.g. ``fbc7a69``) and the application version (e.g. ``0.5.5-dev1``). Also, the most recent image is tagged with ``latest``. To leverage this, use ``docker pull`` from the image repository.
 
 .. code:: shell
-	
+
   docker pull quay.io/unstructured-io/unstructured-api:latest
 
 Once pulled, you can launch the container as a web app on localhost:8000.
 
 .. code:: shell
-	
+
   docker run -p 8000:8000 -d --rm --name unstructured-api quay.io/unstructured-io/unstructured-api:latest --port 8000 --host 0.0.0.0
 
 
@@ -226,7 +241,7 @@ You can now hit the API locally at port 8000. The ``sample-docs`` directory has 
 For example:
 
 .. code:: shell
-	
+
   curl -X 'POST' \
   'http://localhost:8000/general/v0/general' \
   -H 'accept: application/json' \
