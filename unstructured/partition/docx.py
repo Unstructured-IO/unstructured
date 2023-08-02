@@ -164,7 +164,6 @@ def partition_docx(
                     text_as_html=html_table,
                     filename=metadata_filename,
                     page_number=page_number,
-                    include_path_in_metadata_filename=include_path_in_metadata_filename,
                 )
                 elements.append(element)
             table_index += 1
@@ -177,7 +176,6 @@ def partition_docx(
                 para_element.metadata = ElementMetadata(
                     filename=metadata_filename,
                     page_number=page_number,
-                    include_path_in_metadata_filename=include_path_in_metadata_filename,
                 )
                 elements.append(para_element)
             is_list = False
@@ -287,7 +285,6 @@ def _get_headers_and_footers(
                     metadata = ElementMetadata(
                         filename=metadata_filename,
                         header_footer_type=header_footer_type,
-                        include_path_in_metadata_filename=include_path_in_metadata_filename,
                     )
 
                     if _type == "header":

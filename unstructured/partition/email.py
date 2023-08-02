@@ -133,7 +133,6 @@ def build_email_metadata(
         subject=header_dict.get("Subject"),
         date=email_date,
         filename=filename,
-        include_path_in_metadata_filename=include_path_in_metadata_filename,
     )
 
 
@@ -341,7 +340,6 @@ def partition_email(
             text=content,
             include_metadata=False,
             metadata_filename=metadata_filename,
-            include_path_in_metadata_filename=include_path_in_metadata_filename,
         )
         for element in elements:
             if isinstance(element, Text):
@@ -395,7 +393,6 @@ def partition_email(
     metadata = build_email_metadata(
         msg,
         filename=metadata_filename or filename,
-        include_path_in_metadata_filename=include_path_in_metadata_filename,
     )
     for element in all_elements:
         element.metadata = metadata

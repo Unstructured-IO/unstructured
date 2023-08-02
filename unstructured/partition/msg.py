@@ -64,20 +64,17 @@ def partition_msg(
     if "<html>" in text or "</div>" in text:
         elements = partition_html(
             text=text,
-            include_path_in_metadata_filename=include_path_in_metadata_filename,
         )
     else:
         elements = partition_text(
             text=text,
             max_partition=max_partition,
-            include_path_in_metadata_filename=include_path_in_metadata_filename,
             min_partition=min_partition,
         )
 
     metadata = build_msg_metadata(
         msg_obj,
         metadata_filename or filename,
-        include_path_in_metadata_filename=include_path_in_metadata_filename,
     )
 
     for element in elements:
@@ -106,7 +103,6 @@ def partition_msg(
 def build_msg_metadata(
     msg_obj: msg_parser.MsOxMessage,
     filename: Optional[str],
-    include_path_in_metadata_filename: bool = False,
 ) -> ElementMetadata:
     """Creates an ElementMetadata object from the header information in the email."""
     email_date = getattr(msg_obj, "sent_date", None)
@@ -127,7 +123,6 @@ def build_msg_metadata(
         subject=getattr(msg_obj, "subject", None),
         date=email_date,
         filename=filename,
-        include_path_in_metadata_filename=include_path_in_metadata_filename,
     )
 
 

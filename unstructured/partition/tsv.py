@@ -52,7 +52,6 @@ def partition_tsv(
         metadata = ElementMetadata(
             text_as_html=html_text,
             filename=metadata_filename or filename,
-            include_path_in_metadata_filename=include_path_in_metadata_filename,
         )
     else:
         metadata = ElementMetadata()

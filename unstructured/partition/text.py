@@ -242,7 +242,6 @@ def partition_text(
     metadata = (
         ElementMetadata(
             filename=metadata_filename or filename,
-            include_path_in_metadata_filename=include_path_in_metadata_filename,
         )
         if include_metadata
         else ElementMetadata()

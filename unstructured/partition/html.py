@@ -102,11 +102,9 @@ def partition_html(
 
         document = HTMLDocument.from_string(response.text, parser=parser)
 
-
     return document_to_element_list(
         document,
         include_page_breaks=include_page_breaks,
-        include_path_in_metadata_filename=include_path_in_metadata_filename,
     )
 
 

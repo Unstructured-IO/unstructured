@@ -72,7 +72,6 @@ def elements_to_json(
 
 def isd_to_elements(
     isd: List[Dict[str, Any]],
-    include_path_in_metadata_filename: bool = False,
 ) -> List[Element]:
     """Converts an Initial Structured Data (ISD) dictionary to a list of elements."""
     elements: List[Element] = []
@@ -85,7 +84,6 @@ def isd_to_elements(
             metadata = ElementMetadata.from_dict(
                 {
                     **_metadata_dict,
-                    "include_path_in_metadata_filename": include_path_in_metadata_filename,
                 },
             )
 
@@ -112,10 +110,9 @@ def isd_to_elements(
 
 def dict_to_elements(
     element_dict: List[Dict[str, Any]],
-    include_path_in_metadata_filename: bool = False,
 ) -> List[Element]:
     """Converts a dictionary representation of an element list into List[Element]."""
-    return isd_to_elements(element_dict, include_path_in_metadata_filename)
+    return isd_to_elements(element_dict)
 
 
 def elements_from_json(

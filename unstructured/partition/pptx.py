@@ -75,15 +75,11 @@ def partition_pptx(
     elements: List[Element] = []
     metadata = ElementMetadata(
         filename=metadata_filename or filename,
-        include_path_in_metadata_filename=include_path_in_metadata_filename,
     )
     num_slides = len(presentation.slides)
     for i, slide in enumerate(presentation.slides):
         metadata = ElementMetadata.from_dict(
-            {
-                **metadata.to_dict(),
-                "include_path_in_metadata_filename": include_path_in_metadata_filename,
-            },
+            {**metadata.to_dict()},
         )
         metadata.page_number = i + 1
         if include_slide_notes and slide.has_notes_slide is True:
@@ -104,7 +100,6 @@ def partition_pptx(
                         filename=metadata_filename or filename,
                         text_as_html=html_table,
                         page_number=metadata.page_number,
-                        include_path_in_metadata_filename=include_path_in_metadata_filename,
                     )
                     elements.append(Table(text=text_table, metadata=metadata))
                 continue

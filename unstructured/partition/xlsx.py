@@ -58,7 +58,6 @@ def partition_xlsx(
                 page_name=sheet_name,
                 page_number=page_number,
                 filename=metadata_filename or filename,
-                include_path_in_metadata_filename=include_path_in_metadata_filename,
             )
         else:
             metadata = ElementMetadata()
