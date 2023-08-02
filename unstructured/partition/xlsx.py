@@ -19,9 +19,9 @@ from unstructured.partition.common import (
 from unstructured.utils import dependency_exists
 
 if dependency_exists("BeautifulSoup"):
-    from lxml.html.soupparser import fromstring as html_parser
+    from lxml.html.soupparser import fromstring as html_string_parser
 else:
-    from lxml.html import document_fromstring as html_parser
+    from lxml.html import document_fromstring as html_string_parser
 
 
 @process_metadata()
@@ -65,7 +65,7 @@ def partition_xlsx(
     for sheet_name, table in sheets.items():
         page_number += 1
         html_text = table.to_html(index=False, header=False, na_rep="")
-        text = html_parser.fromstring(html_text).text_content()
+        text = html_string_parser(html_text).text_content()
 
         if include_metadata:
             metadata = ElementMetadata(
