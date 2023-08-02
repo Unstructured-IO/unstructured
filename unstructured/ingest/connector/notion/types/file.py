@@ -2,7 +2,7 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from unstructured.ingest.connector.notion.interfaces import FromJSONMixin
+from unstructured.ingest.connector.notion.interfaces import FromJSONMixin, GetTextMixin
 
 
 @dataclass
@@ -25,7 +25,7 @@ class File(FromJSONMixin):
 
 
 @dataclass
-class FileObject(FromJSONMixin):
+class FileObject(FromJSONMixin, GetTextMixin):
     type: str
     external: Optional[External] = None
     file: Optional[File] = None
@@ -39,3 +39,10 @@ class FileObject(FromJSONMixin):
         elif t == "file":
             file_object.file = File.from_dict(data["file"])
         return file_object
+
+    def get_text(self) -> Optional[str]:
+        if self.file:
+            return self.file.url
+        if self.external:
+            return self.external.url
+        return None

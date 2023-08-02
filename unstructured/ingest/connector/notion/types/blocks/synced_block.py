@@ -18,6 +18,9 @@ class OriginalSyncedBlock(BlockBase):
     def from_dict(cls, data: dict):
         return cls(children=data["children"])
 
+    def get_text(self) -> Optional[str]:
+        return None
+
 
 @dataclass
 class DuplicateSyncedBlock(BlockBase):
@@ -32,6 +35,9 @@ class DuplicateSyncedBlock(BlockBase):
     def from_dict(cls, data: dict):
         return cls(**data)
 
+    def get_text(self) -> Optional[str]:
+        return None
+
 
 class SyncBlock(BlockBase):
     @staticmethod
@@ -44,3 +50,6 @@ class SyncBlock(BlockBase):
             return OriginalSyncedBlock.from_dict(data)
         else:
             return DuplicateSyncedBlock.from_dict(data)
+
+    def get_text(self) -> Optional[str]:
+        return None

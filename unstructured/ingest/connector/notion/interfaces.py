@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Optional
 
 
 class FromJSONMixin(ABC):
@@ -8,7 +9,13 @@ class FromJSONMixin(ABC):
         pass
 
 
-class BlockBase(FromJSONMixin):
+class GetTextMixin(ABC):
+    @abstractmethod
+    def get_text(self) -> Optional[str]:
+        pass
+
+
+class BlockBase(FromJSONMixin, GetTextMixin):
     @staticmethod
     @abstractmethod
     def can_have_children() -> bool:

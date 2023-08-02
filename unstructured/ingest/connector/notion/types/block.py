@@ -1,7 +1,12 @@
 # https://developers.notion.com/reference/page
 from dataclasses import dataclass
+from typing import Optional
 
-from unstructured.ingest.connector.notion.interfaces import BlockBase, FromJSONMixin
+from unstructured.ingest.connector.notion.interfaces import (
+    BlockBase,
+    FromJSONMixin,
+    GetTextMixin,
+)
 from unstructured.ingest.connector.notion.types import blocks
 from unstructured.ingest.connector.notion.types.parent import Parent
 from unstructured.ingest.connector.notion.types.user import PartialUser
@@ -37,7 +42,7 @@ block_type_mapping = {
 
 
 @dataclass
-class Block(FromJSONMixin):
+class Block(FromJSONMixin, GetTextMixin):
     id: str
     type: str
     created_time: str
@@ -49,6 +54,9 @@ class Block(FromJSONMixin):
     parent: Parent
     block: BlockBase
     object: str = "block"
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}(id={self.id}, type={self.type})"
 
     @classmethod
     def from_dict(cls, data: dict):
@@ -66,6 +74,12 @@ class Block(FromJSONMixin):
         )
 
         return block
+
+    def get_text(self) -> Optional[str]:
+        if self.block:
+            return self.block.get_text()
+        else:
+            return None
 
 
 if __name__ == "__main__":

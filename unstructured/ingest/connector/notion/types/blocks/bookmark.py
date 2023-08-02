@@ -1,6 +1,6 @@
 # https://developers.notion.com/reference/block#bookmark
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Optional
 
 from unstructured.ingest.connector.notion.interfaces import BlockBase
 from unstructured.ingest.connector.notion.types.rich_text import RichText
@@ -22,3 +22,10 @@ class Bookmark(BlockBase):
             url=data["url"],
             caption=[RichText.from_dict(c) for c in captions],
         )
+
+    def get_text(self) -> Optional[str]:
+        if not self.caption:
+            return None
+        rich_texts = [rt.get_text() for rt in self.caption]
+        text = "\n".join([rt for rt in rich_texts if rt])
+        return text if text else None

@@ -29,3 +29,10 @@ class PDF(BlockBase):
         elif t == "file":
             paragraph.file = File.from_dict(data["file"])
         return paragraph
+
+    def get_text(self) -> Optional[str]:
+        if not self.caption:
+            return None
+        rich_texts = [rt.get_text() for rt in self.caption]
+        text = "\n".join([rt for rt in rich_texts if rt])
+        return text if text else None

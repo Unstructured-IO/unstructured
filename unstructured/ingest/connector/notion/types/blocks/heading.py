@@ -1,6 +1,6 @@
 # https://developers.notion.com/reference/block#headings
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Optional
 
 from unstructured.ingest.connector.notion.interfaces import BlockBase
 from unstructured.ingest.connector.notion.types.rich_text import RichText
@@ -22,3 +22,10 @@ class Heading(BlockBase):
         heading = cls(**data)
         heading.rich_text = [RichText.from_dict(rt) for rt in rich_text]
         return heading
+
+    def get_text(self) -> Optional[str]:
+        if not self.rich_text:
+            return None
+        rich_texts = [rt.get_text() for rt in self.rich_text]
+        text = "\n".join([rt for rt in rich_texts if rt])
+        return text if text else None

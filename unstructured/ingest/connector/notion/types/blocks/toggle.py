@@ -1,6 +1,6 @@
 # https://developers.notion.com/reference/block#toggle-blocks
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Optional
 
 from unstructured.ingest.connector.notion.interfaces import BlockBase
 from unstructured.ingest.connector.notion.types.rich_text import RichText
@@ -22,3 +22,10 @@ class Toggle(BlockBase):
         toggle = cls(**data)
         toggle.rich_text = [RichText.from_dict(rt) for rt in rich_text]
         return toggle
+
+    def get_text(self) -> Optional[str]:
+        if not self.rich_text:
+            return None
+        rich_texts = [rt.get_text() for rt in self.rich_text]
+        text = "\n".join([rt for rt in rich_texts if rt])
+        return text if text else None

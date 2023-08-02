@@ -2,7 +2,7 @@
 from dataclasses import dataclass, field
 from typing import List, Optional
 
-from unstructured.ingest.connector.notion.interfaces import FromJSONMixin
+from unstructured.ingest.connector.notion.interfaces import FromJSONMixin, GetTextMixin
 from unstructured.ingest.connector.notion.types.date import Date
 from unstructured.ingest.connector.notion.types.user import User
 
@@ -22,39 +22,51 @@ class Annotation(FromJSONMixin):
 
 
 @dataclass
-class Equation(FromJSONMixin):
+class Equation(FromJSONMixin, GetTextMixin):
     expression: str
 
     @classmethod
     def from_dict(cls, data: dict):
         return cls(**data)
 
+    def get_text(self) -> Optional[str]:
+        return self.expression if self.expression else None
+
 
 @dataclass
-class MentionDatabase(FromJSONMixin):
+class MentionDatabase(FromJSONMixin, GetTextMixin):
     id: str
 
     @classmethod
     def from_dict(cls, data: dict):
         return cls(**data)
 
+    def get_text(self) -> Optional[str]:
+        return self.id if self.id else None
+
 
 @dataclass
-class MentionLinkPreview(FromJSONMixin):
+class MentionLinkPreview(FromJSONMixin, GetTextMixin):
     url: str
 
     @classmethod
     def from_dict(cls, data: dict):
         return cls(**data)
 
+    def get_text(self) -> Optional[str]:
+        return self.url if self.url else None
+
 
 @dataclass
-class MentionPage(FromJSONMixin):
+class MentionPage(FromJSONMixin, GetTextMixin):
     id: str
 
     @classmethod
     def from_dict(cls, data: dict):
         return cls(**data)
+
+    def get_text(self) -> Optional[str]:
+        return self.id if self.id else None
 
 
 @dataclass
@@ -68,7 +80,7 @@ class MentionTemplate(FromJSONMixin):
 
 
 @dataclass
-class Mention(FromJSONMixin):
+class Mention(FromJSONMixin, GetTextMixin):
     type: str
     database: Optional[MentionDatabase] = None
     date: Optional[Date] = None
@@ -84,7 +96,7 @@ class Mention(FromJSONMixin):
         if t == "date":
             mention.date = Date.from_dict(data["date"])
         elif t == "database":
-            mention.date = MentionDatabase.from_dict(data["database"])
+            mention.database = MentionDatabase.from_dict(data["database"])
         elif t == "link_preview":
             mention.link_preview = MentionLinkPreview.from_dict(data["link_preview"])
         elif t == "page":
@@ -95,6 +107,20 @@ class Mention(FromJSONMixin):
             mention.user = User.from_dict(data["user"])
 
         return mention
+
+    def get_text(self) -> Optional[str]:
+        t = self.type
+        if t == "date":
+            return self.date.get_text() if self.date else None
+        elif t == "database":
+            return self.database.get_text() if self.database else None
+        elif t == "link_preview":
+            return self.link_preview.get_text() if self.link_preview else None
+        elif t == "page":
+            return self.page.get_text() if self.page else None
+        elif t == "user":
+            return self.user.get_text() if self.user else None
+        return None
 
 
 @dataclass
@@ -108,7 +134,7 @@ class Text(FromJSONMixin):
 
 
 @dataclass
-class RichText(FromJSONMixin):
+class RichText(FromJSONMixin, GetTextMixin):
     type: str
     plain_text: str
     annotations: List[Annotation] = field(default_factory=list)
@@ -116,6 +142,12 @@ class RichText(FromJSONMixin):
     text: Optional[Text] = None
     mention: Optional[Mention] = None
     equation: Optional[Equation] = None
+
+    def get_text(self) -> Optional[str]:
+        text = self.plain_text
+        if self.href:
+            text = f"[{text}]({self.href})"
+        return text
 
     @classmethod
     def from_dict(cls, data: dict):
@@ -133,32 +165,3 @@ class RichText(FromJSONMixin):
             rich_text.equation = Equation.from_dict(data["equation"])
 
         return rich_text
-
-
-if __name__ == "__main__":
-    import json
-
-    js = """
-{
-  "type": "mention",
-  "mention": {
-    "type": "page",
-    "page": {
-      "id": "3c612f56-fdd0-4a30-a4d6-bda7d7426309"
-    }
-  },
-  "annotations": {
-    "bold": false,
-    "italic": false,
-    "strikethrough": false,
-    "underline": false,
-    "code": false,
-    "color": "default"
-  },
-  "plain_text": "This is a test page",
-  "href": "https://www.notion.so/3c612f56fdd04a30a4d6bda7d7426309"
-}
-    """
-    j = json.loads(js)
-    rt = RichText.from_dict(j)
-    print(rt)

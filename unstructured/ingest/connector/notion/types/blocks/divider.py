@@ -1,5 +1,6 @@
 # https://developers.notion.com/reference/block#divider
 from dataclasses import dataclass
+from typing import Optional
 
 from unstructured.ingest.connector.notion.interfaces import BlockBase
 
@@ -13,3 +14,6 @@ class Divider(BlockBase):
     @classmethod
     def from_dict(cls, data: dict):
         return cls()
+
+    def get_text(self) -> Optional[str]:
+        return None

@@ -1,4 +1,3 @@
-import json
 import logging
 import os
 from dataclasses import dataclass, field
@@ -16,41 +15,6 @@ from unstructured.ingest.interfaces import (
 from unstructured.utils import (
     requires_dependencies,
 )
-
-# https://developers.notion.com/reference/block
-notion_block_types = [
-    "bookmark",
-    "breadcrumb",
-    "bulleted_list_item",
-    "callout",
-    "child_database",
-    "child_page",
-    "column",
-    "column_list",
-    "divider",
-    "embed",
-    "equation",
-    "file",
-    "heading_1",
-    "heading_2",
-    "heading_3",
-    "image",
-    "link_preview",
-    "link_to_page",
-    "numbered_list_item",
-    "paragraph",
-    "pdf",
-    "quote",
-    "synced_block",
-    "table",
-    "table_of_contents",
-    "table_row",
-    "template",
-    "to_do",
-    "toggle",
-    "unsupported",
-    "video",
-]
 
 
 @dataclass
@@ -84,7 +48,7 @@ class NotionIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     check_exists: bool = False
 
     def _tmp_download_file(self):
-        page_file = self.page_id + ".json"
+        page_file = self.page_id + ".txt"
         return Path(self.standard_config.download_dir) / page_file
 
     @property
@@ -99,9 +63,9 @@ class NotionIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @requires_dependencies(dependencies=["notion_client"])
     def get_file(self):
         from notion_client import APIErrorCode, APIResponseError
-        from notion_client import Client as NotionClient
-        from notion_client.api_endpoints import BlocksChildrenEndpoint
-        from notion_client.helpers import iterate_paginated_api
+
+        from unstructured.ingest.connector.notion.client import Client as NotionClient
+        from unstructured.ingest.connector.notion.helpers import extract_page_text
 
         self._create_full_tmp_dir_path()
 
@@ -110,31 +74,16 @@ class NotionIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         client = NotionClient(auth=self.api_key, logger=self.config.logger)
 
         try:
-            content = {}
-            child_endpoint = BlocksChildrenEndpoint(client)
-            pages_w_child = [self.page_id]
-            pages_processed = []
-            while len(pages_w_child) > 0:
-                parent_id = pages_w_child.pop()
-                for children in iterate_paginated_api(child_endpoint.list, block_id=parent_id):
-                    for c in children:
-                        child_id = c["id"]
-                        content[child_id] = c
-                        if (
-                            c["has_children"]
-                            and child_id not in pages_processed
-                            and child_id not in pages_w_child
-                            and child_id != parent_id
-                        ):
-                            self.config.logger.debug(
-                                f"Adding child to process for more children: {child_id}",
-                            )
-                            pages_w_child.append(c["id"])
-                pages_processed.append(parent_id)
+            text_extraction = extract_page_text(
+                client=client,
+                page_id=self.page_id,
+                logger=self.config.logger,
+            )
             self.check_exists = True
             self.file_exists = True
             with open(self._tmp_download_file(), "w") as page_file:
-                json.dump(content, page_file)
+                page_file.write(text_extraction.text)
+
         except APIResponseError as error:
             if error.code == APIErrorCode.ObjectNotFound:
                 self.check_exists = True

@@ -2,7 +2,7 @@
 from dataclasses import dataclass, field
 from typing import Optional
 
-from unstructured.ingest.connector.notion.interfaces import FromJSONMixin
+from unstructured.ingest.connector.notion.interfaces import FromJSONMixin, GetTextMixin
 
 
 @dataclass
@@ -16,7 +16,7 @@ class PartialUser(FromJSONMixin):
 
 
 @dataclass
-class User(FromJSONMixin):
+class User(FromJSONMixin, GetTextMixin):
     object: dict
     id: str
     type: Optional[str] = None
@@ -26,6 +26,12 @@ class User(FromJSONMixin):
     @classmethod
     def from_dict(cls, data: dict):
         return cls(**data)
+
+    def get_text(self) -> Optional[str]:
+        text = self.name
+        if self.avatar_url:
+            text = f"[{text}]({self.avatar_url}"
+        return text
 
 
 class People(User):
