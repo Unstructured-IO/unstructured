@@ -1,7 +1,7 @@
-import subprocess
-import platform
 import pkg_resources
+import platform
 import shutil
+import subprocess
 from unstructured.utils import dependency_exists
 
 
@@ -49,7 +49,7 @@ def is_python_package_installed(package_name):
         bool: True if package is installed, False otherwise
     """
     result = subprocess.run(
-        ["pip", "list"], stdout=subprocess.PIPE, text=True, check=True
+        ["pip", "list"], stdout=subprocess.PIPE, text=True, check=True,
     )
 
     for line in result.stdout.splitlines():
@@ -73,7 +73,7 @@ def is_brew_package_installed(package_name):
         return False
 
     result = subprocess.run(
-        ["brew", "list"], stdout=subprocess.PIPE, text=True, check=True
+        ["brew", "list"], stdout=subprocess.PIPE, text=True, check=True,
     )
 
     for line in result.stdout.splitlines():
@@ -81,7 +81,7 @@ def is_brew_package_installed(package_name):
             return True
 
     result = subprocess.run(
-        ["brew", "list", "--cask"], stdout=subprocess.PIPE, text=True, check=True
+        ["brew", "list", "--cask"], stdout=subprocess.PIPE, text=True, check=True,
     )
 
     for line in result.stdout.splitlines():
@@ -205,8 +205,9 @@ def main():
     else:
         print("Detectron2 is not installed")
 
-    if is_python_package_installed("paddlepaddle") or \
-        is_python_package_installed("paddleocr"):
+    if is_python_package_installed("paddlepaddle") or is_python_package_installed(
+        "paddleocr"
+    ):
         print(
             "PaddleOCR version: ",
             get_python_package_version("paddlepaddle")
