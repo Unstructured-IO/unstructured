@@ -2,7 +2,8 @@
 
 ### Enhancements
 
-* Track emphasized texts in `partition_html` output.
+* Add page break parameter section in API documentation to sync with change in Prod API
+* Track emphasized texts in `partition_html` output
 
 ### Features
 
