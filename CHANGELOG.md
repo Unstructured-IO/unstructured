@@ -10,6 +10,7 @@
 ### Fixes
 
 * Fixed emoji bug in `partition_xlsx`.
+* Skip ingest test on missing Slack token
 
 ## 0.9.0
 
