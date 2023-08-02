@@ -2,6 +2,7 @@ from test_unstructured.partition.test_constants import EXPECTED_TABLE, EXPECTED_
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import Table
 from unstructured.partition.xlsx import partition_xlsx
+from unstructured.utils import dependency_exists
 
 EXPECTED_FILETYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
@@ -22,6 +23,8 @@ def test_partition_xlsx_from_filename(filename="example-docs/stanley-cups.xlsx")
     assert elements[0].metadata.filename == "stanley-cups.xlsx"
 
 def test_partition_xlsx_from_filename_with_emoji(filename="example-docs/emoji.xlsx"):
+    # Make sure we have the beautifulsoup4 dependency to use the lxml.html.soupparser
+    assert dependency_exists("beautifulsoup4")
     elements = partition_xlsx(filename=filename)
     assert all(isinstance(element, Table) for element in elements)
     assert len(elements) == 1
