@@ -1,4 +1,4 @@
-## 0.9.1-dev0
+## 0.9.1-dev1
 
 ### Enhancements
 
@@ -8,6 +8,7 @@
 ### Features
 
 ### Fixes
+* Pass file_filename metadata when partitioning file object
 
 ## 0.9.0
 
@@ -25,7 +26,6 @@
 
 * Rename "date" field to "last_modified"
 * Adds Box connector
-* Pass file_filename metadata when partitioning file object
 
 ### Fixes
 
