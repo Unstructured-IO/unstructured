@@ -58,19 +58,22 @@ jobs:
           make install-ci
       - name: Update test fixtures
         env:
-          GH_READ_ONLY_ACCESS_TOKEN: ${{ secrets.GH_READ_ONLY_ACCESS_TOKEN }}
-          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
-          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-          CONFLUENCE_USER_EMAIL: ${{ secrets.CONFLUENCE_USER_EMAIL }}
+          BOX_APP_CONFIG: ${{ secrets.BOX_APP_CONFIG }}
           CONFLUENCE_API_TOKEN: ${{ secrets.CONFLUENCE_API_TOKEN }}
+          CONFLUENCE_USER_EMAIL: ${{ secrets.CONFLUENCE_USER_EMAIL }}
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          DROPBOX_APP_KEY: ${{ secrets.DROPBOX_APP_KEY }}
+          DROPBOX_APP_SECRET: ${{ secrets.DROPBOX_APP_SECRET }}
+          DROPBOX_REFRESH_TOKEN: ${{ secrets.DROPBOX_REFRESH_TOKEN }}
           GCP_INGEST_SERVICE_KEY: ${{ secrets.GCP_INGEST_SERVICE_KEY }}
-          UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
-          MS_CLIENT_ID: ${{ secrets.MS_CLIENT_ID }}
+          GH_READ_ONLY_ACCESS_TOKEN: ${{ secrets.GH_READ_ONLY_ACCESS_TOKEN }}
           MS_CLIENT_CRED: ${{ secrets.MS_CLIENT_CRED }}
+          MS_CLIENT_ID: ${{ secrets.MS_CLIENT_ID }}
           MS_TENANT_ID: ${{ secrets.MS_TENANT_ID }}
           MS_USER_EMAIL: ${{ secrets.MS_USER_EMAIL }}
           MS_USER_PNAME: ${{ secrets.MS_USER_PNAME }}
-          BOX_APP_CRED: ${{ secrets.BOX_APP_CRED }}
+          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
           OVERWRITE_FIXTURES: "true"
         run: |
           source .venv/bin/activate
