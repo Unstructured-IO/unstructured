@@ -289,15 +289,16 @@ def test_partition_email_from_file_with_header():
         assert element.metadata.filename is None
 
 
-def test_partition_email_from_filename_has_metadata():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email-header.eml")
+def test_partition_email_from_filename_has_metadata(
+    filename="example-docs/eml/fake-email-header.eml",
+):
     elements = partition_email(filename=filename)
-    assert len(elements) > 0
-    assert (
-        elements[0].metadata.to_dict()
-        == ElementMetadata(
+    print("TEST@")
+    print(elements[0].metadata.to_dict())
+    print(
+        ElementMetadata(
             coordinates=None,
-            filename=filename,
+            filename="fake-email-header.eml",
             date="2022-12-16T17:04:16-05:00",
             page_number=None,
             url=None,
@@ -305,6 +306,23 @@ def test_partition_email_from_filename_has_metadata():
             sent_to=["Matthew Robinson <mrobinson@unstructured.io>"],
             subject="Test Email",
             filetype="message/rfc822",
+            file_directory="example-docs/eml",
+        ).to_dict(),
+    )
+    assert len(elements) > 0
+    assert (
+        elements[0].metadata.to_dict()
+        == ElementMetadata(
+            coordinates=None,
+            filename="fake-email-header.eml",
+            date="2022-12-16T17:04:16-05:00",
+            page_number=None,
+            url=None,
+            sent_from=["Matthew Robinson <mrobinson@unstructured.io>"],
+            sent_to=["Matthew Robinson <mrobinson@unstructured.io>"],
+            subject="Test Email",
+            filetype="message/rfc822",
+            file_directory="example-docs/eml",
         ).to_dict()
     )
     expected_dt = datetime.datetime.fromisoformat("2022-12-16T17:04:16-05:00")
