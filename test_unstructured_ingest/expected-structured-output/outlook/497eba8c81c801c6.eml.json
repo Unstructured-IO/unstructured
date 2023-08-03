@@ -13,7 +13,13 @@
       "sent_to": [
         "devops@unstructuredio.onmicrosoft.com"
       ],
-      "subject": "subfolder1_1"
+      "subject": "subfolder1_1",
+      "emphasized_texts": [
+        {
+          "text": "this is a message for the subfolder1_1",
+          "tag": "span"
+        }
+      ]
     },
     "text": "this is a message for the subfolder1_1"
   }
