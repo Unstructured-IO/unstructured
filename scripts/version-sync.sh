@@ -108,11 +108,27 @@ for i in "${!FILES_TO_CHECK[@]}"; do
     RE_SEMVER=${RE_SEMVERS[$i]}
     UPDATED_VERSION=${UPDATED_VERSIONS[$i]}
     FILE_VERSION=$(grep -o -m 1 -E "${RE_SEMVER}" "$FILE_TO_CHANGE")
+    # TODO SHREYA get version of previous commit in main here
+    # use git hub ?
+    # response=$(curl -sL https://api.github.com/repos/unstructured/unstructured/releases/latest | jq -r ".tag_name")
+    CURRENT_RELEASE=$(curl -sL https://api.github.com/repos/unstructured/unstructured/releases/latest | jq -r ".tag_name")
+    # maybe check if the result meets the RE_RELEASE pattern ?
+
     if [ -z "$FILE_VERSION" ];
     then
         # No match to semver regex in VERSIONFILE, so nothing to replace
         printf "Error: No semver version found in file %s.\n" "$FILE_TO_CHANGE"
         exit 1
+    # TODO SHREYA check file version against main commit
+    elif [ $FILE_VERSION == $CURRENT_RELEASE ]
+    then
+        # report error
+        # only one commit should be associated with a particular release
+        # echo "sed version must be >= ${REQUIRED_VERSION}" && exit 1
+        echo "only one commit should be associated with the latest release ${CURRENT_RELEASE}" && exit 1
+
+        # this will compare __version__ version to main
+        # may need another case to compare changelog to main ?
     else
         # Replace semver in VERSIONFILE with semver obtained from SOURCE_FILE
         TMPFILE=$(mktemp /tmp/new_version.XXXXXX)
