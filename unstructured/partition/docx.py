@@ -183,12 +183,14 @@ def partition_docx(
             if "<w:numPr>" in element_item.xml:
                 is_list = True
             paragraph = docx.text.paragraph.Paragraph(element_item, document)
+            emphasized_texts = _get_emphasized_texts_from_paragraph(paragraph)
             para_element: Optional[Text] = _paragraph_to_element(paragraph, is_list)
             if para_element is not None:
                 para_element.metadata = ElementMetadata(
                     filename=metadata_filename,
                     page_number=page_number,
                     last_modified=metadata_last_modified or last_modification_date,
+                    emphasized_texts=emphasized_texts if emphasized_texts else None,
                 )
                 elements.append(para_element)
             is_list = False
@@ -366,3 +368,13 @@ def convert_and_partition_docx(
         )
 
     return elements
+
+
+def _get_emphasized_texts_from_paragraph(paragraph: Paragraph) -> List[dict]:
+    emphasized_texts = []
+    for run in paragraph.runs:
+        if run.bold:
+            emphasized_texts.append({"text": run.text, "tag": "b"})
+        if run.italic:
+            emphasized_texts.append({"text": run.text, "tag": "i"})
+    return emphasized_texts

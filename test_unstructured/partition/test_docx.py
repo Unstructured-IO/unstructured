@@ -3,6 +3,7 @@ from tempfile import SpooledTemporaryFile
 
 import docx
 import pytest
+from docx.text.paragraph import Paragraph
 
 from unstructured.documents.elements import (
     Address,
@@ -14,7 +15,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.partition.docx import partition_docx
+from unstructured.partition.docx import partition_docx, _get_emphasized_texts_from_paragraph
 
 
 @pytest.fixture()
@@ -131,8 +132,8 @@ def test_partition_docx_processes_table(filename="example-docs/fake_table.docx")
 
     assert isinstance(elements[0], Table)
     assert (
-        elements[0].metadata.text_as_html
-        == """<table>
+            elements[0].metadata.text_as_html
+            == """<table>
 <thead>
 <tr><th>Header Col 1   </th><th>Header Col 2  </th></tr>
 </thead>
@@ -204,8 +205,8 @@ def test_partition_docx_from_file_exclude_metadata(mock_document, tmpdir):
 
 
 def test_partition_docx_metadata_date(
-    mocker,
-    filename="example-docs/fake.docx",
+        mocker,
+        filename="example-docs/fake.docx",
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
 
@@ -220,8 +221,8 @@ def test_partition_docx_metadata_date(
 
 
 def test_partition_docx_metadata_date_with_custom_metadata(
-    mocker,
-    filename="example-docs/fake.docx",
+        mocker,
+        filename="example-docs/fake.docx",
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
     expected_last_modified_date = "2020-07-05T09:24:28"
@@ -240,8 +241,8 @@ def test_partition_docx_metadata_date_with_custom_metadata(
 
 
 def test_partition_docx_from_file_metadata_date(
-    mocker,
-    filename="example-docs/fake.docx",
+        mocker,
+        filename="example-docs/fake.docx",
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
 
@@ -257,8 +258,8 @@ def test_partition_docx_from_file_metadata_date(
 
 
 def test_partition_docx_from_file_metadata_date_with_custom_metadata(
-    mocker,
-    filename="example-docs/fake.docx",
+        mocker,
+        filename="example-docs/fake.docx",
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
     expected_last_modified_date = "2020-07-05T09:24:28"
@@ -274,7 +275,7 @@ def test_partition_docx_from_file_metadata_date_with_custom_metadata(
 
 
 def test_partition_docx_from_file_without_metadata_date(
-    filename="example-docs/fake.docx",
+        filename="example-docs/fake.docx",
 ):
     """Test partition_docx() with file that are not possible to get last modified date"""
 
@@ -285,3 +286,24 @@ def test_partition_docx_from_file_without_metadata_date(
         elements = partition_docx(file=sf)
 
     assert elements[0].metadata.last_modified is None
+
+
+def test_get_emphasized_texts_from_paragraph(
+        filename="example-docs/fake-doc-emphasized-text.docx"
+):
+    expected = [
+        [
+            {'text': 'Dolor', 'tag': 'b'},
+            {'text': 'sit', 'tag': 'i'},
+            {'text': 'amet', 'tag': 'b'},
+            {'text': 'amet', 'tag': 'i'},
+        ],
+        [],
+    ]
+    document = docx.Document(filename)
+    emphasized_texts = [
+        _get_emphasized_texts_from_paragraph(paragraph)
+        for paragraph in document.paragraphs
+        if paragraph.text.strip()
+    ]
+    assert emphasized_texts == expected
