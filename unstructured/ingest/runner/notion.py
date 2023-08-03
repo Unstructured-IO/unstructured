@@ -1,5 +1,6 @@
 import hashlib
 import logging
+from typing import Optional
 
 from unstructured.ingest.interfaces import ProcessorConfigs, StandardConnectorConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
@@ -11,15 +12,29 @@ def notion(
     verbose: bool,
     connector_config: StandardConnectorConfig,
     processor_config: ProcessorConfigs,
-    page_ids: str,
+    page_ids: Optional[str],
+    database_ids: Optional[str],
     api_key: str,
     **kwargs,
 ):
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
+    if not page_ids and not database_ids:
+        raise ValueError("no page ids nor database ids provided")
 
-    hashed_dir_name = hashlib.sha256(
-        page_ids.encode("utf-8"),
-    )
+    if page_ids and database_ids:
+        hashed_dir_name = hashlib.sha256(
+            f"{page_ids},{database_ids}".encode("utf-8"),
+        )
+    elif page_ids:
+        hashed_dir_name = hashlib.sha256(
+            page_ids.encode("utf-8"),
+        )
+    elif database_ids:
+        hashed_dir_name = hashlib.sha256(
+            database_ids.encode("utf-8"),
+        )
+    else:
+        raise ValueError("could not create local cache directory name")
     connector_config.download_dir = update_download_dir_hash(
         connector_config=connector_config,
         hashed_dir_name=hashed_dir_name,
@@ -34,7 +49,8 @@ def notion(
     doc_connector = NotionConnector(  # type: ignore
         standard_config=connector_config,
         config=SimpleNotionConfig(
-            page_ids=SimpleNotionConfig.parse_page_ids(page_ids_str=page_ids),
+            page_ids=SimpleNotionConfig.parse_ids(ids_str=page_ids) if page_ids else [],
+            database_ids=SimpleNotionConfig.parse_ids(ids_str=database_ids) if database_ids else [],
             api_key=api_key,
             logger=logger,
         ),

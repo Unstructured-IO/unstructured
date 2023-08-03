@@ -17,7 +17,12 @@ from unstructured.ingest.runner import notion as notion_fn
 @click.option(
     "--page-ids",
     required=True,
-    help="Comma separated list of Notion page IDs to pull messages from",
+    help="Comma separated list of Notion page IDs to pull text from",
+)
+@click.option(
+    "--database-ids",
+    required=True,
+    help="Comma separated list of Notion database IDs to pull text from",
 )
 @click.option(
     "--api-key",
