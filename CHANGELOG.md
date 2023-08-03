@@ -1,4 +1,4 @@
-## 0.9.1-dev5
+## 0.9.1-dev6
 
 * Adds post processing function `filter_element_types`
 * Set the default strategy for partitioning images to `hi_res`
@@ -13,6 +13,7 @@
 * Pass file_filename metadata when partitioning file object
 * Skip ingest test on missing Slack token
 * Add Dropbox variables to CI environments
+* Remove default encoding for ingest
 
 ## 0.9.0
 
