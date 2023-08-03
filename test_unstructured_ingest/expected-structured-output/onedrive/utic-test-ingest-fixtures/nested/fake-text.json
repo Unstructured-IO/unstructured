@@ -3,8 +3,12 @@
     "type": "NarrativeText",
     "element_id": "1df8eeb8be847c3a1a7411e3be3e0396",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "date_processed": "2023-08-03T01:15:42.986560"
+      },
       "filename": "fake-text.txt",
+      "file_directory": "/Users/rvztz/.cache/unstructured/ingest/c2fe582b2b/utic-test-ingest-fixtures/nested",
+      "last_modified": "2023-08-02T19:15:42",
       "filetype": "text/plain"
     },
     "text": "This is a test document to use for unit tests."
@@ -13,8 +17,12 @@
     "type": "Address",
     "element_id": "a9d4657034aa3fdb5177f1325e912362",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "date_processed": "2023-08-03T01:15:42.986560"
+      },
       "filename": "fake-text.txt",
+      "file_directory": "/Users/rvztz/.cache/unstructured/ingest/c2fe582b2b/utic-test-ingest-fixtures/nested",
+      "last_modified": "2023-08-02T19:15:42",
       "filetype": "text/plain"
     },
     "text": "Doylestown, PA 18901"
@@ -23,8 +31,12 @@
     "type": "Title",
     "element_id": "9c218520320f238595f1fde74bdd137d",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "date_processed": "2023-08-03T01:15:42.986560"
+      },
       "filename": "fake-text.txt",
+      "file_directory": "/Users/rvztz/.cache/unstructured/ingest/c2fe582b2b/utic-test-ingest-fixtures/nested",
+      "last_modified": "2023-08-02T19:15:42",
       "filetype": "text/plain"
     },
     "text": "Important points:"
@@ -33,8 +45,12 @@
     "type": "ListItem",
     "element_id": "39a3ae572581d0f1fe7511fd7b3aa414",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "date_processed": "2023-08-03T01:15:42.986560"
+      },
       "filename": "fake-text.txt",
+      "file_directory": "/Users/rvztz/.cache/unstructured/ingest/c2fe582b2b/utic-test-ingest-fixtures/nested",
+      "last_modified": "2023-08-02T19:15:42",
       "filetype": "text/plain"
     },
     "text": "Hamburgers are delicious"
@@ -43,8 +59,12 @@
     "type": "ListItem",
     "element_id": "fc1adcb8eaceac694e500a103f9f698f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "date_processed": "2023-08-03T01:15:42.986560"
+      },
       "filename": "fake-text.txt",
+      "file_directory": "/Users/rvztz/.cache/unstructured/ingest/c2fe582b2b/utic-test-ingest-fixtures/nested",
+      "last_modified": "2023-08-02T19:15:42",
       "filetype": "text/plain"
     },
     "text": "Dogs are the best"
@@ -53,8 +73,12 @@
     "type": "ListItem",
     "element_id": "0b61e826b1c4ab05750184da72b89f83",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "date_processed": "2023-08-03T01:15:42.986560"
+      },
       "filename": "fake-text.txt",
+      "file_directory": "/Users/rvztz/.cache/unstructured/ingest/c2fe582b2b/utic-test-ingest-fixtures/nested",
+      "last_modified": "2023-08-02T19:15:42",
       "filetype": "text/plain"
     },
     "text": "I love fuzzy blankets"

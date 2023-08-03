@@ -199,6 +199,9 @@ jobs:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
         MS_USER_PNAME: ${{ secrets.MS_USER_PNAME }}
         BOX_APP_CRED: ${{ secrets.BOX_APP_CRED }}
+        SHAREPOINT_CLIENT_ID: ${{secrets.SHAREPOINT_CLIENT_ID}}
+        SHAREPOINT_CRED: ${{secrets.SHAREPOINT_CRED}}
+        SHAREPOINT_SITE: ${{secrets.SHAREPOINT_SITE}}
       run: |
         source .venv/bin/activate
         sudo apt-get update

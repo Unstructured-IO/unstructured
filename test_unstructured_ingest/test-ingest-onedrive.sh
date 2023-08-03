@@ -27,6 +27,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --client-id "$MS_CLIENT_ID" \
     --tenant "$MS_TENANT_ID" \
     --user-pname "$MS_USER_PNAME" \
+    --path '/utic-test-ingest-fixtures' \
     --recursive \
 
 sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
