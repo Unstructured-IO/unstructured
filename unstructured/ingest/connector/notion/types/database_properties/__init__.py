@@ -9,8 +9,8 @@ from .date import Date, DateCell
 from .email import Email, EmailCell
 from .files import Files, FilesCell
 from .formula import Formula, FormulaCell
-from .last_edited_by import LastEditedBy
-from .last_edited_time import LastEditedTime
+from .last_edited_by import LastEditedBy, LastEditedByCell
+from .last_edited_time import LastEditedTime, LastEditedTimeCell
 from .multiselect import MultiSelect, MultiSelectCell
 from .number import Number, NumberCell
 from .people import People, PeopleCell
@@ -65,6 +65,8 @@ db_cell_type_mapping = {
     "email": EmailCell,
     "files": FilesCell,
     "formula": FormulaCell,
+    "last_edited_by": LastEditedByCell,
+    "last_edited_time": LastEditedTimeCell,
     "multi_select": MultiSelectCell,
     "number": NumberCell,
     "people": PeopleCell,

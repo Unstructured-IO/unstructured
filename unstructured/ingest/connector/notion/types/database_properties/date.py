@@ -32,3 +32,9 @@ class DateCell(DBCellBase):
         if date_data:
             date = DateType.from_dict(date_data)
         return cls(date=date, **data)
+
+    def get_text(self) -> Optional[str]:
+        if self.date:
+            return self.date.get_text()
+        else:
+            return None

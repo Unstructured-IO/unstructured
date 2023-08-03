@@ -60,10 +60,13 @@ class Status(DBPropertyBase):
 @dataclass
 class StatusCell(DBCellBase):
     id: str
-    status: StatusProp
+    status: StatusOption
     type: str = "status"
     name: Optional[str] = None
 
     @classmethod
     def from_dict(cls, data: dict):
-        return cls(status=StatusProp.from_dict(data.pop("status", {})), **data)
+        return cls(status=StatusOption.from_dict(data.pop("status", {})), **data)
+
+    def get_text(self) -> Optional[str]:
+        return self.status.name

@@ -40,3 +40,8 @@ class FormulaCell(DBCellBase):
     @classmethod
     def from_dict(cls, data: dict):
         return cls(**data)
+
+    def get_text(self) -> Optional[str]:
+        formula = self.formula
+        t = formula.get("type")
+        return formula[t]

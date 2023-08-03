@@ -47,7 +47,7 @@ class DatabasesEndpoint(NotionDatabasesEndpoint):
 
         *[🔗 Endpoint documentation](https://developers.notion.com/reference/post-database-query)*
         """  # noqa: E501
-        resp: dict = super().query(database_id=database_id)  # type: ignore
+        resp: dict = super().query(database_id=database_id, **kwargs)  # type: ignore
         pages = [Page.from_dict(data=p) for p in resp.pop("results")]
         for p in pages:
             p.properties = map_cells(p.properties)
@@ -57,6 +57,8 @@ class DatabasesEndpoint(NotionDatabasesEndpoint):
         while True:
             response: dict = super().query(database_id=database_id, **kwargs)  # type: ignore
             pages = [Page.from_dict(data=p) for p in response.pop("results", [])]
+            for p in pages:
+                p.properties = map_cells(p.properties)
             yield pages
 
             next_cursor = response.get("next_cursor")

@@ -1,6 +1,7 @@
 # https://developers.notion.com/reference/property-object#relation
 from dataclasses import dataclass
 from typing import Optional
+from urllib.parse import unquote
 
 from unstructured.ingest.connector.notion.interfaces import (
     DBCellBase,
@@ -59,3 +60,6 @@ class RelationCell(DBCellBase):
     @classmethod
     def from_dict(cls, data: dict):
         return cls(**data)
+
+    def get_text(self) -> Optional[str]:
+        return unquote(self.id)

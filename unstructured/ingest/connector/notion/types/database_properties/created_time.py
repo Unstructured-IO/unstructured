@@ -27,3 +27,6 @@ class CreatedTimeCell(DBCellBase):
     @classmethod
     def from_dict(cls, data: dict):
         return cls(**data)
+
+    def get_text(self) -> Optional[str]:
+        return self.created_time

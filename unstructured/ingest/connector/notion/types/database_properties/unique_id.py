@@ -41,3 +41,6 @@ class UniqueIDCell(DBCellBase):
     @classmethod
     def from_dict(cls, data: dict):
         return cls(unique_id=UniqueIDCellData.from_dict(data.pop("unique_id")), **data)
+
+    def get_text(self) -> Optional[str]:
+        return f"{self.unique_id.prefix}-{self.unique_id.number}"

@@ -9,6 +9,7 @@ from unstructured.ingest.connector.notion.types.blocks.child_database import (
     ChildDatabase,
 )
 from unstructured.ingest.connector.notion.types.blocks.child_page import ChildPage
+from unstructured.ingest.connector.notion.types.database import Database
 
 
 @dataclass
@@ -54,3 +55,17 @@ def extract_page_text(
         child_pages=child_pages,
         child_databases=child_databases,
     )
+
+
+def extract_database_text(client: Client, database_id: str, logger: logging.Logger) -> str:
+    logger.debug(f"processing database id: {database_id}")
+    UUID(database_id)
+    text = []
+    database: Database = client.databases.retrieve(database_id=database_id)  # type: ignore
+    text.append(database.get_text())
+    for database_rows in client.databases.iterate_query(database_id=database_id):  # type: ignore
+        for database_row in database_rows:
+            for k, v in database_row.properties.items():
+                text.append(v.get_text())
+
+    return "\n".join([t for t in text if t])

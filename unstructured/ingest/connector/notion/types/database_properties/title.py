@@ -28,3 +28,7 @@ class TitleCell(DBCellBase):
     @classmethod
     def from_dict(cls, data: dict):
         return cls(title=[RichText.from_dict(rt) for rt in data.pop("title", [])], **data)
+
+    def get_text(self) -> Optional[str]:
+        rts = [rt.get_text() for rt in self.title]
+        return ",".join([rt for rt in rts if rt])

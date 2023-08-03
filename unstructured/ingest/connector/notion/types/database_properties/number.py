@@ -40,3 +40,6 @@ class NumberCell(DBCellBase):
     @classmethod
     def from_dict(cls, data: dict):
         return cls(**data)
+
+    def get_text(self) -> Optional[str]:
+        return str(self.number)

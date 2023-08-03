@@ -33,7 +33,7 @@ class MultiSelectProp(FromJSONMixin):
 class MultiSelect(DBPropertyBase):
     id: str
     name: str
-    multi_select: List[MultiSelectProp]
+    multi_select: MultiSelectProp
     type: str = "multi_select"
 
     @classmethod
@@ -47,13 +47,21 @@ class MultiSelect(DBPropertyBase):
 @dataclass
 class MultiSelectCell(DBCellBase):
     id: str
+    multi_select: List[MultiSelectProp]
     type: str = "multi_select"
-    multi_select: List[MultiSelectProp] = field(default_factory=list)
     name: Optional[str] = None
 
     @classmethod
     def from_dict(cls, data: dict):
         return cls(
-            multi_select=data.pop("multi_select", {}),
+            multi_select=[MultiSelectProp.from_dict(o) for o in data.pop("multi_select", [])],
             **data,
         )
+
+    def get_text(self) -> Optional[str]:
+        ids = []
+        if self.multi_select:
+            for ms in self.multi_select:
+                ids.extend([o.id for o in ms.options])
+            return ",".join([i for i in ids if i])
+        return None

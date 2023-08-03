@@ -28,3 +28,6 @@ class CreatedByCell(DBCellBase):
     @classmethod
     def from_dict(cls, data: dict):
         return cls(created_by=People.from_dict(data.pop("created_by")), **data)
+
+    def get_text(self) -> Optional[str]:
+        return self.created_by.get_text()

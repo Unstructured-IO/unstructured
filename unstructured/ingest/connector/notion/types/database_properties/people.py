@@ -28,3 +28,7 @@ class PeopleCell(DBCellBase):
     @classmethod
     def from_dict(cls, data: dict):
         return cls(people=[PeopleType.from_dict(p) for p in data.pop("people", {})], **data)
+
+    def get_text(self) -> Optional[str]:
+        texts = [p.get_text() for p in self.people]
+        return ",".join([t for t in texts if t])

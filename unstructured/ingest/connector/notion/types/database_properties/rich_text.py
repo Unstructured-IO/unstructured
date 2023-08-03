@@ -33,3 +33,7 @@ class RichTextCell(DBCellBase):
             rich_text=[RichTextType.from_dict(rt) for rt in data.pop("rich_text", [])],
             **data,
         )
+
+    def get_text(self) -> Optional[str]:
+        rts = [rt.get_text() for rt in self.rich_text]
+        return ",".join([rt for rt in rts if rt])

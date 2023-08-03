@@ -28,3 +28,7 @@ class FilesCell(DBCellBase):
     @classmethod
     def from_dict(cls, data: dict):
         return cls(files=[FileObject.from_dict(f) for f in data.pop("files", [])], **data)
+
+    def get_text(self) -> Optional[str]:
+        texts = [f.get_text() for f in self.files]
+        return "\n".join([t for t in texts if t])

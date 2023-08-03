@@ -55,3 +55,8 @@ class SelectCell(DBCellBase):
         if select_data:
             select = SelectOption.from_dict(select_data)
         return cls(select=select, **data)
+
+    def get_text(self) -> Optional[str]:
+        if self.select:
+            return self.select.id
+        return None

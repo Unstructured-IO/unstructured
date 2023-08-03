@@ -44,3 +44,11 @@ class RollupCell(DBCellBase):
     @classmethod
     def from_dict(cls, data: dict):
         return cls(**data)
+
+    def get_text(self) -> Optional[str]:
+        rollup = self.rollup
+        t = rollup.get("type")
+        v = rollup[t]
+        if isinstance(v, list):
+            return ",".join([x for x in v if x])
+        return f"{v}"
