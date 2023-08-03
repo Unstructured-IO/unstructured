@@ -16,12 +16,12 @@ from unstructured.ingest.runner import notion as notion_fn
 @click.command()
 @click.option(
     "--page-ids",
-    required=True,
+    default=None,
     help="Comma separated list of Notion page IDs to pull text from",
 )
 @click.option(
     "--database-ids",
-    required=True,
+    default=None,
     help="Comma separated list of Notion database IDs to pull text from",
 )
 @click.option(
