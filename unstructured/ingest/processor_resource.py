@@ -1,16 +1,18 @@
 import multiprocessing as mp
 from typing import Any, Optional
 
+
 class ProcessorResourceSingleton:
     """
     Singleton class for managing shared resources among multiple processes.
-    
+
     This class ensures that each process gets its own instance of shared resources,
     such as connections, keys, sessions, and other arbitrary data.
     """
+
     _instances: dict = {}
 
-    def __new__(cls) -> 'ProcessorResourceSingleton':
+    def __new__(cls) -> "ProcessorResourceSingleton":
         pid = mp.current_process().pid
         if pid not in cls._instances:
             cls._instances[pid] = super().__new__(cls)

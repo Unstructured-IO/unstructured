@@ -69,7 +69,6 @@ class SimpleGoogleDriveConfig(BaseConnectorConfig):
     """Connector config where drive_id is the id of the document to process or
     the folder to process all documents from."""
 
-
     # Google Drive Specific Options
     drive_id: str
     service_account_key: str
@@ -82,7 +81,7 @@ class SimpleGoogleDriveConfig(BaseConnectorConfig):
                 f"Extension not supported. "
                 f"Value MUST be one of {', '.join([k for k in EXT_TO_FILETYPE if k is not None])}.",
             )
-        
+
         logger.debug("creating service key")
         self.service = create_service_account_object(self.service_account_key, self.drive_id)
 
