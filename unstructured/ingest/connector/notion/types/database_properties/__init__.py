@@ -85,11 +85,7 @@ db_cell_type_mapping = {
 def map_cells(props: Dict[str, dict]) -> Dict[str, DBCellBase]:
     mapped_dict = {}
     for k, v in props.items():
-        if v["type"] in db_cell_type_mapping:
-            mapped_dict[k] = db_cell_type_mapping[v["type"]].from_dict(v)  # type: ignore
-        else:
-            print(f"Skipping {v}")
-
+        mapped_dict[k] = db_cell_type_mapping[v["type"]].from_dict(v)  # type: ignore
     return mapped_dict
 
 
