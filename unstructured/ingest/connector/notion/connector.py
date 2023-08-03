@@ -119,7 +119,7 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         # The Notion block endpoint gives more hierarchical information (parent,child relationships)
         # than the pages endpoint so choosing to use that one to get metadata about the page
         try:
-            self.file_metadata = client.pages.retrieve(block_id=self.page_id)  # type: ignore
+            self.file_metadata = client.pages.retrieve(page_id=self.page_id)  # type: ignore
             self.check_exists = True
             self.file_exists = True
         except APIResponseError as error:
