@@ -288,9 +288,7 @@ class Element(ABC):
                 )
             )
         )
-        self.metadata = metadata.merge(
-            ElementMetadata(coordinates=coordinates_metadata),
-        )
+        self.metadata = metadata.merge(ElementMetadata(coordinates=coordinates_metadata))
 
     def to_dict(self) -> dict:
         return {

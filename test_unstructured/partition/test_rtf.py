@@ -29,7 +29,6 @@ def test_partition_rtf_from_file():
         elements = partition_rtf(file=f)
     assert len(elements) > 0
     assert elements[0] == Title("My First Heading")
-
     for element in elements:
         assert element.metadata.filename is None
 

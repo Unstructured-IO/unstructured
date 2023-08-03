@@ -4,12 +4,7 @@ import pathlib
 import pytest
 
 from unstructured.cleaners.core import group_broken_paragraphs
-from unstructured.documents.elements import (
-    Address,
-    ListItem,
-    NarrativeText,
-    Title,
-)
+from unstructured.documents.elements import Address, ListItem, NarrativeText, Title
 from unstructured.partition.text import (
     combine_paragraphs_less_than_min,
     partition_text,
@@ -243,9 +238,7 @@ def test_partition_text_splits_long_text(filename="example-docs/norwich-city.txt
     assert elements[-1].text.endswith("External links")
 
 
-def test_partition_text_splits_long_text_max_partition(
-    filename="example-docs/norwich-city.txt",
-):
+def test_partition_text_splits_long_text_max_partition(filename="example-docs/norwich-city.txt"):
     elements = partition_text(filename=filename)
     elements_max_part = partition_text(filename=filename, max_partition=500)
     assert len(elements) < len(elements_max_part)

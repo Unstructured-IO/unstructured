@@ -203,17 +203,6 @@ def test_partition_docx_from_file_exclude_metadata(mock_document, tmpdir):
     assert elements[0].metadata.filename is None
 
 
-def test_partition_docx_from_file_wi(mock_document, tmpdir):
-    filename = os.path.join(tmpdir.dirname, "mock_document.docx")
-    mock_document.save(filename)
-
-    with open(filename, "rb") as f:
-        elements = partition_docx(file=f, include_metadata=False)
-    assert elements[0].metadata.filetype is None
-    assert elements[0].metadata.page_name is None
-    assert elements[0].metadata.filename is None
-
-
 def test_partition_docx_metadata_date(
     mocker,
     filename="example-docs/fake.docx",
@@ -230,8 +219,7 @@ def test_partition_docx_metadata_date(
     assert elements[0].metadata.last_modified == mocked_last_modification_date
 
 
-def test_partition_docx_metadata_date
-th_custom_metadata(
+def test_partition_docx_metadata_date_with_custom_metadata(
     mocker,
     filename="example-docs/fake.docx",
 ):

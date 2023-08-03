@@ -79,10 +79,7 @@ def is_possible_narrative_text(
         return False
 
     non_alpha_threshold = float(
-        os.environ.get(
-            "UNSTRUCTURED_NARRATIVE_TEXT_NON_ALPHA_THRESHOLD",
-            non_alpha_threshold,
-        ),
+        os.environ.get("UNSTRUCTURED_NARRATIVE_TEXT_NON_ALPHA_THRESHOLD", non_alpha_threshold),
     )
     if under_non_alpha_ratio(text, threshold=non_alpha_threshold):
         return False
