@@ -116,15 +116,10 @@ for i in "${!FILES_TO_CHECK[@]}"; do
         printf "Error: No semver version found in file %s.\n" "$FILE_TO_CHANGE"
         exit 1
     elif [ $FILE_VERSION == $CURRENT_RELEASE ]
-    then
-        # report error
-        # only one commit should be associated with a particular release
-        # echo "sed version must be >= ${REQUIRED_VERSION}" && exit 1
-        printf "Error: there is already a commit associated with release version ${CURRENT_RELEASE}"
+    then 
+        # Only one commit should be associated with a particular non-dev release
+        printf "Error: there is already a commit associated with release version ${CURRENT_RELEASE}.\n"
         exit 1
-
-        # this will compare __version__ version to main
-        # may need another case to compare changelog to main ?
     else
         # Replace semver in VERSIONFILE with semver obtained from SOURCE_FILE
         TMPFILE=$(mktemp /tmp/new_version.XXXXXX)
