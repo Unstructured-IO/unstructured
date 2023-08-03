@@ -380,6 +380,26 @@ def test_partition_pdf_doesnt_raise_warning():
     ("pass_file_filename", "content_type"),
     [(False, None), (False, "image/jpeg"), (True, "image/jpeg"), (True, None)],
 )
+def test_auto_partition_image_default_strategy_hi_res(pass_file_filename, content_type):
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.jpg")
+    file_filename = filename if pass_file_filename else None
+    elements = partition(
+        filename=filename,
+        file_filename=file_filename,
+        content_type=content_type,
+        strategy="auto",
+    )
+
+    # should be same result as test_partition_image_default_strategy_hi_res() in test_image.py
+    first_line = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
+    assert elements[0].text == first_line
+    assert elements[0].metadata.coordinates is not None
+
+
+@pytest.mark.parametrize(
+    ("pass_file_filename", "content_type"),
+    [(False, None), (False, "image/jpeg"), (True, "image/jpeg"), (True, None)],
+)
 def test_auto_partition_jpg(pass_file_filename, content_type):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.jpg")
     file_filename = filename if pass_file_filename else None
@@ -839,3 +859,10 @@ def test_auto_partition_rst_from_file(filename="example-docs/README.rst"):
 
     assert elements[0] == Title("Example Docs")
     assert elements[0].metadata.filetype == "text/x-rst"
+
+
+def test_auto_partition_metadata_file_filename():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
+    with open(filename) as f:
+        elements = partition(file=f, file_filename=filename)
+    assert elements[0].metadata.filename == os.path.split(filename)[-1]
