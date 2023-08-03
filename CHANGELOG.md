@@ -1,4 +1,4 @@
-## 0.9.1-dev3
+## 0.9.1-dev4
 
 ### Enhancements
 
@@ -9,7 +9,6 @@
 
 ### Fixes
 * Pass file_filename metadata when partitioning file object
-
 * Skip ingest test on missing Slack token
 * Add Dropbox variables to CI environments
 
