@@ -8,6 +8,7 @@
 ### Features
 
 ### Fixes
+* Pass file_filename metadata when partitioning file object
 
 * Skip ingest test on missing Slack token
 
