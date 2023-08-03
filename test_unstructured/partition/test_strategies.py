@@ -43,18 +43,9 @@ def test_is_pdf_text_extractable(filename, from_file, expected):
     assert bool(extractable) is expected
 
 
-@pytest.mark.parametrize(
-    ("infer_table_structure", "expected"),
-    [
-        (True, "hi_res"),
-        (False, "ocr_only"),
-    ],
-)
-def test_determine_image_auto_strategy(infer_table_structure, expected):
-    strategy = strategies._determine_image_auto_strategy(
-        infer_table_structure=infer_table_structure,
-    )
-    assert strategy is expected
+def test_determine_image_auto_strategy():
+    strategy = strategies._determine_image_auto_strategy()
+    assert strategy == "hi_res"
 
 
 @pytest.mark.parametrize(
@@ -74,9 +65,9 @@ def test_determine_image_pdf_strategy(pdf_text_extractable, infer_table_structur
     assert strategy is expected
 
 
-def test_determine_pdf_or_image_strategy_fallback_ocr():
+def test_determine_pdf_or_image_strategy_fallback_hi_res():
     strategy = strategies.determine_pdf_or_image_strategy(
         strategy="fast",
         is_image=True,
     )
-    assert strategy == "ocr_only"
+    assert strategy == "hi_res"

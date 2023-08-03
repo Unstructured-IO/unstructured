@@ -1,13 +1,15 @@
-## 0.9.1-dev1
-
-### Enhancements
+## 0.9.1-dev5
 
 * Adds post processing function `filter_element_types`
+* Set the default strategy for partitioning images to `hi_res`
 * Add page break parameter section in API documentation to sync with change in Prod API
 
 ### Features
 
 ### Fixes
+* Pass file_filename metadata when partitioning file object
+* Skip ingest test on missing Slack token
+* Add Dropbox variables to CI environments
 
 ## 0.9.0
 
@@ -22,7 +24,6 @@
 ### Features
 
 ### Fixes
-
 
 * Rename "date" field to "last_modified"
 * Adds Box connector
