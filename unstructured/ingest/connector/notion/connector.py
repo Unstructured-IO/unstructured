@@ -42,6 +42,11 @@ class SimpleNotionConfig(BaseConnectorConfig):
             return self.logger
         return make_default_logger(logging.DEBUG if self.verbose else logging.INFO)
 
+    @staticmethod
+    def parse_ids(ids_str: str) -> List[str]:
+        """Parses a comma separated list of ids into a list."""
+        return [x.strip() for x in ids_str.split(",")]
+
 
 @dataclass
 class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
@@ -93,9 +98,8 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             )
             self.check_exists = True
             self.file_exists = True
-            if text_extraction.text:
-                with open(self._tmp_download_file(), "w") as page_file:
-                    page_file.write(text_extraction.text)
+            with open(self._tmp_download_file(), "w") as page_file:
+                page_file.write(text_extraction.text)
 
         except APIResponseError as error:
             if error.code == APIErrorCode.ObjectNotFound:
@@ -115,7 +119,7 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         # The Notion block endpoint gives more hierarchical information (parent,child relationships)
         # than the pages endpoint so choosing to use that one to get metadata about the page
         try:
-            self.file_metadata = client.pages.retrieve(page_id=self.page_id)  # type: ignore
+            self.file_metadata = client.pages.retrieve(block_id=self.page_id)  # type: ignore
             self.check_exists = True
             self.file_exists = True
         except APIResponseError as error:
@@ -207,9 +211,8 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             )
             self.check_exists = True
             self.file_exists = True
-            if text_extraction.text:
-                with open(self._tmp_download_file(), "w") as page_file:
-                    page_file.write(text_extraction.text)
+            with open(self._tmp_download_file(), "w") as page_file:
+                page_file.write(text_extraction.text)
 
         except APIResponseError as error:
             if error.code == APIErrorCode.ObjectNotFound:
