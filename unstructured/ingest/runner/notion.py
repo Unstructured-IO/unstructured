@@ -12,9 +12,10 @@ def notion(
     verbose: bool,
     connector_config: StandardConnectorConfig,
     processor_config: ProcessorConfigs,
-    page_ids: Optional[str],
-    database_ids: Optional[str],
     api_key: str,
+    recursive: bool,
+    page_ids: Optional[str] = "",
+    database_ids: Optional[str] = "",
     **kwargs,
 ):
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
@@ -53,6 +54,7 @@ def notion(
             database_ids=SimpleNotionConfig.parse_ids(ids_str=database_ids) if database_ids else [],
             api_key=api_key,
             logger=logger,
+            recursive=recursive,
         ),
     )
 

@@ -4,7 +4,7 @@ from typing import List, Optional
 
 from unstructured.ingest.connector.notion.interfaces import FromJSONMixin, GetTextMixin
 from unstructured.ingest.connector.notion.types.date import Date
-from unstructured.ingest.connector.notion.types.user import User
+from unstructured.ingest.connector.notion.types.user import People
 
 
 @dataclass
@@ -87,7 +87,7 @@ class Mention(FromJSONMixin, GetTextMixin):
     link_preview: Optional[MentionLinkPreview] = None
     page: Optional[MentionPage] = None
     template_mention: Optional[MentionTemplate] = None
-    user: Optional[User] = None
+    user: Optional[People] = None
 
     @classmethod
     def from_dict(cls, data: dict):
@@ -104,7 +104,7 @@ class Mention(FromJSONMixin, GetTextMixin):
         elif t == "template_mention":
             mention.template_mention = MentionTemplate.from_dict(data["template_mention"])
         elif t == "user":
-            mention.user = User.from_dict(data["user"])
+            mention.user = People.from_dict(data["user"])
 
         return mention
 

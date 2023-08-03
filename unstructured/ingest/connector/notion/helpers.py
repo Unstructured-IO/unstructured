@@ -1,6 +1,6 @@
 import logging
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Optional
 from uuid import UUID
 
 from unstructured.ingest.connector.notion.client import Client
@@ -14,9 +14,9 @@ from unstructured.ingest.connector.notion.types.database import Database
 
 @dataclass
 class TextExtractionResponse:
-    text: str
-    child_pages: List[str] = field(default_factory=List[str])
-    child_databases: List[str] = field(default_factory=List[str])
+    text: Optional[str] = None
+    child_pages: List[str] = field(default_factory=list)
+    child_databases: List[str] = field(default_factory=list)
 
 
 def extract_page_text(
@@ -72,6 +72,39 @@ def extract_database_text(
             for k, v in database_row.properties.items():
                 text.append(v.get_text())
 
+    non_empty_text = [t for t in text if t]
     return TextExtractionResponse(
-        text="\n".join([t for t in text if t]),
+        text="\n".join(non_empty_text) if non_empty_text else None,
+    )
+
+
+@dataclass
+class ChildExtractionResponse:
+    child_pages: List[str] = field(default_factory=list)
+    child_databases: List[str] = field(default_factory=list)
+
+
+def get_recursive_content(client: Client, page_id: str) -> ChildExtractionResponse:
+    parent_ids = [page_id]
+    child_pages = []
+    child_dbs = []
+    processed = []
+    while len(parent_ids) > 0:
+        parent_id = parent_ids.pop()
+        for children in client.blocks.children.iterate_list(block_id=parent_id):  # type: ignore
+            processed.append(parent_id)
+
+            pages = [c.id for c in children if isinstance(c.block, ChildPage)]
+            new_pages = [p for p in pages if p not in processed]
+            child_pages.extend(new_pages)
+            parent_ids.extend(new_pages)
+
+            dbs = [c.id for c in children if isinstance(c.block, ChildDatabase)]
+            new_dbs = [db for db in dbs if db not in processed]
+            child_dbs.extend(new_dbs)
+            parent_ids.extend(new_dbs)
+
+    return ChildExtractionResponse(
+        child_pages=child_pages,
+        child_databases=child_dbs,
     )

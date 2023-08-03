@@ -3,6 +3,7 @@ import logging
 import click
 
 from unstructured.ingest.cli.common import (
+    add_recursive_option,
     add_shared_options,
     log_options,
     map_to_processor_config,
@@ -46,4 +47,5 @@ def notion(**options):
 def get_cmd() -> click.Command:
     cmd = notion
     add_shared_options(cmd)
+    add_recursive_option(cmd)
     return cmd

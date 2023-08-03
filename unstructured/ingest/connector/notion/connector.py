@@ -3,6 +3,7 @@ import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Optional
+from uuid import UUID
 
 from unstructured.ingest.connector.notion.types.database import Database
 from unstructured.ingest.connector.notion.types.page import Page
@@ -25,13 +26,14 @@ class SimpleNotionConfig(BaseConnectorConfig):
 
     page_ids: List[str]
     database_ids: List[str]
+    recursive: bool
     api_key: str
     logger: logging.Logger
 
     @staticmethod
     def parse_ids(ids_str: str) -> List[str]:
-        """Parses a comma separated list of ids into a list."""
-        return [x.strip() for x in ids_str.split(",")]
+        """Parses a comma separated list of ids into a list of UUID strings."""
+        return [str(UUID(x.strip())) for x in ids_str.split(",")]
 
 
 @dataclass
@@ -84,8 +86,9 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             )
             self.check_exists = True
             self.file_exists = True
-            with open(self._tmp_download_file(), "w") as page_file:
-                page_file.write(text_extraction.text)
+            if text_extraction.text:
+                with open(self._tmp_download_file(), "w") as page_file:
+                    page_file.write(text_extraction.text)
 
         except APIResponseError as error:
             if error.code == APIErrorCode.ObjectNotFound:
@@ -197,8 +200,9 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             )
             self.check_exists = True
             self.file_exists = True
-            with open(self._tmp_download_file(), "w") as page_file:
-                page_file.write(text_extraction.text)
+            if text_extraction.text:
+                with open(self._tmp_download_file(), "w") as page_file:
+                    page_file.write(text_extraction.text)
 
         except APIResponseError as error:
             if error.code == APIErrorCode.ObjectNotFound:
@@ -282,21 +286,81 @@ class NotionConnector(ConnectorCleanupMixin, BaseConnector):
         """Verify that can get metadata for an object, validates connections info."""
         pass
 
+    @requires_dependencies(dependencies=["notion_client"])
+    def get_child_content(self, page_id: str):
+        from unstructured.ingest.connector.notion.client import Client as NotionClient
+        from unstructured.ingest.connector.notion.helpers import get_recursive_content
+
+        client = NotionClient(auth=self.config.api_key, logger=self.config.logger)
+
+        child_content = get_recursive_content(client=client, page_id=page_id)
+        return child_content
+
     def get_ingest_docs(self):
-        return [
-            NotionPageIngestDoc(
-                standard_config=self.standard_config,
-                config=self.config,
-                page_id=page_id,
-                api_key=self.config.api_key,
-            )
-            for page_id in self.config.page_ids
-        ] + [
-            NotionDatabaseIngestDoc(
-                standard_config=self.standard_config,
-                config=self.config,
-                database_id=database_id,
-                api_key=self.config.api_key,
-            )
-            for database_id in self.config.database_ids
-        ]
+        docs: List[BaseIngestDoc] = []
+        if self.config.page_ids:
+            docs += [
+                NotionPageIngestDoc(
+                    standard_config=self.standard_config,
+                    config=self.config,
+                    page_id=page_id,
+                    api_key=self.config.api_key,
+                )
+                for page_id in self.config.page_ids
+            ]
+        if self.config.database_ids:
+            docs += [
+                NotionDatabaseIngestDoc(
+                    standard_config=self.standard_config,
+                    config=self.config,
+                    database_id=database_id,
+                    api_key=self.config.api_key,
+                )
+                for database_id in self.config.database_ids
+            ]
+        if self.config.recursive:
+            child_pages = []
+            child_databases = []
+            for page_id in self.config.page_ids:
+                child_content = self.get_child_content(page_id=page_id)
+                child_pages.extend(child_content.child_pages)
+                child_databases.extend(child_content.child_databases)
+
+            # Remove duplicates
+            child_pages = list(set(child_pages))
+            child_pages = [c for c in child_pages if c not in self.config.page_ids]
+
+            child_databases = list(set(child_databases))
+            child_databases = [db for db in child_databases if db not in self.config.database_ids]
+
+            if child_pages:
+                self.config.logger.info(
+                    "Adding the following child page ids: {}".format(", ".join(child_pages)),
+                )
+                docs += [
+                    NotionPageIngestDoc(
+                        standard_config=self.standard_config,
+                        config=self.config,
+                        page_id=page_id,
+                        api_key=self.config.api_key,
+                    )
+                    for page_id in child_pages
+                ]
+
+            if child_databases:
+                self.config.logger.info(
+                    "Adding the following child database ids: {}".format(
+                        ", ".join(child_databases),
+                    ),
+                )
+                docs += [
+                    NotionDatabaseIngestDoc(
+                        standard_config=self.standard_config,
+                        config=self.config,
+                        database_id=database_id,
+                        api_key=self.config.api_key,
+                    )
+                    for database_id in child_databases
+                ]
+
+        return docs
