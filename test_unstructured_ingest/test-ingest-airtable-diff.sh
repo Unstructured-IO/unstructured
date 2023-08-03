@@ -2,15 +2,16 @@
 set -e
 
 # Description: This test checks if all the processed content is the same as the expected outputs.
+# Also checks if a large table can be ingested properly.
 
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
 
-OUTPUT_FOLDER_NAME=airtable
+OUTPUT_FOLDER_NAME=airtable-diff
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
-if [ -z "$AIRTABLE_PERSONAL_ACCESS_TOKEN" ]; then
+if [ -z "$AIRTABLE_PERSONAL_ACCESS_TOKEN" ] || [ -z "$LARGE_TABLE_BASE_ID" ] || [ -z "$LARGE_TABLE_TABLE_ID" ] || [ -z "$VARIED_DATA_BASE_ID" ] || [ -z "$VARIED_DATA_BASE_ID_2" ]; then
    echo "Skipping Airtable ingest test because the AIRTABLE_PERSONAL_ACCESS_TOKEN is not set."
    exit 0
 fi
@@ -18,6 +19,7 @@ fi
 PYTHONPATH=. ./unstructured/ingest/main.py \
     --download-dir "$DOWNLOAD_DIR" \
     --airtable-personal-access-token "$AIRTABLE_PERSONAL_ACCESS_TOKEN" \
+    --airtable-list-of-paths "$LARGE_TABLE_BASE_ID/$LARGE_TABLE_TABLE_ID $VARIED_DATA_BASE_ID $VARIED_DATA_BASE_ID_2" \
     --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.date \
     --num-processes 2 \
     --preserve-downloads \
