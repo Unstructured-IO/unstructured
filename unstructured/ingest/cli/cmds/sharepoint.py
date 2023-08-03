@@ -29,7 +29,10 @@ from unstructured.ingest.runner import sharepoint as sharepoint_fn
     "--site",
     default=None,
     help="Sharepoint site url. Process either base url e.g https://[tenant].sharepoint.com \
-        or relative sites https://[tenant].sharepoint.com/sites/<site_name>.",
+        or relative sites https://[tenant].sharepoint.com/sites/<site_name>.\
+        To process all sites within the tenant pass a site url as\
+        https://[tenant]-admin.sharepoint.com.\
+        This requires the app to be registered at a tenant level",
 )
 @click.option(
     "--path",
@@ -37,13 +40,6 @@ from unstructured.ingest.runner import sharepoint as sharepoint_fn
     help="Path from which to start parsing files. If the connector is to process all sites \
     within the tenant this filter will be applied to all sites document libraries. \
     Default 'Shared Documents'",
-)
-@click.option(
-    "--process-all",
-    is_flag=True,
-    default=False,
-    help="Process all sites within the tenant. Requires the app to be registered at a tenant \
-        level and a site url in https://[tenant]-admin.sharepoint.com.",
 )
 @click.option(
     "--files-only",

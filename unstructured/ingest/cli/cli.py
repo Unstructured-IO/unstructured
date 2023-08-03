@@ -33,11 +33,11 @@ subcommands = [
 ]
 
 for subcommand in subcommands:
-    ingest.add_command(subcommand())  # type: ignore
+    ingest.add_command(subcommand())
 
 
 def get_cmd() -> click.Command:
-    cmd = ingest  # type: ignore
+    cmd = ingest
     # Add all subcommands
     for subcommand in subcommands:
         # add_shared_options(cmd)

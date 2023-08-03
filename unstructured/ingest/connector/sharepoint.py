@@ -28,7 +28,6 @@ class SimpleSharepointConfig(BaseConnectorConfig):
     client_credential: str = field(repr=False)
     site_url: str
     path: str
-    process_all: bool = False
     process_pages: bool = False
     recursive: bool = False
 
@@ -36,7 +35,7 @@ class SimpleSharepointConfig(BaseConnectorConfig):
         if not (self.client_id and self.client_credential and self.site_url):
             raise ValueError(
                 "Please provide one of the following mandatory values:"
-                "\n-ms-client_id\n-ms-client_cred\n-ms-sharepoint-site",
+                "\n--client-id\n--client-cred\n--site",
             )
 
 
@@ -108,8 +107,17 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def record_locator(self) -> Optional[Dict[str, Any]]:
         if self.meta:
-            return self.meta["page"].to_json()
-        return self.file.to_json()
+            record_source = self.meta["page"]
+            resource_url_name = "AbsoluteUrl"
+        else:
+            record_source = self.file
+            resource_url_name = "ServerRelativeUrl"
+
+        return {
+            "site": self.config.site_url,
+            "UniqueId": record_source.get_property("UniqueId", ""),
+            resource_url_name: record_source.get_property(resource_url_name, ""),
+        }
 
     @property
     def version(self) -> Optional[str]:
@@ -196,20 +204,21 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
         from office365.runtime.auth.client_credential import ClientCredential
         from office365.sharepoint.client_context import ClientContext
 
-        if self.config.process_all:
-            parsed_url = urlparse(self.config.site_url)
-            site_hostname = (parsed_url.hostname or "").split(".")
-            tenant_url = site_hostname[0].split("-")
-            if tenant_url[-1] != "admin" or (
-                parsed_url.path is not None and parsed_url.path != "/"
-            ):
-                raise ValueError(
-                    "A site url in the form of https://[tenant]-admin.sharepoint.com \
-                        is required to process all sites within a tenant.",
-                )
+        parsed_url = urlparse(self.config.site_url)
+        site_hostname = (parsed_url.hostname or "").split(".")
+        tenant_url = site_hostname[0].split("-")
+        self.process_all = False
+        self.base_site_url = ""
+        if tenant_url[-1] == "admin" and (parsed_url.path is None or parsed_url.path == "/"):
+            self.process_all = True
             self.base_site_url = parsed_url._replace(
                 netloc=parsed_url.netloc.replace(site_hostname[0], tenant_url[0]),
             ).geturl()
+        elif tenant_url[-1] == "admin":
+            raise ValueError(
+                "A site url in the form of https://[tenant]-admin.sharepoint.com \
+                is required to process all sites within a tenant. ",
+            )
 
         self.client = ClientContext(self.config.site_url).with_credentials(
             ClientCredential(self.config.client_id, self.config.client_credential),
@@ -238,7 +247,7 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
 
         try:
             pages = site_client.site_pages.pages.get().execute_query()
-            pfiles = []
+            page_files = []
 
             for page_meta in pages:
                 page_url = page_meta.get_property("Url", None)
@@ -248,16 +257,16 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
                 page_url = f"/{page_url}" if page_url[0] != "/" else page_url
                 file_page = site_client.web.get_file_by_server_relative_path(page_url)
                 site_path = None
-                if (spath := (urlparse(site_client.base_url).path)) and (spath != "/"):
-                    site_path = spath[1:]
-                pfiles.append(
+                if (url_path := (urlparse(site_client.base_url).path)) and (url_path != "/"):
+                    site_path = url_path[1:]
+                page_files.append(
                     [file_page, {"page": page_meta, "site_path": site_path}],
                 )
         except ClientRequestException as e:
             logger.info("Caught an error while processing pages %s", e.response.text)
             return []
 
-        return pfiles
+        return page_files
 
     def initialize(self):
         pass
@@ -291,7 +300,8 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
 
     @requires_dependencies(["office365"])
     def get_ingest_docs(self):
-        if self.config.process_all:
+        if self.process_all:
+            logger.debug(self.base_site_url)
             from office365.runtime.auth.client_credential import ClientCredential
             from office365.sharepoint.client_context import ClientContext
             from office365.sharepoint.tenant.administration.tenant import Tenant
