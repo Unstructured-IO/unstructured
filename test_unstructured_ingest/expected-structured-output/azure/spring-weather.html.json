@@ -499,7 +499,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "First, take steps to better prepare for the seasonal hazards weather can throw at you.",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "First, take steps to better prepare for the seasonal hazards weather can throw at you.\nThis could include a spring cleaning of your storm shelter or ensuring your emergency kit is fully stocked. Take a look at our infographics and social media posts to help you become “weather-ready.”"
   },
@@ -514,6 +520,12 @@
         {
           "text": "Spring Safety website",
           "url": "https://www.weather.gov/wrn/spring-safety"
+        }
+      ],
+      "emphasized_texts": [
+        {
+          "text": "Second, encourage others to become Weather-Ready as well.",
+          "tag": "strong"
         }
       ]
     },
