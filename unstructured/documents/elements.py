@@ -146,6 +146,9 @@ class ElementMetadata:
     # MSFT Word specific metadata fields
     header_footer_type: Optional[str] = None
 
+    # Formatting metadata fields
+    emphasized_texts: Optional[List[dict]] = None
+
     # Text format metadata fields
     text_as_html: Optional[str] = None
 

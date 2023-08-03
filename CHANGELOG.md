@@ -3,6 +3,9 @@
 * Adds post processing function `filter_element_types`
 * Set the default strategy for partitioning images to `hi_res`
 * Add page break parameter section in API documentation to sync with change in Prod API
+* Update `XMLDocument._read_xml` to create `<p>` tag element for the text enclosed in the `<pre>` tag
+* Track emphasized texts in `partition_html` output
+* Add parameter `include_tail_text` to `_construct_text` to enable (skip) tail text inclusion
 
 ### Features
 
