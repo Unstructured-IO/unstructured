@@ -2378,3 +2378,45 @@ Examples:
   sentence_count(example, min_length=5)
 
 For more information about the ``sentence_count`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/text_type.py>`_.
+
+
+``filter_element_types``
+------------------
+
+Filter a list of ``Element`` objects by element type. ``filter_element_types`` has two parameters:
+``include_element_types`` - include only specific ``Element``
+``exclude_element_types`` - include all ``Element`` except specific
+
+Examples:
+
+.. code:: python
+
+  from unstructured.staging.base import filter_element_types
+  from unstructured.documents.elements import Title, Text
+  from unstructured.partition.text import partition_text
+
+  elements = partition_text(
+        filename=filename,
+        include_metadata=False,
+    )
+
+  # Returns only element with type Title
+  elements = filter_element_types(
+        elements=elements,
+        include_element_types=[Title],
+    )
+
+  # Returns all types except Title
+  elements = filter_element_types(
+        elements=elements,
+        exclude_element_types=[Title],
+    )
+  # Raises the error as it is not allowed to use both at the time
+  elements = filter_element_types(
+            elements=elements,
+            exclude_element_types=[Title],
+            include_element_types=[Text],
+        )
+
+For more information about the ``filter_element_types`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/staging/base.py>`_.
+
