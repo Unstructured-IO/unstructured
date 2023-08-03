@@ -57,7 +57,11 @@ def extract_page_text(
     )
 
 
-def extract_database_text(client: Client, database_id: str, logger: logging.Logger) -> str:
+def extract_database_text(
+    client: Client,
+    database_id: str,
+    logger: logging.Logger,
+) -> TextExtractionResponse:
     logger.debug(f"processing database id: {database_id}")
     UUID(database_id)
     text = []
@@ -68,4 +72,6 @@ def extract_database_text(client: Client, database_id: str, logger: logging.Logg
             for k, v in database_row.properties.items():
                 text.append(v.get_text())
 
-    return "\n".join([t for t in text if t])
+    return TextExtractionResponse(
+        text="\n".join([t for t in text if t]),
+    )

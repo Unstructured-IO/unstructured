@@ -198,7 +198,7 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             self.check_exists = True
             self.file_exists = True
             with open(self._tmp_download_file(), "w") as page_file:
-                page_file.write(text_extraction)
+                page_file.write(text_extraction.text)
 
         except APIResponseError as error:
             if error.code == APIErrorCode.ObjectNotFound:
