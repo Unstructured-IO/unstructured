@@ -44,8 +44,8 @@ class SimpleNotionConfig(BaseConnectorConfig):
 
     @staticmethod
     def parse_ids(ids_str: str) -> List[str]:
-        """Parses a comma separated list of ids into a list."""
-        return [x.strip() for x in ids_str.split(",")]
+        """Parses a comma separated list of ids into a list of UUID strings."""
+        return [str(UUID(x.strip())) for x in ids_str.split(",")]
 
 
 @dataclass
@@ -98,8 +98,9 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             )
             self.check_exists = True
             self.file_exists = True
-            with open(self._tmp_download_file(), "w") as page_file:
-                page_file.write(text_extraction.text)
+            if text_extraction.text:
+                with open(self._tmp_download_file(), "w") as page_file:
+                    page_file.write(text_extraction.text)
 
         except APIResponseError as error:
             if error.code == APIErrorCode.ObjectNotFound:
@@ -211,8 +212,9 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             )
             self.check_exists = True
             self.file_exists = True
-            with open(self._tmp_download_file(), "w") as page_file:
-                page_file.write(text_extraction.text)
+            if text_extraction.text:
+                with open(self._tmp_download_file(), "w") as page_file:
+                    page_file.write(text_extraction.text)
 
         except APIResponseError as error:
             if error.code == APIErrorCode.ObjectNotFound:
@@ -326,6 +328,14 @@ class NotionConnector(ConnectorCleanupMixin, BaseConnector):
             database_id=database_id,
             logger=self.config.get_logger(),
         )
+
+    def get_child_content(self, page_id: str):
+        from unstructured.ingest.connector.notion.client import Client as NotionClient
+        from unstructured.ingest.connector.notion.helpers import get_recursive_content
+
+        client = NotionClient(auth=self.config.api_key, logger=self.config.logger)
+
+        child_content = get_recursive_content(client=client, page_id=page_id)
         return child_content
 
     def get_ingest_docs(self):

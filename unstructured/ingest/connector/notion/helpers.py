@@ -94,6 +94,38 @@ class ChildExtractionResponse:
     child_databases: List[str] = field(default_factory=list)
 
 
+def get_recursive_content(client: Client, page_id: str) -> ChildExtractionResponse:
+    parent_ids = [page_id]
+    child_pages = []
+    child_dbs = []
+    processed = []
+    while len(parent_ids) > 0:
+        parent_id = parent_ids.pop()
+        for children in client.blocks.children.iterate_list(block_id=parent_id):  # type: ignore
+            processed.append(parent_id)
+
+            pages = [c.id for c in children if isinstance(c.block, ChildPage)]
+            new_pages = [p for p in pages if p not in processed]
+            child_pages.extend(new_pages)
+            parent_ids.extend(new_pages)
+
+            dbs = [c.id for c in children if isinstance(c.block, ChildDatabase)]
+            new_dbs = [db for db in dbs if db not in processed]
+            child_dbs.extend(new_dbs)
+            parent_ids.extend(new_dbs)
+
+    return ChildExtractionResponse(
+        child_pages=child_pages,
+        child_databases=child_dbs,
+    )
+
+
+@dataclass
+class ChildExtractionResponse:
+    child_pages: List[str] = field(default_factory=list)
+    child_databases: List[str] = field(default_factory=list)
+
+
 class QueueEntryType(enum.Enum):
     DATABASE = "database"
     PAGE = "page"
