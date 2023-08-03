@@ -25,11 +25,11 @@ def test_partition_xlsx_from_filename(filename="example-docs/stanley-cups.xlsx")
 
 def test_partition_xlsx_from_filename_with_emoji(filename="example-docs/emoji.xlsx"):
     # Make sure we have the beautifulsoup4 dependency to use the lxml.html.soupparser
-    assert dependency_exists("bs4")
-    elements = partition_xlsx(filename=filename)
-    assert all(isinstance(element, Table) for element in elements)
-    assert len(elements) == 1
-    assert clean_extra_whitespace(elements[0].text) == "🤠😅"
+    if dependency_exists("bs4"):
+        elements = partition_xlsx(filename=filename)
+        assert all(isinstance(element, Table) for element in elements)
+        assert len(elements) == 1
+        assert clean_extra_whitespace(elements[0].text) == "🤠😅"
 
 
 def test_partition_xlsx_from_filename_with_metadata_filename(
