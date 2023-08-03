@@ -32,6 +32,7 @@ RUN python3.8 -m pip install pip==${PIP_VERSION} && \
   pip install --no-cache -r requirements/ingest-wikipedia.txt && \
   pip install --no-cache -r requirements/extra-csv.txt && \
   pip install --no-cache -r requirements/extra-docx.txt && \
+  pip install --no-cache -r requirements/extra-epub.txt && \
   pip install --no-cache -r requirements/extra-markdown.txt && \
   pip install --no-cache -r requirements/extra-msg.txt && \
   pip install --no-cache -r requirements/extra-odt.txt && \
