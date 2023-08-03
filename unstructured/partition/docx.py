@@ -371,6 +371,7 @@ def convert_and_partition_docx(
 
 
 def _get_emphasized_texts_from_paragraph(paragraph: Paragraph) -> List[dict]:
+    """Get emphasized texts with bold/italic formatting from a paragraph in MS Word"""
     emphasized_texts = []
     for run in paragraph.runs:
         if run.bold:
