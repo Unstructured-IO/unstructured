@@ -22,6 +22,7 @@ def test_partition_xlsx_from_filename(filename="example-docs/stanley-cups.xlsx")
     assert elements[0].metadata.page_name == EXCEPTED_PAGE_NAME
     assert elements[0].metadata.filename == "stanley-cups.xlsx"
 
+
 def test_partition_xlsx_from_filename_with_emoji(filename="example-docs/emoji.xlsx"):
     # Make sure we have the beautifulsoup4 dependency to use the lxml.html.soupparser
     assert dependency_exists("bs4")
