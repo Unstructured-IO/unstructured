@@ -115,10 +115,10 @@ for i in "${!FILES_TO_CHECK[@]}"; do
         # No match to semver regex in VERSIONFILE, so nothing to replace
         printf "Error: No semver version found in file %s.\n" "$FILE_TO_CHANGE"
         exit 1
-    elif [ $FILE_VERSION == $CURRENT_RELEASE ]
+    elif [ "$FILE_VERSION" == "$CURRENT_RELEASE" ]
     then 
         # Only one commit should be associated with a particular non-dev release
-        printf "Error: there is already a commit associated with release version ${CURRENT_RELEASE}.\n"
+        printf "Error: there is already a commit associated with release version %s.\n" "$CURRENT_RELEASE"
         exit 1
     else
         # Replace semver in VERSIONFILE with semver obtained from SOURCE_FILE
