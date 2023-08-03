@@ -96,7 +96,6 @@ def map_cells(props: Dict[str, dict]) -> Dict[str, DBCellBase]:
             mapped_dict[k] = db_cell_type_mapping[t].from_dict(v)  # type: ignore
         except KeyError as ke:
             raise KeyError(f"failed to map to associated database property -> {k}: {v}") from ke
-
     return mapped_dict
 
 
