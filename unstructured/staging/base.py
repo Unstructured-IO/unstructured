@@ -193,3 +193,32 @@ def convert_to_dataframe(elements: List[Element], drop_empty_cols: bool = True) 
     if drop_empty_cols:
         df.dropna(axis=1, how="all", inplace=True)
     return df
+
+
+def filter_element_types(
+    elements: List[Element],
+    include_element_types: Optional[List[Element]] = None,
+    exclude_element_types: Optional[List[Element]] = None,
+) -> List[Element]:
+    """Filters document elements by element type"""
+    exactly_one(
+        include_element_types=include_element_types,
+        exclude_element_types=exclude_element_types,
+    )
+
+    filtered_elements: List[Element] = []
+    if include_element_types:
+        for element in elements:
+            if type(element) in include_element_types:
+                filtered_elements.append(element)
+
+        return filtered_elements
+
+    elif exclude_element_types:
+        for element in elements:
+            if type(element) not in exclude_element_types:
+                filtered_elements.append(element)
+
+        return filtered_elements
+
+    return elements
