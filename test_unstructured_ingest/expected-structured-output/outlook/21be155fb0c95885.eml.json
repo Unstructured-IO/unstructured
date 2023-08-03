@@ -1,0 +1,20 @@
+[
+  {
+    "type": "Title",
+    "element_id": "a0f48ad299334e5716f85d225bfe2a16",
+    "metadata": {
+      "data_source": {},
+      "filename": "21be155fb0c95885.eml",
+      "last_modified": "2023-07-15T08:35:51-07:00",
+      "filetype": "message/rfc822",
+      "sent_from": [
+        "David Potter <potterdavidm@gmail.com>"
+      ],
+      "sent_to": [
+        "devops@unstructuredio.onmicrosoft.com"
+      ],
+      "subject": "integration test email 1"
+    },
+    "text": "integration test email"
+  }
+]

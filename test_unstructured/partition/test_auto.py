@@ -242,6 +242,19 @@ def test_auto_partition_json_from_filename():
     assert json_data == json_elems
 
 
+def test_auto_partition_json_raises_with_unprocessable_json(tmpdir):
+    # NOTE(robinson) - This is unprocessable because it is not a list of dicts,
+    # per the Unstructured ISD format
+    text = '{"hi": "there"}'
+
+    filename = os.path.join(tmpdir, "unprocessable.json")
+    with open(filename, "w") as f:
+        f.write(text)
+
+    with pytest.raises(ValueError):
+        partition(filename=filename)
+
+
 @pytest.mark.xfail(
     reason="parsed as text not json, https://github.com/Unstructured-IO/unstructured/issues/492",
 )
@@ -399,6 +412,26 @@ def test_partition_pdf_doesnt_raise_warning():
     with warnings.catch_warnings():
         warnings.simplefilter("error")
         partition(filename=filename, strategy="hi_res")
+
+
+@pytest.mark.parametrize(
+    ("pass_file_filename", "content_type"),
+    [(False, None), (False, "image/jpeg"), (True, "image/jpeg"), (True, None)],
+)
+def test_auto_partition_image_default_strategy_hi_res(pass_file_filename, content_type):
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.jpg")
+    file_filename = filename if pass_file_filename else None
+    elements = partition(
+        filename=filename,
+        file_filename=file_filename,
+        content_type=content_type,
+        strategy="auto",
+    )
+
+    # should be same result as test_partition_image_default_strategy_hi_res() in test_image.py
+    first_line = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
+    assert elements[0].text == first_line
+    assert elements[0].metadata.coordinates is not None
 
 
 @pytest.mark.parametrize(
@@ -567,7 +600,7 @@ def test_auto_partition_odt_from_file():
 @pytest.mark.parametrize(
     ("content_type", "routing_func", "expected"),
     [
-        ("application/json", "json", "application/json"),
+        ("text/csv", "csv", "text/csv"),
         ("text/html", "html", "text/html"),
         ("jdsfjdfsjkds", "pdf", None),
     ],
@@ -809,6 +842,15 @@ def test_auto_partition_csv_from_filename(filename="example-docs/stanley-cups.cs
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
+def test_auto_partition_tsv_from_filename(filename="example-docs/stanley-cups.tsv"):
+    elements = partition(filename=filename)
+
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
+    assert elements[0].metadata.text_as_html == EXPECTED_TABLE
+    assert elements[0].metadata.filetype == "text/tsv"
+
+
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_auto_partition_csv_from_file(filename="example-docs/stanley-cups.csv"):
     with open(filename, "rb") as f:
         elements = partition(file=f)
@@ -867,3 +909,10 @@ def test_auto_partition_rst_from_file(filename="example-docs/README.rst"):
 
     assert elements[0] == Title("Example Docs")
     assert elements[0].metadata.filetype == "text/x-rst"
+
+
+def test_auto_partition_metadata_file_filename():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
+    with open(filename) as f:
+        elements = partition(file=f, file_filename=filename)
+    assert elements[0].metadata.filename == os.path.split(filename)[-1]

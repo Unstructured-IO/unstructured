@@ -3,7 +3,7 @@ import urllib.request
 from dataclasses import dataclass
 from ftplib import FTP, error_perm
 from pathlib import Path
-from typing import List, Union
+from typing import List, Optional, Union
 
 import requests
 from bs4 import BeautifulSoup
@@ -41,11 +41,11 @@ class SimpleBiomedConfig(BaseConnectorConfig):
     """Connector config where path is the FTP directory path and
     id_, from_, until, format are API parameters."""
 
-    path: str
+    path: Optional[str]
     # OA Web Service API Options
-    id_: str
-    from_: str
-    until: str
+    id_: Optional[str]
+    from_: Optional[str]
+    until: Optional[str]
     max_retries: int = 5
     request_timeout: int = 45
     decay: float = 0.3
@@ -217,6 +217,10 @@ class BiomedConnector(ConnectorCleanupMixin, BaseConnector):
     def _list_objects(self):
         files = []
 
+        # Conform to mypy, null check performed elsewhere.
+        # Wouldn't be in this method unless self.config.path exists
+        path: str = self.config.path if self.config.path else ""
+
         def traverse(path, download_dir, output_dir):
             full_path = Path(PMC_DIR) / path
             logger.debug(f"Traversing directory: {full_path}")
@@ -261,7 +265,7 @@ class BiomedConnector(ConnectorCleanupMixin, BaseConnector):
 
         ftp_path = f"{FTP_DOMAIN}/{PMC_DIR}/{self.config.path}"
         if self.config.is_file:
-            local_path = "/".join(self.config.path.split("/")[1:])
+            local_path = "/".join(path.split("/")[1:])
             return [
                 BiomedFileMeta(
                     ftp_path=ftp_path,
@@ -273,7 +277,7 @@ class BiomedConnector(ConnectorCleanupMixin, BaseConnector):
             ]
         else:
             traverse(
-                Path(self.config.path),
+                Path(path),
                 Path(self.standard_config.download_dir),
                 Path(self.standard_config.output_dir),
             )

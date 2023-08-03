@@ -159,9 +159,62 @@ def test_serialized_deserialize_elements_to_json(tmpdir):
     assert elements == new_elements_text
 
 
-def test_read_and_write_json_with_encoding(filename="example-docs/fake-text-utf-16-be.txt"):
+def test_read_and_write_json_with_encoding(
+    filename="example-docs/fake-text-utf-16-be.txt",
+):
     elements = partition_text(filename=filename)
     with NamedTemporaryFile() as tempfile:
         base.elements_to_json(elements, filename=tempfile.name, encoding="utf-16")
-        new_elements_filename = base.elements_from_json(filename=tempfile.name, encoding="utf-16")
+        new_elements_filename = base.elements_from_json(
+            filename=tempfile.name,
+            encoding="utf-16",
+        )
     assert elements == new_elements_filename
+
+
+def test_filter_element_types_with_include_element_type(
+    filename="example-docs/fake-text.txt",
+):
+    element_types = [Title]
+    elements = partition_text(
+        filename=filename,
+        include_metadata=False,
+    )
+    elements = base.filter_element_types(
+        elements=elements,
+        include_element_types=element_types,
+    )
+    for element in elements:
+        assert type(element) in element_types
+
+
+def test_filter_element_types_with_exclude_element_type(
+    filename="example-docs/fake-text.txt",
+):
+    element_types = [Title]
+    elements = partition_text(
+        filename=filename,
+        include_metadata=False,
+    )
+    elements = base.filter_element_types(
+        elements=elements,
+        exclude_element_types=element_types,
+    )
+    for element in elements:
+        assert type(element) not in element_types
+
+
+def test_filter_element_types_with_exclude_and_include_element_type(
+    filename="example-docs/fake-text.txt",
+):
+    element_types = [Title]
+    elements = partition_text(
+        filename=filename,
+        include_metadata=False,
+    )
+    with pytest.raises(ValueError):
+        elements = base.filter_element_types(
+            elements=elements,
+            exclude_element_types=element_types,
+            include_element_types=element_types,
+        )

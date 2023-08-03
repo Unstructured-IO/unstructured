@@ -1,0 +1,20 @@
+[
+  {
+    "type": "NarrativeText",
+    "element_id": "007ec3bff83ee17497e490b86a36e0dd",
+    "metadata": {
+      "data_source": {},
+      "filename": "4a16a411f162ebbb.eml",
+      "last_modified": "2023-07-09T20:38:47-07:00",
+      "filetype": "message/rfc822",
+      "sent_from": [
+        "David Potter <potterdavidm@gmail.com>"
+      ],
+      "sent_to": [
+        "devops@unstructuredio.onmicrosoft.com"
+      ],
+      "subject": "message for subfolder"
+    },
+    "text": "this is a message for the subfolder"
+  }
+]

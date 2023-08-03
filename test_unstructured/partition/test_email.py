@@ -234,7 +234,11 @@ def test_partition_email_from_text_file():
 def test_partition_email_from_text_file_with_headers():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.txt")
     with open(filename) as f:
-        elements = partition_email(file=f, content_source="text/plain", include_headers=True)
+        elements = partition_email(
+            file=f,
+            content_source="text/plain",
+            include_headers=True,
+        )
     assert len(elements) > 0
     assert elements == ALL_EXPECTED_OUTPUT
     for element in elements:
@@ -290,7 +294,7 @@ def test_partition_email_from_file_with_header():
 
 
 def test_partition_email_from_filename_has_metadata():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email-header.eml")
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
     elements = partition_email(filename=filename)
     assert len(elements) > 0
     assert (
@@ -298,19 +302,19 @@ def test_partition_email_from_filename_has_metadata():
         == ElementMetadata(
             coordinates=None,
             filename=filename,
-            date="2022-12-16T17:04:16-05:00",
+            last_modified="2022-12-16T17:04:16-05:00",
             page_number=None,
             url=None,
             sent_from=["Matthew Robinson <mrobinson@unstructured.io>"],
-            sent_to=["Matthew Robinson <mrobinson@unstructured.io>"],
+            sent_to=["NotMatthew <NotMatthew@notunstructured.com>"],
             subject="Test Email",
             filetype="message/rfc822",
         ).to_dict()
     )
     expected_dt = datetime.datetime.fromisoformat("2022-12-16T17:04:16-05:00")
-    assert elements[0].metadata.get_date() == expected_dt
+    assert elements[0].metadata.get_last_modified() == expected_dt
     for element in elements:
-        assert element.metadata.filename == "fake-email-header.eml"
+        assert element.metadata.filename == "fake-email.eml"
 
 
 def test_extract_email_text_matches_html():
@@ -384,7 +388,7 @@ def test_partition_email_still_works_with_no_content():
 def test_partition_email_from_filename_exclude_metadata():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email-header.eml")
     elements = partition_email(filename=filename, include_metadata=False)
-    assert elements[0].metadata.get_date() is None
+    assert elements[0].metadata.get_last_modified() is None
     assert elements[0].metadata.filetype is None
     assert elements[0].metadata.page_name is None
     assert elements[0].metadata.filename is None
@@ -393,8 +397,12 @@ def test_partition_email_from_filename_exclude_metadata():
 def test_partition_email_from_text_file_exclude_metadata():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.txt")
     with open(filename) as f:
-        elements = partition_email(file=f, content_source="text/plain", include_metadata=False)
-    assert elements[0].metadata.get_date() is None
+        elements = partition_email(
+            file=f,
+            content_source="text/plain",
+            include_metadata=False,
+        )
+    assert elements[0].metadata.get_last_modified() is None
     assert elements[0].metadata.filetype is None
     assert elements[0].metadata.page_name is None
     assert elements[0].metadata.filename is None
@@ -404,7 +412,7 @@ def test_partition_email_from_file_exclude_metadata():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
     with open(filename) as f:
         elements = partition_email(file=f, include_metadata=False)
-    assert elements[0].metadata.get_date() is None
+    assert elements[0].metadata.get_last_modified() is None
     assert elements[0].metadata.filetype is None
     assert elements[0].metadata.page_name is None
     assert elements[0].metadata.filename is None
@@ -417,7 +425,10 @@ def test_partition_email_can_process_attachments(
     with open(filename) as f:
         msg = email.message_from_file(f)
     extract_attachment_info(msg, output_dir=tmpdir.dirname)
-    attachment_filename = os.path.join(tmpdir.dirname, ATTACH_EXPECTED_OUTPUT[0]["filename"])
+    attachment_filename = os.path.join(
+        tmpdir.dirname,
+        ATTACH_EXPECTED_OUTPUT[0]["filename"],
+    )
     attachment_elements = partition_text(
         filename=attachment_filename,
         metadata_filename=attachment_filename,
@@ -447,3 +458,27 @@ def test_partition_msg_raises_with_no_partitioner(
 ):
     with pytest.raises(ValueError):
         partition_email(filename=filename, process_attachments=True)
+
+
+def test_partition_email_from_file_custom_metadata_date(
+    filename="example-docs/eml/fake-email-attachment.eml",
+):
+    expected_last_modification_date = "2020-07-05T09:24:28"
+
+    with open(filename) as f:
+        elements = partition_email(file=f, metadata_last_modified=expected_last_modification_date)
+
+    assert elements[0].metadata.last_modified == expected_last_modification_date
+
+
+def test_partition_email_custom_metadata_date(
+    filename="example-docs/eml/fake-email-attachment.eml",
+):
+    expected_last_modification_date = "2020-07-05T09:24:28"
+
+    elements = partition_email(
+        filename=filename,
+        metadata_last_modified=expected_last_modification_date,
+    )
+
+    assert elements[0].metadata.last_modified == expected_last_modification_date

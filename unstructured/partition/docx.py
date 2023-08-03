@@ -4,7 +4,6 @@ from tempfile import SpooledTemporaryFile
 from typing import IO, BinaryIO, List, Optional, Tuple, Union, cast
 
 import docx
-import pypandoc
 from docx.oxml.shared import qn
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
@@ -29,6 +28,8 @@ from unstructured.file_utils.filetype import FileType, add_metadata_with_filetyp
 from unstructured.partition.common import (
     convert_ms_office_table_to_text,
     exactly_one,
+    get_last_modified_date,
+    get_last_modified_date_from_file,
     spooled_to_bytes_io_if_needed,
 )
 from unstructured.partition.text_type import (
@@ -38,6 +39,10 @@ from unstructured.partition.text_type import (
     is_possible_title,
     is_us_city_state_zip,
 )
+from unstructured.utils import dependency_exists
+
+if dependency_exists("pypandoc"):
+    import pypandoc
 
 # NOTE(robinson) - documentation on built in styles can be found at the link below
 # ref: https://python-docx.readthedocs.io/en/latest/user/
@@ -113,6 +118,7 @@ def partition_docx(
     metadata_filename: Optional[str] = None,
     include_page_breaks: bool = True,
     include_metadata: bool = True,
+    metadata_last_modified: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft Word Documents in .docx format into its document elements.
@@ -127,14 +133,22 @@ def partition_docx(
         The filename to use for the metadata. Relevant because partition_doc converts the
         document to .docx before partition. We want the original source filename in the
         metadata.
+    metadata_last_modified
+        The last modified date for the document.
     """
 
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file)
 
+    last_modification_date = None
     if filename is not None:
+        if not filename.startswith("/tmp"):
+            last_modification_date = get_last_modified_date(filename)
+
         document = docx.Document(filename)
     elif file is not None:
+        last_modification_date = get_last_modified_date_from_file(file)
+
         document = docx.Document(
             spooled_to_bytes_io_if_needed(
                 cast(Union[BinaryIO, SpooledTemporaryFile], file),
@@ -163,6 +177,7 @@ def partition_docx(
                     text_as_html=html_table,
                     filename=metadata_filename,
                     page_number=page_number,
+                    last_modified=metadata_last_modified or last_modification_date,
                 )
                 elements.append(element)
             table_index += 1
@@ -175,6 +190,7 @@ def partition_docx(
                 para_element.metadata = ElementMetadata(
                     filename=metadata_filename,
                     page_number=page_number,
+                    last_modified=metadata_last_modified or last_modification_date,
                 )
                 elements.append(para_element)
             is_list = False
@@ -302,8 +318,9 @@ def convert_and_partition_docx(
     file: Optional[IO[bytes]] = None,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
 ) -> List[Element]:
-    """Converts a document to DOCX and then partitions it using partition_html. Works with
+    """Converts a document to DOCX and then partitions it using partition_docx. Works with
     any file format support by pandoc.
 
     Parameters
@@ -348,6 +365,7 @@ def convert_and_partition_docx(
             filename=docx_filename,
             metadata_filename=metadata_filename,
             include_metadata=include_metadata,
+            metadata_last_modified=metadata_last_modified,
         )
 
     return elements

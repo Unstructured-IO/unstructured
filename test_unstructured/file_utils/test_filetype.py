@@ -77,6 +77,7 @@ class MockDocumentLayout(layout.DocumentLayout):
         ("README.rst", FileType.RST),
         ("README.md", FileType.MD),
         ("fake.odt", FileType.ODT),
+        ("fake-incomplete-json.txt", FileType.TXT),
     ],
 )
 def test_detect_filetype_from_filename(file, expected):
@@ -103,6 +104,7 @@ def test_detect_filetype_from_filename(file, expected):
         ("fake-doc.rtf", FileType.RTF),
         ("spring-weather.html.json", FileType.JSON),
         ("fake.odt", FileType.ODT),
+        ("fake-incomplete-json.txt", FileType.TXT),
     ],
 )
 def test_detect_filetype_from_filename_with_extension(monkeypatch, file, expected):
@@ -139,6 +141,7 @@ def test_detect_filetype_from_filename_with_extension(monkeypatch, file, expecte
         ("stanley-cups.tsv", FileType.TSV),
         ("fake-power-point.pptx", FileType.PPTX),
         ("winter-sports.epub", FileType.EPUB),
+        ("fake-incomplete-json.txt", FileType.TXT),
     ],
 )
 def test_detect_filetype_from_file(file, expected):
@@ -475,4 +478,4 @@ def test_document_to_element_list_omits_coord_system_when_coord_points_absent():
 def test_get_page_image_metadata_and_coordinate_system():
     doc = MockDocumentLayout()
     metadata = _get_page_image_metadata(doc.pages[0])
-    assert type(metadata) == dict
+    assert isinstance(metadata, dict)

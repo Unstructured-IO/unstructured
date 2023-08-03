@@ -14,15 +14,17 @@ if [ -z "$SLACK_TOKEN" ]; then
 fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
+   slack \
    --download-dir "$DOWNLOAD_DIR" \
-   --end-date 2023-04-08T12:00:00-08:00 \
-   --metadata-exclude coordinates,file_directory,metadata.data_source.date_processed \
+   --metadata-exclude coordinates,file_directory,metadata.data_source.date_processed,metadata.last_modified \
    --partition-strategy hi_res \
    --preserve-downloads \
    --reprocess \
-   --slack-channels C052BGT7718 \
-   --slack-token "${SLACK_TOKEN}" \
+   --structured-output-dir "$OUTPUT_DIR" \
+   --verbose \
+   --channels C052BGT7718 \
+   --token "${SLACK_TOKEN}" \
    --start-date 2023-04-01 \
-    --structured-output-dir "$OUTPUT_DIR"
+   --end-date 2023-04-08T12:00:00-08:00
 
 sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

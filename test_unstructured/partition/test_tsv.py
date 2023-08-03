@@ -38,7 +38,9 @@ def test_partition_tsv_from_file(filename="example-docs/stanley-cups.tsv"):
         assert element.metadata.filename is None
 
 
-def test_partition_tsv_from_file_with_metadata_filename(filename="example-docs/stanley-cups.tsv"):
+def test_partition_tsv_from_file_with_metadata_filename(
+    filename="example-docs/stanley-cups.tsv",
+):
     with open(filename, "rb") as f:
         elements = partition_tsv(file=f, metadata_filename="test")
 
@@ -47,7 +49,9 @@ def test_partition_tsv_from_file_with_metadata_filename(filename="example-docs/s
         assert element.metadata.filename == "test"
 
 
-def test_partition_tsv_filename_exclude_metadata(filename="example-docs/stanley-cups.tsv"):
+def test_partition_tsv_filename_exclude_metadata(
+    filename="example-docs/stanley-cups.tsv",
+):
     elements = partition_tsv(filename=filename, include_metadata=False)
 
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
@@ -58,9 +62,86 @@ def test_partition_tsv_filename_exclude_metadata(filename="example-docs/stanley-
         assert element.metadata.filename is None
 
 
-def test_partition_tsv_from_file_exclude_metadata(filename="example-docs/stanley-cups.tsv"):
+def test_partition_tsv_from_file_exclude_metadata(
+    filename="example-docs/stanley-cups.tsv",
+):
     with open(filename, "rb") as f:
         elements = partition_tsv(file=f, include_metadata=False)
 
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
+
+
+def test_partition_tsv_metadata_date(
+    mocker,
+    filename="example-docs/stanley-cups.tsv",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.tsv.get_last_modified_date",
+        return_value=mocked_last_modification_date,
+    )
+
+    elements = partition_tsv(
+        filename=filename,
+    )
+
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
+
+
+def test_partition_tsv_with_custom_metadata_date(
+    mocker,
+    filename="example-docs/stanley-cups.tsv",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    expected_last_modification_date = "2020-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.tsv.get_last_modified_date",
+        return_value=mocked_last_modification_date,
+    )
+
+    elements = partition_tsv(
+        filename=filename,
+        metadata_last_modified=expected_last_modification_date,
+    )
+
+    assert elements[0].metadata.last_modified == expected_last_modification_date
+
+
+def test_partition_tsv_from_file_metadata_date(
+    mocker,
+    filename="example-docs/stanley-cups.tsv",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.tsv.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+
+    with open(filename, "rb") as f:
+        elements = partition_tsv(
+            file=f,
+        )
+
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
+
+
+def test_partition_tsv_from_file_with_custom_metadata_date(
+    mocker,
+    filename="example-docs/stanley-cups.tsv",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    expected_last_modification_date = "2020-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.tsv.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+
+    with open(filename, "rb") as f:
+        elements = partition_tsv(file=f, metadata_last_modified=expected_last_modification_date)
+
+    assert elements[0].metadata.last_modified == expected_last_modification_date

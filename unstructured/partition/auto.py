@@ -1,5 +1,5 @@
 import io
-from typing import IO, Callable, Dict, Optional, Tuple
+from typing import IO, Callable, Dict, List, Optional, Tuple
 
 import requests
 
@@ -9,30 +9,62 @@ from unstructured.file_utils.filetype import (
     STR_TO_FILETYPE,
     FileType,
     detect_filetype,
+    is_json_processable,
 )
 from unstructured.logger import logger
 from unstructured.partition.common import exactly_one
-from unstructured.partition.csv import partition_csv
-from unstructured.partition.doc import partition_doc
-from unstructured.partition.docx import partition_docx
 from unstructured.partition.email import partition_email
-from unstructured.partition.epub import partition_epub
 from unstructured.partition.html import partition_html
-from unstructured.partition.image import partition_image
 from unstructured.partition.json import partition_json
-from unstructured.partition.md import partition_md
-from unstructured.partition.msg import partition_msg
-from unstructured.partition.odt import partition_odt
-from unstructured.partition.org import partition_org
-from unstructured.partition.pdf import partition_pdf
-from unstructured.partition.ppt import partition_ppt
-from unstructured.partition.pptx import partition_pptx
-from unstructured.partition.rst import partition_rst
-from unstructured.partition.rtf import partition_rtf
 from unstructured.partition.text import partition_text
-from unstructured.partition.tsv import partition_tsv
-from unstructured.partition.xlsx import partition_xlsx
 from unstructured.partition.xml import partition_xml
+from unstructured.utils import dependency_exists
+
+if dependency_exists("pandas"):
+    from unstructured.partition.csv import partition_csv
+    from unstructured.partition.tsv import partition_tsv
+
+
+if dependency_exists("docx"):
+    from unstructured.partition.doc import partition_doc
+    from unstructured.partition.docx import partition_docx
+
+
+if dependency_exists("docx") and dependency_exists("pypandoc"):
+    from unstructured.partition.odt import partition_odt
+
+
+if dependency_exists("pypandoc"):
+    from unstructured.partition.epub import partition_epub
+    from unstructured.partition.org import partition_org
+    from unstructured.partition.rst import partition_rst
+    from unstructured.partition.rtf import partition_rtf
+
+
+if dependency_exists("markdown"):
+    from unstructured.partition.md import partition_md
+
+
+if dependency_exists("msg_parser"):
+    from unstructured.partition.msg import partition_msg
+
+
+pdf_imports = ["pdf2image", "pdfminer", "PIL"]
+if all(dependency_exists(dep) for dep in pdf_imports):
+    from unstructured.partition.pdf import partition_pdf
+
+
+if dependency_exists("unstructured_inference"):
+    from unstructured.partition.image import partition_image
+
+
+if dependency_exists("pptx"):
+    from unstructured.partition.ppt import partition_ppt
+    from unstructured.partition.pptx import partition_pptx
+
+
+if dependency_exists("pandas") and dependency_exists("openpyxl"):
+    from unstructured.partition.xlsx import partition_xlsx
 
 
 def partition(
@@ -46,6 +78,7 @@ def partition(
     encoding: Optional[str] = None,
     paragraph_grouper: Optional[Callable[[str], str]] = None,
     headers: Dict[str, str] = {},
+    skip_infer_table_types: List[str] = ["pdf", "jpg", "png"],
     ssl_verify: bool = True,
     ocr_languages: str = "eng",
     pdf_infer_table_structure: bool = False,
@@ -81,6 +114,8 @@ def partition(
         The encoding method used to decode the text input. If None, utf-8 will be used.
     headers
         The headers to be used in conjunction with the HTTP request if URL is set.
+    skip_infer_table_types
+        The document types that you want to skip table extraction with.
     ssl_verify
         If the URL parameter is set, determines whether or not partition uses SSL verification
         in the HTTP request.
@@ -121,6 +156,15 @@ def partition(
 
     if file is not None:
         file.seek(0)
+
+    infer_table_structure = decide_table_extraction(
+        filetype,
+        skip_infer_table_types,
+        pdf_infer_table_structure,
+    )
+
+    if file is not None and file_filename is not None:
+        kwargs.setdefault("metadata_filename", file_filename)
 
     if filetype == FileType.DOC:
         elements = partition_doc(filename=filename, file=file, **kwargs)
@@ -182,7 +226,7 @@ def partition(
             file=file,  # type: ignore
             url=None,
             include_page_breaks=include_page_breaks,
-            infer_table_structure=pdf_infer_table_structure,
+            infer_table_structure=infer_table_structure,
             strategy=strategy,
             ocr_languages=ocr_languages,
             **kwargs,
@@ -193,6 +237,7 @@ def partition(
             file=file,  # type: ignore
             url=None,
             include_page_breaks=include_page_breaks,
+            infer_table_structure=infer_table_structure,
             strategy=strategy,
             ocr_languages=ocr_languages,
             **kwargs,
@@ -227,6 +272,11 @@ def partition(
             **kwargs,
         )
     elif filetype == FileType.JSON:
+        if not is_json_processable(filename=filename, file=file):
+            raise ValueError(
+                "Detected a JSON file that does not conform to the Unstructured schema. "
+                "partition_json currently only processes serialized Unstructured output.",
+            )
         elements = partition_json(filename=filename, file=file, **kwargs)
     elif (filetype == FileType.XLSX) or (filetype == FileType.XLS):
         elements = partition_xlsx(filename=filename, file=file, **kwargs)
@@ -268,3 +318,22 @@ def file_and_type_from_url(
 
     filetype = detect_filetype(file=file, content_type=content_type, encoding=encoding)
     return file, filetype
+
+
+def decide_table_extraction(
+    filetype: Optional[FileType],
+    skip_infer_table_types: List[str],
+    pdf_infer_table_structure: bool,
+) -> bool:
+    doc_type = filetype.name.lower() if filetype else None
+
+    if doc_type == "pdf":
+        if doc_type in skip_infer_table_types and pdf_infer_table_structure:
+            logger.warning(
+                f"Conflict between variables skip_infer_table_types: {skip_infer_table_types}"
+                f"and pdf_infer_table_structure: {pdf_infer_table_structure},"
+                "please reset skip_infer_table_types to turn on table extraction for PDFs.",
+            )
+        return not (doc_type in skip_infer_table_types) or pdf_infer_table_structure
+
+    return not (doc_type in skip_infer_table_types)

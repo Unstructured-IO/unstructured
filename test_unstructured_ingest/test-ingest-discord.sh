@@ -14,12 +14,14 @@ if [ -z "$DISCORD_TOKEN" ]; then
 fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-   --discord-channels 1099442333440802930,1099601456321003600 \
-   --discord-token "$DISCORD_TOKEN" \
+    discord \
    --download-dir "$DOWNLOAD_DIR" \
-   --metadata-exclude coordinates,file_directory,metadata.data_source.date_processed \
+   --metadata-exclude coordinates,file_directory,metadata.data_source.date_processed,metadata.last_modified \
    --preserve-downloads \
    --reprocess \
-    --structured-output-dir "$OUTPUT_DIR"
+    --structured-output-dir "$OUTPUT_DIR" \
+    --verbose \
+    --channels 1099442333440802930,1099601456321003600 \
+    --token "$DISCORD_TOKEN" \
 
 sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
