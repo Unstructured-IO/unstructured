@@ -61,8 +61,8 @@ install-csv:
 install-docx:
 	python3 -m pip install -r requirements/extra-docx.txt
 
-.PHONY: install-ebooklib
-install-ebooklib:
+.PHONY: install-epub
+install-epub:
 	python3 -m pip install -r requirements/extra-epub.txt
 
 .PHONY: install-odt
@@ -94,7 +94,7 @@ install-xlsx:
 	python3 -m pip install -r requirements/extra-xlsx.txt
 
 .PHONY: install-all-docs
-install-all-docs: install-base install-csv install-docx install-ebooklib install-odt install-pypandoc install-markdown install-msg install-pdf-image install-pptx install-xlsx
+install-all-docs: install-base install-csv install-docx install-epub install-odt install-pypandoc install-markdown install-msg install-pdf-image install-pptx install-xlsx
 
 .PHONY: install-ingest-google-drive
 install-ingest-google-drive:
