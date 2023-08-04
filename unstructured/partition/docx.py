@@ -5,8 +5,8 @@ from typing import IO, BinaryIO, List, Optional, Tuple, Union, cast
 
 import docx
 from docx.oxml.shared import qn
-from docx.text.paragraph import Paragraph
 from docx.table import Table as DocxTable
+from docx.text.paragraph import Paragraph
 from docx.text.run import Run
 
 from unstructured.cleaners.core import clean_bullets
@@ -24,7 +24,6 @@ from unstructured.documents.elements import (
     Title,
     process_metadata,
 )
-from unstructured.documents.html import HTMLDocument
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import (
     convert_ms_office_table_to_text,

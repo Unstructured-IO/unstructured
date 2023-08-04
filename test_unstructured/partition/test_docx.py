@@ -17,7 +17,8 @@ from unstructured.documents.elements import (
 from unstructured.partition.doc import partition_doc
 from unstructured.partition.docx import (
     _get_emphasized_texts_from_paragraph,
-    partition_docx, _get_emphasized_texts_from_table,
+    _get_emphasized_texts_from_table,
+    partition_docx,
 )
 
 
