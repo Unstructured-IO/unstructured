@@ -211,4 +211,3 @@ def test_partition_msg_custom_metadata_date(
     )
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
-
