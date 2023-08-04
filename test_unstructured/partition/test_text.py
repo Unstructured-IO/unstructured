@@ -240,7 +240,7 @@ def test_partition_text_splits_long_text(filename="example-docs/norwich-city.txt
 
 def test_partition_text_splits_long_text_max_partition(filename="example-docs/norwich-city.txt"):
     elements = partition_text(filename=filename)
-    elements_max_part = partition_text(filename=filename, max_partition=40)
+    elements_max_part = partition_text(filename=filename, max_partition=500)
     assert len(elements) < len(elements_max_part)
     for element in elements_max_part:
         assert len(element.text) <= 500
