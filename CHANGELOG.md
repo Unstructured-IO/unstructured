@@ -111,10 +111,6 @@
 * Removed old error message that's superseded by `requires_dependencies`.
 * Removes using `hi_res` as the default strategy value for `partition_via_api` and `partition_multiple_via_api`
 
-### Enhancements
-
-* set the file's current position to the beginning after reading the file in `convert_to_bytes`
-* Add slide notes to pptx
 ## 0.8.1
 
 ### Enhancements
