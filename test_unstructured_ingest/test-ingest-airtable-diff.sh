@@ -11,7 +11,10 @@ OUTPUT_FOLDER_NAME=airtable-diff
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
-if [ -z "$AIRTABLE_PERSONAL_ACCESS_TOKEN" ] || [ -z "$VARIED_DATA_BASE_ID" ] || [ -z "$VARIED_DATA_BASE_ID_2" ]; then
+VARIED_DATA_BASE_ID="app5YQxSfp220fWtm"
+VARIED_DATA_BASE_ID_2="appJ43QmP8I17zu88"
+
+if [ -z "$AIRTABLE_PERSONAL_ACCESS_TOKEN" ]; then
    echo "Skipping Airtable ingest test because the AIRTABLE_PERSONAL_ACCESS_TOKEN is not set."
    exit 0
 fi
