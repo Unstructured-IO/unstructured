@@ -374,8 +374,11 @@ def _get_emphasized_texts_from_paragraph(paragraph: Paragraph) -> List[dict]:
     """Get emphasized texts with bold/italic formatting from a paragraph in MS Word"""
     emphasized_texts = []
     for run in paragraph.runs:
+        text = run.text.strip() if run.text else None
+        if not text:
+            continue
         if run.bold:
-            emphasized_texts.append({"text": run.text, "tag": "b"})
+            emphasized_texts.append({"text": text, "tag": "b"})
         if run.italic:
-            emphasized_texts.append({"text": run.text, "tag": "i"})
+            emphasized_texts.append({"text": text, "tag": "i"})
     return emphasized_texts

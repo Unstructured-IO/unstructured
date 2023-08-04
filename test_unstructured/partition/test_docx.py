@@ -294,18 +294,23 @@ def test_get_emphasized_texts_from_paragraph(
     filename="example-docs/fake-doc-emphasized-text.docx",
 ):
     expected = [
-        [
-            {"text": "Dolor", "tag": "b"},
-            {"text": "sit", "tag": "i"},
-            {"text": "amet", "tag": "b"},
-            {"text": "amet", "tag": "i"},
-        ],
-        [],
+        {"text": "bold", "tag": "b"},
+        {"text": "italic", "tag": "i"},
+        {"text": "bold-italic", "tag": "b"},
+        {"text": "bold-italic", "tag": "i"},
     ]
     document = docx.Document(filename)
-    emphasized_texts = [
-        _get_emphasized_texts_from_paragraph(paragraph)
-        for paragraph in document.paragraphs
-        if paragraph.text.strip()
-    ]
+    paragraph = document.paragraphs[1]
+    emphasized_texts = _get_emphasized_texts_from_paragraph(paragraph)
+    assert paragraph.text == "I am a bold italic bold-italic text."
     assert emphasized_texts == expected
+
+    paragraph = document.paragraphs[2]
+    emphasized_texts = _get_emphasized_texts_from_paragraph(paragraph)
+    assert paragraph.text == ""
+    assert emphasized_texts == []
+
+    paragraph = document.paragraphs[3]
+    emphasized_texts = _get_emphasized_texts_from_paragraph(paragraph)
+    assert paragraph.text == "I am a normal text."
+    assert emphasized_texts == []
