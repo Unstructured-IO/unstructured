@@ -1,7 +1,8 @@
-## 0.9.1-dev7
+## 0.9.1-dev8
 
 ### Enhancements
 
+* Update table extraction section in API documentation to sync with change in Prod API
 * Update `partition_doc` and `partition_docx` to track emphasized texts in the output
 * Adds post processing function `filter_element_types`
 * Set the default strategy for partitioning images to `hi_res`
