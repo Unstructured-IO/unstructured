@@ -124,7 +124,7 @@ class ElementMetadata:
     data_source: Optional[DataSourceMetadata] = None
     filename: Optional[str] = None
     file_directory: Optional[str] = None
-    date: Optional[str] = None
+    last_modified: Optional[str] = None
     filetype: Optional[str] = None
     attached_to_filename: Optional[str] = None
 
@@ -145,6 +145,9 @@ class ElementMetadata:
 
     # MSFT Word specific metadata fields
     header_footer_type: Optional[str] = None
+
+    # Formatting metadata fields
+    emphasized_texts: Optional[List[dict]] = None
 
     # Text format metadata fields
     text_as_html: Optional[str] = None
@@ -186,11 +189,11 @@ class ElementMetadata:
                 setattr(self, k, getattr(other, k))
         return self
 
-    def get_date(self) -> Optional[datetime.datetime]:
+    def get_last_modified(self) -> Optional[datetime.datetime]:
         """Converts the date field to a datetime object."""
         dt = None
-        if self.date is not None:
-            dt = datetime.datetime.fromisoformat(self.date)
+        if self.last_modified is not None:
+            dt = datetime.datetime.fromisoformat(self.last_modified)
         return dt
 
 
@@ -454,6 +457,13 @@ class Address(Text):
     pass
 
 
+class EmailAddress(Text):
+    """A text element for capturing addresses"""
+
+    category = "EmailAddress"
+    pass
+
+
 class Image(Text):
     """A text element for capturing image metadata."""
 
@@ -502,6 +512,7 @@ TYPE_TO_TEXT_ELEMENT_MAP: Dict[str, Any] = {
     "BulletedText": ListItem,
     "Title": Title,
     "Address": Address,
+    "EmailAddress": EmailAddress,
     "Image": Image,
     "PageBreak": PageBreak,
     "Table": Table,

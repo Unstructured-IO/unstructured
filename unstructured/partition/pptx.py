@@ -6,6 +6,7 @@ import pptx
 from unstructured.documents.elements import (
     Element,
     ElementMetadata,
+    EmailAddress,
     ListItem,
     NarrativeText,
     PageBreak,
@@ -23,6 +24,7 @@ from unstructured.partition.common import (
     spooled_to_bytes_io_if_needed,
 )
 from unstructured.partition.text_type import (
+    is_email_address,
     is_possible_narrative_text,
     is_possible_title,
 )
@@ -38,7 +40,7 @@ def partition_pptx(
     include_page_breaks: bool = True,
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
-    metadata_date: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
     include_slide_notes: bool = False,
     **kwargs,
 ) -> List[Element]:
@@ -56,7 +58,7 @@ def partition_pptx(
         The filename to use for the metadata. Relevant because partition_ppt converts the
         document .pptx before partition. We want the original source filename in the
         metadata.
-    metadata_date
+    metadata_last_modified
         The last modified date for the document.
 
 
@@ -85,7 +87,7 @@ def partition_pptx(
     num_slides = len(presentation.slides)
     for i, slide in enumerate(presentation.slides):
         metadata = ElementMetadata.from_dict(metadata.to_dict())
-        metadata.date = metadata_date or last_modification_date
+        metadata.last_modified = metadata_last_modified or last_modification_date
         metadata.page_number = i + 1
         if include_slide_notes and slide.has_notes_slide is True:
             notes_slide = slide.notes_slide
@@ -105,7 +107,7 @@ def partition_pptx(
                         filename=metadata_filename or filename,
                         text_as_html=html_table,
                         page_number=metadata.page_number,
-                        date=metadata_date or last_modification_date,
+                        last_modified=metadata_last_modified or last_modification_date,
                     )
                     elements.append(Table(text=text_table, metadata=metadata))
                 continue
@@ -121,6 +123,8 @@ def partition_pptx(
                     continue
                 if _is_bulleted_paragraph(paragraph):
                     elements.append(ListItem(text=text, metadata=metadata))
+                elif is_email_address(text):
+                    elements.append(EmailAddress(text=text))
                 elif is_possible_narrative_text(text):
                     elements.append(NarrativeText(text=text, metadata=metadata))
                 elif is_possible_title(text):

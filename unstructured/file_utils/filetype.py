@@ -526,13 +526,13 @@ def document_to_element_list(
             if isinstance(element, List):
                 for el in element:
                     if last_modification_date:
-                        el.metadata.date = last_modification_date
+                        el.metadata.last_modified = last_modification_date
                     el.metadata.page_number = i + 1
                 page_elements.extend(element)
                 continue
             else:
                 if last_modification_date:
-                    element.metadata.date = last_modification_date
+                    element.metadata.last_modified = last_modification_date
                 element.metadata.text_as_html = (
                     layout_element.text_as_html if hasattr(layout_element, "text_as_html") else None
                 )

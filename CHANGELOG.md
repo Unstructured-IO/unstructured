@@ -1,3 +1,46 @@
+## 0.9.1-dev6
+
+### Enhancements
+
+* Adds post processing function `filter_element_types`
+* Set the default strategy for partitioning images to `hi_res`
+* Add page break parameter section in API documentation to sync with change in Prod API
+* Update `XMLDocument._read_xml` to create `<p>` tag element for the text enclosed in the `<pre>` tag
+* Track emphasized texts in `partition_html` output
+* Add parameter `include_tail_text` to `_construct_text` to enable (skip) tail text inclusion
+
+### Features
+
+### Fixes
+
+* Fixed emoji bug in `partition_xlsx`.
+* Pass file_filename metadata when partitioning file object
+* Skip ingest test on missing Slack token
+* Add Dropbox variables to CI environments
+* Adds new element type `EmailAddress` for recognising email address in the  text
+
+* Simplifies `min_partition` logic; makes partitions falling below the `min_partition`
+  less likely.
+
+## 0.9.0
+
+### Enhancements
+
+* Dependencies are now split by document type, creating a slimmer base installation.
+
+## 0.8.8
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* Rename "date" field to "last_modified"
+* Adds Box connector
+
+### Fixes
+
 ## 0.8.7
 
 ### Enhancements
@@ -28,6 +71,11 @@
 * Adds optional Unstructured API unit tests in CI
 * Tracks last modified date for all document types.
 * Add auto_paragraph_grouper to detect new-line and blank-line new paragraph for .txt files.
+* refactor the ingest cli to better support expanding supported connectors
+
+## 0.8.3
+
+### Enhancements
 
 ### Features
 

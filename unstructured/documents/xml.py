@@ -89,7 +89,7 @@ class XMLDocument(Document):
                         text_content.append(element.text)
 
                     for text in text_content:
-                        element = etree.Element("span")
+                        element = etree.Element("p")
                         element.text = str(element_from_text(text=text))
                         document_tree.append(element)
 
@@ -134,4 +134,5 @@ class XMLDocument(Document):
         **kwargs,
     ):
         _, content = read_txt_file(filename=filename, encoding=encoding)
+
         return cls.from_string(content, parser=parser, stylesheet=stylesheet, **kwargs)

@@ -10,7 +10,9 @@ export OMP_THREAD_LIMIT=1
 
 ./test_unstructured_ingest/test-ingest-s3.sh
 ./test_unstructured_ingest/test-ingest-azure.sh
+./test_unstructured_ingest/test-ingest-box.sh
 ./test_unstructured_ingest/test-ingest-discord.sh
+./test_unstructured_ingest/test-ingest-dropbox.sh
 ./test_unstructured_ingest/test-ingest-github.sh
 ./test_unstructured_ingest/test-ingest-gitlab.sh
 ./test_unstructured_ingest/test-ingest-google-drive.sh

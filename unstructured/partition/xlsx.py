@@ -1,7 +1,6 @@
 from tempfile import SpooledTemporaryFile
 from typing import IO, BinaryIO, List, Optional, Union, cast
 
-import lxml.html
 import pandas as pd
 
 from unstructured.documents.elements import (
@@ -17,6 +16,12 @@ from unstructured.partition.common import (
     get_last_modified_date_from_file,
     spooled_to_bytes_io_if_needed,
 )
+from unstructured.utils import dependency_exists
+
+if dependency_exists("bs4"):
+    from lxml.html.soupparser import fromstring as html_string_parser
+else:
+    from lxml.html import document_fromstring as html_string_parser
 
 
 @process_metadata()
@@ -26,7 +31,7 @@ def partition_xlsx(
     file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
-    metadata_date: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft Excel Documents in .xlsx format into its document elements.
@@ -39,7 +44,7 @@ def partition_xlsx(
         A file-like object using "rb" mode --> open(filename, "rb").
     include_metadata
         Determines whether or not metadata is included in the output.
-    metadata_date
+    metadata_last_modified
         The day of the last modification
     """
     exactly_one(filename=filename, file=file)
@@ -60,7 +65,7 @@ def partition_xlsx(
     for sheet_name, table in sheets.items():
         page_number += 1
         html_text = table.to_html(index=False, header=False, na_rep="")
-        text = lxml.html.document_fromstring(html_text).text_content()
+        text = html_string_parser(html_text).text_content()
 
         if include_metadata:
             metadata = ElementMetadata(
@@ -68,7 +73,7 @@ def partition_xlsx(
                 page_name=sheet_name,
                 page_number=page_number,
                 filename=metadata_filename or filename,
-                date=metadata_date or last_modification_date,
+                last_modified=metadata_last_modified or last_modification_date,
             )
         else:
             metadata = ElementMetadata()
