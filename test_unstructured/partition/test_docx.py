@@ -14,7 +14,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.partition.common import convert_ms_office_table_to_text
+from unstructured.partition.doc import partition_doc
 from unstructured.partition.docx import (
     _get_emphasized_texts_from_paragraph,
     partition_docx, _get_emphasized_texts_from_table,
@@ -330,3 +330,33 @@ def test_get_emphasized_texts_from_table(
     table = document.tables[0]
     emphasized_texts = _get_emphasized_texts_from_table(table)
     assert emphasized_texts == expected
+
+
+@pytest.mark.parametrize(
+    ("filename", "partition_func"),
+    [
+        ("fake-doc-emphasized-text.docx", partition_docx),
+        ("fake-doc-emphasized-text.doc", partition_doc),
+    ],
+)
+def test_partition_docx_grabs_emphasized_texts(filename, partition_func):
+    elements = partition_func(filename=f"example-docs/{filename}")
+
+    assert isinstance(elements[0], Table)
+    assert elements[0].metadata.emphasized_texts == [
+        {"text": "bold", "tag": "b"},
+        {"text": "italic", "tag": "i"},
+        {"text": "bold-italic", "tag": "b"},
+        {"text": "bold-italic", "tag": "i"},
+    ]
+
+    assert elements[1] == NarrativeText("I am a bold italic bold-italic text.")
+    assert elements[1].metadata.emphasized_texts == [
+        {"text": "bold", "tag": "b"},
+        {"text": "italic", "tag": "i"},
+        {"text": "bold-italic", "tag": "b"},
+        {"text": "bold-italic", "tag": "i"},
+    ]
+
+    assert elements[2] == NarrativeText("I am a normal text.")
+    assert elements[2].metadata.emphasized_texts is None
