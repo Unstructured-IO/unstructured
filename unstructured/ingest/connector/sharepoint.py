@@ -47,12 +47,14 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     def __post_init__(self):
         self.ext = "".join(Path(self.file.name).suffixes) if not self.meta else ".html"
+        self.ext = self.ext if self.ext != ".aspx" else ".html"
+
         if not self.ext:
             raise ValueError("Unsupported file without extension.")
 
         if self.ext not in EXT_TO_FILETYPE:
             raise ValueError(
-                f"Extension not supported. "
+                f"Extension {self.ext} not supported. "
                 f"Value MUST be one of {', '.join([k for k in EXT_TO_FILETYPE if k is not None])}.",
             )
         self._set_download_paths()
@@ -234,6 +236,8 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
             if not recursive:
                 return files
             for f in objects.folders:
+                if "/Forms" in f.serverRelativeUrl:
+                    continue
                 files += self._list_files(f, recursive)
             return files
         except ClientRequestException as e:
