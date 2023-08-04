@@ -2,6 +2,7 @@ from test_unstructured.partition.test_constants import EXPECTED_TABLE, EXPECTED_
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import Table
 from unstructured.partition.xlsx import partition_xlsx
+from unstructured.utils import dependency_exists
 
 EXPECTED_FILETYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
@@ -20,6 +21,15 @@ def test_partition_xlsx_from_filename(filename="example-docs/stanley-cups.xlsx")
     assert elements[0].metadata.filetype == EXPECTED_FILETYPE
     assert elements[0].metadata.page_name == EXCEPTED_PAGE_NAME
     assert elements[0].metadata.filename == "stanley-cups.xlsx"
+
+
+def test_partition_xlsx_from_filename_with_emoji(filename="example-docs/emoji.xlsx"):
+    # Make sure we have the beautifulsoup4 dependency to use the lxml.html.soupparser
+    if dependency_exists("bs4"):
+        elements = partition_xlsx(filename=filename)
+        assert all(isinstance(element, Table) for element in elements)
+        assert len(elements) == 1
+        assert clean_extra_whitespace(elements[0].text) == "🤠😅"
 
 
 def test_partition_xlsx_from_filename_with_metadata_filename(
@@ -99,7 +109,7 @@ def test_partition_xlsx_metadata_date(
         filename=filename,
     )
 
-    assert elements[0].metadata.date == mocked_last_modification_date
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
 
 
 def test_partition_xlsx_with_custom_metadata_date(
@@ -116,10 +126,10 @@ def test_partition_xlsx_with_custom_metadata_date(
 
     elements = partition_xlsx(
         filename=filename,
-        metadata_date=expected_last_modification_date,
+        metadata_last_modified=expected_last_modification_date,
     )
 
-    assert elements[0].metadata.date == expected_last_modification_date
+    assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
 def test_partition_xlsx_from_file_metadata_date(
@@ -138,7 +148,7 @@ def test_partition_xlsx_from_file_metadata_date(
             file=f,
         )
 
-    assert elements[0].metadata.date == mocked_last_modification_date
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
 
 
 def test_partition_xlsx_from_file_with_custom_metadata_date(
@@ -154,6 +164,6 @@ def test_partition_xlsx_from_file_with_custom_metadata_date(
     )
 
     with open(filename, "rb") as f:
-        elements = partition_xlsx(file=f, metadata_date=expected_last_modification_date)
+        elements = partition_xlsx(file=f, metadata_last_modified=expected_last_modification_date)
 
-    assert elements[0].metadata.date == expected_last_modification_date
+    assert elements[0].metadata.last_modified == expected_last_modification_date

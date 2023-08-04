@@ -15,7 +15,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Win",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Win"
   },
@@ -55,7 +61,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Needs input",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Needs input"
   },
@@ -95,7 +107,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Focus",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Focus"
   },
@@ -125,7 +143,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Notes",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Notes"
   },
@@ -135,7 +159,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Important Links",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Important Links"
   }

@@ -60,7 +60,7 @@ def partition_xml(
     encoding: Optional[str] = None,
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
-    metadata_date: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions an XML document into its document elements.
@@ -86,7 +86,7 @@ def partition_xml(
         no maximum is applied.
     min_partition
         The minimum number of characters to include in a partition.
-    metadata_date
+    metadata_last_modified
         The day of the last modification
     """
     exactly_one(filename=filename, file=file)
@@ -116,7 +116,7 @@ def partition_xml(
         include_metadata=include_metadata,
         max_partition=max_partition,
         min_partition=min_partition,
-        metadata_date=metadata_date or last_modification_date,
+        metadata_last_modified=metadata_last_modified or last_modification_date,
     )
 
     return elements

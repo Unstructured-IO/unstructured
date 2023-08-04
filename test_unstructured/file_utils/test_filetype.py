@@ -478,4 +478,4 @@ def test_document_to_element_list_omits_coord_system_when_coord_points_absent():
 def test_get_page_image_metadata_and_coordinate_system():
     doc = MockDocumentLayout()
     metadata = _get_page_image_metadata(doc.pages[0])
-    assert type(metadata) == dict
+    assert isinstance(metadata, dict)

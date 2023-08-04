@@ -548,7 +548,7 @@ def test_partition_pdf_with_auto_strategy_metadata_date(
         filename=filename,
     )
 
-    assert elements[0].metadata.date == mocked_last_modification_date
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
 
 
 def test_partition_pdf_with_auto_strategy_custom_metadata_date(
@@ -565,10 +565,10 @@ def test_partition_pdf_with_auto_strategy_custom_metadata_date(
 
     elements = pdf.partition_pdf(
         filename=filename,
-        metadata_date=expected_last_modification_date,
+        metadata_last_modified=expected_last_modification_date,
     )
 
-    assert elements[0].metadata.date == expected_last_modification_date
+    assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
 def test_partition_pdf_with_orc_only_strategy_metadata_date(
@@ -584,7 +584,7 @@ def test_partition_pdf_with_orc_only_strategy_metadata_date(
 
     elements = pdf.partition_pdf(filename=filename, strategy="ocr_only")
 
-    assert elements[0].metadata.date == mocked_last_modification_date
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
 
 
 def test_partition_pdf_with_ocr_only_strategy_custom_metadata_date(
@@ -601,11 +601,11 @@ def test_partition_pdf_with_ocr_only_strategy_custom_metadata_date(
 
     elements = pdf.partition_pdf(
         filename=filename,
-        metadata_date=expected_last_modification_date,
+        metadata_last_modified=expected_last_modification_date,
         strategy="ocr_only",
     )
 
-    assert elements[0].metadata.date == expected_last_modification_date
+    assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
 def test_partition_pdf_with_hi_res_strategy_metadata_date(
@@ -621,7 +621,7 @@ def test_partition_pdf_with_hi_res_strategy_metadata_date(
 
     elements = pdf.partition_pdf(filename=filename, strategy="hi_res")
 
-    assert elements[0].metadata.date == mocked_last_modification_date
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
 
 
 def test_partition_pdf_with_hi_res_strategy_custom_metadata_date(
@@ -638,11 +638,11 @@ def test_partition_pdf_with_hi_res_strategy_custom_metadata_date(
 
     elements = pdf.partition_pdf(
         filename=filename,
-        metadata_date=expected_last_modification_date,
+        metadata_last_modified=expected_last_modification_date,
         strategy="hi_res",
     )
 
-    assert elements[0].metadata.date == expected_last_modification_date
+    assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
 def test_partition_pdf_from_file_with_auto_strategy_metadata_date(
@@ -661,7 +661,7 @@ def test_partition_pdf_from_file_with_auto_strategy_metadata_date(
             file=f,
         )
 
-    assert elements[0].metadata.date == mocked_last_modification_date
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
 
 
 def test_partition_pdf_from_file_with_auto_strategy_custom_metadata_date(
@@ -679,10 +679,10 @@ def test_partition_pdf_from_file_with_auto_strategy_custom_metadata_date(
     with open(filename, "rb") as f:
         elements = pdf.partition_pdf(
             file=f,
-            metadata_date=expected_last_modification_date,
+            metadata_last_modified=expected_last_modification_date,
         )
 
-    assert elements[0].metadata.date == expected_last_modification_date
+    assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
 def test_partition_pdf_from_file_with_ocr_only_strategy_metadata_date(
@@ -699,7 +699,7 @@ def test_partition_pdf_from_file_with_ocr_only_strategy_metadata_date(
     with open(filename, "rb") as f:
         elements = pdf.partition_pdf(file=f, strategy="ocr_only")
 
-    assert elements[0].metadata.date == mocked_last_modification_date
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
 
 
 def test_partition_pdf_from_file_with_ocr_only_strategy_custom_metadata_date(
@@ -717,11 +717,11 @@ def test_partition_pdf_from_file_with_ocr_only_strategy_custom_metadata_date(
     with open(filename, "rb") as f:
         elements = pdf.partition_pdf(
             file=f,
-            metadata_date=expected_last_modification_date,
+            metadata_last_modified=expected_last_modification_date,
             strategy="ocr_only",
         )
 
-    assert elements[0].metadata.date == expected_last_modification_date
+    assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
 def test_partition_pdf_from_file_with_hi_res_strategy_metadata_date(
@@ -738,7 +738,7 @@ def test_partition_pdf_from_file_with_hi_res_strategy_metadata_date(
     with open(filename, "rb") as f:
         elements = pdf.partition_pdf(file=f, strategy="hi_res")
 
-    assert elements[0].metadata.date == mocked_last_modification_date
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
 
 
 def test_partition_pdf_from_file_with_hi_res_strategy_custom_metadata_date(
@@ -756,8 +756,8 @@ def test_partition_pdf_from_file_with_hi_res_strategy_custom_metadata_date(
     with open(filename, "rb") as f:
         elements = pdf.partition_pdf(
             file=f,
-            metadata_date=expected_last_modification_date,
+            metadata_last_modified=expected_last_modification_date,
             strategy="hi_res",
         )
 
-    assert elements[0].metadata.date == expected_last_modification_date
+    assert elements[0].metadata.last_modified == expected_last_modification_date

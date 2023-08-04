@@ -7,8 +7,9 @@ You can then use any connector with the ``unstructured-ingest`` command in the t
 .. code:: shell
 
   unstructured-ingest \
+    s3 \
     --remote-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
-    --s3-anonymous \
+    --anonymous \
     --structured-output-dir s3-small-batch-output \
     --num-processes 2
 
@@ -26,6 +27,13 @@ NOTE: Keep in mind that you will need to have all the appropriate extras and dep
 You can batch process documents stored in your Azure Blob Container using the `Azure Connector <https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/connector/azure.py>`_. You can find an example of how to use it `here <https://github.com/Unstructured-IO/unstructured/blob/f5541c7b0b1e2fc47ec88da5e02080d60e1441e2/examples/ingest/azure/ingest.sh>`_.
 
 To install all dependencies for this connector run: ``pip install "unstructured[azure]"``
+
+``Box Connector``
+----------------------
+You can batch process unstructured documents in your Box by using the `Box Connector <https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/connector/box.py>`_. You can find an example of how to use it `here <https://github.com/Unstructured-IO/unstructured/blob/f5541c7b0b1e2fc47ec88da5e02080d60e1441e2/examples/ingest/box/ingest.sh>`_.
+
+To install all dependencies for this connector run: ``pip install "unstructured[box]"``
+
 
 
 ``BioMed Connector``
