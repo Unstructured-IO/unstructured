@@ -76,7 +76,7 @@ class HTMLAddress(TagsMixin, Address):
 
 
 class HTMLEmailAddress(TagsMixin, EmailAddress):
-    """Address with tag information"""
+    """EmailAddress with tag information"""
 
     pass
 
@@ -315,12 +315,7 @@ def _text_to_element(
             emphasized_texts=emphasized_texts,
         )
     elif is_email_address(text):
-        return HTMLEmailAddress(
-            text=text,
-            tag=tag,
-            links=links,
-            emphasized_texts=emphasized_texts,
-        )
+        return HTMLEmailAddress(text=text, tag=tag, links=links, emphasized_texts=emphasized_texts)
 
     if len(text) < 2:
         return None
