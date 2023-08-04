@@ -11,7 +11,6 @@
 
 ### Features
 
-
 ### Fixes
 * Pass file_filename metadata when partitioning file object
 * Skip ingest test on missing Slack token
@@ -114,8 +113,8 @@
 
 ### Enhancements
 
-*   set the file's current position to the beginning after reading the file in `convert_to_bytes`
-*   Add slide notes to pptx
+* set the file's current position to the beginning after reading the file in `convert_to_bytes`
+* Add slide notes to pptx
 ## 0.8.1
 
 ### Enhancements
