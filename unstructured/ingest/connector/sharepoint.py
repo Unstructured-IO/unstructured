@@ -229,11 +229,11 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
         from office365.runtime.client_request_exception import ClientRequestException
 
         try:
-            items = folder.expand(["Files", "Folders"]).get().execute_query()
-            files = list(items.files)
+            objects = folder.expand(["Files", "Folders"]).get().execute_query()
+            files = list(objects.files)
             if not recursive:
                 return files
-            for f in items.itemss:
+            for f in objects.folders:
                 files += self._list_files(f, recursive)
             return files
         except ClientRequestException as e:
