@@ -13,6 +13,7 @@ from unstructured.documents.elements import (
     Address,
     Element,
     ElementMetadata,
+    EmailAddress,
     Footer,
     Header,
     ListItem,
@@ -33,6 +34,7 @@ from unstructured.partition.common import (
 )
 from unstructured.partition.text_type import (
     is_bulleted_text,
+    is_email_address,
     is_possible_narrative_text,
     is_possible_title,
     is_us_city_state_zip,
@@ -259,7 +261,8 @@ def _text_to_element(text: str, is_list=False) -> Optional[Text]:
 
     elif is_us_city_state_zip(text):
         return Address(text=text)
-
+    elif is_email_address(text):
+        return EmailAddress(text=text)
     if len(text) < 2:
         return None
     elif is_possible_narrative_text(text):
