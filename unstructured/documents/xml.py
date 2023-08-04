@@ -93,7 +93,6 @@ class XMLDocument(Document):
                         element.text = str(element_from_text(text=text))
                         document_tree.append(element)
 
-
             if self.stylesheet:
                 if isinstance(self.parser, etree.HTMLParser):
                     logger.warning(
