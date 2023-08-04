@@ -211,7 +211,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Testdoc2 Checklist Item 1",
+          "tag": "span"
+        }
+      ]
     },
     "text": "Testdoc2 Checklist Item 1"
   },
@@ -221,7 +227,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Testdoc2 Checklist Item 2 (checked)",
+          "tag": "span"
+        }
+      ]
     },
     "text": "Testdoc2 Checklist Item 2 (checked)"
   },
@@ -231,7 +243,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Testdoc2 Checklist Item 3",
+          "tag": "span"
+        }
+      ]
     },
     "text": "Testdoc2 Checklist Item 3"
   },
@@ -251,7 +269,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Testdoc2 bold text",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Testdoc2 bold text"
   },
@@ -261,7 +285,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Testdoc2 italic text",
+          "tag": "em"
+        }
+      ]
     },
     "text": "Testdoc2 italic text"
   },
@@ -321,7 +351,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Testdoc2 Table: Column 1 Row 0",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Testdoc2 Table: Column 1 Row 0"
   },
@@ -331,7 +367,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Testdoc2 Table: Column 2 Row 0",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Testdoc2 Table: Column 2 Row 0"
   },
@@ -341,7 +383,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Testdoc2 Table: Column 3 Row 0",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Testdoc2 Table: Column 3 Row 0"
   },
@@ -351,7 +399,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Testdoc2 Table: Column 1 Row 1",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Testdoc2 Table: Column 1 Row 1"
   },
@@ -361,7 +415,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Testdoc2 Table: Column 2 Row 1",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Testdoc2 Table: Column 2 Row 1"
   },
@@ -371,7 +431,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Testdoc2 Table: Column 3 Row 1",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Testdoc2 Table: Column 3 Row 1"
   },
@@ -381,7 +447,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Testdoc2 Table: Column 1 Row 2",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Testdoc2 Table: Column 1 Row 2"
   },
@@ -391,7 +463,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Testdoc2 Table: Column 2 Row 2",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Testdoc2 Table: Column 2 Row 2"
   },
@@ -401,7 +479,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Testdoc2 Table: Column 3 Row 2",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Testdoc2 Table: Column 3 Row 2"
   }
