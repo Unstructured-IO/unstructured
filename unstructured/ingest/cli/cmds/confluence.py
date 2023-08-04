@@ -66,7 +66,7 @@ def confluence(
             connector_config=connector_config,
             processor_config=processor_config,
             **options,
-        )
+        )  # type: ignore
     except Exception as e:
         logger.error(e, exc_info=True)
         raise click.ClickException(str(e)) from e

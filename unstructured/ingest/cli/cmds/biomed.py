@@ -59,7 +59,11 @@ def biomed(
         run_init_checks(**options)
         connector_config = map_to_standard_config(options)
         processor_config = map_to_processor_config(options)
-        biomed_fn(connector_config=connector_config, processor_config=processor_config, **options)
+        biomed_fn(
+            connector_config=connector_config,
+            processor_config=processor_config,
+            **options,
+        )  # type: ignore
     except Exception as e:
         logger.error(e, exc_info=True)
         raise click.ClickException(str(e)) from e

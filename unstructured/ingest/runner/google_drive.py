@@ -8,7 +8,7 @@ from unstructured.ingest.processor import process_documents
 from unstructured.ingest.runner.utils import update_download_dir_hash
 
 
-def gdrive(
+def google_drive(
     verbose: bool,
     connector_config: StandardConnectorConfig,
     processor_config: ProcessorConfigs,
