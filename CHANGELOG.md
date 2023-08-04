@@ -1,4 +1,4 @@
-## 0.9.1-dev6
+## 0.9.1-dev7
 
 ### Enhancements
 
@@ -8,6 +8,7 @@
 * Update `XMLDocument._read_xml` to create `<p>` tag element for the text enclosed in the `<pre>` tag
 * Track emphasized texts in `partition_html` output
 * Add parameter `include_tail_text` to `_construct_text` to enable (skip) tail text inclusion
+* Optimize how imports are handled for ingest cli modules
 
 ### Features
 
