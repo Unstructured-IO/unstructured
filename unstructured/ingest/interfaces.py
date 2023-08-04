@@ -19,6 +19,17 @@ from unstructured.staging.base import convert_to_dict
 
 
 @dataclass
+class BaseSessionHandler:
+    """Abstract definition on which to define shared resources for processing documents.
+    E.g., a shared session for making HTTP requests."""
+
+    @abstractmethod
+    def initialize(self):
+        """Initialize the session handler."""
+        pass
+
+
+@dataclass
 class ProcessorConfigs:
     """Common set of config required when running data connectors."""
 
