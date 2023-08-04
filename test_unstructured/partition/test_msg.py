@@ -141,6 +141,7 @@ def test_partition_msg_from_file_exclude_metadata():
 
 
 def test_partition_msg_can_process_attachments(
+    mocker,
     tmpdir,
     filename="example-docs/fake-email-attachment.msg",
 ):
@@ -148,6 +149,13 @@ def test_partition_msg_can_process_attachments(
     attachment_filename = os.path.join(
         tmpdir.dirname,
         ATTACH_EXPECTED_OUTPUT[0]["filename"],
+    )
+
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.text.get_last_modified_date",
+        return_value=mocked_last_modification_date,
     )
     attachment_elements = partition_text(
         filename=attachment_filename,
@@ -161,7 +169,7 @@ def test_partition_msg_can_process_attachments(
         filename=filename,
         attachment_partitioner=partition_text,
         process_attachments=True,
-        metadata_last_modified="2029-07-05T09:24:28",
+        metadata_last_modified=mocked_last_modification_date,
     )
 
     assert elements[0].text.startswith("Hello!")

@@ -459,6 +459,13 @@ class Address(Text):
     pass
 
 
+class EmailAddress(Text):
+    """A text element for capturing addresses"""
+
+    category = "EmailAddress"
+    pass
+
+
 class Image(Text):
     """A text element for capturing image metadata."""
 
@@ -507,6 +514,7 @@ TYPE_TO_TEXT_ELEMENT_MAP: Dict[str, Any] = {
     "BulletedText": ListItem,
     "Title": Title,
     "Address": Address,
+    "EmailAddress": EmailAddress,
     "Image": Image,
     "PageBreak": PageBreak,
     "Table": Table,

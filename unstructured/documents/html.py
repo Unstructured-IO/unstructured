@@ -16,6 +16,7 @@ from unstructured.documents.base import Page
 from unstructured.documents.elements import (
     Address,
     Element,
+    EmailAddress,
     Link,
     ListItem,
     NarrativeText,
@@ -26,6 +27,7 @@ from unstructured.documents.xml import VALID_PARSERS, XMLDocument
 from unstructured.logger import logger
 from unstructured.partition.text_type import (
     is_bulleted_text,
+    is_email_address,
     is_possible_narrative_text,
     is_possible_title,
     is_us_city_state_zip,
@@ -85,6 +87,14 @@ class HTMLAddress(HTMLBaseMixin, Address):
     def as_base_element(self):
         """Returns instance of Address"""
         return Address(**self.__dict__)
+
+
+class HTMLEmailAddress(HTMLBaseMixin, EmailAddress):
+    """EmailAddress with tag information"""
+
+    def as_base_element(self):
+        """Returns instance of Email"""
+        return EmailAddress(**self.__dict__)
 
 
 class HTMLTitle(HTMLBaseMixin, Title):
@@ -332,6 +342,8 @@ def _text_to_element(
             links=links,
             emphasized_texts=emphasized_texts,
         )
+    elif is_email_address(text):
+        return HTMLEmailAddress(text=text, tag=tag, links=links, emphasized_texts=emphasized_texts)
 
     if len(text) < 2:
         return None
@@ -561,7 +573,8 @@ def _find_articles(
 
 def html_to_base_element(element: Element) -> Element:
     """For HTML elements return instance of base class. For example, if element is instance of HTMLTitle
-    method will return instance of Title. For not HTML elements will just return the same element."""
+    method will return instance of Title. For not HTML elements will just return the same element.
+    """
     if isinstance(element, HTMLBaseMixin):
         return element.as_base_element()
     return element
