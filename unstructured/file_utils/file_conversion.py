@@ -1,11 +1,14 @@
 import tempfile
 from typing import IO, Optional
 
-import pypandoc
-
 from unstructured.partition.common import exactly_one
+from unstructured.utils import dependency_exists, requires_dependencies
+
+if dependency_exists("pypandoc"):
+    import pypandoc
 
 
+@requires_dependencies(["pypandoc"])
 def convert_file_to_text(filename: str, source_format: str, target_format: str) -> str:
     """Uses pandoc to convert the source document to a raw text string."""
     try:

@@ -21,7 +21,7 @@ def partition_doc(
     include_page_breaks: bool = True,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
-    metadata_date: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
     libre_office_filter: Optional[str] = "MS Word 2007 XML",
     **kwargs,
 ) -> List[Element]:
@@ -33,7 +33,7 @@ def partition_doc(
         A string defining the target filename path.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
-    metadata_date
+    metadata_last_modified
         The last modified date for the document.
     libre_office_filter
         The filter to use when coverting to .doc. The default is the
@@ -76,7 +76,7 @@ def partition_doc(
             metadata_filename=metadata_filename,
             include_page_breaks=include_page_breaks,
             include_metadata=include_metadata,
-            metadata_date=metadata_date or last_modification_date,
+            metadata_last_modified=metadata_last_modified or last_modification_date,
         )
         # remove tmp.name from filename if parsing file
         if file:

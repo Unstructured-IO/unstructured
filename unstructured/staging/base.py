@@ -3,8 +3,6 @@ import io
 import json
 from typing import Any, Dict, List, Optional
 
-import pandas as pd
-
 from unstructured.documents.elements import (
     TYPE_TO_TEXT_ELEMENT_MAP,
     CheckBox,
@@ -13,6 +11,10 @@ from unstructured.documents.elements import (
     NoID,
 )
 from unstructured.partition.common import exactly_one
+from unstructured.utils import dependency_exists, requires_dependencies
+
+if dependency_exists("pandas"):
+    import pandas as pd
 
 
 def _get_metadata_table_fieldnames():
@@ -161,7 +163,7 @@ def convert_to_isd_csv(elements: List[Element]) -> str:
 
         if row.get("sent_from"):
             row["sender"] = row.get("sent_from")
-            if type(row["sender"]) == list:
+            if isinstance(row["sender"], list):
                 row["sender"] = row["sender"][0]
 
     with io.StringIO() as buffer:
@@ -176,11 +178,14 @@ def convert_to_csv(elements: List[Element]) -> str:
     return convert_to_isd_csv(elements)
 
 
-def convert_to_dataframe(elements: List[Element], drop_empty_cols: bool = True) -> pd.DataFrame:
+@requires_dependencies(["pandas"])
+def convert_to_dataframe(elements: List[Element], drop_empty_cols: bool = True) -> "pd.DataFrame":
     """Converts document elements to a pandas DataFrame. The dataframe contains the
     following columns:
         text: the element text
         type: the text type (NarrativeText, Title, etc)
+
+    Output is pd.DataFrame
     """
     csv_string = convert_to_isd_csv(elements)
     csv_string_io = io.StringIO(csv_string)
@@ -188,3 +193,32 @@ def convert_to_dataframe(elements: List[Element], drop_empty_cols: bool = True) 
     if drop_empty_cols:
         df.dropna(axis=1, how="all", inplace=True)
     return df
+
+
+def filter_element_types(
+    elements: List[Element],
+    include_element_types: Optional[List[Element]] = None,
+    exclude_element_types: Optional[List[Element]] = None,
+) -> List[Element]:
+    """Filters document elements by element type"""
+    exactly_one(
+        include_element_types=include_element_types,
+        exclude_element_types=exclude_element_types,
+    )
+
+    filtered_elements: List[Element] = []
+    if include_element_types:
+        for element in elements:
+            if type(element) in include_element_types:
+                filtered_elements.append(element)
+
+        return filtered_elements
+
+    elif exclude_element_types:
+        for element in elements:
+            if type(element) not in exclude_element_types:
+                filtered_elements.append(element)
+
+        return filtered_elements
+
+    return elements
