@@ -30,20 +30,12 @@ class SimpleAirtableConfig(BaseConnectorConfig):
 
 @dataclass
 class AirtableFileMeta:
-    """Metadata specifying:"""
+    """Metadata specifying a table id, a base id which the table is stored in,
+    and an optional view id in case particular rows and fields are to be ingested"""
 
     base_id: str
     table_id: str
     view_id: Optional[str] = None
-
-
-# def parse_airtable_path():
-#     return
-
-# def parse_list_of_paths(paths_str, sep):
-#     paths = paths_str.split(sep)
-#     [parse_airtable_path(path) for path in paths]
-#     return
 
 
 @dataclass
@@ -68,7 +60,7 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @property
     def _output_filename(self):
-        """Create output file path based on output directory, ."""
+        """Create output file path based on output directory, base id, and table id"""
         output_file = f"{self.file_meta.table_id}.json"
         return Path(self.standard_config.output_dir) / self.file_meta.base_id / output_file
 
