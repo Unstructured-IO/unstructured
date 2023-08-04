@@ -12,10 +12,15 @@
 ### Features
 
 ### Fixes
+
+* Fixed emoji bug in `partition_xlsx`.
 * Pass file_filename metadata when partitioning file object
 * Skip ingest test on missing Slack token
 * Add Dropbox variables to CI environments
 * Adds new element type `EmailAddress` for recognising email address in the  text
+
+* Simplifies `min_partition` logic; makes partitions falling below the `min_partition`
+  less likely.
 
 ## 0.9.0
 
