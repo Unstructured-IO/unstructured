@@ -158,7 +158,7 @@ def auto_paragraph_grouper(
     text: str,
     line_split: re.Pattern = LINE_BREAK_RE,
     max_line_count: int = 2000,
-    threshold: float = 0.5,
+    threshold: float = 0.1,
 ) -> str:
     """
     Checks the ratio of new line (\n) over the total max_line_count
@@ -183,8 +183,10 @@ def auto_paragraph_grouper(
     # NOTE(klaijan) - for ratio < threshold, we pass to new-line grouper,
     # otherwise to blank-line grouper
     if ratio < threshold:
+        print("new line grouper")
         return new_line_grouper(text)
     else:
+        print("blank line grouper")
         return blank_line_grouper(text)
 
 
