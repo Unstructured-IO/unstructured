@@ -348,6 +348,8 @@ to disable SSL verification in the request.
   elements = partition_html(url="https://python.org/", ssl_verify=False)
 
 
+If you want to ignore content in ``<header>`` and ``<footer>`` tags, pass
+``skip_headers_and_footers=True`` into ``partition_html``.
 
 If you website contains news articles, it can be helpful to only grab content that appears in
 between the ``<article>`` tags, if the site uses that convention.

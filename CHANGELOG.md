@@ -1,7 +1,8 @@
-## 0.9.1-dev7
+## 0.9.1-dev8
 
 ### Enhancements
 
+* Enable `partition_html` to skip headers and footers with the `skip_headers_and_footers` flag.
 * Update `partition_doc` and `partition_docx` to track emphasized texts in the output
 * Adds post processing function `filter_element_types`
 * Set the default strategy for partitioning images to `hi_res`
