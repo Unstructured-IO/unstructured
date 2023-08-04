@@ -34,9 +34,46 @@ def load_requirements(file_list: Optional[Union[str, List[str]]] = None) -> List
         with open(file, encoding="utf-8") as f:
             requirements.extend(f.readlines())
     requirements = [
-        req for req in requirements if not req.startswith("#") and not req.startswith("-")
+        req
+        for req in requirements
+        if not req.startswith("#") and not req.startswith("-")
     ]
     return requirements
+
+
+csv_reqs = load_requirements("requirements/extra-csv.in")
+docx_reqs = load_requirements("requirements/extra-docx.in")
+epub_reqs = load_requirements("requirements/extra-pandoc.in")
+image_reqs = load_requirements("requirements/extra-pdf-image.in")
+markdown_reqs = load_requirements("requirements/extra-markdown.in")
+msg_reqs = load_requirements("requirements/extra-msg.in")
+odt_reqs = load_requirements("requirements/extra-odt.in")
+org_reqs = load_requirements("requirements/extra-pandoc.in")
+pdf_reqs = load_requirements("requirements/extra-pdf-image.in")
+pptx_reqs = load_requirements("requirements/extra-pptx.in")
+rtf_reqs = load_requirements("requirements/extra-pandoc.in")
+rst_reqs = load_requirements("requirements/extra-pandoc.in")
+tsv_reqs = load_requirements("requirements/extra-csv.in")
+xlsx_reqs = load_requirements("requirements/extra-xlsx.in")
+
+all_doc_reqs = list(
+    set(
+        csv_reqs
+        + docx_reqs
+        + epub_reqs
+        + image_reqs
+        + markdown_reqs
+        + msg_reqs
+        + odt_reqs
+        + org_reqs
+        + pdf_reqs
+        + pptx_reqs
+        + rtf_reqs
+        + rst_reqs
+        + tsv_reqs
+        + xlsx_reqs,
+    ),
+)
 
 
 setup(
@@ -71,8 +108,23 @@ setup(
     },
     install_requires=load_requirements(),
     extras_require={
-        "huggingface": load_requirements("requirements/huggingface.in"),
-        "local-inference": load_requirements("requirements/local-inference.in"),
+        # Document specific extra requirements
+        "all-docs": all_doc_reqs,
+        "csv": csv_reqs,
+        "docx": docx_reqs,
+        "epub": epub_reqs,
+        "image": image_reqs,
+        "md": markdown_reqs,
+        "msg": msg_reqs,
+        "odt": odt_reqs,
+        "org": org_reqs,
+        "pdf": pdf_reqs,
+        "pptx": pptx_reqs,
+        "rtf": rtf_reqs,
+        "rst": rst_reqs,
+        "tsv": tsv_reqs,
+        "xlsx": xlsx_reqs,
+        # Extra requirements for data connectors
         "s3": load_requirements("requirements/ingest-s3.in"),
         "azure": load_requirements("requirements/ingest-azure.in"),
         "discord": load_requirements("requirements/ingest-discord.in"),
@@ -89,6 +141,9 @@ setup(
         "onedrive": load_requirements("requirements/ingest-onedrive.in"),
         "outlook": load_requirements("requirements/ingest-outlook.in"),
         "confluence": load_requirements("requirements/ingest-confluence.in"),
+        # Legacy extra requirements
+        "huggingface": load_requirements("requirements/huggingface.in"),
+        "local-inference": all_doc_reqs,
     },
     package_dir={"unstructured": "unstructured"},
     package_data={"unstructured": ["nlp/*.txt"]},

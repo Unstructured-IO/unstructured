@@ -15,6 +15,7 @@ from unstructured.documents.base import Page
 from unstructured.documents.elements import (
     Address,
     Element,
+    EmailAddress,
     Link,
     ListItem,
     NarrativeText,
@@ -25,6 +26,7 @@ from unstructured.documents.xml import VALID_PARSERS, XMLDocument
 from unstructured.logger import logger
 from unstructured.partition.text_type import (
     is_bulleted_text,
+    is_email_address,
     is_possible_narrative_text,
     is_possible_title,
     is_us_city_state_zip,
@@ -48,6 +50,7 @@ class TagsMixin:
         tag: Optional[str] = None,
         ancestortags: Sequence[str] = (),
         links: Sequence[Link] = [],
+        emphasized_texts: Sequence[dict] = [],
         **kwargs,
     ):
         if tag is None:
@@ -56,6 +59,7 @@ class TagsMixin:
             self.tag = tag
         self.ancestortags = ancestortags
         self.links = links
+        self.emphasized_texts = emphasized_texts
         super().__init__(*args, **kwargs)
 
 
@@ -67,6 +71,12 @@ class HTMLText(TagsMixin, Text):
 
 class HTMLAddress(TagsMixin, Address):
     """Address with tag information."""
+
+    pass
+
+
+class HTMLEmailAddress(TagsMixin, EmailAddress):
+    """EmailAddress with tag information"""
 
     pass
 
@@ -132,7 +142,8 @@ class HTMLDocument(XMLDocument):
 
                 elif _is_container_with_text(tag_elem):
                     links = _get_links_from_tag(tag_elem)
-                    element = _text_to_element(tag_elem.text, "div", (), links)
+                    emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
+                    element = _text_to_element(tag_elem.text, "div", (), links, emphasized_texts)
                     if element is not None:
                         page.elements.append(element)
 
@@ -232,6 +243,27 @@ def _get_links_from_tag(tag_elem: etree.Element) -> List[Link]:
     return links
 
 
+def _get_emphasized_texts_from_tag(tag_elem: etree.Element) -> List[dict]:
+    """Get emphasized texts enclosed in <strong>, <em>, <span>, <b>, <i> tags
+    from a tag element in HTML"""
+    emphasized_texts = []
+    tags_to_track = ["strong", "em", "span", "b", "i"]
+    if tag_elem is None:
+        return []
+
+    if tag_elem.tag in tags_to_track:
+        text = _construct_text(tag_elem, False)
+        if text:
+            emphasized_texts.append({"text": text, "tag": tag_elem.tag})
+
+    for descendant_tag_elem in tag_elem.iterdescendants(*tags_to_track):
+        text = _construct_text(descendant_tag_elem, False)
+        if text:
+            emphasized_texts.append({"text": text, "tag": descendant_tag_elem.tag})
+
+    return emphasized_texts
+
+
 def _parse_tag(
     tag_elem: etree.Element,
 ) -> Optional[Element]:
@@ -241,13 +273,20 @@ def _parse_tag(
     but we don't have a use for them at the moment."""
     ancestortags: Tuple[str, ...] = tuple(el.tag for el in tag_elem.iterancestors())[::-1]
     links = _get_links_from_tag(tag_elem)
+    emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
 
     if tag_elem.tag == "script":
         return None
     text = _construct_text(tag_elem)
     if not text:
         return None
-    return _text_to_element(text, tag_elem.tag, ancestortags, links=links)
+    return _text_to_element(
+        text,
+        tag_elem.tag,
+        ancestortags,
+        links=links,
+        emphasized_texts=emphasized_texts,
+    )
 
 
 def _text_to_element(
@@ -255,6 +294,7 @@ def _text_to_element(
     tag: str,
     ancestortags: Tuple[str, ...],
     links: List[Link] = [],
+    emphasized_texts: List[dict] = [],
 ) -> Optional[Element]:
     """Given the text of an element, the tag type and the ancestor tags, produces the appropriate
     HTML element."""
@@ -266,18 +306,45 @@ def _text_to_element(
             tag=tag,
             ancestortags=ancestortags,
             links=links,
+            emphasized_texts=emphasized_texts,
         )
     elif is_us_city_state_zip(text):
-        return HTMLAddress(text=text, tag=tag, ancestortags=ancestortags, links=links)
+        return HTMLAddress(
+            text=text,
+            tag=tag,
+            ancestortags=ancestortags,
+            links=links,
+            emphasized_texts=emphasized_texts,
+        )
+    elif is_email_address(text):
+        return HTMLEmailAddress(text=text, tag=tag, links=links, emphasized_texts=emphasized_texts)
 
     if len(text) < 2:
         return None
     elif is_narrative_tag(text, tag):
-        return HTMLNarrativeText(text, tag=tag, ancestortags=ancestortags, links=links)
+        return HTMLNarrativeText(
+            text,
+            tag=tag,
+            ancestortags=ancestortags,
+            links=links,
+            emphasized_texts=emphasized_texts,
+        )
     elif is_possible_title(text):
-        return HTMLTitle(text, tag=tag, ancestortags=ancestortags, links=links)
+        return HTMLTitle(
+            text,
+            tag=tag,
+            ancestortags=ancestortags,
+            links=links,
+            emphasized_texts=emphasized_texts,
+        )
     else:
-        return HTMLText(text, tag=tag, ancestortags=ancestortags, links=links)
+        return HTMLText(
+            text,
+            tag=tag,
+            ancestortags=ancestortags,
+            links=links,
+            emphasized_texts=emphasized_texts,
+        )
 
 
 def _is_container_with_text(tag_elem: etree.Element) -> bool:
@@ -303,14 +370,14 @@ def is_narrative_tag(text: str, tag: str) -> bool:
     return tag not in HEADING_TAGS and is_possible_narrative_text(text)
 
 
-def _construct_text(tag_elem: etree.Element) -> str:
+def _construct_text(tag_elem: etree.Element, include_tail_text: bool = True) -> str:
     """Extracts text from a text tag element."""
     text = ""
     for item in tag_elem.itertext():
         if item:
             text += item
 
-    if tag_elem.tail:
+    if include_tail_text and tag_elem.tail:
         text = text + tag_elem.tail
 
     text = replace_unicode_quotes(text)
@@ -351,7 +418,16 @@ def _process_list_item(
     if tag_elem.tag in LIST_ITEM_TAGS:
         text = _construct_text(tag_elem)
         links = _get_links_from_tag(tag_elem)
-        return HTMLListItem(text=text, tag=tag_elem.tag, links=links), tag_elem
+        emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
+        return (
+            HTMLListItem(
+                text=text,
+                tag=tag_elem.tag,
+                links=links,
+                emphasized_texts=emphasized_texts,
+            ),
+            tag_elem,
+        )
 
     elif tag_elem.tag == "div":
         text = _construct_text(tag_elem)

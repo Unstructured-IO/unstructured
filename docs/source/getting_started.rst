@@ -73,6 +73,7 @@ These element objects represent different components of the source document. Cur
 		* ``PageBreak``
 		* ``Header``
 		* ``Footer``
+        	* ``EmailAddress``
 	* ``CheckBox``
 	* ``Image``
 

@@ -1,12 +1,34 @@
-## 0.8.9
+## 0.9.1-dev8
 
 ### Enhancements
 
+*   Added `skip_headers_and_footers` parameter to `partition_html` function
+* Update `partition_doc` and `partition_docx` to track emphasized texts in the output
+* Adds post processing function `filter_element_types`
+* Set the default strategy for partitioning images to `hi_res`
+* Add page break parameter section in API documentation to sync with change in Prod API
+* Update `partition_html` to track emphasized texts in the output
+* Update `XMLDocument._read_xml` to create `<p>` tag element for the text enclosed in the `<pre>` tag
+* Add parameter `include_tail_text` to `_construct_text` to enable (skip) tail text inclusion
+
 ### Features
 
-*   Added `skip_headers_and_footers` parameter to `partition_html` function
-
 ### Fixes
+
+* Remove unused `_partition_via_api` function
+* Fixed emoji bug in `partition_xlsx`.
+* Pass `file_filename` metadata when partitioning file object
+* Skip ingest test on missing Slack token
+* Add Dropbox variables to CI environments
+* Adds new element type `EmailAddress` for recognising email address in the  text
+* Simplifies `min_partition` logic; makes partitions falling below the `min_partition`
+  less likely.
+
+## 0.9.0
+
+### Enhancements
+
+* Dependencies are now split by document type, creating a slimmer base installation.
 
 ## 0.8.8
 

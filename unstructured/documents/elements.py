@@ -146,6 +146,9 @@ class ElementMetadata:
     # MSFT Word specific metadata fields
     header_footer_type: Optional[str] = None
 
+    # Formatting metadata fields
+    emphasized_texts: Optional[List[dict]] = None
+
     # Text format metadata fields
     text_as_html: Optional[str] = None
 
@@ -454,6 +457,13 @@ class Address(Text):
     pass
 
 
+class EmailAddress(Text):
+    """A text element for capturing addresses"""
+
+    category = "EmailAddress"
+    pass
+
+
 class Image(Text):
     """A text element for capturing image metadata."""
 
@@ -502,6 +512,7 @@ TYPE_TO_TEXT_ELEMENT_MAP: Dict[str, Any] = {
     "BulletedText": ListItem,
     "Title": Title,
     "Address": Address,
+    "EmailAddress": EmailAddress,
     "Image": Image,
     "PageBreak": PageBreak,
     "Table": Table,
