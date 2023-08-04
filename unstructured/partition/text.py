@@ -36,25 +36,24 @@ def split_by_paragraph(
     min_partition: Optional[int] = 0,
     max_partition: Optional[int] = 1500,
 ) -> List[str]:
-    split_paragraphs = re.split(PARAGRAPH_PATTERN, file_text.strip())
+    paragraphs = re.split(PARAGRAPH_PATTERN, file_text.strip())
 
-    paragraphs = combine_paragraphs_less_than_min(
-        split_paragraphs=split_paragraphs,
-        max_partition=max_partition,
-        min_partition=min_partition,
-    )
-
-    file_content = []
-
+    split_paragraphs = []
     for paragraph in paragraphs:
-        file_content.extend(
+        split_paragraphs.extend(
             split_content_to_fit_max(
                 content=paragraph,
                 max_partition=max_partition,
             ),
         )
 
-    return file_content
+    combined_paragraphs = combine_paragraphs_less_than_min(
+        split_paragraphs=split_paragraphs,
+        max_partition=max_partition,
+        min_partition=min_partition,
+    )
+
+    return combined_paragraphs
 
 
 def _split_in_half_at_breakpoint(
@@ -124,56 +123,29 @@ def combine_paragraphs_less_than_min(
     min_partition: Optional[int] = 0,
 ) -> List[str]:
     """Combine paragraphs less than `min_partition` while not exceeding `max_partition`."""
-    if type(split_paragraphs) is not list:
-        raise ValueError("`split_paragraphs` is not a list")
-    file_content: List[str] = []
-    tmp_paragraph = ""
-    next_index = 0
-    for current_index, paragraph in enumerate(split_paragraphs):
-        if next_index > current_index:
-            continue  # Skip the current iteration if `next_index`` is already updated
-        if min_partition is not None and len(paragraph) < min_partition:
-            # Combine paragraphs that are less than `min_partition``
-            # while not exceeding `max_partition``
-            tmp_paragraph += paragraph + "\n"
+    min_partition = min_partition or 0
+    max_possible_partition = len(" ".join(split_paragraphs))
+    max_partition = max_partition or max_possible_partition
 
-            while len(tmp_paragraph.strip()) < min_partition:
-                if current_index + 1 == len(split_paragraphs):
-                    # If it's the last paragraph, append the paragraph
-                    # to the previous content
-                    file_content[-1] += " " + tmp_paragraph.rstrip()
-                    tmp_paragraph = ""
-                    break
-                for offset_index, para in enumerate(
-                    split_paragraphs[current_index + 1 :], start=1  # noqa
-                ):
-                    if (
-                        max_partition is not None
-                        and len(tmp_paragraph + "\n" + para) < max_partition
-                    ):
-                        tmp_paragraph += "\n" + para
-                        # Update `next_index` to skip already combined paragraphs
-                        next_index = offset_index + current_index + 1
+    combined_paras = []
+    combined_idxs = []
+    for i, para in enumerate(split_paragraphs):
+        if i in combined_idxs:
+            continue
 
-                    if len(tmp_paragraph.strip()) > min_partition:
-                        break  # Stop combining if the combined paragraphs
-                        # meet the `min_partition`` requirement
-                    elif (
-                        max_partition is not None
-                        and len(tmp_paragraph) < min_partition
-                        and len(tmp_paragraph + "\n" + para) > max_partition
-                    ):
-                        raise ValueError(
-                            "`min_partition` and `max_partition` are defined too close together",
-                        )
-            # Add the combined paragraph to the final result
-            file_content.append(
-                tmp_paragraph.strip(),
-            )
-            tmp_paragraph = ""
+        if len(para) >= min_partition:
+            combined_paras.append(para)
         else:
-            file_content.append(paragraph)
-    return file_content
+            combined_para = para
+            for j, next_para in enumerate(split_paragraphs[i + 1 :]):  # noqa
+                if len(combined_para) + len(next_para) + 1 <= max_partition:
+                    combined_idxs.append(i + j + 1)
+                    combined_para += " " + next_para
+                else:
+                    break
+            combined_paras.append(combined_para)
+
+    return combined_paras
 
 
 @process_metadata()
