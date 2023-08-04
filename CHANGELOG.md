@@ -12,6 +12,8 @@
 ### Features
 
 ### Fixes
+
+* Fixed emoji bug in `partition_xlsx`.
 * Pass file_filename metadata when partitioning file object
 * Skip ingest test on missing Slack token
 * Add Dropbox variables to CI environments
