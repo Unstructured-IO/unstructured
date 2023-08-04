@@ -33,7 +33,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
 # Example:
 # Output dir: unstructured/test_unstructured_ingest/structured-output/confluence-large
 # Space dir: unstructured/test_unstructured_ingest/structured-output/confluence-large/testteamsp1
-sh "$SCRIPT_DIR"/check-num-dirs-output.sh 14 "$OUTPUT_FOLDER_NAME"
+sh "$SCRIPT_DIR"/check-num-dirs-output.sh 15 "$OUTPUT_FOLDER_NAME"
 
 # We are expecting 250 files due to the --confluence-num-of-docs-from-each-space 250 that we provided.
 sh "$SCRIPT_DIR"/check-num-files-output.sh 1 "$OUTPUT_FOLDER_NAME"/"$LARGE_BASE_BASE_ID"/
@@ -42,3 +42,5 @@ for i in {1..12}; do
   var="LARGE_WORKSPACE_BASE_ID_$i"
   sh "$SCRIPT_DIR"/check-num-files-output.sh 12 "$OUTPUT_FOLDER_NAME"/"${!var}"
 done
+
+sh "$SCRIPT_DIR"/check-num-rows-and-columns-output.sh 39999 "$OUTPUT_DIR"/"$LARGE_TABLE_BASE_ID"/"$LARGE_TABLE_TABLE_ID".json
