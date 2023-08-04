@@ -222,3 +222,72 @@ def filter_element_types(
         return filtered_elements
 
     return elements
+
+def get_max_width(elements: List[Element]) -> float:
+    
+    ys = []
+    for e in elements:
+        top_left_y= e.metadata.coordinates.points[0][1]
+        bottom_right_y= e.metadata.coordinates.points[3][1]
+        ys.append(top_left_y)
+        ys.append(bottom_right_y)
+
+    ys = sorted(ys)
+    ys = set(ys)
+
+    y_max = max(ys)
+    y_min = min(ys)
+
+    aprox_middle = y_max + y_min/2
+
+    return aprox_middle
+
+def separate_pages(elements : List[Element])-> List[List[Element]]:
+
+    pages = []
+    current_page = []
+    num_page = 1
+    
+    for e in elements:
+        if e.metadata.page_number == num_page:
+            current_page.append(e)
+        else:
+            num_page = e.metadata.page_number
+            pages.append(current_page)
+            current_page=[e]
+
+    return pages
+
+def order_two_column_page(elements:List[Element])-> List[Element]:   
+    # Split the image vertically
+    vertical_line_x = get_max_width(elements)
+    #vertical_line_x = image_width // 2
+
+    # Determine the order of the bounding boxes
+    left_boxes = []
+    right_boxes = []
+    both_sided_boxes = []
+
+    new_bounding_boxes_ix = []
+    for i, bbox in enumerate(elements):
+        x_min = bbox.metadata.coordinates.points[0][0]
+        x_max = bbox.metadata.coordinates.points[-1][0]
+        if x_min < vertical_line_x and x_max < vertical_line_x:
+            left_boxes.append(bbox)
+        elif x_min > vertical_line_x and x_max > vertical_line_x:
+            right_boxes.append(bbox)
+        else:
+            both_sided_boxes.append(bbox)
+
+    # Create new order
+    new_bounding_boxes_ix.extend(both_sided_boxes)
+    new_bounding_boxes_ix.extend(left_boxes)
+    new_bounding_boxes_ix.extend(right_boxes)
+    return new_bounding_boxes_ix
+
+def order_two_column_elements(elements:List[Element])->List[Element]:
+    
+    pages = separate_pages(elements)
+    pages_ordered = [order_two_column_page(page) for page in pages]
+    flat_list = sum(pages_ordered,[])
+    return flat_list
