@@ -6,6 +6,7 @@ from typing import IO, BinaryIO, List, Optional, Tuple, Union, cast
 import docx
 from docx.oxml.shared import qn
 from docx.text.paragraph import Paragraph
+from docx.table import Table as DocxTable
 from docx.text.run import Run
 
 from unstructured.cleaners.core import clean_bullets
@@ -23,6 +24,7 @@ from unstructured.documents.elements import (
     Title,
     process_metadata,
 )
+from unstructured.documents.html import HTMLDocument
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import (
     convert_ms_office_table_to_text,
@@ -167,6 +169,7 @@ def partition_docx(
     for element_item in document.element.body:
         if element_item.tag.endswith("tbl"):
             table = document.tables[table_index]
+            emphasized_texts = _get_emphasized_texts_from_table(table)
             html_table = convert_ms_office_table_to_text(table, as_html=True)
             text_table = convert_ms_office_table_to_text(table, as_html=False)
             element = Table(text_table)
@@ -176,6 +179,7 @@ def partition_docx(
                     filename=metadata_filename,
                     page_number=page_number,
                     last_modified=metadata_last_modified or last_modification_date,
+                    emphasized_texts=emphasized_texts if emphasized_texts else None,
                 )
                 elements.append(element)
             table_index += 1
@@ -381,4 +385,14 @@ def _get_emphasized_texts_from_paragraph(paragraph: Paragraph) -> List[dict]:
             emphasized_texts.append({"text": text, "tag": "b"})
         if run.italic:
             emphasized_texts.append({"text": text, "tag": "i"})
+    return emphasized_texts
+
+
+def _get_emphasized_texts_from_table(table: DocxTable) -> List[dict]:
+    emphasized_texts = []
+    for row in table.rows:
+        for cell in row.cells:
+            for paragraph in cell.paragraphs:
+                _emphasized_texts = _get_emphasized_texts_from_paragraph(paragraph)
+                emphasized_texts += _emphasized_texts
     return emphasized_texts

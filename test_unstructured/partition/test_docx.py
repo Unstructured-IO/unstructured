@@ -14,9 +14,10 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
+from unstructured.partition.common import convert_ms_office_table_to_text
 from unstructured.partition.docx import (
     _get_emphasized_texts_from_paragraph,
-    partition_docx,
+    partition_docx, _get_emphasized_texts_from_table,
 )
 
 
@@ -314,3 +315,18 @@ def test_get_emphasized_texts_from_paragraph(
     emphasized_texts = _get_emphasized_texts_from_paragraph(paragraph)
     assert paragraph.text == "I am a normal text."
     assert emphasized_texts == []
+
+
+def test_get_emphasized_texts_from_table(
+    filename="example-docs/fake-doc-emphasized-text.docx",
+):
+    expected = [
+        {"text": "bold", "tag": "b"},
+        {"text": "italic", "tag": "i"},
+        {"text": "bold-italic", "tag": "b"},
+        {"text": "bold-italic", "tag": "i"},
+    ]
+    document = docx.Document(filename)
+    table = document.tables[0]
+    emphasized_texts = _get_emphasized_texts_from_table(table)
+    assert emphasized_texts == expected
