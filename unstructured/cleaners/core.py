@@ -183,10 +183,8 @@ def auto_paragraph_grouper(
     # NOTE(klaijan) - for ratio < threshold, we pass to new-line grouper,
     # otherwise to blank-line grouper
     if ratio < threshold:
-        print("new line grouper")
         return new_line_grouper(text)
     else:
-        print("blank line grouper")
         return blank_line_grouper(text)
 
 
