@@ -771,6 +771,7 @@ EXPECTED_XLS_TABLE = (
 )
 
 
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_auto_partition_xls_from_filename(filename="example-docs/tests-example.xls"):
     elements = partition(filename=filename)
 
