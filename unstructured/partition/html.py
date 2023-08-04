@@ -1,4 +1,4 @@
-from typing import IO, Dict, List, Optional
+from typing import IO, TYPE_CHECKING, Dict, List, Optional
 
 import requests
 
@@ -18,6 +18,9 @@ from unstructured.partition.common import (
     get_last_modified_date_from_file,
 )
 
+if TYPE_CHECKING:
+    from unstructured_inference.inference.layout import DocumentLayout
+
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.HTML)
@@ -35,6 +38,7 @@ def partition_html(
     html_assemble_articles: bool = False,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
+    skip_headers_and_footers: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Partitions an HTML document into its constituent elements.
@@ -65,6 +69,9 @@ def partition_html(
         The parser to use for parsing the HTML document. If None, default parser will be used.
     metadata_last_modified
         The last modified date for the document.
+    skip_headers_and_footers
+        If True, ignores any content that is within <header> or <footer> tags
+
     """
     if text is not None and text.strip() == "" and not file and not filename and not url:
         return []
@@ -108,6 +115,9 @@ def partition_html(
             raise ValueError(f"Expected content type text/html. Got {content_type}.")
 
         document = HTMLDocument.from_string(response.text, parser=parser)
+
+    if skip_headers_and_footers:
+        document = filter_footer_and_header(document)
 
     return document_to_element_list(
         document,
@@ -162,3 +172,14 @@ def convert_and_partition_html(
         metadata_filename=metadata_filename,
         metadata_last_modified=metadata_last_modified or last_modification_date,
     )
+
+
+def filter_footer_and_header(document: "DocumentLayout") -> "DocumentLayout":
+    for page in document.pages:
+        page.elements = list(
+            filter(
+                lambda el: "footer" not in el.ancestortags and "header" not in el.ancestortags,
+                page.elements,
+            ),
+        )
+    return document
