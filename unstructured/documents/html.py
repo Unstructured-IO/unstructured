@@ -15,6 +15,7 @@ from unstructured.documents.base import Page
 from unstructured.documents.elements import (
     Address,
     Element,
+    EmailAddress,
     Link,
     ListItem,
     NarrativeText,
@@ -25,6 +26,7 @@ from unstructured.documents.xml import VALID_PARSERS, XMLDocument
 from unstructured.logger import logger
 from unstructured.partition.text_type import (
     is_bulleted_text,
+    is_email_address,
     is_possible_narrative_text,
     is_possible_title,
     is_us_city_state_zip,
@@ -69,6 +71,12 @@ class HTMLText(TagsMixin, Text):
 
 class HTMLAddress(TagsMixin, Address):
     """Address with tag information."""
+
+    pass
+
+
+class HTMLEmailAddress(TagsMixin, EmailAddress):
+    """EmailAddress with tag information"""
 
     pass
 
@@ -236,6 +244,8 @@ def _get_links_from_tag(tag_elem: etree.Element) -> List[Link]:
 
 
 def _get_emphasized_texts_from_tag(tag_elem: etree.Element) -> List[dict]:
+    """Get emphasized texts enclosed in <strong>, <em>, <span>, <b>, <i> tags
+    from a tag element in HTML"""
     emphasized_texts = []
     tags_to_track = ["strong", "em", "span", "b", "i"]
     if tag_elem is None:
@@ -306,6 +316,8 @@ def _text_to_element(
             links=links,
             emphasized_texts=emphasized_texts,
         )
+    elif is_email_address(text):
+        return HTMLEmailAddress(text=text, tag=tag, links=links, emphasized_texts=emphasized_texts)
 
     if len(text) < 2:
         return None
