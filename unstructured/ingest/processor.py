@@ -13,7 +13,13 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
 with suppress(RuntimeError):
     mp.set_start_method("spawn")
 
-
+class UnpicklableClass:
+    @classmethod
+    def create_status_handler(cls, *args, **kwargs):
+        return 12
+    
+    # def __reduce__(self):
+    #     raise NotImplementedError("This class is not picklable.")
 class Processor:
     def __init__(
         self,
@@ -40,6 +46,13 @@ class Processor:
 
     def cleanup(self):
         self.doc_connector.cleanup()
+
+    @classmethod
+    def process_init(cls, create_status_handler_fn, verbose):
+        # status_handler = create_status_handler_fn()
+        # logger.debug(f"Status handler created: {status_handler}")
+        ingest_log_streaming_init(verbose)
+        # mp.current_process().session_handler = 
 
     def _filter_docs_with_outputs(self, docs):
         num_docs_all = len(docs)
@@ -73,6 +86,8 @@ class Processor:
             docs = self._filter_docs_with_outputs(docs)
             if not docs:
                 return
+            
+        # 
 
         # Debugging tip: use the below line and comment out the mp.Pool loop
         # block to remain in single process

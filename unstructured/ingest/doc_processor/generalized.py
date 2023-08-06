@@ -32,6 +32,8 @@ def process_document(doc: "IngestDoc", **partition_kwargs) -> Optional[List[Dict
     """
     isd_elems_no_filename = None
     try:
+        # set the session handler on the doc
+        # doc.session_handler = 
         # does the work necessary to load file into filesystem
         # in the future, get_file_handle() could also be supported
         doc.get_file()
@@ -39,7 +41,7 @@ def process_document(doc: "IngestDoc", **partition_kwargs) -> Optional[List[Dict
         isd_elems_no_filename = doc.process_file(**partition_kwargs)
 
         # Note, this may be a no-op if the IngestDoc doesn't do anything to persist
-        # the results. Instead, the MainProcess (caller) may work with the aggregate
+        # the results. Instead, the Processor (caller) may work with the aggregate
         # results across all docs in memory.
         doc.write_result()
     except Exception:
