@@ -1,4 +1,4 @@
-## 0.9.1-dev9
+## 0.9.1-dev10
 
 ### Enhancements
 
@@ -24,6 +24,7 @@
 * Adds new element type `EmailAddress` for recognising email address in the  text
 * Simplifies `min_partition` logic; makes partitions falling below the `min_partition`
   less likely.
+* Fix bug where ingest test check for number of files fails in smoke test
 
 ## 0.9.0
 
