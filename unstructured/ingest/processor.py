@@ -15,11 +15,13 @@ with suppress(RuntimeError):
 
 class UnpicklableClass:
     @classmethod
-    def create_status_handler(cls, *args, **kwargs):
-        return 12
+    def create_session_handle(cls, *args, **kwargs):
+        # return random number
+        import random
+        return random.randint(0, 100)
     
-    # def __reduce__(self):
-    #     raise NotImplementedError("This class is not picklable.")
+    def __reduce__(self):
+        raise NotImplementedError("This class is not picklable.")
 class Processor:
     def __init__(
         self,
@@ -48,11 +50,11 @@ class Processor:
         self.doc_connector.cleanup()
 
     @classmethod
-    def process_init(cls, create_status_handler_fn, verbose):
-        # status_handler = create_status_handler_fn()
-        # logger.debug(f"Status handler created: {status_handler}")
+    def process_init(cls, create_session_handle_fn, verbose):
         ingest_log_streaming_init(verbose)
-        # mp.current_process().session_handler = 
+        session_handle = create_session_handle_fn()
+        logger.debug(f"Status handle created: {session_handle}")
+        mp.current_process().session_handle = session_handle
 
     def _filter_docs_with_outputs(self, docs):
         num_docs_all = len(docs)
@@ -95,8 +97,8 @@ class Processor:
 
         with mp.Pool(
             processes=self.num_processes,
-            initializer=ingest_log_streaming_init,
-            initargs=(logging.DEBUG if self.verbose else logging.INFO,),
+            initializer=self.process_init,
+            initargs=(partial(self.doc_connector.create_session_handle, self.doc_connector.config), logging.DEBUG if self.verbose else logging.INFO,),
         ) as pool:
             pool.map(self.doc_processor_fn, docs)
 

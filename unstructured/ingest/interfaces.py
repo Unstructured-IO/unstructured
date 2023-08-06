@@ -19,9 +19,9 @@ from unstructured.staging.base import convert_to_dict
 
 
 @dataclass
-class BaseSessionHandler:
+class BaseSessionHandle:
     """Abstract definition on which to define shared resources for processing documents.
-    E.g., a shared session for making HTTP requests."""
+    E.g., a connection for making a request for fetching a document."""
 
     @abstractmethod
     def initialize(self):
@@ -78,6 +78,12 @@ class BaseConnector(ABC):
         self.standard_config = standard_config
         self.config = config
 
+    @classmethod
+    def create_session_handle(cls, config: BaseConnectorConfig) -> Optional[BaseSessionHandle]:
+        """Creates a session handle that can be assign on each IngestDoc to share
+        session related resources across all document handling for a process."""
+        return None
+
     @abstractmethod
     def cleanup(self, cur_dir=None):
         """Any additional cleanup up need after processing is complete. E.g., removing
@@ -113,6 +119,7 @@ class BaseIngestDoc(ABC):
 
     standard_config: StandardConnectorConfig
     config: BaseConnectorConfig
+    # session_handle: Optional[BaseSessionHandle] = None
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
