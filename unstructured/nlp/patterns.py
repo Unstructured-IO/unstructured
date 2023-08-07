@@ -82,7 +82,7 @@ DOUBLE_PARAGRAPH_PATTERN_RE = re.compile("(" + PARAGRAPH_PATTERN + "){2}")
 
 # Captures all new line \n and keeps the \n as its own element,
 # considers \n\n as two separate elements
-LINE_BREAK = r"(?:(?<=\n)|(?=\n))"
+LINE_BREAK = r"(?<=\n)"
 LINE_BREAK_RE = re.compile(LINE_BREAK)
 
 # NOTE(klaijan) - captures a line that does not ends with period (.)
