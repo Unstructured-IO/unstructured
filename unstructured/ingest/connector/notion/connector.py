@@ -331,11 +331,33 @@ class NotionConnector(ConnectorCleanupMixin, BaseConnector):
 
     def get_child_content(self, page_id: str):
         from unstructured.ingest.connector.notion.client import Client as NotionClient
-        from unstructured.ingest.connector.notion.helpers import get_recursive_content
+        from unstructured.ingest.connector.notion.helpers import (
+            get_recursive_content_from_page,
+        )
 
         client = NotionClient(auth=self.config.api_key, logger=self.config.logger)
 
-        child_content = get_recursive_content(client=client, page_id=page_id)
+        child_content = get_recursive_content_from_page(
+            client=client,
+            page_id=page_id,
+            logger=self.config.logger,
+        )
+        return child_content
+
+    @requires_dependencies(dependencies=["notion_client"])
+    def get_child_database_content(self, database_id: str):
+        from unstructured.ingest.connector.notion.client import Client as NotionClient
+        from unstructured.ingest.connector.notion.helpers import (
+            get_recursive_content_from_database,
+        )
+
+        client = NotionClient(auth=self.config.api_key, logger=self.config.logger)
+
+        child_content = get_recursive_content_from_database(
+            client=client,
+            database_id=database_id,
+            logger=self.config.logger,
+        )
         return child_content
 
     def get_ingest_docs(self):

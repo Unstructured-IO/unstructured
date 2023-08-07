@@ -94,25 +94,115 @@ class ChildExtractionResponse:
     child_databases: List[str] = field(default_factory=list)
 
 
-def get_recursive_content(client: Client, page_id: str) -> ChildExtractionResponse:
-    parent_ids = [page_id]
+class QueueEntryType(enum.Enum):
+    DATABASE = "database"
+    PAGE = "page"
+
+
+@dataclass
+class QueueEntry:
+    type: QueueEntryType
+    id: UUID
+
+
+def get_recursive_content_from_page(
+    client: Client,
+    page_id: str,
+    logger: logging.Logger,
+) -> ChildExtractionResponse:
+    return get_recursive_content(
+        client=client,
+        init_entry=QueueEntry(type=QueueEntryType.PAGE, id=UUID(page_id)),
+        logger=logger,
+    )
+
+
+def get_recursive_content_from_database(
+    client: Client,
+    database_id: str,
+    logger: logging.Logger,
+) -> ChildExtractionResponse:
+    return get_recursive_content(
+        client=client,
+        init_entry=QueueEntry(type=QueueEntryType.DATABASE, id=UUID(database_id)),
+        logger=logger,
+    )
+
+
+def get_recursive_content(
+    client: Client,
+    init_entry: QueueEntry,
+    logger=logging.Logger,
+) -> ChildExtractionResponse:
+    parents: List[QueueEntry] = [init_entry]
     child_pages = []
     child_dbs = []
     processed = []
-    while len(parent_ids) > 0:
-        parent_id = parent_ids.pop()
-        for children in client.blocks.children.iterate_list(block_id=parent_id):  # type: ignore
-            processed.append(parent_id)
+    while len(parents) > 0:
+        parent: QueueEntry = parents.pop()
+        processed.append(parent.id)
+        if parent.type == QueueEntryType.PAGE:
+            logger.debug(f"Getting child data from page: {parent.id}")
+            for children in client.blocks.children.iterate_list(  # type: ignore
+                block_id=str(parent.id),
+            ):
+                pages = [c for c in children if isinstance(c.block, ChildPage)]
+                if pages:
+                    logger.debug(
+                        "found child pages from parent page {}: {}".format(
+                            parent.id,
+                            ", ".join([p.block.title for p in pages]),
+                        ),
+                    )
+                new_pages = [p.id for p in pages if p.id not in processed]
+                child_pages.extend(new_pages)
+                parents.extend(
+                    [QueueEntry(type=QueueEntryType.PAGE, id=UUID(i)) for i in new_pages],
+                )
 
-            pages = [c.id for c in children if isinstance(c.block, ChildPage)]
-            new_pages = [p for p in pages if p not in processed]
-            child_pages.extend(new_pages)
-            parent_ids.extend(new_pages)
+                dbs = [c for c in children if isinstance(c.block, ChildDatabase)]
+                if dbs:
+                    logger.debug(
+                        "found child database from parent page {}: {}".format(
+                            parent.id,
+                            ", ".join([db.block.title for db in dbs]),
+                        ),
+                    )
+                new_dbs = [db.id for db in dbs if db.id not in processed]
+                child_dbs.extend(new_dbs)
+                parents.extend(
+                    [QueueEntry(type=QueueEntryType.DATABASE, id=UUID(i)) for i in new_dbs],
+                )
+        elif parent.type == QueueEntryType.DATABASE:
+            print(f"Getting child data from database: {parent.id}")
+            for page_entries in client.databases.iterate_query(  # type: ignore
+                database_id=str(parent.id),
+            ):
+                pages = [p for p in page_entries if is_page_url(p.url)]
+                if pages:
+                    logger.debug(
+                        "found child pages from parent database {}: {}".format(
+                            parent.id,
+                            ", ".join([p.url for p in pages]),
+                        ),
+                    )
+                new_pages = [p.id for p in pages if p.id not in processed]
+                child_pages.extend(new_pages)
+                parents.extend(
+                    [QueueEntry(type=QueueEntryType.PAGE, id=UUID(i)) for i in new_pages],
+                )
 
-            dbs = [c.id for c in children if isinstance(c.block, ChildDatabase)]
-            new_dbs = [db for db in dbs if db not in processed]
-            child_dbs.extend(new_dbs)
-            parent_ids.extend(new_dbs)
+                dbs = [p for p in page_entries if is_database_url(p.url)]
+                if dbs:
+                    logger.debug(
+                        "found child database from parent database {}: {}".format(
+                            parent.id,
+                            ", ".join([db.url for db in dbs]),
+                        ),
+                    )
+                new_dbs = [db.id for db in dbs if db.id not in processed]
+                child_dbs.extend(new_dbs)
+                parents.extend([QueueEntry(type=QueueEntryType.DATABASE, id=i) for i in new_dbs])
 
     return ChildExtractionResponse(
         child_pages=child_pages,
