@@ -201,6 +201,15 @@ def add_shared_options(cmd: Command):
             "Default: eng",
         ),
         Option(
+            ["--partition-pdf-infer-table-structure"],
+            default=False,
+            help="A list of language packs to specify which languages to use for OCR, "
+            "separated by '+' e.g. 'eng+deu' to use the English and German language packs. "
+            "The appropriate Tesseract "
+            "language pack needs to be installed."
+            "Default: eng",
+        ),
+        Option(
             ["--encoding"],
             default=None,
             help="Text encoding to use when reading documents. By default the encoding is "
