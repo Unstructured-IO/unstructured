@@ -13,7 +13,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --partition-by-api \
     --structured-output-dir "$OUTPUT_DIR" \
     --partition-pdf-infer-table-structure True \
-    -partition-strategy hi_res \
+    --partition-strategy hi_res \
     --verbose \
     --reprocess \
     --input-path example-docs/layout-parser-paper.pdf
