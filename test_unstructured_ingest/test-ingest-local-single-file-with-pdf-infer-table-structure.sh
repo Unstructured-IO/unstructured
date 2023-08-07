@@ -10,6 +10,7 @@ OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 PYTHONPATH=. ./unstructured/ingest/main.py \
     local \
     --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.last_modified \
+    --partition-by-api \
     --structured-output-dir "$OUTPUT_DIR" \
     --partition-pdf-infer-table-structure True \
     -partition-strategy hi_res \
