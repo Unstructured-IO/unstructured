@@ -146,29 +146,35 @@ def get_recursive_content(
             for children in client.blocks.children.iterate_list(  # type: ignore
                 block_id=str(parent.id),
             ):
-                pages = [c for c in children if isinstance(c.block, ChildPage)]
-                if pages:
+                child_pages_from_page = [c for c in children if isinstance(c.block, ChildPage)]
+                if child_pages_from_page:
+                    child_page_blocks: List[ChildPage] = [
+                        p.block for p in child_pages_from_page if isinstance(p.block, ChildPage)
+                    ]
                     logger.debug(
                         "found child pages from parent page {}: {}".format(
                             parent.id,
-                            ", ".join([p.block.title for p in pages]),
+                            ", ".join([block.title for block in child_page_blocks]),
                         ),
                     )
-                new_pages = [p.id for p in pages if p.id not in processed]
+                new_pages = [p.id for p in child_pages_from_page if p.id not in processed]
                 child_pages.extend(new_pages)
                 parents.extend(
                     [QueueEntry(type=QueueEntryType.PAGE, id=UUID(i)) for i in new_pages],
                 )
 
-                dbs = [c for c in children if isinstance(c.block, ChildDatabase)]
-                if dbs:
+                child_dbs_from_page = [c for c in children if isinstance(c.block, ChildDatabase)]
+                if child_dbs_from_page:
+                    child_db_blocks: List[ChildDatabase] = [
+                        c.block for c in children if isinstance(c.block, ChildDatabase)
+                    ]
                     logger.debug(
                         "found child database from parent page {}: {}".format(
                             parent.id,
-                            ", ".join([db.block.title for db in dbs]),
+                            ", ".join([block.title for block in child_db_blocks]),
                         ),
                     )
-                new_dbs = [db.id for db in dbs if db.id not in processed]
+                new_dbs = [db.id for db in child_dbs_from_page if db.id not in processed]
                 child_dbs.extend(new_dbs)
                 parents.extend(
                     [QueueEntry(type=QueueEntryType.DATABASE, id=UUID(i)) for i in new_dbs],
@@ -178,31 +184,33 @@ def get_recursive_content(
             for page_entries in client.databases.iterate_query(  # type: ignore
                 database_id=str(parent.id),
             ):
-                pages = [p for p in page_entries if is_page_url(p.url)]
-                if pages:
+                child_pages_from_db = [p for p in page_entries if is_page_url(p.url)]
+                if child_pages_from_db:
                     logger.debug(
                         "found child pages from parent database {}: {}".format(
                             parent.id,
-                            ", ".join([p.url for p in pages]),
+                            ", ".join([p.url for p in child_pages_from_db]),
                         ),
                     )
-                new_pages = [p.id for p in pages if p.id not in processed]
+                new_pages = [p.id for p in child_pages_from_db if p.id not in processed]
                 child_pages.extend(new_pages)
                 parents.extend(
                     [QueueEntry(type=QueueEntryType.PAGE, id=UUID(i)) for i in new_pages],
                 )
 
-                dbs = [p for p in page_entries if is_database_url(p.url)]
-                if dbs:
+                child_dbs_from_db = [p for p in page_entries if is_database_url(p.url)]
+                if child_dbs_from_db:
                     logger.debug(
                         "found child database from parent database {}: {}".format(
                             parent.id,
-                            ", ".join([db.url for db in dbs]),
+                            ", ".join([db.url for db in child_dbs_from_db]),
                         ),
                     )
-                new_dbs = [db.id for db in dbs if db.id not in processed]
+                new_dbs = [db.id for db in child_dbs_from_db if db.id not in processed]
                 child_dbs.extend(new_dbs)
-                parents.extend([QueueEntry(type=QueueEntryType.DATABASE, id=i) for i in new_dbs])
+                parents.extend(
+                    [QueueEntry(type=QueueEntryType.DATABASE, id=UUID(i)) for i in new_dbs],
+                )
 
     return ChildExtractionResponse(
         child_pages=child_pages,
