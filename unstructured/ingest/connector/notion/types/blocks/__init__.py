@@ -23,6 +23,7 @@ from .table_of_contents import TableOfContents
 from .template import Template
 from .todo import ToDo
 from .toggle import Toggle
+from .unsupported import Unsupported
 from .video import Video
 
 __all__ = [
@@ -55,5 +56,6 @@ __all__ = [
     "Template",
     "ToDo",
     "Toggle",
+    "Unsupported",
     "Video",
 ]

@@ -18,9 +18,13 @@ block_type_mapping = {
     "callout": blocks.Callout,
     "child_database": blocks.ChildDatabase,
     "child_page": blocks.ChildPage,
+    "code": blocks.Code,
     "column": blocks.Column,
     "column_list": blocks.ColumnList,
     "divider": blocks.Divider,
+    "heading_1": blocks.Heading,
+    "heading_2": blocks.Heading,
+    "heading_3": blocks.Heading,
     "embed": blocks.Embed,
     "equation": blocks.Equation,
     "file": blocks.File,
@@ -37,6 +41,7 @@ block_type_mapping = {
     "template": blocks.Template,
     "to_do": blocks.ToDo,
     "toggle": blocks.Toggle,
+    "unsupported": blocks.Unsupported,
     "video": blocks.Video,
 }
 
@@ -65,13 +70,16 @@ class Block(FromJSONMixin, GetTextMixin):
         created_by = data.pop("created_by")
         last_edited_by = data.pop("last_edited_by")
         parent = data.pop("parent")
-        block = cls(
-            created_by=PartialUser.from_dict(created_by),
-            last_edited_by=PartialUser.from_dict(last_edited_by),
-            parent=Parent.from_dict(parent),
-            block=block_type_mapping.get(t).from_dict(block_data),  # type: ignore
-            **data,
-        )
+        try:
+            block = cls(
+                created_by=PartialUser.from_dict(created_by),
+                last_edited_by=PartialUser.from_dict(last_edited_by),
+                parent=Parent.from_dict(parent),
+                block=block_type_mapping[t].from_dict(block_data),  # type: ignore
+                **data,
+            )
+        except KeyError as ke:
+            raise KeyError(f"failed to map to associated block type -> {t}: {block_data}") from ke
 
         return block
 

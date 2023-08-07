@@ -23,6 +23,7 @@ from .status import Status, StatusCell
 from .title import Title, TitleCell
 from .unique_id import UniqueID, UniqueIDCell
 from .url import URL, URLCell
+from .verification import Verification, VerificationCell
 
 db_prop_type_mapping = {
     "checkbox": Checkbox,
@@ -46,13 +47,17 @@ db_prop_type_mapping = {
     "title": Title,
     "unique_id": UniqueID,
     "url": URL,
+    "verification": Verification,
 }
 
 
 def map_properties(props: Dict[str, dict]) -> Dict[str, DBPropertyBase]:
     mapped_dict = {}
     for k, v in props.items():
-        mapped_dict[k] = db_prop_type_mapping[v["type"]].from_dict(v)  # type: ignore
+        try:
+            mapped_dict[k] = db_prop_type_mapping[v["type"]].from_dict(v)  # type: ignore
+        except KeyError as ke:
+            raise KeyError(f"failed to map to associated database property -> {k}: {v}") from ke
 
     return mapped_dict
 
@@ -79,13 +84,19 @@ db_cell_type_mapping = {
     "title": TitleCell,
     "unique_id": UniqueIDCell,
     "url": URLCell,
+    "verification": VerificationCell,
 }
 
 
 def map_cells(props: Dict[str, dict]) -> Dict[str, DBCellBase]:
     mapped_dict = {}
     for k, v in props.items():
-        mapped_dict[k] = db_cell_type_mapping[v["type"]].from_dict(v)  # type: ignore
+        try:
+            t = v["type"]
+            mapped_dict[k] = db_cell_type_mapping[t].from_dict(v)  # type: ignore
+        except KeyError as ke:
+            raise KeyError(f"failed to map to associated database property -> {k}: {v}") from ke
+
     return mapped_dict
 
 
