@@ -60,6 +60,10 @@ UNICODE_BULLETS: Final[List[str]] = [
 BULLETS_PATTERN = "|".join(UNICODE_BULLETS)
 UNICODE_BULLETS_RE = re.compile(f"(?:{BULLETS_PATTERN})(?!{BULLETS_PATTERN})")
 
+# NOTE(klaijan) - Captures reference of format [1] or [i] or [a] at any point in the line.
+REFERENCE_PATTERN = r"\[(?:[\d]+|[a-z]|[ivxlcdm])\]"
+REFERENCE_PATTERN_RE = re.compile(REFERENCE_PATTERN)
+
 ENUMERATED_BULLETS_RE = re.compile(r"(?:(?:\d{1,3}|[a-z][A-Z])\.?){1,3}")
 
 EMAIL_HEAD_PATTERN = (
@@ -75,6 +79,15 @@ PARAGRAPH_PATTERN_RE = re.compile(
     f"((?:{BULLETS_PATTERN})|{PARAGRAPH_PATTERN})(?!{BULLETS_PATTERN}|$)",
 )
 DOUBLE_PARAGRAPH_PATTERN_RE = re.compile("(" + PARAGRAPH_PATTERN + "){2}")
+
+# Captures all new line \n and keeps the \n as its own element,
+# considers \n\n as two separate elements
+LINE_BREAK = r"(?<=\n)"
+LINE_BREAK_RE = re.compile(LINE_BREAK)
+
+# NOTE(klaijan) - captures a line that does not ends with period (.)
+ONE_LINE_BREAK_PARAGRAPH_PATTERN = r"^(?:(?!\.\s*$).)*$"
+ONE_LINE_BREAK_PARAGRAPH_PATTERN_RE = re.compile(ONE_LINE_BREAK_PARAGRAPH_PATTERN)
 
 # IP Address examples: ba23::58b5:2236:45g2:88h2 or 10.0.2.01
 IP_ADDRESS_PATTERN = (
