@@ -47,6 +47,11 @@ class SimpleNotionConfig(BaseConnectorConfig):
         """Parses a comma separated list of ids into a list of UUID strings."""
         return [str(UUID(x.strip())) for x in ids_str.split(",")]
 
+    def get_logger(self) -> logging.Logger:
+        if self.logger:
+            return self.logger
+        return make_default_logger(logging.DEBUG if self.verbose else logging.INFO)
+
 
 @dataclass
 class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
@@ -340,7 +345,7 @@ class NotionConnector(ConnectorCleanupMixin, BaseConnector):
         child_content = get_recursive_content_from_page(
             client=client,
             page_id=page_id,
-            logger=self.config.logger,
+            logger=self.config.get_logger(),
         )
         return child_content
 
@@ -351,12 +356,12 @@ class NotionConnector(ConnectorCleanupMixin, BaseConnector):
             get_recursive_content_from_database,
         )
 
-        client = NotionClient(auth=self.config.api_key, logger=self.config.logger)
+        client = NotionClient(auth=self.config.api_key, logger=self.config.get_logger())
 
         child_content = get_recursive_content_from_database(
             client=client,
             database_id=database_id,
-            logger=self.config.logger,
+            logger=self.config.get_logger(),
         )
         return child_content
 
