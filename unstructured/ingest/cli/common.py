@@ -105,7 +105,7 @@ def map_to_processor_config(options: dict) -> ProcessorConfigs:
         partition_strategy=options["partition_strategy"],
         partition_ocr_languages=options["partition_ocr_languages"],
         partition_pdf_infer_table_structure=options["partition_pdf_infer_table_structure"],
-        encoding=options["encoding"],
+        partition_encoding=options["partition_encoding"],
         num_processes=options["num_processes"],
         reprocess=options["reprocess"],
         max_docs=options["max_docs"],
@@ -203,14 +203,11 @@ def add_shared_options(cmd: Command):
         Option(
             ["--partition-pdf-infer-table-structure"],
             default=False,
-            help="A list of language packs to specify which languages to use for OCR, "
-            "separated by '+' e.g. 'eng+deu' to use the English and German language packs. "
-            "The appropriate Tesseract "
-            "language pack needs to be installed."
-            "Default: eng",
+            help="If set to True, partition will includ the table's text content in the response."
+            "Default: False",
         ),
         Option(
-            ["--encoding"],
+            ["--partition-encoding"],
             default=None,
             help="Text encoding to use when reading documents. By default the encoding is "
             "detected automatically.",
