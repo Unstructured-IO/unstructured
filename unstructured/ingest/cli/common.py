@@ -104,6 +104,7 @@ def map_to_processor_config(options: dict) -> ProcessorConfigs:
     return ProcessorConfigs(
         partition_strategy=options["partition_strategy"],
         partition_ocr_languages=options["partition_ocr_languages"],
+        partition_pdf_infer_table_structure=options["partition_pdf_infer_table_structure"],
         encoding=options["encoding"],
         num_processes=options["num_processes"],
         reprocess=options["reprocess"],

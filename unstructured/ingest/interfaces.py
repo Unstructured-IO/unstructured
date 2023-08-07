@@ -24,6 +24,7 @@ class ProcessorConfigs:
 
     partition_strategy: str
     partition_ocr_languages: str
+    partition_pdf_infer_table_structure: str
     encoding: str
     num_processes: int
     reprocess: bool
