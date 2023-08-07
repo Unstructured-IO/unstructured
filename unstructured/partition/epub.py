@@ -22,6 +22,7 @@ def partition_epub(
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
+    encoding: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions an EPUB document. The document is first converted to HTML and then
@@ -51,6 +52,7 @@ def partition_epub(
         last_modification_date = get_last_modified_date(filename)
 
     book = epub.read_epub(filename)
+    # book.items also includes EpubLink, EpubImage, EpubNcx (page navigation info) and EpubItem (fomatting/css)
     html_items = [item for item in book.items if isinstance(item, epub.EpubHtml)]
     toc_href_and_title = []
     elements = []
@@ -66,7 +68,7 @@ def partition_epub(
         # not all html_items show up in the toc,
         # so some elements will still have `None` for metadata.section
         item_title = None
-        item_content = item.get_content().decode()
+        item_content = item.get_content()
         item_href = item.file_name
 
         for href, title in toc_href_and_title:
