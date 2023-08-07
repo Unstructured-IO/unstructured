@@ -13,15 +13,6 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
 with suppress(RuntimeError):
     mp.set_start_method("spawn")
 
-class UnpicklableClass:
-    @classmethod
-    def create_session_handle(cls, *args, **kwargs):
-        # return random number
-        import random
-        return random.randint(0, 100)
-    
-    def __reduce__(self):
-        raise NotImplementedError("This class is not picklable.")
 class Processor:
     def __init__(
         self,
@@ -88,8 +79,6 @@ class Processor:
             docs = self._filter_docs_with_outputs(docs)
             if not docs:
                 return
-            
-        # 
 
         # Debugging tip: use the below line and comment out the mp.Pool loop
         # block to remain in single process
