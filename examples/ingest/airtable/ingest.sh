@@ -30,7 +30,7 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 PYTHONPATH=. ./unstructured/ingest/main.py \
         airtable \
         --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
-        --personal-access-token $AIRTABLE_PERSONAL_ACCESS_TOKEN \
+        --personal-access-token "$AIRTABLE_PERSONAL_ACCESS_TOKEN" \
         --structured-output-dir airtable-ingest-output \
         --num-processes 2 \
         --reprocess
