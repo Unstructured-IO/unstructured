@@ -93,6 +93,7 @@ class SimpleGoogleDriveConfig(BaseConnectorConfig):
 class GoogleDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleGoogleDriveConfig
     file_meta: Dict
+    session_handle: Optional[GoogleDriveSessionHandle] = None
 
     @property
     def filename(self):
@@ -107,9 +108,6 @@ class GoogleDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def get_file(self):
         from googleapiclient.errors import HttpError
         from googleapiclient.http import MediaIoBaseDownload
-
-        # log the session handle
-        logger.debug(f"Status handle: {self.session_handle.service}")
 
         if self.file_meta.get("mimeType", "").startswith("application/vnd.google-apps"):
             export_mime = GOOGLE_DRIVE_EXPORT_TYPES.get(
