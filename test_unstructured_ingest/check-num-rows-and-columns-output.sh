@@ -15,7 +15,7 @@ OUTPUT_FILE_NAME=$2
 ROWS=$(python "$SCRIPT_PATH" --structured-output-file-path "$OUTPUT_FILE_NAME")
 
 # Compare the actual output with the expected output
-if [ $ROWS != $EXPECTED_ROWS ]; then
+if [[ $ROWS -ne $EXPECTED_ROWS ]]; then
    echo
    echo "$EXPECTED_ROWS rows should have existed. There are $ROWS rows instead."
    exit 1
