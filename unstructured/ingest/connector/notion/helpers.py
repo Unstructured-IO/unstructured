@@ -132,7 +132,7 @@ def get_recursive_content_from_database(
 def get_recursive_content(
     client: Client,
     init_entry: QueueEntry,
-    logger=logging.Logger,
+    logger: logging.Logger,
 ) -> ChildExtractionResponse:
     parents: List[QueueEntry] = [init_entry]
     child_pages = []
@@ -174,7 +174,7 @@ def get_recursive_content(
                     [QueueEntry(type=QueueEntryType.DATABASE, id=UUID(i)) for i in new_dbs],
                 )
         elif parent.type == QueueEntryType.DATABASE:
-            print(f"Getting child data from database: {parent.id}")
+            logger.debug(f"Getting child data from database: {parent.id}")
             for page_entries in client.databases.iterate_query(  # type: ignore
                 database_id=str(parent.id),
             ):

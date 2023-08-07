@@ -15,6 +15,7 @@ from unstructured.ingest.interfaces import (
     IngestDocCleanupMixin,
     StandardConnectorConfig,
 )
+from unstructured.ingest.logger import make_default_logger
 from unstructured.utils import (
     requires_dependencies,
 )
@@ -28,12 +29,18 @@ class SimpleNotionConfig(BaseConnectorConfig):
     database_ids: List[str]
     recursive: bool
     api_key: str
-    logger: logging.Logger
+    verbose: bool
+    logger: Optional[logging.Logger] = None
 
     @staticmethod
     def parse_ids(ids_str: str) -> List[str]:
         """Parses a comma separated list of ids into a list of UUID strings."""
         return [str(UUID(x.strip())) for x in ids_str.split(",")]
+
+    def get_logger(self) -> logging.Logger:
+        if self.logger:
+            return self.logger
+        return make_default_logger(logging.DEBUG if self.verbose else logging.INFO)
 
 
 @dataclass
@@ -74,15 +81,15 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         self._create_full_tmp_dir_path()
 
-        self.config.logger.debug(f"fetching page {self.page_id} - PID: {os.getpid()}")
+        self.config.get_logger().debug(f"fetching page {self.page_id} - PID: {os.getpid()}")
 
-        client = NotionClient(auth=self.api_key, logger=self.config.logger)
+        client = NotionClient(auth=self.api_key, logger=self.config.get_logger())
 
         try:
             text_extraction = extract_page_text(
                 client=client,
                 page_id=self.page_id,
-                logger=self.config.logger,
+                logger=self.config.get_logger(),
             )
             self.check_exists = True
             self.file_exists = True
@@ -95,7 +102,7 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 self.check_exists = True
                 self.file_exists = False
             else:
-                self.config.logger.error(f"Error: {error}")
+                self.config.get_logger().error(f"Error: {error}")
 
     @requires_dependencies(dependencies=["notion_client"])
     def get_file_metadata(self):
@@ -103,7 +110,7 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         from unstructured.ingest.connector.notion.client import Client as NotionClient
 
-        client = NotionClient(auth=self.api_key, logger=self.config.logger)
+        client = NotionClient(auth=self.api_key, logger=self.config.get_logger())
 
         # The Notion block endpoint gives more hierarchical information (parent,child relationships)
         # than the pages endpoint so choosing to use that one to get metadata about the page
@@ -116,7 +123,7 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 self.check_exists = True
                 self.file_exists = False
             else:
-                self.config.logger.error(f"Error: {error}")
+                self.config.get_logger().error(f"Error: {error}")
 
     @property
     def date_created(self) -> Optional[str]:
@@ -188,15 +195,15 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         self._create_full_tmp_dir_path()
 
-        self.config.logger.debug(f"fetching database {self.database_id} - PID: {os.getpid()}")
+        self.config.get_logger().debug(f"fetching database {self.database_id} - PID: {os.getpid()}")
 
-        client = NotionClient(auth=self.api_key, logger=self.config.logger)
+        client = NotionClient(auth=self.api_key, logger=self.config.get_logger())
 
         try:
             text_extraction = extract_database_text(
                 client=client,
                 database_id=self.database_id,
-                logger=self.config.logger,
+                logger=self.config.get_logger(),
             )
             self.check_exists = True
             self.file_exists = True
@@ -209,7 +216,7 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 self.check_exists = True
                 self.file_exists = False
             else:
-                self.config.logger.error(f"Error: {error}")
+                self.config.get_logger().error(f"Error: {error}")
 
     @requires_dependencies(dependencies=["notion_client"])
     def get_file_metadata(self):
@@ -217,7 +224,7 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         from unstructured.ingest.connector.notion.client import Client as NotionClient
 
-        client = NotionClient(auth=self.api_key, logger=self.config.logger)
+        client = NotionClient(auth=self.api_key, logger=self.config.get_logger())
 
         # The Notion block endpoint gives more hierarchical information (parent,child relationships)
         # than the pages endpoint so choosing to use that one to get metadata about the page
@@ -232,7 +239,7 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 self.check_exists = True
                 self.file_exists = False
             else:
-                self.config.logger.error(f"Error: {error}")
+                self.config.get_logger().error(f"Error: {error}")
 
     @property
     def date_created(self) -> Optional[str]:
@@ -293,12 +300,12 @@ class NotionConnector(ConnectorCleanupMixin, BaseConnector):
             get_recursive_content_from_page,
         )
 
-        client = NotionClient(auth=self.config.api_key, logger=self.config.logger)
+        client = NotionClient(auth=self.config.api_key, logger=self.config.get_logger())
 
         child_content = get_recursive_content_from_page(
             client=client,
             page_id=page_id,
-            logger=self.config.logger,
+            logger=self.config.get_logger(),
         )
         return child_content
 
@@ -309,12 +316,12 @@ class NotionConnector(ConnectorCleanupMixin, BaseConnector):
             get_recursive_content_from_database,
         )
 
-        client = NotionClient(auth=self.config.api_key, logger=self.config.logger)
+        client = NotionClient(auth=self.config.api_key, logger=self.config.get_logger())
 
         child_content = get_recursive_content_from_database(
             client=client,
             database_id=database_id,
-            logger=self.config.logger,
+            logger=self.config.get_logger(),
         )
         return child_content
 
@@ -361,7 +368,7 @@ class NotionConnector(ConnectorCleanupMixin, BaseConnector):
             child_databases = [db for db in child_databases if db not in self.config.database_ids]
 
             if child_pages:
-                self.config.logger.info(
+                self.config.get_logger().info(
                     "Adding the following child page ids: {}".format(", ".join(child_pages)),
                 )
                 docs += [
@@ -375,7 +382,7 @@ class NotionConnector(ConnectorCleanupMixin, BaseConnector):
                 ]
 
             if child_databases:
-                self.config.logger.info(
+                self.config.get_logger().info(
                     "Adding the following child database ids: {}".format(
                         ", ".join(child_databases),
                     ),

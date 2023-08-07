@@ -53,7 +53,7 @@ def notion(
             page_ids=SimpleNotionConfig.parse_ids(ids_str=page_ids) if page_ids else [],
             database_ids=SimpleNotionConfig.parse_ids(ids_str=database_ids) if database_ids else [],
             api_key=api_key,
-            logger=logger,
+            verbose=verbose,
             recursive=recursive,
         ),
     )
