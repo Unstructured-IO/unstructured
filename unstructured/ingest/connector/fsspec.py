@@ -21,6 +21,7 @@ SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
     "az",
     "gs",
     "gcs",
+    "box",
     "dropbox",
 ]
 

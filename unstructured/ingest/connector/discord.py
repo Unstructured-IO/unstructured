@@ -2,7 +2,7 @@ import datetime as dt
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -27,7 +27,7 @@ class SimpleDiscordConfig(BaseConnectorConfig):
     # Discord Specific Options
     channels: List[str]
     token: str
-    days: int
+    days: Optional[int]
     verbose: bool = False
 
     def __post_init__(self):
@@ -55,7 +55,7 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     config: SimpleDiscordConfig
     channel: str
-    days: int
+    days: Optional[int]
     token: str
 
     # NOTE(crag): probably doesn't matter,  but intentionally not defining tmp_download_file

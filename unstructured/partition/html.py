@@ -1,4 +1,4 @@
-from typing import IO, Dict, List, Optional
+from typing import IO, TYPE_CHECKING, Dict, List, Optional
 
 import requests
 
@@ -18,6 +18,9 @@ from unstructured.partition.common import (
     get_last_modified_date_from_file,
 )
 
+if TYPE_CHECKING:
+    from unstructured_inference.inference.layout import DocumentLayout
+
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.HTML)
@@ -34,7 +37,8 @@ def partition_html(
     parser: VALID_PARSERS = None,
     html_assemble_articles: bool = False,
     metadata_filename: Optional[str] = None,
-    metadata_date: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
+    skip_headers_and_footers: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Partitions an HTML document into its constituent elements.
@@ -63,8 +67,11 @@ def partition_html(
         in the HTTP request.
     parser
         The parser to use for parsing the HTML document. If None, default parser will be used.
-    metadata_date
+    metadata_last_modified
         The last modified date for the document.
+    skip_headers_and_footers
+        If True, ignores any content that is within <header> or <footer> tags
+
     """
     if text is not None and text.strip() == "" and not file and not filename and not url:
         return []
@@ -109,10 +116,13 @@ def partition_html(
 
         document = HTMLDocument.from_string(response.text, parser=parser)
 
+    if skip_headers_and_footers:
+        document = filter_footer_and_header(document)
+
     return document_to_element_list(
         document,
         include_page_breaks=include_page_breaks,
-        last_modification_date=metadata_date or last_modification_date,
+        last_modification_date=metadata_last_modified or last_modification_date,
     )
 
 
@@ -122,7 +132,7 @@ def convert_and_partition_html(
     file: Optional[IO[bytes]] = None,
     include_page_breaks: bool = False,
     metadata_filename: Optional[str] = None,
-    metadata_date: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
 ) -> List[Element]:
     """Converts a document to HTML and then partitions it using partition_html. Works with
     any file format support by pandoc.
@@ -160,5 +170,16 @@ def convert_and_partition_html(
         include_page_breaks=include_page_breaks,
         encoding="unicode",
         metadata_filename=metadata_filename,
-        metadata_date=metadata_date or last_modification_date,
+        metadata_last_modified=metadata_last_modified or last_modification_date,
     )
+
+
+def filter_footer_and_header(document: "DocumentLayout") -> "DocumentLayout":
+    for page in document.pages:
+        page.elements = list(
+            filter(
+                lambda el: "footer" not in el.ancestortags and "header" not in el.ancestortags,
+                page.elements,
+            ),
+        )
+    return document

@@ -294,3 +294,19 @@ def test_item_titles():
 )
 def test_is_us_city_state_zip(text, expected):
     assert text_type.is_us_city_state_zip(text) is expected
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        ("fake@gmail.com", True),
+        ("Fake@gmail.com", False),
+        ("fake.gmail.@gmail.com", True),
+        ("fake.gmail@.@gmail.com", False),
+        ("     fake@gmail.com", True),
+        ("fak!/$e@gmail.com", False),
+        ("", False),
+    ],
+)
+def test_is_email_address(text, expected):
+    assert text_type.is_email_address(text) is expected

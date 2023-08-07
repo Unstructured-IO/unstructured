@@ -111,7 +111,7 @@ def partition_email_header(msg: Message) -> List[Element]:
 def build_email_metadata(
     msg: Message,
     filename: Optional[str],
-    metadata_date: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
 ) -> ElementMetadata:
     """Creates an ElementMetadata object from the header information in the email."""
     header_dict = dict(msg.raw_items())
@@ -131,7 +131,7 @@ def build_email_metadata(
         sent_to=sent_to,
         sent_from=sent_from,
         subject=header_dict.get("Subject"),
-        date=metadata_date or email_date,
+        last_modified=metadata_last_modified or email_date,
         filename=filename,
     )
 
@@ -242,7 +242,7 @@ def partition_email(
     max_partition: Optional[int] = 1500,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
-    metadata_date: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
     process_attachments: bool = False,
     attachment_partitioner: Optional[Callable] = None,
     min_partition: Optional[int] = 0,
@@ -267,7 +267,7 @@ def partition_email(
         no maximum is applied. Only applies if processing the text/plain content.
     metadata_filename
         The filename to use for the metadata.
-    metadata_date
+    metadata_last_modified
         The last modified date for the document.
     process_attachments
         If True, partition_email will process email attachments in addition to
@@ -392,7 +392,7 @@ def partition_email(
     metadata = build_email_metadata(
         msg,
         filename=metadata_filename or filename,
-        metadata_date=metadata_date,
+        metadata_last_modified=metadata_last_modified,
     )
     for element in all_elements:
         element.metadata = metadata

@@ -25,7 +25,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Add a header image.",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Add a header image. This gives your overview visual appeal and makes it welcoming for visitors."
   },
@@ -35,7 +41,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Explain what the space is for.",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Explain what the space is for. Start by summarizing the purpose of the space. This could be your team's mission statement or a brief description of the kind of work you do."
   },
@@ -59,6 +71,12 @@
           "text": "product roadmaps",
           "url": "https://www.atlassian.com/software/confluence/templates/product-roadmap"
         }
+      ],
+      "emphasized_texts": [
+        {
+          "text": "Share team goals.",
+          "tag": "strong"
+        }
       ]
     },
     "text": "Share team goals. Add links to your team's OKRs, project plans, and product roadmaps so visitors can quickly get a sense of your team's goals."
@@ -69,7 +87,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Tell people how to contact you.",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Tell people how to contact you. Share your timezone and links to Slack channels, email aliases, or other contact details your team uses so visitors can contact you with questions or feedback about your team's work."
   },
@@ -221,7 +245,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "To add functionality:",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "To add functionality:"
   },
@@ -251,7 +281,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Insert",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Select Insert"
   },
@@ -271,7 +307,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Introduce the team",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Introduce the team"
   },
@@ -297,7 +339,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Share news and announcements with your team",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Share news and announcements with your team"
   },
@@ -323,7 +371,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Display a list of important pages",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Display a list of important pages"
   },

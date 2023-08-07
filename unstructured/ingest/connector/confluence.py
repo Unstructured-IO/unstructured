@@ -2,6 +2,7 @@ import math
 import os
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Optional
 
 from atlassian import Confluence
 
@@ -31,7 +32,7 @@ class SimpleConfluenceConfig(BaseConnectorConfig):
     user_email: str
     api_token: str
     url: str
-    list_of_spaces: str
+    list_of_spaces: Optional[str]
     max_number_of_spaces: int
     max_number_of_docs_from_each_space: int
 

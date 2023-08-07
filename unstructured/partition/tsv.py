@@ -25,7 +25,7 @@ def partition_tsv(
     filename: Optional[str] = None,
     file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
     metadata_filename: Optional[str] = None,
-    metadata_date: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
     include_metadata: bool = True,
     **kwargs,
 ) -> List[Element]:
@@ -39,7 +39,7 @@ def partition_tsv(
         A file-like object using "rb" mode --> open(filename, "rb").
     include_metadata
         Determines whether or not metadata is included in the output.
-    metadata_date
+    metadata_last_modified
         The day of the last modification
     """
     exactly_one(filename=filename, file=file)
@@ -61,7 +61,7 @@ def partition_tsv(
         metadata = ElementMetadata(
             text_as_html=html_text,
             filename=metadata_filename or filename,
-            date=metadata_date or last_modification_date,
+            last_modified=metadata_last_modified or last_modification_date,
         )
     else:
         metadata = ElementMetadata()

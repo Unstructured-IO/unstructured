@@ -24,8 +24,9 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/../../.. || exit 1
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
+    gdrive \
     --drive-id "<file or folder id>" \
-    --drive-service-account-key "<path to drive service account key>" \
+    --service-account-key "<path to drive service account key>" \
     --structured-output-dir google-drive-ingest-output \
     --num-processes 2 \
     --recursive \
@@ -33,4 +34,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
 #    --extension ".docx" # Ensures only .docx files are processed.
 
 # Alternatively, you can call it using:
-# unstructured-ingest --drive-id ...
+# unstructured-ingest gdrive --drive-id ...

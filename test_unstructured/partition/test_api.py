@@ -29,7 +29,6 @@ class MockResponse:
         "text": "This is a test email to use for unit tests.",
         "type": "NarrativeText",
         "metadata": {
-            "date": "2022-12-16T17:04:16-05:00",
             "sent_from": [
                 "Matthew Robinson <mrobinson@unstructured.io>"
             ],
@@ -97,6 +96,8 @@ def test_partition_via_api_raises_with_bad_response(monkeypatch):
         partition_via_api(filename=filename)
 
 
+@pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
+@pytest.mark.skipif(skip_not_on_main, reason="Skipping test run outside of main branch")
 def test_partition_via_api_with_no_strategy():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.jpg")
 
@@ -108,6 +109,8 @@ def test_partition_via_api_with_no_strategy():
     assert elements_hi_res[0].text.startswith("LayoutParser")
 
 
+@pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
+@pytest.mark.skipif(skip_not_on_main, reason="Skipping test run outside of main branch")
 def test_partition_via_api_with_image_hi_res_strategy_includes_coordinates():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.jpg")
 
@@ -154,7 +157,6 @@ class MockMultipleResponse:
             "text": "This is a test email to use for unit tests.",
             "type": "NarrativeText",
             "metadata": {
-                "date": "2022-12-16T17:04:16-05:00",
                 "sent_from": [
                     "Matthew Robinson <mrobinson@unstructured.io>"
                 ],
@@ -173,7 +175,6 @@ class MockMultipleResponse:
             "text": "This is a test email to use for unit tests.",
             "type": "NarrativeText",
             "metadata": {
-                "date": "2022-12-16T17:04:16-05:00",
                 "sent_from": [
                     "Matthew Robinson <mrobinson@unstructured.io>"
                 ],

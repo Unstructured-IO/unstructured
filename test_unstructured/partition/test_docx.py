@@ -14,7 +14,12 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.partition.docx import partition_docx
+from unstructured.partition.doc import partition_doc
+from unstructured.partition.docx import (
+    _get_emphasized_texts_from_paragraph,
+    _get_emphasized_texts_from_table,
+    partition_docx,
+)
 
 
 @pytest.fixture()
@@ -216,7 +221,7 @@ def test_partition_docx_metadata_date(
 
     elements = partition_docx(filename=filename)
 
-    assert elements[0].metadata.date == mocked_last_modification_date
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
 
 
 def test_partition_docx_metadata_date_with_custom_metadata(
@@ -233,10 +238,10 @@ def test_partition_docx_metadata_date_with_custom_metadata(
 
     elements = partition_docx(
         filename=filename,
-        metadata_date=expected_last_modified_date,
+        metadata_last_modified=expected_last_modified_date,
     )
 
-    assert elements[0].metadata.date == expected_last_modified_date
+    assert elements[0].metadata.last_modified == expected_last_modified_date
 
 
 def test_partition_docx_from_file_metadata_date(
@@ -253,7 +258,7 @@ def test_partition_docx_from_file_metadata_date(
     with open(filename, "rb") as f:
         elements = partition_docx(file=f)
 
-    assert elements[0].metadata.date == mocked_last_modification_date
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
 
 
 def test_partition_docx_from_file_metadata_date_with_custom_metadata(
@@ -268,9 +273,9 @@ def test_partition_docx_from_file_metadata_date_with_custom_metadata(
         return_value=mocked_last_modification_date,
     )
     with open(filename, "rb") as f:
-        elements = partition_docx(file=f, metadata_date=expected_last_modified_date)
+        elements = partition_docx(file=f, metadata_last_modified=expected_last_modified_date)
 
-    assert elements[0].metadata.date == expected_last_modified_date
+    assert elements[0].metadata.last_modified == expected_last_modified_date
 
 
 def test_partition_docx_from_file_without_metadata_date(
@@ -284,4 +289,75 @@ def test_partition_docx_from_file_without_metadata_date(
         sf.seek(0)
         elements = partition_docx(file=sf)
 
-    assert elements[0].metadata.date is None
+    assert elements[0].metadata.last_modified is None
+
+
+def test_get_emphasized_texts_from_paragraph(
+    filename="example-docs/fake-doc-emphasized-text.docx",
+):
+    expected = [
+        {"text": "bold", "tag": "b"},
+        {"text": "italic", "tag": "i"},
+        {"text": "bold-italic", "tag": "b"},
+        {"text": "bold-italic", "tag": "i"},
+    ]
+    document = docx.Document(filename)
+    paragraph = document.paragraphs[1]
+    emphasized_texts = _get_emphasized_texts_from_paragraph(paragraph)
+    assert paragraph.text == "I am a bold italic bold-italic text."
+    assert emphasized_texts == expected
+
+    paragraph = document.paragraphs[2]
+    emphasized_texts = _get_emphasized_texts_from_paragraph(paragraph)
+    assert paragraph.text == ""
+    assert emphasized_texts == []
+
+    paragraph = document.paragraphs[3]
+    emphasized_texts = _get_emphasized_texts_from_paragraph(paragraph)
+    assert paragraph.text == "I am a normal text."
+    assert emphasized_texts == []
+
+
+def test_get_emphasized_texts_from_table(
+    filename="example-docs/fake-doc-emphasized-text.docx",
+):
+    expected = [
+        {"text": "bold", "tag": "b"},
+        {"text": "italic", "tag": "i"},
+        {"text": "bold-italic", "tag": "b"},
+        {"text": "bold-italic", "tag": "i"},
+    ]
+    document = docx.Document(filename)
+    table = document.tables[0]
+    emphasized_texts = _get_emphasized_texts_from_table(table)
+    assert emphasized_texts == expected
+
+
+@pytest.mark.parametrize(
+    ("filename", "partition_func"),
+    [
+        ("fake-doc-emphasized-text.docx", partition_docx),
+        ("fake-doc-emphasized-text.doc", partition_doc),
+    ],
+)
+def test_partition_docx_grabs_emphasized_texts(filename, partition_func):
+    elements = partition_func(filename=f"example-docs/{filename}")
+
+    assert isinstance(elements[0], Table)
+    assert elements[0].metadata.emphasized_texts == [
+        {"text": "bold", "tag": "b"},
+        {"text": "italic", "tag": "i"},
+        {"text": "bold-italic", "tag": "b"},
+        {"text": "bold-italic", "tag": "i"},
+    ]
+
+    assert elements[1] == NarrativeText("I am a bold italic bold-italic text.")
+    assert elements[1].metadata.emphasized_texts == [
+        {"text": "bold", "tag": "b"},
+        {"text": "italic", "tag": "i"},
+        {"text": "bold-italic", "tag": "b"},
+        {"text": "bold-italic", "tag": "i"},
+    ]
+
+    assert elements[2] == NarrativeText("I am a normal text.")
+    assert elements[2].metadata.emphasized_texts is None

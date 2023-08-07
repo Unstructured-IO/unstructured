@@ -5,7 +5,17 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Welcome to Confluence!",
+          "tag": "strong"
+        },
+        {
+          "text": "Welcome to Confluence!",
+          "tag": "span"
+        }
+      ]
     },
     "text": "Welcome to Confluence!"
   },
@@ -35,7 +45,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "On this page",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "On this page"
   },
@@ -45,7 +61,17 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Confluence 101",
+          "tag": "strong"
+        },
+        {
+          "text": "Confluence 101",
+          "tag": "span"
+        }
+      ]
     },
     "text": "Confluence 101"
   },
@@ -97,7 +123,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "TEAM SPACES",
+          "tag": "span"
+        }
+      ]
     },
     "text": "TEAM SPACES"
   },
@@ -117,7 +149,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "PROJECT SPACES",
+          "tag": "span"
+        }
+      ]
     },
     "text": "PROJECT SPACES"
   },
@@ -137,7 +175,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "PERSONAL SPACES",
+          "tag": "span"
+        }
+      ]
     },
     "text": "PERSONAL SPACES"
   },
@@ -157,7 +201,37 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "In the main navigation bar, select Spaces→ Create space to create a new space.",
+          "tag": "span"
+        },
+        {
+          "text": "In the main navigation bar, select",
+          "tag": "strong"
+        },
+        {
+          "text": "In the main navigation bar, select",
+          "tag": "span"
+        },
+        {
+          "text": "→",
+          "tag": "strong"
+        },
+        {
+          "text": "→",
+          "tag": "span"
+        },
+        {
+          "text": "to create a new space.",
+          "tag": "strong"
+        },
+        {
+          "text": "to create a new space.",
+          "tag": "span"
+        }
+      ]
     },
     "text": "In the main navigation bar, select Spaces→ Create space to create a new space."
   },
@@ -213,7 +287,29 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Press c to create a page at any time.",
+          "tag": "span"
+        },
+        {
+          "text": "Press",
+          "tag": "strong"
+        },
+        {
+          "text": "Press",
+          "tag": "span"
+        },
+        {
+          "text": "to create a page at any time.",
+          "tag": "strong"
+        },
+        {
+          "text": "to create a page at any time.",
+          "tag": "span"
+        }
+      ]
     },
     "text": "Press c to create a page at any time."
   },
@@ -239,7 +335,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Visualize the relationship between spaces and pages",
+          "tag": "span"
+        }
+      ]
     },
     "text": "Visualize the relationship between spaces and pages"
   },
@@ -265,7 +367,17 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 2
+      "page_number": 2,
+      "emphasized_texts": [
+        {
+          "text": "Making purposeful content",
+          "tag": "strong"
+        },
+        {
+          "text": "Making purposeful content",
+          "tag": "span"
+        }
+      ]
     },
     "text": "Making purposeful content"
   },
@@ -315,7 +427,29 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 2
+      "page_number": 2,
+      "emphasized_texts": [
+        {
+          "text": "Press e when on a page to open the editor.",
+          "tag": "span"
+        },
+        {
+          "text": "Press",
+          "tag": "strong"
+        },
+        {
+          "text": "Press",
+          "tag": "span"
+        },
+        {
+          "text": "when on a page to open the editor.",
+          "tag": "strong"
+        },
+        {
+          "text": "when on a page to open the editor.",
+          "tag": "span"
+        }
+      ]
     },
     "text": "Press e when on a page to open the editor."
   },
@@ -334,6 +468,12 @@
         {
           "text": "Browse space templates",
           "url": "https://support.atlassian.com/confluence-cloud/docs/create-a-space-from-a-template"
+        }
+      ],
+      "emphasized_texts": [
+        {
+          "text": "|",
+          "tag": "span"
         }
       ]
     },
@@ -365,7 +505,29 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 2
+      "page_number": 2,
+      "emphasized_texts": [
+        {
+          "text": "Press/to see a list of elements.",
+          "tag": "span"
+        },
+        {
+          "text": "Press",
+          "tag": "strong"
+        },
+        {
+          "text": "Press",
+          "tag": "span"
+        },
+        {
+          "text": "to see a list of elements.",
+          "tag": "strong"
+        },
+        {
+          "text": "to see a list of elements.",
+          "tag": "span"
+        }
+      ]
     },
     "text": "Press/to see a list of elements."
   },
@@ -411,7 +573,29 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 2
+      "page_number": 2,
+      "emphasized_texts": [
+        {
+          "text": "Select Add status at the top of the page, so teammates can see your progress at a glance.",
+          "tag": "span"
+        },
+        {
+          "text": "Select",
+          "tag": "strong"
+        },
+        {
+          "text": "Select",
+          "tag": "span"
+        },
+        {
+          "text": "at the top of the page, so teammates can see your progress at a glance.",
+          "tag": "strong"
+        },
+        {
+          "text": "at the top of the page, so teammates can see your progress at a glance.",
+          "tag": "span"
+        }
+      ]
     },
     "text": "Select Add status at the top of the page, so teammates can see your progress at a glance."
   },
@@ -453,7 +637,17 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 3
+      "page_number": 3,
+      "emphasized_texts": [
+        {
+          "text": "Collaborating with teammates",
+          "tag": "strong"
+        },
+        {
+          "text": "Collaborating with teammates",
+          "tag": "span"
+        }
+      ]
     },
     "text": "Collaborating with teammates"
   },
@@ -473,7 +667,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 3
+      "page_number": 3,
+      "emphasized_texts": [
+        {
+          "text": "Edit",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "You and up to 11 teammates can edit a page together in real time. Changes save and sync automatically so that everyone editing sees the same thing. Start editing together by selecting the Edit icon in the header."
   },
@@ -483,7 +683,29 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 3
+      "page_number": 3,
+      "emphasized_texts": [
+        {
+          "text": "Press Command + Enter when in the editor to publish.",
+          "tag": "span"
+        },
+        {
+          "text": "Press",
+          "tag": "strong"
+        },
+        {
+          "text": "Press",
+          "tag": "span"
+        },
+        {
+          "text": "when in the editor to publish.",
+          "tag": "strong"
+        },
+        {
+          "text": "when in the editor to publish.",
+          "tag": "span"
+        }
+      ]
     },
     "text": "Press Command + Enter when in the editor to publish."
   },
@@ -539,7 +761,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 3
+      "page_number": 3,
+      "emphasized_texts": [
+        {
+          "text": "Leave comments for your team in different places, depending on the type of feedback you have:",
+          "tag": "span"
+        }
+      ]
     },
     "text": "Leave comments for your team in different places, depending on the type of feedback you have:"
   },
@@ -549,7 +777,17 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 3
+      "page_number": 3,
+      "emphasized_texts": [
+        {
+          "text": "Inline comment →Added to a highlighted section of the page or post you are editing or viewing; good for targeted comments on a specific word or phrase.",
+          "tag": "span"
+        },
+        {
+          "text": "Inline comment →",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Inline comment →Added to a highlighted section of the page or post you are editing or viewing; good for targeted comments on a specific word or phrase."
   },
@@ -559,7 +797,17 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 3
+      "page_number": 3,
+      "emphasized_texts": [
+        {
+          "text": "Page comment →Added below the content of the page or post you are viewing; good for comments that apply to the content as a whole.",
+          "tag": "span"
+        },
+        {
+          "text": "Page comment →",
+          "tag": "strong"
+        }
+      ]
     },
     "text": "Page comment →Added below the content of the page or post you are viewing; good for comments that apply to the content as a whole."
   },
@@ -569,7 +817,21 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 3
+      "page_number": 3,
+      "emphasized_texts": [
+        {
+          "text": "Leave an inline comment when viewing a page or in the editor.",
+          "tag": "span"
+        },
+        {
+          "text": "Leave an inline comment when viewing a page or in the editor.",
+          "tag": "strong"
+        },
+        {
+          "text": "Leave an inline comment when viewing a page or in the editor.",
+          "tag": "span"
+        }
+      ]
     },
     "text": "Leave an inline comment when viewing a page or in the editor."
   },
@@ -611,7 +873,17 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 4
+      "page_number": 4,
+      "emphasized_texts": [
+        {
+          "text": "Organizing your content",
+          "tag": "strong"
+        },
+        {
+          "text": "Organizing your content",
+          "tag": "span"
+        }
+      ]
     },
     "text": "Organizing your content"
   },
@@ -677,7 +949,29 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 4
+      "page_number": 4,
+      "emphasized_texts": [
+        {
+          "text": "Use the /info panel element to highlight important information in your space overview.",
+          "tag": "span"
+        },
+        {
+          "text": "Use the",
+          "tag": "strong"
+        },
+        {
+          "text": "Use the",
+          "tag": "span"
+        },
+        {
+          "text": "panel element to highlight important information in your space overview.",
+          "tag": "strong"
+        },
+        {
+          "text": "panel element to highlight important information in your space overview.",
+          "tag": "span"
+        }
+      ]
     },
     "text": "Use the /info panel element to highlight important information in your space overview."
   },
@@ -713,7 +1007,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 4
+      "page_number": 4,
+      "emphasized_texts": [
+        {
+          "text": "BLOG POST",
+          "tag": "span"
+        }
+      ]
     },
     "text": "BLOG POST"
   },
@@ -733,7 +1033,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 4
+      "page_number": 4,
+      "emphasized_texts": [
+        {
+          "text": "PAGE",
+          "tag": "span"
+        }
+      ]
     },
     "text": "PAGE"
   },
@@ -753,7 +1059,29 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 4
+      "page_number": 4,
+      "emphasized_texts": [
+        {
+          "text": "Press k for a shareable link to your page or post.",
+          "tag": "span"
+        },
+        {
+          "text": "Press",
+          "tag": "strong"
+        },
+        {
+          "text": "Press",
+          "tag": "span"
+        },
+        {
+          "text": "for a shareable link to your page or post.",
+          "tag": "strong"
+        },
+        {
+          "text": "for a shareable link to your page or post.",
+          "tag": "span"
+        }
+      ]
     },
     "text": "Press k for a shareable link to your page or post."
   },
@@ -799,7 +1127,29 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 4
+      "page_number": 4,
+      "emphasized_texts": [
+        {
+          "text": "Type /table to add a table at any time.",
+          "tag": "span"
+        },
+        {
+          "text": "Type",
+          "tag": "strong"
+        },
+        {
+          "text": "Type",
+          "tag": "span"
+        },
+        {
+          "text": "to add a table at any time.",
+          "tag": "strong"
+        },
+        {
+          "text": "to add a table at any time.",
+          "tag": "span"
+        }
+      ]
     },
     "text": "Type /table to add a table at any time."
   },
@@ -845,7 +1195,21 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 4
+      "page_number": 4,
+      "emphasized_texts": [
+        {
+          "text": "DRAFT",
+          "tag": "span"
+        },
+        {
+          "text": "Only you can see your draft, unless you share a link to it.",
+          "tag": "strong"
+        },
+        {
+          "text": "Only you can see your draft, unless you share a link to it.",
+          "tag": "span"
+        }
+      ]
     },
     "text": "DRAFTOnly you can see your draft, unless you share a link to it."
   },
@@ -887,7 +1251,17 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 5
+      "page_number": 5,
+      "emphasized_texts": [
+        {
+          "text": "What’s next?",
+          "tag": "strong"
+        },
+        {
+          "text": "What’s next?",
+          "tag": "span"
+        }
+      ]
     },
     "text": "What’s next?"
   },
@@ -917,7 +1291,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 5
+      "page_number": 5,
+      "emphasized_texts": [
+        {
+          "text": "Explore a Space",
+          "tag": "span"
+        }
+      ]
     },
     "text": "Explore a Space"
   },
@@ -927,7 +1307,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 5
+      "page_number": 5,
+      "emphasized_texts": [
+        {
+          "text": "Create a page",
+          "tag": "span"
+        }
+      ]
     },
     "text": "Create a page"
   },
@@ -937,7 +1323,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 5
+      "page_number": 5,
+      "emphasized_texts": [
+        {
+          "text": "Invite a teammate",
+          "tag": "span"
+        }
+      ]
     },
     "text": "Invite a teammate"
   },

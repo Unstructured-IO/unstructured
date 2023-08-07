@@ -4,8 +4,8 @@ from tempfile import SpooledTemporaryFile
 from typing import IO, BinaryIO, List, Optional, Tuple, Union, cast
 
 import docx
-import pypandoc
 from docx.oxml.shared import qn
+from docx.table import Table as DocxTable
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
 
@@ -14,6 +14,7 @@ from unstructured.documents.elements import (
     Address,
     Element,
     ElementMetadata,
+    EmailAddress,
     Footer,
     Header,
     ListItem,
@@ -34,10 +35,15 @@ from unstructured.partition.common import (
 )
 from unstructured.partition.text_type import (
     is_bulleted_text,
+    is_email_address,
     is_possible_narrative_text,
     is_possible_title,
     is_us_city_state_zip,
 )
+from unstructured.utils import dependency_exists
+
+if dependency_exists("pypandoc"):
+    import pypandoc
 
 # NOTE(robinson) - documentation on built in styles can be found at the link below
 # ref: https://python-docx.readthedocs.io/en/latest/user/
@@ -113,7 +119,7 @@ def partition_docx(
     metadata_filename: Optional[str] = None,
     include_page_breaks: bool = True,
     include_metadata: bool = True,
-    metadata_date: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft Word Documents in .docx format into its document elements.
@@ -128,7 +134,7 @@ def partition_docx(
         The filename to use for the metadata. Relevant because partition_doc converts the
         document to .docx before partition. We want the original source filename in the
         metadata.
-    metadata_date
+    metadata_last_modified
         The last modified date for the document.
     """
 
@@ -164,6 +170,7 @@ def partition_docx(
     for element_item in document.element.body:
         if element_item.tag.endswith("tbl"):
             table = document.tables[table_index]
+            emphasized_texts = _get_emphasized_texts_from_table(table)
             html_table = convert_ms_office_table_to_text(table, as_html=True)
             text_table = convert_ms_office_table_to_text(table, as_html=False)
             element = Table(text_table)
@@ -172,7 +179,8 @@ def partition_docx(
                     text_as_html=html_table,
                     filename=metadata_filename,
                     page_number=page_number,
-                    date=metadata_date or last_modification_date,
+                    last_modified=metadata_last_modified or last_modification_date,
+                    emphasized_texts=emphasized_texts if emphasized_texts else None,
                 )
                 elements.append(element)
             table_index += 1
@@ -180,12 +188,14 @@ def partition_docx(
             if "<w:numPr>" in element_item.xml:
                 is_list = True
             paragraph = docx.text.paragraph.Paragraph(element_item, document)
+            emphasized_texts = _get_emphasized_texts_from_paragraph(paragraph)
             para_element: Optional[Text] = _paragraph_to_element(paragraph, is_list)
             if para_element is not None:
                 para_element.metadata = ElementMetadata(
                     filename=metadata_filename,
                     page_number=page_number,
-                    date=metadata_date or last_modification_date,
+                    last_modified=metadata_last_modified or last_modification_date,
+                    emphasized_texts=emphasized_texts if emphasized_texts else None,
                 )
                 elements.append(para_element)
             is_list = False
@@ -256,7 +266,8 @@ def _text_to_element(text: str, is_list=False) -> Optional[Text]:
 
     elif is_us_city_state_zip(text):
         return Address(text=text)
-
+    elif is_email_address(text):
+        return EmailAddress(text=text)
     if len(text) < 2:
         return None
     elif is_possible_narrative_text(text):
@@ -312,9 +323,9 @@ def convert_and_partition_docx(
     file: Optional[IO[bytes]] = None,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
-    metadata_date: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
 ) -> List[Element]:
-    """Converts a document to DOCX and then partitions it using partition_html. Works with
+    """Converts a document to DOCX and then partitions it using partition_docx. Works with
     any file format support by pandoc.
 
     Parameters
@@ -359,7 +370,31 @@ def convert_and_partition_docx(
             filename=docx_filename,
             metadata_filename=metadata_filename,
             include_metadata=include_metadata,
-            metadata_date=metadata_date,
+            metadata_last_modified=metadata_last_modified,
         )
 
     return elements
+
+
+def _get_emphasized_texts_from_paragraph(paragraph: Paragraph) -> List[dict]:
+    """Get emphasized texts with bold/italic formatting from a paragraph in MS Word"""
+    emphasized_texts = []
+    for run in paragraph.runs:
+        text = run.text.strip() if run.text else None
+        if not text:
+            continue
+        if run.bold:
+            emphasized_texts.append({"text": text, "tag": "b"})
+        if run.italic:
+            emphasized_texts.append({"text": text, "tag": "i"})
+    return emphasized_texts
+
+
+def _get_emphasized_texts_from_table(table: DocxTable) -> List[dict]:
+    emphasized_texts = []
+    for row in table.rows:
+        for cell in row.cells:
+            for paragraph in cell.paragraphs:
+                _emphasized_texts = _get_emphasized_texts_from_paragraph(paragraph)
+                emphasized_texts += _emphasized_texts
+    return emphasized_texts
