@@ -74,6 +74,7 @@
 * Add parameter `skip_infer_table_types` to enable (skip) table extraction for other doc types
 * Adds optional Unstructured API unit tests in CI
 * Tracks last modified date for all document types.
+* Add auto_paragraph_grouper to detect new-line and blank-line new paragraph for .txt files.
 * refactor the ingest cli to better support expanding supported connectors
 
 ## 0.8.3

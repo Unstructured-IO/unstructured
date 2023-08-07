@@ -653,7 +653,7 @@ def test_auto_partition_xml_from_file(filename="example-docs/factbook.xml"):
 def test_auto_partition_xml_from_filename_with_tags(filename="example-docs/factbook.xml"):
     elements = partition(filename=filename, xml_keep_tags=True)
 
-    assert elements[5].text == "<name>United States</name>"
+    assert elements[5].text == "<leader>Joe Biden</leader>"
     assert elements[5].metadata.filename == "factbook.xml"
 
 
@@ -661,7 +661,7 @@ def test_auto_partition_xml_from_file_with_tags(filename="example-docs/factbook.
     with open(filename, "rb") as f:
         elements = partition(file=f, xml_keep_tags=True)
 
-    assert elements[5].text == "<name>United States</name>"
+    assert elements[5].text == "<leader>Joe Biden</leader>"
 
 
 EXPECTED_XLSX_FILETYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
