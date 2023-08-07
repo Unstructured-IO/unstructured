@@ -13,10 +13,10 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 # --airtable-personal-access-token "$AIRTABLE_PERSONAL_ACCESS_TOKEN"
 
 # Other arguments that you can use:
-# --airtable-list-of-paths
+# --list-of-paths
 #     --> A list of paths that specify the set of specific locations to ingest data from.
-#     --airtable-list-of-paths: path1 path2 path3 ….
-#     airtable_path: base_id/table_id(optional)/view_id(optional)/
+#     --list-of-paths: path1 path2 path3 ….
+#     path: base_id/table_id(optional)/view_id(optional)/
 
 #     Here is an example for one --airtable-list-of-paths:
 #         base1/		→ gets the entirety of all tables inside workspace7/base1

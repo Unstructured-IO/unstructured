@@ -25,8 +25,8 @@ from unstructured.ingest.runner import airtable as airtable_fn
     "--list-of-paths",
     default=None,
     help="""List of paths describing the set of locations to ingest data from within Airtable.
-    list_of_airtable_paths: path1 path2 path3 ….
-    airtable_path: base_id/table_id(optional)/view_id(optional)/
+    --list-of-paths: path1 path2 path3 ….
+    path: base_id/table_id(optional)/view_id(optional)/
     Here is an example for one list_of_airtable_paths:
         base1/			                → gets all rows and columns within all tables inside base1
         base1/table1            		→ gets all rows and columns within described table
