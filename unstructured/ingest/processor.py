@@ -13,6 +13,7 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
 with suppress(RuntimeError):
     mp.set_start_method("spawn")
 
+
 class Processor:
     def __init__(
         self,
@@ -44,7 +45,6 @@ class Processor:
     def process_init(cls, create_session_handle_fn, verbose):
         ingest_log_streaming_init(verbose)
         session_handle = create_session_handle_fn()
-        logger.debug(f"Status handle created: {session_handle}")
         mp.current_process().session_handle = session_handle
 
     def _filter_docs_with_outputs(self, docs):

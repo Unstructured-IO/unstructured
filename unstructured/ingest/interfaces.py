@@ -119,7 +119,6 @@ class BaseIngestDoc(ABC):
 
     standard_config: StandardConnectorConfig
     config: BaseConnectorConfig
-    # session_handle: Optional[BaseSessionHandle] = None
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
