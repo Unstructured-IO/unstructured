@@ -25,7 +25,7 @@ class SimpleAirtableConfig(BaseConnectorConfig):
     """
 
     personal_access_token: str
-    list_of_paths: str
+    list_of_paths: Optional[str]
 
 
 @dataclass
@@ -92,7 +92,7 @@ airtable_id_prefixes = ["app", "tbl", "viw"]
 
 
 def raise_airtable_path_error(piece):
-    if any([piece[:3] == prefix for prefix in airtable_id_prefixes]):
+    if any(piece[:3] == prefix for prefix in airtable_id_prefixes):
         raise (
             ValueError(
                 "Path components are not correctly ordered.\
@@ -125,7 +125,7 @@ def check_path_validity(path):
     for i, piece in enumerate(pieces):
         try:
             assert piece[:3] == airtable_id_prefixes[i]
-        except (AssertionError):
+        except AssertionError:
             raise_airtable_path_error(piece)
 
 

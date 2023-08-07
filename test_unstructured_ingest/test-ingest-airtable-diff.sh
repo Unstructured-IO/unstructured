@@ -20,10 +20,11 @@ if [ -z "$AIRTABLE_PERSONAL_ACCESS_TOKEN" ]; then
 fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
+    airtable \
     --download-dir "$DOWNLOAD_DIR" \
-    --airtable-personal-access-token "$AIRTABLE_PERSONAL_ACCESS_TOKEN" \
-    --airtable-list-of-paths "$VARIED_DATA_BASE_ID $VARIED_DATA_BASE_ID_2" \
-    --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.date \
+    --personal-access-token "$AIRTABLE_PERSONAL_ACCESS_TOKEN" \
+    --list-of-paths "$VARIED_DATA_BASE_ID $VARIED_DATA_BASE_ID_2" \
+    --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.date,metadata.last_modified \
     --num-processes 2 \
     --preserve-downloads \
     --reprocess \

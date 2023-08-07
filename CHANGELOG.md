@@ -1,4 +1,4 @@
-## 0.9.1-dev10
+## 0.9.1-dev11
 
 ### Enhancements
 
@@ -12,6 +12,8 @@
 * Add parameter `include_tail_text` to `_construct_text` to enable (skip) tail text inclusion
 
 ### Features
+
+* Add Airtable Connector to be able to pull views/tables/bases from an Airtable organization.
 
 ### Fixes
 

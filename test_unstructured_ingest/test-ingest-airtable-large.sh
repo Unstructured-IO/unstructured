@@ -35,9 +35,10 @@ LARGE_WORKSPACE_BASE_ID_12="apphvDFg6OC7l1xwo"
 LARGE_TEST_LIST_OF_PATHS="$LARGE_BASE_BASE_ID $LARGE_TABLE_BASE_ID $LARGE_WORKSPACE_BASE_ID_1 $LARGE_WORKSPACE_BASE_ID_2 $LARGE_WORKSPACE_BASE_ID_3 $LARGE_WORKSPACE_BASE_ID_4 $LARGE_WORKSPACE_BASE_ID_5 $LARGE_WORKSPACE_BASE_ID_6 $LARGE_WORKSPACE_BASE_ID_7 $LARGE_WORKSPACE_BASE_ID_8 $LARGE_WORKSPACE_BASE_ID_9 $LARGE_WORKSPACE_BASE_ID_10 $LARGE_WORKSPACE_BASE_ID_11 $LARGE_WORKSPACE_BASE_ID_12"
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
+    airtable \
     --download-dir "$DOWNLOAD_DIR" \
-    --airtable-personal-access-token "$AIRTABLE_PERSONAL_ACCESS_TOKEN" \
-    --airtable-list-of-paths "$LARGE_TEST_LIST_OF_PATHS" \
+    --personal-access-token "$AIRTABLE_PERSONAL_ACCESS_TOKEN" \
+    --list-of-paths "$LARGE_TEST_LIST_OF_PATHS" \
     --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.date \
     --num-processes 2 \
     --preserve-downloads \

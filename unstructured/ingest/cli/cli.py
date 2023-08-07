@@ -29,6 +29,7 @@ subcommands = [
     cli_cmds.local,
     cli_cmds.elasticsearch,
     cli_cmds.confluence,
+    cli_cmds.airtable,
 ]
 
 for subcommand in subcommands:
