@@ -171,7 +171,7 @@ Table Extraction
 PDF Table Extraction
 ---------------------
 
-To extract the table structure from PDF files using the ``hi_res`` strategy, ensure that the ``pdf_infer_table_structure`` parameter is set to ``true``. This setting includes the table's text content in the response. By default, this parameter is set to ``false`` to avoid the expensive reading process.
+To extract the table structure from PDF files using the ``hi_res`` strategy, ensure that the ``pdf_infer_table_structure`` parameter is set to ``true``. This setting includes the table's text content in the response. By default, this parameter is set to ``false`` because table extraction is computationally expensive.
 
 .. code:: shell
 
