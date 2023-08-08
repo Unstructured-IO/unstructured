@@ -44,16 +44,17 @@ def partition_epub(
     """
     exactly_one(filename=filename, file=file)
 
-    if file is not None:
+    if filename is not None:
+        last_modification_date = get_last_modified_date(filename)
+    elif file is not None:
         with tempfile.NamedTemporaryFile(delete=False) as tmp:
             tmp.write(file.read())
             filename = tmp.name
         last_modification_date = get_last_modified_date_from_file(file)
-    else:
-        last_modification_date = get_last_modified_date(filename)
 
     book = epub.read_epub(filename)
-    # book.items also includes EpubLink, EpubImage, EpubNcx (page navigation info) and EpubItem (fomatting/css)
+    # book.items also includes EpubLink, EpubImage, EpubNcx (page navigation info)
+    # and EpubItem (fomatting/css)
     html_items = [item for item in book.items if isinstance(item, epub.EpubHtml)]
     toc_href_and_title = []
     elements = []
@@ -68,14 +69,14 @@ def partition_epub(
             toc_href_and_title.append((item.href.split("#")[0], item.title))
 
     item_title = None
-    
+
     for item in html_items:
         if encoding:
             item_content = item.get_content().decode(encoding)
-        else:
+        elif filename is not None:
             formatted_encoding, _ = detect_file_encoding(filename)
             item_content = item.get_content().decode(formatted_encoding)
-    
+
         item_href = item.file_name
 
         for href, title in toc_href_and_title:

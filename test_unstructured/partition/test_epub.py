@@ -4,6 +4,16 @@ import pathlib
 from unstructured.partition.epub import partition_epub
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
+expected_sections = {
+    "CHAPTER I THE SUN-SEEKER",
+    "CHAPTER IV TOBOGGANING",
+    "CHAPTER VIII FOR PARENTS AND GUARDIANS",
+    "CHAPTER VI SKI-ING",
+    "CHAPTER II RINKS AND SKATERS",
+    "CHAPTER VII NOTES ON WINTER RESORTS",
+    "CHAPTER III TEES AND CRAMPITS",
+    "THE FULL PROJECT GUTENBERG LICENSE",
+}
 
 
 def test_partition_epub_from_filename():
@@ -11,9 +21,12 @@ def test_partition_epub_from_filename():
     elements = partition_epub(filename=filename)
     assert len(elements) > 0
     assert elements[0].text.startswith("The Project Gutenberg eBook of Winter Sports")
+    all_sections = set()
     for element in elements:
         assert element.metadata.filename == "winter-sports.epub"
         assert element.metadata.section is not None
+        all_sections.add(element.metadata.section)
+    assert all_sections == expected_sections
 
 
 def test_partition_epub_from_filename_with_metadata_filename():
@@ -30,9 +43,11 @@ def test_partition_epub_from_file():
         elements = partition_epub(file=f)
     assert len(elements) > 0
     assert elements[0].text.startswith("The Project Gutenberg eBook of Winter Sports")
+    all_sections = set()
     for element in elements:
         assert element.metadata.filename is None
-        assert element.metadata.section is not None
+        all_sections.add(element.metadata.section)
+    assert all_sections == expected_sections
 
 
 def test_partition_epub_from_file_with_metadata_filename():
