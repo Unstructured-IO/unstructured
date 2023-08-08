@@ -13,6 +13,7 @@ from unstructured.cleaners.core import remove_punctuation
 from unstructured.logger import trace_logger
 from unstructured.nlp.english_words import ENGLISH_WORDS
 from unstructured.nlp.patterns import (
+    EMAIL_ADDRESS_PATTERN_RE,
     ENDS_IN_PUNCT_RE,
     UNICODE_BULLETS_RE,
     US_CITY_STATE_ZIP_RE,
@@ -304,3 +305,8 @@ def is_us_city_state_zip(text) -> bool:
     DOYLESTOWN, PENNSYLVANIA 18901
     """
     return US_CITY_STATE_ZIP_RE.match(text.strip()) is not None
+
+
+def is_email_address(text) -> bool:
+    """Check if the given text is the email address"""
+    return EMAIL_ADDRESS_PATTERN_RE.match(text.strip()) is not None

@@ -134,4 +134,5 @@ class XMLDocument(Document):
         **kwargs,
     ):
         _, content = read_txt_file(filename=filename, encoding=encoding)
+
         return cls.from_string(content, parser=parser, stylesheet=stylesheet, **kwargs)
