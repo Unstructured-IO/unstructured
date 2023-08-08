@@ -199,7 +199,7 @@ We also provide support for enabling and disabling table extraction for file typ
   -H 'unstructured-api-key: <YOUR API KEY>' \
   -F 'files=@example-docs/layout-parser-paper-with-table.jpg' \
   -F 'strategy=hi_res' \
-  -F 'skip_infer_table_types=' \
+  -F 'skip_infer_table_types=[]' \
   | jq -C . | less -R
 
 XML Tags
