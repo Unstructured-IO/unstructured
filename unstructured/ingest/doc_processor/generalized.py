@@ -33,6 +33,8 @@ def process_document(doc: "IngestDoc", **partition_kwargs) -> Optional[List[Dict
     """
     isd_elems_no_filename = None
     try:
+        # set the session handler on the doc
+        doc.session_handle = mp.current_process().session_handle
         # does the work necessary to load file into filesystem
         # in the future, get_file_handle() could also be supported
         doc.get_file()
