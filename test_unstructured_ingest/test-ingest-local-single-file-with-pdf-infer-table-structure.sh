@@ -4,17 +4,18 @@ set -e
 
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
-OUTPUT_FOLDER_NAME=local-single-file-with-encoding
+OUTPUT_FOLDER_NAME=local-single-file-with-pdf-infer-table-structure
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     local \
-    --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.last_modified \
+    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified \
     --structured-output-dir "$OUTPUT_DIR" \
-    --partition-encoding cp1252 \
+    --partition-pdf-infer-table-structure true \
+    --partition-strategy hi_res \
     --verbose \
     --reprocess \
-    --input-path example-docs/fake-html-cp1252.html
+    --input-path example-docs/layout-parser-paper.pdf
 
 set +e
 
