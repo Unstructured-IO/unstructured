@@ -6,6 +6,7 @@ import pptx
 from unstructured.documents.elements import (
     Element,
     ElementMetadata,
+    EmailAddress,
     ListItem,
     NarrativeText,
     PageBreak,
@@ -23,6 +24,7 @@ from unstructured.partition.common import (
     spooled_to_bytes_io_if_needed,
 )
 from unstructured.partition.text_type import (
+    is_email_address,
     is_possible_narrative_text,
     is_possible_title,
 )
@@ -121,6 +123,8 @@ def partition_pptx(
                     continue
                 if _is_bulleted_paragraph(paragraph):
                     elements.append(ListItem(text=text, metadata=metadata))
+                elif is_email_address(text):
+                    elements.append(EmailAddress(text=text))
                 elif is_possible_narrative_text(text):
                     elements.append(NarrativeText(text=text, metadata=metadata))
                 elif is_possible_title(text):

@@ -15,7 +15,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "CHAPTER 1",
+          "tag": "b"
+        }
+      ]
     },
     "text": "CHAPTER 1"
   },
@@ -25,7 +31,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      "page_number": 1
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "INTRODUCTION",
+          "tag": "b"
+        }
+      ]
     },
     "text": "INTRODUCTION"
   },
