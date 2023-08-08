@@ -12,7 +12,7 @@ Now you can get started with this quick example:
 	-H 'accept: application/json' \
 	-H 'Content-Type: multipart/form-data' \
 	-H 'unstructured-api-key: <YOUR API KEY>' \
-	-F 'files=@sample-docs/family-day.eml' \
+	-F 'files=@example-docs/family-day.eml' \
 	| jq -C . | less -R
 
 
@@ -50,7 +50,7 @@ When elements are extracted from PDFs or images, it may be useful to get their b
   -H 'accept: application/json' \
   -H 'Content-Type: multipart/form-data' \
   -H 'unstructured-api-key: <YOUR API KEY>' \
-  -F 'files=@sample-docs/layout-parser-paper.pdf' \
+  -F 'files=@example-docs/layout-parser-paper.pdf' \
   -F 'coordinates=true' \
   | jq -C . | less -R
 
@@ -67,7 +67,7 @@ You can specify the encoding to use to decode the text input. If no value is pro
   -H 'accept: application/json'  \
   -H 'Content-Type: multipart/form-data' \
   -H 'unstructured-api-key: <YOUR API KEY>' \
-  -F 'files=@sample-docs/fake-power-point.pptx' \
+  -F 'files=@example-docs/fake-power-point.pptx' \
   -F 'encoding=utf_8' \
   | jq -C . | less -R
 
@@ -84,7 +84,7 @@ You can also specify what languages to use for OCR with the ``ocr_languages`` kw
   -H 'accept: application/json' \
   -H 'Content-Type: multipart/form-data' \
   -H 'unstructured-api-key: <YOUR API KEY>' \
-  -F 'files=@sample-docs/english-and-korean.png' \
+  -F 'files=@example-docs/english-and-korean.png' \
   -F 'strategy=ocr_only' \
   -F 'ocr_languages=eng'  \
   -F 'ocr_languages=kor'  \
@@ -103,7 +103,7 @@ By default the result will be in ``json``, but it can be set to ``text/csv`` to 
   -H 'accept: application/json' \
   -H 'Content-Type: multipart/form-data' \
   -H 'unstructured-api-key: <YOUR API KEY>' \
-  -F 'files=@sample-docs/family-day.eml' \
+  -F 'files=@example-docs/family-day.eml' \
   -F 'output_format="text/csv"'
 
 Page Break
@@ -118,7 +118,7 @@ Pass the `include_page_breaks` parameter to `true` to include `PageBreak` elemen
   -H 'accept: application/json' \
   -H 'Content-Type: multipart/form-data' \
   -H 'unstructured-api-key: <YOUR API KEY>' \
-  -F 'files=@sample-docs/family-day.eml' \
+  -F 'files=@example-docs/family-day.eml' \
   -F 'include_page_breaks=true' \
   | jq -C . | less -R
 
@@ -137,7 +137,7 @@ On the other hand, ``hi_res`` is the better choice for PDFs that may have text w
   -H 'accept: application/json' \
   -H 'Content-Type: multipart/form-data' \
   -H 'unstructured-api-key: <YOUR API KEY>' \
-  -F 'files=@sample-docs/layout-parser-paper.pdf' \
+  -F 'files=@example-docs/layout-parser-paper.pdf' \
   -F 'strategy=hi_res' \
   | jq -C . | less -R
 
@@ -159,7 +159,7 @@ To use the ``hi_res`` strategy with **Chipper** model, pass the argument for ``h
   -H 'unstructured-api-key: <YOUR API KEY>' \
   -F 'strategy=hi_res' \
   -F 'hi_res_model_name=chipper' \
-  -F 'files=@sample-docs/layout-parser-paper-fast.pdf' \
+  -F 'files=@example-docs/layout-parser-paper-fast.pdf' \
   -F 'strategy=hi_res' \
   | jq -C . | less -R
 
@@ -180,7 +180,7 @@ To extract the table structure from PDF files using the ``hi_res`` strategy, ens
   -H 'accept: application/json' \
   -H 'Content-Type: multipart/form-data' \
   -H 'unstructured-api-key: <YOUR API KEY>' \
-  -F 'files=@sample-docs/layout-parser-paper.pdf' \
+  -F 'files=@example-docs/layout-parser-paper.pdf' \
   -F 'strategy=hi_res' \
   -F 'pdf_infer_table_structure=true' \
   | jq -C . | less -R
@@ -197,7 +197,7 @@ We also provide support for enabling and disabling table extraction for file typ
   -H 'accept: application/json' \
   -H 'Content-Type: multipart/form-data' \
   -H 'unstructured-api-key: <YOUR API KEY>' \
-  -F 'files=@sample-docs/layout-parser-paper-with-table.jpg' \
+  -F 'files=@example-docs/layout-parser-paper-with-table.jpg' \
   -F 'strategy=hi_res' \
   -F 'skip_infer_table_types=' \
   | jq -C . | less -R
@@ -214,7 +214,7 @@ When processing XML documents, set the ``xml_keep_tags`` parameter to ``true`` t
   -H 'accept: application/json'  \
   -H 'Content-Type: multipart/form-data' \
   -H 'unstructured-api-key: <YOUR API KEY>' \
-  -F 'files=@sample-docs/fake-xml.xml' \
+  -F 'files=@example-docs/fake-xml.xml' \
   -F 'xml_keep_tags=true' \
   | jq -C . | less -R
 
@@ -256,7 +256,7 @@ To get started you'll need to fork the ``unstructured-api`` repository `here <ht
 
 NOTE: See the `Unstructured Installation guide <https://unstructured-io.github.io/unstructured/installing.html>`_ for the many OS dependencies that are required, if the ability to process all file types is desired.
 
-You can now hit the API locally at port 8000. The ``sample-docs`` directory has several example file types that are currently supported.
+You can now hit the API locally at port 8000. The ``example-docs`` directory has several example file types that are currently supported.
 
 For example:
 
@@ -266,5 +266,5 @@ For example:
   'http://localhost:8000/general/v0/general' \
   -H 'accept: application/json' \
   -H 'Content-Type: multipart/form-data' \
-  -F 'files=@sample-docs/family-day.eml' \
+  -F 'files=@example-docs/family-day.eml' \
   | jq -C . | less -R

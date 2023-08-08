@@ -166,7 +166,7 @@ def test_detect_xml_application_xml(monkeypatch):
     assert filetype == FileType.XML
 
 
-def test_detect_text_csv(monkeypatch, filename="sample-docs/stanley-cup.csv"):
+def test_detect_text_csv(monkeypatch, filename="example-docs/stanley-cup.csv"):
     monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "text/csv")
     filetype = detect_filetype(filename=filename)
     assert filetype == FileType.CSV
