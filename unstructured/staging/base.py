@@ -200,7 +200,7 @@ def filter_element_types(
     include_element_types: Optional[List[Element]] = None,
     exclude_element_types: Optional[List[Element]] = None,
 ) -> List[Element]:
-    """Filters document elements by element type"""
+    """Filters document elements by element type."""
     exactly_one(
         include_element_types=include_element_types,
         exclude_element_types=exclude_element_types,
@@ -225,7 +225,7 @@ def filter_element_types(
 
 
 def separate_pages(elements: List[Element]) -> List[List[Element]]:
-    "Separates elements by page using metadata"
+    """Separates elements by page using metadata."""
     pages = []
     current_page = []
     num_page = 1
@@ -244,8 +244,7 @@ def separate_pages(elements: List[Element]) -> List[List[Element]]:
 
 
 def order_two_column_page(elements: List[Element], width_page: int) -> List[Element]:
-    "Order the elements of a page with two columns"
-
+    """Order the elements of a page with two columns."""
     # Split the image vertically
     vertical_line_x = width_page / 2
 
