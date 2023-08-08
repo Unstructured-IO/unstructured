@@ -78,9 +78,6 @@ class Processor:
         # block to remain in single process
         # self.doc_processor_fn(docs[0])
         logger.info(f"Processing {len(docs)} docs")
-        for doc in docs:
-            self.doc_processor_fn(doc)
-        return
         try:
             with mp.Pool(
                 processes=self.num_processes,
