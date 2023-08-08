@@ -2,6 +2,8 @@
 from dataclasses import dataclass
 from typing import Optional
 
+from htmlBuilder.tags import HtmlTag, P
+
 from unstructured.ingest.connector.notion.interfaces import BlockBase
 
 
@@ -17,5 +19,5 @@ class ChildDatabase(BlockBase):
     def from_dict(cls, data: dict):
         return cls(**data)
 
-    def get_text(self) -> Optional[str]:
-        return self.title if self.title else None
+    def get_html(self) -> Optional[HtmlTag]:
+        return P([], self.title)

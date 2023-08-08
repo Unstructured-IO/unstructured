@@ -2,6 +2,9 @@
 from dataclasses import dataclass, field
 from typing import List, Optional
 
+from htmlBuilder.tags import Br, Div, HtmlTag
+from htmlBuilder.tags import Code as HtmlCode
+
 from unstructured.ingest.connector.notion.interfaces import BlockBase
 from unstructured.ingest.connector.notion.types.rich_text import RichText
 
@@ -26,11 +29,15 @@ class Code(BlockBase):
             caption=[RichText.from_dict(c) for c in caption],
         )
 
-    def get_text(self) -> Optional[str]:
-        if not self.rich_text and not self.caption:
+    def get_html(self) -> Optional[HtmlTag]:
+        texts = []
+        if self.rich_text:
+            texts.append(HtmlCode([], [rt.get_html() for rt in self.rich_text]))
+        if self.caption:
+            texts.append(Div([], [rt.get_html() for rt in self.caption]))
+        if not texts:
             return None
-        rich_texts = [rt.get_text() for rt in self.rich_text] + [
-            rt.get_text() for rt in self.caption
-        ]
-        text = "\n".join([rt for rt in rich_texts if rt])
-        return text if text else None
+        joined = [Br()] * (len(texts) * 2 - 1)
+        joined[0::2] = texts
+
+        return Div([], joined)

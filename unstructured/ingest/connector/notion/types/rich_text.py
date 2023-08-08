@@ -1,19 +1,27 @@
 # https://developers.notion.com/reference/rich-text
-from dataclasses import dataclass, field
-from typing import List, Optional
+from dataclasses import dataclass
+from typing import Optional
 
-from unstructured.ingest.connector.notion.interfaces import FromJSONMixin, GetTextMixin
+from htmlBuilder.attributes import Href, Style
+from htmlBuilder.tags import A, B, Code, HtmlTag, I, P, S, U
+from htmlBuilder.tags import Text as HtmlText
+
+from unstructured.ingest.connector.notion.interfaces import (
+    FromJSONMixin,
+    GetHTMLMixin,
+    GetTextMixin,
+)
 from unstructured.ingest.connector.notion.types.date import Date
 from unstructured.ingest.connector.notion.types.user import People
 
 
 @dataclass
-class Annotation(FromJSONMixin):
+class Annotations(FromJSONMixin):
     bold: bool
+    code: bool
     italic: bool
     strikethrough: bool
     underline: bool
-    code: bool
     color: str
 
     @classmethod
@@ -134,28 +142,46 @@ class Text(FromJSONMixin):
 
 
 @dataclass
-class RichText(FromJSONMixin, GetTextMixin):
+class RichText(FromJSONMixin, GetHTMLMixin):
     type: str
     plain_text: str
-    annotations: List[Annotation] = field(default_factory=list)
+    annotations: Optional[Annotations] = None
     href: Optional[str] = None
     text: Optional[Text] = None
     mention: Optional[Mention] = None
     equation: Optional[Equation] = None
 
     def get_text(self) -> Optional[str]:
-        text = self.plain_text
+        pass
+
+    def get_html(self) -> Optional[HtmlTag]:
+        text = HtmlText(self.plain_text)
         if self.href:
-            text = f"[{text}]({self.href})"
+            text = A([Href(self.href)], text)
+        if self.annotations:
+            annotations = self.annotations
+            if annotations.bold:
+                text = B([], text)
+            if annotations.code:
+                text = Code([], text)
+            if annotations.italic:
+                text = I([], text)
+            if annotations.strikethrough:
+                text = S([], text)
+            if annotations.underline:
+                text = U([], text)
+            if annotations.color and annotations.color != "default":
+                if isinstance(text, HtmlText):
+                    text = P([], text)
+                text.attributes.append(Style(f"color:{annotations.color}"))
         return text
 
     @classmethod
     def from_dict(cls, data: dict):
         t = data["type"]
         rich_text = cls(
-            type=data["type"],
-            plain_text=data["plain_text"],
-            href=data.get("href"),
+            annotations=Annotations.from_dict(data.pop("annotations")),
+            **data,
         )
         if t == "text":
             rich_text.text = Text.from_dict(data["text"])

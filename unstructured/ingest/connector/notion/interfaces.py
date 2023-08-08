@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 
+from htmlBuilder.tags import HtmlTag
+
 
 class FromJSONMixin(ABC):
     @classmethod
@@ -15,7 +17,13 @@ class GetTextMixin(ABC):
         pass
 
 
-class BlockBase(FromJSONMixin, GetTextMixin):
+class GetHTMLMixin(ABC):
+    @abstractmethod
+    def get_html(self) -> Optional[HtmlTag]:
+        pass
+
+
+class BlockBase(FromJSONMixin, GetHTMLMixin):
     @staticmethod
     @abstractmethod
     def can_have_children() -> bool:

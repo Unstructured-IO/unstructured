@@ -2,7 +2,12 @@
 from dataclasses import dataclass, field
 from typing import List, Optional
 
-from unstructured.ingest.connector.notion.interfaces import BlockBase
+from htmlBuilder.tags import HtmlTag, Td, Th, Tr
+
+from unstructured.ingest.connector.notion.interfaces import (
+    BlockBase,
+    FromJSONMixin,
+)
 from unstructured.ingest.connector.notion.types.rich_text import RichText
 
 
@@ -20,27 +25,39 @@ class Table(BlockBase):
     def from_dict(cls, data: dict):
         return cls(**data)
 
-    def get_text(self) -> Optional[str]:
+    def get_html(self) -> Optional[HtmlTag]:
         return None
+
+
+@dataclass
+class TableCell(FromJSONMixin):
+    rich_texts: List[RichText]
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        return cls(rich_texts=[RichText.from_dict(rt) for rt in data.pop("rich_texts", [])])
+
+    def get_html(self, is_header: bool) -> Optional[HtmlTag]:
+        if is_header:
+            return Th([], [rt.get_html() for rt in self.rich_texts])
+        else:
+            return Td([], [rt.get_html() for rt in self.rich_texts])
 
 
 # https://developers.notion.com/reference/block#table-rows
 @dataclass
 class TableRow(BlockBase):
-    cells: List[List[RichText]] = field(default_factory=list)
+    is_header: bool = False
+    cells: List[TableCell] = field(default_factory=list)
 
     @classmethod
     def from_dict(cls, data: dict):
         cells = data.get("cells", [])
-        return cls(cells=[[RichText.from_dict(cc) for cc in c] for c in cells])
-
-    def get_text(self) -> Optional[str]:
-        texts = []
-        for cell in self.cells:
-            texts.extend([rt.get_text() for rt in cell])
-        text = "\n".join([t for t in texts if t])
-        return text if text else None
+        return cls(cells=[TableCell.from_dict({"rich_texts": c}) for c in cells])
 
     @staticmethod
     def can_have_children() -> bool:
         return False
+
+    def get_html(self) -> Optional[HtmlTag]:
+        return Tr([], [cell.get_html(is_header=self.is_header) for cell in self.cells])
