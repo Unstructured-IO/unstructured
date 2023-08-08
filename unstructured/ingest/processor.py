@@ -97,7 +97,8 @@ def process_documents(
         process_document,
         strategy=processor_config.partition_strategy,
         ocr_languages=processor_config.partition_ocr_languages,
-        encoding=processor_config.encoding,
+        encoding=processor_config.partition_encoding,
+        pdf_infer_table_structure=processor_config.partition_pdf_infer_table_structure,
     )
 
     Processor(
