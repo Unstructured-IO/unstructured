@@ -1,4 +1,4 @@
-## 0.9.1-dev8
+## 0.9.1
 
 ### Enhancements
 
