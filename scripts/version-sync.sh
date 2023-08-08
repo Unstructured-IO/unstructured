@@ -108,10 +108,19 @@ for i in "${!FILES_TO_CHECK[@]}"; do
     RE_SEMVER=${RE_SEMVERS[$i]}
     UPDATED_VERSION=${UPDATED_VERSIONS[$i]}
     FILE_VERSION=$(grep -o -m 1 -E "${RE_SEMVER}" "$FILE_TO_CHANGE")
+    MAIN_VERSION=$(git show main:unstructured/__version__.py | grep -o -m 1 -E "${RE_SEMVER_FULL}")
+    MAIN_IS_RELEASE=false
+    [[ $MAIN_VERSION != *"-dev"* ]] && MAIN_IS_RELEASE=true
+
     if [ -z "$FILE_VERSION" ];
     then
         # No match to semver regex in VERSIONFILE, so nothing to replace
         printf "Error: No semver version found in file %s.\n" "$FILE_TO_CHANGE"
+        exit 1
+    elif [[ "$MAIN_IS_RELEASE" == true && "$FILE_VERSION" == "$MAIN_VERSION" ]];
+    then 
+        # Only one commit should be associated with a particular non-dev version
+        printf "Error: there is already a commit associated with version %s.\n" "$MAIN_VERSION"
         exit 1
     else
         # Replace semver in VERSIONFILE with semver obtained from SOURCE_FILE
