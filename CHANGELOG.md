@@ -1,4 +1,4 @@
-## 0.9.1-dev5
+## 0.9.1-dev11
 
 * Adds post processing function `filter_element_types`
 * Set the default strategy for partitioning images to `hi_res`
@@ -8,6 +8,7 @@
 * Add parameter `include_tail_text` to `_construct_text` to enable (skip) tail text inclusion
 
 ### Features
+* Add brick for ordering two column pages
 
 ### Fixes
 * Pass file_filename metadata when partitioning file object
