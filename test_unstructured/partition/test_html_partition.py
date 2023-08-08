@@ -412,7 +412,10 @@ def test_partition_html_from_file_custom_metadata_date(
     )
 
     with open(filename) as f:
-        elements = partition_html(file=f, metadata_last_modified=expected_last_modification_date)
+        elements = partition_html(
+            file=f,
+            metadata_last_modified=expected_last_modification_date,
+        )
 
     assert isinstance(elements[0], Title)
     assert elements[0].metadata.last_modified == expected_last_modification_date
@@ -480,6 +483,78 @@ def test_partition_html_grabs_links():
             "url": "/loner",
         },
     ]
+
+
+def test_partition_html_from_filename_with_skip_headers_and_footers(
+    filename="example-docs/fake-html-with-footer-and-header.html",
+):
+    elements = partition_html(filename=filename, skip_headers_and_footers=True)
+
+    for element in elements:
+        assert "footer" not in element.ancestortags
+        assert "header" not in element.ancestortags
+
+
+def test_partition_html_from_file_with_skip_headers_and_footers(
+    filename="example-docs/fake-html-with-footer-and-header.html",
+):
+    with open(filename) as f:
+        elements = partition_html(file=f, skip_headers_and_footers=True)
+
+    for element in elements:
+        assert "footer" not in element.ancestortags
+        assert "header" not in element.ancestortags
+
+
+def test_partition_html_from_text_with_skip_headers_and_footers():
+    text = """
+    <!DOCTYPE html>
+    <html>
+        <header>
+            <p>Header</p>
+        </header>
+        <body>
+            <h1>My First Heading</h1>
+            <p>My first paragraph.</p>
+        </body>
+        <footer>
+            <p>Footer</p>
+        </footer>
+    </html>"""
+    elements = partition_html(text=text, skip_headers_and_footers=True)
+
+    for element in elements:
+        assert "footer" not in element.ancestortags
+        assert "header" not in element.ancestortags
+
+
+def test_partition_html_from_url_with_skip_headers_and_footers(mocker):
+    test_url = "https://example.com"
+    test_headers = {"User-Agent": "test"}
+
+    response = Response()
+    response.status_code = 200
+    response._content = b"""<html>
+        <header>
+            <p>Header</p>
+        </header>
+        <body>
+            <h1>My First Heading</h1>
+            <p>My first paragraph.</p>
+        </body>
+        <footer>
+            <p>Footer</p>
+        </footer>
+    </html>"""
+    response.headers = {"Content-Type": "text/html"}
+
+    mocker.patch("requests.get", return_value=response)
+
+    elements = partition_html(url=test_url, headers=test_headers, skip_headers_and_footers=True)
+
+    for element in elements:
+        assert "footer" not in element.ancestortags
+        assert "header" not in element.ancestortags
 
 
 def test_partition_html_grabs_emphasized_texts():

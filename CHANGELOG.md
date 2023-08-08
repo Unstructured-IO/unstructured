@@ -3,6 +3,7 @@
 ### Enhancements
 
 * Update table extraction section in API documentation to sync with change in Prod API
+* Enable `partition_html` to skip headers and footers with the `skip_headers_and_footers` flag.
 * Update `partition_doc` and `partition_docx` to track emphasized texts in the output
 * Adds post processing function `filter_element_types`
 * Set the default strategy for partitioning images to `hi_res`
@@ -20,9 +21,11 @@
 * Pass `file_filename` metadata when partitioning file object
 * Skip ingest test on missing Slack token
 * Add Dropbox variables to CI environments
+* Remove default encoding for ingest
 * Adds new element type `EmailAddress` for recognising email address in the  text
 * Simplifies `min_partition` logic; makes partitions falling below the `min_partition`
   less likely.
+* Fix bug where ingest test check for number of files fails in smoke test
 
 ## 0.9.0
 
@@ -72,6 +75,7 @@
 * Add parameter `skip_infer_table_types` to enable (skip) table extraction for other doc types
 * Adds optional Unstructured API unit tests in CI
 * Tracks last modified date for all document types.
+* Add auto_paragraph_grouper to detect new-line and blank-line new paragraph for .txt files.
 * refactor the ingest cli to better support expanding supported connectors
 
 ## 0.8.3

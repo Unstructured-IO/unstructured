@@ -201,8 +201,9 @@ def add_shared_options(cmd: Command):
         ),
         Option(
             ["--encoding"],
-            default="utf-8",
-            help="Text encoding to use when reading documents. Default: utf-8",
+            default=None,
+            help="Text encoding to use when reading documents. By default the encoding is "
+            "detected automatically.",
         ),
         Option(
             ["--api-key"],

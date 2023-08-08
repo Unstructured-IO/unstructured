@@ -71,7 +71,7 @@ def test_partition_xml_from_filename_with_tags_default_encoding(filename):
     file_path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
     elements = partition_xml(filename=file_path, xml_keep_tags=True)
 
-    assert elements[5].text == "<name>United States</name>"
+    assert elements[5].text == "<leader>Joe Biden</leader>"
     assert elements[5].metadata.filename == filename
 
 
@@ -94,7 +94,7 @@ def test_partition_xml_from_file_with_tags_default_encoding(filename):
     with open(file_path) as f:
         elements = partition_xml(file=f, xml_keep_tags=True, metadata_filename=file_path)
 
-    assert elements[5].text == "<name>United States</name>"
+    assert elements[5].text == "<leader>Joe Biden</leader>"
     assert elements[5].metadata.filename == filename
 
 
@@ -107,7 +107,7 @@ def test_partition_xml_from_file_rb_with_tags_default_encoding(filename):
     with open(file_path, "rb") as f:
         elements = partition_xml(file=f, xml_keep_tags=True, metadata_filename=file_path)
 
-    assert elements[5].text == "<name>United States</name>"
+    assert elements[5].text == "<leader>Joe Biden</leader>"
     assert elements[5].metadata.filename == filename
 
 
