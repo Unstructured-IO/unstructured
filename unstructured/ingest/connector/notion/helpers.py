@@ -6,7 +6,20 @@ from urllib.parse import urlparse
 from uuid import UUID
 
 from htmlBuilder.attributes import Style, Type
-from htmlBuilder.tags import Body, Div, Head, Html, HtmlTag, Ol, Table, Title, Ul
+from htmlBuilder.tags import (
+    Body,
+    Div,
+    Head,
+    Html,
+    HtmlTag,
+    Ol,
+    Table,
+    Td,
+    Th,
+    Title,
+    Tr,
+    Ul,
+)
 
 import unstructured.ingest.connector.notion.types.blocks as notion_blocks
 from unstructured.ingest.connector.notion.client import Client
@@ -126,32 +139,46 @@ def extract_page_html(
     )
 
 
-def extract_database_text(
+def extract_database_html(
     client: Client,
     database_id: str,
     logger: logging.Logger,
-) -> TextExtractionResponse:
+) -> HtmlExtractionResponse:
     logger.debug(f"processing database id: {database_id}")
-    UUID(database_id)
-    text = []
+    database: Database = client.databases.retrieve(database_id=database_id)  # type: ignore
+    property_keys = list(database.properties.keys())
+    property_keys = sorted(property_keys)
+    table_html_rows = []
     child_pages: List[str] = []
     child_databases: List[str] = []
-    database: Database = client.databases.retrieve(database_id=database_id)  # type: ignore
-    text.append(database.get_text())
-    for pages in client.databases.iterate_query(database_id=database_id):  # type: ignore
-        for page in pages:
-            if is_database_url(page.url):
-                child_databases.append(page.id)
-            if is_page_url(page.url):
-                child_pages.append(page.id)
-            for k, v in page.properties.items():
-                text.append(v.get_text())
+    # Create header row
+    table_html_rows.append(Tr([], [Th([], k) for k in property_keys]))
 
-    non_empty_text = [t for t in text if t]
-    return TextExtractionResponse(
-        text="\n".join(non_empty_text) if non_empty_text else None,
-        child_databases=child_databases,
+    all_pages = []
+    for page_chunk in client.databases.iterate_query(database_id=database_id):  # type: ignore
+        all_pages.extend(page_chunk)
+
+    logger.debug(f"Creating {len(all_pages)} rows")
+    for page in all_pages:
+        if is_database_url(page.url):
+            child_databases.append(page.id)
+        if is_page_url(page.url):
+            child_pages.append(page.id)
+        properties = page.properties
+        inner_html = [properties.get(k).get_html() for k in property_keys]
+        table_html_rows.append(
+            Tr(
+                [],
+                [Td([], cell) for cell in [html if html else Div([], []) for html in inner_html]],
+            ),
+        )
+
+    table_html = Table([], table_html_rows)
+
+    return HtmlExtractionResponse(
+        html=table_html,
         child_pages=child_pages,
+        child_databases=child_databases,
     )
 
 

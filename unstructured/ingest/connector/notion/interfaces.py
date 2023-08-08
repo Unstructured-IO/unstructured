@@ -11,12 +11,6 @@ class FromJSONMixin(ABC):
         pass
 
 
-class GetTextMixin(ABC):
-    @abstractmethod
-    def get_text(self) -> Optional[str]:
-        pass
-
-
 class GetHTMLMixin(ABC):
     @abstractmethod
     def get_html(self) -> Optional[HtmlTag]:
@@ -34,5 +28,5 @@ class DBPropertyBase(FromJSONMixin):
     pass
 
 
-class DBCellBase(FromJSONMixin):
+class DBCellBase(FromJSONMixin, GetHTMLMixin):
     pass

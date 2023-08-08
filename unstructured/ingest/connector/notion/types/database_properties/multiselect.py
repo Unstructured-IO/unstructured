@@ -2,6 +2,9 @@
 from dataclasses import dataclass, field
 from typing import List, Optional
 
+from htmlBuilder.attributes import Style
+from htmlBuilder.tags import Div, HtmlTag, Span
+
 from unstructured.ingest.connector.notion.interfaces import (
     DBCellBase,
     DBPropertyBase,
@@ -47,21 +50,24 @@ class MultiSelect(DBPropertyBase):
 @dataclass
 class MultiSelectCell(DBCellBase):
     id: str
-    multi_select: List[MultiSelectProp]
+    multi_select: List[MultiSelectOption]
     type: str = "multi_select"
     name: Optional[str] = None
 
     @classmethod
     def from_dict(cls, data: dict):
         return cls(
-            multi_select=[MultiSelectProp.from_dict(o) for o in data.pop("multi_select", [])],
+            multi_select=[MultiSelectOption.from_dict(o) for o in data.pop("multi_select", [])],
             **data,
         )
 
-    def get_text(self) -> Optional[str]:
-        ids = []
-        if self.multi_select:
-            for ms in self.multi_select:
-                ids.extend([o.id for o in ms.options])
-            return ",".join([i for i in ids if i])
-        return None
+    def get_html(self) -> Optional[HtmlTag]:
+        if not self.multi_select:
+            return None
+        option_spans = []
+        for option in self.multi_select:
+            option_attributes = []
+            if option.color and option.color != "default":
+                option_attributes.append(Style(f"color: {option.color}"))
+            option_spans.append(Span(option_attributes, option.name))
+        return Div([], option_spans)

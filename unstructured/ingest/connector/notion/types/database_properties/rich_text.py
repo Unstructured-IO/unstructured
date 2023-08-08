@@ -2,6 +2,8 @@
 from dataclasses import dataclass, field
 from typing import List, Optional
 
+from htmlBuilder.tags import Div, HtmlTag, Span
+
 from unstructured.ingest.connector.notion.interfaces import DBCellBase, DBPropertyBase
 from unstructured.ingest.connector.notion.types.rich_text import (
     RichText as RichTextType,
@@ -34,6 +36,8 @@ class RichTextCell(DBCellBase):
             **data,
         )
 
-    def get_text(self) -> Optional[str]:
-        rts = [rt.get_text() for rt in self.rich_text]
-        return ",".join([rt for rt in rts if rt])
+    def get_html(self) -> Optional[HtmlTag]:
+        if not self.rich_text:
+            return None
+        spans = [Span([], rt.get_html()) for rt in self.rich_text]
+        return Div([], spans)

@@ -2,6 +2,8 @@
 from dataclasses import dataclass, field
 from typing import Optional
 
+from htmlBuilder.tags import Div, HtmlTag
+
 from unstructured.ingest.connector.notion.interfaces import DBCellBase, DBPropertyBase
 
 
@@ -20,7 +22,7 @@ class PhoneNumber(DBPropertyBase):
 @dataclass
 class PhoneNumberCell(DBCellBase):
     id: str
-    phone_number: str
+    phone_number: Optional[str]
     name: Optional[str] = None
     type: str = "phone_number"
 
@@ -28,5 +30,7 @@ class PhoneNumberCell(DBCellBase):
     def from_dict(cls, data: dict):
         return cls(**data)
 
-    def get_text(self) -> Optional[str]:
-        return self.phone_number
+    def get_html(self) -> Optional[HtmlTag]:
+        if phone_number := self.phone_number:
+            return Div([], phone_number)
+        return None

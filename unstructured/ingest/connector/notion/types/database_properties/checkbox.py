@@ -2,6 +2,9 @@
 from dataclasses import dataclass, field
 from typing import Optional
 
+from htmlBuilder.attributes import Checked, Type
+from htmlBuilder.tags import Div, HtmlTag, Input
+
 from unstructured.ingest.connector.notion.interfaces import DBCellBase, DBPropertyBase
 
 
@@ -28,5 +31,8 @@ class CheckboxCell(DBCellBase):
     def from_dict(cls, data: dict):
         return cls(**data)
 
-    def get_text(self) -> Optional[str]:
-        return str(self.checkbox)
+    def get_html(self) -> Optional[HtmlTag]:
+        check_input_attributes = [Type("checkbox")]
+        if self.checkbox:
+            check_input_attributes.append(Checked(""))
+        return Div([], Input(check_input_attributes))

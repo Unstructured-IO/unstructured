@@ -3,13 +3,12 @@ from dataclasses import dataclass
 from typing import Optional
 
 from htmlBuilder.attributes import Href, Style
-from htmlBuilder.tags import A, B, Code, HtmlTag, I, P, S, U
+from htmlBuilder.tags import A, B, Code, Div, HtmlTag, I, S, Span, U
 from htmlBuilder.tags import Text as HtmlText
 
 from unstructured.ingest.connector.notion.interfaces import (
     FromJSONMixin,
     GetHTMLMixin,
-    GetTextMixin,
 )
 from unstructured.ingest.connector.notion.types.date import Date
 from unstructured.ingest.connector.notion.types.user import People
@@ -30,51 +29,51 @@ class Annotations(FromJSONMixin):
 
 
 @dataclass
-class Equation(FromJSONMixin, GetTextMixin):
+class Equation(FromJSONMixin, GetHTMLMixin):
     expression: str
 
     @classmethod
     def from_dict(cls, data: dict):
         return cls(**data)
 
-    def get_text(self) -> Optional[str]:
-        return self.expression if self.expression else None
+    def get_html(self) -> Optional[HtmlTag]:
+        return Code([], self.expression) if self.expression else None
 
 
 @dataclass
-class MentionDatabase(FromJSONMixin, GetTextMixin):
+class MentionDatabase(FromJSONMixin, GetHTMLMixin):
     id: str
 
     @classmethod
     def from_dict(cls, data: dict):
         return cls(**data)
 
-    def get_text(self) -> Optional[str]:
-        return self.id if self.id else None
+    def get_html(self) -> Optional[HtmlTag]:
+        return Div([], self.id) if self.id else None
 
 
 @dataclass
-class MentionLinkPreview(FromJSONMixin, GetTextMixin):
+class MentionLinkPreview(FromJSONMixin, GetHTMLMixin):
     url: str
 
     @classmethod
     def from_dict(cls, data: dict):
         return cls(**data)
 
-    def get_text(self) -> Optional[str]:
-        return self.url if self.url else None
+    def get_html(self) -> Optional[HtmlTag]:
+        return A([Href(self.url)], self.url) if self.url else None
 
 
 @dataclass
-class MentionPage(FromJSONMixin, GetTextMixin):
+class MentionPage(FromJSONMixin, GetHTMLMixin):
     id: str
 
     @classmethod
     def from_dict(cls, data: dict):
         return cls(**data)
 
-    def get_text(self) -> Optional[str]:
-        return self.id if self.id else None
+    def get_html(self) -> Optional[HtmlTag]:
+        return Div([], self.id) if self.id else None
 
 
 @dataclass
@@ -88,7 +87,7 @@ class MentionTemplate(FromJSONMixin):
 
 
 @dataclass
-class Mention(FromJSONMixin, GetTextMixin):
+class Mention(FromJSONMixin, GetHTMLMixin):
     type: str
     database: Optional[MentionDatabase] = None
     date: Optional[Date] = None
@@ -116,18 +115,18 @@ class Mention(FromJSONMixin, GetTextMixin):
 
         return mention
 
-    def get_text(self) -> Optional[str]:
+    def get_html(self) -> Optional[HtmlTag]:
         t = self.type
         if t == "date":
-            return self.date.get_text() if self.date else None
+            return self.date.get_html() if self.date else None
         elif t == "database":
-            return self.database.get_text() if self.database else None
+            return self.database.get_html() if self.database else None
         elif t == "link_preview":
-            return self.link_preview.get_text() if self.link_preview else None
+            return self.link_preview.get_html() if self.link_preview else None
         elif t == "page":
-            return self.page.get_text() if self.page else None
+            return self.page.get_html() if self.page else None
         elif t == "user":
-            return self.user.get_text() if self.user else None
+            return self.user.get_html() if self.user else None
         return None
 
 
@@ -151,9 +150,6 @@ class RichText(FromJSONMixin, GetHTMLMixin):
     mention: Optional[Mention] = None
     equation: Optional[Equation] = None
 
-    def get_text(self) -> Optional[str]:
-        pass
-
     def get_html(self) -> Optional[HtmlTag]:
         text = HtmlText(self.plain_text)
         if self.href:
@@ -172,7 +168,7 @@ class RichText(FromJSONMixin, GetHTMLMixin):
                 text = U([], text)
             if annotations.color and annotations.color != "default":
                 if isinstance(text, HtmlText):
-                    text = P([], text)
+                    text = Span([], text)
                 text.attributes.append(Style(f"color:{annotations.color}"))
         return text
 

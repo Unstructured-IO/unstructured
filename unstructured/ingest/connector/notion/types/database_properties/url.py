@@ -2,6 +2,9 @@
 from dataclasses import dataclass, field
 from typing import Optional
 
+from htmlBuilder.attributes import Href
+from htmlBuilder.tags import A, HtmlTag
+
 from unstructured.ingest.connector.notion.interfaces import DBCellBase, DBPropertyBase
 
 
@@ -20,7 +23,7 @@ class URL(DBPropertyBase):
 @dataclass
 class URLCell(DBCellBase):
     id: str
-    url: str
+    url: Optional[str] = None
     name: Optional[str] = None
     type: str = "url"
 
@@ -28,5 +31,7 @@ class URLCell(DBCellBase):
     def from_dict(cls, data: dict):
         return cls(**data)
 
-    def get_text(self) -> Optional[str]:
-        return self.url
+    def get_html(self) -> Optional[HtmlTag]:
+        if url := self.url:
+            return A([Href(url)], url)
+        return None

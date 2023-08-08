@@ -2,6 +2,8 @@
 from dataclasses import dataclass
 from typing import Optional
 
+from htmlBuilder.tags import Div, HtmlTag
+
 from unstructured.ingest.connector.notion.interfaces import (
     DBCellBase,
     DBPropertyBase,
@@ -41,7 +43,7 @@ class FormulaCell(DBCellBase):
     def from_dict(cls, data: dict):
         return cls(**data)
 
-    def get_text(self) -> Optional[str]:
+    def get_html(self) -> Optional[HtmlTag]:
         formula = self.formula
         t = formula.get("type")
-        return formula[t]
+        return Div([], str(formula[t]))
