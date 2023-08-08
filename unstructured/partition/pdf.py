@@ -55,6 +55,7 @@ def partition_pdf(
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
+    two_columns: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Parses a pdf document into a list of interpreted elements.
@@ -102,6 +103,7 @@ def partition_pdf(
         max_partition=max_partition,
         min_partition=min_partition,
         metadata_last_modified=metadata_last_modified,
+        two_columns= two_columns,
         **kwargs,
     )
 
@@ -143,6 +145,7 @@ def partition_pdf_or_image(
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
     metadata_last_modified: Optional[str] = None,
+    two_columns: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
@@ -189,6 +192,7 @@ def partition_pdf_or_image(
                 include_page_breaks=include_page_breaks,
                 ocr_languages=ocr_languages,
                 metadata_last_modified=metadata_last_modified or last_modification_date,
+                two_columns = two_columns,
                 **kwargs,
             )
 
@@ -221,6 +225,7 @@ def _partition_pdf_or_image_local(
     ocr_languages: str = "eng",
     model_name: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
+    two_columns: bool =False,
     **kwargs,
 ) -> List[Element]:
     """Partition using package installed locally."""
@@ -252,6 +257,10 @@ def _partition_pdf_or_image_local(
             extract_tables=infer_table_structure,
             model_name=model_name,
         )
+
+    if two_columns:
+        from unstructured_inference.inference.ordering import order_two_column_document
+        layout = order_two_column_document(layout)
     elements = document_to_element_list(
         layout,
         include_page_breaks=include_page_breaks,
