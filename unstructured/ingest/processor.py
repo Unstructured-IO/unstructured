@@ -4,8 +4,10 @@ from contextlib import suppress
 from functools import partial
 
 from unstructured.ingest.doc_processor.generalized import initialize, process_document
+from unstructured.ingest.doc_processor import resource as doc_processor_resource
 from unstructured.ingest.interfaces import (
     BaseConnector,
+    ConnectorSessionHandleMixin,
     ProcessorConfigs,
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
@@ -42,10 +44,11 @@ class Processor:
         self.doc_connector.cleanup()
 
     @classmethod
-    def process_init(cls, create_session_handle_fn, verbose):
+    def process_init(cls, verbose, create_session_handle_fn=None):
         ingest_log_streaming_init(verbose)
-        session_handle = create_session_handle_fn()
-        mp.current_process().session_handle = session_handle
+        # set the session handle for the doc processor if the connector supports it
+        if create_session_handle_fn is not None:
+            doc_processor_resource.session_handle = create_session_handle_fn()
 
     def _filter_docs_with_outputs(self, docs):
         num_docs_all = len(docs)
@@ -80,6 +83,9 @@ class Processor:
             if not docs:
                 return
 
+        # get a create_session_handle function if the connector supports it
+        create_session_handle_fn = partial(self.doc_connector.create_session_handle, self.doc_connector.config) if isinstance(self.doc_connector, ConnectorSessionHandleMixin) else None
+
         # Debugging tip: use the below line and comment out the mp.Pool loop
         # block to remain in single process
         # self.doc_processor_fn(docs[0])
@@ -87,7 +93,10 @@ class Processor:
         with mp.Pool(
             processes=self.num_processes,
             initializer=self.process_init,
-            initargs=(partial(self.doc_connector.create_session_handle, self.doc_connector.config), logging.DEBUG if self.verbose else logging.INFO,),
+            initargs=(
+                logging.DEBUG if self.verbose else logging.INFO,
+                create_session_handle_fn,
+            ),
         ) as pool:
             pool.map(self.doc_processor_fn, docs)
 

@@ -19,14 +19,9 @@ from unstructured.staging.base import convert_to_dict
 
 
 @dataclass
-class BaseSessionHandle:
+class BaseSessionHandle(ABC):
     """Abstract definition on which to define shared resources for processing documents.
     E.g., a connection for making a request for fetching a document."""
-
-    @abstractmethod
-    def initialize(self):
-        """Initialize the session handler."""
-        pass
 
 
 @dataclass
@@ -77,12 +72,6 @@ class BaseConnector(ABC):
         and config object that implements BaseConnectorConfig."""
         self.standard_config = standard_config
         self.config = config
-
-    @classmethod
-    def create_session_handle(cls, config: BaseConnectorConfig) -> Optional[BaseSessionHandle]:
-        """Creates a session handle that can be assign on each IngestDoc to share
-        session related resources across all document handling for a process."""
-        return None
 
     @abstractmethod
     def cleanup(self, cur_dir=None):
@@ -346,3 +335,15 @@ class IngestDocCleanupMixin:
         ):
             logger.debug(f"Cleaning up {self}")
             os.unlink(self.filename)
+
+
+class IngestDocSessionHandleMixin:
+    session_handle: Optional[BaseSessionHandle] = None
+
+
+class ConnectorSessionHandleMixin:
+    @classmethod
+    @abstractmethod
+    def create_session_handle(cls, config: BaseConnectorConfig) -> BaseSessionHandle:
+        """Creates a session handle that can be assign on each IngestDoc to share
+        session related resources across all document handling for a process."""

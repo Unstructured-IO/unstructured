@@ -1,12 +1,13 @@
 """Process arbitrary files with the Unstructured library"""
 
-import multiprocessing as mp
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, cast
 
 from unstructured_inference.models.base import get_model
 
+from unstructured.ingest.doc_processor import resource
 from unstructured.ingest.interfaces import BaseIngestDoc as IngestDoc
+from unstructured.ingest.interfaces import IngestDocSessionHandleMixin
 from unstructured.ingest.logger import logger
 
 
@@ -33,8 +34,9 @@ def process_document(doc: "IngestDoc", **partition_kwargs) -> Optional[List[Dict
     """
     isd_elems_no_filename = None
     try:
-        # set the session handler on the doc
-        doc.session_handle = mp.current_process().session_handle
+        # assign the session handle for the data source on the doc
+        if resource.session_handle is not None and isinstance(doc, IngestDocSessionHandleMixin):
+            cast(IngestDocSessionHandleMixin, doc).session_handle = resource.session_handle
         # does the work necessary to load file into filesystem
         # in the future, get_file_handle() could also be supported
         doc.get_file()
