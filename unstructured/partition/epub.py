@@ -4,6 +4,7 @@ from typing import IO, List, Optional
 from ebooklib import epub
 
 from unstructured.documents.elements import Element, process_metadata
+from unstructured.file_utils.encoding import detect_file_encoding
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import (
     exactly_one,
@@ -38,10 +39,10 @@ def partition_epub(
         If True, the output will include page breaks if the filetype supports it
     metadata_last_modified
         The last modified date for the document.
+    encoding
+        The encoding method used to decode the text input. If None, utf-8 will be used.
     """
     exactly_one(filename=filename, file=file)
-    if filename is None:
-        filename = ""
 
     if file is not None:
         with tempfile.NamedTemporaryFile(delete=False) as tmp:
@@ -57,6 +58,8 @@ def partition_epub(
     toc_href_and_title = []
     elements = []
 
+    # open issue that might resolve the chapter mapping of text
+    # https://github.com/aerkalov/ebooklib/issues/289
     for item in book.toc:
         # Some toc items may be tuple of multiple items, but all have the same href
         if isinstance(item, tuple):
@@ -64,11 +67,15 @@ def partition_epub(
         else:
             toc_href_and_title.append((item.href.split("#")[0], item.title))
 
+    item_title = None
+    
     for item in html_items:
-        # not all html_items show up in the toc,
-        # so some elements will still have `None` for metadata.section
-        item_title = None
-        item_content = item.get_content()
+        if encoding:
+            item_content = item.get_content().decode(encoding)
+        else:
+            formatted_encoding, _ = detect_file_encoding(filename)
+            item_content = item.get_content().decode(formatted_encoding)
+    
         item_href = item.file_name
 
         for href, title in toc_href_and_title:
