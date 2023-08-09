@@ -10,6 +10,9 @@ SCALE_TEST_NUMBER_OF_RECORDS = 20_000
 # Access token that has read and write permissions for the respective workspace
 token = os.environ["AIRTABLE_ACCESS_TOKEN_WRITE"]
 
+# You can find the IDs below defined in component_ids.sh
+# In case new ones are needed to be created, there's guidance below and in component_ids.sh.
+
 # ID of a new base that is intended to contain one large table.
 # The table will be filled using this python script.
 # If the ID is not in the environment, it is possible to create a new base
