@@ -1,6 +1,7 @@
-## 0.9.2-dev1
+## 0.9.2-dev2
 
 ### Features
+* Add `metadata.section` to capture epub table of contents data
 
 ### Fixes
 
