@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Connectors" href="connectors.html" /><link rel="prev" title="Unstructured API" href="api.html" />
 
   <link rel="shortcut icon" href="_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Bricks - Unstructured 0.9.0 documentation</title>
+  <title>Bricks - Unstructured 0.9.1 documentation</title>
   <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -648,6 +648,8 @@ to disable SSL verification in the request.</p>
 <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_html</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s2">&quot;https://python.org/&quot;</span><span class="p">,</span> <span class="n">ssl_verify</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>If you want to ignore content in <code class="docutils literal notranslate"><span class="pre">&lt;header&gt;</span></code> and <code class="docutils literal notranslate"><span class="pre">&lt;footer&gt;</span></code> tags, pass
+<code class="docutils literal notranslate"><span class="pre">skip_headers_and_footers=True</span></code> into <code class="docutils literal notranslate"><span class="pre">partition_html</span></code>.</p>
 <p>If you website contains news articles, it can be helpful to only grab content that appears in
 between the <code class="docutils literal notranslate"><span class="pre">&lt;article&gt;</span></code> tags, if the site uses that convention.
 To activate this behavior, you can set <code class="docutils literal notranslate"><span class="pre">html_assemble_articles=True</span></code>.
@@ -1047,6 +1049,9 @@ attribute in the element metadata will contain an HTML representation of the tab
 <span class="nb">print</span><span class="p">(</span><span class="n">elements</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">text_as_html</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>If your Excel file contains emojis and you notice them missing in the output, try
+running <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">beautifulsoup4</span></code>. If beautiful soup is installed, <code class="docutils literal notranslate"><span class="pre">partition_xlsx</span></code>
+will use that to parse the table instead of the base <cite>lxml</cite> parser.</p>
 <p>For more information about the <code class="docutils literal notranslate"><span class="pre">partition_xlsx</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/xlsx.py">source code here</a>.</p>
 </section>
 <section id="partition-xml">
@@ -2279,6 +2284,42 @@ distinct sentences and words.</p>
 </div>
 <p>For more information about the <code class="docutils literal notranslate"><span class="pre">sentence_count</span></code> function, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/text_type.py">source code here</a>.</p>
 </section>
+<section id="filter-element-types">
+<h3><code class="docutils literal notranslate"><span class="pre">filter_element_types</span></code><a class="headerlink" href="#filter-element-types" title="Permalink to this heading"></a></h3>
+<p>Filter a list of <code class="docutils literal notranslate"><span class="pre">Element</span></code> objects by element type. <code class="docutils literal notranslate"><span class="pre">filter_element_types</span></code> has two parameters:
+<code class="docutils literal notranslate"><span class="pre">include_element_types</span></code> - include only specific <code class="docutils literal notranslate"><span class="pre">Element</span></code>
+<code class="docutils literal notranslate"><span class="pre">exclude_element_types</span></code> - include all <code class="docutils literal notranslate"><span class="pre">Element</span></code> except specific</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.staging.base</span> <span class="kn">import</span> <span class="n">filter_element_types</span>
+<span class="kn">from</span> <span class="nn">unstructured.documents.elements</span> <span class="kn">import</span> <span class="n">Title</span><span class="p">,</span> <span class="n">Text</span>
+<span class="kn">from</span> <span class="nn">unstructured.partition.text</span> <span class="kn">import</span> <span class="n">partition_text</span>
+
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_text</span><span class="p">(</span>
+      <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span>
+      <span class="n">include_metadata</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+  <span class="p">)</span>
+
+<span class="c1"># Returns only element with type Title</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="n">filter_element_types</span><span class="p">(</span>
+      <span class="n">elements</span><span class="o">=</span><span class="n">elements</span><span class="p">,</span>
+      <span class="n">include_element_types</span><span class="o">=</span><span class="p">[</span><span class="n">Title</span><span class="p">],</span>
+  <span class="p">)</span>
+
+<span class="c1"># Returns all types except Title</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="n">filter_element_types</span><span class="p">(</span>
+      <span class="n">elements</span><span class="o">=</span><span class="n">elements</span><span class="p">,</span>
+      <span class="n">exclude_element_types</span><span class="o">=</span><span class="p">[</span><span class="n">Title</span><span class="p">],</span>
+  <span class="p">)</span>
+<span class="c1"># Raises the error as it is not allowed to use both at the time</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="n">filter_element_types</span><span class="p">(</span>
+          <span class="n">elements</span><span class="o">=</span><span class="n">elements</span><span class="p">,</span>
+          <span class="n">exclude_element_types</span><span class="o">=</span><span class="p">[</span><span class="n">Title</span><span class="p">],</span>
+          <span class="n">include_element_types</span><span class="o">=</span><span class="p">[</span><span class="n">Text</span><span class="p">],</span>
+      <span class="p">)</span>
+</pre></div>
+</div>
+<p>For more information about the <code class="docutils literal notranslate"><span class="pre">filter_element_types</span></code> function, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/staging/base.py">source code here</a>.</p>
+</section>
 </section>
 </section>
 
@@ -2415,6 +2456,7 @@ distinct sentences and words.</p>
 <li><a class="reference internal" href="#is-possible-narrative-text"><code class="docutils literal notranslate"><span class="pre">is_possible_narrative_text</span></code></a></li>
 <li><a class="reference internal" href="#is-possible-title"><code class="docutils literal notranslate"><span class="pre">is_possible_title</span></code></a></li>
 <li><a class="reference internal" href="#sentence-count"><code class="docutils literal notranslate"><span class="pre">sentence_count</span></code></a></li>
+<li><a class="reference internal" href="#filter-element-types"><code class="docutils literal notranslate"><span class="pre">filter_element_types</span></code></a></li>
 </ul>
 </li>
 </ul>
