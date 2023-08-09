@@ -1,4 +1,4 @@
-## 0.9.1-dev10
+## 0.9.1-dev11
 
 ### Enhancements
 
@@ -15,6 +15,8 @@
 
 ### Fixes
 
+* Add functionality to switch `html` text parser based on whether the `html` text contains emoji
+* Add functionality to check if a string contains any emoji characters
 * Remove unused `_partition_via_api` function
 * Fixed emoji bug in `partition_xlsx`.
 * Pass `file_filename` metadata when partitioning file object
