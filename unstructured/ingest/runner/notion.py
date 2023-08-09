@@ -37,6 +37,7 @@ def notion(
     else:
         raise ValueError("could not create local cache directory name")
     connector_config.download_dir = update_download_dir_hash(
+        connector_name="notion",
         connector_config=connector_config,
         hashed_dir_name=hashed_dir_name,
         logger=logger,
