@@ -7,10 +7,27 @@ from unstructured.ingest.logger import logger
 
 SCALE_TEST_NUMBER_OF_RECORDS = 20_000
 
+# Access token that has read and write permissions for the respective workspace
 token = os.environ["AIRTABLE_ACCESS_TOKEN_WRITE"]
+
+# ID of a new base that is intended to contain one large table.
+# The table will be filled using this python script.
+# If the ID is not in the environment, it is possible to create a new base
+# via the Airtable UI, and get the base ID from the URL structure.
+# (https://support.airtable.com/docs/finding-airtable-ids)
 large_table_base_id = os.environ["LARGE_TABLE_BASE_ID"]
+
+# ID of the one table inside the base "large_table_base".
+# The table is intended to be large, and will be filled using this python script.
+# If the ID is not in the environment, it is possible to create a new table
+# via the Airtable UI, and get the table ID from the URL structure.
+# (https://support.airtable.com/docs/finding-airtable-ids)
 large_table_table_id = os.environ["LARGE_TABLE_TABLE_ID"]
-large_base_base_id = os.environ["LARGE_BASE_BASE_ID"]
+
+# ID of a base that is intended to contain lots of tables.
+# large_base_base_id = os.environ["LARGE_BASE_BASE_ID"]
+# Creating tables is not yet supported in pyairtable. Try Airtable Web API instead:
+# https://airtable.com/developers/web/api/create-base"
 
 
 def create_n_bases(api, number_of_bases):
