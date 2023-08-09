@@ -110,15 +110,17 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def record_locator(self) -> Optional[Dict[str, Any]]:
         if self.meta:
             record_source = self.meta["page"]
+            property_name = "AbsoluteUrl"
             resource_url_name = "absolute_url"
         else:
             record_source = self.file
+            property_name = "ServerRelativeUrl"
             resource_url_name = "server_relative_url"
 
         return {
             "site": self.config.site_url,
             "unique_id": record_source.get_property("UniqueId", ""),
-            resource_url_name: record_source.get_property(resource_url_name, ""),
+            resource_url_name: record_source.get_property(property_name, ""),
         }
 
     @property
