@@ -21,11 +21,18 @@ RUN python3.8 -m pip install pip==${PIP_VERSION} && \
   pip install --no-cache -r requirements/test.txt && \
   pip install --no-cache -r requirements/huggingface.txt && \
   pip install --no-cache -r requirements/dev.txt && \
-  pip install --no-cache -r requirements/ingest-azure.txt && \
   pip install --no-cache -r requirements/ingest-box.txt && \
+  pip install --no-cache -r requirements/ingest-confluence.txt && \
+  pip install --no-cache -r requirements/ingest-discord.txt && \
+  pip install --no-cache -r requirements/ingest-dropbox.txt && \
+  pip install --no-cache -r requirements/ingest-elasticsearch.txt && \
+  pip install --no-cache -r requirements/ingest-gcs.txt && \
   pip install --no-cache -r requirements/ingest-github.txt && \
   pip install --no-cache -r requirements/ingest-gitlab.txt && \
   pip install --no-cache -r requirements/ingest-google-drive.txt && \
+  pip install --no-cache -r requirements/ingest-notion.txt && \
+  pip install --no-cache -r requirements/ingest-onedrive.txt && \
+  pip install --no-cache -r requirements/ingest-outlook.txt && \
   pip install --no-cache -r requirements/ingest-reddit.txt && \
   pip install --no-cache -r requirements/ingest-s3.txt && \
   pip install --no-cache -r requirements/ingest-slack.txt && \
