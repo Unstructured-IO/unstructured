@@ -188,3 +188,4 @@ def filter_footer_and_header(document: "DocumentLayout") -> "DocumentLayout":
             ),
         )
     return document
+
