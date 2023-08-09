@@ -7,8 +7,8 @@
         "version": "1.0",
         "record_locator": {
           "site": "https://unstructuredio.sharepoint.com/",
-          "UniqueId": "f4613496-4c63-4128-adf0-3c3e13a5a303",
-          "AbsoluteUrl": "https://unstructuredio.sharepoint.com/SitePages/This-is-a-title.aspx"
+          "unique_id": "f4613496-4c63-4128-adf0-3c3e13a5a303",
+          "absolute_url": ""
         },
         "date_created": "0001-01-01T08:00:00Z",
         "date_modified": "2023-07-31T07:03:37Z"
@@ -27,8 +27,8 @@
         "version": "1.0",
         "record_locator": {
           "site": "https://unstructuredio.sharepoint.com/",
-          "UniqueId": "f4613496-4c63-4128-adf0-3c3e13a5a303",
-          "AbsoluteUrl": "https://unstructuredio.sharepoint.com/SitePages/This-is-a-title.aspx"
+          "unique_id": "f4613496-4c63-4128-adf0-3c3e13a5a303",
+          "absolute_url": ""
         },
         "date_created": "0001-01-01T08:00:00Z",
         "date_modified": "2023-07-31T07:03:37Z"
@@ -47,8 +47,8 @@
         "version": "1.0",
         "record_locator": {
           "site": "https://unstructuredio.sharepoint.com/",
-          "UniqueId": "f4613496-4c63-4128-adf0-3c3e13a5a303",
-          "AbsoluteUrl": "https://unstructuredio.sharepoint.com/SitePages/This-is-a-title.aspx"
+          "unique_id": "f4613496-4c63-4128-adf0-3c3e13a5a303",
+          "absolute_url": ""
         },
         "date_created": "0001-01-01T08:00:00Z",
         "date_modified": "2023-07-31T07:03:37Z"
@@ -67,8 +67,8 @@
         "version": "1.0",
         "record_locator": {
           "site": "https://unstructuredio.sharepoint.com/",
-          "UniqueId": "f4613496-4c63-4128-adf0-3c3e13a5a303",
-          "AbsoluteUrl": "https://unstructuredio.sharepoint.com/SitePages/This-is-a-title.aspx"
+          "unique_id": "f4613496-4c63-4128-adf0-3c3e13a5a303",
+          "absolute_url": ""
         },
         "date_created": "0001-01-01T08:00:00Z",
         "date_modified": "2023-07-31T07:03:37Z"
