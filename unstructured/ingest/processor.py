@@ -2,9 +2,10 @@ import logging
 import multiprocessing as mp
 from contextlib import suppress
 from functools import partial
+from typing import cast
 
-from unstructured.ingest.doc_processor.generalized import initialize, process_document
 from unstructured.ingest.doc_processor import resource as doc_processor_resource
+from unstructured.ingest.doc_processor.generalized import initialize, process_document
 from unstructured.ingest.interfaces import (
     BaseConnector,
     ConnectorSessionHandleMixin,
@@ -84,7 +85,14 @@ class Processor:
                 return
 
         # get a create_session_handle function if the connector supports it
-        create_session_handle_fn = partial(self.doc_connector.create_session_handle, self.doc_connector.config) if isinstance(self.doc_connector, ConnectorSessionHandleMixin) else None
+        create_session_handle_fn = (
+            partial(
+                cast(ConnectorSessionHandleMixin, self.doc_connector).create_session_handle,
+                cast(BaseConnector, self.doc_connector).config,
+            )
+            if isinstance(self.doc_connector, ConnectorSessionHandleMixin)
+            else None
+        )
 
         # Debugging tip: use the below line and comment out the mp.Pool loop
         # block to remain in single process
