@@ -1,4 +1,4 @@
-## 0.9.2-dev2
+## 0.9.2-dev3
 =======
 
 ### Enhancements
@@ -10,6 +10,8 @@
 ### Features
 
 ### Fixes
+* Add functionality to switch `html` text parser based on whether the `html` text contains emoji
+* Add functionality to check if a string contains any emoji characters
 
 ## 0.9.1
 =======
