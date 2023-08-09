@@ -52,7 +52,7 @@ def partition_epub(
             filename = tmp.name
         last_modification_date = get_last_modified_date_from_file(file)
 
-    book = epub.read_epub(filename)
+    book = epub.read_epub(filename, options={"ignore_ncx":False})
     # book.items also includes EpubLink, EpubImage, EpubNcx (page navigation info)
     # and EpubItem (fomatting/css)
     html_items = [item for item in book.items if isinstance(item, epub.EpubHtml)]
