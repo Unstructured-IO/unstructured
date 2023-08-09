@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sys
+from abc import abstractmethod
 from typing import List, Optional, Sequence, Tuple
 
 if sys.version_info < (3, 8):
@@ -59,34 +60,53 @@ class TagsMixin:
         super().__init__(*args, **kwargs)
 
 
-class HTMLText(TagsMixin, Text):
+class HTMLBaseMixin(TagsMixin):
+    """Mixin used for all HTML elements. Has TagsMixin + method specific for HTML elements"""
+
+    @abstractmethod
+    def as_base_element(self) -> Element:
+        """Returns instance of base (non HTML) element"""
+        pass
+
+
+class HTMLText(HTMLBaseMixin, Text):
     """Text with tag information."""
 
-    pass
+    def as_base_element(self):
+        """Returns instance of Text"""
+        return Text(**self.__dict__)
 
 
-class HTMLAddress(TagsMixin, Address):
+class HTMLAddress(HTMLBaseMixin, Address):
     """Address with tag information."""
 
-    pass
+    def as_base_element(self):
+        """Returns instance of Address"""
+        return Address(**self.__dict__)
 
 
-class HTMLTitle(TagsMixin, Title):
+class HTMLTitle(HTMLBaseMixin, Title):
     """Title with tag information."""
 
-    pass
+    def as_base_element(self):
+        """Returns instance of Title"""
+        return Title(**self.__dict__)
 
 
-class HTMLNarrativeText(TagsMixin, NarrativeText):
+class HTMLNarrativeText(HTMLBaseMixin, NarrativeText):
     """NarrativeText with tag information."""
 
-    pass
+    def as_base_element(self):
+        """Returns instance of NarrativeText"""
+        return NarrativeText(**self.__dict__)
 
 
-class HTMLListItem(TagsMixin, ListItem):
+class HTMLListItem(HTMLBaseMixin, ListItem):
     """NarrativeText with tag information."""
 
-    pass
+    def as_base_element(self):
+        """Returns instance of ListItem"""
+        return ListItem(**self.__dict__)
 
 
 class HTMLDocument(XMLDocument):
@@ -98,10 +118,8 @@ class HTMLDocument(XMLDocument):
         stylesheet: Optional[str] = None,
         parser: VALID_PARSERS = None,
         assemble_articles: bool = True,
-        is_html_file: bool = True,
     ):
         self.assembled_articles = assemble_articles
-        self.is_html_file = is_html_file
         super().__init__(stylesheet=stylesheet, parser=parser)
 
     def _read(self) -> List[Page]:
@@ -127,7 +145,7 @@ class HTMLDocument(XMLDocument):
                     continue
 
                 if _is_text_tag(tag_elem):
-                    element = _parse_tag(tag_elem, is_html_file=self.is_html_file)
+                    element = _parse_tag(tag_elem)
                     if element is not None:
                         page.elements.append(element)
                         descendanttag_elems = tuple(tag_elem.iterdescendants())
@@ -195,7 +213,7 @@ class HTMLDocument(XMLDocument):
         for page in self.pages:
             elements: List[Element] = []
             for el in page.elements:
-                if not isinstance(el, TagsMixin):
+                if not isinstance(el, HTMLBaseMixin):
                     raise ValueError(
                         f"elements of class {self.__class__} should be of type HTMLTitle "
                         f"HTMLNarrativeText, or HTMLListItem but "
@@ -241,7 +259,6 @@ def _get_links_from_tag(tag_elem: etree.Element) -> List[Link]:
 
 def _parse_tag(
     tag_elem: etree.Element,
-    is_html_file: bool = True,
 ) -> Optional[Element]:
     """Converts an etree element to a Text element if there is applicable text in the element.
     Ancestor tags are kept so they can be used for filtering or classification without
@@ -260,7 +277,6 @@ def _parse_tag(
         tag_elem.tag,
         ancestortags,
         links=links,
-        is_html_file=is_html_file,
     )
 
 
@@ -269,11 +285,9 @@ def _text_to_element(
     tag: str,
     ancestortags: Tuple[str, ...],
     links: List[Link] = [],
-    is_html_file: bool = True,
 ) -> Optional[Element]:
     """Given the text of an element, the tag type and the ancestor tags, produces the appropriate
     HTML element.
-    is_html_file indicate if original file is HTML, if so will be used HTMLTitle insted of Title
     """
     if is_bulleted_text(text):
         if not clean_bullets(text):
@@ -291,10 +305,8 @@ def _text_to_element(
         return None
     elif is_narrative_tag(text, tag):
         return HTMLNarrativeText(text, tag=tag, ancestortags=ancestortags, links=links)
-    elif is_possible_title(text) and is_html_file:
+    elif is_possible_title(text):
         return HTMLTitle(text, tag=tag, ancestortags=ancestortags, links=links)
-    elif is_possible_title(text) and not is_html_file:
-        return Title(text)
     else:
         return HTMLText(text, tag=tag, ancestortags=ancestortags, links=links)
 
@@ -486,3 +498,11 @@ def _find_articles(
         # NOTE(robinson) - ref: https://schema.org/Article
         articles = root.findall(".//div[@itemprop='articleBody']")
     return [root] if len(articles) == 0 else articles
+
+
+def html_to_base_element(element: Element) -> Element:
+    """For HTML elements return instance of base class. For example, if element is instance of HTMLTitle
+    method will return instance of Title. For not HTML elements will just return the same element."""
+    if isinstance(element, HTMLBaseMixin):
+        return element.as_base_element()
+    return element

@@ -331,6 +331,7 @@ class CheckBox(Element):
         coordinate_system: Optional[CoordinateSystem] = None,
         checked: bool = False,
         metadata: Optional[ElementMetadata] = None,
+        **kwargs,
     ):
         metadata = metadata if metadata else ElementMetadata()
         super().__init__(
@@ -366,6 +367,7 @@ class Text(Element):
         coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         metadata: Optional[ElementMetadata] = None,
+        **kwargs,
     ):
         metadata = metadata if metadata else ElementMetadata()
         self.text: str = text

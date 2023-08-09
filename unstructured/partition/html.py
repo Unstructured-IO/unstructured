@@ -3,7 +3,7 @@ from typing import IO, Dict, List, Optional
 import requests
 
 from unstructured.documents.elements import Element, process_metadata
-from unstructured.documents.html import HTMLDocument
+from unstructured.documents.html import HTMLDocument, html_to_base_element
 from unstructured.documents.xml import VALID_PARSERS
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.file_conversion import convert_file_to_html_text
@@ -35,7 +35,6 @@ def partition_html(
     html_assemble_articles: bool = False,
     metadata_filename: Optional[str] = None,
     metadata_date: Optional[str] = None,
-    is_html_file: bool = True,
     **kwargs,
 ) -> List[Element]:
     """Partitions an HTML document into its constituent elements.
@@ -80,7 +79,6 @@ def partition_html(
             parser=parser,
             encoding=encoding,
             assemble_articles=html_assemble_articles,
-            is_html_file=is_html_file,
         )
 
     elif file is not None:
@@ -90,7 +88,6 @@ def partition_html(
             file_text,
             parser=parser,
             assemble_articles=html_assemble_articles,
-            is_html_file=is_html_file,
         )
 
     elif text is not None:
@@ -99,7 +96,6 @@ def partition_html(
             _text,
             parser=parser,
             assemble_articles=html_assemble_articles,
-            is_html_file=is_html_file,
         )
 
     elif url is not None:
@@ -114,7 +110,6 @@ def partition_html(
         document = HTMLDocument.from_string(
             response.text,
             parser=parser,
-            is_html_file=is_html_file,
         )
 
     return document_to_element_list(
@@ -163,11 +158,11 @@ def convert_and_partition_html(
     )
     # NOTE(robinson) - pypandoc returns a text string with unicode encoding
     # ref: https://github.com/JessicaTegner/pypandoc#usage
-    return partition_html(
+    html_elements = partition_html(
         text=html_text,
         include_page_breaks=include_page_breaks,
         encoding="unicode",
         metadata_filename=metadata_filename,
         metadata_date=metadata_date or last_modification_date,
-        is_html_file=False,
     )
+    return [html_to_base_element(html_element) for html_element in html_elements]
