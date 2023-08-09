@@ -20,6 +20,7 @@ from htmlBuilder.tags import (
     Tr,
     Ul,
 )
+from notion_client.errors import APIResponseError
 
 import unstructured.ingest.connector.notion.types.blocks as notion_blocks
 from unstructured.ingest.connector.notion.client import Client
@@ -160,9 +161,9 @@ def extract_database_html(
 
     logger.debug(f"Creating {len(all_pages)} rows")
     for page in all_pages:
-        if is_database_url(page.url):
+        if is_database_url(client=client, url=page.url):
             child_databases.append(page.id)
-        if is_page_url(page.url):
+        if is_page_url(client=client, url=page.url):
             child_pages.append(page.id)
         properties = page.properties
         inner_html = [properties.get(k).get_html() for k in property_keys]  # type: ignore
@@ -229,90 +230,138 @@ def get_recursive_content(
     logger: logging.Logger,
 ) -> ChildExtractionResponse:
     parents: List[QueueEntry] = [init_entry]
-    child_pages = []
-    child_dbs = []
-    processed = []
+    child_pages: List[str] = []
+    child_dbs: List[str] = []
+    processed: List[str] = []
     while len(parents) > 0:
         parent: QueueEntry = parents.pop()
-        processed.append(parent.id)
+        processed.append(str(parent.id))
         if parent.type == QueueEntryType.PAGE:
             logger.debug(f"Getting child data from page: {parent.id}")
-            for children in client.blocks.children.iterate_list(  # type: ignore
-                block_id=str(parent.id),
-            ):
-                child_pages_from_page = [
-                    c for c in children if isinstance(c.block, notion_blocks.ChildPage)
-                ]
-                if child_pages_from_page:
-                    child_page_blocks: List[notion_blocks.ChildPage] = [
-                        p.block
-                        for p in child_pages_from_page
-                        if isinstance(p.block, notion_blocks.ChildPage)
-                    ]
-                    logger.debug(
-                        "found child pages from parent page {}: {}".format(
-                            parent.id,
-                            ", ".join([block.title for block in child_page_blocks]),
-                        ),
-                    )
-                new_pages = [p.id for p in child_pages_from_page if p.id not in processed]
-                child_pages.extend(new_pages)
-                parents.extend(
-                    [QueueEntry(type=QueueEntryType.PAGE, id=UUID(i)) for i in new_pages],
-                )
+            page_children = []
+            try:
+                for children_block in client.blocks.children.iterate_list(  # type: ignore
+                    block_id=str(parent.id),
+                ):
+                    page_children.extend(children_block)
+            except APIResponseError as api_error:
+                logger.error(f"failed to get page with id {parent.id}: {api_error}")
+                if str(parent.id) in child_pages:
+                    child_pages.remove(str(parent.id))
+                continue
+            if not page_children:
+                continue
 
-                child_dbs_from_page = [
-                    c for c in children if isinstance(c.block, notion_blocks.ChildDatabase)
+            # Extract child pages
+            child_pages_from_page = [
+                c for c in page_children if isinstance(c.block, notion_blocks.ChildPage)
+            ]
+            if child_pages_from_page:
+                child_page_blocks: List[notion_blocks.ChildPage] = [
+                    p.block
+                    for p in child_pages_from_page
+                    if isinstance(p.block, notion_blocks.ChildPage)
                 ]
-                if child_dbs_from_page:
-                    child_db_blocks: List[notion_blocks.ChildDatabase] = [
-                        c.block
-                        for c in children
-                        if isinstance(c.block, notion_blocks.ChildDatabase)
-                    ]
-                    logger.debug(
-                        "found child database from parent page {}: {}".format(
-                            parent.id,
-                            ", ".join([block.title for block in child_db_blocks]),
-                        ),
-                    )
-                new_dbs = [db.id for db in child_dbs_from_page if db.id not in processed]
-                child_dbs.extend(new_dbs)
-                parents.extend(
-                    [QueueEntry(type=QueueEntryType.DATABASE, id=UUID(i)) for i in new_dbs],
+                logger.debug(
+                    "found child pages from parent page {}: {}".format(
+                        parent.id,
+                        ", ".join([block.title for block in child_page_blocks]),
+                    ),
                 )
+            new_pages = [p.id for p in child_pages_from_page if p.id not in processed]
+            new_pages = list(set(new_pages))
+            child_pages.extend(new_pages)
+            parents.extend(
+                [QueueEntry(type=QueueEntryType.PAGE, id=UUID(i)) for i in new_pages],
+            )
+
+            # Extract child databases
+            child_dbs_from_page = [
+                c for c in page_children if isinstance(c.block, notion_blocks.ChildDatabase)
+            ]
+            if child_dbs_from_page:
+                child_db_blocks: List[notion_blocks.ChildDatabase] = [
+                    c.block
+                    for c in page_children
+                    if isinstance(c.block, notion_blocks.ChildDatabase)
+                ]
+                logger.debug(
+                    "found child database from parent page {}: {}".format(
+                        parent.id,
+                        ", ".join([block.title for block in child_db_blocks]),
+                    ),
+                )
+            new_dbs = [db.id for db in child_dbs_from_page if db.id not in processed]
+            new_dbs = list(set(new_dbs))
+            child_dbs.extend(new_dbs)
+            parents.extend(
+                [QueueEntry(type=QueueEntryType.DATABASE, id=UUID(i)) for i in new_dbs],
+            )
+
+            linked_to_others: List[notion_blocks.LinkToPage] = [
+                c.block for c in page_children if isinstance(c.block, notion_blocks.LinkToPage)
+            ]
+            for link in linked_to_others:
+                if (page_id := link.page_id) and (
+                    page_id not in processed and page_id not in child_pages
+                ):
+                    child_pages.append(page_id)
+                    parents.append(QueueEntry(type=QueueEntryType.PAGE, id=UUID(page_id)))
+                if (database_id := link.database_id) and (
+                    database_id not in processed and database_id not in child_dbs
+                ):
+                    child_dbs.append(database_id)
+                    parents.append(
+                        QueueEntry(type=QueueEntryType.DATABASE, id=UUID(database_id)),
+                    )
+
         elif parent.type == QueueEntryType.DATABASE:
             logger.debug(f"Getting child data from database: {parent.id}")
-            for page_entries in client.databases.iterate_query(  # type: ignore
-                database_id=str(parent.id),
-            ):
-                child_pages_from_db = [p for p in page_entries if is_page_url(p.url)]
-                if child_pages_from_db:
-                    logger.debug(
-                        "found child pages from parent database {}: {}".format(
-                            parent.id,
-                            ", ".join([p.url for p in child_pages_from_db]),
-                        ),
-                    )
-                new_pages = [p.id for p in child_pages_from_db if p.id not in processed]
-                child_pages.extend(new_pages)
-                parents.extend(
-                    [QueueEntry(type=QueueEntryType.PAGE, id=UUID(i)) for i in new_pages],
-                )
+            database_pages = []
+            try:
+                for page_entries in client.databases.iterate_query(  # type: ignore
+                    database_id=str(parent.id),
+                ):
+                    database_pages.extend(page_entries)
+            except APIResponseError as api_error:
+                logger.error(f"failed to get database with id {parent.id}: {api_error}")
+                if str(parent.id) in child_dbs:
+                    child_dbs.remove(str(parent.id))
+                continue
+            if not database_pages:
+                continue
 
-                child_dbs_from_db = [p for p in page_entries if is_database_url(p.url)]
-                if child_dbs_from_db:
-                    logger.debug(
-                        "found child database from parent database {}: {}".format(
-                            parent.id,
-                            ", ".join([db.url for db in child_dbs_from_db]),
-                        ),
-                    )
-                new_dbs = [db.id for db in child_dbs_from_db if db.id not in processed]
-                child_dbs.extend(new_dbs)
-                parents.extend(
-                    [QueueEntry(type=QueueEntryType.DATABASE, id=UUID(i)) for i in new_dbs],
+            child_pages_from_db = [
+                p for p in database_pages if is_page_url(client=client, url=p.url)
+            ]
+            if child_pages_from_db:
+                logger.debug(
+                    "found child pages from parent database {}: {}".format(
+                        parent.id,
+                        ", ".join([p.url for p in child_pages_from_db]),
+                    ),
                 )
+            new_pages = [p.id for p in child_pages_from_db if p.id not in processed]
+            child_pages.extend(new_pages)
+            parents.extend(
+                [QueueEntry(type=QueueEntryType.PAGE, id=UUID(i)) for i in new_pages],
+            )
+
+            child_dbs_from_db = [
+                p for p in database_pages if is_database_url(client=client, url=p.url)
+            ]
+            if child_dbs_from_db:
+                logger.debug(
+                    "found child database from parent database {}: {}".format(
+                        parent.id,
+                        ", ".join([db.url for db in child_dbs_from_db]),
+                    ),
+                )
+            new_dbs = [db.id for db in child_dbs_from_db if db.id not in processed]
+            child_dbs.extend(new_dbs)
+            parents.extend(
+                [QueueEntry(type=QueueEntryType.DATABASE, id=UUID(i)) for i in new_dbs],
+            )
 
     return ChildExtractionResponse(
         child_pages=child_pages,
@@ -328,25 +377,39 @@ def is_valid_uuid(uuid_str: str) -> bool:
         return False
 
 
-def is_page_url(url: str):
+def get_uuid_from_url(path: str) -> Optional[str]:
+    strings = path.split("-")
+    if len(strings) > 0 and is_valid_uuid(strings[-1]):
+        return strings[-1]
+    return None
+
+
+def is_page_url(client: Client, url: str):
     parsed_url = urlparse(url)
     path = parsed_url.path.split("/")[-1]
     if parsed_url.netloc != "www.notion.so":
         return False
-    if is_valid_uuid(path):
+    page_uuid = get_uuid_from_url(path=path)
+    if not page_uuid:
         return False
-    strings = path.split("-")
-    if len(strings) > 0 and is_valid_uuid(strings[-1]):
+    check_resp = client.pages.retrieve_status(page_id=page_uuid)
+    if check_resp == 200:
         return True
     return False
 
 
-def is_database_url(url: str):
+def is_database_url(client: Client, url: str):
     parsed_url = urlparse(url)
     path = parsed_url.path.split("/")[-1]
     if parsed_url.netloc != "www.notion.so":
         return False
-    return is_valid_uuid(path)
+    database_uuid = get_uuid_from_url(path=path)
+    if not database_uuid:
+        return False
+    check_resp = client.databases.retrieve_status(database_id=database_uuid)
+    if check_resp == 200:
+        return True
+    return False
 
 
 @dataclass
