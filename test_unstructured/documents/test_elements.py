@@ -1,3 +1,4 @@
+import uuid
 from functools import partial
 
 import pytest
@@ -9,7 +10,13 @@ from unstructured.documents.coordinates import (
     Orientation,
     RelativeCoordinateSystem,
 )
-from unstructured.documents.elements import CoordinatesMetadata, Element, NoID, Text
+from unstructured.documents.elements import (
+    UUID,
+    CoordinatesMetadata,
+    Element,
+    NoID,
+    Text,
+)
 
 
 def test_text_id():
@@ -17,9 +24,19 @@ def test_text_id():
     assert text_element.id == "c69509590d81db2f37f9d75480c8efed"
 
 
+def test_text_uuid():
+    text_element = Text(text="hello there!", element_id=UUID())
+    assert isinstance(text_element.id, uuid.UUID)
+
+
 def test_element_defaults_to_blank_id():
     element = Element()
     assert isinstance(element.id, NoID)
+
+
+def test_element_uuid():
+    element = Element(element_id=UUID())
+    assert isinstance(element.id, UUID)
 
 
 def test_text_element_apply_cleaners():
