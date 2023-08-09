@@ -1,7 +1,9 @@
-## 0.9.2-dev0
+## 0.9.2-dev1
 =======
 
 ### Enhancements
+
+* Update table extraction section in API documentation to sync with change in Prod API
 * Update Notion connector to extract to html
 
 ### Features
