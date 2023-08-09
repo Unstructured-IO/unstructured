@@ -132,6 +132,10 @@ install-ingest-discord:
 install-ingest-github:
 	python3 -m pip install -r requirements/ingest-github.txt
 
+.PHONY: install-ingest-biomed
+install-ingest-biomed:
+	echo "No specific dependencies exist for biomed connector"
+
 .PHONY: install-ingest-gitlab
 install-ingest-gitlab:
 	python3 -m pip install -r requirements/ingest-gitlab.txt
