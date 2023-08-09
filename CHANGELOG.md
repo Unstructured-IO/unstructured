@@ -1,3 +1,14 @@
+## 0.9.2-dev2
+=======
+
+### Enhancements
+
+### Features
+
+* Adds Sharepoint connector.
+
+### Fixes
+
 ## 0.9.2-dev1
 =======
 
@@ -27,8 +38,6 @@
 * Add Notion connector
 
 ### Features
-
-* Adds Sharepoint connector.
 
 ### Fixes
 
