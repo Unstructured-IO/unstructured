@@ -1,4 +1,17 @@
-## 0.9.1-dev11
+## 0.9.2-dev1
+=======
+
+### Enhancements
+
+* Update table extraction section in API documentation to sync with change in Prod API
+* Update Notion connector to extract to html
+
+### Features
+
+### Fixes
+
+## 0.9.1
+=======
 
 ### Enhancements
 
@@ -11,6 +24,7 @@
 * Update `partition_html` to track emphasized texts in the output
 * Update `XMLDocument._read_xml` to create `<p>` tag element for the text enclosed in the `<pre>` tag
 * Add parameter `include_tail_text` to `_construct_text` to enable (skip) tail text inclusion
+* Add Notion connector
 
 ### Features
 
@@ -28,6 +42,7 @@
 * Simplifies `min_partition` logic; makes partitions falling below the `min_partition`
   less likely.
 * Fix bug where ingest test check for number of files fails in smoke test
+* Fix unstructured-ingest entrypoint failure
 
 ## 0.9.0
 
