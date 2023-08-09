@@ -12,6 +12,7 @@ from .github import get_cmd as github
 from .gitlab import get_cmd as gitlab
 from .google_drive import get_cmd as gdrive
 from .local import get_cmd as local
+from .notion import get_cmd as notion
 from .onedrive import get_cmd as onedrive
 from .outlook import get_cmd as outlook
 from .reddit import get_cmd as reddit
@@ -34,6 +35,7 @@ __all__ = [
     "github",
     "gitlab",
     "local",
+    "notion",
     "onedrive",
     "outlook",
     "reddit",

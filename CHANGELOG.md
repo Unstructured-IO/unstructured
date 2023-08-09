@@ -1,7 +1,19 @@
-## 0.9.1-dev11
+## 0.9.2-dev0
 
 ### Enhancements
 
+### Features
+
+* Add Airtable Connector to be able to pull views/tables/bases from an Airtable organization.
+
+### Fixes
+
+
+## 0.9.1
+
+### Enhancements
+
+* Adds --partition-pdf-infer-table-structure to unstructured-ingest.
 * Enable `partition_html` to skip headers and footers with the `skip_headers_and_footers` flag.
 * Update `partition_doc` and `partition_docx` to track emphasized texts in the output
 * Adds post processing function `filter_element_types`
@@ -10,10 +22,9 @@
 * Update `partition_html` to track emphasized texts in the output
 * Update `XMLDocument._read_xml` to create `<p>` tag element for the text enclosed in the `<pre>` tag
 * Add parameter `include_tail_text` to `_construct_text` to enable (skip) tail text inclusion
+* Add Notion connector
 
 ### Features
-
-* Add Airtable Connector to be able to pull views/tables/bases from an Airtable organization.
 
 ### Fixes
 
@@ -27,6 +38,7 @@
 * Simplifies `min_partition` logic; makes partitions falling below the `min_partition`
   less likely.
 * Fix bug where ingest test check for number of files fails in smoke test
+* Fix unstructured-ingest entrypoint failure
 
 ## 0.9.0
 
@@ -76,6 +88,7 @@
 * Add parameter `skip_infer_table_types` to enable (skip) table extraction for other doc types
 * Adds optional Unstructured API unit tests in CI
 * Tracks last modified date for all document types.
+* Add auto_paragraph_grouper to detect new-line and blank-line new paragraph for .txt files.
 * refactor the ingest cli to better support expanding supported connectors
 
 ## 0.8.3

@@ -2,7 +2,10 @@ import re
 import textwrap
 from typing import IO, Callable, List, Optional, Tuple
 
-from unstructured.cleaners.core import clean_bullets, group_broken_paragraphs
+from unstructured.cleaners.core import (
+    auto_paragraph_grouper,
+    clean_bullets,
+)
 from unstructured.documents.coordinates import CoordinateSystem
 from unstructured.documents.elements import (
     Address,
@@ -221,7 +224,7 @@ def partition_text(
     elif paragraph_grouper is not None:
         file_text = paragraph_grouper(file_text)
     else:
-        file_text = group_broken_paragraphs(file_text)
+        file_text = auto_paragraph_grouper(file_text)
 
     if min_partition is not None and len(file_text) < min_partition:
         raise ValueError("`min_partition` cannot be larger than the length of file contents.")

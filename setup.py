@@ -34,9 +34,7 @@ def load_requirements(file_list: Optional[Union[str, List[str]]] = None) -> List
         with open(file, encoding="utf-8") as f:
             requirements.extend(f.readlines())
     requirements = [
-        req
-        for req in requirements
-        if not req.startswith("#") and not req.startswith("-")
+        req for req in requirements if not req.startswith("#") and not req.startswith("-")
     ]
     return requirements
 
@@ -131,6 +129,7 @@ setup(
         "github": load_requirements("requirements/ingest-github.in"),
         "gitlab": load_requirements("requirements/ingest-gitlab.in"),
         "reddit": load_requirements("requirements/ingest-reddit.in"),
+        "notion": load_requirements("requirements/ingest-notion.in"),
         "slack": load_requirements("requirements/ingest-slack.in"),
         "wikipedia": load_requirements("requirements/ingest-wikipedia.in"),
         "google-drive": load_requirements("requirements/ingest-google-drive.in"),

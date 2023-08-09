@@ -104,7 +104,8 @@ def map_to_processor_config(options: dict) -> ProcessorConfigs:
     return ProcessorConfigs(
         partition_strategy=options["partition_strategy"],
         partition_ocr_languages=options["partition_ocr_languages"],
-        encoding=options["encoding"],
+        partition_pdf_infer_table_structure=options["partition_pdf_infer_table_structure"],
+        partition_encoding=options["partition_encoding"],
         num_processes=options["num_processes"],
         reprocess=options["reprocess"],
         max_docs=options["max_docs"],
@@ -200,7 +201,13 @@ def add_shared_options(cmd: Command):
             "Default: eng",
         ),
         Option(
-            ["--encoding"],
+            ["--partition-pdf-infer-table-structure"],
+            default=False,
+            help="If set to True, partition will includ the table's text content in the response."
+            "Default: False",
+        ),
+        Option(
+            ["--partition-encoding"],
             default=None,
             help="Text encoding to use when reading documents. By default the encoding is "
             "detected automatically.",
