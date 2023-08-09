@@ -9,6 +9,7 @@
 * Update `partition_xlsx` to always use `soupparser_fromstring` to parse `html text`
 * Add functionality to switch `html` text parser based on whether the `html` text contains emoji
 * Add functionality to check if a string contains any emoji characters
+* Add CI tests around Notion
 
 ### Features
 
@@ -31,15 +32,20 @@
   - better caching of models
   - another version of detectron2 available, though the default layout model is unchanged
 * Added UUID option for element_id
+* Added UUID option for element_id
+* CI improvements to run ingest tests in parallel
 
 ### Features
 
 * Adds Sharepoint connector.
 
 ### Fixes
+<<<<<<< HEAD
 
 * Bump unstructured-inference==0.5.9:
   - ignores Tesseract errors where no text is extracted for tiles that indeed, have no text
+=======
+>>>>>>> 66c6cfc3 (update CHANGELOG)
 
 ## 0.9.1
 
