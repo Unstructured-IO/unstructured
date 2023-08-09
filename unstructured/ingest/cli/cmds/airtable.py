@@ -31,7 +31,8 @@ from unstructured.ingest.runner import airtable as airtable_fn
     path: base_id/table_id(optional)/view_id(optional)/
 
     To obtain (base, table, view) ids in bulk, check:
-    https://support.airtable.com/docs/finding-airtable-ids
+    https://airtable.com/developers/web/api/list-bases (base ids)
+    https://airtable.com/developers/web/api/get-base-schema (table and view ids)
     https://pyairtable.readthedocs.io/en/latest/metadata.html
 
     To obtain specific ids from Airtable UI, go to your workspace, and copy any
@@ -40,6 +41,8 @@ from unstructured.ingest.runner import airtable as airtable_fn
     appAbcDeF1ghijKlm -> base_id
     tblABcdEfG1HIJkLm -> table_id
     viwABCDEfg6hijKLM -> view_id
+
+    You can also check: https://support.airtable.com/docs/finding-airtable-ids
 
     Here is an example for one --list-of-paths:
         base1/		→ gets the entirety of all tables inside base1
