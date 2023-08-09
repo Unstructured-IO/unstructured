@@ -363,6 +363,7 @@ class NotionConnector(ConnectorCleanupMixin, BaseConnector):
                 for database_id in self.config.database_ids
             ]
         if self.config.recursive:
+            self.config.get_logger().info("Getting recursive content")
             child_pages = []
             child_databases = []
             for page_id in self.config.page_ids:

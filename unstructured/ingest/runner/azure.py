@@ -26,6 +26,7 @@ def azure(
         )
 
     connector_config.download_dir = update_download_dir_remote_url(
+        connector_name="azure",
         connector_config=connector_config,
         remote_url=remote_url,
         logger=logger,

@@ -24,6 +24,7 @@ def slack(
         channels.encode("utf-8"),
     )
     connector_config.download_dir = update_download_dir_hash(
+        connector_name="slack",
         connector_config=connector_config,
         hashed_dir_name=hashed_dir_name,
         logger=logger,
