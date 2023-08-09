@@ -11,6 +11,7 @@
 * Update `partition_html` to track emphasized texts in the output
 * Update `XMLDocument._read_xml` to create `<p>` tag element for the text enclosed in the `<pre>` tag
 * Add parameter `include_tail_text` to `_construct_text` to enable (skip) tail text inclusion
+* Add Notion connector
 
 ### Features
 
