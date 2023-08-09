@@ -9,6 +9,8 @@ expected_sections = {
     "CHAPTER II RINKS AND SKATERS",
     "CHAPTER III TEES AND CRAMPITS",
     "CHAPTER IV TOBOGGANING",
+    # not included in expected sections because TOC doesn't perfectly match with EpubHtml items
+    # 'CHAPTER V ICE-HOCKEY', 
     "CHAPTER VI SKI-ING",
     "CHAPTER VII NOTES ON WINTER RESORTS",
     "CHAPTER VIII FOR PARENTS AND GUARDIANS",
