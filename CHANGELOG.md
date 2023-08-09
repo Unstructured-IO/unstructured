@@ -1,7 +1,13 @@
 ## 0.9.2-dev2
+=======
+
+### Enhancements
+
+* Update table extraction section in API documentation to sync with change in Prod API
+* Update Notion connector to extract to html
+* Add `metadata.section` to capture epub table of contents data
 
 ### Features
-* Add `metadata.section` to capture epub table of contents data
 
 ### Fixes
 
