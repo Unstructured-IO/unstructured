@@ -18,19 +18,35 @@ from unstructured.ingest.runner import airtable as airtable_fn
 @click.option(
     "--personal-access-token",
     default=None,
-    help="Personal access token to authenticate into Airtable. \
-        Check https://support.airtable.com/docs/airtable-api-key-deprecation-notice for more info.",
+    help="Personal access token to authenticate into Airtable. Check: \
+    https://support.airtable.com/docs/creating-and-using-api-keys-and-access-tokens for more info",
 )
 @click.option(
     "--list-of-paths",
     default=None,
-    help="""List of paths describing the set of locations to ingest data from within Airtable.
+    help="""A list of paths that specify the locations to ingest data from within Airtable.
+
+    If this argument is not set, the connector ingests all tables within each and every base.
     --list-of-paths: path1 path2 path3 ….
     path: base_id/table_id(optional)/view_id(optional)/
-    Here is an example for one list_of_airtable_paths:
-        base1/			                → gets all rows and columns within all tables inside base1
-        base1/table1            		→ gets all rows and columns within described table
-        base1/table1/view1	            → gets the rows and columns that are visible in view1
+
+    To obtain (base, table, view) ids in bulk, check:
+    https://support.airtable.com/docs/finding-airtable-ids
+    https://pyairtable.readthedocs.io/en/latest/metadata.html
+
+    To obtain specific ids from Airtable UI, go to your workspace, and copy any
+    relevant id from the URL structure:
+    https://airtable.com/appAbcDeF1ghijKlm/tblABcdEfG1HIJkLm/viwABCDEfg6hijKLM?blocks=hide
+    appAbcDeF1ghijKlm -> base_id
+    tblABcdEfG1HIJkLm -> table_id
+    viwABCDEfg6hijKLM -> view_id
+
+    Here is an example for one --list-of-paths:
+        base1/		→ gets the entirety of all tables inside base1
+        base1/table1		→ gets all rows and columns within table1 in base1
+        base1/table1/view1	→ gets the rows and columns that are
+                              visible in view1 for the table1 in base1
+
     Examples to invalid airtable_paths:
         table1          → has to mention base to be valid
         base1/view1     → has to mention table to be valid
