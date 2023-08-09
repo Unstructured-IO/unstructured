@@ -4,7 +4,6 @@ from typing import IO, List, Optional
 from ebooklib import epub
 
 from unstructured.documents.elements import Element, process_metadata
-from unstructured.file_utils.encoding import detect_file_encoding
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import (
     exactly_one,
@@ -52,7 +51,7 @@ def partition_epub(
             filename = tmp.name
         last_modification_date = get_last_modified_date_from_file(file)
 
-    book = epub.read_epub(filename, options={"ignore_ncx":False})
+    book = epub.read_epub(filename, options={"ignore_ncx": False})
     # book.items also includes EpubLink, EpubImage, EpubNcx (page navigation info)
     # and EpubItem (fomatting/css)
     html_items = [item for item in book.items if isinstance(item, epub.EpubHtml)]
@@ -74,8 +73,7 @@ def partition_epub(
         if encoding:
             item_content = item.get_content().decode(encoding)
         elif filename is not None:
-            formatted_encoding, _ = detect_file_encoding(filename)
-            item_content = item.get_content().decode(formatted_encoding)
+            item_content = item.get_content().decode()
 
         item_href = item.file_name
 
