@@ -32,6 +32,7 @@ block_type_mapping = {
     "file": blocks.File,
     "image": blocks.Image,
     "link_preview": blocks.LinkPreview,
+    "link_to_page": blocks.LinkToPage,
     "numbered_list_item": blocks.NumberedListItem,
     "paragraph": blocks.Paragraph,
     "pdf": blocks.PDF,
