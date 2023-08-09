@@ -26,7 +26,7 @@ def partition_epub(
     **kwargs,
 ) -> List[Element]:
     """Partitions an EPUB document. The document is first converted to HTML and then
-    partitoned using partiton_html. Book `section` info is included in metadata, but 
+    partitoned using partiton_html. Book `section` info is included in metadata, but
     does not perfectly align with sections in document because of ebooklib constraints.
 
     Parameters
