@@ -10,12 +10,14 @@ from unstructured.ingest.interfaces import (
 
 
 def update_download_dir_remote_url(
+    connector_name: str,
     connector_config: StandardConnectorConfig,
     remote_url: str,
     logger: logging.Logger,
 ) -> str:
     hashed_dir_name = hashlib.sha256(remote_url.encode("utf-8"))
     return update_download_dir_hash(
+        connector_name=connector_name,
         connector_config=connector_config,
         hashed_dir_name=hashed_dir_name,
         logger=logger,
@@ -23,6 +25,7 @@ def update_download_dir_remote_url(
 
 
 def update_download_dir_hash(
+    connector_name: str,
     connector_config: StandardConnectorConfig,
     hashed_dir_name: hashlib._Hash,
     logger: logging.Logger,
@@ -32,7 +35,7 @@ def update_download_dir_hash(
         cache_path = Path.home() / ".cache" / "unstructured" / "ingest"
         if not cache_path.exists():
             cache_path.mkdir(parents=True, exist_ok=True)
-        download_dir = cache_path / hashed_dir_name.hexdigest()[:10]
+        download_dir = cache_path / connector_name / hashed_dir_name.hexdigest()[:10]
         if connector_config.preserve_downloads:
             logger.warning(
                 f"Preserving downloaded files but download_dir is not specified,"
