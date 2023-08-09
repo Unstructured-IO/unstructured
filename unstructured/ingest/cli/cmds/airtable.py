@@ -33,11 +33,11 @@ from unstructured.ingest.runner import airtable as airtable_fn
     To obtain (base, table, view) ids in bulk, check:
     https://airtable.com/developers/web/api/list-bases (base ids)
     https://airtable.com/developers/web/api/get-base-schema (table and view ids)
-    https://pyairtable.readthedocs.io/en/latest/metadata.html
+    https://pyairtable.readthedocs.io/en/latest/metadata.html (base, table and view ids)
 
     To obtain specific ids from Airtable UI, go to your workspace, and copy any
     relevant id from the URL structure:
-    https://airtable.com/appAbcDeF1ghijKlm/tblABcdEfG1HIJkLm/viwABCDEfg6hijKLM?blocks=hide
+    https://airtable.com/appAbcDeF1ghijKlm/tblABcdEfG1HIJkLm/viwABCDEfg6hijKLM
     appAbcDeF1ghijKlm -> base_id
     tblABcdEfG1HIJkLm -> table_id
     viwABCDEfg6hijKLM -> view_id
