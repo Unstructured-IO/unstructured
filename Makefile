@@ -169,6 +169,10 @@ install-ingest-airtable:
 install-ingest-sharepoint:
 	python3 -m pip install -r requirements/ingest-sharepoint.txt
 
+.PHONY: install-ingest-notion
+install-ingest-notion:
+	python3 -m pip install -r requirements/ingest-notion.txt
+
 .PHONY: install-unstructured-inference
 install-unstructured-inference:
 	python3 -m pip install -r requirements/local-inference.txt
