@@ -78,7 +78,11 @@ def partition_html(
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text, url=url)
 
-    last_modification_date = None
+    if kwargs.get("last_modification_date"):
+        last_modification_date = kwargs.pop("last_modification_date")
+    else:
+        last_modification_date = None
+
     if filename is not None:
         last_modification_date = get_last_modified_date(filename)
         document = HTMLDocument.from_file(
@@ -152,8 +156,7 @@ def convert_and_partition_html(
     last_modication_date
         The last modified date for the document.
     """
-
-    last_modification_date = None
+    last_modification_date = kwargs.get("last_modification_date")
     if filename:
         last_modification_date = get_last_modified_date(filename)
     elif file:

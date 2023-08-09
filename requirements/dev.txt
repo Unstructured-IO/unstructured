@@ -6,10 +6,6 @@
 #
 anyio==3.7.1
     # via jupyter-server
-appnope==0.1.3
-    # via
-    #   ipykernel
-    #   ipython
 argon2-cffi==21.3.0
     # via jupyter-server
 argon2-cffi-bindings==21.2.0

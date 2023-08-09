@@ -93,7 +93,19 @@ requests==2.31.0
 ruff==0.0.281
     # via -r requirements/test.in
 six==1.16.0
+<<<<<<< HEAD
     # via python-dateutil
+=======
+    # via
+    #   -c requirements/base.txt
+    #   python-dateutil
+tomli==2.0.1
+    # via
+    #   black
+    #   coverage
+    #   mypy
+    #   pytest
+>>>>>>> 55e04bc (update version/changelog)
 types-click==7.1.8
     # via -r requirements/test.in
 types-markdown==3.4.2.10
@@ -113,6 +125,10 @@ urllib3==1.26.16
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   requests
+<<<<<<< HEAD
+=======
+    #   vcrpy
+>>>>>>> 55e04bc (update version/changelog)
 vcrpy==5.1.0
     # via -r requirements/test.in
 wrapt==1.15.0

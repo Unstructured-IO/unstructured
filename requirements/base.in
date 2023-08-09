@@ -1,5 +1,6 @@
 -c "constraints.in"
 chardet
+ebooklib
 filetype
 python-magic
 lxml

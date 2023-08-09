@@ -150,6 +150,8 @@ def _add_element_metadata(
     text_as_html: Optional[str] = None,
     coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
     coordinate_system: Optional[CoordinateSystem] = None,
+    section: Optional[str] = None,
+    **kwargs,
 ) -> Element:
     """Adds document metadata to the document element. Document metadata includes information
     like the filename, source url, and page number."""
@@ -176,6 +178,7 @@ def _add_element_metadata(
         text_as_html=text_as_html,
         links=links,
         emphasized_texts=emphasized_texts,
+        section=section,
     )
     element.metadata = metadata.merge(element.metadata)
     return element

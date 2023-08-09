@@ -1,8 +1,16 @@
+import tempfile
 from typing import IO, List, Optional
+
+from ebooklib import epub
 
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
-from unstructured.partition.html import convert_and_partition_html
+from unstructured.partition.common import (
+    exactly_one,
+    get_last_modified_date,
+    get_last_modified_date_from_file,
+)
+from unstructured.partition.html import partition_html
 
 
 @process_metadata()
@@ -29,13 +37,42 @@ def partition_epub(
         If True, the output will include page breaks if the filetype supports it
     metadata_last_modified
         The last modified date for the document.
-
     """
-    return convert_and_partition_html(
-        source_format="epub",
-        filename=filename,
-        file=file,
-        include_page_breaks=include_page_breaks,
-        metadata_filename=metadata_filename,
-        metadata_last_modified=metadata_last_modified,
-    )
+    exactly_one(filename=filename, file=file)
+    if filename is None:
+        filename = ""
+
+    if file is not None:
+        with tempfile.NamedTemporaryFile(delete=False) as tmp:
+            tmp.write(file.read())
+            filename = tmp.name
+        last_modification_date = get_last_modified_date_from_file(file)
+    else:
+        last_modification_date = get_last_modified_date(filename)
+
+    book = epub.read_epub(filename)
+    toc_items = list(book.toc)
+    elements = []
+
+    for toc_item in toc_items:
+        # Some toc items may be tuple
+        if isinstance(toc_item, tuple):
+            toc_item = toc_item[0]
+
+        href = toc_item.href.split("#")[0]
+        title = toc_item.title
+        item = book.get_item_with_href(href)
+
+        if item is not None:
+            # Convert the item content to a string
+            html_content = item.get_content().decode()
+            section_elements = partition_html(
+                text=html_content,
+                section=title,
+                metadata_last_modified=metadata_last_modified or last_modification_date,
+                **kwargs,
+            )
+
+        elements.extend(section_elements)
+
+    return elements

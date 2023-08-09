@@ -13,6 +13,7 @@ def test_partition_epub_from_filename():
     assert elements[0].text.startswith("The Project Gutenberg eBook of Winter Sports")
     for element in elements:
         assert element.metadata.filename == "winter-sports.epub"
+        assert element.metadata.section is not None
 
 
 def test_partition_epub_from_filename_with_metadata_filename():
@@ -20,6 +21,7 @@ def test_partition_epub_from_filename_with_metadata_filename():
     elements = partition_epub(filename=filename, metadata_filename="test")
     assert len(elements) > 0
     assert all(element.metadata.filename == "test" for element in elements)
+    assert all(element.metadata.section is not None for element in elements)
 
 
 def test_partition_epub_from_file():
@@ -30,6 +32,7 @@ def test_partition_epub_from_file():
     assert elements[0].text.startswith("The Project Gutenberg eBook of Winter Sports")
     for element in elements:
         assert element.metadata.filename is None
+        assert element.metadata.section is not None
 
 
 def test_partition_epub_from_file_with_metadata_filename():
@@ -47,6 +50,7 @@ def test_partition_epub_from_filename_exclude_metadata():
     assert elements[0].metadata.filetype is None
     assert elements[0].metadata.page_name is None
     assert elements[0].metadata.filename is None
+    assert elements[0].metadata.section is None
 
 
 def test_partition_epub_from_file_exlcude_metadata():
@@ -56,6 +60,7 @@ def test_partition_epub_from_file_exlcude_metadata():
     assert elements[0].metadata.filetype is None
     assert elements[0].metadata.page_name is None
     assert elements[0].metadata.filename is None
+    assert elements[0].metadata.section is None
 
 
 def test_partition_epub_metadata_date(
@@ -64,7 +69,7 @@ def test_partition_epub_metadata_date(
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
     mocker.patch(
-        "unstructured.partition.html.get_last_modified_date",
+        "unstructured.partition.epub.get_last_modified_date",
         return_value=mocked_last_modification_date,
     )
     elements = partition_epub(filename=filename)
@@ -99,7 +104,7 @@ def test_partition_epub_from_file_metadata_date(
     mocked_last_modification_date = "2029-07-05T09:24:28"
 
     mocker.patch(
-        "unstructured.partition.html.get_last_modified_date_from_file",
+        "unstructured.partition.epub.get_last_modified_date_from_file",
         return_value=mocked_last_modification_date,
     )
 
