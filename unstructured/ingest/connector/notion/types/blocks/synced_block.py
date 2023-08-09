@@ -2,6 +2,8 @@
 from dataclasses import dataclass, field
 from typing import List, Optional
 
+from htmlBuilder.tags import HtmlTag
+
 from unstructured.ingest.connector.notion.interfaces import BlockBase
 
 
@@ -18,7 +20,7 @@ class OriginalSyncedBlock(BlockBase):
     def from_dict(cls, data: dict):
         return cls(children=data["children"])
 
-    def get_text(self) -> Optional[str]:
+    def get_html(self) -> Optional[HtmlTag]:
         return None
 
 
@@ -35,7 +37,7 @@ class DuplicateSyncedBlock(BlockBase):
     def from_dict(cls, data: dict):
         return cls(**data)
 
-    def get_text(self) -> Optional[str]:
+    def get_html(self) -> Optional[HtmlTag]:
         return None
 
 
@@ -51,5 +53,5 @@ class SyncBlock(BlockBase):
         else:
             return DuplicateSyncedBlock.from_dict(data)
 
-    def get_text(self) -> Optional[str]:
+    def get_html(self) -> Optional[HtmlTag]:
         return None

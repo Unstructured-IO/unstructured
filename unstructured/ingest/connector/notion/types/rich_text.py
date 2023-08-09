@@ -1,19 +1,26 @@
 # https://developers.notion.com/reference/rich-text
-from dataclasses import dataclass, field
-from typing import List, Optional
+from dataclasses import dataclass
+from typing import Optional
 
-from unstructured.ingest.connector.notion.interfaces import FromJSONMixin, GetTextMixin
+from htmlBuilder.attributes import Href, Style
+from htmlBuilder.tags import A, B, Code, Div, HtmlTag, I, S, Span, U
+from htmlBuilder.tags import Text as HtmlText
+
+from unstructured.ingest.connector.notion.interfaces import (
+    FromJSONMixin,
+    GetHTMLMixin,
+)
 from unstructured.ingest.connector.notion.types.date import Date
 from unstructured.ingest.connector.notion.types.user import People
 
 
 @dataclass
-class Annotation(FromJSONMixin):
+class Annotations(FromJSONMixin):
     bold: bool
+    code: bool
     italic: bool
     strikethrough: bool
     underline: bool
-    code: bool
     color: str
 
     @classmethod
@@ -22,51 +29,51 @@ class Annotation(FromJSONMixin):
 
 
 @dataclass
-class Equation(FromJSONMixin, GetTextMixin):
+class Equation(FromJSONMixin, GetHTMLMixin):
     expression: str
 
     @classmethod
     def from_dict(cls, data: dict):
         return cls(**data)
 
-    def get_text(self) -> Optional[str]:
-        return self.expression if self.expression else None
+    def get_html(self) -> Optional[HtmlTag]:
+        return Code([], self.expression) if self.expression else None
 
 
 @dataclass
-class MentionDatabase(FromJSONMixin, GetTextMixin):
+class MentionDatabase(FromJSONMixin, GetHTMLMixin):
     id: str
 
     @classmethod
     def from_dict(cls, data: dict):
         return cls(**data)
 
-    def get_text(self) -> Optional[str]:
-        return self.id if self.id else None
+    def get_html(self) -> Optional[HtmlTag]:
+        return Div([], self.id) if self.id else None
 
 
 @dataclass
-class MentionLinkPreview(FromJSONMixin, GetTextMixin):
+class MentionLinkPreview(FromJSONMixin, GetHTMLMixin):
     url: str
 
     @classmethod
     def from_dict(cls, data: dict):
         return cls(**data)
 
-    def get_text(self) -> Optional[str]:
-        return self.url if self.url else None
+    def get_html(self) -> Optional[HtmlTag]:
+        return A([Href(self.url)], self.url) if self.url else None
 
 
 @dataclass
-class MentionPage(FromJSONMixin, GetTextMixin):
+class MentionPage(FromJSONMixin, GetHTMLMixin):
     id: str
 
     @classmethod
     def from_dict(cls, data: dict):
         return cls(**data)
 
-    def get_text(self) -> Optional[str]:
-        return self.id if self.id else None
+    def get_html(self) -> Optional[HtmlTag]:
+        return Div([], self.id) if self.id else None
 
 
 @dataclass
@@ -80,7 +87,7 @@ class MentionTemplate(FromJSONMixin):
 
 
 @dataclass
-class Mention(FromJSONMixin, GetTextMixin):
+class Mention(FromJSONMixin, GetHTMLMixin):
     type: str
     database: Optional[MentionDatabase] = None
     date: Optional[Date] = None
@@ -108,18 +115,18 @@ class Mention(FromJSONMixin, GetTextMixin):
 
         return mention
 
-    def get_text(self) -> Optional[str]:
+    def get_html(self) -> Optional[HtmlTag]:
         t = self.type
         if t == "date":
-            return self.date.get_text() if self.date else None
+            return self.date.get_html() if self.date else None
         elif t == "database":
-            return self.database.get_text() if self.database else None
+            return self.database.get_html() if self.database else None
         elif t == "link_preview":
-            return self.link_preview.get_text() if self.link_preview else None
+            return self.link_preview.get_html() if self.link_preview else None
         elif t == "page":
-            return self.page.get_text() if self.page else None
+            return self.page.get_html() if self.page else None
         elif t == "user":
-            return self.user.get_text() if self.user else None
+            return self.user.get_html() if self.user else None
         return None
 
 
@@ -134,28 +141,43 @@ class Text(FromJSONMixin):
 
 
 @dataclass
-class RichText(FromJSONMixin, GetTextMixin):
+class RichText(FromJSONMixin, GetHTMLMixin):
     type: str
     plain_text: str
-    annotations: List[Annotation] = field(default_factory=list)
+    annotations: Optional[Annotations] = None
     href: Optional[str] = None
     text: Optional[Text] = None
     mention: Optional[Mention] = None
     equation: Optional[Equation] = None
 
-    def get_text(self) -> Optional[str]:
-        text = self.plain_text
+    def get_html(self) -> Optional[HtmlTag]:
+        text = HtmlText(self.plain_text)
         if self.href:
-            text = f"[{text}]({self.href})"
+            text = A([Href(self.href)], text)
+        if self.annotations:
+            annotations = self.annotations
+            if annotations.bold:
+                text = B([], text)
+            if annotations.code:
+                text = Code([], text)
+            if annotations.italic:
+                text = I([], text)
+            if annotations.strikethrough:
+                text = S([], text)
+            if annotations.underline:
+                text = U([], text)
+            if annotations.color and annotations.color != "default":
+                if isinstance(text, HtmlText):
+                    text = Span([], text)
+                text.attributes.append(Style(f"color:{annotations.color}"))
         return text
 
     @classmethod
     def from_dict(cls, data: dict):
         t = data["type"]
         rich_text = cls(
-            type=data["type"],
-            plain_text=data["plain_text"],
-            href=data.get("href"),
+            annotations=Annotations.from_dict(data.pop("annotations")),
+            **data,
         )
         if t == "text":
             rich_text.text = Text.from_dict(data["text"])

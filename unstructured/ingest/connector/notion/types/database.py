@@ -2,10 +2,12 @@
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional
 
+from htmlBuilder.tags import Div, HtmlTag, Span
+
 from unstructured.ingest.connector.notion.interfaces import (
     DBPropertyBase,
     FromJSONMixin,
-    GetTextMixin,
+    GetHTMLMixin,
 )
 from unstructured.ingest.connector.notion.types.database_properties import (
     map_properties,
@@ -17,7 +19,7 @@ from unstructured.ingest.connector.notion.types.user import PartialUser
 
 
 @dataclass
-class Database(FromJSONMixin, GetTextMixin):
+class Database(FromJSONMixin, GetHTMLMixin):
     id: str
     created_time: str
     created_by: PartialUser
@@ -58,11 +60,12 @@ class Database(FromJSONMixin, GetTextMixin):
 
         return page
 
-    def get_text(self) -> Optional[str]:
-        rts = []
-        if self.title:
-            rts.extend([rt.get_text() for rt in self.title])
-        if self.description:
-            rts.extend([rt.get_text() for rt in self.description])
-        text = "\n".join([rt for rt in rts if rt])
-        return text if text else None
+    def get_html(self) -> Optional[HtmlTag]:
+        spans = []
+        if title := self.title:
+            spans.append(Span([], [rt.get_html() for rt in title]))
+        if description := self.description:
+            spans.append(Span([], [rt.get_html() for rt in description]))
+        if spans:
+            return Div([], spans)
+        return None

@@ -16,6 +16,8 @@ exceptiongroup==1.1.2
     # via anyio
 h11==0.14.0
     # via httpcore
+htmlbuilder==1.0.0
+    # via -r requirements/ingest-notion.in
 httpcore==0.17.3
     # via httpx
 httpx==0.24.1

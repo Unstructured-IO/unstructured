@@ -1,4 +1,15 @@
+## 0.9.2-dev0
+=======
+
+### Enhancements
+* Update Notion connector to extract to html
+
+### Features
+
+### Fixes
+
 ## 0.9.1
+=======
 
 ### Enhancements
 

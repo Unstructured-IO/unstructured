@@ -2,6 +2,8 @@
 from dataclasses import dataclass, field
 from typing import Optional
 
+from htmlBuilder.tags import HtmlTag
+
 from unstructured.ingest.connector.notion.interfaces import DBCellBase, DBPropertyBase
 from unstructured.ingest.connector.notion.types.date import Date as DateType
 
@@ -33,8 +35,7 @@ class DateCell(DBCellBase):
             date = DateType.from_dict(date_data)
         return cls(date=date, **data)
 
-    def get_text(self) -> Optional[str]:
-        if self.date:
-            return self.date.get_text()
-        else:
-            return None
+    def get_html(self) -> Optional[HtmlTag]:
+        if date := self.date:
+            return date.get_html()
+        return None

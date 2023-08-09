@@ -2,6 +2,8 @@
 from dataclasses import dataclass, field
 from typing import Optional
 
+from htmlBuilder.tags import Div, HtmlTag
+
 from unstructured.ingest.connector.notion.interfaces import DBCellBase, DBPropertyBase
 
 
@@ -28,5 +30,7 @@ class EmailCell(DBCellBase):
     def from_dict(cls, data: dict):
         return cls(**data)
 
-    def get_text(self) -> Optional[str]:
-        return self.email
+    def get_html(self) -> Optional[HtmlTag]:
+        if email := self.email:
+            return Div([], email)
+        return None

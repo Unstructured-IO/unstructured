@@ -2,6 +2,8 @@
 from dataclasses import dataclass, field
 from typing import List, Optional
 
+from htmlBuilder.tags import Div, HtmlTag
+
 from unstructured.ingest.connector.notion.interfaces import DBCellBase, DBPropertyBase
 from unstructured.ingest.connector.notion.types.rich_text import RichText
 
@@ -29,6 +31,7 @@ class TitleCell(DBCellBase):
     def from_dict(cls, data: dict):
         return cls(title=[RichText.from_dict(rt) for rt in data.pop("title", [])], **data)
 
-    def get_text(self) -> Optional[str]:
-        rts = [rt.get_text() for rt in self.title]
-        return ",".join([rt for rt in rts if rt])
+    def get_html(self) -> Optional[HtmlTag]:
+        if not self.title:
+            return None
+        return Div([], [rt.get_html() for rt in self.title])

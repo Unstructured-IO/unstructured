@@ -2,6 +2,8 @@
 from dataclasses import dataclass, field
 from typing import List, Optional
 
+from htmlBuilder.tags import Br, Div, HtmlTag
+
 from unstructured.ingest.connector.notion.interfaces import BlockBase
 from unstructured.ingest.connector.notion.types.rich_text import RichText
 
@@ -23,9 +25,7 @@ class Paragraph(BlockBase):
         paragraph.rich_text = [RichText.from_dict(rt) for rt in rich_text]
         return paragraph
 
-    def get_text(self) -> Optional[str]:
+    def get_html(self) -> Optional[HtmlTag]:
         if not self.rich_text:
-            return None
-        rich_texts = [rt.get_text() for rt in self.rich_text]
-        text = "\n".join([rt for rt in rich_texts if rt])
-        return text if text else None
+            return Br()
+        return Div([], [rt.get_html() for rt in self.rich_text])
