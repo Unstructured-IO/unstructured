@@ -77,8 +77,8 @@ def partition_html(
         return []
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text, url=url)
+    
     last_modification_date = None
-
     if filename is not None:
         last_modification_date = get_last_modified_date(filename)
         document = HTMLDocument.from_file(
