@@ -1,10 +1,13 @@
-## 0.9.2-dev1
+## 0.9.2
 =======
 
 ### Enhancements
 
 * Update table extraction section in API documentation to sync with change in Prod API
 * Update Notion connector to extract to html
+* Bump unstructured-inference==0.5.8:
+  - better caching of models
+  - another version of detectron2 available, though the default layout model is unchanged
 
 ### Features
 
