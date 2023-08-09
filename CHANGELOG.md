@@ -1,4 +1,4 @@
-## 0.9.1-dev11
+## 0.9.1
 
 ### Enhancements
 
@@ -27,6 +27,7 @@
 * Simplifies `min_partition` logic; makes partitions falling below the `min_partition`
   less likely.
 * Fix bug where ingest test check for number of files fails in smoke test
+* Fix unstructured-ingest entrypoint failure
 
 ## 0.9.0
 
