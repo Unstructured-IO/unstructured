@@ -165,7 +165,7 @@ def extract_database_html(
         if is_page_url(page.url):
             child_pages.append(page.id)
         properties = page.properties
-        inner_html = [properties.get(k).get_html() for k in property_keys]
+        inner_html = [properties.get(k).get_html() for k in property_keys]  # type: ignore
         table_html_rows.append(
             Tr(
                 [],
@@ -365,7 +365,9 @@ def build_table(client: Client, table: Block) -> BuildTableResponse:
     for row_chunk in client.blocks.children.iterate_list(  # type: ignore
         block_id=table.id,
     ):
-        rows.extend([row.block for row in row_chunk])
+        rows.extend(
+            [row.block for row in row_chunk if isinstance(row.block, notion_blocks.TableRow)],
+        )
 
     # Extract child databases and pages
     for row in rows:
