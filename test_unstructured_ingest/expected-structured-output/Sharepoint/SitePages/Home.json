@@ -7,8 +7,8 @@
         "version": "1.2",
         "record_locator": {
           "site": "https://unstructuredio.sharepoint.com/",
-          "UniqueId": "2b564fff-e9bb-4b64-9822-64f96a20ea10",
-          "AbsoluteUrl": "https://unstructuredio.sharepoint.com/SitePages/Home.aspx"
+          "unique_id": "2b564fff-e9bb-4b64-9822-64f96a20ea10",
+          "absolute_url": ""
         },
         "date_created": "0001-01-01T08:00:00Z",
         "date_modified": "2023-06-16T05:12:51Z"
@@ -27,8 +27,8 @@
         "version": "1.2",
         "record_locator": {
           "site": "https://unstructuredio.sharepoint.com/",
-          "UniqueId": "2b564fff-e9bb-4b64-9822-64f96a20ea10",
-          "AbsoluteUrl": "https://unstructuredio.sharepoint.com/SitePages/Home.aspx"
+          "unique_id": "2b564fff-e9bb-4b64-9822-64f96a20ea10",
+          "absolute_url": ""
         },
         "date_created": "0001-01-01T08:00:00Z",
         "date_modified": "2023-06-16T05:12:51Z"

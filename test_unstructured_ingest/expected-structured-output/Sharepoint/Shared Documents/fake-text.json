@@ -6,8 +6,8 @@
       "data_source": {
         "record_locator": {
           "site": "https://unstructuredio.sharepoint.com/",
-          "UniqueId": "880f80ca-cebf-48d0-b639-aeb671b3c431",
-          "ServerRelativeUrl": "/Shared Documents/fake-text.txt"
+          "unique_id": "880f80ca-cebf-48d0-b639-aeb671b3c431",
+          "server_relative_url": ""
         },
         "date_created": "2023-06-16T05:04:55Z",
         "date_modified": "2023-06-16T05:04:55Z"
@@ -24,8 +24,8 @@
       "data_source": {
         "record_locator": {
           "site": "https://unstructuredio.sharepoint.com/",
-          "UniqueId": "880f80ca-cebf-48d0-b639-aeb671b3c431",
-          "ServerRelativeUrl": "/Shared Documents/fake-text.txt"
+          "unique_id": "880f80ca-cebf-48d0-b639-aeb671b3c431",
+          "server_relative_url": ""
         },
         "date_created": "2023-06-16T05:04:55Z",
         "date_modified": "2023-06-16T05:04:55Z"
@@ -42,8 +42,8 @@
       "data_source": {
         "record_locator": {
           "site": "https://unstructuredio.sharepoint.com/",
-          "UniqueId": "880f80ca-cebf-48d0-b639-aeb671b3c431",
-          "ServerRelativeUrl": "/Shared Documents/fake-text.txt"
+          "unique_id": "880f80ca-cebf-48d0-b639-aeb671b3c431",
+          "server_relative_url": ""
         },
         "date_created": "2023-06-16T05:04:55Z",
         "date_modified": "2023-06-16T05:04:55Z"
@@ -60,8 +60,8 @@
       "data_source": {
         "record_locator": {
           "site": "https://unstructuredio.sharepoint.com/",
-          "UniqueId": "880f80ca-cebf-48d0-b639-aeb671b3c431",
-          "ServerRelativeUrl": "/Shared Documents/fake-text.txt"
+          "unique_id": "880f80ca-cebf-48d0-b639-aeb671b3c431",
+          "server_relative_url": ""
         },
         "date_created": "2023-06-16T05:04:55Z",
         "date_modified": "2023-06-16T05:04:55Z"
@@ -78,8 +78,8 @@
       "data_source": {
         "record_locator": {
           "site": "https://unstructuredio.sharepoint.com/",
-          "UniqueId": "880f80ca-cebf-48d0-b639-aeb671b3c431",
-          "ServerRelativeUrl": "/Shared Documents/fake-text.txt"
+          "unique_id": "880f80ca-cebf-48d0-b639-aeb671b3c431",
+          "server_relative_url": ""
         },
         "date_created": "2023-06-16T05:04:55Z",
         "date_modified": "2023-06-16T05:04:55Z"
@@ -96,8 +96,8 @@
       "data_source": {
         "record_locator": {
           "site": "https://unstructuredio.sharepoint.com/",
-          "UniqueId": "880f80ca-cebf-48d0-b639-aeb671b3c431",
-          "ServerRelativeUrl": "/Shared Documents/fake-text.txt"
+          "unique_id": "880f80ca-cebf-48d0-b639-aeb671b3c431",
+          "server_relative_url": ""
         },
         "date_created": "2023-06-16T05:04:55Z",
         "date_modified": "2023-06-16T05:04:55Z"
