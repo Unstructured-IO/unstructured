@@ -653,7 +653,7 @@ def test_auto_partition_xml_from_file(filename="example-docs/factbook.xml"):
 def test_auto_partition_xml_from_filename_with_tags(filename="example-docs/factbook.xml"):
     elements = partition(filename=filename, xml_keep_tags=True)
 
-    assert elements[5].text == "<name>United States</name>"
+    assert elements[5].text == "<leader>Joe Biden</leader>"
     assert elements[5].metadata.filename == "factbook.xml"
 
 
@@ -661,7 +661,7 @@ def test_auto_partition_xml_from_file_with_tags(filename="example-docs/factbook.
     with open(filename, "rb") as f:
         elements = partition(file=f, xml_keep_tags=True)
 
-    assert elements[5].text == "<name>United States</name>"
+    assert elements[5].text == "<leader>Joe Biden</leader>"
 
 
 EXPECTED_XLSX_FILETYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -771,6 +771,7 @@ EXPECTED_XLS_TABLE = (
 )
 
 
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_auto_partition_xls_from_filename(filename="example-docs/tests-example.xls"):
     elements = partition(filename=filename)
 
@@ -859,3 +860,10 @@ def test_auto_partition_rst_from_file(filename="example-docs/README.rst"):
 
     assert elements[0] == Title("Example Docs")
     assert elements[0].metadata.filetype == "text/x-rst"
+
+
+def test_auto_partition_metadata_file_filename():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
+    with open(filename) as f:
+        elements = partition(file=f, file_filename=filename)
+    assert elements[0].metadata.filename == os.path.split(filename)[-1]

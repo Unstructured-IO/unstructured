@@ -33,10 +33,7 @@ def mock_document():
     # NOTE(robinson) - this should get dropped because it is empty
     document.add_paragraph("", style="Normal")
     # NOTE(robinson) - this should get picked up as a narrative text
-    document.add_paragraph(
-        "This is my first thought. This is my second thought.",
-        style="Normal",
-    )
+    document.add_paragraph("This is my first thought. This is my second thought.", style="Normal")
     document.add_paragraph("This is my third thought.", style="Body Text")
     # NOTE(robinson) - this should just be regular text
     document.add_paragraph("2023")

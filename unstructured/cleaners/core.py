@@ -8,6 +8,7 @@ from unstructured.file_utils.encoding import (
 )
 from unstructured.nlp.patterns import (
     DOUBLE_PARAGRAPH_PATTERN_RE,
+    LINE_BREAK_RE,
     PARAGRAPH_PATTERN,
     PARAGRAPH_PATTERN_RE,
     UNICODE_BULLETS_RE,
@@ -89,7 +90,6 @@ def group_broken_paragraphs(
     for paragraph in paragraphs:
         if not paragraph.strip():
             continue
-
         # NOTE(robinson) - This block is to account for lines like the following that shouldn't be
         # grouped together, but aren't separated by a double line break.
         #     Apache License
@@ -97,7 +97,6 @@ def group_broken_paragraphs(
         #     http://www.apache.org/licenses/
         para_split = line_split.split(paragraph)
         all_lines_short = all(len(line.strip().split(" ")) < 5 for line in para_split)
-
         if UNICODE_BULLETS_RE.match(paragraph.strip()):
             clean_paragraphs.extend(re.split(PARAGRAPH_PATTERN, paragraph))
         elif all_lines_short:
@@ -106,6 +105,87 @@ def group_broken_paragraphs(
             clean_paragraphs.append(re.sub(PARAGRAPH_PATTERN, " ", paragraph))
 
     return "\n\n".join(clean_paragraphs)
+
+
+def new_line_grouper(
+    text: str,
+    paragraph_split: re.Pattern = LINE_BREAK_RE,
+) -> str:
+    """
+    Concatenates text document that has one-line paragraph break pattern
+
+    For example,
+
+    Iwan Roberts
+    Roberts celebrating after scoring a goal for Norwich City
+    in 2004
+
+    Will be returned as:
+
+    Iwan Roberts\n\nRoberts celebrating after scoring a goal for Norwich City\n\nin 2004
+    """
+    paragraphs = paragraph_split.split(text)
+    clean_paragraphs = []
+    for paragraph in paragraphs:
+        if not paragraph.strip():
+            continue
+        clean_paragraphs.append(paragraph)
+    return "\n\n".join(clean_paragraphs)
+
+
+def blank_line_grouper(
+    text: str,
+    paragraph_split: re.Pattern = DOUBLE_PARAGRAPH_PATTERN_RE,
+) -> str:
+    """
+    Concatenates text document that has blank-line paragraph break pattern
+
+    For example,
+
+    Vestibulum auctor dapibus neque.
+
+    Nunc dignissim risus id metus.
+
+    Will be returned as:
+
+    Vestibulum auctor dapibus neque.\n\nNunc dignissim risus id metus.\n\n
+
+    """
+    return group_broken_paragraphs(text)
+
+
+def auto_paragraph_grouper(
+    text: str,
+    line_split: re.Pattern = LINE_BREAK_RE,
+    max_line_count: int = 2000,
+    threshold: float = 0.1,
+) -> str:
+    """
+    Checks the ratio of new line (\n) over the total max_line_count
+
+    If the ratio of new line is less than the threshold,
+    the document is considered a new-line grouping type
+    and return the original text
+
+    If the ratio of new line is greater than or equal to the threshold,
+    the document is considered a blank-line grouping type
+    and passed on to blank_line_grouper function
+    """
+    lines = line_split.split(text)
+    max_line_count = min(len(lines), max_line_count)
+    line_count, empty_line_count = 0, 0
+    for line in lines[:max_line_count]:
+        line_count += 1
+        if not line.strip():
+            empty_line_count += 1
+    ratio = empty_line_count / line_count
+
+    # NOTE(klaijan) - for ratio < threshold, we pass to new-line grouper,
+    # otherwise to blank-line grouper
+    if ratio < threshold:
+        return new_line_grouper(text)
+    else:
+        return blank_line_grouper(text)
 
 
 # TODO(robinson) - There's likely a cleaner was to accomplish this and get all of the

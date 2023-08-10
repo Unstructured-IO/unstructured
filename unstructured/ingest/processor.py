@@ -100,18 +100,19 @@ class Processor:
         # Debugging tip: use the below line and comment out the mp.Pool loop
         # block to remain in single process
         # self.doc_processor_fn(docs[0])
-
-        with mp.Pool(
-            processes=self.num_processes,
-            initializer=self.process_init,
-            initargs=(
+        logger.info(f"Processing {len(docs)} docs")
+        try:
+            with mp.Pool(
+                processes=self.num_processes,
+                initializer=self.process_init,
+                initargs=(
                 logging.DEBUG if self.verbose else logging.INFO,
                 create_session_handle_fn,
             ),
-        ) as pool:
-            pool.map(self.doc_processor_fn, docs)
-
-        self.cleanup()
+            ) as pool:
+                pool.map(self.doc_processor_fn, docs)
+        finally:
+            self.cleanup()
 
 
 def process_documents(
@@ -123,7 +124,8 @@ def process_documents(
         process_document,
         strategy=processor_config.partition_strategy,
         ocr_languages=processor_config.partition_ocr_languages,
-        encoding=processor_config.encoding,
+        encoding=processor_config.partition_encoding,
+        pdf_infer_table_structure=processor_config.partition_pdf_infer_table_structure,
     )
 
     Processor(
