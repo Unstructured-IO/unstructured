@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-# Description: This test checks if all the processed content is the same as the expected outputs.
+# Description: This test checks if all the processed content is the same as the expected outputs
 
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
