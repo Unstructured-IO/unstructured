@@ -1,10 +1,23 @@
-## 0.9.2-dev4
-=======
+## 0.9.3-dev0
+
+### Enhancements
+
+* Add functionality to switch `html` text parser based on whether the `html` text contains emoji
+* Add functionality to check if a string contains any emoji characters
+
+### Features
+
+### Fixes
+
+## 0.9.2
 
 ### Enhancements
 
 * Update table extraction section in API documentation to sync with change in Prod API
 * Update Notion connector to extract to html
+* Bump unstructured-inference==0.5.9:
+  - better caching of models
+  - another version of detectron2 available, though the default layout model is unchanged
 * Added UUID option for element_id
 
 ### Features
@@ -13,11 +26,10 @@
 
 ### Fixes
 
-* Add functionality to switch `html` text parser based on whether the `html` text contains emoji
-* Add functionality to check if a string contains any emoji characters
+* Bump unstructured-inference==0.5.9:
+  - ignores Tesseract errors where no text is extracted for tiles that indeed, have no text
 
 ## 0.9.1
-=======
 
 ### Enhancements
 
