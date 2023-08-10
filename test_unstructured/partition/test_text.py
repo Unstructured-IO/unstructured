@@ -476,5 +476,5 @@ def test_partition_text_with_unique_ids():
     elements = partition_text(text="hello there!", unique_element_ids=True)
     assert len(elements[0].id) == 36
     assert elements[0].id.count("-") == 4
-    # Test that the element is JSON serializable. This shold run without an error
+    # Test that the element is JSON serializable. This should run without an error
     json.dumps(elements[0].to_dict())
