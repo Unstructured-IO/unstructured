@@ -1,5 +1,4 @@
 ## 0.9.2
-=======
 
 ### Enhancements
 
@@ -8,6 +7,7 @@
 * Bump unstructured-inference==0.5.8:
   - better caching of models
   - another version of detectron2 available, though the default layout model is unchanged
+* Added UUID option for element_id
 
 ### Features
 

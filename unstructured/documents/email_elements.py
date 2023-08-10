@@ -1,9 +1,10 @@
 import hashlib
+import uuid
 from abc import ABC
 from datetime import datetime
 from typing import Callable, List, Union
 
-from unstructured.documents.elements import Element, NoID, Text
+from unstructured.documents.elements import UUID, Element, NoID, Text
 
 
 class NoDatestamp(ABC):
@@ -28,7 +29,7 @@ class Name(EmailElement):
         name: str,
         text: str,
         datestamp: Union[datetime, NoDatestamp] = NoDatestamp(),
-        element_id: Union[str, NoID] = NoID(),
+        element_id: Union[str, uuid.UUID, NoID, UUID] = NoID(),
     ):
         self.name: str = name
         self.text: str = text
@@ -36,6 +37,9 @@ class Name(EmailElement):
         if isinstance(element_id, NoID):
             # NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits
             element_id = hashlib.sha256(text.encode()).hexdigest()[:32]
+
+        elif isinstance(element_id, UUID):
+            element_id = uuid.uuid4()
 
         super().__init__(element_id=element_id)
 
