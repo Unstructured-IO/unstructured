@@ -1,4 +1,4 @@
-## 0.9.2-dev3
+## 0.9.2-dev4
 
 ### Enhancements
 
@@ -8,6 +8,7 @@
 
 ### Features
 
+* Adds Sharepoint connector.
 * Add Airtable Connector to be able to pull views/tables/bases from an Airtable organization.
 
 ### Fixes
