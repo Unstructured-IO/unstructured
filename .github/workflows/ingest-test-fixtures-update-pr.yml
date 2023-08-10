@@ -77,6 +77,7 @@ jobs:
           SHAREPOINT_SITE: ${{secrets.SHAREPOINT_SITE}}
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
           UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
+          NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
           OVERWRITE_FIXTURES: "true"
         run: |
           source .venv/bin/activate
@@ -101,6 +102,7 @@ jobs:
           make install-ingest-outlook
           make install-ingest-slack
           make install-ingest-wikipedia
+          make install-ingest-notion
           ./test_unstructured_ingest/test-ingest.sh
 
       - name: Save branch name to environment file
