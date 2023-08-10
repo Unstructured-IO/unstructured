@@ -2,6 +2,8 @@ from tempfile import SpooledTemporaryFile
 from typing import IO, BinaryIO, List, Optional, Union, cast
 
 import pandas as pd
+from lxml.html import document_fromstring
+from lxml.html.soupparser import fromstring as soupparser_fromstring
 
 from unstructured.documents.elements import (
     Element,
@@ -14,14 +16,8 @@ from unstructured.partition.common import (
     exactly_one,
     get_last_modified_date,
     get_last_modified_date_from_file,
-    spooled_to_bytes_io_if_needed,
+    spooled_to_bytes_io_if_needed, contains_emoji,
 )
-from unstructured.utils import dependency_exists
-
-if dependency_exists("bs4"):
-    from lxml.html.soupparser import fromstring as html_string_parser
-else:
-    from lxml.html import document_fromstring as html_string_parser
 
 
 @process_metadata()
@@ -65,6 +61,7 @@ def partition_xlsx(
     for sheet_name, table in sheets.items():
         page_number += 1
         html_text = table.to_html(index=False, header=False, na_rep="")
+        html_string_parser = soupparser_fromstring if contains_emoji(html_text) else document_fromstring
         text = html_string_parser(html_text).text_content()
 
         if include_metadata:
