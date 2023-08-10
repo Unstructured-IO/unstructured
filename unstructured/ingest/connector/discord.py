@@ -131,7 +131,7 @@ class DiscordConnector(ConnectorCleanupMixin, BaseConnector):
 
     def initialize(self):
         """Verify that can get metadata for an object, validates connections info."""
-        os.mkdir(self.standard_config.download_dir)
+        os.makedirs(self.standard_config.download_dir, exist_ok=True)
 
     def get_ingest_docs(self):
         return [
