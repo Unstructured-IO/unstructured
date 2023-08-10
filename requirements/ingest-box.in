@@ -2,3 +2,5 @@
 -c base.txt
 boxfs
 fsspec
+# consistency with other ingest-*.in
+cryptography==41.0.2
