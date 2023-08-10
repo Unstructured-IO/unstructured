@@ -692,7 +692,7 @@ def test_auto_partition_xlsx_from_file(filename="example-docs/stanley-cups.xlsx"
     assert elements[0].metadata.filetype == EXPECTED_XLSX_FILETYPE
 
 
-EXPECTED_XLS_TEXT_LEN = 883
+EXPECTED_XLS_TEXT_LEN = 507
 
 EXPECTED_XLS_INITIAL_45_CLEAN_TEXT = "MA What C datatypes are 8 bits? (assume i386)"
 
