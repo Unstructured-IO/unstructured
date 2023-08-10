@@ -19,7 +19,8 @@ from unstructured.ingest.logger import logger
 # doc processor.
 
 session_handle_var: ContextVar[Optional[BaseSessionHandle]] = ContextVar(
-    "session_handle", default=None
+    "session_handle",
+    default=None,
 )
 
 

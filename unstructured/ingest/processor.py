@@ -106,9 +106,9 @@ class Processor:
                 processes=self.num_processes,
                 initializer=self.process_init,
                 initargs=(
-                logging.DEBUG if self.verbose else logging.INFO,
-                create_session_handle_fn,
-            ),
+                    logging.DEBUG if self.verbose else logging.INFO,
+                    create_session_handle_fn,
+                ),
             ) as pool:
                 pool.map(self.doc_processor_fn, docs)
         finally:

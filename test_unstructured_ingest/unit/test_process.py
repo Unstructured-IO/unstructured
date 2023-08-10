@@ -4,7 +4,6 @@ from unstructured.ingest.doc_processor.generalized import session_handle_var
 from unstructured.ingest.processor import Processor
 
 
-# fixture to reset the session handle after each test
 @pytest.fixture(autouse=True)
 def reset_session_handle():
     session_handle_var.set(None)
