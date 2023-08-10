@@ -19,6 +19,7 @@ fi
 
 # Provides component IDs such as LARGE_TEST_LIST_OF_PATHS,
 # LARGE_TABLE_BASE_ID, LARGE_TABLE_TABLE_ID, and LARGE_BASE_BASE_ID
+# shellcheck disable=SC1091
 source ./scripts/airtable-test-helpers/component_ids.sh
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
