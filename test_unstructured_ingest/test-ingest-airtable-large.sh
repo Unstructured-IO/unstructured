@@ -36,8 +36,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
 # We are expecting fifteen directories: fourteen bases and the parent directory
 sh "$SCRIPT_DIR"/check-num-dirs-output.sh 15 "$OUTPUT_FOLDER_NAME"
 
-# This test is not yet implemented. It is to ingest an Airtable base with a large number of tables
-sh "$SCRIPT_DIR"/check-num-files-output.sh 1 "$OUTPUT_FOLDER_NAME"/"$LARGE_BASE_BASE_ID"/
+# We are expecting 101 directories: 100 bases and the parent directory
+sh "$SCRIPT_DIR"/check-num-files-output.sh 101 "$OUTPUT_FOLDER_NAME"/"$LARGE_BASE_BASE_ID"/
 
 # Test on ingesting a large number of bases
 for i in {1..12}; do

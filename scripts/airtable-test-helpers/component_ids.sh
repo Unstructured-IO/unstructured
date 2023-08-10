@@ -1,13 +1,16 @@
-# These components are all created using Airtable UI, however, in case they need
+# Components below are all created using Airtable UI, however, in case they need
 # to be recreated, it is also possible to create them using the Web API.
 # pyairtable does not yet support creating these components (bases, tables).
-# For documentation on the Web API, check:
+
+# For documentation on the Web API for creating bases, check:
 # https://airtable.com/developers/web/api/create-base
-# https://airtable.com/developers/web/api/create-table
+
+# For creating lots of tables inside a base, check:
+# create_scale_test_components.sh
 
 LARGE_TABLE_BASE_ID="appQqieVsbxpwwD3i"
 LARGE_TABLE_TABLE_ID="tbll85GCfxED1OrvC"
-LARGE_BASE_BASE_ID="app8u2PSod8Mm9shf"
+LARGE_BASE_BASE_ID="appjPRwoyawsapoGW"
 LARGE_WORKSPACE_BASE_ID_1="appSSCNWuIMjzeraO"
 LARGE_WORKSPACE_BASE_ID_2="appyvCsaHWn38RzFc"
 LARGE_WORKSPACE_BASE_ID_3="appbd8fkBv3AXj0Ab"
