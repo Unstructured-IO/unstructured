@@ -6,48 +6,78 @@
 #
 certifi==2023.7.22
     # via
-    #   -c requirements/base.txt
-    #   -c requirements/constraints.in
+    #   -c base.txt
+    #   -c constraints.in
     #   requests
 charset-normalizer==3.2.0
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   requests
 click==8.1.6
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   sacremoses
+cmake==3.27.1
+    # via triton
 filelock==3.12.2
     # via
     #   huggingface-hub
     #   torch
     #   transformers
+    #   triton
 fsspec==2023.6.0
     # via huggingface-hub
 huggingface-hub==0.16.4
     # via transformers
 idna==3.4
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   requests
 jinja2==3.1.2
     # via torch
 joblib==1.3.2
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   sacremoses
 langdetect==1.0.9
-    # via -r requirements/huggingface.in
+    # via -r huggingface.in
+lit==16.0.6
+    # via triton
 markupsafe==2.1.3
     # via jinja2
 mpmath==1.3.0
     # via sympy
 networkx==3.1
     # via torch
-numpy==1.24.4
+numpy==1.25.2
     # via
-    #   -c requirements/constraints.in
+    #   -c constraints.in
     #   transformers
+nvidia-cublas-cu11==11.10.3.66
+    # via
+    #   nvidia-cudnn-cu11
+    #   nvidia-cusolver-cu11
+    #   torch
+nvidia-cuda-cupti-cu11==11.7.101
+    # via torch
+nvidia-cuda-nvrtc-cu11==11.7.99
+    # via torch
+nvidia-cuda-runtime-cu11==11.7.99
+    # via torch
+nvidia-cudnn-cu11==8.5.0.96
+    # via torch
+nvidia-cufft-cu11==10.9.0.58
+    # via torch
+nvidia-curand-cu11==10.2.10.91
+    # via torch
+nvidia-cusolver-cu11==11.4.0.1
+    # via torch
+nvidia-cusparse-cu11==11.7.4.91
+    # via torch
+nvidia-nccl-cu11==2.14.3
+    # via torch
+nvidia-nvtx-cu11==11.7.91
+    # via torch
 packaging==23.1
     # via
     #   huggingface-hub
@@ -58,20 +88,20 @@ pyyaml==6.0.1
     #   transformers
 regex==2023.8.8
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   sacremoses
     #   transformers
 requests==2.31.0
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   huggingface-hub
     #   transformers
 sacremoses==0.0.53
-    # via -r requirements/huggingface.in
+    # via -r huggingface.in
 safetensors==0.3.2
     # via transformers
 sentencepiece==0.1.99
-    # via -r requirements/huggingface.in
+    # via -r huggingface.in
 six==1.16.0
     # via
     #   langdetect
@@ -81,21 +111,34 @@ sympy==1.12
 tokenizers==0.13.3
     # via transformers
 torch==2.0.1
-    # via -r requirements/huggingface.in
+    # via
+    #   -r huggingface.in
+    #   triton
 tqdm==4.66.0
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   huggingface-hub
     #   sacremoses
     #   transformers
 transformers==4.31.0
-    # via -r requirements/huggingface.in
+    # via -r huggingface.in
+triton==2.0.0
+    # via torch
 typing-extensions==4.7.1
     # via
     #   huggingface-hub
     #   torch
 urllib3==1.26.16
     # via
-    #   -c requirements/base.txt
-    #   -c requirements/constraints.in
+    #   -c base.txt
+    #   -c constraints.in
     #   requests
+wheel==0.41.1
+    # via
+    #   -c constraints.in
+    #   nvidia-cublas-cu11
+    #   nvidia-cuda-cupti-cu11
+    #   nvidia-cuda-runtime-cu11
+    #   nvidia-curand-cu11
+    #   nvidia-cusparse-cu11
+    #   nvidia-nvtx-cu11

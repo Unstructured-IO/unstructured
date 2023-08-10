@@ -4,12 +4,12 @@
 #
 #    pip-compile requirements/extra-csv.in
 #
-numpy==1.24.4
+numpy==1.25.2
     # via
-    #   -c requirements/constraints.in
+    #   -c constraints.in
     #   pandas
 pandas==2.0.3
-    # via -r requirements/extra-csv.in
+    # via -r extra-csv.in
 python-dateutil==2.8.2
     # via pandas
 pytz==2023.3
