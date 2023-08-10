@@ -17,7 +17,7 @@ def onedrive(
     client_id: str,
     client_cred: str,
     authority_url: Optional[str],
-    onedrive_folder: Optional[str],
+    path: Optional[str],
     recursive: bool,
     **kwargs,
 ):
@@ -45,7 +45,7 @@ def onedrive(
             user_pname=user_pname,
             tenant=tenant,
             authority_url=authority_url,
-            folder=onedrive_folder,
+            path=path,
             recursive=recursive,
         ),
     )

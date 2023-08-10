@@ -24,11 +24,13 @@ subcommands = [
     cli_cmds.wikipedia,
     cli_cmds.gdrive,
     cli_cmds.biomed,
+    cli_cmds.notion,
     cli_cmds.onedrive,
     cli_cmds.outlook,
     cli_cmds.local,
     cli_cmds.elasticsearch,
     cli_cmds.confluence,
+    cli_cmds.sharepoint,
 ]
 
 for subcommand in subcommands:

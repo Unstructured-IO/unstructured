@@ -7,3 +7,5 @@ pdfminer.six
 # https://github.com/facebookresearch/detectron2/issues/5010
 Pillow<10
 unstructured-inference==0.5.10
+# consistency with other ingest-*.in
+cryptography==41.0.2
