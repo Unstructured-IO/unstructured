@@ -5,7 +5,7 @@
 source ./scripts/airtable-test-helpers/component_ids.sh
 
 base_data='{"description": "Table-X of the test tables for the test LARGE_BASE.", "fields": [{"description": "Name of the row","name": "Name","type": "singleLineText"}],"name": "LARGE_BASE_TABLE_X"}'
-
+# shellcheck disable=SC2001
 for ((i=1; i<=100; i++)); do
   item="$(echo "$base_data" | sed "s/X/$i/g")"
   curl -X POST "https://api.airtable.com/v0/meta/bases/$LARGE_BASE_BASE_ID/tables" \
