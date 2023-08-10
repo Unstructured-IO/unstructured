@@ -1,15 +1,21 @@
 """Process arbitrary files with the Unstructured library"""
 
+from contextvars import ContextVar
 import os
 from typing import Any, Dict, List, Optional, cast
 
 from unstructured_inference.models.base import get_model
 
-from unstructured.ingest.doc_processor import resource
-from unstructured.ingest.interfaces import BaseIngestDoc as IngestDoc
+from unstructured.ingest.interfaces import BaseIngestDoc as IngestDoc, BaseSessionHandle
 from unstructured.ingest.interfaces import IngestDocSessionHandleMixin
 from unstructured.ingest.logger import logger
 
+# This is a context variable that can be set by the pool process to be used by the
+# doc processor to assign the session handle to the doc. This is necessary because
+# the session handle is not picklable and cannot be passed as an argument to the
+# doc processor.
+
+session_handle_var: ContextVar[Optional[BaseSessionHandle]] = ContextVar('session_handle', default=None)
 
 def initialize():
     """Download default model or model specified by UNSTRUCTURED_HI_RES_MODEL_NAME environment
@@ -35,12 +41,9 @@ def process_document(doc: "IngestDoc", **partition_kwargs) -> Optional[List[Dict
     isd_elems_no_filename = None
     try:
         # assign the session handle for the data source on the doc
-        if resource.session_handle is not None and isinstance(doc, IngestDocSessionHandleMixin):
-            print(
-                f"cast(IngestDocSessionHandleMixin, doc).session_handle: {cast(IngestDocSessionHandleMixin, doc).session_handle}"
-            )
-            print(f"resource.session_handle: {resource.session_handle}")
-            cast(IngestDocSessionHandleMixin, doc).session_handle = resource.session_handle
+        session_handle = session_handle_var.get()
+        if session_handle is not None and isinstance(doc, IngestDocSessionHandleMixin):
+            cast(IngestDocSessionHandleMixin, doc).session_handle = session_handle
         # does the work necessary to load file into filesystem
         # in the future, get_file_handle() could also be supported
         doc.get_file()

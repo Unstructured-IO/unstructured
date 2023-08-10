@@ -2,8 +2,7 @@ from dataclasses import dataclass
 
 import pytest
 
-from unstructured.ingest.doc_processor import resource as doc_processor_resource
-from unstructured.ingest.doc_processor.generalized import process_document
+from unstructured.ingest.doc_processor.generalized import process_document, session_handle_var
 from unstructured.ingest.interfaces import BaseIngestDoc, IngestDocSessionHandleMixin
 
 
@@ -13,13 +12,13 @@ class IngestDocWithSessionHandle(IngestDocSessionHandleMixin, BaseIngestDoc):
 # fixture to reset the session handle after each test
 @pytest.fixture(autouse=True)
 def reset_session_handle():
-    doc_processor_resource.session_handle = None
+    session_handle_var.reset()
 
 def test_process_document_with_session_handle(mocker):
     """Test that the process_document function calls the doc_processor_fn with the correct
     arguments, assigns the session handle, and returns the correct results."""
     mock_session_handle = mocker.MagicMock()
-    doc_processor_resource.session_handle = mock_session_handle
+    session_handle_var.set(mock_session_handle)
     mock_doc = mocker.MagicMock(spec=(IngestDocWithSessionHandle))
 
     result = process_document(mock_doc)
@@ -37,7 +36,7 @@ def test_process_document_with_session_handle(mocker):
 def test_process_document_no_session_handle(mocker):
     """Test that the process_document function calls does not assign session handle the IngestDoc
     does not have the session handle mixin."""
-    doc_processor_resource.session_handle = mocker.MagicMock()
+    session_handle_var.set(mocker.MagicMock())
     mock_doc = mocker.MagicMock(spec=(BaseIngestDoc))
 
     process_document(mock_doc)

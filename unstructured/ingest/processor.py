@@ -4,8 +4,7 @@ from contextlib import suppress
 from functools import partial
 from typing import cast
 
-from unstructured.ingest.doc_processor import resource as doc_processor_resource
-from unstructured.ingest.doc_processor.generalized import initialize, process_document
+from unstructured.ingest.doc_processor.generalized import initialize, process_document, session_handle_var
 from unstructured.ingest.interfaces import (
     BaseConnector,
     ConnectorSessionHandleMixin,
@@ -49,7 +48,7 @@ class Processor:
         ingest_log_streaming_init(verbose)
         # set the session handle for the doc processor if the connector supports it
         if create_session_handle_fn is not None:
-            doc_processor_resource.session_handle = create_session_handle_fn()
+            session_handle_var.set(create_session_handle_fn())
 
     def _filter_docs_with_outputs(self, docs):
         num_docs_all = len(docs)
