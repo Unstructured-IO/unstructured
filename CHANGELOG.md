@@ -3,6 +3,17 @@
 
 ### Enhancements
 
+### Features
+
+* Adds Sharepoint connector.
+
+### Fixes
+
+## 0.9.2-dev2
+=======
+
+### Enhancements
+
 * Update table extraction section in API documentation to sync with change in Prod API
 * Update Notion connector to extract to html
 * Added UUID option for element_id
@@ -10,8 +21,6 @@
 ### Features
 
 ### Fixes
-* Add functionality to switch `html` text parser based on whether the `html` text contains emoji
-* Add functionality to check if a string contains any emoji characters
 
 ## 0.9.1
 =======
