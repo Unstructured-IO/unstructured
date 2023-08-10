@@ -2,7 +2,10 @@ from dataclasses import dataclass
 
 import pytest
 
-from unstructured.ingest.doc_processor.generalized import process_document, session_handle_var
+from unstructured.ingest.doc_processor.generalized import (
+    process_document,
+    session_handle_var,
+)
 from unstructured.ingest.interfaces import BaseIngestDoc, IngestDocSessionHandleMixin
 
 
@@ -12,7 +15,7 @@ class IngestDocWithSessionHandle(IngestDocSessionHandleMixin, BaseIngestDoc):
 # fixture to reset the session handle after each test
 @pytest.fixture(autouse=True)
 def reset_session_handle():
-    session_handle_var.reset()
+    session_handle_var.set(None)
 
 def test_process_document_with_session_handle(mocker):
     """Test that the process_document function calls the doc_processor_fn with the correct

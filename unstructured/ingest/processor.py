@@ -4,7 +4,11 @@ from contextlib import suppress
 from functools import partial
 from typing import cast
 
-from unstructured.ingest.doc_processor.generalized import initialize, process_document, session_handle_var
+from unstructured.ingest.doc_processor.generalized import (
+    initialize,
+    process_document,
+    session_handle_var,
+)
 from unstructured.ingest.interfaces import (
     BaseConnector,
     ConnectorSessionHandleMixin,

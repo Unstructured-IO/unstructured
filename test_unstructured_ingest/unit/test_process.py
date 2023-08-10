@@ -1,13 +1,13 @@
 import pytest
 
-from unstructured.ingest.doc_processor import resource as doc_processor_resource
+from unstructured.ingest.doc_processor.generalized import session_handle_var
 from unstructured.ingest.processor import Processor
 
 
 # fixture to reset the session handle after each test
 @pytest.fixture(autouse=True)
 def reset_session_handle():
-    doc_processor_resource.session_handle = None
+    session_handle_var.set(None)
 
 @pytest.mark.parametrize("test_verbose", [True, False])
 def test_processor_init_with_session_handle(mocker, test_verbose):
@@ -21,7 +21,7 @@ def test_processor_init_with_session_handle(mocker, test_verbose):
     mock_ingest_log_streaming_init.assert_called_once_with(test_verbose)
     mock_create_session_handle_fn.assert_called_once_with()
     assert (
-        doc_processor_resource.session_handle == mock_create_session_handle_fn.return_value
+        session_handle_var.get() == mock_create_session_handle_fn.return_value
     )
 
 def test_processor_init_no_session_handle(mocker):
@@ -32,4 +32,4 @@ def test_processor_init_no_session_handle(mocker):
     )
     Processor.process_init(True)
     mock_ingest_log_streaming_init.assert_called_once_with(True)
-    assert doc_processor_resource.session_handle is None
+    assert session_handle_var.get() is None

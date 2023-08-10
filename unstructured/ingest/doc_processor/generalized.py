@@ -1,13 +1,16 @@
 """Process arbitrary files with the Unstructured library"""
 
-from contextvars import ContextVar
 import os
+from contextvars import ContextVar
 from typing import Any, Dict, List, Optional, cast
 
 from unstructured_inference.models.base import get_model
 
-from unstructured.ingest.interfaces import BaseIngestDoc as IngestDoc, BaseSessionHandle
-from unstructured.ingest.interfaces import IngestDocSessionHandleMixin
+from unstructured.ingest.interfaces import BaseIngestDoc as IngestDoc
+from unstructured.ingest.interfaces import (
+    BaseSessionHandle,
+    IngestDocSessionHandleMixin,
+)
 from unstructured.ingest.logger import logger
 
 # This is a context variable that can be set by the pool process to be used by the
@@ -15,7 +18,10 @@ from unstructured.ingest.logger import logger
 # the session handle is not picklable and cannot be passed as an argument to the
 # doc processor.
 
-session_handle_var: ContextVar[Optional[BaseSessionHandle]] = ContextVar('session_handle', default=None)
+session_handle_var: ContextVar[Optional[BaseSessionHandle]] = ContextVar(
+    "session_handle", default=None
+)
+
 
 def initialize():
     """Download default model or model specified by UNSTRUCTURED_HI_RES_MODEL_NAME environment
