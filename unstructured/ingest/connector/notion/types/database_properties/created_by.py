@@ -2,6 +2,8 @@
 from dataclasses import dataclass, field
 from typing import Optional
 
+from htmlBuilder.tags import HtmlTag
+
 from unstructured.ingest.connector.notion.interfaces import DBCellBase, DBPropertyBase
 from unstructured.ingest.connector.notion.types.user import People
 
@@ -29,5 +31,5 @@ class CreatedByCell(DBCellBase):
     def from_dict(cls, data: dict):
         return cls(created_by=People.from_dict(data.pop("created_by")), **data)
 
-    def get_text(self) -> Optional[str]:
-        return self.created_by.get_text()
+    def get_html(self) -> Optional[HtmlTag]:
+        return self.created_by.get_html()

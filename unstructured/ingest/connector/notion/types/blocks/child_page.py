@@ -2,11 +2,13 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from unstructured.ingest.connector.notion.interfaces import BlockBase, GetTextMixin
+from htmlBuilder.tags import HtmlTag, P
+
+from unstructured.ingest.connector.notion.interfaces import BlockBase, GetHTMLMixin
 
 
 @dataclass
-class ChildPage(BlockBase, GetTextMixin):
+class ChildPage(BlockBase, GetHTMLMixin):
     title: str
 
     @staticmethod
@@ -17,5 +19,5 @@ class ChildPage(BlockBase, GetTextMixin):
     def from_dict(cls, data: dict):
         return cls(**data)
 
-    def get_text(self) -> Optional[str]:
-        return self.title if self.title else None
+    def get_html(self) -> Optional[HtmlTag]:
+        return P([], self.title)

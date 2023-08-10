@@ -60,7 +60,7 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     check_exists: bool = False
 
     def _tmp_download_file(self):
-        page_file = self.page_id + ".txt"
+        page_file = self.page_id + ".html"
         return Path(self.standard_config.download_dir) / page_file
 
     @property
@@ -77,7 +77,7 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         from notion_client import APIErrorCode, APIResponseError
 
         from unstructured.ingest.connector.notion.client import Client as NotionClient
-        from unstructured.ingest.connector.notion.helpers import extract_page_text
+        from unstructured.ingest.connector.notion.helpers import extract_page_html
 
         self._create_full_tmp_dir_path()
 
@@ -86,16 +86,16 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         client = NotionClient(auth=self.api_key, logger=self.config.get_logger())
 
         try:
-            text_extraction = extract_page_text(
+            text_extraction = extract_page_html(
                 client=client,
                 page_id=self.page_id,
                 logger=self.config.get_logger(),
             )
             self.check_exists = True
             self.file_exists = True
-            if text_extraction.text:
+            if html := text_extraction.html:
                 with open(self._tmp_download_file(), "w") as page_file:
-                    page_file.write(text_extraction.text)
+                    page_file.write(html.render(pretty=True))
 
         except APIResponseError as error:
             if error.code == APIErrorCode.ObjectNotFound:
@@ -174,7 +174,7 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     check_exists: bool = False
 
     def _tmp_download_file(self):
-        page_file = self.database_id + ".txt"
+        page_file = self.database_id + ".html"
         return Path(self.standard_config.download_dir) / page_file
 
     @property
@@ -191,7 +191,7 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         from notion_client import APIErrorCode, APIResponseError
 
         from unstructured.ingest.connector.notion.client import Client as NotionClient
-        from unstructured.ingest.connector.notion.helpers import extract_database_text
+        from unstructured.ingest.connector.notion.helpers import extract_database_html
 
         self._create_full_tmp_dir_path()
 
@@ -200,16 +200,16 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         client = NotionClient(auth=self.api_key, logger=self.config.get_logger())
 
         try:
-            text_extraction = extract_database_text(
+            text_extraction = extract_database_html(
                 client=client,
                 database_id=self.database_id,
                 logger=self.config.get_logger(),
             )
             self.check_exists = True
             self.file_exists = True
-            if text_extraction.text:
+            if html := text_extraction.html:
                 with open(self._tmp_download_file(), "w") as page_file:
-                    page_file.write(text_extraction.text)
+                    page_file.write(html.render(pretty=True))
 
         except APIResponseError as error:
             if error.code == APIErrorCode.ObjectNotFound:
@@ -301,6 +301,21 @@ class NotionConnector(ConnectorCleanupMixin, BaseConnector):
         )
 
         client = NotionClient(auth=self.config.api_key, logger=self.config.get_logger())
+
+        child_content = get_recursive_content_from_page(
+            client=client,
+            page_id=page_id,
+            logger=self.config.get_logger(),
+        )
+        return child_content
+
+    def get_child_content(self, page_id: str):
+        from unstructured.ingest.connector.notion.client import Client as NotionClient
+        from unstructured.ingest.connector.notion.helpers import (
+            get_recursive_content_from_page,
+        )
+
+        client = NotionClient(auth=self.config.api_key, logger=self.config.logger)
 
         child_content = get_recursive_content_from_page(
             client=client,

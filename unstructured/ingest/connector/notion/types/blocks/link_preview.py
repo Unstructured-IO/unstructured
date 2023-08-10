@@ -2,6 +2,9 @@
 from dataclasses import dataclass
 from typing import Optional
 
+from htmlBuilder.attributes import Href
+from htmlBuilder.tags import A, HtmlTag
+
 from unstructured.ingest.connector.notion.interfaces import BlockBase
 
 
@@ -17,5 +20,5 @@ class LinkPreview(BlockBase):
     def from_dict(cls, data: dict):
         return cls(**data)
 
-    def get_text(self) -> Optional[str]:
-        return self.url if self.url else None
+    def get_html(self) -> Optional[HtmlTag]:
+        return A([Href(self.url)], self.url)

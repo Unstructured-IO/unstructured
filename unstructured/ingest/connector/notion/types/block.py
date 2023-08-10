@@ -2,10 +2,12 @@
 from dataclasses import dataclass
 from typing import Optional
 
+from htmlBuilder.tags import HtmlTag
+
 from unstructured.ingest.connector.notion.interfaces import (
     BlockBase,
     FromJSONMixin,
-    GetTextMixin,
+    GetHTMLMixin,
 )
 from unstructured.ingest.connector.notion.types import blocks
 from unstructured.ingest.connector.notion.types.parent import Parent
@@ -47,7 +49,7 @@ block_type_mapping = {
 
 
 @dataclass
-class Block(FromJSONMixin, GetTextMixin):
+class Block(FromJSONMixin, GetHTMLMixin):
     id: str
     type: str
     created_time: str
@@ -80,11 +82,12 @@ class Block(FromJSONMixin, GetTextMixin):
             )
         except KeyError as ke:
             raise KeyError(f"failed to map to associated block type -> {t}: {block_data}") from ke
+        except TypeError as te:
+            raise TypeError(f"failed to map to associated block type -> {t}: {block_data}") from te
 
         return block
 
-    def get_text(self) -> Optional[str]:
+    def get_html(self) -> Optional[HtmlTag]:
         if self.block:
-            return self.block.get_text()
-        else:
-            return None
+            return self.block.get_html()
+        return None

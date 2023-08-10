@@ -2,6 +2,8 @@
 from dataclasses import dataclass, field
 from typing import List, Optional
 
+from htmlBuilder.tags import Div, HtmlTag, Span
+
 from unstructured.ingest.connector.notion.interfaces import DBCellBase, DBPropertyBase
 from unstructured.ingest.connector.notion.types.user import People as PeopleType
 
@@ -29,6 +31,10 @@ class PeopleCell(DBCellBase):
     def from_dict(cls, data: dict):
         return cls(people=[PeopleType.from_dict(p) for p in data.pop("people", {})], **data)
 
-    def get_text(self) -> Optional[str]:
-        texts = [p.get_text() for p in self.people]
-        return ",".join([t for t in texts if t])
+    def get_html(self) -> Optional[HtmlTag]:
+        if not self.people:
+            return None
+        people_spans = []
+        for person in self.people:
+            people_spans.append(Span([], person.get_html()))
+        return Div([], people_spans)

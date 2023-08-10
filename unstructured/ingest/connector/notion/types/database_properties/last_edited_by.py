@@ -2,6 +2,8 @@
 from dataclasses import dataclass
 from typing import Optional
 
+from htmlBuilder.tags import HtmlTag
+
 from unstructured.ingest.connector.notion.interfaces import DBCellBase, DBPropertyBase
 from unstructured.ingest.connector.notion.types.user import People
 
@@ -28,7 +30,5 @@ class LastEditedByCell(DBCellBase):
     def from_dict(cls, data: dict):
         return cls(last_edited_by=People.from_dict(data.pop("last_edited_by", {})), **data)
 
-    def get_text(self) -> Optional[str]:
-        if self.last_edited_by:
-            return self.last_edited_by.get_text()
-        return None
+    def get_html(self) -> Optional[HtmlTag]:
+        return self.last_edited_by.get_html()

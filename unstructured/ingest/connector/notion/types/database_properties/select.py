@@ -2,6 +2,9 @@
 from dataclasses import dataclass, field
 from typing import List, Optional
 
+from htmlBuilder.attributes import Style
+from htmlBuilder.tags import Div, HtmlTag
+
 from unstructured.ingest.connector.notion.interfaces import (
     DBCellBase,
     DBPropertyBase,
@@ -56,7 +59,10 @@ class SelectCell(DBCellBase):
             select = SelectOption.from_dict(select_data)
         return cls(select=select, **data)
 
-    def get_text(self) -> Optional[str]:
-        if self.select:
-            return self.select.id
+    def get_html(self) -> Optional[HtmlTag]:
+        if select := self.select:
+            select_attr = []
+            if select.color and select.color != "default":
+                select_attr.append(Style(f"color: {select.color}"))
+            return Div(select_attr, select.name)
         return None

@@ -1,13 +1,16 @@
-## 0.9.2-dev0
+## 0.9.2-dev3
 
 ### Enhancements
+
+* Update table extraction section in API documentation to sync with change in Prod API
+* Update Notion connector to extract to html
+* Added UUID option for element_id
 
 ### Features
 
 * Add Airtable Connector to be able to pull views/tables/bases from an Airtable organization.
 
 ### Fixes
-
 
 ## 0.9.1
 
