@@ -131,7 +131,7 @@ install-ingest-github:
 
 .PHONY: install-ingest-biomed
 install-ingest-biomed:
-	echo "No specific dependencies exist for biomed connector"
+	python3 -m pip install -r requirements/ingest-biomed.txt
 
 .PHONY: install-ingest-gitlab
 install-ingest-gitlab:
@@ -168,6 +168,10 @@ install-ingest-confluence:
 .PHONY: install-ingest-airtable
 install-ingest-airtable:
 	python3 -m pip install -r requirements/ingest-airtable.txt
+
+.PHONY: install-ingest-local
+install-ingest-local:
+	echo "no unique dependencies for local connector"
 
 .PHONY: install-ingest-notion
 install-ingest-notion:
@@ -212,6 +216,7 @@ pip-compile:
 	# sphinx docs looks for additional requirements
 	cp requirements/build.txt docs/requirements.txt
 	pip-compile --upgrade requirements/ingest-s3.in
+	pip-compile --upgrade requirements/ingest-biomed.in
 	pip-compile --upgrade requirements/ingest-box.in
 	pip-compile --upgrade requirements/ingest-gcs.in
 	pip-compile --upgrade requirements/ingest-dropbox.in
