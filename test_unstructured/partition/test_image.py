@@ -12,6 +12,8 @@ from unstructured.partition import image, pdf
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
+is_in_docker = os.path.exists("/.dockerenv")
+
 
 class MockResponse:
     def __init__(self, status_code, response):
@@ -159,6 +161,8 @@ def test_partition_image_from_file_with_language_passed(
     assert mock_partition.call_args.kwargs.get("ocr_languages") == "eng+swe"
 
 
+# NOTE(crag): see https://github.com/Unstructured-IO/unstructured/issues/1086
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_partition_image_raises_with_invalid_language(
     filename="example-docs/example.jpg",
 ):
