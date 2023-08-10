@@ -1,5 +1,9 @@
 ## 0.9.2-dev3
 
+### Features
+
+* Adds Sharepoint connector.
+
 ### Enhancements
 
 * Add `unique_element_ids` kwarg to partition functions. If `True`, will use a UUID

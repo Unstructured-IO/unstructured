@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-# Description: This test checks if all the processed content is the same as the expected outputs.
+# Description: This test checks if all the processed content is the same as the expected outputs
 
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
@@ -27,6 +27,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --url https://unstructured-ingest-test.atlassian.net \
     --user-email "$CONFLUENCE_USER_EMAIL" \
     --api-token "$CONFLUENCE_API_TOKEN" \
-    --max-num-of-spaces 4
+    --list-of-spaces testteamsp,MFS \
 
 sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
