@@ -37,7 +37,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
 # We are expecting fifteen directories: fourteen bases and the parent directory
 sh "$SCRIPT_DIR"/check-num-dirs-output.sh 15 "$OUTPUT_FOLDER_NAME"
 
-# We are expecting 101 directories: 100 bases and the parent directory
+# We are expecting 101 files: 100 tables and the parent directory
 sh "$SCRIPT_DIR"/check-num-files-output.sh 101 "$OUTPUT_FOLDER_NAME"/"$LARGE_BASE_BASE_ID"/
 
 # Test on ingesting a large number of bases
