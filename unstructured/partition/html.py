@@ -153,6 +153,8 @@ def convert_and_partition_html(
     metadata_last_modified
         The last modified date for the document.
     """
+
+    last_modification_date = None
     if filename:
         last_modification_date = get_last_modified_date(filename)
     elif file:
