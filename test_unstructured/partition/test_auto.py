@@ -692,7 +692,8 @@ def test_auto_partition_xlsx_from_file(filename="example-docs/stanley-cups.xlsx"
     assert elements[0].metadata.filetype == EXPECTED_XLSX_FILETYPE
 
 
-EXPECTED_XLS_TEXT_LEN = 883
+EXPECTED_XLS_TEXT_LEN = 507
+
 
 EXPECTED_XLS_INITIAL_45_CLEAN_TEXT = "MA What C datatypes are 8 bits? (assume i386)"
 
@@ -779,6 +780,11 @@ def test_auto_partition_xls_from_filename(filename="example-docs/tests-example.x
     assert len(elements) == 3
 
     assert clean_extra_whitespace(elements[0].text)[:45] == EXPECTED_XLS_INITIAL_45_CLEAN_TEXT
+    # NOTE(crag): if the beautifulsoup4 package is installed, some (but not all) additional
+    # whitespace is removed, so the expected text length is less than is the case
+    # when beautifulsoup4 is *not* installed. E.g.
+    # "\n\n\nMA\nWhat C datatypes are 8 bits" vs.
+    # '\n  \n    \n      MA\n      What C datatypes are 8 bits?... "
     assert len(elements[0].text) == EXPECTED_XLS_TEXT_LEN
     assert elements[0].metadata.text_as_html == EXPECTED_XLS_TABLE
 
