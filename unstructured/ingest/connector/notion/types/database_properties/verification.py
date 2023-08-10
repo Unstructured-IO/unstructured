@@ -1,12 +1,14 @@
 # https://developers.notion.com/reference/property-object#url
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import Optional
+
+from htmlBuilder.tags import Div, HtmlTag, Span
 
 from unstructured.ingest.connector.notion.interfaces import (
     DBCellBase,
     DBPropertyBase,
     FromJSONMixin,
-    GetTextMixin,
+    GetHTMLMixin,
 )
 from unstructured.ingest.connector.notion.types.date import Date
 from unstructured.ingest.connector.notion.types.user import People
@@ -25,28 +27,32 @@ class Verification(DBPropertyBase):
 
 
 @dataclass
-class VerificationData(FromJSONMixin, GetTextMixin):
+class VerificationData(FromJSONMixin, GetHTMLMixin):
     state: Optional[str]
     verified_by: Optional[People]
     date: Optional[Date]
 
     @classmethod
     def from_dict(cls, data: dict):
-        return cls(**data)
+        verified_by = data.pop("verified_by", None)
+        date = data.pop("date", None)
+        return cls(
+            verified_by=People.from_dict(data=verified_by) if verified_by else None,
+            date=Date.from_dict(data=date) if date else None,
+            **data,
+        )
 
-    def get_text(self) -> Optional[str]:
-        texts: List[str] = []
-        if self.state:
-            texts.append(self.state)
-        if self.verified_by:
-            verified_by_text = self.verified_by.get_text()
-            if verified_by_text:
-                texts.append(verified_by_text)
-        if self.date:
-            date_text = self.date.get_text()
-            if date_text:
-                texts.append(date_text)
-        return ", ".join(texts) if texts else None
+    def get_html(self) -> Optional[HtmlTag]:
+        elements = []
+        if state := self.state:
+            elements.append(Span([], state))
+        if (verified_by := self.verified_by) and (verified_by_html := verified_by.get_html()):
+            elements.append(verified_by_html)
+        if (date := self.date) and (date_html := date.get_html()):
+            elements.append(date_html)
+        if elements:
+            return Div([], elements)
+        return None
 
 
 @dataclass
@@ -58,14 +64,15 @@ class VerificationCell(DBCellBase):
 
     @classmethod
     def from_dict(cls, data: dict):
-        return cls(**data)
+        return cls(verification=VerificationData.from_dict(data.pop("verification")), **data)
 
-    def get_text(self) -> Optional[str]:
-        texts = []
-        if self.name:
-            texts.append(self.name)
-        if self.verification:
-            verification_text = self.verification.get_text()
-            if verification_text:
-                texts.append(verification_text)
-        return ", ".join(texts)
+    def get_html(self) -> Optional[HtmlTag]:
+        elements = []
+        if name := self.name:
+            elements.append(Span([], name))
+        if (verification := self.verification) and (verification_html := verification.get_html()):
+            elements.append(verification_html)
+
+        if elements:
+            return Div([], elements)
+        return None

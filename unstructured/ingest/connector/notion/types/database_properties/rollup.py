@@ -2,6 +2,8 @@
 from dataclasses import dataclass
 from typing import Optional
 
+from htmlBuilder.tags import Div, HtmlTag, Span
+
 from unstructured.ingest.connector.notion.interfaces import (
     DBCellBase,
     DBPropertyBase,
@@ -45,10 +47,10 @@ class RollupCell(DBCellBase):
     def from_dict(cls, data: dict):
         return cls(**data)
 
-    def get_text(self) -> Optional[str]:
+    def get_html(self) -> Optional[HtmlTag]:
         rollup = self.rollup
         t = rollup.get("type")
         v = rollup[t]
         if isinstance(v, list):
-            return ",".join([x for x in v if x])
-        return f"{v}"
+            return Div([], [Span([], str(x)) for x in v])
+        return Div([], str(v))

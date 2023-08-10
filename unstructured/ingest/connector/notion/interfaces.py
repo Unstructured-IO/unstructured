@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 
+from htmlBuilder.tags import HtmlTag
+
 
 class FromJSONMixin(ABC):
     @classmethod
@@ -9,13 +11,13 @@ class FromJSONMixin(ABC):
         pass
 
 
-class GetTextMixin(ABC):
+class GetHTMLMixin(ABC):
     @abstractmethod
-    def get_text(self) -> Optional[str]:
+    def get_html(self) -> Optional[HtmlTag]:
         pass
 
 
-class BlockBase(FromJSONMixin, GetTextMixin):
+class BlockBase(FromJSONMixin, GetHTMLMixin):
     @staticmethod
     @abstractmethod
     def can_have_children() -> bool:
@@ -26,5 +28,5 @@ class DBPropertyBase(FromJSONMixin):
     pass
 
 
-class DBCellBase(FromJSONMixin):
+class DBCellBase(FromJSONMixin, GetHTMLMixin):
     pass

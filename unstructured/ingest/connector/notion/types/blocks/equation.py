@@ -2,6 +2,8 @@
 from dataclasses import dataclass
 from typing import Optional
 
+from htmlBuilder.tags import Div, HtmlTag
+
 from unstructured.ingest.connector.notion.interfaces import BlockBase
 
 
@@ -17,5 +19,5 @@ class Equation(BlockBase):
     def from_dict(cls, data: dict):
         return cls(**data)
 
-    def get_text(self) -> Optional[str]:
-        return self.expression if self.expression else None
+    def get_html(self) -> Optional[HtmlTag]:
+        return Div([], self.expression)

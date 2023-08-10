@@ -2,6 +2,9 @@
 from dataclasses import dataclass, field
 from typing import List, Optional
 
+from htmlBuilder.attributes import Style
+from htmlBuilder.tags import Div, HtmlTag
+
 from unstructured.ingest.connector.notion.interfaces import (
     DBCellBase,
     DBPropertyBase,
@@ -60,7 +63,7 @@ class Status(DBPropertyBase):
 @dataclass
 class StatusCell(DBCellBase):
     id: str
-    status: StatusOption
+    status: Optional[StatusOption]
     type: str = "status"
     name: Optional[str] = None
 
@@ -68,5 +71,10 @@ class StatusCell(DBCellBase):
     def from_dict(cls, data: dict):
         return cls(status=StatusOption.from_dict(data.pop("status", {})), **data)
 
-    def get_text(self) -> Optional[str]:
-        return self.status.name
+    def get_html(self) -> Optional[HtmlTag]:
+        if status := self.status:
+            select_attr = []
+            if status.color and status.color != "default":
+                select_attr.append(Style(f"color: {status.color}"))
+            return Div(select_attr, status.name)
+        return None

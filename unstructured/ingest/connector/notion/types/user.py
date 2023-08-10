@@ -2,7 +2,10 @@
 from dataclasses import dataclass, field
 from typing import Optional
 
-from unstructured.ingest.connector.notion.interfaces import FromJSONMixin, GetTextMixin
+from htmlBuilder.attributes import Href
+from htmlBuilder.tags import A, Div, HtmlTag
+
+from unstructured.ingest.connector.notion.interfaces import FromJSONMixin, GetHTMLMixin
 
 
 @dataclass
@@ -16,7 +19,7 @@ class PartialUser(FromJSONMixin):
 
 
 @dataclass
-class User(FromJSONMixin, GetTextMixin):
+class User(FromJSONMixin, GetHTMLMixin):
     object: dict
     id: str
     type: Optional[str] = None
@@ -33,6 +36,12 @@ class User(FromJSONMixin, GetTextMixin):
             text = f"[{text}]({self.avatar_url}"
         return text
 
+    def get_html(self) -> Optional[HtmlTag]:
+        if self.avatar_url:
+            return A([Href(self.avatar_url)], self.name)
+        else:
+            return Div([], self.name)
+
 
 @dataclass
 class People(User):
@@ -40,7 +49,7 @@ class People(User):
 
 
 @dataclass
-class Bots(FromJSONMixin, GetTextMixin):
+class Bots(FromJSONMixin, GetHTMLMixin):
     object: dict
     id: str
     bot: dict
@@ -59,3 +68,9 @@ class Bots(FromJSONMixin, GetTextMixin):
         if self.avatar_url:
             text = f"[{text}]({self.avatar_url}"
         return text
+
+    def get_html(self) -> Optional[HtmlTag]:
+        if self.avatar_url:
+            return A([Href(self.avatar_url)], self.name)
+        else:
+            return Div([], self.name)
