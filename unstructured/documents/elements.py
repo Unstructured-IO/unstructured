@@ -143,7 +143,8 @@ class ElementMetadata:
 
     # Webpage specific metadata fields
     url: Optional[str] = None
-    links: Optional[List[Link]] = None
+    link_urls: Optional[List[str]] = None
+    link_texts: Optional[List[str]] = None
 
     # E-mail specific metadata fields
     sent_from: Optional[List[str]] = None

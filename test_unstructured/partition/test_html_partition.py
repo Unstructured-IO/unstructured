@@ -455,34 +455,24 @@ def test_partition_html_grabs_links():
     elements = partition_html(text=html_text)
 
     assert elements[0] == NarrativeText("Hello there I am a very important link!")
-    assert elements[0].metadata.links == [
-        {
-            "text": "very important link!",
-            "url": "/link",
-        },
-    ]
+    assert elements[0].metadata.link_urls == ["/link"]
+    assert elements[0].metadata.link_texts == ["very important link!"]
 
     assert elements[1] == NarrativeText("Here is a list of my favorite things")
-    assert elements[1].metadata.links is None
+    assert elements[1].metadata.link_urls is None
+    assert elements[1].metadata.link_texts is None
 
     assert elements[2] == ListItem("Parrots")
-    assert elements[2].metadata.links == [
-        {
-            "text": "Parrots",
-            "url": "https://en.wikipedia.org/wiki/Parrot",
-        },
-    ]
+    assert elements[2].metadata.link_urls == ["https://en.wikipedia.org/wiki/Parrot"]
+    assert elements[2].metadata.link_texts == ["Parrots"]
 
     assert elements[3] == ListItem("Dogs")
-    assert elements[3].metadata.links is None
+    assert elements[3].metadata.link_urls is None
+    assert elements[3].metadata.link_texts is None
 
     assert elements[4] == Title("A lone link!")
-    assert elements[4].metadata.links == [
-        {
-            "text": "A lone link!",
-            "url": "/loner",
-        },
-    ]
+    assert elements[4].metadata.link_urls == ["/loner"]
+    assert elements[4].metadata.link_texts == ["A lone link!"]
 
 
 def test_partition_html_from_filename_with_skip_headers_and_footers(
