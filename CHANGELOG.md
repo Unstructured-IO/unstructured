@@ -1,18 +1,18 @@
-## 0.9.2-dev2
-=======
+## 0.9.2-dev3
 
 ### Enhancements
 
+* Add `unique_element_ids` kwarg to partition functions. If `True`, will use a UUID
+  for element IDs instead of a SHA-256 hash.
 * Update table extraction section in API documentation to sync with change in Prod API
 * Update Notion connector to extract to html
-* Added UUID option for element_id
+* Added UUID option for `element_id`
 
 ### Features
 
 ### Fixes
 
 ## 0.9.1
-=======
 
 ### Enhancements
 
