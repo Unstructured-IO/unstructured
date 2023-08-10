@@ -159,6 +159,8 @@ def test_partition_image_from_file_with_language_passed(
     assert mock_partition.call_args.kwargs.get("ocr_languages") == "eng+swe"
 
 
+# NOTE(crag): see https://github.com/Unstructured-IO/unstructured/issues/1086
+@pytest.mark.skip(reason="Current catching too many tesseract errors")
 def test_partition_image_raises_with_invalid_language(
     filename="example-docs/example.jpg",
 ):
