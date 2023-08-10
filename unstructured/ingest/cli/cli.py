@@ -30,6 +30,7 @@ subcommands = [
     cli_cmds.local,
     cli_cmds.elasticsearch,
     cli_cmds.confluence,
+    cli_cmds.sharepoint,
 ]
 
 for subcommand in subcommands:

@@ -32,7 +32,7 @@ from unstructured.ingest.runner import onedrive as onedrive_fn
     help="Microsoft App client secret",
 )
 @click.option(
-    "--onedrive-folder",
+    "--path",
     default=None,
     help="Folder to start parsing files from.",
 )
