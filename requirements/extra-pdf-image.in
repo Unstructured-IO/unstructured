@@ -7,3 +7,4 @@ pdfminer.six
 # https://github.com/facebookresearch/detectron2/issues/5010
 Pillow<10
 unstructured-inference==0.5.7
+safetensors==0.3.1

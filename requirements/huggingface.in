@@ -5,3 +5,4 @@ sacremoses
 sentencepiece
 torch
 transformers
+safetensors==0.3.1

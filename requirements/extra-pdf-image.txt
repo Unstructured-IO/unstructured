@@ -161,8 +161,9 @@ requests==2.31.0
     #   huggingface-hub
     #   torchvision
     #   transformers
-safetensors==0.3.2
+safetensors==0.3.1
     # via
+    #   -r requirements/extra-pdf-image.in
     #   timm
     #   transformers
 scipy==1.10.1
