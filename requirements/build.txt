@@ -38,7 +38,7 @@ markupsafe==2.1.3
     # via jinja2
 packaging==23.1
     # via sphinx
-pygments==2.15.1
+pygments==2.16.1
     # via
     #   furo
     #   sphinx
@@ -56,24 +56,29 @@ sphinx==6.2.1
     #   furo
     #   sphinx-basic-ng
     #   sphinx-rtd-theme
+    #   sphinxcontrib-applehelp
+    #   sphinxcontrib-devhelp
+    #   sphinxcontrib-htmlhelp
     #   sphinxcontrib-jquery
+    #   sphinxcontrib-qthelp
+    #   sphinxcontrib-serializinghtml
 sphinx-basic-ng==1.0.0b2
     # via furo
 sphinx-rtd-theme==1.2.2
     # via -r requirements/build.in
-sphinxcontrib-applehelp==1.0.4
+sphinxcontrib-applehelp==1.0.6
     # via sphinx
-sphinxcontrib-devhelp==1.0.2
+sphinxcontrib-devhelp==1.0.4
     # via sphinx
-sphinxcontrib-htmlhelp==2.0.1
+sphinxcontrib-htmlhelp==2.0.3
     # via sphinx
 sphinxcontrib-jquery==4.1
     # via sphinx-rtd-theme
 sphinxcontrib-jsmath==1.0.1
     # via sphinx
-sphinxcontrib-qthelp==1.0.3
+sphinxcontrib-qthelp==1.0.5
     # via sphinx
-sphinxcontrib-serializinghtml==1.1.5
+sphinxcontrib-serializinghtml==1.1.7
     # via sphinx
 urllib3==1.26.16
     # via

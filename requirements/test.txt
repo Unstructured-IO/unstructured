@@ -4,6 +4,8 @@
 #
 #    pip-compile requirements/test.in
 #
+annotated-types==0.5.0
+    # via pydantic
 appdirs==1.4.4
     # via label-studio-tools
 black==23.7.0
@@ -30,7 +32,7 @@ flake8==6.1.0
     # via -r requirements/test.in
 freezegun==1.2.2
     # via -r requirements/test.in
-grpcio==1.56.2
+grpcio==1.57.0
     # via -r requirements/test.in
 idna==3.4
     # via
@@ -39,7 +41,7 @@ idna==3.4
     #   yarl
 iniconfig==2.0.0
     # via pytest
-label-studio-sdk==0.0.29
+label-studio-sdk==0.0.30
     # via -r requirements/test.in
 label-studio-tools==0.0.2
     # via label-studio-sdk
@@ -52,7 +54,7 @@ mccabe==0.7.0
     # via flake8
 multidict==6.0.4
     # via yarl
-mypy==1.4.1
+mypy==1.5.0
     # via -r requirements/test.in
 mypy-extensions==1.0.0
     # via
@@ -70,8 +72,10 @@ pluggy==1.2.0
     # via pytest
 pycodestyle==2.11.0
     # via flake8
-pydantic==1.10.12
+pydantic==2.1.1
     # via label-studio-sdk
+pydantic-core==2.4.0
+    # via pydantic
 pyflakes==3.1.0
     # via flake8
 pytest==7.4.0
@@ -90,7 +94,7 @@ requests==2.31.0
     # via
     #   -c requirements/base.txt
     #   label-studio-sdk
-ruff==0.0.282
+ruff==0.0.284
     # via -r requirements/test.in
 six==1.16.0
     # via python-dateutil
@@ -108,6 +112,7 @@ typing-extensions==4.7.1
     # via
     #   mypy
     #   pydantic
+    #   pydantic-core
 urllib3==1.26.16
     # via
     #   -c requirements/base.txt
