@@ -6,6 +6,7 @@ import inspect
 import os
 import pathlib
 import re
+import uuid
 from abc import ABC
 from copy import deepcopy
 from dataclasses import dataclass
@@ -21,6 +22,12 @@ from unstructured.documents.coordinates import (
 
 class NoID(ABC):
     """Class to indicate that an element do not have an ID."""
+
+    pass
+
+
+class UUID(ABC):
+    """Class to indicate that an element should have a UUID."""
 
     pass
 
@@ -273,14 +280,14 @@ class Element(ABC):
 
     def __init__(
         self,
-        element_id: Union[str, NoID] = NoID(),
+        element_id: Union[str, uuid.UUID, NoID, UUID] = NoID(),
         coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         metadata: Optional[ElementMetadata] = None,
     ):
         if metadata is None:
             metadata = ElementMetadata()
-        self.id: Union[str, NoID] = element_id
+        self.id: Union[str, uuid.UUID, NoID, UUID] = element_id
         coordinates_metadata = (
             None
             if coordinates is None and coordinate_system is None
@@ -329,7 +336,7 @@ class CheckBox(Element):
 
     def __init__(
         self,
-        element_id: Union[str, NoID] = NoID(),
+        element_id: Union[str, uuid.UUID, NoID, UUID] = NoID(),
         coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         checked: bool = False,
@@ -365,7 +372,7 @@ class Text(Element):
     def __init__(
         self,
         text: str,
-        element_id: Union[str, NoID] = NoID(),
+        element_id: Union[str, uuid.UUID, NoID, UUID] = NoID(),
         coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         metadata: Optional[ElementMetadata] = None,
@@ -376,6 +383,9 @@ class Text(Element):
         if isinstance(element_id, NoID):
             # NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits
             element_id = hashlib.sha256(text.encode()).hexdigest()[:32]
+
+        elif isinstance(element_id, UUID):
+            element_id = uuid.uuid4()
 
         super().__init__(
             element_id=element_id,
