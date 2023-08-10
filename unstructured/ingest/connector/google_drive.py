@@ -267,5 +267,4 @@ class GoogleDriveConnector(ConnectorSessionHandleMixin, ConnectorCleanupMixin, B
 
     def get_ingest_docs(self):
         files = self._list_objects(self.config.drive_id, self.config.recursive)
-        # Setting to None because service object can't be pickled for multiprocessing.
         return [GoogleDriveIngestDoc(self.standard_config, self.config, file) for file in files]
