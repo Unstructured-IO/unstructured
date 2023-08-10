@@ -1,3 +1,14 @@
+## 0.9.2-dev3
+=======
+
+### Enhancements
+
+### Features
+
+* Adds Sharepoint connector.
+
+### Fixes
+
 ## 0.9.2-dev2
 =======
 
