@@ -36,7 +36,9 @@ def process_document(doc: "IngestDoc", **partition_kwargs) -> Optional[List[Dict
     try:
         # assign the session handle for the data source on the doc
         if resource.session_handle is not None and isinstance(doc, IngestDocSessionHandleMixin):
-            print(f"cast(IngestDocSessionHandleMixin, doc).session_handle: {cast(IngestDocSessionHandleMixin, doc).session_handle}")
+            print(
+                f"cast(IngestDocSessionHandleMixin, doc).session_handle: {cast(IngestDocSessionHandleMixin, doc).session_handle}"
+            )
             print(f"resource.session_handle: {resource.session_handle}")
             cast(IngestDocSessionHandleMixin, doc).session_handle = resource.session_handle
         # does the work necessary to load file into filesystem

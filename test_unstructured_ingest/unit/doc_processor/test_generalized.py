@@ -1,8 +1,11 @@
 from dataclasses import dataclass
+
 import pytest
-from unstructured.ingest.doc_processor.generalized import process_document
+
 from unstructured.ingest.doc_processor import resource as doc_processor_resource
+from unstructured.ingest.doc_processor.generalized import process_document
 from unstructured.ingest.interfaces import BaseIngestDoc, IngestDocSessionHandleMixin
+
 
 @dataclass
 class IngestDocWithSessionHandle(IngestDocSessionHandleMixin, BaseIngestDoc):
