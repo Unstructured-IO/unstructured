@@ -1,4 +1,4 @@
-## 0.9.3-dev0
+## 0.9.3-dev1
 
 ### Enhancements
 
@@ -10,9 +10,12 @@
 
 ### Features
 
+* Add Airtable Connector to be able to pull views/tables/bases from an Airtable organization
+
 ### Fixes
 
 ## 0.9.2
+
 
 ### Enhancements
 

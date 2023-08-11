@@ -21,6 +21,11 @@ You can also use connectors with the ``unstructured`` API. For this you'll need 
 
 NOTE: Keep in mind that you will need to have all the appropriate extras and dependencies for the file types of the documents contained in your data storage platform if you're running this locally. You can find more information about this in the `installation guide <https://unstructured-io.github.io/unstructured/installing.html>`_.
 
+``Airtable Connector``
+--------------------
+You can batch process documents stored in your Airtable using the `Airtable Connector <https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/connector/airtable.py>`_. You can find an example of how to use it `here <https://github.com/Unstructured-IO/unstructured/blob/f5541c7b0b1e2fc47ec88da5e02080d60e1441e2/examples/ingest/airtable/airtable.sh>`_.
+
+To install all dependencies for this connector run: ``pip install "unstructured[azure]"``
 
 ``Azure Connector``
 --------------------
