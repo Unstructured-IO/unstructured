@@ -120,17 +120,10 @@ class LocalIngestDoc(BaseIngestDoc):
 
     @property
     def _output_filename(self) -> Path:
-        """Returns output filename for the doc
-        If input path argument is a file itself, it returns the filename of the doc.
-        If input path argument is a folder, it returns the relative path of the doc.
-        """
-        input_path = Path(self.config.input_path)
-        basename = (
-            f"{Path(self.path).name}.json"
-            if input_path.is_file()
-            else f"{Path(self.path).relative_to(input_path)}.json"
+        return (
+            Path(self.standard_config.output_dir)
+            / f"{self.path.replace(f'{self.config.input_path}/', '')}.json"
         )
-        return Path(self.standard_config.output_dir) / basename
 
 
 class LocalConnector(BaseConnector):
