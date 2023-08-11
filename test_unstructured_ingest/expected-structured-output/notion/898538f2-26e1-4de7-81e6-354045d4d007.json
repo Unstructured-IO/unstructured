@@ -1,0 +1,36 @@
+[
+  {
+    "type": "Title",
+    "element_id": "94efbf7307081f8f45b11a183ad99254",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-08-04T18:31:00.000Z",
+        "date_modified": "2023-08-04T18:31:00.000Z",
+        "date_processed": "2023-08-11T19:00:24.522767"
+      },
+      "filename": "898538f2-26e1-4de7-81e6-354045d4d007.html",
+      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
+      "last_modified": "2023-08-11T19:00:24",
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": "Mission, Vision, Values"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "f116dc480f737022b3eef55d2095d808",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-08-04T18:31:00.000Z",
+        "date_modified": "2023-08-04T18:31:00.000Z",
+        "date_processed": "2023-08-11T19:00:24.522767"
+      },
+      "filename": "898538f2-26e1-4de7-81e6-354045d4d007.html",
+      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
+      "last_modified": "2023-08-11T19:00:24",
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": "💡\n      \n      Notion Tip: A company mission provides direction and purpose, aligning actions and decisions towards a common goal. It also helps attract like-minded individuals who share the same values and vision for the company."
+  }
+]
