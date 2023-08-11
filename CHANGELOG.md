@@ -9,11 +9,14 @@
 
 ### Features
 
+* Add Airtable Connector to be able to pull views/tables/bases from an Airtable organization
+
 ### Fixes
 
 * make notion module discoverable
 
 ## 0.9.2
+
 
 ### Enhancements
 
