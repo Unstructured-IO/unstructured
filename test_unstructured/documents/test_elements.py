@@ -1,4 +1,4 @@
-import uuid
+import json
 from functools import partial
 
 import pytest
@@ -26,7 +26,10 @@ def test_text_id():
 
 def test_text_uuid():
     text_element = Text(text="hello there!", element_id=UUID())
-    assert isinstance(text_element.id, uuid.UUID)
+    assert len(text_element.id) == 36
+    assert text_element.id.count("-") == 4
+    # Test that the element is JSON serializable. This shold run without an error
+    json.dumps(text_element.to_dict())
 
 
 def test_element_defaults_to_blank_id():

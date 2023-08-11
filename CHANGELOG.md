@@ -2,6 +2,8 @@
 
 ### Enhancements
 
+* Add `unique_element_ids` kwarg to partition functions. If `True`, will use a UUID
+  for element IDs instead of a SHA-256 hash.
 * Add functionality to switch `html` text parser based on whether the `html` text contains emoji
 * Add functionality to check if a string contains any emoji characters
 * Adds ability to reuse connections per process in unstructured-ingest
@@ -16,6 +18,7 @@
 
 * Update table extraction section in API documentation to sync with change in Prod API
 * Update Notion connector to extract to html
+* Added UUID option for `element_id`
 * Bump unstructured-inference==0.5.9:
   - better caching of models
   - another version of detectron2 available, though the default layout model is unchanged
