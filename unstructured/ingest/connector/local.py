@@ -72,7 +72,10 @@ class LocalIngestDoc(BaseIngestDoc):
 
     def get_file(self):
         # Check if file is compressed
-        if zipfile.is_zipfile(self.path):
+        # The way zipfile.is_zipfile() check the file, it can mistake .pptx files as zip.
+        # Adding the extension check to be extra sure.
+        file_extension = os.path.splitext(self.path)[-1]
+        if zipfile.is_zipfile(self.path) and file_extension == ".zip":
             self.is_compressed = True
             if self.config.uncompress:
                 self.process_zip(zip_path=self.path)
