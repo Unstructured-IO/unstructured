@@ -1,4 +1,4 @@
-## 0.9.3-dev0
+## 0.9.3-dev1
 
 ### Enhancements
 
@@ -10,6 +10,8 @@
 ### Features
 
 ### Fixes
+
+* make notion module discoverable
 
 ## 0.9.2
 
