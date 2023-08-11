@@ -12,6 +12,10 @@ async-timeout==4.0.3
     # via aiohttp
 attrs==23.1.0
     # via aiohttp
+beautifulsoup4==4.12.2
+    # via bs4
+bs4==0.0.1
+    # via -r requirements/ingest-gcs.in
 cachetools==5.3.1
     # via google-auth
 certifi==2023.7.22
@@ -94,6 +98,8 @@ rsa==4.9
     # via google-auth
 six==1.16.0
     # via google-auth
+soupsieve==2.4.1
+    # via beautifulsoup4
 urllib3==1.26.16
     # via
     #   -c requirements/base.txt

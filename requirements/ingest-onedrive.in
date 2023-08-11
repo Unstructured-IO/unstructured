@@ -2,3 +2,5 @@
 -c base.txt
 msal
 Office365-REST-Python-Client<2.4.3
+cryptography==41.0.2
+bs4
