@@ -1,4 +1,4 @@
-## 0.9.3-dev2
+## 0.9.3-dev3
 
 ### Enhancements
 
@@ -9,6 +9,7 @@
 * Update `partition_xlsx` to always use `soupparser_fromstring` to parse `html text`
 * Add functionality to switch `html` text parser based on whether the `html` text contains emoji
 * Add functionality to check if a string contains any emoji characters
+* Add support for zip, tar compressed files in connectors
 
 ### Features
 
