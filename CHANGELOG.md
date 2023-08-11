@@ -1,9 +1,10 @@
-## 0.9.3-dev0
+## 0.9.3-dev1
 
 ### Enhancements
 
 * Add functionality to switch `html` text parser based on whether the `html` text contains emoji
 * Add functionality to check if a string contains any emoji characters
+* Adds ability to reuse connections per process in unstructured-ingest
 
 ### Features
 
