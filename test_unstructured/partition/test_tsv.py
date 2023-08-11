@@ -1,4 +1,11 @@
-from test_unstructured.partition.test_constants import EXPECTED_TABLE, EXPECTED_TEXT
+import pytest
+
+from test_unstructured.partition.test_constants import (
+    EXPECTED_TABLE,
+    EXPECTED_TABLE_WITH_EMOJI,
+    EXPECTED_TEXT,
+    EXPECTED_TEXT_WITH_EMOJI,
+)
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import Table
 from unstructured.partition.tsv import partition_tsv
@@ -6,14 +13,22 @@ from unstructured.partition.tsv import partition_tsv
 EXPECTED_FILETYPE = "text/tsv"
 
 
-def test_partition_tsv_from_filename(filename="example-docs/stanley-cups.tsv"):
-    elements = partition_tsv(filename=filename)
+@pytest.mark.parametrize(
+    ("filename", "expected_text", "expected_table"),
+    [
+        ("stanley-cups.tsv", EXPECTED_TEXT, EXPECTED_TABLE),
+        ("stanley-cups-with-emoji.tsv", EXPECTED_TEXT_WITH_EMOJI, EXPECTED_TABLE_WITH_EMOJI),
+    ],
+)
+def test_partition_tsv_from_filename(filename, expected_text, expected_table):
+    f_path = f"example-docs/{filename}"
+    elements = partition_tsv(filename=f_path)
 
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
-    assert elements[0].metadata.text_as_html == EXPECTED_TABLE
+    assert clean_extra_whitespace(elements[0].text) == expected_text
+    assert elements[0].metadata.text_as_html == expected_table
     assert elements[0].metadata.filetype == EXPECTED_FILETYPE
     for element in elements:
-        assert element.metadata.filename == "stanley-cups.tsv"
+        assert element.metadata.filename == filename
 
 
 def test_partition_tsv_from_filename_with_metadata_filename(
@@ -26,13 +41,21 @@ def test_partition_tsv_from_filename_with_metadata_filename(
         assert element.metadata.filename == "test"
 
 
-def test_partition_tsv_from_file(filename="example-docs/stanley-cups.tsv"):
-    with open(filename, "rb") as f:
+@pytest.mark.parametrize(
+    ("filename", "expected_text", "expected_table"),
+    [
+        ("stanley-cups.tsv", EXPECTED_TEXT, EXPECTED_TABLE),
+        ("stanley-cups-with-emoji.tsv", EXPECTED_TEXT_WITH_EMOJI, EXPECTED_TABLE_WITH_EMOJI),
+    ],
+)
+def test_partition_tsv_from_file(filename, expected_text, expected_table):
+    f_path = f"example-docs/{filename}"
+    with open(f_path, "rb") as f:
         elements = partition_tsv(file=f)
 
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
+    assert clean_extra_whitespace(elements[0].text) == expected_text
     assert isinstance(elements[0], Table)
-    assert elements[0].metadata.text_as_html == EXPECTED_TABLE
+    assert elements[0].metadata.text_as_html == expected_table
     assert elements[0].metadata.filetype == EXPECTED_FILETYPE
     for element in elements:
         assert element.metadata.filename is None
