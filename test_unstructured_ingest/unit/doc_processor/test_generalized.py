@@ -14,7 +14,7 @@ class IngestDocWithSessionHandle(IngestDocSessionHandleMixin, BaseIngestDoc):
     pass
 
 @pytest.fixture(autouse=True)
-def reset_session_handle():
+def _reset_session_handle():
     session_handle_var.set(None)
 
 def test_process_document_with_session_handle(mocker):

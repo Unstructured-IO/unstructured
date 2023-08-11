@@ -5,7 +5,7 @@ from unstructured.ingest.processor import Processor
 
 
 @pytest.fixture(autouse=True)
-def reset_session_handle():
+def _reset_session_handle():
     session_handle_var.set(None)
 
 @pytest.mark.parametrize("test_verbose", [True, False])
