@@ -21,7 +21,7 @@ Library Documentation
   Learn more about partitioning, cleaning, and staging bricks, including advanced usage patterns.
 
 :doc:`connectors`
-  Connect to your favortite data storage platforms for an efortless batch processing of your files.
+  Connect to your favorite data storage platforms for an effortless batch processing of your files.
 
 :doc:`metadata`
   Learn more about how metadata is tracked in the ``unstructured`` library.

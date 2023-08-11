@@ -1,17 +1,39 @@
-## 0.9.2-dev4
+## 0.9.3-dev1
+
+### Enhancements
+
+* Add `unique_element_ids` kwarg to partition functions. If `True`, will use a UUID
+  for element IDs instead of a SHA-256 hash.
+* Add functionality to switch `html` text parser based on whether the `html` text contains emoji
+* Add functionality to check if a string contains any emoji characters
+
+### Features
+
+* Add Airtable Connector to be able to pull views/tables/bases from an Airtable organization
+
+### Fixes
+
+## 0.9.2
+
 
 ### Enhancements
 
 * Update table extraction section in API documentation to sync with change in Prod API
 * Update Notion connector to extract to html
+* Added UUID option for `element_id`
+* Bump unstructured-inference==0.5.9:
+  - better caching of models
+  - another version of detectron2 available, though the default layout model is unchanged
 * Added UUID option for element_id
 
 ### Features
 
 * Adds Sharepoint connector.
-* Add Airtable Connector to be able to pull views/tables/bases from an Airtable organization.
 
 ### Fixes
+
+* Bump unstructured-inference==0.5.9:
+  - ignores Tesseract errors where no text is extracted for tiles that indeed, have no text
 
 ## 0.9.1
 
