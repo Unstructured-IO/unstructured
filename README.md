@@ -29,49 +29,54 @@
   </a>
 </div>
 
+<h2 align="center">
+  <p>Open-Source Pre-Processing Tools for Unstructured Data</p>
+</h2>
+
+The `unstructured` library provides open-source components for ingesting and pre-processing images and text documents, such as PDFs, HTML, Word docs, and [many more](https://unstructured-io.github.io/unstructured/bricks.html#partitioning). The use case of `unstructured` revolves around streamlining and optimizing the data processing workflow for LLMs. `unstructured` bricks and connectors form a cohesive system that simplifies data ingestion and pre-processing, making it adaptable to different platforms and is efficient in transforming unstructured data into structured outputs. 
+
+### :bookmark: Documentation
+This README overviews how to install, use and develop the library. For more comprehensive documentation, visit https://unstructured-io.github.io/unstructured/ .
+
+### Concepts Guide
+
+**Bricks** 🧱 in `unstructured` are the foundational elements that drive the data processing workflow within the system. These components provide users with the building blocks to build pipelines targeted at the documents they care about. 
+
+The bricks fall into three categories:
+- :jigsaw: *Partitioning* bricks break raw documents into standard, structured elements.
+- :broom: *Cleaning* bricks remove unwanted text from documents, such as boilerplate and sentence fragments.
+- :performing_arts: *Staging* bricks format data for downstream tasks, such as ML inference and data labeling. 
+
+These bricks create a cohesive, streamlined process that enables effective data handling and analysis. Check out the available bricks and how to use them from the [Bricks documentation](https://unstructured-io.github.io/unstructured/bricks.html).
+
+The **Connectors** 🔗 in `unstructured` serve as vital links between the pre-processing pipeline and various data storage platforms. They allow for the batch processing of documents across various sources, including cloud services, repositories, and local directories. Each connector is tailored to a specific platform, such as Azure, Google Drive, or Github, and comes with unique commands and dependencies. Connectors simplify data integration by bridging the gap between different data repositories and the bricks, making them indispensable tools in the LLM ecosystem.
+
+To see the list of Connectors available in `unstructured` library, please check out the [Connectors GitHub folder](https://github.com/Unstructured-IO/unstructured/tree/main/unstructured/ingest/connector) and [documentation](https://unstructured-io.github.io/unstructured/connectors.html)
+
 <h3 align="center">
   <p>API Announcement!</p>
 </h3>
 
-We are thrilled to announce our newly launched [Unstructured API](https://unstructured-io.github.io/unstructured/api.html). While access to the hosted Unstructured API will remain free, API Keys are required to make requests. To prevent disruption, get yours [here](https://unstructured.io/#get-api-key) now and start using it today! Check out the [readme](https://github.com/Unstructured-IO/unstructured-api#--) here to get started making API calls.</p>
+We are thrilled to announce our newly launched [Unstructured API](https://unstructured-io.github.io/unstructured/api.html), providing the Unstructured capabilities from `unstructured` as an API. Check out the [`unstructured-api` GitHub repository](https://github.com/Unstructured-IO/unstructured-api) to start making API calls. You’ll also find instructions about how to host your own API version.
+
+While access to the hosted Unstructured API will remain free, API Keys are required to make requests. To prevent disruption, get yours [here](https://unstructured.io/#get-api-key) and start using it today! Check out the [`unstructured-api` README](https://github.com/Unstructured-IO/unstructured-api#--) to start making API calls.</p>
 
 #### :rocket: Beta Feature: Chipper Model
 
-We are releasing the beta version of our Chipper model to deliver superior performance when processing high-resolution, complex documents. To start using the Chipper model in your API request, you can utilize the `hi_res` strategy. Please refer to the documentation [here](https://unstructured-io.github.io/unstructured/api.html#strategies).
+We are releasing the beta version of our Chipper model to deliver superior performance when processing high-resolution, complex documents. To start using the Chipper model in your API request, you can utilize the `hi_res_model_name=chipper` parameter. Please refer to the documentation [here](https://unstructured-io.github.io/unstructured/api.html#beta-version-hi-res-strategy-with-chipper-model).
 
 As the Chipper model is in beta version, we welcome feedback and suggestions. For those interested in testing the Chipper model, we encourage you to connect with us on [Slack community](https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-1x7cgo0pg-PTptXWylzPQF9xZolzCnwQ).
 
-<h3 align="center">
-  <p>Open-Source Pre-Processing Tools for Unstructured Data</p>
-</h3>
-
-The `unstructured` library provides open-source components for pre-processing text documents
-such as **PDFs**, **HTML** and **Word** Documents. These components are packaged as *bricks* 🧱, which provide
-users the building blocks they need to build pipelines targeted at the documents they care
-about. Bricks in the library fall into three categories:
-
-- :jigsaw: ***Partitioning bricks*** that break raw documents down into standard, structured
-  elements.
-- :broom: ***Cleaning bricks*** that remove unwanted text from documents, such as boilerplate and
-  sentence
-  fragments.
-- :performing_arts: ***Staging bricks*** that format data for downstream tasks, such as ML inference
-  and data labeling.
-
-Unstructured also provides the capabilities from `unstructured` as an API.
-Checkout the [`unstructured-api` repo](https://github.com/Unstructured-IO/unstructured-api)
-to get started making API calls.
-You’ll also find instructions there about how to host your own version of the API.
-
-## :bookmark: Documentation
-This README gives an overview of how to install, use and develop the library.
-For more comprehensive documentation, visit https://unstructured-io.github.io/unstructured/ .
-
 ## :eight_pointed_black_star: Quick Start
 
-There are two ways to use the library: 1) run a container or 2) install it
+There are several ways to use the `unstructured` library:
+* [Run the library in a container](https://github.com/Unstructured-IO/unstructured#using-the-library-in-a-container) or
+* Install the library
+    1. [Install from PyPI](https://github.com/Unstructured-IO/unstructured#installing-the-library)
+    2. [Install for local development](https://github.com/Unstructured-IO/unstructured#coffee-installation-instructions-for-local-development)
+* For installation with `conda` on Windows system, please refer to the [documentation](https://unstructured-io.github.io/unstructured/installing.html#installation-with-conda-on-windows)
 
-### Using the library in a container
+### Run the library in a container
 
 The following instructions are intended to help you get up and running using Docker to interact with `unstructured`.
 See [here](https://docs.docker.com/get-docker/) if you don't already have docker installed on your machine.
@@ -107,7 +112,7 @@ make docker-build
 make docker-start-bash
 ```
 
-Once in the running container, you can try things out directly in Python interpreter's interactive mode.
+Once in the running container, you can try things directly in Python interpreter's interactive mode.
 ```bash
 # this will drop you into a python console so you can run the below partition functions
 python3
@@ -123,8 +128,9 @@ python3
 Use the following instructions to get up and running with `unstructured` and test your
 installation.
 
-- Install the Python SDK with `pip install "unstructured[local-inference]"`
-		- If you do not need to process PDFs or images, you can run `pip install unstructured`
+- Install the Python SDK to support all document types with `pip install "unstructured[all-docs]"`
+  - For plain text files, HTML, XML, JSON and Emails that do not require any extra dependencies, you can run `pip install unstructured`
+  - to process other doc types, you can install the extras required for those documents, such as `pip install "unstructured[docx,pptx]"`
 - Install the following system dependencies if they are not already available on your system.
   Depending on what document types you're parsing, you may not need all of these.
     - `libmagic-dev` (filetype detection)
@@ -133,7 +139,7 @@ installation.
     - `libreoffice` (MS Office docs)
     - `pandoc` (EPUBs, RTFs and Open Office docs)
 
-- For suggestions on how to install on Windows and to learn about dependencies for other features, see the
+- For suggestions on how to install on the Windows and to learn about dependencies for other features, see the
   installation documentation [here](https://unstructured-io.github.io/unstructured/installing.html).
 
 At this point, you should be able to run the following code:
@@ -144,38 +150,6 @@ from unstructured.partition.auto import partition
 elements = partition(filename="example-docs/eml/fake-email.eml")
 print("\n\n".join([str(el) for el in elements]))
 ```
-
-The following table shows the document types the `unstructured` library currently supports.
-`partition` will recognize each of these document types and route the document to the
-appropriate partitioning function. If you already know your document type, you can use
-the partitioning function listed in the table directly.
-See our [documentation page](https://unstructured-io.github.io/unstructured/) for more details
-about the library.
-
-| Document Type | Partition Function | Strategies | Table Support | Options |
-| --- | --- | --- | --- | --- |
-| CSV Files (`.csv`) | `partition_csv` | N/A | Yes | None |
-| E-mails (`.eml`) | `partition_eml` | N/A | No | Encoding; Max Partition; Process Attachments |
-| E-mails (`.msg`) | `partition_msg` | N/A | No | Encoding; Max Partition; Process Attachments |
-| EPubs (`.epub`) | `partition_epub` | N/A | Yes | Include Page Breaks |
-| Excel Documents (`.xlsx`/`.xls`) | `partition_xlsx` | N/A | Yes | None |
-| HTML Pages (`.html`) | `partition_html` | N/A | No | Encoding; Include Page Breaks |
-| Images (`.png`/`.jpg`) | `partition_image` | `"auto"`, `"hi_res"`, `"ocr_only"` | Yes | Encoding; Include Page Breaks; Infer Table Structure; OCR Languages, Strategy |
-| Markdown (`.md`) | `partitin_md` | N/A | Yes | Include Page Breaks |
-| Org Mode (`.org`) | `partition_org` | N/A | Yes | Include Page Breaks |
-| Open Office Documents (`.odt`) | `partition_odt` | N/A | Yes | None |
-| PDFs (`.pdf`) | `partition_pdf` | `"auto"`, `"fast"`, `"hi_res"`, `"ocr_only"` | Yes | Encoding; Include Page Breaks; Infer Table Structure; Max Partition; OCR Languages, Strategy |
-| Plain Text (`.txt`) | `partition_text` | N/A | No | Encoding; Max Partition; Paragraph Grouper |
-| Power Points (`.ppt`) | `partition_ppt` | N/A | Yes | Include Page Breaks |
-| Power Points (`.pptx`) | `partition_pptx` | N/A | Yes | Include Page Breaks |
-| ReStructured Text (`.rst`) | `partition_rst` | N/A | Yes | Include Page Breaks |
-| Rich Text Files (`.rtf`) | `partition_rtf` | N/A | Yes | Include Page Breaks |
-| TSV Files (`.tsv`) | `partition_tsv` | N/A | Yes | None |
-| Word Documents (`.doc`) | `partition_doc` | N/A | Yes | Include Page Breaks |
-| Word Documents (`.docx`) | `partition_docx` | N/A | Yes | Include Page Breaks |
-| XML Documents (`.xml`) | `partition_xml` | N/A | No | Encoding; Max Partition; XML Keep Tags |
-
-
 
 ## :coffee: Installation Instructions for Local Development
 
@@ -202,7 +176,7 @@ locally if you are planning to contribute to the project.
 
 Additionally, if you're planning to contribute to `unstructured`, we provide you an optional `pre-commit` configuration
 file to ensure your code matches the formatting and linting standards used in `unstructured`.
-If you'd prefer not having code changes auto-tidied before every commit, you can use  `make check` to see
+If you'd prefer not to have code changes auto-tidied before every commit, you can use  `make check` to see
 whether any linting or formatting changes should be applied, and `make tidy` to apply them.
 
 If using the optional `pre-commit`, you'll just need to install the hooks with `pre-commit install` since the
@@ -213,11 +187,7 @@ you can also uninstall the hooks with `pre-commit uninstall`.
 
 You can run this [Colab notebook](https://colab.research.google.com/drive/1U8VCjY2-x8c6y5TYMbSFtQGlQVFHCVIW) to run the examples below.
 
-The following examples show how to get started with the `unstructured` library.
-You can parse over a dozen document types with one line of code!
-<br></br>
-See our [documentation page](https://unstructured-io.github.io/unstructured) for a full description
-of the features in the library.
+The following examples show how to get started with the `unstructured` library. You can parse over a dozen document types with one line of code!
 
 ### Document Parsing
 
