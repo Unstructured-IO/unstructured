@@ -22,3 +22,5 @@ IPython<8.13
 # NOTE(robinson) - See this issue here
 # https://github.com/facebookresearch/detectron2/issues/5010
 Pillow<10.0.0
+
+cryptography>=41.0.3
