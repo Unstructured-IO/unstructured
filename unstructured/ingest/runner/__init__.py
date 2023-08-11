@@ -1,3 +1,4 @@
+from .airtable import airtable
 from .azure import azure
 from .biomed import biomed
 from .box import box
@@ -21,6 +22,7 @@ from .slack import slack
 from .wikipedia import wikipedia
 
 __all__ = [
+    "airtable",
     "azure",
     "biomed",
     "box",

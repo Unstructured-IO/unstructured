@@ -140,6 +140,7 @@ setup(
         "onedrive": load_requirements("requirements/ingest-onedrive.in"),
         "outlook": load_requirements("requirements/ingest-outlook.in"),
         "confluence": load_requirements("requirements/ingest-confluence.in"),
+        "airtable": load_requirements("requirements/ingest-airtable.in"),
         # Legacy extra requirements
         "huggingface": load_requirements("requirements/huggingface.in"),
         "local-inference": all_doc_reqs,
