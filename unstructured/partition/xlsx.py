@@ -13,10 +13,11 @@ from unstructured.documents.elements import (
 )
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import (
+    contains_emoji,
     exactly_one,
     get_last_modified_date,
     get_last_modified_date_from_file,
-    spooled_to_bytes_io_if_needed, contains_emoji,
+    spooled_to_bytes_io_if_needed,
 )
 
 
@@ -61,7 +62,9 @@ def partition_xlsx(
     for sheet_name, table in sheets.items():
         page_number += 1
         html_text = table.to_html(index=False, header=False, na_rep="")
-        html_string_parser = soupparser_fromstring if contains_emoji(html_text) else document_fromstring
+        html_string_parser = (
+            soupparser_fromstring if contains_emoji(html_text) else document_fromstring
+        )
         text = html_string_parser(html_text).text_content()
 
         if include_metadata:

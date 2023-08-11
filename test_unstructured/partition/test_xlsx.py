@@ -2,7 +2,6 @@ from test_unstructured.partition.test_constants import EXPECTED_TABLE, EXPECTED_
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import Table
 from unstructured.partition.xlsx import partition_xlsx
-from unstructured.utils import dependency_exists
 
 EXPECTED_FILETYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
