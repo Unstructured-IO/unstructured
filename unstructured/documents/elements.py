@@ -155,7 +155,8 @@ class ElementMetadata:
     header_footer_type: Optional[str] = None
 
     # Formatting metadata fields
-    emphasized_texts: Optional[List[dict]] = None
+    emphasized_text_contents: Optional[List[str]] = None
+    emphasized_text_tags: Optional[List[str]] = None
 
     # Text format metadata fields
     text_as_html: Optional[str] = None

@@ -170,6 +170,16 @@ def _add_element_metadata(
         if hasattr(element, "emphasized_texts") and len(element.emphasized_texts) > 0
         else None
     )
+    emphasized_text_contents = (
+        [emphasized_text.get("text") for emphasized_text in emphasized_texts]
+        if emphasized_texts
+        else None
+    )
+    emphasized_text_tags = (
+        [emphasized_text.get("tag") for emphasized_text in emphasized_texts]
+        if emphasized_texts
+        else None
+    )
     metadata = ElementMetadata(
         coordinates=coordinates_metadata,
         filename=filename,
@@ -179,7 +189,8 @@ def _add_element_metadata(
         text_as_html=text_as_html,
         link_urls=link_urls,
         link_texts=link_texts,
-        emphasized_texts=emphasized_texts,
+        emphasized_text_contents=emphasized_text_contents,
+        emphasized_text_tags=emphasized_text_tags,
     )
     element.metadata = metadata.merge(element.metadata)
     return element

@@ -560,26 +560,25 @@ def test_partition_html_grabs_emphasized_texts():
     elements = partition_html(text=html_text)
 
     assert elements[0] == NarrativeText("Hello there I am a very important text!")
-    assert elements[0].metadata.emphasized_texts == [
-        {"text": "important", "tag": "strong"},
-    ]
+    assert elements[0].metadata.emphasized_text_contents == ["important"]
+    assert elements[0].metadata.emphasized_text_tags == ["strong"]
 
     assert elements[1] == NarrativeText("Here is a list of my favorite things")
-    assert elements[1].metadata.emphasized_texts == [
-        {"text": "list", "tag": "span"},
-        {"text": "my favorite things", "tag": "b"},
-        {"text": "favorite", "tag": "i"},
+    assert elements[1].metadata.emphasized_text_contents == [
+        "list",
+        "my favorite things",
+        "favorite",
     ]
+    assert elements[1].metadata.emphasized_text_tags == ["span", "b", "i"]
 
     assert elements[2] == ListItem("Parrots")
-    assert elements[2].metadata.emphasized_texts == [
-        {"text": "Parrots", "tag": "em"},
-    ]
+    assert elements[2].metadata.emphasized_text_contents == ["Parrots"]
+    assert elements[2].metadata.emphasized_text_tags == ["em"]
 
     assert elements[3] == ListItem("Dogs")
-    assert elements[3].metadata.emphasized_texts is None
+    assert elements[3].metadata.emphasized_text_contents is None
+    assert elements[3].metadata.emphasized_text_tags is None
 
     assert elements[4] == Title("A lone span text!")
-    assert elements[4].metadata.emphasized_texts == [
-        {"text": "A lone span text!", "tag": "span"},
-    ]
+    assert elements[4].metadata.emphasized_text_contents == ["A lone span text!"]
+    assert elements[4].metadata.emphasized_text_tags == ["span"]
