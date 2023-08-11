@@ -74,7 +74,7 @@ pluggy==1.2.0
     # via pytest
 pycodestyle==2.11.0
     # via flake8
-pydantic==2.1.1
+pydantic<2
     # via label-studio-sdk
 pydantic-core==2.4.0
     # via pydantic
