@@ -14,10 +14,9 @@ from unstructured.ingest.interfaces import (
 from unstructured.ingest.logger import logger
 
 # This is a context variable that can be set by the pool process to be used by the
-# doc processor to assign the session handle to the doc. This is necessary because
-# the session handle is not picklable and cannot be passed as an argument to the
-# doc processor.
-
+# doc processor to assign the session handle to the doc. Note: because
+# the session handle is not picklable, it cannot be passed directly to the pool or
+# the doc processor.
 session_handle_var: ContextVar[Optional[BaseSessionHandle]] = ContextVar(
     "session_handle",
     default=None,
