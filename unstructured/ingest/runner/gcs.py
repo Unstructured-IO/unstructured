@@ -14,6 +14,7 @@ def gcs(
     remote_url: str,
     recursive: bool,
     token: Optional[str],
+    uncompress: bool,
     **kwargs,
 ):
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
@@ -32,6 +33,7 @@ def gcs(
             path=remote_url,
             recursive=recursive,
             access_kwargs={"token": token},
+            uncompress=uncompress,
         ),
     )
 

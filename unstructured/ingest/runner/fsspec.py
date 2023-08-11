@@ -14,6 +14,7 @@ def fsspec(
     processor_config: ProcessorConfigs,
     remote_url: str,
     recursive: bool,
+    uncompress: bool,
     **kwargs,
 ):
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
@@ -42,6 +43,7 @@ def fsspec(
         config=SimpleFsspecConfig(
             path=remote_url,
             recursive=recursive,
+            uncompress=uncompress,
         ),
     )
 

@@ -16,6 +16,7 @@ def azure(
     connection_string: Optional[str],
     remote_url: str,
     recursive: bool,
+    uncompress: bool,
     **kwargs,
 ):
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
@@ -51,6 +52,7 @@ def azure(
             path=remote_url,
             recursive=recursive,
             access_kwargs=access_kwargs,
+            uncompress=uncompress,
         ),
     )
 

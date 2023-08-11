@@ -12,6 +12,7 @@ def local(
     processor_config: ProcessorConfigs,
     input_path: str,
     recursive: bool,
+    uncompress: bool,
     file_glob: Optional[str],
     **kwargs,
 ):
@@ -28,6 +29,7 @@ def local(
             input_path=input_path,
             recursive=recursive,
             file_glob=file_glob,
+            uncompress=uncompress,
         ),
     )
 

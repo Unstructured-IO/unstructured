@@ -3,6 +3,7 @@ import logging
 import click
 
 from unstructured.ingest.cli.common import (
+    add_compression_option,
     add_recursive_option,
     add_remote_url_option,
     add_shared_options,
@@ -40,4 +41,5 @@ def get_cmd() -> click.Command:
     add_recursive_option(cmd)
     add_shared_options(cmd)
     add_remote_url_option(cmd)
+    add_compression_option(cmd)
     return cmd

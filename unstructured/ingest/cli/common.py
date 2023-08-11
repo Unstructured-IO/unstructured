@@ -123,6 +123,17 @@ def add_remote_url_option(cmd: Command):
     )
 
 
+def add_compression_option(cmd: Command):
+    cmd.params.append(
+        Option(
+            ["--uncompress"],
+            is_flag=True,
+            default=False,
+            help="Should compressed files be uncompressed to process, otherwise skipped",
+        ),
+    )
+
+
 def add_recursive_option(cmd: Command):
     cmd.params.append(
         Option(

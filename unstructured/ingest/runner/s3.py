@@ -13,6 +13,7 @@ def s3(
     remote_url: str,
     recursive: bool,
     anonymous: bool,
+    uncompress: bool,
     **kwargs,
 ):
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
@@ -31,6 +32,7 @@ def s3(
             path=remote_url,
             recursive=recursive,
             access_kwargs={"anon": anonymous},
+            uncompress=uncompress,
         ),
     )
 

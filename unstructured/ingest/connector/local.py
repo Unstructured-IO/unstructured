@@ -1,9 +1,10 @@
 import fnmatch
 import glob
 import os
-from dataclasses import dataclass
+import zipfile
+from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional, Type
+from typing import Any, Dict, List, Optional, Type
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -20,6 +21,7 @@ class SimpleLocalConfig(BaseConnectorConfig):
     input_path: str
     recursive: bool = False
     file_glob: Optional[str] = None
+    uncompress: bool = False
 
     def __post_init__(self):
         if os.path.isfile(self.input_path):
@@ -36,6 +38,27 @@ class LocalIngestDoc(BaseIngestDoc):
 
     config: SimpleLocalConfig
     path: str
+    is_compressed: bool = False
+    children: List["BaseIngestDoc"] = field(default_factory=list)
+
+    def get_children(self) -> List["BaseIngestDoc"]:
+        return self.children
+
+    def process_file(self, **partition_kwargs) -> Optional[List[Dict[str, Any]]]:
+        if self.is_compressed:
+            self.config.get_logger().warning(
+                f"file detected as zip, skipping process file: {self.filename}",
+            )
+            return None
+        return super().process_file(**partition_kwargs)
+
+    def write_result(self):
+        if self.is_compressed:
+            self.config.get_logger().warning(
+                f"file detected as zip, skipping write results: {self.filename}",
+            )
+            return None
+        return super().write_result()
 
     @property
     def filename(self):
@@ -47,8 +70,26 @@ class LocalIngestDoc(BaseIngestDoc):
         pass
 
     def get_file(self):
-        """Not applicable to local file system"""
-        pass
+        # Check if file is compressed
+        if zipfile.is_zipfile(self.path):
+            self.is_compressed = True
+            if self.config.uncompress:
+                self.process_zip(zip_path=self.path)
+
+    def process_zip(self, zip_path: str):
+        head, tail = os.path.split(zip_path)
+        path = os.path.join(head, f"{tail}-zip-uncompressed")
+        self.config.get_logger().info(f"extracting {zip_path} -> {path}")
+        with zipfile.ZipFile(zip_path) as zfile:
+            zfile.extractall(path=path)
+        local_connector = LocalConnector(
+            standard_config=StandardConnectorConfig(**self.standard_config.__dict__),
+            config=SimpleLocalConfig(
+                input_path=path,
+                recursive=True,
+            ),
+        )
+        self.children.extend(local_connector.get_ingest_docs())
 
     @property
     def _output_filename(self) -> Path:

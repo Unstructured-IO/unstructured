@@ -1,8 +1,8 @@
 """Defines Abstract Base Classes (ABC's) core to batch processing documents
 through Unstructured."""
-
 import functools
 import json
+import logging
 import os
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
@@ -13,9 +13,11 @@ from typing import Any, Dict, List, Optional
 import requests
 
 from unstructured.documents.elements import DataSourceMetadata
-from unstructured.ingest.logger import logger
+from unstructured.ingest.logger import make_default_logger
 from unstructured.partition.auto import partition
 from unstructured.staging.base import convert_to_dict
+
+logger = make_default_logger()
 
 
 @dataclass
@@ -53,6 +55,15 @@ class StandardConnectorConfig:
 
 class BaseConnectorConfig(ABC):
     """Abstract definition on which to define connector-specific attributes."""
+
+    verbose: bool = False
+    logger: Optional[logging.Logger] = None
+
+    def get_logger(self) -> logging.Logger:
+        if self.logger:
+            return self.logger
+        self.logger = make_default_logger(logging.DEBUG if self.verbose else logging.INFO)
+        return self.logger
 
 
 @dataclass
@@ -107,6 +118,9 @@ class BaseIngestDoc(ABC):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._date_processed = None
+
+    def get_children(self) -> List["BaseIngestDoc"]:
+        return []
 
     @property
     def date_created(self) -> Optional[str]:
@@ -199,6 +213,9 @@ class BaseIngestDoc(ABC):
         with open(self._output_filename, "w", encoding="utf8") as output_f:
             json.dump(self.isd_elems_no_filename, output_f, ensure_ascii=False, indent=2)
         logger.info(f"Wrote {self._output_filename}")
+
+    def write_child_results(self):
+        return
 
     def partition_file(self, **partition_kwargs) -> List[Dict[str, Any]]:
         if not self.standard_config.partition_by_api:

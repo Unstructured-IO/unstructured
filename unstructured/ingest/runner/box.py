@@ -14,6 +14,7 @@ def box(
     remote_url: str,
     recursive: bool,
     box_app_config: Optional[str],
+    uncompress: bool,
     **kwargs,
 ):
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
@@ -32,6 +33,7 @@ def box(
             path=remote_url,
             recursive=recursive,
             access_kwargs={"box_app_config": box_app_config},
+            uncompress=uncompress,
         ),
     )
 
