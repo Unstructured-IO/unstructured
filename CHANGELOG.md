@@ -3,6 +3,8 @@
 ### Enhancements
 
 * Add `metadata.section` to capture epub table of contents data
+* Add functionality to switch `html` text parser based on whether the `html` text contains emoji
+* Add functionality to check if a string contains any emoji characters
 
 ### Features
 
