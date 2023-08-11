@@ -7,6 +7,7 @@ from io import BufferedReader, BytesIO, TextIOWrapper
 from tempfile import SpooledTemporaryFile
 from typing import IO, TYPE_CHECKING, Any, BinaryIO, Dict, List, Optional, Tuple, Union
 
+import emoji
 from tabulate import tabulate
 
 from unstructured.documents.coordinates import CoordinateSystem
@@ -333,3 +334,17 @@ def convert_ms_office_table_to_text(table: "docxtable.Table", as_html: bool = Tr
     else:
         table_text = ""
     return table_text
+
+
+def contains_emoji(s: str) -> bool:
+    """
+    Check if the input string contains any emoji characters.
+
+    Parameters:
+    - s (str): The input string to check.
+
+    Returns:
+    - bool: True if the string contains any emoji, False otherwise.
+    """
+
+    return bool(emoji.emoji_count(s))
