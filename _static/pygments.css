@@ -22,6 +22,7 @@
 .highlight .cs { color: #8f5902; font-style: italic } /* Comment.Special */
 .highlight .gd { color: #a40000 } /* Generic.Deleted */
 .highlight .ge { color: #000000; font-style: italic } /* Generic.Emph */
+.highlight .ges { color: #000000; font-weight: bold; font-style: italic } /* Generic.EmphStrong */
 .highlight .gr { color: #ef2929 } /* Generic.Error */
 .highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
 .highlight .gi { color: #00A000 } /* Generic.Inserted */
@@ -107,6 +108,7 @@ body[data-theme="dark"] .highlight .c1 { color: #ababab; font-style: italic } /*
 body[data-theme="dark"] .highlight .cs { color: #e50808; font-weight: bold; background-color: #520000 } /* Comment.Special */
 body[data-theme="dark"] .highlight .gd { color: #d22323 } /* Generic.Deleted */
 body[data-theme="dark"] .highlight .ge { color: #d0d0d0; font-style: italic } /* Generic.Emph */
+body[data-theme="dark"] .highlight .ges { color: #d0d0d0; font-weight: bold; font-style: italic } /* Generic.EmphStrong */
 body[data-theme="dark"] .highlight .gr { color: #d22323 } /* Generic.Error */
 body[data-theme="dark"] .highlight .gh { color: #ffffff; font-weight: bold } /* Generic.Heading */
 body[data-theme="dark"] .highlight .gi { color: #589819 } /* Generic.Inserted */
@@ -192,6 +194,7 @@ body:not([data-theme="light"]) .highlight .c1 { color: #ababab; font-style: ital
 body:not([data-theme="light"]) .highlight .cs { color: #e50808; font-weight: bold; background-color: #520000 } /* Comment.Special */
 body:not([data-theme="light"]) .highlight .gd { color: #d22323 } /* Generic.Deleted */
 body:not([data-theme="light"]) .highlight .ge { color: #d0d0d0; font-style: italic } /* Generic.Emph */
+body:not([data-theme="light"]) .highlight .ges { color: #d0d0d0; font-weight: bold; font-style: italic } /* Generic.EmphStrong */
 body:not([data-theme="light"]) .highlight .gr { color: #d22323 } /* Generic.Error */
 body:not([data-theme="light"]) .highlight .gh { color: #ffffff; font-weight: bold } /* Generic.Heading */
 body:not([data-theme="light"]) .highlight .gi { color: #589819 } /* Generic.Inserted */
