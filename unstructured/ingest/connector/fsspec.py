@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import re
+import tarfile
 import zipfile
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -142,13 +143,36 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             self.is_compressed = True
             if self.config.uncompress:
                 self.process_zip(zip_path=self._tmp_download_file().as_posix())
+        if tarfile.is_tarfile(self._tmp_download_file().as_posix()):
+            self.is_compressed = True
+            if self.config.uncompress:
+                self.process_tar(tar_path=self._tmp_download_file().as_posix())
 
     def process_zip(self, zip_path: str):
         head, tail = os.path.split(zip_path)
         path = os.path.join(head, f"{tail}-zip-uncompressed")
-        self.config.get_logger().info(f"extracting {zip_path} -> {path}")
+        self.config.get_logger().info(f"extracting zip {zip_path} -> {path}")
         with zipfile.ZipFile(zip_path) as zfile:
             zfile.extractall(path=path)
+        local_connector = LocalConnector(
+            standard_config=StandardConnectorConfig(**self.standard_config.__dict__),
+            config=SimpleLocalConfig(
+                input_path=path,
+                recursive=True,
+            ),
+        )
+        self.children.extend(local_connector.get_ingest_docs())
+
+    def process_tar(self, tar_path: str):
+        head, tail = os.path.split(tar_path)
+        path = os.path.join(head, f"{tail}-tar-uncompressed")
+        self.config.get_logger().info(f"extracting tar {tar_path} -> {path}")
+        try:
+            with tarfile.TarFile(tar_path) as tfile:
+                tfile.extractall(path=path)
+        except tarfile.ReadError as read_error:
+            self.config.get_logger().error(f"failed to uncompress tar {tar_path}: {read_error}")
+            return
         local_connector = LocalConnector(
             standard_config=StandardConnectorConfig(**self.standard_config.__dict__),
             config=SimpleLocalConfig(

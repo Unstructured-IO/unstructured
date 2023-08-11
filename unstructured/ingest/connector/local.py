@@ -1,6 +1,7 @@
 import fnmatch
 import glob
 import os
+import tarfile
 import zipfile
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -75,13 +76,36 @@ class LocalIngestDoc(BaseIngestDoc):
             self.is_compressed = True
             if self.config.uncompress:
                 self.process_zip(zip_path=self.path)
+        if tarfile.is_tarfile(self.path):
+            self.is_compressed = True
+            if self.config.uncompress:
+                self.process_tar(tar_path=self.path)
 
     def process_zip(self, zip_path: str):
         head, tail = os.path.split(zip_path)
         path = os.path.join(head, f"{tail}-zip-uncompressed")
-        self.config.get_logger().info(f"extracting {zip_path} -> {path}")
+        self.config.get_logger().info(f"extracting zip {zip_path} -> {path}")
         with zipfile.ZipFile(zip_path) as zfile:
             zfile.extractall(path=path)
+        local_connector = LocalConnector(
+            standard_config=StandardConnectorConfig(**self.standard_config.__dict__),
+            config=SimpleLocalConfig(
+                input_path=path,
+                recursive=True,
+            ),
+        )
+        self.children.extend(local_connector.get_ingest_docs())
+
+    def process_tar(self, tar_path: str):
+        head, tail = os.path.split(tar_path)
+        path = os.path.join(head, f"{tail}-tar-uncompressed")
+        self.config.get_logger().info(f"extracting tar {tar_path} -> {path}")
+        try:
+            with tarfile.TarFile(tar_path) as tfile:
+                tfile.extractall(path=path)
+        except tarfile.ReadError as read_error:
+            self.config.get_logger().error(f"failed to uncompress tar {tar_path}: {read_error}")
+            return
         local_connector = LocalConnector(
             standard_config=StandardConnectorConfig(**self.standard_config.__dict__),
             config=SimpleLocalConfig(
