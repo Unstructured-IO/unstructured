@@ -761,3 +761,17 @@ def test_partition_pdf_from_file_with_hi_res_strategy_custom_metadata_date(
         )
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
+
+def test_partition_pdf_with_two_columns(
+    mocker,
+    filename="example-docs/Dense-Passage-Retrieval-for-Open-Domain-Question-Answering.pdf",
+):
+  
+    with open(filename, "rb") as f:
+        elements = pdf.partition_pdf(
+            file=f,
+            strategy="hi_res",
+            two_column=True
+        )
+        # ADD INGEST TEST STORING THE RESULT OF THIS CALL
+    
