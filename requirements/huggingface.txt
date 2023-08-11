@@ -82,7 +82,7 @@ tokenizers==0.13.3
     # via transformers
 torch==2.0.1
     # via -r requirements/huggingface.in
-tqdm==4.66.0
+tqdm==4.66.1
     # via
     #   -c requirements/base.txt
     #   huggingface-hub

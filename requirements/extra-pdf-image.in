@@ -8,4 +8,3 @@ pdfminer.six
 Pillow<10
 unstructured-inference==0.5.9
 # consistency with other ingest-*.in
-cryptography==41.0.2

@@ -32,7 +32,7 @@ flake8==6.1.0
     # via -r requirements/test.in
 freezegun==1.2.2
     # via -r requirements/test.in
-grpcio==1.56.2
+grpcio==1.57.0
     # via -r requirements/test.in
 idna==3.4
     # via
@@ -54,7 +54,7 @@ mccabe==0.7.0
     # via flake8
 multidict==6.0.4
     # via yarl
-mypy==1.4.1
+mypy==1.5.0
     # via -r requirements/test.in
 mypy-extensions==1.0.0
     # via
