@@ -346,5 +346,5 @@ class ConnectorSessionHandleMixin:
     @classmethod
     @abstractmethod
     def create_session_handle(cls, config: BaseConnectorConfig) -> BaseSessionHandle:
-        """Creates a session handle that can be assign on each IngestDoc to share
-        session related resources across all document handling for a process."""
+        """Creates a session handle that will be assigned on each IngestDoc to share
+        session related resources across all document handling for a given process."""
