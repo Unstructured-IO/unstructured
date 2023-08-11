@@ -161,6 +161,10 @@ install-ingest-confluence:
 install-ingest-airtable:
 	python3 -m pip install -r requirements/ingest-airtable.txt
 
+.PHONY: install-ingest-sharepoint
+install-ingest-sharepoint:
+	python3 -m pip install -r requirements/ingest-sharepoint.txt
+
 .PHONY: install-unstructured-inference
 install-unstructured-inference:
 	python3 -m pip install -r requirements/local-inference.txt
@@ -215,6 +219,7 @@ pip-compile:
 	pip-compile --upgrade requirements/ingest-outlook.in
 	pip-compile --upgrade requirements/ingest-confluence.in
 	pip-compile --upgrade requirements/ingest-airtable.in
+	pip-compile --upgrade requirements/ingest-sharepoint.in
 
 ## install-project-local:   install unstructured into your local python environment
 .PHONY: install-project-local
