@@ -174,7 +174,7 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         path = os.path.join(head, f"{tail}-tar-uncompressed")
         self.config.get_logger().info(f"extracting tar {tar_path} -> {path}")
         try:
-            with tarfile.TarFile(tar_path) as tfile:
+            with tarfile.open(tar_path, "r:gz") as tfile:
                 tfile.extractall(path=path)
         except tarfile.ReadError as read_error:
             self.config.get_logger().error(f"failed to uncompress tar {tar_path}: {read_error}")
