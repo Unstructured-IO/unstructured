@@ -79,7 +79,7 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         df = pd.DataFrame.from_dict(
             [row["fields"] for row in table.all(view=self.file_meta.view_id)],
-        )
+        ).sort_index(axis=1)
 
         self.document = df.to_csv()
         self.filename.parent.mkdir(parents=True, exist_ok=True)
