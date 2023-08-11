@@ -240,11 +240,20 @@ def process_metadata():
             regex_metadata: Dict["str", "str"] = params.get("regex_metadata", {})
             elements = _add_regex_metadata(elements, regex_metadata)
 
+            unique_element_ids: bool = params.get("unique_element_ids", False)
+            if unique_element_ids:
+                for element in elements:
+                    element.id_to_uuid()
+
             return elements
 
         return wrapper
 
     return decorator
+
+
+def _elements_ids_to_uuid():
+    pass
 
 
 def _add_regex_metadata(
@@ -300,6 +309,9 @@ class Element(ABC):
             )
         )
         self.metadata = metadata.merge(ElementMetadata(coordinates=coordinates_metadata))
+
+    def id_to_uuid(self):
+        self.id = str(uuid.uuid4())
 
     def to_dict(self) -> dict:
         return {
@@ -386,7 +398,7 @@ class Text(Element):
             element_id = hashlib.sha256(text.encode()).hexdigest()[:32]
 
         elif isinstance(element_id, UUID):
-            element_id = uuid.uuid4()
+            element_id = str(uuid.uuid4())
 
         super().__init__(
             element_id=element_id,
