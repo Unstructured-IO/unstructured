@@ -33,25 +33,7 @@
   <p>Open-Source Pre-Processing Tools for Unstructured Data</p>
 </h2>
 
-The `unstructured` library provides open-source components for ingesting and pre-processing images and text documents, such as PDFs, HTML, Word docs, and [many more](https://unstructured-io.github.io/unstructured/bricks.html#partitioning). The use case of `unstructured` revolves around streamlining and optimizing the data processing workflow for LLMs. `unstructured` bricks and connectors form a cohesive system that simplifies data ingestion and pre-processing, making it adaptable to different platforms and is efficient in transforming unstructured data into structured outputs. 
-
-### :bookmark: Documentation
-This README overviews how to install, use and develop the library. For more comprehensive documentation, visit https://unstructured-io.github.io/unstructured/ .
-
-### Concepts Guide
-
-**Bricks** 🧱 in `unstructured` are the foundational elements that drive the data processing workflow within the system. These components provide users with the building blocks to build pipelines targeted at the documents they care about. 
-
-The bricks fall into three categories:
-- :jigsaw: *Partitioning* bricks break raw documents into standard, structured elements.
-- :broom: *Cleaning* bricks remove unwanted text from documents, such as boilerplate and sentence fragments.
-- :performing_arts: *Staging* bricks format data for downstream tasks, such as ML inference and data labeling. 
-
-These bricks create a cohesive, streamlined process that enables effective data handling and analysis. Check out the available bricks and how to use them from the [Bricks documentation](https://unstructured-io.github.io/unstructured/bricks.html).
-
-The **Connectors** 🔗 in `unstructured` serve as vital links between the pre-processing pipeline and various data storage platforms. They allow for the batch processing of documents across various sources, including cloud services, repositories, and local directories. Each connector is tailored to a specific platform, such as Azure, Google Drive, or Github, and comes with unique commands and dependencies. Connectors simplify data integration by bridging the gap between different data repositories and the bricks, making them indispensable tools in the LLM ecosystem.
-
-To see the list of Connectors available in `unstructured` library, please check out the [Connectors GitHub folder](https://github.com/Unstructured-IO/unstructured/tree/main/unstructured/ingest/connector) and [documentation](https://unstructured-io.github.io/unstructured/connectors.html)
+The `unstructured` library provides open-source components for ingesting and pre-processing images and text documents, such as PDFs, HTML, Word docs, and [many more](https://unstructured-io.github.io/unstructured/bricks.html#partitioning). The use cases of `unstructured` revolve around streamlining and optimizing the data processing workflow for LLMs. `unstructured` modular bricks and connectors form a cohesive system that simplifies data ingestion and pre-processing, making it adaptable to different platforms and is efficient in transforming unstructured data into structured outputs.
 
 <h3 align="center">
   <p>API Announcement!</p>
@@ -185,20 +167,25 @@ you can also uninstall the hooks with `pre-commit uninstall`.
 
 ## :clap: Quick Tour
 
-You can run this [Colab notebook](https://colab.research.google.com/drive/1U8VCjY2-x8c6y5TYMbSFtQGlQVFHCVIW) to run the examples below.
+### :bookmark: Documentation
+This README overviews how to install, use and develop the library. For more comprehensive documentation, visit https://unstructured-io.github.io/unstructured/ .
 
-The following examples show how to get started with the `unstructured` library. You can parse over a dozen document types with one line of code!
+### Concepts Guide
 
-### Document Parsing
+**Bricks** 🧱 in `unstructured` are the foundational elements that drive the data processing workflow within the system. These components provide users with the building blocks to build pipelines targeted at the documents they care about. The bricks fall into three categories:
+- :jigsaw: *Partitioning* bricks break raw documents into standard, structured elements.
+- :broom: *Cleaning* bricks remove unwanted text from documents, such as boilerplate and sentence fragments.
+- :performing_arts: *Staging* bricks format data for downstream tasks, such as ML inference and data labeling. 
 
-The easiest way to parse a document in unstructured is to use the `partition` brick. If you
-use `partition` brick, `unstructured` will detect the file type and route it to the appropriate
-file-specific partitioning brick.
-If you are using the `partition` brick, you may need to install additional parameters via `pip install unstructured[local-inference]`. Ensure you first install `libmagic` using the
-instructions outlined [here](https://unstructured-io.github.io/unstructured/installing.html#filetype-detection)
-`partition` will always apply the default arguments. If you need
-advanced features, use a document-specific brick.
-See the table above for a full list of document types supported in the library.
+These bricks create a cohesive, streamlined process that enables effective data handling and analysis. Check out the available bricks and how to use them from the [Bricks documentation](https://unstructured-io.github.io/unstructured/bricks.html).
+
+The **Connectors** 🔗 in `unstructured` serve as vital links between the pre-processing pipeline and various data storage platforms. They allow for the batch processing of documents across various sources, including cloud services, repositories, and local directories. Each connector is tailored to a specific platform, such as Azure, Google Drive, or Github, and comes with unique commands and dependencies. To see the list of Connectors available in `unstructured` library, please check out the [Connectors GitHub folder](https://github.com/Unstructured-IO/unstructured/tree/main/unstructured/ingest/connector) and [documentation](https://unstructured-io.github.io/unstructured/connectors.html)
+
+The following examples show how to get started with the `unstructured` library. You can parse over a dozen document types with one line of code! You can run this [Colab notebook](https://colab.research.google.com/drive/1U8VCjY2-x8c6y5TYMbSFtQGlQVFHCVIW) to run the examples below.
+
+### PDF Parsing Example
+
+The easiest way to parse a document in unstructured is to use the `partition` brick. If you use `partition` brick, `unstructured` will detect the file type and route it to the appropriate file-specific partitioning brick. If you are using the `partition` brick, you may need to install additional parameters via `pip install unstructured[local-inference]`. Ensure you first install `libmagic` using the instructions outlined [here](https://unstructured-io.github.io/unstructured/installing.html#filetype-detection) `partition` will always apply the default arguments. If you need advanced features, use a document-specific brick.
 
 ```python
 from unstructured.partition.auto import partition
