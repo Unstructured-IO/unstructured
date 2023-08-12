@@ -14,6 +14,8 @@
 
 ### Fixes
 
+* make notion module discoverable
+
 ## 0.9.2
 
 
