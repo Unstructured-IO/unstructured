@@ -207,7 +207,7 @@ saved in the ``.doc`` format. This partition brick uses a combination of the sty
 information in the document and the structure of the text to determine the type
 of a text element. The ``partition_doc`` can take a filename or file-like object
 as input.
-``partiton_doc`` uses ``libreoffice`` to convert the file to ``.docx`` and then
+``partition_doc`` uses ``libreoffice`` to convert the file to ``.docx`` and then
 calls ``partition_docx``. Ensure you have ``libreoffice`` installed
 before using ``partition_doc``.
 
