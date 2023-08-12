@@ -112,7 +112,7 @@ installation.
 
 - Install the Python SDK to support all document types with `pip install "unstructured[all-docs]"`
   - For plain text files, HTML, XML, JSON and Emails that do not require any extra dependencies, you can run `pip install unstructured`
-  - to process other doc types, you can install the extras required for those documents, such as `pip install "unstructured[docx,pptx]"`
+  - To process other doc types, you can install the extras required for those documents, such as `pip install "unstructured[docx,pptx]"`
 - Install the following system dependencies if they are not already available on your system.
   Depending on what document types you're parsing, you may not need all of these.
     - `libmagic-dev` (filetype detection)
@@ -167,7 +167,7 @@ you can also uninstall the hooks with `pre-commit uninstall`.
 
 ## :clap: Quick Tour
 
-### :bookmark: Documentation
+### Documentation
 This README overviews how to install, use and develop the library. For more comprehensive documentation, visit https://unstructured-io.github.io/unstructured/ .
 
 ### Concepts Guide
