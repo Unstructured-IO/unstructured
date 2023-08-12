@@ -332,8 +332,8 @@ For more information about the ``partition_email`` brick, you can check the `sou
 ---------------------
 
 The ``partition_epub`` function processes e-books in EPUB3 format. The function
-first converts the document to HTML using ``pandocs`` and then calls ``partition_html``.
-You'll need `pandocs <https://pandoc.org/installing.html>`_ installed on your system
+first converts the document to HTML using ``ebooklib`` and then calls ``partition_html``.
+You'll need `ebooklib <https://pypi.org/project/EbookLib/>`_ installed on your system
 to use ``partition_epub``.
 
 
