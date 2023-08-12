@@ -133,7 +133,7 @@ elements = partition(filename="example-docs/eml/fake-email.eml")
 print("\n\n".join([str(el) for el in elements]))
 ```
 
-## :coffee: Installation Instructions for Local Development
+### :coffee: Installation Instructions for Local Development
 
 The following instructions are intended to help you get up and running with `unstructured`
 locally if you are planning to contribute to the project.
