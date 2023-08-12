@@ -450,6 +450,14 @@ def test_partition_email_can_process_attachments(
         assert element.metadata.subject == "Fake email with attachment"
 
     assert elements[-1].text == "Hey this is a fake attachment!"
+
+    last_mod_email = datetime.datetime.strptime(
+        elements[-1].metadata.last_modified, "%Y-%m-%dT%H:%M:%S"
+    )
+    last_mod_text = datetime.datetime.strptime(expected_metadata.last_modified, "%Y-%m-%dT%H:%M:%S")
+    assert (last_mod_email - last_mod_text).total_seconds() < 2
+    elements[-1].metadata.last_modified = None
+    expected_metadata.last_modified = None
     assert elements[-1].metadata == expected_metadata
 
 
