@@ -27,8 +27,10 @@ msal==1.23.0
     # via
     #   -r requirements/ingest-sharepoint.in
     #   office365-rest-python-client
-office365-rest-python-client==2.4.3
-    # via -r requirements/ingest-sharepoint.in
+office365-rest-python-client==2.4.2
+    # via
+    #   -c requirements/constraints.in
+    #   -r requirements/ingest-sharepoint.in
 pycparser==2.21
     # via cffi
 pyjwt[crypto]==2.8.0
