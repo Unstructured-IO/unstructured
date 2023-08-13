@@ -2,7 +2,6 @@ from tempfile import SpooledTemporaryFile
 from typing import IO, BinaryIO, List, Optional, Union, cast
 
 import pandas as pd
-from lxml.html import document_fromstring
 from lxml.html.soupparser import fromstring as soupparser_fromstring
 
 from unstructured.documents.elements import (
@@ -13,7 +12,6 @@ from unstructured.documents.elements import (
 )
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import (
-    contains_emoji,
     exactly_one,
     get_last_modified_date,
     get_last_modified_date_from_file,
@@ -57,8 +55,7 @@ def partition_tsv(
         last_modification_date = get_last_modified_date_from_file(file)
 
     html_text = table.to_html(index=False, header=False, na_rep="")
-    html_string_parser = soupparser_fromstring if contains_emoji(html_text) else document_fromstring
-    text = html_string_parser(html_text).text_content()
+    text = soupparser_fromstring(html_text).text_content()
 
     if include_metadata:
         metadata = ElementMetadata(
