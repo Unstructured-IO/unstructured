@@ -1,3 +1,4 @@
+from .airtable import get_cmd as airtable
 from .azure import get_cmd as azure
 from .biomed import get_cmd as biomed
 from .box import get_cmd as box
@@ -21,6 +22,7 @@ from .slack import get_cmd as slack
 from .wikipedia import get_cmd as wikipedia
 
 __all__ = [
+    "airtable",
     "azure",
     "biomed",
     "box",

@@ -123,6 +123,7 @@ def partition_html(
         document,
         include_page_breaks=include_page_breaks,
         last_modification_date=metadata_last_modified or last_modification_date,
+        **kwargs,
     )
 
 
@@ -149,7 +150,7 @@ def convert_and_partition_html(
         If True, the output will include page breaks if the filetype supports it.
     metadata_filename
         The filename to use in element metadata.
-    last_modication_date
+    metadata_last_modified
         The last modified date for the document.
     """
 
