@@ -5,6 +5,7 @@
 * Add `metadata.section` to capture epub table of contents data
 * Add `unique_element_ids` kwarg to partition functions. If `True`, will use a UUID
   for element IDs instead of a SHA-256 hash.
+* Update `partition_xlsx` to always use `soupparser_fromstring` to parse `html text` 
 * Add functionality to switch `html` text parser based on whether the `html` text contains emoji
 * Add functionality to check if a string contains any emoji characters
 
