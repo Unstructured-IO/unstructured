@@ -17,6 +17,7 @@ from .onedrive import get_cmd as onedrive
 from .outlook import get_cmd as outlook
 from .reddit import get_cmd as reddit
 from .s3 import get_cmd as s3
+from .salesforce import get_cmd as salesforce
 from .sharepoint import get_cmd as sharepoint
 from .slack import get_cmd as slack
 from .wikipedia import get_cmd as wikipedia
@@ -41,6 +42,7 @@ __all__ = [
     "outlook",
     "reddit",
     "s3",
+    "salesforce",
     "sharepoint",
     "slack",
     "wikipedia",
