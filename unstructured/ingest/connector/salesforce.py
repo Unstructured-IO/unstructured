@@ -37,7 +37,7 @@ class SimpleSalesforceConfig(BaseConnectorConfig):
 @dataclass
 class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
-    category: str
+    record_type: str
     record: str
     config: SimpleSalesforceConfig
     # salesforce_username: str
@@ -51,17 +51,26 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _tmp_download_file(self):
         # page_file = self.page_id + ".txt"
         # page_file = "hello" + ".txt"
-        record_file = self.record["Id"] + ".eml"
-        return Path(self.standard_config.download_dir) / self.category / record_file
+        if self.record_type == "EmailMessage":
+            record_file = self.record["Id"] + ".eml"
+        elif self.record_type == "Account":
+            record_file = self.record["Id"] + ".txt"
+        return Path(self.standard_config.download_dir) / self.record_type / record_file
 
     @property
     def _output_filename(self):
         # page_file = self.page_id + ".json"
         record_file = self.record["Id"] + ".json"
-        return Path(self.standard_config.output_dir) / self.category / record_file
+        return Path(self.standard_config.output_dir) / self.record_type / record_file
 
     def _create_full_tmp_dir_path(self):
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
+
+    def create_txt(self, txt_json):
+        txt = f"""
+Name: {txt_json["Name"]}
+        """
+        return dedent(txt)
 
     def create_eml(self, email_json):
         print("*&**")
@@ -117,11 +126,14 @@ Content-Type: text/html; charset="UTF-8"
             # rsp = client.query_all(self.sql)
             # breakpoint()
             # for record in rsp["records"]:
-            eml = self.create_eml(self.record)
+            if self.record_type == "EmailMessage":
+                formatted_record = self.create_eml(self.record)
+            elif self.record_type == "Account":
+                formatted_record = self.create_txt(self.record)
 
             # breakpoint()
             with open(self._tmp_download_file(), "w") as page_file:
-                page_file.write(eml)
+                page_file.write(formatted_record)
 
         # try:
         #     text_extraction = extract_page_text(
@@ -175,12 +187,12 @@ class SalesforceConnector(ConnectorCleanupMixin, BaseConnector):
         # Create appropriate sql
 
         doc_list=[]
-        for category in self.config.salesforce_categories:
-            print(category)
-            records = client.query_all(f"select FIELDS(STANDARD) from {category}")
+        for record_type in self.config.salesforce_categories:
+            print(record_type)
+            records = client.query_all(f"select FIELDS(STANDARD) from {record_type}")
             for record in records["records"]:
                 print(record)
-                doc_list.append(SalesforceIngestDoc(self.standard_config, self.config, category, record))
+                doc_list.append(SalesforceIngestDoc(self.standard_config, self.config, record_type, record))
 
         return doc_list
 
