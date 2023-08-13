@@ -20,9 +20,9 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
    --salesforce-username "$SALESFORCE_USERNAME" \
    --salesforce-password "$SALESFORCE_PASSWORD" \
    --salesforce-token "$SALESFORCE_TOKEN" \
-   --salesforce-categories "accounts" \
+   --salesforce-categories "EmailMessage" \
    --structured-output-dir salesforce-output \
-   --reprocess \
    --download-dir salesforce-download \
    --preserve-downloads \
+   --reprocess \
    --verbose

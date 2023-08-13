@@ -37,7 +37,8 @@ class SimpleSalesforceConfig(BaseConnectorConfig):
 @dataclass
 class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
-    sql: str
+    category: str
+    record: str
     config: SimpleSalesforceConfig
     # salesforce_username: str
     # salesforce_password: str
@@ -50,14 +51,14 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _tmp_download_file(self):
         # page_file = self.page_id + ".txt"
         # page_file = "hello" + ".txt"
-        page_file = "hello" + ".eml"
-        return Path(self.standard_config.download_dir) / page_file
+        record_file = self.record["Id"] + ".eml"
+        return Path(self.standard_config.download_dir) / self.category / record_file
 
     @property
     def _output_filename(self):
         # page_file = self.page_id + ".json"
-        page_file = "hello" + ".json"
-        return Path(self.standard_config.output_dir) / page_file
+        record_file = self.record["Id"] + ".json"
+        return Path(self.standard_config.output_dir) / self.category / record_file
 
     def _create_full_tmp_dir_path(self):
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
@@ -95,15 +96,16 @@ Content-Type: text/html; charset="UTF-8"
         self._create_full_tmp_dir_path()
 
         # self.config.get_logger().debug(f"fetching page {self.page_id} - PID: {os.getpid()}")
-        logger.debug(f"fetching page BOB - PID: {os.getpid()}")
+        logger.debug(f"fetching page &&&&&&BOB - PID: {os.getpid()}")
 
         # client = NotionClient(auth=self.api_key, logger=self.config.get_logger())
 
-        client = Salesforce(username=self.config.salesforce_username, 
-                            password=self.config.salesforce_password, 
-                            security_token=self.config.salesforce_token)
+        # client = Salesforce(username=self.config.salesforce_username, 
+        #                     password=self.config.salesforce_password, 
+        #                     security_token=self.config.salesforce_token)
 
         try:
+            print("******** TRYING")
             # text_extraction = extract_page_text(
             #     client=client,
             #     page_id=self.page_id,
@@ -112,14 +114,14 @@ Content-Type: text/html; charset="UTF-8"
             # self.check_exists = True
             # self.file_exists = True
             # if text_extraction.text:
-            rsp = client.query_all(self.sql)
+            # rsp = client.query_all(self.sql)
             # breakpoint()
-            for record in rsp["records"]:
-                eml = self.create_eml(record)
+            # for record in rsp["records"]:
+            eml = self.create_eml(self.record)
 
-                # breakpoint()
-                with open(self._tmp_download_file(), "w") as page_file:
-                    page_file.write(eml)
+            # breakpoint()
+            with open(self._tmp_download_file(), "w") as page_file:
+                page_file.write(eml)
 
         # try:
         #     text_extraction = extract_page_text(
@@ -144,7 +146,7 @@ Content-Type: text/html; charset="UTF-8"
     
     @property
     def filename(self):
-        """The filename of the file created from a notion page"""
+        """The filename of the file created from a BLABLABLA notion page"""
         return self._tmp_download_file()
 
 @requires_dependencies(["simple_salesforce"], extras="salesforce")
@@ -163,13 +165,23 @@ class SalesforceConnector(ConnectorCleanupMixin, BaseConnector):
         pass
 
     def get_ingest_docs(self):
+        """Get json files from Salesforce.
+        Create individual IngestDocs for each json entry in the appropriate category.
+        Send them to next phase where each doc gets converted into the appropriate format for partitioning.
+        """
+        client = Salesforce(username=self.config.salesforce_username, 
+                    password=self.config.salesforce_password, 
+                    security_token=self.config.salesforce_token)
         # Create appropriate sql
-        sql_list=[]
-        for categrory in self.config.salesforce_categories:
-            print(categrory)
-            sql_list.append("select FIELDS(STANDARD) from EmailMessage")
-        print("***********")
-        print(sql_list)
-        return [SalesforceIngestDoc(self.standard_config, self.config, f) for f in sql_list]
+
+        doc_list=[]
+        for category in self.config.salesforce_categories:
+            print(category)
+            records = client.query_all(f"select FIELDS(STANDARD) from {category}")
+            for record in records["records"]:
+                print(record)
+                doc_list.append(SalesforceIngestDoc(self.standard_config, self.config, category, record))
+
+        return doc_list
 
 
