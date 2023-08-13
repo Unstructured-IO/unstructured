@@ -5,7 +5,9 @@
 #    pip-compile requirements/ingest-wikipedia.in
 #
 beautifulsoup4==4.12.2
-    # via wikipedia
+    # via
+    #   -c requirements/base.txt
+    #   wikipedia
 certifi==2023.7.22
     # via
     #   -c requirements/base.txt
@@ -24,7 +26,9 @@ requests==2.31.0
     #   -c requirements/base.txt
     #   wikipedia
 soupsieve==2.4.1
-    # via beautifulsoup4
+    # via
+    #   -c requirements/base.txt
+    #   beautifulsoup4
 urllib3==1.26.16
     # via
     #   -c requirements/base.txt

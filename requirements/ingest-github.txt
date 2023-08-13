@@ -18,7 +18,10 @@ charset-normalizer==3.2.0
     #   -c requirements/base.txt
     #   requests
 cryptography==41.0.2
-    # via pyjwt
+    # via
+    #   -c requirements/constraints.in
+    #   -r requirements/ingest-github.in
+    #   pyjwt
 deprecated==1.2.14
     # via pygithub
 idna==3.4

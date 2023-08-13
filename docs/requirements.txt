@@ -9,7 +9,9 @@ alabaster==0.7.13
 babel==2.12.1
     # via sphinx
 beautifulsoup4==4.12.2
-    # via furo
+    # via
+    #   -c requirements/base.txt
+    #   furo
 certifi==2023.7.22
     # via
     #   -c requirements/base.txt
@@ -53,36 +55,33 @@ requests==2.31.0
 snowballstemmer==2.2.0
     # via sphinx
 soupsieve==2.4.1
-    # via beautifulsoup4
+    # via
+    #   -c requirements/base.txt
+    #   beautifulsoup4
 sphinx==6.2.1
     # via
     #   -r requirements/build.in
     #   furo
     #   sphinx-basic-ng
     #   sphinx-rtd-theme
-    #   sphinxcontrib-applehelp
-    #   sphinxcontrib-devhelp
-    #   sphinxcontrib-htmlhelp
     #   sphinxcontrib-jquery
-    #   sphinxcontrib-qthelp
-    #   sphinxcontrib-serializinghtml
 sphinx-basic-ng==1.0.0b2
     # via furo
 sphinx-rtd-theme==1.2.2
     # via -r requirements/build.in
-sphinxcontrib-applehelp==1.0.6
+sphinxcontrib-applehelp==1.0.4
     # via sphinx
-sphinxcontrib-devhelp==1.0.4
+sphinxcontrib-devhelp==1.0.2
     # via sphinx
-sphinxcontrib-htmlhelp==2.0.3
+sphinxcontrib-htmlhelp==2.0.1
     # via sphinx
 sphinxcontrib-jquery==4.1
     # via sphinx-rtd-theme
 sphinxcontrib-jsmath==1.0.1
     # via sphinx
-sphinxcontrib-qthelp==1.0.5
+sphinxcontrib-qthelp==1.0.3
     # via sphinx
-sphinxcontrib-serializinghtml==1.1.7
+sphinxcontrib-serializinghtml==1.1.5
     # via sphinx
 urllib3==1.26.16
     # via
