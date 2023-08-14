@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import os
 import re
 import tarfile
@@ -160,8 +161,17 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         self.config.get_logger().info(f"extracting zip {zip_path} -> {path}")
         with zipfile.ZipFile(zip_path) as zfile:
             zfile.extractall(path=path)
+        new_standard_config = copy.copy(self.standard_config)
+        relative_path = path.replace(self.standard_config.download_dir, "")
+        if relative_path[0] == "/":
+            relative_path = relative_path[1:]
+        new_standard_config.output_dir = os.path.join(
+            self.standard_config.output_dir,
+            relative_path,
+        )
+
         local_connector = LocalConnector(
-            standard_config=StandardConnectorConfig(**self.standard_config.__dict__),
+            standard_config=StandardConnectorConfig(**new_standard_config.__dict__),
             config=SimpleLocalConfig(
                 input_path=path,
                 recursive=True,
@@ -179,8 +189,16 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         except tarfile.ReadError as read_error:
             self.config.get_logger().error(f"failed to uncompress tar {tar_path}: {read_error}")
             return
+        new_standard_config = copy.copy(self.standard_config)
+        relative_path = path.replace(self.standard_config.download_dir, "")
+        if relative_path[0] == "/":
+            relative_path = relative_path[1:]
+        new_standard_config.output_dir = os.path.join(
+            self.standard_config.output_dir,
+            relative_path,
+        )
         local_connector = LocalConnector(
-            standard_config=StandardConnectorConfig(**self.standard_config.__dict__),
+            standard_config=StandardConnectorConfig(**new_standard_config.__dict__),
             config=SimpleLocalConfig(
                 input_path=path,
                 recursive=True,

@@ -188,7 +188,10 @@ class BaseIngestDoc(ABC):
                 and self.filename.is_file()
                 and self.filename.stat().st_size
             ):
-                logger.debug(f"File exists: {self.filename}, skipping {func.__name__}")
+                logger.debug(
+                    f"[{self.__class__.__name__}] File exists: "
+                    f"{self.filename}, skipping {func.__name__}",
+                )
                 return None
             return func(self, *args, **kwargs)
 
@@ -212,7 +215,7 @@ class BaseIngestDoc(ABC):
         self._output_filename.parent.mkdir(parents=True, exist_ok=True)
         with open(self._output_filename, "w", encoding="utf8") as output_f:
             json.dump(self.isd_elems_no_filename, output_f, ensure_ascii=False, indent=2)
-        logger.info(f"Wrote {self._output_filename}")
+        logger.info(f"[{self.__class__.__name__}] Wrote {self._output_filename}")
 
     def write_child_results(self):
         return
@@ -260,7 +263,7 @@ class BaseIngestDoc(ABC):
         self._date_processed = datetime.utcnow().isoformat()
         if self.standard_config.download_only:
             return None
-        logger.info(f"Processing {self.filename}")
+        logger.info(f"[{self.__class__.__name__}] Processing {self.filename}")
 
         isd_elems = self.partition_file(**partition_kwargs)
 
