@@ -4,8 +4,6 @@
 #
 #    pip-compile requirements/extra-xlsx.in
 #
-beautifulsoup4==4.12.2
-    # via -r requirements/extra-xlsx.in
 et-xmlfile==1.1.0
     # via openpyxl
 numpy==1.24.4
@@ -22,8 +20,6 @@ pytz==2023.3
     # via pandas
 six==1.16.0
     # via python-dateutil
-soupsieve==2.4.1
-    # via beautifulsoup4
 tzdata==2023.3
     # via pandas
 xlrd==2.0.1

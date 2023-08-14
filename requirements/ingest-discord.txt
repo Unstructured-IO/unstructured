@@ -16,7 +16,7 @@ charset-normalizer==3.2.0
     # via
     #   -c requirements/base.txt
     #   aiohttp
-discord-py==2.3.1
+discord-py==2.3.2
     # via -r requirements/ingest-discord.in
 frozenlist==1.4.0
     # via
