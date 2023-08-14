@@ -61,7 +61,7 @@ BULLETS_PATTERN = "|".join(UNICODE_BULLETS)
 UNICODE_BULLETS_RE = re.compile(f"(?:{BULLETS_PATTERN})(?!{BULLETS_PATTERN})")
 # zero-width positive lookahead so bullet characters will not be removed when using .split()
 UNICODE_BULLETS_RE_0W = re.compile(f"(?={BULLETS_PATTERN})(?<!{BULLETS_PATTERN})")
-E_BULLET_PATTERN = re.compile(r'^e(?=\s)', re.MULTILINE)
+E_BULLET_PATTERN = re.compile(r"^e(?=\s)", re.MULTILINE)
 
 # NOTE(klaijan) - Captures reference of format [1] or [i] or [a] at any point in the line.
 REFERENCE_PATTERN = r"\[(?:[\d]+|[a-z]|[ivxlcdm])\]"
