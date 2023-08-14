@@ -81,19 +81,15 @@ def group_bullet_paragraph(paragraph: str) -> list:
     Gets converted to
 
     '''○ The big red fox is walking down the lane.
-    ○ At the end of the land the fox met a bear.'''"""
-    clean_bullet_paras = []
+    ○ At the end of the land the fox met a bear.'''
+    """
+    clean_paragraphs = []
+    paragraph = (re.sub(E_BULLET_PATTERN, "·", paragraph)).strip()
     bullet_paras = re.split(UNICODE_BULLETS_RE_0W, paragraph)
-    import pdb; pdb.set_trace()
     for bullet in bullet_paras:
         if bullet:
-            # pytesseract converts some bullet points to standalone "e" characters
-            if E_BULLET_PATTERN.match(bullet):
-                # sub "e" with bullets since they are later used in partition_text 
-                # to determine element type
-                bullet = (re.sub(E_BULLET_PATTERN, "·", bullet)).strip()
-            clean_bullet_paras.append(re.sub(PARAGRAPH_PATTERN, " ", bullet))
-    return clean_bullet_paras
+            clean_paragraphs.append(re.sub(PARAGRAPH_PATTERN, " ", bullet))
+    return clean_paragraphs
 
 
 def group_broken_paragraphs(
