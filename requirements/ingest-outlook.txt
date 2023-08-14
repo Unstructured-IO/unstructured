@@ -17,6 +17,7 @@ charset-normalizer==3.2.0
     #   requests
 cryptography==41.0.2
     # via
+    #   -c requirements/constraints.in
     #   -r requirements/ingest-outlook.in
     #   msal
     #   pyjwt

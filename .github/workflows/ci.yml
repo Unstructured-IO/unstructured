@@ -181,6 +181,7 @@ jobs:
         PYTHONPATH=. pytest test_unstructured_ingest/unit
     - name: Test (end-to-end)
       env:
+        AIRTABLE_PERSONAL_ACCESS_TOKEN: ${{ secrets.AIRTABLE_PERSONAL_ACCESS_TOKEN }}
         BOX_APP_CONFIG: ${{ secrets.BOX_APP_CONFIG }}
         CONFLUENCE_API_TOKEN: ${{ secrets.CONFLUENCE_API_TOKEN }}
         CONFLUENCE_USER_EMAIL: ${{ secrets.CONFLUENCE_USER_EMAIL }}
@@ -209,6 +210,7 @@ jobs:
         sudo apt-get install -y tesseract-ocr-kor
         tesseract --version
         make install-ingest-s3
+        make install-ingest-airtable
         make install-ingest-azure
         make install-ingest-box
         make install-ingest-confluence
