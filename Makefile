@@ -61,6 +61,10 @@ install-csv:
 install-docx:
 	python3 -m pip install -r requirements/extra-docx.txt
 
+.PHONY: install-epub
+install-epub:
+	python3 -m pip install -r requirements/extra-epub.txt
+
 .PHONY: install-odt
 install-odt:
 	python3 -m pip install -r requirements/extra-odt.txt
@@ -90,7 +94,7 @@ install-xlsx:
 	python3 -m pip install -r requirements/extra-xlsx.txt
 
 .PHONY: install-all-docs
-install-all-docs: install-base install-csv install-docx install-docx install-odt install-pypandoc install-markdown install-msg install-pdf-image install-pptx install-xlsx
+install-all-docs: install-base install-csv install-docx install-epub install-odt install-pypandoc install-markdown install-msg install-pdf-image install-pptx install-xlsx
 
 .PHONY: install-ingest-google-drive
 install-ingest-google-drive:
@@ -186,6 +190,7 @@ pip-compile:
 	# Extra requirements that are specific to document types
 	pip-compile --upgrade requirements/extra-csv.in
 	pip-compile --upgrade requirements/extra-docx.in
+	pip-compile --upgrade requirements/extra-epub.in
 	pip-compile --upgrade requirements/extra-pandoc.in
 	pip-compile --upgrade requirements/extra-markdown.in
 	pip-compile --upgrade requirements/extra-msg.in
