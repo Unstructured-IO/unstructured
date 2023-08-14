@@ -235,29 +235,8 @@ jobs:
 
   test_ingest:
     strategy:
-      fail-fast: false
       matrix:
         python-version: ["3.8","3.9","3.10","3.11"]
-        connector: [
-                     "azure",
-                     "biomed",
-                     "box",
-                     "confluence",
-                     "discord",
-                     "dropbox",
-                     "elasticsearch",
-                     "gcs",
-                     "github",
-                     "gitlab",
-                     "google-drive",
-                     "local",
-                     "notion",
-                     "onedrive",
-                     "outlook",
-                     "s3",
-                     "slack",
-                     "wikipedia"
-        ]
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
@@ -270,7 +249,7 @@ jobs:
         path: |
           .venv
           nltk_data
-        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.connector }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
@@ -317,8 +296,24 @@ jobs:
         sudo apt-get install -y tesseract-ocr
         sudo apt-get install -y tesseract-ocr-kor
         tesseract --version
-        make install-ingest-${{ matrix.connector }}
-        ./test_unstructured_ingest/test-ingest-by-connector.sh ${{ matrix.connector }}
+        make install-ingest-s3
+        make install-ingest-airtable
+        make install-ingest-azure
+        make install-ingest-box
+        make install-ingest-confluence
+        make install-ingest-discord
+        make install-ingest-elasticsearch
+        make install-ingest-dropbox
+        make install-ingest-gcs
+        make install-ingest-google-drive
+        make install-ingest-github
+        make install-ingest-gitlab
+        make install-ingest-onedrive
+        make install-ingest-outlook
+        make install-ingest-slack
+        make install-ingest-wikipedia
+        make install-ingest-notion
+        ./test_unstructured_ingest/test-ingest.sh
 
   test_unstructured_api_unit:
     strategy:
