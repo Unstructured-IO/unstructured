@@ -105,7 +105,7 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def process_file(self, **partition_kwargs) -> Optional[List[Dict[str, Any]]]:
         if self.is_compressed:
             self.config.get_logger().warning(
-                f"file detected as zip, skipping process file: {self.filename}",
+                f"file detected as compressed, skipping process file: {self.filename}",
             )
             return None
         return super().process_file(**partition_kwargs)
@@ -113,7 +113,7 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def write_result(self):
         if self.is_compressed:
             self.config.get_logger().warning(
-                f"file detected as zip, skipping write results: {self.filename}",
+                f"file detected as compressed, skipping write results: {self.filename}",
             )
             return None
         return super().write_result()
