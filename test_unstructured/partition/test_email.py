@@ -505,3 +505,15 @@ def test_partition_email_inline_content_disposition(
 
     assert isinstance(elements[0], Text)
     assert isinstance(elements[1], Text)
+
+
+def test_partition_email_odd_attachment_filename(
+    filename="example-docs/eml/email-equals-attachment-filename.eml",
+):
+    elements = partition_email(
+        filename=filename,
+        process_attachments=True,
+        attachment_partitioner=partition_text,
+    )
+
+    assert elements[1].metadata.filename == "odd=file=name.txt"

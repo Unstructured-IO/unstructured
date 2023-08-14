@@ -18,6 +18,7 @@
 
 * make notion module discoverable
 * fix emails with `Content-Distribution: inline` and `Content-Distribution: attachment` with no filename
+* Fix email attachment filenames which had `=` in the filename itself
 
 ## 0.9.2
 
