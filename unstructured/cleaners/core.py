@@ -8,10 +8,12 @@ from unstructured.file_utils.encoding import (
 )
 from unstructured.nlp.patterns import (
     DOUBLE_PARAGRAPH_PATTERN_RE,
+    E_BULLET_PATTERN,
     LINE_BREAK_RE,
     PARAGRAPH_PATTERN,
     PARAGRAPH_PATTERN_RE,
     UNICODE_BULLETS_RE,
+    UNICODE_BULLETS_RE_0W,
 )
 
 
@@ -66,6 +68,34 @@ def clean_ordered_bullets(text) -> str:
     return text_cl
 
 
+def group_bullet_paragraph(paragraph: str) -> list:
+    """Groups paragraphs with bullets that have line breaks for visual/formatting purposes.
+    For example:
+
+    '''○ The big red fox
+    is walking down the lane.
+
+    ○ At the end of the lane
+    the fox met a friendly bear.'''
+
+    Gets converted to
+
+    '''○ The big red fox is walking down the lane.
+    ○ At the end of the land the fox met a bear.'''"""
+    clean_bullet_paras = []
+    bullet_paras = re.split(UNICODE_BULLETS_RE_0W, paragraph)
+    import pdb; pdb.set_trace()
+    for bullet in bullet_paras:
+        if bullet:
+            # pytesseract converts some bullet points to standalone "e" characters
+            if E_BULLET_PATTERN.match(bullet):
+                # sub "e" with bullets since they are later used in partition_text 
+                # to determine element type
+                bullet = (re.sub(E_BULLET_PATTERN, "·", bullet)).strip()
+            clean_bullet_paras.append(re.sub(PARAGRAPH_PATTERN, " ", bullet))
+    return clean_bullet_paras
+
+
 def group_broken_paragraphs(
     text: str,
     line_split: re.Pattern = PARAGRAPH_PATTERN_RE,
@@ -97,8 +127,9 @@ def group_broken_paragraphs(
         #     http://www.apache.org/licenses/
         para_split = line_split.split(paragraph)
         all_lines_short = all(len(line.strip().split(" ")) < 5 for line in para_split)
-        if UNICODE_BULLETS_RE.match(paragraph.strip()):
-            clean_paragraphs.extend(re.split(PARAGRAPH_PATTERN, paragraph))
+        # pytesseract converts some bullet points to standalone "e" characters
+        if UNICODE_BULLETS_RE.match(paragraph.strip()) or E_BULLET_PATTERN.match(paragraph.strip()):
+            clean_paragraphs.extend(group_bullet_paragraph(paragraph))
         elif all_lines_short:
             clean_paragraphs.extend([line for line in para_split if line.strip()])
         else:

@@ -207,6 +207,34 @@ the fox met a friendly bear."""
 
 At the end of the lane the fox met a friendly bear."""
     )
+    
+    
+def test_group_broken_paragraphs_with_bullets():
+    text = """○The big red fox
+is walking down the lane.
+
+○At the end of the lane
+the fox met a friendly bear."""
+    assert (
+        core.group_bullet_paragraph(text) == [
+            '○The big red fox is walking down the lane. ', 
+            '○At the end of the lane the fox met a friendly bear.'
+        ]
+    )
+
+
+def test_group_bullet_paragraph_with_e_bullets():
+    text = """e The big red fox
+is walking down the lane.
+
+e At the end of the lane
+the fox met a friendly bear."""
+    assert (
+        core.group_bullet_paragraph(text) == [
+            '· The big red fox is walking down the lane. ', 
+            '· At the end of the lane the fox met a friendly bear.'
+        ]
+    )
 
 
 @pytest.mark.parametrize(
