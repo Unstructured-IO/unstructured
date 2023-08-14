@@ -6,6 +6,7 @@ import inspect
 import os
 import pathlib
 import re
+import uuid
 from abc import ABC
 from copy import deepcopy
 from dataclasses import dataclass
@@ -21,6 +22,12 @@ from unstructured.documents.coordinates import (
 
 class NoID(ABC):
     """Class to indicate that an element do not have an ID."""
+
+    pass
+
+
+class UUID(ABC):
+    """Class to indicate that an element should have a UUID."""
 
     pass
 
@@ -143,8 +150,14 @@ class ElementMetadata:
     sent_to: Optional[List[str]] = None
     subject: Optional[str] = None
 
+    # Document section fields
+    section: Optional[str] = None
+
     # MSFT Word specific metadata fields
     header_footer_type: Optional[str] = None
+
+    # Formatting metadata fields
+    emphasized_texts: Optional[List[dict]] = None
 
     # Text format metadata fields
     text_as_html: Optional[str] = None
@@ -229,11 +242,20 @@ def process_metadata():
             regex_metadata: Dict["str", "str"] = params.get("regex_metadata", {})
             elements = _add_regex_metadata(elements, regex_metadata)
 
+            unique_element_ids: bool = params.get("unique_element_ids", False)
+            if unique_element_ids:
+                for element in elements:
+                    element.id_to_uuid()
+
             return elements
 
         return wrapper
 
     return decorator
+
+
+def _elements_ids_to_uuid():
+    pass
 
 
 def _add_regex_metadata(
@@ -270,14 +292,14 @@ class Element(ABC):
 
     def __init__(
         self,
-        element_id: Union[str, NoID] = NoID(),
+        element_id: Union[str, uuid.UUID, NoID, UUID] = NoID(),
         coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         metadata: Optional[ElementMetadata] = None,
     ):
         if metadata is None:
             metadata = ElementMetadata()
-        self.id: Union[str, NoID] = element_id
+        self.id: Union[str, uuid.UUID, NoID, UUID] = element_id
         coordinates_metadata = (
             None
             if coordinates is None and coordinate_system is None
@@ -289,6 +311,9 @@ class Element(ABC):
             )
         )
         self.metadata = metadata.merge(ElementMetadata(coordinates=coordinates_metadata))
+
+    def id_to_uuid(self):
+        self.id = str(uuid.uuid4())
 
     def to_dict(self) -> dict:
         return {
@@ -326,7 +351,7 @@ class CheckBox(Element):
 
     def __init__(
         self,
-        element_id: Union[str, NoID] = NoID(),
+        element_id: Union[str, uuid.UUID, NoID, UUID] = NoID(),
         coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         checked: bool = False,
@@ -362,7 +387,7 @@ class Text(Element):
     def __init__(
         self,
         text: str,
-        element_id: Union[str, NoID] = NoID(),
+        element_id: Union[str, uuid.UUID, NoID, UUID] = NoID(),
         coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         metadata: Optional[ElementMetadata] = None,
@@ -373,6 +398,9 @@ class Text(Element):
         if isinstance(element_id, NoID):
             # NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits
             element_id = hashlib.sha256(text.encode()).hexdigest()[:32]
+
+        elif isinstance(element_id, UUID):
+            element_id = str(uuid.uuid4())
 
         super().__init__(
             element_id=element_id,
@@ -454,6 +482,13 @@ class Address(Text):
     pass
 
 
+class EmailAddress(Text):
+    """A text element for capturing addresses"""
+
+    category = "EmailAddress"
+    pass
+
+
 class Image(Text):
     """A text element for capturing image metadata."""
 
@@ -502,6 +537,7 @@ TYPE_TO_TEXT_ELEMENT_MAP: Dict[str, Any] = {
     "BulletedText": ListItem,
     "Title": Title,
     "Address": Address,
+    "EmailAddress": EmailAddress,
     "Image": Image,
     "PageBreak": PageBreak,
     "Table": Table,

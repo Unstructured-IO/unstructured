@@ -27,7 +27,7 @@ class SimpleOneDriveConfig(BaseConnectorConfig):
     user_pname: str
     tenant: str = field(repr=False)
     authority_url: Optional[str] = field(repr=False)
-    folder: Optional[str] = field(default="")
+    path: Optional[str] = field(default="")
     recursive: bool = False
 
     def __post_init__(self):
@@ -65,7 +65,7 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         if not self.ext:
             raise ValueError("Unsupported file without extension.")
 
-        if self.ext not in EXT_TO_FILETYPE.keys():
+        if self.ext not in EXT_TO_FILETYPE:
             raise ValueError(
                 f"Extension not supported. "
                 f"Value MUST be one of {', '.join([k for k in EXT_TO_FILETYPE if k is not None])}.",
@@ -172,7 +172,7 @@ class OneDriveConnector(ConnectorCleanupMixin, BaseConnector):
 
     def get_ingest_docs(self):
         root = self.client.users[self.config.user_pname].drive.get().execute_query().root
-        if fpath := self.config.folder:
+        if fpath := self.config.path:
             root = root.get_by_path(fpath).get().execute_query()
             if root is None or not root.is_folder:
                 raise ValueError(f"Unable to find directory, given: {fpath}")

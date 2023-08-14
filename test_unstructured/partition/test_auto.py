@@ -380,6 +380,26 @@ def test_partition_pdf_doesnt_raise_warning():
     ("pass_file_filename", "content_type"),
     [(False, None), (False, "image/jpeg"), (True, "image/jpeg"), (True, None)],
 )
+def test_auto_partition_image_default_strategy_hi_res(pass_file_filename, content_type):
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.jpg")
+    file_filename = filename if pass_file_filename else None
+    elements = partition(
+        filename=filename,
+        file_filename=file_filename,
+        content_type=content_type,
+        strategy="auto",
+    )
+
+    # should be same result as test_partition_image_default_strategy_hi_res() in test_image.py
+    first_line = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
+    assert elements[0].text == first_line
+    assert elements[0].metadata.coordinates is not None
+
+
+@pytest.mark.parametrize(
+    ("pass_file_filename", "content_type"),
+    [(False, None), (False, "image/jpeg"), (True, "image/jpeg"), (True, None)],
+)
 def test_auto_partition_jpg(pass_file_filename, content_type):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.jpg")
     file_filename = filename if pass_file_filename else None
@@ -633,7 +653,7 @@ def test_auto_partition_xml_from_file(filename="example-docs/factbook.xml"):
 def test_auto_partition_xml_from_filename_with_tags(filename="example-docs/factbook.xml"):
     elements = partition(filename=filename, xml_keep_tags=True)
 
-    assert elements[5].text == "<name>United States</name>"
+    assert elements[5].text == "<leader>Joe Biden</leader>"
     assert elements[5].metadata.filename == "factbook.xml"
 
 
@@ -641,7 +661,7 @@ def test_auto_partition_xml_from_file_with_tags(filename="example-docs/factbook.
     with open(filename, "rb") as f:
         elements = partition(file=f, xml_keep_tags=True)
 
-    assert elements[5].text == "<name>United States</name>"
+    assert elements[5].text == "<leader>Joe Biden</leader>"
 
 
 EXPECTED_XLSX_FILETYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -672,7 +692,8 @@ def test_auto_partition_xlsx_from_file(filename="example-docs/stanley-cups.xlsx"
     assert elements[0].metadata.filetype == EXPECTED_XLSX_FILETYPE
 
 
-EXPECTED_XLS_TEXT_LEN = 883
+EXPECTED_XLS_TEXT_LEN = 507
+
 
 EXPECTED_XLS_INITIAL_45_CLEAN_TEXT = "MA What C datatypes are 8 bits? (assume i386)"
 
@@ -751,6 +772,7 @@ EXPECTED_XLS_TABLE = (
 )
 
 
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_auto_partition_xls_from_filename(filename="example-docs/tests-example.xls"):
     elements = partition(filename=filename)
 
@@ -758,6 +780,11 @@ def test_auto_partition_xls_from_filename(filename="example-docs/tests-example.x
     assert len(elements) == 3
 
     assert clean_extra_whitespace(elements[0].text)[:45] == EXPECTED_XLS_INITIAL_45_CLEAN_TEXT
+    # NOTE(crag): if the beautifulsoup4 package is installed, some (but not all) additional
+    # whitespace is removed, so the expected text length is less than is the case
+    # when beautifulsoup4 is *not* installed. E.g.
+    # "\n\n\nMA\nWhat C datatypes are 8 bits" vs.
+    # '\n  \n    \n      MA\n      What C datatypes are 8 bits?... "
     assert len(elements[0].text) == EXPECTED_XLS_TEXT_LEN
     assert elements[0].metadata.text_as_html == EXPECTED_XLS_TABLE
 
@@ -839,3 +866,10 @@ def test_auto_partition_rst_from_file(filename="example-docs/README.rst"):
 
     assert elements[0] == Title("Example Docs")
     assert elements[0].metadata.filetype == "text/x-rst"
+
+
+def test_auto_partition_metadata_file_filename():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
+    with open(filename) as f:
+        elements = partition(file=f, file_filename=filename)
+    assert elements[0].metadata.filename == os.path.split(filename)[-1]

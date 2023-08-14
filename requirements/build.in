@@ -1,3 +1,6 @@
+-c base.txt
+-c constraints.in
+
 sphinx
 # NOTE(alan) - Pinning to resolve a conflict with sphinx. We can unpin on next sphinx_rtd_theme release.
 sphinx_rtd_theme==1.2.2

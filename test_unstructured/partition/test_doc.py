@@ -33,10 +33,7 @@ def mock_document():
     # NOTE(robinson) - this should get dropped because it is empty
     document.add_paragraph("", style="Normal")
     # NOTE(robinson) - this should get picked up as a narrative text
-    document.add_paragraph(
-        "This is my first thought. This is my second thought.",
-        style="Normal",
-    )
+    document.add_paragraph("This is my first thought. This is my second thought.", style="Normal")
     document.add_paragraph("This is my third thought.", style="Body Text")
     # NOTE(robinson) - this should just be regular text
     document.add_paragraph("2023")
@@ -267,6 +264,6 @@ def test_partition_doc_from_file_without_metadata_date(
         sf = SpooledTemporaryFile()
         sf.write(f.read())
         sf.seek(0)
-        elements = partition_doc(file=sf, metadata_last_modified=None)
+        elements = partition_doc(file=sf, metadata_date="2020-07-05")
 
-    assert elements[0].metadata.last_modified is None
+    assert elements[0].metadata.date == "2020-07-05"

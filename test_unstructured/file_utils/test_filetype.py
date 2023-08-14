@@ -166,7 +166,7 @@ def test_detect_xml_application_xml(monkeypatch):
     assert filetype == FileType.XML
 
 
-def test_detect_text_csv(monkeypatch, filename="sample-docs/stanley-cup.csv"):
+def test_detect_text_csv(monkeypatch, filename="example-docs/stanley-cup.csv"):
     monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "text/csv")
     filetype = detect_filetype(filename=filename)
     assert filetype == FileType.CSV
@@ -478,4 +478,4 @@ def test_document_to_element_list_omits_coord_system_when_coord_points_absent():
 def test_get_page_image_metadata_and_coordinate_system():
     doc = MockDocumentLayout()
     metadata = _get_page_image_metadata(doc.pages[0])
-    assert type(metadata) == dict
+    assert isinstance(metadata, dict)

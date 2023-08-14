@@ -22,6 +22,13 @@ def test_partition_xlsx_from_filename(filename="example-docs/stanley-cups.xlsx")
     assert elements[0].metadata.filename == "stanley-cups.xlsx"
 
 
+def test_partition_xlsx_from_filename_with_emoji(filename="example-docs/emoji.xlsx"):
+    elements = partition_xlsx(filename=filename)
+    assert all(isinstance(element, Table) for element in elements)
+    assert len(elements) == 1
+    assert clean_extra_whitespace(elements[0].text) == "🤠😅"
+
+
 def test_partition_xlsx_from_filename_with_metadata_filename(
     filename="example-docs/stanley-cups.xlsx",
 ):

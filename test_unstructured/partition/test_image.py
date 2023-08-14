@@ -159,6 +159,8 @@ def test_partition_image_from_file_with_language_passed(
     assert mock_partition.call_args.kwargs.get("ocr_languages") == "eng+swe"
 
 
+# NOTE(crag): see https://github.com/Unstructured-IO/unstructured/issues/1086
+@pytest.mark.skip(reason="Current catching too many tesseract errors")
 def test_partition_image_raises_with_invalid_language(
     filename="example-docs/example.jpg",
 ):
@@ -211,6 +213,16 @@ def test_partition_image_raises_with_bad_strategy():
     )
     with pytest.raises(ValueError):
         image.partition_image(filename=filename, strategy="fakeroo")
+
+
+def test_partition_image_default_strategy_hi_res():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.jpg")
+    with open(filename, "rb") as f:
+        elements = image.partition_image(file=f)
+
+    first_line = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
+    assert elements[0].text == first_line
+    assert elements[0].metadata.coordinates is not None
 
 
 def test_partition_image_metadata_date(

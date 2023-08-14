@@ -1,8 +1,8 @@
 from tempfile import SpooledTemporaryFile
 from typing import IO, BinaryIO, List, Optional, Union, cast
 
-import lxml.html
 import pandas as pd
+from lxml.html.soupparser import fromstring as soupparser_fromstring
 
 from unstructured.documents.elements import (
     Element,
@@ -60,7 +60,7 @@ def partition_xlsx(
     for sheet_name, table in sheets.items():
         page_number += 1
         html_text = table.to_html(index=False, header=False, na_rep="")
-        text = lxml.html.document_fromstring(html_text).text_content()
+        text = soupparser_fromstring(html_text).text_content()
 
         if include_metadata:
             metadata = ElementMetadata(

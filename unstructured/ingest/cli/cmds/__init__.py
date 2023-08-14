@@ -1,3 +1,4 @@
+from .airtable import get_cmd as airtable
 from .azure import get_cmd as azure
 from .biomed import get_cmd as biomed
 from .box import get_cmd as box
@@ -11,14 +12,17 @@ from .github import get_cmd as github
 from .gitlab import get_cmd as gitlab
 from .google_drive import get_cmd as gdrive
 from .local import get_cmd as local
+from .notion import get_cmd as notion
 from .onedrive import get_cmd as onedrive
 from .outlook import get_cmd as outlook
 from .reddit import get_cmd as reddit
 from .s3 import get_cmd as s3
+from .sharepoint import get_cmd as sharepoint
 from .slack import get_cmd as slack
 from .wikipedia import get_cmd as wikipedia
 
 __all__ = [
+    "airtable",
     "azure",
     "biomed",
     "box",
@@ -32,10 +36,12 @@ __all__ = [
     "github",
     "gitlab",
     "local",
+    "notion",
     "onedrive",
     "outlook",
     "reddit",
     "s3",
+    "sharepoint",
     "slack",
     "wikipedia",
 ]
