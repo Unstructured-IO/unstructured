@@ -1,0 +1,67 @@
+Return-Path: <testuser@example.com>
+Delivered-To: recipient@example.com
+Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
+	by spool.mail.gandi.net (Postfix) with ESMTPS id 30071740049
+	for <recipient@example.com>; Sun, 13 Aug 2023 22:00:09 +0000 (UTC)
+Received: by mail-il1-x135.google.com with SMTP id e9e14a558f8ab-34aa0845837so895295ab.1
+        for <recipient@example.com>; Sun, 13 Aug 2023 15:00:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1691964008; x=1692568808;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=u2zZbdTcme/MRpud6yh6mKzbHh7iBKn7qvZ1YZJcZuQ=;
+        b=LxHBRFvl8tDcIithe7Il7GC7rAEu5QHGoko+PZll4SUDgh0gYHu35ksEuMO3bBT3sB
+         UGM5/Obbn+17F+DL0Mk/Zyc/6gG15lNMVLcr9+Fzjt2hDkrcUsEAkmS9chFiF0asGebj
+         F3vn1FJ9ZDi3IISHeD80PzmhT23Zp4ELjrfEGv2go7Psb320wzL58mHObkhz2spXEK0c
+         YzlCkJd8hBz2wI5mKedzf4mLdbTUZhPpmycvS+NkNwxQzaMXouLEkBvOXticqPQHvbTe
+         IiTb2JsaTFEJCfDVjhzIuGA6fFqNmH7hz7Fjh6eW66msB2QCIAhWHIIQ0Uy0Lx0FaQeo
+         pA5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691964008; x=1692568808;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=u2zZbdTcme/MRpud6yh6mKzbHh7iBKn7qvZ1YZJcZuQ=;
+        b=InxJceRYlLILD0JdetCcOea42zYYLr8BYlhXxpB07TuFAiKbIV28vxmp7XaEa6YIuA
+         IkpNpvLWrlRJpLsKvJF9QRdIAt83p+91zvd2BW8M0P7AP04KofvzGbbCFG67tjr23K7S
+         YYuVSIXgVli3sjbIMsxq/JnaHWk1fnrGBvpnMLEEekqsdXpyL5GJ0yN0Qb/4lBZO1uO9
+         oZ0gbwqEMA/eHAnpH5W/g9ubkVcXzfjSPCRzzNhXfOEGn3Cc5sAuEH03iVuVIKMe9FJg
+         sO5iyah9+tjnm1NBWCk2qSIuCJrA0YvqcoztgpmJYDDQtG6scHRL83DdMx7phwRlVd/l
+         S6rQ==
+X-Gm-Message-State: AOJu0YzoTpbToiITeHpRUQB8Tc5krfAtkhP2TRgs0WdgPAgfeUixZft6
+	vGUz3KcsN2V+qf2+RQPiveSjelXe81VfycqaH+I2hUNd
+X-Google-Smtp-Source: AGHT+IFzHJ5xiuLxHriivr/CAV7z2Qo6Jep/LEhlzu4GiHEoXTFGC1DZ/MTDROwUz3fXKlKLU6uBzylF4XSOdKWfTW8=
+X-Received: by 2002:a05:6e02:1bee:b0:349:2d1d:e463 with SMTP id
+ y14-20020a056e021bee00b003492d1de463mr12404311ilv.13.1691964008036; Sun, 13
+ Aug 2023 15:00:08 -0700 (PDT)
+MIME-Version: 1.0
+From: Test User <testuser@example.com>
+Date: Sun, 13 Aug 2023 14:59:56 -0700
+Message-ID: <CABBgHeGAW=UW77EE7p4CsCuaudixAYUU8iPqsm3=4921Wc9Vxw@mail.gmail.com>
+Subject: Odd filename example
+To: recipient@example.com
+Content-Type: multipart/mixed; boundary="000000000000ac11b20602d51124"
+X-GND-Status: LEGIT
+
+--000000000000ac11b20602d51124
+Content-Type: multipart/alternative; boundary="000000000000ac11b10602d51122"
+
+--000000000000ac11b10602d51122
+Content-Type: text/plain; charset="UTF-8"
+
+Below is an example of an odd filename
+
+--000000000000ac11b10602d51122
+Content-Type: text/html; charset="UTF-8"
+
+<div dir="ltr">Below is an example of an odd filename</div>
+
+--000000000000ac11b10602d51122--
+--000000000000ac11b20602d51124
+Content-Type: text/plain; charset="US-ASCII"; name="odd=file=name.txt"
+Content-Disposition: attachment; filename="odd=file=name.txt"
+Content-Transfer-Encoding: base64
+Content-ID: <f_ll9zod670>
+X-Attachment-Id: f_ll9zod670
+
+T2RkIGZpbGVuYW1lCg==
+--000000000000ac11b20602d51124--
