@@ -191,7 +191,7 @@ def extract_attachment_info(
                             delete=False,
                         ) as f:
                             list_attachments[idx]["filename"] = os.path.basename(f.name)
-                            f.write(attachment["payload"])
+                            f.write(attachment["payload"])  # type: ignore
 
     return list_attachments
 
