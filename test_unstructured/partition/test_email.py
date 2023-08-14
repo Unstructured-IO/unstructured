@@ -10,8 +10,8 @@ from unstructured.documents.elements import (
     Image,
     ListItem,
     NarrativeText,
-    Title,
     Text,
+    Title,
 )
 from unstructured.documents.email_elements import (
     MetaData,
@@ -492,6 +492,7 @@ def test_partition_email_custom_metadata_date(
     )
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
+
 
 def test_partition_email_inline_content_disposition(
     filename="example-docs/eml/email-inline-content-disposition.eml",

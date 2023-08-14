@@ -5,7 +5,7 @@ import re
 import sys
 from email.message import Message
 from functools import partial
-from tempfile import SpooledTemporaryFile, TemporaryDirectory, NamedTemporaryFile
+from tempfile import NamedTemporaryFile, SpooledTemporaryFile, TemporaryDirectory
 from typing import IO, Callable, Dict, List, Optional, Tuple, Union
 
 from unstructured.file_utils.encoding import (
@@ -165,8 +165,7 @@ def extract_attachment_info(
 
             attachment_info = {}
             for item in cdisp:
-
-                if item.lower() == "attachment" or item.lower() == "inline":
+                if item.lower() in ("attachment", "inline"):
                     continue
                 key, value = item.split("=")
                 key = clean_extra_whitespace(key.replace('"', ""))
