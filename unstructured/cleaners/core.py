@@ -85,10 +85,10 @@ def group_bullet_paragraph(paragraph: str) -> list:
     """
     clean_paragraphs = []
     # pytesseract converts some bullet points to standalone "e" characters.
-    # Substitute "e" with bullets since they are later used in partition_text 
+    # Substitute "e" with bullets since they are later used in partition_text
     # to determine list element type.
     paragraph = (re.sub(E_BULLET_PATTERN, "·", paragraph)).strip()
-    
+
     bullet_paras = re.split(UNICODE_BULLETS_RE_0W, paragraph)
     for bullet in bullet_paras:
         if bullet:
