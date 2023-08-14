@@ -492,6 +492,7 @@ def test_partition_email_custom_metadata_date(
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
 
+
 def test_partition_email_odd_attachment_filename(
     filename="example-docs/eml/email-equals-attachment-filename.eml",
 ):
