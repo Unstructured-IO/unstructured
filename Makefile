@@ -220,6 +220,7 @@ pip-compile:
 	pip-compile --upgrade requirements/ingest-confluence.in
 	pip-compile --upgrade requirements/ingest-airtable.in
 	pip-compile --upgrade requirements/ingest-sharepoint.in
+	pip-compile --upgrade requirements/ingest-notion.in
 
 ## install-project-local:   install unstructured into your local python environment
 .PHONY: install-project-local
