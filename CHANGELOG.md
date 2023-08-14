@@ -1,7 +1,8 @@
-## 0.9.3-dev2
+## 0.9.3-dev3
 
 ### Enhancements
 
+* Update `partition_csv` to always use `soupparser_fromstring` to parse `html text`
 * Update `partition_tsv` to always use `soupparser_fromstring` to parse `html text`
 * Add `metadata.section` to capture epub table of contents data
 * Add `unique_element_ids` kwarg to partition functions. If `True`, will use a UUID
