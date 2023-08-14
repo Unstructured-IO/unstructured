@@ -17,6 +17,7 @@
 ### Fixes
 
 * make notion module discoverable
+* Fix email attachment filenames which had `=` in the filename itself
 
 ## 0.9.2
 

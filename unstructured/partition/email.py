@@ -168,7 +168,7 @@ def extract_attachment_info(
 
                 if item.lower() == "attachment":
                     continue
-                key, value = item.split("=")
+                key, value = item.split("=", 1)
                 key = clean_extra_whitespace(key.replace('"', ""))
                 value = clean_extra_whitespace(value.replace('"', ""))
                 attachment_info[clean_extra_whitespace(key)] = clean_extra_whitespace(
