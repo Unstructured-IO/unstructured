@@ -124,7 +124,7 @@ protobuf==4.23.4
     # via
     #   -c requirements/constraints.in
     #   onnxruntime
-pycocotools==2.0.6
+pycocotools==2.0.7
     # via effdet
 pycparser==2.21
     # via cffi

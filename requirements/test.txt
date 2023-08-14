@@ -22,11 +22,11 @@ click==8.1.6
     #   -c requirements/base.txt
     #   -r requirements/test.in
     #   black
-coverage[toml]==7.2.7
+coverage[toml]==7.3.0
     # via
     #   -r requirements/test.in
     #   pytest-cov
-exceptiongroup==1.1.2
+exceptiongroup==1.1.3
     # via pytest
 flake8==6.1.0
     # via -r requirements/test.in

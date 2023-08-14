@@ -44,7 +44,7 @@ certifi==2023.7.22
     #   requests
 cffi==1.15.1
     # via argon2-cffi-bindings
-cfgv==3.3.1
+cfgv==3.4.0
     # via pre-commit
 charset-normalizer==3.2.0
     # via
@@ -68,7 +68,7 @@ defusedxml==0.7.1
     # via nbconvert
 distlib==0.3.7
     # via virtualenv
-exceptiongroup==1.1.2
+exceptiongroup==1.1.3
     # via
     #   -c requirements/test.txt
     #   anyio
@@ -176,7 +176,7 @@ jupyter-server==2.7.0
     #   notebook-shim
 jupyter-server-terminals==0.4.4
     # via jupyter-server
-jupyterlab==4.0.4
+jupyterlab==4.0.5
     # via notebook
 jupyterlab-pygments==0.2.2
     # via nbconvert
