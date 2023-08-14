@@ -10,6 +10,7 @@ from unstructured.documents.elements import (
     Image,
     ListItem,
     NarrativeText,
+    Text,
     Title,
 )
 from unstructured.documents.email_elements import (
@@ -491,6 +492,19 @@ def test_partition_email_custom_metadata_date(
     )
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
+
+
+def test_partition_email_inline_content_disposition(
+    filename="example-docs/eml/email-inline-content-disposition.eml",
+):
+    elements = partition_email(
+        filename=filename,
+        process_attachments=True,
+        attachment_partitioner=partition_text,
+    )
+
+    assert isinstance(elements[0], Text)
+    assert isinstance(elements[1], Text)
 
 
 def test_partition_email_odd_attachment_filename(

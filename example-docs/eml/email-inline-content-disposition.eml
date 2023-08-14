@@ -1,0 +1,23 @@
+From: Test User <testuser@example.com>
+To: recipient@example.com
+Subject: Testing Inline
+Message-ID: <CAPgCCDEzLVJ-d1OCX_TjFgJU7ugtQrjFybPtAMmmYZzphxNFYg@mail.example.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.34; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="MP_/pqqQE0ldE7RYQcFW3Kd0aQV"
+
+--MP_/pqqQE0ldE7RYQcFW3Kd0aQV
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+This is a test of inline
+
+--MP_/pqqQE0ldE7RYQcFW3Kd0aQV
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename=t.txt
+
+test
+
+--MP_/pqqQE0ldE7RYQcFW3Kd0aQV--
