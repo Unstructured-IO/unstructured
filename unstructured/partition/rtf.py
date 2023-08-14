@@ -17,7 +17,7 @@ def partition_rtf(
     **kwargs,
 ) -> List[Element]:
     """Partitions an RTF document. The document is first converted to HTML and then
-    partitioned using partiton_html.
+    partitioned using partition_html.
 
     Parameters
     ----------

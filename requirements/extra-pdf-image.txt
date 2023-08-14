@@ -24,6 +24,7 @@ contourpy==1.1.0
     # via matplotlib
 cryptography==41.0.2
     # via
+    #   -c requirements/constraints.in
     #   -r requirements/extra-pdf-image.in
     #   pdfminer-six
 cycler==0.11.0
@@ -192,7 +193,7 @@ torchvision==0.15.2
     #   effdet
     #   layoutparser
     #   timm
-tqdm==4.66.0
+tqdm==4.66.1
     # via
     #   -c requirements/base.txt
     #   huggingface-hub

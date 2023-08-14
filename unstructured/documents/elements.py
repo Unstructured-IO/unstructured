@@ -151,6 +151,9 @@ class ElementMetadata:
     sent_to: Optional[List[str]] = None
     subject: Optional[str] = None
 
+    # Document section fields
+    section: Optional[str] = None
+
     # MSFT Word specific metadata fields
     header_footer_type: Optional[str] = None
 
