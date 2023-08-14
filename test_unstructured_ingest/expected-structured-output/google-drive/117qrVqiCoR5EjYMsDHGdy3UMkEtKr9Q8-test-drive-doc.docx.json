@@ -5,11 +5,11 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      "emphasized_texts": [
-        {
-          "text": "Title",
-          "tag": "b"
-        }
+      "emphasized_text_contents": [
+        "Title"
+      ],
+      "emphasized_text_tags": [
+        "b"
       ]
     },
     "text": "Title"
@@ -20,11 +20,11 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      "emphasized_texts": [
-        {
-          "text": "This is a good reason to continue",
-          "tag": "b"
-        }
+      "emphasized_text_contents": [
+        "This is a good reason to continue"
+      ],
+      "emphasized_text_tags": [
+        "b"
       ]
     },
     "text": "This is a good reason to continue"
