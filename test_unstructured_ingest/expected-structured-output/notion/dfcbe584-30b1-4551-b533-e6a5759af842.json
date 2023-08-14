@@ -1,0 +1,36 @@
+[
+  {
+    "type": "Title",
+    "element_id": "b2c1cf36a9b45cdefac07d1899b96ff1",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-08-04T18:31:00.000Z",
+        "date_modified": "2023-08-04T18:31:00.000Z",
+        "date_processed": "2023-08-11T19:00:29.654096"
+      },
+      "filename": "dfcbe584-30b1-4551-b533-e6a5759af842.html",
+      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
+      "last_modified": "2023-08-11T19:00:29",
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": "Corporate Travel"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "ea6b271473e6accb79547f998e68f3d2",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-08-04T18:31:00.000Z",
+        "date_modified": "2023-08-04T18:31:00.000Z",
+        "date_processed": "2023-08-11T19:00:29.654096"
+      },
+      "filename": "dfcbe584-30b1-4551-b533-e6a5759af842.html",
+      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
+      "last_modified": "2023-08-11T19:00:29",
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": "💡\n      \n      Notion Tip: A corporate travel policy is crucial for controlling costs, ensuring compliance, and guaranteeing the safety of employees when traveling for the company."
+  }
+]
