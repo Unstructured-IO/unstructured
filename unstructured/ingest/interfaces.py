@@ -20,7 +20,7 @@ from unstructured.staging.base import convert_to_dict
 
 @dataclass
 class BaseSessionHandle(ABC):
-    """Abstract definition on which to define resources that are shared across each process/thread.
+    """Abstract definition on which to define resources that local to an individual process.
     e.g., a connection for making a request for fetching documents."""
 
 
