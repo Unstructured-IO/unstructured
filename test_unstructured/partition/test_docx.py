@@ -314,19 +314,14 @@ def test_partition_docx_from_file_without_metadata_date(
 
 
 def test_get_emphasized_texts_from_paragraph(
+    expected_emphasized_texts,
     filename="example-docs/fake-doc-emphasized-text.docx",
 ):
-    expected = [
-        {"text": "bold", "tag": "b"},
-        {"text": "italic", "tag": "i"},
-        {"text": "bold-italic", "tag": "b"},
-        {"text": "bold-italic", "tag": "i"},
-    ]
     document = docx.Document(filename)
     paragraph = document.paragraphs[1]
     emphasized_texts = _get_emphasized_texts_from_paragraph(paragraph)
     assert paragraph.text == "I am a bold italic bold-italic text."
-    assert emphasized_texts == expected
+    assert emphasized_texts == expected_emphasized_texts
 
     paragraph = document.paragraphs[2]
     emphasized_texts = _get_emphasized_texts_from_paragraph(paragraph)
@@ -340,18 +335,13 @@ def test_get_emphasized_texts_from_paragraph(
 
 
 def test_get_emphasized_texts_from_table(
+    expected_emphasized_texts,
     filename="example-docs/fake-doc-emphasized-text.docx",
 ):
-    expected = [
-        {"text": "bold", "tag": "b"},
-        {"text": "italic", "tag": "i"},
-        {"text": "bold-italic", "tag": "b"},
-        {"text": "bold-italic", "tag": "i"},
-    ]
     document = docx.Document(filename)
     table = document.tables[0]
     emphasized_texts = _get_emphasized_texts_from_table(table)
-    assert emphasized_texts == expected
+    assert emphasized_texts == expected_emphasized_texts
 
 
 def test_extract_contents_and_tags(
