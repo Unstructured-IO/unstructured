@@ -9,6 +9,7 @@
 
 ### Fixes
 * fix pdf partition of list items being detected as titles in OCR only mode
+* Update dead links in repository README (Quick Start > Install for local development, and Learn more > Batch Processing)
 
 ## 0.9.3
 
