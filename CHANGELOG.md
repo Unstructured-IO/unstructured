@@ -4,6 +4,8 @@
 
 ### Features
 
+* add multipage tiff image extraction test case
+
 ### Fixes
 
 * fix pdf partition of list items being detected as titles in OCR only mode
