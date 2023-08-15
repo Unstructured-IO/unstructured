@@ -394,9 +394,8 @@ def test_partition_pdf_with_copy_protection():
     assert {element.metadata.page_number for element in elements} == {1, 2}
 
 
-def test_partition_pdf_requiring_recursive_text_grab(
-    filename="example-docs/reliance.pdf",
-):
+def test_partition_pdf_with_dpi():
+    filename = os.path.join("example-docs", "copy-protected.pdf")
     with mock.patch.object(layout, "process_file_with_model", mock.MagicMock()) as mock_process:
         pdf.partition_pdf(filename=filename, strategy="hi_res", pdf_image_dpi=100)
         mock_process.assert_called_once_with(

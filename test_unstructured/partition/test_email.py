@@ -295,7 +295,7 @@ def test_partition_email_from_file_with_header():
 
 
 def test_partition_email_from_filename_has_metadata(
-    filename="example-docs/eml/fake-email-header.eml",
+    filename="example-docs/eml/fake-email.eml",
 ):
     elements = partition_email(filename=filename)
     print("TEST@")
@@ -303,7 +303,7 @@ def test_partition_email_from_filename_has_metadata(
     print(
         ElementMetadata(
             coordinates=None,
-            filename="fake-email-header.eml",
+            filename="fake-email.eml",
             last_modified="2022-12-16T17:04:16-05:00",
             page_number=None,
             url=None,
@@ -319,7 +319,7 @@ def test_partition_email_from_filename_has_metadata(
         elements[0].metadata.to_dict()
         == ElementMetadata(
             coordinates=None,
-            filename="fake-email-header.eml",
+            filename="fake-email.eml",
             last_modified="2022-12-16T17:04:16-05:00",
             page_number=None,
             url=None,

@@ -33,8 +33,7 @@ ATTACH_EXPECTED_OUTPUT = [
 ]
 
 
-def test_partition_msg_from_filename():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
+def test_partition_msg_from_filename(filename="example-docs/fake-email.msg"):
     elements = partition_msg(filename=filename)
     assert elements == EXPECTED_MSG_OUTPUT
     assert (
