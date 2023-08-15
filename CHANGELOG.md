@@ -9,7 +9,8 @@
 
 ### Fixes
 * fix pdf partition of list items being detected as titles in OCR only mode
-* Update dead links in repository README (Quick Start > Install for local development, and Learn more > Batch Processing)
+* Fix dead links in repository README (Quick Start > Install for local development, and Learn more > Batch Processing)
+* Update document dependencies to include tesseract-lang for additional language support (required for tests to pass)
 
 ## 0.9.3
 

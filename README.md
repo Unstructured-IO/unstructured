@@ -117,7 +117,7 @@ installation.
   Depending on what document types you're parsing, you may not need all of these.
     - `libmagic-dev` (filetype detection)
     - `poppler-utils` (images and PDFs)
-    - `tesseract-ocr` (images and PDFs)
+    - `tesseract-ocr` (images and PDFs, install `tesseract-lang` for additional language support)
     - `libreoffice` (MS Office docs)
     - `pandoc` (EPUBs, RTFs and Open Office docs)
 
