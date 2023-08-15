@@ -9,7 +9,9 @@ alabaster==0.7.13
 babel==2.12.1
     # via sphinx
 beautifulsoup4==4.12.2
-    # via furo
+    # via
+    #   -c requirements/base.txt
+    #   furo
 certifi==2023.7.22
     # via
     #   -c requirements/base.txt
@@ -53,7 +55,9 @@ requests==2.31.0
 snowballstemmer==2.2.0
     # via sphinx
 soupsieve==2.4.1
-    # via beautifulsoup4
+    # via
+    #   -c requirements/base.txt
+    #   beautifulsoup4
 sphinx==6.2.1
     # via
     #   -r requirements/build.in

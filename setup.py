@@ -41,7 +41,7 @@ def load_requirements(file_list: Optional[Union[str, List[str]]] = None) -> List
 
 csv_reqs = load_requirements("requirements/extra-csv.in")
 docx_reqs = load_requirements("requirements/extra-docx.in")
-epub_reqs = load_requirements("requirements/extra-pandoc.in")
+epub_reqs = load_requirements("requirements/extra-epub.in")
 image_reqs = load_requirements("requirements/extra-pdf-image.in")
 markdown_reqs = load_requirements("requirements/extra-markdown.in")
 msg_reqs = load_requirements("requirements/extra-msg.in")
@@ -140,6 +140,7 @@ setup(
         "onedrive": load_requirements("requirements/ingest-onedrive.in"),
         "outlook": load_requirements("requirements/ingest-outlook.in"),
         "confluence": load_requirements("requirements/ingest-confluence.in"),
+        "airtable": load_requirements("requirements/ingest-airtable.in"),
         # Legacy extra requirements
         "huggingface": load_requirements("requirements/huggingface.in"),
         "local-inference": all_doc_reqs,

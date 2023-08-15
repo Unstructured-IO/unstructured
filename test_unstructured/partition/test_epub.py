@@ -4,6 +4,18 @@ import pathlib
 from unstructured.partition.epub import partition_epub
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
+expected_sections = {
+    "CHAPTER I THE SUN-SEEKER",
+    "CHAPTER II RINKS AND SKATERS",
+    "CHAPTER III TEES AND CRAMPITS",
+    "CHAPTER IV TOBOGGANING",
+    # not included in expected sections because TOC doesn't perfectly match with EpubHtml items
+    # 'CHAPTER V ICE-HOCKEY',
+    "CHAPTER VI SKI-ING",
+    "CHAPTER VII NOTES ON WINTER RESORTS",
+    "CHAPTER VIII FOR PARENTS AND GUARDIANS",
+    "THE FULL PROJECT GUTENBERG LICENSE",
+}
 
 
 def test_partition_epub_from_filename():
@@ -11,8 +23,12 @@ def test_partition_epub_from_filename():
     elements = partition_epub(filename=filename)
     assert len(elements) > 0
     assert elements[0].text.startswith("The Project Gutenberg eBook of Winter Sports")
+    all_sections = set()
     for element in elements:
         assert element.metadata.filename == "winter-sports.epub"
+        assert element.metadata.section is not None
+        all_sections.add(element.metadata.section)
+    assert all_sections == expected_sections
 
 
 def test_partition_epub_from_filename_with_metadata_filename():
@@ -20,6 +36,7 @@ def test_partition_epub_from_filename_with_metadata_filename():
     elements = partition_epub(filename=filename, metadata_filename="test")
     assert len(elements) > 0
     assert all(element.metadata.filename == "test" for element in elements)
+    assert all(element.metadata.section is not None for element in elements)
 
 
 def test_partition_epub_from_file():
@@ -28,8 +45,11 @@ def test_partition_epub_from_file():
         elements = partition_epub(file=f)
     assert len(elements) > 0
     assert elements[0].text.startswith("The Project Gutenberg eBook of Winter Sports")
+    all_sections = set()
     for element in elements:
         assert element.metadata.filename is None
+        all_sections.add(element.metadata.section)
+    assert all_sections == expected_sections
 
 
 def test_partition_epub_from_file_with_metadata_filename():
@@ -47,6 +67,7 @@ def test_partition_epub_from_filename_exclude_metadata():
     assert elements[0].metadata.filetype is None
     assert elements[0].metadata.page_name is None
     assert elements[0].metadata.filename is None
+    assert elements[0].metadata.section is None
 
 
 def test_partition_epub_from_file_exlcude_metadata():
@@ -56,6 +77,7 @@ def test_partition_epub_from_file_exlcude_metadata():
     assert elements[0].metadata.filetype is None
     assert elements[0].metadata.page_name is None
     assert elements[0].metadata.filename is None
+    assert elements[0].metadata.section is None
 
 
 def test_partition_epub_metadata_date(
@@ -64,7 +86,7 @@ def test_partition_epub_metadata_date(
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
     mocker.patch(
-        "unstructured.partition.html.get_last_modified_date",
+        "unstructured.partition.epub.get_last_modified_date",
         return_value=mocked_last_modification_date,
     )
     elements = partition_epub(filename=filename)
@@ -99,7 +121,7 @@ def test_partition_epub_from_file_metadata_date(
     mocked_last_modification_date = "2029-07-05T09:24:28"
 
     mocker.patch(
-        "unstructured.partition.html.get_last_modified_date_from_file",
+        "unstructured.partition.epub.get_last_modified_date_from_file",
         return_value=mocked_last_modification_date,
     )
 

@@ -503,6 +503,7 @@ def document_to_element_list(
     include_page_breaks: bool = False,
     sort: bool = False,
     last_modification_date: Optional[str] = None,
+    **kwargs,
 ) -> List[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
     elements: List[Element] = []
@@ -546,6 +547,7 @@ def document_to_element_list(
                 filetype=image_format,
                 coordinates=coordinates,
                 coordinate_system=coordinate_system,
+                **kwargs,
             )
         if sort:
             page_elements = sorted(
