@@ -37,20 +37,17 @@ def test_partition_xlsx_from_filename_with_metadata_filename(
     assert all(isinstance(element, Table) for element in elements)
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
     assert elements[0].metadata.filename == "test"
-    
-    
-def test_partition_xlsx_from_filename_with_header(filename="example-docs/stanley-cups.xlsx"):
-    elements = partition_xlsx(filename=filename)
 
+
+def test_partition_xlsx_from_filename_with_header(filename="example-docs/stanley-cups.xlsx"):
+    elements = partition_xlsx(filename=filename, include_header=True)
     assert all(isinstance(element, Table) for element in elements)
     assert len(elements) == 2
-
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
-    assert elements[0].metadata.text_as_html == EXPECTED_TABLE
-    assert elements[0].metadata.page_number == 1
-    assert elements[0].metadata.filetype == EXPECTED_FILETYPE
-    assert elements[0].metadata.page_name == EXCEPTED_PAGE_NAME
-    assert elements[0].metadata.filename == "stanley-cups.xlsx"
+    assert (
+        clean_extra_whitespace(elements[0].text)
+        == "Stanley Cups Unnamed: 1 Unnamed: 2 " + EXPECTED_TEXT
+    )
+    assert "<thead>" in elements[0].metadata.text_as_html
 
 
 def test_partition_xlsx_from_file(filename="example-docs/stanley-cups.xlsx"):
@@ -74,6 +71,19 @@ def test_partition_xlsx_from_file_with_metadata_filename(filename="example-docs/
     assert all(isinstance(element, Table) for element in elements)
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
     assert elements[0].metadata.filename == "test"
+
+
+def test_partition_xlsx_from_file_with_header(filename="example-docs/stanley-cups.xlsx"):
+    with open(filename, "rb") as f:
+        elements = partition_xlsx(file=f, include_header=True)
+
+    assert all(isinstance(element, Table) for element in elements)
+    assert len(elements) == 2
+    assert (
+        clean_extra_whitespace(elements[0].text)
+        == "Stanley Cups Unnamed: 1 Unnamed: 2 " + EXPECTED_TEXT
+    )
+    assert "<thead>" in elements[0].metadata.text_as_html
 
 
 def test_partition_xlsx_filename_exclude_metadata(filename="example-docs/stanley-cups.xlsx"):
