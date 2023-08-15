@@ -6,6 +6,8 @@
 
 ### Fixes
 
+* fix pdf partition of list items being detected as titles in OCR only mode
+
 ## 0.9.3
 
 ### Enhancements
@@ -26,6 +28,7 @@
 
 ### Fixes
 
+* fix pdf partition of list items being detected as titles in OCR only mode
 * make notion module discoverable
 * fix emails with `Content-Distribution: inline` and `Content-Distribution: attachment` with no filename
 * Fix email attachment filenames which had `=` in the filename itself
