@@ -15,9 +15,8 @@ charset-normalizer==3.2.0
     # via
     #   -c requirements/base.txt
     #   requests
-cryptography==41.0.2
+cryptography==41.0.3
     # via
-    #   -r requirements/ingest-sharepoint.in
     #   msal
     #   pyjwt
 idna==3.4
@@ -29,13 +28,13 @@ msal==1.23.0
     #   -r requirements/ingest-sharepoint.in
     #   office365-rest-python-client
 office365-rest-python-client==2.4.2
-    # via -r requirements/ingest-sharepoint.in
+    # via
+    #   -c requirements/constraints.in
+    #   -r requirements/ingest-sharepoint.in
 pycparser==2.21
     # via cffi
 pyjwt[crypto]==2.8.0
-    # via
-    #   -r requirements/ingest-sharepoint.in
-    #   msal
+    # via msal
 pytz==2023.3
     # via office365-rest-python-client
 requests==2.31.0
