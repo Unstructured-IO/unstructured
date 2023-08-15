@@ -1,13 +1,11 @@
 ## 0.9.4-dev0
 
-
 ### Enhancements
-
 
 ### Features
 
-
 ### Fixes
+
 * fix pdf partition of list items being detected as titles in OCR only mode
 
 ## 0.9.3
