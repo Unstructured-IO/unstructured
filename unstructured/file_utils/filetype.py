@@ -642,22 +642,18 @@ def add_metadata_with_filetype(filetype: FileType):
                 )
                 filename = params.get("filename")
 
-                if metadata_filename:
-                    _filename = metadata_filename
-                else:
-                    if not filename:
-                        return _remove_element_metadata(elements)
-                    _filename = filename
+                if metadata_filename and not include_path_in_metadata_filename:
+                    params["filename"] = params.get("metadata_filename")
 
-                if include_path_in_metadata_filename:
+                if metadata_filename and include_path_in_metadata_filename and filename:
                     params["filename"] = create_metadata_filename(
                         filename=filename,
                         metadata_filename=metadata_filename,
                     )
-                else:
-                    file_directory, filename_no_dir = os.path.split(_filename)
+                if params["filename"] is not None and not include_path_in_metadata_filename:
+                    file_directory, filename = os.path.split(params["filename"])
                     params["file_directory"] = file_directory or None
-                    params["filename"] = filename_no_dir
+                    params["filename"] = filename
 
                 metadata_kwargs = {
                     kwarg: params.get(kwarg)
