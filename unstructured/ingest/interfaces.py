@@ -19,6 +19,19 @@ from unstructured.staging.base import convert_to_dict
 
 
 @dataclass
+class ProcessorConfigs:
+    """Common set of config required when running data connectors."""
+
+    partition_strategy: str
+    partition_ocr_languages: str
+    partition_pdf_infer_table_structure: bool
+    partition_encoding: str
+    num_processes: int
+    reprocess: bool
+    max_docs: int
+
+
+@dataclass
 class StandardConnectorConfig:
     """Common set of config options passed to all connectors."""
 

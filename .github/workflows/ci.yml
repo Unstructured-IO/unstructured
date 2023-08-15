@@ -5,6 +5,8 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  merge_group:
+    branches: [ main ]
 
 env:
   GHA_CACHE_KEY_VERSION: "v1"
@@ -184,14 +186,25 @@ jobs:
         PYTHONPATH=. pytest test_unstructured_ingest/unit
     - name: Test (end-to-end)
       env:
-        GH_READ_ONLY_ACCESS_TOKEN: ${{ secrets.GH_READ_ONLY_ACCESS_TOKEN }}
-        SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
-        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-        CONFLUENCE_USER_EMAIL: ${{ secrets.CONFLUENCE_USER_EMAIL }}
+        AIRTABLE_PERSONAL_ACCESS_TOKEN: ${{ secrets.AIRTABLE_PERSONAL_ACCESS_TOKEN }}
+        BOX_APP_CONFIG: ${{ secrets.BOX_APP_CONFIG }}
         CONFLUENCE_API_TOKEN: ${{ secrets.CONFLUENCE_API_TOKEN }}
+        CONFLUENCE_USER_EMAIL: ${{ secrets.CONFLUENCE_USER_EMAIL }}
+        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+        DROPBOX_APP_KEY: ${{ secrets.DROPBOX_APP_KEY }}
+        DROPBOX_APP_SECRET: ${{ secrets.DROPBOX_APP_SECRET }}
+        DROPBOX_REFRESH_TOKEN: ${{ secrets.DROPBOX_REFRESH_TOKEN }}
         GCP_INGEST_SERVICE_KEY: ${{ secrets.GCP_INGEST_SERVICE_KEY }}
-        MS_CLIENT_ID: ${{ secrets.MS_CLIENT_ID }}
+        GH_READ_ONLY_ACCESS_TOKEN: ${{ secrets.GH_READ_ONLY_ACCESS_TOKEN }}
         MS_CLIENT_CRED: ${{ secrets.MS_CLIENT_CRED }}
+        MS_CLIENT_ID: ${{ secrets.MS_CLIENT_ID }}
+        MS_TENANT_ID: ${{ secrets.MS_TENANT_ID }}
+        MS_USER_EMAIL: ${{ secrets.MS_USER_EMAIL }}
+        MS_USER_PNAME: ${{ secrets.MS_USER_PNAME }}
+        SHAREPOINT_CLIENT_ID: ${{secrets.SHAREPOINT_CLIENT_ID}}
+        SHAREPOINT_CRED: ${{secrets.SHAREPOINT_CRED}}
+        SHAREPOINT_SITE: ${{secrets.SHAREPOINT_SITE}}
+        SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
       run: |
         source .venv/bin/activate
@@ -202,7 +215,9 @@ jobs:
         sudo apt-get install -y tesseract-ocr-kor
         tesseract --version
         make install-ingest-s3
+        make install-ingest-airtable
         make install-ingest-azure
+        make install-ingest-box
         make install-ingest-confluence
         make install-ingest-discord
         make install-ingest-elasticsearch
@@ -212,9 +227,57 @@ jobs:
         make install-ingest-github
         make install-ingest-gitlab
         make install-ingest-onedrive
+        make install-ingest-outlook
         make install-ingest-slack
         make install-ingest-wikipedia
         ./test_unstructured_ingest/test-ingest.sh
+
+  test_unstructured_api_unit:
+    strategy:
+      matrix:
+        # NOTE(yuming): Unstructured API only use Python 3.8
+        python-version: ["3.8"]
+    runs-on: ubuntu-latest
+    env:
+      NLTK_DATA: ${{ github.workspace }}/nltk_data
+    needs: [setup, lint]
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/cache/restore@v3
+      id: virtualenv-cache
+      with:
+        path: |
+          .venv
+          nltk_data
+        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+    - name: Set up flag for running Unstructured API unit tests
+      run: |
+        # NOTE: Change env `SKIP_API_UNIT_FOR_BREAKING_CHANGE` to true if there is a breaking change in Unstructured repo that will break unstructured api unit tests
+        # TODO: Change env back to false once API unit tests is in sync with unstructured repo
+        echo "SKIP_API_UNIT_FOR_BREAKING_CHANGE=true" >> $GITHUB_ENV
+    - name: Set up Python ${{ matrix.python-version }}
+      if: env.SKIP_API_UNIT_FOR_BREAKING_CHANGE == 'false'
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Setup virtual environment (no cache hit)
+      if: steps.virtualenv-cache.outputs.cache-hit != 'true' &&  env.SKIP_API_UNIT_FOR_BREAKING_CHANGE == 'false'
+      run: |
+        python${{ matrix.python-version}} -m venv .venv
+        source .venv/bin/activate
+        mkdir "$NLTK_DATA"
+        make install-ci
+    - name: Test Unstructured API Unit
+      if: env.SKIP_API_UNIT_FOR_BREAKING_CHANGE == 'false'
+      run: |
+        source .venv/bin/activate
+        sudo apt-get update && sudo apt-get install --yes poppler-utils libreoffice
+        make install-pandoc
+        sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
+        sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
+        tesseract --version
+        make install-nltk-models
+        make test-unstructured-api-unit
 
   changelog:
     runs-on: ubuntu-latest

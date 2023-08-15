@@ -4,24 +4,21 @@
 #
 #    pip-compile requirements/ingest-github.in
 #
-certifi==2023.5.7
+certifi==2023.7.22
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   requests
 cffi==1.15.1
     # via
-    #   -c requirements/base.txt
     #   cryptography
     #   pynacl
 charset-normalizer==3.2.0
     # via
     #   -c requirements/base.txt
     #   requests
-cryptography==41.0.2
-    # via
-    #   -c requirements/base.txt
-    #   pyjwt
+cryptography==41.0.3
+    # via pyjwt
 deprecated==1.2.14
     # via pygithub
 idna==3.4
@@ -29,12 +26,10 @@ idna==3.4
     #   -c requirements/base.txt
     #   requests
 pycparser==2.21
-    # via
-    #   -c requirements/base.txt
-    #   cffi
-pygithub==1.58.2
+    # via cffi
+pygithub==1.59.1
     # via -r requirements/ingest-github.in
-pyjwt[crypto]==2.7.0
+pyjwt[crypto]==2.8.0
     # via pygithub
 pynacl==1.5.0
     # via pygithub

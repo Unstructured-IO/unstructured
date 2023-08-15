@@ -2,12 +2,16 @@ import re
 import textwrap
 from typing import IO, Callable, List, Optional, Tuple
 
-from unstructured.cleaners.core import clean_bullets, group_broken_paragraphs
+from unstructured.cleaners.core import (
+    auto_paragraph_grouper,
+    clean_bullets,
+)
 from unstructured.documents.coordinates import CoordinateSystem
 from unstructured.documents.elements import (
     Address,
     Element,
     ElementMetadata,
+    EmailAddress,
     ListItem,
     NarrativeText,
     Text,
@@ -18,13 +22,43 @@ from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.nlp.tokenize import sent_tokenize
-from unstructured.partition.common import exactly_one
+from unstructured.partition.common import (
+    exactly_one,
+    get_last_modified_date,
+    get_last_modified_date_from_file,
+)
 from unstructured.partition.text_type import (
     is_bulleted_text,
+    is_email_address,
     is_possible_narrative_text,
     is_possible_title,
     is_us_city_state_zip,
 )
+
+
+def split_by_paragraph(
+    file_text: str,
+    min_partition: Optional[int] = 0,
+    max_partition: Optional[int] = 1500,
+) -> List[str]:
+    paragraphs = re.split(PARAGRAPH_PATTERN, file_text.strip())
+
+    split_paragraphs = []
+    for paragraph in paragraphs:
+        split_paragraphs.extend(
+            split_content_to_fit_max(
+                content=paragraph,
+                max_partition=max_partition,
+            ),
+        )
+
+    combined_paragraphs = combine_paragraphs_less_than_min(
+        split_paragraphs=split_paragraphs,
+        max_partition=max_partition,
+        min_partition=min_partition,
+    )
+
+    return combined_paragraphs
 
 
 def _split_in_half_at_breakpoint(
@@ -94,56 +128,29 @@ def combine_paragraphs_less_than_min(
     min_partition: Optional[int] = 0,
 ) -> List[str]:
     """Combine paragraphs less than `min_partition` while not exceeding `max_partition`."""
-    if type(split_paragraphs) is not list:
-        raise ValueError("`split_paragraphs` is not a list")
-    file_content: List[str] = []
-    tmp_paragraph = ""
-    next_index = 0
-    for current_index, paragraph in enumerate(split_paragraphs):
-        if next_index > current_index:
-            continue  # Skip the current iteration if `next_index`` is already updated
-        if min_partition is not None and len(paragraph) < min_partition:
-            # Combine paragraphs that are less than `min_partition``
-            # while not exceeding `max_partition``
-            tmp_paragraph += paragraph + "\n"
+    min_partition = min_partition or 0
+    max_possible_partition = len(" ".join(split_paragraphs))
+    max_partition = max_partition or max_possible_partition
 
-            while len(tmp_paragraph.strip()) < min_partition:
-                if current_index + 1 == len(split_paragraphs):
-                    # If it's the last paragraph, append the paragraph
-                    # to the previous content
-                    file_content[-1] += " " + tmp_paragraph.rstrip()
-                    tmp_paragraph = ""
-                    break
-                for offset_index, para in enumerate(
-                    split_paragraphs[current_index + 1 :], start=1  # noqa
-                ):
-                    if (
-                        max_partition is not None
-                        and len(tmp_paragraph + "\n" + para) < max_partition
-                    ):
-                        tmp_paragraph += "\n" + para
-                        # Update `next_index` to skip already combined paragraphs
-                        next_index = offset_index + current_index + 1
+    combined_paras = []
+    combined_idxs = []
+    for i, para in enumerate(split_paragraphs):
+        if i in combined_idxs:
+            continue
 
-                    if len(tmp_paragraph.strip()) > min_partition:
-                        break  # Stop combining if the combined paragraphs
-                        # meet the `min_partition`` requirement
-                    elif (
-                        max_partition is not None
-                        and len(tmp_paragraph) < min_partition
-                        and len(tmp_paragraph + "\n" + para) > max_partition
-                    ):
-                        raise ValueError(
-                            "`min_partition` and `max_partition` are defined too close together",
-                        )
-            # Add the combined paragraph to the final result
-            file_content.append(
-                tmp_paragraph.strip(),
-            )
-            tmp_paragraph = ""
+        if len(para) >= min_partition:
+            combined_paras.append(para)
         else:
-            file_content.append(paragraph)
-    return file_content
+            combined_para = para
+            for j, next_para in enumerate(split_paragraphs[i + 1 :]):  # noqa
+                if len(combined_para) + len(next_para) + 1 <= max_partition:
+                    combined_idxs.append(i + j + 1)
+                    combined_para += " " + next_para
+                else:
+                    break
+            combined_paras.append(combined_para)
+
+    return combined_paras
 
 
 @process_metadata()
@@ -158,6 +165,7 @@ def partition_text(
     include_metadata: bool = True,
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
+    metadata_last_modified: Optional[str] = None,
     include_path_in_metadata_filename: bool = False,
     **kwargs,
 ) -> List[Element]:
@@ -184,6 +192,8 @@ def partition_text(
         no maximum is applied.
     min_partition
         The minimum number of characters to include in a partition.
+    metadata_last_modified
+        The day of the last modification
     include_path_in_metadata_filename
         Determines whether or not metadata filename will contain full path
 
@@ -201,11 +211,14 @@ def partition_text(
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text)
 
+    last_modification_date = None
     if filename is not None:
         encoding, file_text = read_txt_file(filename=filename, encoding=encoding)
+        last_modification_date = get_last_modified_date(filename)
 
     elif file is not None:
         encoding, file_text = read_txt_file(file=file, encoding=encoding)
+        last_modification_date = get_last_modified_date_from_file(file)
 
     elif text is not None:
         file_text = str(text)
@@ -215,33 +228,22 @@ def partition_text(
     elif paragraph_grouper is not None:
         file_text = paragraph_grouper(file_text)
     else:
-        file_text = group_broken_paragraphs(file_text)
+        file_text = auto_paragraph_grouper(file_text)
 
     if min_partition is not None and len(file_text) < min_partition:
         raise ValueError("`min_partition` cannot be larger than the length of file contents.")
 
-    split_paragraphs = re.split(PARAGRAPH_PATTERN, file_text.strip())
-
-    paragraphs = combine_paragraphs_less_than_min(
-        split_paragraphs=split_paragraphs,
-        max_partition=max_partition,
+    file_content = split_by_paragraph(
+        file_text,
         min_partition=min_partition,
+        max_partition=max_partition,
     )
-
-    file_content = []
-
-    for paragraph in paragraphs:
-        file_content.extend(
-            split_content_to_fit_max(
-                content=paragraph,
-                max_partition=max_partition,
-            ),
-        )
 
     elements: List[Element] = []
     metadata = (
         ElementMetadata(
             filename=metadata_filename or filename,
+            last_modified=metadata_last_modified or last_modification_date,
         )
         if include_metadata
         else ElementMetadata()
@@ -268,6 +270,8 @@ def element_from_text(
             coordinates=coordinates,
             coordinate_system=coordinate_system,
         )
+    elif is_email_address(text):
+        return EmailAddress(text=text)
     elif is_us_city_state_zip(text):
         return Address(
             text=text,

@@ -4,14 +4,14 @@
 #
 #    pip-compile requirements/ingest-elasticsearch.in
 #
-certifi==2023.5.7
+certifi==2023.7.22
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   elastic-transport
 elastic-transport==8.4.0
     # via elasticsearch
-elasticsearch==8.8.2
+elasticsearch==8.9.0
     # via -r requirements/ingest-elasticsearch.in
 jq==1.4.1
     # via -r requirements/ingest-elasticsearch.in

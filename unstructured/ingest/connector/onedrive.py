@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, Optional
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.ingest.interfaces import (
@@ -26,14 +26,14 @@ class SimpleOneDriveConfig(BaseConnectorConfig):
     client_credential: str = field(repr=False)
     user_pname: str
     tenant: str = field(repr=False)
-    authority_url: str = field(repr=False)
-    folder: str = field(default="")
+    authority_url: Optional[str] = field(repr=False)
+    path: Optional[str] = field(default="")
     recursive: bool = False
 
     def __post_init__(self):
         if not (self.client_id and self.client_credential and self.user_pname):
             raise ValueError(
-                "Please provide one of the following mandatory values:"
+                "Please provide all the following mandatory values:"
                 "\n-ms-client_id\n-ms-client_cred\n-ms-user-pname",
             )
         self.token_factory = self._acquire_token
@@ -65,7 +65,7 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         if not self.ext:
             raise ValueError("Unsupported file without extension.")
 
-        if self.ext not in EXT_TO_FILETYPE.keys():
+        if self.ext not in EXT_TO_FILETYPE:
             raise ValueError(
                 f"Extension not supported. "
                 f"Value MUST be one of {', '.join([k for k in EXT_TO_FILETYPE if k is not None])}.",
@@ -150,7 +150,7 @@ class OneDriveConnector(ConnectorCleanupMixin, BaseConnector):
 
     def get_ingest_docs(self):
         root = self.client.users[self.config.user_pname].drive.get().execute_query().root
-        if fpath := self.config.folder:
+        if fpath := self.config.path:
             root = root.get_by_path(fpath).get().execute_query()
             if root is None or not root.is_folder:
                 raise ValueError(f"Unable to find directory, given: {fpath}")

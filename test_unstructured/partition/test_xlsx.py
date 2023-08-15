@@ -22,6 +22,13 @@ def test_partition_xlsx_from_filename(filename="example-docs/stanley-cups.xlsx")
     assert elements[0].metadata.filename == "stanley-cups.xlsx"
 
 
+def test_partition_xlsx_from_filename_with_emoji(filename="example-docs/emoji.xlsx"):
+    elements = partition_xlsx(filename=filename)
+    assert all(isinstance(element, Table) for element in elements)
+    assert len(elements) == 1
+    assert clean_extra_whitespace(elements[0].text) == "🤠😅"
+
+
 def test_partition_xlsx_from_filename_with_metadata_filename(
     filename="example-docs/stanley-cups.xlsx",
 ):
@@ -82,6 +89,81 @@ def test_partition_xlsx_from_file_exclude_metadata(filename="example-docs/stanle
     assert elements[0].metadata.filetype is None
     assert elements[0].metadata.page_name is None
     assert elements[0].metadata.filename is None
+
+
+def test_partition_xlsx_metadata_date(
+    mocker,
+    filename="example-docs/stanley-cups.xlsx",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.xlsx.get_last_modified_date",
+        return_value=mocked_last_modification_date,
+    )
+
+    elements = partition_xlsx(
+        filename=filename,
+    )
+
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
+
+
+def test_partition_xlsx_with_custom_metadata_date(
+    mocker,
+    filename="example-docs/stanley-cups.xlsx",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    expected_last_modification_date = "2020-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.xlsx.get_last_modified_date",
+        return_value=mocked_last_modification_date,
+    )
+
+    elements = partition_xlsx(
+        filename=filename,
+        metadata_last_modified=expected_last_modification_date,
+    )
+
+    assert elements[0].metadata.last_modified == expected_last_modification_date
+
+
+def test_partition_xlsx_from_file_metadata_date(
+    mocker,
+    filename="example-docs/stanley-cups.xlsx",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.xlsx.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+
+    with open(filename, "rb") as f:
+        elements = partition_xlsx(
+            file=f,
+        )
+
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
+
+
+def test_partition_xlsx_from_file_with_custom_metadata_date(
+    mocker,
+    filename="example-docs/stanley-cups.xlsx",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    expected_last_modification_date = "2020-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.xlsx.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+
+    with open(filename, "rb") as f:
+        elements = partition_xlsx(file=f, metadata_last_modified=expected_last_modification_date)
+
+    assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
 def test_partition_tsv_with_include_path_in_metadata_filename(

@@ -6,7 +6,11 @@ import requests
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.documents.xml import VALID_PARSERS
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
-from unstructured.partition.common import exactly_one
+from unstructured.partition.common import (
+    exactly_one,
+    get_last_modified_date,
+    get_last_modified_date_from_file,
+)
 from unstructured.partition.html import partition_html
 
 
@@ -27,6 +31,7 @@ def partition_md(
     include_metadata: bool = True,
     parser: VALID_PARSERS = None,
     metadata_filename: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
     include_path_in_metadata_filename: bool = False,
     **kwargs,
 ) -> List[Element]:
@@ -48,6 +53,8 @@ def partition_md(
         Determines whether or not metadata is included in the output.
     parser
         The parser to use for parsing the markdown document. If None, default parser will be used.
+    metadata_last_modified
+        The last modified date for the document.
     include_path_in_metadata_filename
         Determines whether or not metadata filename will contain full path
     """
@@ -56,11 +63,14 @@ def partition_md(
         text = ""
     exactly_one(filename=filename, file=file, text=text, url=url)
 
+    last_modification_date = None
     if filename is not None:
+        last_modification_date = get_last_modified_date(filename)
         with open(filename, encoding="utf8") as f:
             text = optional_decode(f.read())
 
     elif file is not None:
+        last_modification_date = get_last_modified_date_from_file(file)
         text = optional_decode(file.read())
 
     elif url is not None:
@@ -84,5 +94,6 @@ def partition_md(
         include_metadata=include_metadata,
         parser=parser,
         metadata_filename=metadata_filename,
+        metadata_last_modified=metadata_last_modified or last_modification_date,
         include_path_in_metadata_filename=include_path_in_metadata_filename,
     )

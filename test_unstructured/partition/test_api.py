@@ -29,7 +29,6 @@ class MockResponse:
         "text": "This is a test email to use for unit tests.",
         "type": "NarrativeText",
         "metadata": {
-            "date": "2022-12-16T17:04:16-05:00",
             "sent_from": [
                 "Matthew Robinson <mrobinson@unstructured.io>"
             ],
@@ -99,6 +98,35 @@ def test_partition_via_api_raises_with_bad_response(monkeypatch):
 
 @pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
 @pytest.mark.skipif(skip_not_on_main, reason="Skipping test run outside of main branch")
+def test_partition_via_api_with_no_strategy():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.jpg")
+
+    elements_no_strategy = partition_via_api(filename=filename, api_key=get_api_key())
+    elements_hi_res = partition_via_api(filename=filename, strategy="hi_res", api_key=get_api_key())
+
+    # confirm that hi_res strategy was not passed as defaukt to partition by comparing outputs
+    assert elements_no_strategy[0].text.startswith("arXiv")
+    assert elements_hi_res[0].text.startswith("LayoutParser")
+
+
+@pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
+@pytest.mark.skipif(skip_not_on_main, reason="Skipping test run outside of main branch")
+def test_partition_via_api_with_image_hi_res_strategy_includes_coordinates():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.jpg")
+
+    # coordinates not included by default to limit payload size
+    elements = partition_via_api(
+        filename=filename,
+        strategy="hi_res",
+        coordinates="true",
+        api_key=get_api_key(),
+    )
+
+    assert elements[0].metadata.coordinates is not None
+
+
+@pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
+@pytest.mark.skipif(skip_not_on_main, reason="Skipping test run outside of main branch")
 def test_partition_via_api_valid_request_data_kwargs():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf")
 
@@ -129,7 +157,6 @@ class MockMultipleResponse:
             "text": "This is a test email to use for unit tests.",
             "type": "NarrativeText",
             "metadata": {
-                "date": "2022-12-16T17:04:16-05:00",
                 "sent_from": [
                     "Matthew Robinson <mrobinson@unstructured.io>"
                 ],
@@ -148,7 +175,6 @@ class MockMultipleResponse:
             "text": "This is a test email to use for unit tests.",
             "type": "NarrativeText",
             "metadata": {
-                "date": "2022-12-16T17:04:16-05:00",
                 "sent_from": [
                     "Matthew Robinson <mrobinson@unstructured.io>"
                 ],

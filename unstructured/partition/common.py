@@ -2,11 +2,12 @@ from __future__ import annotations
 
 import os
 import subprocess
+from datetime import datetime
 from io import BufferedReader, BytesIO, TextIOWrapper
 from tempfile import SpooledTemporaryFile
 from typing import IO, TYPE_CHECKING, Any, BinaryIO, Dict, List, Optional, Tuple, Union
 
-from docx import table as docxtable
+import emoji
 from tabulate import tabulate
 
 from unstructured.documents.coordinates import CoordinateSystem
@@ -22,12 +23,35 @@ from unstructured.documents.elements import (
 )
 from unstructured.logger import logger
 from unstructured.nlp.patterns import ENUMERATED_BULLETS_RE, UNICODE_BULLETS_RE
+from unstructured.utils import dependency_exists
+
+if dependency_exists("docx"):
+    import docx.table as docxtable
 
 if TYPE_CHECKING:
     from unstructured_inference.inference.layoutelement import (
         LayoutElement,
         LocationlessLayoutElement,
     )
+
+
+def get_last_modified_date(filename: str) -> Union[str, None]:
+    modify_date = datetime.fromtimestamp(os.path.getmtime(filename))
+    return modify_date.strftime("%Y-%m-%dT%H:%M:%S%z")
+
+
+def get_last_modified_date_from_file(
+    file: Union[IO[bytes], SpooledTemporaryFile, BinaryIO, bytes],
+) -> Union[str, None]:
+    filename = None
+    if hasattr(file, "name"):
+        filename = file.name
+
+    if not filename:
+        return None
+
+    modify_date = get_last_modified_date(filename)
+    return modify_date
 
 
 def normalize_layout_element(
@@ -128,7 +152,9 @@ def _add_element_metadata(
     text_as_html: Optional[str] = None,
     coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
     coordinate_system: Optional[CoordinateSystem] = None,
+    section: Optional[str] = None,
     file_directory: Optional[str] = None,
+    **kwargs,
 ) -> Element:
     """Adds document metadata to the document element. Document metadata includes information
     like the filename, source url, and page number."""
@@ -142,6 +168,11 @@ def _add_element_metadata(
     )
 
     links = element.links if hasattr(element, "links") and len(element.links) > 0 else None
+    emphasized_texts = (
+        element.emphasized_texts
+        if hasattr(element, "emphasized_texts") and len(element.emphasized_texts) > 0
+        else None
+    )
     metadata = ElementMetadata(
         coordinates=coordinates_metadata,
         filename=filename,
@@ -150,11 +181,12 @@ def _add_element_metadata(
         url=url,
         text_as_html=text_as_html,
         links=links,
+        emphasized_texts=emphasized_texts,
+        section=section,
         file_directory=file_directory,
     )
 
     element.metadata = metadata.merge(element.metadata)
-
     return element
 
 
@@ -289,12 +321,12 @@ def convert_to_bytes(
     return f_bytes
 
 
-def convert_ms_office_table_to_text(table: docxtable.Table, as_html: bool = True):
+def convert_ms_office_table_to_text(table: "docxtable.Table", as_html: bool = True) -> str:
     """
     Convert a table object from a Word document to an HTML table string using the tabulate library.
 
     Args:
-        table (Table): A Table object.
+        table (Table): A docx.table.Table object.
         as_html (bool): Whether to return the table as an HTML string (True) or a
             plain text string (False)
 
@@ -303,9 +335,27 @@ def convert_ms_office_table_to_text(table: docxtable.Table, as_html: bool = True
     """
     fmt = "html" if as_html else "plain"
     rows = list(table.rows)
-    headers = [cell.text for cell in rows[0].cells]
-    data = [[cell.text for cell in row.cells] for row in rows[1:]]
-    return tabulate(data, headers=headers, tablefmt=fmt)
+    if len(rows) > 0:
+        headers = [cell.text for cell in rows[0].cells]
+        data = [[cell.text for cell in row.cells] for row in rows[1:]]
+        table_text = tabulate(data, headers=headers, tablefmt=fmt)
+    else:
+        table_text = ""
+    return table_text
+
+
+def contains_emoji(s: str) -> bool:
+    """
+    Check if the input string contains any emoji characters.
+
+    Parameters:
+    - s (str): The input string to check.
+
+    Returns:
+    - bool: True if the string contains any emoji, False otherwise.
+    """
+
+    return bool(emoji.emoji_count(s))
 
 
 def create_metadata_filename(

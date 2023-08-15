@@ -5,7 +5,7 @@ import re
 import sys
 from email.message import Message
 from functools import partial
-from tempfile import SpooledTemporaryFile, TemporaryDirectory
+from tempfile import NamedTemporaryFile, SpooledTemporaryFile, TemporaryDirectory
 from typing import IO, Callable, Dict, List, Optional, Tuple, Union
 
 from unstructured.file_utils.encoding import (
@@ -111,6 +111,7 @@ def partition_email_header(msg: Message) -> List[Element]:
 def build_email_metadata(
     msg: Message,
     filename: Optional[str],
+    metadata_last_modified: Optional[str] = None,
     include_path_in_metadata_filename: Optional[bool] = False,
 ) -> ElementMetadata:
     """Creates an ElementMetadata object from the header information in the email."""
@@ -119,7 +120,7 @@ def build_email_metadata(
     if email_date is not None:
         email_date = convert_to_iso_8601(email_date)
 
-    sent_from = header_dict.get("To")
+    sent_from = header_dict.get("From")
     if sent_from is not None:
         sent_from = [sender.strip() for sender in sent_from.split(",")]
 
@@ -131,7 +132,7 @@ def build_email_metadata(
         sent_to=sent_to,
         sent_from=sent_from,
         subject=header_dict.get("Subject"),
-        date=email_date,
+        last_modified=metadata_last_modified or email_date,
         filename=filename,
     )
 
@@ -163,12 +164,11 @@ def extract_attachment_info(
             cdisp = part["content-disposition"].split(";")
             cdisp = [clean_extra_whitespace(item) for item in cdisp]
 
+            attachment_info = {}
             for item in cdisp:
-                attachment_info = {}
-
-                if item.lower() == "attachment":
+                if item.lower() in ("attachment", "inline"):
                     continue
-                key, value = item.split("=")
+                key, value = item.split("=", 1)
                 key = clean_extra_whitespace(key.replace('"', ""))
                 value = clean_extra_whitespace(value.replace('"', ""))
                 attachment_info[clean_extra_whitespace(key)] = clean_extra_whitespace(
@@ -177,13 +177,23 @@ def extract_attachment_info(
             attachment_info["payload"] = part.get_payload(decode=True)
             list_attachments.append(attachment_info)
 
-            for attachment in list_attachments:
+            for idx, attachment in enumerate(list_attachments):
                 if output_dir:
-                    filename = output_dir + "/" + attachment["filename"]
-                    with open(filename, "wb") as f:
-                        # Note(harrell) mypy wants to just us `w` when opening the file but this
-                        # causes an error since the payloads are bytes not str
-                        f.write(attachment["payload"])  # type: ignore
+                    if "filename" in attachment:
+                        filename = output_dir + "/" + attachment["filename"]
+                        with open(filename, "wb") as f:
+                            # Note(harrell) mypy wants to just us `w` when opening the file but this
+                            # causes an error since the payloads are bytes not str
+                            f.write(attachment["payload"])  # type: ignore
+                    else:
+                        with NamedTemporaryFile(
+                            mode="wb",
+                            dir=output_dir,
+                            delete=False,
+                        ) as f:
+                            list_attachments[idx]["filename"] = os.path.basename(f.name)
+                            f.write(attachment["payload"])  # type: ignore
+
     return list_attachments
 
 
@@ -242,6 +252,7 @@ def partition_email(
     max_partition: Optional[int] = 1500,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
     process_attachments: bool = False,
     attachment_partitioner: Optional[Callable] = None,
     min_partition: Optional[int] = 0,
@@ -270,6 +281,8 @@ def partition_email(
         processing the text/plain content.
     metadata_filename
         The filename to use for the metadata.
+    metadata_last_modified
+        The last modified date for the document.
     process_attachments
         If True, partition_email will process email attachments in addition to
         processing the content of the email itself.
@@ -393,6 +406,7 @@ def partition_email(
     metadata = build_email_metadata(
         msg,
         filename=metadata_filename or filename,
+        metadata_last_modified=metadata_last_modified,
     )
     for element in all_elements:
         element.metadata = metadata

@@ -22,10 +22,56 @@ These functions break a document down into elements such as ``Title``, ``Narrati
 enabling users to decide what content they'd like to keep for their particular application.
 If you're training a summarization model, for example, you may only be interested in ``NarrativeText``.
 
-
 The easiest way to partition documents in unstructured is to use the ``partition`` brick.
 If you call the ``partition`` brick, ``unstructured`` will use ``libmagic`` to automatically determine the file type and invoke the appropriate partition function.
 In cases where ``libmagic`` is not available, filetype detection will fall back to using the file extension.
+
+The following table shows the document types the `unstructured` library currently supports. `partition` will recognize each of these document types and route the document to the appropriate partitioning function. If you already know your document type, you can use the partitioning function listed in the table directly.
+
++----------------------------------------------+---------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
+| Document Type                                | Partition Function  | Strategies                             | Table Support  | Options                                                                                                          |
++==============================================+=====================+========================================+================+==================================================================================================================+
+| CSV Files (`.csv`)                           | `partition_csv`     | N/A                                    | Yes            | None                                                                                                             |
++----------------------------------------------+---------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
+| E-mails (`.eml`)                             | `partition_eml`     | N/A                                    | No             | Encoding; Max Partition; Process Attachments                                                                     |
++----------------------------------------------+---------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
+| E-mails (`.msg`)                             | `partition_msg`     | N/A                                    | No             | Encoding; Max Partition; Process Attachments                                                                     |
++----------------------------------------------+---------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
+| EPubs (`.epub`)                              | `partition_epub`    | N/A                                    | Yes            | Include Page Breaks                                                                                              |
++----------------------------------------------+---------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
+| Excel Documents (`.xlsx`/`.xls`)             | `partition_xlsx`    | N/A                                    | Yes            | None                                                                                                             |
++----------------------------------------------+---------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
+| HTML Pages (`.html`)                         | `partition_html`    | N/A                                    | No             | Encoding; Include Page Breaks                                                                                    |
++----------------------------------------------+---------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
+| Images (`.png`/`.jpg`)                       | `partition_image`   | `"auto"`, `"hi_res"`, `"ocr_only"`     | Yes            | Encoding; Include Page Breaks; Infer Table Structure; OCR Languages, Strategy                                    |
++----------------------------------------------+---------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
+| Markdown (`.md`)                             | `partitin_md`       | N/A                                    | Yes            | Include Page Breaks                                                                                              |
++----------------------------------------------+---------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
+| Org Mode (`.org`)                            | `partition_org`     | N/A                                    | Yes            | Include Page Breaks                                                                                              |
++----------------------------------------------+---------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
+| Open Office Documents (`.odt`)               | `partition_odt`     | N/A                                    | Yes            | None                                                                                                             |
++----------------------------------------------+---------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
+| PDFs (`.pdf`)                                | `partition_pdf`     | `"auto"`, `"fast"`, `"hi_res"`, `"ocr_only"` | Yes | Encoding; Include Page Breaks; Infer Table Structure; Max Partition; OCR Languages, Strategy                          |
++----------------------------------------------+---------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
+| Plain Text (`.txt`)                          | `partition_text`    | N/A                                    | No             | Encoding; Max Partition; Paragraph Grouper                                                                       |
++----------------------------------------------+---------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
+| Power Points (`.ppt`)                        | `partition_ppt`     | N/A                                    | Yes            | Include Page Breaks                                                                                              |
++----------------------------------------------+---------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
+| Power Points (`.pptx`)                       | `partition_pptx`    | N/A                                    | Yes            | Include Page Breaks                                                                                              |
++----------------------------------------------+---------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
+| ReStructured Text (`.rst`)                   | `partition_rst`     | N/A                                    | Yes            | Include Page Breaks                                                                                              |
++----------------------------------------------+---------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
+| Rich Text Files (`.rtf`)                     | `partition_rtf`     | N/A                                    | Yes            | Include Page Breaks                                                                                              |
++----------------------------------------------+---------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
+| TSV Files (`.tsv`)                           | `partition_tsv`     | N/A                                    | Yes            | None                                                                                                             |
++----------------------------------------------+---------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
+| Word Documents (`.doc`)                      | `partition_doc`     | N/A                                    | Yes            | Include Page Breaks                                                                                              |
++----------------------------------------------+---------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
+| Word Documents (`.docx`)                     | `partition_docx`    | N/A                                    | Yes            | Include Page Breaks                                                                                              |
++----------------------------------------------+---------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
+| XML Documents (`.xml`)                       | `partition_xml`     | N/A                                    | No             | Encoding; Max Partition; XML Keep Tags                                                                           |
++----------------------------------------------+---------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
+
 
 As shown in the examples below, the ``partition`` function accepts both filenames and file-like objects as input.
 ``partition`` also has some optional kwargs.
@@ -161,7 +207,7 @@ saved in the ``.doc`` format. This partition brick uses a combination of the sty
 information in the document and the structure of the text to determine the type
 of a text element. The ``partition_doc`` can take a filename or file-like object
 as input.
-``partiton_doc`` uses ``libreoffice`` to convert the file to ``.docx`` and then
+``partition_doc`` uses ``libreoffice`` to convert the file to ``.docx`` and then
 calls ``partition_docx``. Ensure you have ``libreoffice`` installed
 before using ``partition_doc``.
 
@@ -286,8 +332,8 @@ For more information about the ``partition_email`` brick, you can check the `sou
 ---------------------
 
 The ``partition_epub`` function processes e-books in EPUB3 format. The function
-first converts the document to HTML using ``pandocs`` and then calls ``partition_html``.
-You'll need `pandocs <https://pandoc.org/installing.html>`_ installed on your system
+first converts the document to HTML using ``ebooklib`` and then calls ``partition_html``.
+You'll need `ebooklib <https://pypi.org/project/EbookLib/>`_ installed on your system
 to use ``partition_epub``.
 
 
@@ -348,6 +394,8 @@ to disable SSL verification in the request.
   elements = partition_html(url="https://python.org/", ssl_verify=False)
 
 
+If you want to ignore content in ``<header>`` and ``<footer>`` tags, pass
+``skip_headers_and_footers=True`` into ``partition_html``.
 
 If you website contains news articles, it can be helpful to only grab content that appears in
 between the ``<article>`` tags, if the site uses that convention.
@@ -867,6 +915,11 @@ Examples:
 
   elements = partition_xlsx(filename="example-docs/stanley-cups.xlsx")
   print(elements[0].metadata.text_as_html)
+
+
+If your Excel file contains emojis and you notice them missing in the output, try
+running ``pip install beautifulsoup4``. If beautiful soup is installed, ``partition_xlsx``
+will use that to parse the table instead of the base `lxml` parser.
 
 For more information about the ``partition_xlsx`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/xlsx.py>`_.
 
@@ -2378,3 +2431,45 @@ Examples:
   sentence_count(example, min_length=5)
 
 For more information about the ``sentence_count`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/text_type.py>`_.
+
+
+``filter_element_types``
+------------------
+
+Filter a list of ``Element`` objects by element type. ``filter_element_types`` has two parameters:
+``include_element_types`` - include only specific ``Element``
+``exclude_element_types`` - include all ``Element`` except specific
+
+Examples:
+
+.. code:: python
+
+  from unstructured.staging.base import filter_element_types
+  from unstructured.documents.elements import Title, Text
+  from unstructured.partition.text import partition_text
+
+  elements = partition_text(
+        filename=filename,
+        include_metadata=False,
+    )
+
+  # Returns only element with type Title
+  elements = filter_element_types(
+        elements=elements,
+        include_element_types=[Title],
+    )
+
+  # Returns all types except Title
+  elements = filter_element_types(
+        elements=elements,
+        exclude_element_types=[Title],
+    )
+  # Raises the error as it is not allowed to use both at the time
+  elements = filter_element_types(
+            elements=elements,
+            exclude_element_types=[Title],
+            include_element_types=[Text],
+        )
+
+For more information about the ``filter_element_types`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/staging/base.py>`_.
+

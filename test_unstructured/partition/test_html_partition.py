@@ -369,6 +369,101 @@ def test_partition_html_with_include_path_in_metadata_filename_and_metadata_file
     assert elements[0].metadata.file_directory is None
 
 
+def test_partition_html_metadata_date(mocker, filename="example-docs/fake-html.html"):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.html.get_last_modified_date",
+        return_value=mocked_last_modification_date,
+    )
+    elements = partition_html(filename=filename)
+
+    assert isinstance(elements[0], Title)
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
+
+
+def test_partition_html_from_file_metadata_date(
+    mocker,
+    filename="example-docs/fake-html.html",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.html.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+
+    with open(filename) as f:
+        elements = partition_html(file=f)
+
+    assert isinstance(elements[0], Title)
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
+
+
+def test_partition_html_custom_metadata_date(
+    mocker,
+    filename="example-docs/fake-html.html",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    expected_last_modification_date = "2020-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.html.get_last_modified_date",
+        return_value=mocked_last_modification_date,
+    )
+
+    elements = partition_html(
+        filename=filename,
+        metadata_last_modified=expected_last_modification_date,
+    )
+
+    assert isinstance(elements[0], Title)
+    assert elements[0].metadata.last_modified == expected_last_modification_date
+
+
+def test_partition_html_from_file_custom_metadata_date(
+    mocker,
+    filename="example-docs/fake-html.html",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    expected_last_modification_date = "2020-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.html.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+
+    with open(filename) as f:
+        elements = partition_html(
+            file=f,
+            metadata_last_modified=expected_last_modification_date,
+        )
+
+    assert isinstance(elements[0], Title)
+    assert elements[0].metadata.last_modified == expected_last_modification_date
+
+
+def test_partition_html_from_text_metadata_date(filename="example-docs/fake-html.html"):
+    elements = partition_html(text="<html><div><p>TEST</p></div></html>")
+
+    assert isinstance(elements[0], Title)
+    assert elements[0].metadata.last_modified is None
+
+
+def test_partition_html_from_text_custom_metadata_date(
+    filename="example-docs/fake-html.html",
+):
+    expected_last_modification_date = "2020-07-05T09:24:28"
+
+    elements = partition_html(
+        text="<html><div><p>TEST</p></div></html>",
+        metadata_last_modified=expected_last_modification_date,
+    )
+
+    assert isinstance(elements[0], Title)
+    assert elements[0].metadata.last_modified == expected_last_modification_date
+
+
 def test_partition_html_grabs_links():
     html_text = """<html>
         <p>Hello there I am a <a href="/link">very important link!</a></p>
@@ -409,4 +504,114 @@ def test_partition_html_grabs_links():
             "text": "A lone link!",
             "url": "/loner",
         },
+    ]
+
+
+def test_partition_html_from_filename_with_skip_headers_and_footers(
+    filename="example-docs/fake-html-with-footer-and-header.html",
+):
+    elements = partition_html(filename=filename, skip_headers_and_footers=True)
+
+    for element in elements:
+        assert "footer" not in element.ancestortags
+        assert "header" not in element.ancestortags
+
+
+def test_partition_html_from_file_with_skip_headers_and_footers(
+    filename="example-docs/fake-html-with-footer-and-header.html",
+):
+    with open(filename) as f:
+        elements = partition_html(file=f, skip_headers_and_footers=True)
+
+    for element in elements:
+        assert "footer" not in element.ancestortags
+        assert "header" not in element.ancestortags
+
+
+def test_partition_html_from_text_with_skip_headers_and_footers():
+    text = """
+    <!DOCTYPE html>
+    <html>
+        <header>
+            <p>Header</p>
+        </header>
+        <body>
+            <h1>My First Heading</h1>
+            <p>My first paragraph.</p>
+        </body>
+        <footer>
+            <p>Footer</p>
+        </footer>
+    </html>"""
+    elements = partition_html(text=text, skip_headers_and_footers=True)
+
+    for element in elements:
+        assert "footer" not in element.ancestortags
+        assert "header" not in element.ancestortags
+
+
+def test_partition_html_from_url_with_skip_headers_and_footers(mocker):
+    test_url = "https://example.com"
+    test_headers = {"User-Agent": "test"}
+
+    response = Response()
+    response.status_code = 200
+    response._content = b"""<html>
+        <header>
+            <p>Header</p>
+        </header>
+        <body>
+            <h1>My First Heading</h1>
+            <p>My first paragraph.</p>
+        </body>
+        <footer>
+            <p>Footer</p>
+        </footer>
+    </html>"""
+    response.headers = {"Content-Type": "text/html"}
+
+    mocker.patch("requests.get", return_value=response)
+
+    elements = partition_html(url=test_url, headers=test_headers, skip_headers_and_footers=True)
+
+    for element in elements:
+        assert "footer" not in element.ancestortags
+        assert "header" not in element.ancestortags
+
+
+def test_partition_html_grabs_emphasized_texts():
+    html_text = """<html>
+        <p>Hello there I am a very <strong>important</strong> text!</p>
+        <p>Here is a <span>list</span> of <b>my <i>favorite</i> things</b></p>
+        <ul>
+            <li><em>Parrots</em></li>
+            <li>Dogs</li>
+        </ul>
+        <span>A lone span text!</span>
+    </html>"""
+    elements = partition_html(text=html_text)
+
+    assert elements[0] == NarrativeText("Hello there I am a very important text!")
+    assert elements[0].metadata.emphasized_texts == [
+        {"text": "important", "tag": "strong"},
+    ]
+
+    assert elements[1] == NarrativeText("Here is a list of my favorite things")
+    assert elements[1].metadata.emphasized_texts == [
+        {"text": "list", "tag": "span"},
+        {"text": "my favorite things", "tag": "b"},
+        {"text": "favorite", "tag": "i"},
+    ]
+
+    assert elements[2] == ListItem("Parrots")
+    assert elements[2].metadata.emphasized_texts == [
+        {"text": "Parrots", "tag": "em"},
+    ]
+
+    assert elements[3] == ListItem("Dogs")
+    assert elements[3].metadata.emphasized_texts is None
+
+    assert elements[4] == Title("A lone span text!")
+    assert elements[4].metadata.emphasized_texts == [
+        {"text": "A lone span text!", "tag": "span"},
     ]

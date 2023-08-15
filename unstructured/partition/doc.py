@@ -4,7 +4,12 @@ from typing import IO, List, Optional
 
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
-from unstructured.partition.common import convert_office_doc, exactly_one
+from unstructured.partition.common import (
+    convert_office_doc,
+    exactly_one,
+    get_last_modified_date,
+    get_last_modified_date_from_file,
+)
 from unstructured.partition.docx import partition_docx
 
 
@@ -16,6 +21,7 @@ def partition_doc(
     include_page_breaks: bool = True,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
     libre_office_filter: Optional[str] = "MS Word 2007 XML",
     include_path_in_metadata_filename: Optional[bool] = False,
     **kwargs,
@@ -28,6 +34,8 @@ def partition_doc(
         A string defining the target filename path.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
+    metadata_last_modified
+        The last modified date for the document.
     libre_office_filter
         The filter to use when coverting to .doc. The default is the
         filter that is required when using LibreOffice7. Pass in None
@@ -45,6 +53,9 @@ def partition_doc(
         base_filename, _ = os.path.splitext(filename_no_path)
         if not os.path.exists(filename):
             raise ValueError(f"The file {filename} does not exist.")
+
+        last_modification_date = get_last_modified_date(filename)
+
     elif file is not None:
         tmp = tempfile.NamedTemporaryFile(delete=False)
         tmp.write(file.read())
@@ -52,6 +63,8 @@ def partition_doc(
         filename = tmp.name
         _, filename_no_path = os.path.split(os.path.abspath(tmp.name))
         base_filename, _ = os.path.splitext(filename_no_path)
+
+        last_modification_date = get_last_modified_date_from_file(file)
 
     with tempfile.TemporaryDirectory() as tmpdir:
         convert_office_doc(
@@ -66,6 +79,7 @@ def partition_doc(
             metadata_filename=metadata_filename,
             include_page_breaks=include_page_breaks,
             include_metadata=include_metadata,
+            metadata_last_modified=metadata_last_modified or last_modification_date,
             include_path_in_metadata_filename=include_path_in_metadata_filename,
         )
         # remove tmp.name from filename if parsing file

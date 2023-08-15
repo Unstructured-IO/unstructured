@@ -12,6 +12,7 @@ def partition_org(
     include_page_breaks: bool = False,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
     include_path_in_metadata_filename: bool = False,
 ) -> List[Element]:
     """Partitions an org document. The document is first converted to HTML and then
@@ -25,6 +26,8 @@ def partition_org(
         A file-like object using "rb" mode --> open(filename, "rb").
     include_page_breaks
         If True, the output will include page breaks if the filetype supports it
+    metadata_last_modified
+        The last modified date for the document.
     include_path_in_metadata_filename
         Determines whether or not metadata filename will contain full path
     """
@@ -34,5 +37,6 @@ def partition_org(
         file=file,
         include_page_breaks=include_page_breaks,
         metadata_filename=metadata_filename,
+        metadata_last_modified=metadata_last_modified,
         include_path_in_metadata_filename=include_path_in_metadata_filename,
     )
