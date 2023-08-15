@@ -1,3 +1,15 @@
+## 0.9.4-dev0
+
+
+### Enhancements
+
+* Add `include_header` kwarg to `partition_xlsx` and change default behavior to `True`
+
+### Features
+
+### Fixes
+
+
 ## 0.9.3
 
 ### Enhancements
