@@ -22,11 +22,8 @@ coloredlogs==15.0.1
     # via onnxruntime
 contourpy==1.1.0
     # via matplotlib
-cryptography==41.0.2
-    # via
-    #   -c requirements/constraints.in
-    #   -r requirements/extra-pdf-image.in
-    #   pdfminer-six
+cryptography==41.0.3
+    # via pdfminer-six
 cycler==0.11.0
     # via matplotlib
 effdet==0.4.1
@@ -127,7 +124,7 @@ protobuf==4.23.4
     # via
     #   -c requirements/constraints.in
     #   onnxruntime
-pycocotools==2.0.6
+pycocotools==2.0.7
     # via effdet
 pycparser==2.21
     # via cffi
