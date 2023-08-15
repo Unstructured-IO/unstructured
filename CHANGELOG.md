@@ -1,7 +1,19 @@
-## 0.9.3-dev2
+## 0.9.4-dev0
 
 ### Enhancements
 
+### Features
+
+### Fixes
+
+* fix pdf partition of list items being detected as titles in OCR only mode
+
+## 0.9.3
+
+### Enhancements
+
+* Pinned dependency cleanup.
+* Update `partition_csv` to always use `soupparser_fromstring` to parse `html text`
 * Update `partition_tsv` to always use `soupparser_fromstring` to parse `html text`
 * Add `metadata.section` to capture epub table of contents data
 * Add `unique_element_ids` kwarg to partition functions. If `True`, will use a UUID
@@ -16,7 +28,9 @@
 
 ### Fixes
 
+* fix pdf partition of list items being detected as titles in OCR only mode
 * make notion module discoverable
+* fix emails with `Content-Distribution: inline` and `Content-Distribution: attachment` with no filename
 * Fix email attachment filenames which had `=` in the filename itself
 
 ## 0.9.2

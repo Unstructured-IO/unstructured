@@ -68,7 +68,7 @@ defusedxml==0.7.1
     # via nbconvert
 distlib==0.3.7
     # via virtualenv
-exceptiongroup==1.1.2
+exceptiongroup==1.1.3
     # via
     #   -c requirements/test.txt
     #   anyio

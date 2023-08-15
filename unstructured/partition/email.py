@@ -5,7 +5,7 @@ import re
 import sys
 from email.message import Message
 from functools import partial
-from tempfile import SpooledTemporaryFile, TemporaryDirectory
+from tempfile import NamedTemporaryFile, SpooledTemporaryFile, TemporaryDirectory
 from typing import IO, Callable, Dict, List, Optional, Tuple, Union
 
 from unstructured.file_utils.encoding import (
@@ -163,10 +163,9 @@ def extract_attachment_info(
             cdisp = part["content-disposition"].split(";")
             cdisp = [clean_extra_whitespace(item) for item in cdisp]
 
+            attachment_info = {}
             for item in cdisp:
-                attachment_info = {}
-
-                if item.lower() == "attachment":
+                if item.lower() in ("attachment", "inline"):
                     continue
                 key, value = item.split("=", 1)
                 key = clean_extra_whitespace(key.replace('"', ""))
@@ -177,13 +176,23 @@ def extract_attachment_info(
             attachment_info["payload"] = part.get_payload(decode=True)
             list_attachments.append(attachment_info)
 
-            for attachment in list_attachments:
+            for idx, attachment in enumerate(list_attachments):
                 if output_dir:
-                    filename = output_dir + "/" + attachment["filename"]
-                    with open(filename, "wb") as f:
-                        # Note(harrell) mypy wants to just us `w` when opening the file but this
-                        # causes an error since the payloads are bytes not str
-                        f.write(attachment["payload"])  # type: ignore
+                    if "filename" in attachment:
+                        filename = output_dir + "/" + attachment["filename"]
+                        with open(filename, "wb") as f:
+                            # Note(harrell) mypy wants to just us `w` when opening the file but this
+                            # causes an error since the payloads are bytes not str
+                            f.write(attachment["payload"])  # type: ignore
+                    else:
+                        with NamedTemporaryFile(
+                            mode="wb",
+                            dir=output_dir,
+                            delete=False,
+                        ) as f:
+                            list_attachments[idx]["filename"] = os.path.basename(f.name)
+                            f.write(attachment["payload"])  # type: ignore
+
     return list_attachments
 
 
