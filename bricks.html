@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Connectors" href="connectors.html" /><link rel="prev" title="Unstructured API" href="api.html" />
 
   <link rel="shortcut icon" href="_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Bricks - Unstructured 0.9.2 documentation</title>
+  <title>Bricks - Unstructured 0.9.3 documentation</title>
   <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -390,6 +390,139 @@ If you’re training a summarization model, for example, you may only be interes
 <p>The easiest way to partition documents in unstructured is to use the <code class="docutils literal notranslate"><span class="pre">partition</span></code> brick.
 If you call the <code class="docutils literal notranslate"><span class="pre">partition</span></code> brick, <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> will use <code class="docutils literal notranslate"><span class="pre">libmagic</span></code> to automatically determine the file type and invoke the appropriate partition function.
 In cases where <code class="docutils literal notranslate"><span class="pre">libmagic</span></code> is not available, filetype detection will fall back to using the file extension.</p>
+<p>The following table shows the document types the <cite>unstructured</cite> library currently supports. <cite>partition</cite> will recognize each of these document types and route the document to the appropriate partitioning function. If you already know your document type, you can use the partitioning function listed in the table directly.</p>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Document Type</p></th>
+<th class="head"><p>Partition Function</p></th>
+<th class="head"><p>Strategies</p></th>
+<th class="head"><p>Table Support</p></th>
+<th class="head"><p>Options</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>CSV Files (<cite>.csv</cite>)</p></td>
+<td><p><cite>partition_csv</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>Yes</p></td>
+<td><p>None</p></td>
+</tr>
+<tr class="row-odd"><td><p>E-mails (<cite>.eml</cite>)</p></td>
+<td><p><cite>partition_eml</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>No</p></td>
+<td><p>Encoding; Max Partition; Process Attachments</p></td>
+</tr>
+<tr class="row-even"><td><p>E-mails (<cite>.msg</cite>)</p></td>
+<td><p><cite>partition_msg</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>No</p></td>
+<td><p>Encoding; Max Partition; Process Attachments</p></td>
+</tr>
+<tr class="row-odd"><td><p>EPubs (<cite>.epub</cite>)</p></td>
+<td><p><cite>partition_epub</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>Yes</p></td>
+<td><p>Include Page Breaks</p></td>
+</tr>
+<tr class="row-even"><td><p>Excel Documents (<cite>.xlsx</cite>/<cite>.xls</cite>)</p></td>
+<td><p><cite>partition_xlsx</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>Yes</p></td>
+<td><p>None</p></td>
+</tr>
+<tr class="row-odd"><td><p>HTML Pages (<cite>.html</cite>)</p></td>
+<td><p><cite>partition_html</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>No</p></td>
+<td><p>Encoding; Include Page Breaks</p></td>
+</tr>
+<tr class="row-even"><td><p>Images (<cite>.png</cite>/<cite>.jpg</cite>)</p></td>
+<td><p><cite>partition_image</cite></p></td>
+<td><p><cite>“auto”</cite>, <cite>“hi_res”</cite>, <cite>“ocr_only”</cite></p></td>
+<td><p>Yes</p></td>
+<td><p>Encoding; Include Page Breaks; Infer Table Structure; OCR Languages, Strategy</p></td>
+</tr>
+<tr class="row-odd"><td><p>Markdown (<cite>.md</cite>)</p></td>
+<td><p><cite>partitin_md</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>Yes</p></td>
+<td><p>Include Page Breaks</p></td>
+</tr>
+<tr class="row-even"><td><p>Org Mode (<cite>.org</cite>)</p></td>
+<td><p><cite>partition_org</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>Yes</p></td>
+<td><p>Include Page Breaks</p></td>
+</tr>
+<tr class="row-odd"><td><p>Open Office Documents (<cite>.odt</cite>)</p></td>
+<td><p><cite>partition_odt</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>Yes</p></td>
+<td><p>None</p></td>
+</tr>
+<tr class="row-even"><td><p>PDFs (<cite>.pdf</cite>)</p></td>
+<td><p><cite>partition_pdf</cite></p></td>
+<td colspan="3"><p><cite>“auto”</cite>, <cite>“fast”</cite>, <cite>“hi_res”</cite>, <cite>“ocr_only”</cite> | Yes | Encoding; Include Page Breaks; Infer Table Structure; Max Partition; OCR Languages, Strategy</p></td>
+</tr>
+<tr class="row-odd"><td><p>Plain Text (<cite>.txt</cite>)</p></td>
+<td><p><cite>partition_text</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>No</p></td>
+<td><p>Encoding; Max Partition; Paragraph Grouper</p></td>
+</tr>
+<tr class="row-even"><td><p>Power Points (<cite>.ppt</cite>)</p></td>
+<td><p><cite>partition_ppt</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>Yes</p></td>
+<td><p>Include Page Breaks</p></td>
+</tr>
+<tr class="row-odd"><td><p>Power Points (<cite>.pptx</cite>)</p></td>
+<td><p><cite>partition_pptx</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>Yes</p></td>
+<td><p>Include Page Breaks</p></td>
+</tr>
+<tr class="row-even"><td><p>ReStructured Text (<cite>.rst</cite>)</p></td>
+<td><p><cite>partition_rst</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>Yes</p></td>
+<td><p>Include Page Breaks</p></td>
+</tr>
+<tr class="row-odd"><td><p>Rich Text Files (<cite>.rtf</cite>)</p></td>
+<td><p><cite>partition_rtf</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>Yes</p></td>
+<td><p>Include Page Breaks</p></td>
+</tr>
+<tr class="row-even"><td><p>TSV Files (<cite>.tsv</cite>)</p></td>
+<td><p><cite>partition_tsv</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>Yes</p></td>
+<td><p>None</p></td>
+</tr>
+<tr class="row-odd"><td><p>Word Documents (<cite>.doc</cite>)</p></td>
+<td><p><cite>partition_doc</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>Yes</p></td>
+<td><p>Include Page Breaks</p></td>
+</tr>
+<tr class="row-even"><td><p>Word Documents (<cite>.docx</cite>)</p></td>
+<td><p><cite>partition_docx</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>Yes</p></td>
+<td><p>Include Page Breaks</p></td>
+</tr>
+<tr class="row-odd"><td><p>XML Documents (<cite>.xml</cite>)</p></td>
+<td><p><cite>partition_xml</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>No</p></td>
+<td><p>Encoding; Max Partition; XML Keep Tags</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <p>As shown in the examples below, the <code class="docutils literal notranslate"><span class="pre">partition</span></code> function accepts both filenames and file-like objects as input.
 <code class="docutils literal notranslate"><span class="pre">partition</span></code> also has some optional kwargs.
 For example, if you set <code class="docutils literal notranslate"><span class="pre">include_page_breaks=True</span></code>, the output will include <code class="docutils literal notranslate"><span class="pre">PageBreak</span></code> elements if the filetype supports it.
@@ -498,7 +631,7 @@ saved in the <code class="docutils literal notranslate"><span class="pre">.doc</
 information in the document and the structure of the text to determine the type
 of a text element. The <code class="docutils literal notranslate"><span class="pre">partition_doc</span></code> can take a filename or file-like object
 as input.
-<code class="docutils literal notranslate"><span class="pre">partiton_doc</span></code> uses <code class="docutils literal notranslate"><span class="pre">libreoffice</span></code> to convert the file to <code class="docutils literal notranslate"><span class="pre">.docx</span></code> and then
+<code class="docutils literal notranslate"><span class="pre">partition_doc</span></code> uses <code class="docutils literal notranslate"><span class="pre">libreoffice</span></code> to convert the file to <code class="docutils literal notranslate"><span class="pre">.docx</span></code> and then
 calls <code class="docutils literal notranslate"><span class="pre">partition_docx</span></code>. Ensure you have <code class="docutils literal notranslate"><span class="pre">libreoffice</span></code> installed
 before using <code class="docutils literal notranslate"><span class="pre">partition_doc</span></code>.</p>
 <p>Examples:</p>
@@ -601,8 +734,8 @@ workflow looks like:</p>
 <section id="partition-epub">
 <h3><code class="docutils literal notranslate"><span class="pre">partition_epub</span></code><a class="headerlink" href="#partition-epub" title="Permalink to this heading"></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">partition_epub</span></code> function processes e-books in EPUB3 format. The function
-first converts the document to HTML using <code class="docutils literal notranslate"><span class="pre">pandocs</span></code> and then calls <code class="docutils literal notranslate"><span class="pre">partition_html</span></code>.
-You’ll need <a class="reference external" href="https://pandoc.org/installing.html">pandocs</a> installed on your system
+first converts the document to HTML using <code class="docutils literal notranslate"><span class="pre">ebooklib</span></code> and then calls <code class="docutils literal notranslate"><span class="pre">partition_html</span></code>.
+You’ll need <a class="reference external" href="https://pypi.org/project/EbookLib/">ebooklib</a> installed on your system
 to use <code class="docutils literal notranslate"><span class="pre">partition_epub</span></code>.</p>
 <p>Examples:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.epub</span> <span class="kn">import</span> <span class="n">partition_epub</span>
