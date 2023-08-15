@@ -1,5 +1,13 @@
-## 0.9.4-dev0
+## 0.10.0
 
+### Enhancements
+
+* Update the `links` and `emphasized_texts` metadata fields
+
+### Features
+
+
+## 0.9.4-dev0
 
 ### Enhancements
 
@@ -8,6 +16,7 @@
 
 
 ### Fixes
+
 * fix pdf partition of list items being detected as titles in OCR only mode
 
 ## 0.9.3
