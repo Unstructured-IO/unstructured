@@ -430,9 +430,9 @@ def test_partition_email_can_process_attachments(
         tmpdir.dirname,
         ATTACH_EXPECTED_OUTPUT[0]["filename"],
     )
-    
+
     mocked_last_modification_date = "0000-00-05T09:24:28"
-    
+
     attachment_elements = partition_text(
         filename=attachment_filename,
         metadata_filename=attachment_filename,
@@ -455,7 +455,7 @@ def test_partition_email_can_process_attachments(
         assert element.metadata.filename == "fake-email-attachment.eml"
         assert element.metadata.subject == "Fake email with attachment"
 
-    assert elements[-1].text == "Hey this is a fake attachment!"    
+    assert elements[-1].text == "Hey this is a fake attachment!"
     assert elements[-1].metadata == expected_metadata
 
 
