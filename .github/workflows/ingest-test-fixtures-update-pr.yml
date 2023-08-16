@@ -103,6 +103,7 @@ jobs:
           make install-ingest-outlook
           make install-ingest-slack
           make install-ingest-wikipedia
+          make install-ingest-delta-table
           ./test_unstructured_ingest/test-ingest.sh
 
       - name: Save branch name to environment file
