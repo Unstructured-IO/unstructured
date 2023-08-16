@@ -1,13 +1,13 @@
-## 0.9.4-dev1
-
+## 0.10.0
 
 ### Enhancements
 
+* Update the `links` and `emphasized_texts` metadata fields
 
 ### Features
 
-
 ### Fixes
+
 * fix pdf partition of list items being detected as titles in OCR only mode
 * Fix dead links in repository README (Quick Start > Install for local development, and Learn more > Batch Processing)
 * Update document dependencies to include tesseract-lang for additional language support (required for tests to pass)
