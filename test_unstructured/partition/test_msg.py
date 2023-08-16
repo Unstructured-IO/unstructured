@@ -167,7 +167,7 @@ def test_partition_msg_can_process_attachments(
         process_attachments=True,
         metadata_last_modified=mocked_last_modification_date,
     )
-    
+
     assert elements[0].text.startswith("Hello!")
     for element in elements[:-1]:
         assert element.metadata.filename == "fake-email-attachment.msg"
