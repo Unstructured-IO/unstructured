@@ -1,7 +1,8 @@
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
+from typing import Any, Dict, List, Optional
+from datetime import datetime
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -50,6 +51,26 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleAirtableConfig
     file_meta: AirtableFileMeta
 
+    def __post_init__(self):
+        self.__set_table_properties()
+
+    @requires_dependencies(["pyairtable"])
+    def __set_table_properties(self) -> None:
+        from pyairtable import Api
+
+        self.api = Api(self.config.personal_access_token)
+        table = self.api.table(self.file_meta.base_id, self.file_meta.table_id)
+        #NOTE: Might be a good idea to add pagination for large tables
+        rows = table.all(view=self.file_meta.view_id)
+        dates = [r['createdTime'] for r in rows].sort()
+        self.records = [row["fields"] for row in rows]
+        self.table_url = table.url
+        self.min_date, self.max_date = None, None
+        if len(dates) > 1:
+            self.min_date, self.max_date = dates[0], dates[-1]
+        else:
+            self.min_date, self.max_date = dates[0], dates[0]
+
     @property
     def filename(self):
         return (
@@ -63,8 +84,30 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         """Create output file path based on output directory, base id, and table id"""
         output_file = f"{self.file_meta.table_id}.json"
         return Path(self.standard_config.output_dir) / self.file_meta.base_id / output_file
+    
+    @property
+    def date_created(self) -> Optional[str]:
+        return datetime.fromisoformat(self.min_date).isoformat()
+        
+    @property
+    def date_modified(self) -> Optional[str]:
+        return datetime.fromisoformat(self.max_date).isoformat()
 
-    @requires_dependencies(["pyairtable", "pandas"])
+    @property
+    def exists(self) -> Optional[bool]:
+        return (len(self.records) >= 1)
+
+    @property
+    def record_locator(self) -> Optional[Dict[str, Any]]:
+        return {
+            "table_url": self.table_url
+        }
+
+    @property
+    def version(self) -> Optional[str]:
+        return None
+
+    @requires_dependencies(["pandas"])
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
@@ -72,13 +115,9 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         # TODO: instead of having a separate connection object for each doc,
         # have a separate connection object for each process
         import pandas as pd
-        from pyairtable import Api
-
-        self.api = Api(self.config.personal_access_token)
-        table = self.api.table(self.file_meta.base_id, self.file_meta.table_id)
 
         df = pd.DataFrame.from_dict(
-            [row["fields"] for row in table.all(view=self.file_meta.view_id)],
+            self.records,
         ).sort_index(axis=1)
 
         self.document = df.to_csv()

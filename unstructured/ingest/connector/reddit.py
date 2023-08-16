@@ -71,8 +71,8 @@ class RedditIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @property
     def exists(self) -> Optional[bool]:
-        return (self.post.author == "[deleted]" or self.post.auth is None) and (
-            self.post.selftext == "[deleted]" or self.post.selftext == "[removed]"
+        return (self.post.author != "[deleted]" or self.post.auth is not None) and (
+            self.post.selftext != "[deleted]" or self.post.selftext != "[removed]"
         )
 
     @property

@@ -2,7 +2,7 @@ import math
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
+from typing import Any, Dict, Optional
 
 from atlassian import Confluence
 
@@ -86,6 +86,20 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleConfluenceConfig
     file_meta: ConfluenceFileMeta
 
+    @requires_dependencies(["atlassian"])
+    def __post_init__(self):
+        self.confluence = Confluence(
+            self.config.url,
+            username=self.config.user_email,
+            password=self.config.api_token,
+        )
+        self.exists = True
+        try:
+            self.page_properties = self.confluence.get_page_properties(self.file_meta.document_id)
+        except Exception as e:
+            logger.error(e)
+            self.exists = False
+
     # TODO: remove one of filename or _tmp_download_file, using a wrapper
     @property
     def filename(self):
@@ -100,6 +114,26 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         """Create output file path based on output directory, space id and document id."""
         output_file = f"{self.file_meta.document_id}.json"
         return Path(self.standard_config.output_dir) / self.file_meta.space_id / output_file
+    
+    @property
+    def date_created(self) -> Optional[str]:
+        return None
+
+    @property
+    def date_modified(self) -> Optional[str]:
+        return None
+
+    @property
+    def exists(self) -> Optional[bool]:
+        return self.exists
+
+    @property
+    def record_locator(self) -> Optional[Dict[str, Any]]:
+        return {}
+
+    @property
+    def version(self) -> Optional[str]:
+        return None
 
     @requires_dependencies(["atlassian"])
     @BaseIngestDoc.skip_if_file_exists
@@ -108,13 +142,7 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         # TODO: instead of having a separate connection object for each doc,
         # have a separate connection object for each process
-        confluence = Confluence(
-            self.config.url,
-            username=self.config.user_email,
-            password=self.config.api_token,
-        )
-
-        result = confluence.get_page_by_id(page_id=self.file_meta.document_id, expand="body.view")
+        result = self.confluence.get_page_by_id(page_id=self.file_meta.document_id, expand="body.view")
         self.document = result["body"]["view"]["value"]
         self.filename.parent.mkdir(parents=True, exist_ok=True)
         with open(self.filename, "w", encoding="utf8") as f:

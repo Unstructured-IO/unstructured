@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
+from datetime import datetime
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.ingest.interfaces import (
@@ -98,11 +99,11 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @property
     def date_created(self) -> Optional[str]:
-        return self.file.created_datetime
-
+        return datetime.fromisoformat(self.file.created_datetime).isoformat()
+        
     @property
     def date_modified(self) -> Optional[str]:
-        return self.file.last_modified_datetime
+        return datetime.fromisoformat(self.file.last_modified_datetime).isoformat()
 
     @property
     def exists(self) -> Optional[bool]:
@@ -110,7 +111,12 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @property
     def record_locator(self) -> Optional[Dict[str, Any]]:
-        return self.file.to_json()
+        record_source = self.file.to_json()
+        return {
+            "id": record_source.get('id', ''),
+            "web_url": record_source.get('webUrl', ''),
+            "drive_id": record_source.get('parentReference', {}).get('driveId', '')
+        }
 
     @property
     def version(self) -> Optional[str]:
