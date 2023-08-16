@@ -206,7 +206,9 @@ typing-extensions==4.7.1
 tzdata==2023.3
     # via pandas
 unstructured-inference==0.5.10
-    # via -r requirements/extra-pdf-image.in
+    # via
+    #   -c requirements/constraints.in
+    #   -r requirements/extra-pdf-image.in
 urllib3==1.26.16
     # via
     #   -c requirements/base.txt
