@@ -4,7 +4,7 @@ import os
 from dataclasses import dataclass
 from mimetypes import guess_extension
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, Optional, cast
+from typing import TYPE_CHECKING, Dict, Optional
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.file_utils.google_filetype import GOOGLE_DRIVE_EXPORT_TYPES
@@ -13,8 +13,8 @@ from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
     BaseSessionHandle,
+    ConfigSessionHandleMixin,
     ConnectorCleanupMixin,
-    ConnectorSessionHandleMixin,
     IngestDocCleanupMixin,
     IngestDocSessionHandleMixin,
     StandardConnectorConfig,
@@ -76,7 +76,7 @@ def create_service_account_object(key_path, id=None):
 
 
 @dataclass
-class SimpleGoogleDriveConfig(BaseConnectorConfig):
+class SimpleGoogleDriveConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
     """Connector config where drive_id is the id of the document to process or
     the folder to process all documents from."""
 
@@ -93,12 +93,17 @@ class SimpleGoogleDriveConfig(BaseConnectorConfig):
                 f"Value MUST be one of {', '.join([k for k in EXT_TO_FILETYPE if k is not None])}.",
             )
 
+    def create_session_handle(
+        self,
+    ) -> GoogleDriveSessionHandle:
+        service = create_service_account_object(self.service_account_key)
+        return GoogleDriveSessionHandle(service=service)
+
 
 @dataclass
 class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleGoogleDriveConfig
     file_meta: Dict
-    session_handle: Optional[GoogleDriveSessionHandle] = None
 
     @property
     def filename(self):
@@ -113,10 +118,6 @@ class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, B
     def get_file(self):
         from googleapiclient.errors import HttpError
         from googleapiclient.http import MediaIoBaseDownload
-
-        if self.session_handle is None:
-            raise ValueError("Google Drive session handle was not set.")
-        self.session_handle = cast(GoogleDriveSessionHandle, self.session_handle)
 
         if self.file_meta.get("mimeType", "").startswith("application/vnd.google-apps"):
             export_mime = GOOGLE_DRIVE_EXPORT_TYPES.get(
@@ -173,7 +174,7 @@ class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, B
         logger.info(f"Wrote {self._output_filename}")
 
 
-class GoogleDriveConnector(ConnectorSessionHandleMixin, ConnectorCleanupMixin, BaseConnector):
+class GoogleDriveConnector(ConnectorCleanupMixin, BaseConnector):
     """Objects of this class support fetching documents from Google Drive"""
 
     config: SimpleGoogleDriveConfig
@@ -181,18 +182,9 @@ class GoogleDriveConnector(ConnectorSessionHandleMixin, ConnectorCleanupMixin, B
     def __init__(self, standard_config: StandardConnectorConfig, config: SimpleGoogleDriveConfig):
         super().__init__(standard_config, config)
 
-    @classmethod
-    def create_session_handle(
-        cls,
-        config: BaseConnectorConfig,
-    ) -> GoogleDriveSessionHandle:
-        config = cast(SimpleGoogleDriveConfig, config)
-        service = create_service_account_object(config.service_account_key)
-        return GoogleDriveSessionHandle(service=service)
-
     def _list_objects(self, drive_id, recursive=False):
         files = []
-        service = create_service_account_object(self.config.service_account_key)
+        service = self.config.create_session_handle().service
 
         def traverse(drive_id, download_dir, output_dir, recursive=False):
             page_token = None

@@ -2,16 +2,10 @@ import logging
 import multiprocessing as mp
 from contextlib import suppress
 from functools import partial
-from typing import cast
 
-from unstructured.ingest.doc_processor.generalized import (
-    initialize,
-    process_document,
-    session_handle_var,
-)
+from unstructured.ingest.doc_processor.generalized import initialize, process_document
 from unstructured.ingest.interfaces import (
     BaseConnector,
-    ConnectorSessionHandleMixin,
     ProcessorConfigs,
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
@@ -47,13 +41,6 @@ class Processor:
     def cleanup(self):
         self.doc_connector.cleanup()
 
-    @classmethod
-    def process_init(cls, verbose, create_session_handle_fn=None):
-        ingest_log_streaming_init(verbose)
-        # set the session handle for the doc processor if the connector supports it
-        if create_session_handle_fn is not None:
-            session_handle_var.set(create_session_handle_fn())
-
     def _filter_docs_with_outputs(self, docs):
         num_docs_all = len(docs)
         docs = [doc for doc in docs if not doc.has_output()]
@@ -87,16 +74,6 @@ class Processor:
             if not docs:
                 return
 
-        # get a create_session_handle function if the connector supports it
-        create_session_handle_fn = (
-            partial(
-                cast(ConnectorSessionHandleMixin, self.doc_connector).create_session_handle,
-                cast(BaseConnector, self.doc_connector).config,
-            )
-            if isinstance(self.doc_connector, ConnectorSessionHandleMixin)
-            else None
-        )
-
         # Debugging tip: use the below line and comment out the mp.Pool loop
         # block to remain in single process
         # self.doc_processor_fn(docs[0])
@@ -104,11 +81,8 @@ class Processor:
         try:
             with mp.Pool(
                 processes=self.num_processes,
-                initializer=self.process_init,
-                initargs=(
-                    logging.DEBUG if self.verbose else logging.INFO,
-                    create_session_handle_fn,
-                ),
+                initializer=ingest_log_streaming_init,
+                initargs=(logging.DEBUG if self.verbose else logging.INFO,),
             ) as pool:
                 pool.map(self.doc_processor_fn, docs)
         finally:

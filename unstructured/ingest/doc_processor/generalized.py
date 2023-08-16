@@ -1,8 +1,7 @@
 """Process arbitrary files with the Unstructured library"""
 
 import os
-from contextvars import ContextVar
-from typing import Any, Dict, List, Optional, cast
+from typing import Any, Dict, List, Optional
 
 from unstructured_inference.models.base import get_model
 
@@ -13,14 +12,10 @@ from unstructured.ingest.interfaces import (
 )
 from unstructured.ingest.logger import logger
 
-# This is a context variable that can be set by the pool process to be used by the
-# doc processor to assign the session handle to the doc. Note: because
-# the session handle is not picklable, it cannot be passed directly to the pool or
+# This is set by the pool subprocess to be used by the doc processor
+# Note: because the session handle is not picklable, it cannot be passed directly to the pool or
 # the doc processor.
-session_handle_var: ContextVar[Optional[BaseSessionHandle]] = ContextVar(
-    "session_handle",
-    default=None,
-)
+session_handle: Optional[BaseSessionHandle] = None
 
 
 def initialize():
@@ -44,12 +39,17 @@ def process_document(doc: "IngestDoc", **partition_kwargs) -> Optional[List[Dict
     partition_kwargs
         ultimately the parameters passed to partition()
     """
+    global session_handle
     isd_elems_no_filename = None
     try:
-        # assign the session handle for the data source on the doc
-        session_handle = session_handle_var.get()
-        if session_handle is not None and isinstance(doc, IngestDocSessionHandleMixin):
-            cast(IngestDocSessionHandleMixin, doc).session_handle = session_handle
+        if isinstance(doc, IngestDocSessionHandleMixin):
+            # create a session handle if one is not already defined
+            if session_handle is None:
+                # create and assign via doc.session_handle, which is a property that creates a
+                # session handle if one is not already defined
+                session_handle = doc.session_handle
+            else:
+                doc.session_handle = session_handle
         # does the work necessary to load file into filesystem
         # in the future, get_file_handle() could also be supported
         doc.get_file()
