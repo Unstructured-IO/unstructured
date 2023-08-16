@@ -430,9 +430,13 @@ def test_partition_email_can_process_attachments(
         tmpdir.dirname,
         ATTACH_EXPECTED_OUTPUT[0]["filename"],
     )
+    
+    mocked_last_modification_date = "0000-00-05T09:24:28"
+    
     attachment_elements = partition_text(
         filename=attachment_filename,
         metadata_filename=attachment_filename,
+        metadata_last_modified=mocked_last_modification_date,
     )
     expected_metadata = attachment_elements[0].metadata
     expected_metadata.file_directory = None
@@ -442,6 +446,7 @@ def test_partition_email_can_process_attachments(
         filename=filename,
         attachment_partitioner=partition_text,
         process_attachments=True,
+        metadata_last_modified=mocked_last_modification_date,
     )
 
     assert elements[0].text.startswith("Hello!")
@@ -450,16 +455,7 @@ def test_partition_email_can_process_attachments(
         assert element.metadata.filename == "fake-email-attachment.eml"
         assert element.metadata.subject == "Fake email with attachment"
 
-    assert elements[-1].text == "Hey this is a fake attachment!"
-
-    last_mod_email = datetime.datetime.strptime(
-        elements[-1].metadata.last_modified,
-        "%Y-%m-%dT%H:%M:%S",
-    )
-    last_mod_text = datetime.datetime.strptime(expected_metadata.last_modified, "%Y-%m-%dT%H:%M:%S")
-    assert (last_mod_email - last_mod_text).total_seconds() < 2
-    elements[-1].metadata.last_modified = None
-    expected_metadata.last_modified = None
+    assert elements[-1].text == "Hey this is a fake attachment!"    
     assert elements[-1].metadata == expected_metadata
 
 
