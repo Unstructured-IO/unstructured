@@ -1,8 +1,9 @@
-## 0.9.4-dev0
+## 0.10.0
 
 ### Enhancements
 
 * Add `include_header` kwarg to `partition_xlsx` and change default behavior to `True`
+* Update the `links` and `emphasized_texts` metadata fields
 
 ### Features
 
