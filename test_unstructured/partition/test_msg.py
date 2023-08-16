@@ -141,7 +141,6 @@ def test_partition_msg_from_file_exclude_metadata():
 
 
 def test_partition_msg_can_process_attachments(
-    # mocker,
     tmpdir,
     filename="example-docs/fake-email-attachment.msg",
 ):
@@ -168,9 +167,8 @@ def test_partition_msg_can_process_attachments(
         process_attachments=True,
         metadata_last_modified=mocked_last_modification_date,
     )
-    import pdb; pdb.set_trace()
+    
     assert elements[0].text.startswith("Hello!")
-
     for element in elements[:-1]:
         assert element.metadata.filename == "fake-email-attachment.msg"
         assert element.metadata.subject == "Fake email with attachment"
