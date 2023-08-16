@@ -219,7 +219,12 @@ def test_partition_image_raises_with_bad_strategy():
 
 def test_partition_image_default_strategy_hi_res():
     filename = os.path.join(
-        DIRECTORY, "..", "..", "..", "example-docs", "layout-parser-paper-fast.jpg"
+        DIRECTORY,
+        "..",
+        "..",
+        "..",
+        "example-docs",
+        "layout-parser-paper-fast.jpg",
     )
     with open(filename, "rb") as f:
         elements = image.partition_image(file=f)
