@@ -1,9 +1,10 @@
-## 0.10.4-dev0
+## 0.10.4-dev1
 
 ### Enhancements
 * Adds ability to reuse connections per process in unstructured-ingest
 
 ### Features
+* Add delta table connector
 
 ### Fixes
 
