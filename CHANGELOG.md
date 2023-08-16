@@ -1,6 +1,8 @@
 ## 0.10.1-dev2
 
 ### Enhancements
+* Bump unstructured-inference==0.5.11:
+  - better defaults for DPI for hi_res and  Chipper
 * Bump unstructured-inference==0.5.10:
   - implement full-page OCR
 * Create CI Pipeline for running text, xml, email, and html doc tests against the library installed without extras
