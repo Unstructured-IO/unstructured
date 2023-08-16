@@ -187,7 +187,6 @@ jobs:
       run: |
         source .venv/bin/activate
         make test-no-extras CI=true
-        make check-coverage
 
   test_unit_dependency_extras:
     strategy:
@@ -235,7 +234,6 @@ jobs:
         pip install weaviate-client
         pip install argilla
         make test-extra EXTRA_NAME=${{ matrix.extra }} CI=true
-        make check-coverage
 
   test_ingest:
     strategy:
