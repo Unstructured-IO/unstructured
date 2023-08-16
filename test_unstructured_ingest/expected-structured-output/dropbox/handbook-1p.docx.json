@@ -16,11 +16,11 @@
       "data_source": {},
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "CHAPTER 1",
-          "tag": "b"
-        }
+      "emphasized_text_contents": [
+        "CHAPTER 1"
+      ],
+      "emphasized_text_tags": [
+        "b"
       ]
     },
     "text": "CHAPTER 1"
@@ -32,11 +32,11 @@
       "data_source": {},
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "INTRODUCTION",
-          "tag": "b"
-        }
+      "emphasized_text_contents": [
+        "INTRODUCTION"
+      ],
+      "emphasized_text_tags": [
+        "b"
       ]
     },
     "text": "INTRODUCTION"
