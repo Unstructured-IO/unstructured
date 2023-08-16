@@ -90,7 +90,9 @@ def partition_msg(
                     )
                 attached_elements = attachment_partitioner(
                     filename=attached_filename, 
-                    metadata_last_modified=metadata_last_modified
+                    metadata_last_modified=metadata_last_modified,
+                    max_partition=max_partition,
+                    min_partition=min_partition,
                 )
                 for element in attached_elements:
                     element.metadata.filename = attached_file
