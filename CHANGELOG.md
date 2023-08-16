@@ -1,4 +1,10 @@
-## 0.10.1-dev0
+## 0.10.1-dev1
+
+### Enhancements
+* Bump unstructured-inference==0.5.10:
+  - implement full-page OCR
+
+### Features
 
 ### Fixes
 * Fix dead links in repository README (Quick Start > Install for local development, and Learn more > Batch Processing)

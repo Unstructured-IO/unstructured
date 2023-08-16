@@ -1111,13 +1111,13 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "b5ee6af3d776b0bbd2e581a3ab2ab2e1",
+    "element_id": "27b45633a0f31b9e01d179d70d7dc282",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "Potential (Vv)nm°in°}aryT T T0.00001 0.001 olCurrent Density (A/cm2)"
+    "text": "5 1 os = — 10; =o ° © —\" 205 i —~é é —ip a5 — Control -2 — & 2.5 T T T 0.0000001 + —-0.00001 0.001 O14 Current Density (A/cm2)"
   },
   {
     "type": "UncategorizedText",
@@ -1141,13 +1141,13 @@
   },
   {
     "type": "Table",
-    "element_id": "e2ed41967a486766ad6a122cc3aba4d5",
+    "element_id": "9270ab0a1b3ba26a16991abcd0b45dfe",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "Inhibitorconcentration (g) bc (V/dec) ba (V/dec) Ecorr (V) icorr (A/cm2) Polarizationresistance (Ω) Corrosionrate (mm/year) 0246810 0.03351.94600.01630.32330.12400.0382 0.04090.05960.23690.05400.05560.0086 (cid:3) 0.9393(cid:3) 0.8276(cid:3) 0.8825(cid:3) 0.8027(cid:3) 0.5896(cid:3) 0.5356 0.00030.00020.00015.39E-055.46E-051.24E-05 24.0910121.44042.121373.180305.650246.080 2.81631.50540.94760.43180.37720.0919"
+    "text": "Inhibitor be (V/dec) ba (V/dec) Ecorr (V) icorr (A/cm?) Polarization Corrosion concentration (g) resistance (Q) rate (mm/year) oO 0.0335 0.0409 0.0003 24.0910 2.8163 2 1.9460 0.0596 0.0002 121.440 1.5054 4 0.0163 0.2369 0.0001 42.121 0.9476 6 0.3233 0.0540 5.39E-05 373.180 0.4318 8 0.1240 0.0556 5.46E-05 305.650 0.3772 10 0.0382 0.0086 1.24E-05 246.080 0.0919"
   },
   {
     "type": "UncategorizedText",
@@ -1471,13 +1471,13 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "6959a323ee23c858c3b1411b05db6ebf",
+    "element_id": "273fb301b173075f79b2cbdab962e2ff",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "SEM HV: Q0KY WD: 14.89 rmrm‘DEM MAO: 209 x Det: DOE Pecforsence In nenospact"
+    "text": "SEM HV: Q0KY WD: 14.89 rmrm ‘9EM MAO: 209 x Det: DOE Pectomsence In nanospact"
   },
   {
     "type": "NarrativeText",
@@ -1491,13 +1491,13 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "a0463ca888a6f2c8c3ba40ba47be0f2f",
+    "element_id": "d04d110c16a4ebc184fa130f09b8d423",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "gEOOwaeSemny. z00RV | WD: 1424 renn rtirint VEoa3 Tescan20 yin Fertormaros in nancepace|"
+    "text": "Sem ny. 200 Rv"
   },
   {
     "type": "NarrativeText",
@@ -1511,13 +1511,13 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "a9bc28448ebad437288bf5538fb09482",
+    "element_id": "520d1da08c86ce165cd2843e2dc27f98",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "SEM HY: 20.0KVBEM IAAG: 400 x 5"
+    "text": "SEMHV: 20.0KV WD: 15.54 mm EM ING: ACO x Dei: OSE"
   },
   {
     "type": "NarrativeText",
@@ -1578,6 +1578,16 @@
       "page_number": 6
     },
     "text": "Austenitic stainless steel Type 316 was used in this study with chemical composition reported in [1,2]. The chemicals used were of annular grade. The inhibitor concentrations are in the range of 2, 4, 6, 8 and 10 g [3–5]. The structural formula of egg shell powder is shown in Fig. 9."
+  },
+  {
+    "type": "FigureCaption",
+    "element_id": "060e14f01e484ba252e902cd5c6f94f9",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 6
+    },
+    "text": "ou H,;COCHNY OH"
   },
   {
     "type": "UncategorizedText",
