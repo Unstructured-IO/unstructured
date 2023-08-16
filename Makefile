@@ -23,6 +23,9 @@ install: install-base-pip-packages install-dev install-nltk-models install-test 
 .PHONY: install-ci
 install-ci: install-base-pip-packages install-nltk-models install-huggingface install-all-docs install-test
 
+.PHONY: install-base-ci
+install-base-ci: install-base-pip-packages install-nltk-models install-test
+
 .PHONY: install-base-pip-packages
 install-base-pip-packages:
 	python3 -m pip install pip==${PIP_VERSION}
@@ -243,6 +246,7 @@ uninstall-project-local:
 #################
 
 export CI ?= false
+export EXTRA_NAME
 
 ## test:                    runs all unittests
 .PHONY: test
@@ -252,6 +256,21 @@ test:
 .PHONY: test-unstructured-api-unit
 test-unstructured-api-unit:
 	scripts/test-unstructured-api-unit.sh
+
+.PHONY: test-no-extras
+# TODO(newelh) Add json test when fixed
+test-no-extras:
+	PYTHONPATH=. CI=$(CI) pytest \
+		test_${PACKAGE_NAME}/partition/test_text.py \
+		test_${PACKAGE_NAME}/partition/test_email.py \
+		test_${PACKAGE_NAME}/partition/test_html_partition.py \
+		test_${PACKAGE_NAME}/partition/test_xml_partition.py 
+
+.PHONY: test-extra
+test-extra:
+	PYTHONPATH=. CI=$(CI) pytest \
+		test_${PACKAGE_NAME}/partition/${EXTRA_NAME}
+
 
 ## check:                   runs linters (includes tests)
 .PHONY: check
