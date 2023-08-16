@@ -12,9 +12,7 @@ from unstructured.ingest.interfaces import (
 )
 from unstructured.ingest.logger import logger
 
-# This is set by the pool subprocess to be used by the doc processor
-# Note: because the session handle is not picklable, it cannot be passed directly to the pool or
-# the doc processor.
+# module-level variable to store session handle
 session_handle: Optional[BaseSessionHandle] = None
 
 
