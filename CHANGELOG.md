@@ -1,13 +1,25 @@
-## 0.9.4-dev0
-
+## 0.10.1-dev1
 
 ### Enhancements
-
+* Bump unstructured-inference==0.5.10:
+  - implement full-page OCR
 
 ### Features
 
+### Fixes
+* Fix dead links in repository README (Quick Start > Install for local development, and Learn more > Batch Processing)
+* Update document dependencies to include tesseract-lang for additional language support (required for tests to pass)
+
+## 0.10.0
+
+### Enhancements
+
+* Update the `links` and `emphasized_texts` metadata fields
+
+### Features
 
 ### Fixes
+
 * fix pdf partition of list items being detected as titles in OCR only mode
 
 ## 0.9.3
