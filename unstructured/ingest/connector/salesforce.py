@@ -6,6 +6,11 @@ from typing import Type, List
 import json
 from textwrap import dedent
 
+from email.utils import formatdate
+from dateutil import parser
+
+from string import Template
+
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -19,6 +24,27 @@ from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
 from simple_salesforce import Salesforce
+
+
+
+email_template = Template("""MIME-Version: 1.0
+Date: $date
+Message-ID: $id
+Subject: $subject
+From: $from_email
+To: $to_email
+Content-Type: multipart/alternative; boundary="00000000000095c9b205eff92630"
+--00000000000095c9b205eff92630
+Content-Type: text/plain; charset="UTF-8"
+$textbody
+--00000000000095c9b205eff92630
+Content-Type: text/html; charset="UTF-8"
+$textbody
+--00000000000095c9b205eff92630--
+"""
+)
+
+# TODO: Probably need new authentication
 
 @dataclass
 class SimpleSalesforceConfig(BaseConnectorConfig):
@@ -73,29 +99,13 @@ Name: {txt_json["Name"]}
         return dedent(txt)
 
     def create_eml(self, email_json):
+        ####### Fix Date format, should we use htmlbody or textbody
         print("*&**")
         print("Date: Fri, 16 Dec 2022 17:04:16 -0500")
         print(email_json["MessageDate"])
         html_body_1_line = email_json["HtmlBody"].replace("\n","").replace("\r","").replace("\t","")
-        eml = f"""MIME-Version: 1.0
-Date: Fri, 16 Dec 2022 17:04:16 -0500
-Message-ID: {email_json["MessageIdentifier"]}
-Subject: {email_json["Subject"]}
-From: {email_json["FromAddress"]}
-To: {email_json["ToAddress"]}
-Content-Type: multipart/alternative; boundary="00000000000095c9b205eff92630"
-
---00000000000095c9b205eff92630
-Content-Type: text/plain; charset="UTF-8"
-
-{email_json["TextBody"]}
-
---00000000000095c9b205eff92630
-Content-Type: text/html; charset="UTF-8"
-{email_json["TextBody"]}
---00000000000095c9b205eff92630--
-"""
-
+        eml = email_template.substitute(date=formatdate(parser.parse(email_json["MessageDate"]).timestamp()),id=email_json["MessageIdentifier"],subject=email_json["Subject"],
+                                      from_email=email_json["FromAddress"],to_email=email_json["ToAddress"],textbody=email_json["TextBody"])
         return dedent(eml)
 
     @BaseIngestDoc.skip_if_file_exists
@@ -188,10 +198,10 @@ class SalesforceConnector(ConnectorCleanupMixin, BaseConnector):
 
         doc_list=[]
         for record_type in self.config.salesforce_categories:
-            print(record_type)
+            # print(record_type)
             records = client.query_all(f"select FIELDS(STANDARD) from {record_type}")
             for record in records["records"]:
-                print(record)
+                # print(record)
                 doc_list.append(SalesforceIngestDoc(self.standard_config, self.config, record_type, record))
 
         return doc_list
