@@ -121,6 +121,10 @@ install-ingest-azure:
 install-ingest-box:
 	python3 -m pip install -r requirements/ingest-box.txt
 
+.PHONY: install-ingest-delta-table
+install-ingest-delta-table:
+	python3 -m pip install -r requirements/ingest-delta-table.txt
+
 .PHONY: install-ingest-discord
 install-ingest-discord:
 	pip install -r requirements/ingest-discord.txt
@@ -212,6 +216,7 @@ pip-compile:
 	pip-compile --upgrade requirements/ingest-gcs.in
 	pip-compile --upgrade requirements/ingest-dropbox.in
 	pip-compile --upgrade requirements/ingest-azure.in
+	pip-compile --upgrade requirements/ingest-delta-lake.in
 	pip-compile --upgrade requirements/ingest-discord.in
 	pip-compile --upgrade requirements/ingest-reddit.in
 	pip-compile --upgrade requirements/ingest-github.in
