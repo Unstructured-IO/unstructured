@@ -1,9 +1,21 @@
-## 0.9.4
+## 0.10.1
 
 ### Enhancements
 
 *   Adds `include_path_in_metadata_filename` parameters to partition functions.
 *   Add min\_partition kwarg to that combines elements below a specified threshold and modifies splitting of strings longer than max partition so words are not split.
+
+## 0.10.0
+
+### Enhancements
+
+* Update the `links` and `emphasized_texts` metadata fields
+
+### Features
+
+### Fixes
+
+* fix pdf partition of list items being detected as titles in OCR only mode
 
 ## 0.9.3
 
@@ -25,6 +37,7 @@
 
 ### Fixes
 
+* fix pdf partition of list items being detected as titles in OCR only mode
 * make notion module discoverable
 * fix emails with `Content-Distribution: inline` and `Content-Distribution: attachment` with no filename
 * Fix email attachment filenames which had `=` in the filename itself

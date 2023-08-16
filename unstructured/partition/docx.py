@@ -174,6 +174,9 @@ def partition_docx(
         if element_item.tag.endswith("tbl"):
             table = document.tables[table_index]
             emphasized_texts = _get_emphasized_texts_from_table(table)
+            emphasized_text_contents, emphasized_text_tags = _extract_contents_and_tags(
+                emphasized_texts,
+            )
             html_table = convert_ms_office_table_to_text(table, as_html=True)
             text_table = convert_ms_office_table_to_text(table, as_html=False)
             element = Table(text_table)
@@ -183,7 +186,8 @@ def partition_docx(
                     filename=metadata_filename,
                     page_number=page_number,
                     last_modified=metadata_last_modified or last_modification_date,
-                    emphasized_texts=emphasized_texts if emphasized_texts else None,
+                    emphasized_text_contents=emphasized_text_contents,
+                    emphasized_text_tags=emphasized_text_tags,
                 )
                 elements.append(element)
             table_index += 1
@@ -192,13 +196,17 @@ def partition_docx(
                 is_list = True
             paragraph = docx.text.paragraph.Paragraph(element_item, document)
             emphasized_texts = _get_emphasized_texts_from_paragraph(paragraph)
+            emphasized_text_contents, emphasized_text_tags = _extract_contents_and_tags(
+                emphasized_texts,
+            )
             para_element: Optional[Text] = _paragraph_to_element(paragraph, is_list)
             if para_element is not None:
                 para_element.metadata = ElementMetadata(
                     filename=metadata_filename,
                     page_number=page_number,
                     last_modified=metadata_last_modified or last_modification_date,
-                    emphasized_texts=emphasized_texts if emphasized_texts else None,
+                    emphasized_text_contents=emphasized_text_contents,
+                    emphasized_text_tags=emphasized_text_tags,
                 )
                 elements.append(para_element)
             is_list = False
@@ -406,3 +414,30 @@ def _get_emphasized_texts_from_table(table: DocxTable) -> List[dict]:
                 _emphasized_texts = _get_emphasized_texts_from_paragraph(paragraph)
                 emphasized_texts += _emphasized_texts
     return emphasized_texts
+
+
+def _extract_contents_and_tags(
+    emphasized_texts: List[dict],
+) -> Tuple[Optional[List[str]], Optional[List[str]]]:
+    """
+    Extract the text contents and tags from a list of dictionaries containing emphasized texts.
+
+    Args:
+    - emphasized_texts (List[dict]): A list containing dictionaries with keys "text" and "tag".
+
+    Returns:
+    - Tuple[List[str], List[str]]: A tuple containing two lists -
+                                   one for text contents and one for tags extracted from the input.
+    """
+    emphasized_text_contents = (
+        [emphasized_text["text"] for emphasized_text in emphasized_texts]
+        if emphasized_texts
+        else None
+    )
+    emphasized_text_tags = (
+        [emphasized_text["tag"] for emphasized_text in emphasized_texts]
+        if emphasized_texts
+        else None
+    )
+
+    return emphasized_text_contents, emphasized_text_tags
