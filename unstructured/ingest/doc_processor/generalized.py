@@ -41,9 +41,8 @@ def process_document(doc: "IngestDoc", **partition_kwargs) -> Optional[List[Dict
     isd_elems_no_filename = None
     try:
         if isinstance(doc, IngestDocSessionHandleMixin):
-            # create a session handle if one is not already defined
             if session_handle is None:
-                # create and assign via doc.session_handle, which is a property that creates a
+                # create via doc.session_handle, which is a property that creates a
                 # session handle if one is not already defined
                 session_handle = doc.session_handle
             else:
