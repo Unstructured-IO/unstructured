@@ -1,3 +1,9 @@
+## 0.10.1-dev0
+
+### Fixes
+* Fix dead links in repository README (Quick Start > Install for local development, and Learn more > Batch Processing)
+* Update document dependencies to include tesseract-lang for additional language support (required for tests to pass)
+
 ## 0.10.0
 
 ### Enhancements
