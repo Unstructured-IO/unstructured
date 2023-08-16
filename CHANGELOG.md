@@ -1,4 +1,4 @@
-## 0.10.5-dev1
+## 0.10.5-dev2
 
 ### Enhancements
 * Create new CI Pipelines
@@ -11,6 +11,7 @@
 * Add diagrams and descriptions for ingest design in the ingest README
 
 ### Features
+* Add delta table connector
 
 ### Fixes
 
