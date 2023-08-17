@@ -1,9 +1,10 @@
-## 0.10.2
+## 0.10.3
 
 ### Enhancements
 * Bump unstructured-inference==0.5.13:
   - Fix extracted image elements being included in layout merge, addresses the issue
     where an entire-page image in a PDF was not passed to the layout model when using hi_res.
+* Adds ability to reuse connections per process in unstructured-ingest
 
 ### Features
 
@@ -51,7 +52,6 @@
 * Update `partition_xlsx` to always use `soupparser_fromstring` to parse `html text`
 * Add functionality to switch `html` text parser based on whether the `html` text contains emoji
 * Add functionality to check if a string contains any emoji characters
-* Adds ability to reuse connections per process in unstructured-ingest
 
 ### Features
 
