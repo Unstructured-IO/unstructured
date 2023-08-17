@@ -4,22 +4,18 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 import pdf2image
-from unstructured_inference.inference.layout import create_image_output_dir
-from xycut import bbox2points, recursive_xy_cut, vis_polygons_with_index
 
 from unstructured.documents.elements import PageBreak
 from unstructured.partition.pdf import partition_pdf
+from xycut import bbox2points, recursive_xy_cut, vis_polygons_with_index
 
 
 def run(pdf_path):
-    image_output_dir = create_image_output_dir(pdf_path)
-    images = pdf2image.convert_from_path(pdf_path, output_folder=image_output_dir)
-    image_paths = [image.filename for image in images]
-
-    run_partition_pdf(pdf_path, "fast", image_paths)
+    images = pdf2image.convert_from_path(pdf_path)
+    run_partition_pdf(pdf_path, "fast", images)
 
 
-def run_partition_pdf(pdf_path, strategy, image_paths):
+def run_partition_pdf(pdf_path, strategy, images):
     elements = partition_pdf(
         filename=pdf_path,
         strategy=strategy,
@@ -35,11 +31,11 @@ def run_partition_pdf(pdf_path, strategy, image_paths):
             elements_coordinates.append(page_elements_coordinates)
             page_elements_coordinates = []
 
-    assert len(image_paths) == len(elements_coordinates)
-    for idx, (image_path, elements_coordinates_per_page) in enumerate(zip(image_paths, elements_coordinates)):
+    assert len(images) == len(elements_coordinates)
+    for idx, (img, elements_coordinates_per_page) in enumerate(zip(images, elements_coordinates)):
         page_idx = idx + 1
         output_image_name = os.path.splitext(os.path.basename(pdf_path))[0]
-        image = cv2.imread(image_path)
+        image = np.array(img)
         image_height, image_width, _ = image.shape
         boxes = []
         for coordinate in elements_coordinates_per_page:
