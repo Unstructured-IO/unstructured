@@ -5,12 +5,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -22,12 +18,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -39,12 +31,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -56,12 +44,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -73,25 +57,21 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1,
-      "links": [
-        {
-          "text": "\n        text\n      ",
-          "url": "/9ba4d6da8a574cfc81ebceac1fde52bd"
-        }
+      "link_urls": [
+        "/9ba4d6da8a574cfc81ebceac1fde52bd"
       ],
-      "emphasized_texts": [
-        {
-          "text": "formatted",
-          "tag": "b"
-        }
+      "link_texts": [
+        "\n        text\n      "
+      ],
+      "emphasized_text_contents": [
+        "formatted"
+      ],
+      "emphasized_text_tags": [
+        "b"
       ]
     },
     "text": "\n      Some/less → \n      more\n       \n      "
@@ -102,19 +82,15 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1,
-      "links": [
-        {
-          "text": "\n        text\n      ",
-          "url": "/9ba4d6da8a574cfc81ebceac1fde52bd"
-        }
+      "link_urls": [
+        "/9ba4d6da8a574cfc81ebceac1fde52bd"
+      ],
+      "link_texts": [
+        "\n        text\n      "
       ]
     },
     "text": "text\n      \n       with other"
@@ -125,12 +101,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -142,19 +114,15 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1,
-      "links": [
-        {
-          "text": "\n        https://www.google.com/maps/place/Empire+State+Building/@40.7484445,-73.9882393,17z/data=!3m2!4b1!5s0x8b398fecd1aea119:0x76fa1e3ac5a94c70!4m6!3m5!1s0x89c259a9b3117469:0xd134e199a405a163!8m2!3d40.7484405!4d-73.9856644!16zL20vMDJuZF8?entry=ttu\n      ",
-          "url": "https://www.google.com/maps/place/Empire+State+Building/@40.7484445,-73.9882393,17z/data=!3m2!4b1!5s0x8b398fecd1aea119:0x76fa1e3ac5a94c70!4m6!3m5!1s0x89c259a9b3117469:0xd134e199a405a163!8m2!3d40.7484405!4d-73.9856644!16zL20vMDJuZF8?entry=ttu"
-        }
+      "link_urls": [
+        "https://www.google.com/maps/place/Empire+State+Building/@40.7484445,-73.9882393,17z/data=!3m2!4b1!5s0x8b398fecd1aea119:0x76fa1e3ac5a94c70!4m6!3m5!1s0x89c259a9b3117469:0xd134e199a405a163!8m2!3d40.7484405!4d-73.9856644!16zL20vMDJuZF8?entry=ttu"
+      ],
+      "link_texts": [
+        "\n        https://www.google.com/maps/place/Empire+State+Building/@40.7484445,-73.9882393,17z/data=!3m2!4b1!5s0x8b398fecd1aea119:0x76fa1e3ac5a94c70!4m6!3m5!1s0x89c259a9b3117469:0xd134e199a405a163!8m2!3d40.7484405!4d-73.9856644!16zL20vMDJuZF8?entry=ttu\n      "
       ]
     },
     "text": "https://www.google.com/maps/place/Empire+State+Building/@40.7484445,-73.9882393,17z/data=!3m2!4b1!5s0x8b398fecd1aea119:0x76fa1e3ac5a94c70!4m6!3m5!1s0x89c259a9b3117469:0xd134e199a405a163!8m2!3d40.7484405!4d-73.9856644!16zL20vMDJuZF8?entry=ttu"
@@ -165,12 +133,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -182,19 +146,15 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "content",
-          "tag": "b"
-        }
+      "emphasized_text_contents": [
+        "content"
+      ],
+      "emphasized_text_tags": [
+        "b"
       ]
     },
     "text": "c1r1 \n          \n            content"
@@ -205,12 +165,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -222,19 +178,15 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1,
-      "links": [
-        {
-          "text": "\n            Page with every block \n          ",
-          "url": "https://www.notion.so/c47a45664c7a488bac2a1292ee507fcb"
-        }
+      "link_urls": [
+        "https://www.notion.so/c47a45664c7a488bac2a1292ee507fcb"
+      ],
+      "link_texts": [
+        "\n            Page with every block \n          "
       ]
     },
     "text": "Page with every block"
@@ -245,19 +197,15 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1,
-      "links": [
-        {
-          "text": "\n            content\n          ",
-          "url": "/122b2c22996b435b9de2ee0e9d2b04bc"
-        }
+      "link_urls": [
+        "/122b2c22996b435b9de2ee0e9d2b04bc"
+      ],
+      "link_texts": [
+        "\n            content\n          "
       ]
     },
     "text": "c1r2 more \n          \n            content"
@@ -268,19 +216,15 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "cell",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "cell"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "c2r2 table \n          \n            cell"
@@ -291,19 +235,15 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1,
-      "links": [
-        {
-          "text": "\n            Untitled\n          ",
-          "url": "https://www.notion.so/9ba4d6da8a574cfc81ebceac1fde52bd"
-        }
+      "link_urls": [
+        "https://www.notion.so/9ba4d6da8a574cfc81ebceac1fde52bd"
+      ],
+      "link_texts": [
+        "\n            Untitled\n          "
       ]
     },
     "text": "Untitled"
@@ -314,12 +254,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -331,23 +267,17 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "an",
-          "tag": "b"
-        },
-        {
-          "text": "equation",
-          "tag": "b"
-        }
+      "emphasized_text_contents": [
+        "an",
+        "equation"
+      ],
+      "emphasized_text_tags": [
+        "b",
+        "b"
       ]
     },
     "text": "this is \n          \n            an \n          \n          \n            equation"
@@ -358,19 +288,15 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1,
-      "links": [
-        {
-          "text": "\n            Untitled\n          ",
-          "url": "https://www.notion.so/a1a5dff426f34b8f9a709d51b2a00c73"
-        }
+      "link_urls": [
+        "https://www.notion.so/a1a5dff426f34b8f9a709d51b2a00c73"
+      ],
+      "link_texts": [
+        "\n            Untitled\n          "
       ]
     },
     "text": "Untitled"
@@ -381,19 +307,15 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "text2",
-          "tag": "i"
-        }
+      "emphasized_text_contents": [
+        "text2"
+      ],
+      "emphasized_text_tags": [
+        "i"
       ]
     },
     "text": "text1\n\n\n          \n            text2\n          \n          \n\nMultiline cell"
@@ -404,12 +326,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -421,19 +339,15 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1,
-      "links": [
-        {
-          "text": "\n            Untitled\n          ",
-          "url": "https://www.notion.so/84002066546448d0a030aa79b8d400b0"
-        }
+      "link_urls": [
+        "https://www.notion.so/84002066546448d0a030aa79b8d400b0"
+      ],
+      "link_texts": [
+        "\n            Untitled\n          "
       ]
     },
     "text": "Untitled"
@@ -444,12 +358,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -461,12 +371,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -478,12 +384,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -495,12 +397,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -512,12 +410,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -529,12 +423,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -546,12 +436,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -563,12 +449,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -580,12 +462,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -597,12 +475,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -614,12 +488,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -631,12 +501,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -648,12 +514,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -665,12 +527,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -682,12 +540,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -699,19 +553,15 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 2,
-      "links": [
-        {
-          "text": "\n        https://www.notion.so/icons/airplane_brown.svg\n      ",
-          "url": "https://www.notion.so/icons/airplane_brown.svg"
-        }
+      "link_urls": [
+        "https://www.notion.so/icons/airplane_brown.svg"
+      ],
+      "link_texts": [
+        "\n        https://www.notion.so/icons/airplane_brown.svg\n      "
       ]
     },
     "text": "https://www.notion.so/icons/airplane_brown.svg\n      \n      I call this out"
@@ -722,19 +572,15 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 2,
-      "links": [
-        {
-          "text": "\n        https://www.wikipedia.org/\n      ",
-          "url": "https://www.wikipedia.org/"
-        }
+      "link_urls": [
+        "https://www.wikipedia.org/"
+      ],
+      "link_texts": [
+        "\n        https://www.wikipedia.org/\n      "
       ]
     },
     "text": "https://www.wikipedia.org/"
@@ -745,19 +591,15 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 2,
-      "links": [
-        {
-          "text": "\n        https://play-lh.googleusercontent.com/KwUBNPbMTk9jDXYS2AeX3illtVRTkrKVh5xR1Mg4WHd0CG2tV4mrh1z3kXi5z_warlk\n      ",
-          "url": "https://play-lh.googleusercontent.com/KwUBNPbMTk9jDXYS2AeX3illtVRTkrKVh5xR1Mg4WHd0CG2tV4mrh1z3kXi5z_warlk"
-        }
+      "link_urls": [
+        "https://play-lh.googleusercontent.com/KwUBNPbMTk9jDXYS2AeX3illtVRTkrKVh5xR1Mg4WHd0CG2tV4mrh1z3kXi5z_warlk"
+      ],
+      "link_texts": [
+        "\n        https://play-lh.googleusercontent.com/KwUBNPbMTk9jDXYS2AeX3illtVRTkrKVh5xR1Mg4WHd0CG2tV4mrh1z3kXi5z_warlk\n      "
       ]
     },
     "text": "https://play-lh.googleusercontent.com/KwUBNPbMTk9jDXYS2AeX3illtVRTkrKVh5xR1Mg4WHd0CG2tV4mrh1z3kXi5z_warlk"
@@ -768,12 +610,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 2
     },
@@ -785,19 +623,15 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 2,
-      "links": [
-        {
-          "text": "\n        Analytics\n      ",
-          "url": "https://www.notion.so/d1fad658f1cf4eedb0b5ee72b9f0b530"
-        }
+      "link_urls": [
+        "https://www.notion.so/d1fad658f1cf4eedb0b5ee72b9f0b530"
+      ],
+      "link_texts": [
+        "\n        Analytics\n      "
       ]
     },
     "text": "Analytics"
@@ -808,12 +642,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 2
     },
@@ -825,19 +655,15 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 2,
-      "links": [
-        {
-          "text": "\n        Untitled\n      ",
-          "url": "https://www.notion.so/9ba4d6da8a574cfc81ebceac1fde52bd"
-        }
+      "link_urls": [
+        "https://www.notion.so/9ba4d6da8a574cfc81ebceac1fde52bd"
+      ],
+      "link_texts": [
+        "\n        Untitled\n      "
       ]
     },
     "text": "Untitled"
@@ -848,12 +674,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 2
     },
@@ -865,12 +687,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 2
     },
@@ -882,12 +700,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 2
     },
@@ -899,12 +713,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 2
     },
@@ -912,26 +722,22 @@
   },
   {
     "type": "Title",
-    "element_id": "aa214140ab0cac449e78fc668600621d",
+    "element_id": "364862b25cc726a768756134a1e067ed",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 2,
-      "links": [
-        {
-          "text": "\n        https://s3.us-west-2.amazonaws.com/secure.notion-static.com/245bafb9-2684-4852-881b-95b367abc7ba/A_Dive_in_to_Hyper-V_Architecture_and_Vulnerabilities_-_Slides_%28BlackHat_2018%29.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230811%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230811T190033Z&X-Amz-Expires=3600&X-Amz-Signature=c554b468db159debe0ef4b4ca61b14d4d8227be874b5bb61697b3d30bf44d7ba&X-Amz-SignedHeaders=host&x-id=GetObject\n      ",
-          "url": "https://s3.us-west-2.amazonaws.com/secure.notion-static.com/245bafb9-2684-4852-881b-95b367abc7ba/A_Dive_in_to_Hyper-V_Architecture_and_Vulnerabilities_-_Slides_%28BlackHat_2018%29.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230811%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230811T190033Z&X-Amz-Expires=3600&X-Amz-Signature=c554b468db159debe0ef4b4ca61b14d4d8227be874b5bb61697b3d30bf44d7ba&X-Amz-SignedHeaders=host&x-id=GetObject"
-        }
+      "link_urls": [
+        "https://s3.us-west-2.amazonaws.com/secure.notion-static.com/245bafb9-2684-4852-881b-95b367abc7ba/A_Dive_in_to_Hyper-V_Architecture_and_Vulnerabilities_-_Slides_%28BlackHat_2018%29.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230817%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230817T161949Z&X-Amz-Expires=3600&X-Amz-Signature=91ac745e7d83aed3ddad5637e296d14762154b32751a48a25db43a6ddc9ec70a&X-Amz-SignedHeaders=host&x-id=GetObject"
+      ],
+      "link_texts": [
+        "\n        https://s3.us-west-2.amazonaws.com/secure.notion-static.com/245bafb9-2684-4852-881b-95b367abc7ba/A_Dive_in_to_Hyper-V_Architecture_and_Vulnerabilities_-_Slides_%28BlackHat_2018%29.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230817%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230817T161949Z&X-Amz-Expires=3600&X-Amz-Signature=91ac745e7d83aed3ddad5637e296d14762154b32751a48a25db43a6ddc9ec70a&X-Amz-SignedHeaders=host&x-id=GetObject\n      "
       ]
     },
-    "text": "https://s3.us-west-2.amazonaws.com/secure.notion-static.com/245bafb9-2684-4852-881b-95b367abc7ba/A_Dive_in_to_Hyper-V_Architecture_and_Vulnerabilities_-_Slides_%28BlackHat_2018%29.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230811%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230811T190033Z&X-Amz-Expires=3600&X-Amz-Signature=c554b468db159debe0ef4b4ca61b14d4d8227be874b5bb61697b3d30bf44d7ba&X-Amz-SignedHeaders=host&x-id=GetObject"
+    "text": "https://s3.us-west-2.amazonaws.com/secure.notion-static.com/245bafb9-2684-4852-881b-95b367abc7ba/A_Dive_in_to_Hyper-V_Architecture_and_Vulnerabilities_-_Slides_%28BlackHat_2018%29.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230817%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230817T161949Z&X-Amz-Expires=3600&X-Amz-Signature=91ac745e7d83aed3ddad5637e296d14762154b32751a48a25db43a6ddc9ec70a&X-Amz-SignedHeaders=host&x-id=GetObject"
   },
   {
     "type": "Title",
@@ -939,12 +745,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 2
     },
@@ -956,12 +758,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 2
     },
@@ -969,26 +767,22 @@
   },
   {
     "type": "Title",
-    "element_id": "454d1347d0815bb9c3bbb80671d90c7e",
+    "element_id": "00b9947fc697764d706805ab1b0ad318",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 2,
-      "links": [
-        {
-          "text": "\n        https://s3.us-west-2.amazonaws.com/secure.notion-static.com/babdb9b9-53f7-4679-a083-1fdc71c8b63d/Agner-Fog-C-vector-class-library-v2-%282019%29-cut.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230811%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230811T190033Z&X-Amz-Expires=3600&X-Amz-Signature=a0a8de6f2994df5d0385827e3cf86c5ddda335ad8333e9a9fb4ced5d565b1f49&X-Amz-SignedHeaders=host&x-id=GetObject\n      ",
-          "url": "https://s3.us-west-2.amazonaws.com/secure.notion-static.com/babdb9b9-53f7-4679-a083-1fdc71c8b63d/Agner-Fog-C-vector-class-library-v2-%282019%29-cut.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230811%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230811T190033Z&X-Amz-Expires=3600&X-Amz-Signature=a0a8de6f2994df5d0385827e3cf86c5ddda335ad8333e9a9fb4ced5d565b1f49&X-Amz-SignedHeaders=host&x-id=GetObject"
-        }
+      "link_urls": [
+        "https://s3.us-west-2.amazonaws.com/secure.notion-static.com/babdb9b9-53f7-4679-a083-1fdc71c8b63d/Agner-Fog-C-vector-class-library-v2-%282019%29-cut.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230817%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230817T161949Z&X-Amz-Expires=3600&X-Amz-Signature=9a6a9e25c1514d4c25dc3ab7cae7b621066d307d90c04c348cd8c5105f752b0f&X-Amz-SignedHeaders=host&x-id=GetObject"
+      ],
+      "link_texts": [
+        "\n        https://s3.us-west-2.amazonaws.com/secure.notion-static.com/babdb9b9-53f7-4679-a083-1fdc71c8b63d/Agner-Fog-C-vector-class-library-v2-%282019%29-cut.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230817%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230817T161949Z&X-Amz-Expires=3600&X-Amz-Signature=9a6a9e25c1514d4c25dc3ab7cae7b621066d307d90c04c348cd8c5105f752b0f&X-Amz-SignedHeaders=host&x-id=GetObject\n      "
       ]
     },
-    "text": "https://s3.us-west-2.amazonaws.com/secure.notion-static.com/babdb9b9-53f7-4679-a083-1fdc71c8b63d/Agner-Fog-C-vector-class-library-v2-%282019%29-cut.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230811%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230811T190033Z&X-Amz-Expires=3600&X-Amz-Signature=a0a8de6f2994df5d0385827e3cf86c5ddda335ad8333e9a9fb4ced5d565b1f49&X-Amz-SignedHeaders=host&x-id=GetObject"
+    "text": "https://s3.us-west-2.amazonaws.com/secure.notion-static.com/babdb9b9-53f7-4679-a083-1fdc71c8b63d/Agner-Fog-C-vector-class-library-v2-%282019%29-cut.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230817%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230817T161949Z&X-Amz-Expires=3600&X-Amz-Signature=9a6a9e25c1514d4c25dc3ab7cae7b621066d307d90c04c348cd8c5105f752b0f&X-Amz-SignedHeaders=host&x-id=GetObject"
   },
   {
     "type": "UncategorizedText",
@@ -996,12 +790,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-09T14:55:00.000Z",
-        "date_processed": "2023-08-11T19:00:35.443998"
+        "date_modified": "2023-08-09T14:55:00.000Z"
       },
-      "filename": "c47a4566-4c7a-488b-ac2a-1292ee507fcb.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:35",
       "filetype": "text/html",
       "page_number": 2
     },

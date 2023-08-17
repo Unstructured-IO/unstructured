@@ -5,12 +5,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -22,19 +18,15 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1,
-      "links": [
-        {
-          "text": "\n        Roman Isecke\n      ",
-          "url": "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100"
-        }
+      "link_urls": [
+        "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100"
+      ],
+      "link_texts": [
+        "\n        Roman Isecke\n      "
       ]
     },
     "text": "Roman Isecke"
@@ -45,12 +37,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -62,12 +50,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -79,12 +63,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -96,19 +76,15 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "DevOps-Bot",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "DevOps-Bot"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "DevOps-Bot"
@@ -119,12 +95,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -136,19 +108,15 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Option 1",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "Option 1"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "Option 1"
@@ -159,12 +127,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -176,12 +140,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -193,12 +153,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -210,12 +166,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -227,12 +179,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -244,19 +192,15 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1,
-      "links": [
-        {
-          "text": "\n        Roman Isecke\n      ",
-          "url": "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100"
-        }
+      "link_urls": [
+        "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100"
+      ],
+      "link_texts": [
+        "\n        Roman Isecke\n      "
       ]
     },
     "text": "Roman Isecke"
@@ -267,12 +211,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -284,12 +224,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -301,12 +237,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -314,26 +246,22 @@
   },
   {
     "type": "Title",
-    "element_id": "b33fdfd6f3841e0dd7560337e036618d",
+    "element_id": "a58ce7b107257182888968df200c7ed7",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1,
-      "links": [
-        {
-          "text": "\n          https://s3.us-west-2.amazonaws.com/secure.notion-static.com/3a7aaacd-74ab-402b-9377-c352a67675c1/russian-beginner-text-activity.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230811%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230811T190036Z&X-Amz-Expires=3600&X-Amz-Signature=bb577be97e696645c14fb6c7fc726643bf23a6bf550ac784d0b41b6792007f90&X-Amz-SignedHeaders=host&x-id=GetObject\n        ",
-          "url": "https://s3.us-west-2.amazonaws.com/secure.notion-static.com/3a7aaacd-74ab-402b-9377-c352a67675c1/russian-beginner-text-activity.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230811%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230811T190036Z&X-Amz-Expires=3600&X-Amz-Signature=bb577be97e696645c14fb6c7fc726643bf23a6bf550ac784d0b41b6792007f90&X-Amz-SignedHeaders=host&x-id=GetObject"
-        }
+      "link_urls": [
+        "https://s3.us-west-2.amazonaws.com/secure.notion-static.com/3a7aaacd-74ab-402b-9377-c352a67675c1/russian-beginner-text-activity.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230817%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230817T161952Z&X-Amz-Expires=3600&X-Amz-Signature=5cd51a2b037d2faaf86e47bfbf5482196d28a9aa9073ab2d21d66118b61cc722&X-Amz-SignedHeaders=host&x-id=GetObject"
+      ],
+      "link_texts": [
+        "\n          https://s3.us-west-2.amazonaws.com/secure.notion-static.com/3a7aaacd-74ab-402b-9377-c352a67675c1/russian-beginner-text-activity.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230817%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230817T161952Z&X-Amz-Expires=3600&X-Amz-Signature=5cd51a2b037d2faaf86e47bfbf5482196d28a9aa9073ab2d21d66118b61cc722&X-Amz-SignedHeaders=host&x-id=GetObject\n        "
       ]
     },
-    "text": "https://s3.us-west-2.amazonaws.com/secure.notion-static.com/3a7aaacd-74ab-402b-9377-c352a67675c1/russian-beginner-text-activity.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230811%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230811T190036Z&X-Amz-Expires=3600&X-Amz-Signature=bb577be97e696645c14fb6c7fc726643bf23a6bf550ac784d0b41b6792007f90&X-Amz-SignedHeaders=host&x-id=GetObject"
+    "text": "https://s3.us-west-2.amazonaws.com/secure.notion-static.com/3a7aaacd-74ab-402b-9377-c352a67675c1/russian-beginner-text-activity.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230817%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230817T161952Z&X-Amz-Expires=3600&X-Amz-Signature=5cd51a2b037d2faaf86e47bfbf5482196d28a9aa9073ab2d21d66118b61cc722&X-Amz-SignedHeaders=host&x-id=GetObject"
   },
   {
     "type": "UncategorizedText",
@@ -341,41 +269,29 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1,
-      "links": [
-        {
-          "text": "\n            link\n          ",
-          "url": "/51243b9d55dc4131b2ae03eff1ef1783"
-        }
+      "link_urls": [
+        "/51243b9d55dc4131b2ae03eff1ef1783"
       ],
-      "emphasized_texts": [
-        {
-          "text": "More",
-          "tag": "span"
-        },
-        {
-          "text": "text",
-          "tag": "span"
-        },
-        {
-          "text": "text",
-          "tag": "span"
-        },
-        {
-          "text": "with",
-          "tag": "span"
-        },
-        {
-          "text": "link",
-          "tag": "span"
-        }
+      "link_texts": [
+        "\n            link\n          "
+      ],
+      "emphasized_text_contents": [
+        "More",
+        "text",
+        "text",
+        "with",
+        "link"
+      ],
+      "emphasized_text_tags": [
+        "span",
+        "span",
+        "span",
+        "span",
+        "span"
       ]
     },
     "text": "More \n        \n        \n          \n            text\n          \n        \n        \n           with \n        \n        \n          \n            link"
@@ -386,12 +302,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -403,12 +315,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -420,12 +328,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -437,12 +341,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -454,12 +354,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -471,12 +367,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -488,12 +380,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -505,12 +393,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -522,12 +406,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -539,19 +419,15 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1,
-      "links": [
-        {
-          "text": "\n        Roman Isecke\n      ",
-          "url": "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100"
-        }
+      "link_urls": [
+        "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100"
+      ],
+      "link_texts": [
+        "\n        Roman Isecke\n      "
       ]
     },
     "text": "Roman Isecke"
@@ -562,12 +438,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -579,12 +451,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -596,12 +464,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -609,30 +473,24 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "966a7575504cbfff45f85931502be0a5",
+    "element_id": "deae83c73ba2c9341749cc11f077a9e2",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1,
-      "links": [
-        {
-          "text": "\n          https://s3.us-west-2.amazonaws.com/secure.notion-static.com/c24ac006-613b-4cda-9182-297e5ada0219/Agner-Fog-C-vector-class-library-v2-%282019%29-cut.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230811%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230811T190036Z&X-Amz-Expires=3600&X-Amz-Signature=647572b1d65cdd7b3216ee401743c4ec811b6d6af6fb22dcc164c14352c6187d&X-Amz-SignedHeaders=host&x-id=GetObject\n        ",
-          "url": "https://s3.us-west-2.amazonaws.com/secure.notion-static.com/c24ac006-613b-4cda-9182-297e5ada0219/Agner-Fog-C-vector-class-library-v2-%282019%29-cut.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230811%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230811T190036Z&X-Amz-Expires=3600&X-Amz-Signature=647572b1d65cdd7b3216ee401743c4ec811b6d6af6fb22dcc164c14352c6187d&X-Amz-SignedHeaders=host&x-id=GetObject"
-        },
-        {
-          "text": "\n          https://s3.us-west-2.amazonaws.com/secure.notion-static.com/eddee195-f19e-4599-bede-ba09e61d7b52/ThursdayJuly_062023__id_7442045a_f01e_43fe_9289_1b889f64bf97.csv?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230811%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230811T190036Z&X-Amz-Expires=3600&X-Amz-Signature=431c2d00cff8f0c323ca518cd7fc1cd0388293c8db3fdc3c4d12b4cb5140d565&X-Amz-SignedHeaders=host&x-id=GetObject\n        ",
-          "url": "https://s3.us-west-2.amazonaws.com/secure.notion-static.com/eddee195-f19e-4599-bede-ba09e61d7b52/ThursdayJuly_062023__id_7442045a_f01e_43fe_9289_1b889f64bf97.csv?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230811%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230811T190036Z&X-Amz-Expires=3600&X-Amz-Signature=431c2d00cff8f0c323ca518cd7fc1cd0388293c8db3fdc3c4d12b4cb5140d565&X-Amz-SignedHeaders=host&x-id=GetObject"
-        }
+      "link_urls": [
+        "https://s3.us-west-2.amazonaws.com/secure.notion-static.com/c24ac006-613b-4cda-9182-297e5ada0219/Agner-Fog-C-vector-class-library-v2-%282019%29-cut.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230817%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230817T161952Z&X-Amz-Expires=3600&X-Amz-Signature=26e1e9fc0bf76579a5d2c5d944073cb342a72294a836d32049d9e0c30229439a&X-Amz-SignedHeaders=host&x-id=GetObject",
+        "https://s3.us-west-2.amazonaws.com/secure.notion-static.com/eddee195-f19e-4599-bede-ba09e61d7b52/ThursdayJuly_062023__id_7442045a_f01e_43fe_9289_1b889f64bf97.csv?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230817%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230817T161952Z&X-Amz-Expires=3600&X-Amz-Signature=30a78ce125f7f45cee8c494d1a1093f50551149cd8da4b0e0c159a20a16bd34d&X-Amz-SignedHeaders=host&x-id=GetObject"
+      ],
+      "link_texts": [
+        "\n          https://s3.us-west-2.amazonaws.com/secure.notion-static.com/c24ac006-613b-4cda-9182-297e5ada0219/Agner-Fog-C-vector-class-library-v2-%282019%29-cut.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230817%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230817T161952Z&X-Amz-Expires=3600&X-Amz-Signature=26e1e9fc0bf76579a5d2c5d944073cb342a72294a836d32049d9e0c30229439a&X-Amz-SignedHeaders=host&x-id=GetObject\n        ",
+        "\n          https://s3.us-west-2.amazonaws.com/secure.notion-static.com/eddee195-f19e-4599-bede-ba09e61d7b52/ThursdayJuly_062023__id_7442045a_f01e_43fe_9289_1b889f64bf97.csv?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230817%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230817T161952Z&X-Amz-Expires=3600&X-Amz-Signature=30a78ce125f7f45cee8c494d1a1093f50551149cd8da4b0e0c159a20a16bd34d&X-Amz-SignedHeaders=host&x-id=GetObject\n        "
       ]
     },
-    "text": "https://s3.us-west-2.amazonaws.com/secure.notion-static.com/c24ac006-613b-4cda-9182-297e5ada0219/Agner-Fog-C-vector-class-library-v2-%282019%29-cut.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230811%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230811T190036Z&X-Amz-Expires=3600&X-Amz-Signature=647572b1d65cdd7b3216ee401743c4ec811b6d6af6fb22dcc164c14352c6187d&X-Amz-SignedHeaders=host&x-id=GetObject\n        \n        \n          https://s3.us-west-2.amazonaws.com/secure.notion-static.com/eddee195-f19e-4599-bede-ba09e61d7b52/ThursdayJuly_062023__id_7442045a_f01e_43fe_9289_1b889f64bf97.csv?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230811%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230811T190036Z&X-Amz-Expires=3600&X-Amz-Signature=431c2d00cff8f0c323ca518cd7fc1cd0388293c8db3fdc3c4d12b4cb5140d565&X-Amz-SignedHeaders=host&x-id=GetObject"
+    "text": "https://s3.us-west-2.amazonaws.com/secure.notion-static.com/c24ac006-613b-4cda-9182-297e5ada0219/Agner-Fog-C-vector-class-library-v2-%282019%29-cut.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230817%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230817T161952Z&X-Amz-Expires=3600&X-Amz-Signature=26e1e9fc0bf76579a5d2c5d944073cb342a72294a836d32049d9e0c30229439a&X-Amz-SignedHeaders=host&x-id=GetObject\n        \n        \n          https://s3.us-west-2.amazonaws.com/secure.notion-static.com/eddee195-f19e-4599-bede-ba09e61d7b52/ThursdayJuly_062023__id_7442045a_f01e_43fe_9289_1b889f64bf97.csv?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230817%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230817T161952Z&X-Amz-Expires=3600&X-Amz-Signature=30a78ce125f7f45cee8c494d1a1093f50551149cd8da4b0e0c159a20a16bd34d&X-Amz-SignedHeaders=host&x-id=GetObject"
   },
   {
     "type": "UncategorizedText",
@@ -640,33 +498,25 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1,
-      "links": [
-        {
-          "text": "\n            Roman Isecke\n          ",
-          "url": "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100"
-        },
-        {
-          "text": "\n            Jason Scheirer\n          ",
-          "url": "https://lh3.googleusercontent.com/a/AAcHTtdiriiUNnUcm1dkAp7cbmmQyeO-acsViQHFS9v0=s100"
-        }
+      "link_urls": [
+        "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100",
+        "https://lh3.googleusercontent.com/a/AAcHTtdiriiUNnUcm1dkAp7cbmmQyeO-acsViQHFS9v0=s100"
       ],
-      "emphasized_texts": [
-        {
-          "text": "Roman Isecke",
-          "tag": "span"
-        },
-        {
-          "text": "Jason Scheirer",
-          "tag": "span"
-        }
+      "link_texts": [
+        "\n            Roman Isecke\n          ",
+        "\n            Jason Scheirer\n          "
+      ],
+      "emphasized_text_contents": [
+        "Roman Isecke",
+        "Jason Scheirer"
+      ],
+      "emphasized_text_tags": [
+        "span",
+        "span"
       ]
     },
     "text": "Roman Isecke\n          \n        \n        \n          \n            Jason Scheirer"
@@ -677,31 +527,21 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "This is some",
-          "tag": "span"
-        },
-        {
-          "text": "formatted",
-          "tag": "span"
-        },
-        {
-          "text": "formatted",
-          "tag": "b"
-        },
-        {
-          "text": "text",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "This is some",
+        "formatted",
+        "formatted",
+        "text"
+      ],
+      "emphasized_text_tags": [
+        "span",
+        "span",
+        "b",
+        "span"
       ]
     },
     "text": "This is some \n        \n        \n          \n            formatted\n          \n        \n        \n           text"
@@ -712,12 +552,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -729,23 +565,17 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Option 2",
-          "tag": "span"
-        },
-        {
-          "text": "Option 1",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "Option 2",
+        "Option 1"
+      ],
+      "emphasized_text_tags": [
+        "span",
+        "span"
       ]
     },
     "text": "Option 2\n        \n        \n          Option 1"
@@ -756,12 +586,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -773,12 +599,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -790,12 +612,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -807,12 +625,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -824,12 +638,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -841,12 +651,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -858,12 +664,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -875,19 +677,15 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
-        "date_modified": "2023-08-08T19:19:00.000Z",
-        "date_processed": "2023-08-11T19:00:39.574999"
+        "date_modified": "2023-08-08T19:19:00.000Z"
       },
-      "filename": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:39",
       "filetype": "text/html",
       "page_number": 1,
-      "links": [
-        {
-          "text": "\n        www.google.com\n      ",
-          "url": "www.google.com"
-        }
+      "link_urls": [
+        "www.google.com"
+      ],
+      "link_texts": [
+        "\n        www.google.com\n      "
       ]
     },
     "text": "www.google.com"
