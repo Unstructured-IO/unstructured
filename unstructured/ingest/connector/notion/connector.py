@@ -21,7 +21,7 @@ from unstructured.utils import (
 )
 
 
-@dataclass
+@dataclass(frozen=True)
 class SimpleNotionConfig(BaseConnectorConfig):
     """Connector config to process all messages by channel id's."""
 

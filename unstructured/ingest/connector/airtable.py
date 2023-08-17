@@ -15,7 +15,7 @@ from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
 
-@dataclass
+@dataclass(frozen=True)
 class SimpleAirtableConfig(BaseConnectorConfig):
     """Connector config where:
     auth_token is the authentication token to authenticate into Airtable.

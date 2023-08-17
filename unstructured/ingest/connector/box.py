@@ -24,7 +24,7 @@ class AccessTokenError(Exception):
     """There is a problem with the Access Token."""
 
 
-@dataclass
+@dataclass(frozen=True)
 class SimpleBoxConfig(SimpleFsspecConfig):
     @requires_dependencies(["boxfs"], extras="box")
     def __post_init__(self):

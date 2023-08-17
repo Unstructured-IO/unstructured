@@ -12,9 +12,8 @@ from unstructured.ingest.interfaces import (
 )
 from unstructured.ingest.logger import logger
 
-# module-level variable to store session handle
-session_handle: Optional[BaseSessionHandle] = None
-
+# Dictionary to store session handles by config hash
+session_handles_map: Dict[int, BaseSessionHandle] = {}
 
 def initialize():
     """Download default model or model specified by UNSTRUCTURED_HI_RES_MODEL_NAME environment
@@ -40,13 +39,14 @@ def process_document(doc: "IngestDoc", **partition_kwargs) -> Optional[List[Dict
     global session_handle
     isd_elems_no_filename = None
     try:
+        # assign session handle to doc if it supports it
         if isinstance(doc, IngestDocSessionHandleMixin):
-            if session_handle is None:
+            if hash(doc.config) not in session_handles_map:
                 # create via doc.session_handle, which is a property that creates a
                 # session handle if one is not already defined
-                session_handle = doc.session_handle
+                session_handles_map[hash(doc.config)] = doc.session_handle
             else:
-                doc.session_handle = session_handle
+                doc.session_handle = session_handles_map[hash(doc.config)]
         # does the work necessary to load file into filesystem
         # in the future, get_file_handle() could also be supported
         doc.get_file()

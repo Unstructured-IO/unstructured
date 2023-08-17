@@ -26,48 +26,51 @@ SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
 ]
 
 
-@dataclass
+@dataclass(frozen=True)
 class SimpleFsspecConfig(BaseConnectorConfig):
     # fsspec specific options
     path: str
     recursive: bool
     access_kwargs: dict = field(default_factory=dict)
-    protocol: str = field(init=False)
-    path_without_protocol: str = field(init=False)
-    dir_path: str = field(init=False)
-    file_path: str = field(init=False)
 
+    @property
+    def protocol(self):
+        return self.path.split("://")[0]
+    
+    @property
+    def path_without_protocol(self):
+        return self.path.split("://")[1]
+   
+    @property
+    def dir_path(self):
+        if self.protocol == "dropbox":
+            return " "
+        match = re.match(rf"{self.protocol}://([^/\s]+?)(/*)$", self.path)
+        if match:
+            return match.group(1)        
+        match = re.match(rf"{self.protocol}://([^/\s]+?)/([^\s]*)", self.path)
+        if not match:
+            raise ValueError(f"Invalid path {self.path}.")
+        return match.group(1)
+
+    @property
+    def file_path(self):
+        if self.protocol == "dropbox":
+            return ""
+        match = re.match(rf"{self.protocol}://([^/\s]+?)(/*)$", self.path)
+        if match:
+            return ""
+        match = re.match(rf"{self.protocol}://([^/\s]+?)/([^\s]*)", self.path)
+        if not match:
+            raise ValueError(f"Invalid path {self.path}.")
+        return match.group(2) or ""
+        
     def __post_init__(self):
-        self.protocol, self.path_without_protocol = self.path.split("://")
         if self.protocol not in SUPPORTED_REMOTE_FSSPEC_PROTOCOLS:
             raise ValueError(
                 f"Protocol {self.protocol} not supported yet, only "
                 f"{SUPPORTED_REMOTE_FSSPEC_PROTOCOLS} are supported.",
             )
-
-        # dropbox root is an empty string
-        match = re.match(rf"{self.protocol}://([\s])/", self.path)
-        if match and self.protocol == "dropbox":
-            self.dir_path = " "
-            self.file_path = ""
-            return
-
-        # just a path with no trailing prefix
-        match = re.match(rf"{self.protocol}://([^/\s]+?)(/*)$", self.path)
-        if match:
-            self.dir_path = match.group(1)
-            self.file_path = ""
-            return
-
-        # valid path with a dir and/or file
-        match = re.match(rf"{self.protocol}://([^/\s]+?)/([^\s]*)", self.path)
-        if not match:
-            raise ValueError(
-                f"Invalid path {self.path}. Expected <protocol>://<dir-path>/<file-or-dir-path>.",
-            )
-        self.dir_path = match.group(1)
-        self.file_path = match.group(2) or ""
-
 
 @dataclass
 class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):

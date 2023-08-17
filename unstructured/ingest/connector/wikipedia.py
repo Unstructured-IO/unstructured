@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from wikipedia import WikipediaPage
 
 
-@dataclass
+@dataclass(frozen=True)
 class SimpleWikipediaConfig(BaseConnectorConfig):
     title: str
     auto_suggest: bool

@@ -18,7 +18,7 @@ from unstructured.utils import (
 )
 
 
-@dataclass
+@dataclass(frozen=True)
 class SimpleDiscordConfig(BaseConnectorConfig):
     """Connector config where channels is a comma separated list of
     Discord channels to pull messages from.
@@ -29,15 +29,6 @@ class SimpleDiscordConfig(BaseConnectorConfig):
     token: str
     days: Optional[int]
     verbose: bool = False
-
-    def __post_init__(self):
-        if self.days:
-            try:
-                self.days = int(self.days)
-            except ValueError:
-                raise ValueError("--discord-period must be an integer")
-
-        pass
 
     @staticmethod
     def parse_channels(channel_str: str) -> List[str]:

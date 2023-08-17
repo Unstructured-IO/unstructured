@@ -22,6 +22,7 @@ from unstructured.ingest.runner import discord as discord_fn
 @click.option(
     "--period",
     default=None,
+    type=int,
     help="Number of days to go back in the history of discord channels, must be a number",
 )
 @click.option(

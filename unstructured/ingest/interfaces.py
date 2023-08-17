@@ -57,6 +57,7 @@ class StandardConnectorConfig:
     re_download: bool = False
 
 
+@dataclass(frozen=True)
 class BaseConnectorConfig(ABC):
     """Abstract definition on which to define connector-specific attributes."""
 

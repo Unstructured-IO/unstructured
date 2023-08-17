@@ -75,7 +75,7 @@ def create_service_account_object(key_path, id=None):
     return service
 
 
-@dataclass
+@dataclass(frozen=True)
 class SimpleGoogleDriveConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
     """Connector config where drive_id is the id of the document to process or
     the folder to process all documents from."""

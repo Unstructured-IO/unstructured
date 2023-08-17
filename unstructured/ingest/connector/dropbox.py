@@ -26,13 +26,13 @@ class MissingFolderError(Exception):
     """There is no folder by that name. For root try `dropbox:// /`"""
 
 
-@dataclass
+@dataclass(frozen=True)
 class SimpleDropboxConfig(SimpleFsspecConfig):
     pass
 
 
 class DropboxIngestDoc(FsspecIngestDoc):
-    @requires_dependencies(["dropboxdrivefs", "fsspec"])
+    @requires_dependencies(["dropboxdrivefs", "fsspec"], extras="dropbox")
     def get_file(self):
         super().get_file()
 
@@ -70,7 +70,7 @@ class DropboxIngestDoc(FsspecIngestDoc):
             )
 
 
-@requires_dependencies(["dropboxdrivefs", "fsspec"])
+@requires_dependencies(["dropboxdrivefs", "fsspec"], extras="dropbox")
 class DropboxConnector(FsspecConnector):
     ingest_doc_cls: Type[DropboxIngestDoc] = DropboxIngestDoc
 

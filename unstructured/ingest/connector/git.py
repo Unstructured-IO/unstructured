@@ -14,7 +14,7 @@ from unstructured.ingest.interfaces import (
 from unstructured.ingest.logger import logger
 
 
-@dataclass
+@dataclass(frozen=True)
 class SimpleGitConfig(BaseConnectorConfig):
     url: str
     access_token: Optional[str]

@@ -13,20 +13,27 @@ if TYPE_CHECKING:
     from gitlab.v4.objects.projects import Project
 
 
-@dataclass
+@dataclass(frozen=True)
 class SimpleGitLabConfig(SimpleGitConfig):
-    def __post_init__(self):
-        parsed_gh_url = urlparse(self.url)
 
+    @property
+    def parsed_gh_url(self):
+        return urlparse(self.url)
+    
+    @property
+    def repo_path(self):
+        repo_path = self.parsed_gh_url.path
+        while repo_path.startswith("/"):
+            repo_path = repo_path[1:]
+        return repo_path
+    
+    @property
+    def url_with_scheme(self):
         # If no scheme or netloc are provided, use the default gitlab.com
-        if not parsed_gh_url.scheme and not parsed_gh_url.netloc:
-            self.url = "https://gitlab.com"
+        if not self.parsed_gh_url.scheme and not self.parsed_gh_url.netloc:
+            return "https://gitlab.com"
         else:
-            self.url = f"{parsed_gh_url.scheme}://{parsed_gh_url.netloc}"
-        self.repo_path = parsed_gh_url.path
-        while self.repo_path.startswith("/"):
-            self.repo_path = self.repo_path[1:]
-
+            return f"{self.parsed_gh_url.scheme}://{self.parsed_gh_url.netloc}"
 
 @dataclass
 class GitLabIngestDoc(GitIngestDoc):
@@ -49,7 +56,7 @@ class GitLabConnector(GitConnector):
     def __post_init__(self) -> None:
         from gitlab import Gitlab
 
-        self.gitlab = Gitlab(self.config.url, private_token=self.config.access_token)
+        self.gitlab = Gitlab(self.config.url_with_scheme, private_token=self.config.access_token)
 
     def get_ingest_docs(self):
         # Load the Git tree with all files, and then create Ingest docs
