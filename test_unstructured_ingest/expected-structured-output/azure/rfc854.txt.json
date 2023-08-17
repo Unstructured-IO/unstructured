@@ -604,30 +604,12 @@
   },
   {
     "type": "ListItem",
-    "element_id": "19d8999a73cdba6f00747d214f1ef31b",
+    "element_id": "d5bf23fd7f622ba14b5dd626721d0388",
     "metadata": {
       "data_source": {},
       "filetype": "text/plain"
     },
-    "text": "NOTE:  A \"print position\" may contain several characters"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "85231efbe0f659114b09387f8dfd695f",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "which are the result of overstrikes, or of sequences such as"
-  },
-  {
-    "type": "Title",
-    "element_id": "17548c22a23e66db7798c82919b49bc0",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/plain"
-    },
-    "text": "<char1> BS <char2>..."
+    "text": "NOTE:  A \"print position\" may contain several characters which are the result of overstrikes, or of sequences such as <char1> BS <char2>..."
   },
   {
     "type": "Title",

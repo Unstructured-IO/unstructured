@@ -16,11 +16,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "links": [
-        {
-          "text": "Github Project Page",
-          "url": "http://github.com/dcneiner/Downloadify"
-        }
+      "link_urls": [
+        "http://github.com/dcneiner/Downloadify"
+      ],
+      "link_texts": [
+        "Github Project Page"
       ]
     },
     "text": "More info available at the Github Project Page"

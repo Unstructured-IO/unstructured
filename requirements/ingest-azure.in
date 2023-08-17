@@ -2,5 +2,3 @@
 -c base.txt
 adlfs
 fsspec
-# consistency with other ingest-*.in
-cryptography==41.0.2
