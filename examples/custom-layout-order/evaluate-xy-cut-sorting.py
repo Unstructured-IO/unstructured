@@ -12,7 +12,9 @@ from xycut import bbox2points, recursive_xy_cut, vis_polygons_with_index
 
 def run(pdf_path):
     images = pdf2image.convert_from_path(pdf_path)
-    run_partition_pdf(pdf_path, "fast", images)
+    strategies = ["fast", "hi_res"]
+    for strategy in strategies:
+        run_partition_pdf(pdf_path, strategy, images)
 
 
 def run_partition_pdf(pdf_path, strategy, images):
@@ -27,12 +29,17 @@ def run_partition_pdf(pdf_path, strategy, images):
 
     elements_coordinates = []
     page_elements_coordinates = []
-    for idx, el in enumerate(elements):
-        if not isinstance(el, PageBreak):
-            page_elements_coordinates.append(el.metadata.coordinates)
+    for el in elements:
+        if isinstance(el, PageBreak):
+            if page_elements_coordinates:
+                elements_coordinates.append(page_elements_coordinates)
+                page_elements_coordinates = []
         else:
-            elements_coordinates.append(page_elements_coordinates)
-            page_elements_coordinates = []
+            page_elements_coordinates.append(el.metadata.coordinates)
+
+    # After the loop, handle any remaining coordinates
+    if page_elements_coordinates:
+        elements_coordinates.append(page_elements_coordinates)
 
     assert len(images) == len(elements_coordinates)
     for idx, (img, elements_coordinates_per_page) in enumerate(zip(images, elements_coordinates)):
