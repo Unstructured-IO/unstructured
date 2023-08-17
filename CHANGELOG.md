@@ -1,4 +1,4 @@
-## 0.10.1-dev3
+## 0.10.1
 
 ### Enhancements
 * Bump unstructured-inference==0.5.12:
@@ -11,6 +11,7 @@
 ### Features
 
 ### Fixes
+
 * Fix dead links in repository README (Quick Start > Install for local development, and Learn more > Batch Processing)
 * Update document dependencies to include tesseract-lang for additional language support (required for tests to pass)
 
