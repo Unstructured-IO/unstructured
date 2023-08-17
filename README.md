@@ -55,7 +55,7 @@ There are several ways to use the `unstructured` library:
 * [Run the library in a container](https://github.com/Unstructured-IO/unstructured#using-the-library-in-a-container) or
 * Install the library
     1. [Install from PyPI](https://github.com/Unstructured-IO/unstructured#installing-the-library)
-    2. [Install for local development](https://github.com/Unstructured-IO/unstructured#coffee-installation-instructions-for-local-development)
+    2. [Install for local development](https://github.com/Unstructured-IO/unstructured#installation-instructions-for-local-development)
 * For installation with `conda` on Windows system, please refer to the [documentation](https://unstructured-io.github.io/unstructured/installing.html#installation-with-conda-on-windows)
 
 ### Run the library in a container
@@ -117,7 +117,7 @@ installation.
   Depending on what document types you're parsing, you may not need all of these.
     - `libmagic-dev` (filetype detection)
     - `poppler-utils` (images and PDFs)
-    - `tesseract-ocr` (images and PDFs)
+    - `tesseract-ocr` (images and PDFs, install `tesseract-lang` for additional language support)
     - `libreoffice` (MS Office docs)
     - `pandoc` (EPUBs, RTFs and Open Office docs)
 
@@ -244,4 +244,4 @@ Encountered a bug? Please create a new [GitHub issue](https://github.com/Unstruc
 |-|-|
 | [Company Website](https://unstructured.io) | Unstructured.io product and company info |
 | [Documentation](https://unstructured-io.github.io/unstructured) | Full API documentation |
-| [Batch Processing](Ingest.md) | Ingesting batches of documents through Unstructured |
+| [Batch Processing](unstructured/ingest/README.md) | Ingesting batches of documents through Unstructured |

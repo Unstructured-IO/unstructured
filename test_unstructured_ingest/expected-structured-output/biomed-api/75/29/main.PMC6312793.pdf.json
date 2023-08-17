@@ -10,16 +10,6 @@
     "text": "Data in Brief 22 (2019) 484–487"
   },
   {
-    "type": "Image",
-    "element_id": "70d50409ea726a2789ebbd004bec31f4",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "Contents lists available at ScienceDirect Data in Brief journal homepage: www.elsevier.com/locate/dib"
-  },
-  {
     "type": "UncategorizedText",
     "element_id": "869adddb184177031536477262e0dde0",
     "metadata": {
@@ -38,6 +28,16 @@
       "page_number": 1
     },
     "text": "Data in Brief"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "9234133787d0a6b3976b16569c0b5cf3",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "journal homepage: www.elsevier.com/locate/dib"
   },
   {
     "type": "UncategorizedText",
@@ -791,13 +791,13 @@
   },
   {
     "type": "Table",
-    "element_id": "be8fbf813482eec7fd0e2fc665b4d3bb",
+    "element_id": "1d8fd023cd0978f7a6500815d2ad0ef6",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 3
     },
-    "text": "Instance size (m, n) Average number of (8, 1500)(8, 2000)(8, 2500)(8, 3000)(12, 1500)(12, 2000)(12, 2500)(12, 3000)(16, 1500)(16, 2000)(16, 2500)(16, 3000) Locations Times Vehicles Possible empty travels 568.40672.80923.40977.00566.00732.60875.001119.60581.80778.00879.001087.20 975.201048.001078.001113.20994.001040.601081.001107.40985.401040.601083.201101.60 652.20857.201082.401272.80642.00861.201096.001286.20667.80872.401076.401284.60 668,279.401,195,844.801,866,175.202,705,617.00674,191.001,199,659.801,878,745.202,711,180.40673,585.801,200,560.801,879,387.002,684,983.60"
+    "text": "Instance size (m, n) Average number of Locations Times Vehicles Possible empty travels (8, 1500) 568.40 975.20 652.20 668,279.40 (8, 2000) 672.80 1048.00 857.20 1,195,844.80 (8, 2500) 923.40 1078.00 1082.40 1,866,175.20 (8, 3000) 977.00 1113.20 1272.80 2,705,617.00 (12, 1500) 566.00 994.00 642.00 674,191.00 (12, 2000) 732.60 1040.60 861.20 1,199,659.80 (12, 2500) 875.00 1081.00 1096.00 1,878,745.20 (12, 3000) 1119.60 1107.40 1286.20 2,711,180.40 (16, 1500) 581.80 985.40 667.80 673,585.80 (16, 2000) 778.00 1040.60 872.40 1,200,560.80 (16, 2500) 879.00 1083.20 1076.40 1,879,387.00 ) (16, 3000 1087.20 1101.60 1284.60 2,684,983.60"
   },
   {
     "type": "UncategorizedText",

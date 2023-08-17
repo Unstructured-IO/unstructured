@@ -1,7 +1,49 @@
-## 0.9.3-dev3
+## 0.10.3
+
+### Enhancements
+* Bump unstructured-inference==0.5.13:
+  - Fix extracted image elements being included in layout merge, addresses the issue
+    where an entire-page image in a PDF was not passed to the layout model when using hi_res.
+* Adds ability to reuse connections per process in unstructured-ingest
+
+### Features
+
+### Fixes
+
+## 0.10.1
+
+### Enhancements
+* Bump unstructured-inference==0.5.12:
+  - fix to avoid trace for certain PDF's (0.5.12)
+  - better defaults for DPI for hi_res and  Chipper (0.5.11)
+  - implement full-page OCR (0.5.10)
+
+### Features
+
+### Fixes
+
+* Fix dead links in repository README (Quick Start > Install for local development, and Learn more > Batch Processing)
+* Update document dependencies to include tesseract-lang for additional language support (required for tests to pass)
+
+## 0.10.0
 
 ### Enhancements
 
+* Add `include_header` kwarg to `partition_xlsx` and change default behavior to `True`
+* Update the `links` and `emphasized_texts` metadata fields
+
+### Features
+
+### Fixes
+
+* fix pdf partition of list items being detected as titles in OCR only mode
+
+
+## 0.9.3
+
+### Enhancements
+
+* Pinned dependency cleanup.
 * Update `partition_csv` to always use `soupparser_fromstring` to parse `html text`
 * Update `partition_tsv` to always use `soupparser_fromstring` to parse `html text`
 * Add `metadata.section` to capture epub table of contents data
@@ -18,6 +60,7 @@
 
 ### Fixes
 
+* fix pdf partition of list items being detected as titles in OCR only mode
 * make notion module discoverable
 * fix emails with `Content-Distribution: inline` and `Content-Distribution: attachment` with no filename
 * Fix email attachment filenames which had `=` in the filename itself

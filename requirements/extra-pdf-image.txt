@@ -22,11 +22,8 @@ coloredlogs==15.0.1
     # via onnxruntime
 contourpy==1.1.0
     # via matplotlib
-cryptography==41.0.2
-    # via
-    #   -c requirements/constraints.in
-    #   -r requirements/extra-pdf-image.in
-    #   pdfminer-six
+cryptography==41.0.3
+    # via pdfminer-six
 cycler==0.11.0
     # via matplotlib
 effdet==0.4.1
@@ -127,7 +124,7 @@ protobuf==4.23.4
     # via
     #   -c requirements/constraints.in
     #   onnxruntime
-pycocotools==2.0.6
+pycocotools==2.0.7
     # via effdet
 pycparser==2.21
     # via cffi
@@ -208,8 +205,10 @@ typing-extensions==4.7.1
     #   torch
 tzdata==2023.3
     # via pandas
-unstructured-inference==0.5.9
-    # via -r requirements/extra-pdf-image.in
+unstructured-inference==0.5.13
+    # via
+    #   -c requirements/constraints.in
+    #   -r requirements/extra-pdf-image.in
 urllib3==1.26.16
     # via
     #   -c requirements/base.txt

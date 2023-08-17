@@ -36,7 +36,6 @@ def process_document(doc: "IngestDoc", **partition_kwargs) -> Optional[List[Dict
     partition_kwargs
         ultimately the parameters passed to partition()
     """
-    global session_handle
     isd_elems_no_filename = None
     try:
         # assign session handle to doc if it supports it
