@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from praw.models import Submission
 
 
-@dataclass
+@dataclass(frozen=True)
 class SimpleRedditConfig(BaseConnectorConfig):
     subreddit_name: str
     client_id: Optional[str]

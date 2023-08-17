@@ -23,7 +23,7 @@ TEST_ID = "test"
 TEST_FILE_PATH = os.path.join(EXAMPLE_DOCS_DIRECTORY, "book-war-and-peace-1p.txt")
 
 
-@dataclass
+@dataclass(frozen=True)
 class TestConfig(BaseConnectorConfig):
     id: str
     path: str

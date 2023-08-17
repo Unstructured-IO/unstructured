@@ -5,10 +5,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
-import jq
-from elasticsearch import Elasticsearch
-from elasticsearch.helpers import scan
-
 from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
@@ -21,7 +17,7 @@ from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
 
-@dataclass
+@dataclass(frozen=True)
 class SimpleElasticsearchConfig(BaseConnectorConfig):
     """Connector config where:
     url is the url to access the elasticsearch server,
@@ -105,9 +101,11 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         concatenated_values = seperator.join(values)
         return concatenated_values
 
-    @requires_dependencies(["elasticsearch"])
+    @requires_dependencies(["elasticsearch", "jq"], extras="elasticsearch")
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
+        import jq
+        from elasticsearch import Elasticsearch
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         # TODO: instead of having a separate client for each doc,
         # have a separate client for each process
@@ -124,7 +122,7 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             f.write(self.document)
 
 
-@requires_dependencies(["elasticsearch"])
+@requires_dependencies(["elasticsearch"], extras="elasticsearch")
 @dataclass
 class ElasticsearchConnector(ConnectorCleanupMixin, BaseConnector):
     """Fetches particular fields from all documents in a given elasticsearch cluster and index"""
@@ -138,15 +136,18 @@ class ElasticsearchConnector(ConnectorCleanupMixin, BaseConnector):
     ):
         super().__init__(standard_config, config)
 
+    @requires_dependencies(["elasticsearch"], extras="elasticsearch")
     def initialize(self):
+        from elasticsearch import Elasticsearch
         self.es = Elasticsearch(self.config.url)
         self.scan_query: dict = {"query": {"match_all": {}}}
         self.search_query: dict = {"match_all": {}}
         self.es.search(index=self.config.index_name, query=self.search_query, size=1)
 
-    @requires_dependencies(["elasticsearch"])
+    @requires_dependencies(["elasticsearch"], extras="elasticsearch")
     def _get_doc_ids(self):
         """Fetches all document ids in an index"""
+        from elasticsearch.helpers import scan
         hits = scan(
             self.es,
             query=self.scan_query,

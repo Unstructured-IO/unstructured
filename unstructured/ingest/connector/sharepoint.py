@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 MAX_MB_SIZE = 512_000_000
 
 
-@dataclass
+@dataclass(frozen=True)
 class SimpleSharepointConfig(BaseConnectorConfig):
     client_id: str
     client_credential: str = field(repr=False)

@@ -10,7 +10,7 @@ from unstructured.ingest.interfaces import StandardConnectorConfig
 from unstructured.utils import requires_dependencies
 
 
-@dataclass
+@dataclass(frozen=True)
 class SimpleS3Config(SimpleFsspecConfig):
     pass
 

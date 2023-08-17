@@ -16,26 +16,33 @@ if TYPE_CHECKING:
     from github.Repository import Repository
 
 
-@dataclass
+@dataclass(frozen=True)
 class SimpleGitHubConfig(SimpleGitConfig):
-    def __post_init__(self):
-        parsed_gh_url = urlparse(self.url)
-        path_fragments = [fragment for fragment in parsed_gh_url.path.split("/") if fragment]
 
+    @property
+    def parsed_gh_url(self):
+        return urlparse(self.url)
+
+    @property
+    def path_fragments(self):
+        return [fragment for fragment in self.parsed_gh_url.path.split("/") if fragment]
+    
+    @property
+    def repo_path(self):
+        return self.parsed_gh_url.path
+
+    def __post_init__(self):
         # If a scheme and netloc are provided, ensure they are correct
         # Additionally, ensure that the path contains two fragments
         if (
-            (parsed_gh_url.scheme and parsed_gh_url.scheme != "https")
-            or (parsed_gh_url.netloc and parsed_gh_url.netloc != "github.com")
-            or len(path_fragments) != 2
+            (self.parsed_gh_url.scheme and self.parsed_gh_url.scheme != "https")
+            or (self.parsed_gh_url.netloc and self.parsed_gh_url.netloc != "github.com")
+            or len(self.path_fragments) != 2
         ):
             raise ValueError(
                 'Please provide a valid URL, e.g. "https://github.com/Unstructured-IO/unstructured"'
                 ' or a repository owner/name pair, e.g. "Unstructured-IO/unstructured".',
             )
-
-        # If there's no issues, store the core repository info
-        self.repo_path = parsed_gh_url.path
 
 
 @dataclass

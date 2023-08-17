@@ -14,18 +14,15 @@ from unstructured.ingest.interfaces import (
 from unstructured.ingest.logger import logger
 
 
-@dataclass
+@dataclass(frozen=True)
 class SimpleLocalConfig(BaseConnectorConfig):
     # Local specific options
     input_path: str
     recursive: bool = False
     file_glob: Optional[str] = None
 
-    def __post_init__(self):
-        if os.path.isfile(self.input_path):
-            self.input_path_is_file = True
-        else:
-            self.input_path_is_file = False
+    def input_path_is_file(self):
+        return os.path.isfile(self.input_path)
 
 
 @dataclass
@@ -87,7 +84,7 @@ class LocalConnector(BaseConnector):
         pass
 
     def _list_files(self):
-        if self.config.input_path_is_file:
+        if self.config.input_path_is_file():
             return glob.glob(f"{self.config.input_path}")
         elif self.config.recursive:
             return glob.glob(f"{self.config.input_path}/**", recursive=self.config.recursive)

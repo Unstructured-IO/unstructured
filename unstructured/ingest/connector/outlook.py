@@ -26,7 +26,7 @@ class MissingFolderError(Exception):
     """There are no root folders with those names."""
 
 
-@dataclass
+@dataclass(frozen=True)
 class SimpleOutlookConfig(BaseConnectorConfig):
     """This class is getting the token."""
 

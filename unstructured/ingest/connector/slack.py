@@ -21,7 +21,7 @@ from unstructured.utils import (
 DATE_FORMATS = ("%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M:%S%z")
 
 
-@dataclass
+@dataclass(frozen=True)
 class SimpleSlackConfig(BaseConnectorConfig):
     """Connector config to process all messages by channel id's."""
 

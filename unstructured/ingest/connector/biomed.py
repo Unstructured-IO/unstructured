@@ -1,3 +1,4 @@
+import functools
 import os
 import urllib.request
 from dataclasses import dataclass
@@ -36,7 +37,7 @@ class BiomedFileMeta:
     output_filepath: Union[str, os.PathLike]
 
 
-@dataclass
+@dataclass(frozen=True)
 class SimpleBiomedConfig(BaseConnectorConfig):
     """Connector config where path is the FTP directory path and
     id_, from_, until, format are API parameters."""
@@ -60,12 +61,47 @@ class SimpleBiomedConfig(BaseConnectorConfig):
             valid = validate_date_args(self.until)
 
         return valid
+    
+    def is_api(self):
+        return not self.path
+    
+    @functools.lru_cache(maxsize=1) 
+    def is_file(self):
+        if not self.is_api():
+            is_valid = self.formatted_path.lower().startswith(PDF_DIR)
+            if not is_valid:
+                raise ValueError(f"Path MUST start with {PDF_DIR}")
+            ftp = FTP(DOMAIN)
+            ftp.login()
+            path = Path(PMC_DIR) / self.formatted_path
+            response = ""
+            try:
+                if path.suffix == ".pdf":
+                    response = ftp.cwd(str(path.parent))
+                    return True
+                else:
+                    response = ftp.cwd(str(path))
+            except error_perm as exc:
+                if "no such file or directory" in exc.args[0].lower():
+                    raise ValueError(f"The path: {path} is not valid.")
+                elif "not a directory" in exc.args[0].lower():
+                    return True
+                elif "command successful" not in response:
+                    raise ValueError(
+                        "Something went wrong when validating the path: {path}.",
+                    )
+        return False
+    
+    def is_dir(self):
+        return not self.is_api() and not self.is_file()
+    
+    @property
+    def formatted_path(self):
+        if self.path:
+            return self.path.strip("/")
+            
 
     def __post_init__(self):
-        self.is_file = False
-        self.is_dir = False
-        self.is_api = False
-
         if not self.path:
             is_valid = self.validate_api_inputs()
             if not is_valid:
@@ -73,37 +109,7 @@ class SimpleBiomedConfig(BaseConnectorConfig):
                     "Path argument or at least one of the "
                     "OA Web Service arguments MUST be provided.",
                 )
-
-            self.is_api = True
-        else:
-            self.path = self.path.strip("/")
-            is_valid = self.path.lower().startswith(PDF_DIR)
-
-            if not is_valid:
-                raise ValueError(f"Path MUST start with {PDF_DIR}")
-
-            ftp = FTP(DOMAIN)
-            ftp.login()
-
-            path = Path(PMC_DIR) / self.path
-            response = ""
-            try:
-                if path.suffix == ".pdf":
-                    response = ftp.cwd(str(path.parent))
-                    self.is_file = True
-                else:
-                    response = ftp.cwd(str(path))
-            except error_perm as exc:
-                if "no such file or directory" in exc.args[0].lower():
-                    raise ValueError(f"The path: {path} is not valid.")
-                elif "not a directory" in exc.args[0].lower():
-                    self.is_file = True
-                elif "command successful" in response:
-                    self.is_dir = True
-                else:
-                    raise ValueError(
-                        "Something went wrong when validating the path: {path}.",
-                    )
+            
 
 
 @dataclass
@@ -264,7 +270,7 @@ class BiomedConnector(ConnectorCleanupMixin, BaseConnector):
                 raise ValueError(f"{full_path} is not a valid directory.")
 
         ftp_path = f"{FTP_DOMAIN}/{PMC_DIR}/{self.config.path}"
-        if self.config.is_file:
+        if self.config.is_file():
             local_path = "/".join(path.split("/")[1:])
             return [
                 BiomedFileMeta(
@@ -288,5 +294,5 @@ class BiomedConnector(ConnectorCleanupMixin, BaseConnector):
         pass
 
     def get_ingest_docs(self):
-        files = self._list_objects_api() if self.config.is_api else self._list_objects()
+        files = self._list_objects_api() if self.config.is_api() else self._list_objects()
         return [BiomedIngestDoc(self.standard_config, self.config, file) for file in files]

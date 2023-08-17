@@ -18,7 +18,7 @@ from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
 
-@dataclass
+@dataclass(frozen=True)
 class SimpleConfluenceConfig(BaseConnectorConfig):
     """Connector config where:
     user_email is the email to authenticate into Confluence Cloud,
