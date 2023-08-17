@@ -1,9 +1,10 @@
-## 0.10.2
+## 0.10.3
 
 ### Enhancements
 * Bump unstructured-inference==0.5.13:
   - Fix extracted image elements being included in layout merge, addresses the issue
     where an entire-page image in a PDF was not passed to the layout model when using hi_res.
+* Adds ability to reuse connections per process in unstructured-ingest
 
 ### Features
 
