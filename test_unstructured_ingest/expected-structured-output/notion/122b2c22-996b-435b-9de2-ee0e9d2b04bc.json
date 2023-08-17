@@ -5,12 +5,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -22,12 +18,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -39,25 +31,21 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1,
-      "links": [
-        {
-          "text": "\n            Roman Isecke\n          ",
-          "url": "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100"
-        }
+      "link_urls": [
+        "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100"
       ],
-      "emphasized_texts": [
-        {
-          "text": "Roman Isecke",
-          "tag": "span"
-        }
+      "link_texts": [
+        "\n            Roman Isecke\n          "
+      ],
+      "emphasized_text_contents": [
+        "Roman Isecke"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "Roman Isecke"
@@ -68,12 +56,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -85,19 +69,15 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "unverified",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "unverified"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "unverified"
@@ -108,12 +88,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -125,12 +101,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -142,25 +114,21 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1,
-      "links": [
-        {
-          "text": "\n            Roman Isecke\n          ",
-          "url": "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100"
-        }
+      "link_urls": [
+        "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100"
       ],
-      "emphasized_texts": [
-        {
-          "text": "Roman Isecke",
-          "tag": "span"
-        }
+      "link_texts": [
+        "\n            Roman Isecke\n          "
+      ],
+      "emphasized_text_contents": [
+        "Roman Isecke"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "Roman Isecke"
@@ -171,12 +139,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -188,19 +152,15 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Policies",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "Policies"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "Policies"
@@ -211,19 +171,15 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "unverified",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "unverified"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "unverified"
@@ -234,12 +190,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -251,12 +203,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -268,25 +216,21 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1,
-      "links": [
-        {
-          "text": "\n            Roman Isecke\n          ",
-          "url": "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100"
-        }
+      "link_urls": [
+        "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100"
       ],
-      "emphasized_texts": [
-        {
-          "text": "Roman Isecke",
-          "tag": "span"
-        }
+      "link_texts": [
+        "\n            Roman Isecke\n          "
+      ],
+      "emphasized_text_contents": [
+        "Roman Isecke"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "Roman Isecke"
@@ -297,12 +241,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -314,25 +254,21 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1,
-      "links": [
-        {
-          "text": "\n            Roman Isecke\n          ",
-          "url": "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100"
-        }
+      "link_urls": [
+        "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100"
       ],
-      "emphasized_texts": [
-        {
-          "text": "expired",
-          "tag": "span"
-        }
+      "link_texts": [
+        "\n            Roman Isecke\n          "
+      ],
+      "emphasized_text_contents": [
+        "expired"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "expired\n          \n          \n            Roman Isecke\n          \n          \n            2023-08-04T04:00:00.000Z - 2023-08-11T04:00:00.000Z"
@@ -343,12 +279,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -360,12 +292,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -377,25 +305,21 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1,
-      "links": [
-        {
-          "text": "\n            Roman Isecke\n          ",
-          "url": "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100"
-        }
+      "link_urls": [
+        "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100"
       ],
-      "emphasized_texts": [
-        {
-          "text": "Roman Isecke",
-          "tag": "span"
-        }
+      "link_texts": [
+        "\n            Roman Isecke\n          "
+      ],
+      "emphasized_text_contents": [
+        "Roman Isecke"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "Roman Isecke"
@@ -406,12 +330,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -423,19 +343,15 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Policies",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "Policies"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "Policies"
@@ -446,19 +362,15 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "unverified",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "unverified"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "unverified"
@@ -469,12 +381,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -486,12 +394,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -503,25 +407,21 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1,
-      "links": [
-        {
-          "text": "\n            Roman Isecke\n          ",
-          "url": "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100"
-        }
+      "link_urls": [
+        "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100"
       ],
-      "emphasized_texts": [
-        {
-          "text": "Roman Isecke",
-          "tag": "span"
-        }
+      "link_texts": [
+        "\n            Roman Isecke\n          "
+      ],
+      "emphasized_text_contents": [
+        "Roman Isecke"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "Roman Isecke"
@@ -532,12 +432,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -549,23 +445,17 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Vision",
-          "tag": "span"
-        },
-        {
-          "text": "Company Updates",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "Vision",
+        "Company Updates"
+      ],
+      "emphasized_text_tags": [
+        "span",
+        "span"
       ]
     },
     "text": "Vision\n        \n        \n          Company Updates"
@@ -576,19 +466,15 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "unverified",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "unverified"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "unverified"
@@ -599,12 +485,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -616,12 +498,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -633,25 +511,21 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1,
-      "links": [
-        {
-          "text": "\n            Roman Isecke\n          ",
-          "url": "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100"
-        }
+      "link_urls": [
+        "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100"
       ],
-      "emphasized_texts": [
-        {
-          "text": "Roman Isecke",
-          "tag": "span"
-        }
+      "link_texts": [
+        "\n            Roman Isecke\n          "
+      ],
+      "emphasized_text_contents": [
+        "Roman Isecke"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "Roman Isecke"
@@ -662,12 +536,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -679,19 +549,15 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Company Updates",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "Company Updates"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "Company Updates"
@@ -702,19 +568,15 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "unverified",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "unverified"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "unverified"
@@ -725,12 +587,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -742,12 +600,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -759,25 +613,21 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1,
-      "links": [
-        {
-          "text": "\n            Roman Isecke\n          ",
-          "url": "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100"
-        }
+      "link_urls": [
+        "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100"
       ],
-      "emphasized_texts": [
-        {
-          "text": "Roman Isecke",
-          "tag": "span"
-        }
+      "link_texts": [
+        "\n            Roman Isecke\n          "
+      ],
+      "emphasized_text_contents": [
+        "Roman Isecke"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "Roman Isecke"
@@ -788,12 +638,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -805,19 +651,15 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "unverified",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "unverified"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "unverified"
@@ -828,12 +670,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -845,12 +683,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -862,25 +696,21 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1,
-      "links": [
-        {
-          "text": "\n            Roman Isecke\n          ",
-          "url": "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100"
-        }
+      "link_urls": [
+        "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100"
       ],
-      "emphasized_texts": [
-        {
-          "text": "Roman Isecke",
-          "tag": "span"
-        }
+      "link_texts": [
+        "\n            Roman Isecke\n          "
+      ],
+      "emphasized_text_contents": [
+        "Roman Isecke"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "Roman Isecke"
@@ -891,12 +721,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -908,23 +734,17 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Company Updates",
-          "tag": "span"
-        },
-        {
-          "text": "Policies",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "Company Updates",
+        "Policies"
+      ],
+      "emphasized_text_tags": [
+        "span",
+        "span"
       ]
     },
     "text": "Company Updates\n        \n        \n          Policies"
@@ -935,25 +755,21 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1,
-      "links": [
-        {
-          "text": "\n            Roman Isecke\n          ",
-          "url": "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100"
-        }
+      "link_urls": [
+        "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100"
       ],
-      "emphasized_texts": [
-        {
-          "text": "verified",
-          "tag": "span"
-        }
+      "link_texts": [
+        "\n            Roman Isecke\n          "
+      ],
+      "emphasized_text_contents": [
+        "verified"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "verified\n          \n          \n            Roman Isecke\n          \n          \n            2023-08-04T04:00:00.000Z - 2023-11-02T04:00:00.000Z"
@@ -964,12 +780,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -981,12 +793,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -998,25 +806,21 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1,
-      "links": [
-        {
-          "text": "\n            Roman Isecke\n          ",
-          "url": "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100"
-        }
+      "link_urls": [
+        "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100"
       ],
-      "emphasized_texts": [
-        {
-          "text": "Roman Isecke",
-          "tag": "span"
-        }
+      "link_texts": [
+        "\n            Roman Isecke\n          "
+      ],
+      "emphasized_text_contents": [
+        "Roman Isecke"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "Roman Isecke"
@@ -1027,12 +831,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -1044,19 +844,15 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Policies",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "Policies"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "Policies"
@@ -1067,19 +863,15 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "unverified",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "unverified"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "unverified"
@@ -1090,12 +882,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -1107,12 +895,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -1124,25 +908,21 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1,
-      "links": [
-        {
-          "text": "\n            Roman Isecke\n          ",
-          "url": "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100"
-        }
+      "link_urls": [
+        "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100"
       ],
-      "emphasized_texts": [
-        {
-          "text": "Roman Isecke",
-          "tag": "span"
-        }
+      "link_texts": [
+        "\n            Roman Isecke\n          "
+      ],
+      "emphasized_text_contents": [
+        "Roman Isecke"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "Roman Isecke"
@@ -1153,12 +933,8 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1
     },
@@ -1170,19 +946,15 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Policies",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "Policies"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "Policies"
@@ -1193,19 +965,15 @@
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z",
-        "date_processed": "2023-08-11T19:00:29.157536"
+        "date_modified": "2023-08-04T18:44:00.000Z"
       },
-      "filename": "122b2c22-996b-435b-9de2-ee0e9d2b04bc.html",
-      "file_directory": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/notion",
-      "last_modified": "2023-08-11T19:00:29",
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "unverified",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "unverified"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "unverified"
