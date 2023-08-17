@@ -30,7 +30,7 @@ def run_partition_pdf(pdf_path, strategy, image_paths):
     page_elements_coordinates = []
     for idx, el in enumerate(elements):
         if not isinstance(el, PageBreak):
-            page_elements_coordinates.append(el.metadata.coordinates.points)
+            page_elements_coordinates.append(el.metadata.coordinates)
         else:
             elements_coordinates.append(page_elements_coordinates)
             page_elements_coordinates = []
@@ -40,11 +40,18 @@ def run_partition_pdf(pdf_path, strategy, image_paths):
         page_idx = idx + 1
         output_image_name = os.path.splitext(os.path.basename(pdf_path))[0]
         image = cv2.imread(image_path)
-
+        image_height, image_width, _ = image.shape
         boxes = []
         for coordinate in elements_coordinates_per_page:
-            left, top = coordinate[0]
-            right, bottom = coordinate[2]
+            points = coordinate.points
+            w = coordinate.system.width
+            h = coordinate.system.height
+            _left, _top = points[0]
+            _right, _bottom = points[2]
+            left = _left * image_width / w
+            right = _right * image_width / w
+            top = _top * image_height / h
+            bottom = _bottom * image_height / h
             boxes.append([int(left), int(top), int(right), int(bottom)])
 
         annotated_original_image = vis_polygons_with_index(image, [bbox2points(it) for it in boxes])
