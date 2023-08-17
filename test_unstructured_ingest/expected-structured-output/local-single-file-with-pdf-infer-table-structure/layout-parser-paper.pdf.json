@@ -852,7 +852,7 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "185e67615d123b35d38ea72e0cdb6d99",
+    "element_id": "d21661161ae2c8dc39e96ee5c660704b",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -959,16 +959,6 @@
       "page_number": 7
     },
     "text": "LayoutParser provides a uniﬁed interface for existing OCR tools. Though there are many OCR tools available, they are usually conﬁgured diﬀerently with distinct APIs or protocols for using them. It can be ineﬃcient to add new OCR tools into an existing pipeline, and diﬃcult to make direct comparisons among the available tools to ﬁnd the best option for a particular project. To this end, LayoutParser builds a series of wrappers among existing OCR engines, and provides nearly the same syntax for using them. It supports a plug-and-play style of using OCR engines, making it eﬀortless to switch, evaluate, and compare diﬀerent OCR modules:"
-  },
-  {
-    "type": "Image",
-    "element_id": "65ac0f9ae348b12ed9484b8af7296617",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "ocr_agent = lp.TesseractAgent ()pOi"
   },
   {
     "type": "ListItem",
@@ -1350,6 +1340,26 @@
       "page_number": 9
     },
     "text": "x09 Burpunog uayor Aeydsiq 1 vondo 10g Guypunog usyoy apir:z uondo Mode I: Showing Layout on the Original Image Mode Il: Drawing OCR'd Text at the Correspoding Position"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "aed1b21a388cefaa841f20f48d19ca98",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 9
+    },
+    "text": "Mode I: Showing Layout on the Original Image"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "915bc5f1403e01b56e77300d9354fded",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 9
+    },
+    "text": "Mode Il: Drawing OCR'd Text at the Correspoding Position"
   },
   {
     "type": "NarrativeText",
