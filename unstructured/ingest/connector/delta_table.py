@@ -1,15 +1,12 @@
-import hashlib
-import json
 import logging
 import os
 from dataclasses import dataclass
+from datetime import datetime as dt
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union
 
-import pandas
-import pyarrow
+import pandas as pd
 from deltalake import DeltaTable
-from pyarrow import RecordBatch
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -31,7 +28,6 @@ class SimpleDeltaTableConfig(BaseConnectorConfig):
     storage_options: Optional[Dict[str, str]] = None
     without_files: bool = False
     columns: Optional[List[str]] = None
-    batch_size: Optional[int] = None
     logger: Optional[logging.Logger] = None
 
     def get_logger(self) -> logging.Logger:
@@ -39,30 +35,43 @@ class SimpleDeltaTableConfig(BaseConnectorConfig):
             return self.logger
         return make_default_logger(logging.DEBUG if self.verbose else logging.INFO)
 
-    def get_batch_kwargs(self) -> Dict[str, Any]:
-        to_batches_kwargs: Dict[str, Any] = {}
-        if self.columns:
-            to_batches_kwargs["columns"] = self.columns
-        if self.batch_size:
-            to_batches_kwargs["batch_size"] = self.batch_size
-        return to_batches_kwargs
-
 
 @dataclass
 class DeltaTableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleDeltaTableConfig
-    batch: RecordBatch
-    identifier: str
+    uri: str
+    modified_date: str
+    created_at: str
+
+    def uri_filename(self) -> str:
+        basename = os.path.basename(self.uri)
+        return os.path.splitext(basename)[0]
+
+    @property
+    def source_url(self) -> Optional[str]:
+        """The url of the source document."""
+        return self.uri
+
+    @property
+    def date_created(self) -> Optional[str]:
+        """This is the creation time of the table itself, not the file or specific record"""
+        # TODO get creation time of file/record
+        return self.created_at
 
     @property
     def filename(self):
-        return (Path(self.standard_config.download_dir) / f"{self.identifier}.csv").resolve()
+        return (Path(self.standard_config.download_dir) / f"{self.uri_filename()}.csv").resolve()
+
+    @property
+    def date_modified(self) -> Optional[str]:
+        """The date the document was last modified on the source system."""
+        return self.modified_date
 
     @property
     def _output_filename(self):
         """Create filename document id combined with a hash of the query to uniquely identify
         the output file."""
-        return Path(self.standard_config.output_dir) / f"{self.identifier}.json"
+        return Path(self.standard_config.output_dir) / f"{self.uri_filename()}.json"
 
     def _create_full_tmp_dir_path(self):
         self.filename.parent.mkdir(parents=True, exist_ok=True)
@@ -70,10 +79,15 @@ class DeltaTableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
+        import pyarrow.parquet as pq
+        from fsspec.core import url_to_fs
+
+        fs, _ = url_to_fs(self.uri)
         self._create_full_tmp_dir_path()
         self.config.get_logger().debug(f"Fetching {self} - PID: {os.getpid()}")
 
-        df: pandas.DataFrame = self.batch.to_pandas()
+        df: pd.DataFrame = pq.ParquetDataset(self.uri, filesystem=fs).read_pandas().to_pandas()
+
         self.config.get_logger().info(f"writing {len(df)} rows to {self.filename}")
         df.to_csv(self.filename)
 
@@ -107,23 +121,18 @@ class DeltaTableConnector(ConnectorCleanupMixin, BaseConnector):
         """Batches the results into distinct docs"""
         if not self.delta_table:
             raise ValueError("delta table was never initialized")
-        dataset: pyarrow.dataset.Dataset = self.delta_table.to_pyarrow_dataset()
-        identifier_values: List[str] = [f"v{self.delta_table.version()}"]
-        if self.config.get_batch_kwargs():
-            identifier_values.append(
-                str(
-                    hashlib.sha256(
-                        json.dumps(self.config.get_batch_kwargs(), sort_keys=True).encode(),
-                    ),
-                ),
-            )
-        identifier = "-".join(identifier_values)
+        actions = self.delta_table.get_add_actions().to_pandas()
+        mod_date_dict = {
+            row["path"]: str(row["modification_time"]) for _, row in actions.iterrows()
+        }
+        created_at = dt.fromtimestamp(self.delta_table.metadata().created_time / 1000)
         return [
             DeltaTableIngestDoc(
                 standard_config=self.standard_config,
                 config=self.config,
-                identifier=f"{identifier}-{i}",
-                batch=batch,
+                uri=uri,
+                modified_date=mod_date_dict[os.path.basename(uri)],
+                created_at=str(created_at),
             )
-            for i, batch in enumerate(dataset.to_batches(**self.config.get_batch_kwargs()))
+            for uri in self.delta_table.file_uris()
         ]

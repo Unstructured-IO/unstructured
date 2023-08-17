@@ -18,7 +18,6 @@ def delta_table(
     storage_options: Optional[Dict[str, str]] = None,
     without_files: bool = False,
     columns: Optional[List[str]] = None,
-    batch_size: Optional[int] = None,
     **kwargs,
 ):
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
@@ -46,7 +45,6 @@ def delta_table(
             storage_options=storage_options,
             without_files=without_files,
             columns=columns,
-            batch_size=batch_size,
         ),
     )
 
