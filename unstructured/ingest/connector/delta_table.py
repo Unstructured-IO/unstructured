@@ -78,11 +78,19 @@ class DeltaTableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         self._output_filename.parent.mkdir(parents=True, exist_ok=True)
 
     @BaseIngestDoc.skip_if_file_exists
+    @requires_dependencies(["fsspec"], extras="delta-table")
     def get_file(self):
         import pyarrow.parquet as pq
         from fsspec.core import url_to_fs
 
-        fs, _ = url_to_fs(self.uri)
+        try:
+            fs, _ = url_to_fs(self.uri)
+        except ImportError as error:
+            raise ImportError(
+                f"uri {self.uri} may be associated with a filesystem that "
+                f"requires additional dependencies: {error}",
+            )
+        self.config.get_logger().info(f"using a {fs} filesystem to collect table data")
         self._create_full_tmp_dir_path()
         self.config.get_logger().debug(f"Fetching {self} - PID: {os.getpid()}")
 
