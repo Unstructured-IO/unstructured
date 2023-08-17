@@ -46,6 +46,12 @@ To install all dependencies for this connector run: ``pip install "unstructured[
 You can process `National Center for Biotechnology Information <https://www.ncbi.nlm.nih.gov/>`_ files from both a path or their `PMC API <https://www.ncbi.nlm.nih.gov/pmc/tools/developers/>`_ through the `BioMed Connector <https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/connector/biomed.py>`_. You can find an example of how to use it with the file path `here <https://github.com/Unstructured-IO/unstructured/blob/f5541c7b0b1e2fc47ec88da5e02080d60e1441e2/examples/ingest/biomed/ingest-with-path.sh>`_, and with the API `here <https://github.com/Unstructured-IO/unstructured/blob/f5541c7b0b1e2fc47ec88da5e02080d60e1441e2/examples/ingest/biomed/ingest-with-api.sh>`_.
 
 
+``Delta Table Connector``
+----------------------
+You can preprocess your Delta Tables using the `Delta Table Connector <https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/connector/delta_table.py>`_. You can find an example of how to use it `here <https://github.com/Unstructured-IO/unstructured/tree/main/examples/ingest/delta_table/ingest.sh>`_.
+
+To install all dependencies for this connector run: ``pip install "unstructured[delta-table]"``
+
 ``Discord Connector``
 ----------------------
 You can preprocess your Discord channel using the `Discord Connector <https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/connector/discord.py>`_. You can find an example of how to use it `here <https://github.com/Unstructured-IO/unstructured/blob/f5541c7b0b1e2fc47ec88da5e02080d60e1441e2/examples/ingest/discord/ingest.sh>`_.
