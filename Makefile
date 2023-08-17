@@ -246,7 +246,6 @@ uninstall-project-local:
 #################
 
 export CI ?= false
-export EXTRA_NAME
 
 ## test:                    runs all unittests
 .PHONY: test
@@ -266,11 +265,50 @@ test-no-extras:
 		test_${PACKAGE_NAME}/partition/test_html_partition.py \
 		test_${PACKAGE_NAME}/partition/test_xml_partition.py 
 
-.PHONY: test-extra
-test-extra:
+.PHONY: test-extra-csv
+test-extra-csv:
 	PYTHONPATH=. CI=$(CI) pytest \
-		test_${PACKAGE_NAME}/partition/${EXTRA_NAME}
+		test_${PACKAGE_NAME}/partition/csv
 
+.PHONY: test-extra-docx
+test-extra-docx:
+	PYTHONPATH=. CI=$(CI) pytest \
+		test_${PACKAGE_NAME}/partition/docx
+
+.PHONY: test-extra-markdown
+test-extra-markdown:
+	PYTHONPATH=. CI=$(CI) pytest \
+		test_${PACKAGE_NAME}/partition/markdown
+
+.PHONY: test-extra-msg
+test-extra-msg:
+	PYTHONPATH=. CI=$(CI) pytest \
+		test_${PACKAGE_NAME}/partition/msg
+
+.PHONY: test-extra-odt
+test-extra-odt:
+	PYTHONPATH=. CI=$(CI) pytest \
+		test_${PACKAGE_NAME}/partition/odt
+
+.PHONY: test-extra-pdf-image
+test-extra-pdf-image:
+	PYTHONPATH=. CI=$(CI) pytest \
+		test_${PACKAGE_NAME}/partition/pdf-image
+
+.PHONY: test-extra-pptx
+test-extra-pptx:
+	PYTHONPATH=. CI=$(CI) pytest \
+		test_${PACKAGE_NAME}/partition/pptx
+
+.PHONY: test-extra-pypandoc
+test-extra-pypandoc:
+	PYTHONPATH=. CI=$(CI) pytest \
+		test_${PACKAGE_NAME}/partition/pypandoc
+
+.PHONY: test-extra-xlsx
+test-extra-xlsx:
+	PYTHONPATH=. CI=$(CI) pytest \
+		test_${PACKAGE_NAME}/partition/xlsx
 
 ## check:                   runs linters (includes tests)
 .PHONY: check

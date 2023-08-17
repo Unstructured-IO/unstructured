@@ -233,7 +233,7 @@ jobs:
         # version conflicts with label_studio_sdk
         pip install weaviate-client
         pip install argilla
-        make test-extra EXTRA_NAME=${{ matrix.extra }} CI=true
+        make test-extra-${{ matrix.extra }} CI=true
 
   test_ingest:
     strategy:
