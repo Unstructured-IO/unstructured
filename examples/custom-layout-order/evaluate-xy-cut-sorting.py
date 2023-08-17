@@ -16,6 +16,9 @@ def run(pdf_path):
 
 
 def run_partition_pdf(pdf_path, strategy, images):
+    output_dir = os.path.join(output_root_dir, strategy)
+    os.makedirs(output_dir, exist_ok=True)
+
     elements = partition_pdf(
         filename=pdf_path,
         strategy=strategy,
@@ -83,8 +86,8 @@ if __name__ == '__main__':
     cur_dir = os.getcwd()
     base_dir = os.path.join(cur_dir, os.pardir, os.pardir)
     example_docs_dir = os.path.join(base_dir, "example-docs")
-    output_dir = os.path.join(cur_dir, "output")
-    os.makedirs(output_dir, exist_ok=True)
+    output_root_dir = os.path.join(cur_dir, "output")
+    os.makedirs(output_root_dir, exist_ok=True)
 
     f_path = os.path.join(example_docs_dir, "multi-column-2p.pdf")
 
