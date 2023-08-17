@@ -1,18 +1,33 @@
-## 0.10.1-dev3
+## 0.10.2-dev0
 
 ### Enhancements
-* Bump unstructured-inference==0.5.12:
-  - fix to avoid trace for certain PDF's
-* Bump unstructured-inference==0.5.11:
-  - better defaults for DPI for hi_res and  Chipper
-* Bump unstructured-inference==0.5.10:
-  - implement full-page OCR
-* Create CI Pipeline for running text, xml, email, and html doc tests against the library installed without extras
-* Create CI Pipeline for running each library extra against their respective tests
+* Create new CI Pipelines
+  - Checking text, xml, email, and html doc tests against the library installed without extras
+  - Checking each library extra against their respective tests
+
+## 0.10.2
+
+### Enhancements
+* Bump unstructured-inference==0.5.13:
+  - Fix extracted image elements being included in layout merge, addresses the issue
+    where an entire-page image in a PDF was not passed to the layout model when using hi_res.
 
 ### Features
 
 ### Fixes
+
+## 0.10.1
+
+### Enhancements
+* Bump unstructured-inference==0.5.12:
+  - fix to avoid trace for certain PDF's (0.5.12)
+  - better defaults for DPI for hi_res and  Chipper (0.5.11)
+  - implement full-page OCR (0.5.10)
+
+### Features
+
+### Fixes
+
 * Fix dead links in repository README (Quick Start > Install for local development, and Learn more > Batch Processing)
 * Update document dependencies to include tesseract-lang for additional language support (required for tests to pass)
 
@@ -20,6 +35,7 @@
 
 ### Enhancements
 
+* Add `include_header` kwarg to `partition_xlsx` and change default behavior to `True`
 * Update the `links` and `emphasized_texts` metadata fields
 
 ### Features
@@ -27,6 +43,7 @@
 ### Fixes
 
 * fix pdf partition of list items being detected as titles in OCR only mode
+
 
 ## 0.9.3
 

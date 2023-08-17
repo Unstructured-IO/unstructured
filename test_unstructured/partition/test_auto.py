@@ -668,7 +668,7 @@ EXPECTED_XLSX_FILETYPE = "application/vnd.openxmlformats-officedocument.spreadsh
 
 
 def test_auto_partition_xlsx_from_filename(filename="example-docs/stanley-cups.xlsx"):
-    elements = partition(filename=filename)
+    elements = partition(filename=filename, include_header=False)
 
     assert all(isinstance(element, Table) for element in elements)
     assert len(elements) == 2
@@ -681,7 +681,7 @@ def test_auto_partition_xlsx_from_filename(filename="example-docs/stanley-cups.x
 
 def test_auto_partition_xlsx_from_file(filename="example-docs/stanley-cups.xlsx"):
     with open(filename, "rb") as f:
-        elements = partition(file=f)
+        elements = partition(file=f, include_header=False)
 
     assert all(isinstance(element, Table) for element in elements)
     assert len(elements) == 2
@@ -774,7 +774,7 @@ EXPECTED_XLS_TABLE = (
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_auto_partition_xls_from_filename(filename="example-docs/tests-example.xls"):
-    elements = partition(filename=filename)
+    elements = partition(filename=filename, include_header=False)
 
     assert all(isinstance(element, Table) for element in elements)
     assert len(elements) == 3
