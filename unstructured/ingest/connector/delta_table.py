@@ -1,6 +1,7 @@
+import hashlib
+import json
 import logging
 import os
-import uuid
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
@@ -51,29 +52,22 @@ class SimpleDeltaTableConfig(BaseConnectorConfig):
 class DeltaTableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleDeltaTableConfig
     batch: RecordBatch
-    _id: Optional[uuid.UUID] = None
-
-    @property
-    def id(self):
-        if not self._id:
-            self._id = uuid.uuid4()
-        return self._id
+    identifier: str
 
     @property
     def filename(self):
-        return (Path(self.standard_config.download_dir) / f"{self.id}.csv").resolve()
+        return (Path(self.standard_config.download_dir) / f"{self.identifier}.csv").resolve()
 
     @property
     def _output_filename(self):
         """Create filename document id combined with a hash of the query to uniquely identify
         the output file."""
-        return Path(self.standard_config.output_dir) / f"{self.id}.json"
+        return Path(self.standard_config.output_dir) / f"{self.identifier}.json"
 
     def _create_full_tmp_dir_path(self):
         self.filename.parent.mkdir(parents=True, exist_ok=True)
         self._output_filename.parent.mkdir(parents=True, exist_ok=True)
 
-    @requires_dependencies(["elasticsearch"])
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
         self._create_full_tmp_dir_path()
@@ -84,7 +78,7 @@ class DeltaTableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         df.to_csv(self.filename)
 
 
-@requires_dependencies(["deltalake"])
+@requires_dependencies(["deltalake"], extras="delta-table")
 @dataclass
 class DeltaTableConnector(ConnectorCleanupMixin, BaseConnector):
     config: SimpleDeltaTableConfig
@@ -114,11 +108,22 @@ class DeltaTableConnector(ConnectorCleanupMixin, BaseConnector):
         if not self.delta_table:
             raise ValueError("delta table was never initialized")
         dataset: pyarrow.dataset.Dataset = self.delta_table.to_pyarrow_dataset()
+        identifier_values: List[str] = [f"v{self.delta_table.version()}"]
+        if self.config.get_batch_kwargs():
+            identifier_values.append(
+                str(
+                    hashlib.sha256(
+                        json.dumps(self.config.get_batch_kwargs(), sort_keys=True).encode(),
+                    ),
+                ),
+            )
+        identifier = "-".join(identifier_values)
         return [
             DeltaTableIngestDoc(
                 standard_config=self.standard_config,
                 config=self.config,
+                identifier=f"{identifier}-{i}",
                 batch=batch,
             )
-            for batch in dataset.to_batches(**self.config.get_batch_kwargs())
+            for i, batch in enumerate(dataset.to_batches(**self.config.get_batch_kwargs()))
         ]
