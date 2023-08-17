@@ -174,6 +174,39 @@ def test_partition_msg_can_process_attachments(
         assert element.metadata.subject == "Fake email with attachment"
     assert elements[-1].text == "Hey this is a fake attachment!"
     assert elements[-1].metadata == expected_metadata
+    
+    
+def test_partition_msg_can_processmin_max_wtih_attachments(
+    tmpdir,
+    filename="example-docs/fake-email-attachment.msg",
+):
+    extract_msg_attachment_info(filename=filename, output_dir=tmpdir.dirname)
+    attachment_filename = os.path.join(
+        tmpdir.dirname,
+        ATTACH_EXPECTED_OUTPUT[0]["filename"],
+    )
+
+    attachment_elements = partition_text(
+        filename=attachment_filename,
+        metadata_filename=attachment_filename,
+        min_partition=6,
+        max_partition=12,
+    )
+    expected_metadata = attachment_elements[0].metadata
+    expected_metadata.file_directory = None
+    expected_metadata.attached_to_filename = filename
+
+    elements = partition_msg(
+        filename=filename,
+        attachment_partitioner=partition_text,
+        process_attachments=True,
+        min_partition=6,
+        max_partition=12,
+    )
+
+    assert elements[0].text.startswith("Hello!")
+    assert elements[-1].text == attachment_elements[-1].text
+    assert elements[-2].text == attachment_elements[-2].text
 
 
 def test_partition_msg_raises_with_no_partitioner(
