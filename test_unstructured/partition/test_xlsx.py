@@ -9,7 +9,7 @@ EXCEPTED_PAGE_NAME = "Stanley Cups"
 
 
 def test_partition_xlsx_from_filename(filename="example-docs/stanley-cups.xlsx"):
-    elements = partition_xlsx(filename=filename)
+    elements = partition_xlsx(filename=filename, include_header=False)
 
     assert all(isinstance(element, Table) for element in elements)
     assert len(elements) == 2
@@ -23,7 +23,7 @@ def test_partition_xlsx_from_filename(filename="example-docs/stanley-cups.xlsx")
 
 
 def test_partition_xlsx_from_filename_with_emoji(filename="example-docs/emoji.xlsx"):
-    elements = partition_xlsx(filename=filename)
+    elements = partition_xlsx(filename=filename, include_header=False)
     assert all(isinstance(element, Table) for element in elements)
     assert len(elements) == 1
     assert clean_extra_whitespace(elements[0].text) == "🤠😅"
@@ -32,16 +32,27 @@ def test_partition_xlsx_from_filename_with_emoji(filename="example-docs/emoji.xl
 def test_partition_xlsx_from_filename_with_metadata_filename(
     filename="example-docs/stanley-cups.xlsx",
 ):
-    elements = partition_xlsx(filename=filename, metadata_filename="test")
+    elements = partition_xlsx(filename=filename, metadata_filename="test", include_header=False)
 
     assert all(isinstance(element, Table) for element in elements)
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
     assert elements[0].metadata.filename == "test"
 
 
+def test_partition_xlsx_from_filename_with_header(filename="example-docs/stanley-cups.xlsx"):
+    elements = partition_xlsx(filename=filename, include_header=True)
+    assert all(isinstance(element, Table) for element in elements)
+    assert len(elements) == 2
+    assert (
+        clean_extra_whitespace(elements[0].text)
+        == "Stanley Cups Unnamed: 1 Unnamed: 2 " + EXPECTED_TEXT
+    )
+    assert "<thead>" in elements[0].metadata.text_as_html
+
+
 def test_partition_xlsx_from_file(filename="example-docs/stanley-cups.xlsx"):
     with open(filename, "rb") as f:
-        elements = partition_xlsx(file=f)
+        elements = partition_xlsx(file=f, include_header=False)
 
     assert all(isinstance(element, Table) for element in elements)
     assert len(elements) == 2
@@ -55,15 +66,28 @@ def test_partition_xlsx_from_file(filename="example-docs/stanley-cups.xlsx"):
 
 def test_partition_xlsx_from_file_with_metadata_filename(filename="example-docs/stanley-cups.xlsx"):
     with open(filename, "rb") as f:
-        elements = partition_xlsx(file=f, metadata_filename="test")
+        elements = partition_xlsx(file=f, metadata_filename="test", include_header=False)
 
     assert all(isinstance(element, Table) for element in elements)
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
     assert elements[0].metadata.filename == "test"
 
 
+def test_partition_xlsx_from_file_with_header(filename="example-docs/stanley-cups.xlsx"):
+    with open(filename, "rb") as f:
+        elements = partition_xlsx(file=f, include_header=True)
+
+    assert all(isinstance(element, Table) for element in elements)
+    assert len(elements) == 2
+    assert (
+        clean_extra_whitespace(elements[0].text)
+        == "Stanley Cups Unnamed: 1 Unnamed: 2 " + EXPECTED_TEXT
+    )
+    assert "<thead>" in elements[0].metadata.text_as_html
+
+
 def test_partition_xlsx_filename_exclude_metadata(filename="example-docs/stanley-cups.xlsx"):
-    elements = partition_xlsx(filename=filename, include_metadata=False)
+    elements = partition_xlsx(filename=filename, include_metadata=False, include_header=False)
 
     assert all(isinstance(element, Table) for element in elements)
     assert len(elements) == 2
@@ -78,7 +102,7 @@ def test_partition_xlsx_filename_exclude_metadata(filename="example-docs/stanley
 
 def test_partition_xlsx_from_file_exclude_metadata(filename="example-docs/stanley-cups.xlsx"):
     with open(filename, "rb") as f:
-        elements = partition_xlsx(file=f, include_metadata=False)
+        elements = partition_xlsx(file=f, include_metadata=False, include_header=False)
 
     assert all(isinstance(element, Table) for element in elements)
     assert len(elements) == 2
