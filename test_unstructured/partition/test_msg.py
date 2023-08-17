@@ -174,8 +174,8 @@ def test_partition_msg_can_process_attachments(
         assert element.metadata.subject == "Fake email with attachment"
     assert elements[-1].text == "Hey this is a fake attachment!"
     assert elements[-1].metadata == expected_metadata
-    
-    
+
+
 def test_partition_msg_can_processmin_max_wtih_attachments(
     tmpdir,
     filename="example-docs/fake-email-attachment.msg",
