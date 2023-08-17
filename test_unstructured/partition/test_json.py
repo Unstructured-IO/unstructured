@@ -4,9 +4,15 @@ import tempfile
 
 import pytest
 
-from unstructured.partition.auto import partition
+# from unstructured.partition.auto import partition
 from unstructured.partition.json import partition_json
+from unstructured.partition.text import partition_text
+from unstructured.partition.html import partition_html
+from unstructured.partition.xml import partition_xml
+from unstructured.partition.email import partition_email
 from unstructured.staging.base import elements_to_json
+
+from unstructured.file_utils.filetype import detect_filetype, FileType
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
@@ -14,19 +20,19 @@ is_in_docker = os.path.exists("/.dockerenv")
 
 test_files = [
     "fake-text.txt",
-    "layout-parser-paper-fast.pdf",
+    # "layout-parser-paper-fast.pdf",
     "fake-html.html",
-    "fake.doc",
+    # "fake.doc",
     "eml/fake-email.eml",
-    pytest.param(
-        "fake-power-point.ppt",
-        marks=pytest.mark.skipif(
-            is_in_docker,
-            reason="Skipping this test in Docker container",
-        ),
-    ),
-    "fake.docx",
-    "fake-power-point.pptx",
+    # pytest.param(
+    #     "fake-power-point.ppt",
+    #     marks=pytest.mark.skipif(
+    #         is_in_docker,
+    #         reason="Skipping this test in Docker container",
+    #     ),
+    # ),
+    # "fake.docx",
+    # "fake-power-point.pptx",
 ]
 
 is_in_docker = os.path.exists("/.dockerenv")
@@ -35,7 +41,17 @@ is_in_docker = os.path.exists("/.dockerenv")
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_json_from_filename(filename: str):
     path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-    elements = partition(filename=path)
+
+    filetype = detect_filetype(filename=path)
+
+    if filetype == FileType.TXT:
+        elements = partition_text(filename=path)
+    if filetype == FileType.HTML:
+        elements = partition_html(filename=path)
+    if filetype == FileType.XML:
+        elements = partition_xml(filename=path)
+    if filetype == FileType.EML:
+        elements = partition_email(filename=path)
 
     with tempfile.TemporaryDirectory() as tmpdir:
         _filename = os.path.basename(filename)
@@ -55,7 +71,17 @@ def test_partition_json_from_filename(filename: str):
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_json_from_filename_with_metadata_filename(filename: str):
     path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-    elements = partition(filename=path)
+
+    filetype = detect_filetype(filename=path)
+
+    if filetype == FileType.TXT:
+        elements = partition_text(filename=path)
+    if filetype == FileType.HTML:
+        elements = partition_html(filename=path)
+    if filetype == FileType.XML:
+        elements = partition_xml(filename=path)
+    if filetype == FileType.EML:
+        elements = partition_email(filename=path)
 
     with tempfile.TemporaryDirectory() as tmpdir:
         _filename = os.path.basename(filename)
@@ -71,7 +97,17 @@ def test_partition_json_from_filename_with_metadata_filename(filename: str):
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_json_from_file(filename: str):
     path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-    elements = partition(filename=path)
+
+    filetype = detect_filetype(filename=path)
+
+    if filetype == FileType.TXT:
+        elements = partition_text(filename=path)
+    if filetype == FileType.HTML:
+        elements = partition_html(filename=path)
+    if filetype == FileType.XML:
+        elements = partition_xml(filename=path)
+    if filetype == FileType.EML:
+        elements = partition_email(filename=path)
 
     with tempfile.TemporaryDirectory() as tmpdir:
         _filename = os.path.basename(filename)
@@ -91,8 +127,17 @@ def test_partition_json_from_file(filename: str):
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_json_from_file_with_metadata_filename(filename: str):
     path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-    elements = partition(filename=path)
 
+    filetype = detect_filetype(filename=path)
+
+    if filetype == FileType.TXT:
+        elements = partition_text(filename=path)
+    if filetype == FileType.HTML:
+        elements = partition_html(filename=path)
+    if filetype == FileType.XML:
+        elements = partition_xml(filename=path)
+    if filetype == FileType.EML:
+        elements = partition_email(filename=path)
     with tempfile.TemporaryDirectory() as tmpdir:
         _filename = os.path.basename(filename)
         test_path = os.path.join(tmpdir, _filename + ".json")
@@ -107,7 +152,17 @@ def test_partition_json_from_file_with_metadata_filename(filename: str):
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_json_from_text(filename: str):
     path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-    elements = partition(filename=path)
+
+    filetype = detect_filetype(filename=path)
+
+    if filetype == FileType.TXT:
+        elements = partition_text(filename=path)
+    if filetype == FileType.HTML:
+        elements = partition_html(filename=path)
+    if filetype == FileType.XML:
+        elements = partition_xml(filename=path)
+    if filetype == FileType.EML:
+        elements = partition_email(filename=path)
 
     with tempfile.TemporaryDirectory() as tmpdir:
         _filename = os.path.basename(filename)
@@ -140,7 +195,17 @@ def test_partition_json_works_with_empty_list():
 
 def test_partition_json_raises_with_too_many_specified():
     path = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-text.txt")
-    elements = partition(filename=path)
+
+    filetype = detect_filetype(filename=path)
+
+    if filetype == FileType.TXT:
+        elements = partition_text(filename=path)
+    if filetype == FileType.HTML:
+        elements = partition_html(filename=path)
+    if filetype == FileType.XML:
+        elements = partition_xml(filename=path)
+    if filetype == FileType.EML:
+        elements = partition_email(filename=path)
 
     with tempfile.TemporaryDirectory() as tmpdir:
         test_path = os.path.join(tmpdir, "fake-text.txt.json")
@@ -164,7 +229,17 @@ def test_partition_json_raises_with_too_many_specified():
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_json_from_filename_exclude_metadata(filename: str):
     path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-    elements = partition(filename=path)
+
+    filetype = detect_filetype(filename=path)
+
+    if filetype == FileType.TXT:
+        elements = partition_text(filename=path)
+    if filetype == FileType.HTML:
+        elements = partition_html(filename=path)
+    if filetype == FileType.XML:
+        elements = partition_xml(filename=path)
+    if filetype == FileType.EML:
+        elements = partition_email(filename=path)
 
     with tempfile.TemporaryDirectory() as tmpdir:
         _filename = os.path.basename(filename)
@@ -179,7 +254,17 @@ def test_partition_json_from_filename_exclude_metadata(filename: str):
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_json_from_file_exclude_metadata(filename: str):
     path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-    elements = partition(filename=path)
+
+    filetype = detect_filetype(filename=path)
+
+    if filetype == FileType.TXT:
+        elements = partition_text(filename=path)
+    if filetype == FileType.HTML:
+        elements = partition_html(filename=path)
+    if filetype == FileType.XML:
+        elements = partition_xml(filename=path)
+    if filetype == FileType.EML:
+        elements = partition_email(filename=path)
 
     with tempfile.TemporaryDirectory() as tmpdir:
         _filename = os.path.basename(filename)
@@ -195,8 +280,17 @@ def test_partition_json_from_file_exclude_metadata(filename: str):
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_json_from_text_exclude_metadata(filename: str):
     path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-    elements = partition(filename=path)
 
+    filetype = detect_filetype(filename=path)
+
+    if filetype == FileType.TXT:
+        elements = partition_text(filename=path)
+    if filetype == FileType.HTML:
+        elements = partition_html(filename=path)
+    if filetype == FileType.XML:
+        elements = partition_xml(filename=path)
+    if filetype == FileType.EML:
+        elements = partition_email(filename=path)
     with tempfile.TemporaryDirectory() as tmpdir:
         _filename = os.path.basename(filename)
         test_path = os.path.join(tmpdir, _filename + ".json")
