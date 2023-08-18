@@ -6,12 +6,18 @@
   - Checking each library extra against their respective tests
 
 ## 0.10.3
+* Adds ability to reuse connections per process in unstructured-ingest
+
+### Features
+
+### Fixes
+
+## 0.10.2
 
 ### Enhancements
 * Bump unstructured-inference==0.5.13:
   - Fix extracted image elements being included in layout merge, addresses the issue
     where an entire-page image in a PDF was not passed to the layout model when using hi_res.
-* Adds ability to reuse connections per process in unstructured-ingest
 
 ### Features
 
@@ -42,9 +48,6 @@
 ### Features
 
 ### Fixes
-
-* fix pdf partition of list items being detected as titles in OCR only mode
-
 
 ## 0.9.3
 
