@@ -213,6 +213,7 @@ jobs:
       run: |
         python${{ matrix.python-version}} -m venv .venv-${{ matrix.extra }}
         source .venv-${{ matrix.extra }}/bin/activate
+        make install-base-ci
         make install-${{ matrix.extra }}
     - name: Test
       env:
