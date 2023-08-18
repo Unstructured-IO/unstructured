@@ -16,7 +16,7 @@ class CustomError(BaseException, ABC):
         @wraps(f)
         def wrapper(*args, **kwargs):
             try:
-                f(*args, **kwargs)
+                return f(*args, **kwargs)
             except BaseException as error:
                 if not isinstance(error, cls):
                     raise cls(cls.error_string.format(str(error)))
