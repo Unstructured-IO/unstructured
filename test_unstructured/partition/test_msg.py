@@ -176,7 +176,7 @@ def test_partition_msg_can_process_attachments(
     assert elements[-1].metadata == expected_metadata
 
 
-def test_partition_msg_can_processmin_max_wtih_attachments(
+def test_partition_msg_can_process_min_max_wtih_attachments(
     tmpdir,
     filename="example-docs/fake-email-attachment.msg",
 ):
@@ -207,6 +207,7 @@ def test_partition_msg_can_processmin_max_wtih_attachments(
     assert elements[0].text.startswith("Hello!")
     assert elements[-1].text == attachment_elements[-1].text
     assert elements[-2].text == attachment_elements[-2].text
+    assert len(elements) == len(attachment_elements)
 
 
 def test_partition_msg_raises_with_no_partitioner(
