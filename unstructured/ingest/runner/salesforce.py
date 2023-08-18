@@ -17,7 +17,6 @@ def salesforce(
     salesforce_username: str,
     salesforce_password: str,
     salesforce_token: str,
-
     **kwargs,
 ):
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
@@ -29,7 +28,10 @@ def salesforce(
         logger=logger,
     )
 
-    from unstructured.ingest.connector.salesforce import SalesforceConnector, SimpleSalesforceConfig
+    from unstructured.ingest.connector.salesforce import (
+        SalesforceConnector,
+        SimpleSalesforceConfig,
+    )
 
     doc_connector = SalesforceConnector(  # type: ignore
         standard_config=connector_config,

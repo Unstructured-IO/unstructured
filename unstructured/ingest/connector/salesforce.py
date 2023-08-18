@@ -25,11 +25,13 @@ from unstructured.utils import requires_dependencies
 
 from simple_salesforce import Salesforce
 
+class MissingCategoryError(Exception):
+    """There are no categories with that name."""
 
-
-email_template = Template("""MIME-Version: 1.0
+email_template = Template(
+    """MIME-Version: 1.0
 Date: $date
-Message-ID: $id
+Message-ID: $message_identifier
 Subject: $subject
 From: $from_email
 To: $to_email
@@ -41,14 +43,34 @@ $textbody
 Content-Type: text/html; charset="UTF-8"
 $textbody
 --00000000000095c9b205eff92630--
-"""
+""",
+)
+
+account_template = Template(
+    """Id: $id
+Name: $name
+Type: $account_type
+Phone: $phone
+AccountNumber: $account_number
+Website: $website
+Industry: $industry
+AnnualRevenue: $annual_revenue
+NumberOfEmployees: $number_employees
+Ownership: $ownership
+TickerSymbol: $ticker_symbol
+Description: $description
+Rating: $rating
+DandbCompanyId: $dnb_id
+""",
 )
 
 # TODO: Probably need new authentication
 
+
 @dataclass
 class SimpleSalesforceConfig(BaseConnectorConfig):
-    """ Connector specific attributes"""
+    """Connector specific attributes"""
+
     salesforce_categories: List[str]
     salesforce_username: str
     salesforce_password: str
@@ -60,102 +82,87 @@ class SimpleSalesforceConfig(BaseConnectorConfig):
         """Parses a comma separated string of Outlook folders into a list."""
         return [x.strip() for x in folder_str.split(",")]
 
+
 @dataclass
 class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
-
     record_type: str
     record: str
     config: SimpleSalesforceConfig
-    # salesforce_username: str
-    # salesforce_password: str
-    # salesforce_token: str
     file_exists: bool = False
     check_exists: bool = False
 
-    random_number = 5 
-
     def _tmp_download_file(self):
-        # page_file = self.page_id + ".txt"
-        # page_file = "hello" + ".txt"
         if self.record_type == "EmailMessage":
             record_file = self.record["Id"] + ".eml"
         elif self.record_type == "Account":
             record_file = self.record["Id"] + ".txt"
+        else:
+            raise MissingCategoryError(
+                f"There are no categories with the name: {self.record_type}",
+            )
         return Path(self.standard_config.download_dir) / self.record_type / record_file
 
     @property
     def _output_filename(self):
-        # page_file = self.page_id + ".json"
         record_file = self.record["Id"] + ".json"
         return Path(self.standard_config.output_dir) / self.record_type / record_file
 
     def _create_full_tmp_dir_path(self):
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
 
-    def create_txt(self, txt_json):
-        txt = f"""
-Name: {txt_json["Name"]}
-        """
-        return dedent(txt)
+    def create_account(self, account_json):
+        """Creates partitionable account file"""
+        account = account_template.substitute(
+            id=account_json.get("Id"),
+            name=account_json.get("Name"),
+            account_type=account_json.get("Type"),
+            phone=account_json.get("Phone"),
+            account_number=account_json.get("AccountNumber"),
+            website=account_json.get("Website"),
+            industry=account_json.get("Industry"),
+            annual_revenue=account_json.get("AnnualRevenue"),
+            number_employees=account_json.get("NumberOfEmployees"),
+            ownership=account_json.get("Ownership"),
+            ticker_symbol=account_json.get("TickerSymbol"),
+            description=account_json.get("Description"),
+            rating=account_json.get("Rating"),
+            dnb_id=account_json.get("DandbCompanyId"),
+
+        )
+        return dedent(account)
 
     def create_eml(self, email_json):
-        ####### Fix Date format, should we use htmlbody or textbody
-        print("*&**")
-        print("Date: Fri, 16 Dec 2022 17:04:16 -0500")
-        print(email_json["MessageDate"])
-        html_body_1_line = email_json["HtmlBody"].replace("\n","").replace("\r","").replace("\t","")
-        eml = email_template.substitute(date=formatdate(parser.parse(email_json["MessageDate"]).timestamp()),id=email_json["MessageIdentifier"],subject=email_json["Subject"],
-                                      from_email=email_json["FromAddress"],to_email=email_json["ToAddress"],textbody=email_json["TextBody"])
+        """Recreates standard expected email format using template."""
+        eml = email_template.substitute(
+            date=formatdate(parser.parse(email_json.get("MessageDate")).timestamp()),
+            message_identifier=email_json.get("MessageIdentifier"),
+            subject=email_json.get("Subject"),
+            from_email=email_json.get("FromAddress"),
+            to_email=email_json.get("ToAddress"),
+            textbody=email_json.get("TextBody"),
+        )
         return dedent(eml)
 
     @BaseIngestDoc.skip_if_file_exists
     @requires_dependencies(["simple_salesforce"], extras="salesforce")
     def get_file(self):
-        print("GET FILE!!!!!!")
+        """Saves individual json records locally."""
         self._create_full_tmp_dir_path()
+        # breakpoint()
 
-        # self.config.get_logger().debug(f"fetching page {self.page_id} - PID: {os.getpid()}")
-        logger.debug(f"fetching page &&&&&&BOB - PID: {os.getpid()}")
-
-        # client = NotionClient(auth=self.api_key, logger=self.config.get_logger())
-
-        # client = Salesforce(username=self.config.salesforce_username, 
-        #                     password=self.config.salesforce_password, 
-        #                     security_token=self.config.salesforce_token)
+        # logger.debug(f"Writing page {self.record.get('Id')} - PID: {os.getpid()}")
 
         try:
             print("******** TRYING")
-            # text_extraction = extract_page_text(
-            #     client=client,
-            #     page_id=self.page_id,
-            #     logger=self.config.get_logger(),
-            # )
             # self.check_exists = True
             # self.file_exists = True
-            # if text_extraction.text:
-            # rsp = client.query_all(self.sql)
-            # breakpoint()
-            # for record in rsp["records"]:
             if self.record_type == "EmailMessage":
                 formatted_record = self.create_eml(self.record)
             elif self.record_type == "Account":
-                formatted_record = self.create_txt(self.record)
+                formatted_record = self.create_account(self.record)
 
-            # breakpoint()
             with open(self._tmp_download_file(), "w") as page_file:
                 page_file.write(formatted_record)
-
-        # try:
-        #     text_extraction = extract_page_text(
-        #         client=client,
-        #         page_id=self.page_id,
-        #         logger=self.config.get_logger(),
-        #     )
-        #     self.check_exists = True
-        #     self.file_exists = True
-        #     if text_extraction.text:
-        #         with open(self._tmp_download_file(), "w") as page_file:
-        #             page_file.write(text_extraction.text)
 
         except Exception as e:
             print("*******except ")
@@ -165,11 +172,12 @@ Name: {txt_json["Name"]}
             #     self.file_exists = False
             # else:
             #     self.config.get_logger().error(f"Error: {error}")
-    
+
     @property
     def filename(self):
         """The filename of the file created from a BLABLABLA notion page"""
         return self._tmp_download_file()
+
 
 @requires_dependencies(["simple_salesforce"], extras="salesforce")
 class SalesforceConnector(ConnectorCleanupMixin, BaseConnector):
@@ -191,19 +199,22 @@ class SalesforceConnector(ConnectorCleanupMixin, BaseConnector):
         Create individual IngestDocs for each json entry in the appropriate category.
         Send them to next phase where each doc gets converted into the appropriate format for partitioning.
         """
-        client = Salesforce(username=self.config.salesforce_username, 
-                    password=self.config.salesforce_password, 
-                    security_token=self.config.salesforce_token)
-        # Create appropriate sql
+        client = Salesforce(
+            username=self.config.salesforce_username,
+            password=self.config.salesforce_password,
+            security_token=self.config.salesforce_token,
+        )
 
-        doc_list=[]
+        doc_list = []
+        #######TODO: Try Except empty
         for record_type in self.config.salesforce_categories:
-            # print(record_type)
             records = client.query_all(f"select FIELDS(STANDARD) from {record_type}")
             for record in records["records"]:
-                # print(record)
-                doc_list.append(SalesforceIngestDoc(self.standard_config, self.config, record_type, record))
+                doc_list.append(
+                    SalesforceIngestDoc(
+                        self.standard_config, self.config, record_type, record,
+                    ),
+                )
+        print(doc_list)
 
         return doc_list
-
-
