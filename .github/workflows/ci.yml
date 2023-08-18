@@ -171,7 +171,8 @@ jobs:
       with:
         path: |
           nltk_data
-        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+          .venv-base
+        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}-base
     - name: Setup virtual environment
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
       run: |
@@ -206,13 +207,11 @@ jobs:
       with:
         path: |
           nltk_data
-        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
-    - name: Setup virtual environment (no cache hit)
-      if: steps.virtualenv-cache.outputs.cache-hit != 'true'
+        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}-base
+    - name: Setup virtual environment
       run: |
         python${{ matrix.python-version}} -m venv .venv
         source .venv-${{ matrix.extra }}/bin/activate
-        mkdir "$NLTK_DATA"
         make install-${{ matrix.extra }}
     - name: Test
       env:
