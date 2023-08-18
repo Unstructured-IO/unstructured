@@ -7,7 +7,7 @@ import pdf2image
 
 from unstructured.documents.elements import PageBreak
 from unstructured.partition.pdf import partition_pdf
-from xycut import bbox2points, recursive_xy_cut, vis_polygons_with_index
+from unstructured.partition.utils.xycut import bbox2points, recursive_xy_cut, vis_polygons_with_index
 
 
 def run(pdf_path):

@@ -1,5 +1,4 @@
 from typing import List
-
 import cv2
 import numpy as np
 
@@ -122,7 +121,7 @@ def recursive_xy_cut(boxes: np.ndarray, indices: List[int], res: List[int]):
                 x_sorted_boxes_chunk[:, 0] < c1
             )
             recursive_xy_cut(
-                x_sorted_boxes_chunk[_indices], x_sorted_indices_chunk[_indices], res,
+                x_sorted_boxes_chunk[_indices], x_sorted_indices_chunk[_indices], res
             )
 
 
@@ -187,7 +186,7 @@ def vis_polygon(img, points, thickness=2, color=None):
 
 
 def vis_points(
-    img: np.ndarray, points, texts: List[str] = None, color=(0, 200, 0),
+    img: np.ndarray, points, texts: List[str] = None, color=(0, 200, 0)
 ) -> np.ndarray:
     """
 
