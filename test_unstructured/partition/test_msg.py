@@ -204,11 +204,10 @@ def test_partition_msg_can_process_min_max_wtih_attachments(
     assert elements[0].text.startswith("Hello!")
     assert elements[-1].text == attachment_elements[-1].text
     assert elements[-2].text == attachment_elements[-2].text
-    msg_attachments = []
     for element in elements:
         if element.metadata.attached_to_filename is not None:
-            msg_attachments.append(element)
-    assert len(msg_attachments) == len(attachment_elements)
+            assert len(element.text) <= 13
+            assert len(element.text) >= 6
 
 
 def test_partition_msg_raises_with_no_partitioner(
