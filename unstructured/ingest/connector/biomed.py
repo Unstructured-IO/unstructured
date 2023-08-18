@@ -61,11 +61,11 @@ class SimpleBiomedConfig(BaseConnectorConfig):
             valid = validate_date_args(self.until)
 
         return valid
-    
+
     def is_api(self):
         return not self.path
-    
-    @functools.lru_cache(maxsize=1) 
+
+    @functools.lru_cache(maxsize=1)
     def is_file(self):
         if not self.is_api():
             is_valid = self.formatted_path.lower().startswith(PDF_DIR)
@@ -91,15 +91,14 @@ class SimpleBiomedConfig(BaseConnectorConfig):
                         "Something went wrong when validating the path: {path}.",
                     )
         return False
-    
+
     def is_dir(self):
         return not self.is_api() and not self.is_file()
-    
+
     @property
     def formatted_path(self):
         if self.path:
             return self.path.strip("/")
-            
 
     def __post_init__(self):
         if not self.path:
@@ -109,7 +108,6 @@ class SimpleBiomedConfig(BaseConnectorConfig):
                     "Path argument or at least one of the "
                     "OA Web Service arguments MUST be provided.",
                 )
-            
 
 
 @dataclass

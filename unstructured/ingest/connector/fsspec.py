@@ -36,18 +36,18 @@ class SimpleFsspecConfig(BaseConnectorConfig):
     @property
     def protocol(self):
         return self.path.split("://")[0]
-    
+
     @property
     def path_without_protocol(self):
         return self.path.split("://")[1]
-   
+
     @property
     def dir_path(self):
         if self.protocol == "dropbox":
             return " "
         match = re.match(rf"{self.protocol}://([^/\s]+?)(/*)$", self.path)
         if match:
-            return match.group(1)        
+            return match.group(1)
         match = re.match(rf"{self.protocol}://([^/\s]+?)/([^\s]*)", self.path)
         if not match:
             raise ValueError(f"Invalid path {self.path}.")
@@ -64,13 +64,14 @@ class SimpleFsspecConfig(BaseConnectorConfig):
         if not match:
             raise ValueError(f"Invalid path {self.path}.")
         return match.group(2) or ""
-        
+
     def __post_init__(self):
         if self.protocol not in SUPPORTED_REMOTE_FSSPEC_PROTOCOLS:
             raise ValueError(
                 f"Protocol {self.protocol} not supported yet, only "
                 f"{SUPPORTED_REMOTE_FSSPEC_PROTOCOLS} are supported.",
             )
+
 
 @dataclass
 class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):

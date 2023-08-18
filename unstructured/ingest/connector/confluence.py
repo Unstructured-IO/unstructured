@@ -103,6 +103,7 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
         from atlassian import Confluence
+
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
 
         # TODO: instead of having a separate connection object for each doc,
@@ -136,6 +137,7 @@ class ConfluenceConnector(ConnectorCleanupMixin, BaseConnector):
 
     def initialize(self):
         from atlassian import Confluence
+
         self.confluence = Confluence(
             url=self.config.url,
             username=self.config.user_email,

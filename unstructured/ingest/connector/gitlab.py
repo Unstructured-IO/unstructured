@@ -15,18 +15,17 @@ if TYPE_CHECKING:
 
 @dataclass(frozen=True)
 class SimpleGitLabConfig(SimpleGitConfig):
-
     @property
     def parsed_gh_url(self):
         return urlparse(self.url)
-    
+
     @property
     def repo_path(self):
         repo_path = self.parsed_gh_url.path
         while repo_path.startswith("/"):
             repo_path = repo_path[1:]
         return repo_path
-    
+
     @property
     def url_with_scheme(self):
         # If no scheme or netloc are provided, use the default gitlab.com
@@ -34,6 +33,7 @@ class SimpleGitLabConfig(SimpleGitConfig):
             return "https://gitlab.com"
         else:
             return f"{self.parsed_gh_url.scheme}://{self.parsed_gh_url.netloc}"
+
 
 @dataclass
 class GitLabIngestDoc(GitIngestDoc):
@@ -53,6 +53,8 @@ class GitLabIngestDoc(GitIngestDoc):
 @requires_dependencies(["gitlab"], extras="gitlab")
 @dataclass
 class GitLabConnector(GitConnector):
+    config: SimpleGitLabConfig
+
     def __post_init__(self) -> None:
         from gitlab import Gitlab
 

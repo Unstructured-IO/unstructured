@@ -1,5 +1,6 @@
 import fnmatch
 import os
+from abc import abstractmethod
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional
@@ -20,7 +21,11 @@ class SimpleGitConfig(BaseConnectorConfig):
     access_token: Optional[str]
     branch: Optional[str]
     file_glob: Optional[str]
-    repo_path: str = field(init=False, repr=False)
+
+    @property
+    @abstractmethod
+    def repo_path(self):
+        pass
 
 
 @dataclass

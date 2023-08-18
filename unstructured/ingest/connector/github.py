@@ -18,7 +18,6 @@ if TYPE_CHECKING:
 
 @dataclass(frozen=True)
 class SimpleGitHubConfig(SimpleGitConfig):
-
     @property
     def parsed_gh_url(self):
         return urlparse(self.url)
@@ -26,7 +25,7 @@ class SimpleGitHubConfig(SimpleGitConfig):
     @property
     def path_fragments(self):
         return [fragment for fragment in self.parsed_gh_url.path.split("/") if fragment]
-    
+
     @property
     def repo_path(self):
         return self.parsed_gh_url.path

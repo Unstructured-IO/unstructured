@@ -15,6 +15,7 @@ from unstructured.ingest.logger import logger
 # Dictionary to store session handles by config hash
 session_handles_map: Dict[int, BaseSessionHandle] = {}
 
+
 def initialize():
     """Download default model or model specified by UNSTRUCTURED_HI_RES_MODEL_NAME environment
     variable (avoids subprocesses all doing the same)"""
