@@ -4,8 +4,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
-from atlassian import Confluence
-
 from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
@@ -101,9 +99,10 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         output_file = f"{self.file_meta.document_id}.json"
         return Path(self.standard_config.output_dir) / self.file_meta.space_id / output_file
 
-    @requires_dependencies(["atlassian"])
+    @requires_dependencies(["atlassian"], extras="confluence")
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
+        from atlassian import Confluence
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
 
         # TODO: instead of having a separate connection object for each doc,
@@ -121,7 +120,7 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             f.write(self.document)
 
 
-@requires_dependencies(["atlassian"])
+@requires_dependencies(["atlassian"], extras="confluence")
 @dataclass
 class ConfluenceConnector(ConnectorCleanupMixin, BaseConnector):
     """Fetches body fields from all documents within all spaces in a Confluence Cloud instance."""
@@ -135,8 +134,8 @@ class ConfluenceConnector(ConnectorCleanupMixin, BaseConnector):
     ):
         super().__init__(standard_config, config)
 
-    @requires_dependencies(["atlassian"])
     def initialize(self):
+        from atlassian import Confluence
         self.confluence = Confluence(
             url=self.config.url,
             username=self.config.user_email,
@@ -153,7 +152,6 @@ class ConfluenceConnector(ConnectorCleanupMixin, BaseConnector):
                     --confluence-list-of-spaces that you've provided.""",
                 )
 
-    @requires_dependencies(["atlassian"])
     def _get_space_ids(self):
         """Fetches spaces in a confluence domain."""
 
@@ -166,7 +164,6 @@ class ConfluenceConnector(ConnectorCleanupMixin, BaseConnector):
         space_ids = [space["key"] for space in all_results]
         return space_ids
 
-    @requires_dependencies(["atlassian"])
     def _get_docs_ids_within_one_space(
         self,
         space_id: str,
@@ -182,7 +179,6 @@ class ConfluenceConnector(ConnectorCleanupMixin, BaseConnector):
         doc_ids = [(space_id, doc["id"]) for doc in results]
         return doc_ids
 
-    @requires_dependencies(["atlassian"])
     def _get_doc_ids_within_spaces(self):
         space_ids = self._get_space_ids() if not self.list_of_spaces else self.list_of_spaces
 
