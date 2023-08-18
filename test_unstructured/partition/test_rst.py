@@ -1,6 +1,8 @@
+from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import Title
 from unstructured.partition.rst import partition_rst
-
+from unstructured.partition.json import partition_json
+from unstructured.staging.base import elements_to_json
 
 def test_partition_rst_from_filename(filename="example-docs/README.rst"):
     elements = partition_rst(filename=filename)
@@ -126,3 +128,16 @@ def test_partition_rst_from_file_with_custom_metadata_date(
         elements = partition_rst(file=f, metadata_last_modified=expected_last_modification_date)
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
+
+def test_partition_rst_with_json(filename="example-docs/README.rst"):
+    elements = partition_rst(filename=filename)
+    test_elements = partition_json(text=elements_to_json(elements))
+
+    assert len(elements) == len(test_elements)
+    assert clean_extra_whitespace(elements[0].text) == clean_extra_whitespace(test_elements[0].text)
+    assert elements[0].metadata.text_as_html == test_elements[0].metadata.text_as_html
+    assert elements[0].metadata.page_number == test_elements[0].metadata.page_number
+    assert elements[0].metadata.filename == test_elements[0].metadata.filename
+
+    for i in range(len(elements)):
+        assert elements[i] == test_elements[i]
