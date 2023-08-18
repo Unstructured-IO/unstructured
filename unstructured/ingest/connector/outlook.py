@@ -44,10 +44,9 @@ class SimpleOutlookConfig(BaseConnectorConfig):
                 "Please provide one of the following mandatory values:"
                 "\n--client_id\n--client_cred\n--user-email",
             )
-        self.token_factory = self._acquire_token
 
     @requires_dependencies(["msal"])
-    def _acquire_token(self):
+    def acquire_token(self):
         from msal import ConfidentialClientApplication
 
         try:
@@ -149,7 +148,7 @@ class OutlookConnector(ConnectorCleanupMixin, BaseConnector):
     def _set_client(self):
         from office365.graph_client import GraphClient
 
-        self.client = GraphClient(self.config.token_factory)
+        self.client = GraphClient(self.config.acquire_token)
 
     def initialize(self):
         pass

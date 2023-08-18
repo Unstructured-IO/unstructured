@@ -36,10 +36,9 @@ class SimpleOneDriveConfig(BaseConnectorConfig):
                 "Please provide all the following mandatory values:"
                 "\n-ms-client_id\n-ms-client_cred\n-ms-user-pname",
             )
-        self.token_factory = self._acquire_token
 
     @requires_dependencies(["msal"])
-    def _acquire_token(self):
+    def acquire_token(self):
         from msal import ConfidentialClientApplication
 
         try:
@@ -133,7 +132,7 @@ class OneDriveConnector(ConnectorCleanupMixin, BaseConnector):
     def _set_client(self):
         from office365.graph_client import GraphClient
 
-        self.client = GraphClient(self.config.token_factory)
+        self.client = GraphClient(self.config.acquire_token)
 
     def _list_objects(self, folder, recursive) -> List["DriveItem"]:
         drive_items = folder.children.get().execute_query()

@@ -98,7 +98,8 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         bot.run(self.token)
 
-        with open(self._tmp_download_file(), "w") as f:
+        self.filename.parent.mkdir(parents=True, exist_ok=True)
+        with open(self.filename, "w") as f:
             for m in messages:
                 f.write(m.content + "\n")
 
@@ -121,8 +122,7 @@ class DiscordConnector(ConnectorCleanupMixin, BaseConnector):
         super().__init__(standard_config, config)
 
     def initialize(self):
-        """Verify that can get metadata for an object, validates connections info."""
-        os.mkdir(self.standard_config.download_dir)
+        pass
 
     def get_ingest_docs(self):
         return [
