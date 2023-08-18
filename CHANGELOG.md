@@ -1,4 +1,4 @@
-## 0.10.4-dev1
+## 0.10.5-dev0
 
 ### Enhancements
 * Adds ability to reuse connections per process in unstructured-ingest
