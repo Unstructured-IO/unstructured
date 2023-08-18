@@ -18,13 +18,16 @@ GCP_INGEST_SERVICE_KEY_FILE=$(mktemp)
 echo "$GCP_INGEST_SERVICE_KEY" >"$GCP_INGEST_SERVICE_KEY_FILE"
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
+    gcs \
     --download-dir "$DOWNLOAD_DIR" \
-    --gcs-token "$GCP_INGEST_SERVICE_KEY_FILE" \
-    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed \
+    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified \
     --preserve-downloads \
-    --recursive \
-    --remote-url gs://utic-test-ingest-fixtures/ \
     --reprocess \
-    --structured-output-dir "$OUTPUT_DIR"
+    --structured-output-dir "$OUTPUT_DIR" \
+    --verbose \
+    --token "$GCP_INGEST_SERVICE_KEY_FILE" \
+    --recursive \
+    --remote-url gs://utic-test-ingest-fixtures/
+
 
 sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import inspect
+import json
 import os
 import re
 import zipfile
@@ -20,7 +21,7 @@ from unstructured.partition.common import (
 )
 
 if TYPE_CHECKING:
-    from unstructured_inference.inference.layout import DocumentLayout
+    from unstructured_inference.inference.layout import DocumentLayout, PageLayout
 
 try:
     import magic
@@ -300,20 +301,41 @@ def detect_filetype(
             encoding = "utf-8"
         formatted_encoding = format_encoding_str(encoding)
 
-        if extension in PLAIN_TEXT_EXTENSIONS:
+        if extension in [
+            ".eml",
+            ".md",
+            ".rtf",
+            ".html",
+            ".rst",
+            ".org",
+            ".csv",
+            ".tsv",
+            ".json",
+        ]:
             return EXT_TO_FILETYPE.get(extension)
 
         # NOTE(crag): for older versions of the OS libmagic package, such as is currently
         # installed on the Unstructured docker image, .json files resolve to "text/plain"
         # rather than "application/json". this corrects for that case.
-        if _is_text_file_a_json(file=file, filename=filename, encoding=formatted_encoding):
+        if _is_text_file_a_json(
+            file=file,
+            filename=filename,
+            encoding=formatted_encoding,
+        ):
             return FileType.JSON
 
-        if _is_text_file_a_csv(file=file, filename=filename, encoding=formatted_encoding):
+        if _is_text_file_a_csv(
+            file=file,
+            filename=filename,
+            encoding=formatted_encoding,
+        ):
             return FileType.CSV
 
         if file and _check_eml_from_buffer(file=file) is True:
             return FileType.EML
+
+        if extension in PLAIN_TEXT_EXTENSIONS:
+            return EXT_TO_FILETYPE.get(extension)
 
         # Safety catch
         if mime_type in STR_TO_FILETYPE:
@@ -417,6 +439,22 @@ def _is_text_file_a_json(
 ):
     """Detects if a file that has a text/plain MIME type is a JSON file."""
     file_text = _read_file_start_for_type_check(file=file, filename=filename, encoding=encoding)
+    try:
+        json.loads(file_text)
+        return True
+    except json.JSONDecodeError:
+        return False
+
+
+def is_json_processable(
+    filename: Optional[str] = None,
+    file: Optional[IO[bytes]] = None,
+    file_text: Optional[str] = None,
+    encoding: Optional[str] = "utf-8",
+) -> bool:
+    exactly_one(filename=filename, file=file, file_text=file_text)
+    if file_text is None:
+        file_text = _read_file_start_for_type_check(file=file, filename=filename, encoding=encoding)
     return re.match(LIST_OF_DICTS_PATTERN, file_text) is not None
 
 
@@ -433,7 +471,11 @@ def _is_text_file_a_csv(
     encoding: Optional[str] = "utf-8",
 ):
     """Detects if a file that has a text/plain MIME type is a CSV file."""
-    file_text = _read_file_start_for_type_check(file=file, filename=filename, encoding=encoding)
+    file_text = _read_file_start_for_type_check(
+        file=file,
+        filename=filename,
+        encoding=encoding,
+    )
     lines = file_text.strip().splitlines()
     if len(lines) < 2:
         return False
@@ -460,26 +502,38 @@ def document_to_element_list(
     document: "DocumentLayout",
     include_page_breaks: bool = False,
     sort: bool = False,
+    last_modification_date: Optional[str] = None,
+    **kwargs,
 ) -> List[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
     elements: List[Element] = []
     num_pages = len(document.pages)
     for i, page in enumerate(document.pages):
         page_elements: List[Element] = []
+
+        page_image_metadata = _get_page_image_metadata(page)
+        image_format = page_image_metadata.get("format")
+        image_width = page_image_metadata.get("width")
+        image_height = page_image_metadata.get("height")
+
         for layout_element in page.elements:
-            if hasattr(page, "image") and hasattr(layout_element, "coordinates"):
-                image_format = page.image.format
-                coordinate_system = PixelSpace(width=page.image.width, height=page.image.height)
+            if image_width and image_height and hasattr(layout_element, "coordinates"):
+                coordinate_system = PixelSpace(width=image_width, height=image_height)
             else:
-                image_format = None
                 coordinate_system = None
+
             element = normalize_layout_element(layout_element, coordinate_system=coordinate_system)
+
             if isinstance(element, List):
                 for el in element:
+                    if last_modification_date:
+                        el.metadata.last_modified = last_modification_date
                     el.metadata.page_number = i + 1
                 page_elements.extend(element)
                 continue
             else:
+                if last_modification_date:
+                    element.metadata.last_modified = last_modification_date
                 element.metadata.text_as_html = (
                     layout_element.text_as_html if hasattr(layout_element, "text_as_html") else None
                 )
@@ -493,6 +547,7 @@ def document_to_element_list(
                 filetype=image_format,
                 coordinates=coordinates,
                 coordinate_system=coordinate_system,
+                **kwargs,
             )
         if sort:
             page_elements = sorted(
@@ -512,6 +567,34 @@ def document_to_element_list(
         elements.extend(page_elements)
 
     return elements
+
+
+def _get_page_image_metadata(
+    page: PageLayout,
+) -> dict:
+    """Retrieve image metadata and coordinate system from a page."""
+
+    image = getattr(page, "image", None)
+    image_metadata = getattr(page, "image_metadata", None)
+
+    if image:
+        image_format = image.format
+        image_width = image.width
+        image_height = image.height
+    elif image_metadata:
+        image_format = image_metadata.get("format")
+        image_width = image_metadata.get("width")
+        image_height = image_metadata.get("height")
+    else:
+        image_format = None
+        image_width = None
+        image_height = None
+
+    return {
+        "format": image_format,
+        "width": image_width,
+        "height": image_height,
+    }
 
 
 PROGRAMMING_LANGUAGES = [

@@ -19,6 +19,25 @@ from unstructured.staging.base import convert_to_dict
 
 
 @dataclass
+class BaseSessionHandle(ABC):
+    """Abstract Base Class for sharing resources that are local to an individual process.
+    e.g., a connection for making a request for fetching documents."""
+
+
+@dataclass
+class ProcessorConfigs:
+    """Common set of config required when running data connectors."""
+
+    partition_strategy: str
+    partition_ocr_languages: str
+    partition_pdf_infer_table_structure: bool
+    partition_encoding: str
+    num_processes: int
+    reprocess: bool
+    max_docs: int
+
+
+@dataclass
 class StandardConnectorConfig:
     """Common set of config options passed to all connectors."""
 
@@ -317,3 +336,26 @@ class IngestDocCleanupMixin:
         ):
             logger.debug(f"Cleaning up {self}")
             os.unlink(self.filename)
+
+
+class ConfigSessionHandleMixin:
+    @abstractmethod
+    def create_session_handle(self) -> BaseSessionHandle:
+        """Creates a session handle that will be assigned on each IngestDoc to share
+        session related resources across all document handling for a given subprocess."""
+
+
+class IngestDocSessionHandleMixin:
+    config: ConfigSessionHandleMixin
+    _session_handle: Optional[BaseSessionHandle] = None
+
+    @property
+    def session_handle(self):
+        """If a session handle is not assigned, creates a new one and assigns it."""
+        if self._session_handle is None:
+            self._session_handle = self.config.create_session_handle()
+        return self._session_handle
+
+    @session_handle.setter
+    def session_handle(self, session_handle: BaseSessionHandle):
+        self._session_handle = session_handle

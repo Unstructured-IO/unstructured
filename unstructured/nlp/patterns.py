@@ -59,6 +59,13 @@ UNICODE_BULLETS: Final[List[str]] = [
 ]
 BULLETS_PATTERN = "|".join(UNICODE_BULLETS)
 UNICODE_BULLETS_RE = re.compile(f"(?:{BULLETS_PATTERN})(?!{BULLETS_PATTERN})")
+# zero-width positive lookahead so bullet characters will not be removed when using .split()
+UNICODE_BULLETS_RE_0W = re.compile(f"(?={BULLETS_PATTERN})(?<!{BULLETS_PATTERN})")
+E_BULLET_PATTERN = re.compile(r"^e(?=\s)", re.MULTILINE)
+
+# NOTE(klaijan) - Captures reference of format [1] or [i] or [a] at any point in the line.
+REFERENCE_PATTERN = r"\[(?:[\d]+|[a-z]|[ivxlcdm])\]"
+REFERENCE_PATTERN_RE = re.compile(REFERENCE_PATTERN)
 
 ENUMERATED_BULLETS_RE = re.compile(r"(?:(?:\d{1,3}|[a-z][A-Z])\.?){1,3}")
 
@@ -75,6 +82,15 @@ PARAGRAPH_PATTERN_RE = re.compile(
     f"((?:{BULLETS_PATTERN})|{PARAGRAPH_PATTERN})(?!{BULLETS_PATTERN}|$)",
 )
 DOUBLE_PARAGRAPH_PATTERN_RE = re.compile("(" + PARAGRAPH_PATTERN + "){2}")
+
+# Captures all new line \n and keeps the \n as its own element,
+# considers \n\n as two separate elements
+LINE_BREAK = r"(?<=\n)"
+LINE_BREAK_RE = re.compile(LINE_BREAK)
+
+# NOTE(klaijan) - captures a line that does not ends with period (.)
+ONE_LINE_BREAK_PARAGRAPH_PATTERN = r"^(?:(?!\.\s*$).)*$"
+ONE_LINE_BREAK_PARAGRAPH_PATTERN_RE = re.compile(ONE_LINE_BREAK_PARAGRAPH_PATTERN)
 
 # IP Address examples: ba23::58b5:2236:45g2:88h2 or 10.0.2.01
 IP_ADDRESS_PATTERN = (
@@ -100,7 +116,7 @@ EMAIL_DATETIMETZ_PATTERN_RE = re.compile(EMAIL_DATETIMETZ_PATTERN)
 
 EMAIL_ADDRESS_PATTERN = "[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+"  # noqa: W605 NOTE(harrell)
 # - skipping qa because we need the escape for the regex
-
+EMAIL_ADDRESS_PATTERN_RE = re.compile(EMAIL_ADDRESS_PATTERN)
 
 ENDS_IN_PUNCT_PATTERN = r"[^\w\s]\Z"
 ENDS_IN_PUNCT_RE = re.compile(ENDS_IN_PUNCT_PATTERN)
@@ -108,4 +124,17 @@ ENDS_IN_PUNCT_RE = re.compile(ENDS_IN_PUNCT_PATTERN)
 # NOTE(robinson) - Used to detect if text is in the expected "list of dicts"
 # format for document elements
 LIST_OF_DICTS_PATTERN = r"\A\s*\[\s*{?"
-JSON_PATTERN = r"^(?:\{.*\}|\[.*\])$"
+
+# (?s) dot all (including newline characters)
+# \{(?=.*:) opening brace and at least one colon
+# .*? any characters (non-greedy)
+# (?:\}|$) non-capturing group that matches either the closing brace } or the end of
+# the string to handle cases where the JSON is cut off
+# | or
+# \[(?s:.*?)\] matches the opening bracket [ in a JSON array and any characters inside the array
+# (?:$|,|\]) non-capturing group that matches either the end of the string, a comma,
+# or the closing bracket to handle cases where the JSON array is cut off
+JSON_PATTERN = r"(?s)\{(?=.*:).*?(?:\}|$)|\[(?s:.*?)\](?:$|,|\])"
+
+# taken from https://stackoverflow.com/a/3845829/12406158
+VALID_JSON_CHARACTERS = r"[,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]"

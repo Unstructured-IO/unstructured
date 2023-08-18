@@ -71,7 +71,7 @@ def test_partition_xml_from_filename_with_tags_default_encoding(filename):
     file_path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
     elements = partition_xml(filename=file_path, xml_keep_tags=True)
 
-    assert elements[5].text == "<name>United States</name>"
+    assert elements[5].text == "<leader>Joe Biden</leader>"
     assert elements[5].metadata.filename == filename
 
 
@@ -94,7 +94,7 @@ def test_partition_xml_from_file_with_tags_default_encoding(filename):
     with open(file_path) as f:
         elements = partition_xml(file=f, xml_keep_tags=True, metadata_filename=file_path)
 
-    assert elements[5].text == "<name>United States</name>"
+    assert elements[5].text == "<leader>Joe Biden</leader>"
     assert elements[5].metadata.filename == filename
 
 
@@ -107,7 +107,7 @@ def test_partition_xml_from_file_rb_with_tags_default_encoding(filename):
     with open(file_path, "rb") as f:
         elements = partition_xml(file=f, xml_keep_tags=True, metadata_filename=file_path)
 
-    assert elements[5].text == "<name>United States</name>"
+    assert elements[5].text == "<leader>Joe Biden</leader>"
     assert elements[5].metadata.filename == filename
 
 
@@ -156,3 +156,78 @@ def test_partition_xml_from_file_exclude_metadata(filename):
     assert elements[0].text == "United States"
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
+
+
+def test_partition_xml_metadata_date(
+    mocker,
+    filename="example-docs/factbook.xml",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.xml.get_last_modified_date",
+        return_value=mocked_last_modification_date,
+    )
+
+    elements = partition_xml(
+        filename=filename,
+    )
+
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
+
+
+def test_partition_xml_with_custom_metadata_date(
+    mocker,
+    filename="example-docs/factbook.xml",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    expected_last_modification_date = "2020-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.xml.get_last_modified_date",
+        return_value=mocked_last_modification_date,
+    )
+
+    elements = partition_xml(
+        filename=filename,
+        metadata_last_modified=expected_last_modification_date,
+    )
+
+    assert elements[0].metadata.last_modified == expected_last_modification_date
+
+
+def test_partition_xml_from_file_metadata_date(
+    mocker,
+    filename="example-docs/factbook.xml",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.xml.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+
+    with open(filename, "rb") as f:
+        elements = partition_xml(
+            file=f,
+        )
+
+    assert elements[0].metadata.last_modified == mocked_last_modification_date
+
+
+def test_partition_xml_from_file_with_custom_metadata_date(
+    mocker,
+    filename="example-docs/factbook.xml",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    expected_last_modification_date = "2020-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.xml.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+
+    with open(filename, "rb") as f:
+        elements = partition_xml(file=f, metadata_last_modified=expected_last_modification_date)
+
+    assert elements[0].metadata.last_modified == expected_last_modification_date

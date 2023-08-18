@@ -13,6 +13,7 @@ def partition_rst(
     include_page_breaks: bool = False,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions an RST document. The document is first converted to HTML and then
@@ -26,6 +27,8 @@ def partition_rst(
         A file-like object using "rb" mode --> open(filename, "rb").
     include_page_breaks
         If True, the output will include page breaks if the filetype supports it.
+    metadata_last_modified
+        The last modified date for the document.
     """
     return convert_and_partition_html(
         source_format="rst",
@@ -33,4 +36,5 @@ def partition_rst(
         file=file,
         include_page_breaks=include_page_breaks,
         metadata_filename=metadata_filename,
+        metadata_last_modified=metadata_last_modified,
     )

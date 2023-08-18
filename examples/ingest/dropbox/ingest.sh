@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Processes several files in a nested folder structure from dropbox://utic-test-ingest-fixtures/ 
+# Processes several files in a nested folder structure from dropbox://utic-test-ingest-fixtures/
 # through Unstructured's library in 2 processes.
 # Due to Dropbox's interesting sdk:
 # if you want files and folders from the root directory use `"dropbox:// /"`
@@ -16,9 +16,10 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
+  dropbox \
    --remote-url "dropbox:// /" \
    --structured-output-dir dropbox-output \
-   --dropbox-token  "$DROPBOX_TOKEN" \
+   --token  "$DROPBOX_TOKEN" \
    --num-processes 2 \
    --recursive \
-   --verbose 
+   --verbose

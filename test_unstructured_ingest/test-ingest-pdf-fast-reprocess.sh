@@ -13,13 +13,17 @@ echo "REPROCESS INPUT PATH"
 ls "$INPUT_PATH"
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-    --local-file-glob "*.pdf" \
-    --local-input-path "$INPUT_PATH" \
-    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed \
+    local \
+    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified \
     --num-processes 2 \
     --partition-strategy fast \
-    --recursive \
     --reprocess \
-    --structured-output-dir "$OUTPUT_DIR"
+    --structured-output-dir "$OUTPUT_DIR" \
+    --verbose \
+    --file-glob "*.pdf" \
+    --input-path "$INPUT_PATH" \
+    --recursive
+
+
 
 sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

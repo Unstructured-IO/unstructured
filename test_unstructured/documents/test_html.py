@@ -139,6 +139,44 @@ def test_construct_text(doc, expected):
     assert text == expected
 
 
+@pytest.mark.parametrize(
+    ("doc", "root", "expected"),
+    [
+        (
+            "<p>Hello <strong>there</strong> I <em>am</em> a <b>very</b> <i>important</i> text</p>",
+            "p",
+            [
+                {"text": "there", "tag": "strong"},
+                {"text": "am", "tag": "em"},
+                {"text": "very", "tag": "b"},
+                {"text": "important", "tag": "i"},
+            ],
+        ),
+        (
+            "<p>Here is a <span>list</span> of <b>my <i>favorite</i> things</b></p>",
+            "p",
+            [
+                {"text": "list", "tag": "span"},
+                {"text": "my favorite things", "tag": "b"},
+                {"text": "favorite", "tag": "i"},
+            ],
+        ),
+        (
+            "<strong>A lone strong text!</strong>",
+            "strong",
+            [{"text": "A lone strong text!", "tag": "strong"}],
+        ),
+        ("<span>I have a</span> tail", "span", [{"text": "I have a", "tag": "span"}]),
+        ("<span>Empty result</span> ", "p", []),
+    ],
+)
+def test_get_emphasized_texts_from_tag(doc, expected, root):
+    document_tree = etree.fromstring(doc, etree.HTMLParser())
+    el = document_tree.find(f".//{root}")
+    emphasized_texts = html._get_emphasized_texts_from_tag(el)
+    assert emphasized_texts == expected
+
+
 def test_parse_nothing():
     doc = """<p></p>"""
     document_tree = etree.fromstring(doc, etree.HTMLParser())

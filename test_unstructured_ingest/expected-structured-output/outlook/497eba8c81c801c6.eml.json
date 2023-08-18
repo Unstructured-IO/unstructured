@@ -1,0 +1,26 @@
+[
+  {
+    "type": "NarrativeText",
+    "element_id": "cebc4803f41f12981b808ffd79d7b480",
+    "metadata": {
+      "data_source": {},
+      "filename": "497eba8c81c801c6.eml",
+      "last_modified": "2023-07-24T18:25:52-07:00",
+      "filetype": "message/rfc822",
+      "sent_from": [
+        "Ryan Nikolaidis <ryan@unstructured.io>"
+      ],
+      "sent_to": [
+        "devops@unstructuredio.onmicrosoft.com"
+      ],
+      "subject": "subfolder1_1",
+      "emphasized_text_contents": [
+        "this is a message for the subfolder1_1"
+      ],
+      "emphasized_text_tags": [
+        "span"
+      ]
+    },
+    "text": "this is a message for the subfolder1_1"
+  }
+]

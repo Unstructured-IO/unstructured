@@ -131,7 +131,7 @@ def test_partition_file():
     }
     # The document in TEST_FILE_PATH does not have elements with coordinates so
     # partition is not expected to return coordinates metadata.
-    expected_metadata_keys = {"data_source", "filename", "file_directory", "filetype"}
+    expected_metadata_keys = {"data_source", "filename", "file_directory", "filetype", "last_modified"}
     for elem in isd_elems:
         assert expected_keys == set(elem.keys())
         assert expected_metadata_keys == set(elem["metadata"].keys())
@@ -144,7 +144,6 @@ def test_partition_file():
         assert data_source_metadata["date_processed"] == TEST_DATE_PROCESSSED
 
 
-@freeze_time(TEST_DATE_PROCESSSED)
 def test_process_file_fields_include_default(mocker, partition_test_results):
     """Validate when metadata_include and metadata_exclude are not set, all fields:
     ("element_id", "text", "type", "metadata") are included"""
@@ -162,10 +161,6 @@ def test_process_file_fields_include_default(mocker, partition_test_results):
     isd_elems = test_ingest_doc.process_file()
     assert len(isd_elems)
     assert mock_partition.call_count == 1
-    assert (
-        mock_partition.call_args.kwargs["data_source_metadata"].date_processed
-        == TEST_DATE_PROCESSSED
-    )
     for elem in isd_elems:
         assert {"element_id", "text", "type", "metadata"} == set(elem.keys())
         data_source_metadata = elem["metadata"]["data_source"]
@@ -216,8 +211,8 @@ def test_process_file_metadata_exclude_filename_pagenum(mocker, partition_test_r
     isd_elems = test_ingest_doc.process_file()
     assert len(isd_elems)
     for elem in isd_elems:
-        assert "filename" not in elem["metadata"].keys()
-        assert "page_number" not in elem["metadata"].keys()
+        assert "filename" not in elem["metadata"]
+        assert "page_number" not in elem["metadata"]
 
 
 def test_process_file_flatten_metadata(mocker, partition_test_results):

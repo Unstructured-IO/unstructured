@@ -53,10 +53,6 @@ def partition_via_api(
         "UNSTRUCTURED-API-KEY": api_key,
     }
 
-    # set default values for kwargs
-    strategy = request_kwargs.pop("strategy", "hi_res")
-    request_kwargs["strategy"] = strategy
-
     if filename is not None:
         with open(filename, "rb") as f:
             files = [
@@ -118,10 +114,6 @@ def partition_multiple_via_api(
         A list of file-like object using "rb" mode --> open(filename, "rb").
     file_filename
         When file is not None, the filename (string) to store in element metadata. E.g. "foo.txt"
-    strategy
-        The strategy to use for partitioning the PDF. Uses a layout detection model if set
-        to 'hi_res', otherwise partition_pdf simply extracts the text from the document
-        and processes it.
     api_url
         The URL for the Unstructured API. Defaults to the hosted Unstructured API.
     api_key
@@ -134,10 +126,6 @@ def partition_multiple_via_api(
         "ACCEPT": "application/json",
         "UNSTRUCTURED-API-KEY": api_key,
     }
-
-    # set default values for kwargs
-    strategy = request_kwargs.pop("strategy", "hi_res")
-    request_kwargs["strategy"] = strategy
 
     if filenames is not None:
         if content_types and len(content_types) != len(filenames):

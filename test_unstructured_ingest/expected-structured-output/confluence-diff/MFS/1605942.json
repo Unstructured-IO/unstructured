@@ -1,0 +1,172 @@
+[
+  {
+    "type": "Title",
+    "element_id": "307afee17dac4c598e361c095338decd",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": "Copy and paste this section for each week."
+  },
+  {
+    "type": "Title",
+    "element_id": "b980a145c5e8c9e233a0643366ba520a",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Win",
+          "tag": "strong"
+        }
+      ]
+    },
+    "text": "Win"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": ""
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": ""
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": ""
+  },
+  {
+    "type": "Title",
+    "element_id": "aecc044c7725a6555114285dc28fe2d1",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Needs input",
+          "tag": "strong"
+        }
+      ]
+    },
+    "text": "Needs input"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": ""
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": ""
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": ""
+  },
+  {
+    "type": "Title",
+    "element_id": "9d3cab2b5efed4eaef42a707dbc813da",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Focus",
+          "tag": "strong"
+        }
+      ]
+    },
+    "text": "Focus"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": ""
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": ""
+  },
+  {
+    "type": "Title",
+    "element_id": "8a7525b1492fb84833f5c4a69b30f4bf",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Notes",
+          "tag": "strong"
+        }
+      ]
+    },
+    "text": "Notes"
+  },
+  {
+    "type": "Title",
+    "element_id": "98e38cd6c5f88330322de759657563f9",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1,
+      "emphasized_texts": [
+        {
+          "text": "Important Links",
+          "tag": "strong"
+        }
+      ]
+    },
+    "text": "Important Links"
+  }
+]

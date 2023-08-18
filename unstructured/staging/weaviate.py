@@ -8,7 +8,13 @@ class Properties(TypedDict):
     dataType: List[str]
 
 
-exclude_metadata_keys = ("data_source", "coordinates")
+exclude_metadata_keys = (
+    "data_source",
+    "coordinates",
+    "links",
+    "regex_metadata",
+    "emphasized_texts",
+)
 
 
 def stage_for_weaviate(elements: List[Text]) -> List[Dict[str, Any]]:

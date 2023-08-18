@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import os
 import subprocess
+from datetime import datetime
 from io import BufferedReader, BytesIO, TextIOWrapper
 from tempfile import SpooledTemporaryFile
 from typing import IO, TYPE_CHECKING, Any, BinaryIO, Dict, List, Optional, Tuple, Union
 
-from docx import table as docxtable
+import emoji
 from tabulate import tabulate
 
 from unstructured.documents.coordinates import CoordinateSystem
@@ -21,6 +23,10 @@ from unstructured.documents.elements import (
 )
 from unstructured.logger import logger
 from unstructured.nlp.patterns import ENUMERATED_BULLETS_RE, UNICODE_BULLETS_RE
+from unstructured.utils import dependency_exists
+
+if dependency_exists("docx"):
+    import docx.table as docxtable
 
 if TYPE_CHECKING:
     from unstructured_inference.inference.layoutelement import (
@@ -29,8 +35,32 @@ if TYPE_CHECKING:
     )
 
 
+def get_last_modified_date(filename: str) -> Union[str, None]:
+    modify_date = datetime.fromtimestamp(os.path.getmtime(filename))
+    return modify_date.strftime("%Y-%m-%dT%H:%M:%S%z")
+
+
+def get_last_modified_date_from_file(
+    file: Union[IO[bytes], SpooledTemporaryFile, BinaryIO, bytes],
+) -> Union[str, None]:
+    filename = None
+    if hasattr(file, "name"):
+        filename = file.name
+
+    if not filename:
+        return None
+
+    modify_date = get_last_modified_date(filename)
+    return modify_date
+
+
 def normalize_layout_element(
-    layout_element: Union["LayoutElement", "LocationlessLayoutElement", Element, Dict[str, Any]],
+    layout_element: Union[
+        "LayoutElement",
+        "LocationlessLayoutElement",
+        Element,
+        Dict[str, Any],
+    ],
     coordinate_system: Optional[CoordinateSystem] = None,
 ) -> Union[Element, List[Element]]:
     """Converts an unstructured_inference LayoutElement object to an unstructured Element."""
@@ -66,11 +96,23 @@ def normalize_layout_element(
             coordinate_system=coordinate_system,
         )
     elif element_type == "Checked":
-        return CheckBox(checked=True, coordinates=coordinates, coordinate_system=coordinate_system)
+        return CheckBox(
+            checked=True,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
+        )
     elif element_type == "Unchecked":
-        return CheckBox(checked=False, coordinates=coordinates, coordinate_system=coordinate_system)
+        return CheckBox(
+            checked=False,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
+        )
     else:
-        return Text(text=text, coordinates=coordinates, coordinate_system=coordinate_system)
+        return Text(
+            text=text,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
+        )
 
 
 def layout_list_to_list_items(
@@ -109,6 +151,8 @@ def _add_element_metadata(
     text_as_html: Optional[str] = None,
     coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
     coordinate_system: Optional[CoordinateSystem] = None,
+    section: Optional[str] = None,
+    **kwargs,
 ) -> Element:
     """Adds document metadata to the document element. Document metadata includes information
     like the filename, source url, and page number."""
@@ -120,6 +164,24 @@ def _add_element_metadata(
         if coordinates is not None and coordinate_system is not None
         else None
     )
+    links = element.links if hasattr(element, "links") and len(element.links) > 0 else None
+    link_urls = [link.get("url") for link in links] if links else None
+    link_texts = [link.get("text") for link in links] if links else None
+    emphasized_texts = (
+        element.emphasized_texts
+        if hasattr(element, "emphasized_texts") and len(element.emphasized_texts) > 0
+        else None
+    )
+    emphasized_text_contents = (
+        [emphasized_text.get("text") for emphasized_text in emphasized_texts]
+        if emphasized_texts
+        else None
+    )
+    emphasized_text_tags = (
+        [emphasized_text.get("tag") for emphasized_text in emphasized_texts]
+        if emphasized_texts
+        else None
+    )
     metadata = ElementMetadata(
         coordinates=coordinates_metadata,
         filename=filename,
@@ -127,6 +189,11 @@ def _add_element_metadata(
         page_number=page_number,
         url=url,
         text_as_html=text_as_html,
+        link_urls=link_urls,
+        link_texts=link_texts,
+        emphasized_text_contents=emphasized_text_contents,
+        emphasized_text_tags=emphasized_text_tags,
+        section=section,
     )
     element.metadata = metadata.merge(element.metadata)
     return element
@@ -152,8 +219,34 @@ def _remove_element_metadata(
     return elements
 
 
-def convert_office_doc(input_filename: str, output_directory: str, target_format: str):
-    """Converts a .doc file to a .docx file using the libreoffice CLI."""
+def convert_office_doc(
+    input_filename: str,
+    output_directory: str,
+    target_format: str = "docx",
+    target_filter: Optional[str] = None,
+):
+    """Converts a .doc file to a .docx file using the libreoffice CLI.
+
+    Parameters
+    ----------
+    input_filename: str
+        The name of the .doc file to convert to .docx
+    output_directory: str
+        The output directory for the convert .docx file
+    target_format: str
+        The desired output format
+    target_filter: str
+        The output filter name to use when converting. See references below
+        for details.
+
+    References
+    ----------
+    https://stackoverflow.com/questions/52277264/convert-doc-to-docx-using-soffice-not-working
+    https://git.libreoffice.org/core/+/refs/heads/master/filter/source/config/fragments/filters
+
+    """
+    if target_filter is not None:
+        target_format = f"{target_format}:{target_filter}"
     # NOTE(robinson) - In the future can also include win32com client as a fallback for windows
     # users who do not have LibreOffice installed
     # ref: https://stackoverflow.com/questions/38468442/
@@ -237,12 +330,12 @@ def convert_to_bytes(
     return f_bytes
 
 
-def convert_ms_office_table_to_text(table: docxtable.Table, as_html: bool = True):
+def convert_ms_office_table_to_text(table: "docxtable.Table", as_html: bool = True) -> str:
     """
     Convert a table object from a Word document to an HTML table string using the tabulate library.
 
     Args:
-        table (Table): A Table object.
+        table (Table): A docx.table.Table object.
         as_html (bool): Whether to return the table as an HTML string (True) or a
             plain text string (False)
 
@@ -251,6 +344,24 @@ def convert_ms_office_table_to_text(table: docxtable.Table, as_html: bool = True
     """
     fmt = "html" if as_html else "plain"
     rows = list(table.rows)
-    headers = [cell.text for cell in rows[0].cells]
-    data = [[cell.text for cell in row.cells] for row in rows[1:]]
-    return tabulate(data, headers=headers, tablefmt=fmt)
+    if len(rows) > 0:
+        headers = [cell.text for cell in rows[0].cells]
+        data = [[cell.text for cell in row.cells] for row in rows[1:]]
+        table_text = tabulate(data, headers=headers, tablefmt=fmt)
+    else:
+        table_text = ""
+    return table_text
+
+
+def contains_emoji(s: str) -> bool:
+    """
+    Check if the input string contains any emoji characters.
+
+    Parameters:
+    - s (str): The input string to check.
+
+    Returns:
+    - bool: True if the string contains any emoji, False otherwise.
+    """
+
+    return bool(emoji.emoji_count(s))

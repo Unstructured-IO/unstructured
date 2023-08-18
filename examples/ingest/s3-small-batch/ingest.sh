@@ -9,7 +9,8 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/../../.. || exit 1
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
+        s3 \
          --remote-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
-         --s3-anonymous \
+         --anonymous \
          --structured-output-dir s3-small-batch-output \
          --num-processes 2

@@ -15,7 +15,13 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "link_urls": [
+        "http://github.com/dcneiner/Downloadify"
+      ],
+      "link_texts": [
+        "Github Project Page"
+      ]
     },
     "text": "More info available at the Github Project Page"
   },

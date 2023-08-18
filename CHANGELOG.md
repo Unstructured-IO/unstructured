@@ -1,4 +1,135 @@
-## 0.8.2-dev1
+## 0.10.4
+
+### Enhancements
+* Adds ability to reuse connections per process in unstructured-ingest
+* Pass ocr_mode in partition_pdf and set the default back to individual pages for now
+
+### Features
+
+### Fixes
+
+## 0.10.2
+
+### Enhancements
+* Bump unstructured-inference==0.5.13:
+  - Fix extracted image elements being included in layout merge, addresses the issue
+    where an entire-page image in a PDF was not passed to the layout model when using hi_res.
+
+### Features
+
+### Fixes
+
+## 0.10.1
+
+### Enhancements
+* Bump unstructured-inference==0.5.12:
+  - fix to avoid trace for certain PDF's (0.5.12)
+  - better defaults for DPI for hi_res and  Chipper (0.5.11)
+  - implement full-page OCR (0.5.10)
+
+### Features
+
+### Fixes
+
+* Fix dead links in repository README (Quick Start > Install for local development, and Learn more > Batch Processing)
+* Update document dependencies to include tesseract-lang for additional language support (required for tests to pass)
+
+## 0.10.0
+
+### Enhancements
+
+* Add `include_header` kwarg to `partition_xlsx` and change default behavior to `True`
+* Update the `links` and `emphasized_texts` metadata fields
+
+### Features
+
+### Fixes
+
+## 0.9.3
+
+### Enhancements
+
+* Pinned dependency cleanup.
+* Update `partition_csv` to always use `soupparser_fromstring` to parse `html text`
+* Update `partition_tsv` to always use `soupparser_fromstring` to parse `html text`
+* Add `metadata.section` to capture epub table of contents data
+* Add `unique_element_ids` kwarg to partition functions. If `True`, will use a UUID
+  for element IDs instead of a SHA-256 hash.
+* Update `partition_xlsx` to always use `soupparser_fromstring` to parse `html text`
+* Add functionality to switch `html` text parser based on whether the `html` text contains emoji
+* Add functionality to check if a string contains any emoji characters
+
+### Features
+
+* Add Airtable Connector to be able to pull views/tables/bases from an Airtable organization
+
+### Fixes
+
+* fix pdf partition of list items being detected as titles in OCR only mode
+* make notion module discoverable
+* fix emails with `Content-Distribution: inline` and `Content-Distribution: attachment` with no filename
+* Fix email attachment filenames which had `=` in the filename itself
+
+## 0.9.2
+
+
+### Enhancements
+
+* Update table extraction section in API documentation to sync with change in Prod API
+* Update Notion connector to extract to html
+* Added UUID option for `element_id`
+* Bump unstructured-inference==0.5.9:
+  - better caching of models
+  - another version of detectron2 available, though the default layout model is unchanged
+* Added UUID option for element_id
+
+### Features
+
+* Adds Sharepoint connector.
+
+### Fixes
+
+* Bump unstructured-inference==0.5.9:
+  - ignores Tesseract errors where no text is extracted for tiles that indeed, have no text
+
+## 0.9.1
+
+### Enhancements
+
+* Adds --partition-pdf-infer-table-structure to unstructured-ingest.
+* Enable `partition_html` to skip headers and footers with the `skip_headers_and_footers` flag.
+* Update `partition_doc` and `partition_docx` to track emphasized texts in the output
+* Adds post processing function `filter_element_types`
+* Set the default strategy for partitioning images to `hi_res`
+* Add page break parameter section in API documentation to sync with change in Prod API
+* Update `partition_html` to track emphasized texts in the output
+* Update `XMLDocument._read_xml` to create `<p>` tag element for the text enclosed in the `<pre>` tag
+* Add parameter `include_tail_text` to `_construct_text` to enable (skip) tail text inclusion
+* Add Notion connector
+
+### Features
+
+### Fixes
+
+* Remove unused `_partition_via_api` function
+* Fixed emoji bug in `partition_xlsx`.
+* Pass `file_filename` metadata when partitioning file object
+* Skip ingest test on missing Slack token
+* Add Dropbox variables to CI environments
+* Remove default encoding for ingest
+* Adds new element type `EmailAddress` for recognising email address in the  text
+* Simplifies `min_partition` logic; makes partitions falling below the `min_partition`
+  less likely.
+* Fix bug where ingest test check for number of files fails in smoke test
+* Fix unstructured-ingest entrypoint failure
+
+## 0.9.0
+
+### Enhancements
+
+* Dependencies are now split by document type, creating a slimmer base installation.
+
+## 0.8.8
 
 ### Enhancements
 
@@ -6,22 +137,86 @@
 
 ### Fixes
 
-* Adds Onedrive connector.
+* Rename "date" field to "last_modified"
+* Adds Box connector
 
-## 0.8.2-dev0
+### Fixes
+
+## 0.8.7
 
 ### Enhancements
 
+* Put back useful function `split_by_paragraph`
+
+### Features
+
+### Fixes
+
+* Fix argument order in NLTK download step
+
+## 0.8.6
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* Remove debug print lines and non-functional code
+
+## 0.8.5
+
+### Enhancements
+
+* Add parameter `skip_infer_table_types` to enable (skip) table extraction for other doc types
+* Adds optional Unstructured API unit tests in CI
+* Tracks last modified date for all document types.
+* Add auto_paragraph_grouper to detect new-line and blank-line new paragraph for .txt files.
+* refactor the ingest cli to better support expanding supported connectors
+
+## 0.8.3
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* NLTK now only gets downloaded if necessary.
+* Handling for empty tables in Word Documents and PowerPoints.
+
+## 0.8.4
+
+### Enhancements
+
+* Additional tests and refactor of JSON detection.
+* Update functionality to retrieve image metadata from a page for `document_to_element_list`
+* Links are now tracked in `partition_html` output.
+* Set the file's current position to the beginning after reading the file in `convert_to_bytes`
+* Add `min_partition` kwarg to that combines elements below a specified threshold and modifies splitting of strings longer than max partition so words are not split.
 * set the file's current position to the beginning after reading the file in `convert_to_bytes`
+* Add slide notes to pptx
+* Add `--encoding` directive to ingest
+* Improve json detection by `detect_filetype`
 
 ### Features
 
+* Adds Outlook connector
+* Add support for dpi parameter in inference library
+* Adds Onedrive connector.
+* Add Confluence connector for ingest cli to pull the body text from all documents from all spaces in a confluence domain.
+
 ### Fixes
 
-* Add functionality to write images to computer storage temporarily instead of keeping them in memory for `ocr_only` strategy 
+* Fixes issue with email partitioning where From field was being assigned the To field value.
+* Use the `image_metadata` property of the `PageLayout` instance to get the page image info in the `document_to_element_list`
+* Add functionality to write images to computer storage temporarily instead of keeping them in memory for `ocr_only` strategy
 * Add functionality to convert a PDF in small chunks of pages at a time for `ocr_only` strategy
 * Adds `.txt`, `.text`, and `.tab` to list of extensions to check if file
   has a `text/plain` MIME type.
+* Enables filters to be passed to `partition_doc` so it doesn't error with LibreOffice7.
+* Removed old error message that's superseded by `requires_dependencies`.
+* Removes using `hi_res` as the default strategy value for `partition_via_api` and `partition_multiple_via_api`
 
 ## 0.8.1
 

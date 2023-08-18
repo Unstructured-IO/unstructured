@@ -118,6 +118,7 @@ These element objects represent different components of the source document. Cur
 		* ``PageBreak``
 		* ``Header``
 		* ``Footer``
+        	* ``EmailAddress``
 	* ``CheckBox``
 	* ``Image``
 
@@ -222,6 +223,24 @@ a list of elements from JSON, as seen in the snippet below
     elements_to_json(elements, filename=filename)
     elements = elements_from_json(filename=filename)
 
+
+###################
+Unique Element IDs
+###################
+
+By default, the element ID is a SHA-256 hash of the element text. This is to ensure that
+the ID is deterministic. One downside is that the ID is not guaranteed to be unique.
+Different elements with the same text will have the same ID, and there could also
+be hash collisions. To use UUIDs in the output instead, you can pass
+``unique_element_ids=True`` into any of the partition functions. This can be helpful
+if you'd like to use the IDs as a primary key in a database, for example.
+
+.. code:: python
+
+    from unstructured.partition.text import partition_text
+
+    elements = partition_text(text="Here is some example text.", unique_element_ids=True)
+    elements[0].id
 
 
 

@@ -7,7 +7,7 @@ from unstructured.file_utils.encoding import read_txt_file
 from unstructured.logger import logger
 from unstructured.partition.text import (
     element_from_text,
-    split_by_paragraph,
+    partition_text,
 )
 
 VALID_PARSERS = Union[etree.HTMLParser, etree.XMLParser, None]
@@ -78,15 +78,18 @@ class XMLDocument(Document):
             #     Please use  bytes input or XML fragments without declaration.
             except ValueError:
                 document_tree = etree.fromstring(content.encode(), self.parser)
-
             if "<pre>" and "</pre>" in content:
                 tree = etree.HTML(content)
                 for element in tree.xpath("//pre"):
                     if not element.text:
                         continue
-                    text_content = split_by_paragraph(element.text)
+
+                    text_content = []
+                    for element in partition_text(text=element.text, paragraph_grouper=False):
+                        text_content.append(element.text)
+
                     for text in text_content:
-                        element = etree.Element("span")
+                        element = etree.Element("p")
                         element.text = str(element_from_text(text=text))
                         document_tree.append(element)
 
@@ -131,4 +134,5 @@ class XMLDocument(Document):
         **kwargs,
     ):
         _, content = read_txt_file(filename=filename, encoding=encoding)
+
         return cls.from_string(content, parser=parser, stylesheet=stylesheet, **kwargs)

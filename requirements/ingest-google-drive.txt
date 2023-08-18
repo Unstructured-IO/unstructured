@@ -6,7 +6,7 @@
 #
 cachetools==5.3.1
     # via google-auth
-certifi==2023.5.7
+certifi==2023.7.22
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
@@ -17,7 +17,7 @@ charset-normalizer==3.2.0
     #   requests
 google-api-core==2.11.1
     # via google-api-python-client
-google-api-python-client==2.93.0
+google-api-python-client==2.97.0
     # via -r requirements/ingest-google-drive.in
 google-auth==2.22.0
     # via
@@ -26,7 +26,7 @@ google-auth==2.22.0
     #   google-auth-httplib2
 google-auth-httplib2==0.1.0
     # via google-api-python-client
-googleapis-common-protos==1.59.1
+googleapis-common-protos==1.60.0
     # via google-api-core
 httplib2==0.22.0
     # via
@@ -59,7 +59,6 @@ rsa==4.9
     # via google-auth
 six==1.16.0
     # via
-    #   -c requirements/base.txt
     #   google-auth
     #   google-auth-httplib2
 uritemplate==4.1.1

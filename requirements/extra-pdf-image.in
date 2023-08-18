@@ -1,0 +1,9 @@
+-c constraints.in
+-c base.txt
+
+pdf2image
+pdfminer.six
+# NOTE(robinson) - See this issue here
+# https://github.com/facebookresearch/detectron2/issues/5010
+Pillow<10
+unstructured-inference

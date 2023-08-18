@@ -6,7 +6,11 @@ import requests
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.documents.xml import VALID_PARSERS
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
-from unstructured.partition.common import exactly_one
+from unstructured.partition.common import (
+    exactly_one,
+    get_last_modified_date,
+    get_last_modified_date_from_file,
+)
 from unstructured.partition.html import partition_html
 
 
@@ -27,6 +31,7 @@ def partition_md(
     include_metadata: bool = True,
     parser: VALID_PARSERS = None,
     metadata_filename: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions a markdown file into its constituent elements
@@ -47,17 +52,22 @@ def partition_md(
         Determines whether or not metadata is included in the output.
     parser
         The parser to use for parsing the markdown document. If None, default parser will be used.
+    metadata_last_modified
+        The last modified date for the document.
     """
     # Verify that only one of the arguments was provided
     if text is None:
         text = ""
     exactly_one(filename=filename, file=file, text=text, url=url)
 
+    last_modification_date = None
     if filename is not None:
+        last_modification_date = get_last_modified_date(filename)
         with open(filename, encoding="utf8") as f:
             text = optional_decode(f.read())
 
     elif file is not None:
+        last_modification_date = get_last_modified_date_from_file(file)
         text = optional_decode(file.read())
 
     elif url is not None:
@@ -67,7 +77,9 @@ def partition_md(
 
         content_type = response.headers.get("Content-Type", "")
         if not content_type.startswith("text/markdown"):
-            raise ValueError(f"Expected content type text/markdown. Got {content_type}.")
+            raise ValueError(
+                f"Expected content type text/markdown. Got {content_type}.",
+            )
 
         text = response.text
 
@@ -79,4 +91,5 @@ def partition_md(
         include_metadata=include_metadata,
         parser=parser,
         metadata_filename=metadata_filename,
+        metadata_last_modified=metadata_last_modified or last_modification_date,
     )
