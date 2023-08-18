@@ -203,18 +203,16 @@ jobs:
       id: virtualenv-cache
       with:
         path: |
-          .venv
           nltk_data
-        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.extra }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Setup virtual environment (no cache hit)
-      if: steps.virtualenv-cache.outputs.cache-hit != 'true'
+    - name: Setup virtual environment
       run: |
-        python${{ matrix.python-version}} -m venv .venv
-        source .venv/bin/activate
+        python${{ matrix.python-version}} -m venv .venv-{{ matrix.extra }}
+        source .venv-{{ matrix.extra }}/bin/activate
         mkdir "$NLTK_DATA"
         make install-base-ci
         make install-${{ matrix.extra }}
@@ -222,7 +220,7 @@ jobs:
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
       run: |
-        source .venv/bin/activate
+        source .venv-{{ matrix.extra }}/bin/activate
         sudo apt-get update
         sudo apt-get install -y libmagic-dev poppler-utils libreoffice
         make install-pandoc
