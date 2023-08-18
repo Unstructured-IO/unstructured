@@ -96,7 +96,7 @@ def test_partition_via_api_raises_with_bad_response(monkeypatch):
         partition_via_api(filename=filename)
 
 
-@pytest.skip(
+@pytest.mark.skip(
     reason="API is returning fast for auto, see "
     "https://github.com/Unstructured-IO/unstructured-api/issues/188",
 )
