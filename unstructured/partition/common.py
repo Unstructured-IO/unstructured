@@ -34,6 +34,7 @@ if TYPE_CHECKING:
         LocationlessLayoutElement,
     )
 
+
 def get_last_modified_date(filename: str) -> Union[str, None]:
     modify_date = datetime.fromtimestamp(os.path.getmtime(filename))
     return modify_date.strftime("%Y-%m-%dT%H:%M:%S%z")
