@@ -188,6 +188,7 @@ jobs:
         make test-no-extras CI=true
 
   test_unit_dependency_extras:
+    # NOTE(newelh) - Split extras into separate steps in the same pipeline (avoid using matrix)
     strategy:
       matrix:
         python-version: ["3.8"]
@@ -210,7 +211,7 @@ jobs:
         key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}-base
     - name: Setup virtual environment
       run: |
-        python${{ matrix.python-version}} -m venv .venv
+        python${{ matrix.python-version}} -m venv .venv-${{ matrix.extra }}
         source .venv-${{ matrix.extra }}/bin/activate
         make install-${{ matrix.extra }}
     - name: Test
@@ -218,6 +219,7 @@ jobs:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
       run: |
         source .venv-${{ matrix.extra }}/bin/activate
+        # NOTE(newelh) - determine what needs to be installed here
         sudo apt-get update
         sudo apt-get install -y libmagic-dev poppler-utils libreoffice
         make install-pandoc
