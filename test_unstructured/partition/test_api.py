@@ -98,7 +98,7 @@ def test_partition_via_api_raises_with_bad_response(monkeypatch):
 
 @pytest.skip(
     reason="API is returning fast for auto, see "
-    "https://github.com/Unstructured-IO/unstructured-api/issues/188"
+    "https://github.com/Unstructured-IO/unstructured-api/issues/188",
 )
 # @pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
 # @pytest.mark.skipif(skip_not_on_main, reason="Skipping test run outside of main branch")
