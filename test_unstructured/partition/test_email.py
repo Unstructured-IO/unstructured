@@ -477,9 +477,6 @@ def test_partition_email_can_process_min_max_with_attachments(
         min_partition=6,
         max_partition=12,
     )
-    expected_metadata = attachment_elements[0].metadata
-    expected_metadata.file_directory = None
-    expected_metadata.attached_to_filename = filename
 
     elements = partition_email(
         filename=filename,
@@ -492,7 +489,11 @@ def test_partition_email_can_process_min_max_with_attachments(
     assert elements[0].text.startswith("Hello!")
     assert elements[-1].text == attachment_elements[-1].text
     assert elements[-2].text == attachment_elements[-2].text
-    assert len(elements) == len(attachment_elements)
+    email_attachments = []
+    for element in elements:
+        if element.metadata.attached_to_filename is not None:
+            email_attachments.append(element)
+    assert len(email_attachments) == len(attachment_elements)
 
 
 def test_partition_msg_raises_with_no_partitioner(

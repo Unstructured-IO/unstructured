@@ -192,9 +192,6 @@ def test_partition_msg_can_process_min_max_wtih_attachments(
         min_partition=6,
         max_partition=12,
     )
-    expected_metadata = attachment_elements[0].metadata
-    expected_metadata.file_directory = None
-    expected_metadata.attached_to_filename = filename
 
     elements = partition_msg(
         filename=filename,
@@ -207,7 +204,11 @@ def test_partition_msg_can_process_min_max_wtih_attachments(
     assert elements[0].text.startswith("Hello!")
     assert elements[-1].text == attachment_elements[-1].text
     assert elements[-2].text == attachment_elements[-2].text
-    assert len(elements) == len(attachment_elements)
+    msg_attachments = []
+    for element in elements:
+        if element.metadata.attached_to_filename is not None:
+            msg_attachments.append(element)
+    assert len(msg_attachments) == len(attachment_elements)
 
 
 def test_partition_msg_raises_with_no_partitioner(
