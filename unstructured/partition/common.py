@@ -23,13 +23,16 @@ from unstructured.documents.elements import (
 )
 from unstructured.logger import logger
 from unstructured.nlp.patterns import ENUMERATED_BULLETS_RE, UNICODE_BULLETS_RE
+from unstructured.utils import dependency_exists
+
+if dependency_exists("docx.table"):
+    from docx.table import Table as docxtable
 
 if TYPE_CHECKING:
     from unstructured_inference.inference.layoutelement import (
         LayoutElement,
         LocationlessLayoutElement,
     )
-
 
 def get_last_modified_date(filename: str) -> Union[str, None]:
     modify_date = datetime.fromtimestamp(os.path.getmtime(filename))
