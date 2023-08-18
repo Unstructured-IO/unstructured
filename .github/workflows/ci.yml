@@ -162,22 +162,14 @@ jobs:
     needs: [setup, lint]
     steps:
     - uses: actions/checkout@v3
-    - uses: actions/cache/restore@v3
-      id: virtualenv-cache
-      with:
-        path: |
-          .venv
-          nltk_data
-        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
     - name: Setup virtual environment (no cache hit)
-      if: steps.virtualenv-cache.outputs.cache-hit != 'true'
       run: |
-        python${{ matrix.python-version}} -m venv .venv
-        source .venv/bin/activate
+        python${{ matrix.python-version}} -m venv .venv-base
+        source .venv-base/bin/activate
         mkdir "$NLTK_DATA"
         make install-base
         make install-test
@@ -185,7 +177,7 @@ jobs:
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
       run: |
-        source .venv/bin/activate
+        source .venv-base/bin/activate
         make test-no-extras CI=true
 
   test_unit_dependency_extras:
@@ -199,17 +191,12 @@ jobs:
     needs: [setup, lint]
     steps:
     - uses: actions/checkout@v3
-    - uses: actions/cache/restore@v3
-      id: virtualenv-cache
-      with:
-        path: |
-          nltk_data
-        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Setup virtual environment
+    - name: Setup virtual environment (no cache hit)
       run: |
         python${{ matrix.python-version}} -m venv .venv-{{ matrix.extra }}
         source .venv-{{ matrix.extra }}/bin/activate
