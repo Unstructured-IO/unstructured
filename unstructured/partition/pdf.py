@@ -36,7 +36,8 @@ from unstructured.partition.common import (
 )
 from unstructured.partition.strategies import determine_pdf_or_image_strategy
 from unstructured.partition.text import element_from_text, partition_text
-from unstructured.partition.utils.ordering import order_elements
+from unstructured.partition.utils.constants import SORT_MODE_XY_CUT
+from unstructured.partition.utils.sorting import sort_page_elements
 from unstructured.utils import requires_dependencies
 
 RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
@@ -396,26 +397,9 @@ def _process_pdfminer_pages(
                     )
                     page_elements.append(element)
 
-        keep_basic_ordering = kwargs.get("keep_basic_ordering", True)
-        extra_ordering = kwargs.get("extra_ordering", True)
-        if keep_basic_ordering:
-            basic_ordered_page_elements = sorted(
-                page_elements,
-                key=lambda el: (
-                    el.metadata.coordinates.points[0][1] if el.metadata.coordinates else float("inf"),
-                    el.metadata.coordinates.points[0][0] if el.metadata.coordinates else float("inf"),
-                    el.id,
-                ),
-            )
-        else:
-            basic_ordered_page_elements = page_elements
-
-        if extra_ordering:
-            ordered_page_elements = order_elements(basic_ordered_page_elements)
-        else:
-            ordered_page_elements = basic_ordered_page_elements
-
-        elements += ordered_page_elements
+        sort_mode = kwargs.get("sort_mode", SORT_MODE_XY_CUT)
+        sorted_page_elements = sort_page_elements(page_elements, sort_mode)
+        elements += sorted_page_elements
 
         if include_page_breaks:
             elements.append(PageBreak(text=""))
