@@ -11,16 +11,13 @@ Library Documentation
 :doc:`installing`
   Instructions on how to install the ``unstructured`` library on your system.
 
-:doc:`getting_started`
-  Check out this section to learn about basic workflows in ``unstructured``.
-
 :doc:`api`
   Access all the power of ``unstructured`` through the ``unstructured-api`` or learn to host it locally.
 
 :doc:`bricks`
   Learn more about partitioning, cleaning, and staging bricks, including advanced usage patterns.
 
-:doc:`connectors`
+:doc:`upstream_connectors`
   Connect to your favortite data storage platforms for an efortless batch processing of your files.
 
 :doc:`metadata`
@@ -39,11 +36,12 @@ Library Documentation
    :maxdepth: 2
    :hidden:
 
+   introduction
    installing
-   getting_started
    api
    bricks
-   connectors
+   upstream_connectors
    metadata
    examples
+   strategies
    integrations
