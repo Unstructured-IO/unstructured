@@ -36,6 +36,7 @@ from unstructured.partition.common import (
 )
 from unstructured.partition.strategies import determine_pdf_or_image_strategy
 from unstructured.partition.text import element_from_text, partition_text
+from unstructured.partition.utils.ordering import order_elements
 from unstructured.utils import requires_dependencies
 
 RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
@@ -111,12 +112,14 @@ def extractable_elements(
     file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
     include_page_breaks: bool = False,
     metadata_last_modified: Optional[str] = None,
+    **kwargs,
 ):
     return _partition_pdf_with_pdfminer(
         filename=filename,
         file=file,
         include_page_breaks=include_page_breaks,
         metadata_last_modified=metadata_last_modified,
+        **kwargs,
     )
 
 
@@ -161,6 +164,7 @@ def partition_pdf_or_image(
             file=spooled_to_bytes_io_if_needed(file),
             include_page_breaks=include_page_breaks,
             metadata_last_modified=metadata_last_modified or last_modification_date,
+            **kwargs,
         )
         pdf_text_extractable = any(
             isinstance(el, Text) and el.text.strip() for el in extracted_elements
@@ -286,6 +290,7 @@ def _partition_pdf_with_pdfminer(
     file: Optional[BinaryIO] = None,
     include_page_breaks: bool = False,
     metadata_last_modified: Optional[str] = None,
+    **kwargs,
 ) -> List[Element]:
     """Partitions a PDF using PDFMiner instead of using a layoutmodel. Used for faster
     processing or detectron2 is not available.
@@ -304,6 +309,7 @@ def _partition_pdf_with_pdfminer(
                 filename=filename,
                 include_page_breaks=include_page_breaks,
                 metadata_last_modified=metadata_last_modified,
+                **kwargs,
             )
 
     elif file:
@@ -313,6 +319,7 @@ def _partition_pdf_with_pdfminer(
             filename=filename,
             include_page_breaks=include_page_breaks,
             metadata_last_modified=metadata_last_modified,
+            **kwargs,
         )
 
     return elements
@@ -342,6 +349,7 @@ def _process_pdfminer_pages(
     filename: str = "",
     include_page_breaks: bool = False,
     metadata_last_modified: Optional[str] = None,
+    **kwargs,
 ):
     """Uses PDF miner to split a document into pages and process them."""
     elements: List[Element] = []
@@ -388,15 +396,26 @@ def _process_pdfminer_pages(
                     )
                     page_elements.append(element)
 
-        sorted_page_elements = sorted(
-            page_elements,
-            key=lambda el: (
-                el.metadata.coordinates.points[0][1] if el.metadata.coordinates else float("inf"),
-                el.metadata.coordinates.points[0][0] if el.metadata.coordinates else float("inf"),
-                el.id,
-            ),
-        )
-        elements += sorted_page_elements
+        keep_basic_ordering = kwargs.get("keep_basic_ordering", True)
+        extra_ordering = kwargs.get("extra_ordering", True)
+        if keep_basic_ordering:
+            basic_ordered_page_elements = sorted(
+                page_elements,
+                key=lambda el: (
+                    el.metadata.coordinates.points[0][1] if el.metadata.coordinates else float("inf"),
+                    el.metadata.coordinates.points[0][0] if el.metadata.coordinates else float("inf"),
+                    el.id,
+                ),
+            )
+        else:
+            basic_ordered_page_elements = page_elements
+
+        if extra_ordering:
+            ordered_page_elements = order_elements(basic_ordered_page_elements)
+        else:
+            ordered_page_elements = basic_ordered_page_elements
+
+        elements += ordered_page_elements
 
         if include_page_breaks:
             elements.append(PageBreak(text=""))

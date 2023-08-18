@@ -10,73 +10,11 @@ from unstructured.partition.pdf import partition_pdf
 from unstructured.partition.utils.xycut import bbox2points, recursive_xy_cut, vis_polygons_with_index
 
 
-def run(pdf_path):
-    images = pdf2image.convert_from_path(pdf_path)
-    strategies = ["fast", "hi_res"]
-    for strategy in strategies:
-        run_partition_pdf(pdf_path, strategy, images)
-
-
-def run_partition_pdf(pdf_path, strategy, images):
-    output_dir = os.path.join(output_root_dir, strategy)
-    os.makedirs(output_dir, exist_ok=True)
-
-    elements = partition_pdf(
-        filename=pdf_path,
-        strategy=strategy,
-        include_page_breaks=True,
-    )
-
-    elements_coordinates = []
-    page_elements_coordinates = []
-    for el in elements:
-        if isinstance(el, PageBreak):
-            if page_elements_coordinates:
-                elements_coordinates.append(page_elements_coordinates)
-                page_elements_coordinates = []
-        else:
-            page_elements_coordinates.append(el.metadata.coordinates)
-
-    # After the loop, handle any remaining coordinates
-    if page_elements_coordinates:
-        elements_coordinates.append(page_elements_coordinates)
-
-    assert len(images) == len(elements_coordinates)
-    for idx, (img, elements_coordinates_per_page) in enumerate(zip(images, elements_coordinates)):
-        page_idx = idx + 1
-        output_image_name = os.path.splitext(os.path.basename(pdf_path))[0]
-        image = np.array(img)
-        image_height, image_width, _ = image.shape
-        boxes = []
-        for coordinate in elements_coordinates_per_page:
-            points = coordinate.points
-            w = coordinate.system.width
-            h = coordinate.system.height
-            _left, _top = points[0]
-            _right, _bottom = points[2]
-            left = _left * image_width / w
-            right = _right * image_width / w
-            top = _top * image_height / h
-            bottom = _bottom * image_height / h
-            boxes.append([int(left), int(top), int(right), int(bottom)])
-
-        annotated_original_image = vis_polygons_with_index(image, [bbox2points(it) for it in boxes])
-        cv2.imwrite(os.path.join(output_dir, f"{output_image_name}_{page_idx}_original.jpg"), annotated_original_image)
-
-        res = []
-        recursive_xy_cut(np.asarray(boxes).astype(int), np.arange(len(boxes)), res)
-        assert len(res) == len(boxes)
-        np_array_boxes = np.array(boxes)
-        sorted_boxes = np_array_boxes[np.array(res)].tolist()
-
-        annotated_result_image = vis_polygons_with_index(image, [bbox2points(it) for it in sorted_boxes])
-        cv2.imwrite(os.path.join(output_dir, f"{output_image_name}_{page_idx}_result.jpg"), annotated_result_image)
-
-
-def show_plot(result_image, original_image, desired_width):
+def show_plot(image, desired_width=None):
+    image_height, image_width, _ = image.shape
     if desired_width:
         # Calculate the desired height based on the original aspect ratio
-        aspect_ratio = original_image.width / original_image.height
+        aspect_ratio = image_width / image_height
         desired_height = desired_width / aspect_ratio
 
         # Create a figure with the desired size and aspect ratio
@@ -85,8 +23,113 @@ def show_plot(result_image, original_image, desired_width):
         # Create figure and axes
         fig, ax = plt.subplots()
     # Display the image
-    ax.imshow(result_image)
+    ax.imshow(image)
     plt.show()
+
+
+def create_output_directory(strategy, keep_basic_ordering):
+    output_base_dir = os.path.join(output_root_dir, strategy)
+    label = "with_basic_ordering" if keep_basic_ordering else "without_basic_ordering"
+    output_dir = os.path.join(output_base_dir, label)
+    os.makedirs(output_dir, exist_ok=True)
+    return output_dir
+
+
+def extract_element_coordinates(elements):
+    elements_coordinates = []
+    page_elements_coordinates = []
+
+    for el in elements:
+        if isinstance(el, PageBreak):
+            if page_elements_coordinates:
+                elements_coordinates.append(page_elements_coordinates)
+                page_elements_coordinates = []
+        else:
+            page_elements_coordinates.append(el.metadata.coordinates)
+
+    if page_elements_coordinates:
+        elements_coordinates.append(page_elements_coordinates)
+
+    return elements_coordinates
+
+
+def convert_coordinates_to_boxes(coordinates, image):
+    boxes = []
+
+    for coordinate in coordinates:
+        points = coordinate.points
+        _left, _top = points[0]
+        _right, _bottom = points[2]
+        w = coordinate.system.width
+        h = coordinate.system.height
+        image_height, image_width, _ = image.shape
+        left = _left * image_width / w
+        right = _right * image_width / w
+        top = _top * image_height / h
+        bottom = _bottom * image_height / h
+        boxes.append([int(left), int(top), int(right), int(bottom)])
+
+    return boxes
+
+
+def order_boxes(boxes):
+    res = []
+    recursive_xy_cut(np.asarray(boxes).astype(int), np.arange(len(boxes)), res)
+    np_array_boxes = np.array(boxes)
+    ordered_boxes = np_array_boxes[np.array(res)].tolist()
+    return ordered_boxes
+
+
+def draw_boxes(image, boxes, output_dir, base_name, page_num, output_type, label):
+    annotated_image = vis_polygons_with_index(image, [bbox2points(it) for it in boxes])
+
+    if output_type in ["plot", "all"]:
+        print(f"{label} elements - Page: {page_num}")
+        show_plot(annotated_image, desired_width=20)
+
+    if output_type in ["image", "all"]:
+        output_image_path = os.path.join(output_dir, f"{base_name}_{page_num}_{label}.jpg")
+        cv2.imwrite(output_image_path, annotated_image)
+
+
+def draw_elements(elements, images, output_type, output_dir, base_name, label):
+    elements_coordinates = extract_element_coordinates(elements)
+
+    assert len(images) == len(elements_coordinates)
+    for idx, (img, coords_per_page) in enumerate(zip(images, elements_coordinates)):
+        image = np.array(img)
+        boxes = convert_coordinates_to_boxes(coords_per_page, image)
+        draw_boxes(image, boxes, output_dir, base_name, idx + 1, output_type, label)
+
+
+def run_partition_pdf(pdf_path, strategy, images, output_type="plot", keep_basic_ordering=True):
+    output_dir = create_output_directory(strategy, keep_basic_ordering)
+    base_name = os.path.splitext(os.path.basename(pdf_path))[0]
+
+    original_elements = partition_pdf(
+        filename=pdf_path,
+        strategy=strategy,
+        include_page_breaks=True,
+        extra_ordering=False,
+    )
+    draw_elements(original_elements, images, output_type, output_dir, base_name, "original")
+
+    ordered_elements = partition_pdf(
+        filename=pdf_path,
+        strategy=strategy,
+        include_page_breaks=True,
+        keep_basic_ordering=keep_basic_ordering,
+        extra_ordering=True,
+    )
+    draw_elements(ordered_elements, images, output_type, output_dir, base_name, "ordered")
+
+
+def run(pdf_path):
+    images = pdf2image.convert_from_path(pdf_path)
+    strategy = "fast"
+
+    run_partition_pdf(pdf_path, strategy, images, "image", True)
+    run_partition_pdf(pdf_path, strategy, images, "image", False)
 
 
 if __name__ == '__main__':
