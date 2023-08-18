@@ -100,12 +100,9 @@
 * Adds Sharepoint connector.
 
 ### Fixes
-<<<<<<< HEAD
 
 * Bump unstructured-inference==0.5.9:
   - ignores Tesseract errors where no text is extracted for tiles that indeed, have no text
-=======
->>>>>>> 66c6cfc3 (update CHANGELOG)
 
 ## 0.9.1
 
