@@ -1,6 +1,3 @@
-import os
-import tempfile
-
 from test_unstructured.partition.test_constants import EXPECTED_TABLE, EXPECTED_TEXT
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import Table
