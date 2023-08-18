@@ -204,7 +204,6 @@ def partition_pdf_or_image(
                 file=file,
                 include_page_breaks=include_page_breaks,
                 ocr_languages=ocr_languages,
-                ocr_mode="individual_blocks",
                 is_image=is_image,
                 max_partition=max_partition,
                 min_partition=min_partition,
