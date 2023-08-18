@@ -107,7 +107,7 @@ def test_partition_via_api_with_no_strategy():
 
     elements_no_strategy = partition_via_api(
         filename=filename,
-        strategy="fast",
+        strategy="auto",
         api_key=get_api_key(),
     )
     elements_hi_res = partition_via_api(filename=filename, strategy="hi_res", api_key=get_api_key())
