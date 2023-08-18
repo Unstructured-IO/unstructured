@@ -64,6 +64,10 @@ install-csv:
 install-docx:
 	python3 -m pip install -r requirements/extra-docx.txt
 
+.PHONY: install-epub
+install-epub:
+	python3 -m pip install -r requirements/extra-epub.txt
+
 .PHONY: install-odt
 install-odt:
 	python3 -m pip install -r requirements/extra-odt.txt
@@ -71,7 +75,6 @@ install-odt:
 .PHONY: install-pypandoc
 install-pypandoc:
 	python3 -m pip install -r requirements/extra-pandoc.txt
-	python3 -m pip install -r requirements/extra-epub.txt
 
 .PHONY: install-markdown
 install-markdown:
@@ -296,6 +299,11 @@ test-extra-pdf-image:
 test-extra-pptx:
 	PYTHONPATH=. CI=$(CI) pytest \
 		test_${PACKAGE_NAME}/partition/pptx
+
+.PHONY: test-extra-epub
+test-extra-pypandoc:
+	PYTHONPATH=. CI=$(CI) pytest \
+		test_${PACKAGE_NAME}/partition/epub
 
 .PHONY: test-extra-pypandoc
 test-extra-pypandoc:
