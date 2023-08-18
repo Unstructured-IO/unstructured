@@ -491,7 +491,7 @@ def test_partition_email_can_process_min_max_with_attachments(
     assert elements[-2].text == attachment_elements[-2].text
     for element in elements:
         if element.metadata.attached_to_filename is not None:
-            assert len(element.text) <= 13
+            assert len(element.text) <= 12
             assert len(element.text) >= 6
 
 
