@@ -1,4 +1,15 @@
-## 0.10.4-dev0
+## 0.10.1-dev1
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* remove test modification for potential bug and add docstring
+* fix partitioning of and tests for email and msg docs with attachments, add docstring to msg function
+
+## 0.10.0
 
 ### Enhancements
 * Adds ability to reuse connections per process in unstructured-ingest
