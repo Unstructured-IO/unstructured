@@ -1,8 +1,9 @@
-## 0.10.5-dev0
+## 0.10.5-dev1
 
 ### Enhancements
 * Adds ability to reuse connections per process in unstructured-ingest
 * Pass ocr_mode in partition_pdf and set the default back to individual pages for now
+* Add diagrams and descriptions for ingest design in the ingest README
 
 ### Features
 
