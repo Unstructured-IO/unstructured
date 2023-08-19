@@ -14,7 +14,7 @@ from unstructured.documents.elements import (
 from unstructured.partition.pptx import partition_pptx
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
-EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "..", "example-docs")
+EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "..", "..", "example-docs")
 
 EXPECTED_PPTX_OUTPUT = [
     Title(text="Adding a Bullet Slide"),
