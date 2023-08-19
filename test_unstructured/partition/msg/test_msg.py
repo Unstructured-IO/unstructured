@@ -14,7 +14,7 @@ from unstructured.partition.msg import extract_msg_attachment_info, partition_ms
 from unstructured.partition.text import partition_text
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
-EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "..", "example-docs")
+EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "..", "..", "example-docs")
 
 EXPECTED_MSG_OUTPUT = [
     NarrativeText(text="This is a test email to use for unit tests."),
@@ -102,6 +102,7 @@ def test_partition_msg_from_file_with_metadata_filename():
 def test_extract_attachment_info():
     filename = os.path.join(
         DIRECTORY,
+        "..",
         "..",
         "..",
         "example-docs",
