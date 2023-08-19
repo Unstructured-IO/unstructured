@@ -152,6 +152,87 @@ jobs:
         make test CI=true
         make check-coverage
 
+  test_unit_no_extras:
+    strategy:
+      matrix:
+        python-version: ["3.8"]
+    runs-on: ubuntu-latest
+    env:
+      NLTK_DATA: ${{ github.workspace }}/nltk_data
+    needs: [setup, lint]
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    - uses: actions/cache/restore@v3
+      id: virtualenv-cache
+      with:
+        path: |
+          nltk_data
+          .venv-base
+        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}-base
+    - name: Setup virtual environment
+      if: steps.virtualenv-cache.outputs.cache-hit != 'true'
+      run: |
+        python${{ matrix.python-version}} -m venv .venv-base
+        source .venv-base/bin/activate
+        mkdir "$NLTK_DATA"
+        make install-base-ci
+    - name: Test
+      env:
+        UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
+      run: |
+        source .venv-base/bin/activate
+        make test-no-extras CI=true
+
+  test_unit_dependency_extras:
+    # NOTE(newelh) - Split extras into separate steps in the same pipeline (avoid using matrix)
+    strategy:
+      matrix:
+        python-version: ["3.8"]
+        extra: ["csv", "docx", "odt", "markdown", "pypandoc", "msg", "pdf-image", "pptx", "xlsx"]
+    runs-on: ubuntu-latest
+    env:
+      NLTK_DATA: ${{ github.workspace }}/nltk_data
+    needs: [setup, lint, test_unit_no_extras]
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    - uses: actions/cache/restore@v3
+      id: virtualenv-cache
+      with:
+        path: |
+          nltk_data
+        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}-base
+    - name: Setup virtual environment
+      run: |
+        python${{ matrix.python-version}} -m venv .venv-${{ matrix.extra }}
+        source .venv-${{ matrix.extra }}/bin/activate
+        make install-base-ci
+        make install-${{ matrix.extra }}
+    - name: Test
+      env:
+        UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
+      run: |
+        source .venv-${{ matrix.extra }}/bin/activate
+        # NOTE(newelh) - determine what needs to be installed here
+        sudo apt-get update
+        sudo apt-get install -y libmagic-dev poppler-utils libreoffice
+        make install-pandoc
+        sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
+        sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
+        tesseract --version
+        # NOTE(robinson) - Installing weaviate-client separately here because the requests
+        # version conflicts with label_studio_sdk
+        pip install weaviate-client
+        pip install argilla
+        make test-extra-${{ matrix.extra }} CI=true
+
   test_ingest:
     strategy:
       matrix:
