@@ -186,3 +186,6 @@ def test_partition_tsv_with_json(filename):
     assert elements[0].metadata.text_as_html == test_elements[0].metadata.text_as_html
     assert elements[0].metadata.page_number == test_elements[0].metadata.page_number
     assert elements[0].metadata.filename == test_elements[0].metadata.filename
+
+    for i in range(len(elements)):
+        assert elements[i] == test_elements[i]

@@ -3,8 +3,11 @@ import pathlib
 
 import pytest
 
+from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import ListItem, NarrativeText, Title
 from unstructured.partition.ppt import partition_ppt
+from unstructured.partition.json import partition_json
+from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "..", "example-docs")
