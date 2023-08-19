@@ -64,7 +64,21 @@ DandbCompanyId: $dnb_id
 """,
 )
 
-# TODO: Probably need new authentication
+lead_template = Template(
+    """Id: $id
+Name: $name
+Title: $title
+Company: $company
+Phone: $phone
+Email: $email
+Website: $website
+Description: $description
+LeadSource: $lead_source
+Rating: $rating
+Status: $status
+Industry: $industry
+""",
+)
 
 
 @dataclass
@@ -73,8 +87,8 @@ class SimpleSalesforceConfig(BaseConnectorConfig):
 
     salesforce_categories: List[str]
     salesforce_username: str
-    salesforce_password: str
-    salesforce_token: str
+    salesforce_consumer_key: str
+    salesforce_private_key_path: str
     recursive: bool = False
 
     @staticmethod
@@ -94,7 +108,7 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _tmp_download_file(self):
         if self.record_type == "EmailMessage":
             record_file = self.record["Id"] + ".eml"
-        elif self.record_type == "Account":
+        elif self.record_type in ["Account","Lead"]:
             record_file = self.record["Id"] + ".txt"
         else:
             raise MissingCategoryError(
@@ -127,9 +141,26 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             description=account_json.get("Description"),
             rating=account_json.get("Rating"),
             dnb_id=account_json.get("DandbCompanyId"),
-
         )
         return dedent(account)
+
+    def create_lead(self, lead_json):
+        """Creates partitionable account file"""
+        lead = lead_template.substitute(
+            id=lead_json.get("Id"),
+            name=lead_json.get("Name"),
+            title=lead_json.get("Title"),
+            company=lead_json.get("Company"),
+            phone=lead_json.get("Phone"),
+            email=lead_json.get("Email"),
+            website=lead_json.get("Website"),
+            description=lead_json.get("Description"),
+            lead_source=lead_json.get("LeadSource"),
+            rating=lead_json.get("Rating"),
+            status=lead_json.get("Status"),
+            industry=lead_json.get("Industry"),
+        )
+        return dedent(lead)
 
     def create_eml(self, email_json):
         """Recreates standard expected email format using template."""
@@ -148,7 +179,6 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def get_file(self):
         """Saves individual json records locally."""
         self._create_full_tmp_dir_path()
-        # breakpoint()
 
         # logger.debug(f"Writing page {self.record.get('Id')} - PID: {os.getpid()}")
 
@@ -160,6 +190,12 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 formatted_record = self.create_eml(self.record)
             elif self.record_type == "Account":
                 formatted_record = self.create_account(self.record)
+            elif self.record_type == "Lead":
+                formatted_record = self.create_lead(self.record)
+            else:
+                raise MissingCategoryError(
+                    f"There are no categories with the name: {self.record_type}",
+                )
 
             with open(self._tmp_download_file(), "w") as page_file:
                 page_file.write(formatted_record)
@@ -201,8 +237,8 @@ class SalesforceConnector(ConnectorCleanupMixin, BaseConnector):
         """
         client = Salesforce(
             username=self.config.salesforce_username,
-            password=self.config.salesforce_password,
-            security_token=self.config.salesforce_token,
+            consumer_key=self.config.salesforce_consumer_key,
+            privatekey_file=self.config.salesforce_private_key_path,
         )
 
         doc_list = []

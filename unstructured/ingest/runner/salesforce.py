@@ -15,8 +15,8 @@ def salesforce(
     recursive: bool,
     salesforce_categories: str,
     salesforce_username: str,
-    salesforce_password: str,
-    salesforce_token: str,
+    salesforce_consumer_key: str,
+    salesforce_private_key_path: str,
     **kwargs,
 ):
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
@@ -38,8 +38,8 @@ def salesforce(
         config=SimpleSalesforceConfig(
             salesforce_categories=SimpleSalesforceConfig.parse_folders(salesforce_categories),
             salesforce_username=salesforce_username,
-            salesforce_password=salesforce_password,
-            salesforce_token=salesforce_token,
+            salesforce_consumer_key=salesforce_consumer_key,
+            salesforce_private_key_path=salesforce_private_key_path,
             recursive=recursive,
         ),
     )

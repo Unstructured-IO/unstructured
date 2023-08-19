@@ -28,12 +28,12 @@ from unstructured.ingest.runner import salesforce as salesforce_fn
     help="salesforce username bla bla.",
 )
 @click.option(
-    "--salesforce-password",
+    "--salesforce-consumer-key",
     required=True,
     help="password bla bla",
 )
 @click.option(
-    "--salesforce-token",
+    "--salesforce-private-key_path",
     required=True,
     help="token bla bla.",
 )
