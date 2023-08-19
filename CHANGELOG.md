@@ -1,4 +1,4 @@
-## 0.10.4-dev0
+## 0.10.5-dev0
 
 ### Enhancements
 * Create new CI Pipelines
@@ -7,10 +7,14 @@
 
 ## 0.10.3
 * Adds ability to reuse connections per process in unstructured-ingest
+* Pass ocr_mode in partition_pdf and set the default back to individual pages for now
 
 ### Features
 
 ### Fixes
+
+* remove test modification for potential bug and add docstring
+* fix partitioning of and tests for email and msg docs with attachments, add docstring to msg function
 
 ## 0.10.2
 
