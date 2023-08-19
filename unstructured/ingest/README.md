@@ -83,18 +83,18 @@ In checklist form, the above steps are summarized as:
 
 `unstructured/ingest/main.py` is the entrypoint for the `unstructured-ingest` cli. It calls the cli Command as fetched from `cli.py` `get_cmd()`.
 
-`get_cmd()` is aggregates all subcommands (one per connector) as defined in the cli.cmd module. Each of these per-connector commands define the connector specific options and import the relevant common options. They call out to the corollary cli.runner.[CONNECTOR].py module.
+`get_cmd()` aggregates all subcommands (one per connector) as defined in the cli.cmd module. Each of these per-connector commands define the connector specific options and import the relevant common options. They call out to the corollary cli.runner.[CONNECTOR].py module.
 
 The runner is a vanilla (not Click wrapped) Python function which also explicitly exposes the connector specific arguments. It instantiates the connector with aggregated options / configs and passes it in call to `process_documents()` in `processor.py`.
 
-![unstructured ingest cli diagram](/img/unstructured_ingest_cli_diagram.csv)
+![unstructured ingest cli diagram](img/unstructured_ingest_cli_diagram.svg)
 
 Given an instance of BaseConnector with a reference to its ConnectorConfig (BaseConnectorConfig and StandardConnectorConfig) and set of processing parameters, `process_documents()` instantiates the Processor class and calls its `run()` method.
 
 The Processor class (operating in the Main Process) calls to the connector to fetch `get_ingest_docs()`, a list of lazy download IngestDocs, each a skinny serializable object with connection config. These IngestDocs are filtered (where output results already exist locally) and passed to a multiprocessing Pool. Each subprocess in the pool then operates as a Worker Process. The Worker Process first initializes a logger, since it is operating in its own spawn of the Python interpreter. It then calls the `process_document()` function in `doc_processor.generalized.py`. 
 
-The `process_document()` function is given an IngestDoc, which has a reference to the respective ConnectorConfigs. Also defined is a global session_handler (of type BaseSessionHandler). This contains any session/connection relevant data for the IngestDoc that can be re-used when processing sibling IngestDocs from the same BaseConnector / config. The function proceeds to call the IngestDoc's `get_file()`, `process_file()`, `write_result()`, and `clean_up()` methods.
+The `process_document()` function is given an IngestDoc, which has a reference to the respective ConnectorConfigs. Also defined is a global session_handler (of type BaseSessionHandler). This contains any session/connection relevant data for the IngestDoc that can be re-used when processing sibling IngestDocs from the same BaseConnector / config. If the value for the session_handle isn't assigned, a session_handle is created by the IngestDoc and assigned to the global variable, otherwise the existing global variable value is assigned to the IngestDoc. The function proceeds to call the IngestDoc's `get_file()`, `process_file()`, `write_result()`, and `clean_up()` methods.
 
 Once all multiprocessing subprocesses complete a final call to the BaseConnector `clean_up()` method is made.
 
-![unstructured ingest processing diagram](/img/unstructured_ingest_processing_diagram.csv)
+![unstructured ingest processing diagram](img/unstructured_ingest_processing_diagram.svg)
