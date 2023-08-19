@@ -155,7 +155,7 @@ def partition_pdf_or_image(
         file=file,
         filename=filename,
     )
-    if not is_image:
+    if not is_image and strategy != "ocr_only":
         extracted_elements = extractable_elements(
             filename=filename,
             file=spooled_to_bytes_io_if_needed(file),
