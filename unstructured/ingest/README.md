@@ -87,7 +87,7 @@ In checklist form, the above steps are summarized as:
 
 The runner is a vanilla (not Click wrapped) Python function which also explicitly exposes the connector specific arguments. It instantiates the connector with aggregated options / configs and passes it in call to `process_documents()` in `processor.py`.
 
-![unstructured ingest cli diagram](img/unstructured_ingest_cli_diagram.svg)
+![unstructured ingest cli diagram](img/unstructured_ingest_cli_diagram.jpg)
 
 Given an instance of BaseConnector with a reference to its ConnectorConfig (BaseConnectorConfig and StandardConnectorConfig) and set of processing parameters, `process_documents()` instantiates the Processor class and calls its `run()` method.
 
@@ -97,4 +97,4 @@ The `process_document()` function is given an IngestDoc, which has a reference t
 
 Once all multiprocessing subprocesses complete a final call to the BaseConnector `clean_up()` method is made.
 
-![unstructured ingest processing diagram](img/unstructured_ingest_processing_diagram.svg)
+![unstructured ingest processing diagram](img/unstructured_ingest_processing_diagram.jpg)
