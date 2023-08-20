@@ -1,16 +1,15 @@
+import json
 import os
 import re
 from dataclasses import dataclass, field
-from pathlib import Path
-from typing import Type, List
-import json
-from textwrap import dedent
-
 from email.utils import formatdate
-from dateutil import parser
-
+from pathlib import Path
 from string import Template
+from textwrap import dedent
+from typing import List, Type
 
+from dateutil import parser
+from simple_salesforce import Salesforce
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -22,8 +21,6 @@ from unstructured.ingest.interfaces import (
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
-
-from simple_salesforce import Salesforce
 
 
 class MissingCategoryError(Exception):
@@ -112,7 +109,6 @@ NumberOfConvertedLeads: $number_of_converted_leads
 )
 
 
-
 @dataclass
 class SimpleSalesforceConfig(BaseConnectorConfig):
     """Connector specific attributes"""
@@ -177,7 +173,7 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return dedent(account)
 
     def create_lead(self, lead_json):
-        """Creates partitionable account file"""
+        """Creates partitionable lead file"""
         lead = lead_template.substitute(
             id=lead_json.get("Id"),
             name=lead_json.get("Name"),
@@ -195,7 +191,7 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return dedent(lead)
 
     def create_case(self, case_json):
-        """Creates partitionable account file"""
+        """Creates partitionable case file"""
         case = case_template.substitute(
             id=case_json.get("Id"),
             type=case_json.get("Type"),
@@ -210,7 +206,7 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return dedent(case)
 
     def create_campaign(self, campaign_json):
-        """Creates partitionable account file"""
+        """Creates partitionable campaign file"""
         campaign = campaign_template.substitute(
             id=campaign_json.get("Id"),
             name=campaign_json.get("Name"),
@@ -227,7 +223,7 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return dedent(campaign)
 
     def create_eml(self, email_json):
-        """Recreates standard expected email format using template."""
+        """Recreates standard expected .eml format using template."""
         eml = email_template.substitute(
             date=formatdate(parser.parse(email_json.get("MessageDate")).timestamp()),
             message_identifier=email_json.get("MessageIdentifier"),
@@ -247,7 +243,6 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         # logger.debug(f"Writing page {self.record.get('Id')} - PID: {os.getpid()}")
 
         try:
-            print("******** TRYING")
             # self.check_exists = True
             # self.file_exists = True
             if self.record_type == "EmailMessage":

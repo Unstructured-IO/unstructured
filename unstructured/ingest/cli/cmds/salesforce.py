@@ -33,7 +33,7 @@ from unstructured.ingest.runner import salesforce as salesforce_fn
     help="password bla bla",
 )
 @click.option(
-    "--salesforce-private-key_path",
+    "--salesforce-private-key-path",
     required=True,
     help="token bla bla.",
 )
