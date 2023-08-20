@@ -25,8 +25,10 @@ from unstructured.utils import requires_dependencies
 
 from simple_salesforce import Salesforce
 
+
 class MissingCategoryError(Exception):
     """There are no categories with that name."""
+
 
 email_template = Template(
     """MIME-Version: 1.0
@@ -80,6 +82,36 @@ Industry: $industry
 """,
 )
 
+############ if type in text, it has problems partitioning...?? Also if first line is blank...
+case_template = Template(
+    """Id: $id
+Type: $type
+Status: $status
+Reason: $reason
+Origin: $origin
+Subject: $subject
+Priority: $priority
+Description: $description
+Comments: $comments
+""",
+)
+
+campaign_template = Template(
+    """Id: $id
+Name: $name
+Type: $type
+Status: $status
+StartDate: $start_date
+EndDate: $end_date
+BudgetedCost: $budgeted_cost
+ActualCost: $actual_cost
+Description: $description
+NumberOfLeads: $number_of_leads
+NumberOfConvertedLeads: $number_of_converted_leads
+""",
+)
+
+
 
 @dataclass
 class SimpleSalesforceConfig(BaseConnectorConfig):
@@ -108,7 +140,7 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _tmp_download_file(self):
         if self.record_type == "EmailMessage":
             record_file = self.record["Id"] + ".eml"
-        elif self.record_type in ["Account","Lead"]:
+        elif self.record_type in ["Account", "Lead", "Case", "Campaign"]:
             record_file = self.record["Id"] + ".txt"
         else:
             raise MissingCategoryError(
@@ -162,6 +194,38 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         )
         return dedent(lead)
 
+    def create_case(self, case_json):
+        """Creates partitionable account file"""
+        case = case_template.substitute(
+            id=case_json.get("Id"),
+            type=case_json.get("Type"),
+            status=case_json.get("Status"),
+            reason=case_json.get("Reason"),
+            origin=case_json.get("Origin"),
+            subject=case_json.get("Subject"),
+            priority=case_json.get("Priority"),
+            description=case_json.get("Description"),
+            comments=case_json.get("Comments"),
+        )
+        return dedent(case)
+
+    def create_campaign(self, campaign_json):
+        """Creates partitionable account file"""
+        campaign = campaign_template.substitute(
+            id=campaign_json.get("Id"),
+            name=campaign_json.get("Name"),
+            type=campaign_json.get("Type"),
+            status=campaign_json.get("Status"),
+            start_date=campaign_json.get("StartDate"),
+            end_date=campaign_json.get("EndDate"),
+            budgeted_cost=campaign_json.get("BudgetedCost"),
+            actual_cost=campaign_json.get("ActualCost"),
+            description=campaign_json.get("Description"),
+            number_of_leads=campaign_json.get("NumberOfLeads"),
+            number_of_converted_leads=campaign_json.get("NumberOfConvertedLeads"),
+        )
+        return dedent(campaign)
+
     def create_eml(self, email_json):
         """Recreates standard expected email format using template."""
         eml = email_template.substitute(
@@ -192,6 +256,10 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 formatted_record = self.create_account(self.record)
             elif self.record_type == "Lead":
                 formatted_record = self.create_lead(self.record)
+            elif self.record_type == "Case":
+                formatted_record = self.create_case(self.record)
+            elif self.record_type == "Campaign":
+                formatted_record = self.create_campaign(self.record)
             else:
                 raise MissingCategoryError(
                     f"There are no categories with the name: {self.record_type}",
@@ -248,9 +316,11 @@ class SalesforceConnector(ConnectorCleanupMixin, BaseConnector):
             for record in records["records"]:
                 doc_list.append(
                     SalesforceIngestDoc(
-                        self.standard_config, self.config, record_type, record,
+                        self.standard_config,
+                        self.config,
+                        record_type,
+                        record,
                     ),
                 )
-        print(doc_list)
 
         return doc_list
