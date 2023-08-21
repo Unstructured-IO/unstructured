@@ -20,22 +20,34 @@ from unstructured.partition.text import partition_text
 from unstructured.partition.xml import partition_xml
 from unstructured.utils import dependency_exists
 
+PARTITION_WITH_EXTRAS_MAP: Dict[str, Callable] = {}
+
 if dependency_exists("pandas"):
     from unstructured.partition.csv import partition_csv
     from unstructured.partition.tsv import partition_tsv
+
+    PARTITION_WITH_EXTRAS_MAP["csv"] = partition_csv
+    PARTITION_WITH_EXTRAS_MAP["tsv"] = partition_tsv
 
 
 if dependency_exists("docx"):
     from unstructured.partition.doc import partition_doc
     from unstructured.partition.docx import partition_docx
 
+    PARTITION_WITH_EXTRAS_MAP["doc"] = partition_doc
+    PARTITION_WITH_EXTRAS_MAP["docx"] = partition_docx
+
 
 if dependency_exists("docx") and dependency_exists("pypandoc"):
     from unstructured.partition.odt import partition_odt
 
+    PARTITION_WITH_EXTRAS_MAP["odt"] = partition_odt
+
 
 if dependency_exists("ebooklib"):
     from unstructured.partition.epub import partition_epub
+
+    PARTITION_WITH_EXTRAS_MAP["epub"] = partition_epub
 
 
 if dependency_exists("pypandoc"):
@@ -43,31 +55,63 @@ if dependency_exists("pypandoc"):
     from unstructured.partition.rst import partition_rst
     from unstructured.partition.rtf import partition_rtf
 
+    PARTITION_WITH_EXTRAS_MAP["org"] = partition_org
+    PARTITION_WITH_EXTRAS_MAP["rst"] = partition_rst
+    PARTITION_WITH_EXTRAS_MAP["rtf"] = partition_rtf
+
 
 if dependency_exists("markdown"):
     from unstructured.partition.md import partition_md
 
+    PARTITION_WITH_EXTRAS_MAP["md"] = partition_md
+
 
 if dependency_exists("msg_parser"):
     from unstructured.partition.msg import partition_msg
+
+    PARTITION_WITH_EXTRAS_MAP["msg"] = partition_msg
 
 
 pdf_imports = ["pdf2image", "pdfminer", "PIL"]
 if all(dependency_exists(dep) for dep in pdf_imports):
     from unstructured.partition.pdf import partition_pdf
 
+    PARTITION_WITH_EXTRAS_MAP["pdf"] = partition_pdf
+
 
 if dependency_exists("unstructured_inference"):
     from unstructured.partition.image import partition_image
+
+    PARTITION_WITH_EXTRAS_MAP["image"] = partition_image
 
 
 if dependency_exists("pptx"):
     from unstructured.partition.ppt import partition_ppt
     from unstructured.partition.pptx import partition_pptx
 
+    PARTITION_WITH_EXTRAS_MAP["ppt"] = partition_ppt
+    PARTITION_WITH_EXTRAS_MAP["pptx"] = partition_pptx
+
 
 if dependency_exists("pandas") and dependency_exists("openpyxl"):
     from unstructured.partition.xlsx import partition_xlsx
+
+    PARTITION_WITH_EXTRAS_MAP["xlsx"] = partition_xlsx
+
+
+def _partition_with_extras(
+    doc_type: str,
+    partition_with_extras_map: Optional[Dict[str, Callable]] = None,
+):
+    partition_with_extras_map = partition_with_extras_map or PARTITION_WITH_EXTRAS_MAP
+    _partition_func = partition_with_extras_map.get(doc_type)
+    if _partition_func is None:
+        raise ImportError(
+            f"partition_{doc_type} is not available. "
+            f"Install the {doc_type} dependencies with "
+            f'pip install "unstructured[{doc_type}]"',
+        )
+    return _partition_func
 
 
 def partition(
