@@ -26,6 +26,7 @@ def delta_table(
         str(table_uri).encode("utf-8"),
     )
     connector_config.download_dir = update_download_dir_hash(
+        connector_name="delta_table",
         connector_config=connector_config,
         hashed_dir_name=hashed_dir_name,
         logger=logger,
