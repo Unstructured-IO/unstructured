@@ -440,45 +440,45 @@ def convert_pdf_to_images(
 
         for image in chunk_images:
             yield image
-            
-            
-def add_coordinates_to_elements(elements, coordinates):
+
+
+def add_coordinates_to_elements(elements, bboxes):
     """
     Get the bounding box of each element and add it to element.metadata
-    
+
     Args:
         text (str): The text detected by pytesseract.image_to_string.
         coordinates (str): The return value of pytesseract.image_to_boxes.
     """
-    min_x = float('inf')
-    min_y = float('inf')
+    min_x = float("inf")
+    min_y = float("inf")
     max_x = 0
     max_y = 0
-    
-    boxes = coordinates.strip().split('\n')
+
+    boxes = bboxes.strip().split("\n")
     i = 0
     element_boxes = []
     for element in elements:
-        
         char_count = len(element.text.replace(" ", ""))
-        
-        for box in boxes[i:i+char_count]:
-            # origin is at bottom left
+
+        for box in boxes[i : i + char_count]:
             _, x1, y1, x2, y2, _ = box.split()
             x1, y1, x2, y2 = map(int, [x1, y1, x2, y2])
-            
+
             min_x = min(min_x, x1)
             min_y = min(min_y, y1)
             max_x = max(max_x, x2)
             max_y = max(max_y, y2)
-            
+
         box = (min_x, max_x, min_y, min_y + max_x)
         element_boxes.append(box)
-        min_x = float('inf')
-        min_y = float('inf')
+
+        # reset for next element
+        min_x = float("inf")
+        min_y = float("inf")
         max_x = 0
         max_y = 0
-        i += char_count        
+        i += char_count
 
     return elements, boxes
 
@@ -502,17 +502,17 @@ def _partition_pdf_or_image_with_ocr(
         if file is not None:
             image = PIL.Image.open(file)
             text = pytesseract.image_to_string(image, config=f"-l '{ocr_languages}'")
-            coordinates = pytesseract.image_to_boxes(image, config=f"-l '{ocr_languages}'")
+            bboxes = pytesseract.image_to_boxes(image, config=f"-l '{ocr_languages}'")
         else:
             text = pytesseract.image_to_string(filename, config=f"-l '{ocr_languages}'")
-            coordinates = pytesseract.image_to_boxes(filename, config=f"-l '{ocr_languages}'")
+            bboxes = pytesseract.image_to_boxes(filename, config=f"-l '{ocr_languages}'")
         elements = partition_text(
             text=text,
             max_partition=max_partition,
             min_partition=min_partition,
             metadata_last_modified=metadata_last_modified,
         )
-        add_coordinates_to_elements(elements, coordinates)
+        add_coordinates_to_elements(elements, bboxes)
 
     else:
         elements = []
