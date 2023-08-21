@@ -16,10 +16,12 @@ class SimpleS3Config(SimpleFsspecConfig):
 
 
 class S3IngestDoc(FsspecIngestDoc):
+    remote_file_path: str
+    connector_name: str = "s3"
+    
     @requires_dependencies(["s3fs", "fsspec"], extras="s3")
     def get_file(self):
         super().get_file()
-
 
 @requires_dependencies(["s3fs", "fsspec"], extras="s3")
 class S3Connector(FsspecConnector):

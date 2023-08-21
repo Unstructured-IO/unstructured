@@ -5,7 +5,7 @@ import functools
 import json
 import os
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -114,6 +114,13 @@ class BaseIngestDoc(ABC):
         super().__init__(*args, **kwargs)
         self._date_processed = None
 
+    def to_dict(self):
+        return {**asdict(self), 'connector_name': self.connector_name}
+    
+    @classmethod
+    def from_dict(cls, data_dict):
+        return cls(**data_dict)
+
     @property
     def date_created(self) -> Optional[str]:
         """The date the document was created on the source system."""
@@ -134,6 +141,12 @@ class BaseIngestDoc(ABC):
     def exists(self) -> Optional[bool]:
         """Whether the document exists on the remote source."""
         return None
+    
+    # @property
+    # @abstractmethod
+    # def connector_name(cls):
+    #     """The name of the connector class."""
+
 
     @property
     @abstractmethod
@@ -295,6 +308,7 @@ class BaseIngestDoc(ABC):
             self.isd_elems_no_filename.append(elem)
 
         return self.isd_elems_no_filename
+    
 
 
 class ConnectorCleanupMixin:
