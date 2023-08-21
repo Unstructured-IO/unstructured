@@ -464,7 +464,7 @@ def add_pytesseract_bbox_to_elements(elements, bboxes, width, height):
     for element in elements:
         char_count = len(element.text.replace(" ", ""))
 
-        for box in boxes[i : i + char_count]:
+        for box in boxes[i : i + char_count]: # noqa
             _, x1, y1, x2, y2, _ = box.split()
             x1, y1, x2, y2 = map(int, [x1, y1, x2, y2])
 
@@ -474,12 +474,11 @@ def add_pytesseract_bbox_to_elements(elements, bboxes, width, height):
             max_y = max(max_y, y2)
 
         points = ((min_x, min_y), (min_x, max_y), (max_x, max_y), (max_x, min_y))
-        coordinates_metadata = CoordinatesMetadata(
+
+        element.metadata.coordinates = CoordinatesMetadata(
             points=points,
             system=coordinate_system,
         )
-
-        element.metadata.coordinates = coordinates_metadata
 
         # reset for next element
         min_x = float("inf")
