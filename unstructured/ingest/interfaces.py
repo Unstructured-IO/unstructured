@@ -8,7 +8,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Iterable
 
 import requests
 
@@ -68,7 +68,9 @@ class BaseConnector(ABC):
     standard_config: StandardConnectorConfig
     config: BaseConnectorConfig
 
-    def __init__(self, standard_config: StandardConnectorConfig, config: BaseConnectorConfig):
+    def __init__(
+        self, standard_config: StandardConnectorConfig, config: BaseConnectorConfig
+    ):
         """Expects a standard_config object that implements StandardConnectorConfig
         and config object that implements BaseConnectorConfig."""
         self.standard_config = standard_config
@@ -89,7 +91,7 @@ class BaseConnector(ABC):
         pass
 
     @abstractmethod
-    def get_ingest_docs(self):
+    def get_ingest_docs(self) -> Iterable["BaseIngestDoc"]:
         """Returns all ingest docs (derived from BaseIngestDoc).
         This does not imply downloading all the raw documents themselves,
         rather each IngestDoc is capable of fetching its content (in another process)
@@ -146,7 +148,9 @@ class BaseIngestDoc(ABC):
         """Filename of the structured output for this doc."""
 
     @property
-    def record_locator(self) -> Optional[Dict[str, Any]]:  # Values must be JSON-serializable
+    def record_locator(
+        self,
+    ) -> Optional[Dict[str, Any]]:  # Values must be JSON-serializable
         """A dictionary with any data necessary to uniquely identify the document on
         the source system."""
         return None
@@ -203,7 +207,9 @@ class BaseIngestDoc(ABC):
             return
         self._output_filename.parent.mkdir(parents=True, exist_ok=True)
         with open(self._output_filename, "w", encoding="utf8") as output_f:
-            json.dump(self.isd_elems_no_filename, output_f, ensure_ascii=False, indent=2)
+            json.dump(
+                self.isd_elems_no_filename, output_f, ensure_ascii=False, indent=2
+            )
         logger.info(f"Wrote {self._output_filename}")
 
     def partition_file(self, **partition_kwargs) -> List[Dict[str, Any]]:
@@ -241,7 +247,9 @@ class BaseIngestDoc(ABC):
                 )
 
             if response.status_code != 200:
-                raise RuntimeError(f"Caught {response.status_code} from API: {response.text}")
+                raise RuntimeError(
+                    f"Caught {response.status_code} from API: {response.text}"
+                )
 
             return response.json()
 
@@ -302,7 +310,10 @@ class ConnectorCleanupMixin:
 
     def cleanup(self, cur_dir=None):
         """Recursively clean up downloaded files and directories."""
-        if self.standard_config.preserve_downloads or self.standard_config.download_only:
+        if (
+            self.standard_config.preserve_downloads
+            or self.standard_config.download_only
+        ):
             return
         if cur_dir is None:
             cur_dir = self.standard_config.download_dir
@@ -342,7 +353,8 @@ class ConfigSessionHandleMixin:
     @abstractmethod
     def create_session_handle(self) -> BaseSessionHandle:
         """Creates a session handle that will be assigned on each IngestDoc to share
-        session related resources across all document handling for a given subprocess."""
+        session related resources across all document handling for a given subprocess.
+        """
 
 
 class IngestDocSessionHandleMixin:

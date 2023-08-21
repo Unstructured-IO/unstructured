@@ -147,29 +147,23 @@ class FsspecConnector(ConnectorCleanupMixin, BaseConnector):
             # fs.ls does not walk directories
             # directories that are listed in cloud storage can cause problems
             # because they are seen as 0 byte files
-            return [
-                x.get("name")
-                for x in self.fs.ls(self.config.path_without_protocol, detail=True)
-                if x.get("size") > 0
-            ]
+            for x in self.fs.ls(self.config.path_without_protocol, detail=True):
+                if x.get("size") > 0:
+                    yield x.get("name")
         else:
             # fs.find will recursively walk directories
             # "size" is a common key for all the cloud protocols with fs
-            return [
-                k
-                for k, v in self.fs.find(
-                    self.config.path_without_protocol,
-                    detail=True,
-                ).items()
-                if v.get("size") > 0
-            ]
+            for k, v in self.fs.find(
+                self.config.path_without_protocol,
+                detail=True,
+            ).items():
+                if v.get("size") > 0:
+                    yield k
 
     def get_ingest_docs(self):
-        return [
-            self.ingest_doc_cls(
+        for file in self._list_files():
+            yield self.ingest_doc_cls(
                 standard_config=self.standard_config,
                 config=self.config,
                 remote_file_path=file,
             )
-            for file in self._list_files()
-        ]

@@ -138,7 +138,9 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         try:
             content_labels = ["CanvasContent1", "LayoutWebpartsContent1"]
-            content = self.file.listItemAllFields.select(content_labels).get().execute_query()
+            content = (
+                self.file.listItemAllFields.select(content_labels).get().execute_query()
+            )
             pld = (content.properties.get("LayoutWebpartsContent1", "") or "") + (
                 content.properties.get("CanvasContent1", "") or ""
             )
@@ -175,7 +177,9 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             if fsize > MAX_MB_SIZE:
                 logger.info(f"Downloading file with size: {fsize} bytes in chunks")
                 with self.filename.open(mode="wb") as f:
-                    self.file.download_session(f, chunk_size=1024 * 1024 * 100).execute_query()
+                    self.file.download_session(
+                        f, chunk_size=1024 * 1024 * 100
+                    ).execute_query()
             else:
                 with self.filename.open(mode="wb") as f:
                     self.file.download(f).execute_query()
@@ -199,7 +203,9 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
     config: SimpleSharepointConfig
     tenant: None
 
-    def __init__(self, standard_config: StandardConnectorConfig, config: SimpleSharepointConfig):
+    def __init__(
+        self, standard_config: StandardConnectorConfig, config: SimpleSharepointConfig
+    ):
         super().__init__(standard_config, config)
         self._setup_client()
 
@@ -213,7 +219,9 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
         tenant_url = site_hostname[0].split("-")
         self.process_all = False
         self.base_site_url = ""
-        if tenant_url[-1] == "admin" and (parsed_url.path is None or parsed_url.path == "/"):
+        if tenant_url[-1] == "admin" and (
+            parsed_url.path is None or parsed_url.path == "/"
+        ):
             self.process_all = True
             self.base_site_url = parsed_url._replace(
                 netloc=parsed_url.netloc.replace(site_hostname[0], tenant_url[0]),
@@ -244,7 +252,9 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
             return files
         except ClientRequestException as e:
             if e.response.status_code != 404:
-                logger.info("Caught an error while processing documents %s", e.response.text)
+                logger.info(
+                    "Caught an error while processing documents %s", e.response.text
+                )
             return []
 
     @requires_dependencies(["office365"])
@@ -263,7 +273,9 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
                 page_url = f"/{page_url}" if page_url[0] != "/" else page_url
                 file_page = site_client.web.get_file_by_server_relative_path(page_url)
                 site_path = None
-                if (url_path := (urlparse(site_client.base_url).path)) and (url_path != "/"):
+                if (url_path := (urlparse(site_client.base_url).path)) and (
+                    url_path != "/"
+                ):
                     site_path = url_path[1:]
                 page_files.append(
                     [file_page, {"page": page_meta, "site_path": site_path}],
@@ -278,29 +290,33 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
         pass
 
     def _ingest_site_docs(self, site_client) -> List["SharepointIngestDoc"]:
-        root_folder = site_client.web.get_folder_by_server_relative_path(self.config.path)
+        root_folder = site_client.web.get_folder_by_server_relative_path(
+            self.config.path
+        )
         files = self._list_files(root_folder, self.config.recursive)
         if not files:
             logger.info(
                 f"Couldn't process files in path {self.config.path} \
                 for site {site_client.base_url}",
             )
-        output = [SharepointIngestDoc(self.standard_config, self.config, f, {}) for f in files]
+        yield from (
+            SharepointIngestDoc(self.standard_config, self.config, f, {}) for f in files
+        )
         if self.config.process_pages:
             page_files = self._list_pages(site_client)
             if not page_files:
                 logger.info(f"Couldn't process pages for site {site_client.base_url}")
-            page_output = [
+            yield from (
                 SharepointIngestDoc(self.standard_config, self.config, f[0], f[1])
                 for f in page_files
-            ]
-            output = output + page_output
-        return output
+            )
 
     def _filter_site_url(self, site):
         if site.url is None:
             return False
-        return (site.url[0 : len(self.base_site_url)] == self.base_site_url) and (  # noqa: E203
+        return (
+            site.url[0 : len(self.base_site_url)] == self.base_site_url
+        ) and (  # noqa: E203
             "/sites/" in site.url
         )
 
@@ -313,16 +329,19 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
             from office365.sharepoint.tenant.administration.tenant import Tenant
 
             tenant = Tenant(self.client)
-            tenant_sites = tenant.get_site_properties_from_sharepoint_by_filters().execute_query()
+            tenant_sites = (
+                tenant.get_site_properties_from_sharepoint_by_filters().execute_query()
+            )
             tenant_sites = [s.url for s in tenant_sites if self._filter_site_url(s)]
             tenant_sites.append(self.base_site_url)
             ingest_docs: List[SharepointIngestDoc] = []
             for site_url in set(tenant_sites):
                 logger.info(f"Processing docs for site: {site_url}")
                 site_client = ClientContext(site_url).with_credentials(
-                    ClientCredential(self.config.client_id, self.config.client_credential),
+                    ClientCredential(
+                        self.config.client_id, self.config.client_credential
+                    ),
                 )
-                ingest_docs = ingest_docs + self._ingest_site_docs(site_client)
-            return ingest_docs
+                yield from self._ingest_site_docs(site_client)
         else:
-            return self._ingest_site_docs(self.client)
+            yield from self._ingest_site_docs(self.client)
