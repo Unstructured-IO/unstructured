@@ -21,7 +21,7 @@ def sort_page_elements(
     if sort_mode == SORT_MODE_XY_CUT:
         coordinates_list = [el.metadata.coordinates for el in page_elements]
         boxes = [coordinates_to_bbox(coords) for coords in coordinates_list]
-        res = []
+        res: List[int] = []
         recursive_xy_cut(np.asarray(boxes).astype(int), np.arange(len(boxes)), res)
         sorted_page_elements = [page_elements[i] for i in res]
     elif sort_mode == SORT_MODE_BASIC:

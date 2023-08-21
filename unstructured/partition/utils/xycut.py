@@ -3,16 +3,15 @@ from typing import List
 import cv2
 import numpy as np
 
-
 """
 
-This module contains the implementation of the XY-Cut sorting approach 
+This module contains the implementation of the XY-Cut sorting approach
 from: https://github.com/Sanster/xy-cut
 
 """
 
 
-def projection_by_bboxes(boxes: np.array, axis: int) -> np.ndarray:
+def projection_by_bboxes(boxes: np.ndarray, axis: int) -> np.ndarray:
     """
      通过一组 bbox 获得投影直方图，最后以 per-pixel 形式输出
 
@@ -33,8 +32,11 @@ def projection_by_bboxes(boxes: np.array, axis: int) -> np.ndarray:
     return res
 
 
-# from: https://dothinking.github.io/2021-06-19-%E9%80%92%E5%BD%92%E6%8A%95%E5%BD%B1%E5%88%86%E5%89%B2%E7%AE%97%E6%B3%95/#:~:text=%E9%80%92%E5%BD%92%E6%8A%95%E5%BD%B1%E5%88%86%E5%89%B2%EF%BC%88Recursive%20XY,%EF%BC%8C%E5%8F%AF%E4%BB%A5%E5%88%92%E5%88%86%E6%AE%B5%E8%90%BD%E3%80%81%E8%A1%8C%E3%80%82
-def split_projection_profile(arr_values: np.array, min_value: float, min_gap: float):
+# from: https://dothinking.github.io/2021-06-19-%E9%80%92%E5%BD%92%E6%8A%95%E5%BD%B1
+# %E5%88%86%E5%89%B2%E7%AE%97%E6%B3%95/#:~:text=%E9%80%92%E5%BD%92%E6%8A%95%E5%BD%B1
+# %E5%88%86%E5%89%B2%EF%BC%88Recursive%20XY,%EF%BC%8C%E5%8F%AF%E4%BB%A5%E5%88%92
+# %E5%88%86%E6%AE%B5%E8%90%BD%E3%80%81%E8%A1%8C%E3%80%82
+def split_projection_profile(arr_values: np.ndarray, min_value: float, min_gap: float):
     """Split projection profile:
 
     ```
@@ -77,7 +79,7 @@ def split_projection_profile(arr_values: np.array, min_value: float, min_gap: fl
     return arr_start, arr_end
 
 
-def recursive_xy_cut(boxes: np.ndarray, indices: List[int], res: List[int]):
+def recursive_xy_cut(boxes: np.ndarray, indices: np.ndarray, res: List[int]):
     """
 
     Args:
@@ -197,7 +199,7 @@ def vis_polygon(img, points, thickness=2, color=None):
 def vis_points(
     img: np.ndarray,
     points,
-    texts: List[str] = None,
+    texts: List[str],
     color=(0, 200, 0),
 ) -> np.ndarray:
     """
@@ -212,8 +214,7 @@ def vis_points(
 
     """
     points = np.array(points)
-    if texts is not None:
-        assert len(texts) == points.shape[0]
+    assert len(texts) == points.shape[0]
 
     for i, _points in enumerate(points):
         vis_polygon(img, _points.reshape(-1, 2), thickness=2, color=color)
