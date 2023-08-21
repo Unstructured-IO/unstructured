@@ -1,4 +1,5 @@
 import os
+import sys
 
 import cv2
 import matplotlib.pyplot as plt
@@ -7,6 +8,7 @@ import pdf2image
 
 from unstructured.documents.elements import PageBreak
 from unstructured.partition.pdf import partition_pdf
+from unstructured.partition.utils.constants import SORT_MODE_XY_CUT, SORT_MODE_BASIC
 from unstructured.partition.utils.xycut import bbox2points, recursive_xy_cut, vis_polygons_with_index
 
 
@@ -25,14 +27,6 @@ def show_plot(image, desired_width=None):
     # Display the image
     ax.imshow(image)
     plt.show()
-
-
-def create_output_directory(strategy, keep_basic_ordering):
-    output_base_dir = os.path.join(output_root_dir, strategy)
-    label = "with_basic_ordering" if keep_basic_ordering else "without_basic_ordering"
-    output_dir = os.path.join(output_base_dir, label)
-    os.makedirs(output_dir, exist_ok=True)
-    return output_dir
 
 
 def extract_element_coordinates(elements):
@@ -102,43 +96,56 @@ def draw_elements(elements, images, output_type, output_dir, base_name, label):
         draw_boxes(image, boxes, output_dir, base_name, idx + 1, output_type, label)
 
 
-def run_partition_pdf(pdf_path, strategy, images, output_type="plot", keep_basic_ordering=True):
-    output_dir = create_output_directory(strategy, keep_basic_ordering)
-    base_name = os.path.splitext(os.path.basename(pdf_path))[0]
+def run_partition_pdf(
+    pdf_path,
+    strategy,
+    images,
+    output_type="plot",
+    output_root_dir="",
+):
+    print(f">>> Starting run_partition_pdf - f_path: {pdf_path} - strategy: {strategy}")
+    f_base_name = os.path.splitext(os.path.basename(pdf_path))[0]
+
+    output_dir = os.path.join(output_root_dir, strategy, f_base_name)
+    os.makedirs(output_dir, exist_ok=True)
 
     original_elements = partition_pdf(
         filename=pdf_path,
         strategy=strategy,
         include_page_breaks=True,
-        extra_ordering=False,
+        sort_mode=SORT_MODE_BASIC,
     )
-    draw_elements(original_elements, images, output_type, output_dir, base_name, "original")
+    draw_elements(original_elements, images, output_type, output_dir, f_base_name, "original")
 
     ordered_elements = partition_pdf(
         filename=pdf_path,
         strategy=strategy,
         include_page_breaks=True,
-        keep_basic_ordering=keep_basic_ordering,
-        extra_ordering=True,
+        sort_mode=SORT_MODE_XY_CUT,
     )
-    draw_elements(ordered_elements, images, output_type, output_dir, base_name, "ordered")
+    draw_elements(ordered_elements, images, output_type, output_dir, f_base_name, "result")
+    print("<<< Finished run_partition_pdf")
 
 
-def run(pdf_path):
-    images = pdf2image.convert_from_path(pdf_path)
-    strategy = "fast"
+def run():
+    f_sub_path = sys.argv[1]
+    strategy = sys.argv[2]
 
-    run_partition_pdf(pdf_path, strategy, images, "image", True)
-    run_partition_pdf(pdf_path, strategy, images, "image", False)
+    base_dir = os.getcwd()
+    output_root_dir = os.path.join(base_dir, "examples", "custom-layout-order", "output")
+    os.makedirs(output_root_dir, exist_ok=True)
+
+    f_path = os.path.join(base_dir, f_sub_path)
+    images = pdf2image.convert_from_path(f_path)
+    run_partition_pdf(f_path, strategy, images, "image", output_root_dir)
 
 
 if __name__ == '__main__':
-    cur_dir = os.getcwd()
-    base_dir = os.path.join(cur_dir, os.pardir, os.pardir)
-    example_docs_dir = os.path.join(base_dir, "example-docs")
-    output_root_dir = os.path.join(cur_dir, "output")
-    os.makedirs(output_root_dir, exist_ok=True)
+    if len(sys.argv) < 3:
+        print(
+            "Please provide the path to the file name as the first argument and the strategy as the "
+            "second argument.",
+        )
+        sys.exit(1)
 
-    f_path = os.path.join(example_docs_dir, "multi-column-2p.pdf")
-
-    run(f_path)
+    run()
