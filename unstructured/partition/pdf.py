@@ -456,15 +456,15 @@ def add_coordinates_to_elements(elements, coordinates):
     max_y = 0
     
     boxes = coordinates.strip().split('\n')
-    element_text_from_coordinates = ""
-    i = 0    
+    i = 0
+    element_boxes = []
     for element in elements:
         
         char_count = len(element.text.replace(" ", ""))
         
         for box in boxes[i:i+char_count]:
-            char, x1, y1, x2, y2, _ = box.split()
-            element_text_from_coordinates = element_text_from_coordinates + char
+            # origin is at bottom left
+            _, x1, y1, x2, y2, _ = box.split()
             x1, y1, x2, y2 = map(int, [x1, y1, x2, y2])
             
             min_x = min(min_x, x1)
@@ -472,18 +472,15 @@ def add_coordinates_to_elements(elements, coordinates):
             max_x = max(max_x, x2)
             max_y = max(max_y, y2)
             
-        i += char_count
-            
-        width = max_x - min_x
-        height = max_y - min_y
-        
-        import pdb; pdb.set_trace()
-        if element_text_from_coordinates == element.text.replace(" ", ""):
-            box = (min_x, min_x + width, min_y, min_y + height)
-        
-        element_text_from_coordinates = ""
-    
-    return elements
+        box = (min_x, max_x, min_y, min_y + max_x)
+        element_boxes.append(box)
+        min_x = float('inf')
+        min_y = float('inf')
+        max_x = 0
+        max_y = 0
+        i += char_count        
+
+    return elements, boxes
 
 
 @requires_dependencies("pytesseract")
@@ -516,7 +513,6 @@ def _partition_pdf_or_image_with_ocr(
             metadata_last_modified=metadata_last_modified,
         )
         add_coordinates_to_elements(elements, coordinates)
-        import pdb; pdb.set_trace()
 
     else:
         elements = []
