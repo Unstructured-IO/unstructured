@@ -177,6 +177,7 @@ def test_partition_pdf_with_model_name_env_var(
             filename,
             is_image=False,
             ocr_languages="eng",
+            ocr_mode="individual_blocks",
             extract_tables=False,
             model_name="checkbox",
         )
@@ -197,6 +198,7 @@ def test_partition_pdf_with_model_name(
             filename,
             is_image=False,
             ocr_languages="eng",
+            ocr_mode="individual_blocks",
             extract_tables=False,
             model_name="checkbox",
         )
@@ -402,6 +404,7 @@ def test_partition_pdf_with_dpi():
             filename,
             is_image=False,
             ocr_languages="eng",
+            ocr_mode="individual_blocks",
             extract_tables=False,
             model_name=None,
             pdf_image_dpi=100,

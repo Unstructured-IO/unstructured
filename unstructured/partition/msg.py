@@ -91,7 +91,12 @@ def partition_msg(
                     raise ValueError(
                         "Specify the attachment_partitioner kwarg to process attachments.",
                     )
-                attached_elements = attachment_partitioner(filename=attached_filename)
+                attached_elements = attachment_partitioner(
+                    filename=attached_filename,
+                    metadata_last_modified=metadata_last_modified,
+                    max_partition=max_partition,
+                    min_partition=min_partition,
+                )
                 for element in attached_elements:
                     element.metadata.filename = attached_file
                     element.metadata.file_directory = None
@@ -134,6 +139,9 @@ def extract_msg_attachment_info(
     output_dir: Optional[str] = None,
     msg_obj: Optional[msg_parser.MsOxMessage] = None,
 ) -> List[Dict[str, str]]:
+    """Extracts information from email message attachments and returns a list of dictionaries.
+    If 'output_dir' is provided, attachments are also saved to that directory.
+    """
     exactly_one(filename=filename, file=file, msg_obj=msg_obj)
 
     if filename is not None:

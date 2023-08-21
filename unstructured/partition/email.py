@@ -421,7 +421,12 @@ def partition_email(
                     raise ValueError(
                         "Specify the attachment_partitioner kwarg to process attachments.",
                     )
-                attached_elements = attachment_partitioner(filename=attached_filename)
+                attached_elements = attachment_partitioner(
+                    filename=attached_filename,
+                    metadata_last_modified=metadata_last_modified,
+                    max_partition=max_partition,
+                    min_partition=min_partition,
+                )
                 for element in attached_elements:
                     element.metadata.filename = attached_file
                     element.metadata.file_directory = None

@@ -5,7 +5,7 @@ from unstructured.documents.elements import Title
 from unstructured.partition.odt import partition_odt
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
-EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "..", "example-docs")
+EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "..", "..", "example-docs")
 
 
 def test_partition_odt_from_filename():

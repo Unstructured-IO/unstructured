@@ -10,16 +10,6 @@
     "text": "Data in Brief 22 (2019) 451–457"
   },
   {
-    "type": "Image",
-    "element_id": "70d50409ea726a2789ebbd004bec31f4",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "Contents lists available at ScienceDirect Data in Brief journal homepage: www.elsevier.com/locate/dib"
-  },
-  {
     "type": "UncategorizedText",
     "element_id": "869adddb184177031536477262e0dde0",
     "metadata": {
@@ -38,6 +28,16 @@
       "page_number": 1
     },
     "text": "Data in Brief"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "9234133787d0a6b3976b16569c0b5cf3",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "journal homepage: www.elsevier.com/locate/dib"
   },
   {
     "type": "UncategorizedText",
@@ -1491,13 +1491,13 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "a0463ca888a6f2c8c3ba40ba47be0f2f",
+    "element_id": "4f8c25cf7aefbef4af474fe62bed2b33",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "gEOOwaeSemny. z00RV | WD: 1424 renn rtirint VEoa3 Tescan20 yin Fertormaros in nancepace|"
+    "text": "gEoswaeSem ny. 200 RvLitt td vegas rescanFertormarce innancesacel"
   },
   {
     "type": "NarrativeText",
@@ -1511,13 +1511,13 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "a9bc28448ebad437288bf5538fb09482",
+    "element_id": "035c30f23285fdae72335b94421cf564",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "SEM HY: 20.0KVBEM IAAG: 400 x 5"
+    "text": "°@¢Naafe«MgsSEM HY: 20.0KV ALEC CMT LPL LL A a pO OPEM ING: ACO x"
   },
   {
     "type": "NarrativeText",

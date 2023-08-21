@@ -660,6 +660,16 @@
     "text": "Modern society is dependent on the steady supply of electricity, every day of the year – regardless of weather, season or time of day – and nuclear energy is particularly well-suited to providing this service. Given that the majority of baseload supply is fossil-based, an increase in the use of nuclear energy would result in a rapid decarbonization of the electricity system. The International Energy Agency’s (IEA) recent report III on nuclear energy highlighted the importance of dependable baseload electricity generators and the need to properly value and compensate them for the electricity security and reliability services they provide."
   },
   {
+    "type": "FigureCaption",
+    "element_id": "87289b7325e8d8052da6f0182799e2a3",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 5
+    },
+    "text": "ee Nie"
+  },
+  {
     "type": "UncategorizedText",
     "element_id": "1121cfccd5913f0a63fec40a6ffd44ea",
     "metadata": {
@@ -1700,8 +1710,8 @@
     "text": "The incredible energy density of uranium means that just a few kilos is all that is required to provide one person with enough power for a lifetime. Uranium is abundant and can be found in many parts of the world, as well as in seawater. Furthermore, spent nuclear fuel is well managed and can in most cases be recycled to produce even more power. By using nuclear energy, countries are able to take charge of their own destinies by decreasing their reliance on imported energy – enhanced independence and security in uncertain times."
   },
   {
-    "type": "FigureCaption",
-    "element_id": "36ca9b7cdbbcba729a46487cf86c07eb",
+    "type": "NarrativeText",
+    "element_id": "de916089e4fe96d481dbdbb9499694e8",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1918,16 +1928,6 @@
       "page_number": 10
     },
     "text": "8"
-  },
-  {
-    "type": "Image",
-    "element_id": "6d647fc38c561c01f7859e019345d367",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 12
-    },
-    "text": "+44 (0)20 7451 1520www.world-nuclear.orginfo@world-nuclear.org World Nuclear Association is the international organization that represents the global nuclear industry. Its mission is to promote a wider understanding of nuclear energy among key international influencers by producing authoritative information, developing common industry positions, and contributing to the energy debate."
   },
   {
     "type": "UncategorizedText",

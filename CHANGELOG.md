@@ -1,21 +1,64 @@
-## 0.10.1
+## 0.10.6
 
 ### Enhancements
 
 *   Adds `include_path_in_metadata_filename` parameters to partition functions.
 *   Add min\_partition kwarg to that combines elements below a specified threshold and modifies splitting of strings longer than max partition so words are not split.
 
-## 0.10.0
+## 0.10.5-dev0
 
 ### Enhancements
+* Create new CI Pipelines
+  - Checking text, xml, email, and html doc tests against the library installed without extras
+  - Checking each library extra against their respective tests
 
-* Update the `links` and `emphasized_texts` metadata fields
+## 0.10.3
+* Adds ability to reuse connections per process in unstructured-ingest
+* Pass ocr_mode in partition_pdf and set the default back to individual pages for now
 
 ### Features
 
 ### Fixes
 
-* fix pdf partition of list items being detected as titles in OCR only mode
+* remove test modification for potential bug and add docstring
+* fix partitioning of and tests for email and msg docs with attachments, add docstring to msg function
+
+## 0.10.2
+
+### Enhancements
+* Bump unstructured-inference==0.5.13:
+  - Fix extracted image elements being included in layout merge, addresses the issue
+    where an entire-page image in a PDF was not passed to the layout model when using hi_res.
+
+### Features
+
+### Fixes
+
+## 0.10.1
+
+### Enhancements
+* Bump unstructured-inference==0.5.12:
+  - fix to avoid trace for certain PDF's (0.5.12)
+  - better defaults for DPI for hi_res and  Chipper (0.5.11)
+  - implement full-page OCR (0.5.10)
+
+### Features
+
+### Fixes
+
+* Fix dead links in repository README (Quick Start > Install for local development, and Learn more > Batch Processing)
+* Update document dependencies to include tesseract-lang for additional language support (required for tests to pass)
+
+## 0.10.0
+
+### Enhancements
+
+* Add `include_header` kwarg to `partition_xlsx` and change default behavior to `True`
+* Update the `links` and `emphasized_texts` metadata fields
+
+### Features
+
+### Fixes
 
 ## 0.9.3
 
@@ -162,17 +205,6 @@
 ### Enhancements
 
 * Additional tests and refactor of JSON detection.
-*   Adds `include_path_in_metadata_filename` parameters to partition functions.
-*   Update functionality to retrieve image metadata from a page for `document_to_element_list`
-*   Links are now tracked in `partition_html` output.
-*   Set the file's current position to the beginning after reading the file in `convert_to_bytes`
-*   Add min\_partition kwarg to that combines elements below a specified threshold and modifies splitting of strings longer than max partition so words are not split.
-*   set the file's current position to the beginning after reading the file in `convert_to_bytes`
-*   Add slide notes to pptx
-*   Add `--encoding` directive to ingest
-
-### Enhancements
-
 * Update functionality to retrieve image metadata from a page for `document_to_element_list`
 * Links are now tracked in `partition_html` output.
 * Set the file's current position to the beginning after reading the file in `convert_to_bytes`
@@ -189,7 +221,6 @@
 * Adds Onedrive connector.
 * Add Confluence connector for ingest cli to pull the body text from all documents from all spaces in a confluence domain.
 
-
 ### Fixes
 
 * Fixes issue with email partitioning where From field was being assigned the To field value.
@@ -200,6 +231,7 @@
   has a `text/plain` MIME type.
 * Enables filters to be passed to `partition_doc` so it doesn't error with LibreOffice7.
 * Removed old error message that's superseded by `requires_dependencies`.
+* Removes using `hi_res` as the default strategy value for `partition_via_api` and `partition_multiple_via_api`
 
 ## 0.8.1
 

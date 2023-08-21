@@ -27,6 +27,7 @@ def partition_xlsx(
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
     metadata_last_modified: Optional[str] = None,
+    include_header: bool = True,
     include_path_in_metadata_filename: bool = False,
     **kwargs,
 ) -> List[Element]:
@@ -42,6 +43,8 @@ def partition_xlsx(
         Determines whether or not metadata is included in the output.
     metadata_last_modified
         The day of the last modification
+    include_header
+        Determines whether or not header info info is included in text and medatada.text_as_html
     include_path_in_metadata_filename
         Determines whether or not metadata filename will contain full path
     """
@@ -62,7 +65,7 @@ def partition_xlsx(
     page_number = 0
     for sheet_name, table in sheets.items():
         page_number += 1
-        html_text = table.to_html(index=False, header=False, na_rep="")
+        html_text = table.to_html(index=False, header=include_header, na_rep="")
         text = soupparser_fromstring(html_text).text_content()
 
         if include_metadata:

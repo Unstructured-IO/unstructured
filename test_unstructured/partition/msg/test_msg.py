@@ -14,7 +14,7 @@ from unstructured.partition.msg import extract_msg_attachment_info, partition_ms
 from unstructured.partition.text import partition_text
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
-EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "..", "example-docs")
+EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "..", "..", "example-docs")
 
 EXPECTED_MSG_OUTPUT = [
     NarrativeText(text="This is a test email to use for unit tests."),
@@ -104,6 +104,7 @@ def test_extract_attachment_info():
         DIRECTORY,
         "..",
         "..",
+        "..",
         "example-docs",
         "fake-email-attachment.msg",
     )
@@ -141,7 +142,6 @@ def test_partition_msg_from_file_exclude_metadata():
 
 
 def test_partition_msg_can_process_attachments(
-    mocker,
     tmpdir,
     filename="example-docs/fake-email-attachment.msg",
 ):
@@ -153,13 +153,10 @@ def test_partition_msg_can_process_attachments(
 
     mocked_last_modification_date = "2029-07-05T09:24:28"
 
-    mocker.patch(
-        "unstructured.partition.text.get_last_modified_date",
-        return_value=mocked_last_modification_date,
-    )
     attachment_elements = partition_text(
         filename=attachment_filename,
         metadata_filename=attachment_filename,
+        metadata_last_modified=mocked_last_modification_date,
     )
     expected_metadata = attachment_elements[0].metadata
     expected_metadata.file_directory = None
@@ -173,18 +170,45 @@ def test_partition_msg_can_process_attachments(
     )
 
     assert elements[0].text.startswith("Hello!")
-
     for element in elements[:-1]:
         assert element.metadata.filename == "fake-email-attachment.msg"
         assert element.metadata.subject == "Fake email with attachment"
-
-    # TODO(robinson) - might be something wrong with last modified for attachments
-    # Doing this temporarily to fix a failing test
-    expected_metadata.last_modified = None
-    elements[-1].metadata.last_modified = None
-
     assert elements[-1].text == "Hey this is a fake attachment!"
     assert elements[-1].metadata == expected_metadata
+
+
+def test_partition_msg_can_process_min_max_wtih_attachments(
+    tmpdir,
+    filename="example-docs/fake-email-attachment.msg",
+):
+    extract_msg_attachment_info(filename=filename, output_dir=tmpdir.dirname)
+    attachment_filename = os.path.join(
+        tmpdir.dirname,
+        ATTACH_EXPECTED_OUTPUT[0]["filename"],
+    )
+
+    attachment_elements = partition_text(
+        filename=attachment_filename,
+        metadata_filename=attachment_filename,
+        min_partition=6,
+        max_partition=12,
+    )
+
+    elements = partition_msg(
+        filename=filename,
+        attachment_partitioner=partition_text,
+        process_attachments=True,
+        min_partition=6,
+        max_partition=12,
+    )
+
+    assert elements[0].text.startswith("Hello!")
+    assert elements[-1].text == attachment_elements[-1].text
+    assert elements[-2].text == attachment_elements[-2].text
+    for element in elements:
+        if element.metadata.attached_to_filename is not None:
+            assert len(element.text) <= 12
+            assert len(element.text) >= 6
 
 
 def test_partition_msg_raises_with_no_partitioner(

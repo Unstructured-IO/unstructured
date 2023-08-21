@@ -591,13 +591,13 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "00401461c83b8b07511a4864781d8f8d",
+    "element_id": "dd23a7c381d44f4b36975adaf4d2236d",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "Model Customization Community PlatformEfficient Data Annotation ¥y DIA Model HubCustomized Model Training] === | Layout Detection Models | ===OCR Module =— | Layout Data Structure | ==The Core LayoutParser LibraryDIA Pipeline SharingStorage & Visualizationi"
+    "text": "Model Customization Document Images Community PlatformEfficient Data Annotation ¥ DIA Model HubCustomized Model Training) ==> | Layout Detection wot) = | DIA Pipeline Sharing }4( OCR Module ) = { Layout Data stuctue ) = (storages vsatzaion )"
   },
   {
     "type": "NarrativeText",
@@ -959,16 +959,6 @@
       "page_number": 7
     },
     "text": "LayoutParser provides a uniﬁed interface for existing OCR tools. Though there are many OCR tools available, they are usually conﬁgured diﬀerently with distinct APIs or protocols for using them. It can be ineﬃcient to add new OCR tools into an existing pipeline, and diﬃcult to make direct comparisons among the available tools to ﬁnd the best option for a particular project. To this end, LayoutParser builds a series of wrappers among existing OCR engines, and provides nearly the same syntax for using them. It supports a plug-and-play style of using OCR engines, making it eﬀortless to switch, evaluate, and compare diﬀerent OCR modules:"
-  },
-  {
-    "type": "Image",
-    "element_id": "65ac0f9ae348b12ed9484b8af7296617",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "ocr_agent = lp.TesseractAgent ()pOi"
   },
   {
     "type": "ListItem",
@@ -1343,13 +1333,33 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "6df6057f894a166cf24fd34f64267f09",
+    "element_id": "d10d70e48ed0066bd15dd133d09f61fd",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 9
     },
-    "text": "a ESStee eaeoooMode I: Showing Layout on the Original ImageMode Il: Drawing OCR'd Text at the Correspoding Position10g Bpunog vayoy feyds1q :1 vondo‘xog Burpunog vay apiH z word"
+    "text": "a ESMode I: Showing Layout on the Original ImageayeMode Il: Drawing OCR'd Text at the Correspoding Position10g Bpunog vayoy feyds1q :1 vondo‘xog Burpunog vay apiH z word"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "aed1b21a388cefaa841f20f48d19ca98",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 9
+    },
+    "text": "Mode I: Showing Layout on the Original Image"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "915bc5f1403e01b56e77300d9354fded",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 9
+    },
+    "text": "Mode Il: Drawing OCR'd Text at the Correspoding Position"
   },
   {
     "type": "NarrativeText",
@@ -1413,13 +1423,13 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "42aa5660e30073a0282c086fe4f29fce",
+    "element_id": "0ff9ad06a304818ae83b93c6f2b16309",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 10
     },
-    "text": "Column reading orderMaximum Allowed HeightZ. Shen et al.Intra-column reading order(b) Illustration of the recreated document with dense text structure for better OCR performance‘Token CategoriesMoteAddresstetNumberVaribiecompany typeColumn Categories(J tite| Aatress(tee[7] section adr"
+    "text": "Column reading orderMaximum Allowed HeightZ. Shen et al.Intra-column reading ordert el 1 ili |.(a) Illustration of the original Japanese document with detected layout elements highlighted in colored boxesCe tans &iia! aaae oeRRbaeienases(b) Illustration of the recreated document with dense text structure for better OCR performance‘Token CategoriesMoteAddresstetNumberVaribiecompany typeColumn Categories(J tite| Aatress(tee[7] section adr"
   },
   {
     "type": "NarrativeText",
