@@ -1,6 +1,8 @@
-## 0.10.5-dev1
+## 0.10.5-dev2
 
 ### Enhancements
+
+* Add functionality to sort elements using `xy-cut` sorting approach in `partition_pdf` for `hi_res` and `fast` strategies
 * Create new CI Pipelines
   - Checking text, xml, email, and html doc tests against the library installed without extras
   - Checking each library extra against their respective tests
