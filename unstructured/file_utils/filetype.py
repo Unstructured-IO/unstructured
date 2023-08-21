@@ -642,14 +642,20 @@ def add_metadata_with_filetype(filetype: FileType):
                 )
                 filename = params.get("filename")
 
-                if metadata_filename and not include_path_in_metadata_filename:
-                    params["filename"] = params.get("metadata_filename")
+                if metadata_filename:
+                    if not include_path_in_metadata_filename:
+                        # include_path_in_metadata_filename=False use only metadata_filename
+                        params["filename"] = params.get("metadata_filename")
 
-                if metadata_filename and include_path_in_metadata_filename and filename:
-                    params["filename"] = create_metadata_filename(
-                        filename=filename,
-                        metadata_filename=metadata_filename,
-                    )
+                    elif filename:
+                        # if include_path_in_metadata_filename=True and filename is not None
+                        # add directory to metadata_filename
+                        params["filename"] = create_metadata_filename(
+                            filename=filename,
+                            metadata_filename=metadata_filename,
+                        )
+
+                # Remove directory from filename if include_path_in_metadata_filename=False
                 if params["filename"] is not None and not include_path_in_metadata_filename:
                     file_directory, filename = os.path.split(params["filename"])
                     params["file_directory"] = file_directory or None
