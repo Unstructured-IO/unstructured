@@ -464,7 +464,7 @@ def add_pytesseract_bbox_to_elements(elements, bboxes, width, height):
     for element in elements:
         char_count = len(element.text.replace(" ", ""))
 
-        for box in boxes[i : i + char_count]: # noqa
+        for box in boxes[i : i + char_count]:  # noqa
             _, x1, y1, x2, y2, _ = box.split()
             x1, y1, x2, y2 = map(int, [x1, y1, x2, y2])
 
