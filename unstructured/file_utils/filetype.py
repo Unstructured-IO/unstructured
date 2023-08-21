@@ -19,7 +19,7 @@ from unstructured.partition.common import (
     exactly_one,
     normalize_layout_element,
 )
-from unstructured.partition.utils.constants import SORT_MODE_XY_CUT, SORT_MODE_BASIC
+from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_XY_CUT
 from unstructured.partition.utils.sorting import sort_page_elements
 
 if TYPE_CHECKING:
@@ -552,9 +552,7 @@ def document_to_element_list(
                 coordinate_system=coordinate_system,
                 **kwargs,
             )
-        if sort_mode == SORT_MODE_XY_CUT:
-            sorted_page_elements = sort_page_elements(page_elements, sort_mode)
-        elif sort_mode == SORT_MODE_BASIC and sort:
+        if (sort_mode == SORT_MODE_XY_CUT) or (sort_mode == SORT_MODE_BASIC and sort):
             sorted_page_elements = sort_page_elements(page_elements, sort_mode)
         else:
             sorted_page_elements = page_elements

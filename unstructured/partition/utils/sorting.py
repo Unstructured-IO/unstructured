@@ -2,8 +2,8 @@ from typing import List
 
 import numpy as np
 
-from unstructured.documents.elements import Element, CoordinatesMetadata
-from unstructured.partition.utils.constants import SORT_MODE_XY_CUT, SORT_MODE_BASIC
+from unstructured.documents.elements import CoordinatesMetadata, Element
+from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_XY_CUT
 from unstructured.partition.utils.xycut import recursive_xy_cut
 
 

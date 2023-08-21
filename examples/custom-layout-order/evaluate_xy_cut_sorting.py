@@ -8,8 +8,12 @@ import pdf2image
 
 from unstructured.documents.elements import PageBreak
 from unstructured.partition.pdf import partition_pdf
-from unstructured.partition.utils.constants import SORT_MODE_XY_CUT, SORT_MODE_BASIC
-from unstructured.partition.utils.xycut import bbox2points, recursive_xy_cut, vis_polygons_with_index
+from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_XY_CUT
+from unstructured.partition.utils.xycut import (
+    bbox2points,
+    recursive_xy_cut,
+    vis_polygons_with_index,
+)
 
 
 def show_plot(image, desired_width=None):
