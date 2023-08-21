@@ -4,6 +4,14 @@ import cv2
 import numpy as np
 
 
+"""
+
+This module contains the implementation of the XY-Cut sorting approach 
+from: https://github.com/Sanster/xy-cut
+
+"""
+
+
 def projection_by_bboxes(boxes: np.array, axis: int) -> np.ndarray:
     """
      通过一组 bbox 获得投影直方图，最后以 per-pixel 形式输出
