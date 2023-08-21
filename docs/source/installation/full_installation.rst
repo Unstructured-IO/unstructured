@@ -23,11 +23,6 @@ Full Installation
 
    While "local-inference" remains supported in newer versions for backward compatibility, it might be deprecated in future releases. It's advisable to transition to the "all-docs" extra for comprehensive support.
 
-3. **Installing detectron2**:
-   If you intend to leverage custom models from the LayoutParser Model Zoo, you'll need `detectron2`. 
-   
-   Follow the guidelines `here <INSERT_LINK_HERE>`_ to install it.
-
 
 Installation with ``conda`` on Windows
 --------------------------------------
