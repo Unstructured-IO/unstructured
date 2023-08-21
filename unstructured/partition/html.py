@@ -121,6 +121,7 @@ def partition_html(
 
     return document_to_element_list(
         document,
+        sortable=False,
         include_page_breaks=include_page_breaks,
         last_modification_date=metadata_last_modified or last_modification_date,
         **kwargs,

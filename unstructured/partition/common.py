@@ -400,8 +400,8 @@ def _get_page_image_metadata(
 
 def document_to_element_list(
     document: "DocumentLayout",
+    sortable: bool = False,
     include_page_breaks: bool = False,
-    sort: bool = False,
     last_modification_date: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
@@ -450,10 +450,10 @@ def document_to_element_list(
                 coordinate_system=coordinate_system,
                 **kwargs,
             )
-        if (sort_mode == SORT_MODE_XY_CUT) or (sort_mode == SORT_MODE_BASIC and sort):
+
+        sorted_page_elements = page_elements
+        if sortable and sort_mode == SORT_MODE_XY_CUT:
             sorted_page_elements = sort_page_elements(page_elements, sort_mode)
-        else:
-            sorted_page_elements = page_elements
 
         if include_page_breaks and i < num_pages - 1:
             sorted_page_elements.append(PageBreak(text=""))

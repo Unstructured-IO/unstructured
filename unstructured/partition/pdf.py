@@ -263,8 +263,8 @@ def _partition_pdf_or_image_local(
         )
     elements = document_to_element_list(
         layout,
+        sortable=True,
         include_page_breaks=include_page_breaks,
-        sort=False,
         last_modification_date=metadata_last_modified,
         **kwargs,
     )
