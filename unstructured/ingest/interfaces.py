@@ -8,7 +8,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Iterable
+from typing import Any, Dict, Iterable, List, Optional
 
 import requests
 
@@ -69,7 +69,9 @@ class BaseConnector(ABC):
     config: BaseConnectorConfig
 
     def __init__(
-        self, standard_config: StandardConnectorConfig, config: BaseConnectorConfig
+        self,
+        standard_config: StandardConnectorConfig,
+        config: BaseConnectorConfig,
     ):
         """Expects a standard_config object that implements StandardConnectorConfig
         and config object that implements BaseConnectorConfig."""
@@ -208,7 +210,10 @@ class BaseIngestDoc(ABC):
         self._output_filename.parent.mkdir(parents=True, exist_ok=True)
         with open(self._output_filename, "w", encoding="utf8") as output_f:
             json.dump(
-                self.isd_elems_no_filename, output_f, ensure_ascii=False, indent=2
+                self.isd_elems_no_filename,
+                output_f,
+                ensure_ascii=False,
+                indent=2,
             )
         logger.info(f"Wrote {self._output_filename}")
 
@@ -248,7 +253,7 @@ class BaseIngestDoc(ABC):
 
             if response.status_code != 200:
                 raise RuntimeError(
-                    f"Caught {response.status_code} from API: {response.text}"
+                    f"Caught {response.status_code} from API: {response.text}",
                 )
 
             return response.json()
@@ -310,10 +315,7 @@ class ConnectorCleanupMixin:
 
     def cleanup(self, cur_dir=None):
         """Recursively clean up downloaded files and directories."""
-        if (
-            self.standard_config.preserve_downloads
-            or self.standard_config.download_only
-        ):
+        if self.standard_config.preserve_downloads or self.standard_config.download_only:
             return
         if cur_dir is None:
             cur_dir = self.standard_config.download_dir
