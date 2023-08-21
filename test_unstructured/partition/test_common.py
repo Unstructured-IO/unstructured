@@ -1,8 +1,8 @@
 import pytest
 from PIL import Image
 from unstructured_inference.inference import layout
-from unstructured_inference.inference.layoutelement import LocationlessLayoutElement
 from unstructured_inference.inference.layout import LayoutElement
+from unstructured_inference.inference.layoutelement import LocationlessLayoutElement
 
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
@@ -14,7 +14,11 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.partition import common
-from unstructured.partition.common import contains_emoji, document_to_element_list, _get_page_image_metadata
+from unstructured.partition.common import (
+    _get_page_image_metadata,
+    contains_emoji,
+    document_to_element_list,
+)
 
 
 class MockPageLayout(layout.PageLayout):

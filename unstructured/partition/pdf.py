@@ -28,11 +28,11 @@ from unstructured.file_utils.filetype import (
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.partition.common import (
     convert_to_bytes,
+    document_to_element_list,
     exactly_one,
     get_last_modified_date,
     get_last_modified_date_from_file,
     spooled_to_bytes_io_if_needed,
-    document_to_element_list,
 )
 from unstructured.partition.strategies import determine_pdf_or_image_strategy
 from unstructured.partition.text import element_from_text, partition_text

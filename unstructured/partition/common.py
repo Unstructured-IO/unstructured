@@ -23,7 +23,7 @@ from unstructured.documents.elements import (
 )
 from unstructured.logger import logger
 from unstructured.nlp.patterns import ENUMERATED_BULLETS_RE, UNICODE_BULLETS_RE
-from unstructured.partition.utils.constants import SORT_MODE_XY_CUT, SORT_MODE_BASIC
+from unstructured.partition.utils.constants import SORT_MODE_XY_CUT
 from unstructured.partition.utils.sorting import sort_page_elements
 from unstructured.utils import dependency_exists
 
@@ -31,11 +31,11 @@ if dependency_exists("docx") and dependency_exists("docx.table"):
     from docx.table import Table as docxtable
 
 if TYPE_CHECKING:
+    from unstructured_inference.inference.layout import DocumentLayout, PageLayout
     from unstructured_inference.inference.layoutelement import (
         LayoutElement,
         LocationlessLayoutElement,
     )
-    from unstructured_inference.inference.layout import PageLayout
 
 
 def get_last_modified_date(filename: str) -> Union[str, None]:
