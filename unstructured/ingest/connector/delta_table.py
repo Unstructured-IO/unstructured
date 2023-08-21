@@ -6,7 +6,6 @@ from pathlib import Path
 from typing import Dict, List, Optional, Union
 
 import pandas as pd
-from deltalake import DeltaTable
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -103,6 +102,8 @@ class DeltaTableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 @requires_dependencies(["deltalake"], extras="delta-table")
 @dataclass
 class DeltaTableConnector(ConnectorCleanupMixin, BaseConnector):
+    from deltalake import DeltaTable
+
     config: SimpleDeltaTableConfig
     delta_table: Optional[DeltaTable] = None
 
@@ -113,7 +114,10 @@ class DeltaTableConnector(ConnectorCleanupMixin, BaseConnector):
     ):
         super().__init__(standard_config, config)
 
+    @requires_dependencies(["deltalake"], extras="delta-table")
     def initialize(self):
+        from deltalake import DeltaTable
+
         self.delta_table = DeltaTable(
             table_uri=self.config.table_uri,
             version=self.config.version,
