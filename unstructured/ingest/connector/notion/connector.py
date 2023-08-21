@@ -289,6 +289,7 @@ class NotionConnector(ConnectorCleanupMixin, BaseConnector):
             config=config,
         )
 
+    @requires_dependencies(dependencies=["notion_client"])
     def initialize(self):
         """Verify that can get metadata for an object, validates connections info."""
         pass
@@ -301,6 +302,13 @@ class NotionConnector(ConnectorCleanupMixin, BaseConnector):
         )
 
         client = NotionClient(auth=self.config.api_key, logger=self.config.get_logger())
+
+        # sanity check that database id is valid
+        resp_code = client.pages.retrieve_status(page_id=page_id)
+        if resp_code != 200:
+            raise ValueError(
+                f"page associated with page id could not be found: {page_id}",
+            )
 
         child_content = get_recursive_content_from_page(
             client=client,
@@ -333,6 +341,13 @@ class NotionConnector(ConnectorCleanupMixin, BaseConnector):
 
         client = NotionClient(auth=self.config.api_key, logger=self.config.get_logger())
 
+        # sanity check that database id is valid
+        resp_code = client.databases.retrieve_status(database_id=database_id)
+        if resp_code != 200:
+            raise ValueError(
+                f"database associated with database id could not be found: {database_id}",
+            )
+
         child_content = get_recursive_content_from_database(
             client=client,
             database_id=database_id,
@@ -363,6 +378,7 @@ class NotionConnector(ConnectorCleanupMixin, BaseConnector):
                 for database_id in self.config.database_ids
             ]
         if self.config.recursive:
+            self.config.get_logger().info("Getting recursive content")
             child_pages = []
             child_databases = []
             for page_id in self.config.page_ids:

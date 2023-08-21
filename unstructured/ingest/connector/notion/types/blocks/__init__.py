@@ -13,6 +13,7 @@ from .file import File
 from .heading import Heading
 from .image import Image
 from .link_preview import LinkPreview
+from .link_to_page import LinkToPage
 from .numbered_list import NumberedListItem
 from .paragraph import Paragraph
 from .pdf import PDF
@@ -43,6 +44,7 @@ __all__ = [
     "Heading",
     "Image",
     "LinkPreview",
+    "LinkToPage",
     "NumberedListItem",
     "Paragraph",
     "PDF",
