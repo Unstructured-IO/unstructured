@@ -10,12 +10,12 @@ from unstructured.file_utils.file_conversion import convert_file_to_html_text
 from unstructured.file_utils.filetype import (
     FileType,
     add_metadata_with_filetype,
-    document_to_element_list,
 )
 from unstructured.partition.common import (
     exactly_one,
     get_last_modified_date,
     get_last_modified_date_from_file,
+    document_to_element_list,
 )
 
 if TYPE_CHECKING:
