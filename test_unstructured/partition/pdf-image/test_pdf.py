@@ -764,3 +764,10 @@ def test_partition_pdf_from_file_with_hi_res_strategy_custom_metadata_date(
         )
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
+
+
+def test_partition_pdf_with_ocr_has_coordinates(
+    filename="example-docs/chevron-page.pdf",
+):
+    elements = pdf.partition_pdf(filename=filename, strategy="ocr_only")
+    assert elements[0].metadata.coordinates is not None
