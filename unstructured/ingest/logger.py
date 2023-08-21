@@ -16,7 +16,7 @@ def ingest_log_streaming_init(level: int) -> None:
     logger.setLevel(level)
 
 
-def make_default_logger(level: int) -> logging.Logger:
+def make_default_logger(level: int = logging.NOTSET) -> logging.Logger:
     """Return a custom logger."""
     logger = logging.getLogger("unstructured.ingest")
     handler = logging.StreamHandler()

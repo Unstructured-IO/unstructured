@@ -3,6 +3,7 @@ through Unstructured."""
 
 import functools
 import json
+import logging
 import os
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
@@ -14,9 +15,11 @@ import requests
 
 from unstructured.documents.elements import DataSourceMetadata
 from unstructured.ingest.error import PartitionError, SourceConnectionError
-from unstructured.ingest.logger import logger
+from unstructured.ingest.logger import make_default_logger
 from unstructured.partition.auto import partition
 from unstructured.staging.base import convert_to_dict
+
+logger = make_default_logger()
 
 
 @dataclass
@@ -114,6 +117,10 @@ class BaseIngestDoc(ABC):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._date_processed = None
+
+    @abstractmethod
+    def get_logger(self) -> logging.Logger:
+        pass
 
     @property
     def date_created(self) -> Optional[str]:

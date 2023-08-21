@@ -8,7 +8,9 @@ from unstructured.ingest.interfaces import (
     BaseConnector,
     ProcessorConfigs,
 )
-from unstructured.ingest.logger import ingest_log_streaming_init, logger
+from unstructured.ingest.logger import ingest_log_streaming_init, make_default_logger
+
+logger = make_default_logger()
 
 with suppress(RuntimeError):
     mp.set_start_method("spawn")
