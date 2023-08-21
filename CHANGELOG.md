@@ -1,10 +1,28 @@
+## 0.10.5-dev1
+
+### Enhancements
+* Create new CI Pipelines
+  - Checking text, xml, email, and html doc tests against the library installed without extras
+  - Checking each library extra against their respective tests
+
 ## 0.10.3
+* Adds ability to reuse connections per process in unstructured-ingest
+* Pass ocr_mode in partition_pdf and set the default back to individual pages for now
+* Add diagrams and descriptions for ingest design in the ingest README
+
+### Features
+
+### Fixes
+
+* remove test modification for potential bug and add docstring
+* fix partitioning of and tests for email and msg docs with attachments, add docstring to msg function
+
+## 0.10.2
 
 ### Enhancements
 * Bump unstructured-inference==0.5.13:
   - Fix extracted image elements being included in layout merge, addresses the issue
     where an entire-page image in a PDF was not passed to the layout model when using hi_res.
-* Adds ability to reuse connections per process in unstructured-ingest
 
 ### Features
 
@@ -35,9 +53,6 @@
 ### Features
 
 ### Fixes
-
-* fix pdf partition of list items being detected as titles in OCR only mode
-
 
 ## 0.9.3
 
