@@ -132,6 +132,10 @@ install-ingest-discord:
 install-ingest-github:
 	python3 -m pip install -r requirements/ingest-github.txt
 
+.PHONY: install-ingest-biomed
+install-ingest-biomed:
+	python3 -m pip install -r requirements/ingest-biomed.txt
+
 .PHONY: install-ingest-gitlab
 install-ingest-gitlab:
 	python3 -m pip install -r requirements/ingest-gitlab.txt
@@ -172,6 +176,14 @@ install-ingest-airtable:
 install-ingest-sharepoint:
 	python3 -m pip install -r requirements/ingest-sharepoint.txt
 
+.PHONY: install-ingest-local
+install-ingest-local:
+	echo "no unique dependencies for local connector"
+
+.PHONY: install-ingest-notion
+install-ingest-notion:
+	python3 -m pip install -r requirements/ingest-notion.txt
+
 .PHONY: install-unstructured-inference
 install-unstructured-inference:
 	python3 -m pip install -r requirements/local-inference.txt
@@ -211,6 +223,7 @@ pip-compile:
 	# sphinx docs looks for additional requirements
 	cp requirements/build.txt docs/requirements.txt
 	pip-compile --upgrade requirements/ingest-s3.in
+	pip-compile --upgrade requirements/ingest-biomed.in
 	pip-compile --upgrade requirements/ingest-box.in
 	pip-compile --upgrade requirements/ingest-gcs.in
 	pip-compile --upgrade requirements/ingest-dropbox.in
