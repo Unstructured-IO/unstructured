@@ -444,7 +444,7 @@ def convert_pdf_to_images(
             
 def add_coordinates_to_elements(elements, coordinates):
     """
-    Get the bounding box of the each element and add it to element.metadata
+    Get the bounding box of each element and add it to element.metadata
     
     Args:
         text (str): The text detected by pytesseract.image_to_string.
@@ -497,7 +497,7 @@ def _partition_pdf_or_image_with_ocr(
     min_partition: Optional[int] = 0,
     metadata_last_modified: Optional[str] = None,
 ):
-    """Partitions and image or PDF using Tesseract OCR. For PDFs, each page is converted
+    """Partitions an image or PDF using Tesseract OCR. For PDFs, each page is converted
     to an image prior to processing."""
     import pytesseract
 
