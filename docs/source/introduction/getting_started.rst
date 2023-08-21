@@ -58,9 +58,7 @@ The example documents in this section come from the
 directory in the ``unstructured`` repo.
 
 Before running the code in this make sure you've installed the ``unstructured`` library
-and all dependencies using the instructions in the `Quick Start <https://unstructured-io.github.io/unstructured/installing.html#quick-start>`_ section. Note that for examples that use PDFs, you'll need to install the extras for 
-
-
+and all dependencies using the instructions in the `Quick Start <https://unstructured-io.github.io/unstructured/installing.html#quick-start>`_ section.
 
 Partitioning a document
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -164,7 +162,7 @@ of the table will be available in the element metadata under ``element.metadata.
 table extraction is available, the ``partition`` function will extract tables automatically if they are present.
 For PDFs and images, table extraction requires a relatively expensive call to a table recognition model, and so for those
 document types table extraction is an option you need to enable. If you would like to extract tables for PDFs or images,
-pass in ``infer_table_structured=True``. Here is an example (Note: this example requires the ``pdf`` extra. This can be installed with `pip install "unstructured[pdf]"`):
+pass in ``infer_table_structured=True``. Here is an example (Note: this example requires the ``pdf`` extra. This can be installed with ``pip install "unstructured[pdf]"``):
 
 .. code:: python
 
