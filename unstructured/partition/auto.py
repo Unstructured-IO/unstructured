@@ -103,7 +103,8 @@ def _get_partition_with_extras(
     doc_type: str,
     partition_with_extras_map: Optional[Dict[str, Callable]] = None,
 ):
-    partition_with_extras_map = partition_with_extras_map or PARTITION_WITH_EXTRAS_MAP
+    if partition_with_extras_map is None:
+        partition_with_extras_map = PARTITION_WITH_EXTRAS_MAP
     _partition_func = partition_with_extras_map.get(doc_type)
     if _partition_func is None:
         raise ImportError(

@@ -21,7 +21,7 @@ from unstructured.documents.elements import (
 )
 from unstructured.file_utils.filetype import FILETYPE_TO_MIMETYPE, FileType
 from unstructured.partition import auto
-from unstructured.partition.auto import partition
+from unstructured.partition.auto import _get_partition_with_extras, partition
 from unstructured.partition.common import convert_office_doc
 from unstructured.staging.base import elements_to_json
 
@@ -873,3 +873,12 @@ def test_auto_partition_metadata_file_filename():
     with open(filename) as f:
         elements = partition(file=f, file_filename=filename)
     assert elements[0].metadata.filename == os.path.split(filename)[-1]
+
+
+def test_get_partition_with_extras_prompts_for_install_if_missing():
+    partition_with_extras_map = {}
+    with pytest.raises(ImportError) as exception_info:
+        _get_partition_with_extras("pdf", partition_with_extras_map)
+
+    msg = str(exception_info.value)
+    assert 'Install the pdf dependencies with pip install "unstructured[pdf]"' in msg
