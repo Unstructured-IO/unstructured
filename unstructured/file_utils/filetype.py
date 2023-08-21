@@ -19,6 +19,8 @@ from unstructured.partition.common import (
     exactly_one,
     normalize_layout_element,
 )
+from unstructured.partition.utils.constants import SORT_MODE_XY_CUT, SORT_MODE_BASIC
+from unstructured.partition.utils.sorting import sort_page_elements
 
 if TYPE_CHECKING:
     from unstructured_inference.inference.layout import DocumentLayout, PageLayout
@@ -507,6 +509,7 @@ def document_to_element_list(
 ) -> List[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
     elements: List[Element] = []
+    sort_mode = kwargs.get("sort_mode", SORT_MODE_XY_CUT)
     num_pages = len(document.pages)
     for i, page in enumerate(document.pages):
         page_elements: List[Element] = []
@@ -549,22 +552,16 @@ def document_to_element_list(
                 coordinate_system=coordinate_system,
                 **kwargs,
             )
-        if sort:
-            page_elements = sorted(
-                page_elements,
-                key=lambda el: (
-                    el.metadata.coordinates.points[0][1]
-                    if el.metadata.coordinates
-                    else float("inf"),
-                    el.metadata.coordinates.points[0][0]
-                    if el.metadata.coordinates
-                    else float("inf"),
-                    el.id,
-                ),
-            )
+        if sort_mode == SORT_MODE_XY_CUT:
+            sorted_page_elements = sort_page_elements(page_elements, sort_mode)
+        elif sort_mode == SORT_MODE_BASIC and sort:
+            sorted_page_elements = sort_page_elements(page_elements, sort_mode)
+        else:
+            sorted_page_elements = page_elements
+
         if include_page_breaks and i < num_pages - 1:
-            page_elements.append(PageBreak(text=""))
-        elements.extend(page_elements)
+            sorted_page_elements.append(PageBreak(text=""))
+        elements.extend(sorted_page_elements)
 
     return elements
 

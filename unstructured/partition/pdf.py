@@ -262,6 +262,7 @@ def _partition_pdf_or_image_local(
         include_page_breaks=include_page_breaks,
         sort=False,
         last_modification_date=metadata_last_modified,
+        **kwargs,
     )
     out_elements = []
 
@@ -354,6 +355,7 @@ def _process_pdfminer_pages(
 ):
     """Uses PDF miner to split a document into pages and process them."""
     elements: List[Element] = []
+    sort_mode = kwargs.get("sort_mode", SORT_MODE_XY_CUT)
 
     for i, page in enumerate(extract_pages(fp)):  # type: ignore
         width, height = page.width, page.height
@@ -397,7 +399,6 @@ def _process_pdfminer_pages(
                     )
                     page_elements.append(element)
 
-        sort_mode = kwargs.get("sort_mode", SORT_MODE_XY_CUT)
         sorted_page_elements = sort_page_elements(page_elements, sort_mode)
         elements += sorted_page_elements
 
