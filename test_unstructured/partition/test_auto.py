@@ -321,11 +321,13 @@ def test_auto_partition_pdf_uses_table_extraction():
         assert mock_process_file_with_model.call_args[1]["extract_tables"]
 
 
-def test_auto_partition_pdf_with_fast_strategy():
+def test_auto_partition_pdf_with_fast_strategy(monkeypatch):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
 
     mock_return = [NarrativeText("Hello there!")]
     with patch.object(auto, "partition_pdf", return_value=mock_return) as mock_partition:
+        mock_partition_with_extras_map = {"pdf": mock_partition}
+        monkeypatch.setattr(auto, "PARTITION_WITH_EXTRAS_MAP", mock_partition_with_extras_map)
         partition(filename=filename, strategy="fast")
 
     mock_partition.assert_called_once_with(
@@ -563,11 +565,13 @@ def test_auto_partition_odt_from_file():
         ("jdsfjdfsjkds", "pdf", None),
     ],
 )
-def test_auto_adds_filetype_to_metadata(content_type, routing_func, expected):
+def test_auto_adds_filetype_to_metadata(content_type, routing_func, expected, monkeypatch):
     with patch(
         f"unstructured.partition.auto.partition_{routing_func}",
         lambda *args, **kwargs: [Text("text 1"), Text("text 2")],
-    ):
+    ) as mock_partition:
+        mock_partition_with_extras_map = {routing_func: mock_partition}
+        monkeypatch.setattr(auto, "PARTITION_WITH_EXTRAS_MAP", mock_partition_with_extras_map)
         elements = partition("example-docs/layout-parser-paper-fast.pdf", content_type=content_type)
     assert len(elements) == 2
     assert all(el.metadata.filetype == expected for el in elements)
