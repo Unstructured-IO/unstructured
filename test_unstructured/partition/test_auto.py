@@ -584,7 +584,7 @@ def test_auto_adds_filetype_to_metadata(content_type, routing_func, expected, mo
         (None, FILETYPE_TO_MIMETYPE[FileType.PDF]),
     ],
 )
-def test_auto_filetype_overrides_file_specific(content_type, expected):
+def test_auto_filetype_overrides_file_specific(content_type, expected, monkeypatch):
     pdf_metadata = ElementMetadata(filetype="imapdf")
     with patch(
         "unstructured.partition.auto.partition_pdf",
@@ -592,7 +592,9 @@ def test_auto_filetype_overrides_file_specific(content_type, expected):
             Text("text 1", metadata=pdf_metadata),
             Text("text 2", metadata=pdf_metadata),
         ],
-    ):
+    ) as mock_partition:
+        mock_partition_with_extras_map = {"pdf": mock_partition}
+        monkeypatch.setattr(auto, "PARTITION_WITH_EXTRAS_MAP", mock_partition_with_extras_map)
         elements = partition("example-docs/layout-parser-paper-fast.pdf", content_type=content_type)
     assert len(elements) == 2
     assert all(el.metadata.filetype == expected for el in elements)
