@@ -13,6 +13,7 @@ from typing import Any, Dict, List, Optional
 import requests
 
 from unstructured.documents.elements import DataSourceMetadata
+from unstructured.ingest.error import PartitionError, SourceConnectionError
 from unstructured.ingest.logger import logger
 from unstructured.partition.auto import partition
 from unstructured.staging.base import convert_to_dict
@@ -189,6 +190,7 @@ class BaseIngestDoc(ABC):
     # NOTE(crag): Future BaseIngestDoc classes could define get_file_object() methods
     # in addition to or instead of get_file()
     @abstractmethod
+    @SourceConnectionError.wrap
     def get_file(self):
         """Fetches the "remote" doc and stores it locally on the filesystem."""
         pass
@@ -206,6 +208,7 @@ class BaseIngestDoc(ABC):
             json.dump(self.isd_elems_no_filename, output_f, ensure_ascii=False, indent=2)
         logger.info(f"Wrote {self._output_filename}")
 
+    @PartitionError.wrap
     def partition_file(self, **partition_kwargs) -> List[Dict[str, Any]]:
         if not self.standard_config.partition_by_api:
             logger.debug("Using local partition")

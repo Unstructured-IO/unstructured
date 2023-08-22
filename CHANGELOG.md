@@ -1,15 +1,21 @@
-## 0.10.5-dev0
+## 0.10.5-dev3
 
 ### Enhancements
 * Create new CI Pipelines
   - Checking text, xml, email, and html doc tests against the library installed without extras
   - Checking each library extra against their respective tests
+* `partition` raises and error and tells the user to install the appropriate extra if a filetype
+  is detected that is missing dependencies.
+* Add custom errors to ingest
+
 
 ## 0.10.3
 * Adds ability to reuse connections per process in unstructured-ingest
 * Pass ocr_mode in partition_pdf and set the default back to individual pages for now
+* Add diagrams and descriptions for ingest design in the ingest README
 
 ### Features
+* Add delta table connector
 
 ### Fixes
 
@@ -66,6 +72,7 @@
 * Update `partition_xlsx` to always use `soupparser_fromstring` to parse `html text`
 * Add functionality to switch `html` text parser based on whether the `html` text contains emoji
 * Add functionality to check if a string contains any emoji characters
+* Add CI tests around Notion
 
 ### Features
 
@@ -90,6 +97,8 @@
   - better caching of models
   - another version of detectron2 available, though the default layout model is unchanged
 * Added UUID option for element_id
+* Added UUID option for element_id
+* CI improvements to run ingest tests in parallel
 
 ### Features
 

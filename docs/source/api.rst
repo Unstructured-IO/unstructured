@@ -5,16 +5,50 @@ Try our hosted API! It's freely available to use with any of the file types list
 
 Now you can get started with this quick example:
 
-.. code:: shell
+.. tabs::
 
-	curl -X 'POST' \
-	'https://api.unstructured.io/general/v0/general' \
-	-H 'accept: application/json' \
-	-H 'Content-Type: multipart/form-data' \
-	-H 'unstructured-api-key: <YOUR API KEY>' \
-	-F 'files=@example-docs/family-day.eml' \
-	| jq -C . | less -R
+   .. tab:: Shell
 
+      .. code:: shell
+
+         curl -X 'POST' \
+         'https://api.unstructured.io/general/v0/general' \
+         -H 'accept: application/json' \
+         -H 'Content-Type: multipart/form-data' \
+         -H 'unstructured-api-key: <YOUR API KEY>' \
+         -F 'files=@sample-docs/family-day.eml' \
+         | jq -C . | less -R
+
+   .. tab:: Python
+
+      .. code:: python
+
+        # Define the URL
+        url = 'https://api.unstructured.io/general/v0/general'
+
+        # Define the headers
+        headers = {
+            'accept': 'application/json',
+            'unstructured-api-key': '<API-KEY>',
+        }
+
+        # Define the form data
+        data = {
+            'strategy': 'auto',
+        }
+
+        # Define the file data
+        file_path = "/Path/To/File"
+        file_data = {'files': open(file_path, 'rb')}
+
+        # Make the POST request
+        response = requests.post(url, headers=headers, data=data, files=file_data)
+
+        # Close the file
+        file_data['files'].close()
+
+        # Parse the JSON response
+        json_response = response.json()
 
 Below, you will find a more comprehensive overview of the API capabilities. For detailed information on request and response schemas, refer to the `API documentation <https://api.unstructured.io/general/docs#/>`_.
 
@@ -227,7 +261,7 @@ If you are self-hosting the API or running it locally, it's strongly suggested t
 Using Docker Images
 ====================
 
-The following instructions are intended to help you get up and running using Docker to interact with ``unstructured-api``. See `here <https://docs.docker.com/get-docker/>`_ if you don't already have docker installed on your machine.
+The following instructions are intended to help you get up and running using Docker to interact with ``unstructured-api``. See `docker <https://docs.docker.com/get-docker/>`_ if you don't already have docker installed on your machine.
 
 NOTE: Multi-platform images are built to support both x86_64 and Apple silicon hardware. Docker pull should download the corresponding image for your architecture, but you can specify with ``--platform`` (e.g. ``--platform linux/amd64``) if needed.
 
