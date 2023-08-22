@@ -232,7 +232,7 @@ pip-compile:
 	pip-compile --upgrade requirements/ingest-gcs.in
 	pip-compile --upgrade requirements/ingest-dropbox.in
 	pip-compile --upgrade requirements/ingest-azure.in
-	pip-compile --upgrade requirements/ingest-delta-lake.in
+	pip-compile --upgrade requirements/ingest-delta-table.in
 	pip-compile --upgrade requirements/ingest-discord.in
 	pip-compile --upgrade requirements/ingest-reddit.in
 	pip-compile --upgrade requirements/ingest-github.in
