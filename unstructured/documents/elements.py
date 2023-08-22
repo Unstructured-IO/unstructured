@@ -143,7 +143,8 @@ class ElementMetadata:
 
     # Webpage specific metadata fields
     url: Optional[str] = None
-    links: Optional[List[Link]] = None
+    link_urls: Optional[List[str]] = None
+    link_texts: Optional[List[str]] = None
 
     # E-mail specific metadata fields
     sent_from: Optional[List[str]] = None
@@ -157,7 +158,8 @@ class ElementMetadata:
     header_footer_type: Optional[str] = None
 
     # Formatting metadata fields
-    emphasized_texts: Optional[List[dict]] = None
+    emphasized_text_contents: Optional[List[str]] = None
+    emphasized_text_tags: Optional[List[str]] = None
 
     # Text format metadata fields
     text_as_html: Optional[str] = None

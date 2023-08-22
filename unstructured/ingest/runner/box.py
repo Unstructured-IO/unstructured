@@ -19,6 +19,7 @@ def box(
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
 
     connector_config.download_dir = update_download_dir_remote_url(
+        connector_name="box",
         connector_config=connector_config,
         remote_url=remote_url,
         logger=logger,

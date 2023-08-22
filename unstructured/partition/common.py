@@ -25,8 +25,8 @@ from unstructured.logger import logger
 from unstructured.nlp.patterns import ENUMERATED_BULLETS_RE, UNICODE_BULLETS_RE
 from unstructured.utils import dependency_exists
 
-if dependency_exists("docx"):
-    import docx.table as docxtable
+if dependency_exists("docx") and dependency_exists("docx.table"):
+    from docx.table import Table as docxtable
 
 if TYPE_CHECKING:
     from unstructured_inference.inference.layoutelement import (
@@ -165,9 +165,21 @@ def _add_element_metadata(
         else None
     )
     links = element.links if hasattr(element, "links") and len(element.links) > 0 else None
+    link_urls = [link.get("url") for link in links] if links else None
+    link_texts = [link.get("text") for link in links] if links else None
     emphasized_texts = (
         element.emphasized_texts
         if hasattr(element, "emphasized_texts") and len(element.emphasized_texts) > 0
+        else None
+    )
+    emphasized_text_contents = (
+        [emphasized_text.get("text") for emphasized_text in emphasized_texts]
+        if emphasized_texts
+        else None
+    )
+    emphasized_text_tags = (
+        [emphasized_text.get("tag") for emphasized_text in emphasized_texts]
+        if emphasized_texts
         else None
     )
     metadata = ElementMetadata(
@@ -177,8 +189,10 @@ def _add_element_metadata(
         page_number=page_number,
         url=url,
         text_as_html=text_as_html,
-        links=links,
-        emphasized_texts=emphasized_texts,
+        link_urls=link_urls,
+        link_texts=link_texts,
+        emphasized_text_contents=emphasized_text_contents,
+        emphasized_text_tags=emphasized_text_tags,
         section=section,
     )
     element.metadata = metadata.merge(element.metadata)

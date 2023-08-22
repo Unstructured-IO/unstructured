@@ -2,3 +2,4 @@
 -c base.txt
 gcsfs
 fsspec
+bs4
