@@ -17,7 +17,28 @@ def coordinates_to_bbox(coordinates: CoordinatesMetadata) -> List[int]:
 def sort_page_elements(
     page_elements: List[Element],
     sort_mode: str = SORT_MODE_XY_CUT,
-):
+) -> List[Element]:
+    """
+    Sorts a list of page elements based on the specified sorting mode.
+
+    Parameters:
+    - page_elements (List[Element]): A list of elements representing parts of a page. Each element
+     should have metadata containing coordinates.
+    - sort_mode (str, optional): The mode by which the elements will be sorted. Default is
+     SORT_MODE_XY_CUT.
+        - SORT_MODE_XY_CUT: Sorts elements based on XY-cut sorting approach. Requires the
+         recursive_xy_cut function and coordinates_to_bbox function to be defined.
+        - SORT_MODE_BASIC: Sorts elements based on their coordinates. Elements without coordinates
+         will be pushed to the end.
+        - If an unrecognized sort_mode is provided, the function returns the elements as-is.
+
+    Returns:
+    - List[Element]: A list of sorted page elements.
+    """
+
+    if not page_elements:
+        return []
+
     if sort_mode == SORT_MODE_XY_CUT:
         coordinates_list = [el.metadata.coordinates for el in page_elements]
         boxes = [coordinates_to_bbox(coords) for coords in coordinates_list]
