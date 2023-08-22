@@ -371,3 +371,17 @@ def test_partition_image_from_file_with_hi_res_strategy_metadata_date_custom_met
         )
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
+    
+    
+def test_partition_image_with_ocr_has_coordinates_from_file(
+    mocker,
+    filename="example-docs/english-and-korean.png",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    mocker.patch(
+        "unstructured.partition.pdf.get_last_modified_date",
+        return_value=mocked_last_modification_date,
+    )
+    elements = image.partition_image(filename=filename, strategy="ocr_only")
+
+    assert elements[0].metadata.coordinates is not None
