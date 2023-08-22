@@ -1,4 +1,4 @@
-## 0.10.5-dev3
+## 0.10.5-dev4
 
 ### Enhancements
 * Create new CI Pipelines
@@ -7,6 +7,7 @@
 * `partition` raises and error and tells the user to install the appropriate extra if a filetype
   is detected that is missing dependencies.
 * Add custom errors to ingest
+* Add notes on extra installs to docs
 
 
 ## 0.10.3
