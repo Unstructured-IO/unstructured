@@ -188,7 +188,7 @@ def partition_pdf_or_image(
                 infer_table_structure=infer_table_structure,
                 include_page_breaks=include_page_breaks,
                 ocr_languages=ocr_languages,
-                ocr_mode="individual_blocks",
+                ocr_mode="entire_page",
                 metadata_last_modified=metadata_last_modified or last_modification_date,
                 **kwargs,
             )
