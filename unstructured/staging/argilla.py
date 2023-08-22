@@ -18,13 +18,15 @@ from argilla.feedback import (
     TextQuestion,
 )
 
-from unstructured.documents.elements import Text
+from unstructured.documents.elements import Text, Title
 from unstructured.nlp.tokenize import word_tokenize
 
 
 class ARGILLA_PARTITION_TYPES(Enum):
     MSG = "msg"
     CSV = "csv"
+    PPT = "ppt"
+    PPTX = "pptx"
 
 PARTITION_DATASET_FIELDS = {
     # TODO: do we want to include default
@@ -42,6 +44,16 @@ PARTITION_DATASET_FIELDS = {
     ],
     ARGILLA_PARTITION_TYPES.CSV: [
         TextField(name="table", use_markdown=True),
+    ],
+    ARGILLA_PARTITION_TYPES.PPT: [
+        TextField(name="page_number", use_markdown=True),
+        TextField(name="title", use_markdown=True, required=False),
+        TextField(name="content", use_markdown=True, required=False),
+    ],
+    ARGILLA_PARTITION_TYPES.PPTX: [
+        TextField(name="page_number", use_markdown=True),
+        TextField(name="title", use_markdown=True, required=False),
+        TextField(name="content", use_markdown=True, required=False),
     ]
 }
 
@@ -109,6 +121,36 @@ def stage_for_argilla_feedback(
                     "table": element,
                 }
                 fields = _ensure_string_values_dict(fields)
+                records.append(FeedbackRecord(fields=fields))
+    elif partition_type in [ARGILLA_PARTITION_TYPES.PPT , ARGILLA_PARTITION_TYPES.PPTX]:
+        if partition_type == ARGILLA_PARTITION_TYPES.PPTX:
+            from unstructured.partition.pptx import partition_pptx as partition_func
+        else:
+            from unstructured.partition.ppt import partition_ppt as partition_func
+
+        for filename in files:
+            elements = partition_func(filename=filename, **partition_kwargs)
+            page_elements = {}
+            for element in elements:
+                last_page = 1
+                if element.metadata.page_number:
+                    last_page = element.metadata.page_number
+                if last_page not in page_elements:
+                    page_elements[last_page] = []
+                page_elements[last_page].append(element)
+            print(page_elements)
+            for page_number, page_elements in page_elements.items():
+                fields = {
+                    "page_number": page_number,
+                }
+                if not page_elements:
+                    continue
+                if isinstance(page_elements[0], Title):
+                    fields["title"] = page_elements[0].text
+                    page_elements = page_elements[1:]
+                fields["content"] = "\n".join(
+                    _elements_to_text(page_elements)
+                )
                 records.append(FeedbackRecord(fields=fields))
 
     dataset.add_records(records)
