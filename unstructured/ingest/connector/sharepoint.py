@@ -259,7 +259,7 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
             return []
 
     @requires_dependencies(["office365"], extras="sharepoint")
-    def _list_pages(self, site_client) -> list[str, dict]:
+    def _list_pages(self, site_client) -> list:
         from office365.runtime.client_request_exception import ClientRequestException
 
         try:
