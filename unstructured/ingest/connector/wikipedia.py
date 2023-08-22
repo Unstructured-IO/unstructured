@@ -1,7 +1,7 @@
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional, Any, Dict, Optional
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -28,6 +28,9 @@ class WikipediaIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleWikipediaConfig = field(repr=False)
     page: "WikipediaPage"
 
+    def __post_init__(self):
+        self.page = None
+
     @property
     def filename(self) -> Path:
         raise NotImplementedError()
@@ -51,6 +54,16 @@ class WikipediaIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         with open(self.filename, "w", encoding="utf8") as f:
             f.write(self.text)
 
+    @property
+    def record_locator(self) -> Optional[Dict[str, Any]]:
+        return {
+            "page_url": self.page.url,
+            "page_id": self.page.pageid
+        }
+
+    @property
+    def version(self) -> Optional[str]:
+        return self.page.revision_id
 
 class WikipediaIngestHTMLDoc(WikipediaIngestDoc):
     @property

@@ -3,7 +3,7 @@ import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Optional
-
+from datetime import datetime
 from atlassian import Confluence
 
 from unstructured.ingest.interfaces import (
@@ -86,19 +86,10 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleConfluenceConfig
     file_meta: ConfluenceFileMeta
 
-    @requires_dependencies(["atlassian"])
     def __post_init__(self):
-        self.confluence = Confluence(
-            self.config.url,
-            username=self.config.user_email,
-            password=self.config.api_token,
-        )
-        self.exists = True
-        try:
-            self.page_properties = self.confluence.get_page_properties(self.file_meta.document_id)
-        except Exception as e:
-            logger.error(e)
-            self.exists = False
+        self.document = None
+        self.document_history = None
+        self.document_version = None
 
     # TODO: remove one of filename or _tmp_download_file, using a wrapper
     @property
@@ -117,23 +108,34 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     
     @property
     def date_created(self) -> Optional[str]:
-        return None
+        if self.document_history is None:
+            return None
+        return datetime.fromisoformat(self.document_history['createdDate']).isoformat()
 
     @property
     def date_modified(self) -> Optional[str]:
+        if self.document_history is None:
+            return None
+        
+        if date_modified := self.document_history.get('lastUpdated', '').get('when', ''):
+            return datetime.fromisoformat(date_modified).isoformat()
         return None
 
     @property
     def exists(self) -> Optional[bool]:
-        return self.exists
+        return (self.document is not None)
 
     @property
     def record_locator(self) -> Optional[Dict[str, Any]]:
-        return {}
+        return {
+            'base_url': self.config.url,
+            'space_id': self.file_meta.space_id,
+            'page_id': self.file_meta.document_id
+        }
 
     @property
     def version(self) -> Optional[str]:
-        return None
+        return self.document_version
 
     @requires_dependencies(["atlassian"])
     @BaseIngestDoc.skip_if_file_exists
@@ -142,8 +144,18 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         # TODO: instead of having a separate connection object for each doc,
         # have a separate connection object for each process
-        result = self.confluence.get_page_by_id(page_id=self.file_meta.document_id, expand="body.view")
+
+        confluence = Confluence(
+            self.config.url,
+            username=self.config.user_email,
+            password=self.config.api_token,
+        )
+
+        result = confluence.get_page_by_id(page_id=self.file_meta.document_id, expand="history.lastUpdated,version,body.view")
         self.document = result["body"]["view"]["value"]
+        self.document_version = result['version']['number']
+        self.document_history = result['history']
+
         self.filename.parent.mkdir(parents=True, exist_ok=True)
         with open(self.filename, "w", encoding="utf8") as f:
             f.write(self.document)
@@ -174,7 +186,7 @@ class ConfluenceConnector(ConnectorCleanupMixin, BaseConnector):
         self.list_of_spaces = None
         if self.config.list_of_spaces:
             self.list_of_spaces = self.config.list_of_spaces.split(",")
-            if self.config.max_number_of_spaces:
+            if self.config.max_number_of_spaces < len(self.list_of_spaces):
                 logger.warning(
                     """--confluence-list-of-spaces and --confluence-num-of-spaces cannot
                     be used at the same time. Connector will only fetch the
