@@ -770,7 +770,12 @@ def test_partition_pdf_with_ocr_has_coordinates_from_filename(
     filename="example-docs/chevron-page.pdf",
 ):
     elements = pdf.partition_pdf(filename=filename, strategy="ocr_only")
-    assert elements[0].metadata.coordinates is not None
+    assert elements[0].metadata.coordinates.points == [
+        (657.0, 2144.0),
+        (657.0, 2106.0),
+        (1043.0, 2106.0),
+        (1043.0, 2144.0),
+    ]
 
 
 def test_partition_pdf_with_ocr_has_coordinates_from_file(
@@ -781,4 +786,9 @@ def test_partition_pdf_with_ocr_has_coordinates_from_file(
             file=f,
             strategy="ocr_only",
         )
-    assert elements[0].metadata.coordinates is not None
+    assert elements[0].metadata.coordinates.points == [
+        (657.0, 2144.0),
+        (657.0, 2106.0),
+        (1043.0, 2106.0),
+        (1043.0, 2144.0),
+    ]

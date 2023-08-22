@@ -382,5 +382,5 @@ def test_partition_image_with_ocr_has_coordinates_from_file(
         return_value=mocked_last_modification_date,
     )
     elements = image.partition_image(filename=filename, strategy="ocr_only")
-
-    assert elements[0].metadata.coordinates is not None
+    int_coordinates = [(int(x), int(y)) for x, y in elements[0].metadata.coordinates.points]
+    assert int_coordinates == [(14, 36), (14, 16), (381, 16), (381, 36)]
