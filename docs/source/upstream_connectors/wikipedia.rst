@@ -1,12 +1,12 @@
-Airtable
+Wikipedia
 ==========
 Connect Airtable to your preprocessing pipeline, and batch process all your documents using ``unstructured-ingest`` to store structured outputs locally on your filesystem. 
 
-First you'll need to install the Airtable dependencies as shown here.
+First you'll need to install the Wikipedia dependencies as shown here.
 
 .. code:: shell
 
-  pip install "unstructured[airtable]"
+  pip install "unstructured[wikipedia]"
 
 Run Locally
 -----------
