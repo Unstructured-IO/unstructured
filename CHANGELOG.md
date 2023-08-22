@@ -1,4 +1,4 @@
-## 0.10.5-dev2
+## 0.10.5-dev3
 
 ### Enhancements
 * Create new CI Pipelines
@@ -6,6 +6,8 @@
   - Checking each library extra against their respective tests
 * `partition` raises and error and tells the user to install the appropriate extra if a filetype
   is detected that is missing dependencies.
+* Add custom errors to ingest
+
 
 ### Features
 
