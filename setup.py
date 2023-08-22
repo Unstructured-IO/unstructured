@@ -141,6 +141,7 @@ setup(
         "outlook": load_requirements("requirements/ingest-outlook.in"),
         "confluence": load_requirements("requirements/ingest-confluence.in"),
         "airtable": load_requirements("requirements/ingest-airtable.in"),
+        "salesforce": load_requirements("requirements/ingest-salesforce.in"),
         # Legacy extra requirements
         "huggingface": load_requirements("requirements/huggingface.in"),
         "local-inference": all_doc_reqs,

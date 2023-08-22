@@ -1,3 +1,13 @@
+## 0.9.3-dev2
+
+### Enhancements
+
+### Features
+
+* Add Salesforce Connector to be able to pull Account, Case, Campaign, EmailMessage, Lead
+
+### Fixes
+
 ## 0.9.3-dev1
 
 ### Enhancements

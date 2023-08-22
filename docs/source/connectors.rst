@@ -129,6 +129,14 @@ You can process your files stored in S3 in batch using the `S3 Connector <https:
 To install all dependencies for this connector run: ``pip install "unstructured[s3]"``
 
 
+``Salesforce Connector``
+---------------------
+You can process your records stored in S3 in batch using the `Salesforce Connector <https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/connector/salesforce.py>`_. You can find an example of how to use it `here <https://github.com/Unstructured-IO/unstructured/blob/f5541c7b0b1e2fc47ec88da5e02080d60e1441e2/examples/ingest/salesforce/ingest.sh>`_.
+
+To install all dependencies for this connector run: ``pip install "unstructured[salesforce]"``
+
+
+
 ``Slack Connector``
 ---------------------
 Using the `Slack Connector <https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/connector/slack.py>`_ you can batch process a channel. You can find an example of how to use it `here <https://github.com/Unstructured-IO/unstructured/blob/f5541c7b0b1e2fc47ec88da5e02080d60e1441e2/examples/ingest/slack/ingest.sh>`_.
