@@ -22,6 +22,7 @@ def salesforce(
 
     hashed_dir_name = hashlib.sha256(salesforce_username.encode("utf-8"))
     connector_config.download_dir = update_download_dir_hash(
+        connector_name="salesforce",
         connector_config=connector_config,
         hashed_dir_name=hashed_dir_name,
         logger=logger,
