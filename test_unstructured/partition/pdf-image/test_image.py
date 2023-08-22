@@ -371,8 +371,8 @@ def test_partition_image_from_file_with_hi_res_strategy_metadata_date_custom_met
         )
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
-    
-    
+
+
 def test_partition_image_with_ocr_has_coordinates_from_file(
     mocker,
     filename="example-docs/english-and-korean.png",

@@ -545,7 +545,7 @@ def _partition_pdf_or_image_with_ocr(
             for element in _elements:
                 element.metadata = metadata
                 elements.append(element)
-                
+
             add_pytesseract_bbox_to_elements(elements, bboxes, width, height)
 
             if include_page_breaks:

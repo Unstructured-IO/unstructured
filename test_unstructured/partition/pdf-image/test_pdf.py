@@ -771,8 +771,8 @@ def test_partition_pdf_with_ocr_has_coordinates_from_filename(
 ):
     elements = pdf.partition_pdf(filename=filename, strategy="ocr_only")
     assert elements[0].metadata.coordinates is not None
-    
-    
+
+
 def test_partition_pdf_with_ocr_has_coordinates_from_file(
     filename="example-docs/chevron-page.pdf",
 ):
