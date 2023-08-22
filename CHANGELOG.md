@@ -4,6 +4,8 @@
 * Create new CI Pipelines
   - Checking text, xml, email, and html doc tests against the library installed without extras
   - Checking each library extra against their respective tests
+* `partition` raises and error and tells the user to install the appropriate extra if a filetype
+  is detected that is missing dependencies.
 
 ## 0.10.3
 * Adds ability to reuse connections per process in unstructured-ingest
