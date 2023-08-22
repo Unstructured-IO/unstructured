@@ -1,9 +1,8 @@
-import logging
 import os
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional, Type
+from typing import Type
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -13,7 +12,6 @@ from unstructured.ingest.interfaces import (
     IngestDocCleanupMixin,
     StandardConnectorConfig,
 )
-from unstructured.ingest.logger import make_default_logger
 
 SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
     "s3",
@@ -81,12 +79,6 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     config: SimpleFsspecConfig
     remote_file_path: str
-    logger: Optional[logging.Logger] = None
-
-    def get_logger(self) -> logging.Logger:
-        if not self.logger:
-            self.logger = make_default_logger()
-        return self.logger
 
     def _tmp_download_file(self):
         return Path(self.standard_config.download_dir) / self.remote_file_path.replace(
@@ -114,7 +106,7 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         fs: AbstractFileSystem = get_filesystem_class(self.config.protocol)(
             **self.config.access_kwargs,
         )
-        self.get_logger().debug(f"Fetching {self} - PID: {os.getpid()}")
+        self.logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         fs.get(rpath=self.remote_file_path, lpath=self._tmp_download_file().as_posix())
 
     @property

@@ -12,7 +12,6 @@ from unstructured.ingest.interfaces import (
     IngestDocCleanupMixin,
     StandardConnectorConfig,
 )
-from unstructured.ingest.logger import logger
 from unstructured.utils import (
     requires_dependencies,
 )
@@ -83,7 +82,7 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         self._create_full_tmp_dir_path()
         if self.config.verbose:
-            logger.debug(f"fetching {self} - PID: {os.getpid()}")
+            self.logger.debug(f"fetching {self} - PID: {os.getpid()}")
         messages: List[discord.Message] = []
         intents = discord.Intents.default()
         intents.message_content = True
@@ -102,7 +101,7 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
                 await bot.close()
             except Exception as e:
-                logger.error(f"Error fetching messages: {e}")
+                self.logger.error(f"Error fetching messages: {e}")
                 await bot.close()
 
         bot.run(self.token)

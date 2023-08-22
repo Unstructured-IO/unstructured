@@ -11,7 +11,6 @@ from unstructured.ingest.interfaces import (
     IngestDocCleanupMixin,
     StandardConnectorConfig,
 )
-from unstructured.ingest.logger import logger
 
 if TYPE_CHECKING:
     from wikipedia import WikipediaPage
@@ -47,7 +46,7 @@ class WikipediaIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def get_file(self):
         """Fetches the "remote" doc and stores it locally on the filesystem."""
         self._create_full_tmp_dir_path()
-        logger.debug(f"Fetching {self} - PID: {os.getpid()}")
+        self.logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         with open(self.filename, "w", encoding="utf8") as f:
             f.write(self.text)
 

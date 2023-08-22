@@ -17,9 +17,9 @@ from unstructured.ingest.interfaces import (
     ConnectorCleanupMixin,
     IngestDocCleanupMixin,
     IngestDocSessionHandleMixin,
+    LoggingMixin,
     StandardConnectorConfig,
 )
-from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
@@ -101,7 +101,11 @@ class SimpleGoogleDriveConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
 
 
 @dataclass
-class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseIngestDoc):
+class GoogleDriveIngestDoc(
+    IngestDocSessionHandleMixin,
+    IngestDocCleanupMixin,
+    BaseIngestDoc,
+):
     config: SimpleGoogleDriveConfig
     file_meta: Dict
 
@@ -124,7 +128,7 @@ class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, B
                 self.file_meta.get("mimeType"),  # type: ignore
             )
             if not export_mime:
-                logger.info(
+                self.logger.info(
                     f"File not supported. Name: {self.file_meta.get('name')} "
                     f"ID: {self.file_meta.get('id')} "
                     f"MimeType: {self.file_meta.get('mimeType')}",
@@ -151,7 +155,7 @@ class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, B
             dir_ = self.file_meta.get("download_dir")
             if dir_:
                 if not dir_.is_dir():
-                    logger.debug(f"Creating directory: {self.file_meta.get('download_dir')}")
+                    self.logger.debug(f"Creating directory: {self.file_meta.get('download_dir')}")
 
                     if dir_:
                         dir_.mkdir(parents=True, exist_ok=True)
@@ -159,10 +163,10 @@ class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, B
                 with open(self.filename, "wb") as handler:
                     handler.write(file.getbuffer())
                     saved = True
-                    logger.debug(f"File downloaded: {self.filename}.")
+                    self.logger.debug(f"File downloaded: {self.filename}.")
 
         if not saved:
-            logger.error(f"Error while downloading and saving file: {self.filename}.")
+            self.logger.error(f"Error while downloading and saving file: {self.filename}.")
 
     def write_result(self):
         """Write the structured json result for this doc. result must be json serializable."""
@@ -171,16 +175,22 @@ class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, B
         self._output_filename.parent.mkdir(parents=True, exist_ok=True)
         with open(self._output_filename, "w") as output_f:
             output_f.write(json.dumps(self.isd_elems_no_filename, ensure_ascii=False, indent=2))
-        logger.info(f"Wrote {self._output_filename}")
+        self.logger.info(f"Wrote {self._output_filename}")
 
 
-class GoogleDriveConnector(ConnectorCleanupMixin, BaseConnector):
+class GoogleDriveConnector(ConnectorCleanupMixin, BaseConnector, LoggingMixin):
     """Objects of this class support fetching documents from Google Drive"""
 
     config: SimpleGoogleDriveConfig
 
-    def __init__(self, standard_config: StandardConnectorConfig, config: SimpleGoogleDriveConfig):
+    def __init__(
+        self,
+        standard_config: StandardConnectorConfig,
+        config: SimpleGoogleDriveConfig,
+        verbose: bool = False,
+    ):
         super().__init__(standard_config, config)
+        LoggingMixin.__init__(self, verbose=verbose)
 
     def _list_objects(self, drive_id, recursive=False):
         files = []
@@ -217,7 +227,7 @@ class GoogleDriveConnector(ConnectorCleanupMixin, BaseConnector):
                         if meta.get("mimeType", "").startswith("application/vnd.google-apps"):
                             export_mime = GOOGLE_DRIVE_EXPORT_TYPES.get(meta.get("mimeType"))
                             if not export_mime:
-                                logger.info(
+                                self.logger.info(
                                     f"File {meta.get('name')} has an "
                                     f"unsupported MimeType {meta.get('mimeType')}",
                                 )
@@ -229,7 +239,7 @@ class GoogleDriveConnector(ConnectorCleanupMixin, BaseConnector):
 
                         # TODO (Habeeb): Consider filtering at the query level.
                         if self.config.extension and self.config.extension != ext:  # noqa: SIM102
-                            logger.debug(
+                            self.logger.debug(
                                 f"File {meta.get('name')} does not match "
                                 f"the file type {self.config.extension}",
                             )

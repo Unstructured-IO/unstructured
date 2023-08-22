@@ -12,9 +12,9 @@ from unstructured.ingest.interfaces import (
     BaseIngestDoc,
     ConnectorCleanupMixin,
     IngestDocCleanupMixin,
+    LoggingMixin,
     StandardConnectorConfig,
 )
-from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
 
@@ -104,7 +104,7 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @requires_dependencies(["atlassian"])
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
-        logger.debug(f"Fetching {self} - PID: {os.getpid()}")
+        self.logger.debug(f"Fetching {self} - PID: {os.getpid()}")
 
         # TODO: instead of having a separate connection object for each doc,
         # have a separate connection object for each process
@@ -123,7 +123,7 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
 @requires_dependencies(["atlassian"])
 @dataclass
-class ConfluenceConnector(ConnectorCleanupMixin, BaseConnector):
+class ConfluenceConnector(ConnectorCleanupMixin, BaseConnector, LoggingMixin):
     """Fetches body fields from all documents within all spaces in a Confluence Cloud instance."""
 
     config: SimpleConfluenceConfig
@@ -132,8 +132,10 @@ class ConfluenceConnector(ConnectorCleanupMixin, BaseConnector):
         self,
         standard_config: StandardConnectorConfig,
         config: SimpleConfluenceConfig,
+        verbose: bool = False,
     ):
         super().__init__(standard_config, config)
+        LoggingMixin.__init__(self, verbose=verbose)
 
     @requires_dependencies(["atlassian"])
     def initialize(self):
@@ -147,7 +149,7 @@ class ConfluenceConnector(ConnectorCleanupMixin, BaseConnector):
         if self.config.list_of_spaces:
             self.list_of_spaces = self.config.list_of_spaces.split(",")
             if self.config.max_number_of_spaces:
-                logger.warning(
+                self.logger.warning(
                     """--confluence-list-of-spaces and --confluence-num-of-spaces cannot
                     be used at the same time. Connector will only fetch the
                     --confluence-list-of-spaces that you've provided.""",

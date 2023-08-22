@@ -16,9 +16,9 @@ from unstructured.ingest.interfaces import (
     BaseIngestDoc,
     ConnectorCleanupMixin,
     IngestDocCleanupMixin,
+    LoggingMixin,
     StandardConnectorConfig,
 )
-from unstructured.ingest.logger import logger
 from unstructured.utils import (
     validate_date_args,
 )
@@ -125,7 +125,7 @@ class BiomedIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             and self.filename.is_file()
             and not self.standard_config.download_only
         ):
-            logger.debug(f"Cleaning up {self}")
+            self.logger.debug(f"Cleaning up {self}")
             Path.unlink(self.filename)
 
     @BaseIngestDoc.skip_if_file_exists
@@ -133,7 +133,7 @@ class BiomedIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         download_path = self.file_meta.download_filepath  # type: ignore
         dir_ = Path(os.path.dirname(download_path))  # type: ignore
         if not dir_.is_dir():
-            logger.debug(f"Creating directory: {dir_}")
+            self.logger.debug(f"Creating directory: {dir_}")
 
             if dir_:
                 dir_.mkdir(parents=True, exist_ok=True)
@@ -141,10 +141,10 @@ class BiomedIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             self.file_meta.ftp_path,  # type: ignore
             self.file_meta.download_filepath,
         )
-        logger.debug(f"File downloaded: {self.file_meta.download_filepath}")
+        self.logger.debug(f"File downloaded: {self.file_meta.download_filepath}")
 
 
-class BiomedConnector(ConnectorCleanupMixin, BaseConnector):
+class BiomedConnector(ConnectorCleanupMixin, BaseConnector, LoggingMixin):
     """Objects of this class support fetching documents from Biomedical literature FTP directory"""
 
     config: SimpleBiomedConfig
@@ -153,8 +153,10 @@ class BiomedConnector(ConnectorCleanupMixin, BaseConnector):
         self,
         standard_config: StandardConnectorConfig,
         config: SimpleBiomedConfig,
+        verbose: bool = False,
     ):
         super().__init__(standard_config, config)
+        LoggingMixin.__init__(self, verbose=verbose)
 
     def _list_objects_api(self):
         def urls_to_metadata(urls):
@@ -223,7 +225,7 @@ class BiomedConnector(ConnectorCleanupMixin, BaseConnector):
 
         def traverse(path, download_dir, output_dir):
             full_path = Path(PMC_DIR) / path
-            logger.debug(f"Traversing directory: {full_path}")
+            self.logger.debug(f"Traversing directory: {full_path}")
 
             ftp = FTP(DOMAIN)
             ftp.login()

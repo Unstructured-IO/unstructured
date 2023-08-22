@@ -11,9 +11,9 @@ from unstructured.ingest.interfaces import (
     BaseIngestDoc,
     ConnectorCleanupMixin,
     IngestDocCleanupMixin,
+    LoggingMixin,
     StandardConnectorConfig,
 )
-from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
@@ -145,7 +145,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             if pld != "":
                 pld = unescape(pld)
             else:
-                logger.info(
+                self.logger.info(
                     f"Page {self.meta['page'].get_property('Url', '')} has no retrievable content. \
                       Dumping empty doc.",
                 )
@@ -153,15 +153,15 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
             self.output_dir.mkdir(parents=True, exist_ok=True)
             if not self.download_dir.is_dir():
-                logger.debug(f"Creating directory: {self.download_dir}")
+                self.logger.debug(f"Creating directory: {self.download_dir}")
                 self.download_dir.mkdir(parents=True, exist_ok=True)
             with self.filename.open(mode="w") as f:
                 f.write(pld)
         except Exception as e:
-            logger.error(f"Error while downloading and saving file: {self.filename}.")
-            logger.error(e)
+            self.logger.error(f"Error while downloading and saving file: {self.filename}.")
+            self.logger.error(e)
             return
-        logger.info(f"File downloaded: {self.filename}")
+        self.logger.info(f"File downloaded: {self.filename}")
 
     def _get_file(self):
         try:
@@ -169,21 +169,21 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             self.output_dir.mkdir(parents=True, exist_ok=True)
 
             if not self.download_dir.is_dir():
-                logger.debug(f"Creating directory: {self.download_dir}")
+                self.logger.debug(f"Creating directory: {self.download_dir}")
                 self.download_dir.mkdir(parents=True, exist_ok=True)
 
             if fsize > MAX_MB_SIZE:
-                logger.info(f"Downloading file with size: {fsize} bytes in chunks")
+                self.logger.info(f"Downloading file with size: {fsize} bytes in chunks")
                 with self.filename.open(mode="wb") as f:
                     self.file.download_session(f, chunk_size=1024 * 1024 * 100).execute_query()
             else:
                 with self.filename.open(mode="wb") as f:
                     self.file.download(f).execute_query()
         except Exception as e:
-            logger.error(f"Error while downloading and saving file: {self.filename}.")
-            logger.error(e)
+            self.logger.error(f"Error while downloading and saving file: {self.filename}.")
+            self.logger.error(e)
             return
-        logger.info(f"File downloaded: {self.filename}")
+        self.logger.info(f"File downloaded: {self.filename}")
 
     @BaseIngestDoc.skip_if_file_exists
     @requires_dependencies(["office365"])
@@ -195,12 +195,18 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return
 
 
-class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
+class SharepointConnector(ConnectorCleanupMixin, BaseConnector, LoggingMixin):
     config: SimpleSharepointConfig
     tenant: None
 
-    def __init__(self, standard_config: StandardConnectorConfig, config: SimpleSharepointConfig):
+    def __init__(
+        self,
+        standard_config: StandardConnectorConfig,
+        config: SimpleSharepointConfig,
+        verbose: bool = False,
+    ):
         super().__init__(standard_config, config)
+        LoggingMixin.__init__(self, verbose=verbose)
         self._setup_client()
 
     @requires_dependencies(["office365"])
@@ -244,7 +250,7 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
             return files
         except ClientRequestException as e:
             if e.response.status_code != 404:
-                logger.info("Caught an error while processing documents %s", e.response.text)
+                self.logger.info("Caught an error while processing documents %s", e.response.text)
             return []
 
     @requires_dependencies(["office365"])
@@ -258,7 +264,7 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
             for page_meta in pages:
                 page_url = page_meta.get_property("Url", None)
                 if page_url is None:
-                    logger.info("Missing site_url. Omitting page... ")
+                    self.logger.info("Missing site_url. Omitting page... ")
                     break
                 page_url = f"/{page_url}" if page_url[0] != "/" else page_url
                 file_page = site_client.web.get_file_by_server_relative_path(page_url)
@@ -269,7 +275,7 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
                     [file_page, {"page": page_meta, "site_path": site_path}],
                 )
         except ClientRequestException as e:
-            logger.info("Caught an error while processing pages %s", e.response.text)
+            self.logger.info("Caught an error while processing pages %s", e.response.text)
             return []
 
         return page_files
@@ -281,7 +287,7 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
         root_folder = site_client.web.get_folder_by_server_relative_path(self.config.path)
         files = self._list_files(root_folder, self.config.recursive)
         if not files:
-            logger.info(
+            self.logger.info(
                 f"Couldn't process files in path {self.config.path} \
                 for site {site_client.base_url}",
             )
@@ -289,7 +295,7 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
         if self.config.process_pages:
             page_files = self._list_pages(site_client)
             if not page_files:
-                logger.info(f"Couldn't process pages for site {site_client.base_url}")
+                self.logger.info(f"Couldn't process pages for site {site_client.base_url}")
             page_output = [
                 SharepointIngestDoc(self.standard_config, self.config, f[0], f[1])
                 for f in page_files
@@ -307,7 +313,7 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
     @requires_dependencies(["office365"])
     def get_ingest_docs(self):
         if self.process_all:
-            logger.debug(self.base_site_url)
+            self.logger.debug(self.base_site_url)
             from office365.runtime.auth.client_credential import ClientCredential
             from office365.sharepoint.client_context import ClientContext
             from office365.sharepoint.tenant.administration.tenant import Tenant
@@ -318,7 +324,7 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
             tenant_sites.append(self.base_site_url)
             ingest_docs: List[SharepointIngestDoc] = []
             for site_url in set(tenant_sites):
-                logger.info(f"Processing docs for site: {site_url}")
+                self.logger.info(f"Processing docs for site: {site_url}")
                 site_client = ClientContext(site_url).with_credentials(
                     ClientCredential(self.config.client_id, self.config.client_credential),
                 )

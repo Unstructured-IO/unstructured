@@ -9,9 +9,9 @@ from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
+    LoggingMixin,
     StandardConnectorConfig,
 )
-from unstructured.ingest.logger import logger
 
 
 @dataclass
@@ -65,7 +65,7 @@ class LocalIngestDoc(BaseIngestDoc):
         return Path(self.standard_config.output_dir) / basename
 
 
-class LocalConnector(BaseConnector):
+class LocalConnector(BaseConnector, LoggingMixin):
     """Objects of this class support fetching document(s) from local file system"""
 
     config: SimpleLocalConfig
@@ -75,8 +75,10 @@ class LocalConnector(BaseConnector):
         self,
         standard_config: StandardConnectorConfig,
         config: SimpleLocalConfig,
+        verbose: bool = False,
     ):
         super().__init__(standard_config, config)
+        LoggingMixin.__init__(self, verbose=verbose)
 
     def cleanup(self, cur_dir=None):
         """Not applicable to local file system"""
@@ -101,7 +103,7 @@ class LocalConnector(BaseConnector):
         for pattern in patterns:
             if fnmatch.filter([path], pattern):
                 return True
-        logger.debug(f"The file {path!r} is discarded as it does not match any given glob.")
+        self.logger.debug(f"The file {path!r} is discarded as it does not match any given glob.")
         return False
 
     def get_ingest_docs(self):

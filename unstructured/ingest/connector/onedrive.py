@@ -11,13 +11,15 @@ from unstructured.ingest.interfaces import (
     IngestDocCleanupMixin,
     StandardConnectorConfig,
 )
-from unstructured.ingest.logger import logger
+from unstructured.ingest.logger import make_default_logger
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
     from office365.onedrive.driveitems.driveItem import DriveItem
 
 MAX_MB_SIZE = 512_000_000
+
+logger = make_default_logger()
 
 
 @dataclass
@@ -104,21 +106,21 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             self.output_dir.mkdir(parents=True, exist_ok=True)
 
             if not self.download_dir.is_dir():
-                logger.debug(f"Creating directory: {self.download_dir}")
+                self.logger.debug(f"Creating directory: {self.download_dir}")
                 self.download_dir.mkdir(parents=True, exist_ok=True)
 
             if fsize > MAX_MB_SIZE:
-                logger.info(f"Downloading file with size: {fsize} bytes in chunks")
+                self.logger.info(f"Downloading file with size: {fsize} bytes in chunks")
                 with self.filename.open(mode="wb") as f:
                     self.file.download_session(f, chunk_size=1024 * 1024 * 100).execute_query()
             else:
                 with self.filename.open(mode="wb") as f:
                     self.file.download(f).execute_query()
         except Exception as e:
-            logger.error(f"Error while downloading and saving file: {self.filename}.")
-            logger.error(e)
+            self.logger.error(f"Error while downloading and saving file: {self.filename}.")
+            self.logger.error(e)
             return
-        logger.info(f"File downloaded: {self.filename}")
+        self.logger.info(f"File downloaded: {self.filename}")
         return
 
 

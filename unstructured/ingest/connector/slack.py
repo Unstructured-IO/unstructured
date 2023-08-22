@@ -12,7 +12,6 @@ from unstructured.ingest.interfaces import (
     IngestDocCleanupMixin,
     StandardConnectorConfig,
 )
-from unstructured.ingest.logger import logger
 from unstructured.utils import (
     requires_dependencies,
     validate_date_args,
@@ -29,7 +28,6 @@ class SimpleSlackConfig(BaseConnectorConfig):
     token: str
     oldest: Optional[str]
     latest: Optional[str]
-    verbose: bool = False
 
     def validate_inputs(self):
         oldest_valid = True
@@ -96,8 +94,7 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         self._create_full_tmp_dir_path()
 
-        if self.config.verbose:
-            logger.debug(f"fetching channel {self.channel} - PID: {os.getpid()}")
+        self.logger.debug(f"fetching channel {self.channel} - PID: {os.getpid()}")
 
         messages = []
         self.client = WebClient(token=self.token)
@@ -126,7 +123,7 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 )
                 messages.extend(result["messages"])
         except SlackApiError as e:
-            logger.error(f"Error: {e}")
+            self.logger.error(f"Error: {e}")
 
         with open(self._tmp_download_file(), "w") as channel_file:
             for message in messages:

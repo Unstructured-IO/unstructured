@@ -1,4 +1,3 @@
-import logging
 import multiprocessing as mp
 from contextlib import suppress
 from functools import partial
@@ -8,7 +7,7 @@ from unstructured.ingest.interfaces import (
     BaseConnector,
     ProcessorConfigs,
 )
-from unstructured.ingest.logger import ingest_log_streaming_init, make_default_logger
+from unstructured.ingest.logger import make_default_logger
 
 logger = make_default_logger()
 
@@ -36,7 +35,6 @@ class Processor:
 
     def initialize(self):
         """Slower initialization things: check connections, load things into memory, etc."""
-        ingest_log_streaming_init(logging.DEBUG if self.verbose else logging.INFO)
         self.doc_connector.initialize()
         initialize()
 
@@ -83,8 +81,6 @@ class Processor:
         try:
             with mp.Pool(
                 processes=self.num_processes,
-                initializer=ingest_log_streaming_init,
-                initargs=(logging.DEBUG if self.verbose else logging.INFO,),
             ) as pool:
                 pool.map(self.doc_processor_fn, docs)
         finally:
@@ -98,6 +94,7 @@ def process_documents(
 ) -> None:
     process_document_with_partition_args = partial(
         process_document,
+        verbose=verbose,
         strategy=processor_config.partition_strategy,
         ocr_languages=processor_config.partition_ocr_languages,
         encoding=processor_config.partition_encoding,

@@ -1,8 +1,6 @@
-import logging
 from typing import Optional
 
 from unstructured.ingest.interfaces import ProcessorConfigs, StandardConnectorConfig
-from unstructured.ingest.logger import ingest_log_streaming_init
 from unstructured.ingest.processor import process_documents
 
 
@@ -15,8 +13,6 @@ def local(
     file_glob: Optional[str],
     **kwargs,
 ):
-    ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
-
     from unstructured.ingest.connector.local import (
         LocalConnector,
         SimpleLocalConfig,
@@ -29,6 +25,7 @@ def local(
             recursive=recursive,
             file_glob=file_glob,
         ),
+        verbose=verbose,
     )
 
     process_documents(doc_connector=doc_connector, processor_config=processor_config)

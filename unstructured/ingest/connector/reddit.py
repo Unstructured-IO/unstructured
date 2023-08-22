@@ -11,7 +11,6 @@ from unstructured.ingest.interfaces import (
     IngestDocCleanupMixin,
     StandardConnectorConfig,
 )
-from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
@@ -52,7 +51,7 @@ class RedditIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def get_file(self):
         """Fetches the "remote" doc and stores it locally on the filesystem."""
         self._create_full_tmp_dir_path()
-        logger.debug(f"Fetching {self} - PID: {os.getpid()}")
+        self.logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         # Write the title plus the body, if any
         text_to_write = f"# {self.post.title}\n{self.post.selftext}"
         with open(self.filename, "w", encoding="utf8") as f:

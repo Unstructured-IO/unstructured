@@ -10,8 +10,8 @@ from unstructured.ingest.interfaces import (
     BaseIngestDoc,
     ConnectorCleanupMixin,
     IngestDocCleanupMixin,
+    LoggingMixin,
 )
-from unstructured.ingest.logger import logger
 
 
 @dataclass
@@ -44,7 +44,7 @@ class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def get_file(self):
         """Fetches the "remote" doc and stores it locally on the filesystem."""
         self._create_full_tmp_dir_path()
-        logger.debug(f"Fetching {self} - PID: {os.getpid()}")
+        self.logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         self._fetch_and_write()
 
     def _fetch_and_write(self) -> None:
@@ -52,7 +52,7 @@ class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
 
 @dataclass
-class GitConnector(ConnectorCleanupMixin, BaseConnector):
+class GitConnector(ConnectorCleanupMixin, BaseConnector, LoggingMixin):
     config: SimpleGitConfig
 
     def initialize(self):
@@ -78,7 +78,7 @@ class GitConnector(ConnectorCleanupMixin, BaseConnector):
             ),
         )
         if not supported:
-            logger.debug(
+            self.logger.debug(
                 f"The file {path!r} is discarded as it does not contain a supported filetype.",
             )
         return supported
@@ -90,5 +90,5 @@ class GitConnector(ConnectorCleanupMixin, BaseConnector):
         for pattern in patterns:
             if fnmatch.filter([path], pattern):
                 return True
-        logger.debug(f"The file {path!r} is discarded as it does not match any given glob.")
+        self.logger.debug(f"The file {path!r} is discarded as it does not match any given glob.")
         return False

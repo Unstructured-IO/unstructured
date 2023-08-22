@@ -1,4 +1,3 @@
-import logging
 import os
 from dataclasses import dataclass
 from pathlib import Path
@@ -12,7 +11,6 @@ from unstructured.ingest.interfaces import (
     IngestDocCleanupMixin,
     StandardConnectorConfig,
 )
-from unstructured.ingest.logger import make_default_logger
 from unstructured.utils import requires_dependencies
 
 
@@ -50,7 +48,6 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     config: SimpleAirtableConfig
     file_meta: AirtableFileMeta
-    logger: Optional[logging.Logger] = None
 
     @property
     def filename(self):
@@ -59,11 +56,6 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             / self.file_meta.base_id
             / f"{self.file_meta.table_id}.csv"
         ).resolve()
-
-    def get_logger(self) -> logging.Logger:
-        if not self.logger:
-            self.logger = make_default_logger()
-        return self.logger
 
     @property
     def _output_filename(self):
@@ -74,7 +66,7 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @requires_dependencies(["pyairtable", "pandas"])
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
-        self.get_logger().debug(f"Fetching {self} - PID: {os.getpid()}")
+        self.logger.debug(f"Fetching {self} - PID: {os.getpid()}")
 
         # TODO: instead of having a separate connection object for each doc,
         # have a separate connection object for each process

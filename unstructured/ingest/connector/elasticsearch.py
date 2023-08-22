@@ -17,7 +17,6 @@ from unstructured.ingest.interfaces import (
     IngestDocCleanupMixin,
     StandardConnectorConfig,
 )
-from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
 
@@ -108,7 +107,7 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @requires_dependencies(["elasticsearch"])
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
-        logger.debug(f"Fetching {self} - PID: {os.getpid()}")
+        self.logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         # TODO: instead of having a separate client for each doc,
         # have a separate client for each process
         es = Elasticsearch(self.config.url)

@@ -2,7 +2,7 @@ import hashlib
 import logging
 
 from unstructured.ingest.interfaces import ProcessorConfigs, StandardConnectorConfig
-from unstructured.ingest.logger import ingest_log_streaming_init, logger
+from unstructured.ingest.logger import make_default_logger
 from unstructured.ingest.processor import process_documents
 from unstructured.ingest.runner.utils import update_download_dir_hash
 
@@ -19,7 +19,7 @@ def sharepoint(
     recursive: bool,
     **kwargs,
 ):
-    ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
+    logger = make_default_logger(logging.DEBUG if verbose else logging.INFO)
 
     hashed_dir_name = hashlib.sha256(
         f"{site}_{path}".encode("utf-8"),
@@ -46,6 +46,7 @@ def sharepoint(
             process_pages=(not files_only),
             recursive=recursive,
         ),
+        verbose=verbose,
     )
 
     process_documents(doc_connector=doc_connector, processor_config=processor_config)

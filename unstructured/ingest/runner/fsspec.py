@@ -3,7 +3,7 @@ import warnings
 from urllib.parse import urlparse
 
 from unstructured.ingest.interfaces import ProcessorConfigs, StandardConnectorConfig
-from unstructured.ingest.logger import ingest_log_streaming_init, logger
+from unstructured.ingest.logger import make_default_logger
 from unstructured.ingest.processor import process_documents
 from unstructured.ingest.runner.utils import update_download_dir_remote_url
 
@@ -16,7 +16,7 @@ def fsspec(
     recursive: bool,
     **kwargs,
 ):
-    ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
+    logger = make_default_logger(logging.DEBUG if verbose else logging.INFO)
 
     connector_config.download_dir = update_download_dir_remote_url(
         connector_name="fsspec",

@@ -16,10 +16,12 @@ from unstructured.ingest.interfaces import (
     IngestDocCleanupMixin,
     StandardConnectorConfig,
 )
-from unstructured.ingest.logger import logger
+from unstructured.ingest.logger import make_default_logger
 from unstructured.utils import requires_dependencies
 
 MAX_NUM_EMAILS = 1000000  # Maximum number of emails per folder
+
+logger = make_default_logger()
 
 
 class MissingFolderError(Exception):
@@ -109,7 +111,7 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         """Relies on Office365 python sdk message object to do the download."""
         try:
             if not self.download_dir.is_dir():
-                logger.debug(f"Creating directory: {self.download_dir}")
+                self.logger.debug(f"Creating directory: {self.download_dir}")
                 self.download_dir.mkdir(parents=True, exist_ok=True)
 
             with open(
@@ -124,12 +126,12 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 ).execute_query()  # download MIME representation of a message
 
         except Exception as e:
-            logger.error(
+            self.logger.error(
                 f"Error while downloading and saving file: {self.file.subject}.",
             )
-            logger.error(e)
+            self.logger.error(e)
             return
-        logger.info(f"File downloaded: {self.file.subject}")
+        self.logger.info(f"File downloaded: {self.file.subject}")
         return
 
 

@@ -3,7 +3,7 @@ import logging
 from typing import Optional
 
 from unstructured.ingest.interfaces import ProcessorConfigs, StandardConnectorConfig
-from unstructured.ingest.logger import ingest_log_streaming_init, logger
+from unstructured.ingest.logger import make_default_logger
 from unstructured.ingest.processor import process_documents
 from unstructured.ingest.runner.utils import update_download_dir_hash
 
@@ -18,7 +18,7 @@ def github(
     git_file_glob: Optional[str],
     **kwargs,
 ):
-    ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
+    logger = make_default_logger(logging.DEBUG if verbose else logging.INFO)
 
     hashed_dir_name = hashlib.sha256(
         f"{url}_{git_branch}".encode(
@@ -45,6 +45,7 @@ def github(
             branch=git_branch,
             file_glob=git_file_glob,
         ),
+        verbose=verbose,
     )
 
     process_documents(doc_connector=doc_connector, processor_config=processor_config)

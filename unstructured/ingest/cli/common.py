@@ -7,7 +7,7 @@ from unstructured.ingest.interfaces import (
     ProcessorConfigs,
     StandardConnectorConfig,
 )
-from unstructured.ingest.logger import ingest_log_streaming_init, logger
+from unstructured.ingest.logger import make_default_logger
 
 
 def run_init_checks(
@@ -24,7 +24,7 @@ def run_init_checks(
     download_only: bool,
     **kwargs,
 ):
-    ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
+    logger = make_default_logger(logging.DEBUG if verbose else logging.INFO)
     # Initial breaking checks
     if local_input_path is not None and download_dir:
         raise ClickException(
@@ -62,8 +62,7 @@ def run_init_checks(
         )
 
 
-def log_options(options: dict):
-    ingest_log_streaming_init(logging.DEBUG if options["verbose"] else logging.INFO)
+def log_options(options: dict, loggr: logging.Logger):
     sensitive_fields = [
         "account_name",
         "account_key",
@@ -80,7 +79,7 @@ def log_options(options: dict):
             if k in sensitive_fields and v is not None
         },
     )
-    logger.debug(f"options: {options_to_log}")
+    loggr.debug(f"options: {options_to_log}")
 
 
 def map_to_standard_config(options: dict) -> StandardConnectorConfig:

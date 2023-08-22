@@ -3,7 +3,7 @@ import logging
 from typing import Optional
 
 from unstructured.ingest.interfaces import ProcessorConfigs, StandardConnectorConfig
-from unstructured.ingest.logger import ingest_log_streaming_init, logger
+from unstructured.ingest.logger import make_default_logger
 from unstructured.ingest.processor import process_documents
 from unstructured.ingest.runner.utils import update_download_dir_hash
 
@@ -20,7 +20,7 @@ def confluence(
     max_num_of_docs_from_each_space: int,
     **kwargs,
 ):
-    ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
+    logger = make_default_logger(logging.DEBUG if verbose else logging.INFO)
 
     hashed_dir_name = hashlib.sha256(
         url.encode("utf-8"),
@@ -47,6 +47,7 @@ def confluence(
             max_number_of_spaces=max_num_of_spaces,
             max_number_of_docs_from_each_space=max_num_of_docs_from_each_space,
         ),
+        verbose=verbose,
     )
 
     process_documents(doc_connector=doc_connector, processor_config=processor_config)

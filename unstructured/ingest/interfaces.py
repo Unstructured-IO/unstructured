@@ -64,6 +64,8 @@ class StandardConnectorConfig:
 class BaseConnectorConfig(ABC):
     """Abstract definition on which to define connector-specific attributes."""
 
+    verbose: bool = False
+
 
 @dataclass
 class BaseConnector(ABC):
@@ -101,8 +103,24 @@ class BaseConnector(ABC):
         pass
 
 
+class LoggingMixin:
+    verbose: bool = False
+    _logger: Optional[logging.Logger] = None
+
+    def __init__(self, verbose: bool = False):
+        self.verbose = verbose
+
+    @property
+    def logger(self) -> logging.Logger:
+        if not self._logger:
+            self._logger = make_default_logger(
+                level=logging.DEBUG if self.verbose else logging.INFO,
+            )
+        return self._logger
+
+
 @dataclass
-class BaseIngestDoc(ABC):
+class BaseIngestDoc(ABC, LoggingMixin):
     """An "ingest document" is specific to a connector, and provides
     methods to fetch a single raw document, store it locally for processing, any cleanup
     needed after successful processing of the doc, and the ability to write the doc's
@@ -117,10 +135,6 @@ class BaseIngestDoc(ABC):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._date_processed = None
-
-    @abstractmethod
-    def get_logger(self) -> logging.Logger:
-        pass
 
     @property
     def date_created(self) -> Optional[str]:
@@ -188,7 +202,7 @@ class BaseIngestDoc(ABC):
                 and self.filename.is_file()
                 and self.filename.stat().st_size
             ):
-                logger.debug(f"File exists: {self.filename}, skipping {func.__name__}")
+                self.logger.debug(f"File exists: {self.filename}, skipping {func.__name__}")
                 return None
             return func(self, *args, **kwargs)
 
@@ -213,12 +227,12 @@ class BaseIngestDoc(ABC):
         self._output_filename.parent.mkdir(parents=True, exist_ok=True)
         with open(self._output_filename, "w", encoding="utf8") as output_f:
             json.dump(self.isd_elems_no_filename, output_f, ensure_ascii=False, indent=2)
-        logger.info(f"Wrote {self._output_filename}")
+        self.logger.info(f"Wrote {self._output_filename}")
 
     @PartitionError.wrap
     def partition_file(self, **partition_kwargs) -> List[Dict[str, Any]]:
         if not self.standard_config.partition_by_api:
-            logger.debug("Using local partition")
+            self.logger.debug("Using local partition")
             elements = partition(
                 filename=str(self.filename),
                 data_source_metadata=DataSourceMetadata(
@@ -236,7 +250,7 @@ class BaseIngestDoc(ABC):
         else:
             endpoint = self.standard_config.partition_endpoint
 
-            logger.debug(f"Using remote partition ({endpoint})")
+            self.logger.debug(f"Using remote partition ({endpoint})")
 
             with open(self.filename, "rb") as f:
                 headers_dict = {}
@@ -259,7 +273,7 @@ class BaseIngestDoc(ABC):
         self._date_processed = datetime.utcnow().isoformat()
         if self.standard_config.download_only:
             return None
-        logger.info(f"Processing {self.filename}")
+        self.logger.info(f"Processing {self.filename}")
 
         isd_elems = self.partition_file(**partition_kwargs)
 

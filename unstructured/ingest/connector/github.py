@@ -9,7 +9,6 @@ from unstructured.ingest.connector.git import (
     GitIngestDoc,
     SimpleGitConfig,
 )
-from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
@@ -50,10 +49,12 @@ class GitHubIngestDoc(GitIngestDoc):
             and content_file.encoding == "none"  # type: ignore
             and content_file.size  # type: ignore
         ):
-            logger.info("File too large for the GitHub API, using direct download link instead.")
+            self.logger.info(
+                "File too large for the GitHub API, using direct download link instead.",
+            )
             response = requests.get(content_file.download_url)  # type: ignore
             if response.status_code != 200:
-                logger.info("Direct download link has failed... Skipping this file.")
+                self.logger.info("Direct download link has failed... Skipping this file.")
             else:
                 contents = response.content
         else:

@@ -10,7 +10,7 @@ from unstructured.ingest.cli.common import (
     map_to_standard_config,
     run_init_checks,
 )
-from unstructured.ingest.logger import ingest_log_streaming_init, logger
+from unstructured.ingest.logger import make_default_logger
 from unstructured.ingest.runner import airtable as airtable_fn
 
 
@@ -57,8 +57,8 @@ from unstructured.ingest.runner import airtable as airtable_fn
 )
 def airtable(**options):
     verbose = options.get("verbose", False)
-    ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
-    log_options(options)
+    logger = make_default_logger(logging.DEBUG if verbose else logging.INFO)
+    log_options(options=options, loggr=logger)
     try:
         run_init_checks(**options)
         connector_config = map_to_standard_config(options)

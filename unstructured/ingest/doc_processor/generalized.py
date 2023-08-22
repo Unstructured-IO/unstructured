@@ -1,5 +1,5 @@
 """Process arbitrary files with the Unstructured library"""
-
+import logging
 import os
 from typing import Any, Dict, List, Optional
 
@@ -10,7 +10,7 @@ from unstructured.ingest.interfaces import (
     BaseSessionHandle,
     IngestDocSessionHandleMixin,
 )
-from unstructured.ingest.logger import logger
+from unstructured.ingest.logger import make_default_logger
 
 # module-level variable to store session handle
 session_handle: Optional[BaseSessionHandle] = None
@@ -29,7 +29,11 @@ def initialize():
     get_model(os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME"))
 
 
-def process_document(doc: "IngestDoc", **partition_kwargs) -> Optional[List[Dict[str, Any]]]:
+def process_document(
+    doc: "IngestDoc",
+    verbose: bool = False,
+    **partition_kwargs,
+) -> Optional[List[Dict[str, Any]]]:
     """Process any IngestDoc-like class of document with chosen Unstructured's partition logic.
 
     Parameters
@@ -39,6 +43,7 @@ def process_document(doc: "IngestDoc", **partition_kwargs) -> Optional[List[Dict
     """
     global session_handle
     isd_elems_no_filename = None
+    logger = make_default_logger(logging.DEBUG if verbose else logging.INFO)
     try:
         if isinstance(doc, IngestDocSessionHandleMixin):
             if session_handle is None:
