@@ -17,7 +17,7 @@ charset-normalizer==3.2.0
     # via
     #   -c requirements/base.txt
     #   requests
-click==8.1.6
+click==8.1.7
     # via
     #   -c requirements/base.txt
     #   -r requirements/test.in
@@ -94,7 +94,7 @@ requests==2.31.0
     # via
     #   -c requirements/base.txt
     #   label-studio-sdk
-ruff==0.0.284
+ruff==0.0.285
     # via -r requirements/test.in
 six==1.16.0
     # via python-dateutil

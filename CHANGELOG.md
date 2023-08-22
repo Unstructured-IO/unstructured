@@ -1,12 +1,14 @@
-## 0.10.5-dev3
+## 0.10.5
 
 ### Enhancements
 * Create new CI Pipelines
   - Checking text, xml, email, and html doc tests against the library installed without extras
   - Checking each library extra against their respective tests
-* `partition` raises and error and tells the user to install the appropriate extra if a filetype
+* `partition` raises an error and tells the user to install the appropriate extra if a filetype
   is detected that is missing dependencies.
 * Add custom errors to ingest
+* Bump `unstructured-ingest` to 0.5.15
+* Use `entire_page` ocr mode for pdfs and images
 
 
 ## 0.10.3
