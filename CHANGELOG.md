@@ -1,9 +1,15 @@
-## 0.10.5-dev1
+## 0.10.5-dev2
 
 ### Enhancements
 * Create new CI Pipelines
   - Checking text, xml, email, and html doc tests against the library installed without extras
   - Checking each library extra against their respective tests
+
+### Features
+
+* Extract coordinates from PDFs and images when using OCR only strategy and add to metadata
+
+### Fixes
 
 ## 0.10.3
 * Adds ability to reuse connections per process in unstructured-ingest
