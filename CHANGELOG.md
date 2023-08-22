@@ -1,4 +1,6 @@
-## 0.10.6-dev1
+## 0.10.6-dev0
+
+### Enhancements
 
 ### Features
 
@@ -9,6 +11,7 @@
 ## 0.10.5
 
 ### Enhancements
+
 * Create new CI Pipelines
   - Checking text, xml, email, and html doc tests against the library installed without extras
   - Checking each library extra against their respective tests
@@ -20,20 +23,20 @@
   - Add TIFF test file and TIFF filetype to `test_from_image_file` in `test_layout` (0.5.14)
 * Use `entire_page` ocr mode for pdfs and images
 * Add notes on extra installs to docs
-
-
-## 0.10.3
 * Adds ability to reuse connections per process in unstructured-ingest
-* Pass ocr_mode in partition_pdf and set the default back to individual pages for now
-* Add diagrams and descriptions for ingest design in the ingest README
 
 ### Features
 * Add delta table connector
 
 ### Fixes
 
-* remove test modification for potential bug and add docstring
-* fix partitioning of and tests for email and msg docs with attachments, add docstring to msg function
+## 0.10.4
+* Pass ocr_mode in partition_pdf and set the default back to individual pages for now
+* Add diagrams and descriptions for ingest design in the ingest README
+
+### Features
+
+### Fixes
 
 ## 0.10.2
 
