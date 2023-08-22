@@ -45,7 +45,6 @@ def github(
             branch=git_branch,
             file_glob=git_file_glob,
         ),
-        verbose=verbose,
     )
 
     process_documents(doc_connector=doc_connector, processor_config=processor_config)
