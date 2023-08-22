@@ -1,6 +1,5 @@
 import hashlib
 import logging
-from typing import Optional
 
 from unstructured.ingest.interfaces import ProcessorConfigs, StandardConnectorConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
