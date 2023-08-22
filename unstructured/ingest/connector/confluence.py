@@ -83,10 +83,7 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     config: SimpleConfluenceConfig
     file_meta: ConfluenceFileMeta
-    
-    @property
-    def registry_name(self):
-        return "confluence"
+    registry_name: str = "confluence"
 
     # TODO: remove one of filename or _tmp_download_file, using a wrapper
     @property

@@ -44,10 +44,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleSharepointConfig
     file: "File"
     meta: dict
-
-    @property
-    def registry_name(self):
-        return "sharepoint"
+    registry_name: str = "sharepoint"
 
     def __post_init__(self):
         self.ext = "".join(Path(self.file.name).suffixes) if not self.meta else ".html"

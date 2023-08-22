@@ -53,9 +53,7 @@ class WikipediaIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
 
 class WikipediaIngestHTMLDoc(WikipediaIngestDoc):
-    @property
-    def registry_name(self):
-        return "wikipedia_html"
+    registry_name: str = "wikipedia_html"
     
     @property
     def filename(self) -> Path:
@@ -77,9 +75,7 @@ class WikipediaIngestHTMLDoc(WikipediaIngestDoc):
 
 
 class WikipediaIngestTextDoc(WikipediaIngestDoc):
-    @property
-    def registry_name(self):
-        return "wikipedia_text"
+    registry_name: str = "wikipedia_text"
     
     @property
     def filename(self) -> Path:
@@ -101,9 +97,7 @@ class WikipediaIngestTextDoc(WikipediaIngestDoc):
 
 
 class WikipediaIngestSummaryDoc(WikipediaIngestDoc):
-    @property
-    def registry_name(self):
-        return "wikipedia_summary"
+    registry_name: str = "wikipedia_summary"
     
     @property
     def filename(self) -> Path:

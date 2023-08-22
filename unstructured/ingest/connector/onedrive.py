@@ -59,10 +59,7 @@ class SimpleOneDriveConfig(BaseConnectorConfig):
 class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleOneDriveConfig
     file: "DriveItem"
-    
-    @property
-    def registry_name(self):
-        return "onedrive"
+    registry_name: str = "onedrive"
 
     def __post_init__(self):
         self.ext = "".join(Path(self.file.name).suffixes)

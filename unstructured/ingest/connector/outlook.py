@@ -37,6 +37,7 @@ class SimpleOutlookConfig(BaseConnectorConfig):
     authority_url: Optional[str] = field(repr=False)
     ms_outlook_folders: List[str]
     recursive: bool = False
+    registry_name: str = "outlook"
 
     def __post_init__(self):
         if not (self.client_id and self.client_credential and self.user_email):

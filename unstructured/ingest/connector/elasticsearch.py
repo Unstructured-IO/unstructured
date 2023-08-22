@@ -58,10 +58,7 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     config: SimpleElasticsearchConfig
     file_meta: ElasticsearchFileMeta
-
-    @property
-    def registry_name(self):
-        return "elasticsearch"
+    registry_name: str = "elasticsearch"
 
     # TODO: remove one of filename or _tmp_download_file, using a wrapper
     @property

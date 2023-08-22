@@ -110,10 +110,7 @@ class SimpleBiomedConfig(BaseConnectorConfig):
 class BiomedIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleBiomedConfig
     file_meta: BiomedFileMeta
-    
-    @property
-    def registry_name(self):
-        return "biomed"
+    registry_name: str = "biomed"
 
     @property
     def filename(self):

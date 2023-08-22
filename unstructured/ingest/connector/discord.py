@@ -57,6 +57,7 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     channel: str
     days: Optional[int]
     token: str
+    registry_name: str = "discord"
     
     @property
     def registry_name(self):

@@ -104,10 +104,7 @@ class SimpleGoogleDriveConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
 class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleGoogleDriveConfig
     file_meta: Dict
-    
-    @property
-    def registry_name(self):
-        return "gdrive"
+    registry_name: str = "gdrive"
 
     @property
     def filename(self):

@@ -31,10 +31,7 @@ class SimpleGitLabConfig(SimpleGitConfig):
 @dataclass
 class GitLabIngestDoc(GitIngestDoc):
     project: "Project"
-    
-    @property
-    def registry_name(self):
-        return "gitlab"
+    registry_name: str = "gitlab"
 
     def _fetch_and_write(self) -> None:
         content_file = self.project.files.get(

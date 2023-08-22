@@ -16,9 +16,7 @@ class SimpleAzureBlobStorageConfig(SimpleFsspecConfig):
 
 
 class AzureBlobStorageIngestDoc(FsspecIngestDoc):
-    @property
-    def registry_name(self):
-        return "azure"
+    registry_name: str = "azure"
 
     @requires_dependencies(["adlfs", "fsspec"], extras="azure")
     def get_file(self):
