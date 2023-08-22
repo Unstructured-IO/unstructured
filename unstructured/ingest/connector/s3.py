@@ -14,13 +14,10 @@ from unstructured.utils import requires_dependencies
 class SimpleS3Config(SimpleFsspecConfig):
     pass
 
-
+@dataclass
 class S3IngestDoc(FsspecIngestDoc):
     remote_file_path: str
-
-    @property
-    def registry_name(self):
-        return "s3"
+    registry_name: str = "s3"
 
     @requires_dependencies(["s3fs", "fsspec"], extras="s3")
     def get_file(self):

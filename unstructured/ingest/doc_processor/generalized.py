@@ -11,6 +11,7 @@ from unstructured.ingest.interfaces import (
     IngestDocSessionHandleMixin,
 )
 from unstructured.ingest.logger import logger
+from unstructured.ingest.registry import create_instance_from_json
 
 # module-level variable to store session handle
 session_handle: Optional[BaseSessionHandle] = None
@@ -29,7 +30,7 @@ def initialize():
     get_model(os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME"))
 
 
-def process_document(doc: "IngestDoc", **partition_kwargs) -> Optional[List[Dict[str, Any]]]:
+def process_document(doc_json: str, **partition_kwargs) -> Optional[List[Dict[str, Any]]]:
     """Process any IngestDoc-like class of document with chosen Unstructured's partition logic.
 
     Parameters
@@ -40,6 +41,7 @@ def process_document(doc: "IngestDoc", **partition_kwargs) -> Optional[List[Dict
     global session_handle
     isd_elems_no_filename = None
     try:
+        doc = create_instance_from_json(doc_json)
         if isinstance(doc, IngestDocSessionHandleMixin):
             if session_handle is None:
                 # create via doc.session_handle, which is a property that creates a

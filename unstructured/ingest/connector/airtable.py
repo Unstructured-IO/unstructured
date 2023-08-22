@@ -49,10 +49,7 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     config: SimpleAirtableConfig
     file_meta: AirtableFileMeta
-
-    @property
-    def registry_name(self):
-        return "airtable"
+    registry_name: str = "airtable"
 
     @property
     def filename(self):
@@ -68,7 +65,7 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         output_file = f"{self.file_meta.table_id}.json"
         return Path(self.standard_config.output_dir) / self.file_meta.base_id / output_file
 
-    @requires_dependencies(["pyairtable", "pandas"])
+    @requires_dependencies(["pyairtable", "pandas"], extras="airtable")
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
@@ -146,7 +143,7 @@ class AirtableConnector(ConnectorCleanupMixin, BaseConnector):
     ):
         super().__init__(standard_config, config)
 
-    @requires_dependencies(["pyairtable"])
+    @requires_dependencies(["pyairtable"], extras="airtable")
     def initialize(self):
         from pyairtable import Api
 
@@ -156,7 +153,7 @@ class AirtableConnector(ConnectorCleanupMixin, BaseConnector):
 
         self.api = Api(self.config.personal_access_token)
 
-    @requires_dependencies(["pyairtable"])
+    @requires_dependencies(["pyairtable"], extras="airtable")
     def use_all_bases(self):
         from pyairtable.metadata import get_api_bases
 
@@ -164,7 +161,7 @@ class AirtableConnector(ConnectorCleanupMixin, BaseConnector):
             base["id"] for base in get_api_bases(self.api)["bases"]
         ]
 
-    @requires_dependencies(["pyairtable"])
+    @requires_dependencies(["pyairtable"], extras="airtable")
     def fetch_table_ids(self):
         from pyairtable.metadata import get_base_schema
 

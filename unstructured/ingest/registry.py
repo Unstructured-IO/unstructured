@@ -1,3 +1,4 @@
+import json
 from unstructured.ingest.connector.airtable import AirtableIngestDoc
 from unstructured.ingest.connector.azure import AzureBlobStorageIngestDoc
 from unstructured.ingest.connector.biomed import BiomedIngestDoc
@@ -42,11 +43,12 @@ INGEST_DOC_NAME_TO_CLASS = {
 }
 
 
-def create_instance_from_dict(data_dict):
+def create_instance_from_json(data_json: str):
+    data_dict = json.loads(data_json)
     registry_name = data_dict.pop("registry_name")
     try:
         ingest_doc_cls = INGEST_DOC_NAME_TO_CLASS[registry_name]
-        return ingest_doc_cls.from_dict(data_dict)
+        return ingest_doc_cls.from_json(data_json)
     except KeyError:
         raise ValueError(
             f"Error: Received unknown IngestDoc name: {registry_name} while deserializing IngestDoc."

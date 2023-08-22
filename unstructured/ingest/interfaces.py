@@ -5,7 +5,8 @@ import functools
 import json
 import os
 from abc import ABC, abstractmethod
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
+from dataclasses_json import dataclass_json
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -23,7 +24,7 @@ class BaseSessionHandle(ABC):
     """Abstract Base Class for sharing resources that are local to an individual process.
     e.g., a connection for making a request for fetching documents."""
 
-
+@dataclass_json
 @dataclass
 class ProcessorConfigs:
     """Common set of config required when running data connectors."""
@@ -36,7 +37,7 @@ class ProcessorConfigs:
     reprocess: bool
     max_docs: int
 
-
+@dataclass_json
 @dataclass
 class StandardConnectorConfig:
     """Common set of config options passed to all connectors."""
@@ -56,7 +57,8 @@ class StandardConnectorConfig:
     preserve_downloads: bool = False
     re_download: bool = False
 
-
+@dataclass_json
+@dataclass
 class BaseConnectorConfig(ABC):
     """Abstract definition on which to define connector-specific attributes."""
 
@@ -96,7 +98,7 @@ class BaseConnector(ABC):
         with IngestDoc.get_file()."""
         pass
 
-
+@dataclass_json
 @dataclass
 class BaseIngestDoc(ABC):
     """An "ingest document" is specific to a connector, and provides
@@ -114,12 +116,6 @@ class BaseIngestDoc(ABC):
         super().__init__(*args, **kwargs)
         self._date_processed = None
 
-    def to_dict(self):
-        return {**asdict(self), "registry_name": self.registry_name}
-
-    @classmethod
-    def from_dict(cls, data_dict):
-        return cls(**data_dict)
 
     @property
     def date_created(self) -> Optional[str]:
