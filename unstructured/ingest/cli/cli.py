@@ -13,6 +13,7 @@ subcommands = [
     cli_cmds.box,
     cli_cmds.s3,
     cli_cmds.gcs,
+    cli_cmds.delta_table,
     cli_cmds.dropbox,
     cli_cmds.azure,
     cli_cmds.fsspec,

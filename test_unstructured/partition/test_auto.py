@@ -21,7 +21,7 @@ from unstructured.documents.elements import (
 )
 from unstructured.file_utils.filetype import FILETYPE_TO_MIMETYPE, FileType
 from unstructured.partition import auto
-from unstructured.partition.auto import partition
+from unstructured.partition.auto import _get_partition_with_extras, partition
 from unstructured.partition.common import convert_office_doc
 from unstructured.staging.base import elements_to_json
 
@@ -321,11 +321,13 @@ def test_auto_partition_pdf_uses_table_extraction():
         assert mock_process_file_with_model.call_args[1]["extract_tables"]
 
 
-def test_auto_partition_pdf_with_fast_strategy():
+def test_auto_partition_pdf_with_fast_strategy(monkeypatch):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
 
     mock_return = [NarrativeText("Hello there!")]
     with patch.object(auto, "partition_pdf", return_value=mock_return) as mock_partition:
+        mock_partition_with_extras_map = {"pdf": mock_partition}
+        monkeypatch.setattr(auto, "PARTITION_WITH_EXTRAS_MAP", mock_partition_with_extras_map)
         partition(filename=filename, strategy="fast")
 
     mock_partition.assert_called_once_with(
@@ -563,11 +565,13 @@ def test_auto_partition_odt_from_file():
         ("jdsfjdfsjkds", "pdf", None),
     ],
 )
-def test_auto_adds_filetype_to_metadata(content_type, routing_func, expected):
+def test_auto_adds_filetype_to_metadata(content_type, routing_func, expected, monkeypatch):
     with patch(
         f"unstructured.partition.auto.partition_{routing_func}",
         lambda *args, **kwargs: [Text("text 1"), Text("text 2")],
-    ):
+    ) as mock_partition:
+        mock_partition_with_extras_map = {routing_func: mock_partition}
+        monkeypatch.setattr(auto, "PARTITION_WITH_EXTRAS_MAP", mock_partition_with_extras_map)
         elements = partition("example-docs/layout-parser-paper-fast.pdf", content_type=content_type)
     assert len(elements) == 2
     assert all(el.metadata.filetype == expected for el in elements)
@@ -580,7 +584,7 @@ def test_auto_adds_filetype_to_metadata(content_type, routing_func, expected):
         (None, FILETYPE_TO_MIMETYPE[FileType.PDF]),
     ],
 )
-def test_auto_filetype_overrides_file_specific(content_type, expected):
+def test_auto_filetype_overrides_file_specific(content_type, expected, monkeypatch):
     pdf_metadata = ElementMetadata(filetype="imapdf")
     with patch(
         "unstructured.partition.auto.partition_pdf",
@@ -588,7 +592,9 @@ def test_auto_filetype_overrides_file_specific(content_type, expected):
             Text("text 1", metadata=pdf_metadata),
             Text("text 2", metadata=pdf_metadata),
         ],
-    ):
+    ) as mock_partition:
+        mock_partition_with_extras_map = {"pdf": mock_partition}
+        monkeypatch.setattr(auto, "PARTITION_WITH_EXTRAS_MAP", mock_partition_with_extras_map)
         elements = partition("example-docs/layout-parser-paper-fast.pdf", content_type=content_type)
     assert len(elements) == 2
     assert all(el.metadata.filetype == expected for el in elements)
@@ -873,3 +879,12 @@ def test_auto_partition_metadata_file_filename():
     with open(filename) as f:
         elements = partition(file=f, file_filename=filename)
     assert elements[0].metadata.filename == os.path.split(filename)[-1]
+
+
+def test_get_partition_with_extras_prompts_for_install_if_missing():
+    partition_with_extras_map = {}
+    with pytest.raises(ImportError) as exception_info:
+        _get_partition_with_extras("pdf", partition_with_extras_map)
+
+    msg = str(exception_info.value)
+    assert 'Install the pdf dependencies with pip install "unstructured[pdf]"' in msg
