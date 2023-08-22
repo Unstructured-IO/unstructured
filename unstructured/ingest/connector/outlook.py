@@ -1,3 +1,4 @@
+from functools import lru_cache
 import hashlib
 import os
 from collections import defaultdict
@@ -5,8 +6,6 @@ from dataclasses import dataclass, field
 from itertools import chain
 from pathlib import Path
 from typing import List, Optional
-
-from office365.onedrive.driveitems.driveItem import DriveItem
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -74,14 +73,19 @@ class SimpleOutlookConfig(BaseConnectorConfig):
 @dataclass
 class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleOutlookConfig
-    file: DriveItem
-    
-    @property
-    def registry_name(self):
-        return "outlook"
+    url: str
+    registry_name: str = "outlook"
 
     def __post_init__(self):
         self._set_download_paths()
+
+   
+    @requires_dependencies(["office365"], extras="outlook")
+    @property
+    @lru_cache(maxsize=1)
+    def file(self):
+        from office365.sharepoint.files.file import File
+        return File.from_url(self.url)
 
     def hash_mail_name(self, id):
         """Outlook email ids are 152 char long. Hash to shorten to 16."""
@@ -109,7 +113,7 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return Path(self.output_filepath).resolve()
 
     @BaseIngestDoc.skip_if_file_exists
-    @requires_dependencies(["office365"])
+    @requires_dependencies(["office365"], extras="outlook")
     def get_file(self):
         """Relies on Office365 python sdk message object to do the download."""
         try:
@@ -150,7 +154,7 @@ class OutlookConnector(ConnectorCleanupMixin, BaseConnector):
         self._set_client()
         self.get_folder_ids()
 
-    @requires_dependencies(["office365"])
+    @requires_dependencies(["office365"], extras="outlook")
     def _set_client(self):
         from office365.graph_client import GraphClient
 
@@ -232,4 +236,4 @@ class OutlookConnector(ConnectorCleanupMixin, BaseConnector):
             )
             individual_messages.append(messages)
 
-        return [OutlookIngestDoc(self.standard_config, self.config, f) for f in individual_messages]
+        return [OutlookIngestDoc(self.standard_config, self.config, file.get_absolute_url) for file in individual_messages]
