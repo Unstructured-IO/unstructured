@@ -1,6 +1,6 @@
 """
 Salesforce Connector
-Able to download Account, Case, Campaign, EmailMessage, Lead
+Able to download Account, Case, Campaign, EmailMessage, Lead,
 Salesforce returns everything as a list of json.
 This saves each entry as a separate file to be partitioned.
 Using JWT authorization
