@@ -451,13 +451,17 @@ def add_pytesseract_bbox_to_elements(elements, bboxes, width, height):
         coordinates (str): The return value of pytesseract.image_to_boxes.
     """
     # (NOTE) jennings: This function was written with pytesseract in mind, but
-    # paddle returns similar values via `ocr.ocr(img)`. 
+    # paddle returns similar values via `ocr.ocr(img)`.
     # See more at issue #1176: https://github.com/Unstructured-IO/unstructured/issues/1176
     min_x = float("inf")
     min_y = float("inf")
     max_x = 0
     max_y = 0
-    coordinate_system = PointSpace(
+    point_space = PointSpace(
+        width=width,
+        height=height,
+    )
+    pixel_space = PixelSpace(
         width=width,
         height=height,
     )
@@ -477,10 +481,16 @@ def add_pytesseract_bbox_to_elements(elements, bboxes, width, height):
             max_y = max(max_y, y2)
 
         points = ((min_x, min_y), (min_x, max_y), (max_x, max_y), (max_x, min_y))
+        converted_points = []
+
+        for point in points:
+            x, y = point
+            new_x, new_y = point_space.convert_coordinates_to_new_system(pixel_space, x, y)
+            converted_points.append((new_x, new_y))
 
         element.metadata.coordinates = CoordinatesMetadata(
-            points=points,
-            system=coordinate_system,
+            points=converted_points,
+            system=pixel_space,
         )
 
         # reset for next element
