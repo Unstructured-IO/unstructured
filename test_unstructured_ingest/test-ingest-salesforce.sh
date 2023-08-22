@@ -29,7 +29,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --salesforce-username "$SALESFORCE_USERNAME" \
     --salesforce-consumer-key "$SALESFORCE_CONSUMER_KEY" \
     --salesforce-private-key-path "$SALESFORCE_PRIVATE_KEY_PATH" \
-    --salesforce-categories "EmailMessage,Campaign" \
     --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified \
     --num-processes 2 \
     --preserve-downloads \
