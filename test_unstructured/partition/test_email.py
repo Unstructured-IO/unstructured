@@ -10,6 +10,7 @@ from unstructured.documents.elements import (
     Image,
     ListItem,
     NarrativeText,
+    Text,
     Title,
 )
 from unstructured.documents.email_elements import (
@@ -429,9 +430,13 @@ def test_partition_email_can_process_attachments(
         tmpdir.dirname,
         ATTACH_EXPECTED_OUTPUT[0]["filename"],
     )
+
+    mocked_last_modification_date = "0000-00-05T09:24:28"
+
     attachment_elements = partition_text(
         filename=attachment_filename,
         metadata_filename=attachment_filename,
+        metadata_last_modified=mocked_last_modification_date,
     )
     expected_metadata = attachment_elements[0].metadata
     expected_metadata.file_directory = None
@@ -441,6 +446,7 @@ def test_partition_email_can_process_attachments(
         filename=filename,
         attachment_partitioner=partition_text,
         process_attachments=True,
+        metadata_last_modified=mocked_last_modification_date,
     )
 
     assert elements[0].text.startswith("Hello!")
@@ -451,6 +457,42 @@ def test_partition_email_can_process_attachments(
 
     assert elements[-1].text == "Hey this is a fake attachment!"
     assert elements[-1].metadata == expected_metadata
+
+
+def test_partition_email_can_process_min_max_with_attachments(
+    tmpdir,
+    filename="example-docs/eml/fake-email-attachment.eml",
+):
+    with open(filename) as f:
+        msg = email.message_from_file(f)
+    extract_attachment_info(msg, output_dir=tmpdir.dirname)
+    attachment_filename = os.path.join(
+        tmpdir.dirname,
+        ATTACH_EXPECTED_OUTPUT[0]["filename"],
+    )
+
+    attachment_elements = partition_text(
+        filename=attachment_filename,
+        metadata_filename=attachment_filename,
+        min_partition=6,
+        max_partition=12,
+    )
+
+    elements = partition_email(
+        filename=filename,
+        attachment_partitioner=partition_text,
+        process_attachments=True,
+        min_partition=6,
+        max_partition=12,
+    )
+
+    assert elements[0].text.startswith("Hello!")
+    assert elements[-1].text == attachment_elements[-1].text
+    assert elements[-2].text == attachment_elements[-2].text
+    for element in elements:
+        if element.metadata.attached_to_filename is not None:
+            assert len(element.text) <= 12
+            assert len(element.text) >= 6
 
 
 def test_partition_msg_raises_with_no_partitioner(
@@ -482,3 +524,28 @@ def test_partition_email_custom_metadata_date(
     )
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
+
+
+def test_partition_email_inline_content_disposition(
+    filename="example-docs/eml/email-inline-content-disposition.eml",
+):
+    elements = partition_email(
+        filename=filename,
+        process_attachments=True,
+        attachment_partitioner=partition_text,
+    )
+
+    assert isinstance(elements[0], Text)
+    assert isinstance(elements[1], Text)
+
+
+def test_partition_email_odd_attachment_filename(
+    filename="example-docs/eml/email-equals-attachment-filename.eml",
+):
+    elements = partition_email(
+        filename=filename,
+        process_attachments=True,
+        attachment_partitioner=partition_text,
+    )
+
+    assert elements[1].metadata.filename == "odd=file=name.txt"

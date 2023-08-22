@@ -17,7 +17,7 @@ charset-normalizer==3.2.0
     # via
     #   -c requirements/base.txt
     #   requests
-cryptography==41.0.2
+cryptography==41.0.3
     # via pyjwt
 deprecated==1.2.14
     # via pygithub
@@ -27,7 +27,7 @@ idna==3.4
     #   requests
 pycparser==2.21
     # via cffi
-pygithub==1.58.2
+pygithub==1.59.1
     # via -r requirements/ingest-github.in
 pyjwt[crypto]==2.8.0
     # via pygithub

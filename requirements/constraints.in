@@ -22,5 +22,8 @@ IPython<8.13
 # NOTE(robinson) - See this issue here
 # https://github.com/facebookresearch/detectron2/issues/5010
 Pillow<10.0.0
-
-cryptography==41.0.2
+# NOTE(alan) Pinned to avoid error that occurs with 2.4.3:
+# AttributeError: 'ResourcePath' object has no attribute 'collection'
+Office365-REST-Python-Client<2.4.3
+# NOTE(christine) Pinned to set the `unstructured-inference` version
+unstructured-inference==0.5.13

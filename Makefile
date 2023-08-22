@@ -23,6 +23,9 @@ install: install-base-pip-packages install-dev install-nltk-models install-test 
 .PHONY: install-ci
 install-ci: install-base-pip-packages install-nltk-models install-huggingface install-all-docs install-test
 
+.PHONY: install-base-ci
+install-base-ci: install-base-pip-packages install-nltk-models install-test
+
 .PHONY: install-base-pip-packages
 install-base-pip-packages:
 	python3 -m pip install pip==${PIP_VERSION}
@@ -129,6 +132,10 @@ install-ingest-discord:
 install-ingest-github:
 	python3 -m pip install -r requirements/ingest-github.txt
 
+.PHONY: install-ingest-biomed
+install-ingest-biomed:
+	python3 -m pip install -r requirements/ingest-biomed.txt
+
 .PHONY: install-ingest-gitlab
 install-ingest-gitlab:
 	python3 -m pip install -r requirements/ingest-gitlab.txt
@@ -164,6 +171,18 @@ install-ingest-confluence:
 .PHONY: install-ingest-airtable
 install-ingest-airtable:
 	python3 -m pip install -r requirements/ingest-airtable.txt
+
+.PHONY: install-ingest-sharepoint
+install-ingest-sharepoint:
+	python3 -m pip install -r requirements/ingest-sharepoint.txt
+
+.PHONY: install-ingest-local
+install-ingest-local:
+	echo "no unique dependencies for local connector"
+
+.PHONY: install-ingest-notion
+install-ingest-notion:
+	python3 -m pip install -r requirements/ingest-notion.txt
 
 .PHONY: install-ingest-salesforce
 install-ingest-salesforce:
@@ -208,6 +227,7 @@ pip-compile:
 	# sphinx docs looks for additional requirements
 	cp requirements/build.txt docs/requirements.txt
 	pip-compile --upgrade requirements/ingest-s3.in
+	pip-compile --upgrade requirements/ingest-biomed.in
 	pip-compile --upgrade requirements/ingest-box.in
 	pip-compile --upgrade requirements/ingest-gcs.in
 	pip-compile --upgrade requirements/ingest-dropbox.in
@@ -224,6 +244,8 @@ pip-compile:
 	pip-compile --upgrade requirements/ingest-outlook.in
 	pip-compile --upgrade requirements/ingest-confluence.in
 	pip-compile --upgrade requirements/ingest-airtable.in
+	pip-compile --upgrade requirements/ingest-sharepoint.in
+	pip-compile --upgrade requirements/ingest-notion.in
 	pip-compile --upgrade requirements/ingest-salesforce.in
 
 ## install-project-local:   install unstructured into your local python environment
@@ -251,6 +273,65 @@ test:
 .PHONY: test-unstructured-api-unit
 test-unstructured-api-unit:
 	scripts/test-unstructured-api-unit.sh
+
+.PHONY: test-no-extras
+# TODO(newelh) Add json test when fixed
+test-no-extras:
+	PYTHONPATH=. CI=$(CI) pytest \
+		test_${PACKAGE_NAME}/partition/test_text.py \
+		test_${PACKAGE_NAME}/partition/test_email.py \
+		test_${PACKAGE_NAME}/partition/test_html_partition.py \
+		test_${PACKAGE_NAME}/partition/test_xml_partition.py 
+
+.PHONY: test-extra-csv
+test-extra-csv:
+	PYTHONPATH=. CI=$(CI) pytest \
+		test_${PACKAGE_NAME}/partition/csv
+
+.PHONY: test-extra-docx
+test-extra-docx:
+	PYTHONPATH=. CI=$(CI) pytest \
+		test_${PACKAGE_NAME}/partition/docx
+
+.PHONY: test-extra-markdown
+test-extra-markdown:
+	PYTHONPATH=. CI=$(CI) pytest \
+		test_${PACKAGE_NAME}/partition/markdown
+
+.PHONY: test-extra-msg
+test-extra-msg:
+	PYTHONPATH=. CI=$(CI) pytest \
+		test_${PACKAGE_NAME}/partition/msg
+
+.PHONY: test-extra-odt
+test-extra-odt:
+	PYTHONPATH=. CI=$(CI) pytest \
+		test_${PACKAGE_NAME}/partition/odt
+
+.PHONY: test-extra-pdf-image
+test-extra-pdf-image:
+	PYTHONPATH=. CI=$(CI) pytest \
+		test_${PACKAGE_NAME}/partition/pdf-image
+
+.PHONY: test-extra-pptx
+test-extra-pptx:
+	PYTHONPATH=. CI=$(CI) pytest \
+		test_${PACKAGE_NAME}/partition/pptx
+
+.PHONY: test-extra-epub
+test-extra-pypandoc:
+	PYTHONPATH=. CI=$(CI) pytest \
+		test_${PACKAGE_NAME}/partition/epub
+
+.PHONY: test-extra-pypandoc
+test-extra-pypandoc:
+	PYTHONPATH=. CI=$(CI) pytest \
+		test_${PACKAGE_NAME}/partition/pypandoc
+
+.PHONY: test-extra-xlsx
+test-extra-xlsx:
+	PYTHONPATH=. CI=$(CI) pytest \
+		test_${PACKAGE_NAME}/partition/xlsx
 
 ## check:                   runs linters (includes tests)
 .PHONY: check

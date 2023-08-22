@@ -21,7 +21,7 @@ charset-normalizer==3.2.0
     # via
     #   -c requirements/base.txt
     #   requests
-cryptography==41.0.2
+cryptography==41.0.3
     # via boxsdk
 fsspec==2023.6.0
     # via

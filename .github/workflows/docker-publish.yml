@@ -8,7 +8,7 @@ on:
 env:
   DOCKER_REPOSITORY: quay.io/unstructured-io/unstructured
   DOCKER_BUILD_REPOSITORY: quay.io/unstructured-io/build-unstructured
-  PIP_VERSION: "22.2.1"
+  PIP_VERSION: "23.2.1"
   PYTHON_VERSION: "3.8"
 
 jobs:

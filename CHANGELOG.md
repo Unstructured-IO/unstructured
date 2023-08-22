@@ -8,15 +8,78 @@
 
 ### Fixes
 
-## 0.9.3-dev1
+## 0.10.5-dev2
+
+### Enhancements
+* Create new CI Pipelines
+  - Checking text, xml, email, and html doc tests against the library installed without extras
+  - Checking each library extra against their respective tests
+* `partition` raises and error and tells the user to install the appropriate extra if a filetype
+  is detected that is missing dependencies.
+
+## 0.10.3
+* Adds ability to reuse connections per process in unstructured-ingest
+* Pass ocr_mode in partition_pdf and set the default back to individual pages for now
+* Add diagrams and descriptions for ingest design in the ingest README
+
+### Features
+
+### Fixes
+
+* remove test modification for potential bug and add docstring
+* fix partitioning of and tests for email and msg docs with attachments, add docstring to msg function
+
+## 0.10.2
+
+### Enhancements
+* Bump unstructured-inference==0.5.13:
+  - Fix extracted image elements being included in layout merge, addresses the issue
+    where an entire-page image in a PDF was not passed to the layout model when using hi_res.
+
+### Features
+
+### Fixes
+
+## 0.10.1
+
+### Enhancements
+* Bump unstructured-inference==0.5.12:
+  - fix to avoid trace for certain PDF's (0.5.12)
+  - better defaults for DPI for hi_res and  Chipper (0.5.11)
+  - implement full-page OCR (0.5.10)
+
+### Features
+
+### Fixes
+
+* Fix dead links in repository README (Quick Start > Install for local development, and Learn more > Batch Processing)
+* Update document dependencies to include tesseract-lang for additional language support (required for tests to pass)
+
+## 0.10.0
 
 ### Enhancements
 
+* Add `include_header` kwarg to `partition_xlsx` and change default behavior to `True`
+* Update the `links` and `emphasized_texts` metadata fields
+
+### Features
+
+### Fixes
+
+## 0.9.3
+
+### Enhancements
+
+* Pinned dependency cleanup.
+* Update `partition_csv` to always use `soupparser_fromstring` to parse `html text`
+* Update `partition_tsv` to always use `soupparser_fromstring` to parse `html text`
 * Add `metadata.section` to capture epub table of contents data
 * Add `unique_element_ids` kwarg to partition functions. If `True`, will use a UUID
   for element IDs instead of a SHA-256 hash.
+* Update `partition_xlsx` to always use `soupparser_fromstring` to parse `html text`
 * Add functionality to switch `html` text parser based on whether the `html` text contains emoji
 * Add functionality to check if a string contains any emoji characters
+* Add CI tests around Notion
 
 ### Features
 
@@ -24,7 +87,10 @@
 
 ### Fixes
 
+* fix pdf partition of list items being detected as titles in OCR only mode
 * make notion module discoverable
+* fix emails with `Content-Distribution: inline` and `Content-Distribution: attachment` with no filename
+* Fix email attachment filenames which had `=` in the filename itself
 
 ## 0.9.2
 
@@ -38,6 +104,8 @@
   - better caching of models
   - another version of detectron2 available, though the default layout model is unchanged
 * Added UUID option for element_id
+* Added UUID option for element_id
+* CI improvements to run ingest tests in parallel
 
 ### Features
 

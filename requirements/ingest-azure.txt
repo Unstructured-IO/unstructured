@@ -14,7 +14,7 @@ async-timeout==4.0.3
     # via aiohttp
 attrs==23.1.0
     # via aiohttp
-azure-core==1.29.1
+azure-core==1.29.2
     # via
     #   adlfs
     #   azure-identity
@@ -39,9 +39,8 @@ charset-normalizer==3.2.0
     #   -c requirements/base.txt
     #   aiohttp
     #   requests
-cryptography==41.0.2
+cryptography==41.0.3
     # via
-    #   -r requirements/ingest-azure.in
     #   azure-identity
     #   azure-storage-blob
     #   msal
