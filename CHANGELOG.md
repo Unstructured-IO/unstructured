@@ -13,6 +13,7 @@
 * Add diagrams and descriptions for ingest design in the ingest README
 
 ### Features
+* Add delta table connector
 
 ### Fixes
 
