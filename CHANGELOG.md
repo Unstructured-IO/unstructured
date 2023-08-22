@@ -7,7 +7,10 @@
 * `partition` raises an error and tells the user to install the appropriate extra if a filetype
   is detected that is missing dependencies.
 * Add custom errors to ingest
-* Bump `unstructured-ingest` to 0.5.15
+* Bump `unstructured-ingest==0.5.15`
+  - Handle an uncaught TesseractError (0.5.15)
+  - Add TIFF test file and TIFF filetype to `test_from_image_file` in `test_layout` (0.5.14)
+  - Fix extracted image elements being included in layout merge (0.5.13)
 * Use `entire_page` ocr mode for pdfs and images
 
 
