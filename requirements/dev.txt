@@ -51,7 +51,7 @@ charset-normalizer==3.2.0
     #   -c requirements/base.txt
     #   -c requirements/test.txt
     #   requests
-click==8.1.6
+click==8.1.7
     # via
     #   -c requirements/base.txt
     #   -c requirements/test.txt
@@ -80,7 +80,7 @@ filelock==3.12.2
     # via virtualenv
 fqdn==1.5.1
     # via jsonschema
-identify==2.5.26
+identify==2.5.27
     # via pre-commit
 idna==3.4
     # via
@@ -167,7 +167,7 @@ jupyter-events==0.7.0
     # via jupyter-server
 jupyter-lsp==2.2.0
     # via jupyterlab
-jupyter-server==2.7.1
+jupyter-server==2.7.2
     # via
     #   jupyter-lsp
     #   jupyterlab
