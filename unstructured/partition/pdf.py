@@ -450,6 +450,9 @@ def add_pytesseract_bbox_to_elements(elements, bboxes, width, height):
         text (str): The text detected by pytesseract.image_to_string.
         coordinates (str): The return value of pytesseract.image_to_boxes.
     """
+    # (NOTE) jennings: This function was written with pytesseract in mind, but
+    # paddle returns similar values via `ocr.ocr(img)`. 
+    # See more at issue #1176: https://github.com/Unstructured-IO/unstructured/issues/1176
     min_x = float("inf")
     min_y = float("inf")
     max_x = 0
