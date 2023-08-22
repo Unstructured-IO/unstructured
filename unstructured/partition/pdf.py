@@ -155,7 +155,18 @@ def partition_pdf_or_image(
         file=file,
         filename=filename,
     )
-    if not is_image and strategy != "ocr_only":
+
+    if (
+        not is_image
+        and determine_pdf_or_image_strategy(
+            strategy,
+            filename=filename,
+            file=file,
+            is_image=is_image,
+            infer_table_structure=infer_table_structure,
+        )
+        != "ocr_only"
+    ):
         extracted_elements = extractable_elements(
             filename=filename,
             file=spooled_to_bytes_io_if_needed(file),
@@ -209,6 +220,7 @@ def partition_pdf_or_image(
                 min_partition=min_partition,
                 metadata_last_modified=metadata_last_modified or last_modification_date,
             )
+
     return layout_elements
 
 
