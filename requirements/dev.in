@@ -5,4 +5,3 @@ jupyter
 ipython
 pip-tools
 pre-commit
-sphinx-tabs
