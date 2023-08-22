@@ -234,7 +234,7 @@ def partition(
             ocr_languages=ocr_languages,
             **kwargs,
         )
-    elif (filetype == FileType.PNG) or (filetype == FileType.JPG):
+    elif (filetype == FileType.PNG) or (filetype == FileType.JPG) or (filetype == FileType.TIFF):
         elements = partition_image(
             filename=filename,  # type: ignore
             file=file,  # type: ignore
