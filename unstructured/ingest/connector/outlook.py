@@ -74,6 +74,10 @@ class SimpleOutlookConfig(BaseConnectorConfig):
 class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleOutlookConfig
     file: DriveItem
+    
+    @property
+    def registry_name(self):
+        return "outlook"
 
     def __post_init__(self):
         self._set_download_paths()

@@ -57,6 +57,10 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     channel: str
     days: Optional[int]
     token: str
+    
+    @property
+    def registry_name(self):
+        return "discord"
 
     # NOTE(crag): probably doesn't matter,  but intentionally not defining tmp_download_file
     # __post_init__ for multiprocessing simplicity (no Path objects in initially

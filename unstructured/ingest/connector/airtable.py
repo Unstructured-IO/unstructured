@@ -51,6 +51,10 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     file_meta: AirtableFileMeta
 
     @property
+    def registry_name(self):
+        return "airtable"
+
+    @property
     def filename(self):
         return (
             Path(self.standard_config.download_dir)

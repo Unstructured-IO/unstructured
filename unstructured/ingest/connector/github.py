@@ -41,6 +41,10 @@ class SimpleGitHubConfig(SimpleGitConfig):
 @dataclass
 class GitHubIngestDoc(GitIngestDoc):
     repo: "Repository"
+    
+    @property
+    def registry_name(self):
+        return "github"
 
     def _fetch_and_write(self) -> None:
         content_file = self.repo.get_contents(self.path)

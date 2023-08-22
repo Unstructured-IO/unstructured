@@ -32,6 +32,11 @@ class SimpleDropboxConfig(SimpleFsspecConfig):
 
 
 class DropboxIngestDoc(FsspecIngestDoc):
+    
+    @property
+    def registry_name(self):
+        return "dropbox"
+
     @requires_dependencies(["dropboxdrivefs", "fsspec"])
     def get_file(self):
         super().get_file()

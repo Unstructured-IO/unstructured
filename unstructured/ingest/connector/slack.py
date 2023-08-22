@@ -70,6 +70,10 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     token: str
     oldest: Optional[str]
     latest: Optional[str]
+    
+    @property
+    def registry_name(self):
+        return "slack"
 
     # NOTE(crag): probably doesn't matter,  but intentionally not defining tmp_download_file
     # __post_init__ for multiprocessing simplicity (no Path objects in initially

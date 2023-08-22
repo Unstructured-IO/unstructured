@@ -57,6 +57,10 @@ class SimpleBoxConfig(SimpleFsspecConfig):
 
 
 class BoxIngestDoc(FsspecIngestDoc):
+    @property
+    def registry_name(self):
+        return "box"
+
     @requires_dependencies(["boxfs", "fsspec"], extras="box")
     def get_file(self):
         super().get_file()

@@ -27,6 +27,10 @@ class SimpleGitConfig(BaseConnectorConfig):
 class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleGitConfig = field(repr=False)
     path: str
+    
+    @property
+    def registry_name(self):
+        return "git"
 
     @property
     def filename(self):
