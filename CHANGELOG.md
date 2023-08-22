@@ -1,6 +1,7 @@
-## 0.10.6-dev0
+## 0.10.6-dev1
 
 ### Enhancements
+* Improve ingest logging approach
 
 ### Features
 
@@ -25,6 +26,9 @@
   - Add TIFF test file and TIFF filetype to `test_from_image_file` in `test_layout` (0.5.14)
 * Use `entire_page` ocr mode for pdfs and images
 * Add notes on extra installs to docs
+
+## 0.10.3
+>>>>>>> 42e481e6 (update CHANGELOG)
 * Adds ability to reuse connections per process in unstructured-ingest
 
 ### Features
