@@ -5,8 +5,12 @@
 #    pip-compile requirements/ingest-biomed.in
 #
 beautifulsoup4==4.12.2
-    # via bs4
+    # via
+    #   -c requirements/base.txt
+    #   bs4
 bs4==0.0.1
     # via -r requirements/ingest-biomed.in
 soupsieve==2.4.1
-    # via beautifulsoup4
+    # via
+    #   -c requirements/base.txt
+    #   beautifulsoup4

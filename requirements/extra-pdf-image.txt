@@ -35,7 +35,7 @@ filelock==3.12.2
     #   transformers
 flatbuffers==23.5.26
     # via onnxruntime
-fonttools==4.42.0
+fonttools==4.42.1
     # via matplotlib
 fsspec==2023.6.0
     # via huggingface-hub
@@ -196,7 +196,7 @@ tqdm==4.66.1
     #   huggingface-hub
     #   iopath
     #   transformers
-transformers==4.31.0
+transformers==4.32.0
     # via unstructured-inference
 typing-extensions==4.7.1
     # via
@@ -205,7 +205,7 @@ typing-extensions==4.7.1
     #   torch
 tzdata==2023.3
     # via pandas
-unstructured-inference==0.5.13
+unstructured-inference==0.5.15
     # via
     #   -c requirements/constraints.in
     #   -r requirements/extra-pdf-image.in
