@@ -115,8 +115,8 @@ class BaseIngestDoc(ABC):
         self._date_processed = None
 
     def to_dict(self):
-        return {**asdict(self), 'connector_name': self.connector_name}
-    
+        return {**asdict(self), "registry_name": self.registry_name}
+
     @classmethod
     def from_dict(cls, data_dict):
         return cls(**data_dict)
@@ -141,12 +141,6 @@ class BaseIngestDoc(ABC):
     def exists(self) -> Optional[bool]:
         """Whether the document exists on the remote source."""
         return None
-    
-    # @property
-    # @abstractmethod
-    # def connector_name(cls):
-    #     """The name of the connector class."""
-
 
     @property
     @abstractmethod
@@ -308,7 +302,6 @@ class BaseIngestDoc(ABC):
             self.isd_elems_no_filename.append(elem)
 
         return self.isd_elems_no_filename
-    
 
 
 class ConnectorCleanupMixin:
