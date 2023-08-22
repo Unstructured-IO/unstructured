@@ -4,6 +4,12 @@
 #
 #    pip-compile requirements/ingest-onedrive.in
 #
+beautifulsoup4==4.12.2
+    # via
+    #   -c requirements/base.txt
+    #   bs4
+bs4==0.0.1
+    # via -r requirements/ingest-onedrive.in
 certifi==2023.7.22
     # via
     #   -c requirements/base.txt
@@ -42,6 +48,10 @@ requests==2.31.0
     #   -c requirements/base.txt
     #   msal
     #   office365-rest-python-client
+soupsieve==2.4.1
+    # via
+    #   -c requirements/base.txt
+    #   beautifulsoup4
 urllib3==1.26.16
     # via
     #   -c requirements/base.txt

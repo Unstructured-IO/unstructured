@@ -26,6 +26,7 @@ def github(
         ),
     )
     connector_config.download_dir = update_download_dir_hash(
+        connector_name="github",
         connector_config=connector_config,
         hashed_dir_name=hashed_dir_name,
         logger=logger,
