@@ -27,3 +27,5 @@ Pillow<10.0.0
 Office365-REST-Python-Client<2.4.3
 # NOTE(christine) Pinned to set the `unstructured-inference` version
 unstructured-inference==0.5.15
+# NOTE(crag) pinning to avoid error in argilla library
+pydantic<2

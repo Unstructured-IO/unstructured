@@ -74,6 +74,7 @@ pycodestyle==2.11.0
     # via flake8
 pydantic==1.10.12
     # via
+    #   -c requirements/constraints.in
     #   -r requirements/test.in
     #   label-studio-sdk
 pyflakes==3.1.0
