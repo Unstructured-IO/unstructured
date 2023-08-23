@@ -11,6 +11,5 @@ set +e
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 INPUT_FOLDER_NAME=$1
 OUTPUT_DIR_TEXT=$2
-echo script_dir $SCRIPT_DIR
-mkdir -p $OUTPUT_DIR_TEXT
-find $INPUT_FOLDER_NAME -type f -exec bash -c '$1/clean.sh {} $2' bash $SCRIPT_DIR $OUTPUT_DIR_TEXT \;
+mkdir -p "$OUTPUT_DIR_TEXT"
+find "$INPUT_FOLDER_NAME" -type f -exec bash -c '$1/clean.sh {} $2' bash "$SCRIPT_DIR" "$OUTPUT_DIR_TEXT" \;

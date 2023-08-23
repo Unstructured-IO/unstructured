@@ -8,6 +8,6 @@
 # - $2 path to folder to store the result
 # 
 
-BASE=$(basename $1)
+BASE=$(basename "$1")
 DEST=$2/$BASE.txt
-cat $1 | jq '.[].text' > $DEST
+jq '.[].text'<"$1" > "$DEST"
