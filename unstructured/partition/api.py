@@ -8,6 +8,7 @@ from typing import (
 import requests
 
 from unstructured.documents.elements import Element
+from unstructured.logger import logger
 from unstructured.partition.common import exactly_one
 from unstructured.staging.base import dict_to_elements, elements_from_json
 
@@ -19,6 +20,7 @@ def partition_via_api(
     file_filename: Optional[str] = None,
     api_url: str = "https://api.unstructured.io/general/v0/general",
     api_key: str = "",
+    metadata_filename: Optional[str] = None,
     **request_kwargs,
 ) -> List[Element]:
     """Partitions a document using the Unstructured REST API. This is equivalent to
@@ -36,7 +38,7 @@ def partition_via_api(
         A string defining the file content in MIME type
     file
         A file-like object using "rb" mode --> open(filename, "rb").
-    file_filename
+    metadata_filename
         When file is not None, the filename (string) to store in element metadata. E.g. "foo.txt"
     api_url
         The URL for the Unstructured API. Defaults to the hosted Unstructured API.
@@ -47,6 +49,13 @@ def partition_via_api(
         For example the `strategy` parameter.
     """
     exactly_one(filename=filename, file=file)
+
+    if file is not None and file_filename is not None:
+        metadata_filename = file_filename
+        logger.warn(
+            "The file_filename kwarg will be deprecated in a future version of unstructured. "
+            "Please use metadata_filename instead.",
+        )
 
     headers = {
         "ACCEPT": "application/json",
@@ -65,13 +74,13 @@ def partition_via_api(
                 files=files,  # type: ignore
             )
     elif file is not None:
-        if file_filename is None:
+        if metadata_filename is None:
             raise ValueError(
                 "If file is specified in partition_via_api, "
-                "file_filename must be specified as well.",
+                "metadata_filename must be specified as well.",
             )
         files = [
-            ("files", (file_filename, file, content_type)),  # type: ignore
+            ("files", (metadata_filename, file, content_type)),  # type: ignore
         ]
         response = requests.post(
             api_url,
@@ -112,7 +121,7 @@ def partition_multiple_via_api(
         A list of strings defining the file contents in MIME types.
     files
         A list of file-like object using "rb" mode --> open(filename, "rb").
-    file_filename
+    metadata_filename
         When file is not None, the filename (string) to store in element metadata. E.g. "foo.txt"
     api_url
         The URL for the Unstructured API. Defaults to the hosted Unstructured API.

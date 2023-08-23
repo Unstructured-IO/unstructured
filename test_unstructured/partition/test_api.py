@@ -67,9 +67,24 @@ def test_partition_via_api_from_file(monkeypatch):
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", EML_TEST_FILE)
 
     with open(filename, "rb") as f:
-        elements = partition_via_api(file=f, file_filename=filename)
+        elements = partition_via_api(file=f, metadata_filename=filename)
     assert elements[0] == NarrativeText("This is a test email to use for unit tests.")
     assert elements[0].metadata.filetype == "message/rfc822"
+
+
+def test_partition_via_api_from_file_warns_with_file_filename(monkeypatch, caplog):
+    monkeypatch.setattr(
+        requests,
+        "post",
+        lambda *args, **kwargs: MockResponse(status_code=200),
+    )
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", EML_TEST_FILE)
+
+    with open(filename, "rb") as f:
+        partition_via_api(file=f, file_filename=filename)
+
+    assert "WARNING" in caplog.text
+    assert "The file_filename kwarg will be deprecated" in caplog.text
 
 
 def test_partition_via_api_from_file_raises_without_filename(monkeypatch):
