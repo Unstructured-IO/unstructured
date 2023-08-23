@@ -4,12 +4,13 @@
 <head><meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Installation" href="installing.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Introduction" href="introduction.html" />
 
   <link rel="shortcut icon" href="_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Unstructured 0.10.4 documentation</title>
+  <title>Unstructured 0.10.5 documentation</title>
   <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
+  <link rel="stylesheet" type="text/css" href="_static/tabs.css" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
   <link rel="stylesheet" type="text/css" href="_static/unstructured.css" />
   
@@ -307,11 +308,50 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="installing.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="introduction.html">Introduction</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Introduction</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="introduction/overview.html">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction/key_concepts.html">Key Concepts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction/getting_started.html">Getting Started</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="installing.html">Installation</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Installation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation/full_installation.html">Full Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation/docker.html">Docker Installation</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">Unstructured API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bricks.html">Bricks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="connectors.html">Connectors</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="bricks.html">Bricks</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Bricks</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="bricks/partition.html">Partitioning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bricks/cleaning.html">Cleaning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bricks/extracting.html">Extracting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bricks/staging.html">Staging</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="upstream_connectors.html">Upstream Connectors</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Upstream Connectors</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/airtable.html">Airtable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/azure.html">Azure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/biomed.html">Biomed</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/box.html">Box</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/confluence.html">Confluence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/delta_table.html">Delta Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/discord.html">Discord</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/dropbox.html">Dropbox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/elastic_search.html">Elastic Search</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/github.html">Github</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/gitlab.html">Gitlab</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/google_cloud_storage.html">Google Cloud Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/google_drive.html">Google Drive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/local_connector.html">Local</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/notion.html">Notion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/onedrive.html">One Drive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/outlook.html">Outlook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/reddit.html">Reddit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/s3.html">S3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/sharepoint.html">Sharepoint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/slack.html">Slack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/wikipedia.html">Wikipedia</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="metadata.html">Metadata</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="integrations.html">Integrations</a></li>
@@ -380,13 +420,11 @@ using the <code class="docutils literal notranslate"><span class="pre">unstructu
 <dl class="simple">
 <dt><a class="reference internal" href="installing.html"><span class="doc">Installation</span></a></dt><dd><p>Instructions on how to install the <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> library on your system.</p>
 </dd>
-<dt><a class="reference internal" href="getting_started.html"><span class="doc">Getting Started</span></a></dt><dd><p>Check out this section to learn about basic workflows in <code class="docutils literal notranslate"><span class="pre">unstructured</span></code>.</p>
-</dd>
 <dt><a class="reference internal" href="api.html"><span class="doc">Unstructured API</span></a></dt><dd><p>Access all the power of <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> through the <code class="docutils literal notranslate"><span class="pre">unstructured-api</span></code> or learn to host it locally.</p>
 </dd>
 <dt><a class="reference internal" href="bricks.html"><span class="doc">Bricks</span></a></dt><dd><p>Learn more about partitioning, cleaning, and staging bricks, including advanced usage patterns.</p>
 </dd>
-<dt><a class="reference internal" href="connectors.html"><span class="doc">Connectors</span></a></dt><dd><p>Connect to your favorite data storage platforms for an effortless batch processing of your files.</p>
+<dt><a class="reference internal" href="upstream_connectors.html"><span class="doc">Upstream Connectors</span></a></dt><dd><p>Connect to your favortite data storage platforms for an efortless batch processing of your files.</p>
 </dd>
 <dt><a class="reference internal" href="metadata.html"><span class="doc">Metadata</span></a></dt><dd><p>Learn more about how metadata is tracked in the <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> library.</p>
 </dd>
@@ -405,12 +443,12 @@ using the <code class="docutils literal notranslate"><span class="pre">unstructu
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="installing.html">
+          <a class="next-page" href="introduction.html">
             <div class="page-info">
               <div class="context">
                 <span>Next</span>
               </div>
-              <div class="title">Installation</div>
+              <div class="title">Introduction</div>
             </div>
           </a>
           

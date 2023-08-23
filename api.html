@@ -4,12 +4,13 @@
 <head><meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Bricks" href="bricks.html" /><link rel="prev" title="Getting Started" href="getting_started.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Bricks" href="bricks.html" /><link rel="prev" title="Docker Installation" href="installation/docker.html" />
 
   <link rel="shortcut icon" href="_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Unstructured API - Unstructured 0.10.4 documentation</title>
+  <title>Unstructured API - Unstructured 0.10.5 documentation</title>
   <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
+  <link rel="stylesheet" type="text/css" href="_static/tabs.css" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
   <link rel="stylesheet" type="text/css" href="_static/unstructured.css" />
   
@@ -141,6 +142,7 @@
   <script src="_static/doctools.js"></script>
   <script src="_static/sphinx_highlight.js"></script>
   <script src="_static/scripts/furo.js"></script>
+  <script src="_static/tabs.js"></script>
   <script src="_static/js/githubStargazers.js"></script>
   <script src="_static/js/sidebarScrollPosition.js"></script>
   </head>
@@ -307,11 +309,50 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="installing.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="introduction.html">Introduction</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Introduction</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="introduction/overview.html">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction/key_concepts.html">Key Concepts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction/getting_started.html">Getting Started</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="installing.html">Installation</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Installation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation/full_installation.html">Full Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation/docker.html">Docker Installation</a></li>
+</ul>
+</li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Unstructured API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bricks.html">Bricks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="connectors.html">Connectors</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="bricks.html">Bricks</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Bricks</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="bricks/partition.html">Partitioning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bricks/cleaning.html">Cleaning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bricks/extracting.html">Extracting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bricks/staging.html">Staging</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="upstream_connectors.html">Upstream Connectors</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Upstream Connectors</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/airtable.html">Airtable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/azure.html">Azure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/biomed.html">Biomed</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/box.html">Box</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/confluence.html">Confluence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/delta_table.html">Delta Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/discord.html">Discord</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/dropbox.html">Dropbox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/elastic_search.html">Elastic Search</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/github.html">Github</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/gitlab.html">Gitlab</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/google_cloud_storage.html">Google Cloud Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/google_drive.html">Google Drive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/local_connector.html">Local</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/notion.html">Notion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/onedrive.html">One Drive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/outlook.html">Outlook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/reddit.html">Reddit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/s3.html">S3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/sharepoint.html">Sharepoint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/slack.html">Slack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/wikipedia.html">Wikipedia</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="metadata.html">Metadata</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="integrations.html">Integrations</a></li>
@@ -372,17 +413,47 @@
           </div>
           <section id="unstructured-api">
 <h1>Unstructured API<a class="headerlink" href="#unstructured-api" title="Permalink to this heading"></a></h1>
-<p>Try our hosted API! It’s freely available to use with any of the file types listed above. This is the easiest way to get started, all you need is an API key. You can get your API key <a class="reference external" href="https://www.unstructured.io/api-key/">here</a> now and start using it today.</p>
+<p>Try our hosted API! It’s freely available to use with any of the file types listed above. This is the easiest way to get started, all you need is an API key. You can get your API key <a class="reference external" href="https://unstructured.io/#get-api-key">here</a> now and start using it today.</p>
 <p>Now you can get started with this quick example:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-X<span class="w"> </span><span class="s1">&#39;POST&#39;</span><span class="w"> </span><span class="se">\</span>
+<div class="sphinx-tabs docutils container">
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-0-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-0-0-0" name="0-0" role="tab" tabindex="0">Shell</button><button aria-controls="panel-0-0-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-0-0-1" name="0-1" role="tab" tabindex="-1">Python</button></div><div aria-labelledby="tab-0-0-0" class="sphinx-tabs-panel" id="panel-0-0-0" name="0-0" role="tabpanel" tabindex="0"><div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-X<span class="w"> </span><span class="s1">&#39;POST&#39;</span><span class="w"> </span><span class="se">\</span>
 <span class="s1">&#39;https://api.unstructured.io/general/v0/general&#39;</span><span class="w"> </span><span class="se">\</span>
 -H<span class="w"> </span><span class="s1">&#39;accept: application/json&#39;</span><span class="w"> </span><span class="se">\</span>
 -H<span class="w"> </span><span class="s1">&#39;Content-Type: multipart/form-data&#39;</span><span class="w"> </span><span class="se">\</span>
 -H<span class="w"> </span><span class="s1">&#39;unstructured-api-key: &lt;YOUR API KEY&gt;&#39;</span><span class="w"> </span><span class="se">\</span>
--F<span class="w"> </span><span class="s1">&#39;files=@example-docs/family-day.eml&#39;</span><span class="w"> </span><span class="se">\</span>
+-F<span class="w"> </span><span class="s1">&#39;files=@sample-docs/family-day.eml&#39;</span><span class="w"> </span><span class="se">\</span>
 <span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-C<span class="w"> </span>.<span class="w"> </span><span class="p">|</span><span class="w"> </span>less<span class="w"> </span>-R
 </pre></div>
 </div>
+</div><div aria-labelledby="tab-0-0-1" class="sphinx-tabs-panel" hidden="true" id="panel-0-0-1" name="0-1" role="tabpanel" tabindex="0"><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define the URL</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://api.unstructured.io/general/v0/general&#39;</span>
+
+<span class="c1"># Define the headers</span>
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;accept&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;unstructured-api-key&#39;</span><span class="p">:</span> <span class="s1">&#39;&lt;API-KEY&gt;&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># Define the form data</span>
+<span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;strategy&#39;</span><span class="p">:</span> <span class="s1">&#39;auto&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># Define the file data</span>
+<span class="n">file_path</span> <span class="o">=</span> <span class="s2">&quot;/Path/To/File&quot;</span>
+<span class="n">file_data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;files&#39;</span><span class="p">:</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)}</span>
+
+<span class="c1"># Make the POST request</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="n">file_data</span><span class="p">)</span>
+
+<span class="c1"># Close the file</span>
+<span class="n">file_data</span><span class="p">[</span><span class="s1">&#39;files&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="c1"># Parse the JSON response</span>
+<span class="n">json_response</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+</pre></div>
+</div>
+</div></div>
 <p>Below, you will find a more comprehensive overview of the API capabilities. For detailed information on request and response schemas, refer to the <a class="reference external" href="https://api.unstructured.io/general/docs#/">API documentation</a>.</p>
 <p>NOTE: You can also host the API locally. For more information check the <a class="reference internal" href="#using-the-api-locally">Using the API Locally</a> section.</p>
 <section id="supported-file-types">
@@ -569,7 +640,7 @@
 <p>If you are self-hosting the API or running it locally, it’s strongly suggested that you do so running the Docker container.</p>
 <section id="using-docker-images">
 <h3>Using Docker Images<a class="headerlink" href="#using-docker-images" title="Permalink to this heading"></a></h3>
-<p>The following instructions are intended to help you get up and running using Docker to interact with <code class="docutils literal notranslate"><span class="pre">unstructured-api</span></code>. See <a class="reference external" href="https://docs.docker.com/get-docker/">here</a> if you don’t already have docker installed on your machine.</p>
+<p>The following instructions are intended to help you get up and running using Docker to interact with <code class="docutils literal notranslate"><span class="pre">unstructured-api</span></code>. See <a class="reference external" href="https://docs.docker.com/get-docker/">docker</a> if you don’t already have docker installed on your machine.</p>
 <p>NOTE: Multi-platform images are built to support both x86_64 and Apple silicon hardware. Docker pull should download the corresponding image for your architecture, but you can specify with <code class="docutils literal notranslate"><span class="pre">--platform</span></code> (e.g. <code class="docutils literal notranslate"><span class="pre">--platform</span> <span class="pre">linux/amd64</span></code>) if needed.</p>
 <p>Docker images is built for all pushes to <code class="docutils literal notranslate"><span class="pre">main</span></code>. Each image is tagged with the corresponding short commit hash (e.g. <code class="docutils literal notranslate"><span class="pre">fbc7a69</span></code>) and the application version (e.g. <code class="docutils literal notranslate"><span class="pre">0.5.5-dev1</span></code>). Also, the most recent image is tagged with <code class="docutils literal notranslate"><span class="pre">latest</span></code>. To leverage this, use <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">pull</span></code> from the image repository.</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>pull<span class="w"> </span>quay.io/unstructured-io/unstructured-api:latest
@@ -622,13 +693,13 @@
               <div class="title">Bricks</div>
             </div>
           </a>
-          <a class="prev-page" href="getting_started.html">
+          <a class="prev-page" href="installation/docker.html">
             <div class="page-info">
               <div class="context">
                 <span>Previous</span>
               </div>
               
-              <div class="title">Getting Started</div>
+              <div class="title">Docker Installation</div>
               
             </div>
           </a>

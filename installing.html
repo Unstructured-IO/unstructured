@@ -4,12 +4,13 @@
 <head><meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Getting Started" href="getting_started.html" /><link rel="prev" title="Unstructured Core Library" href="index.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Full Installation" href="installation/full_installation.html" /><link rel="prev" title="Getting Started" href="introduction/getting_started.html" />
 
   <link rel="shortcut icon" href="_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Installation - Unstructured 0.10.4 documentation</title>
+  <title>Installation - Unstructured 0.10.5 documentation</title>
   <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
+  <link rel="stylesheet" type="text/css" href="_static/tabs.css" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
   <link rel="stylesheet" type="text/css" href="_static/unstructured.css" />
   
@@ -251,7 +252,7 @@
       <label class="search-icon" for="__search">
         <div class="visually-hidden">Toggle search</div>
       </label>
-      <!-- <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <!-- <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label> -->
@@ -307,11 +308,50 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul class="current">
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="introduction.html">Introduction</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Introduction</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="introduction/overview.html">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction/key_concepts.html">Key Concepts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction/getting_started.html">Getting Started</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">Installation</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Installation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation/full_installation.html">Full Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation/docker.html">Docker Installation</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">Unstructured API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bricks.html">Bricks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="connectors.html">Connectors</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="bricks.html">Bricks</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Bricks</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="bricks/partition.html">Partitioning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bricks/cleaning.html">Cleaning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bricks/extracting.html">Extracting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bricks/staging.html">Staging</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="upstream_connectors.html">Upstream Connectors</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Upstream Connectors</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/airtable.html">Airtable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/azure.html">Azure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/biomed.html">Biomed</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/box.html">Box</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/confluence.html">Confluence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/delta_table.html">Delta Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/discord.html">Discord</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/dropbox.html">Dropbox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/elastic_search.html">Elastic Search</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/github.html">Github</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/gitlab.html">Gitlab</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/google_cloud_storage.html">Google Cloud Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/google_drive.html">Google Drive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/local_connector.html">Local</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/notion.html">Notion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/onedrive.html">One Drive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/outlook.html">Outlook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/reddit.html">Reddit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/s3.html">S3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/sharepoint.html">Sharepoint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/slack.html">Slack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/wikipedia.html">Wikipedia</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="metadata.html">Metadata</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="integrations.html">Integrations</a></li>
@@ -325,7 +365,7 @@
     </div>
   </aside>
   <div class="main">
-    <div class="content">
+    <div class="content content--no-toc">
       <div class="article-container">
         <a href="#" class="back-to-top muted-link">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -349,7 +389,7 @@
               </svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg>
                 <use href="#svg-toc"></use>
@@ -372,160 +412,13 @@
           </div>
           <section id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h1>
-<section id="quick-start">
-<h2>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this heading"></a></h2>
-<p>Use the following instructions to get up and running with <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> and test your
-installation.</p>
-<ul class="simple">
-<li><dl class="simple">
-<dt>Install the Python SDK with <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">unstructured</span></code></dt><dd><ul>
-<li><p>Plain text files, HTML, XML, JSON and Emails do not require any extra dependencies.</p></li>
-<li><dl class="simple">
-<dt>If you need to process other document types, you can install the extras required for those documents</dt><dd><p>with <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;unstructured[docx,pptx]&quot;</span></code>.</p>
-</dd>
-</dl>
-</li>
-<li><p>To install the extras for every document type, use <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;unstructured[all-docs]&quot;</span></code>.</p></li>
-<li><dl class="simple">
-<dt>For <code class="docutils literal notranslate"><span class="pre">unstructured&lt;0.9.0</span></code>, you can install the extras for all document types with</dt><dd><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;unstructured[local-inference]&quot;</span></code>. The <code class="docutils literal notranslate"><span class="pre">local-inference</span></code> extra is still
-supported in newer versions for backward compatibility, but may be deprecated in a future version.
-The <code class="docutils literal notranslate"><span class="pre">all-docs</span></code> extra is the officially supported installation pattern.</p>
-</dd>
-</dl>
-</li>
+<p>Unstructured’s library requires a lot of installation. For the full installation please follow the link below.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation/full_installation.html">Full Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation/docker.html">Docker Installation</a></li>
 </ul>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>Install the following system dependencies if they are not already available on your system. Depending on what document types you’re parsing, you may not need all of these.</dt><dd><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">libmagic-dev</span></code> (filetype detection)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">poppler-utils</span></code> (images and PDFs)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">tesseract-ocr</span></code> (images and PDFs)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">libreoffice</span></code> (MS Office docs)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">pandoc</span></code> (EPUBs, RTFs and Open Office docs)</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><p>Follow the instructions <a class="reference external" href="https://github.com/Unstructured-IO/unstructured-inference#detectron2">here</a> to install <code class="docutils literal notranslate"><span class="pre">detectron2</span></code>. This is required if you would like to use custom models from the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured-inference#using-models-from-the-layoutparser-model-zoo">LayoutParser Model Zoo</a>.</p></li>
-</ul>
-<p>At this point, you should be able to run the following code:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.auto</span> <span class="kn">import</span> <span class="n">partition</span>
-
-<span class="n">elements</span> <span class="o">=</span> <span class="n">partition</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example-docs/fake-email.eml&quot;</span><span class="p">)</span>
-</pre></div>
 </div>
-<p>And if you installed with <cite>local-inference</cite>, you should be able to run this as well:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.auto</span> <span class="kn">import</span> <span class="n">partition</span>
-
-<span class="n">elements</span> <span class="o">=</span> <span class="n">partition</span><span class="p">(</span><span class="s2">&quot;example-docs/layout-parser-paper.pdf&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="installation-with-conda-on-windows">
-<h2>Installation with <code class="docutils literal notranslate"><span class="pre">conda</span></code> on Windows<a class="headerlink" href="#installation-with-conda-on-windows" title="Permalink to this heading"></a></h2>
-<p>You can install and run <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> on Windows with <code class="docutils literal notranslate"><span class="pre">conda</span></code>, but the process
-involves a few extra steps. This section will help you get up and running.</p>
-<ul class="simple">
-<li><p>Install <a class="reference external" href="https://docs.conda.io/projects/conda/en/latest/user-guide/install/windows.html">Anaconda</a> on your Windows machine.</p></li>
-<li><p>Install Microsoft C++ Build Tools using the instructions in <a class="reference external" href="https://stackoverflow.com/questions/64261546/how-to-solve-error-microsoft-visual-c-14-0-or-greater-is-required-when-inst">this Stackoverflow post</a>. C++ build tools are required for the <code class="docutils literal notranslate"><span class="pre">pycocotools</span></code> dependency.</p></li>
-<li><p>Run <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">env</span> <span class="pre">create</span> <span class="pre">-f</span> <span class="pre">environment.yml</span></code> using the <code class="docutils literal notranslate"><span class="pre">environment.yml</span></code> file in the <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> repo to create a virtual environment. The environment will be named <code class="docutils literal notranslate"><span class="pre">unstructured</span></code>.</p></li>
-<li><p>Run <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">activate</span> <span class="pre">unstructured</span></code> to activate the virtualenvironment.</p></li>
-<li><p>Run <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">unstructured</span></code> to install the <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> library.</p></li>
-</ul>
-<section id="setting-up-unstructured-for-local-inference">
-<h3>Setting up <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> for local inference<a class="headerlink" href="#setting-up-unstructured-for-local-inference" title="Permalink to this heading"></a></h3>
-<p>If you need to run model inferences locally, there are a few additional steps you need to
-take. The main challenge is installing <code class="docutils literal notranslate"><span class="pre">detectron2</span></code> for PDF layout parsing. <code class="docutils literal notranslate"><span class="pre">detectron2</span></code>
-does not officially support Windows, but it is possible to get it to install on Windows.
-The installation instructions are based on the instructions LayoutParser provides
-<a class="reference external" href="https://layout-parser.github.io/tutorials/installation#for-windows-users">here</a>.</p>
-<ul class="simple">
-<li><p>Run <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">pycocotools-windows</span></code> to install a Windows compatible version of <code class="docutils literal notranslate"><span class="pre">pycocotools</span></code>. Alternatively, you can run <code class="docutils literal notranslate"><span class="pre">pip3</span> <span class="pre">install</span> <span class="pre">&quot;git+https://github.com/philferriere/cocoapi.git#egg=pycocotools&amp;subdirectory=PythonAPI&quot;</span></code> as outlined in <a class="reference external" href="https://github.com/cocodataset/cocoapi/issues/169#issuecomment-462528628">this GitHub issue</a>.</p></li>
-<li><p>Run <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/ivanpp/detectron2.git</span></code>, then <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">detectron2</span></code>, then <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.</span></code> to install a Windows compatible version of the <code class="docutils literal notranslate"><span class="pre">detectron2</span></code> library.</p></li>
-<li><p>Install the a Windows compatible version of <code class="docutils literal notranslate"><span class="pre">iopath</span></code> using the instructions outlined in <a class="reference external" href="https://github.com/Layout-Parser/layout-parser/issues/15#issuecomment-819546751">this GitHub issue</a>. First, run <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/facebookresearch/iopath</span> <span class="pre">--single-branch</span> <span class="pre">--branch</span> <span class="pre">v0.1.8</span></code>. Then on line 753 in <code class="docutils literal notranslate"><span class="pre">iopath/iopath/common/file_io.py</span></code> change <code class="docutils literal notranslate"><span class="pre">filename</span> <span class="pre">=</span> <span class="pre">path.split(&quot;/&quot;)[-1]</span></code> to <code class="docutils literal notranslate"><span class="pre">filename</span> <span class="pre">=</span> <span class="pre">parsed_url.path.split(&quot;/&quot;)[-1]</span></code>. After that, navigate to the <code class="docutils literal notranslate"><span class="pre">iopath</span></code> directory and run <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.</span></code>.</p></li>
-<li><p>Run <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">unstructured[local-inference]</span></code>. This will install the <code class="docutils literal notranslate"><span class="pre">unstructured_inference</span></code> dependency.</p></li>
-</ul>
-<p>At this point, you can verify the installation by running the following from the root directory of the <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> <a class="reference external" href="https://github.com/Unstructured-IO/unstructured">repo</a>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.pdf</span> <span class="kn">import</span> <span class="n">partition_pdf</span>
-
-<span class="n">partition_pdf</span><span class="p">(</span><span class="s2">&quot;example-docs/layout-parser-paper-fast.pdf&quot;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="installing-paddleocr">
-<h3>Installing PaddleOCR<a class="headerlink" href="#installing-paddleocr" title="Permalink to this heading"></a></h3>
-<p>PaddleOCR is another package that is helpful to use in conjunction with <code class="docutils literal notranslate"><span class="pre">unstructured</span></code>.
-You can use the following steps to install <code class="docutils literal notranslate"><span class="pre">paddleocr</span></code> in your <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> <code class="docutils literal notranslate"><span class="pre">conda</span></code>
-environment.</p>
-<ul class="simple">
-<li><p>Run <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">install</span> <span class="pre">-c</span> <span class="pre">esri</span> <span class="pre">paddleocr</span></code></p></li>
-<li><p>If you have the Windows version of <code class="docutils literal notranslate"><span class="pre">detectron2</span></code> cloned and installed locally, change the name of <code class="docutils literal notranslate"><span class="pre">detectron2/tools</span></code> to <code class="docutils literal notranslate"><span class="pre">detectron2/detectron2_tools</span></code>. Otherwise, you will hit the module name conflict error described in <a class="reference external" href="https://github.com/PaddlePaddle/PaddleOCR/issues/1024">this issue</a>.</p></li>
-<li><p>Set the environment variable <code class="docutils literal notranslate"><span class="pre">KMP_DUPLICATE_LIB_OK</span></code> to <code class="docutils literal notranslate"><span class="pre">&quot;TRUE&quot;</span></code>. This prevents the <code class="docutils literal notranslate"><span class="pre">libiomp5md.dll</span></code> linking issue described <a class="reference external" href="https://github.com/PaddlePaddle/PaddleOCR/issues/4613">in this issue on GitHub</a>.</p></li>
-</ul>
-<p>At this point, you can verify the installation using the following commands. Choose a
-<code class="docutils literal notranslate"><span class="pre">.jpg</span></code> image that contains text.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
-<span class="kn">from</span> <span class="nn">paddleocr</span> <span class="kn">import</span> <span class="n">PaddleOCR</span>
-
-<span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;path/to/my/image.jpg&quot;</span>
-<span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
-<span class="n">ocr</span> <span class="o">=</span> <span class="n">PaddleOCR</span><span class="p">(</span><span class="n">lang</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">,</span> <span class="n">use_gpu</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">show_log</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">ocr</span><span class="o">.</span><span class="n">ocr</span><span class="p">(</span><span class="n">img</span><span class="o">=</span><span class="n">img</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-</section>
-<section id="logging">
-<h2>Logging<a class="headerlink" href="#logging" title="Permalink to this heading"></a></h2>
-<p>You can set the logging level for the package with the <code class="docutils literal notranslate"><span class="pre">LOG_LEVEL</span></code> environment variable.
-By default, the log level is set to <code class="docutils literal notranslate"><span class="pre">WARNING</span></code>. For debugging, consider setting the log
-level to <code class="docutils literal notranslate"><span class="pre">INFO</span></code> or <code class="docutils literal notranslate"><span class="pre">DEBUG</span></code>.</p>
-</section>
-<section id="extra-dependencies">
-<h2>Extra Dependencies<a class="headerlink" href="#extra-dependencies" title="Permalink to this heading"></a></h2>
-<section id="filetype-detection">
-<h3>Filetype Detection<a class="headerlink" href="#filetype-detection" title="Permalink to this heading"></a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">filetype</span></code> module in <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> uses <code class="docutils literal notranslate"><span class="pre">libmagic</span></code> to detect MIME types. For
-this to work, you’ll need <code class="docutils literal notranslate"><span class="pre">libmagic</span></code> installed on your computer. On a Mac, you can run:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>brew<span class="w"> </span>install<span class="w"> </span>libmagic
-</pre></div>
-</div>
-<p>One Debian, run:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>libmagic-dev
-</pre></div>
-</div>
-<p>If you are on Windows using <code class="docutils literal notranslate"><span class="pre">conda</span></code>, run:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>libmagic
-</pre></div>
-</div>
-</section>
-<section id="xml-html-dependencies">
-<h3>XML/HTML Dependencies<a class="headerlink" href="#xml-html-dependencies" title="Permalink to this heading"></a></h3>
-<p>For XML and HTML parsing, you’ll need <code class="docutils literal notranslate"><span class="pre">libxml2</span></code> and <code class="docutils literal notranslate"><span class="pre">libxlst</span></code> installed. On a Mac, you can do
-that with:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>brew<span class="w"> </span>install<span class="w"> </span>libxml2
-<span class="gp">$ </span>brew<span class="w"> </span>install<span class="w"> </span>libxslt
-</pre></div>
-</div>
-</section>
-<section id="huggingface-dependencies">
-<h3>Huggingface Dependencies<a class="headerlink" href="#huggingface-dependencies" title="Permalink to this heading"></a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">transformers</span></code> requires the Rust compiler to be present on your system in
-order to properly <code class="docutils literal notranslate"><span class="pre">pip</span></code> install. If a Rust compiler is not available on your system,
-you can run the following command to install it:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>curl<span class="w"> </span>--proto<span class="w"> </span><span class="s1">&#39;=https&#39;</span><span class="w"> </span>--tlsv1.2<span class="w"> </span>-sSf<span class="w"> </span>https://sh.rustup.rs<span class="w"> </span><span class="p">|</span><span class="w"> </span>sh
-</pre></div>
-</div>
-<p>Additionally, some tokenizers in the <code class="docutils literal notranslate"><span class="pre">transformers</span></code> library required the <code class="docutils literal notranslate"><span class="pre">sentencepiece</span></code>
-library. This is not included as an <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> dependency because it only applies
-to some tokenizers. See the
-<a class="reference external" href="https://github.com/google/sentencepiece#installation">sentencepiece install instructions</a> for
-information on how to install <code class="docutils literal notranslate"><span class="pre">sentencepiece</span></code> if your tokenizer requires it.</p>
-</section>
-</section>
 </section>
 
         </article>
@@ -533,21 +426,21 @@ information on how to install <code class="docutils literal notranslate"><span c
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="getting_started.html">
+          <a class="next-page" href="installation/full_installation.html">
             <div class="page-info">
               <div class="context">
                 <span>Next</span>
               </div>
-              <div class="title">Getting Started</div>
+              <div class="title">Full Installation</div>
             </div>
           </a>
-          <a class="prev-page" href="index.html">
+          <a class="prev-page" href="introduction/getting_started.html">
             <div class="page-info">
               <div class="context">
                 <span>Previous</span>
               </div>
               
-              <div class="title">Home</div>
+              <div class="title">Getting Started</div>
               
             </div>
           </a>
@@ -571,39 +464,8 @@ information on how to install <code class="docutils literal notranslate"><span c
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            Contents
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">Installation</a><ul>
-<li><a class="reference internal" href="#quick-start">Quick Start</a></li>
-<li><a class="reference internal" href="#installation-with-conda-on-windows">Installation with <code class="docutils literal notranslate"><span class="pre">conda</span></code> on Windows</a><ul>
-<li><a class="reference internal" href="#setting-up-unstructured-for-local-inference">Setting up <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> for local inference</a></li>
-<li><a class="reference internal" href="#installing-paddleocr">Installing PaddleOCR</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#logging">Logging</a></li>
-<li><a class="reference internal" href="#extra-dependencies">Extra Dependencies</a><ul>
-<li><a class="reference internal" href="#filetype-detection">Filetype Detection</a></li>
-<li><a class="reference internal" href="#xml-html-dependencies">XML/HTML Dependencies</a></li>
-<li><a class="reference internal" href="#huggingface-dependencies">Huggingface Dependencies</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>
