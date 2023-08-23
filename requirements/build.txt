@@ -64,7 +64,6 @@ sphinx==6.2.1
     #   sphinx-rtd-theme
     #   sphinx-tabs
     #   sphinxcontrib-jquery
-    #   sphinxcontrib-qthelp
     #   sphinxcontrib-serializinghtml
 sphinx-basic-ng==1.0.0b2
     # via furo
@@ -88,8 +87,10 @@ sphinxcontrib-jquery==4.1
     # via sphinx-rtd-theme
 sphinxcontrib-jsmath==1.0.1
     # via sphinx
-sphinxcontrib-qthelp==1.0.6
-    # via sphinx
+sphinxcontrib-qthelp==1.0.3
+    # via
+    #   -r requirements/build.in
+    #   sphinx
 sphinxcontrib-serializinghtml==1.1.9
     # via sphinx
 urllib3==1.26.16
