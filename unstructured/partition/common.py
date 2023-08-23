@@ -29,7 +29,7 @@ from unstructured.utils import dependency_exists
 if dependency_exists("docx") and dependency_exists("docx.table"):
     from docx.table import Table as docxtable
 
-if dependency_exists("numpy"):
+if dependency_exists("numpy") and dependency_exists("cv2"):
     from unstructured.partition.utils.sorting import sort_page_elements
 
 if TYPE_CHECKING:
