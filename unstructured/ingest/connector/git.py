@@ -11,6 +11,7 @@ from unstructured.ingest.interfaces import (
     ConnectorCleanupMixin,
     IngestDocCleanupMixin,
     LoggingMixin,
+    StandardConnectorConfig,
 )
 
 
@@ -54,6 +55,15 @@ class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 @dataclass
 class GitConnector(ConnectorCleanupMixin, BaseConnector, LoggingMixin):
     config: SimpleGitConfig
+
+    def __init__(
+        self,
+        standard_config: StandardConnectorConfig,
+        config: SimpleGitConfig,
+        verbose: bool = False,
+    ):
+        BaseConnector.__init__(self, standard_config=standard_config, config=config)
+        LoggingMixin.__init__(self, verbose=verbose)
 
     def initialize(self):
         pass
