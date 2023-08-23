@@ -12,4 +12,4 @@ SCRIPT_DIR=$(dirname "$(realpath "$0")")
 INPUT_FOLDER_NAME=$1
 OUTPUT_DIR_TEXT=$2
 mkdir -p "$OUTPUT_DIR_TEXT"
-find "$INPUT_FOLDER_NAME" -type f -exec bash -c '$1/clean.sh {} $2' bash "$SCRIPT_DIR" "$OUTPUT_DIR_TEXT" \;
+find "$INPUT_FOLDER_NAME" -type f -print0| xargs -n1 "$SCRIPT_DIR"/clean.sh {} "$OUTPUT_DIR_TEXT" \;
