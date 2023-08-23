@@ -6,6 +6,8 @@
 
 ### Fixes
 
+* Fix bug in `partition_pdf_or_image` where two partitions were called if `strategy == "ocr_only"`.
+
 ## 0.10.5
 
 ### Enhancements
