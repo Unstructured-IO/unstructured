@@ -152,7 +152,7 @@ def test_partition_epub_from_file_custom_metadata_date(
 
 
 def test_partition_epub_with_json():
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "winter-sports.epub")
+    filename = os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "winter-sports.epub")
     elements = partition_epub(filename=filename)
     test_elements = partition_json(text=elements_to_json(elements))
 
