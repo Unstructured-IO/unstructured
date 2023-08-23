@@ -14,7 +14,7 @@ from unstructured.utils import requires_dependencies
 class SimpleGcsConfig(SimpleFsspecConfig):
     pass
 
-
+@dataclass
 class GcsIngestDoc(FsspecIngestDoc):
     registry_name: str = "gcs"
 

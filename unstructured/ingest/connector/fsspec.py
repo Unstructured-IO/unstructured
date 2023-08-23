@@ -68,6 +68,10 @@ class SimpleFsspecConfig(BaseConnectorConfig):
         self.dir_path = match.group(1)
         self.file_path = match.group(2) or ""
 
+    def get_access_kwargs(self) -> dict:
+        print("TEST FSSPEC")
+        return self.access_kwargs
+
 
 @dataclass
 class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
@@ -104,8 +108,11 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         from fsspec import AbstractFileSystem, get_filesystem_class
 
         self._create_full_tmp_dir_path()
+        print(self.config.get_access_kwargs())
+        print(type(self.config))
+        print(self.__class__)
         fs: AbstractFileSystem = get_filesystem_class(self.config.protocol)(
-            **self.config.access_kwargs,
+            **self.config.get_access_kwargs(),
         )
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         fs.get(rpath=self.remote_file_path, lpath=self._tmp_download_file().as_posix())
@@ -130,8 +137,10 @@ class FsspecConnector(ConnectorCleanupMixin, BaseConnector):
         from fsspec import AbstractFileSystem, get_filesystem_class
 
         super().__init__(standard_config, config)
+        print(type(self.config))
+        print(self.__class__)
         self.fs: AbstractFileSystem = get_filesystem_class(self.config.protocol)(
-            **self.config.access_kwargs,
+            **self.config.get_access_kwargs(),
         )
 
     def initialize(self):

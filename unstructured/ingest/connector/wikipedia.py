@@ -51,7 +51,7 @@ class WikipediaIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         with open(self.filename, "w", encoding="utf8") as f:
             f.write(self.text)
 
-
+@dataclass
 class WikipediaIngestHTMLDoc(WikipediaIngestDoc):
     registry_name: str = "wikipedia_html"
     
@@ -73,7 +73,7 @@ class WikipediaIngestHTMLDoc(WikipediaIngestDoc):
             / f"{self.page.title}-{self.page.revision_id}-html.json"
         )
 
-
+@dataclass
 class WikipediaIngestTextDoc(WikipediaIngestDoc):
     registry_name: str = "wikipedia_text"
     
@@ -95,7 +95,7 @@ class WikipediaIngestTextDoc(WikipediaIngestDoc):
             / f"{self.page.title}-{self.page.revision_id}-txt.json"
         )
 
-
+@dataclass
 class WikipediaIngestSummaryDoc(WikipediaIngestDoc):
     registry_name: str = "wikipedia_summary"
     

@@ -30,7 +30,7 @@ class MissingFolderError(Exception):
 class SimpleDropboxConfig(SimpleFsspecConfig):
     pass
 
-
+@dataclass
 class DropboxIngestDoc(FsspecIngestDoc):
     registry_name: str = "dropbox"
 
