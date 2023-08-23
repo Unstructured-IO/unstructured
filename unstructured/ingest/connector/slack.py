@@ -1,4 +1,5 @@
 import os
+import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
@@ -99,7 +100,6 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         if self.config.verbose:
             logger.debug(f"fetching channel {self.channel} - PID: {os.getpid()}")
 
-        messages = []
         self.client = WebClient(token=self.token)
 
         try:
@@ -116,21 +116,41 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 oldest=oldest,
                 latest=latest,
             )
-            messages.extend(result["messages"])
-            while result["has_more"]:
-                result = self.client.conversations_history(
-                    channel=self.channel,
-                    oldest=oldest,
-                    latest=latest,
-                    cursor=result["response_metadata"]["next_cursor"],
-                )
-                messages.extend(result["messages"])
+
+            root = ET.Element("messages")
+            for message in result['messages']:
+                message_elem = ET.SubElement(root, "message")
+                text_elem = ET.SubElement(message_elem, "text")
+                text_elem.text = message.get('text') + " /n "
+                logger.error(text_elem.text)
+
+                cursor = None
+                while True:
+                    try:
+                        response = self.client.conversations_replies(
+                            channel=self.channel,
+                            ts=message['ts'],
+                            cursor=cursor
+                        )
+
+                        replies = response['messages']
+                        for reply in replies:
+                            reply_msg = reply.get('text')
+                            text_elem.text = ''.join([text_elem.text, reply_msg, " /n "])
+
+                        if not response['has_more']:
+                            break
+
+                        cursor = response['response_metadata']['next_cursor']
+
+                    except SlackApiError as e:
+                        print(f"Error retrieving replies: {e.response['error']}")
+
         except SlackApiError as e:
             logger.error(f"Error: {e}")
 
-        with open(self._tmp_download_file(), "w") as channel_file:
-            for message in messages:
-                channel_file.write(message["text"] + "\n")
+        tree = ET.ElementTree(root)
+        tree.write(self._tmp_download_file(), encoding="utf-8", xml_declaration=True)
 
     def convert_datetime(self, date_time):
         for format in DATE_FORMATS:
