@@ -104,6 +104,7 @@ def partition_multiple_via_api(
     file_filenames: Optional[List[str]] = None,
     api_url: str = "https://api.unstructured.io/general/v0/general",
     api_key: str = "",
+    metadata_filenames: Optional[List[str]] = None,
     **request_kwargs,
 ) -> List[List[Element]]:
     """Partitions multiple document using the Unstructured REST API by batching
@@ -136,6 +137,13 @@ def partition_multiple_via_api(
         "UNSTRUCTURED-API-KEY": api_key,
     }
 
+    if files is not None and file_filenames is not None:
+        metadata_filenames = file_filenames
+        logger.warn(
+            "The file_filenames kwarg will be deprecated in a future version of unstructured. "
+            "Please use metadata_filenames instead.",
+        )
+
     if filenames is not None:
         if content_types and len(content_types) != len(filenames):
             raise ValueError("content_types and filenames must have the same length.")
@@ -160,15 +168,15 @@ def partition_multiple_via_api(
         if content_types and len(content_types) != len(files):
             raise ValueError("content_types and files must have the same length.")
 
-        if not file_filenames:
-            raise ValueError("file_filenames must be specified if files are passed")
-        elif len(file_filenames) != len(files):
-            raise ValueError("file_filenames and files must have the same length.")
+        if not metadata_filenames:
+            raise ValueError("metadata_filenames must be specified if files are passed")
+        elif len(metadata_filenames) != len(files):
+            raise ValueError("metadata_filenames and files must have the same length.")
 
         _files = []
         for i, _file in enumerate(files):  # type: ignore
             content_type = content_types[i] if content_types is not None else None
-            filename = file_filenames[i]
+            filename = metadata_filenames[i]
             _files.append(("files", (filename, _file, content_type)))
 
         response = requests.post(

@@ -261,11 +261,33 @@ def test_partition_multiple_via_api_from_files(monkeypatch):
         files = [stack.enter_context(open(filename, "rb")) for filename in filenames]
         elements = partition_multiple_via_api(
             files=files,
-            file_filenames=filenames,
+            metadata_filenames=filenames,
         )
     assert len(elements) == 2
     assert elements[0][0] == NarrativeText("This is a test email to use for unit tests.")
     assert elements[0][0].metadata.filetype == "message/rfc822"
+
+
+def test_partition_multiple_via_api_warns_with_file_filename(monkeypatch, caplog):
+    monkeypatch.setattr(
+        requests,
+        "post",
+        lambda *args, **kwargs: MockMultipleResponse(status_code=200),
+    )
+
+    filenames = [
+        os.path.join(DIRECTORY, "..", "..", "example-docs", EML_TEST_FILE),
+        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake.docx"),
+    ]
+
+    with contextlib.ExitStack() as stack:
+        files = [stack.enter_context(open(filename, "rb")) for filename in filenames]
+        partition_multiple_via_api(
+            files=files,
+            file_filenames=filenames,
+        )
+    assert "WARNING" in caplog.text
+    assert "The file_filenames kwarg will be deprecated" in caplog.text
 
 
 def test_partition_multiple_via_api_raises_with_bad_response(monkeypatch):
@@ -320,7 +342,7 @@ def test_partition_multiple_via_api_from_files_raises_with_size_mismatch(monkeyp
         with pytest.raises(ValueError):
             partition_multiple_via_api(
                 files=files,
-                file_filenames=filenames,
+                metadata_filenames=filenames,
                 content_types=["text/plain"],
             )
 
