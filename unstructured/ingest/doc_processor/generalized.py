@@ -31,7 +31,8 @@ def initialize():
 
 
 def process_document(doc_json: str, **partition_kwargs) -> Optional[List[Dict[str, Any]]]:
-    """Process any IngestDoc-like class of document with chosen Unstructured's partition logic.
+    """Process the serialized json for any IngestDoc-like class of document with chosen 
+    Unstructured partition logic.
 
     Parameters
     ----------
