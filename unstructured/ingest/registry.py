@@ -6,6 +6,7 @@ from unstructured.ingest.connector.box import BoxIngestDoc
 from unstructured.ingest.connector.confluence import ConfluenceIngestDoc
 from unstructured.ingest.connector.discord import DiscordIngestDoc
 from unstructured.ingest.connector.dropbox import DropboxIngestDoc
+from unstructured.ingest.connector.elasticsearch import ElasticsearchIngestDoc
 from unstructured.ingest.connector.gcs import GcsIngestDoc
 from unstructured.ingest.connector.github import GitHubIngestDoc
 from unstructured.ingest.connector.gitlab import GitLabIngestDoc
@@ -17,7 +18,7 @@ from unstructured.ingest.connector.reddit import RedditIngestDoc
 from unstructured.ingest.connector.s3 import S3IngestDoc
 from unstructured.ingest.connector.sharepoint import SharepointIngestDoc
 from unstructured.ingest.connector.slack import SlackIngestDoc
-from unstructured.ingest.connector.wikipedia import WikipediaIngestDoc
+from unstructured.ingest.connector.wikipedia import WikipediaIngestHTMLDoc, WikipediaIngestTextDoc, WikipediaIngestSummaryDoc
 
 
 INGEST_DOC_NAME_TO_CLASS = {
@@ -28,6 +29,7 @@ INGEST_DOC_NAME_TO_CLASS = {
     "confluence": ConfluenceIngestDoc,
     "discord": DiscordIngestDoc,
     "dropbox": DropboxIngestDoc,
+    "elasticsearch": ElasticsearchIngestDoc,
     "gcs": GcsIngestDoc,
     "github": GitHubIngestDoc,
     "gitlab": GitLabIngestDoc,
@@ -39,7 +41,9 @@ INGEST_DOC_NAME_TO_CLASS = {
     "s3": S3IngestDoc,
     "sharepoint": SharepointIngestDoc,
     "slack": SlackIngestDoc,
-    "wikipedia": WikipediaIngestDoc,
+    "wikipedia_html": WikipediaIngestHTMLDoc,
+    "wikipedia_text": WikipediaIngestTextDoc,
+    "wikipedia_summary": WikipediaIngestSummaryDoc
 }
 
 

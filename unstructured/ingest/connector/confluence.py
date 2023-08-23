@@ -4,6 +4,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
+from dataclasses_json import dataclass_json
+
 from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
@@ -34,7 +36,7 @@ class SimpleConfluenceConfig(BaseConnectorConfig):
     max_number_of_spaces: int
     max_number_of_docs_from_each_space: int
 
-
+@dataclass_json
 @dataclass
 class ConfluenceFileMeta:
     """Metadata specifying:

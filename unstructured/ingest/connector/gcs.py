@@ -16,6 +16,7 @@ class SimpleGcsConfig(SimpleFsspecConfig):
 
 @dataclass
 class GcsIngestDoc(FsspecIngestDoc):
+    config: SimpleGcsConfig
     registry_name: str = "gcs"
 
     @requires_dependencies(["gcsfs", "fsspec"], extras="gcs")

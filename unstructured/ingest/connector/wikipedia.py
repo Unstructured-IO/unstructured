@@ -12,6 +12,7 @@ from unstructured.ingest.interfaces import (
     StandardConnectorConfig,
 )
 from unstructured.ingest.logger import logger
+from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
     from wikipedia import WikipediaPage
@@ -26,7 +27,15 @@ class SimpleWikipediaConfig(BaseConnectorConfig):
 @dataclass
 class WikipediaIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleWikipediaConfig = field(repr=False)
-    page: "WikipediaPage"
+
+    @property
+    @requires_dependencies(["wikipedia"], extras="wikipedia")
+    def page(self) -> "WikipediaPage":
+        import wikipedia
+        return wikipedia.page(
+            self.config.title,
+            auto_suggest=self.config.auto_suggest,
+        )
 
     @property
     def filename(self) -> Path:
@@ -126,16 +135,10 @@ class WikipediaConnector(ConnectorCleanupMixin, BaseConnector):
 
     def initialize(self):
         pass
-
+    
     def get_ingest_docs(self):
-        import wikipedia
-
-        page = wikipedia.page(
-            self.config.title,
-            auto_suggest=self.config.auto_suggest,
-        )
         return [
-            WikipediaIngestTextDoc(self.standard_config, self.config, page),
-            WikipediaIngestHTMLDoc(self.standard_config, self.config, page),
-            WikipediaIngestSummaryDoc(self.standard_config, self.config, page),
+            WikipediaIngestTextDoc(self.standard_config, self.config),
+            WikipediaIngestHTMLDoc(self.standard_config, self.config),
+            WikipediaIngestSummaryDoc(self.standard_config, self.config),
         ]

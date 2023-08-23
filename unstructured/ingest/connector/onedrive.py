@@ -98,7 +98,7 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return Path(self.output_filepath).resolve()
 
     @BaseIngestDoc.skip_if_file_exists
-    @requires_dependencies(["office365"])
+    @requires_dependencies(["office365"], extras="onedrive")
     def get_file(self):
         try:
             fsize = self.file.get_property("size", 0)
@@ -130,7 +130,7 @@ class OneDriveConnector(ConnectorCleanupMixin, BaseConnector):
         super().__init__(standard_config, config)
         self._set_client()
 
-    @requires_dependencies(["office365"])
+    @requires_dependencies(["office365"], extras="onedrive")
     def _set_client(self):
         from office365.graph_client import GraphClient
 
