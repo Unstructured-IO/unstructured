@@ -180,16 +180,6 @@
     "text": " Marine"
   },
   {
-    "type": "Title",
-    "element_id": "d04999bf99ea28fc8a6b20318caac58c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": " CSP"
-  },
-  {
     "type": "UncategorizedText",
     "element_id": "9925953f1faef050547e5f7b811c3f7d",
     "metadata": {
@@ -201,13 +191,13 @@
   },
   {
     "type": "Title",
-    "element_id": "8af26217282646d0f64d3e3211f47512",
+    "element_id": "d04999bf99ea28fc8a6b20318caac58c",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": " Solar PV"
+    "text": " CSP"
   },
   {
     "type": "UncategorizedText",
@@ -218,6 +208,16 @@
       "page_number": 4
     },
     "text": "35,000"
+  },
+  {
+    "type": "Title",
+    "element_id": "8af26217282646d0f64d3e3211f47512",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": " Solar PV"
   },
   {
     "type": "Title",
@@ -260,16 +260,6 @@
     "text": "h W T"
   },
   {
-    "type": "Title",
-    "element_id": "bde9df80639b681edb85ace46b4d4600",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": " Bioenergy"
-  },
-  {
     "type": "UncategorizedText",
     "element_id": "c7e6673590d2426f635c9be70bd8f057",
     "metadata": {
@@ -281,13 +271,13 @@
   },
   {
     "type": "Title",
-    "element_id": "b449cd843dc44ab907e1e9ed9c30d92e",
+    "element_id": "bde9df80639b681edb85ace46b4d4600",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": " Hydro"
+    "text": " Bioenergy"
   },
   {
     "type": "UncategorizedText",
@@ -298,6 +288,16 @@
       "page_number": 4
     },
     "text": "20,000"
+  },
+  {
+    "type": "Title",
+    "element_id": "b449cd843dc44ab907e1e9ed9c30d92e",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": " Hydro"
   },
   {
     "type": "Title",
@@ -350,16 +350,6 @@
     "text": " Oil"
   },
   {
-    "type": "Title",
-    "element_id": "90ad0c8c14253135efd14645e0156145",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": " Coal"
-  },
-  {
     "type": "UncategorizedText",
     "element_id": "b2008c37ee3a7cf7ba87f5ad50dd9e11",
     "metadata": {
@@ -368,6 +358,16 @@
       "page_number": 4
     },
     "text": "5,000"
+  },
+  {
+    "type": "Title",
+    "element_id": "90ad0c8c14253135efd14645e0156145",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": " Coal"
   },
   {
     "type": "UncategorizedText",
@@ -820,6 +820,26 @@
     "text": "0"
   },
   {
+    "type": "NarrativeText",
+    "element_id": "4b5ebf5890b9c61b43c5daf4c40cbab0",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "C o m"
+  },
+  {
+    "type": "Title",
+    "element_id": "8fd5206adbbb7a132889e4161057d4cf",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "m ercial Photovoltaic"
+  },
+  {
     "type": "Title",
     "element_id": "8e2f99a9826b1b316f7690290f32b31f",
     "metadata": {
@@ -851,13 +871,13 @@
   },
   {
     "type": "Title",
-    "element_id": "8fd5206adbbb7a132889e4161057d4cf",
+    "element_id": "079c085d3cb9f52f2392addf619382be",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "m ercial Photovoltaic"
+    "text": "C C G T"
   },
   {
     "type": "Title",
@@ -868,26 +888,6 @@
       "page_number": 7
     },
     "text": "C oal"
-  },
-  {
-    "type": "Title",
-    "element_id": "079c085d3cb9f52f2392addf619382be",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "C C G T"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "4b5ebf5890b9c61b43c5daf4c40cbab0",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "C o m"
   },
   {
     "type": "NarrativeText",
@@ -970,26 +970,6 @@
     "text": "140"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "2abaca4911e68fa9bfbf3482ee797fd5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "120"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "2abaca4911e68fa9bfbf3482ee797fd5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "120"
-  },
-  {
     "type": "NarrativeText",
     "element_id": "e11247712b3df61756970b45f019ad68",
     "metadata": {
@@ -998,36 +978,6 @@
       "page_number": 8
     },
     "text": "r a e y"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "b725d20650649a5221675144bab5946e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "99.5"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "ad57366865126e55649ecb23ae1d4888",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "100"
-  },
-  {
-    "type": "Title",
-    "element_id": "3f79bb7b435b05321651daefd374cdc6",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "e"
   },
   {
     "type": "Title",
@@ -1040,24 +990,14 @@
     "text": "W T"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "ce3201efc2e495241a85e4fc84575f50",
+    "type": "Title",
+    "element_id": "3f79bb7b435b05321651daefd374cdc6",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 8
     },
-    "text": "71.9"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "48449a14a4ff7d79bb7a1b6f3d488eba",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "80"
+    "text": "e"
   },
   {
     "type": "NarrativeText",
@@ -1068,6 +1008,46 @@
       "page_number": 8
     },
     "text": "r e p s e i t i l"
+  },
+  {
+    "type": "Title",
+    "element_id": "1fb2ec4fc8fc547c0de86ba79ba651e5",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "a t a F"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "2abaca4911e68fa9bfbf3482ee797fd5",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "120"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "ad57366865126e55649ecb23ae1d4888",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "100"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "48449a14a4ff7d79bb7a1b6f3d488eba",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "80"
   },
   {
     "type": "UncategorizedText",
@@ -1090,16 +1070,6 @@
     "text": "40"
   },
   {
-    "type": "Title",
-    "element_id": "1fb2ec4fc8fc547c0de86ba79ba651e5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "a t a F"
-  },
-  {
     "type": "UncategorizedText",
     "element_id": "f5ca38f748a1d6eaf726b8a42fb575c3",
     "metadata": {
@@ -1108,6 +1078,76 @@
       "page_number": 8
     },
     "text": "20"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "5feceb66ffc86f38d952786c6d696c79",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "0"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "2abaca4911e68fa9bfbf3482ee797fd5",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "120"
+  },
+  {
+    "type": "Title",
+    "element_id": "6c25ebfc9ffd2510c4c41d4bd5cb7ea9",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "C oal"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "b725d20650649a5221675144bab5946e",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "99.5"
+  },
+  {
+    "type": "Title",
+    "element_id": "2378bdd2cf4f491cf401e6b215cbb4fd",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "Oil"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "ce3201efc2e495241a85e4fc84575f50",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "71.9"
+  },
+  {
+    "type": "Title",
+    "element_id": "4fabb98454d019811a732c4a09f31bf0",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "N atural gas"
   },
   {
     "type": "UncategorizedText",
@@ -1130,36 +1170,6 @@
     "text": "1.78"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "f1ced6d8a7d437fd3748f56bb2358f9a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "0.245"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "efc293f64a092b9bfe153be9357f9580",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "<0.01"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "5feceb66ffc86f38d952786c6d696c79",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "0"
-  },
-  {
     "type": "Title",
     "element_id": "77cf83b127020f3a465005abc747e63f",
     "metadata": {
@@ -1168,6 +1178,16 @@
       "page_number": 8
     },
     "text": "Offshore wind"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "77e43ef38dbfcec0511535d9c7dbee5c",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "(U K)"
   },
   {
     "type": "NarrativeText",
@@ -1180,44 +1200,14 @@
     "text": "O nshore wind (G erm any)"
   },
   {
-    "type": "Title",
-    "element_id": "6c25ebfc9ffd2510c4c41d4bd5cb7ea9",
+    "type": "UncategorizedText",
+    "element_id": "f1ced6d8a7d437fd3748f56bb2358f9a",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 8
     },
-    "text": "C oal"
-  },
-  {
-    "type": "Title",
-    "element_id": "2378bdd2cf4f491cf401e6b215cbb4fd",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "Oil"
-  },
-  {
-    "type": "Title",
-    "element_id": "4fabb98454d019811a732c4a09f31bf0",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "N atural gas"
-  },
-  {
-    "type": "Title",
-    "element_id": "f280c2a253ebd5a7389dd0790fcbd56c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "N uclear*"
+    "text": "0.245"
   },
   {
     "type": "Title",
@@ -1231,13 +1221,23 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "77e43ef38dbfcec0511535d9c7dbee5c",
+    "element_id": "efc293f64a092b9bfe153be9357f9580",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 8
     },
-    "text": "(U K)"
+    "text": "<0.01"
+  },
+  {
+    "type": "Title",
+    "element_id": "f280c2a253ebd5a7389dd0790fcbd56c",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "N uclear*"
   },
   {
     "type": "NarrativeText",
@@ -1280,16 +1280,6 @@
     "text": "100"
   },
   {
-    "type": "Title",
-    "element_id": "90ad0c8c14253135efd14645e0156145",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": " Coal"
-  },
-  {
     "type": "UncategorizedText",
     "element_id": "69f59c273b6e669ac32a6dd5e1b2cb63",
     "metadata": {
@@ -1298,6 +1288,16 @@
       "page_number": 8
     },
     "text": "90"
+  },
+  {
+    "type": "Title",
+    "element_id": "90ad0c8c14253135efd14645e0156145",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": " Coal"
   },
   {
     "type": "Title",
@@ -1330,16 +1330,6 @@
     "text": " Biofuels/Waste"
   },
   {
-    "type": "Title",
-    "element_id": "c4fad0ce9772d241be8c8624896ada86",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": " Wind/Solar"
-  },
-  {
     "type": "UncategorizedText",
     "element_id": "ff5a1ae012afa5d4c889c50ad427aaf5",
     "metadata": {
@@ -1351,13 +1341,13 @@
   },
   {
     "type": "Title",
-    "element_id": "b449cd843dc44ab907e1e9ed9c30d92e",
+    "element_id": "c4fad0ce9772d241be8c8624896ada86",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 8
     },
-    "text": " Hydro"
+    "text": " Wind/Solar"
   },
   {
     "type": "UncategorizedText",
@@ -1371,6 +1361,16 @@
   },
   {
     "type": "Title",
+    "element_id": "b449cd843dc44ab907e1e9ed9c30d92e",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": " Hydro"
+  },
+  {
+    "type": "Title",
     "element_id": "f35457739b3bd74c61625c986c844726",
     "metadata": {
       "data_source": {},
@@ -1381,16 +1381,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "1a6562590ef19d1045d06c4055742d38",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "50"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "bbf3f11cb5b43e700273a78d12de55e4",
     "metadata": {
       "data_source": {},
@@ -1398,6 +1388,16 @@
       "page_number": 8
     },
     "text": "%"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "1a6562590ef19d1045d06c4055742d38",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "50"
   },
   {
     "type": "UncategorizedText",
@@ -1510,16 +1510,6 @@
     "text": "600"
   },
   {
-    "type": "Title",
-    "element_id": "baa49be4a9f9fab3b991718e0adb565e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 9
-    },
-    "text": " Non-hydro"
-  },
-  {
     "type": "UncategorizedText",
     "element_id": "0604cd3138feed202ef293e062da2f47",
     "metadata": {
@@ -1528,6 +1518,16 @@
       "page_number": 9
     },
     "text": "500"
+  },
+  {
+    "type": "Title",
+    "element_id": "baa49be4a9f9fab3b991718e0adb565e",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 9
+    },
+    "text": " Non-hydro"
   },
   {
     "type": "Title",
@@ -1541,13 +1541,13 @@
   },
   {
     "type": "Title",
-    "element_id": "f35457739b3bd74c61625c986c844726",
+    "element_id": "563a2980d46c81119e1d7d952b375a41",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 9
     },
-    "text": " Nuclear"
+    "text": "h W T"
   },
   {
     "type": "UncategorizedText",
@@ -1558,26 +1558,6 @@
       "page_number": 9
     },
     "text": "400"
-  },
-  {
-    "type": "Title",
-    "element_id": "f6e172956a9472fa43f9a895f99c2836",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 9
-    },
-    "text": " Natural gas"
-  },
-  {
-    "type": "Title",
-    "element_id": "563a2980d46c81119e1d7d952b375a41",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 9
-    },
-    "text": "h W T"
   },
   {
     "type": "UncategorizedText",
@@ -1591,6 +1571,26 @@
   },
   {
     "type": "Title",
+    "element_id": "f35457739b3bd74c61625c986c844726",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 9
+    },
+    "text": " Nuclear"
+  },
+  {
+    "type": "Title",
+    "element_id": "f6e172956a9472fa43f9a895f99c2836",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 9
+    },
+    "text": " Natural gas"
+  },
+  {
+    "type": "Title",
     "element_id": "b449cd843dc44ab907e1e9ed9c30d92e",
     "metadata": {
       "data_source": {},
@@ -1598,16 +1598,6 @@
       "page_number": 9
     },
     "text": " Hydro"
-  },
-  {
-    "type": "Title",
-    "element_id": "b001a2374d44e3085e712bb40f66270e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 9
-    },
-    "text": " Oil"
   },
   {
     "type": "UncategorizedText",
@@ -1618,6 +1608,16 @@
       "page_number": 9
     },
     "text": "200"
+  },
+  {
+    "type": "Title",
+    "element_id": "b001a2374d44e3085e712bb40f66270e",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 9
+    },
+    "text": " Oil"
   },
   {
     "type": "Title",
@@ -1790,16 +1790,6 @@
     "text": "i"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "de72de35f0092bdd3107011f3be18dc0",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "International Energy Agency (2018), World Energy Outlook 2018. Data accessed from https://www.iea.org/weo/ – Based on the New Policies Scenario, which incorporates existing energy policies as well as an assessment of the results likely to stem from the implementation of announced policy intentions – with visual modification by World Nuclear Association. International Energy Agency (n.d.), Statistics. Accessed from: https://www.iea.org/statistics/?country=WORLD&year=2016&category=Electricity&indicator=ElecGenByFuel&mode =chart&dataTable=ELECTRICITYANDHEAT – with visual modifications by World Nuclear Association. International Energy Agency (2019), Nuclear Power in a Clean Energy System. Accessed from: https://www.iea.org/ publications/nuclear/ Intergovernmental Panel on Climate Change (2018), Special Report on Global Warming of 1.5 °C. Accessed from: https://www.ipcc.ch/sr15/ International Energy Agency (2019), Nuclear Power in a Clean Energy System. Accessed from: https://www.iea.org/ publications/nuclear/ International Energy Agency & OECD Nuclear Energy Agency (2015), Projected Costs of generating Electricity – 2015 Edition. Accessed from: https://www.oecd-nea.org/ndd/pubs/2015/7057-proj-costs-electricity-2015.pdf International Atomic Energy Agency (2015), Technical challenges in the application and licensing of digital instrumentation and control systems in nuclear power plants. Accessed from: https://www-pub.iaea.org/MTCD/ Publications/PDF/P1695_web.pdf"
-  },
-  {
     "type": "Title",
     "element_id": "5d7f49449ab22deac22d767b89549c55",
     "metadata": {
@@ -1861,6 +1851,16 @@
   },
   {
     "type": "NarrativeText",
+    "element_id": "de72de35f0092bdd3107011f3be18dc0",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "International Energy Agency (2018), World Energy Outlook 2018. Data accessed from https://www.iea.org/weo/ – Based on the New Policies Scenario, which incorporates existing energy policies as well as an assessment of the results likely to stem from the implementation of announced policy intentions – with visual modification by World Nuclear Association. International Energy Agency (n.d.), Statistics. Accessed from: https://www.iea.org/statistics/?country=WORLD&year=2016&category=Electricity&indicator=ElecGenByFuel&mode =chart&dataTable=ELECTRICITYANDHEAT – with visual modifications by World Nuclear Association. International Energy Agency (2019), Nuclear Power in a Clean Energy System. Accessed from: https://www.iea.org/ publications/nuclear/ Intergovernmental Panel on Climate Change (2018), Special Report on Global Warming of 1.5 °C. Accessed from: https://www.ipcc.ch/sr15/ International Energy Agency (2019), Nuclear Power in a Clean Energy System. Accessed from: https://www.iea.org/ publications/nuclear/ International Energy Agency & OECD Nuclear Energy Agency (2015), Projected Costs of generating Electricity – 2015 Edition. Accessed from: https://www.oecd-nea.org/ndd/pubs/2015/7057-proj-costs-electricity-2015.pdf International Atomic Energy Agency (2015), Technical challenges in the application and licensing of digital instrumentation and control systems in nuclear power plants. Accessed from: https://www-pub.iaea.org/MTCD/ Publications/PDF/P1695_web.pdf"
+  },
+  {
+    "type": "NarrativeText",
     "element_id": "b6396ecd6f60e3dcca17c045c00846c1",
     "metadata": {
       "data_source": {},
@@ -1868,16 +1868,6 @@
       "page_number": 10
     },
     "text": "viii Paul-Scherrer Institute. Data for nuclear accidents modified to reflect UNSCEAR findings/recommendations (2012)"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "5897aff759a5cc8d94710101c73af296",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "and NRC SOARCA study 2015 International Energy Agency (2018), Electricity Information 2018 https://webstore.iea.org/electricity-information-2018-overview Ibid."
   },
   {
     "type": "Title",
@@ -1901,6 +1891,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "5897aff759a5cc8d94710101c73af296",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "and NRC SOARCA study 2015 International Energy Agency (2018), Electricity Information 2018 https://webstore.iea.org/electricity-information-2018-overview Ibid."
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "cd7669ea7d8c7961fdbf51c7fec05db7",
     "metadata": {
       "data_source": {},
@@ -1920,16 +1920,6 @@
     "text": "8"
   },
   {
-    "type": "Title",
-    "element_id": "2ef1a5c0752085d3a6935132ad9e597c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 12
-    },
-    "text": "+44 (0)20 7451 1520 www.world-nuclear.org info@world-nuclear.org"
-  },
-  {
     "type": "UncategorizedText",
     "element_id": "481e5a54650b0a4ac7bc2568ddad436d",
     "metadata": {
@@ -1938,6 +1928,16 @@
       "page_number": 12
     },
     "text": "World Nuclear Association Tower House 10 Southampton Street London WC2E 7HA United Kingdom"
+  },
+  {
+    "type": "Title",
+    "element_id": "2ef1a5c0752085d3a6935132ad9e597c",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 12
+    },
+    "text": "+44 (0)20 7451 1520 www.world-nuclear.org info@world-nuclear.org"
   },
   {
     "type": "NarrativeText",
