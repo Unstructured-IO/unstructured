@@ -9,6 +9,8 @@
 ### Fixes
 
 * Fix bug in `partition_pdf_or_image` where two partitions were called if `strategy == "ocr_only"`.
+* Bump unstructured-inference
+  * Fix issue where temporary files were being left behind (0.5.16)
 
 ## 0.10.5
 
