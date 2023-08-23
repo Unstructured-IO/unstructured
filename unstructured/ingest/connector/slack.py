@@ -121,8 +121,7 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             for message in result['messages']:
                 message_elem = ET.SubElement(root, "message")
                 text_elem = ET.SubElement(message_elem, "text")
-                text_elem.text = message.get('text') + " /n "
-                logger.error(text_elem.text)
+                text_elem.text = ''.join([message.get('text'), " /n "])
 
                 cursor = None
                 while True:
