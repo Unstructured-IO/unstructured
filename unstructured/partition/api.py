@@ -50,6 +50,12 @@ def partition_via_api(
     """
     exactly_one(filename=filename, file=file)
 
+    if metadata_filename and file_filename:
+        raise ValueError(
+            "Only one of metadata_filename and file_filename is specified. "
+            "metadata_filename is preferred. file_filename is marked for deprecation.",
+        )
+
     if file is not None and file_filename is not None:
         metadata_filename = file_filename
         logger.warn(
@@ -136,6 +142,12 @@ def partition_multiple_via_api(
         "ACCEPT": "application/json",
         "UNSTRUCTURED-API-KEY": api_key,
     }
+
+    if metadata_filenames and file_filenames:
+        raise ValueError(
+            "Only one of metadata_filenames and file_filenames is specified. "
+            "metadata_filenames is preferred. file_filenames is marked for deprecation.",
+        )
 
     if files is not None and file_filenames is not None:
         metadata_filenames = file_filenames

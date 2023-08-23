@@ -87,6 +87,18 @@ def test_partition_via_api_from_file_warns_with_file_filename(monkeypatch, caplo
     assert "The file_filename kwarg will be deprecated" in caplog.text
 
 
+def test_partition_via_api_from_file_raises_with_metadata_and_file_filename(monkeypatch):
+    monkeypatch.setattr(
+        requests,
+        "post",
+        lambda *args, **kwargs: MockResponse(status_code=200),
+    )
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", EML_TEST_FILE)
+
+    with open(filename, "rb") as f, pytest.raises(ValueError):
+        partition_via_api(file=f, file_filename=filename, metadata_filename=filename)
+
+
 def test_partition_via_api_from_file_raises_without_filename(monkeypatch):
     monkeypatch.setattr(
         requests,
@@ -288,6 +300,28 @@ def test_partition_multiple_via_api_warns_with_file_filename(monkeypatch, caplog
         )
     assert "WARNING" in caplog.text
     assert "The file_filenames kwarg will be deprecated" in caplog.text
+
+
+def test_partition_multiple_via_api_warns_with_file_and_metadata_filename(monkeypatch):
+    monkeypatch.setattr(
+        requests,
+        "post",
+        lambda *args, **kwargs: MockMultipleResponse(status_code=200),
+    )
+
+    filenames = [
+        os.path.join(DIRECTORY, "..", "..", "example-docs", EML_TEST_FILE),
+        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake.docx"),
+    ]
+
+    with contextlib.ExitStack() as stack:
+        files = [stack.enter_context(open(filename, "rb")) for filename in filenames]
+        with pytest.raises(ValueError):
+            partition_multiple_via_api(
+                files=files,
+                metadata_filenames=filenames,
+                file_filenames=filenames,
+            )
 
 
 def test_partition_multiple_via_api_raises_with_bad_response(monkeypatch):
