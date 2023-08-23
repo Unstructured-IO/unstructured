@@ -63,9 +63,6 @@ sphinx==6.2.1
     #   sphinx-basic-ng
     #   sphinx-rtd-theme
     #   sphinx-tabs
-    #   sphinxcontrib-applehelp
-    #   sphinxcontrib-devhelp
-    #   sphinxcontrib-htmlhelp
     #   sphinxcontrib-jquery
     #   sphinxcontrib-qthelp
     #   sphinxcontrib-serializinghtml
@@ -75,12 +72,18 @@ sphinx-rtd-theme==1.2.2
     # via -r requirements/build.in
 sphinx-tabs==3.4.1
     # via -r requirements/build.in
-sphinxcontrib-applehelp==1.0.7
-    # via sphinx
-sphinxcontrib-devhelp==1.0.5
-    # via sphinx
-sphinxcontrib-htmlhelp==2.0.4
-    # via sphinx
+sphinxcontrib-applehelp==1.0.4
+    # via
+    #   -r requirements/build.in
+    #   sphinx
+sphinxcontrib-devhelp==1.0.2
+    # via
+    #   -r requirements/build.in
+    #   sphinx
+sphinxcontrib-htmlhelp==2.0.1
+    # via
+    #   -r requirements/build.in
+    #   sphinx
 sphinxcontrib-jquery==4.1
     # via sphinx-rtd-theme
 sphinxcontrib-jsmath==1.0.1

@@ -5,6 +5,11 @@ sphinx
 sphinx-tabs
 # NOTE(alan) - Pinning to resolve a conflict with sphinx. We can unpin on next sphinx_rtd_theme release.
 sphinx_rtd_theme==1.2.2
+# NOTE(crag): the following are pinned due to later versions not being available in CI for some reason
+sphinxcontrib-htmlhelp==2.0.1
+sphinxcontrib-devhelp==1.0.2
+sphinxcontrib-applehelp==1.0.4
+
 furo
 
 # NOTE(robinson) - The following dependencies are pinned to address security scans
