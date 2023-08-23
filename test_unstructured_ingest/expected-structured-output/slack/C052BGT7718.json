@@ -1,12 +1,32 @@
 [
   {
     "type": "NarrativeText",
-    "element_id": "e50da2f0aada6f89af788627ebf261b7",
+    "element_id": "3380dfe4ff06907f92be6f9419821f6e",
     "metadata": {
       "data_source": {},
       "filename": "C052BGT7718.txt",
-      "filetype": "text/plain"
+      "filetype": "application/xml"
     },
-    "text": "testing <@U051UBRR946> has joined the channel <@U04ST78RXU3> has joined the channel"
+    "text": "testing /n testing /n threads are cool /n"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "a30e602a742aa8d0432bfbcd84c6182f",
+    "metadata": {
+      "data_source": {},
+      "filename": "C052BGT7718.txt",
+      "filetype": "application/xml"
+    },
+    "text": "<@U051UBRR946> has joined the channel /n <@U051UBRR946> has joined the channel /n"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "c597fdf97d9b35c6a8de917fda7f7dd3",
+    "metadata": {
+      "data_source": {},
+      "filename": "C052BGT7718.txt",
+      "filetype": "application/xml"
+    },
+    "text": "<@U04ST78RXU3> has joined the channel /n <@U04ST78RXU3> has joined the channel /n"
   }
 ]
