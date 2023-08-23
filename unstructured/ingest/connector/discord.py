@@ -58,10 +58,6 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     days: Optional[int]
     token: str
     registry_name: str = "discord"
-    
-    @property
-    def registry_name(self):
-        return "discord"
 
     # NOTE(crag): probably doesn't matter,  but intentionally not defining tmp_download_file
     # __post_init__ for multiprocessing simplicity (no Path objects in initially
@@ -134,9 +130,9 @@ class DiscordConnector(ConnectorCleanupMixin, BaseConnector):
     ):
         super().__init__(standard_config, config)
 
+
     def initialize(self):
-        """Verify that can get metadata for an object, validates connections info."""
-        os.mkdir(self.standard_config.download_dir)
+        pass
 
     def get_ingest_docs(self):
         return [

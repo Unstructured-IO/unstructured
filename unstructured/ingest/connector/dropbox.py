@@ -34,7 +34,7 @@ class SimpleDropboxConfig(SimpleFsspecConfig):
 class DropboxIngestDoc(FsspecIngestDoc):
     registry_name: str = "dropbox"
 
-    @requires_dependencies(["dropboxdrivefs", "fsspec"])
+    @requires_dependencies(["dropboxdrivefs", "fsspec"], extras="dropbox")
     def get_file(self):
         super().get_file()
 
@@ -72,7 +72,7 @@ class DropboxIngestDoc(FsspecIngestDoc):
             )
 
 
-@requires_dependencies(["dropboxdrivefs", "fsspec"])
+@requires_dependencies(["dropboxdrivefs", "fsspec"], extras="dropbox")
 class DropboxConnector(FsspecConnector):
     ingest_doc_cls: Type[DropboxIngestDoc] = DropboxIngestDoc
 
