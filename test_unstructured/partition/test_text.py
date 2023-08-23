@@ -11,6 +11,8 @@ from unstructured.partition.text import (
     partition_text,
     split_content_to_fit_max,
 )
+from unstructured.partition.json import partition_json
+from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
@@ -478,3 +480,21 @@ def test_partition_text_with_unique_ids():
     assert elements[0].id.count("-") == 4
     # Test that the element is JSON serializable. This should run without an error
     json.dumps(elements[0].to_dict())
+
+@pytest.mark.parametrize(
+    ("filename", "encoding"),
+    [
+        ("fake-text.txt", "utf-8"),
+        ("fake-text.txt", None),
+        ("fake-text-utf-16-be.txt", "utf-16-be"),
+    ],
+)
+def test_partition_text_with_json(filename, encoding):
+    filename_path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+    elements = partition_text(filename=filename_path, encoding=encoding)
+    test_elements = partition_json(text=elements_to_json(elements))
+
+    assert len(elements) == len(test_elements)
+    assert elements[0].metadata.filename == test_elements[0].metadata.filename
+    for i in range(len(elements)):
+        assert elements[i] == test_elements[i]
