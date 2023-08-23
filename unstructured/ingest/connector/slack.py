@@ -118,29 +118,29 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             )
 
             root = ET.Element("messages")
-            for message in result['messages']:
+            for message in result["messages"]:
                 message_elem = ET.SubElement(root, "message")
                 text_elem = ET.SubElement(message_elem, "text")
-                text_elem.text = ''.join([message.get('text'), " /n "])
+                text_elem.text = "".join([message.get("text"), " /n "])
 
                 cursor = None
                 while True:
                     try:
                         response = self.client.conversations_replies(
                             channel=self.channel,
-                            ts=message['ts'],
-                            cursor=cursor
+                            ts=message["ts"],
+                            cursor=cursor,
                         )
 
-                        replies = response['messages']
+                        replies = response["messages"]
                         for reply in replies:
-                            reply_msg = reply.get('text')
-                            text_elem.text = ''.join([text_elem.text, reply_msg, " /n "])
+                            reply_msg = reply.get("text")
+                            text_elem.text = "".join([text_elem.text, reply_msg, " /n "])
 
-                        if not response['has_more']:
+                        if not response["has_more"]:
                             break
 
-                        cursor = response['response_metadata']['next_cursor']
+                        cursor = response["response_metadata"]["next_cursor"]
 
                     except SlackApiError as e:
                         print(f"Error retrieving replies: {e.response['error']}")
