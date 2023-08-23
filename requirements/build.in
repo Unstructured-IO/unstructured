@@ -12,7 +12,7 @@ sphinxcontrib-applehelp==1.0.4
 sphinxcontrib-qthelp==1.0.3
 sphinxcontrib-serializinghtml==1.1.5
 
-furo
+furo==2023.7.26
 
 # NOTE(robinson) - The following dependencies are pinned to address security scans
 certifi>=2022.12.07
