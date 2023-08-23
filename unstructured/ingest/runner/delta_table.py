@@ -47,6 +47,7 @@ def delta_table(
             without_files=without_files,
             columns=columns,
         ),
+        verbose=verbose,
     )
 
     process_documents(doc_connector=doc_connector, processor_config=processor_config)

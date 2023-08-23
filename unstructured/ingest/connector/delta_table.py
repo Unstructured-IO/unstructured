@@ -1,4 +1,3 @@
-import logging
 import os
 from dataclasses import dataclass
 from datetime import datetime as dt
@@ -13,9 +12,9 @@ from unstructured.ingest.interfaces import (
     BaseIngestDoc,
     ConnectorCleanupMixin,
     IngestDocCleanupMixin,
+    LoggingMixin,
     StandardConnectorConfig,
 )
-from unstructured.ingest.logger import make_default_logger
 from unstructured.utils import requires_dependencies
 
 
@@ -27,12 +26,6 @@ class SimpleDeltaTableConfig(BaseConnectorConfig):
     storage_options: Optional[Dict[str, str]] = None
     without_files: bool = False
     columns: Optional[List[str]] = None
-    logger: Optional[logging.Logger] = None
-
-    def get_logger(self) -> logging.Logger:
-        if self.logger:
-            return self.logger
-        return make_default_logger(logging.DEBUG if self.verbose else logging.INFO)
 
 
 @dataclass
@@ -89,19 +82,19 @@ class DeltaTableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 f"uri {self.uri} may be associated with a filesystem that "
                 f"requires additional dependencies: {error}",
             )
-        self.config.get_logger().info(f"using a {fs} filesystem to collect table data")
+        self.logger.info(f"using a {fs} filesystem to collect table data")
         self._create_full_tmp_dir_path()
-        self.config.get_logger().debug(f"Fetching {self} - PID: {os.getpid()}")
+        self.logger.debug(f"Fetching {self} - PID: {os.getpid()}")
 
         df: pd.DataFrame = pq.ParquetDataset(self.uri, filesystem=fs).read_pandas().to_pandas()
 
-        self.config.get_logger().info(f"writing {len(df)} rows to {self.filename}")
+        self.logger.info(f"writing {len(df)} rows to {self.filename}")
         df.to_csv(self.filename)
 
 
 @requires_dependencies(["deltalake"], extras="delta-table")
 @dataclass
-class DeltaTableConnector(ConnectorCleanupMixin, BaseConnector):
+class DeltaTableConnector(ConnectorCleanupMixin, BaseConnector, LoggingMixin):
     from deltalake import DeltaTable
 
     config: SimpleDeltaTableConfig
@@ -111,8 +104,10 @@ class DeltaTableConnector(ConnectorCleanupMixin, BaseConnector):
         self,
         standard_config: StandardConnectorConfig,
         config: SimpleDeltaTableConfig,
+        verbose: bool = False,
     ):
         super().__init__(standard_config, config)
+        LoggingMixin.__init__(self, verbose=verbose)
 
     @requires_dependencies(["deltalake"], extras="delta-table")
     def initialize(self):
@@ -127,7 +122,7 @@ class DeltaTableConnector(ConnectorCleanupMixin, BaseConnector):
         rows = self.delta_table.to_pyarrow_dataset().count_rows()
         if not rows > 0:
             raise ValueError(f"no data found at {self.config.table_uri}")
-        self.config.get_logger().info(f"processing {rows} rows of data")
+        self.logger.info(f"processing {rows} rows of data")
 
     def get_ingest_docs(self):
         """Batches the results into distinct docs"""
