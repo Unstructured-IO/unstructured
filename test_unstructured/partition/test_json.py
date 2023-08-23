@@ -4,7 +4,6 @@ import tempfile
 
 import pytest
 
-# from unstructured.partition.auto import partition
 from unstructured.partition.json import partition_json
 from unstructured.partition.text import partition_text
 from unstructured.partition.html import partition_html
@@ -20,19 +19,8 @@ is_in_docker = os.path.exists("/.dockerenv")
 
 test_files = [
     "fake-text.txt",
-    # "layout-parser-paper-fast.pdf",
     "fake-html.html",
-    # "fake.doc",
     "eml/fake-email.eml",
-    # pytest.param(
-    #     "fake-power-point.ppt",
-    #     marks=pytest.mark.skipif(
-    #         is_in_docker,
-    #         reason="Skipping this test in Docker container",
-    #     ),
-    # ),
-    # "fake.docx",
-    # "fake-power-point.pptx",
 ]
 
 is_in_docker = os.path.exists("/.dockerenv")
