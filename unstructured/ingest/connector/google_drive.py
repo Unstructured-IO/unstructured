@@ -103,7 +103,7 @@ class SimpleGoogleDriveConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
 @dataclass
 class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleGoogleDriveConfig
-    file_meta: Dict
+    file_meta: Dict[str, str]
     registry_name: str = "google_drive"
 
     @property
@@ -149,7 +149,7 @@ class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, B
 
         saved = False
         if downloaded and file:
-            dir_ = Path(self.file_meta.get("download_dir"))
+            dir_ = Path(self.file_meta["download_dir"])
             if dir_:
                 if not dir_.is_dir():
                     logger.debug(f"Creating directory: {self.file_meta.get('download_dir')}")

@@ -5,7 +5,6 @@ from typing import Any, Dict, List, Optional
 
 from unstructured_inference.models.base import get_model
 
-from unstructured.ingest.interfaces import BaseIngestDoc as IngestDoc
 from unstructured.ingest.interfaces import (
     BaseSessionHandle,
     IngestDocSessionHandleMixin,
@@ -31,7 +30,7 @@ def initialize():
 
 
 def process_document(doc_json: str, **partition_kwargs) -> Optional[List[Dict[str, Any]]]:
-    """Process the serialized json for any IngestDoc-like class of document with chosen 
+    """Process the serialized json for any IngestDoc-like class of document with chosen
     Unstructured partition logic.
 
     Parameters

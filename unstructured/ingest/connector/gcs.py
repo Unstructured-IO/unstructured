@@ -14,6 +14,7 @@ from unstructured.utils import requires_dependencies
 class SimpleGcsConfig(SimpleFsspecConfig):
     pass
 
+
 @dataclass
 class GcsIngestDoc(FsspecIngestDoc):
     config: SimpleGcsConfig

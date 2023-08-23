@@ -130,7 +130,6 @@ class DiscordConnector(ConnectorCleanupMixin, BaseConnector):
     ):
         super().__init__(standard_config, config)
 
-
     def initialize(self):
         pass
 

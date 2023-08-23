@@ -1,4 +1,3 @@
-from functools import lru_cache
 import hashlib
 import os
 from collections import defaultdict
@@ -68,7 +67,7 @@ class SimpleOutlookConfig(BaseConnectorConfig):
     def parse_folders(folder_str: str) -> List[str]:
         """Parses a comma separated string of Outlook folders into a list."""
         return [x.strip() for x in folder_str.split(",")]
-    
+
     @requires_dependencies(["office365"], extras="outlook")
     def _get_client(self):
         from office365.graph_client import GraphClient
@@ -84,14 +83,6 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     def __post_init__(self):
         self._set_download_paths()
-
-   
-    @requires_dependencies(["office365"], extras="outlook")
-    @property
-    @lru_cache(maxsize=1)
-    def file(self):
-        from office365.sharepoint.files.file import File
-        return File.from_url(self.url)
 
     def hash_mail_name(self, id):
         """Outlook email ids are 152 char long. Hash to shorten to 16."""
@@ -135,7 +126,9 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 ),
                 "wb",
             ) as local_file:
-                client.users[self.config.user_email].messages[self.message_id].download(local_file).execute_query()
+                client.users[self.config.user_email].messages[self.message_id].download(
+                    local_file,
+                ).execute_query()
 
         except Exception as e:
             logger.error(
@@ -225,4 +218,7 @@ class OutlookConnector(ConnectorCleanupMixin, BaseConnector):
             # Skip empty list if there are no messages in folder.
             if messages:
                 filtered_messages.append(messages)
-        return [OutlookIngestDoc(self.standard_config, self.config, message.id) for message in list(chain.from_iterable(filtered_messages))]
+        return [
+            OutlookIngestDoc(self.standard_config, self.config, message.id)
+            for message in list(chain.from_iterable(filtered_messages))
+        ]

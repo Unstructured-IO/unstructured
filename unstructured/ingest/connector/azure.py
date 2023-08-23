@@ -14,6 +14,7 @@ from unstructured.utils import requires_dependencies
 class SimpleAzureBlobStorageConfig(SimpleFsspecConfig):
     pass
 
+
 @dataclass
 class AzureBlobStorageIngestDoc(FsspecIngestDoc):
     registry_name: str = "azure"

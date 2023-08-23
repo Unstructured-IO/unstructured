@@ -14,6 +14,7 @@ from unstructured.utils import requires_dependencies
 class SimpleS3Config(SimpleFsspecConfig):
     pass
 
+
 @dataclass
 class S3IngestDoc(FsspecIngestDoc):
     remote_file_path: str

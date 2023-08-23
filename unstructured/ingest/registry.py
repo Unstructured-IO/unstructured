@@ -1,4 +1,8 @@
 import json
+from typing import Dict, Type
+
+from dataclasses_json import DataClassJsonMixin
+
 from unstructured.ingest.connector.airtable import AirtableIngestDoc
 from unstructured.ingest.connector.azure import AzureBlobStorageIngestDoc
 from unstructured.ingest.connector.biomed import BiomedIngestDoc
@@ -18,10 +22,13 @@ from unstructured.ingest.connector.reddit import RedditIngestDoc
 from unstructured.ingest.connector.s3 import S3IngestDoc
 from unstructured.ingest.connector.sharepoint import SharepointIngestDoc
 from unstructured.ingest.connector.slack import SlackIngestDoc
-from unstructured.ingest.connector.wikipedia import WikipediaIngestHTMLDoc, WikipediaIngestTextDoc, WikipediaIngestSummaryDoc
+from unstructured.ingest.connector.wikipedia import (
+    WikipediaIngestHTMLDoc,
+    WikipediaIngestSummaryDoc,
+    WikipediaIngestTextDoc,
+)
 
-
-INGEST_DOC_NAME_TO_CLASS = {
+INGEST_DOC_NAME_TO_CLASS: Dict[str, Type[DataClassJsonMixin]] = {
     "airtable": AirtableIngestDoc,
     "azure": AzureBlobStorageIngestDoc,
     "biomed": BiomedIngestDoc,
@@ -43,7 +50,7 @@ INGEST_DOC_NAME_TO_CLASS = {
     "slack": SlackIngestDoc,
     "wikipedia_html": WikipediaIngestHTMLDoc,
     "wikipedia_text": WikipediaIngestTextDoc,
-    "wikipedia_summary": WikipediaIngestSummaryDoc
+    "wikipedia_summary": WikipediaIngestSummaryDoc,
 }
 
 
@@ -55,5 +62,6 @@ def create_instance_from_json(data_json: str):
         return ingest_doc_cls.from_json(data_json)
     except KeyError:
         raise ValueError(
-            f"Error: Received unknown IngestDoc name: {registry_name} while deserializing IngestDoc."
+            f"Error: Received unknown IngestDoc name: {registry_name} while deserializing",
+            "IngestDoc.",
         )

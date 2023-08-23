@@ -6,12 +6,12 @@ import json
 import os
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from dataclasses_json import dataclass_json
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import requests
+from dataclasses_json import DataClassJsonMixin
 
 from unstructured.documents.elements import DataSourceMetadata
 from unstructured.ingest.logger import logger
@@ -24,9 +24,9 @@ class BaseSessionHandle(ABC):
     """Abstract Base Class for sharing resources that are local to an individual process.
     e.g., a connection for making a request for fetching documents."""
 
-@dataclass_json
+
 @dataclass
-class ProcessorConfigs:
+class ProcessorConfigs(DataClassJsonMixin):
     """Common set of config required when running data connectors."""
 
     partition_strategy: str
@@ -37,9 +37,9 @@ class ProcessorConfigs:
     reprocess: bool
     max_docs: int
 
-@dataclass_json
+
 @dataclass
-class StandardConnectorConfig:
+class StandardConnectorConfig(DataClassJsonMixin):
     """Common set of config options passed to all connectors."""
 
     # where raw documents are stored for processing, and then removed if not preserve_downloads
@@ -57,14 +57,14 @@ class StandardConnectorConfig:
     preserve_downloads: bool = False
     re_download: bool = False
 
-@dataclass_json
+
 @dataclass
-class BaseConnectorConfig(ABC):
+class BaseConnectorConfig(DataClassJsonMixin, ABC):
     """Abstract definition on which to define connector-specific attributes."""
 
 
 @dataclass
-class BaseConnector(ABC):
+class BaseConnector(DataClassJsonMixin, ABC):
     """Abstract Base Class for a connector to a remote source, e.g. S3 or Google Drive."""
 
     standard_config: StandardConnectorConfig
@@ -98,9 +98,9 @@ class BaseConnector(ABC):
         with IngestDoc.get_file()."""
         pass
 
-@dataclass_json
+
 @dataclass
-class BaseIngestDoc(ABC):
+class BaseIngestDoc(DataClassJsonMixin, ABC):
     """An "ingest document" is specific to a connector, and provides
     methods to fetch a single raw document, store it locally for processing, any cleanup
     needed after successful processing of the doc, and the ability to write the doc's
@@ -115,7 +115,6 @@ class BaseIngestDoc(ABC):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._date_processed = None
-
 
     @property
     def date_created(self) -> Optional[str]:

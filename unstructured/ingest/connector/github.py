@@ -36,10 +36,11 @@ class SimpleGitHubConfig(SimpleGitConfig):
 
         # If there's no issues, store the core repository info
         self.repo_path = parsed_gh_url.path
-    
+
     @requires_dependencies(["github"], extras="github")
-    def _get_repo(self) -> "Respository":
+    def _get_repo(self) -> "Repository":
         from github import Github
+
         github = Github(self.access_token)
         return github.get_repo(self.repo_path)
 
@@ -73,6 +74,8 @@ class GitHubIngestDoc(GitIngestDoc):
 @requires_dependencies(["github"], extras="github")
 @dataclass
 class GitHubConnector(GitConnector):
+    config: SimpleGitHubConfig
+
     def get_ingest_docs(self):
         repo = self.config._get_repo()
         # Load the Git tree with all files, and then create Ingest docs

@@ -30,11 +30,14 @@ class SimpleGitLabConfig(SimpleGitConfig):
     @requires_dependencies(["gitlab"], extras="gitlab")
     def _get_project(self) -> "Project":
         from gitlab import Gitlab
+
         gitlab = Gitlab(self.url, private_token=self.access_token)
         return gitlab.projects.get(self.repo_path)
 
+
 @dataclass
 class GitLabIngestDoc(GitIngestDoc):
+    config: SimpleGitLabConfig
     project: "Project"
     registry_name: str = "gitlab"
 
@@ -53,6 +56,8 @@ class GitLabIngestDoc(GitIngestDoc):
 @requires_dependencies(["gitlab"], extras="gitlab")
 @dataclass
 class GitLabConnector(GitConnector):
+    config: SimpleGitLabConfig
+
     def get_ingest_docs(self):
         # Load the Git tree with all files, and then create Ingest docs
         # for all blobs, i.e. all files, ignoring directories

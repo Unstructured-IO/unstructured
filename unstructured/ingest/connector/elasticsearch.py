@@ -107,6 +107,7 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def get_file(self):
         import jq
         from elasticsearch import Elasticsearch
+
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         # TODO: instead of having a separate client for each doc,
         # have a separate client for each process
@@ -139,6 +140,7 @@ class ElasticsearchConnector(ConnectorCleanupMixin, BaseConnector):
     @requires_dependencies(["elasticsearch"], extras="elasticsearch")
     def initialize(self):
         from elasticsearch import Elasticsearch
+
         self.es = Elasticsearch(self.config.url)
         self.scan_query: dict = {"query": {"match_all": {}}}
         self.search_query: dict = {"match_all": {}}
@@ -148,6 +150,7 @@ class ElasticsearchConnector(ConnectorCleanupMixin, BaseConnector):
     def _get_doc_ids(self):
         """Fetches all document ids in an index"""
         from elasticsearch.helpers import scan
+
         hits = scan(
             self.es,
             query=self.scan_query,

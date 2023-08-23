@@ -32,6 +32,7 @@ class WikipediaIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @requires_dependencies(["wikipedia"], extras="wikipedia")
     def page(self) -> "WikipediaPage":
         import wikipedia
+
         return wikipedia.page(
             self.config.title,
             auto_suggest=self.config.auto_suggest,
@@ -60,10 +61,11 @@ class WikipediaIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         with open(self.filename, "w", encoding="utf8") as f:
             f.write(self.text)
 
+
 @dataclass
 class WikipediaIngestHTMLDoc(WikipediaIngestDoc):
     registry_name: str = "wikipedia_html"
-    
+
     @property
     def filename(self) -> Path:
         return (
@@ -82,10 +84,11 @@ class WikipediaIngestHTMLDoc(WikipediaIngestDoc):
             / f"{self.page.title}-{self.page.revision_id}-html.json"
         )
 
+
 @dataclass
 class WikipediaIngestTextDoc(WikipediaIngestDoc):
     registry_name: str = "wikipedia_text"
-    
+
     @property
     def filename(self) -> Path:
         return (
@@ -104,10 +107,11 @@ class WikipediaIngestTextDoc(WikipediaIngestDoc):
             / f"{self.page.title}-{self.page.revision_id}-txt.json"
         )
 
+
 @dataclass
 class WikipediaIngestSummaryDoc(WikipediaIngestDoc):
     registry_name: str = "wikipedia_summary"
-    
+
     @property
     def filename(self) -> Path:
         return (
@@ -135,7 +139,7 @@ class WikipediaConnector(ConnectorCleanupMixin, BaseConnector):
 
     def initialize(self):
         pass
-    
+
     def get_ingest_docs(self):
         return [
             WikipediaIngestTextDoc(self.standard_config, self.config),

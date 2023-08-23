@@ -36,7 +36,7 @@ class SimpleConfluenceConfig(BaseConnectorConfig):
     max_number_of_spaces: int
     max_number_of_docs_from_each_space: int
 
-@dataclass_json
+
 @dataclass
 class ConfluenceFileMeta:
     """Metadata specifying:

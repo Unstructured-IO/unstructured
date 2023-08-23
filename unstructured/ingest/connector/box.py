@@ -26,17 +26,20 @@ class AccessTokenError(Exception):
 
 @dataclass
 class SimpleBoxConfig(SimpleFsspecConfig):
-
-    @requires_dependencies(["boxfs"], extras="box") 
+    @requires_dependencies(["boxfs"], extras="box")
     def get_access_kwargs(self):
         # Return access_kwargs with oauth. The oauth object can not be stored directly in the config
         # because it is not serializable.
         from boxsdk import JWTAuth
-        access_kwargs_with_oauth = {"oauth": JWTAuth.from_settings_file(
-            self.access_kwargs["box_app_config"],
-        )}
+
+        access_kwargs_with_oauth = {
+            "oauth": JWTAuth.from_settings_file(
+                self.access_kwargs["box_app_config"],
+            ),
+        }
         access_kwargs_with_oauth.update(self.access_kwargs)
         return access_kwargs_with_oauth
+
 
 @dataclass
 class BoxIngestDoc(FsspecIngestDoc):

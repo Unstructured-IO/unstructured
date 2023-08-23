@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from functools import lru_cache
 from html import unescape
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
@@ -61,10 +60,10 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             )
         self._set_download_paths()
 
-
     @requires_dependencies(["office365"], extras="sharepoint")
     def _get_file_ref(self):
         from office365.sharepoint.files.file import File
+
         logger.debug(f"self.url: {self.url}")
         print(f"self.url: {self.url}")
         return File.from_url(self.url)
@@ -148,7 +147,9 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         try:
             content_labels = ["CanvasContent1", "LayoutWebpartsContent1"]
-            content = self._get_file_ref().listItemAllFields.select(content_labels).get().execute_query()
+            content = (
+                self._get_file_ref().listItemAllFields.select(content_labels).get().execute_query()
+            )
             pld = (content.properties.get("LayoutWebpartsContent1", "") or "") + (
                 content.properties.get("CanvasContent1", "") or ""
             )
@@ -298,7 +299,15 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
         for file in files:
             print(f"file as url: {file.to_json()}")
             print(f"file as url: {file.get_absolute_url().value}")
-        output = [SharepointIngestDoc(self.standard_config, self.config, file.get_absolute_url().value, {}) for file in files]
+        output = [
+            SharepointIngestDoc(
+                self.standard_config,
+                self.config,
+                file.get_absolute_url().value,
+                {},
+            )
+            for file in files
+        ]
 
         if self.config.process_pages:
             pages = self._list_pages(site_client)
