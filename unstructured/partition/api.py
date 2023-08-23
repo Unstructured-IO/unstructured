@@ -56,7 +56,7 @@ def partition_via_api(
             "metadata_filename is preferred. file_filename is marked for deprecation.",
         )
 
-    if file is not None and file_filename is not None:
+    if file_filename is not None:
         metadata_filename = file_filename
         logger.warn(
             "The file_filename kwarg will be deprecated in a future version of unstructured. "
@@ -149,7 +149,7 @@ def partition_multiple_via_api(
             "metadata_filenames is preferred. file_filenames is marked for deprecation.",
         )
 
-    if files is not None and file_filenames is not None:
+    if file_filenames is not None:
         metadata_filenames = file_filenames
         logger.warn(
             "The file_filenames kwarg will be deprecated in a future version of unstructured. "

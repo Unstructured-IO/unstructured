@@ -188,7 +188,7 @@ def partition(
             "metadata_filename is preferred. file_filename is marked for deprecation.",
         )
 
-    if file is not None and file_filename is not None:
+    if file_filename is not None:
         metadata_filename = file_filename
         logger.warn(
             "The file_filename kwarg will be deprecated in a future version of unstructured. "
