@@ -398,9 +398,9 @@ webencodings==0.5.1
     # via
     #   bleach
     #   tinycss2
-websocket-client==1.6.1
+websocket-client==1.6.2
     # via jupyter-server
-wheel==0.41.1
+wheel==0.41.2
     # via
     #   -c requirements/constraints.in
     #   pip-tools
