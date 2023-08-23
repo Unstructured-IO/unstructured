@@ -1,8 +1,8 @@
 import os
 from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-from datetime import datetime
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -70,23 +70,23 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         """Create output file path based on output directory, base id, and table id"""
         output_file = f"{self.file_meta.table_id}.json"
         return Path(self.standard_config.output_dir) / self.file_meta.base_id / output_file
-    
+
     @property
     def date_created(self) -> Optional[str]:
         return datetime.fromisoformat(self.min_date).isoformat()
-        
+
     @property
     def date_modified(self) -> Optional[str]:
         return datetime.fromisoformat(self.max_date).isoformat()
 
     @property
     def exists(self) -> Optional[bool]:
-        return (self.n_records >= 1)
+        return self.n_records >= 1
 
     @property
     def record_locator(self) -> Optional[Dict[str, Any]]:
         return {
-            "table_url": self.table_url
+            "table_url": self.table_url,
         }
 
     @requires_dependencies(["pyairtable", "pandas"])
@@ -101,9 +101,9 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         self.api = Api(self.config.personal_access_token)
         table = self.api.table(self.file_meta.base_id, self.file_meta.table_id)
-        #NOTE: Might be a good idea to add pagination for large tables
+        # NOTE: Might be a good idea to add pagination for large tables
         rows = table.all(view=self.file_meta.view_id)
-        dates = [r.get('createdTime', '') for r in rows].sort()
+        dates = [r.get("createdTime", "") for r in rows].sort()
         self.n_records = len(rows)
         self.table_url = table.url
         if len(dates) == 1:

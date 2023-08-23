@@ -1,9 +1,10 @@
 import datetime as dt
 import os
 from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-from datetime import datetime
+
 from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
@@ -133,7 +134,7 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         if self.created_at is not None:
             return self.created_at.isoformat()
         return self.created_at
-        
+
     @property
     def date_modified(self) -> Optional[str]:
         if self.latest_msg is not None:
@@ -142,13 +143,13 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @property
     def exists(self) -> Optional[bool]:
-        return (self.n_messages >= 1)
+        return self.n_messages >= 1
 
     @property
     def record_locator(self) -> Optional[Dict[str, Any]]:
         return {
             "channel": self.channel,
-            "jump_url": self.jump_url
+            "jump_url": self.jump_url,
         }
 
 

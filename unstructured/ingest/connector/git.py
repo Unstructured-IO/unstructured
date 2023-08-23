@@ -2,7 +2,7 @@ import fnmatch
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional, Any, Dict, Optional
+from typing import Any, Dict, Optional
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -42,11 +42,11 @@ class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def _output_filename(self):
         return Path(self.standard_config.output_dir) / f"{self.path}.json"
-    
+
     @property
     def date_created(self) -> Optional[str]:
         return self.file_created_at
-        
+
     @property
     def date_modified(self) -> Optional[str]:
         return self.file_updated_at
@@ -58,7 +58,7 @@ class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def record_locator(self) -> Optional[Dict[str, Any]]:
         return {
-            "download_url": self.file_download_url or self.config.url
+            "download_url": self.file_download_url or self.config.url,
         }
 
     @property

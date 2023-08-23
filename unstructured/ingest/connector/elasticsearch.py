@@ -3,7 +3,7 @@ import json
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional, Any, Dict
+from typing import Any, Dict, Optional
 
 import jq
 from elasticsearch import Elasticsearch
@@ -121,8 +121,8 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             id=self.file_meta.document_id,
         )
         document_dict = document.body["_source"]
-        self.document_version = document['_version']
-        self.document_found = document['found']
+        self.document_version = document["_version"]
+        self.document_found = document["found"]
 
         if self.config.jq_query:
             document_dict = json.loads(jq.compile(self.config.jq_query).input(document_dict).text())
@@ -139,12 +139,13 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def record_locator(self) -> Optional[Dict[str, Any]]:
         return {
             "index_name": self.config.index_name,
-            "document_id": self.file_meta.document_id
+            "document_id": self.file_meta.document_id,
         }
 
     @property
     def version(self) -> Optional[str]:
         return self.document_version
+
 
 @requires_dependencies(["elasticsearch"])
 @dataclass

@@ -60,14 +60,14 @@ class GitHubIngestDoc(GitIngestDoc):
             else:
                 print(response)
                 contents = response.content
-                self.file_exists = (contents != b"")
+                self.file_exists = contents != b""
         else:
             contents = content_file.decoded_content  # type: ignore
-            self.file_exists = (contents != b"")
-            
+            self.file_exists = contents != b""
 
         with open(self.filename, "wb") as f:
             f.write(contents)
+
 
 @requires_dependencies(["github"], extras="github")
 @dataclass

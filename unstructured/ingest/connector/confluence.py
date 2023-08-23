@@ -1,9 +1,10 @@
 import math
 import os
 from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Optional
-from datetime import datetime
+
 from atlassian import Confluence
 
 from unstructured.ingest.interfaces import (
@@ -105,32 +106,32 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         """Create output file path based on output directory, space id and document id."""
         output_file = f"{self.file_meta.document_id}.json"
         return Path(self.standard_config.output_dir) / self.file_meta.space_id / output_file
-    
+
     @property
     def date_created(self) -> Optional[str]:
         if self.document_history is None:
             return None
-        return datetime.fromisoformat(self.document_history['createdDate']).isoformat()
+        return datetime.fromisoformat(self.document_history["createdDate"]).isoformat()
 
     @property
     def date_modified(self) -> Optional[str]:
         if self.document_history is None:
             return None
-        
-        if date_modified := self.document_history.get('lastUpdated', '').get('when', ''):
+
+        if date_modified := self.document_history.get("lastUpdated", "").get("when", ""):
             return datetime.fromisoformat(date_modified).isoformat()
         return None
 
     @property
     def exists(self) -> Optional[bool]:
-        return (self.document is not None)
+        return self.document is not None
 
     @property
     def record_locator(self) -> Optional[Dict[str, Any]]:
         return {
-            'base_url': self.config.url,
-            'space_id': self.file_meta.space_id,
-            'page_id': self.file_meta.document_id
+            "base_url": self.config.url,
+            "space_id": self.file_meta.space_id,
+            "page_id": self.file_meta.document_id,
         }
 
     @property
@@ -151,10 +152,12 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             password=self.config.api_token,
         )
 
-        result = confluence.get_page_by_id(page_id=self.file_meta.document_id, expand="history.lastUpdated,version,body.view")
+        result = confluence.get_page_by_id(
+            page_id=self.file_meta.document_id, expand="history.lastUpdated,version,body.view",
+        )
         self.document = result["body"]["view"]["value"]
-        self.document_version = result['version']['number']
-        self.document_history = result['history']
+        self.document_version = result["version"]["number"]
+        self.document_history = result["history"]
 
         self.filename.parent.mkdir(parents=True, exist_ok=True)
         with open(self.filename, "w", encoding="utf8") as f:

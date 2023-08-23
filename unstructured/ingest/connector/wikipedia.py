@@ -1,7 +1,7 @@
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional, Any, Dict, Optional
+from typing import TYPE_CHECKING, Any, Dict, Optional
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -58,12 +58,13 @@ class WikipediaIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def record_locator(self) -> Optional[Dict[str, Any]]:
         return {
             "page_url": self.page.url,
-            "page_id": self.page.pageid
+            "page_id": self.page.pageid,
         }
 
     @property
     def version(self) -> Optional[str]:
         return self.page.revision_id
+
 
 class WikipediaIngestHTMLDoc(WikipediaIngestDoc):
     @property
