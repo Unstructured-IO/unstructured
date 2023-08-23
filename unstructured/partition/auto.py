@@ -132,6 +132,7 @@ def partition(
     pdf_infer_table_structure: bool = False,
     xml_keep_tags: bool = False,
     data_source_metadata: Optional[DataSourceMetadata] = None,
+    metadata_filename: Optional[str] = None,
     **kwargs,
 ):
     """Partitions a document into its constituent elements. Will use libmagic to determine
@@ -181,14 +182,19 @@ def partition(
     """
     exactly_one(file=file, filename=filename, url=url)
 
-    metadata_filename = None
+    if metadata_filename and file_filename:
+        raise ValueError(
+            "Only one of metadata_filename and file_filename is specified. "
+            "metadata_filename is preferred. file_filename is marked for deprecation.",
+        )
+
     if file is not None and file_filename is not None:
         metadata_filename = file_filename
         logger.warn(
             "The file_filename kwarg will be deprecated in a future version of unstructured. "
             "Please use metadata_filename instead.",
         )
-        kwargs.setdefault("metadata_filename", metadata_filename)
+    kwargs.setdefault("metadata_filename", metadata_filename)
 
     if url is not None:
         file, filetype = file_and_type_from_url(
