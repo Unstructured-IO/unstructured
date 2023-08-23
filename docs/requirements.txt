@@ -76,9 +76,9 @@ sphinx-rtd-theme==1.2.2
 sphinx-tabs==3.4.1
     # via -r requirements/build.in
 # NOTE(crag): manually remove this dep for now, does not exist in Linux / CI env
-#sphinxcontrib-applehelp==1.0.7
+# sphinxcontrib-applehelp==1.0.7
     # via sphinx
-sphinxcontrib-devhelp==1.0.5
+#sphinxcontrib-devhelp==1.0.5
     # via sphinx
 sphinxcontrib-htmlhelp==2.0.4
     # via sphinx
