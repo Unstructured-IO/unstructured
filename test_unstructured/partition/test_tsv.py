@@ -8,8 +8,8 @@ from test_unstructured.partition.test_constants import (
 )
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import Table
-from unstructured.partition.tsv import partition_tsv
 from unstructured.partition.json import partition_json
+from unstructured.partition.tsv import partition_tsv
 from unstructured.staging.base import elements_to_json
 
 EXPECTED_FILETYPE = "text/tsv"
@@ -173,7 +173,8 @@ def test_partition_tsv_from_file_with_custom_metadata_date(
 
 
 @pytest.mark.parametrize(
-    ("filename"), ["stanley-cups.tsv", "stanley-cups-with-emoji.tsv"]
+    ("filename"),
+    ["stanley-cups.tsv", "stanley-cups-with-emoji.tsv"],
 )
 def test_partition_tsv_with_json(filename):
     f_path = f"example-docs/{filename}"

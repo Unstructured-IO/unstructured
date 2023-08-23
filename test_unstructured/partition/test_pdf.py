@@ -18,6 +18,7 @@ from unstructured.partition import pdf, strategies
 from unstructured.partition.json import partition_json
 from unstructured.staging.base import elements_to_json
 
+
 class MockResponse:
     def __init__(self, status_code, response):
         self.status_code = status_code
@@ -762,6 +763,7 @@ def test_partition_pdf_from_file_with_hi_res_strategy_custom_metadata_date(
         )
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
+
 
 @pytest.mark.parametrize(
     "strategy",

@@ -371,7 +371,7 @@ def test_partition_msg_with_json(
 ):
     elements = image.partition_image(filename=filename, strategy="auto")
     test_elements = partition_json(text=elements_to_json(elements))
-    
+
     assert len(elements) == len(test_elements)
     assert elements[0].metadata.page_number == test_elements[0].metadata.page_number
     for i in range(len(elements)):

@@ -26,8 +26,8 @@ from unstructured.partition.email import (
     partition_email,
     partition_email_header,
 )
-from unstructured.partition.text import partition_text
 from unstructured.partition.json import partition_json
+from unstructured.partition.text import partition_text
 from unstructured.staging.base import elements_to_json
 
 FILE_DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -519,6 +519,7 @@ def test_partition_email_odd_attachment_filename(
     )
 
     assert elements[1].metadata.filename == "odd=file=name.txt"
+
 
 def test_partition_email_with_json():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")

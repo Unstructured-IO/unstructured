@@ -4,14 +4,13 @@ import tempfile
 
 import pytest
 
+from unstructured.file_utils.filetype import FileType, detect_filetype
+from unstructured.partition.email import partition_email
+from unstructured.partition.html import partition_html
 from unstructured.partition.json import partition_json
 from unstructured.partition.text import partition_text
-from unstructured.partition.html import partition_html
 from unstructured.partition.xml import partition_xml
-from unstructured.partition.email import partition_email
 from unstructured.staging.base import elements_to_json
-
-from unstructured.file_utils.filetype import detect_filetype, FileType
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 

@@ -585,6 +585,7 @@ def test_partition_html_grabs_emphasized_texts():
     assert elements[4].metadata.emphasized_text_contents == ["A lone span text!"]
     assert elements[4].metadata.emphasized_text_tags == ["span"]
 
+
 def test_partition_html_with_json():
     directory = os.path.join(DIRECTORY, "..", "..", "example-docs")
     filename = os.path.join(directory, "example-10k.html")

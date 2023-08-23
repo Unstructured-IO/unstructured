@@ -10,9 +10,9 @@ from unstructured.documents.elements import (
     NarrativeText,
     Title,
 )
+from unstructured.partition.json import partition_json
 from unstructured.partition.msg import extract_msg_attachment_info, partition_msg
 from unstructured.partition.text import partition_text
-from unstructured.partition.json import partition_json
 from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -218,6 +218,7 @@ def test_partition_msg_custom_metadata_date(
     )
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
+
 
 def test_partition_msg_with_json():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")

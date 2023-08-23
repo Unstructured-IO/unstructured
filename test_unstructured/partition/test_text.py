@@ -6,12 +6,12 @@ import pytest
 
 from unstructured.cleaners.core import group_broken_paragraphs
 from unstructured.documents.elements import Address, ListItem, NarrativeText, Title
+from unstructured.partition.json import partition_json
 from unstructured.partition.text import (
     combine_paragraphs_less_than_min,
     partition_text,
     split_content_to_fit_max,
 )
-from unstructured.partition.json import partition_json
 from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -480,6 +480,7 @@ def test_partition_text_with_unique_ids():
     assert elements[0].id.count("-") == 4
     # Test that the element is JSON serializable. This should run without an error
     json.dumps(elements[0].to_dict())
+
 
 @pytest.mark.parametrize(
     ("filename", "encoding"),

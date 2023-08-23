@@ -1,8 +1,8 @@
-from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import Title
-from unstructured.partition.org import partition_org
 from unstructured.partition.json import partition_json
+from unstructured.partition.org import partition_org
 from unstructured.staging.base import elements_to_json
+
 
 def test_partition_org_from_filename(filename="example-docs/README.org"):
     elements = partition_org(filename=filename)

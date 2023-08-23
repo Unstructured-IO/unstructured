@@ -11,8 +11,8 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.partition.pptx import partition_pptx
 from unstructured.partition.json import partition_json
+from unstructured.partition.pptx import partition_pptx
 from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -324,6 +324,7 @@ def test_partition_pptx_from_file_with_custom_metadata_date(
         elements = partition_pptx(file=f, metadata_last_modified=expected_last_modification_date)
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
+
 
 def test_partition_pptx_with_json():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")

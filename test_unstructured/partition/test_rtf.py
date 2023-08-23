@@ -3,8 +3,8 @@ import pathlib
 
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import Title
-from unstructured.partition.rtf import partition_rtf
 from unstructured.partition.json import partition_json
+from unstructured.partition.rtf import partition_rtf
 from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -133,6 +133,7 @@ def test_partition_rtf_from_file_with_custom_metadata_date(
         elements = partition_rtf(file=f, metadata_last_modified=expected_last_modification_date)
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
+
 
 def test_partition_rtf_with_json():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-doc.rtf")

@@ -17,6 +17,7 @@ from unstructured.partition.docx import partition_docx
 from unstructured.partition.json import partition_json
 from unstructured.staging.base import elements_to_json
 
+
 @pytest.fixture()
 def mock_document():
     document = docx.Document()
@@ -268,6 +269,7 @@ def test_partition_doc_from_file_without_metadata_date(
         elements = partition_doc(file=sf, metadata_date="2020-07-05")
 
     assert elements[0].metadata.date == "2020-07-05"
+
 
 def test_partition_doc_with_json(mock_document, expected_elements, tmpdir, capsys):
     docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")

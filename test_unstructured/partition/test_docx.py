@@ -24,6 +24,7 @@ from unstructured.partition.docx import (
 from unstructured.partition.json import partition_json
 from unstructured.staging.base import elements_to_json
 
+
 @pytest.fixture()
 def mock_document():
     document = docx.Document()
@@ -388,6 +389,7 @@ def test_partition_docx_grabs_emphasized_texts(
     assert elements[2].metadata.emphasized_text_contents is None
     assert elements[2].metadata.emphasized_text_tags is None
 
+
 def test_partition_docx_with_json(mock_document, expected_elements, tmpdir):
     filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     mock_document.save(filename)
@@ -396,7 +398,7 @@ def test_partition_docx_with_json(mock_document, expected_elements, tmpdir):
     test_elements = partition_json(text=elements_to_json(elements))
 
     assert len(elements) == len(test_elements)
-    assert elements[0].metadata.page_number == test_elements[0].metadata.page_number 
+    assert elements[0].metadata.page_number == test_elements[0].metadata.page_number
     assert elements[0].metadata.filename == test_elements[0].metadata.filename
     for i in range(len(elements)):
         assert elements[i] == test_elements[i]

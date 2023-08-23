@@ -5,8 +5,8 @@ from unittest.mock import patch
 import pytest
 import requests
 
-from unstructured.partition.md import partition_md
 from unstructured.partition.json import partition_json
+from unstructured.partition.md import partition_md
 from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -250,6 +250,7 @@ def test_partition_md_from_text_with_custom_metadata_date(
     elements = partition_md(text=text, metadata_last_modified=expected_last_modification_date)
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
+
 
 def test_partition_md_with_json(
     filename="example-docs/README.md",
