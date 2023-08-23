@@ -41,7 +41,6 @@ def process_document(doc_json: str, **partition_kwargs) -> Optional[List[Dict[st
     global session_handle
     isd_elems_no_filename = None
     try:
-        print(f"Processing {doc_json}")
         doc = create_instance_from_json(doc_json)
         if isinstance(doc, IngestDocSessionHandleMixin):
             if session_handle is None:
