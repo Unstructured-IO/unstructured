@@ -11,8 +11,7 @@ flake8
 freezegun
 label_studio_sdk
 mypy
-# pinning to avoid error in argilla library
-pydantic<2
+pydantic
 pytest-cov
 pytest-mock
 ruff

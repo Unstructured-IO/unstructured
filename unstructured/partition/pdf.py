@@ -155,7 +155,18 @@ def partition_pdf_or_image(
         file=file,
         filename=filename,
     )
-    if not is_image:
+
+    if (
+        not is_image
+        and determine_pdf_or_image_strategy(
+            strategy,
+            filename=filename,
+            file=file,
+            is_image=is_image,
+            infer_table_structure=infer_table_structure,
+        )
+        != "ocr_only"
+    ):
         extracted_elements = extractable_elements(
             filename=filename,
             file=spooled_to_bytes_io_if_needed(file),
@@ -188,6 +199,7 @@ def partition_pdf_or_image(
                 infer_table_structure=infer_table_structure,
                 include_page_breaks=include_page_breaks,
                 ocr_languages=ocr_languages,
+                ocr_mode="entire_page",
                 metadata_last_modified=metadata_last_modified or last_modification_date,
                 **kwargs,
             )
@@ -208,6 +220,7 @@ def partition_pdf_or_image(
                 min_partition=min_partition,
                 metadata_last_modified=metadata_last_modified or last_modification_date,
             )
+
     return layout_elements
 
 
@@ -219,6 +232,7 @@ def _partition_pdf_or_image_local(
     infer_table_structure: bool = False,
     include_page_breaks: bool = False,
     ocr_languages: str = "eng",
+    ocr_mode: str = "entire_page",
     model_name: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     **kwargs,
@@ -235,6 +249,7 @@ def _partition_pdf_or_image_local(
         process_file_with_model_kwargs = {
             "is_image": is_image,
             "ocr_languages": ocr_languages,
+            "ocr_mode": ocr_mode,
             "extract_tables": infer_table_structure,
             "model_name": model_name,
         }
@@ -249,6 +264,7 @@ def _partition_pdf_or_image_local(
             file,
             is_image=is_image,
             ocr_languages=ocr_languages,
+            ocr_mode=ocr_mode,
             extract_tables=infer_table_structure,
             model_name=model_name,
         )

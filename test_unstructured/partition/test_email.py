@@ -432,9 +432,13 @@ def test_partition_email_can_process_attachments(
         tmpdir.dirname,
         ATTACH_EXPECTED_OUTPUT[0]["filename"],
     )
+
+    mocked_last_modification_date = "0000-00-05T09:24:28"
+
     attachment_elements = partition_text(
         filename=attachment_filename,
         metadata_filename=attachment_filename,
+        metadata_last_modified=mocked_last_modification_date,
     )
     expected_metadata = attachment_elements[0].metadata
     expected_metadata.file_directory = None
@@ -444,6 +448,7 @@ def test_partition_email_can_process_attachments(
         filename=filename,
         attachment_partitioner=partition_text,
         process_attachments=True,
+        metadata_last_modified=mocked_last_modification_date,
     )
 
     assert elements[0].text.startswith("Hello!")
@@ -453,16 +458,43 @@ def test_partition_email_can_process_attachments(
         assert element.metadata.subject == "Fake email with attachment"
 
     assert elements[-1].text == "Hey this is a fake attachment!"
-
-    last_mod_email = datetime.datetime.strptime(
-        elements[-1].metadata.last_modified,
-        "%Y-%m-%dT%H:%M:%S",
-    )
-    last_mod_text = datetime.datetime.strptime(expected_metadata.last_modified, "%Y-%m-%dT%H:%M:%S")
-    assert (last_mod_email - last_mod_text).total_seconds() < 2
-    elements[-1].metadata.last_modified = None
-    expected_metadata.last_modified = None
     assert elements[-1].metadata == expected_metadata
+
+
+def test_partition_email_can_process_min_max_with_attachments(
+    tmpdir,
+    filename="example-docs/eml/fake-email-attachment.eml",
+):
+    with open(filename) as f:
+        msg = email.message_from_file(f)
+    extract_attachment_info(msg, output_dir=tmpdir.dirname)
+    attachment_filename = os.path.join(
+        tmpdir.dirname,
+        ATTACH_EXPECTED_OUTPUT[0]["filename"],
+    )
+
+    attachment_elements = partition_text(
+        filename=attachment_filename,
+        metadata_filename=attachment_filename,
+        min_partition=6,
+        max_partition=12,
+    )
+
+    elements = partition_email(
+        filename=filename,
+        attachment_partitioner=partition_text,
+        process_attachments=True,
+        min_partition=6,
+        max_partition=12,
+    )
+
+    assert elements[0].text.startswith("Hello!")
+    assert elements[-1].text == attachment_elements[-1].text
+    assert elements[-2].text == attachment_elements[-2].text
+    for element in elements:
+        if element.metadata.attached_to_filename is not None:
+            assert len(element.text) <= 12
+            assert len(element.text) >= 6
 
 
 def test_partition_msg_raises_with_no_partitioner(
