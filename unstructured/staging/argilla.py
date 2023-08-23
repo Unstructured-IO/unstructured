@@ -108,7 +108,6 @@ PARTITION_DATASET_FIELDS = {
         TextField(name="body", use_markdown=True),
         TextField(name="scripts", use_markdown=True),
     ]
-
 }
 
 def get_argilla_feedback_dataset(
@@ -158,7 +157,6 @@ def stage_for_argilla_feedback(
             metadata = elements[0].metadata.to_dict()
             for elem in elements:
                 print(elem.metadata.to_dict())
-            exit()
             elements = _elements_to_text(elements)
             fields = {
                 "sent_from": metadata.get("sent_from"),
