@@ -884,7 +884,8 @@ def test_auto_partition_metadata_filename():
 def test_auto_partition_warns_about_file_filename_deprecation(caplog):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
     with open(filename) as f:
-        partition(file=f, file_filename=filename)
+        elements = partition(file=f, file_filename=filename)
+    assert elements[0].metadata.filename == os.path.split(filename)[-1]
     assert "WARNING" in caplog.text
     assert "The file_filename kwarg will be deprecated" in caplog.text
 

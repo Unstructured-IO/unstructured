@@ -1,6 +1,6 @@
 import tempfile
-from typing import IO, List, Optional
 import warnings
+from typing import IO, List, Optional
 
 from ebooklib import epub
 
