@@ -200,6 +200,7 @@ def test_partition_xlsx_with_json(filename="example-docs/stanley-cups.xlsx"):
     assert clean_extra_whitespace(elements[0].text) == clean_extra_whitespace(test_elements[0].text)
     assert elements[0].metadata.text_as_html == test_elements[0].metadata.text_as_html
     assert elements[0].metadata.page_number == test_elements[0].metadata.page_number
+    assert elements[0].metadata.page_name == test_elements[0].metadata.page_name
     assert elements[0].metadata.filename == test_elements[0].metadata.filename
 
     for i in range(len(elements)):

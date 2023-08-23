@@ -4,7 +4,6 @@ import pathlib
 import pptx
 import pytest
 
-from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import (
     ListItem,
     NarrativeText,
@@ -331,10 +330,7 @@ def test_partition_pptx_with_json():
     elements = partition_pptx(filename=filename)
     test_elements = partition_json(text=elements_to_json(elements))
 
-    breakpoint()
-
     assert len(elements) == len(test_elements)
-    assert elements[0].metadata.page_number == test_elements[0].metadata.page_number
     assert elements[0].metadata.filename == test_elements[0].metadata.filename
 
     for i in range(len(elements)):

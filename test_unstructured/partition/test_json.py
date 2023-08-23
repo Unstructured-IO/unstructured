@@ -164,8 +164,6 @@ def test_partition_json_from_text(filename: str):
     if filetype == FileType.EML:
         elements = partition_email(filename=path)
 
-    breakpoint()
-
     with tempfile.TemporaryDirectory() as tmpdir:
         _filename = os.path.basename(filename)
         test_path = os.path.join(tmpdir, _filename + ".json")

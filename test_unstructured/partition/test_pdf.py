@@ -15,7 +15,8 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.partition import pdf, strategies
-
+from unstructured.partition.json import partition_json
+from unstructured.staging.base import elements_to_json
 
 class MockResponse:
     def __init__(self, status_code, response):
@@ -761,3 +762,21 @@ def test_partition_pdf_from_file_with_hi_res_strategy_custom_metadata_date(
         )
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
+
+@pytest.mark.parametrize(
+    "strategy",
+    ["fast", "hi_res", "ocr_only"],
+)
+def test_partition_pdf_with_json(
+    strategy,
+    filename="example-docs/layout-parser-paper-fast.pdf",
+):
+    elements = pdf.partition_pdf(filename=filename, strategy=strategy)
+    test_elements = partition_json(text=elements_to_json(elements))
+
+    assert len(elements) == len(test_elements)
+    assert elements[0].metadata.filename == test_elements[0].metadata.filename
+    # NOTE(klaijan) - missing file_directory in metadata after converting to json
+
+    for i in range(len(elements)):
+        assert elements[i] == test_elements[i]

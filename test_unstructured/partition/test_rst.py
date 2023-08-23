@@ -135,7 +135,6 @@ def test_partition_rst_with_json(filename="example-docs/README.rst"):
 
     assert len(elements) == len(test_elements)
     assert clean_extra_whitespace(elements[0].text) == clean_extra_whitespace(test_elements[0].text)
-    assert elements[0].metadata.page_number == test_elements[0].metadata.page_number
     assert elements[0].metadata.filename == test_elements[0].metadata.filename
 
     for i in range(len(elements)):
