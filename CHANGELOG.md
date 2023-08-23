@@ -1,6 +1,8 @@
 ## 0.10.6-dev0
 
 ### Enhancements
+* Fix `test_json` to handle only non-extra dependencies file types (plain-text)
+* Add json invariant tests to all the filetype tests (`partition_filetype() == partition_json(element_to_json)`)
 
 ### Features
 
