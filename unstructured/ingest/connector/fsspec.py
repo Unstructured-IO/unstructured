@@ -2,7 +2,7 @@ import os
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Type
+from typing import TYPE_CHECKING, Any, Dict, Optional, Type
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -13,6 +13,10 @@ from unstructured.ingest.interfaces import (
     StandardConnectorConfig,
 )
 from unstructured.ingest.logger import logger
+
+if TYPE_CHECKING:
+    from fsspec import AbstractFileSystem
+
 
 SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
     "s3",
@@ -80,6 +84,7 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     config: SimpleFsspecConfig
     remote_file_path: str
+    fs: "AbstractFileSystem"
 
     def _tmp_download_file(self):
         return Path(self.standard_config.download_dir) / self.remote_file_path.replace(
@@ -101,19 +106,40 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
         """Fetches the file from the current filesystem and stores it locally."""
-        from fsspec import AbstractFileSystem, get_filesystem_class
 
         self._create_full_tmp_dir_path()
-        fs: AbstractFileSystem = get_filesystem_class(self.config.protocol)(
-            **self.config.access_kwargs,
-        )
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
-        fs.get(rpath=self.remote_file_path, lpath=self._tmp_download_file().as_posix())
+        try:
+            self.fs.get(rpath=self.remote_file_path, lpath=self._tmp_download_file().as_posix())
+        except Exception as e:
+            logger.error(e)
+            return
 
     @property
     def filename(self):
         """The filename of the file after downloading from cloud"""
         return self._tmp_download_file()
+
+    @property
+    def date_created(self) -> Optional[str]:
+        return self.fs.created(self.remote_file_path).isoformat()
+
+    @property
+    def date_modified(self) -> Optional[str]:
+        return self.fs.modified(self.remote_file_path).isoformat()
+
+    @property
+    def exists(self) -> Optional[bool]:
+        return self.fs.exists(self.remote_file_path)
+
+    @property
+    def record_locator(self) -> Optional[Dict[str, Any]]:
+        """Returns the equivalent of ls in dict"""
+        return self.fs.info(self.remote_file_path)
+
+    @property
+    def version(self) -> Optional[str]:
+        return str(self.fs.checksum(self.remote_file_path))
 
 
 class FsspecConnector(ConnectorCleanupMixin, BaseConnector):
@@ -170,6 +196,7 @@ class FsspecConnector(ConnectorCleanupMixin, BaseConnector):
                 standard_config=self.standard_config,
                 config=self.config,
                 remote_file_path=file,
+                fs=self.fs,
             )
             for file in self._list_files()
         ]

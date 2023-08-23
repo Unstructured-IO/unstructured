@@ -2,7 +2,7 @@ import fnmatch
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Any, Dict, Optional
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -28,6 +28,13 @@ class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleGitConfig = field(repr=False)
     path: str
 
+    def __post_init__(self):
+        self.file_created_at = None
+        self.file_updated_at = None
+        self.file_version = None
+        self.file_exists = False
+        self.file_download_url = None
+
     @property
     def filename(self):
         return (Path(self.standard_config.download_dir) / self.path).resolve()
@@ -35,6 +42,28 @@ class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def _output_filename(self):
         return Path(self.standard_config.output_dir) / f"{self.path}.json"
+    
+    @property
+    def date_created(self) -> Optional[str]:
+        return self.file_created_at
+        
+    @property
+    def date_modified(self) -> Optional[str]:
+        return self.file_updated_at
+
+    @property
+    def exists(self) -> Optional[bool]:
+        return self.file_exists
+
+    @property
+    def record_locator(self) -> Optional[Dict[str, Any]]:
+        return {
+            "download_url": self.file_download_url or self.config.url
+        }
+
+    @property
+    def version(self) -> Optional[str]:
+        return self.file_version
 
     def _create_full_tmp_dir_path(self):
         """includes directories in in the gitlab repository"""

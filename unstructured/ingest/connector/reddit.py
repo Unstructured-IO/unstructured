@@ -1,7 +1,10 @@
 import os
 from dataclasses import dataclass, field
+from datetime import datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Any, Dict, Optional
+
+import pytz
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -37,14 +40,6 @@ class RedditIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleRedditConfig = field(repr=False)
     post: "Submission"
 
-    @property
-    def filename(self) -> Path:
-        return (Path(self.standard_config.download_dir) / f"{self.post.id}.md").resolve()
-
-    @property
-    def _output_filename(self):
-        return Path(self.standard_config.output_dir) / f"{self.post.id}.json"
-
     def _create_full_tmp_dir_path(self):
         self.filename.parent.mkdir(parents=True, exist_ok=True)
 
@@ -57,6 +52,36 @@ class RedditIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         text_to_write = f"# {self.post.title}\n{self.post.selftext}"
         with open(self.filename, "w", encoding="utf8") as f:
             f.write(text_to_write)
+
+    @property
+    def filename(self) -> Path:
+        return (Path(self.standard_config.download_dir) / f"{self.post.id}.md").resolve()
+
+    @property
+    def _output_filename(self):
+        return Path(self.standard_config.output_dir) / f"{self.post.id}.json"
+
+    @property
+    def date_created(self) -> Optional[str]:
+        return datetime.fromtimestamp(self.post.created_utc, pytz.utc).isoformat()
+
+    @property
+    def date_modified(self) -> Optional[str]:
+        return None
+
+    @property
+    def exists(self) -> Optional[bool]:
+        return (self.post.author != "[deleted]" or self.post.auth is not None) and (
+            self.post.selftext != "[deleted]" or self.post.selftext != "[removed]"
+        )
+
+    @property
+    def record_locator(self) -> Optional[Dict[str, Any]]:
+        return {"permalink": self.post.permalink, "url": self.post.url, "id": self.post.id}
+
+    @property
+    def version(self) -> Optional[str]:
+        return self.post.id
 
 
 @requires_dependencies(["praw"], extras="reddit")

@@ -3,6 +3,7 @@ from html import unescape
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 from urllib.parse import urlparse
+from datetime import datetime
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.ingest.interfaces import (
@@ -89,14 +90,18 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def date_created(self) -> Optional[str]:
         if self.meta:
-            return self.meta["page"].properties.get("FirstPublished", None)
-        return self.file.time_created
+            date_created = self.meta["page"].properties.get("FirstPublished", None)
+        else:
+            date_created = self.file.time_created
+        return datetime.fromisoformat(date_created).isoformat()
 
     @property
     def date_modified(self) -> Optional[str]:
         if self.meta:
-            return self.meta["page"].properties.get("Modified", None)
-        return self.file.time_last_modified
+            date_modified = self.meta["page"].properties.get("Modified", None)
+        else:
+            date_modified = self.file.time_last_modified
+        return datetime.fromisoformat(date_modified).isoformat()
 
     @property
     def exists(self) -> Optional[bool]:

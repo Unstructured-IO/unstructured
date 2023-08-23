@@ -37,7 +37,10 @@ class GitLabIngestDoc(GitIngestDoc):
             self.path,
             ref=self.config.branch or self.project.default_branch,
         )
+
         contents = content_file.decode()
+        self.file_exists = True
+        self.file_version = content_file.attributes.get('commit_id', '')
 
         with open(self.filename, "wb") as f:
             f.write(contents)

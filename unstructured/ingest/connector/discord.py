@@ -2,8 +2,8 @@ import datetime as dt
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Optional
-
+from typing import Any, Dict, List, Optional
+from datetime import datetime
 from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
@@ -58,6 +58,12 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     days: Optional[int]
     token: str
 
+    def __post_init__(self):
+        self.created_at = None
+        self.latest_msg = None
+        self.jump_url = None
+        self.n_messages = 0
+
     # NOTE(crag): probably doesn't matter,  but intentionally not defining tmp_download_file
     # __post_init__ for multiprocessing simplicity (no Path objects in initially
     # instantiated object)
@@ -97,15 +103,20 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                     after_date = dt.datetime.utcnow() - dt.timedelta(days=self.days)
 
                 channel = bot.get_channel(int(self.channel))
+                if channel:
+                    self.created_at = channel.created_at
+                    self.jump_url = channel.jump_url
                 async for msg in channel.history(after=after_date):  # type: ignore
                     messages.append(msg)
-
                 await bot.close()
             except Exception as e:
                 logger.error(f"Error fetching messages: {e}")
                 await bot.close()
 
         bot.run(self.token)
+        self.n_messages = len(messages)
+        if self.n_messages >= 1:
+            self.latest_msg = [m.created_at for m in messages if m.created_at].sort()
 
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
         with open(self._tmp_download_file(), "w") as f:
@@ -116,6 +127,29 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def filename(self):
         """The filename of the file created from a discord channel"""
         return self._tmp_download_file()
+
+    @property
+    def date_created(self) -> Optional[str]:
+        if self.created_at is not None:
+            return self.created_at.isoformat()
+        return self.created_at
+        
+    @property
+    def date_modified(self) -> Optional[str]:
+        if self.latest_msg is not None:
+            return self.latest_msg.isoformat()
+        return self.latest_msg
+
+    @property
+    def exists(self) -> Optional[bool]:
+        return (self.n_messages >= 1)
+
+    @property
+    def record_locator(self) -> Optional[Dict[str, Any]]:
+        return {
+            "channel": self.channel,
+            "jump_url": self.jump_url
+        }
 
 
 class DiscordConnector(ConnectorCleanupMixin, BaseConnector):

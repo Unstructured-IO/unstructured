@@ -3,7 +3,7 @@ import json
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Any, Dict
 
 import jq
 from elasticsearch import Elasticsearch
@@ -59,6 +59,10 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleElasticsearchConfig
     file_meta: ElasticsearchFileMeta
 
+    def __post_init__(self):
+        self.document_found = False
+        self.document_version = None
+
     # TODO: remove one of filename or _tmp_download_file, using a wrapper
     @property
     def filename(self):
@@ -112,10 +116,14 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         # TODO: instead of having a separate client for each doc,
         # have a separate client for each process
         es = Elasticsearch(self.config.url)
-        document_dict = es.get(
+        document = es.get(
             index=self.config.index_name,
             id=self.file_meta.document_id,
-        ).body["_source"]
+        )
+        document_dict = document.body["_source"]
+        self.document_version = document['_version']
+        self.document_found = document['found']
+
         if self.config.jq_query:
             document_dict = json.loads(jq.compile(self.config.jq_query).input(document_dict).text())
         self.document = self._concatenate_dict_fields(document_dict)
@@ -123,6 +131,20 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         with open(self.filename, "w", encoding="utf8") as f:
             f.write(self.document)
 
+    @property
+    def exists(self) -> Optional[bool]:
+        return self.document_found
+
+    @property
+    def record_locator(self) -> Optional[Dict[str, Any]]:
+        return {
+            "index_name": self.config.index_name,
+            "document_id": self.file_meta.document_id
+        }
+
+    @property
+    def version(self) -> Optional[str]:
+        return self.document_version
 
 @requires_dependencies(["elasticsearch"])
 @dataclass

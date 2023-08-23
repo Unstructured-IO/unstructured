@@ -44,6 +44,9 @@ class GitHubIngestDoc(GitIngestDoc):
 
     def _fetch_and_write(self) -> None:
         content_file = self.repo.get_contents(self.path)
+        self.file_updated_at = content_file.last_modified
+        self.file_version = content_file.etag
+        self.file_download_url = content_file.download_url
         contents = b""
         if (
             not content_file.content  # type: ignore
@@ -55,13 +58,16 @@ class GitHubIngestDoc(GitIngestDoc):
             if response.status_code != 200:
                 logger.info("Direct download link has failed... Skipping this file.")
             else:
+                print(response)
                 contents = response.content
+                self.file_exists = (contents != b"")
         else:
             contents = content_file.decoded_content  # type: ignore
+            self.file_exists = (contents != b"")
+            
 
         with open(self.filename, "wb") as f:
             f.write(contents)
-
 
 @requires_dependencies(["github"], extras="github")
 @dataclass
