@@ -4,8 +4,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
-from dataclasses_json import dataclass_json
-
 from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,

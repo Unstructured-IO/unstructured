@@ -2,6 +2,7 @@ import json
 from typing import Dict, Type
 
 from dataclasses_json import DataClassJsonMixin
+from unsturctured.ingest.interfaces import BaseIngestDoc
 
 from unstructured.ingest.connector.airtable import AirtableIngestDoc
 from unstructured.ingest.connector.azure import AzureBlobStorageIngestDoc
@@ -54,7 +55,7 @@ INGEST_DOC_NAME_TO_CLASS: Dict[str, Type[DataClassJsonMixin]] = {
 }
 
 
-def create_instance_from_json(data_json: str) -> DataClassJsonMixin:
+def create_instance_from_json(data_json: str) -> BaseIngestDoc:
     data_dict = json.loads(data_json)
     registry_name = data_dict.pop("registry_name")
     try:
