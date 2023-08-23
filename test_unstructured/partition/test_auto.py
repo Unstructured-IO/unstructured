@@ -889,6 +889,12 @@ def test_auto_partition_warns_about_file_filename_deprecation(caplog):
     assert "The file_filename kwarg will be deprecated" in caplog.text
 
 
+def test_auto_partition_raises_with_file_and_metadata_filename():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
+    with open(filename) as f, pytest.raises(ValueError):
+        partition(file=f, file_filename=filename, metadata_filename=filename)
+
+
 def test_get_partition_with_extras_prompts_for_install_if_missing():
     partition_with_extras_map = {}
     with pytest.raises(ImportError) as exception_info:
