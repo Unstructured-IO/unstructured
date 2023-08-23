@@ -203,7 +203,7 @@ typing-extensions==4.7.1
     #   torch
 tzdata==2023.3
     # via pandas
-unstructured-inference==0.5.15
+unstructured-inference==0.5.16
     # via
     #   -c requirements/constraints.in
     #   -r requirements/extra-pdf-image.in
