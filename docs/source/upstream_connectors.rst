@@ -1,3 +1,5 @@
+.. _upstream-connectors:
+
 Upstream Connectors
 ===================
 
