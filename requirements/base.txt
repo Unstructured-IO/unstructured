@@ -14,7 +14,7 @@ chardet==5.2.0
     # via -r requirements/base.in
 charset-normalizer==3.2.0
     # via requests
-click==8.1.6
+click==8.1.7
     # via nltk
 emoji==2.8.0
     # via -r requirements/base.in
