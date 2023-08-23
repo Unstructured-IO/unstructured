@@ -9,6 +9,8 @@ from unstructured_inference.inference import layout
 
 from unstructured.documents.elements import Title
 from unstructured.partition import image, pdf
+from unstructured.partition.json import partition_json
+from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
@@ -362,3 +364,15 @@ def test_partition_image_from_file_with_hi_res_strategy_metadata_date_custom_met
         )
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
+
+
+def test_partition_msg_with_json(
+    filename="example-docs/layout-parser-paper-fast.jpg",
+):
+    elements = image.partition_image(filename=filename, strategy="auto")
+    test_elements = partition_json(text=elements_to_json(elements))
+    
+    assert len(elements) == len(test_elements)
+    assert elements[0].metadata.page_number == test_elements[0].metadata.page_number
+    for i in range(len(elements)):
+        assert elements[i] == test_elements[i]
