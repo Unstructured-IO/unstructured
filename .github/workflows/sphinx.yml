@@ -6,7 +6,7 @@ name: Sphinx build
 on:
   push:
     branches:
-      - '*'
+      - '**'
 
 jobs:
   docs:
