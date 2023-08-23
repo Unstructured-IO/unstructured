@@ -23,9 +23,9 @@ inflection==0.5.1
     # via pyairtable
 pyairtable==2.1.0.post1
     # via -r requirements/ingest-airtable.in
-pydantic==2.2.1
+pydantic==2.3.0
     # via pyairtable
-pydantic-core==2.6.1
+pydantic-core==2.6.3
     # via pydantic
 requests==2.31.0
     # via
@@ -33,6 +33,7 @@ requests==2.31.0
     #   pyairtable
 typing-extensions==4.7.1
     # via
+    #   -c requirements/base.txt
     #   annotated-types
     #   pyairtable
     #   pydantic

@@ -76,11 +76,11 @@ pluggy==1.2.0
     # via pytest
 pycodestyle==2.11.0
     # via flake8
-pydantic==2.2.1
+pydantic==2.3.0
     # via
     #   -r requirements/test.in
     #   label-studio-sdk
-pydantic-core==2.6.1
+pydantic-core==2.6.3
     # via pydantic
 pyflakes==3.1.0
     # via flake8
@@ -122,6 +122,7 @@ types-urllib3==1.26.25.14
     # via types-requests
 typing-extensions==4.7.1
     # via
+    #   -c requirements/base.txt
     #   annotated-types
     #   black
     #   mypy
