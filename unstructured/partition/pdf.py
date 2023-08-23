@@ -459,8 +459,8 @@ def add_pytesseract_bbox_to_elements(elements, bboxes, width, height):
     Get the bounding box of each element and add it to element.metadata.coordinates
 
     Args:
-        text (str): The text detected by pytesseract.image_to_string.
-        coordinates (str): The return value of pytesseract.image_to_boxes.
+        elements: elements containing text detected by pytesseract.image_to_string.
+        bboxes (str): The return value of pytesseract.image_to_boxes.
     """
     # (NOTE) jennings: This function was written with pytesseract in mind, but
     # paddle returns similar values via `ocr.ocr(img)`.
@@ -494,7 +494,6 @@ def add_pytesseract_bbox_to_elements(elements, bboxes, width, height):
 
         points = ((min_x, min_y), (min_x, max_y), (max_x, max_y), (max_x, min_y))
         converted_points = []
-
         for point in points:
             x, y = point
             new_x, new_y = point_space.convert_coordinates_to_new_system(pixel_space, x, y)
