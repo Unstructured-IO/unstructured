@@ -108,6 +108,7 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         bot.run(self.token)
 
+        self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
         with open(self._tmp_download_file(), "w") as f:
             for m in messages:
                 f.write(m.content + "\n")

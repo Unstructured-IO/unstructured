@@ -124,6 +124,10 @@ install-ingest-azure:
 install-ingest-box:
 	python3 -m pip install -r requirements/ingest-box.txt
 
+.PHONY: install-ingest-delta-table
+install-ingest-delta-table:
+	python3 -m pip install -r requirements/ingest-delta-table.txt
+
 .PHONY: install-ingest-discord
 install-ingest-discord:
 	pip install -r requirements/ingest-discord.txt
@@ -131,6 +135,10 @@ install-ingest-discord:
 .PHONY: install-ingest-github
 install-ingest-github:
 	python3 -m pip install -r requirements/ingest-github.txt
+
+.PHONY: install-ingest-biomed
+install-ingest-biomed:
+	python3 -m pip install -r requirements/ingest-biomed.txt
 
 .PHONY: install-ingest-gitlab
 install-ingest-gitlab:
@@ -172,6 +180,14 @@ install-ingest-airtable:
 install-ingest-sharepoint:
 	python3 -m pip install -r requirements/ingest-sharepoint.txt
 
+.PHONY: install-ingest-local
+install-ingest-local:
+	echo "no unique dependencies for local connector"
+
+.PHONY: install-ingest-notion
+install-ingest-notion:
+	python3 -m pip install -r requirements/ingest-notion.txt
+
 .PHONY: install-unstructured-inference
 install-unstructured-inference:
 	python3 -m pip install -r requirements/local-inference.txt
@@ -211,10 +227,12 @@ pip-compile:
 	# sphinx docs looks for additional requirements
 	cp requirements/build.txt docs/requirements.txt
 	pip-compile --upgrade requirements/ingest-s3.in
+	pip-compile --upgrade requirements/ingest-biomed.in
 	pip-compile --upgrade requirements/ingest-box.in
 	pip-compile --upgrade requirements/ingest-gcs.in
 	pip-compile --upgrade requirements/ingest-dropbox.in
 	pip-compile --upgrade requirements/ingest-azure.in
+	pip-compile --upgrade requirements/ingest-delta-table.in
 	pip-compile --upgrade requirements/ingest-discord.in
 	pip-compile --upgrade requirements/ingest-reddit.in
 	pip-compile --upgrade requirements/ingest-github.in

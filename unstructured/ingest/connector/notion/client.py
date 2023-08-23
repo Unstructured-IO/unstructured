@@ -1,5 +1,6 @@
 from typing import Any, Generator, List, Tuple
 
+import httpx
 from notion_client import Client as NotionClient
 from notion_client.api_endpoints import (
     BlocksChildrenEndpoint as NotionBlocksChildrenEndpoint,
@@ -7,6 +8,7 @@ from notion_client.api_endpoints import (
 from notion_client.api_endpoints import BlocksEndpoint as NotionBlocksEndpoint
 from notion_client.api_endpoints import DatabasesEndpoint as NotionDatabasesEndpoint
 from notion_client.api_endpoints import PagesEndpoint as NotionPagesEndpoint
+from notion_client.errors import RequestTimeoutError
 
 from unstructured.ingest.connector.notion.types.block import Block
 from unstructured.ingest.connector.notion.types.database import Database
@@ -41,6 +43,18 @@ class DatabasesEndpoint(NotionDatabasesEndpoint):
     def retrieve(self, database_id: str, **kwargs: Any) -> Database:
         resp: dict = super().retrieve(database_id=database_id, **kwargs)  # type: ignore
         return Database.from_dict(data=resp)
+
+    def retrieve_status(self, database_id: str, **kwargs) -> int:
+        request = self.parent._build_request(
+            method="HEAD",
+            path=f"databases/{database_id}",
+            auth=kwargs.get("auth"),
+        )
+        try:
+            response: httpx.Response = self.parent.client.send(request)  # type: ignore
+            return response.status_code
+        except httpx.TimeoutException:
+            raise RequestTimeoutError()
 
     def query(self, database_id: str, **kwargs: Any) -> Tuple[List[Page], dict]:
         """Get a list of [Pages](https://developers.notion.com/reference/page) contained in the database.
@@ -80,6 +94,18 @@ class PagesEndpoint(NotionPagesEndpoint):
     def retrieve(self, page_id: str, **kwargs: Any) -> Page:
         resp: dict = super().retrieve(page_id=page_id, **kwargs)  # type: ignore
         return Page.from_dict(data=resp)
+
+    def retrieve_status(self, page_id: str, **kwargs) -> int:
+        request = self.parent._build_request(
+            method="HEAD",
+            path=f"pages/{page_id}",
+            auth=kwargs.get("auth"),
+        )
+        try:
+            response: httpx.Response = self.parent.client.send(request)  # type: ignore
+            return response.status_code
+        except httpx.TimeoutException:
+            raise RequestTimeoutError()
 
 
 class Client(NotionClient):

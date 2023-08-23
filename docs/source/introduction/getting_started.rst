@@ -1,5 +1,50 @@
 Getting Started
-===============
+---------------
+
+Quick Installation
+~~~~~~~~~~~~~~~~~~
+
+This guide offers concise steps to swiftly install and validate your ``unstructured`` installation.
+
+1. **Installing the Python SDK**: 
+   You can install the core SDK using pip:
+   
+   .. code-block:: bash
+
+      pip install unstructured
+
+   Plain text files, HTML, XML, JSON, and Emails are immediately supported without any additional dependencies.
+
+   If you need to process other document types, you can install the extras required by following the :doc:`../installation/full_installation`
+
+2. **System Dependencies**:
+   Ensure the subsequent system dependencies are installed. Your requirements might vary based on the document types you're handling:
+
+   - `libmagic-dev` : Essential for filetype detection.
+   - `poppler-utils` : Needed for images and PDFs.
+   - `tesseract-ocr` : Essential for images and PDFs.
+   - `libreoffice` : For MS Office documents.
+   - `pandoc` : For EPUBs, RTFs, and Open Office documents.
+
+Validating Installation
+~~~~~~~~~~~~~~~~~~~~~~~
+
+After installation, confirm the setup by executing the below Python code:
+
+.. code-block:: python
+
+   from unstructured.partition.auto import partition
+   elements = partition(filename="example-docs/fake-email.eml")
+
+If you've opted for the "local-inference" installation, you should also be able to execute:
+
+.. code-block:: python
+
+   from unstructured.partition.auto import partition
+   elements = partition("example-docs/layout-parser-paper.pdf")
+
+If these code snippets run without errors, congratulations! Your ``unstructured`` installation is successful and ready for use.
+
 
 The following section will cover basic concepts and usage patterns in ``unstructured``.
 After reading this section, you should be able to:
@@ -13,12 +58,10 @@ The example documents in this section come from the
 directory in the ``unstructured`` repo.
 
 Before running the code in this make sure you've installed the ``unstructured`` library
-and all dependencies using the instructions in the **Quick Start** section.
+and all dependencies using the instructions in the `Quick Start <https://unstructured-io.github.io/unstructured/installing.html#quick-start>`_ section.
 
-
-#######################
 Partitioning a document
-#######################
+~~~~~~~~~~~~~~~~~~~~~~~
 
 In this section, we'll cut right to the chase and get to the most important part of the library: partitioning a document.
 The goal of document partitioning is to read in a source document, split the document into sections, categorize those sections,
@@ -52,9 +95,9 @@ We highly recommend installing ``libmagic`` and you may observe different file d
 if ``libmagic`` is not installed`.
 
 
-##################
+
 Document elements
-##################
+~~~~~~~~~~~~~~~~~
 
 
 When we partition a document, the output is a list of document ``Element`` objects.
@@ -110,16 +153,16 @@ The following code shows how you can limit your output to only narrative text wi
 	        print("\n")
 
 
-######
+
 Tables
-######
+~~~~~~
 
 For ``Table`` elements, the raw text of the table will be stored in the ``text`` attribute for the Element, and HTML representation
 of the table will be available in the element metadata under ``element.metadata.text_as_html``. For most documents where
 table extraction is available, the ``partition`` function will extract tables automatically if they are present.
 For PDFs and images, table extraction requires a relatively expensive call to a table recognition model, and so for those
 document types table extraction is an option you need to enable. If you would like to extract tables for PDFs or images,
-pass in ``infer_table_structured=True``. Here is an example:
+pass in ``infer_table_structured=True``. Here is an example (Note: this example requires the ``pdf`` extra. This can be installed with ``pip install "unstructured[pdf]"``):
 
 .. code:: python
 
@@ -147,40 +190,9 @@ And the ``text_as_html`` metadata will look like this:
 
 	<table><thead><th>Dataset</th><th>| Base Model’</th><th>| Notes</th></thead><tr><td>PubLayNet</td><td>[38] F/M</td><td>Layouts of modern scientific documents</td></tr><tr><td>PRImA [3]</td><td>M</td><td>Layouts of scanned modern magazines and scientific reports</td></tr><tr><td>Newspaper</td><td>F</td><td>Layouts of scanned US newspapers from the 20th century</td></tr><tr><td>TableBank</td><td>F</td><td>Table region on modern scientific and business document</td></tr><tr><td>HJDataset [31]</td><td>F/M</td><td>Layouts of history Japanese documents</td></tr></table>
 
-####################
-Serializing Elements
-####################
 
-The ``unstructured`` library includes helper functions for
-reading and writing a list of ``Element`` objects to and
-from JSON. You can use the following workflow for
-serializing and deserializing an ``Element`` list.
-
-
-.. code:: python
-
-    from unstructured.documents.elements import ElementMetadata, Text, Title, FigureCaption
-    from unstructured.staging.base import elements_to_json, elements_from_json
-
-    filename = "my-elements.json"
-    metadata = ElementMetadata(filename="fake-file.txt")
-    elements = [
-        FigureCaption(text="caption", metadata=metadata, element_id="1"),
-        Title(text="title", metadata=metadata, element_id="2"),
-        Text(text="title", metadata=metadata, element_id="3"),
-
-    ]
-
-    elements_to_json(elements, filename=filename)
-    new_elements = elements_from_json(filename=filename)
-
-    # alternatively, one can also serialize/deserialize to/from a string with:
-    serialized_elements_json = elements_to_json(elements)
-    new_elements = elements_from_json(text=serialized_elements_json)
-
-###########################################
 Converting elements to a dictionary or JSON
-###########################################
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The final step in the process for most users is to convert the output to JSON.
 You can convert a list of document elements to a list of dictionaries using the ``convert_to_dict`` function.
@@ -229,9 +241,9 @@ if you'd like to use the IDs as a primary key in a database, for example.
     elements[0].id
 
 
-##################
+
 Wrapping it all up
-##################
+~~~~~~~~~~~~~~~~~~
 
 To conclude, the basic workflow for reading in a document and converting it to a JSON in ``unstructured``
 looks like the following:
@@ -243,7 +255,7 @@ looks like the following:
     from unstructured.partition.auto import partition
     from unstructured.staging.base import elements_to_json
 
-    input_filename = "example-10k.html"
+    input_filename = "example-docs/example-10k.html"
     output_filename = "outputs.json"
 
     elements = partition(filename=input_filename)
