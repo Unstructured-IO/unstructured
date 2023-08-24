@@ -41,33 +41,30 @@ class SimpleSharepointConfig(BaseConnectorConfig):
 
 @dataclass
 class SharepointFileMeta:
-    base_url: str
-    is_page: bool
-    file_path: str
     date_created: str
     date_modified: str
     version: str
-    extension: str = field(init=False)
-    local_file_path: str = field(init=False)
-
-    def __post_init__(self):
-        self.extension = "".join(Path(self.file_name).suffixes) if not self.is_page else ".html"
-        self.extension = self.extension if self.extension != ".aspx" else ".html"
 
 
 @dataclass
 class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleSharepointConfig
     absolute_url: str
+    base_url: str
+    is_page: bool
+    file_path: str
     meta: SharepointFileMeta
 
     def __post_init__(self):
-        if not self.meta.extension:
+        self.extension = "".join(Path(self.file_path).suffixes) if not self.is_page else ".html"
+        self.extension = self.extension if self.extension != ".aspx" else ".html"
+
+        if not self.extension:
             raise ValueError("Unsupported file without extension.")
 
-        if self.meta.extension not in EXT_TO_FILETYPE:
+        if self.extension not in EXT_TO_FILETYPE:
             raise ValueError(
-                f"Extension {self.meta.extension} not supported. "
+                f"Extension {self.extension} not supported. "
                 f"Value MUST be one of {', '.join([k for k in EXT_TO_FILETYPE if k is not None])}.",
             )
         self.file_exists = False
@@ -77,16 +74,16 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         """Parses the folder structure from the source and creates the download and output paths"""
         download_path = Path(f"{self.standard_config.download_dir}")
         output_path = Path(f"{self.standard_config.output_dir}")
-        if self.meta.is_page:
+        if self.is_page:
             parent = (
-                Path(self.meta.file_path).with_suffix(self.meta.extension)
+                Path(self.file_path).with_suffix(self.extension)
             )
         else:
             parent = Path(self.meta.file_path[1:])
     
         self.download_dir = (download_path / parent.parent).resolve()
         self.download_filepath = (download_path / parent).resolve()
-        oname = f"{str(parent)[:-len(self.meta.extension)]}.json"
+        oname = f"{str(parent)[:-len(self.extension)]}.json"
         self.output_dir = (output_path / parent.parent).resolve()
         self.output_filepath = (output_path / oname).resolve()
 
@@ -148,7 +145,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 pld = unescape(pld)
             else:
                 logger.info(
-                    f"Page {self.meta['page'].get_property('Url', '')} has no retrievable content. \
+                    f"Page {self.absolute_url} has no retrievable content. \
                       Dumping empty doc.",
                 )
                 pld = "<div></div>"
@@ -194,10 +191,10 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @BaseIngestDoc.skip_if_file_exists
     @requires_dependencies(["office365"])
     def get_file(self):
-        if not self.meta:
-            self._get_file()
-        else:
+        if self.is_page:
             self._get_page()
+        else:
+            self._get_file()  
         return
 
 

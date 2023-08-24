@@ -59,7 +59,9 @@ class SimpleOneDriveConfig(BaseConnectorConfig):
 @dataclass
 class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleOneDriveConfig
-    file: "DriveItem"
+    file_parent_path: str
+    file_name: str
+    file_path: str
 
     def __post_init__(self):
         self.ext = "".join(Path(self.file.name).suffixes)
@@ -78,14 +80,14 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         download_path = Path(f"{self.standard_config.download_dir}")
         output_path = Path(f"{self.standard_config.output_dir}")
 
-        if parent_ref := self.file.get_property("parentReference", "").path.split(":")[-1]:
+        if parent_ref := self.file_parent_path.split(":")[-1]:
             odir = parent_ref[1:] if parent_ref[0] == "/" else parent_ref
             download_path = download_path if odir == "" else (download_path / odir).resolve()
             output_path = output_path if odir == "" else (output_path / odir).resolve()
 
         self.download_dir = download_path
         self.download_filepath = (download_path / self.file.name).resolve()
-        oname = f"{self.file.name[:-len(self.ext)]}.json"
+        oname = f"{self.file_name[:-len(self.ext)]}.json"
         self.output_dir = output_path
         self.output_filepath = (output_path / oname).resolve()
 
@@ -127,7 +129,14 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @BaseIngestDoc.skip_if_file_exists
     @requires_dependencies(["office365"])
     def get_file(self):
+        from office365.graph_client import GraphClient 
+
         try:
+            client = GraphClient(self.config.token_factory)
+            root = client.users[self.config.user_pname].drive.get().execute_query().root
+            if fpath := self.config.path:
+                root = root.get_by_path(fpath).get().execute_query()
+            self.file = root.get_by_path(self.file_path).get().execute_query()
             fsize = self.file.get_property("size", 0)
             self.output_dir.mkdir(parents=True, exist_ok=True)
 
