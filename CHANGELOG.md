@@ -1,4 +1,14 @@
-## 0.10.8
+## 0.10.9-dev0
+
+### Enhancements
+
+* Improve use of `requires_dependencies` in ingest cli
+
+### Features
+
+### Fixes
+
+## 0.10.8-dev0
 
 ### Enhancements
 
