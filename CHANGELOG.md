@@ -11,6 +11,7 @@
   * Fix issue where temporary files were being left behind (0.5.16)
 * Adds deprecation warning for the `file_filename` kwarg to `partition`, `partition_via_api`,
   and `partition_multiple_via_api`.
+* Fix documentation build workflow by pinning dependencies
 
 ## 0.10.5
 
