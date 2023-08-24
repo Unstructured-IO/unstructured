@@ -36,7 +36,7 @@ from unstructured.partition.common import (
 )
 from unstructured.partition.strategies import determine_pdf_or_image_strategy
 from unstructured.partition.text import element_from_text, partition_text
-from unstructured.partition.utils.constants import SORT_MODE_XY_CUT, SORT_MODE_BASIC
+from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_XY_CUT
 from unstructured.partition.utils.sorting import sort_page_elements
 from unstructured.utils import requires_dependencies
 
