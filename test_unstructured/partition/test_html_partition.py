@@ -582,3 +582,19 @@ def test_partition_html_grabs_emphasized_texts():
     assert elements[4] == Title("A lone span text!")
     assert elements[4].metadata.emphasized_text_contents == ["A lone span text!"]
     assert elements[4].metadata.emphasized_text_tags == ["span"]
+
+
+def test_pre_tag_parsing_respects_order():
+    html_text = """
+    <pre><h1>The Big Brown Bear</pre>
+    <div><p>The big brown bear is growling.</p></div>
+    <pre><p>The big brown bear is sleeping.</p></div>
+    <div><h1>The Big Blue Bear</h1></div>
+    """
+    elements = partition_html(text=html_text)
+    assert elements == [
+        Title("The Big Brown Bear"),
+        NarrativeText("The big brown bear is growling."),
+        NarrativeText("The big brown bear is sleeping."),
+        Title("The Big Blue Bear"),
+    ]
