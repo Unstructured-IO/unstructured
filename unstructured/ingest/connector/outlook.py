@@ -2,9 +2,10 @@ import hashlib
 import os
 from collections import defaultdict
 from dataclasses import dataclass, field
+from datetime import datetime
 from itertools import chain
 from pathlib import Path
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 from office365.onedrive.driveitems.driveItem import DriveItem
 
@@ -103,6 +104,33 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _output_filename(self):
         return Path(self.output_filepath).resolve()
 
+    @property
+    def date_created(self) -> Optional[str]:
+        return datetime.fromisoformat(self.file.created_datetime).isoformat()
+
+    @property
+    def date_modified(self) -> Optional[str]:
+        return datetime.fromisoformat(self.file.last_modified_datetime).isoformat()
+
+    @property
+    def exists(self) -> Optional[bool]:
+        return (self.file.name is not None) and (self.file.get_property("size", 0) > 0)
+
+    @property
+    def record_locator(self) -> Optional[Dict[str, Any]]:
+        record_source = self.file.to_json()
+        return {
+            "id": record_source.get("id", ""),
+            "web_url": record_source.get("webUrl", ""),
+            "drive_id": record_source.get("parentReference", {}).get("driveId", ""),
+        }
+
+    @property
+    def version(self) -> Optional[str]:
+        if (n_versions := len(self.file.versions)) > 0:
+            return self.file.versions[n_versions - 1].properties.get("id", None)
+        return None
+
     @BaseIngestDoc.skip_if_file_exists
     @requires_dependencies(["office365"])
     def get_file(self):
@@ -119,6 +147,7 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 ),
                 "wb",
             ) as local_file:
+                # NOTE: Add logic to use download_session on larger fiels
                 self.file.download(
                     local_file,
                 ).execute_query()  # download MIME representation of a message
