@@ -134,7 +134,7 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
                         for reply in response["messages"]:
                             reply_msg = reply.get("text")
-                            text_elem.text = "".join([text_elem.text, " <reply> ", reply_msg])
+                            text_elem.text = "".join([str(text_elem.text), " <reply> ", reply_msg])
 
                         if not response["has_more"]:
                             break
