@@ -38,13 +38,11 @@ class SimpleSharepointConfig(BaseConnectorConfig):
                 "\n--client-id\n--client-cred\n--site",
             )
 
-
 @dataclass
 class SharepointFileMeta:
     date_created: str
     date_modified: str
     version: str
-
 
 @dataclass
 class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
@@ -144,7 +142,6 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             content_labels = ["CanvasContent1", "LayoutWebpartsContent1"]
             file = self._get_file_ref()
             self.file_exists = True
-            print(" fpageprops>>>>> ", file.properties)
             content = file.listItemAllFields.select(content_labels).get().execute_query()
             pld = (content.properties.get("LayoutWebpartsContent1", "") or "") + (
                 content.properties.get("CanvasContent1", "") or ""
@@ -279,7 +276,6 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
                 if (url_path := (urlparse(site_client.base_url).path)) and (url_path != "/"):
                     file_path = url_path[1:] + "/" + file_path             
                 absolute_url = file_page.get_absolute_url().execute_query()
-                print(" pageabsurl>>>", absolute_url)
                 pages.append([
                     SharepointIngestDoc(
                         self.standard_config,
@@ -301,7 +297,6 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
 
     def _ingest_site_docs(self, site_client) -> List["SharepointIngestDoc"]:
         root_folder = site_client.web.get_folder_by_server_relative_path(self.config.path)
-        print(' baseurl>>>', site_client.base_url)
         files = self._list_files(root_folder, self.config.recursive)
         if not files:
             logger.info(

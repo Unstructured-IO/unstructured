@@ -57,6 +57,13 @@ class SimpleOneDriveConfig(BaseConnectorConfig):
 
 
 @dataclass
+class OneDriveFileMeta:
+    date_created: str
+    date_modified: str
+    version: str
+    file_size: str
+
+@dataclass
 class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleOneDriveConfig
     file_parent_path: str
@@ -64,7 +71,7 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     file_path: str
 
     def __post_init__(self):
-        self.ext = "".join(Path(self.file.name).suffixes)
+        self.ext = "".join(Path(self.file_name).suffixes)
         if not self.ext:
             raise ValueError("Unsupported file without extension.")
 
@@ -86,45 +93,10 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             output_path = output_path if odir == "" else (output_path / odir).resolve()
 
         self.download_dir = download_path
-        self.download_filepath = (download_path / self.file.name).resolve()
+        self.download_filepath = (download_path / self.file_name).resolve()
         oname = f"{self.file_name[:-len(self.ext)]}.json"
         self.output_dir = output_path
         self.output_filepath = (output_path / oname).resolve()
-
-    @property
-    def filename(self):
-        return Path(self.download_filepath).resolve()
-
-    @property
-    def _output_filename(self):
-        return Path(self.output_filepath).resolve()
-
-    @property
-    def date_created(self) -> Optional[str]:
-        return datetime.fromisoformat(self.file.created_datetime).isoformat()
-
-    @property
-    def date_modified(self) -> Optional[str]:
-        return datetime.fromisoformat(self.file.last_modified_datetime).isoformat()
-
-    @property
-    def exists(self) -> Optional[bool]:
-        return (self.file.name is not None) and (self.file.get_property("size", 0) > 0)
-
-    @property
-    def record_locator(self) -> Optional[Dict[str, Any]]:
-        record_source = self.file.to_json()
-        return {
-            "id": record_source.get("id", ""),
-            "web_url": record_source.get("webUrl", ""),
-            "drive_id": record_source.get("parentReference", {}).get("driveId", ""),
-        }
-
-    @property
-    def version(self) -> Optional[str]:
-        if (n_versions := len(self.file.versions)) > 0:
-            return self.file.versions[n_versions - 1].properties.get("id", None)
-        return None
 
     @BaseIngestDoc.skip_if_file_exists
     @requires_dependencies(["office365"], extras="onedrive")
