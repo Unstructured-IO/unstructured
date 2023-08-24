@@ -68,7 +68,7 @@ requests==2.31.0
     #   transformers
 sacremoses==0.0.53
     # via -r requirements/huggingface.in
-safetensors==0.3.2
+safetensors==0.3.3
     # via transformers
 sentencepiece==0.1.99
     # via -r requirements/huggingface.in

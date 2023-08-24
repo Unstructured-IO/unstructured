@@ -1,4 +1,4 @@
-## 0.10.6-dev0
+## 0.10.6-dev1
 
 ### Enhancements
 
@@ -11,6 +11,7 @@
 * Fix bug in `partition_pdf_or_image` where two partitions were called if `strategy == "ocr_only"`.
 * Bump unstructured-inference
   * Fix issue where temporary files were being left behind (0.5.16)
+* Fix documentation build workflow by pinning dependencies
 
 ## 0.10.5
 

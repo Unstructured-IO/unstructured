@@ -27,7 +27,7 @@ docutils==0.18.1
     #   sphinx
     #   sphinx-rtd-theme
     #   sphinx-tabs
-furo==2023.8.19
+furo==2023.7.26
     # via -r requirements/build.in
 idna==3.4
     # via
@@ -75,19 +75,29 @@ sphinx-rtd-theme==1.2.2
 sphinx-tabs==3.4.1
     # via -r requirements/build.in
 sphinxcontrib-applehelp==1.0.4
-    # via sphinx
+    # via
+    #   -r requirements/build.in
+    #   sphinx
 sphinxcontrib-devhelp==1.0.2
-    # via sphinx
+    # via
+    #   -r requirements/build.in
+    #   sphinx
 sphinxcontrib-htmlhelp==2.0.1
-    # via sphinx
+    # via
+    #   -r requirements/build.in
+    #   sphinx
 sphinxcontrib-jquery==4.1
     # via sphinx-rtd-theme
 sphinxcontrib-jsmath==1.0.1
     # via sphinx
 sphinxcontrib-qthelp==1.0.3
-    # via sphinx
+    # via
+    #   -r requirements/build.in
+    #   sphinx
 sphinxcontrib-serializinghtml==1.1.5
-    # via sphinx
+    # via
+    #   -r requirements/build.in
+    #   sphinx
 urllib3==1.26.16
     # via
     #   -c requirements/base.txt
