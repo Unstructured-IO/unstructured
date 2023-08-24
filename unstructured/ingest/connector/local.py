@@ -36,6 +36,7 @@ class LocalIngestDoc(BaseIngestDoc):
 
     config: SimpleLocalConfig
     path: str
+    registry_name: str = "local"
 
     @property
     def filename(self):

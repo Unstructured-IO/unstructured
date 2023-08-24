@@ -57,6 +57,7 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     channel: str
     days: Optional[int]
     token: str
+    registry_name: str = "discord"
 
     # NOTE(crag): probably doesn't matter,  but intentionally not defining tmp_download_file
     # __post_init__ for multiprocessing simplicity (no Path objects in initially
@@ -131,7 +132,6 @@ class DiscordConnector(ConnectorCleanupMixin, BaseConnector):
         super().__init__(standard_config, config)
 
     def initialize(self):
-        """Verify that can get metadata for an object, validates connections info."""
         pass
 
     def get_ingest_docs(self):

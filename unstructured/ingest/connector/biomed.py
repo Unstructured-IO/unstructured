@@ -3,7 +3,7 @@ import urllib.request
 from dataclasses import dataclass
 from ftplib import FTP, error_perm
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import List, Optional
 
 import requests
 from bs4 import BeautifulSoup
@@ -32,8 +32,8 @@ PDF_DIR = "oa_pdf"
 @dataclass
 class BiomedFileMeta:
     ftp_path: str
-    download_filepath: Union[str, os.PathLike]
-    output_filepath: Union[str, os.PathLike]
+    download_filepath: str
+    output_filepath: str
 
 
 @dataclass
@@ -110,6 +110,7 @@ class SimpleBiomedConfig(BaseConnectorConfig):
 class BiomedIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleBiomedConfig
     file_meta: BiomedFileMeta
+    registry_name: str = "biomed"
 
     @property
     def filename(self):
@@ -166,12 +167,12 @@ class BiomedConnector(ConnectorCleanupMixin, BaseConnector):
                     files.append(
                         BiomedFileMeta(
                             ftp_path=url,
-                            download_filepath=(
-                                Path(self.standard_config.download_dir) / local_path
-                            ).resolve(),
-                            output_filepath=(
-                                Path(self.standard_config.output_dir) / local_path
-                            ).resolve(),
+                            download_filepath=(Path(self.standard_config.download_dir) / local_path)
+                            .resolve()
+                            .as_posix(),
+                            output_filepath=(Path(self.standard_config.output_dir) / local_path)
+                            .resolve()
+                            .as_posix(),
                         ),
                     )
 
@@ -249,10 +250,12 @@ class BiomedConnector(ConnectorCleanupMixin, BaseConnector):
                                 ftp_path=ftp_path,
                                 download_filepath=(
                                     Path(self.standard_config.download_dir) / local_path
-                                ).resolve(),
-                                output_filepath=(
-                                    Path(self.standard_config.output_dir) / local_path
-                                ).resolve(),
+                                )
+                                .resolve()
+                                .as_posix(),
+                                output_filepath=(Path(self.standard_config.output_dir) / local_path)
+                                .resolve()
+                                .as_posix(),
                             ),
                         )
 
@@ -269,10 +272,12 @@ class BiomedConnector(ConnectorCleanupMixin, BaseConnector):
             return [
                 BiomedFileMeta(
                     ftp_path=ftp_path,
-                    download_filepath=(
-                        Path(self.standard_config.download_dir) / local_path
-                    ).resolve(),
-                    output_filepath=(Path(self.standard_config.output_dir) / local_path).resolve(),
+                    download_filepath=(Path(self.standard_config.download_dir) / local_path)
+                    .resolve()
+                    .as_posix(),
+                    output_filepath=(Path(self.standard_config.output_dir) / local_path)
+                    .resolve()
+                    .as_posix(),
                 ),
             ]
         else:

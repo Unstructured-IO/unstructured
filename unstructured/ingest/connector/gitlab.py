@@ -27,15 +27,25 @@ class SimpleGitLabConfig(SimpleGitConfig):
         while self.repo_path.startswith("/"):
             self.repo_path = self.repo_path[1:]
 
+    @requires_dependencies(["gitlab"], extras="gitlab")
+    def _get_project(self) -> "Project":
+        from gitlab import Gitlab
+
+        gitlab = Gitlab(self.url, private_token=self.access_token)
+        return gitlab.projects.get(self.repo_path)
+
 
 @dataclass
 class GitLabIngestDoc(GitIngestDoc):
+    config: SimpleGitLabConfig
     project: "Project"
+    registry_name: str = "gitlab"
 
     def _fetch_and_write(self) -> None:
-        content_file = self.project.files.get(
+        project = self.config._get_project()
+        content_file = project.files.get(
             self.path,
-            ref=self.config.branch or self.project.default_branch,
+            ref=self.config.branch or project.default_branch,
         )
         contents = content_file.decode()
 
@@ -46,15 +56,12 @@ class GitLabIngestDoc(GitIngestDoc):
 @requires_dependencies(["gitlab"], extras="gitlab")
 @dataclass
 class GitLabConnector(GitConnector):
-    def __post_init__(self) -> None:
-        from gitlab import Gitlab
-
-        self.gitlab = Gitlab(self.config.url, private_token=self.config.access_token)
+    config: SimpleGitLabConfig
 
     def get_ingest_docs(self):
         # Load the Git tree with all files, and then create Ingest docs
         # for all blobs, i.e. all files, ignoring directories
-        project = self.gitlab.projects.get(self.config.repo_path)
+        project = self.config._get_project()
         ref = self.config.branch or project.default_branch
         git_tree = project.repository_tree(
             ref=ref,

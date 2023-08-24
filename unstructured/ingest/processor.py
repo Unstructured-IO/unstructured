@@ -78,13 +78,14 @@ class Processor:
         # block to remain in single process
         # self.doc_processor_fn(docs[0])
         logger.info(f"Processing {len(docs)} docs")
+        json_docs = [doc.to_json() for doc in docs]
         try:
             with mp.Pool(
                 processes=self.num_processes,
                 initializer=ingest_log_streaming_init,
                 initargs=(logging.DEBUG if self.verbose else logging.INFO,),
             ) as pool:
-                pool.map(self.doc_processor_fn, docs)
+                pool.map(self.doc_processor_fn, json_docs)
         finally:
             self.cleanup()
 

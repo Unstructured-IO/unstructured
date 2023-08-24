@@ -70,6 +70,14 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         self.file_exists = False
         self._set_download_paths()
 
+    @requires_dependencies(["office365"], extras="sharepoint")
+    def _get_file_ref(self):
+        from office365.sharepoint.files.file import File
+
+        logger.debug(f"self.url: {self.url}")
+        print(f"self.url: {self.url}")
+        return File.from_url(self.url)
+
     def _set_download_paths(self) -> None:
         """Parses the folder structure from the source and creates the download and output paths"""
         download_path = Path(f"{self.standard_config.download_dir}")
@@ -206,7 +214,7 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
         super().__init__(standard_config, config)
         self._setup_client()
 
-    @requires_dependencies(["office365"])
+    @requires_dependencies(["office365"], extras="sharepoint")
     def _setup_client(self):
         from office365.runtime.auth.client_credential import ClientCredential
         from office365.sharepoint.client_context import ClientContext
@@ -231,7 +239,7 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
             ClientCredential(self.config.client_id, self.config.client_credential),
         )
 
-    @requires_dependencies(["office365"])
+    @requires_dependencies(["office365"], extras="sharepoint")
     def _list_files(self, folder, recursive) -> List["File"]:
         from office365.runtime.client_request_exception import ClientRequestException
 
@@ -250,7 +258,7 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
                 logger.info("Caught an error while processing documents %s", e.response.text)
             return []
 
-    @requires_dependencies(["office365"])
+    @requires_dependencies(["office365"], extras="sharepoint")
     def _list_pages(self, site_client) -> list:
         from office365.runtime.client_request_exception import ClientRequestException
 

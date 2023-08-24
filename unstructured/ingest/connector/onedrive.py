@@ -127,7 +127,7 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return None
 
     @BaseIngestDoc.skip_if_file_exists
-    @requires_dependencies(["office365"])
+    @requires_dependencies(["office365"], extras="onedrive")
     def get_file(self):
         from office365.graph_client import GraphClient 
 
@@ -166,7 +166,7 @@ class OneDriveConnector(ConnectorCleanupMixin, BaseConnector):
         super().__init__(standard_config, config)
         self._set_client()
 
-    @requires_dependencies(["office365"])
+    @requires_dependencies(["office365"], extras="onedrive")
     def _set_client(self):
         from office365.graph_client import GraphClient
 

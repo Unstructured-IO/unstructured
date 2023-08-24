@@ -50,6 +50,7 @@ numpy==1.24.4
     #   transformers
 packaging==23.1
     # via
+    #   -c requirements/base.txt
     #   huggingface-hub
     #   transformers
 pyyaml==6.0.1
@@ -68,7 +69,7 @@ requests==2.31.0
     #   transformers
 sacremoses==0.0.53
     # via -r requirements/huggingface.in
-safetensors==0.3.2
+safetensors==0.3.3
     # via transformers
 sentencepiece==0.1.99
     # via -r requirements/huggingface.in
@@ -92,6 +93,7 @@ transformers==4.32.0
     # via -r requirements/huggingface.in
 typing-extensions==4.7.1
     # via
+    #   -c requirements/base.txt
     #   huggingface-hub
     #   torch
 urllib3==1.26.16
