@@ -76,7 +76,7 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     # __post_init__ for multiprocessing simplicity (no Path objects in initially
     # instantiated object)
     def _tmp_download_file(self):
-        channel_file = self.channel + ".txt"
+        channel_file = self.channel + ".xml"
         return Path(self.standard_config.download_dir) / channel_file
 
     @property
@@ -121,7 +121,7 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             for message in result["messages"]:
                 message_elem = ET.SubElement(root, "message")
                 text_elem = ET.SubElement(message_elem, "text")
-                text_elem.text = "".join([message.get("text"), " /n "])
+                text_elem.text = message.get("text")
 
                 cursor = None
                 while True:
@@ -132,10 +132,9 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                             cursor=cursor,
                         )
 
-                        replies = response["messages"]
-                        for reply in replies:
+                        for reply in response["messages"]:
                             reply_msg = reply.get("text")
-                            text_elem.text = "".join([text_elem.text, reply_msg, " /n "])
+                            text_elem.text = "".join([text_elem.text, " <reply> ", reply_msg])
 
                         if not response["has_more"]:
                             break
