@@ -1,4 +1,5 @@
 import tempfile
+import warnings
 from typing import IO, List, Optional
 
 from ebooklib import epub
@@ -52,7 +53,11 @@ def partition_epub(
             filename = tmp.name
         last_modification_date = get_last_modified_date_from_file(file)
 
-    book = epub.read_epub(filename, options={"ignore_ncx": False})
+    # NOTE(robinson): ignore ebooklib warning about changing the ignore_ncx default
+    # in the future.
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        book = epub.read_epub(filename, options={"ignore_ncx": False})
     # book.items also includes EpubLink, EpubImage, EpubNcx (page navigation info)
     # and EpubItem (fomatting/css)
     html_items = [item for item in book.items if isinstance(item, epub.EpubHtml)]

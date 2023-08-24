@@ -132,6 +132,7 @@ def partition(
     pdf_infer_table_structure: bool = False,
     xml_keep_tags: bool = False,
     data_source_metadata: Optional[DataSourceMetadata] = None,
+    metadata_filename: Optional[str] = None,
     **kwargs,
 ):
     """Partitions a document into its constituent elements. Will use libmagic to determine
@@ -147,7 +148,7 @@ def partition(
         A string defining the file content in MIME type
     file
         A file-like object using "rb" mode --> open(filename, "rb").
-    file_filename
+    metadata_filename
         When file is not None, the filename (string) to store in element metadata. E.g. "foo.txt"
     url
         The url for a remote document. Pass in content_type if you want partition to treat
@@ -181,6 +182,20 @@ def partition(
     """
     exactly_one(file=file, filename=filename, url=url)
 
+    if metadata_filename and file_filename:
+        raise ValueError(
+            "Only one of metadata_filename and file_filename is specified. "
+            "metadata_filename is preferred. file_filename is marked for deprecation.",
+        )
+
+    if file_filename is not None:
+        metadata_filename = file_filename
+        logger.warn(
+            "The file_filename kwarg will be deprecated in a future version of unstructured. "
+            "Please use metadata_filename instead.",
+        )
+    kwargs.setdefault("metadata_filename", metadata_filename)
+
     if url is not None:
         file, filetype = file_and_type_from_url(
             url=url,
@@ -197,7 +212,7 @@ def partition(
         filetype = detect_filetype(
             filename=filename,
             file=file,
-            file_filename=file_filename,
+            file_filename=metadata_filename,
             content_type=content_type,
             encoding=encoding,
         )
@@ -210,9 +225,6 @@ def partition(
         skip_infer_table_types,
         pdf_infer_table_structure,
     )
-
-    if file is not None and file_filename is not None:
-        kwargs.setdefault("metadata_filename", file_filename)
 
     if filetype == FileType.DOC:
         _partition_doc = _get_partition_with_extras("doc")
