@@ -26,6 +26,7 @@ docutils==0.18.1
     # via
     #   sphinx
     #   sphinx-rtd-theme
+    #   sphinx-tabs
 furo==2023.8.19
     # via -r requirements/build.in
 idna==3.4

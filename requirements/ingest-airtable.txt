@@ -4,8 +4,6 @@
 #
 #    pip-compile requirements/ingest-airtable.in
 #
-annotated-types==0.5.0
-    # via pydantic
 certifi==2023.7.22
     # via
     #   -c requirements/base.txt
@@ -33,10 +31,8 @@ requests==2.31.0
     #   pyairtable
 typing-extensions==4.7.1
     # via
-    #   annotated-types
     #   pyairtable
     #   pydantic
-    #   pydantic-core
 urllib3==1.26.16
     # via
     #   -c requirements/base.txt
