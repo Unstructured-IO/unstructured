@@ -46,6 +46,7 @@ pygments==2.16.1
     # via
     #   furo
     #   sphinx
+    #   sphinx-tabs
 pytz==2023.3
     # via babel
 requests==2.31.0
@@ -64,6 +65,7 @@ sphinx==6.2.1
     #   furo
     #   sphinx-basic-ng
     #   sphinx-rtd-theme
+    #   sphinx-tabs
     #   sphinxcontrib-jquery
 sphinx-basic-ng==1.0.0b2
     # via furo
