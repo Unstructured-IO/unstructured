@@ -586,10 +586,10 @@ def test_partition_html_grabs_emphasized_texts():
 
 def test_pre_tag_parsing_respects_order():
     html_text = """
-    <pre><h1>The Big Brown Bear</pre>
-    <div><p>The big brown bear is growling.</p></div>
-    <pre><p>The big brown bear is sleeping.</p></div>
-    <div><h1>The Big Blue Bear</h1></div>
+    <pre>The Big Brown Bear</pre>
+    <div>The big brown bear is growling.</div>
+    <pre>The big brown bear is sleeping.</pre>
+    <div>The Big Blue Bear</div>
     """
     elements = partition_html(text=html_text)
     assert elements == [
