@@ -1,12 +1,32 @@
 [
   {
     "type": "NarrativeText",
-    "element_id": "e50da2f0aada6f89af788627ebf261b7",
+    "element_id": "a4f2bf04a36fb5c2b02a946fa94076d9",
     "metadata": {
       "data_source": {},
-      "filename": "C052BGT7718.txt",
-      "filetype": "text/plain"
+      "filename": "C052BGT7718.xml",
+      "filetype": "application/xml"
     },
-    "text": "testing <@U051UBRR946> has joined the channel <@U04ST78RXU3> has joined the channel"
+    "text": "testing <reply> testing <reply> threads are cool"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "d91e2d32f4816b7c0f23c2e760aaf166",
+    "metadata": {
+      "data_source": {},
+      "filename": "C052BGT7718.xml",
+      "filetype": "application/xml"
+    },
+    "text": "<@U051UBRR946> has joined the channel <reply> <@U051UBRR946> has joined the channel"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "f452aa470d0eab626eddf33b5a60386c",
+    "metadata": {
+      "data_source": {},
+      "filename": "C052BGT7718.xml",
+      "filetype": "application/xml"
+    },
+    "text": "<@U04ST78RXU3> has joined the channel <reply> <@U04ST78RXU3> has joined the channel"
   }
 ]
