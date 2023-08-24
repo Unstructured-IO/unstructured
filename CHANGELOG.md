@@ -40,6 +40,7 @@
 * Add diagrams and descriptions for ingest design in the ingest README
 
 ### Features
+* Supports multipage TIFF image partitioning
 
 ### Fixes
 
