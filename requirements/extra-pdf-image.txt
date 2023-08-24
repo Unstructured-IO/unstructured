@@ -161,7 +161,7 @@ requests==2.31.0
     #   huggingface-hub
     #   torchvision
     #   transformers
-safetensors==0.3.2
+safetensors==0.3.3
     # via
     #   timm
     #   transformers
@@ -205,7 +205,7 @@ typing-extensions==4.7.1
     #   torch
 tzdata==2023.3
     # via pandas
-unstructured-inference==0.5.16
+unstructured-inference==0.5.14
     # via
     #   -c requirements/constraints.in
     #   -r requirements/extra-pdf-image.in

@@ -26,4 +26,8 @@ Pillow<10.0.0
 # AttributeError: 'ResourcePath' object has no attribute 'collection'
 Office365-REST-Python-Client<2.4.3
 # NOTE(christine) Pinned to set the `unstructured-inference` version
-unstructured-inference==0.5.16
+unstructured-inference==0.5.14
+# NOTE(klaijan) - Moved pin from test.in
+# pinning to avoid error in argilla library
+pydantic<2
+
