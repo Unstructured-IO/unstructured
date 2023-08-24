@@ -1,32 +1,32 @@
 [
   {
     "type": "NarrativeText",
-    "element_id": "3380dfe4ff06907f92be6f9419821f6e",
+    "element_id": "a4f2bf04a36fb5c2b02a946fa94076d9",
     "metadata": {
       "data_source": {},
-      "filename": "C052BGT7718.txt",
+      "filename": "C052BGT7718.xml",
       "filetype": "application/xml"
     },
-    "text": "testing /n testing /n threads are cool /n"
+    "text": "testing <reply> testing <reply> threads are cool"
   },
   {
     "type": "NarrativeText",
-    "element_id": "a30e602a742aa8d0432bfbcd84c6182f",
+    "element_id": "d91e2d32f4816b7c0f23c2e760aaf166",
     "metadata": {
       "data_source": {},
-      "filename": "C052BGT7718.txt",
+      "filename": "C052BGT7718.xml",
       "filetype": "application/xml"
     },
-    "text": "<@U051UBRR946> has joined the channel /n <@U051UBRR946> has joined the channel /n"
+    "text": "<@U051UBRR946> has joined the channel <reply> <@U051UBRR946> has joined the channel"
   },
   {
     "type": "NarrativeText",
-    "element_id": "c597fdf97d9b35c6a8de917fda7f7dd3",
+    "element_id": "f452aa470d0eab626eddf33b5a60386c",
     "metadata": {
       "data_source": {},
-      "filename": "C052BGT7718.txt",
+      "filename": "C052BGT7718.xml",
       "filetype": "application/xml"
     },
-    "text": "<@U04ST78RXU3> has joined the channel /n <@U04ST78RXU3> has joined the channel /n"
+    "text": "<@U04ST78RXU3> has joined the channel <reply> <@U04ST78RXU3> has joined the channel"
   }
 ]
