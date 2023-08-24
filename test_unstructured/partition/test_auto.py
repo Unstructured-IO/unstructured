@@ -332,6 +332,7 @@ def test_auto_partition_pdf_with_fast_strategy(monkeypatch):
 
     mock_partition.assert_called_once_with(
         filename=filename,
+        metadata_filename=None,
         file=None,
         url=None,
         include_page_breaks=False,
