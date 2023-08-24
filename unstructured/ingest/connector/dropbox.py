@@ -19,7 +19,6 @@ from unstructured.ingest.connector.fsspec import (
     SimpleFsspecConfig,
 )
 from unstructured.ingest.interfaces import StandardConnectorConfig
-from unstructured.utils import requires_dependencies
 
 
 class MissingFolderError(Exception):
@@ -32,7 +31,6 @@ class SimpleDropboxConfig(SimpleFsspecConfig):
 
 
 class DropboxIngestDoc(FsspecIngestDoc):
-    @requires_dependencies(["dropboxdrivefs", "fsspec"])
     def get_file(self):
         super().get_file()
 
@@ -70,7 +68,6 @@ class DropboxIngestDoc(FsspecIngestDoc):
             )
 
 
-@requires_dependencies(["dropboxdrivefs", "fsspec"])
 class DropboxConnector(FsspecConnector):
     ingest_doc_cls: Type[DropboxIngestDoc] = DropboxIngestDoc
 

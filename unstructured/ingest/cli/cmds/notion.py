@@ -12,6 +12,7 @@ from unstructured.ingest.cli.common import (
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner import notion as notion_fn
+from unstructured.utils import requires_dependencies
 
 
 @click.command()
@@ -30,6 +31,7 @@ from unstructured.ingest.runner import notion as notion_fn
     required=True,
     help="API key for Notion api",
 )
+@requires_dependencies(dependencies=["notion_client"], extras="notion")
 def notion(**options):
     verbose = options.get("verbose", False)
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)

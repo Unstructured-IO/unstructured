@@ -11,6 +11,7 @@ from unstructured.ingest.cli.common import (
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner import gitlab as gitlab_fn
+from unstructured.utils import requires_dependencies
 
 
 @click.command()
@@ -38,6 +39,7 @@ from unstructured.ingest.runner import gitlab as gitlab_fn
     help='URL to GitLab repository, e.g. "https://gitlab.com/gitlab-com/content-sites/docsy-gitlab"'
     ', or a repository path, e.g. "gitlab-com/content-sites/docsy-gitlab"',
 )
+@requires_dependencies(["gitlab"], extras="gitlab")
 def gitlab(**options):
     verbose = options.get("verbose", False)
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)

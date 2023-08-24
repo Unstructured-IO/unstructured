@@ -18,7 +18,6 @@ from unstructured.ingest.interfaces import (
     StandardConnectorConfig,
 )
 from unstructured.ingest.logger import logger
-from unstructured.utils import requires_dependencies
 
 
 @dataclass
@@ -105,7 +104,6 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         concatenated_values = seperator.join(values)
         return concatenated_values
 
-    @requires_dependencies(["elasticsearch"])
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
@@ -124,7 +122,6 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             f.write(self.document)
 
 
-@requires_dependencies(["elasticsearch"])
 @dataclass
 class ElasticsearchConnector(ConnectorCleanupMixin, BaseConnector):
     """Fetches particular fields from all documents in a given elasticsearch cluster and index"""
@@ -144,7 +141,6 @@ class ElasticsearchConnector(ConnectorCleanupMixin, BaseConnector):
         self.search_query: dict = {"match_all": {}}
         self.es.search(index=self.config.index_name, query=self.search_query, size=1)
 
-    @requires_dependencies(["elasticsearch"])
     def _get_doc_ids(self):
         """Fetches all document ids in an index"""
         hits = scan(

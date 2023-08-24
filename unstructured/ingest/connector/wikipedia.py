@@ -1,7 +1,8 @@
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import TYPE_CHECKING
+
+from wikipedia import WikipediaPage
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -13,9 +14,6 @@ from unstructured.ingest.interfaces import (
 )
 from unstructured.ingest.logger import logger
 
-if TYPE_CHECKING:
-    from wikipedia import WikipediaPage
-
 
 @dataclass
 class SimpleWikipediaConfig(BaseConnectorConfig):
@@ -26,7 +24,7 @@ class SimpleWikipediaConfig(BaseConnectorConfig):
 @dataclass
 class WikipediaIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleWikipediaConfig = field(repr=False)
-    page: "WikipediaPage"
+    page: WikipediaPage
 
     @property
     def filename(self) -> Path:

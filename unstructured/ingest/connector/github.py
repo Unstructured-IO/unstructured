@@ -1,8 +1,9 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
 from urllib.parse import urlparse
 
 import requests
+from github import Github
+from github.Repository import Repository
 
 from unstructured.ingest.connector.git import (
     GitConnector,
@@ -10,10 +11,6 @@ from unstructured.ingest.connector.git import (
     SimpleGitConfig,
 )
 from unstructured.ingest.logger import logger
-from unstructured.utils import requires_dependencies
-
-if TYPE_CHECKING:
-    from github.Repository import Repository
 
 
 @dataclass
@@ -40,7 +37,7 @@ class SimpleGitHubConfig(SimpleGitConfig):
 
 @dataclass
 class GitHubIngestDoc(GitIngestDoc):
-    repo: "Repository"
+    repo: Repository
 
     def _fetch_and_write(self) -> None:
         content_file = self.repo.get_contents(self.path)
@@ -63,12 +60,9 @@ class GitHubIngestDoc(GitIngestDoc):
             f.write(contents)
 
 
-@requires_dependencies(["github"], extras="github")
 @dataclass
 class GitHubConnector(GitConnector):
     def __post_init__(self) -> None:
-        from github import Github
-
         self.github = Github(self.config.access_token)
 
     def get_ingest_docs(self):

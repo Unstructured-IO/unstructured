@@ -11,13 +11,14 @@ REAUTHORIZE app after making any of the above changes
 from dataclasses import dataclass
 from typing import Type
 
+from boxsdk import JWTAuth
+
 from unstructured.ingest.connector.fsspec import (
     FsspecConnector,
     FsspecIngestDoc,
     SimpleFsspecConfig,
 )
 from unstructured.ingest.interfaces import StandardConnectorConfig
-from unstructured.utils import requires_dependencies
 
 
 class AccessTokenError(Exception):
@@ -26,10 +27,7 @@ class AccessTokenError(Exception):
 
 @dataclass
 class SimpleBoxConfig(SimpleFsspecConfig):
-    @requires_dependencies(["boxfs"], extras="box")
     def __post_init__(self):
-        from boxsdk import JWTAuth
-
         super().__post_init__()
         # We are passing in a json file path via the envt. variable.
         # Need to convert that to an Oauth2 object.
@@ -57,12 +55,10 @@ class SimpleBoxConfig(SimpleFsspecConfig):
 
 
 class BoxIngestDoc(FsspecIngestDoc):
-    @requires_dependencies(["boxfs", "fsspec"], extras="box")
     def get_file(self):
         super().get_file()
 
 
-@requires_dependencies(["boxfs", "fsspec"], extras="box")
 class BoxConnector(FsspecConnector):
     ingest_doc_cls: Type[BoxIngestDoc] = BoxIngestDoc
 

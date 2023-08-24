@@ -12,6 +12,7 @@ from unstructured.ingest.cli.common import (
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner import onedrive as onedrive_fn
+from unstructured.utils import requires_dependencies
 
 
 @click.command()
@@ -46,6 +47,7 @@ from unstructured.ingest.runner import onedrive as onedrive_fn
     required=True,
     help="User principal name, usually is your Azure AD email.",
 )
+@requires_dependencies(["office365", "msal"], extras="onedrive")
 def onedrive(**options):
     verbose = options.get("verbose", False)
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)

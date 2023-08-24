@@ -11,6 +11,7 @@ from unstructured.ingest.cli.common import (
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner import github as github_fn
+from unstructured.utils import requires_dependencies
 
 
 @click.command()
@@ -38,6 +39,7 @@ from unstructured.ingest.runner import github as github_fn
     help='URL to GitHub repository, e.g. "https://github.com/Unstructured-IO/unstructured",'
     ' or a repository owner/name pair, e.g. "Unstructured-IO/unstructured"',
 )
+@requires_dependencies(["github"], extras="github")
 def github(**options):
     verbose = options.get("verbose", False)
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)

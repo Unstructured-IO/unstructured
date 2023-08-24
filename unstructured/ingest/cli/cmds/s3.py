@@ -13,6 +13,7 @@ from unstructured.ingest.cli.common import (
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner import s3 as s3_fn
+from unstructured.utils import requires_dependencies
 
 
 @click.command()
@@ -22,6 +23,7 @@ from unstructured.ingest.runner import s3 as s3_fn
     default=False,
     help="Connect to s3 without local AWS credentials.",
 )
+@requires_dependencies(["s3fs", "fsspec"], extras="s3")
 def s3(**options):
     verbose = options.get("verbose", False)
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)

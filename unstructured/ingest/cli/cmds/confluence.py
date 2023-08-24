@@ -11,6 +11,7 @@ from unstructured.ingest.cli.common import (
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner import confluence as confluence_fn
+from unstructured.utils import requires_dependencies
 
 
 @click.command()
@@ -52,6 +53,7 @@ from unstructured.ingest.runner import confluence as confluence_fn
     required=True,
     help="Email to authenticate into Confluence Cloud",
 )
+@requires_dependencies(["atlassian"], extras="confluence")
 def confluence(
     **options,
 ):

@@ -11,6 +11,7 @@ from unstructured.ingest.cli.common import (
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner import wikipedia as wikipedia_fn
+from unstructured.utils import requires_dependencies
 
 
 @click.command()
@@ -25,6 +26,7 @@ from unstructured.ingest.runner import wikipedia as wikipedia_fn
     required=True,
     help='Title of a Wikipedia page, e.g. "Open source software".',
 )
+@requires_dependencies(dependencies=["wikipedia"], extras="wikipedia")
 def wikipedia(**options):
     verbose = options.get("verbose", False)
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)

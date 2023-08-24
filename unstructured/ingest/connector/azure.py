@@ -7,7 +7,6 @@ from unstructured.ingest.connector.fsspec import (
     SimpleFsspecConfig,
 )
 from unstructured.ingest.interfaces import StandardConnectorConfig
-from unstructured.utils import requires_dependencies
 
 
 @dataclass
@@ -16,12 +15,10 @@ class SimpleAzureBlobStorageConfig(SimpleFsspecConfig):
 
 
 class AzureBlobStorageIngestDoc(FsspecIngestDoc):
-    @requires_dependencies(["adlfs", "fsspec"], extras="azure")
     def get_file(self):
         super().get_file()
 
 
-@requires_dependencies(["adlfs", "fsspec"], extras="azure")
 class AzureBlobStorageConnector(FsspecConnector):
     ingest_doc_cls: Type[AzureBlobStorageIngestDoc] = AzureBlobStorageIngestDoc
 

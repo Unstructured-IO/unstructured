@@ -11,6 +11,7 @@ from unstructured.ingest.cli.common import (
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner import slack as slack_fn
+from unstructured.utils import requires_dependencies
 
 
 @click.command()
@@ -37,6 +38,7 @@ from unstructured.ingest.runner import slack as slack_fn
     required=True,
     help="Bot token used to access Slack API, must have channels:history " "scope for the bot user",
 )
+@requires_dependencies(dependencies=["slack_sdk"], extras="slack")
 def slack(**options):
     verbose = options.get("verbose", False)
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)

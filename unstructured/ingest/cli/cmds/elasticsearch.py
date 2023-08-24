@@ -11,6 +11,7 @@ from unstructured.ingest.cli.common import (
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner import elasticsearch as elasticsearch_fn
+from unstructured.utils import requires_dependencies
 
 
 @click.command()
@@ -32,6 +33,7 @@ from unstructured.ingest.runner import elasticsearch as elasticsearch_fn
     required=True,
     help='URL to the Elasticsearch cluster, e.g. "http://localhost:9200"',
 )
+@requires_dependencies(["elasticsearch"], extras="elasticsearch")
 def elasticsearch(**options):
     verbose = options.get("verbose", False)
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)

@@ -13,6 +13,7 @@ from unstructured.ingest.cli.common import (
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner import azure as azure_fn
+from unstructured.utils import requires_dependencies
 
 
 @click.command()
@@ -32,6 +33,7 @@ from unstructured.ingest.runner import azure as azure_fn
     default=None,
     help="Azure Blob Storage or DataLake connection string.",
 )
+@requires_dependencies(["adlfs", "fsspec"], extras="azure")
 def azure(**options):
     verbose = options.get("verbose", False)
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)

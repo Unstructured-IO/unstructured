@@ -1,7 +1,10 @@
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional
+from typing import Optional
+
+from praw import Reddit
+from praw.models import Submission
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -12,10 +15,6 @@ from unstructured.ingest.interfaces import (
     StandardConnectorConfig,
 )
 from unstructured.ingest.logger import logger
-from unstructured.utils import requires_dependencies
-
-if TYPE_CHECKING:
-    from praw.models import Submission
 
 
 @dataclass
@@ -35,7 +34,7 @@ class SimpleRedditConfig(BaseConnectorConfig):
 @dataclass
 class RedditIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleRedditConfig = field(repr=False)
-    post: "Submission"
+    post: Submission
 
     @property
     def filename(self) -> Path:
@@ -59,13 +58,10 @@ class RedditIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             f.write(text_to_write)
 
 
-@requires_dependencies(["praw"], extras="reddit")
 class RedditConnector(ConnectorCleanupMixin, BaseConnector):
     config: SimpleRedditConfig
 
     def __init__(self, standard_config: StandardConnectorConfig, config: SimpleRedditConfig):
-        from praw import Reddit
-
         super().__init__(standard_config, config)
         self.reddit = Reddit(
             client_id=config.client_id,

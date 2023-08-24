@@ -5,6 +5,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Optional
 
+from slack_sdk import WebClient
+from slack_sdk.errors import SlackApiError
+
 from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
@@ -14,10 +17,7 @@ from unstructured.ingest.interfaces import (
     StandardConnectorConfig,
 )
 from unstructured.ingest.logger import logger
-from unstructured.utils import (
-    requires_dependencies,
-    validate_date_args,
-)
+from unstructured.utils import validate_date_args
 
 DATE_FORMATS = ("%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M:%S%z")
 
@@ -88,11 +88,7 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
 
     @BaseIngestDoc.skip_if_file_exists
-    @requires_dependencies(dependencies=["slack_sdk"], extras="slack")
     def get_file(self):
-        from slack_sdk import WebClient
-        from slack_sdk.errors import SlackApiError
-
         """Fetches the data from a slack channel and stores it locally."""
 
         self._create_full_tmp_dir_path()
@@ -163,7 +159,6 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return self._tmp_download_file()
 
 
-@requires_dependencies(dependencies=["slack_sdk"], extras="slack")
 class SlackConnector(ConnectorCleanupMixin, BaseConnector):
     """Objects of this class support fetching document(s) from"""
 

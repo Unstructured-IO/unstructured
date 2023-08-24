@@ -13,6 +13,7 @@ from unstructured.ingest.cli.common import (
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner import gcs as gcs_fn
+from unstructured.utils import requires_dependencies
 
 
 @click.command()
@@ -22,6 +23,7 @@ from unstructured.ingest.runner import gcs as gcs_fn
     help="Token used to access Google Cloud. GCSFS will attempt to use your default gcloud creds"
     "or get creds from the google metadata service or fall back to anonymous access.",
 )
+@requires_dependencies(["gcsfs", "fsspec"], extras="gcs")
 def gcs(**options):
     verbose = options.get("verbose", False)
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)

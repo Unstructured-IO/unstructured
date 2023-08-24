@@ -4,7 +4,13 @@ import os
 from dataclasses import dataclass
 from mimetypes import guess_extension
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, Optional
+from typing import Dict, Optional
+
+from google.auth import default, exceptions
+from googleapiclient.discovery import Resource as GoogleAPIResource
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+from googleapiclient.http import MediaIoBaseDownload
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.file_utils.google_filetype import GOOGLE_DRIVE_EXPORT_TYPES
@@ -20,10 +26,6 @@ from unstructured.ingest.interfaces import (
     StandardConnectorConfig,
 )
 from unstructured.ingest.logger import logger
-from unstructured.utils import requires_dependencies
-
-if TYPE_CHECKING:
-    from googleapiclient.discovery import Resource as GoogleAPIResource
 
 FILE_FORMAT = "{id}-{name}{ext}"
 DIRECTORY_FORMAT = "{id}-{name}"
@@ -31,10 +33,9 @@ DIRECTORY_FORMAT = "{id}-{name}"
 
 @dataclass
 class GoogleDriveSessionHandle(BaseSessionHandle):
-    service: "GoogleAPIResource"
+    service: GoogleAPIResource
 
 
-@requires_dependencies(["googleapiclient"], extras="google-drive")
 def create_service_account_object(key_path, id=None):
     """
     Creates a service object for interacting with Google Drive.
@@ -49,9 +50,6 @@ def create_service_account_object(key_path, id=None):
     Returns:
         Service account object
     """
-    from google.auth import default, exceptions
-    from googleapiclient.discovery import build
-    from googleapiclient.errors import HttpError
 
     try:
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = key_path
@@ -114,11 +112,7 @@ class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, B
         return Path(f"{self.file_meta.get('output_filepath')}.json").resolve()
 
     @BaseIngestDoc.skip_if_file_exists
-    @requires_dependencies(["googleapiclient"], extras="google-drive")
     def get_file(self):
-        from googleapiclient.errors import HttpError
-        from googleapiclient.http import MediaIoBaseDownload
-
         if self.file_meta.get("mimeType", "").startswith("application/vnd.google-apps"):
             export_mime = GOOGLE_DRIVE_EXPORT_TYPES.get(
                 self.file_meta.get("mimeType"),  # type: ignore

@@ -1,16 +1,14 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
 from urllib.parse import urlparse
+
+from gitlab import Gitlab
+from gitlab.v4.objects.projects import Project
 
 from unstructured.ingest.connector.git import (
     GitConnector,
     GitIngestDoc,
     SimpleGitConfig,
 )
-from unstructured.utils import requires_dependencies
-
-if TYPE_CHECKING:
-    from gitlab.v4.objects.projects import Project
 
 
 @dataclass
@@ -30,7 +28,7 @@ class SimpleGitLabConfig(SimpleGitConfig):
 
 @dataclass
 class GitLabIngestDoc(GitIngestDoc):
-    project: "Project"
+    project: Project
 
     def _fetch_and_write(self) -> None:
         content_file = self.project.files.get(
@@ -43,12 +41,9 @@ class GitLabIngestDoc(GitIngestDoc):
             f.write(contents)
 
 
-@requires_dependencies(["gitlab"], extras="gitlab")
 @dataclass
 class GitLabConnector(GitConnector):
     def __post_init__(self) -> None:
-        from gitlab import Gitlab
-
         self.gitlab = Gitlab(self.config.url, private_token=self.config.access_token)
 
     def get_ingest_docs(self):

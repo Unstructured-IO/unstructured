@@ -5,6 +5,8 @@ from pathlib import Path
 from typing import List, Optional
 from uuid import UUID
 
+from notion_client import APIErrorCode, APIResponseError
+
 from unstructured.ingest.connector.notion.types.database import Database
 from unstructured.ingest.connector.notion.types.page import Page
 from unstructured.ingest.interfaces import (
@@ -16,9 +18,6 @@ from unstructured.ingest.interfaces import (
     StandardConnectorConfig,
 )
 from unstructured.ingest.logger import make_default_logger
-from unstructured.utils import (
-    requires_dependencies,
-)
 
 
 @dataclass
@@ -72,10 +71,7 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
 
     @BaseIngestDoc.skip_if_file_exists
-    @requires_dependencies(dependencies=["notion_client"])
     def get_file(self):
-        from notion_client import APIErrorCode, APIResponseError
-
         from unstructured.ingest.connector.notion.client import Client as NotionClient
         from unstructured.ingest.connector.notion.helpers import extract_page_html
 
@@ -104,10 +100,7 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             else:
                 self.config.get_logger().error(f"Error: {error}")
 
-    @requires_dependencies(dependencies=["notion_client"])
     def get_file_metadata(self):
-        from notion_client import APIErrorCode, APIResponseError
-
         from unstructured.ingest.connector.notion.client import Client as NotionClient
 
         client = NotionClient(auth=self.api_key, logger=self.config.get_logger())
@@ -186,10 +179,7 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
 
     @BaseIngestDoc.skip_if_file_exists
-    @requires_dependencies(dependencies=["notion_client"])
     def get_file(self):
-        from notion_client import APIErrorCode, APIResponseError
-
         from unstructured.ingest.connector.notion.client import Client as NotionClient
         from unstructured.ingest.connector.notion.helpers import extract_database_html
 
@@ -218,10 +208,7 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             else:
                 self.config.get_logger().error(f"Error: {error}")
 
-    @requires_dependencies(dependencies=["notion_client"])
     def get_file_metadata(self):
-        from notion_client import APIErrorCode, APIResponseError
-
         from unstructured.ingest.connector.notion.client import Client as NotionClient
 
         client = NotionClient(auth=self.api_key, logger=self.config.get_logger())
@@ -273,7 +260,6 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return self._tmp_download_file()
 
 
-@requires_dependencies(dependencies=["notion_client"])
 class NotionConnector(ConnectorCleanupMixin, BaseConnector):
     """Objects of this class support fetching document(s) from"""
 
@@ -289,12 +275,10 @@ class NotionConnector(ConnectorCleanupMixin, BaseConnector):
             config=config,
         )
 
-    @requires_dependencies(dependencies=["notion_client"])
     def initialize(self):
         """Verify that can get metadata for an object, validates connections info."""
         pass
 
-    @requires_dependencies(dependencies=["notion_client"])
     def get_child_page_content(self, page_id: str):
         from unstructured.ingest.connector.notion.client import Client as NotionClient
         from unstructured.ingest.connector.notion.helpers import (
@@ -332,7 +316,6 @@ class NotionConnector(ConnectorCleanupMixin, BaseConnector):
         )
         return child_content
 
-    @requires_dependencies(dependencies=["notion_client"])
     def get_child_database_content(self, database_id: str):
         from unstructured.ingest.connector.notion.client import Client as NotionClient
         from unstructured.ingest.connector.notion.helpers import (

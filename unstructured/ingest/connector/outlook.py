@@ -6,6 +6,7 @@ from itertools import chain
 from pathlib import Path
 from typing import List, Optional
 
+from msal import ConfidentialClientApplication
 from office365.onedrive.driveitems.driveItem import DriveItem
 
 from unstructured.ingest.interfaces import (
@@ -17,7 +18,6 @@ from unstructured.ingest.interfaces import (
     StandardConnectorConfig,
 )
 from unstructured.ingest.logger import logger
-from unstructured.utils import requires_dependencies
 
 MAX_NUM_EMAILS = 1000000  # Maximum number of emails per folder
 
@@ -46,10 +46,7 @@ class SimpleOutlookConfig(BaseConnectorConfig):
             )
         self.token_factory = self._acquire_token
 
-    @requires_dependencies(["msal"])
     def _acquire_token(self):
-        from msal import ConfidentialClientApplication
-
         try:
             app = ConfidentialClientApplication(
                 authority=f"{self.authority_url}/{self.tenant}",
@@ -104,7 +101,6 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return Path(self.output_filepath).resolve()
 
     @BaseIngestDoc.skip_if_file_exists
-    @requires_dependencies(["office365"])
     def get_file(self):
         """Relies on Office365 python sdk message object to do the download."""
         try:
@@ -145,7 +141,6 @@ class OutlookConnector(ConnectorCleanupMixin, BaseConnector):
         self._set_client()
         self.get_folder_ids()
 
-    @requires_dependencies(["office365"])
     def _set_client(self):
         from office365.graph_client import GraphClient
 

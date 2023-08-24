@@ -11,6 +11,7 @@ from unstructured.ingest.cli.common import (
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner import delta_table as delta_table_fn
+from unstructured.utils import requires_dependencies
 
 
 @click.command()
@@ -38,6 +39,7 @@ from unstructured.ingest.runner import delta_table as delta_table_fn
     default=False,
     help="If set, will load table without tracking files.",
 )
+@requires_dependencies(["deltalake", "fsspec"], extras="delta-table")
 def delta_table(**options):
     verbose = options.get("verbose", False)
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)

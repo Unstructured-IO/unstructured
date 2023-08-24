@@ -11,6 +11,7 @@ from unstructured.ingest.cli.common import (
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner import discord as discord_fn
+from unstructured.utils import requires_dependencies
 
 
 @click.command()
@@ -30,6 +31,7 @@ from unstructured.ingest.runner import discord as discord_fn
     help="Bot token used to access Discord API, must have "
     "READ_MESSAGE_HISTORY scope for the bot user",
 )
+@requires_dependencies(dependencies=["discord"], extras="discord")
 def discord(**options):
     verbose = options.get("verbose", False)
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)

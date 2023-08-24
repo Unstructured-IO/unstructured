@@ -12,6 +12,7 @@ from unstructured.ingest.cli.common import (
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner import sharepoint as sharepoint_fn
+from unstructured.utils import requires_dependencies
 
 
 @click.command()
@@ -47,6 +48,7 @@ from unstructured.ingest.runner import sharepoint as sharepoint_fn
     default=False,
     help="Process only files.",
 )
+@requires_dependencies(["office365"], extras="sharepoint")
 def sharepoint(**options):
     verbose = options.get("verbose", False)
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)

@@ -3,6 +3,10 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
+import pandas as pd
+from pyairtable import Api
+from pyairtable.metadata import get_api_bases, get_base_schema
+
 from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
@@ -12,7 +16,6 @@ from unstructured.ingest.interfaces import (
     StandardConnectorConfig,
 )
 from unstructured.ingest.logger import logger
-from unstructured.utils import requires_dependencies
 
 
 @dataclass
@@ -64,15 +67,12 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         output_file = f"{self.file_meta.table_id}.json"
         return Path(self.standard_config.output_dir) / self.file_meta.base_id / output_file
 
-    @requires_dependencies(["pyairtable", "pandas"])
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
 
         # TODO: instead of having a separate connection object for each doc,
         # have a separate connection object for each process
-        import pandas as pd
-        from pyairtable import Api
 
         self.api = Api(self.config.personal_access_token)
         table = self.api.table(self.file_meta.base_id, self.file_meta.table_id)
@@ -142,28 +142,19 @@ class AirtableConnector(ConnectorCleanupMixin, BaseConnector):
     ):
         super().__init__(standard_config, config)
 
-    @requires_dependencies(["pyairtable"])
     def initialize(self):
-        from pyairtable import Api
-
         self.base_ids_to_fetch_tables_from = []
         if self.config.list_of_paths:
             self.list_of_paths = self.config.list_of_paths.split()
 
         self.api = Api(self.config.personal_access_token)
 
-    @requires_dependencies(["pyairtable"])
     def use_all_bases(self):
-        from pyairtable.metadata import get_api_bases
-
         self.base_ids_to_fetch_tables_from = [
             base["id"] for base in get_api_bases(self.api)["bases"]
         ]
 
-    @requires_dependencies(["pyairtable"])
     def fetch_table_ids(self):
-        from pyairtable.metadata import get_base_schema
-
         bases = [
             (base_id, self.api.base(base_id)) for base_id in self.base_ids_to_fetch_tables_from
         ]

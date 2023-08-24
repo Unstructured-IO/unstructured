@@ -7,7 +7,6 @@ from unstructured.ingest.connector.fsspec import (
     SimpleFsspecConfig,
 )
 from unstructured.ingest.interfaces import StandardConnectorConfig
-from unstructured.utils import requires_dependencies
 
 
 @dataclass
@@ -16,12 +15,10 @@ class SimpleS3Config(SimpleFsspecConfig):
 
 
 class S3IngestDoc(FsspecIngestDoc):
-    @requires_dependencies(["s3fs", "fsspec"], extras="s3")
     def get_file(self):
         super().get_file()
 
 
-@requires_dependencies(["s3fs", "fsspec"], extras="s3")
 class S3Connector(FsspecConnector):
     ingest_doc_cls: Type[S3IngestDoc] = S3IngestDoc
 

@@ -13,6 +13,7 @@ from unstructured.ingest.cli.common import (
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner import dropbox as dropbox_fn
+from unstructured.utils import requires_dependencies
 
 
 @click.command()
@@ -21,6 +22,7 @@ from unstructured.ingest.runner import dropbox as dropbox_fn
     required=True,
     help="Dropbox access token.",
 )
+@requires_dependencies(["dropboxdrivefs", "fsspec"], extras="dropbox")
 def dropbox(**options):
     verbose = options.get("verbose", False)
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)

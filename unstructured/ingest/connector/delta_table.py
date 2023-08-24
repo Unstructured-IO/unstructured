@@ -6,6 +6,9 @@ from pathlib import Path
 from typing import Dict, List, Optional, Union
 
 import pandas as pd
+import pyarrow.parquet as pq
+from deltalake import DeltaTable
+from fsspec.core import url_to_fs
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -16,7 +19,6 @@ from unstructured.ingest.interfaces import (
     StandardConnectorConfig,
 )
 from unstructured.ingest.logger import make_default_logger
-from unstructured.utils import requires_dependencies
 
 
 @dataclass
@@ -77,11 +79,7 @@ class DeltaTableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         self._output_filename.parent.mkdir(parents=True, exist_ok=True)
 
     @BaseIngestDoc.skip_if_file_exists
-    @requires_dependencies(["fsspec"], extras="delta-table")
     def get_file(self):
-        import pyarrow.parquet as pq
-        from fsspec.core import url_to_fs
-
         try:
             fs, _ = url_to_fs(self.uri)
         except ImportError as error:
@@ -99,11 +97,8 @@ class DeltaTableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         df.to_csv(self.filename)
 
 
-@requires_dependencies(["deltalake"], extras="delta-table")
 @dataclass
 class DeltaTableConnector(ConnectorCleanupMixin, BaseConnector):
-    from deltalake import DeltaTable
-
     config: SimpleDeltaTableConfig
     delta_table: Optional[DeltaTable] = None
 
@@ -114,10 +109,7 @@ class DeltaTableConnector(ConnectorCleanupMixin, BaseConnector):
     ):
         super().__init__(standard_config, config)
 
-    @requires_dependencies(["deltalake"], extras="delta-table")
     def initialize(self):
-        from deltalake import DeltaTable
-
         self.delta_table = DeltaTable(
             table_uri=self.config.table_uri,
             version=self.config.version,

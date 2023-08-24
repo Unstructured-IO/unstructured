@@ -4,6 +4,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Optional
 
+import discord
+from discord.ext import commands
+
 from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
@@ -13,9 +16,6 @@ from unstructured.ingest.interfaces import (
     StandardConnectorConfig,
 )
 from unstructured.ingest.logger import logger
-from unstructured.utils import (
-    requires_dependencies,
-)
 
 
 @dataclass
@@ -74,12 +74,8 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
 
     @BaseIngestDoc.skip_if_file_exists
-    @requires_dependencies(dependencies=["discord"], extras="discord")
     def get_file(self):
         """Actually fetches the data from discord and stores it locally."""
-
-        import discord
-        from discord.ext import commands
 
         self._create_full_tmp_dir_path()
         if self.config.verbose:

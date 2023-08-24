@@ -1,6 +1,9 @@
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import TYPE_CHECKING, List, Optional
+from typing import List, Optional
+
+from msal import ConfidentialClientApplication
+from office365.onedrive.driveitems.driveItem import DriveItem
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.ingest.interfaces import (
@@ -12,10 +15,6 @@ from unstructured.ingest.interfaces import (
     StandardConnectorConfig,
 )
 from unstructured.ingest.logger import logger
-from unstructured.utils import requires_dependencies
-
-if TYPE_CHECKING:
-    from office365.onedrive.driveitems.driveItem import DriveItem
 
 MAX_MB_SIZE = 512_000_000
 
@@ -38,10 +37,7 @@ class SimpleOneDriveConfig(BaseConnectorConfig):
             )
         self.token_factory = self._acquire_token
 
-    @requires_dependencies(["msal"])
     def _acquire_token(self):
-        from msal import ConfidentialClientApplication
-
         try:
             app = ConfidentialClientApplication(
                 authority=f"{self.authority_url}/{self.tenant}",
@@ -58,7 +54,7 @@ class SimpleOneDriveConfig(BaseConnectorConfig):
 @dataclass
 class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleOneDriveConfig
-    file: "DriveItem"
+    file: DriveItem
 
     def __post_init__(self):
         self.ext = "".join(Path(self.file.name).suffixes)
@@ -97,7 +93,6 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return Path(self.output_filepath).resolve()
 
     @BaseIngestDoc.skip_if_file_exists
-    @requires_dependencies(["office365"])
     def get_file(self):
         try:
             fsize = self.file.get_property("size", 0)
@@ -129,7 +124,6 @@ class OneDriveConnector(ConnectorCleanupMixin, BaseConnector):
         super().__init__(standard_config, config)
         self._set_client()
 
-    @requires_dependencies(["office365"])
     def _set_client(self):
         from office365.graph_client import GraphClient
 

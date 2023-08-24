@@ -12,6 +12,7 @@ from unstructured.ingest.cli.common import (
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner import airtable as airtable_fn
+from unstructured.utils import requires_dependencies
 
 
 @click.command()
@@ -55,6 +56,7 @@ from unstructured.ingest.runner import airtable as airtable_fn
         base1/view1     → has to mention table to be valid
     """,
 )
+@requires_dependencies(["pyairtable", "pandas"])
 def airtable(**options):
     verbose = options.get("verbose", False)
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)

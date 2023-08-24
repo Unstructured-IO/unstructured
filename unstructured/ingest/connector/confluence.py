@@ -15,7 +15,6 @@ from unstructured.ingest.interfaces import (
     StandardConnectorConfig,
 )
 from unstructured.ingest.logger import logger
-from unstructured.utils import requires_dependencies
 
 
 @dataclass
@@ -101,7 +100,6 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         output_file = f"{self.file_meta.document_id}.json"
         return Path(self.standard_config.output_dir) / self.file_meta.space_id / output_file
 
-    @requires_dependencies(["atlassian"])
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
@@ -121,7 +119,6 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             f.write(self.document)
 
 
-@requires_dependencies(["atlassian"])
 @dataclass
 class ConfluenceConnector(ConnectorCleanupMixin, BaseConnector):
     """Fetches body fields from all documents within all spaces in a Confluence Cloud instance."""
@@ -135,7 +132,6 @@ class ConfluenceConnector(ConnectorCleanupMixin, BaseConnector):
     ):
         super().__init__(standard_config, config)
 
-    @requires_dependencies(["atlassian"])
     def initialize(self):
         self.confluence = Confluence(
             url=self.config.url,
@@ -153,7 +149,6 @@ class ConfluenceConnector(ConnectorCleanupMixin, BaseConnector):
                     --confluence-list-of-spaces that you've provided.""",
                 )
 
-    @requires_dependencies(["atlassian"])
     def _get_space_ids(self):
         """Fetches spaces in a confluence domain."""
 
@@ -166,7 +161,6 @@ class ConfluenceConnector(ConnectorCleanupMixin, BaseConnector):
         space_ids = [space["key"] for space in all_results]
         return space_ids
 
-    @requires_dependencies(["atlassian"])
     def _get_docs_ids_within_one_space(
         self,
         space_id: str,
@@ -182,7 +176,6 @@ class ConfluenceConnector(ConnectorCleanupMixin, BaseConnector):
         doc_ids = [(space_id, doc["id"]) for doc in results]
         return doc_ids
 
-    @requires_dependencies(["atlassian"])
     def _get_doc_ids_within_spaces(self):
         space_ids = self._get_space_ids() if not self.list_of_spaces else self.list_of_spaces
 

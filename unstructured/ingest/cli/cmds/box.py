@@ -13,6 +13,7 @@ from unstructured.ingest.cli.common import (
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner import box as box_fn
+from unstructured.utils import requires_dependencies
 
 
 @click.command()
@@ -21,6 +22,7 @@ from unstructured.ingest.runner import box as box_fn
     default=None,
     help="Path to Box app credentials as json file.",
 )
+@requires_dependencies(["boxfs", "fsspec"], extras="box")
 def box(**options):
     verbose = options.get("verbose", False)
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
