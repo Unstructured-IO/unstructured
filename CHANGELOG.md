@@ -1,6 +1,7 @@
 ## 0.10.6-dev2
 
 ### Enhancements
+* Add threaded Slack conversations into Slack connector output
 
 ### Features
 
