@@ -30,4 +30,5 @@ unstructured-inference==0.5.14
 # NOTE(klaijan) - Moved pin from test.in
 # pinning to avoid error in argilla library
 pydantic<2
+safetensors<=0.3.2
 
