@@ -1,4 +1,4 @@
-## 0.10.6-dev1
+## 0.10.6-dev2
 
 ### Enhancements
 
@@ -6,6 +6,7 @@
 
 ### Fixes
 
+* Update `partition_html` to respect the order of `<pre>` tags.
 * Fix bug in `partition_pdf_or_image` where two partitions were called if `strategy == "ocr_only"`.
 * Bump unstructured-inference
   * Fix issue where temporary files were being left behind (0.5.16)
