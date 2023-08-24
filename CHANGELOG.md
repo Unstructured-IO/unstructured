@@ -1,24 +1,47 @@
-## 0.10.5-dev2
+## 0.10.6-dev1
 
 ### Enhancements
+
+### Features
+
+### Fixes
+
+* Fix bug in `partition_pdf_or_image` where two partitions were called if `strategy == "ocr_only"`.
+* Bump unstructured-inference
+  * Fix issue where temporary files were being left behind (0.5.16)
+* Adds deprecation warning for the `file_filename` kwarg to `partition`, `partition_via_api`,
+  and `partition_multiple_via_api`.
+* Fix documentation build workflow by pinning dependencies
+
+## 0.10.5
+
+### Enhancements
+
 * Create new CI Pipelines
   - Checking text, xml, email, and html doc tests against the library installed without extras
   - Checking each library extra against their respective tests
-* `partition` raises and error and tells the user to install the appropriate extra if a filetype
+* `partition` raises an error and tells the user to install the appropriate extra if a filetype
   is detected that is missing dependencies.
-
-## 0.10.3
+* Add custom errors to ingest
+* Bump `unstructured-ingest==0.5.15`
+  - Handle an uncaught TesseractError (0.5.15)
+  - Add TIFF test file and TIFF filetype to `test_from_image_file` in `test_layout` (0.5.14)
+* Use `entire_page` ocr mode for pdfs and images
+* Add notes on extra installs to docs
 * Adds ability to reuse connections per process in unstructured-ingest
-* Pass ocr_mode in partition_pdf and set the default back to individual pages for now
-* Add diagrams and descriptions for ingest design in the ingest README
 
 ### Features
 * Add delta table connector
 
 ### Fixes
 
-* remove test modification for potential bug and add docstring
-* fix partitioning of and tests for email and msg docs with attachments, add docstring to msg function
+## 0.10.4
+* Pass ocr_mode in partition_pdf and set the default back to individual pages for now
+* Add diagrams and descriptions for ingest design in the ingest README
+
+### Features
+
+### Fixes
 
 ## 0.10.2
 

@@ -177,7 +177,7 @@ def test_partition_pdf_with_model_name_env_var(
             filename,
             is_image=False,
             ocr_languages="eng",
-            ocr_mode="individual_blocks",
+            ocr_mode="entire_page",
             extract_tables=False,
             model_name="checkbox",
         )
@@ -198,7 +198,7 @@ def test_partition_pdf_with_model_name(
             filename,
             is_image=False,
             ocr_languages="eng",
-            ocr_mode="individual_blocks",
+            ocr_mode="entire_page",
             extract_tables=False,
             model_name="checkbox",
         )
@@ -325,10 +325,14 @@ def test_partition_pdf_falls_back_to_fast_from_ocr_only(
         pdf,
         "extractable_elements",
         return_value=mock_return,
-    ) as mock_partition:
+    ) as mock_partition, mock.patch.object(
+        pdf,
+        "_partition_pdf_or_image_with_ocr",
+    ) as mock_partition_ocr:
         pdf.partition_pdf(filename=filename, url=None, strategy="ocr_only")
 
     mock_partition.assert_called_once()
+    mock_partition_ocr.assert_not_called()
     assert "pytesseract is not installed" in caplog.text
 
 
@@ -404,7 +408,7 @@ def test_partition_pdf_with_dpi():
             filename,
             is_image=False,
             ocr_languages="eng",
-            ocr_mode="individual_blocks",
+            ocr_mode="entire_page",
             extract_tables=False,
             model_name=None,
             pdf_image_dpi=100,

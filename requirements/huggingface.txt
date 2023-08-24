@@ -13,7 +13,7 @@ charset-normalizer==3.2.0
     # via
     #   -c requirements/base.txt
     #   requests
-click==8.1.6
+click==8.1.7
     # via
     #   -c requirements/base.txt
     #   sacremoses
@@ -68,7 +68,7 @@ requests==2.31.0
     #   transformers
 sacremoses==0.0.53
     # via -r requirements/huggingface.in
-safetensors==0.3.2
+safetensors==0.3.3
     # via transformers
 sentencepiece==0.1.99
     # via -r requirements/huggingface.in
@@ -88,7 +88,7 @@ tqdm==4.66.1
     #   huggingface-hub
     #   sacremoses
     #   transformers
-transformers==4.31.0
+transformers==4.32.0
     # via -r requirements/huggingface.in
 typing-extensions==4.7.1
     # via
