@@ -4,8 +4,6 @@
 #
 #    pip-compile requirements/test.in
 #
-annotated-types==0.5.0
-    # via pydantic
 appdirs==1.4.4
     # via label-studio-tools
 black==23.7.0
@@ -74,12 +72,11 @@ pluggy==1.2.0
     # via pytest
 pycodestyle==2.11.0
     # via flake8
-pydantic==2.3.0
+pydantic==1.10.12
     # via
+    #   -c requirements/constraints.in
     #   -r requirements/test.in
     #   label-studio-sdk
-pydantic-core==2.6.3
-    # via pydantic
 pyflakes==3.1.0
     # via flake8
 pytest==7.4.0
@@ -120,11 +117,9 @@ types-urllib3==1.26.25.14
     # via types-requests
 typing-extensions==4.7.1
     # via
-    #   annotated-types
     #   black
     #   mypy
     #   pydantic
-    #   pydantic-core
 urllib3==1.26.16
     # via
     #   -c requirements/base.txt

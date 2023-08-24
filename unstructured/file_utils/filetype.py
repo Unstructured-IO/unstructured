@@ -69,6 +69,7 @@ class FileType(Enum):
     # Image Types
     JPG = 30
     PNG = 31
+    TIFF = 32
 
     # Plain Text Types
     EML = 40
@@ -103,6 +104,7 @@ STR_TO_FILETYPE = {
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document": FileType.DOCX,
     "image/jpeg": FileType.JPG,
     "image/png": FileType.PNG,
+    "image/tiff": FileType.TIFF,
     "text/plain": FileType.TXT,
     "text/x-csv": FileType.CSV,
     "application/csv": FileType.CSV,
@@ -175,6 +177,7 @@ EXT_TO_FILETYPE = {
     ".csv": FileType.CSV,
     ".tsv": FileType.TSV,
     ".tab": FileType.TSV,
+    ".tiff": FileType.TIFF,
     # NOTE(robinson) - for now we are treating code files as plain text
     ".js": FileType.TXT,
     ".py": FileType.TXT,

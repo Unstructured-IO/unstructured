@@ -131,6 +131,13 @@ def test_partition_image_with_table_extraction(
     assert "Layouts of history Japanese documents" in table[0]
 
 
+def test_partition_image_with_multipage_tiff(
+    filename="example-docs/layout-parser-paper-combined.tiff",
+):
+    elements = image.partition_image(filename=filename, strategy="auto")
+    assert elements[-1].metadata.page_number == 2
+
+
 def test_partition_image_with_language_passed(filename="example-docs/example.jpg"):
     with mock.patch.object(
         layout,
