@@ -135,6 +135,8 @@ def test_partition_image_with_multipage_tiff(
     filename="example-docs/layout-parser-paper-combined.tiff",
 ):
     elements = image.partition_image(filename=filename, strategy="auto")
+    second_page_title = "LayoutParser: A Unified Toolkit for DL-Based DIA"
+    assert elements[8].text == second_page_title
     assert elements[-1].metadata.page_number == 2
 
 
