@@ -591,13 +591,13 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "812dcaaec927a84d57af36e20adb5ded",
+    "element_id": "fe214268bbeb666f3dcf577ed81cee8b",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "Efficient Data Annotation Model Customization Document Images Community Platform ‘a >) ¥ DIA Model Hub i .) Customized Model Training] == | Layout Detection Models | ——= DIA Pipeline Sharing ~ OCR Module = { Layout Data stuctue ) = (storage Visualization VY"
+    "text": "Model Customization DOCUMENT IMAGES Community Platform EFFICIENT DATA ANNOTATION DIA MODEL HUB Customized Model Training Layout Detection Models DIA Pipeline Sharing ↑ OCR MODULE Layout Data Structure Storage & Visualization The Core LayoutParser Library"
   },
   {
     "type": "NarrativeText",
@@ -681,14 +681,14 @@
   },
   {
     "type": "Table",
-    "element_id": "34923b77ca76e1808956ade5e766f7c2",
+    "element_id": "48bc589e18a64143624c9d18e0e0db2b",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5,
-      "text_as_html": "<table><thead><th>Dataset</th><th>| Base Model'|</th><th>| Notes</th></thead><tr><td>PubLayNet</td><td>[38] F/M</td><td>Layouts of modern scientific documents</td></tr><tr><td>PRImA [3]</td><td>M</td><td>Layouts of scanned modern magazines and scientific reports</td></tr><tr><td>Newspaper</td><td>F</td><td>Layouts of scanned US newspapers from the 20th century</td></tr><tr><td>TableBank</td><td>F</td><td>Table region on modern scientific and business document</td></tr><tr><td>HJDataset [31]</td><td>F/M</td><td>Layouts of history Japanese documents</td></tr></table>"
+      "text_as_html": "<table><thead><th>DATASET</th><th>Base Modell</th><th>NOTES</th></thead><tr><td>PubLayNet 381</td><td>F/M</td><td>LAYOutS of modern scientific documents</td></tr><tr><td>PRIMA 3</td><td>M</td><td>Layouts of scanned modern magazines and scientific reports</td></tr><tr><td>Newspaper 17</td><td>F</td><td>Layouts of scanned US newspapers from the 20th century</td></tr><tr><td>181 TableBank</td><td>F</td><td>Table region on modern scientific and business document</td></tr><tr><td>31 HJDATASET</td><td>F/M</td><td>Layouts of history Japanese documents</td></tr></table>"
     },
-    "text": "Dataset | Base Model'| Large Model | Notes PubLayNet B8]| F/M M Layouts of modern scientific documents PRImA M - nned modern magazines and scientific reports Newspapei F - canned US newspapers from the 20th century TableBank F F Table region on modern scientific and business document HJDataset F/M - Layouts of history Japanese documents"
+    "text": "DATASET Base Modelil Large Model l Notes PubLayNet B8I F/M M Layouts of modern scientific documents PRImA Bl M Layouts of scanned modern magazines and scientific reports Newspaper F 团 Layouts of scanned US newspapers from the 20th century TableBank F F 18] Table region on modern scientific and business document B1 HJDataset F/M Layouts of history Japanese documents"
   },
   {
     "type": "UncategorizedText",
@@ -852,13 +852,13 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "d21661161ae2c8dc39e96ee5c660704b",
+    "element_id": "11382530048a96a4f52fbd9e870a5694",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 6
     },
-    "text": "- ° . 3 a a 4 a 3 oo er ‘ 2 § 8 a 8 3 3 ‘ £ 4 A g a 9 ‘ 3 ¥ Coordinate g 4 5 3 + § 3 H Extra Features [O=\") [Bo] eaing i Text | | Type | | ower ° & a ¢ o [ coordinatel textblock1, 3 3 ’ g Q 3 , textblock2 , layoutl ] 4 q ® A list of the layout elements Ff"
+    "text": "Coordinate APIS x-interval Quadrilateral Rectangle : OPERATION AND textblock Coordinate + tRANSFORMATION Block Block EXTRA EATURES Reading TEXT Type LORDER ［Coordinatel textblock1 Layout SAME textblock2 layouti ] THE A list of the layout elements"
   },
   {
     "type": "NarrativeText",
@@ -1062,14 +1062,14 @@
   },
   {
     "type": "Table",
-    "element_id": "f81d4915b54758e0d4d52af3566bb813",
+    "element_id": "f8e1bb72eb4ad380d7a141b0cc6eea81",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 8,
-      "text_as_html": "<table><thead><th>Operation Name</th><th></th><th>|</th><th>Description</th></thead><tr><td>block.pad(top, bottom,</td><td>right,</td><td>left) |</td><td>Enlarge the current block according to the input</td></tr><tr><td>block.scale(fx, fy)</td><td></td><td></td><td>Scale the current block given the ratio in x and y direction</td></tr><tr><td>block.shift(dx, dy)</td><td></td><td></td><td>Move the current block with the shift distances in x and y direction</td></tr><tr><td>blocki.is_in(block2)</td><td></td><td>|</td><td>Whether block] is inside of block2</td></tr><tr><td>blocki.intersect (block2)</td><td></td><td></td><td>Return the intersection region of blockl and block2. Coordinate type to be determined based on the inputs.</td></tr><tr><td>block1i.union(block2)</td><td></td><td></td><td>Return the union region of blockl and block2. Coordinate type to be determined based on the inputs.</td></tr><tr><td>blocki.relative_to(block2)</td><td></td><td></td><td>Convert the absolute coordinates of block] to relative coordinates to block2</td></tr><tr><td>blocki.condition_on(block2)</td><td></td><td></td><td>Calculate the absolute coordinates of blockl given the canvas block2’s absolute coordinates</td></tr></table>"
+      "text_as_html": "<table><thead><th>OperationName</th><th>Description</th></thead><tr><td>block.pad(top，bottom，right,left)</td><td>Enlarge the current block according to the input</td></tr><tr><td>block.scale(fx,fy)</td><td>Scale the current block given the ratio in x and y direction</td></tr><tr><td>block.shift(dx,dy)</td><td>Move the current block with the shift distances in x and y direction</td></tr><tr><td>blocki.is_in(block2)</td><td>Whether block1 is inside of block2</td></tr><tr><td>block1.intersect(block2)</td><td>Return the intersection region of blockl and block2. Coordinate type to be determined based on the inputs</td></tr><tr><td>block1.union(block2)</td><td>Return the union region of blockl and block2. Coordinate type to be determined based on the inputs</td></tr><tr><td>blocki.relative_to(block2)</td><td>Convert the absolute coordinates of blockl to relative coordinates to block2</td></tr><tr><td>block1.condition_on(block2)</td><td>Calculate the absolute coordinates of blockl given the canvas block2's absolute coordinates</td></tr></table>"
     },
-    "text": "Operation Name Description block.pad(top, bottom, right, left) Enlarge the current block according to the input block.scale(fx, fy) Scale the current block given the ratio ion in x and y di block.shift(dx, dy) Move the current block with the shift distances in x and y direction block1.is_in(block2) Whether block] is inside of block2 ; Return the intersection region of block and block2. block1. intersect (block2) . . . Coordinate type to be determined based on the inputs. ; Return the union region of block1 and block2. block1.union(block2) . . . Coordinate type to be determined based on the inputs. Convert the absolute coordinates of block to block1.relative_to(block2) ' ' relative coordinates to block2 . Calculate the absolute coordinates of block1 given block1.condition_on(block2) . the canvas block2’s absolute coordinates block. crop_image (image) Obtain the image segments in the block region"
+    "text": "Operation Name Description blockpad(topbottom,right, left) Enlarge the current block according to the input Scale the current block given the ratio block.scale(fx,fy) in x and y direction Move the current block with the shift block.shift(dx, dy) distances in x and y direction block1.is_in(block2) Whether blockl is inside of block2 Return the intersection region of blockl and block2. blocki.intersect(block2) Coordinate type to be determined based on the inputs. Return the union region of blockl and block2. block1.union(block2) Coordinate type to be determined based on the inputs. Convert the absolute coordinates of blockl to block1.relative_to(block2) relative coordinates to block2 Calculate the absolute coordinates of blockl given block1.condition_on(block2) the canvas block2's absolute coordinates block.crop_image(image) Obtain the image segments in the block region"
   },
   {
     "type": "UncategorizedText",
@@ -1333,13 +1333,13 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "975d6cb141cb0a0313375630ae063fa8",
+    "element_id": "4aea22aec89a49dc6ec39446b74c3102",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 9
     },
-    "text": "x09 Burpunog uayor Aeydsiq 1 vondo 10g Guypunog usyoy apir:z uondo Mode I: Showing Layout on the Original Image Mode Il: Drawing OCR'd Text at the Correspoding Position"
+    "text": "OPTION 1: DISPLAY TOKEN BOUNDING BOX OPTION 2:HIDE TOKEN BOUNDING BOX Model: Showing Layout on the Original Image Mode ll: Drawing OCRd Text at the Correspoding Position"
   },
   {
     "type": "NarrativeText",
@@ -1423,13 +1423,13 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "2680b3c7a55754a3ba2738cb3d9d5e8b",
+    "element_id": "8edbb5fb7ba41f5325e5ea1372346df9",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 10
     },
-    "text": "et Intra-column reading order Token Categories tie (Adress 2) tee (NE sumber Variable HEE company type Column Categories (J tite we) adaress —_ (7) section Header by ‘e * Column reading order a a (a) Illustration of the original Japanese Maximum Allowed Height BRE B>e EER eR (b) Illustration of the recreated document with dense text structure for better OCR performance"
+    "text": "Intra-columnreadingorder Token Categories Title Address Number Variable COMPANY TYPE ColumnCategories Title MaximumAllowedHeight Address 化 aL. Section Header H Cb)llustrationoftherecreateddocumentwithdensetextstructureforbetterOCRperformance"
   },
   {
     "type": "NarrativeText",
@@ -1543,13 +1543,13 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "b33b2bc3b9c416673c7f74c6a00c49d8",
+    "element_id": "4488addaedeca34e5ef988248ffcf944",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 11
     },
-    "text": "(spe peepee, ‘Active Learning Layout Annotate Layout Dataset | + ‘Annotation Toolkit ¥ a Deep Leaming Layout Model Training & Inference, ¥ ; Handy Data Structures & Post-processing El Apis for Layout Det a LAR ror tye eats) 4 Text Recognition | <—— Default ane Customized ¥ ee Layout Structure Visualization & Export | <—— | visualization & Storage The Japanese Document Helpful LayoutParser Digitization Pipeline Modules"
+    "text": "Active Learning Layout Annotate Layout Dataset Annotation Toolkit DEEP LEARING LAYOUT Layout Detection ModelTraining&Inference HandyDataStructures& Post-processing APls for Layout Data Text Recognition Default and Customized OCR Models Visualization & Export Layout Structure Visualization & Storage The Japanese DOCUMENT Helpful LayoutParser Digitization Pipeline Modules"
   },
   {
     "type": "UncategorizedText",
@@ -1723,13 +1723,13 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "7d42bb6af1404a95a6e8870d5c4d07bf",
+    "element_id": "10256ee2993fc4e033937966c2405a9f",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 13
     },
-    "text": "(@) Partial table at the bottom (&) Full page table (6) Partial table at the top (d) Mis-detected tet line"
+    "text": "(b) Fu page table"
   },
   {
     "type": "NarrativeText",
