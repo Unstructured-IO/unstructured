@@ -141,6 +141,16 @@
   },
   {
     "type": "Title",
+    "element_id": "4d7c9c95f808a09f6b0bcfe8b255e537",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "Figure 1. Ordering of perceived risks for 30 activities and technologies1,iii"
+  },
+  {
+    "type": "Title",
     "element_id": "d977fff4c69c437aa4a44a5c5f4bf02e",
     "metadata": {
       "data_source": {},
@@ -150,44 +160,74 @@
     "text": "Rank Order Laypersons"
   },
   {
-    "type": "Title",
-    "element_id": "5e12750596bdf1413e64c24997479b21",
+    "type": "UncategorizedText",
+    "element_id": "4523540f1504cd17100c4835e85b7eef",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "Experts"
+    "text": "17"
   },
   {
     "type": "UncategorizedText",
-    "element_id": "6b86b273ff34fce19d6b804eff5a3f57",
+    "element_id": "785f3ec7eb32f30b90cd0fcf3657d388",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "1"
-  },
-  {
-    "type": "Title",
-    "element_id": "82a60569029ed9032f1b08891e8524c2",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "Nuclear power"
+    "text": "22"
   },
   {
     "type": "UncategorizedText",
-    "element_id": "f5ca38f748a1d6eaf726b8a42fb575c3",
+    "element_id": "624b60c58c9d8bfb6ff1886c2fd605d2",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "20"
+    "text": "30"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d1429f8178a04f7fc73a66edf10ab8b5",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": ""
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "4"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d1429f8178a04f7fc73a66edf10ab8b5",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": ""
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d1429f8178a04f7fc73a66edf10ab8b5",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": ""
   },
   {
     "type": "UncategorizedText",
@@ -198,16 +238,6 @@
       "page_number": 4
     },
     "text": "2"
-  },
-  {
-    "type": "Title",
-    "element_id": "602d25f25cca4ebb709f8b48f54d99d9",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "Motor vehicles"
   },
   {
     "type": "UncategorizedText",
@@ -231,33 +261,23 @@
   },
   {
     "type": "Title",
-    "element_id": "f8e3740e358309bd0570d4f3ca141793",
+    "element_id": "1656c455012b016fbac5eac0a38397bd",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "Handguns"
+    "text": "Electric power (non-nuclear)"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
+    "type": "Title",
+    "element_id": "602d25f25cca4ebb709f8b48f54d99d9",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "4"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "4"
+    "text": "Motor vehicles"
   },
   {
     "type": "Title",
@@ -268,6 +288,96 @@
       "page_number": 4
     },
     "text": "Smoking"
+  },
+  {
+    "type": "Title",
+    "element_id": "2f3122790ccc9e095abe1b5ceedddf88",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "X-rays"
+  },
+  {
+    "type": "Title",
+    "element_id": "ed3861e631428b9b77e2bdc0384d2cbe",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "Vaccinations"
+  },
+  {
+    "type": "Title",
+    "element_id": "82a60569029ed9032f1b08891e8524c2",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "Nuclear power"
+  },
+  {
+    "type": "Title",
+    "element_id": "f8e3740e358309bd0570d4f3ca141793",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "Handguns"
+  },
+  {
+    "type": "Title",
+    "element_id": "5e12750596bdf1413e64c24997479b21",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "Experts"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "b7a56873cd771f2c446d369b649430b6",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "25"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "f5ca38f748a1d6eaf726b8a42fb575c3",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "20"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d1429f8178a04f7fc73a66edf10ab8b5",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": ""
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "7902699be42c8a8e46fbbb4501726517",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "7"
   },
   {
     "type": "UncategorizedText",
@@ -291,33 +401,23 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "d1429f8178a04f7fc73a66edf10ab8b5",
+    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": ""
+    "text": "4"
   },
   {
     "type": "UncategorizedText",
-    "element_id": "4523540f1504cd17100c4835e85b7eef",
+    "element_id": "6b86b273ff34fce19d6b804eff5a3f57",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "17"
-  },
-  {
-    "type": "Title",
-    "element_id": "1656c455012b016fbac5eac0a38397bd",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "Electric power (non-nuclear)"
+    "text": "1"
   },
   {
     "type": "UncategorizedText",
@@ -338,106 +438,6 @@
       "page_number": 4
     },
     "text": ""
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "d1429f8178a04f7fc73a66edf10ab8b5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": ""
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "785f3ec7eb32f30b90cd0fcf3657d388",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "22"
-  },
-  {
-    "type": "Title",
-    "element_id": "2f3122790ccc9e095abe1b5ceedddf88",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "X-rays"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "7902699be42c8a8e46fbbb4501726517",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "7"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "d1429f8178a04f7fc73a66edf10ab8b5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": ""
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "d1429f8178a04f7fc73a66edf10ab8b5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": ""
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "624b60c58c9d8bfb6ff1886c2fd605d2",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "30"
-  },
-  {
-    "type": "Title",
-    "element_id": "ed3861e631428b9b77e2bdc0384d2cbe",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "Vaccinations"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "b7a56873cd771f2c446d369b649430b6",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "25"
-  },
-  {
-    "type": "Title",
-    "element_id": "4d7c9c95f808a09f6b0bcfe8b255e537",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "Figure 1. Ordering of perceived risks for 30 activities and technologies1,iii"
   },
   {
     "type": "NarrativeText",
@@ -561,16 +561,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "6a3adc54db5128f797d4a12855193373",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "24.6"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "b7a56873cd771f2c446d369b649430b6",
     "metadata": {
       "data_source": {},
@@ -578,6 +568,16 @@
       "page_number": 5
     },
     "text": "25"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "6a3adc54db5128f797d4a12855193373",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 5
+    },
+    "text": "24.6"
   },
   {
     "type": "UncategorizedText",
@@ -610,14 +610,14 @@
     "text": "r a e y"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "e629fa6598d732768f7c726b4b621285",
+    "type": "Title",
+    "element_id": "f83714d89302473e0e4f5399bd50e7a9",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "15"
+    "text": "W T"
   },
   {
     "type": "Title",
@@ -630,14 +630,14 @@
     "text": "e"
   },
   {
-    "type": "Title",
-    "element_id": "f83714d89302473e0e4f5399bd50e7a9",
+    "type": "UncategorizedText",
+    "element_id": "e629fa6598d732768f7c726b4b621285",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "W T"
+    "text": "15"
   },
   {
     "type": "NarrativeText",
@@ -648,26 +648,6 @@
       "page_number": 5
     },
     "text": "r e p s e i t i l"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "4a44dc15364204a80fe80e9039455cc1",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "10"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "8bf40d0515e8461bd30866c2eb8ac250",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "4.6"
   },
   {
     "type": "Title",
@@ -681,6 +661,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "4a44dc15364204a80fe80e9039455cc1",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 5
+    },
+    "text": "10"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "ef2d127de37b942baad06145e54b0c61",
     "metadata": {
       "data_source": {},
@@ -691,6 +681,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "8bf40d0515e8461bd30866c2eb8ac250",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 5
+    },
+    "text": "4.6"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "c020bad937ece011339d7447ee0ac9fa",
     "metadata": {
       "data_source": {},
@@ -698,46 +698,6 @@
       "page_number": 5
     },
     "text": "2.8"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "91539d7445b231b3612c4f68bd077160",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "0.07"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "a888fe9e2469182b8e3e3bca241d3189",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "0.04"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "a7e46abf169710b34fe8898b950d57ec",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "0.02"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "312b95ee5a344d2f7a16ad817ff70788",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "0.01"
   },
   {
     "type": "UncategorizedText",
@@ -790,6 +750,16 @@
     "text": "N atural gas"
   },
   {
+    "type": "UncategorizedText",
+    "element_id": "91539d7445b231b3612c4f68bd077160",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 5
+    },
+    "text": "0.07"
+  },
+  {
     "type": "Title",
     "element_id": "d151346fe7eea3c6a0865199579ca601",
     "metadata": {
@@ -798,6 +768,16 @@
       "page_number": 5
     },
     "text": "Wind"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "a888fe9e2469182b8e3e3bca241d3189",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 5
+    },
+    "text": "0.04"
   },
   {
     "type": "NarrativeText",
@@ -810,6 +790,16 @@
     "text": "H ydropo w er"
   },
   {
+    "type": "UncategorizedText",
+    "element_id": "a7e46abf169710b34fe8898b950d57ec",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 5
+    },
+    "text": "0.02"
+  },
+  {
     "type": "Title",
     "element_id": "d3d1de6bcd7ebe2351be9f53551f7eb9",
     "metadata": {
@@ -818,6 +808,16 @@
       "page_number": 5
     },
     "text": "S olar"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "312b95ee5a344d2f7a16ad817ff70788",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 5
+    },
+    "text": "0.01"
   },
   {
     "type": "Title",
@@ -990,16 +990,6 @@
     "text": "If the potential of nuclear energy is to be fully realized, public health and safety approaches must be recalibrated to consider a wider range of factors when considering radiation, adopting an “all-hazards” approach. Such an approach must ensure that risks are placed within a proper perspective and context, rather than looking at them in isolation. We therefore must not look at the costs – be they economic, environmental, or public health – associated with an individual power plant in isolation, but rather the costs associated with it (and its alternatives) at a societal level (Figure 4). This would entail looking at the potential risks arising from the use of nuclear power and comparing these with the risks associated with not adopting nuclear power."
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "fd38688f30f8b6e597d540ab0134278f",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "Social and environmental costs of emissions, land-use, climate change, security of supply, etc."
-  },
-  {
     "type": "Title",
     "element_id": "2470c376b60fd11fd9639e0e440ce0f5",
     "metadata": {
@@ -1018,6 +1008,16 @@
       "page_number": 7
     },
     "text": "Grid-level costs of the electricity system"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "fd38688f30f8b6e597d540ab0134278f",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "Social and environmental costs of emissions, land-use, climate change, security of supply, etc."
   },
   {
     "type": "NarrativeText",
@@ -1410,16 +1410,6 @@
     "text": "8"
   },
   {
-    "type": "Title",
-    "element_id": "2ef1a5c0752085d3a6935132ad9e597c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 12
-    },
-    "text": "+44 (0)20 7451 1520 www.world-nuclear.org info@world-nuclear.org"
-  },
-  {
     "type": "UncategorizedText",
     "element_id": "481e5a54650b0a4ac7bc2568ddad436d",
     "metadata": {
@@ -1428,6 +1418,16 @@
       "page_number": 12
     },
     "text": "World Nuclear Association Tower House 10 Southampton Street London WC2E 7HA United Kingdom"
+  },
+  {
+    "type": "Title",
+    "element_id": "2ef1a5c0752085d3a6935132ad9e597c",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 12
+    },
+    "text": "+44 (0)20 7451 1520 www.world-nuclear.org info@world-nuclear.org"
   },
   {
     "type": "NarrativeText",

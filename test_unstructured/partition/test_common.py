@@ -1,5 +1,8 @@
 import pytest
+from PIL import Image
+from unstructured_inference.inference import layout
 from unstructured_inference.inference.layout import LayoutElement
+from unstructured_inference.inference.layoutelement import LocationlessLayoutElement
 
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
@@ -11,7 +14,34 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.partition import common
-from unstructured.partition.common import contains_emoji
+from unstructured.partition.common import (
+    _get_page_image_metadata,
+    contains_emoji,
+    document_to_element_list,
+)
+
+
+class MockPageLayout(layout.PageLayout):
+    def __init__(self, number: int, image: Image):
+        self.number = number
+        self.image = image
+
+    @property
+    def elements(self):
+        return [
+            LocationlessLayoutElement(
+                type="Headline",
+                text="Charlie Brown and the Great Pumpkin",
+            ),
+        ]
+
+
+class MockDocumentLayout(layout.DocumentLayout):
+    @property
+    def pages(self):
+        return [
+            MockPageLayout(number=1, image=Image.new("1", (1, 1))),
+        ]
 
 
 def test_normalize_layout_element_dict():
@@ -243,3 +273,15 @@ def test_convert_ms_office_table_to_text_works_with_empty_tables():
 )
 def test_contains_emoji(text, expected):
     assert contains_emoji(text) is expected
+
+
+def test_document_to_element_list_omits_coord_system_when_coord_points_absent():
+    layout_elem_absent_coordinates = MockDocumentLayout()
+    elements = document_to_element_list(layout_elem_absent_coordinates)
+    assert elements[0].metadata.coordinates is None
+
+
+def test_get_page_image_metadata_and_coordinate_system():
+    doc = MockDocumentLayout()
+    metadata = _get_page_image_metadata(doc.pages[0])
+    assert isinstance(metadata, dict)
