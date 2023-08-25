@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from datetime import datetime
 from html import unescape
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
@@ -22,6 +21,7 @@ if TYPE_CHECKING:
 
 MAX_MB_SIZE = 512_000_000
 
+
 @dataclass
 class SimpleSharepointConfig(BaseConnectorConfig):
     client_id: str
@@ -38,11 +38,13 @@ class SimpleSharepointConfig(BaseConnectorConfig):
                 "\n--client-id\n--client-cred\n--site",
             )
 
+
 @dataclass
 class SharepointFileMeta:
     date_created: str
     date_modified: str
     version: str
+
 
 @dataclass
 class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
@@ -51,7 +53,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     server_path: str
     is_page: bool
     file_path: str
-    registry_name: str = 'sharepoint'
+    registry_name: str = "sharepoint"
 
     def __post_init__(self):
         self.extension = "".join(Path(self.file_path).suffixes) if not self.is_page else ".html"
@@ -138,6 +140,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         LayoutWebpartsContent1"""
         from office365.runtime.auth.client_credential import ClientCredential
         from office365.sharepoint.client_context import ClientContext
+
         try:
             site_client = ClientContext(self.site_url).with_credentials(
                 ClientCredential(self.config.client_id, self.config.client_credential),
@@ -175,6 +178,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _get_file(self):
         from office365.runtime.auth.client_credential import ClientCredential
         from office365.sharepoint.client_context import ClientContext
+
         try:
             site_client = ClientContext(self.site_url).with_credentials(
                 ClientCredential(self.config.client_id, self.config.client_credential),
@@ -208,7 +212,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         if self.is_page:
             self._get_page()
         else:
-            self._get_file()  
+            self._get_file()
         return
 
 
@@ -271,10 +275,13 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
         try:
             site_pages = site_client.site_pages.pages.get().execute_query()
         except ClientRequestException as e:
-            logger.info("Caught an error while retrieving site pages from %s \n%s", 
-                        site_client.base_url, e.response.text)
+            logger.info(
+                "Caught an error while retrieving site pages from %s \n%s",
+                site_client.base_url,
+                e.response.text,
+            )
             return []
-        
+
         pages = []
         for page in site_pages:
             try:
@@ -282,7 +289,7 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
                 page_url = f"/{page_url}" if page_url[0] != "/" else page_url
                 file_path = page.get_property("Url", "")
                 if (url_path := (urlparse(site_client.base_url).path)) and (url_path != "/"):
-                    file_path = url_path[1:] + "/" + file_path             
+                    file_path = url_path[1:] + "/" + file_path
                 pages.append(
                     SharepointIngestDoc(
                         self.standard_config,
@@ -291,7 +298,7 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
                         page_url,
                         True,
                         file_path,
-                    )
+                    ),
                 )
             except Exception as e:
                 logger.info("Omitting page %s. Caught error: \n%s", page_url, e)
@@ -315,15 +322,14 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
                         self.standard_config,
                         self.config,
                         site_client.base_url,
-                        file.serverRelativeUrl, 
+                        file.serverRelativeUrl,
                         False,
                         file.serverRelativeUrl[1:],
-                    )
+                    ),
                 )
             except Exception as e:
                 logger.info("Omitting file %s. Caught error: \n%s", file.name, e)
                 continue
-
 
         if self.config.process_pages:
             page_output = self._list_pages(site_client)
@@ -338,7 +344,7 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
         return (site.url[0 : len(self.base_site_url)] == self.base_site_url) and (  # noqa: E203
             "/sites/" in site.url
         )
-    
+
     def initialize(self):
         pass
 

@@ -2,7 +2,6 @@ import json
 from typing import Dict, Type
 
 from dataclasses_json import DataClassJsonMixin
-from unstructured.ingest.interfaces import BaseIngestDoc
 
 from unstructured.ingest.connector.airtable import AirtableIngestDoc
 from unstructured.ingest.connector.azure import AzureBlobStorageIngestDoc
@@ -28,6 +27,7 @@ from unstructured.ingest.connector.wikipedia import (
     WikipediaIngestSummaryDoc,
     WikipediaIngestTextDoc,
 )
+from unstructured.ingest.interfaces import BaseIngestDoc
 
 INGEST_DOC_NAME_TO_CLASS: Dict[str, Type[DataClassJsonMixin]] = {
     "airtable": AirtableIngestDoc,
