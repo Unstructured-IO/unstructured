@@ -597,7 +597,7 @@ def test_partition_html_with_json():
     for i in range(len(elements)):
         assert elements[i] == test_elements[i]
 
-        
+
 def test_pre_tag_parsing_respects_order():
     html_text = """
     <pre>The Big Brown Bear</pre>
@@ -612,4 +612,3 @@ def test_pre_tag_parsing_respects_order():
         NarrativeText("The big brown bear is sleeping."),
         Title("The Big Blue Bear"),
     ]
-    
