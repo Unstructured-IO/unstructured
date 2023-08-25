@@ -4,7 +4,7 @@ set -e
 
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
-OUTPUT_FOLDER_NAME=local-single-file
+OUTPUT_FOLDER_NAME=local-ocr-langs
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
@@ -16,6 +16,16 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --verbose \
     --reprocess \
     --input-path example-docs/english-and-korean.png
+
+PYTHONPATH=. ./unstructured/ingest/main.py \
+    local \
+    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified \
+    --structured-output-dir "$OUTPUT_DIR" \
+    --partition-ocr-languages chi_sim \
+    --partition-strategy ocr_only \
+    --verbose \
+    --reprocess \
+    --input-path example-docs/simplified_chinese.pdf
 
 set +e
 

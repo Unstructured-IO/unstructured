@@ -88,7 +88,7 @@ jobs:
           sudo apt-get install -y libmagic-dev poppler-utils libreoffice pandoc
           sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
           sudo apt-get install -y tesseract-ocr
-          sudo apt-get install -y tesseract-ocr-kor
+          sudo apt-get install -y tesseract-ocr-kor tesseract-ocr-chi-sim
           tesseract --version
           make install-ingest-s3
           make install-ingest-azure
