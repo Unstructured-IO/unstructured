@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from html import unescape
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, List, Optional
+from typing import TYPE_CHECKING, List
 from urllib.parse import urlparse
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
@@ -37,13 +37,6 @@ class SimpleSharepointConfig(BaseConnectorConfig):
                 "Please provide one of the following mandatory values:"
                 "\n--client-id\n--client-cred\n--site",
             )
-
-
-@dataclass
-class SharepointFileMeta:
-    date_created: str
-    date_modified: str
-    version: str
 
 
 @dataclass
@@ -89,51 +82,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _output_filename(self):
         return Path(self.output_filepath).resolve()
 
-    @property
-    def date_created(self) -> Optional[str]:
-        if self.meta:
-            return self.meta["page"].properties.get("FirstPublished", None)
-        return self._get_file_ref().time_created
-
-    @property
-    def date_modified(self) -> Optional[str]:
-        if self.meta:
-            return self.meta["page"].properties.get("Modified", None)
-        return self._get_file_ref().time_last_modified
-
-    @property
-    def exists(self) -> Optional[bool]:
-        if self.meta:
-            return self.meta["page"].properties.get("FileName", None) and self.meta[
-                "page"
-            ].properties.get("UniqueId", None)
-        return self._get_file_ref().exists
-
-    @property
-    def record_locator(self) -> Optional[Dict[str, Any]]:
-        if self.meta:
-            record_source = self.meta["page"]
-            property_name = "AbsoluteUrl"
-            resource_url_name = "absolute_url"
-        else:
-            record_source = self._get_file_ref()
-            property_name = "ServerRelativeUrl"
-            resource_url_name = "server_relative_url"
-
-        return {
-            "site": self.config.site_url,
-            "unique_id": record_source.get_property("UniqueId", ""),
-            resource_url_name: record_source.get_property(property_name, ""),
-        }
-
-    @property
-    def version(self) -> Optional[str]:
-        if self.meta:
-            return self.meta["page"].properties.get("Version", "")
-
-        if (n_versions := len(self._get_file_ref().versions)) > 0:
-            return self._get_file_ref().versions[n_versions - 1].properties.get("id", None)
-        return None
+    # TODO: address data source properties in explicit PR
 
     def _get_page(self):
         """Retrieves HTML content of the Sharepoint site through the CanvasContent1 and

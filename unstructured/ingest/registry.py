@@ -1,5 +1,5 @@
 import json
-from typing import Dict, Type
+from typing import Dict, Type, cast
 
 from dataclasses_json import DataClassJsonMixin
 
@@ -60,7 +60,7 @@ def create_ingest_doc_from_json(ingest_doc_json: str) -> BaseIngestDoc:
     registry_name = ingest_doc_dict.pop("registry_name")
     try:
         ingest_doc_cls = INGEST_DOC_NAME_TO_CLASS[registry_name]
-        return ingest_doc_cls.from_json(ingest_doc_json)
+        return cast(BaseIngestDoc, ingest_doc_cls.from_json(ingest_doc_json))
     except KeyError:
         raise ValueError(
             f"Error: Received unknown IngestDoc name: {registry_name} while deserializing",
