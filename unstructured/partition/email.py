@@ -14,6 +14,7 @@ from unstructured.file_utils.encoding import (
     read_txt_file,
     validate_encoding,
 )
+from unstructured.logger import logger
 from unstructured.partition.common import (
     convert_to_bytes,
     exactly_one,
@@ -49,7 +50,6 @@ from unstructured.documents.email_elements import (
     Subject,
 )
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
-from unstructured.logger import logger
 from unstructured.nlp.patterns import EMAIL_DATETIMETZ_PATTERN_RE
 from unstructured.partition.html import partition_html
 from unstructured.partition.text import partition_text
@@ -322,6 +322,7 @@ def partition_email(
     if not encoding:
         encoding = detected_encoding
 
+    is_encrypted = False
     content_map: Dict[str, str] = {}
     for part in msg.walk():
         # NOTE(robinson) - content dispostiion is None for the content of the email itself.
@@ -329,11 +330,21 @@ def partition_email(
         if part.get_content_disposition() is not None:
             continue
         content_type = part.get_content_type()
+        if content_type.endswith("encrypted"):
+            is_encrypted = True
         content_map[content_type] = part.get_payload()
 
     content = content_map.get(content_source, "")
-    if not content:
-        elements = []
+
+    elements: List[Element] = []
+
+    if is_encrypted:
+        logger.warning(
+            "Encrypted email detected. Partition function will return an empty list.",
+        )
+
+    elif not content:
+        pass
 
     elif content_source == "text/html":
         # NOTE(robinson) - In the .eml files, the HTML content gets stored in a format that
