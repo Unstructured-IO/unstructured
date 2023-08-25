@@ -39,6 +39,7 @@ TABLE_TAGS: Final[List[str]] = ["table", "tbody", "td", "tr"]
 PAGEBREAK_TAGS: Final[List[str]] = ["hr"]
 HEADER_OR_FOOTER_TAGS: Final[List[str]] = ["header", "footer"]
 EMPTY_TAGS: Final[List[str]] = ["br", "hr"]
+SECTION_TAGS: Final[List[str]] = ["div", "pre"]
 
 
 class TagsMixin:
@@ -356,7 +357,7 @@ def _is_container_with_text(tag_elem: etree.Element) -> bool:
         <div>Please read my message!</div>
     </div>
     """
-    if tag_elem.tag != "div" or len(tag_elem) == 0:
+    if tag_elem.tag not in SECTION_TAGS or len(tag_elem) == 0:
         return False
 
     if tag_elem.text is None or tag_elem.text.strip() == "":
@@ -399,7 +400,7 @@ def _is_text_tag(tag_elem: etree.Element, max_predecessor_len: int = 5) -> bool:
     # NOTE(robinson) - This indicates that a div tag has no children. If that's the
     # case and the tag has text, its potential a text tag
     children = tag_elem.getchildren()
-    if tag_elem.tag == "div" and len(children) == 0:
+    if tag_elem.tag in SECTION_TAGS and len(children) == 0:
         return True
 
     if _has_adjacent_bulleted_spans(tag_elem, children):
@@ -429,7 +430,7 @@ def _process_list_item(
             tag_elem,
         )
 
-    elif tag_elem.tag == "div":
+    elif tag_elem.tag in SECTION_TAGS:
         text = _construct_text(tag_elem)
         next_element = tag_elem.getnext()
         if next_element is None:
@@ -457,7 +458,7 @@ def _get_bullet_descendants(element, next_element) -> Tuple[etree.Element, ...]:
 def is_list_item_tag(tag_elem: etree.Element) -> bool:
     """Checks to see if a tag contains bulleted text."""
     if tag_elem.tag in LIST_ITEM_TAGS or (
-        tag_elem.tag == "div" and is_bulleted_text(_construct_text(tag_elem))
+        tag_elem.tag in SECTION_TAGS and is_bulleted_text(_construct_text(tag_elem))
     ):
         return True
     return False
@@ -494,7 +495,7 @@ def _is_bulleted_table(tag_elem) -> bool:
 def _has_adjacent_bulleted_spans(tag_elem: etree.Element, children: List[etree.Element]) -> bool:
     """Checks to see if a div contains two or more adjacent spans beginning with a bullet. If
     this is the case, it is treated as a single bulleted text element."""
-    if tag_elem.tag == "div":
+    if tag_elem.tag in SECTION_TAGS:
         all_spans = all(child.tag == "span" for child in children)
         _is_bulleted = children[0].text is not None and is_bulleted_text(children[0].text)
         if all_spans and _is_bulleted:

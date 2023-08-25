@@ -1,14 +1,18 @@
-## 0.10.6-dev1
+## 0.10.6
 
 ### Enhancements
 * Fix `test_json` to handle only non-extra dependencies file types (plain-text)
 * Add json invariant tests to all the filetype tests (`partition_filetype() == partition_json(element_to_json)`)
 * Add threaded Slack conversations into Slack connector output
+* Add functionality to sort elements using `xy-cut` sorting approach in `partition_pdf` for `hi_res` and `fast` strategies
 
 ### Features
 
+* Extract coordinates from PDFs and images when using OCR only strategy and add to metadata
+
 ### Fixes
 
+* Update `partition_html` to respect the order of `<pre>` tags.
 * Fix bug in `partition_pdf_or_image` where two partitions were called if `strategy == "ocr_only"`.
 * Bump unstructured-inference
   * Fix issue where temporary files were being left behind (0.5.16)
