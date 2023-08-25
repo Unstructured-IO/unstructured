@@ -63,3 +63,28 @@ def process_document(doc: "IngestDoc", **partition_kwargs) -> Optional[List[Dict
     finally:
         doc.cleanup_file()
         return isd_elems_no_filename
+
+
+def download_document(doc: "IngestDoc", **partition_kwargs) -> None:
+    """Process any IngestDoc-like class of document with chosen Unstructured's partition logic.
+
+    Parameters
+    ----------
+    partition_kwargs
+        ultimately the parameters passed to partition()
+    """
+    global session_handle
+    try:
+        if isinstance(doc, IngestDocSessionHandleMixin):
+            if session_handle is None:
+                # create via doc.session_handle, which is a property that creates a
+                # session handle if one is not already defined
+                session_handle = doc.session_handle
+            else:
+                doc.session_handle = session_handle
+        # does the work necessary to load file into filesystem
+        # in the future, get_file_handle() could also be supported
+        doc.get_file()
+    except Exception:
+        # TODO(crag) save the exception instead of print?
+        logger.error(f"Failed to process {doc}", exc_info=True)

@@ -1,9 +1,12 @@
 import logging
+from dataclasses import dataclass
 from typing import Optional
 
+import click
 from click import ClickException, Command, Option
 
 from unstructured.ingest.interfaces import (
+    BaseConfig,
     ProcessorConfigs,
     StandardConnectorConfig,
 )
@@ -133,6 +136,32 @@ def add_recursive_option(cmd: Command):
             "otherwise stop at the files in provided folder level.",
         ),
     )
+
+
+@dataclass
+class RecursiveOption(BaseConfig):
+    recursive: bool = False
+
+    @staticmethod
+    def get_schema() -> dict:
+        return {
+            "type": "object",
+            "properties": {
+                "recursive": {"type": "boolean"},
+            },
+        }
+
+    @staticmethod
+    def add_cli_options(cmd: click.Command) -> None:
+        cmd.params.append(
+            Option(
+                ["--recursive"],
+                is_flag=True,
+                default=False,
+                help="Recursively download files in their respective folders"
+                "otherwise stop at the files in provided folder level.",
+            ),
+        )
 
 
 def add_shared_options(cmd: Command):

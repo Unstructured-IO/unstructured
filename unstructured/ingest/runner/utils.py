@@ -36,11 +36,11 @@ def update_download_dir_hash(
         if not cache_path.exists():
             cache_path.mkdir(parents=True, exist_ok=True)
         download_dir = cache_path / connector_name / hashed_dir_name.hexdigest()[:10]
-        if connector_config.preserve_downloads:
-            logger.warning(
-                f"Preserving downloaded files but download_dir is not specified,"
-                f" using {download_dir}",
-            )
+        # if connector_config.preserve_downloads:
+        #     logger.warning(
+        #         f"Preserving downloaded files but download_dir is not specified,"
+        #         f" using {download_dir}",
+        #     )
         new_download_dir = str(download_dir)
         logger.debug(f"updating download directory to: {new_download_dir}")
     return new_download_dir

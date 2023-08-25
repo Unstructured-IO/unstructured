@@ -5,12 +5,14 @@ import functools
 import json
 import os
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Type
 
+import click
 import requests
+from jsonschema import validate
 
 from unstructured.documents.elements import DataSourceMetadata
 from unstructured.ingest.error import PartitionError, SourceConnectionError
@@ -23,6 +25,239 @@ from unstructured.staging.base import convert_to_dict
 class BaseSessionHandle(ABC):
     """Abstract Base Class for sharing resources that are local to an individual process.
     e.g., a connection for making a request for fetching documents."""
+
+
+class BaseConfig(ABC):
+    @staticmethod
+    @abstractmethod
+    def get_schema() -> dict:
+        pass
+
+    @classmethod
+    def merge_schemas(cls, configs: List[Type["BaseConfig"]]) -> dict:
+        base_schema = cls.get_schema()
+        for other in configs:
+            other_schema = other.get_schema()
+            if "required" in base_schema:
+                base_schema.get("required", []).extend(other_schema.get("required", []))
+            else:
+                base_schema["required"] = other_schema.get("required", [])
+            if "properties" in other_schema:
+                base_schema.get("properties", {}).update(other_schema.get("properties", {}))
+            else:
+                base_schema["properties"] = other_schema.get("properties", {})
+        return base_schema
+
+    @classmethod
+    def merge_sample_jsons(cls, configs: List[Type["BaseConfig"]]) -> dict:
+        base_json = cls.get_sample_dict()
+        for other in configs:
+            base_json.update(other.get_sample_dict())
+        return base_json
+
+    @classmethod
+    def get_sample_dict(cls) -> dict:
+        config = cls()
+        return config.__dict__
+
+    @staticmethod
+    @abstractmethod
+    def add_cli_options(cmd: click.Command) -> None:
+        pass
+
+    @classmethod
+    def from_dict(cls, d: dict):
+        schema = cls.get_schema()
+        sample_dict = cls.get_sample_dict()
+        filtered_dict = {k: v for k, v in d.items() if k in sample_dict}
+        validate(filtered_dict, schema=schema)
+        return cls(**filtered_dict)
+
+
+@dataclass
+class PartitionConfigs(BaseConfig):
+    # where to write structured data outputs
+    output_dir: str = "structured-output"
+    num_processes: int = 2
+    max_docs: Optional[int] = None
+    pdf_infer_table_structure: bool = False
+    strategy: str = "auto"
+    reprocess: bool = False
+    ocr_languages: str = "eng"
+    encoding: Optional[str] = None
+    fields_include: List[str] = field(
+        default_factory=lambda: ["element_id", "text", "type", "metadata"],
+    )
+    flatten_metadata: bool = False
+    metadata_exclude: List[str] = field(default_factory=list)
+    metadata_include: List[str] = field(default_factory=list)
+    partition_endpoint: Optional[str] = None
+    api_key: Optional[str] = None
+
+    @staticmethod
+    def add_cli_options(cmd: click.Command) -> None:
+        options = [
+            click.Option(
+                ["--output-dir"],
+                default="structured-output",
+                help="Where to place structured output .json files.",
+            ),
+            click.Option(
+                ["--num-processes"],
+                default=2,
+                show_default=True,
+                help="Number of parallel processes to process docs in.",
+            ),
+            click.Option(
+                ["--max-docs"],
+                default=None,
+                type=int,
+                help="If specified, process at most specified number of documents.",
+            ),
+            click.Option(
+                ["--pdf-infer-table-structure"],
+                default=False,
+                help="If set to True, partition will include the table's text "
+                "content in the response.",
+            ),
+            click.Option(
+                ["--strategy"],
+                default="auto",
+                help="The method that will be used to process the documents. "
+                "Default: auto. Other strategies include `fast` and `hi_res`.",
+            ),
+            click.Option(
+                ["--reprocess"],
+                is_flag=True,
+                default=False,
+                help="Reprocess a downloaded file even if the relevant structured "
+                "output .json file in output directory already exists.",
+            ),
+            click.Option(
+                ["--ocr-languages"],
+                default="eng",
+                help="A list of language packs to specify which languages to use for OCR, "
+                "separated by '+' e.g. 'eng+deu' to use the English and German language packs. "
+                "The appropriate Tesseract "
+                "language pack needs to be installed."
+                "Default: eng",
+            ),
+            click.Option(
+                ["--encoding"],
+                default=None,
+                help="Text encoding to use when reading documents. By default the encoding is "
+                "detected automatically.",
+            ),
+            click.Option(
+                ["--fields-include"],
+                multiple=True,
+                default=["element_id", "text", "type", "metadata"],
+                help="If set, include the specified top-level fields in an element. ",
+            ),
+            click.Option(
+                ["--flatten-metadata"],
+                is_flag=True,
+                default=False,
+                help="Results in flattened json elements. "
+                "Specifically, the metadata key values are brought to "
+                "the top-level of the element, and the `metadata` key itself is removed.",
+            ),
+            click.Option(
+                ["--metadata-include"],
+                default=[],
+                multiple=True,
+                help="If set, include the specified metadata fields if they exist "
+                "and drop all other fields. ",
+            ),
+            click.Option(
+                ["--metadata-exclude"],
+                default=[],
+                multiple=True,
+                help="If set, drop the specified metadata fields if they exist. ",
+            ),
+            click.Option(
+                ["--partition-endpoint"],
+                default=None,
+                help="If provided, will use api to run partition",
+            ),
+            click.Option(
+                ["--api-key"],
+                default=None,
+                help="API Key for partition endpoint.",
+            ),
+        ]
+        cmd.params.extend(options)
+
+    @staticmethod
+    def get_schema() -> dict:
+        return {
+            "type": "object",
+            "properties": {
+                "output_dir": {"type": "string", "default": "structured-output"},
+                "num_processes": {"type": ["integer", "null"], "default": None},
+                "max_docs": {"type": "integer", "default": 2},
+                "pdf_infer_table_structure": {"type": "boolean"},
+                "strategy": {"type": ["string", "null"], "default": "auto"},
+                "reprocess": {"type": "boolean"},
+                "ocr_language": {"type": ["string", "null"], "default": "eng"},
+                "encoding": {"type": ["string", "null"], "default": None},
+                "fields_include": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                    },
+                },
+                "flatten_metadata": {"type": "boolean"},
+                "metadata_exclude": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                    },
+                },
+                "metadata_include": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                    },
+                },
+                "partition_endpoint": {"type": ["string", "null"], "default": None},
+                "api_key": {"type": ["string", "null"], "default": None},
+            },
+        }
+
+
+@dataclass
+class ReadConfigs(BaseConfig):
+    # where raw documents are stored for processing, and then removed if not preserve_downloads
+    download_dir: Optional[str] = None
+    re_download: bool = False
+
+    @staticmethod
+    def add_cli_options(cmd: click.Command) -> None:
+        options = [
+            click.Option(
+                ["--download-dir"],
+                help="Where files are downloaded to, defaults to a location at"
+                "`$HOME/.cache/unstructured/ingest/<connector name>/<SHA256>`.",
+            ),
+            click.Option(
+                ["--re-download"],
+                is_flag=True,
+                default=False,
+                help="Re-download files even if they are already present in download dir.",
+            ),
+        ]
+        cmd.params.extend(options)
+
+    @staticmethod
+    def get_schema() -> dict:
+        return {
+            "type": "object",
+            "properties": {
+                "download_dir": {"type": ["string", "null"], "default": None},
+                "re_download": {"type": "boolean"},
+            },
+        }
 
 
 @dataclass
@@ -273,9 +508,9 @@ class BaseIngestDoc(ABC):
                     if "." in ex:  # handle nested fields
                         nested_fields = ex.split(".")
                         current_elem = elem
-                        for field in nested_fields[:-1]:
-                            if field in current_elem:
-                                current_elem = current_elem[field]
+                        for f in nested_fields[:-1]:
+                            if f in current_elem:
+                                current_elem = current_elem[f]
                         field_to_exclude = nested_fields[-1]
                         if field_to_exclude in current_elem:
                             current_elem.pop(field_to_exclude, None)
