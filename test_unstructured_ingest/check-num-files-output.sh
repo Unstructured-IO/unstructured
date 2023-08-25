@@ -14,6 +14,7 @@ SCRIPT_DIR=$(dirname "$(realpath "$0")")
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 num_files_created="$(find "$OUTPUT_DIR" -type f -exec printf '.' \; | wc -c | xargs)"
 
+echo "TEST: $num_files_created files created. $EXPECTED_NUM_FILES files should have been created."
 
 if [ "$num_files_created" -ne "$EXPECTED_NUM_FILES" ] && [ "$OVERWRITE_FIXTURES" = "false" ]; then
    echo
