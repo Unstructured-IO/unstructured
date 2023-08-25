@@ -330,8 +330,13 @@ def partition_email(
         if part.get_content_disposition() is not None:
             continue
         content_type = part.get_content_type()
+
+        # NOTE(robinson) - Per RFC 2015, the content type for emails with PGP encrypted
+        # content is multipart/encrypted
+        # ref: https://www.ietf.org/rfc/rfc2015.txt
         if content_type.endswith("encrypted"):
             is_encrypted = True
+
         content_map[content_type] = part.get_payload()
 
     content = content_map.get(content_source, "")

@@ -63,6 +63,7 @@ def partition_msg(
 
     # NOTE(robinson) - Per RFC 2015, the content type for emails with PGP encrypted
     # content is multipart/encrypted
+    # ref: https://www.ietf.org/rfc/rfc2015.txt
     content_type = msg_obj.header_dict.get("Content-Type", "")
     is_encrypted = "encrypted" in content_type
 
