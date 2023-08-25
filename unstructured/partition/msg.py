@@ -6,6 +6,7 @@ import msg_parser
 
 from unstructured.documents.elements import Element, ElementMetadata, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
+from unstructured.logger import logger
 from unstructured.partition.common import exactly_one
 from unstructured.partition.email import convert_to_iso_8601
 from unstructured.partition.html import partition_html
@@ -60,8 +61,20 @@ def partition_msg(
         tmp.close()
         msg_obj = msg_parser.MsOxMessage(tmp.name)
 
+    # NOTE(robinson) - Per RFC 2015, the content type for emails with PGP encrypted
+    # content is multipart/encrypted
+    content_type = msg_obj.header_dict.get("Content-Type", "")
+    is_encrypted = "encrypted" in content_type
+
     text = msg_obj.body
-    if "<html>" in text or "</div>" in text:
+    elements: List[Element] = []
+    if is_encrypted:
+        logger.warning(
+            "Encrypted email detected. Partition function will return an empty list.",
+        )
+    elif text is None:
+        pass
+    elif "<html>" in text or "</div>" in text:
         elements = partition_html(text=text)
     else:
         elements = partition_text(
