@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from datetime import datetime
 from html import unescape
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
@@ -21,7 +22,6 @@ if TYPE_CHECKING:
 
 MAX_MB_SIZE = 512_000_000
 
-
 @dataclass
 class SimpleSharepointConfig(BaseConnectorConfig):
     client_id: str
@@ -38,52 +38,44 @@ class SimpleSharepointConfig(BaseConnectorConfig):
                 "\n--client-id\n--client-cred\n--site",
             )
 
+@dataclass
+class SharepointFileMeta:
+    date_created: str
+    date_modified: str
+    version: str
 
 @dataclass
 class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleSharepointConfig
-    url: str
-    meta: dict
-    registry_name: str = "sharepoint"
+    site_url: str
+    server_path: str
+    is_page: bool
+    file_path: str
+    registry_name: str = 'sharepoint'
 
     def __post_init__(self):
-        self.ext = "".join(Path(self._get_file_ref().name).suffixes) if not self.meta else ".html"
-        self.ext = self.ext if self.ext != ".aspx" else ".html"
+        self.extension = "".join(Path(self.file_path).suffixes) if not self.is_page else ".html"
+        self.extension = ".html" if self.extension == ".aspx" else self.extension
 
-        if not self.ext:
+        if not self.extension:
             raise ValueError("Unsupported file without extension.")
 
-        if self.ext not in EXT_TO_FILETYPE:
+        if self.extension not in EXT_TO_FILETYPE:
             raise ValueError(
-                f"Extension {self.ext} not supported. "
+                f"Extension {self.extension} not supported. "
                 f"Value MUST be one of {', '.join([k for k in EXT_TO_FILETYPE if k is not None])}.",
             )
+        self.file_exists = False
         self._set_download_paths()
-
-    @requires_dependencies(["office365"], extras="sharepoint")
-    def _get_file_ref(self):
-        from office365.sharepoint.files.file import File
-
-        logger.debug(f"self.url: {self.url}")
-        print(f"self.url: {self.url}")
-        return File.from_url(self.url)
 
     def _set_download_paths(self) -> None:
         """Parses the folder structure from the source and creates the download and output paths"""
         download_path = Path(f"{self.standard_config.download_dir}")
         output_path = Path(f"{self.standard_config.output_dir}")
-        if self.meta:
-            page_url = self.meta["page"].get_property("Url", "")
-            parent = (
-                Path(page_url).with_suffix(self.ext)
-                if (self.meta["site_path"] is None)
-                else Path(self.meta["site_path"] + "/" + page_url).with_suffix(self.ext)
-            )
-        else:
-            parent = Path(self._get_file_ref().serverRelativeUrl[1:])
+        parent = Path(self.file_path).with_suffix(self.extension)
         self.download_dir = (download_path / parent.parent).resolve()
         self.download_filepath = (download_path / parent).resolve()
-        oname = f"{str(parent)[:-len(self.ext)]}.json"
+        oname = f"{str(parent)[:-len(self.extension)]}.json"
         self.output_dir = (output_path / parent.parent).resolve()
         self.output_filepath = (output_path / oname).resolve()
 
@@ -144,12 +136,16 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _get_page(self):
         """Retrieves HTML content of the Sharepoint site through the CanvasContent1 and
         LayoutWebpartsContent1"""
-
+        from office365.runtime.auth.client_credential import ClientCredential
+        from office365.sharepoint.client_context import ClientContext
         try:
-            content_labels = ["CanvasContent1", "LayoutWebpartsContent1"]
-            content = (
-                self._get_file_ref().listItemAllFields.select(content_labels).get().execute_query()
+            site_client = ClientContext(self.site_url).with_credentials(
+                ClientCredential(self.config.client_id, self.config.client_credential),
             )
+            file = site_client.web.get_file_by_server_relative_path(self.server_path)
+            self.file_exists = True
+            content_labels = ["CanvasContent1", "LayoutWebpartsContent1"]
+            content = file.listItemAllFields.select(content_labels).get().execute_query()
             pld = (content.properties.get("LayoutWebpartsContent1", "") or "") + (
                 content.properties.get("CanvasContent1", "") or ""
             )
@@ -157,7 +153,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 pld = unescape(pld)
             else:
                 logger.info(
-                    f"Page {self.meta['page'].get_property('Url', '')} has no retrievable content. \
+                    f"Page {self.server_path} has no retrievable content. \
                       Dumping empty doc.",
                 )
                 pld = "<div></div>"
@@ -171,13 +167,21 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         except Exception as e:
             logger.error(f"Error while downloading and saving file: {self.filename}.")
             logger.error(e)
+            self.file_exists = False
             return
         logger.info(f"File downloaded: {self.filename}")
 
+    @requires_dependencies(["office365"], extras="sharepoint")
     def _get_file(self):
+        from office365.runtime.auth.client_credential import ClientCredential
+        from office365.sharepoint.client_context import ClientContext
         try:
-            file_ref = self._get_file_ref()
-            fsize = file_ref.length
+            site_client = ClientContext(self.site_url).with_credentials(
+                ClientCredential(self.config.client_id, self.config.client_credential),
+            )
+            file = site_client.web.get_file_by_server_relative_url(self.server_path)
+            self.file_exists = True
+            fsize = file.length
             self.output_dir.mkdir(parents=True, exist_ok=True)
 
             if not self.download_dir.is_dir():
@@ -187,23 +191,24 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             if fsize > MAX_MB_SIZE:
                 logger.info(f"Downloading file with size: {fsize} bytes in chunks")
                 with self.filename.open(mode="wb") as f:
-                    file_ref.download_session(f, chunk_size=1024 * 1024 * 100).execute_query()
+                    file.download_session(f, chunk_size=1024 * 1024 * 100).execute_query()
             else:
                 with self.filename.open(mode="wb") as f:
-                    file_ref.download(f).execute_query()
+                    file.download(f).execute_query()
         except Exception as e:
             logger.error(f"Error while downloading and saving file: {self.filename}.")
             logger.error(e)
+            self.file_exists = False
             return
         logger.info(f"File downloaded: {self.filename}")
 
     @BaseIngestDoc.skip_if_file_exists
     @requires_dependencies(["office365"])
     def get_file(self):
-        if not self.meta:
-            self._get_file()
-        else:
+        if self.is_page:
             self._get_page()
+        else:
+            self._get_file()  
         return
 
 
@@ -264,29 +269,34 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
         from office365.runtime.client_request_exception import ClientRequestException
 
         try:
-            pages = site_client.site_pages.pages.get().execute_query()
-            pages = []
-
-            for page_meta in pages:
-                page_url = page_meta.get_property("Url", None)
-                if page_url is None:
-                    logger.info("Missing site_url. Omitting page... ")
-                    break
-                page_url = f"/{page_url}" if page_url[0] != "/" else page_url
-                site_path = None
-                if (url_path := (urlparse(site_client.base_url).path)) and (url_path != "/"):
-                    site_path = url_path[1:]
-                pages.append(
-                    [page_url, {"page": page_meta, "site_path": site_path}],
-                )
+            site_pages = site_client.site_pages.pages.get().execute_query()
         except ClientRequestException as e:
-            logger.info("Caught an error while processing pages %s", e.response.text)
+            logger.info("Caught an error while retrieving site pages from %s \n%s", 
+                        site_client.base_url, e.response.text)
             return []
-
+        
+        pages = []
+        for page in site_pages:
+            try:
+                page_url = page.get_property("Url", "")
+                page_url = f"/{page_url}" if page_url[0] != "/" else page_url
+                file_path = page.get_property("Url", "")
+                if (url_path := (urlparse(site_client.base_url).path)) and (url_path != "/"):
+                    file_path = url_path[1:] + "/" + file_path             
+                pages.append(
+                    SharepointIngestDoc(
+                        self.standard_config,
+                        self.config,
+                        site_client.base_url,
+                        page_url,
+                        True,
+                        file_path,
+                    )
+                )
+            except Exception as e:
+                logger.info("Omitting page %s. Caught error: \n%s", page_url, e)
+                continue
         return pages
-
-    def initialize(self):
-        pass
 
     def _ingest_site_docs(self, site_client) -> List["SharepointIngestDoc"]:
         root_folder = site_client.web.get_folder_by_server_relative_path(self.config.path)
@@ -296,27 +306,29 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
                 f"Couldn't process files in path {self.config.path} \
                 for site {site_client.base_url}",
             )
+        output = []
         for file in files:
-            print(f"file as url: {file.to_json()}")
-            print(f"file as url: {file.get_absolute_url().value}")
-        output = [
-            SharepointIngestDoc(
-                self.standard_config,
-                self.config,
-                file.get_absolute_url().value,
-                {},
-            )
-            for file in files
-        ]
+            try:
+                print(file.serverRelativeUrl)
+                output.append(
+                    SharepointIngestDoc(
+                        self.standard_config,
+                        self.config,
+                        site_client.base_url,
+                        file.serverRelativeUrl, 
+                        False,
+                        file.serverRelativeUrl[1:],
+                    )
+                )
+            except Exception as e:
+                logger.info("Omitting file %s. Caught error: \n%s", file.name, e)
+                continue
+
 
         if self.config.process_pages:
-            pages = self._list_pages(site_client)
-            if not pages:
+            page_output = self._list_pages(site_client)
+            if not page_output:
                 logger.info(f"Couldn't process pages for site {site_client.base_url}")
-            page_output = [
-                SharepointIngestDoc(self.standard_config, self.config, page[0], page[1])
-                for page in pages
-            ]
             output = output + page_output
         return output
 
@@ -326,8 +338,11 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
         return (site.url[0 : len(self.base_site_url)] == self.base_site_url) and (  # noqa: E203
             "/sites/" in site.url
         )
+    
+    def initialize(self):
+        pass
 
-    @requires_dependencies(["office365"], extras="sharepoint")
+    @requires_dependencies(["office365"])
     def get_ingest_docs(self):
         if self.process_all:
             logger.debug(self.base_site_url)
