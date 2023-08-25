@@ -11,7 +11,7 @@ from pdfminer.layout import LTContainer, LTImage, LTItem, LTTextBox
 from pdfminer.utils import open_filename
 
 from unstructured.cleaners.core import clean_extra_whitespace
-from unstructured.documents.coordinates import PixelSpace
+from unstructured.documents.coordinates import PixelSpace, PointSpace
 from unstructured.documents.elements import (
     CoordinatesMetadata,
     Element,
@@ -460,6 +460,66 @@ def convert_pdf_to_images(
             yield image
 
 
+def add_pytesseract_bbox_to_elements(elements, bboxes, width, height):
+    """
+    Get the bounding box of each element and add it to element.metadata.coordinates
+
+    Args:
+        elements: elements containing text detected by pytesseract.image_to_string.
+        bboxes (str): The return value of pytesseract.image_to_boxes.
+    """
+    # (NOTE) jennings: This function was written with pytesseract in mind, but
+    # paddle returns similar values via `ocr.ocr(img)`.
+    # See more at issue #1176: https://github.com/Unstructured-IO/unstructured/issues/1176
+    min_x = float("inf")
+    min_y = float("inf")
+    max_x = 0
+    max_y = 0
+    point_space = PointSpace(
+        width=width,
+        height=height,
+    )
+    pixel_space = PixelSpace(
+        width=width,
+        height=height,
+    )
+
+    boxes = bboxes.strip().split("\n")
+    i = 0
+    for element in elements:
+        char_count = len(element.text.replace(" ", ""))
+
+        for box in boxes[i : i + char_count]:  # noqa
+            _, x1, y1, x2, y2, _ = box.split()
+            x1, y1, x2, y2 = map(int, [x1, y1, x2, y2])
+
+            min_x = min(min_x, x1)
+            min_y = min(min_y, y1)
+            max_x = max(max_x, x2)
+            max_y = max(max_y, y2)
+
+        points = ((min_x, min_y), (min_x, max_y), (max_x, max_y), (max_x, min_y))
+        converted_points = []
+        for point in points:
+            x, y = point
+            new_x, new_y = point_space.convert_coordinates_to_new_system(pixel_space, x, y)
+            converted_points.append((new_x, new_y))
+
+        element.metadata.coordinates = CoordinatesMetadata(
+            points=converted_points,
+            system=pixel_space,
+        )
+
+        # reset for next element
+        min_x = float("inf")
+        min_y = float("inf")
+        max_x = 0
+        max_y = 0
+        i += char_count
+
+    return elements
+
+
 @requires_dependencies("pytesseract")
 def _partition_pdf_or_image_with_ocr(
     filename: str = "",
@@ -471,7 +531,7 @@ def _partition_pdf_or_image_with_ocr(
     min_partition: Optional[int] = 0,
     metadata_last_modified: Optional[str] = None,
 ):
-    """Partitions and image or PDF using Tesseract OCR. For PDFs, each page is converted
+    """Partitions an image or PDF using Tesseract OCR. For PDFs, each page is converted
     to an image prior to processing."""
     import pytesseract
 
@@ -479,14 +539,19 @@ def _partition_pdf_or_image_with_ocr(
         if file is not None:
             image = PIL.Image.open(file)
             text = pytesseract.image_to_string(image, config=f"-l '{ocr_languages}'")
+            bboxes = pytesseract.image_to_boxes(image, config=f"-l '{ocr_languages}'")
         else:
+            image = PIL.Image.open(filename)
             text = pytesseract.image_to_string(filename, config=f"-l '{ocr_languages}'")
+            bboxes = pytesseract.image_to_boxes(filename, config=f"-l '{ocr_languages}'")
         elements = partition_text(
             text=text,
             max_partition=max_partition,
             min_partition=min_partition,
             metadata_last_modified=metadata_last_modified,
         )
+        width, height = image.size
+        add_pytesseract_bbox_to_elements(elements, bboxes, width, height)
 
     else:
         elements = []
@@ -499,6 +564,8 @@ def _partition_pdf_or_image_with_ocr(
                 last_modified=metadata_last_modified,
             )
             text = pytesseract.image_to_string(image, config=f"-l '{ocr_languages}'")
+            bboxes = pytesseract.image_to_boxes(image, config=f"-l '{ocr_languages}'")
+            width, height = image.size
 
             _elements = partition_text(
                 text=text,
@@ -508,6 +575,8 @@ def _partition_pdf_or_image_with_ocr(
             for element in _elements:
                 element.metadata = metadata
                 elements.append(element)
+
+            add_pytesseract_bbox_to_elements(elements, bboxes, width, height)
 
             if include_page_breaks:
                 elements.append(PageBreak(text=""))

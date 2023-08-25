@@ -6,6 +6,8 @@
 
 ### Features
 
+* Extract coordinates from PDFs and images when using OCR only strategy and add to metadata
+
 ### Fixes
 
 * Update `partition_html` to respect the order of `<pre>` tags.

@@ -789,3 +789,31 @@ def test_partition_pdf_with_json(
 
     for i in range(len(elements)):
         assert elements[i] == test_elements[i]
+
+
+def test_partition_pdf_with_ocr_has_coordinates_from_filename(
+    filename="example-docs/chevron-page.pdf",
+):
+    elements = pdf.partition_pdf(filename=filename, strategy="ocr_only")
+    assert elements[0].metadata.coordinates.points == [
+        (657.0, 2144.0),
+        (657.0, 2106.0),
+        (1043.0, 2106.0),
+        (1043.0, 2144.0),
+    ]
+
+
+def test_partition_pdf_with_ocr_has_coordinates_from_file(
+    filename="example-docs/chevron-page.pdf",
+):
+    with open(filename, "rb") as f:
+        elements = pdf.partition_pdf(
+            file=f,
+            strategy="ocr_only",
+        )
+    assert elements[0].metadata.coordinates.points == [
+        (657.0, 2144.0),
+        (657.0, 2106.0),
+        (1043.0, 2106.0),
+        (1043.0, 2144.0),
+    ]
