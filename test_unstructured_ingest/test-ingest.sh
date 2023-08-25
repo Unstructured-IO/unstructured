@@ -30,7 +30,7 @@ export OMP_THREAD_LIMIT=1
 ./test_unstructured_ingest/test-ingest-confluence-large.sh
 ./test_unstructured_ingest/test-ingest-airtable-diff.sh
 ./test_unstructured_ingest/test-ingest-airtable-large.sh
-./test_unstructured_ingest/test-ingest-local-single-file.sh
+./test_unstructured_ingest/test-ingest-local-ocr-langs.sh
 ./test_unstructured_ingest/test-ingest-local-single-file-with-encoding.sh
 ./test_unstructured_ingest/test-ingest-local-single-file-with-pdf-infer-table-structure.sh
 ./test_unstructured_ingest/test-ingest-notion.sh
