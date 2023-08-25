@@ -69,7 +69,6 @@ class SimpleFsspecConfig(BaseConnectorConfig):
         self.file_path = match.group(2) or ""
 
     def get_access_kwargs(self) -> dict:
-        print("TEST FSSPEC")
         return self.access_kwargs
 
 
