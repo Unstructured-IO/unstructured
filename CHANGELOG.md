@@ -1,8 +1,9 @@
-## 0.10.6-dev0
+## 0.10.6-dev1
 
 ### Enhancements
 * Fix `test_json` to handle only non-extra dependencies file types (plain-text)
 * Add json invariant tests to all the filetype tests (`partition_filetype() == partition_json(element_to_json)`)
+* Add threaded Slack conversations into Slack connector output
 
 ### Features
 
@@ -11,6 +12,9 @@
 * Fix bug in `partition_pdf_or_image` where two partitions were called if `strategy == "ocr_only"`.
 * Bump unstructured-inference
   * Fix issue where temporary files were being left behind (0.5.16)
+* Adds deprecation warning for the `file_filename` kwarg to `partition`, `partition_via_api`,
+  and `partition_multiple_via_api`.
+* Fix documentation build workflow by pinning dependencies
 
 ## 0.10.5
 
@@ -39,6 +43,7 @@
 * Add diagrams and descriptions for ingest design in the ingest README
 
 ### Features
+* Supports multipage TIFF image partitioning
 
 ### Fixes
 
