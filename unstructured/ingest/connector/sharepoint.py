@@ -52,6 +52,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     is_page: bool
     file_path: str
     meta: SharepointFileMeta
+    registry_name: str = 'sharepoint'
 
     def __post_init__(self):
         self.extension = "".join(Path(self.file_path).suffixes) if not self.is_page else ".html"

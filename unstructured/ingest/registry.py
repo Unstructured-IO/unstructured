@@ -2,7 +2,7 @@ import json
 from typing import Dict, Type
 
 from dataclasses_json import DataClassJsonMixin
-from unsturctured.ingest.interfaces import BaseIngestDoc
+from unstructured.ingest.interfaces import BaseIngestDoc
 
 from unstructured.ingest.connector.airtable import AirtableIngestDoc
 from unstructured.ingest.connector.azure import AzureBlobStorageIngestDoc

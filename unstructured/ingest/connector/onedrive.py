@@ -66,9 +66,10 @@ class OneDriveFileMeta:
 @dataclass
 class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleOneDriveConfig
-    file_parent_path: str
     file_name: str
     file_path: str
+    meta: OneDriveFileMeta
+    registry_name: str = 'onedrive'
 
     def __post_init__(self):
         self.ext = "".join(Path(self.file_name).suffixes)
@@ -80,6 +81,8 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 f"Extension not supported. "
                 f"Value MUST be one of {', '.join([k for k in EXT_TO_FILETYPE if k is not None])}.",
             )
+        
+        self.server_relative_path = self.file_path+'/'+self.file_name
         self._set_download_paths()
 
     def _set_download_paths(self) -> None:
@@ -87,16 +90,23 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         download_path = Path(f"{self.standard_config.download_dir}")
         output_path = Path(f"{self.standard_config.output_dir}")
 
-        if parent_ref := self.file_parent_path.split(":")[-1]:
-            odir = parent_ref[1:] if parent_ref[0] == "/" else parent_ref
-            download_path = download_path if odir == "" else (download_path / odir).resolve()
-            output_path = output_path if odir == "" else (output_path / odir).resolve()
+        if parent_path := self.file_path:
+            download_path = download_path if parent_path == "" else (download_path / parent_path).resolve()
+            output_path = output_path if parent_path == "" else (output_path / parent_path).resolve()
 
         self.download_dir = download_path
         self.download_filepath = (download_path / self.file_name).resolve()
         oname = f"{self.file_name[:-len(self.ext)]}.json"
         self.output_dir = output_path
         self.output_filepath = (output_path / oname).resolve()
+
+    @property
+    def filename(self):
+        return Path(self.download_filepath).resolve()
+
+    @property
+    def _output_filename(self):
+        return Path(self.output_filepath).resolve()
 
     @BaseIngestDoc.skip_if_file_exists
     @requires_dependencies(["office365"], extras="onedrive")
@@ -106,9 +116,7 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         try:
             client = GraphClient(self.config.token_factory)
             root = client.users[self.config.user_pname].drive.get().execute_query().root
-            if fpath := self.config.path:
-                root = root.get_by_path(fpath).get().execute_query()
-            self.file = root.get_by_path(self.file_path).get().execute_query()
+            self.file = root.get_by_path(self.server_relative_path).get().execute_query()
             fsize = self.file.get_property("size", 0)
             self.output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -153,6 +161,26 @@ class OneDriveConnector(ConnectorCleanupMixin, BaseConnector):
         for f in folders:
             files += self._list_objects(f, recursive)
         return files
+    
+    def _gen_ingest_doc(self, file: "DriveItem") -> OneDriveIngestDoc:
+        file_path = file.parent_reference.path.split(":")[-1]
+        file_path = file_path[1:] if file_path[0] == "/" else file_path
+        version = ''
+        if (n_versions := len(file.versions)) > 0:
+            version = file.versions[n_versions - 1].content
+
+        return OneDriveIngestDoc(
+            self.standard_config, 
+            self.config,
+            file.name,
+            file_path,
+            OneDriveFileMeta(
+                file.created_datetime,
+                file.last_modified_datetime,
+                version,
+                file.get_property("size", 0)
+            )
+        )
 
     def initialize(self):
         pass
@@ -164,4 +192,4 @@ class OneDriveConnector(ConnectorCleanupMixin, BaseConnector):
             if root is None or not root.is_folder:
                 raise ValueError(f"Unable to find directory, given: {fpath}")
         files = self._list_objects(root, self.config.recursive)
-        return [OneDriveIngestDoc(self.standard_config, self.config, f) for f in files]
+        return [self._gen_ingest_doc(f) for f in files]
