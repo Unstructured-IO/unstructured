@@ -3,6 +3,8 @@
 ### Enhancements
 * Add threaded Slack conversations into Slack connector output
 
+* Add functionality to sort elements using `xy-cut` sorting approach in `partition_pdf` for `hi_res` and `fast` strategies
+
 ### Features
 
 ### Fixes
