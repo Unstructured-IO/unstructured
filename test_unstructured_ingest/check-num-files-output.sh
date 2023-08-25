@@ -15,6 +15,11 @@ OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 num_files_created="$(find "$OUTPUT_DIR" -type f -exec printf '.' \; | wc -c | xargs)"
 
 echo "TEST: $num_files_created files created. $EXPECTED_NUM_FILES files should have been created."
+echo "DEBUG: num_files_created = $num_files_created"
+echo "DEBUG: EXPECTED_NUM_FILES = $EXPECTED_NUM_FILES"
+echo "DEBUG: OVERWRITE_FIXTURES = $OVERWRITE_FIXTURES"
+if [ "$num_files_created" -ne "$EXPECTED_NUM_FILES" ]; then echo "DEBUG: num_files_created != EXPECTED_NUM_FILES"; fi
+if [ "$OVERWRITE_FIXTURES" = "false" ]; then echo "DEBUG: OVERWRITE_FIXTURES = false"; fi
 
 if [ "$num_files_created" -ne "$EXPECTED_NUM_FILES" ] && [ "$OVERWRITE_FIXTURES" = "false" ]; then
    echo
