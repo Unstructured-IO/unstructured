@@ -61,7 +61,6 @@ class OneDriveFileMeta:
     date_created: str
     date_modified: str
     version: str
-    file_size: str
 
 @dataclass
 class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
@@ -178,7 +177,6 @@ class OneDriveConnector(ConnectorCleanupMixin, BaseConnector):
                 file.created_datetime,
                 file.last_modified_datetime,
                 version,
-                file.get_property("size", 0)
             )
         )
 
