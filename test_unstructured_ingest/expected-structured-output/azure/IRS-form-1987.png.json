@@ -20,6 +20,96 @@
     "text": "(Section references are to the Internal Revenue Code unless otherwise noted.)"
   },
   {
+    "type": "Title",
+    "element_id": "61ed58fa51293f429f87e8cf1896c9e4",
+    "metadata": {
+      "data_source": {},
+      "filetype": "image/png",
+      "page_number": 1
+    },
+    "text": "Paperwork Reduction Act Notice"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "4660422c06dddc914ab634c5e4045dec",
+    "metadata": {
+      "data_source": {},
+      "filetype": "image/png",
+      "page_number": 1
+    },
+    "text": "We ask for this information to carry out the Internal Revenue laws of the United States. We need it to ensure that taxpayers are complying with these laws an¢ to allow us to figure and collect the nght amount of tax. You are required to give us this information."
+  },
+  {
+    "type": "Title",
+    "element_id": "a1547a4ed1611eee44b15e99120fb978",
+    "metadata": {
+      "data_source": {},
+      "filetype": "image/png",
+      "page_number": 1
+    },
+    "text": "General Instructions"
+  },
+  {
+    "type": "Title",
+    "element_id": "68a3289177b49b285e133a5267eb355f",
+    "metadata": {
+      "data_source": {},
+      "filetype": "image/png",
+      "page_number": 1
+    },
+    "text": "Purpose of Form"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "f9b8e17da7a31507773f78959378e09c",
+    "metadata": {
+      "data_source": {},
+      "filetype": "image/png",
+      "page_number": 1
+    },
+    "text": "File this form to request a change in your accounting method, including the accounting treatment of any item. if you are requesting 2 change in accounting period, use Form 1128, Application for Change in Accounting Period. For more information, see Publication 538, Accounting Periods and Methods,"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "b3859f2f29884b1d3ba0892e52859a99",
+    "metadata": {
+      "data_source": {},
+      "filetype": "image/png",
+      "page_number": 1
+    },
+    "text": "When filing Form 3115, taxpayers are reminded to determine if IRS has published a ruling or procedure dealing with the specific type of change since November 1987 (the current. revision date of Form 3115)"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "e5a95dc10d4071983b70898a21f11175",
+    "metadata": {
+      "data_source": {},
+      "filetype": "image/png",
+      "page_number": 1
+    },
+    "text": "Generally, applicants must complete Section ‘A. In addition, complete the appropriate sections (B:1 through H) for which a change is desired."
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e9d9ab5eb5ff32a31a32bda940a33b7a",
+    "metadata": {
+      "data_source": {},
+      "filetype": "image/png",
+      "page_number": 1
+    },
+    "text": "). Do not file Form"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "29b33c1e0aea8247e6576bd9ad14448e",
+    "metadata": {
+      "data_source": {},
+      "filetype": "image/png",
+      "page_number": 1
+    },
+    "text": "IRB"
+  },
+  {
     "type": "ListItem",
     "element_id": "36a565493a214d3f7e7f24794c1dc7f4",
     "metadata": {
@@ -51,6 +141,16 @@
   },
   {
     "type": "ListItem",
+    "element_id": "8a5edab282632443219e051e4ade2d1d",
+    "metadata": {
+      "data_source": {},
+      "filetype": "image/png",
+      "page_number": 1
+    },
+    "text": "/"
+  },
+  {
+    "type": "ListItem",
     "element_id": "32ebb1abcc1c601ceb9c4e3c4faba0ca",
     "metadata": {
       "data_source": {},
@@ -58,26 +158,6 @@
       "page_number": 1
     },
     "text": "("
-  },
-  {
-    "type": "ListItem",
-    "element_id": "8a5edab282632443219e051e4ade2d1d",
-    "metadata": {
-      "data_source": {},
-      "filetype": "image/png",
-      "page_number": 1
-    },
-    "text": "/"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "8a5edab282632443219e051e4ade2d1d",
-    "metadata": {
-      "data_source": {},
-      "filetype": "image/png",
-      "page_number": 1
-    },
-    "text": "/"
   },
   {
     "type": "ListItem",
@@ -98,16 +178,6 @@
       "page_number": 1
     },
     "text": "-"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "29b33c1e0aea8247e6576bd9ad14448e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "image/png",
-      "page_number": 1
-    },
-    "text": "IRB"
   },
   {
     "type": "ListItem",
@@ -191,13 +261,13 @@
   },
   {
     "type": "ListItem",
-    "element_id": "e9d9ab5eb5ff32a31a32bda940a33b7a",
+    "element_id": "8a5edab282632443219e051e4ade2d1d",
     "metadata": {
       "data_source": {},
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "). Do not file Form"
+    "text": "/"
   },
   {
     "type": "ListItem",
@@ -221,23 +291,13 @@
   },
   {
     "type": "Title",
-    "element_id": "61ed58fa51293f429f87e8cf1896c9e4",
+    "element_id": "5756fb398995bb6518a87637f24f426e",
     "metadata": {
       "data_source": {},
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Paperwork Reduction Act Notice"
-  },
-  {
-    "type": "Title",
-    "element_id": "55d4f33b09f24dd3b27865a5f34bfeb9",
-    "metadata": {
-      "data_source": {},
-      "filetype": "image/png",
-      "page_number": 1
-    },
-    "text": "Signature tea"
+    "text": "Time and Place for Filing"
   },
   {
     "type": "ListItem",
@@ -250,74 +310,14 @@
     "text": "Individuals.—An individual desiring the change should sign the application. Ifthe application pertains to a husband and wife filing a joint Income tax return, the names of both should appear in the heading and both should sign Partnerships.—The form should be signed with the partnership name followed by the signature of one of the general partners and the words “General Partner.” Corporations, cooperatives, and insurance companies.—The form should show the name of the corporation, cooperative, or insurance Company and the signature of the president, vice president, treasurer, assistant treasurer, or chief accounting officer (such as tax officer) authorized tosign, and his or her official title. Receivers, trustees, or assignees must sign any application they are required to file, For a subsidiary corporation filing a consolidated return with its parent, the form should be signed by an officer of the parent corporation, Fiduciaries.—The-form should show the name of the estate or trust and be signed by the fiduciary, personal representative, executor, executrix, administrator, administratrx, etc’, having legal authority to'sign, and his or her ttle. Preparer other than partner, officer, etc.—The signature of the individual preparing the application should appear in the space provided on page"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "4660422c06dddc914ab634c5e4045dec",
-    "metadata": {
-      "data_source": {},
-      "filetype": "image/png",
-      "page_number": 1
-    },
-    "text": "We ask for this information to carry out the Internal Revenue laws of the United States. We need it to ensure that taxpayers are complying with these laws an¢ to allow us to figure and collect the nght amount of tax. You are required to give us this information."
-  },
-  {
     "type": "Title",
-    "element_id": "a1547a4ed1611eee44b15e99120fb978",
+    "element_id": "55d4f33b09f24dd3b27865a5f34bfeb9",
     "metadata": {
       "data_source": {},
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "General Instructions"
-  },
-  {
-    "type": "Title",
-    "element_id": "68a3289177b49b285e133a5267eb355f",
-    "metadata": {
-      "data_source": {},
-      "filetype": "image/png",
-      "page_number": 1
-    },
-    "text": "Purpose of Form"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "f9b8e17da7a31507773f78959378e09c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "image/png",
-      "page_number": 1
-    },
-    "text": "File this form to request a change in your accounting method, including the accounting treatment of any item. if you are requesting 2 change in accounting period, use Form 1128, Application for Change in Accounting Period. For more information, see Publication 538, Accounting Periods and Methods,"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "b3859f2f29884b1d3ba0892e52859a99",
-    "metadata": {
-      "data_source": {},
-      "filetype": "image/png",
-      "page_number": 1
-    },
-    "text": "When filing Form 3115, taxpayers are reminded to determine if IRS has published a ruling or procedure dealing with the specific type of change since November 1987 (the current. revision date of Form 3115)"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "e5a95dc10d4071983b70898a21f11175",
-    "metadata": {
-      "data_source": {},
-      "filetype": "image/png",
-      "page_number": 1
-    },
-    "text": "Generally, applicants must complete Section ‘A. In addition, complete the appropriate sections (B:1 through H) for which a change is desired."
-  },
-  {
-    "type": "Title",
-    "element_id": "5756fb398995bb6518a87637f24f426e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "image/png",
-      "page_number": 1
-    },
-    "text": "Time and Place for Filing"
+    "text": "Signature tea"
   },
   {
     "type": "NarrativeText",
@@ -331,16 +331,6 @@
   },
   {
     "type": "Title",
-    "element_id": "8b06cd6e2bf7fc15130d5d9ed7e66283",
-    "metadata": {
-      "data_source": {},
-      "filetype": "image/png",
-      "page_number": 1
-    },
-    "text": "Affiliated Groups"
-  },
-  {
-    "type": "Title",
     "element_id": "242a9dba10a04654d4adef9c58ff96f6",
     "metadata": {
       "data_source": {},
@@ -348,6 +338,16 @@
       "page_number": 1
     },
     "text": "Changes to Accounting Methods Required Under the Tax Reform Act of 1986"
+  },
+  {
+    "type": "Title",
+    "element_id": "8b06cd6e2bf7fc15130d5d9ed7e66283",
+    "metadata": {
+      "data_source": {},
+      "filetype": "image/png",
+      "page_number": 1
+    },
+    "text": "Affiliated Groups"
   },
   {
     "type": "Title",

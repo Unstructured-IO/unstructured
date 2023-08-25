@@ -1,14 +1,23 @@
-## 0.10.6-dev0
+## 0.10.6-dev2
 
 ### Enhancements
+* Add threaded Slack conversations into Slack connector output
+
+* Add functionality to sort elements using `xy-cut` sorting approach in `partition_pdf` for `hi_res` and `fast` strategies
 
 ### Features
 
+* Extract coordinates from PDFs and images when using OCR only strategy and add to metadata
+
 ### Fixes
 
+* Update `partition_html` to respect the order of `<pre>` tags.
 * Fix bug in `partition_pdf_or_image` where two partitions were called if `strategy == "ocr_only"`.
 * Bump unstructured-inference
   * Fix issue where temporary files were being left behind (0.5.16)
+* Adds deprecation warning for the `file_filename` kwarg to `partition`, `partition_via_api`,
+  and `partition_multiple_via_api`.
+* Fix documentation build workflow by pinning dependencies
 
 ## 0.10.5
 
@@ -37,6 +46,7 @@
 * Add diagrams and descriptions for ingest design in the ingest README
 
 ### Features
+* Supports multipage TIFF image partitioning
 
 ### Fixes
 

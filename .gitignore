@@ -188,3 +188,6 @@ tags
 .ruff_cache/
 
 unstructured-inference/
+
+example-docs/*_images
+examples/**/output/

@@ -331,8 +331,8 @@ def test_partition_html_with_pre_tag():
 
     assert len(elements) > 0
     assert "PageBreak" not in [elem.category for elem in elements]
-    assert clean_extra_whitespace(elements[0].text) == "[107th Congress Public Law 56]"
-    assert isinstance(elements[0], Title)
+    assert clean_extra_whitespace(elements[0].text).startswith("[107th Congress Public Law 56]")
+    assert isinstance(elements[0], NarrativeText)
     assert elements[0].metadata.filetype == "text/html"
     assert elements[0].metadata.filename == "fake-html-pre.htm"
 
@@ -582,3 +582,19 @@ def test_partition_html_grabs_emphasized_texts():
     assert elements[4] == Title("A lone span text!")
     assert elements[4].metadata.emphasized_text_contents == ["A lone span text!"]
     assert elements[4].metadata.emphasized_text_tags == ["span"]
+
+
+def test_pre_tag_parsing_respects_order():
+    html_text = """
+    <pre>The Big Brown Bear</pre>
+    <div>The big brown bear is growling.</div>
+    <pre>The big brown bear is sleeping.</pre>
+    <div>The Big Blue Bear</div>
+    """
+    elements = partition_html(text=html_text)
+    assert elements == [
+        Title("The Big Brown Bear"),
+        NarrativeText("The big brown bear is growling."),
+        NarrativeText("The big brown bear is sleeping."),
+        Title("The Big Blue Bear"),
+    ]

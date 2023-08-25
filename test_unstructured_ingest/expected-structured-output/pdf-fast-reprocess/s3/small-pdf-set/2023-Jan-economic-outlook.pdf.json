@@ -150,6 +150,86 @@
     "text": "Figure 1. Twin Peaks? Headline and Core Inflation (Percent, year over year)"
   },
   {
+    "type": "UncategorizedText",
+    "element_id": "808caaef5b114d874a25b7fec21b5516",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "18 16 14 12 10 8 6 4 2 0 –2"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "28a5aa3897d66de6c31caba99a4c337e",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "–2"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "e26dceaba57a5f670d91ac170e8706d1",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Sources: Haver Analytics; and IMF staff calculations. Note: The figure shows the developments in headline and core inflation across 18 advanced economies and 17 emerging market and developing economies. Core inflation is the change in prices for goods and services, but excluding those for food and energy (or the closest available measure). For the euro area (and other European countries for which the data are available), energy, food, alcohol, and tobacco are excluded. The gray bands depict the 10th to 90th percentiles of inflation across economies."
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "c2c7be4534a60790d1d18451c91dc138",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "16 14 12 10 8 6 4 2 0"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "c7c72889cb49cf43d9bd1f892db1be2c",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jan. 2019"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "c7c72889cb49cf43d9bd1f892db1be2c",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jan. 2019"
+  },
+  {
+    "type": "Title",
+    "element_id": "63e35649dd179389ecc7251e1503489a",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "1. Headline Inflation"
+  },
+  {
+    "type": "Title",
+    "element_id": "b790ab5fcad28bbedb50b568b3adeca2",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "2. Core Inflation"
+  },
+  {
     "type": "Title",
     "element_id": "323d79e74460eda1fb0f8d55a2e0ff42",
     "metadata": {
@@ -158,6 +238,66 @@
       "page_number": 3
     },
     "text": "Median country Brazil"
+  },
+  {
+    "type": "Title",
+    "element_id": "646612b0a62b59fd13be769b4590a9ac",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jul. 19"
+  },
+  {
+    "type": "Title",
+    "element_id": "646612b0a62b59fd13be769b4590a9ac",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jul. 19"
+  },
+  {
+    "type": "Title",
+    "element_id": "7a4f82ed474f82c26a8b867becaf89ba",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jan. 20"
+  },
+  {
+    "type": "Title",
+    "element_id": "7a4f82ed474f82c26a8b867becaf89ba",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jan. 20"
+  },
+  {
+    "type": "Title",
+    "element_id": "6d2f5e3c057e12c92023d5501c3fd075",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jul. 20"
+  },
+  {
+    "type": "Title",
+    "element_id": "6d2f5e3c057e12c92023d5501c3fd075",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jul. 20"
   },
   {
     "type": "Title",
@@ -171,6 +311,66 @@
   },
   {
     "type": "Title",
+    "element_id": "f4a93992a1b09b3fa6200542fd6fde5a",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jan. 21"
+  },
+  {
+    "type": "Title",
+    "element_id": "f4a93992a1b09b3fa6200542fd6fde5a",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jan. 21"
+  },
+  {
+    "type": "Title",
+    "element_id": "81db94f58819ee2fd6c05ddef2082ccc",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jul. 21"
+  },
+  {
+    "type": "Title",
+    "element_id": "81db94f58819ee2fd6c05ddef2082ccc",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jul. 21"
+  },
+  {
+    "type": "Title",
+    "element_id": "babfe67b3ecc6b32db9adb9da08274bf",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jan. 22"
+  },
+  {
+    "type": "Title",
+    "element_id": "babfe67b3ecc6b32db9adb9da08274bf",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jan. 22"
+  },
+  {
+    "type": "Title",
     "element_id": "007b2203e9e86a49c3108e9ffd16fbbc",
     "metadata": {
       "data_source": {},
@@ -180,94 +380,14 @@
     "text": "Euro area"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "808caaef5b114d874a25b7fec21b5516",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "18 16 14 12 10 8 6 4 2 0 –2"
-  },
-  {
     "type": "Title",
-    "element_id": "63e35649dd179389ecc7251e1503489a",
+    "element_id": "82debf5a182b9b394ad3a9d584a870ef",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 3
     },
-    "text": "1. Headline Inflation"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "c7c72889cb49cf43d9bd1f892db1be2c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jan. 2019"
-  },
-  {
-    "type": "Title",
-    "element_id": "646612b0a62b59fd13be769b4590a9ac",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jul. 19"
-  },
-  {
-    "type": "Title",
-    "element_id": "7a4f82ed474f82c26a8b867becaf89ba",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jan. 20"
-  },
-  {
-    "type": "Title",
-    "element_id": "6d2f5e3c057e12c92023d5501c3fd075",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jul. 20"
-  },
-  {
-    "type": "Title",
-    "element_id": "f4a93992a1b09b3fa6200542fd6fde5a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jan. 21"
-  },
-  {
-    "type": "Title",
-    "element_id": "81db94f58819ee2fd6c05ddef2082ccc",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jul. 21"
-  },
-  {
-    "type": "Title",
-    "element_id": "babfe67b3ecc6b32db9adb9da08274bf",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jan. 22"
+    "text": "Jul. 22"
   },
   {
     "type": "Title",
@@ -290,116 +410,6 @@
     "text": "Nov. 22"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "c2c7be4534a60790d1d18451c91dc138",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "16 14 12 10 8 6 4 2 0"
-  },
-  {
-    "type": "Title",
-    "element_id": "b790ab5fcad28bbedb50b568b3adeca2",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "2. Core Inflation"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "28a5aa3897d66de6c31caba99a4c337e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "–2"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "c7c72889cb49cf43d9bd1f892db1be2c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jan. 2019"
-  },
-  {
-    "type": "Title",
-    "element_id": "646612b0a62b59fd13be769b4590a9ac",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jul. 19"
-  },
-  {
-    "type": "Title",
-    "element_id": "7a4f82ed474f82c26a8b867becaf89ba",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jan. 20"
-  },
-  {
-    "type": "Title",
-    "element_id": "6d2f5e3c057e12c92023d5501c3fd075",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jul. 20"
-  },
-  {
-    "type": "Title",
-    "element_id": "f4a93992a1b09b3fa6200542fd6fde5a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jan. 21"
-  },
-  {
-    "type": "Title",
-    "element_id": "81db94f58819ee2fd6c05ddef2082ccc",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jul. 21"
-  },
-  {
-    "type": "Title",
-    "element_id": "babfe67b3ecc6b32db9adb9da08274bf",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jan. 22"
-  },
-  {
-    "type": "Title",
-    "element_id": "82debf5a182b9b394ad3a9d584a870ef",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jul. 22"
-  },
-  {
     "type": "Title",
     "element_id": "cc874418b59b7ecb37a2c938783fb5ce",
     "metadata": {
@@ -408,16 +418,6 @@
       "page_number": 3
     },
     "text": "Nov. 22"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "e26dceaba57a5f670d91ac170e8706d1",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Sources: Haver Analytics; and IMF staff calculations. Note: The figure shows the developments in headline and core inflation across 18 advanced economies and 17 emerging market and developing economies. Core inflation is the change in prices for goods and services, but excluding those for food and energy (or the closest available measure). For the euro area (and other European countries for which the data are available), energy, food, alcohol, and tobacco are excluded. The gray bands depict the 10th to 90th percentiles of inflation across economies."
   },
   {
     "type": "NarrativeText",
@@ -720,56 +720,6 @@
     "text": "Q4 over Q4 2/"
   },
   {
-    "type": "Title",
-    "element_id": "1968c7f7ac8a3b0483f733357bb50b16",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "WEO Projections 1/"
-  },
-  {
-    "type": "Title",
-    "element_id": "b88d850d87e55cb1fd14ae67e5644d57",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "Estimate 2022"
-  },
-  {
-    "type": "Title",
-    "element_id": "18665f77847d326417463628d8860261",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "Projections 2023"
-  },
-  {
-    "type": "Title",
-    "element_id": "b88d850d87e55cb1fd14ae67e5644d57",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "Estimate 2022"
-  },
-  {
-    "type": "Title",
-    "element_id": "18665f77847d326417463628d8860261",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "Projections 2023"
-  },
-  {
     "type": "UncategorizedText",
     "element_id": "1bea20e1df19b12013976de2b5e0e3d1",
     "metadata": {
@@ -780,6 +730,26 @@
     "text": "2021"
   },
   {
+    "type": "Title",
+    "element_id": "b88d850d87e55cb1fd14ae67e5644d57",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "Estimate 2022"
+  },
+  {
+    "type": "Title",
+    "element_id": "18665f77847d326417463628d8860261",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "Projections 2023"
+  },
+  {
     "type": "UncategorizedText",
     "element_id": "6557739a67283a8de383fc5c0997fbec",
     "metadata": {
@@ -788,6 +758,16 @@
       "page_number": 7
     },
     "text": "2024"
+  },
+  {
+    "type": "Title",
+    "element_id": "1968c7f7ac8a3b0483f733357bb50b16",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "WEO Projections 1/"
   },
   {
     "type": "UncategorizedText",
@@ -808,6 +788,26 @@
       "page_number": 7
     },
     "text": "2024"
+  },
+  {
+    "type": "Title",
+    "element_id": "b88d850d87e55cb1fd14ae67e5644d57",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "Estimate 2022"
+  },
+  {
+    "type": "Title",
+    "element_id": "18665f77847d326417463628d8860261",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "Projections 2023"
   },
   {
     "type": "UncategorizedText",
@@ -930,6 +930,26 @@
     "text": "Advanced Economies United States Euro Area"
   },
   {
+    "type": "Title",
+    "element_id": "18231df9f753f2eca887585247231761",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "Germany France Italy Spain"
+  },
+  {
+    "type": "Title",
+    "element_id": "7559320d044a32fbb21a7a8da25e9045",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "Japan United Kingdom Canada Other Advanced Economies 3/"
+  },
+  {
     "type": "UncategorizedText",
     "element_id": "2a9680555d457b6da4b6748492bb6f3d",
     "metadata": {
@@ -1021,26 +1041,6 @@
   },
   {
     "type": "Title",
-    "element_id": "18231df9f753f2eca887585247231761",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "Germany France Italy Spain"
-  },
-  {
-    "type": "Title",
-    "element_id": "7559320d044a32fbb21a7a8da25e9045",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "Japan United Kingdom Canada Other Advanced Economies 3/"
-  },
-  {
-    "type": "Title",
     "element_id": "a4ca51cd6c74adf51f6e9ce60165d047",
     "metadata": {
       "data_source": {},
@@ -1048,6 +1048,86 @@
       "page_number": 7
     },
     "text": "Emerging Market and Developing Economies Emerging and Developing Asia"
+  },
+  {
+    "type": "Title",
+    "element_id": "d5d29f012a1237803ee7e623a134117a",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "China India 4/"
+  },
+  {
+    "type": "Title",
+    "element_id": "8325885b8155742cebc672e0d7072a7d",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "Emerging and Developing Europe"
+  },
+  {
+    "type": "Title",
+    "element_id": "33a3d8ed92b0709ba525369922e51387",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "Russia"
+  },
+  {
+    "type": "Title",
+    "element_id": "ad1094978303f5aa32665083ee1ed934",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "Latin America and the Caribbean"
+  },
+  {
+    "type": "Title",
+    "element_id": "24af2841400373443d80b6c91180918b",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "Middle East and Central Asia"
+  },
+  {
+    "type": "Title",
+    "element_id": "e30a554d7d1cbf308651f8c267ad6872",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "Brazil Mexico"
+  },
+  {
+    "type": "Title",
+    "element_id": "b2800ff802361713acee893ebae272f6",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "Saudi Arabia Sub-Saharan Africa"
+  },
+  {
+    "type": "Title",
+    "element_id": "05704f84f4326b5f53a04d62f7ad62fc",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "Nigeria South Africa"
   },
   {
     "type": "UncategorizedText",
@@ -1138,86 +1218,6 @@
       "page_number": 7
     },
     "text": "4.1 4.9 4.1 7.1 2.8 2.0 1.9 2.2 1.9 . . . 3.5 . . . 2.9 1.8"
-  },
-  {
-    "type": "Title",
-    "element_id": "d5d29f012a1237803ee7e623a134117a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "China India 4/"
-  },
-  {
-    "type": "Title",
-    "element_id": "8325885b8155742cebc672e0d7072a7d",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "Emerging and Developing Europe"
-  },
-  {
-    "type": "Title",
-    "element_id": "33a3d8ed92b0709ba525369922e51387",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "Russia"
-  },
-  {
-    "type": "Title",
-    "element_id": "ad1094978303f5aa32665083ee1ed934",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "Latin America and the Caribbean"
-  },
-  {
-    "type": "Title",
-    "element_id": "e30a554d7d1cbf308651f8c267ad6872",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "Brazil Mexico"
-  },
-  {
-    "type": "Title",
-    "element_id": "24af2841400373443d80b6c91180918b",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "Middle East and Central Asia"
-  },
-  {
-    "type": "Title",
-    "element_id": "b2800ff802361713acee893ebae272f6",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "Saudi Arabia Sub-Saharan Africa"
-  },
-  {
-    "type": "Title",
-    "element_id": "05704f84f4326b5f53a04d62f7ad62fc",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "Nigeria South Africa"
   },
   {
     "type": "UncategorizedText",
@@ -1970,6 +1970,16 @@
     "text": "Overall, financial stability risks remain elevated as investors reassess their inflation and monetary policy outlook. Global financial conditions have eased somewhat since the October 2022 Global Financial Stability Report, driven largely by changing market expectations regarding the interest rate cycle (Figure 1.1). While the expected peak in policy rates—the terminal rate—has risen, markets now also expect the subsequent fall in rates will be significantly faster, and further, than what was forecast in October (Figure 1.2). As a result, global bond yields have recently declined, corporate spreads have tightened, and equity markets have rebounded. That said, central banks are likely to continue to tighten monetary policy to fight inflation, and concerns that this restrictive stance could tip the economy into a recession have increased in major advanced economies."
   },
   {
+    "type": "NarrativeText",
+    "element_id": "e118be83abfed92b8969eca98bb4d53b",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "Slowing aggregate demand and weaker-than-expected inflation prints in some major advanced economies have prompted investors’ anticipation of a further reduction in the pace of future policy rate hikes. Corporate earnings forecasts have been cut due to headwinds from slowing demand, and margins have contracted across most regions. In addition, survey-based probabilities of recession have been increasing, particularly in the United States and Europe. However, upside risks to the inflation outlook remain. Despite the recent moderation in headline inflation, core inflation remains stubbornly high across most regions, labor markets are still tight, energy prices remain pressured by Russia’s ongoing war in Ukraine, and supply chain disruptions may reappear. To keep these risks in check, financial conditions will likely need to tighten further. If not, central banks may need to increase policy rates even more in order to achieve their inflation objectives."
+  },
+  {
     "type": "Title",
     "element_id": "57de33ba9eaa9e5980d4cf6da83abf46",
     "metadata": {
@@ -1980,16 +1990,6 @@
     "text": "Figure 1.1. Global Financial Conditions: Selected Regions (Standard deviations from mean)"
   },
   {
-    "type": "Title",
-    "element_id": "4255f2d53f6408c450b02b249d53c220",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11
-    },
-    "text": "United States Euro area China Other AEs Other EMs"
-  },
-  {
     "type": "UncategorizedText",
     "element_id": "7902699be42c8a8e46fbbb4501726517",
     "metadata": {
@@ -1998,16 +1998,6 @@
       "page_number": 11
     },
     "text": "7"
-  },
-  {
-    "type": "Title",
-    "element_id": "53d79cec96694df67ce3baff95d8a2e3",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11
-    },
-    "text": "October 2022 GFSR"
   },
   {
     "type": "UncategorizedText",
@@ -2038,6 +2028,26 @@
       "page_number": 11
     },
     "text": "4"
+  },
+  {
+    "type": "Title",
+    "element_id": "4255f2d53f6408c450b02b249d53c220",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "United States Euro area China Other AEs Other EMs"
+  },
+  {
+    "type": "Title",
+    "element_id": "53d79cec96694df67ce3baff95d8a2e3",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "October 2022 GFSR"
   },
   {
     "type": "UncategorizedText",
@@ -2121,6 +2131,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "aacd834b5cdc64a329e27649143406dd",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "06"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "785329d8f1c63e8d0cdeedba9e6bc2ea",
     "metadata": {
       "data_source": {},
@@ -2151,6 +2171,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "b17ef6d19c7a5b1ee83b907c595526dc",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "16"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "99cb7a0185216a0acb0ed918e7058868",
     "metadata": {
       "data_source": {},
@@ -2171,26 +2201,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "aacd834b5cdc64a329e27649143406dd",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11
-    },
-    "text": "06"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "b17ef6d19c7a5b1ee83b907c595526dc",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11
-    },
-    "text": "16"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "f5ca38f748a1d6eaf726b8a42fb575c3",
     "metadata": {
       "data_source": {},
@@ -2208,16 +2218,6 @@
       "page_number": 11
     },
     "text": "Sources: Bloomberg Finance L.P.; Haver Analytics; national data sources; and IMF staff calculations. Note: AEs = advanced economies; EMs = emerging markets. GFSR = Global Financial Stability Report."
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "e118be83abfed92b8969eca98bb4d53b",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11
-    },
-    "text": "Slowing aggregate demand and weaker-than-expected inflation prints in some major advanced economies have prompted investors’ anticipation of a further reduction in the pace of future policy rate hikes. Corporate earnings forecasts have been cut due to headwinds from slowing demand, and margins have contracted across most regions. In addition, survey-based probabilities of recession have been increasing, particularly in the United States and Europe. However, upside risks to the inflation outlook remain. Despite the recent moderation in headline inflation, core inflation remains stubbornly high across most regions, labor markets are still tight, energy prices remain pressured by Russia’s ongoing war in Ukraine, and supply chain disruptions may reappear. To keep these risks in check, financial conditions will likely need to tighten further. If not, central banks may need to increase policy rates even more in order to achieve their inflation objectives."
   },
   {
     "type": "Title",
@@ -2251,16 +2251,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "ef2d127de37b942baad06145e54b0c61",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11
-    },
-    "text": "5"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "e7f6c011776e8db7cd330b54174fd76f",
     "metadata": {
       "data_source": {},
@@ -2268,16 +2258,6 @@
       "page_number": 11
     },
     "text": "6"
-  },
-  {
-    "type": "Title",
-    "element_id": "8e655408cf212df5f74df13e05cdf02c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11
-    },
-    "text": "2. Euro area"
   },
   {
     "type": "Title",
@@ -2290,6 +2270,16 @@
     "text": "1. United States"
   },
   {
+    "type": "Title",
+    "element_id": "8e655408cf212df5f74df13e05cdf02c",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "2. Euro area"
+  },
+  {
     "type": "UncategorizedText",
     "element_id": "ef2d127de37b942baad06145e54b0c61",
     "metadata": {
@@ -2311,6 +2301,146 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "4e07408562bedb8b60ce05c1decfe3ad",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "3"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d4735e3a265e16eee03f59718b9b5d03",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "2"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "6b86b273ff34fce19d6b804eff5a3f57",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "1"
+  },
+  {
+    "type": "Title",
+    "element_id": "49cf8421218222b21a0fc54ffce584c9",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "Oct. 22"
+  },
+  {
+    "type": "Title",
+    "element_id": "24a234895630131d612fc1b4605a256e",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "Apr. 23"
+  },
+  {
+    "type": "Title",
+    "element_id": "914e31edcbd035dbe9f1cfb7b29089a9",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "Oct. 23"
+  },
+  {
+    "type": "Title",
+    "element_id": "d8478f45b9790d52201238244d0e9698",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "Dec. 24"
+  },
+  {
+    "type": "Title",
+    "element_id": "fe1cc1c654c8a4fde402cfe2426326ef",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "Dec. 26"
+  },
+  {
+    "type": "Title",
+    "element_id": "49cf8421218222b21a0fc54ffce584c9",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "Oct. 22"
+  },
+  {
+    "type": "Title",
+    "element_id": "24a234895630131d612fc1b4605a256e",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "Apr. 23"
+  },
+  {
+    "type": "Title",
+    "element_id": "914e31edcbd035dbe9f1cfb7b29089a9",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "Oct. 23"
+  },
+  {
+    "type": "Title",
+    "element_id": "d8478f45b9790d52201238244d0e9698",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "Dec. 24"
+  },
+  {
+    "type": "Title",
+    "element_id": "fe1cc1c654c8a4fde402cfe2426326ef",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "Dec. 26"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "ef2d127de37b942baad06145e54b0c61",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "5"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "4b227777d4dd1fc61c6f884f48641d02",
     "metadata": {
       "data_source": {},
@@ -2331,26 +2461,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "4e07408562bedb8b60ce05c1decfe3ad",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11
-    },
-    "text": "3"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "d4735e3a265e16eee03f59718b9b5d03",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11
-    },
-    "text": "2"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "d4735e3a265e16eee03f59718b9b5d03",
     "metadata": {
       "data_source": {},
@@ -2368,116 +2478,6 @@
       "page_number": 11
     },
     "text": "1"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "6b86b273ff34fce19d6b804eff5a3f57",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11
-    },
-    "text": "1"
-  },
-  {
-    "type": "Title",
-    "element_id": "49cf8421218222b21a0fc54ffce584c9",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11
-    },
-    "text": "Oct. 22"
-  },
-  {
-    "type": "Title",
-    "element_id": "24a234895630131d612fc1b4605a256e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11
-    },
-    "text": "Apr. 23"
-  },
-  {
-    "type": "Title",
-    "element_id": "914e31edcbd035dbe9f1cfb7b29089a9",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11
-    },
-    "text": "Oct. 23"
-  },
-  {
-    "type": "Title",
-    "element_id": "d8478f45b9790d52201238244d0e9698",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11
-    },
-    "text": "Dec. 24"
-  },
-  {
-    "type": "Title",
-    "element_id": "fe1cc1c654c8a4fde402cfe2426326ef",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11
-    },
-    "text": "Dec. 26"
-  },
-  {
-    "type": "Title",
-    "element_id": "49cf8421218222b21a0fc54ffce584c9",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11
-    },
-    "text": "Oct. 22"
-  },
-  {
-    "type": "Title",
-    "element_id": "24a234895630131d612fc1b4605a256e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11
-    },
-    "text": "Apr. 23"
-  },
-  {
-    "type": "Title",
-    "element_id": "914e31edcbd035dbe9f1cfb7b29089a9",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11
-    },
-    "text": "Oct. 23"
-  },
-  {
-    "type": "Title",
-    "element_id": "d8478f45b9790d52201238244d0e9698",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11
-    },
-    "text": "Dec. 24"
-  },
-  {
-    "type": "Title",
-    "element_id": "fe1cc1c654c8a4fde402cfe2426326ef",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11
-    },
-    "text": "Dec. 26"
   },
   {
     "type": "NarrativeText",

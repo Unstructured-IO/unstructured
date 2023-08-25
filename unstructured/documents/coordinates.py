@@ -80,15 +80,15 @@ class RelativeCoordinateSystem(CoordinateSystem):
 
 
 class PixelSpace(CoordinateSystem):
-    """Coordinate system representing a pixel space, such as an image. The origin is at the bottom
-    right."""
+    """Coordinate system representing a pixel space, such as an image. The origin is at the top
+    left."""
 
     orientation = Orientation.SCREEN
 
 
 class PointSpace(CoordinateSystem):
-    """Coordinate system representing a point space, such as a pdf. The origin is at the top
-    right."""
+    """Coordinate system representing a point space, such as a pdf. The origin is at the bottom
+    left."""
 
     orientation = Orientation.CARTESIAN
 

@@ -118,24 +118,24 @@ def test_auto_partition_docx_with_file(mock_docx_document, expected_docx_element
 
 
 @pytest.mark.parametrize(
-    ("pass_file_filename", "content_type"),
+    ("pass_metadata_filename", "content_type"),
     [(False, None), (False, "application/msword"), (True, "application/msword"), (True, None)],
 )
 def test_auto_partition_doc_with_filename(
     mock_docx_document,
     expected_docx_elements,
     tmpdir,
-    pass_file_filename,
+    pass_metadata_filename,
     content_type,
 ):
     docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
     mock_docx_document.save(docx_filename)
     convert_office_doc(docx_filename, tmpdir.dirname, "doc")
-    file_filename = doc_filename if pass_file_filename else None
+    metadata_filename = doc_filename if pass_metadata_filename else None
     elements = partition(
         filename=doc_filename,
-        file_filename=file_filename,
+        metadata_filename=metadata_filename,
         content_type=content_type,
         strategy="hi_res",
     )
@@ -159,15 +159,15 @@ def test_auto_partition_doc_with_file(mock_docx_document, expected_docx_elements
 
 
 @pytest.mark.parametrize(
-    ("pass_file_filename", "content_type"),
+    ("pass_metadata_filename", "content_type"),
     [(False, None), (False, "text/html"), (True, "text/html"), (True, None)],
 )
-def test_auto_partition_html_from_filename(pass_file_filename, content_type):
+def test_auto_partition_html_from_filename(pass_metadata_filename, content_type):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "example-10k.html")
-    file_filename = filename if pass_file_filename else None
+    metadata_filename = filename if pass_metadata_filename else None
     elements = partition(
         filename=filename,
-        file_filename=file_filename,
+        metadata_filename=metadata_filename,
         content_type=content_type,
         strategy="hi_res",
     )
@@ -177,16 +177,16 @@ def test_auto_partition_html_from_filename(pass_file_filename, content_type):
 
 
 @pytest.mark.parametrize(
-    ("pass_file_filename", "content_type"),
+    ("pass_metadata_filename", "content_type"),
     [(False, None), (False, "text/html"), (True, "text/html"), (True, None)],
 )
-def test_auto_partition_html_from_file(pass_file_filename, content_type):
+def test_auto_partition_html_from_file(pass_metadata_filename, content_type):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-html.html")
-    file_filename = filename if pass_file_filename else None
+    metadata_filename = filename if pass_metadata_filename else None
     with open(filename) as f:
         elements = partition(
             file=f,
-            file_filename=file_filename,
+            metadata_filename=metadata_filename,
             content_type=content_type,
             strategy="hi_res",
         )
@@ -285,16 +285,16 @@ def test_auto_partition_text_from_file():
 
 
 @pytest.mark.parametrize(
-    ("pass_file_filename", "content_type"),
+    ("pass_metadata_filename", "content_type"),
     [(False, None), (False, "application/pdf"), (True, "application/pdf"), (True, None)],
 )
-def test_auto_partition_pdf_from_filename(pass_file_filename, content_type, request):
+def test_auto_partition_pdf_from_filename(pass_metadata_filename, content_type, request):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
-    file_filename = filename if pass_file_filename else None
+    metadata_filename = filename if pass_metadata_filename else None
 
     elements = partition(
         filename=filename,
-        file_filename=file_filename,
+        metadata_filename=metadata_filename,
         content_type=content_type,
         strategy="hi_res",
     )
@@ -332,6 +332,7 @@ def test_auto_partition_pdf_with_fast_strategy(monkeypatch):
 
     mock_partition.assert_called_once_with(
         filename=filename,
+        metadata_filename=None,
         file=None,
         url=None,
         include_page_breaks=False,
@@ -342,17 +343,17 @@ def test_auto_partition_pdf_with_fast_strategy(monkeypatch):
 
 
 @pytest.mark.parametrize(
-    ("pass_file_filename", "content_type"),
+    ("pass_metadata_filename", "content_type"),
     [(False, None), (False, "application/pdf"), (True, "application/pdf"), (True, None)],
 )
-def test_auto_partition_pdf_from_file(pass_file_filename, content_type, request):
+def test_auto_partition_pdf_from_file(pass_metadata_filename, content_type, request):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
-    file_filename = filename if pass_file_filename else None
+    metadata_filename = filename if pass_metadata_filename else None
 
     with open(filename, "rb") as f:
         elements = partition(
             file=f,
-            file_filename=file_filename,
+            metadata_filename=metadata_filename,
             content_type=content_type,
             strategy="hi_res",
         )
@@ -379,15 +380,15 @@ def test_partition_pdf_doesnt_raise_warning():
 
 
 @pytest.mark.parametrize(
-    ("pass_file_filename", "content_type"),
+    ("pass_metadata_filename", "content_type"),
     [(False, None), (False, "image/jpeg"), (True, "image/jpeg"), (True, None)],
 )
-def test_auto_partition_image_default_strategy_hi_res(pass_file_filename, content_type):
+def test_auto_partition_image_default_strategy_hi_res(pass_metadata_filename, content_type):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.jpg")
-    file_filename = filename if pass_file_filename else None
+    metadata_filename = filename if pass_metadata_filename else None
     elements = partition(
         filename=filename,
-        file_filename=file_filename,
+        metadata_filename=metadata_filename,
         content_type=content_type,
         strategy="auto",
     )
@@ -399,15 +400,15 @@ def test_auto_partition_image_default_strategy_hi_res(pass_file_filename, conten
 
 
 @pytest.mark.parametrize(
-    ("pass_file_filename", "content_type"),
+    ("pass_metadata_filename", "content_type"),
     [(False, None), (False, "image/jpeg"), (True, "image/jpeg"), (True, None)],
 )
-def test_auto_partition_jpg(pass_file_filename, content_type):
+def test_auto_partition_jpg(pass_metadata_filename, content_type):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.jpg")
-    file_filename = filename if pass_file_filename else None
+    metadata_filename = filename if pass_metadata_filename else None
     elements = partition(
         filename=filename,
-        file_filename=file_filename,
+        metadata_filename=metadata_filename,
         content_type=content_type,
         strategy="auto",
     )
@@ -415,16 +416,16 @@ def test_auto_partition_jpg(pass_file_filename, content_type):
 
 
 @pytest.mark.parametrize(
-    ("pass_file_filename", "content_type"),
+    ("pass_metadata_filename", "content_type"),
     [(False, None), (False, "image/jpeg"), (True, "image/jpeg"), (True, None)],
 )
-def test_auto_partition_jpg_from_file(pass_file_filename, content_type):
+def test_auto_partition_jpg_from_file(pass_metadata_filename, content_type):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.jpg")
-    file_filename = filename if pass_file_filename else None
+    metadata_filename = filename if pass_metadata_filename else None
     with open(filename, "rb") as f:
         elements = partition(
             file=f,
-            file_filename=file_filename,
+            metadata_filename=metadata_filename,
             content_type=content_type,
             strategy="auto",
         )
@@ -622,7 +623,7 @@ FILETYPE_TO_MODULE = {
 
 @pytest.mark.parametrize("filetype", supported_filetypes)
 def test_file_specific_produces_correct_filetype(filetype: FileType):
-    if filetype in (FileType.JPG, FileType.PNG, FileType.EMPTY):
+    if filetype in (FileType.JPG, FileType.PNG, FileType.TIFF, FileType.EMPTY):
         pytest.skip()
     extension = filetype.name.lower()
     filetype_module = (
@@ -829,8 +830,8 @@ def test_auto_partition_html_pre_from_file(filename="example-docs/fake-html-pre.
 
     assert len(elements) > 0
     assert "PageBreak" not in [elem.category for elem in elements]
-    assert clean_extra_whitespace(elements[0].text) == "[107th Congress Public Law 56]"
-    assert isinstance(elements[0], Title)
+    assert clean_extra_whitespace(elements[0].text).startswith("[107th Congress Public Law 56]")
+    assert isinstance(elements[0], NarrativeText)
     assert elements[0].metadata.filetype == "text/html"
     assert elements[0].metadata.filename == "fake-html-pre.htm"
 
@@ -874,11 +875,26 @@ def test_auto_partition_rst_from_file(filename="example-docs/README.rst"):
     assert elements[0].metadata.filetype == "text/x-rst"
 
 
-def test_auto_partition_metadata_file_filename():
+def test_auto_partition_metadata_filename():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
+    with open(filename) as f:
+        elements = partition(file=f, metadata_filename=filename)
+    assert elements[0].metadata.filename == os.path.split(filename)[-1]
+
+
+def test_auto_partition_warns_about_file_filename_deprecation(caplog):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
     with open(filename) as f:
         elements = partition(file=f, file_filename=filename)
     assert elements[0].metadata.filename == os.path.split(filename)[-1]
+    assert "WARNING" in caplog.text
+    assert "The file_filename kwarg will be deprecated" in caplog.text
+
+
+def test_auto_partition_raises_with_file_and_metadata_filename():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
+    with open(filename) as f, pytest.raises(ValueError):
+        partition(file=f, file_filename=filename, metadata_filename=filename)
 
 
 def test_get_partition_with_extras_prompts_for_install_if_missing():
