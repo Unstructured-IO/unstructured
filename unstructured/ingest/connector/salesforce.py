@@ -169,7 +169,7 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _create_full_tmp_dir_path(self):
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
 
-    def create_account(self, account_json: Dict[Any, Any]) -> str:
+    def create_account(self, account_json: Dict[str, Any]) -> str:
         """Creates partitionable account file"""
         account = ACCOUNT_TEMPLATE.substitute(
             id=account_json.get("Id"),
@@ -189,7 +189,7 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         )
         return dedent(account)
 
-    def create_lead(self, lead_json: Dict[Any, Any]) -> str:
+    def create_lead(self, lead_json: Dict[str, Any]) -> str:
         """Creates partitionable lead file"""
         lead = LEAD_TEMPLATE.substitute(
             id=lead_json.get("Id"),
@@ -207,7 +207,7 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         )
         return dedent(lead)
 
-    def create_case(self, case_json: Dict[Any, Any]) -> str:
+    def create_case(self, case_json: Dict[str, Any]) -> str:
         """Creates partitionable case file"""
         case = CASE_TEMPLATE.substitute(
             id=case_json.get("Id"),
@@ -222,7 +222,7 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         )
         return dedent(case)
 
-    def create_campaign(self, campaign_json: Dict[Any, Any]) -> str:
+    def create_campaign(self, campaign_json: Dict[str, Any]) -> str:
         """Creates partitionable campaign file"""
         campaign = CAMPAIGN_TEMPLATE.substitute(
             id=campaign_json.get("Id"),
@@ -239,7 +239,7 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         )
         return dedent(campaign)
 
-    def create_eml(self, email_json: Dict[Any, Any]) -> str:
+    def create_eml(self, email_json: Dict[str, Any]) -> str:
         """Recreates standard expected .eml format using template."""
         eml = EMAIL_TEMPLATE.substitute(
             date=formatdate(parser.parse(email_json.get("MessageDate")).timestamp()),
@@ -256,11 +256,9 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def get_file(self):
         """Saves individual json records locally."""
         self._create_full_tmp_dir_path()
-
         logger.debug(f"Writing file {self.record_id} - PID: {os.getpid()}")
 
         client = self.config._get_client()
-
         record = client.query_all(
             f"select FIELDS(STANDARD) from {self.record_type} where Id='{self.record_id}",
         )
