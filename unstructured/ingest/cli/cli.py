@@ -32,6 +32,7 @@ subcommands = [
     cli_cmds.confluence,
     cli_cmds.sharepoint,
     cli_cmds.airtable,
+    cli_cmds.jira,
 ]
 
 for subcommand in subcommands:
