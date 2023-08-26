@@ -43,7 +43,7 @@ iniconfig==2.0.0
     # via pytest
 label-studio-sdk==0.0.30
     # via -r requirements/test.in
-label-studio-tools==0.0.2
+label-studio-tools==0.0.3
     # via label-studio-sdk
 lxml==4.9.3
     # via
@@ -95,7 +95,7 @@ requests==2.31.0
     # via
     #   -c requirements/base.txt
     #   label-studio-sdk
-ruff==0.0.285
+ruff==0.0.286
     # via -r requirements/test.in
 six==1.16.0
     # via python-dateutil
