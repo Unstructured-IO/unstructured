@@ -67,7 +67,7 @@ def normalize_layout_element(
         Dict[str, Any],
     ],
     coordinate_system: Optional[CoordinateSystem] = None,
-    infer_list_items: bool = False,
+    infer_list_items: bool = True,
 ) -> Union[Element, List[Element]]:
     """Converts an unstructured_inference LayoutElement object to an unstructured Element."""
 
@@ -414,7 +414,7 @@ def document_to_element_list(
     sortable: bool = False,
     include_page_breaks: bool = False,
     last_modification_date: Optional[str] = None,
-    infer_list_items: bool = False,
+    infer_list_items: bool = True,
     **kwargs,
 ) -> List[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
