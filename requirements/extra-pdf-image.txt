@@ -91,6 +91,7 @@ opencv-python==4.8.0.76
     #   unstructured-inference
 packaging==23.1
     # via
+    #   -c requirements/base.txt
     #   huggingface-hub
     #   matplotlib
     #   onnxruntime
@@ -161,7 +162,7 @@ requests==2.31.0
     #   huggingface-hub
     #   torchvision
     #   transformers
-safetensors==0.3.2
+safetensors==0.3.3
     # via
     #   -c requirements/constraints.in
     #   timm
@@ -201,6 +202,7 @@ transformers==4.32.0
     # via unstructured-inference
 typing-extensions==4.7.1
     # via
+    #   -c requirements/base.txt
     #   huggingface-hub
     #   iopath
     #   torch

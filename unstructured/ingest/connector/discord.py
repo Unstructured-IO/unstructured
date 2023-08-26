@@ -58,6 +58,7 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     channel: str
     days: Optional[int]
     token: str
+    registry_name: str = "discord"
 
     def __post_init__(self):
         self.created_at = None
@@ -166,7 +167,6 @@ class DiscordConnector(ConnectorCleanupMixin, BaseConnector):
         super().__init__(standard_config, config)
 
     def initialize(self):
-        """Verify that can get metadata for an object, validates connections info."""
         pass
 
     def get_ingest_docs(self):

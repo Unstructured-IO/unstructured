@@ -58,10 +58,12 @@ mypy==1.5.1
     # via -r requirements/test.in
 mypy-extensions==1.0.0
     # via
+    #   -c requirements/base.txt
     #   black
     #   mypy
 packaging==23.1
     # via
+    #   -c requirements/base.txt
     #   black
     #   pytest
 pathspec==0.11.2
@@ -72,11 +74,13 @@ pluggy==1.2.0
     # via pytest
 pycodestyle==2.11.0
     # via flake8
-pydantic==1.10.12
+pydantic==2.3.0
     # via
     #   -c requirements/constraints.in
     #   -r requirements/test.in
     #   label-studio-sdk
+pydantic-core==2.6.3
+    # via pydantic
 pyflakes==3.1.0
     # via flake8
 pytest==7.4.0
@@ -117,6 +121,8 @@ types-urllib3==1.26.25.14
     # via types-requests
 typing-extensions==4.7.1
     # via
+    #   -c requirements/base.txt
+    #   annotated-types
     #   black
     #   mypy
     #   pydantic

@@ -39,6 +39,7 @@ class SimpleRedditConfig(BaseConnectorConfig):
 class RedditIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleRedditConfig = field(repr=False)
     post: "Submission"
+    registry_name: str = "reddit"
 
     def _create_full_tmp_dir_path(self):
         self.filename.parent.mkdir(parents=True, exist_ok=True)
