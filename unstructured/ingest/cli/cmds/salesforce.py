@@ -30,13 +30,12 @@ from unstructured.ingest.runner import salesforce as salesforce_fn
 @click.option(
     "--salesforce-consumer-key",
     required=True,
-    help="For the Salesforce JWT auth. Found in Consumer Details."
+    help="For the Salesforce JWT auth. Found in Consumer Details.",
 )
 @click.option(
     "--salesforce-private-key-path",
     required=True,
-    help="Path to the private key for the Salesforce JWT auth."
-    "Usually named server.key.",
+    help="Path to the private key for the Salesforce JWT auth." "Usually named server.key.",
 )
 def salesforce(**options):
     verbose = options.get("verbose", False)
