@@ -7,21 +7,15 @@ import re
 import zipfile
 from enum import Enum
 from functools import wraps
-from typing import IO, TYPE_CHECKING, Callable, List, Optional
+from typing import IO, Callable, Optional
 
-from unstructured.documents.coordinates import PixelSpace
-from unstructured.documents.elements import Element, PageBreak
 from unstructured.file_utils.encoding import detect_file_encoding, format_encoding_str
 from unstructured.nlp.patterns import LIST_OF_DICTS_PATTERN
 from unstructured.partition.common import (
     _add_element_metadata,
     _remove_element_metadata,
     exactly_one,
-    normalize_layout_element,
 )
-
-if TYPE_CHECKING:
-    from unstructured_inference.inference.layout import DocumentLayout, PageLayout
 
 try:
     import magic
@@ -75,6 +69,7 @@ class FileType(Enum):
     # Image Types
     JPG = 30
     PNG = 31
+    TIFF = 32
 
     # Plain Text Types
     EML = 40
@@ -109,6 +104,7 @@ STR_TO_FILETYPE = {
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document": FileType.DOCX,
     "image/jpeg": FileType.JPG,
     "image/png": FileType.PNG,
+    "image/tiff": FileType.TIFF,
     "text/plain": FileType.TXT,
     "text/x-csv": FileType.CSV,
     "application/csv": FileType.CSV,
@@ -181,6 +177,7 @@ EXT_TO_FILETYPE = {
     ".csv": FileType.CSV,
     ".tsv": FileType.TSV,
     ".tab": FileType.TSV,
+    ".tiff": FileType.TIFF,
     # NOTE(robinson) - for now we are treating code files as plain text
     ".js": FileType.TXT,
     ".py": FileType.TXT,
@@ -496,105 +493,6 @@ def _check_eml_from_buffer(file: IO) -> bool:
     else:
         file_head = file_content
     return EMAIL_HEAD_RE.match(file_head) is not None
-
-
-def document_to_element_list(
-    document: "DocumentLayout",
-    include_page_breaks: bool = False,
-    sort: bool = False,
-    last_modification_date: Optional[str] = None,
-    **kwargs,
-) -> List[Element]:
-    """Converts a DocumentLayout object to a list of unstructured elements."""
-    elements: List[Element] = []
-    num_pages = len(document.pages)
-    for i, page in enumerate(document.pages):
-        page_elements: List[Element] = []
-
-        page_image_metadata = _get_page_image_metadata(page)
-        image_format = page_image_metadata.get("format")
-        image_width = page_image_metadata.get("width")
-        image_height = page_image_metadata.get("height")
-
-        for layout_element in page.elements:
-            if image_width and image_height and hasattr(layout_element, "coordinates"):
-                coordinate_system = PixelSpace(width=image_width, height=image_height)
-            else:
-                coordinate_system = None
-
-            element = normalize_layout_element(layout_element, coordinate_system=coordinate_system)
-
-            if isinstance(element, List):
-                for el in element:
-                    if last_modification_date:
-                        el.metadata.last_modified = last_modification_date
-                    el.metadata.page_number = i + 1
-                page_elements.extend(element)
-                continue
-            else:
-                if last_modification_date:
-                    element.metadata.last_modified = last_modification_date
-                element.metadata.text_as_html = (
-                    layout_element.text_as_html if hasattr(layout_element, "text_as_html") else None
-                )
-                page_elements.append(element)
-            coordinates = (
-                element.metadata.coordinates.points if element.metadata.coordinates else None
-            )
-            _add_element_metadata(
-                element,
-                page_number=i + 1,
-                filetype=image_format,
-                coordinates=coordinates,
-                coordinate_system=coordinate_system,
-                **kwargs,
-            )
-        if sort:
-            page_elements = sorted(
-                page_elements,
-                key=lambda el: (
-                    el.metadata.coordinates.points[0][1]
-                    if el.metadata.coordinates
-                    else float("inf"),
-                    el.metadata.coordinates.points[0][0]
-                    if el.metadata.coordinates
-                    else float("inf"),
-                    el.id,
-                ),
-            )
-        if include_page_breaks and i < num_pages - 1:
-            page_elements.append(PageBreak(text=""))
-        elements.extend(page_elements)
-
-    return elements
-
-
-def _get_page_image_metadata(
-    page: PageLayout,
-) -> dict:
-    """Retrieve image metadata and coordinate system from a page."""
-
-    image = getattr(page, "image", None)
-    image_metadata = getattr(page, "image_metadata", None)
-
-    if image:
-        image_format = image.format
-        image_width = image.width
-        image_height = image.height
-    elif image_metadata:
-        image_format = image_metadata.get("format")
-        image_width = image_metadata.get("width")
-        image_height = image_metadata.get("height")
-    else:
-        image_format = None
-        image_width = None
-        image_height = None
-
-    return {
-        "format": image_format,
-        "width": image_width,
-        "height": image_height,
-    }
 
 
 PROGRAMMING_LANGUAGES = [

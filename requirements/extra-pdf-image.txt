@@ -56,7 +56,7 @@ iopath==0.1.10
     # via layoutparser
 jinja2==3.1.2
     # via torch
-kiwisolver==1.4.4
+kiwisolver==1.4.5
     # via matplotlib
 layoutparser[layoutmodels,tesseract]==0.3.4
     # via unstructured-inference
@@ -164,6 +164,7 @@ requests==2.31.0
     #   transformers
 safetensors==0.3.3
     # via
+    #   -c requirements/constraints.in
     #   timm
     #   transformers
 scipy==1.10.1
@@ -207,7 +208,7 @@ typing-extensions==4.7.1
     #   torch
 tzdata==2023.3
     # via pandas
-unstructured-inference==0.5.16
+unstructured-inference==0.5.17
     # via
     #   -c requirements/constraints.in
     #   -r requirements/extra-pdf-image.in
