@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Cleaning" href="cleaning.html" /><link rel="prev" title="Bricks" href="../bricks.html" />
 
   <link rel="shortcut icon" href="../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Partitioning - Unstructured 0.10.5 documentation</title>
+  <title>Partitioning - Unstructured 0.10.6 documentation</title>
   <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
@@ -625,6 +625,8 @@ workflow looks like:</p>
 <span class="p">)</span>
 </pre></div>
 </div>
+<p>If the content of an email is PGP encrypted, <code class="docutils literal notranslate"><span class="pre">partition_email</span></code> will return an empty
+list of elements and emit a warning indicated the email is encrypted.</p>
 <p>For more information about the <code class="docutils literal notranslate"><span class="pre">partition_email</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/email.py">source code here</a>.</p>
 </section>
 <section id="partition-epub">
@@ -768,6 +770,8 @@ workflow looks like:</p>
 <span class="p">)</span>
 </pre></div>
 </div>
+<p>If the content of an email is PGP encrypted, <code class="docutils literal notranslate"><span class="pre">partition_msg</span></code> will return an empty
+list of elements and emit a warning indicated the email is encrypted.</p>
 <p>For more information about the <code class="docutils literal notranslate"><span class="pre">partition_msg</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/msg.py">source code here</a>.</p>
 </section>
 <section id="partition-multiple-via-api">
@@ -798,7 +802,7 @@ for example:</p>
 
 <span class="k">with</span> <span class="n">ExitStack</span><span class="p">()</span> <span class="k">as</span> <span class="n">stack</span><span class="p">:</span>
     <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="n">stack</span><span class="o">.</span><span class="n">enter_context</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">))</span> <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">]</span>
-    <span class="n">documents</span> <span class="o">=</span> <span class="n">partition_multiple_via_api</span><span class="p">(</span><span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">,</span> <span class="n">file_filenames</span><span class="o">=</span><span class="n">filenames</span><span class="p">)</span>
+    <span class="n">documents</span> <span class="o">=</span> <span class="n">partition_multiple_via_api</span><span class="p">(</span><span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">,</span> <span class="n">metadata_filenames</span><span class="o">=</span><span class="n">filenames</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>For more information about the <code class="docutils literal notranslate"><span class="pre">partition_multiple_via_api</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/api.py">source code here</a>.</p>
@@ -1027,7 +1031,7 @@ type for the file. If you do not explicitly pass it, the MIME type will be infer
 <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_via_api</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;MY_API_KEY&quot;</span><span class="p">,</span> <span class="n">content_type</span><span class="o">=</span><span class="s2">&quot;message/rfc822&quot;</span><span class="p">)</span>
 
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-  <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_via_api</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">file_filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;MY_API_KEY&quot;</span><span class="p">)</span>
+  <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_via_api</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">metadata_filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;MY_API_KEY&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>You can pass additional settings such as <code class="docutils literal notranslate"><span class="pre">strategy</span></code>, <code class="docutils literal notranslate"><span class="pre">ocr_languages</span></code> and <code class="docutils literal notranslate"><span class="pre">encoding</span></code> to the
