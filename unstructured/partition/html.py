@@ -10,9 +10,9 @@ from unstructured.file_utils.file_conversion import convert_file_to_html_text
 from unstructured.file_utils.filetype import (
     FileType,
     add_metadata_with_filetype,
-    document_to_element_list,
 )
 from unstructured.partition.common import (
+    document_to_element_list,
     exactly_one,
     get_last_modified_date,
     get_last_modified_date_from_file,
@@ -121,6 +121,7 @@ def partition_html(
 
     return document_to_element_list(
         document,
+        sortable=False,
         include_page_breaks=include_page_breaks,
         last_modification_date=metadata_last_modified or last_modification_date,
         **kwargs,

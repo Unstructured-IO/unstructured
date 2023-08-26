@@ -1,0 +1,26 @@
+From: Michael Elkins <elkins@aero.org>
+To: Michael Elkins <elkins@aero.org>
+Mime-Version: 1.0
+Content-Type: multipart/encrypted; boundary=foo;
+	protocol="application/pgp-encrypted"
+
+--foo
+Content-Type: application/pgp-encrypted
+
+Version: 1
+
+--foo
+Content-Type: application/octet-stream
+
+-----BEGIN PGP MESSAGE-----
+Version: 2.6.2
+
+hIwDY32hYGCE8MkBA/wOu7d45aUxF4Q0RKJprD3v5Z9K1YcRJ2fve87lMlDlx4Oj
+eW4GDdBfLbJE7VUpp13N19GL8e/AqbyyjHH4aS0YoTk10QQ9nnRvjY8nZL3MPXSZ
+g9VGQxFeGqzykzmykU6A26MSMexR4ApeeON6xzZWfo+0yOqAq6lb46wsvldZ96YA
+AABH78hyX7YX4uT1tNCWEIIBoqqvCeIMpp7UQ2IzBrXg6GtukS8NxbukLeamqVW3
+1yt21DYOjuLzcMNe/JNsD9vDVCvOOG3OCi8=
+=zzaA
+-----END PGP MESSAGE-----
+
+--foo--
