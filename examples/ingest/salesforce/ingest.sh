@@ -3,7 +3,7 @@
 # Processes multiple files in a nested folder structure from Salesforce
 # through Unstructured's library in 2 processes.
 
-# Available categories are: EmailMessage, Account, Lead, Case, Campaign
+# Available categories are: Account, Case, Campaign, EmailMessage, Lead
 
 # Structured outputs are stored in salesforce-output/
 
@@ -24,7 +24,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
    --salesforce-private-key-path "$SALESFORCE_PRIVATE_KEY_PATH" \
    --salesforce-categories "EmailMessage,Account,Lead,Case,Campaign" \
    --structured-output-dir salesforce-output \
-   --download-dir salesforce-download \
    --preserve-downloads \
    --reprocess \
    --verbose

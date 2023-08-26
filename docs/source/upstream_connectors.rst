@@ -26,6 +26,7 @@ in our community `Slack. <https://join.slack.com/t/unstructuredw-kbe4326/shared_
    upstream_connectors/outlook
    upstream_connectors/reddit
    upstream_connectors/s3
+   upstream_connectors/salesforce
    upstream_connectors/sharepoint
    upstream_connectors/slack
    upstream_connectors/wikipedia

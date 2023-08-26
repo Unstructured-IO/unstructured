@@ -20,22 +20,23 @@ from unstructured.ingest.runner import salesforce as salesforce_fn
     default=None,
     required=True,
     help="Comma separated list of categories to download. "
-    "Do not specify subfolders. Use quotes if spaces in folder names.",
+    "Currently only Account, Case, Campaign, EmailMessage, Lead.",
 )
 @click.option(
     "--salesforce-username",
     required=True,
-    help="salesforce username bla bla.",
+    help="Salesforce username usually looks like an email.",
 )
 @click.option(
     "--salesforce-consumer-key",
     required=True,
-    help="password bla bla",
+    help="For the Salesforce JWT auth. Found in Consumer Details."
 )
 @click.option(
     "--salesforce-private-key-path",
     required=True,
-    help="token bla bla.",
+    help="Path to the private key for the Salesforce JWT auth."
+    "Usually named server.key.",
 )
 def salesforce(**options):
     verbose = options.get("verbose", False)
