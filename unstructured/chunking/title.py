@@ -15,7 +15,7 @@ def chunk_by_title(
             text = ""
             metadata = section[0].metadata
 
-            for element in section:
+            for i, element in enumerate(section):
                 if text:
                     text += "\n\n"
                 start_char = len(text)
@@ -23,13 +23,18 @@ def chunk_by_title(
 
                 for attr, value in vars(element.metadata).items():
                     if isinstance(value, list):
-                        _value = metadata.get(attr, [])
-                        if attr == "regex_metadata":
-                            value["start"] += start_char
-                            value["end"] += end_char
+                        _value = getattr(metadata, attr, [])
+                        if _value is None:
+                            _value = []
 
-                        _value.extend(value)
-                        metadata.set(attr, _value)
+                        if attr == "regex_metadata":
+                            for item in value:
+                                item["start"] += start_char
+                                item["end"] += start_char
+
+                        if i > 0:
+                            _value.extend(value)
+                            setattr(metadata, attr, _value)
 
             chunked_elements.append(Section(text=text, metadata=metadata))
 

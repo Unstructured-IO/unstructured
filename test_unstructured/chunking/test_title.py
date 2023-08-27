@@ -55,24 +55,35 @@ def test_split_elements_by_title_and_table():
 
 def test_chunk_by_title():
     elements = [
-        Title("A Great Day"),
-        Text("Today is a great day."),
+        Title("A Great Day", metadata=ElementMetadata(emphasized_text_contents=["Day"])),
+        Text("Today is a great day.", metadata=ElementMetadata(emphasized_text_contents=["day"])),
         Text("It is sunny outside."),
         Table("<table></table>"),
         Title("An Okay Day"),
         Text("Today is an okay day."),
         Text("It is rainy outside."),
         Title("A Bad Day"),
-        Text("Today is a bad day."),
+        Text(
+            "Today is a bad day.",
+            metadata=ElementMetadata(regex_metadata=[{"text": "A", "start": 0, "end": 1}]),
+        ),
         Text("It is storming outside."),
         CheckBox(),
     ]
-    sections = chunk_by_title(elements)
+    chunks = chunk_by_title(elements)
+    import ipdb; ipdb.set_trace()
 
-    assert sections == [
-        Section("A Great Day\n\nToday is a great day.\n\nIt is sunny outside."),
+    assert chunks == [
+        Section(
+            "A Great Day\n\nToday is a great day.\n\nIt is sunny outside.",
+        ),
         Table("<table></table>"),
         Section("An Okay Day\n\nToday is an okay day.\n\nIt is rainy outside."),
-        Section("A Bad Day\n\nToday is a bad day.\n\nIt is storming outside."),
+        Section(
+            "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside.",
+        ),
         CheckBox(),
     ]
+
+    assert chunks[0].metadata == ElementMetadata(emphasized_text_contents=["Day", "day"])
+    assert chunks[2].metadata == ElementMetadata(regex_metadata=[{"text": "A", "start": 11, "end": 12}])
