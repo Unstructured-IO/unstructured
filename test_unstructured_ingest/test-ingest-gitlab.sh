@@ -20,4 +20,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --git-file-glob '*.md,*.txt' \
     --url https://gitlab.com/gitlab-com/content-sites/docsy-gitlab
 
-sh "$SCRIPT_DIR"/check-num-files-output.sh 3 $OUTPUT_FOLDER_NAME
+sh "$SCRIPT_DIR"/check-num-files-output.sh 2 $OUTPUT_FOLDER_NAME
