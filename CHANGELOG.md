@@ -4,6 +4,8 @@
 
 ### Features
 
+* add new extraction function `extract_image_urls_from_html` to extract all img related URL from html text.
+
 ### Fixes
 
 * Remove overly aggressive ListItem chunking for images and PDF's which typically resulted in inchorent elements.
@@ -19,7 +21,7 @@
 * Add functionality to sort elements using `xy-cut` sorting approach in `partition_pdf` for `hi_res` and `fast` strategies
 * Bump unstructured-inference
   * Set OMP_THREAD_LIMIT to 1 if not set for better tesseract perf (0.5.17)
-  
+
 ### Features
 
 * Extract coordinates from PDFs and images when using OCR only strategy and add to metadata
