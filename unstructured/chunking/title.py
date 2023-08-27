@@ -18,11 +18,16 @@ def chunk_by_title(
             for element in section:
                 if text:
                     text += "\n\n"
+                start_char = len(text)
                 text += element.text
 
                 for attr, value in vars(element.metadata).items():
                     if isinstance(value, list):
                         _value = metadata.get(attr, [])
+                        if attr == "regex_metadata":
+                            value["start"] += start_char
+                            value["end"] += end_char
+
                         _value.extend(value)
                         metadata.set(attr, _value)
 

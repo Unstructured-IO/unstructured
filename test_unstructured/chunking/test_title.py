@@ -2,7 +2,14 @@ from unstructured.chunking.title import (
     _split_elements_by_title_and_table,
     chunk_by_title,
 )
-from unstructured.documents.elements import CheckBox, Section, Table, Text, Title
+from unstructured.documents.elements import (
+    CheckBox,
+    ElementMetadata,
+    Section,
+    Table,
+    Text,
+    Title,
+)
 
 
 def test_split_elements_by_title_and_table():
