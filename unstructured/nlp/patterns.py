@@ -138,3 +138,8 @@ JSON_PATTERN = r"(?s)\{(?=.*:).*?(?:\}|$)|\[(?s:.*?)\](?:$|,|\])"
 
 # taken from https://stackoverflow.com/a/3845829/12406158
 VALID_JSON_CHARACTERS = r"[,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]"
+
+IMAGE_URL_PATTERN = (
+    r"(https?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|"
+    r"(?:%[0-9a-fA-F][0-9a-fA-F]))+\.(?:jpg|jpeg|png|gif|bmp))"
+)
