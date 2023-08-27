@@ -16,6 +16,7 @@ OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 
 NUMBER_OF_FOUND_DIRS="$(find "$OUTPUT_DIR" -type d -exec printf '.' \; | wc -c | xargs)"
 
+# Note: single brackets and "-ne" operator were necessary for evaluation in CI
 if [ "$NUMBER_OF_FOUND_DIRS" -ne "$EXPECTED_NUM_DIRS" ]; then
    echo
    echo "$EXPECTED_NUM_DIRS directories were expected to be found."
