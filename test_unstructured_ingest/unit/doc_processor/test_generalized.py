@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 import pytest
+
 from unstructured.ingest.interfaces import BaseIngestDoc, IngestDocSessionHandleMixin
 
 
