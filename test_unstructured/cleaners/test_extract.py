@@ -133,6 +133,10 @@ def test_extract_ordered_bullets(text, expected):
             "some text",
             ([]),
         ),
+        (
+            "some text https://my-image.JPG with another http://my-image.BMP",
+            (["https://my-image.JPG", "http://my-image.BMP"]),
+        ),
     ],
 )
 def test_extract_image_urls_from_html(text, expected):
