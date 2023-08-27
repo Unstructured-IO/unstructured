@@ -71,7 +71,6 @@ def test_chunk_by_title():
         CheckBox(),
     ]
     chunks = chunk_by_title(elements)
-    import ipdb; ipdb.set_trace()
 
     assert chunks == [
         Section(
@@ -86,4 +85,6 @@ def test_chunk_by_title():
     ]
 
     assert chunks[0].metadata == ElementMetadata(emphasized_text_contents=["Day", "day"])
-    assert chunks[2].metadata == ElementMetadata(regex_metadata=[{"text": "A", "start": 11, "end": 12}])
+    assert chunks[3].metadata == ElementMetadata(
+        regex_metadata=[{"text": "A", "start": 11, "end": 12}]
+    )
