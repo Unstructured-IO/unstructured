@@ -278,6 +278,10 @@ def _partition_pdf_or_image_local(
         sortable=True,
         include_page_breaks=include_page_breaks,
         last_modification_date=metadata_last_modified,
+        # NOTE(crag): do not attempt to derive ListItem's from a layout-recognized "List"
+        # block with NLP rules. Otherwise, the assumptions in
+        # unstructured.partition.common::layout_list_to_list_items often result in weird chunking.
+        infer_list_items=False,
         **kwargs,
     )
     out_elements = []

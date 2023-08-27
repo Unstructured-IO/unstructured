@@ -1,3 +1,13 @@
+## 0.10.7
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* Remove overly aggressive ListItem chunking for images and PDF's which typically resulted in inchorent elements.
+
 ## 0.10.6
 
 ### Enhancements
