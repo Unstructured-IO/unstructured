@@ -141,6 +141,15 @@ def test_extract_ordered_bullets(text, expected):
             "http://my-path-with-CAPS/my-image.JPG",
             (["http://my-path-with-CAPS/my-image.JPG"]),
         ),
+        (
+            "http://my-path/my%20image.JPG",
+            (["http://my-path/my%20image.JPG"]),
+        ),
+        # url with reference #
+        (
+            "https://my-image.jpg#ref",
+            (["https://my-image.jpg"]),
+        ),
     ],
 )
 def test_extract_image_urls_from_html(text, expected):
