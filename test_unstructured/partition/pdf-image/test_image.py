@@ -7,7 +7,6 @@ from PIL import Image
 from pytesseract import TesseractError
 from unstructured_inference.inference import layout
 
-from unstructured.documents.elements import Title
 from unstructured.partition import image, pdf
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -194,7 +193,7 @@ def test_partition_image_with_ocr_detects_korean():
         strategy="ocr_only",
     )
 
-    assert elements[0] == Title("RULES AND INSTRUCTIONS")
+    assert elements[0].text == "RULES AND INSTRUCTIONS"
     assert elements[3].text.replace(" ", "").startswith("안녕하세요")
 
 
@@ -207,7 +206,7 @@ def test_partition_image_with_ocr_detects_korean_from_file():
             strategy="ocr_only",
         )
 
-    assert elements[0] == Title("RULES AND INSTRUCTIONS")
+    assert elements[0].text == "RULES AND INSTRUCTIONS"
     assert elements[3].text.replace(" ", "").startswith("안녕하세요")
 
 
@@ -378,3 +377,17 @@ def test_partition_image_from_file_with_hi_res_strategy_metadata_date_custom_met
         )
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
+
+
+def test_partition_image_with_ocr_has_coordinates_from_file(
+    mocker,
+    filename="example-docs/english-and-korean.png",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    mocker.patch(
+        "unstructured.partition.pdf.get_last_modified_date",
+        return_value=mocked_last_modification_date,
+    )
+    elements = image.partition_image(filename=filename, strategy="ocr_only")
+    int_coordinates = [(int(x), int(y)) for x, y in elements[0].metadata.coordinates.points]
+    assert int_coordinates == [(14, 36), (14, 16), (381, 16), (381, 36)]
