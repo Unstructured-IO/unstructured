@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:experimental
-FROM quay.io/unstructured-io/base-images:rocky8.7-3 as base
+FROM quay.io/unstructured-io/base-images:rocky8.7-5 as base
 
 ARG PIP_VERSION
 
