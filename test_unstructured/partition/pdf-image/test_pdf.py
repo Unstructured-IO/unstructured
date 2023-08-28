@@ -785,7 +785,6 @@ def test_partition_pdf_with_json(
 
     assert len(elements) == len(test_elements)
     assert elements[0].metadata.filename == test_elements[0].metadata.filename
-    # NOTE(klaijan) - missing file_directory in metadata after converting to json
 
     for i in range(len(elements)):
         assert elements[i] == test_elements[i]
