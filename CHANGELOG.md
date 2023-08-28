@@ -1,4 +1,14 @@
-## 0.10.6-dev0
+## 0.10.8
+
+### Enhancements
+
+* Release docker image that installs Python 3.10 rather than 3.8
+
+### Features
+
+### Fixes
+
+## 0.10.7
 
 ### Enhancements
 
@@ -6,9 +16,33 @@
 
 ### Fixes
 
+* Remove overly aggressive ListItem chunking for images and PDF's which typically resulted in inchorent elements.
+
+## 0.10.6
+
+### Enhancements
+
+* Enable `partition_email` and `partition_msg` to detect if an email is PGP encryped. If
+  and email is PGP encryped, the functions will return an empy list of elements and
+  emit a warning about the encrypted content.
+* Add threaded Slack conversations into Slack connector output
+* Add functionality to sort elements using `xy-cut` sorting approach in `partition_pdf` for `hi_res` and `fast` strategies
+* Bump unstructured-inference
+  * Set OMP_THREAD_LIMIT to 1 if not set for better tesseract perf (0.5.17)
+
+### Features
+
+* Extract coordinates from PDFs and images when using OCR only strategy and add to metadata
+
+### Fixes
+
+* Update `partition_html` to respect the order of `<pre>` tags.
 * Fix bug in `partition_pdf_or_image` where two partitions were called if `strategy == "ocr_only"`.
 * Bump unstructured-inference
   * Fix issue where temporary files were being left behind (0.5.16)
+* Adds deprecation warning for the `file_filename` kwarg to `partition`, `partition_via_api`,
+  and `partition_multiple_via_api`.
+* Fix documentation build workflow by pinning dependencies
 
 ## 0.10.5
 
@@ -37,6 +71,7 @@
 * Add diagrams and descriptions for ingest design in the ingest README
 
 ### Features
+* Supports multipage TIFF image partitioning
 
 ### Fixes
 

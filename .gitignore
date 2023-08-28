@@ -189,3 +189,7 @@ tags
 
 unstructured-inference/sample-docs/*
 .ppm
+unstructured-inference/
+
+example-docs/*_images
+examples/**/output/
