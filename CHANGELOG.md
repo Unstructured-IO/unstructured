@@ -1,4 +1,4 @@
-## 0.10.8-dev0
+## 0.10.9-dev0
 
 ### Enhancements
 
@@ -6,6 +6,14 @@
 
 * Adds `chunk_by_title` to break a document into sections based on the presence of `Title`
   elements.
+
+## 0.10.8
+
+### Enhancements
+
+* Release docker image that installs Python 3.10 rather than 3.8
+
+### Features
 
 ### Fixes
 
