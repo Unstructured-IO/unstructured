@@ -22,7 +22,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified \
     --structured-output-dir "$OUTPUT_DIR" \
     --partition-ocr-languages chi_sim \
-    --partition-strategy ocr_only \
+    --partition-strategy hi_res \
     --verbose \
     --reprocess \
     --input-path example-docs/simplified_chinese.pdf
