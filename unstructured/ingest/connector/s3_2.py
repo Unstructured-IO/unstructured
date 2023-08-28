@@ -211,8 +211,19 @@ class FsspecDestinationConnector(BaseDestinationConnector):
         logger.info(f"Writing content using filesystem: {type(fs).__name__}")
 
         for doc in docs:
-            logger.debug(f"Uploading {doc._output_filename} -> {self.connector_config.path}")
-            fs.put_file(lpath=doc._output_filename, rpath=self.connector_config.path)
+            s3_file_path = str(doc._output_filename).replace(
+                doc.partition_config.output_dir,
+                self.connector_config.path,
+            )
+            s3_folder = self.connector_config.path
+            if s3_folder[-1] != "/":
+                s3_folder = f"{s3_file_path}/"
+            if s3_file_path[0] == "/":
+                s3_file_path = s3_file_path[1:]
+
+            s3_output_path = s3_folder + s3_file_path
+            logger.debug(f"Uploading {doc._output_filename} -> {s3_output_path}")
+            fs.put_file(lpath=doc._output_filename, rpath=s3_output_path)
 
 
 @dataclass
