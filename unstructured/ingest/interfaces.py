@@ -302,48 +302,6 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
         return self.isd_elems_no_filename
 
 
-@dataclass
-class BaseConnector(ABC):
-    """Abstract Base Class for a connector to a remote source, e.g. S3 or Google Drive."""
-
-    standard_config: StandardConnectorConfig
-    config: BaseConnectorConfig
-
-    def __init__(self, standard_config: StandardConnectorConfig, config: BaseConnectorConfig):
-        """Expects a standard_config object that implements StandardConnectorConfig
-        and config object that implements BaseConnectorConfig."""
-        self.standard_config = standard_config
-        self.config = config
-
-    @abstractmethod
-    def cleanup(self, cur_dir=None):
-        """Any additional cleanup up need after processing is complete. E.g., removing
-        temporary download dirs that are empty.
-
-        By convention, documents that failed to process are typically not cleaned up."""
-        pass
-
-    @abstractmethod
-    def initialize(self):
-        """Initializes the connector. Should also validate the connector is properly
-        configured: e.g., list a single a document from the source."""
-        pass
-
-    @abstractmethod
-    def get_ingest_docs(self):
-        """Returns all ingest docs (derived from BaseIngestDoc).
-        This does not imply downloading all the raw documents themselves,
-        rather each IngestDoc is capable of fetching its content (in another process)
-        with IngestDoc.get_file()."""
-        pass
-
-    def write_ingest_docs(self, docs: List[BaseIngestDoc]) -> None:
-        return None
-
-    def write_ingest_doc(self, doc: BaseIngestDoc) -> None:
-        return None
-
-
 class ConnectorCleanupMixin:
     standard_config: StandardConnectorConfig
 
