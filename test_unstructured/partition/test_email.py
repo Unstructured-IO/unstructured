@@ -562,3 +562,14 @@ def test_partition_email_with_json():
     assert elements[0].metadata.filename == test_elements[0].metadata.filename
     for i in range(len(elements)):
         assert elements[i] == test_elements[i]
+
+        
+def test_partition_email_with_pgp_encrypted_message(
+    caplog,
+    filename="example-docs/eml/fake-encrypted.eml",
+):
+    elements = partition_email(filename=filename)
+
+    assert elements == []
+    assert "WARNING" in caplog.text
+    assert "Encrypted email detected" in caplog.text

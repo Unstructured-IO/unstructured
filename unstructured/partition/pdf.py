@@ -278,6 +278,10 @@ def _partition_pdf_or_image_local(
         sortable=True,
         include_page_breaks=include_page_breaks,
         last_modification_date=metadata_last_modified,
+        # NOTE(crag): do not attempt to derive ListItem's from a layout-recognized "List"
+        # block with NLP rules. Otherwise, the assumptions in
+        # unstructured.partition.common::layout_list_to_list_items often result in weird chunking.
+        infer_list_items=False,
         **kwargs,
     )
     out_elements = []
@@ -499,11 +503,12 @@ def add_pytesseract_bbox_to_elements(elements, bboxes, width, height):
             max_y = max(max_y, y2)
 
         points = ((min_x, min_y), (min_x, max_y), (max_x, max_y), (max_x, min_y))
-        converted_points = []
-        for point in points:
-            x, y = point
-            new_x, new_y = point_space.convert_coordinates_to_new_system(pixel_space, x, y)
-            converted_points.append((new_x, new_y))
+        converted_points = tuple(
+            [
+                point_space.convert_coordinates_to_new_system(pixel_space, *point)
+                for point in points
+            ],
+        )
 
         element.metadata.coordinates = CoordinatesMetadata(
             points=converted_points,

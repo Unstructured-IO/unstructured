@@ -1,10 +1,38 @@
+## 0.10.8
+
+### Enhancements
+
+* Release docker image that installs Python 3.10 rather than 3.8
+* Fix `test_json` to handle only non-extra dependencies file types (plain-text)
+* Add json invariant tests to all the filetype tests (`partition_filetype() == partition_json(element_to_json)`)
+* 
+### Features
+
+### Fixes
+
+* Edit `add_pytesseract_bbox_to_elements`'s (`ocr_only` strategy) `metadata.coordinates.points` return type to `Tuple` for consistency.
+
+## 0.10.7
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* Remove overly aggressive ListItem chunking for images and PDF's which typically resulted in inchorent elements.
+
 ## 0.10.6
 
 ### Enhancements
-* Fix `test_json` to handle only non-extra dependencies file types (plain-text)
-* Add json invariant tests to all the filetype tests (`partition_filetype() == partition_json(element_to_json)`)
+
+* Enable `partition_email` and `partition_msg` to detect if an email is PGP encryped. If
+  and email is PGP encryped, the functions will return an empy list of elements and
+  emit a warning about the encrypted content.
 * Add threaded Slack conversations into Slack connector output
 * Add functionality to sort elements using `xy-cut` sorting approach in `partition_pdf` for `hi_res` and `fast` strategies
+* Bump unstructured-inference
+  * Set OMP_THREAD_LIMIT to 1 if not set for better tesseract perf (0.5.17)
 
 ### Features
 
