@@ -26,7 +26,7 @@ export OMP_THREAD_LIMIT=1
 ./test_unstructured_ingest/test-ingest-onedrive.sh
 ./test_unstructured_ingest/test-ingest-outlook.sh
 ./test_unstructured_ingest/test-ingest-elasticsearch.sh
-#./test_unstructured_ingest/test-ingest-confluence-diff.sh
+./test_unstructured_ingest/test-ingest-confluence-diff.sh
 ./test_unstructured_ingest/test-ingest-confluence-large.sh
 ./test_unstructured_ingest/test-ingest-airtable-diff.sh
 ./test_unstructured_ingest/test-ingest-airtable-large.sh
