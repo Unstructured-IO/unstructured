@@ -5,7 +5,9 @@
 #    pip-compile requirements/ingest-box.in
 #
 attrs==23.1.0
-    # via boxsdk
+    # via
+    #   -c requirements/base.txt
+    #   boxsdk
 boxfs==0.2.1
     # via -r requirements/ingest-box.in
 boxsdk[jwt]==3.8.1

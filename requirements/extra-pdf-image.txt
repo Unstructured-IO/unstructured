@@ -51,7 +51,9 @@ idna==3.4
     #   -c requirements/base.txt
     #   requests
 importlib-resources==6.0.1
-    # via matplotlib
+    # via
+    #   -c requirements/base.txt
+    #   matplotlib
 iopath==0.1.10
     # via layoutparser
 jinja2==3.1.2
@@ -218,4 +220,6 @@ urllib3==1.26.16
     #   -c requirements/constraints.in
     #   requests
 zipp==3.16.2
-    # via importlib-resources
+    # via
+    #   -c requirements/base.txt
+    #   importlib-resources
