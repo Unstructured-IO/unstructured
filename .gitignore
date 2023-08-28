@@ -187,4 +187,5 @@ tags
 # Ruff cache
 .ruff_cache/
 
-unstructured-inference/
+unstructured-inference/sample-docs/*
+.ppm
