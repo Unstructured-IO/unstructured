@@ -16,7 +16,7 @@ def chunk_by_title(
 ) -> List[Element]:
     """Uses title elements to identify sections within the document for chunking."""
     chunked_elements: List[Element] = []
-    sections = _split_elements_by_title_and_table(elements)
+    sections = _split_elements_by_title_and_table(elements, multipage_sections)
 
     for section in sections:
         if not isinstance(section[0], Text) or isinstance(section[0], Table):
@@ -106,7 +106,7 @@ def _drop_extra_metadata(
     include_pages: bool = True,
 ) -> dict:
     keys_to_drop = ["element_id", "type"]
-    if include_pages and "page_number" in metadata_dict:
+    if not include_pages and "page_number" in metadata_dict:
         keys_to_drop.append("page_number")
 
     for key, value in metadata_dict.items():
