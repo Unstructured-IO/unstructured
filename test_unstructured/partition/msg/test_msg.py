@@ -244,7 +244,7 @@ def test_partition_msg_custom_metadata_date(
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
 
-    
+
 def test_partition_msg_with_json():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
     elements = partition_msg(filename=filename)
@@ -255,7 +255,7 @@ def test_partition_msg_with_json():
     assert elements[0].metadata.sent_to[0] == test_elements[0].metadata.sent_to[0]
     assert elements[0].metadata.subject == test_elements[0].metadata.subject
 
-  
+
 def test_partition_msg_with_pgp_encrypted_message(
     caplog,
     filename="example-docs/fake-encrypted.msg",
