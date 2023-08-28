@@ -1,3 +1,13 @@
+## 0.10.8
+
+### Enhancements
+
+* Release docker image that installs Python 3.10 rather than 3.8
+
+### Features
+
+### Fixes
+
 ## 0.10.7
 
 ### Enhancements
