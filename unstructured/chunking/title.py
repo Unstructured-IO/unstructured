@@ -16,7 +16,23 @@ def chunk_by_title(
     combine_under_n_chars: int = 500,
     new_after_n_chars: int = 1500,
 ) -> List[Element]:
-    """Uses title elements to identify sections within the document for chunking."""
+    """Uses title elements to identify sections within the document for chunking. Splits
+    off into a new section when a title is detection or if metadata changes, which happens
+    when page numbers or sections change. Cuts off sections once they have exceeded
+    a character length of new_after_n_chars.
+
+    Parameters
+    ----------
+    elements
+        A list of unstructured elements. Usually the ouput of a partition functions.
+    multipage_sections
+        If True, sections can span multiple pages. Defaults to True.
+    combine_under_n_chars
+        Combines elements (for example a series of titles) until a section reaches
+        a length of n characters.
+    new_after_n_chars
+        Cuts off new sections once they reach a length of n characters
+    """
     chunked_elements: List[Element] = []
     sections = _split_elements_by_title_and_table(
         elements,
