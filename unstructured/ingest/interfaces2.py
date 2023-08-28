@@ -4,14 +4,14 @@ through Unstructured."""
 import functools
 import json
 import os
+import typing as t
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
 
 import requests
-from dataclasses_json import DataClassJsonMixin
+from jsonschema import validate
 
 from unstructured.documents.elements import DataSourceMetadata
 from unstructured.ingest.error import PartitionError, SourceConnectionError
@@ -26,82 +26,140 @@ class BaseSessionHandle(ABC):
     e.g., a connection for making a request for fetching documents."""
 
 
+class BaseConfig(ABC):
+    @staticmethod
+    @abstractmethod
+    def get_schema() -> dict:
+        pass
+
+    @classmethod
+    def merge_schemas(cls, configs: t.List[t.Type["BaseConfig"]]) -> dict:
+        base_schema = cls.get_schema()
+        for other in configs:
+            other_schema = other.get_schema()
+            if "required" in base_schema:
+                base_schema.get("required", []).extend(other_schema.get("required", []))
+            else:
+                base_schema["required"] = other_schema.get("required", [])
+            if "properties" in other_schema:
+                base_schema.get("properties", {}).update(other_schema.get("properties", {}))
+            else:
+                base_schema["properties"] = other_schema.get("properties", {})
+        return base_schema
+
+    @classmethod
+    def merge_sample_jsons(cls, configs: t.List[t.Type["BaseConfig"]]) -> dict:
+        base_json = cls.get_sample_dict()
+        for other in configs:
+            base_json.update(other.get_sample_dict())
+        return base_json
+
+    @classmethod
+    def get_sample_dict(cls) -> dict:
+        config = cls()
+        return config.__dict__
+
+    @classmethod
+    def from_dict(cls, d: dict):
+        schema = cls.get_schema()
+        sample_dict = cls.get_sample_dict()
+        filtered_dict = {k: v for k, v in d.items() if k in sample_dict}
+        validate(filtered_dict, schema=schema)
+        return cls(**filtered_dict)
+
+
 @dataclass
-class ProcessorConfigs(DataClassJsonMixin):
-    """Common set of config required when running data connectors."""
-
-    partition_strategy: str
-    partition_ocr_languages: str
-    partition_pdf_infer_table_structure: bool
-    partition_encoding: str
-    num_processes: int
-    reprocess: bool
-    max_docs: int
-
-
-@dataclass
-class StandardConnectorConfig(DataClassJsonMixin):
-    """Common set of config options passed to all connectors."""
-
-    # where raw documents are stored for processing, and then removed if not preserve_downloads
-    download_dir: str
+class PartitionConfig(BaseConfig):
     # where to write structured data outputs
-    output_dir: str
-    download_only: bool = False
-    fields_include: str = "element_id,text,type,metadata"
+    output_dir: str = "structured-output"
+    num_processes: int = 2
+    max_docs: t.Optional[int] = None
+    pdf_infer_table_structure: bool = False
+    strategy: str = "auto"
+    reprocess: bool = False
+    ocr_languages: str = "eng"
+    encoding: t.Optional[str] = None
+    fields_include: t.List[str] = field(
+        default_factory=lambda: ["element_id", "text", "type", "metadata"],
+    )
     flatten_metadata: bool = False
-    metadata_exclude: Optional[str] = None
-    metadata_include: Optional[str] = None
-    partition_by_api: bool = False
-    partition_endpoint: str = "https://api.unstructured.io/general/v0/general"
-    api_key: str = ""
-    preserve_downloads: bool = False
-    re_download: bool = False
+    metadata_exclude: t.List[str] = field(default_factory=list)
+    metadata_include: t.List[str] = field(default_factory=list)
+    partition_endpoint: t.Optional[str] = None
+    api_key: t.Optional[str] = None
+
+    @staticmethod
+    def get_schema() -> dict:
+        return {
+            "type": "object",
+            "properties": {
+                "output_dir": {"type": "string", "default": "structured-output"},
+                "num_processes": {"type": ["integer", "null"], "default": None},
+                "max_docs": {"type": ["integer", "null"], "default": None},
+                "pdf_infer_table_structure": {"type": "boolean"},
+                "strategy": {"type": ["string", "null"], "default": "auto"},
+                "reprocess": {"type": "boolean"},
+                "ocr_language": {"type": ["string", "null"], "default": "eng"},
+                "encoding": {"type": ["string", "null"], "default": None},
+                "fields_include": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                    },
+                },
+                "flatten_metadata": {"type": "boolean"},
+                "metadata_exclude": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                    },
+                },
+                "metadata_include": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                    },
+                },
+                "partition_endpoint": {"type": ["string", "null"], "default": None},
+                "api_key": {"type": ["string", "null"], "default": None},
+            },
+        }
 
 
 @dataclass
-class BaseConnectorConfig(DataClassJsonMixin, ABC):
+class ReadConfig(BaseConfig):
+    # where raw documents are stored for processing, and then removed if not preserve_downloads
+    download_dir: t.Optional[str] = None
+    re_download: bool = False
+    preserve_downloads: bool = False
+    download_only: bool = False
+
+    @staticmethod
+    def get_schema() -> dict:
+        return {
+            "type": "object",
+            "properties": {
+                "download_dir": {"type": ["string", "null"], "default": None},
+                "re_download": {"type": "boolean"},
+                "preserve_downloads": {"type": "boolean"},
+                "download_only": {"type": "boolean"},
+            },
+        }
+
+
+@dataclass
+class WriteConfig(BaseConfig):
+    @staticmethod
+    def get_schema() -> dict:
+        return {}
+
+
+class BaseConnectorConfig(ABC):
     """Abstract definition on which to define connector-specific attributes."""
 
 
 @dataclass
-class BaseConnector(DataClassJsonMixin, ABC):
-    """Abstract Base Class for a connector to a remote source, e.g. S3 or Google Drive."""
-
-    standard_config: StandardConnectorConfig
-    config: BaseConnectorConfig
-
-    def __init__(self, standard_config: StandardConnectorConfig, config: BaseConnectorConfig):
-        """Expects a standard_config object that implements StandardConnectorConfig
-        and config object that implements BaseConnectorConfig."""
-        self.standard_config = standard_config
-        self.config = config
-
-    @abstractmethod
-    def cleanup(self, cur_dir=None):
-        """Any additional cleanup up need after processing is complete. E.g., removing
-        temporary download dirs that are empty.
-
-        By convention, documents that failed to process are typically not cleaned up."""
-        pass
-
-    @abstractmethod
-    def initialize(self):
-        """Initializes the connector. Should also validate the connector is properly
-        configured: e.g., list a single a document from the source."""
-        pass
-
-    @abstractmethod
-    def get_ingest_docs(self):
-        """Returns all ingest docs (derived from BaseIngestDoc).
-        This does not imply downloading all the raw documents themselves,
-        rather each IngestDoc is capable of fetching its content (in another process)
-        with IngestDoc.get_file()."""
-        pass
-
-
-@dataclass
-class BaseIngestDoc(DataClassJsonMixin, ABC):
+class BaseIngestDoc(ABC):
     """An "ingest document" is specific to a connector, and provides
     methods to fetch a single raw document, store it locally for processing, any cleanup
     needed after successful processing of the doc, and the ability to write the doc's
@@ -110,31 +168,32 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
     Crucially, it is not responsible for the actual processing of the raw document.
     """
 
-    standard_config: StandardConnectorConfig
-    config: BaseConnectorConfig
+    read_config: ReadConfig
+    partition_config: PartitionConfig
+    connector_config: BaseConnectorConfig
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._date_processed = None
 
     @property
-    def date_created(self) -> Optional[str]:
+    def date_created(self) -> t.Optional[str]:
         """The date the document was created on the source system."""
         return None
 
     @property
-    def date_modified(self) -> Optional[str]:
+    def date_modified(self) -> t.Optional[str]:
         """The date the document was last modified on the source system."""
         return None
 
     @property
-    def date_processed(self) -> Optional[str]:
+    def date_processed(self) -> t.Optional[str]:
         """The date the document was last processed by Unstructured.
         self._date_processed is assigned internally in self.partition_file()"""
         return self._date_processed
 
     @property
-    def exists(self) -> Optional[bool]:
+    def exists(self) -> t.Optional[bool]:
         """Whether the document exists on the remote source."""
         return None
 
@@ -149,18 +208,18 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
         """Filename of the structured output for this doc."""
 
     @property
-    def record_locator(self) -> Optional[Dict[str, Any]]:  # Values must be JSON-serializable
+    def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:  # Values must be JSON-serializable
         """A dictionary with any data necessary to uniquely identify the document on
         the source system."""
         return None
 
     @property
-    def source_url(self) -> Optional[str]:
+    def source_url(self) -> t.Optional[str]:
         """The url of the source document."""
         return None
 
     @property
-    def version(self) -> Optional[str]:
+    def version(self) -> t.Optional[str]:
         """The version of the source document, this could be the last modified date, an
         explicit version number, or anything else that can be used to uniquely identify
         the version of the document."""
@@ -179,7 +238,7 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
         @functools.wraps(func)
         def wrapper(self, *args, **kwargs):
             if (
-                not self.standard_config.re_download
+                not self.read_config.re_download
                 and self.filename.is_file()
                 and self.filename.stat().st_size
             ):
@@ -203,7 +262,7 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
 
     def write_result(self):
         """Write the structured json result for this doc. result must be json serializable."""
-        if self.standard_config.download_only:
+        if self.read_config.download_only:
             return
         self._output_filename.parent.mkdir(parents=True, exist_ok=True)
         with open(self._output_filename, "w", encoding="utf8") as output_f:
@@ -211,8 +270,8 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
         logger.info(f"Wrote {self._output_filename}")
 
     @PartitionError.wrap
-    def partition_file(self, **partition_kwargs) -> List[Dict[str, Any]]:
-        if not self.standard_config.partition_by_api:
+    def partition_file(self, **partition_kwargs) -> t.List[t.Dict[str, t.Any]]:
+        if not self.partition_config.partition_endpoint:
             logger.debug("Using local partition")
             elements = partition(
                 filename=str(self.filename),
@@ -229,14 +288,14 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
             return convert_to_dict(elements)
 
         else:
-            endpoint = self.standard_config.partition_endpoint
+            endpoint = self.partition_config.partition_endpoint
 
             logger.debug(f"Using remote partition ({endpoint})")
 
             with open(self.filename, "rb") as f:
                 headers_dict = {}
-                if len(self.standard_config.api_key) > 0:
-                    headers_dict["UNSTRUCTURED-API-KEY"] = self.standard_config.api_key
+                if self.partition_config.api_key:
+                    headers_dict["UNSTRUCTURED-API-KEY"] = self.partition_config.api_key
                 response = requests.post(
                     f"{endpoint}",
                     files={"files": (str(self.filename), f)},
@@ -250,49 +309,46 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
 
             return response.json()
 
-    def process_file(self, **partition_kwargs) -> Optional[List[Dict[str, Any]]]:
+    def process_file(self, **partition_kwargs) -> t.Optional[t.List[t.Dict[str, t.Any]]]:
         self._date_processed = datetime.utcnow().isoformat()
-        if self.standard_config.download_only:
+        if self.read_config.download_only:
             return None
         logger.info(f"Processing {self.filename}")
 
         isd_elems = self.partition_file(**partition_kwargs)
 
-        self.isd_elems_no_filename = []
+        self.isd_elems_no_filename: t.List[t.Dict[str, t.Any]] = []
         for elem in isd_elems:
             # type: ignore
-            if (
-                self.standard_config.metadata_exclude is not None
-                and self.standard_config.metadata_include is not None
-            ):
+            if self.partition_config.metadata_exclude and self.partition_config.metadata_include:
                 raise ValueError(
                     "Arguments `--metadata-include` and `--metadata-exclude` are "
                     "mutually exclusive with each other.",
                 )
-            elif self.standard_config.metadata_exclude is not None:
-                ex_list = self.standard_config.metadata_exclude.split(",")
+            elif self.partition_config.metadata_exclude:
+                ex_list = self.partition_config.metadata_exclude
                 for ex in ex_list:
                     if "." in ex:  # handle nested fields
                         nested_fields = ex.split(".")
                         current_elem = elem
-                        for field in nested_fields[:-1]:
-                            if field in current_elem:
-                                current_elem = current_elem[field]
+                        for f in nested_fields[:-1]:
+                            if f in current_elem:
+                                current_elem = current_elem[f]
                         field_to_exclude = nested_fields[-1]
                         if field_to_exclude in current_elem:
                             current_elem.pop(field_to_exclude, None)
                     else:  # handle top-level fields
                         elem["metadata"].pop(ex, None)  # type: ignore[attr-defined]
-            elif self.standard_config.metadata_include is not None:
-                in_list = self.standard_config.metadata_include.split(",")
+            elif self.partition_config.metadata_include:
+                in_list = self.partition_config.metadata_include
                 for k in list(elem["metadata"].keys()):  # type: ignore[attr-defined]
                     if k not in in_list:
                         elem["metadata"].pop(k, None)  # type: ignore[attr-defined]
 
-            in_list = self.standard_config.fields_include.split(",")
+            in_list = self.partition_config.fields_include
             elem = {k: v for k, v in elem.items() if k in in_list}
 
-            if self.standard_config.flatten_metadata:
+            if self.partition_config.flatten_metadata:
                 for k, v in elem["metadata"].items():  # type: ignore[attr-defined]
                     elem[k] = v
                 elem.pop("metadata")  # type: ignore[attr-defined]
@@ -303,17 +359,24 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
 
 
 @dataclass
-class BaseConnector(ABC):
+class BaseSourceConnector(ABC):
     """Abstract Base Class for a connector to a remote source, e.g. S3 or Google Drive."""
 
-    standard_config: StandardConnectorConfig
-    config: BaseConnectorConfig
+    read_config: ReadConfig
+    connector_config: BaseConnectorConfig
+    partition_config: PartitionConfig
 
-    def __init__(self, standard_config: StandardConnectorConfig, config: BaseConnectorConfig):
+    def __init__(
+        self,
+        read_config: ReadConfig,
+        connector_config: BaseConnectorConfig,
+        partition_config: PartitionConfig,
+    ):
         """Expects a standard_config object that implements StandardConnectorConfig
         and config object that implements BaseConnectorConfig."""
-        self.standard_config = standard_config
-        self.config = config
+        self.read_config = read_config
+        self.connector_config = connector_config
+        self.partition_config = partition_config
 
     @abstractmethod
     def cleanup(self, cur_dir=None):
@@ -337,22 +400,35 @@ class BaseConnector(ABC):
         with IngestDoc.get_file()."""
         pass
 
-    def write_ingest_docs(self, docs: List[BaseIngestDoc]) -> None:
-        return None
 
-    def write_ingest_doc(self, doc: BaseIngestDoc) -> None:
-        return None
+class BaseDestinationConnector(ABC):
+    write_config: WriteConfig
+    connector_config: BaseConnectorConfig
+
+    def __init__(self, write_config: WriteConfig, connector_config: BaseConnectorConfig):
+        self.write_config = write_config
+        self.connector_config = connector_config
+
+    @abstractmethod
+    def initialize(self):
+        """Initializes the connector. Should also validate the connector is properly
+        configured."""
+        pass
+
+    @abstractmethod
+    def write(self, docs: t.List[BaseIngestDoc]) -> None:
+        pass
 
 
-class ConnectorCleanupMixin:
-    standard_config: StandardConnectorConfig
+class SourceConnectorCleanupMixin:
+    read_config: ReadConfig
 
     def cleanup(self, cur_dir=None):
         """Recursively clean up downloaded files and directories."""
-        if self.standard_config.preserve_downloads or self.standard_config.download_only:
+        if self.read_config.preserve_downloads or self.read_config.download_only:
             return
         if cur_dir is None:
-            cur_dir = self.standard_config.download_dir
+            cur_dir = self.read_config.download_dir
         if cur_dir is None or not Path(cur_dir).is_dir():
             return
         sub_dirs = os.listdir(cur_dir)
@@ -367,7 +443,7 @@ class ConnectorCleanupMixin:
 
 
 class IngestDocCleanupMixin:
-    standard_config: StandardConnectorConfig
+    read_config: ReadConfig
 
     @property
     @abstractmethod
@@ -377,9 +453,9 @@ class IngestDocCleanupMixin:
     def cleanup_file(self):
         """Removes the local copy of the file after successful processing."""
         if (
-            not self.standard_config.preserve_downloads
+            not self.read_config.preserve_downloads
             and self.filename.is_file()
-            and not self.standard_config.download_only
+            and not self.read_config.download_only
         ):
             logger.debug(f"Cleaning up {self}")
             os.unlink(self.filename)
@@ -394,7 +470,7 @@ class ConfigSessionHandleMixin:
 
 class IngestDocSessionHandleMixin:
     config: ConfigSessionHandleMixin
-    _session_handle: Optional[BaseSessionHandle] = None
+    _session_handle: t.Optional[BaseSessionHandle] = None
 
     @property
     def session_handle(self):
