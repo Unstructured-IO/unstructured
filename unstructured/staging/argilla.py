@@ -1,7 +1,9 @@
+import warnings
 from enum import Enum
-from typing import List, Union
+from typing import List, Optional, Union
 
 import argilla
+import pandas as pd
 from argilla.client.models import (
     Text2TextRecord,
     TextClassificationRecord,
@@ -45,6 +47,7 @@ class ARGILLA_PARTITION_TYPES(Enum):
     TXT = "txt" # TODO: WIP
     RTF = "rtf" # TODO: WIP
     RST = "rst" # TODO: WIP
+    IMAGE = "image"
     # TEXT WITH DOM
     HTML = "html" # TODO: WIP
     XML = "xml" # TODO: potentially infer structure from file?
@@ -54,6 +57,7 @@ class ARGILLA_PARTITION_TYPES(Enum):
 PARTITION_DATASET_FIELDS = {
     # DEFAULT
     "defaults": [ # TODO: do we want to include defaults?
+        TextField(name="element_id", use_markdown=True),
         TextField(name="filename", use_markdown=True),
         TextField(name="last_modified", use_markdown=True),
         TextField(name="filetype", use_markdown=True),
@@ -74,8 +78,7 @@ PARTITION_DATASET_FIELDS = {
         TextField(name="text_with_sep", use_markdown=True)
     ],
     # TABLES
-    # TODO: do we want to correction questions for tables?
-    ARGILLA_PARTITION_TYPES.CSV: [
+     ARGILLA_PARTITION_TYPES.CSV: [
         TextField(name="table", use_markdown=True),
         TextField(name="raw_csv", use_markdown=True),
     ],
@@ -94,15 +97,34 @@ PARTITION_DATASET_FIELDS = {
     # SLIDES
     ARGILLA_PARTITION_TYPES.PPT: [
         TextField(name="page_number", use_markdown=True),
-        TextField(name="title", use_markdown=True, required=False),
-        TextField(name="content", use_markdown=True, required=False),
+        TextField(name="title", use_markdown=True),
+        TextField(name="content", use_markdown=True),
     ],
     ARGILLA_PARTITION_TYPES.PPTX: [
         TextField(name="page_number", use_markdown=True),
-        TextField(name="title", use_markdown=True, required=False),
-        TextField(name="content", use_markdown=True, required=False),
+        TextField(name="title", use_markdown=True),
+        TextField(name="content", use_markdown=True),
     ],
-    # TEXT
+    # TEXT with multiple page
+    ARGILLA_PARTITION_TYPES.PDF: [
+        TextField(name="page_number", use_markdown=True),
+        TextField(name="title", use_markdown=True),
+        TextField(name="element_type", use_markdown=True),
+        TextField(name="text", use_markdown=True, required=False),
+    ],
+    ARGILLA_PARTITION_TYPES.DOC: [
+        TextField(name="page_number", use_markdown=True),
+        TextField(name="title", use_markdown=True),
+        TextField(name="element_type", use_markdown=True),
+        TextField(name="text", use_markdown=True, required=False),
+    ],
+    ARGILLA_PARTITION_TYPES.EPUB: [
+        TextField(name="page_number", use_markdown=True),
+        TextField(name="title", use_markdown=True),
+        TextField(name="element_type", use_markdown=True),
+        TextField(name="text", use_markdown=True, required=False),
+    ],
+    # TEXT with DOM
     ARGILLA_PARTITION_TYPES.HTML: [
         TextField(name="head", use_markdown=True),
         TextField(name="body", use_markdown=True),
@@ -112,12 +134,16 @@ PARTITION_DATASET_FIELDS = {
 
 def get_argilla_feedback_dataset(
         partition_type: Union[str, ARGILLA_PARTITION_TYPES],
-        questions: List[Union[TextQuestion, LabelQuestion, MultiLabelQuestion, RankingQuestion, RatingQuestion]]
+        questions: List[Union[TextQuestion, LabelQuestion, MultiLabelQuestion, RankingQuestion, RatingQuestion]],
+        include_defaults: Optional[bool] = True,
     ):
+
     # TODO: do we want to default to a TextQuestion?
     partition_type = ARGILLA_PARTITION_TYPES(partition_type)
+    fields = PARTITION_DATASET_FIELDS["defaults"] if include_defaults else []
+    fields += PARTITION_DATASET_FIELDS[partition_type]
     return FeedbackDataset(
-        fields=PARTITION_DATASET_FIELDS[partition_type],
+        fields=fields,
         questions=questions,
     )
 
@@ -133,18 +159,33 @@ def _elements_to_text(elements: List[Text], as_html: bool = True):
             text.append(element.text)
     return text
 
+def _enforce_skipped_field(fields, skip_fields):
+    return {key: value for key, value in dict.items() if key not in skip_fields}
+
 def stage_for_argilla_feedback(
     partition_type: str,
     dataset: FeedbackDataset,
     files: Union[str, List[str]],
     sep: str= "\n____________\n",
     partition_kwargs: dict = {},
+    # skip_fields: Optional[List[str]] = [], or elements?
+    group_by: Optional[str] = None,
 ):
+
     if isinstance(files, str):
         files = [files]
 
     records = []
     partition_type = ARGILLA_PARTITION_TYPES(partition_type)
+    if partition_type not in [ARGILLA_PARTITION_TYPES.MSG, ARGILLA_PARTITION_TYPES.EML,
+                            ARGILLA_PARTITION_TYPES.CSV]:
+        if not group_by:
+            warnings.warn(f"You passed `group_by_strategy` but {partition_type} is a single page document.")
+    else:
+        if group_by:
+            warnings.warn("No `group_by_strategy` defined we recommend grouping by `title`, `element_type` and/or `page`. Grouping by ['title', 'element_type'] is a good default.")
+
+
     if partition_type in [ARGILLA_PARTITION_TYPES.MSG, ARGILLA_PARTITION_TYPES.EML]:
         # TODO: What happens when there are multiple emails in the .msg-file?
         if partition_type == ARGILLA_PARTITION_TYPES.EML:
@@ -225,6 +266,45 @@ def stage_for_argilla_feedback(
                     "table": _elements_to_text([element])[0]
                 }
                 records.append(FeedbackRecord(fields=fields))
+    elif partition_type in [ARGILLA_PARTITION_TYPES.PDF, ARGILLA_PARTITION_TYPES.EPUB, ARGILLA_PARTITION_TYPES.DOC]:
+        if partition_type == ARGILLA_PARTITION_TYPES.PDF:
+            from unstructured.partition.pdf import partition_pdf as partition_func
+        elif partition_type == ARGILLA_PARTITION_TYPES.EPUB:
+            from unstructured.partition.epub import partition_epub as partition_func
+        else:
+            from unstructured.partition.doc import partition_doc as partition_func
+
+        for filename in files:
+            last_title = "start"
+            page_last = 1
+            element_overview = []
+            elements = partition_func(filename=filename, **partition_kwargs)
+            for element in elements:
+                if isinstance(element, Title):
+                    last_title = element.text
+                page_last = element.metadata.page_number or page_last
+                element_overview.append({
+                    "title": last_title,
+                    "element_type": element.to_dict().get("type"),
+                    "page": page_last,
+                    "element": element
+                })
+            df = pd.DataFrame(element_overview)
+
+            df = df.groupby(by=group_by, sort=False, as_index=False).agg(list)
+            df.element = df.element.apply(lambda x: "\n".join(_elements_to_text(x)).strip())
+
+            for item in df.to_dict(orient="records"):
+                if item.get("title") != "start":
+                    fields = {
+                        "page_number": item.get("page", [1]),
+                        "title": item.get("title"),
+                        "element_type": item.get("element_type"),
+                        "text": item.get("element").lstrip(item.get("title"))
+                    }
+                    fields = _ensure_string_values_dict(fields)
+                    records.append(FeedbackRecord(fields=fields))
+
     dataset.add_records(records)
 
     return dataset
