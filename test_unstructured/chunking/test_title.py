@@ -26,7 +26,7 @@ def test_split_elements_by_title_and_table():
         Text("It is storming outside."),
         CheckBox(),
     ]
-    sections = _split_elements_by_title_and_table(elements)
+    sections = _split_elements_by_title_and_table(elements, combine_under_n_chars=0)
 
     assert sections == [
         [
@@ -70,7 +70,7 @@ def test_chunk_by_title():
         Text("It is storming outside."),
         CheckBox(),
     ]
-    chunks = chunk_by_title(elements)
+    chunks = chunk_by_title(elements, combine_under_n_chars=0)
 
     assert chunks == [
         Section(
@@ -107,7 +107,7 @@ def test_chunk_by_title_respects_section_change():
         Text("It is storming outside."),
         CheckBox(),
     ]
-    chunks = chunk_by_title(elements)
+    chunks = chunk_by_title(elements, combine_under_n_chars=0)
 
     assert chunks == [
         Section(
@@ -142,7 +142,7 @@ def test_chunk_by_title_separates_by_page_number():
         Text("It is storming outside."),
         CheckBox(),
     ]
-    chunks = chunk_by_title(elements, multipage_sections=False)
+    chunks = chunk_by_title(elements, multipage_sections=False, combine_under_n_chars=0)
 
     assert chunks == [
         Section(
@@ -177,7 +177,7 @@ def test_chunk_by_title_groups_across_pages():
         Text("It is storming outside."),
         CheckBox(),
     ]
-    chunks = chunk_by_title(elements, multipage_sections=True)
+    chunks = chunk_by_title(elements, multipage_sections=True, combine_under_n_chars=0)
 
     assert chunks == [
         Section(

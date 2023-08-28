@@ -13,10 +13,17 @@ from unstructured.documents.elements import (
 def chunk_by_title(
     elements: List[Element],
     multipage_sections: bool = True,
+    combine_under_n_chars: int = 500,
+    new_after_n_chars: int = 1500,
 ) -> List[Element]:
     """Uses title elements to identify sections within the document for chunking."""
     chunked_elements: List[Element] = []
-    sections = _split_elements_by_title_and_table(elements, multipage_sections)
+    sections = _split_elements_by_title_and_table(
+        elements,
+        multipage_sections=multipage_sections,
+        combine_under_n_chars=combine_under_n_chars,
+        new_after_n_chars=new_after_n_chars,
+    )
 
     for section in sections:
         if not isinstance(section[0], Text) or isinstance(section[0], Table):
@@ -56,6 +63,8 @@ def chunk_by_title(
 def _split_elements_by_title_and_table(
     elements: List[Element],
     multipage_sections: bool = True,
+    combine_under_n_chars: int = 500,
+    new_after_n_chars: int = 1500,
 ) -> List[List[Element]]:
     sections: List[List[Element]] = []
     section: List[Element] = []
@@ -70,11 +79,16 @@ def _split_elements_by_title_and_table(
                 include_pages=not multipage_sections,
             )
 
+        section_length = sum([len(str(element)) for element in section])
+        new_section = (isinstance(element, Title) and section_length > combine_under_n_chars) or (
+            not metadata_matches or section_length > new_after_n_chars
+        )
+
         if isinstance(element, Table) or not isinstance(element, Text):
             sections.append(section)
             sections.append([element])
             section = []
-        elif isinstance(element, Title) or not metadata_matches:
+        elif new_section:
             if len(section) > 0:
                 sections.append(section)
             section = [element]
