@@ -1,3 +1,14 @@
+## 0.10.8-dev0
+
+### Enhancements
+
+### Features
+
+* Adds `chunk_by_title` to break a document into sections based on the presence of `Title`
+  elements.
+
+### Fixes
+
 ## 0.10.7
 
 ### Enhancements
@@ -19,7 +30,7 @@
 * Add functionality to sort elements using `xy-cut` sorting approach in `partition_pdf` for `hi_res` and `fast` strategies
 * Bump unstructured-inference
   * Set OMP_THREAD_LIMIT to 1 if not set for better tesseract perf (0.5.17)
-  
+
 ### Features
 
 * Extract coordinates from PDFs and images when using OCR only strategy and add to metadata
