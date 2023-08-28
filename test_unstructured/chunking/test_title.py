@@ -88,3 +88,38 @@ def test_chunk_by_title():
     assert chunks[3].metadata == ElementMetadata(
         regex_metadata=[{"text": "A", "start": 11, "end": 12}],
     )
+
+
+def test_chunk_by_title_respects_section_change():
+    elements = [
+        Title("A Great Day", metadata=ElementMetadata(section="first")),
+        Text("Today is a great day.", metadata=ElementMetadata(section="second")),
+        Text("It is sunny outside.", metadata=ElementMetadata(section="second")),
+        Table("<table></table>"),
+        Title("An Okay Day"),
+        Text("Today is an okay day."),
+        Text("It is rainy outside."),
+        Title("A Bad Day"),
+        Text(
+            "Today is a bad day.",
+            metadata=ElementMetadata(regex_metadata=[{"text": "A", "start": 0, "end": 1}]),
+        ),
+        Text("It is storming outside."),
+        CheckBox(),
+    ]
+    chunks = chunk_by_title(elements)
+
+    assert chunks == [
+        Section(
+            "A Great Day",
+        ),
+        Section(
+            "Today is a great day.\n\nIt is sunny outside.",
+        ),
+        Table("<table></table>"),
+        Section("An Okay Day\n\nToday is an okay day.\n\nIt is rainy outside."),
+        Section(
+            "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside.",
+        ),
+        CheckBox(),
+    ]

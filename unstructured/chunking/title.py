@@ -19,7 +19,10 @@ def chunk_by_title(
     sections = _split_elements_by_title_and_table(elements)
 
     for section in sections:
-        if isinstance(section[0], Title):
+        if not isinstance(section[0], Text) or isinstance(section[0], Table):
+            chunked_elements.extend(section)
+
+        elif isinstance(section[0], Text):
             text = ""
             metadata = section[0].metadata
 
@@ -46,9 +49,6 @@ def chunk_by_title(
                             setattr(metadata, attr, _value)
 
             chunked_elements.append(Section(text=text, metadata=metadata))
-
-        else:
-            chunked_elements.extend(section)
 
     return chunked_elements
 
@@ -114,6 +114,7 @@ def _drop_extra_metadata(
             keys_to_drop.append(key)
 
     for key in keys_to_drop:
-        del metadata_dict[key]
+        if key in metadata_dict:
+            del metadata_dict[key]
 
     return metadata_dict
