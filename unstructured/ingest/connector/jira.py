@@ -32,7 +32,10 @@ class SimpleJiraConfig(BaseConnectorConfig):
     user_email: str
     api_token: str
     url: str
-    list_of_paths: Optional[str]
+    list_of_projects: Optional[str]
+    list_of_boards: Optional[str]
+    list_of_epics: Optional[str]
+    list_of_issues: Optional[str]
     jql_query: Optional[str]
 
 
@@ -44,6 +47,8 @@ class JiraFileMeta:
     """
 
     project_id: str
+    board_id: Optional[str]
+    epic_id: Optional[str]
     issue_key: str
     issue_id: str
 
@@ -181,19 +186,40 @@ class JiraIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleJiraConfig
     file_meta: JiraFileMeta
 
+    def grouping_folder_name(self):
+        all_component_types = ["epic_id", "board_id", "project_id"]
+
+        # If the user has provided epics as components, connector respects the directive and forms
+        # folders at epic level for the issues ingested from that epic. Similarly for boards and
+        # projects. If the user has not provided any grouping component, connector forms folders
+        # by project ids.
+        for component_type in all_component_types:
+            # attribute_value is always set, even if None
+            attribute_value = getattr(self.file_meta, component_type)
+            if attribute_value:
+                return attribute_value
+
+        raise AttributeError(
+            "The issue has no project_id. This is unexpected as project_id \
+                             should be automatically created by the connector.",
+        )
+
     @property
     def filename(self):
+        download_file = f"{self.file_meta.issue_id}.txt"
+
         return (
-            Path(self.standard_config.download_dir)
-            / self.file_meta.project_id
-            / f"{self.file_meta.issue_id}.txt"
+            Path(self.standard_config.download_dir) / self.grouping_folder_name() / download_file
         ).resolve()
 
     @property
     def _output_filename(self):
-        """Create output file path based on output directory, project id and issue key."""
+        """Create output file path."""
         output_file = f"{self.file_meta.issue_id}.json"
-        return Path(self.standard_config.output_dir) / self.file_meta.project_id / output_file
+
+        return (
+            Path(self.standard_config.output_dir) / self.grouping_folder_name() / output_file
+        ).resolve()
 
     @requires_dependencies(["atlassian"])
     @BaseIngestDoc.skip_if_file_exists
@@ -242,14 +268,26 @@ class JiraConnector(ConnectorCleanupMixin, BaseConnector):
             password=self.config.api_token,
         )
 
+        if (
+            self.config.list_of_projects
+            or self.config.list_of_boards
+            or self.config.list_of_epics
+            or self.config.list_of_issues
+        ):
+
+            self.ingest_all_issues = False
+
+        else:
+            self.ingest_all_issues = True
+
     @requires_dependencies(["atlassian"])
-    def _get_project_ids(self):
-        """Fetches projects in a Jira domain."""
+    def _get_all_project_ids(self):
+        """Fetches ids for all projects in a Jira domain."""
         project_ids = [project["key"] for project in self.jira.projects()]
         return project_ids
 
     @requires_dependencies(["atlassian"])
-    def _get_issue_keys_within_one_project(
+    def _get_issues_within_one_project(
         self,
         project_id: str,
     ):
@@ -259,24 +297,82 @@ class JiraConnector(ConnectorCleanupMixin, BaseConnector):
         return [(issue["key"], issue["id"]) for issue in results]
 
     @requires_dependencies(["atlassian"])
-    def _get_issue_keys_within_projects(self):
-        project_ids = self._get_project_ids()
+    def _get_issue_keys_within_projects(self, project_ids=None):
+        if project_ids is None:
+            if self.ingest_all_issues:
+                project_ids = self._get_all_project_ids()
+            else:
+                return []
 
-        issue_keys_all = [
-            self._get_issue_keys_within_one_project(project_id=id) for id in project_ids
-        ]
+        issue_keys_all = [self._get_issues_within_one_project(project_id=id) for id in project_ids]
 
+        # since these issues will be grouped by project_id,
+        # both epic_ids and board_ids are intentionally set as none
         issue_keys_flattened = [
-            (issue_key, issue_id)
+            (issue_key, issue_id, None, None)
             for issue_keys_project in issue_keys_all
             for issue_key, issue_id in issue_keys_project
         ]
 
         return issue_keys_flattened
 
+    @requires_dependencies(["atlassian"])
+    def _get_issue_keys_within_epics(self, epic_ids):
+        if epic_ids is None:
+            return []
+
+        # since these issues will be grouped by
+        # epic_id, board_ids are intentionally set as none
+        issue_keys_with_epic_ids = [
+            (issue["key"], issue["id"], None, epic_id)
+            for epic_id in epic_ids
+            for issue in self.jira.epic_issues(epic=epic_id, fields=["key"])
+        ]
+
+        return issue_keys_with_epic_ids
+
+    def _get_issues_within_one_board(self, board_id: str):
+        get_issues_with_scroll = scroll_wrapper(self.jira.get_issues_for_board)
+        results = get_issues_with_scroll(board_id=board_id, fields=["key"], jql=None)
+
+        # since these issues will be grouped by
+        # board_id, epic_ids are intentionally set as none
+        return [(issue["key"], issue["id"], board_id, None) for issue in results]
+
+    def _get_issue_keys_within_boards(self, board_ids):
+        if board_ids is None:
+            return []
+
+        issue_keys_all = [self._get_issues_within_one_board(board_id=id) for id in board_ids]
+
+        issue_keys_flattened = [
+            (issue_key, issue_id, board_id, epic_id)
+            for issue_keys_board in issue_keys_all
+            for issue_key, issue_id, board_id, epic_id in issue_keys_board
+        ]
+        return issue_keys_flattened
+
+    def get_issue_keys_for_given_components(self):
+        issues = []
+
+        if self.config.list_of_projects:
+            issues += self._get_issue_keys_within_projects(self.config.list_of_projects.split())
+        if self.config.list_of_boards:
+            issues += self._get_issue_keys_within_boards(self.config.list_of_boards.split())
+        if self.config.list_of_epics:
+            issues += self._get_issue_keys_within_epics(self.config.list_of_epics.split())
+
+        return issues
+
     def get_ingest_docs(self):
         """Fetches all issues in a project."""
-        issue_keys_and_ids = self._get_issue_keys_within_projects()
+        print(str(self.config))
+        if self.ingest_all_issues:
+            # gets all issue ids from all projects
+            issue_keys_and_ids = self._get_issue_keys_within_projects()
+        else:
+            issue_keys_and_ids = self.get_issue_keys_for_given_components()
+
         return [
             JiraIngestDoc(
                 self.standard_config,
@@ -285,7 +381,9 @@ class JiraConnector(ConnectorCleanupMixin, BaseConnector):
                     issue_id=issue_id,
                     issue_key=issue_key,
                     project_id=issue_key.split("-")[0],
+                    board_id=board_id,
+                    epic_id=epic_id,
                 ),
             )
-            for issue_key, issue_id in issue_keys_and_ids
+            for issue_key, issue_id, board_id, epic_id in issue_keys_and_ids
         ]

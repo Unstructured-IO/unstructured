@@ -15,7 +15,10 @@ def jira(
     url: str,
     user_email: str,
     api_token: str,
-    list_of_paths: Optional[str],
+    list_of_projects: Optional[str],
+    list_of_boards: Optional[str],
+    list_of_epics: Optional[str],
+    list_of_issues: Optional[str],
     jql_query: Optional[str],
     **kwargs,
 ):
@@ -42,7 +45,10 @@ def jira(
             url=url,
             user_email=user_email,
             api_token=api_token,
-            list_of_paths=list_of_paths,
+            list_of_projects=list_of_projects,
+            list_of_boards=list_of_boards,
+            list_of_epics=list_of_epics,
+            list_of_issues=list_of_issues,
             jql_query=jql_query,
         ),
     )

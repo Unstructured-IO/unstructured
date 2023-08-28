@@ -27,30 +27,24 @@ from unstructured.ingest.runner import jira as jira_fn
     help="...",
 )
 @click.option(
-    "--list-of-paths",
+    "--list-of-projects",
     default=None,
-    help="""A list of paths that specify the locations to ingest data from within Jira.
-
-    If this argument is not set, the connector ingests all issues within each and every project.
-    --list-of-paths: path1 path2 path3 ….
-    path: project_id/board_id(optional)/epic_id(optional)/issue_id(optional)
-
-    To obtain project, board, epic, issue ids in bulk, check:
-    ...
-
-    To obtain specific ids from Jira UI, go to your Jira page, and ...:
-
-    You can also check:
-    https://confluence.atlassian.com/cloudkb/how-to-identify-the-jira-issue-id-in-cloud-1167747456.html
-
-    Here is an example for one --list-of-paths:
-        project1/		→ gets the all issues inside project1
-        ...
-
-    Examples to invalid airtable_paths:
-        ...          → has to mention base to be valid
-        .../...     → has to mention table to be valid
-    """,
+    help="todo",
+)
+@click.option(
+    "--list-of-boards",
+    default=None,
+    help="todo",
+)
+@click.option(
+    "--list-of-epics",
+    default=None,
+    help="todo",
+)
+@click.option(
+    "--list-of-issues",
+    default=None,
+    help="todo",
 )
 @click.option(
     "--url",
