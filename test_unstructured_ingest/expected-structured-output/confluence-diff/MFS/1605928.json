@@ -76,11 +76,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Time",
-          "tag": "strong"
-        }
+      "emphasized_text_contents": [
+        "Time"
+      ],
+      "emphasized_text_tags": [
+        "strong"
       ]
     },
     "text": "Time"
@@ -92,11 +92,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Item",
-          "tag": "strong"
-        }
+      "emphasized_text_contents": [
+        "Item"
+      ],
+      "emphasized_text_tags": [
+        "strong"
       ]
     },
     "text": "Item"
@@ -108,11 +108,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Presenter",
-          "tag": "strong"
-        }
+      "emphasized_text_contents": [
+        "Presenter"
+      ],
+      "emphasized_text_tags": [
+        "strong"
       ]
     },
     "text": "Presenter"
@@ -124,11 +124,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Notes",
-          "tag": "strong"
-        }
+      "emphasized_text_contents": [
+        "Notes"
+      ],
+      "emphasized_text_tags": [
+        "strong"
       ]
     },
     "text": "Notes"
