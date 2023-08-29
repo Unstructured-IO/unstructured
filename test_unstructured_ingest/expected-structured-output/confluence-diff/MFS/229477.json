@@ -26,19 +26,15 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "links": [
-        {
-          "text": "Template - Project plan",
-          "url": "/wiki/spaces/MFS/pages/1540126/Template+-+Project+plan"
-        },
-        {
-          "text": "Template - Meeting notes",
-          "url": "/wiki/spaces/MFS/pages/1605928/Template+-+Meeting+notes"
-        },
-        {
-          "text": "Template - Weekly status report",
-          "url": "/wiki/spaces/MFS/pages/1605942/Template+-+Weekly+status+report"
-        }
+      "link_urls": [
+        "/wiki/spaces/MFS/pages/1540126/Template+-+Project+plan",
+        "/wiki/spaces/MFS/pages/1605928/Template+-+Meeting+notes",
+        "/wiki/spaces/MFS/pages/1605942/Template+-+Weekly+status+report"
+      ],
+      "link_texts": [
+        "Template - Project plan",
+        "Template - Meeting notes",
+        "Template - Weekly status report"
       ]
     },
     "text": "Get started with page templates:Template - Project planTemplate - Meeting notesTemplate - Weekly status report"
@@ -50,11 +46,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "links": [
-        {
-          "text": "Get the most out of your team space",
-          "url": "/wiki/spaces/MFS/pages/1605956/Get+the+most+out+of+your+team+space"
-        }
+      "link_urls": [
+        "/wiki/spaces/MFS/pages/1605956/Get+the+most+out+of+your+team+space"
+      ],
+      "link_texts": [
+        "Get the most out of your team space"
       ]
     },
     "text": "Check out Get the most out of your team space for more tips."
@@ -76,15 +72,13 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "What is your team all about?",
-          "tag": "em"
-        },
-        {
-          "text": "What is your team all about?",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "What is your team all about?",
+        "What is your team all about?"
+      ],
+      "emphasized_text_tags": [
+        "em",
+        "span"
       ]
     },
     "text": "What is your team all about?"
@@ -106,15 +100,13 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "What is your team's mission? What is your vision?",
-          "tag": "em"
-        },
-        {
-          "text": "What is your team's mission? What is your vision?",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "What is your team's mission? What is your vision?",
+        "What is your team's mission? What is your vision?"
+      ],
+      "emphasized_text_tags": [
+        "em",
+        "span"
       ]
     },
     "text": "What is your team's mission? What is your vision?"
@@ -136,15 +128,13 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Add team members to your space.",
-          "tag": "em"
-        },
-        {
-          "text": "Add team members to your space.",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "Add team members to your space.",
+        "Add team members to your space."
+      ],
+      "emphasized_text_tags": [
+        "em",
+        "span"
       ]
     },
     "text": "Add team members to your space."
@@ -156,11 +146,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Team member",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "Team member"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "Team member"
@@ -172,11 +162,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Role",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "Role"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "Role"
@@ -188,11 +178,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Responsibility",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "Responsibility"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "Responsibility"
@@ -204,11 +194,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Team member",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "Team member"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "Team member"
@@ -220,11 +210,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Role",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "Role"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "Role"
@@ -236,11 +226,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Responsibility",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "Responsibility"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "Responsibility"
@@ -252,11 +242,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Team member",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "Team member"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "Team member"
@@ -268,11 +258,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Role",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "Role"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "Role"
@@ -284,11 +274,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Responsibility",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "Responsibility"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "Responsibility"
@@ -310,15 +300,13 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "How can someone reach out to your team?",
-          "tag": "em"
-        },
-        {
-          "text": "How can someone reach out to your team?",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "How can someone reach out to your team?",
+        "How can someone reach out to your team?"
+      ],
+      "emphasized_text_tags": [
+        "em",
+        "span"
       ]
     },
     "text": "How can someone reach out to your team?"
@@ -330,17 +318,17 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "links": [
-        {
-          "text": null,
-          "url": "mailto:team@email.com"
-        }
+      "link_urls": [
+        "mailto:team@email.com"
       ],
-      "emphasized_texts": [
-        {
-          "text": "team@email.com",
-          "tag": "span"
-        }
+      "link_texts": [
+        null
+      ],
+      "emphasized_text_contents": [
+        "team@email.com"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "team@email.com"
@@ -352,11 +340,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Tickets",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "Tickets"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "Tickets"
@@ -368,11 +356,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Jira board",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "Jira board"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "Jira board"
@@ -384,11 +372,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "#channel",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "#channel"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "#channel"
@@ -410,15 +398,13 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "List them here",
-          "tag": "em"
-        },
-        {
-          "text": "List them here",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "List them here",
+        "List them here"
+      ],
+      "emphasized_text_tags": [
+        "em",
+        "span"
       ]
     },
     "text": "List them here"
@@ -470,15 +456,13 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Add resources for new hires",
-          "tag": "em"
-        },
-        {
-          "text": "Add resources for new hires",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "Add resources for new hires",
+        "Add resources for new hires"
+      ],
+      "emphasized_text_tags": [
+        "em",
+        "span"
       ]
     },
     "text": "Add resources for new hires"
@@ -500,15 +484,13 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Add links to meeting notes",
-          "tag": "em"
-        },
-        {
-          "text": "Add links to meeting notes",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "Add links to meeting notes",
+        "Add links to meeting notes"
+      ],
+      "emphasized_text_tags": [
+        "em",
+        "span"
       ]
     },
     "text": "Add links to meeting notes"
@@ -530,15 +512,13 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "List them here",
-          "tag": "em"
-        },
-        {
-          "text": "List them here",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "List them here",
+        "List them here"
+      ],
+      "emphasized_text_tags": [
+        "em",
+        "span"
       ]
     },
     "text": "List them here"
@@ -560,15 +540,13 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Create a blog post to share team news. It will automatically appear here once it's published.",
-          "tag": "em"
-        },
-        {
-          "text": "Create a blog post to share team news. It will automatically appear here once it's published.",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "Create a blog post to share team news. It will automatically appear here once it's published.",
+        "Create a blog post to share team news. It will automatically appear here once it's published."
+      ],
+      "emphasized_text_tags": [
+        "em",
+        "span"
       ]
     },
     "text": "Create a blog post to share team news. It will automatically appear here once it's published."
