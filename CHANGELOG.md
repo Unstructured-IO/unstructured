@@ -1,3 +1,13 @@
+## 0.10.9-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* Edit `add_pytesseract_bbox_to_elements`'s (`ocr_only` strategy) `metadata.coordinates.points` return type to `Tuple` for consistency.
+
 ## 0.10.8
 
 ### Enhancements
