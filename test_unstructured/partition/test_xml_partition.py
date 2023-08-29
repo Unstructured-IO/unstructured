@@ -3,7 +3,9 @@ import pathlib
 
 import pytest
 
+from unstructured.partition.json import partition_json
 from unstructured.partition.xml import partition_xml
+from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
@@ -231,3 +233,20 @@ def test_partition_xml_from_file_with_custom_metadata_date(
         elements = partition_xml(file=f, metadata_last_modified=expected_last_modification_date)
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
+
+
+@pytest.mark.parametrize(
+    "filename",
+    ["factbook.xml", "factbook-utf-16.xml"],
+)
+def test_partition_xml_with_json(filename):
+    file_path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+    elements = partition_xml(filename=file_path, xml_keep_tags=False)
+    test_elements = partition_json(text=elements_to_json(elements))
+
+    assert len(elements) == len(test_elements)
+    assert elements[0].metadata.page_number == test_elements[0].metadata.page_number
+    assert elements[0].metadata.filename == test_elements[0].metadata.filename
+
+    for i in range(len(elements)):
+        assert elements[i] == test_elements[i]

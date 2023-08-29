@@ -2,12 +2,13 @@
 
 ### Enhancements
 
+* Fix `test_json` to handle only non-extra dependencies file types (plain-text)
+
 ### Features
 
 * Adds `chunk_by_title` to break a document into sections based on the presence of `Title`
   elements.
 * add new extraction function `extract_image_urls_from_html` to extract all img related URL from html text.
-
 
 ### Fixes
 
