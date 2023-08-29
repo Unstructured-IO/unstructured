@@ -26,7 +26,7 @@ export OMP_THREAD_LIMIT=1
 ./test_unstructured_ingest/test-ingest-onedrive.sh
 ./test_unstructured_ingest/test-ingest-outlook.sh
 ./test_unstructured_ingest/test-ingest-elasticsearch.sh
-#./test_unstructured_ingest/test-ingest-confluence-diff.sh
+./test_unstructured_ingest/test-ingest-confluence-diff.sh
 ./test_unstructured_ingest/test-ingest-confluence-large.sh
 ./test_unstructured_ingest/test-ingest-airtable-diff.sh
 ./test_unstructured_ingest/test-ingest-airtable-large.sh
@@ -34,7 +34,7 @@ export OMP_THREAD_LIMIT=1
 ./test_unstructured_ingest/test-ingest-local-single-file-with-encoding.sh
 ./test_unstructured_ingest/test-ingest-local-single-file-with-pdf-infer-table-structure.sh
 ./test_unstructured_ingest/test-ingest-notion.sh
-./test_unstructured_ingest/test-ingest-salesforce.sh
+./test_unstructured_ingest/test-ingest-delta-table.sh
 # NOTE(yuming): The following test should be put after any tests with --preserve-downloads option
 ./test_unstructured_ingest/test-ingest-pdf-fast-reprocess.sh
 ./test_unstructured_ingest/test-ingest-sharepoint.sh

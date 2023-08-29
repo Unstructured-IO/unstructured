@@ -3,6 +3,7 @@ from .azure import get_cmd as azure
 from .biomed import get_cmd as biomed
 from .box import get_cmd as box
 from .confluence import get_cmd as confluence
+from .delta_table import get_cmd as delta_table
 from .discord import get_cmd as discord
 from .dropbox import get_cmd as dropbox
 from .elasticsearch import get_cmd as elasticsearch
@@ -28,6 +29,7 @@ __all__ = [
     "biomed",
     "box",
     "confluence",
+    "delta_table",
     "discord",
     "dropbox",
     "elasticsearch",

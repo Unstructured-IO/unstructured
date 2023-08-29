@@ -13,6 +13,7 @@ in our community `Slack. <https://join.slack.com/t/unstructuredw-kbe4326/shared_
    upstream_connectors/biomed
    upstream_connectors/box
    upstream_connectors/confluence
+   upstream_connectors/delta_table
    upstream_connectors/discord
    upstream_connectors/dropbox
    upstream_connectors/elastic_search

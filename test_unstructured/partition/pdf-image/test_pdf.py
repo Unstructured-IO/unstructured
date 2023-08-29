@@ -177,7 +177,7 @@ def test_partition_pdf_with_model_name_env_var(
             filename,
             is_image=False,
             ocr_languages="eng",
-            ocr_mode="individual_blocks",
+            ocr_mode="entire_page",
             extract_tables=False,
             model_name="checkbox",
         )
@@ -198,7 +198,7 @@ def test_partition_pdf_with_model_name(
             filename,
             is_image=False,
             ocr_languages="eng",
-            ocr_mode="individual_blocks",
+            ocr_mode="entire_page",
             extract_tables=False,
             model_name="checkbox",
         )
@@ -325,10 +325,14 @@ def test_partition_pdf_falls_back_to_fast_from_ocr_only(
         pdf,
         "extractable_elements",
         return_value=mock_return,
-    ) as mock_partition:
+    ) as mock_partition, mock.patch.object(
+        pdf,
+        "_partition_pdf_or_image_with_ocr",
+    ) as mock_partition_ocr:
         pdf.partition_pdf(filename=filename, url=None, strategy="ocr_only")
 
     mock_partition.assert_called_once()
+    mock_partition_ocr.assert_not_called()
     assert "pytesseract is not installed" in caplog.text
 
 
@@ -404,7 +408,7 @@ def test_partition_pdf_with_dpi():
             filename,
             is_image=False,
             ocr_languages="eng",
-            ocr_mode="individual_blocks",
+            ocr_mode="entire_page",
             extract_tables=False,
             model_name=None,
             pdf_image_dpi=100,
@@ -466,10 +470,10 @@ def test_partition_pdf_fast_groups_text_in_text_box():
     assert str(elements[1]).endswith("Jordan and Egypt.")
 
     expected_coordinate_points_3 = (
-        (273.9929, 181.16470000000004),
-        (273.9929, 226.16470000000004),
-        (333.59990000000005, 226.16470000000004),
-        (333.59990000000005, 181.16470000000004),
+        (95.6683, 181.16470000000004),
+        (95.6683, 226.16470000000004),
+        (166.7908, 226.16470000000004),
+        (166.7908, 181.16470000000004),
     )
     expected_coordinate_system_3 = PixelSpace(width=612, height=792)
     expected_elem_metadata_3 = ElementMetadata(
@@ -478,7 +482,7 @@ def test_partition_pdf_fast_groups_text_in_text_box():
             system=expected_coordinate_system_3,
         ),
     )
-    assert elements[3] == Title("1st", metadata=expected_elem_metadata_3)
+    assert elements[3] == Text("2.5", metadata=expected_elem_metadata_3)
 
 
 def test_partition_pdf_with_metadata_filename(
@@ -764,3 +768,31 @@ def test_partition_pdf_from_file_with_hi_res_strategy_custom_metadata_date(
         )
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
+
+
+def test_partition_pdf_with_ocr_has_coordinates_from_filename(
+    filename="example-docs/chevron-page.pdf",
+):
+    elements = pdf.partition_pdf(filename=filename, strategy="ocr_only")
+    assert elements[0].metadata.coordinates.points == (
+        (657.0, 2144.0),
+        (657.0, 2106.0),
+        (1043.0, 2106.0),
+        (1043.0, 2144.0),
+    )
+
+
+def test_partition_pdf_with_ocr_has_coordinates_from_file(
+    filename="example-docs/chevron-page.pdf",
+):
+    with open(filename, "rb") as f:
+        elements = pdf.partition_pdf(
+            file=f,
+            strategy="ocr_only",
+        )
+    assert elements[0].metadata.coordinates.points == (
+        (657.0, 2144.0),
+        (657.0, 2106.0),
+        (1043.0, 2106.0),
+        (1043.0, 2144.0),
+    )

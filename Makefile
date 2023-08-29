@@ -124,6 +124,10 @@ install-ingest-azure:
 install-ingest-box:
 	python3 -m pip install -r requirements/ingest-box.txt
 
+.PHONY: install-ingest-delta-table
+install-ingest-delta-table:
+	python3 -m pip install -r requirements/ingest-delta-table.txt
+
 .PHONY: install-ingest-discord
 install-ingest-discord:
 	pip install -r requirements/ingest-discord.txt
@@ -223,7 +227,7 @@ pip-compile:
 	pip-compile --upgrade requirements/test.in
 	pip-compile --upgrade requirements/dev.in
 	pip-compile --upgrade requirements/build.in
-	# NOTE(robinson) - doc/requirements.txt is where the GitHub action for building
+	# NOTE(robinson) - docs/requirements.txt is where the GitHub action for building
 	# sphinx docs looks for additional requirements
 	cp requirements/build.txt docs/requirements.txt
 	pip-compile --upgrade requirements/ingest-s3.in
@@ -232,6 +236,7 @@ pip-compile:
 	pip-compile --upgrade requirements/ingest-gcs.in
 	pip-compile --upgrade requirements/ingest-dropbox.in
 	pip-compile --upgrade requirements/ingest-azure.in
+	pip-compile --upgrade requirements/ingest-delta-table.in
 	pip-compile --upgrade requirements/ingest-discord.in
 	pip-compile --upgrade requirements/ingest-reddit.in
 	pip-compile --upgrade requirements/ingest-github.in

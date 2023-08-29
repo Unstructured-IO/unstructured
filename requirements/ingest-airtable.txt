@@ -19,10 +19,12 @@ idna==3.4
     #   requests
 inflection==0.5.1
     # via pyairtable
-pyairtable==2.0.0
+pyairtable==2.1.0.post1
     # via -r requirements/ingest-airtable.in
 pydantic==1.10.12
-    # via pyairtable
+    # via
+    #   -c requirements/constraints.in
+    #   pyairtable
 requests==2.31.0
     # via
     #   -c requirements/base.txt

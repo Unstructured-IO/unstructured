@@ -265,6 +265,9 @@ workflow looks like:
     filename=filename, process_attachments=True, attachment_partitioner=partition
   )
 
+If the content of an email is PGP encrypted, ``partition_email`` will return an empty
+list of elements and emit a warning indicated the email is encrypted.
+
 For more information about the ``partition_email`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/email.py>`_.
 
 
@@ -457,6 +460,9 @@ workflow looks like:
     filename=filename, process_attachments=True, attachment_partitioner=partition
   )
 
+If the content of an email is PGP encrypted, ``partition_msg`` will return an empty
+list of elements and emit a warning indicated the email is encrypted.
+
 For more information about the ``partition_msg`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/msg.py>`_.
 
 
@@ -496,7 +502,7 @@ Examples:
 
   with ExitStack() as stack:
       files = [stack.enter_context(open(filename, "rb")) for filename in filenames]
-      documents = partition_multiple_via_api(files=files, file_filenames=filenames)
+      documents = partition_multiple_via_api(files=files, metadata_filenames=filenames)
 
 For more information about the ``partition_multiple_via_api`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/api.py>`_.
 
@@ -794,7 +800,7 @@ type for the file. If you do not explicitly pass it, the MIME type will be infer
   elements = partition_via_api(filename=filename, api_key="MY_API_KEY", content_type="message/rfc822")
 
   with open(filename, "rb") as f:
-    elements = partition_via_api(file=f, file_filename=filename, api_key="MY_API_KEY")
+    elements = partition_via_api(file=f, metadata_filename=filename, api_key="MY_API_KEY")
 
 
 You can pass additional settings such as ``strategy``, ``ocr_languages`` and ``encoding`` to the

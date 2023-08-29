@@ -1,33 +1,91 @@
-## 0.9.3-dev3
+## 0.10.9-dev2
 
 ### Enhancements
 
 ### Features
 
-* Add Salesforce Connector to be able to pull Account, Case, Campaign, EmailMessage, Lead
+### Fixes
+
+* Edit `add_pytesseract_bbox_to_elements`'s (`ocr_only` strategy) `metadata.coordinates.points` return type to `Tuple` for consistency.
+* Re-enable test-ingest-confluence-diff for ingest tests
+* Fix syntax for ingest test check number of files
+
+## 0.10.8
+
+### Enhancements
+
+* Release docker image that installs Python 3.10 rather than 3.8
+
+### Features
 
 ### Fixes
 
-## 0.10.5-dev2
+## 0.10.7
 
 ### Enhancements
+
+### Features
+
+### Fixes
+
+* Remove overly aggressive ListItem chunking for images and PDF's which typically resulted in inchorent elements.
+
+## 0.10.6
+
+### Enhancements
+
+* Enable `partition_email` and `partition_msg` to detect if an email is PGP encryped. If
+  and email is PGP encryped, the functions will return an empy list of elements and
+  emit a warning about the encrypted content.
+* Add threaded Slack conversations into Slack connector output
+* Add functionality to sort elements using `xy-cut` sorting approach in `partition_pdf` for `hi_res` and `fast` strategies
+* Bump unstructured-inference
+  * Set OMP_THREAD_LIMIT to 1 if not set for better tesseract perf (0.5.17)
+
+### Features
+
+* Extract coordinates from PDFs and images when using OCR only strategy and add to metadata
+
+### Fixes
+
+* Update `partition_html` to respect the order of `<pre>` tags.
+* Fix bug in `partition_pdf_or_image` where two partitions were called if `strategy == "ocr_only"`.
+* Bump unstructured-inference
+  * Fix issue where temporary files were being left behind (0.5.16)
+* Adds deprecation warning for the `file_filename` kwarg to `partition`, `partition_via_api`,
+  and `partition_multiple_via_api`.
+* Fix documentation build workflow by pinning dependencies
+
+## 0.10.5
+
+### Enhancements
+
 * Create new CI Pipelines
   - Checking text, xml, email, and html doc tests against the library installed without extras
   - Checking each library extra against their respective tests
-* `partition` raises and error and tells the user to install the appropriate extra if a filetype
+* `partition` raises an error and tells the user to install the appropriate extra if a filetype
   is detected that is missing dependencies.
-
-## 0.10.3
+* Add custom errors to ingest
+* Bump `unstructured-ingest==0.5.15`
+  - Handle an uncaught TesseractError (0.5.15)
+  - Add TIFF test file and TIFF filetype to `test_from_image_file` in `test_layout` (0.5.14)
+* Use `entire_page` ocr mode for pdfs and images
+* Add notes on extra installs to docs
 * Adds ability to reuse connections per process in unstructured-ingest
+
+### Features
+* Add delta table connector
+
+### Fixes
+
+## 0.10.4
 * Pass ocr_mode in partition_pdf and set the default back to individual pages for now
 * Add diagrams and descriptions for ingest design in the ingest README
 
 ### Features
+* Supports multipage TIFF image partitioning
 
 ### Fixes
-
-* remove test modification for potential bug and add docstring
-* fix partitioning of and tests for email and msg docs with attachments, add docstring to msg function
 
 ## 0.10.2
 
