@@ -39,17 +39,18 @@ class ARGILLA_PARTITION_TYPES(Enum):
     TSV = "tsv"
     CSV = "csv"
     # TEXT with pages
-    PDF = "pdf" # TODO: WIP
-    EPUB = "epub" # TODO: WIP
-    DOC = "doc" # TODO: WIP
-    DOCX = "docx" # TODO: WIP
+    PDF = "pdf"
+    EPUB = "epub"
+    DOC = "doc"
+    DOCX = "docx"
     # TEXT without pages
-    ODT = "odt" # TODO: WIP
-    ORG = "org" # TODO: WIP
-    MD = "md" # TODO: WIP
-    TXT = "txt" # TODO: WIP
-    RTF = "rtf" # TODO: WIP
-    RST = "rst" # TODO: WIP
+    ODT = "odt"
+    ORG = "org"
+    MD = "md"
+    TXT = "txt"
+    TEXT = "text"
+    RTF = "rtf"
+    RST = "rst"
     IMAGE = "image"
     # TEXT WITH DOM
     HTML = "html" # TODO: WIP
@@ -62,8 +63,16 @@ GROUP_TO_TYPE = {
     "slides": [ARGILLA_PARTITION_TYPES.PPT, ARGILLA_PARTITION_TYPES.PPTX],
     "tables_with_pages": [ARGILLA_PARTITION_TYPES.XLS, ARGILLA_PARTITION_TYPES.XLSX],
     "tables_without_pages": [ARGILLA_PARTITION_TYPES.TSV, ARGILLA_PARTITION_TYPES.CSV],
-    "text_with_pages": [ARGILLA_PARTITION_TYPES.PDF, ARGILLA_PARTITION_TYPES.EPUB, ARGILLA_PARTITION_TYPES.DOC],
-    "text_without_pages": [ARGILLA_PARTITION_TYPES.TXT, ARGILLA_PARTITION_TYPES.MD, ARGILLA_PARTITION_TYPES.RTF, ARGILLA_PARTITION_TYPES.RST, ARGILLA_PARTITION_TYPES.IMAGE],
+    "text_with_pages": [
+        ARGILLA_PARTITION_TYPES.PDF, ARGILLA_PARTITION_TYPES.EPUB,
+        ARGILLA_PARTITION_TYPES.DOC, ARGILLA_PARTITION_TYPES.DOCX
+    ],
+    "text_without_pages": [
+        ARGILLA_PARTITION_TYPES.TXT, ARGILLA_PARTITION_TYPES.TEXT,
+        ARGILLA_PARTITION_TYPES.RTF, ARGILLA_PARTITION_TYPES.RST,
+        ARGILLA_PARTITION_TYPES.IMAGE, ARGILLA_PARTITION_TYPES.ODT,
+        ARGILLA_PARTITION_TYPES.ORG, ARGILLA_PARTITION_TYPES.MD,
+    ],
     "text_with_dom": [ARGILLA_PARTITION_TYPES.HTML, ARGILLA_PARTITION_TYPES.XML],
     "api": [ARGILLA_PARTITION_TYPES.API],
 }
@@ -140,7 +149,7 @@ def _get_partition_func(partition_type: ARGILLA_PARTITION_TYPES):
         from unstructured.partition.doc import partition_doc as partition_func
     elif partition_type == ARGILLA_PARTITION_TYPES.DOCX:
         from unstructured.partition.docx import partition_docx as partition_func
-    elif partition_type == ARGILLA_PARTITION_TYPES.TXT:
+    elif partition_type in [ARGILLA_PARTITION_TYPES.TXT, ARGILLA_PARTITION_TYPES.TEXT]:
         from unstructured.partition.text import partition_text as partition_func
     elif partition_type == ARGILLA_PARTITION_TYPES.MD:
         from unstructured.partition.md import partition_md as partition_func
@@ -229,17 +238,18 @@ def stage_for_argilla_feedback(
     dataset: FeedbackDataset,
     files: Union[str, List[str]],
     partition_kwargs: dict = {},
-    group_by: Optional[str] = None,
+    group_by: Optional[Union[str, bool, list]] = None,
     join_operator: Optional[str] = "\n",
 ):
     partition_type = ARGILLA_PARTITION_TYPES(partition_type)
-    if partition_type not in [ARGILLA_PARTITION_TYPES.MSG, ARGILLA_PARTITION_TYPES.EML,
-                            ARGILLA_PARTITION_TYPES.CSV]:
-        if not group_by:
-            warnings.warn(f"You passed `group_by_strategy` but {partition_type} is a single page document.")
+    if partition_type in GROUP_TO_TYPE["text_without_pages"] + GROUP_TO_TYPE["text_with_pages"]:
+        if group_by is None:
+            warnings.warn("No `group_by`. Using ['title'] as a default. Set `group_by=False` if no groupby is intended.`")
+            group_by = ["title"]
     else:
         if group_by:
-            warnings.warn("No `group_by_strategy` defined we recommend grouping by `title`, `element_type` and/or `page`. Grouping by ['title', 'element_type'] is a good default.")
+            warnings.warn(f"You passed `group_by` but {partition_type} is a single page document.")
+
 
     records = []
     partition_func = _get_partition_func(partition_type)
@@ -311,7 +321,10 @@ def stage_for_argilla_feedback(
                 })
             df = pd.DataFrame(element_overview)
 
-            df = df.groupby(by=group_by, sort=False, as_index=False).agg(list)
+            if group_by:
+                df = df.groupby(by=group_by, sort=False, as_index=False).agg(list)
+            else:
+                df.element = df.element.apply(lambda x: [x])
             df.element = df.element.apply(lambda x: "\n".join(_convert_elements_to_text(x)).strip())
 
             for item in df.to_dict(orient="records"):
