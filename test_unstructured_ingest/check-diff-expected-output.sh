@@ -31,7 +31,9 @@ if [ "$OVERWRITE_FIXTURES" != "false" ]; then
 elif ! diff -ru "$EXPECTED_OUTPUT_DIR" "$OUTPUT_DIR" ; then
     "$SCRIPT_DIR"/json-to-clean-text-folder.sh "$EXPECTED_OUTPUT_DIR" "$EXPECTED_OUTPUT_DIR_TEXT"
     "$SCRIPT_DIR"/json-to-clean-text-folder.sh "$OUTPUT_DIR" "$OUTPUT_DIR_TEXT"
-    diff -ru "$EXPECTED_OUTPUT_DIR_TEXT" "$OUTPUT_DIR_TEXT"
+    diff -ru "$EXPECTED_OUTPUT_DIR_TEXT" "$OUTPUT_DIR_TEXT"> outputdiff.txt
+    cat outputdiff.txt
+    diffstat -c outputdiff.txt
     echo
     echo "There are differences from the previously checked-in structured outputs."
     echo
