@@ -98,27 +98,40 @@ def get_fields_for_issue(issue, c_sep="|||", r_sep="\n\n\n"):
     return all_fields
 
 
-def _get_id_fields_for_issue(issue, c_sep="|||"):
+DEFAULT_C_SEP = " " * 5
+DEFAULT_R_SEP = "\n"
+
+
+def _get_id_fields_for_issue(issue, c_sep=DEFAULT_C_SEP, r_sep=DEFAULT_R_SEP):
     id, key = issue["id"], issue["key"]
-    return f"{id}{c_sep}{key}"
+    return f"IssueID_IssueKey:{id}{c_sep}{key}{r_sep}"
 
 
-def _get_project_fields_for_issue(issue, c_sep="|||", r_sep="\n\n\n"):
+def _get_project_fields_for_issue(issue, c_sep=DEFAULT_C_SEP, r_sep=DEFAULT_R_SEP):
     if "project" in issue:
-        return c_sep.join([issue["project"]["key"], issue["project"]["name"]])
+        return (
+            f"""ProjectID_Key:{issue["project"]["key"]}{c_sep}{issue["project"]["name"]}{r_sep}"""
+        )
     else:
         return ""
 
 
-def _get_dropdown_fields_for_issue(issue, c_sep="|||", r_sep="==="):
+def _get_dropdown_fields_for_issue(issue, c_sep=DEFAULT_C_SEP, r_sep=DEFAULT_R_SEP):
     return f"""
-    {issue["issuetype"]["name"]}
-    {issue["status"]["name"]}
-    {issue["priority"]}
-    {issue["assignee"]["accountId"]}{c_sep}{issue["assignee"]["displayName"]}
-    {issue["reporter"]["emailAddress"]}{c_sep}{issue["reporter"]["displayName"]}
-    {c_sep.join(issue["labels"])}
-    {c_sep.join([component["name"] for component in issue["components"]])}
+    IssueType:{issue["issuetype"]["name"]}
+    {r_sep}
+    Status:{issue["status"]["name"]}
+    {r_sep}
+    Priority:{issue["priority"]}
+    {r_sep}
+    AssigneeID_Name:{issue["assignee"]["accountId"]}{c_sep}{issue["assignee"]["displayName"]}
+    {r_sep}
+    ReporterAdr_Name:{issue["reporter"]["emailAddress"]}{c_sep}{issue["reporter"]["displayName"]}
+    {r_sep}
+    Labels:{c_sep.join(issue["labels"])}
+    {r_sep}
+    Components:{c_sep.join([component["name"] for component in issue["components"]])}
+    {r_sep}
     """
 
 
@@ -126,22 +139,25 @@ def _get_subtasks_for_issue(issue):
     return ""
 
 
-def _get_text_fields_for_issue(issue, c_sep="|||", r_sep="\n\n\n"):
+def _get_text_fields_for_issue(issue, c_sep=DEFAULT_C_SEP, r_sep=DEFAULT_R_SEP):
     return f"""
     {issue["summary"]}
+    {r_sep}
     {issue["description"]}
+    {r_sep}
     {c_sep.join([atch["self"] for atch in issue["attachment"]])}
+    {r_sep}
     """
 
 
-def _get_comments_for_issue(issue, c_sep="|||", r_sep="==="):
+def _get_comments_for_issue(issue, c_sep=DEFAULT_C_SEP, r_sep=DEFAULT_R_SEP):
     return c_sep.join(
         [_get_fields_for_comment(comment) for comment in issue["comment"]["comments"]],
     )
 
 
-def _get_fields_for_comment(comment, c_sep="|||"):
-    return f"{comment['author']['displayName']}{c_sep}{comment['body']}"
+def _get_fields_for_comment(comment, c_sep=DEFAULT_C_SEP, r_sep=DEFAULT_R_SEP):
+    return f"{comment['author']['displayName']}{c_sep}{comment['body']}{r_sep}"
 
 
 def scroll_wrapper(func, results_key="results"):
@@ -323,6 +339,10 @@ class JiraConnector(ConnectorCleanupMixin, BaseConnector):
         ]
         return issue_keys_flattened
 
+    def get_issues_info(self, issues):
+        issues_info = [self.jira.get_issue(issue, ["key", "id"]) for issue in issues]
+        return [(info["key"], info["id"], None) for info in issues_info]
+
     def get_issue_keys_for_given_components(self):
         issues = []
 
@@ -331,9 +351,7 @@ class JiraConnector(ConnectorCleanupMixin, BaseConnector):
         if self.config.list_of_boards:
             issues += self._get_issue_keys_within_boards(self.config.list_of_boards.split())
         if self.config.list_of_issues:
-            # issues += self.
-            # todo
-            pass
+            issues += self.get_issues_info(self.config.list_of_issues.split())
 
         return issues
 
