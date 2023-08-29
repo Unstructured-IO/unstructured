@@ -1,13 +1,19 @@
-## 0.10.9-dev1
+## 0.10.9-dev3
 
 ### Enhancements
 
+* Fix `test_json` to handle only non-extra dependencies file types (plain-text)
+
 ### Features
 
+* Adds `chunk_by_title` to break a document into sections based on the presence of `Title`
+  elements.
+  
 ### Fixes
 
 * Edit `add_pytesseract_bbox_to_elements`'s (`ocr_only` strategy) `metadata.coordinates.points` return type to `Tuple` for consistency.
 * Re-enable test-ingest-confluence-diff for ingest tests
+* Fix syntax for ingest test check number of files
 
 ## 0.10.8
 
