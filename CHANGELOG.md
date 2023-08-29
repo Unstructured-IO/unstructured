@@ -1,8 +1,11 @@
-## 0.10.9-dev2
+## 0.10.9-dev3
 
 ### Enhancements
 
 ### Features
+
+* Adds `chunk_by_title` to break a document into sections based on the presence of `Title`
+  elements.
 
 ### Fixes
 
