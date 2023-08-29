@@ -14,10 +14,10 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     s3 \
     --download-dir "$DOWNLOAD_DIR" \
     --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified \
-    --partition-strategy hi_res \
+    --strategy hi_res \
     --preserve-downloads \
     --reprocess \
-    --structured-output-dir "$OUTPUT_DIR" \
+    --output-dir "$OUTPUT_DIR" \
     --verbose \
     --remote-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
     --anonymous
