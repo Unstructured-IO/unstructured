@@ -16,11 +16,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Win",
-          "tag": "strong"
-        }
+      "emphasized_text_contents": [
+        "Win"
+      ],
+      "emphasized_text_tags": [
+        "strong"
       ]
     },
     "text": "Win"
@@ -62,11 +62,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Needs input",
-          "tag": "strong"
-        }
+      "emphasized_text_contents": [
+        "Needs input"
+      ],
+      "emphasized_text_tags": [
+        "strong"
       ]
     },
     "text": "Needs input"
@@ -108,11 +108,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Focus",
-          "tag": "strong"
-        }
+      "emphasized_text_contents": [
+        "Focus"
+      ],
+      "emphasized_text_tags": [
+        "strong"
       ]
     },
     "text": "Focus"
@@ -144,11 +144,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Notes",
-          "tag": "strong"
-        }
+      "emphasized_text_contents": [
+        "Notes"
+      ],
+      "emphasized_text_tags": [
+        "strong"
       ]
     },
     "text": "Notes"
@@ -160,11 +160,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Important Links",
-          "tag": "strong"
-        }
+      "emphasized_text_contents": [
+        "Important Links"
+      ],
+      "emphasized_text_tags": [
+        "strong"
       ]
     },
     "text": "Important Links"
