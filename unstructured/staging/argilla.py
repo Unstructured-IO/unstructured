@@ -375,7 +375,7 @@ def stage_for_argilla_feedback(
                     "text": item.get("element").lstrip(item.get("title"))
                 })
                 fields = _ensure_string_values_dict(fields)
-                if partition_type in [ARGILLA_PARTITION_TYPES.TXT]:
+                if partition_type in GROUP_TO_TYPE["text_without_pages"]:
                     del fields["page_id"]
                 records.append(FeedbackRecord(fields=fields, metadata=metadata_list.pop()))
         elif partition_type in GROUP_TO_TYPE["text_with_dom"]:

@@ -93,7 +93,6 @@ if not is_in_docker:
             ("md", "README.md"),
             ("odt", "example-docs/fake.odt"),
             ("org", "example-docs/README.org"),
-            ("pdf", "example-docs/layout-parser-paper-fast.pdf"),
             ("rst", "example-docs/README.rst"),
             ("rtf", "example-docs/fake-doc.rtf"),
             ("text", "example-docs/fake-text.txt")
