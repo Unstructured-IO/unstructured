@@ -81,10 +81,7 @@ TYPE_TO_GROUP = {value: key for key, values in GROUP_TO_TYPE.items() for value i
 
 GROUP_TO_FIELDS = {
     "defaults": [ # TODO: do we want to include defaults?
-        TextField(name="element_id", use_markdown=True),
         TextField(name="filename", use_markdown=True),
-        TextField(name="last_modified", use_markdown=True),
-        TextField(name="filetype", use_markdown=True),
     ],
     "email": [
         TextField(name="sent_from", use_markdown=True),
@@ -175,7 +172,6 @@ def _get_partition_func(partition_type: ARGILLA_PARTITION_TYPES):
 def get_argilla_feedback_dataset(
         partition_type: Union[str, ARGILLA_PARTITION_TYPES],
         questions: List[Union[TextQuestion, LabelQuestion, MultiLabelQuestion, RankingQuestion, RatingQuestion]],
-        include_defaults: Optional[bool] = True,
     ):
     """
     Creates a FeedbackDataset for Argilla based on the partition type and questions.
@@ -183,17 +179,14 @@ def get_argilla_feedback_dataset(
     Args:
         partition_type (Union[str, ARGILLA_PARTITION_TYPES]): The partition type to use.
         questions (List[Union[TextQuestion, LabelQuestion, MultiLabelQuestion, RankingQuestion, RatingQuestion]]): The questions to use.
-        include_defaults (Optional[bool], optional): Whether to include the default fields. Defaults to True.
 
     Returns:
         FeedbackDataset: The FeedbackDataset for Argilla.
     """
-
-    # TODO: do we want to default to a TextQuestion?
     partition_type = ARGILLA_PARTITION_TYPES(partition_type)
-    fields = GROUP_TO_FIELDS["defaults"] if include_defaults else []
+    fields = [TextField(name="filename", use_markdown=True)]
     fields += GROUP_TO_FIELDS[TYPE_TO_GROUP[partition_type]]
-
+    print(fields)
     return FeedbackDataset(
         fields=fields,
         questions=questions,
@@ -207,6 +200,29 @@ def _ensure_string_values_dict(dictionary: dict) -> dict:
         dictionary (dict): The dictionary to convert.
     """
     return {key: str(value) for key, value in dictionary.items()}
+
+def _get_metadata_from_elements(elements: List[Text]) -> dict:
+    """
+    Gets the metadata from a list of elements.
+
+    Args:
+        elements (List[Text]): The elements to get the metadata from.
+
+    Returns:
+        dict: The metadata.
+    """
+    metadata_list = {}
+    for element in elements:
+        metadata = element.metadata.to_dict()
+        for key, value in metadata.items():
+            if key in metadata_list:
+                metadata_list[key].append(value)
+            else:
+                metadata_list[key] = [value]
+
+    return metadata_list
+
+
 
 def _convert_elements_to_text(elements: List[Text], as_html: bool = True) -> List[str]:
     """
@@ -237,9 +253,11 @@ def stage_for_argilla_feedback(
     partition_type: str,
     dataset: FeedbackDataset,
     files: Union[str, List[str]],
+    include_metadata: bool = True,
     partition_kwargs: dict = {},
     group_by: Optional[Union[str, bool, list]] = None,
     join_operator: Optional[str] = "\n",
+    post_processing_func: Optional[callable] = None,
 ):
     partition_type = ARGILLA_PARTITION_TYPES(partition_type)
     if partition_type in GROUP_TO_TYPE["text_without_pages"] + GROUP_TO_TYPE["text_with_pages"]:
@@ -250,39 +268,42 @@ def stage_for_argilla_feedback(
         if group_by:
             warnings.warn(f"You passed `group_by` but {partition_type} is a single page document.")
 
-
     records = []
     partition_func = _get_partition_func(partition_type)
     if isinstance(files, str):
         files = [files]
     elements_iterator = _partition_iterator(files, partition_func, **partition_kwargs)
     for elements in elements_iterator:
+        fields, metadata = {}, {}
+        if elements:
+            fields = {"filename": elements[0].metadata.filename}
+
         if partition_type in GROUP_TO_TYPE["email"]:
             # TODO: What happens when there are multiple emails in the .msg-file?
-            metadata = elements[0].metadata.to_dict()
+            metadata = _get_metadata_from_elements(elements)if include_metadata else {}
             elements = _convert_elements_to_text(elements)
-            fields = {
+            fields.update({
                 "sent_from": metadata.get("sent_from"),
                 "sent_to": metadata.get("sent_to"),
                 "subject": metadata.get("subject"),
                 "text": "\n".join(elements),
-            }
+            })
             fields = _ensure_string_values_dict(fields)
-            records.append(FeedbackRecord(fields=fields))
+            records.append(FeedbackRecord(fields=fields, metadata=metadata))
         elif partition_type in GROUP_TO_TYPE["tables_without_pages"] + GROUP_TO_TYPE["tables_with_pages"]:
             for element in elements:
-                metadata = element.metadata.to_dict()
-                fields = {
+                metadata = _get_metadata_from_elements([elements]) if metadata else {}
+                fields.update({
                     "page_id": metadata.get("page_name"),
                     "table": join_operator.join(_convert_elements_to_text([element], as_html=True)),
                     "table_as_text": join_operator.join(_convert_elements_to_text([element], as_html=False)),
-                }
+                })
                 if partition_type in GROUP_TO_TYPE["tables_without_pages"]:
                     del fields["page_id"]
                 else:
                     del fields["table_as_text"]
                 fields = _ensure_string_values_dict(fields)
-                records.append(FeedbackRecord(fields=fields))
+                records.append(FeedbackRecord(fields=fields, metadata=metadata))
         elif partition_type in GROUP_TO_TYPE["slides"]:
             page_elements = {}
             for element in elements:
@@ -293,9 +314,8 @@ def stage_for_argilla_feedback(
                     page_elements[last_page] = []
                 page_elements[last_page].append(element)
             for page_number, page_elements in page_elements.items():
-                fields = {
-                    "page_id": page_number,
-                }
+                metadata = _get_metadata_from_elements(page_elements)if include_metadata else {}
+                fields.update({"page_id": page_number})
                 if not page_elements:
                     continue
                 if isinstance(page_elements[0], Title):
@@ -304,7 +324,7 @@ def stage_for_argilla_feedback(
                 fields["content"] = join_operator.join(
                     _convert_elements_to_text(page_elements)
                 )
-                records.append(FeedbackRecord(fields=fields))
+                records.append(FeedbackRecord(fields=fields, metadata=metadata))
         elif partition_type in GROUP_TO_TYPE["text_with_pages"] + GROUP_TO_TYPE["text_without_pages"]:
             last_title = "None"
             page_last = 1
@@ -325,23 +345,26 @@ def stage_for_argilla_feedback(
                 df = df.groupby(by=group_by, sort=False, as_index=False).agg(list)
             else:
                 df.element = df.element.apply(lambda x: [x])
+
+            df.metadata = df.element.apply(lambda x: _get_metadata_from_elements(x) if include_metadata else {})
             df.element = df.element.apply(lambda x: "\n".join(_convert_elements_to_text(x)).strip())
 
+            metadata_list = df.metadata.tolist()
             for item in df.to_dict(orient="records"):
-                fields = {
+                fields.update({
                     "page_id": item.get("page", [1]),
                     "title": item.get("title"),
                     "element_type": item.get("element_type"),
                     "text": item.get("element").lstrip(item.get("title"))
-                }
+                })
                 fields = _ensure_string_values_dict(fields)
                 if partition_type in [ARGILLA_PARTITION_TYPES.TXT]:
                     del fields["page_id"]
-                records.append(FeedbackRecord(fields=fields))
+                records.append(FeedbackRecord(fields=fields, metadata=metadata_list.pop()))
         elif partition_type in GROUP_TO_TYPE["text_with_dom"]:
-            raise NotImplementedError("TODO: implement")
+            raise NotImplementedError("We do not support DOM yet. Feel free to open an issue on GitHub.")
         elif partition_type in GROUP_TO_TYPE["api"]:
-            raise NotImplementedError("TODO: implement")
+            raise NotImplementedError("We do not support the API yet. Feel free to open an issue on GitHub.")
         else:
             raise ValueError(f"Invalid partition type: {partition_type}")
         # TODO: add batched option?
