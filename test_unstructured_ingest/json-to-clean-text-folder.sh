@@ -13,4 +13,4 @@ OUTPUT_DIR_TEXT=$2
 echo "INPUT FOLDER: $INPUT_FOLDER_NAME"
 echo "OUTPUT FOLDER: $OUTPUT_DIR_TEXT"
 mkdir -p "$OUTPUT_DIR_TEXT"
-find "$INPUT_FOLDER_NAME" -type f -print0| xargs -IX --null -n1 "$SCRIPT_DIR"/json-to-text.sh X "$OUTPUT_DIR_TEXT" 
+find "$INPUT_FOLDER_NAME" -type f -print0| xargs -IX --null -n1 "$SCRIPT_DIR"/json-to-text.sh X "$OUTPUT_DIR_TEXT"
