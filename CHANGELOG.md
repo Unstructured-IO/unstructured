@@ -1,4 +1,4 @@
-## 0.10.9-dev0
+## 0.10.9-dev1
 
 ### Enhancements
 
@@ -7,6 +7,7 @@
 ### Fixes
 
 * Edit `add_pytesseract_bbox_to_elements`'s (`ocr_only` strategy) `metadata.coordinates.points` return type to `Tuple` for consistency.
+* Re-enable test-ingest-confluence-diff for ingest tests
 
 ## 0.10.8
 
