@@ -1,7 +1,8 @@
 from typing import List
 
-import cv2
 import numpy as np
+
+from unstructured.utils import requires_dependencies
 
 """
 
@@ -157,7 +158,10 @@ def bbox2points(bbox):
     return [left, top, right, top, right, bottom, left, bottom]
 
 
+@requires_dependencies("cv2")
 def vis_polygon(img, points, thickness=2, color=None):
+    import cv2
+
     br2bl_color = color
     tl2tr_color = color
     tr2br_color = color
@@ -196,6 +200,7 @@ def vis_polygon(img, points, thickness=2, color=None):
     return img
 
 
+@requires_dependencies("cv2")
 def vis_points(
     img: np.ndarray,
     points,
@@ -206,13 +211,15 @@ def vis_points(
 
     Args:
         img:
-        points: [N, 8]  8: x1,y1,x2,y2,x3,y3,x3,y4
+        points: [N, 8]  8: x1,y1,x2,y2,x3,y3,x4,y4
         texts:
         color:
 
     Returns:
 
     """
+    import cv2
+
     points = np.array(points)
     assert len(texts) == points.shape[0]
 
