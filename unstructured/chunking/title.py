@@ -1,9 +1,9 @@
 from typing import List
 
 from unstructured.documents.elements import (
+    CompositeElement,
     Element,
     ElementMetadata,
-    Section,
     Table,
     Text,
     Title,
@@ -71,7 +71,7 @@ def chunk_by_title(
                             _value.extend(value)
                             setattr(metadata, attr, _value)
 
-            chunked_elements.append(Section(text=text, metadata=metadata))
+            chunked_elements.append(CompositeElement(text=text, metadata=metadata))
 
     return chunked_elements
 

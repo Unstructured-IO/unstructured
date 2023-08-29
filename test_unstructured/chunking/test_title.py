@@ -4,8 +4,8 @@ from unstructured.chunking.title import (
 )
 from unstructured.documents.elements import (
     CheckBox,
+    CompositeElement,
     ElementMetadata,
-    Section,
     Table,
     Text,
     Title,
@@ -73,12 +73,12 @@ def test_chunk_by_title():
     chunks = chunk_by_title(elements, combine_under_n_chars=0)
 
     assert chunks == [
-        Section(
+        CompositeElement(
             "A Great Day\n\nToday is a great day.\n\nIt is sunny outside.",
         ),
         Table("<table></table>"),
-        Section("An Okay Day\n\nToday is an okay day.\n\nIt is rainy outside."),
-        Section(
+        CompositeElement("An Okay Day\n\nToday is an okay day.\n\nIt is rainy outside."),
+        CompositeElement(
             "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside.",
         ),
         CheckBox(),
@@ -110,15 +110,15 @@ def test_chunk_by_title_respects_section_change():
     chunks = chunk_by_title(elements, combine_under_n_chars=0)
 
     assert chunks == [
-        Section(
+        CompositeElement(
             "A Great Day",
         ),
-        Section(
+        CompositeElement(
             "Today is a great day.\n\nIt is sunny outside.",
         ),
         Table("<table></table>"),
-        Section("An Okay Day\n\nToday is an okay day.\n\nIt is rainy outside."),
-        Section(
+        CompositeElement("An Okay Day\n\nToday is an okay day.\n\nIt is rainy outside."),
+        CompositeElement(
             "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside.",
         ),
         CheckBox(),
@@ -145,15 +145,15 @@ def test_chunk_by_title_separates_by_page_number():
     chunks = chunk_by_title(elements, multipage_sections=False, combine_under_n_chars=0)
 
     assert chunks == [
-        Section(
+        CompositeElement(
             "A Great Day",
         ),
-        Section(
+        CompositeElement(
             "Today is a great day.\n\nIt is sunny outside.",
         ),
         Table("<table></table>"),
-        Section("An Okay Day\n\nToday is an okay day.\n\nIt is rainy outside."),
-        Section(
+        CompositeElement("An Okay Day\n\nToday is an okay day.\n\nIt is rainy outside."),
+        CompositeElement(
             "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside.",
         ),
         CheckBox(),
@@ -180,12 +180,12 @@ def test_chunk_by_title_groups_across_pages():
     chunks = chunk_by_title(elements, multipage_sections=True, combine_under_n_chars=0)
 
     assert chunks == [
-        Section(
+        CompositeElement(
             "A Great Day\n\nToday is a great day.\n\nIt is sunny outside.",
         ),
         Table("<table></table>"),
-        Section("An Okay Day\n\nToday is an okay day.\n\nIt is rainy outside."),
-        Section(
+        CompositeElement("An Okay Day\n\nToday is an okay day.\n\nIt is rainy outside."),
+        CompositeElement(
             "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside.",
         ),
         CheckBox(),
