@@ -2,11 +2,13 @@
 
 ### Enhancements
 
+* Fix `test_json` to handle only non-extra dependencies file types (plain-text)
+
 ### Features
 
 * Adds `chunk_by_title` to break a document into sections based on the presence of `Title`
   elements.
-
+  
 ### Fixes
 
 * Edit `add_pytesseract_bbox_to_elements`'s (`ocr_only` strategy) `metadata.coordinates.points` return type to `Tuple` for consistency.
@@ -18,9 +20,7 @@
 ### Enhancements
 
 * Release docker image that installs Python 3.10 rather than 3.8
-* Fix `test_json` to handle only non-extra dependencies file types (plain-text)
-* Add json invariant tests to all the filetype tests (`partition_filetype() == partition_json(element_to_json)`)
-* 
+
 ### Features
 
 ### Fixes
