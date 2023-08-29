@@ -549,3 +549,14 @@ def test_partition_email_odd_attachment_filename(
     )
 
     assert elements[1].metadata.filename == "odd=file=name.txt"
+
+
+def test_partition_email_with_pgp_encrypted_message(
+    caplog,
+    filename="example-docs/eml/fake-encrypted.eml",
+):
+    elements = partition_email(filename=filename)
+
+    assert elements == []
+    assert "WARNING" in caplog.text
+    assert "Encrypted email detected" in caplog.text
