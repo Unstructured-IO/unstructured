@@ -306,7 +306,7 @@ def stage_for_argilla_feedback(
                 )
                 records.append(FeedbackRecord(fields=fields))
         elif partition_type in GROUP_TO_TYPE["text_with_pages"] + GROUP_TO_TYPE["text_without_pages"]:
-            last_title = "start"
+            last_title = "None"
             page_last = 1
             element_overview = []
             for element in elements:
@@ -328,17 +328,16 @@ def stage_for_argilla_feedback(
             df.element = df.element.apply(lambda x: "\n".join(_convert_elements_to_text(x)).strip())
 
             for item in df.to_dict(orient="records"):
-                if item.get("title") != "start":
-                    fields = {
-                        "page_id": item.get("page", [1]),
-                        "title": item.get("title"),
-                        "element_type": item.get("element_type"),
-                        "text": item.get("element").lstrip(item.get("title"))
-                    }
-                    fields = _ensure_string_values_dict(fields)
-                    if partition_type in [ARGILLA_PARTITION_TYPES.TXT]:
-                        del fields["page_id"]
-                    records.append(FeedbackRecord(fields=fields))
+                fields = {
+                    "page_id": item.get("page", [1]),
+                    "title": item.get("title"),
+                    "element_type": item.get("element_type"),
+                    "text": item.get("element").lstrip(item.get("title"))
+                }
+                fields = _ensure_string_values_dict(fields)
+                if partition_type in [ARGILLA_PARTITION_TYPES.TXT]:
+                    del fields["page_id"]
+                records.append(FeedbackRecord(fields=fields))
         elif partition_type in GROUP_TO_TYPE["text_with_dom"]:
             raise NotImplementedError("TODO: implement")
         elif partition_type in GROUP_TO_TYPE["api"]:
