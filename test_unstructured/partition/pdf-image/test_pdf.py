@@ -774,8 +774,7 @@ def test_partition_pdf_from_file_with_hi_res_strategy_custom_metadata_date(
 
 @pytest.mark.parametrize(
     "strategy",
-    # ["fast", "hi_res", "ocr_only"],
-    ["ocr_only"],
+    ["fast", "hi_res"],
 )
 def test_partition_pdf_with_json(
     strategy,
@@ -786,14 +785,8 @@ def test_partition_pdf_with_json(
 
     assert len(elements) == len(test_elements)
 
-    breakpoint()
-
     for i in range(len(elements)):
-        print(i)
-        assert elements[i].text == test_elements[i].text 
-        assert elements[i].metadata.filename == test_elements[i].metadata.filename
-        assert elements[i].metadata.coordinates == test_elements[i].metadata.coordinates
-        assert elements[i].metadata.page_number == test_elements[i].metadata.page_number
+        assert elements[i] == test_elements[i]
 
 
 def test_partition_pdf_with_ocr_has_coordinates_from_filename(
