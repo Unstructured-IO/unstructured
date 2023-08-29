@@ -247,7 +247,7 @@ def partition_text(
     for ctext in file_content:
         ctext = ctext.strip()
 
-        if ctext:
+        if ctext and clean_bullets(ctext):
             element = element_from_text(ctext)
             element.metadata = metadata
             elements.append(element)
