@@ -144,7 +144,7 @@ def _get_fields_for_comment(comment, c_sep="|||"):
     return f"{comment['author']['displayName']}{c_sep}{comment['body']}"
 
 
-def scroll_wrapper(func):
+def scroll_wrapper(func, results_key="results"):
     def wrapper(*args, **kwargs):
         """Wraps a function to obtain scroll functionality.
         Function needs to be able to accept 'start' and 'limit' arguments."""
@@ -165,8 +165,12 @@ def scroll_wrapper(func):
             if type(response) is list:
                 all_results += func(*args, **kwargs)
             elif type(response) is dict:
-                all_results += func(*args, **kwargs)["results"]
-
+                if results_key not in response:
+                    raise KeyError(
+                        "Response object has no known keys to \
+                                   access the results, such as 'results' or 'values'.",
+                    )
+                all_results += func(*args, **kwargs)[results_key]
             kwargs["start"] += kwargs["limit"]
 
         return all_results[:number_of_items_to_fetch]
@@ -298,7 +302,10 @@ class JiraConnector(ConnectorCleanupMixin, BaseConnector):
         return issue_keys_flattened
 
     def _get_issues_within_one_board(self, board_id: str):
-        get_issues_with_scroll = scroll_wrapper(self.jira.get_issues_for_board)
+        get_issues_with_scroll = scroll_wrapper(
+            self.jira.get_issues_for_board,
+            results_key="issues",
+        )
         results = get_issues_with_scroll(board_id=board_id, fields=["key"], jql=None)
 
         return [(issue["key"], issue["id"], board_id) for issue in results]
