@@ -67,6 +67,7 @@ def normalize_layout_element(
         Dict[str, Any],
     ],
     coordinate_system: Optional[CoordinateSystem] = None,
+    infer_list_items: bool = True,
 ) -> Union[Element, List[Element]]:
     """Converts an unstructured_inference LayoutElement object to an unstructured Element."""
 
@@ -88,11 +89,19 @@ def normalize_layout_element(
     coordinates = layout_dict.get("coordinates")
     element_type = layout_dict.get("type")
     if element_type == "List":
-        return layout_list_to_list_items(
-            text,
-            coordinates=coordinates,
-            coordinate_system=coordinate_system,
-        )
+        if infer_list_items:
+            return layout_list_to_list_items(
+                text,
+                coordinates=coordinates,
+                coordinate_system=coordinate_system,
+            )
+        else:
+            return ListItem(
+                text=text,
+                coordinates=coordinates,
+                coordinate_system=coordinate_system,
+            )
+
     elif element_type in TYPE_TO_TEXT_ELEMENT_MAP:
         _element_class = TYPE_TO_TEXT_ELEMENT_MAP[element_type]
         return _element_class(
@@ -405,6 +414,7 @@ def document_to_element_list(
     sortable: bool = False,
     include_page_breaks: bool = False,
     last_modification_date: Optional[str] = None,
+    infer_list_items: bool = True,
     **kwargs,
 ) -> List[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
@@ -425,7 +435,11 @@ def document_to_element_list(
             else:
                 coordinate_system = None
 
-            element = normalize_layout_element(layout_element, coordinate_system=coordinate_system)
+            element = normalize_layout_element(
+                layout_element,
+                coordinate_system=coordinate_system,
+                infer_list_items=infer_list_items,
+            )
 
             if isinstance(element, List):
                 for el in element:
