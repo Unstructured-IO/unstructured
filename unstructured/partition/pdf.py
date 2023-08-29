@@ -489,26 +489,39 @@ def add_pytesseract_bbox_to_elements(elements, bboxes, width, height):
     )
 
     boxes = bboxes.strip().split("\n")
-    i = 0
+    import pdb; pdb.set_trace
+    idx = 0
+    # char_count = 0
+    _bookmark = 0
     for element in elements:
+        if not element.text:
+            continue
         char_count = len(element.text.replace(" ", ""))
 
-        for box in boxes[i : i + char_count]:  # noqa
-            _, x1, y1, x2, y2, _ = box.split()
+        for box in boxes[idx : idx + char_count]:  # noqa
+            char, x1, y1, x2, y2, _ = box.split()
+            
+            # there are occasionally extra bboxes that should be skipped
+            if char not in element.text:
+                continue
+            
             x1, y1, x2, y2 = map(int, [x1, y1, x2, y2])
-
             min_x = min(min_x, x1)
             min_y = min(min_y, y1)
             max_x = max(max_x, x2)
             max_y = max(max_y, y2)
 
         points = ((min_x, min_y), (min_x, max_y), (max_x, max_y), (max_x, min_y))
-        converted_points = tuple(
-            [
-                point_space.convert_coordinates_to_new_system(pixel_space, *point)
-                for point in points
-            ],
-        )
+        converted_points = []
+        
+        for point in points:
+            point = (point_space.convert_coordinates_to_new_system(pixel_space, *point))
+            converted_points.append(tuple(map(int, point)))
+        
+        converted_points = tuple(converted_points)
+                
+        if element.text == "2 Z. Shen et al.":
+            _bookmark = 1
 
         element.metadata.coordinates = CoordinatesMetadata(
             points=converted_points,
@@ -520,8 +533,9 @@ def add_pytesseract_bbox_to_elements(elements, bboxes, width, height):
         min_y = float("inf")
         max_x = 0
         max_y = 0
-        i += char_count
-
+        idx += char_count
+        if _bookmark == 1:
+            import pdb; pdb.set_trace()
     return elements
 
 
