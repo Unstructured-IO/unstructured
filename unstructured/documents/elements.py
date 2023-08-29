@@ -443,6 +443,14 @@ class Text(Element):
         self.text = cleaned_text
 
 
+class CompositeElement(Text):
+    """A section of text consisting of a combination of elements."""
+
+    category = "CompositeElement"
+
+    pass
+
+
 class FigureCaption(Text):
     """An element for capturing text associated with figure captions."""
 
