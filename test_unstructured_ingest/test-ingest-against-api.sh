@@ -23,4 +23,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --file-glob "*.pdf" \
     --input-path example-docs
 
-sh "$SCRIPT_DIR"/check-num-files-output.sh 8 $OUTPUT_FOLDER_NAME
+sh "$SCRIPT_DIR"/check-num-files-output.sh 12 $OUTPUT_FOLDER_NAME
