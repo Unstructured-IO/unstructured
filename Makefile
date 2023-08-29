@@ -319,7 +319,7 @@ test-extra-pptx:
 		test_${PACKAGE_NAME}/partition/pptx
 
 .PHONY: test-extra-epub
-test-extra-pypandoc:
+test-extra-epub:
 	PYTHONPATH=. CI=$(CI) pytest \
 		test_${PACKAGE_NAME}/partition/epub
 
