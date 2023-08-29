@@ -16,7 +16,6 @@ from textwrap import dedent
 from typing import Any, Dict, List, Type
 
 from dateutil import parser  # type: ignore
-from simple_salesforce.exceptions import SalesforceMalformedRequest
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -252,13 +251,14 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return dedent(eml)
 
     @BaseIngestDoc.skip_if_file_exists
-    @requires_dependencies(["simple_salesforce"], extras="salesforce")
     def get_file(self):
         """Saves individual json records locally."""
         self._create_full_tmp_dir_path()
         logger.debug(f"Writing file {self.record_id} - PID: {os.getpid()}")
 
         client = self.config._get_client()
+
+        # Get record from Salesforce based on id
         record = client.query_all(
             f"select FIELDS(STANDARD) from {self.record_type} where Id='{self.record_id}",
         )
@@ -290,7 +290,6 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return self._tmp_download_file()
 
 
-@requires_dependencies(["simple_salesforce"], extras="salesforce")
 class SalesforceConnector(ConnectorCleanupMixin, BaseConnector):
     ingest_doc_cls: Type[SalesforceIngestDoc] = SalesforceIngestDoc
     config: SimpleSalesforceConfig
@@ -305,11 +304,14 @@ class SalesforceConnector(ConnectorCleanupMixin, BaseConnector):
     def initialize(self):
         pass
 
+    @requires_dependencies(["simple_salesforce"], extras="salesforce")
     def get_ingest_docs(self) -> List[SalesforceIngestDoc]:
         """Get Salesforce Ids for the records.
         Send them to next phase where each doc gets downloaded into the
         appropriate format for partitioning.
         """
+        from simple_salesforce.exceptions import SalesforceMalformedRequest
+
         client = self.config._get_client()
 
         record_ids = []
@@ -318,6 +320,7 @@ class SalesforceConnector(ConnectorCleanupMixin, BaseConnector):
                 raise ValueError(f"{record_type} not currently an accepted Salesforce category")
 
             try:
+                # Get ids from Salesforce
                 records = client.query_all(
                     f"select Id from {record_type}",
                 )
