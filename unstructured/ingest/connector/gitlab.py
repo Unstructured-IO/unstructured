@@ -38,7 +38,6 @@ class SimpleGitLabConfig(SimpleGitConfig):
 @dataclass
 class GitLabIngestDoc(GitIngestDoc):
     config: SimpleGitLabConfig
-    project: "Project"
     registry_name: str = "gitlab"
 
     def _fetch_and_write(self) -> None:
