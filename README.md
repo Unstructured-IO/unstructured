@@ -165,6 +165,14 @@ If using the optional `pre-commit`, you'll just need to install the hooks with `
 `pre-commit` package is installed as part of `make install` mentioned above. Finally, if you decided to use `pre-commit`
 you can also uninstall the hooks with `pre-commit uninstall`.
 
+In addition to develop in your local OS we also provide a helper to use docker providing a development environment:
+
+```bash
+make docker-start-dev
+```
+
+This starts a docker container with your local repo mounted to `/mnt/local_unstructured`. This docker image allows you to develop without worrying about your OS's compatibility with the repo and its dependencies.
+
 ## :clap: Quick Tour
 
 ### Documentation

@@ -293,7 +293,7 @@ run_profile() {
 
     # Pick the strategy
     while true; do
-      read -r -p "Choose a strategy: 1) auto, (2) fast, (3) hi_res, (b) back, (q) quit: " -n 1 strategy_option
+	read -r -p "Choose a strategy: 1) auto, (2) fast, (3) hi_res, (4) ocr_only (b) back, (q) quit: " -n 1 strategy_option
       echo
 
       if [[ $strategy_option == "b" ]]; then
@@ -313,6 +313,10 @@ run_profile() {
           ;;
         "3")
           strategy="hi_res"
+          break
+          ;;
+        "4")
+          strategy="ocr_only"
           break
           ;;
         *)

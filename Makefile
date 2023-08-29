@@ -401,6 +401,12 @@ docker-build:
 docker-start-bash:
 	docker run -ti --rm ${DOCKER_IMAGE}
 
+.PHONY: docker-start-dev
+docker-start-dev:
+	docker run --rm \
+	-v ${CURRENT_DIR}:/mnt/local_unstructued \
+	-ti ${DOCKER_IMAGE}
+
 .PHONY: docker-test
 docker-test:
 	docker run --rm \
