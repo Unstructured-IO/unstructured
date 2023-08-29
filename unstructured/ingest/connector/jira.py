@@ -34,7 +34,6 @@ class SimpleJiraConfig(BaseConnectorConfig):
     url: str
     list_of_projects: Optional[str]
     list_of_boards: Optional[str]
-    list_of_epics: Optional[str]
     list_of_issues: Optional[str]
     jql_query: Optional[str]
 
@@ -48,11 +47,13 @@ class JiraFileMeta:
 
     project_id: str
     board_id: Optional[str]
-    epic_id: Optional[str]
     issue_key: str
     issue_id: str
 
 
+# An implementation to obtain nested-defaultdict functionality.
+# Keys have default values in a recursive manner, allowing
+# limitless templates to parse an api response object.
 def nested_object_to_field_getter(object):
     if isinstance(object, abc.Mapping):
         new_object = {}
@@ -73,7 +74,6 @@ class FieldGetter(dict):
             value = FieldGetter({})
         return value
 
-    #
     # def __missing__(self, key):
     #     new_defaultdict = self.__class__(self.default_factory)
     #     self[key] = new_defaultdict
@@ -187,22 +187,10 @@ class JiraIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     file_meta: JiraFileMeta
 
     def grouping_folder_name(self):
-        all_component_types = ["epic_id", "board_id", "project_id"]
-
-        # If the user has provided epics as components, connector respects the directive and forms
-        # folders at epic level for the issues ingested from that epic. Similarly for boards and
-        # projects. If the user has not provided any grouping component, connector forms folders
-        # by project ids.
-        for component_type in all_component_types:
-            # attribute_value is always set, even if None
-            attribute_value = getattr(self.file_meta, component_type)
-            if attribute_value:
-                return attribute_value
-
-        raise AttributeError(
-            "The issue has no project_id. This is unexpected as project_id \
-                             should be automatically created by the connector.",
-        )
+        if self.file_meta.board_id:
+            return self.file_meta.board_id
+        else:
+            return self.file_meta.project_id
 
     @property
     def filename(self):
@@ -268,12 +256,7 @@ class JiraConnector(ConnectorCleanupMixin, BaseConnector):
             password=self.config.api_token,
         )
 
-        if (
-            self.config.list_of_projects
-            or self.config.list_of_boards
-            or self.config.list_of_epics
-            or self.config.list_of_issues
-        ):
+        if self.config.list_of_projects or self.config.list_of_boards or self.config.list_of_issues:
 
             self.ingest_all_issues = False
 
@@ -294,7 +277,7 @@ class JiraConnector(ConnectorCleanupMixin, BaseConnector):
         get_issues_with_scroll = scroll_wrapper(self.jira.get_all_project_issues)
         results = get_issues_with_scroll(project=project_id, fields=["key"])
 
-        return [(issue["key"], issue["id"]) for issue in results]
+        return [(issue["key"], issue["id"], None) for issue in results]
 
     @requires_dependencies(["atlassian"])
     def _get_issue_keys_within_projects(self, project_ids=None):
@@ -306,38 +289,19 @@ class JiraConnector(ConnectorCleanupMixin, BaseConnector):
 
         issue_keys_all = [self._get_issues_within_one_project(project_id=id) for id in project_ids]
 
-        # since these issues will be grouped by project_id,
-        # both epic_ids and board_ids are intentionally set as none
         issue_keys_flattened = [
-            (issue_key, issue_id, None, None)
+            (issue_key, issue_id, None)
             for issue_keys_project in issue_keys_all
-            for issue_key, issue_id in issue_keys_project
+            for issue_key, issue_id, board_id in issue_keys_project
         ]
 
         return issue_keys_flattened
-
-    @requires_dependencies(["atlassian"])
-    def _get_issue_keys_within_epics(self, epic_ids):
-        if epic_ids is None:
-            return []
-
-        # since these issues will be grouped by
-        # epic_id, board_ids are intentionally set as none
-        issue_keys_with_epic_ids = [
-            (issue["key"], issue["id"], None, epic_id)
-            for epic_id in epic_ids
-            for issue in self.jira.epic_issues(epic=epic_id, fields=["key"])
-        ]
-
-        return issue_keys_with_epic_ids
 
     def _get_issues_within_one_board(self, board_id: str):
         get_issues_with_scroll = scroll_wrapper(self.jira.get_issues_for_board)
         results = get_issues_with_scroll(board_id=board_id, fields=["key"], jql=None)
 
-        # since these issues will be grouped by
-        # board_id, epic_ids are intentionally set as none
-        return [(issue["key"], issue["id"], board_id, None) for issue in results]
+        return [(issue["key"], issue["id"], board_id) for issue in results]
 
     def _get_issue_keys_within_boards(self, board_ids):
         if board_ids is None:
@@ -346,9 +310,9 @@ class JiraConnector(ConnectorCleanupMixin, BaseConnector):
         issue_keys_all = [self._get_issues_within_one_board(board_id=id) for id in board_ids]
 
         issue_keys_flattened = [
-            (issue_key, issue_id, board_id, epic_id)
+            (issue_key, issue_id, board_id)
             for issue_keys_board in issue_keys_all
-            for issue_key, issue_id, board_id, epic_id in issue_keys_board
+            for issue_key, issue_id, board_id in issue_keys_board
         ]
         return issue_keys_flattened
 
@@ -359,8 +323,10 @@ class JiraConnector(ConnectorCleanupMixin, BaseConnector):
             issues += self._get_issue_keys_within_projects(self.config.list_of_projects.split())
         if self.config.list_of_boards:
             issues += self._get_issue_keys_within_boards(self.config.list_of_boards.split())
-        if self.config.list_of_epics:
-            issues += self._get_issue_keys_within_epics(self.config.list_of_epics.split())
+        if self.config.list_of_issues:
+            # issues += self.
+            # todo
+            pass
 
         return issues
 
@@ -382,8 +348,7 @@ class JiraConnector(ConnectorCleanupMixin, BaseConnector):
                     issue_key=issue_key,
                     project_id=issue_key.split("-")[0],
                     board_id=board_id,
-                    epic_id=epic_id,
                 ),
             )
-            for issue_key, issue_id, board_id, epic_id in issue_keys_and_ids
+            for issue_key, issue_id, board_id in issue_keys_and_ids
         ]

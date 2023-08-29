@@ -37,11 +37,6 @@ from unstructured.ingest.runner import jira as jira_fn
     help="todo",
 )
 @click.option(
-    "--list-of-epics",
-    default=None,
-    help="todo",
-)
-@click.option(
     "--list-of-issues",
     default=None,
     help="todo",
