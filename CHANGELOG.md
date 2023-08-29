@@ -1,4 +1,4 @@
-## 0.10.9-dev0
+## 0.10.9-dev3
 
 ### Enhancements
 
@@ -6,6 +6,12 @@
 
 * Adds `chunk_by_title` to break a document into sections based on the presence of `Title`
   elements.
+
+### Fixes
+
+* Edit `add_pytesseract_bbox_to_elements`'s (`ocr_only` strategy) `metadata.coordinates.points` return type to `Tuple` for consistency.
+* Re-enable test-ingest-confluence-diff for ingest tests
+* Fix syntax for ingest test check number of files
 
 ## 0.10.8
 
@@ -16,8 +22,6 @@
 ### Features
 
 ### Fixes
-
-* Edit `add_pytesseract_bbox_to_elements`'s (`ocr_only` strategy) `metadata.coordinates.points` return type to `Tuple` for consistency.
 
 ## 0.10.7
 
