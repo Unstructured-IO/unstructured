@@ -2,8 +2,13 @@
 
 ### Enhancements
 
+* Fix `test_json` to handle only non-extra dependencies file types (plain-text)
+
 ### Features
 
+* Adds `chunk_by_title` to break a document into sections based on the presence of `Title`
+  elements.
+  
 ### Fixes
 
 * Make cv2 dependency optional
