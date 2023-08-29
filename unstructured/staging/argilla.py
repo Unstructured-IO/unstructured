@@ -54,7 +54,7 @@ class ARGILLA_PARTITION_TYPES(Enum):
     IMAGE = "image"
     # TEXT WITH DOM
     HTML = "html" # TODO: WIP
-    XML = "xml" # TODO: potentially infer structure from file?
+    XML = "xml" # TODO: WIP
     # API
     API = "api" # TODO: WIP infer knowledge from file type
 
@@ -80,7 +80,7 @@ GROUP_TO_TYPE = {
 TYPE_TO_GROUP = {value: key for key, values in GROUP_TO_TYPE.items() for value in values}
 
 GROUP_TO_FIELDS = {
-    "defaults": [ # TODO: do we want to include defaults?
+    "defaults": [
         TextField(name="filename", use_markdown=True),
     ],
     "email": [
@@ -257,8 +257,26 @@ def stage_for_argilla_feedback(
     partition_kwargs: dict = {},
     group_by: Optional[Union[str, bool, list]] = None,
     join_operator: Optional[str] = "\n",
-    post_processing_func: Optional[callable] = None,
-):
+    batch_size: int = 100,
+    post_processing_func: Optional[callable] = lambda x: x,
+) -> FeedbackDataset:
+    """
+    Stages a FeedbackDataset for Argilla based on the partition type and questions.
+
+    Args:
+        partition_type (str): The partition type to use.
+        dataset (FeedbackDataset): The FeedbackDataset to stage.
+        files (Union[str, List[str]]): The files to use.
+        include_metadata (bool, optional): Whether to include metadata. Defaults to True.
+        partition_kwargs (dict, optional): The partition kwargs to use. Defaults to {}.
+        group_by (Optional[Union[str, bool, list]], optional): The group by to use. Defaults to None.
+        join_operator (Optional[str], optional): The join operator to use. Defaults to "\n".
+        batch_size (int, optional): The batch size to use. Defaults to 100.
+        post_processing_func (Optional[callable], optional): The post processing function to use. Defaults to lambda x: x.
+
+    Returns:
+        FeedbackDataset: The FeedbackDataset for Argilla.
+    """
     partition_type = ARGILLA_PARTITION_TYPES(partition_type)
     if partition_type in GROUP_TO_TYPE["text_without_pages"] + GROUP_TO_TYPE["text_with_pages"]:
         if group_by is None:
@@ -279,7 +297,6 @@ def stage_for_argilla_feedback(
             fields = {"filename": elements[0].metadata.filename}
 
         if partition_type in GROUP_TO_TYPE["email"]:
-            # TODO: What happens when there are multiple emails in the .msg-file?
             metadata = _get_metadata_from_elements(elements)if include_metadata else {}
             elements = _convert_elements_to_text(elements)
             fields.update({
@@ -367,8 +384,13 @@ def stage_for_argilla_feedback(
             raise NotImplementedError("We do not support the API yet. Feel free to open an issue on GitHub.")
         else:
             raise ValueError(f"Invalid partition type: {partition_type}")
-        # TODO: add batched option?
-    dataset.add_records(records)
+
+        if len(records) > batch_size:
+            dataset.add_records(post_processing_func(records))
+            records = []
+
+    if records:
+        dataset.add_records(post_processing_func(records))
 
     return dataset
 
