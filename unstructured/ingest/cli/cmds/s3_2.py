@@ -57,7 +57,7 @@ def s3_source(ctx: click.Context, **options):
             options[k] = list(v)
     verbose = options.get("verbose", False)
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
-    log_options(options)
+    log_options(options, verbose=verbose)
     try:
         # run_init_checks(**options)
         read_configs = CliReadConfig.from_dict(options)
@@ -73,7 +73,6 @@ def s3_source(ctx: click.Context, **options):
 @click.command(name="s3")
 @click.pass_context
 def s3_dest(ctx: click.Context, **options):
-    click.echo(f"Running s3 write subcommand with ctx: {ctx.__dict__}")
     parent_options: dict = ctx.parent.params if ctx.parent else {}
     # Click sets all multiple fields as tuple, this needs to be updated to list
     for k, v in options.items():
