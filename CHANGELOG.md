@@ -1,8 +1,9 @@
-## 0.10.9-dev3
+## 0.10.9-dev4
 
 ### Enhancements
 
 * Fix `test_json` to handle only non-extra dependencies file types (plain-text)
+* Serialize IngestDocs to JSON for passing to subprocesses
 
 ### Features
 
