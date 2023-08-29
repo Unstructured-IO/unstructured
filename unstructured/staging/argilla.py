@@ -28,18 +28,21 @@ class ARGILLA_PARTITION_TYPES(Enum):
     # EMAIL
     MSG = "msg"
     EML = "eml"
+    EMAIL = "email"
     # SLIDES
     PPT = "ppt"
     PPTX = "pptx"
-    # TABLES
-    TSV = "tsv"
-    CSV = "csv"
+    # TABLES WITH PAGES
     XLS = "xls"
     XLSX = "xlsx"
+    # TABLES WITHOUT PAGES
+    TSV = "tsv"
+    CSV = "csv"
     # TEXT with pages
     PDF = "pdf" # TODO: WIP
     EPUB = "epub" # TODO: WIP
     DOC = "doc" # TODO: WIP
+    DOCX = "docx" # TODO: WIP
     # TEXT without pages
     ODT = "odt" # TODO: WIP
     ORG = "org" # TODO: WIP
@@ -54,103 +57,159 @@ class ARGILLA_PARTITION_TYPES(Enum):
     # API
     API = "api" # TODO: WIP infer knowledge from file type
 
-PARTITION_DATASET_FIELDS = {
-    # DEFAULT
+GROUP_TO_TYPE = {
+    "email": [ARGILLA_PARTITION_TYPES.MSG, ARGILLA_PARTITION_TYPES.EML, ARGILLA_PARTITION_TYPES.EMAIL],
+    "slides": [ARGILLA_PARTITION_TYPES.PPT, ARGILLA_PARTITION_TYPES.PPTX],
+    "tables_with_pages": [ARGILLA_PARTITION_TYPES.XLS, ARGILLA_PARTITION_TYPES.XLSX],
+    "tables_without_pages": [ARGILLA_PARTITION_TYPES.TSV, ARGILLA_PARTITION_TYPES.CSV],
+    "text_with_pages": [ARGILLA_PARTITION_TYPES.PDF, ARGILLA_PARTITION_TYPES.EPUB, ARGILLA_PARTITION_TYPES.DOC],
+    "text_without_pages": [ARGILLA_PARTITION_TYPES.TXT, ARGILLA_PARTITION_TYPES.MD, ARGILLA_PARTITION_TYPES.RTF, ARGILLA_PARTITION_TYPES.RST, ARGILLA_PARTITION_TYPES.IMAGE],
+    "text_with_dom": [ARGILLA_PARTITION_TYPES.HTML, ARGILLA_PARTITION_TYPES.XML],
+    "api": [ARGILLA_PARTITION_TYPES.API],
+}
+
+TYPE_TO_GROUP = {value: key for key, values in GROUP_TO_TYPE.items() for value in values}
+
+GROUP_TO_FIELDS = {
     "defaults": [ # TODO: do we want to include defaults?
         TextField(name="element_id", use_markdown=True),
         TextField(name="filename", use_markdown=True),
         TextField(name="last_modified", use_markdown=True),
         TextField(name="filetype", use_markdown=True),
     ],
-    # EMAIL
-    ARGILLA_PARTITION_TYPES.MSG: [
+    "email": [
         TextField(name="sent_from", use_markdown=True),
         TextField(name="sent_to", use_markdown=True),
         TextField(name="subject", use_markdown=True),
         TextField(name="text", use_markdown=True),
-        TextField(name="text_with_sep", use_markdown=True)
     ],
-    ARGILLA_PARTITION_TYPES.EML: [
-        TextField(name="sent_from", use_markdown=True),
-        TextField(name="sent_to", use_markdown=True),
-        TextField(name="subject", use_markdown=True),
-        TextField(name="text", use_markdown=True),
-        TextField(name="text_with_sep", use_markdown=True)
-    ],
-    # TABLES
-     ARGILLA_PARTITION_TYPES.CSV: [
-        TextField(name="table", use_markdown=True),
-        TextField(name="raw_csv", use_markdown=True),
-    ],
-    ARGILLA_PARTITION_TYPES.TSV: [
-        TextField(name="table", use_markdown=True),
-        TextField(name="raw_csv", use_markdown=True),
-    ],
-    ARGILLA_PARTITION_TYPES.XLSX: [
-        TextField(name="page_name", use_markdown=True),
-        TextField(name="table", use_markdown=True),
-    ],
-    ARGILLA_PARTITION_TYPES.XLS: [
-        TextField(name="page_name", use_markdown=True),
-        TextField(name="table", use_markdown=True),
-    ],
-    # SLIDES
-    ARGILLA_PARTITION_TYPES.PPT: [
-        TextField(name="page_number", use_markdown=True),
+    "slides": [
+        TextField(name="page_id", use_markdown=True),
         TextField(name="title", use_markdown=True),
         TextField(name="content", use_markdown=True),
     ],
-    ARGILLA_PARTITION_TYPES.PPTX: [
-        TextField(name="page_number", use_markdown=True),
-        TextField(name="title", use_markdown=True),
-        TextField(name="content", use_markdown=True),
+    "tables_with_pages": [
+        TextField(name="page_id", use_markdown=True),
+        TextField(name="table", use_markdown=True),
     ],
-    # TEXT with multiple page
-    ARGILLA_PARTITION_TYPES.PDF: [
-        TextField(name="page_number", use_markdown=True),
-        TextField(name="title", use_markdown=True),
-        TextField(name="element_type", use_markdown=True),
-        TextField(name="text", use_markdown=True, required=False),
+    "tables_without_pages": [
+        TextField(name="table", use_markdown=True),
+        TextField(name="table_as_text", use_markdown=True),
     ],
-    ARGILLA_PARTITION_TYPES.DOC: [
-        TextField(name="page_number", use_markdown=True),
+    "text_with_pages": [
+        TextField(name="page_id", use_markdown=True),
         TextField(name="title", use_markdown=True),
         TextField(name="element_type", use_markdown=True),
         TextField(name="text", use_markdown=True, required=False),
     ],
-    ARGILLA_PARTITION_TYPES.EPUB: [
-        TextField(name="page_number", use_markdown=True),
+    "text_without_pages": [
         TextField(name="title", use_markdown=True),
         TextField(name="element_type", use_markdown=True),
         TextField(name="text", use_markdown=True, required=False),
     ],
-    # TEXT with DOM
-    ARGILLA_PARTITION_TYPES.HTML: [
+    "text_with_dom": [
         TextField(name="head", use_markdown=True),
         TextField(name="body", use_markdown=True),
         TextField(name="scripts", use_markdown=True),
+    ],
+    "api": [
+        TextField(name="api", use_markdown=True),
     ]
 }
+
+def _get_partition_func(partition_type: ARGILLA_PARTITION_TYPES):
+    if partition_type == ARGILLA_PARTITION_TYPES.MSG:
+        from unstructured.partition.msg import partition_msg as partition_func
+    elif partition_type in [ARGILLA_PARTITION_TYPES.EML, ARGILLA_PARTITION_TYPES.EMAIL]:
+        from unstructured.partition.email import partition_email as partition_func
+    elif partition_type == ARGILLA_PARTITION_TYPES.TSV:
+        from unstructured.partition.tsv import partition_tsv as partition_func
+    elif partition_type == ARGILLA_PARTITION_TYPES.CSV:
+        from unstructured.partition.csv import partition_csv as partition_func
+    elif partition_type in [ARGILLA_PARTITION_TYPES.XLS, ARGILLA_PARTITION_TYPES.XLSX]:
+        from unstructured.partition.xlsx import partition_xlsx as partition_func
+    elif partition_type == ARGILLA_PARTITION_TYPES.PPT:
+        from unstructured.partition.ppt import partition_ppt as partition_func
+    elif partition_type == ARGILLA_PARTITION_TYPES.PPTX:
+        from unstructured.partition.pptx import partition_pptx as partition_func
+    elif partition_type == ARGILLA_PARTITION_TYPES.PDF:
+        from unstructured.partition.pdf import partition_pdf as partition_func
+    elif partition_type == ARGILLA_PARTITION_TYPES.EPUB:
+        from unstructured.partition.epub import partition_epub as partition_func
+    elif partition_type == ARGILLA_PARTITION_TYPES.DOC:
+        from unstructured.partition.doc import partition_doc as partition_func
+    elif partition_type == ARGILLA_PARTITION_TYPES.DOCX:
+        from unstructured.partition.docx import partition_docx as partition_func
+    elif partition_type == ARGILLA_PARTITION_TYPES.TXT:
+        from unstructured.partition.text import partition_text as partition_func
+    elif partition_type == ARGILLA_PARTITION_TYPES.MD:
+        from unstructured.partition.md import partition_md as partition_func
+    elif partition_type == ARGILLA_PARTITION_TYPES.RTF:
+        from unstructured.partition.rtf import partition_rtf as partition_func
+    elif partition_type == ARGILLA_PARTITION_TYPES.RST:
+        from unstructured.partition.rst import partition_rst as partition_func
+    elif partition_type == ARGILLA_PARTITION_TYPES.IMAGE:
+        from unstructured.partition.image import partition_image as partition_func
+    elif partition_type == ARGILLA_PARTITION_TYPES.HTML:
+        from unstructured.partition.html import partition_html as partition_func
+    elif partition_type == ARGILLA_PARTITION_TYPES.XML:
+        from unstructured.partition.xml import partition_xml as partition_func
+    elif partition_type == ARGILLA_PARTITION_TYPES.ODT:
+        from unstructured.partition.odt import partition_odt as partition_func
+    elif partition_type == ARGILLA_PARTITION_TYPES.ORG:
+        from unstructured.partition.org import partition_org as partition_func
+    else:
+        raise ValueError(f"Invalid partition type: {partition_type}")
+    return partition_func
+
 
 def get_argilla_feedback_dataset(
         partition_type: Union[str, ARGILLA_PARTITION_TYPES],
         questions: List[Union[TextQuestion, LabelQuestion, MultiLabelQuestion, RankingQuestion, RatingQuestion]],
         include_defaults: Optional[bool] = True,
     ):
+    """
+    Creates a FeedbackDataset for Argilla based on the partition type and questions.
+
+    Args:
+        partition_type (Union[str, ARGILLA_PARTITION_TYPES]): The partition type to use.
+        questions (List[Union[TextQuestion, LabelQuestion, MultiLabelQuestion, RankingQuestion, RatingQuestion]]): The questions to use.
+        include_defaults (Optional[bool], optional): Whether to include the default fields. Defaults to True.
+
+    Returns:
+        FeedbackDataset: The FeedbackDataset for Argilla.
+    """
 
     # TODO: do we want to default to a TextQuestion?
     partition_type = ARGILLA_PARTITION_TYPES(partition_type)
-    fields = PARTITION_DATASET_FIELDS["defaults"] if include_defaults else []
-    fields += PARTITION_DATASET_FIELDS[partition_type]
+    fields = GROUP_TO_FIELDS["defaults"] if include_defaults else []
+    fields += GROUP_TO_FIELDS[TYPE_TO_GROUP[partition_type]]
+
     return FeedbackDataset(
         fields=fields,
         questions=questions,
     )
 
-def _ensure_string_values_dict(dictionary: dict):
+def _ensure_string_values_dict(dictionary: dict) -> dict:
+    """
+    Ensures that all values in a dictionary are strings.
+
+    Args:
+        dictionary (dict): The dictionary to convert.
+    """
     return {key: str(value) for key, value in dictionary.items()}
 
-def _elements_to_text(elements: List[Text], as_html: bool = True):
+def _convert_elements_to_text(elements: List[Text], as_html: bool = True) -> List[str]:
+    """
+    Converts a list of elements to text.
+
+    Args:
+        elements (List[Text]): The elements to convert.
+        as_html (bool, optional): Whether to return the text as html. Defaults to True.
+
+    Returns:
+        List[str]: The text.
+    """
     text = []
     for element in elements:
         if element.metadata.text_as_html and as_html:
@@ -159,23 +218,20 @@ def _elements_to_text(elements: List[Text], as_html: bool = True):
             text.append(element.text)
     return text
 
-def _enforce_skipped_field(fields, skip_fields):
-    return {key: value for key, value in dict.items() if key not in skip_fields}
+def _partition_iterator(files, partition_func, **partition_kwargs):
+    """ Helper function to iterate over partitions. """
+    for filename in files:
+        yield partition_func(filename=filename, **partition_kwargs)
+
 
 def stage_for_argilla_feedback(
     partition_type: str,
     dataset: FeedbackDataset,
     files: Union[str, List[str]],
-    sep: str= "\n____________\n",
     partition_kwargs: dict = {},
-    # skip_fields: Optional[List[str]] = [], or elements?
     group_by: Optional[str] = None,
+    join_operator: Optional[str] = "\n",
 ):
-
-    if isinstance(files, str):
-        files = [files]
-
-    records = []
     partition_type = ARGILLA_PARTITION_TYPES(partition_type)
     if partition_type not in [ARGILLA_PARTITION_TYPES.MSG, ARGILLA_PARTITION_TYPES.EML,
                             ARGILLA_PARTITION_TYPES.CSV]:
@@ -185,55 +241,39 @@ def stage_for_argilla_feedback(
         if group_by:
             warnings.warn("No `group_by_strategy` defined we recommend grouping by `title`, `element_type` and/or `page`. Grouping by ['title', 'element_type'] is a good default.")
 
-
-    if partition_type in [ARGILLA_PARTITION_TYPES.MSG, ARGILLA_PARTITION_TYPES.EML]:
-        # TODO: What happens when there are multiple emails in the .msg-file?
-        if partition_type == ARGILLA_PARTITION_TYPES.EML:
-            from unstructured.partition.email import partition_email as partition_func
-        else:
-            from unstructured.partition.msg import partition_msg as partition_func
-
-        for filename in files:
-            elements = partition_func(filename=filename, **partition_kwargs)
+    records = []
+    partition_func = _get_partition_func(partition_type)
+    if isinstance(files, str):
+        files = [files]
+    elements_iterator = _partition_iterator(files, partition_func, **partition_kwargs)
+    for elements in elements_iterator:
+        if partition_type in GROUP_TO_TYPE["email"]:
+            # TODO: What happens when there are multiple emails in the .msg-file?
             metadata = elements[0].metadata.to_dict()
-            for elem in elements:
-                print(elem.metadata.to_dict())
-            elements = _elements_to_text(elements)
+            elements = _convert_elements_to_text(elements)
             fields = {
                 "sent_from": metadata.get("sent_from"),
                 "sent_to": metadata.get("sent_to"),
                 "subject": metadata.get("subject"),
                 "text": "\n".join(elements),
-                "text_with_sep": sep.join(elements)
             }
             fields = _ensure_string_values_dict(fields)
             records.append(FeedbackRecord(fields=fields))
-    elif partition_type in [ARGILLA_PARTITION_TYPES.CSV, ARGILLA_PARTITION_TYPES.TSV]:
-        if partition_type == ARGILLA_PARTITION_TYPES.TSV:
-            from unstructured.partition.tsv import partition_tsv as partition_func
-        else:
-            from unstructured.partition.csv import partition_csv as partition_func
-
-        for filename in files:
-            elements = partition_func(filename=filename, **partition_kwargs)
-            metadata = elements[0].metadata.to_dict()
-            elements_html = _elements_to_text(elements, as_html=True)
-            elements_raw = _elements_to_text(elements, as_html=False)
-            for element_html, element_raw in zip(elements_html, elements_raw):
+        elif partition_type in GROUP_TO_TYPE["tables_without_pages"] + GROUP_TO_TYPE["tables_with_pages"]:
+            for element in elements:
+                metadata = element.metadata.to_dict()
                 fields = {
-                    "table": element_html,
-                    "raw_csv": element_raw,
+                    "page_id": metadata.get("page_name"),
+                    "table": join_operator.join(_convert_elements_to_text([element], as_html=True)),
+                    "table_as_text": join_operator.join(_convert_elements_to_text([element], as_html=False)),
                 }
+                if partition_type in GROUP_TO_TYPE["tables_without_pages"]:
+                    del fields["page_id"]
+                else:
+                    del fields["table_as_text"]
                 fields = _ensure_string_values_dict(fields)
                 records.append(FeedbackRecord(fields=fields))
-    elif partition_type in [ARGILLA_PARTITION_TYPES.PPT , ARGILLA_PARTITION_TYPES.PPTX]:
-        if partition_type == ARGILLA_PARTITION_TYPES.PPTX:
-            from unstructured.partition.pptx import partition_pptx as partition_func
-        else:
-            from unstructured.partition.ppt import partition_ppt as partition_func
-
-        for filename in files:
-            elements = partition_func(filename=filename, **partition_kwargs)
+        elif partition_type in GROUP_TO_TYPE["slides"]:
             page_elements = {}
             for element in elements:
                 last_page = 1
@@ -244,41 +284,21 @@ def stage_for_argilla_feedback(
                 page_elements[last_page].append(element)
             for page_number, page_elements in page_elements.items():
                 fields = {
-                    "page_number": page_number,
+                    "page_id": page_number,
                 }
                 if not page_elements:
                     continue
                 if isinstance(page_elements[0], Title):
                     fields["title"] = page_elements[0].text
                     page_elements = page_elements[1:]
-                fields["content"] = "\n".join(
-                    _elements_to_text(page_elements)
+                fields["content"] = join_operator.join(
+                    _convert_elements_to_text(page_elements)
                 )
                 records.append(FeedbackRecord(fields=fields))
-    elif partition_type in [ARGILLA_PARTITION_TYPES.XLS, ARGILLA_PARTITION_TYPES.XLSX]:
-        from unstructured.partition.xlsx import partition_xlsx
-
-        for filename in files:
-            elements = partition_xlsx(filename=filename, **partition_kwargs)
-            for element in elements:
-                fields = {
-                    "page_name": element.metadata.page_name,
-                    "table": _elements_to_text([element])[0]
-                }
-                records.append(FeedbackRecord(fields=fields))
-    elif partition_type in [ARGILLA_PARTITION_TYPES.PDF, ARGILLA_PARTITION_TYPES.EPUB, ARGILLA_PARTITION_TYPES.DOC]:
-        if partition_type == ARGILLA_PARTITION_TYPES.PDF:
-            from unstructured.partition.pdf import partition_pdf as partition_func
-        elif partition_type == ARGILLA_PARTITION_TYPES.EPUB:
-            from unstructured.partition.epub import partition_epub as partition_func
-        else:
-            from unstructured.partition.doc import partition_doc as partition_func
-
-        for filename in files:
+        elif partition_type in GROUP_TO_TYPE["text_with_pages"] + GROUP_TO_TYPE["text_without_pages"]:
             last_title = "start"
             page_last = 1
             element_overview = []
-            elements = partition_func(filename=filename, **partition_kwargs)
             for element in elements:
                 if isinstance(element, Title):
                     last_title = element.text
@@ -292,19 +312,27 @@ def stage_for_argilla_feedback(
             df = pd.DataFrame(element_overview)
 
             df = df.groupby(by=group_by, sort=False, as_index=False).agg(list)
-            df.element = df.element.apply(lambda x: "\n".join(_elements_to_text(x)).strip())
+            df.element = df.element.apply(lambda x: "\n".join(_convert_elements_to_text(x)).strip())
 
             for item in df.to_dict(orient="records"):
                 if item.get("title") != "start":
                     fields = {
-                        "page_number": item.get("page", [1]),
+                        "page_id": item.get("page", [1]),
                         "title": item.get("title"),
                         "element_type": item.get("element_type"),
                         "text": item.get("element").lstrip(item.get("title"))
                     }
                     fields = _ensure_string_values_dict(fields)
+                    if partition_type in [ARGILLA_PARTITION_TYPES.TXT]:
+                        del fields["page_id"]
                     records.append(FeedbackRecord(fields=fields))
-
+        elif partition_type in GROUP_TO_TYPE["text_with_dom"]:
+            raise NotImplementedError("TODO: implement")
+        elif partition_type in GROUP_TO_TYPE["api"]:
+            raise NotImplementedError("TODO: implement")
+        else:
+            raise ValueError(f"Invalid partition type: {partition_type}")
+        # TODO: add batched option?
     dataset.add_records(records)
 
     return dataset

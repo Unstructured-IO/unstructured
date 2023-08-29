@@ -69,3 +69,22 @@ if not is_in_docker:
         with pytest.raises(error) as e:
             argilla.stage_for_argilla(elements, task_name, **extra_kwargs)
             assert error_message in e.args[0].lower() if error_message else True
+
+    @pytest.mark.parametrize(
+        ("partition", "file"),
+        [
+            ("xlsx", "example-docs/stanley-cups.xlsx"),
+        ]
+    )
+    def test_stage_for_argilla_feedback(partition, file):
+        argilla_dataset = argilla.get_argilla_feedback_dataset(
+            partition_type=partition,
+            questions=[rg.LabelQuestion(name="harmful", labels=["yes", "no"])],
+            include_defaults=False
+        )
+        argilla.stage_for_argilla_feedback(
+            partition_type=partition,
+            dataset=argilla_dataset,
+            files=[file],
+        )
+
