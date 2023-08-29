@@ -74,6 +74,29 @@ if not is_in_docker:
         ("partition", "file"),
         [
             ("xlsx", "example-docs/stanley-cups.xlsx"),
+            ("xls", "example-docs/stanley-cups.xlsx"),
+            # Tables without
+            ("csv", "example-docs/stanley-cups.csv"),
+            ("tsv", "example-docs/stanley-cups.tsv"),
+            # Email
+            ("msg", "example-docs/fake-email.msg"),
+            ("email",  "example-docs/eml/fake-email.eml"),
+            # slides
+            ("ppt", "example-docs/fake-power-point.ppt"),
+            ("pptx", "example-docs/fake-power-point.pptx"),
+            # doc with page
+            ("doc", "example-docs/fake.doc"),
+            ("epub", "example-docs/winter-sports.epub"),
+            ("pdf", "example-docs/layout-parser-paper-fast.pdf"),
+            # doc without pages
+            ("image", "example-docs/layout-parser-paper-fast.jpg"),
+            ("md", "README.md"),
+            ("odt", "example-docs/fake.odt"),
+            ("org", "example-docs/README.org"),
+            ("pdf", "example-docs/layout-parser-paper-fast.pdf"),
+            ("rst", "example-docs/README.rst"),
+            ("rtf", "example-docs/fake-doc.rtf"),
+            ("text", "example-docs/fake-text.txt")
         ]
     )
     def test_stage_for_argilla_feedback(partition, file):
