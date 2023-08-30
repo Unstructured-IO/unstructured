@@ -8,7 +8,13 @@ The profiling script allows a user to inspect how time time and memory are spent
 ## Install
 Benchmarking requires no additional dependencies and should work without any initial setup.
 Profiling has a few dependencies which can be installed with: 
-`pip install -r scripts/performance/requirements.txt`
+
+```bash
+pip install -r scripts/performance/requirements.txt
+npm install -g speedscope
+```
+
+The second dependency `speedscope` provides a tool to view profiling results from `py-spy` locally. Alternatively you can also drop the profile result `*.speedscope` into https://www.speedscope.app/ to view the results online.
 
 ## Run
 ### Benchmark

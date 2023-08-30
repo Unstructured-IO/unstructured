@@ -1,5 +1,5 @@
-import sys
 import os
+import sys
 
 from unstructured.partition.auto import partition
 
