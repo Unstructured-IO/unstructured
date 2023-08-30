@@ -1,7 +1,8 @@
 ## 0.10.10-dev0
 
 ### Enhancements
-* Bump `unstructured-inference==0.5.18`
+* Bump `unstructured-inference==0.5.18`, change non-default detectron2 classification threshold
+
 ### Features
 
 ### Fixes
