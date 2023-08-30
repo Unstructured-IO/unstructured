@@ -469,7 +469,6 @@ def _get_element_box(
     boxes: List[str] = [],
     box_idx: int = 0,
     char_count: int = 0,
-    box_text: str = "",
 ):
     """Helper function to get the bounding box of an element.
 
@@ -478,7 +477,6 @@ def _get_element_box(
         boxes (List[str], optional): Defaults to [].
         box_idx (int, optional): Defaults to 0.
         char_count (int, optional): Defaults to 0.
-        box_text (str, optional): Defaults to "".
     """
     min_x = float("inf")
     min_y = float("inf")
@@ -486,8 +484,7 @@ def _get_element_box(
     max_y = 0
 
     for box in boxes[box_idx : box_idx + char_count]:  # noqa
-        import pdb; pdb.set_trace()
-        char, x1, y1, x2, y2, _ = int(*box.split())
+        char, x1, y1, x2, y2, _ = box.split()
 
         # pytesseract cleans some characters from text that still appear in the bounding boxes,
         # so those bounding boxes should be skipped
@@ -495,15 +492,13 @@ def _get_element_box(
             char_count += 1
             continue
 
-        box_text = box_text + char
-
         x1, y1, x2, y2 = map(int, [x1, y1, x2, y2])
         min_x = min(min_x, x1)
         min_y = min(min_y, y1)
         max_x = max(max_x, x2)
         max_y = max(max_y, y2)
 
-    return ((min_x, min_y), (min_x, max_y), (max_x, max_y), (max_x, min_y)), box_text, char_count
+    return ((min_x, min_y), (min_x, max_y), (max_x, max_y), (max_x, min_y)), char_count
 
 
 def add_pytesseract_bbox_to_elements(
@@ -539,13 +534,11 @@ def add_pytesseract_bbox_to_elements(
             box_idx += 1
             continue
         char_count = len(element.text.replace(" ", ""))
-        box_text = ""
-        points, box_text, char_count = _get_element_box(
+        points, char_count = _get_element_box(
             element=element,
             boxes=boxes,
             box_idx=box_idx,
             char_count=char_count,
-            box_text=box_text,
         )
         box_idx += char_count
         converted_points = []
