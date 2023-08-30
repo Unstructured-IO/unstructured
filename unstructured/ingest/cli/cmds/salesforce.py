@@ -16,24 +16,24 @@ from unstructured.ingest.runner import salesforce as salesforce_fn
 
 @click.command()
 @click.option(
-    "--salesforce-categories",
+    "--categories",
     default=None,
     required=True,
-    help="Comma separated list of categories to download. "
+    help="Comma separated list of Salesforce categories to download. "
     "Currently only Account, Case, Campaign, EmailMessage, Lead.",
 )
 @click.option(
-    "--salesforce-username",
+    "--username",
     required=True,
     help="Salesforce username usually looks like an email.",
 )
 @click.option(
-    "--salesforce-consumer-key",
+    "--consumer-key",
     required=True,
     help="For the Salesforce JWT auth. Found in Consumer Details.",
 )
 @click.option(
-    "--salesforce-private-key-path",
+    "--private-key-path",
     required=True,
     help="Path to the private key for the Salesforce JWT auth." "Usually named server.key.",
 )

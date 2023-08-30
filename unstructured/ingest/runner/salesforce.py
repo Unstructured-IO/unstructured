@@ -12,15 +12,15 @@ def salesforce(
     connector_config: StandardConnectorConfig,
     processor_config: ProcessorConfigs,
     recursive: bool,
-    salesforce_categories: str,
-    salesforce_username: str,
-    salesforce_consumer_key: str,
-    salesforce_private_key_path: str,
+    categories: str,
+    username: str,
+    consumer_key: str,
+    private_key_path: str,
     **kwargs,
 ):
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
 
-    hashed_dir_name = hashlib.sha256(salesforce_username.encode("utf-8"))
+    hashed_dir_name = hashlib.sha256(username.encode("utf-8"))
     connector_config.download_dir = update_download_dir_hash(
         connector_name="salesforce",
         connector_config=connector_config,
@@ -36,10 +36,10 @@ def salesforce(
     doc_connector = SalesforceConnector(  # type: ignore
         standard_config=connector_config,
         config=SimpleSalesforceConfig(
-            salesforce_categories=SimpleSalesforceConfig.parse_folders(salesforce_categories),
-            salesforce_username=salesforce_username,
-            salesforce_consumer_key=salesforce_consumer_key,
-            salesforce_private_key_path=salesforce_private_key_path,
+            categories=SimpleSalesforceConfig.parse_folders(categories),
+            username=username,
+            consumer_key=consumer_key,
+            private_key_path=private_key_path,
             recursive=recursive,
         ),
     )

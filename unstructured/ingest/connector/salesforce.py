@@ -121,10 +121,10 @@ NumberOfConvertedLeads: $number_of_converted_leads
 class SimpleSalesforceConfig(BaseConnectorConfig):
     """Connector specific attributes"""
 
-    salesforce_categories: List[str]
-    salesforce_username: str
-    salesforce_consumer_key: str
-    salesforce_private_key_path: str
+    categories: List[str]
+    username: str
+    consumer_key: str
+    private_key_path: str
     recursive: bool = False
 
     @staticmethod
@@ -137,9 +137,9 @@ class SimpleSalesforceConfig(BaseConnectorConfig):
         from simple_salesforce import Salesforce
 
         return Salesforce(
-            username=self.salesforce_username,
-            consumer_key=self.salesforce_consumer_key,
-            privatekey_file=self.salesforce_private_key_path,
+            username=self.username,
+            consumer_key=self.consumer_key,
+            privatekey_file=self.private_key_path,
         )
 
 
@@ -314,8 +314,8 @@ class SalesforceConnector(ConnectorCleanupMixin, BaseConnector):
 
         client = self.config._get_client()
 
-        record_ids = []
-        for record_type in self.config.salesforce_categories:
+        ingest_docs = []
+        for record_type in self.config.categories:
             if record_type not in ACCEPTED_CATEGORIES:
                 raise ValueError(f"{record_type} not currently an accepted Salesforce category")
 
@@ -325,7 +325,7 @@ class SalesforceConnector(ConnectorCleanupMixin, BaseConnector):
                     f"select Id from {record_type}",
                 )
                 for record in records["records"]:
-                    record_ids.append(
+                    ingest_docs.append(
                         SalesforceIngestDoc(
                             self.standard_config,
                             self.config,
@@ -336,4 +336,4 @@ class SalesforceConnector(ConnectorCleanupMixin, BaseConnector):
             except SalesforceMalformedRequest as e:
                 raise SalesforceMalformedRequest(f"Problem with Salesforce query: {e}")
 
-        return record_ids
+        return ingest_docs

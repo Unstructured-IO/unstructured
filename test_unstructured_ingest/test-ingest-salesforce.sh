@@ -24,11 +24,11 @@ fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     salesforce \
-    --salesforce-categories "EmailMessage,Campaign" \
+    --categories "EmailMessage,Campaign" \
     --download-dir "$DOWNLOAD_DIR" \
-    --salesforce-username "$SALESFORCE_USERNAME" \
-    --salesforce-consumer-key "$SALESFORCE_CONSUMER_KEY" \
-    --salesforce-private-key-path "$SALESFORCE_PRIVATE_KEY_PATH" \
+    --username "$SALESFORCE_USERNAME" \
+    --consumer-key "$SALESFORCE_CONSUMER_KEY" \
+    --private-key-path "$SALESFORCE_PRIVATE_KEY_PATH" \
     --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified \
     --num-processes 2 \
     --preserve-downloads \

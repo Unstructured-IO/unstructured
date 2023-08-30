@@ -11,7 +11,7 @@
 # https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_auth_key_and_cert.htm
 # https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_auth_connected_app.htm
 
-# salesforce-private-key-path is the path to the key file
+# private-key-path is the path to the key file
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/../../.. || exit 1
@@ -19,10 +19,10 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
   salesforce \
-   --salesforce-username "$SALESFORCE_USERNAME" \
-   --salesforce-consumer-key "$SALESFORCE_CONSUMER_KEY" \
-   --salesforce-private-key-path "$SALESFORCE_PRIVATE_KEY_PATH" \
-   --salesforce-categories "EmailMessage,Account,Lead,Case,Campaign" \
+   --username "$SALESFORCE_USERNAME" \
+   --consumer-key "$SALESFORCE_CONSUMER_KEY" \
+   --private-key-path "$SALESFORCE_PRIVATE_KEY_PATH" \
+   --categories "EmailMessage,Account,Lead,Case,Campaign" \
    --structured-output-dir salesforce-output \
    --preserve-downloads \
    --reprocess \
