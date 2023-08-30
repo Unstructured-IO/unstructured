@@ -9,6 +9,8 @@ from requests.models import Response
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import ListItem, NarrativeText, Title
 from unstructured.partition.html import partition_html
+from unstructured.partition.json import partition_json
+from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
@@ -582,6 +584,18 @@ def test_partition_html_grabs_emphasized_texts():
     assert elements[4] == Title("A lone span text!")
     assert elements[4].metadata.emphasized_text_contents == ["A lone span text!"]
     assert elements[4].metadata.emphasized_text_tags == ["span"]
+
+
+def test_partition_html_with_json():
+    directory = os.path.join(DIRECTORY, "..", "..", "example-docs")
+    filename = os.path.join(directory, "example-10k.html")
+    elements = partition_html(filename=filename)
+    test_elements = partition_json(text=elements_to_json(elements))
+
+    assert len(elements) == len(test_elements)
+    assert elements[0].metadata.filename == test_elements[0].metadata.filename
+    for i in range(len(elements)):
+        assert elements[i] == test_elements[i]
 
 
 def test_pre_tag_parsing_respects_order():
