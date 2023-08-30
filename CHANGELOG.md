@@ -1,6 +1,11 @@
-## 0.10.10-dev0
+## 0.10.10-dev1
 
 ### Enhancements
+
+* If `xml_keep_tags=False`, `partition_xml` infers the element type for each leaf element
+  separately without delegating to `partition_text`. Note, `max_partition` and `min_partition`
+  no longer apply when `xml_keep_tags=True` since `partition_xml` no longer delegates
+  to `partition_text` in that case.
 * Bump `unstructured-inference==0.5.18`, change non-default detectron2 classification threshold
 
 ### Features
@@ -17,7 +22,7 @@
 
 * Adds `chunk_by_title` to break a document into sections based on the presence of `Title`
   elements.
-  
+
 ### Fixes
 
 * Make cv2 dependency optional
