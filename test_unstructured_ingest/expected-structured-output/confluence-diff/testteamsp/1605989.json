@@ -196,11 +196,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "links": [
-        {
-          "text": "This is the link for unstructured . io.",
-          "url": "https://www.unstructured.io/"
-        }
+      "link_urls": [
+        "https://www.unstructured.io/"
+      ],
+      "link_texts": [
+        "This is the link for unstructured . io."
       ]
     },
     "text": "This is the link for unstructured . io."
@@ -212,11 +212,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Testdoc3 Checklist Item 1",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "Testdoc3 Checklist Item 1"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "Testdoc3 Checklist Item 1"
@@ -228,11 +228,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Testdoc3 Checklist Item 2 (checked)",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "Testdoc3 Checklist Item 2 (checked)"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "Testdoc3 Checklist Item 2 (checked)"
@@ -244,11 +244,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Testdoc3 Checklist Item 3",
-          "tag": "span"
-        }
+      "emphasized_text_contents": [
+        "Testdoc3 Checklist Item 3"
+      ],
+      "emphasized_text_tags": [
+        "span"
       ]
     },
     "text": "Testdoc3 Checklist Item 3"
@@ -270,11 +270,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Testdoc3 bold text",
-          "tag": "strong"
-        }
+      "emphasized_text_contents": [
+        "Testdoc3 bold text"
+      ],
+      "emphasized_text_tags": [
+        "strong"
       ]
     },
     "text": "Testdoc3 bold text"
@@ -286,11 +286,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Testdoc3 italic text",
-          "tag": "em"
-        }
+      "emphasized_text_contents": [
+        "Testdoc3 italic text"
+      ],
+      "emphasized_text_tags": [
+        "em"
       ]
     },
     "text": "Testdoc3 italic text"
@@ -352,11 +352,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Testdoc3 Table: Column 1 Row 0",
-          "tag": "strong"
-        }
+      "emphasized_text_contents": [
+        "Testdoc3 Table: Column 1 Row 0"
+      ],
+      "emphasized_text_tags": [
+        "strong"
       ]
     },
     "text": "Testdoc3 Table: Column 1 Row 0"
@@ -368,11 +368,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Testdoc3 Table: Column 2 Row 0",
-          "tag": "strong"
-        }
+      "emphasized_text_contents": [
+        "Testdoc3 Table: Column 2 Row 0"
+      ],
+      "emphasized_text_tags": [
+        "strong"
       ]
     },
     "text": "Testdoc3 Table: Column 2 Row 0"
@@ -384,11 +384,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Testdoc3 Table: Column 3 Row 0",
-          "tag": "strong"
-        }
+      "emphasized_text_contents": [
+        "Testdoc3 Table: Column 3 Row 0"
+      ],
+      "emphasized_text_tags": [
+        "strong"
       ]
     },
     "text": "Testdoc3 Table: Column 3 Row 0"
@@ -400,11 +400,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Testdoc3 Table: Column 1 Row 1",
-          "tag": "strong"
-        }
+      "emphasized_text_contents": [
+        "Testdoc3 Table: Column 1 Row 1"
+      ],
+      "emphasized_text_tags": [
+        "strong"
       ]
     },
     "text": "Testdoc3 Table: Column 1 Row 1"
@@ -416,11 +416,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Testdoc3 Table: Column 2 Row 1",
-          "tag": "strong"
-        }
+      "emphasized_text_contents": [
+        "Testdoc3 Table: Column 2 Row 1"
+      ],
+      "emphasized_text_tags": [
+        "strong"
       ]
     },
     "text": "Testdoc3 Table: Column 2 Row 1"
@@ -432,11 +432,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Testdoc3 Table: Column 3 Row 1",
-          "tag": "strong"
-        }
+      "emphasized_text_contents": [
+        "Testdoc3 Table: Column 3 Row 1"
+      ],
+      "emphasized_text_tags": [
+        "strong"
       ]
     },
     "text": "Testdoc3 Table: Column 3 Row 1"
@@ -448,11 +448,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Testdoc3 Table: Column 1 Row 2",
-          "tag": "strong"
-        }
+      "emphasized_text_contents": [
+        "Testdoc3 Table: Column 1 Row 2"
+      ],
+      "emphasized_text_tags": [
+        "strong"
       ]
     },
     "text": "Testdoc3 Table: Column 1 Row 2"
@@ -464,11 +464,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Testdoc3 Table: Column 2 Row 2",
-          "tag": "strong"
-        }
+      "emphasized_text_contents": [
+        "Testdoc3 Table: Column 2 Row 2"
+      ],
+      "emphasized_text_tags": [
+        "strong"
       ]
     },
     "text": "Testdoc3 Table: Column 2 Row 2"
@@ -480,11 +480,11 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_texts": [
-        {
-          "text": "Testdoc3 Table: Column 3 Row 2",
-          "tag": "strong"
-        }
+      "emphasized_text_contents": [
+        "Testdoc3 Table: Column 3 Row 2"
+      ],
+      "emphasized_text_tags": [
+        "strong"
       ]
     },
     "text": "Testdoc3 Table: Column 3 Row 2"

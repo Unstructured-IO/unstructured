@@ -503,11 +503,12 @@ def add_pytesseract_bbox_to_elements(elements, bboxes, width, height):
             max_y = max(max_y, y2)
 
         points = ((min_x, min_y), (min_x, max_y), (max_x, max_y), (max_x, min_y))
-        converted_points = []
-        for point in points:
-            x, y = point
-            new_x, new_y = point_space.convert_coordinates_to_new_system(pixel_space, x, y)
-            converted_points.append((new_x, new_y))
+        converted_points = tuple(
+            [
+                point_space.convert_coordinates_to_new_system(pixel_space, *point)
+                for point in points
+            ],
+        )
 
         element.metadata.coordinates = CoordinatesMetadata(
             points=converted_points,
