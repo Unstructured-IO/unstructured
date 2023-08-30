@@ -16,6 +16,10 @@ from unstructured.ingest.connector.github import GitHubIngestDoc
 from unstructured.ingest.connector.gitlab import GitLabIngestDoc
 from unstructured.ingest.connector.google_drive import GoogleDriveIngestDoc
 from unstructured.ingest.connector.local import LocalIngestDoc
+from unstructured.ingest.connector.notion.connector import (
+    NotionDatabaseIngestDoc,
+    NotionPageIngestDoc,
+)
 from unstructured.ingest.connector.onedrive import OneDriveIngestDoc
 from unstructured.ingest.connector.outlook import OutlookIngestDoc
 from unstructured.ingest.connector.reddit import RedditIngestDoc
@@ -43,6 +47,8 @@ INGEST_DOC_NAME_TO_CLASS: Dict[str, Type[DataClassJsonMixin]] = {
     "gitlab": GitLabIngestDoc,
     "google_drive": GoogleDriveIngestDoc,
     "local": LocalIngestDoc,
+    "notion_database": NotionDatabaseIngestDoc,
+    "notion_page": NotionPageIngestDoc,
     "onedrive": OneDriveIngestDoc,
     "outlook": OutlookIngestDoc,
     "reddit": RedditIngestDoc,
