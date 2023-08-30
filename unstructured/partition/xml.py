@@ -2,7 +2,7 @@ import xml.etree.ElementTree as ET
 from tempfile import SpooledTemporaryFile
 from typing import IO, BinaryIO, List, Optional, Union, cast
 
-from unstructured.documents.elements import Element, process_metadata
+from unstructured.documents.elements import Element, ElementMetadata, process_metadata
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import (
@@ -11,7 +11,7 @@ from unstructured.partition.common import (
     get_last_modified_date_from_file,
     spooled_to_bytes_io_if_needed,
 )
-from unstructured.partition.text import partition_text
+from unstructured.partition.text import element_from_text, partition_text
 
 
 def is_leaf(elem):
@@ -26,7 +26,7 @@ def get_leaf_elements(
     filename: Optional[str] = None,
     file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
     xml_path: str = ".",
-):
+) -> List[Optional[str]]:
     if filename:
         _, raw_text = read_txt_file(filename=filename)
     elif file:
@@ -45,7 +45,7 @@ def get_leaf_elements(
             if is_leaf(subelem) and is_string(subelem.text):
                 leaf_elements.append(subelem.text)
 
-    return "\n".join(leaf_elements)  # type: ignore
+    return leaf_elements
 
 
 @process_metadata()
@@ -90,6 +90,13 @@ def partition_xml(
         The day of the last modification
     """
     exactly_one(filename=filename, file=file)
+    elements: List[Element] = []
+
+    last_modification_date = None
+    if filename:
+        last_modification_date = get_last_modified_date(filename)
+    elif file:
+        last_modification_date = get_last_modified_date_from_file(file)
 
     if xml_keep_tags:
         if filename:
@@ -101,22 +108,31 @@ def partition_xml(
             _, raw_text = read_txt_file(file=f, encoding=encoding)
         else:
             raise ValueError("Either 'filename' or 'file' must be provided.")
+
+        elements = partition_text(
+            text=raw_text,
+            metadata_filename=metadata_filename,
+            include_metadata=include_metadata,
+            max_partition=max_partition,
+            min_partition=min_partition,
+            metadata_last_modified=metadata_last_modified or last_modification_date,
+        )
+
     else:
-        raw_text = get_leaf_elements(filename=filename, file=file, xml_path=xml_path)
+        metadata = (
+            ElementMetadata(
+                filename=metadata_filename or filename,
+                last_modified=metadata_last_modified or last_modification_date,
+            )
+            if include_metadata
+            else ElementMetadata()
+        )
 
-    last_modification_date = None
-    if filename:
-        last_modification_date = get_last_modified_date(filename)
-    elif file:
-        last_modification_date = get_last_modified_date_from_file(file)
-
-    elements = partition_text(
-        text=raw_text,
-        metadata_filename=metadata_filename,
-        include_metadata=include_metadata,
-        max_partition=max_partition,
-        min_partition=min_partition,
-        metadata_last_modified=metadata_last_modified or last_modification_date,
-    )
+        leaf_elements = get_leaf_elements(filename=filename, file=file, xml_path=xml_path)
+        for leaf_element in leaf_elements:
+            if leaf_element:
+                element = element_from_text(leaf_element)
+                element.metadata = metadata
+                elements.append(element)
 
     return elements
