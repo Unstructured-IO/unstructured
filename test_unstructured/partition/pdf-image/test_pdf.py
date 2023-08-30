@@ -798,3 +798,20 @@ def test_partition_pdf_with_ocr_has_coordinates_from_file(
         (1043.0, 2106.0),
         (1043.0, 2144.0),
     )
+
+
+def test_partition_pdf_with_ocr_has_valid_coordinates_from_file(
+    filename="example-docs/layout-parser-paper-fast.pdf",
+):
+    import math
+
+    with open(filename, "rb") as f:
+        elements = pdf.partition_pdf(
+            file=f,
+            strategy="ocr_only",
+        )
+    for element in elements:
+        box = element.metadata.coordinates.points
+        for point in box:
+            assert point[0] is not math.nan
+            assert point[1] is not math.nan
