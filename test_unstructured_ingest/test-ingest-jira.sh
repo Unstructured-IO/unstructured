@@ -38,8 +38,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
         --structured-output-dir "$OUTPUT_DIR" \
         --verbose \
         --url https://unstructured-jira-connector-test.atlassian.net \
-        --user-email "$JIRA_USER_EMAIL" \
-        --api-token "$JIRA_API_TOKEN" \
+        --user-email "$JIRA_INGEST_USER_EMAIL" \
+        --api-token "$JIRA_INGEST_API_TOKEN" \
         --list-of-projects "JCTP3" \
         --list-of-boards "1" \
         --list-of-issues "JCTP2-4 JCTP2-7 JCTP2-8 10012 JCTP2-11" \
