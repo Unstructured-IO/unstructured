@@ -10,6 +10,45 @@ which take a list of ``Element`` objects as input and return formatted dictionar
 ----------------------------
 You can convert a list of ``Text`` elements to an `Argilla <https://www.argilla.io/>`_ ``Dataset`` using the `stage_for_argilla <https://unstructured-io.github.io/unstructured/bricks.html#stage-for-argilla>`_ staging brick. Specify the type of dataset to be generated using the ``argilla_task`` parameter. Valid values are ``"text_classification"``, ``"token_classification"``, and ``"text2text"``. Follow the link for more details on usage.
 
+.. code:: python
+
+  import json
+
+  from unstructured.documents.elements import Title, NarrativeText
+  from unstructured.staging.argilla import stage_for_argilla
+
+  elements = [Title(text="Title"), NarrativeText(text="Narrative")]
+  metadata = [{"type": "title"}, {"type": "text"}]
+
+  argilla_dataset = stage_for_argilla(elements, "text_classification", metadata=metadata)
+
+Additionally, the ``partition_stage_for_argilla`` partitions and stages data for ingestion into `Argilla's FeedbackDataset API <https://docs.argilla.io/en/latest/guides/llms/practical_guides/create_dataset.html>`_. It does so by inferring structural information about the data based on the ``partition_type``. And it allows you to flexibly define annotation questions for your annotation team so that you can directly start your effort on receiving human feedback.
+
+.. code:: python
+
+    from argilla import LabelQuestion
+    from unstructured.staging.argilla import (
+        get_argilla_feedback_dataset,
+        partition_stage_for_argilla
+    )
+
+    argilla_dataset = get_argilla_feedback_dataset(
+      partition_type="csv",
+      questions=[LabelQuestion(name="harmful", labels=["yes", "no"])]
+    )
+    argilla_dataset = partition_stage_for_argilla(
+        dataset=argilla_dataset,
+        partition_type=["csv", "tsv"],
+        files=[
+            "example-docs/stanley-cups.csv",
+            "example-docs/stanley-cups.tsv"
+        ],
+    )
+    argilla_dataset.push_to_argilla(name="tables")
+
+.. image:: /_static/images/staging/argilla/tables.png
+    :width: 100%
+    :alt: Alternative text
 
 ``Integration with Baseplate``
 -------------------------------

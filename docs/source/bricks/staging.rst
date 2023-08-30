@@ -17,6 +17,18 @@ We can take this data and directly upload it into LabelStudio to quickly get sta
   output = stage_for_label_studio(narrative_text)
   print(json.dumps(output[:2], indent=4))
 
+Another good example of directly partitioning and staging data for ingestion into a downstream system is the ``partition_stage_for_argilla``.
+This stage assumes how data is stored based on the ``partition_type``. In the example below, we partition and stage data for Argilla's FeedbackDataset.
+
+.. code:: python
+
+  from unstructured.staging import argilla
+
+  argilla.partition_stage_for_argilla(
+      partition_type=partition,
+      dataset=argilla_dataset,
+      files=[file],
+  )
 
 ``convert_to_csv``
 ----------------------
@@ -132,7 +144,6 @@ parameter. Valid values for ``argilla_task`` are ``"text_classification"``,
 and ``tokens`` is not included in the optional kwargs, the ``nltk`` word tokenizer
 is used by default.
 
-
 Examples:
 
 .. code:: python
@@ -146,6 +157,170 @@ Examples:
   metadata = [{"type": "title"}, {"type": "text"}]
 
   argilla_dataset = stage_for_argilla(elements, "text_classification", metadata=metadata)
+
+For more information about the ``stage_for_argilla`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/argilla.py>`_.
+
+``partition_stage_for_argilla``
+-------------------------------
+
+This brick partitions and stages data for ingestion into `Argilla's FeedbackDataset API <https://docs.argilla.io/en/latest/guides/llms/practical_guides/create_dataset.html>`_.
+It does so by inferring structural information about the data based on the ``partition_type``.
+Additionally, it allows you to flexibly define annotation questions for your annotation team so that you can directly start your effort on receiving human feedback.
+At the moment, all partition types are supported except for ``html``, ``xml`` and the ``api``.
+
+Examples:
+
+.. tabs::
+
+    .. tab:: tables [csv, tsv]
+
+      .. code:: python
+
+        from argilla import LabelQuestion
+        from unstructured.staging.argilla import (
+            get_argilla_feedback_dataset,
+            partition_stage_for_argilla
+        )
+
+        argilla_dataset = get_argilla_feedback_dataset(
+          partition_type="csv",
+          questions=[LabelQuestion(name="harmful", labels=["yes", "no"])]
+        )
+        argilla_dataset = partition_stage_for_argilla(
+            dataset=argilla_dataset,
+            partition_type=["csv", "tsv"],
+            files=[
+                "example-docs/stanley-cups.csv",
+                "example-docs/stanley-cups.tsv"
+            ],
+        )
+        argilla_dataset.push_to_argilla(name="tables")
+
+      .. image:: /_static/images/staging/argilla/tables.png
+        :width: 100%
+        :alt: Alternative text
+
+    .. tab:: tables (multi-sheet) [xls, xlsx]
+
+      .. code:: python
+
+        from argilla import LabelQuestion
+        from unstructured.staging.argilla import (
+            get_argilla_feedback_dataset,
+            partition_stage_for_argilla
+        )
+
+        argilla_dataset = get_argilla_feedback_dataset(
+          partition_type="xlsx",
+          questions=[LabelQuestion(name="harmful", labels=["yes", "no"])]
+        )
+        argilla_dataset = partition_stage_for_argilla(
+            dataset=argilla_dataset,
+            partition_type=["xls", "xlsx"],
+            files=[
+                "tests-example.xls",
+                "example-docs/stanley-cups.xlsx"
+            ],
+        )
+        argilla_dataset.push_to_argilla(name="tables-with-sheets")
+
+      .. image:: /_static/images/staging/argilla/tables.png
+        :width: 100%
+        :alt: Alternative text
+
+    .. tab:: email [msg, eml]
+
+      .. code:: python
+
+        from argilla import LabelQuestion
+        from unstructured.staging.argilla import (
+            get_argilla_feedback_dataset,
+            partition_stage_for_argilla
+        )
+
+        argilla_dataset = get_argilla_feedback_dataset(
+          partition_type="msg",
+          questions=[LabelQuestion(name="harmful", labels=["yes", "no"])]
+        )
+        argilla_dataset = partition_stage_for_argilla(
+            dataset=argilla_dataset,
+            partition_type=["msg", "eml"],
+            files=[
+                "example-docs/fake-email.msg",
+                "example-docs/eml/fake-email.eml"
+            ],
+        )
+        argilla_dataset.push_to_argilla(name="email")
+
+      .. image:: /_static/images/staging/argilla/tables.png
+        :width: 100%
+        :alt: Alternative text
+
+    .. tab:: slides [ppt, pptx]
+
+      .. code:: python
+
+        from argilla import LabelQuestion
+        from unstructured.staging.argilla import (
+            get_argilla_feedback_dataset,
+            partition_stage_for_argilla
+        )
+
+        argilla_dataset = get_argilla_feedback_dataset(
+          partition_type="msg",
+          questions=[LabelQuestion(name="harmful", labels=["yes", "no"])]
+        )
+        argilla_dataset = partition_stage_for_argilla(
+            dataset=argilla_dataset,
+            partition_type=["msg", "eml"],
+            files=[
+                "example-docs/fake-email.msg",
+                "example-docs/eml/fake-email.eml"
+            ],
+        )
+        argilla_dataset.push_to_argilla(name="email")
+
+      .. image:: /_static/images/staging/argilla/tables.png
+        :width: 100%
+        :alt: Alternative text
+
+    .. tab:: text [txt, md, rtf, odt, rst, image]
+
+      .. code:: python
+
+        import json
+
+        from unstructured.documents.elements import Title, NarrativeText
+        from unstructured.staging.argilla import stage_for_argilla
+
+        elements = [Title(text="Title"), NarrativeText(text="Narrative")]
+        metadata = [{"type": "title"}, {"type": "text"}]
+
+        argilla_dataset = stage_for_argilla(elements, "text_classification", metadata=metadata)
+
+      .. image:: /_static/images/staging/argilla/tables.png
+        :width: 100%
+        :alt: Alternative text
+
+    .. tab:: text (multi-page) [doc, docx, epub, pdf]
+
+      .. code:: python
+
+        import json
+
+        from unstructured.documents.elements import Title, NarrativeText
+        from unstructured.staging.argilla import stage_for_argilla
+
+        elements = [Title(text="Title"), NarrativeText(text="Narrative")]
+        metadata = [{"type": "title"}, {"type": "text"}]
+
+        argilla_dataset = stage_for_argilla(elements, "text_classification", metadata=metadata)
+
+      .. image:: /_static/images/staging/argilla/tables.png
+        :width: 100%
+        :alt: Alternative text
+
+
 
 For more information about the ``stage_for_argilla`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/argilla.py>`_.
 

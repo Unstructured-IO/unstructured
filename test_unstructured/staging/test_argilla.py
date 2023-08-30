@@ -104,8 +104,8 @@ if not is_in_docker:
             questions=[rg.LabelQuestion(name="harmful", labels=["yes", "no"])],
             include_defaults=False
         )
-        argilla.stage_for_argilla_feedback(
-            partition_type=partition,
+        argilla.partition_stage_for_argilla(
+            partition_types=partition,
             dataset=argilla_dataset,
             files=[file],
         )
