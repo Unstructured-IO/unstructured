@@ -9,6 +9,7 @@ After reading this section, you should understand the following:
 * How to remove unwanted content from document elements using cleaning bricks.
 * How to extract content from a document using the extraction bricks.
 * How to prepare data for downstream use cases using staging bricks
+* How to chunk partitioned documents for use cases such as Retrieval Augmented Generation (RAG).
 
 .. toctree::
    :maxdepth: 1
@@ -17,3 +18,4 @@ After reading this section, you should understand the following:
    bricks/cleaning
    bricks/extracting
    bricks/staging
+   bricks/chunking

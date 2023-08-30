@@ -4,10 +4,10 @@
 <head><meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Upstream Connectors" href="../upstream_connectors.html" /><link rel="prev" title="Staging" href="staging.html" />
 
   <link rel="shortcut icon" href="../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Chunking - Unstructured 0.10.8 documentation</title>
+  <title>Chunking - Unstructured 0.10.9 documentation</title>
   <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
@@ -252,7 +252,7 @@
       <label class="search-icon" for="__search">
         <div class="visually-hidden">Toggle search</div>
       </label>
-      <!-- <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <!-- <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label> -->
@@ -307,7 +307,7 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../introduction.html">Introduction</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Introduction</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../introduction/overview.html">Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../introduction/key_concepts.html">Key Concepts</a></li>
@@ -320,11 +320,12 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../api.html">Unstructured API</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../bricks.html">Bricks</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Bricks</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../bricks.html">Bricks</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Bricks</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="partition.html">Partitioning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cleaning.html">Cleaning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="extracting.html">Extracting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="staging.html">Staging</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Chunking</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../upstream_connectors.html">Upstream Connectors</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Upstream Connectors</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -365,7 +366,7 @@
     </div>
   </aside>
   <div class="main">
-    <div class="content content--no-toc">
+    <div class="content">
       <div class="article-container">
         <a href="#" class="back-to-top muted-link">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -389,7 +390,7 @@
               </svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg>
                 <use href="#svg-toc"></use>
@@ -412,7 +413,45 @@
           </div>
           <section id="chunking">
 <h1>Chunking<a class="headerlink" href="#chunking" title="Permalink to this heading"></a></h1>
-<p>This needs to be written</p>
+<p>Chunking functions in <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> use metadata and document elements
+detected with <code class="docutils literal notranslate"><span class="pre">partition</span></code> functions to split a document into subsections
+for uses cases such as Retrieval Augmented Generation (RAG).</p>
+<section id="chunk-by-title">
+<h2><code class="docutils literal notranslate"><span class="pre">chunk_by_title</span></code><a class="headerlink" href="#chunk-by-title" title="Permalink to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">chunk_by_title</span></code> function combines elements into sections by looking
+for the presence of titles. When a title is detected, a new section is created.
+Tables and non-text elements (such as page breaks or images) are always their
+own section.</p>
+<p>New sections are also created if changes in metadata occure. Examples of when
+this occurs include when the section of the document or the page number changes
+or when an element comes from an attachment instead of from the main document.
+If you set <code class="docutils literal notranslate"><span class="pre">multipage_sections=True</span></code>, <code class="docutils literal notranslate"><span class="pre">chunk_by_title</span></code> will allow for sections
+that span between pages. This kwarg is <code class="docutils literal notranslate"><span class="pre">True</span></code> by default.</p>
+<p><code class="docutils literal notranslate"><span class="pre">chunk_by_title</span></code> will start a new section if the length of a section exceed
+<code class="docutils literal notranslate"><span class="pre">new_after_n_chars</span></code>. The default value is <code class="docutils literal notranslate"><span class="pre">1500</span></code>. <code class="docutils literal notranslate"><span class="pre">chunk_by_title</span></code> does
+not split elements, it is possible for a section to exceed that lenght, for
+example if a <code class="docutils literal notranslate"><span class="pre">NarrativeText</span></code> elements exceeds <code class="docutils literal notranslate"><span class="pre">1500</span></code> characters on its on.</p>
+<p>Similarly, sections under <code class="docutils literal notranslate"><span class="pre">combine_under_n_chars</span></code> will be combined if they
+do not exceed the specified threshold, which defaults to <code class="docutils literal notranslate"><span class="pre">500</span></code>. This will combine
+a series of <code class="docutils literal notranslate"><span class="pre">Title</span></code> elements that occur one after another, which sometimes
+happens in lists that are not detected as <code class="docutils literal notranslate"><span class="pre">ListItem</span></code> elements. Set
+<code class="docutils literal notranslate"><span class="pre">combine_under_n_chars=0</span></code> to turn off this behavior.</p>
+<p>The following shows an example of how to use <code class="docutils literal notranslate"><span class="pre">chunk_by_title</span></code>. You will
+see the document chunked into sections instead of elements.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.html</span> <span class="kn">import</span> <span class="n">partition_html</span>
+<span class="kn">from</span> <span class="nn">unstructured.chunking.title</span> <span class="kn">import</span> <span class="n">chunk_by_title</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://understandingwar.org/backgrounder/russian-offensive-campaign-assessment-august-27-2023-0&quot;</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="n">partition_html</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">)</span>
+<span class="n">chunks</span> <span class="o">=</span> <span class="n">chunk_by_title</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">chunks</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">80</span><span class="p">)</span>
+    <span class="nb">input</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
 </section>
 
         </article>
@@ -420,8 +459,24 @@
       <footer>
         
         <div class="related-pages">
-          
-          
+          <a class="next-page" href="../upstream_connectors.html">
+            <div class="page-info">
+              <div class="context">
+                <span>Next</span>
+              </div>
+              <div class="title">Upstream Connectors</div>
+            </div>
+          </a>
+          <a class="prev-page" href="staging.html">
+            <div class="page-info">
+              <div class="context">
+                <span>Previous</span>
+              </div>
+              
+              <div class="title">Staging</div>
+              
+            </div>
+          </a>
         </div>
         <div class="bottom-of-page">
           <div class="left-details">
@@ -442,8 +497,27 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Chunking</a><ul>
+<li><a class="reference internal" href="#chunk-by-title"><code class="docutils literal notranslate"><span class="pre">chunk_by_title</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

@@ -2,7 +2,7 @@ Unstructured Core Library
 =========================
 
 The ``unstructured`` library is designed to help preprocess structure unstructured text documents
-for use in downstream machine learning tasks. Examples of documents that can be processes
+for use in downstream machine learning tasks. Examples of documents that can be processed
 using the ``unstructured`` library include PDFs, XML and HTML documents.
 
 Library Documentation
@@ -18,7 +18,7 @@ Library Documentation
   Learn more about partitioning, cleaning, and staging bricks, including advanced usage patterns.
 
 :doc:`upstream_connectors`
-  Connect to your favortite data storage platforms for an efortless batch processing of your files.
+  Connect to your favorite data storage platforms for an effortless batch processing of your files.
 
 :doc:`metadata`
   Learn more about how metadata is tracked in the ``unstructured`` library.
