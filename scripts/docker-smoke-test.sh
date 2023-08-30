@@ -38,7 +38,7 @@ trap stop_container EXIT
 await_container
 
 # Run the tests
-docker cp test_unstructured_ingest $CONTAINER_NAME:/home
+docker cp test_unstructured_ingest $CONTAINER_NAME:/home/notebook_user
 docker exec "$CONTAINER_NAME" /bin/bash -c "/home/notebook_user/test_unstructured_ingest/test-ingest-wikipedia.sh"
 
 result=$?
