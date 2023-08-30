@@ -466,9 +466,9 @@ def convert_pdf_to_images(
 
 def _get_element_box(
     element: Element,
-    boxes: List[str] = [],
-    box_idx: int = 0,
-    char_count: int = 0,
+    boxes: List[str],
+    box_idx: int,
+    char_count: int,
 ):
     """Helper function to get the bounding box of an element.
 
@@ -502,11 +502,11 @@ def _get_element_box(
 
 
 def add_pytesseract_bbox_to_elements(
-    elements: List[Element] = [],
+    elements: List[Element],
+    bboxes: str,
+    width: int,
+    height: int,
     element_idx: int = 0,
-    bboxes: str = "",
-    width: int = 0,
-    height: int = 0,
 ) -> List[Element]:
     """
     Get the bounding box of each element and add it to element.metadata.coordinates
