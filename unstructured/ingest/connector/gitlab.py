@@ -16,14 +16,13 @@ if TYPE_CHECKING:
 
 @dataclass
 class SimpleGitLabConfig(SimpleGitConfig):
+    base_url: str = "https://gitlab.com"
+
     def __post_init__(self):
         parsed_gh_url = urlparse(self.url)
-
-        # If no scheme or netloc are provided, use the default gitlab.com
-        if not parsed_gh_url.scheme and not parsed_gh_url.netloc:
-            self.url = "https://gitlab.com"
-        else:
-            self.url = f"{parsed_gh_url.scheme}://{parsed_gh_url.netloc}"
+        # If a scheme or netloc are provided, use the parsed base url
+        if parsed_gh_url.scheme or parsed_gh_url.netloc:
+            self.base_url = f"{parsed_gh_url.scheme}://{parsed_gh_url.netloc}"
         self.repo_path = parsed_gh_url.path
         while self.repo_path.startswith("/"):
             self.repo_path = self.repo_path[1:]
@@ -32,7 +31,7 @@ class SimpleGitLabConfig(SimpleGitConfig):
     def _get_project(self) -> "Project":
         from gitlab import Gitlab
 
-        gitlab = Gitlab(self.url, private_token=self.access_token)
+        gitlab = Gitlab(self.base_url, private_token=self.access_token)
         return gitlab.projects.get(self.repo_path)
 
 
@@ -89,7 +88,7 @@ class GitLabConnector(GitConnector):
             all=True,
         )
         return [
-            GitLabIngestDoc(self.standard_config, self.config, element["path"], project)
+            GitLabIngestDoc(self.standard_config, self.config, element["path"])
             for element in git_tree
             if element["type"] == "blob"
             and self.is_file_type_supported(element["path"])

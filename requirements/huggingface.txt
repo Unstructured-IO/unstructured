@@ -17,7 +17,7 @@ click==8.1.7
     # via
     #   -c requirements/base.txt
     #   sacremoses
-filelock==3.12.2
+filelock==3.12.3
     # via
     #   huggingface-hub
     #   torch
@@ -69,8 +69,10 @@ requests==2.31.0
     #   transformers
 sacremoses==0.0.53
     # via -r requirements/huggingface.in
-safetensors==0.3.3
-    # via transformers
+safetensors==0.3.2
+    # via
+    #   -c requirements/constraints.in
+    #   transformers
 sentencepiece==0.1.99
     # via -r requirements/huggingface.in
 six==1.16.0
@@ -89,11 +91,11 @@ tqdm==4.66.1
     #   huggingface-hub
     #   sacremoses
     #   transformers
-transformers==4.32.0
+transformers==4.32.1
     # via -r requirements/huggingface.in
 typing-extensions==4.7.1
     # via
-    #   -c requirements/base.txt
+    #   filelock
     #   huggingface-hub
     #   torch
 urllib3==1.26.16

@@ -81,63 +81,13 @@
   },
   {
     "type": "ListItem",
-    "element_id": "a02bbc7d83b04c67fcac3ae66b21b824",
+    "element_id": "4fcc5b6364213b1efa9272bdce4f9fcd",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "li@uwaterloo.ca"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "91e84c77f84bea17e45f12fe8d612afa",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "University of Waterloo w"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "ee43ace21caffc7f3e421e0d25282863",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "University of Washington bcgl@cs.washington.edu"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "69ce85202ad89819bf6a6687c34c04a0",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "Harvard University {melissadell,jacob carlson}@fas.harvard.edu"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "c44dd169d4120fc474358e959bc32f27",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "Brown University ruochen zhang@brown.edu"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "d598892f792aa3f81bde483737ac163e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "Allen Institute for AI shannons@allenai.org"
+    "text": "1 Allen Institute for AI shannons@allenai.org 2 Brown University ruochen zhang@brown.edu 3 Harvard University {melissadell,jacob carlson}@fas.harvard.edu 4 University of Washington bcgl@cs.washington.edu 5 University of Waterloo w422li@uwaterloo.ca"
   },
   {
     "type": "NarrativeText",
@@ -411,163 +361,13 @@
   },
   {
     "type": "ListItem",
-    "element_id": "f6adbb1b29c00a0317d87307ea7349c0",
+    "element_id": "bbde5bc98ffe50bc4557c848cb1a0473",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 3
     },
-    "text": "https://github.com/Paddl"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "c13539d1568999137c4e0354795cd37b",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "CR"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "c9a7576974bf76f87205a547952012b9",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "I/Eas"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "f12bcd1c4c95f968487ef1d92f721777",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "https://github.com/Jaide"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "0c4475e4ef576fc3ba91edb83ac90529",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "/detectron"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "85932d11fa05437c5aca785378fe8b88",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "https://github.com/hpanwar"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "fcec4cb3f8a40c9c97f67564ef7b01cf",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "ayout"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "3be8a9f080762eb3b89459c83b9dc0cc",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "d/Documen"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "96811996068f19e87f4fc6944d2534c0",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "nalysis"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "c84915bf4d12c1d1794529a2197c8f7e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "ayou"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "a52d4e55ffcecbb2b7e10950d6e3d2ff",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "addle/Paddl"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "a180bff913a0059538fe3609d9db6832",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "https://github.com/Bo"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "193e03893373b61e7354231571171b6f",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "https://ocr-d.de/en/about"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "27494431886c5be0e1b0dbeb2831a1e6",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "The number shown is obtained by specifying the search type as ‘code’."
-  },
-  {
-    "type": "ListItem",
-    "element_id": "9b41ceaccf9f13d73692f2e1f5ec87ca",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "https://github.com/leonlulu/Dee"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "c13539d1568999137c4e0354795cd37b",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "CR"
+    "text": "6 The number shown is obtained by specifying the search type as ‘code’. 7 https://ocr-d.de/en/about 8 https://github.com/BobLd/DocumentLayoutAnalysis 9 https://github.com/leonlulu/DeepLayout 10 https://github.com/hpanwar08/detectron2 11 https://github.com/JaidedAI/EasyOCR 12 https://github.com/PaddlePaddle/PaddleOCR"
   },
   {
     "type": "UncategorizedText",
@@ -962,43 +762,13 @@
   },
   {
     "type": "ListItem",
-    "element_id": "bebbb4e94f1f97edeb5b96e252720a93",
+    "element_id": "55ab2654fa8c2c01de322b52f4fad508",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "ocr_agent = lp . Tesserac"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "38ad08d5b34f8a5030d33d6e23aaf335",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "gent ()"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "3277e23329a3e4d08d021cac5d0609c7",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "# Can be easily switched to other OCR software"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "33c490deb7d22ca00a760f2d0c1a30e6",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "tokens = ocr_agent . detect ( image )"
+    "text": "1 ocr_agent = lp . TesseractAgent () 2 # Can be easily switched to other OCR software 3 tokens = ocr_agent . detect ( image )"
   },
   {
     "type": "NarrativeText",

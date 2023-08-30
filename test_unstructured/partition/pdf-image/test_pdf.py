@@ -15,6 +15,8 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.partition import pdf, strategies
+from unstructured.partition.json import partition_json
+from unstructured.staging.base import elements_to_json
 
 
 class MockResponse:
@@ -770,16 +772,33 @@ def test_partition_pdf_from_file_with_hi_res_strategy_custom_metadata_date(
     assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
+@pytest.mark.parametrize(
+    "strategy",
+    ["fast", "hi_res"],
+)
+def test_partition_pdf_with_json(
+    strategy,
+    filename="example-docs/layout-parser-paper-fast.pdf",
+):
+    elements = pdf.partition_pdf(filename=filename, strategy=strategy)
+    test_elements = partition_json(text=elements_to_json(elements))
+
+    assert len(elements) == len(test_elements)
+
+    for i in range(len(elements)):
+        assert elements[i] == test_elements[i]
+
+
 def test_partition_pdf_with_ocr_has_coordinates_from_filename(
     filename="example-docs/chevron-page.pdf",
 ):
     elements = pdf.partition_pdf(filename=filename, strategy="ocr_only")
-    assert elements[0].metadata.coordinates.points == [
+    assert elements[0].metadata.coordinates.points == (
         (657.0, 2144.0),
         (657.0, 2106.0),
         (1043.0, 2106.0),
         (1043.0, 2144.0),
-    ]
+    )
 
 
 def test_partition_pdf_with_ocr_has_coordinates_from_file(
@@ -790,9 +809,9 @@ def test_partition_pdf_with_ocr_has_coordinates_from_file(
             file=f,
             strategy="ocr_only",
         )
-    assert elements[0].metadata.coordinates.points == [
+    assert elements[0].metadata.coordinates.points == (
         (657.0, 2144.0),
         (657.0, 2106.0),
         (1043.0, 2106.0),
         (1043.0, 2144.0),
-    ]
+    )

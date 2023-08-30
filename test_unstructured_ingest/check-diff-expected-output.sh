@@ -16,7 +16,9 @@ SCRIPT_DIR=$(dirname "$(realpath "$0")")
 OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
 OUTPUT_FOLDER_NAME=$1
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
+OUTPUT_DIR_TEXT=$SCRIPT_DIR/text-output/$OUTPUT_FOLDER_NAME
 EXPECTED_OUTPUT_DIR=$SCRIPT_DIR/expected-structured-output/$OUTPUT_FOLDER_NAME
+EXPECTED_OUTPUT_DIR_TEXT=$SCRIPT_DIR/expected-text-output/$OUTPUT_FOLDER_NAME
 
 # to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [ "$OVERWRITE_FIXTURES" != "false" ]; then
@@ -27,6 +29,11 @@ if [ "$OVERWRITE_FIXTURES" != "false" ]; then
     mkdir -p "$EXPECTED_OUTPUT_DIR"
     cp -rf "$OUTPUT_DIR" "$SCRIPT_DIR/expected-structured-output"
 elif ! diff -ru "$EXPECTED_OUTPUT_DIR" "$OUTPUT_DIR" ; then
+    "$SCRIPT_DIR"/json-to-clean-text-folder.sh "$EXPECTED_OUTPUT_DIR" "$EXPECTED_OUTPUT_DIR_TEXT"
+    "$SCRIPT_DIR"/json-to-clean-text-folder.sh "$OUTPUT_DIR" "$OUTPUT_DIR_TEXT"
+    diff -ru "$EXPECTED_OUTPUT_DIR_TEXT" "$OUTPUT_DIR_TEXT"> outputdiff.txt
+    cat outputdiff.txt
+    diffstat -c outputdiff.txt
     echo
     echo "There are differences from the previously checked-in structured outputs."
     echo

@@ -5,12 +5,12 @@ from typing import Any, Dict, List, Optional
 
 from unstructured_inference.models.base import get_model
 
+from unstructured.ingest.connector.registry import create_ingest_doc_from_json
 from unstructured.ingest.interfaces import (
     BaseSessionHandle,
     IngestDocSessionHandleMixin,
 )
 from unstructured.ingest.logger import logger
-from unstructured.ingest.registry import create_ingest_doc_from_json
 
 # module-level variable to store session handle
 session_handle: Optional[BaseSessionHandle] = None
