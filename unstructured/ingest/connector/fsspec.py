@@ -107,9 +107,6 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         from fsspec import AbstractFileSystem, get_filesystem_class
 
         self._create_full_tmp_dir_path()
-        print(self.config.get_access_kwargs())
-        print(type(self.config))
-        print(self.__class__)
         fs: AbstractFileSystem = get_filesystem_class(self.config.protocol)(
             **self.config.get_access_kwargs(),
         )
@@ -136,8 +133,6 @@ class FsspecConnector(ConnectorCleanupMixin, BaseConnector):
         from fsspec import AbstractFileSystem, get_filesystem_class
 
         super().__init__(standard_config, config)
-        print(type(self.config))
-        print(self.__class__)
         self.fs: AbstractFileSystem = get_filesystem_class(self.config.protocol)(
             **self.config.get_access_kwargs(),
         )
