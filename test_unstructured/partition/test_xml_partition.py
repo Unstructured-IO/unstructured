@@ -74,8 +74,8 @@ def test_partition_xml_from_filename_with_tags_default_encoding(filename):
     file_path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
     elements = partition_xml(filename=file_path, xml_keep_tags=True)
 
-    assert elements[5].text == "<leader>Joe Biden</leader>"
-    assert elements[5].metadata.filename == filename
+    assert "<leader>Joe Biden</leader>" in elements[0].text
+    assert elements[0].metadata.filename == filename
 
 
 def test_partition_xml_from_text_with_tags(filename="example-docs/factbook.xml"):
@@ -83,8 +83,8 @@ def test_partition_xml_from_text_with_tags(filename="example-docs/factbook.xml")
         text = f.read()
     elements = partition_xml(text=text, xml_keep_tags=True, metadata_filename=filename)
 
-    assert elements[5].text == "<leader>Joe Biden</leader>"
-    assert elements[5].metadata.filename == "factbook.xml"
+    assert "<leader>Joe Biden</leader>" in elements[0].text
+    assert elements[0].metadata.filename == "factbook.xml"
 
 
 @pytest.mark.parametrize(
@@ -106,8 +106,8 @@ def test_partition_xml_from_file_with_tags_default_encoding(filename):
     with open(file_path) as f:
         elements = partition_xml(file=f, xml_keep_tags=True, metadata_filename=file_path)
 
-    assert elements[5].text == "<leader>Joe Biden</leader>"
-    assert elements[5].metadata.filename == filename
+    assert "<leader>Joe Biden</leader>" in elements[0].text
+    assert elements[0].metadata.filename == filename
 
 
 @pytest.mark.parametrize(
@@ -119,8 +119,8 @@ def test_partition_xml_from_file_rb_with_tags_default_encoding(filename):
     with open(file_path, "rb") as f:
         elements = partition_xml(file=f, xml_keep_tags=True, metadata_filename=file_path)
 
-    assert elements[5].text == "<leader>Joe Biden</leader>"
-    assert elements[5].metadata.filename == filename
+    assert "<leader>Joe Biden</leader>" in elements[0].text
+    assert elements[0].metadata.filename == filename
 
 
 @pytest.mark.parametrize(

@@ -2,7 +2,12 @@ import xml.etree.ElementTree as ET
 from tempfile import SpooledTemporaryFile
 from typing import IO, BinaryIO, List, Optional, Union, cast
 
-from unstructured.documents.elements import Element, ElementMetadata, process_metadata
+from unstructured.documents.elements import (
+    Element,
+    ElementMetadata,
+    Text,
+    process_metadata,
+)
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import (
@@ -11,7 +16,7 @@ from unstructured.partition.common import (
     get_last_modified_date_from_file,
     spooled_to_bytes_io_if_needed,
 )
-from unstructured.partition.text import element_from_text, partition_text
+from unstructured.partition.text import element_from_text
 
 
 def is_leaf(elem):
@@ -27,6 +32,7 @@ def get_leaf_elements(
     file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
     text: Optional[str] = None,
     xml_path: str = ".",
+    xml_keep_tags: bool = False,
 ) -> List[Optional[str]]:
     exactly_one(filename=filename, file=file, text=text)
     if filename:
@@ -61,8 +67,6 @@ def partition_xml(
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
     encoding: Optional[str] = None,
-    max_partition: Optional[int] = 1500,
-    min_partition: Optional[int] = 0,
     metadata_last_modified: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
@@ -86,11 +90,6 @@ def partition_xml(
     include_metadata
         Determines whether or not metadata is included in the metadata attribute on the
         elements in the output.
-    max_partition
-        The maximum number of characters to include in a partition. If None is passed,
-        no maximum is applied.
-    min_partition
-        The minimum number of characters to include in a partition.
     metadata_last_modified
         The day of the last modification
     """
@@ -103,6 +102,15 @@ def partition_xml(
     elif file:
         last_modification_date = get_last_modified_date_from_file(file)
 
+    metadata = (
+        ElementMetadata(
+            filename=metadata_filename or filename,
+            last_modified=metadata_last_modified or last_modification_date,
+        )
+        if include_metadata
+        else ElementMetadata()
+    )
+
     if xml_keep_tags:
         if filename:
             _, raw_text = read_txt_file(filename=filename, encoding=encoding)
@@ -114,25 +122,11 @@ def partition_xml(
         elif text:
             raw_text = text
 
-        elements = partition_text(
-            text=raw_text,
-            metadata_filename=metadata_filename,
-            include_metadata=include_metadata,
-            max_partition=max_partition,
-            min_partition=min_partition,
-            metadata_last_modified=metadata_last_modified or last_modification_date,
-        )
+        elements = [
+            Text(text=raw_text, metadata=metadata),
+        ]
 
     else:
-        metadata = (
-            ElementMetadata(
-                filename=metadata_filename or filename,
-                last_modified=metadata_last_modified or last_modification_date,
-            )
-            if include_metadata
-            else ElementMetadata()
-        )
-
         leaf_elements = get_leaf_elements(
             filename=filename,
             file=file,
