@@ -342,7 +342,7 @@ run_profile() {
       py_spy='py-spy'
       py_runtime='python3'
     fi
-    "$py_spy" record -o "$PROFILE_RESULTS_DIR/${test_file##*/}.speedscope" --format speedscope -- "$py_runtime" -m "$MODULE_PATH.run_partition" "$test_file" "$strategy"
+    "$py_spy" record --subprocesses -i -o "$PROFILE_RESULTS_DIR/${test_file##*/}.speedscope" --format speedscope -- "$py_runtime" -m "$MODULE_PATH.run_partition" "$test_file" "$strategy"
     echo "Profiling completed."
     echo "Viewing results for $test_file"
     echo "The py-spy produced speedscope profile can be viewed on https://www.speedscope.app or locally by installing via 'npm install -g speedscope'"
