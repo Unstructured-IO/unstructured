@@ -2,6 +2,7 @@
 
 ### Enhancements
 
+* Adds `text` as an input parameter to `partition_xml`.
 * If `xml_keep_tags=False`, `partition_xml` infers the element type for each leaf element
   separately without delegating to `partition_text`. Note, `max_partition` and `min_partition`
   no longer apply when `xml_keep_tags=False` since `partition_xml` no longer delegates
@@ -22,6 +23,7 @@
 
 * Adds `chunk_by_title` to break a document into sections based on the presence of `Title`
   elements.
+* add new extraction function `extract_image_urls_from_html` to extract all img related URL from html text.
 
 ### Fixes
 
