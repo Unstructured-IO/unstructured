@@ -644,7 +644,7 @@ def test_file_specific_produces_correct_filetype(filetype: FileType):
 
 
 def test_auto_partition_xml_from_filename(filename="example-docs/factbook.xml"):
-    elements = partition(filename=filename, xml_keep_tags=False)
+    elements = partition(filename=filename, xml_keep_tags=False, metadata_filename=filename)
 
     assert elements[0].text == "United States"
     assert elements[0].metadata.filename == "factbook.xml"
@@ -661,7 +661,7 @@ def test_auto_partition_xml_from_filename_with_tags(filename="example-docs/factb
     elements = partition(filename=filename, xml_keep_tags=True)
 
     assert "<leader>Joe Biden</leader>" in elements[0].text
-    assert elements[0].metadata.filename == filename
+    assert elements[0].metadata.filename == "factbook.xml"
 
 
 def test_auto_partition_xml_from_file_with_tags(filename="example-docs/factbook.xml"):
