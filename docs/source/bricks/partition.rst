@@ -881,5 +881,7 @@ If ``xml_keep_tags=True``, the function returns tag information in addition to t
 The default value is ``1500``, which roughly corresponds to
 the average character length for a paragraph.
 You can disable ``max_partition`` by setting it to ``None``.
+Currently, the ``max_partition`` and ``min_partition`` kwargs only apply if ``xml_keep_tags=True``.
+
 
 For more information about the ``partition_xml`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/xml.py>`_.
