@@ -25,8 +25,10 @@ def is_string(elem):
 def get_leaf_elements(
     filename: Optional[str] = None,
     file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
+    text: Optional[str] = None,
     xml_path: str = ".",
 ) -> List[Optional[str]]:
+    exactly_one(filename=filename, file=file, text=text)
     if filename:
         _, raw_text = read_txt_file(filename=filename)
     elif file:
@@ -34,8 +36,8 @@ def get_leaf_elements(
             cast(Union[BinaryIO, SpooledTemporaryFile], file),
         )
         _, raw_text = read_txt_file(file=f)
-    else:
-        raise ValueError("Either 'filename' or 'file' must be provided.")
+    elif text:
+        raw_text = text
 
     root = ET.fromstring(raw_text)
     leaf_elements = []
@@ -53,6 +55,7 @@ def get_leaf_elements(
 def partition_xml(
     filename: Optional[str] = None,
     file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
+    text: Optional[str] = None,
     xml_keep_tags: bool = False,
     xml_path: str = ".",
     metadata_filename: Optional[str] = None,
@@ -71,6 +74,8 @@ def partition_xml(
         A string defining the target filename path.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
+    text
+        The text of the XML file
     xml_keep_tags
         If True, will retain the XML tags in the output. Otherwise it will simply extract
         the text from within the tags.
@@ -89,7 +94,7 @@ def partition_xml(
     metadata_last_modified
         The day of the last modification
     """
-    exactly_one(filename=filename, file=file)
+    exactly_one(filename=filename, file=file, text=text)
     elements: List[Element] = []
 
     last_modification_date = None
@@ -106,8 +111,8 @@ def partition_xml(
                 cast(Union[BinaryIO, SpooledTemporaryFile], file),
             )
             _, raw_text = read_txt_file(file=f, encoding=encoding)
-        else:
-            raise ValueError("Either 'filename' or 'file' must be provided.")
+        elif text:
+            raw_text = text
 
         elements = partition_text(
             text=raw_text,
@@ -128,7 +133,7 @@ def partition_xml(
             else ElementMetadata()
         )
 
-        leaf_elements = get_leaf_elements(filename=filename, file=file, xml_path=xml_path)
+        leaf_elements = get_leaf_elements(filename=filename, file=file, text=text, xml_path=xml_path)
         for leaf_element in leaf_elements:
             if leaf_element:
                 element = element_from_text(leaf_element)
