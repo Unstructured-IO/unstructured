@@ -1,4 +1,4 @@
-## 0.10.9-dev3
+## 0.10.9
 
 ### Enhancements
 
@@ -11,6 +11,7 @@
   
 ### Fixes
 
+* Make cv2 dependency optional
 * Edit `add_pytesseract_bbox_to_elements`'s (`ocr_only` strategy) `metadata.coordinates.points` return type to `Tuple` for consistency.
 * Re-enable test-ingest-confluence-diff for ingest tests
 * Fix syntax for ingest test check number of files
