@@ -118,7 +118,7 @@ def test_partition_pdf_local_raises_with_no_filename():
     [("fast", {1, 4}), ("hi_res", {1, 3, 4}), ("ocr_only", {1, 3, 4})],
 )
 def test_partition_pdf(
-    file_mode,        
+    file_mode,
     strategy,
     expected,
     filename="example-docs/layout-parser-paper-fast.pdf",
@@ -129,7 +129,7 @@ def test_partition_pdf(
         assert len(result) > 10
         # check that the pdf has multiple different page numbers
         assert {element.metadata.page_number for element in result} == expected
-    
+
     if file_mode == "filename":
         result = pdf.partition_pdf(filename=filename, strategy=strategy)
         _test(result)
