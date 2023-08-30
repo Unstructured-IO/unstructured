@@ -1,2 +1,4 @@
 structured-output
 download
+test_unstructured_ingest/expected-text-output/**
+test_unstructured_ingest/text-output/**
