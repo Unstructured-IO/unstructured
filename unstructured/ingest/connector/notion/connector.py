@@ -117,7 +117,7 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def date_created(self) -> Optional[str]:
         """The date the document was created on the source system."""
-        if not self.file_metadata:
+        if not hasattr(self, "file_metadata") or not self.file_metadata:
             self.get_file_metadata()
 
         return self.file_metadata.created_time if self.file_metadata else None
@@ -125,7 +125,7 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def date_modified(self) -> Optional[str]:
         """The date the document was last modified on the source system."""
-        if not self.file_metadata:
+        if not hasattr(self, "file_metadata") or not self.file_metadata:
             self.get_file_metadata()
 
         return self.file_metadata.last_edited_time if self.file_metadata else None
@@ -231,7 +231,7 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def date_created(self) -> Optional[str]:
         """The date the document was created on the source system."""
-        if not self.file_metadata:
+        if not hasattr(self, "file_metadata") or not self.file_metadata:
             self.get_file_metadata()
 
         return self.file_metadata.created_time if self.file_metadata else None
@@ -239,7 +239,7 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def date_modified(self) -> Optional[str]:
         """The date the document was last modified on the source system."""
-        if not self.file_metadata:
+        if not hasattr(self, "file_metadata") or not self.file_metadata:
             self.get_file_metadata()
 
         return self.file_metadata.last_edited_time if self.file_metadata else None
