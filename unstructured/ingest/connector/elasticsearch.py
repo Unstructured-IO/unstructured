@@ -41,6 +41,7 @@ class ElasticsearchFileMeta:
 
     index_name: str
     document_id: str
+    version: str = None
 
 
 @dataclass
@@ -55,10 +56,7 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleElasticsearchConfig
     file_meta: ElasticsearchFileMeta
     registry_name: str = "elasticsearch"
-
-    def __post_init__(self):
-        self.document_found = False
-        self.document_version = None
+    file_exists: Optional[bool] = None
 
     # TODO: remove one of filename or _tmp_download_file, using a wrapper
     @property
@@ -106,34 +104,54 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         concatenated_values = seperator.join(values)
         return concatenated_values
 
-    @requires_dependencies(["elasticsearch", "jq"], extras="elasticsearch")
+    @requires_dependencies(["jq"], extras="elasticsearch")
+    def _get_document(self):
+        from elasticsearch import Elasticsearch, NotFoundError
+
+        try:
+            # TODO: instead of having a separate client for each doc,
+            # have a separate client for each process
+            es = Elasticsearch(self.config.url)
+            document = es.get(
+                index=self.config.index_name,
+                id=self.file_meta.document_id,
+            )
+        except Exception as e:
+            if isinstance(e, NotFoundError):
+                logger.error("Couldn't find document with ID: %s", self.file_meta.document_id)
+                self.file_exists = False
+            raise
+        self.file_exists = document["found"]
+        return document
+
+    def get_file_metadata(self, document=None):
+        if document is None:
+            document = self._get_document()
+        self.file_meta.version = document["_version"]
+
+    @requires_dependencies(["jq"], extras="elasticsearch")
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
         import jq
-        from elasticsearch import Elasticsearch
 
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
-        # TODO: instead of having a separate client for each doc,
-        # have a separate client for each process
-        es = Elasticsearch(self.config.url)
-        document = es.get(
-            index=self.config.index_name,
-            id=self.file_meta.document_id,
-        )
+        # NOTE: rename variable?
+        document = self._get_document()
         document_dict = document.body["_source"]
-        self.document_version = document["_version"]
-        self.document_found = document["found"]
-
+        print("document body", document.body)
         if self.config.jq_query:
             document_dict = json.loads(jq.compile(self.config.jq_query).input(document_dict).text())
         self.document = self._concatenate_dict_fields(document_dict)
+        self.get_file_metadata(document)
         self.filename.parent.mkdir(parents=True, exist_ok=True)
         with open(self.filename, "w", encoding="utf8") as f:
             f.write(self.document)
 
     @property
     def exists(self) -> Optional[bool]:
-        return self.document_found
+        if self.file_exists is None:
+            self.get_file_metadata()
+        return self.file_exists
 
     @property
     def record_locator(self) -> Optional[Dict[str, Any]]:
@@ -144,7 +162,9 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @property
     def version(self) -> Optional[str]:
-        return self.document_version
+        if self.file_meta.version is None:
+            self.get_file_metadata()
+        return self.file_meta.version
 
 
 @dataclass

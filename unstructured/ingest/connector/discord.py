@@ -47,6 +47,12 @@ class SimpleDiscordConfig(BaseConnectorConfig):
 
 
 @dataclass
+class DiscordFileMeta:
+    date_created: str
+    date_modified: str
+
+
+@dataclass
 class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     """Class encapsulating fetching a doc and writing processed results (but not
     doing the processing!).
@@ -58,13 +64,9 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     channel: str
     days: Optional[int]
     token: str
+    file_exists: Optional[bool] = None
+    file_metadata: DiscordFileMeta = None
     registry_name: str = "discord"
-
-    def __post_init__(self):
-        self.created_at = None
-        self.latest_msg = None
-        self.jump_url = None
-        self.n_messages = 0
 
     # NOTE(crag): probably doesn't matter,  but intentionally not defining tmp_download_file
     # __post_init__ for multiprocessing simplicity (no Path objects in initially
@@ -81,17 +83,12 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _create_full_tmp_dir_path(self):
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
 
-    @BaseIngestDoc.skip_if_file_exists
     @requires_dependencies(dependencies=["discord"], extras="discord")
-    def get_file(self):
+    def _get_messages(self):
         """Actually fetches the data from discord and stores it locally."""
-
         import discord
         from discord.ext import commands
 
-        self._create_full_tmp_dir_path()
-        if self.config.verbose:
-            logger.debug(f"fetching {self} - PID: {os.getpid()}")
         messages: List[discord.Message] = []
         intents = discord.Intents.default()
         intents.message_content = True
@@ -103,23 +100,44 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 after_date = None
                 if self.days:
                     after_date = dt.datetime.utcnow() - dt.timedelta(days=self.days)
-
                 channel = bot.get_channel(int(self.channel))
-                if channel:
-                    self.created_at = channel.created_at
-                    self.jump_url = channel.jump_url
                 async for msg in channel.history(after=after_date):  # type: ignore
                     messages.append(msg)
                 await bot.close()
             except Exception as e:
-                logger.error(f"Error fetching messages: {e}")
+                logger.error(f"Error fetching messages")
+                self.file_exists = False
                 await bot.close()
+                raise
 
         bot.run(self.token)
+        self.file_exists = len(messages) >= 1
+        return messages
+
+    def get_file_metadata(self, messages=None):
+        if messages is None:
+            messages = self._get_messages()
+        if len(messages) < 1:
+            return
+        dates = [m.created_at for m in messages if m.created_at]
+        dates.sort()
+        self.file_metadata = DiscordFileMeta(
+            date_created=dates[0].isoformat(),
+            date_modified=dates[-1].isoformat(),
+        )
+
+    @BaseIngestDoc.skip_if_file_exists
+    def get_file(self):
+        self._create_full_tmp_dir_path()
+        if self.config.verbose:
+            logger.debug(f"fetching {self} - PID: {os.getpid()}")
+
+        messages = self._get_messages()
         self.n_messages = len(messages)
         if self.n_messages >= 1:
             self.latest_msg = [m.created_at for m in messages if m.created_at].sort()
 
+        self.get_file_metadata(messages)
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
         with open(self._tmp_download_file(), "w") as f:
             for m in messages:
@@ -132,19 +150,21 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @property
     def date_created(self) -> Optional[str]:
-        if self.created_at is not None:
-            return self.created_at.isoformat()
-        return self.created_at
+        if self.file_metadata is None:
+            self.get_file_metadata()
+        return self.file_metadata.date_created
 
     @property
     def date_modified(self) -> Optional[str]:
-        if self.latest_msg is not None:
-            return self.latest_msg.isoformat()
-        return self.latest_msg
+        if self.file_metadata is None:
+            self.get_file_metadata()
+        return self.file_metadata.date_modified
 
     @property
     def exists(self) -> Optional[bool]:
-        return self.n_messages >= 1
+        if self.file_exists is None:
+            self.get_file_metadata()
+        return self.file_exists
 
     @property
     def record_locator(self) -> Optional[Dict[str, Any]]:

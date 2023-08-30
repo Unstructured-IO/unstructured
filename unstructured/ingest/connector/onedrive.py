@@ -62,13 +62,14 @@ class OneDriveFileMeta:
     date_modified: str
     version: str
 
+
 @dataclass
 class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleOneDriveConfig
     file_name: str
     file_path: str
     meta: OneDriveFileMeta
-    registry_name: str = 'onedrive'
+    registry_name: str = "onedrive"
 
     def __post_init__(self):
         self.ext = "".join(Path(self.file_name).suffixes)
@@ -80,8 +81,8 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 f"Extension not supported. "
                 f"Value MUST be one of {', '.join([k for k in EXT_TO_FILETYPE if k is not None])}.",
             )
-        
-        self.server_relative_path = self.file_path+'/'+self.file_name
+
+        self.server_relative_path = self.file_path + "/" + self.file_name
         self._set_download_paths()
 
     def _set_download_paths(self) -> None:
@@ -90,8 +91,12 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         output_path = Path(f"{self.standard_config.output_dir}")
 
         if parent_path := self.file_path:
-            download_path = download_path if parent_path == "" else (download_path / parent_path).resolve()
-            output_path = output_path if parent_path == "" else (output_path / parent_path).resolve()
+            download_path = (
+                download_path if parent_path == "" else (download_path / parent_path).resolve()
+            )
+            output_path = (
+                output_path if parent_path == "" else (output_path / parent_path).resolve()
+            )
 
         self.download_dir = download_path
         self.download_filepath = (download_path / self.file_name).resolve()
@@ -137,7 +142,7 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @BaseIngestDoc.skip_if_file_exists
     @requires_dependencies(["office365"], extras="onedrive")
     def get_file(self):
-        from office365.graph_client import GraphClient 
+        from office365.graph_client import GraphClient
 
         try:
             client = GraphClient(self.config.token_factory)
@@ -187,16 +192,16 @@ class OneDriveConnector(ConnectorCleanupMixin, BaseConnector):
         for f in folders:
             files += self._list_objects(f, recursive)
         return files
-    
+
     def _gen_ingest_doc(self, file: "DriveItem") -> OneDriveIngestDoc:
         file_path = file.parent_reference.path.split(":")[-1]
         file_path = file_path[1:] if file_path[0] == "/" else file_path
-        version = ''
+        version = ""
         if (n_versions := len(file.versions)) > 0:
             version = file.versions[n_versions - 1].content
 
         return OneDriveIngestDoc(
-            self.standard_config, 
+            self.standard_config,
             self.config,
             file.name,
             file_path,
@@ -204,7 +209,7 @@ class OneDriveConnector(ConnectorCleanupMixin, BaseConnector):
                 file.created_datetime,
                 file.last_modified_datetime,
                 version,
-            )
+            ),
         )
 
     def initialize(self):

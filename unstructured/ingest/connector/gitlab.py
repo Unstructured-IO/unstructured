@@ -1,9 +1,10 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Dict, Optional
 from urllib.parse import urlparse
 
 from unstructured.ingest.connector.git import (
     GitConnector,
+    GitFileMeta,
     GitIngestDoc,
     SimpleGitConfig,
 )
@@ -38,22 +39,37 @@ class SimpleGitLabConfig(SimpleGitConfig):
 @dataclass
 class GitLabIngestDoc(GitIngestDoc):
     config: SimpleGitLabConfig
-    project: "Project"
     registry_name: str = "gitlab"
 
-    def _fetch_and_write(self) -> None:
-        project = self.config._get_project()
-        content_file = project.files.get(
-            self.path,
-            ref=self.config.branch or project.default_branch,
-        )
+    def _fetch_content(self):
+        try:
+            project = self.config._get_project()
+            content_file = project.files.get(
+                self.path,
+                ref=self.config.branch or project.default_branch,
+            )
+        except Exception as e:
+            self.file_exists = False
+            raise
+        self.file_exists = True
+        return content_file
 
+    def _fetch_and_write(self) -> None:
+        content_file = self._fetch_content()
         contents = content_file.decode()
         self.file_exists = True
-        self.file_version = content_file.attributes.get("commit_id", "")
-
+        self.get_file_metadata(content_file)
         with open(self.filename, "wb") as f:
             f.write(contents)
+
+    def get_file_metadata(self, content_file=None):
+        if content_file is None:
+            content_file = self._fetch_content()
+        self.file_metadata = GitFileMeta(
+            None,
+            None,
+            content_file.attributes.get("commit_id", ""),
+        )
 
 
 @requires_dependencies(["gitlab"], extras="gitlab")

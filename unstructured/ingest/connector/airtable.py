@@ -36,6 +36,8 @@ class AirtableFileMeta:
 
     base_id: str
     table_id: str
+    date_created: str = None
+    date_modified: str = None
     view_id: Optional[str] = None
 
 
@@ -50,13 +52,8 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     config: SimpleAirtableConfig
     file_meta: AirtableFileMeta
+    file_exists: Optional[bool] = None
     registry_name: str = "airtable"
-
-    def __post_init__(self):
-        self.n_records = None
-        self.table_url = None
-        self.min_date = None
-        self.max_date = None
 
     @property
     def filename(self):
@@ -74,44 +71,68 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @property
     def date_created(self) -> Optional[str]:
-        return datetime.fromisoformat(self.min_date).isoformat()
+        if self.file_meta.date_created is None:
+            self.get_file_metadata()
+        return self.file_meta.date_created
 
     @property
     def date_modified(self) -> Optional[str]:
-        return datetime.fromisoformat(self.max_date).isoformat()
+        if self.file_meta.date_modified is None:
+            self.get_file_metadata()
+        return self.file_meta.date_modified
 
     @property
     def exists(self) -> Optional[bool]:
-        return self.n_records >= 1
+        if self.file_exists is None:
+            self.get_file_metadata()
+        return self.file_exists
 
     @property
     def record_locator(self) -> Optional[Dict[str, Any]]:
         return {
-            "table_url": self.table_url,
+            "base_id": self.file_meta.base_id,
+            "table_id": self.file_meta.table_id,
+            "view_id": self.file_meta.view_id,
         }
 
-    @requires_dependencies(["pyairtable", "pandas"], extras="airtable")
-    @BaseIngestDoc.skip_if_file_exists
-    def get_file(self):
-        logger.debug(f"Fetching {self} - PID: {os.getpid()}")
-
-        # TODO: instead of having a separate connection object for each doc,
-        # have a separate connection object for each process
-        import pandas as pd
+    @requires_dependencies(["pyairtable"], extras="airtable")
+    def _get_table_rows(self):
         from pyairtable import Api
 
-        self.api = Api(self.config.personal_access_token)
-        table = self.api.table(self.file_meta.base_id, self.file_meta.table_id)
-        # NOTE: Might be a good idea to add pagination for large tables
-        rows = table.all(view=self.file_meta.view_id)
-        dates = [r.get("createdTime", "") for r in rows].sort()
-        self.n_records = len(rows)
-        self.table_url = table.url
-        if len(dates) == 1:
-            self.min_date, self.max_date = dates[0], dates[0]
-        else:
-            self.min_date, self.max_date = dates[0], dates[-1]
+        api = Api(self.config.personal_access_token)
+        try:
+            rows = api.table(self.file_meta.base_id, self.file_meta.table_id).all(
+                view=self.file_meta.view_id,
+            )
+        except Exception as e:
+            # TODO: more specific error handling?
+            logger.error("Failed to retrieve rows from Airtable table.")
+            self.file_exists = False
+            raise
 
+        if len(rows) == 0:
+            logger.info("Empty document, retrieved table but it has no rows.")
+        self.file_exists = True
+        return rows
+
+    def get_file_metadata(self, rows=None):
+        """Sets file metadata from the current table."""
+        if rows is None:
+            rows = self._get_table_rows()
+        if len(rows) < 1:
+            return
+        dates = [r.get("createdTime", "") for r in rows].sort()
+        self.file_meta.date_created = datetime.fromisoformat(dates[0]).isoformat()
+        self.file_meta.date_modified = datetime.fromisoformat(dates[-1]).isoformat()
+
+    @requires_dependencies(["pandas"])
+    @BaseIngestDoc.skip_if_file_exists
+    def get_file(self):
+        import pandas as pd
+
+        logger.debug(f"Fetching {self} - PID: {os.getpid()}")
+        rows = self._get_table_rows()
+        # NOTE: Might be a good idea to add pagination for large tables
         df = pd.DataFrame.from_dict(
             [row["fields"] for row in rows],
         ).sort_index(axis=1)
@@ -121,6 +142,7 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         with open(self.filename, "w", encoding="utf8") as f:
             f.write(self.document)
+        self.get_file_metadata(rows)
 
 
 airtable_id_prefixes = ["app", "tbl", "viw"]

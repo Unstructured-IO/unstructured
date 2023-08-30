@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from itertools import chain
 from pathlib import Path
-from typing import List, Optional, Dict, Any
+from typing import Any, Dict, List, Optional
 
 from unstructured.ingest.interfaces import (
     BaseConnector,

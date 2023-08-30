@@ -24,9 +24,18 @@ class SimpleGitConfig(BaseConnectorConfig):
 
 
 @dataclass
+class GitFileMeta:
+    date_created: str
+    date_modified: str
+    version: str
+
+
+@dataclass
 class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleGitConfig = field(repr=False)
     path: str
+    file_exists: Optional[bool] = None
+    file_metadata: Optional[GitFileMeta] = None
 
     def __post_init__(self):
         self.file_created_at = None
@@ -44,26 +53,30 @@ class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return Path(self.standard_config.output_dir) / f"{self.path}.json"
 
     @property
-    def date_created(self) -> Optional[str]:
-        return self.file_created_at
-
-    @property
     def date_modified(self) -> Optional[str]:
-        return self.file_updated_at
+        if self.file_metadata is None:
+            self.get_file_metadata()
+        return self.file_metadata.date_modified
 
     @property
     def exists(self) -> Optional[bool]:
+        if self.file_exists is None:
+            self.get_file_metadata()
         return self.file_exists
 
     @property
-    def record_locator(self) -> Optional[Dict[str, Any]]:
-        return {
-            "download_url": self.file_download_url or self.config.url,
-        }
+    def version(self) -> Optional[str]:
+        if self.file_metadata is None:
+            self.get_file_metadata()
+        return self.file_metadata.version
 
     @property
-    def version(self) -> Optional[str]:
-        return self.file_version
+    def record_locator(self) -> Dict[str, Any]:
+        return {
+            "url": self.config.url,
+            "repo_path": self.config.repo_path,
+            "file_path": self.path,
+        }
 
     def _create_full_tmp_dir_path(self):
         """includes directories in in the gitlab repository"""
@@ -75,6 +88,9 @@ class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         self._create_full_tmp_dir_path()
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         self._fetch_and_write()
+
+    def _fetch_content(self) -> None:
+        raise NotImplementedError()
 
     def _fetch_and_write(self) -> None:
         raise NotImplementedError()

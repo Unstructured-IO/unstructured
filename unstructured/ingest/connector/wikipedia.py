@@ -25,21 +25,42 @@ class SimpleWikipediaConfig(BaseConnectorConfig):
 
 
 @dataclass
+class WikipediaFileMeta:
+    page_url: str
+    page_id: str
+    version: str
+
+
+@dataclass
 class WikipediaIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleWikipediaConfig = field(repr=False)
+    file_meta: Optional[WikipediaFileMeta] = None
+    file_exists: Optional[bool] = None
 
     @property
     @requires_dependencies(["wikipedia"], extras="wikipedia")
     def page(self) -> "WikipediaPage":
         import wikipedia
+        from wikipedia.exceptions import PageError
 
-        return wikipedia.page(
-            self.config.title,
-            auto_suggest=self.config.auto_suggest,
-        )
+        try:
+            page = wikipedia.page(
+                self.config.title,
+                auto_suggest=self.config.auto_suggest,
+            )
+        except PageError as e:
+            self.file_exists = False
+            raise
 
-    def __post_init__(self):
-        self.page = None
+        if self.file_meta is None:
+            self.file_meta = WikipediaFileMeta(
+                page.url,
+                page.pageid,
+                page.revision_id,
+            )
+
+        self.file_exists = True
+        return page
 
     @property
     def filename(self) -> Path:
@@ -67,13 +88,13 @@ class WikipediaIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def record_locator(self) -> Optional[Dict[str, Any]]:
         return {
-            "page_url": self.page.url,
-            "page_id": self.page.pageid,
+            "page_url": self.file_meta.page_url,
+            "page_id": self.file_meta.page_id,
         }
 
     @property
     def version(self) -> Optional[str]:
-        return self.page.revision_id
+        return self.file_meta.version
 
 
 @dataclass

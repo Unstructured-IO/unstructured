@@ -13,6 +13,9 @@ from unstructured.ingest.interfaces import (
     StandardConnectorConfig,
 )
 from unstructured.ingest.logger import logger
+from unstructured.utils import (
+    requires_dependencies,
+)
 
 if TYPE_CHECKING:
     from fsspec import AbstractFileSystem
@@ -73,8 +76,14 @@ class SimpleFsspecConfig(BaseConnectorConfig):
         self.file_path = match.group(2) or ""
 
     def get_access_kwargs(self) -> dict:
-        print("TEST FSSPEC")
         return self.access_kwargs
+
+
+@dataclass
+class FsspecFileMeta:
+    date_created: str
+    date_modified: str
+    version: str
 
 
 @dataclass
@@ -88,7 +97,8 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     config: SimpleFsspecConfig
     remote_file_path: str
-    fs: "AbstractFileSystem"
+    file_exists: Optional[bool] = None
+    file_metadata: FsspecFileMeta = None
 
     def _tmp_download_file(self):
         return Path(self.standard_config.download_dir) / self.remote_file_path.replace(
@@ -110,20 +120,37 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
         """Fetches the file from the current filesystem and stores it locally."""
+        from fsspec import AbstractFileSystem, get_filesystem_class
 
         self._create_full_tmp_dir_path()
-        print(self.config.get_access_kwargs())
-        print(type(self.config))
-        print(self.__class__)
         fs: AbstractFileSystem = get_filesystem_class(self.config.protocol)(
             **self.config.get_access_kwargs(),
         )
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         try:
-            self.fs.get(rpath=self.remote_file_path, lpath=self._tmp_download_file().as_posix())
+            fs.get(rpath=self.remote_file_path, lpath=self._tmp_download_file().as_posix())
+            self.file_exists = True
         except Exception as e:
-            logger.error(e)
-            return
+            if isinstance(e, FileNotFoundError):
+                self.file_exists = False
+            raise
+        self.get_file_metadata()
+
+    @requires_dependencies(["fsspec"])
+    def get_file_metadata(self):
+        """Fetches file metadata from the current filesystem."""
+        from fsspec import AbstractFileSystem, get_filesystem_class
+
+        if fs is None:
+            fs: AbstractFileSystem = get_filesystem_class(self.config.protocol)(
+                **self.config.get_access_kwargs(),
+            )
+        self.file_exists = fs.exists(self.remote_file_path)
+        self.file_metadata = FsspecFileMeta(
+            fs.created(self.remote_file_path).isoformat(),
+            fs.modified(self.remote_file_path).isoformat(),
+            str(self.fs.checksum(self.remote_file_path)),
+        )
 
     @property
     def filename(self):
@@ -132,24 +159,34 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @property
     def date_created(self) -> Optional[str]:
-        return self.fs.created(self.remote_file_path).isoformat()
+        if self.file_metadata is None:
+            self.get_file_metadata()
+        return self.file_metadata.date_created
 
     @property
     def date_modified(self) -> Optional[str]:
-        return self.fs.modified(self.remote_file_path).isoformat()
+        if self.file_metadata is None:
+            self.get_file_metadata()
+        return self.file_metadata.date_created
 
     @property
     def exists(self) -> Optional[bool]:
-        return self.fs.exists(self.remote_file_path)
+        if self.file_exists is None:
+            self.get_file_metadata()
+        self.file_exists
 
     @property
     def record_locator(self) -> Optional[Dict[str, Any]]:
         """Returns the equivalent of ls in dict"""
-        return self.fs.info(self.remote_file_path)
+        return {
+            "remote_file_path": self.remote_file_path,
+        }
 
     @property
     def version(self) -> Optional[str]:
-        return str(self.fs.checksum(self.remote_file_path))
+        if self.file_metadata is None:
+            self.get_file_metadata()
+        return self.file_metadata.version
 
 
 class FsspecConnector(ConnectorCleanupMixin, BaseConnector):

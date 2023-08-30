@@ -45,6 +45,9 @@ class ConfluenceFileMeta:
 
     space_id: str
     document_id: str
+    date_created: str = None
+    date_modified: str = None
+    version: str = None
 
 
 def scroll_wrapper(func):
@@ -84,12 +87,8 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     config: SimpleConfluenceConfig
     file_meta: ConfluenceFileMeta
+    file_exists: Optional[bool] = None
     registry_name: str = "confluence"
-
-    def __post_init__(self):
-        self.document = None
-        self.document_history = None
-        self.document_version = None
 
     # TODO: remove one of filename or _tmp_download_file, using a wrapper
     @property
@@ -108,58 +107,84 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @property
     def date_created(self) -> Optional[str]:
-        if self.document_history is None:
-            return None
-        return datetime.fromisoformat(self.document_history["createdDate"]).isoformat()
+        if self.file_meta.date_created is None:
+            self.get_file_metadata()
+        return self.file_meta.date_created
 
     @property
     def date_modified(self) -> Optional[str]:
-        if self.document_history is None:
-            return None
-
-        if date_modified := self.document_history.get("lastUpdated", "").get("when", ""):
-            return datetime.fromisoformat(date_modified).isoformat()
-        return None
+        if self.file_meta.date_created is None:
+            self.get_file_metadata()
+        return self.file_meta.date_modified
 
     @property
     def exists(self) -> Optional[bool]:
-        return self.document is not None
+        if self.file_exists is None:
+            self.get_file_metadata()
+        return self.file_exists
 
     @property
     def record_locator(self) -> Optional[Dict[str, Any]]:
         return {
-            "base_url": self.config.url,
-            "space_id": self.file_meta.space_id,
             "page_id": self.file_meta.document_id,
         }
 
     @property
     def version(self) -> Optional[str]:
-        return self.document_version
+        if self.file_meta.version is None:
+            self.get_file_metadata()
+        return self.file_meta.version
 
     @requires_dependencies(["atlassian"], extras="Confluence")
+    def _get_page(self):
+        from atlassian import Confluence
+        from atlassian.errors import ApiError
+
+        try:
+            confluence = Confluence(
+                self.config.url,
+                username=self.config.user_email,
+                password=self.config.api_token,
+            )
+            result = confluence.get_page_by_id(
+                page_id=self.file_meta.document_id,
+                expand="history.lastUpdated,version,body.view",
+            )
+        except Exception as e:
+            if isinstance(e, ApiError):
+                self.file_exists = False
+            logger.error("Failed to retrieve confluence page: \n")
+            logger.error(e)
+        self.file_exists = True
+        return result
+
+    def get_file_metadata(self, page=None):
+        """Fetches file metadata from the current page."""
+        if page is None:
+            page = self._get_page()
+        document_history = page["history"]
+        #
+        self.file_meta.date_created = datetime.strptime(
+            document_history["createdDate"], "%Y-%m-%dT%H:%M:%S.%fZ",
+        ).isoformat()
+        if date_modified := document_history.get("lastUpdated", "").get("when", ""):
+            self.file_meta.date_modified = datetime.strptime(
+                date_modified, "%Y-%m-%dT%H:%M:%S.%fZ",
+            ).isoformat()
+        else:
+            self.file_meta.date_modified = self.file_meta.date_created
+        self.file_meta.version = page["version"]["number"]
+
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
-        from atlassian import Confluence
-
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
 
         # TODO: instead of having a separate connection object for each doc,
         # have a separate connection object for each process
 
-        confluence = Confluence(
-            self.config.url,
-            username=self.config.user_email,
-            password=self.config.api_token,
-        )
-
-        result = confluence.get_page_by_id(
-            page_id=self.file_meta.document_id, expand="history.lastUpdated,version,body.view",
-        )
+        result = self._get_page()
+        self.get_file_metadata(result)
         self.document = result["body"]["view"]["value"]
-        self.document_version = result["version"]["number"]
-        self.document_history = result["history"]
-
         self.filename.parent.mkdir(parents=True, exist_ok=True)
         with open(self.filename, "w", encoding="utf8") as f:
             f.write(self.document)
