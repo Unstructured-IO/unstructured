@@ -260,6 +260,4 @@ class GoogleDriveConnector(ConnectorCleanupMixin, BaseConnector):
 
     def get_ingest_docs(self):
         files = self._list_objects(self.config.drive_id, self.config.recursive)
-        for file in files:
-            print(f"file {file}")
         return [GoogleDriveIngestDoc(self.standard_config, self.config, file) for file in files]
