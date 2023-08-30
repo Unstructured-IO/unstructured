@@ -1,9 +1,11 @@
-## 0.10.10-dev0
+## 0.10.10-dev1
 
 ### Enhancements
 * Bump `unstructured-inference==0.5.18`, change non-default detectron2 classification threshold
 
 ### Features
+
+* Add Jira Connector to be able to pull issues from a Jira organization
 
 ### Fixes
 
@@ -17,7 +19,7 @@
 
 * Adds `chunk_by_title` to break a document into sections based on the presence of `Title`
   elements.
-  
+
 ### Fixes
 
 * Make cv2 dependency optional
