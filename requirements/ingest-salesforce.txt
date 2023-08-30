@@ -17,10 +17,8 @@ charset-normalizer==3.2.0
     # via
     #   -c requirements/base.txt
     #   requests
-cryptography==41.0.2
-    # via
-    #   -c requirements/constraints.in
-    #   simple-salesforce
+cryptography==41.0.3
+    # via simple-salesforce
 idna==3.4
     # via
     #   -c requirements/base.txt
