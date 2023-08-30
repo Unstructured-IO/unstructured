@@ -44,7 +44,7 @@ def sort_page_elements(
         coordinates_list = [el.metadata.coordinates for el in page_elements]
         if any(coords is None for coords in coordinates_list):
             sorted_page_elements = page_elements
-        else:    
+        else:
             boxes = [coordinates_to_bbox(coords) for coords in coordinates_list]
             res: List[int] = []
             recursive_xy_cut(np.asarray(boxes).astype(int), np.arange(len(boxes)), res)
