@@ -277,7 +277,6 @@ class JiraConnector(ConnectorCleanupMixin, BaseConnector):
         )
 
         if self.config.list_of_projects or self.config.list_of_boards or self.config.list_of_issues:
-
             self.ingest_all_issues = False
 
         else:

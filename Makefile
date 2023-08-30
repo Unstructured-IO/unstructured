@@ -188,6 +188,10 @@ install-ingest-local:
 install-ingest-notion:
 	python3 -m pip install -r requirements/ingest-notion.txt
 
+.PHONY: install-ingest-jira
+install-ingest-jira:
+	python3 -m pip install -r requirements/ingest-jira.txt
+
 .PHONY: install-unstructured-inference
 install-unstructured-inference:
 	python3 -m pip install -r requirements/local-inference.txt
@@ -247,6 +251,7 @@ pip-compile:
 	pip-compile --upgrade requirements/ingest-airtable.in
 	pip-compile --upgrade requirements/ingest-sharepoint.in
 	pip-compile --upgrade requirements/ingest-notion.in
+	pip-compile --upgrade requirements/ingest-jira.in
 
 ## install-project-local:   install unstructured into your local python environment
 .PHONY: install-project-local
@@ -281,7 +286,7 @@ test-no-extras:
 		test_${PACKAGE_NAME}/partition/test_text.py \
 		test_${PACKAGE_NAME}/partition/test_email.py \
 		test_${PACKAGE_NAME}/partition/test_html_partition.py \
-		test_${PACKAGE_NAME}/partition/test_xml_partition.py 
+		test_${PACKAGE_NAME}/partition/test_xml_partition.py
 
 .PHONY: test-extra-csv
 test-extra-csv:
