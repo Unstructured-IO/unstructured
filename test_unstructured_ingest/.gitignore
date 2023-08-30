@@ -1,2 +1,4 @@
 structured-output
 download
+expected-text-output/**
+text-output/**
