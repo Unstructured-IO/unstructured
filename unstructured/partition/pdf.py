@@ -484,7 +484,7 @@ def _get_element_box(
     max_y = 0
 
     for box in boxes[box_idx : box_idx + char_count]:  # noqa
-        char, x1, y1, x2, y2, _ = box.split()
+        char, _x1, _y1, _x2, _y2, _ = box.split()
 
         # pytesseract cleans some characters from text that still appear in the bounding boxes,
         # so those bounding boxes should be skipped
@@ -492,7 +492,7 @@ def _get_element_box(
             char_count += 1
             continue
 
-        x1, y1, x2, y2 = map(int, [x1, y1, x2, y2])
+        x1, y1, x2, y2 = map(int, [_x1, _y1, _x2, _y2])
         min_x = min(min_x, x1)
         min_y = min(min_y, y1)
         max_x = max(max_x, x2)
@@ -534,7 +534,7 @@ def add_pytesseract_bbox_to_elements(
             box_idx += 1
             continue
         char_count = len(element.text.replace(" ", ""))
-        points, char_count = _get_element_box(
+        _points, char_count = _get_element_box(
             element=element,
             boxes=boxes,
             box_idx=box_idx,
@@ -543,14 +543,14 @@ def add_pytesseract_bbox_to_elements(
         box_idx += char_count
         converted_points = []
 
-        for point in points:
+        for point in _points:
             point = point_space.convert_coordinates_to_new_system(pixel_space, *point)
             converted_points.append(tuple(map(int, point)))
 
-        converted_points = tuple(converted_points)  # noqa
+        points = tuple(converted_points)
 
         element.metadata.coordinates = CoordinatesMetadata(
-            points=converted_points,
+            points=points,
             system=pixel_space,
         )
     return elements
