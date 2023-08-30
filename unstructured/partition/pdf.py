@@ -494,6 +494,8 @@ def add_pytesseract_bbox_to_elements(elements, bboxes, width, height):
         char_count = len(element.text.replace(" ", ""))
 
         for box in boxes[i : i + char_count]:  # noqa
+            if not box:
+                import pdb; pdb.set_trace()
             _, x1, y1, x2, y2, _ = box.split()
             x1, y1, x2, y2 = map(int, [x1, y1, x2, y2])
 
@@ -568,21 +570,23 @@ def _partition_pdf_or_image_with_ocr(
                 page_number=page_number,
                 last_modified=metadata_last_modified,
             )
-            text = pytesseract.image_to_string(image, config=f"-l '{ocr_languages}'")
-            bboxes = pytesseract.image_to_boxes(image, config=f"-l '{ocr_languages}'")
+            _text = pytesseract.image_to_string(image, config=f"-l '{ocr_languages}'")
+            _bboxes = pytesseract.image_to_boxes(image, config=f"-l '{ocr_languages}'")
             width, height = image.size
 
             _elements = partition_text(
-                text=text,
+                text=_text,
                 max_partition=max_partition,
                 min_partition=min_partition,
             )
+
+            # FIXME (yao): do not save duplicated info?
             for element in _elements:
                 element.metadata = metadata
-                elements.append(element)
 
-            add_pytesseract_bbox_to_elements(elements, bboxes, width, height)
+            add_pytesseract_bbox_to_elements(_elements, _bboxes, width, height)
 
+            elements.extend(_elements)
             if include_page_breaks:
                 elements.append(PageBreak(text=""))
     return elements

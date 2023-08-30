@@ -111,11 +111,14 @@ def test_partition_pdf_local_raises_with_no_filename():
 
 
 @pytest.mark.parametrize(
-    "strategy",
-    ["fast", "hi_res", "ocr_only"],
+    ("strategy", "expected"),
+    # fast: can't capture the "intentionally left blank page" page
+    # others: will ignore the actual blank page
+    [("fast", {1, 4}), ("hi_res", {1, 3, 4}), ("ocr_only", {1, 3, 4})],
 )
 def test_partition_pdf_with_filename(
     strategy,
+    expected,
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
     # Test that the partition_pdf function can handle filename
@@ -123,7 +126,7 @@ def test_partition_pdf_with_filename(
     # validate that the result is a non-empty list of dicts
     assert len(result) > 10
     # check that the pdf has multiple different page numbers
-    assert {element.metadata.page_number for element in result} == {1, 2}
+    assert {element.metadata.page_number for element in result} == expected
 
 
 @pytest.mark.parametrize(
