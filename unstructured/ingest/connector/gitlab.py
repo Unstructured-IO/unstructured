@@ -31,8 +31,6 @@ class SimpleGitLabConfig(SimpleGitConfig):
         from gitlab import Gitlab
 
         gitlab = Gitlab(self.base_url, private_token=self.access_token)
-
-        ref = self.branch or project.default_branch
         return gitlab.projects.get(self.repo_path)
 
 
