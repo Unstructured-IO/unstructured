@@ -1,11 +1,9 @@
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, TYPE_CHECKING
 from uuid import UUID
 
-from unstructured.ingest.connector.notion.types.database import Database
-from unstructured.ingest.connector.notion.types.page import Page
 from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
@@ -18,6 +16,10 @@ from unstructured.ingest.logger import logger
 from unstructured.utils import (
     requires_dependencies,
 )
+
+if TYPE_CHECKING:
+    from unstructured.ingest.connector.notion.types.database import Database
+    from unstructured.ingest.connector.notion.types.page import Page
 
 
 @dataclass
@@ -48,7 +50,7 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     page_id: str
     api_key: str
     config: SimpleNotionConfig
-    file_metadata: Optional[Page] = None
+    file_metadata: Optional["Page"] = None
     file_exists: bool = False
     check_exists: bool = False
     registry_name: str = "notion_page"
@@ -163,7 +165,7 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     database_id: str
     api_key: str
     config: SimpleNotionConfig
-    file_metadata: Optional[Database] = None
+    file_metadata: Optional["Database"] = None
     file_exists: bool = False
     check_exists: bool = False
     registry_name: str = "notion_database"
