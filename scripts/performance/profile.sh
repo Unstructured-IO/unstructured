@@ -5,7 +5,7 @@
 # Environment Variables:
 #   - DOCKER_TEST: Set to true to run profiling inside a Docker container (default: false)
 
-# Usage: 
+# Usage:
 # - Run the script and choose the profiling mode: 'run' or 'view'.
 # - In the 'run' mode, you can profile custom files or select existing test files.
 # - In the 'view' mode, you can view previously generated profiling results.
@@ -34,7 +34,7 @@ check_python_module() {
   fi
 }
 validate_dependencies() {
-  check_python_module memray 
+  check_python_module memray
   check_python_module flameprof
 }
 
@@ -117,7 +117,7 @@ view_profile_headless() {
 
 view_profile_with_head() {
   while true; do
-	read -r -p "Choose profile type: (1) time (2) memory (3) speedscope (b) back, (q) quit: " -n 1 profile_type
+    read -r -p "Choose profile type: (1) time (2) memory (3) speedscope (b) back, (q) quit: " -n 1 profile_type
     echo
 
     if [[ $profile_type == "b" ]]; then
@@ -145,8 +145,8 @@ view_profile_with_head() {
       continue
     fi
 
-    if [[ $profile_type == "3" ]]; then	    
-	speedscope $result_file
+    if [[ $profile_type == "3" ]]; then
+	    speedscope "$result_file"
     elif [[ $profile_type == "2" ]]; then
       while true; do
         read -r -p "Choose visualization type: (1) flamegraph (2) table (3) tree (4) summary (5) stats (b) back, (q) quit: " -n 1 visualization_type
@@ -342,7 +342,7 @@ run_profile() {
       py_spy='py-spy'
       py_runtime='python3'
     fi
-    $py_spy record -o "$PROFILE_RESULTS_DIR/${test_file##*/}.speedscope" --format speedscope -- $py_runtime -m "$MODULE_PATH.run_partition" "$test_file" "$strategy"
+    "$py_spy" record -o "$PROFILE_RESULTS_DIR/${test_file##*/}.speedscope" --format speedscope -- "$py_runtime" -m "$MODULE_PATH.run_partition" "$test_file" "$strategy"
     echo "Profiling completed."
     echo "Viewing results for $test_file"
     echo "The py-spy produced speedscope profile can be viewed on https://www.speedscope.app or locally by installing via 'npm install -g speedscope'"
@@ -355,7 +355,7 @@ while true; do
   if [[ -n "$1" ]]; then
     mode="$1"
   fi
-  
+
   if [[ -z $result_file ]]; then
     read -r -p "Choose mode: (1) run, (2) view, (q) quit: " -n 1 mode
     echo
