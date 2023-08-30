@@ -142,7 +142,7 @@ jsonschema-specifications==2023.7.1
     # via jsonschema
 jupyter==1.0.0
     # via -r requirements/dev.in
-jupyter-client==8.3.0
+jupyter-client==8.3.1
     # via
     #   ipykernel
     #   jupyter-console
@@ -198,7 +198,7 @@ mistune==3.0.1
     # via nbconvert
 nbclient==0.8.0
     # via nbconvert
-nbconvert==7.7.4
+nbconvert==7.8.0
     # via
     #   jupyter
     #   jupyter-server
@@ -297,7 +297,7 @@ pyzmq==25.1.1
     #   qtconsole
 qtconsole==5.4.3
     # via jupyter
-qtpy==2.3.1
+qtpy==2.4.0
     # via qtconsole
 referencing==0.30.2
     # via
