@@ -117,7 +117,7 @@ view_profile_headless() {
 
 view_profile_with_head() {
   while true; do
-    read -r -p "Choose profile type: (1) time (2) memory (b) back, (q) quit: " -n 1 profile_type
+	read -r -p "Choose profile type: (1) time (2) memory (3) speedscope (b) back, (q) quit: " -n 1 profile_type
     echo
 
     if [[ $profile_type == "b" ]]; then
@@ -131,6 +131,8 @@ view_profile_with_head() {
       extension=".prof"
     elif [[ $profile_type == "2" ]]; then
       extension=".bin"
+    elif [[ $profile_type == "3" ]]; then
+      extension=".speedscope"
     else
       echo "Invalid profile type. Please try again."
       continue
@@ -143,7 +145,9 @@ view_profile_with_head() {
       continue
     fi
 
-    if [[ $profile_type == "2" ]]; then
+    if [[ $profile_type == "3" ]]; then	    
+	speedscope $result_file
+    elif [[ $profile_type == "2" ]]; then
       while true; do
         read -r -p "Choose visualization type: (1) flamegraph (2) table (3) tree (4) summary (5) stats (b) back, (q) quit: " -n 1 visualization_type
         echo
@@ -329,8 +333,19 @@ run_profile() {
     python3 -m cProfile -s cumulative -o "$PROFILE_RESULTS_DIR/${test_file##*/}.prof" -m "$MODULE_PATH.run_partition" "$test_file" "$strategy"
     echo "Running memory profile..."
     python3 -m memray run -o "$PROFILE_RESULTS_DIR/${test_file##*/}.bin" -m "$MODULE_PATH.run_partition" "$test_file" "$strategy"
+    echo "Running py-spy for detailed run time profiling (this can take some time)..."
+    if [[ "$(uname)" = "Darwin" ]]; then
+      echo "on macOS py-spy requires su to run"
+      py_spy='sudo py-spy'
+      py_runtime=${VIRTUAL_ENV}/bin/python
+    else
+      py_spy='py-spy'
+      py_runtime='python3'
+    fi
+    $py_spy record -o "$PROFILE_RESULTS_DIR/${test_file##*/}.speedscope" --format speedscope -- $py_runtime -m "$MODULE_PATH.run_partition" "$test_file" "$strategy"
     echo "Profiling completed."
     echo "Viewing results for $test_file"
+    echo "The py-spy produced speedscope profile can be viewed on https://www.speedscope.app or locally by installing via 'npm install -g speedscope'"
     result_file=$PROFILE_RESULTS_DIR/$(basename "$test_file")
     view_profile "${result_file}.bin" # Go directly to view mode
   done
