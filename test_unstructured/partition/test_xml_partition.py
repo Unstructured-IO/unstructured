@@ -3,6 +3,7 @@ import pathlib
 
 import pytest
 
+from unstructured.documents.elements import NarrativeText, Title
 from unstructured.partition.json import partition_json
 from unstructured.partition.xml import partition_xml
 from unstructured.staging.base import elements_to_json
@@ -75,6 +76,15 @@ def test_partition_xml_from_filename_with_tags_default_encoding(filename):
 
     assert elements[5].text == "<leader>Joe Biden</leader>"
     assert elements[5].metadata.filename == filename
+
+
+def test_partition_xml_from_text_with_tags(filename="example-docs/factbook.xml"):
+    with open(filename) as f:
+        text = f.read()
+    elements = partition_xml(text=text, xml_keep_tags=True, metadata_filename=filename)
+
+    assert elements[5].text == "<leader>Joe Biden</leader>"
+    assert elements[5].metadata.filename == "factbook.xml"
 
 
 @pytest.mark.parametrize(
@@ -250,3 +260,20 @@ def test_partition_xml_with_json(filename):
 
     for i in range(len(elements)):
         assert elements[i] == test_elements[i]
+
+
+def test_partition_xml_with_narrative_line_breaks():
+    xml_text = """<xml>
+        <parrot>
+            <name>Conure</name>
+            <description>A conure is a very friendly bird.
+            Conures are feathery and like to dance.
+            </description>
+        </parrot>
+    </xml>"""
+
+    elements = partition_xml(text=xml_text)
+    assert elements[0] == Title("Conure")
+    assert isinstance(elements[1], NarrativeText)
+    assert str(elements[1]).startswith("A conure is a very friendly bird.")
+    assert str(elements[1]).strip().endswith("Conures are feathery and like to dance.")

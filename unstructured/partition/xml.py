@@ -133,7 +133,12 @@ def partition_xml(
             else ElementMetadata()
         )
 
-        leaf_elements = get_leaf_elements(filename=filename, file=file, text=text, xml_path=xml_path)
+        leaf_elements = get_leaf_elements(
+            filename=filename,
+            file=file,
+            text=text,
+            xml_path=xml_path,
+        )
         for leaf_element in leaf_elements:
             if leaf_element:
                 element = element_from_text(leaf_element)
