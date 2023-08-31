@@ -77,7 +77,7 @@ class CoordinateSystem:
         new_system_coordinates = []
         for x, y in coordinates:
             new_system_coordinates.append(
-                self.convert_coordinate_to_new_system(new_system=new_system, x=x, y=y)
+                self.convert_coordinate_to_new_system(new_system=new_system, x=x, y=y),
             )
         return tuple(new_system_coordinates)
 

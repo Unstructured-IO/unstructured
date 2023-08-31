@@ -498,9 +498,8 @@ def _get_element_box(
         min_y = min(min_y, y1)
         max_x = max(max_x, x2)
         max_y = max(max_y, y2)
-        
+
     print(f"box text: \n    {box_text}")
-    
 
     return ((min_x, min_y), (min_x, max_y), (max_x, max_y), (max_x, min_y)), char_count
 
@@ -533,8 +532,6 @@ def add_pytesseract_bbox_to_elements(
     boxes = bboxes.strip().split("\n")
     box_idx = 0
     for element in elements:
-        if element.text == '2 Z. Shen et al.':
-            import pdb; pdb.set_trace()
         if not element.text:
             box_idx += 1
             continue
@@ -556,7 +553,8 @@ def add_pytesseract_bbox_to_elements(
         #     converted_points.append(tuple(map(int, point)))
 
         converted_points = point_space.convert_multiple_coordinates_to_new_system(
-            pixel_space, _points
+            pixel_space,
+            _points,
         )
         print(f"coordinates: \n    {converted_points}")
         print(f"element text: \n    {element.text}")
@@ -630,8 +628,10 @@ def _partition_pdf_or_image_with_ocr(
             # FIXME (yao): do not save duplicated info?
             for element in _elements:
                 element.metadata = metadata
-                if element.text == '2 Z. Shen et al.':
-                    import pdb; pdb.set_trace()
+                if element.text == "2 Z. Shen et al.":
+                    import pdb
+
+                    pdb.set_trace()
 
             add_pytesseract_bbox_to_elements(
                 elements=_elements,
