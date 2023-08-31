@@ -3,16 +3,7 @@
     "type": "Title",
     "element_id": "b4e929d8bcfe04189801a8ed61496d17",
     "metadata": {
-      "data_source": {
-        "version": "1.2",
-        "record_locator": {
-          "site": "https://unstructuredio.sharepoint.com/",
-          "unique_id": "2b564fff-e9bb-4b64-9822-64f96a20ea10",
-          "absolute_url": "https://unstructuredio.sharepoint.com/SitePages/Home.aspx"
-        },
-        "date_created": "0001-01-01T08:00:00Z",
-        "date_modified": "2023-06-16T05:12:51Z"
-      },
+      "data_source": {},
       "filename": "Home.html",
       "filetype": "text/html",
       "page_number": 1
@@ -23,16 +14,7 @@
     "type": "Title",
     "element_id": "8d14f6e72de8f18ab1ee5c5330f00653",
     "metadata": {
-      "data_source": {
-        "version": "1.2",
-        "record_locator": {
-          "site": "https://unstructuredio.sharepoint.com/",
-          "unique_id": "2b564fff-e9bb-4b64-9822-64f96a20ea10",
-          "absolute_url": "https://unstructuredio.sharepoint.com/SitePages/Home.aspx"
-        },
-        "date_created": "0001-01-01T08:00:00Z",
-        "date_modified": "2023-06-16T05:12:51Z"
-      },
+      "data_source": {},
       "filename": "Home.html",
       "filetype": "text/html",
       "page_number": 1

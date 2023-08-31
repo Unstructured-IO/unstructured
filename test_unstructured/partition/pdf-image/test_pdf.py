@@ -110,57 +110,40 @@ def test_partition_pdf_local_raises_with_no_filename():
         pdf._partition_pdf_or_image_local(filename="", file=None, is_image=False)
 
 
+@pytest.mark.parametrize("file_mode", ["filename", "rb", "spool"])
 @pytest.mark.parametrize(
-    "strategy",
-    ["fast", "hi_res", "ocr_only"],
+    ("strategy", "expected"),
+    # fast: can't capture the "intentionally left blank page" page
+    # others: will ignore the actual blank page
+    [("fast", {1, 4}), ("hi_res", {1, 3, 4}), ("ocr_only", {1, 3, 4})],
 )
-def test_partition_pdf_with_filename(
+def test_partition_pdf(
+    file_mode,
     strategy,
+    expected,
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
     # Test that the partition_pdf function can handle filename
-    result = pdf.partition_pdf(filename=filename, strategy=strategy)
-    # validate that the result is a non-empty list of dicts
-    assert len(result) > 10
-    # check that the pdf has multiple different page numbers
-    assert {element.metadata.page_number for element in result} == {1, 2}
-
-
-@pytest.mark.parametrize(
-    "strategy",
-    ["fast", "hi_res", "ocr_only"],
-)
-def test_partition_pdf_with_file_rb(
-    strategy,
-    filename="example-docs/layout-parser-paper-fast.pdf",
-):
-    # Test that the partition_pdf function can handle BufferedReader
-    with open(filename, "rb") as f:
-        result = pdf.partition_pdf(file=f, strategy=strategy)
+    def _test(result):
         # validate that the result is a non-empty list of dicts
         assert len(result) > 10
         # check that the pdf has multiple different page numbers
-        assert {element.metadata.page_number for element in result} == {1, 2}
+        assert {element.metadata.page_number for element in result} == expected
 
-
-@pytest.mark.parametrize(
-    "strategy",
-    ["fast", "hi_res", "ocr_only"],
-)
-def test_partition_pdf_with_spooled_file(
-    strategy,
-    filename="example-docs/layout-parser-paper-fast.pdf",
-):
-    # Test that the partition_pdf function can handle a SpooledTemporaryFile
-    with open(filename, "rb") as test_file:
-        spooled_temp_file = SpooledTemporaryFile()
-        spooled_temp_file.write(test_file.read())
-        spooled_temp_file.seek(0)
-        result = pdf.partition_pdf(file=spooled_temp_file, strategy=strategy)
-        # validate that the result is a non-empty list of dicts
-        assert len(result) > 10
-        # check that the pdf has multiple different page numbers
-        assert {element.metadata.page_number for element in result} == {1, 2}
+    if file_mode == "filename":
+        result = pdf.partition_pdf(filename=filename, strategy=strategy)
+        _test(result)
+    elif file_mode == "rb":
+        with open(filename, "rb") as f:
+            result = pdf.partition_pdf(file=f, strategy=strategy)
+            _test(result)
+    else:
+        with open(filename, "rb") as test_file:
+            spooled_temp_file = SpooledTemporaryFile()
+            spooled_temp_file.write(test_file.read())
+            spooled_temp_file.seek(0)
+            result = pdf.partition_pdf(file=spooled_temp_file, strategy=strategy)
+            _test(result)
 
 
 @mock.patch.dict(os.environ, {"UNSTRUCTURED_HI_RES_MODEL_NAME": "checkbox"})
@@ -236,7 +219,7 @@ def test_partition_pdf_with_fast_strategy(
     elements = pdf.partition_pdf(filename=filename, url=None, strategy="fast")
     assert len(elements) > 10
     # check that the pdf has multiple different page numbers
-    assert {element.metadata.page_number for element in elements} == {1, 2}
+    assert {element.metadata.page_number for element in elements} == {1, 4}
     for element in elements:
         assert element.metadata.filename == "layout-parser-paper-fast.pdf"
 

@@ -410,8 +410,8 @@ docker-start-dev:
 .PHONY: docker-test
 docker-test:
 	docker run --rm \
-	-v ${CURRENT_DIR}/test_unstructured:/home/test_unstructured \
-	-v ${CURRENT_DIR}/test_unstructured_ingest:/home/test_unstructured_ingest \
+	-v ${CURRENT_DIR}/test_unstructured:/home/notebook-user/test_unstructured \
+	-v ${CURRENT_DIR}/test_unstructured_ingest:/home/notebook-user/test_unstructured_ingest \
 	$(if $(wildcard uns_test_env_file),--env-file uns_test_env_file,) \
 	$(DOCKER_IMAGE) \
 	bash -c "CI=$(CI) pytest $(if $(TEST_NAME),-k $(TEST_NAME),) test_unstructured"

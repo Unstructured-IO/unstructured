@@ -1,1 +1,1 @@
-__version__ = "0.10.9-dev3"
+__version__ = "0.10.10"  # pragma: no cover
