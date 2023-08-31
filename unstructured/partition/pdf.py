@@ -482,6 +482,7 @@ def _get_element_box(
     min_y = float("inf")
     max_x = 0
     max_y = 0
+    box_text = ""
     for box in boxes[box_idx : box_idx + char_count]:  # noqa
         char, _x1, _y1, _x2, _y2, _ = box.split()
 
@@ -490,12 +491,16 @@ def _get_element_box(
         if char not in element.text:
             char_count += 1
             continue
+        box_text = box_text + char
 
         x1, y1, x2, y2 = map(int, [_x1, _y1, _x2, _y2])
         min_x = min(min_x, x1)
         min_y = min(min_y, y1)
         max_x = max(max_x, x2)
         max_y = max(max_y, y2)
+        
+    print(f"box text: \n    {box_text}")
+    
 
     return ((min_x, min_y), (min_x, max_y), (max_x, max_y), (max_x, min_y)), char_count
 
@@ -505,7 +510,6 @@ def add_pytesseract_bbox_to_elements(
     bboxes: str,
     width: int,
     height: int,
-    element_idx: int = 0,
 ) -> List[Element]:
     """
     Get the bounding box of each element and add it to element.metadata.coordinates
@@ -528,7 +532,9 @@ def add_pytesseract_bbox_to_elements(
 
     boxes = bboxes.strip().split("\n")
     box_idx = 0
-    for element in elements[element_idx:]:
+    for element in elements:
+        if element.text == '2 Z. Shen et al.':
+            import pdb; pdb.set_trace()
         if not element.text:
             box_idx += 1
             continue
@@ -549,8 +555,13 @@ def add_pytesseract_bbox_to_elements(
         #     point = point_space.convert_coordinates_to_new_system(pixel_space, *_point)
         #     converted_points.append(tuple(map(int, point)))
 
-        converted_points = point_space.convert_multiple_coordinates_to_new_system(pixel_space, _points)
-        
+        converted_points = point_space.convert_multiple_coordinates_to_new_system(
+            pixel_space, _points
+        )
+        print(f"coordinates: \n    {converted_points}")
+        print(f"element text: \n    {element.text}")
+        print("-----------------------------------------")
+
         element.metadata.coordinates = CoordinatesMetadata(
             points=converted_points,
             system=pixel_space,
@@ -599,7 +610,6 @@ def _partition_pdf_or_image_with_ocr(
     else:
         elements = []
         page_number = 0
-        element_idx = 0
         for image in convert_pdf_to_images(filename, file):
             page_number += 1
             metadata = ElementMetadata(
@@ -620,15 +630,15 @@ def _partition_pdf_or_image_with_ocr(
             # FIXME (yao): do not save duplicated info?
             for element in _elements:
                 element.metadata = metadata
+                if element.text == '2 Z. Shen et al.':
+                    import pdb; pdb.set_trace()
 
             add_pytesseract_bbox_to_elements(
                 elements=_elements,
-                element_idx=element_idx,
                 bboxes=_bboxes,
                 width=width,
                 height=height,
             )
-            element_idx = len(_elements)
             elements.extend(_elements)
             if include_page_breaks:
                 elements.append(PageBreak(text=""))
