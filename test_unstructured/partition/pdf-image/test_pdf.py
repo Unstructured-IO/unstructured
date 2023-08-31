@@ -3,6 +3,7 @@ from tempfile import SpooledTemporaryFile
 from unittest import mock
 
 import pytest
+from pytesseract import image_to_string, image_to_boxes
 from PIL import Image
 from unstructured_inference.inference import layout
 
@@ -782,6 +783,13 @@ def test_partition_pdf_with_ocr_has_coordinates_from_filename(
         (1043.0, 2106.0),
         (1043.0, 2144.0),
     )
+
+
+def test_image_to_data_returns_valid_text(
+    filename="example-docs/chevron-page.pdf",
+):
+    for image in pdf.convert_pdf_to_images(filename):
+        assert pdf.image_to_string_and_box(image)[0] == image_to_string(image, config=f"-l eng")
 
 
 def test_partition_pdf_with_ocr_has_coordinates_from_file(

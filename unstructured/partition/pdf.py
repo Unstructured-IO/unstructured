@@ -2,8 +2,9 @@ import os
 import re
 import warnings
 from tempfile import SpooledTemporaryFile
-from typing import BinaryIO, Iterator, List, Optional, Union, cast
+from typing import BinaryIO, Iterator, List, Optional, Union, cast, Tuple
 
+import numpy as np
 import pdf2image
 import PIL
 from pdfminer.high_level import extract_pages
@@ -523,6 +524,16 @@ def add_pytesseract_bbox_to_elements(elements, bboxes, width, height):
         i += char_count
 
     return elements
+
+
+@requires_dependencies("pytesseract")
+def image_to_string_and_box(image: Union[PIL.Image.Image, np.ndarray], ocr_languages: str="eng") -> Tuple[str, np.ndarray]:
+    import pytesseract
+    data = pytesseract.image_to_data(image, config=f"-l '{ocr_languages}'", output_type="data.frame")
+    return (
+        " ".join(data.text.replace(np.nan,"\n")),
+        data[["left", "top", "width", "height"]].to_numpy()
+    )
 
 
 @requires_dependencies("pytesseract")
