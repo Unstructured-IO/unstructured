@@ -811,7 +811,10 @@ def test_partition_pdf_with_ocr_has_valid_coordinates_from_file(
             strategy="ocr_only",
         )
     for element in elements:
+        if element.metadata.coordinates==None:
+            import pdb; pdb.set_trace()
         box = element.metadata.coordinates.points
+        
         for point in box:
             assert point[0] is not math.nan
             assert point[1] is not math.nan
