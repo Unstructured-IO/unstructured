@@ -3,6 +3,7 @@ from typing import List
 import numpy as np
 
 from unstructured.documents.elements import CoordinatesMetadata, Element
+from unstructured.logger import logger
 from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_XY_CUT
 from unstructured.partition.utils.xycut import recursive_xy_cut
 
@@ -43,6 +44,10 @@ def sort_page_elements(
     if sort_mode == SORT_MODE_XY_CUT:
         coordinates_list = [el.metadata.coordinates for el in page_elements]
         if any(coords is None for coords in coordinates_list):
+            logger.warning(
+                "some or all elements are missing coordinates from this page so we can't sort the "
+                "elements",
+            )
             sorted_page_elements = page_elements
         else:
             boxes = [coordinates_to_bbox(coords) for coords in coordinates_list]
