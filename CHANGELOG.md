@@ -1,3 +1,7 @@
+## 0.10.10-dev4
+
+* Fix bug that produces empty elements.
+
 ## 0.10.9-dev3
 
 ### Enhancements
