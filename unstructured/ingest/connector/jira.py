@@ -35,7 +35,6 @@ class SimpleJiraConfig(BaseConnectorConfig):
     list_of_projects: Optional[str]
     list_of_boards: Optional[str]
     list_of_issues: Optional[str]
-    jql_query: Optional[str]
 
 
 @dataclass
@@ -73,13 +72,6 @@ class FieldGetter(dict):
         if value is None:
             value = FieldGetter({})
         return value
-
-    # def __missing__(self, key):
-    #     new_defaultdict = self.__class__(self.default_factory)
-    #     self[key] = new_defaultdict
-    #     return new_defaultdict
-    # def __repr__(self):
-    #     return self.default_factory()
 
 
 def get_fields_for_issue(issue, c_sep="|||", r_sep="\n\n\n"):

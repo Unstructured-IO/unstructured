@@ -18,7 +18,6 @@ def jira(
     list_of_projects: Optional[str],
     list_of_boards: Optional[str],
     list_of_issues: Optional[str],
-    jql_query: Optional[str],
     **kwargs,
 ):
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
@@ -47,7 +46,6 @@ def jira(
             list_of_projects=list_of_projects,
             list_of_boards=list_of_boards,
             list_of_issues=list_of_issues,
-            jql_query=jql_query,
         ),
     )
 

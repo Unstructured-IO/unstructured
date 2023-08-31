@@ -22,11 +22,6 @@ from unstructured.ingest.runner import jira as jira_fn
         for more info.",
 )
 @click.option(
-    "--jql-query",
-    default=None,
-    help="...",
-)
-@click.option(
     "--list-of-projects",
     default=None,
     help="todo",
