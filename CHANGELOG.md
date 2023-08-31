@@ -13,6 +13,8 @@
 
 ### Fixes
 
+- Fix a bug where mismatched `elements` and `bboxes` are passed into `add_pytesseract_bbox_to_elements`
+
 ## 0.10.9
 
 ### Enhancements
