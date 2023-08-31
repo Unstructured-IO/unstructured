@@ -50,6 +50,7 @@ numpy==1.24.4
     #   transformers
 packaging==23.1
     # via
+    #   -c requirements/base.txt
     #   huggingface-hub
     #   transformers
 pyyaml==6.0.1

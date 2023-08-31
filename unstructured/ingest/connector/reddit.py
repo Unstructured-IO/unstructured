@@ -36,6 +36,7 @@ class SimpleRedditConfig(BaseConnectorConfig):
 class RedditIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleRedditConfig = field(repr=False)
     post: "Submission"
+    registry_name: str = "reddit"
 
     @property
     def filename(self) -> Path:

@@ -56,7 +56,6 @@ def notion(
             api_key=api_key,
             verbose=verbose,
             recursive=recursive,
-            logger=logger,
         ),
     )
 
