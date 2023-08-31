@@ -1,8 +1,32 @@
-## 0.10.10-dev4
+## 0.10.11-dev0
 
-* Fix bug that produces empty elements.
+### Enhancements
 
-## 0.10.9-dev3
+### Features
+
+### Fixes
+
+* Checks text to ensure it is not empty after removing bullets from text.
+
+## 0.10.10
+
+### Enhancements
+
+* Adds `text` as an input parameter to `partition_xml`.
+* `partition_xml` no longer runs through `partition_text`, avoiding incorrect splitting
+  on carriage returns in the XML. Since `partition_xml` no longer calls `partition_text`,
+  `min_partition` and `max_partition` are no longer supported in `partition_xml`.
+* Bump `unstructured-inference==0.5.18`, change non-default detectron2 classification threshold
+* Upgrade base image from rockylinux 8 to rockylinux 9
+* Serialize IngestDocs to JSON when passing to subprocesses
+
+### Features
+
+### Fixes
+
+- Fix a bug where mismatched `elements` and `bboxes` are passed into `add_pytesseract_bbox_to_elements`
+
+## 0.10.9
 
 ### Enhancements
 
@@ -12,9 +36,11 @@
 
 * Adds `chunk_by_title` to break a document into sections based on the presence of `Title`
   elements.
-  
+* add new extraction function `extract_image_urls_from_html` to extract all img related URL from html text.
+
 ### Fixes
 
+* Make cv2 dependency optional
 * Edit `add_pytesseract_bbox_to_elements`'s (`ocr_only` strategy) `metadata.coordinates.points` return type to `Tuple` for consistency.
 * Re-enable test-ingest-confluence-diff for ingest tests
 * Fix syntax for ingest test check number of files

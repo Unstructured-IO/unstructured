@@ -5,6 +5,7 @@ from typing import List, Optional
 from unstructured.nlp.patterns import (
     EMAIL_ADDRESS_PATTERN,
     EMAIL_DATETIMETZ_PATTERN,
+    IMAGE_URL_PATTERN,
     IP_ADDRESS_NAME_PATTERN,
     IP_ADDRESS_PATTERN_RE,
     MAPI_ID_PATTERN,
@@ -136,3 +137,7 @@ def extract_ordered_bullets(text) -> tuple:
         b = "".join(b)
         c = "".join(c) if c else None
     return a, b, c
+
+
+def extract_image_urls_from_html(text: str) -> List[str]:
+    return re.findall(IMAGE_URL_PATTERN, text)
