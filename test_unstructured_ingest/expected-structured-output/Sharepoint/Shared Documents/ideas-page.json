@@ -3,15 +3,7 @@
     "type": "NarrativeText",
     "element_id": "c08fcabe68ba13b7a7cc6592bd5513a8",
     "metadata": {
-      "data_source": {
-        "record_locator": {
-          "site": "https://unstructuredio.sharepoint.com/",
-          "unique_id": "0dfe3d76-00c0-42db-ae1b-8cf22d4b3f10",
-          "server_relative_url": "/Shared Documents/ideas-page.html"
-        },
-        "date_created": "2023-06-16T05:04:47Z",
-        "date_modified": "2023-06-16T05:04:47Z"
-      },
+      "data_source": {},
       "filename": "ideas-page.html",
       "filetype": "text/html",
       "page_number": 1,
