@@ -106,6 +106,4 @@ urllib3==1.26.16
     #   -c requirements/constraints.in
     #   requests
 zipp==3.16.2
-    # via
-    #   -c requirements/base.txt
-    #   importlib-metadata
+    # via importlib-metadata

@@ -11,7 +11,7 @@ from datetime import datetime
 from pathlib import Path
 
 import requests
-from jsonschema import validate
+from dataclasses_json import DataClassJsonMixin
 
 from unstructured.documents.elements import DataSourceMetadata
 from unstructured.ingest.error import PartitionError, SourceConnectionError
@@ -26,46 +26,8 @@ class BaseSessionHandle(ABC):
     e.g., a connection for making a request for fetching documents."""
 
 
-class BaseConfig(ABC):
-    @staticmethod
-    @abstractmethod
-    def get_schema() -> dict:
-        pass
-
-    @classmethod
-    def merge_schemas(cls, configs: t.List[t.Type["BaseConfig"]]) -> dict:
-        base_schema = cls.get_schema()
-        for other in configs:
-            other_schema = other.get_schema()
-            if "required" in base_schema:
-                base_schema.get("required", []).extend(other_schema.get("required", []))
-            else:
-                base_schema["required"] = other_schema.get("required", [])
-            if "properties" in other_schema:
-                base_schema.get("properties", {}).update(other_schema.get("properties", {}))
-            else:
-                base_schema["properties"] = other_schema.get("properties", {})
-        return base_schema
-
-    @classmethod
-    def merge_sample_jsons(cls, configs: t.List[t.Type["BaseConfig"]]) -> dict:
-        base_json = cls.get_sample_dict()
-        for other in configs:
-            base_json.update(other.get_sample_dict())
-        return base_json
-
-    @classmethod
-    def get_sample_dict(cls) -> dict:
-        config = cls()
-        return config.__dict__
-
-    @classmethod
-    def from_dict(cls, d: dict):
-        schema = cls.get_schema()
-        sample_dict = cls.get_sample_dict()
-        filtered_dict = {k: v for k, v in d.items() if k in sample_dict}
-        validate(filtered_dict, schema=schema)
-        return cls(**filtered_dict)
+class BaseConfig(DataClassJsonMixin, ABC):
+    pass
 
 
 @dataclass
@@ -159,7 +121,7 @@ class BaseConnectorConfig(ABC):
 
 
 @dataclass
-class BaseIngestDoc(ABC):
+class BaseIngestDoc(DataClassJsonMixin, ABC):
     """An "ingest document" is specific to a connector, and provides
     methods to fetch a single raw document, store it locally for processing, any cleanup
     needed after successful processing of the doc, and the ability to write the doc's
@@ -359,7 +321,7 @@ class BaseIngestDoc(ABC):
 
 
 @dataclass
-class BaseSourceConnector(ABC):
+class BaseSourceConnector(DataClassJsonMixin, ABC):
     """Abstract Base Class for a connector to a remote source, e.g. S3 or Google Drive."""
 
     read_config: ReadConfig
@@ -401,7 +363,7 @@ class BaseSourceConnector(ABC):
         pass
 
 
-class BaseDestinationConnector(ABC):
+class BaseDestinationConnector(DataClassJsonMixin, ABC):
     write_config: WriteConfig
     connector_config: BaseConnectorConfig
 

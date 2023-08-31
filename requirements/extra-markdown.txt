@@ -9,6 +9,4 @@ importlib-metadata==6.8.0
 markdown==3.4.4
     # via -r requirements/extra-markdown.in
 zipp==3.16.2
-    # via
-    #   -c requirements/base.txt
-    #   importlib-metadata
+    # via importlib-metadata

@@ -51,9 +51,7 @@ idna==3.4
     #   -c requirements/base.txt
     #   requests
 importlib-resources==6.0.1
-    # via
-    #   -c requirements/base.txt
-    #   matplotlib
+    # via matplotlib
 iopath==0.1.10
     # via layoutparser
 jinja2==3.1.2
@@ -204,6 +202,7 @@ transformers==4.32.1
     # via unstructured-inference
 typing-extensions==4.7.1
     # via
+    #   -c requirements/base.txt
     #   filelock
     #   huggingface-hub
     #   iopath
@@ -220,6 +219,4 @@ urllib3==1.26.16
     #   -c requirements/constraints.in
     #   requests
 zipp==3.16.2
-    # via
-    #   -c requirements/base.txt
-    #   importlib-resources
+    # via importlib-resources
