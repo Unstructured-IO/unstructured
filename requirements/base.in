@@ -8,3 +8,4 @@ tabulate
 requests
 beautifulsoup4
 emoji
+dataclasses-json

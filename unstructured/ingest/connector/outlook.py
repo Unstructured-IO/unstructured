@@ -6,8 +6,6 @@ from itertools import chain
 from pathlib import Path
 from typing import List, Optional
 
-from office365.onedrive.driveitems.driveItem import DriveItem
-
 from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
@@ -37,6 +35,7 @@ class SimpleOutlookConfig(BaseConnectorConfig):
     authority_url: Optional[str] = field(repr=False)
     ms_outlook_folders: List[str]
     recursive: bool = False
+    registry_name: str = "outlook"
 
     def __post_init__(self):
         if not (self.client_id and self.client_credential and self.user_email):
@@ -69,11 +68,18 @@ class SimpleOutlookConfig(BaseConnectorConfig):
         """Parses a comma separated string of Outlook folders into a list."""
         return [x.strip() for x in folder_str.split(",")]
 
+    @requires_dependencies(["office365"], extras="outlook")
+    def _get_client(self):
+        from office365.graph_client import GraphClient
+
+        return GraphClient(self.token_factory)
+
 
 @dataclass
 class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleOutlookConfig
-    file: DriveItem
+    message_id: str
+    registry_name: str = "outlook"
 
     def __post_init__(self):
         self._set_download_paths()
@@ -89,9 +95,9 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         self.download_dir = download_path
         self.download_filepath = (
-            download_path / f"{self.hash_mail_name(self.file.id)}.eml"
+            download_path / f"{self.hash_mail_name(self.message_id)}.eml"
         ).resolve()
-        oname = f"{self.hash_mail_name(self.file.id)}.eml.json"
+        oname = f"{self.hash_mail_name(self.message_id)}.eml.json"
         self.output_dir = output_path
         self.output_filepath = (output_path / oname).resolve()
 
@@ -104,10 +110,11 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return Path(self.output_filepath).resolve()
 
     @BaseIngestDoc.skip_if_file_exists
-    @requires_dependencies(["office365"])
+    @requires_dependencies(["office365"], extras="outlook")
     def get_file(self):
         """Relies on Office365 python sdk message object to do the download."""
         try:
+            client = self.config._get_client()
             if not self.download_dir.is_dir():
                 logger.debug(f"Creating directory: {self.download_dir}")
                 self.download_dir.mkdir(parents=True, exist_ok=True)
@@ -115,21 +122,21 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             with open(
                 os.path.join(
                     self.download_dir,
-                    self.hash_mail_name(self.file.id) + ".eml",
+                    self.hash_mail_name(self.message_id) + ".eml",
                 ),
                 "wb",
             ) as local_file:
-                self.file.download(
+                client.users[self.config.user_email].messages[self.message_id].download(
                     local_file,
-                ).execute_query()  # download MIME representation of a message
+                ).execute_query()
 
         except Exception as e:
             logger.error(
-                f"Error while downloading and saving file: {self.file.subject}.",
+                f"Error while downloading and saving file: {self.hash_mail_name(self.message_id)}.",
             )
             logger.error(e)
             return
-        logger.info(f"File downloaded: {self.file.subject}")
+        logger.info(f"File downloaded: {self.hash_mail_name(self.message_id)}")
         return
 
 
@@ -142,14 +149,8 @@ class OutlookConnector(ConnectorCleanupMixin, BaseConnector):
         config: SimpleOutlookConfig,
     ):
         super().__init__(standard_config, config)
-        self._set_client()
+        self.client = self.config._get_client()
         self.get_folder_ids()
-
-    @requires_dependencies(["office365"])
-    def _set_client(self):
-        from office365.graph_client import GraphClient
-
-        self.client = GraphClient(self.config.token_factory)
 
     def initialize(self):
         pass
@@ -217,14 +218,7 @@ class OutlookConnector(ConnectorCleanupMixin, BaseConnector):
             # Skip empty list if there are no messages in folder.
             if messages:
                 filtered_messages.append(messages)
-
-        # Filtered messages have an un-downloadable resource path.
-        # So we get each message object individually.
-        individual_messages = []
-        for m in list(chain.from_iterable(filtered_messages)):
-            messages = (
-                self.client.users[self.config.user_email].messages[m.id].get().execute_query()
-            )
-            individual_messages.append(messages)
-
-        return [OutlookIngestDoc(self.standard_config, self.config, f) for f in individual_messages]
+        return [
+            OutlookIngestDoc(self.standard_config, self.config, message.id)
+            for message in list(chain.from_iterable(filtered_messages))
+        ]
