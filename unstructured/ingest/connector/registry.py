@@ -8,6 +8,7 @@ from unstructured.ingest.connector.azure import AzureBlobStorageIngestDoc
 from unstructured.ingest.connector.biomed import BiomedIngestDoc
 from unstructured.ingest.connector.box import BoxIngestDoc
 from unstructured.ingest.connector.confluence import ConfluenceIngestDoc
+from unstructured.ingest.connector.delta_table import DeltaTableIngestDoc
 from unstructured.ingest.connector.discord import DiscordIngestDoc
 from unstructured.ingest.connector.dropbox import DropboxIngestDoc
 from unstructured.ingest.connector.elasticsearch import ElasticsearchIngestDoc
@@ -39,6 +40,7 @@ INGEST_DOC_NAME_TO_CLASS: Dict[str, Type[DataClassJsonMixin]] = {
     "biomed": BiomedIngestDoc,
     "box": BoxIngestDoc,
     "confluence": ConfluenceIngestDoc,
+    "delta-table": DeltaTableIngestDoc,
     "discord": DiscordIngestDoc,
     "dropbox": DropboxIngestDoc,
     "elasticsearch": ElasticsearchIngestDoc,
