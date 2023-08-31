@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any, Dict, Tuple, Union
+from typing import Any, Dict, Tuple, Union, Sequence
 
 
 class Orientation(Enum):
@@ -58,7 +58,7 @@ class CoordinateSystem:
         new_y = convert_coordinate(y, self.height, 1, y_orientation)
         return new_x, new_y
 
-    def convert_coordinates_to_new_system(
+    def convert_coordinate_to_new_system(
         self,
         new_system: CoordinateSystem,
         x: Union[float, int],
@@ -67,6 +67,17 @@ class CoordinateSystem:
         """Convert from this coordinate system to another given coordinate system."""
         rel_x, rel_y = self.convert_to_relative(x, y)
         return new_system.convert_from_relative(rel_x, rel_y)
+    
+    def convert_multiple_coordinates_to_new_system(
+        self,
+        new_system: CoordinateSystem,
+        coordinates: Sequence[Tuple[Union[float, int], Union[float, int]]],
+    ) -> Tuple[Tuple[Union[float, int], Union[float, int]]]:
+        """Convert (x, y) coordinates from current system to another coordinate system."""
+        new_system_coordinates = []
+        for x, y in coordinates:
+            new_system_coordinates.append(self.convert_coordinate_to_new_system(new_system=new_system, x=x, y=y))
+        return tuple(new_system_coordinates)
 
 
 class RelativeCoordinateSystem(CoordinateSystem):
