@@ -8,6 +8,7 @@
   `min_partition` and `max_partition` are no longer supported in `partition_xml`.
 * Bump `unstructured-inference==0.5.18`, change non-default detectron2 classification threshold
 * Upgrade base image from rockylinux 8 to rockylinux 9
+* Serialize IngestDocs to JSON when passing to subprocesses
 
 ### Features
 

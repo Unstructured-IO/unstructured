@@ -91,6 +91,7 @@ opencv-python==4.8.0.76
     #   unstructured-inference
 packaging==23.1
     # via
+    #   -c requirements/base.txt
     #   huggingface-hub
     #   matplotlib
     #   onnxruntime

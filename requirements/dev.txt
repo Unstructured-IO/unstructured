@@ -221,6 +221,7 @@ overrides==7.4.0
     # via jupyter-server
 packaging==23.1
     # via
+    #   -c requirements/base.txt
     #   -c requirements/test.txt
     #   build
     #   ipykernel
@@ -377,6 +378,7 @@ traitlets==5.9.0
     #   qtconsole
 typing-extensions==4.7.1
     # via
+    #   -c requirements/base.txt
     #   -c requirements/test.txt
     #   async-lru
     #   filelock

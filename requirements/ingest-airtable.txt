@@ -31,6 +31,7 @@ requests==2.31.0
     #   pyairtable
 typing-extensions==4.7.1
     # via
+    #   -c requirements/base.txt
     #   pyairtable
     #   pydantic
 urllib3==1.26.16
