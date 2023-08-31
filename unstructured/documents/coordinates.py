@@ -58,7 +58,7 @@ class CoordinateSystem:
         new_y = convert_coordinate(y, self.height, 1, y_orientation)
         return new_x, new_y
 
-    def convert_coordinate_to_new_system(
+    def convert_coordinates_to_new_system(
         self,
         new_system: CoordinateSystem,
         x: Union[float, int],
@@ -77,7 +77,7 @@ class CoordinateSystem:
         new_system_coordinates = []
         for x, y in coordinates:
             new_system_coordinates.append(
-                self.convert_coordinate_to_new_system(new_system=new_system, x=x, y=y),
+                self.convert_coordinates_to_new_system(new_system=new_system, x=x, y=y),
             )
         return tuple(new_system_coordinates)
 
