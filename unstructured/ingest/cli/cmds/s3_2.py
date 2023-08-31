@@ -35,15 +35,6 @@ class S3CliConfigs(BaseConfig, CliMixin):
         ]
         cmd.params.extend(options)
 
-    @staticmethod
-    def get_schema() -> dict:
-        return {
-            "type": "object",
-            "properties": {
-                "anonymous": {"type": "boolean"},
-            },
-        }
-
 
 @click.group(name="s3", invoke_without_command=True, cls=Group)
 @click.pass_context

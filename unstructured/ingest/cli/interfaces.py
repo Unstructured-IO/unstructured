@@ -159,15 +159,6 @@ class CliRecursiveConfig(BaseConfig, CliMixin):
         ]
         cmd.params.extend(options)
 
-    @staticmethod
-    def get_schema() -> dict:
-        return {
-            "type": "object",
-            "properties": {
-                "recursive": {"type": "boolean"},
-            },
-        }
-
 
 class CliRemoteUrlConfig(BaseConfig, CliMixin):
     remote_url: str
@@ -182,12 +173,3 @@ class CliRemoteUrlConfig(BaseConfig, CliMixin):
             ),
         ]
         cmd.params.extend(options)
-
-    @staticmethod
-    def get_schema() -> dict:
-        return {
-            "type": "object",
-            "properties": {
-                "remote_url": {"type": "string"},
-            },
-        }

@@ -50,43 +50,6 @@ class PartitionConfig(BaseConfig):
     partition_endpoint: t.Optional[str] = None
     api_key: t.Optional[str] = None
 
-    @staticmethod
-    def get_schema() -> dict:
-        return {
-            "type": "object",
-            "properties": {
-                "output_dir": {"type": "string", "default": "structured-output"},
-                "num_processes": {"type": ["integer", "null"], "default": None},
-                "max_docs": {"type": ["integer", "null"], "default": None},
-                "pdf_infer_table_structure": {"type": "boolean"},
-                "strategy": {"type": ["string", "null"], "default": "auto"},
-                "reprocess": {"type": "boolean"},
-                "ocr_language": {"type": ["string", "null"], "default": "eng"},
-                "encoding": {"type": ["string", "null"], "default": None},
-                "fields_include": {
-                    "type": "array",
-                    "items": {
-                        "type": "string",
-                    },
-                },
-                "flatten_metadata": {"type": "boolean"},
-                "metadata_exclude": {
-                    "type": "array",
-                    "items": {
-                        "type": "string",
-                    },
-                },
-                "metadata_include": {
-                    "type": "array",
-                    "items": {
-                        "type": "string",
-                    },
-                },
-                "partition_endpoint": {"type": ["string", "null"], "default": None},
-                "api_key": {"type": ["string", "null"], "default": None},
-            },
-        }
-
 
 @dataclass
 class ReadConfig(BaseConfig):
@@ -96,24 +59,10 @@ class ReadConfig(BaseConfig):
     preserve_downloads: bool = False
     download_only: bool = False
 
-    @staticmethod
-    def get_schema() -> dict:
-        return {
-            "type": "object",
-            "properties": {
-                "download_dir": {"type": ["string", "null"], "default": None},
-                "re_download": {"type": "boolean"},
-                "preserve_downloads": {"type": "boolean"},
-                "download_only": {"type": "boolean"},
-            },
-        }
-
 
 @dataclass
 class WriteConfig(BaseConfig):
-    @staticmethod
-    def get_schema() -> dict:
-        return {}
+    pass
 
 
 class BaseConnectorConfig(ABC):
