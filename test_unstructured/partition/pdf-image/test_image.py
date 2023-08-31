@@ -401,14 +401,25 @@ def test_partition_image_with_ocr_has_coordinates_from_filename(
     assert int_coordinates == [(14, 36), (14, 16), (381, 16), (381, 36)]
 
 
-def test_partition_image_with_ocr_has_valid_coordinates_from_filename(
-    filename="example-docs/layout-parser-paper-with-table.jpg",
+@pytest.mark.parametrize(
+    ("filename"),
+    [
+        ("example-docs/layout-parser-paper-with-table.jpg"),
+        ("example-docs/english-and-korean.png"),
+        ("example-docs/layout-parser-paper-fast.jpg"),
+    ],
+)
+def test_partition_image_with_ocr_coordinates_are_not_nan_from_filename(
+    filename,
 ):
     import math
 
     elements = image.partition_image(filename=filename, strategy="ocr_only")
     for element in elements:
-        box = element.metadata.coordinates.points
-        for point in box:
-            assert point[0] is not math.nan
-            assert point[1] is not math.nan
+        # TODO (jennings) One or multiple elements is an empty string without coordinates.
+        # This should be fixed in a new issue
+        if element.text:
+            box = element.metadata.coordinates.points
+            for point in box:
+                assert point[0] is not math.nan
+                assert point[1] is not math.nan

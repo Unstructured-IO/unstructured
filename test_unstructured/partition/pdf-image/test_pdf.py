@@ -798,10 +798,18 @@ def test_partition_pdf_with_ocr_has_coordinates_from_file(
         (1043.0, 2106.0),
         (1043.0, 2144.0),
     )
-
-
-def test_partition_pdf_with_ocr_has_valid_coordinates_from_file(
-    filename="example-docs/layout-parser-paper-fast.pdf",
+    
+    
+@pytest.mark.parametrize(
+    ("filename"),
+    [
+        ("example-docs/multi-column-2p.pdf"),
+        ("example-docs/layout-parser-paper-fast.pdf"),
+        ("example-docs/list-item-example.pdf"),
+    ]
+)
+def test_partition_pdf_with_ocr_coordinates_are_not_nan_from_file(
+    filename,
 ):
     import math
 
