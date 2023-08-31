@@ -34,8 +34,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
         --user-email "$JIRA_USER_EMAIL" \
         --api-token "$JIRA_API_TOKEN" \
         --structured-output-dir jira-ingest-output \
+        --num-processes 2 \
+        --reprocess
         # --list-of-projects <your project keys/ids here (space separated)> \
         # --list-of-boards <your board keys/ids here (space separated)> \
         # --list-of-issues <your issue keys/ids here (space separated)> \
-        --num-processes 2 \
-        --reprocess

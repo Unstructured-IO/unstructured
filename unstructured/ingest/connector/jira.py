@@ -1,9 +1,14 @@
+# import datetime
 import math
 import os
 from collections import abc
 from dataclasses import dataclass
 from pathlib import Path
+
+# from typing import Any, Dict
 from typing import Optional
+
+from requests.exceptions import HTTPError
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -198,6 +203,68 @@ class JiraIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleJiraConfig
     file_meta: JiraFileMeta
 
+    # @property
+    # def record_locator(self) -> Optional[Dict[str, Any]]:  # Values must be JSON-serializable
+    #     """A dictionary with any data necessary to uniquely identify the document on
+    #     the source system."""
+    #     return {"issue_key":self.file_meta.issue_key}
+
+    # @requires_dependencies(dependencies=["atlassian"])
+    # def get_metadata_fields(self):
+    #     try:
+    #         issue = self.jira.issue(self.file_meta.issue_key)
+    #         issue_fields = nested_object_to_field_getter(issue["fields"])
+
+    #         self.metadata_fields= {
+    #             "date_modified": str(issue_fields["updated"]),
+    #             "date_created": str(issue_fields["created"]),
+    #             "date_processed": str(datetime.datetime.now().time()),
+    #             "record_locator": issue["key"]}
+
+    #         self.check_exists = True
+    #         self.file_exists = True
+
+    #     except HTTPError as error:
+    #         if error.response.reason=="Not Found":
+    #             self.check_exists = True
+    #             self.file_exists = False
+    #         else:
+    #             logger.error(f"Error: {error} for issue {self.file_meta.issue_key}")
+
+    # @property
+    # def date_created(self) -> Optional[str]:
+    #     if not self.metadata_fields:
+    #         self.get_metadata_fields()
+
+    #     return self.metadata_fields["date_created"] \
+    #         if self.metadata_fields else None
+
+    # @property
+    # def date_modified(self) -> Optional[str]:
+    #     if not self.metadata_fields:
+    #         self.get_metadata_fields()
+
+    #     return self.metadata_fields["date_modified"] \
+    #         if self.metadata_fields else None
+
+    # @property
+    # def date_processed(self) -> Optional[str]:
+    #     if not self.metadata_fields:
+    #         self.get_metadata_fields()
+
+    #     return self.metadata_fields["date_processed"] \
+    #         if self.metadata_fields else None
+
+    # @property
+    # def exists(self) -> Optional[bool]:
+    #     """Whether the document exists on the remote source."""
+    #     if self.check_exists:
+    #         return self.file_exists
+
+    #     self.get_metadata_fields()
+
+    #     return self.file_exists
+
     def grouping_folder_name(self):
         if self.file_meta.board_id:
             return self.file_meta.board_id
@@ -230,18 +297,32 @@ class JiraIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         # TODO: instead of having a separate connection object for each doc,
         # have a separate connection object for each process
-        jira = Jira(
-            self.config.url,
-            username=self.config.user_email,
-            password=self.config.api_token,
-        )
+        try:
+            jira = Jira(
+                self.config.url,
+                username=self.config.user_email,
+                password=self.config.api_token,
+            )
 
-        issue = jira.issue(self.file_meta.issue_key)
-        self.document = get_fields_for_issue(issue)
-        self.filename.parent.mkdir(parents=True, exist_ok=True)
+            # GET issue data
+            issue = jira.issue(self.file_meta.issue_key)
+            self.check_exists = True
+            self.file_exists = True
 
-        with open(self.filename, "w", encoding="utf8") as f:
-            f.write(self.document)
+            # parse issue data
+            self.document = get_fields_for_issue(issue)
+
+            self.filename.parent.mkdir(parents=True, exist_ok=True)
+
+            with open(self.filename, "w", encoding="utf8") as f:
+                f.write(self.document)
+
+        except HTTPError as error:
+            if error.response.reason == "Not Found":
+                self.check_exists = True
+                self.file_exists = False
+            else:
+                logger.error(f"Error: {error} for issue {self.file_meta.issue_key}")
 
 
 @requires_dependencies(["atlassian"])
