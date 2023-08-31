@@ -35,7 +35,7 @@ from unstructured.ingest.runner import salesforce as salesforce_fn
 @click.option(
     "--private-key-path",
     required=True,
-    help="Path to the private key for the Salesforce JWT auth." "Usually named server.key.",
+    help="Path to the private key for the Salesforce JWT auth. Usually named server.key.",
 )
 def salesforce(**options):
     verbose = options.get("verbose", False)
