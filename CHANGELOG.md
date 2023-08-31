@@ -1,4 +1,4 @@
-## 0.10.10-dev4
+## 0.10.10
 
 ### Enhancements
 
@@ -7,6 +7,7 @@
   on carriage returns in the XML. Since `partition_xml` no longer calls `partition_text`,
   `min_partition` and `max_partition` are no longer supported in `partition_xml`.
 * Bump `unstructured-inference==0.5.18`, change non-default detectron2 classification threshold
+* Upgrade base image from rockylinux 8 to rockylinux 9
 * Serialize IngestDocs to JSON when passing to subprocesses
 
 ### Features
