@@ -465,7 +465,6 @@ def convert_pdf_to_images(
 
 
 def _get_element_box(
-    element: Text,
     boxes: List[str],
     box_idx: int,
     char_count: int,
@@ -482,24 +481,14 @@ def _get_element_box(
     min_y = float("inf")
     max_x = 0
     max_y = 0
-    box_text = ""
     for box in boxes[box_idx : box_idx + char_count]:  # noqa
-        char, _x1, _y1, _x2, _y2, _ = box.split()
-
-        # pytesseract cleans some characters from text that still appear in the bounding boxes,
-        # so those bounding boxes should be skipped
-        if char not in element.text:
-            char_count += 1
-            continue
-        box_text = box_text + char
+        _, _x1, _y1, _x2, _y2, _ = box.split()
 
         x1, y1, x2, y2 = map(int, [_x1, _y1, _x2, _y2])
         min_x = min(min_x, x1)
         min_y = min(min_y, y1)
         max_x = max(max_x, x2)
         max_y = max(max_y, y2)
-
-    # print(f"box text: \n    {box_text}")
 
     return ((min_x, min_y), (min_x, max_y), (max_x, max_y), (max_x, min_y)), char_count
 
@@ -539,7 +528,6 @@ def add_pytesseract_bbox_to_elements(
             box_idx += 1
         char_count = len(element.text.replace(" ", ""))
         _points, char_count = _get_element_box(
-            element=element,
             boxes=boxes,
             box_idx=box_idx,
             char_count=char_count,
