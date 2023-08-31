@@ -15,27 +15,35 @@ if TYPE_CHECKING:
 
 @dataclass
 class SimpleGitLabConfig(SimpleGitConfig):
+    base_url: str = "https://gitlab.com"
+
     def __post_init__(self):
         parsed_gh_url = urlparse(self.url)
-
-        # If no scheme or netloc are provided, use the default gitlab.com
-        if not parsed_gh_url.scheme and not parsed_gh_url.netloc:
-            self.url = "https://gitlab.com"
-        else:
-            self.url = f"{parsed_gh_url.scheme}://{parsed_gh_url.netloc}"
+        # If a scheme or netloc are provided, use the parsed base url
+        if parsed_gh_url.scheme or parsed_gh_url.netloc:
+            self.base_url = f"{parsed_gh_url.scheme}://{parsed_gh_url.netloc}"
         self.repo_path = parsed_gh_url.path
         while self.repo_path.startswith("/"):
             self.repo_path = self.repo_path[1:]
 
+    @requires_dependencies(["gitlab"], extras="gitlab")
+    def _get_project(self) -> "Project":
+        from gitlab import Gitlab
+
+        gitlab = Gitlab(self.base_url, private_token=self.access_token)
+        return gitlab.projects.get(self.repo_path)
+
 
 @dataclass
 class GitLabIngestDoc(GitIngestDoc):
-    project: "Project"
+    config: SimpleGitLabConfig
+    registry_name: str = "gitlab"
 
     def _fetch_and_write(self) -> None:
-        content_file = self.project.files.get(
+        project = self.config._get_project()
+        content_file = project.files.get(
             self.path,
-            ref=self.config.branch or self.project.default_branch,
+            ref=self.config.branch or project.default_branch,
         )
         contents = content_file.decode()
 
@@ -46,15 +54,12 @@ class GitLabIngestDoc(GitIngestDoc):
 @requires_dependencies(["gitlab"], extras="gitlab")
 @dataclass
 class GitLabConnector(GitConnector):
-    def __post_init__(self) -> None:
-        from gitlab import Gitlab
-
-        self.gitlab = Gitlab(self.config.url, private_token=self.config.access_token)
+    config: SimpleGitLabConfig
 
     def get_ingest_docs(self):
         # Load the Git tree with all files, and then create Ingest docs
         # for all blobs, i.e. all files, ignoring directories
-        project = self.gitlab.projects.get(self.config.repo_path)
+        project = self.config._get_project()
         ref = self.config.branch or project.default_branch
         git_tree = project.repository_tree(
             ref=ref,
@@ -63,7 +68,7 @@ class GitLabConnector(GitConnector):
             all=True,
         )
         return [
-            GitLabIngestDoc(self.standard_config, self.config, element["path"], project)
+            GitLabIngestDoc(self.standard_config, self.config, element["path"])
             for element in git_tree
             if element["type"] == "blob"
             and self.is_file_type_supported(element["path"])

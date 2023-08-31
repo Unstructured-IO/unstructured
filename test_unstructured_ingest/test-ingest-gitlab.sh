@@ -14,6 +14,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified \
     --partition-strategy hi_res \
     --preserve-downloads \
+    --reprocess \
     --structured-output-dir "$OUTPUT_DIR" \
     --verbose \
     --git-branch 'v0.0.7' \
