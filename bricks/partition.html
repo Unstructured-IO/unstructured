@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Cleaning" href="cleaning.html" /><link rel="prev" title="Bricks" href="../bricks.html" />
 
   <link rel="shortcut icon" href="../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Partitioning - Unstructured 0.10.9 documentation</title>
+  <title>Partitioning - Unstructured 0.10.10 documentation</title>
   <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
@@ -1094,10 +1094,6 @@ If <code class="docutils literal notranslate"><span class="pre">xml_keep_tags=Tr
 <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_xml</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example-docs/factbook.xml&quot;</span><span class="p">,</span> <span class="n">xml_keep_tags</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">partition_xml</span></code> includes a <code class="docutils literal notranslate"><span class="pre">max_partition</span></code> parameter that indicates the maximum character length for a document element.
-The default value is <code class="docutils literal notranslate"><span class="pre">1500</span></code>, which roughly corresponds to
-the average character length for a paragraph.
-You can disable <code class="docutils literal notranslate"><span class="pre">max_partition</span></code> by setting it to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
 <p>For more information about the <code class="docutils literal notranslate"><span class="pre">partition_xml</span></code> brick, you can check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/xml.py">source code here</a>.</p>
 </section>
 </section>
