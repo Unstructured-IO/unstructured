@@ -71,6 +71,7 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     token: str
     oldest: Optional[str]
     latest: Optional[str]
+    registry_name: str = "slack"
 
     # NOTE(crag): probably doesn't matter,  but intentionally not defining tmp_download_file
     # __post_init__ for multiprocessing simplicity (no Path objects in initially

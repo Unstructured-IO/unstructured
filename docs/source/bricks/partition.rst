@@ -877,9 +877,4 @@ If ``xml_keep_tags=True``, the function returns tag information in addition to t
 
   elements = partition_xml(filename="example-docs/factbook.xml", xml_keep_tags=False)
 
-``partition_xml`` includes a ``max_partition`` parameter that indicates the maximum character length for a document element.
-The default value is ``1500``, which roughly corresponds to
-the average character length for a paragraph.
-You can disable ``max_partition`` by setting it to ``None``.
-
 For more information about the ``partition_xml`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/xml.py>`_.

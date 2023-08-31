@@ -58,10 +58,12 @@ mypy==1.5.1
     # via -r requirements/test.in
 mypy-extensions==1.0.0
     # via
+    #   -c requirements/base.txt
     #   black
     #   mypy
 packaging==23.1
     # via
+    #   -c requirements/base.txt
     #   black
     #   pytest
 pathspec==0.11.2
@@ -117,6 +119,7 @@ types-urllib3==1.26.25.14
     # via types-requests
 typing-extensions==4.7.1
     # via
+    #   -c requirements/base.txt
     #   black
     #   mypy
     #   pydantic

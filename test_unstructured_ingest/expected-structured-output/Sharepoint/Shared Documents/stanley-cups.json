@@ -3,15 +3,7 @@
     "type": "Table",
     "element_id": "3e65b02bec20bb1056bd23a3b4ecd0f6",
     "metadata": {
-      "data_source": {
-        "record_locator": {
-          "site": "https://unstructuredio.sharepoint.com/",
-          "unique_id": "b9956a33-8079-4321-91ea-609def07394d",
-          "server_relative_url": "/Shared Documents/stanley-cups.xlsx"
-        },
-        "date_created": "2023-06-16T05:05:05Z",
-        "date_modified": "2023-06-16T05:05:05Z"
-      },
+      "data_source": {},
       "filename": "stanley-cups.xlsx",
       "filetype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       "page_number": 1,
@@ -24,15 +16,7 @@
     "type": "Table",
     "element_id": "0699dddf33814117e04654068f5182f6",
     "metadata": {
-      "data_source": {
-        "record_locator": {
-          "site": "https://unstructuredio.sharepoint.com/",
-          "unique_id": "b9956a33-8079-4321-91ea-609def07394d",
-          "server_relative_url": "/Shared Documents/stanley-cups.xlsx"
-        },
-        "date_created": "2023-06-16T05:05:05Z",
-        "date_modified": "2023-06-16T05:05:05Z"
-      },
+      "data_source": {},
       "filename": "stanley-cups.xlsx",
       "filetype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       "page_number": 2,
