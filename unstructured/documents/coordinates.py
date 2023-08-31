@@ -72,7 +72,7 @@ class CoordinateSystem:
         self,
         new_system: CoordinateSystem,
         coordinates: Sequence[Tuple[Union[float, int], Union[float, int]]],
-    ) -> Tuple[Tuple[Union[float, int], Union[float, int]]]:
+    ) -> Tuple[Tuple[Union[float, int], Union[float, int]], ...]:
         """Convert (x, y) coordinates from current system to another coordinate system."""
         new_system_coordinates = []
         for x, y in coordinates:
