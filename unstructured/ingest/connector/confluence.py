@@ -4,8 +4,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
-from atlassian import Confluence
-
 from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
@@ -85,6 +83,7 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     config: SimpleConfluenceConfig
     file_meta: ConfluenceFileMeta
+    registry_name: str = "confluence"
 
     # TODO: remove one of filename or _tmp_download_file, using a wrapper
     @property
@@ -101,9 +100,11 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         output_file = f"{self.file_meta.document_id}.json"
         return Path(self.standard_config.output_dir) / self.file_meta.space_id / output_file
 
-    @requires_dependencies(["atlassian"])
+    @requires_dependencies(["atlassian"], extras="Confluence")
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
+        from atlassian import Confluence
+
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
 
         # TODO: instead of having a separate connection object for each doc,
@@ -121,7 +122,7 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             f.write(self.document)
 
 
-@requires_dependencies(["atlassian"])
+@requires_dependencies(["atlassian"], extras="Confluence")
 @dataclass
 class ConfluenceConnector(ConnectorCleanupMixin, BaseConnector):
     """Fetches body fields from all documents within all spaces in a Confluence Cloud instance."""
@@ -137,6 +138,8 @@ class ConfluenceConnector(ConnectorCleanupMixin, BaseConnector):
 
     @requires_dependencies(["atlassian"])
     def initialize(self):
+        from atlassian import Confluence
+
         self.confluence = Confluence(
             url=self.config.url,
             username=self.config.user_email,

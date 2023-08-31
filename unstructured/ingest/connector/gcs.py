@@ -15,7 +15,11 @@ class SimpleGcsConfig(SimpleFsspecConfig):
     pass
 
 
+@dataclass
 class GcsIngestDoc(FsspecIngestDoc):
+    config: SimpleGcsConfig
+    registry_name: str = "gcs"
+
     @requires_dependencies(["gcsfs", "fsspec"], extras="gcs")
     def get_file(self):
         super().get_file()

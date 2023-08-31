@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Optional
 
 from unstructured_inference.models.base import get_model
 
-from unstructured.ingest.interfaces import BaseIngestDoc as IngestDoc
+from unstructured.ingest.connector.registry import create_ingest_doc_from_json
 from unstructured.ingest.interfaces import (
     BaseSessionHandle,
     IngestDocSessionHandleMixin,
@@ -29,8 +29,9 @@ def initialize():
     get_model(os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME"))
 
 
-def process_document(doc: "IngestDoc", **partition_kwargs) -> Optional[List[Dict[str, Any]]]:
-    """Process any IngestDoc-like class of document with chosen Unstructured's partition logic.
+def process_document(ingest_doc_json: str, **partition_kwargs) -> Optional[List[Dict[str, Any]]]:
+    """Process the serialized json for any IngestDoc-like class of document with chosen
+    Unstructured partition logic.
 
     Parameters
     ----------
@@ -40,6 +41,7 @@ def process_document(doc: "IngestDoc", **partition_kwargs) -> Optional[List[Dict
     global session_handle
     isd_elems_no_filename = None
     try:
+        doc = create_ingest_doc_from_json(ingest_doc_json)
         if isinstance(doc, IngestDocSessionHandleMixin):
             if session_handle is None:
                 # create via doc.session_handle, which is a property that creates a
