@@ -5,7 +5,7 @@
 # Environment Variables:
 #   - DOCKER_TEST: Set to true to run profiling inside a Docker container (default: false)
 
-# Usage: 
+# Usage:
 # - Run the script and choose the profiling mode: 'run' or 'view'.
 # - In the 'run' mode, you can profile custom files or select existing test files.
 # - In the 'view' mode, you can view previously generated profiling results.
@@ -34,7 +34,7 @@ check_python_module() {
   fi
 }
 validate_dependencies() {
-  check_python_module memray 
+  check_python_module memray
   check_python_module flameprof
 }
 
@@ -117,7 +117,7 @@ view_profile_headless() {
 
 view_profile_with_head() {
   while true; do
-    read -r -p "Choose profile type: (1) time (2) memory (b) back, (q) quit: " -n 1 profile_type
+    read -r -p "Choose profile type: (1) time (2) memory (3) speedscope (b) back, (q) quit: " -n 1 profile_type
     echo
 
     if [[ $profile_type == "b" ]]; then
@@ -131,6 +131,8 @@ view_profile_with_head() {
       extension=".prof"
     elif [[ $profile_type == "2" ]]; then
       extension=".bin"
+    elif [[ $profile_type == "3" ]]; then
+      extension=".speedscope"
     else
       echo "Invalid profile type. Please try again."
       continue
@@ -143,7 +145,9 @@ view_profile_with_head() {
       continue
     fi
 
-    if [[ $profile_type == "2" ]]; then
+    if [[ $profile_type == "3" ]]; then
+	    speedscope "$result_file"
+    elif [[ $profile_type == "2" ]]; then
       while true; do
         read -r -p "Choose visualization type: (1) flamegraph (2) table (3) tree (4) summary (5) stats (b) back, (q) quit: " -n 1 visualization_type
         echo
@@ -293,7 +297,7 @@ run_profile() {
 
     # Pick the strategy
     while true; do
-      read -r -p "Choose a strategy: 1) auto, (2) fast, (3) hi_res, (b) back, (q) quit: " -n 1 strategy_option
+	read -r -p "Choose a strategy: 1) auto, (2) fast, (3) hi_res, (4) ocr_only (b) back, (q) quit: " -n 1 strategy_option
       echo
 
       if [[ $strategy_option == "b" ]]; then
@@ -315,6 +319,10 @@ run_profile() {
           strategy="hi_res"
           break
           ;;
+        "4")
+          strategy="ocr_only"
+          break
+          ;;
         *)
           echo "Invalid strategy option. Please try again."
           ;;
@@ -325,8 +333,11 @@ run_profile() {
     python3 -m cProfile -s cumulative -o "$PROFILE_RESULTS_DIR/${test_file##*/}.prof" -m "$MODULE_PATH.run_partition" "$test_file" "$strategy"
     echo "Running memory profile..."
     python3 -m memray run -o "$PROFILE_RESULTS_DIR/${test_file##*/}.bin" -m "$MODULE_PATH.run_partition" "$test_file" "$strategy"
+    echo "Running py-spy for detailed run time profiling (this can take some time)..."
+    py-spy record --subprocesses -i -o "$PROFILE_RESULTS_DIR/${test_file##*/}.speedscope" --format speedscope -- python3 -m "$MODULE_PATH.run_partition" "$test_file" "$strategy"
     echo "Profiling completed."
     echo "Viewing results for $test_file"
+    echo "The py-spy produced speedscope profile can be viewed on https://www.speedscope.app or locally by installing via 'npm install -g speedscope'"
     result_file=$PROFILE_RESULTS_DIR/$(basename "$test_file")
     view_profile "${result_file}.bin" # Go directly to view mode
   done
@@ -336,7 +347,7 @@ while true; do
   if [[ -n "$1" ]]; then
     mode="$1"
   fi
-  
+
   if [[ -z $result_file ]]; then
     read -r -p "Choose mode: (1) run, (2) view, (q) quit: " -n 1 mode
     echo
