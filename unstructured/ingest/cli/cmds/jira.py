@@ -24,17 +24,19 @@ from unstructured.ingest.runner import jira as jira_fn
 @click.option(
     "--list-of-projects",
     default=None,
-    help="todo",
+    help="Space separated project ids or keys. Use Jira UI or the API to find or obtain keys.\
+        Alternatively, use API to obtain ids.",
 )
 @click.option(
     "--list-of-boards",
     default=None,
-    help="todo",
+    help="Space separated board ids. Check board URL, or use the API to find the board ids.",
 )
 @click.option(
     "--list-of-issues",
     default=None,
-    help="todo",
+    help="Space separated issue ids or keys. Use Jira UI or the API to find or obtain keys.\
+        Alternatively, use API to obtain ids.",
 )
 @click.option(
     "--url",
