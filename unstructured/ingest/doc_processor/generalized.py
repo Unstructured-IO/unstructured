@@ -60,10 +60,9 @@ def process_document(ingest_doc_json: str, **partition_kwargs) -> Optional[List[
         # the results. Instead, the Processor (caller) may work with the aggregate
         # results across all docs in memory.
         doc.write_result()
-    except Exception as e:
+    except Exception:
         # TODO(crag) save the exception instead of print?
         logger.error(f"Failed to process {doc}", exc_info=True)
-        raise e
     finally:
         if doc:
             doc.cleanup_file()
