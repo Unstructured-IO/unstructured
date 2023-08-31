@@ -334,15 +334,7 @@ run_profile() {
     echo "Running memory profile..."
     python3 -m memray run -o "$PROFILE_RESULTS_DIR/${test_file##*/}.bin" -m "$MODULE_PATH.run_partition" "$test_file" "$strategy"
     echo "Running py-spy for detailed run time profiling (this can take some time)..."
-    if [[ "$(uname)" = "Darwin" ]]; then
-      echo "on macOS py-spy requires su to run"
-      py_spy='sudo py-spy'
-      py_runtime=${VIRTUAL_ENV}/bin/python
-    else
-      py_spy='py-spy'
-      py_runtime='python3'
-    fi
-    "$py_spy" record --subprocesses -i -o "$PROFILE_RESULTS_DIR/${test_file##*/}.speedscope" --format speedscope -- "$py_runtime" -m "$MODULE_PATH.run_partition" "$test_file" "$strategy"
+    py-spy record --subprocesses -i -o "$PROFILE_RESULTS_DIR/${test_file##*/}.speedscope" --format speedscope -- python3 -m "$MODULE_PATH.run_partition" "$test_file" "$strategy"
     echo "Profiling completed."
     echo "Viewing results for $test_file"
     echo "The py-spy produced speedscope profile can be viewed on https://www.speedscope.app or locally by installing via 'npm install -g speedscope'"
