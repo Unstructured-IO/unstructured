@@ -2,7 +2,7 @@ import os
 import re
 import warnings
 from tempfile import SpooledTemporaryFile
-from typing import BinaryIO, Iterator, List, Optional, Union, cast, Tuple
+from typing import BinaryIO, Iterator, List, Optional, Tuple, Union, cast
 
 import numpy as np
 import pdf2image
@@ -527,12 +527,17 @@ def add_pytesseract_bbox_to_elements(elements, bboxes, width, height):
 
 
 @requires_dependencies("pytesseract")
-def image_to_string_and_box(image: Union[PIL.Image.Image, np.ndarray], ocr_languages: str="eng") -> Tuple[str, np.ndarray]:
+def image_to_string_and_box(
+    image: Union[PIL.Image.Image, np.ndarray], ocr_languages: str = "eng"
+) -> Tuple[str, np.ndarray]:
     import pytesseract
-    data = pytesseract.image_to_data(image, config=f"-l '{ocr_languages}'", output_type="data.frame")
+
+    data = pytesseract.image_to_data(
+        image, config=f"-l '{ocr_languages}'", output_type="data.frame"
+    )
     return (
-        " ".join(data.text.replace(np.nan,"\n")),
-        data[["left", "top", "width", "height"]].to_numpy()
+        " ".join(data.text.replace(np.nan, "\n")),
+        data[["left", "top", "width", "height"]].to_numpy(),
     )
 
 

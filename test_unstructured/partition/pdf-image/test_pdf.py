@@ -3,8 +3,8 @@ from tempfile import SpooledTemporaryFile
 from unittest import mock
 
 import pytest
-from pytesseract import image_to_string, image_to_boxes
 from PIL import Image
+from pytesseract import image_to_boxes, image_to_string
 from unstructured_inference.inference import layout
 
 from unstructured.documents.coordinates import PixelSpace
