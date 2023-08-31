@@ -482,9 +482,9 @@ def _get_element_box(
     min_y = float("inf")
     max_x = 0
     max_y = 0
-
     for box in boxes[box_idx : box_idx + char_count]:  # noqa
         char, _x1, _y1, _x2, _y2, _ = box.split()
+        box_text = box_text + char
 
         # pytesseract cleans some characters from text that still appear in the bounding boxes,
         # so those bounding boxes should be skipped
@@ -533,6 +533,8 @@ def add_pytesseract_bbox_to_elements(
         if not element.text:
             box_idx += 1
             continue
+        while boxes[box_idx][0] != element.text[0]:
+            box_idx += 1
         char_count = len(element.text.replace(" ", ""))
         _points, char_count = _get_element_box(
             element=element,
@@ -543,12 +545,12 @@ def add_pytesseract_bbox_to_elements(
         box_idx += char_count
         converted_points = []
 
-        for point in _points:
-            point = point_space.convert_coordinates_to_new_system(pixel_space, *point)
+        for _point in _points:
+            point = point_space.convert_coordinates_to_new_system(pixel_space, *_point)
             converted_points.append(tuple(map(int, point)))
 
         points = tuple(converted_points)
-
+        
         element.metadata.coordinates = CoordinatesMetadata(
             points=points,
             system=pixel_space,
@@ -620,13 +622,14 @@ def _partition_pdf_or_image_with_ocr(
                 element.metadata = metadata
 
             add_pytesseract_bbox_to_elements(
-                elements=elements,
+                elements=_elements,
                 element_idx=element_idx,
-                bboxes=bboxes,
+                bboxes=_bboxes,
                 width=width,
                 height=height,
             )
-            element_idx = len(elements)
+            element_idx = len(_elements)
+            elements.extend(_elements)
             if include_page_breaks:
                 elements.append(PageBreak(text=""))
     return elements
