@@ -5,6 +5,11 @@ import click
 
 class Group(click.Group):
     def parse_args(self, ctx, args):
+        """
+        This allows for subcommands to be called with the --help flag without breaking
+        if parent command is missing any of its required parameters
+        """
+
         try:
             return super().parse_args(ctx, args)
         except click.MissingParameter:
@@ -17,8 +22,9 @@ class Group(click.Group):
             return super().parse_args(ctx, args)
 
     def format_commands(self, ctx: click.Context, formatter: click.HelpFormatter) -> None:
-        """Extra format methods for multi methods that adds all the commands
-        after the options.
+        """
+        Copy of the original click.Group format_commands() method but replacing
+        'Commands' -> 'Destinations'
         """
         commands = []
         for subcommand in self.list_commands(ctx):
