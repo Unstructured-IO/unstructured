@@ -24,7 +24,7 @@ from unstructured.ingest.connector.notion.connector import (
 from unstructured.ingest.connector.onedrive import OneDriveIngestDoc
 from unstructured.ingest.connector.outlook import OutlookIngestDoc
 from unstructured.ingest.connector.reddit import RedditIngestDoc
-from unstructured.ingest.connector.s3 import S3IngestDoc
+from unstructured.ingest.connector.s3_2 import S3IngestDoc
 from unstructured.ingest.connector.sharepoint import SharepointIngestDoc
 from unstructured.ingest.connector.slack import SlackIngestDoc
 from unstructured.ingest.connector.wikipedia import (
@@ -64,7 +64,14 @@ INGEST_DOC_NAME_TO_CLASS: Dict[str, Type[DataClassJsonMixin]] = {
 
 
 def create_ingest_doc_from_json(ingest_doc_json: str) -> BaseIngestDoc:
-    ingest_doc_dict = json.loads(ingest_doc_json)
+    try:
+        ingest_doc_dict: dict = json.loads(ingest_doc_json)
+    except TypeError as te:
+        raise TypeError(
+            f"failed to load json string when deserializing IngestDoc: {ingest_doc_json}",
+        ) from te
+    if "registry_name" not in ingest_doc_dict:
+        raise ValueError(f"registry_name not present in ingest doc: {ingest_doc_dict}")
     registry_name = ingest_doc_dict.pop("registry_name")
     try:
         ingest_doc_cls = INGEST_DOC_NAME_TO_CLASS[registry_name]

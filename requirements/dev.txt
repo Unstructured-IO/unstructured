@@ -4,7 +4,7 @@
 #
 #    pip-compile requirements/dev.in
 #
-anyio==3.7.1
+anyio==4.0.0
     # via jupyter-server
 appnope==0.1.3
     # via
@@ -101,7 +101,6 @@ importlib-resources==6.0.1
     #   jsonschema
     #   jsonschema-specifications
     #   jupyterlab
-    #   notebook
 ipykernel==6.25.1
     # via
     #   jupyter
@@ -167,7 +166,7 @@ jupyter-events==0.7.0
     # via jupyter-server
 jupyter-lsp==2.2.0
     # via jupyterlab
-jupyter-server==2.7.2
+jupyter-server==2.7.3
     # via
     #   jupyter-lsp
     #   jupyterlab
@@ -211,7 +210,7 @@ nest-asyncio==1.5.7
     # via ipykernel
 nodeenv==1.8.0
     # via pre-commit
-notebook==7.0.2
+notebook==7.0.3
     # via jupyter
 notebook-shim==0.2.3
     # via
@@ -391,7 +390,7 @@ urllib3==1.26.16
     #   -c requirements/constraints.in
     #   -c requirements/test.txt
     #   requests
-virtualenv==20.24.3
+virtualenv==20.24.4
     # via pre-commit
 wcwidth==0.2.6
     # via prompt-toolkit
