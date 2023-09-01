@@ -148,6 +148,7 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     record_type: str
     record_id: str
     config: SimpleSalesforceConfig
+    registry_name: str = "salesforce"
 
     def _tmp_download_file(self) -> Path:
         if self.record_type == "EmailMessage":
