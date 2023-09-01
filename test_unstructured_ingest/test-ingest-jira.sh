@@ -9,8 +9,8 @@ OUTPUT_FOLDER_NAME=jira-diff
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
-if [ -z "$JIRA_USER_EMAIL" ] || [ -z "$JIRA_API_TOKEN" ]; then
-   echo "Skipping Jira ingest test because the JIRA_USER_EMAIL or JIRA_API_TOKEN env var is not set."
+if [ -z "$JIRA_INGEST_USER_EMAIL" ] || [ -z "$JIRA_INGEST_API_TOKEN" ]; then
+   echo "Skipping Jira ingest test because the JIRA_INGEST_USER_EMAIL or JIRA_INGEST_API_TOKEN env var is not set."
    exit 0
 fi
 
