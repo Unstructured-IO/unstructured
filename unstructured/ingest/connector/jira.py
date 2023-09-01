@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, Optional
 
-from requests.exceptions import HTTPError, MissingSchema
+from requests.exceptions import HTTPError
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -45,24 +45,25 @@ def create_jira_object(url, user_email, api_token):
     """
     from atlassian import Jira
 
-    try:
-        jira = Jira(
-            url,
-            username=user_email,
-            password=api_token,
+    jira = Jira(
+        url,
+        username=user_email,
+        password=api_token,
+    )
+
+    response = jira.get_permissions("BROWSE_PROJECTS")
+    permitted = response["permissions"]["BROWSE_PROJECTS"]["havePermission"]
+
+    if permitted:
+        return jira
+
+    else:
+        raise ValueError(
+            """The user with the provided *user_email* and the *api_token*
+                         is not permitted to browse projects for the jira organization
+                         for the provided *url*. Try checking user_email, api_token,
+                         and the url arguments.""",
         )
-
-        response = jira.get_permissions("BROWSE_PROJECTS")
-        permitted = response["permissions"]["BROWSE_PROJECTS"]["havePermission"]
-
-        if permitted:
-            return jira
-
-        else:
-            pass
-
-    except MissingSchema as error:
-        print(error)
 
 
 @dataclass
