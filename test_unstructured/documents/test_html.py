@@ -182,7 +182,7 @@ def test_parse_nothing():
     document_tree = etree.fromstring(doc, etree.HTMLParser())
     el = document_tree.find(".//p")
     parsed_el = html._parse_tag(el)
-    assert parsed_el is None
+    assert parsed_el == []
 
 
 def test_read_with_existing_pages():
@@ -199,7 +199,7 @@ def test_parse_not_anything(monkeypatch):
     document_tree = etree.fromstring(doc, etree.HTMLParser())
     el = document_tree.find(".//p")
     parsed_el = html._parse_tag(el)
-    assert parsed_el == Text(text="This is nothing")
+    assert parsed_el[0] == Text(text="This is nothing")
 
 
 def test_parse_bullets(monkeypatch):
@@ -207,7 +207,7 @@ def test_parse_bullets(monkeypatch):
     document_tree = etree.fromstring(doc, etree.HTMLParser())
     el = document_tree.find(".//p")
     parsed_el = html._parse_tag(el)
-    assert parsed_el == ListItem("An excellent point!")
+    assert parsed_el[0] == ListItem("An excellent point!")
 
 
 def test_parse_tag_ignores_lonely_bullets():
@@ -215,7 +215,7 @@ def test_parse_tag_ignores_lonely_bullets():
     document_tree = etree.fromstring(doc, etree.HTMLParser())
     el = document_tree.find(".//p")
     parsed_el = html._parse_tag(el)
-    assert parsed_el is None
+    assert parsed_el == []
 
 
 def test_parse_tag_ignores_stubs():
@@ -223,7 +223,7 @@ def test_parse_tag_ignores_stubs():
     document_tree = etree.fromstring(doc, etree.HTMLParser())
     el = document_tree.find(".//p")
     parsed_el = html._parse_tag(el)
-    assert parsed_el is None
+    assert parsed_el == []
 
 
 def test_adjacent_spans_are_text_tags():
