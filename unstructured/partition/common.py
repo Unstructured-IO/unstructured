@@ -510,7 +510,8 @@ def set_element_hierarchy(elements):
             continue
 
         should_pop = stack and element.category not in HIERARCHY_RULE_SET.get(
-            stack[-1].category, []
+            stack[-1].category,
+            [],
         )
         stack = [el for el in stack if not should_pop] + (
             [element] if element.category in HIERARCHY_RULE_SET else []
