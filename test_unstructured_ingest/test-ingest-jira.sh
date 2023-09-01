@@ -24,10 +24,16 @@ fi
 #   --> User email for the domain, such as xyz@unstructured.io
 
 # Optional arguments:
-# --list-of-paths ..
-#     -->
-# --jql-query .. \
-#     -->
+# --list-of-projects
+#     --> Space separated project ids or keys
+# --list-of-boards
+#     --> Space separated board ids or keys
+# --list-of-issues
+#     --> Space separated issue ids or keys
+
+# Note: When any of the optional arguments are provided, connector will ingest only those components, and nothing else.
+#       When none of the optional arguments are provided, all issues in all projects will be ingested.
+
 PYTHONPATH=. ./unstructured/ingest/main.py \
         jira \
         --download-dir "$DOWNLOAD_DIR" \
