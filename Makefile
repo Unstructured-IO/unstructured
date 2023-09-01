@@ -208,10 +208,13 @@ install-pandoc:
 ## pip-compile:             compiles all base/dev/test requirements
 .PHONY: pip-compile
 pip-compile:
-	@for file in $(shell ls requirements/*.in); \
-		do echo "running: pip-compile --upgrade $${file}" && \
+	@for file in $(shell ls requirements/*.in); do \
+		if [[ "$${file}" =~ "constraints" ]]; then \
+			continue; \
+		fi; \
+		echo "running: pip-compile --upgrade $${file}"; \
 		pip-compile --upgrade $${file}; \
-	 done
+	done
 	cp requirements/build.txt docs/requirements.txt
 
 

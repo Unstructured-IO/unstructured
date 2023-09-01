@@ -2,6 +2,8 @@
 
 ### Enhancements
 
+* Removed PIL pin as issue has been resolved upstream
+
 ### Features
 
 * Add Jira Connector to be able to pull issues from a Jira organization
