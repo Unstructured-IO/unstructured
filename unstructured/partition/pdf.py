@@ -466,22 +466,19 @@ def convert_pdf_to_images(
 
 def _get_element_box(
     boxes: List[str],
-    box_idx: int,
     char_count: int,
 ):
     """Helper function to get the bounding box of an element.
 
     Args:
-        element
         boxes (List[str], optional): Defaults to [].
-        box_idx (int, optional): Defaults to 0.
         char_count (int, optional): Defaults to 0.
     """
     min_x = float("inf")
     min_y = float("inf")
     max_x = 0
     max_y = 0
-    for box in boxes[box_idx : box_idx + char_count]:  # noqa
+    for box in boxes:
         _, _x1, _y1, _x2, _y2, _ = box.split()
 
         x1, y1, x2, y2 = map(int, [_x1, _y1, _x2, _y2])
@@ -505,6 +502,8 @@ def add_pytesseract_bbox_to_elements(
     Args:
         elements: elements containing text detected by pytesseract.image_to_string.
         bboxes (str): The return value of pytesseract.image_to_boxes.
+        width: width of image
+        height: height of image
     """
     # (NOTE) jennings: This function was written with pytesseract in mind, but
     # paddle returns similar values via `ocr.ocr(img)`.
@@ -528,8 +527,7 @@ def add_pytesseract_bbox_to_elements(
             box_idx += 1
         char_count = len(element.text.replace(" ", ""))
         _points, char_count = _get_element_box(
-            boxes=boxes,
-            box_idx=box_idx,
+            boxes=boxes[box_idx : box_idx + char_count],
             char_count=char_count,
         )
         box_idx += char_count
@@ -604,7 +602,6 @@ def _partition_pdf_or_image_with_ocr(
                 min_partition=min_partition,
             )
 
-            # FIXME (yao): do not save duplicated info?
             for element in _elements:
                 element.metadata = metadata
 
