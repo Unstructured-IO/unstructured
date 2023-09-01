@@ -17,7 +17,7 @@ certifi>=2023.7.22
 pyparsing<3.1.0
 # NOTE(robinson) - Numpy dropped Python 3.8 support in 1.25.0
 numpy<1.25.0
-scipy<1.11.0
+scipy<1.12.0
 IPython<8.13
 # NOTE(alan) Pinned to avoid error that occurs with 2.4.3:
 # AttributeError: 'ResourcePath' object has no attribute 'collection'
