@@ -4,7 +4,7 @@ import os
 from collections import abc
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Optional
+from typing import TYPE_CHECKING, Optional
 
 from requests.exceptions import HTTPError
 
@@ -252,11 +252,10 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
 
     config: SimpleJiraConfig
     file_meta: JiraFileMeta
-    metadata_fields = None
     registry_name: str = "jira"
 
     @property
-    def record_locator(self) -> Optional[Dict[str, Any]]:  # Values must be JSON-serializable
+    def record_locator(self):  # Values must be JSON-serializable
         """A dictionary with any data necessary to uniquely identify the document on
         the source system."""
         return {"issue_key": self.file_meta.issue_key}
@@ -271,7 +270,7 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
                 "date_modified": str(issue_fields["updated"]),
                 "date_created": str(issue_fields["created"]),
                 "date_processed": str(datetime.datetime.now().time()),
-                "record_locator": issue["key"],
+                "record_locator": self.record_locator,
             }
 
             self.check_exists = True
@@ -341,7 +340,6 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
     @requires_dependencies(["atlassian"], extras="jira")
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
-
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
 
         try:
@@ -384,7 +382,6 @@ class JiraConnector(ConnectorCleanupMixin, BaseConnector):
 
     @requires_dependencies(["atlassian"], extras="jira")
     def initialize(self):
-
         self.jira = self.config.create_session_handle().service
 
         if self.config.list_of_projects or self.config.list_of_boards or self.config.list_of_issues:
