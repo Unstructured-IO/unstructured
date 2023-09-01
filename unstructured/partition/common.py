@@ -502,8 +502,8 @@ def document_to_element_list(
     return elements
 
 
-def set_element_hierarchy(elements):
-    stack = []
+def set_element_hierarchy(elements: List[Element]) -> List[Element]:
+    stack: List[Element] = []
     for element in elements:
         # Skip elements that already have a parent
         if element.metadata.parent_id:
