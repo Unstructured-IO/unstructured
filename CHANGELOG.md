@@ -1,10 +1,12 @@
-## 0.10.12-dev1
+## 0.10.11-dev2
 
 ### Enhancements
 
 ### Features
 
 ### Fixes
+* `add_pytesseract_bbox_to_elements` no longer returns `nan` values and logic is broken into new methods
+  `_get_element_box` and `convert_multiple_coordinates_to_new_system`
 
 * Update version-sync to prevent duplicate release versions
 
