@@ -4,6 +4,7 @@
 
 * Removed PIL pin as issue has been resolved upstream
 * YoloX types added
+
 ### Features
 
 ### Fixes
