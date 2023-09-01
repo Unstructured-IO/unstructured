@@ -1,7 +1,10 @@
 import os
 from dataclasses import dataclass, field
+from datetime import datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional
+from typing import Any, Dict, Optional
+
+import pytz
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -13,9 +16,6 @@ from unstructured.ingest.interfaces import (
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
-
-if TYPE_CHECKING:
-    from praw.models import Submission
 
 
 @dataclass
@@ -33,21 +33,52 @@ class SimpleRedditConfig(BaseConnectorConfig):
 
 
 @dataclass
+class RedditFileMeta:
+    date_created: str
+    date_modified: str
+    version: str
+
+
+@dataclass
 class RedditIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleRedditConfig = field(repr=False)
-    post: "Submission"
+    post_id: str
+    file_exists = None
+    file_metadata: Optional[RedditFileMeta] = None
     registry_name: str = "reddit"
-
-    @property
-    def filename(self) -> Path:
-        return (Path(self.standard_config.download_dir) / f"{self.post.id}.md").resolve()
-
-    @property
-    def _output_filename(self):
-        return Path(self.standard_config.output_dir) / f"{self.post.id}.json"
 
     def _create_full_tmp_dir_path(self):
         self.filename.parent.mkdir(parents=True, exist_ok=True)
+
+    @requires_dependencies(["praw"])
+    def get_post(self):
+        from praw import Reddit
+        from praw.models import Submission
+
+        try:
+            reddit = Reddit(
+                client_id=self.config.client_id,
+                client_secret=self.config.client_secret,
+                user_agent=self.config.user_agent,
+            )
+            post = Submission(reddit, self.post_id)
+        except Exception as e:
+            logger.error(f"Failed to retrieve post with id {self.post_id}")
+            self.file_exists = False
+            raise
+
+        self.file_exists = (self.post.author != "[deleted]" or self.post.auth is not None) and (
+            self.post.selftext != "[deleted]" or self.post.selftext != "[removed]"
+        )
+        return post
+
+    def get_file_metadata(self):
+        post = self.get_post()
+        self.file_metadata = RedditFileMeta(
+            datetime.fromtimestamp(self.post.created_utc, pytz.utc).isoformat(),
+            None,
+            post.permalink,
+        )
 
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
@@ -55,9 +86,40 @@ class RedditIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         self._create_full_tmp_dir_path()
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         # Write the title plus the body, if any
-        text_to_write = f"# {self.post.title}\n{self.post.selftext}"
+        post = self.get_post()
+        text_to_write = f"# {post.title}\n{post.selftext}"
         with open(self.filename, "w", encoding="utf8") as f:
             f.write(text_to_write)
+
+    @property
+    def filename(self) -> Path:
+        return (Path(self.standard_config.download_dir) / f"{self.post_id}.md").resolve()
+
+    @property
+    def _output_filename(self):
+        return Path(self.standard_config.output_dir) / f"{self.post_id}.json"
+
+    @property
+    def date_created(self) -> Optional[str]:
+        if not self.file_metadata:
+            self.get_file_metadata()
+        return self.file_metadata.date_created
+
+    @property
+    def exists(self) -> Optional[bool]:
+        if self.file_exists is None:
+            self.get_file_metadata()
+        return self.file_exists
+
+    @property
+    def record_locator(self) -> Optional[Dict[str, Any]]:
+        return {"id": self.post.id}
+
+    @property
+    def version(self) -> Optional[str]:
+        if not self.file_metadata:
+            self.get_file_metadata()
+        return self.file_metadata.version
 
 
 @requires_dependencies(["praw"], extras="reddit")
@@ -83,4 +145,4 @@ class RedditConnector(ConnectorCleanupMixin, BaseConnector):
             posts = subreddit.search(self.config.search_query, limit=self.config.num_posts)
         else:
             posts = subreddit.hot(limit=self.config.num_posts)
-        return [RedditIngestDoc(self.standard_config, self.config, post) for post in posts]
+        return [RedditIngestDoc(self.standard_config, self.config, post.id) for post in posts]
