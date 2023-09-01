@@ -202,13 +202,14 @@ transformers==4.32.1
     # via unstructured-inference
 typing-extensions==4.7.1
     # via
+    #   -c requirements/base.txt
     #   filelock
     #   huggingface-hub
     #   iopath
     #   torch
 tzdata==2023.3
     # via pandas
-unstructured-inference==0.5.18
+unstructured-inference==0.5.19
     # via
     #   -c requirements/constraints.in
     #   -r requirements/extra-pdf-image.in
