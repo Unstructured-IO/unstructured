@@ -134,6 +134,7 @@ class ElementMetadata:
     last_modified: Optional[str] = None
     filetype: Optional[str] = None
     attached_to_filename: Optional[str] = None
+    parent_id: Optional[Union[str, uuid.UUID, NoID, UUID]] = None
 
     # Page numbers currenlty supported for PDF, HTML and PPT documents
     page_number: Optional[int] = None

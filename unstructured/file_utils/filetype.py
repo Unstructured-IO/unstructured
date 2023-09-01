@@ -38,6 +38,11 @@ TXT_MIME_TYPES = [
     "message/rfc822",  # ref: https://www.rfc-editor.org/rfc/rfc822
 ]
 
+HIERARCHY_RULE_SET = {
+    "Title": ["Title", "Text", "UncategorizedText", "NarrativeText", "ListItem", "BulletedText", "Figure", "Table"],
+    "Header": ["Title", "Text", "UncategorizedText", "NarrativeText", "ListItem", "BulletedText", "Figure", "Table"],
+}
+
 # NOTE(robinson) - .docx.xlsx files are actually zip file with a .docx/.xslx extension.
 # If the MIME type is application/octet-stream, we check if it's a .docx/.xlsx file by
 # looking for expected filenames within the zip file.
@@ -566,8 +571,22 @@ def document_to_element_list(
             page_elements.append(PageBreak(text=""))
         elements.extend(page_elements)
 
+    elements = set_element_hierarchy(elements)
+
     return elements
 
+def set_element_hierarchy(elements):
+    stack = []
+    for element in elements:
+        category = element.category
+        
+        should_pop = stack and category not in HIERARCHY_RULE_SET.get(stack[-1].category, [])
+        stack = [el for el in stack if not should_pop] + ([element] if category in HIERARCHY_RULE_SET else [])
+        
+        if stack:
+            element.metadata.parent_id = stack[-1].id
+
+    return elements
 
 def _get_page_image_metadata(
     page: PageLayout,
