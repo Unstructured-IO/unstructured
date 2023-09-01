@@ -1,12 +1,10 @@
-# import datetime
+import datetime
 import math
 import os
 from collections import abc
 from dataclasses import dataclass
 from pathlib import Path
-
-# from typing import Any, Dict
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Any, Dict, Optional
 
 from requests.exceptions import HTTPError, MissingSchema
 
@@ -253,68 +251,67 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
 
     config: SimpleJiraConfig
     file_meta: JiraFileMeta
+    metadata_fields = None
 
-    # @property
-    # def record_locator(self) -> Optional[Dict[str, Any]]:  # Values must be JSON-serializable
-    #     """A dictionary with any data necessary to uniquely identify the document on
-    #     the source system."""
-    #     return {"issue_key":self.file_meta.issue_key}
+    @property
+    def record_locator(self) -> Optional[Dict[str, Any]]:  # Values must be JSON-serializable
+        """A dictionary with any data necessary to uniquely identify the document on
+        the source system."""
+        return {"issue_key": self.file_meta.issue_key}
 
-    # @requires_dependencies(dependencies=["atlassian"])
-    # def get_metadata_fields(self):
-    #     try:
-    #         issue = self.jira.issue(self.file_meta.issue_key)
-    #         issue_fields = nested_object_to_field_getter(issue["fields"])
+    @requires_dependencies(dependencies=["atlassian"])
+    def get_metadata_fields(self):
+        try:
+            issue = self.jira.issue(self.file_meta.issue_key)
+            issue_fields = nested_object_to_field_getter(issue["fields"])
 
-    #         self.metadata_fields= {
-    #             "date_modified": str(issue_fields["updated"]),
-    #             "date_created": str(issue_fields["created"]),
-    #             "date_processed": str(datetime.datetime.now().time()),
-    #             "record_locator": issue["key"]}
+            self.metadata_fields = {
+                "date_modified": str(issue_fields["updated"]),
+                "date_created": str(issue_fields["created"]),
+                "date_processed": str(datetime.datetime.now().time()),
+                "record_locator": issue["key"],
+            }
 
-    #         self.check_exists = True
-    #         self.file_exists = True
+            self.check_exists = True
+            self.file_exists = True
 
-    #     except HTTPError as error:
-    #         if error.response.reason=="Not Found":
-    #             self.check_exists = True
-    #             self.file_exists = False
-    #         else:
-    #             logger.error(f"Error: {error} for issue {self.file_meta.issue_key}")
+        except HTTPError as error:
+            if error.response.reason == "Not Found":
+                self.check_exists = True
+                self.file_exists = False
+            else:
+                logger.error(f"Error: {error} for issue {self.file_meta.issue_key}")
 
-    # @property
-    # def date_created(self) -> Optional[str]:
-    #     if not self.metadata_fields:
-    #         self.get_metadata_fields()
+    @property
+    def date_created(self) -> Optional[str]:
+        if not self.metadata_fields:
+            self.get_metadata_fields()
 
-    #     return self.metadata_fields["date_created"] \
-    #         if self.metadata_fields else None
+        return self.metadata_fields["date_created"] if self.metadata_fields else None
 
-    # @property
-    # def date_modified(self) -> Optional[str]:
-    #     if not self.metadata_fields:
-    #         self.get_metadata_fields()
+    @property
+    def date_modified(self) -> Optional[str]:
+        if not self.metadata_fields:
+            self.get_metadata_fields()
 
-    #     return self.metadata_fields["date_modified"] \
-    #         if self.metadata_fields else None
+        return self.metadata_fields["date_modified"] if self.metadata_fields else None
 
-    # @property
-    # def date_processed(self) -> Optional[str]:
-    #     if not self.metadata_fields:
-    #         self.get_metadata_fields()
+    @property
+    def date_processed(self) -> Optional[str]:
+        if not self.metadata_fields:
+            self.get_metadata_fields()
 
-    #     return self.metadata_fields["date_processed"] \
-    #         if self.metadata_fields else None
+        return self.metadata_fields["date_processed"] if self.metadata_fields else None
 
-    # @property
-    # def exists(self) -> Optional[bool]:
-    #     """Whether the document exists on the remote source."""
-    #     if self.check_exists:
-    #         return self.file_exists
+    @property
+    def exists(self) -> Optional[bool]:
+        """Whether the document exists on the remote source."""
+        if self.check_exists:
+            return self.file_exists
 
-    #     self.get_metadata_fields()
+        self.get_metadata_fields()
 
-    #     return self.file_exists
+        return self.file_exists
 
     def grouping_folder_name(self):
         if self.file_meta.board_id:
@@ -346,10 +343,10 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
 
         try:
-            jira = self.config.create_session_handle().service
+            self.jira = self.config.create_session_handle().service
 
             # GET issue data
-            issue = jira.issue(self.file_meta.issue_key)
+            issue = self.jira.issue(self.file_meta.issue_key)
             self.check_exists = True
             self.file_exists = True
 
