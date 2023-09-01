@@ -141,15 +141,13 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         """Fetches file metadata from the current filesystem."""
         from fsspec import AbstractFileSystem, get_filesystem_class
 
-        if fs is None:
-            fs: AbstractFileSystem = get_filesystem_class(self.config.protocol)(
-                **self.config.get_access_kwargs(),
-            )
+        fs: AbstractFileSystem = get_filesystem_class(self.config.protocol)(
+                **self.config.get_access_kwargs())
         self.file_exists = fs.exists(self.remote_file_path)
         self.file_metadata = FsspecFileMeta(
             fs.created(self.remote_file_path).isoformat(),
             fs.modified(self.remote_file_path).isoformat(),
-            str(self.fs.checksum(self.remote_file_path)),
+            str(fs.checksum(self.remote_file_path)),
         )
 
     @property
@@ -243,7 +241,6 @@ class FsspecConnector(ConnectorCleanupMixin, BaseConnector):
                 standard_config=self.standard_config,
                 config=self.config,
                 remote_file_path=file,
-                fs=self.fs,
             )
             for file in self._list_files()
         ]
