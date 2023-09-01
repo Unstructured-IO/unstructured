@@ -1,10 +1,12 @@
-## 0.10.12-dev0
+## 0.10.12-dev1
 
 ### Enhancements
 
 ### Features
 
 ### Fixes
+
+* Update version-sync to prevent duplicate release versions
 
 ## 0.10.11
 
