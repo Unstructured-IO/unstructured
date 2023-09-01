@@ -527,7 +527,7 @@ def add_pytesseract_bbox_to_elements(
             box_idx += 1
         char_count = len(element.text.replace(" ", ""))
         _points, char_count = _get_element_box(
-            boxes=boxes[box_idx : box_idx + char_count], # noqa
+            boxes=boxes[box_idx : box_idx + char_count],  # noqa
             char_count=char_count,
         )
         box_idx += char_count
