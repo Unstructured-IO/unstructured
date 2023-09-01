@@ -261,7 +261,7 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         # Get record from Salesforce based on id
         record = client.query_all(
-            f"select FIELDS(STANDARD) from {self.record_type} where Id='{self.record_id}",
+            f"select FIELDS(STANDARD) from {self.record_type} where Id='{self.record_id}'",
         )
 
         try:
