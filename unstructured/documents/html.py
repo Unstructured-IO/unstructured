@@ -24,6 +24,7 @@ from unstructured.documents.elements import (
 )
 from unstructured.documents.xml import VALID_PARSERS, XMLDocument
 from unstructured.logger import logger
+from unstructured.partition.text import split_by_paragraph
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_email_address,
@@ -136,17 +137,20 @@ class HTMLDocument(XMLDocument):
                     continue
 
                 if _is_text_tag(tag_elem):
-                    element = _parse_tag(tag_elem)
-                    if element is not None:
-                        page.elements.append(element)
-                        descendanttag_elems = tuple(tag_elem.iterdescendants())
+                    elements = _parse_tag(tag_elem)
+                    for element in elements:
+                        if element is not None:
+                            page.elements.append(element)
+                            descendanttag_elems = tuple(tag_elem.iterdescendants())
 
                 elif _is_container_with_text(tag_elem):
                     links = _get_links_from_tag(tag_elem)
                     emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
-                    element = _text_to_element(tag_elem.text, "div", (), links, emphasized_texts)
-                    if element is not None:
-                        page.elements.append(element)
+                    text_snippets = split_by_paragraph(tag_elem.text)
+                    for _text in text_snippets:
+                        _element = _text_to_element(_text, "div", (), links, emphasized_texts)
+                        if _element is not None:
+                            page.elements.append(_element)
 
                 elif _is_bulleted_table(tag_elem):
                     bulleted_text = _bulleted_text_from_table(tag_elem)
@@ -154,9 +158,9 @@ class HTMLDocument(XMLDocument):
                     descendanttag_elems = tuple(tag_elem.iterdescendants())
 
                 elif is_list_item_tag(tag_elem):
-                    element, next_element = _process_list_item(tag_elem)
-                    if element is not None:
-                        page.elements.append(element)
+                    _element, next_element = _process_list_item(tag_elem)
+                    if _element is not None:
+                        page.elements.append(_element)
                         descendanttag_elems = _get_bullet_descendants(tag_elem, next_element)
 
                 elif tag_elem.tag in PAGEBREAK_TAGS and len(page.elements) > 0:
@@ -267,7 +271,7 @@ def _get_emphasized_texts_from_tag(tag_elem: etree.Element) -> List[dict]:
 
 def _parse_tag(
     tag_elem: etree.Element,
-) -> Optional[Element]:
+) -> List[Element]:
     """Converts an etree element to a Text element if there is applicable text in the element.
     Ancestor tags are kept so they can be used for filtering or classification without
     processing the document tree again. In the future we might want to keep descendants too,
@@ -277,17 +281,27 @@ def _parse_tag(
     emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
 
     if tag_elem.tag == "script":
-        return None
+        return []
+
     text = _construct_text(tag_elem)
-    if not text:
-        return None
-    return _text_to_element(
-        text,
-        tag_elem.tag,
-        ancestortags,
-        links=links,
-        emphasized_texts=emphasized_texts,
-    )
+    text_snippets = split_by_paragraph(text)
+
+    elements: List[Element] = []
+    for _text in text_snippets:
+        if not _text:
+            continue
+
+        element = _text_to_element(
+            text,
+            tag_elem.tag,
+            ancestortags,
+            links=links,
+            emphasized_texts=emphasized_texts,
+        )
+        if element is not None:
+            elements.append(element)
+
+    return elements
 
 
 def _text_to_element(
