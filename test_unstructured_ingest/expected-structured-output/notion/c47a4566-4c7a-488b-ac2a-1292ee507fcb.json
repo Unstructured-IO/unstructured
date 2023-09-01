@@ -14,7 +14,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "197dece4986f325b5d51a9e9d50eb0a6",
+    "element_id": "5682460764071f5959a113ccbe76aaa5",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
@@ -23,7 +23,7 @@
       "filetype": "text/html",
       "page_number": 1
     },
-    "text": "💡\n      \n      Notion Tip: Tag pages to let collaborators know what they can expect to use the page for. You can add one or many tags to any page in a wiki."
+    "text": "Notion Tip: Tag pages to let collaborators know what they can expect to use the page for. You can add one or many tags to any page in a wiki."
   },
   {
     "type": "Title",
@@ -52,8 +52,8 @@
     "text": "This is some new text"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "0e417d4322de881c074174e590eb664f",
+    "type": "Title",
+    "element_id": "b09081352943c3156037d4f400f06804",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
@@ -74,11 +74,36 @@
         "b"
       ]
     },
-    "text": "\n      Some/less → \n      more\n       \n      "
+    "text": "Some/less →"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "e302f58e2f42e9bcf16d78f5829ac32d",
+    "type": "Title",
+    "element_id": "187897ce0afcf20b50ba2b37dca84a95",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-08-04T18:31:00.000Z",
+        "date_modified": "2023-08-17T18:48:00.000Z"
+      },
+      "filetype": "text/html",
+      "page_number": 1,
+      "link_urls": [
+        "/9ba4d6da8a574cfc81ebceac1fde52bd"
+      ],
+      "link_texts": [
+        "\n        text\n      "
+      ],
+      "emphasized_text_contents": [
+        "formatted"
+      ],
+      "emphasized_text_tags": [
+        "b"
+      ]
+    },
+    "text": "more"
+  },
+  {
+    "type": "Title",
+    "element_id": "982d9e3eb996f559e633f4d194def376",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
@@ -93,11 +118,30 @@
         "\n        text\n      "
       ]
     },
-    "text": "text\n      \n       with other"
+    "text": "text"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "8864784f943d9f832a3dce22ef8bcf01",
+    "type": "Title",
+    "element_id": "9b4fb415705d7236447844998cca0733",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-08-04T18:31:00.000Z",
+        "date_modified": "2023-08-17T18:48:00.000Z"
+      },
+      "filetype": "text/html",
+      "page_number": 1,
+      "link_urls": [
+        "/9ba4d6da8a574cfc81ebceac1fde52bd"
+      ],
+      "link_texts": [
+        "\n        text\n      "
+      ]
+    },
+    "text": "with other"
+  },
+  {
+    "type": "Title",
+    "element_id": "b6005709775903ca20c4dac4119c9a45",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
@@ -112,11 +156,30 @@
         "b"
       ]
     },
-    "text": "c1r1 \n          \n            content"
+    "text": "c1r1"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "6f75c9d2993dbb3981c019741c7962a9",
+    "type": "Title",
+    "element_id": "ed7002b439e9ac845f22357d822bac14",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-08-04T18:31:00.000Z",
+        "date_modified": "2023-08-17T18:48:00.000Z"
+      },
+      "filetype": "text/html",
+      "page_number": 1,
+      "emphasized_text_contents": [
+        "content"
+      ],
+      "emphasized_text_tags": [
+        "b"
+      ]
+    },
+    "text": "content"
+  },
+  {
+    "type": "Title",
+    "element_id": "2b519ce0cb9f88af9bca968b00e36195",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
@@ -125,7 +188,33 @@
       "filetype": "text/html",
       "page_number": 1
     },
-    "text": "c2r1 table \n          2023-08-08T09:00:00.000-04:00\n            cell"
+    "text": "c2r1 table"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "b7fe0b3d5c73b7704a8a7c8373b2ce01",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-08-04T18:31:00.000Z",
+        "date_modified": "2023-08-17T18:48:00.000Z"
+      },
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": "2023-08-08T09:00:00.000-04:00"
+  },
+  {
+    "type": "Title",
+    "element_id": "39d02b42938b2b75d027ebeb25c9d1fd",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-08-04T18:31:00.000Z",
+        "date_modified": "2023-08-17T18:48:00.000Z"
+      },
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": "cell"
   },
   {
     "type": "Title",
@@ -147,8 +236,8 @@
     "text": "Page with every block"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "13686520a51e25584bb06ab189b38552",
+    "type": "Title",
+    "element_id": "d78b2a36b04d4b06084c0ecbe7c957ff",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
@@ -163,11 +252,30 @@
         "\n            content\n          "
       ]
     },
-    "text": "c1r2 more \n          \n            content"
+    "text": "c1r2 more"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "cf236cfe4b4c0ef644c37b4e491a4aa8",
+    "type": "Title",
+    "element_id": "ed7002b439e9ac845f22357d822bac14",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-08-04T18:31:00.000Z",
+        "date_modified": "2023-08-17T18:48:00.000Z"
+      },
+      "filetype": "text/html",
+      "page_number": 1,
+      "link_urls": [
+        "/122b2c22996b435b9de2ee0e9d2b04bc"
+      ],
+      "link_texts": [
+        "\n            content\n          "
+      ]
+    },
+    "text": "content"
+  },
+  {
+    "type": "Title",
+    "element_id": "d30c64f4a227f44968f3efb46da339c2",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
@@ -182,7 +290,26 @@
         "span"
       ]
     },
-    "text": "c2r2 table \n          \n            cell"
+    "text": "c2r2 table"
+  },
+  {
+    "type": "Title",
+    "element_id": "39d02b42938b2b75d027ebeb25c9d1fd",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-08-04T18:31:00.000Z",
+        "date_modified": "2023-08-17T18:48:00.000Z"
+      },
+      "filetype": "text/html",
+      "page_number": 1,
+      "emphasized_text_contents": [
+        "cell"
+      ],
+      "emphasized_text_tags": [
+        "span"
+      ]
+    },
+    "text": "cell"
   },
   {
     "type": "Title",
@@ -218,7 +345,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "2d77a706008eebaf1f7c4e116bbe08b4",
+    "element_id": "42b57632c93fb87d5f6de87d299eeda6",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
@@ -235,7 +362,49 @@
         "b"
       ]
     },
-    "text": "this is \n          \n            an \n          \n          \n            equation"
+    "text": "this is"
+  },
+  {
+    "type": "Title",
+    "element_id": "ea325d761f98c6b73320e442b67f2a35",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-08-04T18:31:00.000Z",
+        "date_modified": "2023-08-17T18:48:00.000Z"
+      },
+      "filetype": "text/html",
+      "page_number": 1,
+      "emphasized_text_contents": [
+        "an",
+        "equation"
+      ],
+      "emphasized_text_tags": [
+        "b",
+        "b"
+      ]
+    },
+    "text": "an"
+  },
+  {
+    "type": "Title",
+    "element_id": "edfc47701c055a12d3e783874b515842",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-08-04T18:31:00.000Z",
+        "date_modified": "2023-08-17T18:48:00.000Z"
+      },
+      "filetype": "text/html",
+      "page_number": 1,
+      "emphasized_text_contents": [
+        "an",
+        "equation"
+      ],
+      "emphasized_text_tags": [
+        "b",
+        "b"
+      ]
+    },
+    "text": "equation"
   },
   {
     "type": "Title",
@@ -257,8 +426,8 @@
     "text": "Untitled"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "7e921a403f1840728e2887990cfe640d",
+    "type": "Title",
+    "element_id": "fe8df1a5a1980493ca9406ad3bb0e412",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
@@ -273,7 +442,45 @@
         "i"
       ]
     },
-    "text": "text1\n\n\n          \n            text2\n          \n          \n\nMultiline cell"
+    "text": "text1"
+  },
+  {
+    "type": "Title",
+    "element_id": "fd848ca35a6281600b5da598c7cb4d5d",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-08-04T18:31:00.000Z",
+        "date_modified": "2023-08-17T18:48:00.000Z"
+      },
+      "filetype": "text/html",
+      "page_number": 1,
+      "emphasized_text_contents": [
+        "text2"
+      ],
+      "emphasized_text_tags": [
+        "i"
+      ]
+    },
+    "text": "text2"
+  },
+  {
+    "type": "Title",
+    "element_id": "855397592bdca441f628c3dee1d19133",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-08-04T18:31:00.000Z",
+        "date_modified": "2023-08-17T18:48:00.000Z"
+      },
+      "filetype": "text/html",
+      "page_number": 1,
+      "emphasized_text_contents": [
+        "text2"
+      ],
+      "emphasized_text_tags": [
+        "i"
+      ]
+    },
+    "text": "Multiline cell"
   },
   {
     "type": "Title",
@@ -503,8 +710,8 @@
     "text": "I quote myself testings Notion"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "20c9899ff94a00676943e33f204aa191",
+    "type": "Title",
+    "element_id": "af36d59778ff507b5d0bb5913219f4b7",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
@@ -519,7 +726,26 @@
         "\n        https://www.notion.so/icons/airplane_brown.svg\n      "
       ]
     },
-    "text": "https://www.notion.so/icons/airplane_brown.svg\n      \n      I call this out"
+    "text": "https://www.notion.so/icons/airplane_brown.svg"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "840be735d959b12f23dde6b06964679e",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-08-04T18:31:00.000Z",
+        "date_modified": "2023-08-17T18:48:00.000Z"
+      },
+      "filetype": "text/html",
+      "page_number": 2,
+      "link_urls": [
+        "https://www.notion.so/icons/airplane_brown.svg"
+      ],
+      "link_texts": [
+        "\n        https://www.notion.so/icons/airplane_brown.svg\n      "
+      ]
+    },
+    "text": "I call this out"
   },
   {
     "type": "Title",
