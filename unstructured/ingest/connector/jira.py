@@ -31,7 +31,7 @@ class JiraSessionHandle(BaseSessionHandle):
     service: "Jira"
 
 
-@requires_dependencies(["atlassian"])
+@requires_dependencies(["atlassian"], extras="jira")
 def create_jira_object(url, user_email, api_token):
     """
     Creates a jira object for interacting with Jira Cloud.
@@ -252,6 +252,7 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
     config: SimpleJiraConfig
     file_meta: JiraFileMeta
     metadata_fields = None
+    registry_name: str = "jira"
 
     @property
     def record_locator(self) -> Optional[Dict[str, Any]]:  # Values must be JSON-serializable
@@ -259,7 +260,7 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
         the source system."""
         return {"issue_key": self.file_meta.issue_key}
 
-    @requires_dependencies(dependencies=["atlassian"])
+    @requires_dependencies(dependencies=["atlassian"], extras="jira")
     def get_metadata_fields(self):
         try:
             issue = self.jira.issue(self.file_meta.issue_key)
@@ -336,7 +337,7 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
             Path(self.standard_config.output_dir) / self.grouping_folder_name() / output_file
         ).resolve()
 
-    @requires_dependencies(["atlassian"])
+    @requires_dependencies(["atlassian"], extras="jira")
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
 
@@ -366,7 +367,7 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
                 logger.error(f"Error: {error} for issue {self.file_meta.issue_key}")
 
 
-@requires_dependencies(["atlassian"])
+@requires_dependencies(["atlassian"], extras="jira")
 @dataclass
 class JiraConnector(ConnectorCleanupMixin, BaseConnector):
     """Fetches issues from projects in an Atlassian (Jira) Cloud instance."""
@@ -380,7 +381,7 @@ class JiraConnector(ConnectorCleanupMixin, BaseConnector):
     ):
         super().__init__(standard_config, config)
 
-    @requires_dependencies(["atlassian"])
+    @requires_dependencies(["atlassian"], extras="jira")
     def initialize(self):
 
         self.jira = self.config.create_session_handle().service
@@ -391,13 +392,13 @@ class JiraConnector(ConnectorCleanupMixin, BaseConnector):
         else:
             self.ingest_all_issues = True
 
-    @requires_dependencies(["atlassian"])
+    @requires_dependencies(["atlassian"], extras="jira")
     def _get_all_project_ids(self):
         """Fetches ids for all projects in a Jira domain."""
         project_ids = [project["key"] for project in self.jira.projects()]
         return project_ids
 
-    @requires_dependencies(["atlassian"])
+    @requires_dependencies(["atlassian"], extras="jira")
     def _get_issues_within_one_project(
         self,
         project_id: str,
@@ -407,7 +408,7 @@ class JiraConnector(ConnectorCleanupMixin, BaseConnector):
 
         return [(issue["key"], issue["id"], None) for issue in results]
 
-    @requires_dependencies(["atlassian"])
+    @requires_dependencies(["atlassian"], extras="jira")
     def _get_issue_keys_within_projects(self, project_ids=None):
         if project_ids is None:
             if self.ingest_all_issues:
