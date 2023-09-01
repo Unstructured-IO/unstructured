@@ -489,10 +489,8 @@ def set_element_hierarchy(elements):
         if element.metadata.parent_id:
             continue
 
-        category = element.category
-        
-        should_pop = stack and category not in HIERARCHY_RULE_SET.get(stack[-1].category, [])
-        stack = [el for el in stack if not should_pop] + ([element] if category in HIERARCHY_RULE_SET else [])
+        should_pop = stack and element.category not in HIERARCHY_RULE_SET.get(stack[-1].category, [])
+        stack = [el for el in stack if not should_pop] + ([element] if element.category in HIERARCHY_RULE_SET else [])
         
         if stack:
             element.metadata.parent_id = stack[-1].id
