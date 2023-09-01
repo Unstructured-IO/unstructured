@@ -1,10 +1,14 @@
-## 0.10.12-dev0
+## 0.10.12-dev2
 
 ### Enhancements
+
+* Removed PIL pin as issue has been resolved upstream
 
 ### Features
 
 ### Fixes
+
+* Update version-sync to prevent duplicate release versions
 
 ## 0.10.11
 
