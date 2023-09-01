@@ -40,6 +40,7 @@ def process_document(ingest_doc_json: str, **partition_kwargs) -> Optional[List[
     """
     global session_handle
     isd_elems_no_filename = None
+    doc = None
     try:
         doc = create_ingest_doc_from_json(ingest_doc_json)
         if isinstance(doc, IngestDocSessionHandleMixin):
@@ -63,5 +64,6 @@ def process_document(ingest_doc_json: str, **partition_kwargs) -> Optional[List[
         # TODO(crag) save the exception instead of print?
         logger.error(f"Failed to process {doc}", exc_info=True)
     finally:
-        doc.cleanup_file()
+        if doc:
+            doc.cleanup_file()
         return isd_elems_no_filename

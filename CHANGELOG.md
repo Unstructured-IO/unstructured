@@ -1,10 +1,10 @@
-## 0.10.10-dev1
+## 0.10.11-dev0
 
 ### Enhancements
 
 ### Features
 
-* Add Salesforce Connector to be able to pull Account, Case, Campaign, EmailMessage, Lead
+* Add in ingest cli s3 writer
 
 ### Fixes
 
