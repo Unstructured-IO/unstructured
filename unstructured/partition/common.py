@@ -40,9 +40,28 @@ if TYPE_CHECKING:
     )
 
 HIERARCHY_RULE_SET = {
-    "Title": ["Title", "Text", "UncategorizedText", "NarrativeText", "ListItem", "BulletedText", "Figure", "Table"],
-    "Header": ["Title", "Text", "UncategorizedText", "NarrativeText", "ListItem", "BulletedText", "Figure", "Table"],
+    "Title": [
+        "Title",
+        "Text",
+        "UncategorizedText",
+        "NarrativeText",
+        "ListItem",
+        "BulletedText",
+        "Figure",
+        "Table",
+    ],
+    "Header": [
+        "Title",
+        "Text",
+        "UncategorizedText",
+        "NarrativeText",
+        "ListItem",
+        "BulletedText",
+        "Figure",
+        "Table",
+    ],
 }
+
 
 def get_last_modified_date(filename: str) -> Union[str, None]:
     modify_date = datetime.fromtimestamp(os.path.getmtime(filename))
@@ -482,6 +501,7 @@ def document_to_element_list(
     elements = set_element_hierarchy(elements)
     return elements
 
+
 def set_element_hierarchy(elements):
     stack = []
     for element in elements:
@@ -489,9 +509,13 @@ def set_element_hierarchy(elements):
         if element.metadata.parent_id:
             continue
 
-        should_pop = stack and element.category not in HIERARCHY_RULE_SET.get(stack[-1].category, [])
-        stack = [el for el in stack if not should_pop] + ([element] if element.category in HIERARCHY_RULE_SET else [])
-        
+        should_pop = stack and element.category not in HIERARCHY_RULE_SET.get(
+            stack[-1].category, []
+        )
+        stack = [el for el in stack if not should_pop] + (
+            [element] if element.category in HIERARCHY_RULE_SET else []
+        )
+
         if stack:
             element.metadata.parent_id = stack[-1].id
 
