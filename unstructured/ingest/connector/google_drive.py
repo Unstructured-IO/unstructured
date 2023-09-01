@@ -2,9 +2,10 @@ import io
 import json
 import os
 from dataclasses import dataclass
+from datetime import datetime
 from mimetypes import guess_extension
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, Optional
+from typing import TYPE_CHECKING, Any, Dict, Optional
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.file_utils.google_filetype import GOOGLE_DRIVE_EXPORT_TYPES
@@ -104,6 +105,7 @@ class SimpleGoogleDriveConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
 class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleGoogleDriveConfig
     file_meta: Dict[str, str]
+    file_exists: Optional[bool] = None
     registry_name: str = "google_drive"
 
     @property
@@ -114,8 +116,68 @@ class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, B
     def _output_filename(self):
         return Path(f"{self.file_meta.get('output_filepath')}.json").resolve()
 
-    @BaseIngestDoc.skip_if_file_exists
+    @property
+    def date_created(self) -> Optional[str]:
+        if self.file_meta.get("date_created", None) is None:
+            self.get_file_metadata()
+        return self.file_meta["date_created"]
+
+    @property
+    def date_modified(self) -> Optional[str]:
+        if self.file_meta.get("date_modified", None) is None:
+            self.get_file_metadata()
+        return self.file_meta["date_modified"]
+
+    @property
+    def exists(self) -> Optional[bool]:
+        if self.file_exists is None:
+            self.get_file_metadata()
+        return self.file_exists
+
+    @property
+    def record_locator(self) -> Optional[Dict[str, Any]]:
+        return {
+            "id": self.file_meta["id"],
+        }
+
+    @property
+    def version(self) -> Optional[str]:
+        if self.file_meta.get("version", None) is None:
+            self.get_file_metadata()
+        return self.file_meta["version"]
+
     @requires_dependencies(["googleapiclient"], extras="google-drive")
+    def get_file_metadata(self):
+        from googleapiclient.errors import HttpError
+
+        try:
+            file_obj = (
+                self.session_handle.service.files()
+                .get(fileId=self.file_meta["id"], fields="id, createdTime, modifiedTime, version")
+                .execute()
+            )
+            if date_created := file_obj.get("createdTime", ""):
+                self.file_meta["date_created"] = datetime.strptime(
+                    date_created,
+                    "%Y-%m-%dT%H:%M:%S.%fZ",
+                ).isoformat()
+
+            if date_modified := file_obj.get("modifiedTime", ""):
+                self.file_meta["date_modifed"] = datetime.strptime(
+                    date_modified,
+                    "%Y-%m-%dT%H:%M:%S.%fZ",
+                ).isoformat()
+
+            self.file_meta["version"] = file_obj.get("version", "")
+        except HttpError as e:
+            if e.status_code == 404:
+                logger.error(f"File {self.file_meta['name']} not found")
+                self.file_exists = False
+            raise
+        self.file_exists = True
+
+    @requires_dependencies(["googleapiclient"], extras="google-drive")
+    @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
         from googleapiclient.errors import HttpError
         from googleapiclient.http import MediaIoBaseDownload
@@ -143,7 +205,7 @@ class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, B
         downloaded = False
         try:
             while downloaded is False:
-                status, downloaded = downloader.next_chunk()
+                _, downloaded = downloader.next_chunk()
         except HttpError:
             pass
 
@@ -164,6 +226,7 @@ class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, B
 
         if not saved:
             logger.error(f"Error while downloading and saving file: {self.filename}.")
+        self.get_file_metadata()
 
     def write_result(self):
         """Write the structured json result for this doc. result must be json serializable."""
