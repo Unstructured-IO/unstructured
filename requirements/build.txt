@@ -10,17 +10,17 @@ babel==2.12.1
     # via sphinx
 beautifulsoup4==4.12.2
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   furo
 certifi==2023.7.22
     # via
-    #   -c requirements/base.txt
-    #   -c requirements/constraints.in
-    #   -r requirements/build.in
+    #   -c base.txt
+    #   -c constraints.in
+    #   -r build.in
     #   requests
 charset-normalizer==3.2.0
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   requests
 docutils==0.18.1
     # via
@@ -28,14 +28,12 @@ docutils==0.18.1
     #   sphinx-rtd-theme
     #   sphinx-tabs
 furo==2023.7.26
-    # via -r requirements/build.in
+    # via -r build.in
 idna==3.4
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   requests
 imagesize==1.4.1
-    # via sphinx
-importlib-metadata==6.8.0
     # via sphinx
 jinja2==3.1.2
     # via sphinx
@@ -43,50 +41,49 @@ markupsafe==2.1.3
     # via jinja2
 packaging==23.1
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   sphinx
 pygments==2.16.1
     # via
     #   furo
     #   sphinx
     #   sphinx-tabs
-pytz==2023.3
-    # via babel
 requests==2.31.0
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   sphinx
 snowballstemmer==2.2.0
     # via sphinx
 soupsieve==2.4.1
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   beautifulsoup4
 sphinx==6.2.1
     # via
-    #   -r requirements/build.in
+    #   -r build.in
     #   furo
     #   sphinx-basic-ng
     #   sphinx-rtd-theme
     #   sphinx-tabs
+    #   sphinxcontrib-devhelp
     #   sphinxcontrib-jquery
 sphinx-basic-ng==1.0.0b2
     # via furo
 sphinx-rtd-theme==1.2.2
-    # via -r requirements/build.in
+    # via -r build.in
 sphinx-tabs==3.4.1
-    # via -r requirements/build.in
+    # via -r build.in
 sphinxcontrib-applehelp==1.0.4
     # via
-    #   -r requirements/build.in
+    #   -r build.in
     #   sphinx
-sphinxcontrib-devhelp==1.0.2
+sphinxcontrib-devhelp==1.0.5
     # via
-    #   -r requirements/build.in
+    #   -r build.in
     #   sphinx
 sphinxcontrib-htmlhelp==2.0.1
     # via
-    #   -r requirements/build.in
+    #   -r build.in
     #   sphinx
 sphinxcontrib-jquery==4.1
     # via sphinx-rtd-theme
@@ -94,16 +91,14 @@ sphinxcontrib-jsmath==1.0.1
     # via sphinx
 sphinxcontrib-qthelp==1.0.3
     # via
-    #   -r requirements/build.in
+    #   -r build.in
     #   sphinx
 sphinxcontrib-serializinghtml==1.1.5
     # via
-    #   -r requirements/build.in
+    #   -r build.in
     #   sphinx
 urllib3==1.26.16
     # via
-    #   -c requirements/base.txt
-    #   -c requirements/constraints.in
+    #   -c base.txt
+    #   -c constraints.in
     #   requests
-zipp==3.16.2
-    # via importlib-metadata
