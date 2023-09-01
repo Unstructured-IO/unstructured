@@ -623,7 +623,7 @@ FILETYPE_TO_MODULE = {
 
 @pytest.mark.parametrize("filetype", supported_filetypes)
 def test_file_specific_produces_correct_filetype(filetype: FileType):
-    if filetype in (FileType.JPG, FileType.PNG, FileType.EMPTY):
+    if filetype in (FileType.JPG, FileType.PNG, FileType.TIFF, FileType.EMPTY):
         pytest.skip()
     extension = filetype.name.lower()
     filetype_module = (
@@ -644,7 +644,7 @@ def test_file_specific_produces_correct_filetype(filetype: FileType):
 
 
 def test_auto_partition_xml_from_filename(filename="example-docs/factbook.xml"):
-    elements = partition(filename=filename, xml_keep_tags=False)
+    elements = partition(filename=filename, xml_keep_tags=False, metadata_filename=filename)
 
     assert elements[0].text == "United States"
     assert elements[0].metadata.filename == "factbook.xml"
@@ -660,15 +660,15 @@ def test_auto_partition_xml_from_file(filename="example-docs/factbook.xml"):
 def test_auto_partition_xml_from_filename_with_tags(filename="example-docs/factbook.xml"):
     elements = partition(filename=filename, xml_keep_tags=True)
 
-    assert elements[5].text == "<leader>Joe Biden</leader>"
-    assert elements[5].metadata.filename == "factbook.xml"
+    assert "<leader>Joe Biden</leader>" in elements[0].text
+    assert elements[0].metadata.filename == "factbook.xml"
 
 
 def test_auto_partition_xml_from_file_with_tags(filename="example-docs/factbook.xml"):
     with open(filename, "rb") as f:
         elements = partition(file=f, xml_keep_tags=True)
 
-    assert elements[5].text == "<leader>Joe Biden</leader>"
+    assert "<leader>Joe Biden</leader>" in elements[0].text
 
 
 EXPECTED_XLSX_FILETYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -830,8 +830,8 @@ def test_auto_partition_html_pre_from_file(filename="example-docs/fake-html-pre.
 
     assert len(elements) > 0
     assert "PageBreak" not in [elem.category for elem in elements]
-    assert clean_extra_whitespace(elements[0].text) == "[107th Congress Public Law 56]"
-    assert isinstance(elements[0], Title)
+    assert clean_extra_whitespace(elements[0].text).startswith("[107th Congress Public Law 56]")
+    assert isinstance(elements[0], NarrativeText)
     assert elements[0].metadata.filetype == "text/html"
     assert elements[0].metadata.filename == "fake-html-pre.htm"
 

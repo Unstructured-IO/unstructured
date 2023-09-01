@@ -28,7 +28,7 @@ cycler==0.11.0
     # via matplotlib
 effdet==0.4.1
     # via layoutparser
-filelock==3.12.2
+filelock==3.12.3
     # via
     #   huggingface-hub
     #   torch
@@ -56,7 +56,7 @@ iopath==0.1.10
     # via layoutparser
 jinja2==3.1.2
     # via torch
-kiwisolver==1.4.4
+kiwisolver==1.4.5
     # via matplotlib
 layoutparser[layoutmodels,tesseract]==0.3.4
     # via unstructured-inference
@@ -91,6 +91,7 @@ opencv-python==4.8.0.76
     #   unstructured-inference
 packaging==23.1
     # via
+    #   -c requirements/base.txt
     #   huggingface-hub
     #   matplotlib
     #   onnxruntime
@@ -132,7 +133,7 @@ pyparsing==3.0.9
     # via
     #   -c requirements/constraints.in
     #   matplotlib
-pypdfium2==4.18.0
+pypdfium2==4.19.0
     # via pdfplumber
 pytesseract==0.3.10
     # via layoutparser
@@ -161,8 +162,9 @@ requests==2.31.0
     #   huggingface-hub
     #   torchvision
     #   transformers
-safetensors==0.3.3
+safetensors==0.3.2
     # via
+    #   -c requirements/constraints.in
     #   timm
     #   transformers
 scipy==1.10.1
@@ -175,7 +177,7 @@ sympy==1.12
     # via
     #   onnxruntime
     #   torch
-timm==0.9.5
+timm==0.9.6
     # via effdet
 tokenizers==0.13.3
     # via transformers
@@ -196,16 +198,18 @@ tqdm==4.66.1
     #   huggingface-hub
     #   iopath
     #   transformers
-transformers==4.32.0
+transformers==4.32.1
     # via unstructured-inference
 typing-extensions==4.7.1
     # via
+    #   -c requirements/base.txt
+    #   filelock
     #   huggingface-hub
     #   iopath
     #   torch
 tzdata==2023.3
     # via pandas
-unstructured-inference==0.5.16
+unstructured-inference==0.5.19
     # via
     #   -c requirements/constraints.in
     #   -r requirements/extra-pdf-image.in

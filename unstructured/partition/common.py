@@ -10,7 +10,7 @@ from typing import IO, TYPE_CHECKING, Any, BinaryIO, Dict, List, Optional, Tuple
 import emoji
 from tabulate import tabulate
 
-from unstructured.documents.coordinates import CoordinateSystem
+from unstructured.documents.coordinates import CoordinateSystem, PixelSpace
 from unstructured.documents.elements import (
     TYPE_TO_TEXT_ELEMENT_MAP,
     CheckBox,
@@ -23,12 +23,17 @@ from unstructured.documents.elements import (
 )
 from unstructured.logger import logger
 from unstructured.nlp.patterns import ENUMERATED_BULLETS_RE, UNICODE_BULLETS_RE
+from unstructured.partition.utils.constants import SORT_MODE_XY_CUT
 from unstructured.utils import dependency_exists
 
 if dependency_exists("docx") and dependency_exists("docx.table"):
     from docx.table import Table as docxtable
 
+if dependency_exists("numpy") and dependency_exists("cv2"):
+    from unstructured.partition.utils.sorting import sort_page_elements
+
 if TYPE_CHECKING:
+    from unstructured_inference.inference.layout import DocumentLayout, PageLayout
     from unstructured_inference.inference.layoutelement import (
         LayoutElement,
         LocationlessLayoutElement,
@@ -62,6 +67,7 @@ def normalize_layout_element(
         Dict[str, Any],
     ],
     coordinate_system: Optional[CoordinateSystem] = None,
+    infer_list_items: bool = True,
 ) -> Union[Element, List[Element]]:
     """Converts an unstructured_inference LayoutElement object to an unstructured Element."""
 
@@ -83,11 +89,19 @@ def normalize_layout_element(
     coordinates = layout_dict.get("coordinates")
     element_type = layout_dict.get("type")
     if element_type == "List":
-        return layout_list_to_list_items(
-            text,
-            coordinates=coordinates,
-            coordinate_system=coordinate_system,
-        )
+        if infer_list_items:
+            return layout_list_to_list_items(
+                text,
+                coordinates=coordinates,
+                coordinate_system=coordinate_system,
+            )
+        else:
+            return ListItem(
+                text=text,
+                coordinates=coordinates,
+                coordinate_system=coordinate_system,
+            )
+
     elif element_type in TYPE_TO_TEXT_ELEMENT_MAP:
         _element_class = TYPE_TO_TEXT_ELEMENT_MAP[element_type]
         return _element_class(
@@ -365,3 +379,100 @@ def contains_emoji(s: str) -> bool:
     """
 
     return bool(emoji.emoji_count(s))
+
+
+def _get_page_image_metadata(
+    page: PageLayout,
+) -> dict:
+    """Retrieve image metadata and coordinate system from a page."""
+
+    image = getattr(page, "image", None)
+    image_metadata = getattr(page, "image_metadata", None)
+
+    if image:
+        image_format = image.format
+        image_width = image.width
+        image_height = image.height
+    elif image_metadata:
+        image_format = image_metadata.get("format")
+        image_width = image_metadata.get("width")
+        image_height = image_metadata.get("height")
+    else:
+        image_format = None
+        image_width = None
+        image_height = None
+
+    return {
+        "format": image_format,
+        "width": image_width,
+        "height": image_height,
+    }
+
+
+def document_to_element_list(
+    document: "DocumentLayout",
+    sortable: bool = False,
+    include_page_breaks: bool = False,
+    last_modification_date: Optional[str] = None,
+    infer_list_items: bool = True,
+    **kwargs,
+) -> List[Element]:
+    """Converts a DocumentLayout object to a list of unstructured elements."""
+    elements: List[Element] = []
+    sort_mode = kwargs.get("sort_mode", SORT_MODE_XY_CUT)
+    num_pages = len(document.pages)
+    for i, page in enumerate(document.pages):
+        page_elements: List[Element] = []
+
+        page_image_metadata = _get_page_image_metadata(page)
+        image_format = page_image_metadata.get("format")
+        image_width = page_image_metadata.get("width")
+        image_height = page_image_metadata.get("height")
+
+        for layout_element in page.elements:
+            if image_width and image_height and hasattr(layout_element, "coordinates"):
+                coordinate_system = PixelSpace(width=image_width, height=image_height)
+            else:
+                coordinate_system = None
+
+            element = normalize_layout_element(
+                layout_element,
+                coordinate_system=coordinate_system,
+                infer_list_items=infer_list_items,
+            )
+
+            if isinstance(element, List):
+                for el in element:
+                    if last_modification_date:
+                        el.metadata.last_modified = last_modification_date
+                    el.metadata.page_number = i + 1
+                page_elements.extend(element)
+                continue
+            else:
+                if last_modification_date:
+                    element.metadata.last_modified = last_modification_date
+                element.metadata.text_as_html = (
+                    layout_element.text_as_html if hasattr(layout_element, "text_as_html") else None
+                )
+                page_elements.append(element)
+            coordinates = (
+                element.metadata.coordinates.points if element.metadata.coordinates else None
+            )
+            _add_element_metadata(
+                element,
+                page_number=i + 1,
+                filetype=image_format,
+                coordinates=coordinates,
+                coordinate_system=coordinate_system,
+                **kwargs,
+            )
+
+        sorted_page_elements = page_elements
+        if sortable and sort_mode == SORT_MODE_XY_CUT:
+            sorted_page_elements = sort_page_elements(page_elements, sort_mode)
+
+        if include_page_breaks and i < num_pages - 1:
+            sorted_page_elements.append(PageBreak(text=""))
+        elements.extend(sorted_page_elements)
+
+    return elements

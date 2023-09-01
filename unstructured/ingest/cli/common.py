@@ -62,8 +62,8 @@ def run_init_checks(
         )
 
 
-def log_options(options: dict):
-    ingest_log_streaming_init(logging.DEBUG if options["verbose"] else logging.INFO)
+def log_options(options: dict, verbose=False):
+    ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
     sensitive_fields = [
         "account_name",
         "account_key",

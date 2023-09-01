@@ -104,3 +104,53 @@ def test_extract_us_phone_number(text, expected):
 )
 def test_extract_ordered_bullets(text, expected):
     assert extract.extract_ordered_bullets(text=text) == expected
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        (
+            "https://my-image.jpg",
+            (["https://my-image.jpg"]),
+        ),
+        (
+            "https://my-image.png with some text",
+            (["https://my-image.png"]),
+        ),
+        (
+            "https://my-image/with/some/path.png",
+            (["https://my-image/with/some/path.png"]),
+        ),
+        (
+            "some text https://my-image.jpg with another http://my-image.bmp",
+            (["https://my-image.jpg", "http://my-image.bmp"]),
+        ),
+        (
+            "http://not-an-image.com",
+            ([]),
+        ),
+        (
+            "some text",
+            ([]),
+        ),
+        (
+            "some text https://my-image.JPG with another http://my-image.BMP",
+            (["https://my-image.JPG", "http://my-image.BMP"]),
+        ),
+        (
+            "http://my-path-with-CAPS/my-image.JPG",
+            (["http://my-path-with-CAPS/my-image.JPG"]),
+        ),
+        (
+            "http://my-path/my%20image.JPG",
+            (["http://my-path/my%20image.JPG"]),
+        ),
+        # url with reference #
+        (
+            "https://my-image.jpg#ref",
+            (["https://my-image.jpg"]),
+        ),
+    ],
+)
+def test_extract_image_urls_from_html(text, expected):
+    assert extract.extract_image_urls_from_html(text=text) == expected

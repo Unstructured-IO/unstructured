@@ -300,9 +300,8 @@ def partition(
             ocr_languages=ocr_languages,
             **kwargs,
         )
-    elif (filetype == FileType.PNG) or (filetype == FileType.JPG):
-        _partition_image = _get_partition_with_extras("image")
-        elements = _partition_image(
+    elif (filetype == FileType.PNG) or (filetype == FileType.JPG) or (filetype == FileType.TIFF):
+        elements = partition_image(
             filename=filename,  # type: ignore
             file=file,  # type: ignore
             url=None,

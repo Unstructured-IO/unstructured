@@ -204,49 +204,13 @@ install-pandoc:
 ## pip-compile:             compiles all base/dev/test requirements
 .PHONY: pip-compile
 pip-compile:
-	pip-compile --upgrade requirements/base.in
-
-	# Extra requirements that are specific to document types
-	pip-compile --upgrade requirements/extra-csv.in
-	pip-compile --upgrade requirements/extra-docx.in
-	pip-compile --upgrade requirements/extra-epub.in
-	pip-compile --upgrade requirements/extra-pandoc.in
-	pip-compile --upgrade requirements/extra-markdown.in
-	pip-compile --upgrade requirements/extra-msg.in
-	pip-compile --upgrade requirements/extra-odt.in
-	pip-compile --upgrade requirements/extra-pdf-image.in
-	pip-compile --upgrade requirements/extra-pptx.in
-	pip-compile --upgrade requirements/extra-xlsx.in
-
-	# Extra requirements for huggingface staging functions
-	pip-compile --upgrade requirements/huggingface.in
-	pip-compile --upgrade requirements/test.in
-	pip-compile --upgrade requirements/dev.in
-	pip-compile --upgrade requirements/build.in
-	# NOTE(robinson) - docs/requirements.txt is where the GitHub action for building
-	# sphinx docs looks for additional requirements
+	@for file in $(shell ls requirements/*.in); \
+		do echo "running: pip-compile --upgrade $${file}" && \
+		pip-compile --upgrade $${file}; \
+	 done
 	cp requirements/build.txt docs/requirements.txt
-	pip-compile --upgrade requirements/ingest-s3.in
-	pip-compile --upgrade requirements/ingest-biomed.in
-	pip-compile --upgrade requirements/ingest-box.in
-	pip-compile --upgrade requirements/ingest-gcs.in
-	pip-compile --upgrade requirements/ingest-dropbox.in
-	pip-compile --upgrade requirements/ingest-azure.in
-	pip-compile --upgrade requirements/ingest-delta-table.in
-	pip-compile --upgrade requirements/ingest-discord.in
-	pip-compile --upgrade requirements/ingest-reddit.in
-	pip-compile --upgrade requirements/ingest-github.in
-	pip-compile --upgrade requirements/ingest-gitlab.in
-	pip-compile --upgrade requirements/ingest-slack.in
-	pip-compile --upgrade requirements/ingest-wikipedia.in
-	pip-compile --upgrade requirements/ingest-google-drive.in
-	pip-compile --upgrade requirements/ingest-elasticsearch.in
-	pip-compile --upgrade requirements/ingest-onedrive.in
-	pip-compile --upgrade requirements/ingest-outlook.in
-	pip-compile --upgrade requirements/ingest-confluence.in
-	pip-compile --upgrade requirements/ingest-airtable.in
-	pip-compile --upgrade requirements/ingest-sharepoint.in
-	pip-compile --upgrade requirements/ingest-notion.in
+
+
 
 ## install-project-local:   install unstructured into your local python environment
 .PHONY: install-project-local
@@ -281,7 +245,7 @@ test-no-extras:
 		test_${PACKAGE_NAME}/partition/test_text.py \
 		test_${PACKAGE_NAME}/partition/test_email.py \
 		test_${PACKAGE_NAME}/partition/test_html_partition.py \
-		test_${PACKAGE_NAME}/partition/test_xml_partition.py 
+		test_${PACKAGE_NAME}/partition/test_xml_partition.py
 
 .PHONY: test-extra-csv
 test-extra-csv:
@@ -319,7 +283,7 @@ test-extra-pptx:
 		test_${PACKAGE_NAME}/partition/pptx
 
 .PHONY: test-extra-epub
-test-extra-pypandoc:
+test-extra-epub:
 	PYTHONPATH=. CI=$(CI) pytest \
 		test_${PACKAGE_NAME}/partition/epub
 
@@ -401,11 +365,17 @@ docker-build:
 docker-start-bash:
 	docker run -ti --rm ${DOCKER_IMAGE}
 
+.PHONY: docker-start-dev
+docker-start-dev:
+	docker run --rm \
+	-v ${CURRENT_DIR}:/mnt/local_unstructued \
+	-ti ${DOCKER_IMAGE}
+
 .PHONY: docker-test
 docker-test:
 	docker run --rm \
-	-v ${CURRENT_DIR}/test_unstructured:/home/test_unstructured \
-	-v ${CURRENT_DIR}/test_unstructured_ingest:/home/test_unstructured_ingest \
+	-v ${CURRENT_DIR}/test_unstructured:/home/notebook-user/test_unstructured \
+	-v ${CURRENT_DIR}/test_unstructured_ingest:/home/notebook-user/test_unstructured_ingest \
 	$(if $(wildcard uns_test_env_file),--env-file uns_test_env_file,) \
 	$(DOCKER_IMAGE) \
 	bash -c "CI=$(CI) pytest $(if $(TEST_NAME),-k $(TEST_NAME),) test_unstructured"

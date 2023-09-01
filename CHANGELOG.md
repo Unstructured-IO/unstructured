@@ -1,4 +1,4 @@
-## 0.10.6-dev1
+## 0.10.12-dev1
 
 ### Enhancements
 
@@ -6,6 +6,99 @@
 
 ### Fixes
 
+* Update version-sync to prevent duplicate release versions
+
+## 0.10.11
+
+### Enhancements
+
+* Bump unstructured-inference
+  * Combine entire-page OCR output with layout-detected elements, to ensure full coverage of the page (0.5.19)
+
+### Features
+
+* Add in ingest cli s3 writer
+
+### Fixes
+
+* Fix a bug where `xy-cut` sorting attemps to sort elements without valid coordinates; now xy cut sorting only works when **all** elements have valid coordinates
+
+## 0.10.10
+
+### Enhancements
+
+* Adds `text` as an input parameter to `partition_xml`.
+* `partition_xml` no longer runs through `partition_text`, avoiding incorrect splitting
+  on carriage returns in the XML. Since `partition_xml` no longer calls `partition_text`,
+  `min_partition` and `max_partition` are no longer supported in `partition_xml`.
+* Bump `unstructured-inference==0.5.18`, change non-default detectron2 classification threshold
+* Upgrade base image from rockylinux 8 to rockylinux 9
+* Serialize IngestDocs to JSON when passing to subprocesses
+
+### Features
+
+### Fixes
+
+- Fix a bug where mismatched `elements` and `bboxes` are passed into `add_pytesseract_bbox_to_elements`
+
+## 0.10.9
+
+### Enhancements
+
+* Fix `test_json` to handle only non-extra dependencies file types (plain-text)
+
+### Features
+
+* Adds `chunk_by_title` to break a document into sections based on the presence of `Title`
+  elements.
+* add new extraction function `extract_image_urls_from_html` to extract all img related URL from html text.
+
+### Fixes
+
+* Make cv2 dependency optional
+* Edit `add_pytesseract_bbox_to_elements`'s (`ocr_only` strategy) `metadata.coordinates.points` return type to `Tuple` for consistency.
+* Re-enable test-ingest-confluence-diff for ingest tests
+* Fix syntax for ingest test check number of files
+
+## 0.10.8
+
+### Enhancements
+
+* Release docker image that installs Python 3.10 rather than 3.8
+
+### Features
+
+### Fixes
+
+## 0.10.7
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* Remove overly aggressive ListItem chunking for images and PDF's which typically resulted in inchorent elements.
+
+## 0.10.6
+
+### Enhancements
+
+* Enable `partition_email` and `partition_msg` to detect if an email is PGP encryped. If
+  and email is PGP encryped, the functions will return an empy list of elements and
+  emit a warning about the encrypted content.
+* Add threaded Slack conversations into Slack connector output
+* Add functionality to sort elements using `xy-cut` sorting approach in `partition_pdf` for `hi_res` and `fast` strategies
+* Bump unstructured-inference
+  * Set OMP_THREAD_LIMIT to 1 if not set for better tesseract perf (0.5.17)
+
+### Features
+
+* Extract coordinates from PDFs and images when using OCR only strategy and add to metadata
+
+### Fixes
+
+* Update `partition_html` to respect the order of `<pre>` tags.
 * Fix bug in `partition_pdf_or_image` where two partitions were called if `strategy == "ocr_only"`.
 * Bump unstructured-inference
   * Fix issue where temporary files were being left behind (0.5.16)
@@ -40,6 +133,7 @@
 * Add diagrams and descriptions for ingest design in the ingest README
 
 ### Features
+* Supports multipage TIFF image partitioning
 
 ### Fixes
 

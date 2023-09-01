@@ -2,6 +2,8 @@ import os
 import pathlib
 
 from unstructured.partition.epub import partition_epub
+from unstructured.partition.json import partition_json
+from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 expected_sections = {
@@ -147,3 +149,15 @@ def test_partition_epub_from_file_custom_metadata_date(
         elements = partition_epub(file=f, metadata_last_modified=expected_last_modification_date)
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
+
+
+def test_partition_epub_with_json():
+    filename = os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "winter-sports.epub")
+    elements = partition_epub(filename=filename)
+    test_elements = partition_json(text=elements_to_json(elements))
+
+    assert len(elements) == len(test_elements)
+    assert elements[0].metadata.filename == test_elements[0].metadata.filename
+    assert elements[0].metadata.section == test_elements[0].metadata.section
+    for i in range(len(elements)):
+        elements[i] == test_elements[i]
