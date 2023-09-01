@@ -831,7 +831,7 @@ def test_auto_partition_html_pre_from_file(filename="example-docs/fake-html-pre.
     assert len(elements) > 0
     assert "PageBreak" not in [elem.category for elem in elements]
     assert clean_extra_whitespace(elements[0].text).startswith("[107th Congress Public Law 56]")
-    assert isinstance(elements[0], NarrativeText)
+    assert isinstance(elements[0], Title)
     assert elements[0].metadata.filetype == "text/html"
     assert elements[0].metadata.filename == "fake-html-pre.htm"
 
