@@ -1,4 +1,4 @@
-## 0.10.11-dev0
+## 0.10.11-dev1
 
 ### Enhancements
 
@@ -7,6 +7,8 @@
 * Add in ingest cli s3 writer
 
 ### Fixes
+
+* Ingest error handling to properly raise errors when wrapped
 
 ## 0.10.10
 
