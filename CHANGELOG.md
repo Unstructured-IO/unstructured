@@ -1,4 +1,4 @@
-## 0.10.11-dev2
+## 0.10.12-dev2
 
 ### Enhancements
 
