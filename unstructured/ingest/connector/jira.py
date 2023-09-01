@@ -6,24 +6,69 @@ from dataclasses import dataclass
 from pathlib import Path
 
 # from typing import Any, Dict
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
-from requests.exceptions import HTTPError
+from requests.exceptions import HTTPError, MissingSchema
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
+    BaseSessionHandle,
+    ConfigSessionHandleMixin,
     ConnectorCleanupMixin,
     IngestDocCleanupMixin,
+    IngestDocSessionHandleMixin,
     StandardConnectorConfig,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
+if TYPE_CHECKING:
+    from atlassian import Jira
+
 
 @dataclass
-class SimpleJiraConfig(BaseConnectorConfig):
+class JiraSessionHandle(BaseSessionHandle):
+    service: "Jira"
+
+
+@requires_dependencies(["atlassian"])
+def create_jira_object(url, user_email, api_token):
+    """
+    Creates a jira object for interacting with Jira Cloud.
+    Args:
+        url: URL to Jira Cloud organization
+        user_email: Email for the user with the permissions
+        api_token: API Token, generated for the user
+
+    Returns:
+        Jira object
+    """
+    from atlassian import Jira
+
+    try:
+        jira = Jira(
+            url,
+            username=user_email,
+            password=api_token,
+        )
+
+        response = jira.get_permissions("BROWSE_PROJECTS")
+        permitted = response["permissions"]["BROWSE_PROJECTS"]["havePermission"]
+
+        if permitted:
+            return jira
+
+        else:
+            pass
+
+    except MissingSchema as error:
+        print(error)
+
+
+@dataclass
+class SimpleJiraConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
     """Connector config where:
     user_email is the email to authenticate into Atlassian (Jira) Cloud,
     api_token is the api token to authenticate into Atlassian (Jira) Cloud,
@@ -40,6 +85,12 @@ class SimpleJiraConfig(BaseConnectorConfig):
     list_of_projects: Optional[str]
     list_of_boards: Optional[str]
     list_of_issues: Optional[str]
+
+    def create_session_handle(
+        self,
+    ) -> JiraSessionHandle:
+        service = create_jira_object(self.url, self.user_email, self.api_token)
+        return JiraSessionHandle(service=service)
 
 
 @dataclass
@@ -192,7 +243,7 @@ def scroll_wrapper(func, results_key="results"):
 
 
 @dataclass
-class JiraIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
+class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseIngestDoc):
     """Class encapsulating fetching a doc and writing processed results (but not
     doing the processing).
 
@@ -291,18 +342,11 @@ class JiraIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @requires_dependencies(["atlassian"])
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
-        from atlassian import Jira
 
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
 
-        # TODO: instead of having a separate connection object for each doc,
-        # have a separate connection object for each process
         try:
-            jira = Jira(
-                self.config.url,
-                username=self.config.user_email,
-                password=self.config.api_token,
-            )
+            jira = self.config.create_session_handle().service
 
             # GET issue data
             issue = jira.issue(self.file_meta.issue_key)
@@ -341,13 +385,8 @@ class JiraConnector(ConnectorCleanupMixin, BaseConnector):
 
     @requires_dependencies(["atlassian"])
     def initialize(self):
-        from atlassian import Jira
 
-        self.jira = Jira(
-            url=self.config.url,
-            username=self.config.user_email,
-            password=self.config.api_token,
-        )
+        self.jira = self.config.create_session_handle().service
 
         if self.config.list_of_projects or self.config.list_of_boards or self.config.list_of_issues:
             self.ingest_all_issues = False
